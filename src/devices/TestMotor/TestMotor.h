@@ -12,7 +12,6 @@
 
 #include <cstdio>
 
-
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
@@ -21,12 +20,6 @@
 #include <yarp/os/Log.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-    namespace dev {
-        class TestMotor;
-    }
-}
-
 
 /**
  * @ingroup dev_impl_motor
@@ -34,43 +27,41 @@ namespace yarp {
  * A fake motor control board for testing.
  * Implements the IPositionControl, IEncoders and IVelocityControl interfaces.
  */
-class YARP_dev_API yarp::dev::TestMotor : public DeviceDriver,
-                                          public IPositionControl,
-                                          public IEncodersTimed,
-                                          public IVelocityControl {
+class TestMotor :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IPositionControl,
+        public yarp::dev::IEncodersTimed,
+        public yarp::dev::IVelocityControl
+{
 private:
-    int njoints;
-    yarp::sig::Vector pos, speed, vel, acc;
-    double delay;
-    double last;
-    bool posMode;
+    int njoints{1};
+    yarp::sig::Vector pos;
+    yarp::sig::Vector speed;
+    yarp::sig::Vector vel;
+    yarp::sig::Vector acc;
+    double delay{0};
+    double last{-1};
+    bool posMode{true};
 
-    void update() {
-        if (posMode) return;
-        double now = yarp::os::Time::now();
-        if (last<0) last = now;
-        double dt = now-last;
-        for (int i=0; i<njoints; i++) {
-            pos[i] += vel[i]*dt;
-        }
-        last = now;
-    }
+    void update();
 
 public:
-    TestMotor() {
-        njoints = 1;
-        delay = 0;
-        posMode = true;
-        last = -1;
-    }
+    TestMotor() = default;
+    TestMotor(const TestMotor&) = delete;
+    TestMotor(TestMotor&&) = delete;
+    TestMotor& operator=(const TestMotor&) = delete;
+    TestMotor& operator=(TestMotor&&) = delete;
+    ~TestMotor() override = default;
 
-    bool getAxes(int *ax) override {
+    bool getAxes(int *ax) override
+    {
         *ax = njoints;
         yInfo("TestMotor reporting %d axes present", *ax);
         return true;
     }
 
-    bool open(yarp::os::Searchable& config) override {
+    bool open(yarp::os::Searchable& config) override
+    {
         njoints = config.check("axes",yarp::os::Value(4),"number of axes to pretend to have").asInt32();
         pos.resize(njoints);
         speed.resize(njoints);
@@ -88,7 +79,8 @@ public:
     }
 
 
-    bool positionMove(int j, double ref) override {
+    bool positionMove(int j, double ref) override
+    {
         posMode = true;
         if (j<njoints) {
             pos[j] = ref;
@@ -97,7 +89,8 @@ public:
     }
 
 
-    bool positionMove(const double *refs) override {
+    bool positionMove(const double *refs) override
+    {
         posMode = true;
         for (int i=0; i<njoints; i++) {
             pos[i] = refs[i];
@@ -106,7 +99,8 @@ public:
     }
 
 
-    bool relativeMove(int j, double delta) override {
+    bool relativeMove(int j, double delta) override
+    {
         posMode = true;
         if (j<njoints) {
             pos[j] += delta;
@@ -115,7 +109,8 @@ public:
     }
 
 
-    bool relativeMove(const double *deltas) override {
+    bool relativeMove(const double *deltas) override
+    {
         posMode = true;
         for (int i=0; i<njoints; i++) {
             pos[i] += deltas[i];
@@ -124,18 +119,21 @@ public:
     }
 
 
-    bool checkMotionDone(int j, bool *flag) override {
+    bool checkMotionDone(int j, bool *flag) override
+    {
         yarp::os::Time::delay(delay/1000.0);
         return true;
     }
 
 
-    bool checkMotionDone(bool *flag) override {
+    bool checkMotionDone(bool *flag) override
+    {
         return true;
     }
 
 
-    bool setRefSpeed(int j, double sp) override {
+    bool setRefSpeed(int j, double sp) override
+    {
         if (j<njoints) {
             speed[j] = sp;
         }
@@ -143,7 +141,8 @@ public:
     }
 
 
-    bool setRefSpeeds(const double *spds) override {
+    bool setRefSpeeds(const double *spds) override
+    {
         for (int i=0; i<njoints; i++) {
             speed[i] = spds[i];
         }
@@ -151,7 +150,8 @@ public:
     }
 
 
-    bool setRefAcceleration(int j, double acc) override {
+    bool setRefAcceleration(int j, double acc) override
+    {
         if (j<njoints) {
             this->acc[j] = acc;
         }
@@ -159,7 +159,8 @@ public:
     }
 
 
-    bool setRefAccelerations(const double *accs) override {
+    bool setRefAccelerations(const double *accs) override
+    {
         for (int i=0; i<njoints; i++) {
             acc[i] = accs[i];
         }
@@ -167,7 +168,8 @@ public:
     }
 
 
-    bool getRefSpeed(int j, double *ref) override {
+    bool getRefSpeed(int j, double *ref) override
+    {
         if (j<njoints) {
             (*ref) = speed[j];
         }
@@ -175,7 +177,8 @@ public:
     }
 
 
-    bool getRefSpeeds(double *spds) override {
+    bool getRefSpeeds(double *spds) override
+    {
         for (int i=0; i<njoints; i++) {
             spds[i] = speed[i];
         }
@@ -183,7 +186,8 @@ public:
     }
 
 
-    bool getRefAcceleration(int j, double *acc) override {
+    bool getRefAcceleration(int j, double *acc) override
+    {
         if (j<njoints) {
             (*acc) = this->acc[j];
         }
@@ -191,7 +195,8 @@ public:
     }
 
 
-    bool getRefAccelerations(double *accs) override {
+    bool getRefAccelerations(double *accs) override
+    {
         for (int i=0; i<njoints; i++) {
             accs[i] = acc[i];
         }
@@ -199,12 +204,14 @@ public:
     }
 
 
-    bool stop(int j) override {
+    bool stop(int j) override
+    {
         return true;
     }
 
 
-    bool stop() override {
+    bool stop() override
+    {
         return true;
     }
 
@@ -268,18 +275,21 @@ public:
         return false;
     }
 
-    bool close() override {
+    bool close() override
+    {
         return true;
     }
 
-    bool resetEncoder(int j) override {
+    bool resetEncoder(int j) override
+    {
         if (j<njoints) {
             pos[j] = 0;
         }
         return true;
     }
 
-    bool resetEncoders() override {
+    bool resetEncoders() override
+    {
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
         }
@@ -287,7 +297,8 @@ public:
         return true;
     }
 
-    bool setEncoder(int j, double val) override {
+    bool setEncoder(int j, double val) override
+    {
         if (j<njoints) {
             pos[j] = val;
         }
@@ -295,7 +306,8 @@ public:
         return true;
     }
 
-    bool setEncoders(const double *vals) override {
+    bool setEncoders(const double *vals) override
+    {
         for (int i=0; i<njoints; i++) {
             pos[i] = vals[i];
         }
@@ -303,7 +315,8 @@ public:
         return true;
     }
 
-    bool getEncoder(int j, double *v) override {
+    bool getEncoder(int j, double *v) override
+    {
         update();
         if (j<njoints) {
             (*v) = pos[j];
@@ -311,7 +324,8 @@ public:
         return true;
     }
 
-    bool getEncoders(double *encs) override {
+    bool getEncoders(double *encs) override
+    {
         update();
         for (int i=0; i<njoints; i++) {
             encs[i] = pos[i];
@@ -336,35 +350,40 @@ public:
         return true;
     }
 
-    bool getEncoderSpeed(int j, double *sp) override {
+    bool getEncoderSpeed(int j, double *sp) override
+    {
         if (j<njoints) {
             (*sp) = 0;
         }
         return true;
     }
 
-    bool getEncoderSpeeds(double *spds) override {
+    bool getEncoderSpeeds(double *spds) override
+    {
         for (int i=0; i<njoints; i++) {
             spds[i] = 0;
         }
         return true;
     }
 
-    bool getEncoderAcceleration(int j, double *spds) override {
+    bool getEncoderAcceleration(int j, double *spds) override
+    {
         if (j<njoints) {
             (*spds) = 0;
         }
         return true;
     }
 
-    bool getEncoderAccelerations(double *accs) override {
+    bool getEncoderAccelerations(double *accs) override
+    {
         for (int i=0; i<njoints; i++) {
             accs[i] = 0;
         }
         return true;
     }
 
-    bool velocityMove(int j, double sp) override {
+    bool velocityMove(int j, double sp) override
+    {
         posMode = false;
         if (j<njoints) {
             vel[j] = sp;
@@ -372,7 +391,8 @@ public:
         return true;
     }
 
-    bool velocityMove(const double *sp) override {
+    bool velocityMove(const double *sp) override
+    {
         posMode = false;
         for (int i=0; i<njoints; i++) {
             vel[i] = sp[i];
@@ -381,14 +401,5 @@ public:
     }
 
 };
-
-/**
- * @ingroup dev_runtime
- * \defgroup cmd_device_test_motor test_motor
-
- A fake motor control board, see yarp::dev::TestMotor.
-
-*/
-
 
 #endif // YARP_DEV_TESTMOTOR_H

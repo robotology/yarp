@@ -3,7 +3,7 @@
  *
  * \defgroup test_motor_basic Example for test_motor (test_motor_basic)
 
-Instantiates \ref cmd_device_test_motor "test_motor" device implemented by yarp::dev::TestMotor.
+Instantiates \ref cmd_device_test_motor "test_motor" device implemented by TestMotor.
 \verbatim
 # set up a fake motor control device with 8 joints
 device test_motor
@@ -34,6 +34,6 @@ So this is just an example
 <tr><td>delay</td><td>delay in each call for debugging purpose, in ms</td><td>0</td></tr>
 </table>
 
-\sa yarp::dev::TestMotor
+\sa TestMotor
 
  */

@@ -139,43 +139,5 @@ TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
         }
     }
 
-    SECTION("test the controlboard wrapper 2")
-    {
-        PolyDriver dd;
-        Property p;
-        p.put("device","controlboardwrapper2");
-        p.put("subdevice","test_motor");
-        p.put("name","/motor");
-        p.put("axes",16);
-        bool result;
-        result = dd.open(p);
-        REQUIRE(result); // controlboardwrapper open reported successful
-
-        // Check if IMultipleWrapper interface is correctly found
-        yarp::dev::IMultipleWrapper * i_mwrapper=nullptr;
-        result = dd.view(i_mwrapper);
-        REQUIRE(result); // IMultipleWrapper view reported successful
-        REQUIRE(i_mwrapper != nullptr); // IMultipleWrapper pointer not null
-
-        PolyDriver dd2;
-        Property p2;
-        p2.put("device","remote_controlboard");
-        p2.put("remote","/motor");
-        p2.put("local","/motor/client");
-        p2.put("carrier","tcp");
-        p2.put("ignoreProtocolCheck","true");
-        result = dd2.open(p2);
-        REQUIRE(result); // remote_controlboard open reported successful
-
-        IPositionControl *pos = nullptr;
-        result = dd2.view(pos);
-        REQUIRE(result); // interface reported
-        int axes = 0;
-        pos->getAxes(&axes);
-        CHECK(axes == 16); // interface seems functional
-        CHECK(dd.close()); // close dd reported successful
-        CHECK(dd2.close()); // close dd2 reported successful
-    }
-
     Network::setLocalMode(false);
 }

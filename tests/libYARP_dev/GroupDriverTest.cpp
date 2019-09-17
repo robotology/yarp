@@ -26,6 +26,7 @@ using namespace yarp::dev;
 TEST_CASE("dev::GroupDriver", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("group", "device");
+    YARP_REQUIRE_PLUGIN("test_motor", "device");
 
     Network::setLocalMode(true);
 

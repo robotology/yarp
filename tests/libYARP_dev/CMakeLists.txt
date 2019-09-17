@@ -6,6 +6,7 @@
 
 add_executable(harness_dev AnalogWrapperTest.cpp
                            ControlBoardRemapperTest.cpp
+                           ControlBoardWrapper2Test.cpp
                            FrameTransformClientTest.cpp
                            GroupDriverTest.cpp
                            MapGrid2DTest.cpp
