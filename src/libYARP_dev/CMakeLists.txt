@@ -186,7 +186,6 @@ set(YARP_dev_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
                           src/devices/ControlBoardWrapper/RPCMessagesParser.cpp
                           src/devices/ControlBoardWrapper/StreamingMessagesParser.cpp
                           src/devices/ControlBoardWrapper/SubDevice.cpp
-                          src/devices/DevicePipe/DevicePipe.cpp
                           src/devices/JoypadControlClient/JoypadControlClient.cpp
                           src/devices/JoypadControlServer/JoypadControlServer.cpp
                           src/devices/RemoteControlBoard/RemoteControlBoard.cpp
@@ -212,7 +211,6 @@ set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
                           src/devices/ControlBoardWrapper/RPCMessagesParser.h
                           src/devices/ControlBoardWrapper/StreamingMessagesParser.h
                           src/devices/ControlBoardWrapper/SubDevice.h
-                          src/devices/DevicePipe/DevicePipe.h
                           src/devices/JoypadControlClient/JoypadControlClient.h
                           src/devices/JoypadControlServer/JoypadControlNetUtils.h
                           src/devices/JoypadControlServer/JoypadControlServer.h

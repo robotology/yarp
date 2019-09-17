@@ -21,7 +21,6 @@ using namespace yarp::dev;
 extern DriverCreator* createServerSerial();
 extern DriverCreator* createRemoteFrameGrabber();
 extern DriverCreator* createServerFrameGrabber();
-extern DriverCreator* createDevicePipe();
 extern DriverCreator* createRemoteControlBoard();
 extern DriverCreator* createAnalogSensorClient();
 extern DriverCreator* createAnalogWrapper();
@@ -42,7 +41,6 @@ void Drivers::init() {
     add(createServerSerial());
     add(createRemoteFrameGrabber());
     add(createServerFrameGrabber());
-    add(createDevicePipe());
     add(createRemoteControlBoard());
     add(createServerInertial());
     add(createControlBoardWrapper());

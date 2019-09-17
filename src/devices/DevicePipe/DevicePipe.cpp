@@ -19,15 +19,8 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createDevicePipe() {
-    return new yarp::dev::DriverCreatorOf<yarp::dev::DevicePipe>("pipe",
-                                                                 "",
-                                                                 "yarp::dev::DevicePipe");
-}
-
-
-bool DevicePipe::open(yarp::os::Searchable& config) {
+bool DevicePipe::open(yarp::os::Searchable& config)
+{
     bool ok = open("source",source,config,
                    "device to read from (string or nested properties)");
     if (!ok) return false;
@@ -40,8 +33,11 @@ bool DevicePipe::open(yarp::os::Searchable& config) {
 }
 
 
-bool DevicePipe::open(const char *key, PolyDriver& poly,
-                      yarp::os::Searchable& config, const char *comment) {
+bool DevicePipe::open(const char *key,
+                      PolyDriver& poly,
+                      yarp::os::Searchable& config,
+                      const char *comment)
+{
 
     Value *name;
     if (config.check(key,name,comment)) {
@@ -71,7 +67,8 @@ bool DevicePipe::open(const char *key, PolyDriver& poly,
 }
 
 
-bool DevicePipe::close() {
+bool DevicePipe::close()
+{
     printf("Devices closing\n");
     source.close();
     sink.close();
@@ -79,7 +76,8 @@ bool DevicePipe::close() {
 }
 
 
-bool DevicePipe::updateService() {
+bool DevicePipe::updateService()
+{
     IFrameGrabberImage *imgSource;
     IAudioGrabberSound *sndSource;
     IAudioVisualGrabber *imgSndSource;

@@ -14,42 +14,48 @@
 #include <yarp/dev/ServiceInterfaces.h>
 
 
-namespace yarp{
-    namespace dev {
-        class DevicePipe;
-    }
-}
-
 /**
  * @ingroup dev_impl_other
  *
  * Tries to connect the output of one device to the input of another.
- *
  */
-class YARP_dev_API yarp::dev::DevicePipe : public DeviceDriver,
-                                           public IService {
-
+class DevicePipe :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IService
+{
 public:
+    DevicePipe() = default;
+    DevicePipe(const DevicePipe&) = delete;
+    DevicePipe(DevicePipe&&) = delete;
+    DevicePipe& operator=(const DevicePipe&) = delete;
+    DevicePipe& operator=(DevicePipe&&) = delete;
+    ~DevicePipe() override = default;
+
     bool open(yarp::os::Searchable& config) override;
 
     bool close() override;
 
-    bool startService() override {
+    bool startService() override
+    {
         // please call updateService
         return false;
     }
 
-    bool stopService() override {
+    bool stopService() override
+    {
         return close();
     }
 
     bool updateService() override;
 
 protected:
-    PolyDriver source, sink;
+    yarp::dev::PolyDriver source;
+    yarp::dev::PolyDriver sink;
 
-    bool open(const char *key, PolyDriver& poly,
-              yarp::os::Searchable& config, const char *comment);
+    bool open(const char *key,
+              yarp::dev::PolyDriver& poly,
+              yarp::os::Searchable& config,
+              const char *comment);
 };
 
 
