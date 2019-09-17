@@ -58,8 +58,6 @@ class DeprecatedDeviceDriverTest : public DeprecatedDeviceDriver
 };
 
 
-
-
 TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
 {
     Network::setLocalMode(true);
@@ -139,28 +137,6 @@ TEST_CASE("dev::PolyDriverTest", "[yarp::dev]")
             // bug may cause crash due to Monitor reporting to deallocated
             // driver
         }
-    }
-
-    SECTION("make sure groups of devices can be instantiated correctly")
-    {
-        Property p;
-        p.fromConfig("\
-device group\n\
-\n\
-[part mymotor]\n\
-device test_motor\n\
-axes 10\n\
-\n\
-[part broadcast]\n\
-device controlboardwrapper2\n\
-subdevice mymotor\n\
-name /mymotor\n\
-");
-        p.put("verbose",1);
-        PolyDriver dd(p);
-        Bottle cmd("get axes"), reply;
-        Network::write(Contact("/mymotor/rpc:i"), cmd, reply);
-        CHECK(reply.get(2).asInt32() == 10); // axis count is correct
     }
 
     SECTION("test the controlboard wrapper 2")

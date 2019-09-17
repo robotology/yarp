@@ -25,30 +25,21 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createDeviceGroup() {
-    return new yarp::dev::DriverCreatorOf<yarp::dev::DeviceGroup>("group",
-                                                                  "",
-                                                                  "yarp::dev::DeviceGroup");
-}
-
 #define HELPER(x) (*((DeviceGroupHelper*)(x)))
 
 
-class DeviceGroupHelper {
+class DeviceGroupHelper
+{
 private:
     std::vector<PolyDriver *> drivers;
     std::vector<std::string> names;
     std::vector<bool> needDrive;
     std::mutex mutex;
 public:
-    bool needDriveSummary;
+    bool needDriveSummary{false};
 
-    DeviceGroupHelper() : mutex() {
-        needDriveSummary = false;
-    }
-
-    void clear() {
+    void clear()
+    {
         mutex.lock();
         std::vector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
@@ -63,7 +54,8 @@ public:
         mutex.unlock();
     }
 
-    void update() {
+    void update()
+    {
         mutex.lock();
         std::vector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
@@ -78,18 +70,21 @@ public:
         mutex.unlock();
     }
 
-    bool close() {
+    bool close()
+    {
         printf("*** Device group closing\n");
         clear();
         printf("*** Device group closed\n");
         return true;
     }
 
-    ~DeviceGroupHelper() {
+    ~DeviceGroupHelper()
+    {
         clear();
     }
 
-    bool add(const std::string& name, yarp::os::Searchable& config) {
+    bool add(const std::string& name, yarp::os::Searchable& config)
+    {
         //printf("ADDING %s\n", config.toString().c_str());
         auto* pd = new PolyDriver();
         yAssert(pd!=nullptr);
@@ -123,7 +118,8 @@ public:
 
 
 
-bool DeviceGroup::open(yarp::os::Searchable& config) {
+bool DeviceGroup::open(yarp::os::Searchable& config)
+{
     if (implementation==nullptr) {
         implementation = new DeviceGroupHelper;
     }
@@ -153,8 +149,8 @@ bool DeviceGroup::open(yarp::os::Searchable& config) {
 
 
 bool DeviceGroup::open(const char *key, PolyDriver& poly,
-                      yarp::os::Searchable& config, const char *comment) {
-
+                      yarp::os::Searchable& config, const char *comment)
+{
     Value *name;
     if (config.check(key,name,comment)) {
         if (name->isString()) {
@@ -183,7 +179,8 @@ bool DeviceGroup::open(const char *key, PolyDriver& poly,
 }
 
 
-bool DeviceGroup::closeMain() {
+bool DeviceGroup::closeMain()
+{
     printf("Devices closing\n");
     HELPER(implementation).close();
     source.close();
@@ -191,18 +188,21 @@ bool DeviceGroup::closeMain() {
     return true;
 }
 
-bool DeviceGroup::startService() {
+bool DeviceGroup::startService()
+{
     return !HELPER(implementation).needDriveSummary;
 }
 
 
-bool DeviceGroup::updateService() {
+bool DeviceGroup::updateService()
+{
     HELPER(implementation).update();
     return true;
 }
 
 
-DeviceGroup::~DeviceGroup() {
+DeviceGroup::~DeviceGroup()
+{
     if (implementation!=nullptr) {
         delete &HELPER(implementation);
         implementation = nullptr;

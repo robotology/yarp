@@ -13,52 +13,52 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
 
-
-namespace yarp{
-    namespace dev {
-        class DeviceGroup;
-    }
-}
-
 /**
  * @ingroup dev_impl_other
  *
  * Lets you make a bunch of devices as a group.
  *
  */
-class YARP_dev_API yarp::dev::DeviceGroup : public DeviceDriver,
-                                            public IService {
-
+class DeviceGroup :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IService
+{
 public:
-    DeviceGroup() {
-        implementation = NULL;
-    }
-
-    virtual ~DeviceGroup();
+    DeviceGroup() = default;
+    DeviceGroup(const DeviceGroup&) = delete;
+    DeviceGroup(DeviceGroup&&) = delete;
+    DeviceGroup& operator=(const DeviceGroup&) = delete;
+    DeviceGroup& operator=(DeviceGroup&&) = delete;
+    ~DeviceGroup() override;
 
     bool open(yarp::os::Searchable& config) override;
 
-    bool close() override {
+    bool close() override
+    {
         return closeMain();
     }
 
     bool startService() override;
 
-    bool stopService() override {
+    bool stopService() override
+    {
         return close();
     }
 
     bool updateService() override;
 
 private:
-    void *implementation;
+    void* implementation{nullptr};
 
     bool closeMain();
 
-    PolyDriver source, sink;
+    yarp::dev::PolyDriver source;
+    yarp::dev::PolyDriver sink;
 
-    bool open(const char *key, PolyDriver& poly,
-              yarp::os::Searchable& config, const char *comment);
+    bool open(const char *key,
+              yarp::dev::PolyDriver& poly,
+              yarp::os::Searchable& config,
+              const char *comment);
 };
 
 

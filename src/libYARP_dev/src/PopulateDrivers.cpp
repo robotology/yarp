@@ -23,7 +23,6 @@ extern DriverCreator* createServerSerial();
 extern DriverCreator* createRemoteFrameGrabber();
 extern DriverCreator* createServerFrameGrabber();
 extern DriverCreator* createDevicePipe();
-extern DriverCreator* createDeviceGroup();
 extern DriverCreator* createRemoteControlBoard();
 extern DriverCreator* createAnalogSensorClient();
 extern DriverCreator* createAnalogWrapper();
@@ -46,7 +45,6 @@ void Drivers::init() {
     add(createRemoteFrameGrabber());
     add(createServerFrameGrabber());
     add(createDevicePipe());
-    add(createDeviceGroup());
     add(createRemoteControlBoard());
     add(createServerInertial());
     add(createControlBoardWrapper());
