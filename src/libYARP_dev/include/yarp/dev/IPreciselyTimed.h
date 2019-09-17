@@ -14,19 +14,21 @@
 
 #include <yarp/dev/api.h>
 
-namespace yarp{
-    namespace dev{
-        class IPreciselyTimed;
-    }
-}
+namespace yarp {
+namespace dev {
 
-class YARP_dev_API yarp::dev::IPreciselyTimed {
+class YARP_dev_API IPreciselyTimed
+{
 public:
+    virtual ~IPreciselyTimed() = default;
+
     /**
-    * Return the time stamp relative to the last acquisition.
-    */
+     * Return the time stamp relative to the last acquisition.
+     */
     virtual yarp::os::Stamp getLastInputStamp() = 0;
-    virtual ~IPreciselyTimed(){}
 };
+
+} // namespace dev
+} // namespace yarp
 
 #endif // YARP_DEV_IPRECISELYTIMED_H
