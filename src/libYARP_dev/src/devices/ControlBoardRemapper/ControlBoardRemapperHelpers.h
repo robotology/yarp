@@ -21,7 +21,7 @@
 #include <yarp/dev/IInteractionMode.h>
 #include <yarp/dev/IControlLimits2.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 
 
 #include <yarp/sig/Vector.h>

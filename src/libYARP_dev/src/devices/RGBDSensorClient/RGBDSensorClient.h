@@ -16,7 +16,7 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/FrameGrabberControl2.h>
 #include <yarp/dev/FrameGrabberControlImpl.h>

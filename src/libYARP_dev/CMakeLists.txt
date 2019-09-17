@@ -80,6 +80,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IPositionControl2.h
                   include/yarp/dev/IPositionControl.h
                   include/yarp/dev/IPositionDirect.h
+                  include/yarp/dev/IPreciselyTimed.h
                   include/yarp/dev/IPWMControl.h
                   include/yarp/dev/IRangefinder2D.h
                   include/yarp/dev/IRemoteVariables.h
@@ -98,7 +99,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
-                  include/yarp/dev/PreciselyTimed.h
                   include/yarp/dev/RGBDSensorParamParser.h
                   include/yarp/dev/SerialInterfaces.h
                   include/yarp/dev/ServiceInterfaces.h
@@ -113,6 +113,11 @@ if(TARGET YARP::YARP_math)
                             include/yarp/dev/Map2DArea.h
                             include/yarp/dev/MapGrid2D.h)
 endif()
+
+if(NOT YARP_NO_DEPRECATED) # Since YARP 3.3.0
+  list(APPEND YARP_dev_HDRS include/yarp/dev/IPreciselyTimed.h)
+endif()
+
 
 set(YARP_dev_IMPL_HDRS include/yarp/dev/impl/FixedSizeBuffersManager.h
                        include/yarp/dev/impl/FixedSizeBuffersManager-inl.h)
