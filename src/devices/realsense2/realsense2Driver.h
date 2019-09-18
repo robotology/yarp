@@ -194,7 +194,6 @@ public:
     int width() const override;
 
 private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     //method
     inline bool initializeRealsenseDevice();
     inline bool setParams();
@@ -237,6 +236,5 @@ private:
     int m_fps;
     float m_scale;
     std::vector<cameraFeature_id_t> m_supportedFeatures;
-#endif
 };
 #endif
