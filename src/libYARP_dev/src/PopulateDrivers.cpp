@@ -18,8 +18,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-extern DriverCreator* createControlBoardRemapper();
-extern DriverCreator* createRemoteControlBoardRemapper();
 extern DriverCreator* createRobotDescriptionServer();
 extern DriverCreator* createRobotDescriptionClient();
 extern DriverCreator* createServerGrabber();
@@ -27,8 +25,6 @@ extern DriverCreator* createJoypadControlClient();
 extern DriverCreator* createJoypadControlServer();
 
 void Drivers::init() {
-    add(createControlBoardRemapper());
-    add(createRemoteControlBoardRemapper());
     add(createRobotDescriptionServer());
     add(createRobotDescriptionClient());
     add(createServerGrabber());

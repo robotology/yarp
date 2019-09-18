@@ -21,17 +21,6 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace std;
 
-// needed for the driver factory.
-DriverCreator *createRemoteControlBoardRemapper()
-{
-    return new DriverCreatorOf<yarp::dev::RemoteControlBoardRemapper>
-            ("remotecontrolboardremapper", "controlboardwrapper2", "yarp::dev::RemoteControlBoardRemapper");
-}
-
-RemoteControlBoardRemapper::RemoteControlBoardRemapper() = default;
-
-RemoteControlBoardRemapper::~RemoteControlBoardRemapper() = default;
-
 void RemoteControlBoardRemapper::closeAllRemoteControlBoards()
 {
     for(auto& m_remoteControlBoardDevice : m_remoteControlBoardDevices)

@@ -176,19 +176,13 @@ if(TARGET YARP::YARP_math)
                             src/Map2DArea.cpp)
 endif()
 
-set(YARP_dev_devices_SRCS src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
-                          src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
-                          src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
-                          src/devices/JoypadControlClient/JoypadControlClient.cpp
+set(YARP_dev_devices_SRCS src/devices/JoypadControlClient/JoypadControlClient.cpp
                           src/devices/JoypadControlServer/JoypadControlServer.cpp
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
                           src/devices/ServerGrabber/ServerGrabber.cpp)
 
-set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.h
-                          src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
-                          src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
-                          src/devices/JoypadControlClient/JoypadControlClient.h
+set(YARP_dev_devices_HDRS src/devices/JoypadControlClient/JoypadControlClient.h
                           src/devices/JoypadControlServer/JoypadControlNetUtils.h
                           src/devices/JoypadControlServer/JoypadControlServer.h
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.h

@@ -13,11 +13,6 @@
 
 #include "ControlBoardRemapper.h"
 
-
-namespace yarp {
-namespace dev {
-
-
 /**
  *  @ingroup dev_impl_network_clients
  *
@@ -105,25 +100,19 @@ private:
     /**
      * List of remote_controlboard devices opened by the RemoteControlBoardRemapper device.
      */
-    std::vector<PolyDriver*> m_remoteControlBoardDevices;
+    std::vector<yarp::dev::PolyDriver*> m_remoteControlBoardDevices;
 
 
     // Close all opened remote controlboards
     void closeAllRemoteControlBoards();
 
 public:
-    /**
-    * Constructor.
-    */
-    RemoteControlBoardRemapper();
-
-    virtual ~RemoteControlBoardRemapper();
-
-    /**
-     * Default open() method.
-     * @return always false since initialization requires parameters.
-     */
-    bool open() override { return false; }
+    RemoteControlBoardRemapper() = default;
+    RemoteControlBoardRemapper(const RemoteControlBoardRemapper&) = delete;
+    RemoteControlBoardRemapper(RemoteControlBoardRemapper&&) = delete;
+    RemoteControlBoardRemapper& operator=(const RemoteControlBoardRemapper&) = delete;
+    RemoteControlBoardRemapper& operator=(RemoteControlBoardRemapper&&) = delete;
+    ~RemoteControlBoardRemapper() override = default;
 
    /**
      * Open the device driver.
@@ -138,8 +127,5 @@ public:
      */
     bool close() override;
 };
-
-}
-}
 
 #endif

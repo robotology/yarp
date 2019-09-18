@@ -27,10 +27,6 @@
     #pragma warning(disable:4355)
 #endif
 
-namespace yarp {
-namespace dev {
-
-
 /**
  * @ingroup dev_impl_remappers
  *
@@ -62,7 +58,7 @@ namespace dev {
  * For compatibility with the controlboardwrapper2, the
  * networks keyword can also be used to select the desired joints.
  * For more information on the syntax of the networks, see the
- * ControlBoardWrapper2 class.
+ * ControlBoardWrapper class.
  *
  * \code{.unparsed}
  *  networks (net_larm net_lhand)
@@ -73,37 +69,38 @@ namespace dev {
  *
  */
 
-class ControlBoardRemapper : public yarp::dev::DeviceDriver,
-                             public yarp::dev::IPidControl,
-                             public yarp::dev::IPositionControl,
-                             public yarp::dev::IPositionDirect,
-                             public yarp::dev::IVelocityControl,
-                             public yarp::dev::IPWMControl,
-                             public yarp::dev::ICurrentControl,
-                             public yarp::dev::IEncodersTimed,
-                             public yarp::dev::IMotor,
-                             public yarp::dev::IMotorEncoders,
-                             public yarp::dev::IAmplifierControl,
-                             public yarp::dev::IControlLimits,
-                             public yarp::dev::IRemoteCalibrator,
-                             public yarp::dev::IControlCalibration,
-                             public yarp::dev::ITorqueControl,
-                             public yarp::dev::IImpedanceControl,
-                             public yarp::dev::IControlMode,
-                             public yarp::dev::IMultipleWrapper,
-                             public yarp::dev::IAxisInfo,
-                             public yarp::dev::IPreciselyTimed,
-                             public yarp::dev::IInteractionMode,
-                             public yarp::dev::IRemoteVariables {
+class ControlBoardRemapper :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IPidControl,
+        public yarp::dev::IPositionControl,
+        public yarp::dev::IPositionDirect,
+        public yarp::dev::IVelocityControl,
+        public yarp::dev::IPWMControl,
+        public yarp::dev::ICurrentControl,
+        public yarp::dev::IEncodersTimed,
+        public yarp::dev::IMotor,
+        public yarp::dev::IMotorEncoders,
+        public yarp::dev::IAmplifierControl,
+        public yarp::dev::IControlLimits,
+        public yarp::dev::IRemoteCalibrator,
+        public yarp::dev::IControlCalibration,
+        public yarp::dev::ITorqueControl,
+        public yarp::dev::IImpedanceControl,
+        public yarp::dev::IControlMode,
+        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::IAxisInfo,
+        public yarp::dev::IPreciselyTimed,
+        public yarp::dev::IInteractionMode,
+        public yarp::dev::IRemoteVariables {
 private:
     std::vector<std::string> axesNames;
-    yarp::dev::RemappedControlBoards remappedControlBoards;
+    RemappedControlBoards remappedControlBoards;
 
     /** number of axes controlled by this controlboard */
-    int controlledJoints;
+    int controlledJoints{0};
 
     /** Verbosity of the class */
-    bool _verb;
+    bool _verb{false};
 
     // to open ports and print more detailed debug messages
     std::string partName;
@@ -138,8 +135,8 @@ private:
     // Parse device options
     bool parseOptions(yarp::os::Property &prop);
 
-    bool usingAxesNamesForAttachAll;
-    bool usingNetworksForAttachAll;
+    bool usingAxesNamesForAttachAll{false};
+    bool usingNetworksForAttachAll{false};
 
     /***
      * Parse device options if networks option is passed
@@ -177,24 +174,18 @@ private:
 
 
 public:
-    /**
-    * Constructor.
-    */
-    ControlBoardRemapper();
-
-    virtual ~ControlBoardRemapper();
+    ControlBoardRemapper() = default;
+    ControlBoardRemapper(const ControlBoardRemapper&) = delete;
+    ControlBoardRemapper(ControlBoardRemapper&&) = delete;
+    ControlBoardRemapper& operator=(const ControlBoardRemapper&) = delete;
+    ControlBoardRemapper& operator=(ControlBoardRemapper&&) = delete;
+    ~ControlBoardRemapper() override = default;
 
     /**
     * Return the value of the verbose flag.
     * @return the verbose flag.
     */
     bool verbose() const { return _verb; }
-
-    /**
-    * Default open() method.
-    * @return always false since initialization requires parameters.
-    */
-    virtual bool open() { return false; }
 
     /**
     * Close the device driver by deallocating all resources and closing ports.
@@ -215,47 +206,47 @@ public:
     bool attachAll(const yarp::dev::PolyDriverList &l) override;
 
     /* IPidControl */
-    bool setPid(const PidControlTypeEnum& pidtype,int j, const Pid &p) override;
+    bool setPid(const yarp::dev::PidControlTypeEnum& pidtype,int j, const yarp::dev::Pid &p) override;
 
-    bool setPids(const PidControlTypeEnum& pidtype,const Pid *ps) override;
+    bool setPids(const yarp::dev::PidControlTypeEnum& pidtype,const yarp::dev::Pid *ps) override;
 
-    bool setPidReference(const PidControlTypeEnum& pidtype,int j, double ref) override;
+    bool setPidReference(const yarp::dev::PidControlTypeEnum& pidtype,int j, double ref) override;
 
-    bool setPidReferences(const PidControlTypeEnum& pidtype,const double *refs) override;
+    bool setPidReferences(const yarp::dev::PidControlTypeEnum& pidtype,const double *refs) override;
 
-    bool setPidErrorLimit(const PidControlTypeEnum& pidtype,int j, double limit) override;
+    bool setPidErrorLimit(const yarp::dev::PidControlTypeEnum& pidtype,int j, double limit) override;
 
-    bool setPidErrorLimits(const PidControlTypeEnum& pidtype,const double *limits) override;
+    bool setPidErrorLimits(const yarp::dev::PidControlTypeEnum& pidtype,const double *limits) override;
 
-    bool getPidError(const PidControlTypeEnum& pidtype,int j, double *err) override;
+    bool getPidError(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *err) override;
 
-    bool getPidErrors(const PidControlTypeEnum& pidtype,double *errs) override;
+    bool getPidErrors(const yarp::dev::PidControlTypeEnum& pidtype,double *errs) override;
 
-    bool getPidOutput(const PidControlTypeEnum& pidtype,int j, double *out) override;
+    bool getPidOutput(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *out) override;
 
-    bool getPidOutputs(const PidControlTypeEnum& pidtype,double *outs) override;
+    bool getPidOutputs(const yarp::dev::PidControlTypeEnum& pidtype,double *outs) override;
 
-    bool setPidOffset(const PidControlTypeEnum& pidtype,int j, double v) override;
+    bool setPidOffset(const yarp::dev::PidControlTypeEnum& pidtype,int j, double v) override;
 
-    bool getPid(const PidControlTypeEnum& pidtype,int j, Pid *p) override;
+    bool getPid(const yarp::dev::PidControlTypeEnum& pidtype,int j, yarp::dev::Pid *p) override;
 
-    bool getPids(const PidControlTypeEnum& pidtype,Pid *pids) override;
+    bool getPids(const yarp::dev::PidControlTypeEnum& pidtype,yarp::dev::Pid *pids) override;
 
-    bool getPidReference(const PidControlTypeEnum& pidtype,int j, double *ref) override;
+    bool getPidReference(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *ref) override;
 
-    bool getPidReferences(const PidControlTypeEnum& pidtype,double *refs) override;
+    bool getPidReferences(const yarp::dev::PidControlTypeEnum& pidtype,double *refs) override;
 
-    bool getPidErrorLimit(const PidControlTypeEnum& pidtype,int j, double *limit) override;
+    bool getPidErrorLimit(const yarp::dev::PidControlTypeEnum& pidtype,int j, double *limit) override;
 
-    bool getPidErrorLimits(const PidControlTypeEnum& pidtype,double *limits) override;
+    bool getPidErrorLimits(const yarp::dev::PidControlTypeEnum& pidtype,double *limits) override;
 
-    bool resetPid(const PidControlTypeEnum& pidtype,int j) override;
+    bool resetPid(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
 
-    bool disablePid(const PidControlTypeEnum& pidtype,int j) override;
+    bool disablePid(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
 
-    bool enablePid(const PidControlTypeEnum& pidtype,int j) override;
+    bool enablePid(const yarp::dev::PidControlTypeEnum& pidtype,int j) override;
 
-    bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    bool isPidEnabled(const yarp::dev::PidControlTypeEnum& pidtype, int j, bool* enabled) override;
 
     /* IPositionControl */
     bool getAxes(int *ax) override;
@@ -447,7 +438,7 @@ public:
 
     bool calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3) override;
 
-    bool setCalibrationParameters(int j, const CalibrationParameters &params) override;
+    bool setCalibrationParameters(int j, const yarp::dev::CalibrationParameters &params) override;
 
     bool calibrationDone(int j) override;
 
@@ -505,8 +496,7 @@ public:
 
     bool getImpedanceOffset(int j, double *offset) override;
 
-    virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp,
-                                          double *max_damp) override;
+    bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp) override;
 
     bool getControlMode(int j, int *mode) override;
 
@@ -590,8 +580,5 @@ public:
 
     bool getRefCurrent(int m, double *curr) override;
 };
-
-}
-}
 
 #endif // YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPER_H

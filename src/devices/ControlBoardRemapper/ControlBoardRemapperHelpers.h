@@ -36,12 +36,6 @@
     #pragma warning(disable:4355)
 #endif
 
-namespace yarp
-{
-
-namespace dev
-{
-
 /*
  * Helper class for the ControlBoardRemapper.
  * It contains all the data structure related
@@ -127,7 +121,7 @@ public:
      *
      * @return a reference to the requests SubControlBoard.
      */
-    inline yarp::dev::RemappedSubControlBoard* getSubControlBoard(size_t i)
+    inline RemappedSubControlBoard* getSubControlBoard(size_t i)
     {
         return &(subdevices[i]);
     }
@@ -190,7 +184,7 @@ public:
      *
      * (Version for InteractionModes methods)
      */
-    void fillSubControlBoardBuffersFromCompleteJointVector(const InteractionModeEnum * full,
+    void fillSubControlBoardBuffersFromCompleteJointVector(const yarp::dev::InteractionModeEnum * full,
                                                             const RemappedControlBoards & remappedControlBoards);
 
     /**
@@ -216,7 +210,7 @@ public:
      * Before calling this method you should have called the resizeSubControlBoardBuffers method.
      * (Version for InteractionModes methods)
      */
-    void fillCompleteJointVectorFromSubControlBoardBuffers(InteractionModeEnum * full,
+    void fillCompleteJointVectorFromSubControlBoardBuffers(yarp::dev::InteractionModeEnum * full,
                                                            const RemappedControlBoards & remappedControlBoards);
 
 
@@ -233,7 +227,7 @@ public:
 
     std::vector< std::vector<double> > m_bufferForSubControlBoard;
     std::vector< std::vector<int>    > m_bufferForSubControlBoardControlModes;
-    std::vector< std::vector<InteractionModeEnum>  > m_bufferForSubControlBoardInteractionModes;
+    std::vector< std::vector<yarp::dev::InteractionModeEnum>  > m_bufferForSubControlBoardInteractionModes;
 
     std::vector<int> m_counterForControlBoard;
 };
@@ -287,7 +281,7 @@ public:
      * a vector of joints of the RemappedControlBoards
      * (Version for InteractionModes methods)
      */
-    void fillSubControlBoardBuffersFromArbitraryJointVector(const InteractionModeEnum * arbitraryVec,
+    void fillSubControlBoardBuffersFromArbitraryJointVector(const yarp::dev::InteractionModeEnum * arbitraryVec,
                                                             const int n_joints,
                                                             const int *joints,
                                                             const RemappedControlBoards & remappedControlBoards);
@@ -328,7 +322,7 @@ public:
      * Before calling this method you should have called the resizeSubControlBoardBuffers method.
      * (Version for InteractionModes methods)
      */
-    void fillArbitraryJointVectorFromSubControlBoardBuffers(InteractionModeEnum * arbitraryVec,
+    void fillArbitraryJointVectorFromSubControlBoardBuffers(yarp::dev::InteractionModeEnum * arbitraryVec,
                                                             const int n_joints, const int *joints,
                                                             const RemappedControlBoards & remappedControlBoards);
 
@@ -349,16 +343,12 @@ public:
     // the size of m_jointsInSubControlBoard[ctrlBoard].size()
     std::vector< std::vector<double> > m_bufferForSubControlBoard;
     std::vector< std::vector<int>    > m_bufferForSubControlBoardControlModes;
-    std::vector< std::vector<InteractionModeEnum>  > m_bufferForSubControlBoardInteractionModes;
+    std::vector< std::vector<yarp::dev::InteractionModeEnum>  > m_bufferForSubControlBoardInteractionModes;
 
 
     // Counter used when converting a full vector to
     // the subcontrolboard buffers
     std::vector<int> m_counterForControlBoard;
 };
-
-}
-
-}
 
 #endif  // YARP_DEV_CONTROLBOARDREMAPPER_CONTROLBOARDREMAPPERHELPERS_H
