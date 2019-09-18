@@ -13,6 +13,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/AudioGrabberInterfaces.h
                   include/yarp/dev/AudioVisualInterfaces.h
                   include/yarp/dev/CalibratorInterfaces.h
+                  include/yarp/dev/CalibratorVocabs.h
                   include/yarp/dev/CanBusInterface.h
                   include/yarp/dev/CircularAudioBuffer.h
                   include/yarp/dev/CartesianControl.h
@@ -21,6 +22,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ControlBoardInterfaces.h
                   include/yarp/dev/ControlBoardInterfacesImpl.h
                   include/yarp/dev/ControlBoardPid.h
+                  include/yarp/dev/ControlBoardVocabs.h
                   include/yarp/dev/DataSource.h
                   include/yarp/dev/DeviceDriver.h
                   include/yarp/dev/DriverLinkCreator.h
@@ -36,6 +38,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IAnalogSensor.h
                   include/yarp/dev/IAxisInfo.h
                   include/yarp/dev/IBattery.h
+                  include/yarp/dev/ICalibrator.h
                   include/yarp/dev/IControlCalibration.h
                   include/yarp/dev/IControlDebug.h
                   include/yarp/dev/IControlLimits2.h
@@ -80,8 +83,10 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IPositionControl2.h
                   include/yarp/dev/IPositionControl.h
                   include/yarp/dev/IPositionDirect.h
+                  include/yarp/dev/IPreciselyTimed.h
                   include/yarp/dev/IPWMControl.h
                   include/yarp/dev/IRangefinder2D.h
+                  include/yarp/dev/IRemoteCalibrator.h
                   include/yarp/dev/IRemoteVariables.h
                   include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IRobotDescription.h
@@ -98,7 +103,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/PolyDriverDescriptor.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
-                  include/yarp/dev/PreciselyTimed.h
                   include/yarp/dev/RGBDSensorParamParser.h
                   include/yarp/dev/SerialInterfaces.h
                   include/yarp/dev/ServiceInterfaces.h
@@ -114,6 +118,11 @@ if(TARGET YARP::YARP_math)
                             include/yarp/dev/MapGrid2D.h)
 endif()
 
+if(NOT YARP_NO_DEPRECATED) # Since YARP 3.3.0
+  list(APPEND YARP_dev_HDRS include/yarp/dev/IPreciselyTimed.h)
+endif()
+
+
 set(YARP_dev_IMPL_HDRS include/yarp/dev/impl/FixedSizeBuffersManager.h
                        include/yarp/dev/impl/FixedSizeBuffersManager-inl.h)
 
@@ -128,6 +137,7 @@ set(YARP_dev_SRCS src/CanBusInterface.cpp
                   src/GazeControl.cpp
                   src/IBattery.cpp
                   src/IJoypadController.cpp
+                  src/IRemoteCalibrator.cpp
                   src/ImplementAmplifierControl.cpp
                   src/ImplementAxisInfo.cpp
                   src/ImplementControlCalibration.cpp
@@ -144,7 +154,6 @@ set(YARP_dev_SRCS src/CanBusInterface.cpp
                   src/ImplementPositionControl.cpp
                   src/ImplementPositionDirect.cpp
                   src/ImplementPWMControl.cpp
-                  src/ImplementRemoteCalibrator.cpp
                   src/ImplementRemoteVariables.cpp
                   src/ImplementTorqueControl.cpp
                   src/ImplementVelocityControl.cpp

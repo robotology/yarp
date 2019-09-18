@@ -18,7 +18,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 
 // These classes are part of the YARP library implementation,
 // rather than its user interface
