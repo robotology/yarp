@@ -16,12 +16,6 @@ using namespace yarp::sig;
 using namespace yarp::os;
 using namespace std;
 
-// needed for the driver factory.
-yarp::dev::DriverCreator* createJoypadControlClient()
-{
-    return new DriverCreatorOf<yarp::dev::JoypadControlClient>("JoypadControlClient", "JoypadControlClient", "yarp::dev::JoypadControlClient");
-}
-
 JoypadControlClient::JoypadControlClient() :  m_rpc_only(false)
 {
     m_ports.push_back(&m_buttonsPort  );

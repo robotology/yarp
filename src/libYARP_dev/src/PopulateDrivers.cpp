@@ -18,10 +18,5 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-extern DriverCreator* createJoypadControlClient();
-extern DriverCreator* createJoypadControlServer();
-
 void Drivers::init() {
-    add(createJoypadControlServer());
-    add(createJoypadControlClient());
 }

@@ -18,20 +18,11 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
 #include <map>
-#include "JoypadControlNetUtils.h"
-
-namespace yarp
-{
-    namespace dev
-    {
-        class JoypadControlServer;
-    }
-}
+#include <JoypadControlNetUtils.h>
 
 
-
-
-class JoypadCtrlParser: public yarp::dev::DeviceResponder
+class JoypadCtrlParser :
+        public yarp::dev::DeviceResponder
 {
 private:
     typedef bool (yarp::dev::IJoypadController::*getcountmethod)(unsigned int&);
@@ -40,24 +31,24 @@ private:
     yarp::dev::IJoypadController* device;
 public:
     JoypadCtrlParser();
-    virtual ~JoypadCtrlParser(){}
+    ~JoypadCtrlParser() override = default;
 
     bool         configure(yarp::dev::IJoypadController* interface);
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
-class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
-                                      public yarp::dev::IWrapper,
-                                      public yarp::dev::IMultipleWrapper,
-                                      public yarp::os::PeriodicThread
+class JoypadControlServer :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IWrapper,
+        public yarp::dev::IMultipleWrapper,
+        public yarp::os::PeriodicThread
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
     typedef yarp::dev::IJoypadController::JoypadCtrl_coordinateMode coordsMode;
     typedef yarp::sig::Vector                  Vector;
     typedef yarp::sig::VectorOf<unsigned char> VecOfChar;
-    #define JoyPort yarp::dev::JoypadControl::JoyPort
 
+    template<typename T>
+    using JoyPort = JoypadControl::JoyPort<T>;
 
     double                          m_period;
     JoypadCtrlParser                m_parser;
@@ -83,11 +74,13 @@ class yarp::dev::JoypadControlServer: public yarp::dev::DeviceDriver,
     bool openPorts();
     void profile();
 
-#endif //DOXYGEN_SHOULD_SKIP_THIS
-
 public:
     JoypadControlServer();
-    ~JoypadControlServer();
+    JoypadControlServer(const JoypadControlServer&) = delete;
+    JoypadControlServer(JoypadControlServer&&) = delete;
+    JoypadControlServer& operator=(const JoypadControlServer&) = delete;
+    JoypadControlServer& operator=(JoypadControlServer&&) = delete;
+    ~JoypadControlServer() override;
 
     bool open(yarp::os::Searchable& params) override;
     bool fromConfig(yarp::os::Searchable& params);
@@ -100,8 +93,6 @@ public:
     bool threadInit() override;
     void threadRelease() override;
     void run() override;
-
-    #undef JoyPort
 };
 
 #endif

@@ -26,16 +26,9 @@
 **/
 
 #define DEFAULT_THREAD_PERIOD 10
-namespace yarp
-{
-    namespace dev
-    {
-        class JoypadControlClient;
-        class JoypadControlWatchdog;
-    }
-}
 
-class yarp::dev::JoypadControlWatchdog : public yarp::os::PeriodicThread
+class JoypadControlWatchdog :
+        public yarp::os::PeriodicThread
 {
 public:
     JoypadControlWatchdog() : PeriodicThread(0.250) {}
@@ -43,16 +36,18 @@ public:
 
 
     std::vector<JoypadControl::LoopablePort*> m_ports;
-    virtual void run() YARP_OVERRIDE;
+    void run() override;
 
 };
 
-class yarp::dev::JoypadControlClient : public yarp::dev::IJoypadEventDriven,
-                                       public yarp::dev::DeviceDriver
+class JoypadControlClient :
+        public yarp::dev::IJoypadEventDriven,
+        public yarp::dev::DeviceDriver
 {
 private:
     //---------------utils
-    #define JOYPORT yarp::dev::JoypadControl::JoyPort
+    template<typename T>
+    using JOYPORT = JoypadControl::JoyPort<T>;
     typedef yarp::sig::Vector                  Vector;
     typedef yarp::sig::VectorOf<unsigned char> CharVector;
 
@@ -69,7 +64,7 @@ private:
     std::string m_local;
     std::string m_remote;
 
-    yarp::dev::JoypadControlWatchdog          watchdog;
+    JoypadControlWatchdog          watchdog;
     std::vector<JoypadControl::LoopablePort*> m_ports;
 
     //--------------method
@@ -78,7 +73,11 @@ private:
 
 public:
     JoypadControlClient();
-    virtual ~JoypadControlClient() {}
+    JoypadControlClient(const JoypadControlClient&) = delete;
+    JoypadControlClient(JoypadControlClient&&) = delete;
+    JoypadControlClient& operator=(const JoypadControlClient&) = delete;
+    JoypadControlClient& operator=(JoypadControlClient&&) = delete;
+    ~JoypadControlClient() override = default;
 
     //rateThread
 
@@ -100,7 +99,4 @@ public:
     bool getRawAxis(unsigned int axis_id, double& value) override;
     bool getRawStick(unsigned int stick_id, yarp::sig::Vector& value, JoypadCtrl_coordinateMode coordinate_mode) override;
     bool getRawTouch(unsigned int touch_id, yarp::sig::Vector& value) override;
-
-    #undef JoyPort
-
 };

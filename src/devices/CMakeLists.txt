@@ -82,6 +82,9 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(RobotDescriptionClient)
   add_subdirectory(RobotDescriptionServer)
   add_subdirectory(ServerGrabber)
+  add_subdirectory(JoypadControlNetUtils)
+  add_subdirectory(JoypadControlClient)
+  add_subdirectory(JoypadControlServer)
 
 
   # We can also suck in other device libraries built the same way.

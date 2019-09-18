@@ -858,9 +858,3 @@ bool JoypadControlServer::close()
     m_rpcPort.close();
     return true;
 }
-
-// needed for the driver factory.
-yarp::dev::DriverCreator* createJoypadControlServer()
-{
-    return new DriverCreatorOf<yarp::dev::JoypadControlServer>("JoypadControlServer", "JoypadControlServer", "yarp::dev::JoypadControlServer");
-}
