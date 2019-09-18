@@ -27,62 +27,60 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/Wrapper.h>
-namespace yarp {
-    namespace dev {
-        class ServerGrabber;
-        namespace DC1394 {
-            class DC1394Parser;
-        }
-        namespace impl {
-            class ServerGrabberResponder;
-        }
-    }
-}
 
-class YARP_dev_API yarp::dev::DC1394::DC1394Parser:    public DeviceResponder
+
+class ServerGrabber;
+
+class DC1394Parser :
+        public yarp::dev::DeviceResponder
 {
 private:
-    yarp::dev::IFrameGrabberControlsDC1394  *fgCtrl_DC1394;
+    yarp::dev::IFrameGrabberControlsDC1394  *fgCtrl_DC1394{nullptr};
 
 public:
-    DC1394Parser();
-    virtual ~DC1394Parser() {};
+    DC1394Parser() = default;
+    ~DC1394Parser() override = default;
     bool configure(yarp::dev::IFrameGrabberControlsDC1394 *interface);
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
-class yarp::dev::impl::ServerGrabberResponder :public DeviceResponder
+
+class ServerGrabberResponder :
+        public yarp::dev::DeviceResponder
 {
 private:
-    bool left;
-    yarp::dev::ServerGrabber* server;
+    bool left{false};
+    ServerGrabber* server{nullptr};
 public:
-    ServerGrabberResponder(bool _left=false);
-    ~ServerGrabberResponder();
-    bool configure(yarp::dev::ServerGrabber* _server);
-    bool respond(const os::Bottle &command, os::Bottle &reply) override;
+    ServerGrabberResponder(bool _left = false);
+    ~ServerGrabberResponder() override = default;
+    bool configure(ServerGrabber* _server);
+    bool respond(const yarp::os::Bottle &command, yarp::os::Bottle &reply) override;
 };
 
-typedef enum {
+
+enum Capabilities
+{
 //    AV,
     COLOR,
     RAW,
-} Capabilities;
+};
 
-typedef struct
+
+struct Configuration
 {
-    bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
-    bool canDrop;
-    bool addStamp;
-    bool active;
-    bool singleThreaded;
-    bool twoCameras;
-    bool split;
-    bool splitterMode;
-    bool hasAudio;
-    Capabilities cap;
+    bool spoke{false}; // location of this variable tickles bug on Solaris/gcc3.2
+    bool canDrop{true};
+    bool addStamp{false};
+    bool active{false};
+    bool singleThreaded{false};
+    bool twoCameras{false};
+    bool split{false};
+    bool splitterMode{false};
+    bool hasAudio{false};
+    Capabilities cap{COLOR};
+};
 
-} Configuration;
 
 #define DEFAULT_THREAD_PERIOD   0.03 //s
 
@@ -177,51 +175,53 @@ typedef struct
  * \endcode
  *
  */
-class YARP_dev_API yarp::dev::ServerGrabber : public DeviceDriver,
-            public yarp::dev::IWrapper,
-            public yarp::dev::IMultipleWrapper,
-            public yarp::os::PeriodicThread
+class ServerGrabber :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IWrapper,
+        public yarp::dev::IMultipleWrapper,
+        public yarp::os::PeriodicThread
 {
 private:
-    double period;
-    int count, count2;
-    yarp::dev::impl::ServerGrabberResponder* responder;
-    yarp::dev::impl::ServerGrabberResponder* responder2;
+    double period{DEFAULT_THREAD_PERIOD};
+    int count{0};
+    int count2{0};
+    ServerGrabberResponder* responder{nullptr};
+    ServerGrabberResponder* responder2{nullptr};
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
     yarp::dev::Implement_RgbVisualParams_Parser  rgbParser2;
-    yarp::dev::IRgbVisualParams* rgbVis_p;
-    yarp::dev::IRgbVisualParams* rgbVis_p2;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) rpcPort_Name;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) rpcPort2_Name;
+    yarp::dev::IRgbVisualParams* rgbVis_p{nullptr};
+    yarp::dev::IRgbVisualParams* rgbVis_p2{nullptr};
+    std::string rpcPort_Name;
+    std::string rpcPort2_Name;
     yarp::os::Port rpcPort;
     yarp::os::Port rpcPort2;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) pImg_Name;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) pImg2_Name;
+    std::string pImg_Name;
+    std::string pImg2_Name;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg;
     yarp::os::BufferedPort<yarp::sig::FlexImage> pImg2;
-    yarp::os::Port *p2;//audio
-    yarp::dev::PolyDriver* poly; //subDeviceOwned convert to pointer
-    yarp::dev::PolyDriver* poly2;
-    yarp::dev::IFrameGrabberImage *fgImage;
-    yarp::dev::IFrameGrabberImage *fgImage2;
-    yarp::dev::IFrameGrabberImageRaw *fgImageRaw;
-    yarp::dev::IFrameGrabberImageRaw *fgImageRaw2;
+    yarp::os::Port *p2{nullptr};//audio
+    yarp::dev::PolyDriver* poly{nullptr}; //subDeviceOwned convert to pointer
+    yarp::dev::PolyDriver* poly2{nullptr};
+    yarp::dev::IFrameGrabberImage *fgImage{nullptr};
+    yarp::dev::IFrameGrabberImage *fgImage2{nullptr};
+    yarp::dev::IFrameGrabberImageRaw *fgImageRaw{nullptr};
+    yarp::dev::IFrameGrabberImageRaw *fgImageRaw2{nullptr};
     //yarp::sig::FlexImage  doubleImage, doubleImage2;
-//    IAudioVisualGrabber *fgAv; //TODO: manage the AV
-    yarp::dev::IFrameGrabberControls *fgCtrl;
-    yarp::dev::IFrameGrabberControls *fgCtrl2;
-    yarp::dev::IFrameGrabberControlsDC1394* fgCtrl_DC1394;
-    yarp::dev::IFrameGrabberControlsDC1394* fgCtrl2_DC1394;
-    yarp::dev::IPreciselyTimed *fgTimed;
+//    IAudioVisualGrabber *fgAv{nullptr}; //TODO: manage the AV
+    yarp::dev::IFrameGrabberControls *fgCtrl{nullptr};
+    yarp::dev::IFrameGrabberControls *fgCtrl2{nullptr};
+    yarp::dev::IFrameGrabberControlsDC1394* fgCtrl_DC1394{nullptr};
+    yarp::dev::IFrameGrabberControlsDC1394* fgCtrl2_DC1394{nullptr};
+    yarp::dev::IPreciselyTimed *fgTimed{nullptr};
     yarp::dev::FrameGrabberControls_Parser ifgCtrl_Parser;
     yarp::dev::FrameGrabberControls_Parser ifgCtrl2_Parser;
-    yarp::dev::DC1394::DC1394Parser ifgCtrl_DC1394_Parser;
-    yarp::dev::DC1394::DC1394Parser ifgCtrl2_DC1394_Parser;
+    DC1394Parser ifgCtrl_DC1394_Parser;
+    DC1394Parser ifgCtrl2_DC1394_Parser;
     Configuration param;
-    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img;
-    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img2;
-    yarp::sig::ImageOf<yarp::sig::PixelMono>* img_Raw;
-    yarp::sig::ImageOf<yarp::sig::PixelMono>* img2_Raw;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img{nullptr};
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img2{nullptr};
+    yarp::sig::ImageOf<yarp::sig::PixelMono>* img_Raw{nullptr};
+    yarp::sig::ImageOf<yarp::sig::PixelMono>* img2_Raw{nullptr};
 
     // Open the wrapper only, the attach method needs to be called before using it
     // Typical usage: yarprobotinterface
@@ -229,16 +229,16 @@ private:
 
     // If a subdevice parameter is given, the wrapper will open it(or them) and attach to immediately.
     // Typical usage: simulator or command line
-    bool                           isSubdeviceOwned;
-    bool                           openAndAttachSubDevice(yarp::os::Searchable& prop);
+    bool isSubdeviceOwned{false};
+    bool openAndAttachSubDevice(yarp::os::Searchable& prop);
 
 public:
-    /**
-     * Constructor.
-     */
     ServerGrabber();
-
-    ~ServerGrabber();
+    ServerGrabber(const ServerGrabber&) = delete;
+    ServerGrabber(ServerGrabber&&) = delete;
+    ServerGrabber& operator=(const ServerGrabber&) = delete;
+    ServerGrabber& operator=(ServerGrabber&&) = delete;
+    ~ServerGrabber() override;
 
     //DeviceDriver
     bool close() override;
@@ -255,12 +255,12 @@ public:
     bool respond(const yarp::os::Bottle& command,
                          yarp::os::Bottle& reply, bool left, bool both);
     // IMultipleWrapper interface
-    bool        attachAll(const PolyDriverList &device2attach) override;
+    bool        attachAll(const yarp::dev::PolyDriverList &device2attach) override;
 
     bool        detachAll() override;
 
     // IWrapper interface
-    bool        attach(PolyDriver *poly) override;
+    bool        attach(yarp::dev::PolyDriver *poly) override;
 
     bool        detach() override;
 

@@ -26,21 +26,13 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 
-yarp::dev::DriverCreator *createServerGrabber()
-{
-    return new yarp::dev::DriverCreatorOf<yarp::dev::ServerGrabber>
-            ("grabberDual", "grabberDual", "yarp::dev::ServerGrabber");
-}
-
-yarp::dev::DC1394::DC1394Parser::DC1394Parser() : fgCtrl_DC1394(nullptr) {}
-
-bool yarp::dev::DC1394::DC1394Parser::configure(IFrameGrabberControlsDC1394 *interface)
+bool DC1394Parser::configure(IFrameGrabberControlsDC1394 *interface)
 {
     fgCtrl_DC1394 = interface;
     return true;
 }
 
-bool yarp::dev::DC1394::DC1394Parser::respond(const Bottle& cmd, Bottle& response)
+bool DC1394Parser::respond(const Bottle& cmd, Bottle& response)
 {
     int code = cmd.get(1).asVocab();
     if (fgCtrl_DC1394)
@@ -158,15 +150,12 @@ bool yarp::dev::DC1394::DC1394Parser::respond(const Bottle& cmd, Bottle& respons
 
 // **********ServerGrabberResponder**********
 
+ServerGrabberResponder::ServerGrabberResponder(bool _left) :
+        left(_left)
+{
+}
 
-yarp::dev::impl::ServerGrabberResponder::ServerGrabberResponder(bool _left) :
-    left(_left),
-    server(nullptr)
-{}
-
-yarp::dev::impl::ServerGrabberResponder::~ServerGrabberResponder() = default;
-
-bool yarp::dev::impl::ServerGrabberResponder::configure(yarp::dev::ServerGrabber* _server)
+bool ServerGrabberResponder::configure(ServerGrabber* _server)
 {
     if(_server)
     {
@@ -176,7 +165,8 @@ bool yarp::dev::impl::ServerGrabberResponder::configure(yarp::dev::ServerGrabber
     yError()<<"ServerGrabberResponder: invalid server pointer";
     return false;
 }
-bool yarp::dev::impl::ServerGrabberResponder::respond(const os::Bottle &command, os::Bottle &reply){
+
+bool ServerGrabberResponder::respond(const yarp::os::Bottle &command, yarp::os::Bottle &reply){
     if(server)
     {
         if(server->respond(command,reply,left,false))
@@ -194,42 +184,9 @@ bool yarp::dev::impl::ServerGrabberResponder::respond(const os::Bottle &command,
 
 // **********ServerGrabber**********
 
-ServerGrabber::ServerGrabber():PeriodicThread(DEFAULT_THREAD_PERIOD), period(DEFAULT_THREAD_PERIOD) {
-    responder = nullptr;
-    responder2 =nullptr;
-    rgbVis_p = nullptr;
-    rgbVis_p2 = nullptr;
-    fgImage = nullptr;
-    fgImage2 = nullptr;
-    fgImageRaw = nullptr;
-    fgImageRaw2 = nullptr;
-    fgCtrl_DC1394 = nullptr;
-    fgCtrl2_DC1394 = nullptr;
-//    fgAv = nullptr;
-    fgCtrl = nullptr;
-    fgCtrl2 = nullptr;
-    fgTimed = nullptr;
-    poly = nullptr;
-    poly2 = nullptr;
-    img=nullptr;
-    img2=nullptr;
-    img_Raw=nullptr;
-    img2_Raw=nullptr;
-    param.spoke = false;
-    param.canDrop = true;
-    param.addStamp = false;
-    param.active = false;
-    param.singleThreaded = false;
-    param.hasAudio = false;
-    param.twoCameras = false;
-    param.splitterMode = false;
-    param.split = false;
-//    param.cap=AV;
-    param.cap=COLOR;
-    p2 = nullptr;
-    isSubdeviceOwned=false;
-    count = 0;
-    count2 = 0;
+ServerGrabber::ServerGrabber() :
+        PeriodicThread(DEFAULT_THREAD_PERIOD)
+{
 }
 
 ServerGrabber::~ServerGrabber()
@@ -403,12 +360,12 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
     if(!param.twoCameras && param.split)
         param.splitterMode = true;
 
-    responder = new yarp::dev::impl::ServerGrabberResponder(true);
+    responder = new ServerGrabberResponder(true);
     if(!responder->configure(this))
         return false;
     if(param.twoCameras)
     {
-        responder2 = new yarp::dev::impl::ServerGrabberResponder(false);
+        responder2 = new ServerGrabberResponder(false);
         if(!responder2->configure(this))
             return false;
 
@@ -437,7 +394,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
     {
         if(param.split)
         {
-            responder2 = new yarp::dev::impl::ServerGrabberResponder(false);
+            responder2 = new ServerGrabberResponder(false);
             if(!responder2->configure(this))
                 return false;
             pImg_Name = rootName + "/left";

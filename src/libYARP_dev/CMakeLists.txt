@@ -177,13 +177,11 @@ if(TARGET YARP::YARP_math)
 endif()
 
 set(YARP_dev_devices_SRCS src/devices/JoypadControlClient/JoypadControlClient.cpp
-                          src/devices/JoypadControlServer/JoypadControlServer.cpp
-                          src/devices/ServerGrabber/ServerGrabber.cpp)
+                          src/devices/JoypadControlServer/JoypadControlServer.cpp)
 
 set(YARP_dev_devices_HDRS src/devices/JoypadControlClient/JoypadControlClient.h
                           src/devices/JoypadControlServer/JoypadControlNetUtils.h
-                          src/devices/JoypadControlServer/JoypadControlServer.h
-                          src/devices/ServerGrabber/ServerGrabber.h)
+                          src/devices/JoypadControlServer/JoypadControlServer.h)
 
 # Handle the YARP thrift messages
 include(YarpIDL)
