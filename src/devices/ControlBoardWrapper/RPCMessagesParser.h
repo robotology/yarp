@@ -41,25 +41,7 @@
  * (we could also use the actual joint number for each subdevice using a for loop). TODO
  */
 
-/* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
- * name conflicts
- */
-
-namespace yarp {
-    namespace dev {
-        class ControlBoardWrapper;
-        namespace impl {
-            class RPCMessagesParser;
-            class SubDevice;
-            class WrappedDevice;
-        }
-    }
-}
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-
+class ControlBoardWrapper;
 
 /* the control command message type
 * head is a Bottle which contains the specification of the message type
@@ -71,10 +53,11 @@ typedef yarp::os::PortablePair<yarp::os::Bottle, yarp::sig::Vector> CommandMessa
 /**
 * Helper object for parsing RPC port messages
 */
-class  yarp::dev::impl::RPCMessagesParser : public yarp::dev::DeviceResponder
+class  RPCMessagesParser :
+        public yarp::dev::DeviceResponder
 {
 protected:
-    yarp::dev::ControlBoardWrapper      *ControlBoardWrapper_p;
+    ControlBoardWrapper                 *ControlBoardWrapper_p;
     yarp::dev::IPidControl              *rpc_IPid;
     yarp::dev::IPositionControl         *rpc_IPosCtrl;
     yarp::dev::IPositionDirect          *rpc_IPosDirect;
@@ -111,7 +94,7 @@ public:
     * This is required to recover the pointers to the interfaces that implement the responses
     * to the commands.
     */
-    void init(yarp::dev::ControlBoardWrapper *x);
+    void init(ControlBoardWrapper *x);
 
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 
@@ -146,10 +129,5 @@ public:
     */
     virtual bool initialize();
 };
-
-
-
-
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #endif // YARP_DEV_CONTROLBOARDWRAPPER_RPCMESSAGESPARSER_H

@@ -41,24 +41,7 @@
  * (we could also use the actual joint number for each subdevice using a for loop). TODO
  */
 
-/* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
- * name conflicts
- */
-
-namespace yarp {
-    namespace dev {
-        class ControlBoardWrapper;
-        namespace impl {
-            class StreamingMessagesParser;
-            class SubDevice;
-            class WrappedDevice;
-        }
-    }
-}
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
+class ControlBoardWrapper;
 
 
 /* the control command message type
@@ -72,7 +55,8 @@ typedef yarp::os::PortablePair<yarp::os::Bottle, yarp::sig::Vector> CommandMessa
 /**
 * Callback implementation after buffered input.
 */
-class  yarp::dev::impl::StreamingMessagesParser : public yarp::os::TypedReaderCallback<CommandMessage> {
+class StreamingMessagesParser : public yarp::os::TypedReaderCallback<CommandMessage>
+{
 protected:
     yarp::dev::IPositionControl     *stream_IPosCtrl;
     yarp::dev::IPositionDirect      *stream_IPosDirect;
@@ -92,7 +76,7 @@ public:
     * Initialization.
     * @param x is the instance of the container class using the callback.
     */
-    void init(yarp::dev::ControlBoardWrapper *x);
+    void init(ControlBoardWrapper *x);
 
     using yarp::os::TypedReaderCallback<CommandMessage>::onRead;
     /**
@@ -103,10 +87,5 @@ public:
 
     bool initialize();
 };
-
-
-
-
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #endif // YARP_DEV_CONTROLBOARDWRAPPER_STREAMINGMESSAGESPARSER_H

@@ -77,6 +77,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(RGBDSensorClient)
   add_subdirectory(ServerInertial)
   add_subdirectory(RGBDSensorWrapper)
+  add_subdirectory(ControlBoardWrapper)
 
 
   # We can also suck in other device libraries built the same way.

@@ -179,10 +179,6 @@ endif()
 set(YARP_dev_devices_SRCS src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
                           src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
                           src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
-                          src/devices/ControlBoardWrapper/ControlBoardWrapper.cpp
-                          src/devices/ControlBoardWrapper/RPCMessagesParser.cpp
-                          src/devices/ControlBoardWrapper/StreamingMessagesParser.cpp
-                          src/devices/ControlBoardWrapper/SubDevice.cpp
                           src/devices/JoypadControlClient/JoypadControlClient.cpp
                           src/devices/JoypadControlServer/JoypadControlServer.cpp
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
@@ -192,10 +188,6 @@ set(YARP_dev_devices_SRCS src/devices/ControlBoardRemapper/ControlBoardRemapper.
 set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                           src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
                           src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
-                          src/devices/ControlBoardWrapper/ControlBoardWrapper.h
-                          src/devices/ControlBoardWrapper/RPCMessagesParser.h
-                          src/devices/ControlBoardWrapper/StreamingMessagesParser.h
-                          src/devices/ControlBoardWrapper/SubDevice.h
                           src/devices/JoypadControlClient/JoypadControlClient.h
                           src/devices/JoypadControlServer/JoypadControlNetUtils.h
                           src/devices/JoypadControlServer/JoypadControlServer.h

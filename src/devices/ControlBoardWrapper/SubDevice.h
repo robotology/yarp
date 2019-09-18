@@ -46,29 +46,14 @@
  * (we could also use the actual joint number for each subdevice using a for loop). TODO
  */
 
-/* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
- * name conflicts
- */
-
-namespace yarp {
-    namespace dev {
-        class ControlBoardWrapper;
-        namespace impl {
-            class SubDevice;
-            class WrappedDevice;
-        }
-    }
-}
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+class ControlBoardWrapper;
 
 /*
 * An Helper class for the controlBoardWrapper
 * It maps only a subpart of the underlying device.
 */
 
-class  yarp::dev::impl::SubDevice
+class SubDevice
 {
 public:
     std::string id;
@@ -81,7 +66,7 @@ public:
 
     bool configuredF;
 
-    yarp::dev::ControlBoardWrapper   *parent;
+    ControlBoardWrapper *parent;
 
     yarp::dev::PolyDriver            *subdevice;
     yarp::dev::IPidControl           *pid;
@@ -115,7 +100,7 @@ public:
     void detach();
     inline void setVerbose(bool _verbose) {_subDevVerbose = _verbose; }
 
-    bool configure(int wbase, int wtop, int base, int top, int axes, const std::string &id, yarp::dev::ControlBoardWrapper *_parent);
+    bool configure(int wbase, int wtop, int base, int top, int axes, const std::string &id, ControlBoardWrapper *_parent);
 
     bool isAttached()
     { return attachedF; }
@@ -125,7 +110,7 @@ private:
     bool attachedF;
 };
 
-typedef std::vector<yarp::dev::impl::SubDevice> SubDeviceVector;
+typedef std::vector<SubDevice> SubDeviceVector;
 
 struct DevicesLutEntry
 {
@@ -135,14 +120,14 @@ struct DevicesLutEntry
 };
 
 
-class yarp::dev::impl::WrappedDevice
+class WrappedDevice
 {
 public:
     SubDeviceVector subdevices;
     std::vector<DevicesLutEntry> lut;
     int maxNumOfJointsInDevices;
 
-    inline yarp::dev::impl::SubDevice *getSubdevice(unsigned int i)
+    inline SubDevice *getSubdevice(unsigned int i)
     {
         if (i>=subdevices.size())
             return 0;
@@ -150,7 +135,5 @@ public:
         return &subdevices[i];
     }
 };
-
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #endif // YARP_DEV_CONTROLBOARDWRAPPER_SUBDEVICE_H

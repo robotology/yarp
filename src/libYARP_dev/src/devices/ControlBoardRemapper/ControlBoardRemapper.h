@@ -62,7 +62,7 @@ namespace dev {
  * For compatibility with the controlboardwrapper2, the
  * networks keyword can also be used to select the desired joints.
  * For more information on the syntax of the networks, see the
- * yarp::dev::ControlBoardWrapper class.
+ * ControlBoardWrapper2 class.
  *
  * \code{.unparsed}
  *  networks (net_larm net_lhand)

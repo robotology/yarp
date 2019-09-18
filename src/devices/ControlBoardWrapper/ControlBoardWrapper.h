@@ -29,12 +29,11 @@
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/Wrapper.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 
 #include <mutex>
 #include <string>
 #include <vector>
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <yarp/dev/impl/jointData.h>           // struct for YARP extended port
 
@@ -47,7 +46,6 @@
 #include <yarp/os/Publisher.h>
 #include <yarp/rosmsg/sensor_msgs/JointState.h>
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef MSVC
     #pragma warning(disable:4355)
@@ -63,51 +61,25 @@
  * (we could also use the actual joint number for each subdevice using a for loop). TODO
  */
 
-/* Using yarp::dev::impl namespace for all helper class inside yarp::dev to reduce
- * name conflicts
- */
+class CommandsHelper;
+class SubDevice;
+class WrappedDevice;
 
-namespace yarp {
-    namespace dev {
-        class ControlBoardWrapper;
-        namespace impl {
-            class CommandsHelper;
-            class SubDevice;
-            class WrappedDevice;
-            class MultiJointData;
-        }
-    }
-}
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-enum MAX_VALUES_FOR_ALLOCATION_TABLE_TMP_DATA { MAX_DEVICES=5, MAX_JOINTS_ON_DEVICE=32};
-
-
-class yarp::dev::impl::MultiJointData
+class MultiJointData
 {
 public:
-    int deviceNum;
-    int maxJointsNumForDevice;
+    int deviceNum{0};
+    int maxJointsNumForDevice{0};
 
-    int *subdev_jointsVectorLen;                 // number of joints belonging to each subdevice
-    int **jointNumbers;
-    int **modes;
-    double **values;
-    yarp::dev::impl::SubDevice **subdevices_p;
+    int *subdev_jointsVectorLen{nullptr}; // number of joints belonging to each subdevice
+    int **jointNumbers{nullptr};
+    int **modes{nullptr};
+    double **values{nullptr};
+    SubDevice **subdevices_p{nullptr};
 
-    MultiJointData() :
-        deviceNum(0),
-        maxJointsNumForDevice(0),
-        subdev_jointsVectorLen(nullptr),
-        jointNumbers(nullptr),
-        modes(nullptr),
-        values(nullptr),
-        subdevices_p(nullptr)
-{}
+    MultiJointData() = default;
 
-    void resize(int _deviceNum, int _maxJointsNumForDevice, yarp::dev::impl::WrappedDevice *_device)
+    void resize(int _deviceNum, int _maxJointsNumForDevice, WrappedDevice *_device)
     {
         deviceNum = _deviceNum;
         maxJointsNumForDevice = _maxJointsNumForDevice;
@@ -121,7 +93,7 @@ public:
         values      = new double *[deviceNum];                          // alloc a vector of pointers
         values[0]   = new double[deviceNum * _maxJointsNumForDevice];   // alloc real memory for data
 
-        subdevices_p = new yarp::dev::impl::SubDevice *[deviceNum];
+        subdevices_p = new SubDevice *[deviceNum];
         subdevices_p[0] = _device->getSubdevice(0);
 
         for (int i = 1; i < deviceNum; i++)
@@ -150,10 +122,6 @@ public:
         delete[] subdevices_p;
     }
 };
-
-#endif // DOXYGEN_SHOULD_SKIP_THIS
-
-
 
 /**
  *  @ingroup dev_impl_wrapper
@@ -254,35 +222,34 @@ public:
  * \endcode
  */
 
-class yarp::dev::ControlBoardWrapper:   public yarp::dev::DeviceDriver,
-                                        public yarp::os::PeriodicThread,
-                                        public yarp::dev::IPidControl,
-                                        public yarp::dev::IPositionControl,
-                                        public yarp::dev::IPositionDirect,
-                                        public yarp::dev::IVelocityControl,
-                                        public yarp::dev::IEncodersTimed,
-                                        public yarp::dev::IMotor,
-                                        public yarp::dev::IMotorEncoders,
-                                        public yarp::dev::IAmplifierControl,
-                                        public yarp::dev::IControlLimits,
-                                        public yarp::dev::IRemoteCalibrator,
-                                        public yarp::dev::IControlCalibration,
-                                        public yarp::dev::ITorqueControl,
-                                        public yarp::dev::IImpedanceControl,
-                                        public yarp::dev::IControlMode,
-                                        public yarp::dev::IMultipleWrapper,
-                                        public yarp::dev::IAxisInfo,
-                                        public yarp::dev::IPreciselyTimed,
-                                        public yarp::dev::IInteractionMode,
-                                        public yarp::dev::IRemoteVariables,
-                                        public yarp::dev::IPWMControl,
-                                        public yarp::dev::ICurrentControl
+class ControlBoardWrapper :
+        public yarp::dev::DeviceDriver,
+        public yarp::os::PeriodicThread,
+        public yarp::dev::IPidControl,
+        public yarp::dev::IPositionControl,
+        public yarp::dev::IPositionDirect,
+        public yarp::dev::IVelocityControl,
+        public yarp::dev::IEncodersTimed,
+        public yarp::dev::IMotor,
+        public yarp::dev::IMotorEncoders,
+        public yarp::dev::IAmplifierControl,
+        public yarp::dev::IControlLimits,
+        public yarp::dev::IRemoteCalibrator,
+        public yarp::dev::IControlCalibration,
+        public yarp::dev::ITorqueControl,
+        public yarp::dev::IImpedanceControl,
+        public yarp::dev::IControlMode,
+        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::IAxisInfo,
+        public yarp::dev::IPreciselyTimed,
+        public yarp::dev::IInteractionMode,
+        public yarp::dev::IRemoteVariables,
+        public yarp::dev::IPWMControl,
+        public yarp::dev::ICurrentControl
 {
 private:
-
-#ifndef    DOXYGEN_SHOULD_SKIP_THIS
     std::string rootName;
-    yarp::dev::impl::WrappedDevice device;
+    WrappedDevice device;
 
     bool checkPortName(yarp::os::Searchable &params);
 
@@ -311,13 +278,13 @@ private:
     yarp::os::Publisher<yarp::rosmsg::sensor_msgs::JointState> rosPublisherPort;    // Dedicated ROS topic publisher
 
     yarp::os::PortReaderBuffer<yarp::os::Bottle>    inputRPC_buffer;                // Buffer associated to the inputRPCPort port
-    yarp::dev::impl::RPCMessagesParser              RPC_parser;                     // Message parser associated to the inputRPCPort port
-    yarp::dev::impl::StreamingMessagesParser        streaming_parser;               // Message parser associated to the inputStreamingPort port
+    RPCMessagesParser              RPC_parser;                     // Message parser associated to the inputRPCPort port
+    StreamingMessagesParser        streaming_parser;               // Message parser associated to the inputStreamingPort port
 
 
     // RPC calls are concurrent from multiple clients, data used inside the calls has to be protected
     std::mutex                                 rpcDataMutex;                   // mutex to avoid concurrency between more clients using rppc port
-    yarp::dev::impl::MultiJointData                 rpcData;                        // Structure used to re-arrange data from "multiple_joints" calls.
+    MultiJointData                 rpcData;                        // Structure used to re-arrange data from "multiple_joints" calls.
 
     std::string         partName;               // to open ports and print more detailed debug messages
 
@@ -353,32 +320,31 @@ private:
         //else
             // yError() << "CBW(" << partName << "): " << func_name.c_str() << " on device" << info.c_str() << ": the interface is not available.";
     }
-    
+
     void calculateMaxNumOfJointsInDevices();
-#endif  //DOXYGEN_SHOULD_SKIP_THIS
 
 public:
-    /**
-    * Constructor.
-    */
     ControlBoardWrapper();
-
-    virtual ~ControlBoardWrapper();
+    ControlBoardWrapper(const ControlBoardWrapper&) = delete;
+    ControlBoardWrapper(ControlBoardWrapper&&) = delete;
+    ControlBoardWrapper& operator=(const ControlBoardWrapper&) = delete;
+    ControlBoardWrapper& operator=(ControlBoardWrapper&&) = delete;
+    ~ControlBoardWrapper() override;
 
     /**
     * Return the value of the verbose flag.
     * @return the verbose flag.
     */
-    bool verbose() const { return _verb; }
+    bool verbose() const
+    {
+        return _verb;
+    }
 
     /* Return id of this device */
-    std::string getId() { return partName; }
-
-    /**
-    * Default open() method.
-    * @return always false since initialization requires parameters.
-    */
-    virtual bool open() { return false; }
+    std::string getId()
+    {
+        return partName;
+    }
 
     /**
     * Close the device driver by deallocating all resources and closing ports.
@@ -410,27 +376,27 @@ public:
 
     /* IPidControl
     These methods are documented by Doxygen in IPidControl.h*/
-    bool setPid(const PidControlTypeEnum& pidtype, int j, const Pid &p) override;
-    bool setPids(const PidControlTypeEnum& pidtype, const Pid *ps) override;
-    bool setPidReference(const PidControlTypeEnum& pidtype, int j, double ref) override;
-    bool setPidReferences(const PidControlTypeEnum& pidtype, const double *refs) override;
-    bool setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit) override;
-    bool setPidErrorLimits(const PidControlTypeEnum& pidtype, const double *limits) override;
-    bool getPidError(const PidControlTypeEnum& pidtype, int j, double *err) override;
-    bool getPidErrors(const PidControlTypeEnum& pidtype, double *errs) override;
-    bool getPidOutput(const PidControlTypeEnum& pidtype, int j, double *out) override;
-    bool getPidOutputs(const PidControlTypeEnum& pidtype, double *outs) override;
-    bool setPidOffset(const PidControlTypeEnum& pidtype, int j, double v) override;
-    bool getPid(const PidControlTypeEnum& pidtype, int j, Pid *p) override;
-    bool getPids(const PidControlTypeEnum& pidtype, Pid *pids) override;
-    bool getPidReference(const PidControlTypeEnum& pidtype, int j, double *ref) override;
-    bool getPidReferences(const PidControlTypeEnum& pidtype, double *refs) override;
-    bool getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double *limit) override;
-    bool getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) override;
-    bool resetPid(const PidControlTypeEnum& pidtype, int j) override;
-    bool disablePid(const PidControlTypeEnum& pidtype, int j) override;
-    bool enablePid(const PidControlTypeEnum& pidtype, int j) override;
-    bool isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled) override;
+    bool setPid(const yarp::dev::PidControlTypeEnum& pidtype, int j, const yarp::dev::Pid &p) override;
+    bool setPids(const yarp::dev::PidControlTypeEnum& pidtype, const yarp::dev::Pid *ps) override;
+    bool setPidReference(const yarp::dev::PidControlTypeEnum& pidtype, int j, double ref) override;
+    bool setPidReferences(const yarp::dev::PidControlTypeEnum& pidtype, const double *refs) override;
+    bool setPidErrorLimit(const yarp::dev::PidControlTypeEnum& pidtype, int j, double limit) override;
+    bool setPidErrorLimits(const yarp::dev::PidControlTypeEnum& pidtype, const double *limits) override;
+    bool getPidError(const yarp::dev::PidControlTypeEnum& pidtype, int j, double *err) override;
+    bool getPidErrors(const yarp::dev::PidControlTypeEnum& pidtype, double *errs) override;
+    bool getPidOutput(const yarp::dev::PidControlTypeEnum& pidtype, int j, double *out) override;
+    bool getPidOutputs(const yarp::dev::PidControlTypeEnum& pidtype, double *outs) override;
+    bool setPidOffset(const yarp::dev::PidControlTypeEnum& pidtype, int j, double v) override;
+    bool getPid(const yarp::dev::PidControlTypeEnum& pidtype, int j, yarp::dev::Pid *p) override;
+    bool getPids(const yarp::dev::PidControlTypeEnum& pidtype, yarp::dev::Pid *pids) override;
+    bool getPidReference(const yarp::dev::PidControlTypeEnum& pidtype, int j, double *ref) override;
+    bool getPidReferences(const yarp::dev::PidControlTypeEnum& pidtype, double *refs) override;
+    bool getPidErrorLimit(const yarp::dev::PidControlTypeEnum& pidtype, int j, double *limit) override;
+    bool getPidErrorLimits(const yarp::dev::PidControlTypeEnum& pidtype, double *limits) override;
+    bool resetPid(const yarp::dev::PidControlTypeEnum& pidtype, int j) override;
+    bool disablePid(const yarp::dev::PidControlTypeEnum& pidtype, int j) override;
+    bool enablePid(const yarp::dev::PidControlTypeEnum& pidtype, int j) override;
+    bool isPidEnabled(const yarp::dev::PidControlTypeEnum& pidtype, int j, bool* enabled) override;
 
     /* IPositionControl */
 
@@ -1094,7 +1060,7 @@ public:
     /* IControlCalibration */
     bool calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3) override;
 
-    bool setCalibrationParameters(int j, const CalibrationParameters& params) override;
+    bool setCalibrationParameters(int j, const yarp::dev::CalibrationParameters& params) override;
 
     /**
     * Check whether the calibration has been completed.

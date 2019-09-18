@@ -17,7 +17,6 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
-using namespace yarp::dev::impl;
 using namespace yarp::sig;
 using namespace std;
 
@@ -52,11 +51,11 @@ SubDevice::SubDevice() :
     attachedF(false)
 {}
 
-bool SubDevice::configure(int wb, int wt, int b, int t, int n, const std::string &key, yarp::dev::ControlBoardWrapper *_parent)
+bool SubDevice::configure(int wb, int wt, int b, int t, int n, const std::string &key, ControlBoardWrapper *_parent)
 {
     parent = _parent;
     configuredF=false;
-    
+
     wbase = wb;
     wtop = wt;
     base=b;

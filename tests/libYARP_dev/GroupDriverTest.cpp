@@ -27,6 +27,7 @@ TEST_CASE("dev::GroupDriver", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("group", "device");
     YARP_REQUIRE_PLUGIN("test_motor", "device");
+    YARP_REQUIRE_PLUGIN("controlboardwrapper2", "device");
 
     Network::setLocalMode(true);
 

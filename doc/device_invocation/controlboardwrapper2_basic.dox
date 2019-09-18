@@ -3,7 +3,7 @@
  *
  * \defgroup controlboardwrapper2_basic Example for controlboardwrapper2 (controlboardwrapper2_basic)
 
-Instantiates \ref cmd_device_controlboardwrapper2 "controlboardwrapper2" device implemented by yarp::dev::ControlBoardWrapper2.
+Instantiates \ref cmd_device_controlboardwrapper2 "controlboardwrapper2" device implemented by ControlBoardWrapper.
 \verbatim
 device controlboardwrapper2
 subdevice test_motor
@@ -41,6 +41,6 @@ So this is just an example
 <tr><td>ROS</td><td></td><td></td></tr>
 </table>
 
-\sa yarp::dev::ControlBoardWrapper2
+\sa ControlBoardWrapper
 
  */
