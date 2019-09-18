@@ -1279,8 +1279,8 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
     }
 
     // For loop iterates over elements
-    std::string elem = tmp("_elem");
-    f_cpp_ << indent_cpp() << "for (auto& " << elem << " : " << prefix << ") {\n";
+    std::string i = tmp("_i");
+    f_cpp_ << indent_cpp() << "for (size_t " << i << " = 0; " << i << " < " << size << "; ++" << i << ") {\n";
     indent_up_cpp();
     {
         if (ttype->is_map()) {
@@ -1288,7 +1288,7 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
         } else if (ttype->is_set()) {
             generate_deserialize_set_element(f_cpp_, (t_set*)ttype, prefix);
         } else if (ttype->is_list()) {
-            generate_deserialize_list_element(f_cpp_, (t_list*)ttype, prefix, use_push, elem);
+            generate_deserialize_list_element(f_cpp_, (t_list*)ttype, prefix, use_push, prefix + "[" + i + "]");
         }
     }
     indent_down_cpp();
