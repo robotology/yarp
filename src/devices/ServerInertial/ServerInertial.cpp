@@ -29,14 +29,14 @@ using namespace yarp::os;
 // needed for the driver factory.
 yarp::dev::DriverCreator *createServerInertial()
 {
-    return new yarp::dev::DriverCreatorOf<yarp::dev::ServerInertial>
-            ("inertial", "inertial", "yarp::dev::ServerInertial");
+    return new yarp::dev::DriverCreatorOf<ServerInertial>
+            ("inertial", "inertial", "ServerInertial");
 }
 
 /**
  * Constructor.
  */
-yarp::dev::ServerInertial::ServerInertial() :
+ServerInertial::ServerInertial() :
         IMU_polydriver(nullptr),
         ownDevices(false),
         subDeviceOwned(nullptr)
@@ -82,7 +82,7 @@ yarp::dev::ServerInertial::ServerInertial() :
 //     yDebug() << "covariance size is " << covariance.size();
 }
 
-yarp::dev::ServerInertial::~ServerInertial()
+ServerInertial::~ServerInertial()
 {
     if (IMU != nullptr) close();
 }
@@ -220,14 +220,14 @@ bool ServerInertial::initialize_ROS()
     return success;
 }
 
-bool yarp::dev::ServerInertial::openDeferredAttach(yarp::os::Property& prop)
+bool ServerInertial::openDeferredAttach(yarp::os::Property& prop)
 {
     return true;
 }
 
 // If a subdevice parameter is given to the wrapper, it will open it as well
 // and attach to it immediately.
-bool yarp::dev::ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
+bool ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
 {
     yarp::os::Value &subdevice = prop.find("subdevice");
     IMU_polydriver = new yarp::dev::PolyDriver;
@@ -275,7 +275,7 @@ bool yarp::dev::ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
  * @param config The options to use
  * @return true iff the object could be configured.
  */
-bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
+bool ServerInertial::open(yarp::os::Searchable& config)
 {
     Property prop;
     prop.fromString(config.toString());
@@ -343,7 +343,7 @@ bool yarp::dev::ServerInertial::open(yarp::os::Searchable& config)
     return true;
 }
 
-bool yarp::dev::ServerInertial::close()
+bool ServerInertial::close()
 {
     yInfo("Closing Server Inertial...\n");
     stop();
@@ -363,7 +363,7 @@ bool yarp::dev::ServerInertial::close()
 }
 
 
-bool yarp::dev::ServerInertial::getInertial(yarp::os::Bottle &bot)
+bool ServerInertial::getInertial(yarp::os::Bottle &bot)
 {
     if (IMU==nullptr)
     {
@@ -395,7 +395,7 @@ bool yarp::dev::ServerInertial::getInertial(yarp::os::Bottle &bot)
     }
 }
 
-void yarp::dev::ServerInertial::run()
+void ServerInertial::run()
 {
     double before, now;
     yInfo("Starting server Inertial thread\n");
@@ -489,7 +489,7 @@ void yarp::dev::ServerInertial::run()
     yInfo("Server Intertial thread finished\n");
 }
 
-bool yarp::dev::ServerInertial::read(ConnectionReader& connection)
+bool ServerInertial::read(ConnectionReader& connection)
 {
     yarp::os::Bottle cmd, response;
     cmd.read(connection);
@@ -499,26 +499,26 @@ bool yarp::dev::ServerInertial::read(ConnectionReader& connection)
     return true;
 }
 
-bool yarp::dev::ServerInertial::read(yarp::sig::Vector &out)
+bool ServerInertial::read(yarp::sig::Vector &out)
 {
     if (IMU == nullptr) { return false; }
     return IMU->read (out);
 }
 
-bool yarp::dev::ServerInertial::getChannels(int *nc)
+bool ServerInertial::getChannels(int *nc)
 {
     if (IMU == nullptr) { return false; }
     return IMU->getChannels (nc);
 }
 
-bool yarp::dev::ServerInertial::calibrate(int ch, double v)
+bool ServerInertial::calibrate(int ch, double v)
 {
     if (IMU==nullptr) {return false;}
     return IMU->calibrate(ch, v);
 }
 
 
-bool yarp::dev::ServerInertial::attach(PolyDriver* poly)
+bool ServerInertial::attach(PolyDriver* poly)
 {
     yTrace();
     if(!poly)
@@ -544,12 +544,12 @@ bool yarp::dev::ServerInertial::attach(PolyDriver* poly)
     return true;
 }
 
-bool yarp::dev::ServerInertial::detach()
+bool ServerInertial::detach()
 {
     return true;
 }
 
-bool yarp::dev::ServerInertial::attachAll(const PolyDriverList &imuToAttachTo)
+bool ServerInertial::attachAll(const PolyDriverList &imuToAttachTo)
 {
     if (imuToAttachTo.size() != 1)
     {
@@ -560,7 +560,7 @@ bool yarp::dev::ServerInertial::attachAll(const PolyDriverList &imuToAttachTo)
     return attach(imuToAttachTo[0]->poly);
 }
 
-bool yarp::dev::ServerInertial::detachAll()
+bool ServerInertial::detachAll()
 {
     IMU = nullptr;
     return true;

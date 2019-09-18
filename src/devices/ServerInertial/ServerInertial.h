@@ -29,14 +29,6 @@
 #include <yarp/rosmsg/sensor_msgs/Imu.h>
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class ServerInertial;
-    }
-}
-
 
 /**
  *  @ingroup dev_impl_wrapper
@@ -115,20 +107,20 @@ namespace yarp
  *  ROS message type used is sensor_msgs/Imu.msg
  */
 
-class yarp::dev::ServerInertial : public DeviceDriver,
-            public yarp::dev::IWrapper,
-            public yarp::dev::IMultipleWrapper,
-            private yarp::os::Thread,
-            public yarp::os::PortReader,
-            public yarp::dev::IGenericSensor
+class ServerInertial :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IWrapper,
+        public yarp::dev::IMultipleWrapper,
+        private yarp::os::Thread,
+        public yarp::os::PortReader,
+        public yarp::dev::IGenericSensor
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:
     bool spoke;
     std::string partName;
     yarp::dev::PolyDriver *IMU_polydriver;
-    IGenericSensor *IMU; //The inertial device
-    IPreciselyTimed *iTimed;
+    yarp::dev::IGenericSensor *IMU; //The inertial device
+    yarp::dev::IPreciselyTimed *iTimed;
     double period;
     yarp::os::Port p;
     yarp::os::PortWriterBuffer<yarp::os::Bottle> writer;
@@ -150,15 +142,14 @@ private:
     bool checkROSParams(yarp::os::Searchable &config);
     bool initialize_ROS();
     bool initialize_YARP(yarp::os::Searchable &prop);
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
-    /**
-     * Constructor.
-     */
     ServerInertial();
-
-    virtual ~ServerInertial();
+    ServerInertial(const ServerInertial&) = delete;
+    ServerInertial(ServerInertial&&) = delete;
+    ServerInertial& operator=(const ServerInertial&) = delete;
+    ServerInertial& operator=(ServerInertial&&) = delete;
+    ~ServerInertial() override;
 
     /**
      * Open the device driver.
@@ -186,7 +177,7 @@ public:
      * @param poly the polydriver that you want to attach to.
      * @return true/false on success failure.
      */
-    bool attach(PolyDriver *poly) override;
+    bool attach(yarp::dev::PolyDriver *poly) override;
     bool detach() override;
 
     /**   IMultipleWrapper interface
@@ -194,7 +185,7 @@ public:
      * @param p the polydriver list that you want to attach to.
      * @return true/false on success failure.
      */
-    bool attachAll(const PolyDriverList &p) override;
+    bool attachAll(const yarp::dev::PolyDriverList &p) override;
     bool detachAll() override;
 
 private:

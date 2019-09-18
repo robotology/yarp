@@ -189,8 +189,7 @@ set(YARP_dev_devices_SRCS src/devices/ControlBoardRemapper/ControlBoardRemapper.
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
                           src/devices/RGBDSensorWrapper/RGBDSensorWrapper.cpp
-                          src/devices/ServerGrabber/ServerGrabber.cpp
-                          src/devices/ServerInertial/ServerInertial.cpp)
+                          src/devices/ServerGrabber/ServerGrabber.cpp)
 
 set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.h
                           src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
@@ -205,8 +204,7 @@ set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.h
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.h
                           src/devices/RGBDSensorWrapper/RGBDSensorWrapper.h
-                          src/devices/ServerGrabber/ServerGrabber.h
-                          src/devices/ServerInertial/ServerInertial.h)
+                          src/devices/ServerGrabber/ServerGrabber.h)
 
 # Handle the YARP thrift messages
 include(YarpIDL)
