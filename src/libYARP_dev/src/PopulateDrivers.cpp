@@ -19,7 +19,6 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 extern DriverCreator* createControlBoardWrapper();
-extern DriverCreator* createRGBDSensorWrapper();
 extern DriverCreator* createControlBoardRemapper();
 extern DriverCreator* createRemoteControlBoardRemapper();
 extern DriverCreator* createRobotDescriptionServer();
@@ -30,7 +29,6 @@ extern DriverCreator* createJoypadControlServer();
 
 void Drivers::init() {
     add(createControlBoardWrapper());
-    add(createRGBDSensorWrapper());
     add(createControlBoardRemapper());
     add(createRemoteControlBoardRemapper());
     add(createRobotDescriptionServer());

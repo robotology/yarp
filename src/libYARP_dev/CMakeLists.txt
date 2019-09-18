@@ -166,8 +166,7 @@ set(YARP_dev_SRCS src/CanBusInterface.cpp
                   src/PolyDriver.cpp
                   src/PolyDriverDescriptor.cpp
                   src/PolyDriverList.cpp
-                  src/PopulateDrivers.cpp
-                  src/RGBDSensorParamParser.cpp)
+                  src/PopulateDrivers.cpp)
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
@@ -188,7 +187,6 @@ set(YARP_dev_devices_SRCS src/devices/ControlBoardRemapper/ControlBoardRemapper.
                           src/devices/JoypadControlServer/JoypadControlServer.cpp
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
-                          src/devices/RGBDSensorWrapper/RGBDSensorWrapper.cpp
                           src/devices/ServerGrabber/ServerGrabber.cpp)
 
 set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.h
@@ -203,7 +201,6 @@ set(YARP_dev_devices_HDRS src/devices/ControlBoardRemapper/ControlBoardRemapper.
                           src/devices/JoypadControlServer/JoypadControlServer.h
                           src/devices/RobotDescriptionClient/RobotDescriptionClient.h
                           src/devices/RobotDescriptionServer/RobotDescriptionServer.h
-                          src/devices/RGBDSensorWrapper/RGBDSensorWrapper.h
                           src/devices/ServerGrabber/ServerGrabber.h)
 
 # Handle the YARP thrift messages

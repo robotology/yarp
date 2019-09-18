@@ -41,20 +41,15 @@
 #include <yarp/rosmsg/sensor_msgs/Image.h>
 
 
-namespace yarp{
-    namespace dev{
-        class RGBDSensorWrapper;
-        namespace RGBDImpl
-        {
-            const std::string frameId_param            = "ROS_frame_Id";
-            const std::string nodeName_param           = "ROS_nodeName";
-            const std::string colorTopicName_param     = "ROS_colorTopicName";
-            const std::string depthTopicName_param     = "ROS_depthTopicName";
-            const std::string depthInfoTopicName_param = "ROS_depthInfoTopicName";
-            const std::string colorInfoTopicName_param = "ROS_colorInfoTopicName";
-            class RGBDSensorParser;
-        }
-    }
+namespace RGBDImpl
+{
+    const std::string frameId_param            = "ROS_frame_Id";
+    const std::string nodeName_param           = "ROS_nodeName";
+    const std::string colorTopicName_param     = "ROS_colorTopicName";
+    const std::string depthTopicName_param     = "ROS_depthTopicName";
+    const std::string depthInfoTopicName_param = "ROS_depthInfoTopicName";
+    const std::string colorInfoTopicName_param = "ROS_colorInfoTopicName";
+    class RGBDSensorParser;
 }
 
 #define DEFAULT_THREAD_PERIOD   0.03 // s
@@ -67,7 +62,8 @@ constexpr yarp::conf::vocab32_t VOCAB_PROTOCOL_VERSION = yarp::os::createVocab('
 
 
 
-class yarp::dev::RGBDImpl::RGBDSensorParser:    public DeviceResponder
+class RGBDImpl::RGBDSensorParser :
+        public yarp::dev::DeviceResponder
 {
 private:
     yarp::dev::IRGBDSensor  *iRGBDSensor;
@@ -77,10 +73,10 @@ private:
 
 public:
     RGBDSensorParser();
-    virtual ~RGBDSensorParser() {}
-    bool configure(IRGBDSensor *interface);
-    bool configure(IRgbVisualParams *rgbInterface, IDepthVisualParams *depthInterface);
-    bool configure(IFrameGrabberControls *_fgCtrl);
+    ~RGBDSensorParser() override = default;
+    bool configure(yarp::dev::IRGBDSensor *interface);
+    bool configure(yarp::dev::IRgbVisualParams *rgbInterface, yarp::dev::IDepthVisualParams *depthInterface);
+    bool configure(yarp::dev::IFrameGrabberControls *_fgCtrl);
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
@@ -94,7 +90,7 @@ public:
  * for depth image following Framegrabber and IDepthSensor interfaces specification respectively.
  * See they documentation for more details about each interface.
  *
- * This device is paired with its client called RGBDSensorClient to receive the data streams and perform remote operations.
+ * This device is paired with its client called RGBDSensorWrapper to receive the data streams and perform remote operations.
  *
  *   Parameters required by this device are:
  * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                                                         | Notes |
@@ -125,14 +121,13 @@ public:
  * \endcode
  */
 
-class yarp::dev::RGBDSensorWrapper: public yarp::dev::DeviceDriver,
-                                    public yarp::dev::IWrapper,
-                                    public yarp::dev::IMultipleWrapper,
-                                    public yarp::os::PeriodicThread
+class RGBDSensorWrapper :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IWrapper,
+        public yarp::dev::IMultipleWrapper,
+        public yarp::os::PeriodicThread
 {
 private:
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat>    DepthImage;
     typedef yarp::os::BufferedPort<DepthImage>           DepthPortType;
     typedef yarp::os::BufferedPort<yarp::sig::FlexImage> ImagePortType;
@@ -161,11 +156,18 @@ private:
 
     // One RPC port should be enough for the wrapper in all cases
     yarp::os::Port        rpcPort;
-    std::string rpcPort_Name;
-    ImageTopicType        rosPublisherPort_color, rosPublisherPort_depth;
-    DepthTopicType        rosPublisherPort_colorCaminfo, rosPublisherPort_depthCaminfo;
+    std::string           rpcPort_Name;
+    ImageTopicType        rosPublisherPort_color;
+    ImageTopicType        rosPublisherPort_depth;
+    DepthTopicType        rosPublisherPort_colorCaminfo;
+    DepthTopicType        rosPublisherPort_depthCaminfo;
     yarp::os::Node*       rosNode;
-    std::string           nodeName, depthTopicName, colorTopicName, dInfoTopicName, cInfoTopicName, rosFrameId;
+    std::string           nodeName;
+    std::string           depthTopicName;
+    std::string           colorTopicName;
+    std::string           dInfoTopicName;
+    std::string           cInfoTopicName;
+    std::string           rosFrameId;
     yarp::sig::FlexImage  colorImage;
     DepthImage            depthImage;
     UInt                  nodeSeq;
@@ -176,7 +178,7 @@ private:
 //     sensor::depth::RGBDSensor_RPCMgsParser  RPC_parser;
 
     //Helper class for RPCs
-    yarp::dev::RGBDImpl::RGBDSensorParser        rgbdParser;
+    RGBDImpl::RGBDSensorParser     rgbdParser;
 
     // Image data specs
     // int hDim, vDim;
@@ -184,13 +186,13 @@ private:
     std::string                    sensorId;
     yarp::dev::IRGBDSensor*        sensor_p;
     yarp::dev::IFrameGrabberControls* fgCtrl;
-    IRGBDSensor::RGBDSensor_status sensorStatus;
+    yarp::dev::IRGBDSensor::RGBDSensor_status sensorStatus;
     int                            verbose;
     bool                           use_YARP;
     bool                           use_ROS;
     bool                           forceInfoSync;
-    bool                           initialize_YARP(yarp::os::Searchable &config);
-    bool                           initialize_ROS(yarp::os::Searchable &config);
+    bool                           initialize_YARP(yarp::os::Searchable& config);
+    bool                           initialize_ROS(yarp::os::Searchable& config);
     bool                           read(yarp::os::ConnectionReader& connection);
 
     // Open the wrapper only, the attach method needs to be called before using it
@@ -230,13 +232,13 @@ private:
 
     static std::string yarp2RosPixelCode(int code);
 
-
-
-#endif //DOXYGEN_SHOULD_SKIP_THIS
-
 public:
     RGBDSensorWrapper();
-    ~RGBDSensorWrapper();
+    RGBDSensorWrapper(const RGBDSensorWrapper&) = delete;
+    RGBDSensorWrapper(RGBDSensorWrapper&&) = delete;
+    RGBDSensorWrapper& operator=(const RGBDSensorWrapper&) = delete;
+    RGBDSensorWrapper& operator=(RGBDSensorWrapper&&) = delete;
+    ~RGBDSensorWrapper() override;
 
     bool        open(yarp::os::Searchable &params) override;
     bool        fromConfig(yarp::os::Searchable &params);
@@ -248,10 +250,10 @@ public:
     /**
       * Specify which sensor this thread has to read from.
       */
-    bool        attachAll(const PolyDriverList &p) override;
+    bool        attachAll(const yarp::dev::PolyDriverList &p) override;
     bool        detachAll() override;
 
-    bool        attach(PolyDriver *poly) override;
+    bool        attach(yarp::dev::PolyDriver *poly) override;
     bool        attach(yarp::dev::IRGBDSensor *s);
     bool        detach() override;
 

@@ -16,7 +16,7 @@
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 #include "rosPixelCode.h"
 
-using namespace yarp::dev::RGBDImpl;
+using namespace RGBDImpl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -26,13 +26,10 @@ using namespace std;
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createRGBDSensorWrapper() {
-    return new DriverCreatorOf<yarp::dev::RGBDSensorWrapper>("RGBDSensorWrapper", "RGBDSensorWrapper", "yarp::dev::RGBDSensorWrapper");
+RGBDSensorParser::RGBDSensorParser() :
+        iRGBDSensor(nullptr)
+{
 }
-
-RGBDSensorParser::RGBDSensorParser() : iRGBDSensor(nullptr)
-{}
 
 bool RGBDSensorParser::configure(IRGBDSensor *interface)
 {
