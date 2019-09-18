@@ -165,8 +165,7 @@ set(YARP_dev_SRCS src/CanBusInterface.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp
                   src/PolyDriver.cpp
                   src/PolyDriverDescriptor.cpp
-                  src/PolyDriverList.cpp
-                  src/PopulateDrivers.cpp)
+                  src/PolyDriverList.cpp)
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
