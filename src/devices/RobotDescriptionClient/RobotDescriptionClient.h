@@ -22,12 +22,6 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRobotDescription.h>
 
-namespace yarp {
-    namespace dev {
-        class RobotDescriptionClient;
-    }
-}
-
 /**
 * @ingroup dev_impl_network_clients
 * This client device is used to connect to a robotDescriptionServer and ask info about the currently opened devices.
@@ -39,17 +33,15 @@ namespace yarp {
 * | remote         |      -         | string  | -              |   -           | Yes                         | prefix of the port opened by the robotDescriptionServer, like /descriptionServer.  | MUST start with a '/' character. /rpc is automatically appended. |
 */
 
-class yarp::dev::RobotDescriptionClient : public DeviceDriver,
-                                          public IRobotDescription
+class RobotDescriptionClient :
+        public yarp::dev::DeviceDriver,
+        public yarp::dev::IRobotDescription
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
-    std::mutex               m_mutex;
-    yarp::os::Port                m_rpc_port;
+    std::mutex          m_mutex;
+    yarp::os::Port      m_rpc_port;
     std::string         m_local_name;
     std::string         m_remote_name;
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 public:
     /* DeviceDriver methods */
@@ -59,17 +51,17 @@ public:
     /**
     * Ask the complete list of all yarp device drivers registered by a robot description server.
     */
-    bool getAllDevices(std::vector<DeviceDescription>& dev_list) override;
+    bool getAllDevices(std::vector<yarp::dev::DeviceDescription>& dev_list) override;
 
     /**
     * Ask a list of all registered yarp device drivers whose type corresponds to the given param.
     */
-    bool getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list) override;
+    bool getAllDevicesByType(const std::string &type, std::vector<yarp::dev::DeviceDescription>& dev_list) override;
 
     /**
     * Register a new running yarp device into a robot description server.
     */
-    bool registerDevice(const DeviceDescription& dev) override;
+    bool registerDevice(const yarp::dev::DeviceDescription& dev) override;
 
     /**
     * Unregister a running yarp device from a robot description server.

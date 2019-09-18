@@ -20,7 +20,7 @@ using namespace yarp::sig;
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool yarp::dev::RobotDescriptionClient::open(yarp::os::Searchable &config)
+bool RobotDescriptionClient::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
     m_remote_name.clear();
@@ -65,14 +65,14 @@ bool yarp::dev::RobotDescriptionClient::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool yarp::dev::RobotDescriptionClient::close()
+bool RobotDescriptionClient::close()
 {
     m_rpc_port.close();
 
     return true;
 }
 
-bool yarp::dev::RobotDescriptionClient::getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list)
+bool RobotDescriptionClient::getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -111,7 +111,7 @@ bool yarp::dev::RobotDescriptionClient::getAllDevicesByType(const std::string &t
     return true;
 }
 
-bool yarp::dev::RobotDescriptionClient::unregisterDevice(const std::string& device_name)
+bool RobotDescriptionClient::unregisterDevice(const std::string& device_name)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -137,7 +137,7 @@ bool yarp::dev::RobotDescriptionClient::unregisterDevice(const std::string& devi
     return true;
 }
 
-bool yarp::dev::RobotDescriptionClient::registerDevice(const DeviceDescription& dev)
+bool RobotDescriptionClient::registerDevice(const DeviceDescription& dev)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -164,7 +164,7 @@ bool yarp::dev::RobotDescriptionClient::registerDevice(const DeviceDescription& 
     return true;
 }
 
-bool yarp::dev::RobotDescriptionClient::getAllDevices(std::vector<DeviceDescription>& dev_list)
+bool RobotDescriptionClient::getAllDevices(std::vector<DeviceDescription>& dev_list)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -200,14 +200,4 @@ bool yarp::dev::RobotDescriptionClient::getAllDevices(std::vector<DeviceDescript
         return false;
     }
     return true;
-}
-
-yarp::dev::DriverCreator *createRobotDescriptionClient()
-{
-    return new DriverCreatorOf<RobotDescriptionClient>
-               (
-                   "robotDescriptionClient",
-                   "",
-                   "RobotDescriptionClient"
-               );
 }

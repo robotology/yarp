@@ -178,15 +178,11 @@ endif()
 
 set(YARP_dev_devices_SRCS src/devices/JoypadControlClient/JoypadControlClient.cpp
                           src/devices/JoypadControlServer/JoypadControlServer.cpp
-                          src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
-                          src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
                           src/devices/ServerGrabber/ServerGrabber.cpp)
 
 set(YARP_dev_devices_HDRS src/devices/JoypadControlClient/JoypadControlClient.h
                           src/devices/JoypadControlServer/JoypadControlNetUtils.h
                           src/devices/JoypadControlServer/JoypadControlServer.h
-                          src/devices/RobotDescriptionClient/RobotDescriptionClient.h
-                          src/devices/RobotDescriptionServer/RobotDescriptionServer.h
                           src/devices/ServerGrabber/ServerGrabber.h)
 
 # Handle the YARP thrift messages

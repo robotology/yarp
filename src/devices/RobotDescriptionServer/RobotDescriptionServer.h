@@ -23,12 +23,6 @@
 #include <yarp/dev/Wrapper.h>
 #include <yarp/dev/IRobotDescription.h>
 
-namespace yarp {
-    namespace dev {
-        class RobotDescriptionServer;
-    }
-}
-
 /**
 * @ingroup dev_impl_wrapper
 * This device is a storage which contains a list of the currently opened device drivers.
@@ -41,22 +35,19 @@ namespace yarp {
 * | local          |      -         | string  | -              |   -           | Yes                         | prefix of the port opened by the device, like /descriptionServer  | MUST start with a '/' character. /rpc is automatically appended. |
 */
 
-class yarp::dev::RobotDescriptionServer : public DeviceDriver, public yarp::os::PortReader, public yarp::dev::IMultipleWrapper
-
+class RobotDescriptionServer :
+        public yarp::dev::DeviceDriver,
+        public yarp::os::PortReader,
+        public yarp::dev::IMultipleWrapper
 {
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 protected:
-
-    std::mutex                m_external_mutex;
-    std::mutex                m_internal_mutex;
-    yarp::os::Port                 m_rpc_port;
-    std::string          m_local_name;
-    std::vector<DeviceDescription> m_robot_devices;
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+    std::mutex                                m_external_mutex;
+    std::mutex                                m_internal_mutex;
+    yarp::os::Port                            m_rpc_port;
+    std::string                               m_local_name;
+    std::vector<yarp::dev::DeviceDescription> m_robot_devices;
 
 public:
-
     /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
@@ -66,8 +57,8 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 
 private:
-    bool add_device(DeviceDescription dev);
-    bool remove_device(DeviceDescription dev);
+    bool add_device(yarp::dev::DeviceDescription dev);
+    bool remove_device(yarp::dev::DeviceDescription dev);
 };
 
 #endif // YARP_DEV_ROBOTDESCRIPTIONSERVER_H

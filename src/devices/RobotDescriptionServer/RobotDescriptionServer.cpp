@@ -21,7 +21,7 @@ using namespace yarp::sig;
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-bool yarp::dev::RobotDescriptionServer::open(yarp::os::Searchable &config)
+bool RobotDescriptionServer::open(yarp::os::Searchable &config)
 {
     m_local_name.clear();
     m_local_name = config.find("local").asString();
@@ -45,7 +45,7 @@ bool yarp::dev::RobotDescriptionServer::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool yarp::dev::RobotDescriptionServer::attachAll(const PolyDriverList &p)
+bool RobotDescriptionServer::attachAll(const PolyDriverList &p)
 {
     std::lock_guard<std::mutex> guard(m_external_mutex);
     for (int i = 0; i < p.size(); i++)
@@ -65,20 +65,20 @@ bool yarp::dev::RobotDescriptionServer::attachAll(const PolyDriverList &p)
     return true;
 }
 
-bool yarp::dev::RobotDescriptionServer::detachAll()
+bool RobotDescriptionServer::detachAll()
 {
     std::lock_guard<std::mutex> guard(m_external_mutex);
     m_robot_devices.clear();
     return true;
 }
 
-bool yarp::dev::RobotDescriptionServer::close()
+bool RobotDescriptionServer::close()
 {
     m_rpc_port.close();
     return true;
 }
 
-bool yarp::dev::RobotDescriptionServer::add_device(DeviceDescription dev)
+bool RobotDescriptionServer::add_device(DeviceDescription dev)
 {
     std::lock_guard<std::mutex> guard(m_internal_mutex);
     for (auto& m_robot_device : m_robot_devices)
@@ -93,7 +93,7 @@ bool yarp::dev::RobotDescriptionServer::add_device(DeviceDescription dev)
     return true;
 }
 
-bool yarp::dev::RobotDescriptionServer::remove_device(DeviceDescription dev)
+bool RobotDescriptionServer::remove_device(DeviceDescription dev)
 {
     std::lock_guard<std::mutex> guard(m_internal_mutex);
     for (auto it = m_robot_devices.begin(); it != m_robot_devices.end(); it++)
@@ -107,7 +107,7 @@ bool yarp::dev::RobotDescriptionServer::remove_device(DeviceDescription dev)
     return false;
 }
 
-bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
+bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
 {
     std::lock_guard<std::mutex> guard(m_external_mutex);
     yarp::os::Bottle in;
@@ -237,15 +237,4 @@ bool yarp::dev::RobotDescriptionServer::read(yarp::os::ConnectionReader& connect
     }
 
     return true;
-}
-
-
-yarp::dev::DriverCreator *createRobotDescriptionServer()
-{
-    return new DriverCreatorOf<RobotDescriptionServer>
-               (
-                   "robotDescriptionServer",
-                   "",
-                   "RobotDescriptionServer"
-               );
 }
