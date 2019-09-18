@@ -9,6 +9,7 @@
 #include <yarp/os/all.h>
 #include <Demo.h>
 #include <DemoStructList.h>
+#include <DemoStructMap.h>
 #include <DemoStructExt.h>
 #include <SurfaceMeshWithBoundingBox.h>
 #include <Wrapping.h>
@@ -117,6 +118,15 @@ public:
             Time::delay(0.1);
         }
         closing = false;
+    }
+
+    virtual DemoStructMap get_demo_map_struct() override {
+        DemoStructMap demoStructMap;
+        demoStructMap.mapValues["map_0"] = {0, 10};
+        demoStructMap.mapValues["map_1"] = {1, 11};
+        demoStructMap.mapValues["map_2"] = {2, 12};
+        demoStructMap.mapValues["map_3"] = {3, 13};
+        return demoStructMap;
     }
 };
 
@@ -860,5 +870,30 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         Time::delay(1);
         INFO("Stopping a long operation");
         client.do_stop_a_service();
+    }
+
+    SECTION("test map types")
+    {
+        Demo client;
+        Server server;
+        RpcClient client_port;
+        RpcServer server_port;
+        REQUIRE(client_port.open("/client"));
+        REQUIRE(server_port.open("/server"));
+        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        client.yarp().attachAsClient(client_port);
+        server.yarp().attachAsServer(server_port);
+
+        INFO("Requesting a map type");
+        DemoStructMap demoStructMap = client.get_demo_map_struct();
+        CHECK(demoStructMap.mapValues.size() == 4);
+        CHECK(demoStructMap.mapValues["map_0"].x == 0);
+        CHECK(demoStructMap.mapValues["map_0"].y == 10);
+        CHECK(demoStructMap.mapValues["map_1"].x == 1);
+        CHECK(demoStructMap.mapValues["map_1"].y == 11);
+        CHECK(demoStructMap.mapValues["map_2"].x == 2);
+        CHECK(demoStructMap.mapValues["map_2"].y == 12);
+        CHECK(demoStructMap.mapValues["map_3"].x == 3);
+        CHECK(demoStructMap.mapValues["map_3"].y == 13);
     }
 }
