@@ -360,8 +360,8 @@ bool SensorMeasurements::read_measurements(yarp::os::idl::WireReader& reader)
     yarp::os::idl::WireState _etype3;
     reader.readListBegin(_etype3, _size0);
     measurements.resize(_size0);
-    for (auto& _elem4 : measurements) {
-        if (!reader.readNested(_elem4)) {
+    for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+        if (!reader.readNested(measurements[_i4])) {
             reader.fail();
             return false;
         }
@@ -395,8 +395,8 @@ bool SensorMeasurements::nested_read_measurements(yarp::os::idl::WireReader& rea
     yarp::os::idl::WireState _etype9;
     reader.readListBegin(_etype9, _size6);
     measurements.resize(_size6);
-    for (auto& _elem10 : measurements) {
-        if (!reader.readNested(_elem10)) {
+    for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
+        if (!reader.readNested(measurements[_i10])) {
             reader.fail();
             return false;
         }

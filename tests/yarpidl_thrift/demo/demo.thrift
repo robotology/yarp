@@ -41,6 +41,10 @@ struct DemoStructList {
   1: list<DemoStruct> lst
 }
 
+struct DemoStructMap {
+  1: map<string, DemoStruct> mapValues;
+}
+
 struct DemoStructExt {
   /** this is the x part */
   1: i32 x = 0,
@@ -100,4 +104,6 @@ service Demo {
   void do_stop_a_service();
 
   DemoStruct get_demo_struct();
+
+  DemoStructMap get_demo_map_struct()
 }
