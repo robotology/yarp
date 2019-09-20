@@ -165,9 +165,7 @@ set(YARP_dev_SRCS src/CanBusInterface.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp
                   src/PolyDriver.cpp
                   src/PolyDriverDescriptor.cpp
-                  src/PolyDriverList.cpp
-                  src/PopulateDrivers.cpp
-                  src/RGBDSensorParamParser.cpp)
+                  src/PolyDriverList.cpp)
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
@@ -176,63 +174,6 @@ if(TARGET YARP::YARP_math)
                             src/MapGrid2D.cpp
                             src/Map2DArea.cpp)
 endif()
-
-set(YARP_dev_devices_SRCS src/devices/AnalogSensorClient/AnalogSensorClient.cpp
-                          src/devices/AnalogWrapper/AnalogWrapper.cpp
-                          src/devices/ControlBoardRemapper/ControlBoardRemapper.cpp
-                          src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.cpp
-                          src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.cpp
-                          src/devices/ControlBoardWrapper/ControlBoardWrapper.cpp
-                          src/devices/ControlBoardWrapper/RPCMessagesParser.cpp
-                          src/devices/ControlBoardWrapper/StreamingMessagesParser.cpp
-                          src/devices/ControlBoardWrapper/SubDevice.cpp
-                          src/devices/DeviceGroup/DeviceGroup.cpp
-                          src/devices/DevicePipe/DevicePipe.cpp
-                          src/devices/JoypadControlClient/JoypadControlClient.cpp
-                          src/devices/JoypadControlServer/JoypadControlServer.cpp
-                          src/devices/RemoteControlBoard/RemoteControlBoard.cpp
-                          src/devices/RemoteControlBoard/stateExtendedReader.cpp
-                          src/devices/RemoteFrameGrabber/RemoteFrameGrabber.cpp
-                          src/devices/RobotDescriptionClient/RobotDescriptionClient.cpp
-                          src/devices/RobotDescriptionServer/RobotDescriptionServer.cpp
-                          src/devices/RGBDSensorClient/RGBDSensorClient.cpp
-                          src/devices/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.cpp
-                          src/devices/RGBDSensorWrapper/RGBDSensorWrapper.cpp
-                          src/devices/ServerFrameGrabber/ServerFrameGrabber.cpp
-                          src/devices/ServerGrabber/ServerGrabber.cpp
-                          src/devices/ServerInertial/ServerInertial.cpp
-                          src/devices/ServerSerial/ServerSerial.cpp
-                          src/devices/TestMotor/TestMotor.cpp
-                          src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.cpp)
-
-set(YARP_dev_devices_HDRS src/devices/AnalogSensorClient/AnalogSensorClient.h
-                          src/devices/AnalogWrapper/AnalogWrapper.h
-                          src/devices/ControlBoardRemapper/ControlBoardRemapper.h
-                          src/devices/ControlBoardRemapper/ControlBoardRemapperHelpers.h
-                          src/devices/ControlBoardRemapper/RemoteControlBoardRemapper.h
-                          src/devices/ControlBoardWrapper/ControlBoardWrapper.h
-                          src/devices/ControlBoardWrapper/RPCMessagesParser.h
-                          src/devices/ControlBoardWrapper/StreamingMessagesParser.h
-                          src/devices/ControlBoardWrapper/SubDevice.h
-                          src/devices/DeviceGroup/DeviceGroup.h
-                          src/devices/DevicePipe/DevicePipe.h
-                          src/devices/JoypadControlClient/JoypadControlClient.h
-                          src/devices/JoypadControlServer/JoypadControlNetUtils.h
-                          src/devices/JoypadControlServer/JoypadControlServer.h
-                          src/devices/RemoteControlBoard/RemoteControlBoard.h
-                          src/devices/RemoteControlBoard/stateExtendedReader.h
-                          src/devices/RemoteFrameGrabber/RemoteFrameGrabber.h
-                          src/devices/RobotDescriptionClient/RobotDescriptionClient.h
-                          src/devices/RobotDescriptionServer/RobotDescriptionServer.h
-                          src/devices/RGBDSensorClient/RGBDSensorClient.h
-                          src/devices/RGBDSensorClient/RGBDSensorClient_StreamingMsgParser.h
-                          src/devices/RGBDSensorWrapper/RGBDSensorWrapper.h
-                          src/devices/ServerFrameGrabber/ServerFrameGrabber.h
-                          src/devices/ServerGrabber/ServerGrabber.h
-                          src/devices/ServerInertial/ServerInertial.h
-                          src/devices/ServerSerial/ServerSerial.h
-                          src/devices/TestMotor/TestMotor.h
-                          src/devices/VirtualAnalogWrapper/VirtualAnalogWrapper.h)
 
 # Handle the YARP thrift messages
 include(YarpIDL)
@@ -281,8 +222,7 @@ target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOU
                                            $<BUILD_INTERFACE:${YARP_dev_idl_INCLUDE_DIRS}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_include_directories(YARP_dev PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/AnalogSensorClient
-                                            ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
+target_include_directories(YARP_dev PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
 
 target_link_libraries(YARP_dev PUBLIC YARP::YARP_conf
                                       YARP::YARP_OS

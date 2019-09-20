@@ -14,6 +14,8 @@
 #ifndef YARP_THRIFT_GENERATOR_STRUCT_JOINTDATA_H
 #define YARP_THRIFT_GENERATOR_STRUCT_JOINTDATA_H
 
+#include <yarp/dev/api.h>
+
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/sig/Vector.h>
@@ -22,7 +24,7 @@ namespace yarp {
 namespace dev {
 namespace impl {
 
-class jointData :
+class YARP_dev_API jointData :
         public yarp::os::idl::WirePortable
 {
 public:

@@ -37,6 +37,3 @@ if(NOT SKIP_serialport)
 
   set_property(TARGET yarp_serialport PROPERTY FOLDER "Plugins/Device")
 endif()
-
-include(YarpRemoveFile)
-yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/serial.ini") # YARP_DEPRECATED since YARP 3.0

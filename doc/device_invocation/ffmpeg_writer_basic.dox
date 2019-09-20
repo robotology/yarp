@@ -3,7 +3,7 @@
  *
  * \defgroup ffmpeg_writer_basic Example for pipe (ffmpeg_writer_basic)
 
-Instantiates \ref cmd_device_pipe "pipe" device implemented by yarp::dev::DevicePipe.
+Instantiates \ref cmd_device_pipe "pipe" device implemented by DevicePipe.
 \verbatim
 # Start up a pipe from a test_grabber to an ffmpeg_writer.
 # this will save the output of test_grabber into a movie.
@@ -47,6 +47,6 @@ So this is just an example
 <tr><td>sink</td><td>device to write to (string or nested properties)</td><td></td></tr>
 </table>
 
-\sa yarp::dev::DevicePipe
+\sa DevicePipe
 
  */

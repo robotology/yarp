@@ -46,4 +46,7 @@ struct jointData
   20: bool controlMode_isValid;
   21: VectorOfInt interactionMode;
   22: bool interactionMode_isValid;
- }
+} (
+    yarp.api.include = "yarp/dev/api.h"
+    yarp.api.keyword = "YARP_dev_API"
+)

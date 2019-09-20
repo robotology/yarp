@@ -28,11 +28,11 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-class DriversHelper : public YarpPluginSelector {
+class Drivers::Private : public YarpPluginSelector {
 public:
     std::vector<DriverCreator *> delegates;
 
-    ~DriversHelper() {
+    ~Private() {
         for (auto& delegate : delegates) {
             if (delegate==nullptr) continue;
             delete delegate;
@@ -230,54 +230,47 @@ public:
     }
 };
 
-#define HELPER(x) (*(((DriversHelper*)(x))))
-
 Drivers& Drivers::factory()
 {
    static Drivers instance;
    return instance;
 }
 
-Drivers::Drivers() {
-    implementation = new DriversHelper;
-    yAssert(implementation!=nullptr);
-    init();
+Drivers::Drivers() :
+        mPriv(new Private)
+{
 }
 
-
 Drivers::~Drivers() {
-    if (implementation!=nullptr) {
-        delete &HELPER(implementation);
-        implementation = nullptr;
-    }
+    delete mPriv;
 }
 
 std::string Drivers::toString() const {
-    return HELPER(implementation).toString();
+    return mPriv->toString();
 }
 
 void Drivers::add(DriverCreator *creator) {
-    HELPER(implementation).add(creator);
+    mPriv->add(creator);
 }
 
 
 DriverCreator *Drivers::find(const char *name) {
-    return HELPER(implementation).find(name);
+    return mPriv->find(name);
 }
 
 bool Drivers::remove(const char *name) {
-    return HELPER(implementation).remove(name);
+    return mPriv->remove(name);
 }
 
 
-DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
+DeviceDriver* Drivers::open(yarp::os::Searchable& prop) {
     PolyDriver poly;
     bool result = poly.open(prop);
     if (!result) return nullptr;
     return poly.take();
 }
 
-DriverCreator *DriversHelper::load(const char *name) {
+DriverCreator* Drivers::Private::load(const char *name) {
     auto* result = new StubDriver(name,false);
     if (!result->isValid()) {
         delete result;
@@ -621,7 +614,3 @@ DeviceDriver *StubDriverCreator::create() const {
     //yDebug("Created %s from %s\n", desc.c_str(), libname.c_str());
     return result;
 }
-
-
-// defined in PopulateDrivers.cpp:
-//   DeviceDriver *Drivers::init()

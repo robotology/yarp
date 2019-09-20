@@ -64,6 +64,28 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(usbCamera)
   add_subdirectory(fakeLocalizerDevice)
   add_subdirectory(fakeNavigationDevice)
+  add_subdirectory(DeviceGroup)
+  add_subdirectory(DevicePipe)
+  add_subdirectory(ServerSerial)
+  add_subdirectory(TestMotor)
+  add_subdirectory(ServerFrameGrabber)
+  add_subdirectory(RemoteFrameGrabber)
+  add_subdirectory(RemoteControlBoard)
+  add_subdirectory(AnalogSensorClient)
+  add_subdirectory(AnalogWrapper)
+  add_subdirectory(VirtualAnalogWrapper)
+  add_subdirectory(RGBDSensorClient)
+  add_subdirectory(ServerInertial)
+  add_subdirectory(RGBDSensorWrapper)
+  add_subdirectory(ControlBoardWrapper)
+  add_subdirectory(ControlBoardRemapper)
+  add_subdirectory(RobotDescriptionClient)
+  add_subdirectory(RobotDescriptionServer)
+  add_subdirectory(ServerGrabber)
+  add_subdirectory(JoypadControlNetUtils)
+  add_subdirectory(JoypadControlClient)
+  add_subdirectory(JoypadControlServer)
+
 
   # We can also suck in other device libraries built the same way.
   # We seek an ExternalModules.cmake file either in the conf directory

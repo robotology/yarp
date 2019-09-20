@@ -28,6 +28,9 @@ using namespace yarp::sig;
 TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("test_grabber", "device");
+    YARP_REQUIRE_PLUGIN("grabber", "device");
+    YARP_REQUIRE_PLUGIN("remote_grabber", "device");
+    YARP_REQUIRE_PLUGIN("grabberDual", "device");
 
     Network::setLocalMode(true);
 

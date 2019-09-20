@@ -24,6 +24,10 @@ using namespace yarp::dev;
 
 TEST_CASE("dev::robotDescriptionTest", "[yarp::dev]")
 {
+    YARP_REQUIRE_PLUGIN("robotDescriptionServer", "device");
+    YARP_REQUIRE_PLUGIN("robotDescriptionClient", "device");
+    YARP_REQUIRE_PLUGIN("controlboardwrapper2", "device");
+
     Network::setLocalMode(true);
 
     SECTION("Test the RobotDescription client/server")

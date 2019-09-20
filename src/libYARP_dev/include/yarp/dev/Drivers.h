@@ -254,12 +254,13 @@ public:
     static int yarpdev(int argc, char *argv[]);
 
 private:
-
-    void init();
-
-    void *implementation;
-
     Drivers();
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+private:
+    class Private;
+    Private* mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 #endif // YARP_DRIVERS_H
