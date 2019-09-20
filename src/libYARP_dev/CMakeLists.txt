@@ -119,7 +119,7 @@ if(TARGET YARP::YARP_math)
 endif()
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.3.0
-  list(APPEND YARP_dev_HDRS include/yarp/dev/IPreciselyTimed.h)
+  list(APPEND YARP_dev_HDRS include/yarp/dev/PreciselyTimed.h)
 endif()
 
 
