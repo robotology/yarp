@@ -38,7 +38,7 @@ public:
         AS_TIMEOUT=3
     };
 
-    virtual ~IAnalogSensor(){}
+    virtual ~IAnalogSensor();
 
     /**
      * Read a vector from the sensor.

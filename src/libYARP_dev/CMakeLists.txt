@@ -136,6 +136,7 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/Drivers.cpp
                   src/FrameGrabberControlImpl.cpp
                   src/GazeControl.cpp
+                  src/IAnalogSensor.cpp
                   src/IBattery.cpp
                   src/IJoypadController.cpp
                   src/IRemoteCalibrator.cpp
