@@ -222,8 +222,6 @@ target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOU
                                            $<BUILD_INTERFACE:${YARP_dev_idl_INCLUDE_DIRS}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_include_directories(YARP_dev PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/devices/JoypadControlServer)
-
 target_link_libraries(YARP_dev PUBLIC YARP::YARP_conf
                                       YARP::YARP_OS
                                       YARP::YARP_sig
