@@ -31,7 +31,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/FrameGrabberControlImpl.h
                   include/yarp/dev/FrameGrabberInterfaces.h
                   include/yarp/dev/GazeControl.h
-                  include/yarp/dev/GenericSensorInterfaces.h
                   include/yarp/dev/GenericVocabs.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAmplifierControl.h
@@ -51,6 +50,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IEncoders.h
                   include/yarp/dev/IEncodersTimed.h
                   include/yarp/dev/IFrameWriterAudioVisual.h
+                  include/yarp/dev/IGenericSensor.h
                   include/yarp/dev/IHapticDevice.h
                   include/yarp/dev/IImpedanceControl.h
                   include/yarp/dev/IInteractionMode.h
@@ -123,7 +123,8 @@ if(TARGET YARP::YARP_math)
 endif()
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.3.0
-  list(APPEND YARP_dev_HDRS include/yarp/dev/PreciselyTimed.h
+  list(APPEND YARP_dev_HDRS include/yarp/dev/GenericSensorInterfaces.h
+                            include/yarp/dev/PreciselyTimed.h
                             include/yarp/dev/Wrapper.h)
 endif()
 
@@ -147,6 +148,7 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/IAudioVisualStream.cpp
                   src/IBattery.cpp
                   src/IFrameWriterAudioVisual.cpp
+                  src/IGenericSensor.cpp
                   src/IJoypadController.cpp
                   src/IRemoteCalibrator.cpp
                   src/IMultipleWrapper.cpp

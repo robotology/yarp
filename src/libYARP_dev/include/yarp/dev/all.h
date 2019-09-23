@@ -28,7 +28,7 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/FrameGrabberControl2.h>
 #include <yarp/dev/GazeControl.h>
-#include <yarp/dev/GenericSensorInterfaces.h>
+#include <yarp/dev/IGenericSensor.h>
 #include <yarp/dev/GPUInterface.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/IRGBDSensor.h>
