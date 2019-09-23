@@ -15,20 +15,17 @@
 #include <string>
 
 namespace yarp {
-    namespace dev {
-        class IRobotDescription;
+namespace dev {
 
-        struct DeviceDescription
-        {
-            std::string  device_name;
-            std::string  device_type;
-            bool operator ==(DeviceDescription const& b) const
-            {
-                return this->device_name == b.device_name && this->device_type == b.device_type;
-            }
-        };
-      }
-}
+struct DeviceDescription
+{
+    std::string  device_name;
+    std::string  device_type;
+    bool operator ==(DeviceDescription const& b) const
+    {
+        return this->device_name == b.device_name && this->device_type == b.device_type;
+    }
+};
 
 /**
  * @ingroup dev_iface_motor
@@ -36,7 +33,7 @@ namespace yarp {
  * This interface allows users to retrieve a list which contains the names and the types of the currently running devices.
  * This list is stored in a RobotDescriptionsServer class. The user can access to the data opening a RobotDescriptionsClient in its own module.
  */
-class YARP_dev_API yarp::dev::IRobotDescription
+class YARP_dev_API IRobotDescription
 {
 public:
     /**
@@ -50,20 +47,23 @@ public:
     virtual bool getAllDevices(std::vector<DeviceDescription>& dev_list) = 0;
 
     /**
-    * Ask a list of all registered yarp device drivers whose type corresponds to the given param.
-    */
+     * Ask a list of all registered yarp device drivers whose type corresponds to the given param.
+     */
     virtual bool getAllDevicesByType(const std::string &type, std::vector<DeviceDescription>& dev_list) = 0;
 
     /**
-    * Register a new running yarp device into a robot description server.
-    */
+     * Register a new running yarp device into a robot description server.
+     */
     virtual bool registerDevice(const DeviceDescription& dev) = 0;
 
     /**
-    * Unregister a running yarp device from a robot description server.
-    */
+     * Unregister a running yarp device from a robot description server.
+     */
     virtual bool unregisterDevice(const std::string& device_name) = 0;
 };
+
+} // namespace dev
+} // namespace yarp
 
 constexpr yarp::conf::vocab32_t VOCAB_IROBOT_DESCRIPTION            = yarp::os::createVocab('i','r','o','b');
 constexpr yarp::conf::vocab32_t VOCAB_IROBOT_GET                    = yarp::os::createVocab('g','e','t');

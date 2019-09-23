@@ -17,12 +17,6 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/IVisualParams.h>
 
-namespace yarp {
-    namespace dev {
-        class IRGBDSensor;
-    }
-}
-
 
 // Interface name
 constexpr yarp::conf::vocab32_t VOCAB_RGBD_SENSOR            = yarp::os::createVocab('r','g','d','b');
@@ -36,6 +30,9 @@ constexpr yarp::conf::vocab32_t VOCAB_DEPTH_IMAGE       = yarp::os::createVocab(
 constexpr yarp::conf::vocab32_t VOCAB_IMAGES            = yarp::os::createVocab('i','m','m','s');
 constexpr yarp::conf::vocab32_t VOCAB_STATUS            = yarp::os::createVocab('s','t','a','t');
 
+
+namespace yarp {
+namespace dev {
 
 /**
  * @ingroup dev_iface_other
@@ -53,8 +50,9 @@ constexpr yarp::conf::vocab32_t VOCAB_STATUS            = yarp::os::createVocab(
  * can be used.
  */
 
-class YARP_dev_API yarp::dev::IRGBDSensor : public IRgbVisualParams,
-                                            public IDepthVisualParams
+class YARP_dev_API IRGBDSensor :
+        public IRgbVisualParams,
+        public IDepthVisualParams
 {
 public:
 
@@ -163,5 +161,8 @@ public:
      */
     virtual RGBDSensor_status getSensorStatus() = 0;
 };
+
+} // namespace dev
+} // namespace yarp
 
 #endif   // YARP_DEV_IRGBDSENSOR_H

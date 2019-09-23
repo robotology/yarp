@@ -14,58 +14,70 @@
 #include <yarp/dev/Drivers.h>
 
 namespace yarp {
-    namespace dev {
-        class DriverLinkCreator;
-    }
-}
+namespace dev {
 
 /**
  * A factory for creating links to a driver that has already been
  * created.
  */
-class YARP_dev_API yarp::dev::DriverLinkCreator : public DriverCreator {
+class YARP_dev_API DriverLinkCreator :
+        public DriverCreator
+{
 private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
     PolyDriver holding;
+
 public:
-    DriverLinkCreator(const std::string& name, PolyDriver& source) {
+    DriverLinkCreator(const std::string& name, PolyDriver& source)
+    {
         this->name = name;
         holding.link(source);
     }
 
-    virtual ~DriverLinkCreator() {
+    virtual ~DriverLinkCreator() override
+    {
         holding.close();
     }
 
-    std::string toString() const override {
+    std::string toString() const override
+    {
         return name;
     }
 
-    DeviceDriver *create() const override {
+    DeviceDriver *create() const override
+    {
         DeviceDriver *internal;
         const_cast<PolyDriver&>(holding).view(internal);
         return internal;
     }
 
-    std::string getName() const override {
+    std::string getName() const override
+    {
         return name;
     }
 
-    std::string getWrapper() const override {
+    std::string getWrapper() const override
+    {
         return "(link)";
     }
 
-    std::string getCode() const override {
+    std::string getCode() const override
+    {
         return "DriverLinkCreator";
     }
 
-    PolyDriver *owner() override {
+    PolyDriver *owner() override
+    {
         return &holding;
     }
 
-    void close() {
+    void close()
+    {
         holding.close();
     }
 };
+
+} // namespace dev
+} // namespace yarp
 
 #endif // YARP_DEV_DRIVERLINKCREATOR_H

@@ -17,11 +17,9 @@
 constexpr yarp::conf::vocab32_t VOCAB_IANALOG           = yarp::os::createVocab('i','a','n','a');
 
 /*! \file IAnalogSensor.h analog sensor interface */
+
 namespace yarp {
-    namespace dev {
-        class IAnalogSensor;
-    }
-}
+namespace dev {
 
 /**
  * @ingroup dev_iface_other
@@ -29,7 +27,7 @@ namespace yarp {
  * A generic interface to sensors (gyro, a/d converters). Similar to
  * IGenerisSensor, but includes error handling.
  */
-class YARP_dev_API yarp::dev::IAnalogSensor
+class YARP_dev_API IAnalogSensor
 {
 public:
     enum
@@ -90,5 +88,8 @@ public:
      */
     virtual int calibrateChannel(int ch, double value)=0;
 };
+
+} // namespace dev
+} // namespace yarp
 
 #endif // YARP_DEV_IANALOGSENSOR_H
