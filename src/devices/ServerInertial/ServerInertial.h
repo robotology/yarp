@@ -14,7 +14,7 @@
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/GenericSensorInterfaces.h>
+#include <yarp/dev/IGenericSensor.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>

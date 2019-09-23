@@ -25,7 +25,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/SerialInterfaces.h>
-#include <yarp/dev/GenericSensorInterfaces.h>
+#include <yarp/dev/IGenericSensor.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/math/Quaternion.h>
 #include <mutex>
