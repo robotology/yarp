@@ -133,6 +133,7 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/ControlBoardHelper.cpp
                   src/ControlBoardPid.cpp
                   src/DeviceDriver.cpp
+                  src/DriverLinkCreator.cpp
                   src/Drivers.cpp
                   src/FrameGrabberControlImpl.cpp
                   src/GazeControl.cpp

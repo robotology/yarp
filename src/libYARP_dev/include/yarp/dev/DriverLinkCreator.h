@@ -28,16 +28,8 @@ private:
     PolyDriver holding;
 
 public:
-    DriverLinkCreator(const std::string& name, PolyDriver& source)
-    {
-        this->name = name;
-        holding.link(source);
-    }
-
-    virtual ~DriverLinkCreator() override
-    {
-        holding.close();
-    }
+    DriverLinkCreator(const std::string& name, PolyDriver& source);
+    virtual ~DriverLinkCreator() override;
 
     std::string toString() const override
     {
