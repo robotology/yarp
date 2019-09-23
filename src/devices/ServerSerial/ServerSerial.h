@@ -16,7 +16,7 @@
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/SerialInterfaces.h>
+#include <yarp/dev/ISerialDevice.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>

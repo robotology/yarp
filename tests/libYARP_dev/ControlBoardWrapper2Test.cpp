@@ -12,7 +12,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 
 #include <string>
 

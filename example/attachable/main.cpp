@@ -15,7 +15,7 @@
 #include <iostream>
 #include <vector>
 
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 
 using namespace yarp::dev;
 

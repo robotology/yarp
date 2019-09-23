@@ -24,7 +24,7 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 
 #include <yarp/dev/IVirtualAnalogSensor.h>
 

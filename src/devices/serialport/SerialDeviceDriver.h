@@ -13,7 +13,7 @@
 #define SerialDeviceDriverh
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/SerialInterfaces.h>
+#include <yarp/dev/ISerialDevice.h>
 #include <yarp/os/Bottle.h>
 
 #include <stdio.h>
