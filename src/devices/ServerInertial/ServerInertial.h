@@ -21,7 +21,8 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/IPreciselyTimed.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IWrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 
 // ROS state publisher
 #include <yarp/os/Node.h>

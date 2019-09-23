@@ -26,7 +26,8 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/dev/IVisualParamsImpl.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IWrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 
 
 class ServerGrabber;

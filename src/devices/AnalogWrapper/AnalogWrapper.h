@@ -31,7 +31,7 @@
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/api.h>
 
 

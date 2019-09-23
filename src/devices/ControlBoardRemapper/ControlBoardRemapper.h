@@ -16,7 +16,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 
 #include <string>
 #include <vector>

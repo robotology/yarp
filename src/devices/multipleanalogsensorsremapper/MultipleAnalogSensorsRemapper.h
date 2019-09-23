@@ -11,7 +11,7 @@
 #define YARP_DEV_MULTIPLEANALOGSENSORSREMAPPER_MULTIPLEANALOGSENSORSREMAPPER_H
 
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 
 #include <vector>
 #include <map>
