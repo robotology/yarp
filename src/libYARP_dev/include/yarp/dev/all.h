@@ -39,6 +39,7 @@
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IWrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 
 #endif // YARP_DEV_ALL_H

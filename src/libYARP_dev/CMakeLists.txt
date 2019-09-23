@@ -57,6 +57,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IJoypadController.h
                   include/yarp/dev/IMotorEncoders.h
                   include/yarp/dev/IMotor.h
+                  include/yarp/dev/IMultipleWrapper.h
                   include/yarp/dev/ImplementAmplifierControl.h
                   include/yarp/dev/ImplementAxisInfo.h
                   include/yarp/dev/ImplementControlBoardInterfaces.h
@@ -100,6 +101,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IVisualParams.h
                   include/yarp/dev/IVisualParamsImpl.h
                   include/yarp/dev/IVisualServoing.h
+                  include/yarp/dev/IWrapper.h
                   include/yarp/dev/LaserMeasurementData.h
                   include/yarp/dev/MultipleAnalogSensorsInterfaces.h
                   include/yarp/dev/PidEnums.h
@@ -108,8 +110,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/PolyDriverList.h
                   include/yarp/dev/RGBDSensorParamParser.h
                   include/yarp/dev/SerialInterfaces.h
-                  include/yarp/dev/ServiceInterfaces.h
-                  include/yarp/dev/Wrapper.h)
+                  include/yarp/dev/ServiceInterfaces.h)
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_HDRS include/yarp/dev/IFrameTransform.h
@@ -122,7 +123,8 @@ if(TARGET YARP::YARP_math)
 endif()
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.3.0
-  list(APPEND YARP_dev_HDRS include/yarp/dev/PreciselyTimed.h)
+  list(APPEND YARP_dev_HDRS include/yarp/dev/PreciselyTimed.h
+                            include/yarp/dev/Wrapper.h)
 endif()
 
 
@@ -147,6 +149,7 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/IFrameWriterAudioVisual.cpp
                   src/IJoypadController.cpp
                   src/IRemoteCalibrator.cpp
+                  src/IMultipleWrapper.cpp
                   src/ImplementAmplifierControl.cpp
                   src/ImplementAxisInfo.cpp
                   src/ImplementControlCalibration.cpp
@@ -173,6 +176,7 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/IRobotDescription.cpp
                   src/IVisualParamsImpl.cpp
                   src/IVisualServoing.cpp
+                  src/IWrapper.cpp
                   src/LaserMeasurementData.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp
                   src/PolyDriver.cpp
