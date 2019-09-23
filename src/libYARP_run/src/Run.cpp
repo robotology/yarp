@@ -791,8 +791,8 @@ void yarp::run::Run::cleanBeforeExec()
 
 void yarp::run::Run::writeToPipe(int fd, std::string str)
 {
-    size_t len = str.length() + 1;
-    size_t ret;
+    int len = str.length() + 1;
+    int ret;
     ret = write(fd, &len, sizeof(len));
     if (ret != sizeof(len)) {
         fprintf(stderr, "Warning: could not write string length to pipe.\n");
