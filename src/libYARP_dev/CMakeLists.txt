@@ -126,7 +126,8 @@ endif()
 set(YARP_dev_IMPL_HDRS include/yarp/dev/impl/FixedSizeBuffersManager.h
                        include/yarp/dev/impl/FixedSizeBuffersManager-inl.h)
 
-set(YARP_dev_SRCS src/CanBusInterface.cpp
+set(YARP_dev_SRCS src/AudioBufferSize.cpp
+                  src/CanBusInterface.cpp
                   src/CartesianControl.cpp
                   src/ControlBoardInterfacesImpl.cpp
                   src/ControlBoardHelper.cpp

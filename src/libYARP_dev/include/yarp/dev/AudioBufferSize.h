@@ -38,16 +38,8 @@ public:
     bool read(yarp::os::ConnectionReader& reader) override { return audioBufferSizeData::read(reader); }
     bool write(yarp::os::ConnectionWriter& writer) const override { return audioBufferSizeData::write(writer); }
 
-    AudioBufferSize() : audioBufferSizeData() {}
-
-            //this casts are due to the fact the it is not yet possibile to define an unsigned type in thrift
-    AudioBufferSize(size_t samples, size_t channels, size_t depth_in_bytes) :
-            audioBufferSizeData(static_cast<int32_t>(samples),
-                                static_cast<int32_t>(channels),
-                                static_cast<int32_t>(depth_in_bytes),
-                                static_cast<int32_t>(samples * channels))
-    {
-    }
+    AudioBufferSize();
+    AudioBufferSize(size_t samples, size_t channels, size_t depth_in_bytes);
 };
 
 } // namespace dev
