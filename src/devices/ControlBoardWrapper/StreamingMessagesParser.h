@@ -26,7 +26,6 @@
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/dev/Wrapper.h>
 
 #include <string>
 #include <vector>

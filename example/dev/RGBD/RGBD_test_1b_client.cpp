@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <yarp/os/Time.h>
-#include <yarp/dev/Wrapper.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/PolyDriver.h>

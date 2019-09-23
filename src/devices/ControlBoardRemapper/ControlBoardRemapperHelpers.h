@@ -25,7 +25,6 @@
 
 
 #include <yarp/sig/Vector.h>
-#include <yarp/dev/Wrapper.h>
 
 #include <mutex>
 #include <string>

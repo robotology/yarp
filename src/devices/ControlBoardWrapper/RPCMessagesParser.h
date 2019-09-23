@@ -24,7 +24,6 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/dev/Wrapper.h>
 
 #include <mutex>
 #include <string>

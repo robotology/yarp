@@ -42,7 +42,6 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/Wrapper.h>
 #include <yarp/dev/api.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
