@@ -20,7 +20,7 @@ namespace dev {
 class YARP_dev_API IPreciselyTimed
 {
 public:
-    virtual ~IPreciselyTimed() = default;
+    virtual ~IPreciselyTimed();
 
     /**
      * Return the time stamp relative to the last acquisition.
