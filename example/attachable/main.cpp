@@ -37,15 +37,15 @@ public:
         drivers=p;
 
         // we got the list of drivers, now we can do what we want
-        // usually we will acquire the interfaces we need by 
+        // usually we will acquire the interfaces we need by
         // calling view() multiple times.
 
 
         // here we just do a simple check
         std::cout<<"MyWrapper::attachAll\n";
-        
+
         int nd=drivers.size();
-        
+
         std::cout<<"Received list of "<<nd << " drivers:\n";
 
         bool allValid=true;;
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
     DriverCreator *fakey_factory = new DriverCreatorOf<MyWrapper>("wrapper","","MyWrapper");
     Drivers::factory().add(fakey_factory); // hand factory over to YARP
 
-    std::cout<<"Testing multiple attachable interface/data structure\n";    
+    std::cout<<"Testing multiple attachable interface/data structure\n";
 
     // create list of devices we are going to wrap
     PolyDriver p1;
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
     //attach devices, first get interface
     IMultipleWrapper *iat;
     wrapper.view(iat);
-    
+
     PolyDriverList list;
     list.push(&p1, "p1");
     list.push(&p2, "p2");
@@ -118,6 +118,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
-
-
