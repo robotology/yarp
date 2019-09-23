@@ -36,6 +36,8 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/GPUInterface.h
                   include/yarp/dev/IAmplifierControl.h
                   include/yarp/dev/IAnalogSensor.h
+                  include/yarp/dev/IAudioVisualGrabber.h
+                  include/yarp/dev/IAudioVisualStream.h
                   include/yarp/dev/IAxisInfo.h
                   include/yarp/dev/IBattery.h
                   include/yarp/dev/ICalibrator.h
@@ -48,6 +50,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ICurrentControl.h
                   include/yarp/dev/IEncoders.h
                   include/yarp/dev/IEncodersTimed.h
+                  include/yarp/dev/IFrameWriterAudioVisual.h
                   include/yarp/dev/IHapticDevice.h
                   include/yarp/dev/IImpedanceControl.h
                   include/yarp/dev/IInteractionMode.h
@@ -138,7 +141,10 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/FrameGrabberControlImpl.cpp
                   src/GazeControl.cpp
                   src/IAnalogSensor.cpp
+                  src/IAudioVisualGrabber.cpp
+                  src/IAudioVisualStream.cpp
                   src/IBattery.cpp
+                  src/IFrameWriterAudioVisual.cpp
                   src/IJoypadController.cpp
                   src/IRemoteCalibrator.cpp
                   src/ImplementAmplifierControl.cpp
