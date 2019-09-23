@@ -24,9 +24,6 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(ffmpeg)
   add_subdirectory(opencv)
   add_subdirectory(serialport)
-  if(NOT YARP_NO_DEPRECATED) # since YARP 3.2.0
-    add_subdirectory(portaudio)
-  endif()
   add_subdirectory(portaudioPlayer)
   add_subdirectory(portaudioRecorder)
   add_subdirectory(imuBosch_BNO055)
@@ -45,9 +42,6 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(batteryWrapper)
   add_subdirectory(Rangefinder2DWrapper)
   add_subdirectory(realsense2)
-  if(NOT YARP_NO_DEPRECATED) # since YARP 3.2.0
-    add_subdirectory(ServerSoundGrabber)
-  endif()
   add_subdirectory(multipleAnalogSensorsMsgs)
   add_subdirectory(multipleanalogsensorsserver)
   add_subdirectory(multipleanalogsensorsclient)
@@ -86,6 +80,8 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(JoypadControlClient)
   add_subdirectory(JoypadControlServer)
 
+  add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
+  add_subdirectory(ServerSoundGrabber) # DEPRECATED Since YARP 3.2
 
   # We can also suck in other device libraries built the same way.
   # We seek an ExternalModules.cmake file either in the conf directory
