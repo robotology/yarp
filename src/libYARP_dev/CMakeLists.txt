@@ -159,6 +159,7 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/ImplementTorqueControl.cpp
                   src/ImplementVelocityControl.cpp
                   src/ImplementVirtualAnalogSensor.cpp
+                  src/IRGBDSensor.cpp
                   src/IRangefinder2D.cpp
                   src/IVisualParamsImpl.cpp
                   src/IVisualServoing.cpp

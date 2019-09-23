@@ -70,7 +70,7 @@ public:
         RGBD_SENSOR_TIMEOUT          = 6
     };
 
-    virtual ~IRGBDSensor(){}
+    virtual ~IRGBDSensor();
 
     /*
      *  IRgbVisualParams interface. Look at IVisualParams.h for documentation
