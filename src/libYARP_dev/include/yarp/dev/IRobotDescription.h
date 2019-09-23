@@ -39,7 +39,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~IRobotDescription() {}
+    virtual ~IRobotDescription();
 
     /**
      * Ask the complete list of all yarp device drivers registered by a robot description server.

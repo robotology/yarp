@@ -163,6 +163,7 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/IPreciselyTimed.cpp
                   src/IRGBDSensor.cpp
                   src/IRangefinder2D.cpp
+                  src/IRobotDescription.cpp
                   src/IVisualParamsImpl.cpp
                   src/IVisualServoing.cpp
                   src/LaserMeasurementData.cpp
