@@ -94,6 +94,7 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/IRemoteVariables.h
                   include/yarp/dev/IRGBDSensor.h
                   include/yarp/dev/IRobotDescription.h
+                  include/yarp/dev/ISerialDevice.h
                   include/yarp/dev/ITorqueControl.h
                   include/yarp/dev/IVelocityControl2.h
                   include/yarp/dev/IVelocityControl.h
@@ -109,7 +110,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/PolyDriver.h
                   include/yarp/dev/PolyDriverList.h
                   include/yarp/dev/RGBDSensorParamParser.h
-                  include/yarp/dev/SerialInterfaces.h
                   include/yarp/dev/ServiceInterfaces.h)
 
 if(TARGET YARP::YARP_math)
@@ -125,6 +125,7 @@ endif()
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.3.0
   list(APPEND YARP_dev_HDRS include/yarp/dev/GenericSensorInterfaces.h
                             include/yarp/dev/PreciselyTimed.h
+                            include/yarp/dev/SerialInterfaces.h
                             include/yarp/dev/Wrapper.h)
 endif()
 
@@ -173,6 +174,7 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/ImplementVelocityControl.cpp
                   src/ImplementVirtualAnalogSensor.cpp
                   src/IPreciselyTimed.cpp
+                  src/ISerialDevice.cpp
                   src/IRGBDSensor.cpp
                   src/IRangefinder2D.cpp
                   src/IRobotDescription.cpp

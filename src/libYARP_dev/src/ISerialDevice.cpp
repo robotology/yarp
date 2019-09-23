@@ -6,10 +6,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_SERIALINTERFACES_H
-#define YARP_DEV_SERIALINTERFACES_H
-
-YARP_COMPILER_WARNING("<yarp/dev/SerialInterfaces.h> file is deprecated. Use <yarp/dev/ISerialDevice.h> instead")
 #include <yarp/dev/ISerialDevice.h>
 
-#endif // YARP_DEV_SERIALINTERFACES_H
+yarp::dev::ISerialDevice::~ISerialDevice() = default;
