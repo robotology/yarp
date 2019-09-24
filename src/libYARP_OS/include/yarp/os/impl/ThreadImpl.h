@@ -11,7 +11,6 @@
 #define YARP_OS_IMPL_THREADIMPL_H
 
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/Runnable.h>
 
 #include <atomic>
 #include <thread>
@@ -23,17 +22,14 @@ namespace impl {
 /**
  * An abstraction for a thread of execution.
  */
-class YARP_OS_impl_API ThreadImpl : public Runnable
+class YARP_OS_impl_API ThreadImpl
 {
 public:
-    ThreadImpl();
-    ThreadImpl(Runnable* target);
-
     virtual ~ThreadImpl();
 
     int join(double seconds = -1);
-    void run() override;
-    void close() override;
+    virtual void run();
+    virtual void close();
 
     // similar to close, but it does not call join (does not wait for thread termination)
     void askToClose();
@@ -44,11 +40,11 @@ public:
     bool isClosing();
     bool isRunning();
 
-    void beforeStart() override;
-    void afterStart(bool success) override;
+    virtual void beforeStart();
+    virtual void afterStart(bool success);
 
-    bool threadInit() override;
-    void threadRelease() override;
+    virtual bool threadInit();
+    virtual void threadRelease();
 
     static int getCount();
 
@@ -70,24 +66,23 @@ public:
     int getPolicy();
     long getTid();
 
-    long tid;
+    long tid{-1};
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::thread::id) id;
 
     static void yield();
 
 private:
-    int defaultPriority;
-    int defaultPolicy;
+    int defaultPriority{-1};
+    int defaultPolicy{-1};
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::thread) thread;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) active;
-    bool opened;
-    bool closing;
-    bool needJoin;
-    Runnable* delegate;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) active{false};
+    bool opened{false};
+    bool closing{false};
+    bool needJoin{false};
 
-    yarp::os::Semaphore synchro;
+    yarp::os::Semaphore synchro{0};
 
-    bool initWasSuccessful;
+    bool initWasSuccessful{false};
 };
 
 } // namespace impl

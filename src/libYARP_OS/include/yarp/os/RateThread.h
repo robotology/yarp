@@ -16,6 +16,10 @@
 YARP_COMPILER_WARNING("<yarp/os/RateThread.h> file is deprecated")
 #endif
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0 (RateThreadWrapper since YARP 3.3)
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+
 #include <yarp/os/api.h>
 
 #include <yarp/os/PeriodicThread.h>
@@ -23,8 +27,6 @@ YARP_COMPILER_WARNING("<yarp/os/RateThread.h> file is deprecated")
 
 namespace yarp {
 namespace os {
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-
 
 /**
  * \ingroup key_class
@@ -219,7 +221,9 @@ protected:
     void afterStart(bool success) override;
 };
 
-
+/**
+ * @deprecated since YARP 3.0
+ */
 class YARP_OS_DEPRECATED_API_MSG("Use PeriodicThread(..., == ShouldUseSystemClock::Yes) instead") SystemRateThread : public PeriodicThread
 {
 public:
@@ -231,12 +235,12 @@ public:
 };
 
 
-#endif
 /**
  * This class takes a Runnable instance and wraps a thread around it.
- * This class is under development - API may change a lot.
+ *
+ * @deprecated since YARP 3.3
  */
-class YARP_OS_API RateThreadWrapper : public PeriodicThread
+class YARP_OS_DEPRECATED_API RateThreadWrapper : public PeriodicThread
 {
 private:
     yarp::os::Runnable* helper;
@@ -272,5 +276,7 @@ public:
 } // namespace os
 } // namespace yarp
 
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_OS_RATETHREAD_H

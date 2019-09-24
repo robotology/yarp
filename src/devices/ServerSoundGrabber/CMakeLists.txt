@@ -8,7 +8,8 @@ yarp_prepare_plugin(ServerSoundGrabber
                     CATEGORY device
                     TYPE ServerSoundGrabber
                     INCLUDE ServerSoundGrabber.h
-                    DEFAULT ON)
+                    DEFAULT OFF
+                    DEPENDS "NOT YARP_NO_DEPRECATED") # DEPRECATED Since YARP 3.2
 
 if(NOT SKIP_ServerSoundGrabber)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)

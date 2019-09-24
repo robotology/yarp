@@ -15,6 +15,8 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 
 bool ServerFrameGrabber::close()
 {
@@ -493,3 +495,5 @@ bool ServerFrameGrabber::updateService()
     }
     return false;
 }
+
+YARP_WARNING_POP

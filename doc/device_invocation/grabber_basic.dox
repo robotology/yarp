@@ -1,12 +1,12 @@
 /**
  * \ingroup dev_examples
  *
- * \defgroup grabber_basic Example for grabber (grabber_basic)
+ * \defgroup grabber_basic Example for grabberDual (grabber_basic)
 
-Instantiates \ref cmd_device_grabber "grabber" device implemented by ServerFrameGrabber.
+Instantiates \ref cmd_device_grabberDual "grabberDual" device implemented by ServerGrabber.
 \verbatim
 # start up a network wrapper around a test_grabber
-device grabber
+device grabberDual
 subdevice test_grabber
 width 640
 height 480
@@ -34,39 +34,19 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
-<tr><td>subdevice</td><td>name (or nested configuration) of device to wrap</td><td></td></tr>
-<tr><td>test_grabber.device</td><td></td><td></td></tr>
-<tr><td>test_grabber.wrapped</td><td></td><td></td></tr>
-<tr><td>test_grabber.width</td><td>desired width of test image</td><td>320</td></tr>
-<tr><td>test_grabber.height</td><td>desired height of test image</td><td>240</td></tr>
-<tr><td>test_grabber.horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
-<tr><td>test_grabber.verticalFov</td><td>desired vertical fov of test image</td><td>2.0</td></tr>
-<tr><td>test_grabber.mirror</td><td>mirroring disabled by default</td><td>0</td></tr>
-<tr><td>test_grabber.physFocalLength</td><td>Physical focal length of the test_grabber</td><td>3.0</td></tr>
-<tr><td>test_grabber.focalLengthX</td><td>Horizontal component of the focal length of the test_grabber</td><td>4.0</td></tr>
-<tr><td>test_grabber.focalLengthY</td><td>Vertical component of the focal length of the test_grabber</td><td>5.0</td></tr>
-<tr><td>test_grabber.principalPointX</td><td>X coordinate of the principal point of the test_grabber</td><td>6.0</td></tr>
-<tr><td>test_grabber.principalPointY</td><td>Y coordinate of the principal point of the test_grabber</td><td>7.0</td></tr>
-<tr><td>test_grabber.retificationMatrix</td><td>Matrix that describes the lens' distortion(fake)</td><td>1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0</td></tr>
-<tr><td>test_grabber.distortionModel</td><td>Reference to group of parameters describing the distortion model of the camera</td><td>FishEye</td></tr>
-<tr><td>test_grabber.k1</td><td>Radial distortion coefficient of the lens(fake)</td><td>8.0</td></tr>
-<tr><td>test_grabber.k2</td><td>Radial distortion coefficient of the lens(fake)</td><td>9.0</td></tr>
-<tr><td>test_grabber.k3</td><td>Radial distortion coefficient of the lens(fake)</td><td>10.0</td></tr>
-<tr><td>test_grabber.t1</td><td>Tangential distortion of the lens(fake)</td><td>11.0</td></tr>
-<tr><td>test_grabber.t2</td><td>Tangential distortion of the lens(fake)</td><td>12.0</td></tr>
-<tr><td>test_grabber.freq</td><td>rate of test images in Hz</td><td></td></tr>
-<tr><td>test_grabber.period</td><td>period of test images in seconds</td><td></td></tr>
-<tr><td>test_grabber.mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]</td><td>line</td></tr>
-<tr><td>test_grabber.src</td><td></td><td></td></tr>
-<tr><td>test_grabber.bayer</td><td>should emit bayer test image?</td><td></td></tr>
-<tr><td>test_grabber.mono</td><td>should emit a monochrome image?</td><td></td></tr>
+<tr><td>period</td><td>refresh period(in ms) of the broadcasted values through yarp ports</td><td></td></tr>
+<tr><td>subdevice</td><td>name of the subdevice to use as a data source</td><td></td></tr>
+<tr><td>left_config</td><td></td><td></td></tr>
+<tr><td>right_config</td><td></td><td></td></tr>
+<tr><td>twoCameras</td><td>if true ServerGrabber will open and handle two devices, if false only one</td><td></td></tr>
+<tr><td>split</td><td>set 'true' to split the streaming on two different ports</td><td></td></tr>
+<tr><td>capabilities</td><td>two capabilities supported, COLOR and RAW respectively for rgb and raw streaming</td><td></td></tr>
 <tr><td>no_drop</td><td>if present, use strict policy for sending data</td><td></td></tr>
 <tr><td>stamp</td><td>if present, add timestamps to data</td><td></td></tr>
-<tr><td>name</td><td>name of port to send data on</td><td>/grabber</td></tr>
 <tr><td>single_threaded</td><td>if present, operate in single threaded mode</td><td></td></tr>
-<tr><td>framerate</td><td>maximum rate in Hz to read from subdevice</td><td>0</td></tr>
+<tr><td>name</td><td>name of port to send data on</td><td>/grabber</td></tr>
 </table>
 
-\sa ServerFrameGrabber
+\sa ServerGrabber
 
  */

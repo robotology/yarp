@@ -10,6 +10,17 @@
 #ifndef YARP_DEV_DATASOURCE_H
 #define YARP_DEV_DATASOURCE_H
 
+#include <yarp/conf/system.h>
+
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/dev/DataSource.h> file is deprecated")
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+
 #include <yarp/os/Port.h>
 #include <yarp/os/Runnable.h>
 #include <yarp/os/PortWriterBuffer.h>
@@ -36,14 +47,14 @@ namespace yarp {
 }
 
 template <class T>
-class yarp::dev::DataSource {
+class YARP_DEPRECATED yarp::dev::DataSource {
 public:
     virtual ~DataSource() {}
     virtual bool getDatum(T& datum) = 0;
 };
 
 template <class T>
-class yarp::dev::DataWriter : public yarp::os::Runnable {
+class YARP_DEPRECATED yarp::dev::DataWriter : public yarp::os::Runnable {
 private:
     yarp::os::Port& port;
     yarp::os::PortWriterBuffer<T> writer;
@@ -140,7 +151,7 @@ public:
 
 
 template <class T1, class T2>
-class yarp::dev::DataSource2 {
+class YARP_DEPRECATED yarp::dev::DataSource2 {
 public:
     virtual ~DataSource2() {}
     virtual bool getDatum(T1& datum1, T2& datum2) = 0;
@@ -148,7 +159,7 @@ public:
 
 
 template <class T1, class T2>
-class yarp::dev::DataWriter2 : public yarp::os::Runnable {
+class YARP_DEPRECATED yarp::dev::DataWriter2 : public yarp::os::Runnable {
 private:
     yarp::os::Port& port1;
     yarp::os::Port& port2;
@@ -186,7 +197,10 @@ public:
 };
 
 
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
+YARP_WARNING_POP
+
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_DEV_DATASOURCE_H

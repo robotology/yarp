@@ -95,40 +95,6 @@ void theExecutiveBranch(void* args)
 }
 
 
-ThreadImpl::ThreadImpl() :
-        tid(-1),
-        id(std::thread::id()),
-        defaultPriority(-1),
-        defaultPolicy(-1),
-        thread(std::thread()),
-        active(false),
-        opened(false),
-        closing(false),
-        needJoin(false),
-        delegate(nullptr),
-        synchro(0),
-        initWasSuccessful(false)
-{
-}
-
-
-ThreadImpl::ThreadImpl(Runnable* target) :
-        tid(-1),
-        id(std::thread::id()),
-        defaultPriority(-1),
-        defaultPolicy(-1),
-        thread(std::thread()),
-        active(false),
-        opened(false),
-        closing(false),
-        needJoin(false),
-        delegate(target),
-        synchro(0),
-        initWasSuccessful(false)
-{
-}
-
-
 ThreadImpl::~ThreadImpl()
 {
     YARP_DEBUG(Logger::get(), "Thread being deleted");
@@ -187,17 +153,11 @@ int ThreadImpl::join(double seconds)
 
 void ThreadImpl::run()
 {
-    if (delegate != nullptr) {
-        delegate->run();
-    }
 }
 
 void ThreadImpl::close()
 {
     closing = true;
-    if (delegate != nullptr) {
-        delegate->close();
-    }
     join(-1);
 }
 
@@ -205,38 +165,23 @@ void ThreadImpl::close()
 void ThreadImpl::askToClose()
 {
     closing = true;
-    if (delegate != nullptr) {
-        delegate->close();
-    }
 }
 
 void ThreadImpl::beforeStart()
 {
-    if (delegate != nullptr) {
-        delegate->beforeStart();
-    }
 }
 
 void ThreadImpl::afterStart(bool success)
 {
-    if (delegate != nullptr) {
-        delegate->afterStart(success);
-    }
 }
 
 bool ThreadImpl::threadInit()
 {
-    if (delegate != nullptr) {
-        return delegate->threadInit();
-    }
     return true;
 }
 
 void ThreadImpl::threadRelease()
 {
-    if (delegate != nullptr) {
-        delegate->threadRelease();
-    }
 }
 
 bool ThreadImpl::start()

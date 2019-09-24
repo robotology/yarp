@@ -21,7 +21,6 @@
 #include <yarp/dev/IControlDebug.h>
 #include <yarp/dev/IControlLimits.h>
 #include <yarp/dev/ControlBoardPid.h>
-#include <yarp/dev/DataSource.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/DriverLinkCreator.h>
 #include <yarp/dev/Drivers.h>
@@ -41,5 +40,11 @@
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/IWrapper.h>
 #include <yarp/dev/IMultipleWrapper.h>
+
+#ifndef YARP_NO_DEPRECATED // since YARP 3.3
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#include <yarp/dev/DataSource.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_DEV_ALL_H

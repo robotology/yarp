@@ -28,7 +28,6 @@ using namespace yarp::sig;
 TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("test_grabber", "device");
-    YARP_REQUIRE_PLUGIN("grabber", "device");
     YARP_REQUIRE_PLUGIN("remote_grabber", "device");
     YARP_REQUIRE_PLUGIN("grabberDual", "device");
 
@@ -40,8 +39,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
         // try to take an image and check the relative port and rpc port
         PolyDriver dd;
         Property p;
-        p.put("device","grabber");
-        p.put("subdevice","test_grabber");
+        p.put("device","test_grabber");
         REQUIRE(dd.open(p)); // open reported successful
         IFrameGrabberImage *grabber = nullptr;
         REQUIRE(dd.view(grabber)); // interface reported
@@ -60,7 +58,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
         p.put("device","remote_grabber");
         p.put("remote","/grabber");
         p.put("local","/grabber/client");
-        p2.put("device","grabber");
+        p2.put("device","grabberDual");
         p2.put("subdevice","test_grabber");
 
         REQUIRE(dd2.open(p2)); // server open reported successful
@@ -93,7 +91,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
         p.put("local","/grabber/client");
         p.put("no_stream", 1);
 
-        p2.put("device","grabber");
+        p2.put("device","grabberDual");
         p2.put("subdevice","test_grabber");
 
         REQUIRE(dd2.open(p2)); // server open reported successful
@@ -189,14 +187,13 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
         vertices.resize(2);
         vertices[0] = std::pair <int, int> (0, 0);
         vertices[1] = std::pair <int, int> ( 10, 10); // Configure a doable crop.
-        // check crop function must not work on old server (call does not hangs)
-        CHECK_FALSE(grabber->getImageCrop(YARP_CROP_RECT, vertices, crop));
+
+        CHECK(grabber->getImageCrop(YARP_CROP_RECT, vertices, crop));
 
         CHECK(dd2.close()); // server close reported successful
         CHECK(dd.close()); // client close reported successful
     }
 
-    //Testing the new ServerGrabber
     SECTION("Test the IRgbVisualParams interface")
     {
         PolyDriver dd;

@@ -17,7 +17,7 @@ yarp_prepare_plugin(fake_grabber
                     CATEGORY device
                     TYPE FakeFrameGrabber
                     INCLUDE FakeFrameGrabber.h
-                    EXTRA_CONFIG WRAPPER=grabber)
+                    EXTRA_CONFIG WRAPPER=grabberDual)
 
 if(NOT SKIP_fake_grabber)
   yarp_add_plugin(fake_grabber FakeFrameGrabber.cpp FakeFrameGrabber.h)

@@ -23,7 +23,6 @@ set(YARP_dev_HDRS include/yarp/dev/all.h
                   include/yarp/dev/ControlBoardInterfacesImpl.h
                   include/yarp/dev/ControlBoardPid.h
                   include/yarp/dev/ControlBoardVocabs.h
-                  include/yarp/dev/DataSource.h
                   include/yarp/dev/DeviceDriver.h
                   include/yarp/dev/DriverLinkCreator.h
                   include/yarp/dev/Drivers.h
@@ -123,7 +122,8 @@ if(TARGET YARP::YARP_math)
 endif()
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.3.0
-  list(APPEND YARP_dev_HDRS include/yarp/dev/GenericSensorInterfaces.h
+  list(APPEND YARP_dev_HDRS include/yarp/dev/DataSource.h
+                            include/yarp/dev/GenericSensorInterfaces.h
                             include/yarp/dev/PreciselyTimed.h
                             include/yarp/dev/SerialInterfaces.h
                             include/yarp/dev/Wrapper.h)
