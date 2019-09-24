@@ -123,7 +123,7 @@ bool fakeNavigation::resumeNavigation()
     return true;
 }
 
-bool fakeNavigation::getAllNavigationWaypoints(std::vector<Map2DLocation>& waypoints)
+bool fakeNavigation::getAllNavigationWaypoints(Map2DPath& waypoints)
 {
     yInfo() << "getAllNavigationWaypoints not yet implemented";
     return true;
