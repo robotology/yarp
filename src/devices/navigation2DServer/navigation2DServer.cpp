@@ -366,19 +366,19 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     }
     else if (request == VOCAB_NAV_GET_NAVIGATION_WAYPOINTS)
     {
-        std::vector<Map2DLocation> locs;
+        Map2DPath locs;
         bool ret = iNav_ctrl->getAllNavigationWaypoints(locs);
         if (ret)
         {
             reply.addVocab(VOCAB_OK);
             Bottle& waypoints = reply.addList();
-            for (size_t i = 0; i < locs.size(); i++)
+            for (auto it = locs.begin(); it!=locs.end(); it++)
             {
                 Bottle& the_waypoint = waypoints.addList();
-                the_waypoint.addString(locs[i].map_id);
-                the_waypoint.addFloat64(locs[i].x);
-                the_waypoint.addFloat64(locs[i].y);
-                the_waypoint.addFloat64(locs[i].theta);
+                the_waypoint.addString(it->map_id);
+                the_waypoint.addFloat64(it->x);
+                the_waypoint.addFloat64(it->y);
+                the_waypoint.addFloat64(it->theta);
             }
         }
         else

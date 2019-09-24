@@ -26,6 +26,10 @@ namespace yarp
             class YARP_dev_API Map2DPath : public yarp::dev::Map2DPathData
             {
             public:
+                typedef yarp::dev::Nav2D::Map2DLocation* iterator;
+                typedef const yarp::dev::Nav2D::Map2DLocation* const_iterator;
+
+            public:
                 /**
                 * Constructor
                 * @param area_points: a set of Map2DLocations defining the path.
@@ -85,6 +89,49 @@ namespace yarp
                 * Remove all elements from the path
                 */
                 void clear();
+
+                /**
+                 * @brief Returns an iterator to the beginning of the VectorOf
+                 * @note At the moment iterator is implemented as a pointer, it may change in the future.
+                 * For this reason it should not be used as a pointer to the data, use data() instead.
+                 */
+                iterator begin() noexcept
+                {
+                    return this->begin();
+                }
+
+
+                /**
+                 * @brief Returns an iterator to the end of the VectorOf
+                 */
+                iterator end() noexcept
+                {
+                    return this->end();
+                }
+
+                /**
+                 * @brief Returns a const iterator to the beginning of the VectorOf
+                 * @note At the moment iterator is implemented as a pointer, it may change in the future.
+                 * For this reason it should not be used as a pointer to the data, use data() instead.
+                 */
+
+                const_iterator cbegin() const noexcept
+                {
+                    return this->cbegin();;
+                }
+
+                /**
+                 * @brief Returns a const iterator to the end of the VectorOf.
+                 */
+                const_iterator cend() const noexcept
+                {
+                    return this->cend();
+                }
+
+                void push_back(yarp::dev::Nav2D::Map2DLocation loc)
+                {
+                    waypoints.push_back(loc);
+                }
             };
         }
     }

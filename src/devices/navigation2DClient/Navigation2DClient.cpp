@@ -1223,7 +1223,7 @@ bool Navigation2DClient::resumeNavigation()
     return true;
 }
 
-bool   Navigation2DClient::getAllNavigationWaypoints(std::vector<Map2DLocation>& waypoints)
+bool   Navigation2DClient::getAllNavigationWaypoints(Map2DPath& waypoints)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
