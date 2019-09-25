@@ -221,11 +221,10 @@ EOF
 fi
 
 
-) > license-statement.txt
+) > COPYING
+
+rm -Rf copyright-*.txt license-*.txt license_check
 
 echo
-echo "License statement in license-statement.txt"
-echo
-echo "You can now run:"
-echo "   cp license-statement.txt COPYING"
+echo "COPYING file updated"
 echo
