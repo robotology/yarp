@@ -77,6 +77,28 @@ bool Vec2D<int>::read(yarp::os::ConnectionReader& connection)
 }
 
 template<>
+bool Vec2D<size_t>::read(yarp::os::ConnectionReader& connection)
+{
+    // auto-convert text mode interaction
+    connection.convertTextMode();
+    Vec2DPortContentHeader header;
+    bool ok = connection.expectBlock((char*)&header, sizeof(header));
+    if (!ok) return false;
+
+    if (header.listLen == 2 && header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_INT64))
+    {
+        this->x = connection.expectInt64();
+        this->y = connection.expectInt64();
+    }
+    else
+    {
+        return false;
+    }
+
+    return !connection.isError();
+}
+
+template<>
 bool Vec2D<double>::write(yarp::os::ConnectionWriter& connection) const
 {
     Vec2DPortContentHeader header;
@@ -106,6 +128,24 @@ bool Vec2D<int>::write(yarp::os::ConnectionWriter& connection) const
 
     connection.appendInt32(this->x);
     connection.appendInt32(this->y);
+
+    connection.convertTextMode();
+
+    return !connection.isError();
+}
+
+template<>
+bool Vec2D<size_t>::write(yarp::os::ConnectionWriter& connection) const
+{
+    Vec2DPortContentHeader header;
+
+    header.listTag = (BOTTLE_TAG_LIST | BOTTLE_TAG_INT64);
+    header.listLen = 2;
+
+    connection.appendBlock((char*)&header, sizeof(header));
+
+    connection.appendInt64(this->x);
+    connection.appendInt64(this->y);
 
     connection.convertTextMode();
 
@@ -218,3 +258,34 @@ template yarp::math::Vec2D<int>    YARP_math_API operator * (const yarp::sig::Ma
 
 template class YARP_math_API yarp::math::Vec2D<double>;
 template class YARP_math_API yarp::math::Vec2D<int>;
+template class YARP_math_API yarp::math::Vec2D<size_t>;
+
+//--------------------------------------------------------------------
+namespace yarp {
+    namespace math {
+        //constructors
+        template <typename T>
+        yarp::math::Vec2Db<T>::Vec2Db() : x(0), y(0)
+        {
+        }
+
+        template <typename T>
+        yarp::math::Vec2Db<T>::Vec2Db(const yarp::sig::Vector& v)
+        {
+            yAssert(v.size() == 2);
+            x = T(v[0]);
+            y = T(v[1]);
+        }
+
+        template <typename T>
+        yarp::math::Vec2Db<T>::Vec2Db(const T& x_value, const T& y_value)
+        {
+            x = x_value;
+            y = y_value;
+        }
+    }
+}
+
+template class YARP_math_API yarp::math::Vec2Db<double>;
+template class YARP_math_API yarp::math::Vec2Db<int>;
+template class YARP_math_API yarp::math::Vec2Db<size_t>;

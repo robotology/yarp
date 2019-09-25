@@ -21,8 +21,9 @@ namespace math {
 template <typename T>
 class YARP_math_API Vec2D : public yarp::os::Portable
 {
-    static_assert (std::is_same<int, T>::value ||
-                   std::is_same<double, T>::value, "Vec2D can be specialized only as int, double");
+    static_assert (std::is_same<size_t, T>::value ||
+                   std::is_same<int, T>::value ||
+                   std::is_same<double, T>::value, "Vec2D can be specialized only as size_t, int, double");
 public:
     T x;
     T y;
@@ -74,6 +75,29 @@ public:
     yarp::math::Vec2D<T>& operator-=(const yarp::math::Vec2D<T>& rhs);
     bool operator == (const yarp::math::Vec2D<T>& rhs) const;
     bool operator != (const yarp::math::Vec2D<T>& rhs) const;
+};
+
+template <typename T>
+class YARP_math_API Vec2Db
+{
+    static_assert (std::is_same<size_t, T>::value ||
+        std::is_same<int, T>::value ||
+        std::is_same<double, T>::value, "Vec2D can be specialized only as size_t, int, double");
+public:
+    T x;
+    T y;
+
+public:
+    Vec2Db<T>();
+    Vec2Db<T>(const T& x_value, const T& y_value);
+    Vec2Db<T>(const yarp::sig::Vector& v);
+    explicit operator yarp::sig::Vector() const
+    {
+        yarp::sig::Vector v(2);
+        v[0] = double(x);
+        v[1] = double(y);
+        return v;
+    }
 };
 
 } // namespace math

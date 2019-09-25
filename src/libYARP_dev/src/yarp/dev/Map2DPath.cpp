@@ -61,9 +61,9 @@ void Map2DPath::clear()
 
 Map2DPath::Map2DPath(const std::vector<Map2DLocation> map_waypoints)
 {
-    for (auto it = map_waypoints.begin(); it != map_waypoints.end(); it++)
+    for (const auto& map_waypoint : map_waypoints)
     {
-        waypoints.push_back(*it);
+        waypoints.push_back(map_waypoint);
     }
 }
 
@@ -73,19 +73,7 @@ Map2DPath::Map2DPath()
 
 Map2DLocation &Map2DPath::operator[](size_t index)
 {
-    if (index >= this->waypoints.size())
-    {
-        yError() << "Map2DPath: Array index out of bound!";
-        yFatal();// return yarp::dev::Map2DLocation();
-    }
-    Map2DLocationData a;
-    auto b = reinterpret_cast<Map2DLocation&> (a);
-    
-    Map2DLocation ret_val;
-
-  //  yarp::dev::Map2DLocation& ret_val = dynamic_cast<yarp::dev::Map2DLocation&> (waypoints[index]);
-
-    return ret_val;
+    return waypoints[index];
 }
 
 size_t Map2DPath::size() const
@@ -102,4 +90,30 @@ bool Map2DPath::isOnSingleMap() const
         if (it->map_id != mapname) return false;
     }
     return true;
+}
+
+Map2DPath::iterator Map2DPath::begin() noexcept
+{
+    return waypoints.begin();
+}
+
+
+Map2DPath::iterator Map2DPath::end() noexcept
+{
+    return waypoints.end();
+}
+
+Map2DPath::const_iterator Map2DPath::cbegin() const noexcept
+{
+    return waypoints.cbegin();
+}
+
+Map2DPath::const_iterator Map2DPath::cend() const noexcept
+{
+    return waypoints.cend();
+}
+
+void Map2DPath::push_back(yarp::dev::Nav2D::Map2DLocation loc)
+{
+    waypoints.push_back(loc);
 }

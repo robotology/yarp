@@ -396,8 +396,8 @@ double FakeLaser::checkStraightLine(XYCell src, XYCell dst)
     XYCell src_final = src;
 
     //here using the fast Bresenham algorithm
-    int dx = abs(dst.x - src.x);
-    int dy = abs(dst.y - src.y);
+    int dx = abs(int(dst.x - src.x));
+    int dy = abs(int(dst.y - src.y));
     int err = dx - dy;
 
     int sx;

@@ -8,23 +8,17 @@
 
 namespace yarp yarp.dev
 
-//include "Map2DLocationData.thrift"
-
-struct Map2DLocationData
+struct Map2DLocation
 {
-    1: string map_id;
-    2: double x;
-    3: double y;
-    4: double theta;
 }
 (
-    yarp.api.include = "yarp/dev/api.h"
-    yarp.api.keyword = "YARP_dev_API"
+  yarp.name = "yarp::dev::Nav2D::Map2DLocation"
+  yarp.includefile="yarp/dev/Map2DLocation.h"
 )
 
 struct Map2DPathData
 {
-    1: list<Map2DLocationData> waypoints;
+    1: list<Map2DLocation> waypoints;
 }
 (
     yarp.api.include = "yarp/dev/api.h"

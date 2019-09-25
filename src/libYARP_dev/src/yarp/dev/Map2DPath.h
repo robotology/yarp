@@ -26,10 +26,6 @@ namespace yarp
             class YARP_dev_API Map2DPath : public yarp::dev::Map2DPathData
             {
             public:
-                typedef yarp::dev::Nav2D::Map2DLocation* iterator;
-                typedef const yarp::dev::Nav2D::Map2DLocation* const_iterator;
-
-            public:
                 /**
                 * Constructor
                 * @param area_points: a set of Map2DLocations defining the path.
@@ -42,14 +38,14 @@ namespace yarp
                 Map2DPath();
 
                 /**
-                * Returns text representation of the area.
-                * @return a human readable string containing the area infos.
+                * Returns text representation of the path.
+                * @return a human readable string containing the path infos.
                 */
                 std::string toString() const;
 
                 /**
-                * Compares two Map2DAreas
-                * @return true if the two areas are different.
+                * Compares two Map2DPath 
+                * @return true if the two paths are different.
                 */
                 bool operator!=(const Map2DPath& r) const;
 
@@ -90,48 +86,34 @@ namespace yarp
                 */
                 void clear();
 
-                /**
-                 * @brief Returns an iterator to the beginning of the VectorOf
-                 * @note At the moment iterator is implemented as a pointer, it may change in the future.
-                 * For this reason it should not be used as a pointer to the data, use data() instead.
-                 */
-                iterator begin() noexcept
-                {
-                    return this->begin();
-                }
-
+                using iterator = std::vector<Map2DLocation>::iterator;
+                using const_iterator = std::vector<Map2DLocation>::const_iterator;
 
                 /**
-                 * @brief Returns an iterator to the end of the VectorOf
+                 * Returns an iterator to the begin of the Path.
                  */
-                iterator end() noexcept
-                {
-                    return this->end();
-                }
+                iterator begin() noexcept;
 
                 /**
-                 * @brief Returns a const iterator to the beginning of the VectorOf
-                 * @note At the moment iterator is implemented as a pointer, it may change in the future.
-                 * For this reason it should not be used as a pointer to the data, use data() instead.
+                 * @brief Returns an iterator to the end of the Path
                  */
-
-                const_iterator cbegin() const noexcept
-                {
-                    return this->cbegin();;
-                }
+                iterator end() noexcept;
 
                 /**
-                 * @brief Returns a const iterator to the end of the VectorOf.
+                 * Returns a const iterator to the begin of the Path.
                  */
-                const_iterator cend() const noexcept
-                {
-                    return this->cend();
-                }
+                const_iterator cbegin() const noexcept;
 
-                void push_back(yarp::dev::Nav2D::Map2DLocation loc)
-                {
-                    waypoints.push_back(loc);
-                }
+                /**
+                 * Returns a const iterator to the end of the Path.
+                 */
+                const_iterator cend() const noexcept;
+
+                /**
+                 * Inserts a new location into the path
+                 * @loc   the location to be inserted
+                */
+                void push_back(yarp::dev::Nav2D::Map2DLocation loc);
             };
         }
     }

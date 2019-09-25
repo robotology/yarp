@@ -222,9 +222,9 @@ void MapGrid2D::enlargeCell(XYCell cell)
 {
     int i = cell.x;
     int j = cell.y;
-    int il = cell.x - 1>0 ? cell.x - 1 : 0;
+    int il = cell.x > 1 ? cell.x - 1 : 0;
     int ir = cell.x + 1<(int)(m_width) - 1 ? cell.x + 1 : (int)(m_width)-1;
-    int ju = cell.y - 1>0 ? cell.y - 1 : 0;
+    int ju = cell.y > 1 ? cell.y - 1 : 0;
     int jd = cell.y + 1<(int)(m_height) - 1 ? cell.y + 1 : (int)(m_height)-1;
 
     if (m_map_flags.pixel(il, j) == MAP_CELL_FREE) m_map_flags.pixel(il, j) = MAP_CELL_ENLARGED_OBSTACLE;
