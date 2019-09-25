@@ -5,7 +5,7 @@ on:
     - cron:  '0 0 * * *'
 
 jobs:
-  nightly-merge:
+  nightly-merge-devel:
 
     runs-on: ubuntu-latest
 
@@ -14,8 +14,32 @@ jobs:
       uses: actions/checkout@v1
 
     - name: Nightly Merge
-      uses: robotology/gh-action-nightly-merge@v1.1.0
+      uses: robotology/gh-action-nightly-merge@v1.2.0
       with:
+        allow_ff: false
+        user_name: 'Daniele E. Domenichelli (Nightly Merge Action)'
+        user_email: 'daniele.domenichelli@iit.it'
+        push_token: 'NIGHTLY_MERGE_PUSH_TOKEN'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NIGHTLY_MERGE_PUSH_TOKEN: ${{ secrets.NIGHTLY_MERGE_PUSH_TOKEN }}
+
+
+  nightly-merge-yarp-3-2:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Nightly Merge
+      uses: robotology/gh-action-nightly-merge@v1.2.0
+      with:
+        stable_branch: 'master'
+        development_branch: 'yarp-3.2'
+        allow_ff: true
+        ff_only: true
         user_name: 'Daniele E. Domenichelli (Nightly Merge Action)'
         user_email: 'daniele.domenichelli@iit.it'
         push_token: 'NIGHTLY_MERGE_PUSH_TOKEN'

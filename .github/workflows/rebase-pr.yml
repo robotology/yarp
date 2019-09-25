@@ -1,0 +1,20 @@
+name: 'Rebase PR'
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  rebase-pr:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Rebase PR
+      uses: drdanz/rebase@pr_from_fork
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        drdanz_TOKEN: ${{ secrets.NIGHTLY_MERGE_PUSH_TOKEN }}
