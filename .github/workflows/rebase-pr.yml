@@ -18,3 +18,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         drdanz_TOKEN: ${{ secrets.NIGHTLY_MERGE_PUSH_TOKEN }}
+        randaz81_TOKEN: ${{ secrets.randaz81_TOKEN }}
