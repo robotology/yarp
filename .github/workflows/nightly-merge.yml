@@ -16,30 +16,9 @@ jobs:
     - name: Nightly Merge
       uses: robotology/gh-action-nightly-merge@v1.2.0
       with:
+        stable_branch: 'yarp-3.3'
+        development_branch: 'master'
         allow_ff: false
-        user_name: 'Daniele E. Domenichelli (Nightly Merge Action)'
-        user_email: 'daniele.domenichelli@iit.it'
-        push_token: 'drdanz_TOKEN'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        drdanz_TOKEN: ${{ secrets.drdanz_TOKEN }}
-
-
-  nightly-merge-yarp-3-2:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v1
-
-    - name: Nightly Merge
-      uses: robotology/gh-action-nightly-merge@v1.2.0
-      with:
-        stable_branch: 'master'
-        development_branch: 'yarp-3.2'
-        allow_ff: true
-        ff_only: true
         user_name: 'Daniele E. Domenichelli (Nightly Merge Action)'
         user_email: 'daniele.domenichelli@iit.it'
         push_token: 'drdanz_TOKEN'
