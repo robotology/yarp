@@ -38,6 +38,9 @@ yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
         commitToRpc(false),
         active(false),
         recCallbackLock(nullptr),
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
+        old_recCallbackLock(nullptr),
+#endif // YARP_NO_DEPRECATED
         haveCallbackLock(false)
 {
     setContactable(&owner);
@@ -288,9 +291,25 @@ void yarp::os::impl::PortCoreAdapter::configWaitAfterSend(bool waitAfterSend)
     setWaitAfterSend(waitAfterSend);
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 bool yarp::os::impl::PortCoreAdapter::configCallbackLock(Mutex* lock)
 {
+    recCallbackLock = nullptr;
+    old_recCallbackLock = lock;
+    haveCallbackLock = true;
+    return setCallbackLock(lock);
+}
+YARP_WARNING_POP
+#endif
+
+bool yarp::os::impl::PortCoreAdapter::configCallbackLock(std::mutex* lock)
+{
     recCallbackLock = lock;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+    old_recCallbackLock = nullptr;
+#endif
     haveCallbackLock = true;
     return setCallbackLock(lock);
 }
@@ -298,6 +317,9 @@ bool yarp::os::impl::PortCoreAdapter::configCallbackLock(Mutex* lock)
 bool yarp::os::impl::PortCoreAdapter::unconfigCallbackLock()
 {
     recCallbackLock = nullptr;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+    old_recCallbackLock = nullptr;
+#endif
     haveCallbackLock = false;
     return removeCallbackLock();
 }

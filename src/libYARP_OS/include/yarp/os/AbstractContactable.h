@@ -140,8 +140,17 @@ public:
     // Documented in Contactable
     void includeNodeInName(bool flag) override;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     // Documented in Contactable
-    bool setCallbackLock(yarp::os::Mutex* mutex = nullptr) override;
+    YARP_DEPRECATED_MSG("Use setCallbackLock with std::mutex instead")
+    bool setCallbackLock(yarp::os::Mutex* mutex) override;
+YARP_WARNING_POP
+#endif
+
+    // Documented in Contactable
+    bool setCallbackLock(std::mutex* mutex = nullptr) override;
 
     // Documented in Contactable
     bool removeCallbackLock() override;

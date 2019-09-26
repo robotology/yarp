@@ -668,7 +668,17 @@ bool Port::isOpen() const
     return IMPL().active;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 bool Port::setCallbackLock(yarp::os::Mutex* mutex)
+{
+    return IMPL().configCallbackLock(mutex);
+}
+YARP_WARNING_POP
+#endif
+
+bool Port::setCallbackLock(std::mutex* mutex)
 {
     return IMPL().configCallbackLock(mutex);
 }

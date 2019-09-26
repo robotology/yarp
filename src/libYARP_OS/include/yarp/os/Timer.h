@@ -11,9 +11,14 @@
 
 #include <yarp/os/api.h>
 
+#ifndef YARP_NO_DEPRECATED // since YARP 3.3
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/os/Mutex.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif
 
 #include <functional>
+#include <mutex>
 
 namespace yarp {
 namespace os {
@@ -104,6 +109,68 @@ public:
     typedef std::function<bool(const yarp::os::YarpTimerEvent&)> TimerCallback;
     Timer(const Timer&) = delete;
     Timer operator=(const Timer&) = delete;
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+    /**
+     * @brief Timer constructor
+     * @param settings the timer settings. see TimerSettings documentation
+     * @param callback the pointer to the function to call. the signature should
+     *        be "bool foo(const yarp::os::YarpTimerEvent&)" and if it return
+     *        false the timer will stop
+     * @param mutex if not nullptr will be locked before calling callback and
+     *        released just after
+     * @param newThread whether the timer should be executed in a dedicated thread
+     *        or with all the timers with newThread == false (in any case they
+     *        will not run in the main thread)
+     * @deprecated since YARP 3.3
+     */
+    Timer(const yarp::os::TimerSettings& settings,
+          const TimerCallback& callback,
+          bool newThread,
+          yarp::os::Mutex* mutex);
+
+    /**
+     * @brief Timer constructor
+     * @param settings the timer settings. see TimerSettings documentation
+     * @param callback the pointer to the member method to call
+     * @param object the pointer to the object
+     * @param mutex if not nullptr will be locked before calling callback and
+     *        released just after
+     * @param newThread whether the timer should be executed in a his own thread
+     *        or with all the timers with newThread == false (in any case they
+     *        will not run in the main thread)
+     * @deprecated since YARP 3.3
+     */
+    template <class T>
+    Timer(const yarp::os::TimerSettings& settings,
+          bool (T::*callback)(const yarp::os::YarpTimerEvent&),
+          T* object,
+          bool newThread,
+          yarp::os::Mutex* mutex) :
+
+            Timer(settings, std::bind(callback, object, std::placeholders::_1), newThread, mutex)
+    {
+    }
+
+    /**
+     * const version.
+     * @deprecated since YARP 3.3
+     */
+    template <class T>
+    Timer(const yarp::os::TimerSettings& settings,
+          bool (T::*callback)(const yarp::os::YarpTimerEvent&) const,
+          const T* object,
+          bool newThread,
+          yarp::os::Mutex* mutex) :
+
+            Timer(settings, std::bind(callback, object, std::placeholders::_1), newThread, mutex)
+    {
+    }
+YARP_WARNING_POP
+#endif
+
     /**
      * @brief Timer constructor
      * @param settings the timer settings. see TimerSettings documentation
@@ -119,7 +186,7 @@ public:
     Timer(const yarp::os::TimerSettings& settings,
           const TimerCallback& callback,
           bool newThread,
-          yarp::os::Mutex* mutex = nullptr);
+          std::mutex* mutex = nullptr);
 
     /**
      * @brief Timer constructor
@@ -137,7 +204,7 @@ public:
           bool (T::*callback)(const yarp::os::YarpTimerEvent&),
           T* object,
           bool newThread,
-          yarp::os::Mutex* mutex = nullptr) :
+          std::mutex* mutex = nullptr) :
 
             Timer(settings, std::bind(callback, object, std::placeholders::_1), newThread, mutex)
     {
@@ -151,7 +218,7 @@ public:
           bool (T::*callback)(const yarp::os::YarpTimerEvent&) const,
           const T* object,
           bool newThread,
-          yarp::os::Mutex* mutex = nullptr) :
+          std::mutex* mutex = nullptr) :
 
             Timer(settings, std::bind(callback, object, std::placeholders::_1), newThread, mutex)
     {

@@ -6,7 +6,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/os/Mutex.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 
 #include <mutex>
 
@@ -41,9 +46,9 @@ void Mutex::unlock()
     mPriv->unlock();
 }
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 bool Mutex::tryLock()
 {
     return mPriv->try_lock();
 }
-#endif // YARP_NO_DEPRECATED
+
+YARP_WARNING_POP

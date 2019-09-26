@@ -180,7 +180,17 @@ void yarp::os::AbstractContactable::includeNodeInName(bool flag)
     asPort().includeNodeInName(flag);
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 bool yarp::os::AbstractContactable::setCallbackLock(yarp::os::Mutex* mutex)
+{
+    return asPort().setCallbackLock(mutex);
+}
+YARP_WARNING_POP
+#endif
+
+bool yarp::os::AbstractContactable::setCallbackLock(std::mutex* mutex)
 {
     return asPort().setCallbackLock(mutex);
 }

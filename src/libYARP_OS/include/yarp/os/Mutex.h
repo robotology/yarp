@@ -9,23 +9,29 @@
 #ifndef YARP_OS_MUTEX_H
 #define YARP_OS_MUTEX_H
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-#    include <yarp/os/api.h>
-#else // YARP_NO_DEPRECATED
-#    include <mutex>
-#endif // YARP_NO_DEPRECATED
+#include <yarp/conf/system.h>
+
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/os/Mutex.h> file is deprecated")
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.3
+
+#include <yarp/os/api.h>
+#include <mutex>
 
 namespace yarp {
 namespace os {
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 /**
  * Basic wrapper for mutual exclusion.
  *
  * Intended to match std::mutex in C++11, for eventual replacement by that
  * class.
+ *
+ * @deprecated since YARP 3.3. Use \c std::mutex instead.
  */
-class YARP_OS_API Mutex
+class YARP_OS_DEPRECATED_API_MSG("Use std::mutex instead") Mutex
 {
 public:
     /**
@@ -80,13 +86,9 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-#else
-
-using Mutex = std::mutex;
-
-#endif // YARP_NO_DEPRECATED
-
 } // namespace os
 } // namespace yarp
+
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_OS_MUTEX_H
