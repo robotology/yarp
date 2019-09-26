@@ -19,10 +19,10 @@ jobs:
         allow_ff: false
         user_name: 'Daniele E. Domenichelli (Nightly Merge Action)'
         user_email: 'daniele.domenichelli@iit.it'
-        push_token: 'NIGHTLY_MERGE_PUSH_TOKEN'
+        push_token: 'drdanz_TOKEN'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NIGHTLY_MERGE_PUSH_TOKEN: ${{ secrets.NIGHTLY_MERGE_PUSH_TOKEN }}
+        drdanz_TOKEN: ${{ secrets.drdanz_TOKEN }}
 
 
   nightly-merge-yarp-3-2:
@@ -42,7 +42,7 @@ jobs:
         ff_only: true
         user_name: 'Daniele E. Domenichelli (Nightly Merge Action)'
         user_email: 'daniele.domenichelli@iit.it'
-        push_token: 'NIGHTLY_MERGE_PUSH_TOKEN'
+        push_token: 'drdanz_TOKEN'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NIGHTLY_MERGE_PUSH_TOKEN: ${{ secrets.NIGHTLY_MERGE_PUSH_TOKEN }}
+        drdanz_TOKEN: ${{ secrets.drdanz_TOKEN }}
