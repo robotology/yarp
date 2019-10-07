@@ -65,6 +65,7 @@ namespace dev {
 * | tf_root_frame         | string |       |               | yes       | name of the root frame                    |       |
 * | stick_as_axis         | bool   |       |               | yes       | if axes shoud be published as sticks      |       |
 * | gui_elements          | int    |       |               | yes       | number of the gui element to visualize    |       |
+* | hands_relative        | bool   |       | false         | no        | if the hand pose should be w.r.t. head    |       |
 
 Gui Groups parameters
 * |   Parameter name      | Type   | Units | Default Value | Required  | Description               | Notes |
