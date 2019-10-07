@@ -11,7 +11,7 @@ if(YARP_COMPILE_DEVICE_PLUGINS)
      NOT ALLOW_IDL_GENERATION AND
      YARP_COMPILE_EXECUTABLES)
     yarp_add_idl(MAS_THRIFT_GEN_FILES multipleAnalogSensorsSerializations.thrift)
-    set(MAS_THRIFT_INTERFACE_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include")
+    set(MAS_THRIFT_INTERFACE_INCLUDE_DIRS "${YARP_ADD_IDL_INCLUDE_DIR}")
   else()
     yarp_idl_to_dir(INPUT_FILES multipleAnalogSensorsSerializations.thrift
                     OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
