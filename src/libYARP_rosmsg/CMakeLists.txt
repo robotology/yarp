@@ -24,7 +24,7 @@ macro(_yarp_choose_idl _prefix)
        YARP_COMPILE_EXECUTABLES)
       yarp_add_idl(${_prefix}_GEN_FILES
                    ${ARGN})
-      set(${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include")
+      set(${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS "${YARP_ADD_IDL_INCLUDE_DIR}")
     else()
       foreach(_msg ${ARGN})
         yarp_idl_to_dir(INPUT_FILES ${_msg}
