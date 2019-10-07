@@ -119,8 +119,14 @@ option(BUILD_SHARED_LIBS "Compile shared libraries rather than linking staticall
 mark_as_advanced(BUILD_SHARED_LIBS)
 yarp_renamed_option(CREATE_SHARED_LIBRARY BUILD_SHARED_LIBS) # Since YARP 2.3.68.1
 
+set(YARP_DLL OFF)
 if(BUILD_SHARED_LIBS)
   set(YARP_DLL ON)
+endif()
+
+set (YARP_LINK_PLUGINS TRUE)
+if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
+  set (YARP_LINK_PLUGINS FALSE)
 endif()
 
 
