@@ -76,5 +76,3 @@ add_subdirectory(libyarpc)
 if(YARP_COMPILE_EXECUTABLES)
   add_subdirectory(yarpfs)
 endif()
-
-yarp_deprecated_option(YARP_USE_PERSISTENT_NAMESERVER)
