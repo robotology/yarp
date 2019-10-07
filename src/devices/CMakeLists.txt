@@ -103,11 +103,11 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
         if(NOT EXISTS "${safe_path}/CMakeLists.txt")
           message(FATAL_ERROR "${EXTDIR}_DIR=${${EXTDIR}_DIR} from ${EXTFILE} does not contain a CMakeLists.txt")
         endif()
-      add_subdirectory(${safe_path}
-                       ${CMAKE_CURRENT_BINARY_DIR}/externals/${EXTDIR})
-    endforeach(EXTDIR ${EXTERNAL_MODULES})
-  endif(EXISTS ${EXTFILE})
-endforeach(EXTFILE)
+        add_subdirectory(${safe_path}
+                         ${CMAKE_CURRENT_BINARY_DIR}/externals/${EXTDIR})
+      endforeach()
+    endif()
+  endforeach()
 
 yarp_end_plugin_library(yarpmod QUIET)
 add_library(YARP::yarpmod ALIAS yarpmod)
