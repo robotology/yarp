@@ -30,6 +30,7 @@ constexpr char rgbRes         [] = "rgbResolution";
 constexpr char framerate      [] = "framerate";
 constexpr char enableEmitter  [] = "enableEmitter";
 constexpr char needAlignment  [] = "needAlignment";
+constexpr char alignmentFrame [] = "alignmentFrame";
 
 
 static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
@@ -40,8 +41,16 @@ static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
     {rgbRes,         RGBDSensorParamParser::RGBDParam(rgbRes,          2)},
     {framerate,      RGBDSensorParamParser::RGBDParam(framerate,       1)},
     {enableEmitter,  RGBDSensorParamParser::RGBDParam(enableEmitter,   1)},
-    {needAlignment,  RGBDSensorParamParser::RGBDParam(needAlignment,   1)}
+    {needAlignment,  RGBDSensorParamParser::RGBDParam(needAlignment,   1)},
+    {alignmentFrame, RGBDSensorParamParser::RGBDParam(alignmentFrame,  1)}
 };
+
+static const std::map<std::string, rs2_stream> stringRSStreamMap {
+    {"None",  RS2_STREAM_ANY},
+    {"RGB",  RS2_STREAM_COLOR},
+    {"Depth", RS2_STREAM_DEPTH}
+};
+
 
 static std::string get_device_information(const rs2::device& dev)
 {
@@ -414,6 +423,7 @@ realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(n
     m_paramParser.rgbIntrinsic.isOptional   = true;
     m_paramParser.isOptionalExtrinsic       = true;
 
+
     m_supportedFeatures.push_back(YARP_FEATURE_EXPOSURE);
     m_supportedFeatures.push_back(YARP_FEATURE_WHITE_BALANCE);
     m_supportedFeatures.push_back(YARP_FEATURE_GAIN);
@@ -659,6 +669,7 @@ bool realsense2Driver::setParams()
     //ALIGNMENT
     if (params_map[needAlignment].isSetting && ret)
     {
+        yWarning()<<"realsense2Driver: needAlignment parameter is deprecated, use alignmentFrame instead.";
         Value& v = params_map[needAlignment].val[0];
         if (!v.isBool())
         {
@@ -667,9 +678,26 @@ bool realsense2Driver::setParams()
         }
 
         m_needAlignment = v.asBool();
-
+        m_alignment_stream = m_needAlignment ? RS2_STREAM_COLOR : RS2_STREAM_ANY;
     }
 
+    if (params_map[alignmentFrame].isSetting && ret)
+    {
+        Value& v = params_map[alignmentFrame].val[0];
+        auto alignmentFrameStr = v.asString();
+        if (!v.isString())
+        {
+            settingErrorMsg("Param " + params_map[alignmentFrame].name + " is not a string as it should be.", ret);
+            return false;
+        }
+
+        if (stringRSStreamMap.find(alignmentFrameStr) == stringRSStreamMap.end()) {
+            settingErrorMsg("Value "+alignmentFrameStr+" not allowed for " + params_map[alignmentFrame].name + " see documentation for supported values.", ret);
+            return false;
+        }
+
+        m_alignment_stream = stringRSStreamMap.at(alignmentFrameStr);
+    }
 
     //DEPTH_RES
     if (params_map[depthRes].isSetting && ret)
@@ -957,6 +985,11 @@ bool realsense2Driver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
+    if (m_alignment_stream == RS2_STREAM_DEPTH)
+    {
+        rs2::align align(m_alignment_stream);
+        data = align.process(data);
+    }
     return getImage(rgbImage, timeStamp, data);
 }
 
@@ -964,9 +997,9 @@ bool realsense2Driver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* tim
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
-    if (m_needAlignment)
+    if (m_alignment_stream == RS2_STREAM_COLOR)
     {
-        rs2::align align(RS2_STREAM_COLOR);
+        rs2::align align(m_alignment_stream);
         data = align.process(data);
     }
     return getImage(depthImage, timeStamp, data);
@@ -1036,9 +1069,9 @@ bool realsense2Driver::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& dep
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset data = m_pipeline.wait_for_frames();
-    if (m_needAlignment)
+    if (m_alignment_stream != RS2_STREAM_ANY) // RS2_STREAM_ANY is used as no-alignment-needed value.
     {
-        rs2::align align(RS2_STREAM_COLOR);
+        rs2::align align(m_alignment_stream);
         data = align.process(data);
     }
     return getImage(colorFrame, colorStamp, data) && getImage(depthFrame, depthStamp, data);
