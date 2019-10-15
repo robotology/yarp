@@ -409,10 +409,8 @@ bool realsense2Driver::pipelineRestart()
     if (!pipelineShutdown())
         return false;
 
-    if (!pipelineStartup())
-        return false;
+    return pipelineStartup();
 
-    return true;
 }
 
 bool realsense2Driver::setFramerate(const int _fps)
@@ -696,12 +694,8 @@ bool realsense2Driver::open(Searchable& config)
     }
 
     // setting Parameters
-    if (!setParams())
-    {
-        return false;
-    }
+    return setParams();
 
-    return true;
 }
 
 bool realsense2Driver::close()
@@ -1076,14 +1070,7 @@ bool realsense2Driver::hasFeature(int feature, bool* hasFeature)
         return false;
     }
 
-    if (std::find(m_supportedFeatures.begin(), m_supportedFeatures.end(), f) != m_supportedFeatures.end())
-    {
-        *hasFeature = true;
-    }
-    else
-    {
-        *hasFeature = false;
-    }
+    *hasFeature = std::find(m_supportedFeatures.begin(), m_supportedFeatures.end(), f) != m_supportedFeatures.end();
 
     return true;
 }
