@@ -353,6 +353,56 @@ static YarpDistortion rsDistToYarpDist(const rs2_distortion dist)
 
 }
 
+static void settingErrorMsg(const string& error, bool& ret)
+{
+    yError() << "realsense2Driver:" << error.c_str();
+    ret = false;
+}
+
+static bool setIntrinsic(Property& intrinsic, const rs2_intrinsics &values)
+{
+    yarp::sig::IntrinsicParams params;
+    params.focalLengthX       = values.fx;
+    params.focalLengthY       = values.fy;
+    params.principalPointX    = values.ppx;
+    params.principalPointY    = values.ppy;
+    // distortion model
+    params.distortionModel.type = rsDistToYarpDist(values.model);
+    params.distortionModel.k1 = values.coeffs[0];
+    params.distortionModel.k2 = values.coeffs[1];
+    params.distortionModel.t1 = values.coeffs[2];
+    params.distortionModel.t2 = values.coeffs[3];
+    params.distortionModel.k3 = values.coeffs[4];
+    params.toProperty(intrinsic);
+    return true;
+}
+
+static bool setExtrinsicParam(Matrix &extrinsic, const rs2_extrinsics &values)
+{
+
+    if (extrinsic.cols() != 4 || extrinsic.rows() != 4)
+    {
+        yError()<<"realsense2Driver: extrinsic matrix is not 4x4";
+        return false;
+    }
+
+    extrinsic.eye();
+
+    for (size_t j=0; j<extrinsic.rows() - 1; j++)
+    {
+        for (size_t i=0; i<extrinsic.cols() - 1; i++)
+        {
+            extrinsic[j][i] = values.rotation[i + j*extrinsic.cols()];
+        }
+    }
+
+    extrinsic[0][3] = values.translation[0];
+    extrinsic[1][3] = values.translation[1];
+    extrinsic[2][3] = values.translation[2];
+
+    return false;
+}
+
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
                                        m_paramParser(), m_verbose(false),
                                        m_initialized(false), m_stereoMode(false),
@@ -549,12 +599,6 @@ void realsense2Driver::updateTransformations()
 
 }
 
-
-void realsense2Driver::settingErrorMsg(const string& error, bool& ret)
-{
-    yError() << "realsense2Driver:" << error.c_str();
-    ret = false;
-}
 
 bool realsense2Driver::setParams()
 {
@@ -825,50 +869,6 @@ bool realsense2Driver::getRgbMirroring(bool& mirror)
 bool realsense2Driver::setRgbMirroring(bool mirror)
 {
     yWarning()<<"realsense2Driver: mirroring not supported";
-    return false;
-}
-
-bool realsense2Driver::setIntrinsic(Property& intrinsic, const rs2_intrinsics &values)
-{
-    yarp::sig::IntrinsicParams params;
-    params.focalLengthX       = values.fx;
-    params.focalLengthY       = values.fy;
-    params.principalPointX    = values.ppx;
-    params.principalPointY    = values.ppy;
-    // distortion model
-    params.distortionModel.type = rsDistToYarpDist(values.model);
-    params.distortionModel.k1 = values.coeffs[0];
-    params.distortionModel.k2 = values.coeffs[1];
-    params.distortionModel.t1 = values.coeffs[2];
-    params.distortionModel.t2 = values.coeffs[3];
-    params.distortionModel.k3 = values.coeffs[4];
-    params.toProperty(intrinsic);
-    return true;
-}
-
-bool realsense2Driver::setExtrinsicParam(Matrix &extrinsic, const rs2_extrinsics &values)
-{
-
-    if (extrinsic.cols() != 4 || extrinsic.rows() != 4)
-    {
-        yError()<<"realsense2Driver: extrinsic matrix is not 4x4";
-        return false;
-    }
-
-    extrinsic.eye();
-
-    for (size_t j=0; j<extrinsic.rows() - 1; j++)
-    {
-        for (size_t i=0; i<extrinsic.cols() - 1; i++)
-        {
-            extrinsic[j][i] = values.rotation[i + j*extrinsic.cols()];
-        }
-    }
-
-    extrinsic[0][3] = values.translation[0];
-    extrinsic[1][3] = values.translation[1];
-    extrinsic[2][3] = values.translation[2];
-
     return false;
 }
 

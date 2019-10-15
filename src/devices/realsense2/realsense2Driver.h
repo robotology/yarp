@@ -200,9 +200,6 @@ private:
 
     bool        getImage(FlexImage& Frame, Stamp* timeStamp, rs2::frameset& sourceFrame);
     bool        getImage(depthImage& Frame, Stamp* timeStamp, const rs2::frameset& sourceFrame);
-    bool        setIntrinsic(yarp::os::Property& intrinsic, const rs2_intrinsics& values);
-    bool        setExtrinsicParam(yarp::sig::Matrix& extrinsic, const rs2_extrinsics& values);
-    void        settingErrorMsg(const std::string& error, bool& ret);
     void        updateTransformations();
     bool        pipelineStartup();
     bool        pipelineShutdown();
