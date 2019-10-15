@@ -129,7 +129,7 @@ static bool isSupportedFormat(const rs2::sensor &sensor, const int width, const 
     //Next, we go over all the stream profiles and print the details of each one
 
     int profile_num = 0;
-    for (rs2::stream_profile stream_profile : stream_profiles)
+    for (const rs2::stream_profile& stream_profile : stream_profiles)
     {
         if (verbose)
         {
@@ -505,25 +505,25 @@ bool realsense2Driver::initializeRealsenseDevice()
     yInfo()<< "realsense2Driver: Device consists of" << m_sensors.size()<<"sensors";
     if (m_verbose)
     {
-        for (size_t i=0; i < m_sensors.size(); i++)
+        for (const auto & m_sensor : m_sensors)
         {
-            print_supported_options(m_sensors[i]);
+            print_supported_options(m_sensor);
         }
     }
 
-    for (size_t i=0; i < m_sensors.size(); i++)
+    for (auto & m_sensor : m_sensors)
     {
-        if (m_sensors[i].is<rs2::depth_sensor>())
+        if (m_sensor.is<rs2::depth_sensor>())
         {
-            m_depth_sensor =  &m_sensors[i];
+            m_depth_sensor =  &m_sensor;
             if (!getOption(RS2_OPTION_DEPTH_UNITS, m_depth_sensor, m_scale))
             {
                 yError()<<"relsense2Driver: failed to retrieve scale";
                 return false;
             }
         }
-        else if (m_sensors[i].get_stream_profiles()[0].stream_type() == RS2_STREAM_COLOR)
-            m_color_sensor = &m_sensors[i];
+        else if (m_sensor.get_stream_profiles()[0].stream_type() == RS2_STREAM_COLOR)
+            m_color_sensor = &m_sensor;
     }
 
     // Get stream intrinsics & extrinsics
