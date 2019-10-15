@@ -51,7 +51,7 @@ static std::string get_device_information(const rs2::device& dev)
 
     for (int i = 0; i < static_cast<int>(RS2_CAMERA_INFO_COUNT); i++)
     {
-        rs2_camera_info info_type = static_cast<rs2_camera_info>(i);
+        auto info_type = static_cast<rs2_camera_info>(i);
         ss << "  " << std::left << std::setw(20) << info_type << " : ";
 
         if (dev.supports(info_type))
@@ -79,7 +79,7 @@ static void print_supported_options(const rs2::sensor& sensor)
     // Starting from 0 until RS2_OPTION_COUNT (exclusive)
     for (int i = 0; i < static_cast<int>(RS2_OPTION_COUNT); i++)
     {
-        rs2_option option_type = static_cast<rs2_option>(i);
+        auto option_type = static_cast<rs2_option>(i);
         //SDK enum types can be streamed to get a string that represents them
 
         // To control an option, use the following api:
@@ -684,6 +684,7 @@ bool realsense2Driver::setParams()
 bool realsense2Driver::open(Searchable& config)
 {
     std::vector<RGBDSensorParamParser::RGBDParam*> params;
+    params.reserve(params_map.size());
     for (auto& p:params_map)
     {
         params.push_back(&(p.second));
@@ -1037,7 +1038,7 @@ bool realsense2Driver::getImage(depthImage& Frame, Stamp *timeStamp, const rs2::
     Frame.resize(w, h);
 
     float* rawImage = &Frame.pixel(0,0);
-    const uint16_t * rawImageRs =(const uint16_t *) depth_frm.get_data();
+    const auto * rawImageRs =(const uint16_t *) depth_frm.get_data();
 
     for(int i = 0; i < w * h; i++)
     {
@@ -1110,7 +1111,7 @@ bool realsense2Driver::setFeature(int feature, double value)
 
     float valToSet = 0.0;
     b = false;
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
@@ -1188,7 +1189,7 @@ bool realsense2Driver::getFeature(int feature, double *value)
     float valToGet = 0.0;
     b = false;
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     switch(f)
     {
     case YARP_FEATURE_EXPOSURE:
@@ -1258,7 +1259,7 @@ bool realsense2Driver::hasOnOff(  int feature, bool *HasOnOff)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_WHITE_BALANCE || f == YARP_FEATURE_MIRROR || f == YARP_FEATURE_EXPOSURE)
     {
         *HasOnOff = true;
@@ -1339,7 +1340,7 @@ bool realsense2Driver::hasAuto(int feature, bool *hasAuto)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_WHITE_BALANCE)
     {
         *hasAuto = true;
@@ -1358,7 +1359,7 @@ bool realsense2Driver::hasManual( int feature, bool* hasManual)
         return false;
     }
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_EXPOSURE || f == YARP_FEATURE_FRAME_RATE || f == YARP_FEATURE_GAIN ||
         f == YARP_FEATURE_HUE || f == YARP_FEATURE_SATURATION || f == YARP_FEATURE_SHARPNESS)
     {
@@ -1392,7 +1393,7 @@ bool realsense2Driver::setMode(int feature, FeatureMode mode)
     float one = 1.0;
     float zero = 0.0;
 
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_WHITE_BALANCE)
     {
         switch(mode)
@@ -1440,7 +1441,7 @@ bool realsense2Driver::getMode(int feature, FeatureMode* mode)
     }
     float res = 0.0;
     bool ret = true;
-    cameraFeature_id_t f = static_cast<cameraFeature_id_t>(feature);
+    auto f = static_cast<cameraFeature_id_t>(feature);
     if (f == YARP_FEATURE_WHITE_BALANCE)
     {
         ret &= getOption(RS2_OPTION_ENABLE_AUTO_WHITE_BALANCE, m_color_sensor, res);
