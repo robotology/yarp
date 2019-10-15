@@ -131,7 +131,7 @@ private:
 
 public:
     realsense2Driver();
-    ~realsense2Driver();
+    ~realsense2Driver() override = default;
 
     // DeviceDriver
     bool open(yarp::os::Searchable& config) override;
@@ -228,7 +228,7 @@ private:
     yarp::os::Stamp m_rgb_stamp;
     yarp::os::Stamp m_depth_stamp;
     std::string m_lastError;
-    yarp::dev::RGBDSensorParamParser* m_paramParser;
+    yarp::dev::RGBDSensorParamParser m_paramParser;
     bool m_verbose;
     bool m_initialized;
     bool m_stereoMode;

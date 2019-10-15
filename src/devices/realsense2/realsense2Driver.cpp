@@ -354,18 +354,15 @@ static YarpDistortion rsDistToYarpDist(const rs2_distortion dist)
 }
 
 realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(nullptr),
-                                       m_paramParser(nullptr), m_verbose(false),
+                                       m_paramParser(), m_verbose(false),
                                        m_initialized(false), m_stereoMode(false),
                                        m_needAlignment(true), m_fps(0),
                                        m_scale(0.0)
 {
-
-    m_paramParser = new RGBDSensorParamParser();
-
     // realsense SDK already provides them
-    m_paramParser->depthIntrinsic.isOptional = true;
-    m_paramParser->rgbIntrinsic.isOptional   = true;
-    m_paramParser->isOptionalExtrinsic       = true;
+    m_paramParser.depthIntrinsic.isOptional = true;
+    m_paramParser.rgbIntrinsic.isOptional   = true;
+    m_paramParser.isOptionalExtrinsic       = true;
 
     m_supportedFeatures.push_back(YARP_FEATURE_EXPOSURE);
     m_supportedFeatures.push_back(YARP_FEATURE_WHITE_BALANCE);
@@ -374,15 +371,6 @@ realsense2Driver::realsense2Driver() : m_depth_sensor(nullptr), m_color_sensor(n
     m_supportedFeatures.push_back(YARP_FEATURE_SHARPNESS);
     m_supportedFeatures.push_back(YARP_FEATURE_HUE);
     m_supportedFeatures.push_back(YARP_FEATURE_SATURATION);
-}
-
-realsense2Driver::~realsense2Driver()
-{
-    if (m_paramParser)
-    {
-        delete m_paramParser;
-        m_paramParser = nullptr;
-    }
 }
 
 bool realsense2Driver::pipelineStartup()
@@ -695,7 +683,7 @@ bool realsense2Driver::open(Searchable& config)
         m_stereoMode = config.find("stereoMode").asBool();
     }
 
-    if (!m_paramParser->parseParam(config, params))
+    if (!m_paramParser.parseParam(config, params))
     {
         yError()<<"realsense2Driver: failed to parse the parameters";
         return false;
