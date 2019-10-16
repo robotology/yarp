@@ -219,8 +219,8 @@ private:
     std::vector<rs2::sensor> m_sensors;
     rs2::sensor* m_depth_sensor;
     rs2::sensor* m_color_sensor;
-    rs2_intrinsics m_depth_intrin, m_color_intrin, m_infrared_intrin;
-    rs2_extrinsics m_depth_to_color, m_color_to_depth;
+    rs2_intrinsics m_depth_intrin{}, m_color_intrin{}, m_infrared_intrin{};
+    rs2_extrinsics m_depth_to_color{}, m_color_to_depth{};
     rs2_stream  m_alignment_stream{RS2_STREAM_COLOR};
 
 
