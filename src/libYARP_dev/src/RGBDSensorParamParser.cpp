@@ -181,7 +181,7 @@ bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGB
 
     if (!ret)
     {
-        yError() << "depthCamera driver input file not correct, please fix it!";
+        yError() << "RGBDSensorParamParser: driver input file not correct, please fix it!";
         return false;
     }
 

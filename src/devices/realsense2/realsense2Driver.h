@@ -72,7 +72,8 @@
  * |                              |  accuracy           | double              |  Read / write   | meters         |   -           |  No                              | Accuracy of the device, as the depth measurement error at 1 meter distance             |  Note that only few realsense devices allows to set it                |
  * |                              |  framerate          | int                 |  Read / Write   | fps            |   30          |  No                              | Framerate of the sensor                                                                |                                                                       |
  * |                              |  enableEmitter      | bool                |  Read / Write   | -              |   true        |  No                              | Flag for enabling the IR emitter(if supported by the sensor)                           |                                                                       |
- * |                              |  needAlignment      | bool                |  Read / Write   | -              |   true        |  No                              | Flag for enabling the alignment of the depth frame over the rgb frame                  |  This operation could be heavy, set it to false to increase the fps   |
+ * |                              |  needAlignment      | bool                |  Read / Write   | -              |   true        |  No                              | Flag for enabling the alignment of the depth frame over the rgb frame                  |  This option is deprecated, please use alignmentFrame instead.        |
+ * |                              |  alignmentFrame     | string              |  Read / Write   | -              |   RGB         |  No                              | This parameter specifies the frame to which the frames RGB and Depth will be aligned.  |  The accepted values are RGB, Depth, None. This operation could be heavy, set it to None to increase the fps.|
  * |  HW_DESCRIPTION              |      -              |  group              |                 | -              |   -           |  Yes                             | Hardware description of device property.                                               |  Read only property. Setting will be disabled                         |
  * |                              |  clipPlanes         | double, double      |  Read / write   | meters         |   -           |  No                              | Minimum and maximum distance at which an object is seen by the depth sensor            |  parameter introduced mainly for simulated sensors, it can be used to set the clip planes if Openni gives wrong values |
  *
@@ -89,7 +90,7 @@ depthResolution (640 480)    #Note the parentheses
 rgbResolution   (640 480)
 framerate       30
 enableEmitter   true
-needAlignment   true
+alignmentFrame  RGB
 
 [HW_DESCRIPTION]
 clipPlanes (0.2 10.0)
@@ -131,7 +132,7 @@ private:
 
 public:
     realsense2Driver();
-    ~realsense2Driver();
+    ~realsense2Driver() override = default;
 
     // DeviceDriver
     bool open(yarp::os::Searchable& config) override;
@@ -200,9 +201,6 @@ private:
 
     bool        getImage(FlexImage& Frame, Stamp* timeStamp, rs2::frameset& sourceFrame);
     bool        getImage(depthImage& Frame, Stamp* timeStamp, const rs2::frameset& sourceFrame);
-    bool        setIntrinsic(yarp::os::Property& intrinsic, const rs2_intrinsics& values);
-    bool        setExtrinsicParam(yarp::sig::Matrix& extrinsic, const rs2_extrinsics& values);
-    void        settingErrorMsg(const std::string& error, bool& ret);
     void        updateTransformations();
     bool        pipelineStartup();
     bool        pipelineShutdown();
@@ -221,14 +219,15 @@ private:
     std::vector<rs2::sensor> m_sensors;
     rs2::sensor* m_depth_sensor;
     rs2::sensor* m_color_sensor;
-    rs2_intrinsics m_depth_intrin, m_color_intrin, m_infrared_intrin;
-    rs2_extrinsics m_depth_to_color, m_color_to_depth;
+    rs2_intrinsics m_depth_intrin{}, m_color_intrin{}, m_infrared_intrin{};
+    rs2_extrinsics m_depth_to_color{}, m_color_to_depth{};
+    rs2_stream  m_alignment_stream{RS2_STREAM_COLOR};
 
 
     yarp::os::Stamp m_rgb_stamp;
     yarp::os::Stamp m_depth_stamp;
     std::string m_lastError;
-    yarp::dev::RGBDSensorParamParser* m_paramParser;
+    yarp::dev::RGBDSensorParamParser m_paramParser;
     bool m_verbose;
     bool m_initialized;
     bool m_stereoMode;
