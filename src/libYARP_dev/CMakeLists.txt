@@ -190,7 +190,8 @@ set(YARP_dev_SRCS src/AudioBufferSize.cpp
                   src/MultipleAnalogSensorsInterfaces.cpp
                   src/PolyDriver.cpp
                   src/PolyDriverDescriptor.cpp
-                  src/PolyDriverList.cpp)
+                  src/PolyDriverList.cpp
+                  src/RGBDSensorParamParser.cpp)
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_SRCS src/IFrameTransform.cpp
