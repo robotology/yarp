@@ -474,6 +474,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     left_frame     = cfg.find("tf_left_hand_frame").asString();
     right_frame    = cfg.find("tf_right_hand_frame").asString();
     root_frame     = cfg.find("tf_root_frame").asString();
+    relative       = cfg.check("hands_relative", yarp::os::Value(false)).asBool();
 
     //getting gui information from cfg
 
