@@ -168,7 +168,7 @@ function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_
       set(_dest_dir "${_cpp_placement_dir}")
       set(_dest_file "${_gen_file}")
       if(NOT _cpp_placement_ns)
-        string(REGEX REPLACE "^.+/([^\/]+)$" "\\1" _dest_file "${_dest_file}")
+        string(REGEX REPLACE "^.+/([^/]+)$" "\\1" _dest_file "${_dest_file}")
       endif()
       set(_dest_file "${_dest_dir}/${_dest_file}")
     else()
