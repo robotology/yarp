@@ -21,10 +21,10 @@ if(NOT SKIP_h264)
                   H264Decoder.cpp
                   H264Decoder.h)
 
-  target_link_libraries(yarp_h264 PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_h264 PRIVATE YARP::YARP_os
                                           YARP::YARP_sig
                                           YARP::YARP_wire_rep_utils)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig)
 
   # GObject is required by GStreamer

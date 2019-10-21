@@ -17,10 +17,10 @@ if(ENABLE_realsense2)
   yarp_add_plugin(yarp_realsense2 realsense2Driver.cpp
                                   realsense2Driver.h)
 
-  target_link_libraries(yarp_realsense2 PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_realsense2 PRIVATE YARP::YARP_os
                                                 YARP::YARP_sig
                                                 YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

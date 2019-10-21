@@ -6,7 +6,7 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 add_executable(yarphear yarphear.cpp)
-target_link_libraries(yarphear PRIVATE YARP::YARP_OS
+target_link_libraries(yarphear PRIVATE YARP::YARP_os
                                        YARP::YARP_sig
                                        YARP::YARP_dev
                                        YARP::YARP_init)

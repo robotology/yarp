@@ -39,11 +39,11 @@ if(NOT SKIP_rpLidar2)
                                 $<TARGET_OBJECTS:rpLidar2_sdk>)
   target_compile_definitions(yarp_rpLidar2 PRIVATE _USE_MATH_DEFINES)
   target_include_directories(yarp_rpLidar2 SYSTEM PRIVATE $<TARGET_PROPERTY:rpLidar2_sdk,INTERFACE_INCLUDE_DIRECTORIES>)
-  target_link_libraries(yarp_rpLidar2 PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_rpLidar2 PRIVATE YARP::YARP_os
                                               YARP::YARP_sig
                                               YARP::YARP_dev
                                               YARP::YARP_math)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

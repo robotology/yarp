@@ -88,9 +88,9 @@ if(YARP_COMPILE_yarpdataplayer)
                                       ${yarpdataplayer_RC_FILES}
                                       ${yarpdataplayer_THRIFT_FILES})
 
-  target_link_libraries(yarpdataplayer YARP_OS
-                                       YARP_init
-                                       YARP_sig
+  target_link_libraries(yarpdataplayer YARP::YARP_os
+                                       YARP::YARP_init
+                                       YARP::YARP_sig
                                        Qt5::Widgets)
 
   if(YARP_HAS_OpenCV)

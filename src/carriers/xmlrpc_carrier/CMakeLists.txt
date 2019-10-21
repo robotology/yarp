@@ -24,8 +24,8 @@ if(NOT SKIP_xmlrpc)
                   XmlRpcCarrier.cpp
                   XmlRpcStream.h
                   XmlRpcStream.cpp)
-  target_link_libraries(yarp_xmlrpc PRIVATE YARP::YARP_OS)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+  target_link_libraries(yarp_xmlrpc PRIVATE YARP::YARP_os)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   target_include_directories(yarp_xmlrpc SYSTEM PRIVATE ${xmlrpcpp_INCLUDE_DIRS})
   target_link_libraries(yarp_xmlrpc PRIVATE ${xmlrpcpp_LIBRARIES})

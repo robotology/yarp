@@ -16,10 +16,10 @@ if(ENABLE_multipleanalogsensorsclient)
                                                    MultipleAnalogSensorsClient.h
                                                    $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
   target_include_directories(yarp_multipleanalogsensorsclient PRIVATE $<TARGET_PROPERTY:multipleAnalogSensorsSerializations,INTERFACE_INCLUDE_DIRECTORIES>)
-  target_link_libraries(yarp_multipleanalogsensorsclient PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_multipleanalogsensorsclient PRIVATE YARP::YARP_os
                                                                  YARP::YARP_sig
                                                                  YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

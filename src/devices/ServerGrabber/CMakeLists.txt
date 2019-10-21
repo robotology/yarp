@@ -15,10 +15,10 @@ if(NOT SKIP_grabberDual)
 
   yarp_add_plugin(yarp_grabberDual ServerGrabber.cpp
                                    ServerGrabber.h)
-  target_link_libraries(yarp_grabberDual PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_grabberDual PRIVATE YARP::YARP_os
                                                  YARP::YARP_sig
                                                  YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

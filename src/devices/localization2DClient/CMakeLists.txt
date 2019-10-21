@@ -16,11 +16,11 @@ if(NOT SKIP_localization2DClient)
 
   yarp_add_plugin(yarp_localization2DClient Localization2DClient.cpp
                                             Localization2DClient.h)
-  target_link_libraries(yarp_localization2DClient PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_localization2DClient PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev
                                                           YARP::YARP_math)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
                                                       YARP_math)

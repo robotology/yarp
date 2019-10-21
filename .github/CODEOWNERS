@@ -52,7 +52,7 @@
 /src/libYARP_profiler/**                      @Nicogene
 /src/libYARP_math/**                          @traversaro
 /src/libYARP_name/**                          @drdanz
-/src/libYARP_OS/**                            @drdanz
+/src/libYARP_os/**                            @drdanz
 /src/libYARP_robottestingframework/**         @Nicogene @aerydna
 /src/libYARP_serversql/**                     @drdanz
 /src/libYARP_sig/                             @drdanz

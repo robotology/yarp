@@ -17,8 +17,8 @@ if(NOT SKIP_human)
                              HumanStream.h
                              HumanCarrier.cpp
                              HumanStream.cpp)
-  target_link_libraries(yarp_human PRIVATE YARP::YARP_OS)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+  target_link_libraries(yarp_human PRIVATE YARP::YARP_os)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   yarp_install(TARGETS yarp_human
                EXPORT YARP_${YARP_PLUGIN_MASTER}

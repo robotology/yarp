@@ -16,10 +16,10 @@ if(NOT SKIP_portaudioPlayer)
 
   yarp_add_plugin(yarp_portaudioPlayer PortAudioPlayerDeviceDriver.cpp
                                        PortAudioPlayerDeviceDriver.h)
-  target_link_libraries(yarp_portaudioPlayer PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_portaudioPlayer PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

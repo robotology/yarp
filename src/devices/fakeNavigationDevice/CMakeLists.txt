@@ -15,11 +15,11 @@ if(NOT SKIP_fakeNavigation)
 
   yarp_add_plugin(yarp_fakeNavigation fakeNavigationDev.h
                                       fakeNavigationDev.cpp)
-  target_link_libraries(yarp_fakeNavigation PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_fakeNavigation PRIVATE YARP::YARP_os
                                                     YARP::YARP_sig
                                                     YARP::YARP_dev
                                                     YARP::YARP_math)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
                                                       YARP_math)

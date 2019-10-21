@@ -23,7 +23,7 @@ add_library(YARP_init ${YARP_init_SRCS} ${YARP_init_HDRS})
 add_library(YARP::YARP_init ALIAS YARP_init)
 
 target_link_libraries(YARP_init PRIVATE YARP::YARP_conf
-                                        YARP::YARP_OS)
+                                        YARP::YARP_os)
 
 if(YARP_LINK_PLUGINS)
     if(YARP_COMPILE_CARRIER_PLUGINS)
@@ -51,16 +51,25 @@ set_property(TARGET YARP_init PROPERTY VERSION ${YARP_VERSION_SHORT})
 set_property(TARGET YARP_init PROPERTY SOVERSION ${YARP_SOVERSION})
 
 install(TARGETS YARP_init
-        EXPORT YARP_OS
-        COMPONENT YARP_OS
+        EXPORT YARP_os
+        COMPONENT YARP_os
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
 include(YarpInstallBasicPackageFiles)
-yarp_install_basic_package_files(YARP_OS
-                                 DEPENDENCIES ${YARP_OS_PUBLIC_DEPS} ${YARP_init_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_OS_PRIVATE_DEPS} ${YARP_init_PRIVATE_DEPS}
-                                 STATIC_CONFIG_TEMPLATE "${CMAKE_CURRENT_LIST_DIR}/YARP_OSConfigStatic.cmake.in")
+yarp_install_basic_package_files(YARP_os
+                                 DEPENDENCIES ${YARP_os_PUBLIC_DEPS} ${YARP_init_PUBLIC_DEPS}
+                                 PRIVATE_DEPENDENCIES ${YARP_os_PRIVATE_DEPS} ${YARP_init_PRIVATE_DEPS}
+                                 STATIC_CONFIG_TEMPLATE "${CMAKE_CURRENT_LIST_DIR}/YARP_osConfigStatic.cmake.in"
+                                 INCLUDE_CONTENT "
+if(NOT YARP_NO_DEPRECATED AND NOT TARGET YARP::YARP_OS)
+  add_library(YARP::YARP_OS INTERFACE IMPORTED)
+  set_target_properties(YARP::YARP_OS PROPERTIES
+    INTERFACE_LINK_LIBRARIES \"YARP::YARP_os\"
+    INTERFACE_COMPILE_DEFINITIONS USING_DEPRECATED_UPPERCASE_YARP_OS_TARGET
+  )
+endif()
+")
 
 set_property(TARGET YARP_init PROPERTY FOLDER "Libraries")

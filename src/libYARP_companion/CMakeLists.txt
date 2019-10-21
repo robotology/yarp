@@ -30,8 +30,8 @@ add_library(YARP::YARP_companion ALIAS YARP_companion)
 target_include_directories(YARP_companion PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(YARP_companion PUBLIC YARP::YARP_OS)
-list(APPEND YARP_companion_PUBLIC_DEPS YARP_OS)
+target_link_libraries(YARP_companion PUBLIC YARP::YARP_os)
+list(APPEND YARP_companion_PUBLIC_DEPS YARP_os)
 
 target_compile_features(YARP_companion PUBLIC cxx_override)
 

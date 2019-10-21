@@ -14,9 +14,9 @@ if(NOT SKIP_SerialServoBoard)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   yarp_add_plugin(yarp_SerialServoBoard SerialServoBoard.cpp
                                         SerialServoBoard.h)
-  target_link_libraries(yarp_SerialServoBoard PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_SerialServoBoard PRIVATE YARP::YARP_os
                                                       YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_dev)
 
   yarp_install(TARGETS yarp_SerialServoBoard

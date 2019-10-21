@@ -92,9 +92,9 @@ if(YARP_COMPILE_libYARP_manager)
     target_include_directories(YARP_manager SYSTEM PRIVATE ${dirent_INCLUDE_DIRS})
   endif()
 
-  target_link_libraries(YARP_manager PUBLIC YARP::YARP_OS
+  target_link_libraries(YARP_manager PUBLIC YARP::YARP_os
                                      PRIVATE YARP::YARP_sig)
-  list(APPEND YARP_manager_PUBLIC_DEPS YARP_OS)
+  list(APPEND YARP_manager_PUBLIC_DEPS YARP_os)
   list(APPEND YARP_manager_PRIVATE_DEPS YARP_sig)
 
   if(TARGET YARP::YARP_math)

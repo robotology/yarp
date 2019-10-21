@@ -26,10 +26,10 @@ target_include_directories(YARP_wire_rep_utils PUBLIC $<BUILD_INTERFACE:${CMAKE_
                                                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(YARP_wire_rep_utils PUBLIC YARP::YARP_conf
-                                                 YARP::YARP_OS
+                                                 YARP::YARP_os
                                                  YARP::YARP_sig)
 list(APPEND YARP_wire_rep_utils_PUBLIC_DEPS YARP_conf
-                                            YARP_OS
+                                            YARP_os
                                             YARP_sig)
 
 if(YARP_HAS_ACE)

@@ -32,8 +32,8 @@ if(NOT SKIP_mpi)
                            MpiP2PStream.h
                            MpiComm.h)
 
-  target_link_libraries(yarp_mpi PRIVATE YARP::YARP_OS)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+  target_link_libraries(yarp_mpi PRIVATE YARP::YARP_os)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   target_include_directories(yarp_mpi SYSTEM PRIVATE ${MPI_INCLUDE_PATH})
   target_link_libraries(yarp_mpi PRIVATE ${MPI_LIBRARIES})
@@ -72,8 +72,8 @@ if(NOT SKIP_mpibcast)
                                 MpiBcastStream.h
                                 MpiComm.h)
 
-  target_link_libraries(yarp_mpibcast PRIVATE YARP::YARP_OS)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+  target_link_libraries(yarp_mpibcast PRIVATE YARP::YARP_os)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   target_include_directories(yarp_mpibcast SYSTEM PRIVATE ${MPI_INCLUDE_PATH})
   target_link_libraries(yarp_mpibcast PRIVATE ${MPI_LIBRARIES})

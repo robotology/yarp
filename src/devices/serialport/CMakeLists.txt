@@ -17,9 +17,9 @@ if(NOT SKIP_serialport)
 
   yarp_add_plugin(yarp_serialport SerialDeviceDriver.cpp
                                   SerialDeviceDriver.h)
-  target_link_libraries(yarp_serialport PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_serialport PRIVATE YARP::YARP_os
                                                 YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_dev)
 
   target_compile_definitions(yarp_serialport PRIVATE YARP_HAS_ACE)

@@ -44,7 +44,7 @@ add_library(QtYARPScopePlugin MODULE ${QtYARPScopePlugin_SRCS}
                                      ${QtYARPScopePlugin_QRC_FILES}
                                      ${QtYARPScopePlugin_QRC_GEN_SRCS}
                                      ${QtYARPScopePlugin_QML_FILES})
-target_link_libraries(QtYARPScopePlugin YARP::YARP_OS
+target_link_libraries(QtYARPScopePlugin YARP::YARP_os
                                         YARP::YARP_init
                                         ${QCustomPlot_LIBRARIES}
                                         Qt5::Widgets

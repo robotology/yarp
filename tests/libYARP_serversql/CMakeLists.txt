@@ -9,7 +9,7 @@ add_executable(harness_serversql ServerTest.cpp)
 target_include_directories(harness_serversql PRIVATE ${hmac_INCLUDE_DIRS})
 
 target_link_libraries(harness_serversql PRIVATE YARP_harness
-                                                YARP::YARP_OS
+                                                YARP::YARP_os
                                                 YARP::YARP_serversql)
 set_property(TARGET harness_serversql PROPERTY FOLDER "Test")
 

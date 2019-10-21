@@ -20,7 +20,7 @@ include(GNUInstallDirs)
 set(CMAKE_C_FLAGS -w)
 set(CMAKE_CXX_FLAGS -w)
 
-set(_components conf OS sig dev)
+set(_components conf os sig dev)
 
 if(NOT YARP_VERSION)
 
@@ -148,7 +148,7 @@ if(YARP_COMPILE_BINDINGS)
   # Include SWIG use file
   include(${SWIG_USE_FILE})
 
-  set(SWIG_YARP_LIBRARIES YARP::YARP_OS
+  set(SWIG_YARP_LIBRARIES YARP::YARP_os
                           YARP::YARP_sig
                           YARP::YARP_dev
                           YARP::YARP_init)

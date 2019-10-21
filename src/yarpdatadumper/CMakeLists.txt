@@ -20,7 +20,7 @@ if(YARP_COMPILE_yarpdatadumper)
     target_link_libraries(yarpdatadumper ${OpenCV_LIBRARIES})
   endif()
 
-  target_link_libraries(yarpdatadumper YARP::YARP_OS YARP::YARP_init YARP::YARP_sig)
+  target_link_libraries(yarpdatadumper YARP::YARP_os YARP::YARP_init YARP::YARP_sig)
   if(YARP_HAS_OpenCV)
     target_link_libraries(yarpdatadumper YARP::YARP_cv)
   endif()

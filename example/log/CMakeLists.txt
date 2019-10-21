@@ -11,5 +11,5 @@ project(log_test)
 find_package(YARP REQUIRED)
 
 add_executable(log_test log_test.cpp)
-target_link_libraries(log_test YARP::YARP_OS
+target_link_libraries(log_test YARP::YARP_os
                                YARP::YARP_init)

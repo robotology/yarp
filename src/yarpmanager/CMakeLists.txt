@@ -136,7 +136,7 @@ if(YARP_COMPILE_yarpmanager)
                                    ${yarpmanager_UI_GEN_SRCS}
                                    ${yarpmanager_UI_FILES})
 
-  target_link_libraries(yarpmanager YARP::YARP_OS
+  target_link_libraries(yarpmanager YARP::YARP_os
                                     YARP::YARP_init
                                     YARP::YARP_manager
                                     YARP::YARP_profiler

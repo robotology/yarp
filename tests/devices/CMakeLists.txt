@@ -6,7 +6,7 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 add_executable(harness_devices harness_devices.cpp)
-target_link_libraries(harness_devices YARP::YARP_OS
+target_link_libraries(harness_devices YARP::YARP_os
                                       YARP::YARP_init
                                       YARP::YARP_dev)
 set_property(TARGET harness_devices PROPERTY FOLDER "Test")

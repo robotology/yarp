@@ -29,10 +29,10 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
                   RosSlave.h
                   RosLookup.h
                   RosLookup.cpp)
-  target_link_libraries(yarp_tcpros PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_tcpros PRIVATE YARP::YARP_os
                                             YARP::YARP_sig
                                             YARP::YARP_wire_rep_utils)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_wire_rep_utils)
 
@@ -52,7 +52,7 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
   add_executable(yarpros yarpros.cpp
                          TcpRosStream.cpp
                          RosLookup.cpp)
-  target_link_libraries(yarpros PRIVATE YARP::YARP_OS
+  target_link_libraries(yarpros PRIVATE YARP::YARP_os
                                         YARP::YARP_init
                                         YARP::YARP_wire_rep_utils)
   install(TARGETS yarpros

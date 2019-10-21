@@ -12,7 +12,7 @@ add_executable(harness_sig ImageTest.cpp
                            VectorTest.cpp)
 
 target_link_libraries(harness_sig PRIVATE YARP_harness
-                                          YARP::YARP_OS
+                                          YARP::YARP_os
                                           YARP::YARP_sig
                                           YARP::YARP_gsl)
 

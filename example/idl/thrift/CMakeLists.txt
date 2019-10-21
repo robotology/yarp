@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(thrift_example)
 
-find_package(YARP COMPONENTS OS idl_tools REQUIRED)
+find_package(YARP COMPONENTS os idl_tools REQUIRED)
 set(CMAKE_CXX_FLAGS "-Weverything -Wno-c++98-compat -Wno-padded -Wno-shadow")
 
 set(THRIFT_FILES thrift/firstInterface/PointD.thrift
@@ -28,7 +28,7 @@ add_library(generatedDemoLibrary ${THRIFT_HEADERS}
                                  ${THRIFT_FILES})
 target_include_directories(generatedDemoLibrary PUBLIC $<BUILD_INTERFACE:${THRIFT_INCLUDE_DIRS}>)
 
-target_link_libraries(generatedDemoLibrary YARP::YARP_OS)
+target_link_libraries(generatedDemoLibrary YARP::YARP_os)
 
 add_subdirectory(userImpl)
 

@@ -14,9 +14,9 @@ if(NOT SKIP_zfp)
 
   yarp_add_plugin(yarp_pm_zfp zfpPortmonitor.cpp
                               zfpPortmonitor.h)
-  target_link_libraries(yarp_pm_zfp PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_pm_zfp PRIVATE YARP::YARP_os
                                             YARP::YARP_sig)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig)
 
   target_include_directories(yarp_pm_zfp SYSTEM PRIVATE ${ZFP_INCLUDE_DIRS})

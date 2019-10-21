@@ -17,7 +17,7 @@ if(YARP_COMPILE_yarpmanager-console)
                                      ${yarpmanager_console_HDRS})
 
   target_link_libraries(yarpmanager-console PRIVATE YARP::YARP_init
-                                                    YARP::YARP_OS
+                                                    YARP::YARP_os
                                                     YARP::YARP_manager)
 
   if(YARP_HAS_Libedit)

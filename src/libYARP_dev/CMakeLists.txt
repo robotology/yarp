@@ -249,11 +249,11 @@ target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOU
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(YARP_dev PUBLIC YARP::YARP_conf
-                                      YARP::YARP_OS
+                                      YARP::YARP_os
                                       YARP::YARP_sig
                                PRIVATE YARP::YARP_rosmsg)
 list(APPEND YARP_dev_PUBLIC_DEPS YARP_conf
-                                 YARP_OS
+                                 YARP_os
                                  YARP_sig)
 list(APPEND YARP_dev_PRIVATE_DEPS YARP_rosmsg)
 

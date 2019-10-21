@@ -13,7 +13,7 @@ robottestingframework_add_plugin(robottestingframework_fixturemanager_yarpserver
 
 target_link_libraries(robottestingframework_fixturemanager_yarpserver PRIVATE RobotTestingFramework::RTF
                                                                               RobotTestingFramework::RTF_dll
-                                                                              YARP::YARP_OS
+                                                                              YARP::YARP_os
                                                                               YARP::YARP_init
                                                                               YARP::YARP_serversql)
 
