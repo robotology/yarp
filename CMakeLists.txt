@@ -83,6 +83,13 @@ add_subdirectory(cmake)
 # Build required 3rd party libraries
 add_subdirectory(extern)
 
+
+include(YarpInstallationHelpers)
+include(YarpDeprecatedOption)
+
+yarp_configure_external_installation(yarp WITH_PLUGINS)
+
+
 # Set up the main libraries and utilities.
 add_subdirectory(src)
 
