@@ -293,7 +293,7 @@ if(NOT YARP_NO_DEPRECATED AND NOT COMMAND _YARP_DEPRECATED_VARIABLE_WARNING)
   set(YARP_MODULE_PATH "${YARP_MODULE_DIR}"
                        "${YARP_MODULE_DIR}/deprecated"
                        ${_YARP_YCM_MODULE_PATH})
-  variable_watch(YARP_MODULE_PATH _yarp_component_path_is_deprecated)
+  variable_watch(YARP_MODULE_PATH _yarp_module_path_is_deprecated)
 
   # YARP_DEFINES is deprecated since YARP 3.0.0
   variable_watch(YARP_DEFINES _yarp_deprecated_variable_warning)
