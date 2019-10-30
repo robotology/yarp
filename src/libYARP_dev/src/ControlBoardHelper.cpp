@@ -818,9 +818,9 @@ void ControlBoardHelper::convert_pid_to_user(const yarp::dev::PidControlTypeEnum
     out_usr.kd = out_usr.kd / output_conversion_units_user2raw;
     out_usr.max_output = out_usr.max_output / output_conversion_units_user2raw;
     out_usr.max_int = out_usr.max_int / output_conversion_units_user2raw;
-    out_usr.stiction_up_val = out_usr.stiction_up_val / output_conversion_units_user2raw;
-    out_usr.stiction_down_val = out_usr.stiction_down_val / output_conversion_units_user2raw;
-    out_usr.offset = out_usr.offset / output_conversion_units_user2raw;
+    out_usr.stiction_up_val = out_usr.stiction_up_val / mPriv->newtonsToSensors[k_usr];
+    out_usr.stiction_down_val = out_usr.stiction_down_val / mPriv->newtonsToSensors[k_usr];
+    out_usr.offset = out_usr.offset / mPriv->newtonsToSensors[k_usr];
 }
 
 Pid ControlBoardHelper::convert_pid_to_machine(const yarp::dev::PidControlTypeEnum& pidtype, const Pid &in_usr, int j_usr)
@@ -850,9 +850,9 @@ void ControlBoardHelper::convert_pid_to_machine(const yarp::dev::PidControlTypeE
     out_raw.kd = out_raw.kd * output_conversion_units_user2raw;
     out_raw.max_output = out_raw.max_output * output_conversion_units_user2raw;
     out_raw.max_int = out_raw.max_int * output_conversion_units_user2raw;
-    out_raw.stiction_up_val = out_raw.stiction_up_val * output_conversion_units_user2raw;
-    out_raw.stiction_down_val = out_raw.stiction_down_val * output_conversion_units_user2raw;
-    out_raw.offset = out_raw.offset * output_conversion_units_user2raw;
+    out_raw.stiction_up_val = out_raw.stiction_up_val * mPriv->newtonsToSensors[j_usr];
+    out_raw.stiction_down_val = out_raw.stiction_down_val * mPriv->newtonsToSensors[j_usr];
+    out_raw.offset = out_raw.offset * mPriv->newtonsToSensors[j_usr];
 }
 
 void ControlBoardHelper::convert_pidunits_to_machine(const yarp::dev::PidControlTypeEnum& pidtype, double userval, int j, double &machineval, int &k)
