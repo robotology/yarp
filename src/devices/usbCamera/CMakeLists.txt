@@ -15,7 +15,8 @@ yarp_prepare_plugin(usbCameraRaw
                     CATEGORY device
                     TYPE USBCameraDriverRaw
                     INCLUDE USBcamera.h
-                    EXTRA_CONFIG WRAPPER=grabberDual)
+                    EXTRA_CONFIG WRAPPER=grabberDual
+                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV")
 
 if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
