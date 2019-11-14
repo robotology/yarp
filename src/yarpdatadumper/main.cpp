@@ -20,6 +20,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <array>
 #include <deque>
 #include <utility>
 #include <mutex>
@@ -578,6 +579,15 @@ private:
     unsigned int      dwnsample{0};
     string            portName;
 
+    void polish_filename(string &fname)
+    {
+        array<char,6> notallowed={':','*','?','|','>','<'};
+        for (auto &c:notallowed)
+        {
+            replace(fname.begin(),fname.end(),c,'_');
+        }
+    }
+
 public:
     DumpModule() = default;
 
@@ -630,6 +640,7 @@ public:
         rxTime=rf.check("rxTime");
         txTime=rf.check("txTime");
         string templateDirName=rf.check("dir")?rf.find("dir").asString():portName;
+        polish_filename(templateDirName);
         if (templateDirName[0]!='/')
             templateDirName="/"+templateDirName;
 
