@@ -42,6 +42,7 @@
 /src/devices/usbCamera/**                     @barbalberto @Nicogene
 /src/idls/rosmsg/**                           @drdanz
 /src/idls/thrift/**                           @drdanz
+/src/libYARP_companion/**                     @drdanz
 /src/libYARP_conf/**                          @drdanz
 /src/libYARP_cv/**                            @Nicogene
 /src/libYARP_dev/**                           @barbalberto @randaz81
