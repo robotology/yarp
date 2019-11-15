@@ -73,7 +73,7 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      [Oculis SDK](https://developer.oculus.com/licenses/).
  * A few optional parts of YARP are released under the terms of the GPL license,
    version 2 or later:
-   + `libYARP_math` uses the GNU Scientific Library, under the GPL 2 or later.
+   + `YARP_gsl` uses the GNU Scientific Library, under the GPL 2 or later.
    + `example/matrix/gsl_example.cpp` uses GSL, under the GPL 2 or later.
  * A few optional parts of YARP are released under the terms of the GPL license,
    version 3 or later:
