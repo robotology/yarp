@@ -174,7 +174,6 @@ STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/idl_generated_code/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/devices/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/src/ \

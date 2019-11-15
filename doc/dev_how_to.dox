@@ -38,15 +38,15 @@ derives from DeviceDriver and from the interface you want to support,
 and you implement them. The interfaces are documented in the code,
 using the doxygen standard. See \ref note_devices for an example.
 
-\section dev-howto-lib Adding a device driver to libYARP_dev
+\section dev-howto-lib Adding a device driver to YARP_dev
 
 Some practical rules are also required to have cmake include your .cpp/.h
-files in the libYARP_dev (device library) project.
+files in the YARP_dev (device library) project.
 
 Let's assume you want to create the Foo device.
 Start by creating a folder called:
 \verbatim
-libYARP_dev/src/foo/
+YARP_dev/src/foo/
 \endverbatim
 
 Files in foo will be organized in:
@@ -65,7 +65,7 @@ specific device by the manufacturer, if any.
 
 CMake searches for YARP device drivers listed in:
 \verbatim
-libYARP_dev/AvailableDevices.txt
+YARP_dev/AvailableDevices.txt
 \endverbatim
 
 Here you specify the directory that contains the device driver tree (in the above example we called it foo). For example we could add "foo" in as follows:
@@ -73,7 +73,7 @@ Here you specify the directory that contains the device driver tree (in the abov
 SET(AVAILABLE_DEVICES picolo dragonfly esdMotionControl foo)
 \endverbatim
 
-This is the list of directories under libYARP_dev that are searched for device drivers, when CMake runs.  CMake does this by searching for a file called libraries.txt.
+This is the list of directories under YARP_dev that are searched for device drivers, when CMake runs.  CMake does this by searching for a file called libraries.txt.
 
 The file libraries.txt tells cmake which additional libraries or
 packages the device depends on. This files is platform
@@ -130,7 +130,7 @@ distribution or in the way the device is configured.
 
 If all libraries are located, you can go on with CMake and generate
 your make/project files. If at least one device driver was selected
-and correctly found, libYARP_dev should now compile.
+and correctly found, YARP_dev should now compile.
 
 \section dev-howto-factory Adding a device driver factory
 
@@ -138,7 +138,7 @@ It is useful to be able to create devices in a reconfigurable way,
 for example using the \ref yarpdev "yarpdev" application or the
 yarp::dev::PolyDriver class.
 This is done be adding a "factory" for your device driver to
-libYARP_dev.
+YARP_dev.
 
 Take a look at this file:
 \verbatim

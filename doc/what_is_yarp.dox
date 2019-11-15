@@ -59,7 +59,7 @@ portability. YARP is written almost entirely in C++.
 auditory) in an open manner easily interfaced with other
 commonly used libraries, for example OpenCV.
 
-\li \link dev_all libYARP_dev \endlink - interfacing with common devices used in robotics:
+\li \link dev_all YARP_dev \endlink - interfacing with common devices used in robotics:
 framegrabbers, digital cameras, motor control boards, etc.
 
 These components are maintained separately. The core component
@@ -76,7 +76,7 @@ in New Zealand, New York).
 
 For interfacing with hardware, we are at the mercy of which
 operating systems particular companies choose to support - few are
-enlightened enough to provide source. The libYARP_dev library is
+enlightened enough to provide source. The YARP_dev library is
 structured to interface easily with vendor-supplied code, but to
 shield the rest of your system from that code so that future
 hardware replacements are possible. Check the requirements imposed
