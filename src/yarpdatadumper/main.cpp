@@ -582,9 +582,18 @@ private:
     void polish_filename(string &fname)
     {
         array<char,6> notallowed={':','*','?','|','>','<'};
-        for (auto &c:notallowed)
+        for (const auto& c : notallowed)
         {
-            replace(fname.begin(),fname.end(),c,'_');
+#if (__cplusplus >= 201703L) || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
+            replace(,fname.end(),c,);
+#else
+            auto it = fname.begin();
+            for (; it != fname.end(); ++it) {
+                if (*it == c) {
+                    *it = '_';
+                }
+            }
+#endif
         }
     }
 
