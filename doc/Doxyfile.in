@@ -173,10 +173,11 @@ STRIP_FROM_PATH        = @CMAKE_BINARY_DIR@ \
 STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/src/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/idl_generated_code/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/devices/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/src/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_name/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_name/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_eigen/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_pcl/src/ \
@@ -828,10 +829,8 @@ WARN_LOGFILE           = @DOX_WARN_LOGFILE@
 INPUT                  = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_name/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_eigen/src \
@@ -2152,10 +2151,9 @@ SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/devices/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_name/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_name/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_eigen/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_pcl/src \
