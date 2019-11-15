@@ -189,6 +189,7 @@ STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_manager/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_logger/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_wire_rep_utils/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/include/ \
                          @CMAKE_BINARY_DIR@/src/libYARP_companion/src/ \
                          @CMAKE_SOURCE_DIR@/src/devices \
@@ -846,6 +847,7 @@ INPUT                  = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_manager/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_logger/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_wire_rep_utils/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/src/ \
                          @CMAKE_BINARY_DIR@/src/libYARP_companion/src \
@@ -2171,6 +2173,7 @@ INCLUDE_PATH           = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_run/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_manager/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_logger/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_wire_rep_utils/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/include/ \
                          @CMAKE_BINARY_DIR@/src/libYARP_companion/src
 
