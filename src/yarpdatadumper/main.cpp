@@ -24,6 +24,7 @@
 #include <deque>
 #include <utility>
 #include <mutex>
+#include <algorithm>
 
 #ifdef ADD_VIDEO
     #include <opencv2/opencv.hpp>
