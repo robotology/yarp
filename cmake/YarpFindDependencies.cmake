@@ -479,7 +479,7 @@ if(SKIP_ACE)
   unset(YARP_HAS_ACE) # Not set = disabled
 endif()
 
-yarp_dependent_option(YARP_COMPILE_libYARP_math "Create math library libYARP_math?" ON
+yarp_dependent_option(YARP_COMPILE_libYARP_math "Create math library YARP_math?" ON
                       YARP_HAS_Eigen3 OFF)
 yarp_renamed_option(CREATE_LIB_MATH YARP_COMPILE_libYARP_math) # Deprecated since YARP 3.2
 
