@@ -543,6 +543,11 @@ if(YARP_COMPILE_yarpviz OR YARP_COMPILE_yarpmanager)
   set(YARP_COMPILE_libYARP_profiler ON)
 endif()
 
+set(YARP_COMPILE_libYARP_robottestingframework OFF)
+if(YARP_COMPILE_RobotTestingFramework_ADDONS)
+  set(YARP_COMPILE_libYARP_robottestingframework ON)
+endif()
+
 if(NOT YARP_COMPILE_yarprobotinterface AND
    NOT YARP_COMPILE_yarpscope AND
    NOT YARP_COMPILE_libYARP_manager)

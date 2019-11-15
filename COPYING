@@ -52,7 +52,7 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      - `QtYARPView` and `yarpview`
  * Some optional components use 3rd party libraries that may have some extra
    requirements.
-   + `libYARP_robottestingframework` and the Robot Testing Framework plugins use
+   + `YARP_robottestingframework` and the Robot Testing Framework plugins use
      [Robot Testing Framework](https://github.com/robotology/robot-testing-framework/blob/master/LICENSE).
    + The `xmlrpc` carrier uses a custom version of the
      [xmlrpcpp](https://sourceforge.net/projects/xmlrpcpp/) library.
