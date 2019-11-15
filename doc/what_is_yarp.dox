@@ -55,7 +55,7 @@ Communication Environment) library, which is portable across a very
 broad range of environments, and YARP inherits that
 portability. YARP is written almost entirely in C++.
 
-\li \link sig_class libYARP_sig \endlink - performing common signal processing tasks (visual,
+\li \link sig_class YARP_sig \endlink - performing common signal processing tasks (visual,
 auditory) in an open manner easily interfaced with other
 commonly used libraries, for example OpenCV.
 

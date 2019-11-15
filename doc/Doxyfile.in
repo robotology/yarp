@@ -172,7 +172,7 @@ STRIP_FROM_PATH        = @CMAKE_BINARY_DIR@ \
 
 STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/devices/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/include/ \
@@ -825,7 +825,6 @@ WARN_LOGFILE           = @DOX_WARN_LOGFILE@
 
 INPUT                  = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src \
@@ -2151,7 +2150,7 @@ SEARCH_INCLUDES        = YES
 
 INCLUDE_PATH           = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/devices/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/include/ \

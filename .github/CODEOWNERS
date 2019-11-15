@@ -55,7 +55,7 @@
 /src/libYARP_os/**                            @drdanz
 /src/libYARP_robottestingframework/**         @Nicogene @aerydna
 /src/libYARP_serversql/**                     @drdanz
-/src/libYARP_sig/                             @drdanz
+/src/libYARP_sig/**                           @drdanz
 /src/libYARP_wire_rep_utils/**                @drdanz
 /src/robottestingframework-plugins/**         @Nicogene @aerydna
 /src/yarp/**                                  @drdanz
