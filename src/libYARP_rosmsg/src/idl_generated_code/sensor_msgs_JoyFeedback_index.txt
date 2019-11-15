@@ -1,0 +1,3 @@
+sensor_msgs_JoyFeedback.h
+sensor_msgs/JoyFeedback.h
+yarp/rosmsg/sensor_msgs/JoyFeedback.h

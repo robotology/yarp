@@ -1,3 +1,0 @@
-include/std_msgs_UInt16.h
-include/std_msgs/UInt16.h
-include/yarp/rosmsg/std_msgs/UInt16.h

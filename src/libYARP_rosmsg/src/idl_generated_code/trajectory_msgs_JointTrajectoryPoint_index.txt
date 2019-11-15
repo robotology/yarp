@@ -1,0 +1,5 @@
+TickDuration.h
+yarp/rosmsg/TickDuration.h
+trajectory_msgs_JointTrajectoryPoint.h
+trajectory_msgs/JointTrajectoryPoint.h
+yarp/rosmsg/trajectory_msgs/JointTrajectoryPoint.h

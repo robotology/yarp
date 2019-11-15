@@ -1,0 +1,3 @@
+sensor_msgs_RegionOfInterest.h
+sensor_msgs/RegionOfInterest.h
+yarp/rosmsg/sensor_msgs/RegionOfInterest.h

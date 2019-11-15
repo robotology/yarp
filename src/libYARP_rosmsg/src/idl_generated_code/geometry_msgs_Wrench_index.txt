@@ -1,0 +1,6 @@
+geometry_msgs_Vector3.h
+geometry_msgs/Vector3.h
+yarp/rosmsg/geometry_msgs/Vector3.h
+geometry_msgs_Wrench.h
+geometry_msgs/Wrench.h
+yarp/rosmsg/geometry_msgs/Wrench.h

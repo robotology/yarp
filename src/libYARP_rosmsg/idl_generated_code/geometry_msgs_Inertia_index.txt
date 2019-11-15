@@ -1,6 +1,0 @@
-include/geometry_msgs_Vector3.h
-include/geometry_msgs/Vector3.h
-include/yarp/rosmsg/geometry_msgs/Vector3.h
-include/geometry_msgs_Inertia.h
-include/geometry_msgs/Inertia.h
-include/yarp/rosmsg/geometry_msgs/Inertia.h

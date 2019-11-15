@@ -1,9 +1,0 @@
-include/std_msgs_MultiArrayDimension.h
-include/std_msgs/MultiArrayDimension.h
-include/yarp/rosmsg/std_msgs/MultiArrayDimension.h
-include/std_msgs_MultiArrayLayout.h
-include/std_msgs/MultiArrayLayout.h
-include/yarp/rosmsg/std_msgs/MultiArrayLayout.h
-include/std_msgs_UInt32MultiArray.h
-include/std_msgs/UInt32MultiArray.h
-include/yarp/rosmsg/std_msgs/UInt32MultiArray.h

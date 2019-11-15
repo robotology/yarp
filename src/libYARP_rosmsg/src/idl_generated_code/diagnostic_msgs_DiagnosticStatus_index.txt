@@ -1,0 +1,6 @@
+diagnostic_msgs_KeyValue.h
+diagnostic_msgs/KeyValue.h
+yarp/rosmsg/diagnostic_msgs/KeyValue.h
+diagnostic_msgs_DiagnosticStatus.h
+diagnostic_msgs/DiagnosticStatus.h
+yarp/rosmsg/diagnostic_msgs/DiagnosticStatus.h

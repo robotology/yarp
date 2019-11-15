@@ -1,0 +1,6 @@
+diagnostic_msgs_AddDiagnosticsReply.h
+diagnostic_msgs/AddDiagnosticsReply.h
+yarp/rosmsg/diagnostic_msgs/AddDiagnosticsReply.h
+diagnostic_msgs_AddDiagnostics.h
+diagnostic_msgs/AddDiagnostics.h
+yarp/rosmsg/diagnostic_msgs/AddDiagnostics.h
