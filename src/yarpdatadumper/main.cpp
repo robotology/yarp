@@ -585,7 +585,7 @@ private:
         for (const auto& c : notallowed)
         {
 #if (__cplusplus >= 201703L) || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
-            replace(,fname.end(),c,);
+            replace(fname.begin(),fname.end(),c,'_');
 #else
             auto it = fname.begin();
             for (; it != fname.end(); ++it) {
