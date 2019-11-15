@@ -43,6 +43,7 @@
 /src/idls/rosmsg/**                           @drdanz
 /src/idls/thrift/**                           @drdanz
 /src/libYARP_conf/**                          @drdanz
+/src/libYARP_cv/**                            @Nicogene
 /src/libYARP_dev/**                           @barbalberto @randaz81
 /src/libYARP_eigen/**                         @traversaro
 /src/libYARP_gsl/**                           @traversaro
