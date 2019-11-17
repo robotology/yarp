@@ -33,6 +33,8 @@ init:
   - cmd: set CMAKE_PLATFORM=%Platform%
   - cmd: echo CMAKE_PLATFORM=%CMAKE_PLATFORM%
 
+  - cmd: set TIMEOUT=%SystemRoot%\System32\timeout.exe
+
   # Dependencies found in YARP and iCub packages
   - cmd: set YARP_LATEST=2.3.70
   - cmd: set YARP_LATEST_TAG=v%YARP_LATEST%
@@ -96,7 +98,7 @@ install:
   - cmd: echo Downloading %YARP_INSTALLER%
   - cmd: appveyor DownloadFile "%YARP_INSTALLER%" -FileName "C:\downloads\yarp.exe"
   - cmd: start "" /WAIT "c:\downloads\yarp.exe" /S
-  - cmd: timeout 10
+  - cmd: "%TIMEOUT% /T 10"
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\yarp-%YARP_LATEST%" /S /Q
   - cmd: del "%ROBOTOLOGY_ROOT%\Uninstall_YARP.exe" /F /Q
   - cmd: del "%ROBOTOLOGY_ROOT%\uninstall_YARP.log" /F /Q
@@ -105,7 +107,7 @@ install:
   - cmd: echo Downloading %ICUB_INSTALLER%
   - cmd: appveyor DownloadFile "%ICUB_INSTALLER%" -FileName "C:\downloads\iCub.exe"
   - cmd: start "" /WAIT "c:\downloads\iCub.exe" /S
-  - cmd: timeout 10
+  - cmd: "%TIMEOUT% /T 10"
   - cmd: move "%ROBOTOLOGY_ROOT%\%OpenCV_DEFAULT_REL_DIR%" "%ROBOTOLOGY_ROOT%\%OpenCV_REL_DIR%"
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\icub-%ICUB_LATEST%" /S /Q
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\glut-3.7.6" /S /Q
@@ -119,7 +121,7 @@ install:
   #- cmd: echo Downloading %JPEG_INSTALLER%
   #- cmd: appveyor DownloadFile "%JPEG_INSTALLER%" -FileName "C:\downloads\libjpeg-turbo.exe"
   #- cmd: start "" /WAIT "C:\downloads\libjpeg-turbo.exe" /S /D=%JPEG_DEFAULT_ROOT%
-  #- cmd: timeout 10
+  #- cmd: "%TIMEOUT% /T 10"
   #- cmd: rmdir "%JPEG_DEFAULT_ROOT%\classes" /S /Q
   #- cmd: rmdir "%JPEG_DEFAULT_ROOT%\doc" /S /Q
   #- cmd: del "%JPEG_DEFAULT_ROOT%\*.exe" /S /F /Q
