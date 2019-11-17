@@ -10,6 +10,8 @@
 #ifndef YARP_DEV_WRAPPER_H
 #define YARP_DEV_WRAPPER_H
 
+#include <yarp/conf/system.h>
+
 YARP_COMPILER_WARNING("<yarp/dev/Wrapper.h> file is deprecated. Use <yarp/dev/IWrapper.h> and <yarp/dev/IMultipleWrapper.h> instead")
 #include <yarp/dev/IWrapper.h>
 #include <yarp/dev/IMultipleWrapper.h>
