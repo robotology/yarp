@@ -42,20 +42,25 @@
 /src/devices/usbCamera/**                     @barbalberto @Nicogene
 /src/idls/rosmsg/**                           @drdanz
 /src/idls/thrift/**                           @drdanz
+/src/libYARP_companion/**                     @drdanz
 /src/libYARP_conf/**                          @drdanz
-/src/libYARP_dev/**                           @barbalberto @randaz81
+/src/libYARP_cv/**                            @Nicogene
+/src/libYARP_dev/**                           @randaz81
 /src/libYARP_eigen/**                         @traversaro
 /src/libYARP_gsl/**                           @traversaro
 /src/libYARP_init/**                          @drdanz
 /src/libYARP_logger/**                        @randaz81
 /src/libYARP_manager/**                       @Nicogene
-/src/libYARP_profiler/**                      @Nicogene
 /src/libYARP_math/**                          @traversaro
 /src/libYARP_name/**                          @drdanz
 /src/libYARP_os/**                            @drdanz
+/src/libYARP_pcl/**                           @Nicogene
+/src/libYARP_profiler/**                      @Nicogene
 /src/libYARP_robottestingframework/**         @Nicogene @aerydna
-/src/libYARP_serversql/**                     @drdanz
-/src/libYARP_sig/                             @drdanz
+/src/libYARP_rosmsg/**                        @drdanz
+/src/libYARP_run/**                           @drdanz @aerydna
+/src/libYARP_serversql/**                     @drdanz @aerydna
+/src/libYARP_sig/**                           @drdanz
 /src/libYARP_wire_rep_utils/**                @drdanz
 /src/robottestingframework-plugins/**         @Nicogene @aerydna
 /src/yarp/**                                  @drdanz

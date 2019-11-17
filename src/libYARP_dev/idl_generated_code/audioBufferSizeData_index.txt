@@ -1,2 +1,0 @@
-include/yarp/dev/audioBufferSizeData.h
-src/audioBufferSizeData.cpp

@@ -1,3 +1,0 @@
-include/sensor_msgs_NavSatStatus.h
-include/sensor_msgs/NavSatStatus.h
-include/yarp/rosmsg/sensor_msgs/NavSatStatus.h

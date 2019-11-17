@@ -1,0 +1,12 @@
+diagnostic_msgs_KeyValue.h
+diagnostic_msgs/KeyValue.h
+yarp/rosmsg/diagnostic_msgs/KeyValue.h
+diagnostic_msgs_DiagnosticStatus.h
+diagnostic_msgs/DiagnosticStatus.h
+yarp/rosmsg/diagnostic_msgs/DiagnosticStatus.h
+diagnostic_msgs_SelfTestReply.h
+diagnostic_msgs/SelfTestReply.h
+yarp/rosmsg/diagnostic_msgs/SelfTestReply.h
+diagnostic_msgs_SelfTest.h
+diagnostic_msgs/SelfTest.h
+yarp/rosmsg/diagnostic_msgs/SelfTest.h

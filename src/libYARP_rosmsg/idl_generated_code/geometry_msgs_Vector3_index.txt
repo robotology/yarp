@@ -1,3 +1,0 @@
-include/geometry_msgs_Vector3.h
-include/geometry_msgs/Vector3.h
-include/yarp/rosmsg/geometry_msgs/Vector3.h

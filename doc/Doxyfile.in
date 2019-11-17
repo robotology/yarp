@@ -170,20 +170,27 @@ STRIP_FROM_PATH        = @CMAKE_BINARY_DIR@ \
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/include \
+STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/devices/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_math/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_name/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_gsl/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_eigen/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_pcl/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_cv/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/idl_generated_code/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_run/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/include/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/idl_generated_code/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_math/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_name/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_gsl/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_eigen/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_pcl/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_cv/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_serversql/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_profiler/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/src/idl_generated_code/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_run/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_manager/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_logger/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_wire_rep_utils/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/src/ \
+                         @CMAKE_BINARY_DIR@/src/libYARP_companion/src/ \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/doc \
@@ -823,26 +830,25 @@ WARN_LOGFILE           = @DOX_WARN_LOGFILE@
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @CMAKE_BINARY_DIR@/src/libYARP_conf/include \
+INPUT                  = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_math/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_math/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_name/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_name/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_gsl/include \
                          @CMAKE_SOURCE_DIR@/src/libYARP_gsl/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_eigen/include \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_pcl/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_cv/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/idl_generated_code/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_run/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_run/src/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/src/ \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_eigen/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_pcl/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_cv/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_serversql/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_profiler/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_run/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_manager/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_logger/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_wire_rep_utils/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/src \
+                         @CMAKE_BINARY_DIR@/src/libYARP_companion/src \
                          @CMAKE_SOURCE_DIR@/src/devices \
                          @CMAKE_SOURCE_DIR@/src/carriers \
                          @CMAKE_SOURCE_DIR@/doc \
@@ -2149,20 +2155,25 @@ SEARCH_INCLUDES        = YES
 # preprocessor.
 # This tag requires that the tag SEARCH_INCLUDES is set to YES.
 
-INCLUDE_PATH           = @CMAKE_BINARY_DIR@/src/libYARP_conf/include \
+INCLUDE_PATH           = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/devices/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_math/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_name/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_gsl/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_eigen/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_pcl/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_cv/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/idl_generated_code/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_run/include/ \
-                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/include/
+                         @CMAKE_SOURCE_DIR@/src/libYARP_sig/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_dev/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_math/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_name/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_gsl/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_eigen/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_pcl/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_cv/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_serversql/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_profiler/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_rosmsg/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_run/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_manager/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_logger/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_wire_rep_utils/src \
+                         @CMAKE_SOURCE_DIR@/src/libYARP_robottestingframework/src \
+                         @CMAKE_BINARY_DIR@/src/libYARP_companion/src
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the

@@ -1,5 +1,0 @@
-include/TickTime.h
-include/yarp/rosmsg/TickTime.h
-include/actionlib_msgs_GoalID.h
-include/actionlib_msgs/GoalID.h
-include/yarp/rosmsg/actionlib_msgs/GoalID.h

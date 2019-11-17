@@ -1,3 +1,0 @@
-include/shape_msgs_Plane.h
-include/shape_msgs/Plane.h
-include/yarp/rosmsg/shape_msgs/Plane.h

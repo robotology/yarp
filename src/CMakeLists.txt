@@ -26,6 +26,7 @@ add_subdirectory(libYARP_manager)
 add_subdirectory(libYARP_profiler)
 add_subdirectory(libYARP_logger)
 add_subdirectory(libYARP_wire_rep_utils)
+add_subdirectory(libYARP_robottestingframework)
 
 # plugins
 add_subdirectory(devices)
@@ -62,7 +63,6 @@ endif()
 
 # Robot Testing Framework addons
 if(YARP_COMPILE_RobotTestingFramework_ADDONS)
-  add_subdirectory(libYARP_robottestingframework)
   add_subdirectory(robottestingframework-plugins)
 endif()
 

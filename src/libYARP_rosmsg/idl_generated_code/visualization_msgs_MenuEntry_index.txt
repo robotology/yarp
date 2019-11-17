@@ -1,3 +1,0 @@
-include/visualization_msgs_MenuEntry.h
-include/visualization_msgs/MenuEntry.h
-include/yarp/rosmsg/visualization_msgs/MenuEntry.h

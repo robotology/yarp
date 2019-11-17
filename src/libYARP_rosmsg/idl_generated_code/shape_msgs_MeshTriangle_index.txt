@@ -1,3 +1,0 @@
-include/shape_msgs_MeshTriangle.h
-include/shape_msgs/MeshTriangle.h
-include/yarp/rosmsg/shape_msgs/MeshTriangle.h

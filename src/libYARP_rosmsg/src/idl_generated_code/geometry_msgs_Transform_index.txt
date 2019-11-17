@@ -1,0 +1,9 @@
+geometry_msgs_Vector3.h
+geometry_msgs/Vector3.h
+yarp/rosmsg/geometry_msgs/Vector3.h
+geometry_msgs_Quaternion.h
+geometry_msgs/Quaternion.h
+yarp/rosmsg/geometry_msgs/Quaternion.h
+geometry_msgs_Transform.h
+geometry_msgs/Transform.h
+yarp/rosmsg/geometry_msgs/Transform.h

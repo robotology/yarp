@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
             }
 
             // get image header, see YARPImagePortContentHeader
-            // class in src/libYARP_sig/src/Image.cpp
+            // class in src/libYARP_sig/src/yarp/sig/Image.cpp
             int i;
             res = yarp_receive_binary(con,(char*)header,sizeof(header));
             if (res<0) {

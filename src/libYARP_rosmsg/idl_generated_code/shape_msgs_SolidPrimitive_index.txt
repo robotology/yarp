@@ -1,3 +1,0 @@
-include/shape_msgs_SolidPrimitive.h
-include/shape_msgs/SolidPrimitive.h
-include/yarp/rosmsg/shape_msgs/SolidPrimitive.h
