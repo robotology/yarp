@@ -1,0 +1,5 @@
+fix/yarpdataplayer_fixslider {#master}
+ --------------
+
+ #### `yarpdataplayer`
+ * adding missing slider functionality
