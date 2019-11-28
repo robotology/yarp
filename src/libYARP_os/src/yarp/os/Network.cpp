@@ -647,12 +647,32 @@ bool NetworkBase::disconnect(const std::string& src,
     return result == 0;
 }
 
+bool NetworkBase::disconnect(const std::string& src, const std::string& dest, const std::string& carrier, bool quiet)
+{
+    ContactStyle style;
+    style.quiet = quiet;
+    if (!carrier.empty()) {
+        style.carrier = carrier;
+    }
+    return disconnect(src, dest, style);
+}
+
 bool NetworkBase::isConnected(const std::string& src,
                               const std::string& dest,
                               bool quiet)
 {
     ContactStyle style;
     style.quiet = quiet;
+    return isConnected(src, dest, style);
+}
+
+bool NetworkBase::isConnected(const std::string& src, const std::string& dest, const std::string& carrier, bool quiet)
+{
+    ContactStyle style;
+    style.quiet = quiet;
+    if (!carrier.empty()) {
+        style.carrier = carrier;
+    }
     return isConnected(src, dest, style);
 }
 
