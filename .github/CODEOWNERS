@@ -3,24 +3,22 @@
 /cmake/**                                     @drdanz
 /src/**                                       @drdanz
 /src/carriers/**                              @drdanz
-/src/carriers/depth_image_portmonitor/**      @barbalberto
 /src/carriers/mjpeg_carrier/**                @drdanz
 /src/carriers/tcpros_carrier/**               @drdanz
 /src/carriers/zfp_portmonitor/**              @Nicogene
-/src/devices/**                               @randaz81 @barbalberto @traversaro @Nicogene
+/src/devices/**                               @randaz81 @traversaro @Nicogene
 /src/devices/Rangefinder2DClient/**           @randaz81
 /src/devices/Rangefinder2DWrapper/**          @randaz81
 /src/devices/SDLJoypad/**                     @aerydna
+/src/devices/audioPlayerWrapper/**            @randaz81
+/src/devices/audioRecorderWrapper/**          @randaz81
 /src/devices/batteryClient/**                 @randaz81
 /src/devices/batteryWrapper/**                @randaz81
-/src/devices/depthCamera/**                   @barbalberto
-/src/devices/fakeAnalogSensor/**              @barbalberto
 /src/devices/fakeBattery/**                   @randaz81
-/src/devices/fakeDepthCamera/**               @barbalberto
-/src/devices/fakeIMU/**                       @barbalberto
 /src/devices/fakeLaser/**                     @randaz81
-/src/devices/fakeMotionControl/**             @barbalberto
-/src/devices/imuBosch_BNO055/**               @barbalberto @Nicogene
+/src/devices/fakeMicrophone/**                @randaz81
+/src/devices/fakeSpeaker/**                   @randaz81
+/src/devices/imuBosch_BNO055/**               @Nicogene
 /src/devices/laserFromDepth/**                @randaz81
 /src/devices/laserHokuyo/**                   @randaz81
 /src/devices/localization2DClient/**          @randaz81
@@ -34,12 +32,15 @@
 /src/devices/navigation2DClient/**            @randaz81
 /src/devices/navigation2DServer/**            @randaz81
 /src/devices/ovrheadset/**                    @drdanz @aerydna
+/src/devices/portaudio/**                     @randaz81
+/src/devices/portaudioPlayer/**               @randaz81
+/src/devices/portaudioRecorder/**             @randaz81
 /src/devices/realsense2/**                    @Nicogene
 /src/devices/rpLidar/**                       @randaz81
 /src/devices/rpLidar2/**                      @randaz81
 /src/devices/transformClient/**               @randaz81 @aerydna
 /src/devices/transformServer/**               @randaz81 @aerydna
-/src/devices/usbCamera/**                     @barbalberto @Nicogene
+/src/devices/usbCamera/**                     @Nicogene
 /src/idls/rosmsg/**                           @drdanz
 /src/idls/thrift/**                           @drdanz
 /src/libYARP_companion/**                     @drdanz
