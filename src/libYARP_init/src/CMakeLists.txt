@@ -23,7 +23,7 @@ add_library(YARP::YARP_init ALIAS YARP_init)
 
 target_link_libraries(YARP_init PRIVATE YARP::YARP_conf
                                         YARP::YARP_os)
-target_compile_features(YARP_init PUBLIC cxx_std_11)
+target_compile_features(YARP_init PUBLIC cxx_std_14)
 
 if(YARP_LINK_PLUGINS)
     if(YARP_COMPILE_CARRIER_PLUGINS)

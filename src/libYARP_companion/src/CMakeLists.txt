@@ -35,7 +35,7 @@ target_include_directories(YARP_companion PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRE
 target_link_libraries(YARP_companion PUBLIC YARP::YARP_os)
 list(APPEND YARP_companion_PUBLIC_DEPS YARP_os)
 
-target_compile_features(YARP_companion PUBLIC cxx_std_11)
+target_compile_features(YARP_companion PUBLIC cxx_std_14)
 
 if(YARP_HAS_ACE)
   target_compile_definitions(YARP_companion PRIVATE YARP_HAS_ACE)

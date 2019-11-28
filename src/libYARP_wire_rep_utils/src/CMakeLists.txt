@@ -21,7 +21,7 @@ add_library(YARP::YARP_wire_rep_utils ALIAS YARP_wire_rep_utils)
 
 target_include_directories(YARP_wire_rep_utils PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_compile_features(YARP_wire_rep_utils PUBLIC cxx_std_11)
+target_compile_features(YARP_wire_rep_utils PUBLIC cxx_std_14)
 
 target_link_libraries(YARP_wire_rep_utils PUBLIC YARP::YARP_conf
                                                  YARP::YARP_os

@@ -32,7 +32,7 @@ add_library(YARP::YARP_name ALIAS YARP_name)
 
 target_include_directories(YARP_name PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_compile_features(YARP_name PUBLIC cxx_std_11)
+target_compile_features(YARP_name PUBLIC cxx_std_14)
 
 target_link_libraries(YARP_name PUBLIC YARP::YARP_conf
                                        YARP::YARP_os)

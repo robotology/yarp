@@ -47,7 +47,7 @@ add_library(YARP::YARP_math ALIAS YARP_math)
 
 target_include_directories(YARP_math PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_compile_features(YARP_math PUBLIC cxx_std_11)
+target_compile_features(YARP_math PUBLIC cxx_std_14)
 
 # import math symbols from standard cmath
 target_compile_definitions(YARP_math PRIVATE _USE_MATH_DEFINES)
