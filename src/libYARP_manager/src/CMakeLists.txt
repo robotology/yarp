@@ -87,6 +87,7 @@ target_include_directories(YARP_manager PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT
 if(MSVC)
   target_include_directories(YARP_manager SYSTEM PRIVATE ${dirent_INCLUDE_DIRS})
 endif()
+target_compile_features(YARP_manager PUBLIC cxx_std_11)
 
 target_link_libraries(YARP_manager PUBLIC YARP::YARP_os
                                    PRIVATE YARP::YARP_sig)
@@ -102,8 +103,6 @@ endif()
 target_include_directories(YARP_manager SYSTEM PRIVATE ${TinyXML_INCLUDE_DIRS})
 target_link_libraries(YARP_manager PRIVATE ${TinyXML_LIBRARIES})
 list(APPEND YARP_manager_PRIVATE_DEPS TinyXML)
-
-target_compile_features(YARP_manager PUBLIC cxx_override)
 
 set_property(TARGET YARP_manager PROPERTY PUBLIC_HEADER ${YARP_manager_HDRS})
 set_property(TARGET YARP_manager PROPERTY PRIVATE_HEADER ${YARP_manager_IMPL_HDRS})

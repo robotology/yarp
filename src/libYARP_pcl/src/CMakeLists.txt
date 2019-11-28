@@ -15,6 +15,7 @@ add_library(YARP::YARP_pcl ALIAS YARP_pcl)
 
 target_include_directories(YARP_pcl INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_pcl INTERFACE cxx_std_11)
 
 target_link_libraries(YARP_pcl INTERFACE YARP::YARP_sig)
 list(APPEND YARP_pcl_PUBLIC_DEPS YARP_sig)

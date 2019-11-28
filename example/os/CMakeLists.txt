@@ -5,7 +5,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(Examples)
 
 # Be sure to set YARP_DIR environment variable if YARP is not installed

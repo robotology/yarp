@@ -405,6 +405,8 @@ endif()
 
 target_include_directories(YARP_os PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_os PUBLIC cxx_std_11)
+
 target_link_libraries(YARP_os PUBLIC YARP::YARP_conf)
 list(APPEND YARP_os_PUBLIC_DEPS YARP_conf)
 
@@ -436,10 +438,6 @@ if(YARP_HAS_Libedit)
   target_link_libraries(YARP_os PRIVATE Libedit::libedit)
   list(APPEND YARP_os_PRIVATE_DEPS Libedit)
 endif()
-
-target_compile_features(YARP_os PUBLIC cxx_nullptr
-                                       cxx_override
-                                       cxx_rvalue_references)
 
 set_property(TARGET YARP_os PROPERTY PUBLIC_HEADER ${YARP_os_HDRS})
 set_property(TARGET YARP_os PROPERTY PRIVATE_HEADER ${YARP_os_IMPL_HDRS})

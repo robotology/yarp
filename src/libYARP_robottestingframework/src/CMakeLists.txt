@@ -25,6 +25,7 @@ add_library(YARP::YARP_robottestingframework ALIAS YARP_robottestingframework)
 
 target_include_directories(YARP_robottestingframework PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_robottestingframework PUBLIC cxx_std_11)
 
 target_link_libraries(YARP_robottestingframework PUBLIC YARP::YARP_conf
                                                         YARP::YARP_os
@@ -38,9 +39,6 @@ list(APPEND YARP_robottestingframework_PUBLIC_DEPS YARP_conf
 
 target_link_libraries(YARP_robottestingframework PUBLIC RobotTestingFramework::RTF)
 list(APPEND YARP_robottestingframework_PUBLIC_DEPS RobotTestingFramework)
-
-target_compile_features(YARP_robottestingframework PUBLIC cxx_nullptr
-                                        cxx_override)
 
 set_property(TARGET YARP_robottestingframework PROPERTY PUBLIC_HEADER ${YARP_robottestingframework_HDRS})
 set_property(TARGET YARP_robottestingframework PROPERTY PRIVATE_HEADER ${YARP_robottestingframework_IMPL_HDRS})

@@ -21,6 +21,7 @@ add_library(YARP::YARP_wire_rep_utils ALIAS YARP_wire_rep_utils)
 
 target_include_directories(YARP_wire_rep_utils PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_wire_rep_utils PUBLIC cxx_std_11)
 
 target_link_libraries(YARP_wire_rep_utils PUBLIC YARP::YARP_conf
                                                  YARP::YARP_os
@@ -34,9 +35,6 @@ if(YARP_HAS_ACE)
   target_link_libraries(YARP_wire_rep_utils PRIVATE ACE::ACE_INLINE)
   list(APPEND YARP_wire_rep_utils_PRIVATE_DEPS ACE)
 endif()
-
-target_compile_features(YARP_wire_rep_utils PUBLIC cxx_nullptr
-                                                   cxx_override)
 
 set_property(TARGET YARP_wire_rep_utils PROPERTY PUBLIC_HEADER ${YARP_wire_rep_utils_HDRS})
 set_property(TARGET YARP_wire_rep_utils PROPERTY PRIVATE_HEADER ${YARP_wire_rep_utils_IMPL_HDRS})
