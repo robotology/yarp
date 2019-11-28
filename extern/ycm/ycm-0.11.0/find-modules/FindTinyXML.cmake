@@ -30,7 +30,8 @@
 
 
 include(StandardFindModule)
-standard_find_module(TinyXML tinyxml)
+standard_find_module(TinyXML tinyxml
+                     SKIP_CMAKE_CONFIG)
 
 # Set package properties if FeatureSummary was included
 if(COMMAND set_package_properties)
