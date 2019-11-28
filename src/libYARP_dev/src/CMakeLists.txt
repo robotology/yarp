@@ -117,6 +117,7 @@ set(YARP_dev_HDRS yarp/dev/all.h
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_HDRS yarp/dev/IFrameTransform.h
+                            yarp/dev/IFrameTransformClientControl.h
                             yarp/dev/ILocalization2D.h
                             yarp/dev/IMap2D.h
                             yarp/dev/INavigation2D.h
@@ -195,6 +196,7 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_SRCS yarp/dev/IFrameTransform.cpp
+                            yarp/dev/IFrameTransformClientControl.cpp
                             yarp/dev/IMap2D.cpp
                             yarp/dev/INavigation2D.cpp
                             yarp/dev/MapGrid2D.cpp
