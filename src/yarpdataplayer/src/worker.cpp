@@ -385,7 +385,7 @@ void MasterThread::runNormally()
         }
     }
     
-    virtualTime += diff_seconds();
+    virtualTime += diff_seconds() * utilities->speed;
 
     tick();
 
