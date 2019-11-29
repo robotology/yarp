@@ -145,7 +145,7 @@ public:
      */
     static bool disconnect(const std::string& src,
                            const std::string& dest,
-                           bool quiet = true);
+                           bool quiet);
 
     /**
      * Request that an output port disconnect from an input port.
@@ -159,6 +159,31 @@ public:
                            const ContactStyle& style);
 
     /**
+     * Request that an output port disconnect from an input port.
+     * @param src the name of an output port
+     * @param dest the name of an input port
+     * @param carrier the name of the protocol to use (tcp/udp/mcast)
+     * @param quiet suppress messages displayed upon success/failure
+     * @return true on success, false on failure
+     */
+    static bool disconnect(const std::string& src,
+                        const std::string& dest,
+                        const std::string& carrier = "",
+                        bool quiet = true);
+
+    // Catch old uses of nullptr for carrier
+    static bool disconnect(const char* src,
+                        const char* dest,
+                        const char* carrier,
+                        bool quiet = true)
+    {
+        return disconnect(std::string(src),
+                       std::string(dest),
+                       std::string((carrier == nullptr) ? "" : carrier),
+                       quiet);
+    }
+
+    /**
      * Check if a connection exists between two ports.
      * @param src the name of an output port
      * @param dest the name of an input port
@@ -167,7 +192,7 @@ public:
      */
     static bool isConnected(const std::string& src,
                             const std::string& dest,
-                            bool quiet = true);
+                            bool quiet);
 
     /**
      * Check if a connection exists between two ports.
@@ -179,6 +204,31 @@ public:
     static bool isConnected(const std::string& src,
                             const std::string& dest,
                             const ContactStyle& style);
+
+    /**
+     * Check if a connection exists between two ports.
+     * @param src the name of an output port
+     * @param dest the name of an input port
+     * @param carrier the name of the protocol to use (tcp/udp/mcast)
+     * @param quiet suppress messages displayed upon success/failure
+     * @return true if there is a connection
+     */
+    static bool isConnected(const std::string& src,
+                        const std::string& dest,
+                        const std::string& carrier = "",
+                        bool quiet = true);
+
+    // Catch old uses of nullptr for carrier
+    static bool isConnected(const char* src,
+                        const char* dest,
+                        const char* carrier,
+                        bool quiet = true)
+    {
+        return isConnected(std::string(src),
+                       std::string(dest),
+                       std::string((carrier == nullptr) ? "" : carrier),
+                       quiet);
+    }
 
     /**
      * Check for a port to be ready and responsive.
