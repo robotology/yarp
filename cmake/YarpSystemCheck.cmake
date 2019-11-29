@@ -20,11 +20,11 @@ include(GNUInstallDirs)
 
 
 #########################################################################
-# C++11 is required
+# C++14 is required
 # These variables are used by try_compile, so they must be set here
 
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 

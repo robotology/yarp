@@ -47,6 +47,10 @@ add_library(YARP::YARP_math ALIAS YARP_math)
 
 target_include_directories(YARP_math PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_math PUBLIC cxx_std_14)
+
+# import math symbols from standard cmath
+target_compile_definitions(YARP_math PRIVATE _USE_MATH_DEFINES)
 
 target_link_libraries(YARP_math PUBLIC YARP::YARP_conf
                                        YARP::YARP_os
@@ -59,11 +63,6 @@ list(APPEND YARP_math_PRIVATE_DEPS YARP_eigen)
 
 target_link_libraries(YARP_math PRIVATE Eigen3::Eigen)
 list(APPEND YARP_math_PRIVATE_DEPS Eigen3)
-
-# import math symbols from standard cmath
-target_compile_definitions(YARP_math PRIVATE _USE_MATH_DEFINES)
-
-target_compile_features(YARP_math PUBLIC cxx_override)
 
 set_property(TARGET YARP_math PROPERTY PUBLIC_HEADER ${YARP_math_HDRS})
 set_property(TARGET YARP_math PROPERTY PRIVATE_HEADER ${YARP_math_IMPL_HDRS})

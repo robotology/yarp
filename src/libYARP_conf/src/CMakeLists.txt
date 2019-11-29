@@ -104,6 +104,7 @@ add_library(YARP::YARP_conf ALIAS YARP_conf)
 
 target_include_directories(YARP_conf INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
                                                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_conf INTERFACE cxx_std_14)
 
 
 #########################################################################

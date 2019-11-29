@@ -44,6 +44,7 @@ add_library(YARP::YARP_serversql ALIAS YARP_serversql)
 
 target_include_directories(YARP_serversql PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_serversql PUBLIC cxx_std_14)
 
 target_link_libraries(YARP_serversql PUBLIC YARP::YARP_conf
                                             YARP::YARP_os

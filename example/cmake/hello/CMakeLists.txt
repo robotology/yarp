@@ -6,7 +6,7 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 # YARP needs CMake 3.0 or greater
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 
 # find YARP
 find_package(YARP REQUIRED)

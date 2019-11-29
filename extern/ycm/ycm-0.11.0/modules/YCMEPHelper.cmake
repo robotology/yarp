@@ -47,6 +47,8 @@
 #
 # .. variable:: YCM_BOOTSTRAP_VERBOSE
 #
+# .. variable:: YCM_EP_INSTALL_DIR
+#
 # .. variable:: YCM_<COMPONENT>_COLOR
 #
 # .. variable:: YCM_<COMPONENT>_BGCOLOR
@@ -230,7 +232,8 @@ macro(_YCM_SETUP)
   # Install directory for all sub-projects
   # TODO Make this a cached variable for installation outside build
   #      directory
-  set(_YCM_EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/install)
+  set(YCM_EP_INSTALL_DIR "${CMAKE_BINARY_DIR}/install" CACHE PATH "Path to the superbuild installation directory. WARNING: If this path is not writable by the user, you will have to build as superuser")
+  mark_as_advanced(YCM_EP_INSTALL_DIR)
 
   # ExternalProject does not handle correctly arguments containing ";" passed
   # using CMAKE_ARGS, and instead splits them into several arguments. This is
@@ -239,7 +242,7 @@ macro(_YCM_SETUP)
   #
   # TODO FIXME check what happens when the "*_COMMAND" arguments are passed.
   file(TO_CMAKE_PATH "$ENV{CMAKE_PREFIX_PATH}" _CMAKE_PREFIX_PATH)
-  list(INSERT _CMAKE_PREFIX_PATH 0 ${_YCM_EP_INSTALL_DIR})
+  list(INSERT _CMAKE_PREFIX_PATH 0 ${YCM_EP_INSTALL_DIR})
   list(REMOVE_DUPLICATES _CMAKE_PREFIX_PATH)
   string(REPLACE ";" "|" _CMAKE_PREFIX_PATH "${_CMAKE_PREFIX_PATH}")
   set(_YCM_EP_ALL_CMAKE_ARGS LIST_SEPARATOR "|")
@@ -249,7 +252,7 @@ macro(_YCM_SETUP)
                          "-DCMAKE_PREFIX_PATH:PATH=${_CMAKE_PREFIX_PATH}") # Path used by cmake for finding stuff
 
   # Default CMAKE_CACHE_ARGS (Initial cache, forced)
-  set(_YCM_EP_CMAKE_CACHE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=${_YCM_EP_INSTALL_DIR}") # Where to do the installation
+  set(_YCM_EP_CMAKE_CACHE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=${YCM_EP_INSTALL_DIR}") # Where to do the installation
 
   if(DEFINED CMAKE_TOOLCHAIN_FILE)
     list(APPEND _YCM_EP_CMAKE_CACHE_ARGS "-DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}")
@@ -817,7 +820,7 @@ function(YCM_EP_HELPER _name)
   set(${_name}_SOURCE_DIR ${CMAKE_SOURCE_DIR}/${_YH_${_name}_FOLDER}/${_name})
   set(${_name}_DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/${_YH_${_name}_FOLDER})
   set(${_name}_BINARY_DIR ${CMAKE_BINARY_DIR}/${_YH_${_name}_FOLDER}/${_name})
-  set(${_name}_INSTALL_DIR ${_YCM_EP_INSTALL_DIR})
+  set(${_name}_INSTALL_DIR ${YCM_EP_INSTALL_DIR})
   set(${_name}_TMP_DIR ${CMAKE_BINARY_DIR}/${_YH_${_name}_FOLDER}/${_name}${CMAKE_FILES_DIRECTORY}/YCMTmp)
   set(${_name}_STAMP_DIR ${CMAKE_BINARY_DIR}/${_YH_${_name}_FOLDER}/${_name}${CMAKE_FILES_DIRECTORY}/YCMStamp)
 
@@ -894,7 +897,7 @@ function(YCM_EP_HELPER _name)
      NOT ("${_YH_${_name}_CONFIGURE_COMMAND}" MATCHES "^[^;]*/cmake" AND
           NOT "${_YH_${_name}_CONFIGURE_COMMAND}" MATCHES ";-[PE];"))
 
-    set(_pkg_config_path "${_YCM_EP_INSTALL_DIR}/lib/pkgconfig")
+    set(_pkg_config_path "${YCM_EP_INSTALL_DIR}/lib/pkgconfig")
     if(WIN32)
       set(_regex "(^|;)${_pkg_config_path}(;|^)")
     else()
@@ -1371,10 +1374,14 @@ macro(YCM_BOOTSTRAP)
   file(READ ${YCM_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/YCMTmp/YCM-cfgcmd.txt _cmd)
   string(STRIP "${_cmd}" _cmd)
   string(REGEX REPLACE "^cmd='(.+)'" "\\1" _cmd "${_cmd}")
+  # The -DCMAKE_PREFIX_PATH in YCM-cfgcmd.txt uses | as list separator, so it is not 
+  # usable as it is when invoking CMake from the config line. As YCM during bootstrap 
+  # does not need to find any package via CMAKE_PREFIX_PATH, we just remove it 
+  string(REGEX REPLACE "-DCMAKE_PREFIX_PATH:PATH=.+;-C" "-C" _cmd "${_cmd}")
   # The cache file is generated with 'file(GENERATE)', therefore it is not yet
   # available. Since we cannot use CMAKE_CACHE_ARGS or CMAKE_CACHE_DEFAULT_ARGS,
   # We just remove it from the command line, and append the arguments instead.
-  string(REGEX REPLACE "-C.+\\.cmake;" "${_YCM_EP_CMAKE_CACHE_ARGS};${_YCM_EP_CMAKE_CACHE_DEFAULT_ARGS}" _cmd "${_cmd}")
+  string(REGEX REPLACE "-C.+\\.cmake;" "${_YCM_EP_CMAKE_CACHE_ARGS};${_YCM_EP_CMAKE_CACHE_DEFAULT_ARGS};" _cmd "${_cmd}")
   # The command line contains location tags, therefore we need to expand it.
   _ep_replace_location_tags(YCM _cmd)
   execute_process(COMMAND ${_cmd}

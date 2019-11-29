@@ -245,6 +245,7 @@ add_library(YARP::YARP_dev ALIAS YARP_dev)
 target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                            $<BUILD_INTERFACE:${YARP_dev_idl_INCLUDE_DIRS}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_dev PUBLIC cxx_std_14)
 
 target_link_libraries(YARP_dev PUBLIC YARP::YARP_conf
                                        YARP::YARP_os
@@ -259,10 +260,6 @@ if(TARGET YARP::YARP_math)
   target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)
   list(APPEND YARP_dev_PRIVATE_DEPS YARP_math)
 endif()
-
-target_compile_features(YARP_dev PUBLIC cxx_nullptr
-                                        cxx_override
-                                        cxx_final)
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS}
                                                     ${YARP_dev_idl_HDRS})

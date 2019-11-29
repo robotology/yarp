@@ -36,7 +36,7 @@ License: 3-Clause-BSD
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-Version: 0.10.4
+Version: 0.11.0
 
 Notes:
  YCM downloads several modules at build time. We don't want to add a network

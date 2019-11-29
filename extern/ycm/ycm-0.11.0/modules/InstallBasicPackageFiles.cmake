@@ -12,10 +12,10 @@
 # project::
 #
 #  install_basic_package_files(<Name>
-#                              VERSION <version>
 #                              COMPATIBILITY <compatibility>
+#                              [VERSION <version>]
 #                              [ARCH_INDEPENDENT]
-#                              [EXPORT <export>] # (default = "<Name>")
+#                              [NO_EXPORT | EXPORT <export>] # (default = "EXPORT <Name>")
 #                              [NO_SET_AND_CHECK_MACRO]
 #                              [NO_CHECK_REQUIRED_COMPONENTS_MACRO]
 #                              [VARS_PREFIX <prefix>] # (default = "<Name>")
@@ -39,16 +39,16 @@
 #  - ``<Name>Targets.cmake`` or ``<name>-targets.cmake``
 #
 # If neither ``UPPERCASE_FILENAMES`` nor ``LOWERCASE_FILENAMES`` is
-# set, a file ``<Name>ConfigVersion.cmake.in`` or
-# ``<name>-config-version.cmake.in`` is searched, and the convention
+# set, a file ``<Name>Config.cmake.in`` or
+# ``<name>-config.cmake.in`` is searched, and the convention
 # is chosed according to the file found. If no file was found, the
 # uppercase convention is used.
 #
 # The ``DEPENDENCIES`` argument can be used to set a list of dependencies
-# that will be searched using the :command:`find_dependency` command
+# that will be searched using the :cmake:command:`find_dependency` command
 # from the :module:`CMakeFindDependencyMacro` module.
-# Dependencies can be followed by any of the possible :command:`find_dependency`
-# argument.
+# Dependencies can be followed by any of the possible
+# :cmake:command:`find_dependency` argument.
 # In this case, all the arguments must be specified within double quotes (e.g.
 # ``"<dependency> 1.0.0 EXACT"``, or ``"<dependency> CONFIG"``).
 # The ``PRIVATE_DEPENDENCIES`` argument is similar to ``DEPENDENCIES``, but
@@ -72,9 +72,13 @@
 # one (``CMAKE_BINARY_DIR``).  If this is a relative path, it is
 # considered relative to the ``CMAKE_CURRENT_BINARY_DIR`` directory.
 #
+# The build directory is exported to the CMake user package registry if the
+# build option ``CMAKE_EXPORT_PACKAGE_REGISTRY`` is set.
+#
 # The ``<Name>ConfigVersion.cmake`` file is generated using
-# ``write_basic_package_version_file``. The ``VERSION``, ``COMPATIBILITY``, and
-# ``ARCH_INDEPENDENT``arguments are passed to this function.
+# :cmake:command:`write_basic_package_version_file`. The ``VERSION``,
+# ``COMPATIBILITY``, and ``ARCH_INDEPENDENT``arguments are passed to this
+# function.
 #
 # ``VERSION`` shall be in the form ``<major>[.<minor>[.<patch>[.<tweak>]]]]``.
 # If no ``VERSION`` is given, the ``PROJECT_VERSION`` variable is used.
@@ -82,12 +86,12 @@
 # to replace the ``@PACKAGE_VERSION@`` string in the configuration file.
 #
 # ``COMPATIBILITY`` shall be any of the options accepted by the
-# :command:`write_basic_package_version_file` command
+# :cmake:command:`write_basic_package_version_file` command
 # (``AnyNewerVersion``, ``SameMajorVersion``, ``SameMinorVersion`` [CMake 3.11],
 # or ``ExactVersion``).
-# These options are explained in :command:`write_basic_package_version_file`
+# These options are explained in :cmake:command:`write_basic_package_version_file`
 # command documentation.
-# If your project has more elaborated version matching rules, you will need to
+# If your project has more elaborate version matching rules, you will need to
 # write your own custom ConfigVersion.cmake file instead of using this macro.
 #
 # If the ``ARCH_INDEPENDENT`` option is enabled, the installed package version
@@ -95,14 +99,14 @@
 # architecture than the requested architecture.
 #
 # The ``<Name>Config.cmake`` file is generated using
-# ``configure_package_config_file``. The  ``NO_SET_AND_CHECK_MACRO``, and
-# ``NO_CHECK_REQUIRED_COMPONENTS_MACRO``, and arguments are passed to this
-# function.
+# :cmake:command:`configure_package_config_file`. The
+# ``NO_SET_AND_CHECK_MACRO``, ``NO_CHECK_REQUIRED_COMPONENTS_MACRO``, and
+# arguments are passed to this function.
 #
-# By default ``install_basic_package_files`` also generates the two helper
+# By default :command:`install_basic_package_files` also generates the two helper
 # macros ``set_and_check()`` and ``check_required_components()`` into the
 # ``<Name>Config.cmake`` file. ``set_and_check()`` should be used instead of the
-# normal :command:`set()` command for setting directories and file locations.
+# normal :cmake:command:`set()` command for setting directories and file locations.
 # Additionally to setting the variable it also checks that the referenced file
 # or directory actually exists and fails with a ``FATAL_ERROR`` otherwise.
 # This makes sure that the created ``<Name>Config.cmake`` file does not contain
@@ -110,7 +114,7 @@
 # When using the ``NO_SET_AND_CHECK_MACRO, this macro is not generated into the
 # ``<Name>Config.cmake`` file.
 #
-# By default, ``install_basic_package_files`` append a call to
+# By default, :command:`install_basic_package_files` append a call to
 # ``check_required_components(<Name>)`` in ``<Name>Config.cmake`` file if the
 # package supports components. This macro checks whether all requested,
 # non-optional components have been found, and if this is not the case, sets the
@@ -132,7 +136,7 @@
 # If the file does not exist, a very basic file is created.
 #
 # A set of variables are checked and passed to
-# ``configure_package_config_file`` as ``PATH_VARS``. For each of the
+# :cmake:command:`configure_package_config_file` as ``PATH_VARS``. For each of the
 # ``SUFFIX`` considered, if one of the variables::
 #
 #     <VARS_PREFIX>_(BUILD|INSTALL)_<SUFFIX>
@@ -177,16 +181,17 @@
 # argument.
 #
 #
-# The ``<Name>Targets.cmake`` is generated using :command:`export(EXPORT)` in
-# the build tree and :command:`install(EXPORT)` in the installation directory.
-# The targets are exported using the value for the ``NAMESPACE`` argument as
-# namespace.
-# The export can be passed using the ``EXPORT`` argument.
+# The ``<Name>Targets.cmake`` is generated using :cmake:command:`export(EXPORT)`
+# in the build tree and :cmake:command:`install(EXPORT)` in the installation
+# directory. The targets are exported using the value for the ``NAMESPACE``
+# argument as namespace.
+# The export can be passed using the ``EXPORT`` argument. If no export is
+# used (e.g. for a CMake script library), pass ``NO_EXPORT``.
 #
 # If the ``INCLUDE_FILE`` argument is passed, the content of the specified file
 # (which might contain ``@variables@``) is appended to the generated
 # ``<Name>Config.cmake`` file.
-# If the ``INCLUDED_CONTENT`` argument is passed, the specified content
+# If the ``INCLUDE_CONTENT`` argument is passed, the specified content
 # (which might contain ``@variables@``) is appended to the generated
 # ``<Name>Config.cmake`` file.
 # When a ``CONFIG_TEMPLATE`` is passed, or a ``<Name>ConfigVersion.cmake.in`` or
@@ -195,8 +200,12 @@
 # This allows one to inject custom code to this file, useful e.g. to set
 # additional variables which are loaded by downstream projects.
 #
+# Note that content specified with ``INCLUDE_FILE`` or ``INCLUDE_CONTENT``
+# cannot reference any of the ``PATH_VARS`` because this content is not
+# expanded by :cmake:command:`configure_package_config_file`.
+#
 # If the ``COMPONENT`` argument is passed, it is forwarded to the
-# :command:`install` commands, otherwise ``<Name>`` is used.
+# :cmake:command:`install` commands, otherwise ``<Name>`` is used.
 
 #=============================================================================
 # Copyright 2013 Istituto Italiano di Tecnologia (IIT)
@@ -225,9 +234,8 @@ include(CMakeParseArguments)
 
 function(INSTALL_BASIC_PACKAGE_FILES _Name)
 
-  # TODO check that _Name does not contain "-" characters
-
   set(_options ARCH_INDEPENDENT
+               NO_EXPORT
                NO_SET_AND_CHECK_MACRO
                NO_CHECK_REQUIRED_COMPONENTS_MACRO
                UPPERCASE_FILENAMES
@@ -260,7 +268,10 @@ function(INSTALL_BASIC_PACKAGE_FILES _Name)
   endif()
 
   if(NOT DEFINED _IBPF_VERSION)
-    message(FATAL_ERROR "VERSION argument is required")
+    if(NOT DEFINED PROJECT_VERSION)
+      message(FATAL_ERROR "VERSION argument is required (PROJECT_VERSION is not defined)")
+    endif()
+    set(_IBPF_VERSION ${PROJECT_VERSION})
   endif()
 
   if(NOT DEFINED _IBPF_COMPATIBILITY)
@@ -286,12 +297,17 @@ function(INSTALL_BASIC_PACKAGE_FILES _Name)
   set(_export_cmd EXPORT ${_Name})
 
   if(DEFINED _IBPF_EXPORT)
-    if(DEFINED _IBPF_TARGETS OR DEFINED _IBPF_TARGETS_PROPERTIES OR DEFINED _IBPF_TARGETS_PROPERTIES)
-      message(FATAL_ERROR "EXPORT cannot be used with TARGETS, TARGETS_PROPERTY or TARGETS_PROPERTIES")
+    if(_IBPF_NO_EXPORT OR DEFINED _IBPF_TARGETS OR DEFINED _IBPF_TARGETS_PROPERTIES OR DEFINED _IBPF_TARGETS_PROPERTIES)
+      message(FATAL_ERROR "EXPORT cannot be used with NO_EXPORT, TARGETS, TARGETS_PROPERTY, or TARGETS_PROPERTIES")
     endif()
 
     set(_export_cmd EXPORT ${_IBPF_EXPORT})
     set(_install_cmd EXPORT ${_IBPF_EXPORT})
+
+  elseif(_IBPF_NO_EXPORT)
+    if(DEFINED _IBPF_TARGETS OR DEFINED _IBPF_TARGETS_PROPERTIES OR DEFINED _IBPF_TARGETS_PROPERTIES)
+      message(FATAL_ERROR "NO_EXPORT cannot be used with TARGETS, TARGETS_PROPERTY, or TARGETS_PROPERTIES")
+    endif()
 
   elseif(DEFINED _IBPF_TARGETS)
     message(DEPRECATION "TARGETS is deprecated. Use EXPORT instead")
@@ -520,6 +536,12 @@ endif()
 ")
     endif()
 
+    if(_IBPF_NO_EXPORT)
+      set(_include_targets_cmd "")
+    else()
+      set(_include_targets_cmd "include(\"\${CMAKE_CURRENT_LIST_DIR}/${_targets_filename}\")")
+    endif()
+
     # Write the file
     file(WRITE "${_config_cmake_in}"
 "set(${_IBPF_VARS_PREFIX}_VERSION \@PACKAGE_VERSION\@)
@@ -528,7 +550,7 @@ endif()
 
 \@PACKAGE_DEPENDENCIES\@
 
-include(\"\${CMAKE_CURRENT_LIST_DIR}/${_targets_filename}\")
+${_include_targets_cmd}
 
 ${_compatibility_vars}
 
@@ -720,14 +742,26 @@ endif()
 
 
   # <Name>Targets.cmake (build tree)
-  export(${_export_cmd}
-         NAMESPACE ${_IBPF_NAMESPACE}
-         FILE "${_IBPF_EXPORT_DESTINATION}/${_targets_filename}")
+  if(NOT _IBPF_NO_EXPORT)
+    export(${_export_cmd}
+           NAMESPACE ${_IBPF_NAMESPACE}
+           FILE "${_IBPF_EXPORT_DESTINATION}/${_targets_filename}")
+  endif()
+
+  # Export build directory if CMAKE_EXPORT_PACKAGE_REGISTRY is set.
+  # CMake >= 3.15 already checks for CMAKE_EXPORT_PACKAGE_REGISTRY in `export(PACKAGE)` (cf.
+  # cf. https://cmake.org/cmake/help/latest/policy/CMP0090.html), and we effectively back-port
+  # this behavior to earlier versions.
+  if(CMAKE_EXPORT_PACKAGE_REGISTRY OR NOT CMAKE_VERSION VERSION_LESS 3.15)
+    export(PACKAGE ${_Name})
+  endif()
 
   # <Name>Targets.cmake (installed)
-  install(${_install_cmd}
-          NAMESPACE ${_IBPF_NAMESPACE}
-          DESTINATION ${_IBPF_INSTALL_DESTINATION}
-          FILE "${_targets_filename}"
-          COMPONENT ${_IBPF_COMPONENT})
+  if(NOT _IBPF_NO_EXPORT)
+    install(${_install_cmd}
+            NAMESPACE ${_IBPF_NAMESPACE}
+            DESTINATION ${_IBPF_INSTALL_DESTINATION}
+            FILE "${_targets_filename}"
+            COMPONENT ${_IBPF_COMPONENT})
+  endif()
 endfunction()

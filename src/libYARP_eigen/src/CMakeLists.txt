@@ -15,6 +15,8 @@ add_library(YARP::YARP_eigen ALIAS YARP_eigen)
 
 target_include_directories(YARP_eigen INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_eigen INTERFACE cxx_std_14)
+
 target_link_libraries(YARP_eigen INTERFACE YARP_sig)
 list(APPEND YARP_eigen_PUBLIC_DEPS YARP_sig)
 

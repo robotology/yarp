@@ -40,6 +40,7 @@ add_library(YARP::YARP_run ALIAS YARP_run)
 
 target_include_directories(YARP_run PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_compile_features(YARP_run PUBLIC cxx_std_14)
 
 target_link_libraries(YARP_run PRIVATE YARP::YARP_os)
 list(APPEND YARP_run_PRIVATE_DEPS YARP_os)
@@ -49,8 +50,6 @@ if(YARP_HAS_ACE)
   target_link_libraries(YARP_run PRIVATE ACE::ACE_INLINE)
   list(APPEND YARP_run_PRIVATE_DEPS ACE)
 endif()
-
-target_compile_features(YARP_run PUBLIC cxx_override)
 
 set_property(TARGET YARP_run PROPERTY PUBLIC_HEADER ${YARP_run_HDRS})
 set_property(TARGET YARP_run PROPERTY PRIVATE_HEADER ${YARP_run_IMPL_HDRS})
