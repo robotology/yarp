@@ -491,7 +491,8 @@ public:
 #ifndef YARP_NO_DEPRECATED // since YARP 3.3
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-    bool YARP_DEPRECATED setCallbackLock(yarp::os::Mutex* mutex);
+    YARP_DEPRECATED
+    bool setCallbackLock(yarp::os::Mutex* mutex);
 YARP_WARNING_POP
 #endif // YARP_NO_DEPRECATED
 

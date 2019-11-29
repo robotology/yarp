@@ -89,7 +89,8 @@ YARP_WARNING_POP
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.3
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-    bool YARP_DEPRECATED configCallbackLock(Mutex* lock);
+    YARP_DEPRECATED
+    bool configCallbackLock(Mutex* lock);
 YARP_WARNING_POP
 #endif
     bool configCallbackLock(std::mutex* lock);
