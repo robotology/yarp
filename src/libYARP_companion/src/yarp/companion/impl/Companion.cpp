@@ -523,7 +523,7 @@ int Companion::cmdExists(int argc, char *argv[]) {
         return ok?0:1;
     }
     if (argc == 2) {
-        bool ok = NetworkBase::isConnected(argv[0], argv[1], false);
+        bool ok = NetworkBase::isConnected(argv[0], argv[1], "", false);
         return ok?0:1;
     }
 
