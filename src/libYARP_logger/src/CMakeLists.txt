@@ -44,12 +44,22 @@ set_property(TARGET YARP_logger PROPERTY FOLDER "Libraries/Private")
 
 install(TARGETS YARP_logger
         EXPORT YARP_logger
-        COMPONENT YARP_logger
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/logger"
-        PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/logger/impl")
+        RUNTIME
+          DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT YARP_logger
+        LIBRARY
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_logger
+          NAMELINK_COMPONENT YARP_logger-dev
+        ARCHIVE
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_logger-dev
+        PUBLIC_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/logger"
+          COMPONENT YARP_logger-dev
+        PRIVATE_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/logger/impl"
+          COMPONENT YARP_logger-priv-dev)
 
 
 set(YARP_logger_PUBLIC_DEPS ${YARP_logger_PUBLIC_DEPS} PARENT_SCOPE)

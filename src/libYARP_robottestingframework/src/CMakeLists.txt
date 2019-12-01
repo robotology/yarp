@@ -49,11 +49,22 @@ set_property(TARGET YARP_robottestingframework PROPERTY FOLDER "Libraries")
 
 install(TARGETS YARP_robottestingframework
         EXPORT YARP_robottestingframework
-        COMPONENT YARP_robottestingframework
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/robottestingframework)
+        RUNTIME
+          DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT YARP_robottestingframework
+        LIBRARY
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_robottestingframework
+          NAMELINK_COMPONENT YARP_robottestingframework-dev
+        ARCHIVE
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_robottestingframework-dev
+        PUBLIC_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/robottestingframework"
+          COMPONENT YARP_robottestingframework-dev
+        PRIVATE_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/robottestingframework/impl"
+          COMPONENT YARP_robottestingframework-priv-dev)
 
 
 set(YARP_robottestingframework_PUBLIC_DEPS ${YARP_robottestingframework_PUBLIC_DEPS} PARENT_SCOPE)

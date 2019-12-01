@@ -13,7 +13,7 @@ include(UseJava)
 # this is set in the parent directory, but for some reason it does not get inherited
 set_source_files_properties(${SWIG_BINDINGS_SOURCE_FILE} PROPERTIES CPLUSPLUS ON)
 
-if (NOT ${Java_VERSION_MAJOR} VERSION_LESS 9)
+if (${Java_VERSION_MAJOR} VERSION_GREATER_EQUAL 9)
   # Java >= 9
   set(JAVA_RELEASE_VERSION 7 CACHE STRING "Compile for a specific VM version. See javac --help (--release option)")
   mark_as_advanced(JAVA_RELEASE_VERSION)

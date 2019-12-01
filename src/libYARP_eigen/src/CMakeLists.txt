@@ -31,12 +31,13 @@ list(APPEND YARP_eigen_PUBLIC_DEPS Eigen3)
 
 
 install(TARGETS YARP_eigen
-        EXPORT YARP_eigen
-        COMPONENT YARP_eigen
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/eigen)
+        EXPORT YARP_eigen)
 
+# INTERFACE libraries do not support the PUBLIC_HEADER property
+# https://gitlab.kitware.com/cmake/cmake/issues/20056
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/yarp/eigen
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
+        COMPONENT YARP_eigen-dev)
 
 
 set(YARP_eigen_PUBLIC_DEPS ${YARP_eigen_PUBLIC_DEPS} PARENT_SCOPE)

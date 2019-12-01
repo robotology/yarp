@@ -68,12 +68,22 @@ set_property(TARGET YARP_serversql PROPERTY FOLDER "Libraries/Private")
 
 install(TARGETS YARP_serversql
         EXPORT YARP_serversql
-        COMPONENT YARP_serversql
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql"
-        PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql/impl")
+        RUNTIME
+          DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT YARP_serversql
+        LIBRARY
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_serversql
+          NAMELINK_COMPONENT YARP_serversql-dev
+        ARCHIVE
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_serversql-dev
+        PUBLIC_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql"
+          COMPONENT YARP_serversql-dev
+        PRIVATE_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/serversql/impl"
+          COMPONENT YARP_serversql-priv-dev)
 
 
 set(YARP_serversql_PUBLIC_DEPS ${YARP_serversql_PUBLIC_DEPS} PARENT_SCOPE)

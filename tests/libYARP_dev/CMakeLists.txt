@@ -27,19 +27,7 @@ else()
   set(_disabled_files FrameTransformClientTest.cpp
                       Navigation2DClientTest.cpp
                       MapGrid2DTest.cpp)
-
-  if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.9)
-    message(AUTHOR_WARNING "DISABLED property is supported since CMake 3.9, you can remove this check")
-  endif()
- if(NOT ${CMAKE_VERSION} VERSION_LESS 3.9)
-   set_source_files_properties(${_disabled_files} PROPERTIES HEADER_FILE_ONLY ON)
- else()
-    get_property(_sources TARGET harness_dev PROPERTY SOURCES)
-    foreach(_file IN LISTS _disabled_files)
-      list(REMOVE_ITEM _sources ${_file})
-    endforeach()
-    set_property(TARGET harness_dev PROPERTY SOURCES ${_sources})
- endif()
+  set_source_files_properties(${_disabled_files} PROPERTIES HEADER_FILE_ONLY ON)
 endif()
 
 set_property(TARGET harness_dev PROPERTY FOLDER "Test")

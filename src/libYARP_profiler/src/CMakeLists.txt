@@ -42,11 +42,22 @@ set_property(TARGET YARP_profiler PROPERTY FOLDER "Libraries/Private")
 
 install(TARGETS YARP_profiler
         EXPORT YARP_profiler
-        COMPONENT YARP_profiler
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/profiler")
+        RUNTIME
+          DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT YARP_profiler
+        LIBRARY
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_profiler
+          NAMELINK_COMPONENT YARP_profiler-dev
+        ARCHIVE
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_profiler-dev
+        PUBLIC_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/profiler"
+          COMPONENT YARP_profiler-dev
+        PRIVATE_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/profiler/impl"
+          COMPONENT YARP_profiler-priv-dev)
 
 
 set(YARP_profiler_PUBLIC_DEPS ${YARP_profiler_PUBLIC_DEPS} PARENT_SCOPE)

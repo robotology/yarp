@@ -45,12 +45,22 @@ set_property(TARGET YARP_wire_rep_utils PROPERTY FOLDER "Libraries/Private")
 
 install(TARGETS YARP_wire_rep_utils
         EXPORT YARP_wire_rep_utils
-        COMPONENT YARP_wire_rep_utils
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/wire_rep_utils
-        PRIVATE_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/wire_rep_utils/impl)
+        RUNTIME
+          DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT YARP_wire_rep_utils
+        LIBRARY
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_wire_rep_utils
+          NAMELINK_COMPONENT YARP_wire_rep_utils-dev
+        ARCHIVE
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_wire_rep_utils-dev
+        PUBLIC_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/wire_rep_utils"
+          COMPONENT YARP_wire_rep_utils-dev
+        PRIVATE_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/wire_rep_utils/impl"
+          COMPONENT YARP_wire_rep_utils-priv-dev)
 
 
 set(YARP_wire_rep_utils_PUBLIC_DEPS ${YARP_wire_rep_utils_PUBLIC_DEPS} PARENT_SCOPE)

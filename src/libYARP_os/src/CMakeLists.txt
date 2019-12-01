@@ -456,20 +456,32 @@ set_property(TARGET YARP_os PROPERTY FOLDER "Libraries")
 
 install(TARGETS YARP_os
         EXPORT YARP_os
-        COMPONENT YARP_os
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os
-        PRIVATE_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl)
+        RUNTIME
+          DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT YARP_os
+        LIBRARY
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_os
+          NAMELINK_COMPONENT YARP_os-dev
+        ARCHIVE
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_os-dev
+        PUBLIC_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/os"
+          COMPONENT YARP_os-dev
+        PRIVATE_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl"
+          COMPONENT YARP_os-priv-dev)
+# PUBLIC_HEADER and PRIVATE_HEADER do not support sub-directories
+# See https://gitlab.kitware.com/cmake/cmake/issues/7941
 install(FILES ${YARP_os_IDL_HDRS}
-        COMPONENT YARP_os
+        COMPONENT YARP_os-dev
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/idl)
 install(FILES ${YARP_os_IMPL_POSIX_HDRS}
-        COMPONENT development
+        COMPONENT YARP_os-priv-dev
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl/posix)
 install(FILES ${YARP_os_IMPL_MACOS_HDRS}
-        COMPONENT development
+        COMPONENT YARP_os-priv-dev
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/os/impl/macos)
 
 
