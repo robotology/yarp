@@ -110,6 +110,10 @@ public:
     bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
     bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
     bool   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;
+    bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
+    bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
+    bool   startLocalizationService() override;
+    bool   stopLocalizationService() override;
 
     bool   storeCurrentPosition(std::string location_name) override;
     bool   storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) override;

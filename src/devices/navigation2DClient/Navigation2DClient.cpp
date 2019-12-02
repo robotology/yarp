@@ -776,6 +776,68 @@ bool  Navigation2DClient::setInitialPose(const Map2DLocation& loc)
     return true;
 }
 
+bool Navigation2DClient::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_SET_INITIAL_POS);
+    b.addString(loc.map_id);
+    b.addFloat64(loc.x);
+    b.addFloat64(loc.y);
+    b.addFloat64(loc.theta);
+
+    bool ret = m_rpc_port_localization_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Localization2DClient::setInitialPose() received error from localization server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Localization2DClient::setInitialPose() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
+bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GET_CURRENT_POS);
+
+    bool ret = m_rpc_port_localization_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
+        {
+            yError() << "Localization2DClient::getCurrentPosition() received error from localization server";
+            return false;
+        }
+        else
+        {
+            loc.map_id = resp.get(1).asString();
+            loc.x = resp.get(2).asFloat64();
+            loc.y = resp.get(3).asFloat64();
+            loc.theta = resp.get(4).asFloat64();
+            return true;
+        }
+    }
+    else
+    {
+        yError() << "Localization2DClient::getCurrentPosition() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
 bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
 {
     yarp::os::Bottle b;
@@ -1480,3 +1542,14 @@ double Navigation2DClient::normalize_angle(double angle)
     }
     return angle;
 }
+
+bool  Navigation2DClient::startLocalizationService()
+{
+    return true;
+}
+
+bool  Navigation2DClient::stopLocalizationService()
+{
+    return true;
+}
+

@@ -91,6 +91,18 @@ bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc)
     return true;
 }
 
+bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
+{
+    locThread->getCurrentLoc(loc);
+    return true;
+}
+
+bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
+{
+    locThread->initializeLocalization(loc);
+    return true;
+}
+
 //////////////////////////
 
 fakeLocalizerThread::fakeLocalizerThread(double _period, yarp::os::Searchable& _cfg) : PeriodicThread(_period), m_cfg(_cfg)
@@ -219,6 +231,16 @@ fakeLocalizer::~fakeLocalizer()
         delete locThread;
         locThread = NULL;
     }
+}
+
+bool fakeLocalizer::startLocalizationService()
+{
+    return true;
+}
+
+bool fakeLocalizer::stopLocalizationService()
+{
+    return true;
 }
 
 bool fakeLocalizer::close()

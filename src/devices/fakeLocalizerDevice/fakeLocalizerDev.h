@@ -100,4 +100,32 @@ public:
     * @return true/false
     */
     bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
+
+    /**
+    * Sets the initial pose for the localization algorithm which estimates the current position of the robot w.r.t world reference frame.
+    * @param loc the location of the robot
+    * @param cov the 3x3 covariance matrix
+    * @return true/false
+    */
+    virtual bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
+
+    /**
+    * Gets the current position of the robot w.r.t world reference frame, plus the covariance
+    * @param loc the location of the robot
+    * @param cov the 3x3 covariance matrix
+    * @return true/false
+    */
+    virtual bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
+
+    /**
+    * Starts the localization service
+    * @return true/false
+    */
+    virtual bool   startLocalizationService() override;
+
+    /**
+    * Stops the localization service
+    * @return true/false
+    */
+    virtual bool   stopLocalizationService() override;
 };
