@@ -19,7 +19,7 @@ file(GLOB folder_header *.h)
 
 # Automatically add include directories if needed.
 foreach(header_file ${folder_header})
-  get_filename_component(p ${header_file} PATH)
+  get_filename_component(p ${header_file} DIRECTORY)
   include_directories(${p})
 endforeach(header_file ${folder_header})
 

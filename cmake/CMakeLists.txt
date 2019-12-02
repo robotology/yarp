@@ -12,8 +12,8 @@ set(YARP_CMAKE_FILES YarpPlugin.cmake
                      YarpPrintFeature.cmake
                      YarpDeprecatedOption.cmake)
 install(FILES ${YARP_CMAKE_FILES}
-        COMPONENT scripts
-        DESTINATION share/yarp/cmake)
+        DESTINATION share/yarp/cmake
+        COMPONENT YARP_conf-dev)
 
 # Templates used by modules
 set(YARP_TEMPLATE_FILES template/yarp_plugin_carrier.cpp.in
@@ -24,8 +24,8 @@ set(YARP_TEMPLATE_FILES template/yarp_plugin_carrier.cpp.in
                         template/yarp_plugin_yarpdev_main.cpp.in)
 
 install(FILES ${YARP_TEMPLATE_FILES}
-        COMPONENT scripts
-        DESTINATION share/yarp/cmake/template)
+        DESTINATION share/yarp/cmake/template
+        COMPONENT YARP_conf-dev)
 
 # Remove renamed files from installation
 include(YarpRemoveFile)

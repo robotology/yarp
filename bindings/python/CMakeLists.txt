@@ -27,7 +27,7 @@ find_package(PythonLibs ${YARP_USE_PYTHON_VERSION} EXACT)
 
 ## in Windows it seems necessary to declare explictly the link_directory
 if(WIN32)
-  get_filename_component(PYTHON_DIR ${PYTHON_LIBRARY} PATH)
+  get_filename_component(PYTHON_DIR ${PYTHON_LIBRARY} DIRECTORY)
   link_directories(${PYTHON_DIR})
 endif()
 

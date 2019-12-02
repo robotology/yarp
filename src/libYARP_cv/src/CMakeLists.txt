@@ -25,14 +25,21 @@ target_include_directories(YARP_cv SYSTEM INTERFACE ${OPENCV_INCLUDE_DIR})
 target_link_libraries(YARP_cv INTERFACE ${OPENCV_INCLUDE_DIR})
 list(APPEND YARP_cv_PUBLIC_DEPS OpenCV)
 
+# set_property(TARGET YARP_cv PROPERTY PUBLIC_HEADER ${YARP_cv_HDRS})
+# set_property(TARGET YARP_cv PROPERTY PRIVATE_HEADER ${YARP_cv_IMPL_HDRS})
+# set_property(TARGET YARP_cv PROPERTY VERSION ${YARP_VERSION_SHORT})
+# set_property(TARGET YARP_cv PROPERTY SOVERSION ${YARP_SOVERSION})
+# set_property(TARGET YARP_cv PROPERTY FOLDER "Libraries")
+
 
 install(TARGETS YARP_cv
-        EXPORT YARP_cv
-        COMPONENT YARP_cv
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/cv)
+        EXPORT YARP_cv)
 
+# INTERFACE libraries do not support the PUBLIC_HEADER property
+# https://gitlab.kitware.com/cmake/cmake/issues/20056
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/yarp/cv
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
+        COMPONENT YARP_cv-dev)
 
 
 set(YARP_cv_PUBLIC_DEPS ${YARP_cv_PUBLIC_DEPS} PARENT_SCOPE)

@@ -188,26 +188,27 @@ endforeach()
 
 
 # Install all libraries
+# INTERFACE libraries do not support the PUBLIC_HEADER property
+# https://gitlab.kitware.com/cmake/cmake/issues/20056
 install(TARGETS YARP_rosmsg_native
-        EXPORT YARP_rosmsg_native
-        COMPONENT YARP_rosmsg_native)
+        EXPORT YARP_rosmsg_native)
 install(FILES ${native_INSTALL_FILES}
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg
+        COMPONENT YARP_rosmsg_native-dev)
 
 foreach(_pkg ${ROS_MSG_PACKAGES})
   install(TARGETS YARP_rosmsg_${_pkg}
-          EXPORT YARP_rosmsg_${_pkg}
-          COMPONENT YARP_rosmsg_${_pkg})
+          EXPORT YARP_rosmsg_${_pkg})
   install(FILES ${${_pkg}_INSTALL_FILES}
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg/${_pkg}
-          COMPONENT development)
+          COMPONENT YARP_rosmsg_${_pkg}-dev)
 endforeach()
 
 install(TARGETS YARP_rosmsg
-        EXPORT YARP_rosmsg
-        COMPONENT YARP_rosmsg)
+        EXPORT YARP_rosmsg)
 install(FILES ${YARP_rosmsgs_IMPL_HDRS}
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg/impl)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/rosmsg/impl
+        COMPONENT YARP_rosmsg-dev)
 
 
 # Set variables for parent scope

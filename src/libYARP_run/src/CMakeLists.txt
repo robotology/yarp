@@ -60,15 +60,25 @@ set_property(TARGET YARP_run PROPERTY FOLDER "Libraries/Private")
 
 install(TARGETS YARP_run
         EXPORT YARP_run
-        COMPONENT YARP_run
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/run"
-        PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/run/impl")
+        RUNTIME
+          DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT YARP_run
+        LIBRARY
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_run
+          NAMELINK_COMPONENT YARP_run-dev
+        ARCHIVE
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_run-dev
+        PUBLIC_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/run"
+          COMPONENT YARP_run-dev
+        PRIVATE_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/run/impl"
+          COMPONENT YARP_run-priv-dev)
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
   install(FILES ${YARP_run_os_HDRS}
-          COMPONENT deprecated
+          COMPONENT YARP_os-dev
           DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/os")
 endif()
 

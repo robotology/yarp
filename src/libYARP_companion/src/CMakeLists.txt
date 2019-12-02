@@ -58,12 +58,22 @@ set_property(TARGET YARP_companion PROPERTY FOLDER "Libraries/Private")
 
 install(TARGETS YARP_companion
         EXPORT YARP_companion
-        COMPONENT YARP_companion
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/companion"
-        PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/companion/impl")
+        RUNTIME
+          DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT YARP_companion
+        LIBRARY
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_companion
+          NAMELINK_COMPONENT YARP_companion-dev
+        ARCHIVE
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_companion-dev
+        PUBLIC_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/companion"
+          COMPONENT YARP_companion-dev
+        PRIVATE_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/companion/impl"
+          COMPONENT YARP_companion-priv-dev)
 
 
 set(YARP_companion_PUBLIC_DEPS ${YARP_companion_PUBLIC_DEPS} PARENT_SCOPE)

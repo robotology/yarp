@@ -113,12 +113,22 @@ set_property(TARGET YARP_manager PROPERTY FOLDER "Libraries/Private")
 
 install(TARGETS YARP_manager
         EXPORT YARP_manager
-        COMPONENT YARP_manager
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/manager"
-        PRIVATE_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/manager/impl")
+        RUNTIME
+          DESTINATION "${CMAKE_INSTALL_BINDIR}"
+          COMPONENT YARP_manager
+        LIBRARY
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_manager
+          NAMELINK_COMPONENT YARP_manager-dev
+        ARCHIVE
+          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          COMPONENT YARP_manager-dev
+        PUBLIC_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/manager"
+          COMPONENT YARP_manager-dev
+        PRIVATE_HEADER
+          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/manager/impl"
+          COMPONENT YARP_manager-priv-dev)
 
 
 set(YARP_manager_PUBLIC_DEPS ${YARP_manager_PUBLIC_DEPS} PARENT_SCOPE)

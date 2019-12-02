@@ -31,13 +31,14 @@ list(APPEND YARP_pcl_PUBLIC_DEPS PCL)
 # set_property(TARGET YARP_pcl PROPERTY FOLDER "Libraries")
 
 
+# INTERFACE libraries do not support the PUBLIC_HEADER property
+# https://gitlab.kitware.com/cmake/cmake/issues/20056
 install(TARGETS YARP_pcl
-        EXPORT YARP_pcl
-        COMPONENT YARP_pcl
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp/pcl)
+        EXPORT YARP_pcl)
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/yarp/pcl
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp)
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
+        COMPONENT YARP_pcl)
 
 
 set(YARP_pcl_PUBLIC_DEPS ${YARP_pcl_PUBLIC_DEPS} PARENT_SCOPE)

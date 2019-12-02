@@ -55,18 +55,18 @@ if(NOT YCM_FOUND)
                                      ycm-${YCM_REQUIRED_VERSION}/cmake-3.14/Modules/UseSWIG.cmake)
 
       install(FILES ${YCM_CMAKE_find_modules_FILES}
-              COMPONENT scripts
+              COMPONENT YARP_conf-dev
               DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/find-modules)
       install(FILES ${YCM_CMAKE_modules_FILES}
-              COMPONENT scripts
+              COMPONENT YARP_conf-dev
               DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/modules)
       install(FILES ${YCM_CMAKE_3rdparty_FILES}
-              COMPONENT scripts
+              COMPONENT YARP_conf-dev
               DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/3rdparty)
       if(${CMAKE_VERSION} VERSION_LESS 3.14)
         # Files from CMake 3.14, available only if CMake on the system is older
         install(FILES ${YCM_CMAKE_cmake_3.14_FILES}
-                COMPONENT scripts
+                COMPONENT YARP_conf-dev
                 DESTINATION share/yarp/cmake/ycm-${YCM_REQUIRED_VERSION}/cmake-next/Modules)
       endif()
     endif()

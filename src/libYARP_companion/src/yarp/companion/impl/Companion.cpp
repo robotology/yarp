@@ -1234,7 +1234,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.addString("");
     f.addString("# Automatically add include directories if needed.");
     f.addString("foreach(header_file ${folder_header})");
-    f.addString("  get_filename_component(p ${header_file} PATH)");
+    f.addString("  get_filename_component(p ${header_file} DIRECTORY)");
     f.addString("  include_directories(${p})");
     f.addString("endforeach(header_file ${folder_header})");
     f.addString("");
