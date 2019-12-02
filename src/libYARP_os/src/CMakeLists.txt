@@ -359,6 +359,8 @@ set(YARP_os_IMPL_POSIX_SRCS yarp/os/impl/posix/TcpAcceptor.cpp
 set(YARP_os_IMPL_MACOS_HDRS yarp/os/impl/macos/MacOSAPI.h)
 set(YARP_os_IMPL_MACOS_SRCS yarp/os/impl/macos/MacOSAPI.mm)
 
+set(YARP_os_IMPL_WIN32_SRCS yarp/os/impl/windows/WinConsole.c)
+
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Source Files"
              FILES ${YARP_os_SRCS}
@@ -401,6 +403,12 @@ if(APPLE)
                                  ${YARP_os_IMPL_MACOS_SRCS})
   # Required by MacOSAPI.mm
   target_link_libraries(YARP_os PRIVATE "-framework Foundation")
+endif()
+
+if(MSVC AND YARP_HAS_WIN_VT_SUPPORT)
+  target_sources(YARP_os PRIVATE ${YARP_os_IMPL_WIN32_SRCS})
+  # Used in Log.cpp
+  target_compile_definitions(YARP_os PRIVATE YARP_HAS_WIN_VT_SUPPORT)
 endif()
 
 target_include_directories(YARP_os PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

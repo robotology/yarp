@@ -187,6 +187,13 @@ if(WIN32)
     add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
     add_definitions(-D_WINSOCK_DEPRECATED_NO_WARNINGS)
 
+    set(YARP_HAS_WIN_VT_SUPPORT 0)
+
+    # Check whether colored output is available on Windows console.
+    if(NOT CMAKE_SYSTEM_VERSION VERSION_LESS 10.0.10586)
+      set(YARP_HAS_WIN_VT_SUPPORT 1)
+    endif()
+
     # Traditionally, we add "d" postfix to debug libraries
     set(CMAKE_DEBUG_POSTFIX "d")
   endif()
