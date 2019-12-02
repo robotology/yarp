@@ -11,9 +11,13 @@ yarp_prepare_plugin(fakeAnalogSensor
                     EXTRA_CONFIG WRAPPER=analogServer)
 
 if(ENABLE_fakeAnalogSensor)
+  yarp_add_plugin(yarp_fakeAnalogSensor)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_fakeAnalogSensor fakeAnalogSensor.cpp
-                                        fakeAnalogSensor.h)
+
+  target_sources(yarp_fakeAnalogSensor PRIVATE fakeAnalogSensor.cpp
+                                               fakeAnalogSensor.h)
+
   target_link_libraries(yarp_fakeAnalogSensor PRIVATE YARP::YARP_os
                                                       YARP::YARP_sig
                                                       YARP::YARP_dev)

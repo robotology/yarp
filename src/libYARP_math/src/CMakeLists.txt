@@ -5,6 +5,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_math)
+add_library(YARP::YARP_math ALIAS YARP_math)
+
 set(YARP_math_HDRS yarp/math/api.h
                    yarp/math/Math.h
                    yarp/math/NormRand.h
@@ -40,10 +43,9 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_math_HDRS}
                    ${YARP_math_IMPL_HDRS})
 
-add_library(YARP_math ${YARP_math_SRCS}
-                      ${YARP_math_HDRS}
-                      ${YARP_math_IMPL_HDRS})
-add_library(YARP::YARP_math ALIAS YARP_math)
+target_sources(YARP_math PRIVATE ${YARP_math_SRCS}
+                                 ${YARP_math_HDRS}
+                                 ${YARP_math_IMPL_HDRS})
 
 target_include_directories(YARP_math PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

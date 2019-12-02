@@ -33,18 +33,21 @@ source_group("Resources Files" FILES ${QtYARPViewPlugin_QRC_FILES})
 source_group("QML Files" FILES ${QtYARPViewPlugin_QML_FILES})
 source_group("Generated Files" FILES ${QtYARPViewPlugin_QRC_GEN_SRCS})
 
-add_library(QtYARPViewPlugin MODULE ${QtYARPViewPlugin_SRCS}
-                                    ${QtYARPViewPlugin_HDRS}
-                                    ${QtYARPViewPlugin_QRC_FILES}
-                                    ${QtYARPViewPlugin_QRC_GEN_SRCS}
-                                    ${QtYARPViewPlugin_QML_FILES})
-target_link_libraries(QtYARPViewPlugin YARP::YARP_os
-                                       YARP::YARP_init
-                                       YARP::YARP_sig
-                                       Qt5::Widgets
-                                       Qt5::Qml
-                                       Qt5::Quick
-                                       Qt5::Multimedia)
+add_library(QtYARPViewPlugin MODULE)
+
+target_sources(QtYARPViewPlugin PRIVATE ${QtYARPViewPlugin_SRCS}
+                                        ${QtYARPViewPlugin_HDRS}
+                                        ${QtYARPViewPlugin_QRC_FILES}
+                                        ${QtYARPViewPlugin_QRC_GEN_SRCS}
+                                        ${QtYARPViewPlugin_QML_FILES})
+
+target_link_libraries(QtYARPViewPlugin PRIVATE YARP::YARP_os
+                                               YARP::YARP_init
+                                               YARP::YARP_sig
+                                               Qt5::Widgets
+                                               Qt5::Qml
+                                               Qt5::Quick
+                                               Qt5::Multimedia)
 
 qtyarp_qml_plugin(QtYARPViewPlugin "${QtYARPViewPlugin_QMLDIR}")
 

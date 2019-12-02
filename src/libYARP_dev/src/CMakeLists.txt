@@ -5,6 +5,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_dev)
+add_library(YARP::YARP_dev ALIAS YARP_dev)
+
 set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/api.h
                   yarp/dev/AudioBufferSize.h
@@ -235,12 +238,11 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_dev_devices_SRCS}
                    ${YARP_dev_devices_HDRS})
 
-add_library(YARP_dev ${YARP_dev_SRCS}
-                     ${YARP_dev_HDRS}
-                     ${YARP_dev_IMPL_HDRS}
-                     ${YARP_dev_devices_SRCS}
-                     ${YARP_dev_devices_HDRS})
-add_library(YARP::YARP_dev ALIAS YARP_dev)
+target_sources(YARP_dev PRIVATE ${YARP_dev_SRCS}
+                                ${YARP_dev_HDRS}
+                                ${YARP_dev_IMPL_HDRS}
+                                ${YARP_dev_devices_SRCS}
+                                ${YARP_dev_devices_HDRS})
 
 target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                            $<BUILD_INTERFACE:${YARP_dev_idl_INCLUDE_DIRS}>

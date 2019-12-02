@@ -7,12 +7,14 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os dev REQUIRED)
 
 yarp_begin_plugin_library(userlib)
 add_subdirectory(fake_grabber)
 yarp_end_plugin_library(userlib)
-add_executable(test_userlib test_userlib.cpp)
 
-target_link_libraries(test_userlib ${YARP_LIBRARIES})
-target_link_libraries(test_userlib userlib)
+add_executable(test_userlib)
+target_sources(test_userlib PRIVATE test_userlib.cpp)
+
+target_link_libraries(test_userlib PRIVATE ${YARP_LIBRARIES})
+target_link_libraries(test_userlib PRIVATE userlib)

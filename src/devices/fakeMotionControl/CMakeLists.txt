@@ -12,9 +12,13 @@ yarp_prepare_plugin(fakeMotionControl
                     DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeMotionControl)
+  yarp_add_plugin(yarp_fakeMotionControl)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_fakeMotionControl fakeMotionControl.cpp
-                                         fakeMotionControl.h)
+
+  target_sources(yarp_fakeMotionControl PRIVATE fakeMotionControl.cpp
+                                                fakeMotionControl.h)
+
   target_link_libraries(yarp_fakeMotionControl PRIVATE YARP::YARP_os
                                                        YARP::YARP_sig
                                                        YARP::YARP_dev

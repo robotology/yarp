@@ -13,17 +13,20 @@ yarp_prepare_plugin(shmem
                     DEFAULT ON)
 
 if(NOT SKIP_shmem)
+  yarp_add_plugin(yarp_shmem)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_shmem ShmemCarrier.cpp
-                             ShmemCarrier.h
-                             ShmemHybridStream.cpp
-                             ShmemHybridStream.h
-                             ShmemInputStream.cpp
-                             ShmemInputStream.h
-                             ShmemOutputStream.cpp
-                             ShmemOutputStream.h
-                             ShmemTypes.h)
+  target_sources(yarp_shmem PRIVATE ShmemCarrier.cpp
+                                    ShmemCarrier.h
+                                    ShmemHybridStream.cpp
+                                    ShmemHybridStream.h
+                                    ShmemInputStream.cpp
+                                    ShmemInputStream.h
+                                    ShmemOutputStream.cpp
+                                    ShmemOutputStream.h
+                                    ShmemTypes.h)
+
   target_link_libraries(yarp_shmem PRIVATE YARP::YARP_os)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 

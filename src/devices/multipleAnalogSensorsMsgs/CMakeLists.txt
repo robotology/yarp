@@ -5,7 +5,6 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(YARP_COMPILE_DEVICE_PLUGINS)
-
   if(BUILD_SHARED_LIBS AND
      NOT CMAKE_CROSSCOMPILING AND
      NOT ALLOW_IDL_GENERATION AND
@@ -21,7 +20,10 @@ if(YARP_COMPILE_DEVICE_PLUGINS)
     set(MAS_THRIFT_GEN_FILES ${MAS_THRIFT_GEN_SRCS} ${MAS_THRIFT_GEN_HDRS})
   endif()
 
-  add_library(multipleAnalogSensorsSerializations OBJECT ${MAS_THRIFT_GEN_FILES})
+  add_library(multipleAnalogSensorsSerializations OBJECT)
+
+  target_sources(multipleAnalogSensorsSerializations PRIVATE ${MAS_THRIFT_GEN_FILES})
+
   target_link_libraries(multipleAnalogSensorsSerializations PRIVATE YARP::YARP_os
                                                                     YARP::YARP_sig)
   target_include_directories(multipleAnalogSensorsSerializations PUBLIC ${MAS_THRIFT_INTERFACE_INCLUDE_DIRS})

@@ -4,12 +4,14 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-add_executable(harness_sig ImageTest.cpp
-                           MatrixTest.cpp
-                           PointCloudTest.cpp
-                           SoundTest.cpp
-                           VectorOfTest.cpp
-                           VectorTest.cpp)
+add_executable(harness_sig)
+
+target_sources(harness_sig PRIVATE ImageTest.cpp
+                                   MatrixTest.cpp
+                                   PointCloudTest.cpp
+                                   SoundTest.cpp
+                                   VectorOfTest.cpp
+                                   VectorTest.cpp)
 
 target_link_libraries(harness_sig PRIVATE YARP_harness
                                           YARP::YARP_os

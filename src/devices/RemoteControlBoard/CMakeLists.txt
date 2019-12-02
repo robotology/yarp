@@ -12,12 +12,14 @@ yarp_prepare_plugin(remote_controlboard
                     DEFAULT ON)
 
 if(NOT SKIP_remote_controlboard)
+  yarp_add_plugin(yarp_remote_controlboard)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_remote_controlboard RemoteControlBoard.cpp
-                                           RemoteControlBoard.h
-                                           stateExtendedReader.cpp
-                                           stateExtendedReader.h)
+  target_sources(yarp_remote_controlboard PRIVATE RemoteControlBoard.cpp
+                                                  RemoteControlBoard.h
+                                                  stateExtendedReader.cpp
+                                                  stateExtendedReader.h)
   target_link_libraries(yarp_remote_controlboard PRIVATE YARP::YARP_os
                                                          YARP::YARP_sig
                                                          YARP::YARP_dev)

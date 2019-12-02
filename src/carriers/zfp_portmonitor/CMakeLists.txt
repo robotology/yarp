@@ -10,10 +10,13 @@ yarp_prepare_plugin(zfp TYPE ZfpMonitorObject
                         DEPENDS "ENABLE_yarpcar_portmonitor;YARP_HAS_ZFP")
 
 if(NOT SKIP_zfp)
+  yarp_add_plugin(yarp_pm_zfp)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_pm_zfp zfpPortmonitor.cpp
-                              zfpPortmonitor.h)
+  target_sources(yarp_pm_zfp PRIVATE zfpPortmonitor.cpp
+                                     zfpPortmonitor.h)
+
   target_link_libraries(yarp_pm_zfp PRIVATE YARP::YARP_os
                                             YARP::YARP_sig)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os

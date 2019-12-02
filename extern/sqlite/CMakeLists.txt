@@ -7,29 +7,32 @@
 # SQLite
 project(YARP_priv_sqlite)
 
+add_library(YARP_priv_sqlite STATIC)
+
 set(sqlite_SRCS
     sqlite/shell.c
-    sqlite/sqlite3.c
-)
+    sqlite/sqlite3.c)
 
 set(sqlite_HDRS
     sqlite/sqlite3ext.h
-    sqlite/sqlite3.h
-)
+    sqlite/sqlite3.h)
 
 if(MSVC)
-    set_source_files_properties(sqlite/sqlite3.c PROPERTIES COMPILE_FLAGS "/wd4996")
+  set_source_files_properties(sqlite/sqlite3.c PROPERTIES COMPILE_FLAGS "/wd4996")
 endif()
 
-add_definitions(-DSQLITE_OMIT_LOAD_EXTENSION)
+target_sources(YARP_priv_sqlite PRIVATE ${sqlite_SRCS})
 
-add_library(YARP_priv_sqlite STATIC ${sqlite_SRCS})
+target_include_directories(YARP_priv_sqlite PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/sqlite>)
+
+target_compile_definitions(YARP_priv_sqlite PRIVATE SQLITE_OMIT_LOAD_EXTENSION)
+
+if(UNIX)
+  target_link_libraries(YARP_priv_sqlite PRIVATE pthread)
+endif(UNIX)
 
 set_property(TARGET YARP_priv_sqlite PROPERTY FOLDER "Libraries/External")
 
-if(UNIX)
-    target_link_libraries(YARP_priv_sqlite PRIVATE pthread)
-endif(UNIX)
 
 set(SQLite_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/sqlite PARENT_SCOPE)
 set(SQLite_LIBRARIES YARP_priv_sqlite PARENT_SCOPE)

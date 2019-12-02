@@ -9,18 +9,9 @@ if(YARP_COMPILE_yarpdataplayer)
   include(YarpUseQt5)
   include(YarpMacOSUtilities)
 
+  add_executable(yarpdataplayer WIN32)
+
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-
-  if(YARP_HAS_OpenCV)
-    add_definitions(-DHAS_OPENCV)
-    include_directories(${OpenCV_INCLUDE_DIRS})
-  else()
-    message(STATUS "yarpdataplayer: OpenCV not selected, keep on building...")
-  endif()
-
-  if(MSVC)
-    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
-  endif()
 
   set(yarpdataplayer_SRCS src/aboutdlg.cpp
                           src/genericinfodlg.cpp
@@ -40,12 +31,14 @@ if(YARP_COMPILE_yarpdataplayer)
                           include/worker.h)
 
   set(yarpdataplayer_QRC_FILES src/RC/res.qrc)
+
   set(yarpdataplayer_UI_FILES include/UI/aboutdlg.ui
                               include/UI/genericinfodlg.ui
                               include/UI/loadingwidget.ui
                               include/UI/mainwindow.ui)
 
   set(yarpdataplayer_THRIFT_FILES yarpdataplayer.thrift)
+
   if(MSVC)
     set(yarpdataplayer_RC_FILES src/RC/yarpdataplayer_resource.rc)
   endif()
@@ -59,8 +52,6 @@ if(YARP_COMPILE_yarpdataplayer)
                   SOURCES_VAR yarpdataplayer_THRIFT_GEN_SRCS
                   HEADERS_VAR yarpdataplayer_THRIFT_GEN_HDRS
                   INCLUDE_DIRS_VAR yarpdataplayer_THRIFT_INCLUDE_DIRS)
-
-  include_directories(${yarpdataplayer_THRIFT_INCLUDE_DIRS})
 
   source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
                PREFIX "Source Files"
@@ -77,24 +68,33 @@ if(YARP_COMPILE_yarpdataplayer)
                                        ${yarpdataplayer_THRIFT_GEN_SRCS}
                                        ${yarpdataplayer_THRIFT_GEN_HDRS})
 
-  add_executable(yarpdataplayer WIN32 ${yarpdataplayer_SRCS}
-                                      ${yarpdataplayer_HDRS}
-                                      ${yarpdataplayer_QRC_FILES}
-                                      ${yarpdataplayer_QRC_GEN_SRCS}
-                                      ${yarpdataplayer_UI_FILES}
-                                      ${yarpdataplayer_UI_GEN_SRCS}
-                                      ${yarpdataplayer_THRIFT_GEN_SRCS}
-                                      ${yarpdataplayer_THRIFT_GEN_HDRS}
-                                      ${yarpdataplayer_RC_FILES}
-                                      ${yarpdataplayer_THRIFT_FILES})
+  target_sources(yarpdataplayer PRIVATE ${yarpdataplayer_SRCS}
+                                        ${yarpdataplayer_HDRS}
+                                        ${yarpdataplayer_QRC_FILES}
+                                        ${yarpdataplayer_QRC_GEN_SRCS}
+                                        ${yarpdataplayer_UI_FILES}
+                                        ${yarpdataplayer_UI_GEN_SRCS}
+                                        ${yarpdataplayer_THRIFT_GEN_SRCS}
+                                        ${yarpdataplayer_THRIFT_GEN_HDRS}
+                                        ${yarpdataplayer_RC_FILES}
+                                        ${yarpdataplayer_THRIFT_FILES})
 
-  target_link_libraries(yarpdataplayer YARP::YARP_os
-                                       YARP::YARP_init
-                                       YARP::YARP_sig
-                                       Qt5::Widgets)
+  target_include_directories(yarpdataplayer PRIVATE ${yarpdataplayer_THRIFT_INCLUDE_DIRS})
+
+  target_link_libraries(yarpdataplayer PRIVATE YARP::YARP_os
+                                               YARP::YARP_init
+                                               YARP::YARP_sig
+                                               Qt5::Widgets)
 
   if(YARP_HAS_OpenCV)
-    target_link_libraries(yarpdataplayer ${OpenCV_LIBRARIES} YARP_cv)
+    target_compile_definitions(yarpdataplayer PRIVATE HAS_OPENCV)
+    target_include_directories(yarpdataplayer PRIVATE ${OpenCV_INCLUDE_DIRS})
+    target_link_libraries(yarpdataplayer PRIVATE ${OpenCV_LIBRARIES}
+                                                 YARP::YARP_cv)
+  endif()
+
+  if(MSVC)
+    target_include_directories(yarpdataplayer SYSTEM PRIVATE ${dirent_INCLUDE_DIRS})
   endif()
 
   install(TARGETS yarpdataplayer COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})

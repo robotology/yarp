@@ -48,6 +48,8 @@ function(YARP_MACOS_DUPLICATE_AND_ADD_BUNDLE)
       message(FATAL_ERROR "Unknown arguments ${_DADB_UNPARSED_ARGUMENTS}")
     endif()
 
+    add_executable(${_target_dest})
+
     get_all_cmake_properties(_all_properties)
 
     # Cleanup property list of all that should not be checked
@@ -73,12 +75,6 @@ function(YARP_MACOS_DUPLICATE_AND_ADD_BUNDLE)
         if(NOT "${_prop_value}" STREQUAL "${_target_orig}")
           message(FATAL_ERROR "Something went horribly wrong")
         endif()
-      elseif("${_prop_name}" STREQUAL "SOURCES")
-        # Create the actual target
-        list(REMOVE_ITEM _all_properties "${_prop_name}")
-        get_target_property(_prop_value ${_target_orig} ${_prop_name})
-        # Icons should be added to the executable
-        add_executable(${_target_dest} ${_prop_value} "${_DADB_APP_ICON}")
       elseif("${_prop_name}" MATCHES "^(ALIASED_TARGET)")
         # Target properties that should not be copied
         list(REMOVE_ITEM _all_properties "${_prop_name}")
@@ -106,6 +102,7 @@ function(YARP_MACOS_DUPLICATE_AND_ADD_BUNDLE)
       endif()
     endforeach()
 
+
     # Enable bundle creation
     set_target_properties(${_target_dest} PROPERTIES MACOSX_BUNDLE ON)
 
@@ -117,6 +114,8 @@ function(YARP_MACOS_DUPLICATE_AND_ADD_BUNDLE)
 
     # Set icon for the bundle
     if (DEFINED _DADB_APP_ICON)
+      # Append the icon to the sources
+      target_sources(${_target_dest} PRIVATE "${_DADB_APP_ICON}")
       get_filename_component(_filename "${_DADB_APP_ICON}" NAME)
       set_target_properties(${_target_dest} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${_filename}")
       set_source_files_properties(${_DADB_APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)

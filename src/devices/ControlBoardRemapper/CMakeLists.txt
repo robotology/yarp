@@ -18,14 +18,17 @@ yarp_prepare_plugin(remotecontrolboardremapper
                     DEFAULT ON)
 
 if(NOT SKIP_controlboardremapper OR NOT SKIP_remotecontrolboardremapper)
+  yarp_add_plugin(yarp_controlboardremapper)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_controlboardremapper ControlBoardRemapper.cpp
-                                            ControlBoardRemapper.h
-                                            ControlBoardRemapperHelpers.cpp
-                                            ControlBoardRemapperHelpers.h
-                                            RemoteControlBoardRemapper.cpp
-                                            RemoteControlBoardRemapper.h)
+  target_sources(yarp_controlboardremapper PRIVATE ControlBoardRemapper.cpp
+                                                   ControlBoardRemapper.h
+                                                   ControlBoardRemapperHelpers.cpp
+                                                   ControlBoardRemapperHelpers.h
+                                                   RemoteControlBoardRemapper.cpp
+                                                   RemoteControlBoardRemapper.h)
+
   target_link_libraries(yarp_controlboardremapper PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev)

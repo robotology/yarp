@@ -4,6 +4,11 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+# FIXME All API should use a YARP_manager_API for __declspec(dllimport/dllexport)
+# For now always build the library as STATIC
+add_library(YARP_manager STATIC)
+add_library(YARP::YARP_manager ALIAS YARP_manager)
+
 set(YARP_manager_HDRS yarp/manager/application.h
                       yarp/manager/arbitrator.h
                       yarp/manager/binexparser.h
@@ -74,13 +79,9 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_manager_HDRS}
                    ${YARP_manager_IMPL_HDRS})
 
-
-# FIXME All API should use a YARP_manager_API for __declspec(dllimport/dllexport)
-# For now always build the library as STATIC
-add_library(YARP_manager STATIC ${YARP_manager_SRCS}
-                                ${YARP_manager_HDRS}
-                                ${YARP_manager_IMPL_HDRS})
-add_library(YARP::YARP_manager ALIAS YARP_manager)
+target_sources(YARP_manager PRIVATE ${YARP_manager_SRCS}
+                                    ${YARP_manager_HDRS}
+                                    ${YARP_manager_IMPL_HDRS})
 
 target_include_directories(YARP_manager PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

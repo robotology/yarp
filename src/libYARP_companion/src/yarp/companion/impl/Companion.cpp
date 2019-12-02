@@ -1241,8 +1241,9 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.addString("");
     f.addString("# Set up our main executable.");
     f.addString("if(folder_source)");
-    f.addString("  add_executable(${PROJECT_NAME} ${folder_source} ${folder_header})");
-    f.addString("  target_link_libraries(${PROJECT_NAME} ${YARP_LIBRARIES})");
+    f.addString("  add_executable(${PROJECT_NAME})");
+    f.addString("  target_sources(${PROJECT_NAME} PRIVATE ${folder_source} ${folder_header})");
+    f.addString("  target_link_libraries(${PROJECT_NAME} PRIVATE ${YARP_LIBRARIES})");
     f.addString("else()");
     f.addString("  message(FATAL_ERROR \"No source code files found. Please add something\")");
     f.addString("endif()");

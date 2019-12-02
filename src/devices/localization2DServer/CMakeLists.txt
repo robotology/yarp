@@ -12,10 +12,12 @@ yarp_prepare_plugin(localization2DServer
                     DEFAULT ON)
 
 if(NOT SKIP_localization2DServer)
+  yarp_add_plugin(yarp_localization2DServer)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_localization2DServer Localization2DServer.h
-                                            Localization2DServer.cpp)
+  target_sources(yarp_localization2DServer PRIVATE Localization2DServer.h
+                                                   Localization2DServer.cpp)
 
   target_link_libraries(yarp_localization2DServer YARP::YARP_os
                                                   YARP::YARP_sig

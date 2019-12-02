@@ -9,7 +9,7 @@ if(YARP_COMPILE_yarplaserscannergui)
   include(YarpUseQt5)
   include(YarpMacOSUtilities)
 
-  include_directories(${OpenCV_INCLUDE_DIRS})
+  add_executable(yarplaserscannergui WIN32)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -34,21 +34,22 @@ if(YARP_COMPILE_yarplaserscannergui)
   source_group("Generated Files" FILES ${yarpLaserScannergui_QRC_GEN_SRCS}
                                        ${yarplaserscannergui_UI_GEN_SRCS})
 
-  add_executable(yarplaserscannergui WIN32 ${yarplaserscannergui_SRCS}
-                                           ${yarplaserscannergui_HDRS}
-                                           ${yarplaserscannergui_QRC_FILES}
-                                           ${yarplaserscannergui_QRC_GEN_SRCS}
-                                           ${yarplaserscannergui_UI_FILES}
-                                           ${yarplaserscannergui_UI_GEN_SRCS})
+  target_sources(yarplaserscannergui PRIVATE ${yarplaserscannergui_SRCS}
+                                             ${yarplaserscannergui_HDRS}
+                                             ${yarplaserscannergui_QRC_FILES}
+                                             ${yarplaserscannergui_QRC_GEN_SRCS}
+                                             ${yarplaserscannergui_UI_FILES}
+                                             ${yarplaserscannergui_UI_GEN_SRCS})
 
-  target_link_libraries(yarplaserscannergui YARP::YARP_os
-                                            YARP::YARP_init
-                                            YARP::YARP_sig
-                                            YARP::YARP_dev
-                                            Qt5::Widgets
-                                            Qt5::Gui)
+  target_link_libraries(yarplaserscannergui PRIVATE YARP::YARP_os
+                                                    YARP::YARP_init
+                                                    YARP::YARP_sig
+                                                    YARP::YARP_dev
+                                                    Qt5::Widgets
+                                                    Qt5::Gui)
 
-  target_link_libraries(yarplaserscannergui ${OpenCV_LIBRARIES})
+  target_include_directories(yarplaserscannergui PRIVATE ${OpenCV_INCLUDE_DIRS})
+  target_link_libraries(yarplaserscannergui PRIVATE ${OpenCV_LIBRARIES})
 
   install(TARGETS yarplaserscannergui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 

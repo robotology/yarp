@@ -11,15 +11,16 @@ yarp_prepare_plugin(h264
                     DEPENDS "YARP_HAS_GObject;YARP_HAS_GLIB2;YARP_HAS_GStreamer;YARP_HAS_GStreamerPluginsBase")
 
 if(NOT SKIP_h264)
+  yarp_add_plugin(yarp_h264)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_h264
-                  H264Carrier.h
-                  H264Carrier.cpp
-                  H264Stream.h
-                  H264Stream.cpp
-                  H264Decoder.cpp
-                  H264Decoder.h)
+  target_sources(yarp_h264 PRIVATE H264Carrier.h
+                                   H264Carrier.cpp
+                                   H264Stream.h
+                                   H264Stream.cpp
+                                   H264Decoder.cpp
+                                   H264Decoder.h)
 
   target_link_libraries(yarp_h264 PRIVATE YARP::YARP_os
                                           YARP::YARP_sig

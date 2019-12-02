@@ -11,5 +11,6 @@ project(opencv_test)
 find_package(YARP REQUIRED COMPONENTS sig cv)
 find_package(OpenCV REQUIRED)
 
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} ${YARP_LIBRARIES} ${OpenCV_LIBRARIES})
+add_executable(opencv_test)
+target_sources(opencv_test PRIVATE main.cpp)
+target_link_libraries(opencv_test PRIVATE ${YARP_LIBRARIES} ${OpenCV_LIBRARIES})

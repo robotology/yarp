@@ -5,6 +5,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_name)
+add_library(YARP::YARP_name ALIAS YARP_name)
+
 set(YARP_name_HDRS yarp/name/all.h
                    yarp/name/api.h
                    yarp/name/BootstrapServer.h
@@ -25,10 +28,9 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_name_HDRS}
                    ${YARP_name_IMPL_HDRS})
 
-add_library(YARP_name ${YARP_name_SRCS}
-                      ${YARP_name_HDRS}
-                      ${YARP_name_IMPL_HDRS})
-add_library(YARP::YARP_name ALIAS YARP_name)
+target_sources(YARP_name PRIVATE ${YARP_name_SRCS}
+                                 ${YARP_name_HDRS}
+                                 ${YARP_name_IMPL_HDRS})
 
 target_include_directories(YARP_name PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                             $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
@@ -75,4 +77,3 @@ install(TARGETS YARP_name
 
 set(YARP_name_PUBLIC_DEPS ${YARP_os_PUBLIC_DEPS} PARENT_SCOPE)
 set(YARP_name_PRIVATE_DEPS ${YARP_os_PRIVATE_DEPS} PARENT_SCOPE)
-

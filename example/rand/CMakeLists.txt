@@ -8,7 +8,8 @@
 cmake_minimum_required(VERSION 3.12)
 project(Rand)
 
-find_package(YARP)
+find_package(YARP COMPONENTS sig math REQUIRED)
 
-add_executable(rand rand.cpp)
-target_link_libraries(rand ${YARP_LIBRARIES})
+add_executable(rand)
+target_sources(rand PRIVATE rand.cpp)
+target_link_libraries(rand PRIVATE ${YARP_LIBRARIES})

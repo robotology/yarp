@@ -6,7 +6,7 @@
 
 include(YarpMacOSUtilities)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
+add_executable(yarpview WIN32)
 
 set(yarpview_SRCS main.cpp
                   qtquick2applicationviewer/qtquick2applicationviewer.cpp)
@@ -28,11 +28,13 @@ source_group("Generated Files" FILES ${yarpview_QRC_GEN_SRCS})
 
 qtyarp_use_qml_plugin()
 
-add_executable(yarpview WIN32 ${yarpview_SRCS}
-                              ${yarpview_HDRS}
-                              ${yarpview_QRC_FILES}
-                              ${yarpview_QRC_GEN_SRCS}
-                              ${yarpview_QML_FILES})
+target_sources(yarpview PRIVATE ${yarpview_SRCS}
+                                ${yarpview_HDRS}
+                                ${yarpview_QRC_FILES}
+                                ${yarpview_QRC_GEN_SRCS}
+                                ${yarpview_QML_FILES})
+
+target_include_directories(yarpview PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 
 target_link_libraries(yarpview Qt5::Widgets
                                Qt5::Qml

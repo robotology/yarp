@@ -9,7 +9,8 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
-add_executable(web_test web_test.cpp)
-target_link_libraries(web_test ${YARP_LIBRARIES})
+add_executable(web_test)
+target_sources(web_test PRIVATE web_test.cpp)
+target_link_libraries(web_test PRIVATE YARP::YARP_os YARP::YARP_init)

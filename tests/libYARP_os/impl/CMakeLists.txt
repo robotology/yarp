@@ -4,15 +4,17 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-add_executable(harness_os_impl BottleImplTest.cpp
-                               BufferedConnectionWriterTest.cpp
-                               DgramTwoWayStreamTest.cpp
-                               NameConfigTest.cpp
-                               NameServerTest.cpp
-                               PortCommandTest.cpp
-                               PortCoreTest.cpp
-                               ProtocolTest.cpp
-                               StreamConnectionReaderTest.cpp)
+add_executable(harness_os_impl)
+
+target_sources(harness_os_impl PRIVATE BottleImplTest.cpp
+                                       BufferedConnectionWriterTest.cpp
+                                       DgramTwoWayStreamTest.cpp
+                                       NameConfigTest.cpp
+                                       NameServerTest.cpp
+                                       PortCommandTest.cpp
+                                       PortCoreTest.cpp
+                                       ProtocolTest.cpp
+                                       StreamConnectionReaderTest.cpp)
 
 target_link_libraries(harness_os_impl PRIVATE YARP_harness
                                               YARP::YARP_os

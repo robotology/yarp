@@ -4,6 +4,11 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+# FIXME All API should use a YARP_profiler_API for __declspec(dllimport/dllexport)
+# For now always build the library as STATIC
+add_library(YARP_profiler STATIC)
+add_library(YARP::YARP_profiler ALIAS YARP_profiler)
+
 set(YARP_profiler_HDRS yarp/profiler/NetworkProfiler.h
                        yarp/profiler/Graph.h)
 
@@ -17,12 +22,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_profiler_HDRS})
 
-# FIXME All API should use a YARP_profiler_API for __declspec(dllimport/dllexport)
-# For now always build the library as STATIC
-add_library(YARP_profiler STATIC ${YARP_profiler_SRCS}
-                                 ${YARP_profiler_HDRS})
-
-add_library(YARP::YARP_profiler ALIAS YARP_profiler)
+target_sources(YARP_profiler PRIVATE ${YARP_profiler_SRCS}
+                                     ${YARP_profiler_HDRS})
 
 target_include_directories(YARP_profiler PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
                                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

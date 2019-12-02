@@ -12,10 +12,13 @@ yarp_prepare_plugin(virtualAnalogServer
                     DEFAULT ON)
 
 if(NOT SKIP_virtualAnalogServer)
+  yarp_add_plugin(yarp_virtualAnalogServer)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_virtualAnalogServer VirtualAnalogWrapper.cpp
-                                           VirtualAnalogWrapper.h)
+  target_sources(yarp_virtualAnalogServer PRIVATE VirtualAnalogWrapper.cpp
+                                                  VirtualAnalogWrapper.h)
+
   target_link_libraries(yarp_virtualAnalogServer PRIVATE YARP::YARP_os
                                                          YARP::YARP_sig
                                                          YARP::YARP_dev)

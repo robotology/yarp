@@ -12,12 +12,15 @@ yarp_prepare_plugin(RGBDSensorClient
                     DEFAULT ON)
 
 if(NOT SKIP_RGBDSensorClient)
+  yarp_add_plugin(yarp_RGBDSensorClient)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_RGBDSensorClient RGBDSensorClient.cpp
-                                        RGBDSensorClient.h
-                                        RGBDSensorClient_StreamingMsgParser.cpp
-                                        RGBDSensorClient_StreamingMsgParser.h)
+  target_sources(yarp_RGBDSensorClient PRIVATE RGBDSensorClient.cpp
+                                               RGBDSensorClient.h
+                                               RGBDSensorClient_StreamingMsgParser.cpp
+                                               RGBDSensorClient_StreamingMsgParser.h)
+
   target_link_libraries(yarp_RGBDSensorClient PRIVATE YARP::YARP_os
                                                       YARP::YARP_sig
                                                       YARP::YARP_dev)

@@ -11,17 +11,16 @@
 
 #include <yarp/dev/DeviceDriver.h>
 
-namespace yarp {
-    namespace dev {
-      class foobot;
-    }
-}
-
-class yarp::dev::foobot : public DeviceDriver
+class foobot : public yarp::dev::DeviceDriver
 {
-private:
 public:
-    foobot() {}
+    foobot() = default;
+    foobot(const foobot&) = delete;
+    foobot(foobot&&) = delete;
+    foobot& operator=(const foobot&) = delete;
+    foobot& operator=(foobot&&) = delete;
+    ~foobot() override = default;
+
     virtual bool open(yarp::os::Searchable& config);
 };
 

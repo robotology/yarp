@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(game_server)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
 # using ACE
 add_definitions(-D_REENTRANT)
@@ -21,12 +21,12 @@ if(WIN32 AND CYGWIN)
   add_definitions(-DCYGWIN)
 endif(WIN32 AND CYGWIN)
 
-include_directories(${CMAKE_SOURCE_DIR})
-
-add_executable(game_server Game.cpp
-                           Login.cpp
-                           main.cpp
-                           Player.cpp
-                           Thing.cpp
-                           Things.cpp)
-target_link_libraries(game_server ${YARP_LIBRARIES})
+add_executable(game_server)
+target_sources(game_server PRIVATE Game.cpp
+                                   Login.cpp
+                                   main.cpp
+                                   Player.cpp
+                                   Thing.cpp
+                                   Things.cpp)
+target_include_directories(game_server PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(game_server PRIVATE ${YARP_LIBRARIES})

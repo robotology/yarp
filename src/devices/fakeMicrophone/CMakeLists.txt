@@ -11,9 +11,13 @@ yarp_prepare_plugin(fakeMicrophone
                     EXTRA_CONFIG WRAPPER=AudioRecorderWrapper)
 
 if(NOT SKIP_fakeMicrophone)
+  yarp_add_plugin(yarp_fakeMicrophone)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_fakeMicrophone fakeMicrophone.cpp
-                                      fakeMicrophone.h)
+
+  target_sources(yarp_fakeMicrophone PRIVATE fakeMicrophone.cpp
+                                             fakeMicrophone.h)
+
   target_link_libraries(yarp_fakeMicrophone PRIVATE YARP::YARP_os
                                                     YARP::YARP_sig
                                                     YARP::YARP_dev)

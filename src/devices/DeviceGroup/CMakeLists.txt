@@ -11,10 +11,13 @@ yarp_prepare_plugin(group
                     DEFAULT ON)
 
 if(NOT SKIP_group)
+  yarp_add_plugin(yarp_group)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_group DeviceGroup.cpp
-                             DeviceGroup.h)
+  target_sources(yarp_group PRIVATE DeviceGroup.cpp
+                                    DeviceGroup.h)
+
   target_link_libraries(yarp_group PRIVATE YARP::YARP_os
                                            YARP::YARP_sig
                                            YARP::YARP_dev)

@@ -8,7 +8,6 @@
  */
 
 #include "bazbot.h"
-using namespace yarp::dev;
 
 bool bazbot::open(yarp::os::Searchable& config)
 {

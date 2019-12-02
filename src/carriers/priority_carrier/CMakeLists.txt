@@ -14,10 +14,13 @@ yarp_prepare_plugin(priority
                     DEFAULT ON)
 
 if(NOT SKIP_priority)
+  yarp_add_plugin(yarp_priority)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_priority PriorityCarrier.h
-                                PriorityCarrier.cpp)
+  target_sources(yarp_priority PRIVATE PriorityCarrier.h
+                                       PriorityCarrier.cpp)
+
   target_link_libraries(yarp_priority PRIVATE YARP::YARP_os
                                               YARP::YARP_sig
                                               YARP::YARP_math)

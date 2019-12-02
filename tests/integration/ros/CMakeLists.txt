@@ -6,10 +6,12 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os idl_tools REQUIRED)
 
 yarp_idl_to_dir(RosIntegrationTest.msg ${CMAKE_BINARY_DIR}/msgs SRC HDR INC)
-include_directories(${INC})
-add_executable(test_topic test_topic.cpp ${SRC} ${HDR})
-target_link_libraries(test_topic ${YARP_LIBRARIES})
+
+add_executable(test_topic)
+target_sources(test_topic PRIVATE test_topic.cpp ${SRC} ${HDR})
+target_include_directories(test_topic PRIVATE ${INC})
+target_link_libraries(test_topic PRIVATE ${YARP_LIBRARIES})
 

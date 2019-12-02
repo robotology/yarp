@@ -11,10 +11,13 @@ yarp_prepare_plugin(grabberDual
                     DEFAULT ON)
 
 if(NOT SKIP_grabberDual)
+  yarp_add_plugin(yarp_grabberDual)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_grabberDual ServerGrabber.cpp
-                                   ServerGrabber.h)
+  target_sources(yarp_grabberDual PRIVATE ServerGrabber.cpp
+                                          ServerGrabber.h)
+
   target_link_libraries(yarp_grabberDual PRIVATE YARP::YARP_os
                                                  YARP::YARP_sig
                                                  YARP::YARP_dev)

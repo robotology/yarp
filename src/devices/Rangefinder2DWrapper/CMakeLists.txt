@@ -11,10 +11,13 @@ yarp_prepare_plugin(Rangefinder2DWrapper
                     DEFAULT ON)
 
 if(NOT SKIP_Rangefinder2DWrapper)
+  yarp_add_plugin(yarp_Rangefinder2DWrapper)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_Rangefinder2DWrapper Rangefinder2DWrapper.cpp
-                                            Rangefinder2DWrapper.h)
+  target_sources(yarp_Rangefinder2DWrapper PRIVATE Rangefinder2DWrapper.cpp
+                                                   Rangefinder2DWrapper.h)
+
   target_link_libraries(yarp_Rangefinder2DWrapper PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev

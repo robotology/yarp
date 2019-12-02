@@ -89,12 +89,13 @@ else()
   endif()
 endif()
 
-
-add_executable(yarpidl_thrift ${yarpidl_thrift_SRCS}
-                              ${yarpidl_thrift_GEN_SRCS}
-                              ${yarpidl_thrift_YARP_SRCS})
-
+add_executable(yarpidl_thrift)
 add_executable(YARP::yarpidl_thrift ALIAS yarpidl_thrift)
+
+target_sources(yarpidl_thrift PRIVATE ${yarpidl_thrift_SRCS}
+                                      ${yarpidl_thrift_GEN_SRCS}
+                                      ${yarpidl_thrift_YARP_SRCS})
+
 install(TARGETS yarpidl_thrift
         EXPORT YARP_idl_tools
         COMPONENT YARP_idl_tools

@@ -9,10 +9,14 @@
 cmake_minimum_required(VERSION 3.12)
 
 # find YARP
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
 # set up our program
-add_executable(hello hello.cpp)
+add_executable(hello)
+
+# declare our source files
+target_sources(hello PRIVATE hello.cpp)
 
 # link with YARP libraries
-target_link_libraries(hello ${YARP_LIBRARIES})
+target_link_libraries(hello PRIVATE YARP::YARP_os
+                                    YARP::YARP_init)

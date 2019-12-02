@@ -5,20 +5,23 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(YARP_COMPILE_yarpmanager-console)
+  add_executable(yarpmanager-console)
+
   set(yarpmanager_console_SRCS yarpmanager.cpp
                                ymanager.cpp)
   set(yarpmanager_console_HDRS ymanager.h)
 
-  if(MSVC)
-    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
-  endif()
 
-  add_executable(yarpmanager-console ${yarpmanager_console_SRCS}
-                                     ${yarpmanager_console_HDRS})
+  target_sources(yarpmanager-console PRIVATE ${yarpmanager_console_SRCS}
+                                             ${yarpmanager_console_HDRS})
 
   target_link_libraries(yarpmanager-console PRIVATE YARP::YARP_init
                                                     YARP::YARP_os
                                                     YARP::YARP_manager)
+
+  if(MSVC)
+    target_include_directories(yarpmanager-console SYSTEM PRIVATE ${dirent_INCLUDE_DIRS})
+  endif()
 
   if(YARP_HAS_Libedit)
     target_compile_definitions(yarpmanager-console PRIVATE YARP_HAS_Libedit)

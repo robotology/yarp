@@ -11,10 +11,13 @@ yarp_prepare_plugin(fakeLocalizer
                     DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_fakeLocalizer)
+  yarp_add_plugin(yarp_fakeLocalizer)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_fakeLocalizer fakeLocalizerDev.h
-                                     fakeLocalizerDev.cpp)
+  target_sources(yarp_fakeLocalizer PRIVATE fakeLocalizerDev.h
+                                            fakeLocalizerDev.cpp)
+
   target_link_libraries(yarp_fakeLocalizer PRIVATE YARP::YARP_os
                                                    YARP::YARP_sig
                                                    YARP::YARP_dev

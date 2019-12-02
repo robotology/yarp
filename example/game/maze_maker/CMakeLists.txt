@@ -8,12 +8,12 @@
 cmake_minimum_required(VERSION 3.12)
 project(maze_maker)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
 # using ACE
 add_definitions(-D_REENTRANT)
 
-include_directories($(CMAKE_SOURCE_DIR))
-
-add_executable(maze_maker main.cpp)
-target_link_libraries(${YARP_LIBRARIES})
+add_executable(maze_maker)
+target_sources(maze_maker PRIVATE main.cpp)
+target_include_directories(maze_maker PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(maze_maker PRIVATE ${YARP_LIBRARIES})

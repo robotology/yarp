@@ -13,6 +13,8 @@ yarp_prepare_plugin(bayer
                     DEFAULT ON)
 
 if(NOT SKIP_bayer)
+  yarp_add_plugin(yarp_bayer)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   if(NOT YARP_HAS_Libdc1394)
@@ -36,9 +38,9 @@ if(NOT SKIP_bayer)
     add_definitions(-DUSE_LIBDC1394)
   endif()
 
-  yarp_add_plugin(yarp_bayer BayerCarrier.h
-                             BayerCarrier.cpp
-                             ${DC1394_SRC})
+  target_sources(yarp_bayer PRIVATE BayerCarrier.h
+                                    BayerCarrier.cpp
+                                    ${DC1394_SRC})
 
   target_link_libraries(yarp_bayer PRIVATE YARP::YARP_os
                                            YARP::YARP_sig)

@@ -5,6 +5,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_companion)
+add_library(YARP::YARP_companion ALIAS YARP_companion)
+
 set(YARP_companion_HDRS yarp/companion/api.h
                         yarp/companion/yarpcompanion.h)
 
@@ -23,11 +26,10 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_companion_HDRS}
                    ${YARP_companion_IMPL_HDRS})
 
-add_library(YARP_companion ${YARP_companion_SRCS}
-                           ${YARP_companion_HDRS}
-                           ${YARP_companion_IMPL_SRCS}
-                           ${YARP_companion_IMPL_HDRS})
-add_library(YARP::YARP_companion ALIAS YARP_companion)
+target_sources(YARP_companion PRIVATE ${YARP_companion_SRCS}
+                                      ${YARP_companion_HDRS}
+                                      ${YARP_companion_IMPL_SRCS}
+                                      ${YARP_companion_IMPL_HDRS})
 
 target_include_directories(YARP_companion PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

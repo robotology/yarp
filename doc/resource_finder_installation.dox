@@ -42,10 +42,12 @@ project(resourceFinder)
 
 find_package(YARP REQUIRED COMPONENTS os)
 
-add_executable(rf_basic tutorial_rf_basic.cpp)
+add_executable(rf_basic)
+target_sources(rf_basic PRIVATE tutorial_rf_basic.cpp)
 target_link_libraries(rf_basic PRIVATE YARP::YARP_os YARP::YARP_init)
 
-add_executable(rf_advanced tutorial_rf_advanced.cpp)
+add_executable(rf_advanced)
+target_sources(rf_advanced PRIVATE tutorial_rf_advanced.cpp)
 target_link_libraries(rf_advanced PRIVATE YARP::YARP_os YARP::YARP_init)
 ~~~
 

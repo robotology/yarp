@@ -12,10 +12,13 @@ yarp_prepare_plugin(transformServer
                     DEFAULT ON)
 
 if(NOT SKIP_transformServer)
+  yarp_add_plugin(yarp_transformServer)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_transformServer FrameTransformServer.cpp
-                                       FrameTransformServer.h)
+  target_sources(yarp_transformServer PRIVATE FrameTransformServer.cpp
+                                              FrameTransformServer.h)
+
   target_link_libraries(yarp_transformServer PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev

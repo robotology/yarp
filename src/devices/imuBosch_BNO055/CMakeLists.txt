@@ -12,9 +12,13 @@ yarp_prepare_plugin(imuBosch_BNO055
                     DEPENDS "NOT WIN32;TARGET YARP::YARP_math;YARP_HAS_I2C")
 
 if(ENABLE_imuBosch_BNO055)
+  yarp_add_plugin(yarp_imuBosch_BNO055)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_imuBosch_BNO055 imuBosch_BNO055.cpp
-                                       imuBosch_BNO055.h)
+
+  target_sources(yarp_imuBosch_BNO055 PRIVATE imuBosch_BNO055.cpp
+                                              imuBosch_BNO055.h)
+
   target_link_libraries(yarp_imuBosch_BNO055 PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev

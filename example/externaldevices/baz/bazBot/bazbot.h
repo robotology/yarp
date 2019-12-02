@@ -11,17 +11,16 @@
 
 #include <yarp/dev/DeviceDriver.h>
 
-namespace yarp {
-    namespace dev {
-      class bazbot;
-    }
-}
-
-class yarp::dev::bazbot : public DeviceDriver
+class bazbot : public yarp::dev::DeviceDriver
 {
-private:
 public:
-    bazbot() {}
-    virtual bool open(yarp::os::Searchable& config);
+    bazbot() = default;
+    bazbot(const bazbot&) = delete;
+    bazbot(bazbot&&) = delete;
+    bazbot& operator=(const bazbot&) = delete;
+    bazbot& operator=(bazbot&&) = delete;
+    ~bazbot() override = default;
+
+    bool open(yarp::os::Searchable& config) override;
 };
 

@@ -4,6 +4,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_robottestingframework)
+add_library(YARP::YARP_robottestingframework ALIAS YARP_robottestingframework)
+
 set(YARP_robottestingframework_HDRS yarp/robottestingframework/JointsPosMotion.h
                                     yarp/robottestingframework/TestAsserter.h
                                     yarp/robottestingframework/TestCase.h
@@ -20,8 +23,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_robottestingframework_HDRS})
 
-add_library(YARP_robottestingframework ${YARP_robottestingframework_SRCS} ${YARP_robottestingframework_HDRS})
-add_library(YARP::YARP_robottestingframework ALIAS YARP_robottestingframework)
+target_sources(YARP_robottestingframework PRIVATE ${YARP_robottestingframework_SRCS}
+                                                  ${YARP_robottestingframework_HDRS})
 
 target_include_directories(YARP_robottestingframework PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

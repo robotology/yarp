@@ -7,24 +7,27 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-# execute YarpConfig.cmake
-find_package(YARP)
+# create the program "foo"
+add_executable(foo)
 
-# now FindOpenCV.cmake is in CMAKE_MODULE_PATH
-find_package(OpenCV)
-
-# searches for all .cpp and .h files in the current directory
-file(GLOB folder_source *.cpp)
-file(GLOB folder_header *.h)
+# add sources
+target_sources(foo PRIVATE main.cpp)
 
 # add the current directory in the include path
-include_directories(${CMAKE_SOURCE_DIR})
+target_include_directories(foo PRIVATE ${CMAKE_SOURCE_DIR})
 
+
+# execute YarpConfig.cmake
+find_package(YARP COMPONENTS os REQUIRED)
+# link YARP libraries
+target_link_libraries(foo PRIVATE YARP::YARP_os
+                                   YARP::YARP_init)
+
+# now FindOpenCV.cmake is in CMAKE_MODULE_PATH
+find_package(OpenCV REQUIRED)
 # add OpenCV include directories
-include_directories(${OPENCV_INCLUDE_DIR})
+target_include_directories(foo PRIVATE ${OPENCV_INCLUDE_DIR})
+# link OpenCV libraries
+target_link_libraries(foo PRIVATE ${OPENCV_LIBRARIES}
 
-# create the program "foo"
-add_executable(foo ${folder_source} ${folder_header})
 
-# link opencv and YARP libraries
-target_link_libraries(foo ${OPENCV_LIBRARIES} ${YARP_LIBRARIES})

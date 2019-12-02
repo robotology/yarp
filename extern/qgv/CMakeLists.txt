@@ -9,6 +9,8 @@ project(YARP_priv_qgvcore)
 
 include(YarpUseQt5)
 
+add_library(YARP_priv_qgvcore STATIC)
+
 set(qgvcore_SRCS qgv/QGVCore/private/QGVCore.cpp
                  qgv/QGVCore/private/QGVGraphPrivate.cpp
                  qgv/QGVCore/private/QGVEdgePrivate.cpp
@@ -31,19 +33,21 @@ set(qgvcore_HDRS qgv/QGVCore/qgv.h
                  qgv/QGVCore/QGVScene.h
                  qgv/QGVCore/QGVSubGraph.h)
 
-add_definitions(-DQGVCORE_LIB -DWITH_CGRAPH)
+target_sources(YARP_priv_qgvcore PRIVATE ${qgvcore_SRCS} ${qgvcore_HDRS})
 
-include_directories(${Graphviz_INCLUDE_DIR}
-                    ${CMAKE_CURRENT_SOURCE_DIR}/qgv/QGVCore
-                    ${CMAKE_CURRENT_SOURCE_DIR}/qgv/QGVCore/private
-                    ${CMAKE_CURRENT_BINARY_DIR})
+target_compile_definitions(YARP_priv_qgvcore PRIVATE QGVCORE_LIB)
 
-add_library(YARP_priv_qgvcore STATIC ${qgvcore_SRCS} ${qgvcore_HDRS})
+target_include_directories(YARP_priv_qgvcore PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/qgv/QGVCore>
+                                             PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/qgv/QGVCore/private
+                                                     ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(YARP_priv_qgvcore Qt5::Widgets
-                                        ${Graphviz_LIBRARIES})
+target_link_libraries(YARP_priv_qgvcore PUBLIC Qt5::Widgets)
+
+target_include_directories(YARP_priv_qgvcore PRIVATE ${Graphviz_INCLUDE_DIR})
+target_link_libraries(YARP_priv_qgvcore PRIVATE ${Graphviz_LIBRARIES})
 
 set_property(TARGET YARP_priv_qgvcore PROPERTY FOLDER "Libraries/External")
+
 
 set(QGVCore_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/qgv/QGVCore PARENT_SCOPE)
 set(QGVCore_LIBRARIES "YARP_priv_qgvcore" PARENT_SCOPE)

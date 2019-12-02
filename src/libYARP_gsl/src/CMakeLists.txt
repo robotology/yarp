@@ -4,6 +4,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_gsl)
+add_library(YARP::YARP_gsl ALIAS YARP_gsl)
+
 set(YARP_gsl_HDRS yarp/gsl/api.h
                   yarp/gsl/Gsl.h)
 set(YARP_gsl_SRCS yarp/gsl/Gsl.cpp)
@@ -17,8 +20,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_gsl_HDRS}
                    ${YARP_gsl_IMPL_HDRS})
 
-add_library(YARP_gsl ${YARP_gsl_SRCS} ${YARP_gsl_HDRS})
-add_library(YARP::YARP_gsl ALIAS YARP_gsl)
+target_sources(YARP_gsl PRIVATE ${YARP_gsl_SRCS}
+                                ${YARP_gsl_HDRS})
 
 target_include_directories(YARP_gsl PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

@@ -12,16 +12,19 @@ yarp_prepare_plugin(controlboardwrapper2
                     DEFAULT ON)
 
 if(NOT SKIP_controlboardwrapper2)
+  yarp_add_plugin(yarp_controlboardwrapper2)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_controlboardwrapper2 ControlBoardWrapper.cpp
-                                            ControlBoardWrapper.h
-                                            RPCMessagesParser.cpp
-                                            RPCMessagesParser.h
-                                            StreamingMessagesParser.cpp
-                                            StreamingMessagesParser.h
-                                            SubDevice.cpp
-                                            SubDevice.h)
+  target_sources(yarp_controlboardwrapper2 PRIVATE ControlBoardWrapper.cpp
+                                                   ControlBoardWrapper.h
+                                                   RPCMessagesParser.cpp
+                                                   RPCMessagesParser.h
+                                                   StreamingMessagesParser.cpp
+                                                   StreamingMessagesParser.h
+                                                   SubDevice.cpp
+                                                   SubDevice.h)
+
   target_link_libraries(yarp_controlboardwrapper2 PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev

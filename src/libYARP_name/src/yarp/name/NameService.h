@@ -60,9 +60,9 @@ public:
         return false;
     }
 
-    virtual bool process(yarp::os::PortWriter& in,
-                         yarp::os::PortReader& out,
-                         const yarp::os::Contact& remote) override;
+    bool process(yarp::os::PortWriter& in,
+                 yarp::os::PortReader& out,
+                 const yarp::os::Contact& remote) override;
 };
 
 

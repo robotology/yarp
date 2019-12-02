@@ -13,10 +13,13 @@ yarp_prepare_plugin(serialport
                     DEPENDS "YARP_HAS_ACE")
 
 if(NOT SKIP_serialport)
+  yarp_add_plugin(yarp_serialport)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_serialport SerialDeviceDriver.cpp
-                                  SerialDeviceDriver.h)
+  target_sources(yarp_serialport PRIVATE SerialDeviceDriver.cpp
+                                         SerialDeviceDriver.h)
+
   target_link_libraries(yarp_serialport PRIVATE YARP::YARP_os
                                                 YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os

@@ -10,14 +10,17 @@ yarp_prepare_plugin(multipleanalogsensorsserver
                     INCLUDE MultipleAnalogSensorsServer.h
                     DEFAULT ON)
 
-
 if(ENABLE_multipleanalogsensorsserver)
+  yarp_add_plugin(yarp_multipleanalogsensorsserver)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_multipleanalogsensorsserver MultipleAnalogSensorsServer.cpp
-                                                   MultipleAnalogSensorsServer.h
-                                                   $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
-  target_include_directories(yarp_multipleanalogsensorsserver
-                             PRIVATE $<TARGET_PROPERTY:multipleAnalogSensorsSerializations,INTERFACE_INCLUDE_DIRECTORIES>)
+
+  target_sources(yarp_multipleanalogsensorsserver PRIVATE MultipleAnalogSensorsServer.cpp
+                                                          MultipleAnalogSensorsServer.h)
+
+  target_sources(yarp_multipleanalogsensorsserver PRIVATE $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
+  target_include_directories(yarp_multipleanalogsensorsserver PRIVATE $<TARGET_PROPERTY:multipleAnalogSensorsSerializations,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_multipleanalogsensorsserver PRIVATE YARP::YARP_os
                                                                  YARP::YARP_sig
                                                                  YARP::YARP_dev)

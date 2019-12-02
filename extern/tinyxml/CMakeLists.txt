@@ -7,20 +7,22 @@
 # TinyXML
 project(YARP_priv_tinyxml)
 
+add_library(YARP_priv_tinyxml STATIC)
+
 set(tinyxml_SRCS
     tinyxml/tinyxml.cpp
     tinyxml/tinyxmlerror.cpp
-    tinyxml/tinyxmlparser.cpp
-)
+    tinyxml/tinyxmlparser.cpp)
 
 set(tinyxml_HDRS
     tinyxml/tinystr.h
-    tinyxml/tinyxml.h
-)
+    tinyxml/tinyxml.h)
 
-add_definitions("-DTIXML_USE_STL")
+target_sources(YARP_priv_tinyxml PRIVATE ${tinyxml_SRCS})
 
-add_library(YARP_priv_tinyxml STATIC ${tinyxml_SRCS})
+target_include_directories(YARP_priv_tinyxml PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tinyxml>)
+
+target_compile_definitions(YARP_priv_tinyxml PUBLIC "TIXML_USE_STL")
 
 set_property(TARGET YARP_priv_tinyxml PROPERTY FOLDER "Libraries/External")
 

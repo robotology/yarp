@@ -5,6 +5,10 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+
+add_library(YARP_sig)
+add_library(YARP::YARP_sig ALIAS YARP_sig)
+
 set(YARP_sig_HDRS yarp/sig/all.h
                   yarp/sig/api.h
                   yarp/sig/Image.h
@@ -55,11 +59,10 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_sig_HDRS}
                    ${YARP_sig_IMPL_HDRS})
 
-add_library(YARP_sig ${YARP_sig_SRCS}
-                     ${YARP_sig_HDRS}
-                     ${YARP_sig_IMPL_SRCS}
-                     ${YARP_sig_IMPL_HDRS})
-add_library(YARP::YARP_sig ALIAS YARP_sig)
+target_sources(YARP_sig PRIVATE ${YARP_sig_SRCS}
+                                ${YARP_sig_HDRS}
+                                ${YARP_sig_IMPL_SRCS}
+                                ${YARP_sig_IMPL_HDRS})
 
 target_include_directories(YARP_sig PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
