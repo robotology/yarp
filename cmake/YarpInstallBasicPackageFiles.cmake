@@ -59,6 +59,7 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
                               VERSION ${YARP_VERSION}
                               COMPATIBILITY SameMajorVersion
                               EXPORT_DESTINATION "${CMAKE_BINARY_DIR}/${_export}"
+                              INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_export}"
                               DEPENDENCIES ${_deps}
                               PRIVATE_DEPENDENCIES ${_priv_deps}
                               NO_CHECK_REQUIRED_COMPONENTS_MACRO
