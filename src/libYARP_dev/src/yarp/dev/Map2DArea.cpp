@@ -76,6 +76,8 @@ bool Map2DArea::read(yarp::os::ConnectionReader& connection)
 {
     // auto-convert text mode interaction
     connection.convertTextMode();
+
+    //[[maybe_unused]] int32_t dummy; //@@@FIXME To be used as soon as C++17 becomes available
     int32_t dummy;
 
     dummy = connection.expectInt32();

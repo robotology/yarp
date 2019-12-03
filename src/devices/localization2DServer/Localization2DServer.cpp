@@ -267,6 +267,50 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                 iLoc->setInitialPose(init_loc);
                 reply.addVocab(VOCAB_OK);
             }
+            else if (request == VOCAB_NAV_GET_CURRENT_POSCOV)
+            {
+                Map2DLocation init_loc;
+                yarp::sig::Matrix cov(3, 3);
+                iLoc->getCurrentPosition(init_loc, cov);
+                reply.addVocab(VOCAB_OK);
+                reply.addString(m_current_position.map_id);
+                reply.addFloat64(m_current_position.x);
+                reply.addFloat64(m_current_position.y);
+                reply.addFloat64(m_current_position.theta);
+                yarp::os::Bottle& mc = reply.addList();
+                for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { mc.addFloat64(cov[i][j]); } }
+            }
+            else if (request == VOCAB_NAV_SET_INITIAL_POSCOV)
+            {
+                Map2DLocation init_loc;
+                yarp::sig::Matrix cov(3,3);
+                init_loc.map_id = command.get(2).asString();
+                init_loc.x = command.get(3).asFloat64();
+                init_loc.y = command.get(4).asFloat64();
+                init_loc.theta = command.get(5).asFloat64();
+                Bottle* mc = command.get(6).asList();
+                if (mc!=nullptr && mc->size() == 9)
+                {
+                    for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = mc->get(i * 3 + j).asFloat64(); } }
+                    bool ret = iLoc->setInitialPose(init_loc, cov);
+                    if (ret) { reply.addVocab(VOCAB_OK); }
+                    else     { reply.addVocab(VOCAB_ERR); } 
+                }
+                else
+                {
+                    reply.addVocab(VOCAB_ERR);
+                }
+            }
+            else if (request == VOCAB_NAV_LOCALIZATION_START)
+            {
+                iLoc->startLocalizationService();
+                reply.addVocab(VOCAB_OK);
+            }
+            else if (request == VOCAB_NAV_LOCALIZATION_STOP)
+            {
+                iLoc->stopLocalizationService();
+                reply.addVocab(VOCAB_OK);
+            }
             else if (request == VOCAB_NAV_GET_LOCALIZER_STATUS)
             {
                 if (m_getdata_using_periodic_thread)

@@ -1297,7 +1297,7 @@ bool Map2DServer::save_locations_and_areas(std::string locations_file)
         for (it3 = m_paths_storage.begin(); it3 != m_paths_storage.end(); ++it3)
         {
             file << it3->first; // the name of the path
-            for (int i=0; i<it3->second.size(); i++)
+            for (size_t i=0; i<it3->second.size(); i++)
             {
                 loc = it3->second[i];
                 file << "( " <<loc.map_id << s << loc.x << s << loc.y << s << loc.theta << ") ";

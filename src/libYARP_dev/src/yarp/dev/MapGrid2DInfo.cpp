@@ -45,10 +45,10 @@ bool MapGrid2DInfo::isInsideMap(XYWorld world) const
 
 bool MapGrid2DInfo::isInsideMap(XYCell cell) const
 {
-    if (cell.x < 0) return false;
-    if (cell.y < 0) return false;
-    if (cell.x >= (int)(m_width)) return false;
-    if (cell.y >= (int)(m_height)) return false;
+    //if (cell.x < 0) return false;
+    //if (cell.y < 0) return false;
+    if (cell.x >= m_width) return false;
+    if (cell.y >= m_height) return false;
     return true;
 }
 

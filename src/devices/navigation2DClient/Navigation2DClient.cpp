@@ -204,9 +204,11 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
         reply.addString("get_last_target");
         reply.addString("get_location_list");
         reply.addString("get_navigation_status");
-        reply.addString("stop");
-        reply.addString("pause");
-        reply.addString("resume");
+        reply.addString("stop_loc");
+        reply.addString("start_loc");
+        reply.addString("stop_nav");
+        reply.addString("pause_nav");
+        reply.addString("resume_nav");
         reply.addString("get_current_loc");
         reply.addString("initLoc <map_name> <x> <y> <angle in degrees>");
     }
@@ -305,26 +307,62 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
     }
     else if (command.get(0).isString() && command.get(0).asString() == "get_current_loc")
     {
-        Map2DLocation curr_loc;
-        bool ret = this->getCurrentPosition(curr_loc);
-        if (ret)
         {
-            std::string s = std::string("Current Location is: ") + curr_loc.toString();
-            reply.addString(s);
+            Map2DLocation curr_loc;
+            bool ret1 = this->getCurrentPosition(curr_loc);
+            if (ret1)
+            {
+                std::string s = std::string("Current Location is: ") + curr_loc.toString();
+                reply.addString(s);
+            }
+            else
+            {
+                reply.addString("getCurrentPosition(curr_loc) failed");
+            }
         }
-        else
         {
-            reply.addString("getCurrentPosition() failed");
+            Map2DLocation curr_loc;
+            Matrix cov;
+            bool ret2 = this->getCurrentPosition(curr_loc, cov);
+            if (ret2)
+            {
+                std::string s = std::string("Current Location with covariance is: ") + curr_loc.toString() + "\n" + cov.toString();
+                reply.addString(s);
+            }
+            else
+            {
+                reply.addString("getCurrentPosition(curr_loc, covariance) failed");
+            }
         }
     }
     else if (command.get(0).isString() && command.get(0).asString() == "initLoc")
     {
         Map2DLocation init_loc;
-        init_loc.map_id = command.get(1).asString();
-        init_loc.x = command.get(2).asFloat64();
-        init_loc.y = command.get(3).asFloat64();
-        init_loc.theta = command.get(4).asFloat64();
-        bool ret = this->setInitialPose(init_loc);
+        bool ret = false;
+        if (command.size() == 5)
+        {
+            init_loc.map_id = command.get(1).asString();
+            init_loc.x = command.get(2).asFloat64();
+            init_loc.y = command.get(3).asFloat64();
+            init_loc.theta = command.get(4).asFloat64();
+            ret = this->setInitialPose(init_loc);
+        }
+        else if (command.size() == 6)
+        {
+            init_loc.map_id = command.get(1).asString();
+            init_loc.x = command.get(2).asFloat64();
+            init_loc.y = command.get(3).asFloat64();
+            init_loc.theta = command.get(4).asFloat64();
+            Bottle* b= command.get(5).asList();
+            if (b && b->size()==9)
+            {
+                yarp::sig::Matrix cov(3,3);
+                for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = b->get(i * 3 + j).asFloat64(); } }
+                ret = this->setInitialPose(init_loc, cov);
+            }
+            else ret = false;
+        }
+
         if (ret)
         {
             std::string s = std::string("Localization initialized to: ") + init_loc.toString();
@@ -419,12 +457,17 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
             reply.addString("not found");
         }
     }
-    else if (command.get(0).asString() == "stop")
+    else if (command.get(0).asString() == "stop_nav")
     {
         this->stopNavigation();
         reply.addString("Stopping movement.");
     }
-    else if (command.get(0).asString() == "pause")
+    else if (command.get(0).asString() == "stop_loc")
+    {
+        this->stopLocalizationService();
+        reply.addString("Stopping localization service.");
+    }
+    else if (command.get(0).asString() == "pause_nav")
     {
         double time = -1;
         if (command.size() > 1)
@@ -432,10 +475,15 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
         this->suspendNavigation(time);
         reply.addString("Pausing.");
     }
-    else if (command.get(0).asString() == "resume")
+    else if (command.get(0).asString() == "resume_nav")
     {
         this->resumeNavigation();
         reply.addString("Resuming.");
+    }
+    else if (command.get(0).asString() == "start_loc")
+    {
+        this->startLocalizationService();
+        reply.addString("Starting localization service.");
     }
     else
     {
@@ -778,15 +826,22 @@ bool  Navigation2DClient::setInitialPose(const Map2DLocation& loc)
 
 bool Navigation2DClient::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
 {
+    if (cov.rows() != 3 || cov.cols() != 3)
+    {
+        yError() << "Covariance matrix is expected to have size (3,3)";
+        return false;
+    }
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_SET_INITIAL_POS);
+    b.addVocab(VOCAB_NAV_SET_INITIAL_POSCOV);
     b.addString(loc.map_id);
     b.addFloat64(loc.x);
     b.addFloat64(loc.y);
     b.addFloat64(loc.theta);
+    yarp::os::Bottle& mc = b.addList();
+    for (int i = 0; i < 3; i++) { for (int j = 0; j < 3; j++) { mc.addFloat64(cov[i][j]); } }
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
@@ -811,22 +866,30 @@ bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matr
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_CURRENT_POS);
+    b.addVocab(VOCAB_NAV_GET_CURRENT_POSCOV);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
+        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 6)
         {
             yError() << "Localization2DClient::getCurrentPosition() received error from localization server";
             return false;
         }
         else
         {
+            if (cov.rows() != 3 || cov.cols() != 3)
+            {
+                yDebug() << "Performance warning: covariance matrix is not (3,3), resizing...";
+                cov.resize(3, 3);
+            }
             loc.map_id = resp.get(1).asString();
             loc.x = resp.get(2).asFloat64();
             loc.y = resp.get(3).asFloat64();
             loc.theta = resp.get(4).asFloat64();
+            Bottle* mc = resp.get(5).asList();
+            if (mc == nullptr) return false;
+            for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = mc->get(i * 3 + j).asFloat64(); } }
             return true;
         }
     }
@@ -1545,11 +1608,51 @@ double Navigation2DClient::normalize_angle(double angle)
 
 bool  Navigation2DClient::startLocalizationService()
 {
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_LOCALIZATION_START);
+
+    bool ret = m_rpc_port_localization_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::startLocalizationService() received error from navigation server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::startLocalizationService() error on writing on rpc port";
+        return false;
+    }
     return true;
 }
 
 bool  Navigation2DClient::stopLocalizationService()
 {
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_LOCALIZATION_STOP);
+
+    bool ret = m_rpc_port_localization_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yError() << "Navigation2DClient::stopLocalizationService() received error from navigation server";
+            return false;
+        }
+    }
+    else
+    {
+        yError() << "Navigation2DClient::stopLocalizationService() error on writing on rpc port";
+        return false;
+    }
     return true;
 }
 
