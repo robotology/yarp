@@ -51,18 +51,24 @@
 #ifdef YARP_HAS_WIN_VT_SUPPORT
 #include <windows.h>
 
-static bool yarp_logger_vt_colors_enabled = false;
-extern "C" static void yarp_logger_enable_vt_colors()
+namespace
 {
-    DWORD handleMode = 0;
-    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    bool yarp_logger_vt_colors_enabled = false;
 
-    if (hStdout != INVALID_HANDLE_VALUE && GetConsoleMode(hStdout, &handleMode)) {
-        handleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-        SetConsoleMode(hStdout, handleMode);
+    bool yarp_logger_enable_vt_colors()
+    {
+        DWORD handleMode = 0;
+        HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+        bool success = false;
+
+        if (hStdout != INVALID_HANDLE_VALUE && GetConsoleMode(hStdout, &handleMode)) {
+            handleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            success = SetConsoleMode(hStdout, handleMode);
+        }
+
+        yarp_logger_vt_colors_enabled = true;
+        return success;
     }
-
-    yarp_logger_vt_colors_enabled = true;
 }
 #endif
 
@@ -226,7 +232,7 @@ yarp::os::Log::Log(const char* file,
 {
 #ifdef YARP_HAS_WIN_VT_SUPPORT
     if (!yarp_logger_vt_colors_enabled) {
-        yarp_logger_enable_vt_colors();
+        mPriv->colored_output &= yarp_logger_enable_vt_colors();
     }
 #endif
 }
@@ -236,7 +242,7 @@ yarp::os::Log::Log() :
 {
 #ifdef YARP_HAS_WIN_VT_SUPPORT
     if (!yarp_logger_vt_colors_enabled) {
-        yarp_logger_enable_vt_colors();
+        mPriv->colored_output &= yarp_logger_enable_vt_colors();
     }
 #endif
 }
