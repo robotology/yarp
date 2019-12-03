@@ -7,6 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -66,7 +67,7 @@ static std::string pathify(const Bottle& dirs)
     if (!result) {
         REQUIRE(result!=nullptr); // cwd/pwd not too long
     }
-    std::string slash = Network::getDirectorySeparator();
+    std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
     std::string dir = buf;
     for (size_t i=0; i<dirs.size(); i++) {
         dir += slash;
@@ -77,7 +78,7 @@ static std::string pathify(const Bottle& dirs)
 
 static void mkdir(const Bottle& dirs)
 {
-    std::string slash = Network::getDirectorySeparator();
+    std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
     std::string dir = "";
     for (size_t i=0; i<dirs.size(); i++) {
         if (i>0) dir += slash;
@@ -88,8 +89,8 @@ static void mkdir(const Bottle& dirs)
 
 static void setUpTestArea(bool etc_pathd)
 {
-    std::string colon = Network::getPathSeparator();
-    std::string slash = Network::getDirectorySeparator();
+    std::string colon = std::string{yarp::conf::filesystem::path_separator};
+    std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
     FILE *fout;
 
     std::string base = etc_pathd ? "__test_dir_rf_a1" : "__test_dir_rf_a2";
@@ -517,7 +518,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         CHECK(ResourceFinder::getDataHome() == "/foo"); // YARP_DATA_HOME noticed
         Network::unsetEnvironment("YARP_DATA_HOME");
         Network::setEnvironment("XDG_DATA_HOME", "/foo");
-        std::string slash = Network::getDirectorySeparator();
+        std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
         CHECK(ResourceFinder::getDataHome() == (std::string("/foo") + slash + "yarp")); // XDG_DATA_HOME noticed
         Network::unsetEnvironment("XDG_DATA_HOME");
 #ifdef __linux__
@@ -536,7 +537,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
         CHECK(ResourceFinder::getConfigHome() == "/foo"); // YARP_CONFIG_HOME noticed
         Network::unsetEnvironment("YARP_CONFIG_HOME");
         Network::setEnvironment("XDG_CONFIG_HOME", "/foo");
-        std::string slash = Network::getDirectorySeparator();
+        std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
         CHECK(ResourceFinder::getConfigHome() == (std::string("/foo") + slash + "yarp")); // XDG_CONFIG_HOME noticed
         Network::unsetEnvironment("XDG_CONFIG_HOME");
 #ifdef __linux__
@@ -550,8 +551,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
     {
         saveEnvironment("YARP_DATA_DIRS");
         saveEnvironment("XDG_DATA_DIRS");
-        std::string slash = Network::getDirectorySeparator();
-        std::string colon = Network::getPathSeparator();
+        std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
+        std::string colon = std::string{yarp::conf::filesystem::path_separator};
         std::string foobar = std::string("/foo") + colon + "/bar";
         std::string yfoo = std::string("/foo") + slash + "yarp";
         std::string ybar = std::string("/bar") + slash + "yarp";
@@ -588,8 +589,8 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
     {
         saveEnvironment("YARP_CONFIG_DIRS");
         saveEnvironment("XDG_CONFIG_DIRS");
-        std::string slash = Network::getDirectorySeparator();
-        std::string colon = Network::getPathSeparator();
+        std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
+        std::string colon = std::string{yarp::conf::filesystem::path_separator};
         std::string foobar = std::string("/foo") + colon + "/bar";
         std::string yfoo = std::string("/foo") + slash + "yarp";
         std::string ybar = std::string("/bar") + slash + "yarp";
@@ -737,7 +738,7 @@ TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
 
     SECTION("test get 'home' dirs for writing")
     {
-        std::string slash = Network::getDirectorySeparator();
+        std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
         setUpTestArea(false);
 
         {

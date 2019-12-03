@@ -8,6 +8,7 @@
 
 #include <yarp/manager/scriptbroker.h>
 
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <string>
@@ -18,13 +19,13 @@
 using namespace yarp::os;
 using namespace yarp::manager;
 using namespace std;
+namespace fs = yarp::conf::filesystem;
 
-static char slash = NetworkBase::getDirectorySeparator()[0];
+constexpr fs::value_type slash = fs::preferred_separator;
+constexpr fs::value_type sep   = fs::path_separator;
 
 ////// adapted from YARP_os: ResourceFinder.cpp
 static Bottle parsePaths(const std::string& txt) {
-    char slash = NetworkBase::getDirectorySeparator()[0];
-    char sep = NetworkBase::getPathSeparator()[0];
     Bottle result;
     const char *at = txt.c_str();
     int slash_tweak = 0;
@@ -71,7 +72,8 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
         yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
         for (size_t i=0; i<possiblePaths.size(); ++i)
         {
-            std::string guessString=possiblePaths.get(i).asString() + slash + szcmd;
+            std::string guessString=possiblePaths.get(i).asString() +
+            std::string{slash} + szcmd;
             const char* guess=guessString.c_str();
             if (fileExists (guess))
             {

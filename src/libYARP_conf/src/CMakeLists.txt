@@ -102,7 +102,8 @@ endforeach()
 add_library(YARP_conf INTERFACE)
 add_library(YARP::YARP_conf ALIAS YARP_conf)
 
-target_include_directories(YARP_conf INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+target_include_directories(YARP_conf INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
+                                               $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
                                                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_compile_features(YARP_conf INTERFACE cxx_std_14)
 
@@ -115,6 +116,10 @@ install(TARGETS YARP_conf
 
 # INTERFACE libraries do not support the PUBLIC_HEADER property
 # https://gitlab.kitware.com/cmake/cmake/issues/20056
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/yarp/conf"
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
+        COMPONENT YARP_conf-dev
+        FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/yarp/conf"
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
         COMPONENT YARP_conf-dev

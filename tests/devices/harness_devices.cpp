@@ -9,6 +9,7 @@
 
 #include "YarpBuildLocation.h"
 
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
@@ -100,23 +101,23 @@ static void setup_Environment()
     // and YARP_DATA_HOME is set to a non existent directory
     std::string yarp_data_dirs =
             CMAKE_BINARY_DIR +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "share" +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp" +
-            yarp::os::NetworkBase::getPathSeparator() +
+            std::string{yarp::conf::filesystem::path_separator} +
             TEST_DATA_DIR;
     yarp::os::NetworkBase::setEnvironment("YARP_DATA_DIRS", yarp_data_dirs);
 
     std::string yarp_data_home =
             CMAKE_BINARY_DIR +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "home" +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "user" +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             ".local" +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp";
     yarp::os::NetworkBase::setEnvironment("YARP_DATA_HOME", yarp_data_home);
 
@@ -124,20 +125,20 @@ static void setup_Environment()
     // the user's system and on the build machines, YARP_CONFIG_DIRS and
     // YARP_CONFIG_HOME are set to a non existent directory
     std::string yarp_config_dirs = CMAKE_BINARY_DIR +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "etc" +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp";
     yarp::os::NetworkBase::setEnvironment("YARP_CONFIG_DIRS", yarp_config_dirs);
 
     std::string yarp_config_home = CMAKE_BINARY_DIR +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "home" +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "user" +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             ".config" +
-            yarp::os::NetworkBase::getDirectorySeparator() +
+            std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp";
     yarp::os::NetworkBase::setEnvironment("YARP_CONFIG_HOME", yarp_config_home);
 

@@ -9,6 +9,7 @@
 
 #include <yarp/os/ResourceFinder.h>
 
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -26,6 +27,7 @@
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+namespace fs = yarp::conf::filesystem;
 
 #define RTARGET stderr
 #define RESOURCE_FINDER_CACHE_TIME 10
@@ -63,8 +65,8 @@ static Bottle parsePaths(const std::string& txt)
     if (txt.empty()) {
         return Bottle();
     }
-    char slash = NetworkBase::getDirectorySeparator()[0];
-    char sep = NetworkBase::getPathSeparator()[0];
+    constexpr fs::value_type slash = fs::preferred_separator;
+    constexpr fs::value_type sep   = fs::path_separator;
     Bottle result;
     const char* at = txt.c_str();
     int slash_tweak = 0;
@@ -93,10 +95,10 @@ static void appendResourceType(std::string& path,
     if (resourceType.empty()) {
         return;
     }
-    std::string slash = NetworkBase::getDirectorySeparator();
+    std::string slash{fs::preferred_separator};
     if (path.length() > 0) {
         if (path[path.length() - 1] != slash[0]) {
-            path += NetworkBase::getDirectorySeparator();
+            path +=slash;
         }
     }
     path += resourceType;
@@ -108,8 +110,8 @@ static void prependResourceType(std::string& path,
     if (resourceType.empty()) {
         return;
     }
-    std::string slash = NetworkBase::getDirectorySeparator();
-    path = resourceType + NetworkBase::getDirectorySeparator() + path;
+    std::string slash{fs::preferred_separator};
+    path = resourceType + slash + path;
 }
 
 static void appendResourceType(Bottle& paths,
@@ -266,7 +268,7 @@ public:
         }
 
         std::string s;
-        std::string slash = NetworkBase::getDirectorySeparator();
+        std::string slash{fs::preferred_separator};
 
         if (!base1.empty()) {
             s = base1;
@@ -484,7 +486,7 @@ public:
         }
 
         if ((locs & ResourceFinderOptions::Robot) != 0) {
-            std::string slash = NetworkBase::getDirectorySeparator();
+            std::string slash{fs::preferred_separator};
             bool found = false;
             std::string robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME", &found);
             if (!found) {
@@ -714,7 +716,7 @@ public:
         }
         std::string path = getPath(ResourceFinder::getDataHome(), "contexts", context, "");
 
-        std::string slash = NetworkBase::getDirectorySeparator();
+        std::string slash{fs::preferred_separator};
         if (path.length() > 1) {
             if (path[path.length() - 1] == slash[0]) {
                 path = path.substr(0, path.length() - slash.size());
@@ -744,7 +746,7 @@ public:
         }
         std::string path = getPath(ResourceFinder::getDataHome(), "robots", robot, "");
 
-        std::string slash = NetworkBase::getDirectorySeparator();
+        std::string slash{fs::preferred_separator};
         if (path.length() > 1) {
             if (path[path.length() - 1] == slash[0]) {
                 path = path.substr(0, path.length() - slash.size());
@@ -1021,7 +1023,7 @@ ResourceFinder& ResourceFinder::getResourceFinderSingleton()
 
 std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
 {
-    std::string slash = NetworkBase::getDirectorySeparator();
+    std::string slash{fs::preferred_separator};
     bool found = false;
     std::string yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
                                                            &found);
@@ -1062,7 +1064,7 @@ std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
 
 std::string ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
 {
-    std::string slash = NetworkBase::getDirectorySeparator();
+    std::string slash{fs::preferred_separator};
     bool found = false;
     std::string yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME",
                                                            &found);
@@ -1112,7 +1114,7 @@ std::string ResourceFinder::createIfAbsent(bool mayCreate,
 
 Bottle ResourceFinder::getDataDirs()
 {
-    std::string slash = NetworkBase::getDirectorySeparator();
+    std::string slash{fs::preferred_separator};
     bool found = false;
     Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_DATA_DIRS",
                                                                  &found));
@@ -1144,7 +1146,6 @@ Bottle ResourceFinder::getDataDirs()
 
 Bottle ResourceFinder::getConfigDirs()
 {
-    std::string slash = NetworkBase::getDirectorySeparator();
     bool found = false;
     Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_CONFIG_DIRS",
                                                                  &found));

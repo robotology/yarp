@@ -12,6 +12,7 @@
 
 #include <yarp/conf/system.h>
 #include <yarp/conf/version.h>
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Carriers.h>
@@ -1827,7 +1828,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) //if interactive mode
     {
         hist_file=yarp::os::ResourceFinder::getDataHome();
-        std::string slash=NetworkBase::getDirectorySeparator();
+        std::string slash{yarp::conf::filesystem::preferred_separator};
         hist_file += slash;
         hist_file += "yarp_write";
         if (yarp::os::mkdir_p(hist_file.c_str(), 1) != 0)
