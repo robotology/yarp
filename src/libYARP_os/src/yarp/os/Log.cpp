@@ -51,25 +51,24 @@
 #ifdef YARP_HAS_WIN_VT_SUPPORT
 #include <windows.h>
 
-namespace
+namespace {
+bool yarp_logger_vt_colors_enabled = false;
+
+bool yarp_logger_enable_vt_colors()
 {
-    bool yarp_logger_vt_colors_enabled = false;
+    DWORD handleMode = 0;
+    HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+    bool success = false;
 
-    bool yarp_logger_enable_vt_colors()
-    {
-        DWORD handleMode = 0;
-        HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-        bool success = false;
-
-        if (hStdout != INVALID_HANDLE_VALUE && GetConsoleMode(hStdout, &handleMode)) {
-            handleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-            success = SetConsoleMode(hStdout, handleMode);
-        }
-
-        yarp_logger_vt_colors_enabled = true;
-        return success;
+    if (hStdout != INVALID_HANDLE_VALUE && GetConsoleMode(hStdout, &handleMode)) {
+        handleMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        success = SetConsoleMode(hStdout, handleMode);
     }
+
+    yarp_logger_vt_colors_enabled = true;
+    return success;
 }
+} // namespace
 #endif
 
 #if defined(_WIN32) && !defined(YARP_HAS_WIN_VT_SUPPORT)
