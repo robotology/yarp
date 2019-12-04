@@ -11,10 +11,13 @@ yarp_prepare_plugin(analogsensorclient
                     DEFAULT ON)
 
 if(NOT SKIP_analogsensorclient)
+  yarp_add_plugin(yarp_analogsensorclient)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_analogsensorclient AnalogSensorClient.cpp
-                                          AnalogSensorClient.h)
+  target_sources(yarp_analogsensorclient PRIVATE AnalogSensorClient.cpp
+                                                 AnalogSensorClient.h)
+
   target_link_libraries(yarp_analogsensorclient PRIVATE YARP::YARP_os
                                                         YARP::YARP_sig
                                                         YARP::YARP_dev)

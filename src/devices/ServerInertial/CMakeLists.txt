@@ -12,10 +12,13 @@ yarp_prepare_plugin(inertial
                     DEFAULT ON)
 
 if(NOT SKIP_inertial)
+  yarp_add_plugin(yarp_inertial)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_inertial ServerInertial.cpp
-                                ServerInertial.h)
+  target_sources(yarp_inertial PRIVATE ServerInertial.cpp
+                                       ServerInertial.h)
+
   target_link_libraries(yarp_inertial PRIVATE YARP::YARP_os
                                               YARP::YARP_sig
                                               YARP::YARP_dev

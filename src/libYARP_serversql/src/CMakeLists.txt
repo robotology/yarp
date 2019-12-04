@@ -5,6 +5,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_serversql)
+add_library(YARP::YARP_serversql ALIAS YARP_serversql)
+
 set(YARP_serversql_SRCS yarp/serversql/yarpserversql.cpp
                         yarp/serversql/Server.cpp)
 
@@ -35,12 +38,19 @@ set(YARP_serversql_IMPL_SRCS yarp/serversql/impl/TripleSourceCreator.cpp
                              yarp/serversql/impl/ParseName.cpp
                              yarp/serversql/impl/StyleNameService.cpp)
 
-add_library(YARP_serversql ${YARP_serversql_SRCS}
-                           ${YARP_serversql_HDRS}
-                           ${YARP_serversql_IMPL_SRCS}
-                           ${YARP_serversql_IMPL_HDRS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Source Files"
+             FILES ${YARP_serversql_SRCS}
+                   ${YARP_serversql_SRCS})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+             PREFIX "Header Files"
+             FILES ${YARP_serversql_HDRS}
+                   ${YARP_serversql_IMPL_HDRS})
 
-add_library(YARP::YARP_serversql ALIAS YARP_serversql)
+target_sources(YARP_serversql PRIVATE ${YARP_serversql_SRCS}
+                                      ${YARP_serversql_HDRS}
+                                      ${YARP_serversql_IMPL_SRCS}
+                                      ${YARP_serversql_IMPL_HDRS})
 
 target_include_directories(YARP_serversql PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

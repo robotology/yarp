@@ -8,10 +8,14 @@ if(NOT YARP_COMPILE_DEVICE_PLUGINS)
   return()
 endif()
 
-add_library(joypadcontrolnetutils OBJECT JoypadControlNetUtils.cpp
-                                         JoypadControlNetUtils.h)
+add_library(joypadcontrolnetutils OBJECT)
+
+target_sources(joypadcontrolnetutils PRIVATE JoypadControlNetUtils.cpp
+                                             JoypadControlNetUtils.h)
+
+target_include_directories(joypadcontrolnetutils PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+
 target_link_libraries(joypadcontrolnetutils PRIVATE YARP::YARP_os
                                                     YARP::YARP_sig)
-target_include_directories(joypadcontrolnetutils PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 set_property(TARGET joypadcontrolnetutils PROPERTY FOLDER "Libraries/Msgs")

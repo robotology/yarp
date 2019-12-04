@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(minimal_client)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
 if(WIN32 AND NOT CYGWIN)
   add_definitions(-DWIN32 -D_WINDOWS)
@@ -18,5 +18,6 @@ if(WIN32 AND CYGWIN)
   add_definitions(-DCYGWIN)
 endif(WIN32 AND CYGWIN)
 
-add_executable(minimal_client main.cpp)
-target_link_libraries(minimal_client ${YARP_LIBRARIES})
+add_executable(minimal_client)
+target_sources(minimal_client PRIVATE main.cpp)
+target_link_libraries(minimal_client PRIVATE ${YARP_LIBRARIES})

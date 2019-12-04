@@ -8,7 +8,9 @@ if(NOT TARGET YARP::YARP_wire_rep_utils)
   return()
 endif()
 
-add_executable(harness_wire_rep_utils WireTest.cpp)
+add_executable(harness_wire_rep_utils)
+
+target_sources(harness_wire_rep_utils PRIVATE WireTest.cpp)
 
 target_include_directories(harness_wire_rep_utils PRIVATE ${hmac_INCLUDE_DIRS})
 

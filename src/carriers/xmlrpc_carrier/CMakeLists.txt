@@ -12,18 +12,20 @@ yarp_prepare_plugin(xmlrpc
                     DEFAULT ON)
 
 if(NOT SKIP_xmlrpc)
+  yarp_add_plugin(yarp_xmlrpc)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+  target_sources(yarp_xmlrpc PRIVATE XmlRpcCarrier.h
+                                     XmlRpcCarrier.cpp
+                                     XmlRpcStream.h
+                                     XmlRpcStream.cpp)
 
   check_cxx_compiler_flag("-Wformat-nonliteral" CXX_HAS_WFORMAT_NONLITERAL)
   if(CXX_HAS_WFORMAT_NONLITERAL)
     set_source_files_properties(xmlrpc/XmlRpcValue.cpp PROPERTIES COMPILE_FLAGS "-Wno-format-nonliteral")
   endif()
 
-  yarp_add_plugin(yarp_xmlrpc
-                  XmlRpcCarrier.h
-                  XmlRpcCarrier.cpp
-                  XmlRpcStream.h
-                  XmlRpcStream.cpp)
   target_link_libraries(yarp_xmlrpc PRIVATE YARP::YARP_os)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 

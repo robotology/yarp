@@ -9,6 +9,8 @@ if(YARP_COMPILE_yarpbatterygui)
   include(YarpUseQt5)
   include(YarpMacOSUtilities)
 
+  add_executable(yarpbatterygui WIN32)
+
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
   set(yarpbatterygui_SRCS main.cpp
@@ -34,21 +36,23 @@ if(YARP_COMPILE_yarpbatterygui)
   source_group("Generated Files" FILES ${yarpbatterygui_QRC_GEN_SRCS}
                                        ${yarpbatterygui_UI_GEN_SRCS})
 
-  add_executable(yarpbatterygui WIN32 ${yarpbatterygui_SRCS}
-                                      ${yarpbatterygui_HDRS}
-                                      ${yarpbatterygui_QRC_FILES}
-                                      ${yarpbatterygui_QRC_GEN_SRCS}
-                                      ${yarpbatterygui_UI_FILES}
-                                      ${yarpbatterygui_UI_GEN_SRCS})
+  target_sources(yarpbatterygui PRIVATE ${yarpbatterygui_SRCS}
+                                        ${yarpbatterygui_HDRS}
+                                        ${yarpbatterygui_QRC_FILES}
+                                        ${yarpbatterygui_QRC_GEN_SRCS}
+                                        ${yarpbatterygui_UI_FILES}
+                                        ${yarpbatterygui_UI_GEN_SRCS})
 
-  target_link_libraries(yarpbatterygui YARP::YARP_os
-                                       YARP::YARP_init
-                                       YARP::YARP_sig
-                                       YARP::YARP_dev
-                                       Qt5::Widgets
-                                       Qt5::Gui)
+  target_link_libraries(yarpbatterygui PRIVATE YARP::YARP_os
+                                               YARP::YARP_init
+                                               YARP::YARP_sig
+                                               YARP::YARP_dev
+                                               Qt5::Widgets
+                                               Qt5::Gui)
 
-  install(TARGETS yarpbatterygui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS yarpbatterygui
+          COMPONENT utilities
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   set_property(TARGET yarpbatterygui PROPERTY FOLDER "Graphical User Interfaces")
 

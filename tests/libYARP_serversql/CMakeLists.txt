@@ -4,7 +4,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-add_executable(harness_serversql ServerTest.cpp)
+add_executable(harness_serversql)
+
+target_sources(harness_serversql PRIVATE ServerTest.cpp)
 
 target_include_directories(harness_serversql PRIVATE ${hmac_INCLUDE_DIRS})
 

@@ -14,12 +14,15 @@ yarp_prepare_plugin(portaudio
                     DEPENDS "NOT YARP_NO_DEPRECATED;YARP_HAS_PortAudio") # DEPRECATED Since YARP 3.2
 
 if(NOT SKIP_portaudio)
+  yarp_add_plugin(yarp_portaudio)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_portaudio PortAudioBuffer.cpp
-                                 PortAudioBuffer.h
-                                 PortAudioDeviceDriver.cpp
-                                 PortAudioDeviceDriver.h)
+  target_sources(yarp_portaudio PRIVATE PortAudioBuffer.cpp
+                                        PortAudioBuffer.h
+                                        PortAudioDeviceDriver.cpp
+                                        PortAudioDeviceDriver.h)
+
   target_link_libraries(yarp_portaudio PRIVATE YARP::YARP_os
                                                YARP::YARP_sig
                                                YARP::YARP_dev)

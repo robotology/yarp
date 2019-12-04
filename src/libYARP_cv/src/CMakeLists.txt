@@ -4,15 +4,15 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_cv INTERFACE)
+add_library(YARP::YARP_cv ALIAS YARP_cv)
+
 set(YARP_cv_HDRS yarp/cv/Cv.h
                  yarp/cv/Cv-inl.h)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_cv_HDRS})
-
-add_library(YARP_cv INTERFACE)
-add_library(YARP::YARP_cv ALIAS YARP_cv)
 
 target_include_directories(YARP_cv INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

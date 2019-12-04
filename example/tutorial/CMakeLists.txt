@@ -8,12 +8,10 @@
 # Make sure that YARP_DIR is set in your environment to wherever you 
 # compiled YARP.
 
+project(run_fakebot)
 cmake_minimum_required(VERSION 3.12)
 
-# Start a project.
-project(run_fakebot)
-
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os dev REQUIRED)
 
 set(ENABLE_fakebot TRUE CACHE BOOLEAN "we want to use fakebot")
 
@@ -24,15 +22,9 @@ set(folder_source fakebot/FakeBot.cpp
                   yarpdev.cpp)
 set(folder_header fakebot/FakeBot.h
                   adder.h)
-source_group("Source Files" FILES ${folder_source})
-source_group("Header Files" FILES ${folder_header})
-
-include_directories(${CMAKE_SOURCE_DIR}/fakebot)
 
 # Set up our main executable.
-if(folder_source)
-  add_executable(run_fakebot ${folder_source} ${folder_header})
-  target_link_libraries(run_fakebot ${YARP_LIBRARIES})
-else()
-  message(FATAL_ERROR "No source code files found. Please add something")
-endif()
+add_executable(run_fakebot)
+target_sources(run_fakebot PRIVATE ${folder_source} ${folder_header})
+target_include_directories(run_fakebot PRIVATE ${CMAKE_SOURCE_DIR}/fakebot)
+target_link_libraries(run_fakebot PRIVATE ${YARP_LIBRARIES})

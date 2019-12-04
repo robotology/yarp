@@ -51,10 +51,12 @@ if(CREATE_YARPC)
     set_property(SOURCE ${_file} APPEND_STRING PROPERTY COMPILE_FLAGS " -fvisibility=default")
   endforeach()
 
-  add_library(yarpc ${yarpc_HDRS}
-                    ${yarpc_SRCS}
-                    ${YARP_COPY_SRC})
+  add_library(yarpc)
   add_library(YARP::yarpc ALIAS yarpc)
+
+  target_sources(yarpc PRIVATE ${yarpc_HDRS}
+                               ${yarpc_SRCS}
+                               ${YARP_COPY_SRC})
 
   target_compile_definitions(yarpc PRIVATE YARP_HAS_ACE)
   target_link_libraries(yarpc PRIVATE ACE::ACE)
@@ -92,11 +94,13 @@ if(CREATE_YARPC)
   set_property(TARGET yarpc PROPERTY FOLDER "Unmaintained")
 
   if(YARP_COMPILE_TESTS)
-    add_executable(yarpc_test1 test1.cpp)
-    target_link_libraries(yarpc_test1 YARP::yarpc)
+    add_executable(yarpc_test1)
+    target_sources(yarpc_test1 PRIVATE test1.cpp)
+    target_link_libraries(yarpc_test1 PRIVATE YARP::yarpc)
 
-    add_executable(yarpc_test2 test2.cpp)
-    target_link_libraries(yarpc_test2 YARP::yarpc)
-  endif(YARP_COMPILE_TESTS)
+    add_executable(yarpc_test2)
+    target_sources(yarpc_test2 PRIVATE test2.cpp)
+    target_link_libraries(yarpc_test2 PRIVATE YARP::yarpc)
+  endif()
 
 endif(CREATE_YARPC)

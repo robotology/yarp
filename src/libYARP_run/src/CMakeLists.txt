@@ -4,6 +4,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_run)
+add_library(YARP::YARP_run ALIAS YARP_run)
+
 set(YARP_run_HDRS yarp/run/Run.h)
 
 set(YARP_run_IMPL_HDRS yarp/run/impl/RunCheckpoints.h
@@ -31,16 +34,23 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
                    ${YARP_run_IMPL_HDRS}
                    ${YARP_run_os_HDRS})
 
-add_library(YARP_run ${YARP_run_SRCS}
-                     ${YARP_run_HDRS}
-                     ${YARP_run_IMPL_SRCS}
-                     ${YARP_run_IMPL_HDRS}
-                     ${YARP_run_os_HDRS})
-add_library(YARP::YARP_run ALIAS YARP_run)
+target_sources(YARP_run PRIVATE ${YARP_run_SRCS}
+                                ${YARP_run_HDRS}
+                                ${YARP_run_IMPL_SRCS}
+                                ${YARP_run_IMPL_HDRS}
+                                ${YARP_run_os_HDRS})
 
 target_include_directories(YARP_run PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_compile_features(YARP_run PUBLIC cxx_std_14)
+
+option(YARP_ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
+mark_as_advanced(YARP_ENABLE_YARPRUN_LOG)
+if(YARP_ENABLE_YARPRUN_LOG)
+   target_compile_definitions(YARP_run PRIVATE YARPRUN_LOG)
+endif()
+include(YarpRenamedOption)
+yarp_renamed_option(ENABLE_YARPRUN_LOG YARP_ENABLE_YARPRUN_LOG) # Since YARP 3.3
 
 target_link_libraries(YARP_run PRIVATE YARP::YARP_os)
 list(APPEND YARP_run_PRIVATE_DEPS YARP_os)

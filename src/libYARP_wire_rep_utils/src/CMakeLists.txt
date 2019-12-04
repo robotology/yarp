@@ -5,6 +5,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_wire_rep_utils STATIC)
+add_library(YARP::YARP_wire_rep_utils ALIAS YARP_wire_rep_utils)
+
 set(YARP_wire_rep_utils_HDRS yarp/wire_rep_utils/api.h
                              yarp/wire_rep_utils/BlobNetworkHeader.h
                              yarp/wire_rep_utils/WireImage.h
@@ -15,9 +18,8 @@ set(YARP_wire_rep_utils_SRCS yarp/wire_rep_utils/WireImage.cpp
                              yarp/wire_rep_utils/WireBottle.cpp
                              yarp/wire_rep_utils/WireTwiddler.cpp)
 
-add_library(YARP_wire_rep_utils STATIC ${YARP_wire_rep_utils_HDRS}
-                                       ${YARP_wire_rep_utils_SRCS})
-add_library(YARP::YARP_wire_rep_utils ALIAS YARP_wire_rep_utils)
+target_sources(YARP_wire_rep_utils PRIVATE ${YARP_wire_rep_utils_HDRS}
+                                           ${YARP_wire_rep_utils_SRCS})
 
 target_include_directories(YARP_wire_rep_utils PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

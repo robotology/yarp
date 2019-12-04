@@ -9,5 +9,6 @@ project(module)
 
 find_package(YARP COMPONENTS os REQUIRED)
 
-add_executable(module main.cpp)
+add_executable(module)
+target_sources(module PRIVATE main.cpp)
 target_link_libraries(module PRIVATE YARP::YARP_os YARP::YARP_init)

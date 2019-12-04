@@ -4,14 +4,14 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_eigen INTERFACE)
+add_library(YARP::YARP_eigen ALIAS YARP_eigen)
+
 set(YARP_eigen_HDRS yarp/eigen/Eigen.h)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_eigen_HDRS})
-
-add_library(YARP_eigen INTERFACE)
-add_library(YARP::YARP_eigen ALIAS YARP_eigen)
 
 target_include_directories(YARP_eigen INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

@@ -12,12 +12,16 @@ yarp_prepare_plugin(JoypadControlClient
                     DEFAULT ON)
 
 if(NOT SKIP_JoypadControlClient)
+  yarp_add_plugin(yarp_JoypadControlClient)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_JoypadControlClient JoypadControlClient.cpp
-                                           JoypadControlClient.h
-                                           $<TARGET_OBJECTS:joypadcontrolnetutils>)
+  target_sources(yarp_JoypadControlClient PRIVATE JoypadControlClient.cpp
+                                                  JoypadControlClient.h)
+
+  target_sources(yarp_JoypadControlClient PRIVATE $<TARGET_OBJECTS:joypadcontrolnetutils>)
   target_include_directories(yarp_JoypadControlClient PRIVATE $<TARGET_PROPERTY:joypadcontrolnetutils,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_JoypadControlClient PRIVATE YARP::YARP_os
                                                          YARP::YARP_sig
                                                          YARP::YARP_dev)

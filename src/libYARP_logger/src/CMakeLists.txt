@@ -4,6 +4,11 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+# FIXME All API should use a YARP_logger_API for __declspec(dllimport/dllexport)
+# For now always build the library as STATIC
+add_library(YARP_logger STATIC)
+add_library(YARP::YARP_logger ALIAS YARP_logger)
+
 set(YARP_logger_HDRS yarp/logger/YarpLogger.h)
 
 set(YARP_logger_IMPL_HDRS )
@@ -18,13 +23,9 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_logger_HDRS}
                    ${YARP_logger_IMPL_HDRS})
 
-
-# FIXME All API should use a YARP_logger_API for __declspec(dllimport/dllexport)
-# For now always build the library as STATIC
-add_library(YARP_logger STATIC ${YARP_logger_SRCS}
-                               ${YARP_logger_HDRS}
-                               ${YARP_logger_IMPL_HDRS})
-add_library(YARP::YARP_logger ALIAS YARP_logger)
+target_sources(YARP_logger PRIVATE ${YARP_logger_SRCS}
+                                   ${YARP_logger_HDRS}
+                                   ${YARP_logger_IMPL_HDRS})
 
 target_include_directories(YARP_logger PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

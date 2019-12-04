@@ -5,6 +5,14 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_os)
+add_library(YARP::YARP_os ALIAS YARP_os)
+
+if(NOT YARP_NO_DEPRECATED) # since YARP 3.3
+  add_library(YARP_OS ALIAS YARP_os)
+  add_library(YARP::YARP_OS ALIAS YARP_os)
+endif()
+
 set(YARP_os_HDRS yarp/os/AbstractCarrier.h
                  yarp/os/AbstractContactable.h
                  yarp/os/all.h
@@ -365,7 +373,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
                    ${YARP_os_IDL_SRCS}
                    ${YARP_os_IMPL_SRCS}
                    ${YARP_os_IMPL_POSIX_SRCS}
-                   ${YARP_os_IMPL_MACOS_SRCS})
+                   ${YARP_os_IMPL_MACOS_SRCS}
+                   ${YARP_os_IMPL_WIN32_SRCS})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_os_HDRS}
@@ -374,22 +383,12 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
                    ${YARP_os_IMPL_POSIX_HDRS}
                    ${YARP_os_IMPL_MACOS_HDRS})
 
-option(ENABLE_YARPRUN_LOG "Enable yarprun log file in temp dir" OFF)
-if (ENABLE_YARPRUN_LOG)
-    add_definitions(-DYARPRUN_LOG)
-endif(ENABLE_YARPRUN_LOG)
-
-add_library(YARP_os ${YARP_os_SRCS}
-                    ${YARP_os_HDRS}
-                    ${YARP_os_IDL_SRCS}
-                    ${YARP_os_IDL_HDRS}
-                    ${YARP_os_IMPL_SRCS}
-                    ${YARP_os_IMPL_HDRS})
-add_library(YARP::YARP_os ALIAS YARP_os)
-if(NOT YARP_NO_DEPRECATED) # since YARP 3.3
-  add_library(YARP_OS ALIAS YARP_os)
-  add_library(YARP::YARP_OS ALIAS YARP_os)
-endif()
+target_sources(YARP_os PRIVATE ${YARP_os_SRCS}
+                               ${YARP_os_HDRS}
+                               ${YARP_os_IDL_SRCS}
+                               ${YARP_os_IDL_HDRS}
+                               ${YARP_os_IMPL_SRCS}
+                               ${YARP_os_IMPL_HDRS})
 
 if(SKIP_ACE)
   target_sources(YARP_os PRIVATE ${YARP_os_IMPL_POSIX_HDRS}

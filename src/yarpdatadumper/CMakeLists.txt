@@ -6,23 +6,20 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(YARP_COMPILE_yarpdatadumper)
-  if(YARP_HAS_OpenCV)
-    add_definitions(-DADD_VIDEO)
-  else()
-    message(STATUS "yarpdatadumper: OpenCV not selected, keep on building...")
-  endif()
+  add_executable(yarpdatadumper)
 
   set(yarpdatadumper_SRCS main.cpp)
 
-  add_executable(yarpdatadumper ${yarpdatadumper_SRCS})
+  target_sources(yarpdatadumper PRIVATE ${yarpdatadumper_SRCS})
+
+  target_link_libraries(yarpdatadumper PRIVATE YARP::YARP_os
+                                               YARP::YARP_init
+                                               YARP::YARP_sig)
 
   if(YARP_HAS_OpenCV)
-    target_link_libraries(yarpdatadumper ${OpenCV_LIBRARIES})
-  endif()
-
-  target_link_libraries(yarpdatadumper YARP::YARP_os YARP::YARP_init YARP::YARP_sig)
-  if(YARP_HAS_OpenCV)
-    target_link_libraries(yarpdatadumper YARP::YARP_cv)
+    target_compile_definitions(yarpdatadumper PRIVATE ADD_VIDEO)
+    target_link_libraries(yarpdatadumper PRIVATE ${OpenCV_LIBRARIES})
+    target_link_libraries(yarpdatadumper PRIVATE YARP::YARP_cv)
   endif()
 
   install(TARGETS yarpdatadumper

@@ -7,6 +7,17 @@
 # XmlRpc++
 project(YARP_priv_xmlrpcpp)
 
+set(YARP_priv_xmlrpcpp_TYPE "STATIC" CACHE STRING "YARP_priv_xmlrpcpp (LGPL2.1+) library type (STATIC or SHARED)" )
+set_property(CACHE YARP_priv_xmlrpcpp_TYPE PROPERTY STRINGS "STATIC" "SHARED")
+mark_as_advanced(YARP_priv_xmlrpcpp_TYPE)
+if(NOT YARP_priv_xmlrpcpp_TYPE MATCHES "(STATIC|SHARED)")
+  message(WARNING "Invalid value for YARP_priv_xmlrpcpp_TYPE: ${YARP_priv_xmlrpcpp_TYPE}. Valid values are \"STATIC\" and \"SHARED\". Resetting to default value (STATIC).")
+  set_property(CACHE YARP_priv_xmlrpcpp_TYPE PROPERTY VALUE "STATIC")
+  unset(YARP_priv_xmlrpcpp_TYPE)
+endif()
+
+add_library(YARP_priv_xmlrpcpp ${YARP_priv_xmlrpcpp_TYPE})
+
 set(xmlrpcpp_SRCS xmlrpcpp/src/base64.cpp
                   xmlrpcpp/src/XmlRpcClient.cpp
                   xmlrpcpp/src/XmlRpcServerConnection.cpp
@@ -27,15 +38,9 @@ set(xmlrpcpp_HDRS xmlrpcpp/src/base64.h
                   xmlrpcpp/src/XmlRpcUtil.h
                   xmlrpcpp/src/XmlRpcValue.h)
 
-set(YARP_priv_xmlrpcpp_TYPE "STATIC" CACHE STRING "YARP_priv_xmlrpcpp (LGPL2.1+) library type (STATIC or SHARED)" )
-set_property(CACHE YARP_priv_xmlrpcpp_TYPE PROPERTY STRINGS "STATIC" "SHARED")
-mark_as_advanced(YARP_priv_xmlrpcpp_TYPE)
-if(NOT YARP_priv_xmlrpcpp_TYPE MATCHES "(STATIC|SHARED)")
-  message(WARNING "Invalid value for YARP_priv_xmlrpcpp_TYPE: ${YARP_priv_xmlrpcpp_TYPE}. Valid values are \"STATIC\" and \"SHARED\". Resetting to default value (STATIC).")
-  set_property(CACHE YARP_priv_xmlrpcpp_TYPE PROPERTY VALUE "STATIC")
-  unset(YARP_priv_xmlrpcpp_TYPE)
-endif()
-add_library(YARP_priv_xmlrpcpp ${YARP_priv_xmlrpcpp_TYPE} ${xmlrpcpp_SRCS})
+target_sources(YARP_priv_xmlrpcpp PRIVATE  ${xmlrpcpp_SRCS})
+
+target_include_directories(YARP_priv_xmlrpcpp PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/xmlrpcpp/src>)
 
 set_property(TARGET YARP_priv_xmlrpcpp PROPERTY FOLDER "Libraries/External")
 

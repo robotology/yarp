@@ -19,14 +19,16 @@ yarp_prepare_plugin(usbCameraRaw
                     DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV")
 
 if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
+  yarp_add_plugin(yarp_usbCamera)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_usbCamera common/USBcamera.cpp
-                                 common/USBcamera.h
-                                 linux/V4L_camera.cpp
-                                 linux/V4L_camera.h
-                                 linux/list.cpp
-                                 linux/list.h)
+  target_sources(yarp_usbCamera PRIVATE common/USBcamera.cpp
+                                        common/USBcamera.h
+                                        linux/V4L_camera.cpp
+                                        linux/V4L_camera.h
+                                        linux/list.cpp
+                                        linux/list.h)
 
   target_include_directories(yarp_usbCamera PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/common")
   target_include_directories(yarp_usbCamera PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/linux")

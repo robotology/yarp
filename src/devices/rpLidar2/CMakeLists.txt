@@ -11,8 +11,7 @@ yarp_prepare_plugin(rpLidar2
                     DEPENDS "NOT APPLE;TARGET YARP::YARP_math")
 
 if(NOT SKIP_rpLidar2)
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
+  # Build rpLidar2 SDK
   if(WIN32)
     set(RPLIDAR_ARCH_DIR win32)
   elseif(APPLE)
@@ -29,16 +28,24 @@ if(NOT SKIP_rpLidar2)
                        ${RPLIDAR_SDK_ROOT}/src/arch/${RPLIDAR_ARCH_DIR}/timer.cpp
                        ${RPLIDAR_SDK_ROOT}/src/hal/thread.cpp)
 
-  add_library(rpLidar2_sdk OBJECT ${RPLIDAR_SDK_SRCS})
+  add_library(rpLidar2_sdk OBJECT)
+  target_sources(rpLidar2_sdk PRIVATE ${RPLIDAR_SDK_SRCS})
   target_compile_options(rpLidar2_sdk PRIVATE -w)
   target_include_directories(rpLidar2_sdk SYSTEM PUBLIC ${RPLIDAR_SDK_ROOT}/include
                                                         ${RPLIDAR_SDK_ROOT}/src)
 
-  yarp_add_plugin(yarp_rpLidar2 rpLidar2.h
-                                rpLidar2.cpp
-                                $<TARGET_OBJECTS:rpLidar2_sdk>)
+  # Build YARP rpLidar2 device
+  yarp_add_plugin(yarp_rpLidar2)
+
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+  target_sources(yarp_rpLidar2 PRIVATE rpLidar2.h
+                                       rpLidar2.cpp)
   target_compile_definitions(yarp_rpLidar2 PRIVATE _USE_MATH_DEFINES)
+
+  target_sources(yarp_rpLidar2 PRIVATE $<TARGET_OBJECTS:rpLidar2_sdk>)
   target_include_directories(yarp_rpLidar2 SYSTEM PRIVATE $<TARGET_PROPERTY:rpLidar2_sdk,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_rpLidar2 PRIVATE YARP::YARP_os
                                               YARP::YARP_sig
                                               YARP::YARP_dev

@@ -12,9 +12,12 @@ yarp_prepare_plugin(test_grabber
                     DEFAULT ON)
 
 if(ENABLE_test_grabber)
+  yarp_add_plugin(yarp_test_grabber)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_test_grabber TestFrameGrabber.cpp
-                                        TestFrameGrabber.h)
+  target_sources(yarp_test_grabber PRIVATE TestFrameGrabber.cpp
+                                           TestFrameGrabber.h)
+
   target_link_libraries(yarp_test_grabber PRIVATE YARP::YARP_os
                                                   YARP::YARP_sig
                                                   YARP::YARP_dev)

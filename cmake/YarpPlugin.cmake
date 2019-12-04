@@ -556,8 +556,11 @@ macro(YARP_ADD_PLUGIN _library_name)
 
   # The user is adding a bone-fide plugin library.  We add it,
   # while inserting any generated source code needed for initialization.
+  add_library(${_library_name} ${_library_type})
+  target_sources(${_library_name} PRIVATE ${ARGN})
+
   get_property(srcs DIRECTORY PROPERTY YARP_BUNDLE_CODE)
-  add_library(${_library_name} ${_library_type} ${srcs} ${ARGN})
+  target_sources(${_library_name} PRIVATE ${srcs})
 
   if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
     # Do not add the "lib" prefix to dynamic plugin libraries.
@@ -649,7 +652,9 @@ macro(YARP_END_PLUGIN_LIBRARY bundle_name)
     get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
 
     # add the library initializer code
-    add_library(${YARP_PLUGIN_MASTER} ${code} ${CMAKE_CURRENT_BINARY_DIR}/yarp_${YARP_PLUGIN_MASTER}_plugin_library.cpp)
+    add_library(${YARP_PLUGIN_MASTER})
+
+    target_sources(${YARP_PLUGIN_MASTER} PRIVATE ${code} ${CMAKE_CURRENT_BINARY_DIR}/yarp_${YARP_PLUGIN_MASTER}_plugin_library.cpp)
 
     # this cannot be target_link_libraries, or in static builds the master
     # target will require the YARP_conf target, and this does not work well
@@ -691,7 +696,8 @@ macro(YARP_ADD_PLUGIN_YARPDEV_EXECUTABLE exename bundle_name)
     get_property(autogen_source_group GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP)
     source_group("${autogen_source_group}" FILES "${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp")
   endif()
-  add_executable(${exename} ${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp)
+  add_executable(${exename})
+  target_sources(${exename} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/${bundle_name}_yarpdev.cpp)
   target_link_libraries(${exename} PRIVATE ${bundle_name})
   target_link_libraries(${exename} PRIVATE YARP::YARP_os
                                            YARP::YARP_init

@@ -11,9 +11,13 @@ yarp_prepare_plugin(fakebot
                     INCLUDE FakeBot.h)
 
 if(NOT SKIP_fakebot)
+  yarp_add_plugin(yarp_fakebot)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_fakebot FakeBot.cpp
-                               FakeBot.h)
+
+  target_sources(yarp_fakebot PRIVATE FakeBot.cpp
+                                      FakeBot.h)
+
   target_link_libraries(yarp_fakebot PRIVATE YARP::YARP_os
                                              YARP::YARP_sig
                                              YARP::YARP_dev)

@@ -12,10 +12,13 @@ yarp_prepare_plugin(test_motor
                     DEFAULT ON)
 
 if(NOT SKIP_test_motor)
+  yarp_add_plugin(yarp_test_motor)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_test_motor TestMotor.cpp
-                                  TestMotor.h)
+  target_sources(yarp_test_motor PRIVATE TestMotor.cpp
+                                         TestMotor.h)
+
   target_link_libraries(yarp_test_motor PRIVATE YARP::YARP_os
                                                 YARP::YARP_sig
                                                 YARP::YARP_dev)

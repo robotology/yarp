@@ -11,10 +11,13 @@ yarp_prepare_plugin(robotDescriptionClient
                     DEFAULT ON)
 
 if(NOT SKIP_robotDescriptionClient)
+  yarp_add_plugin(yarp_robotDescriptionClient)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_robotDescriptionClient RobotDescriptionClient.cpp
-                                              RobotDescriptionClient.h)
+  target_sources(yarp_robotDescriptionClient PRIVATE RobotDescriptionClient.cpp
+                                                     RobotDescriptionClient.h)
+
   target_link_libraries(yarp_robotDescriptionClient PRIVATE YARP::YARP_os
                                                             YARP::YARP_sig
                                                             YARP::YARP_dev)

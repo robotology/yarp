@@ -7,14 +7,16 @@
 # hmac
 project(YARP_priv_hmac)
 
+add_library(YARP_priv_hmac STATIC)
+
 set(hmac_SRCS hmac/hmac_sha2.c
               hmac/sha2.c)
 
-set(hmac_HDRS
-    hmac/hmac_sha2.h
-    hmac/sha2.h)
+set(hmac_HDRS hmac/hmac_sha2.h
+              hmac/sha2.h)
 
-add_library(YARP_priv_hmac STATIC ${hmac_SRCS} ${hmac_HDRS})
+
+target_sources(YARP_priv_hmac PRIVATE ${hmac_SRCS} ${hmac_HDRS})
 
 set_property(TARGET YARP_priv_hmac PROPERTY FOLDER "Libraries/External")
 

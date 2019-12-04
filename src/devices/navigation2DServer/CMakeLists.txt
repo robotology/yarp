@@ -12,10 +12,12 @@ yarp_prepare_plugin(navigation2DServer
                     DEFAULT ON)
 
 if(NOT SKIP_navigation2DServer)
+  yarp_add_plugin(yarp_navigation2DServer)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_navigation2DServer navigation2DServer.h
-                                          navigation2DServer.cpp)
+  target_sources(yarp_navigation2DServer PRIVATE navigation2DServer.h
+                                                 navigation2DServer.cpp)
 
   target_link_libraries(yarp_navigation2DServer YARP::YARP_os
                                                 YARP::YARP_sig

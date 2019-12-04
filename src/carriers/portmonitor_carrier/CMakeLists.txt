@@ -13,21 +13,22 @@ yarp_prepare_plugin(portmonitor
                     DEFAULT ON)
 
 if (NOT SKIP_portmonitor)
+  yarp_add_plugin(yarp_portmonitor)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  if(YARP_HAS_Lua)
-    set(portmonitor_LUA_SRCS lua/MonitorLua.cpp lua/MonitorLua.h)
-  endif()
 
-  yarp_add_plugin(yarp_portmonitor
-                  PortMonitor.h
-                  MonitorBinding.h
-                  MonitorEvent.h
-                  PortMonitor.cpp
-                  MonitorBinding.cpp
-                  dll/MonitorSharedLib.h
-                  dll/MonitorSharedLib.cpp
-                  ${portmonitor_LUA_SRCS})
+  target_sources(yarp_portmonitor PRIVATE PortMonitor.h
+                                          MonitorBinding.h
+                                          MonitorEvent.h
+                                          PortMonitor.cpp
+                                          MonitorBinding.cpp
+                                          dll/MonitorSharedLib.h
+                                          dll/MonitorSharedLib.cpp)
+  if(YARP_HAS_Lua)
+    target_sources(yarp_portmonitor PRIVATE lua/MonitorLua.cpp
+                                            lua/MonitorLua.h)
+  endif()
 
   target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/dll)
   target_link_libraries(yarp_portmonitor PRIVATE YARP::YARP_os)

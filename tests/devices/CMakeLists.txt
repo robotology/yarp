@@ -5,10 +5,11 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-add_executable(harness_devices harness_devices.cpp)
-target_link_libraries(harness_devices YARP::YARP_os
-                                      YARP::YARP_init
-                                      YARP::YARP_dev)
+add_executable(harness_devices)
+target_sources(harness_devices PRIVATE harness_devices.cpp)
+target_link_libraries(harness_devices PRIVATE YARP::YARP_os
+                                              YARP::YARP_init
+                                              YARP::YARP_dev)
 set_property(TARGET harness_devices PROPERTY FOLDER "Test")
 
 set(_inis AudioPlayerWrapper_fakeSpeaker.ini

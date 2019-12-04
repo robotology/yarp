@@ -8,7 +8,6 @@
  */
 
 #include "foodevice.h"
-using namespace yarp::dev;
 
 bool foodevice::open(yarp::os::Searchable& config)
 {

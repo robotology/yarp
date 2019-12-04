@@ -14,8 +14,10 @@ set(yarp_config_HDRS yarpcontext.h
                      yarprobot.h
                      yarpcontextutils.h)
 
-add_executable(yarp-config ${yarp_config_SRCS}
-                           ${yarp_config_HDRS})
+add_executable(yarp-config)
+target_sources(yarp-config PRIVATE ${yarp_config_SRCS}
+                                   ${yarp_config_HDRS})
+
 target_include_directories(yarp-config SYSTEM PRIVATE ${diff_match_patch_INCLUDE_DIRS})
 target_link_libraries(yarp-config PRIVATE YARP::YARP_os
                                           YARP::YARP_init)

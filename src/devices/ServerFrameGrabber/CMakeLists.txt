@@ -13,10 +13,13 @@ yarp_prepare_plugin(grabber
                     DEPENDS "NOT YARP_NO_DEPRECATED") # DEPRECATED Since YARP 3.3
 
 if(NOT SKIP_grabber)
+  yarp_add_plugin(yarp_grabber)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_grabber ServerFrameGrabber.cpp
-                               ServerFrameGrabber.h)
+  target_sources(yarp_grabber PRIVATE ServerFrameGrabber.cpp
+                                      ServerFrameGrabber.h)
+
   target_link_libraries(yarp_grabber PRIVATE YARP::YARP_os
                                              YARP::YARP_sig
                                              YARP::YARP_dev)

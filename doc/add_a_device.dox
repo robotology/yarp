@@ -51,12 +51,17 @@ So you want to add a device to YARP?
 \li Just to review, your \c foo/CMakeLists.txt file might look something like
     this:
 \code{.cmake}
-  find_package(YARP REQUIRED)
+  find_package(YARP COMPONENTS os dev REQUIRED)
   # ... find and use other needed libraries ...
-  add_library(foodev FooDriver.cpp FooDriver.h)
-  target_link_libraries(foodev ${YARP_LIBRARIES})
-  add_executable(example FooExample.cpp)
-  target_link_libraries(example foodev)
+  add_library(foodev)
+  target_sources(foodev PRIVATE FooDriver.cpp
+                                FooDriver.h)
+  target_link_libraries(foodev PRIVATE YARP::YARP_os
+                                       YARP::YARP_dev)
+
+  add_executable(example)
+  target_sources(example PRIVATE FooExample.cpp)
+  target_link_libraries(example PRIVATE foodev)
 \endcode
 \li Got all that working?  Good.
     When your device gets bundled up with others, YARP will define the CMake
@@ -64,13 +69,17 @@ So you want to add a device to YARP?
     So please modify your \c CMakeLists.txt so that if this variable is set, all
     it does is add your device library, and skips any testing you might do.
 \code{.cmake}
-  find_package(YARP REQUIRED)
+  find_package(YARP COMPONENTS os dev REQUIRED)
   # ... find and use other needed libraries ...
-  add_library(foodev FooDriver.cpp FooDriver.h)
-  target_link_libraries(foodev ${YARP_LIBRARIES})
+  add_library(foodev)
+  target_sources foodev PRIVATE FooDriver.cpp
+                                FooDriver.h)
+  target_link_libraries(foodev PRIVATE YARP::YARP_os
+                                       YARP::YARP_dev)
   if(NOT COMPILE_DEVICE_LIBRARY)
-    add_executable(example FooExample.cpp)
-    target_link_libraries(example foodev)
+    add_executable(example)
+    target_sources(example PRIVATE FooExample.cpp)
+    target_link_libraries(example PRIVATE foodev)
   endif()
 \endcode
 \li One more thing: YARP needs to keep track of a global list of devices, their
@@ -96,13 +105,17 @@ So you want to add a device to YARP?
                         CATEGORY device)
   endif()
   if(NOT SKIP_foo)
-    find_package(YARP REQUIRED)
+    find_package(YARP COMPONENTS os dev REQUIRED)
     # ... find and use other needed libraries ...
-    yarp_add_plugin(foodev FooDriver.cpp FooDriver.h)
-    target_link_libraries(foodev ${YARP_LIBRARIES})
+    yarp_add_plugin(foodev)
+    target_sources(foodev PRIVATE FooDriver.cpp
+                                  FooDriver.h)
+    target_link_libraries(foodev PRIVATE YARP::YARP_os
+                                         YARP::YARP_dev)
     if(NOT COMPILE_DEVICE_LIBRARY)
-      add_executable(example FooExample.cpp)
-      target_link_libraries(example foodev)
+      add_executable(example)
+      target_sources(example PRIVATE FooExample.cpp)
+      target_link_libraries(example PRIVATE foodev)
     endif()
   endif()
 \endcode

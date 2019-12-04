@@ -12,10 +12,13 @@ yarp_prepare_plugin(portaudioRecorder
                     DEPENDS "YARP_HAS_PortAudio")
 
 if(NOT SKIP_portaudioRecorder)
+  yarp_add_plugin(yarp_portaudioRecorder)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_portaudioRecorder PortAudioRecorderDeviceDriver.cpp
-                                         PortAudioRecorderDeviceDriver.h)
+  target_sources(yarp_portaudioRecorder PRIVATE PortAudioRecorderDeviceDriver.cpp
+                                                PortAudioRecorderDeviceDriver.h)
+
   target_link_libraries(yarp_portaudioRecorder PRIVATE YARP::YARP_os
                                                        YARP::YARP_sig
                                                        YARP::YARP_dev)

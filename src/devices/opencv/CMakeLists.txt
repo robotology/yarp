@@ -13,10 +13,13 @@ yarp_prepare_plugin(opencv_grabber
                     DEPENDS "YARP_HAS_OpenCV")
 
 if(NOT SKIP_opencv_grabber)
+  yarp_add_plugin(yarp_opencv)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_opencv OpenCVGrabber.cpp
-                              OpenCVGrabber.h)
+  target_sources(yarp_opencv PRIVATE OpenCVGrabber.cpp
+                                     OpenCVGrabber.h)
+
   target_link_libraries(yarp_opencv PRIVATE YARP::YARP_os
                                             YARP::YARP_sig
                                             YARP::YARP_dev)

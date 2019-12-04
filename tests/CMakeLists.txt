@@ -116,8 +116,10 @@ endfunction()
 #########################################################################
 # Main harness target
 
-add_library(YARP_harness STATIC harness.cpp
-                                harness.h)
+add_library(YARP_harness STATIC)
+
+target_sources(YARP_harness PRIVATE harness.cpp
+                                    harness.h)
 
 target_link_libraries(YARP_harness PRIVATE YARP::YARP_os
                                            YARP::YARP_init

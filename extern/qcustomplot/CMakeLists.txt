@@ -9,13 +9,17 @@ project(YARP_priv_qcustomplot)
 
 include(YarpUseQt5)
 
+add_library(YARP_priv_qcustomplot STATIC)
+
 set(qcustomplot_SRCS qcustomplot/qcustomplot.cpp)
 
 set(qcustomplot_HDRS qcustomplot/qcustomplot.h)
 
-add_library(YARP_priv_qcustomplot STATIC ${qcustomplot_SRCS})
+target_sources(YARP_priv_qcustomplot PRIVATE ${qcustomplot_SRCS})
 
-target_link_libraries(YARP_priv_qcustomplot Qt5::Widgets)
+target_include_directories(YARP_priv_qcustomplot PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/qcustomplot>)
+
+target_link_libraries(YARP_priv_qcustomplot PUBLIC Qt5::Widgets)
 
 set_property(TARGET YARP_priv_qcustomplot PROPERTY FOLDER "Libraries/External")
 

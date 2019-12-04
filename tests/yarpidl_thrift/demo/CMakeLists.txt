@@ -35,7 +35,7 @@ set(IDL_FILES demo.thrift
               settings.thrift)
 
 # Test using yarp_idl_to_dir
-set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}")
+set(generated_libs_dir "${CMAKE_CURRENT_BINARY_DIR}/yarp_idl_to_dir")
 yarp_idl_to_dir(INPUT_FILES ${IDL_FILES}
                 OUTPUT_DIR "${generated_libs_dir}"
                 SOURCES_VAR IDL_GEN_SRCS
@@ -44,8 +44,13 @@ yarp_idl_to_dir(INPUT_FILES ${IDL_FILES}
                 THRIFT_INCLUDE_PREFIX
                 THRIFT_NO_NAMESPACE_PREFIX)
 
-include_directories(${generated_libs_dir}/include)
-add_executable(demo_yarp_idl_to_dir main.cpp ${IDL_GEN_SRCS} ${IDL_GEN_HDRS})
+add_executable(demo_yarp_idl_to_dir)
+target_compile_definitions(demo_yarp_idl_to_dir PRIVATE THRIFT_INCLUDE_PREFIX
+                                                        THRIFT_NO_NAMESPACE_PREFIX)
+target_sources(demo_yarp_idl_to_dir PRIVATE main.cpp
+                                            ${IDL_GEN_SRCS}
+                                            ${IDL_GEN_HDRS})
+target_include_directories(demo_yarp_idl_to_dir PRIVATE ${generated_libs_dir}/include)
 target_link_libraries(demo_yarp_idl_to_dir PRIVATE YARP::YARP_os
                                                    YARP::YARP_init
                                                    YARP::YARP_sig)
@@ -55,7 +60,11 @@ ParseAndAddCatchTests(demo_yarp_idl_to_dir)
 
 # Test using yarp_add_idl
 yarp_add_idl(IDL_GEN_FILES ${IDL_FILES})
-add_executable(demo_yarp_add_idl main.cpp ${IDL_GEN_FILES})
+add_executable(demo_yarp_add_idl)
+target_compile_definitions(demo_yarp_add_idl PRIVATE THRIFT_INCLUDE_PREFIX
+                                                     THRIFT_NO_NAMESPACE_PREFIX)
+target_sources(demo_yarp_add_idl PRIVATE main.cpp
+                                         ${IDL_GEN_FILES})
 target_link_libraries(demo_yarp_add_idl PRIVATE YARP::YARP_os
                                                 YARP::YARP_init
                                                 YARP::YARP_sig)

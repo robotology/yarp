@@ -7,7 +7,7 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os dev REQUIRED)
 
 yarp_begin_plugin_library(foo)
 add_subdirectory(fooBot)

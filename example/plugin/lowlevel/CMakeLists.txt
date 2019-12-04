@@ -6,14 +6,14 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-set(BUILD_SHARED_LIBS ON)
+find_package(YARP COMPONENTS os REQUIRED)
 
-find_package(YARP REQUIRED)
+add_library(hoopy SHARED)
+target_sources(hoopy PRIVATE hoopy.cpp)
+target_include_directories(hoopy PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(hoopy PRIVATE YARP::YARP_os)
 
-include_directories(${CMAKE_SOURCE_DIR})
-
-add_library(hoopy hoopy.cpp)
-target_link_libraries(hoopy ${YARP_LIBRARIES})
-
-add_executable(test_hoopy test_hoopy.cpp)
-target_link_libraries(test_hoopy ${YARP_LIBRARIES})
+add_executable(test_hoopy)
+target_sources(test_hoopy PRIVATE test_hoopy.cpp)
+target_include_directories(test_hoopy PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(test_hoopy PRIVATE YARP::YARP_os YARP::YARP_init)

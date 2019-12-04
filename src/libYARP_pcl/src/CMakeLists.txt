@@ -4,14 +4,14 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_pcl INTERFACE)
+add_library(YARP::YARP_pcl ALIAS YARP_pcl)
+
 set(YARP_pcl_HDRS yarp/pcl/Pcl.h)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_pcl_HDRS})
-
-add_library(YARP_pcl INTERFACE)
-add_library(YARP::YARP_pcl ALIAS YARP_pcl)
 
 target_include_directories(YARP_pcl INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

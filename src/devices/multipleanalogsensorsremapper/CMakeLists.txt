@@ -11,11 +11,16 @@ yarp_prepare_plugin(multipleanalogsensorsremapper
                     DEFAULT ON)
 
 if(ENABLE_multipleanalogsensorsremapper)
+  yarp_add_plugin(yarp_multipleanalogsensorsremapper)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_multipleanalogsensorsremapper MultipleAnalogSensorsRemapper.cpp
-                                                     MultipleAnalogSensorsRemapper.h
-                                                     $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
+
+  target_sources(yarp_multipleanalogsensorsremapper PRIVATE MultipleAnalogSensorsRemapper.cpp
+                                                            MultipleAnalogSensorsRemapper.h)
+
+  target_sources(yarp_multipleanalogsensorsremapper PRIVATE $<TARGET_OBJECTS:multipleAnalogSensorsSerializations>)
   target_include_directories(yarp_multipleanalogsensorsclient PRIVATE $<TARGET_PROPERTY:multipleAnalogSensorsSerializations,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_multipleanalogsensorsremapper PRIVATE YARP::YARP_os
                                                                    YARP::YARP_sig
                                                                    YARP::YARP_dev)

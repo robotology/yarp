@@ -39,19 +39,22 @@ source_group("Resources Files" FILES ${QtYARPScopePlugin_QRC_FILES})
 source_group("QML Files" FILES ${QtYARPScopePlugin_QML_FILES})
 source_group("Generated Files" FILES ${QtYARPScopePlugin_QRC_GEN_SRCS})
 
-add_library(QtYARPScopePlugin MODULE ${QtYARPScopePlugin_SRCS}
-                                     ${QtYARPScopePlugin_HDRS}
-                                     ${QtYARPScopePlugin_QRC_FILES}
-                                     ${QtYARPScopePlugin_QRC_GEN_SRCS}
-                                     ${QtYARPScopePlugin_QML_FILES})
-target_link_libraries(QtYARPScopePlugin YARP::YARP_os
-                                        YARP::YARP_init
-                                        ${QCustomPlot_LIBRARIES}
-                                        Qt5::Widgets
-                                        Qt5::Qml
-                                        Qt5::Quick
-                                        Qt5::Xml
-                                        Qt5::PrintSupport)
+add_library(QtYARPScopePlugin MODULE)
+
+target_sources(QtYARPScopePlugin PRIVATE ${QtYARPScopePlugin_SRCS}
+                                         ${QtYARPScopePlugin_HDRS}
+                                         ${QtYARPScopePlugin_QRC_FILES}
+                                         ${QtYARPScopePlugin_QRC_GEN_SRCS}
+                                         ${QtYARPScopePlugin_QML_FILES})
+
+target_link_libraries(QtYARPScopePlugin PRIVATE YARP::YARP_os
+                                                YARP::YARP_init
+                                                ${QCustomPlot_LIBRARIES}
+                                                Qt5::Widgets
+                                                Qt5::Qml
+                                                Qt5::Quick
+                                                Qt5::Xml
+                                                Qt5::PrintSupport)
 
 qtyarp_qml_plugin(QtYARPScopePlugin "${QtYARPScopePlugin_QMLDIR}")
 

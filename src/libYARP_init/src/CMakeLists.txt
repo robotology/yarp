@@ -5,6 +5,8 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+add_library(YARP_init)
+add_library(YARP::YARP_init ALIAS YARP_init)
 
 set(YARP_init_HDRS)
 set(YARP_init_IMPL_HDRS)
@@ -18,8 +20,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              FILES ${YARP_init_HDRS}
                    ${YARP_init_IMPL_HDRS})
 
-add_library(YARP_init ${YARP_init_SRCS} ${YARP_init_HDRS})
-add_library(YARP::YARP_init ALIAS YARP_init)
+target_sources(YARP_init PRIVATE ${YARP_init_SRCS}
+                                 ${YARP_init_HDRS})
 
 target_link_libraries(YARP_init PRIVATE YARP::YARP_conf
                                         YARP::YARP_os)

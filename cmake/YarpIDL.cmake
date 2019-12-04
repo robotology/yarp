@@ -44,7 +44,8 @@
 #                    file2.msg
 #                    file3.srv)
 #   yarp_add_idl(THRIFT_GEN_FILES ${THRIFT_FILES})
-#   add_executable(foo main.cpp ${THRIFT_GEN_FILES})
+#   add_executable(foo)
+#   target_sources(foo PRIVATE main.cpp ${THRIFT_GEN_FILES})
 #
 # The ``YARP_ADD_IDL_INCLUDE_DIR`` variable contains the include directory for
 # using the header files
@@ -386,7 +387,7 @@ endfunction()
 
 # Internal function.
 # Calculate a list of sources generated from a .thrift file
-function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_hdrs_var)
+function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_hdrs_var _include_prefix _no_namespace_prefix)
   set(gen_srcs)
   set(gen_hdrs)
 
@@ -401,6 +402,14 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
   # Match "namespace"
   string(REGEX MATCH "namespace[ \t\n]+yarp[ \t\n]+([^ \t\n]+)" _unused ${file_content})
   string(REPLACE "." "/" namespace_dir "${CMAKE_MATCH_1}")
+
+  if(NOT _include_prefix)
+    set(path)
+  endif()
+
+  if(_no_namespace_prefix)
+    set(namespace_dir)
+  endif()
 
   # Match "enum"s, "struct"s and "service"s defined in the file
   string(REGEX MATCHALL "(enum|struct|service)[ \t\n]+([^ \t\n]+)[ \t\n]*{[^}]+}([ \t\n]*\\([^\\)]+\\))?" objects ${file_content})
@@ -508,7 +517,7 @@ function(YARP_ADD_IDL var)
     set(native 0)
     if("${ext}" STREQUAL ".thrift")
       set(family thrift)
-      _yarp_idl_thrift_to_file_list("${file}" "${path}" "${basename}" ${ext} gen_srcs gen_hdrs)
+      _yarp_idl_thrift_to_file_list("${file}" "${path}" "${basename}" ${ext} gen_srcs gen_hdrs 1 1)
     elseif("${ext}" MATCHES "^\\.(msg|srv)$")
       set(family rosmsg)
       get_filename_component(pkg "${path}" NAME)
@@ -547,7 +556,7 @@ function(YARP_ADD_IDL var)
 
     # Prepare main command
     if("${family}" STREQUAL "thrift")
-      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${out_dir}" "${file}")
+      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix,no_namespace_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${out_dir}" "${file}")
     else()
       if(YARPIDL_rosmsg_VERBOSE)
         set(_verbose --verbose)
