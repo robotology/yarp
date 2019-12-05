@@ -71,13 +71,57 @@ bool Transforms_server_storage::set_transform(const FrameTransform& t)
 bool Transforms_server_storage::delete_transform(string t1, string t2)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    for (size_t i = 0; i < m_transforms.size(); i++)
+    if (t1=="*" && t2=="*")
     {
-        if ((m_transforms[i].dst_frame_id == t1 && m_transforms[i].src_frame_id == t2) ||
-            (m_transforms[i].dst_frame_id == t2 && m_transforms[i].src_frame_id == t1) )
+        m_transforms.clear();
+        return true;
+    }
+    else
+    if (t1=="*")
+    {
+        for (size_t i = 0; i < m_transforms.size(); )
         {
-            m_transforms.erase(m_transforms.begin() + i);
-            return true;
+            //source frame is jolly, thus delete all frames with destination == t2
+            if (m_transforms[i].dst_frame_id == t2)
+            {
+                m_transforms.erase(m_transforms.begin() + i);
+                i=0; //the erase operation invalidates the iteration, loop restart is required
+            }
+            else
+            {
+                i++;
+            }
+        }
+        return true;
+    }
+    else
+    if (t2=="*")
+    {
+        for (size_t i = 0; i < m_transforms.size(); )
+        {
+            //destination frame is jolly, thus delete all frames with source == t1
+            if (m_transforms[i].src_frame_id == t1)
+            {
+                m_transforms.erase(m_transforms.begin() + i);
+                i=0; //the erase operation invalidates the iteration, loop restart is required
+            }
+            else
+            {
+                i++;
+            }
+        }
+        return true;
+    }
+    else
+    {
+        for (size_t i = 0; i < m_transforms.size(); i++)
+        {
+            if ((m_transforms[i].dst_frame_id == t1 && m_transforms[i].src_frame_id == t2) ||
+                (m_transforms[i].dst_frame_id == t2 && m_transforms[i].src_frame_id == t1) )
+            {
+                m_transforms.erase(m_transforms.begin() + i);
+                return true;
+            }
         }
     }
     return false;
@@ -163,7 +207,8 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
             continue;
         }
         yDebug() << storages[s]->size();
-        out.addString(storageDescription[s] + ": ");
+        std::string text_to_print = storageDescription[s] + std::string("(") +std::to_string(storages[s]->size())+ std::string("): ");
+        out.addString(text_to_print);
 
         for(size_t i = 0; i < storages[s]->size(); i++)
         {
@@ -277,6 +322,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         out.addString("'list': get all transforms stored");
         out.addString("'delete_all': delete all transforms");
         out.addString("'set_static_transform <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform");
+        out.addString("'delete_static_transform <src> <dst>': delete a static transform");
     }
     else if (request == "set_static_transform")
     {
@@ -312,6 +358,14 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     {
         out.addVocab(Vocab::encode("many"));
         list_response(out);
+    }
+    else if (request == "delete_static_transform")
+    {
+        std::string src = in.get(1).asString();
+        std::string dst = in.get(2).asString();
+        m_yarp_static_transform_storage->delete_transform(src,dst);
+        m_ros_static_transform_storage->delete_transform(src,dst);
+        out.addString("delete_static_transform done");
     }
     else
     {

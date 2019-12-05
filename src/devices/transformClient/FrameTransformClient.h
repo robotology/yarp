@@ -16,14 +16,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_DEV_FRAMETRANSFORMCLIENT_FRAMETRANSFORMCLIENT_H
-#define YARP_DEV_FRAMETRANSFORMCLIENT_FRAMETRANSFORMCLIENT_H
+#ifndef YARP_DEV_FRAMETRANSFORMCLIENT_H
+#define YARP_DEV_FRAMETRANSFORMCLIENT_H
 
 
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/IFrameTransformClientControl.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
@@ -87,6 +88,7 @@ public:
 class FrameTransformClient :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IFrameTransform,
+        public yarp::dev::IFrameTransformClientControl,
         public yarp::os::PortReader,
         public yarp::os::PeriodicThread
 {
@@ -104,6 +106,14 @@ protected:
     yarp::os::Port                m_rpc_InterfaceToUser;
     std::string         m_local_name;
     std::string         m_remote_name;
+
+    std::string         m_local_rpcServer;
+    std::string         m_local_rpcUser;
+    std::string         m_remote_rpc;
+    std::string         m_remote_streaming_name;
+    std::string         m_local_streaming_name;
+
+    std::string         m_streaming_connection_type;
     Transforms_client_storage*    m_transform_storage;
     double                        m_period;
     std::mutex               m_rpc_mutex;
@@ -145,6 +155,9 @@ public:
      bool     transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion) override;
      bool     waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout) override;
 
+     bool     isConnectedWithServer() override;
+     bool     reconnectWithServer() override;
+
      FrameTransformClient();
     ~FrameTransformClient();
      bool     threadInit() override;
@@ -152,4 +165,4 @@ public:
      void     run() override;
 };
 
-#endif // YARP_DEV_FRAMETRANSFORMCLIENT_FRAMETRANSFORMCLIENT_H
+#endif // YARP_DEV_FRAMETRANSFORMCLIENT_H
