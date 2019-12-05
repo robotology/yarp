@@ -26,12 +26,16 @@ Make sure you set the YARP_DIR environment variable to point to
 where you compiled YARP (or give the path through the CMake GUI).
 
 \verbatim
-cmake_minimum_required(VERSION 3.5)
-find_package(YARP REQUIRED)
-add_executable(simple_sender simple_sender.cpp)
-target_link_libraries(simple_sender ${YARP_LIBRARIES})
-add_executable(simple_receiver simple_receiver.cpp)
-target_link_libraries(simple_receiver ${YARP_LIBRARIES})
+cmake_minimum_required(VERSION 3.12)
+find_package(YARP COMPONENTS os REQUIRED)
+add_executable(simple_sender)
+target_sources(simple_sender PRIVATE simple_sender.cpp)
+target_link_libraries(simple_sender PRIVATE YARP::YARP_os
+                                            YARP::YARP_init)
+add_executable(simple_receiver)
+target_sources(simple_receiver PRIVATE simple_receiver.cpp)
+target_link_libraries(simple_receiver PRIVATE YARP::YARP_os
+                                              YARP::YARP_init)
 \endverbatim
 
 After compiling, on three separate

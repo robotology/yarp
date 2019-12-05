@@ -12,15 +12,18 @@ yarp_prepare_plugin(navigation2DClient
                     DEFAULT ON)
 
 if(NOT SKIP_navigation2DClient)
+  yarp_add_plugin(yarp_navigation2DClient)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_navigation2DClient Navigation2DClient.cpp
-                                          Navigation2DClient.h)
-  target_link_libraries(yarp_navigation2DClient PRIVATE YARP::YARP_OS
+  target_sources(yarp_navigation2DClient PRIVATE Navigation2DClient.cpp
+                                                 Navigation2DClient.h)
+
+  target_link_libraries(yarp_navigation2DClient PRIVATE YARP::YARP_os
                                                         YARP::YARP_sig
                                                         YARP::YARP_dev
                                                         YARP::YARP_math)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
                                                       YARP_math)

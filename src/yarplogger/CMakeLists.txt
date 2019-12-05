@@ -9,7 +9,9 @@ if(YARP_COMPILE_yarplogger)
   project(yarplogger)
 
   include(YarpUseQt5)
-  include(YarpOSXUtilities)
+  include(YarpMacOSUtilities)
+
+  add_executable(yarplogger WIN32)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -32,18 +34,18 @@ if(YARP_COMPILE_yarplogger)
   source_group("Generated Files" FILES ${yarplogger_QRC_GEN_SRCS}
                                        ${yarplogger_UI_GEN_SRCS})
 
-  add_executable(yarplogger WIN32 ${yarplogger_SRCS}
-                                  ${yarplogger_HDRS}
-                                  ${yarplogger_QRC_FILES}
-                                  ${yarplogger_QRC_GEN_SRCS}
-                                  ${yarplogger_UI_FILES}
-                                  ${yarplogger_UI_GEN_SRCS})
+  target_sources(yarplogger PRIVATE ${yarplogger_SRCS}
+                                    ${yarplogger_HDRS}
+                                    ${yarplogger_QRC_FILES}
+                                    ${yarplogger_QRC_GEN_SRCS}
+                                    ${yarplogger_UI_FILES}
+                                    ${yarplogger_UI_GEN_SRCS})
 
-  target_link_libraries(yarplogger YARP_OS
-                                   YARP_init
-                                   YARP_logger
-                                   Qt5::Widgets
-                                   Qt5::Gui)
+  target_link_libraries(yarplogger PRIVATE YARP::YARP_os
+                                           YARP::YARP_init
+                                           YARP::YARP_logger
+                                           Qt5::Widgets
+                                           Qt5::Gui)
 
   install(TARGETS yarplogger
           COMPONENT utilities
@@ -51,8 +53,8 @@ if(YARP_COMPILE_yarplogger)
 
   set_property(TARGET yarplogger PROPERTY FOLDER "Graphical User Interfaces")
 
-  yarp_osx_duplicate_and_add_bundle(TARGET yarplogger
-                                    INSTALL_COMPONENT utilities
-                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  yarp_macos_duplicate_and_add_bundle(TARGET yarplogger
+                                      INSTALL_COMPONENT utilities
+                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()

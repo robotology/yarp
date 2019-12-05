@@ -3,7 +3,7 @@
  *
  * \defgroup remote_grabber_basic Example for pipe (remote_grabber_basic)
 
-Instantiates \ref cmd_device_pipe "pipe" device implemented by yarp::dev::DevicePipe.
+Instantiates \ref cmd_device_pipe "pipe" device implemented by DevicePipe.
 \verbatim
 # sending images to a port called "/save" will result in them
 # being saved to test.avi
@@ -44,6 +44,6 @@ So this is just an example
 <tr><td>sink</td><td>device to write to (string or nested properties)</td><td></td></tr>
 </table>
 
-\sa yarp::dev::DevicePipe
+\sa DevicePipe
 
  */

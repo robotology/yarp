@@ -31,11 +31,13 @@ for the user through --rxTime option.
 
 Moreover, a file called 'info.log' is produced containing
 information about the data type stored within the 'data.log'
-file as well as the name of the yarp ports connected or
-disconnected to the dumper, as in the following:
+file as well as the logged time stamps and the name of the
+yarp ports connected or disconnected to the dumper,
+as in the following:
 
 \code
 Type: [Bottle; | Image; | Image; Video:ext(huffyuv);]
+Stamp: [rx; | tx; | tx+rx;]
 [local-timestamp] /yarp-port-name [connected]
 [local-timestamp] /yarp-port-name [disconnected]
 \endcode
@@ -110,9 +112,9 @@ by the \ref yarpdatadumper.
 
 `--type datatype`
 - The parameter `datatype` selects the type of items to be
-  stored. It can be \e bottle, \e image, \e image_jpg or \e video; if not
-  specified \e bottle is assumed. Note that images are stored
-  using the corresponding file formats. The data type \e video
+  stored. It can be \e bottle, \e image, \e image_jpg, \e image_png or
+  \e video; if not specified \e bottle is assumed. Note that images are
+  stored using the corresponding file formats. The data type \e video
   is available if OpenCV is found and the codec \e huffyuv is installed.
 
 `--addVideo`

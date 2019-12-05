@@ -8,16 +8,20 @@ yarp_prepare_plugin(ServerSoundGrabber
                     CATEGORY device
                     TYPE ServerSoundGrabber
                     INCLUDE ServerSoundGrabber.h
-                    DEFAULT ON)
+                    DEFAULT OFF
+                    DEPENDS "NOT YARP_NO_DEPRECATED") # DEPRECATED Since YARP 3.2
 
 if(NOT SKIP_ServerSoundGrabber)
+  yarp_add_plugin(yarp_ServerSoundGrabber)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_ServerSoundGrabber ServerSoundGrabber.h)
-  target_link_libraries(yarp_ServerSoundGrabber PRIVATE YARP::YARP_OS
+  target_sources(yarp_ServerSoundGrabber PRIVATE ServerSoundGrabber.h)
+
+  target_link_libraries(yarp_ServerSoundGrabber PRIVATE YARP::YARP_os
                                                         YARP::YARP_sig
                                                         YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

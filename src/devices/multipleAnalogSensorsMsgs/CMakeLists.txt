@@ -5,13 +5,12 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 if(YARP_COMPILE_DEVICE_PLUGINS)
-
   if(BUILD_SHARED_LIBS AND
      NOT CMAKE_CROSSCOMPILING AND
      NOT ALLOW_IDL_GENERATION AND
      YARP_COMPILE_EXECUTABLES)
     yarp_add_idl(MAS_THRIFT_GEN_FILES multipleAnalogSensorsSerializations.thrift)
-    set(MAS_THRIFT_INTERFACE_INCLUDE_DIRS "${CMAKE_CURRENT_BINARY_DIR}/include")
+    set(MAS_THRIFT_INTERFACE_INCLUDE_DIRS "${YARP_ADD_IDL_INCLUDE_DIR}")
   else()
     yarp_idl_to_dir(INPUT_FILES multipleAnalogSensorsSerializations.thrift
                     OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
@@ -21,16 +20,12 @@ if(YARP_COMPILE_DEVICE_PLUGINS)
     set(MAS_THRIFT_GEN_FILES ${MAS_THRIFT_GEN_SRCS} ${MAS_THRIFT_GEN_HDRS})
   endif()
 
-  # See https://gitlab.kitware.com/cmake/cmake/issues/14778
-  # See https://gitlab.kitware.com/cmake/cmake/merge_requests/1524
-  if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.12)
-    message(AUTHOR_WARNING "CMAKE_MINIMUM_REQUIRED_VERSION is now ${CMAKE_MINIMUM_REQUIRED_VERSION}. object libraries can be used with target_link_libraries now.")
-  endif()
-  add_library(multipleAnalogSensorsSerializations OBJECT ${MAS_THRIFT_GEN_FILES})
-  target_include_directories(multipleAnalogSensorsSerializations PRIVATE $<TARGET_PROPERTY:YARP::YARP_OS,INTERFACE_INCLUDE_DIRECTORIES>)
-  target_compile_definitions(multipleAnalogSensorsSerializations PRIVATE $<TARGET_PROPERTY:YARP::YARP_OS,INTERFACE_COMPILE_DEFINITIONS>)
-  target_include_directories(multipleAnalogSensorsSerializations PRIVATE $<TARGET_PROPERTY:YARP::YARP_sig,INTERFACE_INCLUDE_DIRECTORIES>)
-  target_compile_definitions(multipleAnalogSensorsSerializations PRIVATE $<TARGET_PROPERTY:YARP::YARP_sig,INTERFACE_COMPILE_DEFINITIONS>)
+  add_library(multipleAnalogSensorsSerializations OBJECT)
+
+  target_sources(multipleAnalogSensorsSerializations PRIVATE ${MAS_THRIFT_GEN_FILES})
+
+  target_link_libraries(multipleAnalogSensorsSerializations PRIVATE YARP::YARP_os
+                                                                    YARP::YARP_sig)
   target_include_directories(multipleAnalogSensorsSerializations PUBLIC ${MAS_THRIFT_INTERFACE_INCLUDE_DIRS})
 
   set_property(TARGET multipleAnalogSensorsSerializations PROPERTY FOLDER "Libraries/Msgs")

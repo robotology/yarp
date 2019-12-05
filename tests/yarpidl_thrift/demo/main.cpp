@@ -14,7 +14,15 @@
 #include <SurfaceMeshWithBoundingBox.h>
 #include <Wrapping.h>
 #include <TestSomeMoreTypes.h>
-#include <sub/directory/ClockServer.h>
+#if defined(THRIFT_INCLUDE_PREFIX) && defined(THRIFT_NO_NAMESPACE_PREFIX)
+# include <sub/directory/ClockServer.h>
+#elif defined(THRIFT_INCLUDE_PREFIX)
+# include <sub/directory/testing/ClockServer.h>
+#elif defined(THRIFT_NO_NAMESPACE_PREFIX)
+# include <ClockServer.h>
+#else
+# include <testing/ClockServer.h>
+#endif
 #include <Settings.h>
 
 #define CATCH_CONFIG_MAIN

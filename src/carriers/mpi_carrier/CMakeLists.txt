@@ -5,14 +5,6 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-include(CMakeDependentOption)
-cmake_dependent_option(MPI_DEBUG_MSG "Turn on status messages for MPI Carrier" OFF
-                       "NOT SKIP_mpi OR NOT SKIP_mpibcast" OFF)
-if(MPI_DEBUG_MSG)
-  add_definitions(-DMPI_DEBUG)
-endif(MPI_DEBUG_MSG)
-
-
 yarp_prepare_plugin(mpi
                     CATEGORY carrier
                     TYPE MpiP2PCarrier
@@ -20,20 +12,33 @@ yarp_prepare_plugin(mpi
                     EXTRA_CONFIG CODE="MPI_____"
                     DEPENDS "YARP_HAS_MPI")
 
-if(NOT SKIP_mpi)
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_mpi MpiCarrier.cpp
-                           MpiComm.cpp
-                           MpiStream.cpp
-                           MpiP2PStream.cpp
-                           MpiCarrier.h
-                           MpiP2PCarrier.h
-                           MpiStream.h
-                           MpiP2PStream.h
-                           MpiComm.h)
+include(CMakeDependentOption)
+cmake_dependent_option(YARP_MPI_DEBUG_MSG "Turn on status messages for MPI Carrier" OFF
+                       "NOT SKIP_mpi OR NOT SKIP_mpibcast" OFF)
+include(YarpRenamedOption)
+yarp_renamed_option(MPI_DEBUG_MSG YARP_MPI_DEBUG_MSG) # Since YARP 3.3
 
-  target_link_libraries(yarp_mpi PRIVATE YARP::YARP_OS)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+if(NOT SKIP_mpi)
+  yarp_add_plugin(yarp_mpi)
+
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+  target_sources(yarp_mpi PRIVATE MpiCarrier.cpp
+                                  MpiComm.cpp
+                                  MpiStream.cpp
+                                  MpiP2PStream.cpp
+                                  MpiCarrier.h
+                                  MpiP2PCarrier.h
+                                  MpiStream.h
+                                  MpiP2PStream.h
+                                  MpiComm.h)
+
+  if(MPI_DEBUG_MSG)
+    target_compile_definitions(yarp_mpi PRIVATE MPI_DEBUG)
+  endif(MPI_DEBUG_MSG)
+
+  target_link_libraries(yarp_mpi PRIVATE YARP::YARP_os)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   target_include_directories(yarp_mpi SYSTEM PRIVATE ${MPI_INCLUDE_PATH})
   target_link_libraries(yarp_mpi PRIVATE ${MPI_LIBRARIES})
@@ -60,20 +65,27 @@ yarp_prepare_plugin(mpibcast
                     DEPENDS "YARP_HAS_MPI")
 
 if(NOT SKIP_mpibcast)
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_mpibcast MpiCarrier.cpp
-                                MpiBcastCarrier.cpp
-                                MpiComm.cpp
-                                MpiStream.cpp
-                                MpiBcastStream.cpp
-                                MpiCarrier.h
-                                MpiBcastCarrier.h
-                                MpiStream.h
-                                MpiBcastStream.h
-                                MpiComm.h)
+  yarp_add_plugin(yarp_mpibcast)
 
-  target_link_libraries(yarp_mpibcast PRIVATE YARP::YARP_OS)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+  set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+  target_sources(yarp_mpibcast PRIVATE MpiCarrier.cpp
+                                       MpiBcastCarrier.cpp
+                                       MpiComm.cpp
+                                       MpiStream.cpp
+                                       MpiBcastStream.cpp
+                                       MpiCarrier.h
+                                       MpiBcastCarrier.h
+                                       MpiStream.h
+                                       MpiBcastStream.h
+                                       MpiComm.h)
+
+  if(MPI_DEBUG_MSG)
+    target_compile_definitions(yarp_mpibcast PRIVATE MPI_DEBUG)
+  endif(MPI_DEBUG_MSG)
+
+  target_link_libraries(yarp_mpibcast PRIVATE YARP::YARP_os)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   target_include_directories(yarp_mpibcast SYSTEM PRIVATE ${MPI_INCLUDE_PATH})
   target_link_libraries(yarp_mpibcast PRIVATE ${MPI_LIBRARIES})

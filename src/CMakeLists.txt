@@ -5,14 +5,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-include(YarpInstallationHelpers)
-include(YarpDeprecatedOption)
-
-yarp_configure_external_installation(yarp WITH_PLUGINS)
-
 # public libraries
 add_subdirectory(libYARP_conf)
-add_subdirectory(libYARP_OS)
+add_subdirectory(libYARP_os)
 add_subdirectory(libYARP_sig)
 add_subdirectory(libYARP_eigen)
 add_subdirectory(libYARP_gsl)
@@ -31,12 +26,9 @@ add_subdirectory(libYARP_manager)
 add_subdirectory(libYARP_profiler)
 add_subdirectory(libYARP_logger)
 add_subdirectory(libYARP_wire_rep_utils)
+add_subdirectory(libYARP_robottestingframework)
 
 # plugins
-set (YARP_LINK_PLUGINS TRUE)
-if(YARP_FORCE_DYNAMIC_PLUGINS OR BUILD_SHARED_LIBS)
-  set (YARP_LINK_PLUGINS FALSE)
-endif()
 add_subdirectory(devices)
 add_subdirectory(carriers)
 add_subdirectory(libYARP_init)
@@ -71,7 +63,6 @@ endif()
 
 # Robot Testing Framework addons
 if(YARP_COMPILE_RobotTestingFramework_ADDONS)
-  add_subdirectory(libYARP_robottestingframework)
   add_subdirectory(robottestingframework-plugins)
 endif()
 
@@ -80,5 +71,3 @@ add_subdirectory(libyarpc)
 if(YARP_COMPILE_EXECUTABLES)
   add_subdirectory(yarpfs)
 endif()
-
-yarp_deprecated_option(YARP_USE_PERSISTENT_NAMESERVER)

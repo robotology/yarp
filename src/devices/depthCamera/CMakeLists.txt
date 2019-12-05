@@ -12,16 +12,17 @@ yarp_prepare_plugin(depthCamera
                     DEPENDS "YARP_HAS_OpenNI2")
 
 if(ENABLE_depthCamera)
+  yarp_add_plugin(yarp_depthCamera)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+  target_sources(yarp_depthCamera PRIVATE depthCameraDriver.cpp
+                                          depthCameraDriver.h)
 
-  yarp_add_plugin(yarp_depthCamera depthCameraDriver.cpp
-                                   depthCameraDriver.h)
-
-  target_link_libraries(yarp_depthCamera PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_depthCamera PRIVATE YARP::YARP_os
                                                  YARP::YARP_sig
                                                  YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

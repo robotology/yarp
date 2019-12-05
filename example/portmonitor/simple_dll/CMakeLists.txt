@@ -4,9 +4,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os sig dev REQUIRED)
 
 set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -16,12 +16,19 @@ yarp_configure_plugins_installation(simplemonitor_portmonitor)
 
 yarp_prepare_plugin(simplemonitor TYPE SimpleMonitorObject
                                   INCLUDE Simple.h
-                                  CATEGORY portmonitor)
+                                  CATEGORY portmonitor
+                                  INTERNAL
+                                  QUIET)
 
-yarp_add_plugin(yarp_pm_simple
-                Simple.cpp
-                Simple.h)
-target_link_libraries(yarp_pm_simple ${YARP_LIBRARIES})
+yarp_add_plugin(yarp_pm_simple)
+
+target_sources(yarp_pm_simple PRIVATE Simple.cpp
+                                      Simple.h)
+
+target_link_libraries(yarp_pm_simple YARP::YARP_os
+                                     YARP::YARP_sig
+                                     YARP::YARP_dev)
+
 yarp_install(TARGETS yarp_pm_simple
              EXPORT yarp_pm_simple
              COMPONENT runtime

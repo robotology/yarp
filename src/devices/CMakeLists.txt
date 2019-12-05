@@ -24,9 +24,6 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(ffmpeg)
   add_subdirectory(opencv)
   add_subdirectory(serialport)
-  if(NOT YARP_NO_DEPRECATED) # since YARP 3.2.0
-    add_subdirectory(portaudio)
-  endif()
   add_subdirectory(portaudioPlayer)
   add_subdirectory(portaudioRecorder)
   add_subdirectory(imuBosch_BNO055)
@@ -45,9 +42,6 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(batteryWrapper)
   add_subdirectory(Rangefinder2DWrapper)
   add_subdirectory(realsense2)
-  if(NOT YARP_NO_DEPRECATED) # since YARP 3.2.0
-    add_subdirectory(ServerSoundGrabber)
-  endif()
   add_subdirectory(multipleAnalogSensorsMsgs)
   add_subdirectory(multipleanalogsensorsserver)
   add_subdirectory(multipleanalogsensorsclient)
@@ -64,6 +58,30 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(usbCamera)
   add_subdirectory(fakeLocalizerDevice)
   add_subdirectory(fakeNavigationDevice)
+  add_subdirectory(DeviceGroup)
+  add_subdirectory(DevicePipe)
+  add_subdirectory(ServerSerial)
+  add_subdirectory(TestMotor)
+  add_subdirectory(RemoteFrameGrabber)
+  add_subdirectory(RemoteControlBoard)
+  add_subdirectory(AnalogSensorClient)
+  add_subdirectory(AnalogWrapper)
+  add_subdirectory(VirtualAnalogWrapper)
+  add_subdirectory(RGBDSensorClient)
+  add_subdirectory(ServerInertial)
+  add_subdirectory(RGBDSensorWrapper)
+  add_subdirectory(ControlBoardWrapper)
+  add_subdirectory(ControlBoardRemapper)
+  add_subdirectory(RobotDescriptionClient)
+  add_subdirectory(RobotDescriptionServer)
+  add_subdirectory(ServerGrabber)
+  add_subdirectory(JoypadControlNetUtils)
+  add_subdirectory(JoypadControlClient)
+  add_subdirectory(JoypadControlServer)
+
+  add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
+  add_subdirectory(ServerSoundGrabber) # DEPRECATED Since YARP 3.2
+  add_subdirectory(ServerFrameGrabber) # DEPRECATED Since YARP 3.3
 
   # We can also suck in other device libraries built the same way.
   # We seek an ExternalModules.cmake file either in the conf directory
@@ -85,11 +103,11 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
         if(NOT EXISTS "${safe_path}/CMakeLists.txt")
           message(FATAL_ERROR "${EXTDIR}_DIR=${${EXTDIR}_DIR} from ${EXTFILE} does not contain a CMakeLists.txt")
         endif()
-      add_subdirectory(${safe_path}
-                       ${CMAKE_CURRENT_BINARY_DIR}/externals/${EXTDIR})
-    endforeach(EXTDIR ${EXTERNAL_MODULES})
-  endif(EXISTS ${EXTFILE})
-endforeach(EXTFILE)
+        add_subdirectory(${safe_path}
+                         ${CMAKE_CURRENT_BINARY_DIR}/externals/${EXTDIR})
+      endforeach()
+    endif()
+  endforeach()
 
 yarp_end_plugin_library(yarpmod QUIET)
 add_library(YARP::yarpmod ALIAS yarpmod)

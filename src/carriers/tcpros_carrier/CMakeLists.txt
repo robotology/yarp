@@ -18,21 +18,24 @@ yarp_prepare_plugin(rossrv
                     DEFAULT ON)
 
 if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
+  yarp_add_plugin(yarp_tcpros)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_tcpros
-                  TcpRosCarrier.h
-                  TcpRosCarrier.cpp
-                  TcpRosStream.h
-                  TcpRosStream.cpp
-                  RosHeader.h
-                  RosHeader.cpp
-                  RosSlave.h
-                  RosLookup.h
-                  RosLookup.cpp)
-  target_link_libraries(yarp_tcpros PRIVATE YARP::YARP_OS
+
+  target_sources(yarp_tcpros PRIVATE TcpRosCarrier.h
+                                     TcpRosCarrier.cpp
+                                     TcpRosStream.h
+                                     TcpRosStream.cpp
+                                     RosHeader.h
+                                     RosHeader.cpp
+                                     RosSlave.h
+                                     RosLookup.h
+                                     RosLookup.cpp)
+
+  target_link_libraries(yarp_tcpros PRIVATE YARP::YARP_os
                                             YARP::YARP_sig
                                             YARP::YARP_wire_rep_utils)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_wire_rep_utils)
 
@@ -49,10 +52,13 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
 
 
   # yarpros executable
-  add_executable(yarpros yarpros.cpp
-                         TcpRosStream.cpp
-                         RosLookup.cpp)
-  target_link_libraries(yarpros PRIVATE YARP::YARP_OS
+  add_executable(yarpros)
+
+  target_sources(yarpros PRIVATE yarpros.cpp
+                                 TcpRosStream.cpp
+                                 RosLookup.cpp)
+
+  target_link_libraries(yarpros PRIVATE YARP::YARP_os
                                         YARP::YARP_init
                                         YARP::YARP_wire_rep_utils)
   install(TARGETS yarpros

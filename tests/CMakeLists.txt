@@ -116,10 +116,12 @@ endfunction()
 #########################################################################
 # Main harness target
 
-add_library(YARP_harness STATIC harness.cpp
-                                harness.h)
+add_library(YARP_harness STATIC)
 
-target_link_libraries(YARP_harness PRIVATE YARP::YARP_OS
+target_sources(YARP_harness PRIVATE harness.cpp
+                                    harness.h)
+
+target_link_libraries(YARP_harness PRIVATE YARP::YARP_os
                                            YARP::YARP_init
                                            YARP::YARP_serversql)
 
@@ -133,8 +135,8 @@ set_property(TARGET YARP_harness PROPERTY FOLDER "Test")
 
 add_subdirectory(misc)
 
-add_subdirectory(libYARP_OS)
-add_subdirectory(libYARP_OS/impl)
+add_subdirectory(libYARP_os)
+add_subdirectory(libYARP_os/impl)
 add_subdirectory(libYARP_sig)
 add_subdirectory(libYARP_rosmsg)
 add_subdirectory(libYARP_dev)

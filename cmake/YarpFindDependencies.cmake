@@ -320,7 +320,7 @@ get_property(OpenCV24_WORKAROUND_ORIGINAL_INCLUDE_DIRS DIRECTORY PROPERTY INCLUD
 # End first part of workaround
 find_package(OpenCV QUIET)
 # OpenCV 4 is not supported yet
-if(OpenCV_FOUND AND NOT OpenCV_VERSION VERSION_LESS 4)
+if(OpenCV_FOUND AND OpenCV_VERSION VERSION_GREATER_EQUAL 4)
   message(STATUS "OpenCV 4 is not supported yet.")
   set(OpenCV_FOUND FALSE)
   set(OPENCV_FOUND FALSE)
@@ -415,6 +415,8 @@ checkandset_dependency(Libv4l2)
 find_package(Libv4lconvert QUIET)
 checkandset_dependency(Libv4lconvert)
 
+find_package(Fuse QUIET)
+checkandset_dependency(Fuse)
 
 
 ################################################################################
@@ -479,7 +481,7 @@ if(SKIP_ACE)
   unset(YARP_HAS_ACE) # Not set = disabled
 endif()
 
-yarp_dependent_option(YARP_COMPILE_libYARP_math "Create math library libYARP_math?" ON
+yarp_dependent_option(YARP_COMPILE_libYARP_math "Create math library YARP_math?" ON
                       YARP_HAS_Eigen3 OFF)
 yarp_renamed_option(CREATE_LIB_MATH YARP_COMPILE_libYARP_math) # Deprecated since YARP 3.2
 
@@ -506,7 +508,7 @@ yarp_dependent_option(YARP_COMPILE_yarpdataplayer "Do you want to compile yarpda
 yarp_dependent_option(YARP_COMPILE_yarpmotorgui "Do you want to compile yarpmotorgui?" ON
                       "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
 yarp_dependent_option(YARP_COMPILE_yarpbatterygui "Do you want to compile yarpbatterygui?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;NOT Qt5_VERSION VERSION_LESS 5.4;" OFF)
+                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;Qt5_VERSION VERSION_GREATER_EQUAL 5.4;" OFF)
 yarp_dependent_option(YARP_COMPILE_yarplaserscannergui  "Do you want to compile yarplaserscannergui?" ON
                       "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_OpenCV" OFF)
 yarp_dependent_option(YARP_COMPILE_yarpviz "Do you want to compile yarpviz?" ON
@@ -541,6 +543,11 @@ endif()
 set(YARP_COMPILE_libYARP_profiler OFF)
 if(YARP_COMPILE_yarpviz OR YARP_COMPILE_yarpmanager)
   set(YARP_COMPILE_libYARP_profiler ON)
+endif()
+
+set(YARP_COMPILE_libYARP_robottestingframework OFF)
+if(YARP_COMPILE_RobotTestingFramework_ADDONS)
+  set(YARP_COMPILE_libYARP_robottestingframework ON)
 endif()
 
 if(NOT YARP_COMPILE_yarprobotinterface AND
@@ -605,6 +612,7 @@ print_dependency(FLEX)
 print_dependency(I2C)
 print_dependency(Libv4l2)
 print_dependency(Libv4lconvert)
+print_dependency(Fuse)
 
 ################################################################################
 # Print information for user
@@ -622,12 +630,14 @@ yarp_print_feature(YARP_COMPILE_EXECUTABLES 0 "Compile executables")
 yarp_print_feature(YARP_COMPILE_yarprobotinterface 1 "Compile yarprobotinterface${YARP_COMPILE_yarprobotinterface_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpmanager-console 1 "Compile YARP Module Manager (console)${YARP_COMPILE_yarpmanager-console_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpdatadumper 1 "Compile yarpdatadumper${YARP_COMPILE_yarpdatadumper_disable_reason}")
+yarp_print_feature("YARP_COMPILE_yarpdatadumper AND YARP_HAS_OpenCV" 2 "yarpdatadumper video support")
 yarp_print_feature(YARP_COMPILE_GUIS 1 "Compile GUIs${YARP_COMPILE_GUIS_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpview 2 "Compile yarpview${YARP_COMPILE_yarpview_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpmanager 2 "Compile yarpmanager${YARP_COMPILE_yarpmanager_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarplogger 2 "Compile yarplogger${YARP_COMPILE_yarplogger_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpscope 2 "Compile yarpscope${YARP_COMPILE_yarpscope_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpdataplayer 2 "Compile yarpdataplayer${YARP_COMPILE_yarpdataplayer_disable_reason}")
+yarp_print_feature("YARP_COMPILE_yarpdataplayer AND YARP_HAS_OpenCV" 3 "yarpdataplayer video support")
 yarp_print_feature(YARP_COMPILE_yarpmotorgui 2 "Compile yarpmotorgui${YARP_COMPILE_yarpmotorgui_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarplaserscannergui 2 "Compile yarplaserscannergui${YARP_COMPILE_yarplaserscannergui_disable_reason}")
 yarp_print_feature(YARP_COMPILE_yarpbatterygui 2 "Compile yarpbatterygui${YARP_COMPILE_yarpbatterygui_disable_reason}")

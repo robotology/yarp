@@ -4,18 +4,21 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-add_executable(harness_dev AnalogWrapperTest.cpp
-                           ControlBoardRemapperTest.cpp
-                           FrameTransformClientTest.cpp
-                           MapGrid2DTest.cpp
-                           Navigation2DClientTest.cpp
-                           MultipleAnalogSensorsInterfacesTest.cpp
-                           PolyDriverTest.cpp
-                           robotDescriptionTest.cpp
-                           TestFrameGrabberTest.cpp)
+add_executable(harness_dev)
+target_sources(harness_dev PRIVATE AnalogWrapperTest.cpp
+                                   ControlBoardRemapperTest.cpp
+                                   ControlBoardWrapper2Test.cpp
+                                   FrameTransformClientTest.cpp
+                                   GroupDriverTest.cpp
+                                   MapGrid2DTest.cpp
+                                   Navigation2DClientTest.cpp
+                                   MultipleAnalogSensorsInterfacesTest.cpp
+                                   PolyDriverTest.cpp
+                                   robotDescriptionTest.cpp
+                                   TestFrameGrabberTest.cpp)
 
 target_link_libraries(harness_dev PRIVATE YARP_harness
-                                          YARP::YARP_OS
+                                          YARP::YARP_os
                                           YARP::YARP_sig
                                           YARP::YARP_dev)
 
@@ -25,19 +28,7 @@ else()
   set(_disabled_files FrameTransformClientTest.cpp
                       Navigation2DClientTest.cpp
                       MapGrid2DTest.cpp)
-
-  if(NOT ${CMAKE_MINIMUM_REQUIRED_VERSION} VERSION_LESS 3.9)
-    message(AUTHOR_WARNING "DISABLED property is supported since CMake 3.9, you can remove this check")
-  endif()
- if(NOT ${CMAKE_VERSION} VERSION_LESS 3.9)
-   set_source_files_properties(${_disabled_files} PROPERTIES HEADER_FILE_ONLY ON)
- else()
-    get_property(_sources TARGET harness_dev PROPERTY SOURCES)
-    foreach(_file IN LISTS _disabled_files)
-      list(REMOVE_ITEM _sources ${_file})
-    endforeach()
-    set_property(TARGET harness_dev PROPERTY SOURCES ${_sources})
- endif()
+  set_source_files_properties(${_disabled_files} PROPERTIES HEADER_FILE_ONLY ON)
 endif()
 
 set_property(TARGET harness_dev PROPERTY FOLDER "Test")

@@ -12,7 +12,7 @@
 #include <yarp/sig/Image.h>
 #include "AsciiImage.h"
 
-#define WINDOW_SIZE     6
+constexpr size_t WINDOW_SIZE = 6;
 
 using namespace yarp::os;
 using namespace yarp::sig;

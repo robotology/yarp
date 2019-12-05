@@ -12,12 +12,16 @@ yarp_prepare_plugin(dynamixelAX12Ftdi
                     DEPENDS "YARP_HAS_FTDI")
 
 if(NOT SKIP_dynamixelAX12Ftdi)
+  yarp_add_plugin(yarp_dynamixelAX12Ftdi)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_dynamixelAX12Ftdi DynamixelAX12FtdiDriver.cpp
-                                         DynamixelAX12FtdiDriver.h)
-  target_link_libraries(yarp_dynamixelAX12Ftdi PRIVATE YARP::YARP_OS
+
+  target_sources(yarp_dynamixelAX12Ftdi PRIVATE DynamixelAX12FtdiDriver.cpp
+                                                DynamixelAX12FtdiDriver.h)
+
+  target_link_libraries(yarp_dynamixelAX12Ftdi PRIVATE YARP::YARP_os
                                                        YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_dev)
 
   target_include_directories(yarp_dynamixelAX12Ftdi SYSTEM PRIVATE ${FTDI_INCLUDE_DIR})

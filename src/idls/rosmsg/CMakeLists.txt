@@ -15,15 +15,17 @@ set(yarpidl_rosmsg_SRCS src/main.cpp
 set(yarpidl_rosmsg_HDRS src/RosType.h
                         src/RosTypeCodeGenYarp.h)
 
-add_executable(yarpidl_rosmsg ${yarpidl_rosmsg_SRCS}
-                              ${yarpidl_rosmsg_HDRS}
-                              ${md5_SRCS}
-                              ${md5_HDRS})
+add_executable(yarpidl_rosmsg)
 add_executable(YARP::yarpidl_rosmsg ALIAS yarpidl_rosmsg)
+
+target_sources(yarpidl_rosmsg PRIVATE ${yarpidl_rosmsg_SRCS}
+                                      ${yarpidl_rosmsg_HDRS}
+                                      ${md5_SRCS}
+                                      ${md5_HDRS})
 
 target_include_directories(yarpidl_rosmsg SYSTEM PRIVATE "${md5_ROOT}")
 target_link_libraries(yarpidl_rosmsg PRIVATE YARP::YARP_init
-                                             YARP::YARP_OS)
+                                             YARP::YARP_os)
 if(YARP_HAS_ACE)
   target_compile_definitions(yarpidl_rosmsg PRIVATE YARP_HAS_ACE)
   target_link_libraries(yarpidl_rosmsg PRIVATE ACE::ACE)

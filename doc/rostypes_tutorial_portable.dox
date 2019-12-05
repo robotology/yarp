@@ -83,14 +83,15 @@ As usual we start with the CMake code, write your CMakeLists.txt:
 
 \code
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-add_executable(sender sender.cpp)
-target_link_libraries(sender ${YARP_LIBRARIES})
+add_executable(sender)
+target_sources(sender PRIVATE sender.cpp)
+target_include_directories(sender PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(sender PRIVATE YARP::YARP_os
+                                     YARP::YARP_init)
 
 \endcode
 Now we write the code for the sender in \em sender.cpp:
@@ -168,8 +169,10 @@ It is simple to write a receiver:
 Append the following to the CMakeLists.txt
 
 \code
-add_executable(receiver receiver.cpp)
-target_link_libraries(receiver ${YARP_LIBRARIES})
+add_executable(receiver)
+target_sources(receiver PRIVATE receiver.cpp)
+target_link_libraries(receiver YARP::YARP_os
+                               YARP::YARP_init)
 \endcode
 
 Now we write the code for the receiver in \em receiver.cpp:
@@ -250,7 +253,7 @@ Edit the file CMakeLists.txt:
 
 \code
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 
 #find YARP
 find_package(YARP REQUIRED)
@@ -279,13 +282,20 @@ include(SharedData_msg.cmake)
 include_directories(${generated_libs_dir}/include)
 
 # create the sender
-add_executable(sender sender.cpp ${headers} ${sources})
-target_link_libraries(sender ${YARP_LIBRARIES})
+add_executable(sender)
+target_sources(sender PRIVATE sender.cpp
+                              ${headers}
+                              ${sources})
+target_link_libraries(sender PRIVATE YARP::YARP_os
+                                     YARP::YARP_init)
 
 # create the receiver
-add_executable(receiver receiver.cpp ${headers} ${sources})
-target_link_libraries(receiver ${YARP_LIBRARIES})
-
+add_executable(receiver)
+target_sources(receiver PRIVATE receiver.cpp
+                                ${headers}
+                                ${sources})
+target_link_libraries(receiver PRIVATE YARP::YARP_os
+                                       YARP::YARP_init)
 \endcode
 
 Now you just have to execute CMake. The variable ALLOW_IDL_GENERATION controls

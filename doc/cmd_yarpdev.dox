@@ -107,7 +107,7 @@ $ yarpdev --device test_grabber --period 0.5 --width 640 --height 480
 \endverbatim
 was automatically expanded to:
 \verbatim
-$ yarpdev --device grabber --subdevice test_grabber --period 0.5 --width 640 --height 480
+$ yarpdev --device grabberDual --subdevice test_grabber --period 0.5 --width 640 --height 480
 \endverbatim
 
 \section yarpdev_verbose yarpdev --verbose --device DEVICENAME  ...

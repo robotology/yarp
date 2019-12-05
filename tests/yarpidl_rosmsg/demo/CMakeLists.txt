@@ -4,18 +4,18 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(demo)
 enable_testing()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 
-find_package(YARP COMPONENTS OS sig idl_tools REQUIRED)
+find_package(YARP COMPONENTS os sig idl_tools REQUIRED)
 
 include(ParseAndAddCatchTests)
 set(PARSE_CATCH_TESTS_VERBOSE OFF CACHE INTERNAL "")
@@ -44,9 +44,13 @@ yarp_idl_to_dir(INPUT_FILES ${IDL_FILES}
                 THRIFT_INCLUDE_PREFIX
                 THRIFT_NO_NAMESPACE_PREFIX)
 
-include_directories(${generated_libs_dir}/include)
-add_executable(demo_yarp_idl_to_dir main.cpp ${IDL_GEN_SRCS} ${IDL_GEN_HDRS})
-target_link_libraries(demo_yarp_idl_to_dir PRIVATE YARP::YARP_OS
+add_executable(demo_yarp_idl_to_dir)
+
+target_include_directories(demo_yarp_idl_to_dir PRIVATE ${generated_libs_dir}/include)
+target_sources(demo_yarp_idl_to_dir PRIVATE main.cpp
+                                            ${IDL_GEN_SRCS}
+                                            ${IDL_GEN_HDRS})
+target_link_libraries(demo_yarp_idl_to_dir PRIVATE YARP::YARP_os
                                                    YARP::YARP_init
                                                    YARP::YARP_sig)
 
@@ -56,8 +60,10 @@ ParseAndAddCatchTests(demo_yarp_idl_to_dir)
 # Test using yarp_add_idl
 yarp_add_idl(IDL_GEN_FILES ${IDL_FILES})
 
-add_executable(demo_yarp_add_idl main.cpp ${IDL_GEN_FILES})
-target_link_libraries(demo_yarp_add_idl PRIVATE YARP::YARP_OS
+add_executable(demo_yarp_add_idl)
+target_sources(demo_yarp_add_idl PRIVATE main.cpp
+                                         ${IDL_GEN_FILES})
+target_link_libraries(demo_yarp_add_idl PRIVATE YARP::YARP_os
                                                 YARP::YARP_init
                                                 YARP::YARP_sig)
 

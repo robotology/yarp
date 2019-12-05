@@ -8,13 +8,15 @@ if(NOT TARGET YARP::YARP_math)
   return()
 endif()
 
-add_executable(harness_math MathTest.cpp
-                            Vec2DTest.cpp
-                            svdTest.cpp
-                            RandTest.cpp)
+add_executable(harness_math)
+
+target_sources(harness_math PRIVATE MathTest.cpp
+                                    Vec2DTest.cpp
+                                    svdTest.cpp
+                                    RandTest.cpp)
 
 target_link_libraries(harness_math PRIVATE YARP_harness
-                                           YARP::YARP_OS
+                                           YARP::YARP_os
                                            YARP::YARP_sig
                                            YARP::YARP_math)
 

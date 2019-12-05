@@ -4,7 +4,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-include(YarpOSXUtilities)
+include(YarpMacOSUtilities)
+
+add_executable(yarpscope WIN32)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 
@@ -28,15 +30,15 @@ source_group("Generated Files" FILES ${yarpscope_QRC_GEN_SRCS})
 
 qtyarp_use_qml_plugin()
 
-add_executable(yarpscope WIN32 ${yarpscope_SRCS}
-                               ${yarpscope_HDRS}
-                               ${yarpscope_QRC_GEN_SRCS}
-                               ${yarpscope_QRC_FILES}
-                               ${yarpscope_QML_FILES})
+target_sources(yarpscope PRIVATE ${yarpscope_SRCS}
+                                 ${yarpscope_HDRS}
+                                 ${yarpscope_QRC_GEN_SRCS}
+                                 ${yarpscope_QRC_FILES}
+                                 ${yarpscope_QML_FILES})
 
-target_link_libraries(yarpscope Qt5::Widgets
-                                Qt5::Qml
-                                Qt5::Quick)
+target_link_libraries(yarpscope PRIVATE Qt5::Widgets
+                                        Qt5::Qml
+                                        Qt5::Quick)
 
 install(TARGETS yarpscope
         COMPONENT utilities
@@ -44,11 +46,11 @@ install(TARGETS yarpscope
 
 set_property(TARGET yarpscope PROPERTY FOLDER "Graphical User Interfaces")
 
-yarp_osx_duplicate_and_add_bundle(TARGET yarpscope
-                                  INSTALL_COMPONENT utilities
-                                  INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+yarp_macos_duplicate_and_add_bundle(TARGET yarpscope
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
-if(APPLE  AND NOT YARP_DISABLE_OSX_BUNDLES)
+if(APPLE AND NOT YARP_DISABLE_MACOS_BUNDLES)
   add_dependencies(yarpscope.app QtYARPScopePlugin)
   add_custom_command(TARGET yarpscope.app POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:QtYARPScopePlugin>"

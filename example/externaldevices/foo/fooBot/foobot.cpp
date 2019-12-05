@@ -8,7 +8,6 @@
  */
 
 #include "foobot.h"
-using namespace yarp::dev;
 
 bool foobot::open(yarp::os::Searchable& config)
 {

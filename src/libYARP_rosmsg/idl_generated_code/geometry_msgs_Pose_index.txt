@@ -1,9 +1,0 @@
-include/geometry_msgs_Point.h
-include/geometry_msgs/Point.h
-include/yarp/rosmsg/geometry_msgs/Point.h
-include/geometry_msgs_Quaternion.h
-include/geometry_msgs/Quaternion.h
-include/yarp/rosmsg/geometry_msgs/Quaternion.h
-include/geometry_msgs_Pose.h
-include/geometry_msgs/Pose.h
-include/yarp/rosmsg/geometry_msgs/Pose.h

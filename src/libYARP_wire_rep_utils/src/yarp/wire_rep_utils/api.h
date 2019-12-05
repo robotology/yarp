@@ -11,7 +11,7 @@
 
 #include <yarp/conf/api.h>
 
-// avoid dll export until libYARP_wire_rep_utils becomes dynamic again
+// avoid dll export until YARP_wire_rep_utils becomes dynamic again
 #define YARP_wire_rep_utils_API
 
 #ifndef YARP_wire_rep_utils_API

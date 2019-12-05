@@ -43,9 +43,10 @@ Then save the following as "CMakeLists.txt" within the
 same directory:
 
 \verbatim
-    cmake_minimum_required(VERSION 3.5)
+    cmake_minimum_required(VERSION 3.12)
     project(MyProject)
-    add_executable(hello main.cpp)
+    add_executable(hello)
+    target_sources(hello PRIVATE main.cpp)
 \endverbatim
 
 The first line gives a CMake version number.  CMake is evolving with
@@ -196,7 +197,7 @@ Here is a header file "namer/world.h":
 
 And here is the corresponding implementation "namer/world.cpp":
 \code
-    #include "world.h"
+    #include <namer/world.h>
     std::string getWorld() { return "Earth"; }
 \endcode
 
@@ -204,7 +205,7 @@ And we update our "main.cpp" program to make use of the "getWorld"
 function:
 \code
     #include <stdio.h>
-    #include "world.h"
+    #include <namer/world.h>
     int main() {
       printf("Hello %s\n", getWorld().c_str());
       return 0;
@@ -218,29 +219,34 @@ Now we update the "CMakeLists.txt" to tell it about the library
 and to make sure the header file can be found by both the library
 and by "main.cpp":
 \verbatim
-    cmake_minimum_required(VERSION 3.5)
+    cmake_minimum_required(VERSION 3.12)
     project(MyProject)
-    include_directories("${CMAKE_SOURCE_DIR}/namer")
-    add_library(namer namer/world.cpp namer/world.h)
-    add_executable(hello main.cpp)
-    target_link_libraries(hello namer)
+    add_library(namer)
+    target_sources(namer PRIVATE namer/world.cpp
+                                 namer/world.h)
+    target_include_directories(namer PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+    add_executable(hello)
+    target_sources(hello PRIVATE main.cpp)
+    target_link_libraries(hello PRIVATE namer)
 \endverbatim
 
-The "include_directories" command makes
-sure "world.h" can be found when included in source code.
-We supply the path relative to "CMAKE_SOURCE_DIR", which is a
+The `target_include_directories` command makes
+sure `namer/world.h` can be found when included in source code.
+We supply the path relative to `CMAKE_CURRENT_SOURCE_DIR`, which is a
 variable pointing to our source directory.
 
-The "add_library" command tells CMake that we want to make
-a library called "namer" ("namer.lib" on Windows, "libnamer.a"
+The `add_library` command tells CMake that we want to make
+a library called `namer` (`namer.lib` on Windows, `libnamer.a` or `libnamer.a`
 on Linux, ...) using the supplied source code.  Note that
 header files should be included in this list (although it
 will work without them).  There are extra commands you can
 use to organize code into different groups for presentation
 in IDEs like visual studio, but we'll skip over that.
 
-The "target_link_libraries" says that program "hello" needs
-library "namer".
+The `target_link_libraries` says that program `hello` needs
+library `namer`.
 
 And that's all!  CMake will figure out all the details needed for your
 operating system and compiler to compile the library and link it
@@ -257,10 +263,12 @@ two separate projects.
 
 Add the following CMake file for the library in "namer/CMakeLists.txt":
 \verbatim
-    cmake_minimum_required(VERSION 3.5)
+    cmake_minimum_required(VERSION 3.12)
     project(Namer)
-    include_directories("${CMAKE_SOURCE_DIR}")
-    add_library(namer world.cpp world.h)
+    add_library(namer)
+    target_sources(namer PRIVATE world.cpp world.h)
+    target_include_directories(namer PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 \endverbatim
 This is very similar to what we had before, except with our program
 pruned out.
@@ -269,12 +277,13 @@ Make a subdirectory "hello" and move "main.cpp" into it.  Then add
 "hello/CMakeLists.txt":
 
 \verbatim
-    cmake_minimum_required(VERSION 3.5)
+    cmake_minimum_required(VERSION 3.12)
     project(hello)
     find_package(Namer REQUIRED)
-    include_directories("${Namer_INCLUDE_DIRS}")
-    add_executable(hello main.cpp)
-    target_link_libraries(hello ${Namer_LIBRARIES})
+    add_executable(hello)
+    target_sources(hello PRIVATE main.cpp)
+    target_include_directories(hello PRIVATE "${Namer_INCLUDE_DIRS}")
+    target_link_libraries(hello PRIVATE ${Namer_LIBRARIES})
 \endverbatim
 
 This is also similar to what we had before, except we now use the
@@ -327,12 +336,13 @@ then a directory specified by an environment variable.
 
 Now modify "hello/CMakeLists.txt" so that it can find this script:
 \verbatim
-    cmake_minimum_required(VERSION 3.5)
+    cmake_minimum_required(VERSION 3.12)
     set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
     find_package(Namer REQUIRED)
     include_directories("${Namer_INCLUDE_DIRS}")
-    add_executable(hello main.cpp)
-    target_link_libraries(hello ${Namer_LIBRARIES})
+    add_executable(hello)
+    target_sources(hello PRIVATE main.cpp)
+    target_link_libraries(hello PRIVATE ${Namer_LIBRARIES})
 \endverbatim
 
 If we try again, configuration will still

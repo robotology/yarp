@@ -5,10 +5,12 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(bottle)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
-add_executable(bottle main.cpp)
-target_link_libraries(bottle ${YARP_LIBRARIES})
+add_executable(bottle)
+target_sources(bottle PRIVATE main.cpp)
+target_link_libraries(bottle PRIVATE YARP::YARP_os
+                                     YARP::YARP_init)

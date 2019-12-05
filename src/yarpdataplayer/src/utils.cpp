@@ -225,7 +225,7 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
 /**********************************************************/
 bool Utilities::checkLogValidity(const char *filename)
 {
-    bool check = false;
+    bool check = true;
     fstream str;
     str.open (filename, ios_base::in);//, ios::binary);
 
@@ -234,17 +234,14 @@ bool Utilities::checkLogValidity(const char *filename)
         int itr = 0;
         while( getline( str, line ) && itr < 3){
             Bottle b( line );
-            if (itr >= 0){
-                if ( b.size() < 1){
-                    check = false;
-                } else {
-                    check = true;
-                }
+            if ( b.size() == 0){
+                check = false;
+                break;
             }
             itr++;
         }
         str.close();
-        fprintf (stdout, "The size of the file is %d \n",itr );
+        fprintf (stdout, "The file contains at least %d non-empty lines\n",itr );
     }
     return check;
 }
@@ -260,15 +257,19 @@ bool Utilities::setupDataFromParts(partsData &part)
     if (str.is_open()){
         string line;
         int itr = 0;
-        while( getline( str, line ) && (itr <= 1) ){
+        while( getline( str, line ) && (itr < 3) ){
             Bottle b( line );
             if (itr == 0){
                 part.type = b.get(1).toString();
-                part.type.erase(part.type.size() -1 );      // remove the ";" character
+                part.type.erase(part.type.size() -1 );          // remove the ";" character
             }
-            if (itr == 1){
-                part.portName = b.get(1).toString();
-                LOG( "the name of the port is %s\n",part.portName.c_str());
+            else{
+                string stamp_tag = b.get(0).toString();
+                if (stamp_tag.find("Stamp") == string::npos){   // skip stamp information
+                    part.portName = b.get(1).toString();
+                    LOG( "the name of the port is %s\n",part.portName.c_str());
+                    break;
+                }
             }
             itr++;
         }

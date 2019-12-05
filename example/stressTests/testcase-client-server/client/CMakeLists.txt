@@ -5,13 +5,11 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-set(PROJECTNAME collatzClient)
+cmake_minimum_required(VERSION 3.12)
 project(collatzClient)
 
-cmake_minimum_required(VERSION 3.5)
-
 # Add Yarp to the "packages" used by this project.
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
 # Find .cpp and .h automatically. This is a bit lazy,
 # and in principle it would be better to list these files
@@ -19,16 +17,9 @@ find_package(YARP REQUIRED)
 file(GLOB folder_source src/*.cpp)
 file(GLOB folder_header include/*.h ../common/*.h)
 
-# Declare groups of source and header, makes tings pretty in VisualStudio.
-source_group("Source Files" FILES ${folder_source})
-source_group("Header Files" FILES ${folder_header})
-
 # Create everything needed to build our executable.
-include_directories(${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/../common)
-add_executable(collatzClient ${folder_source} ${folder_header})
-target_link_libraries(collatzClient ${YARP_LIBRARIES})
-
-# Make VisualStudio a bit quieter with warnings.
-if(MSVC)
-  set_target_properties(collatzClient PROPERTIES COMPILE_FLAGS /wd4996)
-endif()
+add_executable(collatzClient)
+target_sources(collatzClient PRIVATE ${folder_source} ${folder_header})
+target_include_directories(collatzClient PRIVATE ${PROJECT_SOURCE_DIR}/include
+                                                 ${PROJECT_SOURCE_DIR}/../common)
+target_link_libraries(collatzClient PRIVATE ${YARP_LIBRARIES})

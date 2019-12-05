@@ -4,9 +4,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-include(YarpOSXUtilities)
+include(YarpMacOSUtilities)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
+add_executable(yarpview WIN32)
 
 set(yarpview_SRCS main.cpp
                   qtquick2applicationviewer/qtquick2applicationviewer.cpp)
@@ -28,11 +28,13 @@ source_group("Generated Files" FILES ${yarpview_QRC_GEN_SRCS})
 
 qtyarp_use_qml_plugin()
 
-add_executable(yarpview WIN32 ${yarpview_SRCS}
-                              ${yarpview_HDRS}
-                              ${yarpview_QRC_FILES}
-                              ${yarpview_QRC_GEN_SRCS}
-                              ${yarpview_QML_FILES})
+target_sources(yarpview PRIVATE ${yarpview_SRCS}
+                                ${yarpview_HDRS}
+                                ${yarpview_QRC_FILES}
+                                ${yarpview_QRC_GEN_SRCS}
+                                ${yarpview_QML_FILES})
+
+target_include_directories(yarpview PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/qtquick2applicationviewer)
 
 target_link_libraries(yarpview Qt5::Widgets
                                Qt5::Qml
@@ -44,12 +46,12 @@ install(TARGETS yarpview
 
 set_property(TARGET yarpview PROPERTY FOLDER "Graphical User Interfaces")
 
-yarp_osx_duplicate_and_add_bundle(TARGET yarpview
-                                  APP_ICON icons/AppIcon.icns
-                                  INSTALL_COMPONENT utilities
-                                  INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+yarp_macos_duplicate_and_add_bundle(TARGET yarpview
+                                    APP_ICON icons/AppIcon.icns
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
-if(APPLE AND NOT YARP_DISABLE_OSX_BUNDLES)
+if(APPLE AND NOT YARP_DISABLE_MACOS_BUNDLES)
   add_dependencies(yarpview.app QtYARPViewPlugin)
   add_custom_command(TARGET yarpview.app POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:QtYARPViewPlugin>"

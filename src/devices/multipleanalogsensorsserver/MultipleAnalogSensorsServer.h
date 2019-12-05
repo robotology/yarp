@@ -12,7 +12,7 @@
 
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/Wrapper.h>
+#include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 
 // Thrift-generated classes

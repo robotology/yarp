@@ -300,8 +300,11 @@ yarp_idl_to_dir(INPUT_FILES firstInterface/PointD.thrift
                 SOURCES_VAR sources
                 HEADERS_VAR headers
                 INCLUDE_DIRS_VAR include_dirs)
-include_directories(${include_dirs})
-add_executable(test_program test_program.cpp ${sources} ${headers})
+add_executable(test_program)
+target_sources(test_program PRIVATE test_program.cpp
+                                    ${sources}
+                                    ${headers})
+target_include_directories(test_program PRIVATE ${include_dirs})
 ~~~
 
 \section thrift_tutorial_server Server implementation

@@ -7,13 +7,9 @@
 if(YARP_COMPILE_yarpmanager)
 
   include(YarpUseQt5)
-  include(YarpOSXUtilities)
+  include(YarpMacOSUtilities)
 
-  include_directories("${CMAKE_CURRENT_LIST_DIR}/src-builder"
-                      "${CMAKE_CURRENT_LIST_DIR}/src-manager")
-  if(MSVC)
-    include_directories(SYSTEM ${dirent_INCLUDE_DIRS})
-  endif()
+  add_executable(yarpmanager WIN32)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -128,28 +124,34 @@ if(YARP_COMPILE_yarpmanager)
   source_group("Generated Files" FILES ${yarpmanager_QRC_GEN_SRCS}
                                        ${yarpmanager_UI_GEN_SRCS})
 
-  add_executable(yarpmanager WIN32 ${yarpmanager_SRCS}
-                                   ${yarpmanager_HDRS}
-                                   ${yarpmanager_QRC_FILES}
-                                   ${yarpmanager_QRC_GEN_SRCS}
-                                   ${yarpmanager_RC_FILES}
-                                   ${yarpmanager_UI_GEN_SRCS}
-                                   ${yarpmanager_UI_FILES})
+  target_sources(yarpmanager PRIVATE ${yarpmanager_SRCS}
+                                     ${yarpmanager_HDRS}
+                                     ${yarpmanager_QRC_FILES}
+                                     ${yarpmanager_QRC_GEN_SRCS}
+                                     ${yarpmanager_RC_FILES}
+                                     ${yarpmanager_UI_GEN_SRCS}
+                                     ${yarpmanager_UI_FILES})
 
-  target_link_libraries(yarpmanager YARP::YARP_OS
-                                    YARP::YARP_init
-                                    YARP::YARP_manager
-                                    YARP::YARP_profiler
-                                    Qt5::Widgets
-                                    Qt5::Gui)
+  target_include_directories(yarpmanager PRIVATE "${CMAKE_CURRENT_LIST_DIR}/src-builder"
+                                                  "${CMAKE_CURRENT_LIST_DIR}/src-manager")
+  if(MSVC)
+    target_include_directories(yarpmanager SYSTEM PRIVATE ${dirent_INCLUDE_DIRS})
+  endif()
+
+  target_link_libraries(yarpmanager PRIVATE YARP::YARP_os
+                                            YARP::YARP_init
+                                            YARP::YARP_manager
+                                            YARP::YARP_profiler
+                                            Qt5::Widgets
+                                            Qt5::Gui)
 
   install(TARGETS yarpmanager COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   set_property(TARGET yarpmanager PROPERTY FOLDER "Graphical User Interfaces")
 
-  yarp_osx_duplicate_and_add_bundle(TARGET yarpmanager
-                                    APP_ICON Resources/AppIcon.icns
-                                    INSTALL_COMPONENT utilities
-                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  yarp_macos_duplicate_and_add_bundle(TARGET yarpmanager
+                                      APP_ICON Resources/AppIcon.icns
+                                      INSTALL_COMPONENT utilities
+                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 endif()

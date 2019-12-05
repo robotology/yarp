@@ -16,7 +16,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
-#include <yarp/dev/PreciselyTimed.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>

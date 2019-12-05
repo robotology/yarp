@@ -7,7 +7,7 @@
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include_directories(SYSTEM ${QGVCore_INCLUDE_DIRS} ${YARP_profiler_INCLUDE_DIRS})
+add_executable(yarpviz WIN32)
 
 set(yarpviz_qt_SRCS main.cpp
                     MainWindow.cpp
@@ -43,21 +43,21 @@ source_group("UI Files" FILES ${yarpviz_qt_UI_FILES})
 source_group("Generated Files" FILES ${yarpviz_qt_QRC_GEN_SRCS}
                                   ${yarpviz_qt_UI_GEN_SRCS})
 
+target_sources(yarpviz PRIVATE ${yarpviz_qt_SRCS}
+                               ${yarpviz_qt_HDRS}
+                               ${yarpviz_qt_QRC_FILES}
+                               ${yarpviz_qt_QRC_GEN_SRCS}
+                               ${yarpviz_qt_UI_GEN_SRCS}
+                               ${yarpviz_qt_UI_FILES})
 
-add_executable(yarpviz WIN32 ${yarpviz_qt_SRCS}
-                             ${yarpviz_qt_HDRS}
-                             ${yarpviz_qt_QRC_FILES}
-                             ${yarpviz_qt_QRC_GEN_SRCS}
-                             ${yarpviz_qt_UI_GEN_SRCS}
-                             ${yarpviz_qt_UI_FILES})
+target_link_libraries(yarpviz PRIVATE YARP::YARP_os
+                                      YARP::YARP_init
+                                      YARP::YARP_profiler
+                                      Qt5::Widgets
+                                      Qt5::Gui)
 
-
-target_link_libraries(yarpviz YARP::YARP_OS
-                              YARP::YARP_init
-                              YARP::YARP_profiler
-                              ${QGVCore_LIBRARIES}
-                              Qt5::Widgets
-                              Qt5::Gui)
+target_include_directories(yarpviz SYSTEM PRIVATE ${QGVCore_INCLUDE_DIRS})
+target_link_libraries(yarpviz PRIVATE ${QGVCore_LIBRARIES})
 
 install(TARGETS yarpviz
         COMPONENT utilities
@@ -66,6 +66,6 @@ install(TARGETS yarpviz
 
 set_property(TARGET yarpviz PROPERTY FOLDER "Graphical User Interfaces")
 
-yarp_osx_duplicate_and_add_bundle(TARGET yarpviz
-                                  INSTALL_COMPONENT utilities
-                                  INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+yarp_macos_duplicate_and_add_bundle(TARGET yarpviz
+                                    INSTALL_COMPONENT utilities
+                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")

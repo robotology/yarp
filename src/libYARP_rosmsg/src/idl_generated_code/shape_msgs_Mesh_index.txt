@@ -1,0 +1,9 @@
+shape_msgs_MeshTriangle.h
+shape_msgs/MeshTriangle.h
+yarp/rosmsg/shape_msgs/MeshTriangle.h
+geometry_msgs_Point.h
+geometry_msgs/Point.h
+yarp/rosmsg/geometry_msgs/Point.h
+shape_msgs_Mesh.h
+shape_msgs/Mesh.h
+yarp/rosmsg/shape_msgs/Mesh.h

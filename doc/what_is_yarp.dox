@@ -46,7 +46,7 @@ our computational needs for controlling various humanoid robots.
 
 The components of YARP can be broken down into:
 
-\li \link yarp_os libYARP_OS \endlink - interfacing with the operating system(s) to support
+\li \link yarp_os YARP_os \endlink - interfacing with the operating system(s) to support
 easy streaming of data across many threads across many
 machines. YARP is written to be OS neutral, and has been used
 on Linux, Microsoft Windows, Apple macOS and iOS, Solaris, and Android.
@@ -55,15 +55,15 @@ Communication Environment) library, which is portable across a very
 broad range of environments, and YARP inherits that
 portability. YARP is written almost entirely in C++.
 
-\li \link sig_class libYARP_sig \endlink - performing common signal processing tasks (visual,
+\li \link sig_class YARP_sig \endlink - performing common signal processing tasks (visual,
 auditory) in an open manner easily interfaced with other
 commonly used libraries, for example OpenCV.
 
-\li \link dev_all libYARP_dev \endlink - interfacing with common devices used in robotics:
+\li \link dev_all YARP_dev \endlink - interfacing with common devices used in robotics:
 framegrabbers, digital cameras, motor control boards, etc.
 
 These components are maintained separately. The core component
-is libYARP_OS, which must be available before the other
+is YARP_os, which must be available before the other
 components can be used.
 
 
@@ -76,7 +76,7 @@ in New Zealand, New York).
 
 For interfacing with hardware, we are at the mercy of which
 operating systems particular companies choose to support - few are
-enlightened enough to provide source. The libYARP_dev library is
+enlightened enough to provide source. The YARP_dev library is
 structured to interface easily with vendor-supplied code, but to
 shield the rest of your system from that code so that future
 hardware replacements are possible. Check the requirements imposed

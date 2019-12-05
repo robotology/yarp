@@ -12,14 +12,17 @@ yarp_prepare_plugin(batteryWrapper
                     DEFAULT ON)
 
 if(NOT SKIP_batteryWrapper)
+  yarp_add_plugin(yarp_batteryWrapper)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_batteryWrapper BatteryWrapper.cpp
-                                      BatteryWrapper.h)
-  target_link_libraries(yarp_batteryWrapper PRIVATE YARP::YARP_OS
+  target_sources(yarp_batteryWrapper PRIVATE BatteryWrapper.cpp
+                                             BatteryWrapper.h)
+
+  target_link_libraries(yarp_batteryWrapper PRIVATE YARP::YARP_os
                                                     YARP::YARP_sig
                                                     YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

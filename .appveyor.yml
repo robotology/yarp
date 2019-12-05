@@ -5,8 +5,8 @@ platform:
   - x64
 
 os:
- - Visual Studio 2015
  - Visual Studio 2017
+ - Visual Studio 2019
 
 configuration:
   - Release
@@ -26,10 +26,14 @@ init:
 
   # System related variables
   - cmd: set CMAKE_GENERATOR=Visual Studio
-  - cmd: if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" set CMAKE_GENERATOR=%CMAKE_GENERATOR% 14 2015
   - cmd: if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" set CMAKE_GENERATOR=%CMAKE_GENERATOR% 15 2017
-  - cmd: if "%Platform%"=="x64" set CMAKE_GENERATOR=%CMAKE_GENERATOR% Win64
+  - cmd: if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" set CMAKE_GENERATOR=%CMAKE_GENERATOR% 16 2019
   - cmd: echo CMAKE_GENERATOR=%CMAKE_GENERATOR%
+
+  - cmd: set CMAKE_PLATFORM=%Platform%
+  - cmd: echo CMAKE_PLATFORM=%CMAKE_PLATFORM%
+
+  - cmd: set TIMEOUT=%SystemRoot%\System32\timeout.exe
 
   # Dependencies found in YARP and iCub packages
   - cmd: set YARP_LATEST=2.3.70
@@ -94,7 +98,7 @@ install:
   - cmd: echo Downloading %YARP_INSTALLER%
   - cmd: appveyor DownloadFile "%YARP_INSTALLER%" -FileName "C:\downloads\yarp.exe"
   - cmd: start "" /WAIT "c:\downloads\yarp.exe" /S
-  - cmd: timeout 10
+  - cmd: "%TIMEOUT% /T 10"
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\yarp-%YARP_LATEST%" /S /Q
   - cmd: del "%ROBOTOLOGY_ROOT%\Uninstall_YARP.exe" /F /Q
   - cmd: del "%ROBOTOLOGY_ROOT%\uninstall_YARP.log" /F /Q
@@ -103,7 +107,7 @@ install:
   - cmd: echo Downloading %ICUB_INSTALLER%
   - cmd: appveyor DownloadFile "%ICUB_INSTALLER%" -FileName "C:\downloads\iCub.exe"
   - cmd: start "" /WAIT "c:\downloads\iCub.exe" /S
-  - cmd: timeout 10
+  - cmd: "%TIMEOUT% /T 10"
   - cmd: move "%ROBOTOLOGY_ROOT%\%OpenCV_DEFAULT_REL_DIR%" "%ROBOTOLOGY_ROOT%\%OpenCV_REL_DIR%"
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\icub-%ICUB_LATEST%" /S /Q
   - cmd: rmdir "%ROBOTOLOGY_ROOT%\glut-3.7.6" /S /Q
@@ -117,13 +121,13 @@ install:
   #- cmd: echo Downloading %JPEG_INSTALLER%
   #- cmd: appveyor DownloadFile "%JPEG_INSTALLER%" -FileName "C:\downloads\libjpeg-turbo.exe"
   #- cmd: start "" /WAIT "C:\downloads\libjpeg-turbo.exe" /S /D=%JPEG_DEFAULT_ROOT%
-  #- cmd: timeout 10
+  #- cmd: "%TIMEOUT% /T 10"
   #- cmd: rmdir "%JPEG_DEFAULT_ROOT%\classes" /S /Q
   #- cmd: rmdir "%JPEG_DEFAULT_ROOT%\doc" /S /Q
   #- cmd: del "%JPEG_DEFAULT_ROOT%\*.exe" /S /F /Q
 
 before_build:
-  - cmd: cmake -H%APPVEYOR_BUILD_FOLDER% -B%APPVEYOR_BUILD_FOLDER%\build -G"%CMAKE_GENERATOR%" -DCMAKE_INSTALL_PREFIX:PATH=%APPVEYOR_BUILD_FOLDER%\install -C%APPVEYOR_BUILD_FOLDER%\scripts\admin\initial-cache.cmake
+  - cmd: cmake -H%APPVEYOR_BUILD_FOLDER% -B%APPVEYOR_BUILD_FOLDER%\build -G"%CMAKE_GENERATOR%" -A%CMAKE_PLATFORM% -DCMAKE_INSTALL_PREFIX:PATH=%APPVEYOR_BUILD_FOLDER%\install -C%APPVEYOR_BUILD_FOLDER%\scripts\admin\initial-cache.cmake
 
 build:
   project: build\yarp.sln

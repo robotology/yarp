@@ -37,16 +37,18 @@ We'll see now how to setup installation rules so that after compilation the conf
 The minimal CMake file that allows to build our tutorial modules is this (this CMake file actually builds the two Resource Finder tutorials):
 
 ~~~{.cmake}
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(resourceFinder)
 
-find_package(YARP REQUIRED COMPONENTS OS)
+find_package(YARP REQUIRED COMPONENTS os)
 
-add_executable(rf_basic tutorial_rf_basic.cpp)
-target_link_libraries(rf_basic PRIVATE YARP::YARP_OS YARP::YARP_init)
+add_executable(rf_basic)
+target_sources(rf_basic PRIVATE tutorial_rf_basic.cpp)
+target_link_libraries(rf_basic PRIVATE YARP::YARP_os YARP::YARP_init)
 
-add_executable(rf_advanced tutorial_rf_advanced.cpp)
-target_link_libraries(rf_advanced PRIVATE YARP::YARP_OS YARP::YARP_init)
+add_executable(rf_advanced)
+target_sources(rf_advanced PRIVATE tutorial_rf_advanced.cpp)
+target_link_libraries(rf_advanced PRIVATE YARP::YARP_os YARP::YARP_init)
 ~~~
 
 The \c yarp_install macro is loaded automatically with \c find_package(YARP):

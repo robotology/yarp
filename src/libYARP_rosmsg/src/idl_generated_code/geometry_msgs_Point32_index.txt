@@ -1,0 +1,3 @@
+geometry_msgs_Point32.h
+geometry_msgs/Point32.h
+yarp/rosmsg/geometry_msgs/Point32.h

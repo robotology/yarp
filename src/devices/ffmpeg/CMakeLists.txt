@@ -9,7 +9,7 @@ yarp_prepare_plugin(ffmpeg_grabber
                     CATEGORY device
                     TYPE FfmpegGrabber
                     INCLUDE FfmpegGrabber.h
-                    EXTRA_CONFIG WRAPPER=grabber
+                    EXTRA_CONFIG WRAPPER=grabberDual
                     DEPENDS "YARP_HAS_FFMPEG")
 yarp_prepare_plugin(ffmpeg_writer
                     CATEGORY device
@@ -18,17 +18,20 @@ yarp_prepare_plugin(ffmpeg_writer
                     DEPENDS "YARP_HAS_FFMPEG")
 
 if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
+  yarp_add_plugin(yarp_ffmpeg)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_ffmpeg FfmpegGrabber.cpp
-                              FfmpegWriter.cpp
-                              FfmpegGrabber.h
-                              FfmpegWriter.h
-                              ffmpeg_api.h
-                              ffmpeg_api.cpp)
-  target_link_libraries(yarp_ffmpeg PRIVATE YARP::YARP_OS
+  target_sources(yarp_ffmpeg PRIVATE FfmpegGrabber.cpp
+                                     FfmpegWriter.cpp
+                                     FfmpegGrabber.h
+                                     FfmpegWriter.h
+                                     ffmpeg_api.h
+                                     ffmpeg_api.cpp)
+
+  target_link_libraries(yarp_ffmpeg PRIVATE YARP::YARP_os
                                             YARP::YARP_sig
                                             YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

@@ -12,13 +12,17 @@ yarp_prepare_plugin(human
                     EXTRA_CONFIG CODE="HUMANITY")
 
 if(NOT SKIP_human)
+  yarp_add_plugin(yarp_human)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(yarp_human HumanCarrier.h
-                             HumanStream.h
-                             HumanCarrier.cpp
-                             HumanStream.cpp)
-  target_link_libraries(yarp_human PRIVATE YARP::YARP_OS)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS)
+
+  target_sources(yarp_human PRIVATE HumanCarrier.h
+                                    HumanStream.h
+                                    HumanCarrier.cpp
+                                    HumanStream.cpp)
+
+  target_link_libraries(yarp_human PRIVATE YARP::YARP_os)
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
 
   yarp_install(TARGETS yarp_human
                EXPORT YARP_${YARP_PLUGIN_MASTER}

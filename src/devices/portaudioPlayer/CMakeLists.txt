@@ -12,14 +12,17 @@ yarp_prepare_plugin(portaudioPlayer
                     DEPENDS "YARP_HAS_PortAudio")
 
 if(NOT SKIP_portaudioPlayer)
+  yarp_add_plugin(yarp_portaudioPlayer)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_portaudioPlayer PortAudioPlayerDeviceDriver.cpp
-                                       PortAudioPlayerDeviceDriver.h)
-  target_link_libraries(yarp_portaudioPlayer PRIVATE YARP::YARP_OS
+  target_sources(yarp_portaudioPlayer PRIVATE PortAudioPlayerDeviceDriver.cpp
+                                              PortAudioPlayerDeviceDriver.h)
+
+  target_link_libraries(yarp_portaudioPlayer PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

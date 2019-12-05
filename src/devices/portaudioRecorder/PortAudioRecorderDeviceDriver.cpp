@@ -23,7 +23,6 @@
 #include <cstring>
 #include <portaudio.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/Wrapper.h>
 #include <yarp/dev/api.h>
 
 #include <yarp/os/Time.h>

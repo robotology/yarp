@@ -8,7 +8,6 @@
  */
 
 #include "bazdevice.h"
-using namespace yarp::dev;
 
 bool bazdevice::open(yarp::os::Searchable& config)
 {

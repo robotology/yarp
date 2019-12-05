@@ -5,10 +5,10 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(game_client)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
 # using ACE
 add_definitions(-D_REENTRANT)
@@ -21,11 +21,10 @@ if(WIN32 AND CYGWIN)
   add_definitions(-DCYGWIN)
 endif(WIN32 AND CYGWIN)
 
-include_directories(${CMAKE_SOURCE_DIR})
-
-add_executable(game_client main.cpp keyboard.cpp simio.cpp)
-target_link_libraries(game_client ${YARP_LIBRARIES})
+add_executable(game_client)
+target_sources(game_client PRIVATE main.cpp keyboard.cpp simio.cpp)
+target_include_directories(game_client PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(game_client PRIVATE ${YARP_LIBRARIES})
 if(NOT WIN32)
-  target_link_libraries(game_client ncurses)
+  target_link_libraries(game_client PRIVATE ncurses)
 endif(NOT WIN32)
-

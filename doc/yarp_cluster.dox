@@ -222,8 +222,8 @@ the \ref carrier_config_udp and \ref carrier_config_mcast.
 
 In case you need to fix something, the relevant source code in YARP is:
 
-- src/libYARP_OS/include/yarp/os/DgramTwoWayStream.h
-- src/libYARP_OS/src/DgramTwoWayStream.cpp
+- `src/libYARP_os/src/yarp/os/impl/DgramTwoWayStream.h`
+- `src/libYARP_os/src/yarp/os/impl/DgramTwoWayStream.cpp`
 
 We appreciate patches to these files. We only have a few networks to test
 on, and this topic can be quite network-dependent and subtle.

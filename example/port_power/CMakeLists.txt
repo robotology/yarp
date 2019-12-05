@@ -8,18 +8,18 @@
 # Make sure that YARP_DIR is set in your environment to wherever you 
 # compiled YARP.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(PortPower)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
 file(GLOB_RECURSE examples *.cpp)
-
-include_directories(${PROJECT_SOURCE_DIR})
 
 foreach(example ${examples})
   # get name without extension
   get_filename_component(example_we "${example}" NAME_WE)
-  add_executable(${example_we} ${example})
-  target_link_libraries(${example_we} ${YARP_LIBRARIES})
+  add_executable(${example_we})
+  target_sources(${example_we} PRIVATE ${example})
+  target_include_directories(${example_we} PRIVATE ${PROJECT_SOURCE_DIR})
+  target_link_libraries(${example_we} PRIVATE ${YARP_LIBRARIES})
 endforeach(example ${examples})

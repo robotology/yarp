@@ -1,0 +1,3 @@
+sensor_msgs_ChannelFloat32.h
+sensor_msgs/ChannelFloat32.h
+yarp/rosmsg/sensor_msgs/ChannelFloat32.h

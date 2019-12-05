@@ -5,36 +5,17 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.5)
-
-if(NOT ${CMAKE_VERSION} VERSION_LESS 3.8)
-  cmake_policy(SET CMP0067 NEW)
-endif()
-
-# RPATH cmake policy set to NEW
-if(NOT ${CMAKE_VERSION} VERSION_LESS 3.9)
-  cmake_policy(SET CMP0068 NEW)
-endif()
-
-# Run automoc on generated files
-if(NOT ${CMAKE_VERSION} VERSION_LESS 3.10)
-  cmake_policy(SET CMP0071 NEW)
-endif()
-
-# FindOpenGL prefers GLVND by default when available.
-if(NOT ${CMAKE_VERSION} VERSION_LESS 3.11)
-  cmake_policy(SET CMP0072 NEW)
-endif()
+cmake_minimum_required(VERSION 3.12)
 
 # UseSWIG generates now standard target names.
-if(NOT ${CMAKE_VERSION} VERSION_LESS 3.13)
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.13)
   cmake_policy(SET CMP0078 OLD)
 endif()
 
 
 # Main project
 project(YARP
-        VERSION 3.2.2
+        VERSION 3.2.102
         LANGUAGES C CXX)
 set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
 
@@ -75,13 +56,18 @@ message(STATUS "CMake modules directory: ${CMAKE_MODULE_PATH}")
 # See cmake/YarpFindDependencies.cmake.
 include(YarpFindDependencies)
 
-include(YarpSourceGroup)
-
 # Make some custom header files containing compile settings.
 add_subdirectory(cmake)
 
 # Build required 3rd party libraries
 add_subdirectory(extern)
+
+
+include(YarpInstallationHelpers)
+include(YarpDeprecatedOption)
+
+yarp_configure_external_installation(yarp WITH_PLUGINS)
+
 
 # Set up the main libraries and utilities.
 add_subdirectory(src)

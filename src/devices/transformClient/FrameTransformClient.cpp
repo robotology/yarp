@@ -208,6 +208,30 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         out.addString("'publish_transform <src> <dst> <portname> <format>: opens a port to publish transform from src to dst");
         out.addString("'unpublish_transform <portname>: closes a previously opened port to publish a transform");
         out.addString("'unpublish_all <portname>: closes a all previously opened ports to publish a transform");
+        out.addString("'is_connected'");
+        out.addString("'reconnect'");
+    }
+    else if (request == "is_connected")
+    {
+        if (isConnectedWithServer())
+        {
+            out.addString("yes");
+        }
+        else
+        {
+            out.addString("no");
+        }
+    }
+    else if (request == "reconnect")
+    {
+        if (reconnectWithServer())
+        {
+            out.addString("successful");
+        }
+        else
+        {
+            out.addString("unsuccessful");
+        }
     }
     else if (request == "list_frames")
     {
@@ -370,6 +394,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 
     m_local_name  = config.find("local").asString();
     m_remote_name = config.find("remote").asString();
+    m_streaming_connection_type = "udp";
 
     if (m_local_name == "")
     {
@@ -392,41 +417,36 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         yWarning("FrameTransformClient: using default period of %f s" , m_period);
     }
 
-    std::string local_rpcServer = m_local_name;
-    local_rpcServer += "/rpc:o";
-    std::string local_rpcUser = m_local_name;
-    local_rpcUser += "/rpc:i";
-    std::string remote_rpc = m_remote_name;
-    remote_rpc += "/rpc";
-    std::string remote_streaming_name = m_remote_name;
-    remote_streaming_name += "/transforms:o";
-    std::string local_streaming_name = m_local_name;
-    local_streaming_name += "/transforms:i";
+    m_local_rpcServer = m_local_name + "/rpc:o";
+    m_local_rpcUser = m_local_name + "/rpc:i";
+    m_remote_rpc = m_remote_name + "/rpc";
+    m_remote_streaming_name = m_remote_name + "/transforms:o";
+    m_local_streaming_name = m_local_name + "/transforms:i";
 
-    if (!m_rpc_InterfaceToUser.open(local_rpcUser))
+    if (!m_rpc_InterfaceToUser.open(m_local_rpcUser))
     {
-        yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpcUser.c_str());
+        yError("FrameTransformClient::open() error could not open rpc port %s, check network", m_local_rpcUser.c_str());
         return false;
     }
 
-    if (!m_rpc_InterfaceToServer.open(local_rpcServer))
+    if (!m_rpc_InterfaceToServer.open(m_local_rpcServer))
     {
-        yError("FrameTransformClient::open() error could not open rpc port %s, check network", local_rpcServer.c_str());
+        yError("FrameTransformClient::open() error could not open rpc port %s, check network", m_local_rpcServer.c_str());
         return false;
     }
 
-    m_transform_storage = new Transforms_client_storage(local_streaming_name);
-    bool ok = Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "udp");
+    m_transform_storage = new Transforms_client_storage(m_local_streaming_name);
+    bool ok = Network::connect(m_remote_streaming_name.c_str(), m_local_streaming_name.c_str(), m_streaming_connection_type.c_str());
     if (!ok)
     {
-        yError("FrameTransformClient::open() error could not connect to %s", remote_streaming_name.c_str());
+        yError("FrameTransformClient::open() error could not connect to %s", m_remote_streaming_name.c_str());
         return false;
     }
 
-    ok = Network::connect(local_rpcServer, remote_rpc);
+    ok = Network::connect(m_local_rpcServer, m_remote_rpc);
     if (!ok)
     {
-        yError("FrameTransformClient::open() error could not connect to %s", remote_rpc.c_str());
+        yError("FrameTransformClient::open() error could not connect to %s", m_remote_rpc.c_str());
         return false;
     }
 
@@ -925,4 +945,33 @@ void     FrameTransformClient::run()
             }
         }
     }
+}
+
+bool     FrameTransformClient::isConnectedWithServer()
+{
+    bool ok1 = Network::isConnected(m_local_rpcServer.c_str(), m_remote_rpc.c_str());
+    if (!ok1) yInfo() << m_local_rpcServer << "is not connected to: " << m_remote_rpc;
+
+    bool ok2 = Network::isConnected(m_remote_streaming_name.c_str(), m_local_streaming_name.c_str(),m_streaming_connection_type.c_str());
+    if (!ok2) yInfo() << m_remote_streaming_name << "is not connected to: " << m_local_streaming_name;
+
+    return ok1 && ok2;
+}
+
+bool     FrameTransformClient::reconnectWithServer()
+{
+    bool ok = Network::connect(m_remote_streaming_name.c_str(), m_local_streaming_name.c_str(), m_streaming_connection_type.c_str());
+    if (!ok)
+    {
+        yError("FrameTransformClient::reconnectWithServer() error could not connect to %s", m_remote_streaming_name.c_str());
+        return false;
+    }
+
+    ok = Network::connect(m_local_rpcServer, m_remote_rpc);
+    if (!ok)
+    {
+        yError("FrameTransformClient::reconnectWithServer() error could not connect to %s", m_remote_rpc.c_str());
+        return false;
+    }
+    return true;
 }

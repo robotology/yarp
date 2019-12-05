@@ -9,10 +9,16 @@ include(InstallBasicPackageFiles)
 macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
   set(_options )
   set(_oneValueArgs FIRST_TARGET
-                    STATIC_CONFIG_TEMPLATE)
+                    STATIC_CONFIG_TEMPLATE
+                    COMPONENT)
   set(_multiValueArgs DEPENDENCIES
                       PRIVATE_DEPENDENCIES)
   cmake_parse_arguments(_YIBPF "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
+
+  unset(_component)
+  if(NOT DEFINED _YIBPF_COMPONENT)
+    set(_YIBPF_COMPONENT ${_export}-dev)
+  endif()
 
   unset(_deps)
   foreach(_dep ${_YIBPF_DEPENDENCIES})
@@ -53,10 +59,12 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
                               VERSION ${YARP_VERSION}
                               COMPATIBILITY SameMajorVersion
                               EXPORT_DESTINATION "${CMAKE_BINARY_DIR}/${_export}"
+                              INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_export}"
                               DEPENDENCIES ${_deps}
                               PRIVATE_DEPENDENCIES ${_priv_deps}
                               NO_CHECK_REQUIRED_COMPONENTS_MACRO
                               NO_SET_AND_CHECK_MACRO
+                              COMPONENT ${_YIBPF_COMPONENT}
                               NAMESPACE YARP::
                               UPPERCASE_FILENAMES
                               ${_YIBPF_UNPARSED_ARGUMENTS})

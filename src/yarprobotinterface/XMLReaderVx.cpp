@@ -24,8 +24,8 @@
 #include "Types.h"
 #include "RobotInterfaceDTD.h"
 
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 
 #include <tinyxml.h>
@@ -77,7 +77,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
     std::replace(filename.begin(), filename.end(), '/', '\\');
 #endif
     std::string curr_filename = fileName;
-    std::string path = filename.substr(0, filename.rfind(yarp::os::Network::getDirectorySeparator()));
+    std::string path = filename.substr(0, filename.rfind(yarp::conf::filesystem::preferred_separator));
 
     yDebug() << "Reading file" << filename.c_str();
     auto* doc = new TiXmlDocument(filename.c_str());

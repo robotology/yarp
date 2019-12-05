@@ -12,16 +12,19 @@ yarp_prepare_plugin(map2DServer
                     DEFAULT ON)
 
 if(NOT SKIP_map2DServer)
+  yarp_add_plugin(yarp_map2DServer)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_map2DServer Map2DServer.cpp
-                                   Map2DServer.h)
-  target_link_libraries(yarp_map2DServer PRIVATE YARP::YARP_OS
+  target_sources(yarp_map2DServer PRIVATE Map2DServer.cpp
+                                          Map2DServer.h)
+
+  target_link_libraries(yarp_map2DServer PRIVATE YARP::YARP_os
                                                  YARP::YARP_sig
                                                  YARP::YARP_dev
                                                  YARP::YARP_math
                                                  YARP::YARP_rosmsg)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
                                                       YARP_math

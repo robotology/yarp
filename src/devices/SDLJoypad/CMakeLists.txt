@@ -12,16 +12,17 @@ yarp_prepare_plugin(SDLJoypad
                     DEPENDS "YARP_HAS_SDL")
 
 if(ENABLE_SDLJoypad)
+  yarp_add_plugin(yarp_SDLJoypad)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_SDLJoypad SDLJoypad.cpp
-                                 SDLJoypad.h)
+  target_sources(yarp_SDLJoypad PRIVATE SDLJoypad.cpp
+                                        SDLJoypad.h)
 
-  target_link_libraries(yarp_SDLJoypad PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_SDLJoypad PRIVATE YARP::YARP_os
                                                YARP::YARP_sig
                                                YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

@@ -1,0 +1,14 @@
+TickTime.h
+yarp/rosmsg/TickTime.h
+std_msgs_Header.h
+std_msgs/Header.h
+yarp/rosmsg/std_msgs/Header.h
+geometry_msgs_Vector3.h
+geometry_msgs/Vector3.h
+yarp/rosmsg/geometry_msgs/Vector3.h
+geometry_msgs_Inertia.h
+geometry_msgs/Inertia.h
+yarp/rosmsg/geometry_msgs/Inertia.h
+geometry_msgs_InertiaStamped.h
+geometry_msgs/InertiaStamped.h
+yarp/rosmsg/geometry_msgs/InertiaStamped.h

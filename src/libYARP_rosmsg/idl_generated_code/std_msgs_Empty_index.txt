@@ -1,3 +1,0 @@
-include/std_msgs_Empty.h
-include/std_msgs/Empty.h
-include/yarp/rosmsg/std_msgs/Empty.h

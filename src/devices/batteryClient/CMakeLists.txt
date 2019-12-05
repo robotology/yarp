@@ -11,14 +11,17 @@ yarp_prepare_plugin(batteryClient
                     DEFAULT ON)
 
 if(NOT SKIP_batteryClient)
+  yarp_add_plugin(yarp_batteryClient)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_batteryClient BatteryClient.cpp
-                                     BatteryClient.h)
-  target_link_libraries(yarp_batteryClient PRIVATE YARP::YARP_OS
+  target_sources(yarp_batteryClient PRIVATE BatteryClient.cpp
+                                            BatteryClient.h)
+
+  target_link_libraries(yarp_batteryClient PRIVATE YARP::YARP_os
                                                    YARP::YARP_sig
                                                    YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

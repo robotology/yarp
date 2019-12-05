@@ -21,6 +21,7 @@
 #include <yarp/manager/xmlapploader.h>
 #include <yarp/manager/application.h>
 #include <dirent.h>
+#include <yarp/conf/filesystem.h>
 #include <yarp/os/ResourceFinder.h>
 
 /*
@@ -788,7 +789,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         return true;
     }
 
-    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
 
     /**
      *  list available modules
@@ -1163,7 +1164,7 @@ void YConsoleManager::onCnnFailed(void* which)
 
 bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 {
-    const std::string directorySeparator = yarp::os::NetworkBase::getDirectorySeparator();
+    const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
     string strPath = szPath;
     if((strPath.rfind(directorySeparator)==string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1))

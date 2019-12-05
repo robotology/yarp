@@ -11,6 +11,8 @@ yarp_prepare_plugin(ovrheadset
                     DEPENDS "TARGET YARP::YARP_math;YARP_HAS_LibOVR;YARP_HAS_GLFW3;YARP_HAS_GLEW;YARP_HAS_OpenGL")
 
 if(NOT SKIP_ovrheadset)
+  yarp_add_plugin(yarp_ovrheadset)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   set(yarp_ovrheadset_SRCS OVRHeadset.cpp
@@ -45,14 +47,14 @@ if(NOT SKIP_ovrheadset)
 
   source_group("Texture Images" FILES ${yarp_ovrheadset_IMGS})
 
-  yarp_add_plugin(yarp_ovrheadset ${yarp_ovrheadset_SRCS}
-                                  ${yarp_ovrheadset_HDRS})
+  target_sources(yarp_ovrheadset PRIVATE ${yarp_ovrheadset_SRCS}
+                                         ${yarp_ovrheadset_HDRS})
 
-  target_link_libraries(yarp_ovrheadset PRIVATE YARP::YARP_OS
+  target_link_libraries(yarp_ovrheadset PRIVATE YARP::YARP_os
                                                 YARP::YARP_sig
                                                 YARP::YARP_dev
                                                 YARP::YARP_math)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
                                                       YARP_math)

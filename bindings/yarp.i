@@ -34,7 +34,7 @@
 %import "yarp/conf/api.h"
 %import "yarp/conf/numeric.h"
 
-// YARP_OS
+// YARP_os
 %{
 #include <yarp/os/api.h>
 %}

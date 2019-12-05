@@ -8,10 +8,11 @@
 # Make sure that YARP_DIR is set in your environment to wherever you 
 # compiled YARP.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(example)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os REQUIRED)
 
-add_executable(example main.cpp)
-target_link_libraries(example ${YARP_LIBRARIES})
+add_executable(example)
+target_sources(example PRIVATE main.cpp)
+target_link_libraries(example PRIVATE ${YARP_LIBRARIES})

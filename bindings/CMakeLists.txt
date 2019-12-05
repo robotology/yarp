@@ -5,10 +5,10 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 
 # UseSWIG generates now standard target names.
-if(NOT ${CMAKE_VERSION} VERSION_LESS 3.13)
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.13)
   cmake_policy(SET CMP0078 OLD)
 endif()
 
@@ -19,6 +19,8 @@ include(GNUInstallDirs)
 # disable all warnings for current folder and subfolders
 set(CMAKE_C_FLAGS -w)
 set(CMAKE_CXX_FLAGS -w)
+
+set(_components conf os sig dev)
 
 if(NOT YARP_VERSION)
 
@@ -35,24 +37,27 @@ if(NOT YARP_VERSION)
   endif()
 
   # Find YARP for bindings-only builds
-  find_package(YARP COMPONENTS conf OS sig dev REQUIRED)
-  foreach(_component conf OS sig dev)
-    get_property(YARP_${_component}_INCLUDE_DIRS TARGET YARP::YARP_${_component} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-    include_directories(${YARP_${_component}_INCLUDE_DIRS})
-  endforeach()
-
+  find_package(YARP COMPONENTS ${_components} REQUIRED)
   find_package(SWIG 3.0 REQUIRED)
-
   set(_nested_build 0)
 else()
-  # this is necessary for SWIG to parse yarp.i file
-  # FIXME: Find a better way to do this (using generator expressions?)
-  include_directories("${CMAKE_BINARY_DIR}/src/libYARP_conf/include")
-  include_directories("${CMAKE_SOURCE_DIR}/src/libYARP_OS/include")
-  include_directories("${CMAKE_SOURCE_DIR}/src/libYARP_sig/include")
-  include_directories("${CMAKE_SOURCE_DIR}/src/libYARP_dev/include")
   set(_nested_build 1)
 endif()
+
+# This is necessary for SWIG to parse yarp.i file
+# TODO This might no longer be necessary with some updated UseSWIG.cmake version
+foreach(_component IN LISTS _components)
+  get_property(_include_dirs TARGET YARP::YARP_${_component} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+  foreach(_dir IN LISTS _include_dirs)
+    if("${_dir}" MATCHES "\\\$<BUILD_INTERFACE:(.+)>$")
+      include_directories("${CMAKE_MATCH_1}")
+    elseif("${_dir}" MATCHES "\\\$<INSTALL_INTERFACE:(.+)>$")
+      # Nothing to do
+    else()
+      include_directories(${_dir})
+    endif()
+  endforeach()
+endforeach()
 
 include(${YARP_MODULE_DIR}/YarpPrintFeature.cmake)
 include(${YARP_MODULE_DIR}/YarpDeprecatedOption.cmake)
@@ -143,7 +148,7 @@ if(YARP_COMPILE_BINDINGS)
   # Include SWIG use file
   include(${SWIG_USE_FILE})
 
-  set(SWIG_YARP_LIBRARIES YARP::YARP_OS
+  set(SWIG_YARP_LIBRARIES YARP::YARP_os
                           YARP::YARP_sig
                           YARP::YARP_dev
                           YARP::YARP_init)

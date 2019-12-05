@@ -70,14 +70,17 @@ port and periodically write a `SharedData` object.
 As usual we start with the CMake code, write your `CMakeLists.txt`:
 
 ~~~{.cmake}
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 
-find_package(YARP REQUIRED)
+find_package(YARP COMPONENTS os sig REQUIRED)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable(sender sender.cpp SharedData.cpp)
-target_link_libraries(sender ${YARP_LIBRARIES})
+add_executable(sender)
+target_sources(sender PRIVATE sender.cpp SharedData.cpp)
+target_include_directories(sender PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(sender PRIVATE YARP::YARP_os
+                                     YARP::YARP_sig
+                                     YARP::YARP_init)
 ~~~
 
 Now we write the code for the sender in `sender.cpp`:
@@ -154,8 +157,12 @@ It is simple to write a receiver:
 Append the following to the `CMakeLists.txt`
 
 ~~~{.cmake}
-add_executable(receiver receiver.cpp SharedData.cpp)
-target_link_libraries(receiver ${YARP_LIBRARIES})
+add_executable(receiver)
+target_sources(receiver PRIVATE receiver.cpp
+                                SharedData.cpp)
+target_link_libraries(receiver PRIVATE YARP::YARP_os
+                                       YARP::YARP_sig
+                                       YARP::YARP_init)
 ~~~
 
 This is the receiver code in `receiver.cpp`:
@@ -214,15 +221,26 @@ yarp_idl_to_dir(INPUT_FILES SharedData.thrift
                 HEADERS_VAR headers
                 INCLUDE_DIRS_VAR include_dirs)
 
-include_directories(${include_dirs})
 
 # create the sender
-add_executable(sender sender.cpp ${headers} ${sources})
-target_link_libraries(sender ${YARP_LIBRARIES})
+add_executable(sender)
+target_sources(sender PRIVATE sender.cpp
+                              ${headers}
+                              ${sources})
+target_include_directories(sender PRIVATE ${include_dirs})
+target_link_libraries(sender PRIVATE YARP::YARP_os
+                                     YARP::YARP_sig
+                                     YARP::YARP_init)
 
 # create the receiver
-add_executable(receiver receiver.cpp ${headers} ${sources})
-target_link_libraries(receiver ${YARP_LIBRARIES})
+add_executable(receiver)
+target_sources(receiver PRIVATE receiver.cpp
+                                ${headers}
+                                ${sources})
+target_include_directories(receiver PRIVATE ${include_dirs})
+target_link_libraries(receiver PRIVATE YARP::YARP_os
+                                       YARP::YARP_sig
+                                       YARP::YARP_init)
 ~~~
 
 Now you just have to execute CMake.

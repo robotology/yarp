@@ -3,7 +3,7 @@
  *
  * \defgroup group_basic Example for group (group_basic)
 
-Instantiates \ref cmd_device_group "group" device implemented by yarp::dev::DeviceGroup.
+Instantiates \ref cmd_device_group "group" device implemented by DeviceGroup.
 \verbatim
 # Make a motor and camera device.
 # Put the motor device on the network.
@@ -86,6 +86,6 @@ So this is just an example
 <tr><td>name</td><td>prefix for port names</td><td>controlboard</td></tr>
 </table>
 
-\sa yarp::dev::DeviceGroup
+\sa DeviceGroup
 
  */

@@ -12,14 +12,16 @@ yarp_prepare_plugin(AudioPlayerWrapper
                     DEFAULT ON)
 
 if(NOT SKIP_AudioPlayerWrapper)
+  yarp_add_plugin(yarp_AudioPlayerWrapper)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_AudioPlayerWrapper AudioPlayerWrapper.cpp
-                                          AudioPlayerWrapper.h)
-  target_link_libraries(yarp_AudioPlayerWrapper PRIVATE YARP::YARP_OS
+  target_sources(yarp_AudioPlayerWrapper PRIVATE AudioPlayerWrapper.cpp
+                                                 AudioPlayerWrapper.h)
+  target_link_libraries(yarp_AudioPlayerWrapper PRIVATE YARP::YARP_os
                                                         YARP::YARP_sig
                                                         YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

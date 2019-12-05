@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <yarp/os/Time.h>
-#include <yarp/dev/Wrapper.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/PolyDriver.h>
@@ -58,7 +57,7 @@ int main(int argc, char *argv[])
     int depthImageHeight = RGBDInterface->getDepthHeight();
     int depthImageWidth  = RGBDInterface->getDepthWidth();
 
-    Time::delay(0.1);			// wait for first data to arrive
+    Time::delay(0.1); // wait for first data to arrive
     FlexImage rgbImage;
     ImageOf<PixelFloat> depthImage;
     bool gotImage = RGBDInterface->getImages(rgbImage, depthImage);

@@ -1,0 +1,3 @@
+geometry_msgs_Quaternion.h
+geometry_msgs/Quaternion.h
+yarp/rosmsg/geometry_msgs/Quaternion.h

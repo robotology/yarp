@@ -1,2 +1,0 @@
-include/yarp/dev/impl/jointData.h
-src/jointData.cpp

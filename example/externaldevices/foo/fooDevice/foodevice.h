@@ -12,17 +12,16 @@
 
 #include <yarp/dev/DeviceDriver.h>
 
-namespace yarp {
-    namespace dev {
-      class foodevice;
-    }
-}
-
-class yarp::dev::foodevice : public DeviceDriver
+class foodevice : public yarp::dev::DeviceDriver
 {
-private:
 public:
-    foodevice() {}
+    foodevice() = default;
+    foodevice(const foodevice&) = delete;
+    foodevice(foodevice&&) = delete;
+    foodevice& operator=(const foodevice&) = delete;
+    foodevice& operator=(foodevice&&) = delete;
+    ~foodevice() override = default;
+
     virtual bool open(yarp::os::Searchable& config);
 };
 

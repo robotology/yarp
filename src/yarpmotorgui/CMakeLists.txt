@@ -7,7 +7,9 @@
 if(YARP_COMPILE_yarpmotorgui)
 
   include(YarpUseQt5)
-  include(YarpOSXUtilities)
+  include(YarpMacOSUtilities)
+
+  add_executable(yarpmotorgui WIN32)
 
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
@@ -54,27 +56,27 @@ if(YARP_COMPILE_yarpmotorgui)
   source_group("Generated Files" FILES ${yarpmotorgui_QRC_GEN_SRCS}
                                        ${yarpmotorgui_UI_GEN_SRCS})
 
-  add_executable(yarpmotorgui WIN32  ${yarpmotorgui_SRCS}
-                                     ${yarpmotorgui_HDRS}
-                                     ${yarpmotorgui_QRC_FILES}
-                                     ${yarpmotorgui_QRC_GEN_SRCS}
-                                     ${yarpmotorgui_UI_FILES}
-                                     ${yarpmotorgui_UI_GEN_SRCS})
+  target_sources(yarpmotorgui PRIVATE ${yarpmotorgui_SRCS}
+                                      ${yarpmotorgui_HDRS}
+                                      ${yarpmotorgui_QRC_FILES}
+                                      ${yarpmotorgui_QRC_GEN_SRCS}
+                                      ${yarpmotorgui_UI_FILES}
+                                      ${yarpmotorgui_UI_GEN_SRCS})
 
-  target_link_libraries(yarpmotorgui YARP::YARP_OS
-                                     YARP::YARP_init
-                                     YARP::YARP_sig
-                                     YARP::YARP_dev
-                                     Qt5::Widgets
-                                     Qt5::Gui)
+  target_link_libraries(yarpmotorgui PRIVATE YARP::YARP_os
+                                             YARP::YARP_init
+                                             YARP::YARP_sig
+                                             YARP::YARP_dev
+                                             Qt5::Widgets
+                                             Qt5::Gui)
 
   install(TARGETS yarpmotorgui COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 
   set_property(TARGET yarpmotorgui PROPERTY FOLDER "Graphical User Interfaces")
 
-  yarp_osx_duplicate_and_add_bundle(TARGET yarpmotorgui
-                                    INSTALL_COMPONENT utilities
-                                    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  yarp_macos_duplicate_and_add_bundle(TARGET yarpmotorgui
+                                      INSTALL_COMPONENT utilities
+                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
   yarp_install(FILES yarpmotorgui.xml
                DESTINATION ${YARP_MODULES_INSTALL_DIR})

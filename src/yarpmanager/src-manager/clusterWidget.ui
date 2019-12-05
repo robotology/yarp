@@ -68,7 +68,7 @@
             </size>
            </property>
            <property name="text">
-            <string>Cluster Managerment Window</string>
+            <string>Cluster Management Window</string>
            </property>
           </widget>
          </item>

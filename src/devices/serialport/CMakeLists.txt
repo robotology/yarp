@@ -13,13 +13,16 @@ yarp_prepare_plugin(serialport
                     DEPENDS "YARP_HAS_ACE")
 
 if(NOT SKIP_serialport)
+  yarp_add_plugin(yarp_serialport)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  yarp_add_plugin(yarp_serialport SerialDeviceDriver.cpp
-                                  SerialDeviceDriver.h)
-  target_link_libraries(yarp_serialport PRIVATE YARP::YARP_OS
+  target_sources(yarp_serialport PRIVATE SerialDeviceDriver.cpp
+                                         SerialDeviceDriver.h)
+
+  target_link_libraries(yarp_serialport PRIVATE YARP::YARP_os
                                                 YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_dev)
 
   target_compile_definitions(yarp_serialport PRIVATE YARP_HAS_ACE)
@@ -37,6 +40,3 @@ if(NOT SKIP_serialport)
 
   set_property(TARGET yarp_serialport PROPERTY FOLDER "Plugins/Device")
 endif()
-
-include(YarpRemoveFile)
-yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/serial.ini") # YARP_DEPRECATED since YARP 3.0

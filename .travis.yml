@@ -118,7 +118,7 @@ git:
 
 .export_cmake_options_skip_ace_cmd_definition: &export_cmake_options_skip_ace_cmd |-
   # export_cmake_options_skip_ace_cmd_definition
-  export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE:BOOL=ON -DYARP_TEST_HEAP:BOOL=ON"
+  export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DSKIP_ACE:BOOL=ON"
 
 .export_cmake_options_skip_math_cmd_definition: &export_cmake_options_skip_math_cmd |-
   # export_cmake_options_skip_math_cmd
@@ -457,48 +457,6 @@ matrix:
 
     - stage: cmake
       <<: *cmake_configure_template
-      name: "Configure using CMake 3.5"
-      env:
-        - TRAVIS_CMAKE_VERSION="3.5"
-
-    - stage: cmake
-      <<: *cmake_configure_template
-      name: "Configure using CMake 3.6"
-      env:
-        - TRAVIS_CMAKE_VERSION="3.6"
-
-    - stage: cmake
-      <<: *cmake_configure_template
-      name: "Configure using CMake 3.7"
-      env:
-        - TRAVIS_CMAKE_VERSION="3.7"
-
-    - stage: cmake
-      <<: *cmake_configure_template
-      name: "Configure using CMake 3.8"
-      env:
-        - TRAVIS_CMAKE_VERSION="3.8"
-
-    - stage: cmake
-      <<: *cmake_configure_template
-      name: "Configure using CMake 3.9"
-      env:
-        - TRAVIS_CMAKE_VERSION="3.9"
-
-    - stage: cmake
-      <<: *cmake_configure_template
-      name: "Configure using CMake 3.10"
-      env:
-        - TRAVIS_CMAKE_VERSION="3.10"
-
-    - stage: cmake
-      <<: *cmake_configure_template
-      name: "Configure using CMake 3.11"
-      env:
-        - TRAVIS_CMAKE_VERSION="3.11"
-
-    - stage: cmake
-      <<: *cmake_configure_template
       name: "Configure using CMake 3.12"
       env:
         - TRAVIS_CMAKE_VERSION="3.12"
@@ -520,6 +478,12 @@ matrix:
       name: "Configure using CMake 3.15"
       env:
         - TRAVIS_CMAKE_VERSION="3.15"
+
+    - stage: cmake
+      <<: *cmake_configure_template
+      name: "Configure using CMake 3.16"
+      env:
+        - TRAVIS_CMAKE_VERSION="3.16"
 
     - stage: test
       <<: *linux_gcc_build_template

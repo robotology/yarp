@@ -669,7 +669,7 @@ void t_yarp_generator::init_generator()
     // Each enum produces a .cpp and a .h files
     for (const auto& enum_ : program_->get_enums()) {
         f_out_index_ << get_include_prefix(program_) << enum_->get_name() << ".h\n";
-        f_out_index_ << enum_->get_name() << ".cpp\n";
+        f_out_index_ << get_include_prefix(program_) << enum_->get_name() << ".cpp\n";
     }
 
     // Each struct and exception produces a .h and a .cpp files unless
@@ -677,14 +677,14 @@ void t_yarp_generator::init_generator()
     for (const auto& obj : program_->get_objects()) {
         if (obj->annotations_.find("yarp.includefile") == obj->annotations_.end()) {
             f_out_index_ << get_include_prefix(program_) << obj->get_name() << ".h\n";
-            f_out_index_ << obj->get_name() << ".cpp\n";
+            f_out_index_ << get_include_prefix(program_) << obj->get_name() << ".cpp\n";
         }
     }
 
     // Each service produces a .h and a .cpp files
     for (const auto& service : program_->get_services()) {
         f_out_index_ << get_include_prefix(program_) << service->get_name() << ".h\n";
-        f_out_index_ << service->get_name() << ".cpp\n";
+        f_out_index_ << get_include_prefix(program_) << service->get_name() << ".cpp\n";
     }
 
     f_out_index_.close();
@@ -1622,7 +1622,7 @@ void t_yarp_generator::generate_enum(t_enum* tenum)
     THRIFT_DEBUG_COMMENT(f_h_);
 
     // Open cpp files
-    std::string f_cpp_name = get_out_dir() + name + ".cpp";
+    std::string f_cpp_name = get_out_dir() + get_include_prefix(program_) + name + ".cpp";
     ofstream_with_content_based_conditional_update f_cpp_;
     f_cpp_.open(f_cpp_name);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -1846,7 +1846,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     f_h_.open(f_header_name);
 
     // Open cpp file
-    std::string f_cpp_name = get_out_dir() + name + ".cpp";
+    std::string f_cpp_name = get_out_dir() + get_include_prefix(program_) + name + ".cpp";
     ofstream_with_content_based_conditional_update f_cpp_;
     f_cpp_.open(f_cpp_name);
 
@@ -3230,7 +3230,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
     f_h_.open(f_header_name);
 
     // Open cpp files
-    std::string f_cpp_name = get_out_dir() + service_name + ".cpp";
+    std::string f_cpp_name = get_out_dir() + get_include_prefix(program_) + service_name + ".cpp";
     ofstream_with_content_based_conditional_update f_cpp_;
     f_cpp_.open(f_cpp_name);
 

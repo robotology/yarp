@@ -10,13 +10,17 @@ yarp_prepare_plugin(laserHokuyo
                     INCLUDE laserHokuyo.h)
 
 if(NOT SKIP_laserHokuyo)
+  yarp_add_plugin(laserHokuyo)
+
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  yarp_add_plugin(laserHokuyo laserHokuyo.h
-                              laserHokuyo.cpp)
-  target_link_libraries(laserHokuyo PRIVATE YARP::YARP_OS
+
+  target_sources(laserHokuyo PRIVATE laserHokuyo.h
+                                     laserHokuyo.cpp)
+
+  target_link_libraries(laserHokuyo PRIVATE YARP::YARP_os
                                             YARP::YARP_sig
                                             YARP::YARP_dev)
-  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_OS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 

@@ -13,7 +13,7 @@ set(YARP_BINDINGS "${CMAKE_SOURCE_DIR}/bindings")
 set(YARP_CMAKECONFIG_DIR "${CMAKE_BINARY_DIR}")
 set(YARP_YCM_MODULE_DIR "${CMAKE_SOURCE_DIR}/extern/ycm/ycm-${YCM_REQUIRED_VERSION}")
 
-set(YARP_DEFAULT_FIND_COMPONENTS OS
+set(YARP_DEFAULT_FIND_COMPONENTS os
                                  sig
                                  dev)
 if(TARGET YARP::YARP_math)
@@ -54,14 +54,7 @@ write_basic_package_version_file(${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake
                                  VERSION ${YARP_VERSION_SHORT}
                                  COMPATIBILITY SameMajorVersion)
 
-if(NOT CMAKE_MINIMUM_REQUIRED_VERSION VERSION_LESS 3.7)
-  message(AUTHOR_WARNING "Searching for packages in \"lib/cmake\" is supported on Windows since CMake 3.7. You can remove this check")
-endif()
-if(WIN32)
-  set(YARP_CMAKE_DESTINATION CMake)
-else()
-  set(YARP_CMAKE_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/YARP")
-endif()
+set(YARP_CMAKE_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/YARP")
 
 # Save variables for later
 yarp_backup_variable(YARP_BINDINGS)

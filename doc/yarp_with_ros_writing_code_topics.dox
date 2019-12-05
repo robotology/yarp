@@ -32,10 +32,12 @@ Type the following code in a file, e.g. listener.cpp:
 An example CMakeLists.txt file to compile this code would be:
 
 ~~~{.cpp}
-    cmake_minimum_required(VERSION 3.5)
-    find_package(YARP REQUIRED)
-    add_executable(listener listener.cpp)
-    target_link_libraries(listener ${YARP_LIBRARIES})
+    cmake_minimum_required(VERSION 3.12)
+    find_package(YARP COMPONENTS os REQUIRED)
+    add_executable(listener)
+    target_sources(listener PRIVATE listener.cpp)
+    target_link_libraries(listener PRIVATE YARP::YARP_os
+                                           YARP::YARP_init)
 ~~~
 
 You can now publish the string "Hello World" to the topic /chatter using ROS:
@@ -77,10 +79,12 @@ in a file, e.g. talker.cpp:
 an example `CMakeLists.txt` file to compile this code would be:
 
 ~~~{.cmake}
-    cmake_minimum_required(VERSION 3.5)
-    find_package(YARP REQUIRED)
-    add_executable(talker talker.cpp)
-    target_link_libraries(talker ${YARP_LIBRARIES})
+    cmake_minimum_required(VERSION 3.12)
+    find_package(YARP COMPONENTS os REQUIRED)
+    add_executable(talker)
+    target_sources(talker PRIVATE talker.cpp)
+    target_link_libraries(talker PRIVATE YARP::YARP_os
+                                         YARP::YARP_init)
 ~~~
 
 We can run this code on a terminal:

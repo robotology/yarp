@@ -11,20 +11,22 @@ cmake_dependent_option(CREATE_YARPFS "Compile yarpfs executable" FALSE
 mark_as_advanced(CREATE_YARPFS)
 
 if(CREATE_YARPFS)
-  # Find Fuse
-  find_package(Fuse REQUIRED)
-  add_definitions(${Fuse_DEFINITIONS})
-  include_directories(${Fuse_INCLUDE_DIRS})
+  add_executable(yarpfs)
 
   set(yarpfs_SRCS yarpfs.cpp
                   link.cpp)
   set(yarpfs_HDRS yarpfns.h
                   yarputils.h)
 
-  add_executable(yarpfs ${yarpfs_SRCS} ${yarpfs_HDRS})
-  target_link_libraries(yarpfs YARP::YARP_OS
-                               YARP::YARP_init
-                               ${Fuse_LIBRARIES})
+  target_sources(yarpfs PRIVATE ${yarpfs_SRCS}
+                                ${yarpfs_HDRS})
+
+  target_link_libraries(yarpfs PRIVATE YARP::YARP_os
+                                       YARP::YARP_init)
+
+  target_compile_definitions(yarpfs PRIVATE ${Fuse_DEFINITIONS})
+  target_include_directories(yarpfs PRIVATE ${Fuse_INCLUDE_DIRS})
+  target_link_libraries(yarpfs PRIVATE ${Fuse_LIBRARIES})
 
   set_property(TARGET yarpfs PROPERTY FOLDER "Unsupported")
 endif()
