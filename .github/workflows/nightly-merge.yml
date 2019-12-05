@@ -5,7 +5,7 @@ on:
     - cron:  '0 0 * * *'
 
 jobs:
-  nightly-merge-devel:
+  nightly-merge-yarp-3-3:
 
     runs-on: ubuntu-latest
 
