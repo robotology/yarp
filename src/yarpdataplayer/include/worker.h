@@ -131,6 +131,7 @@ protected:
 public:
     int                     numThreads;
     double                  timePassed, initTime, virtualTime;
+    double                  pauseStart{0.0}, pauseEnd{0.0};
     bool                    stepfromCmd;
 
     using Moment = std::chrono::time_point<std::chrono::high_resolution_clock>;
