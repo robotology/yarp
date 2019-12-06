@@ -450,12 +450,15 @@ void MasterThread::backward(int steps)
 /**********************************************************/
 void MasterThread::pause()
 {
+    pauseStart = yarp::os::Time::now();
     this->suspend();
 }
 
 /**********************************************************/
 void MasterThread::resume()
 {
+    pauseEnd = yarp::os::Time::now();
+    virtualTime -= pauseEnd - pauseStart;
     PeriodicThread::resume();
 }
 
