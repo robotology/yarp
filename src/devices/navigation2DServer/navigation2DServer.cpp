@@ -107,6 +107,7 @@ bool navigation2DServer::open(Searchable& config)
     }
     else
     {
+        local_name = config.find("name").asString();
     }
     m_rpcPortName = local_name + "/rpc";
     m_streamingPortName = local_name + "/streaming:o";

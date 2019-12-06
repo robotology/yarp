@@ -45,8 +45,8 @@ bool Map2DPath::operator==(const Map2DPath& r) const
 std::string Map2DPath::toString() const
 {
     std::ostringstream stringStream;
-    stringStream.precision(-1);
-    stringStream.width(-1);
+    stringStream.precision(2);
+    //stringStream.width(0);
     for (size_t i = 0; i < waypoints.size(); i++)
     {
         stringStream << " waypoint " << i << "(" << waypoints[i].map_id << " " << waypoints[i].x << "," << waypoints[i].y << "," << waypoints[i].theta << ")";

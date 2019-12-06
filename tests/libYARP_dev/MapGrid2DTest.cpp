@@ -28,11 +28,13 @@ static void ReadMapfromString(Nav2D::MapGrid2D& m, std::string s)
     {
         if (s.at(i) == '\n') { cell.x = 0; cell.y++; continue; }
         yarp::dev::Nav2D::MapGrid2D::map_flags flag;
-        if (s.at(i) == '*') flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_UNKNOWN;
-        else if (s.at(i) == '.') flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_FREE;
-        else if (s.at(i) == '#') flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL;
-        else flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_UNKNOWN;
+        double occupancy = 0;
+        if (s.at(i) == '*')      { flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_UNKNOWN; occupancy = 1; }
+        else if (s.at(i) == '.') { flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_FREE; occupancy = 0; }
+        else if (s.at(i) == '#') { flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL;  occupancy = 1; }
+        else                     { flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_UNKNOWN; occupancy = 1; }
         m.setMapFlag(cell, flag);
+        m.setOccupancyData(cell, occupancy);
         cell.x++;
     }
 }
@@ -67,6 +69,12 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             "*#........#\n"\
             "*##########\n");
         ReadMapfromString(test_map, mapstring);
+
+        double occ_test;
+        test_map.getOccupancyData(XYCell(0, 0), occ_test); CHECK(occ_test == 1);
+        test_map.getOccupancyData(XYCell(1, 1), occ_test); CHECK(occ_test == 1);
+        test_map.getOccupancyData(XYCell(2, 2), occ_test); CHECK(occ_test == 0);
+        test_map.getOccupancyData(XYCell(3, 3), occ_test); CHECK(occ_test == 0);
 
         Nav2D::MapGrid2D test_cnvutils_map1 = test_map;
         yarp::dev::Nav2D::XYCell cell1;
@@ -406,6 +414,8 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             ret = imap->getPath("path_new", path);      CHECK(ret);
             ret = imap->getLocation("loc", loc);       CHECK(ret == false);
             ret = imap->getLocation("loc_new", loc);    CHECK(ret);
+
+            path.toString();
 
             //final cleanup, already tested        
             ret = imap->clearAllLocations();  CHECK(ret);
