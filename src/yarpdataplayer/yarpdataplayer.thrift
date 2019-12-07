@@ -54,6 +54,13 @@ service yarpdataplayer_IDL
   */
   bool load(1:string path);
 
+
+  /**
+   * Get slider percentage
+   * @return i32 percentage
+   */
+  i32 getSliderPercentage();
+
   /**
   * Plays the dataSets
   * @return true/false on success/failure

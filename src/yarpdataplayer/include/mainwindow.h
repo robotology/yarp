@@ -107,6 +107,10 @@ public:
      */
     bool load(const std::string &path) override;
     /**
+     * function that returns slider percentage
+     */
+    int  getSliderPercentage() override;
+    /**
      * function that handles an IDL message - play
      */
     bool play() override;
@@ -225,7 +229,7 @@ signals:
     void internalStep(yarp::os::Bottle *reply);
     void internalSetFrame(const std::string &name, const int frameNum);
     void internalGetFrame(const std::string &name, int *frame);
-
+    void internalGetSliderPercentage(int * percentage);
 
 private slots:
     void onInternalQuit();
@@ -258,6 +262,7 @@ private slots:
     void onInternalStep(yarp::os::Bottle *reply);
     void onInternalSetFrame(const std::string &name, const int frameNum);
     void onInternalGetFrame(const std::string &name, int *frame);
+    void onInternalGetSliderPercentage(int *frame);
 
 };
 

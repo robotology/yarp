@@ -59,6 +59,12 @@ public:
     virtual bool load(const std::string& path);
 
     /**
+     * Get slider percentage
+     * @return i32 percentage
+     */
+    virtual std::int32_t getSliderPercentage();
+
+    /**
      * Plays the dataSets
      * @return true/false on success/failure
      */

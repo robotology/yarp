@@ -210,6 +210,49 @@ bool yarpdataplayer_IDL_load_helper::read(yarp::os::ConnectionReader& connection
     return true;
 }
 
+class yarpdataplayer_IDL_getSliderPercentage_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit yarpdataplayer_IDL_getSliderPercentage_helper();
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static std::int32_t s_return_helper;
+};
+
+thread_local std::int32_t yarpdataplayer_IDL_getSliderPercentage_helper::s_return_helper = {};
+
+yarpdataplayer_IDL_getSliderPercentage_helper::yarpdataplayer_IDL_getSliderPercentage_helper()
+{
+    s_return_helper = {};
+}
+
+bool yarpdataplayer_IDL_getSliderPercentage_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeTag("getSliderPercentage", 1, 1)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_IDL_getSliderPercentage_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readI32(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
 class yarpdataplayer_IDL_play_helper :
         public yarp::os::Portable
 {
@@ -428,6 +471,16 @@ bool yarpdataplayer_IDL::load(const std::string& path)
     return ok ? yarpdataplayer_IDL_load_helper::s_return_helper : bool{};
 }
 
+std::int32_t yarpdataplayer_IDL::getSliderPercentage()
+{
+    yarpdataplayer_IDL_getSliderPercentage_helper helper{};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "std::int32_t yarpdataplayer_IDL::getSliderPercentage()");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? yarpdataplayer_IDL_getSliderPercentage_helper::s_return_helper : std::int32_t{};
+}
+
 bool yarpdataplayer_IDL::play()
 {
     yarpdataplayer_IDL_play_helper helper{};
@@ -479,6 +532,7 @@ std::vector<std::string> yarpdataplayer_IDL::help(const std::string& functionNam
         helpString.emplace_back("setFrame");
         helpString.emplace_back("getFrame");
         helpString.emplace_back("load");
+        helpString.emplace_back("getSliderPercentage");
         helpString.emplace_back("play");
         helpString.emplace_back("pause");
         helpString.emplace_back("stop");
@@ -510,6 +564,11 @@ std::vector<std::string> yarpdataplayer_IDL::help(const std::string& functionNam
             helpString.emplace_back("bool load(const std::string& path) ");
             helpString.emplace_back("Loads a dataset from a path ");
             helpString.emplace_back("@return true/false on success/failure ");
+        }
+        if (functionName == "getSliderPercentage") {
+            helpString.emplace_back("std::int32_t getSliderPercentage() ");
+            helpString.emplace_back("Get slider percentage ");
+            helpString.emplace_back("@return i32 percentage ");
         }
         if (functionName == "play") {
             helpString.emplace_back("bool play() ");
@@ -630,6 +689,20 @@ bool yarpdataplayer_IDL::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
                 if (!writer.writeBool(yarpdataplayer_IDL_load_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "getSliderPercentage") {
+            yarpdataplayer_IDL_getSliderPercentage_helper::s_return_helper = getSliderPercentage();
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeI32(yarpdataplayer_IDL_getSliderPercentage_helper::s_return_helper)) {
                     return false;
                 }
             }
