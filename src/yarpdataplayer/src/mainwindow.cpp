@@ -759,14 +759,14 @@ void MainWindow::onMenuPlayBackPlay()
             }
         }
 
-        if ( utilities->masterThread->isRunning() ) {
+        if ( utilities->masterThread->isSuspended() ) {
             LOG("asking the thread to resume\n");
 
             for (int i=0; i < subDirCnt; i++)
                 utilities->partDetails[i].worker->resetTime();
 
             utilities->masterThread->resume();
-        } else {
+        } else if (!utilities->masterThread->isRunning()) {
             LOG("asking the thread to start\n");
             LOG("initializing the workers...\n");
 
