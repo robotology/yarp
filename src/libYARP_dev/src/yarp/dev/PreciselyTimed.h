@@ -9,6 +9,8 @@
 #ifndef YARP_DEV_PRECISELYTIMED_H
 #define YARP_DEV_PRECISELYTIMED_H
 
+#include <yarp/conf/system.h>
+
 YARP_COMPILER_WARNING("<yarp/dev/PreciselyTimed.h> file is deprecated. Use <yarp/dev/IPreciselyTimed.h> instead")
 #include <yarp/dev/IPreciselyTimed.h>
 
