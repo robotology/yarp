@@ -9,6 +9,8 @@
 #ifndef YARP_DEV_GENERICSENSORINTERFACES_H
 #define YARP_DEV_GENERICSENSORINTERFACES_H
 
+#include <yarp/conf/system.h>
+
 YARP_COMPILER_WARNING("<yarp/dev/GenericSensorInterfaces.h> file is deprecated. Use <yarp/dev/IGenericSensor.h> instead")
 #include <yarp/dev/IGenericSensor.h>
 

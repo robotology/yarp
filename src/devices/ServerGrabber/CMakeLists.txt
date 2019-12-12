@@ -8,6 +8,7 @@ yarp_prepare_plugin(grabberDual
                     CATEGORY device
                     TYPE ServerGrabber
                     INCLUDE ServerGrabber.h
+                    EXTRA_CONFIG WRAPPER=grabberDual
                     DEFAULT ON)
 
 if(NOT SKIP_grabberDual)
