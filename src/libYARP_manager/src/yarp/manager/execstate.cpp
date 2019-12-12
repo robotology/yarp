@@ -205,7 +205,7 @@ void Ready::startModule()
             if(!checkResources(false)) {
                 OSTRINGSTREAM msg;
                 msg<<"cannot run "<<executable->getCommand()<<" on "<<executable->getHost();
-                msg<<" : Timeout while waiting for some resources.";
+                msg<<" : Timeout while waiting for "<<executable->getHost();
                 logger->addError(msg);
 
                 castEvent(EventFactory::startModuleEventFailed);
