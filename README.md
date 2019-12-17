@@ -22,8 +22,7 @@ used on everything from humanoids to embedded devices.
 Documentation
 -------------
 
-[![YARP documentation (master)](https://img.shields.io/badge/[master]_Documentation-yarp.it-19c2d8.svg)](http://www.yarp.it/)
-[![YARP documentation (devel)](https://img.shields.io/badge/[devel]_Documentation-yarp.it-19c2d8.svg)](http://www.yarp.it/devel/)
+[![YARP documentation](https://img.shields.io/badge/Documentation-yarp.it-19c2d8.svg)](http://www.yarp.it/)
 
 
 Installation
@@ -66,7 +65,7 @@ There's a comprehensive list of tutorials here:
 License
 -------
 
-[![License](https://img.shields.io/badge/license-BSD%20%2B%20others-19c2d8.svg)](https://github.com/robotology/yarp/blob/devel/LICENSE)
+[![License](https://img.shields.io/badge/license-BSD%20%2B%20others-19c2d8.svg)](https://github.com/robotology/yarp/blob/master/LICENSE)
 
 Material included in YARP is Copyright of Istituto Italiano di Tecnologia (IIT),
 RobotCub Consortium and other contributors.
@@ -80,11 +79,8 @@ See the file COPYING and LICENSE files for details.
 CI Status
 ---------
 
-[![Build Status (Linux/macOS) (master branch)](https://img.shields.io/travis/robotology/yarp/master.svg?logo=travis&label=[master]%20build%20(Linux/macOS))](https://travis-ci.org/robotology/yarp)
-[![Build Status (Linux/macOS) (devel branch)](https://img.shields.io/travis/robotology/yarp/devel.svg?logo=travis&label=[devel]%20build%20(Linux/macOS))](https://travis-ci.org/robotology/yarp)
-
-[![Build status (Windows) (master branch)](https://img.shields.io/appveyor/ci/robotology/yarp/master.svg?logo=appveyor&label=[master]%20build%20(Windows))](https://ci.appveyor.com/project/robotology/yarp)
-[![Build status (Windows) (devel branch)](https://img.shields.io/appveyor/ci/robotology/yarp/devel.svg?logo=appveyor&label=[devel]%20build%20(Windows))](https://ci.appveyor.com/project/robotology/yarp)
+[![Build Status (Linux/macOS)](https://img.shields.io/travis/robotology/yarp/master.svg?logo=travis&label=build%20(Linux/macOS))](https://travis-ci.org/robotology/yarp)
+[![Build status (Windows)](https://img.shields.io/appveyor/ci/robotology/yarp/master.svg?logo=appveyor&label=build%20(Windows))](https://ci.appveyor.com/project/robotology/yarp)
 
 and [more](http://dashboard.icub.org/index.php?project=YARP)
 
@@ -93,8 +89,7 @@ Stats
 -----
 
 [![Github commits (since latest release)](https://img.shields.io/github/commits-since/robotology/yarp/latest.svg)](https://github.com/robotology/yarp)
-[![GitHub last commit (master branch)](https://img.shields.io/github/last-commit/robotology/yarp/master.svg?label=[master]%20last%20commit)](https://github.com/robotology/yarp)
-[![GitHub last commit (devel branch)](https://img.shields.io/github/last-commit/robotology/yarp/devel.svg?label=[devel]%20last%20commit)](https://github.com/robotology/yarp)
+[![GitHub last commit](https://img.shields.io/github/last-commit/robotology/yarp/master.svg?label=last%20commit)](https://github.com/robotology/yarp)
 
 [![GitHub commit activity the past week, 4 weeks, year](https://img.shields.io/github/commit-activity/y/robotology/yarp.svg)](https://github.com/robotology/yarp)
 [![GitHub contributors](https://img.shields.io/github/contributors/robotology/yarp.svg)](https://github.com/robotology/yarp/graphs/contributors)
