@@ -12,12 +12,14 @@ Contributing to YARP                                             {#contributing}
   - [CMake](#cmake)
   - [Git](#git)
 - [Workflow](#workflow)
-  - [Stable branch: `master`](#stable-branch-master)
-  - [Development branch: `devel`](#development-branch-devel)
+  - [Stable branches: `yarp-3.x`](#stable-branches-yarp-3x)
+      - [Work in progress PR](#work-in-progress-pr)
+  - [Development branch: `master`](#development-branch-master)
   - [Example](#example)
   - [Terminology](#terminology)
 - [Policies](#policies)
-  - [Deprecated features](#deprecated-features)
+  - [Deprecated Features](#deprecated-features)
+  - [`impl` Classes](#impl-classes)
   - [Supported Systems](#supported-systems)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -171,7 +173,6 @@ This is an example of workflow involving:
   * **v3.3.2** is the latest stable (bug fixes only) tag for the YARP 3.3 release series.
   * **v3.4.0** is the first tag (introducing new features) for the YARP 3.4 release series.
   * **v3.4.1** is the latest stable tag for the YARP 3.1 release series.
-  * **v3.1.1** is a stable tag  for the YARP 3.1 release series.
 * A few fake development tags in the `master` branch:
   * **v3.3.100** that represents the beginning of the development of the next
     YARP 3.4 release.
@@ -227,10 +228,9 @@ to changes, without deprecation, even in a minor release.
 
 * **Linux**: See [YARP Supported Distributions](http://wiki.icub.org/wiki/YARP_Supported_Distributions)
 * **Windows**:
-  * Visual Studio 14 2015 32/64 bit
   * Visual Studio 15 2017 32/64 bit
+  * Visual Studio 16 2019 32/64 bit
 * **macOS**:
-  * 10.11 El Capitan
-  * 10.12 Sierra
   * 10.13 High Sierra
   * 10.14 Mojave
+  * 10.15 Catalina
