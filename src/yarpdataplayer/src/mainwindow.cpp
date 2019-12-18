@@ -116,6 +116,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     connect(this,SIGNAL(internalSetFrame(std::string,int)),this,SLOT(onInternalSetFrame(std::string,int)),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalGetFrame(std::string, int*)),this,SLOT(onInternalGetFrame(std::string,int*)),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalQuit()),this,SLOT(onInternalQuit()),Qt::QueuedConnection);
+    connect(this,SIGNAL(internalGetSliderPercentage(int*)),this,SLOT(onInternalGetSliderPercentage(int*)),Qt::BlockingQueuedConnection);
 
     QShortcut *openShortcut = new QShortcut(QKeySequence("Ctrl+O"), parent);
     QObject::connect(openShortcut, SIGNAL(activated()), this, SLOT(onInternalLoad(QString)));
@@ -202,6 +203,24 @@ int MainWindow::getFrame(const string &name)
 void MainWindow::onInternalGetFrame(const string &name, int *frame)
 {
     getFrameCmd(name.c_str(),frame);
+}
+
+/**********************************************************/
+int MainWindow::getSliderPercentage()
+{
+    int percentage = 0;
+    emit internalGetSliderPercentage(&percentage);
+    if (percentage < 1){
+        return -1;
+    } else {
+        return percentage;
+    }
+}
+
+/**********************************************************/
+void MainWindow::onInternalGetSliderPercentage(int *percentage)
+{
+    *percentage = ui->playSlider->value();
 }
 
 /**********************************************************/
