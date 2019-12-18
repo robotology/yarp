@@ -10,12 +10,14 @@
 #define YARP_FAKEBATTERY_H
 
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/Semaphore.h>
-#include <yarp/dev/IBattery.h>
-#include <yarp/dev/PolyDriver.h>
 #include <yarp/os/ResourceFinder.h>
+
 #include <yarp/sig/Vector.h>
 
+#include <yarp/dev/IBattery.h>
+#include <yarp/dev/PolyDriver.h>
+
+#include <mutex>
 
 class FakeBattery :
         public yarp::os::PeriodicThread,
@@ -23,41 +25,46 @@ class FakeBattery :
         public yarp::dev::DeviceDriver
 {
 protected:
-    yarp::os::Semaphore mutex;
+    std::mutex m_mutex;
 
-    short              status;
-    double             timeStamp;
-    yarp::sig::Vector  data;
-    double             battery_charge;
-    double             battery_voltage;
-    double             battery_current;
-    double             battery_temperature;
-    std::string        battery_info;
-    unsigned char      backpack_status;
+    short status;
+    double timeStamp;
+    yarp::sig::Vector data;
+    double battery_charge;
+    double battery_voltage;
+    double battery_current;
+    double battery_temperature;
+    std::string battery_info;
+    unsigned char backpack_status;
 
     bool debugEnable;
 
-    yarp::os::ResourceFinder   rf;
-    std::string         remoteName;
-    std::string         localName;
+    yarp::os::ResourceFinder rf;
+    std::string remoteName;
+    std::string localName;
 
 public:
-    FakeBattery(int period=20);
-    virtual ~FakeBattery();
+    FakeBattery();
+    FakeBattery(const FakeBattery&) = delete;
+    FakeBattery(FakeBattery&&) = delete;
+    FakeBattery& operator=(const FakeBattery&) = delete;
+    FakeBattery& operator=(FakeBattery&&) = delete;
 
-    virtual bool open(yarp::os::Searchable& config) override;
-    virtual bool close() override;
+    ~FakeBattery() override;
 
-    virtual bool getBatteryVoltage     (double &voltage) override;
-    virtual bool getBatteryCurrent     (double &current) override;
-    virtual bool getBatteryCharge      (double &charge) override;
-    virtual bool getBatteryStatus      (Battery_status &status) override;
-    virtual bool getBatteryInfo        (std::string &info) override;
-    virtual bool getBatteryTemperature (double &temperature) override;
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
-    virtual bool threadInit() override;
-    virtual void threadRelease() override;
-    virtual void run() override;
+    bool getBatteryVoltage(double& voltage) override;
+    bool getBatteryCurrent(double& current) override;
+    bool getBatteryCharge(double& charge) override;
+    bool getBatteryStatus(Battery_status& status) override;
+    bool getBatteryInfo(std::string& info) override;
+    bool getBatteryTemperature(double& temperature) override;
+
+    bool threadInit() override;
+    void threadRelease() override;
+    void run() override;
 };
 
 #endif
