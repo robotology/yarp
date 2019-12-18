@@ -13,8 +13,6 @@ yarp_prepare_plugin(batteryClient
 if(NOT SKIP_batteryClient)
   yarp_add_plugin(yarp_batteryClient)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_batteryClient PRIVATE BatteryClient.cpp
                                             BatteryClient.h)
 

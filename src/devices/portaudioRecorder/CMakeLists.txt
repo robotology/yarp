@@ -14,8 +14,6 @@ yarp_prepare_plugin(portaudioRecorder
 if(NOT SKIP_portaudioRecorder)
   yarp_add_plugin(yarp_portaudioRecorder)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_portaudioRecorder PRIVATE PortAudioRecorderDeviceDriver.cpp
                                                 PortAudioRecorderDeviceDriver.h)
 

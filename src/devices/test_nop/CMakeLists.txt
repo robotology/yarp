@@ -17,8 +17,6 @@ yarp_prepare_plugin(test_nop
 if(NOT SKIP_test_nop)
   yarp_add_plugin(yarp_test_nop)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_test_nop PRIVATE Nop.cpp
                                        Nop.h)
 

@@ -14,8 +14,6 @@ yarp_prepare_plugin(transformClient
 if(NOT SKIP_transformClient)
   yarp_add_plugin(yarp_transformClient)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_transformClient PRIVATE FrameTransformClient.cpp
                                               FrameTransformClient.h)
 

@@ -13,8 +13,6 @@ yarp_prepare_plugin(h264
 if(NOT SKIP_h264)
   yarp_add_plugin(yarp_h264)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_h264 PRIVATE H264Carrier.h
                                    H264Carrier.cpp
                                    H264Stream.h

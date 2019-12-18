@@ -14,8 +14,6 @@ yarp_prepare_plugin(JoypadControlClient
 if(NOT SKIP_JoypadControlClient)
   yarp_add_plugin(yarp_JoypadControlClient)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_JoypadControlClient PRIVATE JoypadControlClient.cpp
                                                   JoypadControlClient.h)
 

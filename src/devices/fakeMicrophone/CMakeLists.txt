@@ -13,8 +13,6 @@ yarp_prepare_plugin(fakeMicrophone
 if(NOT SKIP_fakeMicrophone)
   yarp_add_plugin(yarp_fakeMicrophone)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_fakeMicrophone PRIVATE fakeMicrophone.cpp
                                              fakeMicrophone.h)
 

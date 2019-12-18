@@ -14,8 +14,6 @@ yarp_prepare_plugin(transformServer
 if(NOT SKIP_transformServer)
   yarp_add_plugin(yarp_transformServer)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_transformServer PRIVATE FrameTransformServer.cpp
                                               FrameTransformServer.h)
 

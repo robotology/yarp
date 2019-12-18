@@ -13,8 +13,6 @@ yarp_prepare_plugin(fakeLaser
 if(NOT SKIP_fakeLaser)
   yarp_add_plugin(yarp_fakeLaser)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_fakeLaser PRIVATE fakeLaser.h
                                         fakeLaser.cpp)
 

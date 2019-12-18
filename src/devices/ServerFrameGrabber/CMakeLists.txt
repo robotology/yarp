@@ -15,8 +15,6 @@ yarp_prepare_plugin(grabber
 if(NOT SKIP_grabber)
   yarp_add_plugin(yarp_grabber)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_grabber PRIVATE ServerFrameGrabber.cpp
                                       ServerFrameGrabber.h)
 

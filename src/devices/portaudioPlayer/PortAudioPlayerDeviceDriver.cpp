@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <PortAudioPlayerDeviceDriver.h>
+#include "PortAudioPlayerDeviceDriver.h"
 
 #include <cstdio>
 #include <cstdlib>

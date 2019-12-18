@@ -12,8 +12,6 @@ yarp_prepare_plugin(depthimage TYPE DepthImageConverter
 if(NOT SKIP_depthimage)
   yarp_add_plugin(yarp_pm_depthimage)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_pm_depthimage PRIVATE DepthImage.cpp
                                             DepthImage.h)
   target_link_libraries(yarp_pm_depthimage PRIVATE YARP::YARP_os

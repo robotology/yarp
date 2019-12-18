@@ -14,8 +14,6 @@ yarp_prepare_plugin(human
 if(NOT SKIP_human)
   yarp_add_plugin(yarp_human)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_human PRIVATE HumanCarrier.h
                                     HumanStream.h
                                     HumanCarrier.cpp

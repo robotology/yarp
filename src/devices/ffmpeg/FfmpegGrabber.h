@@ -18,7 +18,7 @@ extern "C" {
 }
 
 /*
- * A Yarp 2 frame grabber device driver using ffmpeg to implement
+ * A YARP frame grabber device driver using ffmpeg to implement
  * image capture from AVI files.
  */
 

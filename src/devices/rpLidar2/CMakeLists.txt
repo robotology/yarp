@@ -37,8 +37,6 @@ if(NOT SKIP_rpLidar2)
   # Build YARP rpLidar2 device
   yarp_add_plugin(yarp_rpLidar2)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_rpLidar2 PRIVATE rpLidar2.h
                                        rpLidar2.cpp)
   target_compile_definitions(yarp_rpLidar2 PRIVATE _USE_MATH_DEFINES)

@@ -14,8 +14,6 @@ yarp_prepare_plugin(depthCamera
 if(ENABLE_depthCamera)
   yarp_add_plugin(yarp_depthCamera)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_depthCamera PRIVATE depthCameraDriver.cpp
                                           depthCameraDriver.h)
 

@@ -14,8 +14,6 @@ yarp_prepare_plugin(xmlrpc
 if(NOT SKIP_xmlrpc)
   yarp_add_plugin(yarp_xmlrpc)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_xmlrpc PRIVATE XmlRpcCarrier.h
                                      XmlRpcCarrier.cpp
                                      XmlRpcStream.h

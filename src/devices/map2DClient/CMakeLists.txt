@@ -14,8 +14,6 @@ yarp_prepare_plugin(map2DClient
 if(NOT SKIP_map2DClient)
   yarp_add_plugin(yarp_map2DClient)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_map2DClient PRIVATE Map2DClient.cpp
                                           Map2DClient.h)
 

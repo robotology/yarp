@@ -16,15 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <rpLidar2.h>
+#include "rpLidar2.h"
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
-#include <iostream>
-#include <cstring>
+
 #include <cstdlib>
+#include <cstring>
+#include <iostream>
 #include <limits>
 #include <mutex>
 

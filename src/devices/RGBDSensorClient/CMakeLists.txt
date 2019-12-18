@@ -14,8 +14,6 @@ yarp_prepare_plugin(RGBDSensorClient
 if(NOT SKIP_RGBDSensorClient)
   yarp_add_plugin(yarp_RGBDSensorClient)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_RGBDSensorClient PRIVATE RGBDSensorClient.cpp
                                                RGBDSensorClient.h
                                                RGBDSensorClient_StreamingMsgParser.cpp

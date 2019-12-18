@@ -18,8 +18,6 @@ yarp_prepare_plugin(foobot
 if(NOT SKIP_foobot)
   yarp_add_plugin(foobot)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-
   target_sources(foobot PRIVATE foobot.cpp
                                 foobot.h)
   target_link_libraries(foobot PRIVATE YARP::YARP_os

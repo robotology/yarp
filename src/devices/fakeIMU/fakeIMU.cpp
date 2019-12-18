@@ -6,14 +6,15 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <string>
+#include "fakeIMU.h"
+
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/LogStream.h>
 
-#include <fakeIMU.h>
+#include <string>
 
 using namespace yarp::os;
 using namespace yarp::dev;

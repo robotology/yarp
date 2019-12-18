@@ -13,8 +13,6 @@ yarp_prepare_plugin(multipleanalogsensorsserver
 if(ENABLE_multipleanalogsensorsserver)
   yarp_add_plugin(yarp_multipleanalogsensorsserver)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_multipleanalogsensorsserver PRIVATE MultipleAnalogSensorsServer.cpp
                                                           MultipleAnalogSensorsServer.h)
 

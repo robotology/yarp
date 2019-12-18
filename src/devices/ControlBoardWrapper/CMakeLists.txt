@@ -14,8 +14,6 @@ yarp_prepare_plugin(controlboardwrapper2
 if(NOT SKIP_controlboardwrapper2)
   yarp_add_plugin(yarp_controlboardwrapper2)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_controlboardwrapper2 PRIVATE ControlBoardWrapper.cpp
                                                    ControlBoardWrapper.h
                                                    RPCMessagesParser.cpp

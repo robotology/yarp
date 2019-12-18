@@ -18,8 +18,6 @@ yarp_prepare_plugin(foodevice
 if(NOT SKIP_foodevice)
   yarp_add_plugin(foodevice)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-
   target_sources(foodevice PRIVATE foodevice.cpp
                                    foodevice.h)
   target_link_libraries(foodevice PRIVATE YARP::YARP_os

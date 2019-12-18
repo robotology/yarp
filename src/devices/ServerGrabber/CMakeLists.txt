@@ -14,8 +14,6 @@ yarp_prepare_plugin(grabberDual
 if(NOT SKIP_grabberDual)
   yarp_add_plugin(yarp_grabberDual)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_grabberDual PRIVATE ServerGrabber.cpp
                                           ServerGrabber.h)
 

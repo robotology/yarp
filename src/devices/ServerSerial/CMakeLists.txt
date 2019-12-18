@@ -14,8 +14,6 @@ yarp_prepare_plugin(serial
 if(NOT SKIP_serial)
   yarp_add_plugin(yarp_serial)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_serial PRIVATE ServerSerial.cpp
                                      ServerSerial.h)
 

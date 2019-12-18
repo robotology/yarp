@@ -14,8 +14,6 @@ yarp_prepare_plugin(dynamixelAX12Ftdi
 if(NOT SKIP_dynamixelAX12Ftdi)
   yarp_add_plugin(yarp_dynamixelAX12Ftdi)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_dynamixelAX12Ftdi PRIVATE DynamixelAX12FtdiDriver.cpp
                                                 DynamixelAX12FtdiDriver.h)
 

@@ -14,8 +14,6 @@ yarp_prepare_plugin(localization2DClient
 if(NOT SKIP_localization2DClient)
   yarp_add_plugin(yarp_localization2DClient)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_localization2DClient PRIVATE Localization2DClient.cpp
                                                    Localization2DClient.h)
 

@@ -22,7 +22,7 @@
 #define YARP_OPENCV_GRABBER_DEVICE_OPENCVGRABBER_H
 
 /*
- * A Yarp 2 frame grabber device driver using OpenCV to implement
+ * A YARP frame grabber device driver using OpenCV to implement
  * image capture from cameras and AVI files.
  */
 
@@ -34,8 +34,6 @@
 #include <yarp/dev/IPreciselyTimed.h>
 
 #include <opencv2/highgui/highgui.hpp>
-
-#include <OpenCVGrabber.h>
 
 /**
  * @ingroup dev_impl_media

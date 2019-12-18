@@ -14,8 +14,6 @@ yarp_prepare_plugin(ServerSoundGrabber
 if(NOT SKIP_ServerSoundGrabber)
   yarp_add_plugin(yarp_ServerSoundGrabber)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_ServerSoundGrabber PRIVATE ServerSoundGrabber.h)
 
   target_link_libraries(yarp_ServerSoundGrabber PRIVATE YARP::YARP_os

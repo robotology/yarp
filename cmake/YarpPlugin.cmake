@@ -277,6 +277,20 @@ macro(YARP_PREPARE_PLUGIN _plugin_name)
     endif()
   endif()
 
+  if(NOT IS_ABSOLUTE "${_YPP_INCLUDE}")
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_YPP_INCLUDE}")
+      # DEPRECATED Since YARP 3.4
+      message(DEPRECATION "${CMAKE_CURRENT_SOURCE_DIR}/The file \"${_YPP_INCLUDE}\" does not exist. This will not be allowed in a future release")
+    else()
+      get_filename_component(_abs_include "${_YPP_INCLUDE}" ABSOLUTE)
+      set(_YPP_INCLUDE ${_abs_include})
+    endif()
+  else()
+    if(NOT EXISTS "${_YPP_INCLUDE}")
+      message(SEND_ERROR "The file \"${_YPP_INCLUDE}\" does not exist")
+    endif()
+  endif()
+
   # Set up a flag to enable/disable compilation of this plugin.
   if(NOT YARP_PLUGIN_MASTER STREQUAL "")
     set(_plugin_fullname "${YARP_PLUGIN_MASTER}_${_plugin_name}")

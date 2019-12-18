@@ -20,7 +20,6 @@ yarp_prepare_plugin(ffmpeg_writer
 if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
   yarp_add_plugin(yarp_ffmpeg)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
   target_sources(yarp_ffmpeg PRIVATE FfmpegGrabber.cpp
                                      FfmpegWriter.cpp
                                      FfmpegGrabber.h

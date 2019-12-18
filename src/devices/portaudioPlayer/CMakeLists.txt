@@ -14,8 +14,6 @@ yarp_prepare_plugin(portaudioPlayer
 if(NOT SKIP_portaudioPlayer)
   yarp_add_plugin(yarp_portaudioPlayer)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_portaudioPlayer PRIVATE PortAudioPlayerDeviceDriver.cpp
                                               PortAudioPlayerDeviceDriver.h)
 
