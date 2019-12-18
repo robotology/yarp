@@ -23,15 +23,27 @@
 #include "Robot.h"
 #include "XMLReader.h"
 
+#include <yarp/conf/system.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RpcServer.h>
+
+#if defined(YARP_HAS_EXECINFO_H)
+#  include <csignal>
+#  include <cstring>
+#  include <execinfo.h>
+#endif
 
 class RobotInterface::Module::Private
 {
 public:
     Private(Module *parent);
     ~Private();
+
+#if defined(YARP_HAS_EXECINFO_H)
+    static struct sigaction old_action;
+    static void sigsegv_handler(int nSignum, siginfo_t* si, void* vcontext);
+#endif
 
     Module * const parent;
     RobotInterface::Robot robot;
@@ -41,6 +53,9 @@ public:
     bool closeOk;
 };
 
+#if defined(YARP_HAS_EXECINFO_H)
+struct sigaction RobotInterface::Module::Private::old_action;
+#endif
 
 RobotInterface::Module::Private::Private(Module *parent) :
     parent(parent),
@@ -52,10 +67,42 @@ RobotInterface::Module::Private::Private(Module *parent) :
 
 RobotInterface::Module::Private::~Private() = default;
 
+#if defined(YARP_HAS_EXECINFO_H)
+void RobotInterface::Module::Private::sigsegv_handler(int nSignum, siginfo_t* si, void* vcontext)
+{
+    auto context = reinterpret_cast<ucontext_t*>(vcontext);
+    context->uc_mcontext.gregs[REG_RIP]++;
+
+    const size_t max_depth = 100;
+    size_t stack_depth;
+    void* stack_addrs[max_depth];
+    char** stack_strings;
+    stack_depth = backtrace(stack_addrs, max_depth);
+    stack_strings = backtrace_symbols(stack_addrs, stack_depth);
+
+    yError("yarprobotinterface intercepted a segmentation fault caused by a faulty plugin:");
+    yError("%s\n", stack_strings[2]);
+    yarp_print_trace(stderr, __FILE__, __LINE__);
+
+    // Free memory allocated by backtrace_symbols()
+    free(stack_strings);
+
+    // Restore original action
+    sigaction(SIGSEGV, &old_action, nullptr);
+}
+#endif
 
 RobotInterface::Module::Module() :
     mPriv(new Private(this))
 {
+#if defined(YARP_HAS_EXECINFO_H)
+    struct sigaction action;
+    memset(&action, 0, sizeof(struct sigaction));
+    memset(&Private::old_action, 0, sizeof(struct sigaction));
+    action.sa_flags = SA_SIGINFO;
+    action.sa_sigaction = Private::sigsegv_handler;
+    sigaction(SIGSEGV, &action, &Private::old_action);
+#endif
 }
 
 RobotInterface::Module::~Module()

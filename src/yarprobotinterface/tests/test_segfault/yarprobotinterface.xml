@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="test_segfault_robot" build="2" portprefix="test" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <device name="the_nop_one" type="test_nop">
+        <param name="period">0.5</param>
+    </device>
+
+    <device name="the_nop_two" type="test_nop">
+        <param name="period">1</param>
+    </device>
+
+    <device name="the_segfault" type="test_segfault">
+        <param name="delay">3</param>
+    </device>
+
+</robot>
