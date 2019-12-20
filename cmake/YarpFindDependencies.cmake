@@ -319,12 +319,6 @@ checkandset_dependency(SWIG)
 get_property(OpenCV24_WORKAROUND_ORIGINAL_INCLUDE_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
 # End first part of workaround
 find_package(OpenCV QUIET)
-# OpenCV 4 is not supported yet
-if(OpenCV_FOUND AND OpenCV_VERSION VERSION_GREATER_EQUAL 4)
-  message(STATUS "OpenCV 4 is not supported yet.")
-  set(OpenCV_FOUND FALSE)
-  set(OPENCV_FOUND FALSE)
-endif()
 checkandset_dependency(OpenCV)
 # Second part of the workaround
 set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES ${OpenCV24_WORKAROUND_ORIGINAL_INCLUDE_DIRS})
