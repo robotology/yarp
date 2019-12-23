@@ -12,8 +12,6 @@ yarp_prepare_plugin(zfp TYPE ZfpMonitorObject
 if(NOT SKIP_zfp)
   yarp_add_plugin(yarp_pm_zfp)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_pm_zfp PRIVATE zfpPortmonitor.cpp
                                      zfpPortmonitor.h)
 

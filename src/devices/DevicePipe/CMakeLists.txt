@@ -13,8 +13,6 @@ yarp_prepare_plugin(pipe
 if(NOT SKIP_pipe)
   yarp_add_plugin(yarp_pipe)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_pipe PRIVATE DevicePipe.cpp
                                    DevicePipe.h)
 

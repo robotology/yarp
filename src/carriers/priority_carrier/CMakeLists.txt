@@ -16,8 +16,6 @@ yarp_prepare_plugin(priority
 if(NOT SKIP_priority)
   yarp_add_plugin(yarp_priority)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_priority PRIVATE PriorityCarrier.h
                                        PriorityCarrier.cpp)
 

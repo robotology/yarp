@@ -13,8 +13,6 @@ yarp_prepare_plugin(fakeAnalogSensor
 if(ENABLE_fakeAnalogSensor)
   yarp_add_plugin(yarp_fakeAnalogSensor)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_fakeAnalogSensor PRIVATE fakeAnalogSensor.cpp
                                                fakeAnalogSensor.h)
 

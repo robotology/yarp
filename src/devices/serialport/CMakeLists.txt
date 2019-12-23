@@ -15,8 +15,6 @@ yarp_prepare_plugin(serialport
 if(NOT SKIP_serialport)
   yarp_add_plugin(yarp_serialport)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_serialport PRIVATE SerialDeviceDriver.cpp
                                          SerialDeviceDriver.h)
 

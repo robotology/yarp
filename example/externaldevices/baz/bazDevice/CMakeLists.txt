@@ -18,8 +18,6 @@ yarp_prepare_plugin(bazdevice
 if(NOT SKIP_bazdevice)
   yarp_add_plugin(bazdevice)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-
   target_sources(bazdevice PRIVATE bazdevice.cpp
                                    bazdevice.h)
   target_link_libraries(bazdevice PRIVATE YARP::YARP_os

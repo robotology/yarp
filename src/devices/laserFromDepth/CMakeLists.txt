@@ -12,8 +12,6 @@ yarp_prepare_plugin(laserFromDepth
 if(NOT SKIP_laserFromDepth)
   yarp_add_plugin(laserFromDepth)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(laserFromDepth PRIVATE laserFromDepth.h
                                         laserFromDepth.cpp)
 

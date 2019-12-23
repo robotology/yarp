@@ -18,19 +18,20 @@
 
 #define _USE_MATH_DEFINES
 
-#include <rpLidar.h>
+#include "rpLidar.h"
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/ResourceFinder.h>
-#include <iostream>
-#include <cstring>
+
+#include <cmath>
 #include <cstdlib>
+#include <cstring>
+#include <iostream>
 #include <limits>
 #include <mutex>
 
-#include <cmath>
 
 //#define LASER_DEBUG
 //#define FORCE_SCAN

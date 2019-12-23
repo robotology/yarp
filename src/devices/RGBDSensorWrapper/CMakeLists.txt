@@ -14,8 +14,6 @@ yarp_prepare_plugin(RGBDSensorWrapper
 if(NOT SKIP_RGBDSensorWrapper)
   yarp_add_plugin(yarp_RGBDSensorWrapper)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_RGBDSensorWrapper PRIVATE RGBDSensorWrapper.cpp
                                                 RGBDSensorWrapper.h
                                                 rosPixelCode.h)

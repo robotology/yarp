@@ -13,8 +13,6 @@ yarp_prepare_plugin(fakeSpeaker
 if(NOT SKIP_fakeSpeaker)
   yarp_add_plugin(yarp_fakeSpeaker)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_fakeSpeaker PRIVATE fakeSpeaker.cpp
                                           fakeSpeaker.h)
 

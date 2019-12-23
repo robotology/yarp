@@ -18,8 +18,6 @@ yarp_prepare_plugin(bazbot
 if(NOT SKIP_bazbot)
   yarp_add_plugin(bazbot)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-
   target_sources(bazbot PRIVATE bazbot.cpp
                                 bazbot.h)
   target_link_libraries(bazbot PRIVATE YARP::YARP_os

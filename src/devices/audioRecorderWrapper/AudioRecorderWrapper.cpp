@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <AudioRecorderWrapper.h>
+#include "AudioRecorderWrapper.h"
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;

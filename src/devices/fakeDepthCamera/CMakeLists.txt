@@ -13,8 +13,6 @@ yarp_prepare_plugin(fakeDepthCamera
 if(ENABLE_fakeDepthCamera)
   yarp_add_plugin(yarp_fakeDepthCamera)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_fakeDepthCamera PRIVATE fakeDepthCameraDriver.cpp
                                               fakeDepthCameraDriver.h)
 

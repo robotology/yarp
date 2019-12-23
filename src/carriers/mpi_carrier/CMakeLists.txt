@@ -21,8 +21,6 @@ yarp_renamed_option(MPI_DEBUG_MSG YARP_MPI_DEBUG_MSG) # Since YARP 3.3
 if(NOT SKIP_mpi)
   yarp_add_plugin(yarp_mpi)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_mpi PRIVATE MpiCarrier.cpp
                                   MpiComm.cpp
                                   MpiStream.cpp
@@ -66,8 +64,6 @@ yarp_prepare_plugin(mpibcast
 
 if(NOT SKIP_mpibcast)
   yarp_add_plugin(yarp_mpibcast)
-
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   target_sources(yarp_mpibcast PRIVATE MpiCarrier.cpp
                                        MpiBcastCarrier.cpp

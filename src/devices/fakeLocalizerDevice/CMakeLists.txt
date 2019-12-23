@@ -13,8 +13,6 @@ yarp_prepare_plugin(fakeLocalizer
 if(NOT SKIP_fakeLocalizer)
   yarp_add_plugin(yarp_fakeLocalizer)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_fakeLocalizer PRIVATE fakeLocalizerDev.h
                                             fakeLocalizerDev.cpp)
 

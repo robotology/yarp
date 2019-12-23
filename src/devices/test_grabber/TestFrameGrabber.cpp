@@ -7,12 +7,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <TestFrameGrabber.h>
-#include <yarp/dev/PolyDriver.h>
+#include "TestFrameGrabber.h"
 
-#include <yarp/sig/ImageDraw.h>
-#include <random>
 #include <yarp/os/LogStream.h>
+#include <yarp/sig/ImageDraw.h>
+
+#include <random>
 
 using namespace yarp::os;
 using namespace yarp::dev;

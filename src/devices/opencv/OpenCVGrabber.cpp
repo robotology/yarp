@@ -19,10 +19,11 @@
  */
 
 /*
- * A Yarp 2 frame grabber device driver using OpenCV to implement
+ * A YARP frame grabber device driver using OpenCV to implement
  * image capture from cameras and AVI files.
  */
 
+#include "OpenCVGrabber.h"
 
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
@@ -42,7 +43,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include <OpenCVGrabber.h>
 
 
 using yarp::dev::DeviceDriver;

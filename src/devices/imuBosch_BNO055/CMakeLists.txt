@@ -14,8 +14,6 @@ yarp_prepare_plugin(imuBosch_BNO055
 if(ENABLE_imuBosch_BNO055)
   yarp_add_plugin(yarp_imuBosch_BNO055)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_imuBosch_BNO055 PRIVATE imuBosch_BNO055.cpp
                                               imuBosch_BNO055.h)
 

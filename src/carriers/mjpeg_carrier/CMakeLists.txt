@@ -21,8 +21,6 @@ yarp_renamed_option(MJPEG_AUTOCOMPRESS YARP_MJPEG_AUTOCOMPRESS) # Since YARP 3.3
 if(NOT SKIP_mjpeg)
   yarp_add_plugin(yarp_mjpeg)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_mjpeg PRIVATE MjpegCarrier.h
                                     MjpegCarrier.cpp
                                     MjpegStream.h

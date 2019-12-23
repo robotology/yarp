@@ -20,8 +20,6 @@ yarp_prepare_plugin(rossrv
 if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
   yarp_add_plugin(yarp_tcpros)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_tcpros PRIVATE TcpRosCarrier.h
                                      TcpRosCarrier.cpp
                                      TcpRosStream.h

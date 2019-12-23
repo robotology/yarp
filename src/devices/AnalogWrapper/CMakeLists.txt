@@ -14,8 +14,6 @@ yarp_prepare_plugin(analogServer
 if(NOT SKIP_analogServer)
   yarp_add_plugin(yarp_analogServer)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_analogServer PRIVATE AnalogWrapper.cpp
                                            AnalogWrapper.h)
 

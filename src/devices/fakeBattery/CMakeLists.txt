@@ -13,8 +13,6 @@ yarp_prepare_plugin(fakeBattery
 if(NOT SKIP_fakeBattery)
   yarp_add_plugin(yarp_fakeBattery)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_fakeBattery PRIVATE fakeBattery.cpp
                                           fakeBattery.h)
 

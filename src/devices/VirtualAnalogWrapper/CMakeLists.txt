@@ -14,8 +14,6 @@ yarp_prepare_plugin(virtualAnalogServer
 if(NOT SKIP_virtualAnalogServer)
   yarp_add_plugin(yarp_virtualAnalogServer)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_virtualAnalogServer PRIVATE VirtualAnalogWrapper.cpp
                                                   VirtualAnalogWrapper.h)
 

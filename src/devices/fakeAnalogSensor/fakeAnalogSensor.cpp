@@ -6,11 +6,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include "fakeAnalogSensor.h"
 
 #include <yarp/os/Time.h>
 #include <yarp/os/LogStream.h>
-
-#include <fakeAnalogSensor.h>
 
 using namespace std;
 using namespace yarp::dev;

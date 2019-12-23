@@ -14,8 +14,6 @@ yarp_prepare_plugin(Rangefinder2DClient
 if(NOT SKIP_Rangefinder2DClient)
   yarp_add_plugin(yarp_Rangefinder2DClient)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_Rangefinder2DClient PRIVATE Rangefinder2DClient.cpp
                                                   Rangefinder2DClient.h)
 

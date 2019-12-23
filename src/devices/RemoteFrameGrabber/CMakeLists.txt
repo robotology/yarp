@@ -14,8 +14,6 @@ yarp_prepare_plugin(remote_grabber
 if(NOT SKIP_remote_grabber)
   yarp_add_plugin(yarp_remote_grabber)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_remote_grabber PRIVATE RemoteFrameGrabber.cpp
                                              RemoteFrameGrabber.h)
 

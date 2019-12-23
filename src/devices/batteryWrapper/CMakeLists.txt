@@ -14,8 +14,6 @@ yarp_prepare_plugin(batteryWrapper
 if(NOT SKIP_batteryWrapper)
   yarp_add_plugin(yarp_batteryWrapper)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_batteryWrapper PRIVATE BatteryWrapper.cpp
                                              BatteryWrapper.h)
 

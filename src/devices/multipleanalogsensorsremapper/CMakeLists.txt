@@ -13,8 +13,6 @@ yarp_prepare_plugin(multipleanalogsensorsremapper
 if(ENABLE_multipleanalogsensorsremapper)
   yarp_add_plugin(yarp_multipleanalogsensorsremapper)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_multipleanalogsensorsremapper PRIVATE MultipleAnalogSensorsRemapper.cpp
                                                             MultipleAnalogSensorsRemapper.h)
 

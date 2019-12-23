@@ -14,8 +14,6 @@ yarp_prepare_plugin(fakeIMU
 if(NOT SKIP_fakeIMU)
   yarp_add_plugin(yarp_fakeIMU)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_fakeIMU PRIVATE fakeIMU.cpp
                                       fakeIMU.h)
 

@@ -13,8 +13,6 @@ yarp_prepare_plugin(SerialServoBoard
 if(NOT SKIP_SerialServoBoard)
   yarp_add_plugin(yarp_SerialServoBoard)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_SerialServoBoard PRIVATE SerialServoBoard.cpp
                                                SerialServoBoard.h)
 

@@ -9,14 +9,14 @@
 #ifndef MONITOR_SHAREDLIB_INC
 #define MONITOR_SHAREDLIB_INC
 
-#include <string>
-#include <string>
+#include "MonitorBinding.h"
+
+#include <yarp/os/MonitorObject.h>
 #include <yarp/os/SharedLibraryClass.h>
 #include <yarp/os/SharedLibrary.h>
 #include <yarp/os/YarpPlugin.h>
 
-#include <yarp/os/MonitorObject.h>
-#include "MonitorBinding.h"
+#include <string>
 
 class MonitorSharedLib : public MonitorBinding
 {

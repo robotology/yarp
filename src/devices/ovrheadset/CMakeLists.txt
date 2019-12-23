@@ -13,8 +13,6 @@ yarp_prepare_plugin(ovrheadset
 if(NOT SKIP_ovrheadset)
   yarp_add_plugin(yarp_ovrheadset)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   set(yarp_ovrheadset_SRCS OVRHeadset.cpp
                            TextureBuffer.cpp
                            TextureStatic.cpp

@@ -14,8 +14,6 @@ yarp_prepare_plugin(map2DServer
 if(NOT SKIP_map2DServer)
   yarp_add_plugin(yarp_map2DServer)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
   target_sources(yarp_map2DServer PRIVATE Map2DServer.cpp
                                           Map2DServer.h)
 

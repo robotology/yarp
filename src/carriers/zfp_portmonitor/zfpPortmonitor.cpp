@@ -6,16 +6,18 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include "zfpPortmonitor.h"
+
 #include <cstdio>
 #include <cstring>
 #include <cmath>
 #include <algorithm>
 #include <yarp/sig/Image.h>
 #include <yarp/os/LogStream.h>
+
 extern "C" {
     #include "zfp.h"
 }
-#include "zfpPortmonitor.h"
 
 using namespace yarp::os;
 using namespace yarp::sig;
