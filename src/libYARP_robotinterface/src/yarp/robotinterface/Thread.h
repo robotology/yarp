@@ -23,8 +23,8 @@
 
 #include <yarp/os/Thread.h>
 
-namespace RobotInterface
-{
+namespace yarp {
+namespace robotinterface {
 
 class Thread: public yarp::os::Thread
 {
@@ -32,6 +32,7 @@ public:
     virtual void abort() {}
 };
 
-} // RobotInterface
+} // namespace robotinterface
+} // namespace yarp
 
 #endif // YARP_YARPROBOTINTERFACE_THREAD_H

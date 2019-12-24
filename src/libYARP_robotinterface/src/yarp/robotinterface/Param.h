@@ -23,10 +23,10 @@
 
 namespace yarp { namespace os { class Property; } }
 
-namespace RobotInterface
-{
+namespace yarp {
+namespace robotinterface {
 
-class Param
+class YARP_robotinterface_API Param
 {
 public:
     explicit Param(bool isGroup = false);
@@ -51,10 +51,11 @@ private:
     Private * const mPriv;
 }; // class Param
 
-} // RobotInterface
+} // namespace robotinterface
+} // namespace yarp
 
-namespace std { std::ostream& operator<<(std::ostream &oss, const RobotInterface::Param &t); }
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Param &t);
+namespace std { std::ostream& operator<<(std::ostream &oss, const yarp::robotinterface::Param &t); }
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Param &t);
 
 
 #endif // YARP_YARPROBOTINTERFACE_PARAM_H

@@ -26,7 +26,7 @@
 #include <yarp/os/LogStream.h>
 
 
-bool RobotInterface::hasParam(const RobotInterface::ParamList &list, const std::string& name)
+bool yarp::robotinterface::hasParam(const yarp::robotinterface::ParamList &list, const std::string& name)
 {
     for (const auto& param : list) {
         if (name == param.name()) {
@@ -36,7 +36,7 @@ bool RobotInterface::hasParam(const RobotInterface::ParamList &list, const std::
     return false;
 }
 
-std::string RobotInterface::findParam(const RobotInterface::ParamList &list, const std::string& name)
+std::string yarp::robotinterface::findParam(const yarp::robotinterface::ParamList &list, const std::string& name)
 {
     for (const auto& param : list) {
         if (name == param.name()) {
@@ -47,7 +47,7 @@ std::string RobotInterface::findParam(const RobotInterface::ParamList &list, con
     return {};
 }
 
-bool RobotInterface::hasGroup(const RobotInterface::ParamList &list, const std::string& name)
+bool yarp::robotinterface::hasGroup(const yarp::robotinterface::ParamList &list, const std::string& name)
 {
     for (const auto& param : list) {
         if (param.isGroup() && name == param.name()) {
@@ -57,7 +57,7 @@ bool RobotInterface::hasGroup(const RobotInterface::ParamList &list, const std::
     return false;
 }
 
-std::string RobotInterface::findGroup(const RobotInterface::ParamList &list, const std::string& name)
+std::string yarp::robotinterface::findGroup(const yarp::robotinterface::ParamList &list, const std::string& name)
 {
     for (const auto& param : list) {
         if (param.isGroup() && name == param.name()) {
@@ -68,13 +68,13 @@ std::string RobotInterface::findGroup(const RobotInterface::ParamList &list, con
     return {};
 }
 
-RobotInterface::ParamList RobotInterface::mergeDuplicateGroups(const RobotInterface::ParamList &list)
+yarp::robotinterface::ParamList yarp::robotinterface::mergeDuplicateGroups(const yarp::robotinterface::ParamList &list)
 {
-    RobotInterface::ParamList params = list;
+    yarp::robotinterface::ParamList params = list;
     for (auto it1 = params.begin(); it1 != params.end(); ++it1) {
-        RobotInterface::Param &param1 = *it1;
+        yarp::robotinterface::Param &param1 = *it1;
         for (auto it2 = it1 + 1; it2 != params.end(); ) {
-            RobotInterface::Param &param2 = *it2;
+            yarp::robotinterface::Param &param2 = *it2;
             if (param1.name() == param2.name()) {
                 if (!param1.isGroup() || !param2.isGroup()) {
                     yFatal() << "Duplicate parameter \"" << param1.name() << "\" found and at least one of them is not a group.";
@@ -90,96 +90,96 @@ RobotInterface::ParamList RobotInterface::mergeDuplicateGroups(const RobotInterf
 }
 
 
-RobotInterface::ActionPhase RobotInterface::StringToActionPhase(const std::string &phase)
+yarp::robotinterface::ActionPhase yarp::robotinterface::StringToActionPhase(const std::string &phase)
 {
     if (phase == "startup") {
-        return RobotInterface::ActionPhaseStartup;
+        return yarp::robotinterface::ActionPhaseStartup;
     } else if (phase == "run") {
-        return RobotInterface::ActionPhaseRun;
+        return yarp::robotinterface::ActionPhaseRun;
     } else if (phase == "interrupt1") {
-        return RobotInterface::ActionPhaseInterrupt1;
+        return yarp::robotinterface::ActionPhaseInterrupt1;
     } else if (phase == "interrupt2") {
-        return RobotInterface::ActionPhaseInterrupt2;
+        return yarp::robotinterface::ActionPhaseInterrupt2;
     } else if (phase == "interrupt3") {
-        return RobotInterface::ActionPhaseInterrupt3;
+        return yarp::robotinterface::ActionPhaseInterrupt3;
     } else if (phase == "shutdown") {
-        return RobotInterface::ActionPhaseShutdown;
+        return yarp::robotinterface::ActionPhaseShutdown;
     }
-    return RobotInterface::ActionPhaseReserved;
+    return yarp::robotinterface::ActionPhaseReserved;
 }
 
-std::string RobotInterface::ActionPhaseToString(RobotInterface::ActionPhase actionphase)
+std::string yarp::robotinterface::ActionPhaseToString(yarp::robotinterface::ActionPhase actionphase)
 {
     switch (actionphase) {
-    case RobotInterface::ActionPhaseStartup:
+    case yarp::robotinterface::ActionPhaseStartup:
         return std::string("startup");
-    case RobotInterface::ActionPhaseRun:
+    case yarp::robotinterface::ActionPhaseRun:
         return std::string("run");
-    case RobotInterface::ActionPhaseInterrupt1:
+    case yarp::robotinterface::ActionPhaseInterrupt1:
         return std::string("interrupt1");
-    case RobotInterface::ActionPhaseInterrupt2:
+    case yarp::robotinterface::ActionPhaseInterrupt2:
         return std::string("interrupt2");
-    case RobotInterface::ActionPhaseInterrupt3:
+    case yarp::robotinterface::ActionPhaseInterrupt3:
         return std::string("interrupt3");
-    case RobotInterface::ActionPhaseShutdown:
+    case yarp::robotinterface::ActionPhaseShutdown:
         return std::string("shutdown");
-    case RobotInterface::ActionPhaseUnknown:
+    case yarp::robotinterface::ActionPhaseUnknown:
     default:
         return {};
     }
 }
 
-void RobotInterface::operator>>(const std::stringstream &sstream, RobotInterface::ActionPhase &actionphase)
+void yarp::robotinterface::operator>>(const std::stringstream &sstream, yarp::robotinterface::ActionPhase &actionphase)
 {
-    actionphase = RobotInterface::StringToActionPhase(sstream.str());
+    actionphase = yarp::robotinterface::StringToActionPhase(sstream.str());
 }
 
 
-RobotInterface::ActionType RobotInterface::StringToActionType(const std::string &type)
+yarp::robotinterface::ActionType yarp::robotinterface::StringToActionType(const std::string &type)
 {
     if (type == "configure") {
-        return RobotInterface::ActionTypeConfigure;
+        return yarp::robotinterface::ActionTypeConfigure;
     } else if (type == "calibrate") {
-        return RobotInterface::ActionTypeCalibrate;
+        return yarp::robotinterface::ActionTypeCalibrate;
     } else if (type == "attach") {
-        return RobotInterface::ActionTypeAttach;
+        return yarp::robotinterface::ActionTypeAttach;
     } else if (type == "abort") {
-        return RobotInterface::ActionTypeAbort;
+        return yarp::robotinterface::ActionTypeAbort;
     } else if (type == "detach") {
-        return RobotInterface::ActionTypeDetach;
+        return yarp::robotinterface::ActionTypeDetach;
     } else if (type == "park") {
-        return RobotInterface::ActionTypePark;
+        return yarp::robotinterface::ActionTypePark;
     } else if (type == "custom") {
-        return RobotInterface::ActionTypeCustom;
+        return yarp::robotinterface::ActionTypeCustom;
     } else {
-        return RobotInterface::ActionTypeUnknown;
+        return yarp::robotinterface::ActionTypeUnknown;
     }
 }
 
-std::string RobotInterface::ActionTypeToString(RobotInterface::ActionType actiontype)
+std::string yarp::robotinterface::ActionTypeToString(yarp::robotinterface::ActionType actiontype)
 {
     switch (actiontype) {
-    case RobotInterface::ActionTypeConfigure:
+    case yarp::robotinterface::ActionTypeConfigure:
         return std::string("configure");
-    case RobotInterface::ActionTypeCalibrate:
+    case yarp::robotinterface::ActionTypeCalibrate:
         return std::string("calibrate");
-    case RobotInterface::ActionTypeAttach:
+    case yarp::robotinterface::ActionTypeAttach:
         return std::string("attach");
-    case RobotInterface::ActionTypeAbort:
+    case yarp::robotinterface::ActionTypeAbort:
         return std::string("abort");
-    case RobotInterface::ActionTypeDetach:
+    case yarp::robotinterface::ActionTypeDetach:
         return std::string("detach");
-    case RobotInterface::ActionTypePark:
+    case yarp::robotinterface::ActionTypePark:
         return std::string("park");
-    case RobotInterface::ActionTypeCustom:
+    case yarp::robotinterface::ActionTypeCustom:
         return std::string("custom");
-    case RobotInterface::ActionTypeUnknown:
+    case yarp::robotinterface::ActionTypeUnknown:
     default:
         return {};
     }
 }
 
-void RobotInterface::operator>>(const std::stringstream &sstream, RobotInterface::ActionType &actiontype)
+void yarp::robotinterface::operator>>(const std::stringstream &sstream, yarp::robotinterface::ActionType &actiontype)
 {
-    actiontype = RobotInterface::StringToActionType(sstream.str());
+    actiontype = yarp::robotinterface::StringToActionType(sstream.str());
 }

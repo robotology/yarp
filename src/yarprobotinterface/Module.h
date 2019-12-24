@@ -22,7 +22,7 @@
 #include <yarp/os/RFModule.h>
 #include <yarprobotinterfaceRpc.h>
 
-namespace RobotInterface
+namespace yarprobotinterface
 {
 
 class Module : public yarp::os::RFModule,

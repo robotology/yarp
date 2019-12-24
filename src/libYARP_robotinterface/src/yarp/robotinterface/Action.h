@@ -21,8 +21,8 @@
 
 #include "Types.h"
 
-namespace RobotInterface
-{
+namespace yarp {
+namespace robotinterface {
 
 class Action
 {
@@ -53,11 +53,12 @@ private:
     Private * const mPriv;
 }; // class Action
 
-} // namespace RobotInterface
+} // namespace robotinterface
+} // namespace yarp
 
 
-namespace std { std::ostream& operator<<(std::ostream &oss, const RobotInterface::Action &t); }
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Action &t);
+namespace std { std::ostream& operator<<(std::ostream &oss, const yarp::robotinterface::Action &t); }
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Action &t);
 
 
 #endif // YARP_YARPROBOTINTERFACE_ACTION_H

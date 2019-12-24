@@ -24,14 +24,14 @@
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-class RobotInterface::CalibratorThread::Private
+class yarp::robotinterface::CalibratorThread::Private
 {
 public:
     Private(CalibratorThread *parent) :
             parent(parent),
             calibrator(nullptr),
             target(nullptr),
-            action(RobotInterface::CalibratorThread::Action::ActionCalibrate)
+            action(yarp::robotinterface::CalibratorThread::Action::ActionCalibrate)
     {
     }
 
@@ -67,22 +67,22 @@ public:
         }
     }
 
-    RobotInterface::CalibratorThread * const parent;
+    yarp::robotinterface::CalibratorThread * const parent;
 
     yarp::dev::ICalibrator *calibrator;
     std::string calibratorName;
     yarp::dev::DeviceDriver *target;
     std::string targetName;
-    RobotInterface::CalibratorThread::Action action;
-}; // class RobotInterface::CalibratorThread::Private
+    yarp::robotinterface::CalibratorThread::Action action;
+}; // class yarp::robotinterface::CalibratorThread::Private
 
 
 
-RobotInterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calibrator,
+yarp::robotinterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calibrator,
                                                    const std::string &calibratorName,
                                                    yarp::dev::DeviceDriver *target,
                                                    const std::string &targetName,
-                                                   RobotInterface::CalibratorThread::Action action) :
+                                                   yarp::robotinterface::CalibratorThread::Action action) :
         mPriv(new Private(this))
 {
     yAssert(calibrator);
@@ -96,17 +96,17 @@ RobotInterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calib
     mPriv->action = action;
 }
 
-RobotInterface::CalibratorThread::~CalibratorThread()
+yarp::robotinterface::CalibratorThread::~CalibratorThread()
 {
     delete mPriv;
 }
 
-void RobotInterface::CalibratorThread::run()
+void yarp::robotinterface::CalibratorThread::run()
 {
     mPriv->run();
 }
 
-void RobotInterface::CalibratorThread::onStop()
+void yarp::robotinterface::CalibratorThread::onStop()
 {
     mPriv->stop();
 }

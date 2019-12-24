@@ -38,8 +38,8 @@
 #define SYNTAX_ERROR(line) yFatal() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 #define SYNTAX_WARNING(line) yWarning() << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
 
-
-namespace RobotInterface {
+namespace yarp {
+namespace robotinterface {
 
 // Represent something like this in the xml file
 // <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
@@ -176,4 +176,5 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr
     return true;
 }
 
-} // namespace
+} // namespace robotinterface
+} // namespace yarp

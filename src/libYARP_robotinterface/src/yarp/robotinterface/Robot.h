@@ -23,8 +23,8 @@
 
 #include <yarp/robotinterface/api.h>
 
-namespace RobotInterface
-{
+namespace yarp {
+namespace robotinterface {
 
 class YARP_robotinterface_API Robot
 {
@@ -58,8 +58,8 @@ public:
     std::string findParam(const std::string &name) const;
 
     void interrupt();
-    bool enterPhase(RobotInterface::ActionPhase phase);
-    RobotInterface::ActionPhase currentPhase() const;
+    bool enterPhase(yarp::robotinterface::ActionPhase phase);
+    yarp::robotinterface::ActionPhase currentPhase() const;
     int currentLevel() const;
 
 private:
@@ -67,10 +67,11 @@ private:
     Private * const mPriv;
 }; // class Robot
 
-} // namespace RobotInterface
+} // namespace robotinterface
+} // namespace yarp
 
-std::ostringstream& operator<<(std::ostringstream &oss, const RobotInterface::Robot &t);
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Robot &t);
+std::ostringstream& operator<<(std::ostringstream &oss, const yarp::robotinterface::Robot &t);
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Robot &t);
 
 
 #endif // YARP_YARPROBOTINTERFACE_ROBOT_H

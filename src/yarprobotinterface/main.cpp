@@ -38,6 +38,6 @@ int main(int argc, char* argv[])
     rf.configure(argc, argv);
 
     // Create and run our module
-    RobotInterface::Module module;
+    yarprobotinterface::Module module;
     return module.runModule(rf);
 }

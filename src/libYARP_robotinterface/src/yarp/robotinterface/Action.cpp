@@ -25,7 +25,7 @@
 
 
 
-class RobotInterface::Action::Private
+class yarp::robotinterface::Action::Private
 {
 public:
     Private(Action * /*parent*/) :
@@ -41,7 +41,7 @@ public:
     ParamList params;
 };
 
-std::ostream& std::operator<<(std::ostream &oss, const RobotInterface::Action &t)
+std::ostream& std::operator<<(std::ostream &oss, const yarp::robotinterface::Action &t)
 {
     oss << "(\"" << ActionPhaseToString(t.phase()) << ":" << ActionTypeToString(t.type()) << ":" << t.level() << "\"";
     if (!t.params().empty()) {
@@ -54,7 +54,7 @@ std::ostream& std::operator<<(std::ostream &oss, const RobotInterface::Action &t
 }
 
 
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Action &t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Action &t)
 {
     std::ostringstream oss;
     oss << t;
@@ -62,12 +62,12 @@ yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Ac
     return dbg;
 }
 
-RobotInterface::Action::Action() :
+yarp::robotinterface::Action::Action() :
     mPriv(new Private(this))
 {
 }
 
-RobotInterface::Action::Action(const std::string& phase, const std::string& type, unsigned int level) :
+yarp::robotinterface::Action::Action(const std::string& phase, const std::string& type, unsigned int level) :
     mPriv(new Private(this))
 {
     mPriv->phase = StringToActionPhase(phase);
@@ -75,7 +75,7 @@ RobotInterface::Action::Action(const std::string& phase, const std::string& type
     mPriv->level = level;
 }
 
-RobotInterface::Action::Action(RobotInterface::ActionPhase phase, RobotInterface::ActionType type, unsigned int level) :
+yarp::robotinterface::Action::Action(yarp::robotinterface::ActionPhase phase, yarp::robotinterface::ActionType type, unsigned int level) :
     mPriv(new Private(this))
 {
     mPriv->phase = phase;
@@ -83,7 +83,7 @@ RobotInterface::Action::Action(RobotInterface::ActionPhase phase, RobotInterface
     mPriv->level = level;
 }
 
-RobotInterface::Action::Action(const RobotInterface::Action& other) :
+yarp::robotinterface::Action::Action(const yarp::robotinterface::Action& other) :
     mPriv(new Private(this))
 {
     mPriv->phase = other.mPriv->phase;
@@ -92,7 +92,7 @@ RobotInterface::Action::Action(const RobotInterface::Action& other) :
     mPriv->params = other.mPriv->params;
 }
 
-RobotInterface::Action& RobotInterface::Action::operator=(const RobotInterface::Action& other)
+yarp::robotinterface::Action& yarp::robotinterface::Action::operator=(const yarp::robotinterface::Action& other)
 {
     if (&other != this) {
         mPriv->phase = other.mPriv->phase;
@@ -106,57 +106,57 @@ RobotInterface::Action& RobotInterface::Action::operator=(const RobotInterface::
     return *this;
 }
 
-RobotInterface::Action::~Action()
+yarp::robotinterface::Action::~Action()
 {
     delete mPriv;
 }
 
-RobotInterface::ActionPhase& RobotInterface::Action::phase()
+yarp::robotinterface::ActionPhase& yarp::robotinterface::Action::phase()
 {
     return mPriv->phase;
 }
 
-RobotInterface::ActionType& RobotInterface::Action::type()
+yarp::robotinterface::ActionType& yarp::robotinterface::Action::type()
 {
     return mPriv->type;
 }
 
-unsigned int& RobotInterface::Action::level()
+unsigned int& yarp::robotinterface::Action::level()
 {
     return mPriv->level;
 }
 
-RobotInterface::ParamList& RobotInterface::Action::params()
+yarp::robotinterface::ParamList& yarp::robotinterface::Action::params()
 {
     return mPriv->params;
 }
 
-RobotInterface::ActionPhase RobotInterface::Action::phase() const
+yarp::robotinterface::ActionPhase yarp::robotinterface::Action::phase() const
 {
     return mPriv->phase;
 }
 
-RobotInterface::ActionType RobotInterface::Action::type() const
+yarp::robotinterface::ActionType yarp::robotinterface::Action::type() const
 {
     return mPriv->type;
 }
 
-unsigned int RobotInterface::Action::level() const
+unsigned int yarp::robotinterface::Action::level() const
 {
     return mPriv->level;
 }
 
-const RobotInterface::ParamList& RobotInterface::Action::params() const
+const yarp::robotinterface::ParamList& yarp::robotinterface::Action::params() const
 {
     return mPriv->params;
 }
 
-bool RobotInterface::Action::hasParam(const std::string& name) const
+bool yarp::robotinterface::Action::hasParam(const std::string& name) const
 {
-    return RobotInterface::hasParam(mPriv->params, name);
+    return yarp::robotinterface::hasParam(mPriv->params, name);
 }
 
-std::string RobotInterface::Action::findParam(const std::string& name) const
+std::string yarp::robotinterface::Action::findParam(const std::string& name) const
 {
-    return RobotInterface::findParam(mPriv->params, name);
+    return yarp::robotinterface::findParam(mPriv->params, name);
 }

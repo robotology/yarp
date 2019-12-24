@@ -44,14 +44,14 @@
 // When this bug is fixed upstream we can enable this
 #define TINYXML_UNSIGNED_INT_BUG 0
 
-RobotInterface::XMLReader::XMLReader() :
+yarp::robotinterface::XMLReader::XMLReader() :
     mReader(nullptr)
 {
     enable_deprecated = false;
     verbose = false;
 }
 
-RobotInterface::XMLReader::~XMLReader()
+yarp::robotinterface::XMLReader::~XMLReader()
 {
     if (mReader)
     {
@@ -60,17 +60,17 @@ RobotInterface::XMLReader::~XMLReader()
     }
 }
 
-void RobotInterface::XMLReader::setVerbose(bool verb)
+void yarp::robotinterface::XMLReader::setVerbose(bool verb)
 {
     verbose = verb;
 }
 
-void RobotInterface::XMLReader::setEnableDeprecated(bool enab)
+void yarp::robotinterface::XMLReader::setEnableDeprecated(bool enab)
 {
     enable_deprecated = enab;
 }
 
-RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fileName)
+yarp::robotinterface::Robot& yarp::robotinterface::XMLReader::getRobot(const std::string& fileName)
 {
     std::string filename = fileName;
 #if defined(_WIN32)
@@ -116,7 +116,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
         if (enable_deprecated)
         {
             yWarning() << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
-            mReader = new RobotInterface::XMLReaderFileV1;
+            mReader = new yarp::robotinterface::XMLReaderFileV1;
             return mReader->getRobotFile(filename, verbose);
         }
         else
@@ -127,7 +127,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
     else if (dtd.majorVersion == 3)
     {
         yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
-        mReader = new RobotInterface::XMLReaderFileV3;
+        mReader = new yarp::robotinterface::XMLReaderFileV3;
         return mReader->getRobotFile(filename,verbose);
     }
 

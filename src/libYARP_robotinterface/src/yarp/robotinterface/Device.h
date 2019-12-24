@@ -26,8 +26,8 @@
 namespace yarp { namespace dev { class PolyDriver; } }
 namespace yarp { namespace dev { class PolyDriverList; } }
 
-namespace RobotInterface
-{
+namespace yarp {
+namespace robotinterface {
 
 class YARP_robotinterface_API Device
 {
@@ -92,10 +92,11 @@ private:
     Private * const mPriv;
 }; // class Device
 
-} // RobotInterface
+} // namespace robotinterface
+} // namespace yarp
 
-namespace std { std::ostream& operator<<(std::ostream &oss, const RobotInterface::Device &t); }
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const RobotInterface::Device &t);
+namespace std { std::ostream& operator<<(std::ostream &oss, const yarp::robotinterface::Device &t); }
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Device &t);
 
 
 #endif // YARP_YARPROBOTINTERFACE_DEVICE_H

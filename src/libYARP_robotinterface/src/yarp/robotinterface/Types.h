@@ -30,23 +30,24 @@
 namespace yarp { namespace os { class Thread; } }
 namespace yarp { namespace os { class LogStream; } }
 
-namespace RobotInterface
-{
+namespace yarp {
+namespace robotinterface {
+
 class Param;
 class Action;
 class Device;
 class Robot;
 
-typedef std::vector<RobotInterface::Param> ParamList;
-typedef std::vector<RobotInterface::Action> ActionList;
-typedef std::vector<RobotInterface::Device> DeviceList;
+typedef std::vector<robotinterface::Param> ParamList;
+typedef std::vector<robotinterface::Action> ActionList;
+typedef std::vector<robotinterface::Device> DeviceList;
 typedef std::list<yarp::os::Thread*> ThreadList;
 
-bool hasParam(const RobotInterface::ParamList &list, const std::string& name);
-std::string findParam(const RobotInterface::ParamList &list, const std::string& name);
-bool hasGroup(const RobotInterface::ParamList &list, const std::string& name);
-std::string findGroup(const RobotInterface::ParamList &list, const std::string& name);
-RobotInterface::ParamList mergeDuplicateGroups(const RobotInterface::ParamList &list);
+bool hasParam(const robotinterface::ParamList &list, const std::string& name);
+std::string findParam(const robotinterface::ParamList &list, const std::string& name);
+bool hasGroup(const robotinterface::ParamList &list, const std::string& name);
+std::string findGroup(const robotinterface::ParamList &list, const std::string& name);
+robotinterface::ParamList mergeDuplicateGroups(const robotinterface::ParamList &list);
 
 enum ActionPhase
 {
@@ -61,10 +62,10 @@ enum ActionPhase
     ActionPhaseReserved = 0xFF
 };
 
-RobotInterface::ActionPhase YARP_robotinterface_API StringToActionPhase(const std::string &phase);
-std::string YARP_robotinterface_API ActionPhaseToString(RobotInterface::ActionPhase actionphase);
-// Required by TiXmlElement::QueryValueAttribute<RobotInterface::ActionPhase>
-void YARP_robotinterface_API operator>>(const std::stringstream &sstream, RobotInterface::ActionPhase &actionphase);
+robotinterface::ActionPhase YARP_robotinterface_API StringToActionPhase(const std::string &phase);
+std::string YARP_robotinterface_API ActionPhaseToString(robotinterface::ActionPhase actionphase);
+// Required by TiXmlElement::QueryValueAttribute<robotinterface::ActionPhase>
+void YARP_robotinterface_API operator>>(const std::stringstream &sstream, robotinterface::ActionPhase &actionphase);
 
 
 enum ActionType
@@ -81,11 +82,12 @@ enum ActionType
     ActionTypeCustom = 0xFF
 };
 
-RobotInterface::ActionType YARP_robotinterface_API StringToActionType(const std::string &type);
-std::string YARP_robotinterface_API ActionTypeToString(RobotInterface::ActionType actiontype);
-// Required by TiXmlElement::QueryValueAttribute<RobotInterface::ActionType>
-void YARP_robotinterface_API operator>>(const std::stringstream &sstream, RobotInterface::ActionType &actiontype);
+robotinterface::ActionType YARP_robotinterface_API StringToActionType(const std::string &type);
+std::string YARP_robotinterface_API ActionTypeToString(robotinterface::ActionType actiontype);
+// Required by TiXmlElement::QueryValueAttribute<robotinterface::ActionType>
+void YARP_robotinterface_API operator>>(const std::stringstream &sstream, robotinterface::ActionType &actiontype);
 
-}
+} // namespace robotinterface
+} // namespace yarp
 
 #endif // YARP_YARPROBOTINTERFACE_TYPES_H

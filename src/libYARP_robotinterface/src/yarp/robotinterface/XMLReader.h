@@ -23,8 +23,9 @@
 
 #include <yarp/robotinterface/api.h>
 
-namespace RobotInterface
-{
+namespace yarp {
+namespace robotinterface {
+
 class Robot;
 
 
@@ -77,6 +78,7 @@ private:
     XMLReaderFileVx * mReader;
 }; // class XMLReader
 
-} // namespace RobotInterface
+} // namespace robotinterface
+} // namespace yarp
 
 #endif // YARP_YARPROBOTINTERFACE_XMLREADER_H
