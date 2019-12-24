@@ -36,9 +36,8 @@ TEST_CASE("dev::MultipleAnalogSensorsInterfacesTest", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
-    SECTION("Test the multiple analog sensors device on a single IMU")
+    SECTION("Test the multiple analog sensors device on a single IMU (deferred attach)")
     {
-
         // We first allocate a single fakeImu
         PolyDriver imuSensor;
         PolyDriver wrapper;
@@ -112,6 +111,42 @@ TEST_CASE("dev::MultipleAnalogSensorsInterfacesTest", "[yarp::dev]")
         imuSensor.close();
     }
 
-    Network::setLocalMode(false);
+    SECTION("Test the multiple analog sensors device on a single IMU (wrapped subdevice)")
+    {
+        PolyDriver wrapper;
+        Property pWrapper;
+        pWrapper.put("device", "multipleanalogsensorsserver");
+        pWrapper.put("subdevice", "fakeIMU"); // wrapped subdevice
+        std::string serverPrefix = "/test/mas/server";
+        pWrapper.put("name", serverPrefix);
+        pWrapper.put("period", 10);
+        pWrapper.put("constantValue", 1); // subdevice-specific
+        REQUIRE(wrapper.open(pWrapper)); // multipleanalogsensorsserver open reported successful
 
+        // Open the client
+        Property pClient;
+        pClient.put("device", "multipleanalogsensorsclient");
+        pClient.put("remote", serverPrefix);
+        pClient.put("local", "/test/mas/client");
+        // Increase timeout time because we don't know the load of the machine on which the test will run
+        pClient.put("timeout", 1.0);
+
+        PolyDriver client;
+        REQUIRE(client.open(pClient)); // multipleanalogsensorsclient open reported successful
+
+        // Let make sure that the data get read by the client
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        // Check the readings of the client device
+        yarp::dev::IOrientationSensors* clientOrientSens;
+        REQUIRE(client.view(clientOrientSens)); // IOrientationSensors of multipleanalogsensorsclient correctly opened
+        int nrOfSensors = clientOrientSens->getNrOfOrientationSensors();
+        CHECK(nrOfSensors == 1); // getNrOfOrientationSensors of multipleanalogsensorsclient works correctly
+
+        // Close devices
+        client.close();
+        wrapper.close();
+    }
+
+    Network::setLocalMode(false);
 }
