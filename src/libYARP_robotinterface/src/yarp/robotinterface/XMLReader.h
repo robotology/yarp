@@ -21,12 +21,14 @@
 
 #include <string>
 
+#include <yarp/robotinterface/api.h>
+
 namespace RobotInterface
 {
 class Robot;
 
 
-class XMLReaderFileVx
+class YARP_robotinterface_API XMLReaderFileVx
 {
 public:
     bool verbose;
@@ -34,7 +36,7 @@ public:
     virtual  Robot& getRobotFile(const std::string &filename, bool verbose = false)=0;
 };
 
-class XMLReaderFileV1 : public XMLReaderFileVx
+class YARP_robotinterface_API XMLReaderFileV1 : public XMLReaderFileVx
 {
 public:
     XMLReaderFileV1();
@@ -47,7 +49,7 @@ private:
     privateXMLReaderFileV1 * const mPriv;
 };
 
-class XMLReaderFileV3: public XMLReaderFileVx
+class YARP_robotinterface_API XMLReaderFileV3: public XMLReaderFileVx
 {
 public:
     XMLReaderFileV3();
@@ -60,7 +62,7 @@ private:
     privateXMLReaderFileV3 * const mPriv;
 };
 
-class XMLReader
+class YARP_robotinterface_API XMLReader
 {
 public:
     XMLReader();

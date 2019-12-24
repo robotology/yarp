@@ -16,6 +16,7 @@ add_subdirectory(libYARP_rosmsg)
 add_subdirectory(libYARP_dev)
 add_subdirectory(libYARP_pcl)
 add_subdirectory(libYARP_cv)
+add_subdirectory(libYARP_robotinterface)
 
 # private libraries
 add_subdirectory(libYARP_companion)

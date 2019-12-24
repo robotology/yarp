@@ -479,6 +479,9 @@ yarp_dependent_option(YARP_COMPILE_libYARP_math "Create math library YARP_math?"
                       YARP_HAS_Eigen3 OFF)
 yarp_renamed_option(CREATE_LIB_MATH YARP_COMPILE_libYARP_math) # Deprecated since YARP 3.2
 
+yarp_dependent_option(YARP_COMPILE_libYARP_robotinterface "Do you want to compile the library YARP_robotinterface?" ON
+                      "YARP_HAS_TinyXML" OFF)
+
 yarp_dependent_option(YARP_COMPILE_GUIS "Do you want to compile GUIs" ON
                       "YARP_COMPILE_EXECUTABLES;YARP_HAS_Qt5" OFF)
 yarp_renamed_option(CREATE_GUIS YARP_COMPILE_GUIS) # Deprecated since YARP 3.2
@@ -546,7 +549,8 @@ endif()
 
 if(NOT YARP_COMPILE_yarprobotinterface AND
    NOT YARP_COMPILE_yarpscope AND
-   NOT YARP_COMPILE_libYARP_manager)
+   NOT YARP_COMPILE_libYARP_manager AND
+   NOT YARP_COMPILE_libYARP_robotinterface)
   set(YARP_BUILD_TinyXML FALSE)
   unset(YARP_HAS_TinyXML)
 endif()

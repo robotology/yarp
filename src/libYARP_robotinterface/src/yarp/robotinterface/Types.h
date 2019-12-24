@@ -24,6 +24,9 @@
 #include <list>
 #include <string>
 
+#include <yarp/robotinterface/api.h>
+
+
 namespace yarp { namespace os { class Thread; } }
 namespace yarp { namespace os { class LogStream; } }
 
@@ -58,10 +61,10 @@ enum ActionPhase
     ActionPhaseReserved = 0xFF
 };
 
-RobotInterface::ActionPhase StringToActionPhase(const std::string &phase);
-std::string ActionPhaseToString(RobotInterface::ActionPhase actionphase);
+RobotInterface::ActionPhase YARP_robotinterface_API StringToActionPhase(const std::string &phase);
+std::string YARP_robotinterface_API ActionPhaseToString(RobotInterface::ActionPhase actionphase);
 // Required by TiXmlElement::QueryValueAttribute<RobotInterface::ActionPhase>
-void operator>>(const std::stringstream &sstream, RobotInterface::ActionPhase &actionphase);
+void YARP_robotinterface_API operator>>(const std::stringstream &sstream, RobotInterface::ActionPhase &actionphase);
 
 
 enum ActionType
@@ -78,10 +81,10 @@ enum ActionType
     ActionTypeCustom = 0xFF
 };
 
-RobotInterface::ActionType StringToActionType(const std::string &type);
-std::string ActionTypeToString(RobotInterface::ActionType actiontype);
+RobotInterface::ActionType YARP_robotinterface_API StringToActionType(const std::string &type);
+std::string YARP_robotinterface_API ActionTypeToString(RobotInterface::ActionType actiontype);
 // Required by TiXmlElement::QueryValueAttribute<RobotInterface::ActionType>
-void operator>>(const std::stringstream &sstream, RobotInterface::ActionType &actiontype);
+void YARP_robotinterface_API operator>>(const std::stringstream &sstream, RobotInterface::ActionType &actiontype);
 
 }
 

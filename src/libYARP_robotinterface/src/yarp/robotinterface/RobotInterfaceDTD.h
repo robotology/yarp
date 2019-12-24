@@ -16,6 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
 #include "XMLReader.h"
 #include "Action.h"
 #include "Device.h"
@@ -34,6 +35,8 @@
 #include <iterator>
 #include <algorithm>
 
+#include <yarp/robotinterface/api.h>
+
 #define SYNTAX_ERROR(line) yFatal() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 #define SYNTAX_WARNING(line) yWarning() << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
 
@@ -42,7 +45,7 @@ namespace RobotInterface {
 
 // Represent something like this in the xml file
 // <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
-class RobotInterfaceDTD
+class YARP_robotinterface_API RobotInterfaceDTD
 {
 public:
     enum DocType {
@@ -77,6 +80,6 @@ public:
 };
 
 
-std::string DocTypeToString(RobotInterfaceDTD::DocType doctype);
+std::string YARP_robotinterface_API DocTypeToString(RobotInterfaceDTD::DocType doctype);
 
 } // namespace

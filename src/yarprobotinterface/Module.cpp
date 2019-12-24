@@ -16,12 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "Action.h"
-#include "Device.h"
 #include "Module.h"
-#include "Param.h"
-#include "Robot.h"
-#include "XMLReader.h"
+
+#include <yarp/robotinterface/Action.h>
+#include <yarp/robotinterface/Device.h>
+#include <yarp/robotinterface/Param.h>
+#include <yarp/robotinterface/Robot.h>
+#include <yarp/robotinterface/XMLReader.h>
 
 #include <yarp/conf/system.h>
 #include <yarp/os/LogStream.h>

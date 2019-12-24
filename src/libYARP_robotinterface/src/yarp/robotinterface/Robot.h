@@ -21,10 +21,12 @@
 
 #include "Types.h"
 
+#include <yarp/robotinterface/api.h>
+
 namespace RobotInterface
 {
 
-class Robot
+class YARP_robotinterface_API Robot
 {
 public:
     explicit Robot();

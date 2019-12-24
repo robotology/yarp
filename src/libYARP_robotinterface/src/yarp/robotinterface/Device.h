@@ -21,13 +21,15 @@
 
 #include "Types.h"
 
+
+
 namespace yarp { namespace dev { class PolyDriver; } }
 namespace yarp { namespace dev { class PolyDriverList; } }
 
 namespace RobotInterface
 {
 
-class Device
+class YARP_robotinterface_API Device
 {
 public:
     explicit Device();
