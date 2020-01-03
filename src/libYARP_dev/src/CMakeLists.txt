@@ -125,6 +125,7 @@ if(TARGET YARP::YARP_math)
                             yarp/dev/Map2DArea.h
                             yarp/dev/MapGrid2D.h
                             yarp/dev/Map2DPath.h
+                            yarp/dev/NavTypes.h
                             yarp/dev/MapGrid2DInfo.h)
 endif()
 
@@ -209,15 +210,28 @@ endif()
 
 # Handle the YARP thrift messages
 include(YarpIDL)
-yarp_idl_to_dir(INPUT_FILES idl/stateExt.thrift
-                            idl/audioBufferSizeData.thrift
-                            idl/Map2DLocationData.thrift
-                            idl/Map2DPathData.thrift
+
+if(TARGET YARP::YARP_math)
+yarp_idl_to_dir(INPUT_FILES 
+                idl/stateExt.thrift
+                idl/audioBufferSizeData.thrift 
+                idl/Map2DLocationData.thrift
+                idl/Map2DPathData.thrift
                 OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
                 SOURCES_VAR YARP_dev_idl_SRCS
                 HEADERS_VAR YARP_dev_idl_all_HDRS
                 INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS
                 PLACEMENT MERGED)
+else()
+yarp_idl_to_dir(INPUT_FILES
+                idl/stateExt.thrift
+                idl/audioBufferSizeData.thrift 
+                OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+                SOURCES_VAR YARP_dev_idl_SRCS
+                HEADERS_VAR YARP_dev_idl_all_HDRS
+                INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS
+                PLACEMENT MERGED)
+endif()
 
 list(APPEND YARP_dev_SRCS ${YARP_dev_idl_SRCS})
 unset(YARP_dev_idl_HDRS)

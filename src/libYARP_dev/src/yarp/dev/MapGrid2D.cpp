@@ -220,12 +220,12 @@ bool MapGrid2D::enlargeObstacles(double size)
 
 void MapGrid2D::enlargeCell(XYCell cell)
 {
-    int i = cell.x;
-    int j = cell.y;
-    int il = cell.x > 1 ? cell.x - 1 : 0;
-    int ir = cell.x + 1<(m_width) - 1 ? cell.x + 1 : (m_width)-1;
-    int ju = cell.y > 1 ? cell.y - 1 : 0;
-    int jd = cell.y + 1<(m_height) - 1 ? cell.y + 1 : (m_height)-1;
+    size_t i = cell.x;
+    size_t j = cell.y;
+    size_t il = cell.x > 1 ? cell.x - 1 : 0;
+    size_t ir = cell.x + 1 < (m_width)-1 ? cell.x + 1 : (m_width)-1;
+    size_t ju = cell.y > 1 ? cell.y - 1 : 0;
+    size_t jd = cell.y + 1 < (m_height)-1 ? cell.y + 1 : (m_height)-1;
 
     if (m_map_flags.pixel(il, j) == MAP_CELL_FREE) m_map_flags.pixel(il, j) = MAP_CELL_ENLARGED_OBSTACLE;
     if (m_map_flags.pixel(ir, j) == MAP_CELL_FREE) m_map_flags.pixel(ir, j) = MAP_CELL_ENLARGED_OBSTACLE;

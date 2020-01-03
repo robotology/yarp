@@ -17,6 +17,7 @@
 #include <yarp/math/Vec2D.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/NavTypes.h>
 
 /**
 * \file MapGrid2D.h contains the definition of a map type
@@ -27,11 +28,11 @@ namespace yarp
     {
         namespace Nav2D
         {
-            typedef yarp::math::Vec2D<size_t>    XYCell;
-            typedef yarp::math::Vec2D<double>    XYWorld;
-
-            struct YARP_dev_API MapGrid2DOrigin
+            class YARP_dev_API MapGrid2DOrigin
             {
+            public:
+                MapGrid2DOrigin();
+                MapGrid2DOrigin(double x_init, double y_init, double t_init);
                 double x;     ///< in meters
                 double y;     ///< in meters
                 double theta; ///< in radians
@@ -40,6 +41,8 @@ namespace yarp
             class YARP_dev_API MapGrid2DInfo
             {
             public:
+                MapGrid2DInfo();
+
                 YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) m_map_name;
                 double          m_resolution;   ///< meters/pixel
                 MapGrid2DOrigin m_origin;       ///< pose of the map frame w.r.t. the bottom left corner of the map image

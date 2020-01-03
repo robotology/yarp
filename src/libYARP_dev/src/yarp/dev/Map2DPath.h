@@ -69,6 +69,12 @@ namespace yarp
                 size_t size() const;
 
                 /**
+                * Returns the length of the path
+                * @return the size of the path
+                */
+                double getLength() const;
+
+                /**
                 * Checks if all the waypoints of the path belong to the same map
                 * return true if the test is successful
                 */

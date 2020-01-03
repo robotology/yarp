@@ -14,6 +14,7 @@
 #include <yarp/os/LogStream.h>
 #include <cassert>
 #include <functional>
+#include <math.h>
 
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
@@ -79,6 +80,16 @@ Map2DLocation &Map2DPath::operator[](size_t index)
 size_t Map2DPath::size() const
 {
     return this->waypoints.size();
+}
+
+double Map2DPath::getLength() const
+{
+    double ll = 0;
+    for (auto it = waypoints.begin(); it != waypoints.end(); it++)
+    {
+        ll += sqrt(pow(it->x,2)+ pow(it->y,2));
+    }
+    return ll;
 }
 
 bool Map2DPath::isOnSingleMap() const

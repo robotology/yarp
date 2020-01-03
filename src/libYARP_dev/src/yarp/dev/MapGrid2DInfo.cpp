@@ -15,15 +15,38 @@ using namespace yarp::os;
 using namespace yarp::math;
 using namespace std;
 
+MapGrid2DOrigin::MapGrid2DOrigin()
+{
+    x = 0;
+    y = 0;
+    theta = 0;
+}
+
+MapGrid2DOrigin::MapGrid2DOrigin(double x_init, double y_init, double t_init)
+{
+    x = x_init;
+    y = y_init;
+    theta = t_init;
+}
+
+MapGrid2DInfo::MapGrid2DInfo()
+{
+    m_map_name = "";
+    m_resolution = 0;
+    m_origin = MapGrid2DOrigin(0, 0, 0);
+    m_width = 0;
+    m_height = 0;
+}
+
 XYWorld MapGrid2DInfo::cell2World(XYCell cell) const
 {
     //convert a cell (from the upper-left corner) to the map reference frame (located in m_origin, measured in meters)
     //beware: the location of m_origin is referred to the lower-left corner (ROS convention)
     XYWorld v;
-    v.x = double(cell.x)*this->m_resolution;
-    v.y = double(cell.y)*this->m_resolution;
-    v.x = + v.x + m_origin.x + 0 * this->m_resolution;
-    v.y = - v.y + m_origin.y + (m_height-1)*this->m_resolution;
+    v.x = double(cell.x) * this->m_resolution;
+    v.y = double(cell.y) * this->m_resolution;
+    v.x = +v.x + m_origin.x + 0 * this->m_resolution;
+    v.y = -v.y + m_origin.y + (m_height - 1) * this->m_resolution;
     return v;
 }
 
@@ -47,8 +70,10 @@ bool MapGrid2DInfo::isInsideMap(XYCell cell) const
 {
     //if (cell.x < 0) return false;
     //if (cell.y < 0) return false;
-    if (cell.x >= m_width) return false;
-    if (cell.y >= m_height) return false;
+    if (cell.x >= m_width)
+        return false;
+    if (cell.y >= m_height)
+        return false;
     return true;
 }
 
@@ -65,7 +90,7 @@ Map2DLocation MapGrid2DInfo::toLocation(XYWorld wrld) const
 
 XYCell MapGrid2DInfo::toXYCell(yarp::dev::Nav2D::Map2DLocation loc) const
 {
-    XYWorld wrld (loc.x, loc.y);
+    XYWorld wrld(loc.x, loc.y);
     XYCell cell = world2Cell(wrld);
     return cell;
 }

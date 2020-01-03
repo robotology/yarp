@@ -259,33 +259,3 @@ template yarp::math::Vec2D<int>    YARP_math_API operator * (const yarp::sig::Ma
 template class YARP_math_API yarp::math::Vec2D<double>;
 template class YARP_math_API yarp::math::Vec2D<int>;
 template class YARP_math_API yarp::math::Vec2D<size_t>;
-
-//--------------------------------------------------------------------
-namespace yarp {
-    namespace math {
-        //constructors
-        template <typename T>
-        yarp::math::Vec2Db<T>::Vec2Db() : x(0), y(0)
-        {
-        }
-
-        template <typename T>
-        yarp::math::Vec2Db<T>::Vec2Db(const yarp::sig::Vector& v)
-        {
-            yAssert(v.size() == 2);
-            x = T(v[0]);
-            y = T(v[1]);
-        }
-
-        template <typename T>
-        yarp::math::Vec2Db<T>::Vec2Db(const T& x_value, const T& y_value)
-        {
-            x = x_value;
-            y = y_value;
-        }
-    }
-}
-
-template class YARP_math_API yarp::math::Vec2Db<double>;
-template class YARP_math_API yarp::math::Vec2Db<int>;
-template class YARP_math_API yarp::math::Vec2Db<size_t>;

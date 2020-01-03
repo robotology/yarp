@@ -12,6 +12,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/sig/Matrix.h>
 #include <vector>
 
 namespace yarp {

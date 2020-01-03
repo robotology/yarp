@@ -12,8 +12,9 @@
 #include <sstream>
 #include <string>
 
-#include <yarp/math/Vec2D.h>
+//#include <yarp/math/Vec2D.h>
 #include <yarp/dev/api.h>
+#include <yarp/dev/NavTypes.h>
 #include <yarp/dev/Map2DLocationData.h>
 
 /**
@@ -50,7 +51,7 @@ namespace yarp
                 * @param inY: location coordinates w.r.t. map reference frame (expressed in meters)
                 * @param inT: location orientation w.r.t. map reference frame (expressed in degrees)
                 */
-                Map2DLocation(const std::string& map_name, yarp::math::Vec2D<double> location)
+                Map2DLocation(const std::string& map_name, yarp::dev::Nav2D::XYWorld location)
                 {
                     map_id = map_name;
                     x = location.x;
