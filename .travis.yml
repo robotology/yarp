@@ -287,7 +287,7 @@ git:
         - tinyxml
         - libedit
         - qt5
-        - opencv@3
+        - opencv
         - eigen
         - graphviz
         - libpng
@@ -413,15 +413,11 @@ git:
   .osx_enable_qt5_cmd_definition: &osx_enable_qt5_cmd |-
     # Enable automatic Qt5 detection on osx
     export Qt5_DIR="/usr/local/opt/qt5/lib/cmake/Qt5"
-  .osx_link_opencv3_cmd_definition: &osx_link_opencv3_cmd |-
-    # Install opencv@3 (keg-only)
-    brew link --force opencv@3
   before_install:
     - *osx_enable_ccache_cmd
     - *osx_system_info_cmd
   install:
     - *osx_enable_qt5_cmd
-    - *osx_link_opencv3_cmd
   before_script:
     - *prepare_build_dir_cmd
     - *export_cmake_options_base_cmd
