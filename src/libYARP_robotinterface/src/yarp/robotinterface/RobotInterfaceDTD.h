@@ -80,7 +80,7 @@ public:
 };
 
 
-std::string YARP_robotinterface_API DocTypeToString(RobotInterfaceDTD::DocType doctype);
+YARP_robotinterface_API std::string DocTypeToString(RobotInterfaceDTD::DocType doctype);
 
 } // namespace robotinterface
 } // namespace yarp

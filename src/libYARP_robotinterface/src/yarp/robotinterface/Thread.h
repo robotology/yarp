@@ -23,10 +23,12 @@
 
 #include <yarp/os/Thread.h>
 
+#include <yarp/robotinterface/api.h>
+
 namespace yarp {
 namespace robotinterface {
 
-class Thread: public yarp::os::Thread
+class YARP_robotinterface_API Thread: public yarp::os::Thread
 {
 public:
     virtual void abort() {}

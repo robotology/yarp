@@ -95,8 +95,8 @@ private:
 } // namespace robotinterface
 } // namespace yarp
 
-namespace std { std::ostream& operator<<(std::ostream &oss, const yarp::robotinterface::Device &t); }
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Device &t);
+namespace std { YARP_robotinterface_API std::ostream& operator<<(std::ostream &oss, const yarp::robotinterface::Device &t); }
+YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Device &t);
 
 
 #endif // YARP_ROBOTINTERFACE_DEVICE_H

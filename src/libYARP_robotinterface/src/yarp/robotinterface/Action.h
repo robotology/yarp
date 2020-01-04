@@ -24,7 +24,7 @@
 namespace yarp {
 namespace robotinterface {
 
-class Action
+class YARP_robotinterface_API Action
 {
 public:
     explicit Action();
@@ -57,8 +57,8 @@ private:
 } // namespace yarp
 
 
-namespace std { std::ostream& operator<<(std::ostream &oss, const yarp::robotinterface::Action &t); }
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Action &t);
+namespace std { YARP_robotinterface_API std::ostream& operator<<(std::ostream &oss, const yarp::robotinterface::Action &t); }
+YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Action &t);
 
 
 #endif // YARP_ROBOTINTERFACE_ACTION_H

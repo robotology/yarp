@@ -43,11 +43,11 @@ typedef std::vector<robotinterface::Action> ActionList;
 typedef std::vector<robotinterface::Device> DeviceList;
 typedef std::list<yarp::os::Thread*> ThreadList;
 
-bool hasParam(const robotinterface::ParamList &list, const std::string& name);
-std::string findParam(const robotinterface::ParamList &list, const std::string& name);
-bool hasGroup(const robotinterface::ParamList &list, const std::string& name);
-std::string findGroup(const robotinterface::ParamList &list, const std::string& name);
-robotinterface::ParamList mergeDuplicateGroups(const robotinterface::ParamList &list);
+YARP_robotinterface_API bool hasParam(const robotinterface::ParamList &list, const std::string& name);
+YARP_robotinterface_API std::string findParam(const robotinterface::ParamList &list, const std::string& name);
+YARP_robotinterface_API bool hasGroup(const robotinterface::ParamList &list, const std::string& name);
+YARP_robotinterface_API std::string findGroup(const robotinterface::ParamList &list, const std::string& name);
+YARP_robotinterface_API robotinterface::ParamList mergeDuplicateGroups(const robotinterface::ParamList &list);
 
 enum ActionPhase
 {
@@ -62,10 +62,10 @@ enum ActionPhase
     ActionPhaseReserved = 0xFF
 };
 
-robotinterface::ActionPhase YARP_robotinterface_API StringToActionPhase(const std::string &phase);
-std::string YARP_robotinterface_API ActionPhaseToString(robotinterface::ActionPhase actionphase);
+YARP_robotinterface_API robotinterface::ActionPhase StringToActionPhase(const std::string &phase);
+YARP_robotinterface_API std::string ActionPhaseToString(robotinterface::ActionPhase actionphase);
 // Required by TiXmlElement::QueryValueAttribute<robotinterface::ActionPhase>
-void YARP_robotinterface_API operator>>(const std::stringstream &sstream, robotinterface::ActionPhase &actionphase);
+YARP_robotinterface_API void operator>>(const std::stringstream &sstream, robotinterface::ActionPhase &actionphase);
 
 
 enum ActionType
@@ -82,10 +82,10 @@ enum ActionType
     ActionTypeCustom = 0xFF
 };
 
-robotinterface::ActionType YARP_robotinterface_API StringToActionType(const std::string &type);
-std::string YARP_robotinterface_API ActionTypeToString(robotinterface::ActionType actiontype);
+YARP_robotinterface_API robotinterface::ActionType StringToActionType(const std::string &type);
+YARP_robotinterface_API std::string ActionTypeToString(robotinterface::ActionType actiontype);
 // Required by TiXmlElement::QueryValueAttribute<robotinterface::ActionType>
-void YARP_robotinterface_API operator>>(const std::stringstream &sstream, robotinterface::ActionType &actiontype);
+YARP_robotinterface_API void operator>>(const std::stringstream &sstream, robotinterface::ActionType &actiontype);
 
 } // namespace robotinterface
 } // namespace yarp
