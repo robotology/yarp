@@ -37,9 +37,6 @@
 
 #include <yarp/robotinterface/api.h>
 
-#define SYNTAX_ERROR(line) yFatal() << "Syntax error while loading" << curr_filename << "at line" << line << "."
-#define SYNTAX_WARNING(line) yWarning() << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
-
 namespace yarp {
 namespace robotinterface {
 
