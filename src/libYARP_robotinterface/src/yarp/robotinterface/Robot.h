@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_YARPROBOTINTERFACE_ROBOT_H
-#define YARP_YARPROBOTINTERFACE_ROBOT_H
+#ifndef YARP_ROBOTINTERFACE_ROBOT_H
+#define YARP_ROBOTINTERFACE_ROBOT_H
 
 #include "Types.h"
 
@@ -74,4 +74,4 @@ std::ostringstream& operator<<(std::ostringstream &oss, const yarp::robotinterfa
 yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Robot &t);
 
 
-#endif // YARP_YARPROBOTINTERFACE_ROBOT_H
+#endif // YARP_ROBOTINTERFACE_ROBOT_H

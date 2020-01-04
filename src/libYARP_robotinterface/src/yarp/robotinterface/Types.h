@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_YARPROBOTINTERFACE_TYPES_H
-#define YARP_YARPROBOTINTERFACE_TYPES_H
+#ifndef YARP_ROBOTINTERFACE_TYPES_H
+#define YARP_ROBOTINTERFACE_TYPES_H
 
 #include <vector>
 #include <iosfwd>
@@ -90,4 +90,4 @@ void YARP_robotinterface_API operator>>(const std::stringstream &sstream, roboti
 } // namespace robotinterface
 } // namespace yarp
 
-#endif // YARP_YARPROBOTINTERFACE_TYPES_H
+#endif // YARP_ROBOTINTERFACE_TYPES_H

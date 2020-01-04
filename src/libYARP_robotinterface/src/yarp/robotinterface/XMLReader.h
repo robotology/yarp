@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_YARPROBOTINTERFACE_XMLREADER_H
-#define YARP_YARPROBOTINTERFACE_XMLREADER_H
+#ifndef YARP_ROBOTINTERFACE_XMLREADER_H
+#define YARP_ROBOTINTERFACE_XMLREADER_H
 
 #include <string>
 
@@ -81,4 +81,4 @@ private:
 } // namespace robotinterface
 } // namespace yarp
 
-#endif // YARP_YARPROBOTINTERFACE_XMLREADER_H
+#endif // YARP_ROBOTINTERFACE_XMLREADER_H

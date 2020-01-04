@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_YARPROBOTINTERFACE_ACTION_H
-#define YARP_YARPROBOTINTERFACE_ACTION_H
+#ifndef YARP_ROBOTINTERFACE_ACTION_H
+#define YARP_ROBOTINTERFACE_ACTION_H
 
 #include "Types.h"
 
@@ -61,4 +61,4 @@ namespace std { std::ostream& operator<<(std::ostream &oss, const yarp::robotint
 yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Action &t);
 
 
-#endif // YARP_YARPROBOTINTERFACE_ACTION_H
+#endif // YARP_ROBOTINTERFACE_ACTION_H

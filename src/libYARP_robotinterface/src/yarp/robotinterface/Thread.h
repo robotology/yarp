@@ -18,8 +18,8 @@
 
 // WARNING This is a temporary hack until yarp::os::Thread::join method is public
 
-#ifndef YARP_YARPROBOTINTERFACE_THREAD_H
-#define YARP_YARPROBOTINTERFACE_THREAD_H
+#ifndef YARP_ROBOTINTERFACE_THREAD_H
+#define YARP_ROBOTINTERFACE_THREAD_H
 
 #include <yarp/os/Thread.h>
 
@@ -35,4 +35,4 @@ public:
 } // namespace robotinterface
 } // namespace yarp
 
-#endif // YARP_YARPROBOTINTERFACE_THREAD_H
+#endif // YARP_ROBOTINTERFACE_THREAD_H
