@@ -28,7 +28,6 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 
-#include <tinyxml.h>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -36,6 +35,8 @@
 #include <algorithm>
 
 #include <yarp/robotinterface/api.h>
+
+class TiXmlUnknown;
 
 namespace yarp {
 namespace robotinterface {
