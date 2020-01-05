@@ -17,12 +17,12 @@
  */
 
 
-#include "XMLReader.h"
-#include "Action.h"
-#include "Device.h"
-#include "Param.h"
-#include "Robot.h"
-#include "Types.h"
+#include <yarp/robotinterface/XMLReader.h>
+#include <yarp/robotinterface/Action.h>
+#include <yarp/robotinterface/Device.h>
+#include <yarp/robotinterface/Param.h>
+#include <yarp/robotinterface/Robot.h>
+#include <yarp/robotinterface/Types.h>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>

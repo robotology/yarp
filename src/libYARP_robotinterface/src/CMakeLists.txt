@@ -15,8 +15,9 @@ set(YARP_robotinterface_HDRS yarp/robotinterface/Action.h
                              yarp/robotinterface/Param.h
                              yarp/robotinterface/Robot.h
                              yarp/robotinterface/Types.h
-                             yarp/robotinterface/XMLReader.h
-                             yarp/robotinterface/RobotInterfaceDTD.h)
+                             yarp/robotinterface/XMLReader.h)
+
+set(YARP_robotinterface_IMPL_HDRS yarp/robotinterface/impl/RobotInterfaceDTD.h)
 
 set(YARP_robotinterface_SRCS yarp/robotinterface/Action.cpp
                              yarp/robotinterface/CalibratorThread.cpp

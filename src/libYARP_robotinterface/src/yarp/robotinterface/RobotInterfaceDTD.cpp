@@ -22,7 +22,7 @@
 #include "Param.h"
 #include "Robot.h"
 #include "Types.h"
-#include "RobotInterfaceDTD.h"
+#include "impl/RobotInterfaceDTD.h"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
