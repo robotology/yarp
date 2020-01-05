@@ -21,7 +21,8 @@
 
 #include "Types.h"
 
-
+#include "Action.h"
+#include "Param.h"
 
 namespace yarp { namespace dev { class PolyDriver; } }
 namespace yarp { namespace dev { class PolyDriverList; } }
