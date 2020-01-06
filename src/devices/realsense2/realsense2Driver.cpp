@@ -562,7 +562,7 @@ bool realsense2Driver::initializeRealsenseDevice()
     // Given a device, we can query its sensors using:
     m_sensors = m_device.query_sensors();
 
-    yInfo()<< "realsense2Driver: Device consists of" << m_sensors.size()<<"sensors";
+    yInfo()<< "realsense2Driver: Device consists of" << m_sensors.size()<<"sensors. More infos using --verbose option";
     if (m_verbose)
     {
         for (const auto & m_sensor : m_sensors)

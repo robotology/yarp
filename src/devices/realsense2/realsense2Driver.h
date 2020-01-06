@@ -194,7 +194,7 @@ public:
     int height() const override;
     int width() const override;
 
-private:
+protected:
     //method
     inline bool initializeRealsenseDevice();
     inline bool setParams();
@@ -210,7 +210,7 @@ private:
 
 
     // realsense classes
-    std::mutex   m_mutex;
+    mutable std::mutex m_mutex;
     rs2::context m_ctx;
     rs2::config m_cfg;
     rs2::pipeline m_pipeline;
