@@ -168,6 +168,10 @@ bool MultipleAnalogSensorsServer::populateAllSensorsMetadata()
                                        &yarp::dev::IThreeAxisMagnetometers::getNrOfThreeAxisMagnetometers,
                                        &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerName,
                                        &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerFrameName);
+    ok = ok && populateSensorsMetadata(m_iPositionSensors, m_sensorMetadata.PositionSensors, "PositionSensors",
+                                       &yarp::dev::IPositionSensors::getNrOfPositionSensors,
+                                       &yarp::dev::IPositionSensors::getPositionSensorName,
+                                       &yarp::dev::IPositionSensors::getPositionSensorFrameName);
     ok = ok && populateSensorsMetadata(m_iOrientationSensors, m_sensorMetadata.OrientationSensors, "OrientationSensors",
                                        &yarp::dev::IOrientationSensors::getNrOfOrientationSensors,
                                        &yarp::dev::IOrientationSensors::getOrientationSensorName,
@@ -223,6 +227,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     poly->view(m_iThreeAxisGyroscopes);
     poly->view(m_iThreeAxisLinearAccelerometers);
     poly->view(m_iThreeAxisMagnetometers);
+    poly->view(m_iPositionSensors);
     poly->view(m_iOrientationSensors);
     poly->view(m_iTemperatureSensors);
     poly->view(m_iSixAxisForceTorqueSensors);
@@ -342,6 +347,11 @@ void MultipleAnalogSensorsServer::run()
                                  streamingData.ThreeAxisMagnetometers.measurements,
                                  &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerStatus,
                                  &yarp::dev::IThreeAxisMagnetometers::getThreeAxisMagnetometerMeasure);
+
+    ok = ok && genericStreamData(m_iPositionSensors, m_sensorMetadata.PositionSensors,
+                                 streamingData.PositionSensors.measurements,
+                                 &yarp::dev::IPositionSensors::getPositionSensorStatus,
+                                 &yarp::dev::IPositionSensors::getPositionSensorMeasure);
 
     ok = ok && genericStreamData(m_iOrientationSensors, m_sensorMetadata.OrientationSensors,
                                  streamingData.OrientationSensors.measurements,

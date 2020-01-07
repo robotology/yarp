@@ -53,6 +53,7 @@ class MultipleAnalogSensorsServer :
     yarp::dev::IThreeAxisGyroscopes* m_iThreeAxisGyroscopes{nullptr};
     yarp::dev::IThreeAxisLinearAccelerometers* m_iThreeAxisLinearAccelerometers{nullptr};
     yarp::dev::IThreeAxisMagnetometers* m_iThreeAxisMagnetometers{nullptr};
+    yarp::dev::IPositionSensors* m_iPositionSensors{nullptr};
     yarp::dev::IOrientationSensors* m_iOrientationSensors{nullptr};
     yarp::dev::ITemperatureSensors* m_iTemperatureSensors{nullptr};
     yarp::dev::ISixAxisForceTorqueSensors* m_iSixAxisForceTorqueSensors{nullptr};
