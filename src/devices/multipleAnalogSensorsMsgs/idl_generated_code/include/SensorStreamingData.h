@@ -32,6 +32,7 @@ public:
     SensorMeasurements ContactLoadCellArrays;
     SensorMeasurements EncoderArrays;
     SensorMeasurements SkinPatches;
+    SensorMeasurements PositionSensors;
 
     // Default constructor
     SensorStreamingData();
@@ -45,7 +46,8 @@ public:
                         const SensorMeasurements& SixAxisForceTorqueSensors,
                         const SensorMeasurements& ContactLoadCellArrays,
                         const SensorMeasurements& EncoderArrays,
-                        const SensorMeasurements& SkinPatches);
+                        const SensorMeasurements& SkinPatches,
+                        const SensorMeasurements& PositionSensors);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -170,6 +172,12 @@ public:
         virtual bool will_set_SkinPatches();
         virtual bool did_set_SkinPatches();
 
+        // Editor: PositionSensors field
+        void set_PositionSensors(const SensorMeasurements& PositionSensors);
+        const SensorMeasurements& get_PositionSensors() const;
+        virtual bool will_set_PositionSensors();
+        virtual bool did_set_PositionSensors();
+
         // Editor: clean
         void clean();
 
@@ -196,6 +204,7 @@ public:
         bool is_dirty_ContactLoadCellArrays;
         bool is_dirty_EncoderArrays;
         bool is_dirty_SkinPatches;
+        bool is_dirty_PositionSensors;
         int dirty_count;
 
         // Editor: send if possible
@@ -214,6 +223,7 @@ public:
         void mark_dirty_ContactLoadCellArrays();
         void mark_dirty_EncoderArrays();
         void mark_dirty_SkinPatches();
+        void mark_dirty_PositionSensors();
 
         // Editor: dirty_flags
         void dirty_flags(bool flag);
@@ -273,6 +283,12 @@ private:
     bool write_SkinPatches(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_SkinPatches(yarp::os::idl::WireReader& reader);
     bool nested_write_SkinPatches(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write PositionSensors field
+    bool read_PositionSensors(yarp::os::idl::WireReader& reader);
+    bool write_PositionSensors(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_PositionSensors(yarp::os::idl::WireReader& reader);
+    bool nested_write_PositionSensors(const yarp::os::idl::WireWriter& writer) const;
 };
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_SENSORSTREAMINGDATA_H

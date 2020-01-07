@@ -59,6 +59,7 @@ class MultipleAnalogSensorsClient :
         public yarp::dev::IThreeAxisGyroscopes,
         public yarp::dev::IThreeAxisLinearAccelerometers,
         public yarp::dev::IThreeAxisMagnetometers,
+        public yarp::dev::IPositionSensors,
         public yarp::dev::IOrientationSensors,
         public yarp::dev::ITemperatureSensors,
         public yarp::dev::ISixAxisForceTorqueSensors,
@@ -118,6 +119,13 @@ public:
     bool getThreeAxisMagnetometerName(size_t sens_index, std::string &name) const override;
     bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string &frameName) const override;
     bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
+
+    /* IPositionSensors methods */
+    size_t getNrOfPositionSensors() const override;
+    yarp::dev::MAS_status getPositionSensorStatus(size_t sens_index) const override;
+    bool getPositionSensorName(size_t sens_index, std::string& name) const override;
+    bool getPositionSensorFrameName(size_t sens_index, std::string& frameName) const override;
+    bool getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
 
     /* IOrientationSensors methods */
     size_t getNrOfOrientationSensors() const override;

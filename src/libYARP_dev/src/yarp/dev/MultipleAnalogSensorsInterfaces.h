@@ -22,6 +22,7 @@ namespace yarp
         class IThreeAxisGyroscopes;
         class IThreeAxisLinearAccelerometers;
         class IThreeAxisMagnetometers;
+        class IPositionSensors;
         class IOrientationSensors;
         class ITemperatureSensors;
         class ISixAxisForceTorqueSensors;
@@ -196,6 +197,63 @@ public:
     virtual bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const = 0;
 
     virtual ~IThreeAxisMagnetometers(){}
+};
+
+/**
+ * @ingroup dev_iface_multiple_analog
+ *
+ * \brief Device interface to one or multiple position sensors, such as UWB localization sensors.
+ * The device returns the relative position between a lab or surface-fixed frame and
+ * a frame rigidly attached to the sensor.
+ *
+ * The definition of the lab or surface-fixed frame is sensor-specific.
+ *
+ * | Sensor Tag  |
+ * |:-----------------:|
+ * | `PositionSensors` |
+ */
+class YARP_dev_API yarp::dev::IPositionSensors
+{
+public:
+    /**
+     * Get the number of position sensors exposed by this device.
+     */
+    virtual size_t getNrOfPositionSensors() const = 0;
+
+    /**
+     * Get the status of the specified sensor.
+     */
+    virtual yarp::dev::MAS_status getPositionSensorStatus(size_t sens_index) const = 0;
+
+    /**
+     * Get the name of the specified sensor.
+     * @return false if an error occurred, true otherwise.
+     */
+    virtual bool getPositionSensorName(size_t sens_index, std::string& name) const = 0;
+
+    /**
+     * Get the name of the frame of the specified sensor.
+     *
+     * @note This is an implementation specific method, that may return the name of the sensor
+     *       frame in a scenegraph
+     *
+     * @return false if an error occurred, true otherwise.
+     */
+    virtual bool getPositionSensorFrameName(size_t sens_index, std::string& frameName) const = 0;
+
+    /**
+     * Get the last reading of the position sensor as x y z.
+     *
+     * @param[in] sens_index The index of the specified sensor (should be between 0 and getNrOfPositionSensors()-1).
+     * @param[out] out The requested measure. The vector should be 3-dimensional. The measure is expressed in meters.
+     * @param[out] timestamp The timestamp of the requested measure, expressed in seconds.
+     * @return false if an error occurred, true otherwise.
+     */
+    virtual bool getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const = 0;
+
+    virtual ~IPositionSensors()
+    {
+    }
 };
 
 /**

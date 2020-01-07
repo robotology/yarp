@@ -24,7 +24,8 @@ SensorRPCData::SensorRPCData() :
         SixAxisForceTorqueSensors(),
         ContactLoadCellArrays(),
         EncoderArrays(),
-        SkinPatches()
+        SkinPatches(),
+        PositionSensors()
 {
 }
 
@@ -37,7 +38,8 @@ SensorRPCData::SensorRPCData(const std::vector<SensorMetadata>& ThreeAxisGyrosco
                              const std::vector<SensorMetadata>& SixAxisForceTorqueSensors,
                              const std::vector<SensorMetadata>& ContactLoadCellArrays,
                              const std::vector<SensorMetadata>& EncoderArrays,
-                             const std::vector<SensorMetadata>& SkinPatches) :
+                             const std::vector<SensorMetadata>& SkinPatches,
+                             const std::vector<SensorMetadata>& PositionSensors) :
         WirePortable(),
         ThreeAxisGyroscopes(ThreeAxisGyroscopes),
         ThreeAxisLinearAccelerometers(ThreeAxisLinearAccelerometers),
@@ -47,7 +49,8 @@ SensorRPCData::SensorRPCData(const std::vector<SensorMetadata>& ThreeAxisGyrosco
         SixAxisForceTorqueSensors(SixAxisForceTorqueSensors),
         ContactLoadCellArrays(ContactLoadCellArrays),
         EncoderArrays(EncoderArrays),
-        SkinPatches(SkinPatches)
+        SkinPatches(SkinPatches),
+        PositionSensors(PositionSensors)
 {
 }
 
@@ -81,6 +84,9 @@ bool SensorRPCData::read(yarp::os::idl::WireReader& reader)
     if (!read_SkinPatches(reader)) {
         return false;
     }
+    if (!read_PositionSensors(reader)) {
+        return false;
+    }
     return !reader.isError();
 }
 
@@ -88,7 +94,7 @@ bool SensorRPCData::read(yarp::os::idl::WireReader& reader)
 bool SensorRPCData::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(9)) {
+    if (!reader.readListHeader(10)) {
         return false;
     }
     return read(reader);
@@ -124,6 +130,9 @@ bool SensorRPCData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_SkinPatches(writer)) {
         return false;
     }
+    if (!write_PositionSensors(writer)) {
+        return false;
+    }
     return !writer.isError();
 }
 
@@ -131,7 +140,7 @@ bool SensorRPCData::write(const yarp::os::idl::WireWriter& writer) const
 bool SensorRPCData::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(9)) {
+    if (!writer.writeListHeader(10)) {
         return false;
     }
     return write(writer);
@@ -552,6 +561,44 @@ bool SensorRPCData::Editor::did_set_SkinPatches()
     return true;
 }
 
+// Editor: PositionSensors setter
+void SensorRPCData::Editor::set_PositionSensors(const std::vector<SensorMetadata>& PositionSensors)
+{
+    will_set_PositionSensors();
+    obj->PositionSensors = PositionSensors;
+    mark_dirty_PositionSensors();
+    communicate();
+    did_set_PositionSensors();
+}
+
+// Editor: PositionSensors setter (list)
+void SensorRPCData::Editor::set_PositionSensors(size_t index, const SensorMetadata& elem)
+{
+    will_set_PositionSensors();
+    obj->PositionSensors[index] = elem;
+    mark_dirty_PositionSensors();
+    communicate();
+    did_set_PositionSensors();
+}
+
+// Editor: PositionSensors getter
+const std::vector<SensorMetadata>& SensorRPCData::Editor::get_PositionSensors() const
+{
+    return obj->PositionSensors;
+}
+
+// Editor: PositionSensors will_set
+bool SensorRPCData::Editor::will_set_PositionSensors()
+{
+    return true;
+}
+
+// Editor: PositionSensors did_set
+bool SensorRPCData::Editor::did_set_PositionSensors()
+{
+    return true;
+}
+
 // Editor: clean
 void SensorRPCData::Editor::clean()
 {
@@ -673,8 +720,16 @@ bool SensorRPCData::Editor::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
             }
+            if (field == "PositionSensors") {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeString("std::vector<SensorMetadata> PositionSensors")) {
+                    return false;
+                }
+            }
         }
-        if (!writer.writeListHeader(10)) {
+        if (!writer.writeListHeader(11)) {
             return false;
         }
         writer.writeString("*** Available fields:");
@@ -687,6 +742,7 @@ bool SensorRPCData::Editor::read(yarp::os::ConnectionReader& connection)
         writer.writeString("ContactLoadCellArrays");
         writer.writeString("EncoderArrays");
         writer.writeString("SkinPatches");
+        writer.writeString("PositionSensors");
         return true;
     }
     bool nested = true;
@@ -767,6 +823,12 @@ bool SensorRPCData::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             did_set_SkinPatches();
+        } else if (key == "PositionSensors") {
+            will_set_PositionSensors();
+            if (!obj->nested_read_PositionSensors(reader)) {
+                return false;
+            }
+            did_set_PositionSensors();
         } else {
             // would be useful to have a fallback here
         }
@@ -920,6 +982,20 @@ bool SensorRPCData::Editor::write(yarp::os::ConnectionWriter& connection) const
             return false;
         }
     }
+    if (is_dirty_PositionSensors) {
+        if (!writer.writeListHeader(3)) {
+            return false;
+        }
+        if (!writer.writeString("set")) {
+            return false;
+        }
+        if (!writer.writeString("PositionSensors")) {
+            return false;
+        }
+        if (!obj->nested_write_PositionSensors(writer)) {
+            return false;
+        }
+    }
     return !writer.isError();
 }
 
@@ -1040,6 +1116,17 @@ void SensorRPCData::Editor::mark_dirty_SkinPatches()
     mark_dirty();
 }
 
+// Editor: PositionSensors mark_dirty
+void SensorRPCData::Editor::mark_dirty_PositionSensors()
+{
+    if (is_dirty_PositionSensors) {
+        return;
+    }
+    dirty_count++;
+    is_dirty_PositionSensors = true;
+    mark_dirty();
+}
+
 // Editor: dirty_flags
 void SensorRPCData::Editor::dirty_flags(bool flag)
 {
@@ -1053,7 +1140,8 @@ void SensorRPCData::Editor::dirty_flags(bool flag)
     is_dirty_ContactLoadCellArrays = flag;
     is_dirty_EncoderArrays = flag;
     is_dirty_SkinPatches = flag;
-    dirty_count = flag ? 9 : 0;
+    is_dirty_PositionSensors = flag;
+    dirty_count = flag ? 10 : 0;
 }
 
 // read ThreeAxisGyroscopes field
@@ -1677,6 +1765,76 @@ bool SensorRPCData::nested_write_SkinPatches(const yarp::os::idl::WireWriter& wr
     }
     for (const auto& _item119 : SkinPatches) {
         if (!writer.writeNested(_item119)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+// read PositionSensors field
+bool SensorRPCData::read_PositionSensors(yarp::os::idl::WireReader& reader)
+{
+    PositionSensors.clear();
+    uint32_t _size120;
+    yarp::os::idl::WireState _etype123;
+    reader.readListBegin(_etype123, _size120);
+    PositionSensors.resize(_size120);
+    for (size_t _i124 = 0; _i124 < _size120; ++_i124) {
+        if (!reader.readNested(PositionSensors[_i124])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write PositionSensors field
+bool SensorRPCData::write_PositionSensors(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(PositionSensors.size()))) {
+        return false;
+    }
+    for (const auto& _item125 : PositionSensors) {
+        if (!writer.writeNested(_item125)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) PositionSensors field
+bool SensorRPCData::nested_read_PositionSensors(yarp::os::idl::WireReader& reader)
+{
+    PositionSensors.clear();
+    uint32_t _size126;
+    yarp::os::idl::WireState _etype129;
+    reader.readListBegin(_etype129, _size126);
+    PositionSensors.resize(_size126);
+    for (size_t _i130 = 0; _i130 < _size126; ++_i130) {
+        if (!reader.readNested(PositionSensors[_i130])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write (nested) PositionSensors field
+bool SensorRPCData::nested_write_PositionSensors(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(PositionSensors.size()))) {
+        return false;
+    }
+    for (const auto& _item131 : PositionSensors) {
+        if (!writer.writeNested(_item131)) {
             return false;
         }
     }

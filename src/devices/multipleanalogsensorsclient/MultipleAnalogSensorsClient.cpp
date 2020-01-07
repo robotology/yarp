@@ -399,6 +399,32 @@ bool MultipleAnalogSensorsClient::getOrientationSensorMeasureAsRollPitchYaw(size
                              m_streamingPort.receivedData.OrientationSensors, sens_index, out, timestamp);
 }
 
+size_t MultipleAnalogSensorsClient::getNrOfPositionSensors() const
+{
+    return genericGetNrOfSensors(m_sensorsMetadata.PositionSensors,
+                                 m_streamingPort.receivedData.PositionSensors);
+}
+
+yarp::dev::MAS_status MultipleAnalogSensorsClient::getPositionSensorStatus(size_t sens_index) const
+{
+    return genericGetStatus();
+}
+
+bool MultipleAnalogSensorsClient::getPositionSensorName(size_t sens_index, std::string& name) const
+{
+    return genericGetName(m_sensorsMetadata.PositionSensors, "PositionSensors", sens_index, name);
+}
+
+bool MultipleAnalogSensorsClient::getPositionSensorFrameName(size_t sens_index, std::string& frameName) const
+{
+    return genericGetFrameName(m_sensorsMetadata.PositionSensors, "PositionSensors", sens_index, frameName);
+}
+
+bool MultipleAnalogSensorsClient::getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    return genericGetMeasure(m_sensorsMetadata.PositionSensors, "PositionSensors", m_streamingPort.receivedData.PositionSensors, sens_index, out, timestamp);
+}
+
 size_t MultipleAnalogSensorsClient::getNrOfTemperatureSensors() const
 {
     return genericGetNrOfSensors(m_sensorsMetadata.TemperatureSensors,

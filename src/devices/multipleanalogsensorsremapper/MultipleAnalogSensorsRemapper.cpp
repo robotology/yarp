@@ -54,6 +54,9 @@ inline std::string MAS_getTagFromEnum(const MAS_SensorType type)
         case SkinPatches:
             return "SkinPatches";
             break;
+        case PositionSensors:
+            return "PositionSensors";
+            break;
         default:
             assert(false);
             return "MAS_getTagFromEnum_notExpectedEnum";
@@ -213,6 +216,8 @@ bool MultipleAnalogSensorsRemapper::attachAll(const PolyDriverList &polylist)
                                 &IThreeAxisLinearAccelerometers::getThreeAxisLinearAccelerometerName, &IThreeAxisLinearAccelerometers::getNrOfThreeAxisLinearAccelerometers);
     ok = ok && genericAttachAll(ThreeAxisMagnetometers, m_iThreeAxisMagnetometers, polylist,
                                 &IThreeAxisMagnetometers::getThreeAxisMagnetometerName, &IThreeAxisMagnetometers::getNrOfThreeAxisMagnetometers);
+    ok = ok && genericAttachAll(PositionSensors, m_iPositionSensors, polylist,
+                                &IPositionSensors::getPositionSensorName, &IPositionSensors::getNrOfPositionSensors);
     ok = ok && genericAttachAll(OrientationSensors, m_iOrientationSensors, polylist,
                                 &IOrientationSensors::getOrientationSensorName, &IOrientationSensors::getNrOfOrientationSensors);
     ok = ok && genericAttachAll(TemperatureSensors, m_iTemperatureSensors, polylist,
@@ -234,6 +239,7 @@ bool MultipleAnalogSensorsRemapper::detachAll()
     m_iThreeAxisGyroscopes.resize(0);
     m_iThreeAxisLinearAccelerometers.resize(0);
     m_iThreeAxisMagnetometers.resize(0);
+    m_iPositionSensors.resize(0);
     m_iOrientationSensors.resize(0);
     m_iTemperatureSensors.resize(0);
     m_iSixAxisForceTorqueSensors.resize(0);
@@ -450,6 +456,31 @@ bool MultipleAnalogSensorsRemapper::getThreeAxisMagnetometerFrameName(size_t sen
 bool MultipleAnalogSensorsRemapper::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
      return genericGetMeasure(ThreeAxisMagnetometers, sens_index, out, timestamp, m_iThreeAxisMagnetometers, &IThreeAxisMagnetometers::getThreeAxisMagnetometerMeasure);
+}
+
+size_t MultipleAnalogSensorsRemapper::getNrOfPositionSensors() const
+{
+    return m_indicesMap[PositionSensors].size();
+}
+
+MAS_status MultipleAnalogSensorsRemapper::getPositionSensorStatus(size_t sens_index) const
+{
+    return genericGetStatus(PositionSensors, sens_index, m_iPositionSensors, &IPositionSensors::getPositionSensorStatus);
+}
+
+bool MultipleAnalogSensorsRemapper::getPositionSensorName(size_t sens_index, std::string& name) const
+{
+    return genericGetName(PositionSensors, sens_index, name, m_iPositionSensors, &IPositionSensors::getPositionSensorName);
+}
+
+bool MultipleAnalogSensorsRemapper::getPositionSensorFrameName(size_t sens_index, std::string& frameName) const
+{
+    return genericGetFrameName(PositionSensors, sens_index, frameName, m_iPositionSensors, &IPositionSensors::getPositionSensorFrameName);
+}
+
+bool MultipleAnalogSensorsRemapper::getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
+{
+    return genericGetMeasure(PositionSensors, sens_index, out, timestamp, m_iPositionSensors, &IPositionSensors::getPositionSensorMeasure);
 }
 
 size_t MultipleAnalogSensorsRemapper::getNrOfOrientationSensors() const

@@ -30,7 +30,8 @@ enum MAS_SensorType
     SixAxisForceTorqueSensors=5,
     ContactLoadCellArrays=6,
     EncoderArrays=7,
-    SkinPatches=8
+    SkinPatches=8,
+    PositionSensors=9
 };
 
 /**
@@ -94,7 +95,8 @@ class MultipleAnalogSensorsRemapper :
         public yarp::dev::ISixAxisForceTorqueSensors,
         public yarp::dev::IContactLoadCellArrays,
         public yarp::dev::IEncoderArrays,
-        public yarp::dev::ISkinPatches
+        public yarp::dev::ISkinPatches,
+        public yarp::dev::IPositionSensors
 {
 private:
     bool m_verbose{false};
@@ -126,6 +128,8 @@ private:
     std::vector<yarp::dev::IContactLoadCellArrays*> m_iContactLoadCellArrays;
     std::vector<yarp::dev::IEncoderArrays*> m_iEncoderArrays;
     std::vector<yarp::dev::ISkinPatches*> m_iSkinPatches;
+    std::vector<yarp::dev::IPositionSensors*> m_iPositionSensors;
+
 
     // Templated methods to streamline of the function implementation for all the different sensors
     // This part is complicated, but is useful to avoid a huge code duplication
@@ -237,6 +241,13 @@ public:
     bool getSkinPatchName(size_t sens_index, std::string &name) const override;
     bool getSkinPatchMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
     size_t getSkinPatchSize(size_t sens_index) const override;
+
+    /* IPositionSensors methods */
+    size_t getNrOfPositionSensors() const override;
+    yarp::dev::MAS_status getPositionSensorStatus(size_t sens_index) const override;
+    bool getPositionSensorName(size_t sens_index, std::string& name) const override;
+    bool getPositionSensorFrameName(size_t sens_index, std::string& frameName) const override;
+    bool getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const override;
 };
 
 

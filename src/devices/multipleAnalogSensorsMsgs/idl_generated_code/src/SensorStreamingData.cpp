@@ -24,7 +24,8 @@ SensorStreamingData::SensorStreamingData() :
         SixAxisForceTorqueSensors(),
         ContactLoadCellArrays(),
         EncoderArrays(),
-        SkinPatches()
+        SkinPatches(),
+        PositionSensors()
 {
 }
 
@@ -37,7 +38,8 @@ SensorStreamingData::SensorStreamingData(const SensorMeasurements& ThreeAxisGyro
                                          const SensorMeasurements& SixAxisForceTorqueSensors,
                                          const SensorMeasurements& ContactLoadCellArrays,
                                          const SensorMeasurements& EncoderArrays,
-                                         const SensorMeasurements& SkinPatches) :
+                                         const SensorMeasurements& SkinPatches,
+                                         const SensorMeasurements& PositionSensors) :
         WirePortable(),
         ThreeAxisGyroscopes(ThreeAxisGyroscopes),
         ThreeAxisLinearAccelerometers(ThreeAxisLinearAccelerometers),
@@ -47,7 +49,8 @@ SensorStreamingData::SensorStreamingData(const SensorMeasurements& ThreeAxisGyro
         SixAxisForceTorqueSensors(SixAxisForceTorqueSensors),
         ContactLoadCellArrays(ContactLoadCellArrays),
         EncoderArrays(EncoderArrays),
-        SkinPatches(SkinPatches)
+        SkinPatches(SkinPatches),
+        PositionSensors(PositionSensors)
 {
 }
 
@@ -81,6 +84,9 @@ bool SensorStreamingData::read(yarp::os::idl::WireReader& reader)
     if (!read_SkinPatches(reader)) {
         return false;
     }
+    if (!read_PositionSensors(reader)) {
+        return false;
+    }
     return !reader.isError();
 }
 
@@ -88,7 +94,7 @@ bool SensorStreamingData::read(yarp::os::idl::WireReader& reader)
 bool SensorStreamingData::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(9)) {
+    if (!reader.readListHeader(10)) {
         return false;
     }
     return read(reader);
@@ -124,6 +130,9 @@ bool SensorStreamingData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_SkinPatches(writer)) {
         return false;
     }
+    if (!write_PositionSensors(writer)) {
+        return false;
+    }
     return !writer.isError();
 }
 
@@ -131,7 +140,7 @@ bool SensorStreamingData::write(const yarp::os::idl::WireWriter& writer) const
 bool SensorStreamingData::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(9)) {
+    if (!writer.writeListHeader(10)) {
         return false;
     }
     return write(writer);
@@ -462,6 +471,34 @@ bool SensorStreamingData::Editor::did_set_SkinPatches()
     return true;
 }
 
+// Editor: PositionSensors setter
+void SensorStreamingData::Editor::set_PositionSensors(const SensorMeasurements& PositionSensors)
+{
+    will_set_PositionSensors();
+    obj->PositionSensors = PositionSensors;
+    mark_dirty_PositionSensors();
+    communicate();
+    did_set_PositionSensors();
+}
+
+// Editor: PositionSensors getter
+const SensorMeasurements& SensorStreamingData::Editor::get_PositionSensors() const
+{
+    return obj->PositionSensors;
+}
+
+// Editor: PositionSensors will_set
+bool SensorStreamingData::Editor::will_set_PositionSensors()
+{
+    return true;
+}
+
+// Editor: PositionSensors did_set
+bool SensorStreamingData::Editor::did_set_PositionSensors()
+{
+    return true;
+}
+
 // Editor: clean
 void SensorStreamingData::Editor::clean()
 {
@@ -583,8 +620,16 @@ bool SensorStreamingData::Editor::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
             }
+            if (field == "PositionSensors") {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeString("SensorMeasurements PositionSensors")) {
+                    return false;
+                }
+            }
         }
-        if (!writer.writeListHeader(10)) {
+        if (!writer.writeListHeader(11)) {
             return false;
         }
         writer.writeString("*** Available fields:");
@@ -597,6 +642,7 @@ bool SensorStreamingData::Editor::read(yarp::os::ConnectionReader& connection)
         writer.writeString("ContactLoadCellArrays");
         writer.writeString("EncoderArrays");
         writer.writeString("SkinPatches");
+        writer.writeString("PositionSensors");
         return true;
     }
     bool nested = true;
@@ -677,6 +723,12 @@ bool SensorStreamingData::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             did_set_SkinPatches();
+        } else if (key == "PositionSensors") {
+            will_set_PositionSensors();
+            if (!obj->nested_read_PositionSensors(reader)) {
+                return false;
+            }
+            did_set_PositionSensors();
         } else {
             // would be useful to have a fallback here
         }
@@ -830,6 +882,20 @@ bool SensorStreamingData::Editor::write(yarp::os::ConnectionWriter& connection) 
             return false;
         }
     }
+    if (is_dirty_PositionSensors) {
+        if (!writer.writeListHeader(3)) {
+            return false;
+        }
+        if (!writer.writeString("set")) {
+            return false;
+        }
+        if (!writer.writeString("PositionSensors")) {
+            return false;
+        }
+        if (!obj->nested_write_PositionSensors(writer)) {
+            return false;
+        }
+    }
     return !writer.isError();
 }
 
@@ -950,6 +1016,17 @@ void SensorStreamingData::Editor::mark_dirty_SkinPatches()
     mark_dirty();
 }
 
+// Editor: PositionSensors mark_dirty
+void SensorStreamingData::Editor::mark_dirty_PositionSensors()
+{
+    if (is_dirty_PositionSensors) {
+        return;
+    }
+    dirty_count++;
+    is_dirty_PositionSensors = true;
+    mark_dirty();
+}
+
 // Editor: dirty_flags
 void SensorStreamingData::Editor::dirty_flags(bool flag)
 {
@@ -963,7 +1040,8 @@ void SensorStreamingData::Editor::dirty_flags(bool flag)
     is_dirty_ContactLoadCellArrays = flag;
     is_dirty_EncoderArrays = flag;
     is_dirty_SkinPatches = flag;
-    dirty_count = flag ? 9 : 0;
+    is_dirty_PositionSensors = flag;
+    dirty_count = flag ? 10 : 0;
 }
 
 // read ThreeAxisGyroscopes field
@@ -1303,6 +1381,44 @@ bool SensorStreamingData::nested_read_SkinPatches(yarp::os::idl::WireReader& rea
 bool SensorStreamingData::nested_write_SkinPatches(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeNested(SkinPatches)) {
+        return false;
+    }
+    return true;
+}
+
+// read PositionSensors field
+bool SensorStreamingData::read_PositionSensors(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.read(PositionSensors)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write PositionSensors field
+bool SensorStreamingData::write_PositionSensors(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.write(PositionSensors)) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) PositionSensors field
+bool SensorStreamingData::nested_read_PositionSensors(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readNested(PositionSensors)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write (nested) PositionSensors field
+bool SensorStreamingData::nested_write_PositionSensors(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeNested(PositionSensors)) {
         return false;
     }
     return true;
