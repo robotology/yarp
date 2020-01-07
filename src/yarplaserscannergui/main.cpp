@@ -26,9 +26,13 @@
 #include <cstdio>
 #include <limits>
 #include <cmath>
-
+#include <opencv2/core/version.hpp>
+#if CV_MAJOR_VERSION >= 3
+#include <opencv2/highgui/highgui_c.h>
+#else
 #include <cv.h>
 #include <highgui.h>
+#endif
 #include <vector>
 
 #include <yarp/dev/Drivers.h>

@@ -27,9 +27,13 @@
 #include <algorithm>
 
 #ifdef ADD_VIDEO
-    #include <opencv2/opencv.hpp>
-    #include <yarp/cv/Cv.h>
-#endif
+#    include <opencv2/opencv.hpp>
+#    include <yarp/cv/Cv.h>
+#    if CV_MAJOR_VERSION >= 3
+#        include <opencv2/core/core_c.h>
+#        include <opencv2/videoio/videoio_c.h>
+#    endif // CV_MAJOR_VERSION
+#endif // ADD_VIDEO
 
 
 using namespace std;
