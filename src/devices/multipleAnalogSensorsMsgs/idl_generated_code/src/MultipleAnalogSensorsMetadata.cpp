@@ -120,7 +120,7 @@ bool MultipleAnalogSensorsMetadata::read(yarp::os::ConnectionReader& connection)
             MultipleAnalogSensorsMetadata_getMetadata_helper::s_return_helper = getMetadata();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
-                if (!writer.writeListHeader(9)) {
+                if (!writer.writeListHeader(10)) {
                     return false;
                 }
                 if (!writer.write(MultipleAnalogSensorsMetadata_getMetadata_helper::s_return_helper)) {

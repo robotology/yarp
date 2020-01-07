@@ -32,6 +32,7 @@ public:
     std::vector<SensorMetadata> ContactLoadCellArrays;
     std::vector<SensorMetadata> EncoderArrays;
     std::vector<SensorMetadata> SkinPatches;
+    std::vector<SensorMetadata> PositionSensors;
 
     // Default constructor
     SensorRPCData();
@@ -45,7 +46,8 @@ public:
                   const std::vector<SensorMetadata>& SixAxisForceTorqueSensors,
                   const std::vector<SensorMetadata>& ContactLoadCellArrays,
                   const std::vector<SensorMetadata>& EncoderArrays,
-                  const std::vector<SensorMetadata>& SkinPatches);
+                  const std::vector<SensorMetadata>& SkinPatches,
+                  const std::vector<SensorMetadata>& PositionSensors);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -179,6 +181,13 @@ public:
         virtual bool will_set_SkinPatches();
         virtual bool did_set_SkinPatches();
 
+        // Editor: PositionSensors field
+        void set_PositionSensors(const std::vector<SensorMetadata>& PositionSensors);
+        void set_PositionSensors(size_t index, const SensorMetadata& elem);
+        const std::vector<SensorMetadata>& get_PositionSensors() const;
+        virtual bool will_set_PositionSensors();
+        virtual bool did_set_PositionSensors();
+
         // Editor: clean
         void clean();
 
@@ -205,6 +214,7 @@ public:
         bool is_dirty_ContactLoadCellArrays;
         bool is_dirty_EncoderArrays;
         bool is_dirty_SkinPatches;
+        bool is_dirty_PositionSensors;
         int dirty_count;
 
         // Editor: send if possible
@@ -223,6 +233,7 @@ public:
         void mark_dirty_ContactLoadCellArrays();
         void mark_dirty_EncoderArrays();
         void mark_dirty_SkinPatches();
+        void mark_dirty_PositionSensors();
 
         // Editor: dirty_flags
         void dirty_flags(bool flag);
@@ -282,6 +293,12 @@ private:
     bool write_SkinPatches(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_SkinPatches(yarp::os::idl::WireReader& reader);
     bool nested_write_SkinPatches(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write PositionSensors field
+    bool read_PositionSensors(yarp::os::idl::WireReader& reader);
+    bool write_PositionSensors(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_PositionSensors(yarp::os::idl::WireReader& reader);
+    bool nested_write_PositionSensors(const yarp::os::idl::WireWriter& writer) const;
 };
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_SENSORRPCDATA_H

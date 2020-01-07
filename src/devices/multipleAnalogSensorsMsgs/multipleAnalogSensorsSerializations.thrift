@@ -33,6 +33,7 @@ struct SensorStreamingData
   7: SensorMeasurements ContactLoadCellArrays;
   8: SensorMeasurements EncoderArrays;
   9: SensorMeasurements SkinPatches;
+  10: SensorMeasurements PositionSensors;
 }
 
 struct SensorMetadata {
@@ -52,6 +53,7 @@ struct SensorRPCData
   7: list<SensorMetadata> ContactLoadCellArrays;
   8: list<SensorMetadata> EncoderArrays;
   9: list<SensorMetadata> SkinPatches;
+  10: list<SensorMetadata> PositionSensors;
 }
 
 service MultipleAnalogSensorsMetadata
