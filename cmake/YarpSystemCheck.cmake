@@ -267,12 +267,6 @@ else()
     yarp_check_and_append_cxx_compiler_flag(EXPERIMENTAL_WARNING_FLAGS "-Wfloat-equal")
 
 
-    ## Visibility hidden flags ##
-    unset(VISIBILITY_HIDDEN_FLAGS)
-    yarp_check_and_append_cxx_compiler_flag(VISIBILITY_HIDDEN_FLAGS "-fvisibility=hidden")
-    yarp_check_and_append_cxx_compiler_flag(VISIBILITY_HIDDEN_FLAGS "-fvisibility-inlines-hidden")
-
-
     ## Deprcated declarations flags ##
     unset(DEPRECATED_DECLARATIONS_FLAGS)
     yarp_check_and_append_cxx_compiler_flag(DEPRECATED_DECLARATIONS_FLAGS "-Wdeprecated-declarations")
