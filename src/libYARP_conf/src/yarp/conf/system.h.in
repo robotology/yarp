@@ -23,7 +23,7 @@
 #cmakedefine YARP_HAS_IFADDRS_H
 
 // Size of pointers
-#define YARP_POINTER_SIZE @YARP_POINTER_SIZE@
+#define YARP_POINTER_SIZE @CMAKE_SIZEOF_VOID_P@
 
 
 ///@{

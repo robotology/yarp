@@ -43,12 +43,6 @@ endif()
 
 
 #########################################################################
-# Check size of pointers
-
-check_type_size("void *" YARP_POINTER_SIZE)
-
-
-#########################################################################
 # Find 32, 64 and optionally 128-bit floating point types and check whether
 # floating point types are IEC559
 
