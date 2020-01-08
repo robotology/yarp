@@ -1,0 +1,41 @@
+/*
+ * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+#include "MagfieldRosPublisher.h"
+
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
+
+bool MagfieldRosPublisher::viewInterfaces()
+{
+    // View all the interfaces
+    bool ok = true;
+    ok &= m_poly->view(m_iThreeAxisMagnetometers);
+    m_iThreeAxisMagnetometers->getThreeAxisMagnetometerFrameName(0, m_framename);
+    return ok;
+}
+
+void MagfieldRosPublisher::run()
+{
+    if (m_publisher.asPort().isOpen())
+    {
+        yarp::sig::Vector vecmagn(3);
+        yarp::rosmsg::sensor_msgs::MagneticField& magfield_ros_data = m_publisher.prepare();
+        m_iThreeAxisMagnetometers->getThreeAxisMagnetometerMeasure(m_sens_index, vecmagn, m_timestamp);
+        magfield_ros_data.clear();
+        magfield_ros_data.header.frame_id = m_framename;;
+        magfield_ros_data.header.seq = m_msg_counter++;
+        magfield_ros_data.header.stamp = m_timestamp;
+        magfield_ros_data.magnetic_field.x = vecmagn[0];
+        magfield_ros_data.magnetic_field.y = vecmagn[1];
+        magfield_ros_data.magnetic_field.z = vecmagn[2];
+        //magfield_ros_data.magnetic_field_covariance = 0;
+        m_publisher.write();
+    }
+ }
+

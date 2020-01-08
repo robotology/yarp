@@ -46,6 +46,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(multipleanalogsensorsserver)
   add_subdirectory(multipleanalogsensorsclient)
   add_subdirectory(multipleanalogsensorsremapper)
+  add_subdirectory(multipleAnalogSensorsRosPublishers)
   add_subdirectory(transformClient)
   add_subdirectory(transformServer)
   add_subdirectory(localization2DClient)
