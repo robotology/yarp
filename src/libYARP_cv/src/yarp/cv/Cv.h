@@ -14,6 +14,9 @@
 #include <type_traits>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#if CV_MAJOR_VERSION >= 3
+#include <opencv2/imgproc/types_c.h>
+#endif
 
 namespace yarp {
 namespace cv {
