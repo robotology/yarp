@@ -9,8 +9,8 @@
 #ifndef YARP_ROBOTINTERFACE_ROBOT_H
 #define YARP_ROBOTINTERFACE_ROBOT_H
 
-#include "Types.h"
-#include "Device.h"
+#include <yarp/robotinterface/Types.h>
+#include <yarp/robotinterface/Device.h>
 
 #include <yarp/robotinterface/api.h>
 

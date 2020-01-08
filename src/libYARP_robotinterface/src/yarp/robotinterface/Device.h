@@ -9,10 +9,10 @@
 #ifndef YARP_ROBOTINTERFACE_DEVICE_H
 #define YARP_ROBOTINTERFACE_DEVICE_H
 
-#include "Types.h"
+#include <yarp/robotinterface/Types.h>
 
-#include "Action.h"
-#include "Param.h"
+#include <yarp/robotinterface/Action.h>
+#include <yarp/robotinterface/Param.h>
 
 namespace yarp { namespace dev { class PolyDriver; } }
 namespace yarp { namespace dev { class PolyDriverList; } }

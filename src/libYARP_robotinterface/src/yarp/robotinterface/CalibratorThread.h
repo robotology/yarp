@@ -9,7 +9,7 @@
 #ifndef YARP_ROBOTINTERFACE_CALIBRATORTHREAD_H
 #define YARP_ROBOTINTERFACE_CALIBRATORTHREAD_H
 
-#include "Types.h"
+#include <yarp/robotinterface/Types.h>
 
 #include <yarp/os/Thread.h>
 

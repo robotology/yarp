@@ -9,7 +9,7 @@
 #ifndef YARP_ROBOTINTERFACE_ACTION_H
 #define YARP_ROBOTINTERFACE_ACTION_H
 
-#include "Types.h"
+#include <yarp/robotinterface/Types.h>
 
 namespace yarp {
 namespace robotinterface {
