@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -415,7 +415,7 @@ std::string t_yarp_generator::copyright_comment()
     std::string ret = "";
     if (!no_copyright_) {
         ret += "/*\n";
-        ret += " * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)\n";
+        ret += " * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)\n";
         ret += " * All rights reserved.\n";
         ret += " *\n";
         ret += " * This software may be modified and distributed under the terms of the\n";

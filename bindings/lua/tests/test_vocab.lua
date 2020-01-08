@@ -1,6 +1,6 @@
 #!/usr/bin/lua
 
--- Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+-- Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
 -- Copyright (C) 2018 Juan G. Victores
 -- All rights reserved.
 --

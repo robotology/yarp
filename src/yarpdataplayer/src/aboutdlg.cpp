@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -91,6 +91,6 @@ LGPL-2.1+<br />\
  Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA\n\
 </pre>\
 ";
-    GenericInfoDlg dlg("Licence","Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)",text);
+    GenericInfoDlg dlg("Licence","Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)",text);
     dlg.exec();
 }
