@@ -66,26 +66,9 @@ _yarp_include_targets_file(YARP_os)
 # Properly find the dependencies. This will force to include all the
 # dependencies also for packages in other exports
 foreach(_component ${_yarp_included_components})
-  # FIXME Remove this check when CMake 3.9 or later is required
-  if (CMAKE_VERSION VERSION_LESS 3.9)
-    set(_YARP_os_FIND_PARTS_REQUIRED)
-    if (YARP_os_FIND_REQUIRED)
-      set(_YARP_os_FIND_PARTS_REQUIRED REQUIRED)
-    endif()
-    set(_YARP_os_FIND_PARTS_QUIET)
-    if (YARP_os_FIND_QUIETLY)
-      set(_YARP_os_FIND_PARTS_QUIET QUIET)
-    endif()
-    find_package(${_component}
-                 ${_YARP_os_FIND_PARTS_QUIET}
-                 ${_YARP_os_FIND_PARTS_REQUIRED}
-                 HINTS "${YARP_CMAKECONFIG_DIR}"
-                 NO_DEFAULT_PATH)
-  else()
-    find_dependency(${_component}
-                    HINTS "${YARP_CMAKECONFIG_DIR}"
-                    NO_DEFAULT_PATH)
-  endif()
+  find_dependency(${_component}
+                  HINTS "${YARP_CMAKECONFIG_DIR}"
+                  NO_DEFAULT_PATH)
 endforeach()
 
 
