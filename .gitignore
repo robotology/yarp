@@ -27,3 +27,4 @@ tags
 /.vs/
 /.idea/
 /cmake-build*/
+/.clangd/
