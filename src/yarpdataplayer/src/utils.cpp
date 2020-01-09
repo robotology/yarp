@@ -106,8 +106,7 @@ string Utilities::getCurrentPath()
     return currentPath;
 }
 /**********************************************************/
-int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string> &info,
-                                vector<string> &logs, vector<string> &paths, int recursive)
+int Utilities::getRecSubDirList(const string& dir, vector<RowInfo>& rowInfoVec, int recursive)
 {
 
     struct dirent *direntp = nullptr;
@@ -169,16 +168,18 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
                 //check log file validity before proceeding
                 if ( checkLog && checkData && (stat(dataFileName.c_str(), &st) == 0)) {
                     LOG(" %s IS present adding it to the gui\n",filename);
+                    RowInfo row;
 
                     if (recursiveName.empty()){
-                        names.emplace_back( direntp->d_name );//pass also previous subDir name
+                        row.name = direntp->d_name;//pass also previous subDir name
                     } else {
-                        names.emplace_back(recursiveName + "_" + direntp->d_name );//pass only subDir name
+                        row.name = recursiveName + "_" + direntp->d_name;//pass only subDir name
                     }
 
-                    info.emplace_back(dir + "/" + direntp->d_name + "/info.log" );
-                    logs.emplace_back(dir + "/" + direntp->d_name + "/data.log" );
-                    paths.emplace_back(dir + "/" + direntp->d_name + "/" ); //pass full path
+                    row.info  = dir + "/" + direntp->d_name + "/info.log";
+                    row.log   = dir + "/" + direntp->d_name + "/data.log";
+                    row.path = dir + "/" + direntp->d_name + "/"; //pass full path
+                    rowInfoVec.emplace_back(row);
                     dir_count++;
                 } else {
                     if (!checkLog){
@@ -204,7 +205,7 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
                     recursiveName = string( direntp->d_name );
                 }
 
-                getRecSubDirList(recDir, names, info, logs, paths, 1);
+                getRecSubDirList(recDir, rowInfoVec, 1);
             }
             if (recursiveIterations < 2 || recursiveIterations > 2){
                 recursiveName.erase();
@@ -215,10 +216,10 @@ int Utilities::getRecSubDirList(string dir, vector<string> &names, vector<string
     /* close the dir */
     (void)closedir(dirp);
     //avoid this for alphabetical order in linux
-    sort(names.begin(), names.end());
-    sort(info.begin(), info.end());
-    sort(logs.begin(), logs.end());
-    sort(paths.begin(), paths.end());
+    std::sort(rowInfoVec.begin(), rowInfoVec.end(), [](const RowInfo& lhs, const RowInfo& rhs)
+    {
+        return lhs.name < rhs.name;
+    });
 
     return dir_count;
 }
