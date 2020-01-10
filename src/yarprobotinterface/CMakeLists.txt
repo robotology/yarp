@@ -8,34 +8,17 @@ if(YARP_COMPILE_yarprobotinterface)
   add_executable(yarprobotinterface)
 
   set(yarprobotinterface_SRCS main.cpp
-                              Action.cpp
-                              CalibratorThread.cpp
-                              Device.cpp
-                              Module.cpp
-                              Param.cpp
-                              Robot.cpp
-                              Types.cpp
-                              XMLReaderVx.cpp
-                              XMLReaderV1.cpp
-                              XMLReaderV3.cpp
-                              RobotInterfaceDTD.cpp)
+                              Module.cpp)
 
-  set(yarprobotinterface_HDRS Action.h
-                              CalibratorThread.h
-                              Device.h
-                              Module.h
-                              Param.h
-                              Robot.h
-                              Types.h
-                              XMLReader.h
-                              RobotInterfaceDTD.h)
+  set(yarprobotinterface_HDRS Module.h)
 
   target_sources(yarprobotinterface PRIVATE ${yarprobotinterface_SRCS}
                                             ${yarprobotinterface_HDRS})
 
   target_link_libraries(yarprobotinterface PRIVATE YARP::YARP_os
                                                    YARP::YARP_dev
-                                                   YARP::YARP_init)
+                                                   YARP::YARP_init
+                                                   YARP::YARP_robotinterface)
 
   include(YarpIDL)
   yarp_idl_to_dir(INPUT_FILES yarprobotinterface.thrift
@@ -46,9 +29,6 @@ if(YARP_COMPILE_yarprobotinterface)
   target_include_directories(yarprobotinterface PRIVATE ${yarprobotinterface_IDLS_INCLUDE_DIRS})
   target_sources(yarprobotinterface PRIVATE ${yarprobotinterface_IDLS_SRCS}
                                             ${yarprobotinterface_IDLS_HDRS})
-
-  target_include_directories(yarprobotinterface PRIVATE ${TinyXML_INCLUDE_DIRS})
-  target_link_libraries(yarprobotinterface PRIVATE ${TinyXML_LIBRARIES})
 
   install(TARGETS yarprobotinterface
           COMPONENT utilities

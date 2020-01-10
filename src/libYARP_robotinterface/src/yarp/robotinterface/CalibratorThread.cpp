@@ -1,19 +1,9 @@
 /*
  * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "CalibratorThread.h"
@@ -24,14 +14,14 @@
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-class RobotInterface::CalibratorThread::Private
+class yarp::robotinterface::CalibratorThread::Private
 {
 public:
     Private(CalibratorThread *parent) :
             parent(parent),
             calibrator(nullptr),
             target(nullptr),
-            action(RobotInterface::CalibratorThread::Action::ActionCalibrate)
+            action(yarp::robotinterface::CalibratorThread::Action::ActionCalibrate)
     {
     }
 
@@ -67,22 +57,22 @@ public:
         }
     }
 
-    RobotInterface::CalibratorThread * const parent;
+    yarp::robotinterface::CalibratorThread * const parent;
 
     yarp::dev::ICalibrator *calibrator;
     std::string calibratorName;
     yarp::dev::DeviceDriver *target;
     std::string targetName;
-    RobotInterface::CalibratorThread::Action action;
-}; // class RobotInterface::CalibratorThread::Private
+    yarp::robotinterface::CalibratorThread::Action action;
+}; // class yarp::robotinterface::CalibratorThread::Private
 
 
 
-RobotInterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calibrator,
+yarp::robotinterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calibrator,
                                                    const std::string &calibratorName,
                                                    yarp::dev::DeviceDriver *target,
                                                    const std::string &targetName,
-                                                   RobotInterface::CalibratorThread::Action action) :
+                                                   yarp::robotinterface::CalibratorThread::Action action) :
         mPriv(new Private(this))
 {
     yAssert(calibrator);
@@ -96,17 +86,17 @@ RobotInterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calib
     mPriv->action = action;
 }
 
-RobotInterface::CalibratorThread::~CalibratorThread()
+yarp::robotinterface::CalibratorThread::~CalibratorThread()
 {
     delete mPriv;
 }
 
-void RobotInterface::CalibratorThread::run()
+void yarp::robotinterface::CalibratorThread::run()
 {
     mPriv->run();
 }
 
-void RobotInterface::CalibratorThread::onStop()
+void yarp::robotinterface::CalibratorThread::onStop()
 {
     mPriv->stop();
 }

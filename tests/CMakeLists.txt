@@ -144,6 +144,7 @@ add_subdirectory(libYARP_serversql)
 add_subdirectory(libYARP_run)
 add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_wire_rep_utils)
+add_subdirectory(libYARP_robotinterface)
 
 add_subdirectory(yarpidl_thrift)
 add_subdirectory(yarpidl_rosmsg)

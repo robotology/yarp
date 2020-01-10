@@ -1,19 +1,9 @@
 /*
  * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "XMLReader.h"
@@ -22,7 +12,7 @@
 #include "Param.h"
 #include "Robot.h"
 #include "Types.h"
-#include "RobotInterfaceDTD.h"
+#include "impl/RobotInterfaceDTD.h"
 
 #include <yarp/conf/filesystem.h>
 #include <yarp/os/LogStream.h>
@@ -44,14 +34,14 @@
 // When this bug is fixed upstream we can enable this
 #define TINYXML_UNSIGNED_INT_BUG 0
 
-RobotInterface::XMLReader::XMLReader() :
+yarp::robotinterface::XMLReader::XMLReader() :
     mReader(nullptr)
 {
     enable_deprecated = false;
     verbose = false;
 }
 
-RobotInterface::XMLReader::~XMLReader()
+yarp::robotinterface::XMLReader::~XMLReader()
 {
     if (mReader)
     {
@@ -60,17 +50,17 @@ RobotInterface::XMLReader::~XMLReader()
     }
 }
 
-void RobotInterface::XMLReader::setVerbose(bool verb)
+void yarp::robotinterface::XMLReader::setVerbose(bool verb)
 {
     verbose = verb;
 }
 
-void RobotInterface::XMLReader::setEnableDeprecated(bool enab)
+void yarp::robotinterface::XMLReader::setEnableDeprecated(bool enab)
 {
     enable_deprecated = enab;
 }
 
-RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fileName)
+yarp::robotinterface::Robot& yarp::robotinterface::XMLReader::getRobot(const std::string& fileName)
 {
     std::string filename = fileName;
 #if defined(_WIN32)
@@ -116,7 +106,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
         if (enable_deprecated)
         {
             yWarning() << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
-            mReader = new RobotInterface::XMLReaderFileV1;
+            mReader = new yarp::robotinterface::XMLReaderFileV1;
             return mReader->getRobotFile(filename, verbose);
         }
         else
@@ -127,7 +117,7 @@ RobotInterface::Robot& RobotInterface::XMLReader::getRobot(const std::string& fi
     else if (dtd.majorVersion == 3)
     {
         yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
-        mReader = new RobotInterface::XMLReaderFileV3;
+        mReader = new yarp::robotinterface::XMLReaderFileV3;
         return mReader->getRobotFile(filename,verbose);
     }
 

@@ -1,19 +1,9 @@
 /*
  * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "XMLReader.h"
@@ -22,7 +12,7 @@
 #include "Param.h"
 #include "Robot.h"
 #include "Types.h"
-#include "RobotInterfaceDTD.h"
+#include "impl/RobotInterfaceDTD.h"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
@@ -38,8 +28,8 @@
 #define SYNTAX_ERROR(line) yFatal() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 #define SYNTAX_WARNING(line) yWarning() << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
 
-
-namespace RobotInterface {
+namespace yarp {
+namespace robotinterface {
 
 // Represent something like this in the xml file
 // <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
@@ -176,4 +166,5 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr
     return true;
 }
 
-} // namespace
+} // namespace robotinterface
+} // namespace yarp
