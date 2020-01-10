@@ -502,23 +502,20 @@ bool  MainWindow::doGuiSetup(QString newPath)
     //look for folders and log files associated with them
     LOG("the full path is %s \n", newPath.toLatin1().data());
     subDirCnt = 0;
-    partsName.clear();
-    partsFullPath.clear();
-    partsInfoPath.clear();
-    partsLogPath.clear();
+    rowInfoVec.clear();
 
 
     itr = 0;
     partMap.clear();
 
     if(!initThread){
-        initThread = new InitThread(utilities,newPath,&partsName,&partsFullPath,&partsInfoPath,&partsLogPath,this);
+        initThread = new InitThread(utilities,newPath,rowInfoVec,this);
         connect(initThread,SIGNAL(initDone(int)),this,SLOT(onInitDone(int)),Qt::QueuedConnection);
         initThread->start();
     }else{
         if(!initThread->isRunning()){
             delete initThread;
-            initThread = new InitThread(utilities,newPath,&partsName,&partsFullPath,&partsInfoPath,&partsLogPath,this);
+            initThread = new InitThread(utilities,newPath,rowInfoVec,this);
             connect(initThread,SIGNAL(initDone(int)),this,SLOT(onInitDone(int)),Qt::QueuedConnection);
             initThread->start();
         }
@@ -1026,27 +1023,21 @@ void MainWindow::onClose()
 
 /**********************************************************/
 InitThread::InitThread(Utilities *utilities,
-                       QString newPath,
-                       std::vector<std::string>    *partsName,
-                       std::vector<std::string>    *partsFullPath,
-                       std::vector<std::string>    *partsInfoPath,
-                       std::vector<std::string>    *partsLogPath,
-                       QObject *parent) : QThread(parent)
+                       QString  newPath,
+                       std::vector<RowInfo>& rowInfoVec,
+                       QObject *parent) : QThread(parent),
+                                          utilities(utilities),
+                                          newPath(std::move(newPath)),
+                                          mainWindow(dynamic_cast<QMainWindow*> (parent)),
+                                          rowInfoVec(rowInfoVec)
 {
-    this->utilities = utilities;
-    this->newPath = newPath;
-    this->partsName = partsName;
-    this->partsFullPath = partsFullPath;
-    this->partsInfoPath = partsInfoPath;
-    this->partsLogPath = partsLogPath;
-    this->mainWindow = (QMainWindow*)parent;
 }
 
 /**********************************************************/
 void InitThread::run()
 {
     utilities->resetMaxTimeStamp();
-    int subDirCnt = utilities->getRecSubDirList(newPath.toLatin1().data(), *partsName, *partsInfoPath, *partsLogPath, *partsFullPath, 1);
+    int subDirCnt = utilities->getRecSubDirList(newPath.toLatin1().data(), rowInfoVec, 1);
     LOG("the size of subDirs is: %d\n", subDirCnt);
     //reset totalSent to 0
     utilities->totalSent = 0;
@@ -1058,10 +1049,10 @@ void InitThread::run()
 
     //fill in parts with all data
     for (int x=0; x < subDirCnt; x++){
-        utilities->partDetails[x].name = partsName->at(x);
-        utilities->partDetails[x].infoFile = partsInfoPath->at(x);
-        utilities->partDetails[x].logFile = partsLogPath->at(x);
-        utilities->partDetails[x].path = partsFullPath->at(x);
+        utilities->partDetails[x].name = rowInfoVec[x].name;
+        utilities->partDetails[x].infoFile = rowInfoVec[x].info;
+        utilities->partDetails[x].logFile = rowInfoVec[x].log;
+        utilities->partDetails[x].path = rowInfoVec[x].path;
 
         utilities->setupDataFromParts(utilities->partDetails[x]);
 

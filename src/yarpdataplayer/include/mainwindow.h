@@ -181,10 +181,7 @@ private:
     QString                     moduleName;
     bool                        add_prefix; //indicates if ports have to be opened with /<moduleName> as prefix
     yarp::os::RpcServer         rpcPort;
-    std::vector<std::string>    partsName;
-    std::vector<std::string>    partsFullPath;
-    std::vector<std::string>    partsInfoPath;
-    std::vector<std::string>    partsLogPath;
+    std::vector<RowInfo>        rowInfoVec;
     int                         subDirCnt;
     std::vector<std::string>    dataType;
 
@@ -267,11 +264,9 @@ class InitThread : public QThread
     Q_OBJECT
 
 public:
-    InitThread(Utilities *utilities, QString newPath,
-               std::vector<std::string>    *partsName,
-               std::vector<std::string>    *partsFullPath,
-               std::vector<std::string>    *partsInfoPath,
-               std::vector<std::string>    *partsLogPath,
+    InitThread(Utilities *utilities,
+               QString newPath,
+               std::vector<RowInfo>& rowInfoVec,
                QObject *parent = 0);
 
 protected:
@@ -281,11 +276,7 @@ private:
     Utilities *utilities;
     QString newPath;
     QMainWindow *mainWindow;
-    std::vector<std::string>    *partsName;
-    std::vector<std::string>    *partsFullPath;
-    std::vector<std::string>    *partsInfoPath;
-    std::vector<std::string>    *partsLogPath;
-
+    std::vector<RowInfo>        rowInfoVec;
 signals:
     void initDone(int subDirCount);
 };
