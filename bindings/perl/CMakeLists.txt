@@ -39,7 +39,7 @@ set_target_properties(${SWIG_MODULE_yarp_perl_REAL_NAME} PROPERTIES PREFIX ""
 
 # Update RPATH
 if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
-  file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_PERLDIR}" "${CMAKE_INSTALL_FULL_LIBDIR}")
+  file(RELATIVE_PATH _rel_path "${CMAKE_INSTALL_FULL_PERLDIR}/auto/yarp" "${CMAKE_INSTALL_FULL_LIBDIR}")
   get_target_property(_current_rpath "${SWIG_MODULE_yarp_perl_REAL_NAME}" INSTALL_RPATH)
   if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     list(APPEND _current_rpath "@loader_path/${_rel_path}")

@@ -23,7 +23,7 @@ print "Property is ", $prop->toString(), "\n";
 my $dev = new yarp::PolyDriver($prop);
 
 # get the "IFrameGrabberImage" interface
-my $grabber = $dev->viewFrameGrabberImage();
+my $grabber = $dev->viewIFrameGrabberImage();
 
 # grab 30 images
 my $img = new yarp::ImageRgb();
