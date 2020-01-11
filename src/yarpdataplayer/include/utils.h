@@ -56,6 +56,13 @@ struct partsData
         bool                    hasNotified;                        //boolean used for individual part notification that it has reached eof
     };
 
+struct RowInfo {
+    std::string name;
+    std::string info;
+    std::string log;
+    std::string path;
+};
+
 /**********************************************************/
 class Utilities : public QObject
 {
@@ -98,8 +105,7 @@ public:
     /**
     * function that returns a vector containing path directories - works in a recursive way
     */
-    int getRecSubDirList(std::string dir, std::vector<std::string> &names, std::vector<std::string> &info,
-                         std::vector<std::string> &logs, std::vector<std::string> &paths, int recursive);
+    int getRecSubDirList(const std::string& dir, std::vector<RowInfo>& rowInfoVec, int recursive);
     /**
     * function that checks validity of log files
     */
