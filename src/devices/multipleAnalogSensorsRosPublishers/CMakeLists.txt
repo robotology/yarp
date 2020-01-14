@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
 # All rights reserved.
 #
 # This software may be modified and distributed under the terms of the
@@ -42,19 +42,19 @@ endif()
 
 #---------------------------------------------------------------------------------------------------------
 
-yarp_prepare_plugin(WrenchRosPublisher
+yarp_prepare_plugin(WrenchStampedRosPublisher
                     CATEGORY device
-                    TYPE WrenchRosPublisher
-                    INCLUDE WrenchRosPublisher.h
-                    EXTRA_CONFIG WRAPPER=WrenchRosPublisher
+                    TYPE WrenchStampedRosPublisher
+                    INCLUDE WrenchStampedRosPublisher.h
+                    EXTRA_CONFIG WRAPPER=WrenchStampedRosPublisher
                     DEFAULT ON)
 
-if(ENABLE_WrenchRosPublisher)
-  yarp_add_plugin(yarp_WrenchRosPublisher)
+if(ENABLE_WrenchStampedRosPublisher)
+  yarp_add_plugin(yarp_WrenchStampedRosPublisher)
 
-  target_sources(yarp_WrenchRosPublisher PRIVATE WrenchRosPublisher.cpp WrenchRosPublisher.h GenericSensorRosPublisher.h )
+  target_sources(yarp_WrenchStampedRosPublisher PRIVATE WrenchStampedRosPublisher.cpp WrenchStampedRosPublisher.h GenericSensorRosPublisher.h )
 
-  target_link_libraries(yarp_WrenchRosPublisher PRIVATE YARP::YARP_os
+  target_link_libraries(yarp_WrenchStampedRosPublisher PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev
                                                      YARP_rosmsg)
@@ -64,7 +64,7 @@ if(ENABLE_WrenchRosPublisher)
                                                       YARP_dev
                                                       YARP_rosmsg)
 
-  yarp_install(TARGETS yarp_WrenchRosPublisher
+  yarp_install(TARGETS yarp_WrenchStampedRosPublisher
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -73,7 +73,7 @@ if(ENABLE_WrenchRosPublisher)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_WrenchRosPublisher PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_WrenchStampedRosPublisher PROPERTY FOLDER "Plugins/Device")
 endif()
 
 #---------------------------------------------------------------------------------------------------------
@@ -114,19 +114,19 @@ endif()
 
 #---------------------------------------------------------------------------------------------------------
 
-yarp_prepare_plugin(PoseRosPublisher
+yarp_prepare_plugin(PoseStampedRosPublisher
                     CATEGORY device
-                    TYPE PoseRosPublisher
-                    INCLUDE PoseRosPublisher.h
-                    EXTRA_CONFIG WRAPPER=PoseRosPublisher
+                    TYPE PoseStampedRosPublisher
+                    INCLUDE PoseStampedRosPublisher.h
+                    EXTRA_CONFIG WRAPPER=PoseStampedRosPublisher
                     DEFAULT ON)
 
-if(ENABLE_PoseRosPublisher)
-  yarp_add_plugin(yarp_PoseRosPublisher)
+if(ENABLE_PoseStampedRosPublisher)
+  yarp_add_plugin(yarp_PoseStampedRosPublisher)
 
-  target_sources(yarp_PoseRosPublisher PRIVATE PoseRosPublisher.cpp PoseRosPublisher.h GenericSensorRosPublisher.h )
+  target_sources(yarp_PoseStampedRosPublisher PRIVATE PoseStampedRosPublisher.cpp PoseStampedRosPublisher.h GenericSensorRosPublisher.h )
 
-  target_link_libraries(yarp_PoseRosPublisher PRIVATE YARP::YARP_os
+  target_link_libraries(yarp_PoseStampedRosPublisher PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev
                                                      YARP::YARP_math
@@ -138,7 +138,7 @@ if(ENABLE_PoseRosPublisher)
                                                       YARP_math
                                                       YARP_rosmsg)
 
-  yarp_install(TARGETS yarp_PoseRosPublisher
+  yarp_install(TARGETS yarp_PoseStampedRosPublisher
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -147,24 +147,24 @@ if(ENABLE_PoseRosPublisher)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_PoseRosPublisher PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_PoseStampedRosPublisher PROPERTY FOLDER "Plugins/Device")
 endif()
 
 #---------------------------------------------------------------------------------------------------------
 
-yarp_prepare_plugin(MagfieldRosPublisher
+yarp_prepare_plugin(MagneticFieldRosPublisher
                     CATEGORY device
-                    TYPE MagfieldRosPublisher
-                    INCLUDE MagfieldRosPublisher.h
-                    EXTRA_CONFIG WRAPPER=MagfieldRosPublisher
+                    TYPE MagneticFieldRosPublisher
+                    INCLUDE MagneticFieldRosPublisher.h
+                    EXTRA_CONFIG WRAPPER=MagneticFieldRosPublisher
                     DEFAULT ON)
 
-if(ENABLE_MagfieldRosPublisher)
-  yarp_add_plugin(yarp_MagfieldRosPublisher)
+if(ENABLE_MagneticFieldRosPublisher)
+  yarp_add_plugin(yarp_MagneticFieldRosPublisher)
 
-  target_sources(yarp_MagfieldRosPublisher PRIVATE MagfieldRosPublisher.cpp MagfieldRosPublisher.h GenericSensorRosPublisher.h )
+  target_sources(yarp_MagneticFieldRosPublisher PRIVATE MagneticFieldRosPublisher.cpp MagneticFieldRosPublisher.h GenericSensorRosPublisher.h )
 
-  target_link_libraries(yarp_MagfieldRosPublisher PRIVATE YARP::YARP_os
+  target_link_libraries(yarp_MagneticFieldRosPublisher PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev
                                                      YARP_rosmsg)
@@ -174,7 +174,7 @@ if(ENABLE_MagfieldRosPublisher)
                                                       YARP_dev
                                                       YARP_rosmsg)
 
-  yarp_install(TARGETS yarp_MagfieldRosPublisher
+  yarp_install(TARGETS yarp_MagneticFieldRosPublisher
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -183,7 +183,7 @@ if(ENABLE_MagfieldRosPublisher)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_MagfieldRosPublisher PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_MagneticFieldRosPublisher PROPERTY FOLDER "Plugins/Device")
 endif()
 
 #---------------------------------------------------------------------------------------------------------

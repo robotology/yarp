@@ -1,17 +1,17 @@
 /*
- * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "MagfieldRosPublisher.h"
+#include "MagneticFieldRosPublisher.h"
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
-bool MagfieldRosPublisher::viewInterfaces()
+bool MagneticFieldRosPublisher::viewInterfaces()
 {
     // View all the interfaces
     bool ok = true;
@@ -20,7 +20,7 @@ bool MagfieldRosPublisher::viewInterfaces()
     return ok;
 }
 
-void MagfieldRosPublisher::run()
+void MagneticFieldRosPublisher::run()
 {
     if (m_publisher.asPort().isOpen())
     {

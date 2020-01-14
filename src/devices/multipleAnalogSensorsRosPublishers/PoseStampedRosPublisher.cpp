@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "PoseRosPublisher.h"
+#include "PoseStampedRosPublisher.h"
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/Math.h>
 
@@ -14,7 +14,7 @@
 #define M_PI (3.14159265358979323846)
 #endif
 
-bool PoseRosPublisher::viewInterfaces()
+bool PoseStampedRosPublisher::viewInterfaces()
 {
     // View all the interfaces
     bool ok = true;
@@ -24,7 +24,7 @@ bool PoseRosPublisher::viewInterfaces()
     return ok;
 }
 
-void PoseRosPublisher::run()
+void PoseStampedRosPublisher::run()
 {
     if (m_publisher.asPort().isOpen())
     {
