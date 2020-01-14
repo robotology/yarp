@@ -111,13 +111,13 @@ yarprobotinterface::Module::~Module()
     delete mPriv;
 }
 
-bool yarprobotinterface::Module::configure(yarp::os::ResourceFinder &rf)
+bool yarprobotinterface::Module::configure(yarp::os::ResourceFinder& rf)
 {
     if (!rf.check("config")) {
         yFatal() << "Missing \"config\" argument";
     }
 
-    const std::string &filename = rf.findFile("config");
+    const std::string& filename = rf.findFile("config");
     yTrace() << "Reading robot config file" << filename;
 
     bool verbosity = rf.check("verbose");
@@ -125,7 +125,14 @@ bool yarprobotinterface::Module::configure(yarp::os::ResourceFinder &rf)
     yarp::robotinterface::XMLReader reader;
     reader.setVerbose(verbosity);
     reader.setEnableDeprecated(deprecated);
-    mPriv->robot = reader.getRobot(filename);
+
+    yarp::robotinterface::XMLReaderResult result = reader.getRobotFromFile(filename);
+
+    if (!result.parsingIsSuccessful) {
+        yFatal() << "Config file " << filename << " not parsed correctly.";
+    }
+
+    mPriv->robot = std::move(result.robot);
     // yDebug() << mPriv->robot;
 
     // User can use YARP_PORT_PREFIX environment variable to override

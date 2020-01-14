@@ -12,6 +12,8 @@
 #include <string>
 
 #include <yarp/robotinterface/api.h>
+#include <yarp/robotinterface/Robot.h>
+
 
 namespace yarp {
 namespace robotinterface {
@@ -19,13 +21,50 @@ namespace robotinterface {
 class Robot;
 class XMLReaderFileVx;
 
+/**
+ * Result of the parsing of XMLReader.
+ */
+class YARP_robotinterface_API XMLReaderResult
+{
+public:
+    static XMLReaderResult ParsingFailed() {
+        XMLReaderResult result;
+        result.parsingIsSuccessful = false;
+        return result;
+    }
+
+    /**
+     * True if the parsing was successful, false otherwise.
+     */
+    bool parsingIsSuccessful = false;
+
+    /**
+     * If parsingIsSuccessful is true, contains a valid robot instance.
+     */
+    Robot robot;
+};
+
 class YARP_robotinterface_API XMLReader
 {
 public:
     XMLReader();
     virtual ~XMLReader();
 
-    Robot& getRobot(const std::string &filename);
+    /**
+     * Parse the XML description of a robotinterface from a file.
+     *
+     * \param filename path to the XML file to load.
+     * \return result of parsing.
+     */
+    XMLReaderResult getRobotFromFile(const std::string &filename);
+
+    /**
+     * Parse the XML description of a robotinterface from a string.
+     *
+     * \param xmlString string containing the XML code to parse.
+     * \return result of parsing.
+     */
+    XMLReaderResult getRobotFromString(const std::string& xmlString);
     void setVerbose(bool verbose);
     void setEnableDeprecated(bool enab);
 private:

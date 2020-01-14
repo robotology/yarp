@@ -16,12 +16,15 @@
 namespace yarp {
 namespace robotinterface {
 
+class XMLReaderResult;
+
 class XMLReaderFileVx
 {
 public:
     bool verbose;
     virtual ~XMLReaderFileVx() {};
-    virtual  Robot& getRobotFile(const std::string &filename, bool verbose = false)=0;
+    virtual XMLReaderResult getRobotFromFile(const std::string& filename, bool verbose = false) = 0;
+    virtual XMLReaderResult getRobotFromString(const std::string& xmlString, bool verbose = false) = 0;
 };
 
 class XMLReaderFileV1 : public XMLReaderFileVx
@@ -30,8 +33,8 @@ public:
     XMLReaderFileV1();
     virtual ~XMLReaderFileV1();
 
-    Robot& getRobotFile(const std::string &filename, bool verbose = false) override;
-
+    XMLReaderResult getRobotFromFile(const std::string& filename, bool verbose = false) override;
+    XMLReaderResult getRobotFromString(const std::string& xmlString, bool verbose = false) override;
 private:
     class privateXMLReaderFileV1;
     privateXMLReaderFileV1 * const mPriv;
@@ -43,7 +46,8 @@ public:
     XMLReaderFileV3();
     virtual ~XMLReaderFileV3();
 
-    Robot& getRobotFile(const std::string &filename, bool verbose = false) override;
+    XMLReaderResult getRobotFromFile(const std::string& filename, bool verbose = false) override;
+    XMLReaderResult getRobotFromString(const std::string& xmlString, bool verbose = false) override;
 
 private:
     class privateXMLReaderFileV3;

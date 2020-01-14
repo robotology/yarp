@@ -27,9 +27,8 @@
 #include <iterator>
 #include <algorithm>
 
-#define SYNTAX_ERROR(line) yFatal() << "Syntax error while loading" << curr_filename << "at line" << line << "."
+#define SYNTAX_ERROR(line) yError() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 #define SYNTAX_WARNING(line) yWarning() << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
-
 
 // BUG in TinyXML, see
 // https://sourceforge.net/tracker/?func=detail&aid=3567726&group_id=13559&atid=113559
@@ -62,7 +61,7 @@ void yarp::robotinterface::XMLReader::setEnableDeprecated(bool enab)
     enable_deprecated = enab;
 }
 
-yarp::robotinterface::Robot& yarp::robotinterface::XMLReader::getRobot(const std::string& fileName)
+yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotFromFile(const std::string& fileName)
 {
     std::string filename = fileName;
 #if defined(_WIN32)
@@ -75,10 +74,12 @@ yarp::robotinterface::Robot& yarp::robotinterface::XMLReader::getRobot(const std
     auto* doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
     }
 
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
     }
 
     RobotInterfaceDTD dtd;
@@ -109,20 +110,78 @@ yarp::robotinterface::Robot& yarp::robotinterface::XMLReader::getRobot(const std
         {
             yWarning() << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
             mReader = new yarp::robotinterface::XMLReaderFileV1;
-            return mReader->getRobotFile(filename, verbose);
+            return mReader->getRobotFromFile(filename, verbose);
         }
         else
         {
-            yFatal("Invalid DTD version, execution stopped.");
+            yError("Invalid DTD version, execution stopped.");
+            return yarp::robotinterface::XMLReaderResult::ParsingFailed();
         }
     }
     else if (dtd.majorVersion == 3)
     {
         yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
         mReader = new yarp::robotinterface::XMLReaderFileV3;
-        return mReader->getRobotFile(filename,verbose);
+        return mReader->getRobotFromFile(filename, verbose);
     }
 
     //ERROR HERE
-    yFatal("Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
+    yError("Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
+    return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+}
+
+yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotFromString(const std::string& xmlString)
+{
+    std::string curr_filename = " XML runtime string ";
+    auto* doc = new TiXmlDocument();
+    if (!doc->Parse(xmlString.data())) {
+        SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+    }
+    if (!doc->RootElement()) {
+        SYNTAX_ERROR(doc->Row()) << "No root element.";
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+    }
+
+    RobotInterfaceDTD dtd;
+
+    for (TiXmlNode* childNode = doc->FirstChild(); childNode != nullptr; childNode = childNode->NextSibling()) {
+        if (childNode->Type() == TiXmlNode::TINYXML_UNKNOWN) {
+            std::string curr_filename = " XML runtime string ";
+            if (dtd.parse(childNode->ToUnknown(), curr_filename)) {
+                break;
+            }
+        }
+    }
+
+    if (!dtd.valid()) {
+        SYNTAX_WARNING(doc->Row()) << "No DTD found. Assuming version yarprobotinterfaceV3.0";
+        dtd.setDefault();
+        dtd.type = RobotInterfaceDTD::DocTypeRobot;
+    }
+
+    if (dtd.type != RobotInterfaceDTD::DocTypeRobot) {
+        SYNTAX_WARNING(doc->Row()) << "Expected document of type" << DocTypeToString(RobotInterfaceDTD::DocTypeRobot)
+                                   << ". Found" << DocTypeToString(dtd.type);
+    }
+
+    if (dtd.majorVersion == 1) {
+        yError() << "DTD V1.x has been deprecated. Please update your configuration files to DTD v3.x";
+        if (enable_deprecated) {
+            yWarning() << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
+            mReader = new yarp::robotinterface::XMLReaderFileV1;
+            return mReader->getRobotFromString(xmlString, verbose);
+        } else {
+            yError("Invalid DTD version, execution stopped.");
+            return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+        }
+    } else if (dtd.majorVersion == 3) {
+        yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
+        mReader = new yarp::robotinterface::XMLReaderFileV3;
+        return mReader->getRobotFromString(xmlString, verbose);
+    }
+
+    //ERROR HERE
+    yError("Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
+    return yarp::robotinterface::XMLReaderResult::ParsingFailed();
 }
