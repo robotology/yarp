@@ -96,7 +96,7 @@ protected:
 
 public:
 
-    /* DevideDriver methods */
+    /* DeviceDriver methods */
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
