@@ -9,6 +9,7 @@ yarp_prepare_plugin(IMURosPublisher
                     TYPE IMURosPublisher
                     INCLUDE IMURosPublisher.h
                     EXTRA_CONFIG WRAPPER=IMURosPublisher
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(ENABLE_IMURosPublisher)
@@ -47,6 +48,7 @@ yarp_prepare_plugin(WrenchStampedRosPublisher
                     TYPE WrenchStampedRosPublisher
                     INCLUDE WrenchStampedRosPublisher.h
                     EXTRA_CONFIG WRAPPER=WrenchStampedRosPublisher
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(ENABLE_WrenchStampedRosPublisher)
@@ -83,6 +85,7 @@ yarp_prepare_plugin(TemperatureRosPublisher
                     TYPE TemperatureRosPublisher
                     INCLUDE TemperatureRosPublisher.h
                     EXTRA_CONFIG WRAPPER=TemperatureRosPublisher
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(ENABLE_TemperatureRosPublisher)
@@ -119,6 +122,7 @@ yarp_prepare_plugin(PoseStampedRosPublisher
                     TYPE PoseStampedRosPublisher
                     INCLUDE PoseStampedRosPublisher.h
                     EXTRA_CONFIG WRAPPER=PoseStampedRosPublisher
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(ENABLE_PoseStampedRosPublisher)
@@ -157,6 +161,7 @@ yarp_prepare_plugin(MagneticFieldRosPublisher
                     TYPE MagneticFieldRosPublisher
                     INCLUDE MagneticFieldRosPublisher.h
                     EXTRA_CONFIG WRAPPER=MagneticFieldRosPublisher
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(ENABLE_MagneticFieldRosPublisher)
