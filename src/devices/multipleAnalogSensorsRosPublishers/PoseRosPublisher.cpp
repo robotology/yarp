@@ -10,6 +10,10 @@
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/Math.h>
 
+#ifndef M_PI
+#define M_PI (3.14159265358979323846)
+#endif
+
 bool PoseRosPublisher::viewInterfaces()
 {
     // View all the interfaces
@@ -36,6 +40,9 @@ void PoseRosPublisher::run()
         pose_data.pose.position.x = vecpos[0];
         pose_data.pose.position.y = vecpos[1];
         pose_data.pose.position.z = vecpos[2];
+        vecrpy[0] = vecrpy[0] * M_PI / 180.0;
+        vecrpy[1] = vecrpy[1] * M_PI / 180.0;
+        vecrpy[2] = vecrpy[2] * M_PI / 180.0;
         yarp::sig::Matrix matrix = yarp::math::rpy2dcm(vecrpy);
         yarp::math::Quaternion q; q.fromRotationMatrix(matrix);
         pose_data.pose.orientation.x = q.x();
