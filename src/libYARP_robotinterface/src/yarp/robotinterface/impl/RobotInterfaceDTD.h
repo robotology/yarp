@@ -6,6 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#ifndef YARP_ROBOTINTERFACE_IMPL_ROBOTINTERFACEDTD_H
+#define YARP_ROBOTINTERFACE_IMPL_ROBOTINTERFACEDTD_H
 
 #include <yarp/robotinterface/XMLReader.h>
 #include <yarp/robotinterface/Action.h>
@@ -33,7 +35,7 @@ namespace robotinterface {
 
 // Represent something like this in the xml file
 // <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
-class YARP_robotinterface_API RobotInterfaceDTD
+class RobotInterfaceDTD
 {
 public:
     enum DocType {
@@ -68,7 +70,9 @@ public:
 };
 
 
-YARP_robotinterface_API std::string DocTypeToString(RobotInterfaceDTD::DocType doctype);
+std::string DocTypeToString(RobotInterfaceDTD::DocType doctype);
 
 } // namespace robotinterface
 } // namespace yarp
+
+#endif // YARP_ROBOTINTERFACE_ROBOTINTERFACEDTD_H
