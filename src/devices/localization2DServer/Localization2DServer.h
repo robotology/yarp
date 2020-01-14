@@ -24,6 +24,7 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
@@ -64,6 +65,7 @@ protected:
 
     double                                  m_stats_time_last;
     double                                  m_period;
+    yarp::os::Stamp                         m_stamp;
     bool                                    m_getdata_using_periodic_thread;
     yarp::dev::Nav2D::Map2DLocation         m_current_position;
     yarp::dev::LocalizationStatusEnum       m_current_status;

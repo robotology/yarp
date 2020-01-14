@@ -211,27 +211,20 @@ endif()
 # Handle the YARP thrift messages
 include(YarpIDL)
 
+set(YARP_dev_IDL idl/stateExt.thrift
+                 idl/audioBufferSizeData.thrift)
+				 
 if(TARGET YARP::YARP_math)
-yarp_idl_to_dir(INPUT_FILES 
-                idl/stateExt.thrift
-                idl/audioBufferSizeData.thrift 
-                idl/Map2DLocationData.thrift
-                idl/Map2DPathData.thrift
-                OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                SOURCES_VAR YARP_dev_idl_SRCS
-                HEADERS_VAR YARP_dev_idl_all_HDRS
-                INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS
-                PLACEMENT MERGED)
-else()
-yarp_idl_to_dir(INPUT_FILES
-                idl/stateExt.thrift
-                idl/audioBufferSizeData.thrift 
-                OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                SOURCES_VAR YARP_dev_idl_SRCS
-                HEADERS_VAR YARP_dev_idl_all_HDRS
-                INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS
-                PLACEMENT MERGED)
+  list(APPEND YARP_dev_IDL idl/Map2DLocationData.thrift
+                           idl/Map2DPathData.thrift)
 endif()
+
+yarp_idl_to_dir(INPUT_FILES ${YARP_dev_IDL}
+                OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+                SOURCES_VAR YARP_dev_idl_SRCS
+                HEADERS_VAR YARP_dev_idl_all_HDRS
+                INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS
+                PLACEMENT MERGED)
 
 list(APPEND YARP_dev_SRCS ${YARP_dev_idl_SRCS})
 unset(YARP_dev_idl_HDRS)

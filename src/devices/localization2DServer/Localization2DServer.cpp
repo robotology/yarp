@@ -173,6 +173,10 @@ bool Localization2DServer::open(Searchable& config)
             return false;
         }
     }
+    else
+    {
+        yInfo() << "Localization2DServer: waiting for device to attach";
+    }
     m_stats_time_last = yarp::os::Time::now();
 
     if (!initialize_YARP(config))
@@ -446,6 +450,12 @@ void Localization2DServer::run()
             b.addFloat64(curr_loc.y);
             b.addFloat64(curr_loc.theta);
         }
+
+        //update the timestamp
+        m_stamp.update();
+        m_streamingPort.setEnvelope(m_stamp);
+
+        //send data to port
         m_streamingPort.write();
     }
 }
