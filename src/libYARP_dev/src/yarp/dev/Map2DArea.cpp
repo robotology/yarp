@@ -20,6 +20,7 @@
 #include <algorithm>
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::math;
@@ -46,7 +47,7 @@ Map2DArea::Map2DArea(const std::string& map_name, const std::vector<yarp::math::
     points = area_points;
 }
 
-Map2DArea::Map2DArea(const std::string& map_name, const std::vector<yarp::dev::Map2DLocation> area_points)
+Map2DArea::Map2DArea(const std::string& map_name, const std::vector<Map2DLocation> area_points)
 {
     map_id = map_name;
     for (auto it = area_points.begin(); it != area_points.end(); it++)
@@ -75,6 +76,8 @@ bool Map2DArea::read(yarp::os::ConnectionReader& connection)
 {
     // auto-convert text mode interaction
     connection.convertTextMode();
+
+    //[[maybe_unused]] int32_t dummy; //@@@FIXME To be used as soon as C++17 becomes available
     int32_t dummy;
 
     dummy = connection.expectInt32();
@@ -144,7 +147,7 @@ std::string Map2DArea::toString() const
     return stringStream.str();
 }
 
-bool Map2DArea::checkLocationInsideArea(yarp::dev::Map2DLocation loc)
+bool Map2DArea::checkLocationInsideArea(Map2DLocation loc)
 {
     if (loc.map_id != this->map_id) return false;
     if (points.size() < 3) return false;
@@ -183,7 +186,7 @@ bool Map2DArea::isValid() const
     return true;
 }
 
-bool  Map2DArea::findAreaBounds(yarp::dev::Map2DLocation& lt, yarp::dev::Map2DLocation& rb)
+bool  Map2DArea::findAreaBounds(Map2DLocation& lt, Map2DLocation& rb)
 {
     lt.map_id = rb.map_id = this->map_id;
     lt.x = lt.y = std::numeric_limits<double>::max();
@@ -199,10 +202,10 @@ bool  Map2DArea::findAreaBounds(yarp::dev::Map2DLocation& lt, yarp::dev::Map2DLo
     return true;
 }
 
-bool  Map2DArea::getRandomLocation(yarp::dev::Map2DLocation& loc)
+bool  Map2DArea::getRandomLocation(Map2DLocation& loc)
 {
-    yarp::dev::Map2DLocation lt;
-    yarp::dev::Map2DLocation rb;
+    Map2DLocation lt;
+    Map2DLocation rb;
     if (findAreaBounds(lt, rb) == false)
         return false;
 
@@ -233,3 +236,17 @@ bool  Map2DArea::getRandomLocation(yarp::dev::Map2DLocation& loc)
 
     return true;
 }
+
+void Map2DArea::clear()
+{
+    this->map_id = "";
+    this->points.clear();
+}
+
+yarp::math::Vec2D<double>& Map2DArea::operator[](size_t index)
+{
+    //std::vector::at() function performs bound check, throwing exception.
+    //[] operator, instead, not.
+    return points.at(index);
+}
+

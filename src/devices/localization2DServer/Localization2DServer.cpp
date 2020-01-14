@@ -35,6 +35,7 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace std;
 
 #define DEFAULT_THREAD_PERIOD 0.01
@@ -72,7 +73,7 @@ bool Localization2DServer::attachAll(const PolyDriverList &device2attach)
     //initialize m_current_position and m_current_status, if available
     bool ret = true;
     yarp::dev::LocalizationStatusEnum status;
-    yarp::dev::Map2DLocation loc;
+    Map2DLocation loc;
     ret &= iLoc->getLocalizationStatus(status);
     ret &= iLoc->getCurrentPosition(loc);
     if (ret)
@@ -172,6 +173,10 @@ bool Localization2DServer::open(Searchable& config)
             return false;
         }
     }
+    else
+    {
+        yInfo() << "Localization2DServer: waiting for device to attach";
+    }
     m_stats_time_last = yarp::os::Time::now();
 
     if (!initialize_YARP(config))
@@ -258,12 +263,56 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
             }
             else if (request == VOCAB_NAV_SET_INITIAL_POS)
             {
-                yarp::dev::Map2DLocation init_loc;
+                Map2DLocation init_loc;
                 init_loc.map_id = command.get(2).asString();
                 init_loc.x = command.get(3).asFloat64();
                 init_loc.y = command.get(4).asFloat64();
                 init_loc.theta = command.get(5).asFloat64();
                 iLoc->setInitialPose(init_loc);
+                reply.addVocab(VOCAB_OK);
+            }
+            else if (request == VOCAB_NAV_GET_CURRENT_POSCOV)
+            {
+                Map2DLocation init_loc;
+                yarp::sig::Matrix cov(3, 3);
+                iLoc->getCurrentPosition(init_loc, cov);
+                reply.addVocab(VOCAB_OK);
+                reply.addString(m_current_position.map_id);
+                reply.addFloat64(m_current_position.x);
+                reply.addFloat64(m_current_position.y);
+                reply.addFloat64(m_current_position.theta);
+                yarp::os::Bottle& mc = reply.addList();
+                for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { mc.addFloat64(cov[i][j]); } }
+            }
+            else if (request == VOCAB_NAV_SET_INITIAL_POSCOV)
+            {
+                Map2DLocation init_loc;
+                yarp::sig::Matrix cov(3,3);
+                init_loc.map_id = command.get(2).asString();
+                init_loc.x = command.get(3).asFloat64();
+                init_loc.y = command.get(4).asFloat64();
+                init_loc.theta = command.get(5).asFloat64();
+                Bottle* mc = command.get(6).asList();
+                if (mc!=nullptr && mc->size() == 9)
+                {
+                    for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = mc->get(i * 3 + j).asFloat64(); } }
+                    bool ret = iLoc->setInitialPose(init_loc, cov);
+                    if (ret) { reply.addVocab(VOCAB_OK); }
+                    else     { reply.addVocab(VOCAB_ERR); } 
+                }
+                else
+                {
+                    reply.addVocab(VOCAB_ERR);
+                }
+            }
+            else if (request == VOCAB_NAV_LOCALIZATION_START)
+            {
+                iLoc->startLocalizationService();
+                reply.addVocab(VOCAB_OK);
+            }
+            else if (request == VOCAB_NAV_LOCALIZATION_STOP)
+            {
+                iLoc->stopLocalizationService();
                 reply.addVocab(VOCAB_OK);
             }
             else if (request == VOCAB_NAV_GET_LOCALIZER_STATUS)
@@ -284,7 +333,7 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
             }
             else if (request == VOCAB_NAV_GET_LOCALIZER_POSES)
             {
-                std::vector<yarp::dev::Map2DLocation> poses;
+                std::vector<Map2DLocation> poses;
                 iLoc->getEstimatedPoses(poses);
                 reply.addVocab(VOCAB_OK);
                 reply.addInt32(poses.size());
@@ -317,14 +366,14 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
     }
     else if (command.get(0).isString() && command.get(0).asString() == "getLoc")
     {
-        yarp::dev::Map2DLocation curr_loc;
+        Map2DLocation curr_loc;
         iLoc->getCurrentPosition(curr_loc);
         std::string s = std::string("Current Location is: ") + curr_loc.toString();
         reply.addString(s);
     }
     else if (command.get(0).isString() && command.get(0).asString() == "initLoc")
     {
-        yarp::dev::Map2DLocation init_loc;
+        Map2DLocation init_loc;
         init_loc.map_id = command.get(1).asString();
         init_loc.x = command.get(2).asFloat64();
         init_loc.y = command.get(3).asFloat64();
@@ -392,7 +441,7 @@ void Localization2DServer::run()
         }
         else
         {
-            yarp::dev::Map2DLocation curr_loc;
+            Map2DLocation curr_loc;
             curr_loc.x = std::nan("");
             curr_loc.y = std::nan("");
             curr_loc.theta = std::nan("");
@@ -401,6 +450,12 @@ void Localization2DServer::run()
             b.addFloat64(curr_loc.y);
             b.addFloat64(curr_loc.theta);
         }
+
+        //update the timestamp
+        m_stamp.update();
+        m_streamingPort.setEnvelope(m_stamp);
+
+        //send data to port
         m_streamingPort.write();
     }
 }

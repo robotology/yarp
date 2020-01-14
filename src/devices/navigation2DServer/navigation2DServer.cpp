@@ -32,6 +32,7 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace std;
 
 #ifndef RAD2DEG
@@ -106,6 +107,7 @@ bool navigation2DServer::open(Searchable& config)
     }
     else
     {
+        local_name = config.find("name").asString();
     }
     m_rpcPortName = local_name + "/rpc";
     m_streamingPortName = local_name + "/streaming:o";
@@ -204,7 +206,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     int request = command.get(1).asVocab();
     if (request == VOCAB_NAV_GOTOABS)
     {
-        yarp::dev::Map2DLocation loc;
+        Map2DLocation loc;
         loc.map_id = command.get(2).asString();
         loc.x = command.get(3).asFloat64();
         loc.y = command.get(4).asFloat64();
@@ -365,19 +367,19 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     }
     else if (request == VOCAB_NAV_GET_NAVIGATION_WAYPOINTS)
     {
-        std::vector<yarp::dev::Map2DLocation> locs;
+        Map2DPath locs;
         bool ret = iNav_ctrl->getAllNavigationWaypoints(locs);
         if (ret)
         {
             reply.addVocab(VOCAB_OK);
             Bottle& waypoints = reply.addList();
-            for (size_t i = 0; i < locs.size(); i++)
+            for (auto it = locs.begin(); it!=locs.end(); it++)
             {
                 Bottle& the_waypoint = waypoints.addList();
-                the_waypoint.addString(locs[i].map_id);
-                the_waypoint.addFloat64(locs[i].x);
-                the_waypoint.addFloat64(locs[i].y);
-                the_waypoint.addFloat64(locs[i].theta);
+                the_waypoint.addString(it->map_id);
+                the_waypoint.addFloat64(it->x);
+                the_waypoint.addFloat64(it->y);
+                the_waypoint.addFloat64(it->theta);
             }
         }
         else
@@ -388,7 +390,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     }
     else if (request == VOCAB_NAV_GET_CURRENT_WAYPOINT)
     {
-        yarp::dev::Map2DLocation loc;
+        Map2DLocation loc;
         bool ret = iNav_ctrl->getCurrentNavigationWaypoint(loc);
         if (ret)
         {
@@ -406,7 +408,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     }
     else if (request == VOCAB_NAV_GET_NAV_MAP)
     {
-        yarp::dev::MapGrid2D map;
+        MapGrid2D map;
         if (iNav_ctrl->getCurrentNavigationMap((yarp::dev::NavigationMapTypeEnum)(command.get(2).asInt32()), map))
         {
             reply.addVocab(VOCAB_OK);
@@ -421,7 +423,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     }
     else if (request == VOCAB_NAV_GET_ABS_TARGET)
     {
-        yarp::dev::Map2DLocation loc;
+        Map2DLocation loc;
         bool ret;
         ret = iNav_target->getAbsoluteLocationOfCurrentTarget(loc);
         if (ret)
@@ -440,7 +442,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     }
     else if (request == VOCAB_NAV_GET_REL_TARGET)
     {
-        yarp::dev::Map2DLocation loc;
+        Map2DLocation loc;
         bool ret;
         ret = iNav_target->getRelativeLocationOfCurrentTarget(loc.x, loc.y, loc.theta);
         if (ret)

@@ -18,6 +18,7 @@
 #include <cmath>
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::math;
@@ -83,7 +84,7 @@ MapGrid2D::MapGrid2D()
 
 MapGrid2D::~MapGrid2D() = default;
 
-bool MapGrid2D::isNotFree(MapGrid2D::XYCell cell) const
+bool MapGrid2D::isNotFree(XYCell cell) const
 {
     if (isInsideMap(cell))
     {
@@ -95,7 +96,7 @@ bool MapGrid2D::isNotFree(MapGrid2D::XYCell cell) const
     return false;
 }
 
-bool MapGrid2D::isFree(MapGrid2D::XYCell cell) const
+bool MapGrid2D::isFree(XYCell cell) const
 {
     if (isInsideMap(cell))
     {
@@ -187,7 +188,7 @@ bool MapGrid2D::enlargeObstacles(double size)
         }
         return true;
     }
-    auto repeat_num = (size_t)(std::ceil(size/m_resolution));
+    auto repeat_num = (size_t)(std::ceil(size/ m_resolution));
     for (size_t repeat = 0; repeat < repeat_num; repeat++)
     {
         //contains the cells to be enlarged;
@@ -219,12 +220,12 @@ bool MapGrid2D::enlargeObstacles(double size)
 
 void MapGrid2D::enlargeCell(XYCell cell)
 {
-    int i = cell.x;
-    int j = cell.y;
-    int il = cell.x - 1>0 ? cell.x - 1 : 0;
-    int ir = cell.x + 1<(int)(m_width) - 1 ? cell.x + 1 : (int)(m_width)-1;
-    int ju = cell.y - 1>0 ? cell.y - 1 : 0;
-    int jd = cell.y + 1<(int)(m_height) - 1 ? cell.y + 1 : (int)(m_height)-1;
+    size_t i = cell.x;
+    size_t j = cell.y;
+    size_t il = cell.x > 1 ? cell.x - 1 : 0;
+    size_t ir = cell.x + 1 < (m_width)-1 ? cell.x + 1 : (m_width)-1;
+    size_t ju = cell.y > 1 ? cell.y - 1 : 0;
+    size_t jd = cell.y + 1 < (m_height)-1 ? cell.y + 1 : (m_height)-1;
 
     if (m_map_flags.pixel(il, j) == MAP_CELL_FREE) m_map_flags.pixel(il, j) = MAP_CELL_ENLARGED_OBSTACLE;
     if (m_map_flags.pixel(ir, j) == MAP_CELL_FREE) m_map_flags.pixel(ir, j) = MAP_CELL_ENLARGED_OBSTACLE;
@@ -811,44 +812,6 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
     return !connection.isError();
 }
 
-MapGrid2D::XYWorld MapGrid2D::cell2World(MapGrid2D::XYCell cell) const
-{
-    //convert a cell (from the upper-left corner) to the map reference frame (located in m_origin, measured in meters)
-    //beware: the location of m_origin is referred to the lower-left corner (ROS convention)
-    MapGrid2D::XYWorld v;
-    v.x = double(cell.x)*this->m_resolution;
-    v.y = double(cell.y)*this->m_resolution;
-    v.x = + v.x + m_origin.x + 0 * this->m_resolution;
-    v.y = - v.y + m_origin.y + (m_height-1)*this->m_resolution;
-    return v;
-}
-
-
-MapGrid2D::XYCell MapGrid2D::world2Cell(MapGrid2D::XYWorld world) const
-{
-    //convert a world location (wrt the map reference frame located in m_origin, measured in meters), to a cell from the upper-left corner.
-    //beware: the location of m_origin is referred to the lower-left corner (ROS convention)
-    MapGrid2D::XYCell c;
-    c.x = int((+world.x - this->m_origin.x) / this->m_resolution) + 0;
-    c.y = int((-world.y + this->m_origin.y) / this->m_resolution) + m_height - 1;
-    return c;
-}
-
-bool MapGrid2D::isInsideMap(MapGrid2D::XYWorld world) const
-{
-    XYCell cell = world2Cell(world);
-    return isInsideMap(cell);
-}
-
-bool MapGrid2D::isInsideMap(MapGrid2D::XYCell cell) const
-{
-    if (cell.x < 0) return false;
-    if (cell.y < 0) return false;
-    if (cell.x >= (int)(m_width)) return false;
-    if (cell.y >= (int)(m_height)) return false;
-    return true;
-}
-
 bool MapGrid2D::setOrigin(double x, double y, double theta)
 {
     //the given x and y are referred to the bottom left corner, pointing outwards.
@@ -859,7 +822,7 @@ bool MapGrid2D::setOrigin(double x, double y, double theta)
         return false;
     }
 
-    int xc = (int)(x/m_resolution);
+    int xc = (int)(x/ m_resolution);
     int yc = (int)(y / m_resolution);
 
     XYCell orig(-xc, (m_height-1) + yc);
@@ -955,8 +918,8 @@ bool MapGrid2D::setSize_in_cells(size_t x, size_t y)
 
 void MapGrid2D::getSize_in_meters(double& x, double& y) const
 {
-    x = m_width*m_resolution;
-    y = m_height*m_resolution;
+    x = m_width* m_resolution;
+    y = m_height* m_resolution;
 }
 
 void MapGrid2D::getSize_in_cells(size_t&x, size_t& y) const

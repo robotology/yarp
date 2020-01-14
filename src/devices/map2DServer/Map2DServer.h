@@ -38,6 +38,7 @@
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
+#include <yarp/dev/Map2DPath.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -74,9 +75,10 @@ class Map2DServer :
         public yarp::os::PortReader
 {
 private:
-    std::map<std::string, yarp::dev::MapGrid2D>     m_maps_storage;
-    std::map<std::string, yarp::dev::Map2DLocation> m_locations_storage;
-    std::map<std::string, yarp::dev::Map2DArea>     m_areas_storage;
+    std::map<std::string, yarp::dev::Nav2D::MapGrid2D>     m_maps_storage;
+    std::map<std::string, yarp::dev::Nav2D::Map2DLocation> m_locations_storage;
+    std::map<std::string, yarp::dev::Nav2D::Map2DPath>     m_paths_storage;
+    std::map<std::string, yarp::dev::Nav2D::Map2DArea>     m_areas_storage;
 
 public:
     Map2DServer();
@@ -91,9 +93,13 @@ public:
     yarp::os::Bottle getOptions();
 
 private:
+    bool priv_load_locations_and_areas_v1(std::ifstream& file);
+    bool priv_load_locations_and_areas_v2(std::ifstream& file);
+
+private:
     yarp::os::ResourceFinder     m_rf_mapCollection;
     std::mutex              m_mutex;
-    std::string        m_rpcPortName;
+    std::string                  m_rpcPortName;
     yarp::os::Node*              m_rosNode;
     bool                         m_enable_publish_ros_map;
     bool                         m_enable_subscribe_ros_map;

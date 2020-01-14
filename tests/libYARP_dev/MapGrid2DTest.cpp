@@ -17,21 +17,24 @@
 #include <harness.h>
 
 using namespace yarp::dev;
+using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-static void ReadMapfromString(MapGrid2D& m, std::string s)
+static void ReadMapfromString(Nav2D::MapGrid2D& m, std::string s)
 {
-    yarp::dev::MapGrid2D::XYCell cell;
+    yarp::dev::Nav2D::XYCell cell;
     for (unsigned int i = 0; i < s.length(); i++)
     {
         if (s.at(i) == '\n') { cell.x = 0; cell.y++; continue; }
-        yarp::dev::MapGrid2D::map_flags flag;
-        if (s.at(i) == '*') flag = yarp::dev::MapGrid2D::map_flags::MAP_CELL_UNKNOWN;
-        else if (s.at(i) == '.') flag = yarp::dev::MapGrid2D::map_flags::MAP_CELL_FREE;
-        else if (s.at(i) == '#') flag = yarp::dev::MapGrid2D::map_flags::MAP_CELL_WALL;
-        else flag = yarp::dev::MapGrid2D::map_flags::MAP_CELL_UNKNOWN;
+        yarp::dev::Nav2D::MapGrid2D::map_flags flag;
+        double occupancy = 0;
+        if (s.at(i) == '*')      { flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_UNKNOWN; occupancy = 1; }
+        else if (s.at(i) == '.') { flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_FREE; occupancy = 0; }
+        else if (s.at(i) == '#') { flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL;  occupancy = 1; }
+        else                     { flag = yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_UNKNOWN; occupancy = 1; }
         m.setMapFlag(cell, flag);
+        m.setOccupancyData(cell, occupancy);
         cell.x++;
     }
 }
@@ -45,7 +48,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
     SECTION("Test data type MapGrid2D")
     {
-        MapGrid2D test_map;
+        Nav2D::MapGrid2D test_map;
         test_map.setResolution(1.0);
         test_map.setSize_in_meters(11, 11);
         test_map.setOrigin(-3, -7, 0);
@@ -67,27 +70,33 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             "*##########\n");
         ReadMapfromString(test_map, mapstring);
 
-        MapGrid2D test_cnvutils_map1 = test_map;
-        yarp::dev::MapGrid2D::XYCell cell1;
-        yarp::dev::MapGrid2D::XYCell cell1_test(6, 4);
-        yarp::dev::MapGrid2D::XYWorld world1(3, -1);
+        double occ_test;
+        test_map.getOccupancyData(XYCell(0, 0), occ_test); CHECK(occ_test == 1);
+        test_map.getOccupancyData(XYCell(1, 1), occ_test); CHECK(occ_test == 1);
+        test_map.getOccupancyData(XYCell(2, 2), occ_test); CHECK(occ_test == 0);
+        test_map.getOccupancyData(XYCell(3, 3), occ_test); CHECK(occ_test == 0);
+
+        Nav2D::MapGrid2D test_cnvutils_map1 = test_map;
+        yarp::dev::Nav2D::XYCell cell1;
+        yarp::dev::Nav2D::XYCell cell1_test(6, 4);
+        yarp::dev::Nav2D::XYWorld world1(3, -1);
         cell1 = test_cnvutils_map1.world2Cell(world1);
         CHECK(cell1 == cell1_test); // IMap2D world2Cell() operation successful
 
-        MapGrid2D test_cnvutils_map2 = test_map;
-        yarp::dev::MapGrid2D::XYCell cell2(6, 4);
-        yarp::dev::MapGrid2D::XYWorld world2;
-        yarp::dev::MapGrid2D::XYWorld world2_test(3, -1);
+        Nav2D::MapGrid2D test_cnvutils_map2 = test_map;
+        yarp::dev::Nav2D::XYCell cell2(6, 4);
+        yarp::dev::Nav2D::XYWorld world2;
+        yarp::dev::Nav2D::XYWorld world2_test(3, -1);
         world2 = test_cnvutils_map2.cell2World(cell2);
         CHECK(world2 == world2_test); // IMap2D cell2World() operation successful
 
-        MapGrid2D test_cnvutils_map3 = test_map;
-        yarp::dev::MapGrid2D::XYCell cell3_ok(0, 0);
-        yarp::dev::MapGrid2D::XYWorld world3_ok(-1, -1);
-        yarp::dev::MapGrid2D::XYCell cell4_err(11, 11);
-        yarp::dev::MapGrid2D::XYWorld world4_err(100, 100);
-        yarp::dev::MapGrid2D::XYCell cell5_err(-1, -1);
-        yarp::dev::MapGrid2D::XYWorld world5_err(-100, -100);
+        Nav2D::MapGrid2D test_cnvutils_map3 = test_map;
+        yarp::dev::Nav2D::XYCell cell3_ok(0, 0);
+        yarp::dev::Nav2D::XYWorld world3_ok(-1, -1);
+        yarp::dev::Nav2D::XYCell cell4_err(11, 11);
+        yarp::dev::Nav2D::XYWorld world4_err(100, 100);
+        yarp::dev::Nav2D::XYCell cell5_err(-1, -1);
+        yarp::dev::Nav2D::XYWorld world5_err(-100, -100);
         CHECK(test_cnvutils_map3.isInsideMap(cell3_ok));
         CHECK(test_cnvutils_map3.isInsideMap(world3_ok));
         CHECK_FALSE(test_cnvutils_map3.isInsideMap(cell4_err));
@@ -102,7 +111,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         bool b;
         bool b2;
 
-        yarp::dev::Map2DArea area1;
+        Map2DArea area1;
         area1.map_id = "maptest";
         area1.points.push_back(yarp::math::Vec2D<double>(-1, -1));
         area1.points.push_back(yarp::math::Vec2D<double>(-1,  1));
@@ -111,14 +120,14 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         b = area1.isValid(); //box area
         CHECK(b);
 
-        yarp::dev::Map2DArea area_err;
+        Map2DArea area_err;
         area_err.map_id = "maptest";
         area_err.points.push_back(yarp::math::Vec2D<double>(-1, -1));
         area_err.points.push_back(yarp::math::Vec2D<double>(-1, 1));
         b = area_err.isValid(); //incomplete area
         CHECK(b==false);
 
-        yarp::dev::Map2DArea area2;
+        Map2DArea area2;
         area2.map_id = "maptest";
         area2.points.push_back(yarp::math::Vec2D<double>(-1, -1));
         area2.points.push_back(yarp::math::Vec2D<double>(-1, 1));
@@ -126,7 +135,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         b = area2.isValid(); //triangular area
         CHECK(b);
 
-        yarp::dev::Map2DArea area3;
+        Map2DArea area3;
         area3.map_id = "maptest";
         area3.points.push_back(yarp::math::Vec2D<double>(-1, -1));
         area3.points.push_back(yarp::math::Vec2D<double>(-1, 1));
@@ -136,8 +145,8 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         b = area3.isValid(); //concave polygon
         CHECK(b);
 
-        yarp::dev::Map2DLocation t1;
-        yarp::dev::Map2DLocation t2;
+        Map2DLocation t1;
+        Map2DLocation t2;
         b = area1.findAreaBounds(t1, t2);   CHECK(b);
         CHECK(t1 == Map2DLocation("maptest", -1, -1, 0));
         CHECK(t2 == Map2DLocation("maptest",  1,  1, 0));
@@ -152,7 +161,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
         for (size_t i = 0; i < 100; i++)
         {
-            yarp::dev::Map2DLocation rnd;
+            Map2DLocation rnd;
             b = area1.getRandomLocation(rnd);
             if (b)
             {
@@ -166,7 +175,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
         for (size_t i = 0; i < 100; i++)
         {
-            yarp::dev::Map2DLocation rnd;
+            Map2DLocation rnd;
             b = area2.getRandomLocation(rnd);
             if (b)
             {
@@ -180,7 +189,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
         for (size_t i = 0; i < 100; i++)
         {
-            yarp::dev::Map2DLocation rnd;
+            Map2DLocation rnd;
             b = area3.getRandomLocation(rnd);
             if (b)
             {
@@ -256,7 +265,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             ret = imap->storeLocation("loc2", Map2DLocation("map2", 4, 5, 6));  CHECK(ret);
 
             std::vector<Map2DLocation> vec1, vec2, vec3;
-            yarp::dev::Map2DLocation v;
+            Map2DLocation v;
             v.x = 1.1; v.y = 1.1; vec1.push_back(v);
             v.x = 1.2; v.y = 1.2; vec1.push_back(v);
             v.x = 1.3; v.y = 1.3; vec1.push_back(v);
@@ -322,11 +331,102 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             ret = imap->clearAllAreas();  CHECK(ret);
         }
 
+        //////////"Checking IMap2D methods which involve usage of classes Map2DPath/Map2DLocation"
+        {
+            std::vector <Map2DPath>      paths;
+            std::vector <Map2DLocation>  locs;
+            std::vector <std::string>    loc_names;
+            std::vector <std::string>    path_names;
+            Map2DLocation loc;
+            Map2DPath     path;
+            bool ret;
+            bool b1;
+            ret = imap->clearAllLocations();   CHECK(ret);
+            ret = imap->clearAllPaths();       CHECK(ret);
+            ret = imap->getPathsList(path_names);   CHECK(ret);
+            b1 = (path_names.size() == 0);
+            CHECK(b1);
+            ret = imap->getLocationsList(loc_names);   CHECK(ret);
+            b1 = (loc_names.size() == 0);
+            CHECK(b1);
+
+            ret = imap->storeLocation("loc1", Map2DLocation("map1", 1, 2, 3));  CHECK(ret);
+            ret = imap->storeLocation("loc2", Map2DLocation("map2", 4, 5, 6));  CHECK(ret);
+
+            std::vector<Map2DLocation> vec1, vec2, vec3;
+            Map2DLocation v;
+            v.x = 1.1; v.y = 1.1; vec1.push_back(v);
+            v.x = 1.2; v.y = 1.2; vec1.push_back(v);
+            v.x = 1.3; v.y = 1.3; vec1.push_back(v);
+            ret = imap->storePath("path1", Map2DPath(vec1));  CHECK(ret);
+            v.x = 2.1; v.y = 2.1; vec2 = vec1;  vec2.push_back(v);
+            ret = imap->storePath("path2", Map2DPath(vec2));  CHECK(ret);
+            v.x = 3.1; v.y = 3.1; vec3 = vec2;  vec3.push_back(v);
+            ret = imap->storePath("path3", Map2DPath(vec3));  CHECK(ret);
+
+            ret = imap->getPathsList(path_names);   CHECK(ret);
+            b1 = (path_names.size() == 3);
+            CHECK(b1);
+            ret = imap->getLocationsList(loc_names);  CHECK(ret);
+            b1 = (loc_names.size() == 2);
+            CHECK(b1);
+
+            ret = imap->getPath("path1", path);   CHECK(ret);
+            b1 = (path == Map2DPath(vec1));
+            CHECK(b1);
+            ret = imap->getPath("path_err", path);   CHECK(ret == false);
+
+            ret = imap->getLocation("loc1", loc);  CHECK(ret);
+            b1 = (loc == Map2DLocation("map1", 1, 2, 3));
+            CHECK(b1);
+            ret = imap->getLocation("loc_err", loc);   CHECK(ret == false);
+
+            ret = imap->deletePath("path1");       CHECK(ret);
+            ret = imap->deleteLocation("loc1");  CHECK(ret);
+            ret = imap->deletePath("path_err");       CHECK(ret == false);
+            ret = imap->deleteLocation("loc_err");  CHECK(ret == false);
+            ret = imap->getPath("path1", path);    CHECK(ret == false);
+            ret = imap->getLocation("loc1", loc);  CHECK(ret == false);
+
+            ret = imap->getPath("path2", path);  CHECK(ret);
+            b1 = (path == Map2DPath(vec2));
+            CHECK(b1);
+            ret = imap->getLocation("loc2", loc);   CHECK(ret);
+            b1 = (loc == Map2DLocation("map2", 4, 5, 6));
+            CHECK(b1);
+
+            ret = imap->clearAllLocations();  CHECK(ret);
+            ret = imap->clearAllPaths();  CHECK(ret);
+            ret = imap->getPathsList(path_names);  CHECK(ret);
+            b1 = (path_names.size() == 0);
+            CHECK(b1);
+            imap->getLocationsList(loc_names);
+            b1 = (loc_names.size() == 0);
+            CHECK(b1);
+
+            ret = imap->storePath("path", Map2DPath(vec1));  CHECK(ret);
+            ret = imap->storeLocation("loc", Map2DLocation("map2", 4, 5, 6));  CHECK(ret);
+            ret = imap->renamePath("path_fail", "path_new");  CHECK(ret == false);
+            ret = imap->renameLocation("loc_fail", "loc_new");  CHECK(ret == false);
+            ret = imap->renamePath("path", "path_new");  CHECK(ret);
+            ret = imap->renameLocation("loc", "loc_new");  CHECK(ret);
+            ret = imap->getPath("path", path);         CHECK(ret == false);
+            ret = imap->getPath("path_new", path);      CHECK(ret);
+            ret = imap->getLocation("loc", loc);       CHECK(ret == false);
+            ret = imap->getLocation("loc_new", loc);    CHECK(ret);
+
+            path.toString();
+
+            //final cleanup, already tested        
+            ret = imap->clearAllLocations();  CHECK(ret);
+            ret = imap->clearAllPaths();  CHECK(ret);
+        }
+
         //////////"Checking IMap2D methods which involve usage of classes MapGrid2D"
         {
-            MapGrid2D test_store_map1;
-            MapGrid2D test_store_map2;
-            MapGrid2D test_get_map;
+            Nav2D::MapGrid2D test_store_map1;
+            Nav2D::MapGrid2D test_store_map2;
+            Nav2D::MapGrid2D test_get_map;
 
             test_store_map1.setMapName("test_map1");
             test_store_map2.setMapName("test_map2");
