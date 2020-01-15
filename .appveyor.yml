@@ -15,6 +15,7 @@ configuration:
 branches:
   except:
     - /^.*travis.*$/
+    - /^devel$/
 
 environment:
   CTEST_OUTPUT_ON_FAILURE: 1
