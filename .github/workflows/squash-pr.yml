@@ -13,7 +13,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
-    - name: Rebase PR
+    - name: Squash PR
       uses: robotology/gh-action-squash@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
