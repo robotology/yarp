@@ -555,6 +555,22 @@ public:
      * @note At the moment iterator is implemented as a pointer, it may change in the future.
      * For this reason it should not be used as a pointer to the data, use data() instead.
      */
+    const_iterator begin() const noexcept {
+        return first;
+    }
+
+    /**
+     * @brief Returns a const iterator to the end of the VectorOf.
+     */
+    const_iterator end() const noexcept {
+        return first + len;
+    }
+
+    /**
+     * @brief Returns a const iterator to the beginning of the VectorOf
+     * @note At the moment iterator is implemented as a pointer, it may change in the future.
+     * For this reason it should not be used as a pointer to the data, use data() instead.
+     */
     const_iterator cbegin() const noexcept {
         return first;
     }
