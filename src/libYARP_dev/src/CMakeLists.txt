@@ -212,8 +212,9 @@ endif()
 include(YarpIDL)
 
 set(YARP_dev_IDL idl/stateExt.thrift
-                 idl/audioBufferSizeData.thrift)
-				 
+                 idl/audioBufferSizeData.thrift
+                 idl/OdometryData.thrift)
+
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_IDL idl/Map2DLocationData.thrift
                            idl/Map2DPathData.thrift)
