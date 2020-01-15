@@ -113,13 +113,12 @@ clipPlanes (0.2 10.0)
  * \endcode
  */
 
+class rotation_estimator;
+
 class realsense2withIMUDriver :
         public realsense2Driver,
         public yarp::dev::IThreeAxisGyroscopes,
         public yarp::dev::IThreeAxisLinearAccelerometers,
-#ifdef FORCE_MISSING_MAGNETOMETERS_ON
-        public yarp::dev::IThreeAxisMagnetometers,
-#endif
         public yarp::dev::IOrientationSensors
 {
 private:
@@ -139,15 +138,12 @@ private:
     inline bool initializeRealsenseDevice();
     inline bool setParams();
 
-    void updateTransformations();
 #if 0
     bool pipelineStartup(); //inherited
     bool pipelineShutdown(); //inherited
     bool pipelineRestart(); //inherited
     void fallback(); //inherited
 #endif
-    bool setFramerate(const int _fps);
-
 
 public:
     /* IThreeAxisGyroscopes methods */
@@ -164,15 +160,6 @@ public:
     bool getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string& frameName) const override;
     bool getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
 
-#ifdef FORCE_MISSING_MAGNETOMETERS_ON
-    /* IThreeAxisMagnetometers methods */
-    size_t getNrOfThreeAxisMagnetometers() const override;
-    yarp::dev::MAS_status getThreeAxisMagnetometerStatus(size_t sens_index) const override;
-    bool getThreeAxisMagnetometerName(size_t sens_index, std::string& name) const override;
-    bool getThreeAxisMagnetometerFrameName(size_t sens_index, std::string& frameName) const override;
-    bool getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const override;
-#endif
-
     /* IOrientationSensors methods */
     size_t getNrOfOrientationSensors() const override;
     yarp::dev::MAS_status getOrientationSensorStatus(size_t sens_index) const override;
@@ -180,34 +167,25 @@ public:
     bool getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const override;
     bool getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const override;
 
-        /* IPoseSensors methods */
-    size_t getNrOfPoseSensors() const ;
-    yarp::dev::MAS_status getPoseSensorStatus(size_t sens_index) const;
-    bool getPoseSensorName(size_t sens_index, std::string& name) const;
-    bool getPoseSensorFrameName(size_t sens_index, std::string& frameName) const;
-    bool getPoseSensorMeasureAsXYZRPY(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const;
-
 protected:
     // realsense classes
     mutable rs2_vector m_last_gyro;
     mutable rs2_vector m_last_accel;
     mutable rs2_pose   m_last_pose;
+    mutable rotation_estimator* m_rotation_estimator;
 
-    bool m_sensor_has_pose_capabilities;
     bool m_sensor_has_orientation_estimator;
 
     //strings
-    std::string m_inertial_sensor_name_prefix;
-    const std::string m_accel_sensor_tag = "accelerations_sensor";
-    const std::string m_gyro_sensor_tag = "gyro_sensor";
+    std::string       m_inertial_sensor_name_prefix;
+    const std::string m_accel_sensor_tag       = "accelerations_sensor";
+    const std::string m_gyro_sensor_tag        = "gyro_sensor";
     const std::string m_orientation_sensor_tag = "orientation_sensor";
-    const std::string m_pose_sensor_tag = "pose_sensor";
-    const std::string m_magnetic_sensor_tag = "magnetic_field_sensor";
+    const std::string m_position_sensor_tag    = "position_sensor";
     std::string m_gyroFrameName;
     std::string m_accelFrameName;
     std::string m_orientationFrameName;
-    std::string m_poseFrameName;
-    std::string m_magneticFrameName;
+    std::string m_positionFrameName;
 
     /*std::mutex   m_mutex;
     rs2::context m_ctx;
@@ -236,3 +214,4 @@ protected:
     std::vector<cameraFeature_id_t> m_supportedFeatures;*/
 };
 #endif
+
