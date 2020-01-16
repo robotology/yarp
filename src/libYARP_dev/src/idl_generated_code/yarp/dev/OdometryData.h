@@ -27,14 +27,41 @@ class YARP_dev_API OdometryData :
 {
 public:
     // Fields
+    /**
+     * position of the robot [m], expressed in the world reference frame
+     */
     double odom_x;
+    /**
+     * position of the robot [m], expressed in the world reference frame
+     */
     double odom_y;
+    /**
+     * orientation the robot [deg], expressed in the world reference frame
+     */
     double odom_theta;
+    /**
+     * velocity of the robot [m/s] expressed in the robot reference frame
+     */
     double base_vel_x;
+    /**
+     * velocity of the robot [m/s] expressed in the robot reference frame
+     */
     double base_vel_y;
+    /**
+     * angular velocity of the robot [deg/s] expressed in the robot reference frame
+     */
     double base_vel_theta;
+    /**
+     * velocity of the robot [m/s] expressed in the world reference frame
+     */
     double odom_vel_x;
+    /**
+     * velocity of the robot [m/s] expressed in the world reference frame
+     */
     double odom_vel_y;
+    /**
+     * angular velocity of the robot [deg/s] expressed in the world reference frame
+     */
     double odom_vel_theta;
 
     // Default constructor

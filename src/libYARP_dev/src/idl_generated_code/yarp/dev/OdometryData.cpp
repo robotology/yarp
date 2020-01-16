@@ -515,74 +515,101 @@ bool OdometryData::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             if (field == "odom_x") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double odom_x")) {
                     return false;
                 }
+                if (!writer.writeString("position of the robot [m], expressed in the world reference frame")) {
+                    return false;
+                }
             }
             if (field == "odom_y") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double odom_y")) {
                     return false;
                 }
+                if (!writer.writeString("position of the robot [m], expressed in the world reference frame")) {
+                    return false;
+                }
             }
             if (field == "odom_theta") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double odom_theta")) {
                     return false;
                 }
+                if (!writer.writeString("orientation the robot [deg], expressed in the world reference frame")) {
+                    return false;
+                }
             }
             if (field == "base_vel_x") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double base_vel_x")) {
                     return false;
                 }
+                if (!writer.writeString("velocity of the robot [m/s] expressed in the robot reference frame")) {
+                    return false;
+                }
             }
             if (field == "base_vel_y") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double base_vel_y")) {
                     return false;
                 }
+                if (!writer.writeString("velocity of the robot [m/s] expressed in the robot reference frame")) {
+                    return false;
+                }
             }
             if (field == "base_vel_theta") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double base_vel_theta")) {
                     return false;
                 }
+                if (!writer.writeString("angular velocity of the robot [deg/s] expressed in the robot reference frame")) {
+                    return false;
+                }
             }
             if (field == "odom_vel_x") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double odom_vel_x")) {
                     return false;
                 }
+                if (!writer.writeString("velocity of the robot [m/s] expressed in the world reference frame")) {
+                    return false;
+                }
             }
             if (field == "odom_vel_y") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double odom_vel_y")) {
                     return false;
                 }
+                if (!writer.writeString("velocity of the robot [m/s] expressed in the world reference frame")) {
+                    return false;
+                }
             }
             if (field == "odom_vel_theta") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double odom_vel_theta")) {
+                    return false;
+                }
+                if (!writer.writeString("angular velocity of the robot [deg/s] expressed in the world reference frame")) {
                     return false;
                 }
             }
