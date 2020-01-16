@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
@@ -22,6 +22,11 @@
 #include <librealsense2/rsutil.h>
 #include <librealsense2/rs.hpp>
 #include <mutex>
+
+ /**********************************************************************************************************/
+ // This software module is experimental.
+ // It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.
+ /**********************************************************************************************************/
 
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -183,6 +188,9 @@ bool realsense2Tracking::pipelineRestart()
 
 bool realsense2Tracking::open(Searchable& config)
 {
+    yWarning() << "This software module is experimental.";
+    yWarning() << "It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.";
+
     string sensor_is = "t265";
     bool b= true;
 

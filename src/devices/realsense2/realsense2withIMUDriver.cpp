@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the
@@ -23,6 +23,11 @@
 #include <librealsense2/rs.hpp>
 #include <mutex>
 
+ /**********************************************************************************************************/
+ // This software module is experimental.
+ // It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.
+ /**********************************************************************************************************/
+ 
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -115,6 +120,7 @@ public:
         // Calculate rotation angle from accelerometer data
         accel_angle.z = atan2(accel_data.y, accel_data.z);
         accel_angle.x = atan2(accel_data.x, sqrt(accel_data.y * accel_data.y + accel_data.z * accel_data.z));
+        accel_angle.y = 0; //ADDED by randaz81
 
         // If it is the first iteration, set initial pose of camera according to accelerometer data (note the different handling for Y axis)
         std::lock_guard<std::mutex> lock(theta_mtx);
@@ -276,6 +282,9 @@ void realsense2Driver::fallback()
 
 bool realsense2withIMUDriver::open(Searchable& config)
 {
+    yWarning() << "This software module is experimental.";
+    yWarning() << "It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.";
+
     string sensor_is = "d435i";
     bool b = true;
 
