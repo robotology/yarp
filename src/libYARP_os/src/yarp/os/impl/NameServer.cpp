@@ -7,21 +7,22 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/impl/NameServer.h>
+
+#include <yarp/conf/string.h>
+#include <yarp/conf/version.h>
+
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/LogComponent.h>
-#include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/NameServer.h>
-#include <yarp/os/impl/SplitString.h>
-#include <yarp/conf/version.h>
-
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/impl/LogComponent.h>
+#include <yarp/os/impl/NameConfig.h>
 
 #include <map>
 #include <set>
@@ -155,7 +156,7 @@ Contact NameServer::queryName(const std::string& name)
     std::string base = name;
     std::string pat;
     if (name.find("/net=") == 0) {
-        size_t patStart = 5;
+        constexpr size_t patStart = 5;
         size_t patEnd = name.find('/', patStart);
         if (patEnd >= patStart && patEnd != std::string::npos) {
             pat = name.substr(patStart, patEnd - patStart);
@@ -169,9 +170,9 @@ Contact NameServer::queryName(const std::string& name)
         if (!pat.empty()) {
             std::string ip = rec->matchProp("ips", pat);
             if (!ip.empty()) {
-                SplitString sip(ip.c_str());
+                auto sip = yarp::conf::string::split(ip, ' ');
                 Contact c = rec->getAddress();
-                c.setHost(sip.get(0));
+                c.setHost(sip.at(0));
                 return c;
             }
         }
@@ -692,15 +693,23 @@ std::string NameServer::apply(const std::string& txt, const Contact& remote)
 {
     std::string result = "no command given";
     mutex.lock();
-
-    SplitString ss(txt.c_str());
+    auto ss = yarp::conf::string::split(txt, std::regex{"[\" \t\n]+"});
     if (ss.size() >= 2) {
-        std::string key = ss.get(1);
+        std::string key = ss.at(1);
         yCTrace(NAMESERVER, "dispatching to %s", key.c_str());
-        ss.set(1, remote.getHost().c_str());
-        result = dispatcher.dispatch(this, key.c_str(), ss.size() - 1, (char**)(ss.get() + 1));
+        ss.at(1) = remote.getHost();
+
+        // Create argc/argv containing all arguments but the first one
+        std::vector<char*> args;
+        args.reserve(ss.size());
+        std::transform(ss.begin() + 1, ss.end(), std::back_inserter(args), [](const std::string& str) { return const_cast<char*>(str.c_str()); });
+        args.push_back(nullptr);
+        int argc = static_cast<int>(args.size()) - 1;
+        char** argv = args.data();
+
+        result = dispatcher.dispatch(this, key.c_str(), argc, argv);
         if (result.empty()) {
-            Bottle b = ndispatcher.dispatch(this, key.c_str(), ss.size() - 1, (char**)(ss.get() + 1));
+            Bottle b = ndispatcher.dispatch(this, key.c_str(), argc, argv);
             result = b.toString();
             if (!result.empty()) {
                 result = result + "\n";

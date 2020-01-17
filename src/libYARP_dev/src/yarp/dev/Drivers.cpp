@@ -9,6 +9,8 @@
 
 #include <yarp/dev/Drivers.h>
 
+#include <yarp/conf/string.h>
+
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/Os.h>
@@ -383,27 +385,6 @@ static void handler (int) {
 }
 
 
-
-// Split with delimiter method.
-// See https://stackoverflow.com/questions/236129
-// TODO Move somewhere else?
-namespace {
-template<typename Out>
-void split(const std::string &s, char delim, Out result) {
-    std::stringstream ss;
-    ss.str(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        *(result++) = item;
-    }
-}
-std::vector<std::string> split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, std::back_inserter(elems));
-    return elems;
-}
-} // namespace
-
 int Drivers::yarpdev(int argc, char *argv[]) {
 
     std::signal(SIGINT, handler);
@@ -452,7 +433,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         // no device mentioned - maybe user needs help
         if (options.check("list")) {
             yCInfo(DRIVERS, "Here are devices listed for your system:");
-            for (auto& s : split(Drivers::factory().toString(), '\n')) {
+            for (const auto& s : yarp::conf::string::split(Drivers::factory().toString(), '\n')) {
                 yCInfo(DRIVERS, "%s", s.c_str());
             }
         } else {

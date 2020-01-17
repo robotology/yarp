@@ -10,13 +10,15 @@
 #ifndef YARP_OS_IMPL_NAMESERVER_H
 #define YARP_OS_IMPL_NAMESERVER_H
 
+#include <yarp/conf/string.h>
+#include <yarp/conf/numeric.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Dispatcher.h>
-#include <yarp/os/impl/SplitString.h>
 
 #include <map>
 #include <mutex>
@@ -244,12 +246,14 @@ private:
 
         void releaseAddress(const char* addr)
         {
-            SplitString ss(addr, '.');
+            auto ss = yarp::conf::string::split(addr, '.');
+            constexpr size_t ipv4_size = 4;
             int ip[] = {224, 3, 1, 1};
-            yCAssert(NAMESERVER, ss.size() == 4);
-            for (int i = 0; i < 4; i++) {
-                ip[i] = yarp::conf::numeric::from_string<int>(ss.get(i));
+            yCAssert(NAMESERVER, ss.size() == ipv4_size);
+            for (size_t i = 0; i < ipv4_size; ++i) {
+                ip[i] = yarp::conf::numeric::from_string<int>(ss[i]);
             }
+
             int v2 = ip[2] - 1;
             int v1 = ip[3] - 1;
             int x = v2 * 255 + v1;

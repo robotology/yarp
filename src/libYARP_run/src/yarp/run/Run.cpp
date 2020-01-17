@@ -29,7 +29,6 @@
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdio.h>
 
@@ -1801,9 +1800,9 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
     std::string cstrEnvName;
     if (msg.check("env"))
     {
-        yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
-        for(int i=0; i<ss.size(); i++) {
-            lstrcpy(lpNew, (LPTCH) ss.get(i));
+        auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+        for (const auto& s : ss) {
+            lstrcpy(lpNew, (LPTCH) s.c_str());
             lpNew += lstrlen(lpNew) + 1;
         }
     }
@@ -2669,10 +2668,10 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
 
                 if (msg.check("env"))
                 {
-                    yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
-                    for(int i=0; i<ss.size(); i++) {
-                        char* szenv = new char[strlen(ss.get(i))+1];
-                        strcpy(szenv, ss.get(i));
+                    auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+                    for (const auto& s : ss) {
+                        char* szenv = new char[s.size()+1];
+                        strcpy(szenv, s.c_str());
                         yarp::run::impl::putenv(szenv); // putenv doesn't make copy of the string
                     }
                     //delete [] szenv;
@@ -3033,10 +3032,10 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
 
                 if (msg.check("env"))
                 {
-                    yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
-                    for(int i=0; i<ss.size(); i++) {
-                        char* szenv = new char[strlen(ss.get(i))+1];
-                        strcpy(szenv, ss.get(i));
+                    auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+                    for (const auto& s : ss) {
+                        char* szenv = new char[s.size()+1];
+                        strcpy(szenv, s.c_str());
                         yarp::run::impl::putenv(szenv); // putenv doesn't make copy of the string
                     }
                     //delete [] szenv;
@@ -3475,10 +3474,10 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
         if (msg.check("env"))
         {
-            yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
-            for(int i=0; i<ss.size(); i++) {
-                char* szenv = new char[strlen(ss.get(i))+1];
-                strcpy(szenv, ss.get(i));
+            auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+            for (const auto& s : ss) {
+                char* szenv = new char[s.size()+1];
+                strcpy(szenv, s.c_str());
                 yarp::run::impl::putenv(szenv); // putenv doesn't make copy of the string
             }
         }
