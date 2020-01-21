@@ -409,7 +409,8 @@ foreach my $filename (@files) {
 
     if ("$filename" eq "src/carriers/portmonitor_carrier/lua/lua_swig.h" ||
         "$filename" =~ /src\/idls\/thrift\/src_gen\/thrift\// ||
-        "$filename" =~ /\/qtquick2applicationviewer/) {
+        "$filename" =~ /\/qtquick2applicationviewer/ ||
+        "$filename" =~ /idl_generated_code/) {
         print_if_verbose "[SKIP (autogen)] $filename\n";
         $skip++;
         next;
