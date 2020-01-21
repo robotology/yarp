@@ -618,29 +618,32 @@ foreach my $filename (@files) {
 }
 
 print "\n";
+print "---\n";
 print "FILES:  $files\n";
 print "OK:     $ok\n";
 print "SKIP:   $skip\n";
 print "KNOWN:  $known\n";
 print "ERRORS: $errors\n";
+print "---\n";
+print "\n";
 
 if ($ok + $skip + $known + $errors != $files) {
-    print "\n[ERROR: Some file was not counted]\n";
+    print "[ERROR: Some file was not counted]\n\n";
     exit 1;
 }
 
 if ($known < scalar(@skip_files)) {
-    print "\n[ERROR: Some known file was not found and the skip file was not updated]\n";
+    print "[ERROR: Some known file was not found and the skip file was not updated]\n\n";
     exit 1;
 }
 
 if ($known > scalar(@skip_files)) {
-    print "\n[ERROR: Some new known file was added and the skip file was not updated]\n";
+    print "[ERROR: Some new known file was added and the skip file was not updated]\n\n";
     exit 1;
 }
 
 if ($errors != 0) {
-    print "\n[ERROR: Some file has an invalid license]\n";
+    print "[ERROR: Some file has an invalid license]\n\n";
     exit 1;
 }
 
