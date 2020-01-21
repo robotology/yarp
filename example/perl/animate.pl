@@ -43,11 +43,11 @@ for (my $i=0; $i<100; $i++) {
     my $s = abs(sin($r));
     print "[mat] [mono] (1 $all 1 $w $h) {\\\n";
     for (my $y=0; $y<$h; $y++) {
-	for (my $x=0; $x<$w; $x++) {
-	    my $v = (($x*$c+$y*$s)*10+$i)%256;
-	    print " $v";
-	}
-	print " \\\n";
+        for (my $x=0; $x<$w; $x++) {
+            my $v = (($x*$c+$y*$s)*10+$i)%256;
+            print " $v";
+        }
+        print " \\\n";
     }
     print "}\n";
     SafeSystem("usleep 30000");

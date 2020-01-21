@@ -20,12 +20,12 @@ int main(int argc, char *argv[]) {
 
     for (int i=10; i>=0; i--) {
         printf("at %d\n", i);
-	    Bottle& msg = out.prepare();
-		msg.clear();
-		msg.addString("countdown");
-		msg.addInt32(i);
-		out.write();
-		Time::delay(1);
+        Bottle& msg = out.prepare();
+        msg.clear();
+        msg.addString("countdown");
+        msg.addInt32(i);
+        out.write();
+        Time::delay(1);
     }
     return 0;
 }

@@ -28,7 +28,7 @@ while(~done)
   disp(b);
 
   if (strcmp(b.toString, 'quit'))
-	done=1;
+    done=1;
   end
 end
 

@@ -23,10 +23,10 @@ using namespace yarp::os;
 class Thread1 : public Thread {
 public:
     virtual bool threadInit()
-	{
-		printf("Starting thread1\n");
-		return true;
-	}
+    {
+        printf("Starting thread1\n");
+        return true;
+    }
 
     virtual void run() {
         while (!isStopping()) {
@@ -36,18 +36,18 @@ public:
     }
 
     virtual void threadRelease()
-	{
-		printf("Goodbye from thread1\n");
-	}
+    {
+        printf("Goodbye from thread1\n");
+    }
 };
 
 class Thread2 : public Thread {
 public:
-	virtual bool threadInit()
-	{
-		printf("Starting thread2\n");
-		return true;
-	}
+    virtual bool threadInit()
+    {
+        printf("Starting thread2\n");
+        return true;
+    }
 
     virtual void run() {
         Time::delay(0.5);
@@ -58,9 +58,9 @@ public:
     }
 
     virtual void threadRelease()
-	{
-		printf("Goodbye from thread2\n");
-	}
+    {
+        printf("Goodbye from thread2\n");
+    }
 };
 
 int main() {

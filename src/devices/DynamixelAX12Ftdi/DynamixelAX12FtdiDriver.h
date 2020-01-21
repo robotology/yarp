@@ -78,23 +78,23 @@
 
 /** defines for device parameters - RAM ********************************/
 
-#define CT_TORQUE_ENABLE	24
-#define CT_CW_COMP_MARGIN	26
-#define CT_CWW_COMP_MARGIN	27
-#define CT_CW_COMP_SLOPE	28
-#define CT_CWW_COMP_SLOPE	29
-#define CT_GOAL_POSITION	30
-#define CT_MOVING_SPEED		32
-#define CT_TORQUE_LIMIT		34
-#define CT_PRESENT_POSITION	0x24
-#define CT_PRESENT_SPEED	0x26
-#define CT_PRESENT_LOAD		0x28
-#define CT_PRESENT_VOLTAGE	42
-#define CT_PRESENT_TEMPERATURE	43
-#define CT_REG_INSTRUCTION	44
-#define CT_MOVING		46
-#define CT_LOCK			47
-#define CT_PUNCH		48
+#define CT_TORQUE_ENABLE        24
+#define CT_CW_COMP_MARGIN       26
+#define CT_CWW_COMP_MARGIN      27
+#define CT_CW_COMP_SLOPE        28
+#define CT_CWW_COMP_SLOPE       29
+#define CT_GOAL_POSITION        30
+#define CT_MOVING_SPEED         32
+#define CT_TORQUE_LIMIT         34
+#define CT_PRESENT_POSITION     0x24
+#define CT_PRESENT_SPEED        0x26
+#define CT_PRESENT_LOAD         0x28
+#define CT_PRESENT_VOLTAGE      42
+#define CT_PRESENT_TEMPERATURE  43
+#define CT_REG_INSTRUCTION      44
+#define CT_MOVING               46
+#define CT_LOCK                 47
+#define CT_PUNCH                48
 
 enum ErrorCode {
     VOLTAGE_ERROR,

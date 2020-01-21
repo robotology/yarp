@@ -35,7 +35,7 @@
     <data>
         <input>
             <type>array</type>
-	    <port carrier="mcast">/yarpscope</port>
+            <port carrier="mcast">/yarpscope</port>
             <required>no</required>
             <priority>no</priority>
             <description></description>

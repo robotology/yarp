@@ -17,12 +17,12 @@ sleep 4
 
 ct=1
 while true; do
-	./bin/harness_os verbose regression PortTest
-	./bin/harness_os regression PortTest
-	./bin/harness_os verbose regression PortCoreTest PortTest
-	./bin/harness_os regression PortCoreTest PortTest
-	./bin/harness_os verbose regression
-	./bin/harness_os regression
-	echo $ct >> repeats.txt
-	let ct=ct+1
+    ./bin/harness_os verbose regression PortTest
+    ./bin/harness_os regression PortTest
+    ./bin/harness_os verbose regression PortCoreTest PortTest
+    ./bin/harness_os regression PortCoreTest PortTest
+    ./bin/harness_os verbose regression
+    ./bin/harness_os regression
+    echo $ct >> repeats.txt
+    let ct=ct+1
 done

@@ -51,8 +51,8 @@ proc send_text {target cmd} {
     set reply [gets $sock]
     # reply should be "Welcome tcl"
     if {[string trim $reply] ne "Welcome tcl"} {
-	puts "Error: target port is not behaving like a YARP port"
-	exit 1
+        puts "Error: target port is not behaving like a YARP port"
+        exit 1
     }
 
     # send the command
@@ -63,10 +63,10 @@ proc send_text {target cmd} {
     set reply [gets $sock]
     set surplus ""
     while {$surplus ne "<ACK>"} {
-	set surplus [gets $sock]
-	if {$surplus ne "<ACK>"} {
-	    set reply "$reply $surplus"
-	}
+        set surplus [gets $sock]
+        if {$surplus ne "<ACK>"} {
+            set reply "$reply $surplus"
+        }
     }
 
     return $reply
@@ -82,8 +82,8 @@ proc query {portname} {
     global name_server
     set r [send_text $name_server "query $portname"]
     if {[string trim $r] eq "*** end of message"} {
-	puts "Error: could not find port $portname"
-	exit 1
+        puts "Error: could not find port $portname"
+        exit 1
     }
     set contact_info [eval "list $r"]
     set result [list [lindex $contact_info 4] [lindex $contact_info 6]]

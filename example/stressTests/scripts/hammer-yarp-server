@@ -14,12 +14,12 @@ echo " "
 
 
 while true; do
-	# can pass "verbose" as $1 if desired
-	yarp $1 name register /foo
-	yarp $1 name unregister /foo
+    # can pass "verbose" as $1 if desired
+    yarp $1 name register /foo
+    yarp $1 name unregister /foo
 
-	# even more basic test
-	#	echo "blahlah" | telnet localhost 10000
-	#	sleep 1
+    # even more basic test
+    #    echo "blahlah" | telnet localhost 10000
+    #    sleep 1
 
 done

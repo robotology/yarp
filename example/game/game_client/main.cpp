@@ -28,12 +28,12 @@ using namespace yarp;
 //#define printf cprintf
 
 String pad(const String& src, int len = 70) {
-	String result = src;
-	int ct = len-src.length();
-	for (int i=0; i<ct; i++) {
-		result += " ";
-	}
-	return result;
+    String result = src;
+    int ct = len-src.length();
+    for (int i=0; i<ct; i++) {
+        result += " ";
+    }
+    return result;
 }
 
 std::mutex broadcastMutex();

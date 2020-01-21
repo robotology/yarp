@@ -30,7 +30,7 @@ while(~done)
   port.write(b);
 
   if (strcmp(reply, 'quit'))
-	done=1;
+    done=1;
   end
 end
 

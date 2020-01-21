@@ -16,7 +16,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 int main(int argc, char *argv[]) {
-	Network yarp;
+    Network yarp;
 
     adder();
 

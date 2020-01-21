@@ -235,8 +235,8 @@ void Player::fire(int tx, int ty) {
 
     send("ack [fire] \"fire requested\"");
 
-	// fire (-1, 5); target, at most
-	// client (x,y)  beginning
+    // fire (-1, 5); target, at most
+    // client (x,y)  beginning
 
     Game& game = Game::getGame();
     ID x = thing.getX();
@@ -337,10 +337,10 @@ void Player::look() {
                         ch = 'O';  // another one
                     }
                 } else if(x == 1)  {
-                    ch = '#';	// piece of wall
+                    ch = '#';    // piece of wall
                 }
                 else if(x == 2) {
-                    ch = 'o';	// a bullet
+                    ch = 'o';    // a bullet
                 }
             }
             if (ch==' ') {

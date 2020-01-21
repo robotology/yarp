@@ -7,19 +7,19 @@
 -->
 
 <module>
-	<name>opencv_grabber</name>
-	<description> An opencv-based frame grabber</description>
-	<version>1.0</version>
+    <name>opencv_grabber</name>
+    <description> An opencv-based frame grabber</description>
+    <version>1.0</version>
 
-	<arguments>
-		<!-- <param default="/yarpview/img:i" required="no" desc="input port name">name</param> -->
-	</arguments>
+    <arguments>
+        <!-- <param default="/yarpview/img:i" required="no" desc="input port name">name</param> -->
+    </arguments>
 
-	<authors>
-		<author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
-	</authors>
+    <authors>
+        <author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
+    </authors>
 
-	<data>
+    <data>
         <input port_type="service">
             <type>Rpc</type>
             <port>/opencv_grabber/quit</port>
@@ -28,12 +28,12 @@
             <description> a port which receives rpc command such as 'quit'.</description>
         </input>
 
-		<output port_type="stream">
-			<type>ImageOfPixelRgb</type>
-			<port carrier="udp">/grabber</port>
-			<description>output image port</description>
-		</output>
-	</data>
+        <output port_type="stream">
+            <type>ImageOfPixelRgb</type>
+            <port carrier="udp">/grabber</port>
+            <description>output image port</description>
+        </output>
+    </data>
 
     <deployer>yarpdev</deployer>
 
@@ -42,10 +42,10 @@
         </computer>
     </dependencies>
 
-	<development>
-		<include></include>
-		<library>YARP</library>
-	</development>
+    <development>
+        <include></include>
+        <library>YARP</library>
+    </development>
 
 </module>
 

@@ -113,7 +113,7 @@ constexpr int MAX_MSG_LENGTH = 128;
 #define TRIG_RESET_SYSTEM   0x20    // reset system
 #define TRIG_SELF_TEST      0x01    // Start self test
 
-#define BNO055_ID 	        0xA0
+#define BNO055_ID           0xA0
 
 #define RESP_HEADER_SIZE                 2
 // Time to wait while switching to and from config_mode & any operation_mode

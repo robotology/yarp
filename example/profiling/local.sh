@@ -36,7 +36,7 @@ for rate in $RATES
     echo "Starting client"
     ../port_latency --client --name end --nframes $NFRAMES &
     jobClient=$!
-	echo $jobClient
+    echo $jobClient
 
     yarp wait $CLIENT_PORT
     yarp connect $SERVER_PORT $CLIENT_PORT $protocol

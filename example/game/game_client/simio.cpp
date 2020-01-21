@@ -17,59 +17,60 @@ int key_stored = 0;
 
 void newline()
 {
-	cputch ( '\n' );
+    cputch ( '\n' );
 }
 
 void initconio()
 {
-	initscr();
-	cbreak();
-	noecho();
-	nodelay(stdscr,1);
+    initscr();
+    cbreak();
+    noecho();
+    nodelay(stdscr,1);
 }
 
 void deinitconio()
 {
-	endwin();
+    endwin();
 }
 
 
 void setautorefresh ( int refr )
 {
-	auto_refresh = refr;
+    auto_refresh = refr;
 }
 
 
 void autorefresh()
 {
-	if ( auto_refresh )	refresh();
+    if ( auto_refresh )
+        refresh();
 }
 
 
 void clrscr()
 {
-	clear();
-	autorefresh();
+    clear();
+    autorefresh();
 }
 
 
 void gotoxy ( int x, int y )
 {
-	move ( y, x );
-	autorefresh();
+    move ( y, x );
+    autorefresh();
 }
 
 
 void cputch ( int ch )
 {
-	addch ( ch );
-	autorefresh();
+    addch ( ch );
+    autorefresh();
 }
 
 
 int kbhit()
 {
-	if ( !key_stored )
+    if ( !key_stored )
         {
             last_key = getch();
             if ( last_key != ERR )
@@ -78,18 +79,18 @@ int kbhit()
                 }
         }
 
-	return key_stored;
+    return key_stored;
 }
 
 int waitkey()
 {
-	while ( !kbhit() )
+    while ( !kbhit() )
         {
             // wait
         }
-	key_stored = 0;
+    key_stored = 0;
 
-	return last_key;
+    return last_key;
 }
 
 
@@ -99,15 +100,15 @@ int waitkey()
 
 void initconio()
 {
-	//textmode ( C4350 );
-	//_setcursortype ( _NOCURSOR );
+    //textmode ( C4350 );
+    //_setcursortype ( _NOCURSOR );
 }
 
 
 void newline()
 {
-	cputch ( '\r' );
-	cputch ( '\n' );
+    cputch ( '\r' );
+    cputch ( '\n' );
 }
 
 

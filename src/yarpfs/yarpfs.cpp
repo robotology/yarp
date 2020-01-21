@@ -276,14 +276,14 @@ static struct fuse_operations yarp_oper;
 
 int main(int argc, char *argv[])
 {
-    yarp_oper.getattr	= yarp_getattr;
-    yarp_oper.readdir	= yarp_readdir;
-    yarp_oper.open	= yarp_open;
-    yarp_oper.release	= yarp_release;
-    yarp_oper.read	= yarp_read;
-    yarp_oper.write	= yarp_write;
-    yarp_oper.truncate	= yarp_truncate;
-    yarp_oper.init      = yarp_init;
+    yarp_oper.getattr  = yarp_getattr;
+    yarp_oper.readdir  = yarp_readdir;
+    yarp_oper.open     = yarp_open;
+    yarp_oper.release  = yarp_release;
+    yarp_oper.read     = yarp_read;
+    yarp_oper.write    = yarp_write;
+    yarp_oper.truncate = yarp_truncate;
+    yarp_oper.init     = yarp_init;
 
     //Linking & Renaming
     yarp_oper.readlink  = yarp_readlink;

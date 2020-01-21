@@ -220,7 +220,7 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
                                      IplConvKernelFP* yKernel));
 
 //IPLAPIIMPL(IPLStatus, iplFixedFilter,(IplImage* srcImage, IplImage* dstImage,
-//			      IplFilter filter));
+//           IplFilter filter));
 
 IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
                                    IplConvKernel* xKernel, IplConvKernel* yKernel));

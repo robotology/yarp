@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
         options.put("remote", name);
     }
 
-	fprintf(stderr, "%s", options.toString().c_str());
+    fprintf(stderr, "%s", options.toString().c_str());
 
 
     // create a device

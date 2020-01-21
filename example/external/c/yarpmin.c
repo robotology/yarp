@@ -202,7 +202,7 @@ yarpAddressPtr yarp_init_with(const char *name_server_host,
     if(wsaRc=WSAStartup(0x0101, &wsaData)) {
         perror("WinSock init");
     }
-	if(wsaData.wVersion != 0x0101) {
+    if(wsaData.wVersion != 0x0101) {
         WSACleanup();
         perror("wsaData.wVersion");
     }
@@ -235,35 +235,35 @@ yarpConnection yarp_connect(yarpAddressPtr address) {
 #ifdef WIN32
     SOCKET sd;
 #else
-	int sd;
+    int sd;
 #endif
-	//struct sockaddr_in sin;
-	struct sockaddr_in pin;
-	struct hostent *hp;
+    //struct sockaddr_in sin;
+    struct sockaddr_in pin;
+    struct hostent *hp;
 
-	// get host information
-	if ((hp = gethostbyname(address->host)) == 0) {
-		perror("gethostbyname");
-		exit(1);
-	}
+    // get host information
+    if ((hp = gethostbyname(address->host)) == 0) {
+        perror("gethostbyname");
+        exit(1);
+    }
 
-	// set up socket structure
-	memset(&pin, 0, sizeof(pin));
-	pin.sin_family = AF_INET;
-	pin.sin_addr.s_addr = ((struct in_addr *)(hp->h_addr))->s_addr;
-	pin.sin_port = htons(address->port_number);
+    // set up socket structure
+    memset(&pin, 0, sizeof(pin));
+    pin.sin_family = AF_INET;
+    pin.sin_addr.s_addr = ((struct in_addr *)(hp->h_addr))->s_addr;
+    pin.sin_port = htons(address->port_number);
 
-	// get a socket
-	if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-		perror("socket");
-		exit(1);
-	}
+    // get a socket
+    if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
 
-	// connect to PORT on HOST
-	if (connect(sd,(struct sockaddr *)  &pin, sizeof(pin)) == -1) {
-		perror("connect");
-		exit(1);
-	}
+    // connect to PORT on HOST
+    if (connect(sd,(struct sockaddr *)  &pin, sizeof(pin)) == -1) {
+        perror("connect");
+        exit(1);
+    }
 
     return (long int) sd;
 }
@@ -295,11 +295,11 @@ int yarp_send(yarpConnection connection, const char *msg) {
 
 
 int yarp_send_binary(yarpConnection connection, const char *msg, int len) {
-	// send a message to the server PORT on machine HOST
-	if (send(SOCK_CAST(connection), msg, len, 0) == -1) {
-		perror("send");
-		exit(1);
-	}
+    // send a message to the server PORT on machine HOST
+    if (send(SOCK_CAST(connection), msg, len, 0) == -1) {
+        perror("send");
+        exit(1);
+    }
     return 0;
 }
 

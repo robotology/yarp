@@ -10,7 +10,7 @@
 echo "run as ./scripts/grind"
 
 if [ -e  yarp.valgrind.suppress ]; then
-	mv yarp.valgrind.suppress yarp.valgrind.suppress.old
+    mv yarp.valgrind.suppress yarp.valgrind.suppress.old
 fi
 
 (
@@ -105,7 +105,7 @@ XXX
 lib=os
 
 if [ ! "k$1" = "k" ]; then
-	lib=$1
+    lib=$1
 fi
 
 valgrind --suppressions=yarp.valgrind.suppress --gen-suppressions=yes bin/harness_$lib regression

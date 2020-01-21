@@ -35,5 +35,5 @@ int main()
         Time::delay(0.3);
     }
 
-	return 0;
+    return 0;
 }

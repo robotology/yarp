@@ -150,11 +150,11 @@ yarp::os::QosStyle::PacketPriorityLevel yarp::os::QosStyle::getPacketPriorityAsL
 }
 
 
-//                Class 1          Class 2         Class 3         Class 4
-//          ------------------------------------------------------------------
-// Low Drop	 | AF11 (DSCP 10)	AF21 (DSCP 18)	AF31 (DSCP 26)	AF41 (DSCP 34)
-// Med Drop	 | AF12 (DSCP 12)	AF22 (DSCP 20)	AF32 (DSCP 28)	AF42 (DSCP 36)
-// High Drop | AF13 (DSCP 14)	AF23 (DSCP 22)	AF33 (DSCP 30)	AF43 (DSCP 38)
+// |           |     Class 1    |     Class 2    |     Class 3    |     Class 4    |
+// |-----------|----------------|----------------|----------------|----------------|
+// | Low Drop  | AF11 (DSCP 10) | AF21 (DSCP 18) | AF31 (DSCP 26) | AF41 (DSCP 34) |
+// | Med Drop  | AF12 (DSCP 12) | AF22 (DSCP 20) | AF32 (DSCP 28) | AF42 (DSCP 36) |
+// | High Drop | AF13 (DSCP 14) | AF23 (DSCP 22) | AF33 (DSCP 30) | AF43 (DSCP 38) |
 yarp::os::QosStyle::PacketPriorityDSCP yarp::os::QosStyle::getDSCPByVocab(int vocab)
 {
     switch (vocab) {

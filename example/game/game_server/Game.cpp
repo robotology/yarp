@@ -108,7 +108,7 @@ Game& Game::getGame() {
 
 Thing& Game::getThing(ID id) {
     Thing& thing = SYS(system_resource).game_things.getThing(id);
-	return thing;
+    return thing;
 }
 
 bool Game::isThing(ID id) {

@@ -104,35 +104,34 @@
  *  period 20
  *  ports (FirstSetOfChannels SecondSetOfChannels ThirdSetOfChannels)
  *  channels 1344
- *  FirstSetOfChannels 	0   191  0 191
+ *  FirstSetOfChannels  0   191  0 191
  *  SecondSetOfChannels 192 575  0 383
- *  ThirdSetOfChannels 	576 1343 0 767
+ *  ThirdSetOfChannels  576 1343 0 767
  *
  * \endcode
  *
  * Configuration file using .xml format.
  *
  * \code{.xml}
- *	<device name="/myAnalogServer" type="analogServer">
- *		<param name="period">   20  			    </param>
- *		<param name="channels"> 1344				</param>
+ *    <device name="/myAnalogServer" type="analogServer">
+ *        <param name="period">   20   </param>
+ *        <param name="channels"> 1344 </param>
  *
- *		<paramlist name="ports">
- *		  <elem name="FirstSetOfChannels"> 	0   191  0 191</elem>
- *		  <elem name="SecondSetOfChannels"> 192 575  0 383</elem>
- *		  <elem name="ThirdSetOfChannels"> 	576 1343 0 767</elem>
- *		</paramlist>
+ *        <paramlist name="ports">
+ *            <elem name="FirstSetOfChannels">  0   191  0 191</elem>
+ *            <elem name="SecondSetOfChannels"> 192 575  0 383</elem>
+ *            <elem name="ThirdSetOfChannels">  576 1343 0 767</elem>
+ *        </paramlist>
  *
- *		<action phase="startup" level="5" type="attach">
- *		    <paramlist name="networks">
- *		<!-- The param value must match the device name in the corresponding analogSensor config file.
- *      AnalogWrapper is able to attach to only one subdevice. -->
- *		        <elem name="myAnalogSensor">  my_analog_sensor </elem>
- *		    </paramlist>
- *		</action>
+ *        <action phase="startup" level="5" type="attach">
+ *            <paramlist name="networks">
+ *                <!-- The param value must match the device name in the corresponding analogSensor config file. AnalogWrapper is able to attach to only one subdevice. -->
+ *                <elem name="myAnalogSensor">  my_analog_sensor </elem>
+ *            </paramlist>
+ *        </action>
  *
- *		<action phase="shutdown" level="5" type="detach" />
- *	</device>
+ *        <action phase="shutdown" level="5" type="detach" />
+ *    </device>
  * \endcode
  *
  * Configuration for ROS topic using .ini format.

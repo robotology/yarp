@@ -103,7 +103,7 @@ The `fakeDepthCamera` device driver is opened in the very same way as before. Af
 ```
 yarp::dev::IWrapper *wrapperInterface;
 wrapperDriver.view(wrapperInterface);
-wrapperInterface->attach(&rgbdDriver);                	// Bind the wrapper with the actual device
+wrapperInterface->attach(&rgbdDriver);                  // Bind the wrapper with the actual device
 ```
 
 #### Client side:
@@ -118,7 +118,7 @@ PolyDriver clientDriver;
 Property   clientConfig;
 
 // client configuration
-clientConfig.put("device", "RGBDSensorClient");    		// Network client receiving data from YARP network
+clientConfig.put("device", "RGBDSensorClient"); // Network client receiving data from YARP network
 clientConfig.put(<paramName>, <paramValue>);
 
 // Instantiating RGBD client
@@ -130,7 +130,7 @@ As in the local application, the user has to get the `view` of the required inte
 
 ``` C++
 yarp::dev::IRGBDSensor *RGBDInterface;              // interface we want to use
-clientDriver.view(RGBDInterface);              		// wanted device interface
+clientDriver.view(RGBDInterface);                   // wanted device interface
 
 // Let's use the interface to get info from device
 int rgbImageHeight   = RGBDInterface->getRgbHeight();

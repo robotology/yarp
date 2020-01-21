@@ -258,9 +258,9 @@ int DynamixelAX12FtdiDriver::sendCommand(unsigned char id, unsigned char inst[],
             //some point, I will get back the correct number of bytes. After doing this enough times,
             //I should work out the timing issue
             retCode = ftdi_read_data(&ftdic, header, 4);
-        }            // retCode: <0,: 	error code from usb_bulk_read()
-            //          0: 	no data was available
-            //          >0: 	number of bytes read
+        }            // retCode: <0,:     error code from usb_bulk_read()
+            //          0:     no data was available
+            //          >0:     number of bytes read
             /// TODO check if it works with Kaspar. Originally made by Sven. Need testing
         while (retCode == 0); // not needed. as it will hang if no device is connected
 
@@ -299,7 +299,7 @@ int DynamixelAX12FtdiDriver::sendCommand(unsigned char id, unsigned char inst[],
                         for (i = 0; i < retCode - 1; i++) {
                             ret[i] = body[i];
                         }
-                        // retSize = retCode;    	// Sven's original code.
+                        // retSize = retCode;        // Sven's original code.
                         retSize = retCode - 1; // retSize should be retCode - 1, as checksum is not included
                         return 1;
                     }
@@ -859,7 +859,7 @@ bool DynamixelAX12FtdiDriver::initMotorIndex(yarp::os::Bottle *sensorIndex) {
     unsigned char *tmp = NULL;
     tmp = (unsigned char *) realloc(jointNumbers, numOfAxes * sizeof (unsigned char));
     if (tmp != NULL) {
-        //	jointNumbers = {0x65, 0x74, 0x84, 0x66, 0x75, 0x85, 0x67, 0x76, 0x86, 0x6B, 0x77, 0x87, 0x6A, 0x68, 0x69, 0x6C};
+        //    jointNumbers = {0x65, 0x74, 0x84, 0x66, 0x75, 0x85, 0x67, 0x76, 0x86, 0x6B, 0x77, 0x87, 0x6A, 0x68, 0x69, 0x6C};
         jointNumbers = tmp;
     } else {
         return false;

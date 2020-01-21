@@ -84,12 +84,12 @@ public:
         return false;
     }
 
-	virtual bool getWhiteBalance(double &red, double &green)
-	{
-		red=0;
-		green=0;
-		return false;
-	}
+    virtual bool getWhiteBalance(double &red, double &green)
+    {
+        red=0;
+        green=0;
+        return false;
+    }
 
     virtual double getBrightness() {
         return brightness;

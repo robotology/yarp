@@ -28,10 +28,10 @@ and "Mondo" is added to the reply) by looking at the client and server terminal.
 $ ./client.lua
 in create!
 yarp: Sending output from /client to /server using tcp+send.portmonitor+file.rpc_modifier
-command:	Hello
-reply:  	Hello "(Ciao)" "(Mondo)"
-command:	Hello
-reply:  	Hello "(Ciao)" "(Mondo)"
+command:    Hello
+reply:      Hello "(Ciao)" "(Mondo)"
+command:    Hello
+reply:      Hello "(Ciao)" "(Mondo)"
 ...
 
 [server terminal]

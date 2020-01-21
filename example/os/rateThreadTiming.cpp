@@ -31,23 +31,23 @@ class Thread1 : public PeriodicThread {
 public:
     Thread1(double p):PeriodicThread(p){}
     virtual bool threadInit()
-	{
-		printf("Starting thread1\n");
-		return true;
-	}
+    {
+        printf("Starting thread1\n");
+        return true;
+    }
 
-	//called by start after threadInit, s is true iff the thread started
-	//successfully
-	virtual void afterStart(bool s)
-	{
-		if (s)
-			printf("Thread1 started successfully\n");
-		else
-			printf("Thread1 did not start\n");
+    //called by start after threadInit, s is true iff the thread started
+    //successfully
+    virtual void afterStart(bool s)
+    {
+        if (s)
+            printf("Thread1 started successfully\n");
+        else
+            printf("Thread1 did not start\n");
 
 
         m.resize(NROWS,NCOLS);
-	}
+    }
 
     virtual void run()
     {
@@ -66,9 +66,9 @@ public:
     }
 
     virtual void threadRelease()
-	{
-		printf("Goodbye from thread1\n");
-	}
+    {
+        printf("Goodbye from thread1\n");
+    }
 };
 
 int main() {
