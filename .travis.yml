@@ -441,6 +441,20 @@ matrix:
   include:
 
     - stage: check
+      name: "Style check"
+      os: linux
+      dist: bionic
+      language: generic
+      addons:
+        apt:
+          packages:
+            - perl
+      before_install: skip
+      before_script: skip
+      script: tests/misc/check_style.pl
+      after_success: skip
+
+    - stage: check
       name: "License check"
       os: linux
       dist: bionic
