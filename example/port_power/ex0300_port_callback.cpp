@@ -16,7 +16,7 @@ class DataProcessor : public PortReader {
           Bottle b;
           b.read(connection);
           // process data in b
-          printf("Got %s\n", b.toString().c_str());      
+          printf("Got %s\n", b.toString().c_str());
           return true;
      }
 };
@@ -24,7 +24,7 @@ DataProcessor processor;
 
 int main() {
     Network yarp;
-    
+
     Port p;            // Create a port.
     p.open("/in");     // Give it a name on the network.
     p.setReader(processor);  // no need to call p.read() on port any more.
@@ -33,6 +33,6 @@ int main() {
         printf("main thread free to do whatever it wants\n");
         Time::delay(10);
     }
-    
+
     return 0;
 }

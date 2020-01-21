@@ -61,13 +61,13 @@ bool WorkerClass::init()
     initTime = 0.0;
     frameRate = 0.0;
     utilities->partDetails[part].hasNotified = false;
-    
+
     #ifdef HAS_OPENCV
         yInfo("USING OPENCV FOR SENDING THE IMAGES\n");
     #else
         yInfo("USING YARP IMAGE FOR SENDING THE IMAGES\n");
     #endif
-    
+
     return true;
 }
 
@@ -103,11 +103,11 @@ void WorkerClass::run()
     } else {
         double t = Time::now();
         frameRate = t-initTime;
-        
+
         //LOG("initTime %lf t= %lf frameRate %lf\n", initTime, t, frameRate);
         initTime = t;
     }
-    
+
     if (isActive)
     {
         Bottle tmp;
@@ -173,7 +173,7 @@ int WorkerClass::sendImages(int part, int frame)
         tmp.erase(tmp.end()-1);
         code = Vocab::encode(tmp);
     }
-    
+
     tmpPath = tmpPath + tmpName;
     unique_ptr<Image> img_yarp = nullptr;
 
@@ -289,11 +289,11 @@ bool MasterThread::threadInit()
 
     //virtualTime = utilities->partDetails[0].timestamp[ utilities->partDetails[0].currFrame ];
     virtualTime = utilities->minTimeStamp;
-    
+
     LOG("virtual time is %lf\n", virtualTime);
-    
+
     initialize();
-    
+
     return true;
 }
 
@@ -351,7 +351,7 @@ void MasterThread::stepFromCmd()
 /**********************************************************/
 void MasterThread::runNormally()
 {
-    
+
     for (int i=0; i < numPart; i++){
         bool isActive  = ((MainWindow*)wnd)->getPartActivation(utilities->partDetails[i].name.c_str());
         if ( utilities->partDetails[i].currFrame <= utilities->partDetails[i].maxFrame ){
@@ -391,7 +391,7 @@ void MasterThread::runNormally()
             }
         }
     }
-    
+
     virtualTime += diff_seconds() * utilities->speed;
 
     tick();

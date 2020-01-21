@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     Network yarp;
 
     // give YARP a factory for creating instances of FakeFrameGrabber
-    DriverCreator *fakey_factory = 
+    DriverCreator *fakey_factory =
         new DriverCreatorOf<FakeFrameGrabber>("fakey",
                                               "grabber",
                                               "FakeFrameGrabber");

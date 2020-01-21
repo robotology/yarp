@@ -67,7 +67,7 @@ void CollatzServer::run()
     Bottle in, out;
 
     while (!isStopping())
-    {        
+    {
         // wait for a client request
         if (port.read(in,true))
         {
@@ -84,7 +84,7 @@ void CollatzServer::run()
                 if (num!=COLLATZ_EMPTY_FIELD)
                     tickItem(num);
             }
-#endif 
+#endif
             // generate a new item
             unsigned int num=1;
             unsigned int thres=0;

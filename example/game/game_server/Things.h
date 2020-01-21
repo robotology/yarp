@@ -89,7 +89,7 @@ public:
             Thing& thing = getThing(id);
 
             thing.update();
-      
+
             if(!thing.isAlive()) {
                 // remove.bind(id,id); // for now, don't do this
                 // Players automatically expire from arena when client killed

@@ -37,6 +37,6 @@ MonitorBinding* MonitorBinding::create(const char* script_type)
 
     if(std::string(script_type) == "dll")
         return new MonitorSharedLib();
-       
-    return nullptr;        
+
+    return nullptr;
 }

@@ -33,7 +33,7 @@ YARP_DISABLE_CLASS_ENUM_API_WARNING
             METRIC = 1,
         };
 
-        enum class YARP_dev_API PidOutputUnitsEnum 
+        enum class YARP_dev_API PidOutputUnitsEnum
         {
             RAW_MACHINE_UNITS = 0,
             DUTYCYCLE_PWM_PERCENT = 1,

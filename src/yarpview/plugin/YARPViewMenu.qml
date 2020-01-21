@@ -48,7 +48,7 @@ MenuBar {
             autosizeItem.checked = false
         }
     }
-    
+
     Menu {
 
         title: "File"

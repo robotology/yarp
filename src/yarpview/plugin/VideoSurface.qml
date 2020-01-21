@@ -73,7 +73,7 @@ Rectangle {
         onAutosize:{
             autosize(check);
         }
-        
+
         onSetName:{
             setName(name)
         }
@@ -267,7 +267,7 @@ Rectangle {
 
                 yarpViewCore.clickCoords_2(clickX,clickY)
             }
-            
+
             onPressed: {
                 startclickX = mouse.x
                 startclickY = mouse.y
@@ -286,19 +286,19 @@ Rectangle {
                 clickX = x/ratioW
                 clickY = y/ratioH
             }
-                
+
             onPressAndHold: {
                 pressing = true;
                 canvasOverlay.requestPaint()
             }
-            
+
             onReleased: {
                 if (pressing)
                 {
                     pressing = false;
                     var x = mouse.x
                     var y = mouse.y
-                  
+
                     var frameW = yarpViewCore.videoProducer.frameWidth;
                     var frameH = yarpViewCore.videoProducer.frameHeight
 
@@ -307,7 +307,7 @@ Rectangle {
 
                     var ratioW = w/frameW
                     var ratioH = h/frameH
-                
+
                     lastclickX=mouse.x/ratioW
                     lastclickY=mouse.y/ratioH
 
@@ -315,14 +315,14 @@ Rectangle {
                 }
                 canvasOverlay.requestPaint()
             }
-            
+
             onPositionChanged:
             {
                 currX=mouse.x;
-                currY=mouse.y;   
+                currY=mouse.y;
                 canvasOverlay.requestPaint()
-            }           
-            
+            }
+
             Canvas
             {
                 id:canvasOverlay
@@ -330,7 +330,7 @@ Rectangle {
                 height: parent.height
                 anchors.fill: parent
                 visible: true
- 
+
                 onPaint:
                 {
                     var ctx = canvasOverlay.getContext("2d")
@@ -344,12 +344,12 @@ Rectangle {
                         ctx.lineTo(coordsMouseArea.currX,coordsMouseArea.currY)
                         ctx.closePath()
                         ctx.stroke()
-                    }   
+                    }
                 }
             }
         }
     }
-    
+
 
 
     /************ Dialogs **************/

@@ -54,16 +54,16 @@ end
 
 
 --
--- In this example, trig() is called periodically every 30ms 
--- This is specified in the PortMonitor.create() using 
--- PortMonitor.setTrigInterval(0.3). 
+-- In this example, trig() is called periodically every 30ms
+-- This is specified in the PortMonitor.create() using
+-- PortMonitor.setTrigInterval(0.3).
 --
 PortMonitor.trig = function()
-    if received == false then 
+    if received == false then
         print("[qos_monitor] Qos is not okay. (data frequency < 30Hz)")
     else
         received = false
-    end 
+    end
 end
 
 

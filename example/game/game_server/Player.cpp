@@ -41,12 +41,12 @@ void Player::apply(int argc, const char *argv[]) {
                 int at = 0;
                 for (int i=-1; i<argc; i++) {
                     const char *txt = NULL;
-                    if (i==-1) { 
+                    if (i==-1) {
                         txt = prefix;
-                    } else if (i==0) { 
-                        txt = getName(); 
-                    } else { 
-                        txt = argv[i]; 
+                    } else if (i==0) {
+                        txt = getName();
+                    } else {
+                        txt = argv[i];
                     }
                     if (i>=0) {
                         if (at<sizeof(buf)-2) {
@@ -195,7 +195,7 @@ void Player::apply(const char *command) {
                     at++;
                 }
                 sub_at = 0;
-            } 
+            }
         }
     }
     for (int i=0; i<MAX_ARG_CT; i++) {
@@ -211,9 +211,9 @@ void Player::apply(const char *command) {
 
 void Player::move(int dx, int dy) {
     Thing& thing = login.getThing();
-    if (!thing.isAlive()) { 
+    if (!thing.isAlive()) {
         send("error [dead] \"you are dead\"");
-        return; 
+        return;
     }
     send("ack [move] \"move requested\"");
     if (dx>1) dx = 1;
@@ -228,9 +228,9 @@ void Player::move(int dx, int dy) {
 
 void Player::fire(int tx, int ty) {
     Thing& thing = login.getThing();
-    if (!thing.isAlive()) { 
+    if (!thing.isAlive()) {
         send("error [dead] \"you are dead\"");
-        return; 
+        return;
     }
 
     send("ack [fire] \"fire requested\"");
@@ -257,7 +257,7 @@ void Player::fire(int tx, int ty) {
             if(myid >= 100) {
                 Thing& other = game.getThing(myid);
                 other.setLife(other.getLife() - 1000);
-	  
+
                 if(other.getLife() <= 0)  other.setLifetime(0);
             }
             break;  // something hit
@@ -279,7 +279,7 @@ void Player::look() {
     y = thing.getY();
     char buf[256], buf_bar[256];
     int dx = 10, dy = 5;
- 
+
     int at = 0;
     buf_bar[at] = ' ';
     at++;
@@ -330,7 +330,7 @@ void Player::look() {
                             ch = '*';
                         }
                     } else if (x==login.getID().asInt32()) {
-                        ch = 'Q';  // me 
+                        ch = 'Q';  // me
                     } else if(game.getThing(nid).isBullet()) {
                         ch = '.';
                     } else {
@@ -362,7 +362,7 @@ void Player::look() {
     send(buf_bar);
 
     send("  (players ");
-    sprintf(buf,"    (%s (location %d %d) (life %d))", 
+    sprintf(buf,"    (%s (location %d %d) (life %d))",
             login.getThing().getName(),
             thing.getX().asInt32(),
             thing.getY().asInt32(),
@@ -375,7 +375,7 @@ void Player::look() {
             long int x = nid.asInt32();
             if (x>=100 && x!=login.getID().asInt32()) {
                 char buf[1000];
-                sprintf(buf,"    (%s (location %d %d) (life %d))", 
+                sprintf(buf,"    (%s (location %d %d) (life %d))",
                         game.getThing(nid).getName(),
                         xx,yy,
                         game.getThing(nid).getLife()/1000);

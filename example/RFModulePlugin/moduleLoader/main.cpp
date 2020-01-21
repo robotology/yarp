@@ -12,7 +12,7 @@
 
 using namespace yarp::os;
 
-int main() 
+int main()
 {
     std::unique_ptr<RFPlugin> pluginBar(new RFPlugin);
 

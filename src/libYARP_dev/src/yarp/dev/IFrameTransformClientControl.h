@@ -38,7 +38,7 @@ public:
     * @return true/false
     */
     virtual bool isConnectedWithServer() = 0;
-    
+
     /**
     * Attempts to reconnect the client with the server. Returns true if the operation
     * is succesful, false otherwise.

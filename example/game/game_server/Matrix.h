@@ -74,7 +74,7 @@ public:
                 ID x = (*it2).ext_id_;
                 ID v = (*it2).int_id_;
                 printf("(%ld,%ld) = %ld\n",x.asInt32(),y.asInt32(),v.asInt32());
-                fout << "piece " << x.asInt32() << " " << y.asInt32() << " " << 
+                fout << "piece " << x.asInt32() << " " << y.asInt32() << " " <<
                     v.asInt32() << std::endl;
                 ids.rebind(v,v);
             }

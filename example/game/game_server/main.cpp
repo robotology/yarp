@@ -64,7 +64,7 @@ public:
 
     virtual bool read(ConnectionReader& connection) {
         result = "";
-        printf("Reading something from <%s>\n", 
+        printf("Reading something from <%s>\n",
                connection.getRemoteContact().getName().c_str());
         if (!loggedOn) {
             printf("Completing login...\n");
@@ -149,7 +149,7 @@ public:
         man.setReaderCreator(*this);
         man.open(Contact("/game", "...", "...", 8080));
         Contact where = man.where();
-        printf("Game reachable at ip %s port %d (registered with yarp as %s)\n", 
+        printf("Game reachable at ip %s port %d (registered with yarp as %s)\n",
                where.getHost().c_str(),
                where.getPort(),
                where.getName().c_str());
@@ -179,7 +179,7 @@ int main() {
     //Network::setLocalMode(true);
     ClientFactory factory;
     Game::getGame().main();
-  
+
     return 0;
 }
 

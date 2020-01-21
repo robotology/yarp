@@ -14,7 +14,7 @@
 #include <yarp/os/MonitorObject.h>
 
 
-class AsciiImageMonitorObject : public yarp::os::MonitorObject 
+class AsciiImageMonitorObject : public yarp::os::MonitorObject
 {
 public:
     bool create(const yarp::os::Property& options);

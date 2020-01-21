@@ -15,8 +15,8 @@ int main() {
     Network yarp;
 
     Network::connect("/target/raw/out","/target/raw/in"); // connect ports.
-    // can do the same thing from command line with 
+    // can do the same thing from command line with
     // "yarp connect /target/raw/out /target/raw/in"
-    
+
     return 0;
 }

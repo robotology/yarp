@@ -31,14 +31,14 @@ extern "C" {
     /**
      *
      * Plain C network structure.  This structure represents the
-     * overall YARP network.  
+     * overall YARP network.
      *
      */
     typedef struct yarpNetworkStruct {
         void *implementation;
     } yarpNetwork;
     typedef yarpNetwork *yarpNetworkPtr;
-    
+
     /**
      *
      * Plain C port structure.  This structure represents individual
@@ -49,7 +49,7 @@ extern "C" {
         void *implementation;
     } yarpPort;
     typedef yarpPort *yarpPortPtr;
-    
+
     /**
      *
      * Plain C contact structure.  This structure represents how to
@@ -110,7 +110,7 @@ extern "C" {
     typedef struct yarpPortableStruct {
         void *client;            // user pointer, will be untouched
         void *implementation;    // private
-        void *adaptor;           // private 
+        void *adaptor;           // private
     } yarpPortable;
     typedef yarpPortable *yarpPortablePtr;
 
@@ -123,7 +123,7 @@ extern "C" {
         void *implementation;
     } yarpString;
     typedef yarpString *yarpStringPtr;
-    
+
     /**
      *
      * Plain C thread callback structure.
@@ -152,7 +152,7 @@ extern "C" {
         yarpThreadCallbacksPtr callbacks;
     } yarpThread;
     typedef yarpThread *yarpThreadPtr;
-    
+
     /**
      *
      * Plain C semaphore structure.  This structure represents semaphores.
@@ -162,7 +162,7 @@ extern "C" {
         void *implementation;
     } yarpSemaphore;
     typedef yarpSemaphore *yarpSemaphorePtr;
-    
+
     /**
      *
      * Plain C bottle structure.  This structure represents YARP bottles.
@@ -172,18 +172,18 @@ extern "C" {
      */
     typedef yarpPortable yarpBottle;
     typedef yarpBottle *yarpBottlePtr;
-    
+
 
     YARP_DECLARE(yarpNetworkPtr) yarpNetworkCreate();
     YARP_DECLARE(void) yarpNetworkFree(yarpNetworkPtr network);
     YARP_DECLARE(yarpNetworkPtr) yarpNetworkGet();
     YARP_DECLARE(int) yarpNetworkSetLocalMode(yarpNetworkPtr network,
                                               int isLocal);
-    YARP_DECLARE(int) yarpNetworkConnect(yarpNetworkPtr network, 
+    YARP_DECLARE(int) yarpNetworkConnect(yarpNetworkPtr network,
                                          const char *src,
                                          const char *dest,
                                          const char *carrier);
-    YARP_DECLARE(int) yarpNetworkDisconnect(yarpNetworkPtr network, 
+    YARP_DECLARE(int) yarpNetworkDisconnect(yarpNetworkPtr network,
                                             const char *src,
                                             const char *dest);
 
@@ -198,11 +198,11 @@ extern "C" {
     YARP_DECLARE(int) yarpPortEnableBackgroundWrite(yarpPortPtr port,
                                                     int writeInBackgroundFlag);
     YARP_DECLARE(int) yarpPortWrite(yarpPortPtr port, yarpPortablePtr msg);
-    YARP_DECLARE(int) yarpPortRead(yarpPortPtr port, 
+    YARP_DECLARE(int) yarpPortRead(yarpPortPtr port,
                                    yarpPortablePtr msg,
                                    int willReply);
     YARP_DECLARE(int) yarpPortReply(yarpPortPtr port, yarpPortablePtr msg);
-    YARP_DECLARE(int) yarpPortWriteWithReply(yarpPortPtr port, 
+    YARP_DECLARE(int) yarpPortWriteWithReply(yarpPortPtr port,
                                              yarpPortablePtr msg,
                                              yarpPortablePtr reply);
     YARP_DECLARE(yarpContactPtr) yarpContactCreate();
@@ -221,7 +221,7 @@ extern "C" {
 
     YARP_DECLARE(int) yarpWriterAppendInt32(yarpWriterPtr c, int data);
 
-    YARP_DECLARE(int) yarpPortableInit(yarpPortablePtr portable, 
+    YARP_DECLARE(int) yarpPortableInit(yarpPortablePtr portable,
                                        yarpPortableCallbacksPtr callbacks);
 
     YARP_DECLARE(int) yarpPortableFini(yarpPortablePtr portable);

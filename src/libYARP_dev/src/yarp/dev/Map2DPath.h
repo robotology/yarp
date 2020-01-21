@@ -44,7 +44,7 @@ namespace yarp
                 std::string toString() const;
 
                 /**
-                * Compares two Map2DPath 
+                * Compares two Map2DPath
                 * @return true if the two paths are different.
                 */
                 bool operator!=(const Map2DPath& r) const;

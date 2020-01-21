@@ -41,7 +41,7 @@ If you want to play with this here are some tips:
 + Change into the directory and look around: [as root] cd /mnt/yarp; ls
 
 + You should see a directory tree reflecting the ports that
-  exist in your YARP Network.  
+  exist in your YARP Network.
 
 + The "leaf" files called "rw" can be read from
   and written to, and the data comes from and goes to the port

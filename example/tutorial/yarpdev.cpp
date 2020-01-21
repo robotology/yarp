@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     adder();
 
     int result = Drivers::yarpdev(argc,argv);
-    
+
     return result;
 }
 

@@ -11,7 +11,7 @@ require("yarp")
 function test_resource_finder()
   -- initialize yarp network
   yarp.Network()
-  
+
   local rf = yarp.ResourceFinder()
   rf:setVerbose(true)
   rf:setDefaultContext("myContext")

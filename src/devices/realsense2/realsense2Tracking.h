@@ -25,7 +25,7 @@
  // This software module is experimental.
  // It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.
  /**********************************************************************************************************/
- 
+
 class realsense2Tracking :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IThreeAxisGyroscopes,

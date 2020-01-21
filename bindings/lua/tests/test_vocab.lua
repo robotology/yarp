@@ -22,7 +22,7 @@ end
 function test_vocab_pixel_types_enum()
   assert("number" == type(yarp.VOCAB_PIXEL_RGB))
   assert(6449010 == yarp.VOCAB_PIXEL_RGB) -- VOCAB3
-  assert(761423730 == yarp.VOCAB_PIXEL_RGB_SIGNED) -- VOCAB4 with '-' 
+  assert(761423730 == yarp.VOCAB_PIXEL_RGB_SIGNED) -- VOCAB4 with '-'
   assert(909209453 == yarp.VOCAB_PIXEL_MONO16) -- VOCAB4 with '1' and '6'
 end
 

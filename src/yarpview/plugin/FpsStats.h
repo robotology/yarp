@@ -88,7 +88,7 @@ public:
             M=0;
         }
     }
-    
+
     /*! \brief This function returns the Average value
         \param av the average value
     */

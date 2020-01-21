@@ -126,16 +126,16 @@ public:
      * Use VOCAB_PIXEL_RGB for best performances.
      *
      * @param rgbImage the image to be filled.
-     * @param timeStamp time in which the image was acquired. Optional, ignored if nullptr. 
+     * @param timeStamp time in which the image was acquired. Optional, ignored if nullptr.
      * @return True on success
      */
     virtual bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = NULL) = 0;
 
     /**
      * Get the depth frame from the device.
-     * 
+     *
      * @param depthImage the depth image to be filled, depth measured in meters.
-     * @param timeStamp time in which the image was acquired. Optional, ignored if nullptr. 
+     * @param timeStamp time in which the image was acquired. Optional, ignored if nullptr.
      * @return True on success
      */
     virtual bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = NULL) = 0;

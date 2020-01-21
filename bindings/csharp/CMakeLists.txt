@@ -16,7 +16,7 @@ if(WIN32 AND NOT CYGWIN)
   swig_add_library(yarp_csharp
                    LANGUAGE csharp
                    SOURCES ${SWIG_BINDINGS_SOURCE_FILE})
-                   
+
   if(PREPARE_CLASS_FILES)
     add_custom_command(TARGET ${SWIG_MODULE_yarp_csharp_REAL_NAME}
                        POST_BUILD

@@ -16,14 +16,14 @@ struct OdometryData
   2: double odom_y;
   /** orientation the robot [deg], expressed in the world reference frame */
   3: double odom_theta;
-  
+
   /** velocity of the robot [m/s] expressed in the robot reference frame */
   4: double base_vel_x;
   /** velocity of the robot [m/s] expressed in the robot reference frame */
   5: double base_vel_y;
   /** angular velocity of the robot [deg/s] expressed in the robot reference frame */
   6: double base_vel_theta;
-  
+
   /** velocity of the robot [m/s] expressed in the world reference frame */
   7: double odom_vel_x;
   /** velocity of the robot [m/s] expressed in the world reference frame */

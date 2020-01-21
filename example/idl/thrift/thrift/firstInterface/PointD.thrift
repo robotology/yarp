@@ -17,7 +17,7 @@ struct PointD {
 struct PointDLists{
   1: string name ="pointLists";
   2: list<PointD> firstList;
-  3: list<PointD> secondList; 
+  3: list<PointD> secondList;
 }
 
 enum PointQuality{

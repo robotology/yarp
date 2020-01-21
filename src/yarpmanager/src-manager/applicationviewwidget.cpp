@@ -183,7 +183,7 @@ ApplicationViewWidget::ApplicationViewWidget(yarp::manager::Application *app,
         builder->addConnectionsAction(conn1SeparatorAction);
 
         ui->splitter->setStretchFactor(0,50);
-        ui->splitter->setStretchFactor(1,10);       
+        ui->splitter->setStretchFactor(1,10);
         showBuilderWindows(*m_pConfig);
 
         connect(builder,SIGNAL(refreshApplication()),

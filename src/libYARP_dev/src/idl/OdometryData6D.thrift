@@ -21,7 +21,7 @@ struct OdometryData6D
   /** orientation the robot [deg], expressed in the world reference frame */
    5: double odom_pitch;
   /** orientation the robot [deg], expressed in the world reference frame */
-   6: double odom_yaw;  
+   6: double odom_yaw;
 
   /** velocity of the robot [m/s] expressed in the robot reference frame */
    7: double base_vel_x;
@@ -35,7 +35,7 @@ struct OdometryData6D
   11: double base_vel_pitch;
   /** angular velocity of the robot [deg/s] expressed in the robot reference frame */
   12: double base_vel_yaw;
-  
+
   /** velocity of the robot [m/s] expressed in the world reference frame */
   13: double odom_vel_x;
   /** velocity of the robot [m/s] expressed in the world reference frame */

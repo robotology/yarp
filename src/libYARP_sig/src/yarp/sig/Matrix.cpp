@@ -173,7 +173,7 @@ std::string Matrix::toString(int precision, int width, const char* endRowStr) co
 
     // Buffering.
     std::string ret = "";
-    char buffer[350]; 
+    char buffer[350];
     const double* src = (*this).data();
 
     // Iterate through copying the contents from the matrix, into a string.

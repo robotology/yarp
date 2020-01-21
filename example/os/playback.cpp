@@ -67,7 +67,7 @@ public:
         writer.appendExternalBlock(mem.get(),mem.length());
         printf("Writing %zu bytes\n", mem.length());
         return true;
-        
+
     }
 };
 
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
     // Get commandline options
     Property options;
     options.fromCommand(argc,argv);
-    std::string portName = 
+    std::string portName =
         options.check("name",Value("/playback"),"port name").asString();
 
     // Create a port

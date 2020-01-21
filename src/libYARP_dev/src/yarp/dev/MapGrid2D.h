@@ -225,7 +225,7 @@ namespace yarp
                 * @return true if cell is inside the map, false otherwise.
                 */
                 bool   isInsideMap(XYWorld world) const;
-#endif 
+#endif
 
                 /**
                 * Checks is two maps are identical.

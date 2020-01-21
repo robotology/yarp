@@ -16,7 +16,7 @@
 using namespace yarp::os;
 
 using namespace std;
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     Network yarp;
 
@@ -25,13 +25,13 @@ int main(int argc, char *argv[])
     rf.setDefaultConfigFile("or.ini");
     rf.setDefaultContext("orBottle");
     rf.configure(argc, argv);
-        
+
     std::string robotName=rf.find("robot").asString();
     std::string model=rf.findFile("model");
-    
+
     cout<<"Running with:"<<endl;
     cout<<"robot: "<<robotName.c_str()<<endl;
-    
+
     if (model=="")
     {
         cout<<"Sorry no model was found, check config parameters"<<endl;

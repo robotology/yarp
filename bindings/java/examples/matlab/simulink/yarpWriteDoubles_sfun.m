@@ -113,7 +113,7 @@ switch flag,
   case 0,
     global numDoubles;
     numDoubles = setNumDoubles;
-    [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes;    
+    [sys,x0,str,ts,simStateCompliance]=mdlInitializeSizes;
 
   %%%%%%%%%%%%%%%
   % Derivatives %

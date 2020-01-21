@@ -13,7 +13,7 @@ class Handler {
 public:
     virtual ~Handler() {
     }
-    
+
     virtual int hello() {
         return 99;
     }

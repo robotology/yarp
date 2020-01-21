@@ -88,7 +88,7 @@ bool QtYARPScope::parseParameters(QStringList params)
     rf.setVerbose();
     // TODO Read default values from yarpscope.ini
     rf.setDefaultConfigFile("yarpscope.ini");
-    rf.setDefaultContext("yarpscope"); 
+    rf.setDefaultContext("yarpscope");
 
     // Transform Qt Params array in standard argc & argv
     int c = params.count();

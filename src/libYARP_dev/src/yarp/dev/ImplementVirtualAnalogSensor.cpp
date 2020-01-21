@@ -32,7 +32,7 @@ bool ImplementVirtualAnalogSensor::initialize(int size, const int *amap, const d
 
     helper=(void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, nullptr, userToRaw, nullptr));
     yAssert (helper != nullptr);
-    
+
     return true;
 }
 

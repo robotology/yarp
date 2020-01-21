@@ -1,4 +1,4 @@
-#!/usr/bin/lua 
+#!/usr/bin/lua
 
 -- Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
 -- All rights reserved.
@@ -7,7 +7,7 @@
 -- BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 
--- LUA_CPATH should have the path to yarp-lua binding library (i.e. yarp.so, yarp.dll) 
+-- LUA_CPATH should have the path to yarp-lua binding library (i.e. yarp.so, yarp.dll)
 require("yarp")
 
 -- initialize yarp network
@@ -38,7 +38,7 @@ end
 
 -- open the interfaces
 ipos = driver:viewIPositionControl()
-if ipos == nil then 
+if ipos == nil then
     print("Cannot open the IPositionControl interface");
     driver:close()
     os.exit()

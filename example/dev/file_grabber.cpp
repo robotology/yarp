@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     Network yarp;
 
     // give YARP a factory for creating instances of FileFrameGrabber
-    DriverCreator *file_grabber_factory = 
+    DriverCreator *file_grabber_factory =
         new DriverCreatorOf<FileFrameGrabber>("file_grabber",
                                               "grabber",
                                               "FileFrameGrabber");

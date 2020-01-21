@@ -16,7 +16,7 @@ import yarp.PixelRgbFloat;
 import yarp.ImageRgbFloat;
 import yarp.charArray;
 
-/** 
+/**
  * Helper class to convert YARP image to Matlab matrices (images).
  */
 public class YarpImageHelper
@@ -45,8 +45,8 @@ public class YarpImageHelper
 	}
 
 	/**
-     * Converts a YARP image to grayscale. 
-     * Returns a height by width two dimensional array. This array is 
+     * Converts a YARP image to grayscale.
+     * Returns a height by width two dimensional array. This array is
      * compatible with a Matlab matrix.
      * @param img input image
      * @return the two dimensional array which contains the image
@@ -63,14 +63,14 @@ public class YarpImageHelper
 
 					array2d[r][c]=(short)(temp+0.5);
 				}
-		
+
 		return array2d;
 	}
 
 	/**
      * Converts a YARP image to a 3D array.
      * This array is compatible with a [HxWx3] Matlab matrix. Note:
-     * passing 3d arrays from/to Matlab/Java is SLOW (at least on 
+     * passing 3d arrays from/to Matlab/Java is SLOW (at least on
      * Matlab 6.5); use getB/getR/getG or get2DMatrix.
      * @param img input image
      * @return the three dimensional array which contains the image
@@ -85,7 +85,7 @@ public class YarpImageHelper
 					sarray1[r][c][1] = (short) p.getG();
 					sarray1[r][c][2] = (short) p.getB();
 				}
-		
+
 		return sarray1;
 	}
 
@@ -124,7 +124,7 @@ public class YarpImageHelper
 				}
 		return array2d;
 	}
-	
+
 	/**
      * Access a YARP image by planes.
      * Returns a 2D array which contains the blue plane, this is a
@@ -144,12 +144,12 @@ public class YarpImageHelper
 	}
 
 	/**
-     * Converts a color YARP image to a two dimensional array. 
-     * Returns a [Hx3*W] array which contains the 'justaposition' of the 
-     * three color planes of the image. This array can be copied into a 
+     * Converts a color YARP image to a two dimensional array.
+     * Returns a [Hx3*W] array which contains the 'justaposition' of the
+     * three color planes of the image. This array can be copied into a
      * Matlab matrix:
      * OUT=[R|G|B]
-     * where R, G, B are three [HxW] matrices formed by the color 
+     * where R, G, B are three [HxW] matrices formed by the color
      * planes. From OUT you can create a color image [HxWx3] by typing:
      * IMG=uint8(H,W,3);
      * IMG(:,:,1)=OUT(:,1:W);
@@ -172,9 +172,9 @@ public class YarpImageHelper
 
 		return arrayfull;
 	}
-    
+
     /**
-     * Converts a floating point YARP image to a two dimensional array. 
+     * Converts a floating point YARP image to a two dimensional array.
      * @param img input image
      * @return output array
      */
@@ -248,9 +248,9 @@ public class YarpImageHelper
         return arrFltFull;
     }
 
-    
+
     /**
-     * Fast conversion of a YARP image to a one dimensional array. 
+     * Fast conversion of a YARP image to a one dimensional array.
      * In MATLAB, USE: reshape(OUT, [height width pixelsize]); Extended function to work with padding (Vadim Tikhanoff)
      * \author Leo Pape
      * @param img input image
@@ -273,22 +273,22 @@ public class YarpImageHelper
 			{
                 for(int p=0; p<pixelsize; p++)
 				{
-                    //vec1ds[(c * height) + r + (p * width * height)] = (short) car.getitem((r * width * pixelsize) + (c * pixelsize) + p); 
+                    //vec1ds[(c * height) + r + (p * width * height)] = (short) car.getitem((r * width * pixelsize) + (c * pixelsize) + p);
 					vec1ds[(c * height) + r + (p * width * height)] = (short) car.getitem(index);
 					index ++;
-					
+
 				}
 			}
-			index += pad; 
+			index += pad;
 		}
 		return vec1ds;
     }
 
     /**
 	*Fast conversion from matlab image format (based on leo's structure) to a YARP image format
-	* in MATLAB, the reshape function to modify the matrix to  be a 1d vector IN = reshape(label, [h*w*pixelSize 1]); 
+	* in MATLAB, the reshape function to modify the matrix to  be a 1d vector IN = reshape(label, [h*w*pixelSize 1]);
 	* and, if not previously done cast it to int16 eg: tempImg = cast(IN,'int16');
-	*					
+	*
 	* \author Vadim Tikhanoff
 	* @param input array height int width int pixelSize int
 	* @return output yarp image
@@ -301,7 +301,7 @@ public class YarpImageHelper
 		for(int r=0; r<height; r++)
             for(int c=0; c<width; c++)
                 for(int p=0; p<pixelSize; p++)
-					tempImg.setitem( (r * width * pixelSize) + (c * pixelSize) + p,  vec1ds[(c * height) + r + (p * width * height)] );		
+					tempImg.setitem( (r * width * pixelSize) + (c * pixelSize) + p,  vec1ds[(c * height) + r + (p * width * height)] );
 		return img;
 	}
 }

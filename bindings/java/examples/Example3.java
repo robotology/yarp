@@ -21,7 +21,7 @@ class Example3 {
 	System.loadLibrary("yarp_java");
 	Network.init();
 
-	// set up a description of the device we want 
+	// set up a description of the device we want
 	// in this case, a fake framegrabber
 	Property prop = new Property();
 	prop.put("device","test_grabber");

@@ -74,16 +74,16 @@ void CollatzClient::run()
     Bottle in, out;
 
     while (!isStopping())
-    {        
+    {
         out.clear();
         out.addVocab(COLLATZ_VOCAB_REQ_ITEM);
         out.addInt32(replyField);
-    
+
         fprintf(stdout,"Requiring item: %s\n",out.toString().c_str());
 
         // forward a new request and wait for reply
         port.write(out,in);
-    
+
         if (in.size()>0)
         {
             if (in.get(0).asVocab()==COLLATZ_VOCAB_ITEM)
@@ -91,7 +91,7 @@ void CollatzClient::run()
                 // process the reply
                 const unsigned int num=(unsigned int)in.get(1).asInt32();
                 const unsigned int thres=(unsigned int)in.get(2).asInt32();
-                
+
                 verifyItem(num,thres);
                 replyField=num;
             }

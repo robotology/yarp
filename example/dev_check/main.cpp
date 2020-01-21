@@ -42,10 +42,10 @@ int main() {
         exit(1);
     }
 
-  
+
     IFrameGrabberImage *grabber;
     dd2.view(grabber);
-  
+
     if (grabber!=NULL) {
         printf("*** It can supply images\n");
         ImageOf<PixelRgb> img;
@@ -60,13 +60,13 @@ int main() {
 
     IPidControl *pid;
     dd.view(pid);
-  
+
     if (pid!=NULL) {
         printf("*** It can do PID control\n");
     } else {
         printf("*** It can <<<<<NOT>>>>> do PID control\n");
     }
-  
+
     return 0;
 }
 

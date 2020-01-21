@@ -14,8 +14,8 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-/** Lorenzo Natale, Dec 2007. Test remotization of calibrate 
- *  functions. Useful for general tests on device remotization 
+/** Lorenzo Natale, Dec 2007. Test remotization of calibrate
+ *  functions. Useful for general tests on device remotization
  *  (see fakebot for example).
  */
 int main(int argc, const char **argv)
@@ -38,6 +38,6 @@ int main(int argc, const char **argv)
     ical->park();
 
     device.close();
-    return 0; 
+    return 0;
 }
 

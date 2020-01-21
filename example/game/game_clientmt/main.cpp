@@ -64,7 +64,7 @@ public:
         myLife=6;
 
         randengine.seed(0);
-    
+
         mutex.unlock();
     }
 
@@ -72,7 +72,7 @@ public:
     void run()
     {
         mutex.lock();
-        
+
         look();
         rndMove();
         if(shooterF)
@@ -87,7 +87,7 @@ public:
 
         printf("Disconnecting\n");
         Network::disconnect(port.getName(), SERVER_NAME);
-        
+
         mutex.unlock();
     }
 
@@ -100,16 +100,16 @@ public:
 
         // pick out map part
         world= response.findGroup("look").findGroup("map");
-          
+
         Bottle &users = response.findGroup("look").findGroup("players");
-        
+
         Bottle *player = users.get(1).asList();
         if (player!=0)
             {
                 Bottle &location = player->findGroup("location");
                 Value &life = player->find("life");
                 std::string playerName = player->get(0).asString();
-       
+
                 myX=location.get(1).asInt32(),
                     myY=location.get(2).asInt32(),
                     myLife=life.asInt32();
@@ -161,7 +161,7 @@ public:
     void getWorld(Bottle &w)
     {
         mutex.lock();
-        
+
         w=world;
 
         mutex.unlock();
@@ -214,11 +214,11 @@ int main(int argc, char **argv)
 {
     if (argc!=3)
         return 0;
-  
+
     Network yarp;
 
     MyPlayer *player = new MyPlayer(argv[1], PLAYER_PERIOD);
-  
+
     if(atoi(argv[2])==0)
         player->setShooter(0);
     else
@@ -238,7 +238,7 @@ int main(int argc, char **argv)
             plX=player->getX();
             plY=player->getY();
 
-            if ((count==500)||(plLife==0)) 
+            if ((count==500)||(plLife==0))
                 {
                     fprintf(stderr, "Stopping player\n");
                     player->stop();
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
             player->getWorld(world);
 
             int i;
-            for (i=1; i<world.size(); i++) 
+            for (i=1; i<world.size(); i++)
                 {
                     printf("%s\n", world.get(i).asString().c_str());
                 }
@@ -264,7 +264,7 @@ int main(int argc, char **argv)
 
             Time::delay(0.5);
         }
-     
+
     player->stop();
 
     delete player;

@@ -709,7 +709,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
 void ControlBoardWrapper::calculateMaxNumOfJointsInDevices()
 {
     device.maxNumOfJointsInDevices = 0;
-    
+
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
         SubDevice *p = device.getSubdevice(d);
@@ -1105,7 +1105,7 @@ bool ControlBoardWrapper::getPidError(const PidControlTypeEnum& pidtype, int j, 
 bool ControlBoardWrapper::getPidErrors(const PidControlTypeEnum& pidtype, double *errs)
 {
     auto* errors = new double [device.maxNumOfJointsInDevices];
-    
+
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
     {
@@ -1129,7 +1129,7 @@ bool ControlBoardWrapper::getPidErrors(const PidControlTypeEnum& pidtype, double
             break;
         }
     }
-    
+
     delete[] errors;
     return ret;
 }
@@ -1163,7 +1163,7 @@ bool ControlBoardWrapper::getPidOutputs(const PidControlTypeEnum& pidtype, doubl
             ret = false;
             break;
         }
-        
+
         if( (p->pid) &&(ret = p->pid->getPidOutputs(pidtype, outputs)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -1178,7 +1178,7 @@ bool ControlBoardWrapper::getPidOutputs(const PidControlTypeEnum& pidtype, doubl
             break;
         }
     }
-    
+
     delete [] outputs;
     return ret;
 }
@@ -1228,7 +1228,7 @@ bool ControlBoardWrapper::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
             ret = false;
             break;
         }
-        
+
         if( (p->pid) &&(ret = p->pid->getPids(pidtype, pids_device)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -1243,7 +1243,7 @@ bool ControlBoardWrapper::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
             break;
         }
     }
-    
+
     delete[] pids_device;
     return ret;
 }
@@ -1262,7 +1262,7 @@ bool ControlBoardWrapper::getPidReference(const PidControlTypeEnum& pidtype, int
     return false;
 }
 
-bool ControlBoardWrapper::getPidReferences(const PidControlTypeEnum& pidtype, double *refs) 
+bool ControlBoardWrapper::getPidReferences(const PidControlTypeEnum& pidtype, double *refs)
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
@@ -1274,7 +1274,7 @@ bool ControlBoardWrapper::getPidReferences(const PidControlTypeEnum& pidtype, do
             ret = false;
             break;
         }
-        
+
         if( (p->pid) &&(ret = p->pid->getPidReferences(pidtype, references)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -1289,7 +1289,7 @@ bool ControlBoardWrapper::getPidReferences(const PidControlTypeEnum& pidtype, do
             break;
         }
     }
-    
+
     delete [] references;
     return ret;
 }
@@ -1309,7 +1309,7 @@ bool ControlBoardWrapper::getPidErrorLimit(const PidControlTypeEnum& pidtype, in
     return false;
 }
 
-bool ControlBoardWrapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits) 
+bool ControlBoardWrapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, double *limits)
 {
     auto* lims = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
@@ -1321,7 +1321,7 @@ bool ControlBoardWrapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, d
             ret = false;
             break;
         }
-        
+
         if( (p->pid) &&(ret = p->pid->getPidErrorLimits(pidtype, lims)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -1336,7 +1336,7 @@ bool ControlBoardWrapper::getPidErrorLimits(const PidControlTypeEnum& pidtype, d
             break;
         }
     }
-    
+
     delete [] lims;
     return ret;
 }
@@ -1551,7 +1551,7 @@ bool ControlBoardWrapper::getTargetPosition(const int j, double* ref)
 * @param spds pointer to the array that will store the speed values.
 * @return true/false on success/failure.
 */
-bool ControlBoardWrapper::getTargetPositions(double *spds) 
+bool ControlBoardWrapper::getTargetPositions(double *spds)
 {
     auto* targets = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
@@ -1563,7 +1563,7 @@ bool ControlBoardWrapper::getTargetPositions(double *spds)
             ret = false;
             break;
         }
-        
+
         if( (p->pos) &&(ret = p->pos->getTargetPositions(targets)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -1578,7 +1578,7 @@ bool ControlBoardWrapper::getTargetPositions(double *spds)
             break;
         }
     }
-    
+
     delete [] targets;
     return ret;
 }
@@ -1752,7 +1752,7 @@ bool ControlBoardWrapper::checkMotionDone(int j, bool *flag) {
 * @param flag true if the trajectory is terminated, false otherwise
 * @return false on failure
 */
-bool ControlBoardWrapper::checkMotionDone(bool *flag) 
+bool ControlBoardWrapper::checkMotionDone(bool *flag)
 {
     bool ret = true;
 
@@ -2089,7 +2089,7 @@ bool ControlBoardWrapper::getRefSpeed(int j, double *ref) {
 * @param spds pointer to the array that will store the speed values.
 * @return true/false on success/failure.
 */
-bool ControlBoardWrapper::getRefSpeeds(double *spds) 
+bool ControlBoardWrapper::getRefSpeeds(double *spds)
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
@@ -2101,7 +2101,7 @@ bool ControlBoardWrapper::getRefSpeeds(double *spds)
             ret = false;
             break;
         }
-        
+
         if( (p->pos) &&(ret = p->pos->getRefSpeeds(references)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -2116,7 +2116,7 @@ bool ControlBoardWrapper::getRefSpeeds(double *spds)
             break;
         }
     }
-    
+
     delete [] references;
     return ret;
 }
@@ -2213,7 +2213,7 @@ bool ControlBoardWrapper::getRefAcceleration(int j, double *acc) {
 * @param accs pointer to the array that will store the acceleration values.
 * @return true/false on success or failure
 */
-bool ControlBoardWrapper::getRefAccelerations(double *accs) 
+bool ControlBoardWrapper::getRefAccelerations(double *accs)
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
@@ -2225,7 +2225,7 @@ bool ControlBoardWrapper::getRefAccelerations(double *accs)
             ret = false;
             break;
         }
-        
+
         if( (p->pos) &&(ret = p->pos->getRefAccelerations(references)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -2240,7 +2240,7 @@ bool ControlBoardWrapper::getRefAccelerations(double *accs)
             break;
         }
     }
-    
+
     delete [] references;
     return ret;
 }
@@ -2544,7 +2544,7 @@ bool ControlBoardWrapper::getEncoder(int j, double *v) {
     return false;
 }
 
-bool ControlBoardWrapper::getEncoders(double *encs) 
+bool ControlBoardWrapper::getEncoders(double *encs)
 {
     auto* encValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
@@ -2556,7 +2556,7 @@ bool ControlBoardWrapper::getEncoders(double *encs)
             ret = false;
             break;
         }
-        
+
         if( (p->iJntEnc) &&(ret = p->iJntEnc->getEncoders(encValues)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -2571,10 +2571,10 @@ bool ControlBoardWrapper::getEncoders(double *encs)
             break;
         }
     }
-    
+
     delete [] encValues;
     return ret;
-    
+
 }
 
 bool ControlBoardWrapper::getEncodersTimed(double *encs, double *t)
@@ -2590,7 +2590,7 @@ bool ControlBoardWrapper::getEncodersTimed(double *encs, double *t)
             ret = false;
             break;
         }
-        
+
         if( (p->iJntEnc) &&(ret = p->iJntEnc->getEncodersTimed(encValues, tValues)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -2606,7 +2606,7 @@ bool ControlBoardWrapper::getEncodersTimed(double *encs, double *t)
             break;
         }
     }
-    
+
     delete [] encValues;
     delete [] tValues;
     return ret;
@@ -2656,7 +2656,7 @@ bool ControlBoardWrapper::getEncoderSpeeds(double *spds)
             ret = false;
             break;
         }
-        
+
         if( (p->iJntEnc) &&(ret = p->iJntEnc->getEncoderSpeeds(sValues)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -2671,7 +2671,7 @@ bool ControlBoardWrapper::getEncoderSpeeds(double *spds)
             break;
         }
     }
-    
+
     delete [] sValues;
     return ret;
 }
@@ -2704,7 +2704,7 @@ bool ControlBoardWrapper::getEncoderAccelerations(double *accs)
             ret = false;
             break;
         }
-        
+
         if( (p->iJntEnc) &&(ret = p->iJntEnc->getEncoderAccelerations(aValues)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -2719,7 +2719,7 @@ bool ControlBoardWrapper::getEncoderAccelerations(double *accs)
             break;
         }
     }
-    
+
     delete [] aValues;
     return ret;
 }
@@ -2746,7 +2746,7 @@ bool ControlBoardWrapper::getTemperature      (int m, double* val) {
     return false;
 }
 
-bool ControlBoardWrapper::getTemperatures     (double *vals) 
+bool ControlBoardWrapper::getTemperatures     (double *vals)
 {
     auto* temps = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
@@ -2758,7 +2758,7 @@ bool ControlBoardWrapper::getTemperatures     (double *vals)
             ret = false;
             break;
         }
-        
+
         if( (p->imotor) &&(ret = p->imotor->getTemperatures(temps)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -2773,7 +2773,7 @@ bool ControlBoardWrapper::getTemperatures     (double *vals)
             break;
         }
     }
-    
+
     delete [] temps;
     return ret;
 }
@@ -3028,9 +3028,9 @@ bool ControlBoardWrapper::getMotorEncoder(int m, double *v) {
     return false;
 }
 
-bool ControlBoardWrapper::getMotorEncoders(double *encs) 
+bool ControlBoardWrapper::getMotorEncoders(double *encs)
 {
-    
+
     auto* encValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
@@ -3041,7 +3041,7 @@ bool ControlBoardWrapper::getMotorEncoders(double *encs)
             ret = false;
             break;
         }
-        
+
         if( (p->iMotEnc) &&(ret = p->iMotEnc->getMotorEncoders(encValues)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -3056,7 +3056,7 @@ bool ControlBoardWrapper::getMotorEncoders(double *encs)
             break;
         }
     }
-    
+
     delete [] encValues;
     return ret;
 }
@@ -3074,7 +3074,7 @@ bool ControlBoardWrapper::getMotorEncodersTimed(double *encs, double *t)
             ret = false;
             break;
         }
-        
+
         if( (p->iMotEnc) &&(ret = p->iMotEnc->getMotorEncodersTimed(encValues, tValues)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -3090,7 +3090,7 @@ bool ControlBoardWrapper::getMotorEncodersTimed(double *encs, double *t)
             break;
         }
     }
-    
+
     delete [] encValues;
     delete [] tValues;
     return ret;
@@ -3140,7 +3140,7 @@ bool ControlBoardWrapper::getMotorEncoderSpeeds(double *spds)
             ret = false;
             break;
         }
-        
+
         if( (p->iMotEnc) &&(ret = p->iMotEnc->getMotorEncoderSpeeds(sValues)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -3155,7 +3155,7 @@ bool ControlBoardWrapper::getMotorEncoderSpeeds(double *spds)
             break;
         }
     }
-    
+
     delete [] sValues;
     return ret;
 }
@@ -3188,7 +3188,7 @@ bool ControlBoardWrapper::getMotorEncoderAccelerations(double *accs)
             ret = false;
             break;
         }
-        
+
         if( (p->iMotEnc) &&(ret = p->iMotEnc->getMotorEncoderAccelerations(aValues)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -3203,10 +3203,10 @@ bool ControlBoardWrapper::getMotorEncoderAccelerations(double *accs)
             break;
         }
     }
-    
+
     delete [] aValues;
     return ret;
-    
+
 }
 
 
@@ -3270,7 +3270,7 @@ bool ControlBoardWrapper::getAmpStatus(int *st)
             ret = false;
             break;
         }
-        
+
         if( (p->amp) &&(ret = p->amp->getAmpStatus(status)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -3285,7 +3285,7 @@ bool ControlBoardWrapper::getAmpStatus(int *st)
             break;
         }
     }
-    
+
     delete [] status;
     return ret;
 }
@@ -3753,7 +3753,7 @@ bool ControlBoardWrapper::getRefTorques(double *refs)
             ret = false;
             break;
         }
-        
+
         if( (p->iTorque) &&(ret = p->iTorque->getRefTorques(references)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -3768,7 +3768,7 @@ bool ControlBoardWrapper::getRefTorques(double *refs)
             break;
         }
     }
-    
+
     delete [] references;
     return ret;
 }
@@ -3959,7 +3959,7 @@ bool ControlBoardWrapper::getTorques(double *t)
             ret = false;
             break;
         }
-        
+
         if( (p->iTorque) &&(ret = p->iTorque->getTorques(trqs)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -3974,10 +3974,10 @@ bool ControlBoardWrapper::getTorques(double *t)
             break;
         }
     }
-    
+
     delete [] trqs;
     return ret;
-    
+
  }
 
 bool ControlBoardWrapper::getTorqueRange(int j, double *min, double *max)
@@ -4010,7 +4010,7 @@ bool ControlBoardWrapper::getTorqueRanges(double *min, double *max)
             ret = false;
             break;
         }
-        
+
         if( (p->iTorque) &&(ret = p->iTorque->getTorqueRanges(t_min, t_max)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -4026,11 +4026,11 @@ bool ControlBoardWrapper::getTorqueRanges(double *min, double *max)
             break;
         }
     }
-    
+
     delete [] t_min;
     delete [] t_max;
-    return ret; 
-    
+    return ret;
+
 }
 
 bool ControlBoardWrapper::getImpedance(int j, double* stiff, double* damp)
@@ -4112,7 +4112,7 @@ bool ControlBoardWrapper::getControlModes(int *modes)
             ret = false;
             break;
         }
-        
+
         if( (p->iMode) &&(ret = p->iMode->getControlModes(all_mode)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -4127,10 +4127,10 @@ bool ControlBoardWrapper::getControlModes(int *modes)
             break;
         }
     }
-    
+
     delete [] all_mode;
-    return ret; 
-    
+    return ret;
+
 }
 
 // iControlMode2
@@ -4351,7 +4351,7 @@ bool ControlBoardWrapper::getRefPosition(const int j, double* ref)
     return false;
 }
 
-bool ControlBoardWrapper::getRefPositions(double *spds) 
+bool ControlBoardWrapper::getRefPositions(double *spds)
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
@@ -4363,7 +4363,7 @@ bool ControlBoardWrapper::getRefPositions(double *spds)
             ret = false;
             break;
         }
-        
+
         if( (p->posDir) &&(ret = p->posDir->getRefPositions(references)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -4378,10 +4378,10 @@ bool ControlBoardWrapper::getRefPositions(double *spds)
             break;
         }
     }
-    
+
     delete [] references;
-    return ret; 
-    
+    return ret;
+
 }
 
 
@@ -4511,7 +4511,7 @@ bool ControlBoardWrapper::getRefVelocities(double* vels)
             ret = false;
             break;
         }
-        
+
         if( (p->vel) &&(ret = p->vel->getRefVelocities(references)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -4526,10 +4526,10 @@ bool ControlBoardWrapper::getRefVelocities(double* vels)
             break;
         }
     }
-    
+
     delete [] references;
-    return ret; 
-    
+    return ret;
+
 }
 
 bool ControlBoardWrapper::getRefVelocities(const int n_joints, const int* joints, double* vels)
@@ -4661,7 +4661,7 @@ bool ControlBoardWrapper::getInteractionModes(int n_joints, int *joints, yarp::d
 
 bool ControlBoardWrapper::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    
+
     auto* imodes = new yarp::dev::InteractionModeEnum[device.maxNumOfJointsInDevices];
     bool ret = true;
     for(unsigned int d=0; d<device.subdevices.size(); d++)
@@ -4672,7 +4672,7 @@ bool ControlBoardWrapper::getInteractionModes(yarp::dev::InteractionModeEnum* mo
             ret = false;
             break;
         }
-        
+
         if( (p->iInteract) &&(ret = p->iInteract->getInteractionModes(imodes)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -4687,9 +4687,9 @@ bool ControlBoardWrapper::getInteractionModes(yarp::dev::InteractionModeEnum* mo
             break;
         }
     }
-    
+
     delete [] imodes;
-    return ret; 
+    return ret;
 }
 
 bool ControlBoardWrapper::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
@@ -4835,7 +4835,7 @@ bool ControlBoardWrapper::getRefDutyCycles(double *v)
             ret = false;
             break;
         }
-        
+
         if( (p->iPWM) &&(ret = p->iPWM->getRefDutyCycles(references)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -4850,10 +4850,10 @@ bool ControlBoardWrapper::getRefDutyCycles(double *v)
             break;
         }
     }
-    
+
     delete [] references;
-    return ret; 
-    
+    return ret;
+
 }
 
 bool ControlBoardWrapper::getDutyCycle(int j, double *v)
@@ -4885,7 +4885,7 @@ bool ControlBoardWrapper::getDutyCycles(double *v)
             ret = false;
             break;
         }
-        
+
         if( (p->iPWM) &&(ret = p->iPWM->getDutyCycles(dutyCicles)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -4900,10 +4900,10 @@ bool ControlBoardWrapper::getDutyCycles(double *v)
             break;
         }
     }
-    
+
     delete [] dutyCicles;
-    return ret; 
-    
+    return ret;
+
 }
 
 
@@ -5004,7 +5004,7 @@ bool ControlBoardWrapper::getCurrentRanges(double *min, double *max)
             ret = false;
             break;
         }
-        
+
         if( (p->iCurr) &&(ret = p->iCurr->getCurrentRanges(c_min, c_max)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -5020,11 +5020,11 @@ bool ControlBoardWrapper::getCurrentRanges(double *min, double *max)
             break;
         }
     }
-    
+
     delete [] c_min;
     delete [] c_max;
-    return ret; 
-    
+    return ret;
+
 }
 
 bool ControlBoardWrapper::setRefCurrents(const double *t)
@@ -5114,7 +5114,7 @@ bool ControlBoardWrapper::getRefCurrents(double *t)
             ret = false;
             break;
         }
-        
+
         if( (p->iCurr) &&(ret = p->iCurr->getRefCurrents(references)))
         {
             for(int juser= p->wbase, jdevice=p->base; juser<=p->wtop; juser++, jdevice++)
@@ -5129,10 +5129,10 @@ bool ControlBoardWrapper::getRefCurrents(double *t)
             break;
         }
     }
-    
+
     delete [] references;
-    return ret; 
-    
+    return ret;
+
 }
 
 bool ControlBoardWrapper::getRefCurrent(int j, double *t)

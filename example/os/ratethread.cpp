@@ -37,7 +37,7 @@ public:
 			printf("Thread1 did not start\n");
 	}
 
-    virtual void run() 
+    virtual void run()
     {
         printf("Hello, from thread1\n");
     }
@@ -54,7 +54,7 @@ public:
 	virtual bool threadInit()
 	{
 		printf("Starting thread2\n");
-		return true; 
+		return true;
 	}
 
 	//called by start after threadInit, s is true iff the thread started
@@ -125,7 +125,7 @@ int main() {
     t2.resume();
 
 	Time::delay(3);
-    
+
     printf("Thread1 ran %d times, estimated period: %.lf[ms]\n", t1.getIterations(), t1.getEstimatedPeriod());
     printf("Thread2 ran %d times, estimated period: %.lf[ms]\n", t2.getIterations(), t2.getEstimatedPeriod());
     t1.stop();

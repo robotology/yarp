@@ -72,7 +72,7 @@ private slots:
     void ctxMenu(const QPoint &pos);
 
     void on_clearLogTab_action();
-    
+
     void on_saveLogTab_action();
 
     void on_enableLogTab_action();

@@ -37,13 +37,13 @@ PortMonitor.accept = function(thing)
         print("\nRate of", sourceName, ":", yarp.Time_now() - prev_time)
         prev_time = yarp.Time_now()
         return true
-    end 
+    end
 
     -- filter with the desired frequency. e.g, 300ms
     if yarp.Time_now() - prev_time < 0.300 then
         return false
     end
-    
+
     prev_time = yarp.Time_now()
     return true
 end

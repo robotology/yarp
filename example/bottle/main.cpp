@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
     }
     lst->asList()->fromString(subProp.toString());
     printf("lst: %s\n", lst->toString().c_str());
-    
+
     Property prop;
     prop.put("height",15);
     prop.put("verbose",1);

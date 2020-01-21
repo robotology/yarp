@@ -48,7 +48,7 @@ MOST OFTEN USED SCRIPTS:
 	uses emacs to regularize indentation of all source files
 
 ./scripts/make-source-package
-	Uses cvs to check out a clean copy of YARP, and 
+	Uses cvs to check out a clean copy of YARP, and
 	generates a source package using cmake.
 	Works in a subdirectory, $YARP_ROOT/source-package
 

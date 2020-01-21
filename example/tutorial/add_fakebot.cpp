@@ -19,7 +19,7 @@ using namespace yarp::dev;
 
 void add_fakebot() {
 #if ENABLE_fakebot
-    DriverCreator *factory = 
+    DriverCreator *factory =
         new DriverCreatorOf<FakeBot>("fakebot",
                                            "",
                                            "FakeBot");

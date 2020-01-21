@@ -42,7 +42,7 @@ sliderOptions::sliderOptions( QWidget *parent) :
     pos_step_validator = new QDoubleValidator(this);
     vel_step_validator = new QDoubleValidator(this);
     trq_step_validator = new QDoubleValidator(this);
-    vel_lims_validator = new QDoubleValidator(this); 
+    vel_lims_validator = new QDoubleValidator(this);
     vel_lims_validator->setRange(0 , 100);
 
     ui->pos_step->setValidator(vel_step_validator);

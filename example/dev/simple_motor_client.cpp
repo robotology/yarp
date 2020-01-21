@@ -62,7 +62,7 @@ using namespace yarp;
 
 
 //
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     // just list the devices if no argument given
     if (argc <= 2) {
@@ -104,8 +104,8 @@ int main(int argc, char *argv[])
 
 	fprintf(stderr, "%s", options.toString().c_str());
 
-    
-    // create a device 
+
+    // create a device
     PolyDriver dd(options);
     if (!dd.isValid()) {
         printf("Device not available.  Here are the known devices:\n");
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
     printf("Device active...\n");
     while (dd.isValid()) {
         char s[1024];
-        
+
         printf("-> ");
         char c = 0;
         int i = 0;
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
         p.fromString(s);
         printf("Bottle: %s\n", p.toString().c_str());
 
-        switch(p.get(0).asVocab()) {        
+        switch(p.get(0).asVocab()) {
         case VOCAB_HELP:
             printf("\n\n");
             printf("Available commands:\n\n");
@@ -177,13 +177,13 @@ int main(int argc, char *argv[])
 
             printf("type [set] and one of the following:\n");
             printf("[%s] <int> <double> to move a single axis\n", Vocab::decode(VOCAB_POSITION_MOVE).c_str());
-            printf("[%s] <int> <double> to accelerate a single axis to a given speed\n", Vocab::decode(VOCAB_VELOCITY_MOVE).c_str());            
+            printf("[%s] <int> <double> to accelerate a single axis to a given speed\n", Vocab::decode(VOCAB_VELOCITY_MOVE).c_str());
             printf("[%s] <int> <double> to set the reference speed for a single axis\n", Vocab::decode(VOCAB_REF_SPEED).c_str());
             printf("[%s] <int> <double> to set the reference acceleration for a single axis\n", Vocab::decode(VOCAB_REF_ACCELERATION).c_str());
             printf("[%s] <list> to move multiple axes\n", Vocab::decode(VOCAB_POSITION_MOVES).c_str());
             printf("[%s] <list> to accelerate multiple axes to a given speed\n", Vocab::decode(VOCAB_VELOCITY_MOVES).c_str());
             printf("[%s] <list> to set the reference speed for all axes\n", Vocab::decode(VOCAB_REF_SPEEDS).c_str());
-            printf("[%s] <list> to set the reference acceleration for all axes\n", Vocab::decode(VOCAB_REF_ACCELERATIONS).c_str());          
+            printf("[%s] <list> to set the reference acceleration for all axes\n", Vocab::decode(VOCAB_REF_ACCELERATIONS).c_str());
             printf("[%s] <int> to stop a single axis\n", Vocab::decode(VOCAB_STOP).c_str());
             printf("[%s] <int> to stop all axes\n", Vocab::decode(VOCAB_STOPS).c_str());
             printf("[%s] <int> <list> to set the PID values for a single axis\n", Vocab::decode(VOCAB_PID).c_str());
@@ -265,7 +265,7 @@ int main(int argc, char *argv[])
                     printf ("%s: (", Vocab::decode(VOCAB_REFERENCES).c_str());
                     for(i = 0; i < jnts; i++)
                         printf ("%.2f ", tmp[i]);
-                    printf (")\n");                    
+                    printf (")\n");
                 }
                 break;
 
@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
                     printf ("%s: (", Vocab::decode(VOCAB_REF_SPEEDS).c_str());
                     for(i = 0; i < jnts; i++)
                         printf ("%.2f ", tmp[i]);
-                    printf (")\n");                    
+                    printf (")\n");
                 }
                 break;
 
@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
                     printf ("%s: (", Vocab::decode(VOCAB_REF_ACCELERATIONS).c_str());
                     for(i = 0; i < jnts; i++)
                         printf ("%.2f ", tmp[i]);
-                    printf (")\n");                    
+                    printf (")\n");
                 }
                 break;
 
@@ -389,9 +389,9 @@ int main(int argc, char *argv[])
                     int j = p.get(2).asInt32();
                     double ref = p.get(3).asFloat64();
                     printf("%s: setting the encoder value for %d to %.2f\n", Vocab::decode(VOCAB_ENCODER).c_str(), j, ref);
-                    enc->setEncoder(j, ref);                    
+                    enc->setEncoder(j, ref);
                 }
-                break; 
+                break;
 
                 case VOCAB_ENCODERS: {
                     Bottle *l = p.get(2).asList();

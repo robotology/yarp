@@ -124,13 +124,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionKill_all,SIGNAL(triggered()),this,SLOT(onKill()));
     connect(ui->actionConnect_all,SIGNAL(triggered()),this,SLOT(onConnect()));
     connect(ui->actionDisconnect_all,SIGNAL(triggered()),this,SLOT(onDisconnect()));
-   
+
     connect(ui->actionRun,SIGNAL(triggered()),this,SLOT(onRunSelected()));
     connect(ui->actionStop,SIGNAL(triggered()),this,SLOT(onStopSelected()));
     connect(ui->actionKill,SIGNAL(triggered()),this,SLOT(onKillSelected()));
     connect(ui->actionConnect,SIGNAL(triggered()),this,SLOT(onConnectSelected()));
     connect(ui->actionDisconnect,SIGNAL(triggered()),this,SLOT(onDisconnectSelected()));
-    
+
     connect(ui->actionRefresh_Status,SIGNAL(triggered()),this,SLOT(onRefresh()));
     connect(ui->actionSelect_All,SIGNAL(triggered()),this,SLOT(onSelectAll()));
     connect(ui->actionExport_Graph,SIGNAL(triggered()),this,SLOT(onExportGraph()));

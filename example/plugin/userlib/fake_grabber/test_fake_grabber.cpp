@@ -13,7 +13,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 int main(int argc, char *argv[]) {
-  DriverCreator *fake_factory = 
+  DriverCreator *fake_factory =
     new DriverCreatorOf<FakeFrameGrabber>("fake_grabber","grabber","FakeFrameGrabber");
   Drivers::factory().add(fake_factory); // hand factory over to YARP
 

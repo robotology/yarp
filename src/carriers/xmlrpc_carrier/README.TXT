@@ -21,7 +21,7 @@ and then sublists with key->value mappings.
 such lists, or you could populate a Property object if
 you want fast look-up.)
 
-If you want to convert a Bottle list that may start with the 
+If you want to convert a Bottle list that may start with the
 string "dict" or "list", prepend the keyword "list".
   (list ...)
 That keyword will be silently consumed, and will guarantee

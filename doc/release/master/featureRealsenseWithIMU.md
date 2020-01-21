@@ -4,7 +4,7 @@ featureRealsenseWithIMU {master}
 
 ### devices
 
-* added the following new EXPERIMENTAL devices. 
+* added the following new EXPERIMENTAL devices.
 * Experimental means that the software is under development, provided with uncomplete documentation and it may be modified/renamed/removed without any notice.
 
 #### Realsense2WithIMU

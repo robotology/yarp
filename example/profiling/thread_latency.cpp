@@ -10,12 +10,12 @@
 #include <yarp/os/all.h>
 
 // Thread latency, basic test.
-// Thread A is periodic. Thread B is 
+// Thread A is periodic. Thread B is
 // not periodic, but waits on a mutex. Thread
 // A posts the mutex to wake up B.
-// We measure the time it takes to for B to 
+// We measure the time it takes to for B to
 // wake up.
-// 
+//
 // Lorenzo Natale August 2008
 
 #include <string>
@@ -126,7 +126,7 @@ public:
 
 };
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     Network yarp;
     Property p;

@@ -52,7 +52,7 @@ enum class DumpFormat { plain, image_jpg, image_png } dump_format;
 /**************************************************************************/
 class DumpObj
 {
-protected: 
+protected:
     DumpFormat dump_format{DumpFormat::plain};
 
 public:

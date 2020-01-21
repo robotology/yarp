@@ -21,7 +21,7 @@ class Example4 {
 	System.loadLibrary("yarp_java");
 	Network yarp = new Network();
 
-	// set up a description of the device we want 
+	// set up a description of the device we want
 	// in this case, a remote motor control board
 	Property prop = new Property();
 	prop.put("device","remote_controlboard");

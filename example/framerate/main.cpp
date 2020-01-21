@@ -27,7 +27,7 @@ BufferedPort<Bottle> *iPort=0;
 
 static void handler (int) {
     static int ct = 0;
-    ct++;    
+    ct++;
 
     fprintf(stderr, "[try %d of %d] Asking to shut down smoothly\n",ct, 3);
     terminated = true;
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
             Network::connect(val->asString(), local.c_str(), prot->asString().c_str());
         else
             Network::connect(val->asString(), local.c_str());
-    }        
+    }
     // read
     double first = Time::now();
     double prev = 0;

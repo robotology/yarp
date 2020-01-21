@@ -35,7 +35,7 @@ int main() {
     Network::connect("/out","/in");
     Bottle b("10 10 20");
     out.write(b);
-    
+
     return 0;
 }
 

@@ -24,7 +24,7 @@ class BufferedPortTest(unittest.TestCase):
         self.assertTrue(yarp.Network.connect(p.getName(),p2.getName()))
         p.close()
         p2.close()
-        
+
     def test_open_and_connect_comm(self):
         p = yarp.BufferedPortBottle()
         p2 = yarp.BufferedPortBottle()

@@ -8,7 +8,7 @@
 require("yarp")
 
 
--- 
+--
 -- Auxiliary functions
 --
 
@@ -22,10 +22,10 @@ function save_log()
     if file == nil then
         print("\n[Rate_Log] Cannot open", param_log_name.."\n")
     return
-    end 
-    -- save all the loged data 
-    if param_log_raw == true then 
-        for i=1,#log_data do      
+    end
+    -- save all the loged data
+    if param_log_raw == true then
+        for i=1,#log_data do
             file:write(log_data[i].time," ",log_data[i].value,"\n")
         end
     else
@@ -36,7 +36,7 @@ function save_log()
         file:write("Mean       : "..avg.."\n")
         file:write("Min        : "..min.."\n")
         file:write("Max        : "..max.."\n")
-    end    
+    end
     file:close()
 end
 
@@ -64,15 +64,15 @@ PortMonitor.create = function(options)
     param_log_start = true
     param_log_path = os.getenv("HOME")
     param_log_name = ""
-                    
-    -- log variables 
+
+    -- log variables
     log_data = {}
     prev_time = 0
     sum, min, max, count = 0, 0, 0 ,0
     print("\n[Rate_Log] Ready!\n")
-    if param_log_start == true then 
+    if param_log_start == true then
         print("\n[Rate_Log] Start logging...\n")
-    end 
+    end
 
     return true;
 end
@@ -81,7 +81,7 @@ end
 -- destroy is called when port monitor is destroyed
 --
 PortMonitor.destroy = function()
-    if param_log_start == false then return true end 
+    if param_log_start == false then return true end
     --save_log()
 end
 
@@ -92,7 +92,7 @@ end
 -- @return Boolean
 -- if false is returned, the data will be ignored
 PortMonitor.accept = function(thing)
-    if param_log_start == false then return true end 
+    if param_log_start == false then return true end
 
     if prev_time ~= 0 then
         t = yarp.Time_now() - prev_time
@@ -103,7 +103,7 @@ PortMonitor.accept = function(thing)
         if param_log_raw == true then
             log_data[#log_data+1] =  {time=yarp.Time_now(), value=t}
         end
-    end 
+    end
     prev_time = yarp.Time_now()
     return true
 end
@@ -115,11 +115,11 @@ end
 PortMonitor.setparam = function(property)
     if property:check("log_raw") then
         param_log_raw = (property:find("log_raw"):asInt32() == 1)
-        if param_log_raw == true then 
+        if param_log_raw == true then
             print("\n[Rate_Log] Logging all samples!\n")
         else
             print("\n[Rate_Log] Logging only statistics!\n")
-        end    
+        end
     end
 
     if property:check("log_name") then
@@ -131,13 +131,13 @@ PortMonitor.setparam = function(property)
         print('log_path', param_log_path)
     end
 
-    if property:check("log_start") then        
+    if property:check("log_start") then
         param_log_start = (property:find("log_start"):asInt32() == 1)
-        if param_log_start == true then 
+        if param_log_start == true then
             print("\n[Rate_Log] Start logging...\n")
         else
             print("\n[Rate_Log] Stop logging...\n")
-        end 
+        end
     end
     if property:check("log_save") then
         param_log_start = false
@@ -153,7 +153,7 @@ PortMonitor.getparam = function()
         prop:put("log_raw", 0)
     end
     prop:put("log_name", param_log_name)
-    if param_log_start == true then 
+    if param_log_start == true then
         prop:put("log_start", 1)
     else
         prop:put("log_start", 0)

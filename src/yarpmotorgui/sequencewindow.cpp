@@ -590,7 +590,7 @@ void SequenceTreeWidget::onContextMenuRequested(QPoint point)
     if (ret == clipboardAction)
     {
         QClipboard  *clipboard = QApplication::clipboard();
-       
+
         QString selected_test;
 
         for (int i = 2; i<columnCount(); i++)

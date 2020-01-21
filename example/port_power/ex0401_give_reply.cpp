@@ -19,7 +19,7 @@ int main() {
     Bottle in, out;    // Make places to store things.
     while (true) {
         p.read(in,true); // Read from the port, warn that we'll be replying.
-        printf("Got %s\n", in.toString().c_str());                
+        printf("Got %s\n", in.toString().c_str());
         out.clear();
         out.addString("acknowledge");
         out.append(in);

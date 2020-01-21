@@ -21,7 +21,7 @@
 
 #include <string>
 
-static const std::string str_app_template = 
+static const std::string str_app_template =
 "  <application>\n"
 "      <!-- Generic information-->\n"
 "      <name>ApplicationName</name>\n"
@@ -31,18 +31,18 @@ static const std::string str_app_template =
 "      <authors>\n"
 "          <author email=\"\"> author.name </author>\n"
 "      </authors>\n"
-"\n"         
-"      <!-- Required modules -->\n"       
+"\n"
+"      <!-- Required modules -->\n"
 "      <module>\n"
 "          <name>Module_Name</name>\n"
 "          <parameters></parameters>\n"
-"          <node></node>\n" 
+"          <node></node>\n"
 "          <stdio></stdio>\n"
 "          <prefix></prefix>\n"
 "      </module>\n"
 "\n"
 "      <!-- Embedded applications -->\n"
-"      <application>\n" 
+"      <application>\n"
 "          <name>Application_Name</name>\n"
 "          <prefix></prefix>\n"
 "       </application>\n"
@@ -56,7 +56,7 @@ static const std::string str_app_template =
 "\n"
 "  </application>\n";
 
-static const std::string str_mod_template = 
+static const std::string str_mod_template =
 "<module>\n"
 "    <!-- module's name should match its executable file's name. -->\n"
 "    <name>module_name</name>\n"
@@ -67,7 +67,7 @@ static const std::string str_mod_template =
 "    <arguments>\n"
 "        <param desc=\"first parameter\"> param1 </param>\n"
 "    </arguments>\n"
-"\n" 
+"\n"
 "    <!-- <authors> can have multiple <author> tags. -->\n"
 "    <authors>\n"
 "        <author email=\"\"> author1 </author>\n"
@@ -77,7 +77,7 @@ static const std::string str_mod_template =
 "     <data>\n"
 "        <!-- input data if available-->\n"
 "        <input>\n"
-"            <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->\n" 
+"            <!-- <type> refers to nominal type of data (e.g. ImageFrame, String). -->\n"
 "            <type>DataType</type>\n"
 "\n"
 "            <!-- input port which receive the data. -->\n"
@@ -93,7 +93,7 @@ static const std::string str_mod_template =
 "                 until the required data becomes available on the port -->\n"
 "            <priority>no</priority>\n"
 "            <description></description>\n"
-"        </input>\n"    
+"        </input>\n"
 "\n"
 "        <!-- output datas if available -->\n"
 "        <output>\n"
@@ -105,17 +105,17 @@ static const std::string str_mod_template =
 "\n"
 "    <!-- physical and logical resource dependencies can be introduced in this\n"
 "         section. Dependencies must follow resource conceptional models. Currently\n"
-"         available resource models are 'memory', 'processor', 'storage', 'network',\n" 
+"         available resource models are 'memory', 'processor', 'storage', 'network',\n"
 "         'yarp_port', 'platform' and 'gpu'. All resource dependencies should be introduced\n"
 "         inside <computer></computer> tags. While resources described inside <computer>\n"
 "         tags represent conjunctional dependency, resources from different <computer>\n"
 "         tags can be seen as disjunctions. Meaning that If a module depend on either\n"
-"         resource R1 or R2 they can be introduced inside two different <computer> tags.\n" 
-"         Resource dependencies should be introduced if they are really required. For\n" 
+"         resource R1 or R2 they can be introduced inside two different <computer> tags.\n"
+"         Resource dependencies should be introduced if they are really required. For\n"
 "         example, if module's performance drops significantly in case of memory swapping,\n"
 "         a memory resource dependency can be introduced with the required memory space. -->\n"
 "    <dependencies>\n"
-"        <computer>\n"     
+"        <computer>\n"
 "        </computer>\n"
 "    </dependencies>\n"
 "\n"
@@ -127,7 +127,7 @@ static const std::string str_mod_template =
 "\n"
 "</module>\n";
 
-static const std::string str_res_template = 
+static const std::string str_res_template =
 "<resources>\n"
 "    <!-- Multiple computer descriptions can be introduced -->\n"
 "    <computer>\n"
@@ -135,7 +135,7 @@ static const std::string str_res_template =
 "        <description>Template resource</description>\n"
 "\n"
 "        <!-- A disabled resource will not be used. -->\n"
-"        <disable>no</disable>\n" 
+"        <disable>no</disable>\n"
 "\n"
 "        <!-- Platform, Memory, Storage, Processor and Network speceification\n"
 "        will be discoverd automatically. But peripherals sush as GPU need to\n"

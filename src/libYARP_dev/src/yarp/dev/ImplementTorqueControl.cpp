@@ -89,7 +89,7 @@ bool ImplementTorqueControl::setMotorTorqueParams(int j,  const yarp::dev::Motor
 {
     JOINTIDCHECK
     int k;
-    
+
     yarp::dev::MotorTorqueParameters params_raw;
     castToMapper(helper)->bemf_user2raw(params.bemf, j, params_raw.bemf, k);
     castToMapper(helper)->ktau_user2raw(params.ktau, j, params_raw.ktau, k);

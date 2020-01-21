@@ -64,7 +64,7 @@ int client(int nframes)
 
     port.close();
 
-    fprintf(stderr, "Received: %d average latency %.3lf[ms]\n", 
+    fprintf(stderr, "Received: %d average latency %.3lf[ms]\n",
             count, delay/count);
     return 0;
 }

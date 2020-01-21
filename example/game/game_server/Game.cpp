@@ -82,7 +82,7 @@ void Game::setMaze(const char *fname) {
             char ch = buf[x];
             ID v = 0;
             if (ch=='+' || ch=='-' || ch=='|'||ch=='#') { v = 1; }
-            if (ch>='0'&&ch<='9') { 
+            if (ch>='0'&&ch<='9') {
                 v = SYS(system_resource).game_things.create();
                 SYS(system_resource).game_things.getThing(v).set(x,y,v);
             }
@@ -122,10 +122,10 @@ Thing& Game::newThing(bool putOnBoard) {
             id = i;
             break;
         }
-    }   
+    }
 
     if(putOnBoard) {
-  
+
         if (id.asInt32()!=-1) {
             ID xx = -1;
             ID yy = -1;
@@ -164,7 +164,7 @@ Thing& Game::newThing(bool putOnBoard) {
     else {
         SYS(system_resource).game_things.create(id);
     }
-  
+
     if (id.asInt32()==-1) {
         return Thing::NOTHING;
     }

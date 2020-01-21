@@ -26,7 +26,7 @@ public:
 class Player : public Replier {
 public:
     Player() : mutex() {
-  
+
     }
 
     // this is the main command processing function
@@ -85,7 +85,7 @@ public:
     void setFirerange(int f) {firerange = f; };
     int  getFirerange() {return firerange; };
 
-    void setName(const char *txt) { 
+    void setName(const char *txt) {
         login.getThing().setName(txt);
     }
     const char *getName() {
@@ -93,7 +93,7 @@ public:
     }
 
 private:
-  
+
     Replier *replier;
     std::mutex mutex;
 

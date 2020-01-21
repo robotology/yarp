@@ -43,7 +43,7 @@ function FastImageConversion()
     port.close;
     portImage.close;
     portFilters.close;
-    %open the ports 
+    %open the ports
     disp('opening ports...');
     port.open('/matlab/read');
     disp('opened port /matlab/read');
@@ -63,7 +63,7 @@ function FastImageConversion()
     while(~done)%run until you get the quit signal
 
          b = port.read( false );%use false to have a non blocking port
-         if (sum(size(b)) ~= 0) %check size of bottle 
+         if (sum(size(b)) ~= 0) %check size of bottle
              disp('received command: ');
              disp(b);
              %checking for quit signal
@@ -74,7 +74,7 @@ function FastImageConversion()
 
          %disp('getting a yarp image..');
          yarpImage=portImage.read(false);%get the yarp image from port
-         if (sum(size(yarpImage)) ~= 0) %check size of bottle 
+         if (sum(size(yarpImage)) ~= 0) %check size of bottle
              %disp('got it..');
              h=yarpImage.height;
              w=yarpImage.width;
@@ -82,7 +82,7 @@ function FastImageConversion()
              tool=yarp.matlab.YarpImageHelper(h, w);
              tic %start time
              IN = tool.getRawImg(yarpImage); %use leo pape image patch
-             TEST = reshape(IN, [h w pixSize]); %need to reshape the matrix from 1D to h w pixelSize 
+             TEST = reshape(IN, [h w pixSize]); %need to reshape the matrix from 1D to h w pixelSize
              COLOR=uint8(zeros(h, w, pixSize)); %create an empty image with the correct dimentions
              r = cast(TEST(:,:,1),'uint8');  % need to cast the image from int16 to uint8
              g = cast(TEST(:,:,2),'uint8');
@@ -121,5 +121,5 @@ function closePorts(portImage,port,portFilters)
     portImage.close;
     port.close;
     portFilters.close;
-    
+
 end

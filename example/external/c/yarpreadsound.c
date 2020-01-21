@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
             // YARP sound format is just like images (see yarpreadimage)
             // EXCEPT:
             //   There is an extra header, declaring the image and a
-            //   small extra Bottle holding sound details like the 
+            //   small extra Bottle holding sound details like the
             //   sampling frequency.
 
             unsigned char preheader[4*2]; // declares header and footer

@@ -22,7 +22,7 @@ foreach my $bug (@bugs) {
 	my $fileName = $1;
 	my $lineNumber = $2;
 	print "Problem at $fileName:$lineNumber ... ";
-	
+
 	my $buffer = "";
 	my $ct = 1;
 	open(FIN,"<$fileName");

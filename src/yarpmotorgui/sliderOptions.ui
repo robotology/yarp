@@ -222,7 +222,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Limiter on joint 
+       <string>Limiter on joint
 max vel: (0-100)</string>
       </property>
      </widget>

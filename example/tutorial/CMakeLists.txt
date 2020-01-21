@@ -5,7 +5,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-# Make sure that YARP_DIR is set in your environment to wherever you 
+# Make sure that YARP_DIR is set in your environment to wherever you
 # compiled YARP.
 
 project(run_fakebot)

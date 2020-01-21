@@ -6,7 +6,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:template match="/">
   /**
   *
-  * @ingroup <xsl:value-of select="module/doxygen-group" /> 
+  * @ingroup <xsl:value-of select="module/doxygen-group" />
   * \defgroup <xsl:value-of select="module/name" /><xsl:text> </xsl:text><xsl:value-of select="module/name" />
   * <xsl:value-of select="module/description" />
   * Version:<xsl:value-of select="module/version" />
@@ -16,7 +16,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
                  <xsl:value-of select="text()"/> <xsl:value-of select="@email"/>
                  </xsl:when>
                  <xsl:otherwise>
-                 <xsl:value-of select="text()"/> <xsl:value-of select="@email"/>, 
+                 <xsl:value-of select="text()"/> <xsl:value-of select="@email"/>,
                  </xsl:otherwise>
                </xsl:choose>
      </xsl:for-each>
@@ -25,7 +25,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   * \section intro_sec Description
   *
   <xsl:copy-of select="module/description-long/node()" disable-output-escaping="yes" />
-  * \section parameters_sec Parameters     
+  * \section parameters_sec Parameters
   <xsl:for-each select="module/arguments/param">
   *- --<xsl:value-of select="text()"/>: <xsl:value-of select="@desc"/>
   </xsl:for-each>

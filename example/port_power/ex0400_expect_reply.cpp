@@ -13,7 +13,7 @@ using namespace yarp::os;
 
 int main() {
     Network yarp;
-    
+
     int ct = 0;
     Port p;            // Create a port.
     p.open("/out");    // Give it a name on the network.
@@ -29,7 +29,7 @@ int main() {
         // process response "in".
         if (in.size()>0) {
             printf("Got response: %s\n", in.toString().c_str());
-        } else { 
+        } else {
             printf("No response\n");
         }
         Time::delay(1);

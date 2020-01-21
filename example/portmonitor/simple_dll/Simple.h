@@ -11,7 +11,7 @@
 
 #include <yarp/os/MonitorObject.h>
 
-class SimpleMonitorObject : public yarp::os::MonitorObject 
+class SimpleMonitorObject : public yarp::os::MonitorObject
 {
 public:
     bool create(const yarp::os::Property& options);

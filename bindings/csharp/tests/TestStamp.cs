@@ -20,7 +20,7 @@ namespace HelloNameSpace
 	    Network.init();
 	    BufferedPortBottle p = new BufferedPortBottle();
 	    if (!p.open("/csharp")) System.Environment.Exit(1);
-	    Stamp ts = new Stamp(); 
+	    Stamp ts = new Stamp();
 	    p.setEnvelope(ts);
 	    p.close();
 	    Network.fini();

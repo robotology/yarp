@@ -16,7 +16,7 @@ using namespace yarp::os;
 
 int main() {
     Network yarp;
-    
+
     Port p;            // Create a port.
     p.open("/target/raw/in");     // Give it a name on the network.
     BinPortable<Target> b;          // Make a place to store things.
@@ -25,6 +25,6 @@ int main() {
         // Do something with data.
         printf("Got (%d,%d)\n", b.content().x, b.content().y);
     }
-    
+
     return 0;
 }

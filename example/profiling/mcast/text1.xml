@@ -29,7 +29,7 @@
 	<from>/grabber1</from>
 	<to>/fr1</to>
 	<protocol>mcast</protocol>
-	</connection>	
+	</connection>
 </application>
 
 

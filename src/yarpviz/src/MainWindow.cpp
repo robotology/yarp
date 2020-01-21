@@ -367,7 +367,7 @@ void MainWindow::drawGraph(Graph &graph)
                     continue;
                 }
 
-                if(edge.property.find("type").asString() == "connection") {                    
+                if(edge.property.find("type").asString() == "connection") {
                     //QGVEdge* gve = scene->addEdge(nodeSet[&v1], nodeSet[&v2],
                     //                               edge.property.find("carrier").asString().c_str());
                     string label;
@@ -603,7 +603,7 @@ void MainWindow::onHighlightLoops() {
     if(!currentGraph)
         return;
 
-    if(ui->actionHighlight_Loops->isChecked()) {        
+    if(ui->actionHighlight_Loops->isChecked()) {
         graph_subset scc;
         Algorithm::calcSCC(*currentGraph, scc);
 

@@ -257,7 +257,7 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 #if defined (YARP_HAS_PNG)
 static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t rowSize, png_byte color_type, png_byte bit_depth)
 {
-    // create file 
+    // create file
     if (src == nullptr)
     {
         yError("[write_png_file] Cannot write to file a nullptr image");
@@ -293,7 +293,7 @@ static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t 
         fclose(fp);
         return false;
     }
-    
+
     png_bytep * row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * h);
     for (size_t y = 0; y < h; y++)
     {

@@ -22,7 +22,7 @@ if(ENABLE_IMURosPublisher)
                                                      YARP::YARP_dev
                                                      YARP::YARP_math
                                                      YARP_rosmsg)
-                                                     
+
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
@@ -60,7 +60,7 @@ if(ENABLE_WrenchStampedRosPublisher)
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev
                                                      YARP_rosmsg)
-                                                     
+
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
@@ -97,7 +97,7 @@ if(ENABLE_TemperatureRosPublisher)
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev
                                                      YARP_rosmsg)
-                                                     
+
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
@@ -135,7 +135,7 @@ if(ENABLE_PoseStampedRosPublisher)
                                                      YARP::YARP_dev
                                                      YARP::YARP_math
                                                      YARP_rosmsg)
-                                                     
+
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
@@ -173,7 +173,7 @@ if(ENABLE_MagneticFieldRosPublisher)
                                                      YARP::YARP_sig
                                                      YARP::YARP_dev
                                                      YARP_rosmsg)
-                                                     
+
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev

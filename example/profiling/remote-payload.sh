@@ -8,7 +8,7 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 PROTOCOLS="tcp udp"
-PAYLOAD="125 250 500 1000 2000 4000 8000 16000 32000 64000 128000 256000 512000 1000000 2000000 4000000" 
+PAYLOAD="125 250 500 1000 2000 4000 8000 16000 32000 64000 128000 256000 512000 1000000 2000000 4000000"
 PL_VERBOSE=(125 250 500 1k 2k 4k 8k 16k 32k 64k 128k 256k 512k 1M 2M 4M)
 NFRAMES=1000
 
@@ -20,14 +20,14 @@ MACHINES=( pc104 )
 
 case $1 in
     killall)
-		
+
 		for machine in ${MACHINES[@]}
 		  do
 		  echo "Killing client on $machine"
 		  yarp run --on /$machine --kill profTag 9
 		  echo echo "done"
 		done
-		
+
 		killall port_latency
 		;;
 	*)
@@ -47,7 +47,7 @@ case $1 in
 				do
 					echo "Starting client on $machine"
 					cmd="$YARP_ROOT/example/profiling/port_latency --client --name $machine --nframes -1"
-					yarp run --on /$machine --cmd "$cmd" --as profTag 
+					yarp run --on /$machine --cmd "$cmd" --as profTag
 					yarp wait /profiling/client/$machine/port:i
 					yarp wait /profiling/client/$machine/port:o
 					echo echo "done"

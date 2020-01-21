@@ -322,11 +322,11 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             ret = imap->renameArea("area", "area_new");  CHECK(ret);
             ret = imap->renameLocation("loc", "loc_new");  CHECK(ret);
             ret = imap->getArea("area", area);         CHECK(ret==false);
-            ret = imap->getArea("area_new", area);      CHECK(ret); 
+            ret = imap->getArea("area_new", area);      CHECK(ret);
             ret = imap->getLocation("loc", loc);       CHECK(ret==false);
             ret = imap->getLocation("loc_new", loc);    CHECK(ret);
-            
-            //final cleanup, already tested        
+
+            //final cleanup, already tested
             ret = imap->clearAllLocations();  CHECK(ret);
             ret = imap->clearAllAreas();  CHECK(ret);
         }
@@ -417,7 +417,7 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
 
             path.toString();
 
-            //final cleanup, already tested        
+            //final cleanup, already tested
             ret = imap->clearAllLocations();  CHECK(ret);
             ret = imap->clearAllPaths();  CHECK(ret);
         }

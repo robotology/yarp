@@ -28,9 +28,9 @@ int main()
         if (tmp=="quit")
             done=true;
     }
-    
+
     std::cout<<"You typed exit.\n";
-   
+
     std::cout<<"Calling Port::close()...";
     port.close();
     std::cout<<"done!\n";

@@ -10,7 +10,7 @@ program.  Run it without arguments for a list of what is possible now.
 ROS data is represented in YARP as blobs.  As a user, when you read or
 write to a port, the data you'll get is exactly as ROS's message/service
 types would suggest, preceded by a 12-byte header (see BlobHeader.h).
-This header is "virtual", it is just for compatibility with the YARP 
+This header is "virtual", it is just for compatibility with the YARP
 Bottle serialization format.
 
 Reminders to myself of the state of this carrier...
@@ -22,10 +22,10 @@ Basic XML/RPC use for talking to ROS:
 =====================================
 
 Enable xmlrpc_carrier. This is experimental, but  sufficient to interoperate
-with the XmlRpc++ library's "Hello" server and client.  Carrier name is 
+with the XmlRpc++ library's "Hello" server and client.  Carrier name is
 "xmlrpc".  XML structures are converted to Bottle-compatible form.
 
-Here's a quick test against ROS, which uses XML/RPC for some 
+Here's a quick test against ROS, which uses XML/RPC for some
 APIs. Assumes roscore and "talker.cpp" tutorial example running:
 
   yarp name register /roscore tcp localhost 11311
@@ -50,10 +50,10 @@ tcpros_carrier can read from ros publishers as follows.  Do the
   yarp connect /read /talker/chatter tcpros+topic./chatter
 
 You'll then see the messages from /talker, but represented as an
-uninterpreted list of numbers rather than a string.  
+uninterpreted list of numbers rather than a string.
 
 Note that the connect should probably be accompanied by talking
-to the roscore server to let it know there's a new publisher of 
+to the roscore server to let it know there's a new publisher of
 sorts; easy to do, but punting for now...
 
 writing to ros subscribers:
@@ -76,7 +76,7 @@ Now let the yarp server know about the ROS listener:
 
   yarp name register /talker tcp ... 56227
 
-Now ask the listener to ask our fake slave where to connect 
+Now ask the listener to ask our fake slave where to connect
 to [are you still following? :-)]
 
   yarp name query /slave

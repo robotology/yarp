@@ -26,13 +26,13 @@ b=Bottle;
 while(~done)
   port.read(b);
   disp(b);
-  
+
   if (strcmp(b.toString, 'quit'))
 	done=1;
   end
 end
 
 port.close;
-  
-  
-  
+
+
+

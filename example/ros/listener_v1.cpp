@@ -28,6 +28,6 @@ int main(int argc, char *argv[]) {
         }
         printf("Got [%s]\n", msg.get(0).asString().c_str());
     }
-  
+
     return 0;
 }

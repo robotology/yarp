@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     finder.setVerbose();
     finder.setDefaultConfigFile("yarpmotorgui.ini");
     finder.configure(argc, argv);
-    
+
     Bottle         pParts;
     QStringList    enabledParts;
     vector<bool>   enabled;

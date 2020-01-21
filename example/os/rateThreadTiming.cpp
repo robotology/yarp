@@ -31,9 +31,9 @@ class Thread1 : public PeriodicThread {
 public:
     Thread1(double p):PeriodicThread(p){}
     virtual bool threadInit()
-	{ 
+	{
 		printf("Starting thread1\n");
-		return true; 
+		return true;
 	}
 
 	//called by start after threadInit, s is true iff the thread started
@@ -49,7 +49,7 @@ public:
         m.resize(NROWS,NCOLS);
 	}
 
-    virtual void run() 
+    virtual void run()
     {
         if (getIterations()==10)
             {
@@ -74,7 +74,7 @@ public:
 int main() {
     yarp::os::Network network;
     Thread1 t1(THREAD_PERIOD);
-    t1.start(); 
+    t1.start();
 
     Time::delay(MAIN_WAIT);
 

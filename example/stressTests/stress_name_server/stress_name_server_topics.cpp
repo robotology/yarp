@@ -31,7 +31,7 @@ public:
     }
 
     void show() {
-        for (int i=0; i<R; i++) { 
+        for (int i=0; i<R; i++) {
             printf("Number %d: got %d (target %d)\n", i, counts[i], N*N);
         }
     }

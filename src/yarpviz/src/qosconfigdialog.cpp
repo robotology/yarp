@@ -182,7 +182,7 @@ bool QosConfigDialog::getUserQosStyles(yarp::os::QosStyle& srcStyle, yarp::os::Q
 }
 
 void QosConfigDialog::apply() {
-    if(!edge) {        
+    if(!edge) {
         close();
         setResult(QDialog::Accepted);
         return;
@@ -201,5 +201,5 @@ void QosConfigDialog::apply() {
     // something went wrong
     QMessageBox messageBox;
     messageBox.critical(nullptr,"Error","An error has occurred while applying the QoS configuration! \n Please check the QoS parameters carefully.");
-    messageBox.setFixedSize(500,200);    
+    messageBox.setFixedSize(500,200);
 }

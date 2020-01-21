@@ -27,14 +27,14 @@ MACHINES=( pc104 )
 
 case $1 in
     killall)
-		
+
 		for machine in ${MACHINES[@]}
 		  do
 		  echo "Killing client on $machine"
-		  yarp run --on /$machine --kill profTag 
+		  yarp run --on /$machine --kill profTag
 		  echo echo "done"
 		done
-		
+
 		killall port_latency
 		;;
 	*)
@@ -53,7 +53,7 @@ case $1 in
 		  do
 		  echo "Starting client on $machine"
 		  cmd="$YARP_ROOT/example/profiling/port_latency --client --name $machine --nframes -1"
-		  yarp run --on /$machine --cmd "$cmd" --as profTag 
+		  yarp run --on /$machine --cmd "$cmd" --as profTag
 		  yarp wait /profiling/client/$machine/port:i
 		  yarp wait /profiling/client/$machine/port:o
 		  echo echo "done"
@@ -90,7 +90,7 @@ case $1 in
 		for machine in ${MACHINES[@]}
 		  do
 		  echo "Killing client on $machine"
-		  yarp run --on /$machine --kill profTag 
+		  yarp run --on /$machine --kill profTag
 		  echo echo "done"
 		done
 

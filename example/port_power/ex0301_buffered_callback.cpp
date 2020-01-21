@@ -21,7 +21,7 @@ class DataPort : public BufferedPort<Bottle> {
 
 int main() {
     Network yarp;
-    
+
     DataPort p;
     p.useCallback();  // input should go to onRead() callback
     p.open("/in");          // Give it a name on the network.
@@ -29,6 +29,6 @@ int main() {
         printf("main thread free to do whatever it wants\n");
         Time::delay(10);
     }
-    
+
     return 0;
 }

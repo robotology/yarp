@@ -4,7 +4,7 @@ featureMultipleAnalogSensorsRosPublishers {master}
 
 ### devices
 
-* added the following new devices: 
+* added the following new devices:
 
 #### IMURosPublisher
 

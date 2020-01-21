@@ -50,7 +50,7 @@ public:
     }
 
 
-    /** Set relative position. The command is relative to the 
+    /** Set relative position. The command is relative to the
      * current position of the axis.
      * @param j joint axis number
      * @param delta relative command
@@ -128,7 +128,7 @@ public:
     }
 
 
-    /** Get reference speed for a joint. Returns the speed used to 
+    /** Get reference speed for a joint. Returns the speed used to
      * generate the trajectory profile.
      * @param j joint number
      * @param ref pointer to storage for the return value
@@ -148,7 +148,7 @@ public:
     }
 
 
-    /** Get reference acceleration for a joint. Returns the acceleration used to 
+    /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
      * @param j joint number
      * @param acc pointer to storage for the return value
@@ -162,7 +162,7 @@ public:
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
-     * @return true/false on success or failure 
+     * @return true/false on success or failure
      */
     virtual bool getRefAccelerations(double *accs) {
         return true;
@@ -178,7 +178,7 @@ public:
     }
 
 
-    /** Stop motion, multiple joints 
+    /** Stop motion, multiple joints
      * @return true/false on success/failure
      */
     virtual bool stop() {
@@ -209,7 +209,7 @@ void testMotor(PolyDriver& driver) {
 
 int main(int argc, char *argv[]) {
     yarp::os::Network yarp;
-    Drivers::factory().add(new DriverCreatorOf<FakeMotor>("motor", 
+    Drivers::factory().add(new DriverCreatorOf<FakeMotor>("motor",
                                                           "controlboard",
                                                           "FakeMotor"));
 
@@ -261,7 +261,7 @@ int main(int argc, char *argv[]) {
     server.close();
 
 
-    
+
 
     return 0;
 }

@@ -34,7 +34,7 @@
 #define safe_printf sprintf_s
 #else
 #define safe_printf snprintf
-#endif 
+#endif
 
 static int yarp_is_initialized = 0;
 static yarpAddress yarp_server;
@@ -135,7 +135,7 @@ int find_name_server(int verbose) {
     safe_printf(full_server_filename,sizeof(full_server_filename),
                 "%s%s%s",path,sep,server_filename);
     if (verbose) {
-        fprintf(stderr,"Expect name server information in %s\n", 
+        fprintf(stderr,"Expect name server information in %s\n",
                 server_filename);
     }
     fin = fopen(full_server_filename,"r");
@@ -310,7 +310,7 @@ int yarp_receive(yarpConnection connection, char *buf, int len) {
 }
 
 
-int yarp_receive_lines(yarpConnection connection, char *buf, int len, 
+int yarp_receive_lines(yarpConnection connection, char *buf, int len,
                        char **pending_buf, int *pending_len) {
     int i;
     int res = 0;
@@ -410,7 +410,7 @@ int yarp_parse_registration(yarpAddressPtr address, char *buf) {
             }
         }
     }
-    
+
     if (!(got_ip&&got_port_number)) {
         return -1;
     }
@@ -468,12 +468,12 @@ yarpConnection yarp_prepare_to_read_binary(yarpAddressPtr address) {
         exit(1);
     }
 
-    // Following tcp protocol documented at: 
+    // Following tcp protocol documented at:
     //   http://www.yarp.it/yarp_protocol.html
 
     // Send header to select connection type.
     // this header is for fast_tcp, so we don't have to deal with flow control
-    char hdr[8] = {'Y','A',0x64, 0x1E, 0, 0,'R','P'}; 
+    char hdr[8] = {'Y','A',0x64, 0x1E, 0, 0,'R','P'};
     yarp_send_binary(con,hdr,8);
 
     // Send name of our port - there is none, so send a name that
@@ -530,7 +530,7 @@ int yarp_receive_data_header(yarpConnection con) {
     int port_message_len = 0;
     for (i=0; i<blocks; i++) {
         yarp_receive_binary(con,(char *)load_len,4);
-        len += load_len[0] + (load_len[1]<<8) + (load_len[2]<<16) + 
+        len += load_len[0] + (load_len[1]<<8) + (load_len[2]<<16) +
             (load_len[3]<<24);
         if (i==0) {
             port_message_len = len;
@@ -543,7 +543,7 @@ int yarp_receive_data_header(yarpConnection con) {
             exit(1);
         }
     }
-    
+
     // extract the port header part
     char command_header[8];
     command_header[4] = '\0';

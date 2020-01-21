@@ -154,7 +154,7 @@ bool yarp::robotinterface::XMLReaderFileV3::privateXMLReaderFileV3::PerformInclu
 #ifdef DEBUG_PARSER
         std::string a;
         if (childElem->FirstAttribute()) a= childElem->FirstAttribute()->Value();
-        yDebug() << "Parsing" << childElem->Value() << a; 
+        yDebug() << "Parsing" << childElem->Value() << a;
 #endif
         std::string elemString = childElem->ValueStr();
         if (elemString == "file")
@@ -322,7 +322,7 @@ yarp::robotinterface::Device yarp::robotinterface::XMLReaderFileV3::privateXMLRe
                 device.actions().push_back(*it);
             }
         }
-        else 
+        else
         {
             ParamList childParams = readParams(childElem);
             for (ParamList::const_iterator it = childParams.begin(); it != childParams.end(); ++it)

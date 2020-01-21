@@ -1264,7 +1264,7 @@ bool Map2DServer::save_locations_and_areas(std::string locations_file)
 
     file << "Version: \n";
     file << "2\n";
-    
+
     {
         file << "Locations: \n";
         std::map<std::string, Map2DLocation>::iterator it;

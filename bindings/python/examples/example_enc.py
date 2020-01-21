@@ -16,7 +16,7 @@ def main():
     options = yarp.Property()
     driver = yarp.PolyDriver()
 
-    # set the poly driver options 
+    # set the poly driver options
     options.put("robot", "icub")
     options.put("device", "remote_controlboard")
     options.put("local", "/example_enc/client")
@@ -36,8 +36,8 @@ def main():
     if ienc is None or ipos is None:
         print 'Cannot view motor positions/encoders!'
         sys.exit()
-     
-    # wait a bit for the interface 
+
+    # wait a bit for the interface
     yarp.delay(1.0)
 
     encs = yarp.Vector(ipos.getAxes())
@@ -49,7 +49,7 @@ def main():
         print "Current encoders value: "
         print encs.toString(-1, -1)
         yarp.delay(0.01)
-    
+
     # closing the driver
     driver.close()
     yarp.Network.fini()

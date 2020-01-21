@@ -7,7 +7,7 @@
 
 This program simulates a robot head looking out to sea at a boat.
 
-On Linux type: 
+On Linux type:
 
    cmake .
    make
@@ -24,5 +24,5 @@ On Windows with MSVC
 
 Now you can run a copy of yarpview and connect it to /USERNAME/fakebot/camera
 
-The simulated camera can be moved around by sending commands to 
+The simulated camera can be moved around by sending commands to
 /USERNAME/fakebot/motor/rpc:i

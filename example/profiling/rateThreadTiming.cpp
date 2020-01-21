@@ -42,15 +42,15 @@ class Thread1 : public PeriodicThread {
     std::vector<double> measures;
 public:
     Thread1(double p=THREAD_PERIOD):PeriodicThread(p)
-    { 
-        cpuUsage=0; 
+    {
+        cpuUsage=0;
         iterations=-1;
     }
 
     virtual bool threadInit()
-	{ 
+	{
 		printf("Starting thread1\n");
-		return true; 
+		return true;
 	}
 
 	//called by start after threadInit, s is true iff the thread started
@@ -65,12 +65,12 @@ public:
 	}
 
     void setIterations(int it)
-    { 
+    {
         iterations=it;
         if (iterations>0)
             measures.reserve(iterations);
     }
-    
+
     void dump(const std::string &filename)
     {
         std::vector<double>::iterator it=measures.begin();
@@ -83,7 +83,7 @@ public:
         fclose(fp);
     }
 
-    virtual void run() 
+    virtual void run()
     {
         static int count=0;
         static double prev=Time::now();
@@ -107,7 +107,7 @@ public:
                 resetStat();
             }
 #endif
-        
+
         double time;
         time=getPeriod()*cpuUsage; //go to seconds
 
@@ -130,7 +130,7 @@ int main(int argc, char **argv) {
     Network yarp;
     Property p;
     Thread1 t1;
-    
+
     p.fromCommand(argc, argv);
 
     double period=p.check("period", Value(THREAD_PERIOD)).asFloat64();
@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
 
     printf("Going to wait %.2lf seconds before quitting\n", time);
 
-    t1.start(); 
+    t1.start();
 
     Time::delay(time);
 

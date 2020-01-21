@@ -216,7 +216,7 @@ public:
 
     /////////////////////////////////////////////////
     // Now, the initial hand-shaking
-    
+
     virtual bool prepareSend(yarp::os::ConnectionState& proto) {
         // nothing special to do
         return true;

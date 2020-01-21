@@ -240,7 +240,7 @@ MainWindow::MainWindow(QWidget *parent) :
             }
             //copy position in the lambda
             connect(newAction, &QAction::triggered, this, [this, position]{onHomeSinglePartToCustomPosition(position); });
-            
+
         }
     }
 

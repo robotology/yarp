@@ -298,7 +298,7 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                     for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = mc->get(i * 3 + j).asFloat64(); } }
                     bool ret = iLoc->setInitialPose(init_loc, cov);
                     if (ret) { reply.addVocab(VOCAB_OK); }
-                    else     { reply.addVocab(VOCAB_ERR); } 
+                    else     { reply.addVocab(VOCAB_ERR); }
                 }
                 else
                 {

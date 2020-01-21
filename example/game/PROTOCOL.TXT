@@ -13,7 +13,7 @@ It is accessible via telnet or YARP.
 Here we describe how to use the game via telnet.
 
 First, you need to know where the game is running and how
-to reach it.  You need the name/IP of the server the game 
+to reach it.  You need the name/IP of the server the game
 is on, and the socket number it listens to.
 
 Either ask someone or, if you have YARP, run:

@@ -96,7 +96,7 @@ void BatchQosConfDialog::openCons()
     }
     file.close();
 
-    if(ui->treeWidgetCons->topLevelItemCount() > 0) {	
+    if(ui->treeWidgetCons->topLevelItemCount() > 0) {
         ui->pushButtonBatchQosUpdate->setEnabled(true);
         ui->pushButtonBatchQosConfigure->setEnabled(true);
         updateQos();

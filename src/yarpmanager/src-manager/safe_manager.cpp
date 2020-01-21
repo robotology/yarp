@@ -472,7 +472,7 @@ void SafeManager::safeLoadBalance()
    if(busy()) return;
 
    WAIT_SEMAPHOR();
-   action = MLOADBALANCE;  
+   action = MLOADBALANCE;
    POST_SEMAPHOR();
    if(!yarp::os::Thread::isRunning())
        yarp::os::Thread::start();

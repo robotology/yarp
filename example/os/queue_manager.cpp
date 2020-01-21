@@ -103,7 +103,7 @@ public:
         addUsage("[del] $foo", "remove a name from the queue");
     }
 
-    virtual bool respond(const yarp::os::Bottle& command, 
+    virtual bool respond(const yarp::os::Bottle& command,
                          yarp::os::Bottle& reply) {
         mutex.lock();
         switch (command.get(0).asVocab()) {
@@ -152,7 +152,7 @@ public:
                         }
                         addQueue(reply);
                     }
-                } 
+                }
             }
             break;
         case yarp::os::createVocab('l','i','s','t'):

@@ -18,7 +18,7 @@ In this example we will use a fake device, for testing purposes: the `fakeDepthC
 
 ```
 Terminal 1: yarpserver
-Terminal 2: yarpdev --device RGBDSensorWrapper --name /server --subdevice fakeDepthCamera --mode ball 
+Terminal 2: yarpdev --device RGBDSensorWrapper --name /server --subdevice fakeDepthCamera --mode ball
 ```
 The parameters here means:
 - device: The server we want to open
@@ -56,7 +56,7 @@ config.put("device", "fakeDepthCamera");            // device producing (fake) d
 
 PolyDriver dd;
 dd.open(config);
-``` 
+```
 
 The Polydriver class will load the required plugin and the makes it available to the user.
 In order to access specific functionality offered by the driver, the user must access to the right YARP interface.
@@ -65,7 +65,7 @@ Polydriver offers the 'view' functionality which expose a particular interface (
 ``` c++
 yarp::dev::IRGBDSensor *RGBDInterface;              // interface we want to use
 dd.view(RGBDInterface);
-``` 
+```
 Now, the user can easily access the device functionality by mean of the interface pointer:
 
 ``` c++

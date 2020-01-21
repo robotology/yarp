@@ -7,7 +7,7 @@
 -- BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 
--- LUA_CPATH should have the path to yarp-lua binding library (i.e. yarp.so, yarp.dll) 
+-- LUA_CPATH should have the path to yarp-lua binding library (i.e. yarp.so, yarp.dll)
 require("yarp")
 
 -- initialize yarp network

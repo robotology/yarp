@@ -174,7 +174,7 @@ void MainWindow::on_enableLogTab(int model_row)
     std::string logname = model_yarprunports->item(model_row,1)->text().toStdString();
     bool log_enabled = theLogger->get_log_enable_by_port_complete(logname);
 
-    if (log_enabled) 
+    if (log_enabled)
     {
         theLogger->set_log_enable_by_port_complete(logname,false);
         for (int j=0; j<model_yarprunports->columnCount(); j++)
@@ -210,7 +210,7 @@ void MainWindow::on_clearLogTab(int model_row)
     QString logname = model_yarprunports->item(model_row,1)->text();
     theLogger->clear_messages_by_port_complete(logname.toStdString());
     for (int i=0; i<ui->logtabs->count(); i++)
-        if (ui->logtabs->tabText(i) == logname) 
+        if (ui->logtabs->tabText(i) == logname)
             {
                 auto* l = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
                 if (l) l->clear_model_logs();
@@ -407,7 +407,7 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &pre_index)
         return;
     }
     QString tabname = model_yarprunports->item(model_row,1)->text();
- 
+
     int exists = -1;
     for (int i=0; i<ui->logtabs->count(); i++)
         if (ui->logtabs->tabText(i) == tabname) exists = i;
@@ -506,7 +506,7 @@ void MainWindow::on_actionShow_YarprunTimestamps_toggled(bool arg1)
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) 
+        if (logtab)
         {
             logtab->displayYarprunTimestamp(displayYarprunTimestamps);
         }
@@ -519,7 +519,7 @@ void MainWindow::on_actionShow_LocalTimestamps_toggled(bool arg1)
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) 
+        if (logtab)
         {
             logtab->displayLocalTimestamp(displayLocalTimestamps);
         }
@@ -566,7 +566,7 @@ void MainWindow::on_actionShow_Error_Level_toggled(bool arg1)
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) 
+        if (logtab)
         {
             logtab->displayErrorLevel(displayErrorLevel);
         }
@@ -579,7 +579,7 @@ void MainWindow::on_actionShow_Colors_toggled(bool arg1)
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) 
+        if (logtab)
         {
             logtab->displayColors(displayColors);
         }
@@ -592,7 +592,7 @@ void MainWindow::on_actionShow_Grid_toggled(bool arg1)
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab) 
+        if (logtab)
         {
             logtab->displayGrid(displayGrid);
         }

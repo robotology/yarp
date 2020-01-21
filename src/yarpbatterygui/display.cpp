@@ -80,7 +80,7 @@ void MainWindow::updateMain()
 
     //For debug purpose only
     //connected = true;
-    //charge = 100; 
+    //charge = 100;
     //voltage = 40.1;
     //current = -10.3;
 
@@ -211,7 +211,7 @@ MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, yarp::dev::IBattery* 
     mainTimer = new QTimer(this);
     connect(mainTimer, SIGNAL(timeout()), this, SLOT(updateMain()));
     mainTimer->start(1000*refresh_period); //10 seconds
-    
+
     //this->setWindowFlags(Qt::BypassWindowManagerHint); //Set window with no title bar
     //this->setWindowFlags(Qt::CustomizeWindowHint); //Set window with no title bar
     this->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint); //Set window to fixed size

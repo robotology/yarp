@@ -48,11 +48,11 @@ int yarp_receive(yarpConnection connection, char *buf, int len);
 /* receive a string from a connection */
 int yarp_receive_line(yarpConnection connection, char *buf, int len);
 
-/* receive a series of strings from a connection.  The pending_buf and 
-   pending_len should be initially NULL/0.  Keep calling until 
+/* receive a series of strings from a connection.  The pending_buf and
+   pending_len should be initially NULL/0.  Keep calling until
    return value is <= 0
 */
-int yarp_receive_lines(yarpConnection connection, char *buf, int len, 
+int yarp_receive_lines(yarpConnection connection, char *buf, int len,
                        char **pending_buf, int *pending_len);
 
 /* receive payload bytes (user data, no YARP meta data) from a connection */

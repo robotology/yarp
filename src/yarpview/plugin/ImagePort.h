@@ -55,7 +55,7 @@ public:
     using yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >::onRead;
     void onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img) override;
 #endif
- 
+
 private:
     int counter;
     SignalHandler *sigHandler;

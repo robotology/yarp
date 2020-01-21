@@ -54,8 +54,8 @@ int main(int argc, char *argv[]) {
             Value& life = player->find("life");
 
             std::string playerName = player->get(0).asString();
-            printf("PLAYER %s is at (%d,%d) with lifeforce %d\n", 
-                   playerName.c_str(), 
+            printf("PLAYER %s is at (%d,%d) with lifeforce %d\n",
+                   playerName.c_str(),
                    location.get(1).asInt32(),
                    location.get(2).asInt32(),
                    life.asInt32());

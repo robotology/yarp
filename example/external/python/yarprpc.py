@@ -43,7 +43,7 @@ def comm(addr,message):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(addr)
     sock.send('CONNACK extern\n')
-    getline(sock) 
+    getline(sock)
     sock.send('d\n%s\n' % message)
     result = getline(sock)
     sock.close()

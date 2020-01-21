@@ -16,7 +16,7 @@
 using namespace yarp::os;
 
 using namespace std;
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     Network yarp;
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     rf.setDefaultConfigFile("config.ini");
     rf.setDefaultContext("randomMotion");
     rf.configure(argc, argv);
-        
+
     std::string robotName=rf.find("robot").asString();
     std::string partName=rf.find("part").asString();
     int joint=rf.find("joint").asInt32();
@@ -34,6 +34,6 @@ int main(int argc, char *argv[])
     cout<<"robot: "<<robotName.c_str()<<endl;
     cout<<"part: "<<partName.c_str()<<endl;
     cout<<"joint: "<<joint<<endl;
-       
+
     return 0;
 }

@@ -34,7 +34,7 @@ set name_server {"localhost" 10000}
 ## Send a single command to a port target, and return the first line
 ## of the response.
 ##
-## Warning: this method is inefficient for multiple commands, since 
+## Warning: this method is inefficient for multiple commands, since
 ## there is no reuse of the socket connection.
 ##
 
@@ -84,7 +84,7 @@ proc query {portname} {
     if {[string trim $r] eq "*** end of message"} {
 	puts "Error: could not find port $portname"
 	exit 1
-    } 
+    }
     set contact_info [eval "list $r"]
     set result [list [lindex $contact_info 4] [lindex $contact_info 6]]
     puts "Found $portname at $result"
@@ -94,7 +94,7 @@ proc query {portname} {
 #######################################################################
 ##
 ## Convert a "YARP Bottle" to a TCL nested list.  The conversion is
-## quite approximate, and could fail if special characters are 
+## quite approximate, and could fail if special characters are
 ## present in quoted form.
 ##
 

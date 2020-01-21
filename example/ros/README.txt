@@ -8,4 +8,4 @@ Make sure you run:
 
 $ yarpidl_rosmsg String
 
-to generate String.h (required to compile listener.cpp talker.cpp) 
+to generate String.h (required to compile listener.cpp talker.cpp)

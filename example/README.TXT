@@ -35,7 +35,7 @@ libraries.
 * property
 
     Reading config files and command line arguments in a way
-    that is compatible with configuring drivers and sending 
+    that is compatible with configuring drivers and sending
     network messages.
 
 * remote_check
@@ -44,7 +44,7 @@ libraries.
 
 * dev_check
 
-    Tests the YARP factories for producing interfaces to 
+    Tests the YARP factories for producing interfaces to
     device drivers.
 
 * game

@@ -130,7 +130,7 @@ bool GenericSensorRosPublisher<ROS_MSG>::open(yarp::os::Searchable & config)
         yError() << " GenericSensorRosPublisher: invalid node name: " << m_rosNodeName;
         return false;
     }
-  
+
     m_rosNode = new yarp::os::Node(m_rosNodeName); // add a ROS node
 
     if (m_rosNode == nullptr) {

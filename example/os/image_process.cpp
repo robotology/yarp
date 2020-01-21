@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     // Set the name of the port (use "/worker" if there is no --name option)
     std::string portName = options.check("name",Value("/worker")).asString();
     port.open(portName);
-  
+
     int ct = 0;
     while (true) {
         // read an image from the port
@@ -64,6 +64,6 @@ int main(int argc, char *argv[]) {
         port.prepare() = *img;
         port.write();
     }
-  
+
     return 0;
 }

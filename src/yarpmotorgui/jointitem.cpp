@@ -334,7 +334,7 @@ bool JointItem::eventFilter(QObject *obj, QEvent *event)
             if(slider == nullptr)
                 return false;
 
-            
+
             if(keyEvent->type() == QEvent::KeyPress){
                 if(key == Qt::Key_Left || key == Qt::Key_Down){
                     slider->setValue(slider->value() - 1);
@@ -794,7 +794,7 @@ void JointItem::setSpeedVisible(bool visible)
         ui->labelPositionDirvelUnits->setMinimumHeight(0);
         ui->labelMixedSpeed->setMinimumHeight(0);
         ui->labelMixedvelUnits->setMinimumHeight(0);
-        ui->labelTorqueSpeed->setMinimumHeight(0); 
+        ui->labelTorqueSpeed->setMinimumHeight(0);
         ui->labelTorquevelUnits->setMinimumHeight(0);
         ui->labelPWMSpeed->setMinimumHeight(0);
         ui->labelPWMvelUnits->setMinimumHeight(0);
@@ -1385,7 +1385,7 @@ void JointItem::updateSliderPosition(SliderWithTarget *slider, double val)
 {
     if(sliderTrajectoryPositionPressed ||
         sliderMixedPositionPressed ||
-        sliderDirectPositionPressed) 
+        sliderDirectPositionPressed)
     {
         return;
     }
