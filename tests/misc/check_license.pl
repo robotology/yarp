@@ -6,6 +6,14 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+
+sub print_if_verbose
+{
+    #print (@_);
+    return;
+}
+
+
 my @files = `git ls-files src example tests scripts cmake bindings CMakeLists.txt`;
 s{^\s+|\s+$}{}g foreach @files;
 
@@ -319,32 +327,32 @@ foreach my $filename (@files) {
     }
 
     if( $match ) {
-        print "[SKIP (known)] $filename\n";
+        print_if_verbose "[SKIP (known)] $filename\n";
         $known++;
         next;
     }
 
     # Skip images and binary files
     if ("$filename" =~ /\.(png|svg|jpg|ppm|bmp|ico|icns)$/) {
-        print "[SKIP (image - $1)] $filename\n";
+        print_if_verbose "[SKIP (image - $1)] $filename\n";
         $skip++;
         next;
     }
 
     if ("$filename" =~ /\.(avi)$/) {
-        print "[SKIP (video - $1)] $filename\n";
+        print_if_verbose "[SKIP (video - $1)] $filename\n";
         $skip++;
         next;
     }
 
     if ("$filename" =~ /\.(wav)$/) {
-        print "[SKIP (audio - $1)] $filename\n";
+        print_if_verbose "[SKIP (audio - $1)] $filename\n";
         $skip++;
         next;
     }
 
     if ("$filename" =~ /\.(rar)$/) {
-        print "[SKIP (binary - $1)] $filename\n";
+        print_if_verbose "[SKIP (binary - $1)] $filename\n";
         $skip++;
         next;
     }
@@ -369,25 +377,25 @@ foreach my $filename (@files) {
 
     # Skip a specific files
     if ("$filename" =~ /src\/(carriers|devices)\/.+\.ini$/) {
-        print "[SKIP (plugin .ini)] $filename\n";
+        print_if_verbose "[SKIP (plugin .ini)] $filename\n";
         $skip++;
         next;
     }
 
     if ("$filename" =~ /\/(README|readme)(\.(txt|TXT|md))?$/) {
-        print "[SKIP (README)] $filename\n";
+        print_if_verbose "[SKIP (README)] $filename\n";
         $skip++;
         next;
     }
 
     if ("$filename" =~ /\/qmldir$/) {
-        print "[SKIP (qmldir)] $filename\n";
+        print_if_verbose "[SKIP (qmldir)] $filename\n";
         $skip++;
         next;
     }
 
     if ("$filename" =~ /\/Doxyfile(.in)?$/) {
-        print "[SKIP (Doxyfile)] $filename\n";
+        print_if_verbose "[SKIP (Doxyfile)] $filename\n";
         $skip++;
         next;
     }
@@ -395,14 +403,14 @@ foreach my $filename (@files) {
     if ("$filename" eq "src/carriers/portmonitor_carrier/lua/lua_swig.h" ||
         "$filename" =~ /src\/idls\/thrift\/src_gen\/thrift\// ||
         "$filename" =~ /\/qtquick2applicationviewer/) {
-        print "[SKIP (autogen)] $filename\n";
+        print_if_verbose "[SKIP (autogen)] $filename\n";
         $skip++;
         next;
     }
 
     if ("$filename" =~ /\.(ui|rc|qrc|xml|xslt|xsl|msg|srv|ini|cfg|txt|TXT|dox|md|plist.in|tex|mdl)$/) {
         if ("$filename" !~ /CMakeLists.txt$/) {
-            print "[SKIP ($1)] $filename\n";
+            print_if_verbose "[SKIP ($1)] $filename\n";
             $skip++;
             next;
         }
@@ -411,10 +419,10 @@ foreach my $filename (@files) {
     # C++ style BSD-3-Clause
     if ("$txt" =~ /$str_bsd3_cpp/s) {
         if ("$filename" =~ /\.(cpp|cpp.in|c|h|h.in|thrift|mm|qml|java|cs)$/) {
-            print "[OK - BSD ($1)] $filename\n";
+            print_if_verbose "[OK - BSD ($1)] $filename\n";
             $ok++;
         } elsif ("$filename" =~ /\/compiler\..+\.in$/) {
-            print "[OK - BSD (compiler.*.in)] $filename\n";
+            print_if_verbose "[OK - BSD (compiler.*.in)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - BSD (c++ style)] $filename\n";
@@ -426,10 +434,10 @@ foreach my $filename (@files) {
     # Script style BSD-3-Clause (no shebang)
     if ("$txt" =~ /$str_bsd3_script_no_sb/s) {
         if ("$filename" =~ /\.(cmake|cmake\.in|cmake\.template|ps1)$/) {
-            print "[OK - BSD ($1)] $filename\n";
+            print_if_verbose "[OK - BSD ($1)] $filename\n";
             $ok++;
         } elsif ("$filename" =~ /CMakeLists.txt$/) {
-            print "[OK - BSD (CMakeLists.txt)] $filename\n";
+            print_if_verbose "[OK - BSD (CMakeLists.txt)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - BSD (script)] $filename\n";
@@ -452,10 +460,10 @@ foreach my $filename (@files) {
         }
 
         if ("$filename" =~ /\.(sh|py|pl|tcl)$/) {
-            print "[OK - BSD (.$1)] $filename\n";
+            print_if_verbose "[OK - BSD (.$1)] $filename\n";
             $ok++;
         } else {
-            print "[OK - BSD (script)] $filename\n";
+            print_if_verbose "[OK - BSD (script)] $filename\n";
             $ok++;
         }
         next;
@@ -464,7 +472,7 @@ foreach my $filename (@files) {
     # Xml style BSD-3-Clause
     if ("$txt" =~ /$str_bsd3_xml/s) {
         if ("$filename" =~ /\.xml$/) {
-            print "[OK - BSD (.xml)] $filename\n";
+            print_if_verbose "[OK - BSD (.xml)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - BSD (xml style)] $filename\n";
@@ -476,7 +484,7 @@ foreach my $filename (@files) {
     # Lua style BSD-3-Clause
     if ("$txt" =~ /$str_bsd3_lua/s) {
         if ("$filename" =~ /\.lua$/) {
-            print "[OK - BSD (.lua)] $filename\n";
+            print_if_verbose "[OK - BSD (.lua)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - BSD (lua style)] $filename\n";
@@ -488,7 +496,7 @@ foreach my $filename (@files) {
     # Swig style BSD-3-Clause
     if ("$txt" =~ /$str_bsd3_swig/s) {
         if ("$filename" =~ /\.(i)$/) {
-            print "[OK - BSD ($1)] $filename\n";
+            print_if_verbose "[OK - BSD ($1)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - BSD (swig style)] $filename\n";
@@ -500,7 +508,7 @@ foreach my $filename (@files) {
     # Matlab style BSD-3-Clause
     if ("$txt" =~ /$str_bsd3_mat/s) {
         if ("$filename" =~ /\.(m)$/) {
-            print "[OK - BSD ($1)] $filename\n";
+            print_if_verbose "[OK - BSD ($1)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - BSD (mat style)] $filename\n";
@@ -515,7 +523,7 @@ foreach my $filename (@files) {
             print "[NOT OK - LGPL2.1+ (library $1)] $filename\n";
             $errors++;
         } elsif ("$filename" =~ /\.(cpp|h|thrift|qml)$/) {
-            print "[OK - LGPL2.1+ ($1)] $filename\n";
+            print_if_verbose "[OK - LGPL2.1+ ($1)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - LGPL2.1+] $filename\n";
@@ -530,7 +538,7 @@ foreach my $filename (@files) {
             print "[NOT OK - LGPL2.1+ (library $1)] $filename\n";
             $errors++;
         } elsif ("$filename" =~ /\.(lua)$/) {
-            print "[OK - LGPL2.1+ ($1)] $filename\n";
+            print_if_verbose "[OK - LGPL2.1+ ($1)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - LGPL2.1+] $filename\n";
@@ -552,7 +560,7 @@ foreach my $filename (@files) {
         if ("$filename" =~ /src\/libYARP_gsl\/.*\.(cpp|h)/ ||
             "$filename" =~ /example\/matrix\/.*\.(cpp|h)/) {
             # YARP_gsl library is necessarily GPL2+
-            print "[OK - GPL2+ ($1)] $filename\n";
+            print_if_verbose "[OK - GPL2+ ($1)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - GPL2+] $filename\n";
@@ -571,7 +579,7 @@ foreach my $filename (@files) {
             "$filename" =~ /src\/yarpscope\/.*\.(cpp|h|qml)/ ||
             "$filename" =~ /example\/ContainerExample\/.*\.(cpp|h|qml)/) {
             # yarpviz and yarpscope are necessarily GPL3+
-            print "[OK - GPL3+ ($1)] $filename\n";
+            print_if_verbose "[OK - GPL3+ ($1)] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - GPL3+] $filename\n";
@@ -587,7 +595,7 @@ foreach my $filename (@files) {
     # Apache 2.0
     if ("$txt" =~ /$str_apache_2/s) {
         if ("$filename" eq "src/idls/thrift/src/t_yarp_generator.cc") {
-            print "[OK - Apache 2.0] $filename\n";
+            print_if_verbose "[OK - Apache 2.0] $filename\n";
             $ok++;
         } else {
             print "[NOT OK - Apache 2.0] $filename\n";
@@ -601,6 +609,7 @@ foreach my $filename (@files) {
     next;
 }
 
+print "\n";
 print "FILES:  $files\n";
 print "OK:     $ok\n";
 print "SKIP:   $skip\n";
