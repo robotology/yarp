@@ -374,6 +374,13 @@ foreach my $filename (@files) {
         next;
     }
 
+    # Check if the file contains windows EOL
+    if ("$txt" =~ /\r\n/s) {
+        print "[NOT OK (Contains Windows EOL)] $filename\n";
+        $errors++;
+        next;
+    }
+
 
     # Skip a specific files
     if ("$filename" =~ /src\/(carriers|devices)\/.+\.ini$/) {
