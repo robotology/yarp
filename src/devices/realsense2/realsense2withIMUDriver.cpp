@@ -27,7 +27,7 @@
  // This software module is experimental.
  // It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.
  /**********************************************************************************************************/
- 
+
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -304,7 +304,7 @@ bool realsense2withIMUDriver::open(Searchable& config)
         b &= pipelineRestart();
     }
     /*
-    //T265 is very diffcukt to implement without major refactoring. 
+    //T265 is very diffcukt to implement without major refactoring.
     //here some infos, just for reference
     else if(sensor_is == "t265")
     {
@@ -465,7 +465,7 @@ bool realsense2withIMUDriver::getOrientationSensorMeasureAsRollPitchYaw(size_t s
         std::lock_guard<std::mutex> guard(m_mutex);
         rs2::frameset dataframe = m_pipeline.wait_for_frames();
         auto motion = dataframe.as<rs2::motion_frame>();
-        if (motion && motion.get_profile().stream_type() == RS2_STREAM_GYRO && 
+        if (motion && motion.get_profile().stream_type() == RS2_STREAM_GYRO &&
                       motion.get_profile().format() == RS2_FORMAT_MOTION_XYZ32F)
         {
             // Get the timestamp of the current frame

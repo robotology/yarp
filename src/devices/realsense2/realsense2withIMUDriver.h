@@ -25,7 +25,7 @@
  // This software module is experimental.
  // It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.
  /**********************************************************************************************************/
- 
+
 class rotation_estimator;
 
 class realsense2withIMUDriver :
@@ -127,4 +127,3 @@ protected:
     std::vector<cameraFeature_id_t> m_supportedFeatures;*/
 };
 #endif
-

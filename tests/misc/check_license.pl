@@ -381,6 +381,13 @@ foreach my $filename (@files) {
         next;
     }
 
+    # Check if the file contains trailing white spaces
+    if ("$txt" =~ / \n/s) {
+        print "[NOT OK (Contains trailing white spaces)] $filename\n";
+        $errors++;
+        next;
+    }
+
 
     # Skip a specific files
     if ("$filename" =~ /src\/(carriers|devices)\/.+\.ini$/) {
