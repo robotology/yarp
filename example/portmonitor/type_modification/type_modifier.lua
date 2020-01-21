@@ -80,4 +80,3 @@ PortMonitor.update = function(thing)
     th:setPortWriter(vec)
     return th
 end
-

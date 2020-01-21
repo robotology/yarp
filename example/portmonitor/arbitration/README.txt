@@ -74,4 +74,3 @@ To run the arbitration example:
 To stop the application, type:
     >> stop
     >> exit
-

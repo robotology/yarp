@@ -189,4 +189,3 @@ private:
 
 
 #endif // SEQUENCEWINDOW_H
-

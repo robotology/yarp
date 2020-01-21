@@ -74,4 +74,3 @@ bool yarp::robottestingframework::TestAsserter::isApproxEqual(double left,
         return false;
     }
 }
-

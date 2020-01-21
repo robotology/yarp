@@ -26,4 +26,3 @@ Have a yarp server running. Additional dependencies can be solved with the follo
 * yarpReadDoubles: yarp write /write
 * yarpRemotePosEnc: yarpdev --device test_motor
 * yarpRemoteVelEnc: yarpdev --device test_motor
-

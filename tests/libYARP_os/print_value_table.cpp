@@ -180,4 +180,3 @@ YARP_WARNING_POP
 
     return 0;
 }
-

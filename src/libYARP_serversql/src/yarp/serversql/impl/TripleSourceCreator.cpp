@@ -111,4 +111,3 @@ bool TripleSourceCreator::close() {
     }
     return true;
 }
-

@@ -35,6 +35,3 @@ while(~done)
 end
 
 port.close;
-
-
-

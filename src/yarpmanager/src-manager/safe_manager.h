@@ -119,4 +119,3 @@ private:
 
 
 #endif // SAFE_MANAGER_H
-

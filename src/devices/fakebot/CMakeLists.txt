@@ -34,4 +34,3 @@ if(NOT SKIP_fakebot)
 
   set_property(TARGET yarp_fakebot PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
-

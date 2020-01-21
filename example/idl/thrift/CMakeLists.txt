@@ -32,4 +32,3 @@ target_include_directories(generatedDemoLibrary PUBLIC $<BUILD_INTERFACE:${THRIF
 target_link_libraries(generatedDemoLibrary YARP::YARP_os)
 
 add_subdirectory(userImpl)
-

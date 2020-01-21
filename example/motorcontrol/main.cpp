@@ -40,4 +40,3 @@ int main(int argc, const char **argv)
     device.close();
     return 0;
 }
-

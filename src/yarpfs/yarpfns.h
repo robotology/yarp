@@ -35,4 +35,3 @@ int yarp_symlink(const char *from, const char *to);
 int yarp_link(const char *from, const char *to);
 
 #endif
-

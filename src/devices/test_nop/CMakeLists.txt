@@ -38,4 +38,3 @@ if(NOT SKIP_test_nop)
 
   set_property(TARGET yarp_test_nop PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
-

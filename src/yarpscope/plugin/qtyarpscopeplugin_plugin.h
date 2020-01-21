@@ -31,4 +31,3 @@ public:
 };
 
 #endif // QTYARPSCOPEPLUGIN_PLUGIN_H
-

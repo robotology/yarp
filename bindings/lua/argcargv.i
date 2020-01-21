@@ -70,4 +70,3 @@ SWIGINTERN int SWIG_argv_size(lua_State* L, int index) {
 %typemap(freearg) (int ARGC, char **ARGV) {
   free((char *) $2);
 }
-

@@ -16,5 +16,3 @@ tcl/control-motor.tcl controls a YARP motor controlboard from TCL.
 Code written by someone who doesn't really know TCL very well,
 so beware.  Assumes that you have run:
   yarpdev --device test_motor --name /controlboard
-
-

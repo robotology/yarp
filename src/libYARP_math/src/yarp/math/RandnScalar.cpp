@@ -88,6 +88,3 @@ void RandnScalar::boxMuller()
     y[0] = x1 * w;
     y[1] = x2 * w;
 }
-
-
-

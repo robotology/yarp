@@ -31,4 +31,3 @@ enum ItemType { ModuleItemType, SourcePortItemType, DestinationPortItemType,  Co
 
 
 #endif // COMMONS
-

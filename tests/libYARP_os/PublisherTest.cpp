@@ -166,4 +166,3 @@ TEST_CASE("OS::PublisherTest", "[yarp::os]")
 
     Network::setLocalMode(false);
 };
-

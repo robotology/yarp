@@ -239,4 +239,3 @@ bool MjpegCarrier::autoCompression() const {
     return false;
 #endif
 }
-

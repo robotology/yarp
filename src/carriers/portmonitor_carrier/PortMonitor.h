@@ -128,5 +128,3 @@ private:
 };
 
 #endif //PORTMONITOR_INC
-
-

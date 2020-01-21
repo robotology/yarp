@@ -13,5 +13,3 @@ bool foobot::open(yarp::os::Searchable& config)
 {
     return true;
 }
-
-

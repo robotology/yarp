@@ -52,4 +52,3 @@ void IMURosPublisher::run()
         m_publisher.write();
     }
  }
-

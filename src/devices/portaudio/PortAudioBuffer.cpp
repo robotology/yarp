@@ -23,6 +23,3 @@
 #include <portaudio.h>
 
 using namespace yarp::dev;
-
-
-

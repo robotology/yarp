@@ -474,7 +474,3 @@ void MasterThread::threadRelease()
 {
 
 }
-
-
-
-

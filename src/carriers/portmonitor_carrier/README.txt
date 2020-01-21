@@ -113,5 +113,3 @@ Port Monitor carrier
   Port monitor carrier looks for the global table name 'PortMonitor' in the user script and calls its
   corresponding functions if exist. Notice that the PortMonitor is a global variable and should not be
   altered or assigned to nil.
-
-

@@ -45,5 +45,3 @@ gets encoded with a simple base64 encoder and transmited to the receiver. For ex
 
 Notice that codec.lua acts as coder or decoder depending to which side of the connection
 it is attached. This is checked in the PortMonitor.create(options) callback.
-
-

@@ -53,4 +53,3 @@ void PoseStampedRosPublisher::run()
         m_publisher.write();
     }
  }
-

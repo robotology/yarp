@@ -155,4 +155,3 @@ int yarp_context_main(int argc, char *argv[]) {
     yarp_context_help();
     return 1;
 }
-

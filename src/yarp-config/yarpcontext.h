@@ -12,4 +12,3 @@
 int yarp_context_main(int argc, char *argv[]);
 void yarp_context_help();
 #endif
-

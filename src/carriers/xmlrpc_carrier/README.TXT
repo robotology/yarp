@@ -26,6 +26,3 @@ string "dict" or "list", prepend the keyword "list".
   (list ...)
 That keyword will be silently consumed, and will guarantee
 that an XMLRPC array is produced.
-
-
-

@@ -139,4 +139,3 @@ int main(int argc, char *argv[])
 
     return (app.exec()!=0?1:0);
 }
-

@@ -87,6 +87,3 @@ YARP_DEFINE(int) yarpNetworkDisconnect(yarpNetworkPtr network,
     YARP_NETWORK(network).disconnect(src,dest);
     return 0;
 }
-
-
-

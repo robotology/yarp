@@ -51,4 +51,3 @@ case "$1" in
     ./ctrl.sh demo
     ;;
 esac
-

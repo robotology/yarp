@@ -271,5 +271,3 @@ void SourcePortItem::setAvailable(bool available)
     portAvailable = available;
     update();
 }
-
-

@@ -32,4 +32,3 @@ public:
 };
 
 #endif // QTYARPVIEW_PLUGIN_H
-

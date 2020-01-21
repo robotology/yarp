@@ -45,5 +45,3 @@ function imageTest()
 end
 
 imageTest()
-
-

@@ -23,4 +23,3 @@ public:
 
     bool open(yarp::os::Searchable& config) override;
 };
-

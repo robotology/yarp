@@ -71,4 +71,3 @@ TEST_CASE("OS::MessageStackTest", "[yarp::os]")
         CHECK(worker.last.toString() == "the world"); // got a prefixed message
     }
 }
-

@@ -134,5 +134,3 @@ puts [send_command $motor "get axes"]
 
 # Set the position of the first motor to 50.
 puts [send_command $motor "set pos 0 50"]
-
-

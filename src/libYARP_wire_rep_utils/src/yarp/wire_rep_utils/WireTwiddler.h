@@ -364,4 +364,3 @@ public:
 } // namespace yarp
 
 #endif
-

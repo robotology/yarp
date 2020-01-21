@@ -37,4 +37,3 @@ int main(int argc, char *argv[]) {
     // call the yarp standard companion
     return yarp::companion::main(argc,argv);
 }
-

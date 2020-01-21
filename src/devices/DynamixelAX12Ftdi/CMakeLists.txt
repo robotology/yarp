@@ -37,5 +37,3 @@ if(NOT SKIP_dynamixelAX12Ftdi)
 
   set_property(TARGET yarp_dynamixelAX12Ftdi PROPERTY FOLDER "Unsupported")
 endif()
-
-

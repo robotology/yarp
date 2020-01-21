@@ -180,5 +180,3 @@ PortMonitor.getparam = function()
     property:fromString(bt:toString())
     return property
 end
-
-

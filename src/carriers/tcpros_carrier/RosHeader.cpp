@@ -98,6 +98,3 @@ std::string RosHeader::toString() const {
     }
     return result;
 }
-
-
-

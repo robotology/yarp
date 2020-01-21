@@ -16,5 +16,3 @@ PortMonitor.create = function(options)
     PortMonitor.setConstraint("e_ball_selected")
     return true;
 end
-
-

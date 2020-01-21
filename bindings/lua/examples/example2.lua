@@ -54,4 +54,3 @@ receiver:close()
 
 -- Deinitialize yarp network
 yarp.Network_fini()
-

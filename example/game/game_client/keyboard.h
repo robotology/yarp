@@ -12,4 +12,3 @@
 extern yarp::String getCommand();
 
 extern yarp::String getPreparation();
-

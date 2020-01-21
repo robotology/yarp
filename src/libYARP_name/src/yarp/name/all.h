@@ -15,4 +15,3 @@
 #include <yarp/name/BootstrapServer.h>
 
 #endif
-

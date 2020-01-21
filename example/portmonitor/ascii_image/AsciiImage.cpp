@@ -91,4 +91,3 @@ yarp::os::Things& AsciiImageMonitorObject::update(yarp::os::Things& thing)
     free(str);
     return th;
 }
-

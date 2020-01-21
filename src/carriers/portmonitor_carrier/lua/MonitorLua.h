@@ -112,5 +112,3 @@ private:
 
 
 #endif //_MONITORLUA_INC_
-
-

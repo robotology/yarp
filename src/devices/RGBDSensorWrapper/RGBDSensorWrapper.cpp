@@ -964,4 +964,3 @@ void RGBDSensorWrapper::run()
             yError("RGBDSensorWrapper: %s: Sensor interface is not valid", sensorId.c_str());
     }
 }
-

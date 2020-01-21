@@ -18,4 +18,3 @@
 #define COLLATZ_EMPTY_FIELD         0
 
 #endif
-

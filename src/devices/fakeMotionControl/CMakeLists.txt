@@ -37,4 +37,3 @@ if(NOT SKIP_fakeMotionControl)
 
   set_property(TARGET yarp_fakeMotionControl PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
-

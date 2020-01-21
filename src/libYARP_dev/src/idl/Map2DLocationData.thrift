@@ -19,4 +19,3 @@ struct Map2DLocationData
     yarp.api.include = "yarp/dev/api.h"
     yarp.api.keyword = "YARP_dev_API"
 )
-

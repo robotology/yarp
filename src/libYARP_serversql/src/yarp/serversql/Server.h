@@ -29,4 +29,3 @@ private:
 } // namespace yarp
 
 #endif // YARP_SERVERSQL_SERVER_H
-

@@ -176,5 +176,3 @@ YARP_DEFINE(int) yarpPortWriteWithReply(yarpPortPtr port,
     YARP_OK0(areply);
     return YARP_PORT(port).write(*amsg,*areply)?0:-1;
 }
-
-

@@ -108,4 +108,3 @@ YARP_DEFINE(int) yarpThreadIsStopping(yarpThreadPtr thread) {
     YARP_OK(thread);
     return YARP_THREAD(thread).isStopping();
 }
-

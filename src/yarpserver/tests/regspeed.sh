@@ -14,4 +14,3 @@ while [ $x -le $top ]; do
     echo Hello | yarp write /write
     let x=x+1
 done
-

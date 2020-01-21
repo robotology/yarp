@@ -221,4 +221,3 @@ yarp::os::Face* H264Carrier::createFace() const
 {
     return new yarp::os::impl::FakeFace();
 }
-

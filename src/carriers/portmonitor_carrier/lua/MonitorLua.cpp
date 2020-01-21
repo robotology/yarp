@@ -639,5 +639,3 @@ const struct luaL_reg MonitorLua::portMonitorLib [] = {
     {"setTrigInterval", MonitorLua::setTrigInterval},
     {nullptr, nullptr}
 };
-
-

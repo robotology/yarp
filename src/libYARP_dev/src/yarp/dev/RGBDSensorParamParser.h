@@ -94,7 +94,3 @@ public:
 } // yarp
 
 #endif
-
-
-
-

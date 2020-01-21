@@ -37,4 +37,3 @@ struct Vector {
   yarp.name = "yarp::sig::Vector"
   yarp.includefile="yarp/sig/Vector.h"
 )
-

@@ -715,5 +715,3 @@ void NameServiceOnTriples::unlock() {
     db->end(nullptr);
     mutex.unlock();
 }
-
-

@@ -94,5 +94,3 @@ int yarp_link(const char *from, const char *to) {
 
     return 0;
 }
-
-

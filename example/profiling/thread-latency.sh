@@ -18,4 +18,3 @@ for rate in $RATES
   reportFile="latency-$rate-$KER.txt"
   mv dump.txt $reportFile
 done
-

@@ -71,5 +71,3 @@ PortMonitor.update_reply = function(thing)
     bt:addString("(Mondo)")
     return thing
 end
-
-

@@ -459,8 +459,3 @@ void PidDlg::onCancel()
 {
     reject();
 }
-
-
-
-
-

@@ -25,4 +25,3 @@ BuilderWindow *YarpBuilderLib::getBuilder(Application *app, Manager *lazyManager
 {
     return new BuilderWindow(app,lazyManager,manager,editingMode);
 }
-

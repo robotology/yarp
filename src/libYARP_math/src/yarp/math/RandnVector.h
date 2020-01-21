@@ -44,4 +44,3 @@ public:
 };
 
 #endif // YARP_MATH_RANDNSCALAR_H
-

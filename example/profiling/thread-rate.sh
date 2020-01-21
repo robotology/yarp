@@ -18,4 +18,3 @@ for rate in $RATES
   reportFile="thread-$rate-$KER.txt"
   mv dump.txt $reportFile
 done
-

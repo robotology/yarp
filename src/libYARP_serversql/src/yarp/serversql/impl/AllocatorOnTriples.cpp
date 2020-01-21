@@ -249,6 +249,3 @@ bool AllocatorOnTriples::freePortResources(const yarp::os::Contact& c) {
 
     return true;
 }
-
-
-

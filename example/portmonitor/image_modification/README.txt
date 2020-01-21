@@ -35,4 +35,3 @@ data in an input port
 -- To stop the application, in the yarpmanager's console, type:
     >> stop
     >> exit
-

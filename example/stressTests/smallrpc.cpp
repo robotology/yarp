@@ -72,4 +72,3 @@ int main(int argc, char *argv[]) {
     printf("  smallrpc --client --name /rpc/clientN\n");
     return 1;
 }
-

@@ -164,5 +164,3 @@ bool deBayer_RGGB8_TO_BGR(yarp::sig::Image &source, yarp::sig::Image &dest, int 
     YARP_FIXME_NOTIMPLEMENTED("convert_RGGB8_TO_BGR\n");
     return false;
 }
-
-

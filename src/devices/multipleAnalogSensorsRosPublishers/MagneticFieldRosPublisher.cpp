@@ -38,4 +38,3 @@ void MagneticFieldRosPublisher::run()
         m_publisher.write();
     }
  }
-

@@ -137,5 +137,3 @@ yarp::os::Contact RosLookup::getRosCoreAddress() {
     }
     return addr;
 }
-
-

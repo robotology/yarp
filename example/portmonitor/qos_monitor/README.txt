@@ -32,4 +32,3 @@ will be printed out in the viewer terminal.
  [qos_monitor] Qos is not okay. (data frequency < 30Hz)
  [qos_monitor] Qos is not okay. (data frequency < 30Hz)
  ...
-

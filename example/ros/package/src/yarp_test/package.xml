@@ -9,4 +9,3 @@
   <run_depend>message_runtime</run_depend>
   <buildtool_depend>catkin</buildtool_depend>
 </package>
-

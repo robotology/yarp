@@ -109,4 +109,3 @@ if [ ! "k$1" = "k" ]; then
 fi
 
 valgrind --suppressions=yarp.valgrind.suppress --gen-suppressions=yes bin/harness_$lib regression
-

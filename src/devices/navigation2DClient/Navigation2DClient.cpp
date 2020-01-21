@@ -1655,4 +1655,3 @@ bool  Navigation2DClient::stopLocalizationService()
     }
     return true;
 }
-

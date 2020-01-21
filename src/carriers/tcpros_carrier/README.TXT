@@ -120,6 +120,3 @@ yarp name register /adder tcp localhost $v2
 
  echo "{ 8 0 0 0   0 0 0 0   2 0 0 0   0 0 0 0}" | yarp rpc tcpros+service./add_two_ints://adder )
 # get back { 10 0 0 0 0 0 0 0 }, which is 8 + 2
-
-
-

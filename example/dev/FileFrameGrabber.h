@@ -95,4 +95,3 @@ public:
         return w;
     }
 };
-

@@ -256,4 +256,3 @@ bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGB
 
     return ret;
 }
-

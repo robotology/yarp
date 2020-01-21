@@ -45,5 +45,3 @@ end
 
 test_bottle()
 test_property()
-
-

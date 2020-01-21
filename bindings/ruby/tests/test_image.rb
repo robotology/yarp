@@ -45,5 +45,3 @@ Yarp::Network.init()
 Yarp::Network.setLocalMode(true)
 
 test_image()
-
-

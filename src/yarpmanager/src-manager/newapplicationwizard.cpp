@@ -272,5 +272,3 @@ void NewApplicationWizard::accept()
     }
     QDialog::accept();
 }
-
-

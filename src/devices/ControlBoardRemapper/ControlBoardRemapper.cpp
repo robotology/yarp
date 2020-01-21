@@ -4457,5 +4457,3 @@ bool ControlBoardRemapper::getRefCurrents(double* currs)
 
     return ret;
 }
-
-

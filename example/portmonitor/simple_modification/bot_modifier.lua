@@ -101,5 +101,3 @@ PortMonitor.getparam = function()
 
     return property
 end
-
-

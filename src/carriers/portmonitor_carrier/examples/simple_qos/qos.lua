@@ -78,5 +78,3 @@ PortMonitor.accept = function(thing)
     end
     return true
 end
-
-

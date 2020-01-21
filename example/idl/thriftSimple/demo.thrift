@@ -14,4 +14,3 @@ service Demo {
   bool stop();
   bool is_running();
 }
-

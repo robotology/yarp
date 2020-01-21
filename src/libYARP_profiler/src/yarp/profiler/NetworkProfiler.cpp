@@ -469,4 +469,3 @@ bool NetworkProfiler::getPortmonitorParams(std::string portName, yarp::os::Bottl
     }
     return true;
 }
-

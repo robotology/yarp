@@ -93,4 +93,3 @@ private slots:
 };
 
 #endif // QTYARPSCOPE_H
-

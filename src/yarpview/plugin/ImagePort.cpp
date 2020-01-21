@@ -106,4 +106,3 @@ void InputCallback::setSignalHandler(SignalHandler *handler)
 {
     sigHandler = handler;
 }
-

@@ -34,4 +34,3 @@ if(NOT SKIP_fakeSpeaker)
 
   set_property(TARGET yarp_fakeSpeaker PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
-

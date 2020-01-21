@@ -62,4 +62,3 @@ void NormRand::init(int seed)
 {
     theRandnScalar.init(seed);
 }
-

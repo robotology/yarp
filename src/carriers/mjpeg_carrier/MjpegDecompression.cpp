@@ -236,4 +236,3 @@ bool MjpegDecompression::isAutomatic() const {
     return false;
 #endif
 }
-

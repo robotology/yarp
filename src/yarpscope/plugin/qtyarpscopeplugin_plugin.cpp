@@ -24,5 +24,3 @@ void QtYARPScopePluginPlugin::registerTypes(const char *uri)
     // @uri robotology.yarp.scope
     qmlRegisterType<QtYARPScope>(uri, 1, 0, "QtYARPScopePlugin");
 }
-
-

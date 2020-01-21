@@ -1041,6 +1041,3 @@ yarp::conf::ssize_t WireTwiddlerReader::readMapped(yarp::os::InputStream& is,
 
 //void write(OutputStream& os) {
 //}
-
-
-

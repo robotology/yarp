@@ -183,4 +183,3 @@ if ($policy =~ /BSD-3-Clause/) {
 }
 
 # print "$txt2\n";
-

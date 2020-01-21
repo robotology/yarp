@@ -294,6 +294,3 @@ bool movepicopic(int j, double ref, double *positions, double *speeds, ISerialDe
 
     return true;
 }
-
-
-

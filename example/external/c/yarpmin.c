@@ -599,4 +599,3 @@ int yarp_write_int(char *buf, int len, int x) {
     ubuf[3] = (x>>24)&0xff;
     return 0;
 }
-

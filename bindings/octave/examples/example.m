@@ -43,5 +43,3 @@ p.close();
 
 % Deinitialize yarp network
 yarp.Network.fini();
-
-

@@ -787,4 +787,3 @@ void ApplicationItem::setInputPortAvailable(QString iData, bool available)
             }
     }
 }
-

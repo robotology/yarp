@@ -631,4 +631,3 @@ void SafeManager::refreshPortStatus(int id)
         if(eventReceiver) eventReceiver->onConUnAvailable(-1, id);
     }
 }
-

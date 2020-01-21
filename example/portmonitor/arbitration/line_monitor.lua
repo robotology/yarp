@@ -16,5 +16,3 @@ PortMonitor.create = function(options)
     PortMonitor.setConstraint("e_line_selected")
     return true;
 end
-
-

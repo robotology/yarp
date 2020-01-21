@@ -36,4 +36,3 @@ end
 test_vocab()
 test_vocab_pixel_types_enum()
 test_vocab_global_scope()
-

@@ -242,4 +242,3 @@ TEST_CASE("OS::ContactTest", "[yarp::os]")
         CHECK(c.getName() == "/192.168.1.3:43705"); // good port name
     }
 }
-

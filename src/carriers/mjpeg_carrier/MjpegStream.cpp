@@ -128,4 +128,3 @@ yarp::conf::ssize_t MjpegStream::read(Bytes& b) {
 void MjpegStream::write(const Bytes& b) {
     delegate->getOutputStream().write(b);
 }
-

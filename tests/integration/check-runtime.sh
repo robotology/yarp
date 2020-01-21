@@ -131,4 +131,3 @@ header "Check installed static fakebot is startable"
 $base/root_static/bin/yarpdev --device fakebot --lifetime 1 || fail "Could not start fakebot"
 
 header "Done, no problems found"
-

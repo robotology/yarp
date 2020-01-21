@@ -20,4 +20,3 @@ function test_resource_finder()
 end
 
 test_resource_finder()
-

@@ -249,4 +249,3 @@ yarp::math::Vec2D<double>& Map2DArea::operator[](size_t index)
     //[] operator, instead, not.
     return points.at(index);
 }
-

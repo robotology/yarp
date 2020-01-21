@@ -37,4 +37,3 @@ if(NOT SKIP_fakeIMU)
 
   set_property(TARGET yarp_fakeIMU PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
-

@@ -44,5 +44,3 @@ void Thing::applyMove() {
         dx = dy = 0;
     }
 }
-
-

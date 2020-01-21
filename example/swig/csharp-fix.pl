@@ -41,5 +41,3 @@ foreach my $bug (@bugs) {
         close(FOUT);
     }
 }
-
-

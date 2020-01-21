@@ -75,6 +75,3 @@ YARP_DEFINE(int) yarpBottleToString(yarpBottlePtr bottle,
     YARP_STRING(result) = YARP_BOTTLE(bottle).toString();
     return 0;
 }
-
-
-

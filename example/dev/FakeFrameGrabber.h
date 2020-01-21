@@ -60,4 +60,3 @@ public:
         return w;
     }
 };
-

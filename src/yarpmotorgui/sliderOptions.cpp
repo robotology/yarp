@@ -146,9 +146,3 @@ sliderOptions::~sliderOptions()
     delete vel_lims_validator;
     delete ui;
 }
-
-
-
-
-
-

@@ -939,4 +939,3 @@ void BoschIMU::threadRelease()
 //    printf("On overall read operations of %ld\n", totMessagesRead);
     ::close(fd);
 }
-

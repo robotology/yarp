@@ -55,5 +55,3 @@ YARP_DEFINE(int) yarpStringFromC(yarpStringPtr str, const char *c) {
     }
     return -1;
 }
-
-

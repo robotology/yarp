@@ -112,4 +112,3 @@ if(ENABLE_realsense2Tracking)
 
   set_property(TARGET yarp_realsense2Tracking PROPERTY FOLDER "Plugins/Device")
 endif()
-

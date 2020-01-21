@@ -16,4 +16,3 @@ A map is loaded. Laser data are generated, with robot position obtained from a y
 
 * yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
 A map is loaded. Laser data are generated, with robot position obtained from a localization client
-

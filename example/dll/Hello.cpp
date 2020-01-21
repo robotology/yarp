@@ -21,4 +21,3 @@ void HelloImpl::write(int v) {
 int HelloImpl::read() {
     return x;
 }
-

@@ -45,4 +45,3 @@ target_sources(demoClient PRIVATE DemoClient.cpp
 target_include_directories(demoClient PRIVATE ${THRIFT_INCLUDE_DIRS})
 target_link_libraries(demoClient PRIVATE YARP::YARP_os
                                          YARP::YARP_init)
-

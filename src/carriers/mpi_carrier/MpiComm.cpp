@@ -194,4 +194,3 @@ void MpiComm::disconnect(bool disconn) {
     printf("[MpiComm @ %s] new rank : %d \n", name.c_str(), rank());
     #endif
 }
-

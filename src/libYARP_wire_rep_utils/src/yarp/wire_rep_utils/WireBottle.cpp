@@ -131,4 +131,3 @@ bool WireBottle::extractBlobFromBottle(yarp::os::SizedWriter& src,
     }
     return false;
 }
-

@@ -383,4 +383,3 @@ bool BayerCarrier::setFormat(const char *fmt) {
     }
     return true;
 }
-

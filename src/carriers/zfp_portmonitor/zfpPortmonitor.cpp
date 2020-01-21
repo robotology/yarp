@@ -239,4 +239,3 @@ int ZfpMonitorObject::decompress(float* array, float* &decompressed, int zfpsize
     return status;
 
 }
-

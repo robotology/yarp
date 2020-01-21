@@ -168,4 +168,3 @@ PortMonitor.getparam = function()
     prop:put("data", bt:get(0))
     return prop
 end
-

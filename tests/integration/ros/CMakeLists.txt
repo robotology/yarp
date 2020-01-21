@@ -14,4 +14,3 @@ add_executable(test_topic)
 target_sources(test_topic PRIVATE test_topic.cpp ${SRC} ${HDR})
 target_include_directories(test_topic PRIVATE ${INC})
 target_link_libraries(test_topic PRIVATE ${YARP_LIBRARIES})
-

@@ -29,5 +29,3 @@ find_package(OpenCV REQUIRED)
 target_include_directories(foo PRIVATE ${OPENCV_INCLUDE_DIR})
 # link OpenCV libraries
 target_link_libraries(foo PRIVATE ${OPENCV_LIBRARIES}
-
-

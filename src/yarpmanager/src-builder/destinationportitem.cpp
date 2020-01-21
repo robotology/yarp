@@ -277,4 +277,3 @@ void DestinationPortItem::setAvailable(bool available)
     portAvailable = available;
     update();
 }
-

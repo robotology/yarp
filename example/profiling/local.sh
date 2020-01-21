@@ -52,4 +52,3 @@ for rate in $RATES
     mv timing.txt $reportFile
   done
 done
-

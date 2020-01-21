@@ -37,4 +37,3 @@ void Login::shutdown() {
         base_id = -1;
     }
 }
-

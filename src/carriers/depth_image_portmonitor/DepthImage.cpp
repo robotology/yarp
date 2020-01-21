@@ -91,4 +91,3 @@ yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
     th.setPortWriter(&outImg);
     return th;
 }
-

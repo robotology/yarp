@@ -16,12 +16,3 @@ SerialServoBoard:
 
 Requirements:
   The "serialport" module must be compiled in order to use this driver.
-
-
-
-
-
-
-
-
-

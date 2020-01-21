@@ -174,4 +174,3 @@ bool ImplementEncoders::getEncoderAccelerations(double *v)
 
     return ret;
 }
-

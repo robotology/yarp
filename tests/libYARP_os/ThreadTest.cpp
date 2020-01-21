@@ -413,4 +413,3 @@ TEST_CASE("OS::ThreadTest", "[yarp::os]")
         t.hold = false;
     }
 }
-

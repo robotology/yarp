@@ -240,4 +240,3 @@ void GenericSensorRosPublisher<ROS_MSG>::threadRelease()
 }
 
 #endif
-

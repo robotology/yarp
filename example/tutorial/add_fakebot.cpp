@@ -26,4 +26,3 @@ void add_fakebot() {
     Drivers::factory().add(factory); // hand factory over to YARP
 #endif
 }
-

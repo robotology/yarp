@@ -165,4 +165,3 @@ int yarp_robot_main(int argc, char *argv[]) {
     yarp_robot_help();
     return 1;
 }
-

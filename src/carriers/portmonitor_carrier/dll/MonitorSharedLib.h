@@ -59,5 +59,3 @@ private:
 };
 
 #endif //_MONITOR_SHAREDLIB_INC_
-
-

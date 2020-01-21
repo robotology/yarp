@@ -13,4 +13,3 @@ int yarp_robot_main(int argc, char *argv[]);
 void yarp_robot_help();
 
 #endif
-

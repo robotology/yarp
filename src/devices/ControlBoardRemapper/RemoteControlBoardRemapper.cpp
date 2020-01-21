@@ -153,4 +153,3 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
     // TODO: close devices that are not actually used by the remapper
     return true;
 }
-

@@ -22,4 +22,3 @@ int main(int argc, char** argv)
     ros::Subscriber chatter_sub = n.subscribe("pos", 1, chatterCallback);
     ros::spin();
 }
-

@@ -53,5 +53,3 @@ int main(int argc, char *argv[]) {
     printf("100 + 1 = %d\n", hello2->read());
     return 0;
 }
-
-

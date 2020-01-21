@@ -152,4 +152,3 @@ bool YarpPluginFixture::check() {
 
 void YarpPluginFixture::tearDown() {
 }
-

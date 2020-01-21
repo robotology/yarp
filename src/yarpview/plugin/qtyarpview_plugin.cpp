@@ -27,5 +27,3 @@ void QtYARPViewPlugin::registerTypes(const char *uri)
     // @uri robotology.yarp.view
     qmlRegisterType<QtYARPView>(uri, 1, 0, "QtYARPViewPlugin");
 }
-
-

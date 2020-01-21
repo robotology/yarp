@@ -153,4 +153,3 @@ void FakeAnalogSensor::threadRelease()
 {
     yTrace();
 }
-

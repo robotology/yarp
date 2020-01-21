@@ -24,5 +24,3 @@ in an input port (converting a YARP image to Ascii code)
 
 -- In another terminal connect the port as follow:
    $  yarp connect /grabber /read tcp+recv.portmonitor+type.dll+file.ascii_image
-
-

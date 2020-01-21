@@ -47,4 +47,3 @@ PortMonitor.accept = function(thing)
     prev_time = yarp.Time_now()
     return true
 end
-

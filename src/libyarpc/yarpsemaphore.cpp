@@ -67,5 +67,3 @@ YARP_DECLARE(int) yarpSemaphoreCheck(yarpSemaphorePtr sema) {
     }
     return -1;
 }
-
-

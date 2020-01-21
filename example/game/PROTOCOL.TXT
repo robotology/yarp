@@ -143,4 +143,3 @@ the client sends:
 The server responds with
   broadcast username the-message-text
 The same response will be placed on the broadcast channel.
-

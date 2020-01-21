@@ -76,5 +76,3 @@ YARP_DEFINE(int) yarpReaderIsTextMode(yarpReaderPtr reader) {
     YARP_OK(reader);
     return YARP_READER(reader).isTextMode();
 }
-
-

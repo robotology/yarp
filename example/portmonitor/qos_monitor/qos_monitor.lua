@@ -65,5 +65,3 @@ PortMonitor.trig = function()
         received = false
     end
 end
-
-

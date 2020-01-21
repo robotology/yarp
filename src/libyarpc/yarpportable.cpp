@@ -176,5 +176,3 @@ YARP_DEFINE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, 
     return 0;
 }
 */
-
-

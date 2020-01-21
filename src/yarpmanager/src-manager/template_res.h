@@ -147,4 +147,3 @@ static const std::string str_res_template =
 
 
 #endif // TEMPLATE_RES
-

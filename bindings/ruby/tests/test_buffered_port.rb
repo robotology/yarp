@@ -43,4 +43,3 @@ Yarp::Network.setLocalMode(true)
 
 open_and_connect()
 open_and_connect_comm()
-

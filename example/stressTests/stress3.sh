@@ -22,4 +22,3 @@ killall stressrpc
 
 echo "Now killing yarpdev"
 killall yarpdev
-

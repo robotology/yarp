@@ -103,4 +103,3 @@ function dec(data)
         return string.char(c)
     end))
 end
-

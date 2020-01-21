@@ -24,4 +24,3 @@ YARP_DEFINE(double) yarpTimeNow() {
 YARP_DEFINE(void) yarpTimeYield() {
     Time::yield();
 }
-

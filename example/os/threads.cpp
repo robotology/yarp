@@ -78,4 +78,3 @@ int main() {
     printf("stopped\n");
     return 0;
 }
-

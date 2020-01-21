@@ -20,4 +20,3 @@ for (( k=0; k<25; k++ )); do
     echo hello | ${YARP_BIN}/yarp rpc $port_name
     wait_port_gone $port_name
 done
-

@@ -393,5 +393,3 @@ void Player::shutdown() {
     login.shutdown();
     id = -1;
 }
-
-

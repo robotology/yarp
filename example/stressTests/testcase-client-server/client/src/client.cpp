@@ -107,6 +107,3 @@ void CollatzClient::threadRelease()
     port.interrupt();
     port.close();
 }
-
-
-

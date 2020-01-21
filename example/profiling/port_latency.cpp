@@ -347,9 +347,3 @@ int main(int argc, char **argv) {
     else if (p.check("client"))
         return client(p.find("nframes").asInt32(), name);
 }
-
-
-
-
-
-

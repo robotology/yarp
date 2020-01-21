@@ -13,5 +13,3 @@ bool bazbot::open(yarp::os::Searchable& config)
 {
     return true;
 }
-
-

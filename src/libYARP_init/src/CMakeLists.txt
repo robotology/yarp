@@ -65,4 +65,3 @@ install(TARGETS YARP_init
         ARCHIVE
           DESTINATION "${CMAKE_INSTALL_LIBDIR}"
           COMPONENT YARP_os-dev)
-

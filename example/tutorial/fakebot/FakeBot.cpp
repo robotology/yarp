@@ -155,4 +155,3 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     Time::delay(0.1); // simulated hardware delay
     return true;
 }
-

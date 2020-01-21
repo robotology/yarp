@@ -95,6 +95,3 @@ int main (void)
     printf("\n disconnected port\n");
     return 1;
 }
-
-
-

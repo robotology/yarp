@@ -32,4 +32,3 @@ if(NOT SKIP_SerialServoBoard)
 
   set_property(TARGET yarp_SerialServoBoard PROPERTY FOLDER "Unsupported")
 endif()
-

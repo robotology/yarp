@@ -448,6 +448,3 @@ void Utilities::pauseThread()
     LOG( "ok................ \n");
     masterThread->stepfromCmd = false;
 }
-
-
-

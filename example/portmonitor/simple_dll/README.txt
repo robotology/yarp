@@ -37,4 +37,3 @@ Now if you write something  in the 'sender' terminal, you will see the text
 
 As it is constrained in `SimpleMonitorObject::accept()' method from `Simple.cpp', if you type "ignore",
 the message will be ignored by the portmonitor and it never be delivered to the input port.
-

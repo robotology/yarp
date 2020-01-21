@@ -22,4 +22,3 @@ int main(int argc, char** argv)
     ros::Subscriber chatter_sub = n.subscribe("yarp_image", 100, chatterCallback);
     ros::spin();
 }
-

@@ -33,4 +33,3 @@ for {set i 1} {$i<=$top} {incr i} {
 p close
 
 Network_fini
-

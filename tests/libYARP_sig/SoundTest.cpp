@@ -288,4 +288,3 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
 
     NetworkBase::setLocalMode(false);
 }
-

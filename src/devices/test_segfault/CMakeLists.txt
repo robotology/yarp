@@ -38,4 +38,3 @@ if(NOT SKIP_test_segfault)
 
   set_property(TARGET yarp_test_segfault PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
-

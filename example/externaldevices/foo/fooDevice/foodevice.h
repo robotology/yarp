@@ -24,4 +24,3 @@ public:
 
     virtual bool open(yarp::os::Searchable& config);
 };
-

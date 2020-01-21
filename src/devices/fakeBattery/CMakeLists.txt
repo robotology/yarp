@@ -34,4 +34,3 @@ if(NOT SKIP_fakeBattery)
 
   set_property(TARGET yarp_fakeBattery PROPERTY FOLDER "Plugins/Device/Fake")
 endif()
-

@@ -559,5 +559,3 @@ Matrix::Matrix(const Matrix &m): yarp::os::Portable(),
         updatePointers();
     }
 }
-
-

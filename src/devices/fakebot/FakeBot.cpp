@@ -176,4 +176,3 @@ void FakeBot::run() {
         std::exit(0);
     }
 }
-
