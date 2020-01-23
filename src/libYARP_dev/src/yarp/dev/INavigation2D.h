@@ -22,43 +22,46 @@
 
 namespace yarp {
     namespace dev {
-        class INavigation2DTargetActions;
-        class INavigation2DControlActions;
-        class INavigation2D;
-
-        enum NavigationStatusEnum
+        namespace Nav2D
         {
-            navigation_status_idle                  = yarp::os::createVocab('i', 'd', 'l', 'e'),
-            navigation_status_preparing_before_move = yarp::os::createVocab('p', 'r', 'e', 'p'),
-            navigation_status_moving                = yarp::os::createVocab('m', 'o', 'v', 'g'),
-            navigation_status_waiting_obstacle      = yarp::os::createVocab('w', 'a', 'i', 't'),
-            navigation_status_goal_reached          = yarp::os::createVocab('r', 'e', 'c', 'h'),
-            navigation_status_aborted               = yarp::os::createVocab('a', 'b', 'r', 't'),
-            navigation_status_failing               = yarp::os::createVocab('f', 'a', 'i', 'l'),
-            navigation_status_paused                = yarp::os::createVocab('p', 'a', 'u', 's'),
-            navigation_status_thinking              = yarp::os::createVocab('t', 'h', 'n', 'k'),
-            navigation_status_error                 = yarp::os::createVocab('e', 'r', 'r')
-        };
+            class INavigation2DTargetActions;
+            class INavigation2DControlActions;
+            class INavigation2D;
 
-        enum NavigationMapTypeEnum
-        {
-            global_map                              = yarp::os::createVocab('g', 'l', 'o', 'b'),
-            local_map                               = yarp::os::createVocab('l', 'o', 'c', 'a')
-        };
+            enum NavigationStatusEnum
+            {
+                navigation_status_idle                  = yarp::os::createVocab('i', 'd', 'l', 'e'),
+                navigation_status_preparing_before_move = yarp::os::createVocab('p', 'r', 'e', 'p'),
+                navigation_status_moving                = yarp::os::createVocab('m', 'o', 'v', 'g'),
+                navigation_status_waiting_obstacle      = yarp::os::createVocab('w', 'a', 'i', 't'),
+                navigation_status_goal_reached          = yarp::os::createVocab('r', 'e', 'c', 'h'),
+                navigation_status_aborted               = yarp::os::createVocab('a', 'b', 'r', 't'),
+                navigation_status_failing               = yarp::os::createVocab('f', 'a', 'i', 'l'),
+                navigation_status_paused                = yarp::os::createVocab('p', 'a', 'u', 's'),
+                navigation_status_thinking              = yarp::os::createVocab('t', 'h', 'n', 'k'),
+                navigation_status_error                 = yarp::os::createVocab('e', 'r', 'r')
+            };
 
-        namespace INavigation2DHelpers
-        {
-            //converts a string to a NavigationStatusEnum.
-            //navigation_status_error is returned if the string is not recognized.
-            YARP_dev_API NavigationStatusEnum stringToStatus(std::string s);
+            enum NavigationMapTypeEnum
+            {
+                global_map                              = yarp::os::createVocab('g', 'l', 'o', 'b'),
+                local_map                               = yarp::os::createVocab('l', 'o', 'c', 'a')
+            };
 
-            //converts a NavigationStatusEnum to a string.
-            YARP_dev_API std::string statusToString(NavigationStatusEnum status);
+            namespace INavigation2DHelpers
+            {
+                //converts a string to a NavigationStatusEnum.
+                //navigation_status_error is returned if the string is not recognized.
+                YARP_dev_API NavigationStatusEnum stringToStatus(std::string s);
+
+                //converts a NavigationStatusEnum to a string.
+                YARP_dev_API std::string statusToString(NavigationStatusEnum status);
+            }
         }
     }
 }
 
-class YARP_dev_API yarp::dev::INavigation2DTargetActions
+class YARP_dev_API yarp::dev::Nav2D::INavigation2DTargetActions
 {
 public:
     /**
@@ -117,7 +120,7 @@ public:
     virtual bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) = 0;
 };
 
-class YARP_dev_API yarp::dev::INavigation2DControlActions
+class YARP_dev_API yarp::dev::Nav2D::INavigation2DControlActions
 {
 public:
     /**
@@ -177,7 +180,7 @@ public:
      * @param map the map, currently used by the navigation algorithm
      * @return true/false
      */
-    virtual bool getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) = 0;
+    virtual bool getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) = 0;
 };
 
 /**
@@ -185,9 +188,9 @@ public:
  *
  * An interface to control the navigation of a mobile robot in a 2D environment.
  */
-class YARP_dev_API yarp::dev::INavigation2D :  public yarp::dev::INavigation2DTargetActions,
-                                               public yarp::dev::INavigation2DControlActions,
-                                               public yarp::dev::ILocalization2D
+class YARP_dev_API yarp::dev::Nav2D::INavigation2D :  public yarp::dev::Nav2D::INavigation2DTargetActions,
+                                                      public yarp::dev::Nav2D::INavigation2DControlActions,
+                                                      public yarp::dev::Nav2D::ILocalization2D
 {
 public:
     /**

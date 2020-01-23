@@ -155,6 +155,12 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc, const yarp::
     return true;
 }
 
+bool  Localization2DClient::getEstimatedOdometry(yarp::dev::OdometryData& odom)
+{
+   yError() << " Localization2DClient::getEstimatedOdometry is not yet implemented";
+   return false;
+}
+
 bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc)
 {
     yarp::os::Bottle b;
@@ -279,7 +285,7 @@ bool  Localization2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
     return true;
 }
 
-bool  Localization2DClient::getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status)
+bool  Localization2DClient::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -297,7 +303,7 @@ bool  Localization2DClient::getLocalizationStatus(yarp::dev::LocalizationStatusE
         }
         else
         {
-            status = (yarp::dev::LocalizationStatusEnum)(resp.get(1).asVocab());
+            status = (yarp::dev::Nav2D::LocalizationStatusEnum)(resp.get(1).asVocab());
             return true;
         }
     }

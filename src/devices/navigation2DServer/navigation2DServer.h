@@ -47,12 +47,12 @@ protected:
     std::string                       m_rpcPortName;
     std::string                       m_streamingPortName;
     std::string                       m_yarpviewPortName;
-    yarp::dev::NavigationStatusEnum   m_navigation_status;
+    yarp::dev::Nav2D::NavigationStatusEnum   m_navigation_status;
 
     //drivers and interfaces
     yarp::dev::PolyDriver                   pNav;
-    yarp::dev::INavigation2DControlActions* iNav_ctrl;
-    yarp::dev::INavigation2DTargetActions*  iNav_target;
+    yarp::dev::Nav2D::INavigation2DControlActions* iNav_ctrl;
+    yarp::dev::Nav2D::INavigation2DTargetActions*  iNav_target;
 
     double                                  m_period;
     double                                  m_stats_time_last;
@@ -74,7 +74,7 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 
 private:
-    std::string getStatusAsString(yarp::dev::NavigationStatusEnum status);
+    std::string getStatusAsString(yarp::dev::Nav2D::NavigationStatusEnum status);
     bool parse_respond_string(const yarp::os::Bottle& command, yarp::os::Bottle& reply);
     bool parse_respond_vocab(const yarp::os::Bottle& command, yarp::os::Bottle& reply);
 };

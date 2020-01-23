@@ -43,7 +43,7 @@ navigation2DServer::navigation2DServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
     iNav_target = nullptr;
     iNav_ctrl = nullptr;
-    m_navigation_status=yarp::dev::navigation_status_idle;
+    m_navigation_status=yarp::dev::Nav2D::navigation_status_idle;
 }
 
 bool navigation2DServer::attachAll(const PolyDriverList &device2attach)
@@ -295,7 +295,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     }
     else if (request == VOCAB_NAV_GET_NAVIGATION_STATUS)
     {
-        yarp::dev::NavigationStatusEnum nav_status = yarp::dev::navigation_status_error;
+        yarp::dev::Nav2D::NavigationStatusEnum nav_status = yarp::dev::Nav2D::navigation_status_error;
         bool ret = iNav_ctrl->getNavigationStatus(nav_status);
         if (ret)
         {
@@ -409,7 +409,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     else if (request == VOCAB_NAV_GET_NAV_MAP)
     {
         MapGrid2D map;
-        if (iNav_ctrl->getCurrentNavigationMap((yarp::dev::NavigationMapTypeEnum)(command.get(2).asInt32()), map))
+        if (iNav_ctrl->getCurrentNavigationMap((yarp::dev::Nav2D::NavigationMapTypeEnum)(command.get(2).asInt32()), map))
         {
             reply.addVocab(VOCAB_OK);
             yarp::os::Bottle& mapbot = reply.addList();

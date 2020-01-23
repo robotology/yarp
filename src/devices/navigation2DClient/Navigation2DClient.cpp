@@ -293,11 +293,11 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
     }
     else if (command.get(0).asString() == "get_navigation_status")
     {
-        yarp::dev::NavigationStatusEnum ss;
+        yarp::dev::Nav2D::NavigationStatusEnum ss;
         bool ret = this->getNavigationStatus(ss);
         if (ret)
         {
-            std::string s = yarp::dev::INavigation2DHelpers::statusToString(ss);
+            std::string s = yarp::dev::Nav2D::INavigation2DHelpers::statusToString(ss);
             reply.addString(s.c_str());
         }
         else
@@ -901,6 +901,12 @@ bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matr
     return true;
 }
 
+bool  Navigation2DClient::getEstimatedOdometry(yarp::dev::OdometryData& odom)
+{
+    yError() << " Localization2DClient::getEstimatedOdometry is not yet implemented";
+    return false;
+}
+
 bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
 {
     yarp::os::Bottle b;
@@ -1439,7 +1445,7 @@ bool   Navigation2DClient::getCurrentNavigationWaypoint(Map2DLocation& curr_wayp
     return true;
 }
 
-bool Navigation2DClient::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type,MapGrid2D& map)
+bool Navigation2DClient::getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type,MapGrid2D& map)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1478,7 +1484,7 @@ bool Navigation2DClient::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnu
     return true;
 }
 
-bool  Navigation2DClient::getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status)
+bool  Navigation2DClient::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
@@ -1496,7 +1502,7 @@ bool  Navigation2DClient::getLocalizationStatus(yarp::dev::LocalizationStatusEnu
         }
         else
         {
-            status = (yarp::dev::LocalizationStatusEnum)(resp.get(1).asVocab());
+            status = (yarp::dev::Nav2D::LocalizationStatusEnum)(resp.get(1).asVocab());
             return true;
         }
     }

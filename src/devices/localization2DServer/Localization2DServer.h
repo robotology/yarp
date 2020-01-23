@@ -25,12 +25,16 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/Node.h>
+#include <yarp/os/Publisher.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ILocalization2D.h>
+#include <yarp/dev/OdometryData.h>
+#include <yarp/rosmsg/nav_msgs/Odometry.h>
 #include <math.h>
 
  /**
@@ -54,21 +58,34 @@ class Localization2DServer :
         public yarp::os::PortReader
 {
 protected:
+
+    //yarp
     yarp::os::Port                            m_rpcPort;
     std::string                               m_rpcPortName;
-    yarp::os::BufferedPort<yarp::os::Bottle>  m_streamingPort;
-    std::string                               m_streamingPortName;
+    yarp::os::BufferedPort<yarp::dev::Nav2D::Map2DLocation>  m_2DLocationPort;
+    std::string                               m_2DLocationPortName;
+    yarp::os::BufferedPort<yarp::dev::OdometryData>  m_odometryPort;
+    std::string                               m_odometryPortName;
+    std::string                               m_robot_frame;
+    std::string                               m_fixed_frame;
+
+    //ROS
+    yarp::os::Node*                                       m_ros_node;
+    yarp::os::Publisher<yarp::rosmsg::nav_msgs::Odometry> m_odometry_publisher;
 
     //drivers and interfaces
     yarp::dev::PolyDriver                   pLoc;
-    yarp::dev::ILocalization2D*             iLoc;
+    yarp::dev::Nav2D::ILocalization2D*      iLoc;
 
     double                                  m_stats_time_last;
     double                                  m_period;
-    yarp::os::Stamp                         m_stamp;
+    yarp::os::Stamp                         m_loc_stamp;
+    yarp::os::Stamp                         m_odom_stamp;
     bool                                    m_getdata_using_periodic_thread;
-    yarp::dev::Nav2D::Map2DLocation         m_current_position;
-    yarp::dev::LocalizationStatusEnum       m_current_status;
+
+    yarp::dev::OdometryData                     m_current_odometry;
+    yarp::dev::Nav2D::Map2DLocation             m_current_position;
+    yarp::dev::Nav2D::LocalizationStatusEnum    m_current_status;
 
 public:
     Localization2DServer();

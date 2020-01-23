@@ -50,7 +50,7 @@
 
 class Navigation2DClient:
         public yarp::dev::DeviceDriver,
-        public yarp::dev::INavigation2D,
+        public yarp::dev::Nav2D::INavigation2D,
         public yarp::os::PortReader
 {
 protected:
@@ -107,8 +107,9 @@ public:
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
 
     bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation &loc) override;
+    bool   getEstimatedOdometry(yarp::dev::OdometryData& odom) override; 
     bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
-    bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
+    bool   getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status) override;
     bool   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;
     bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
     bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
@@ -122,14 +123,14 @@ public:
     bool   deleteLocation(std::string location_name) override;
     bool   getLocationsList(std::vector<std::string>& locations) override;
 
-    bool   getNavigationStatus(yarp::dev::NavigationStatusEnum& status) override;
+    bool   getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;
     bool   clearAllLocations() override;
     bool   stopNavigation() override;
     bool   suspendNavigation(const double time_s) override;
     bool   resumeNavigation() override;
     bool   getAllNavigationWaypoints(yarp::dev::Nav2D::Map2DPath& waypoints) override;
     bool   getCurrentNavigationWaypoint(yarp::dev::Nav2D::Map2DLocation& curr_waypoint) override;
-    bool   getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
+    bool   getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
 };
 
 #endif // YARP_DEV_NAVIGATION2DCLIENT_H

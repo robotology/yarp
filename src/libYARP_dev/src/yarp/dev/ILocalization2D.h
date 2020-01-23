@@ -12,19 +12,22 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/OdometryData.h>
 #include <yarp/sig/Matrix.h>
 #include <vector>
 
 namespace yarp {
     namespace dev {
-        class ILocalization2D;
+        namespace Nav2D {
+            class ILocalization2D;
 
-        enum LocalizationStatusEnum
-        {
-            localization_status_not_yet_localized = yarp::os::createVocab('l', 'o', 'c', 'n'),
-            localization_status_localized_ok      = yarp::os::createVocab('l', 'o', 'c', 'y'),
-            localization_status_error             = yarp::os::createVocab('e', 'r', 'r')
-        };
+            enum LocalizationStatusEnum
+            {
+                localization_status_not_yet_localized = yarp::os::createVocab('l', 'o', 'c', 'n'),
+                localization_status_localized_ok      = yarp::os::createVocab('l', 'o', 'c', 'y'),
+                localization_status_error             = yarp::os::createVocab('e', 'r', 'r')
+            };
+        }
     }
 }
 
@@ -33,7 +36,7 @@ namespace yarp {
  *
  * ILocalization2D interface. Provides methods to obtain the pose of the robot in a known map.
  */
-class YARP_dev_API yarp::dev::ILocalization2D
+class YARP_dev_API yarp::dev::Nav2D::ILocalization2D
 {
 public:
     /**
@@ -79,6 +82,14 @@ public:
     * @return true/false
     */
     virtual bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) = 0;
+
+    /**
+    * Gets the estimated odometry the robot, including its velocity expressed in the world and in the local reference frame
+    * @param loc the estimated odometry.
+    * @return true/false
+    */
+    virtual bool   getEstimatedOdometry(yarp::dev::OdometryData& odom) = 0;
+
 
     /**
      * Sets the initial pose for the localization algorithm which estimates the current position of the robot w.r.t world reference frame.
