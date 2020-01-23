@@ -57,6 +57,30 @@ ManagedBytes::ManagedBytes(const ManagedBytes& alt) :
     }
 }
 
+void ManagedBytes::moveOwnership(ManagedBytes &other)
+{
+    clear();
+    b = other.b;
+    owned = other.owned;
+    use = other.use;
+    use_set = other.use_set;
+    other.owned = false;
+    other.clear();
+}
+
+ManagedBytes::ManagedBytes(ManagedBytes&& other) noexcept
+{
+    moveOwnership(other);
+}
+
+ManagedBytes& ManagedBytes::operator=(ManagedBytes&& other) noexcept
+{
+    if (&other != this) {
+        moveOwnership(other);
+    }
+    return *this;
+}
+
 const ManagedBytes& ManagedBytes::operator=(const ManagedBytes& alt)
 {
     if (&alt != this) {

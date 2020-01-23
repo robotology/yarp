@@ -184,6 +184,29 @@ public:
         memcpy(this->data(), p, sizeof(T)*s);
     }
 
+    /**
+     * @brief Move constructor.
+     *
+     * @param other the VectorOf to be moved
+     */
+    VectorOf(VectorOf<T>&& other) noexcept : bytes(std::move(other.bytes))
+    {
+        _updatePointers();
+    }
+
+    /**
+     * @brief Move assignment operator.
+     *
+     * @param other the VectorOf to be moved
+     * @return this object
+     */
+    VectorOf& operator=(VectorOf<T>&& other) noexcept
+    {
+        bytes = std::move(other.bytes);
+        _updatePointers();
+        return *this;
+    }
+
     VectorOf(const VectorOf& r) : VectorBase()
     {
         bytes = r.bytes;
