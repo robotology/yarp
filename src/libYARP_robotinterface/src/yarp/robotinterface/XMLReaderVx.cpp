@@ -13,6 +13,8 @@
 #include "Robot.h"
 #include "Types.h"
 #include "impl/RobotInterfaceDTD.h"
+#include "impl/XMLReaderFileVx.h"
+
 
 #include <yarp/conf/filesystem.h>
 #include <yarp/os/LogStream.h>
