@@ -59,7 +59,6 @@ ManagedBytes::ManagedBytes(const ManagedBytes& alt) :
 
 void ManagedBytes::moveOwnership(ManagedBytes &other)
 {
-    clear();
     b = other.b;
     owned = other.owned;
     use = other.use;
@@ -76,6 +75,7 @@ ManagedBytes::ManagedBytes(ManagedBytes&& other) noexcept
 ManagedBytes& ManagedBytes::operator=(ManagedBytes&& other) noexcept
 {
     if (&other != this) {
+        clear();
         moveOwnership(other);
     }
     return *this;

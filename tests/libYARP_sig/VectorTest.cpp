@@ -143,6 +143,12 @@ bool checkConsistency(Vector &a) {
     return ret;
 }
 
+Vector functionThatReturnsCopyOfReference(const Vector&a) {
+    Vector ret_a = a;
+    if (false) { return Vector(0); }
+    return ret_a;
+}
+
 TEST_CASE("sig::VectorTest", "[yarp::sig]")
 {
     NetworkBase::setLocalMode(true);
@@ -375,6 +381,13 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         CHECK(v[2] == 4.0);
         CHECK(v[3] == 6.0);
         CHECK(v[4] == 8.0);
+    }
+
+    SECTION("Regression test for GitHub issue 2189")
+    {
+        Vector v{1.0, 2.0, 3.0};
+        Vector vCopy = functionThatReturnsCopyOfReference(v);
+        CHECK(vCopy.size() == v.size());
     }
 
     NetworkBase::setLocalMode(false);
