@@ -84,7 +84,7 @@ public:
     virtual bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) = 0;
 
     /**
-    * Gets the estimated odometry the robot, including its velocity expressed in the world and in the local reference frame
+    * Gets the estimated odometry the robot, including its velocity expressed in the world and in the local reference frame.
     * @param loc the estimated odometry.
     * @return true/false
     */

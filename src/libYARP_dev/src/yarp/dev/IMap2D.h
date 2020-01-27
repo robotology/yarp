@@ -23,7 +23,10 @@ namespace yarp
 {
     namespace dev
     {
-        class IMap2D;
+        namespace Nav2D
+        {
+            class IMap2D;
+        }
     }
 }
 
@@ -32,7 +35,7 @@ namespace yarp
  *
  * IMap2D Interface. Provides methods to store/retrieve map grids and locations to/from a map server.
  */
-class YARP_dev_API yarp::dev::IMap2D
+class YARP_dev_API yarp::dev::Nav2D::IMap2D
 {
 public:
     /**

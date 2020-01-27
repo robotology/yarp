@@ -35,6 +35,7 @@
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/OdometryData.h>
 #include <yarp/rosmsg/nav_msgs/Odometry.h>
+#include <yarp/rosmsg/tf2_msgs/TFMessage.h>
 #include <math.h>
 
  /**
@@ -60,6 +61,7 @@ class Localization2DServer :
 protected:
 
     //yarp
+    std::string                               m_local_name;
     yarp::os::Port                            m_rpcPort;
     std::string                               m_rpcPortName;
     yarp::os::BufferedPort<yarp::dev::Nav2D::Map2DLocation>  m_2DLocationPort;
@@ -70,8 +72,11 @@ protected:
     std::string                               m_fixed_frame;
 
     //ROS
+    std::string                                           m_child_frame_id;
+    std::string                                           m_parent_frame_id;
     yarp::os::Node*                                       m_ros_node;
     yarp::os::Publisher<yarp::rosmsg::nav_msgs::Odometry> m_odometry_publisher;
+    yarp::os::Publisher<yarp::rosmsg::tf2_msgs::TFMessage>  m_tf_publisher;
 
     //drivers and interfaces
     yarp::dev::PolyDriver                   pLoc;
@@ -87,6 +92,12 @@ protected:
     yarp::dev::Nav2D::Map2DLocation             m_current_position;
     yarp::dev::Nav2D::LocalizationStatusEnum    m_current_status;
 
+private:
+    void publish_2DLocation_on_yarp_port();
+    void publish_odometry_on_yarp_port();
+    void publish_odometry_on_ROS_topic();
+    void publish_odometry_on_TF_topic();
+
 public:
     Localization2DServer();
 
@@ -98,6 +109,7 @@ public:
     virtual void run() override;
 
     bool initialize_YARP(yarp::os::Searchable &config);
+    bool initialize_ROS(yarp::os::Searchable& config);
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
