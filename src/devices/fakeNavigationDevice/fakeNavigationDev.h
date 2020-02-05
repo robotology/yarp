@@ -38,8 +38,8 @@ public:
 
 class fakeNavigation :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::INavigation2DTargetActions,
-        public yarp::dev::INavigation2DControlActions
+        public yarp::dev::Nav2D::INavigation2DTargetActions,
+        public yarp::dev::Nav2D::INavigation2DControlActions
 {
 public:
     fakeNavigationThread  *navThread;
@@ -92,7 +92,7 @@ public:
      * //Gets the status of the current navigation task. Typically stored into navigation_status variable.
      * @return the current navigation status expressed as NavigationStatusEnum.
      */
-    bool getNavigationStatus(yarp::dev::NavigationStatusEnum& status) override;
+    bool getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status) override;
 
     /**
      * //Stops the current navigation task.
@@ -132,7 +132,7 @@ public:
      * @param map the map, currently used by the navigation algorithm
      * @return true/false
      */
-    bool getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
+    bool getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
 
     /**
      * Forces the navigation system to recompute the path from the current robot position to the current goal.
