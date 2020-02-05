@@ -31,7 +31,7 @@
 #    include <yarp/cv/Cv.h>
 #    if CV_MAJOR_VERSION >= 3
 #        include <opencv2/core/core_c.h>
-#        include <opencv2/videoio/videoio_c.h>
+#        include <opencv2/videoio.hpp>
 #    endif // CV_MAJOR_VERSION
 #endif // ADD_VIDEO
 
@@ -155,15 +155,15 @@ public:
         int code=p->getPixelCode();
         if (code==VOCAB_PIXEL_MONO_FLOAT)
         {
-            img=toCvMat(*dynamic_cast<ImageOf<PixelFloat>*>(p));
+            img=toCvMat(*static_cast<ImageOf<PixelFloat>*>(p));
         }
         else if (code==VOCAB_PIXEL_MONO)
         {
-            img=toCvMat(*dynamic_cast<ImageOf<PixelMono>*>(p));
+            img=toCvMat(*static_cast<ImageOf<PixelMono>*>(p));
         }
         else
         {
-            img=toCvMat(*dynamic_cast<ImageOf<PixelRgb>*>(p));
+            img=toCvMat(*static_cast<ImageOf<PixelRgb>*>(p));
         }
         return img;
     }
@@ -478,18 +478,15 @@ public:
                 buf.unlock();
 
                 int fps;
-                const cv::Mat &img=dynamic_cast<DumpImage*>(itemEnd.obj)->getImage();
+                auto& img=static_cast<DumpImage*>(itemEnd.obj)->getImage();
                 int frameW=img.size().width;
                 int frameH=img.size().height;
 
                 t0=itemFront.timeStamp.getStamp();
                 double dt=itemEnd.timeStamp.getStamp()-t0;
-                if (dt<=0.0)
-                    fps=25; // default
-                else
-                    fps=int(double(sz-1)/dt);
+                fps=(dt<=0.0)?25:int(double(sz-1)/dt);
 
-                videoWriter.open(videoFile.c_str(),CV_FOURCC('H','F','Y','U'),
+                videoWriter.open(videoFile.c_str(),cv::VideoWriter::fourcc('H','F','Y','U'),
                                  fps,cvSize(frameW,frameH),true);
 
                 doImgParamsExtraction=false;
@@ -518,7 +515,7 @@ public:
             #ifdef ADD_VIDEO
                 if (doSaveFrame)
                 {
-                    videoWriter << dynamic_cast<DumpImage*>(item.obj)->getImage();
+                    videoWriter << static_cast<DumpImage*>(item.obj)->getImage();
 
                     // write the timecode of the frame
                     int dt=(int)(1000.0*(item.timeStamp.getStamp()-t0));
