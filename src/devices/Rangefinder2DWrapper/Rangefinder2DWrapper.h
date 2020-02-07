@@ -38,6 +38,7 @@
 
 #include <yarp/sig/Vector.h>
 
+#include <yarp/dev/LaserScan2D.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -90,7 +91,7 @@ private:
     std::string streamingPortName;
     std::string rpcPortName;
     yarp::os::Port rpcPort;
-    yarp::os::BufferedPort<yarp::os::Bottle> streamingPort;
+    yarp::os::BufferedPort<yarp::dev::LaserScan2D> streamingPort;
     yarp::dev::IRangefinder2D *sens_p;
     yarp::dev::IPreciselyTimed *iTimed;
     yarp::os::Stamp lastStateStamp;

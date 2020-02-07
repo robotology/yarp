@@ -26,6 +26,7 @@
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
+#include <yarp/dev/LaserScan2D.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
@@ -37,9 +38,9 @@
 const int LASER_TIMEOUT=100; //ms
 
 class Rangefinder2DInputPortProcessor :
-        public yarp::os::BufferedPort<yarp::os::Bottle>
+        public yarp::os::BufferedPort<yarp::dev::LaserScan2D>
 {
-    yarp::os::Bottle lastBottle;
+    yarp::dev::LaserScan2D lastScan;
     std::mutex mutex;
     yarp::os::Stamp lastStamp;
     double deltaT;
@@ -57,10 +58,10 @@ public:
 
     Rangefinder2DInputPortProcessor();
 
-    using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
-    void onRead(yarp::os::Bottle &v) override;
+    using yarp::os::BufferedPort<yarp::dev::LaserScan2D>::onRead;
+    void onRead(yarp::dev::LaserScan2D&v) override;
 
-    inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);
+    inline int getLast(yarp::dev::LaserScan2D &data, yarp::os::Stamp &stmp);
 
     inline int getIterations();
 
