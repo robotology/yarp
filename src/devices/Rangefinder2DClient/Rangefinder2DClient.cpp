@@ -57,7 +57,7 @@ Rangefinder2DInputPortProcessor::Rangefinder2DInputPortProcessor()
     resetStat();
 }
 
-void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
+void Rangefinder2DInputPortProcessor::onRead(yarp::dev::LaserScan2D&b)
 {
     now=SystemClock::nowSystem();
     mutex.lock();
@@ -74,7 +74,7 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
         //compare network time
         if (tmpDT*1000<LASER_TIMEOUT)
         {
-            state = b.get(1).asInt32();
+            state = b.status;
         }
         else
         {
@@ -85,7 +85,7 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
     prev=now;
     count++;
 
-    lastBottle=b;
+    lastScan=b;
     Stamp newStamp;
     getEnvelope(newStamp);
 
@@ -98,7 +98,7 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
     //now compare timestamps
     if ((1000*(newStamp.getTime()-lastStamp.getTime()))<LASER_TIMEOUT)
     {
-        state = b.get(1).asInt32();
+        state = b.status;
     }
     else
     {
@@ -109,13 +109,13 @@ void Rangefinder2DInputPortProcessor::onRead(yarp::os::Bottle &b)
     mutex.unlock();
 }
 
-inline int Rangefinder2DInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stmp)
+inline int Rangefinder2DInputPortProcessor::getLast(yarp::dev::LaserScan2D&data, Stamp &stmp)
 {
     mutex.lock();
     int ret=state;
     if (ret != IRangefinder2D::DEVICE_GENERAL_ERROR)
     {
-        data=lastBottle;
+        data=lastScan;
         stmp = lastStamp;
     }
     mutex.unlock();
@@ -126,11 +126,7 @@ inline int Rangefinder2DInputPortProcessor::getLast(yarp::os::Bottle &data, Stam
 bool Rangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
 {
     mutex.lock();
-    if (lastBottle.size()==0) { mutex.unlock(); return false; }
-    unsigned int size = lastBottle.get(0).asList()->size();
-    ranges.resize(size);
-    for (unsigned int i = 0; i < size; i++)
-        ranges[i] = lastBottle.get(0).asList()->get(i).asFloat64();
+    ranges= lastScan.scans;
     mutex.unlock();
     return true;
 }
@@ -138,7 +134,7 @@ bool Rangefinder2DInputPortProcessor::getData(yarp::sig::Vector &ranges)
 yarp::dev::IRangefinder2D::Device_status Rangefinder2DInputPortProcessor::getStatus()
 {
     mutex.lock();
-    auto status = (yarp::dev::IRangefinder2D::Device_status) lastBottle.get(3).asInt32();
+    auto status = (yarp::dev::IRangefinder2D::Device_status) lastScan.status;
     mutex.unlock();
     return status;
 }
