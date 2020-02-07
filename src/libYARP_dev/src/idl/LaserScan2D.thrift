@@ -29,7 +29,7 @@ struct LaserScan2D
     /** the maximum distance of the scan [m] */
     4: double       range_max;
     
-    /** the scan data, measured in [m]. The anglular increment of each ray is obtained by (angle_max-angle_min)/num_of_elements. Invalid data are represented as std::inf.  */
+    /** the scan data, measured in [m]. The angular increment of each ray is obtained by (angle_max-angle_min)/num_of_elements. Invalid data are represented as std::inf.  */
     5: YarpVector   scans;
     
     6: i32          status;
