@@ -51,7 +51,7 @@
 
 class Localization2DClient :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::ILocalization2D
+        public yarp::dev::Nav2D::ILocalization2D
 {
 protected:
     std::mutex               m_mutex;
@@ -66,8 +66,9 @@ public:
 
     /* The following methods belong to ILocalization2D interface */
     bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation &loc) override;
+    bool   getEstimatedOdometry(yarp::dev::OdometryData& odom) override;
     bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
-    bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
+    bool   getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status) override;
     bool   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;
     bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc, const yarp::sig::Matrix& cov) override;
     bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;

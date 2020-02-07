@@ -45,9 +45,9 @@ using namespace yarp::dev::Nav2D;
 #define DEG2RAD M_PI/180
 
 
-bool   fakeLocalizer::getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status)
+bool   fakeLocalizer::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
 {
-    status = yarp::dev::LocalizationStatusEnum::localization_status_localized_ok;
+    status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_localized_ok;
     return true;
 }
 
@@ -100,6 +100,16 @@ bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& 
 bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc, const yarp::sig::Matrix& cov)
 {
     locThread->initializeLocalization(loc);
+    return true;
+}
+
+bool   fakeLocalizer::getEstimatedOdometry(yarp::dev::OdometryData& odom)
+{
+    Map2DLocation loc;
+    locThread->getCurrentLoc(loc);
+    odom.odom_x = loc.x;
+    odom.odom_y = loc.y;
+    odom.odom_theta = loc.theta;
     return true;
 }
 

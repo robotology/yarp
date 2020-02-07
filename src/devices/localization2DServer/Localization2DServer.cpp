@@ -27,6 +27,7 @@
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IFrameTransform.h>
+#include <yarp/math/Math.h>
 #include "Localization2DServer.h"
 
 #include <cmath>
@@ -39,14 +40,23 @@ using namespace yarp::dev::Nav2D;
 using namespace std;
 
 #define DEFAULT_THREAD_PERIOD 0.01
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 //------------------------------------------------------------------------------------------------------------------------------
 
 Localization2DServer::Localization2DServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
+    m_ros_node = nullptr;
+    m_current_status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_not_yet_localized;
     m_period = DEFAULT_THREAD_PERIOD;
     m_stats_time_last = yarp::os::Time::now();
     iLoc = 0;
     m_getdata_using_periodic_thread = true;
+    m_ros_publish_odometry_on_topic = false;
+    m_ros_publish_odometry_on_tf = false;
 }
 
 bool Localization2DServer::attachAll(const PolyDriverList &device2attach)
@@ -72,7 +82,7 @@ bool Localization2DServer::attachAll(const PolyDriverList &device2attach)
 
     //initialize m_current_position and m_current_status, if available
     bool ret = true;
-    yarp::dev::LocalizationStatusEnum status;
+    yarp::dev::Nav2D::LocalizationStatusEnum status;
     Map2DLocation loc;
     ret &= iLoc->getLocalizationStatus(status);
     ret &= iLoc->getCurrentPosition(loc);
@@ -138,20 +148,21 @@ bool Localization2DServer::open(Searchable& config)
     }
 
 
-    string local_name = "/localizationServer";
+    m_local_name = "/localizationServer";
     if (!general_group.check("name"))
     {
         yInfo() << "Localization2DServer: missing 'name' parameter. Using default value: /localizationServer";
     }
     else
     {
-        local_name = general_group.find("name").asString();
-        if (local_name.c_str()[0] != '/') { yError() << "Missing '/' in name parameter" ;  return false; }
-        yInfo() << "Localization2DServer: using local name:" << local_name;
+        m_local_name = general_group.find("name").asString();
+        if (m_local_name.c_str()[0] != '/') { yError() << "Missing '/' in name parameter" ;  return false; }
+        yInfo() << "Localization2DServer: using local name:" << m_local_name;
     }
 
-    m_rpcPortName = local_name + "/rpc";
-    m_streamingPortName = local_name + "/streaming:o";
+    m_rpcPortName = m_local_name + "/rpc";
+    m_2DLocationPortName = m_local_name + "/streaming:o";
+    m_odometryPortName = m_local_name + "/odometry:o";
 
     if (config.check("subdevice"))
     {
@@ -185,14 +196,91 @@ bool Localization2DServer::open(Searchable& config)
         return false;
     }
 
+    if (!initialize_ROS(config))
+    {
+        yError() << "Localization2DServer: Error initializing ROS system";
+        return false;
+    }
+
+    return true;
+}
+
+bool Localization2DServer::initialize_ROS(yarp::os::Searchable& params)
+{
+    if (params.check("ROS"))
+    {
+        Bottle& ros_group = params.findGroup("ROS");
+        if (ros_group.check("publish_tf"))
+        {
+            m_ros_publish_odometry_on_tf=true;
+        }
+        if (ros_group.check("publish_odom"))
+        {
+            m_ros_publish_odometry_on_topic=true;
+        }
+
+        if (!ros_group.check("parent_frame_id"))
+        {
+            yError() << "Localization2DServer: missing 'parent_frame_id' parameter";
+            //return false;
+        }
+        else
+        {
+            m_parent_frame_id = ros_group.find("parent_frame_id").asString();
+        }
+        if (!ros_group.check("child_frame_id"))
+        {
+            yError() << "Localization2DServer: missing 'child_frame_id' parameter";
+            //return false;
+        }
+        else
+        {
+            m_child_frame_id = ros_group.find("child_frame_id").asString();
+        }
+
+    }
+    else
+    {
+        yInfo() << "Ros initialization not requested";
+        return true;
+    }
+
+    if (m_ros_node == nullptr)
+    {
+        bool b= false;
+        m_ros_node = new yarp::os::Node(m_local_name+"_ROSnode");
+        if (m_ros_node == nullptr)
+        {
+            yError() << " opening " << m_local_name << " Node, check your yarp-ROS network configuration\n";
+        }
+
+        string ros_odom_topic = m_local_name + string("/odom");
+        b = m_odometry_publisher.topic(ros_odom_topic);
+        if (!b)
+        {
+            yError() << "Unable to publish data on " << ros_odom_topic <<" topic";
+        }
+        b = m_tf_publisher.topic("/tf");
+        if (!b)
+        {
+            yError() << "Unable to publish data on /tf topic";
+        }
+        yInfo() << "Ros initialized";
+    }
     return true;
 }
 
 bool Localization2DServer::initialize_YARP(yarp::os::Searchable &params)
 {
-    if (!m_streamingPort.open(m_streamingPortName.c_str()))
+    if (!m_2DLocationPort.open(m_2DLocationPortName.c_str()))
     {
-        yError("Localization2DServer: failed to open port %s", m_streamingPortName.c_str());
+        yError("Localization2DServer: failed to open port %s", m_2DLocationPortName.c_str());
+        return false;
+    }
+
+    if (!m_odometryPort.open(m_odometryPortName.c_str()))
+    {
+        yError("Localization2DServer: failed to open port %s", m_odometryPortName.c_str());
         return false;
     }
 
@@ -216,10 +304,20 @@ bool Localization2DServer::close()
 
     detachAll();
 
-    m_streamingPort.interrupt();
-    m_streamingPort.close();
+    m_2DLocationPort.interrupt();
+    m_2DLocationPort.close();
+    m_odometryPort.interrupt();
+    m_odometryPort.close();
     m_rpcPort.interrupt();
     m_rpcPort.close();
+
+    if (m_ros_node)
+    {
+        m_tf_publisher.close();
+        m_odometry_publisher.close();
+        delete m_ros_node;
+        m_ros_node = nullptr;
+    }
 
     yDebug() << "Localization2DServer execution terminated";
     return true;
@@ -416,10 +514,26 @@ void Localization2DServer::run()
 
         if (m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
         {
+            //update the stamp
+
+
             bool ret2 = iLoc->getCurrentPosition(m_current_position);
             if (ret2 == false)
             {
                 yError() << "Localization2DServer: getCurrentPosition() failed";
+            }
+            else
+            {
+                m_loc_stamp.update();
+            }
+            bool ret3 = iLoc->getEstimatedOdometry(m_current_odometry);
+            if (ret3 == false)
+            {
+                //yError() << "Localization2DServer: getEstimatedOdometry() failed";
+            }
+            else
+            {
+                m_odom_stamp.update();
             }
         }
         else
@@ -428,34 +542,114 @@ void Localization2DServer::run()
         }
     }
 
-    if (m_streamingPort.getOutputCount() > 0)
+    if (1) publish_odometry_on_yarp_port();
+    if (1) publish_2DLocation_on_yarp_port();
+    if (m_ros_publish_odometry_on_topic) publish_odometry_on_ROS_topic();
+    if (m_ros_publish_odometry_on_tf) publish_odometry_on_TF_topic();
+
+}
+
+void Localization2DServer::publish_odometry_on_yarp_port()
+{
+    if (m_odometryPort.getOutputCount() > 0)
     {
-        Bottle& b = m_streamingPort.prepare();
-        b.clear();
+        yarp::dev::OdometryData& odom = m_odometryPort.prepare();
+        odom = m_current_odometry;
+
+        //send data to port
+        m_odometryPort.setEnvelope(m_odom_stamp);
+        m_odometryPort.write();
+    }
+}
+
+void Localization2DServer::publish_2DLocation_on_yarp_port()
+{
+    if (m_2DLocationPort.getOutputCount() > 0)
+    {
+        Nav2D::Map2DLocation& loc = m_2DLocationPort.prepare();
         if (m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
         {
-            b.addString(m_current_position.map_id);
-            b.addFloat64(m_current_position.x);
-            b.addFloat64(m_current_position.y);
-            b.addFloat64(m_current_position.theta);
+            loc = m_current_position;
         }
         else
         {
-            Map2DLocation curr_loc;
-            curr_loc.x = std::nan("");
-            curr_loc.y = std::nan("");
-            curr_loc.theta = std::nan("");
-            b.addString(curr_loc.map_id);
-            b.addFloat64(curr_loc.x);
-            b.addFloat64(curr_loc.y);
-            b.addFloat64(curr_loc.theta);
+            Map2DLocation temp_loc;
+            temp_loc.x = std::nan("");
+            temp_loc.y = std::nan("");
+            temp_loc.theta = std::nan("");
+            loc = temp_loc;
         }
 
-        //update the timestamp
-        m_stamp.update();
-        m_streamingPort.setEnvelope(m_stamp);
-
         //send data to port
-        m_streamingPort.write();
+        m_2DLocationPort.setEnvelope(m_loc_stamp);
+        m_2DLocationPort.write();
+    }
+}
+
+void Localization2DServer::publish_odometry_on_TF_topic()
+{
+    yarp::rosmsg::tf2_msgs::TFMessage& rosData = m_tf_publisher.prepare();
+    yarp::rosmsg::geometry_msgs::TransformStamped transform;
+    transform.child_frame_id = m_child_frame_id;
+    transform.header.frame_id = m_parent_frame_id;
+    transform.header.seq = m_odom_stamp.getCount();
+    transform.header.stamp = m_odom_stamp.getTime();
+    double halfYaw = m_current_odometry.odom_theta / 180.0 * M_PI * 0.5;
+    double cosYaw = cos(halfYaw);
+    double sinYaw = sin(halfYaw);
+    transform.transform.rotation.x = 0;
+    transform.transform.rotation.y = 0;
+    transform.transform.rotation.z = sinYaw;
+    transform.transform.rotation.w = cosYaw;
+    transform.transform.translation.x = m_current_odometry.odom_x;
+    transform.transform.translation.y = m_current_odometry.odom_y;
+    transform.transform.translation.z = 0;
+    if (rosData.transforms.size() == 0)
+    {
+        rosData.transforms.push_back(transform);
+    }
+    else
+    {
+        rosData.transforms[0] = transform;
+    }
+
+    m_tf_publisher.write();
+}
+
+void Localization2DServer::publish_odometry_on_ROS_topic()
+{
+    if (m_ros_node && m_odometry_publisher.asPort().getOutputCount() > 0)
+    {
+        yarp::rosmsg::nav_msgs::Odometry& odom = m_odometry_publisher.prepare();
+        odom.clear();
+        odom.header.frame_id = m_fixed_frame;
+        odom.header.seq = m_odom_stamp.getCount();
+        odom.header.stamp = m_odom_stamp.getTime();
+        odom.child_frame_id = m_robot_frame;
+
+        odom.pose.pose.position.x = m_current_odometry.odom_x;
+        odom.pose.pose.position.y = m_current_odometry.odom_y;
+        odom.pose.pose.position.z = 0;
+        yarp::sig::Vector vecrpy(3);
+        vecrpy[0] = 0;
+        vecrpy[1] = 0;
+        vecrpy[2] = m_current_odometry.odom_theta;
+        yarp::sig::Matrix matrix = yarp::math::rpy2dcm(vecrpy);
+        yarp::math::Quaternion q; q.fromRotationMatrix(matrix);
+        odom.pose.pose.orientation.x = q.x();
+        odom.pose.pose.orientation.y = q.y();
+        odom.pose.pose.orientation.z = q.z();
+        odom.pose.pose.orientation.w = q.w();
+        //odom.pose.covariance = 0;
+
+        odom.twist.twist.linear.x = m_current_odometry.base_vel_x;
+        odom.twist.twist.linear.y = m_current_odometry.base_vel_y;
+        odom.twist.twist.linear.z = 0;
+        odom.twist.twist.angular.x = 0;
+        odom.twist.twist.angular.y = 0;
+        odom.twist.twist.angular.z = m_current_odometry.base_vel_theta;
+        //odom.twist.covariance = 0;
+
+        m_odometry_publisher.write();
     }
 }

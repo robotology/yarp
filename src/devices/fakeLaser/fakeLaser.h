@@ -80,7 +80,7 @@ protected:
     yarp::dev::Nav2D::MapGrid2D   m_map;
     yarp::os::BufferedPort<yarp::os::Bottle>* m_loc_port;
     yarp::dev::PolyDriver*      m_pLoc;
-    yarp::dev::ILocalization2D* m_iLoc;
+    yarp::dev::Nav2D::ILocalization2D* m_iLoc;
     double m_loc_x;
     double m_loc_y;
     double m_loc_t;

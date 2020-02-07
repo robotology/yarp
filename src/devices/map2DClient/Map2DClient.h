@@ -48,7 +48,7 @@
 
 class Map2DClient :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IMap2D
+        public yarp::dev::Nav2D::IMap2D
 {
 protected:
     yarp::os::Port      m_rpcPort_to_Map2DServer;

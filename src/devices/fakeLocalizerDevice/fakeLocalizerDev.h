@@ -63,7 +63,7 @@ public:
 
 class fakeLocalizer :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::ILocalization2D
+        public yarp::dev::Nav2D::ILocalization2D
 {
 public:
     fakeLocalizerThread         *locThread;
@@ -79,7 +79,7 @@ public:
     * Gets the current status of the localization task.
     * @return true/false
     */
-    bool   getLocalizationStatus(yarp::dev::LocalizationStatusEnum& status) override;
+    bool   getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status) override;
 
     /**
     * Gets a set of pose estimates computed by the localization algorithm.
@@ -116,6 +116,13 @@ public:
     * @return true/false
     */
     virtual bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov) override;
+
+    /**
+    * Gets the estimated odometry the robot, including its velocity expressed in the world and in the local reference frame.
+    * @param loc the estimated odometry.
+    * @return true/false
+    */
+    virtual bool   getEstimatedOdometry(yarp::dev::OdometryData& odom)  override;
 
     /**
     * Starts the localization service

@@ -8,4 +8,4 @@
 
 #include <yarp/dev/IMap2D.h>
 
-yarp::dev::IMap2D::~IMap2D() = default;
+yarp::dev::Nav2D::IMap2D::~IMap2D() = default;

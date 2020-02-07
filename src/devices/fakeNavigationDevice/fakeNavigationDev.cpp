@@ -135,13 +135,13 @@ bool fakeNavigation::getCurrentNavigationWaypoint(Map2DLocation& curr_waypoint)
     return true;
 }
 
-bool fakeNavigation::getCurrentNavigationMap(yarp::dev::NavigationMapTypeEnum map_type, MapGrid2D& map)
+bool fakeNavigation::getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, MapGrid2D& map)
 {
     yInfo() << "getCurrentNavigationMap not yet implemented";
     return true;
 }
 
-bool fakeNavigation::getNavigationStatus(yarp::dev::NavigationStatusEnum& status)
+bool fakeNavigation::getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status)
 {
     yInfo() << "getNavigationStatus not yet implemented";
     return true;
