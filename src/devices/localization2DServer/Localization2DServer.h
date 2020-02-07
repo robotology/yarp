@@ -49,6 +49,8 @@
  * | GENERAL        |  retrieve_position_periodically     | bool  | -  | true         | No           | If true, the subdevice is asked periodically to retrieve the current location. Otherwise the current location is obtained asynchronously when a getCurrentPosition() command is issued.     | -     |
  * | GENERAL        |  name          | string  |  -             | /localizationServer | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /localizationServer/rpc and /localizationServer/streaming:o     |
  * | subdevice      |  -             | string  |  -             |  -                  | Yes          | The name of the of Localization device to be used                 | -     |
+ * | ROS            |  publish_tf    | bool    |  -             |  false              | No           | If true, odometry data will be published on global ROS /tf topic      | -     |
+ * | ROS            |  publish_odom  | bool    |  -             |  false              | No           | If true, odometry data will be published on a user-defined ROS topic  | The default name of the topic is built as: name+"/odom"     |
  */
 
 
@@ -59,6 +61,10 @@ class Localization2DServer :
         public yarp::os::PortReader
 {
 protected:
+
+    //general options
+    bool m_ros_publish_odometry_on_topic;
+    bool m_ros_publish_odometry_on_tf;
 
     //yarp
     std::string                               m_local_name;

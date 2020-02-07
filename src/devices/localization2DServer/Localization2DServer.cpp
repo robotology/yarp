@@ -55,6 +55,8 @@ Localization2DServer::Localization2DServer() : PeriodicThread(DEFAULT_THREAD_PER
     m_stats_time_last = yarp::os::Time::now();
     iLoc = 0;
     m_getdata_using_periodic_thread = true;
+    m_ros_publish_odometry_on_topic = false;
+    m_ros_publish_odometry_on_tf = false;
 }
 
 bool Localization2DServer::attachAll(const PolyDriverList &device2attach)
@@ -208,6 +210,15 @@ bool Localization2DServer::initialize_ROS(yarp::os::Searchable& params)
     if (params.check("ROS"))
     {
         Bottle& ros_group = params.findGroup("ROS");
+        if (ros_group.check("publish_tf"))
+        {
+            m_ros_publish_odometry_on_tf=true;
+        }
+        if (ros_group.check("publish_odom"))
+        {
+            m_ros_publish_odometry_on_topic=true;
+        }
+
         if (!ros_group.check("parent_frame_id"))
         {
             yError() << "Localization2DServer: missing 'parent_frame_id' parameter";
@@ -533,8 +544,8 @@ void Localization2DServer::run()
 
     if (1) publish_odometry_on_yarp_port();
     if (1) publish_2DLocation_on_yarp_port();
-    if (1) publish_odometry_on_ROS_topic();
-    if (1) publish_odometry_on_TF_topic();
+    if (m_ros_publish_odometry_on_topic) publish_odometry_on_ROS_topic();
+    if (m_ros_publish_odometry_on_tf) publish_odometry_on_TF_topic();
 
 }
 
