@@ -14,6 +14,7 @@
 #include <cstddef> //defines size_t
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/ManagedBytes.h>
@@ -119,45 +120,20 @@ template<class T>
 class yarp::sig::VectorOf : public VectorBase
 {
 private:
-    yarp::os::ManagedBytes bytes;
-    T *first;
-    size_t len;
-
-    inline void _updatePointers() {
-        len = bytes.used()/sizeof(T);
-        if (len==0) {
-            first = nullptr;
-        } else {
-            first = reinterpret_cast<T*>(bytes.get());
-        }
-    }
+    std::vector<T> bytes;
 
 public:
-    typedef T* iterator;
-    typedef const T* const_iterator;
 
-    VectorOf() {
-        bytes.allocate(16*sizeof(T)); // preallocate space for 16 elements
-        bytes.setUsed(0);
-        first = nullptr;
-        len = 0;
-    }
+    VectorOf() = default;
 
-    VectorOf(size_t size) : bytes(size*sizeof(T)) {
-        bytes.setUsed(size*sizeof(T));
-        _updatePointers();
+    VectorOf(size_t size) : bytes(size) {
     }
 
     /**
      * @brief Initializer list constructor.
      * @param[in] values, list of values with which initialize the Vector.
      */
-    VectorOf(std::initializer_list<T> values) : bytes(values.size()*sizeof(T))
-    {
-        bytes.setUsed(values.size()*sizeof(T));
-        len = values.size();
-        _updatePointers();
-        std::uninitialized_copy(values.begin(), values.end(), first);
+    VectorOf(std::initializer_list<T> values) : bytes(values) {
     }
 
     /**
@@ -165,9 +141,7 @@ public:
     * @param s the size
     * @param def a default value used to fill the vector
     */
-    VectorOf(size_t s, const T& def)
-    {
-        this->resize(s,def);
+    VectorOf(size_t s, const T& def) : bytes(s, def) {
     }
 
     /**
@@ -178,10 +152,22 @@ public:
     */
     VectorOf(size_t s, const T *p)
     {
-        len = 0;
         this->resize(s);
-
         memcpy(this->data(), p, sizeof(T)*s);
+    }
+
+    VectorOf(const VectorOf& r) : VectorBase(), bytes(r.bytes) {
+    }
+
+    /**
+     * Copy operator;
+     */
+    const VectorOf<T> &operator=(const VectorOf<T>& r)
+    {
+
+        if (this == &r) return *this;
+        bytes = r.bytes;
+        return *this;
     }
 
     /**
@@ -189,9 +175,7 @@ public:
      *
      * @param other the VectorOf to be moved
      */
-    VectorOf(VectorOf<T>&& other) noexcept : bytes(std::move(other.bytes))
-    {
-        _updatePointers();
+    VectorOf(VectorOf<T>&& other) noexcept : bytes(std::move(other.bytes)) {
     }
 
     /**
@@ -203,35 +187,9 @@ public:
     VectorOf& operator=(VectorOf<T>&& other) noexcept
     {
         bytes = std::move(other.bytes);
-        _updatePointers();
         return *this;
     }
 
-    VectorOf(const VectorOf& r) : VectorBase()
-    {
-        bytes = r.bytes;
-        _updatePointers();
-    }
-
-    /**
-    * Copy operator;
-    */
-    const VectorOf<T> &operator=(const VectorOf<T>& r)
-    {
-
-        if (this == &r) return *this;
-
-        if(this->size() == r.size())
-        {
-            memcpy(this->data(), r.data(), sizeof(T)*r.size());
-        }
-        else
-        {
-            bytes = r.bytes;
-            _updatePointers();
-        }
-        return *this;
-    }
 
     size_t getElementSize() const override {
         return sizeof(T);
@@ -243,31 +201,31 @@ public:
 
     size_t getListSize() const override
     {
-        return len;
+        return bytes.size();
     }
 
     const char* getMemoryBlock() const override
     {
-        return bytes.get();
+        return reinterpret_cast<const char*>(this->data());
     }
 
     char* getMemoryBlock() override
     {
-        return bytes.get();
+        return reinterpret_cast<char*>(this->data());
     }
 #ifndef YARP_NO_DEPRECATED // since YARP 3.2.0
     YARP_DEPRECATED_MSG("Use either data() if you need the pointer to the first element,"
                         " or cbegin() if you need the iterator")
     inline const T *getFirst() const
     {
-        return first;
+        return this->data();
     }
 
     YARP_DEPRECATED_MSG("Use either data() if you need the pointer to the first element,"
                         " or begin() if you need the iterator")
     inline T *getFirst()
     {
-        return first;
+        return this->data();
     }
 #endif // YARP_NO_DEPRECATED
 
@@ -276,7 +234,7 @@ public:
     * @return a pointer to double (or nullptr if the vector is of zero length)
     */
     inline T *data()
-    { return first; }
+    { return bytes.empty() ? nullptr : &(bytes.at(0)); }
 
     /**
     * Return a pointer to the first element of the vector,
@@ -284,7 +242,7 @@ public:
     * @return a (const) pointer to double (or nullptr if the vector is of zero length)
     */
     inline const T *data() const
-    { return first;}
+    { return bytes.empty() ? nullptr : &(bytes.at(0)); }
 
     /**
     * Resize the vector.
@@ -292,13 +250,7 @@ public:
     */
     void resize(size_t size) override
     {
-        size_t prev_len = len;
-        bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
-        bytes.setUsed(size*sizeof(T));
-        _updatePointers();
-        for (size_t i = prev_len; i < size; i++) {
-            new (&((*this)[i])) T(); // non-allocating placement operator new
-        }
+        bytes.resize(size);
     }
 
     /**
@@ -308,12 +260,8 @@ public:
     */
     void resize(size_t size, const T&def)
     {
-        bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
-        bytes.setUsed(size*sizeof(T));
-        _updatePointers();
-        for (size_t i = 0; i < size; i++) {
-            new (&((*this)[i])) T(def); // non-allocating placement operator new
-        }
+        this->resize(size);
+        std::fill(bytes.begin(), bytes.end(), def);
     }
 
     /**
@@ -322,8 +270,7 @@ public:
      * @param size, new size of the vector.
      */
     void reserve(size_t size) {
-        bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
-        _updatePointers();
+        bytes.reserve(size);
     }
 
     /**
@@ -331,10 +278,7 @@ public:
     */
     inline void push_back (const T &elem)
     {
-        bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
-        bytes.setUsed(bytes.used()+sizeof(T));
-        _updatePointers();
-        new (&((*this)[len-1])) T(elem); // non-allocating placement operator new
+        bytes.push_back(elem);
     }
 
     /**
@@ -343,7 +287,7 @@ public:
      */
     inline void push_back (T&& elem)
     {
-        this->emplace_back(std::move(elem));
+        bytes.push_back(std::move(elem));
     }
 
     /**
@@ -354,11 +298,7 @@ public:
     template<typename... _Args>
     inline T& emplace_back(_Args&&... args)
     {
-        bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
-        bytes.setUsed(bytes.used()+sizeof(T));
-        _updatePointers();
-        new (&((*this)[len-1])) T(std::forward<_Args>(args)...); // non-allocating placement operator new
-        return (*this)[len-1];
+        bytes.emplace_back(std::forward<_Args>(args)...);
     }
 
     /**
@@ -366,11 +306,7 @@ public:
     */
     inline void pop_back (void)
     {
-        if (bytes.used()>sizeof(T)) {
-            bytes.setUsed(bytes.used()-sizeof(T));
-            len--;
-            _updatePointers();
-        }
+        bytes.pop_back();
     }
 
     /**
@@ -380,7 +316,7 @@ public:
     */
     inline T &operator[](size_t i)
     {
-        return first[i];
+        return bytes[i];
     }
 
     /**
@@ -390,7 +326,7 @@ public:
     */
     inline const T &operator[](size_t i) const
     {
-        return first[i];
+        return bytes[i];
     }
 
     /**
@@ -400,7 +336,7 @@ public:
     */
     inline T &operator()(size_t i)
     {
-        return first[i];
+        return this->data()[i];
     }
 
     /**
@@ -410,11 +346,11 @@ public:
     */
     inline const T &operator()(size_t i) const
     {
-        return first[i];
+        return this->data()[i];
     }
 
     inline size_t size() const {
-        return len;
+        return bytes.size();
     }
 
     /**
@@ -429,7 +365,7 @@ public:
      * @return the number of elements that the container has currently allocated space for.
      */
     inline size_t capacity() const {
-        return bytes.length()/sizeof(T);
+        return bytes.capacity();
     }
 
     /**
@@ -437,7 +373,7 @@ public:
     */
     void zero()
     {
-        memset(this->data(), 0, sizeof(T)*this->size());
+        std::fill(bytes.begin(), bytes.end(), 0);
     }
 
     /**
@@ -526,11 +462,7 @@ public:
     */
     const VectorOf<T> &operator=(T v)
     {
-        T *tmp = this->data();
-
-        for(size_t k=0; k<length(); k++)
-            tmp[k]=v;
-
+        std::fill(bytes.begin(), bytes.end(), v);
         return *this;
     }
 
@@ -539,22 +471,7 @@ public:
     */
     bool operator==(const VectorOf<T> &r) const
     {
-        //check dimensions first
-        size_t c=size();
-        if (c!=r.size())
-            return false;
-
-        const T *tmp1=data();
-        const T *tmp2=r.data();
-
-        while(c--)
-        {
-            if (*tmp1++!=*tmp2++)
-                return false;
-        }
-
-        return true;
-
+        return bytes == r.bytes;
     }
 
     /**
@@ -562,15 +479,15 @@ public:
      * @note At the moment iterator is implemented as a pointer, it may change in the future.
      * For this reason it should not be used as a pointer to the data, use data() instead.
      */
-    iterator begin() noexcept {
-        return first;
+    typename std::vector<T>::iterator begin() noexcept {
+        return bytes.begin();
     }
 
     /**
      * @brief Returns an iterator to the end of the VectorOf
      */
-    iterator end() noexcept {
-        return first + len;
+    typename std::vector<T>::iterator end() noexcept {
+        return bytes.end();
     }
 
     /**
@@ -578,15 +495,15 @@ public:
      * @note At the moment iterator is implemented as a pointer, it may change in the future.
      * For this reason it should not be used as a pointer to the data, use data() instead.
      */
-    const_iterator begin() const noexcept {
-        return first;
+    typename std::vector<T>::const_iterator begin() const noexcept {
+        return bytes.begin();
     }
 
     /**
      * @brief Returns a const iterator to the end of the VectorOf.
      */
-    const_iterator end() const noexcept {
-        return first + len;
+    typename std::vector<T>::const_iterator end() const noexcept {
+        return bytes.end();
     }
 
     /**
@@ -594,21 +511,18 @@ public:
      * @note At the moment iterator is implemented as a pointer, it may change in the future.
      * For this reason it should not be used as a pointer to the data, use data() instead.
      */
-    const_iterator cbegin() const noexcept {
-        return first;
+    typename std::vector<T>::const_iterator cbegin() const noexcept {
+        return bytes.cbegin();
     }
 
     /**
      * @brief Returns a const iterator to the end of the VectorOf.
      */
-    const_iterator cend() const noexcept {
-        return first + len;
+    typename std::vector<T>::const_iterator cend() const noexcept {
+        return bytes.cend();
     }
     void clear() {
         bytes.clear();
-        bytes.setUsed(0);
-        len = 0;
-        first = nullptr;
     }
 
     yarp::os::Type getType() const override {
