@@ -931,5 +931,62 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         CHECK(pcCol.height() == depth.height()); // Checking PC height
 
     }
+
+    SECTION("Testing move semantics")
+    {
+        INFO("Testing the copy constructor with PC of the same type");
+        PointCloud<DataXYZRGBA> testPC;
+        int width  = 5;
+        int height = 5;
+        testPC.resize(width, height);
+
+        for (int i=0; i<width*height; i++)
+        {
+            testPC(i).x = static_cast<float>(i);
+            testPC(i).y = static_cast<float>(i + 1);
+            testPC(i).z = static_cast<float>(i + 2);
+            testPC(i).r = '1';
+            testPC(i).g = '2';
+            testPC(i).b = '3';
+            testPC(i).a = '4';
+        }
+
+        auto size_bytes = testPC.dataSizeBytes();
+
+        PointCloud<DataXYZRGBA> testPC2(std::move(testPC));
+
+        CHECK(testPC2.dataSizeBytes() == size_bytes); // Checking size
+
+        bool ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= testPC2(i).x == i;
+            ok &= testPC2(i).y == i + 1;
+            ok &= testPC2(i).z == i + 2;
+            ok &= testPC2(i).r == '1';
+            ok &= testPC2(i).g == '2';
+            ok &= testPC2(i).b == '3';
+            ok &= testPC2(i).a == '4';
+        }
+
+        CHECK(ok); // Checking data consistency
+
+        PointCloud<DataXYZRGBA> testPC3 = std::move(testPC2);
+        CHECK(testPC3.dataSizeBytes() == size_bytes); // Checking size
+
+        ok = true;
+        for (int i=0; i<width*height; i++)
+        {
+            ok &= testPC3(i).x == i;
+            ok &= testPC3(i).y == i + 1;
+            ok &= testPC3(i).z == i + 2;
+            ok &= testPC3(i).r == '1';
+            ok &= testPC3(i).g == '2';
+            ok &= testPC3(i).b == '3';
+            ok &= testPC3(i).a == '4';
+        }
+
+        CHECK(ok); // Checking data consistency
+    }
     Network::setLocalMode(false);
 }
