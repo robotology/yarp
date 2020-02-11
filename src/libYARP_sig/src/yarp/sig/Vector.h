@@ -123,6 +123,8 @@ private:
     std::vector<T> bytes;
 
 public:
+    using iterator       =  typename std::vector<T>::iterator;
+    using const_iterator =  typename std::vector<T>::const_iterator;
 
     VectorOf() = default;
 
@@ -479,14 +481,14 @@ public:
      * @note At the moment iterator is implemented as a pointer, it may change in the future.
      * For this reason it should not be used as a pointer to the data, use data() instead.
      */
-    typename std::vector<T>::iterator begin() noexcept {
+    iterator begin() noexcept {
         return bytes.begin();
     }
 
     /**
      * @brief Returns an iterator to the end of the VectorOf
      */
-    typename std::vector<T>::iterator end() noexcept {
+    iterator end() noexcept {
         return bytes.end();
     }
 
@@ -495,14 +497,14 @@ public:
      * @note At the moment iterator is implemented as a pointer, it may change in the future.
      * For this reason it should not be used as a pointer to the data, use data() instead.
      */
-    typename std::vector<T>::const_iterator begin() const noexcept {
+    const_iterator begin() const noexcept {
         return bytes.begin();
     }
 
     /**
      * @brief Returns a const iterator to the end of the VectorOf.
      */
-    typename std::vector<T>::const_iterator end() const noexcept {
+    const_iterator end() const noexcept {
         return bytes.end();
     }
 
@@ -511,14 +513,14 @@ public:
      * @note At the moment iterator is implemented as a pointer, it may change in the future.
      * For this reason it should not be used as a pointer to the data, use data() instead.
      */
-    typename std::vector<T>::const_iterator cbegin() const noexcept {
+    const_iterator cbegin() const noexcept {
         return bytes.cbegin();
     }
 
     /**
      * @brief Returns a const iterator to the end of the VectorOf.
      */
-    typename std::vector<T>::const_iterator cend() const noexcept {
+    const_iterator cend() const noexcept {
         return bytes.cend();
     }
     void clear() {
