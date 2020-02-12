@@ -54,8 +54,12 @@ InputCallback::~InputCallback()
 void InputCallback::onRead(ImageType &img)
 {
     int delaycnt = 0;
+
+    eyeRenderTexture->mutex.lock();
     while (eyeRenderTexture->dataReady && delaycnt <= 3) {
+        eyeRenderTexture->mutex.unlock();
         yarp::os::SystemClock::delaySystem(0.001);
+        eyeRenderTexture->mutex.lock();
         ++delaycnt;
     }
 
@@ -92,8 +96,6 @@ void InputCallback::onRead(ImageType &img)
     }
     expected = (found + 1) % 10;
 #endif // DEBUG_SQUARES
-
-    eyeRenderTexture->mutex.lock();
 
     if(eyeRenderTexture->ptr) {
         size_t w = img.width();
