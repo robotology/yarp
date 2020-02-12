@@ -1412,6 +1412,29 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
         }
         break;
+    case GLFW_KEY_P:
+        yDebug() << "--------------------------------------------";
+        yDebug() << "Current settings:";
+        yDebug() << "  Flip input" << (flipInputEnabled ? "ON" : "OFF");
+        yDebug() << "  Image pose" << (imagePoseEnabled ? "ON" : "OFF");
+        yDebug() << "  User pose" << (userPoseEnabled ? "ON" : "OFF");
+        yDebug() << "  Overlays:";
+        yDebug() << "    Logo" << (logoEnabled ? "ON" : "OFF");
+        yDebug() << "    Crosshairs" << (crosshairsEnabled ? "ON" : "OFF");
+        yDebug() << "    Battery" << (batteryEnabled ? "ON" : "OFF");
+        yDebug() << "    Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
+        yDebug() << "  Left eye:";
+        yDebug() << "    HFOV = " << camHFOV[0];
+        yDebug() << "    pitch offset =" << displayPorts[0]->pitchOffset;
+        yDebug() << "    yaw offset =" << displayPorts[0]->yawOffset;
+        yDebug() << "    roll offset =" << displayPorts[0]->rollOffset;
+        yDebug() << "  Right eye:";
+        yDebug() << "    HFOV =" << camHFOV[1];
+        yDebug() << "    pitch offset =" << displayPorts[1]->pitchOffset;
+        yDebug() << "    yaw offset =" << displayPorts[1]->yawOffset;
+        yDebug() << "    roll offset =" << displayPorts[1]->rollOffset;
+        yDebug() << "--------------------------------------------";
+        break;
     default:
         break;
     }
