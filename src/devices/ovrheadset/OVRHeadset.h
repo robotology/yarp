@@ -167,7 +167,7 @@ private:
     ovrPoseStatef headpose;
     ovrPoseStatef predicted_headpose;
     unsigned int guiCount;
-    bool         enableGui{ true };
+    bool         guiEnabled{ true };
     std::mutex                       inputStateMutex;
     ovrInputState                    inputState;
     bool                             inputStateError{ false };
