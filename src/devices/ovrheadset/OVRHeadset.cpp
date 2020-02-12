@@ -467,6 +467,10 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
                 huds.push_back(hud);
             }
         }
+        else
+        {
+            guiEnabled = false;
+        }
 
     }
 
@@ -1142,7 +1146,7 @@ void yarp::dev::OVRHeadset::run()
         }
 
         //setting up dynamic hud
-        if (enableGui)
+        if (guiEnabled)
         {
             for (auto& hud : huds)
             {
@@ -1277,7 +1281,7 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
             "Battery" << (batteryEnabled ? "ON" : "OFF") <<
-            "Gui" << (enableGui ? "ON" : "OFF");
+            "Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
         break;
     case GLFW_KEY_C:
         crosshairsEnabled = !crosshairsEnabled;
@@ -1285,7 +1289,7 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
             "Battery" << (batteryEnabled ? "ON" : "OFF") <<
-            "Gui" << (enableGui ? "ON" : "OFF");
+            "Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
         break;
     case GLFW_KEY_B:
         batteryEnabled = !batteryEnabled;
@@ -1298,15 +1302,17 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
             "Battery" << (batteryEnabled ? "ON" : "OFF") <<
-            "Gui" << (enableGui ? "ON" : "OFF");
+            "Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
         break;
     case GLFW_KEY_G:
-        enableGui = !enableGui;
+        if (guiCount != 0) {
+            guiEnabled = !guiEnabled;
+        }
         yDebug() << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
             "Battery" << (batteryEnabled ? "ON" : "OFF") <<
-            "Gui" << (enableGui ? "ON" : "OFF");
+            "Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED") ;
         break;
     case GLFW_KEY_ESCAPE:
         this->close();
