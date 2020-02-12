@@ -354,7 +354,7 @@ checkandset_dependency(PNG)
 find_package(MPI QUIET)
 checkandset_dependency(MPI)
 
-set(LibOVR_REQUIRED_VERSION 1.17)
+set(LibOVR_REQUIRED_VERSION 1.19)
 find_package(LibOVR ${LibOVR_REQUIRED_VERSION} QUIET)
 checkandset_dependency(LibOVR)
 

@@ -1175,7 +1175,10 @@ void yarp::dev::OVRHeadset::run()
 
         ovrLayerHeader** layers = new ovrLayerHeader*[layerList.size()];
         std::copy(layerList.begin(), layerList.end(), layers);
-        ovrResult result = ovr_SubmitFrame(session, distortionFrameIndex, nullptr, layers, layerList.size());
+
+        ovr_WaitToBeginFrame(session, distortionFrameIndex);
+        ovr_BeginFrame(session, distortionFrameIndex);
+        ovr_EndFrame(session, distortionFrameIndex, nullptr, layers, layerList.size());
         delete[] layers;
 
         // Blit mirror texture to back buffer
