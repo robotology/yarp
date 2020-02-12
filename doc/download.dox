@@ -51,10 +51,7 @@ Brew bottles can also be downloaded from [GitHub](https://github.com/robotology/
 
 \section download_previous_releases Previous releases
 
-Previous versions are hosted on
-
- + [GitHub](https://github.com/robotology/yarp/releases)
- + [SourceForge](https://sourceforge.net/projects/yarp0/files/yarp2/) (2.3.63 and older)
+Previous versions are hosted on [GitHub](https://github.com/robotology/yarp/releases)
 
 __Previous releases version and dates__:
 
@@ -105,5 +102,18 @@ __Previous releases version and dates__:
  + \ref v2_2_7
  + \ref v2_2_6
  + \ref v2_2_5
+ + \ref v2_2_4
+ + \ref v2_2_3
  + \ref v2_2_2
+ + \ref v2_2_1
+ + \ref v2_2_0
+ + \ref v2_1_9
+ + \ref v2_1_8
+ + \ref v2_1_7
+ + \ref v2_1_6
+ + \ref v2_1_5
+ + \ref v2_1_4
+ + \ref v2_1_3
+ + \ref v2_1_0
+ + \ref v2_0_4
 */
