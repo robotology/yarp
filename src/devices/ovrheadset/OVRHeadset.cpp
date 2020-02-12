@@ -1225,6 +1225,11 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     bool rightShiftPressed = (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
     bool leftCtrlPressed = (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS);
     bool rightCtrlPressed = (glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS);
+    bool leftAltPressed = (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS);
+    bool rightAltPressed = (glfwGetKey(window, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS);
+    bool shiftPressed = leftShiftPressed || rightShiftPressed;
+    bool ctrlPressed = leftCtrlPressed || rightCtrlPressed;
+    bool altPressed = leftAltPressed || rightAltPressed;
 
     switch (key) {
     case GLFW_KEY_R:
@@ -1259,9 +1264,11 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     case GLFW_KEY_I:
         imagePoseEnabled = !imagePoseEnabled;
         yDebug() << "Image pose" << (imagePoseEnabled ? "ON" : "OFF");
+        yDebug() << "User pose" << (userPoseEnabled ? "ON" : "OFF");
         break;
     case GLFW_KEY_U:
         userPoseEnabled = !userPoseEnabled;
+        yDebug() << "Image pose" << (imagePoseEnabled ? "ON" : "OFF");
         yDebug() << "User pose" << (userPoseEnabled ? "ON" : "OFF");
         break;
     case GLFW_KEY_L:
@@ -1269,14 +1276,16 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         yDebug() << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
-            "Battery" << (batteryEnabled ? "ON" : "OFF");
+            "Battery" << (batteryEnabled ? "ON" : "OFF") <<
+            "Gui" << (enableGui ? "ON" : "OFF");
         break;
     case GLFW_KEY_C:
         crosshairsEnabled = !crosshairsEnabled;
         yDebug() << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
-            "Battery" << (batteryEnabled ? "ON" : "OFF");
+            "Battery" << (batteryEnabled ? "ON" : "OFF") <<
+            "Gui" << (enableGui ? "ON" : "OFF");
         break;
     case GLFW_KEY_B:
         batteryEnabled = !batteryEnabled;
@@ -1288,7 +1297,16 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         yDebug() << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
-            "Battery" << (batteryEnabled ? "ON" : "OFF");
+            "Battery" << (batteryEnabled ? "ON" : "OFF") <<
+            "Gui" << (enableGui ? "ON" : "OFF");
+        break;
+    case GLFW_KEY_G:
+        enableGui = !enableGui;
+        yDebug() << "Overlays:" <<
+            "Logo" << (logoEnabled ? "ON" : "OFF") <<
+            "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
+            "Battery" << (batteryEnabled ? "ON" : "OFF") <<
+            "Gui" << (enableGui ? "ON" : "OFF");
         break;
     case GLFW_KEY_ESCAPE:
         this->close();
@@ -1319,61 +1337,61 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         break;
     case GLFW_KEY_UP:
         if (!rightShiftPressed) {
-            displayPorts[0]->pitchOffset += rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->pitchOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye pitch offset =" << displayPorts[0]->pitchOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->pitchOffset += leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->pitchOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye pitch offset =" << displayPorts[1]->pitchOffset;
         }
         break;
     case GLFW_KEY_DOWN:
         if (!rightShiftPressed) {
-            displayPorts[0]->pitchOffset -= rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->pitchOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye pitch offset =" << displayPorts[0]->pitchOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->pitchOffset -= leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->pitchOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye pitch offset =" << displayPorts[1]->pitchOffset;
         }
         break;
     case GLFW_KEY_LEFT:
         if (!rightShiftPressed) {
-            displayPorts[0]->yawOffset += rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->yawOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye yaw offset =" << displayPorts[0]->yawOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->yawOffset += leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->yawOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye yaw offset =" << displayPorts[1]->yawOffset;
         }
         break;
     case GLFW_KEY_RIGHT:
         if (!rightShiftPressed) {
-            displayPorts[0]->yawOffset -= rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->yawOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye yaw offset =" << displayPorts[0]->yawOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->yawOffset -= leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->yawOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye yaw offset =" << displayPorts[1]->yawOffset;
         }
         break;
     case GLFW_KEY_PAGE_UP:
         if (!rightShiftPressed) {
-            displayPorts[0]->rollOffset += rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->rollOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye roll offset =" << displayPorts[0]->rollOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->rollOffset += leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->rollOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye roll offset =" << displayPorts[1]->rollOffset;
         }
         break;
     case GLFW_KEY_PAGE_DOWN:
         if (!rightShiftPressed) {
-            displayPorts[0]->rollOffset -= rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->rollOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye roll offset =" << displayPorts[0]->rollOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->rollOffset -= leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->rollOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye roll offset =" << displayPorts[1]->rollOffset;
         }
         break;
@@ -1384,11 +1402,6 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
         }
         break;
-    case GLFW_KEY_G:
-    {
-        enableGui = !enableGui;
-    }
-    break;
     default:
         break;
     }
