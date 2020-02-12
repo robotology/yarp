@@ -606,7 +606,7 @@ bool yarp::dev::OVRHeadset::threadInit()
     OVR::System::Init();
 
     // Initializes LibOVR, and the Rift
-    ovrInitParams initParams = { ovrInit_RequestVersion, OVR_MINOR_VERSION, ovrDebugCallback, reinterpret_cast<uintptr_t>(this), 0 };
+    ovrInitParams initParams = { ovrInit_RequestVersion | ovrInit_FocusAware, OVR_MINOR_VERSION, ovrDebugCallback, reinterpret_cast<uintptr_t>(this), 0 };
     ovrResult r = ovr_Initialize(&initParams);
 //    VALIDATE(OVR_SUCCESS(r), "Failed to initialize libOVR.");
     if (!OVR_SUCCESS(r)) {
@@ -909,6 +909,10 @@ void yarp::dev::OVRHeadset::run()
     if (!sessionStatus.IsVisible) {
         resetInput();
         return;
+    }
+
+    if (!sessionStatus.HasInputFocus) {
+      //  return;
     }
 
     // Begin frame
