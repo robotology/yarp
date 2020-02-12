@@ -566,7 +566,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     {
         { "flipinput",     "[F] Enable input flipping",                &flipInputEnabled,  true },
         { "no-imagepose",  "[I] Disable image pose",                   &imagePoseEnabled,  false },
-        { "userpose",      "[U] Use user pose instead of camera pose", &imagePoseEnabled,  true  },
+        { "userpose",      "[U] Use user pose instead of camera pose", &userPoseEnabled,   true  },
         { "no-logo",       "[L] Disable logo",                         &logoEnabled,       false },
         { "no-crosshairs", "[C] Disable crosshairs",                   &crosshairsEnabled, false },
         { "no-battery",    "[B] Disable battery",                      &batteryEnabled,    false }
