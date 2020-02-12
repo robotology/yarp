@@ -835,7 +835,7 @@ bool yarp::dev::OVRHeadset::updateService()
         return false;
     }
 
-    const double delay = 5.0;
+    constexpr double delay = 60.0;
     yDebug("Thread ran %d times, est period %lf[ms], used %lf[ms]",
            getIterations(),
            getEstimatedPeriod()*1000,
