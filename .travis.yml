@@ -214,7 +214,7 @@ git:
         - cmake
         - ccache
         # Robotology dependencies
-        - ycm
+        - ycm-cmake-modules
         - librobottestingframework-dev
         # Libraries
         - libsqlite3-dev
