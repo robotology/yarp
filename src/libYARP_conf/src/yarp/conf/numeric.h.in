@@ -60,6 +60,21 @@ typedef ::SSIZE_T ssize_t;
 typedef ::ssize_t ssize_t;
 #endif
 
+// Define `clamp` algorithm, available in c++17
+template<class T>
+constexpr const T& clamp( const T& v, const T& lo, const T& hi )
+{
+    // assert( !(hi < lo) );
+    return (v < lo) ? lo : (hi < v) ? hi : v;
+}
+
+template<class T, class Compare>
+constexpr const T& clamp( const T& v, const T& lo, const T& hi, Compare comp )
+{
+    // assert( !comp(hi, lo) );
+    return comp(v, lo) ? lo : comp(hi, v) ? hi : v;
+}
+
 } // namespace conf
 } // namespace yarp
 
