@@ -17,6 +17,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetInt32.h>
+#include <yarp/sig/Vector.h>
 
 namespace yarp {
 namespace sig {
@@ -194,6 +195,23 @@ struct DataXYZ
         ret.addFloat64(y);
         ret.addFloat64(z);
         return ret;
+    }
+    yarp::sig::Vector toVector3() const
+    {
+        yarp::sig::Vector v(3);
+        v[0] = x;
+        v[1] = y;
+        v[2] = z;
+        return v;
+    }
+    yarp::sig::Vector toVector4() const
+    {
+        yarp::sig::Vector v(4);
+        v[0] = x;
+        v[1] = y;
+        v[2] = z;
+        v[3] = 1;
+        return v;
     }
     void fromBottle(const yarp::os::Bottle& bt, size_t i)
     {
