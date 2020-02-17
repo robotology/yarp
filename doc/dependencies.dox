@@ -220,8 +220,7 @@ export CMAKE_PREFIX_PATH=$CMAKE_PREFIX_PATH:/path/to/Qt/5.3/gcc_64/
 \paragraph dependencies_qt5_debian_ubuntu Debian/Ubuntu
 
 
-On Debian (jessie or later) and Ubuntu (utopic or later) systems, you need to
-install the following packages:
+On Debian and Ubuntu systems, you need to install the following packages:
 
 \li qtbase5-dev
 \li qtdeclarative5-dev
@@ -239,21 +238,6 @@ sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qml-module-qtquick2 qml-module-qtquick-window2 \
   qml-module-qtmultimedia qml-module-qtquick-dialogs \
   qml-module-qtquick-controls
-\endverbatim
-
-On Debian stretch, also the following packages are required:
-
-\li qml-module-qt-labs-folderlistmodel
-\li qml-module-qt-labs-settings
-
-You can install them by running:
-
-\verbatim
-sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
-  qml-module-qtquick2 qml-module-qtquick-window2 \
-  qml-module-qtmultimedia qml-module-qtquick-dialogs \
-  qml-module-qtquick-controls qml-module-qt-labs-folderlistmodel
-  qml-module-qt-labs-settings
 \endverbatim
 
 
