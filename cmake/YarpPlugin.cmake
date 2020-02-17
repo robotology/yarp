@@ -95,9 +95,11 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
     message(FATAL_ERROR "DEFAULT argument cannot be used without OPTION")
   endif()
 
+  yarp_colorize_string(bundle_name_col white 1 "${bundle_name}")
+
   if(YARP_PLUGIN_LEVEL)
     if(NOT _YBPL_DOC)
-      set(_YBPL_DOC "nested plugin library: ${bundle_name}")
+      set(_YBPL_DOC "Nested plugin library: ${bundle_name_col}")
     endif()
 
     if(DEFINED _YBPL_OPTION)
@@ -109,7 +111,7 @@ macro(YARP_BEGIN_PLUGIN_LIBRARY bundle_name)
 
   else()
     if(NOT _YBPL_DOC)
-      set(_YBPL_DOC "nested plugin library: ${bundle_name}")
+      set(_YBPL_DOC "Plugin library: ${bundle_name_col}")
     endif()
 
     # If we are the outermost plugin block, then we need to set up
@@ -533,8 +535,17 @@ YARP_DEFINE_SHARED_SUBCLASS(\@YARPPLUG_NAME\@, \@YARPPLUG_TYPE\@, \@YARPPLUG_PAR
   string(MAKE_C_IDENTIFIER "${_plugin_name}.ini" _ini_id)
   set_property(DIRECTORY PROPERTY YARP_BUNDLE_INI_CONTENT_${_ini_id} ${_ini_file_content})
 
-  if (NOT _YPP_QUIET AND NOT YarpPlugin_QUIET)
-    yarp_print_feature("${_YPP_OPTION}" ${YARP_PLUGIN_LEVEL} "plugin ${_plugin_fullname}${_disable_reason}")
+  if(NOT _YPP_QUIET AND NOT YarpPlugin_QUIET)
+    if(${_YPP_OPTION})
+      yarp_colorize_string(_plugin_fullname_col green 0 "${_plugin_fullname}")
+    else()
+      if("${_disable_reason}" STREQUAL "")
+        yarp_colorize_string(_plugin_fullname_col yellow 0 "${_plugin_fullname}")
+      else()
+        yarp_colorize_string(_plugin_fullname_col red 0 "${_plugin_fullname}")
+      endif()
+    endif()
+    yarp_print_feature("${_YPP_OPTION}" ${YARP_PLUGIN_LEVEL} "Plugin: ${_plugin_fullname_col}${_disable_reason}")
   endif()
 
   if(NOT _YPP_INTERNAL AND COMMAND add_feature_info)

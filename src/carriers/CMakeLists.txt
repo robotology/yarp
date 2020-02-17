@@ -9,8 +9,7 @@ include(YarpPlugin)
 include(YarpPrintFeature)
 
 yarp_begin_plugin_library(yarpcar OPTION YARP_COMPILE_CARRIER_PLUGINS
-                                  DEFAULT ON
-                                  DOC "carrier plugins")
+                                  DEFAULT ON)
   add_subdirectory(shmem_carrier)
   add_subdirectory(human_carrier)
   add_subdirectory(mpi_carrier)

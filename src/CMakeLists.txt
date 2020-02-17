@@ -30,8 +30,8 @@ add_subdirectory(libYARP_wire_rep_utils)
 add_subdirectory(libYARP_robottestingframework)
 
 # plugins
-add_subdirectory(devices)
 add_subdirectory(carriers)
+add_subdirectory(devices)
 add_subdirectory(libYARP_init)
 
 if(YARP_COMPILE_EXECUTABLES)
