@@ -6,14 +6,14 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "realsense2withIMUdriver.h"
+#include "realsense2withIMUDriver.h"
 
 #include <yarp/os/Value.h>
 
 #include <yarp/sig/ImageUtils.h>
 
-#include <yarp/math/quaternion.h>
-#include <yarp/math/math.h>
+#include <yarp/math/Quaternion.h>
+#include <yarp/math/Math.h>
 
 #include <algorithm>
 #include <cmath>
@@ -34,12 +34,11 @@ using namespace yarp::os;
 
 using namespace std;
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 struct float3 {
-    float x, y, z;
+    float x;
+    float y;
+    float z;
+
     float3 operator*(float t)
     {
         return { x * t, y * t, z * t };
@@ -55,13 +54,6 @@ struct float3 {
         x = x * t;
         y = y * t;
         z = z * t;
-    }
-
-    void operator=(float3 other)
-    {
-        x = other.x;
-        y = other.y;
-        z = other.z;
     }
 
     void add(float t1, float t2, float t3)
@@ -154,6 +146,7 @@ public:
 
 //---------------------------------------------------------------
 
+#if 0
 static std::string get_device_information(const rs2::device& dev)
 {
 
@@ -226,6 +219,7 @@ static void settingErrorMsg(const string& error, bool& ret)
     yError() << "realsense2Driver:" << error.c_str();
     ret = false;
 }
+#endif
 
 realsense2withIMUDriver::realsense2withIMUDriver() :
         realsense2Driver()

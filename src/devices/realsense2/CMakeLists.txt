@@ -44,19 +44,21 @@ yarp_prepare_plugin(realsense2withIMU
                     TYPE realsense2withIMUDriver
                     INCLUDE realsense2withIMUDriver.h
                     EXTRA_CONFIG WRAPPER=RGBDSensorWrapper
-                    DEPENDS "YARP_HAS_realsense2")
+                    DEPENDS "TARGET YARP::YARP_math;YARP_HAS_realsense2;")
 
 if(ENABLE_realsense2withIMU)
   yarp_add_plugin(yarp_realsense2withIMU)
 
   target_sources(yarp_realsense2withIMU PRIVATE realsense2Driver.cpp
-                                         realsense2withIMUDriver.cpp
-                                         realsense2withIMUDriver.h)
+                                                realsense2withIMUDriver.cpp
+                                                realsense2withIMUDriver.h)
+
+  target_compile_definitions(yarp_realsense2withIMU PRIVATE _USE_MATH_DEFINES)
 
   target_link_libraries(yarp_realsense2withIMU PRIVATE YARP::YARP_os
-                                                YARP::YARP_sig
-                                                YARP::YARP_dev
-                                                YARP::YARP_math)
+                                                       YARP::YARP_sig
+                                                       YARP::YARP_dev
+                                                       YARP::YARP_math)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
@@ -81,7 +83,7 @@ yarp_prepare_plugin(realsense2Tracking
                     CATEGORY device
                     TYPE realsense2Tracking
                     INCLUDE realsense2Tracking.h
-                    DEPENDS "YARP_HAS_realsense2")
+                    DEPENDS "TARGET YARP::YARP_math;YARP_HAS_realsense2;")
 
 if(ENABLE_realsense2Tracking)
   yarp_add_plugin(yarp_realsense2Tracking)
@@ -89,10 +91,12 @@ if(ENABLE_realsense2Tracking)
   target_sources(yarp_realsense2Tracking PRIVATE realsense2Tracking.cpp
                                                  realsense2Tracking.h)
 
+  target_compile_definitions(yarp_realsense2Tracking PRIVATE _USE_MATH_DEFINES)
+
   target_link_libraries(yarp_realsense2Tracking PRIVATE YARP::YARP_os
-                                                YARP::YARP_sig
-                                                YARP::YARP_dev
-                                                YARP::YARP_math)
+                                                        YARP::YARP_sig
+                                                        YARP::YARP_dev
+                                                        YARP::YARP_math)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
