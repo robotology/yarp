@@ -29,8 +29,8 @@
 #include <yarp/dev/IPreciselyTimed.h>
 
 #include <asm/types.h>
-#include <cv.h>
-#include <errno.h>
+#include <opencv2/opencv.hpp>
+#include <cerrno>
 #include <fcntl.h>
 #include <getopt.h>
 #include <iostream>
@@ -40,8 +40,8 @@
 #include <linux/videodev2.h>
 #include <malloc.h>
 #include <map>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
