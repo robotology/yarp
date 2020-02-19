@@ -107,7 +107,7 @@ public:
     bool   getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) override;
 
     bool   getCurrentPosition(yarp::dev::Nav2D::Map2DLocation &loc) override;
-    bool   getEstimatedOdometry(yarp::dev::OdometryData& odom) override; 
+    bool   getEstimatedOdometry(yarp::dev::OdometryData& odom) override;
     bool   setInitialPose(const yarp::dev::Nav2D::Map2DLocation& loc) override;
     bool   getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status) override;
     bool   getEstimatedPoses(std::vector<yarp::dev::Nav2D::Map2DLocation>& poses) override;

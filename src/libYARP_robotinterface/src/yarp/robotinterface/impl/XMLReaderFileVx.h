@@ -54,4 +54,3 @@ private:
 } // namespace yarp
 
 #endif // YARP_ROBOTINTERFACE_XMLREADERFILEVX_H
-
