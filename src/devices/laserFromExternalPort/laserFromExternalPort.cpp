@@ -64,65 +64,28 @@ bool LaserFromExternalPort::open(yarp::os::Searchable& config)
 {
     Property subConfig;
     m_info = "LaserFromExternalPort device";
-    m_device_status = DEVICE_OK_STANBY;
+    m_port_name = "/laserFromExternalPort:i";
 
 #ifdef LASER_DEBUG
     yDebug("%s\n", config.toString().c_str());
 #endif
 
-    m_min_distance = 0.1; //m
-    m_max_distance = 2.5;  //m
-    bool br = config.check("SUBDEVICE");
-    if (br != false)
+    if (this->parse(config) == false)
     {
-        yarp::os::Searchable& general_config = config.findGroup("SUBDEVICE");
-        m_clip_max_enable = general_config.check("clip_max");
-        m_clip_min_enable = general_config.check("clip_min");
-        if (m_clip_max_enable) { m_max_distance = general_config.find("clip_max").asFloat64(); }
-        if (m_clip_min_enable) { m_min_distance = general_config.find("clip_min").asFloat64(); }
-        m_do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt32()!=0);
-    }
-    else
-    {
-        yError() << "Missing SUBDEVICE section";
+        yError() << "LaserFromExternalPort: error parsing parameters";
         return false;
     }
-    bool bs = config.check("SKIP");
-    if (bs != false)
-    {
-        yarp::os::Searchable& skip_config = config.findGroup("SKIP");
-        Bottle mins = skip_config.findGroup("min");
-        Bottle maxs = skip_config.findGroup("max");
-        size_t s_mins = mins.size();
-        size_t s_maxs = mins.size();
-        if (s_mins == s_maxs && s_maxs > 1 )
-        {
-            for (size_t s = 1; s < s_maxs; s++)
-            {
-                Range_t range;
-                range.max = maxs.get(s).asFloat64();
-                range.min = mins.get(s).asFloat64();
-                if (range.max >= 0 && range.max <= 360 &&
-                    range.min >= 0 && range.min <= 360 &&
-                    range.max > range.min)
-                {
-                    m_range_skip_vector.push_back(range);
-                }
-                else
-                {
-                    yError() << "Invalid range in SKIP section";
-                    return false;
-                }
-            }
-        }
 
-    }
+    yarp::os::Searchable& general_config = config.findGroup("SENSOR");
+    if (general_config.check("input_port_name"))
+       {m_port_name = general_config.find("input_port_name").asString();} //this parameter is optional
 
-    m_input_port.open("/iiiii");
+    m_input_port.useCallback();
+    m_input_port.open(m_port_name);
 
     PeriodicThread::start();
 
-    yInfo("Sensor ready");
+    yInfo("LaserFromExternalPort: Sensor ready");
     return true;
 }
 
@@ -136,98 +99,40 @@ bool LaserFromExternalPort::close()
     return true;
 }
 
-bool LaserFromExternalPort::getDistanceRange(double& min, double& max)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    min = m_min_distance;
-    max = m_max_distance;
-    return true;
-}
+
 
 bool LaserFromExternalPort::setDistanceRange(double min, double max)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     m_min_distance = min;
     m_max_distance = max;
     return true;
 }
 
-bool LaserFromExternalPort::getScanLimits(double& min, double& max)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    min = m_min_angle;
-    max = m_max_angle;
-    return true;
-}
-
 bool LaserFromExternalPort::setScanLimits(double min, double max)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setScanLimits not yet implemented");
     return true;
 }
 
-bool LaserFromExternalPort::getHorizontalResolution(double& step)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    step = m_resolution;
-    return true;
-}
+
 
 bool LaserFromExternalPort::setHorizontalResolution(double step)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setHorizontalResolution not yet implemented");
-    return true;
-}
-
-bool LaserFromExternalPort::getScanRate(double& rate)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    yWarning("getScanRate not yet implemented");
     return true;
 }
 
 bool LaserFromExternalPort::setScanRate(double rate)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setScanRate not yet implemented");
     return false;
 }
 
 
-bool LaserFromExternalPort::getRawData(yarp::sig::Vector &out)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    out = m_laser_data;
-    m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
-    return true;
-}
-
-bool LaserFromExternalPort::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-#ifdef LASER_DEBUG
-        //yDebug("data: %s\n", laser_data.toString().c_str());
-#endif
-    size_t size = m_laser_data.size();
-    data.resize(size);
-    if (m_max_angle < m_min_angle) { yError() << "getLaserMeasurement failed"; return false; }
-    double laser_angle_of_view = m_max_angle - m_min_angle;
-    for (size_t i = 0; i < size; i++)
-    {
-        double angle = (i / double(size)*laser_angle_of_view + m_min_angle)* DEG2RAD;
-        data[i].set_polar(m_laser_data[i], angle);
-    }
-    m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
-    return true;
-}
-bool LaserFromExternalPort::getDeviceStatus(Device_status &status)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    status = m_device_status;
-    return true;
-}
 
 bool LaserFromExternalPort::threadInit()
 {
@@ -244,16 +149,29 @@ void LaserFromExternalPort::run()
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();
 #endif
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     m_input_port.getLast(m_last_scan_data, m_last_stamp);
+    size_t received_scans = m_last_scan_data.scans.size();
+
+    if (1)
+    {
+       //this ovverrides user setting with parameteres received from the port
+       m_sensorsNum = received_scans;
+       m_max_angle = m_last_scan_data.angle_max;
+       m_min_angle = m_last_scan_data.angle_min;
+       m_max_distance = m_last_scan_data.range_max;
+       m_min_distance = m_last_scan_data.range_min;
+       m_resolution   = received_scans/(m_max_angle - m_min_angle);
+       if (m_laser_data.size() != m_sensorsNum) m_laser_data.resize(m_sensorsNum);
+    }
 
     double angle, distance;
     size_t i;
 
     const double infinity   = std::numeric_limits<double>::infinity();
 
-    for (int elem = 0; elem < m_sensorsNum; elem++)
+    for (size_t elem = 0; elem < m_sensorsNum; elem++)
     {
         angle    = elem * m_resolution;    //deg
         distance = m_last_scan_data.scans[elem]; //m
@@ -295,9 +213,4 @@ void LaserFromExternalPort::threadRelease()
     return;
 }
 
-bool LaserFromExternalPort::getDeviceInfo(std::string &device_info)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    device_info = m_info;
-    return true;
-}
+
