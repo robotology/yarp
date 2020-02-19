@@ -5,7 +5,7 @@
 
 Latest YARP release is:
 
- + \ref v3_3_1
+ + \ref v3_3_2
 
 \section download_source_code Source Code
 
@@ -55,6 +55,7 @@ Previous versions are hosted on [GitHub](https://github.com/robotology/yarp/rele
 
 __Previous releases version and dates__:
 
+ + \ref v3_3_1
  + \ref v3_3_0
  + \ref v3_2_2
  + \ref v3_2_1
