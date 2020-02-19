@@ -467,6 +467,10 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
                 huds.push_back(hud);
             }
         }
+        else
+        {
+            guiEnabled = false;
+        }
 
     }
 
@@ -562,8 +566,8 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     {
         { "flipinput",     "[F] Enable input flipping",                &flipInputEnabled,  true },
         { "no-imagepose",  "[I] Disable image pose",                   &imagePoseEnabled,  false },
-        { "userpose",      "[U] Use user pose instead of camera pose", &imagePoseEnabled,  true  },
-        { "no-logo",       "[L] Disable logo",                         &imagePoseEnabled,  false },
+        { "userpose",      "[U] Use user pose instead of camera pose", &userPoseEnabled,   true  },
+        { "no-logo",       "[L] Disable logo",                         &logoEnabled,       false },
         { "no-crosshairs", "[C] Disable crosshairs",                   &crosshairsEnabled, false },
         { "no-battery",    "[B] Disable battery",                      &batteryEnabled,    false }
     };
@@ -606,7 +610,7 @@ bool yarp::dev::OVRHeadset::threadInit()
     OVR::System::Init();
 
     // Initializes LibOVR, and the Rift
-    ovrInitParams initParams = { ovrInit_RequestVersion, OVR_MINOR_VERSION, ovrDebugCallback, reinterpret_cast<uintptr_t>(this), 0 };
+    ovrInitParams initParams = { ovrInit_RequestVersion | ovrInit_FocusAware, OVR_MINOR_VERSION, ovrDebugCallback, reinterpret_cast<uintptr_t>(this), 0 };
     ovrResult r = ovr_Initialize(&initParams);
 //    VALIDATE(OVR_SUCCESS(r), "Failed to initialize libOVR.");
     if (!OVR_SUCCESS(r)) {
@@ -835,7 +839,7 @@ bool yarp::dev::OVRHeadset::updateService()
         return false;
     }
 
-    const double delay = 5.0;
+    constexpr double delay = 60.0;
     yDebug("Thread ran %d times, est period %lf[ms], used %lf[ms]",
            getIterations(),
            getEstimatedPeriod()*1000,
@@ -909,6 +913,10 @@ void yarp::dev::OVRHeadset::run()
     if (!sessionStatus.IsVisible) {
         resetInput();
         return;
+    }
+
+    if (!sessionStatus.HasInputFocus) {
+      //  return;
     }
 
     // Begin frame
@@ -1142,7 +1150,7 @@ void yarp::dev::OVRHeadset::run()
         }
 
         //setting up dynamic hud
-        if (enableGui)
+        if (guiEnabled)
         {
             for (auto& hud : huds)
             {
@@ -1167,7 +1175,10 @@ void yarp::dev::OVRHeadset::run()
 
         ovrLayerHeader** layers = new ovrLayerHeader*[layerList.size()];
         std::copy(layerList.begin(), layerList.end(), layers);
-        ovrResult result = ovr_SubmitFrame(session, distortionFrameIndex, nullptr, layers, layerList.size());
+
+        ovr_WaitToBeginFrame(session, distortionFrameIndex);
+        ovr_BeginFrame(session, distortionFrameIndex);
+        ovr_EndFrame(session, distortionFrameIndex, nullptr, layers, layerList.size());
         delete[] layers;
 
         // Blit mirror texture to back buffer
@@ -1225,6 +1236,11 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     bool rightShiftPressed = (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
     bool leftCtrlPressed = (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS);
     bool rightCtrlPressed = (glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS);
+    bool leftAltPressed = (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS);
+    bool rightAltPressed = (glfwGetKey(window, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS);
+    bool shiftPressed = leftShiftPressed || rightShiftPressed;
+    bool ctrlPressed = leftCtrlPressed || rightCtrlPressed;
+    bool altPressed = leftAltPressed || rightAltPressed;
 
     switch (key) {
     case GLFW_KEY_R:
@@ -1259,9 +1275,11 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     case GLFW_KEY_I:
         imagePoseEnabled = !imagePoseEnabled;
         yDebug() << "Image pose" << (imagePoseEnabled ? "ON" : "OFF");
+        yDebug() << "User pose" << (userPoseEnabled ? "ON" : "OFF");
         break;
     case GLFW_KEY_U:
         userPoseEnabled = !userPoseEnabled;
+        yDebug() << "Image pose" << (imagePoseEnabled ? "ON" : "OFF");
         yDebug() << "User pose" << (userPoseEnabled ? "ON" : "OFF");
         break;
     case GLFW_KEY_L:
@@ -1269,14 +1287,16 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         yDebug() << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
-            "Battery" << (batteryEnabled ? "ON" : "OFF");
+            "Battery" << (batteryEnabled ? "ON" : "OFF") <<
+            "Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
         break;
     case GLFW_KEY_C:
         crosshairsEnabled = !crosshairsEnabled;
         yDebug() << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
-            "Battery" << (batteryEnabled ? "ON" : "OFF");
+            "Battery" << (batteryEnabled ? "ON" : "OFF") <<
+            "Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
         break;
     case GLFW_KEY_B:
         batteryEnabled = !batteryEnabled;
@@ -1288,7 +1308,18 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         yDebug() << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
-            "Battery" << (batteryEnabled ? "ON" : "OFF");
+            "Battery" << (batteryEnabled ? "ON" : "OFF") <<
+            "Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
+        break;
+    case GLFW_KEY_G:
+        if (guiCount != 0) {
+            guiEnabled = !guiEnabled;
+        }
+        yDebug() << "Overlays:" <<
+            "Logo" << (logoEnabled ? "ON" : "OFF") <<
+            "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
+            "Battery" << (batteryEnabled ? "ON" : "OFF") <<
+            "Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED") ;
         break;
     case GLFW_KEY_ESCAPE:
         this->close();
@@ -1319,61 +1350,61 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         break;
     case GLFW_KEY_UP:
         if (!rightShiftPressed) {
-            displayPorts[0]->pitchOffset += rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->pitchOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye pitch offset =" << displayPorts[0]->pitchOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->pitchOffset += leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->pitchOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye pitch offset =" << displayPorts[1]->pitchOffset;
         }
         break;
     case GLFW_KEY_DOWN:
         if (!rightShiftPressed) {
-            displayPorts[0]->pitchOffset -= rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->pitchOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye pitch offset =" << displayPorts[0]->pitchOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->pitchOffset -= leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->pitchOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye pitch offset =" << displayPorts[1]->pitchOffset;
         }
         break;
     case GLFW_KEY_LEFT:
         if (!rightShiftPressed) {
-            displayPorts[0]->yawOffset += rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->yawOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye yaw offset =" << displayPorts[0]->yawOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->yawOffset += leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->yawOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye yaw offset =" << displayPorts[1]->yawOffset;
         }
         break;
     case GLFW_KEY_RIGHT:
         if (!rightShiftPressed) {
-            displayPorts[0]->yawOffset -= rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->yawOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye yaw offset =" << displayPorts[0]->yawOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->yawOffset -= leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->yawOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye yaw offset =" << displayPorts[1]->yawOffset;
         }
         break;
     case GLFW_KEY_PAGE_UP:
         if (!rightShiftPressed) {
-            displayPorts[0]->rollOffset += rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->rollOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye roll offset =" << displayPorts[0]->rollOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->rollOffset += leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->rollOffset += ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye roll offset =" << displayPorts[1]->rollOffset;
         }
         break;
     case GLFW_KEY_PAGE_DOWN:
         if (!rightShiftPressed) {
-            displayPorts[0]->rollOffset -= rightCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[0]->rollOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Left eye roll offset =" << displayPorts[0]->rollOffset;
         }
         if (!leftShiftPressed) {
-            displayPorts[1]->rollOffset -= leftCtrlPressed ? 0.05f : 0.0025f;
+            displayPorts[1]->rollOffset -= ctrlPressed ? 0.05f : 0.0025f;
             yDebug() << "Right eye roll offset =" << displayPorts[1]->rollOffset;
         }
         break;
@@ -1384,11 +1415,29 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
             ovr_SetInt(session, OVR_PERF_HUD_MODE, PerfHudMode);
         }
         break;
-    case GLFW_KEY_G:
-    {
-        enableGui = !enableGui;
-    }
-    break;
+    case GLFW_KEY_P:
+        yDebug() << "--------------------------------------------";
+        yDebug() << "Current settings:";
+        yDebug() << "  Flip input" << (flipInputEnabled ? "ON" : "OFF");
+        yDebug() << "  Image pose" << (imagePoseEnabled ? "ON" : "OFF");
+        yDebug() << "  User pose" << (userPoseEnabled ? "ON" : "OFF");
+        yDebug() << "  Overlays:";
+        yDebug() << "    Logo" << (logoEnabled ? "ON" : "OFF");
+        yDebug() << "    Crosshairs" << (crosshairsEnabled ? "ON" : "OFF");
+        yDebug() << "    Battery" << (batteryEnabled ? "ON" : "OFF");
+        yDebug() << "    Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
+        yDebug() << "  Left eye:";
+        yDebug() << "    HFOV = " << camHFOV[0];
+        yDebug() << "    pitch offset =" << displayPorts[0]->pitchOffset;
+        yDebug() << "    yaw offset =" << displayPorts[0]->yawOffset;
+        yDebug() << "    roll offset =" << displayPorts[0]->rollOffset;
+        yDebug() << "  Right eye:";
+        yDebug() << "    HFOV =" << camHFOV[1];
+        yDebug() << "    pitch offset =" << displayPorts[1]->pitchOffset;
+        yDebug() << "    yaw offset =" << displayPorts[1]->yawOffset;
+        yDebug() << "    roll offset =" << displayPorts[1]->rollOffset;
+        yDebug() << "--------------------------------------------";
+        break;
     default:
         break;
     }

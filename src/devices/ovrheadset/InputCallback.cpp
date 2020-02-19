@@ -54,8 +54,12 @@ InputCallback::~InputCallback()
 void InputCallback::onRead(ImageType &img)
 {
     int delaycnt = 0;
+
+    eyeRenderTexture->mutex.lock();
     while (eyeRenderTexture->dataReady && delaycnt <= 3) {
+        eyeRenderTexture->mutex.unlock();
         yarp::os::SystemClock::delaySystem(0.001);
+        eyeRenderTexture->mutex.lock();
         ++delaycnt;
     }
 
@@ -93,8 +97,6 @@ void InputCallback::onRead(ImageType &img)
     expected = (found + 1) % 10;
 #endif // DEBUG_SQUARES
 
-    eyeRenderTexture->mutex.lock();
-
     if(eyeRenderTexture->ptr) {
         size_t w = img.width();
         size_t h = img.height();
@@ -125,13 +127,6 @@ void InputCallback::onRead(ImageType &img)
             }
         }
 
-//        float roll = OVR::DegreeToRad(static_cast<float>(-img.roll)) + rollOffset;
-//        float pitch = OVR::DegreeToRad(static_cast<float>(img.pitch)) + rollOffset;
-//        float yaw = OVR::DegreeToRad(static_cast<float>(img.yaw)) + rollOffset;
-//        float x = static_cast<float>(img.x);
-//        float y = static_cast<float>(img.y);
-//        float z = static_cast<float>(img.z);
-
         float x = 0.0f;
         float y = 0.0f;
         float z = 0.0f;
@@ -149,12 +144,7 @@ void InputCallback::onRead(ImageType &img)
             roll += OVR::DegreeToRad(static_cast<float>(r));
             pitch += OVR::DegreeToRad(static_cast<float>(p));
             yaw += OVR::DegreeToRad(static_cast<float>(yy));
-//        if (b.size() == 3) {
-//            roll += OVR::DegreeToRad(static_cast<float>(b.get(0).asFloat64()));
-//            pitch += OVR::DegreeToRad(static_cast<float>(b.get(1).asFloat64()));
-//            yaw += OVR::DegreeToRad(static_cast<float>(b.get(2).asFloat64()));
         }
-        yDebug() << b.size() << b.toString() << "-------------------" << roll << pitch << yaw;
 
         eyeRenderTexture->eyePose.Orientation.w = (float)(- cos(roll/2) * cos(pitch/2) * cos(yaw/2) - sin(roll/2) * sin(pitch/2) * sin(yaw/2));
         eyeRenderTexture->eyePose.Orientation.x = (float)(- cos(roll/2) * sin(pitch/2) * cos(yaw/2) - sin(roll/2) * cos(pitch/2) * sin(yaw/2));
@@ -164,7 +154,6 @@ void InputCallback::onRead(ImageType &img)
         eyeRenderTexture->eyePose.Position.x = x;
         eyeRenderTexture->eyePose.Position.y = y;
         eyeRenderTexture->eyePose.Position.z = z;
-
 
         eyeRenderTexture->imageWidth = img.width();
         eyeRenderTexture->imageHeight = img.height();
