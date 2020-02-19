@@ -22,7 +22,7 @@ using namespace std;
 #define DEG2RAD M_PI/180.0
 #endif
 
-bool Lidar2DDeviceTemplate::getScanLimits(double& min, double& max)
+bool Lidar2DDeviceBase::getScanLimits(double& min, double& max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     min = m_min_angle;
@@ -30,7 +30,7 @@ bool Lidar2DDeviceTemplate::getScanLimits(double& min, double& max)
     return true;
 }
 
-bool Lidar2DDeviceTemplate::getDistanceRange(double& min, double& max)
+bool Lidar2DDeviceBase::getDistanceRange(double& min, double& max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     min = m_min_distance;
@@ -38,21 +38,21 @@ bool Lidar2DDeviceTemplate::getDistanceRange(double& min, double& max)
     return true;
 }
 
-bool Lidar2DDeviceTemplate::getHorizontalResolution(double& step)
+bool Lidar2DDeviceBase::getHorizontalResolution(double& step)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     step = m_resolution;
     return true;
 }
 
-bool Lidar2DDeviceTemplate::getDeviceStatus(Device_status& status)
+bool Lidar2DDeviceBase::getDeviceStatus(Device_status& status)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     status = m_device_status;
     return true;
 }
 
-bool Lidar2DDeviceTemplate::getRawData(yarp::sig::Vector& out)
+bool Lidar2DDeviceBase::getRawData(yarp::sig::Vector& out)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     out = m_laser_data;
@@ -60,21 +60,21 @@ bool Lidar2DDeviceTemplate::getRawData(yarp::sig::Vector& out)
     return true;
 }
 
-bool Lidar2DDeviceTemplate::getScanRate(double& rate)
+bool Lidar2DDeviceBase::getScanRate(double& rate)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     rate = m_scan_rate;
     return true;
 }
 
-bool Lidar2DDeviceTemplate::getDeviceInfo(std::string& device_info)
+bool Lidar2DDeviceBase::getDeviceInfo(std::string& device_info)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     device_info = m_info;
     return true;
 }
 
-bool Lidar2DDeviceTemplate::getLaserMeasurement(std::vector<LaserMeasurementData>& data)
+bool Lidar2DDeviceBase::getLaserMeasurement(std::vector<LaserMeasurementData>& data)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
 #ifdef LASER_DEBUG
@@ -93,7 +93,7 @@ bool Lidar2DDeviceTemplate::getLaserMeasurement(std::vector<LaserMeasurementData
     return true;
 }
 
-Lidar2DDeviceTemplate::Lidar2DDeviceTemplate() :
+Lidar2DDeviceBase::Lidar2DDeviceBase() :
     m_device_status(yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_STANBY),
     m_scan_rate(0.0),
     m_sensorsNum(0),
@@ -107,7 +107,7 @@ Lidar2DDeviceTemplate::Lidar2DDeviceTemplate() :
     m_do_not_clip_infinity_enable(false)
 {}
 
-bool Lidar2DDeviceTemplate::parse(yarp::os::Searchable& config)
+bool Lidar2DDeviceBase::parse(yarp::os::Searchable& config)
 {
     bool br = config.check("SENSOR");
     if (br != false)

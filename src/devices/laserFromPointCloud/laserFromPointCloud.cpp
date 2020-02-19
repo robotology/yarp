@@ -18,7 +18,7 @@
 
 #define _USE_MATH_DEFINES
 
-#include "laserFromPCL.h"
+#include "laserFromPointCloud.h"
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
@@ -45,10 +45,10 @@ using namespace std;
 
 /*
 
-yarpdev --device Rangefinder2DWrapper --subdevice laserFromPCL \
+yarpdev --device Rangefinder2DWrapper --subdevice laserFromPointCloud \
         --ROS::useROS true --ROS::ROS_nodeName /cer-laserFront \
         --ROS::ROS_topicName /laserDepth --ROS::frame_id /mobile_base_lidar_F \
-        --GENERAL \
+        --SENSOR \
         --RGBD_SENSOR_CLIENT::localImagePort    /clientRgbPort:i     \
         --RGBD_SENSOR_CLIENT::localDepthPort    /clientDepthPort:i   \
         --RGBD_SENSOR_CLIENT::localRpcPort      /clientRpcPort       \
@@ -61,6 +61,7 @@ yarpdev --device Rangefinder2DWrapper --subdevice laserFromPCL \
         --Z_CLIPPING_PLANES::ceiling_height     3.0  \
         --Z_CLIPPING_PLANES::camera_frame_id depth_center \
         --Z_CLIPPING_PLANES::ground_frame_id ground_link \
+        --publish_ROS_pointcloud \
         --period 10 \
         --name /outlaser:o
 */
@@ -70,7 +71,7 @@ yarp::os::Node                                             * rosNode=nullptr;
 
 void ros_init_pc()
 {
-  //  rosNode = new yarp::os::Node("laserFromDepth");
+    //  rosNode = new yarp::os::Node("laserFromPointCloud");
 
     pointCloud_outTopic=new yarp::os::Publisher<yarp::rosmsg::sensor_msgs::PointCloud2>;
     if (pointCloud_outTopic->topic("/ros_pc")==false)
@@ -152,11 +153,10 @@ void ros_compute_and_send_pc(const yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc
 
 //-------------------------------------------------------------------------------------
 
-bool LaserFromPCL::open(yarp::os::Searchable& config)
+bool LaserFromPointCloud::open(yarp::os::Searchable& config)
 {
     Property subConfig;
     m_info = "LaserFromDepth device";
-    m_device_status = DEVICE_OK_STANBY;
 
 #ifdef LASER_DEBUG
     yDebug("%s\n", config.toString().c_str());
@@ -166,9 +166,34 @@ bool LaserFromPCL::open(yarp::os::Searchable& config)
     m_max_distance = 5.0;  //m
     m_floor_height = 0.1; //m
     m_ceiling_height = 2; //m
-    m_publish_ros_pc =true;
+    m_publish_ros_pc = false;
+
+    m_sensorsNum = 360;
+    m_resolution = 1;
+    m_laser_data.resize(m_sensorsNum, 0.0);
+    m_max_angle = 360;
+    m_min_angle = 0;
+
+    m_pc_stepx=2;
+    m_pc_stepy=2;
+
     m_ground_frame_id = "/ground_frame";
     m_camera_frame_id = "/depth_camera_frame";
+
+    if (config.check("publish_ROS_pointcloud"))
+    {
+        m_publish_ros_pc=true;
+        yDebug() << "User requested to publish ROS pointcloud (debug mode)";
+    }
+
+    bool bpcr = config.check("POINTCLOUD_QUALITY");
+    if (bpcr != false)
+    {
+        yarp::os::Searchable& pointcloud_quality_config = config.findGroup("POINTCLOUD_QUALITY");
+        if (pointcloud_quality_config.check("x_step")) { m_pc_stepx = pointcloud_quality_config.find("x_step").asFloat64(); }
+        if (pointcloud_quality_config.check("y_step")) { m_pc_stepy = pointcloud_quality_config.find("y_step").asFloat64(); }
+        yInfo() << "Pointcloud decimation step set to:" << m_pc_stepx << m_pc_stepy;
+    }
 
     bool bpc = config.check("Z_CLIPPING_PLANES");
     if (bpc != false)
@@ -178,54 +203,13 @@ bool LaserFromPCL::open(yarp::os::Searchable& config)
         if (pointcloud_clip_config.check("ceiling_height")) {m_ceiling_height=pointcloud_clip_config.find("ceiling_height").asFloat64();}
         if (pointcloud_clip_config.check("ground_frame_id")) {m_ground_frame_id = pointcloud_clip_config.find("ground_frame_id").asString();}
         if (pointcloud_clip_config.check("camera_frame_id")) {m_camera_frame_id = pointcloud_clip_config.find("camera_frame_id").asString();}
-
     }
     yInfo() <<"Z clipping planes (floor,ceiling) have been set to ("<< m_floor_height <<","<< m_ceiling_height <<")";
 
-    bool br = config.check("GENERAL");
-    if (br != false)
+    if (this->parse(config) == false)
     {
-        yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        m_clip_max_enable = general_config.check("clip_max");
-        m_clip_min_enable = general_config.check("clip_min");
-        if (m_clip_max_enable) { m_max_distance = general_config.find("clip_max").asFloat64(); }
-        if (m_clip_min_enable) { m_min_distance = general_config.find("clip_min").asFloat64(); }
-        m_do_not_clip_infinity_enable = (general_config.find("allow_infinity").asInt32()!=0);
-    }
-    else
-    {
-        yError() << "Missing GENERAL section";
+        yError() << "LaserFromExternalPort: error parsing parameters";
         return false;
-    }
-    bool bs = config.check("SKIP");
-    if (bs != false)
-    {
-        yarp::os::Searchable& skip_config = config.findGroup("SKIP");
-        Bottle mins = skip_config.findGroup("min");
-        Bottle maxs = skip_config.findGroup("max");
-        size_t s_mins = mins.size();
-        size_t s_maxs = mins.size();
-        if (s_mins == s_maxs && s_maxs > 1 )
-        {
-            for (size_t s = 1; s < s_maxs; s++)
-            {
-                Range_t range;
-                range.max = maxs.get(s).asFloat64();
-                range.min = mins.get(s).asFloat64();
-                if (range.max >= 0 && range.max <= 360 &&
-                    range.min >= 0 && range.min <= 360 &&
-                    range.max > range.min)
-                {
-                    m_range_skip_vector.push_back(range);
-                }
-                else
-                {
-                    yError() << "Invalid range in SKIP section";
-                    return false;
-                }
-            }
-        }
-
     }
 
     //open the tc client
@@ -237,8 +221,6 @@ bool LaserFromPCL::open(yarp::os::Searchable& config)
     }
     tcprop.fromString(config.findGroup("TRANSFORM_CLIENT").toString());
     tcprop.put("device", "transformClient");
-    //prop.put("local", "/"+m_module_name + "/TfClient");
-    //prop.put("remote", "/transformServer");
 
     m_tc_driver.open(tcprop);
     if (!m_tc_driver.isValid())
@@ -264,6 +246,8 @@ bool LaserFromPCL::open(yarp::os::Searchable& config)
     }
     prop.fromString(config.findGroup("RGBD_SENSOR_CLIENT").toString());
     prop.put("device", "RGBDSensorClient");
+    prop.put("ImageCarrier","mjpeg");
+    prop.put("DepthCarrier","udp");
     m_rgbd_driver.open(prop);
     if (!m_rgbd_driver.isValid())
     {
@@ -285,22 +269,19 @@ bool LaserFromPCL::open(yarp::os::Searchable& config)
     yInfo() << "Depth Intrinsics:" << m_propIntrinsics.toString();
     m_intrinsics.fromProperty(m_propIntrinsics);
 
-    m_sensorsNum = 360;
-    m_resolution = 1;
-    m_laser_data.resize(m_sensorsNum, 0.0);
-    m_max_angle = 360;
-    m_min_angle = 0;
     PeriodicThread::start();
-
     yInfo("Sensor ready");
 
     //init ros
-    ros_init_pc();
+    if (m_publish_ros_pc)
+    {
+       ros_init_pc();
+    }
 
     return true;
 }
 
-bool LaserFromPCL::close()
+bool LaserFromPointCloud::close()
 {
     PeriodicThread::stop();
 
@@ -314,100 +295,38 @@ bool LaserFromPCL::close()
     return true;
 }
 
-bool LaserFromPCL::getDistanceRange(double& min, double& max)
+bool LaserFromPointCloud::setDistanceRange(double min, double max)
 {
-    std::lock_guard<std::mutex> guard(mutex);
-    min = m_min_distance;
-    max = m_max_distance;
-    return true;
-}
-
-bool LaserFromPCL::setDistanceRange(double min, double max)
-{
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     m_min_distance = min;
     m_max_distance = max;
     return true;
 }
 
-bool LaserFromPCL::getScanLimits(double& min, double& max)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    min = m_min_angle;
-    max = m_max_angle;
-    return true;
-}
 
-bool LaserFromPCL::setScanLimits(double min, double max)
+bool LaserFromPointCloud::setScanLimits(double min, double max)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setScanLimits not yet implemented");
     return true;
 }
 
-bool LaserFromPCL::getHorizontalResolution(double& step)
+bool LaserFromPointCloud::setHorizontalResolution(double step)
 {
-    std::lock_guard<std::mutex> guard(mutex);
-    step = m_resolution;
-    return true;
-}
-
-bool LaserFromPCL::setHorizontalResolution(double step)
-{
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setHorizontalResolution not yet implemented");
     return true;
 }
 
-bool LaserFromPCL::getScanRate(double& rate)
+bool LaserFromPointCloud::setScanRate(double rate)
 {
-    std::lock_guard<std::mutex> guard(mutex);
-    yWarning("getScanRate not yet implemented");
-    return true;
-}
-
-bool LaserFromPCL::setScanRate(double rate)
-{
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setScanRate not yet implemented");
     return false;
 }
 
 
-bool LaserFromPCL::getRawData(yarp::sig::Vector &out)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    out = m_laser_data;
-    m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
-    return true;
-}
-
-bool LaserFromPCL::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-#ifdef LASER_DEBUG
-        //yDebug("data: %s\n", laser_data.toString().c_str());
-#endif
-    size_t size = m_laser_data.size();
-    data.resize(size);
-    if (m_max_angle < m_min_angle) { yError() << "getLaserMeasurement failed"; return false; }
-    double laser_angle_of_view = m_max_angle - m_min_angle;
-    for (size_t i = 0; i < size; i++)
-    {
-        double angle = (i / double(size)*laser_angle_of_view + m_min_angle)* DEG2RAD;
-        data[i].set_polar(m_laser_data[i], angle);
-    }
-    m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
-    return true;
-}
-bool LaserFromPCL::getDeviceStatus(Device_status &status)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    status = m_device_status;
-    return true;
-}
-
-bool LaserFromPCL::threadInit()
+bool LaserFromPointCloud::threadInit()
 {
 #ifdef LASER_DEBUG
     yDebug("LaserFromDepth:: thread initialising...\n");
@@ -416,10 +335,6 @@ bool LaserFromPCL::threadInit()
 
     return true;
 }
-
-#define TEST_M 1
-double m_floor_height   = 0.3;
-double m_ceiling_height = 2;
 
 void rotate_pc (yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc, const yarp::sig::Matrix& m)
 {
@@ -433,14 +348,20 @@ void rotate_pc (yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc, const yarp::sig::
     }
 }
 
-void LaserFromPCL::run()
+void LaserFromPointCloud::run()
 {
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();
 #endif
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
-    m_iRGBD->getDepthImage(m_depth_image);
+    bool depth_ok = m_iRGBD->getDepthImage(m_depth_image);
+    if (depth_ok == false)
+    {
+        yDebug() << "getDepthImage failed";
+        return;
+    }
+
     if (m_depth_image.getRawImage()==nullptr)
     {
         yDebug()<<"invalid image received";
@@ -463,7 +384,7 @@ void LaserFromPCL::run()
     }
 
     //compute the point cloud
-    yarp::sig::PointCloud<yarp::sig::DataXYZ> pc = yarp::sig::utils::depthToPC(m_depth_image, m_intrinsics);
+    yarp::sig::PointCloud<yarp::sig::DataXYZ> pc = yarp::sig::utils::depthToPC(m_depth_image, m_intrinsics,m_pc_roi,m_pc_stepx,m_pc_stepy);
 
     //if (m_publish_ros_pc) {ros_compute_and_send_pc(pc,m_camera_frame_id);}//<-------------------------
 
@@ -474,7 +395,7 @@ void LaserFromPCL::run()
     //we compute the transformation matrix from the camera to the laser reference frame
     yarp::sig::Matrix m(4,4); m.eye();
 
-#if 0//TEST_M
+#if TEST_M
     yarp::sig::Vector vvv(3);
     vvv(0)=-1.57;
     vvv(1)=0;
@@ -549,7 +470,10 @@ void LaserFromPCL::run()
             }
 
             //update the vector of measurements, putting the NEAREST obstacle in right element of the vector.
-            if (distance<m_laser_data[elem]) m_laser_data[elem]=distance;
+            if (distance<m_laser_data[elem])
+            {
+                m_laser_data[elem]=distance;
+            }
         }
         else
         {
@@ -571,10 +495,15 @@ void LaserFromPCL::run()
     }
 */
 
+#ifdef DEBUG_TIMING
+    double t2 = yarp::os::Time::now();
+    yDebug() << t2 - t1;
+#endif
+
     return;
 }
 
-void LaserFromPCL::threadRelease()
+void LaserFromPointCloud::threadRelease()
 {
 #ifdef LASER_DEBUG
     yDebug("LaserFromDepth Thread releasing...");
@@ -582,11 +511,4 @@ void LaserFromPCL::threadRelease()
 #endif
 
     return;
-}
-
-bool LaserFromPCL::getDeviceInfo(std::string &device_info)
-{
-    std::lock_guard<std::mutex> guard(mutex);
-    device_info = m_info;
-    return true;
 }

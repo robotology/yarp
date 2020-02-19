@@ -4,18 +4,18 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-yarp_prepare_plugin(laserFromPCL
+yarp_prepare_plugin(laserFromPointCloud
                     CATEGORY device
-                    TYPE LaserFromPCL
-                    INCLUDE laserFromPCL.h)
+                    TYPE LaserFromPointCloud
+                    INCLUDE laserFromPointCloud.h)
 
-if(NOT SKIP_laserFromPCL)
-  yarp_add_plugin(laserFromPCL)
+if(NOT SKIP_laserFromPointCloud)
+  yarp_add_plugin(laserFromPointCloud)
 
-  target_sources(laserFromPCL PRIVATE laserFromPCL.h
-                                      laserFromPCL.cpp)
+  target_sources(laserFromPointCloud PRIVATE laserFromPointCloud.h
+                                      laserFromPointCloud.cpp)
 
-  target_link_libraries(laserFromPCL PRIVATE YARP::YARP_os
+  target_link_libraries(laserFromPointCloud PRIVATE YARP::YARP_os
                                                YARP::YARP_sig
                                                YARP::YARP_dev
                                                YARP::YARP_math
@@ -27,7 +27,7 @@ if(NOT SKIP_laserFromPCL)
                                                       YARP_math
                                                       YARP_rosmsg)
 
-  yarp_install(TARGETS laserFromPCL
+  yarp_install(TARGETS laserFromPointCloud
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -36,5 +36,5 @@ if(NOT SKIP_laserFromPCL)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET laserFromPCL PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET laserFromPointCloud PROPERTY FOLDER "Plugins/Device")
 endif()
