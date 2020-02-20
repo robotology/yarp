@@ -38,24 +38,26 @@ using namespace std;
 #define DEG2RAD M_PI/180.0
 #endif
 
+YARP_LOG_COMPONENT(LASER_FROM_EXTERNAL_PORT, "yarp.devices.laserFromExternalPort")
+
 InputPortProcessor::InputPortProcessor()
 {
 }
 
 void InputPortProcessor::onRead(yarp::dev::LaserScan2D& b)
 {
-    mutex.lock();
-        lastScan = b;
-        getEnvelope(lastStamp);
-    mutex.unlock();
+    m_port_mutex.lock();
+        m_lastScan = b;
+        getEnvelope(m_lastStamp);
+    m_port_mutex.unlock();
 }
 
 inline void InputPortProcessor::getLast(yarp::dev::LaserScan2D& data, Stamp& stmp)
 {
-    mutex.lock();
-        data = lastScan;
-        stmp = lastStamp;
-    mutex.unlock();
+    m_port_mutex.lock();
+        data = m_lastScan;
+        stmp = m_lastStamp;
+    m_port_mutex.unlock();
 }
 
 //-------------------------------------------------------------------------------------
@@ -67,12 +69,12 @@ bool LaserFromExternalPort::open(yarp::os::Searchable& config)
     m_port_name = "/laserFromExternalPort:i";
 
 #ifdef LASER_DEBUG
-    yDebug("%s\n", config.toString().c_str());
+    yCDebug(LASER_FROM_EXTERNAL_PORT) << "%s\n", config.toString().c_str());
 #endif
 
-    if (this->parse(config) == false)
+    if (this->parseConfiguration(config) == false)
     {
-        yError() << "LaserFromExternalPort: error parsing parameters";
+        yCError(LASER_FROM_EXTERNAL_PORT) << "Error parsing parameters";
         return false;
     }
 
@@ -112,7 +114,7 @@ bool LaserFromExternalPort::setDistanceRange(double min, double max)
 bool LaserFromExternalPort::setScanLimits(double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
-    yWarning("setScanLimits not yet implemented");
+    yCWarning(LASER_FROM_EXTERNAL_PORT) << "setScanLimits not yet implemented";
     return true;
 }
 
@@ -121,14 +123,14 @@ bool LaserFromExternalPort::setScanLimits(double min, double max)
 bool LaserFromExternalPort::setHorizontalResolution(double step)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
-    yWarning("setHorizontalResolution not yet implemented");
+    yCWarning(LASER_FROM_EXTERNAL_PORT, "setHorizontalResolution not yet implemented");
     return true;
 }
 
 bool LaserFromExternalPort::setScanRate(double rate)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
-    yWarning("setScanRate not yet implemented");
+    yCWarning(LASER_FROM_EXTERNAL_PORT, "setScanRate not yet implemented");
     return false;
 }
 
@@ -137,8 +139,8 @@ bool LaserFromExternalPort::setScanRate(double rate)
 bool LaserFromExternalPort::threadInit()
 {
 #ifdef LASER_DEBUG
-    yDebug("LaserFromExternalPort:: thread initialising...\n");
-    yDebug("... done!\n");
+    yCDebug(LASER_FROM_EXTERNAL_PORT) <<"LaserFromExternalPort:: thread initialising...\n");
+    yCDebug(LASER_FROM_EXTERNAL_PORT) <<"... done!\n");
 #endif
 
     return true;
@@ -156,7 +158,7 @@ void LaserFromExternalPort::run()
 
     if (1)
     {
-       //this ovverrides user setting with parameteres received from the port
+       //this ovverrides user setting with parameters received from the port
        m_sensorsNum = received_scans;
        m_max_angle = m_last_scan_data.angle_max;
        m_min_angle = m_last_scan_data.angle_min;
@@ -166,39 +168,11 @@ void LaserFromExternalPort::run()
        if (m_laser_data.size() != m_sensorsNum) m_laser_data.resize(m_sensorsNum);
     }
 
-    double angle, distance;
-    size_t i;
-
-    const double infinity   = std::numeric_limits<double>::infinity();
-
     for (size_t elem = 0; elem < m_sensorsNum; elem++)
     {
-        angle    = elem * m_resolution;    //deg
-        distance = m_last_scan_data.scans[elem]; //m
-
-        if (m_clip_min_enable && distance < m_min_distance)
-        {
-            distance = m_max_distance;
-        }
-
-        if (m_clip_max_enable              &&
-            distance > m_max_distance      &&
-            !m_do_not_clip_infinity_enable &&
-            distance <= infinity)
-        {
-            distance = m_max_distance;
-        }
-
-        for (i = 0; i < m_range_skip_vector.size(); i++)
-        {
-            if (angle > m_range_skip_vector[i].min && angle < m_range_skip_vector[i].max)
-            {
-                distance = infinity;
-            }
-        }
-
-        m_laser_data[elem] = distance;
+        m_laser_data[elem] = m_last_scan_data.scans[elem]; //m
     }
+    applyLimitsOnLaserData();
 
     return;
 }
@@ -206,8 +180,8 @@ void LaserFromExternalPort::run()
 void LaserFromExternalPort::threadRelease()
 {
 #ifdef LASER_DEBUG
-    yDebug("LaserFromExternalPort Thread releasing...");
-    yDebug("... done.");
+    yCDebug(LASER_FROM_EXTERNAL_PORT) <<"Thread releasing...");
+    yCDebug(LASER_FROM_EXTERNAL_PORT) <<"... done.");
 #endif
 
     return;

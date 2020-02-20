@@ -14,6 +14,7 @@
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/ILocalization2D.h>
+#include <yarp/dev/Lidar2DDeviceBase.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/MapGrid2D.h>
@@ -57,7 +58,7 @@
 * yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
 */
 
-class FakeLaser : public yarp::os::PeriodicThread, public yarp::dev::IRangefinder2D, public yarp::dev::DeviceDriver
+class FakeLaser : public yarp::os::PeriodicThread, public yarp::dev::Lidar2DDeviceBase, public yarp::dev::DeviceDriver
 {
 protected:
     enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2 };
@@ -66,29 +67,17 @@ protected:
     yarp::dev::PolyDriver driver;
     test_mode_t m_test_mode;
     localization_mode_t m_loc_mode;
-    std::mutex mutex;
 
-    double period;
-    int sensorsNum;
-
-    double min_angle;
-    double max_angle;
-    double min_distance;
-    double max_distance;
-    double resolution;
-
+    double m_period;
     yarp::dev::Nav2D::MapGrid2D   m_map;
     yarp::os::BufferedPort<yarp::os::Bottle>* m_loc_port;
     yarp::dev::PolyDriver*      m_pLoc;
     yarp::dev::Nav2D::ILocalization2D* m_iLoc;
+
+    //this is the position of the localized robot in the map
     double m_loc_x;
     double m_loc_y;
     double m_loc_t;
-
-    std::string info;
-    Device_status device_status;
-
-    yarp::sig::Vector laser_data;
 
     std::random_device* m_rd;
     std::mt19937* m_gen;
@@ -98,23 +87,22 @@ public:
     FakeLaser(double period = 0.02) : PeriodicThread(period),
         m_test_mode(test_mode_t::NO_OBSTACLES),
         m_loc_mode(localization_mode_t::LOC_NOT_SET),
-        mutex(),
-        period(period),
-        sensorsNum(0),
-        min_angle(0.0),
-        max_angle(0.0),
-        min_distance(0.0),
-        max_distance(0.0),
-        resolution(0.0),
         m_loc_port(nullptr),
         m_pLoc(nullptr),
         m_iLoc(nullptr),
         m_loc_x(0.0),
         m_loc_y(0.0),
-        m_loc_t(0.0),
-        device_status(Device_status::DEVICE_OK_STANBY)
+        m_loc_t(0.0)
     {
-        m_rd = new std::random_device;
+        //default parameters
+        m_min_distance = 0.1;  //m
+        m_max_distance = 8.0;  //m
+        m_min_angle = 0;       //degrees
+        m_max_angle = 360;     //degrees
+        m_resolution = 1.0;    //degrees
+
+        //noise generator
+        m_rd  = new std::random_device;
         m_gen = new std::mt19937((*m_rd)());
         m_dis = new std::uniform_real_distribution<>(0, 0.01);
     }
@@ -150,17 +138,9 @@ private:
 
 public:
     //IRangefinder2D interface
-    bool getRawData(yarp::sig::Vector &out) override;
-    bool getLaserMeasurement(std::vector<yarp::dev::LaserMeasurementData> &data) override;
-    bool getDeviceStatus     (Device_status &status) override;
-    bool getDeviceInfo       (std::string &device_info) override;
-    bool getDistanceRange    (double& min, double& max) override;
     bool setDistanceRange    (double min, double max) override;
-    bool getScanLimits        (double& min, double& max) override;
     bool setScanLimits        (double min, double max) override;
-    bool getHorizontalResolution      (double& step) override;
     bool setHorizontalResolution      (double step) override;
-    bool getScanRate         (double& rate) override;
     bool setScanRate         (double rate) override;
 
 };

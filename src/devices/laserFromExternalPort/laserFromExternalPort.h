@@ -45,9 +45,9 @@ typedef unsigned char byte;
 class InputPortProcessor :
     public yarp::os::BufferedPort<yarp::dev::LaserScan2D>
 {
-    std::mutex             mutex;
-    yarp::dev::LaserScan2D lastScan;
-    yarp::os::Stamp        lastStamp;
+    std::mutex             m_port_mutex;
+    yarp::dev::LaserScan2D m_lastScan;
+    yarp::os::Stamp        m_lastStamp;
 
 public:
 
@@ -70,7 +70,7 @@ protected:
 
 
 public:
-    LaserFromExternalPort(double period = 0.01) : PeriodicThread(period), Lidar2DDeviceBase()
+    LaserFromExternalPort(double period = 0.01) : Lidar2DDeviceBase(), PeriodicThread(period)
     {}
 
     ~LaserFromExternalPort()
