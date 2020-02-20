@@ -50,7 +50,7 @@ class LaserFromDepth : public PeriodicThread, public yarp::dev::IRangefinder2D, 
 protected:
     PolyDriver driver;
     IRGBDSensor* iRGBD;
-    std::mutex mutex;
+    std::mutex m_mutex;
 
     int m_depth_width;
     int m_depth_height;

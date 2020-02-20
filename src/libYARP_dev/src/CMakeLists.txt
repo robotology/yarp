@@ -113,6 +113,7 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/PolyDriverDescriptor.h
                   yarp/dev/PolyDriverList.h
                   yarp/dev/RGBDSensorParamParser.h
+                  yarp/dev/Lidar2DDeviceBase.h
                   yarp/dev/ServiceInterfaces.h)
 
 if(TARGET YARP::YARP_math)
@@ -195,7 +196,8 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/PolyDriver.cpp
                   yarp/dev/PolyDriverDescriptor.cpp
                   yarp/dev/PolyDriverList.cpp
-                  yarp/dev/RGBDSensorParamParser.cpp)
+                  yarp/dev/RGBDSensorParamParser.cpp
+                  yarp/dev/Lidar2DDeviceBase.cpp)
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_SRCS yarp/dev/IFrameTransform.cpp

@@ -53,10 +53,10 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
 
     m_min_distance = 0.1; //m
     m_max_distance = 2.5;  //m
-    bool br = config.check("SUBDEVICE");
+    bool br = config.check("SENSOR");
     if (br != false)
     {
-        yarp::os::Searchable& general_config = config.findGroup("SUBDEVICE");
+        yarp::os::Searchable& general_config = config.findGroup("SENSOR");
         m_clip_max_enable = general_config.check("clip_max");
         m_clip_min_enable = general_config.check("clip_min");
         if (m_clip_max_enable) { m_max_distance = general_config.find("clip_max").asFloat64(); }
@@ -65,7 +65,7 @@ bool LaserFromDepth::open(yarp::os::Searchable& config)
     }
     else
     {
-        yError() << "Missing SUBDEVICE section";
+        yError() << "Missing SENSOR section";
         return false;
     }
     bool bs = config.check("SKIP");
@@ -150,7 +150,7 @@ bool LaserFromDepth::close()
 
 bool LaserFromDepth::getDistanceRange(double& min, double& max)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     min = m_min_distance;
     max = m_max_distance;
     return true;
@@ -158,7 +158,7 @@ bool LaserFromDepth::getDistanceRange(double& min, double& max)
 
 bool LaserFromDepth::setDistanceRange(double min, double max)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     m_min_distance = min;
     m_max_distance = max;
     return true;
@@ -166,7 +166,7 @@ bool LaserFromDepth::setDistanceRange(double min, double max)
 
 bool LaserFromDepth::getScanLimits(double& min, double& max)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     min = m_min_angle;
     max = m_max_angle;
     return true;
@@ -174,35 +174,35 @@ bool LaserFromDepth::getScanLimits(double& min, double& max)
 
 bool LaserFromDepth::setScanLimits(double min, double max)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setScanLimits not yet implemented");
     return true;
 }
 
 bool LaserFromDepth::getHorizontalResolution(double& step)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     step = m_resolution;
     return true;
 }
 
 bool LaserFromDepth::setHorizontalResolution(double step)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setHorizontalResolution not yet implemented");
     return true;
 }
 
 bool LaserFromDepth::getScanRate(double& rate)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("getScanRate not yet implemented");
     return true;
 }
 
 bool LaserFromDepth::setScanRate(double rate)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     yWarning("setScanRate not yet implemented");
     return false;
 }
@@ -210,7 +210,7 @@ bool LaserFromDepth::setScanRate(double rate)
 
 bool LaserFromDepth::getRawData(yarp::sig::Vector &out)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     out = m_laser_data;
     m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
     return true;
@@ -218,7 +218,7 @@ bool LaserFromDepth::getRawData(yarp::sig::Vector &out)
 
 bool LaserFromDepth::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 #ifdef LASER_DEBUG
         //yDebug("data: %s\n", laser_data.toString().c_str());
 #endif
@@ -236,7 +236,7 @@ bool LaserFromDepth::getLaserMeasurement(std::vector<LaserMeasurementData> &data
 }
 bool LaserFromDepth::getDeviceStatus(Device_status &status)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     status = m_device_status;
     return true;
 }
@@ -256,7 +256,7 @@ void LaserFromDepth::run()
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();
 #endif
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
 
     iRGBD->getDepthImage(m_depth_image);
     if (m_depth_image.getRawImage()==nullptr)
@@ -328,7 +328,7 @@ void LaserFromDepth::threadRelease()
 
 bool LaserFromDepth::getDeviceInfo(std::string &device_info)
 {
-    std::lock_guard<std::mutex> guard(mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     device_info = m_info;
     return true;
 }
