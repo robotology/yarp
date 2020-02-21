@@ -72,5 +72,5 @@
         <to>/iCubGui/torso:i</to>
         <protocol>udp</protocol>
     </connection>
-    
+
 </application>

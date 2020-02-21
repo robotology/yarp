@@ -11,5 +11,3 @@
 if(YARP_COMPILE_libYARP_manager)
   add_subdirectory(tests) #should be renamed to xml or templates
 endif()
-
-

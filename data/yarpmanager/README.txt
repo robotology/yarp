@@ -104,4 +104,3 @@ Leaving <node></node> empty, later you can use the load balancer of yarpmanager
 to automatically assign module a a node which has less processor load. Notice that,
 available nodes should be  listed using Resource XML file.
 See ./xml/resources/cluster_nodes.xml for an example.
-
