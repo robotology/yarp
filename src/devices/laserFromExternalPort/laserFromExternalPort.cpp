@@ -212,5 +212,3 @@ void LaserFromExternalPort::threadRelease()
 
     return;
 }
-
-

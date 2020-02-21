@@ -95,7 +95,7 @@ bool Lidar2DDeviceTemplate::getLaserMeasurement(std::vector<LaserMeasurementData
 
 Lidar2DDeviceTemplate::Lidar2DDeviceTemplate() :
     m_device_status(yarp::dev::IRangefinder2D::Device_status::DEVICE_OK_STANBY),
-    m_scan_rate(0.0), 
+    m_scan_rate(0.0),
     m_sensorsNum(0),
     m_min_angle(0.0),
     m_max_angle(0.0),

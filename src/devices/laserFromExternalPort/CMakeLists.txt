@@ -13,11 +13,11 @@ if(NOT SKIP_laserFromExternalPort)
   yarp_add_plugin(laserFromExternalPort)
 
   target_sources(laserFromExternalPort PRIVATE laserFromExternalPort.h
-                                        laserFromExternalPort.cpp)
+                                               laserFromExternalPort.cpp)
 
   target_link_libraries(laserFromExternalPort PRIVATE YARP::YARP_os
-                                               YARP::YARP_sig
-                                               YARP::YARP_dev)
+                                                      YARP::YARP_sig
+                                                      YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)

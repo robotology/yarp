@@ -57,9 +57,9 @@ if(ENABLE_WrenchStampedRosPublisher)
   target_sources(yarp_WrenchStampedRosPublisher PRIVATE WrenchStampedRosPublisher.cpp WrenchStampedRosPublisher.h GenericSensorRosPublisher.h )
 
   target_link_libraries(yarp_WrenchStampedRosPublisher PRIVATE YARP::YARP_os
-                                                     YARP::YARP_sig
-                                                     YARP::YARP_dev
-                                                     YARP_rosmsg)
+                                                               YARP::YARP_sig
+                                                               YARP::YARP_dev
+                                                               YARP_rosmsg)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
@@ -94,9 +94,9 @@ if(ENABLE_TemperatureRosPublisher)
   target_sources(yarp_TemperatureRosPublisher PRIVATE TemperatureRosPublisher.cpp TemperatureRosPublisher.h GenericSensorRosPublisher.h )
 
   target_link_libraries(yarp_TemperatureRosPublisher PRIVATE YARP::YARP_os
-                                                     YARP::YARP_sig
-                                                     YARP::YARP_dev
-                                                     YARP_rosmsg)
+                                                             YARP::YARP_sig
+                                                             YARP::YARP_dev
+                                                             YARP_rosmsg)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
@@ -131,10 +131,10 @@ if(ENABLE_PoseStampedRosPublisher)
   target_sources(yarp_PoseStampedRosPublisher PRIVATE PoseStampedRosPublisher.cpp PoseStampedRosPublisher.h GenericSensorRosPublisher.h )
 
   target_link_libraries(yarp_PoseStampedRosPublisher PRIVATE YARP::YARP_os
-                                                     YARP::YARP_sig
-                                                     YARP::YARP_dev
-                                                     YARP::YARP_math
-                                                     YARP_rosmsg)
+                                                             YARP::YARP_sig
+                                                             YARP::YARP_dev
+                                                             YARP::YARP_math
+                                                             YARP_rosmsg)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
@@ -170,9 +170,9 @@ if(ENABLE_MagneticFieldRosPublisher)
   target_sources(yarp_MagneticFieldRosPublisher PRIVATE MagneticFieldRosPublisher.cpp MagneticFieldRosPublisher.h GenericSensorRosPublisher.h )
 
   target_link_libraries(yarp_MagneticFieldRosPublisher PRIVATE YARP::YARP_os
-                                                     YARP::YARP_sig
-                                                     YARP::YARP_dev
-                                                     YARP_rosmsg)
+                                                               YARP::YARP_sig
+                                                               YARP::YARP_dev
+                                                               YARP_rosmsg)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig

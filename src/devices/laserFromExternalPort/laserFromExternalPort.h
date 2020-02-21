@@ -58,7 +58,7 @@ public:
 };
 
 class LaserFromExternalPort : public yarp::dev::Lidar2DDeviceTemplate,
-                              public PeriodicThread, 
+                              public PeriodicThread,
                               public DeviceDriver
 {
 protected:
