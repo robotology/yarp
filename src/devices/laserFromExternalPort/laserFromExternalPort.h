@@ -57,8 +57,8 @@ public:
     void getLast(yarp::dev::LaserScan2D& data, yarp::os::Stamp& stmp);
 };
 
-class LaserFromExternalPort : public yarp::dev::Lidar2DDeviceTemplate,
-                              public PeriodicThread,
+class LaserFromExternalPort : public yarp::dev::Lidar2DDeviceBase,
+                              public PeriodicThread, 
                               public DeviceDriver
 {
 protected:
@@ -70,7 +70,7 @@ protected:
 
 
 public:
-    LaserFromExternalPort(double period = 0.01) : PeriodicThread(period)
+    LaserFromExternalPort(double period = 0.01) : PeriodicThread(period), Lidar2DDeviceBase()
     {}
 
     ~LaserFromExternalPort()
