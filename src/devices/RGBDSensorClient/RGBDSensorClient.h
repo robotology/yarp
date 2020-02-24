@@ -48,6 +48,8 @@ class RGBDSensor_StreamingMsgParser;
  * | remoteImagePort |      -         | string  | -              |   -           |               | Full name of the port to read color images from, e.g. /robotName/RGBD/image_camera:o  |       |
  * | remoteDepthPort |      -         | string  | -              |   -           |               | Full name of the port to read depth images from, e.g. /robotName/RGBD/depth_camera:o  |       |
  * | remoteRpcPort   |      -         | string  | -              |   -           |               | Full name of the remote RPC port, e.g. /robotName/RGBD/rpc                            |       |
+ * | ImageCarrier    |      -         | string  | -              | udp           | No            | Carrier name for the Image stream used in the client-server connection                |       |
+ * | DepthCarrier    |      -         | string  | -              | udp           | No            | Carrier name for the Depth strean used in the client-server connection                |       |
  *
  * Configuration file using .ini format, using subdevice keyword.
  *
@@ -92,6 +94,8 @@ protected:
     std::string local_depthFrame_StreamingPort_name;
     std::string remote_colorFrame_StreamingPort_name;
     std::string remote_depthFrame_StreamingPort_name;
+    std::string image_carrier_type;
+    std::string depth_carrier_type;
     yarp::os::BufferedPort<yarp::sig::FlexImage> colorFrame_StreamingPort;
     yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat> > depthFrame_StreamingPort;
 

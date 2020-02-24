@@ -151,6 +151,18 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
             remote_rpcPort_name  = config.find("remoteRpcPort").asString();
         }
 
+        image_carrier_type = "udp";
+        depth_carrier_type = "udp";
+
+        if (config.check("ImageCarrier", "carrier for the image stream"))
+        {
+            image_carrier_type = config.find("ImageCarrier").asString();
+        }
+
+        if (config.check("DepthCarrier", "carrier for the depth tream"))
+        {
+            depth_carrier_type = config.find("DepthCarrier").asString();
+        }
 
         /*
             * When using multiple RPC ports
@@ -194,15 +206,15 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
         depthFrame_StreamingPort.close();
     }
 
-    if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_name, colorFrame_StreamingPort.getName(), "udp") )
+    if(! yarp::os::Network::connect(remote_colorFrame_StreamingPort_name, colorFrame_StreamingPort.getName(), image_carrier_type) )
     {
-        yError() << colorFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_colorFrame_StreamingPort_name;
+        yError() << colorFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_colorFrame_StreamingPort_name << "with carrier " << image_carrier_type;
         return false;
     }
 
-    if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_name, depthFrame_StreamingPort.getName(), "udp") )
+    if(! yarp::os::Network::connect(remote_depthFrame_StreamingPort_name, depthFrame_StreamingPort.getName(), depth_carrier_type) )
     {
-        yError() << depthFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_depthFrame_StreamingPort_name;
+        yError() << depthFrame_StreamingPort.getName() << " cannot connect to remote port " << remote_depthFrame_StreamingPort_name << "with carrier " << depth_carrier_type;
         return false;
     }
 
