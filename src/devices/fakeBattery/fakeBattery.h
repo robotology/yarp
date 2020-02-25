@@ -10,39 +10,33 @@
 #define YARP_FAKEBATTERY_H
 
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/os/ResourceFinder.h>
-
-#include <yarp/sig/Vector.h>
+#include <yarp/os/RpcServer.h>
 
 #include <yarp/dev/IBattery.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <mutex>
 
+#include "fakeBatteryService.h"
+
 class FakeBattery :
         public yarp::os::PeriodicThread,
         public yarp::dev::IBattery,
-        public yarp::dev::DeviceDriver
+        public yarp::dev::DeviceDriver,
+        public fakeBatteryService
 {
 protected:
     std::mutex m_mutex;
+    double battery_charge {52.0};
+    double battery_voltage {50.0};
+    double battery_current {51.0};
+    double battery_temperature {20.0};
+    std::string battery_info {"fake battery system v2.0"};
+    Battery_status battery_status {BATTERY_OK_IN_USE};
 
-    short status;
-    double timeStamp;
-    yarp::sig::Vector data;
-    double battery_charge;
-    double battery_voltage;
-    double battery_current;
-    double battery_temperature;
-    std::string battery_info;
-    unsigned char backpack_status;
+    bool debugEnable {false};
 
-    bool debugEnable;
-
-    yarp::os::ResourceFinder rf;
-    std::string remoteName;
-    std::string localName;
-
+    yarp::os::RpcServer ctrl_port;
 public:
     FakeBattery();
     FakeBattery(const FakeBattery&) = delete;
@@ -50,10 +44,12 @@ public:
     FakeBattery& operator=(const FakeBattery&) = delete;
     FakeBattery& operator=(FakeBattery&&) = delete;
 
-    ~FakeBattery() override;
+    ~FakeBattery() override = default;
 
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
+
+    void run() override;
 
     bool getBatteryVoltage(double& voltage) override;
     bool getBatteryCurrent(double& current) override;
@@ -62,9 +58,15 @@ public:
     bool getBatteryInfo(std::string& info) override;
     bool getBatteryTemperature(double& temperature) override;
 
-    bool threadInit() override;
-    void threadRelease() override;
-    void run() override;
+    void setBatteryVoltage(const double voltage) override;
+    void setBatteryCurrent(const double current) override;
+    void setBatteryCharge(const double charge) override;
+    void setBatteryStatus(const fakeBatteryStatus status) override;
+    void setBatteryInfo(const std::string& info) override;
+    void setBatteryTemperature(const double temperature) override;
+
+private:
+    void updateStatus();
 };
 
 #endif
