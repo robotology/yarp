@@ -13,13 +13,13 @@ if(NOT SKIP_laserFromPointCloud)
   yarp_add_plugin(laserFromPointCloud)
 
   target_sources(laserFromPointCloud PRIVATE laserFromPointCloud.h
-                                      laserFromPointCloud.cpp)
+                                             laserFromPointCloud.cpp)
 
   target_link_libraries(laserFromPointCloud PRIVATE YARP::YARP_os
-                                               YARP::YARP_sig
-                                               YARP::YARP_dev
-                                               YARP::YARP_math
-                                               YARP::YARP_rosmsg)
+                                                    YARP::YARP_sig
+                                                    YARP::YARP_dev
+                                                    YARP::YARP_math
+                                                    YARP::YARP_rosmsg)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
