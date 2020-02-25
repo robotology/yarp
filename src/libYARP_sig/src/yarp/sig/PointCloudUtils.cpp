@@ -50,7 +50,7 @@ PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat>& depth
     if (roi.max_y == 0) max_y = depth.height();
     max_x = max_x < depth.width()  ? max_x : depth.width();
     max_y = max_y < depth.height() ? max_y : depth.height();
- 
+
     PointCloud<DataXYZ> pointCloud;
     pointCloud.resize(max_x-roi.min_x, max_y-roi.min_y);
 
