@@ -114,7 +114,7 @@ inline int BatteryInputPortProcessor::getLast(yarp::os::Bottle &data, Stamp &stm
 double BatteryInputPortProcessor::getVoltage()
 {
     mutex.lock();
-    double voltage = lastBottle.get(0).asInt32();
+    double voltage = lastBottle.get(0).asFloat64();
     mutex.unlock();
     return voltage;
 }
@@ -122,7 +122,7 @@ double BatteryInputPortProcessor::getVoltage()
 double BatteryInputPortProcessor::getCurrent()
 {
     mutex.lock();
-    double current = lastBottle.get(1).asInt32();
+    double current = lastBottle.get(1).asFloat64();
     mutex.unlock();
     return current;
 }
@@ -130,7 +130,7 @@ double BatteryInputPortProcessor::getCurrent()
 double BatteryInputPortProcessor::getCharge()
 {
     mutex.lock();
-    double charge = lastBottle.get(2).asInt32();
+    double charge = lastBottle.get(2).asFloat64();
     mutex.unlock();
     return charge;
 }
@@ -146,7 +146,7 @@ int    BatteryInputPortProcessor::getStatus()
 double BatteryInputPortProcessor::getTemperature()
 {
     mutex.lock();
-    double temperature = lastBottle.get(3).asInt32();
+    double temperature = lastBottle.get(3).asFloat64();
     mutex.unlock();
     return temperature;
 }
