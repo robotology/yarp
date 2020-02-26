@@ -31,8 +31,10 @@ bool FakeBattery::open(yarp::os::Searchable& config)
 {
     Bottle& group_general = config.findGroup("GENERAL");
 
-    int period = config.find("thread_period").asInt32();
-    setPeriod((double)period / 1000.0);
+    if (config.check("thread_period")) {
+        int period = config.find("thread_period").asInt32();
+        setPeriod((double)period / 1000.0);
+    }
 
     if (group_general.isNull())
     {
