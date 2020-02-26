@@ -200,12 +200,13 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
 
     if (config.check("subdevice"))
     {
-        Property       p;
         PolyDriverList driverlist;
-
-        p.fromString(config.toString(), false);
-        p.put("device", config.find("subdevice").asString());
+        Property p;
+        p.fromString(config.toString());
+        p.unput("device");
         p.unput("subdevice");
+        p.put("device", config.find("subdevice").asString());
+        p.setMonitor(config.getMonitor(), "subdevice"); // pass on any monitoring
 
         if (!m_driver.open(p) || !m_driver.isValid())
         {
