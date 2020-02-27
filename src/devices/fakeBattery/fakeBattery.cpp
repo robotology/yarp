@@ -13,31 +13,25 @@
 #include <yarp/os/Time.h>
 
 #include <iostream>
-#include <string.h>
+#include <cstring>
 
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
+
 FakeBattery::FakeBattery() :
         PeriodicThread(0.02)
 {
-    debugEnable = false;
 }
 
-FakeBattery::~FakeBattery()
-{
-}
 
 bool FakeBattery::open(yarp::os::Searchable& config)
 {
+    double period = config.check("thread_period", Value(0.02), "thread period (smaller implies faster charge/discharge)").asFloat64();
+    setPeriod(period);
+
     Bottle& group_general = config.findGroup("GENERAL");
-
-    if (config.check("thread_period")) {
-        int period = config.find("thread_period").asInt32();
-        setPeriod((double)period / 1000.0);
-    }
-
     if (group_general.isNull()) {
         yWarning() << "GENERAL group parameters missing, assuming default";
     } else {
@@ -45,51 +39,39 @@ bool FakeBattery::open(yarp::os::Searchable& config)
         this->debugEnable = group_general.check("debug", Value(0), "enable/disable the debug mode").asBool();
     }
 
+    std::string name = config.find("name").asString();
+    this->yarp().attachAsServer(ctrl_port);
+    if (!ctrl_port.open(name + "/control/rpc:i")) {
+        yError("Could not open rpc port");
+        close();
+        return false;
+    }
+
     PeriodicThread::start();
+
     return true;
 }
 
 bool FakeBattery::close()
 {
-    //stop the thread
+    // Stop the thread
     PeriodicThread::stop();
 
-    return true;
-}
+    // Close the RPC port
+    ctrl_port.close();
 
-bool FakeBattery::threadInit()
-{
-    battery_info = "fake battery system v1.0";
-    battery_voltage = 50.0;
-    battery_current = 51.0;
-    battery_charge = 52.0;
-    battery_temperature = 53.0;
-    timeStamp = yarp::os::Time::now();
     return true;
 }
 
 void FakeBattery::run()
 {
-    double timeNow = yarp::os::Time::now();
-    static int counter = 0;
-
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (timeNow - timeStamp > 2.0) {
-        timeStamp = timeNow;
-        if (counter >= 4) {
-            battery_voltage = 50.0;
-            battery_current = 51.0;
-            battery_charge = 52.0;
-            battery_temperature = 53.0;
-            counter = 0;
-        } else {
-            battery_voltage += 10;
-            battery_current += 10;
-            battery_charge += 10;
-            battery_temperature += 10;
-            counter++;
-        }
+    if (battery_current > 0.1) {
+        battery_charge -= 0.001;
+    } else if (battery_current < -0.1) {
+        battery_charge += 0.001;
     }
+    updateStatus();
 }
 
 bool FakeBattery::getBatteryVoltage(double& voltage)
@@ -116,14 +98,14 @@ bool FakeBattery::getBatteryCharge(double& charge)
 bool FakeBattery::getBatteryStatus(Battery_status& status)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    status = BATTERY_OK_IN_USE;
+    status = battery_status;
     return true;
 }
 
 bool FakeBattery::getBatteryTemperature(double& temperature)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    temperature = 20;
+    temperature = battery_temperature;
     return true;
 }
 
@@ -134,7 +116,60 @@ bool FakeBattery::getBatteryInfo(string& info)
     return true;
 }
 
-void FakeBattery::threadRelease()
+void FakeBattery::setBatteryVoltage(const double voltage)
 {
-    yTrace("FakeBattery Thread released\n");
+    std::lock_guard<std::mutex> lock(m_mutex);
+    battery_voltage = voltage;
+    updateStatus();
+}
+
+void FakeBattery::setBatteryCurrent(const double current)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    battery_current = current;
+    updateStatus();
+}
+
+void FakeBattery::setBatteryCharge(const double charge)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    battery_charge = charge;
+    updateStatus();
+}
+
+void FakeBattery::setBatteryStatus(const fakeBatteryStatus status)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    battery_status = static_cast<yarp::dev::IBattery::Battery_status>(status);
+    updateStatus();
+}
+
+void FakeBattery::setBatteryInfo(const std::string& info)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    battery_info = info;
+}
+
+void FakeBattery::setBatteryTemperature(const double temperature)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    battery_temperature = temperature;
+}
+
+void FakeBattery::updateStatus()
+{
+    battery_charge = yarp::conf::clamp(battery_charge, 0.0, 100.0);
+    if (battery_current > 0.1) {
+        if (battery_charge > 15.0) {
+            battery_status = yarp::dev::IBattery::Battery_status::BATTERY_OK_IN_USE;
+        } else if (battery_charge > 5.0) {
+            battery_status = yarp::dev::IBattery::Battery_status::BATTERY_LOW_WARNING;
+        } else {
+            battery_status = yarp::dev::IBattery::Battery_status::BATTERY_CRITICAL_WARNING;
+        }
+    } else if (battery_current > -0.1) {
+        battery_status = yarp::dev::IBattery::Battery_status::BATTERY_OK_STANBY;
+    } else {
+        battery_status = yarp::dev::IBattery::Battery_status::BATTERY_OK_IN_CHARGE;
+    }
 }
