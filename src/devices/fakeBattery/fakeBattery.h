@@ -27,11 +27,11 @@ class FakeBattery :
 {
 protected:
     std::mutex m_mutex;
-    double battery_charge {52.0};
-    double battery_voltage {50.0};
-    double battery_current {51.0};
+    double battery_charge {50.0};
+    double battery_voltage {30.0};
+    double battery_current {3.0};
     double battery_temperature {20.0};
-    std::string battery_info {"fake battery system v2.0"};
+    std::string battery_info {"Fake battery system v2.0"};
     Battery_status battery_status {BATTERY_OK_IN_USE};
 
     bool debugEnable {false};
