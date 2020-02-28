@@ -17,21 +17,21 @@
 
 #include <mutex>
 
-#include "fakeBatteryService.h"
+#include "FakeBatteryService.h"
 
 class FakeBattery :
         public yarp::os::PeriodicThread,
         public yarp::dev::IBattery,
         public yarp::dev::DeviceDriver,
-        public fakeBatteryService
+        public FakeBatteryService
 {
 protected:
     std::mutex m_mutex;
-    double battery_charge {52.0};
-    double battery_voltage {50.0};
-    double battery_current {51.0};
+    double battery_charge {50.0};
+    double battery_voltage {30.0};
+    double battery_current {3.0};
     double battery_temperature {20.0};
-    std::string battery_info {"fake battery system v2.0"};
+    std::string battery_info {"Fake battery system v2.0"};
     Battery_status battery_status {BATTERY_OK_IN_USE};
 
     bool debugEnable {false};
@@ -61,7 +61,6 @@ public:
     void setBatteryVoltage(const double voltage) override;
     void setBatteryCurrent(const double current) override;
     void setBatteryCharge(const double charge) override;
-    void setBatteryStatus(const fakeBatteryStatus status) override;
     void setBatteryInfo(const std::string& info) override;
     void setBatteryTemperature(const double temperature) override;
 

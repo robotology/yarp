@@ -28,9 +28,23 @@ FakeBattery::FakeBattery() :
 
 bool FakeBattery::open(yarp::os::Searchable& config)
 {
-    double period = config.check("thread_period", Value(0.02), "thread period (smaller implies faster charge/discharge)").asFloat64();
+    double period = config.check("thread_period", Value(0.02), "Thread period (smaller implies faster charge/discharge)").asFloat64();
     setPeriod(period);
 
+    double charge = config.check("charge", Value(50.0), "Initial charge (%)").asFloat64();
+    double voltage = config.check("voltage", Value(30.0), "Initial voltage (V)").asFloat64();
+    double current = config.check("current", Value(3.0), "Initial current (A)").asFloat64();
+    double temperature = config.check("temperature", Value(20.0), "Initial temperature (°C)").asFloat64();
+    std::string info = config.check("info", Value("Fake battery system v2.0"), "Initial battery information").asString();
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        battery_charge = charge;
+        battery_voltage = voltage;
+        battery_current = current;
+        battery_temperature = temperature;
+        battery_info = std::move(info);
+        updateStatus();
+    }
     Bottle& group_general = config.findGroup("GENERAL");
     if (group_general.isNull()) {
         yWarning() << "GENERAL group parameters missing, assuming default";
@@ -134,13 +148,6 @@ void FakeBattery::setBatteryCharge(const double charge)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     battery_charge = charge;
-    updateStatus();
-}
-
-void FakeBattery::setBatteryStatus(const fakeBatteryStatus status)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    battery_status = static_cast<yarp::dev::IBattery::Battery_status>(status);
     updateStatus();
 }
 

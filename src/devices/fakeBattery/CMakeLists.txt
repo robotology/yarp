@@ -12,7 +12,7 @@ yarp_prepare_plugin(fakeBattery
 
 if(NOT SKIP_fakeBattery)
   yarp_add_plugin(yarp_fakeBattery)
-  yarp_add_idl(IDL_GEN_FILES fakeBatteryService.thrift)
+  yarp_add_idl(IDL_GEN_FILES FakeBatteryService.thrift)
 
   target_sources(yarp_fakeBattery PRIVATE fakeBattery.cpp
                                           fakeBattery.h
