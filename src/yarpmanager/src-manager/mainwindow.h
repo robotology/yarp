@@ -109,9 +109,7 @@ private slots:
     void onLogMessage(QString);
     void onHelp();
     void onAbout();
-    void onBuilderWindowFloating(bool);
     void onWizardError(QString);
-    void onViewBuilderWindows();
 
     void onModified(bool);
     void onFileChanged(const QString & path);

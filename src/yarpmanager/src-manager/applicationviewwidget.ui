@@ -33,77 +33,86 @@
      </property>
      <widget class="QWidget" name="topWidget" native="true">
       <layout class="QGridLayout" name="gridLayout">
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
        <item row="0" column="0">
-        <widget class="QSplitter" name="splitter">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="tabPosition">
+          <enum>QTabWidget::East</enum>
          </property>
-         <widget class="CustomTreeWidget" name="moduleList">
-          <property name="styleSheet">
-           <string notr="true">/*alternate-background-color: rgb(200, 200, 200);
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="tab">
+          <attribute name="title">
+           <string>Module list</string>
+          </attribute>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="CustomTreeWidget" name="moduleList">
+             <property name="styleSheet">
+              <string notr="true">/*alternate-background-color: rgb(200, 200, 200);
 background-color: rgb(255, 255, 255);*/
 </string>
-          </property>
-          <property name="rootIsDecorated">
-           <bool>false</bool>
-          </property>
-          <attribute name="headerDefaultSectionSize">
-           <number>80</number>
-          </attribute>
-          <column>
-           <property name="text">
-            <string>Module</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>ID</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Status</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Host</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Parameters</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Stdio</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Work Dir</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Environment</string>
-           </property>
-          </column>
+             </property>
+             <property name="rootIsDecorated">
+              <bool>false</bool>
+             </property>
+             <attribute name="headerDefaultSectionSize">
+              <number>80</number>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Module</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>ID</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Status</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Host</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Parameters</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Stdio</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Work Dir</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Environment</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
          </widget>
-         <widget class="QWidget" name="builderContainer" native="true"/>
+         <widget class="QWidget" name="tab_2">
+          <attribute name="title">
+           <string>Builder</string>
+          </attribute>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QWidget" name="builderContainer" native="true"/>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>
