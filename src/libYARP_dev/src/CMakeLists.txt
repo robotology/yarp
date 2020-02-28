@@ -252,8 +252,8 @@ target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOU
 target_compile_features(YARP_dev PUBLIC cxx_std_14)
 
 target_link_libraries(YARP_dev PUBLIC YARP::YARP_conf
-                                       YARP::YARP_os
-                                       YARP::YARP_sig
+                                      YARP::YARP_os
+                                      YARP::YARP_sig
                                PRIVATE YARP::YARP_rosmsg)
 list(APPEND YARP_dev_PUBLIC_DEPS YARP_conf
                                  YARP_os
@@ -261,7 +261,7 @@ list(APPEND YARP_dev_PUBLIC_DEPS YARP_conf
 list(APPEND YARP_dev_PRIVATE_DEPS YARP_rosmsg)
 
 if(TARGET YARP::YARP_math)
-  target_link_libraries(YARP_dev PRIVATE YARP::YARP_math)
+  target_link_libraries(YARP_dev PUBLIC YARP::YARP_math)
   list(APPEND YARP_dev_PRIVATE_DEPS YARP_math)
 endif()
 
