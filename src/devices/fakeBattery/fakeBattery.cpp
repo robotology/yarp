@@ -137,13 +137,6 @@ void FakeBattery::setBatteryCharge(const double charge)
     updateStatus();
 }
 
-void FakeBattery::setBatteryStatus(const fakeBatteryStatus status)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    battery_status = static_cast<yarp::dev::IBattery::Battery_status>(status);
-    updateStatus();
-}
-
 void FakeBattery::setBatteryInfo(const std::string& info)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
