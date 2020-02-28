@@ -311,7 +311,7 @@ buildandset_dependency(hmac)
 find_package(Eigen3 QUIET)
 checkandset_dependency(Eigen3)
 
-find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport QUIET)
+find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport OPTIONAL_COMPONENTS DBus QUIET)
 checkandset_dependency(Qt5)
 
 find_package(QCustomPlot QUIET)
