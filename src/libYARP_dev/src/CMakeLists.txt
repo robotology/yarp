@@ -280,7 +280,7 @@ list(APPEND YARP_dev_PRIVATE_DEPS YARP_rosmsg)
 
 if(TARGET YARP::YARP_math)
   target_link_libraries(YARP_dev PUBLIC YARP::YARP_math)
-  list(APPEND YARP_dev_PRIVATE_DEPS YARP_math)
+  list(APPEND YARP_dev_PUBLIC_DEPS YARP_math)
 endif()
 
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS}
