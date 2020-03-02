@@ -86,8 +86,6 @@ CI Status
 [![Build status (Windows) (master branch)](https://img.shields.io/appveyor/ci/robotology/yarp/master.svg?logo=appveyor&label=[master]%20build%20(Windows))](https://ci.appveyor.com/project/robotology/yarp)
 [![Build status (Windows) (devel branch)](https://img.shields.io/appveyor/ci/robotology/yarp/devel.svg?logo=appveyor&label=[devel]%20build%20(Windows))](https://ci.appveyor.com/project/robotology/yarp)
 
-and [more](http://dashboard.icub.org/index.php?project=YARP)
-
 
 Stats
 -----
