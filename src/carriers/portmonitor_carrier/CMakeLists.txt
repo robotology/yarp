@@ -25,6 +25,7 @@ if (NOT SKIP_portmonitor)
   if(YARP_HAS_Lua)
     target_sources(yarp_portmonitor PRIVATE lua/MonitorLua.cpp
                                             lua/MonitorLua.h)
+    target_include_directories(yarp_portmonitor PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/lua/src_gen")
   endif()
 
   target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
