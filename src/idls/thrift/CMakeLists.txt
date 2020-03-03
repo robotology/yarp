@@ -24,7 +24,7 @@ set(yarpidl_thrift_SRCS "${CMAKE_CURRENT_BINARY_DIR}/thrift/version.h"
 set(yarpidl_thrift_YARP_SRCS src/t_yarp_generator.cc)
 
 
-if(YARP_HAS_BISON AND YARP_HAS_FLEX)
+if(YARP_HAS_BISON AND YARP_HAS_FLEX AND NOT CMAKE_CROSS_COMPILING)
   bison_target(thrifty
                "${THRIFT_ROOT}/compiler/cpp/src/thrift/thrifty.yy"
                "${CMAKE_CURRENT_BINARY_DIR}/thrift/thrifty.cc"
