@@ -69,8 +69,9 @@ public:
     */
     void setManager(Utilities *utilities);
     /**
-    * Function that sends the images
+    * Functions that sends data (many different types)
     */
+    int sendBottle(int part, int id);
     int sendImages( int part, int id );
     /**
     * Function that returns the frame rate

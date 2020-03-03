@@ -24,6 +24,7 @@
 
 #include <memory>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/LogStream.h>
 #include "include/worker.h"
 #include "include/mainwindow.h"
 #include "include/log.h"
@@ -110,29 +111,13 @@ void WorkerClass::run()
 
     if (isActive)
     {
-        Bottle tmp;
-        if (utilities->withExtraColumn){
-            tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail();
-        } else {
-            tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail();
+        if (strcmp (utilities->partDetails[part].type.c_str(),"Bottle") == 0)
+        {
+            sendBottle(part, frame);
         }
-
-        if (strcmp (utilities->partDetails[part].type.c_str(),"Bottle") == 0){
-
-            Bottle& outBot = utilities->partDetails[part].bottlePort.prepare();
-            outBot = tmp;
-
-            //propagate timestamp
-            Stamp ts(frame,utilities->partDetails[part].timestamp[frame]);
-            utilities->partDetails[part].bottlePort.setEnvelope(ts);
-
-            if (utilities->sendStrict){
-                utilities->partDetails[part].bottlePort.writeStrict();
-            } else {
-                utilities->partDetails[part].bottlePort.write();
-            }
-        }
-        if (strcmp (utilities->partDetails[part].type.c_str(),"Image:ppm") == 0 || strcmp (utilities->partDetails[part].type.c_str(),"Image") == 0){
+        if (strcmp (utilities->partDetails[part].type.c_str(),"Image:ppm") == 0 ||
+            strcmp (utilities->partDetails[part].type.c_str(),"Image") == 0)
+        {
             sendImages(part, frame);
         }
     }
@@ -151,6 +136,36 @@ double WorkerClass::getFrameRate()
 double WorkerClass::getTimeTaken()
 {
     return yarp::os::Time::now()-startTime;
+}
+
+/**********************************************************/
+int WorkerClass::sendBottle(int part, int frame)
+{
+    Bottle tmp;
+    if (utilities->withExtraColumn) {
+        tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().tail();
+    }
+    else {
+        tmp = utilities->partDetails[part].bot.get(frame).asList()->tail().tail();
+    }
+
+    yarp::os::BufferedPort<Bottle>* the_port = dynamic_cast<yarp::os::BufferedPort<yarp::os::Bottle>*> (utilities->partDetails[part].outputPort);
+    if (the_port == nullptr) { yFatal() << "dynamic_cast failed"; }
+
+    Bottle& outBot = the_port->prepare();
+    outBot = tmp;
+
+    //propagate timestamp
+    Stamp ts(frame, utilities->partDetails[part].timestamp[frame]);
+    the_port->setEnvelope(ts);
+
+    if (utilities->sendStrict) {
+        the_port->writeStrict();
+    }
+    else {
+        the_port->write();
+    }
+    return 0;
 }
 
 /**********************************************************/
@@ -244,15 +259,18 @@ int WorkerClass::sendImages(int part, int frame)
     }
     else
     {
-        utilities->partDetails[part].imagePort.prepare()=*img_yarp;
+        yarp::os::BufferedPort<yarp::sig::Image>* the_port = dynamic_cast<yarp::os::BufferedPort<yarp::sig::Image>*> (utilities->partDetails[part].outputPort);
+        if (the_port == nullptr) { yFatal() << "dynamic_cast failed"; }
+
+        the_port->prepare()=*img_yarp;
 
         Stamp ts(frame,utilities->partDetails[part].timestamp[frame]);
-        utilities->partDetails[part].imagePort.setEnvelope(ts);
+        the_port->setEnvelope(ts);
 
         if (utilities->sendStrict) {
-            utilities->partDetails[part].imagePort.writeStrict();
+            the_port->writeStrict();
         } else {
-            utilities->partDetails[part].imagePort.write();
+            the_port->write();
         }
     }
 
