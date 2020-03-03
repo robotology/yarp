@@ -41,6 +41,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(SDLJoypad)
   add_subdirectory(batteryClient)
   add_subdirectory(batteryWrapper)
+  add_subdirectory(upowerBattery)
   add_subdirectory(Rangefinder2DWrapper)
   add_subdirectory(realsense2)
   add_subdirectory(multipleAnalogSensorsMsgs)
