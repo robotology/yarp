@@ -89,9 +89,8 @@ git:
 
 .export_cmake_options_base_cmd_definition: &export_cmake_options_base_cmd |-
   # Prepare cmake options
-  . scripts/admin/generate-cmake-options.sh $(hostname) $(lsb_release -cs) continuous
   export YARP_INSTALL_PREFIX="${PWD}/install"
-  export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -DCMAKE_INSTALL_PREFIX=${YARP_INSTALL_PREFIX}"
+  export YARP_CMAKE_OPTIONS="${CMAKE_OPTIONS} -C${PWD}/.ci/initial-cache.appveyor.cmake -DCMAKE_INSTALL_PREFIX=${YARP_INSTALL_PREFIX}"
 
 .export_cmake_options_linux_cmd_definition: &export_cmake_options_linux_cmd |-
   # export_cmake_options_linux_cmd

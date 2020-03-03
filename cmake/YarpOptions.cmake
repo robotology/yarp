@@ -280,29 +280,14 @@ endif()
 
 
 #########################################################################
-# Control compilation of device tests.
-# Not really for end-user, but instead for the library developers
-yarp_deprecated_option(CREATE_BUILTIN_DEVICE_TESTS) # Since YARP 2.3.68
-
-
-#########################################################################
-# Control submission of reports
-option(ENABLE_DASHBOARD_SUBMIT "Allow submission of builds to http://dashboard.icub.org/index.php?project=YARP" OFF)
-mark_as_advanced(ENABLE_DASHBOARD_SUBMIT)
-if(ENABLE_DASHBOARD_SUBMIT)
-  include(CTest)
-endif()
-
-
-#########################################################################
 # Control setting an rpath
-yarp_deprecated_option(ENABLE_FORCE_RPATH)
-yarp_deprecated_option(INSTALL_WITH_RPATH)
+
 add_install_rpath_support(LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"       # Libraries
                           BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"       # Binaries
                                    "${CMAKE_INSTALL_FULL_LIBDIR}/yarp"  # Plugins
                           INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
                           USE_LINK_PATH)
+
 
 #########################################################################
 # Specify yarp version and copyright into macOS bundles
@@ -339,17 +324,15 @@ endif()
 
 
 #########################################################################
-# Display test machine options for reference, if they are set
+# Deprecated options
 
-if(TEST_MACHINE_HOSTNAME)
-  message(STATUS "TEST_MACHINE_HOSTNAME: ${TEST_MACHINE_HOSTNAME}")
-  message(STATUS "TEST_MACHINE_OS_TYPE: ${TEST_MACHINE_OS_TYPE}")
-  message(STATUS "TEST_MACHINE_TEST_TYPE: ${TEST_MACHINE_TEST_TYPE}")
-endif()
-
-
-
-
+yarp_deprecated_option(ENABLE_FORCE_RPATH) # Since YARP 2.3.65
+yarp_deprecated_option(INSTALL_WITH_RPATH) # Since YARP 2.3.65
+yarp_deprecated_option(CREATE_BUILTIN_DEVICE_TESTS) # Since YARP 2.3.68
 yarp_deprecated_option(YARP_EXPERIMENTAL_CXX11) # Since YARP 3.0.0
 yarp_deprecated_option(YARP_WRAP_STL_STRING) # Since YARP 3.0.0
 yarp_deprecated_option(YARP_WRAP_STL_STRING_INLINE) # Since YARP 3.0.0
+yarp_deprecated_option(ENABLE_DASHBOARD_SUBMIT) # Since YARP 3.3.3
+yarp_deprecated_option(TEST_MACHINE_HOSTNAME) # Since YARP 3.3.3
+yarp_deprecated_option(TEST_MACHINE_OS_TYPE) # Since YARP 3.3.3
+yarp_deprecated_option(TEST_MACHINE_TEST_TYPE) # Since YARP 3.3.3

@@ -82,8 +82,6 @@ CI Status
 [![Build Status (Linux/macOS)](https://img.shields.io/travis/robotology/yarp/master.svg?logo=travis&label=build%20(Linux/macOS))](https://travis-ci.org/robotology/yarp)
 [![Build status (Windows)](https://img.shields.io/appveyor/ci/robotology/yarp/master.svg?logo=appveyor&label=build%20(Windows))](https://ci.appveyor.com/project/robotology/yarp)
 
-and [more](http://dashboard.icub.org/index.php?project=YARP)
-
 
 Stats
 -----

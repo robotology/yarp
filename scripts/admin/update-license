@@ -23,7 +23,6 @@ for f in `cd license_check; find . -type f -iname "*.cpp" \
                                        -or -name "CMakeLists.txt" \
                 | grep -v "/extern" \
                 | grep -v "/qtquick2applicationviewer/" \
-                | grep -v "CTestConfig.cmake" \
                 | grep -v "src/carriers/portmonitor_carrier/lua/lua_swig.h" \
 `; do
     ./scripts/admin/update-license-single $f
