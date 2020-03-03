@@ -25,7 +25,18 @@ if (NOT SKIP_portmonitor)
   if(YARP_HAS_Lua)
     target_sources(yarp_portmonitor PRIVATE lua/MonitorLua.cpp
                                             lua/MonitorLua.h)
-    target_include_directories(yarp_portmonitor PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/lua/src_gen")
+    if(YARP_HAS_SWIG AND NOT CMAKE_CROSSCOMPILING)
+      include(${SWIG_USE_FILE})
+      add_custom_command(
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen/swigluarun.h"
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen/"
+        COMMAND "${SWIG_EXECUTABLE}" -c++ -lua -external-runtime "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen/swigluarun.h"
+        COMMENT "Generating swig-lua runtime")
+      target_include_directories(yarp_portmonitor PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen")
+      target_sources(yarp_portmonitor PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/lua/src_gen/swigluarun.h")
+    else()
+      target_include_directories(yarp_portmonitor PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/lua/src_gen")
+    endif()
   endif()
 
   target_include_directories(yarp_portmonitor PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
