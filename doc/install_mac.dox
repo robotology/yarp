@@ -206,7 +206,7 @@ If the options above are not enough and you want to install YARP with additional
  \endcode
  (Note: if the install directory is a system directory you may need administrator privileges, e.g. you have to use sudo).
 
-After the installation, you will need to set your \subpage environment_configuration and the \subpage bash_completion.
+After the installation, you will need to set your \subpage environment_configuration.
 
  \subsubsection install_mac_YARP_Xcode Compile YARP using Xcode
 
@@ -238,7 +238,7 @@ After the installation, you will need to set your \subpage environment_configura
  \endcode
 
 
- After the installation, you will need to set your \subpage environment_configuration and the \subpage bash_completion.
+ After the installation, you will need to set your \subpage environment_configuration.
 
 
 
@@ -306,21 +306,6 @@ Add the YARP environment variable in
 
 
  Check if YARP has been properly installed by running a \subpage quick_test_yarp.
-
-\subsection bash_completion Bash completion
-
- \code
- brew install bash-completion
- \endcode
-
- Then add the following lines to your .bash_profile:
-
- \code
- if [ -f `brew --prefix`/etc/bash_completion ]; then
-       . `brew --prefix`/etc/bash_completion
- fi
- source $YARP_ROOT/scripts/yarp_completion
- \endcode
 
 
  \section quick_test_yarp Quick YARP run test

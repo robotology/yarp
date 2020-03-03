@@ -4,9 +4,6 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-add_subdirectory(yarpmanager)
-add_subdirectory(yarpdataplayer)
-# add_subdirectory(icons)
-
-add_subdirectory(bash-completion)
-# add_subdirectory(WindowsPowerShell)
+yarp_install(FILES yarp
+             DESTINATION ${CMAKE_INSTALL_DATADIR}/bash-completion/completion
+             COMPONENT yarp-data)
