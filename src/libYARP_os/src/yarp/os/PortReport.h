@@ -7,28 +7,38 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+
+#include <yarp/conf/system.h>
+
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/os/PortReport.h> file is deprecated")
+#endif
+
 #ifndef YARP_OS_PORTREPORT_H
 #define YARP_OS_PORTREPORT_H
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+
 #include <yarp/os/api.h>
-
 namespace yarp {
 namespace os {
+
 class PortInfo;
-} // namespace os
-} // namespace yarp
-
-namespace yarp {
-namespace os {
 
 /**
  * \ingroup comm_class
  *
  * A base class for objects that want information about port status
  * changes.
+ *
+ * @deprecated since YARP 3.4
  */
-class YARP_os_API PortReport
+class YARP_os_DEPRECATED_API PortReport
 {
+    // HACK Issue a deprecated warning in classes derived from yarp::os::PortReport
+    class YARP_DEPRECATED yarp__os__PortReport_is_deprecated {};
+    yarp__os__PortReport_is_deprecated issue_warning;
+
 public:
     /**
      * Destructor.
@@ -50,5 +60,7 @@ public:
 
 } // namespace os
 } // namespace yarp
+
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_OS_PORTREPORT_H

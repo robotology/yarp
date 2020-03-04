@@ -82,11 +82,14 @@ public:
     int getOutputCount() override;
 
 #ifndef YARP_NO_DEPRECATED
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     // Documented in Contactable
     YARP_DEPRECATED void getReport(PortReport& reporter) override;
 
     // Documented in Contactable
     YARP_DEPRECATED void setReporter(PortReport& reporter) override;
+YARP_WARNING_POP
 #endif
 
     // Documented in Contactable

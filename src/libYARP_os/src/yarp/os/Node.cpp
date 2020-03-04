@@ -16,7 +16,6 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/PortInfo.h>
-#include <yarp/os/PortReport.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Type.h>
 #include <yarp/os/impl/LogComponent.h>

@@ -16,7 +16,6 @@
 #include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReaderCreator.h>
-#include <yarp/os/PortReport.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Type.h>

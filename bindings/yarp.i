@@ -320,7 +320,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/os/NetInt16.h>
 %include <yarp/os/NetInt32.h>
 %include <yarp/os/NetInt64.h>
-%include <yarp/os/PortReport.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/ConnectionReader.h>
 %include <yarp/os/ConnectionWriter.h>

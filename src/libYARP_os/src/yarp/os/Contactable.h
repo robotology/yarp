@@ -12,13 +12,21 @@
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/PortReader.h>
-#include <yarp/os/PortReport.h>
 #include <yarp/os/PortWriter.h>
 #include <functional>
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.3
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #  include <yarp/os/Mutex.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#   include <yarp/os/PortReport.h>
+YARP_WARNING_POP
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #endif
 
@@ -183,6 +191,8 @@ public:
     virtual int getOutputCount() = 0;
 
 #ifndef YARP_NO_DEPRECATED
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     /**
      * Get information on the state of the port - connections etc.
      * PortReport::report will be called once for each connection to
@@ -206,11 +216,12 @@ public:
      * @deprecated since yarp 4
      */
     YARP_DEPRECATED virtual void setReporter(PortReport& reporter) = 0;
+YARP_WARNING_POP
 #endif
 
     /**
      * Get information on the state of the port - connections etc.
-     * PortReport::report will be called once for each connection to
+     * `reporter()` will be called once for each connection to
      * the port that exists right now.  To request callbacks for
      * any future connections/disconnections, use the setReporter
      * method instead.

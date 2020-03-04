@@ -12,7 +12,6 @@
 #include <yarp/os/Name.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/PortInfo.h>
-#include <yarp/os/PortReport.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/LogComponent.h>

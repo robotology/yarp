@@ -89,7 +89,6 @@ set(YARP_os_HDRS yarp/os/AbstractCarrier.h
                  yarp/os/PortReaderBufferBaseCreator.h
                  yarp/os/PortReaderCreator.h
                  yarp/os/PortReader.h
-                 yarp/os/PortReport.h
                  yarp/os/PortWriterBuffer.h
                  yarp/os/PortWriterBufferBase.h
                  yarp/os/PortWriter.h
@@ -202,7 +201,6 @@ set(YARP_os_SRCS yarp/os/AbstractCarrier.cpp
                  yarp/os/PortReaderBufferBaseCreator.cpp
                  yarp/os/PortReader.cpp
                  yarp/os/PortReaderCreator.cpp
-                 yarp/os/PortReport.cpp
                  yarp/os/PortWriterBufferBase.cpp
                  yarp/os/PortWriter.cpp
                  yarp/os/Property.cpp
@@ -245,11 +243,14 @@ if(NOT YARP_NO_DEPRECATED)
                            yarp/os/Mutex.h            # DEPRECATED since YARP 3.3.0
                            yarp/os/RateThread.h       # DEPRECATED since YARP 3.3.0
                            yarp/os/RecursiveMutex.h   # DEPRECATED since YARP 3.3.0
-                           yarp/os/Runnable.h)        # DEPRECATED since YARP 3.3.0
+                           yarp/os/Runnable.h         # DEPRECATED since YARP 3.3.0
+                           yarp/os/PortReport.h)      # DEPRECATED since YARP 3.4.0
+
   list(APPEND YARP_os_SRCS yarp/os/Mutex.cpp          # DEPRECATED since YARP 3.3.0
                            yarp/os/RateThread.cpp     # DEPRECATED since YARP 3.3.0
                            yarp/os/RecursiveMutex.cpp # DEPRECATED since YARP 3.3.0
-                           yarp/os/Runnable.cpp)      # DEPRECATED since YARP 3.3.0
+                           yarp/os/Runnable.cpp       # DEPRECATED since YARP 3.3.0
+                           yarp/os/PortReport.cpp)    # DEPRECATED since YARP 3.4.0
 endif()
 
 set(YARP_os_IDL_HDRS yarp/os/idl/BareStyle.h
