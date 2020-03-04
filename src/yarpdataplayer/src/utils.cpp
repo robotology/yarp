@@ -44,6 +44,14 @@
 #include "include/mainwindow.h"
 #include "include/log.h"
 
+ //ROS messages
+#include <yarp/rosmsg/sensor_msgs/LaserScan.h>
+#include <yarp/rosmsg/nav_msgs/Odometry.h>
+#include <yarp/rosmsg/tf/tfMessage.h>
+#include <yarp/rosmsg/tf2_msgs/tfMessage.h>
+#include <yarp/rosmsg/geometry_msgs/Pose.h>
+#include <yarp/rosmsg/geometry_msgs/Pose2D.h>
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace std;
@@ -366,13 +374,26 @@ bool Utilities::configurePorts(partsData &part)
         tmp_port_name="/"+moduleName+tmp_port_name;
     }
 
-    if (strcmp (part.type.c_str(),"Bottle") == 0)
-    {
+    if (strcmp (part.type.c_str(),"Bottle") == 0)   {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::os::Bottle>; }
     } 
-    else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0)
-    {
+    else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0)  {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::sig::Image>; }
+    }
+    else if (strcmp(part.type.c_str(), "LaserScan") == 0 ) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::sensor_msgs::LaserScan>; }
+    }
+    else if (strcmp(part.type.c_str(), "Odometry") == 0) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::nav_msgs::Odometry>; }
+    }
+    else if (strcmp(part.type.c_str(), "tf") == 0) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::tf2_msgs::TFMessage>; }
+    }
+    else if (strcmp(part.type.c_str(), "Pose") == 0) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::geometry_msgs::Pose>; }
+    }
+    else if (strcmp(part.type.c_str(), "Pose2D") == 0) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::geometry_msgs::Pose2D>; }
     }
     else
     {
@@ -389,7 +410,7 @@ bool Utilities::configurePorts(partsData &part)
     }
     else
     {
-        LOG("port %s already exists, skipping\n", tmp_port_name);
+        LOG("port %s already exists, skipping\n", tmp_port_name.c_str());
     }
 
 

@@ -20,11 +20,13 @@
 #define WORKER_H
 
 #include <QObject>
+#include "include/log.h"
 
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/sig/ImageFile.h>
 #include "include/utils.h"
 #include <yarp/os/Event.h>
@@ -38,7 +40,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <yarp/cv/Cv.h>
 #endif
-
 
 class Utilities;
 //class MainWindow;
@@ -72,7 +73,38 @@ public:
     * Functions that sends data (many different types)
     */
     int sendBottle(int part, int id);
-    int sendImages( int part, int id );
+    int sendImages( int part, int id);
+    
+    template <class T>
+    int sendGenericData(int part, int id)
+    {
+        yarp::os::Bottle tmp;
+        if (utilities->withExtraColumn) {
+            tmp = utilities->partDetails[part].bot.get(id).asList()->tail().tail().tail();
+        }
+        else {
+            tmp = utilities->partDetails[part].bot.get(id).asList()->tail().tail();
+        }
+
+        yarp::os::BufferedPort<T>* the_port = dynamic_cast<yarp::os::BufferedPort<T>*> (utilities->partDetails[part].outputPort);
+        if (the_port == nullptr) { LOG_ERROR("dynamic_cast failed"); return -1; }
+
+        auto& dat = the_port->prepare();
+        yarp::os::Portable::copyPortable(tmp, dat);
+
+        //propagate timestamp
+        yarp::os::Stamp ts(id, utilities->partDetails[part].timestamp[id]);
+        the_port->setEnvelope(ts);
+
+        if (utilities->sendStrict) {
+            the_port->writeStrict();
+        }
+        else {
+            the_port->write();
+        }
+        return 0;
+    }
+    
     /**
     * Function that returns the frame rate
     */

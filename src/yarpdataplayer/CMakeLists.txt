@@ -84,7 +84,8 @@ if(YARP_COMPILE_yarpdataplayer)
   target_link_libraries(yarpdataplayer PRIVATE YARP::YARP_os
                                                YARP::YARP_init
                                                YARP::YARP_sig
-                                               Qt5::Widgets)
+                                               Qt5::Widgets
+                                               YARP::YARP_rosmsg)
 
   if(YARP_HAS_OpenCV)
     target_compile_definitions(yarpdataplayer PRIVATE HAS_OPENCV)

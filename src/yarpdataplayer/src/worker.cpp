@@ -23,7 +23,6 @@
 #endif
 
 #include <memory>
-#include <yarp/os/Stamp.h>
 #include <yarp/os/LogStream.h>
 #include "include/worker.h"
 #include "include/mainwindow.h"
@@ -31,6 +30,15 @@
 #if CV_MAJOR_VERSION >= 3
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 #endif
+
+//ROS messages
+#include <yarp/rosmsg/sensor_msgs/LaserScan.h>
+#include <yarp/rosmsg/nav_msgs/Odometry.h>
+#include <yarp/rosmsg/tf/tfMessage.h>
+#include <yarp/rosmsg/tf2_msgs/tfMessage.h>
+#include <yarp/rosmsg/geometry_msgs/Pose.h>
+#include <yarp/rosmsg/geometry_msgs/Pose2D.h>
+
 
 using namespace yarp::sig;
 using namespace yarp::sig::file;
@@ -111,14 +119,38 @@ void WorkerClass::run()
 
     if (isActive)
     {
-        if (strcmp (utilities->partDetails[part].type.c_str(),"Bottle") == 0)
-        {
-            sendBottle(part, frame);
-        }
+        int ret=-1;
         if (strcmp (utilities->partDetails[part].type.c_str(),"Image:ppm") == 0 ||
-            strcmp (utilities->partDetails[part].type.c_str(),"Image") == 0)
-        {
-            sendImages(part, frame);
+            strcmp (utilities->partDetails[part].type.c_str(),"Image") == 0)  {
+            ret = sendImages(part, frame);
+        }
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "Bottle") == 0)  {
+            ret = sendBottle(part, frame); 
+            // the above line can be safely replaced with sendGenericData<Bottle>. 
+            // I kept it for no particular reason, thinking that maybe it could be convenient (later)
+            // to process Bottles in a different way.
+        }
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "LaserScan") == 0)  {
+            ret = sendGenericData<yarp::rosmsg::sensor_msgs::LaserScan>(part, frame);
+        }
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "Odometry") == 0) {
+            ret = sendGenericData<yarp::rosmsg::nav_msgs::Odometry>(part, frame);
+        }
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "tf") == 0) {
+            ret = sendGenericData<yarp::rosmsg::tf2_msgs::TFMessage>(part, frame);
+        }
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "Pose") == 0) {
+            ret = sendGenericData<yarp::rosmsg::geometry_msgs::Pose>(part, frame);
+        }
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "Pose2D") == 0) {
+            ret = sendGenericData<yarp::rosmsg::geometry_msgs::Pose2D>(part, frame);
+        }
+        else  {
+            LOG("Unknown data type: %s", utilities->partDetails[part].type.c_str());
+        }
+
+        if (ret==-1)  {
+            LOG("Failed to send data: %s", utilities->partDetails[part].type.c_str());
         }
     }
     utilities->partDetails[part].sent++;
@@ -150,7 +182,8 @@ int WorkerClass::sendBottle(int part, int frame)
     }
 
     yarp::os::BufferedPort<Bottle>* the_port = dynamic_cast<yarp::os::BufferedPort<yarp::os::Bottle>*> (utilities->partDetails[part].outputPort);
-    if (the_port == nullptr) { yFatal() << "dynamic_cast failed"; }
+    if (the_port == nullptr)
+    {  LOG_ERROR("dynamic_cast failed"); return -1;}
 
     Bottle& outBot = the_port->prepare();
     outBot = tmp;
