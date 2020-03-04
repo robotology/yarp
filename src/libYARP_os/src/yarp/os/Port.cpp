@@ -41,10 +41,10 @@ void* Port::needImplementation() const
 // implementation is a PortCoreAdapter
 #define IMPL() (*((yarp::os::impl::PortCoreAdapter*)(needImplementation())))
 
-Port::Port()
+Port::Port() :
+        implementation(nullptr),
+        owned(false)
 {
-    implementation = nullptr;
-    owned = false;
 }
 
 Port::~Port()

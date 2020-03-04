@@ -12,36 +12,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Time.h>
 
-yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner) :
-        stateMutex(),
-        readDelegate(nullptr),
-        permanentReadDelegate(nullptr),
-        adminReadDelegate(nullptr),
-        writeDelegate(nullptr),
-        readResult(false),
-        readActive(false),
-        readBackground(false),
-        willReply(false),
-        closed(false),
-        opened(false),
-        replyDue(false),
-        dropDue(false),
-        produce(0), consume(0), readBlock(1),
-        recReadCreator(nullptr),
-        recWaitAfterSend(-1),
-        usedForRead(false),
-        usedForWrite(false),
-        usedForRpc(false),
-        includeNode(false),
-        commitToRead(false),
-        commitToWrite(false),
-        commitToRpc(false),
-        active(false),
-        recCallbackLock(nullptr),
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
-        old_recCallbackLock(nullptr),
-#endif // YARP_NO_DEPRECATED
-        haveCallbackLock(false)
+yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner)
 {
     setContactable(&owner);
 }

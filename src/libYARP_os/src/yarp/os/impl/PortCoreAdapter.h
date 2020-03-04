@@ -31,42 +31,42 @@ class PortCoreAdapter :
 {
 private:
     std::mutex stateMutex;
-    PortReader* readDelegate;
-    PortReader* permanentReadDelegate;
-    PortReader* adminReadDelegate;
-    PortWriter* writeDelegate;
-    //PortReaderCreator *readCreatorDelegate;
-    bool readResult;
-    bool readActive;
-    bool readBackground;
-    bool willReply;
-    bool closed;
-    bool opened;
-    bool replyDue;
-    bool dropDue;
-    yarp::os::Semaphore produce;
-    yarp::os::Semaphore consume;
-    yarp::os::Semaphore readBlock;
-    PortReaderCreator* recReadCreator;
-    int recWaitAfterSend;
-    bool usedForRead;
-    bool usedForWrite;
-    bool usedForRpc;
+    PortReader* readDelegate { nullptr };
+    PortReader* permanentReadDelegate { nullptr };
+    PortReader* adminReadDelegate { nullptr };
+    PortWriter* writeDelegate { nullptr };
+    //PortReaderCreator *readCreatorDelegate { nullptr };
+    bool readResult { false };
+    bool readActive { false };
+    bool readBackground { false };
+    bool willReply { false };
+    bool closed { false };
+    bool opened { false };
+    bool replyDue { false };
+    bool dropDue { false };
+    yarp::os::Semaphore produce { 0 };
+    yarp::os::Semaphore consume { 0 };
+    yarp::os::Semaphore readBlock { 1 };
+    PortReaderCreator* recReadCreator { nullptr };
+    int recWaitAfterSend { -1 };
+    bool usedForRead { false };
+    bool usedForWrite { false };
+    bool usedForRpc { false };
 
 public:
-    bool includeNode;
-    bool commitToRead;
-    bool commitToWrite;
-    bool commitToRpc;
-    bool active;
-    std::mutex* recCallbackLock;
+    bool includeNode { false };
+    bool commitToRead { false };
+    bool commitToWrite { false };
+    bool commitToRpc { false };
+    bool active { false };
+    std::mutex* recCallbackLock { nullptr };
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.3
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-    yarp::os::Mutex* old_recCallbackLock;
+    yarp::os::Mutex* old_recCallbackLock { nullptr };
 YARP_WARNING_POP
 #endif
-    bool haveCallbackLock;
+    bool haveCallbackLock { false };
 
     PortCoreAdapter(Port& owner);
     void openable();

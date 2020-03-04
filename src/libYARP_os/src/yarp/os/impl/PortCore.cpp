@@ -1627,7 +1627,7 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
         }
     }
 
-    PortCoreCommand cmd = static_cast<PortCoreCommand>(v.asVocab());
+    auto cmd = static_cast<PortCoreCommand>(v.asVocab());
     switch (cmd) {
     case PortCoreCommand::Help:
     case PortCoreCommand::Ver:
@@ -1651,7 +1651,7 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
 
 PortCoreConnectionDirection parseConnectionDirection(yarp::conf::vocab32_t v, bool errorIsOut = false)
 {
-    PortCoreConnectionDirection dir = static_cast<PortCoreConnectionDirection>(v);
+    auto dir = static_cast<PortCoreConnectionDirection>(v);
     switch (dir) {
     case PortCoreConnectionDirection::In:
     case PortCoreConnectionDirection::Out:
@@ -1663,7 +1663,7 @@ PortCoreConnectionDirection parseConnectionDirection(yarp::conf::vocab32_t v, bo
 
 PortCorePropertyAction parsePropertyAction(yarp::conf::vocab32_t v)
 {
-    PortCorePropertyAction action = static_cast<PortCorePropertyAction>(v);
+    auto action = static_cast<PortCorePropertyAction>(v);
     switch (action) {
     case PortCorePropertyAction::Get:
     case PortCorePropertyAction::Set:
