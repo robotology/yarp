@@ -13,7 +13,7 @@
 #include <string>
 #include <yarp/os/PeriodicThread.h>
 #include "MonitorBinding.h"
-#include "lua_swig.h"
+#include "swigluarun.h"
 #include <mutex>
 
 class MonitorTrigger;
