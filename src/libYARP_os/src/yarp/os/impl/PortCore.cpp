@@ -1105,19 +1105,6 @@ void PortCore::describe(void* id, OutputStream* os)
     }
 }
 
-
-#ifndef YARP_NO_DEPRECATED
-void PortCore::describe(PortReport& reporter)
-{
-    this->describe([&reporter](const yarp::os::PortInfo & info) { reporter.report(info); });
-}
-
-void PortCore::setReportCallback(yarp::os::PortReport *reporter)
-{
-    setReportCallback([&reporter](const yarp::os::PortInfo & info) { reporter->report(info); });
-}
-#endif
-
 void PortCore::describe(const std::function<void(const yarp::os::PortInfo&)>& reporter)
 {
     cleanUnits();

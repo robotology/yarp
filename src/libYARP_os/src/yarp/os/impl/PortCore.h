@@ -219,16 +219,6 @@ public:
      */
     void describe(void* id, yarp::os::OutputStream* os);
 
-
-#ifndef YARP_NO_DEPRECATED
-    /**
-     * Generate a description of the connections associated with the
-     * port.
-     * @deprecated since yarp 4.0
-     */
-    YARP_DEPRECATED void describe(yarp::os::PortReport& reporter);
-#endif
-
     /**
      * Generate a description of the connections associated with the
      * port.
@@ -463,14 +453,6 @@ public:
      * Undo an interrupt()
      */
     void resume();
-
-#ifndef YARP_NO_DEPRECATED
-    /**
-     * Set a callback to be notified of changes in port status.
-     * @deprecated since yarp 4
-     */
-    YARP_DEPRECATED void setReportCallback(yarp::os::PortReport *reporter);
-#endif
 
     /**
      * Set a callback to be notified of changes in port status.
