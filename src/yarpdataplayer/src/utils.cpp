@@ -380,19 +380,19 @@ bool Utilities::configurePorts(partsData &part)
     else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0)  {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::sig::Image>; }
     }
-    else if (strcmp(part.type.c_str(), "LaserScan") == 0 ) {
+    else if (strcmp(part.type.c_str(), "sensor_msgs/LaserScan") == 0 ) {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::sensor_msgs::LaserScan>; }
     }
-    else if (strcmp(part.type.c_str(), "Odometry") == 0) {
+    else if (strcmp(part.type.c_str(), "nav_msgs/Odometry") == 0) {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::nav_msgs::Odometry>; }
     }
-    else if (strcmp(part.type.c_str(), "tf") == 0) {
+    else if (strcmp(part.type.c_str(), "tf2_msgs/tf") == 0) {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::tf2_msgs::TFMessage>; }
     }
-    else if (strcmp(part.type.c_str(), "Pose") == 0) {
+    else if (strcmp(part.type.c_str(), "geometry_msgs/Pose") == 0) {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::geometry_msgs::Pose>; }
     }
-    else if (strcmp(part.type.c_str(), "Pose2D") == 0) {
+    else if (strcmp(part.type.c_str(), "geometry_msgs/Pose2D") == 0) {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::geometry_msgs::Pose2D>; }
     }
     else

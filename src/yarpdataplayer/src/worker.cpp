@@ -130,19 +130,19 @@ void WorkerClass::run()
             // I kept it for no particular reason, thinking that maybe it could be convenient (later)
             // to process Bottles in a different way.
         }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "LaserScan") == 0)  {
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "sensor_msgs/LaserScan") == 0)  {
             ret = sendGenericData<yarp::rosmsg::sensor_msgs::LaserScan>(part, frame);
         }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "Odometry") == 0) {
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "nav_msgs/Odometry") == 0) {
             ret = sendGenericData<yarp::rosmsg::nav_msgs::Odometry>(part, frame);
         }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "tf") == 0) {
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "tf2_msgs/tf") == 0) {
             ret = sendGenericData<yarp::rosmsg::tf2_msgs::TFMessage>(part, frame);
         }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "Pose") == 0) {
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "geometry_msgs/Pose") == 0) {
             ret = sendGenericData<yarp::rosmsg::geometry_msgs::Pose>(part, frame);
         }
-        else if (strcmp(utilities->partDetails[part].type.c_str(), "Pose2D") == 0) {
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "geometry_msgs/Pose2D") == 0) {
             ret = sendGenericData<yarp::rosmsg::geometry_msgs::Pose2D>(part, frame);
         }
         else  {
