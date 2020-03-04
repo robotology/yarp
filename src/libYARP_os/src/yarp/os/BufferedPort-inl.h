@@ -263,13 +263,13 @@ bool yarp::os::BufferedPort<T>::isWriting()
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 template <typename T>
-YARP_DEPRECATED void yarp::os::BufferedPort<T>::getReport(PortReport& reporter)
+void yarp::os::BufferedPort<T>::getReport(PortReport& reporter)
 {
     port.getReport(reporter);
 }
 
 template <typename T>
-YARP_DEPRECATED void yarp::os::BufferedPort<T>::setReporter(PortReport& reporter)
+void yarp::os::BufferedPort<T>::setReporter(PortReport& reporter)
 {
     port.setReporter(reporter);
 }

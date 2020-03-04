@@ -85,13 +85,12 @@ int yarp::os::AbstractContactable::getOutputCount()
 #ifndef YARP_NO_DEPRECATED
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-YARP_DEPRECATED void yarp::os::AbstractContactable::getReport(PortReport& reporter)
+void yarp::os::AbstractContactable::getReport(PortReport& reporter)
 {
     asPort().getReport(reporter);
 }
 
-
-YARP_DEPRECATED void yarp::os::AbstractContactable::setReporter(PortReport& reporter)
+void yarp::os::AbstractContactable::setReporter(PortReport& reporter)
 {
     asPort().setReporter(reporter);
 }

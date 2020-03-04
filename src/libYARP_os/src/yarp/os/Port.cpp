@@ -568,14 +568,13 @@ int Port::getOutputCount()
 #ifndef YARP_NO_DEPRECATED
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-YARP_DEPRECATED void Port::getReport(PortReport& reporter)
+void Port::getReport(PortReport& reporter)
 {
     PortCoreAdapter& core = IMPL();
     core.describe(reporter);
 }
 
-
-YARP_DEPRECATED void Port::setReporter(PortReport& reporter)
+void Port::setReporter(PortReport& reporter)
 {
     PortCoreAdapter& core = IMPL();
     core.setReportCallback(&reporter);
