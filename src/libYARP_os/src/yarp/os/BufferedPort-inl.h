@@ -259,23 +259,6 @@ bool yarp::os::BufferedPort<T>::isWriting()
     return port.isWriting();
 }
 
-#ifndef YARP_NO_DEPRECATED
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-template <typename T>
-void yarp::os::BufferedPort<T>::getReport(PortReport& reporter)
-{
-    port.getReport(reporter);
-}
-
-template <typename T>
-void yarp::os::BufferedPort<T>::setReporter(PortReport& reporter)
-{
-    port.setReporter(reporter);
-}
-YARP_WARNING_POP
-#endif
-
 template <typename T>
 void yarp::os::BufferedPort<T>::getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter)
 {

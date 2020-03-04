@@ -21,15 +21,6 @@
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #endif
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
-#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-#   include <yarp/os/PortReport.h>
-YARP_WARNING_POP
-#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-#endif
-
 #include <mutex>
 
 // Forward declarations:
@@ -37,6 +28,11 @@ namespace yarp {
 namespace os {
 
 class Property;
+class PortInfo;
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+class PortReport;
+#endif
 
 /**
  * @brief An abstract port.
@@ -190,7 +186,7 @@ public:
      */
     virtual int getOutputCount() = 0;
 
-#ifndef YARP_NO_DEPRECATED
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
     /**
@@ -201,9 +197,9 @@ YARP_DISABLE_DEPRECATED_WARNING
      * method instead.
      *
      * @param reporter callback for port event/state information
-     * @deprecated since yarp 4
+     * @deprecated since YARP 3.4
      */
-    YARP_DEPRECATED virtual void getReport(PortReport& reporter) = 0;
+    YARP_DEPRECATED virtual void getReport(PortReport& reporter) final;
 
 
     /**
@@ -213,9 +209,9 @@ YARP_DISABLE_DEPRECATED_WARNING
      * instead.
      *
      * @param reporter callback for port event/state information
-     * @deprecated since yarp 4
+     * @deprecated since YARP 3.4
      */
-    YARP_DEPRECATED virtual void setReporter(PortReport& reporter) = 0;
+    YARP_DEPRECATED virtual void setReporter(PortReport& reporter) final;
 YARP_WARNING_POP
 #endif
 

@@ -82,21 +82,6 @@ int yarp::os::AbstractContactable::getOutputCount()
     return asPort().getOutputCount();
 }
 
-#ifndef YARP_NO_DEPRECATED
-YARP_WARNING_PUSH
-YARP_DISABLE_DEPRECATED_WARNING
-void yarp::os::AbstractContactable::getReport(PortReport& reporter)
-{
-    asPort().getReport(reporter);
-}
-
-void yarp::os::AbstractContactable::setReporter(PortReport& reporter)
-{
-    asPort().setReporter(reporter);
-}
-YARP_WARNING_POP
-#endif
-
 void yarp::os::AbstractContactable::getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter)
 {
     asPort().getReport(reporter);
