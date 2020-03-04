@@ -13,6 +13,8 @@
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Property.h>
+#include <yarp/dev/PolyDriverList.h>
 
 
 MultipleAnalogSensorsServer::MultipleAnalogSensorsServer() :
@@ -35,7 +37,6 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
         yError("MultipleAnalogSensorsClient: missing period parameter, exiting.");
         return false;
     }
-
 
     if (!config.find("period").isInt32())
     {
@@ -63,12 +64,48 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
     m_RPCPortName = name + "/rpc:o";
     m_streamingPortName = name + "/measures:o";
 
+    if (config.check("subdevice"))
+    {
+        std::string subdeviceName = config.find("subdevice").asString();
+
+        yarp::os::Property driverConfig;
+        driverConfig.fromString(config.toString());
+        driverConfig.setMonitor(config.getMonitor(), subdeviceName.c_str()); // pass on any monitoring
+        driverConfig.put("device", subdeviceName);
+
+        if (!m_subdevice.open(driverConfig))
+        {
+            yError("MultipleAnalogSensorsServer: opening subdevice failed.");
+            return false;
+        }
+
+        yarp::dev::PolyDriverList driverList;
+        driverList.push(&m_subdevice, subdeviceName.c_str());
+
+        if (!attachAll(driverList))
+        {
+            yError("MultipleAnalogSensorsServer: attaching subdevice failed.");
+            return false;
+        }
+
+        yInfo("MultipleAnalogSensorsServer: subdevice \"%s\" successfully configured and attached.", subdeviceName.c_str());
+        m_isDeviceOwned = true;
+    }
+
     return true;
 }
 
 bool MultipleAnalogSensorsServer::close()
 {
-    return this->detachAll();
+    bool ok = this->detachAll();
+
+    if (m_isDeviceOwned)
+    {
+        ok &= m_subdevice.close();
+        m_isDeviceOwned = false;
+    }
+
+    return ok;
 }
 
 // Note: as soon as we support only C++17, we can switch to using std::invoke
@@ -205,13 +242,14 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
         yError("MultipleAnalogSensorsServer: this device only supports exposing a "
                  "single MultipleAnalogSensors device on YARP ports, but %d devices have been passed in attachAll.", p.size());
         yError("MultipleAnalogSensorsServer: please use the multipleanalogsensorsremapper device to combine several device in a new device.");
-        detachAll();
+        close();
         return false;
     }
 
     if (p.size() == 0)
     {
         yError("MultipleAnalogSensorsServer: no device passed to attachAll, please pass a device to expose on YARP ports.");
+        close();
         return false;
     }
 
@@ -220,6 +258,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     if (!poly)
     {
         yError("MultipleAnalogSensorsServer: null pointer passed to attachAll.");
+        close();
         return false;
     }
 
@@ -241,7 +280,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
 
     if(!ok)
     {
-        detachAll();
+        close();
         return false;
     }
 
@@ -250,7 +289,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     if (!ok)
     {
         yError("MultipleAnalogSensorsServer: failure in opening port named %s.", m_streamingPortName.c_str());
-        detachAll();
+        close();
         return false;
     }
 
@@ -258,7 +297,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     if (!ok)
     {
         yError("MultipleAnalogSensorsServer: failure in attaching RPC port to thrift RPC interface.");
-        detachAll();
+        close();
         return false;
     }
 
@@ -266,15 +305,21 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     if (!ok)
     {
         yError("MultipleAnalogSensorsServer: failure in opening port named %s.", m_RPCPortName.c_str());
-        detachAll();
+        close();
         return false;
     }
 
     // Set rate period
     ok = this->setPeriod(m_periodInS);
     ok = ok && this->start();
+    if (!ok)
+    {
+        yError("MultipleAnalogSensorsServer: failure in starting thread.");
+        close();
+        return false;
+    }
 
-    return ok;
+    return true;
 }
 
 bool MultipleAnalogSensorsServer::detachAll()

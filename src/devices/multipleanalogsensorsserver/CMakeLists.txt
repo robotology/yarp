@@ -8,6 +8,7 @@ yarp_prepare_plugin(multipleanalogsensorsserver
                     CATEGORY device
                     TYPE MultipleAnalogSensorsServer
                     INCLUDE MultipleAnalogSensorsServer.h
+                    EXTRA_CONFIG WRAPPER=multipleanalogsensorsserver
                     DEFAULT ON)
 
 if(ENABLE_multipleanalogsensorsserver)
