@@ -566,6 +566,8 @@ int Port::getOutputCount()
 }
 
 #ifndef YARP_NO_DEPRECATED
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
 YARP_DEPRECATED void Port::getReport(PortReport& reporter)
 {
     PortCoreAdapter& core = IMPL();
@@ -578,6 +580,7 @@ YARP_DEPRECATED void Port::setReporter(PortReport& reporter)
     PortCoreAdapter& core = IMPL();
     core.setReportCallback(&reporter);
 }
+YARP_WARNING_POP
 #endif
 
 void Port::getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter)
