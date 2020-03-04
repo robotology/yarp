@@ -74,7 +74,7 @@ public:
     */
     int sendBottle(int part, int id);
     int sendImages( int part, int id);
-    
+
     template <class T>
     int sendGenericData(int part, int id)
     {
@@ -104,7 +104,7 @@ public:
         }
         return 0;
     }
-    
+
     /**
     * Function that returns the frame rate
     */

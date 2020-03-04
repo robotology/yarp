@@ -35,7 +35,7 @@
 #include <yarp/rosmsg/sensor_msgs/LaserScan.h>
 #include <yarp/rosmsg/nav_msgs/Odometry.h>
 #include <yarp/rosmsg/tf/tfMessage.h>
-#include <yarp/rosmsg/tf2_msgs/tfMessage.h>
+#include <yarp/rosmsg/tf2_msgs/TFMessage.h>
 #include <yarp/rosmsg/geometry_msgs/Pose.h>
 #include <yarp/rosmsg/geometry_msgs/Pose2D.h>
 
@@ -125,8 +125,8 @@ void WorkerClass::run()
             ret = sendImages(part, frame);
         }
         else if (strcmp(utilities->partDetails[part].type.c_str(), "Bottle") == 0)  {
-            ret = sendBottle(part, frame); 
-            // the above line can be safely replaced with sendGenericData<Bottle>. 
+            ret = sendBottle(part, frame);
+            // the above line can be safely replaced with sendGenericData<Bottle>.
             // I kept it for no particular reason, thinking that maybe it could be convenient (later)
             // to process Bottles in a different way.
         }

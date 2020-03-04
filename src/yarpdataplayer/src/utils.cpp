@@ -48,7 +48,7 @@
 #include <yarp/rosmsg/sensor_msgs/LaserScan.h>
 #include <yarp/rosmsg/nav_msgs/Odometry.h>
 #include <yarp/rosmsg/tf/tfMessage.h>
-#include <yarp/rosmsg/tf2_msgs/tfMessage.h>
+#include <yarp/rosmsg/tf2_msgs/TFMessage.h>
 #include <yarp/rosmsg/geometry_msgs/Pose.h>
 #include <yarp/rosmsg/geometry_msgs/Pose2D.h>
 
@@ -376,7 +376,7 @@ bool Utilities::configurePorts(partsData &part)
 
     if (strcmp (part.type.c_str(),"Bottle") == 0)   {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::os::Bottle>; }
-    } 
+    }
     else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0)  {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::sig::Image>; }
     }
