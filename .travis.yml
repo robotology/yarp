@@ -1,6 +1,7 @@
 branches:
   except:
     - /^.*appveyor.*$/
+    - /^devel$/
 
 notifications:
   irc:
@@ -175,7 +176,7 @@ git:
 
 .run_unit_tests_cmd_definition: &run_unit_tests_cmd |-
   # Run unit tests
-  (cd build; ctest --build . -C ${TRAVIS_BUILD_TYPE}) || travis_terminate 1
+  (cd build; ctest --build . -C ${TRAVIS_BUILD_TYPE} || ctest --build . -C ${TRAVIS_BUILD_TYPE} --rerun-failed) || travis_terminate 1
 
 .install_yarp_cmd_definition: &install_yarp_cmd |-
   # Test installation
