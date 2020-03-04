@@ -1,0 +1,12 @@
+# Configuration for update-docs - https://github.com/behaviorbot/update-docs
+
+# Comment to be posted to on PRs that don't update documentation
+updateDocsComment: >
+  Thanks for opening this pull request! The maintainers of this repository would appreciate it if you would update the release notes by adding a file in `doc/release/<target_branch>`, based on your changes.
+
+#updateDocsWhiteList:
+  #- bug
+  #- chore
+
+updateDocsTargetFiles:
+  - doc/release
