@@ -218,7 +218,7 @@ bool MultipleAnalogSensorsClient::genericGetMeasure(const std::vector<SensorMeta
         return false;
     }
 
-    if (m_streamingPort.status !=sens_index >= measurementsVector.measurements.size())
+    if (m_streamingPort.status != (sens_index >= measurementsVector.measurements.size()))
     {
         yError("MultipleAnalogSensorsClient: No sensor of type %s with index %lu (nr of sensors: %lu).",
                tag.c_str(), sens_index, metadataVector.size());
