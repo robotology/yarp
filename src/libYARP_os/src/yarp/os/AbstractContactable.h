@@ -11,6 +11,7 @@
 
 #include <yarp/os/Port.h>
 #include <yarp/os/UnbufferedContactable.h>
+
 #include <functional>
 
 namespace yarp {

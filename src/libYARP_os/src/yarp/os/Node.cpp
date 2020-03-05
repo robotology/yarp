@@ -25,8 +25,8 @@
 #include <cstdlib>
 #include <list>
 #include <map>
-#include <vector>
 #include <mutex>
+#include <vector>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -248,8 +248,7 @@ public:
                     if (info.incoming) {
                         c = RosNameSpace::rosify(nic.queryName(info.sourceName));
                         incomingURIs.insert(std::make_pair(info.portName, c.toURI()));
-                    }
-                    else {
+                    } else {
                         c = RosNameSpace::rosify(nic.queryName(info.targetName));
                         outgoingURIs.insert(std::make_pair(info.portName, c.toURI()));
                     }

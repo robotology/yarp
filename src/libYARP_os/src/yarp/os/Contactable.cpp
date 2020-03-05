@@ -60,12 +60,12 @@ YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 void yarp::os::Contactable::getReport(PortReport& reporter)
 {
-    getReport([&reporter](const yarp::os::PortInfo & info) { reporter.report(info); });
+    getReport([&reporter](const yarp::os::PortInfo& info) { reporter.report(info); });
 }
 
 void yarp::os::Contactable::setReporter(PortReport& reporter)
 {
-    setReporter([&reporter](const yarp::os::PortInfo & info) { reporter.report(info); });
+    setReporter([&reporter](const yarp::os::PortInfo& info) { reporter.report(info); });
 }
 YARP_WARNING_POP
 #endif // YARP_NO_DEPRECATED

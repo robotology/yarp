@@ -32,9 +32,9 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <vector>
-#include <functional>
 
 namespace yarp {
 namespace os {
