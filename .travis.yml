@@ -743,6 +743,12 @@ matrix:
         - *print_cmake_flags_cmd
         - *run_cmake_cmd
         - *print_cmake_cache_cmd
+      script:
+        - *build_yarp_cmd
+        - *install_yarp_cmd
+        - *build_yarp_os_examples_cmd
+        - *build_bindings_from_build_cmd
+        - *build_bindings_from_install_cmd
 
     - stage: test
       <<: *linux_clang_build_template
