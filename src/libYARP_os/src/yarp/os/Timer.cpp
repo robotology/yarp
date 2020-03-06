@@ -137,12 +137,26 @@ YARP_WARNING_POP
     }
 };
 
+double gcd(double a, double b)
+{
+    if (a < b) {
+        return gcd(b, a);
+    }
+
+    // base case
+    if (fabs(b) < 0.001) {
+        return a;
+    } else {
+        return (gcd(b, a - floor(a / b) * b));
+    }
+}
+
 class TimerSingleton : public yarp::os::PeriodicThread
 {
     std::mutex mu;
     std::map<size_t, MonoThreadTimer*> timers;
     TimerSingleton() :
-            PeriodicThread(0.0)
+            PeriodicThread(10)
     {
     }
 
@@ -163,9 +177,15 @@ public:
 
     size_t addTimer(MonoThreadTimer* t)
     {
+        if (timers.size()) {
+            setPeriod(gcd(getPeriod(), t->m_settings.period));
+        } else {
+            setPeriod(t->m_settings.period);
+        }
         mu.lock();
         timers[timers.size()] = t;
         mu.unlock();
+
         return timers.size() - 1;
     }
 
@@ -174,6 +194,15 @@ public:
         mu.lock();
         timers.erase(id);
         mu.unlock();
+        if (!timers.size()) {
+            return;
+        }
+
+        double new_gcd = timers.begin()->second->m_settings.period;
+        for (auto& i : timers) {
+            new_gcd = gcd(new_gcd, i.second->m_settings.period);
+        }
+        setPeriod(new_gcd);
     }
 
     size_t getTimerCount()
@@ -272,6 +301,7 @@ YARP_WARNING_POP
 
     bool startTimer() override
     {
+        setPeriod(m_settings.period);
         m_startStamp = yarp::os::Time::now();
         return start();
     }
