@@ -176,7 +176,7 @@ git:
 
 .run_unit_tests_cmd_definition: &run_unit_tests_cmd |-
   # Run unit tests
-  (cd build; ctest --build . -C ${TRAVIS_BUILD_TYPE}) || travis_terminate 1
+  (cd build; ctest --build . -C ${TRAVIS_BUILD_TYPE} || ctest --build . -C ${TRAVIS_BUILD_TYPE} --rerun-failed) || travis_terminate 1
 
 .install_yarp_cmd_definition: &install_yarp_cmd |-
   # Test installation
@@ -757,6 +757,12 @@ matrix:
         - *print_cmake_flags_cmd
         - *run_cmake_cmd
         - *print_cmake_cache_cmd
+      script:
+        - *build_yarp_cmd
+        - *install_yarp_cmd
+        - *build_yarp_os_examples_cmd
+        - *build_bindings_from_build_cmd
+        - *build_bindings_from_install_cmd
 
     - stage: test
       <<: *linux_clang_build_template
