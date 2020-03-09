@@ -19,7 +19,8 @@ if(YARP_COMPILE_yarpdataplayer)
                           src/main.cpp
                           src/mainwindow.cpp
                           src/utils.cpp
-                          src/worker.cpp)
+                          src/worker.cpp
+                          src/worker-impl.cpp)
 
 
   set(yarpdataplayer_HDRS include/aboutdlg.h
