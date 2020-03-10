@@ -30,7 +30,7 @@
   // network.
   // See, for example https://github.com/MalcolmMcLean/ieee754/ for a possible
   // implementation of the read and write methods.
-  YARP_COMPILER_ERROR("Unsupported compiler. Please implement yarp::os::NetFloat64")
+  YARP_COMPILER_ERROR("Unsupported compiler. Please implement yarp::os::NetFloat32")
 #endif
 
 namespace yarp {
