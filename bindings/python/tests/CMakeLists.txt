@@ -7,7 +7,7 @@
 macro(add_python_unit_test pythonscript)
   if(PYTHON_EXECUTABLE)
     string(REGEX REPLACE "^test_" "bindings::python::" name "${pythonscript}")
-    string(REGEX REPLACE "\.py$" "" name "${name}")
+    string(REGEX REPLACE "\\.py$" "" name "${name}")
     add_test(NAME "${name}" COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${pythonscript})
     set_tests_properties("${name}" PROPERTIES ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:${SWIG_MODULE_yarp_python_REAL_NAME}>")
   endif()
