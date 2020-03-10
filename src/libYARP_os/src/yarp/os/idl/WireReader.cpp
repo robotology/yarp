@@ -265,6 +265,9 @@ bool WireReader::readFloat32(yarp::conf::float32_t& x)
     case BOTTLE_TAG_FLOAT32:
         x = reader.expectFloat32();
         break;
+    case BOTTLE_TAG_FLOAT64:
+        x = static_cast<yarp::conf::float32_t>(reader.expectFloat64());
+        break;
     default:
         return false;
     }
