@@ -217,7 +217,8 @@ set(YARP_dev_IDL idl/stateExt.thrift
                  idl/audioBufferSizeData.thrift
                  idl/OdometryData.thrift
                  idl/OdometryData6D.thrift
-                 idl/LaserScan2D.thrift)
+                 idl/LaserScan2D.thrift
+                 idl/MobileBaseVelocity.thrift)
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_IDL idl/Map2DLocationData.thrift
