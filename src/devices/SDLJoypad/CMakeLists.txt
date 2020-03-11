@@ -9,7 +9,7 @@ yarp_prepare_plugin(SDLJoypad
                     TYPE SDLJoypad
                     INCLUDE SDLJoypad.h
                     EXTRA_CONFIG WRAPPER=JoypadControlServer
-                    DEPENDS "YARP_HAS_SDL")
+                    DEPENDS "YARP_HAS_SDL OR YARP_HAS_SDL2")
 
 if(ENABLE_SDLJoypad)
   yarp_add_plugin(yarp_SDLJoypad)
@@ -24,9 +24,15 @@ if(ENABLE_SDLJoypad)
                                                       YARP_sig
                                                       YARP_dev)
 
-  target_include_directories(yarp_SDLJoypad SYSTEM PRIVATE ${SDL_INCLUDE_DIR})
-  target_link_libraries(yarp_SDLJoypad PRIVATE ${SDL_LIBRARY})
-#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS SDL) (not using targets)
+  if(YARP_HAS_SDL2)
+    target_include_directories(yarp_SDLJoypad SYSTEM PRIVATE ${SDL2_INCLUDE_DIRS})
+    target_link_libraries(yarp_SDLJoypad PRIVATE ${SDL2_LIBRARIES})
+#     list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS SDL2) (not using targets)
+  else()
+    target_include_directories(yarp_SDLJoypad SYSTEM PRIVATE ${SDL_INCLUDE_DIR})
+    target_link_libraries(yarp_SDLJoypad PRIVATE ${SDL_LIBRARY})
+#     list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS SDL) (not using targets)
+  endif()
 
   yarp_install(TARGETS yarp_SDLJoypad
                EXPORT YARP_${YARP_PLUGIN_MASTER}

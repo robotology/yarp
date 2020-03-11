@@ -376,6 +376,13 @@ checkandset_dependency(FFMPEG)
 find_package(SDL QUIET)
 checkandset_dependency(SDL)
 
+find_package(SDL2 QUIET)
+checkandset_dependency(SDL2)
+
+if(YARP_HAS_SDL2)
+  unset(YARP_HAS_SDL)
+endif()
+
 find_package(PortAudio QUIET)
 checkandset_dependency(PortAudio)
 
@@ -611,6 +618,7 @@ print_dependency(MPI)
 print_dependency(FTDI)
 print_dependency(FFMPEG)
 print_dependency(SDL)
+print_dependency(SDL2)
 print_dependency(PortAudio)
 print_dependency(ZFP)
 print_dependency(OpenNI2)

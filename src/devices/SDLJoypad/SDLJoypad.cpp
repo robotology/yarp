@@ -84,14 +84,22 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
     {
         joy_id = 0;
         yInfo ( "SDLJoypad: One joystick found \n");
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+        yInfo ( "SDLJoypad: Using joystick: %s \n", SDL_JoystickNameForIndex(joy_id));
+#else
         yInfo ( "SDLJoypad: Using joystick: %s \n", SDL_JoystickName(joy_id));
+#endif
     }
     else
     {
         yInfo ( "SDLJoypad: More than one joystick found:\n");
         for (size_t i = 0; i < joystick_num; i++)
         {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+            yInfo () << i << ":" << SDL_JoystickNameForIndex(i);
+#else
             yInfo () << i << ":" << SDL_JoystickName(i);
+#endif
         }
         yInfo ( "\n");
         if(!rf.check("UseAllJoypadAsOne"))
