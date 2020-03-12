@@ -79,6 +79,13 @@ public:
     // If you want to serialize this class without nesting, use this helper
     typedef yarp::os::idl::Unwrapped<LaserScan2D> unwrapped;
 
+
+    // The name for this message, ROS will need this
+    static constexpr const char* typeName = "yarp/LaserScan2D";
+    static constexpr const char* typeVersion = "1.0";
+
+    yarp::os::Type getType() const override;
+
     class Editor :
             public yarp::os::Wire,
             public yarp::os::PortWriter

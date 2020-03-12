@@ -1840,6 +1840,16 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
         yarp_api_keyword = annotations.at("yarp.api.keyword");
     }
 
+    std::string yarp_type_name{};
+    if (annotations.find("yarp.type.name") != annotations.end()) {
+        yarp_api_keyword = annotations.at("yarp.type.name");
+    }
+
+    std::string yarp_type_version{};
+    if (annotations.find("yarp.type.version") != annotations.end()) {
+        yarp_api_keyword = annotations.at("yarp.type.version");
+    }
+
     // Open header file
     std::string f_header_name = get_out_dir() + get_include_prefix(program_) + name + ".h";
     ofstream_with_content_based_conditional_update f_h_;
