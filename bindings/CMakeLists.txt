@@ -6,7 +6,7 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 project(yarp-bindings)
-cmake_minimum_required(VERSION 3.0.12)
+cmake_minimum_required(VERSION 3.12)
 
 # UseSWIG generates now standard target names.
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.13)
@@ -44,7 +44,7 @@ if(NOT YARP_VERSION)
 
   # Find YARP for bindings-only builds
   find_package(YARP COMPONENTS ${_components} REQUIRED)
-  find_package(SWIG 3.12 REQUIRED)
+  find_package(SWIG 3.0.12 REQUIRED)
   set(_nested_build 0)
 else()
   set(_nested_build 1)
