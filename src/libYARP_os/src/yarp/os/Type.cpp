@@ -84,6 +84,7 @@ public:
     Property* prop{nullptr};
     std::string name;
     std::string name_on_wire;
+    std::string version;
 };
 
 
@@ -106,6 +107,21 @@ Type::Type(Type&& rhs) noexcept :
 Type::~Type()
 {
     delete mPriv;
+}
+
+std::string Type::getVersion() const
+{
+    return mPriv->version;
+}
+
+size_t Type::getMajorVersion() const
+{
+    return 1;
+}
+
+size_t Type::getMinorVersion() const
+{
+    return 1;
 }
 
 Type& Type::operator=(const Type& rhs)
@@ -154,9 +170,14 @@ bool Type::hasName() const
     return !mPriv->name.empty();
 }
 
+bool Type::hasVersion() const
+{
+    return !mPriv->version.empty();
+}
+
 bool Type::isValid() const
 {
-    return hasName();
+    return hasName() && hasVersion();
 }
 
 std::string Type::toString() const
@@ -170,6 +191,11 @@ std::string Type::toString() const
     return "null";
 }
 
+Type& Type::setVersion(const std::string& version)
+{
+    mPriv->version = version;
+    return *this;
+}
 
 Type Type::byName(const char* name)
 {

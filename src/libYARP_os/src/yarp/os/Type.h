@@ -72,7 +72,15 @@ public:
 
     std::string getNameOnWire() const;
 
+    std::string getVersion() const;
+    
+    size_t getMajorVersion() const;
+    
+    size_t getMinorVersion() const;
+
     bool hasName() const;
+
+    bool hasVersion() const;
 
     bool isValid() const;
 
@@ -83,6 +91,8 @@ public:
     Property& writeProperties();
 
     Type& addProperty(const char* key, const Value& val);
+
+    Type& setVersion(const std::string& vesion);
 
     /** @} */
     /** @{ */

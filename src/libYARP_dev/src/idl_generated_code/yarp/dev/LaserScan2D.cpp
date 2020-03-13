@@ -82,7 +82,7 @@ bool LaserScan2D::read(yarp::os::ConnectionReader& connection)
 // Write structure on a Wire
 bool LaserScan2D::write(const yarp::os::idl::WireWriter& writer) const
 {
-    write_type();
+    //write_type();
 
     if (!write_angle_min(writer)) {
         return false;
@@ -126,7 +126,7 @@ std::string LaserScan2D::toString() const
 yarp::os::Type LaserScan2D::getType() const
 {
     yarp::os::Type typ = yarp::os::Type::byNameOnWire(typeName);
-    type.setVersion(typeVersion);
+    typ.setVersion(typeVersion);
     return typ;
 }
 
