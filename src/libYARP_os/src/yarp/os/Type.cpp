@@ -116,12 +116,18 @@ std::string Type::getVersion() const
 
 size_t Type::getMajorVersion() const
 {
-    return 1;
+    unsigned int major = 0;
+    unsigned int minor = 0;
+    int ret = sscanf(mPriv->version.c_str(),"%u.%u", &major, &minor);
+    return major;
 }
 
 size_t Type::getMinorVersion() const
 {
-    return 1;
+    unsigned int major = 0;
+    unsigned int minor = 0;
+    int ret = sscanf(mPriv->version.c_str(), "%u.%u", &major, &minor);
+    return minor;
 }
 
 Type& Type::operator=(const Type& rhs)
@@ -177,7 +183,11 @@ bool Type::hasVersion() const
 
 bool Type::isValid() const
 {
+#if 0
+    //this should be tested carefully, it could be a breaking change!
     return hasName() && hasVersion();
+#endif
+    return hasName();
 }
 
 std::string Type::toString() const

@@ -1847,7 +1847,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
         yarp_type_name = annotations.at("yarp.type.name");
     }
     else {
-        yarp_type_name = "yarp/"+name;
+        yarp_type_name = "";
     }
 
     std::string yarp_type_version{};
@@ -1855,7 +1855,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
         yarp_type_version = annotations.at("yarp.type.version");
     }
     else {
-        yarp_type_version = "1.0";
+        yarp_type_version = "";
     }
 
     // Open header file
@@ -2247,7 +2247,7 @@ void t_yarp_generator::generate_struct_typeconstexpr(t_struct* tstruct, std::ost
 
     f_h_ << indent_h() << "//The name and the version for this message\n";
     f_h_ << indent_h() << "static constexpr const char* typeName = \"" << yarp_type_name << "\";\n";
-    f_h_ << indent_h() << "static constexpr const char* typeVersion = \"" << "1.0" << "\";\n";
+    f_h_ << indent_h() << "static constexpr const char* typeVersion = \"" << yarp_type_version << "\";\n";
     f_h_ << '\n';
 
     assert(indent_count_h() == 1);
@@ -2264,14 +2264,14 @@ void t_yarp_generator::generate_struct_gettype(t_struct* tstruct, std::ostringst
     f_h_ << indent_h() << "yarp::os::Type getType() const;\n";
     f_h_ << '\n';
 
-    f_cpp_ << indent_cpp() << "// Convert to a printable string\n";
+    f_cpp_ << indent_cpp() << "// Get the message type\n";
     f_cpp_ << indent_cpp() << "yarp::os::Type " << name << "::getType() const\n";
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
-        f_cpp_ << indent_cpp() << " yarp::os::Type typ = yarp::os::Type::byNameOnWire(typeName);\n";
+        f_cpp_ << indent_cpp() << "yarp::os::Type typ = yarp::os::Type::byNameOnWire(typeName);\n";
         f_cpp_ << indent_cpp() << "typ.setVersion(typeVersion);\n";
-        f_cpp_ << indent_cpp() << " return typ;\n";
+        f_cpp_ << indent_cpp() << "return typ;\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
