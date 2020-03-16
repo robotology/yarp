@@ -36,7 +36,11 @@ init:
 
   - cmd: set TIMEOUT=%SystemRoot%\System32\timeout.exe
 
-  # Dependencies found in YARP and iCub packages
+  # Dependencies found in YCM, YARP and iCub packages
+  - cmd: set YCM_LATEST=0.11.0
+  - cmd: set YCM_LATEST_TAG=v%YCM_LATEST%
+  - cmd: set YCM_DIR=%ROBOTOLOGY_ROOT%\ycm-%YCM_LATEST%
+
   - cmd: set YARP_LATEST=2.3.70
   - cmd: set YARP_LATEST_TAG=v%YARP_LATEST%
   - cmd: set YARP_LATEST_PKG=1
@@ -78,6 +82,7 @@ init:
   #- cmd: set PATH=%PATH%;%JPEG_ROOT%\bin
 
   # Installers URLs
+  - cmd: set YCM_INSTALLER=https://github.com/robotology/ycm/releases/download/%YCM_LATEST_TAG%/YCM-%YCM_LATEST%-all.tar.gz
   - cmd: set YARP_INSTALLER=https://github.com/robotology/yarp/releases/download/%YARP_LATEST_TAG%/yarp_%YARP_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
   - cmd: set ICUB_INSTALLER=https://github.com/robotology/icub-main/releases/download/%ICUB_LATEST_TAG%/iCub_%ICUB_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
   #- cmd: if "%platform%"=="Win32" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc.exe/download
@@ -94,6 +99,12 @@ init:
 
 install:
   - cmd: md C:\downloads
+
+  # Get YCM installer
+  - cmd: echo Downloading %YCM_INSTALLER%
+  - cmd: appveyor DownloadFile "%YCM_INSTALLER%" -FileName "C:\downloads\ycm.tar.gz"
+  - cmd: 7z x "C:\downloads\ycm.tar.gz" -so | 7z x -si -ttar > nul
+  - cmd: move YCM-%YCM_LATEST%-all "%YCM_DIR%"
 
   # Get YARP installer
   - cmd: echo Downloading %YARP_INSTALLER%
