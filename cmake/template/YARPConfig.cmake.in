@@ -93,48 +93,16 @@ set(YARP_IDL_BINARY_HINT "@PACKAGE_YARP_IDL_BINARY_HINT@")
 # CMake modules directories
 set_and_check(YARP_MODULE_DIR "@PACKAGE_YARP_MODULE_DIR@")
 
-
 # Save the variables, that it should not be modified by find_package(YARP), but
 # we need to modify it in order to find all the dependencies.
 set(_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
 set(_YCM_FOUND ${YCM_FOUND})
 
-# Find YCM if needed:
-# * If YARP is static therefore we need YCM (or YARP private version) for private
-#   dependencies.
-# * If deprecated stuff is enabled, we need YCM (or YARP private version) for
-#   compatibility with old versions.
-# If YCM is not found, the private version is used instead.
-if(NOT YARP_IS_SHARED_LIBRARY OR NOT YARP_NO_DEPRECATED)
-  # Until YCM is optional, we always want to look for YCM quietly, therefore we
-  # use find_package instead of find_dependency.
-  # WARNING find_package(YCM) will overwrite the PACKAGE_PREFIX_DIR variable,
-  #         therefore this variable is no longer valid after this line
-  get_property(_yarp_ycm_transitive_dependency_set GLOBAL PROPERTY _CMAKE_YCM_TRANSITIVE_DEPENDENCY SET)
-  find_package(YCM @YCM_REQUIRED_VERSION@ QUIET)
-  # Ensure that YCM is not shown by FeatureSummary if not requested by the user
-  if(NOT _yarp_ycm_transitive_dependency_set)
-    set_property(GLOBAL PROPERTY _CMAKE_YCM_TRANSITIVE_DEPENDENCY TRUE)
-  endif()
-  if(NOT YARP_NO_DEPRECATED)
-    if(YCM_FOUND)
-      set(_YARP_YCM_MODULE_PATH ${YCM_MODULE_PATH})
-    else()
-      set_and_check(YARP_YCM_MODULE_DIR "@PACKAGE_YARP_YCM_MODULE_DIR@")
-      set(_YARP_YCM_MODULE_PATH "${YARP_YCM_MODULE_DIR}/find-modules"
-                                "${YARP_YCM_MODULE_DIR}/modules"
-                                "${YARP_YCM_MODULE_DIR}/3rdparty"
-                                "${YARP_YCM_MODULE_DIR}/cmake-proposed")
-      if(${CMAKE_VERSION} VERSION_LESS 3.8)
-        list(APPEND _YARP_YCM_MODULE_PATH "${YARP_YCM_MODULE_DIR}/cmake-3.8/Modules")
-      endif()
-
-      # We need these paths in order to use the find modules in the following
-      # find_package/find_dependency calls (those are automatically added by
-      # YCM)
-      list(APPEND CMAKE_MODULE_PATH ${_YARP_YCM_MODULE_PATH})
-    endif()
-  endif()
+# Find YCM if YARP is static therefore we need YCM (or YARP private version) for
+# private dependencies.
+if(NOT YARP_IS_SHARED_LIBRARY)
+  include(CMakeFindDependencyMacro)
+  find_dependency(YCM @YCM_REQUIRED_VERSION@ REQUIRED)
 endif()
 
 

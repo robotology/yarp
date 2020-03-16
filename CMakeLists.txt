@@ -28,10 +28,10 @@ set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
 set(YARP_MODULE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH ${YARP_MODULE_DIR})
 
-
-# Find or use YCM version in extern.
+# Find YCM
 # This is required here, because YarpVersion uses GitInfo from YCM
-add_subdirectory(extern/ycm)
+set(YCM_REQUIRED_VERSION 0.11.0) # Used also by YarpFindDependencies
+find_package(YCM ${YCM_REQUIRED_VERSION} REQUIRED)
 
 # Get the current YARP version.
 # See cmake/YarpVersion.cmake.
