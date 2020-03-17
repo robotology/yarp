@@ -9,4 +9,4 @@ updateDocsComment: >
   #- chore
 
 updateDocsTargetFiles:
-  - doc/release
+  - doc/release/
