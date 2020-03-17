@@ -10,6 +10,8 @@
 #ifndef YARP_OS_PORTWRITERBUFFERBASE_H
 #define YARP_OS_PORTWRITERBUFFERBASE_H
 
+#include <yarp/os/PortWriter.h>
+
 namespace yarp {
 namespace os {
 
