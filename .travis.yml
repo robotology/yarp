@@ -301,14 +301,15 @@ git:
   services:
     - docker
   before_install:
-    - docker pull drdanz/cmake:cmake-${TRAVIS_CMAKE_VERSION}
+    - docker pull drdanz/ycm:cmake-${TRAVIS_CMAKE_VERSION}_ycm-${TRAVIS_YCM_VERSION}
     - >-
       docker run -it -d \
         -v $TRAVIS_BUILD_DIR:$TRAVIS_BUILD_DIR \
         -v $HOME/.ccache:$HOME/.ccache \
         -w $TRAVIS_BUILD_DIR \
         --name yarp-builder \
-        drdanz/cmake:cmake-${TRAVIS_CMAKE_VERSION}
+        drdanz/ycm:cmake-${TRAVIS_CMAKE_VERSION}_ycm-${TRAVIS_YCM_VERSION}
+    - >-
     - docker exec -it yarp-builder cmake --version
     - docker exec -it yarp-builder mkdir $TRAVIS_BUILD_DIR/build
   install: skip
@@ -469,33 +470,38 @@ matrix:
 
     - stage: cmake
       <<: *cmake_configure_template
-      name: "Configure using CMake 3.12"
+      name: "Configure using CMake 3.12 and YCM 0.11.0"
       env:
         - TRAVIS_CMAKE_VERSION="3.12"
+        - TRAVIS_YCM_VERSION="0.11.0"
 
     - stage: cmake
       <<: *cmake_configure_template
-      name: "Configure using CMake 3.13"
+      name: "Configure using CMake 3.13 and YCM 0.11.0"
       env:
         - TRAVIS_CMAKE_VERSION="3.13"
+        - TRAVIS_YCM_VERSION="0.11.0"
 
     - stage: cmake
       <<: *cmake_configure_template
-      name: "Configure using CMake 3.14"
+      name: "Configure using CMake 3.14 and YCM 0.11.0"
       env:
         - TRAVIS_CMAKE_VERSION="3.14"
+        - TRAVIS_YCM_VERSION="0.11.0"
 
     - stage: cmake
       <<: *cmake_configure_template
-      name: "Configure using CMake 3.15"
+      name: "Configure using CMake 3.15 and YCM 0.11.0"
       env:
         - TRAVIS_CMAKE_VERSION="3.15"
+        - TRAVIS_YCM_VERSION="0.11.0"
 
     - stage: cmake
       <<: *cmake_configure_template
-      name: "Configure using CMake 3.16"
+      name: "Configure using CMake 3.16 and YCM 0.11.0"
       env:
         - TRAVIS_CMAKE_VERSION="3.16"
+        - TRAVIS_YCM_VERSION="0.11.0"
 
     - stage: test
       <<: *linux_gcc_build_template

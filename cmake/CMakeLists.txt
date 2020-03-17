@@ -34,3 +34,26 @@ foreach(_f YarpDeprecatedWarning.cmake   # since YARP 3.0.0
            deprecated/YarpBackupVariable.cmake)
   yarp_remove_file("share/yarp/cmake/${_f}")
 endforeach()
+
+# Remove old YCM internal installations
+foreach(_d ycm-0.6.0   # since YARP 3.0.0
+           ycm-0.7.0
+           ycm-0.8.0
+           ycm-0.8.1   # since YARP 3.0.1
+           ycm-0.8.20180628.11
+           ycm-0.8.20180712.5
+           ycm-0.8.20180720.3
+           ycm-0.9.0   # since YARP 3.1.1
+           ycm-0.9.0.8
+           ycm-0.9.20181128.10
+           ycm-0.9.20181204.8
+           ycm-0.9.20190213.9
+           ycm-0.9.20190315.16
+           ycm-0.9.20190329.27
+           ycm-0.10.0
+           ycm-0.10.1
+           ycm-0.10.2
+           ycm-0.10.3
+           ycm-0.11.0) # since YARP 3.3.0
+  yarp_remove_directory("share/yarp/cmake/${_d}")
+endforeach()
