@@ -20,11 +20,13 @@
 #define WORKER_H
 
 #include <QObject>
+#include "include/log.h"
 
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/sig/ImageFile.h>
 #include "include/utils.h"
 #include <yarp/os/Event.h>
@@ -38,7 +40,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <yarp/cv/Cv.h>
 #endif
-
 
 class Utilities;
 //class MainWindow;
@@ -69,9 +70,14 @@ public:
     */
     void setManager(Utilities *utilities);
     /**
-    * Function that sends the images
+    * Functions that sends data (many different types)
     */
-    int sendImages( int part, int id );
+    int sendBottle(int part, int id);
+    int sendImages( int part, int id);
+
+    template <class T>
+    int sendGenericData(int part, int id);
+
     /**
     * Function that returns the frame rate
     */

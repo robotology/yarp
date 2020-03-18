@@ -44,6 +44,14 @@
 #include "include/mainwindow.h"
 #include "include/log.h"
 
+ //ROS messages
+#include <yarp/rosmsg/sensor_msgs/LaserScan.h>
+#include <yarp/rosmsg/nav_msgs/Odometry.h>
+#include <yarp/rosmsg/tf/tfMessage.h>
+#include <yarp/rosmsg/tf2_msgs/TFMessage.h>
+#include <yarp/rosmsg/geometry_msgs/Pose.h>
+#include <yarp/rosmsg/geometry_msgs/Pose2D.h>
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace std;
@@ -366,49 +374,64 @@ bool Utilities::configurePorts(partsData &part)
         tmp_port_name="/"+moduleName+tmp_port_name;
     }
 
-    if (strcmp (part.type.c_str(),"Bottle") == 0){
-        if ( !yarp::os::Network::exists(tmp_port_name) ){
-            LOG("need to create new port %s for %s\n",part.type.c_str(), part.name.c_str());
-            part.bottlePort.close();
-            LOG("creating and opening %s port for part %s\n",part.type.c_str(), part.name.c_str());
-            part.bottlePort.open(tmp_port_name);
-        }
-    } else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0){
-        if ( !yarp::os::Network::exists(tmp_port_name) ){
-            LOG("need to create new port %s for %s\n",part.type.c_str(), part.name.c_str());
-            part.imagePort.close();
-            LOG("creating and opening image port for part %s\n",part.name.c_str());
-            part.imagePort.open(tmp_port_name);
-        }
+    if (strcmp (part.type.c_str(),"Bottle") == 0)   {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::os::Bottle>; }
     }
-    else {
+    else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0)  {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::sig::Image>; }
+    }
+    else if (strcmp(part.type.c_str(), "sensor_msgs/LaserScan") == 0 ) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::sensor_msgs::LaserScan>; }
+    }
+    else if (strcmp(part.type.c_str(), "nav_msgs/Odometry") == 0) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::nav_msgs::Odometry>; }
+    }
+    else if (strcmp(part.type.c_str(), "tf2_msgs/tf") == 0) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::tf2_msgs::TFMessage>; }
+    }
+    else if (strcmp(part.type.c_str(), "geometry_msgs/Pose") == 0) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::geometry_msgs::Pose>; }
+    }
+    else if (strcmp(part.type.c_str(), "geometry_msgs/Pose2D") == 0) {
+        if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::rosmsg::geometry_msgs::Pose2D>; }
+    }
+    else
+    {
         LOG("Something is wrong with the data...%s\nIt seems its missing a type \n",part.name.c_str());
         return false;
     }
+
+    if (!yarp::os::Network::exists(tmp_port_name))
+    {
+        LOG("need to create new port %s for %s\n", part.type.c_str(), part.name.c_str());
+        part.outputPort->close();
+        LOG("creating and opening %s port for part %s\n", part.type.c_str(), part.name.c_str());
+        part.outputPort->open(tmp_port_name);
+    }
+    else
+    {
+        LOG("port %s already exists, skipping\n", tmp_port_name.c_str());
+    }
+
+
     return true;
 }
 /**********************************************************/
 bool Utilities::interruptPorts(partsData &part)
 {
-    if (strcmp (part.type.c_str(),"Bottle") == 0){
-        part.bottlePort.interrupt();
-    } else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0){
-        part.imagePort.interrupt();
-    } else {
+    if (part.outputPort == nullptr)  {
         return false;
     }
+    part.outputPort->interrupt();
     return true;
 }
 /**********************************************************/
 bool Utilities::closePorts(partsData &part)
 {
-    if (strcmp (part.type.c_str(),"Bottle") == 0){
-        part.bottlePort.close();
-    } else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0) {
-        part.imagePort.close();
-    } else {
+    if (part.outputPort == nullptr)  {
         return false;
     }
+    part.outputPort->close();
     return true;
 }
 
