@@ -38,6 +38,7 @@
 #include "display.h"
 #include "ui_display.h"
 
+
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -62,6 +63,11 @@ int main(int argc, char *argv[])
     if (rf.check("help"))
     {
         yInfo() << "Options:";
+        yInfo() << "--port <name>         the full name of the output port";
+        yInfo() << "--step_lin_vel        the increase step of linear velocity (m/s)";
+        yInfo() << "--step_ang_vel        the increase step of angular velocity (deg/s)";
+        yInfo() << "--default_lin_vel     the default value for max linear velocity (m/s)";
+        yInfo() << "--default_ang_vel     the default value for max angular velocity (deg/s)";
         return 0;
     }
 

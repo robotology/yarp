@@ -14,12 +14,13 @@ if(YARP_COMPILE_yarpmobilebasegui)
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
   set(yarpmobilebasegui_SRCS main.cpp
-                          display.cpp)
-  set(yarpmobilebasegui_HDRS display.h)
-
+                          display.cpp 
+                          joywidget.cpp)
+  set(yarpmobilebasegui_HDRS display.h
+                             joywidget.h)
   set(yarpmobilebasegui_QRC_FILES res.qrc)
 
-  set(yarpmobilebasegui_UI_FILES display.ui)
+  set(yarpmobilebasegui_UI_FILES display.ui )
 
   qt5_add_resources(yarpmobilebasegui_QRC_GEN_SRCS ${yarpmobilebasegui_QRC_FILES})
 
