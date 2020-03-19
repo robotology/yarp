@@ -14,8 +14,8 @@ if(YARP_COMPILE_yarpmobilebasegui)
   set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 
   set(yarpmobilebasegui_SRCS main.cpp
-                          display.cpp 
-                          joywidget.cpp)
+                             display.cpp
+                             joywidget.cpp)
   set(yarpmobilebasegui_HDRS display.h
                              joywidget.h)
   set(yarpmobilebasegui_QRC_FILES res.qrc)
@@ -38,18 +38,18 @@ if(YARP_COMPILE_yarpmobilebasegui)
                                        ${yarpmobilebasegui_UI_GEN_SRCS})
 
   target_sources(yarpmobilebasegui PRIVATE ${yarpmobilebasegui_SRCS}
-                                        ${yarpmobilebasegui_HDRS}
-                                        ${yarpmobilebasegui_QRC_FILES}
-                                        ${yarpmobilebasegui_QRC_GEN_SRCS}
-                                        ${yarpmobilebasegui_UI_FILES}
-                                        ${yarpmobilebasegui_UI_GEN_SRCS})
+                                           ${yarpmobilebasegui_HDRS}
+                                           ${yarpmobilebasegui_QRC_FILES}
+                                           ${yarpmobilebasegui_QRC_GEN_SRCS}
+                                           ${yarpmobilebasegui_UI_FILES}
+                                           ${yarpmobilebasegui_UI_GEN_SRCS})
 
   target_link_libraries(yarpmobilebasegui PRIVATE YARP::YARP_os
-                                               YARP::YARP_init
-                                               YARP::YARP_sig
-                                               YARP::YARP_dev
-                                               Qt5::Widgets
-                                               Qt5::Gui)
+                                                  YARP::YARP_init
+                                                  YARP::YARP_sig
+                                                  YARP::YARP_dev
+                                                  Qt5::Widgets
+                                                  Qt5::Gui)
 
   install(TARGETS yarpmobilebasegui
           COMPONENT utilities

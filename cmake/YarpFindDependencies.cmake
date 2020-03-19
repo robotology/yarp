@@ -521,7 +521,7 @@ yarp_dependent_option(YARP_COMPILE_yarpmotorgui "Do you want to compile yarpmoto
 yarp_dependent_option(YARP_COMPILE_yarpbatterygui "Do you want to compile yarpbatterygui?" ON
                       "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;Qt5_VERSION VERSION_GREATER_EQUAL 5.4;" OFF)
 yarp_dependent_option(YARP_COMPILE_yarpmobilebasegui "Do you want to compile yarpmobilebasegui?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;Qt5_VERSION VERSION_GREATER_EQUAL 5.4;" OFF)
+                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
 yarp_dependent_option(YARP_COMPILE_yarplaserscannergui  "Do you want to compile yarplaserscannergui?" ON
                       "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_OpenCV" OFF)
 yarp_dependent_option(YARP_COMPILE_yarpviz "Do you want to compile yarpviz?" ON

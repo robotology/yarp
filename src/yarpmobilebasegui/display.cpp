@@ -76,11 +76,10 @@ void MainWindow::keyPressEvent(QKeyEvent* e)
         case Qt::Key_D: pressed_right = true; break;
         case Qt::Key_Q: pressed_turn_left = true; break;
         case Qt::Key_E: pressed_turn_right = true; break;
-       
         case Qt::Key_I: max_vel_lin += lin_vel_step;
             snprintf(buff, 100, s_max_lin_vel, max_vel_lin);
             yDebug() << buff;
-            ui->label_max_lin_vel->setText(buff); 
+            ui->label_max_lin_vel->setText(buff);
         break;
         case Qt::Key_K: if (max_vel_lin > 0) { max_vel_lin -= lin_vel_step; }
             snprintf(buff, 100, s_max_lin_vel, max_vel_lin);
@@ -165,7 +164,7 @@ MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, QWidget *parent, doub
     yInfo() << "--step_ang_vel        the increase step of angular velocity (deg/s)";
     yInfo() << "--default_lin_vel     the default value for max linear velocity (m/s)";
     yInfo() << "--default_ang_vel     the default value for max angular velocity (deg/s)";
-    
+
     if (rf.check("port"))
         { portname = rf.find("port").asString(); }
     if (rf.check("step_lin_vel"))
