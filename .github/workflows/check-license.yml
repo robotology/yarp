@@ -1,0 +1,23 @@
+name: 'License Check'
+
+on:
+  pull_request:
+
+jobs:
+  check-license:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -qq -y perl
+
+    - name: Check Style
+      run: |
+        tests/misc/check_license.pl
