@@ -55,6 +55,20 @@ XYCell MapGrid2DInfo::world2Cell(XYWorld world) const
     //convert a world location (wrt the map reference frame located in m_origin, measured in meters), to a cell from the upper-left corner.
     //beware: the location of m_origin is referred to the lower-left corner (ROS convention)
     XYCell c;
+    int x = int((+world.x - this->m_origin.x) / this->m_resolution) + 0;
+    int y = int((-world.y + this->m_origin.y) / this->m_resolution) + m_height - 1;
+    c.x = (x < 0) ? 0 : x;
+    c.y = (y < 0) ? 0 : y;
+    c.x = (c.x >= m_width) ? m_width-1 : c.x;
+    c.y = (c.y >= m_height) ? m_height-1 : c.y;
+    return c;
+}
+
+XYCell MapGrid2DInfo::world2Cell_unsafeFast(XYWorld world) const
+{
+    //convert a world location (wrt the map reference frame located in m_origin, measured in meters), to a cell from the upper-left corner.
+    //beware: the location of m_origin is referred to the lower-left corner (ROS convention)
+    XYCell c;
     c.x = int((+world.x - this->m_origin.x) / this->m_resolution) + 0;
     c.y = int((-world.y + this->m_origin.y) / this->m_resolution) + m_height - 1;
     return c;
@@ -62,7 +76,7 @@ XYCell MapGrid2DInfo::world2Cell(XYWorld world) const
 
 bool MapGrid2DInfo::isInsideMap(XYWorld world) const
 {
-    XYCell cell = world2Cell(world);
+    XYCell cell = world2Cell_unsafeFast(world);
     return isInsideMap(cell);
 }
 

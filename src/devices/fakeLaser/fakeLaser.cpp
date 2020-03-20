@@ -381,9 +381,16 @@ void FakeLaser::run()
             ray_world.x = robot_curr_x*cos(m_loc_t*DEG2RAD) - robot_curr_y*sin(m_loc_t*DEG2RAD) + m_loc_x;
             ray_world.y = robot_curr_x*sin(m_loc_t*DEG2RAD) + robot_curr_y*cos(m_loc_t*DEG2RAD) + m_loc_y;
             XYCell src = m_map.world2Cell(XYWorld(m_loc_x, m_loc_y));
-            XYCell dst = m_map.world2Cell(ray_world);
-            double distance = checkStraightLine(src,dst);
-            laser_data.push_back(distance + (*m_dis)(*m_gen));
+            if (m_map.isInsideMap(ray_world))
+            {
+                XYCell dst = m_map.world2Cell(ray_world);
+                double distance = checkStraightLine(src, dst);
+                laser_data.push_back(distance + (*m_dis)(*m_gen));
+            }
+            else
+            {
+                laser_data.push_back(std::numeric_limits<double>::infinity());
+            }
         }
     }
 

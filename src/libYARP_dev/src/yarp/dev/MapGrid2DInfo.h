@@ -57,6 +57,7 @@ namespace yarp
 
                 //convert a world location (wrt the map reference frame located in m_origin, measured in meters), to a cell from the upper-left corner.
                 XYCell world2Cell(XYWorld world) const;
+                XYCell world2Cell_unsafeFast(XYWorld world) const;
                 yarp::dev::Nav2D::Map2DLocation toLocation(XYWorld cell) const;
                 XYWorld toXYWorld(yarp::dev::Nav2D::Map2DLocation loc) const;
 
