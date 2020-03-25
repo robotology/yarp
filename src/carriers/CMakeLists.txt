@@ -20,6 +20,7 @@ yarp_begin_plugin_library(yarpcar OPTION YARP_COMPILE_CARRIER_PLUGINS
   add_subdirectory(priority_carrier)
   add_subdirectory(portmonitor_carrier)
   add_subdirectory(depth_image_portmonitor)
+  add_subdirectory(depth_image2_portmonitor)
   add_subdirectory(zfp_portmonitor)
   add_subdirectory(h264_carrier)
 yarp_end_plugin_library(yarpcar QUIET)
