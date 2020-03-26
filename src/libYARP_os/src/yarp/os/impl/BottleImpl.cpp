@@ -18,6 +18,8 @@
 #include <yarp/os/impl/MemoryOutputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
+#include <limits>
+
 using yarp::os::Bottle;
 using yarp::os::Bytes;
 using yarp::os::ConnectionReader;
@@ -140,7 +142,7 @@ void BottleImpl::smartAdd(const std::string& str)
             ((ch >= '0' && ch <= '9') || ch == '+' || ch == '-' || ch == '.') &&
             (ch != '.' || str.length() > 1)) {
             if (!hasPeriodOrE) {
-                s = new StoreInt32(0);
+                s = new StoreInt64(0);
             } else {
                 s = new StoreFloat64(0);
             }
@@ -155,6 +157,20 @@ void BottleImpl::smartAdd(const std::string& str)
         }
         if (s != nullptr) {
             s->fromStringNested(str);
+
+            // Traditionally all int are read as 32 bit integers, but 64 bit
+            // integers will not fit.
+            // Therefore the value is read as 64 bit, but if the value would fit
+            // a 32 bit integer, it is cast to a 32 bit integer.
+            if (s->isInt64()
+                && s->asInt64() >= std::numeric_limits<int32_t>::min()
+                && s->asInt64() <= std::numeric_limits<int32_t>::max()) {
+                Storable* s_i32 = new StoreInt32(s->asInt32());
+                delete s;
+                s = s_i32;
+                s_i32 = nullptr;
+            }
+
             if (ss != nullptr) {
                 if (str.length() == 0 || str[0] != '\"') {
                     std::string val = ss->asString();
