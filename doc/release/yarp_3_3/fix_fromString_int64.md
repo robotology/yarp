@@ -1,4 +1,4 @@
-fix_fronString_int64 {yarp-3.3}
+fix_fromString_int64 {yarp-3.3}
 --------------------
 
 ## Libraries
