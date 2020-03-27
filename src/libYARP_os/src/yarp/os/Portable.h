@@ -40,7 +40,7 @@ public:
      *
      * @return true iff writer.write and reader.read both succeeded.
      */
-    static bool copyPortable(PortWriter& writer, PortReader& reader);
+    static bool copyPortable(const PortWriter& writer, PortReader& reader);
 };
 
 } // namespace os
