@@ -232,9 +232,7 @@ bool Storable::write(ConnectionWriter& connection) const
 
 std::string StoreInt8::toString() const
 {
-    char buf[256];
-    sprintf(buf, "%" PRId8, x);
-    return std::string(buf);
+    return std::to_string(x);
 }
 
 void StoreInt8::fromString(const std::string& src)
@@ -260,9 +258,7 @@ bool StoreInt8::writeRaw(ConnectionWriter& writer) const
 
 std::string StoreInt16::toString() const
 {
-    char buf[256];
-    sprintf(buf, "%" PRId16, x);
-    return std::string(buf);
+    return std::to_string(x);
 }
 
 void StoreInt16::fromString(const std::string& src)
@@ -288,9 +284,7 @@ bool StoreInt16::writeRaw(ConnectionWriter& writer) const
 
 std::string StoreInt32::toString() const
 {
-    char buf[256];
-    sprintf(buf, "%" PRId32, x);
-    return std::string(buf);
+    return std::to_string(x);
 }
 
 void StoreInt32::fromString(const std::string& src)
@@ -316,9 +310,7 @@ bool StoreInt32::writeRaw(ConnectionWriter& writer) const
 
 std::string StoreInt64::toString() const
 {
-    char buf[256];
-    sprintf(buf, "%" PRId64, x);
-    return std::string(buf);
+    return std::to_string(x);
 }
 
 void StoreInt64::fromString(const std::string& src)
