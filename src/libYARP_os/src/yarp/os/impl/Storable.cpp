@@ -22,6 +22,7 @@
 #include <clocale>
 #include <cstdio>
 #include <cstdlib>
+#include <limits>
 
 using yarp::os::Bottle;
 using yarp::os::ConnectionReader;
@@ -90,10 +91,8 @@ inline std::string fp_to_string(T x)
     size_t offset = str.find(lc->decimal_point);
     if (offset != std::string::npos) {
         str[offset] = '.';
-    } else {
-        if (str.find('e') == std::string::npos) {
-            str += ".0";
-        }
+    } else if (str.find('e') == std::string::npos && str != "inf" && str != "nan") {
+        str += ".0";
     }
     return str;
 }
@@ -104,6 +103,12 @@ inline std::string fp_to_string(T x)
 template <typename T>
 inline T fp_from_string(std::string src)
 {
+    if (src == "inf") {
+        return std::numeric_limits<T>::infinity();
+    }
+    if (src == "nan") {
+        return std::numeric_limits<T>::quiet_NaN();
+    }
     // YARP Bug 2526259: Locale settings influence YARP behavior
     // Need to deal with alternate versions of the decimal point.
     size_t offset = src.find('.');
@@ -113,7 +118,8 @@ inline T fp_from_string(std::string src)
     }
     return static_cast<T>(strtod(src.c_str(), nullptr));
 }
-}
+
+} // namespace
 
 
 ////////////////////////////////////////////////////////////////////////////
