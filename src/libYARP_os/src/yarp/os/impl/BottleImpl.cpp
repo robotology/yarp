@@ -93,6 +93,10 @@ void BottleImpl::smartAdd(const std::string& str)
         int signCount = 0;
         bool hasPeriodOrE = false;
         for (size_t i = 0; i < str.length(); i++) {
+            if (str == "inf" || str == "nan") {
+                hasPeriodOrE = true;
+                break;
+            }
             char ch2 = str[i];
             if (ch2 == '.') {
                 hasPeriodOrE = true;
@@ -139,7 +143,7 @@ void BottleImpl::smartAdd(const std::string& str)
         }
 
         if (numberLike &&
-            ((ch >= '0' && ch <= '9') || ch == '+' || ch == '-' || ch == '.') &&
+            ((ch >= '0' && ch <= '9') || ch == '+' || ch == '-' || ch == '.' || ch == 'i' /* inf */ || ch == 'n' /* nan */) &&
             (ch != '.' || str.length() > 1)) {
             if (!hasPeriodOrE) {
                 s = new StoreInt64(0);
