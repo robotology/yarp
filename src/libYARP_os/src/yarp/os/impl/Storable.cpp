@@ -56,19 +56,19 @@ const int StoreDict::code = BOTTLE_TAG_LIST | BOTTLE_TAG_DICT;
 
 
 /*
- * The maximum string length for a 'double' printed as a string using ("%.*g", DBL_DIG) will be:
+ * The maximum string length for a 'double' printed as a string using ("%.*g", DECIMAL_DIG) will be:
  *  Initial +/- sign                        1 char
  *  First digit for exponential notation    1 char
  * '.' decimal separator char               1 char
- *  DBL_DIG digits for the mantissa         DBL_DIG chars
+ *  DECIMAL_DIG digits for the mantissa     DECIMAL_DIG chars
  * 'e+/-'                                   2 chars
  * YARP_DBL_EXP_DIG  for the exponential    YARP_DBL_EXP_DIG chars
  * string terminator                        1 char
  * FILLER                                   10 chars  (you know, for safety)
  * -----------------------------------------------------
- * TOTAL is                                 16 + DBL_DIG + YARP_DBL_EXP_DIG
+ * TOTAL is                                 16 + DECIMAL_DIG + YARP_DBL_EXP_DIG
  */
-#define YARP_DOUBLE_TO_STRING_MAX_LENGTH (16 + DBL_DIG + YARP_DBL_EXP_DIG)
+#define YARP_DOUBLE_TO_STRING_MAX_LENGTH (16 + DECIMAL_DIG + YARP_DBL_EXP_DIG)
 
 namespace {
 // FIXME These methods should probably be in NetType
@@ -79,7 +79,7 @@ template <typename T>
 inline std::string fp_to_string(T x)
 {
     char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH]; // -> see comment at the top of the file
-    std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DBL_DIG, x);
+    std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DECIMAL_DIG, x);
     std::string str(buf);
 
     // If locale is set, the locale version of the decimal point is used.
