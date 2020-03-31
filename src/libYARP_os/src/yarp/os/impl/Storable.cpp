@@ -91,7 +91,7 @@ inline std::string fp_to_string(T x)
     size_t offset = str.find(lc->decimal_point);
     if (offset != std::string::npos) {
         str[offset] = '.';
-    } else if (str.find('e') == std::string::npos && str != "inf" && str != "nan") {
+    } else if (str.find('e') == std::string::npos && str != "inf" && str != "-inf" && str != "nan") {
         str += ".0";
     }
     return str;
@@ -105,6 +105,9 @@ inline T fp_from_string(std::string src)
 {
     if (src == "inf") {
         return std::numeric_limits<T>::infinity();
+    }
+    if (src == "-inf") {
+        return -std::numeric_limits<T>::infinity();
     }
     if (src == "nan") {
         return std::numeric_limits<T>::quiet_NaN();

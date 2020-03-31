@@ -93,7 +93,7 @@ void BottleImpl::smartAdd(const std::string& str)
         int signCount = 0;
         bool hasPeriodOrE = false;
         for (size_t i = 0; i < str.length(); i++) {
-            if (str == "inf" || str == "nan") {
+            if (str == "inf" || str == "-inf" || str == "nan") {
                 hasPeriodOrE = true;
                 break;
             }
