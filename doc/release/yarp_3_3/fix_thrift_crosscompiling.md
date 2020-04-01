@@ -1,4 +1,4 @@
-fix_thrift_crosscompiling {yarp-3.3}
+fix_thrift_crosscompiling {#yarp_3_3}
 -------------------------
 
 ### Build System

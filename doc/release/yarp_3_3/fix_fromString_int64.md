@@ -1,10 +1,10 @@
-fix_fromString_int64 {yarp-3.3}
+fix_fromString_int64 {#yarp_3_3}
 --------------------
 
-## Libraries
+### Libraries
 
-### `os`
+#### `os`
 
-#### `Bottle`
+##### `Bottle`
 
 * Fixed fromString when reading a 64 bit integer.

@@ -1,4 +1,4 @@
-fix_fakeBattery {yarp-3.3}
+fix_fakeBattery {#yarp_3_3}
 ---------------
 
 ### Devices
