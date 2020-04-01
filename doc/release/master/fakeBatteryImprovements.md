@@ -1,4 +1,4 @@
-fakeBatteryImprovements {master}
+fakeBatteryImprovements {#master}
 -----------------------
 
 ## New Features

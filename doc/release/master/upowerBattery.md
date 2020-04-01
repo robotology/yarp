@@ -1,4 +1,4 @@
-upowerBattery {master}
+upowerBattery {#master}
 -------------
 
 ## New Features

@@ -1,5 +1,5 @@
 YarpPlugin_absolute {#master}
-------------------
+-------------------
 
 ### CMake
 

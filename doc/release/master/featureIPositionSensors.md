@@ -1,24 +1,28 @@
-featureIPositionSensors {master}
-----------------------
+featureIPositionSensors {#master}
+-----------------------
 
-### YARP_dev
+### Libraries
+
+#### `dev`
 
 * Added new interface `yarp::dev::IPositionSensors`.
 
-### devices
 
-#### multipleAnalogSensorsMsgs
+### Devices
 
-* `multipleAnalogSensorsSerializations.thrift` have been extended to handle position sensors.
+#### `multipleAnalogSensorsMsgs`
 
-#### multipleanalogsensorsserver
+* `multipleAnalogSensorsSerializations.thrift` have been extended to handle
+  position sensors.
 
-* Added handlers for `IPositionSensors` interface.
-
-#### multipleanalogsensorsclient
+#### `multipleanalogsensorsserver`
 
 * Added handlers for `IPositionSensors` interface.
 
-#### multipleanalogsensorsremapper
+#### `multipleanalogsensorsclient`
+
+* Added handlers for `IPositionSensors` interface.
+
+#### `multipleanalogsensorsremapper`
 
 * Added handlers for `IPositionSensors` interface.

@@ -1,11 +1,11 @@
-copyPortable_const {master}
+copyPortable_const {#master}
 ------------------
 
-## Libraries
+### Libraries
 
-### `os`
+#### `os`
 
-#### `Portable`
+##### `Portable`
 
 * The first argument of `copyPortable` is now `const`. The new signature is:
   ```

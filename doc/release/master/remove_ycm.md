@@ -1,5 +1,5 @@
-remove_ycm {master}
--------------------
+remove_ycm {#master}
+----------
 
 ### Important Changes
 

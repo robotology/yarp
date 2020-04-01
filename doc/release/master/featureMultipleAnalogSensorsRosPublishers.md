@@ -1,27 +1,31 @@
-featureMultipleAnalogSensorsRosPublishers {master}
-----------------------
+featureMultipleAnalogSensorsRosPublishers {#master}
+-----------------------------------------
 
+### Devices
 
-### devices
+* Added the following new devices:
 
-* added the following new devices:
+#### `IMURosPublisher`
 
-#### IMURosPublisher
+* `IMURosPublisher` This wrapper connects to a device and publishes a ROS topic
+  of type `sensor_msgs::Imu`.
 
-* `IMURosPublisher` This wrapper connects to a device and publishes a ROS topic of type sensor_msgs::Imu.
+#### `MagfieldRosPublisher`
 
-#### MagfieldRosPublisher
+* `MagfieldRosPublisher` This wrapper connects to a device and publishes a ROS
+  topic of type `sensor_msgs::MagneticField`.
 
-* `MagfieldRosPublisher` This wrapper connects to a device and publishes a ROS topic of type sensor_msgs::MagneticField.
+#### `PoseRosPublisher`
 
-#### PoseRosPublisher
+* `PoseRosPublisher` This wrapper connects to a device and publishes a ROS topic
+  of type `geometry_msgs::PoseStamped`.
 
-* `PoseRosPublisher` This wrapper connects to a device and publishes a ROS topic of type geometry_msgs::PoseStamped.
+#### `TemperatureRosPublisher`
 
-#### TemperatureRosPublisher
+* `TemperatureRosPublisher` This wrapper connects to a device and publishes a
+  ROS topic of type `sensor_msgs::Temperature`.
 
-* `TemperatureRosPublisher` This wrapper connects to a device and publishes a ROS topic of type sensor_msgs::Temperature.
+#### `WrenchRosPublisher`
 
-#### WrenchRosPublisher
-
-* ``WrenchRosPublisher` This wrapper connects to a device and publishes a ROS topic of type geometry_msgs::WrenchStamped.
+* ``WrenchRosPublisher` This wrapper connects to a device and publishes a ROS
+  topic of type `geometry_msgs::WrenchStamped`.
