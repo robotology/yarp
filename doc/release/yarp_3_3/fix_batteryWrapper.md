@@ -1,4 +1,4 @@
-fix_batteryWrapper {yarp-3.3}
+fix_batteryWrapper {#yarp_3_3}
 ------------------
 
 ### Devices

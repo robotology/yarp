@@ -103,8 +103,12 @@ h1, h2, h3, h4 {
     text-shadow: 0 2px 2px rgba(135,181,204,0.9);
 }
 
-h1, h2, h3 {
+h1, h2 {
     font-variant: small-caps;
+}
+
+h4 {
+    padding-left: 10px;
 }
 
 /* Header for groups of functions */

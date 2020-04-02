@@ -1,4 +1,4 @@
-fix_batteryClient {yarp-3.3}
+fix_batteryClient {#yarp_3_3}
 -----------------
 
 ### Devices

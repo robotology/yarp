@@ -1,10 +1,10 @@
-fix_fromString_inf_nan {yarp-3.3}
+fix_fromString_inf_nan {#yarp_3_3}
 ----------------------
 
-## Libraries
+### Libraries
 
-### `os`
+#### `os`
 
-#### `Bottle`
+##### `Bottle`
 
 * Fixed toString and fromString when writing or reading infinity or nan.
