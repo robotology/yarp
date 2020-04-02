@@ -28,6 +28,9 @@
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <cstdio>
+#include <functional>
+#include <random>
+#include <regex>
 #include <vector>
 
 #ifdef YARP_HAS_ACE
@@ -1582,6 +1585,7 @@ enum class PortCoreCommand : yarp::conf::vocab32_t
     Unknown = 0,
     Help = yarp::os::createVocab('h', 'e', 'l', 'p'),
     Ver = yarp::os::createVocab('v', 'e', 'r'),
+    Pray = yarp::os::createVocab('p', 'r', 'a', 'y'),
     Add = yarp::os::createVocab('a', 'd', 'd'),
     Del = yarp::os::createVocab('d', 'e', 'l'),
     Atch = yarp::os::createVocab('a', 't', 'c', 'h'),
@@ -1631,6 +1635,7 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
     switch (cmd) {
     case PortCoreCommand::Help:
     case PortCoreCommand::Ver:
+    case PortCoreCommand::Pray:
     case PortCoreCommand::Add:
     case PortCoreCommand::Del:
     case PortCoreCommand::Atch:
@@ -1754,6 +1759,163 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result.addInt32(1);
         result.addInt32(2);
         result.addInt32(3);
+        return result;
+    };
+
+    auto handleAdminPrayCmd = [this]() {
+        // Strongly inspired by nethack #pray command:
+        // https://nethackwiki.com/wiki/Prayer
+        // http://www.steelypips.org/nethack/pray.html
+
+        Bottle result;
+
+        bool found = false;
+        std::string name = NetworkBase::getEnvironment("YARP_ROBOT_NAME", &found);
+        if (!found) {
+            name = getName();
+            // Remove initial "/"
+            while (name[0] == '/') {
+                name = name.substr(1);
+            }
+            // Keep only the first part of the port name
+            auto i = name.find('/');
+            if (i != std::string::npos) {
+                name = name.substr(0, i);
+            }
+        }
+
+        std::random_device rd;
+        std::mt19937 mt(rd());
+        std::uniform_int_distribution<int> dist2(0,1);
+        auto d2 = std::bind(dist2, mt);
+
+        result.addString("You begin praying to " + name + ".");
+        result.addString("You finish your prayer.");
+
+        static const char* godvoices[] = {
+            "booms out",
+            "thunders",
+            "rings out",
+            "booms",
+        };
+        std::uniform_int_distribution<int> godvoices_dist(0, (sizeof(godvoices) / sizeof(godvoices[0])) - 1);
+        auto godvoice = [&]() {
+            return std::string(godvoices[godvoices_dist(mt)]);
+        };
+
+        static const char* creatures[] = {
+            "mortal",
+            "creature",
+            "robot",
+        };
+        std::uniform_int_distribution<int> creatures_dist(0, (sizeof(creatures) / sizeof(creatures[0])) - 1);
+        auto creature = [&]() {
+            return std::string(creatures[creatures_dist(mt)]);
+        };
+
+        static const char* auras[] = {
+            "amber",
+            "light blue",
+            "golden",
+            "white",
+            "orange",
+            "black",
+        };
+        std::uniform_int_distribution<int> auras_dist(0, (sizeof(auras) / sizeof(auras[0])) - 1);
+        auto aura = [&]() {
+            return std::string(auras[auras_dist(mt)]);
+        };
+
+        static const char* items[] = {
+            "keyboard",
+            "mouse",
+            "monitor",
+            "headphones",
+            "smartphone",
+            "wallet",
+            "eyeglasses",
+            "shirt",
+        };
+        std::uniform_int_distribution<int> items_dist(0, (sizeof(items) / sizeof(items[0])) - 1);
+        auto item = [&]() {
+            return std::string(items[items_dist(mt)]);
+        };
+
+        static const char* blessings[] = {
+            "You feel more limber.",
+            "The slime disappears.",
+            "Your amulet vanishes! You can breathe again.",
+            "You can breathe again.",
+            "You are back on solid ground.",
+            "Your stomach feels content.",
+            "You_feel better.",
+            "You_feel much better.",
+            "Your surroundings change.",
+            "Your shape becomes uncertain.",
+            "Your chain disappears.",
+            "There's a tiger in your tank.",
+            "You feel in good health again.",
+            "Your eye feels better.",
+            "Your eyes feel better.",
+            "Looks like you are back in Kansas.",
+            "Your <ITEM> softly glows <AURA>.",
+        };
+        std::uniform_int_distribution<int> blessings_dist(0, (sizeof(blessings) / sizeof(blessings[0])) - 1);
+        auto blessing = [&](){
+            auto blessing = std::string(blessings[blessings_dist(mt)]);
+            blessing = std::regex_replace(blessing, std::regex("<ITEM>"), item());
+            blessing = std::regex_replace(blessing, std::regex("<AURA>"), aura());
+            return blessing;
+        };
+
+        std::uniform_int_distribution<int> dist13(0,12);
+        switch(dist13(mt)) {
+        case 0:
+        case 1:
+            result.addString("You feel that " + name + " is " + (d2() ? "bummed" : "displeased") + ".");
+            break;
+        case 2:
+        case 3:
+            result.addString("The voice of " + name + " " + godvoice() +
+                             ": \"Thou " + (d2() ? "hast strayed from the path" : "art arrogant") +
+                             ", " + creature() + ". Thou must relearn thy lessons!\"");
+            break;
+        case 4:
+        case 5:
+            result.addString("The voice of " + name + " " + godvoice() +
+                             ": \"Thou hast angered me.\"");
+            result.addString("A black glow surrounds you.");
+            break;
+        case 6:
+            result.addString("The voice of " + name + " " + godvoice() +
+                             ": \"Thou hast angered me.\"");
+            break;
+        case 7:
+        case 8:
+            result.addString("The voice of " + name + " " + godvoice() +
+                             ": \"Thou durst " + (d2() ? "scorn" : "call upon") +
+                             " me? Then die, " + creature() + "!\"");
+            break;
+        case 9:
+            result.addString("You feel that " + name + " is " + (d2() ? "pleased as punch" : "well-pleased") + ".");
+            result.addString(blessing());
+            break;
+        case 10:
+            result.addString("You feel that " + name + " is " + (d2() ? "ticklish" : "pleased") + ".");
+            result.addString(blessing());
+            break;
+        case 11:
+            result.addString("You feel that " + name + " is " + (d2() ? "full" : "satisfied") + ".");
+            result.addString(blessing());
+            break;
+        default:
+            result.addString("The voice of " + name + " " + godvoice() +
+                             ": \"Thou hast angered me.\"");
+            result.addString("Suddenly, a bolt of lightning strikes you!");
+            result.addString("You fry to a crisp!");
+            break;
+        }
+
         return result;
     };
 
@@ -2455,6 +2617,9 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         break;
     case PortCoreCommand::Ver:
         result = handleAdminVerCmd();
+        break;
+    case PortCoreCommand::Pray:
+        result = handleAdminPrayCmd();
         break;
     case PortCoreCommand::Add: {
         std::string output = cmd.get(1).asString();
