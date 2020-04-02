@@ -432,8 +432,6 @@ git:
   script:
     - *build_yarp_cmd
     - *run_unit_tests_cmd
-    - *install_yarp_cmd
-    - *build_yarp_os_examples_cmd
   after_success: skip
 
 matrix:
@@ -879,17 +877,17 @@ matrix:
 
     - stage: test-long
       <<: *osx_build_template
-      name: "Standard build (osx, xcode9.4, clang) - bindings and failing tests disabled"
+      name: "Standard build (osx, xcode9.4, clang) - installation, examples, bindings and failing tests disabled"
 
     - stage: test-long
       <<: *osx_build_template
-      name: "Standard build with Xcode (osx, xcode9.4, clang) - bindings and failing tests disabled"
+      name: "Standard build with Xcode (osx, xcode9.4, clang) - installation, examples, bindings and failing tests disabled"
       env:
         - TRAVIS_CMAKE_GENERATOR="Xcode"
 
     - stage: test-long
       <<: *osx_build_template
-      name: "Standard build with Xcode (osx, xcode10.2, clang) - bindings and failing tests disabled"
+      name: "Standard build with Xcode (osx, xcode10.2, clang) - installation, examples, bindings and failing tests disabled"
       osx_image: xcode10.2
       env:
         - TRAVIS_CMAKE_GENERATOR="Xcode"
