@@ -20,26 +20,26 @@ using namespace yarp::sig;
 
 void getHeatMapColor(float value, unsigned char& r, unsigned char& g, unsigned char& b)
 {
-  const int NUM_COLORS = 5;
-  static float color[NUM_COLORS][3] = { {0,0,1}, {0,1,0}, {1,1,0}, {1,0,0}, {0,0,0} };
-  
-  int idx1;
-  int idx2;
-  float fractBetween = 0;
-  
-  if(value <= 0)      {  idx1 = idx2 = 0;            }
-  else if(value >= 1)  {  idx1 = idx2 = NUM_COLORS-1; }
-  else
-  {
-    value = value * (NUM_COLORS-1);
-    idx1  = floor(value);
-    idx2  = idx1+1;
-    fractBetween = value - float(idx1);
-  }
-    
-  r = ((color[idx2][0] - color[idx1][0])*fractBetween + color[idx1][0])*255;
-  g = ((color[idx2][1] - color[idx1][1])*fractBetween + color[idx1][1])*255;
-  b = ((color[idx2][2] - color[idx1][2])*fractBetween + color[idx1][2])*255;
+    const int NUM_COLORS = 5;
+    static float color[NUM_COLORS][3] = { {0,0,1}, {0,1,0}, {1,1,0}, {1,0,0}, {0,0,0} };
+
+    int idx1;
+    int idx2;
+    float fractBetween = 0;
+
+    if(value <= 0)      {  idx1 = idx2 = 0;            }
+    else if(value >= 1) {  idx1 = idx2 = NUM_COLORS-1; }
+    else
+    {
+       value = value * (NUM_COLORS-1);
+       idx1  = floor(value);
+       idx2  = idx1+1;
+       fractBetween = value - float(idx1);
+    }
+
+    r = ((color[idx2][0] - color[idx1][0])*fractBetween + color[idx1][0])*255;
+    g = ((color[idx2][1] - color[idx1][1])*fractBetween + color[idx1][1])*255;
+    b = ((color[idx2][2] - color[idx1][2])*fractBetween + color[idx1][2])*255;
 }
 
 bool DepthImageConverter::create(const yarp::os::Property& options)
@@ -100,11 +100,11 @@ yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
             float inVal = inPixels[w + (h * img->width())];
             if (inVal != inVal /* NaN */ || inVal < min || inVal > max)
             {
-                outPixels[w*3 + (h * (img->width()*3)) + 0] = 0;
-                outPixels[w*3 + (h * (img->width()*3)) + 1] = 0;
-                outPixels[w*3 + (h * (img->width()*3)) + 2] = 0;
+               outPixels[w*3 + (h * (img->width()*3)) + 0] = 0;
+               outPixels[w*3 + (h * (img->width()*3)) + 1] = 0;
+               outPixels[w*3 + (h * (img->width()*3)) + 2] = 0;
             }
-            else 
+            else
             {
                float dist = inVal  / (max - min);
                unsigned char r,g,b;

@@ -128,7 +128,7 @@ bool SegmentationImageConverter::accept(yarp::os::Things& thing)
         return true;
     }
 
-    printf("SegmentationImageConverter: expected %s or %s, got %s, not doing any conversion!\n", 
+    printf("SegmentationImageConverter: expected %s or %s, got %s, not doing any conversion!\n",
             yarp::os::Vocab::decode(VOCAB_PIXEL_MONO).c_str(),
             yarp::os::Vocab::decode(VOCAB_PIXEL_MONO16).c_str(),
             yarp::os::Vocab::decode(img->getPixelCode()).c_str() );
