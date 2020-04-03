@@ -46,8 +46,6 @@ bool DepthImageConverter::create(const yarp::os::Property& options)
 {
     min = 0.2;
     max = 10.0;
-    inMatrix = nullptr;
-    outMatrix = nullptr;
     outImg.setPixelCode(VOCAB_PIXEL_MONO);
     return true;
 }
@@ -86,14 +84,13 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
 
 yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
 {
-    auto* img = thing.cast_as<Image>();
-    inMatrix = reinterpret_cast<float **> (img->getRawImage());
+    yarp::sig::Image* img = thing.cast_as<Image>();
 
     outImg.setPixelCode(VOCAB_PIXEL_RGB);
     outImg.setPixelSize(3);
     outImg.resize(img->width(), img->height());
-
     outImg.zero();
+
     auto* inPixels = reinterpret_cast<float *> (img->getRawImage());
     unsigned char *outPixels = outImg.getRawImage();
     for(size_t h=0; h<img->height(); h++)

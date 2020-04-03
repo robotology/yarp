@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_CARRIER_DEPTHIMAGE2_CONVERTER_H
-#define YARP_CARRIER_DEPTHIMAGE2_CONVERTER_H
+#ifndef YARP_CARRIER_SEGMENTATION_CONVERTER_H
+#define YARP_CARRIER_SEGMENTATION_CONVERTER_H
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Things.h>
@@ -15,9 +15,16 @@
 #include <yarp/sig/Image.h>
 
 //example usage:
-//yarp connect /grabber/depth:o /yarpview/img:i tcp+recv.portmonitor+type.dll+file.depthimage2
+//yarp connect /segmentationimage:o /yarpview/img:i tcp+recv.portmonitor+type.dll+file.segmentationimage
 
-class DepthImageConverter : public yarp::os::MonitorObject
+struct rgbColor
+{
+    char r;
+    char g;
+    char b;
+};
+
+class SegmentationImageConverter : public yarp::os::MonitorObject
 {
 public:
     bool create(const yarp::os::Property& options) override;
@@ -30,11 +37,11 @@ public:
     yarp::os::Things& update(yarp::os::Things& thing) override;
 
 private:
-
-    double min, max;
+    int max_colors;
     yarp::os::Bottle bt;
     yarp::os::Things th;
     yarp::sig::FlexImage outImg;
+    std::map<int, rgbColor> colormap;
 };
 
-#endif  // YARP_CARRIER_DEPTHIMAGE2_CONVERTER_H
+#endif  // YARP_CARRIER_SEGMENTATION_CONVERTER_H
