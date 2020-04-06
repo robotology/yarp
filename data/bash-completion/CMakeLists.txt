@@ -5,5 +5,5 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_install(FILES yarp
-             DESTINATION ${CMAKE_INSTALL_DATADIR}/bash-completion/completion
+             DESTINATION ${CMAKE_INSTALL_DATADIR}/bash-completion/completions
              COMPONENT yarp-data)
