@@ -879,18 +879,13 @@ matrix:
 
     - stage: test-long
       <<: *osx_build_template
-      name: "Standard build (osx, xcode9.4, clang) - installation, examples, bindings and failing tests disabled"
+      name: "Standard build (osx, xcode11.3, clang) - installation, examples, bindings and failing tests disabled"
+      osx_image: xcode11.3
 
     - stage: test-long
       <<: *osx_build_template
-      name: "Standard build with Xcode (osx, xcode9.4, clang) - installation, examples, bindings and failing tests disabled"
-      env:
-        - TRAVIS_CMAKE_GENERATOR="Xcode"
-
-    - stage: test-long
-      <<: *osx_build_template
-      name: "Standard build with Xcode (osx, xcode10.2, clang) - installation, examples, bindings and failing tests disabled"
-      osx_image: xcode10.2
+      name: "Standard build with Xcode (osx, xcode11.3, clang) - installation, examples, bindings and failing tests disabled"
+      osx_image: xcode11.3
       env:
         - TRAVIS_CMAKE_GENERATOR="Xcode"
 
