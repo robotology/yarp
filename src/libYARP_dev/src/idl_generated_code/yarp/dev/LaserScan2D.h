@@ -45,7 +45,7 @@ public:
      */
     double range_max;
     /**
-     * the scan data, measured in [m]. The anglular increment of each ray is obtained by (angle_max-angle_min)/num_of_elements. Invalid data are represented as std::inf.
+     * the scan data, measured in [m]. The angular increment of each ray is obtained by (angle_max-angle_min)/num_of_elements. Invalid data are represented as std::inf.
      */
     yarp::sig::Vector scans;
     std::int32_t status;
