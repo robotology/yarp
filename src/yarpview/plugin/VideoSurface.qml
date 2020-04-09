@@ -41,8 +41,9 @@ Rectangle {
     signal changeWindowSize(int w, int h)
     signal synchRate(bool check);
     signal autosize(bool check);
-    signal setName(string name)
-
+    signal setName(string name);
+    signal saveSetClosed(bool check);
+    signal saveSingleClosed(bool check);
 
     /*********Connections*********/
     Connections{
@@ -365,6 +366,10 @@ Rectangle {
         signal stopSavingFrameSet()
         signal setFileName(url fileName)
 
+        onClosing: {
+            saveSetClosed(false);
+        }
+
         function save(){
             saveFrameSet()
         }
@@ -450,6 +455,10 @@ Rectangle {
 
         signal saveFrame()
         signal setFileName(url fileName)
+
+        onClosing: {
+            saveSingleClosed(false);
+        }
 
         function save(){
             saveFrame()
