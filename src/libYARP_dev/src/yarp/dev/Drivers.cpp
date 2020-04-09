@@ -521,20 +521,33 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     Terminee *terminee = nullptr;
     if (dd.isValid()) {
         Value *v;
-        std::string s("/yarpdev/quit");
-        if (options.check("device", v)) {
-            if (v->isString()) {
-                s = "";
-                s += "/";
-                s += v->toString();
-                s += "/quit";
-            }
-        }
+        std::string name;
         if (options.check("name", v)) {
-            s = "";
-            s += v->toString();
-            s += "/quit";
+            name = v->toString();
+        } else if (options.check("device", v)) {
+            if (v->isString()) {
+                auto device_name = v->toString();
+                name = dd.getDefaultValue((device_name + ".name").c_str()).toString();
+                if (name.empty()) {
+                    auto options = dd.getOptions();
+                    for (size_t i = 0; i < options.size(); ++i) {
+                        auto opt = options.get(i).toString();
+                        if (opt.length() > 5 && opt.compare(opt.length() - 5, 5, ".name") == 0) { // C++20 opt.ends_with(".name")
+                            yWarning("%s", opt.c_str());
+                            name = dd.getDefaultValue(opt.c_str()).toString();
+                            break;
+                        }
+                    }
+                }
+                if (name.empty()) {
+                    name = v->toString();
+                }
+            }
+        } else {
+            name = "/yarpdev";
         }
+        std::string s = name + "/quit";
+
         if (s.find('=') == std::string::npos &&
             s.find('@') == std::string::npos) {
             terminee = new Terminee(s.c_str());
