@@ -48,6 +48,22 @@ MenuBar {
             autosizeItem.checked = false
         }
     }
+
+    // NB: This is not the best solution but the fastest one.
+    /*!
+      \brief Changes the "saveSingle" menu checked state
+      \param checked Bollean: Whether or not the menu item has to be checked
+      */
+    function saveSingleChecked(checked){
+        saveSingle.checked = checked;
+    }
+    /*!
+      \brief Changes the "saveSet" menu checked state
+      \param checked Bollean: Whether or not the menu item has to be checked
+      */
+    function saveSetChecked(checked){
+        saveSet.checked = checked;
+    }
     
     Menu {
 
