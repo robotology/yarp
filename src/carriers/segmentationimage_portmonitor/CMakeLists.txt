@@ -5,17 +5,17 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(segmentationimage TYPE SegmentationImageConverter
-                               INCLUDE SegmentationImage.h
-                               CATEGORY portmonitor
-                               DEPENDS "ENABLE_yarpcar_portmonitor")
+                                      INCLUDE SegmentationImage.h
+                                      CATEGORY portmonitor
+                                      DEPENDS "ENABLE_yarpcar_portmonitor")
 
 if(NOT SKIP_segmentationimage)
   yarp_add_plugin(yarp_pm_segmentationimage)
 
   target_sources(yarp_pm_segmentationimage PRIVATE SegmentationImage.cpp
-                                            SegmentationImage.h)
+                                                   SegmentationImage.h)
   target_link_libraries(yarp_pm_segmentationimage PRIVATE YARP::YARP_os
-                                                   YARP::YARP_sig)
+                                                          YARP::YARP_sig)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig)
 

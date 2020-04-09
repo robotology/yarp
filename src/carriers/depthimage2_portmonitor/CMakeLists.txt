@@ -5,17 +5,17 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 yarp_prepare_plugin(depthimage2 TYPE DepthImageConverter
-                               INCLUDE DepthImage2.h
-                               CATEGORY portmonitor
-                               DEPENDS "ENABLE_yarpcar_portmonitor")
+                                INCLUDE DepthImage2.h
+                                CATEGORY portmonitor
+                                DEPENDS "ENABLE_yarpcar_portmonitor")
 
 if(NOT SKIP_depthimage2)
   yarp_add_plugin(yarp_pm_depthimage2)
 
   target_sources(yarp_pm_depthimage2 PRIVATE DepthImage2.cpp
-                                            DepthImage2.h)
+                                             DepthImage2.h)
   target_link_libraries(yarp_pm_depthimage2 PRIVATE YARP::YARP_os
-                                                   YARP::YARP_sig)
+                                                    YARP::YARP_sig)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig)
 
