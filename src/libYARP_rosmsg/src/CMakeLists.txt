@@ -6,38 +6,7 @@
 
 project(YARP_rosmsg)
 
-include(YarpIDL)
-
-# * yarpidl_rosmsg depends on YARP_init. This means that on static builds the
-#   tool for re-generating the files depends on the generated files (yes, this
-#   is madness). For now the only way to fix this is to use pre-generated files.
-# * For cross-compiling, generating the files at build time could be an issue,
-#   hence use pre-generated files.
-# * Finally if ALLOW_IDL_GENERATION is enabled, we want to re-generate the
-#   pre-generated files.
-macro(_yarp_choose_idl _prefix)
-  unset(${_prefix}_GEN_FILES)
-  if(NOT "${ARGN}" STREQUAL "")
-    if(BUILD_SHARED_LIBS AND
-       NOT CMAKE_CROSSCOMPILING AND
-       NOT ALLOW_IDL_GENERATION AND
-       YARP_COMPILE_EXECUTABLES)
-      yarp_add_idl(${_prefix}_GEN_FILES
-                   ${ARGN})
-      set(${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS "${YARP_ADD_IDL_INCLUDE_DIR}")
-    else()
-      foreach(_msg ${ARGN})
-        yarp_idl_to_dir(INPUT_FILES ${_msg}
-                        OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                        SOURCES_VAR ${_prefix}_GEN_SRCS
-                        HEADERS_VAR ${_prefix}_GEN_HDRS
-                        INCLUDE_DIRS_VAR ${_prefix}_BUILD_INTERFACE_INCLUDE_DIRS
-                        PLACEMENT MERGED)
-        set(${_prefix}_GEN_FILES ${${_prefix}_GEN_SRCS} ${${_prefix}_GEN_HDRS})
-      endforeach()
-    endif()
-  endif()
-endmacro()
+include(YarpChooseIDL)
 
 # yarpRosHelper.h is used by several devices
 # For now in impl since it might be removed in the future
@@ -64,9 +33,9 @@ add_dependencies(YARP_rosmsg YARP_rosmsg_gen_all)
 
 
 # ROS native types
-_yarp_choose_idl(native_MSG
-                 time
-                 duration)
+yarp_choose_idl(native_MSG
+                time
+                duration)
 
 add_custom_target(YARP_rosmsg_gen_native DEPENDS ${native_MSG_GEN_FILES})
 set_property(TARGET YARP_rosmsg_gen_native PROPERTY FOLDER "Libraries/YARP_rosmsg")
@@ -112,9 +81,8 @@ foreach(_pkg ${ROS_MSG_PACKAGES})
                 PREFIX "${_pkg} .srv Files"
                 FILES ${${_pkg}_SRV_FILES})
 
-  # Call yarp_add_idl or yarp_idl_to_dir
-  _yarp_choose_idl(${_pkg}_MSG ${${_pkg}_MSG_FILES})
-  _yarp_choose_idl(${_pkg}_SRV ${${_pkg}_SRV_FILES})
+  yarp_choose_idl(${_pkg}_MSG ${${_pkg}_MSG_FILES})
+  yarp_choose_idl(${_pkg}_SRV ${${_pkg}_SRV_FILES})
 
   # Add custom target and set it as YARP_rosmsg_gen_all dependency
   add_custom_target(YARP_rosmsg_gen_${_pkg} DEPENDS ${${_pkg}_MSG_GEN_FILES}

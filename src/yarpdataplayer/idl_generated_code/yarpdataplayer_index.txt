@@ -1,2 +1,2 @@
-include/yarpdataplayer_IDL.h
-src/yarpdataplayer_IDL.cpp
+yarpdataplayer_IDL.h
+yarpdataplayer_IDL.cpp

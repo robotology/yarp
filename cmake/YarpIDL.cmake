@@ -387,7 +387,7 @@ endfunction()
 
 # Internal function.
 # Calculate a list of sources generated from a .thrift file
-function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_hdrs_var _include_prefix _no_namespace_prefix)
+function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_hdrs_var)
   set(gen_srcs)
   set(gen_hdrs)
 
@@ -403,11 +403,11 @@ function(_YARP_IDL_THRIFT_TO_FILE_LIST file path basename ext gen_srcs_var gen_h
   string(REGEX MATCH "namespace[ \t\n]+yarp[ \t\n]+([^ \t\n]+)" _unused ${file_content})
   string(REPLACE "." "/" namespace_dir "${CMAKE_MATCH_1}")
 
-  if(NOT _include_prefix)
+  if(NOT YARP_ADD_IDL_THRIFT_INCLUDE_PREFIX)
     set(path)
   endif()
 
-  if(_no_namespace_prefix)
+  if(YARP_ADD_IDL_THRIFT_NO_NAMESPACE_PREFIX)
     set(namespace_dir)
   endif()
 
@@ -498,6 +498,15 @@ function(YARP_ADD_IDL var)
   unset(${var})
   unset(include_dirs)
 
+  # Ensure that these 2 variables are true when not defined, in order to be
+  # compatible with the original behaviour
+  if (NOT DEFINED YARP_ADD_IDL_THRIFT_INCLUDE_PREFIX)
+    set(YARP_ADD_IDL_THRIFT_INCLUDE_PREFIX 1)
+  endif()
+  if (NOT DEFINED YARP_ADD_IDL_THRIFT_NO_NAMESPACE_PREFIX)
+    set(YARP_ADD_IDL_THRIFT_NO_NAMESPACE_PREFIX 1)
+  endif()
+
   set(_files ${ARGN})
   foreach(file ${_files})
 
@@ -517,7 +526,7 @@ function(YARP_ADD_IDL var)
     set(native 0)
     if("${ext}" STREQUAL ".thrift")
       set(family thrift)
-      _yarp_idl_thrift_to_file_list("${file}" "${path}" "${basename}" ${ext} gen_srcs gen_hdrs 1 1)
+      _yarp_idl_thrift_to_file_list("${file}" "${path}" "${basename}" ${ext} gen_srcs gen_hdrs)
     elseif("${ext}" MATCHES "^\\.(msg|srv)$")
       set(family rosmsg)
       get_filename_component(pkg "${path}" NAME)
@@ -554,14 +563,22 @@ function(YARP_ADD_IDL var)
     string(REGEX REPLACE "/(/|$)" "\\1" out_dir "${out_dir}")
     file(MAKE_DIRECTORY "${out_dir}")
 
+    set(_verbose 0)
+    if(YARPIDL_rosmsg_VERBOSE)
+      set(_verbose 1)
+    endif()
+
+    if("${family}" STREQUAL "thrift")
+      _yarp_idl_thrift_args(YARP_ADD_IDL "${out_dir}" ${_verbose} _args)
+    else()
+      _yarp_idl_rosmsg_args(YARP_ADD_IDL "${out_dir}" ${_verbose} _args)
+    endif()
+
     # Prepare main command
     if("${family}" STREQUAL "thrift")
-      set(cmd ${YARPIDL_thrift_COMMAND} --gen yarp:include_prefix,no_namespace_prefix --I "${CMAKE_CURRENT_SOURCE_DIR}" --out "${out_dir}" "${file}")
+      set(cmd ${YARPIDL_thrift_COMMAND} ${_args} "${file}")
     else()
-      if(YARPIDL_rosmsg_VERBOSE)
-        set(_verbose --verbose)
-      endif()
-      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-ros true --no-cache --no-index ${_verbose} --out "${out_dir}" "${file}")
+      set(cmd ${YARPIDL_rosmsg_COMMAND} --no-index ${_args} "${file}")
     endif()
 
     # Populate output variable

@@ -20,15 +20,10 @@ if(YARP_COMPILE_yarprobotinterface)
                                                    YARP::YARP_init
                                                    YARP::YARP_robotinterface)
 
-  include(YarpIDL)
-  yarp_idl_to_dir(INPUT_FILES yarprobotinterface.thrift
-                  OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                  SOURCES_VAR yarprobotinterface_IDLS_SRCS
-                  HEADERS_VAR yarprobotinterface_IDLS_HDRS
-                  INCLUDE_DIRS_VAR yarprobotinterface_IDLS_INCLUDE_DIRS)
-  target_include_directories(yarprobotinterface PRIVATE ${yarprobotinterface_IDLS_INCLUDE_DIRS})
-  target_sources(yarprobotinterface PRIVATE ${yarprobotinterface_IDLS_SRCS}
-                                            ${yarprobotinterface_IDLS_HDRS})
+  include(YarpChooseIDL)
+  yarp_choose_idl(yarprobotinterface_IDLS yarprobotinterface.thrift)
+  target_include_directories(yarprobotinterface PRIVATE ${yarprobotinterface_IDLS_BUILD_INTERFACE_INCLUDE_DIRS})
+  target_sources(yarprobotinterface PRIVATE ${yarprobotinterface_IDLS_GEN_FILES})
 
   install(TARGETS yarprobotinterface
           COMPONENT utilities

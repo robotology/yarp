@@ -454,7 +454,7 @@ bool LaserScan2D::Editor::read(yarp::os::ConnectionReader& connection)
                 if (!writer.writeString("yarp::sig::Vector scans")) {
                     return false;
                 }
-                if (!writer.writeString("the scan data, measured in [m]. The anglular increment of each ray is obtained by (angle_max-angle_min)/num_of_elements. Invalid data are represented as std::inf.")) {
+                if (!writer.writeString("the scan data, measured in [m]. The angular increment of each ray is obtained by (angle_max-angle_min)/num_of_elements. Invalid data are represented as std::inf.")) {
                     return false;
                 }
             }

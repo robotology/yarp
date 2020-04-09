@@ -12,11 +12,15 @@ yarp_prepare_plugin(fakeBattery
 
 if(NOT SKIP_fakeBattery)
   yarp_add_plugin(yarp_fakeBattery)
-  yarp_add_idl(IDL_GEN_FILES FakeBatteryService.thrift)
+
+  include(YarpChooseIDL)
+  yarp_choose_idl(IDL FakeBatteryService.thrift)
 
   target_sources(yarp_fakeBattery PRIVATE fakeBattery.cpp
                                           fakeBattery.h
                                           ${IDL_GEN_FILES})
+
+  target_include_directories(yarp_fakeBattery PRIVATE ${IDL_BUILD_INTERFACE_INCLUDE_DIRS})
 
   target_link_libraries(yarp_fakeBattery PRIVATE YARP::YARP_os
                                                  YARP::YARP_sig
