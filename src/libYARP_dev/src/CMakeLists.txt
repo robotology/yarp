@@ -211,7 +211,7 @@ if(TARGET YARP::YARP_math)
 endif()
 
 # Handle the YARP thrift messages
-include(YarpIDL)
+include(YarpChooseIDL)
 
 set(YARP_dev_IDL idl/stateExt.thrift
                  idl/audioBufferSizeData.thrift
@@ -225,20 +225,18 @@ if(TARGET YARP::YARP_math)
                            idl/Map2DPathData.thrift)
 endif()
 
-yarp_idl_to_dir(INPUT_FILES ${YARP_dev_IDL}
-                OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
-                SOURCES_VAR YARP_dev_idl_SRCS
-                HEADERS_VAR YARP_dev_idl_all_HDRS
-                INCLUDE_DIRS_VAR YARP_dev_idl_INCLUDE_DIRS
-                PLACEMENT MERGED)
+yarp_choose_idl(YARP_dev_idl ${YARP_dev_IDL})
 
-list(APPEND YARP_dev_SRCS ${YARP_dev_idl_SRCS})
 unset(YARP_dev_idl_HDRS)
-foreach(_hdr IN LISTS YARP_dev_idl_all_HDRS)
-  if("${_hdr}" MATCHES "yarp/dev" AND NOT "${_hdr}" MATCHES "yarp/dev/impl")
-    list(APPEND YARP_dev_idl_HDRS "${_hdr}")
-  else()
-    list(APPEND YARP_dev_idl_IMPL_HDRS ${_hdr})
+unset(YARP_dev_idl_IMPL_HDRS)
+foreach(_f IN LISTS YARP_dev_idl_GEN_FILES)
+  message("-> ${_f}")
+  if("${_f}" MATCHES "\\.h$")
+    if ("${_f}" MATCHES "yarp/dev" AND NOT "${_f}" MATCHES "yarp/dev/impl")
+      list(APPEND YARP_dev_idl_HDRS "${_f}")
+    else()
+      list(APPEND YARP_dev_idl_IMPL_HDRS ${_f})
+    endif()
   endif()
 endforeach()
 
@@ -249,24 +247,24 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Header Files"
              FILES ${YARP_dev_HDRS}
                    ${YARP_dev_IMPL_HDRS})
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/idl_generated_code"
+source_group(TREE "${YARP_dev_idl_BUILD_INTERFACE_INCLUDE_DIRS}"
              PREFIX "Generated Files"
-             FILES ${YARP_dev_idl_SRCS}
-                   ${YARP_dev_idl_HDRS}
-                   ${YARP_dev_idl_IMPL_HDRS})
+             FILES ${YARP_dev_idl_GEN_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Devices Files"
              FILES ${YARP_dev_devices_SRCS}
                    ${YARP_dev_devices_HDRS})
 
+
 target_sources(YARP_dev PRIVATE ${YARP_dev_SRCS}
                                 ${YARP_dev_HDRS}
                                 ${YARP_dev_IMPL_HDRS}
                                 ${YARP_dev_devices_SRCS}
-                                ${YARP_dev_devices_HDRS})
+                                ${YARP_dev_devices_HDRS}
+                                ${YARP_dev_idl_GEN_FILES})
 
 target_include_directories(YARP_dev PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-                                           $<BUILD_INTERFACE:${YARP_dev_idl_INCLUDE_DIRS}>
+                                           $<BUILD_INTERFACE:${YARP_dev_idl_BUILD_INTERFACE_INCLUDE_DIRS}>
                                            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_compile_features(YARP_dev PUBLIC cxx_std_14)
 
