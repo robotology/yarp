@@ -23,7 +23,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-TEST_CASE("OS::BottleTest", "[yarp::os]")
+TEST_CASE("os::BottleTest", "[yarp::os]")
 {
     SECTION("testing string representation")
     {

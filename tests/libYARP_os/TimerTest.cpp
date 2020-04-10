@@ -119,7 +119,7 @@ static void apiTest(bool multiThread)
 }
 
 
-TEST_CASE("OS::TimerTest", "[yarp::os]")
+TEST_CASE("os::TimerTest", "[yarp::os]")
 {
 #if defined(DISABLE_FAILING_TESTS)
     YARP_SKIP_TEST("Skipping failing tests")

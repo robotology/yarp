@@ -20,7 +20,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-TEST_CASE("OS::PortablePairTest", "[yarp::os]")
+TEST_CASE("os::PortablePairTest", "[yarp::os]")
 {
 
     Network::setLocalMode(true);

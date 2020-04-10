@@ -36,7 +36,7 @@ void checkCompanion(bool fake) {
     NetworkBase::setLocalMode(false);
 }
 
-TEST_CASE("OS::impl::NameServerTest", "[yarp::os][yarp::os::impl]")
+TEST_CASE("os::impl::NameServerTest", "[yarp::os][yarp::os::impl]")
 {
     SECTION( "check register")
     {

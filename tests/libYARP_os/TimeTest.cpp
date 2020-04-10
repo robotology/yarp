@@ -16,7 +16,7 @@
 
 using namespace yarp::os;
 
-TEST_CASE("OS::TimeTest", "[yarp::os]")
+TEST_CASE("os::TimeTest", "[yarp::os]")
 {
     SECTION("testing delay (there will be a short pause)...")
     {

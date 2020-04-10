@@ -14,7 +14,7 @@
 
 using namespace yarp::os;
 
-TEST_CASE("OS::StringInputStreamTest", "[yarp::os]")
+TEST_CASE("os::StringInputStreamTest", "[yarp::os]")
 {
     SECTION("test reading")
     {

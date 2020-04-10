@@ -14,7 +14,7 @@
 
 using namespace yarp::os;
 
-TEST_CASE("OS::ElectionTest", "[yarp::os]")
+TEST_CASE("os::ElectionTest", "[yarp::os]")
 {
 
     SECTION("testing the basics of elections")

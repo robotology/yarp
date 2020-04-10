@@ -26,7 +26,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-namespace harness_OS {
+namespace harness_os {
 namespace periodicThread {
 
 class MyClock : public Clock {
@@ -262,12 +262,12 @@ double test(double period, double delay)
     return estPeriod;
 }
 
-} // namespace harness_OS
+} // namespace harness_os
 } // namespace periodicThread
 
-using namespace harness_OS::periodicThread;
+using namespace harness_os::periodicThread;
 
-TEST_CASE("OS::PeriodicThreadTest", "[yarp::os]")
+TEST_CASE("os::PeriodicThreadTest", "[yarp::os]")
 {
 #if defined(DISABLE_FAILING_TESTS)
     YARP_SKIP_TEST("Skipping failing tests")

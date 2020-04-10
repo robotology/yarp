@@ -39,7 +39,7 @@ public:
     }
 };
 
-TEST_CASE("OS::SemaphoreTest", "[yarp::os]")
+TEST_CASE("os::SemaphoreTest", "[yarp::os]")
 {
     SECTION("basic semaphore sanity check")
     {

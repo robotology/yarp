@@ -31,7 +31,7 @@ static void printStringToFile(const char * filename, const char * filecontent)
     fout = nullptr;
 }
 
-TEST_CASE("OS::PropertyTest", "[yarp::os]")
+TEST_CASE("os::PropertyTest", "[yarp::os]")
 {
     SECTION("checking puts and gets")
     {

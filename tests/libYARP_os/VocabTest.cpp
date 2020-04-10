@@ -15,7 +15,7 @@
 
 using namespace yarp::os;
 
-TEST_CASE("OS::VocabTest", "[yarp::os]")
+TEST_CASE("os::VocabTest", "[yarp::os]")
 {
 
     SECTION("checking vocabulary conversions")

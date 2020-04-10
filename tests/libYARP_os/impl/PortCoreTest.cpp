@@ -164,7 +164,7 @@ public:
     }
 };
 
-TEST_CASE("OS::impl::PortCoreTest", "[yarp::os][yarp::os::impl]")
+TEST_CASE("os::impl::PortCoreTest", "[yarp::os][yarp::os::impl]")
 {
     Network::setLocalMode(true);
     PortCoreTest thePortCoreTest;

@@ -36,7 +36,7 @@ public:
     }
 };
 
-TEST_CASE("OS::PortReaderBufferTest", "[yarp::os]")
+TEST_CASE("os::PortReaderBufferTest", "[yarp::os]")
 {
 #if defined(DISABLE_FAILING_TESTS)
     YARP_SKIP_TEST("Skipping failing tests")

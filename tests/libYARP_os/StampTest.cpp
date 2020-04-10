@@ -60,7 +60,7 @@ static void checkEnvelope(const char *mode)
 }
 
 
-TEST_CASE("OS::StampTest", "[yarp::os]")
+TEST_CASE("os::StampTest", "[yarp::os]")
 {
     Network::setLocalMode(true);
 

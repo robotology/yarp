@@ -48,7 +48,7 @@ public:
     }
 };
 
-TEST_CASE("OS::RFModuleTest", "[yarp::os]")
+TEST_CASE("os::RFModuleTest", "[yarp::os]")
 {
     Network::setLocalMode(true);
 

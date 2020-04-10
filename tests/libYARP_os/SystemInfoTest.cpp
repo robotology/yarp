@@ -15,7 +15,7 @@
 
 using namespace yarp::os;
 
-TEST_CASE("OS::SystemInfoTest", "[yarp::os]")
+TEST_CASE("os::SystemInfoTest", "[yarp::os]")
 {
     std::ostringstream str;
 

@@ -14,7 +14,7 @@
 
 using namespace yarp::os;
 
-TEST_CASE("OS::RouteTest", "[yarp::os]")
+TEST_CASE("os::RouteTest", "[yarp::os]")
 {
     SECTION("checking constructor with no parameters")
     {

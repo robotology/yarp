@@ -20,7 +20,7 @@
 
 using namespace yarp::os;
 
-TEST_CASE("OS::NetTypeTest", "[yarp::os]")
+TEST_CASE("os::NetTypeTest", "[yarp::os]")
 {
 
     SECTION("checking cyclic redundancy check is plausible")

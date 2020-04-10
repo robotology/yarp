@@ -11,7 +11,7 @@
 #include <catch.hpp>
 #include <harness.h>
 
-TEST_CASE("OS::LogStreamTest", "[yarp::os]")
+TEST_CASE("os::LogStreamTest", "[yarp::os]")
 {
 
     int i = 13;

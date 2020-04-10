@@ -314,7 +314,7 @@ static void breakDownTestArea()
     restoreEnvironment();
 }
 
-TEST_CASE("OS::ResourceFinderTest", "[yarp::os]")
+TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
 {
     SECTION("testing the basics of RF...")
     {

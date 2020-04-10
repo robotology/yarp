@@ -59,7 +59,7 @@ static bool waitConnect(const std::string& n1,
     return false;
 }
 
-TEST_CASE("OS::NodeTest", "[yarp::os]")
+TEST_CASE("os::NodeTest", "[yarp::os]")
 {
     NetworkBase::setLocalMode(true);
 
