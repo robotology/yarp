@@ -121,7 +121,12 @@ static void apiTest(bool multiThread)
 
 TEST_CASE("OS::TimerTest", "[yarp::os]")
 {
-    //please note that the return values of the callbacks does not rappresent the result of the tests but simply keeps the timer alive..
+#if defined(DISABLE_FAILING_TESTS)
+    YARP_SKIP_TEST("Skipping failing tests")
+#endif
+
+    //please note that the return values of the callbacks does not rappresent
+    // the result of the tests but simply keeps the timer alive..
 
 #if defined(ENABLE_BROKEN_TESTS)
     //fails with valgrind for valgrind slowing down the system
