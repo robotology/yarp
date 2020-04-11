@@ -11,7 +11,7 @@
 #include <catch.hpp>
 #include <harness.h>
 
-TEST_CASE("OS::LogTest", "[yarp::os]")
+TEST_CASE("os::LogTest", "[yarp::os]")
 {
     int i = 42;
 

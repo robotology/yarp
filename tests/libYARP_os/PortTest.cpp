@@ -338,7 +338,7 @@ static int safePort()
     return Network::getDefaultPortRange() + 100;
 }
 
-TEST_CASE("OS::PortTest", "[yarp::os]")
+TEST_CASE("os::PortTest", "[yarp::os]")
 {
     NetworkBase::setLocalMode(true);
 

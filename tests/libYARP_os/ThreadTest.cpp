@@ -252,7 +252,7 @@ public:
 };
 } // namespace
 
-TEST_CASE("OS::ThreadTest", "[yarp::os]")
+TEST_CASE("os::ThreadTest", "[yarp::os]")
 {
     SECTION("testing isRunning function")
     {

@@ -17,7 +17,7 @@
 using namespace yarp::os;
 
 
-TEST_CASE("OS::ValueTest", "[yarp::os]")
+TEST_CASE("os::ValueTest", "[yarp::os]")
 {
     SECTION("Check value copying")
     {

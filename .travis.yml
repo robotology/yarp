@@ -115,6 +115,8 @@ git:
   export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DENABLE_yarpmod_opencv_grabber:BOOL=OFF"
   # Avoid building Qt5 guis twice on macOS.
   export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_DISABLE_OSX_BUNDLES:BOOL=ON"
+  # Disable system SQLite (workaround for #2247)
+  export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_USE_SYSTEM_SQLite:BOOL=OFF"
 
 .export_cmake_options_skip_ace_cmd_definition: &export_cmake_options_skip_ace_cmd |-
   # export_cmake_options_skip_ace_cmd_definition

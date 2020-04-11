@@ -29,7 +29,7 @@ static bool waitForOutput(Contactable& c, double timeout) {
 }
 
 
-TEST_CASE("OS::PublisherTest", "[yarp::os]")
+TEST_CASE("os::PublisherTest", "[yarp::os]")
 {
     Network::setLocalMode(true);
 

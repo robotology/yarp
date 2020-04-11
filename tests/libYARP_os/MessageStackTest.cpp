@@ -43,7 +43,7 @@ public:
     }
 };
 
-TEST_CASE("OS::MessageStackTest", "[yarp::os]")
+TEST_CASE("os::MessageStackTest", "[yarp::os]")
 {
     SECTION("check basics of stack operation")
     {

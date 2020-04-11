@@ -85,6 +85,12 @@ ApplicationWindow {
         onSetName:{
             statusBar.setName(name)
         }
+        onSaveSetClosed:{
+            menu.saveSetChecked(check);
+        }
+        onSaveSingleClosed:{
+            menu.saveSingleChecked(check);
+        }
     }
 
     Connections{

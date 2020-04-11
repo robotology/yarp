@@ -16,7 +16,7 @@
 
 using namespace yarp::os;
 
-TEST_CASE("OS::StringOutputStreamTest", "[yarp::os]")
+TEST_CASE("os::StringOutputStreamTest", "[yarp::os]")
 {
     SECTION("testing writing")
     {

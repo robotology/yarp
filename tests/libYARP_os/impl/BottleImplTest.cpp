@@ -19,7 +19,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-TEST_CASE("OS::BottleImplTest", "[yarp::os::impl]")
+TEST_CASE("os::BottleImplTest", "[yarp::os::impl]")
 {
     SECTION("testing binary representation")
     {

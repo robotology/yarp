@@ -13,7 +13,7 @@
 #include <harness.h>
 
 using namespace yarp::os;
-TEST_CASE("OS::ContactTest", "[yarp::os]")
+TEST_CASE("os::ContactTest", "[yarp::os]")
 {
     SECTION("checking string representation")
     {

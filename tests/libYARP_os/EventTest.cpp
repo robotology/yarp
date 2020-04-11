@@ -60,7 +60,7 @@ public:
 
 
 
-TEST_CASE("OS::EventTest", "[yarp::os]")
+TEST_CASE("os::EventTest", "[yarp::os]")
 {
 
     SECTION("basic event sanity check")

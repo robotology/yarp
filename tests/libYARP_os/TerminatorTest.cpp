@@ -17,7 +17,7 @@
 
 using namespace yarp::os;
 
-TEST_CASE("OS::TerminatorTest", "[yarp::os]")
+TEST_CASE("os::TerminatorTest", "[yarp::os]")
 {
     Network::setLocalMode(true);
     SECTION("checking terminator connection")
