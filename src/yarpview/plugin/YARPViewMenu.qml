@@ -64,7 +64,7 @@ MenuBar {
     function saveSetChecked(checked){
         saveSet.checked = checked;
     }
-    
+
     Menu {
 
         title: "File"
