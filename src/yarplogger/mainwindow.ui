@@ -117,16 +117,7 @@
            <enum>QFrame::Raised</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="leftMargin">
-            <number>0</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
+           <property name="margin">
             <number>0</number>
            </property>
            <item>
@@ -428,7 +419,7 @@
             <string>Filter:</string>
            </property>
           </widget>
-          <widget class="QLineEdit" name="lineEdit_2">
+          <widget class="QLineEdit" name="filterLineEdit">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -501,7 +492,7 @@
      <x>0</x>
      <y>0</y>
      <width>1072</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -523,9 +514,22 @@
     </property>
     <addaction name="actionShow_YarprunTimestamps"/>
     <addaction name="actionShow_LocalTimestamps"/>
-    <addaction name="actionShow_Error_Level"/>
+    <addaction name="actionShow_System_Time"/>
+    <addaction name="actionShow_Network_Time"/>
+    <addaction name="actionShow_Log_Level"/>
+    <addaction name="actionShow_Filename"/>
+    <addaction name="actionShow_Line_Number"/>
+    <addaction name="actionShow_Function"/>
+    <addaction name="actionShow_Hostname"/>
+    <addaction name="actionShow_Pid"/>
+    <addaction name="actionShow_Cmd"/>
+    <addaction name="actionShow_Args"/>
+    <addaction name="actionShow_Thread_Id"/>
+    <addaction name="actionShow_Component"/>
+    <addaction name="separator"/>
     <addaction name="actionShow_Colors"/>
     <addaction name="actionShow_Grid"/>
+    <addaction name="separator"/>
     <addaction name="actionShow_Mute_Ports"/>
     <addaction name="separator"/>
     <addaction name="actionAdvanced"/>
@@ -612,6 +616,9 @@
    </property>
   </action>
   <action name="actionStop_Logger">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/images/stop.png</normaloff>:/images/stop.png</iconset>
@@ -620,7 +627,7 @@
     <string>Stop Logger</string>
    </property>
   </action>
-  <action name="actionShow_Error_Level">
+  <action name="actionShow_Log_Level">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -628,7 +635,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Error Level</string>
+    <string>Show Log Level</string>
    </property>
   </action>
   <action name="actionShow_Colors">
@@ -670,6 +677,9 @@
    </property>
   </action>
   <action name="actionRefresh">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/images/progress.png</normaloff>:/images/progress.png</iconset>
@@ -712,6 +722,97 @@
   <action name="actionReset_current_log_error_warning_counters">
    <property name="text">
     <string>Reset error/warning counters</string>
+   </property>
+  </action>
+  <action name="actionShow_Filename">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Filename</string>
+   </property>
+  </action>
+  <action name="actionShow_Line_Number">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Line Number</string>
+   </property>
+  </action>
+  <action name="actionShow_Function">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Function</string>
+   </property>
+  </action>
+  <action name="actionShow_Thread_Id">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Thread Id</string>
+   </property>
+  </action>
+  <action name="actionShow_Component">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Component</string>
+   </property>
+  </action>
+  <action name="actionShow_System_Time">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show System Time</string>
+   </property>
+  </action>
+  <action name="actionShow_Network_Time">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Network Time</string>
+   </property>
+  </action>
+  <action name="actionShow_Hostname">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Hostname</string>
+   </property>
+  </action>
+  <action name="actionShow_Pid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Pid</string>
+   </property>
+  </action>
+  <action name="actionShow_Cmd">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Cmd</string>
+   </property>
+  </action>
+  <action name="actionShow_Args">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Args</string>
    </property>
   </action>
  </widget>

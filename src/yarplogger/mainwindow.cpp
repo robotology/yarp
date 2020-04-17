@@ -92,17 +92,23 @@ void MainWindow::updateMain()
                 }
 
                 existing = true;
-                if (it->last_update==-1 && show_mute_ports_enabled==false) {model_yarprunports->removeRow(i);}
+                if (it->last_update==-1 && !ui->actionShow_Mute_Ports->isChecked()) {model_yarprunports->removeRow(i);}
                 break;
             }
         }
         if (existing == false)
         {
             QList<QStandardItem *> rowItems;
-            rowItems << new QStandardItem(it->ip_address.c_str()) << new QStandardItem(it->port_complete.c_str()) <<
-                        new QStandardItem(time_text) << new QStandardItem(logsize_text) <<
-                        new QStandardItem(logerrors_text) << new QStandardItem (logwarnings_text);
-            if (show_mute_ports_enabled || (!show_mute_ports_enabled && it->last_update!=-1)) {itemsRoot->appendRow(rowItems);}
+            rowItems << new QStandardItem(it->ip_address.c_str())
+                     << new QStandardItem(it->port_complete.c_str())
+                     << new QStandardItem(time_text)
+                     << new QStandardItem(logsize_text)
+                     << new QStandardItem(logerrors_text)
+                     << new QStandardItem (logwarnings_text);
+            if (ui->actionShow_Mute_Ports->isChecked() || it->last_update!=-1)
+            {
+                itemsRoot->appendRow(rowItems);
+            }
         }
 
 #elif TREE_MODEL
@@ -127,7 +133,9 @@ void MainWindow::updateMain()
                 if (level2_exists == false)
                 {
                     QList<QStandardItem *> rowItems;
-                    rowItems << new QStandardItem(it->port_prefix.c_str()) << new QStandardItem(it->port_complete.c_str()) << new QStandardItem(time_text);
+                    rowItems << new QStandardItem(it->port_prefix.c_str())
+                             << new QStandardItem(it->port_complete.c_str())
+                             << new QStandardItem(time_text);
                     item_level1->appendRow(rowItems);
                     break;
                 }
@@ -199,7 +207,7 @@ void MainWindow::on_enableLogTab_action()
     int model_row=index.row();
     if (model_row==-1)
     {
-        system_message->addMessage("on_clearLogTab_action error",MESSAGE_LEVEL_ERROR);
+        system_message->addMessage("on_clearLogTab_action error", MESSAGE_LEVEL_ERROR);
         return;
     }
     on_enableLogTab(model_row);
@@ -210,12 +218,14 @@ void MainWindow::on_clearLogTab(int model_row)
     QString logname = model_yarprunports->item(model_row,1)->text();
     theLogger->clear_messages_by_port_complete(logname.toStdString());
     for (int i=0; i<ui->logtabs->count(); i++)
+    {
         if (ui->logtabs->tabText(i) == logname)
-            {
-                auto* l = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-                if (l) l->clear_model_logs();
-                break;
-            }
+        {
+            auto* l = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+            if (l) l->clearLogModel();
+            break;
+        }
+    }
     QString message = logname + QString(" log cleared");
     system_message->addMessage(message);
 }
@@ -334,18 +344,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->yarprunTreeView, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ctxMenu(const QPoint &)));
 
-    QMenu *m=ui->menuFile;
-    m->actions().at(0)->setEnabled(true);
-    m->actions().at(1)->setEnabled(false);
-    m->actions().at(2)->setEnabled(false);
-
-    displayYarprunTimestamps=true;
-    displayLocalTimestamps=true;
-    displayErrorLevel=true;
-    displayGrid=true;
-    displayColors=true;
-    show_mute_ports_enabled=true;
-
     bool autostart = rf.check("start");
     if (autostart)
     {
@@ -382,16 +380,17 @@ void MainWindow::loadTextFile()
     */
 }
 
-void MainWindow::on_lineEdit_2_textChanged(const QString &arg1)
+void MainWindow::on_filterLineEdit_textChanged(const QString &text)
 {
+#if USE_FILTERS
     QString filter = "*";
-    filter.append(arg1);
+    filter.append(text);
     filter.append("*");
     QRegExp regExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard);
 
     auto* logtab = ui->logtabs->currentWidget()->findChild<LogTab*>("logtab");
-
     if (logtab) logtab->proxyModelSearch->setFilterRegExp(regExp);
+#endif
 }
 
 void MainWindow::on_logtabs_tabCloseRequested(int index)
@@ -423,11 +422,22 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &pre_index)
         auto* tab = new QTabWidget(this);
         auto* l= new QVBoxLayout(tab);
         LogTab* tmpLogTab = new LogTab(theLogger, system_message, tabname.toStdString(), this);
-        tmpLogTab->displayYarprunTimestamp(displayYarprunTimestamps);
-        tmpLogTab->displayLocalTimestamp(displayLocalTimestamps);
-        tmpLogTab->displayErrorLevel(displayErrorLevel);
-        tmpLogTab->displayGrid(displayGrid);
-        tmpLogTab->displayColors(displayColors);
+        tmpLogTab->displayYarprunTimestamp(ui->actionShow_YarprunTimestamps->isChecked());
+        tmpLogTab->displayLocalTimestamp(ui->actionShow_LocalTimestamps->isChecked());
+        tmpLogTab->displaySystemTime(ui->actionShow_System_Time->isChecked());
+        tmpLogTab->displayNetworkTime(ui->actionShow_Network_Time->isChecked());
+        tmpLogTab->displayLogLevel(ui->actionShow_Log_Level->isChecked());
+        tmpLogTab->displayFilename(ui->actionShow_Filename->isChecked());
+        tmpLogTab->displayLine(ui->actionShow_Line_Number->isChecked());
+        tmpLogTab->displayFunction(ui->actionShow_Function->isChecked());
+        tmpLogTab->displayHostname(ui->actionShow_Hostname->isChecked());
+        tmpLogTab->displayPid(ui->actionShow_Pid->isChecked());
+        tmpLogTab->displayCmd(ui->actionShow_Cmd->isChecked());
+        tmpLogTab->displayArgs(ui->actionShow_Args->isChecked());
+        tmpLogTab->displayThreadId(ui->actionShow_Thread_Id->isChecked());
+        tmpLogTab->displayComponent(ui->actionShow_Component->isChecked());
+        tmpLogTab->displayGrid(ui->actionShow_Grid->isChecked());
+        tmpLogTab->displayColors(ui->actionShow_Colors->isChecked());
         l->addWidget(tmpLogTab);
         tmpLogTab->setObjectName("logtab");
 
@@ -460,6 +470,7 @@ QString MainWindow::recomputeFilters()
 
 void MainWindow::apply_button_filters()
 {
+#if USE_FILTERS
     QRegExp regExp ("*", Qt::CaseInsensitive, QRegExp::RegExp);
     regExp.setPattern(recomputeFilters());
     for (int i=0; i<ui->logtabs->count(); i++)
@@ -467,9 +478,10 @@ void MainWindow::apply_button_filters()
         auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
         if (logtab) {
             logtab->proxyModelButtons->setFilterRegExp(regExp);
-            logtab->proxyModelButtons->setFilterKeyColumn(2);
+            logtab->proxyModelButtons->setFilterKeyColumn(LogModel::LOGLEVEL_COLUMN);
         }
     }
+#endif
 }
 
 void MainWindow::on_DisplayErrorEnable_toggled(bool checked)
@@ -502,35 +514,206 @@ void MainWindow::on_DisplayUnformattedEnable_toggled(bool checked)
     apply_button_filters();
 }
 
-void MainWindow::on_actionShow_YarprunTimestamps_toggled(bool arg1)
+void MainWindow::on_actionShow_YarprunTimestamps_toggled(bool checked)
 {
-    displayYarprunTimestamps = arg1;
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
         if (logtab)
         {
-            logtab->displayYarprunTimestamp(displayYarprunTimestamps);
+            logtab->displayYarprunTimestamp(checked);
         }
     }
 }
 
-void MainWindow::on_actionShow_LocalTimestamps_toggled(bool arg1)
+void MainWindow::on_actionShow_LocalTimestamps_toggled(bool checked)
 {
-    displayLocalTimestamps = arg1;
     for (int i=0; i<ui->logtabs->count(); i++)
     {
         auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
         if (logtab)
         {
-            logtab->displayLocalTimestamp(displayLocalTimestamps);
+            logtab->displayLocalTimestamp(checked);
         }
     }
+}
+
+void MainWindow::on_actionShow_System_Time_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displaySystemTime(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Network_Time_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayNetworkTime(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Log_Level_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayLogLevel(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Filename_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayFilename(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Line_Number_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayLine(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Function_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayFunction(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Hostname_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayHostname(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Pid_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayPid(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Cmd_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayCmd(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Args_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayArgs(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Thread_Id_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayThreadId(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Component_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayComponent(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Grid_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayGrid(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Colors_toggled(bool checked)
+{
+    for (int i=0; i<ui->logtabs->count(); i++)
+    {
+        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
+        if (logtab)
+        {
+            logtab->displayColors(checked);
+        }
+    }
+}
+
+void MainWindow::on_actionShow_Mute_Ports_toggled(bool checked)
+{
+    // FIXME Do something?
 }
 
 void MainWindow::on_actionAbout_QtYarpLogger_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://www.yarp.it/qtyarplogger.html"));
+    QDesktopServices::openUrl(QUrl("http://wiki.icub.org/yarpdoc/qtyarplogger.html"));
 }
 
 void MainWindow::on_actionSave_Log_triggered(bool checked)
@@ -562,70 +745,25 @@ void MainWindow::on_actionLoad_Log_triggered()
     }
 }
 
-void MainWindow::on_actionShow_Error_Level_toggled(bool arg1)
-{
-    displayErrorLevel = arg1;
-    for (int i=0; i<ui->logtabs->count(); i++)
-    {
-        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab)
-        {
-            logtab->displayErrorLevel(displayErrorLevel);
-        }
-    }
-}
-
-void MainWindow::on_actionShow_Colors_toggled(bool arg1)
-{
-    displayColors = arg1;
-    for (int i=0; i<ui->logtabs->count(); i++)
-    {
-        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab)
-        {
-            logtab->displayColors(displayColors);
-        }
-    }
-}
-
-void MainWindow::on_actionShow_Grid_toggled(bool arg1)
-{
-    displayGrid = arg1;
-    for (int i=0; i<ui->logtabs->count(); i++)
-    {
-        auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-        if (logtab)
-        {
-            logtab->displayGrid(displayGrid);
-        }
-    }
-}
-
 void MainWindow::on_actionAdvanced_triggered()
 {
     QDialog* advanced = new advanced_dialog(theLogger, this);
     advanced->show();
 }
 
-void MainWindow::on_actionShow_Mute_Ports_toggled(bool arg1)
-{
-    show_mute_ports_enabled = arg1;
-}
-
 void MainWindow::on_actionStart_Logger_triggered()
 {
     if (this->theLogger->start_logging())
     {
-        QMenu *m=ui->menuFile;
-        m->actions().at(0)->setEnabled(false);
-        m->actions().at(1)->setEnabled(true);
-        m->actions().at(2)->setEnabled(true);
+        ui->actionStart_Logger->setEnabled(false);
+        ui->actionStop_Logger->setEnabled(true);
+        ui->actionRefresh->setEnabled(true);
         system_message->addMessage("Logger started");
         statusBarLabel->setText("Running");
     }
     else
     {
-        system_message->addMessage("Unable to start: maybe logger port is conflicting with another running process?\nOnly one logger can be executed on the same network.",MESSAGE_LEVEL_ERROR);
+        system_message->addMessage("Unable to start: maybe logger port is conflicting with another running process?\nOnly one logger can be executed on the same network.", MESSAGE_LEVEL_ERROR);
     }
 }
 
@@ -633,10 +771,9 @@ void MainWindow::on_actionStop_Logger_triggered()
 {
     if (this->theLogger->stop_logging())
     {
-        QMenu *m=ui->menuFile;
-        m->actions().at(0)->setEnabled(true);
-        m->actions().at(1)->setEnabled(false);
-        m->actions().at(2)->setEnabled(false);
+        ui->actionStart_Logger->setEnabled(true);
+        ui->actionStop_Logger->setEnabled(false);
+        ui->actionRefresh->setEnabled(false);
         system_message->addMessage("Logger stopped");
         statusBarLabel->setText("Stopped");
     }
