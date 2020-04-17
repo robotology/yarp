@@ -27,6 +27,7 @@ namespace {
 static yarp::os::Network* net = nullptr;
 static yarp::os::NameStore* store = nullptr;
 static bool verbose = false;
+static bool no_bypass = false;
 
 static void setup_Environment()
 {
@@ -103,22 +104,29 @@ static void init_NameStore()
 {
     assert(net != nullptr);
 
-    yarp::os::Property opts;
-    opts.put("portdb",":memory:");
-    opts.put("subdb",":memory:");
-    opts.put("local",1);
-    if (verbose) {
-        opts.put("verbose", 1);
+    if (!no_bypass) {
+        yarp::os::Property opts;
+        opts.put("portdb",":memory:");
+        opts.put("subdb",":memory:");
+        opts.put("local",1);
+        if (verbose) {
+            opts.put("verbose", 1);
+        }
+        store = yarpserver_create(opts);
+        net->queryBypass(store);
+    } else {
+        printf("WARNING: Not bypassing yarp server\n");
     }
-    store = yarpserver_create(opts);
-    net->queryBypass(store);
+
 }
 
 static void fini_NameStore()
 {
-    net->queryBypass(nullptr);
-    delete store;
-    store = nullptr;
+    if (!no_bypass) {
+        net->queryBypass(nullptr);
+        delete store;
+        store = nullptr;
+    }
 }
 
 } // namespace
@@ -128,7 +136,8 @@ int main(int argc, char *argv[])
 {
     Catch::Session session;
 
-    auto cli = session.cli() | Catch::clara::Opt(verbose)["--yarp-verbose"]("Enable verbose mode");
+    auto cli = session.cli() | Catch::clara::Opt(verbose)["--yarp-verbose"]("Enable verbose mode")
+                             | Catch::clara::Opt(no_bypass)["--yarp-no-bypass"]("Do not bypass yarpserver");
     session.cli( cli );
 
     int returnCode = session.applyCommandLine( argc, argv );
