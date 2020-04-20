@@ -11,6 +11,7 @@
 
 #include <yarp/os/api.h>
 
+#include <cstdint>
 #include <iosfwd>
 
 #if defined(__GNUC__)
@@ -38,11 +39,12 @@
 namespace yarp {
 namespace os {
 
+class LogComponent;
 class LogStream;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace impl {
-class LogImpl;
+class LogPrivate;
 } // namespace impl
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
@@ -51,18 +53,22 @@ class YARP_os_API Log
 public:
     Log(const char* file,
         const unsigned int line,
-        const char* func);
+        const char* func,
+        const LogComponent& comp = defaultLogComponent());
+
     Log();
     virtual ~Log();
 
-    enum LogType
+    enum LogType : uint8_t
     {
+        LogTypeUnknown = 0,
         TraceType,
         DebugType,
         InfoType,
         WarningType,
         ErrorType,
-        FatalType
+        FatalType,
+        LogTypeReserved = 0xFF
     };
 
     void trace(const char* msg, ...) const YARP_ATTRIBUTE_FORMAT(printf, 2, 3);
@@ -79,35 +85,57 @@ public:
     LogStream error() const;
     LogStream fatal() const;
 
-    typedef void (*LogCallback)(yarp::os::Log::LogType,
-                                const char*,
-                                const char*,
-                                const unsigned int,
-                                const char*);
+    using LogCallback = void (*)(yarp::os::Log::LogType type,
+                                 const char* msg,
+                                 const char* file,
+                                 const unsigned int line,
+                                 const char* func,
+                                 double systemtime,
+                                 double networktime,
+                                 const char* comp_name);
 
-    static void setLogCallback(LogCallback);
+    static void setPrintCallback(LogCallback);
+    static void setForwardCallback(LogCallback);
+
+    static const LogComponent& defaultLogComponent();
+
+    static LogType defaultMinimumPrintLevel();
+    static LogType defaultMinimumForwardLevel();
+
+    static LogCallback defaultPrintCallback();
+    static LogCallback defaultForwardCallback();
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    yarp::os::impl::LogImpl* const mPriv;
+    yarp::os::impl::LogPrivate* const mPriv;
+
+    friend class yarp::os::LogStream;
+
+    // This callback is called by LogStream
+    static void do_log(yarp::os::Log::LogType type,
+                       const char* msg,
+                       const char* file,
+                       const unsigned int line,
+                       const char* func,
+                       double systemtime,
+                       double networktime,
+                       const LogComponent& comp_name);
+
+    // This component is used for internal debug output, and is called by LogStream
+    static const LogComponent& logInternalComponent();
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-
-    static LogCallback print_callback;
-    static LogCallback forward_callback;
-
-    friend class LogStream;
 }; // class Log
 
 } // namespace os
 } // namespace yarp
 
 
-#define yTrace   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).trace
-#define yDebug   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).debug
-#define yInfo    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).info
-#define yWarning yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).warning
-#define yError   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).error
-#define yFatal   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).fatal
+#define yTrace(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).trace(__VA_ARGS__)
+#define yDebug(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).debug(__VA_ARGS__)
+#define yInfo(...)    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).info(__VA_ARGS__)
+#define yWarning(...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).warning(__VA_ARGS__)
+#define yError(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).error(__VA_ARGS__)
+#define yFatal(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).fatal(__VA_ARGS__)
 
 #ifndef NDEBUG
 #  define yAssert(x)                                                       \
@@ -124,7 +152,7 @@ private:
 /**
  * Low level function for printing a stack trace, if implemented (ACE or gcc/Linux).
  */
-YARP_os_API void yarp_print_trace(FILE* out, const char* file, int line);
+YARP_os_API void yarp_print_trace(FILE* out, const char* file, unsigned int line);
 
 
 #endif // YARP_OS_LOG_H

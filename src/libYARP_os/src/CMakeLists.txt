@@ -44,6 +44,7 @@ set(YARP_os_HDRS yarp/os/AbstractCarrier.h
                  yarp/os/InputStream.h
                  yarp/os/LocalReader.h
                  yarp/os/Log.h
+                 yarp/os/LogComponent.h
                  yarp/os/LogStream.h
                  yarp/os/ManagedBytes.h
                  yarp/os/MessageStack.h
@@ -161,6 +162,7 @@ set(YARP_os_SRCS yarp/os/AbstractCarrier.cpp
                  yarp/os/IConfig.cpp
                  yarp/os/InputStream.cpp
                  yarp/os/Log.cpp
+                 yarp/os/LogComponent.cpp
                  yarp/os/ManagedBytes.cpp
                  yarp/os/MessageStack.cpp
                  yarp/os/ModifyingCarrier.cpp
@@ -276,7 +278,6 @@ set(YARP_os_IMPL_HDRS yarp/os/impl/AuthHMAC.h
                       yarp/os/impl/HttpCarrier.h
                       yarp/os/impl/LocalCarrier.h
                       yarp/os/impl/Logger.h
-                      yarp/os/impl/LogImpl.h
                       yarp/os/impl/LogForwarder.h
                       yarp/os/impl/McastCarrier.h
                       yarp/os/impl/MemoryOutputStream.h
@@ -404,7 +405,8 @@ if(APPLE)
 endif()
 
 if(MSVC AND YARP_HAS_WIN_VT_SUPPORT)
-  target_compile_definitions(YARP_os PRIVATE YARP_HAS_WIN_VT_SUPPORT)
+  target_compile_definitions(YARP_os PRIVATE YARP_HAS_WIN_VT_SUPPORT
+                                             NOMINMAX)
 endif()
 
 target_include_directories(YARP_os PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>

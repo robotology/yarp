@@ -12,7 +12,10 @@
 #include <yarp/os/api.h>
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Os.h>
+#include <yarp/os/SystemClock.h>
+#include <yarp/os/Time.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -20,6 +23,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
 
 namespace std {
 template <typename T>
@@ -33,24 +37,35 @@ class YARP_os_API LogStream
 {
     struct Stream
     {
-        Stream(Log::LogType t, const char* fn, unsigned int l, const char* f) :
-                type(t), file(fn), line(l), func(f), ref(1)
+        Stream(Log::LogType t, const char* fn, unsigned int l, const char* f, const LogComponent& c) :
+                type(t),
+                file(fn),
+                line(l),
+                func(f),
+                systemtime(yarp::os::SystemClock::nowSystem()),
+                networktime(!yarp::os::Time::isClockInitialized() ? 0.0 : (yarp::os::Time::isSystemClock() ? systemtime : yarp::os::Time::now())),
+                comp(c),
+                ref(1)
         {
         }
-        std::ostringstream oss;
-        Log::LogType type;
-        const char* file;
-        unsigned int line;
-        const char* func;
-        int ref;
+        std::ostringstream oss;   // NOLINT(misc-non-private-member-variables-in-classes)
+        Log::LogType type;        // NOLINT(misc-non-private-member-variables-in-classes)
+        const char* file;         // NOLINT(misc-non-private-member-variables-in-classes)
+        unsigned int line;        // NOLINT(misc-non-private-member-variables-in-classes)
+        const char* func;         // NOLINT(misc-non-private-member-variables-in-classes)
+        double systemtime;        // NOLINT(misc-non-private-member-variables-in-classes)
+        double networktime;       // NOLINT(misc-non-private-member-variables-in-classes)
+        const LogComponent& comp; // NOLINT(misc-non-private-member-variables-in-classes)
+        int ref;                  // NOLINT(misc-non-private-member-variables-in-classes)
     } * stream;
 
 public:
     inline LogStream(Log::LogType type,
                      const char* file,
                      unsigned int line,
-                     const char* func) :
-            stream(new Stream(type, file, line, func))
+                     const char* func,
+                     const LogComponent& comp = Log::defaultLogComponent()) :
+            stream(new Stream(type, file, line, func, comp))
     {
     }
 
@@ -63,20 +78,32 @@ public:
     inline ~LogStream()
     {
         if (!--stream->ref) {
-            if (Log::print_callback) {
-                Log::print_callback(stream->type,
-                                    stream->oss.str().c_str(),
-                                    stream->file,
-                                    stream->line,
-                                    stream->func);
+            std::string s = stream->oss.str();
+            if (!s.empty()) {
+                // remove the last character if it an empty space (i.e.
+                // always unless the user defined an operator<< that
+                // does not add an empty space.
+                if (s.back() == ' ') {
+                    s.pop_back();
+                } else {
+                    yarp::os::Log(stream->file, stream->line, stream->func, yarp::os::Log::logInternalComponent()).warning(
+                        "' ' was expected. Some `operator<<` does not add an extra space at the end");
+                }
+                // remove the last character if it is a \n
+                if (s.back() == '\n') {
+                    yarp::os::Log(stream->file, stream->line, stream->func, yarp::os::Log::logInternalComponent()).warning(
+                        "Removing extra \\n (stream-style)");
+                    s.pop_back();
+                }
             }
-            if (Log::forward_callback) {
-                Log::forward_callback(stream->type,
-                                      stream->oss.str().c_str(),
-                                      stream->file,
-                                      stream->line,
-                                      stream->func);
-            }
+            Log::do_log(stream->type,
+                        s.c_str(),
+                        stream->file,
+                        stream->line,
+                        stream->func,
+                        stream->systemtime,
+                        stream->networktime,
+                        stream->comp);
             if (stream->type == yarp::os::Log::FatalType) {
                 yarp_print_trace(stderr, stream->file, stream->line);
                 delete stream;
