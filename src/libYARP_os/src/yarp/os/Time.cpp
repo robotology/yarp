@@ -254,6 +254,11 @@ void Time::useCustomClock(Clock* clock)
     getTimeMutex().unlock();
 }
 
+bool Time::isClockInitialized()
+{
+    return (yarp_clock_type != YARP_CLOCK_UNINITIALIZED);
+}
+
 bool Time::isSystemClock()
 {
     return (yarp_clock_type == YARP_CLOCK_SYSTEM);
