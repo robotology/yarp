@@ -33,7 +33,7 @@ yarp::os::impl::LogForwarder::LogForwarder()
     yarp::os::SystemInfo::ProcessInfo processInfo = yarp::os::SystemInfo::getProcessInfo();
 
     outputPort.setWriteOnly();
-    std::string logPortName = "/log/" + std::string(hostname) + "/" + processInfo.name + "/" + std::to_string(processInfo.pid);
+    std::string logPortName = "/log/" + std::string(hostname) + "/" + processInfo.name.substr(processInfo.name.find_last_of("\\/") + 1) + "/" + std::to_string(processInfo.pid);
     if (!outputPort.open(logPortName)) {
         printf("LogForwarder error while opening port %s\n", logPortName.c_str());
     }
