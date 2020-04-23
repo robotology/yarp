@@ -118,6 +118,21 @@ std::string NetType::toHexString(int x)
     return buf;
 }
 
+std::string NetType::toHexString(long x)
+{
+    char buf[256];
+    sprintf(buf, "%lx", x);
+    return buf;
+}
+
+std::string NetType::toHexString(unsigned int x)
+{
+    char buf[256];
+    sprintf(buf, "%x", x);
+    return buf;
+}
+
+
 std::string NetType::toString(int x)
 {
     char buf[256];
