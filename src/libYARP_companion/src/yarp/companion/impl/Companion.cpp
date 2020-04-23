@@ -245,35 +245,37 @@ Companion::Companion() :
     adminMode(false),
     waitConnect(false)
 {
-    add("check",      &Companion::cmdCheck,      "run a simple sanity check to see if yarp is working");
-    add("clean",      &Companion::cmdClean,      "try to remove inactive entries from the name server");
-    add("clock",      &Companion::cmdClock,      "creates a server publishing the system time");
-    add("cmake",      &Companion::cmdMake,       "create files to help compiling YARP projects");
-    add("conf",       &Companion::cmdConf,       "report location of configuration file, and optionally fix it");
-    add("connect",    &Companion::cmdConnect,    "create a connection between two ports");
-    add("detect",     &Companion::cmdDetect,     "search for the yarp name server");
-    add("disconnect", &Companion::cmdDisconnect, "remove a connection between two ports");
-    add("exists",     &Companion::cmdExists,     "check if a port or connection is alive");
-    add("help",       &Companion::cmdHelp,       "get this list");
-    add("merge",      &Companion::cmdMerge,      "concatenate input from several ports into a single unit");
-    add("name",       &Companion::cmdName,       "send commands to the yarp name server");
-    add("namespace",  &Companion::cmdNamespace,  "set or query the name of the yarp name server (default is /root)");
-    add("ping",       &Companion::cmdPing,       "get live information about a port");
-    add("plugin",     &Companion::cmdPlugin,     "check properties of a YARP plugin (device/carrier)");
-    add("read",       &Companion::cmdRead,       "read from the network and print to standard output");
-    add("readwrite",  &Companion::cmdReadWrite,  "read from the network and print to standard output, write to the network from standard input");
-    add("regression", &Companion::cmdRegression, "run regression tests, if linked");
-    add("resource",   &Companion::cmdResource,   "locates resource files (see ResourceFinder class)");
-    add("rpc",        &Companion::cmdRpc,        "write commands to a port, and read replies");
-    add("rpcserver",  &Companion::cmdRpcServer,  "make a test RPC server to receive and reply to Bottle-format messages");
-    add("sample",     &Companion::cmdSample,     "drop or duplicate messages to achieve a constant frame-rate");
-    add("terminate",  &Companion::cmdTerminate,  "terminate a yarp-terminate-aware process by name");
-    add("time",       &Companion::cmdTime,       "show the time");
-    add("topic",      &Companion::cmdTopic,      "set a topic name");
-    add("version",    &Companion::cmdVersion,    "get version information");
-    add("wait",       &Companion::cmdWait,       "wait for a port to be alive");
-    add("where",      &Companion::cmdWhere,      "report where the yarp name server is running");
-    add("write",      &Companion::cmdWrite,      "write to the network from standard input");
+    add("check",           &Companion::cmdCheck,          "run a simple sanity check to see if yarp is working");
+    add("clean",           &Companion::cmdClean,          "try to remove inactive entries from the name server");
+    add("clock",           &Companion::cmdClock,          "creates a server publishing the system time");
+    add("cmake",           &Companion::cmdMake,           "create files to help compiling YARP projects");
+    add("conf",            &Companion::cmdConf,           "report location of configuration file, and optionally fix it");
+    add("connect",         &Companion::cmdConnect,        "create a connection between two ports");
+    add("detect",          &Companion::cmdDetect,         "search for the yarp name server");
+    add("disconnect",      &Companion::cmdDisconnect,     "remove a connection between two ports");
+    add("exists",          &Companion::cmdExists,         "check if a port or connection is alive");
+    add("help",            &Companion::cmdHelp,           "get this list");
+    add("merge",           &Companion::cmdMerge,          "concatenate input from several ports into a single unit");
+    add("name",            &Companion::cmdName,           "send commands to the yarp name server");
+    add("namespace",       &Companion::cmdNamespace,      "set or query the name of the yarp name server (default is /root)");
+    add("ping",            &Companion::cmdPing,           "get live information about a port");
+    add("plugin",          &Companion::cmdPlugin,         "check properties of a YARP plugin (device/carrier)");
+    add("priority-qos",    &Companion::cmdPriorityQos,    "set/get the packet priority for a given connection");
+    add("read",            &Companion::cmdRead,           "read from the network and print to standard output");
+    add("readwrite",       &Companion::cmdReadWrite,      "read from the network and print to standard output, write to the network from standard input");
+    add("regression",      &Companion::cmdRegression,     "run regression tests, if linked");
+    add("resource",        &Companion::cmdResource,       "locates resource files (see ResourceFinder class)");
+    add("rpc",             &Companion::cmdRpc,            "write commands to a port, and read replies");
+    add("rpcserver",       &Companion::cmdRpcServer,      "make a test RPC server to receive and reply to Bottle-format messages");
+    add("sample",          &Companion::cmdSample,         "drop or duplicate messages to achieve a constant frame-rate");
+    add("priority-sched",  &Companion::cmdPrioritySched,  "set/get the thread policy and priority for a given connection");
+    add("terminate",       &Companion::cmdTerminate,      "terminate a yarp-terminate-aware process by name");
+    add("time",            &Companion::cmdTime,           "show the time");
+    add("topic",           &Companion::cmdTopic,          "set a topic name");
+    add("version",         &Companion::cmdVersion,        "get version information");
+    add("wait",            &Companion::cmdWait,           "wait for a port to be alive");
+    add("where",           &Companion::cmdWhere,          "report where the yarp name server is running");
+    add("write",           &Companion::cmdWrite,          "write to the network from standard input");
 }
 
 void Companion::setAdminMode(bool admin)
