@@ -8,16 +8,25 @@
 
 #include <yarp/os/MultiNameSpace.h>
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/YarpNameSpace.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameConfig.h>
 
 #include <vector>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+
+namespace {
+YARP_LOG_COMPONENT(MULTINAMESPACE,
+                   "yarp.os.MultiNamespace",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
 
 using SpaceList = std::vector<NameSpace*>;
 
@@ -122,8 +131,8 @@ public:
             static double last_shown = now - 10;
             if (now - last_shown > 3) {
                 last_shown = now;
-                fprintf(stderr, "warning: YARP name server(s) not configured, ports will be anonymous\n");
-                fprintf(stderr, "warning: check your namespace and settings with 'yarp detect'\n");
+                yCWarning(MULTINAMESPACE, "YARP name server(s) not configured, ports will be anonymous\n");
+                yCWarning(MULTINAMESPACE, "check your namespace and settings with 'yarp detect'\n");
             }
             return false;
         }
@@ -134,7 +143,7 @@ public:
             NameConfig conf2;
             // read configuration of individual namespace
             if (!conf2.fromFile(n.c_str())) {
-                fprintf(stderr, "Could not find namespace %s\n", n.c_str());
+                yCWarning(MULTINAMESPACE, "Could not find namespace %s\n", n.c_str());
                 continue;
             }
             std::string mode = conf2.getMode();
@@ -153,7 +162,7 @@ public:
                 spaces.push_back(ns);
             } else {
                 // shrug
-                YARP_SPRINTF1(Logger::get(), error, "cannot deal with namespace of type %s", mode.c_str());
+                yCError(MULTINAMESPACE, "cannot deal with namespace of type %s", mode.c_str());
                 return false;
             }
         }

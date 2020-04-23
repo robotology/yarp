@@ -22,6 +22,8 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
 
   target_sources(yarp_tcpros PRIVATE TcpRosCarrier.h
                                      TcpRosCarrier.cpp
+                                     TcpRosCarrierLog.h
+                                     TcpRosCarrierLog.cpp
                                      TcpRosStream.h
                                      TcpRosStream.cpp
                                      RosHeader.h
@@ -53,6 +55,8 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
   add_executable(yarpros)
 
   target_sources(yarpros PRIVATE yarpros.cpp
+                                 TcpRosCarrierLog.h
+                                 TcpRosCarrierLog.cpp
                                  TcpRosStream.cpp
                                  RosLookup.cpp)
 

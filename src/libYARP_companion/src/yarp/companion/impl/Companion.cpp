@@ -16,6 +16,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Carriers.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Name.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -31,7 +32,6 @@
 
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/NameServer.h>
@@ -62,6 +62,40 @@ using namespace yarp::companion::impl;
 using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp;
+
+
+namespace {
+void print_callback(yarp::os::Log::LogType type,
+                    const char* msg,
+                    const char* file,
+                    const unsigned int line,
+                    const char* func,
+                    double systemtime,
+                    double networktime,
+                    const char* comp_name)
+{
+    YARP_UNUSED(type);
+    YARP_UNUSED(file);
+    YARP_UNUSED(line);
+    YARP_UNUSED(func);
+    YARP_UNUSED(systemtime);
+    YARP_UNUSED(networktime);
+    YARP_UNUSED(comp_name);
+    static const char* err_str = "[ERROR] ";
+    static const char* warn_str = "[WARNING] ";
+    static const char* no_str = "";
+    printf("%s%s\n",
+           ((type == yarp::os::Log::ErrorType) ? err_str : ((type == yarp::os::Log::WarningType) ? warn_str : no_str)),
+           msg);
+}
+}
+
+YARP_LOG_COMPONENT(COMPANION,
+                   "yarp.companion.impl.Companion",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   print_callback,
+                   nullptr)
 
 #ifdef YARP_HAS_Libedit
 
@@ -194,8 +228,7 @@ static void companion_sigint_handler(int sig) {
             port->interrupt();
         }
     } else {
-        fprintf(stderr, "Aborting...\n");
-        std::exit(1);
+        yCFatal(COMPANION, "Aborting");
     }
 }
 
@@ -305,9 +338,7 @@ int Companion::dispatch(const char* name, int argc, char* argv[])
     char** argv_copy_org = argv_copy;
     int argc_copy = argc;
     if (!argv_copy) {
-        YARP_SPRINTF0(Logger::get(),
-                      error,
-                      "Could not copy argument list");
+        yCError(COMPANION, "Could not copy argument list");
         return 1;
     }
     int at = 0;
@@ -342,10 +373,7 @@ int Companion::dispatch(const char* name, int argc, char* argv[])
     if (it != action.end()) {
         v = (this->*(it->second.fn))(argc_copy, argv_copy);
     } else {
-        YARP_SPRINTF1(Logger::get(),
-                      error,
-                      "Could not find command \"%s\"",
-                      name);
+        yCError(COMPANION, "Could not find command \"%s\"", name);
     }
     delete[] argv_copy_org;
     return v;
@@ -363,13 +391,12 @@ int yarp::companion::main(int argc, char *argv[]) {
     argv++;
 
     if (argc<=0) {
-        printf("This is the YARP network companion.\n");
-        printf("Call with the argument \"help\" to see a list of ways to use this program.\n");
+        yCInfo(COMPANION, "This is the YARP network companion.");
+        yCInfo(COMPANION, "Call with the argument \"help\" to see a list of ways to use this program.");
         return 0;
     }
 
     Companion& instance = Companion::getInstance();
-    int verbose = 0;
     bool adminMode = false;
     bool more = true;
     while (more && argc>0) {
@@ -379,17 +406,10 @@ int yarp::companion::main(int argc, char *argv[]) {
             argc++;
             argv--;
             // "pray" command requires the full command line
-            Logger::get().setVerbosity(-1);
             return instance.cmdPray(argc, argv);
         }
-        if (s == std::string("verbose")) {
-            verbose++;
-            argc--;
-            argv++;
-            more = true;
-        }
-        if (s == std::string("quiet")) {
-            verbose--;
+        if (s == std::string("verbose") || s == std::string("quiet")) {
+            yCWarning(COMPANION, "The %s argument is deprecated.", s.c_str());
             argc--;
             argv++;
             more = true;
@@ -401,13 +421,10 @@ int yarp::companion::main(int argc, char *argv[]) {
             more = true;
         }
     }
-    if (verbose!=0) {
-        Logger::get().setVerbosity(verbose);
-    }
 
     if (argc<=0) {
-        fprintf(stderr, "Please supply a command\n");
-        return -1;
+        yCError(COMPANION, "Please supply a command");
+        return 1;
     }
 
     const char *cmd = argv[0];
@@ -420,12 +437,12 @@ int yarp::companion::main(int argc, char *argv[]) {
 
 int Companion::cmdTerminate(int argc, char *argv[]) {
     if (argc == 1) {
-        printf("Asking port %s to quit gracefully\n", argv[0]);
+        yCInfo(COMPANION, "Asking port %s to quit gracefully", argv[0]);
         Terminator::terminateByName(argv[0]);
         return 0;
     }
 
-    printf("Wrong parameter format, please specify a port name as a single parameter to terminate\n");
+    yCError(COMPANION, "Wrong parameter format, please specify a port name as a single parameter to terminate");
     return 1;
 }
 
@@ -450,7 +467,7 @@ int Companion::cmdPing(int argc, char *argv[]) {
     if (argc == 1) {
         char *targetName = argv[0];
         if (time) {
-            printf("Timing communication with %s...\n", targetName);
+            yCInfo(COMPANION, "Timing communication with %s...", targetName);
             Ping ping;
             ping.setTarget(targetName);
             for (int i=0; i<10; i++) {
@@ -461,7 +478,7 @@ int Companion::cmdPing(int argc, char *argv[]) {
             return 0;
         }
         if (rate) {
-            printf("Measuring rate of output from %s...\n", targetName);
+            yCInfo(COMPANION, "Measuring rate of output from %s...", targetName);
             Ping ping;
             ping.setTarget(targetName);
             ping.sample();
@@ -469,10 +486,10 @@ int Companion::cmdPing(int argc, char *argv[]) {
         }
         return ping(targetName, false);
     }
-    fprintf(stderr, "Usage:\n");
-    fprintf(stderr, "  yarp ping /port\n");
-    fprintf(stderr, "  yarp ping --time /port\n");
-    fprintf(stderr, "  yarp ping --rate /port\n");
+    yCError(COMPANION, "Usage:");
+    yCError(COMPANION, "  yarp ping /port");
+    yCError(COMPANION, "  yarp ping --time /port");
+    yCError(COMPANION, "  yarp ping --rate /port");
     return 1;
 }
 
@@ -484,7 +501,7 @@ int Companion::ping(const char *port, bool quiet) {
     Contact address = NetworkBase::queryName(port);
     if (!address.isValid()) {
         if (!quiet) {
-            YARP_ERROR(Logger::get(), "could not find port");
+            yCError(COMPANION, "could not find port");
         }
         return 1;
     }
@@ -492,13 +509,13 @@ int Companion::ping(const char *port, bool quiet) {
     if (address.getCarrier()=="tcp") {
         out = Carriers::connect(address);
         if (out == nullptr) {
-            YARP_ERROR(Logger::get(), "port found, but cannot connect");
+            yCError(COMPANION, "port found, but cannot connect");
             return 1;
         }
         Route r(connectionName, port, "text_ack");
         bool ok = out->open(r);
         if (!ok) {
-            YARP_ERROR(Logger::get(), "could not connect to port");
+            yCError(COMPANION, "could not connect to port");
             return 1;
         }
         OutputStream& os = out->getOutputStream();
@@ -516,7 +533,7 @@ int Companion::ping(const char *port, bool quiet) {
             resp.read(reader);
             std::string str = resp.toString();
             if (resp.get(0).asString()!="<ACK>") {
-                printf("%s\n", str.c_str());
+                yCInfo(COMPANION, "%s", str.c_str());
             } else {
                 done = true;
             }
@@ -526,7 +543,7 @@ int Companion::ping(const char *port, bool quiet) {
         }
     } else {
         int e = NetworkBase::exists(port, quiet);
-        printf("%s %s.\n", port, (e==0)?"exists":"is not responding");
+        yCInfo(COMPANION, "%s %s.", port, (e==0) ? "exists" : "is not responding");
         return e;
     }
 
@@ -544,7 +561,7 @@ int Companion::cmdExists(int argc, char *argv[]) {
         return ok?0:1;
     }
 
-    fprintf(stderr, "Please specify a port name\n");
+    yCError(COMPANION, "Please specify a port name");
     return 1;
 }
 
@@ -555,7 +572,7 @@ int Companion::cmdWait(int argc, char *argv[]) {
     if (argc == 2) {
         return NetworkBase::waitConnection(argv[0], argv[1]);
     }
-    fprintf(stderr, "Please specify a single port name, or a source and destination port name\n");
+    yCError(COMPANION, "Please specify a single port name, or a source and destination port name");
     return 1;
 }
 
@@ -573,11 +590,11 @@ int Companion::cmdName(int argc, char *argv[]) {
     if (key=="query") {
         Contact result = NetworkBase::queryName(cmd.get(1).asString());
         if (!result.isValid()) {
-            fprintf(stderr, "%s not known.\n", cmd.get(1).asString().c_str());
+            yCError(COMPANION, "%s not known.", cmd.get(1).asString().c_str());
             return 1;
         }
         std::string txt = NameServer::textify(result);
-        printf("%s", txt.c_str());
+        yCInfo(COMPANION, "%s", txt.c_str());
         return 0;
     }
     if (key=="register") {
@@ -607,14 +624,14 @@ int Companion::cmdName(int argc, char *argv[]) {
             result = NetworkBase::registerName(portName);
         }
         std::string txt = NameServer::textify(result);
-        printf("%s", txt.c_str());
+        yCInfo(COMPANION, "%s", txt.c_str());
         return 0;
     }
     if (key=="unregister") {
         std::string portName = cmd.get(1).asString();
         Contact result;
         result = NetworkBase::unregisterName(portName);
-        printf("Unregistered name.\n");
+        yCInfo(COMPANION, "Unregistered name.");
         return 0;
     }
 
@@ -623,22 +640,22 @@ int Companion::cmdName(int argc, char *argv[]) {
                                              reply,
                                              style);
     if (!ok) {
-        fprintf(stderr, "Failed to reach name server\n");
+        yCError(COMPANION, "Failed to reach name server\n");
         return 1;
     }
     if (reply.size()==1&&reply.get(0).isString()) {
-        printf("%s", reply.get(0).asString().c_str());
+        yCInfo(COMPANION, "%s", reply.get(0).asString().c_str());
     } else if (reply.get(0).isVocab() && reply.get(0).asVocab()==yarp::os::createVocab('m', 'a', 'n', 'y')) {
         for (size_t i=1; i<reply.size(); i++) {
             Value& v = reply.get(i);
             if (v.isString()) {
-                printf("  %s\n", v.asString().c_str());
+                yCInfo(COMPANION, "  %s", v.asString().c_str());
             } else {
-                printf("  %s\n", v.toString().c_str());
+                yCInfo(COMPANION, "  %s", v.toString().c_str());
             }
         }
     } else {
-        printf("%s\n", reply.toString().c_str());
+        yCInfo(COMPANION, "%s", reply.toString().c_str());
     }
     return 0;
 }
@@ -646,7 +663,7 @@ int Companion::cmdName(int argc, char *argv[]) {
 int Companion::cmdConf(int argc, char *argv[]) {
     NameConfig nc;
     if (argc==0) {
-        printf("%s\n", nc.getConfigFileName().c_str());
+        yCInfo(COMPANION, "%s", nc.getConfigFileName().c_str());
         return 0;
     }
     if (argc>=2) {
@@ -664,28 +681,28 @@ int Companion::cmdConf(int argc, char *argv[]) {
         nc.fromFile();
         Contact current = nc.getAddress();
         std::string currentMode = nc.getMode();
-        printf("Configuration file:\n");
-        printf("  %s\n", nc.getConfigFileName().c_str());
+        yCInfo(COMPANION, "Configuration file:");
+        yCInfo(COMPANION, "  %s", nc.getConfigFileName().c_str());
         if (prev.isValid()) {
-            printf("Stored:\n");
-            printf("  host %s port number %d (%s name server)\n",
+            yCInfo(COMPANION, "Stored:");
+            yCInfo(COMPANION, "  host %s port number %d (%s name server)",
                    prev.getHost().c_str(),
                    prev.getPort(),
                    prevMode.c_str());
         }
         if (current.isValid()) {
-            printf("Now stores:\n");
-            printf("  host %s port number %d (%s name server)\n",
+            yCInfo(COMPANION, "Now stores:");
+            yCInfo(COMPANION, "  host %s port number %d (%s name server)",
                    current.getHost().c_str(),
                    current.getPort(),
                    currentMode.c_str());
         } else {
-            printf("is not valid!\n");
-            printf("Expected:\n");
-            printf("  yarp conf [ip address] [port number]\n");
-            printf("  yarp conf [ip address] [port number] [yarp|ros]\n");
-            printf("For example:\n");
-            printf("  yarp conf 192.168.0.1 10000\n");
+            yCError(COMPANION, "is not valid!");
+            yCError(COMPANION, "Expected:");
+            yCError(COMPANION, "  yarp conf [ip address] [port number]");
+            yCError(COMPANION, "  yarp conf [ip address] [port number] [yarp|ros]");
+            yCError(COMPANION, "For example:");
+            yCError(COMPANION, "  yarp conf 192.168.0.1 10000");
             return 1;
         }
         return 0;
@@ -693,12 +710,12 @@ int Companion::cmdConf(int argc, char *argv[]) {
     if (argc==1) {
         if (std::string(argv[0])=="--clean") {
             nc.toFile(true);
-            printf("Cleared configuration file:\n");
-            printf("  %s\n", nc.getConfigFileName().c_str());
+            yCInfo(COMPANION, "Cleared configuration file:");
+            yCInfo(COMPANION, "  %s", nc.getConfigFileName().c_str());
             return 0;
         }
     }
-    printf("Command not understood\n");
+    yCError(COMPANION, "Command not understood");
     return 1;
 }
 
@@ -709,11 +726,12 @@ int Companion::cmdWhere(int argc, char *argv[]) {
     NameConfig nc;
     nc.fromFile();
     if (nc.getAddress().isValid()) {
-        printf("Looking for name server on %s, port number %d\n",
+        yCInfo(COMPANION,
+               "Looking for name server on %s, port number %d",
                nc.getAddress().getHost().c_str(),
                nc.getAddress().getPort());
-        printf("If there is a long delay, try:\n");
-        printf("  yarp conf --clean\n");
+        yCInfo(COMPANION, "If there is a long delay, try:");
+        yCInfo(COMPANION, "  yarp conf --clean");
     }
     Contact address = NetworkBase::getNameServerContact();
 
@@ -729,64 +747,70 @@ int Companion::cmdWhere(int argc, char *argv[]) {
     }
 
     if (address.isValid()&&reachable) {
-        printf("%sName server %s is available at ip %s port %d\n",
-                       nc.getMode()=="ros"?"ROS ":"",
-                       nc.getNamespace().c_str(),
-                       address.getHost().c_str(), address.getPort());
+        yCInfo(COMPANION,
+               "%sName server %s is available at ip %s port %d",
+               ((nc.getMode() == "ros") ? "ROS " : ""),
+               nc.getNamespace().c_str(),
+               address.getHost().c_str(),
+               address.getPort());
         if (address.getCarrier()=="tcp") {
-            printf("Name server %s can be browsed at http://%s:%d/\n",
-                           nc.getNamespace().c_str(),
-                           address.getHost().c_str(), address.getPort());
+            yCInfo(COMPANION,
+                   "Name server %s can be browsed at http://%s:%d/",
+                   nc.getNamespace().c_str(),
+                   address.getHost().c_str(),
+                   address.getPort());
         }
     } else {
         NameConfig conf;
         bool haveFile = conf.fromFile();
         Contact address = conf.getAddress();
 
-        printf("\n");
-        printf("=======================================================================\n");
-        printf("==\n");
-        printf("== PROBLEM\n");
+        yCInfo(COMPANION);
+        yCInfo(COMPANION, "=======================================================================");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "== PROBLEM");
         if (haveFile) {
-            printf("== No valid YARP name server is available.\n");
-            printf("== Here is the expected configuration:\n");
-            printf("==   host: %s port number: %d\n", address.getHost().c_str(),
+            yCInfo(COMPANION, "== No valid YARP name server is available.");
+            yCInfo(COMPANION, "== Here is the expected configuration:");
+            yCInfo(COMPANION,
+                   "==   host: %s port number: %d\n",
+                   address.getHost().c_str(),
                    address.getPort());
-            printf("==   namespace: %s\n", nc.getNamespace().c_str());
+            yCInfo(COMPANION, "==   namespace: %s\n", nc.getNamespace().c_str());
             if (conf.getMode()!="" && conf.getMode()!="//") {
-                printf("==   type of name server: %s\n", conf.getMode().c_str());
+                yCInfo(COMPANION, "==   type of name server: %s\n", conf.getMode().c_str());
             }
-            printf("== But such a name server was not found.\n");
+            yCInfo(COMPANION, "== But such a name server was not found.");
         } else {
-            printf("== No address for a YARP name server is available.\n");
-            printf("== A configuration file giving the location of the \n");
-            printf("== YARP name server is required, but was not found.\n");
+            yCInfo(COMPANION, "== No address for a YARP name server is available.");
+            yCInfo(COMPANION, "== A configuration file giving the location of the ");
+            yCInfo(COMPANION, "== YARP name server is required, but was not found.");
         }
-        printf("==\n");
-        printf("== SHORT SOLUTION\n");
-        printf("== If you are fairly confident there is a name server running, try:\n");
-        printf("== $ yarp detect --write\n");
-        printf("== If you just want to make a quick test, start your own name server:\n");
-        printf("== $ yarp namespace /your/name\n");
-        printf("== $ yarp server\n");
-        printf("==\n");
-        printf("== DETAILED SOLUTION\n");
-        printf("== To try to fix this problem automatically, do:\n");
-        printf("== $ yarp detect --write\n");
-        printf("== This will search your network for a nameserver\n");
-        printf("== and then write the result to a configuration file.\n");
-        printf("== If you know the address of the name server, you\n");
-        printf("== can bypass this search by doing:\n");
-        printf("== $ yarp conf [ip address] [port number]\n");
-        printf("== If you would like to search the network for a\n");
-        printf("== nameserver but *not* automatically update the\n");
-        printf("== configuration file, do:\n");
-        printf("== $ yarp detect\n");
-        printf("== Or to determine the name of the required\n");
-        printf("== configuration file for manual viewing/editing, do:\n");
-        printf("== $ yarp conf\n");
-        printf("==\n");
-        printf("=======================================================================\n");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "== SHORT SOLUTION");
+        yCInfo(COMPANION, "== If you are fairly confident there is a name server running, try:");
+        yCInfo(COMPANION, "== $ yarp detect --write");
+        yCInfo(COMPANION, "== If you just want to make a quick test, start your own name server:");
+        yCInfo(COMPANION, "== $ yarp namespace /your/name");
+        yCInfo(COMPANION, "== $ yarp server");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "== DETAILED SOLUTION");
+        yCInfo(COMPANION, "== To try to fix this problem automatically, do:");
+        yCInfo(COMPANION, "== $ yarp detect --write");
+        yCInfo(COMPANION, "== This will search your network for a nameserver");
+        yCInfo(COMPANION, "== and then write the result to a configuration file.");
+        yCInfo(COMPANION, "== If you know the address of the name server, you");
+        yCInfo(COMPANION, "== can bypass this search by doing:");
+        yCInfo(COMPANION, "== $ yarp conf [ip address] [port number]");
+        yCInfo(COMPANION, "== If you would like to search the network for a");
+        yCInfo(COMPANION, "== nameserver but *not* automatically update the");
+        yCInfo(COMPANION, "== configuration file, do:");
+        yCInfo(COMPANION, "== $ yarp detect");
+        yCInfo(COMPANION, "== Or to determine the name of the required");
+        yCInfo(COMPANION, "== configuration file for manual viewing/editing, do:");
+        yCInfo(COMPANION, "== $ yarp conf");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "=======================================================================");
 
         return 1;
     }
@@ -796,17 +820,16 @@ int Companion::cmdWhere(int argc, char *argv[]) {
 int Companion::cmdHelp(int argc, char *argv[]) {
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
-    printf("Usage:\n");
-    printf("  <yarp> [verbose] [admin] command arg1 arg2 ...\n");
-    printf("Here are commands you can use:\n");
+    yCInfo(COMPANION, "Usage:");
+    yCInfo(COMPANION, "  <yarp> [admin] command arg1 arg2 ...");
+    yCInfo(COMPANION, "Here are commands you can use:");
     for (unsigned i=0; i<names.size(); i++) {
         std::string name = names[i];
         const std::string& tip = tips[i];
         while (name.length()<12) {
             name += " ";
         }
-        printf("%s ", name.c_str());
-        printf("%s\n", tip.c_str());
+        yCInfo(COMPANION, "%s %s", name.c_str(), tip.c_str());
     }
     return 0;
 }
@@ -815,8 +838,7 @@ int Companion::cmdHelp(int argc, char *argv[]) {
 int Companion::cmdVersion(int argc, char *argv[]) {
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
-    printf("YARP version %s\n",
-                   version().c_str());
+    yCInfo(COMPANION, "YARP version %s", version().c_str());
     return 0;
 }
 
@@ -839,33 +861,33 @@ int Companion::cmdConnect(int argc, char *argv[]) {
         } else if (arg=="--list-carriers") {
             Bottle lst = Carriers::listCarriers();
             for (size_t i=0; i<lst.size(); i++) {
-                printf("%s%s", (i>0)?" ":"", lst.get(i).asString().c_str());
+                yCInfo(COMPANION, "%s%s", (i>0)?" ":"", lst.get(i).asString().c_str());
             }
-            printf("\n");
+            yCInfo(COMPANION);
             return 0;
         } else if (arg=="--help") {
-            printf("USAGE:\n\n");
-            printf("yarp connect OUTPUT_PORT INPUT_PORT\n");
-            printf("yarp connect OUTPUT_PORT INPUT_PORT CARRIER\n");
-            printf("  Make a connection between two ports, which must both exist at the time the\n");
-            printf("  connection is requested.  The connection will be terminated when either\n");
-            printf("  port is closed.\n");
-            printf("\n");
-            printf("yarp connect --persist OUTPUT_PORT INPUT_PORT\n");
-            printf("yarp connect --persist OUTPUT_PORT INPUT_PORT CARRIER\n");
-            printf("  Ask the name server to make connections whenever the named ports are available.\n");
-            printf("\n");
-            printf("yarp connect --persist-from OUTPUT_PORT INPUT_PORT\n");
-            printf("  Ask the name server to connect the OUTPUT_PORT, which must\n");
-            printf("  exist at the time the connection is requested, and the INPUT_PORT\n");
-            printf("  whenever it is available. The request expires when OUTPUT_PORT is closed.\n");
-            printf("\n");
-            printf("yarp connect --persist-to OUTPUT_PORT INPUT_PORT\n");
-            printf("  Ask the name server to connect the OUTPUT_PORT whenever available to the\n");
-            printf("  INPUT_PORT which exists at the time the connection is requested.  The \n");
-            printf("  request expires when INPUT_PORT is closed.\n");
-            printf("yarp connect --list-carriers\n");
-            printf("  List carriers available for connections.\n");
+            yCInfo(COMPANION, "USAGE:\n");
+            yCInfo(COMPANION, "yarp connect OUTPUT_PORT INPUT_PORT");
+            yCInfo(COMPANION, "yarp connect OUTPUT_PORT INPUT_PORT CARRIER");
+            yCInfo(COMPANION, "  Make a connection between two ports, which must both exist at the time the");
+            yCInfo(COMPANION, "  connection is requested.  The connection will be terminated when either");
+            yCInfo(COMPANION, "  port is closed.");
+            yCInfo(COMPANION);
+            yCInfo(COMPANION, "yarp connect --persist OUTPUT_PORT INPUT_PORT");
+            yCInfo(COMPANION, "yarp connect --persist OUTPUT_PORT INPUT_PORT CARRIER");
+            yCInfo(COMPANION, "  Ask the name server to make connections whenever the named ports are available.");
+            yCInfo(COMPANION);
+            yCInfo(COMPANION, "yarp connect --persist-from OUTPUT_PORT INPUT_PORT");
+            yCInfo(COMPANION, "  Ask the name server to connect the OUTPUT_PORT, which must");
+            yCInfo(COMPANION, "  exist at the time the connection is requested, and the INPUT_PORT");
+            yCInfo(COMPANION, "  whenever it is available. The request expires when OUTPUT_PORT is closed.");
+            yCInfo(COMPANION);
+            yCInfo(COMPANION, "yarp connect --persist-to OUTPUT_PORT INPUT_PORT");
+            yCInfo(COMPANION, "  Ask the name server to connect the OUTPUT_PORT whenever available to the");
+            yCInfo(COMPANION, "  INPUT_PORT which exists at the time the connection is requested.  The ");
+            yCInfo(COMPANION, "  request expires when INPUT_PORT is closed.");
+            yCInfo(COMPANION, "yarp connect --list-carriers");
+            yCInfo(COMPANION, "  List carriers available for connections.");
             return 0;
         }
         if (persist) {
@@ -873,7 +895,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
             argc--;
         }
     } else {
-        fprintf(stderr, "[get help with 'yarp connect --help']\n");
+        yCError(COMPANION, "[get help with 'yarp connect --help']\n");
     }
     if (argc<2||argc>3) {
         if (persist&&argc<2) {
@@ -892,7 +914,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
                 return (result==0)?result2:result;
             }
         }
-        fprintf(stderr, "Currently must have two/three arguments, a sender port and receiver port (and an optional protocol)\n");
+        yCError(COMPANION, "Currently must have two/three arguments, a sender port and receiver port (and an optional protocol)\n");
         return 1;
     }
 
@@ -921,7 +943,7 @@ int Companion::cmdDisconnect(int argc, char *argv[]) {
         }
     }
     if (argc!=2) {
-        fprintf(stderr, "Must have two arguments, a sender port and receiver port\n");
+        yCError(COMPANION, "Must have two arguments, a sender port and receiver port\n");
         return 1;
     }
 
@@ -937,7 +959,7 @@ int Companion::cmdDisconnect(int argc, char *argv[]) {
 
 int Companion::cmdRead(int argc, char *argv[]) {
     if (argc<1) {
-        fprintf(stderr, "Please supply the port name\n");
+        yCError(COMPANION, "Please supply the port name\n");
         return 1;
     }
 
@@ -959,7 +981,7 @@ int Companion::cmdRead(int argc, char *argv[]) {
 
 int Companion::cmdWrite(int argc, char *argv[]) {
     if (argc<1) {
-        fprintf(stderr, "Please supply the port name, and optionally some targets\n");
+        yCError(COMPANION, "Please supply the port name, and optionally some targets\n");
         return 1;
     }
 
@@ -981,19 +1003,19 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
         } else if (cmd=="--echo") {
             echo = true;
         } else {
-            fprintf(stderr, "Option not recognized: %s\n", cmd.c_str());
+            yCError(COMPANION, "Option not recognized: %s\n", cmd.c_str());
             return 1;
         }
         argv++;
         argc--;
     }
     if (argc<1) {
-        fprintf(stderr, "Please call as:\n");
-        fprintf(stderr, "  yarp rpcserver [--single] [--stop] [--echo] /port/name\n");
-        fprintf(stderr, "By default, this shows commands and waits for user to enter replies. Flags:\n");
-        fprintf(stderr, "  --single: respond to only a single command per connection, ROS-style\n");
-        fprintf(stderr, "  --stop: stop the server entirely after a single command\n");
-        fprintf(stderr, "  --echo: reply with the message received\n");
+        yCError(COMPANION, "Please call as:\n");
+        yCError(COMPANION, "  yarp rpcserver [--single] [--stop] [--echo] /port/name\n");
+        yCError(COMPANION, "By default, this shows commands and waits for user to enter replies. Flags:\n");
+        yCError(COMPANION, "  --single: respond to only a single command per connection, ROS-style\n");
+        yCError(COMPANION, "  --stop: stop the server entirely after a single command\n");
+        yCError(COMPANION, "  --echo: reply with the message received\n");
         return 1;
     }
 
@@ -1009,12 +1031,12 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
 #endif
 
     while (true) {
-        printf("Waiting for a message...\n");
+        yCInfo(COMPANION, "Waiting for a message...");
         Bottle cmd;
         Bottle response;
         port.read(cmd, true);
-        printf("Message: %s\n", cmd.toString().c_str());
-        printf("Reply: ");
+        yCInfo(COMPANION, "Message: %s", cmd.toString().c_str());
+        yCInfo(COMPANION, "Reply: ");
         if (echo) {
             response = cmd;
         } else {
@@ -1033,10 +1055,10 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
 
 int Companion::cmdRpc(int argc, char *argv[]) {
     if (argc<1) {
-        fprintf(stderr, "Please supply remote port name\n");
+        yCError(COMPANION, "Please supply remote port name\n");
 
-        fprintf(stderr, "(and, optionally, a name for this connection or port)\n");
-        fprintf(stderr, "You can also do \"yarp rpc --client /port\" to make a port for connecting later\n");
+        yCError(COMPANION, "(and, optionally, a name for this connection or port)\n");
+        yCError(COMPANION, "You can also do \"yarp rpc --client /port\" to make a port for connecting later\n");
         return 1;
     }
 
@@ -1058,7 +1080,7 @@ int Companion::cmdRpc(int argc, char *argv[]) {
 
 int Companion::cmdRpc2(int argc, char *argv[]) {
     if (argc<1) {
-        fprintf(stderr, "Please supply remote port name, and local port name\n");
+        yCError(COMPANION, "Please supply remote port name, and local port name\n");
         return 1;
     }
 
@@ -1090,7 +1112,7 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
         Bottle cmd(txt), reply;
         ok = p.write(cmd, reply);
         if (ok) {
-            printf("%s\n", reply.toString().c_str());
+            yCInfo(COMPANION, "%s", reply.toString().c_str());
         }
     }
     return 0;
@@ -1100,7 +1122,7 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
 int Companion::cmdRegression(int argc, char *argv[]) {
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
-    fprintf(stderr, "no regression tests linked in this version\n");
+    yCError(COMPANION, "no regression tests linked in this version\n");
     return 1;
 }
 
@@ -1139,22 +1161,21 @@ public:
 int Companion::cmdCheck(int argc, char *argv[]) {
     YARP_UNUSED(argc);
     YARP_UNUSED(argv);
-    Logger& log = Logger::get();
 
-    YARP_INFO(log, "==================================================================");
-    YARP_INFO(log, "=== This is \"yarp check\"");
-    YARP_INFO(log, "=== It is a very simple sanity check for your installation");
-    YARP_INFO(log, "=== If it freezes, try deleting the file reported by \"yarp conf\"");
-    YARP_INFO(log, "=== Also, if you are mixing terminal types, e.g. bash/cmd.exe");
-    YARP_INFO(log, "=== on windows, make sure the \"yarp conf\" file is the same on each");
-    YARP_INFO(log, "==================================================================");
-    YARP_INFO(log, "=== Trying to register some ports");
+    yCInfo(COMPANION, "==================================================================");
+    yCInfo(COMPANION, "=== This is \"yarp check\"");
+    yCInfo(COMPANION, "=== It is a very simple sanity check for your installation");
+    yCInfo(COMPANION, "=== If it freezes, try deleting the file reported by \"yarp conf\"");
+    yCInfo(COMPANION, "=== Also, if you are mixing terminal types, e.g. bash/cmd.exe");
+    yCInfo(COMPANION, "=== on windows, make sure the \"yarp conf\" file is the same on each");
+    yCInfo(COMPANION, "==================================================================");
+    yCInfo(COMPANION, "=== Trying to register some ports");
 
     CompanionCheckHelper check;
     Port in;
     bool faking = false;
     if (!NetworkBase::exists(NetworkBase::getNameServerName())) {
-        YARP_INFO(log, "=== NO NAME SERVER!  Switching to local, fake mode");
+        yCInfo(COMPANION, "=== NO NAME SERVER!  Switching to local, fake mode");
         NetworkBase::setLocalMode(true);
         faking = true;
     }
@@ -1165,15 +1186,15 @@ int Companion::cmdCheck(int argc, char *argv[]) {
 
     SystemClock::delaySystem(1);
 
-    YARP_INFO(log, "==================================================================");
-    YARP_INFO(log, "=== Trying to connect some ports");
+    yCInfo(COMPANION, "==================================================================");
+    yCInfo(COMPANION, "=== Trying to connect some ports");
 
     connect(out.getName().c_str(), in.getName().c_str());
 
     SystemClock::delaySystem(1);
 
-    YARP_INFO(log, "==================================================================");
-    YARP_INFO(log, "=== Trying to write some data");
+    yCInfo(COMPANION, "==================================================================");
+    yCInfo(COMPANION, "=== Trying to write some data");
 
     Bottle bot;
     bot.addInt32(42);
@@ -1181,36 +1202,34 @@ int Companion::cmdCheck(int argc, char *argv[]) {
 
     SystemClock::delaySystem(1);
 
-    YARP_INFO(log, "==================================================================");
+    yCInfo(COMPANION, "==================================================================");
     bool ok = false;
     for (int i=0; i<3; i++) {
-        YARP_INFO(log, "=== Trying to read some data");
+        yCInfo(COMPANION, "=== Trying to read some data");
         SystemClock::delaySystem(1);
         if (check.get() != nullptr) {
             int x = check.get()->get(0).asInt32();
-            char buf[256];
-            sprintf(buf, "*** Read number %d", x);
-            YARP_INFO(log, buf);
+            yCInfo(COMPANION, "*** Read number %d", x);
             if (x==42) {
                 ok = true;
                 break;
             }
         }
     }
-    YARP_INFO(log, "==================================================================");
-    YARP_INFO(log, "=== Trying to close some ports");
+    yCInfo(COMPANION, "==================================================================");
+    yCInfo(COMPANION, "=== Trying to close some ports");
     in.close();
     out.close();
     SystemClock::delaySystem(1);
     if (!ok) {
-        YARP_INFO(log, "*** YARP seems broken.");
+        yCInfo(COMPANION, "*** YARP seems broken.");
         //diagnose();
         return 1;
     } else {
         if (faking) {
-            YARP_INFO(log, "*** YARP seems okay, but there is no name server available.");
+            yCInfo(COMPANION, "*** YARP seems okay, but there is no name server available.");
         } else {
-            YARP_INFO(log, "*** YARP seems okay!");
+            yCInfo(COMPANION, "*** YARP seems okay!");
         }
     }
     return 0;
@@ -1268,15 +1287,15 @@ int Companion::cmdMake(int argc, char *argv[]) {
 
     FILE *fin = fopen(target, "r");
     if (fin) {
-        printf("File %s already exists, please remove it first\n", target);
+        yCInfo(COMPANION, "File %s already exists, please remove it first", target);
         fclose(fin);
         fin = nullptr;
         return 1;
     }
 
     writeBottleAsFile(target, f);
-    printf("Wrote to %s\n", target);
-    printf("Run cmake to generate makefiles or project files for compiling.\n");
+    yCInfo(COMPANION, "Wrote to %s", target);
+    yCInfo(COMPANION, "Run cmake to generate makefiles or project files for compiling.");
     return 0;
 }
 
@@ -1286,8 +1305,8 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
     NameConfig nc;
     if (argc!=0) {
         std::string fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
-        printf("Setting namespace in: %s\n", fname.c_str());
-        printf("Remove this file to revert to the default namespace (/root)\n");
+        yCInfo(COMPANION, "Setting namespace in: %s", fname.c_str());
+        yCInfo(COMPANION, "Remove this file to revert to the default namespace (/root)");
         Bottle cmd;
         for (int i=0; i<argc; i++) {
             cmd.addString(argv[i]);
@@ -1300,12 +1319,12 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
     //Bottle bot(nc.readConfig(fname).c_str());
     //std::string space = bot.get(0).asString().c_str();
     if (ns.size()==0) {
-        printf("No namespace specified\n");
+        yCInfo(COMPANION, "No namespace specified");
     }
     if (ns.size()==1) {
-        printf("YARP namespace: %s\n", ns.get(0).asString().c_str());
+        yCInfo(COMPANION, "YARP namespace: %s", ns.get(0).asString().c_str());
     } else {
-        printf("YARP namespaces: %s\n", ns.toString().c_str());
+        yCInfo(COMPANION, "YARP namespaces: %s", ns.toString().c_str());
     }
     return 0;
 }
@@ -1314,9 +1333,9 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
 int Companion::cmdClean(int argc, char *argv[]) {
     Property options;
     if (argc==0) {
-        printf("# If the cleaning process has long delays, you may wish to use a timeout, \n");
-        printf("# specifying how long to wait (in seconds) for a test connection to a port:\n");
-        printf("#   yarp clean --timeout 5.0\n");
+        yCInfo(COMPANION, "# If the cleaning process has long delays, you may wish to use a timeout, ");
+        yCInfo(COMPANION, "# specifying how long to wait (in seconds) for a test connection to a port:");
+        yCInfo(COMPANION, "#   yarp clean --timeout 5.0");
     } else {
         options.fromCommand(argc, argv, false);
     }
@@ -1326,21 +1345,21 @@ int Companion::cmdClean(int argc, char *argv[]) {
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");
-    printf("Requesting list of ports from name server... ");
+    yCInfo(COMPANION, "Requesting list of ports from name server... ");
     NetworkBase::write(name,
                        msg,
                        reply);
     int ct = reply.size()-1;
-    printf("got %d port%s\n", ct, (ct!=1)?"s":"");
+    yCInfo(COMPANION, "got %d port%s", ct, (ct!=1)?"s":"");
     double timeout = -1;
     if (options.check("timeout")) {
         timeout = options.find("timeout").asFloat64();
     }
     if (timeout <= 0) {
         timeout = -1;
-        printf("No timeout; to specify one, do \"yarp clean --timeout NN.N\"\n");
+        yCInfo(COMPANION, "No timeout; to specify one, do \"yarp clean --timeout NN.N\"");
     } else {
-        printf("Using a timeout of %g seconds\n", timeout);
+        yCInfo(COMPANION, "Using a timeout of %g seconds", timeout);
     }
     for (size_t i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
@@ -1349,10 +1368,10 @@ int Companion::cmdClean(int argc, char *argv[]) {
             if (port!="" && port!="fallback" && port!=name) {
                 Contact c = Contact::fromConfig(*entry);
                 if (c.getCarrier()=="mcast") {
-                    printf("Skipping mcast port %s...\n", port.c_str());
+                    yCInfo(COMPANION, "Skipping mcast port %s...", port.c_str());
                 } else {
                     Contact addr = c;
-                    printf("Testing %s at %s\n",
+                    yCInfo(COMPANION, "Testing %s at %s",
                            port.c_str(),
                            addr.toURI().c_str());
                     if (addr.isValid()) {
@@ -1361,7 +1380,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
                         }
                         OutputProtocol *out = Carriers::connect(addr);
                         if (out == nullptr) {
-                            printf("* No response, removing port %s\n", port.c_str());
+                            yCInfo(COMPANION, "* No response, removing port %s", port.c_str());
                             NetworkBase::unregisterName(port);
                         } else {
                             delete out;
@@ -1370,16 +1389,16 @@ int Companion::cmdClean(int argc, char *argv[]) {
                 }
             } else {
                 if (port!="") {
-                    printf("Ignoring %s\n", port.c_str());
+                    yCInfo(COMPANION, "Ignoring %s", port.c_str());
                 }
             }
         }
     }
-    printf("Giving name server a chance to do garbage collection.\n");
+    yCInfo(COMPANION, "Giving name server a chance to do garbage collection.");
     std::string serverName = NetworkBase::getNameServerName();
     Bottle cmd2("gc"), reply2;
     NetworkBase::write(serverName, cmd2, reply2);
-    printf("Name server says: %s\n", reply2.toString().c_str());
+    yCInfo(COMPANION, "Name server says: %s", reply2.toString().c_str());
 
     return 0;
 }
@@ -1387,19 +1406,18 @@ int Companion::cmdClean(int argc, char *argv[]) {
 
 int Companion::cmdResource(int argc, char *argv[]) {
     if (argc==0) {
-        printf("Looks for, and prints the complete path to, resource files.\n");
-        printf("Example usage:\n");
-        printf("   yarp resource --context context-name --from file-name\n");
-        printf("   yarp resource --context context-name --find file-name\n");
-        printf("To show what a config file loads as, specify --show\n");
-        printf("\n");
-        printf("Note that the search through the available contexts complies\n");
-        printf("with the current policies, therefore the content of the environment\n");
-        printf("variable YARP_ROBOT_NAME might affect the final result\n");
+        yCInfo(COMPANION, "Looks for, and prints the complete path to, resource files.");
+        yCInfo(COMPANION, "Example usage:");
+        yCInfo(COMPANION, "   yarp resource --context context-name --from file-name");
+        yCInfo(COMPANION, "   yarp resource --context context-name --find file-name");
+        yCInfo(COMPANION, "To show what a config file loads as, specify --show");
+        yCInfo(COMPANION);
+        yCInfo(COMPANION, "Note that the search through the available contexts complies");
+        yCInfo(COMPANION, "with the current policies, therefore the content of the environment");
+        yCInfo(COMPANION, "variable YARP_ROBOT_NAME might affect the final result");
         return 0;
     }
     ResourceFinder rf;
-    rf.setVerbose();
     Property p;
     p.fromCommand(argc, argv, false);
     if (p.check("find")) {
@@ -1408,9 +1426,9 @@ int Companion::cmdResource(int argc, char *argv[]) {
     bool ok = rf.configure(argc, argv, false);
     if (ok) {
         if (rf.check("show")) {
-            printf(">>> %s\n", rf.toString().c_str());
+            yCInfo(COMPANION, ">>> %s", rf.toString().c_str());
         }
-        printf("\"%s\"\n", rf.findFile("from").c_str());
+        yCInfo(COMPANION, "\"%s\"", rf.findFile("from").c_str());
     }
     return (ok?0:1);
 }
@@ -1431,35 +1449,35 @@ int Companion::cmdDetectRos(bool write) {
         delete tcpros;
     }
     if (!(have_xmlrpc&&have_tcpros)) {
-        fprintf(stderr, "ROS support requires enabling some optional carriers\n");
-        fprintf(stderr, "   xmlrpc %s\n", have_xmlrpc?"(already enabled)":"");
-        fprintf(stderr, "   tcpros %s\n", have_tcpros?"(already enabled)":"");
+        yCError(COMPANION, "ROS support requires enabling some optional carriers\n");
+        yCError(COMPANION, "   xmlrpc %s\n", have_xmlrpc?"(already enabled)":"");
+        yCError(COMPANION, "   tcpros %s\n", have_tcpros?"(already enabled)":"");
         return 1;
     }
 
     std::string uri = NetworkBase::getEnvironment("ROS_MASTER_URI");
     if (uri=="") {
-        fprintf(stderr, "ROS_MASTER_URI environment variable not set.\n");
+        yCError(COMPANION, "ROS_MASTER_URI environment variable not set.\n");
         uri = "http://127.0.0.1:11311/";
     }
     Contact root = Contact::fromString(uri);
     root.setCarrier("xmlrpc");
-    fprintf(stderr, "Trying ROS_MASTER_URI=%s...\n", uri.c_str());
+    yCError(COMPANION, "Trying ROS_MASTER_URI=%s...\n", uri.c_str());
     OutputProtocol *out = Carriers::connect(root);
     bool ok = (out != nullptr);
     if (ok) delete out;
     if (!ok) {
-        fprintf(stderr, "Could not reach server.\n");
+        yCError(COMPANION, "Could not reach server.\n");
         return 1;
     } else {
-        fprintf(stderr, "Reachable.  Writing.\n");
+        yCError(COMPANION, "Reachable.  Writing.\n");
     }
     NameConfig nc;
     nc.fromFile();
     nc.setAddress(root);
     nc.setMode("ros");
     nc.toFile();
-    fprintf(stderr, "Configuration stored.  Testing.\n");
+    yCError(COMPANION, "Configuration stored.  Testing.\n");
     return cmdWhere(0, nullptr);
 }
 
@@ -1478,7 +1496,7 @@ int Companion::cmdDetect(int argc, char *argv[]) {
         } else if (std::string(argv[0])=="--ros") {
             ros = true;
         } else {
-            YARP_ERROR(Logger::get(), "Argument not understood");
+            yCError(COMPANION, "Argument not understood");
             return 1;
         }
     }
@@ -1491,76 +1509,76 @@ int Companion::cmdDetect(int argc, char *argv[]) {
                                                  didScan,
                                                  didUse);
     if (addr.isValid()) {
-        printf("Checking for name server at ip %s port %d\n",
+        yCInfo(COMPANION, "Checking for name server at ip %s port %d",
                addr.getHost().c_str(),
                addr.getPort());
-        printf("If there is a long delay, try:\n");
-        printf("  yarp conf --clean\n");
+        yCInfo(COMPANION, "If there is a long delay, try:");
+        yCInfo(COMPANION, "  yarp conf --clean");
     }
     OutputProtocol *out = Carriers::connect(addr);
     bool ok = (out != nullptr);
     if (ok) delete out;
     if (ok) {
-        printf("\n");
-        printf("=========================================================\n");
-        printf("==\n");
-        printf("== FOUND\n");
-        printf("== %s is available at ip %s port %d\n",
+        yCInfo(COMPANION);
+        yCInfo(COMPANION, "=========================================================");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "== FOUND");
+        yCInfo(COMPANION, "== %s is available at ip %s port %d",
                addr.getName().c_str(),
                addr.getHost().c_str(), addr.getPort());
-        printf("== %s can be browsed at http://%s:%d/\n",
+        yCInfo(COMPANION, "== %s can be browsed at http://%s:%d/",
                addr.getName().c_str(),
                addr.getHost().c_str(), addr.getPort());
         if (didScan&&!didUse) {
-            printf("== \n");
-            printf("== WARNING\n");
-            printf("== This address was found by scanning the network, but\n");
-            printf("== has not been saved to a configuration file.\n");
-            printf("== Regular YARP programs will not be able to use the \n");
-            printf("== name server until this address is saved.  To do so:\n");
-            printf("==   yarp detect --write\n");
+            yCInfo(COMPANION, "== ");
+            yCInfo(COMPANION, "== WARNING");
+            yCInfo(COMPANION, "== This address was found by scanning the network, but");
+            yCInfo(COMPANION, "== has not been saved to a configuration file.");
+            yCInfo(COMPANION, "== Regular YARP programs will not be able to use the ");
+            yCInfo(COMPANION, "== name server until this address is saved.  To do so:");
+            yCInfo(COMPANION, "==   yarp detect --write");
         }
         if (didUse) {
-            printf("== \n");
-            printf("== Address saved.\n");
-            printf("== YARP programs will now be able to use the name server.\n");
+            yCInfo(COMPANION, "== ");
+            yCInfo(COMPANION, "== Address saved.");
+            yCInfo(COMPANION, "== YARP programs will now be able to use the name server.");
         }
-        printf("== \n");
-        printf("=========================================================\n");
+        yCInfo(COMPANION, "== ");
+        yCInfo(COMPANION, "=========================================================");
     } else {
-        printf("\n");
-        printf("=========================================================\n");
-        printf("==\n");
-        printf("== PROBLEM\n");
-        printf("== No valid YARP name server was found.\n");
-        printf("==\n");
-        printf("== TIPS\n");
-        printf("== #1 Make sure a YARP name server is running.\n");
-        printf("== A command for starting the server is:\n");
-        printf("== $ yarp server\n");
-        printf("==\n");
-        printf("== #2 Make sure the YARP name server is running in the\n");
-        printf("== same namespace as you.  Your namespace is set as:\n");
-        printf("==   %s\n", NetworkBase::getNameServerName().c_str());
-        printf("== You can change your namespace to /EXAMPLE by doing:\n");
-        printf("==   yarp namespace /EXAMPLE\n");
-        printf("== You can check your namespace by doing:\n");
-        printf("==   yarp namespace\n");
-        printf("==\n");
-        printf("== #3 Find out the ip address and port number the YARP\n");
-        printf("== name server is running on, and do:\n");
-        printf("== $ yarp conf [ip address] [port number]\n");
-        printf("== This information is printed out when the server is\n");
-        printf("== started.\n");
-        printf("==\n");
-        printf("== #4 To determine the name of the required configuration\n");
-        printf("== file for manual viewing/editing, do:\n");
-        printf("== $ yarp conf\n");
-        printf("== The simplest possible configuration file would look\n");
-        printf("== like something this:\n");
-        printf("==   192.168.0.1 10000\n");
-        printf("==\n");
-        printf("=========================================================\n");
+        yCInfo(COMPANION);
+        yCInfo(COMPANION, "=========================================================");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "== PROBLEM");
+        yCInfo(COMPANION, "== No valid YARP name server was found.");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "== TIPS");
+        yCInfo(COMPANION, "== #1 Make sure a YARP name server is running.");
+        yCInfo(COMPANION, "== A command for starting the server is:");
+        yCInfo(COMPANION, "== $ yarp server");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "== #2 Make sure the YARP name server is running in the");
+        yCInfo(COMPANION, "== same namespace as you.  Your namespace is set as:");
+        yCInfo(COMPANION, "==   %s", NetworkBase::getNameServerName().c_str());
+        yCInfo(COMPANION, "== You can change your namespace to /EXAMPLE by doing:");
+        yCInfo(COMPANION, "==   yarp namespace /EXAMPLE");
+        yCInfo(COMPANION, "== You can check your namespace by doing:");
+        yCInfo(COMPANION, "==   yarp namespace");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "== #3 Find out the ip address and port number the YARP");
+        yCInfo(COMPANION, "== name server is running on, and do:");
+        yCInfo(COMPANION, "== $ yarp conf [ip address] [port number]");
+        yCInfo(COMPANION, "== This information is printed out when the server is");
+        yCInfo(COMPANION, "== started.");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "== #4 To determine the name of the required configuration");
+        yCInfo(COMPANION, "== file for manual viewing/editing, do:");
+        yCInfo(COMPANION, "== $ yarp conf");
+        yCInfo(COMPANION, "== The simplest possible configuration file would look");
+        yCInfo(COMPANION, "== like something this:");
+        yCInfo(COMPANION, "==   192.168.0.1 10000");
+        yCInfo(COMPANION, "==");
+        yCInfo(COMPANION, "=========================================================");
         return 1;
     }
     return 0;
@@ -1577,7 +1595,7 @@ int Companion::subscribe(const char *src, const char *dest, const char *mode) {
                                  reply);
     bool fail = reply.get(0).toString()=="fail";
     if (fail) {
-        printf("Persistent connection operation failed.\n");
+        yCInfo(COMPANION, "Persistent connection operation failed.");
         return 1;
     }
     if (reply.get(0).toString()=="subscriptions") {
@@ -1590,27 +1608,28 @@ int Companion::subscribe(const char *src, const char *dest, const char *mode) {
                 const char *destTopic = "";
                 //if (topic.get(1).asInt32()) srcTopic=" (topic)";
                 //if (topic.get(2).asInt32()) destTopic=" (topic)";
-                printf("Persistent connection %s%s -> %s%s",
+                yCInfo(COMPANION,
+                       "Persistent connection %s%s -> %s%s",
                        b->check("src", Value("?")).asString().c_str(),
                        srcTopic,
                        b->check("dest", Value("?")).asString().c_str(),
                        destTopic);
                 std::string mode = b->check("mode", Value("")).asString();
                 if (mode!="") {
-                    printf(" [%s]", mode.c_str());
+                    yCInfo(COMPANION, " [%s]", mode.c_str());
                 }
                 std::string carrier = b->check("carrier", Value("")).asString();
                 if (carrier!="") {
-                    printf(" (%s)", carrier.c_str());
+                    yCInfo(COMPANION, " (%s)", carrier.c_str());
                 }
-                printf("\n");
+                yCInfo(COMPANION);
             }
         }
         if (subs.size()==0) {
-            printf("No persistent connections.\n");
+            yCInfo(COMPANION, "No persistent connections.");
         }
     } else if (ok&&reply.get(0).toString()!="ok") {
-        printf("This name server does not support persistent connections.\n");
+        yCInfo(COMPANION, "This name server does not support persistent connections.");
     }
     return 0;
 }
@@ -1626,7 +1645,7 @@ int Companion::unsubscribe(const char *src, const char *dest) {
                        reply);
     bool ok = reply.get(0).toString()=="ok";
     if (!ok) {
-        printf("Unsubscription failed.\n");
+        yCInfo(COMPANION, "Unsubscription failed.");
     }
     return ok?0:1;
 }
@@ -1667,7 +1686,7 @@ public:
             companion_active_port = &core;
             address = core.where();
         } else {
-            //YARP_ERROR(Logger::get(), "Could not create port");
+            //yCError(COMPANION, "Could not create port");
             done.post();
         }
     }
@@ -1682,7 +1701,7 @@ public:
             Bottle envelope;
             core.getEnvelope(envelope);
             if (envelope.size()>0) {
-                printf("%s ", envelope.toString().c_str());
+                yCInfo(COMPANION, "%s ", envelope.toString().c_str());
             }
         }
     }
@@ -1698,7 +1717,7 @@ public:
                 int code = bot.get(0).asInt32();
                 if (code!=1) {
                     showEnvelope();
-                    printf("%s\n", bot.get(1).asString().c_str());
+                    yCInfo(COMPANION, "%s", bot.get(1).asString().c_str());
                     fflush(stdout);
                 }
                 if (code==1) {
@@ -1707,7 +1726,7 @@ public:
             } else {
                 // raw = true; // don't make raw mode "sticky"
                 showEnvelope();
-                printf("%s\n", bot.toString().c_str());
+                yCInfo(COMPANION, "%s", bot.toString().c_str());
                 fflush(stdout);
             }
             return true;
@@ -1732,7 +1751,7 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 {
     if (argc<2)
     {
-        fprintf(stderr, "Please supply the read and write port names\n");
+        yCError(COMPANION, "Please supply the read and write port names\n");
         return 1;
     }
 
@@ -1769,22 +1788,22 @@ int Companion::cmdTopic(int argc, char *argv[]) {
                                          false,
                                          true);
             if (!ok) {
-                fprintf(stderr, "Failed to read topic list\n");
+                yCError(COMPANION, "Failed to read topic list\n");
                 return 1;
             }
             if (reply.size()==0) {
-                printf("No topics\n");
+                yCInfo(COMPANION, "No topics");
             } else {
-                printf("Topics: %s\n", reply.toString().c_str());
+                yCInfo(COMPANION, "Topics: %s", reply.toString().c_str());
             }
             return 0;
         }
     }
     if (argc<1)
     {
-        fprintf(stderr, "Please supply the topic name\n");
-        fprintf(stderr, "(Or: '--list' to list all topics)\n");
-        fprintf(stderr, "(Or: '--remove <topic>' to remove a topic)\n");
+        yCError(COMPANION, "Please supply the topic name\n");
+        yCError(COMPANION, "(Or: '--list' to list all topics)\n");
+        yCError(COMPANION, "(Or: '--remove <topic>' to remove a topic)\n");
         return 1;
     }
 
@@ -1805,10 +1824,10 @@ int Companion::cmdTopic(int argc, char *argv[]) {
         ok = reply.get(0).asVocab()==yarp::os::createVocab('o', 'k');
     }
     if (!ok) {
-        fprintf(stderr, "Failed to %s topic %s:\n  %s\n",
+        yCError(COMPANION, "Failed to %s topic %s:\n  %s\n",
                         act.c_str(), argv[0], reply.toString().c_str());
     } else {
-        fprintf(stdout, "Topic %s %sd\n", argv[0], act.c_str());
+        yCInfo(COMPANION, "Topic %s %sd\n", argv[0], act.c_str());
     }
 
     return ok?0:1;
@@ -1850,7 +1869,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         hist_file += "yarp_write";
         if (yarp::os::mkdir_p(hist_file.c_str(), 1) != 0)
         {
-            fprintf(stderr, "Unable to create directory into \"%s\"\n",
+            yCError(COMPANION, "Unable to create directory into \"%s\"\n",
                     yarp::os::ResourceFinder::getDataHome().c_str());
             return 1;
         }
@@ -1964,7 +1983,9 @@ int Companion::forward(const char *localName, const char *targetName) {
         Bottle in, out;
         p.read(in, true);
         p.write(in, out);
-        printf("in [%s] out [%s]\n", in.toString().c_str(),
+        yCInfo(COMPANION,
+               "in [%s] out [%s]\n",
+               in.toString().c_str(),
                out.toString().c_str());
         p.reply(out);
     }
@@ -1986,8 +2007,8 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
         Port port;
         port.openFake(connectionName);
         if (!port.addOutput(targetName)) {
-            fprintf(stderr, "Cannot make connection\n");
-            YARP_ERROR(Logger::get(), "Alternative method: precede port name with --client");
+            yCError(COMPANION, "Cannot make connection\n");
+            yCError(COMPANION, "Alternative method: precede port name with --client");
             return 1;
         }
         if (adminMode) {
@@ -1995,7 +2016,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
         }
 
         if (!firstTimeRound) {
-            printf("Target disappeared, reconnecting...\n");
+            yCInfo(COMPANION, "Target disappeared, reconnecting...\n");
         }
         firstTimeRound = false;
 
@@ -2039,7 +2060,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                     break;
                 }
                 if (reply.get(0).isVocab() && reply.get(0).asVocab()==yarp::os::createVocab('m', 'a', 'n', 'y')) {
-                    printf("Responses:\n");
+                    yCInfo(COMPANION, "Responses:\n");
                     Bottle *lst = &reply;
                     int start = 1;
                     if (reply.size()==2 && reply.get(1).isList()) {
@@ -2049,13 +2070,13 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                     for (size_t i=start; i<lst->size(); i++) {
                         Value& v = lst->get(i);
                         if (v.isString()) {
-                            printf("  %s\n", v.asString().c_str());
+                            yCInfo(COMPANION, "  %s\n", v.asString().c_str());
                         } else {
-                            printf("  %s\n", v.toString().c_str());
+                            yCInfo(COMPANION, "  %s\n", v.toString().c_str());
                         }
                     }
                 } else {
-                    printf("Response: %s\n", reply.toString().c_str());
+                    yCInfo(COMPANION, "Response: %s\n", reply.toString().c_str());
                 }
                 resendCount = 0;
             }
@@ -2080,7 +2101,7 @@ static bool plugin_test(YarpPluginSettings& settings) {
     SharedLibraryFactory lib;
     settings.open(lib);
     if (!lib.isValid()) {
-        fprintf(stderr, "    Cannot find or load shared library\n");
+        yCError(COMPANION, "    Cannot find or load shared library\n");
         return false;
     } else {
         const SharedLibraryClassApi& api = lib.getApi();
@@ -2088,10 +2109,10 @@ static bool plugin_test(YarpPluginSettings& settings) {
         api.getClassName(className, sizeof(className));
         char baseClassName[256] = "unknown";
         api.getBaseClassName(baseClassName, sizeof(baseClassName));
-        printf("  * library:        %s\n", lib.getName().c_str());
-        printf("  * system version: %d\n", (int)api.systemVersion);
-        printf("  * class name:     %s\n", className);
-        printf("  * base class:     %s\n", baseClassName);
+        yCInfo(COMPANION, "  * library:        %s\n", lib.getName().c_str());
+        yCInfo(COMPANION, "  * system version: %d\n", (int)api.systemVersion);
+        yCInfo(COMPANION, "  * class name:     %s\n", className);
+        yCInfo(COMPANION, "  * base class:     %s\n", baseClassName);
 
         bool ok = true;
         yarp::os::impl::signal(SIGSEGV, plugin_signal_handler);
@@ -2100,20 +2121,20 @@ static bool plugin_test(YarpPluginSettings& settings) {
             void* tmp = api.create();
             api.destroy(tmp);
         } catch (...) {
-            printf("\n");
-            printf("  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
-            printf("  X                                                     X\n");
-            printf("  X                       WARNING                       X\n");
-            printf("  X                                                     X\n");
-            printf("  X            === This plugin is BROKEN ===            X\n");
-            printf("  X                                                     X\n");
-            printf("  X                                                     X\n");
-            printf("  X  Author information: The most plausible reason is   X\n");
-            printf("  X  that the destructor is deleting some pointer that  X\n");
-            printf("  X  is not allocated in the constructor, and that is   X\n");
-            printf("  X  not initialized to a null pointer.                 X\n");
-            printf("  X                                                     X\n");
-            printf("  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
+            yCWarning(COMPANION, "\n");
+            yCWarning(COMPANION, "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
+            yCWarning(COMPANION, "  X                                                     X\n");
+            yCWarning(COMPANION, "  X                       WARNING                       X\n");
+            yCWarning(COMPANION, "  X                                                     X\n");
+            yCWarning(COMPANION, "  X            === This plugin is BROKEN ===            X\n");
+            yCWarning(COMPANION, "  X                                                     X\n");
+            yCWarning(COMPANION, "  X                                                     X\n");
+            yCWarning(COMPANION, "  X  Author information: The most plausible reason is   X\n");
+            yCWarning(COMPANION, "  X  that the destructor is deleting some pointer that  X\n");
+            yCWarning(COMPANION, "  X  is not allocated in the constructor, and that is   X\n");
+            yCWarning(COMPANION, "  X  not initialized to a null pointer.                 X\n");
+            yCWarning(COMPANION, "  X                                                     X\n");
+            yCWarning(COMPANION, "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
             ok = false;
         }
         yarp::os::impl::signal(SIGSEGV, SIG_DFL);
@@ -2124,21 +2145,21 @@ static bool plugin_test(YarpPluginSettings& settings) {
 
 static void plugin_usage()
 {
-    printf("Print information about installed plugins\n");
-    printf("\n");
-    printf("Usage:\n");
-    printf(" * Test a specific plugin:\n");
-    printf("     yarp plugin [--verbose] <pluginname>\n");
-    printf("     yarp plugin [--verbose] /path/to/plugin/<libraryname>.(so|dll|dylib) <pluginpart>\n");
-    printf(" * Test all the plugins:\n");
-    printf("     yarp plugin [--verbose] --all\n");
-    printf(" * Print a list of plugins:\n");
-    printf("     yarp plugin [--verbose] --list\n");
-    printf(" * Print plugin search path:\n");
-    printf("     yarp plugin [--verbose] --search-path\n");
-    printf(" * Print this help and exit:\n");
-    printf("     yarp plugin --help\n");
-    printf("\n");
+    yCInfo(COMPANION, "Print information about installed plugins\n");
+    yCInfo(COMPANION, "\n");
+    yCInfo(COMPANION, "Usage:\n");
+    yCInfo(COMPANION, " * Test a specific plugin:\n");
+    yCInfo(COMPANION, "     yarp plugin <pluginname>\n");
+    yCInfo(COMPANION, "     yarp plugin /path/to/plugin/<libraryname>.(so|dll|dylib) <pluginpart>\n");
+    yCInfo(COMPANION, " * Test all the plugins:\n");
+    yCInfo(COMPANION, "     yarp plugin --all\n");
+    yCInfo(COMPANION, " * Print a list of plugins:\n");
+    yCInfo(COMPANION, "     yarp plugin --list\n");
+    yCInfo(COMPANION, " * Print plugin search path:\n");
+    yCInfo(COMPANION, "     yarp plugin --search-path\n");
+    yCInfo(COMPANION, " * Print this help and exit:\n");
+    yCInfo(COMPANION, "     yarp plugin --help\n");
+    yCInfo(COMPANION, "\n");
 }
 
 int Companion::cmdPlugin(int argc, char *argv[]) {
@@ -2153,9 +2174,8 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         return 0;
     }
 
-    bool verbose = false;
     if (arg=="--verbose") {
-        verbose = true;
+        yCWarning(COMPANION, "The verbose argument is deprecated.");
         argc--;
         argv++;
         arg = argv[0];
@@ -2167,17 +2187,17 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
     if (arg=="--search-path") {
         Bottle lst = selector.getSearchPath();
         if (lst.size()==0) {
-            printf("No search path.\n");
+            yCInfo(COMPANION, "No search path.\n");
             return 1;
         }
-        printf("Search path:\n");
+        yCInfo(COMPANION, "Search path:\n");
         for (size_t i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
             std::string name = options.asList()->get(0).toString();
             std::string path = options.check("path", Value("unknown path")).asString();
             std::string type = options.check("type", Value("unknown type")).asString();
             if (type == "shared") {
-                printf("  %15s:\t%s\n", name.c_str(), path.c_str());
+                yCInfo(COMPANION, "  %15s:\t%s\n", name.c_str(), path.c_str());
             }
         }
         return 0;
@@ -2188,29 +2208,28 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         for (size_t i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
             std::string name = options.check("name", Value("untitled")).asString();
-            printf("%s\n", name.c_str());
+            yCInfo(COMPANION, "%s\n", name.c_str());
         }
         return 0;
     }
     if (arg=="--all") {
         Bottle lst = selector.getSelectedPlugins();
         if (lst.size()==0) {
-            printf("No plugins found.\n");
+            yCInfo(COMPANION, "No plugins found.\n");
             return 1;
         }
-        printf("Runtime plugins found:\n");
+        yCInfo(COMPANION, "Runtime plugins found:\n");
         bool ok = true;
         for (size_t i=0; i<lst.size(); i++) {
             Value& options = lst.get(i);
             std::string name = options.check("name", Value("untitled")).asString();
             std::string type = options.check("type", Value("unknown type")).asString();
-            printf("\n");
-            printf("%s %s\n", type.c_str(), name.c_str());
-            printf("  * ini file:       %s\n", options.find("inifile").toString().c_str());
+            yCInfo(COMPANION, "\n");
+            yCInfo(COMPANION, "%s %s\n", type.c_str(), name.c_str());
+            yCInfo(COMPANION, "  * ini file:       %s\n", options.find("inifile").toString().c_str());
             options.asList()->pop();
-            printf("  * config:         %s\n", options.toString().c_str());
+            yCInfo(COMPANION, "  * config:         %s\n", options.toString().c_str());
             YarpPluginSettings settings;
-            settings.setVerboseMode(verbose);
             settings.setSelector(selector);
             settings.readFromSearchable(options, name);
             ok &= plugin_test(settings);
@@ -2219,16 +2238,15 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
     } else {
         Property p;
         YarpPluginSettings settings;
-        settings.setVerboseMode(verbose);
         if (argc>=2) {
             settings.setLibraryMethodName(argv[0], argv[1]);
         } else {
             settings.setPluginName(argv[0]);
         }
         if (!settings.setSelector(selector)) {
-            fprintf(stderr, "cannot find a plugin with the specified name\n");
+            yCError(COMPANION, "cannot find a plugin with the specified name\n");
         } else {
-            printf("Yes, this is a YARP plugin\n");
+            yCInfo(COMPANION, "Yes, this is a YARP plugin\n");
         }
         return plugin_test(settings) ? 0 : 1;
     }
@@ -2324,10 +2342,10 @@ int Companion::cmdMerge(int argc, char *argv[]) {
 
     int nPorts = argc;
     if (nPorts == 0) {
-        printf("This is yarp merge. Please provide a list of ports to read from, e.g:\n");
-        printf("  yarp merge /port1 /port2\n");
-        printf("Alternative syntax:\n");
-        printf("  yarp merge --input /p1 /p2 --output /p3 --worker /prefix --carrier udp\n");
+        yCInfo(COMPANION, "This is yarp merge. Please provide a list of ports to read from, e.g:\n");
+        yCInfo(COMPANION, "  yarp merge /port1 /port2\n");
+        yCInfo(COMPANION, "Alternative syntax:\n");
+        yCInfo(COMPANION, "  yarp merge --input /p1 /p2 --output /p3 --worker /prefix --carrier udp\n");
         return -1;
     }
 
@@ -2375,7 +2393,7 @@ int Companion::cmdMerge(int argc, char *argv[]) {
         }
     }
 
-    printf ("Ready. Output goes to %s\n", outPort.getName().c_str());
+    yCInfo(COMPANION, "Ready. Output goes to %s\n", outPort.getName().c_str());
     while(true) {
         product.wait();
         while (product.check()) product.wait();
@@ -2408,19 +2426,19 @@ int Companion::cmdSample(int argc, char *argv[]) {
     Property options;
     options.fromCommand(argc, argv, false);
     if (argc==0 || !((options.check("period")||options.check("rate"))&&options.check("output"))) {
-        printf("This is yarp sample. Syntax:\n");
-        printf("  yarp sample --output /port --period 0.01\n");
-        printf("  yarp sample --output /port --rate 100\n");
-        printf("  yarp sample --input /p1 --output /p2 --rate 50 --carrier udp\n");
-        printf("  yarp sample --output /port --rate 100 --show\n");
-        printf("Data is read from the input port and repeated on the output port at the\n");
-        printf("specified rate/period.  If the 'show' flag is given, the data is also printed\n");
-        printf("on standard output.\n");
+        yCInfo(COMPANION, "This is yarp sample. Syntax:\n");
+        yCInfo(COMPANION, "  yarp sample --output /port --period 0.01\n");
+        yCInfo(COMPANION, "  yarp sample --output /port --rate 100\n");
+        yCInfo(COMPANION, "  yarp sample --input /p1 --output /p2 --rate 50 --carrier udp\n");
+        yCInfo(COMPANION, "  yarp sample --output /port --rate 100 --show\n");
+        yCInfo(COMPANION, "Data is read from the input port and repeated on the output port at the\n");
+        yCInfo(COMPANION, "specified rate/period.  If the 'show' flag is given, the data is also printed\n");
+        yCInfo(COMPANION, "on standard output.\n");
         return 1;
     }
 
     if (!port.open(options.find("output").asString())) {
-        fprintf(stderr, "Failed to open output port\n");
+        yCError(COMPANION, "Failed to open output port\n");
         return 1;
     }
     if (options.check("period")) {
@@ -2445,7 +2463,7 @@ int Companion::cmdSample(int argc, char *argv[]) {
         Bottle *bot = port.read();
         if (!bot) continue;
         if (show) {
-            printf("%s\n", bot->toString().c_str());
+            yCInfo(COMPANION, "%s\n", bot->toString().c_str());
         }
         if (port.getOutputCount()>0) {
             port.prepare() = *bot;
@@ -2477,9 +2495,9 @@ int Companion::cmdTime(int argc, char *argv[]) {
         if (ros) {
             int sec = (int) t;
             int nsec = (int)((t-sec)*1e9);
-            printf("%d %d\n", sec, nsec);
+            yCInfo(COMPANION, "%d %d\n", sec, nsec);
         } else {
-            printf("%f\n", t);
+            yCInfo(COMPANION, "%f\n", t);
         }
         fflush(stdout);
         clk.delay(0.1);
@@ -2503,14 +2521,14 @@ int Companion::cmdClock(int argc, char *argv[])
 
     if(help)
     {
-        printf("This command publishes a clock time through a YARP port\n\n");
-        printf("Accepted parameters are:\n");
-        printf("period:     update period [ms]. Default 30\n");
-        printf("name:       name of yarp port to be opened. Default: check YARP_CLOCK environment variable; if missing use '/clock'\n");
-        printf("rtf:        realt time factor. Elapsed time will be multiplied by this factor to simulate faster or slower then real time clock frequency. Default 1 (real time)\n");
-        printf("systemTime: If present the published time will start at the same value as system clock. If if not present (default) the published time will start from 0. \n");
-        printf("help:       print this help\n");
-        printf("\n");
+        yCInfo(COMPANION, "This command publishes a clock time through a YARP port\n\n");
+        yCInfo(COMPANION, "Accepted parameters are:\n");
+        yCInfo(COMPANION, "period:     update period [ms]. Default 30\n");
+        yCInfo(COMPANION, "name:       name of yarp port to be opened. Default: check YARP_CLOCK environment variable; if missing use '/clock'\n");
+        yCInfo(COMPANION, "rtf:        realt time factor. Elapsed time will be multiplied by this factor to simulate faster or slower then real time clock frequency. Default 1 (real time)\n");
+        yCInfo(COMPANION, "systemTime: If present the published time will start at the same value as system clock. If if not present (default) the published time will start from 0. \n");
+        yCInfo(COMPANION, "help:       print this help\n");
+        yCInfo(COMPANION, "\n");
         return 1;
     }
 
@@ -2525,19 +2543,19 @@ int Companion::cmdClock(int argc, char *argv[])
         portName = "/clock";
     portName = config.check("name", Value(portName), "name of port broadcasting the time").asString();
 
-    printf("Clock configuration is the following:\n");
-    printf("period %.3f msec\n", period*1000);                  std::fflush(stdout);
-    printf("name   %s\n", portName.c_str());                    std::fflush(stdout);
-    printf("rtf    %.3f\n", timeFactor);                        std::fflush(stdout);
-    printf("system %s\n", system?"true":"false");               std::fflush(stdout);
+    yCInfo(COMPANION, "Clock configuration is the following:\n");
+    yCInfo(COMPANION, "period %.3f msec\n", period*1000);                  std::fflush(stdout);
+    yCInfo(COMPANION, "name   %s\n", portName.c_str());                    std::fflush(stdout);
+    yCInfo(COMPANION, "rtf    %.3f\n", timeFactor);                        std::fflush(stdout);
+    yCInfo(COMPANION, "system %s\n", system?"true":"false");               std::fflush(stdout);
 
     if(!streamPort.open(portName) )
     {
-        printf("yarp clock error: Cannot open '/clock' port");
+        yCInfo(COMPANION, "yarp clock error: Cannot open '/clock' port");
         return 1;
     }
 
-    printf("\n\n");                                             std::fflush(stdout);
+    yCInfo(COMPANION, "\n\n");                                             std::fflush(stdout);
     double sec, nsec, elapsed;
     double time = clock.now();
 
@@ -2569,7 +2587,7 @@ int Companion::cmdClock(int argc, char *argv[])
         if( (((int) elapsed %5) == 0))
         {
             if(!done) {
-                printf("yarp clock running happily...\n");
+                yCInfo(COMPANION, "yarp clock running happily...\n");
                 std::fflush(stdout);
             }
             done = true;
@@ -2586,8 +2604,8 @@ int Companion::cmdClock(int argc, char *argv[])
 int Companion::cmdPray(int argc, char *argv[])
 {
     auto cmdPray_usage = [](){
-        printf("Usage:\n");
-        printf("yarp pray [port]\n");
+        yCInfo(COMPANION, "Usage:\n");
+        yCInfo(COMPANION, "yarp pray [port]\n");
     };
 
     auto cmdPray_getch = []() {
@@ -2720,5 +2738,4 @@ int Companion::cmdPray(int argc, char *argv[])
     }
     printf("\n");
     return 0;
-
 }

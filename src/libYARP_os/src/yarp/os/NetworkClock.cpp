@@ -11,6 +11,7 @@
 #include <yarp/conf/numeric.h>
 #include <yarp/conf/system.h>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
@@ -20,7 +21,6 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/SystemInfo.h>
-#include <yarp/os/impl/Logger.h>
 
 #include <cstring>
 #include <list>
@@ -31,6 +31,14 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+namespace {
+YARP_LOG_COMPONENT(NETWORKCLOCK,
+                   "yarp.os.NetworkClock",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+}
 
 class NetworkClock::Private : public yarp::os::PortReader
 {
@@ -95,7 +103,7 @@ bool NetworkClock::Private::read(ConnectionReader& reader)
     }
 
     if (!ok && !closing) {
-        YARP_ERROR(Logger::get(), "Error reading clock port");
+        yCError(NETWORKCLOCK, "Error reading clock port");
         return false;
     }
 
@@ -131,7 +139,7 @@ NetworkClock::NetworkClock() :
 
 NetworkClock::~NetworkClock()
 {
-    YARP_WARN(Logger::get(), "Destroying network clock");
+    yCWarning(NETWORKCLOCK, "Destroying network clock");
     delete mPriv;
 }
 
@@ -171,7 +179,7 @@ bool NetworkClock::open(const std::string& clockSourcePortName, std::string loca
         ret = NetworkBase::connect(mPriv->clockName, mPriv->port.getName(), style);
 
         if (!src.isValid()) {
-            fprintf(stderr, "Cannot find time port \"%s\" or a time topic \"%s@\"\n", mPriv->clockName.c_str(), mPriv->clockName.c_str());
+            yCError(NETWORKCLOCK, "Cannot find time port \"%s\" or a time topic \"%s@\"\n", mPriv->clockName.c_str(), mPriv->clockName.c_str());
         }
     }
 

@@ -9,12 +9,20 @@
 
 #include "ShmemCarrier.h"
 #include "ShmemHybridStream.h"
+#include "ShmemTypes.h"
 
 #include <yarp/os/ConnectionState.h>
+#include <yarp/os/Log.h>
 
 #include <string>
 #include <cstdlib>
 
+YARP_LOG_COMPONENT(SHMEMCARRIER,
+                   "yarp.carrier.shmem",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
 
 ShmemCarrier::ShmemCarrier() = default;
 

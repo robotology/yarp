@@ -10,7 +10,7 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/SplitString.h>
@@ -29,11 +29,12 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-//#define YMSG(x) printf x;
-//#define YTRACE(x) YMSG(("at %s\n", x))
-
-#define YMSG(x)
-#define YTRACE(x)
+YARP_LOG_COMPONENT(NAMESERVER,
+                   "yarp.os.impl.NameServer",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
 
 // produce a correctly parsed string in presence of quoting
 static std::string STR_HELP(const char* txt)
@@ -89,7 +90,7 @@ Contact NameServer::registerName(const std::string& name,
     bool reusablePort = false;
     bool reusableIp = false;
 
-    //YARP_DEBUG(Logger::get(), "in registerName...");
+    yCTrace(NAMESERVER, "in registerName...");
 
     if (name != "...") {
         unregisterName(name);
@@ -116,7 +117,7 @@ Contact NameServer::registerName(const std::string& name,
     if (machine == "...") {
         if (carrier != "mcast") {
             if (remote == "...") {
-                YARP_ERROR(Logger::get(), "remote machine name was not found!  can only guess it is local...");
+                yCError(NAMESERVER, "remote machine name was not found!  can only guess it is local...");
                 machine = "127.0.0.1";
             } else {
                 machine = remote;
@@ -140,7 +141,7 @@ Contact NameServer::registerName(const std::string& name,
 
     suggestion = Contact(portName, carrier, machine, port);
 
-    YARP_DEBUG(Logger::get(), std::string("Registering ") + suggestion.toURI() + " for " + suggestion.getRegName());
+    yCDebug(NAMESERVER, "Registering %s for %s", suggestion.toURI().c_str(), suggestion.getRegName().c_str());
 
     NameRecord& nameRecord = getNameRecord(suggestion.getRegName());
     nameRecord.setAddress(suggestion, reusablePort, reusableIp);
@@ -164,7 +165,7 @@ Contact NameServer::queryName(const std::string& name)
         if (patEnd >= patStart && patEnd != std::string::npos) {
             pat = name.substr(patStart, patEnd - patStart);
             base = name.substr(patEnd);
-            YARP_DEBUG(Logger::get(), std::string("Special query form ") + name + " (" + pat + "/" + base + ")");
+            yCDebug(NAMESERVER, "Special query form %s (%s/%s)", name.c_str(), pat.c_str(), base.c_str());
         }
     }
 
@@ -284,9 +285,7 @@ std::string NameServer::cmdRegister(int argc, char* argv[])
 
     Contact address = registerName(portName, Contact(portName, carrier, machine, port), remote);
 
-    //YARP_DEBUG(Logger::get(),
-    //std::string("name server register address -- ") +
-    //address.toString());
+    yCDebug(NAMESERVER, "name server register address -- %s", address.toString().c_str());
 
     return terminate(textify(address));
 }
@@ -702,7 +701,7 @@ std::string NameServer::apply(const std::string& txt, const Contact& remote)
     SplitString ss(txt.c_str());
     if (ss.size() >= 2) {
         std::string key = ss.get(1);
-        //YARP_DEBUG(Logger::get(), std::string("dispatching to ") + key);
+        yCTrace(NAMESERVER, "dispatching to %s", key.c_str());
         ss.set(1, remote.getHost().c_str());
         result = dispatcher.dispatch(this, key.c_str(), ss.size() - 1, (char**)(ss.get() + 1));
         if (result.empty()) {
@@ -713,8 +712,8 @@ std::string NameServer::apply(const std::string& txt, const Contact& remote)
                 result = terminate(result);
             }
         }
-        //YARP_DEBUG(Logger::get(), std::string("name server request -- ") + txt);
-        //YARP_DEBUG(Logger::get(), std::string("name server result  -- ") + result);
+        yCTrace(NAMESERVER, "name server request -- %s", txt.c_str());
+        yCTrace(NAMESERVER, "name server result  -- %s", result.c_str());
     }
     mutex.unlock();
     return result;
@@ -749,7 +748,7 @@ public:
 
     bool read(ConnectionReader& reader) override
     {
-        YTRACE("NameServer::read start");
+        yCTrace(NAMESERVER, "read start");
         std::string ref = "NAME_SERVER ";
         bool ok = true;
         std::string msg = "?";
@@ -767,14 +766,12 @@ public:
             msg = ref + msg;
         }
         if (reader.isActive() && haveMessage) {
-            YARP_DEBUG(Logger::get(), std::string("name server got message ") + msg);
+            yCDebug(NAMESERVER, "name server got message %s", msg.c_str());
             size_t index = msg.find("NAME_SERVER");
             if (index == 0) {
                 Contact remote = reader.getRemoteContact();
-                YARP_DEBUG(Logger::get(),
-                           std::string("name server receiving from ") + remote.toURI());
-                YARP_DEBUG(Logger::get(),
-                           std::string("name server request is ") + msg);
+                yCDebug(NAMESERVER, "name server receiving from %s", remote.toURI().c_str());
+                yCDebug(NAMESERVER, "name server request is %s", msg.c_str());
                 std::string result = server->apply(msg, remote);
                 ConnectionWriter* os = reader.getWriter();
                 if (os != nullptr) {
@@ -792,21 +789,19 @@ public:
                     tmp += '\r';
                     os->appendText(tmp);
 
-                    YARP_DEBUG(Logger::get(),
-                               std::string("name server reply is ") + result);
+                    yCDebug(NAMESERVER, "name server reply is %s", result.c_str());
                     std::string resultSparse = result;
                     size_t end = resultSparse.find("\n*** end of message");
                     if (end != std::string::npos) {
                         resultSparse[end] = '\0';
                     }
-                    YARP_INFO(Logger::get(), resultSparse);
+                    yCInfo(NAMESERVER, "%s", resultSparse.c_str());
                 }
             } else {
-                YARP_INFO(Logger::get(),
-                          std::string("Name server ignoring unknown command: ") + msg);
+                yCInfo(NAMESERVER, "Name server ignoring unknown command: %s", msg.c_str());
             }
         }
-        YTRACE("NameServer::read stop");
+        yCTrace(NAMESERVER, "read stop");
         return true;
     }
 };

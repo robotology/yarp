@@ -11,7 +11,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/LogStream.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Thread.h>
@@ -28,6 +28,9 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+namespace {
+YARP_LOG_COMPONENT(RFMODULE, "yarp.os.RFModule")
+}
 
 class RFModuleRespondHandler :
         public yarp::os::PortReader,
@@ -58,7 +61,7 @@ public:
 
     void run() override
     {
-        yInfo("Listening to terminal (type \"quit\" to stop module).");
+        yCInfo(RFMODULE, "Listening to terminal (type \"quit\" to stop module).");
         bool isEof = false;
         while (!(isEof || isStopping() || owner.isStopping())) {
             std::string str = yarp::os::impl::Terminal::readString(&isEof);
@@ -67,21 +70,21 @@ public:
                 Bottle reply;
                 bool ok = owner.safeRespond(cmd, reply);
                 if (ok) {
-                    //printf("ALL: %s\n", reply.toString().c_str());
-                    //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
+                    yCDebug(RFMODULE, "ALL: %s\n", reply.toString().c_str());
+                    yCDebug(RFMODULE, "ITEM 1: %s\n", reply.get(0).toString().c_str());
                     if (reply.get(0).toString() == "help") {
                         for (size_t i = 0; i < reply.size(); i++) {
-                            yInfo("%s.", reply.get(i).toString().c_str());
+                            yCInfo(RFMODULE, "%s.", reply.get(i).toString().c_str());
                         }
                     } else {
-                        yInfo("%s.", reply.toString().c_str());
+                        yCInfo(RFMODULE, "%s.", reply.toString().c_str());
                     }
                 } else {
-                    yInfo("Command not understood -- %s.", str.c_str());
+                    yCInfo(RFMODULE, "Command not understood -- %s.", str.c_str());
                 }
             }
         }
-        //printf("terminal shutting down\n");
+        yCDebug(RFMODULE, "terminal shutting down\n");
         //owner.interruptModule();
     }
 
@@ -119,9 +122,9 @@ public:
 
     bool detachTerminal()
     {
-        yWarning("Critical: stopping thread, this might hang.");
+        yCWarning(RFMODULE, "Critical: stopping thread, this might hang.");
         Thread::stop();
-        yWarning("done!");
+        yCWarning(RFMODULE, "done!");
         return true;
     }
 };
@@ -133,7 +136,7 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection)
     if (!cmd.read(connection)) {
         return false;
     }
-    //printf("command received: %s\n", cmd.toString().c_str());
+    yCDebug(RFMODULE, "command received: %s\n", cmd.toString().c_str());
 
     bool result = owner.safeRespond(cmd, response);
     if (response.size() >= 1) {
@@ -153,7 +156,7 @@ bool RFModuleRespondHandler::read(ConnectionReader& connection)
             } else {
                 response.write(*writer);
             }
-            //printf("response sent: %s\n", response.toString().c_str());
+            yCDebug(RFMODULE, "response sent: %s\n", response.toString().c_str());
         }
     }
     return result;
@@ -245,10 +248,10 @@ static void handler(int sig)
     ct++;
     yarp::os::Time::useSystemClock();
     if (ct > 3) {
-        yInfo("Aborting (calling abort())...");
+        yCInfo(RFMODULE, "Aborting (calling abort())...");
         std::abort();
     }
-    yInfo("[try %d of 3] Trying to shut down.", ct);
+    yCInfo(RFMODULE, "[try %d of 3] Trying to shut down.", ct);
 
     if (module != nullptr) {
         module->stopModule(false);
@@ -295,7 +298,7 @@ RFModule::RFModule() :
     if (module == nullptr) {
         module = this;
     } else {
-        yInfo("RFModule::RFModule() signal handling currently only good for one module.");
+        yCInfo(RFMODULE, "RFModule::RFModule() signal handling currently only good for one module.");
     }
 
 #if defined(_WIN32)
@@ -362,15 +365,15 @@ int RFModule::runModule()
         } while (!isStopping());
     }
 
-    yInfo("RFModule closing.");
+    yCInfo(RFMODULE, "RFModule closing.");
     if (mPriv->respond_handler->isTerminalAttached()) {
-        yWarning("Module attached to terminal calling exit() to quit.");
-        yWarning("You should be aware that this is not a good way to stop a module. Effects will be:");
-        yWarning("- class destructors will NOT be called");
-        yWarning("- code in the main after runModule() will NOT be executed");
-        yWarning("This happens because in your module you called attachTerminal() and we don't have a portable way to quit a module that is listening to the terminal.");
-        yWarning("At the moment the only way to have the module quit correctly is to avoid listening to terminal (i.e. do not call attachTerminal()).");
-        yWarning("This will also make this annoying message go away.");
+        yCWarning(RFMODULE, "Module attached to terminal calling exit() to quit.");
+        yCWarning(RFMODULE, "You should be aware that this is not a good way to stop a module. Effects will be:");
+        yCWarning(RFMODULE, "- class destructors will NOT be called");
+        yCWarning(RFMODULE, "- code in the main after runModule() will NOT be executed");
+        yCWarning(RFMODULE, "This happens because in your module you called attachTerminal() and we don't have a portable way to quit a module that is listening to the terminal.");
+        yCWarning(RFMODULE, "At the moment the only way to have the module quit correctly is to avoid listening to terminal (i.e. do not call attachTerminal()).");
+        yCWarning(RFMODULE, "This will also make this annoying message go away.");
 
         // One day this will hopefully go away, now only way to stop
         // remove both:
@@ -381,7 +384,7 @@ int RFModule::runModule()
     }
 
     close();
-    yInfo("RFModule finished.");
+    yCInfo(RFMODULE, "RFModule finished.");
     return 0;
 }
 
@@ -393,7 +396,7 @@ int RFModule::runModule(yarp::os::ResourceFinder& rf)
     }
 
     if (!configure(rf)) {
-        yInfo("RFModule failed to open.");
+        yCInfo(RFMODULE, "RFModule failed to open.");
         return 1;
     }
     return runModule();
@@ -407,12 +410,12 @@ int RFModule::runModuleThreaded()
     }
 
     if (!mPriv->newThreadHandler()) {
-        yError("RFModule handling thread failed to allocate.");
+        yCError(RFMODULE, "RFModule handling thread failed to allocate.");
         return 1;
     }
 
     if (!mPriv->threaded_handler->start()) {
-        yError("RFModule handling thread failed to start.");
+        yCError(RFMODULE, "RFModule handling thread failed to start.");
         return 1;
     }
 
@@ -427,7 +430,7 @@ int RFModule::runModuleThreaded(ResourceFinder& rf)
     }
 
     if (!configure(rf)) {
-        yError("RFModule failed to open.");
+        yCError(RFMODULE, "RFModule failed to open.");
         return 1;
     }
 
@@ -498,7 +501,7 @@ void RFModule::stopModule(bool wait)
     stopFlag = true;
 
     if (!interruptModule()) {
-        yError("interruptModule() returned an error there could be problems shutting down the module.");
+        yCError(RFMODULE, "interruptModule() returned an error there could be problems shutting down the module.");
     }
 
     if (wait) {
@@ -520,10 +523,10 @@ bool RFModule::joinModule(double seconds)
             mPriv->deleteThreadHandler();
             return true;
         }
-        yWarning("RFModule joinModule() timed out.");
+        yCWarning(RFMODULE, "RFModule joinModule() timed out.");
         return false;
     }
-    yWarning("Cannot call join: RFModule runModule() is not currently threaded.");
+    yCWarning(RFMODULE, "Cannot call join: RFModule runModule() is not currently threaded.");
     return true;
 }
 
@@ -539,8 +542,8 @@ std::string RFModule::getName(const std::string& subName)
     // Support legacy behavior, check if a "/" needs to be
     // appended before subName.
     if (subName[0] != '/') {
-        yWarning("SubName in getName() does not begin with \"/\" this suggest you expect getName() to follow a deprecated behavior.");
-        yWarning("I am now adding \"/\" between %s and %s but you should not rely on this.", name.c_str(), subName.c_str());
+        yCWarning(RFMODULE, "SubName in getName() does not begin with \"/\" this suggest you expect getName() to follow a deprecated behavior.");
+        yCWarning(RFMODULE, "I am now adding \"/\" between %s and %s but you should not rely on this.", name.c_str(), subName.c_str());
 
         base += "/";
     }

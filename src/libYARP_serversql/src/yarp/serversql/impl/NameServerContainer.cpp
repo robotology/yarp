@@ -13,6 +13,8 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/name/BootstrapServer.h>
 
 #include <string>
@@ -37,9 +39,17 @@ using yarp::serversql::impl::ComposedNameService;
 using yarp::serversql::impl::NameServiceOnTriples;
 using yarp::serversql::impl::StyleNameService;
 
-
-
 using yarp::serversql::impl::NameServerContainer;
+
+namespace {
+YARP_LOG_COMPONENT(NAMESERVERCONTAINER,
+                   "yarp.serversql.impl.NameServerContainer",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
+
 
 NameServerContainer::~NameServerContainer()
 {
@@ -82,7 +92,7 @@ bool NameServerContainer::open(Searchable& options)
     std::string subdbDefault = ":memory:";
 
     if (options.check("memory")) {
-        fprintf(stderr,"The --memory option was given, but that is now a default. Continuing.\n");
+        yCWarning(NAMESERVERCONTAINER, "The --memory option was given, but that is now a default. Continuing.");
     }
 
     std::string dbFilename = options.check("portdb",
@@ -96,27 +106,24 @@ bool NameServerContainer::open(Searchable& options)
     bool verbose = options.check("verbose");
 
     if (!silent) {
-        printf("Using port database: %s\n",
-               dbFilename.c_str());
-        printf("Using subscription database: %s\n",
-               subdbFilename.c_str());
+        yCInfo(NAMESERVERCONTAINER, "Using port database: %s", dbFilename.c_str());
+        yCInfo(NAMESERVERCONTAINER, "Using subscription database: %s", subdbFilename.c_str());
         if (dbFilename!=":memory:" || subdbFilename!=":memory:") {
-            printf("If you ever need to clear the name server's state, just delete those files.\n\n");
+            yCInfo(NAMESERVERCONTAINER, "If you ever need to clear the name server's state, just delete those files.");
         }
-        printf("IP address: %s\n",
-               (ip=="...")?"default":ip.c_str());
-        printf("Port number: %d\n", sock);
+        yCInfo(NAMESERVERCONTAINER, "IP address: %s", (ip=="...")?"default":ip.c_str());
+        yCInfo(NAMESERVERCONTAINER, "Port number: %d", sock);
     }
 
     bool reset = false;
     if (options.check("ip")||options.check("socket")) {
-        fprintf(stderr,"Database needs to be reset, IP or port number set.\n");
+        yCError(NAMESERVERCONTAINER, "Database needs to be reset, IP or port number set.");
         reset = true;
     }
 
     TripleSource *pmem = db.open(dbFilename.c_str(),cautious,reset);
     if (pmem == nullptr) {
-        fprintf(stderr,"Aborting, ports database failed to open.\n");
+        yCError(NAMESERVERCONTAINER, "Aborting, ports database failed to open.");
         return false;
     }
     if (verbose) {
@@ -124,7 +131,7 @@ bool NameServerContainer::open(Searchable& options)
     }
 
     if (!subscriber.open(subdbFilename)) {
-        fprintf(stderr,"Aborting, subscription database failed to open.\n");
+        yCError(NAMESERVERCONTAINER, "Aborting, subscription database failed to open.");
         return false;
     }
     if (verbose) {
@@ -137,7 +144,7 @@ bool NameServerContainer::open(Searchable& options)
         if (!BootstrapServer::configFileBootstrap(contact,
                                                   options.check("read"),
                                                   options.check("write"))) {
-            fprintf(stderr,"Aborting.\n");
+            yCError(NAMESERVERCONTAINER, "Aborting.\n");
             return false;
         }
     }
@@ -148,10 +155,10 @@ bool NameServerContainer::open(Searchable& options)
         if (lstStr.find("rossrv") == std::string::npos ||
             lstStr.find("tcpros") == std::string::npos ||
             lstStr.find("xmlrpc") == std::string::npos) {
-            fprintf(stderr,"Missing one or more required carriers ");
-            fprintf(stderr,"for yarpserver --ros (rossrv, tcpros, xmlrpc).\n");
-            fprintf(stderr,"Run 'yarp connect --list-carriers' to see carriers on your machine\n");
-            fprintf(stderr,"Aborting.\n");
+            yCError(NAMESERVERCONTAINER, "Missing one or more required carriers ");
+            yCError(NAMESERVERCONTAINER, "for yarpserver --ros (rossrv, tcpros, xmlrpc).\n");
+            yCError(NAMESERVERCONTAINER, "Run 'yarp connect --list-carriers' to see carriers on your machine\n");
+            yCError(NAMESERVERCONTAINER, "Aborting.\n");
             return false;
         }
         std::string addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
@@ -162,10 +169,9 @@ bool NameServerContainer::open(Searchable& options)
             space = new RosNameSpace(c);
             subscriber.setDelegate(space);
             ns.setDelegate(space);
-            fprintf(stderr, "Using ROS with ROS_MASTER_URI=%s\n", addr.c_str());
+            yCInfo(NAMESERVERCONTAINER, "Using ROS with ROS_MASTER_URI=%s\n", addr.c_str());
         } else {
-            fprintf(stderr, "Cannot find ROS, check ROS_MASTER_URI (currently '%s')\n", addr.c_str());
-            ::exit(1);
+            yCFatal(NAMESERVERCONTAINER, "Cannot find ROS, check ROS_MASTER_URI (currently '%s')\n", addr.c_str());
         }
     }
 

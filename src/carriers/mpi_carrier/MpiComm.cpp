@@ -19,6 +19,8 @@
 
 using namespace yarp::os;
 
+YARP_LOG_COMPONENT(MPI_CARRIER, "yarp.carrier.mpi")
+
 /* --------------------------------------- */
 /* MpiControlThread */
 
@@ -40,23 +42,21 @@ void finalizeMPI() {
         }
         ct++;
     }
-    yError("MpiControlThread: Finalizing MPI failed! Calling MPI_Abort");
+    yCError(MPI_CARRIER, "MpiControlThread: Finalizing MPI failed! Calling MPI_Abort");
     MPI_Abort(MPI_COMM_WORLD,1);
 }
 
 void MpiControlThread::threadRelease() {
-    yInfo("MpiControlThread: Trying to finalize MPI...");
+    yCInfo(MPI_CARRIER, "MpiControlThread: Trying to finalize MPI...");
     MPI_Finalize();
-    yInfo("MpiControlThread: Successfully finalized MPI...");
+    yCInfo(MPI_CARRIER,"MpiControlThread: Successfully finalized MPI...");
 }
 
 bool MpiControlThread::threadInit() {
     // We have to finalize MPI at process termination
     atexit(finalizeMPI);
 
-    #ifdef MPI_DEBUG
-    printf("[MpiControl] Initialize\n");
-    #endif
+    yCDebug(MPI_CARRIER,"[MpiControl] Initialize");
 
     int provided;
     // We need full multithread support for MPI
@@ -64,7 +64,7 @@ bool MpiControlThread::threadInit() {
     // Passing NULL for argc/argv pointers is fine for MPI-2
     int err = MPI_Init_thread(nullptr, nullptr, requested , &provided);
     if (err != MPI_SUCCESS ) {
-        yError("MpiControlThread: Couldn't initialize MPI\n");
+        yCError(MPI_CARRIER, "MpiControlThread: Couldn't initialize MPI");
         return false;
     }
 
@@ -73,7 +73,7 @@ bool MpiControlThread::threadInit() {
     }
     else {
         MPI_Finalize();
-        yError("MpiControlThread: MPI implementation doesn't provide required thread safety: requested %s, provided %s", NetType::toString(requested).c_str(), NetType::toString(provided).c_str());
+        yCError(MPI_CARRIER, "MpiControlThread: MPI implementation doesn't provide required thread safety: requested %s, provided %s", NetType::toString(requested).c_str(), NetType::toString(provided).c_str());
         return false;
     }
 }
@@ -103,15 +103,13 @@ MpiComm::MpiComm(std::string name) :
     int length = 0;
     MPI_Get_processor_name(unique_id, &length);
     sprintf(unique_id + length, "____pid____%d", getpid());
-    #ifdef MPI_DEBUG
-    printf("[MpiComm @ %s] Unique id: %s\n", name.c_str(), unique_id);
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiComm @ %s] Unique id: %s", name.c_str(), unique_id);
 }
 
 //TODO: replace by static variable check??!?
 bool MpiComm::notLocal(std::string other) {
     if (other == std::string(unique_id)) {
-        yError("MPI does not support process local communication\n");
+        yCError(MPI_CARRIER, "MPI does not support process local communication");
         return false;
     }
     return true;
@@ -123,9 +121,7 @@ bool MpiComm::connect(std::string port) {
     memcpy(port_name, port.c_str(), port.length());
     port_name[port.length()] = '\0';
 
-    #ifdef MPI_DEBUG
-    printf("[MpiComm @ %s] Waiting for accept\n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiComm @ %s] Waiting for accept", name.c_str());
 
     MPI_Comm intercomm;
     MPI_Comm_set_errhandler(comm, MPI_ERRORS_RETURN);
@@ -133,38 +129,29 @@ bool MpiComm::connect(std::string port) {
     MPI_Comm_set_errhandler(comm, MPI_ERRORS_ARE_FATAL);
 
     if (err != MPI_SUCCESS ) {
-        yError("MpiCarrier: Couldn't create connection\n");
+        yCError(MPI_CARRIER, "MpiCarrier: Couldn't create connection");
         return false;
     }
 
-
-    #ifdef MPI_DEBUG
-    printf("[MpiComm @ %s] Connection established\n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiComm @ %s] Connection established", name.c_str());
 
     bool high = true;
     MPI_Intercomm_merge(intercomm, high, &comm);
     MPI_Comm_disconnect(&intercomm);
 
-    #ifdef MPI_DEBUG
-    printf("[MpiComm @ %s] Comms merged \n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiComm @ %s] Comms merged", name.c_str());
 
     delete[] port_name;
 
     return true;
 }
 bool MpiComm::accept() {
-    #ifdef MPI_DEBUG
-    printf("[MpiComm @ %s] Waiting for connect\n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiComm @ %s] Waiting for connect", name.c_str());
 
     MPI_Comm intercomm, newintra;
     MPI_Comm_accept( port_name, MPI_INFO_NULL, 0, comm, &intercomm );
 
-    #ifdef MPI_DEBUG
-    printf("[MpiComm @ %s] Connection accepted \n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiComm @ %s] Connection accepted", name.c_str());
 
     bool high = false;
     // Complicated way of doing comm = Merge(intercomm)
@@ -174,23 +161,17 @@ bool MpiComm::accept() {
     MPI_Comm_disconnect(&comm);
     comm = newintra;
 
-    #ifdef MPI_DEBUG
-    printf("[MpiComm @ %s] Comms merged \n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiComm @ %s] Comms merged", name.c_str());
 
     return true;
 }
 
 
 void MpiComm::disconnect(bool disconn) {
-    #ifdef MPI_DEBUG
-    printf("[MpiComm @ %s] split from group : %d \n", name.c_str(), disconn);
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiComm @ %s] split from group : %d", name.c_str(), disconn);
     MPI_Comm new_comm;
     MPI_Comm_split(comm, disconn, rank(), &new_comm);
     MPI_Comm_disconnect(&comm);
     comm = new_comm;
-    #ifdef MPI_DEBUG
-    printf("[MpiComm @ %s] new rank : %d \n", name.c_str(), rank());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiComm @ %s] new rank : %d", name.c_str(), rank());
 }

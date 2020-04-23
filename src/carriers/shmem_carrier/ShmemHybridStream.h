@@ -14,7 +14,6 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/impl/Logger.h>
 
 #include "ShmemInputStream.h"
 #include "ShmemOutputStream.h"

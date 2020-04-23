@@ -9,16 +9,25 @@
 
 #include <yarp/conf/system.h>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/FallbackNameClient.h>
 #include <yarp/os/impl/FallbackNameServer.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+namespace {
+YARP_LOG_COMPONENT(FALLBACKNAMECLIENT,
+                   "yarp.os.impl.FallbackNameClient",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
 
 void FallbackNameClient::run()
 {
@@ -28,7 +37,7 @@ void FallbackNameClient::run()
     send.join(call, true);
     listen.join(call, false);
     if (!listen.isOk()) {
-        YARP_ERROR(Logger::get(), std::string("Multicast not available"));
+        yCError(FALLBACKNAMECLIENT, "Multicast not available");
         return;
     }
     std::string msg = std::string("NAME_SERVER query ") + nc.getNamespace();
@@ -43,10 +52,10 @@ void FallbackNameClient::run()
         if (closed) {
             return;
         }
-        YARP_DEBUG(Logger::get(), std::string("Fallback name client got ") + txt);
+        yCDebug(FALLBACKNAMECLIENT, "Fallback name client got %s", txt.c_str());
         if (txt.find("registration ") == 0) {
             address = NameClient::extractAddress(txt);
-            YARP_INFO(Logger::get(), std::string("Received address ") + address.toURI());
+            yCInfo(FALLBACKNAMECLIENT, "Received address %s", address.toURI().c_str());
             return;
         }
     }
@@ -77,8 +86,7 @@ Contact FallbackNameClient::seek()
 
         FallbackNameClient seeker;
 
-        YARP_INFO(Logger::get(),
-                  std::string("Polling for name server (using multicast), try ") + NetType::toString(k + 1) + std::string(" of max ") + NetType::toString(tries));
+        yCInfo(FALLBACKNAMECLIENT, "Polling for name server (using multicast), try %d of max %d", k + 1, tries);
 
         seeker.start();
         SystemClock::delaySystem(0.25);
@@ -100,7 +108,7 @@ Contact FallbackNameClient::seek()
             }
         }
         fprintf(stderr, "\n");
-        YARP_INFO(Logger::get(), "No response to search for server");
+        yCInfo(FALLBACKNAMECLIENT, "No response to search for server");
         seeker.close();
         seeker.join();
     }

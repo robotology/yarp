@@ -515,14 +515,16 @@ public:
      */
     static bool initialized();
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     /**
-     *
      * Set level of verbosity of YARP messages.
      *
      * @param verbosity -1 inhibits messages, 0 is normal, 1 is verbose
-     *
+     * @deprecated since YARP 3.4
      */
+    YARP_DEPRECATED_MSG("Use LogComponents instead")
     static void setVerbosity(int verbosity);
+#endif // YARP_NO_DEPRECATED
 
     /**
      *

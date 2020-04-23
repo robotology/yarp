@@ -10,12 +10,21 @@
 #include <yarp/os/impl/TextCarrier.h>
 
 #include <yarp/os/ConnectionState.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Route.h>
-#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+
+namespace {
+YARP_LOG_COMPONENT(TEXTCARRIER,
+                   "yarp.os.impl.TextCarrier",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
 
 yarp::os::impl::TextCarrier::TextCarrier(bool ackVariant)
 {
@@ -108,7 +117,7 @@ bool yarp::os::impl::TextCarrier::expectReplyToHeader(ConnectionState& proto)
 
 bool yarp::os::impl::TextCarrier::expectSenderSpecifier(ConnectionState& proto)
 {
-    YARP_SPRINTF0(Logger::get(), debug, "TextCarrier::expectSenderSpecifier");
+    yCDebug(TEXTCARRIER, "TextCarrier::expectSenderSpecifier");
     Route route = proto.getRoute();
     route.setFromName(proto.is().readLine());
     proto.setRoute(route);

@@ -9,8 +9,8 @@
 
 #include <yarp/os/NetType.h>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/impl/Logger.h>
 
 #include <clocale>
 #include <cstdlib>
@@ -38,6 +38,13 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 namespace {
+
+YARP_LOG_COMPONENT(NETTYPE,
+                   "yarp.os.NetType",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
 
 /*
  * Converts a floating point number to a string, dealing with locale issues
@@ -104,7 +111,7 @@ bool NetType::netInt(int data, yarp::os::Bytes& code)
     NetInt32 i = data;
     yarp::os::Bytes b((char*)(&i), sizeof(i));
     if (code.length() != sizeof(i)) {
-        YARP_ERROR(Logger::get(), "not enough room for integer");
+        yCError(NETTYPE, "not enough room for integer");
         return false;
     }
     memcpy(code.get(), b.get(), code.length());

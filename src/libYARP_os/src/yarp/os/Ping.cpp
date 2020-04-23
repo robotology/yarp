@@ -11,6 +11,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
@@ -21,6 +22,10 @@
 #include <mutex>
 
 using namespace yarp::os;
+
+namespace {
+YARP_LOG_COMPONENT(PING, "yarp.os.Ping")
+}
 
 Stat::Stat()
 {
@@ -133,7 +138,7 @@ void Ping::connect()
     Contact c = NetworkBase::queryName(target);
     double afterQuery = SystemClock::nowSystem();
     if (!c.isValid()) {
-        yError("Port not found during ping");
+        yCError(PING, "Port not found during ping");
     }
     ContactStyle rpc;
     rpc.admin = true;
@@ -143,7 +148,7 @@ void Ping::connect()
     cmd.addVocab(Vocab::encode("ver"));
     bool ok = NetworkBase::write(c, cmd, reply, rpc);
     if (!ok) {
-        yError("Port did not respond as expected");
+        yCError(PING, "Port did not respond as expected");
     }
     double stop = SystemClock::nowSystem();
     lastConnect.totalTime.add(stop - start);
@@ -155,14 +160,16 @@ void Ping::report()
 {
     long int ping = lround(accumConnect.targetTime.count() + 0.5);
     if (ping > 0) {
-        printf("Ping #%ld:\n", lround(accumConnect.targetTime.count() + 0.5));
+        yCInfo(PING, "Ping #%ld:\n", lround(accumConnect.targetTime.count() + 0.5));
         int space = 14;
         int decimal = 5;
-        printf("  %s connection time (%s with name lookup)\n",
+        yCInfo(PING,
+               "  %s connection time (%s with name lookup)\n",
                renderTime(lastConnect.targetTime.mean(), space, decimal).c_str(),
                renderTime(lastConnect.totalTime.mean(), space, decimal).c_str());
         if (accumConnect.totalTime.count() > 1) {
-            printf("  %s +/- %s on average (%s +/- %s with name lookup)\n",
+            yCInfo(PING,
+                   "  %s +/- %s on average (%s +/- %s with name lookup)\n",
                    renderTime(accumConnect.targetTime.mean(), space, decimal).c_str(),
                    renderTime(accumConnect.targetTime.deviation(), space, decimal).c_str(),
                    renderTime(accumConnect.totalTime.mean(), space, decimal).c_str(),
@@ -177,7 +184,7 @@ std::string Ping::renderTime(double t, int space, int decimal)
     std::string unit;
     double times = 1;
     if (space < 0) {
-        yError("Negative space");
+        yCError(PING, "Negative space");
     }
     if (t >= 1) {
         unit = "sec";
@@ -223,7 +230,8 @@ public:
                 period.add(dt);
             }
             lastTime = now;
-            printf("Period is %g +/- %g (%d)\n",
+            yCInfo(PING,
+                   "Period is %g +/- %g (%d)\n",
                    period.mean(),
                    period.deviation(),
                    ct);
@@ -239,11 +247,12 @@ void Ping::sample()
     PingSampler sampler;
     p.setReader(sampler);
     p.open("...");
-    printf("Pausing for 5 seconds...\n");
+    yCInfo(PING, "Pausing for 5 seconds...\n");
     NetworkBase::connect(target, p.getName());
     SystemClock::delaySystem(5);
     p.close();
-    printf("Period is %g +/- %g (%d)\n",
+    yCInfo(PING,
+           "Period is %g +/- %g (%d)\n",
            sampler.period.mean(),
            sampler.period.deviation(),
            sampler.ct);

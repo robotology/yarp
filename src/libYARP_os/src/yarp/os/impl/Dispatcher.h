@@ -10,12 +10,14 @@
 #ifndef YARP_OS_IMPL_DISPATCHER_H
 #define YARP_OS_IMPL_DISPATCHER_H
 
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/LogComponent.h>
 
 #include <cstdio>
 #include <map>
 #include <string>
 #include <vector>
+
+YARP_DECLARE_LOG_COMPONENT(DISPATCHER)
 
 namespace yarp {
 namespace os {
@@ -65,7 +67,7 @@ public:
         if (it != action.end()) {
             return (owner->*(it->second.fn))(argc, argv);
         } else {
-            YARP_SPRINTF1(Logger::get(), error, "Could not find command \"%s\"", name);
+            yCError(DISPATCHER, "Could not find command \"%s\"", name);
         }
         return RET();
     }

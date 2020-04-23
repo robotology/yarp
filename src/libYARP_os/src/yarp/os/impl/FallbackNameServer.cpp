@@ -11,6 +11,7 @@
 
 #include <yarp/conf/system.h>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Bytes.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
@@ -18,6 +19,16 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+namespace {
+YARP_LOG_COMPONENT(FALLBACKNAMESERVER,
+                   "yarp.os.impl.FallbackNameServer",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
+
 
 Contact FallbackNameServer::getAddress()
 {
@@ -34,16 +45,16 @@ void FallbackNameServer::run()
     send.join(getAddress(), true);
     listen.join(getAddress(), false);
 
-    YARP_DEBUG(Logger::get(), "Fallback server running");
+    yCDebug(FALLBACKNAMESERVER, "Fallback server running");
     while (listen.isOk() && send.isOk() && !closed) {
-        YARP_DEBUG(Logger::get(), "Fallback server waiting");
+        yCDebug(FALLBACKNAMESERVER, "Fallback server waiting");
         std::string msg;
         listen.beginPacket();
         msg = listen.readLine();
         listen.endPacket();
-        YARP_DEBUG(Logger::get(), "Fallback server got something");
+        yCDebug(FALLBACKNAMESERVER, "Fallback server got something");
         if (listen.isOk() && !closed) {
-            YARP_DEBUG(Logger::get(), std::string("Fallback server got ") + msg);
+            yCDebug(FALLBACKNAMESERVER, "Fallback server got %s", msg.c_str());
             if (msg.find("NAME_SERVER ") == 0) {
                 Contact addr;
                 std::string result = owner.apply(msg, addr);

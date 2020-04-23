@@ -12,7 +12,6 @@
 
 
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/impl/posix/TcpStream.h>
 

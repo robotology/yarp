@@ -82,9 +82,6 @@ void usage(const char* name)
 static void init_Network()
 {
     net = new yarp::os::Network;
-    if (verbose) {
-        yarp::os::NetworkBase::setVerbosity(1);
-    }
 }
 
 static void fini_Network()

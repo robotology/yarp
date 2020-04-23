@@ -9,12 +9,12 @@
 
 #include <yarp/os/Time.h>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/NetworkClock.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/Thread.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/impl/TimeImpl.h>
 
@@ -26,7 +26,15 @@
 #endif
 
 using namespace yarp::os;
-using yarp::os::impl::Logger;
+
+namespace {
+YARP_LOG_COMPONENT(TIME,
+                   "yarp.os.Time",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
 
 namespace {
 
@@ -43,12 +51,14 @@ std::mutex& getTimeMutex()
 
 void printNoClock_ErrorMessage()
 {
-    YARP_ERROR(Logger::get(), "\n Warning an issue has been found, please update the code.\n \
-    Clock is not initialized: This means YARP framework has not been properly initialized. \n \
-    The clock can be initialized with one of the following methods:\n \
-    - Create yarp::os::Network object or call yarp::os::Network::init()\n \
-    - Call useSystemClock()\n \
-    otherwise use yarp::os::SystemClock::nowSystem() and yarp::os::SystemClock::delaySystem() instead of Time::now() and Time::delay()\n");
+    yCError(TIME);
+    yCError(TIME, "Warning an issue has been found, please update the code.");
+    yCError(TIME, " Clock is not initialized.");
+    yCError(TIME, " This means YARP framework has not been properly initialized.");
+    yCError(TIME, " The clock can be initialized with one of the following methods:");
+    yCError(TIME, " - Create yarp::os::Network object or call yarp::os::Network::init()");
+    yCError(TIME, " - Call useSystemClock()");
+    yCError(TIME, " otherwise use yarp::os::SystemClock::nowSystem() and yarp::os::SystemClock::delaySystem() instead of Time::now() and Time::delay()");
 }
 
 Clock* getClock()
@@ -192,7 +202,7 @@ void Time::useNetworkClock(const std::string& clock, const std::string& localPor
     bool old_clock_owned = clock_owned;
     auto* _networkClock = new NetworkClock();
     if (_networkClock == nullptr) {
-        YARP_FAIL(Logger::get(), "failed creating NetworkClock client");
+        yCFatal(TIME, "failed creating NetworkClock client");
         return;
     }
     if (_networkClock->open(clock, localPortName)) {
@@ -203,7 +213,7 @@ void Time::useNetworkClock(const std::string& clock, const std::string& localPor
         clock_owned = true;
         yarp_clock_type = YARP_CLOCK_NETWORK;
     } else {
-        YARP_FAIL(Logger::get(), "failed creating NetworkClock client, cannot open input port");
+        yCFatal(TIME, "failed creating NetworkClock client, cannot open input port");
         return;
     }
 
@@ -217,7 +227,7 @@ void Time::useNetworkClock(const std::string& clock, const std::string& localPor
     while ((pclock != nullptr) && !pclock->isValid()) {
         i++;
         if ((i % 50) == 0) {
-            YARP_INFO(Logger::get(), "Waiting for clock server to start broadcasting data ...");
+            yCInfo(TIME, "Waiting for clock server to start broadcasting data ...");
             i = 0;
         }
         SystemClock::delaySystem(0.1);
@@ -227,12 +237,12 @@ void Time::useNetworkClock(const std::string& clock, const std::string& localPor
 void Time::useCustomClock(Clock* clock)
 {
     if (clock == nullptr) {
-        YARP_FAIL(Logger::get(), "failed configuring CustomClock client");
+        yCFatal(TIME, "failed configuring CustomClock client");
         return;
     }
 
     if (!clock->isValid()) {
-        YARP_FAIL(Logger::get(), "Error: CustomClock is not valid");
+        yCFatal(TIME, "Error: CustomClock is not valid");
         return;
     }
 

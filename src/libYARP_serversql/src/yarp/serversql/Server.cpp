@@ -11,9 +11,11 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/SystemClock.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/name/BootstrapServer.h>
 #include <yarp/name/NameServerManager.h>
@@ -31,6 +33,40 @@ using yarp::os::impl::NameClient;
 using yarp::name::BootstrapServer;
 using yarp::name::NameServerManager;
 using yarp::serversql::impl::NameServerContainer;
+
+namespace {
+void print_callback(yarp::os::Log::LogType type,
+                    const char* msg,
+                    const char* file,
+                    const unsigned int line,
+                    const char* func,
+                    double systemtime,
+                    double remotetime,
+                    const char* comp_name)
+{
+    YARP_UNUSED(type);
+    YARP_UNUSED(file);
+    YARP_UNUSED(line);
+    YARP_UNUSED(func);
+    YARP_UNUSED(systemtime);
+    YARP_UNUSED(remotetime);
+    YARP_UNUSED(comp_name);
+    static const char* err_str = "[ERROR] ";
+    static const char* warn_str = "[WARNING] ";
+    static const char* no_str = "";
+    printf("%s%s\n",
+           ((type == yarp::os::Log::ErrorType) ? err_str : ((type == yarp::os::Log::WarningType) ? warn_str : no_str)),
+           msg);
+}
+}
+
+YARP_LOG_COMPONENT(SERVER,
+                   "yarp.serversql.Server",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   print_callback,
+                   nullptr)
+
 
 int yarp::serversql::Server::run(int argc, char** argv)
 {
@@ -99,20 +135,19 @@ int yarp::serversql::Server::run(int argc, char** argv)
 
     ok = server.open(nc.where(),false);
     if (!ok) {
-        fprintf(stderr, "Name server failed to open\n");
+        yCError(SERVER, "Name server failed to open\n");
         if (silent) {
             fclose(out);
         }
         return 1;
     }
 
-    printf("\n");
     fallback.start();
 
 
     // Repeat registrations for the server and fallback server -
     // these registrations are more complete.
-    fprintf(out, "Registering name server with itself:\n");
+    yCInfo(SERVER, "Registering name server with itself:\n");
     nc.preregister(nc.where());
     nc.preregister(fallback.where());
 
@@ -131,9 +166,10 @@ int yarp::serversql::Server::run(int argc, char** argv)
 
     NameClient::getNameClient().send(cmd, reply);
 
-    fprintf(out, "Name server can be browsed at http://%s:%d/\n",
-           nc.where().getHost().c_str(), nc.where().getPort());
-    fprintf(out, "\nOk.  Ready!\n");
+    yCInfo(SERVER, "Name server can be browsed at http://%s:%d/\n",
+              nc.where().getHost().c_str(),
+              nc.where().getPort());
+    yCError(SERVER, "Ok. Ready!\n");
 
     while(!shouldStop) {
         messageCounter += pollingRate;
@@ -141,11 +177,11 @@ int yarp::serversql::Server::run(int argc, char** argv)
         double dummy;
 
         if(std::modf(messageCounter / 600.0, &dummy) < .00001) {
-            fprintf(out, "Name server running happily\n");
+            yCInfo(SERVER, "Name server running happily\n");
         }
     }
 
-    fprintf(out, "closing yarp server\n");
+    yCInfo(SERVER, "closing yarp server\n");
     server.close();
     if (silent) {
         fclose(out);

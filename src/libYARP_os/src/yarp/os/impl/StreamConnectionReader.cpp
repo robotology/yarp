@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/Protocol.h>

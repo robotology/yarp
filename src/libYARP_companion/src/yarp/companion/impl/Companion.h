@@ -14,12 +14,14 @@
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Contactable.h>
+#include <yarp/os/LogComponent.h>
 
 #include <map>
 #include <string>
 #include <vector>
 #include <cstdio>
 
+YARP_DECLARE_LOG_COMPONENT(COMPANION);
 
 namespace yarp {
 namespace companion {

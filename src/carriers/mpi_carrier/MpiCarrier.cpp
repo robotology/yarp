@@ -14,24 +14,12 @@
 
 using namespace yarp::os;
 
-#ifdef MPI_DEBUG
-#include <yarp/os/impl/Logger.h>
-using yarp::os::impl::Logger;
-#endif
-
 MpiCarrier::MpiCarrier() : stream(nullptr), comm(nullptr) {
-    #ifdef MPI_DEBUG
-    Logger::get().setVerbosity(1);
-    #endif
 }
 
-#ifdef MPI_DEBUG
 MpiCarrier::~MpiCarrier() {
-    printf("[MpiCarrier @ %s] Destructor called \n", route.c_str() );
+    yCDebug(MPI_CARRIER, "[MpiCarrier @ %s] Destructor called", route.c_str() );
 }
-#else
-MpiCarrier::~MpiCarrier() = default;
-#endif
 
 void  MpiCarrier::getHeader(Bytes& header) const {
     for (size_t i=0; i<8 && i<header.length(); i++) {
@@ -80,9 +68,7 @@ bool MpiCarrier::sendHeader(ConnectionState& proto) {
     char* port = comm->port_name;
     char* uid = comm->unique_id;
 
-    #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] setting up MpiPort '%s'\n", route.c_str(), port);
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiCarrier @ %s] setting up MpiPort '%s'", route.c_str(), port);
 
     Bytes b4(uid,strlen(uid));
     proto.os().write(b4);
@@ -95,10 +81,7 @@ bool MpiCarrier::sendHeader(ConnectionState& proto) {
     proto.os().write('\n');
     proto.os().flush();
 
-
-    #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] Header sent\n", route.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiCarrier @ %s] Header sent", route.c_str());
 
     return proto.os().isOk();
 }
@@ -109,9 +92,7 @@ bool MpiCarrier::expectSenderSpecifier(ConnectionState& proto) {
     // interpret everything that sendHeader wrote
     name = proto.getRoute().getToName();
 
-    #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] Waiting for header\n", route.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiCarrier @ %s] Waiting for header", route.c_str());
 
     other = proto.is().readLine();
     Route r = proto.getRoute();
@@ -131,18 +112,14 @@ bool MpiCarrier::expectSenderSpecifier(ConnectionState& proto) {
 
     port = proto.is().readLine();
 
-    #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] Header received\n", route.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiCarrier @ %s] Header received", route.c_str());
 
     return notLocal && proto.is().isOk();
 }
 
 bool MpiCarrier::respondToHeader(ConnectionState& proto) {
     // SWITCH TO NEW STREAM TYPE
-    #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] trying to connect to MpiPort '%s'\n", route.c_str(), port.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiCarrier @ %s] trying to connect to MpiPort '%s'", route.c_str(), port.c_str());
 
     if (!comm->connect(port)) {
         delete stream;
@@ -150,9 +127,7 @@ bool MpiCarrier::respondToHeader(ConnectionState& proto) {
     }
     proto.takeStreams(stream);
 
-    #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] MpiStream successfully setup \n", route.c_str() );
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiCarrier @ %s] MpiStream successfully setup", route.c_str() );
 
     return proto.is().isOk();
 }
@@ -165,9 +140,7 @@ bool MpiCarrier::expectReplyToHeader(ConnectionState& proto) {
     }
     proto.takeStreams(stream);
 
-    #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] MpiStream successfully setup \n", route.c_str() );
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiCarrier @ %s] MpiStream successfully setup", route.c_str() );
 
     return proto.os().isOk();
 }

@@ -9,23 +9,30 @@
 
 #include <yarp/os/impl/PortCoreInputUnit.h>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Name.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/PortInfo.h>
 #include <yarp/os/PortReport.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PortCommand.h>
 
 #include <cstdio>
 
-//#define YMSG(x) printf x;
-//#define YTRACE(x) YMSG(("at %s\n", x))
-
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+namespace {
+YARP_LOG_COMPONENT(PORTCOREINPUTUNIT,
+                   "yarp.os.impl.PortCoreInputUnit",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
 
 PortCoreInputUnit::PortCoreInputUnit(PortCore& owner,
                                      int index,
@@ -62,28 +69,17 @@ PortCoreInputUnit::~PortCoreInputUnit()
 
 bool PortCoreInputUnit::start()
 {
-
-
-    YARP_DEBUG(Logger::get(), std::string("new input connection to ") + getOwner().getName() + " starting");
-
-    /*
-    if (ip!=nullptr) {
-        Route route = ip->getRoute();
-        YARP_DEBUG(Logger::get(), std::string("starting output for ") +
-                   route.toString());
-    }
-    */
+    yCDebug(PORTCOREINPUTUNIT, "new input connection to %s starting", getOwner().getName().c_str());
 
     phase.wait();
 
     bool result = PortCoreUnit::start();
     if (result) {
-        YARP_DEBUG(Logger::get(), std::string("new input connection to ") + getOwner().getName() + " started ok");
+        yCDebug(PORTCOREINPUTUNIT, "new input connection to %s started ok", getOwner().getName().c_str());
         phase.wait();
         phase.post();
     } else {
-        YARP_DEBUG(Logger::get(), std::string("new input connection to ") + getOwner().getName() + " failed to start");
-
+        yCDebug(PORTCOREINPUTUNIT, "new input connection to %s failed to start", getOwner().getName().c_str());
         phase.post();
     }
 
@@ -111,7 +107,7 @@ void PortCoreInputUnit::run()
         ip->open(getName());
     }
     if (!ok) {
-        YARP_DEBUG(Logger::get(), std::string("new input connection to ") + getOwner().getName() + " is broken");
+        yCDebug(PORTCOREINPUTUNIT, "new input connection to %s is broken", getOwner().getName().c_str());
         done = true;
     } else {
         route = ip->getRoute();
@@ -119,12 +115,10 @@ void PortCoreInputUnit::run()
         // just before going official, tag any lurking inputs from
         // the same source as undesired
         if (Name(route.getFromName()).isRooted()) {
-            YARP_SPRINTF3(Logger::get(),
-                          debug,
-                          "Port %s starting up, flushing routes %s->*->%s",
-                          getOwner().getName().c_str(),
-                          route.getFromName().c_str(),
-                          route.getToName().c_str());
+            yCDebug(PORTCOREINPUTUNIT, "Port %s starting up, flushing routes %s->*->%s",
+                        getOwner().getName().c_str(),
+                        route.getFromName().c_str(),
+                        route.getToName().c_str());
             getOwner().removeIO(Route(route.getFromName(),
                                       route.getToName(),
                                       "*"),
@@ -134,16 +128,12 @@ void PortCoreInputUnit::run()
         setMode();
         getOwner().reportUnit(this, true);
 
-        std::string msg = std::string("Receiving input from ") + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
-        if (Name(route.getFromName()).isRooted()) {
-            if (reversed || ip->getConnection().isPush()) {
-                YARP_INFO(Logger::get(), msg);
-                posted = true;
-            } else {
-                YARP_DEBUG(Logger::get(), msg);
-            }
+        std::string msg = "Receiving input from " + route.getFromName() + " to " + route.getToName() + " using " + route.getCarrierName();
+        if (Name(route.getFromName()).isRooted() && (reversed || ip->getConnection().isPush())) {
+            yCInfo(PORTCOREINPUTUNIT, "%s", msg.c_str());
+            posted = true;
         } else {
-            YARP_DEBUG(Logger::get(), msg);
+            yCDebug(PORTCOREINPUTUNIT, "%s", msg.c_str());
         }
 
         // Report the new connection
@@ -252,30 +242,27 @@ void PortCoreInputUnit::run()
 
         switch (key) {
         case '/':
-            YARP_SPRINTF3(Logger::get(),
-                          debug,
-                          "Port command (%s): %s should add connection: %s",
-                          route.toString().c_str(),
-                          getOwner().getName().c_str(),
-                          cmd.getText().c_str());
+            yCDebug(PORTCOREINPUTUNIT,
+                    "Port command (%s): %s should add connection: %s",
+                    route.toString().c_str(),
+                    getOwner().getName().c_str(),
+                    cmd.getText().c_str());
             man.addOutput(cmd.getText(), id, os);
             break;
         case '!':
-            YARP_SPRINTF3(Logger::get(),
-                          debug,
-                          "Port command (%s): %s should remove output: %s",
-                          route.toString().c_str(),
-                          getOwner().getName().c_str(),
-                          cmd.getText().c_str());
+            yCDebug(PORTCOREINPUTUNIT,
+                    "Port command (%s): %s should remove output: %s",
+                    route.toString().c_str(),
+                    getOwner().getName().c_str(),
+                    cmd.getText().c_str());
             man.removeOutput(cmd.getText().substr(1, std::string::npos), id, os);
             break;
         case '~':
-            YARP_SPRINTF3(Logger::get(),
-                          debug,
-                          "Port command (%s): %s should remove input: %s",
-                          route.toString().c_str(),
-                          getOwner().getName().c_str(),
-                          cmd.getText().c_str());
+            yCDebug(PORTCOREINPUTUNIT,
+                    "Port command (%s): %s should remove input: %s",
+                    route.toString().c_str(),
+                    getOwner().getName().c_str(),
+                    cmd.getText().c_str());
             man.removeInput(cmd.getText().substr(1, std::string::npos), id, os);
             break;
         case '*':
@@ -289,8 +276,7 @@ void PortCoreInputUnit::run()
 
             std::string env = cmd.getText();
             if (env.length() > 2) {
-                //YARP_ERROR(Logger::get(),
-                //"***** received an envelope! [%s]", env.c_str());
+                yCTrace(PORTCOREINPUTUNIT, "***** received an envelope! [%s]", env.c_str());
                 std::string env2 = env.substr(2, env.length());
                 man.setEnvelope(env2);
                 ip->setEnvelope(env2);
@@ -359,8 +345,8 @@ void PortCoreInputUnit::run()
         case 'i':
             printf("Interrupt requested\n");
             //yarp::os::impl::kill(0, 2); // SIGINT
-            //yarp::os::impl::kill(Logger::get().getPid(), 2); // SIGINT
-            yarp::os::impl::kill(Logger::get().getPid(), 15); // SIGTERM
+            //yarp::os::impl::kill(yarp::os::getpid(), 2); // SIGINT
+            yarp::os::impl::kill(yarp::os::getpid(), 15); // SIGTERM
             break;
 #endif
         case '?':
@@ -407,22 +393,22 @@ void PortCoreInputUnit::run()
 
     setDoomed();
 
-    YARP_DEBUG(Logger::get(), "PortCoreInputUnit closing ip");
+    yCDebug(PORTCOREINPUTUNIT, "Closing ip");
     access.wait();
     if (ip != nullptr) {
         ip->close();
     }
     access.post();
-    YARP_DEBUG(Logger::get(), "PortCoreInputUnit closed ip");
+    yCDebug(PORTCOREINPUTUNIT, "Closed ip");
 
     std::string msg = std::string("Removing input from ") + route.getFromName() + " to " + route.getToName();
 
     if (Name(route.getFromName()).isRooted()) {
         if (posted) {
-            YARP_INFO(Logger::get(), msg);
+            yCInfo(PORTCOREINPUTUNIT, "%s", msg.c_str());
         }
     } else {
-        YARP_DEBUG(Logger::get(), "PortCoreInputUnit (unrooted) shutting down");
+        yCDebug(PORTCOREINPUTUNIT, "(unrooted) shutting down");
     }
 
     getOwner().reportUnit(this, false);
@@ -517,15 +503,13 @@ void PortCoreInputUnit::closeMain()
     Route r = getRoute();
     access.post();
 
-    Logger log(r.toString().c_str(), Logger::get());
-
-    YARP_DEBUG(log, "PortCoreInputUnit closing");
+    yCDebug(PORTCOREINPUTUNIT, "[%s] closing", r.toString().c_str());
 
     if (running) {
-        YARP_DEBUG(log, "PortCoreInputUnit joining");
+        yCDebug(PORTCOREINPUTUNIT, "[%s] joining", r.toString().c_str());
         interrupt();
         join();
-        YARP_DEBUG(log, "PortCoreInputUnit joined");
+        yCDebug(PORTCOREINPUTUNIT, "[%s] joined", r.toString().c_str());
     }
 
     if (ip != nullptr) {

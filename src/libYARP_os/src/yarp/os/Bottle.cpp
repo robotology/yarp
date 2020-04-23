@@ -12,7 +12,6 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/BottleImpl.h>
-#include <yarp/os/impl/Logger.h>
 
 
 using yarp::os::Bottle;

@@ -12,11 +12,11 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Carrier.h>
 #include <yarp/os/Carriers.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <cstdio>
@@ -26,11 +26,18 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(PROTOCOL,
+                   "yarp.os.impl.Protocol",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
 
 Protocol::Protocol(TwoWayStream* stream) :
         messageLen(0),
         pendingAck(false),
-        log(Logger::get()),
         active(true),
         delegate(nullptr),
         recv_delegate(nullptr),
@@ -181,12 +188,6 @@ const std::string& Protocol::getEnvelope() const
 }
 
 
-Log& Protocol::getLog() const
-{
-    return log;
-}
-
-
 void Protocol::setRemainingLength(int len)
 {
     messageLen = len;
@@ -309,7 +310,7 @@ bool Protocol::write(SizedWriter& writer)
     if (reply != nullptr) {
         if (!delegate->supportReply()) {
             // We are expected to get a reply, but cannot.
-            YARP_INFO(log, std::string("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
+            yCInfo(PROTOCOL, "connection %s does not support replies (try \"tcp\" or \"text_ack\")", getRoute().toString().c_str());
         }
         if (ok) {
             // Read reply.
@@ -672,11 +673,11 @@ bool Protocol::expectProtocolSpecifier()
     yarp::os::Bytes header((char*)&buf[0], sizeof(buf));
     yarp::conf::ssize_t len = is().readFull(header);
     if (len == -1) {
-        YARP_DEBUG(log, "no connection");
+        yCDebug(PROTOCOL, "no connection");
         return false;
     }
     if ((size_t)len != header.length()) {
-        YARP_DEBUG(log, "data stream died");
+        yCDebug(PROTOCOL, "data stream died");
         return false;
     }
     bool already = false;
@@ -696,7 +697,7 @@ bool Protocol::expectProtocolSpecifier()
         }
     }
     if (delegate == nullptr) {
-        YARP_DEBUG(log, "unrecognized protocol");
+        yCDebug(PROTOCOL, "unrecognized protocol");
         return false;
     }
     Route r = getRoute();

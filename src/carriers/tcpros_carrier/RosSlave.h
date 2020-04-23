@@ -6,6 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include "TcpRosCarrierLog.h"
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Port.h>
@@ -23,20 +25,17 @@ private:
     std::string hostname;
     int portnum;
     yarp::os::Semaphore done;
-    bool verbose;
     bool worked;
 public:
-    RosSlave(bool verbose) :
+    RosSlave() :
         portnum(-1),
         done(0),
-        verbose(verbose),
         worked(false)
     {}
 
     void start(const char *hostname, int portnum) {
         this->hostname = hostname;
         this->portnum = portnum;
-        slave.setVerbosity(-1);
         slave.setReader(*this);
         slave.open("...");
     }
@@ -70,7 +69,7 @@ public:
         yarp::os::Bottle cmd, reply;
         bool ok = cmd.read(reader);
         if (!ok) return false;
-        if (verbose) printf("slave got request %s\n", cmd.toString().c_str());
+        yCDebug(TCPROSCARRIER, "slave got request %s", cmd.toString().c_str());
         reply.addInt32(1);
         reply.addString("");
         yarp::os::Bottle& lst = reply.addList();
@@ -79,7 +78,7 @@ public:
         lst.addInt32(portnum);
         yarp::os::ConnectionWriter *writer = reader.getWriter();
         if (writer==NULL) { return false; }
-        if (verbose) printf("replying with %s\n", reply.toString().c_str());
+        yCDebug(TCPROSCARRIER, "replying with %s", reply.toString().c_str());
         reply.write(*writer);
         done.post();
         return true;

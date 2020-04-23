@@ -10,11 +10,11 @@
 #include <yarp/os/Property.h>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/BottleImpl.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformDirent.h>
 #include <yarp/os/impl/SplitString.h>
 
@@ -27,6 +27,15 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+namespace {
+YARP_LOG_COMPONENT(PROPERTY,
+                   "yarp.os.Property",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+}
 
 class PropertyItem
 {
@@ -354,8 +363,7 @@ public:
     bool readDir(const std::string& dirname, yarp::os::impl::DIR*& dir, std::string& result, const std::string& section = std::string())
     {
         bool ok = true;
-        YARP_DEBUG(Logger::get(),
-                   std::string("reading directory ") + dirname);
+        yCDebug(PROPERTY, "reading directory %s", dirname.c_str());
 
         yarp::os::impl::dirent** namelist;
         yarp::os::impl::closedir(dir);
@@ -395,8 +403,7 @@ public:
                 return readDir(fname, dir, result);
             }
         }
-        YARP_DEBUG(Logger::get(),
-                   std::string("reading file ") + fname);
+        yCDebug(PROPERTY, "reading file %s", fname.c_str());
         FILE* fin = fopen(fname.c_str(), "r");
         if (fin == nullptr) {
             return false;
@@ -417,8 +424,7 @@ public:
                                            "path to search for config files")
                                      .toString();
 
-        YARP_DEBUG(Logger::get(),
-                   std::string("looking for ") + fname + ", search path: " + searchPath);
+        yCDebug(PROPERTY, "looking for %s, search path: %s", fname.c_str(), searchPath.c_str());
 
         std::string pathPrefix;
         std::string txt;
@@ -432,8 +438,7 @@ public:
                 trial += '/';
                 trial += fname;
 
-                YARP_DEBUG(Logger::get(),
-                           std::string("looking for ").append(fname).append(" as ").append(trial));
+                yCDebug(PROPERTY, "looking for %s as %s", fname.c_str(), trial.c_str());
 
                 txt = "";
                 if (readFile(trial, txt, true)) {
@@ -455,7 +460,7 @@ public:
         }
 
         if (!ok) {
-            YARP_ERROR(Logger::get(), std::string("cannot read from ") + fname);
+            yCError(PROPERTY, "cannot read from %s", fname.c_str());
             return false;
         }
 
@@ -481,17 +486,17 @@ public:
             return fromConfigFile(dirname, p, wipe);
         }
 
-        YARP_DEBUG(Logger::get(), std::string("looking for ") + dirname);
+        yCDebug(PROPERTY, "looking for %s", dirname.c_str());
 
         yarp::os::impl::DIR* dir = yarp::os::impl::opendir(dirname.c_str());
         if (dir == nullptr) {
-            YARP_ERROR(Logger::get(), std::string("cannot read from ") + dirname);
+            yCError(PROPERTY, "cannot read from %s", dirname.c_str());
             return false;
         }
 
         std::string txt;
         if (!readDir(dirname, dir, txt, section)) {
-            YARP_ERROR(Logger::get(), std::string("cannot read from ") + dirname);
+            yCError(PROPERTY, "cannot read from %s", dirname.c_str());
             return false;
         }
 
@@ -607,8 +612,7 @@ public:
                                                 target->addString(subName.c_str());
                                             }
                                         } else {
-                                            YARP_ERROR(Logger::get(),
-                                                       std::string("bad include"));
+                                            yCError(PROPERTY, "bad include");
                                             return;
                                         }
 
@@ -616,15 +620,16 @@ public:
                                         Property p;
                                         if (getBottle(subName) != nullptr) {
                                             p.fromString(getBottle(subName)->tail().toString());
-                                            //printf(">>> prior p %s\n",
-                                            //     p.toString().c_str());
+                                            yCTrace(PROPERTY,
+                                                    ">>> prior p %s\n",
+                                                    p.toString().c_str());
                                         }
                                         p.fromConfigFile(fname, env, false);
                                         accum.fromString(p.toString());
                                         tag = subName;
-                                        //printf(">>> tag %s accum %s\n",
-                                        //     tag.c_str(),
-                                        //     accum.toString().c_str());
+                                        yCTrace(PROPERTY, ">>> tag %s accum %s\n",
+                                                tag.c_str(),
+                                                accum.toString().c_str());
                                         if (!tag.empty()) {
                                             if (accum.size() >= 1) {
                                                 Bottle b;
@@ -640,7 +645,7 @@ public:
                                     } else {
                                         tag = "";
                                         std::string fname = bot.get(1).toString();
-                                        //printf("Including %s\n", fname.c_str());
+                                        yCTrace(PROPERTY, "Including %s\n", fname.c_str());
                                         fromConfigFile(fname, env, false);
                                     }
                                 }
@@ -702,8 +707,10 @@ public:
                     if (getBottle(tag) != nullptr) {
                         // merge data
                         accum.append(getBottle(tag)->tail());
-                        //printf("MERGE %s, got %s\n", tag.c_str(),
-                        //     accum.toString().c_str());
+                        yCTrace(PROPERTY,
+                                "MERGE %s, got %s\n",
+                                tag.c_str(),
+                                accum.toString().c_str());
                     }
                 }
             }
@@ -739,7 +746,7 @@ public:
     // expand any environment variables found
     std::string expand(const char* txt, Searchable& env, Searchable& env2)
     {
-        //printf("expanding %s\n", txt);
+        yCTrace(PROPERTY, "expanding %s\n", txt);
         std::string input = txt;
         if (input.find('$') == std::string::npos) {
             // no variables present for sure
@@ -788,7 +795,7 @@ public:
                     }
                 }
                 inVar = false;
-                //printf("VARIABLE %s\n", var.c_str());
+                yCTrace(PROPERTY, "VARIABLE %s\n", var.c_str());
                 std::string add = NetworkBase::getEnvironment(var.c_str());
                 if (add.empty()) {
                     add = env.find(var).toString();
@@ -1166,9 +1173,9 @@ void Property::fromQuery(const char* url, bool wipe)
             key = buf;
             val = "";
             buf = "";
-            //printf("adding key %s\n", key.c_str());
+            yCTrace(PROPERTY, "adding key %s\n", key.c_str());
         } else if (ch == '&') {
-            //printf("adding val %s\n", val.c_str());
+            yCTrace(PROPERTY, "adding val %s\n", val.c_str());
             val = buf;
             buf = "";
             if (!key.empty() && !val.empty()) {

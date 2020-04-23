@@ -9,7 +9,18 @@
 
 #include <yarp/serversql/impl/Subscriber.h>
 
+#include <yarp/os/LogComponent.h>
+
 using yarp::serversql::impl::Subscriber;
+
+namespace {
+YARP_LOG_COMPONENT(SUBSCRIBER,
+                   "yarp.serversql.impl.Subscriber",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
 
 bool Subscriber::apply(yarp::os::Bottle& cmd,
                        yarp::os::Bottle& reply,
@@ -28,7 +39,7 @@ bool Subscriber::apply(yarp::os::Bottle& cmd,
         tag == "untopic" ||
         tag == "type") {
         if (!silent) {
-            printf("-> %s\n", cmd.toString().c_str());
+            yCInfo(SUBSCRIBER, "-> %s", cmd.toString().c_str());
         }
     }
     if (tag == "subscribe") {

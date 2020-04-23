@@ -8,11 +8,11 @@
 
 #include <yarp/os/YarpPlugin.h>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/SystemClock.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameClient.h>
 
 #include <cstdio>
@@ -20,6 +20,15 @@
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+
+namespace {
+YARP_LOG_COMPONENT(YARPPLUGIN,
+                   "yarp.os.Plugin",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+}
 
 bool YarpPluginSettings::open(SharedLibraryFactory& factory,
                               const std::string& dll_name,
@@ -32,24 +41,22 @@ bool YarpPluginSettings::subopen(SharedLibraryFactory& factory,
                                  const std::string& dll_name,
                                  const std::string& fn_name)
 {
-    YARP_SPRINTF2(impl::Logger::get(), debug, "Trying plugin [dll: %s] [fn: %s]", dll_name.c_str(), fn_name.c_str());
+    yCDebug(YARPPLUGIN, "Trying plugin [dll: %s] [fn: %s]", dll_name.c_str(), fn_name.c_str());
     bool ok = factory.open(dll_name.c_str(), fn_name.c_str());
-    if (verbose) {
-        fprintf(stderr, "Trying to find library '%s' containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok ? "found" : "fail");
-    }
+    yCDebug(YARPPLUGIN, "Trying to find library '%s' containing function '%s' -- %s\n", dll_name.c_str(), fn_name.c_str(), ok ? "found" : "fail");
     if (ok) {
-        YARP_SPRINTF2(impl::Logger::get(), debug, "Found plugin [dll: %s] [fn: %s]", dll_name.c_str(), fn_name.c_str());
+        yCDebug(YARPPLUGIN, "Found plugin [dll: %s] [fn: %s]", dll_name.c_str(), fn_name.c_str());
         this->dll_name = dll_name;
         this->fn_name = fn_name;
-    } else if (verbose || (factory.getStatus() != SharedLibraryFactory::STATUS_LIBRARY_NOT_FOUND)) {
-        fprintf(stderr, "error while opening %s:\n  %s\n", dll_name.c_str(), factory.getError().c_str());
+    } else if (factory.getStatus() != SharedLibraryFactory::STATUS_LIBRARY_NOT_FOUND) {
+        yCError(YARPPLUGIN, "error while opening %s:\n  %s\n", dll_name.c_str(), factory.getError().c_str());
     }
     return ok;
 }
 
 bool YarpPluginSettings::open(SharedLibraryFactory& factory)
 {
-    YARP_SPRINTF3(impl::Logger::get(), debug, "Plugin [name: %s] [dll: %s] [fn: %s]", name.c_str(), dll_name.c_str(), fn_name.c_str());
+    yCDebug(YARPPLUGIN, "Plugin [name: %s] [dll: %s] [fn: %s]", name.c_str(), dll_name.c_str(), fn_name.c_str());
     if (selector != nullptr && !name.empty()) {
         // we may have a YARP-specific search path available,
         // and a proper name for the DLL
@@ -125,34 +132,32 @@ void YarpPluginSettings::reportStatus(SharedLibraryFactory& factory) const
     }
     switch (problem) {
     case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
-        if (verbose) {
-            fprintf(stderr, "Cannot load plugin from shared library (%s)\n", dll_name.c_str());
-            fprintf(stderr, "(%s)\n", factory.getError().c_str());
-        }
+        yCDebug(YARPPLUGIN, "Cannot load plugin from shared library (%s)\n", dll_name.c_str());
+        yCDebug(YARPPLUGIN, "(%s)\n", factory.getError().c_str());
         break;
     case SharedLibraryFactory::STATUS_LIBRARY_NOT_FOUND:
-        fprintf(stderr, "Cannot load plugin from shared library (%s)\n", dll_name.c_str());
-        fprintf(stderr, "(%s)\n", factory.getError().c_str());
+        yCWarning(YARPPLUGIN, "Cannot load plugin from shared library (%s)\n", dll_name.c_str());
+        yCWarning(YARPPLUGIN, "(%s)\n", factory.getError().c_str());
         break;
     case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
-        fprintf(stderr, "cannot find YARP hook in shared library (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
-        fprintf(stderr, "(%s)\n", factory.getError().c_str());
+        yCWarning(YARPPLUGIN, "cannot find YARP hook in shared library (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
+        yCWarning(YARPPLUGIN, "(%s)\n", factory.getError().c_str());
         break;
     case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
-        fprintf(stderr, "YARP hook in shared library misbehaved (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
-        fprintf(stderr, "(the library may be too old/new and need to be recompiled to match YARP version)\n");
-        fprintf(stderr, "(%s)\n", factory.getError().c_str());
+        yCWarning(YARPPLUGIN, "YARP hook in shared library misbehaved (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
+        yCWarning(YARPPLUGIN, "(the library may be too old/new and need to be recompiled to match YARP version)\n");
+        yCWarning(YARPPLUGIN, "(%s)\n", factory.getError().c_str());
         break;
     default:
-        fprintf(stderr, "Unknown error (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
-        fprintf(stderr, "(%s)\n", factory.getError().c_str());
+        yCWarning(YARPPLUGIN, "Unknown error (%s:%s)\n", dll_name.c_str(), fn_name.c_str());
+        yCWarning(YARPPLUGIN, "(%s)\n", factory.getError().c_str());
         break;
     }
 }
 
 void YarpPluginSettings::reportFailure() const
 {
-    fprintf(stderr, "Failed to create %s from shared library %s\n", fn_name.c_str(), dll_name.c_str());
+    yCError(YARPPLUGIN, "Failed to create %s from shared library %s\n", fn_name.c_str(), dll_name.c_str());
 }
 
 
@@ -172,9 +177,7 @@ void YarpPluginSelector::scan()
         return;
     }
 
-    YARP_SPRINTF0(Logger::get(),
-                  debug,
-                  "Scanning. I'm scanning. I hope you like scanning too.");
+    yCDebug(YARPPLUGIN, "Scanning. I'm scanning. I hope you like scanning too.");
 
     // Search plugins directories
     ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
@@ -192,16 +195,12 @@ void YarpPluginSelector::scan()
     if (plugin_paths.size() > 0) {
         for (size_t i = 0; i < plugin_paths.size(); i++) {
             std::string target = plugin_paths.get(i).asString();
-            YARP_SPRINTF1(Logger::get(),
-                          debug,
-                          "Loading configuration files related to plugins from %s.",
-                          target.c_str());
+            yCDebug(YARPPLUGIN, "Loading configuration files related to plugins from %s.",
+                       target.c_str());
             config.fromConfigDir(target, "inifile", false);
         }
     } else {
-        YARP_SPRINTF0(Logger::get(),
-                      debug,
-                      "Plugin directory not found");
+        yCDebug(YARPPLUGIN, "Plugin directory not found");
     }
 
     // Read the .ini files and populate the lists

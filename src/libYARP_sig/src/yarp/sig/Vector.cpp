@@ -17,8 +17,6 @@
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
 
-#include <yarp/os/impl/Logger.h>
-
 #include <yarp/sig/Matrix.h>
 
 #include <vector>

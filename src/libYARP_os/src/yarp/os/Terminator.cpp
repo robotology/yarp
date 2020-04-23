@@ -20,6 +20,16 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(TERMINATOR,
+                   "yarp.os.Terminator",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+}
+
+
 bool Terminator::terminateByName(const char* name)
 {
     if (name == nullptr) {
@@ -46,7 +56,7 @@ bool Terminator::terminateByName(const char* name)
     Bottle reply;
     Contact c = NetworkBase::queryName(s);
     if (!c.isValid()) {
-        fprintf(stderr, "Terminator port not found\n");
+        yCError(TERMINATOR, "Terminator port not found");
         return false;
     }
     ContactStyle style;
@@ -67,7 +77,7 @@ Terminee::Terminee(const char* name)
     implementation = nullptr;
     if (name == nullptr) {
         quit = true;
-        printf("Terminator: Please supply a proper port name\n");
+        yCError(TERMINATOR, "Terminator: Please supply a proper port name");
         return;
     }
 
@@ -84,7 +94,7 @@ Terminee::Terminee(const char* name)
     ok = helper.open(s);
     if (!ok) {
         quit = true;
-        fprintf(stderr, "Kill port conflict: make sure you supply a distinct --name /PORTNAME\n");
+        yCError(TERMINATOR, "Kill port conflict: make sure you supply a distinct --name /PORTNAME");
     } else {
         quit = false;
         start();

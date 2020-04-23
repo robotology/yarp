@@ -18,12 +18,10 @@ public:
     std::string hostname;
     int portnum;
     std::string protocol;
-    bool verbose;
 
-    RosLookup(bool verbose) :
+    RosLookup() :
         valid(false),
-        portnum(-1),
-        verbose(verbose)
+        portnum(-1)
     {}
 
     bool lookupCore(const std::string& name);

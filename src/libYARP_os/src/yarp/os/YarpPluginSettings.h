@@ -30,7 +30,6 @@ public:
     YarpPluginSettings() :
             wrapper_name("unknown")
     {
-        verbose = false;
         selector = nullptr;
     }
 
@@ -97,15 +96,18 @@ public:
         return false;
     }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     /**
      * Should messages be printed showing what searches YARP is trying out?
      *
      * @param verbose verbosity flag
+     * @deprecated
      */
+    YARP_DEPRECATED_MSG("Use log components instead")
     void setVerboseMode(bool verbose)
     {
-        this->verbose = verbose;
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Configure settings from a configuration file or other searchable
@@ -220,7 +222,6 @@ private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) class_name;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) baseclass_name;
     YarpPluginSelector* selector;
-    bool verbose;
 
     bool subopen(SharedLibraryFactory& factory,
                  const std::string& dll_name,

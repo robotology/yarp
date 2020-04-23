@@ -10,12 +10,21 @@
 #include <yarp/os/impl/LocalCarrier.h>
 
 #include <yarp/os/ConnectionState.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Route.h>
 #include <yarp/os/SizedWriter.h>
-#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;
+
+namespace {
+YARP_LOG_COMPONENT(LOCALCARRIER,
+                   "yarp.os.impl.LocalCarrier",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
 
 yarp::os::impl::LocalCarrierManager yarp::os::impl::LocalCarrier::manager;
 
@@ -250,8 +259,10 @@ bool yarp::os::impl::LocalCarrier::sendHeader(ConnectionState& proto)
     // now switch over to some local structure to communicate
     peerMutex.lock();
     peer = manager.getReceiver();
-    //printf("sender %ld sees receiver %ld\n", (long int) this,
-    //       (long int) peer);
+    yCDebug(LOCALCARRIER,
+            "sender %p sees receiver %p",
+            this,
+            peer);
     peerMutex.unlock();
 
     return true;
@@ -263,9 +274,12 @@ bool yarp::os::impl::LocalCarrier::expectExtraHeader(ConnectionState& proto)
     // switch over to some local structure to communicate
     peerMutex.lock();
     peer = manager.getSender(this);
-    //printf("receiver %ld (%s) sees sender %ld (%s)\n",
-    //       (long int) this, portName.c_str(),
-    //       (long int) peer, peer->portName.c_str());
+    yCDebug(LOCALCARRIER,
+            "receiver %p (%s) sees sender %p (%s)",
+            this,
+            portName.c_str(),
+            peer,
+            peer->portName.c_str());
     Route route = proto.getRoute();
     route.setFromName(peer->portName);
     proto.setRoute(route);
@@ -281,8 +295,6 @@ bool yarp::os::impl::LocalCarrier::becomeLocal(ConnectionState& proto, bool send
         stream->attach(this, sender);
     }
     proto.takeStreams(stream);
-    //YARP_ERROR(Logger::get(), "*** don't trust local carrier yet ****");
-    //exit(1);
     return true;
 }
 
@@ -295,13 +307,11 @@ bool yarp::os::impl::LocalCarrier::write(ConnectionState& proto, SizedWriter& wr
         if (peer != nullptr) {
             peer->accept(ref);
         } else {
-            YARP_ERROR(Logger::get(),
-                       "local send failed - write without peer");
+            yCError(LOCALCARRIER, "local send failed - write without peer");
         }
         peerMutex.unlock();
     } else {
-        YARP_ERROR(Logger::get(),
-                   "local send failed - no object");
+        yCError(LOCALCARRIER, "local send failed - no object");
     }
 
     return true;
@@ -323,15 +333,15 @@ bool yarp::os::impl::LocalCarrier::expectReplyToHeader(ConnectionState& proto)
 bool yarp::os::impl::LocalCarrier::expectIndex(ConnectionState& proto)
 {
 
-    YARP_DEBUG(Logger::get(), "local recv: wait send");
+    yCDebug(LOCALCARRIER, "local recv: wait send");
     sent.wait();
-    YARP_DEBUG(Logger::get(), "local recv: got send");
+    yCDebug(LOCALCARRIER, "local recv: got send");
     proto.setReference(ref);
     received.post();
     if (ref != nullptr) {
-        YARP_DEBUG(Logger::get(), "local recv: received");
+        yCDebug(LOCALCARRIER, "local recv: received");
     } else {
-        YARP_DEBUG(Logger::get(), "local recv: shutdown");
+        yCDebug(LOCALCARRIER, "local recv: shutdown");
         proto.is().interrupt();
         return false;
     }
@@ -342,11 +352,11 @@ bool yarp::os::impl::LocalCarrier::expectIndex(ConnectionState& proto)
 void yarp::os::impl::LocalCarrier::accept(yarp::os::Portable* ref)
 {
     this->ref = ref;
-    YARP_DEBUG(Logger::get(), "local send: send ref");
+    yCDebug(LOCALCARRIER, "local send: send ref");
     sent.post();
     if (ref != nullptr && !doomed) {
-        YARP_DEBUG(Logger::get(), "local send: wait receipt");
+        yCDebug(LOCALCARRIER, "local send: wait receipt");
         received.wait();
-        YARP_DEBUG(Logger::get(), "local send: received");
+        yCDebug(LOCALCARRIER, "local send: received");
     }
 }

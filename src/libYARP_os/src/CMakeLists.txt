@@ -275,8 +275,6 @@ set(YARP_os_IMPL_HDRS yarp/os/impl/AuthHMAC.h
                       yarp/os/impl/FallbackNameServer.h
                       yarp/os/impl/HttpCarrier.h
                       yarp/os/impl/LocalCarrier.h
-                      yarp/os/impl/Logger.h
-                      yarp/os/impl/LogImpl.h
                       yarp/os/impl/LogForwarder.h
                       yarp/os/impl/McastCarrier.h
                       yarp/os/impl/MemoryOutputStream.h
@@ -331,7 +329,6 @@ set(YARP_os_IMPL_SRCS yarp/os/impl/AuthHMAC.cpp
                       yarp/os/impl/FallbackNameServer.cpp
                       yarp/os/impl/HttpCarrier.cpp
                       yarp/os/impl/LocalCarrier.cpp
-                      yarp/os/impl/Logger.cpp
                       yarp/os/impl/LogForwarder.cpp
                       yarp/os/impl/McastCarrier.cpp
                       yarp/os/impl/NameClient.cpp

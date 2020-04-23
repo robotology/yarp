@@ -11,12 +11,13 @@
 
 #include <yarp/conf/filesystem.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 
@@ -31,6 +32,15 @@ namespace fs = yarp::conf::filesystem;
 
 #define RTARGET stderr
 #define RESOURCE_FINDER_CACHE_TIME 10
+
+namespace {
+YARP_LOG_COMPONENT(RESOURCEFINDER,
+                   "yarp.os.ResourceFinder",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+}
 
 
 static std::string getPwd()
@@ -134,8 +144,6 @@ private:
     yarp::os::Bottle apps;
     std::string configFilePath;
     yarp::os::Property cache;
-    bool verbose{false};
-    bool quiet{false};
     bool mainActive{false};
     bool useNearMain{false};
 
@@ -150,11 +158,6 @@ public:
     {
         apps.clear();
         return true;
-    }
-
-    bool isVerbose() const
-    {
-        return verbose;
     }
 
     static std::string extractPath(const std::string& fname)
@@ -180,12 +183,10 @@ public:
         bool user_specified_from = p.check("from");
 
         if (p.check("verbose")) {
-            setVerbose(p.check("verbose", Value(1)).asBool());
+            yCWarning(RESOURCEFINDER, "The 'verbose' option is deprecated.");
         }
 
-        if (isVerbose()) {
-            fprintf(RTARGET, "||| configuring\n");
-        }
+        yCDebug(RESOURCEFINDER, "configuring");
 
         bool configured_normally = true;
 
@@ -193,9 +194,7 @@ public:
             clearAppNames();
             std::string c = p.check("context", Value("default")).asString();
             addAppName(c.c_str());
-            if (verbose) {
-                fprintf(RTARGET, "||| added context %s\n", c.c_str());
-            }
+            yCDebug(RESOURCEFINDER, "added context %s", c.c_str());
         }
 
         config.fromCommand(argc, argv, skip, false);
@@ -203,9 +202,7 @@ public:
             std::string from = config.check("from",
                                             Value("config.ini"))
                                    .toString();
-            if (verbose) {
-                fprintf(RTARGET, "||| default config file specified as %s\n", from.c_str());
-            }
+            yCDebug(RESOURCEFINDER, "default config file specified as %s", from.c_str());
             mainActive = true;
             std::string corrected = findFile(config, from, nullptr);
             mainActive = false;
@@ -321,10 +318,9 @@ public:
             }
         }
 
-        if (verbose) {
-            std::string base = doc.toString();
-            fprintf(RTARGET, "||| checking [%s] (%s%s%s)\n", s.c_str(), base.c_str(), (base.length() == 0) ? "" : " ", doc2.c_str());
-        }
+        std::string base = doc.toString();
+        yCDebug(RESOURCEFINDER, "checking [%s] (%s%s%s)", s.c_str(), base.c_str(), (base.length() == 0) ? "" : " ", doc2.c_str());
+
         bool ok = exists(s.c_str(), isDir);
         Value status;
         yAssert(status.asList());
@@ -332,9 +328,7 @@ public:
         status.asList()->addInt32(ok ? 1 : 0);
         cache.put(s, status);
         if (ok) {
-            if (verbose) {
-                fprintf(RTARGET, "||| found %s\n", s.c_str());
-            }
+            yCInfo(RESOURCEFINDER, "found %s", s.c_str());
             return s;
         }
         return {};
@@ -403,13 +397,10 @@ public:
 
     bool canShowErrors(const ResourceFinderOptions& opts) const
     {
-        if ((opts.messageFilter & ResourceFinderOptions::ShowErrors) != 0) {
-            return true;
-        }
         if (opts.messageFilter == ResourceFinderOptions::ShowNone) {
             return false;
         }
-        return !quiet;
+        return true;
     }
 
     void findFileBase(Property& config, const std::string& name, bool isDir, Bottle& output, const ResourceFinderOptions& opts)
@@ -423,7 +414,7 @@ public:
         bool justTop = (opts.duplicateFilesPolicy == ResourceFinderOptions::First);
         if (justTop) {
             if (canShowErrors(opts)) {
-                fprintf(RTARGET, "||| did not find %s\n", name.c_str());
+                yCInfo(RESOURCEFINDER, "did not find %s", name.c_str());
             }
         }
     }
@@ -441,11 +432,9 @@ public:
     void findFileBaseInner(Property& config, const std::string& name, bool isDir, bool allowPathd, Bottle& output, const ResourceFinderOptions& opts, const Bottle& predoc, const std::string& reason)
     {
         Bottle doc;
-        if (verbose) {
-            doc = predoc;
-            if (!reason.empty()) {
-                doc.addString(reason);
-            }
+        doc = predoc;
+        if (!reason.empty()) {
+            doc.addString(reason);
         }
         ResourceFinderOptions::SearchLocations locs = opts.searchLocations;
         ResourceFinderOptions::SearchFlavor flavor = opts.searchFlavor;
@@ -656,18 +645,6 @@ public:
         }
     }
 
-    bool setVerbose(bool verbose)
-    {
-        this->verbose = verbose;
-        return this->verbose;
-    }
-
-    bool setQuiet(bool quiet)
-    {
-        this->quiet = quiet;
-        return this->quiet;
-    }
-
     bool exists(const std::string& fname, bool isDir)
     {
         int result = yarp::os::stat(fname.c_str());
@@ -729,7 +706,7 @@ public:
         }
 
         if (yarp::os::mkdir(path.c_str()) < 0 && errno != EEXIST) {
-            fprintf(RTARGET, "||| WARNING  Could not create %s directory\n", path.c_str());
+            yCWarning(RESOURCEFINDER, "Could not create %s directory", path.c_str());
         }
         return path;
     }
@@ -759,7 +736,7 @@ public:
         }
 
         if (yarp::os::mkdir(path.c_str()) < 0 && errno != EEXIST) {
-            fprintf(RTARGET, "||| WARNING  Could not create %s directory\n", path.c_str());
+            yCWarning(RESOURCEFINDER, "Could not create %s directory", path.c_str());
         }
         return path;
     }
@@ -834,17 +811,13 @@ bool ResourceFinder::addContext(const std::string& appName)
     if (appName[0] == '\0') {
         return true;
     }
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| adding context [%s]\n", appName.c_str());
-    }
+    yCDebug(RESOURCEFINDER, "adding context [%s]", appName.c_str());
     return mPriv->addAppName(appName);
 }
 
 bool ResourceFinder::clearContext()
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| clearing context\n");
-    }
+    yCDebug(RESOURCEFINDER, "clearing context");
     return mPriv->clearAppNames();
 }
 
@@ -872,92 +845,74 @@ bool ResourceFinder::setDefault(const std::string& key, const yarp::os::Value& v
 
 std::string ResourceFinder::findFile(const std::string& name)
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| finding file [%s]\n", name.c_str());
-    }
+    yCDebug(RESOURCEFINDER, "finding file [%s]", name.c_str());
     return mPriv->findFile(config, name, nullptr);
 }
 
 std::string ResourceFinder::findFile(const std::string& name,
                                      const ResourceFinderOptions& options)
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| finding file [%s]\n", name.c_str());
-    }
+    yCDebug(RESOURCEFINDER, "finding file [%s]", name.c_str());
     return mPriv->findFile(config, name, &options);
 }
 
 std::string ResourceFinder::findFileByName(const std::string& name)
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| finding file %s\n", name.c_str());
-    }
+    yCDebug(RESOURCEFINDER, "finding file %s", name.c_str());
     return mPriv->findFileByName(config, name, nullptr);
 }
 
 std::string ResourceFinder::findFileByName(const std::string& name,
                                            const ResourceFinderOptions& options)
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| finding file %s\n", name.c_str());
-    }
+    yCDebug(RESOURCEFINDER, "finding file %s", name.c_str());
     return mPriv->findFileByName(config, name, &options);
 }
 
 
 std::string ResourceFinder::findPath(const std::string& name)
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| finding path [%s]\n", name.c_str());
-    }
+    yCDebug(RESOURCEFINDER, "finding path [%s]", name.c_str());
     return mPriv->findPath(config, name, nullptr);
 }
 
 std::string ResourceFinder::findPath(const std::string& name,
                                      const ResourceFinderOptions& options)
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| finding path [%s]\n", name.c_str());
-    }
+    yCDebug(RESOURCEFINDER, "finding path [%s]", name.c_str());
     return mPriv->findPath(config, name, &options);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const std::string& name)
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| finding paths [%s]\n", name.c_str());
-    }
+    yCDebug(RESOURCEFINDER, "finding paths [%s]", name.c_str());
     return mPriv->findPaths(config, name, nullptr);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const std::string& name,
                                            const ResourceFinderOptions& options)
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| finding paths [%s]\n", name.c_str());
-    }
+    yCDebug(RESOURCEFINDER, "finding paths [%s]", name.c_str());
     return mPriv->findPaths(config, name, &options);
 }
 
 std::string ResourceFinder::findPath()
 {
-    if (mPriv->isVerbose()) {
-        fprintf(RTARGET, "||| finding path\n");
-    }
+    yCDebug(RESOURCEFINDER, "finding path");
     return mPriv->findPath(config);
 }
 
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 bool ResourceFinder::setVerbose(bool verbose)
 {
-    return mPriv->setVerbose(verbose);
+    return false;
 }
 
 bool ResourceFinder::setQuiet(bool quiet)
 {
-    return mPriv->setQuiet(quiet);
+    return false;
 }
-
+#endif
 
 bool ResourceFinder::check(const std::string& key) const
 {

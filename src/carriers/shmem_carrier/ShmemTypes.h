@@ -12,6 +12,10 @@
 
 #define SHMEM_DEFAULT_SIZE 4096
 
+#include <yarp/os/LogComponent.h>
+
+YARP_DECLARE_LOG_COMPONENT(SHMEMCARRIER)
+
 struct ShmemHeader_t
 {
     bool resize;

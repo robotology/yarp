@@ -29,6 +29,13 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+YARP_LOG_COMPONENT(SOCKETTWOWAYSTREAM,
+                   "yarp.os.impl.PortCoreOutputUnit",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+
 int SocketTwoWayStream::open(const Contact& address)
 {
     if (address.getPort() == -1) {
@@ -68,11 +75,9 @@ int SocketTwoWayStream::open(const Contact& address)
     if (result >= 0) {
         happy = true;
     } else {
-        YARP_SPRINTF2(Logger::get(),
-                      debug,
-                      "TCP connection to tcp://%s:%d failed to open",
-                      host.c_str(),
-                      address.getPort());
+        yCDebug(SOCKETTWOWAYSTREAM, "TCP connection to tcp://%s:%d failed to open",
+                   host.c_str(),
+                   address.getPort());
     }
     updateAddresses();
     return result;
@@ -121,7 +126,7 @@ void SocketTwoWayStream::updateAddresses()
         if (ret) {
             localAddress = Contact(localHostAddress, ntohs(reinterpret_cast<struct sockaddr_in*>(&local)->sin_port));
         } else {
-            YARP_ERROR(Logger::get(), "SocketTwoWayStream::updateAddresses failed getting local address");
+            yCError(SOCKETTWOWAYSTREAM, "SocketTwoWayStream::updateAddresses failed getting local address");
         }
         ret = inet_ntop(remote.sa_family,
                         (remote.sa_family == AF_INET ? reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in*>(&remote)->sin_addr) : reinterpret_cast<void*>(&reinterpret_cast<struct sockaddr_in6*>(&remote)->sin6_addr)),
@@ -130,12 +135,12 @@ void SocketTwoWayStream::updateAddresses()
         if (ret) {
             remoteAddress = Contact(remoteHostAddress, ntohs(reinterpret_cast<struct sockaddr_in*>(&remote)->sin_port));
         } else {
-            YARP_ERROR(Logger::get(), "SocketTwoWayStream::updateAddresses failed getting local address");
+            yCError(SOCKETTWOWAYSTREAM, "SocketTwoWayStream::updateAddresses failed getting local address");
         }
         delete[] localHostAddress;
         delete[] remoteHostAddress;
     } else {
-        YARP_ERROR(Logger::get(), "Unknown address type");
+        yCError(SOCKETTWOWAYSTREAM, "Unknown address type");
     }
 #endif
 }

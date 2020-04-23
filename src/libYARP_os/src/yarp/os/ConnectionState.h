@@ -22,7 +22,6 @@ class OutputStream;
 class Portable;
 class Route;
 class TwoWayStream;
-class Log;
 class Contactable;
 
 /**
@@ -68,11 +67,6 @@ public:
      * when there is no low-level way to know this.
      */
     virtual void setRemainingLength(int len) = 0;
-
-    /**
-     * Access a connection-specific logging object.
-     */
-    virtual Log& getLog() const = 0;
 
     /**
      * Extract a name for the sender, if the connection

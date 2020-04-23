@@ -9,14 +9,22 @@
 
 #include <yarp/os/PortWriterBuffer.h>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCorePackets.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(PORTWRITERBUFFERBASE,
+                   "yarp.os.PortWriterBufferBase",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::defaultPrintCallback(),
+                   nullptr)
+} // namespace
 
 PortWriterBufferManager::~PortWriterBufferManager() = default;
 
@@ -53,7 +61,7 @@ public:
 
     void finishWrites()
     {
-        YARP_DEBUG(Logger::get(), "finishing writes");
+        yCDebug(PORTWRITERBUFFERBASE, "finishing writes");
         bool done = false;
         while (!done) {
             stateSema.wait();
@@ -71,7 +79,7 @@ public:
                 completionSema.wait();
             }
         }
-        YARP_DEBUG(Logger::get(), "finished writes");
+        yCDebug(PORTWRITERBUFFERBASE, "finished writes");
     }
 
     const void* get()
@@ -80,14 +88,14 @@ public:
             // (Safe to check outside mutex)
             // oops, there is already a prepared and unwritten
             // object.  best remove it.
-            YARP_DEBUG(Logger::get(), "releasing unused buffer");
+            yCDebug(PORTWRITERBUFFERBASE, "releasing unused buffer");
             release();
         }
         stateSema.wait();
         PortCorePacket* packet = packets.getFreePacket();
         yAssert(packet != nullptr);
         if (packet->getContent() == nullptr) {
-            YARP_DEBUG(Logger::get(), "creating a writer buffer");
+            yCDebug(PORTWRITERBUFFERBASE, "creating a writer buffer");
             //packet->setContent(owner.create(*this, packet), true);
             yarp::os::PortWriterWrapper* wrapper = owner.create(*this, packet);
             //packet->setContent(wrapper, true);
@@ -119,7 +127,7 @@ public:
     void onCompletion(void* tracker) override
     {
         stateSema.wait();
-        YARP_DEBUG(Logger::get(), "freeing up a writer buffer");
+        yCDebug(PORTWRITERBUFFERBASE, "freeing up a writer buffer");
         packets.freePacket((PortCorePacket*)tracker, false);
         outCt--;
         bool sig = finishing;

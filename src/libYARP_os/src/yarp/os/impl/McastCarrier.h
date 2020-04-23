@@ -13,7 +13,6 @@
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/Election.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/UdpCarrier.h>
 

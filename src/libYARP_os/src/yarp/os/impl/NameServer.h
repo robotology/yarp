@@ -12,10 +12,10 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Dispatcher.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SplitString.h>
 
 #include <map>
@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 
+YARP_DECLARE_LOG_COMPONENT(NAMESERVER)
 
 namespace yarp {
 namespace os {
@@ -174,7 +175,7 @@ private:
     public:
         HostRecord()
         {
-            //YARP_DEBUG(Logger::get(), "FIXME: HostRecord has hardcoded base");
+            // FIXME HostRecord has hardcoded base
             base = 0;
         }
 
@@ -186,8 +187,7 @@ private:
         int get()
         {
             int result = ReusableRecord<int>::getFree();
-            //YARP_DEBUG(Logger::get(), std::string("host record says ") +
-            //NetType::toString(result) + " is free");
+            yCTrace(NAMESERVER, "host record says %d is free", result);
             return result;
         }
 
@@ -209,7 +209,7 @@ private:
     public:
         McastRecord()
         {
-            //YARP_DEBUG(Logger::get(), "FIXME: mcast records are never reused");
+            // FIXME: mcast records are never reused
             base = 0;
             basePort = 0;
             last = 0;
@@ -253,7 +253,7 @@ private:
             int v2 = ip[2] - 1;
             int v1 = ip[3] - 1;
             int x = v2 * 255 + v1;
-            printf("Releasing %s %d  %d:%d\n", addr, x, v2, v1);
+            yCInfo(NAMESERVER, "Releasing %s %d  %d:%d\n", addr, x, v2, v1);
             release(x);
         }
     };

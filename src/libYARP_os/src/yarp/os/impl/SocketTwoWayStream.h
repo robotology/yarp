@@ -13,8 +13,8 @@
 #include <yarp/conf/system.h>
 
 #include <yarp/os/Bytes.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/impl/TcpAcceptor.h>
 #include <yarp/os/impl/TcpStream.h>
@@ -28,6 +28,8 @@
 #else
 #    include <netinet/tcp.h>
 #endif
+
+YARP_DECLARE_LOG_COMPONENT(SOCKETTWOWAYSTREAM)
 
 namespace yarp {
 namespace os {
@@ -80,15 +82,15 @@ public:
 
     void interrupt() override
     {
-        YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket");
+        yCDebug(SOCKETTWOWAYSTREAM, "^^^^^^^^^^^ interrupting socket");
         if (happy) {
             happy = false;
             stream.close_reader();
-            YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket reader");
+            yCDebug(SOCKETTWOWAYSTREAM, "^^^^^^^^^^^ interrupting socket reader");
             stream.close_writer();
-            YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket writer");
+            yCDebug(SOCKETTWOWAYSTREAM, "^^^^^^^^^^^ interrupting socket writer");
             stream.close();
-            YARP_DEBUG(Logger::get(), "^^^^^^^^^^^ interrupting socket fully");
+            yCDebug(SOCKETTWOWAYSTREAM, "^^^^^^^^^^^ interrupting socket fully");
         }
     }
 
@@ -115,7 +117,7 @@ public:
         }
         if (result <= 0) {
             happy = false;
-            YARP_DEBUG(Logger::get(), "bad socket read");
+            yCDebug(SOCKETTWOWAYSTREAM, "bad socket read");
         }
         return result;
     }
@@ -136,7 +138,7 @@ public:
         }
         if (result <= 0) {
             happy = false;
-            YARP_DEBUG(Logger::get(), "bad socket read");
+            yCDebug(SOCKETTWOWAYSTREAM, "bad socket read");
         }
         return result;
     }
@@ -155,7 +157,7 @@ public:
         }
         if (result < 0) {
             happy = false;
-            YARP_DEBUG(Logger::get(), "bad socket write");
+            yCDebug(SOCKETTWOWAYSTREAM, "bad socket write");
         }
     }
 

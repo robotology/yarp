@@ -7,6 +7,7 @@
  */
 
 #include "RosHeader.h"
+#include "TcpRosCarrierLog.h"
 
 #include <cstdio>
 #include <cstring>
@@ -73,11 +74,11 @@ bool RosHeader::readHeader(const string& bin) {
         string keyval(at,slen);
         size_t delim = keyval.find_first_of('=',0);
         if (delim == string::npos) {
-            fprintf(stderr, "warning: corrupt ROS header\n");
+            yCWarning(TCPROSCARRIER, "Corrupt ROS header");
         }
         string key = keyval.substr(0,delim);
         string val = keyval.substr(delim+1);
-        //printf("key %s => val %s\n", key.c_str(), val.c_str());
+        yCTrace(TCPROSCARRIER, "key %s => val %s\n", key.c_str(), val.c_str());
         data[key] = val;
         at += slen;
         len -= slen;

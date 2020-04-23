@@ -35,7 +35,6 @@ bool YarpFixManager::setup(int argc, char** argv) {
     bool ret;
     if(!initialized) {
         // check yarp network
-        yarp.setVerbosity(-1);
         ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(yarp.checkNetwork(),
                             "YARP network does not seem to be available, is the yarp server accessible?");
 
