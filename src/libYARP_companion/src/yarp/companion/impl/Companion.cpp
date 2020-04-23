@@ -2641,7 +2641,7 @@ int Companion::cmdPray(int argc, char *argv[])
             vsnprintf(buffer, buf_size, format, args);
             va_end(args);
             auto s = cmdPray_makePalindrome(buffer);
-            printf(s.c_str());
+            printf("%s", s.c_str());
         }
     };
 
