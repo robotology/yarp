@@ -453,7 +453,7 @@ std::string StoreString::toString() const
     return x;
 }
 
-std::string StoreString::toStringNested() const
+std::string StoreString::quotedString(const std::string& x)
 {
     // quoting code: very inefficient, but portable
     std::string result;
@@ -505,6 +505,11 @@ std::string StoreString::toStringNested() const
     result += "\"";
 
     return result;
+}
+
+std::string StoreString::toStringNested() const
+{
+    return quotedString(x);
 }
 
 void StoreString::fromString(const std::string& src)

@@ -965,6 +965,9 @@ public:
     {
         return yarp::os::Vocab::encode(x.c_str());
     }
+
+    // Quote and escape a string for printing it nested
+    static std::string quotedString(const std::string& x);
 };
 
 /**
