@@ -34,6 +34,7 @@ set(YARP_serversql_IMPL_SRCS yarp/serversql/impl/TripleSourceCreator.cpp
                              yarp/serversql/impl/NameServiceOnTriples.cpp
                              yarp/serversql/impl/NameServerContainer.cpp
                              yarp/serversql/impl/AllocatorOnTriples.cpp
+                             yarp/serversql/impl/Subscriber.cpp
                              yarp/serversql/impl/SubscriberOnSql.cpp
                              yarp/serversql/impl/ParseName.cpp
                              yarp/serversql/impl/StyleNameService.cpp)

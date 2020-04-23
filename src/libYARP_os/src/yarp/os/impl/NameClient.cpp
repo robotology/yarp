@@ -27,20 +27,17 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+namespace {
 
 /*
   Old class for splitting string based on spaces
 */
-
-#define MAX_ARG_CT (20)
-#define MAX_ARG_LEN (256)
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 class Params
 {
 private:
+    static constexpr size_t MAX_ARG_CT =20;
+    static constexpr size_t MAX_ARG_LEN = 256;
+
     int argc;
     const char* argv[MAX_ARG_CT];
     char buf[MAX_ARG_CT][MAX_ARG_LEN];
@@ -71,8 +68,8 @@ public:
 
     void apply(const char* command)
     {
-        int at = 0;
-        int sub_at = 0;
+        size_t at = 0;
+        size_t sub_at = 0;
         unsigned int i;
         for (i = 0; i < strlen(command) + 1; i++) {
             if (at < MAX_ARG_CT) {
@@ -102,8 +99,7 @@ public:
         argc = at;
     }
 };
-
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+} // namespace
 
 
 NameClient::NameClient() :

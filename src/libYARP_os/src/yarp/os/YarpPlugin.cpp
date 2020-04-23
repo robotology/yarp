@@ -6,11 +6,12 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/YarpPlugin.h>
+
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/SystemClock.h>
-#include <yarp/os/YarpPlugin.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameClient.h>
 

@@ -24,42 +24,49 @@ namespace serversql {
 namespace impl {
 
 /**
- *
  * Abstract interface for maintaining persistent connections.
- *
  */
-class Subscriber : public yarp::name::NameService {
-private:
-    yarp::os::NameStore *store;
-    ConnectManager manager;
-    bool silent;
-    yarp::os::NameSpace *delegate;
+class Subscriber :
+        public yarp::name::NameService
+{
 public:
     Subscriber() :
             store(nullptr),
             silent(false),
-            delegate(nullptr) {
+            delegate(nullptr)
+    {
     }
 
-    void setStore(yarp::os::NameStore& store) { this->store = &store; }
-    yarp::os::NameStore *getStore() { return store; }
+    void setStore(yarp::os::NameStore& store)
+    {
+        this->store = &store;
+    }
 
-    void setSilent(bool flag) {
+    yarp::os::NameStore *getStore()
+    {
+        return store;
+    }
+
+    void setSilent(bool flag)
+    {
         this->silent = flag;
     }
 
-    void clear() {
+    void clear()
+    {
         manager.clear();
     }
 
     void connect(const std::string& src,
-                 const std::string& dest) {
+                 const std::string& dest)
+    {
         manager.connect(src,dest);
     }
 
     void disconnect(const std::string& src,
                     const std::string& dest,
-                    bool srcDrop) {
+                    bool srcDrop)
+    {
         manager.disconnect(src,dest,srcDrop);
     }
 
@@ -87,114 +94,35 @@ public:
     virtual std::string getType(const std::string& family,
                                           const std::string& structure) = 0;
 
-    virtual bool apply(yarp::os::Bottle& cmd,
-                       yarp::os::Bottle& reply,
-                       yarp::os::Bottle& event,
-                       const yarp::os::Contact& remote) override {
-        std::string tag = cmd.get(0).asString();
-        bool ok = false;
-        if (tag=="subscribe"||tag=="unsubscribe"||tag=="announce"||
-            tag=="topic"||tag=="untopic"||tag=="type") {
-            if (!silent) printf("-> %s\n", cmd.toString().c_str());
-        }
-        if (tag=="subscribe") {
-            std::string src = cmd.get(1).asString();
-            std::string dest = cmd.get(2).asString();
-            std::string mode = cmd.get(3).asString();
-            if (dest!="") {
-                ok = addSubscription(src,
-                                     dest,
-                                     mode);
-                reply.clear();
-                reply.addVocab(ok?yarp::os::createVocab('o','k'):yarp::os::createVocab('f','a','i','l'));
-                return ok;
-            } else {
-                // list subscriptions
-                listSubscriptions(src,reply);
-            }
-            return true;
-        }
-        if (tag=="unsubscribe") {
-            ok = removeSubscription(cmd.get(1).asString().c_str(),
-                                    cmd.get(2).asString().c_str());
-            reply.clear();
-            reply.addVocab(ok?yarp::os::createVocab('o','k'):yarp::os::createVocab('f','a','i','l'));
-            return ok;
-        }
-        if (tag=="announce") {
-            if (cmd.get(2).isInt32()) {
-                welcome(cmd.get(1).asString().c_str(),cmd.get(2).asInt32()?1:0);
-            } else {
-                welcome(cmd.get(1).asString().c_str(),true);
-            }
-            reply.clear();
-            reply.addVocab(yarp::os::createVocab('o','k'));
-            return true;
-        }
-        if (tag=="topic") {
-            if (cmd.size()>=2) {
-                bool result = setTopic(cmd.get(1).asString().c_str(),
-                                       cmd.get(2).asString().c_str(),true);
-                reply.clear();
-                reply.addVocab(replyCode(result));
-                return true;
-            } else {
-                reply.clear();
-                listTopics(reply);
-                return true;
-            }
-        }
-        if (tag=="type") {
-            if (cmd.size()==4) {
-                bool result = setType(cmd.get(1).asString().c_str(),
-                                      cmd.get(2).asString().c_str(),
-                                      cmd.get(3).asString().c_str());
-                reply.clear();
-                reply.addVocab(replyCode(result));
-                return true;
-            } else if (cmd.size()==3) {
-                std::string result =
-                    getType(cmd.get(1).asString().c_str(),
-                            cmd.get(2).asString().c_str());
-                reply.clear();
-                if (result=="") {
-                    reply.addVocab(replyCode(false));
-                } else {
-                    reply.addString(cmd.get(0).asString());
-                    reply.addString(cmd.get(1).asString());
-                    reply.addString(cmd.get(2).asString());
-                    reply.addString(result);
-                }
-                return true;
-            } else {
-                reply.clear();
-                reply.addVocab(replyCode(false));
-                return true;
-            }
-        }
-        if (tag=="untopic") {
-            bool result = setTopic(cmd.get(1).asString().c_str(),"",false);
-            reply.clear();
-            reply.addVocab(replyCode(result));
-            return true;
-        }
-        return ok;
-    }
+    bool apply(yarp::os::Bottle& cmd,
+               yarp::os::Bottle& reply,
+               yarp::os::Bottle& event,
+               const yarp::os::Contact& remote) override;
 
-    void onEvent(yarp::os::Bottle& event) override {
+    void onEvent(yarp::os::Bottle& event) override
+    {
     }
 
     int replyCode(bool flag) {
-        return flag?yarp::os::createVocab('o','k'):yarp::os::createVocab('f','a','i','l');
+        return flag ? yarp::os::createVocab('o', 'k')
+                    : yarp::os::createVocab('f', 'a', 'i', 'l');
     }
 
-    void setDelegate(yarp::os::NameSpace *delegate) {
+    void setDelegate(yarp::os::NameSpace *delegate)
+    {
         this->delegate = delegate;
     }
 
-    yarp::os::NameSpace *getDelegate() {
+    yarp::os::NameSpace *getDelegate()
+    {
         return delegate;
     }
+
+private:
+    yarp::os::NameStore *store;
+    ConnectManager manager;
+    bool silent;
+    yarp::os::NameSpace *delegate;
 };
 
 } // namespace impl

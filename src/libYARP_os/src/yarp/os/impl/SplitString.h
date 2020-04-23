@@ -12,8 +12,7 @@
 
 #include <yarp/os/api.h>
 
-#define MAX_ARG_CT (20)
-#define MAX_ARG_LEN (256)
+#include <cstddef>
 
 namespace yarp {
 namespace os {
@@ -42,6 +41,9 @@ public:
     void apply(const char* command, char splitter = ' ');
 
 private:
+    static constexpr size_t MAX_ARG_CT = 20;
+    static constexpr size_t MAX_ARG_LEN = 256;
+
     int argc;
     const char* argv[MAX_ARG_CT];
     char buf[MAX_ARG_CT][MAX_ARG_LEN];

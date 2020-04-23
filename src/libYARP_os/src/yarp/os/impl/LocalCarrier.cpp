@@ -309,16 +309,14 @@ bool yarp::os::impl::LocalCarrier::write(ConnectionState& proto, SizedWriter& wr
 
 bool yarp::os::impl::LocalCarrier::respondToHeader(ConnectionState& proto)
 {
-    // i am the receiver
-
+    // I am the receiver
     return becomeLocal(proto, false);
 }
 
 
 bool yarp::os::impl::LocalCarrier::expectReplyToHeader(ConnectionState& proto)
 {
-    // i am the sender
-
+    // I am the sender
     return becomeLocal(proto, true);
 }
 

@@ -56,16 +56,13 @@ static bool __yarp_auto_init_active = false; // was yarp auto-initialized?
 
 
 /**
- *
  * A single-use class to shut down the yarp library if it was
  * initialized automatically.
- *
  */
 class YarpAutoInit
 {
 public:
     /**
-     *
      * Shut down the yarp library if it was automatically initialized.
      * The library is automatically initialized if
      * NetworkBase::autoInitMinimum() is called before any of the
@@ -73,7 +70,6 @@ public:
      * creating a Network object, etc).  yarp::os::ResourceFinder
      * calls autoInitMinimum() since it needs to be sure that
      * YARP+ACE is initialized (but a user might not expect that).
-     *
      */
     ~YarpAutoInit()
     {

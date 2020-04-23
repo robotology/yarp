@@ -148,8 +148,6 @@ void PortCoreOutputUnit::runSingleThreaded()
 
     // no thread component
     running = false;
-
-    return;
 }
 
 void PortCoreOutputUnit::closeBasic()

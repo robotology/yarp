@@ -344,6 +344,7 @@ set(YARP_os_IMPL_SRCS yarp/os/impl/AuthHMAC.cpp
                       yarp/os/impl/PortCoreAdapter.cpp
                       yarp/os/impl/PortCoreInputUnit.cpp
                       yarp/os/impl/PortCoreOutputUnit.cpp
+                      yarp/os/impl/PortCorePackets.cpp
                       yarp/os/impl/Protocol.cpp
                       yarp/os/impl/RFModuleFactory.cpp
                       yarp/os/impl/SocketTwoWayStream.cpp

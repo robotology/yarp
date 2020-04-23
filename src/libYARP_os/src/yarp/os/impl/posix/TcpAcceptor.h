@@ -16,14 +16,6 @@
 
 #include <yarp/os/impl/posix/TcpStream.h>
 
-//#include <sys/time.h>
-//#include <iostream>
-//
-//#include <sys/types.h>
-//#include <sys/socket.h>
-//#include <arpa/inet.h>
-//#include <unistd.h>
-
 // General files
 
 namespace yarp {

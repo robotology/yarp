@@ -53,8 +53,8 @@ const char** SplitString::get()
 
 void SplitString::apply(const char* command, char splitter)
 {
-    int at = 0;
-    int sub_at = 0;
+    size_t at = 0;
+    size_t sub_at = 0;
     unsigned int i;
     for (i = 0; i < strlen(command) + 1; i++) {
         if (at < MAX_ARG_CT) {

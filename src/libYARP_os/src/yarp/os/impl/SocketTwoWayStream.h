@@ -53,7 +53,7 @@ public:
 
     int open(yarp::os::impl::TcpAcceptor& acceptor);
 
-    virtual ~SocketTwoWayStream()
+    ~SocketTwoWayStream() override
     {
         close();
     }

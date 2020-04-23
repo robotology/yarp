@@ -25,6 +25,7 @@
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/PortCorePackets.h>
 #include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/Logger.h>
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.3
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE

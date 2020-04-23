@@ -20,6 +20,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+
 class yarp::os::PeriodicThread::Private : public ThreadImpl
 {
 private:

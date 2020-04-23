@@ -34,7 +34,7 @@ namespace yarp
         class  LogEntryInfo;
         struct MessageEntry;
 
-        enum loglLevelEnum
+        enum LogLevelEnum
         {
             LOGLEVEL_UNDEFINED = 0,
             LOGLEVEL_TRACE = 1,
@@ -47,59 +47,69 @@ namespace yarp
 
         class  LogLevel
         {
-            private:
-            int e_level;
+        private:
+            LogLevelEnum e_level {LOGLEVEL_UNDEFINED};
 
-            public:
-            LogLevel()
+        public:
+            LogLevel() = default;
+
+            LogLevel(int l) :
+                    e_level(static_cast<LogLevelEnum>(l))
             {
-                e_level = 0;
             }
-            LogLevel(int l)
-            {
-                    e_level = l;
-            }
-            void setLevel(loglLevelEnum level)
+
+            void setLevel(LogLevelEnum level)
             {
                 e_level = level;
             }
+
             void setLevel(int level)
             {
+                e_level = static_cast<LogLevelEnum>(level);
+            }
+
+            int toInt()
+            {
+                return static_cast<int>(e_level);
+            }
+
+            std::string toString() const
+            {
+                if (e_level == LOGLEVEL_UNDEFINED) { return "<UNDEFINED>"; }
+                if (e_level == LOGLEVEL_TRACE) { return "<TRACE>"; }
+                if (e_level == LOGLEVEL_DEBUG) { return "<DEBUG>"; }
+                if (e_level == LOGLEVEL_INFO) { return "<INFO>"; }
+                if (e_level == LOGLEVEL_WARNING) { return "<WARNING>"; }
+                if (e_level == LOGLEVEL_ERROR) { return "<ERROR>"; }
+                if (e_level == LOGLEVEL_FATAL) { return "<FATAL>"; }
+                else { return "<UNDEFINED>"; }
+            }
+
+            void operator=(LogLevelEnum level)
+            {
                 e_level = level;
             }
-            int toInt()
+
+            explicit operator LogLevelEnum() const
             {
                 return e_level;
             }
-            std::string toString() const
-            {
-                if (e_level == 0) { return "<UNDEFINED>"; }
-                if (e_level == 1) { return "<TRACE>"; }
-                if (e_level == 2) { return "<DEBUG>"; }
-                if (e_level == 3) { return "<INFO>"; }
-                if (e_level == 4) { return "<WARNING>"; }
-                if (e_level == 5) { return "<ERROR>"; }
-                if (e_level == 6) { return "<FATAL>"; }
-                else { return "<UNDEFINED>"; }
-            }
-            void operator = (loglLevelEnum level)
-            {
-                e_level = level;
-            }
-            bool operator == (const LogLevel& other) const
+
+            bool operator==(const LogLevel& other) const
             {
                 return this->e_level == other.e_level;
             }
-            bool operator == (const loglLevelEnum& other) const
+            bool operator==(const LogLevelEnum& other) const
             {
                 return this->e_level == other;
             }
-            bool operator > (const LogLevel& other) const
+            bool operator>(const LogLevel& other) const
             {
                 return this->e_level > other.e_level;
             }
         };
-        enum   LogSystemEnum
+
+        enum LogSystemEnum
         {
             LOGSYSTEM_YARP    = 0,
             LOGSYSTEM_YARPRUN = 1

@@ -7,6 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/dev/Drivers.h>
+
 #include <yarp/os/Log.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
@@ -17,8 +19,6 @@
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
-
-#include <yarp/dev/Drivers.h>
 
 #include <vector>
 #include <sstream>
@@ -171,11 +171,13 @@ public:
         settings.setVerboseMode(verbose);
         YarpPluginSelector selector;
         selector.scan();
-        if (!settings.setSelector(selector)) return;
+        if (!settings.setSelector(selector)) {
+            return;
+        }
         init();
     }
 
-    virtual ~StubDriver() = default;
+    ~StubDriver() override = default;
 
     void init() {
         if (plugin.open(settings)) {
