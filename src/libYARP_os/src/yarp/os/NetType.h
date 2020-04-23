@@ -34,6 +34,15 @@ public:
     static std::string toString(int x);
     static std::string toString(long x);
     static std::string toString(unsigned int x);
+
+    static std::string toString(yarp::conf::float32_t x);
+    static std::string toString(yarp::conf::float64_t x);
+
+    static yarp::conf::float32_t toFloat32(const std::string& s);
+    static yarp::conf::float64_t toFloat64(const std::string& s);
+    static yarp::conf::float32_t toFloat32(std::string&& s);
+    static yarp::conf::float64_t toFloat64(std::string&& s);
+
     static int toInt(const std::string& x);
     static unsigned long int getCrc(char* buf, size_t len);
 };
