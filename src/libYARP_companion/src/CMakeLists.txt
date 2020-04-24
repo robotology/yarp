@@ -15,7 +15,9 @@ set(YARP_companion_SRCS )
 
 set(YARP_companion_IMPL_HDRS yarp/companion/impl/Companion.h)
 
-set(YARP_companion_IMPL_SRCS yarp/companion/impl/Companion.cpp yarp/companion/impl/Companion.qos.cpp)
+set(YARP_companion_IMPL_SRCS yarp/companion/impl/Companion.cpp
+                             yarp/companion/impl/Companion.env.cpp
+                             yarp/companion/impl/Companion.qos.cpp)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Source Files"
