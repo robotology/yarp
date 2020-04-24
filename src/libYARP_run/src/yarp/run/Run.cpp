@@ -157,7 +157,6 @@ int yarp::run::Run::main(int argc, char *argv[])
         }
 
         mPortName=std::string(config.find("server").asString());
-
         return server();
     }
 
@@ -1905,7 +1904,7 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
     std::string out=std::string("STARTED: server=")+mPortName
                              +std::string(" alias=")+strAlias
                              +std::string(" cmd=")+strCmd
-                             +std::string("pid=")+int2String(cmd_process_info.dwProcessId)
+                             +std::string(" pid=")+int2String(cmd_process_info.dwProcessId)
                              +std::string("\n");
 
     result.addString(out.c_str());
@@ -2115,7 +2114,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
     std::string out=std::string("STARTED: server=")+mPortName
                              +std::string(" alias=")+strAlias
                              +std::string(" cmd=")+strCmd
-                             +std::string("pid=")+int2String(cmd_process_info.dwProcessId)
+                             +std::string(" pid=")+int2String(cmd_process_info.dwProcessId)
                              +std::string("\n");
 
     result.addString(out.c_str());
@@ -2240,7 +2239,7 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     std::string out=std::string("STARTED: server=")+mPortName
                              +std::string(" alias=")+strAlias
                              +std::string(" cmd=")+strCmd
-                             +std::string("pid=")+int2String(cmd_process_info.dwProcessId)
+                             +std::string(" pid=")+int2String(cmd_process_info.dwProcessId)
                              +std::string("\n");
 
     fprintf(stderr, "%s", out.c_str());
