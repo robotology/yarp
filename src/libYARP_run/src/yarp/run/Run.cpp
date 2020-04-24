@@ -161,28 +161,6 @@ int yarp::run::Run::main(int argc, char *argv[])
         return server();
     }
 
-    if (config.check("echo"))
-    {
-        char line[1024];
-        fprintf(stderr, "Program echo started.\n");
-        fflush(stderr);
-
-        while(true)
-        {
-            int ret=scanf("%s", line);
-
-            if (ret>0)
-            {
-                fprintf(stderr, "%s\n", line);
-                fflush(stderr);
-            }
-        }
-
-        return 0;
-    }
-
-    //yarp::os::Network yarp;
-
     mPortName="";
 
     if (!yarp::os::Network::getLocalMode())
