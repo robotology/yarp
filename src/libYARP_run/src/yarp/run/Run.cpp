@@ -99,7 +99,8 @@ void sigstdio_handler(int sig)
 constexpr fs::value_type slash = fs::preferred_separator;
 constexpr fs::value_type sep   = fs::path_separator;
 ////// adapted from libYARP_OS: ResourceFinder.cpp
-static yarp::os::Bottle parsePaths(const std::string& txt) {
+static yarp::os::Bottle parsePaths(const std::string& txt)
+{
     yarp::os::Bottle result;
     const char *at = txt.c_str();
     int slash_tweak = 0;
@@ -121,16 +122,17 @@ static yarp::os::Bottle parsePaths(const std::string& txt) {
     return result;
 }
 
-static bool fileExists(const char *fname) {
-        FILE *fp = nullptr;
-        fp = fopen(fname, "r");
-        if (!fp) {
-            return false;
-        } else {
-            fclose(fp);
-            return true;
-        }
+static bool fileExists(const char *fname)
+{
+    FILE *fp = nullptr;
+    fp = fopen(fname, "r");
+    if (!fp) {
+        return false;
+    } else {
+        fclose(fp);
+        return true;
     }
+}
 
 
 /////////
@@ -193,8 +195,7 @@ int yarp::run::Run::main(int argc, char *argv[])
         }
     }
 
-    //////////////////////////////////////////////////////////
-
+    // READWRITE
     if (config.check("readwrite"))
     {
         yarp::os::impl::Logger::get().setVerbosity(-1);
@@ -253,6 +254,7 @@ int yarp::run::Run::main(int argc, char *argv[])
         return rw.loop();
     }
 
+    // WRITE
     if (config.check("write"))
     {
         yarp::os::impl::Logger::get().setVerbosity(-1);
@@ -294,6 +296,7 @@ int yarp::run::Run::main(int argc, char *argv[])
         return 0;
     }
 
+    // READ
     if (config.check("read"))
     {
         yarp::os::impl::Logger::get().setVerbosity(-1);
@@ -317,8 +320,7 @@ int yarp::run::Run::main(int argc, char *argv[])
         return r.loop();
     }
 
-    //////////////////////////////////////////////////////////
-
+    // STRESSTEST
     if (config.check("stresstest"))
     {
         fprintf(stderr, "Yarprun stress test started.\n");
@@ -2167,22 +2169,6 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     }
 
     /*
-    if (msg.check("env"))
-    {
-        int pos = msg.find("env").asString().find("=");
-        if (pos)
-        {
-            std::string cstrName = msg.find("env").asString().substr(0, pos);
-            int nValue = msg.find("env").asString().length() -
-                         cstrName.length() - 1;
-            std::string cstrValue = msg.find("env").asString().substr(pos+1, nValue);
-            SetEnvironmentVariable(cstrName.c_str(), cstrValue.c_str());
-        }
-
-    }
-    */
-
-    /*
      * setting environment variable for child process
      */
     TCHAR chNewEnv[32767];
@@ -2350,52 +2336,6 @@ int yarp::run::Run::userStdio(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 ////////////////
 #else // LINUX
 ////////////////
-/*
-int CountArgs(char *str)
-{
-    int nargs=0;
-
-    for (bool bSpace=true; *str; ++str)
-    {
-        if (bSpace)
-        {
-            if (*str!=' ')
-            {
-                ++nargs;
-                bSpace=false;
-            }
-        }
-        else
-        {
-            if (*str==' ')
-            {
-                bSpace=true;
-            }
-        }
-    }
-
-    return nargs;
-}
-
-void ParseCmd(char* cmd_str, char** arg_str)
-{
-    int nargs=0;
-
-    for (bool bSpace=true; *cmd_str; ++cmd_str)
-    {
-        if (*cmd_str!=' ')
-        {
-            if (bSpace) arg_str[nargs++]=cmd_str;
-            bSpace=false;
-        }
-        else
-        {
-            *cmd_str=0;
-            bSpace=true;
-        }
-    }
-}
-*/
 /**
  * Split a line into separate words.
  */
@@ -2415,8 +2355,6 @@ void splitLine(char *pLine, char **pArgs)
     }
     *pArgs = pTmp;
 }
-
-
 
 /**
  * Breaks up a line into multiple arguments.
