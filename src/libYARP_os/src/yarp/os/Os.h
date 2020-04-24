@@ -13,6 +13,7 @@
 #include <yarp/os/api.h>
 
 #include <cstddef>
+#include <string>
 
 
 namespace yarp {
@@ -47,6 +48,15 @@ YARP_os_API int getpid();
  * @param size The size of the @c hostname array
  */
 YARP_os_API void gethostname(char* hostname, size_t size);
+
+/**
+ * @brief Portable wrapper for the gethostname() function.
+ *
+ * Returns the hostname as string
+ *
+ * @return hostname the system hostname
+ */
+YARP_os_API std::string gethostname();
 
 /**
  * @brief Portable wrapper for the mkdir() function.

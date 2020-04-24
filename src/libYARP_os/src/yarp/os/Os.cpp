@@ -9,10 +9,11 @@
 
 #include <yarp/os/Os.h>
 #include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/PlatformLimits.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 #include <yarp/os/impl/PlatformUnistd.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -101,6 +102,13 @@ void yarp::os::gethostname(char* hostname, size_t size)
     if (std::strlen(hostname) == 0) {
         std::strncpy(hostname, "no_hostname", size);
     }
+}
+
+std::string yarp::os::gethostname()
+{
+    char hostname[HOST_NAME_MAX];
+    yarp::os::gethostname(hostname, HOST_NAME_MAX);
+    return {hostname};
 }
 
 char* yarp::os::getcwd(char* buf, size_t size)
