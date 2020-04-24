@@ -803,6 +803,11 @@ void NetworkBase::initMinimum()
     initMinimum(YARP_CLOCK_DEFAULT);
 }
 
+bool NetworkBase::isNetworkInitialized()
+{
+    return (__yarp_is_initialized > 0 && yarp::os::Time::isClockInitialized());
+}
+
 #if defined(YARP_HAS_ACE)
 namespace {
 class YARP_ACE
