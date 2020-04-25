@@ -485,64 +485,96 @@ bool MapGrid2D::loadMapYarpOnly(string yarp_filename)
     return true;
 }
 
+bool MapGrid2D::parseMapParameters(const Property& mapfile)
+{
+    //Map parameters.
+    //these values can eventually override values previously assigned
+    //(e.g. ROS values found in yaml data)
+    if (mapfile.check("resolution"))
+    {
+        m_resolution = mapfile.find("resolution").asFloat32();
+    }
+    if (mapfile.check("origin"))
+    {
+        Bottle* b = mapfile.find("origin").asList();
+        if (b)
+        {
+            m_origin.x = b->get(0).asFloat32();
+            m_origin.y = b->get(1).asFloat32();
+            m_origin.theta = b->get(2).asFloat32();
+        }
+    }
+
+    return true;
+}
+
 bool  MapGrid2D::loadFromFile(std::string map_file_with_path)
 {
-    Property mapfile;
+    Property mapfile_prop;
     string mapfile_path = extractPathFromFile(map_file_with_path);
-    if (mapfile.fromConfigFile(map_file_with_path) == false)
+    if (mapfile_prop.fromConfigFile(map_file_with_path) == false)
     {
         yError() << "Unable to open .map description file:" << map_file_with_path;
         return false;
     }
 
-    if (mapfile.check("MapName") ==false)
+    if (mapfile_prop.check("MapName") ==false)
     {
         yError() << "Unable to find 'MapName' parameter inside:" << map_file_with_path;
         return false;
     }
-    m_map_name = mapfile.find("MapName").asString();
+    m_map_name = mapfile_prop.find("MapName").asString();
 
     bool YarpMapDataFound = false;
     string ppm_flg_filename;
-    if (mapfile.check("YarpMapData") == false)
+    if (mapfile_prop.check("YarpMapData") == false)
     {
         yWarning() << "Unable to find 'YarpMapData' parameter inside:" << map_file_with_path;
         YarpMapDataFound = false;
     }
     else
     {
-        ppm_flg_filename = mapfile.find("YarpMapData").asString();
+        ppm_flg_filename = mapfile_prop.find("YarpMapData").asString();
         YarpMapDataFound = true;
     }
 
     bool RosMapDataFound = false;
     string yaml_filename;
-    if (mapfile.check("RosMapData") == false)
+    if (mapfile_prop.check("RosMapData") == false)
     {
         yWarning() << "Unable to find 'RosMapData' parameter inside:" << map_file_with_path;
         RosMapDataFound = false;
     }
     else
     {
-        yaml_filename = mapfile.find("RosMapData").asString();
+        yaml_filename = mapfile_prop.find("RosMapData").asString();
         RosMapDataFound = true;
     }
 
     m_width = -1;
     m_height = -1;
-    string ppm_flg_filename_with_path = mapfile_path + ppm_flg_filename;
-    string yaml_filename_with_path = mapfile_path + yaml_filename;
+    string yarp_flg_filename_with_path = mapfile_path + ppm_flg_filename;
+    string ros_yaml_filename_with_path = mapfile_path + yaml_filename;
     if (YarpMapDataFound && RosMapDataFound)
     {
-        return this->loadMapYarpAndRos(ppm_flg_filename_with_path, yaml_filename_with_path);
+        //yarp and ros
+        yDebug() << "Opening files: "<< yarp_flg_filename_with_path << " and " << ros_yaml_filename_with_path;
+        return this->loadMapYarpAndRos(yarp_flg_filename_with_path, ros_yaml_filename_with_path) &&
+               this->parseMapParameters(mapfile_prop);
     }
     else if (!YarpMapDataFound && RosMapDataFound)
     {
-        return this->loadMapROSOnly(yaml_filename_with_path);
+        //only ros
+        yDebug() << "Opening file:" << ros_yaml_filename_with_path;
+        return this->loadMapROSOnly(ros_yaml_filename_with_path) &&
+               this->parseMapParameters(mapfile_prop);
     }
     else if (YarpMapDataFound && !RosMapDataFound)
     {
-        return this->loadMapYarpOnly(ppm_flg_filename_with_path);
+        //only yarp
+        yDebug() << "Opening file:" << yarp_flg_filename_with_path;
+        return this->loadMapYarpOnly(yarp_flg_filename_with_path) &&
+               this->parseMapParameters(mapfile_prop);
     }
     else
     {

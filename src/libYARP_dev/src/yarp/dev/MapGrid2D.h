@@ -68,6 +68,7 @@ namespace yarp
                 bool loadMapROSOnly(std::string ros_yaml_filename);
                 bool loadROSParams(std::string ros_yaml_filename, std::string& pgm_occ_filename, double& resolution, double& orig_x, double& orig_y, double& orig_t);
                 bool loadMapYarpAndRos(std::string yarp_img_filename, std::string ros_yaml_filename);
+                bool parseMapParameters(const yarp::os::Property& mapfile);
 
             public:
                 MapGrid2D();
