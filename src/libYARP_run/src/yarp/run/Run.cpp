@@ -1792,6 +1792,16 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
         lpNew += lstrlen(lpNew) + 1;
     }
 
+    // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
+    // process will now that is running inside yarprun.
+    lstrcpy(lpNew, (LPTCH) "YARP_IS_YARPRUN=1");
+    lpNew += lstrlen(lpNew) + 1;
+
+    // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 1, so that
+    // the child process will now that yarprun is not logging the output.
+    lstrcpy(lpNew, (LPTCH) "YARPRUN_IS_FORWARDING_LOG=1");
+    lpNew += lstrlen(lpNew) + 1;
+
     // adding new env variables
     std::string cstrEnvName;
     if (msg.check("env"))
@@ -2013,6 +2023,16 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
         lpNew += lstrlen(lpNew) + 1;
     }
 
+    // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
+    // process will now that is running inside yarprun.
+    lstrcpy(lpNew, (LPTCH) "YARP_IS_YARPRUN=1");
+    lpNew += lstrlen(lpNew) + 1;
+
+    // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 1, so that
+    // the child process will now that yarprun is not logging the output.
+    lstrcpy(lpNew, (LPTCH) "YARPRUN_IS_FORWARDING_LOG=1");
+    lpNew += lstrlen(lpNew) + 1;
+
     // adding new env variables
     std::string cstrEnvName;
     if (msg.check("env"))
@@ -2162,6 +2182,16 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
         lpOld += lstrlen(lpOld) + 1;
         lpNew += lstrlen(lpNew) + 1;
     }
+
+    // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
+    // process will now that is running inside yarprun.
+    lstrcpy(lpNew, (LPTCH) "YARP_IS_YARPRUN=1");
+    lpNew += lstrlen(lpNew) + 1;
+
+    // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 0, so that
+    // the child process will now that yarprun is not logging the output.
+    lstrcpy(lpNew, (LPTCH) "YARPRUN_IS_FORWARDING_LOG=0");
+    lpNew += lstrlen(lpNew) + 1;
 
     // adding new env variables
     std::string cstrEnvName;
@@ -2634,6 +2664,14 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
                 REDIRECT_TO(STDOUT_FILENO, pipe_cmd_to_stdout[WRITE_TO_PIPE]);
                 REDIRECT_TO(STDERR_FILENO, pipe_cmd_to_stdout[WRITE_TO_PIPE]);
 
+                // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
+                // process will now that is running inside yarprun.
+                yarp::os::impl::putenv(strdup("YARP_IS_YARPRUN=1"));
+
+                // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 1, so that
+                // the child process will now that yarprun is not logging the output.
+                yarp::os::impl::putenv(strdup("YARPRUN_IS_FORWARDING_LOG=1"));
+
                 if (msg.check("env"))
                 {
                     yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
@@ -2990,6 +3028,14 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
 
                 REDIRECT_TO(STDOUT_FILENO, pipe_cmd_to_stdout[WRITE_TO_PIPE]);
                 REDIRECT_TO(STDERR_FILENO, pipe_cmd_to_stdout[WRITE_TO_PIPE]);
+
+                // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
+                // process will now that is running inside yarprun.
+                yarp::os::impl::putenv(strdup("YARP_IS_YARPRUN=1"));
+
+                // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 1, so that
+                // the child process will now that yarprun is not logging the output.
+                yarp::os::impl::putenv(strdup("YARPRUN_IS_FORWARDING_LOG=1"));
 
                 if (msg.check("env"))
                 {
@@ -3424,6 +3470,14 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
         char **arg_str = new char*[C_MAXARGS + 1];
         parseArguments(cmd_str, &nargs, arg_str);
         arg_str[nargs]=nullptr;
+
+        // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
+        // process will now that is running inside yarprun.
+        yarp::os::impl::putenv(strdup("YARP_IS_YARPRUN=1"));
+
+        // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 0, so that
+        // the child process will now that yarprun is not logging the output.
+        yarp::os::impl::putenv(strdup("YARPRUN_IS_FORWARDING_LOG=0"));
 
         if (msg.check("env"))
         {
