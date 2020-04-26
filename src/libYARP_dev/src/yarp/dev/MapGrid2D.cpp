@@ -6,6 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#define _USE_MATH_DEFINES
+
 #include <yarp/dev/MapGrid2D.h>
 
 #include <yarp/os/Bottle.h>
@@ -23,6 +25,14 @@ using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::math;
 using namespace std;
+
+#ifndef DEG2RAD
+#define DEG2RAD M_PI/180.0
+#endif
+
+#ifndef RAD2DEG
+#define RAD2DEG 180.0/M_PI
+#endif
 
 //helper functions
 string extractPathFromFile(string full_filename)
@@ -45,9 +55,7 @@ string extractExtensionFromFile(string full_filename)
 bool MapGrid2D::isIdenticalTo(const MapGrid2D& other) const
 {
     if (m_map_name != other.m_map_name) return false;
-    if (m_origin.x != other.m_origin.x) return false;
-    if (m_origin.y != other.m_origin.y) return false;
-    if (m_origin.theta != other.m_origin.theta) return false;
+    if (m_origin != other.m_origin) return false;
     if (m_resolution != other.m_resolution) return false;
     if (m_width != other.width()) return false;
     if (m_height != other.height()) return false;
@@ -60,9 +68,6 @@ bool MapGrid2D::isIdenticalTo(const MapGrid2D& other) const
 
 MapGrid2D::MapGrid2D()
 {
-    m_origin.x = 0;
-    m_origin.y = 0;
-    m_origin.theta = 0;
     m_resolution = 1.0; //each pixel corresponds to 1 m
     m_width = 2;
     m_height = 2;
@@ -284,7 +289,7 @@ bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename
     {
         orig_x = b->get(0).asFloat64();
         orig_y = b->get(1).asFloat64();
-        orig_t = b->get(2).asFloat64();
+        orig_t = b->get(2).asFloat64() * RAD2DEG;
     }
 
     if (bbb.check("occupied_thresh:"))
@@ -332,9 +337,7 @@ bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename
         //Everything ok, proceed to internal assignments
         setSize_in_cells(yarp_img.width(), yarp_img.height());
         m_resolution = resolution;
-        m_origin.x = orig_x;
-        m_origin.y = orig_y;
-        m_origin.theta = orig_t;
+        m_origin.setOrigin(orig_x,orig_y,orig_t);
 
         //set YARPS stuff
         for (size_t y = 0; y < m_height; y++)
@@ -401,9 +404,7 @@ bool MapGrid2D::loadMapROSOnly(string ros_yaml_filename)
     //Everything ok, proceed to internal assignments
     setSize_in_cells(ros_img.width(), ros_img.height());
     m_resolution = resolution;
-    m_origin.x = orig_x;
-    m_origin.y = orig_y;
-    m_origin.theta = orig_t;
+    m_origin.setOrigin(orig_x, orig_y, orig_t);
 
     //set ROS Stuff
     for (size_t y = 0; y < m_height; y++)
@@ -499,9 +500,9 @@ bool MapGrid2D::parseMapParameters(const Property& mapfile)
         Bottle* b = mapfile.find("origin").asList();
         if (b)
         {
-            m_origin.x = b->get(0).asFloat32();
-            m_origin.y = b->get(1).asFloat32();
-            m_origin.theta = b->get(2).asFloat32();
+            m_origin.setOrigin(b->get(0).asFloat32(),
+                               b->get(1).asFloat32(),
+                               b->get(2).asFloat32());
         }
     }
 
@@ -698,9 +699,10 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
     m_map_flags.copy(new_map_flags);
     this->m_width=m_map_occupancy.width();
     this->m_height=m_map_occupancy.height();
-    yDebug() << m_origin.x << m_origin.y;
-    m_origin.x = m_origin.x+(left*m_resolution);
-    m_origin.y = m_origin.y+(double(original_height)-double(bottom))*m_resolution;
+    yDebug() << m_origin.get_x() << m_origin.get_y();
+    double new_x0 = m_origin.get_x() +(left*m_resolution);
+    double new_y0 = m_origin.get_y() +(double(original_height)-double(bottom))*m_resolution;
+    m_origin.setOrigin(new_x0,new_y0, m_origin.get_theta());
     return true;
 }
 
@@ -729,7 +731,7 @@ bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
     }
     yaml_file << "image: " << pgm_occ_filename << endl;
     yaml_file << "resolution: " << m_resolution << endl;
-    yaml_file << "origin: [ " << m_origin.x << " " << m_origin.y << " " << m_origin.theta << " ]"<< endl;
+    yaml_file << "origin: [ " << m_origin.get_x() << " " << m_origin.get_y() << " " << m_origin.get_theta() << " ]"<< endl;
     yaml_file << "negate: 0" << endl;
     yaml_file << "occupied_thresh: " << m_occupied_thresh << endl;
     yaml_file << "free_thresh: " << m_free_thresh << endl;
@@ -776,11 +778,12 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
     connection.expectInt32();
     m_height = connection.expectInt32();
     connection.expectInt32();
-    m_origin.x = connection.expectFloat64();
+    double x0 = connection.expectFloat64();
     connection.expectInt32();
-    m_origin.y = connection.expectFloat64();
+    double y0 = connection.expectFloat64();
     connection.expectInt32();
-    m_origin.theta = connection.expectFloat64();
+    double theta0 = connection.expectFloat64();
+    m_origin.setOrigin(x0,y0,theta0);
     connection.expectInt32();
     m_resolution = connection.expectFloat64();
     connection.expectInt32();
@@ -817,11 +820,11 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
     connection.appendInt32(BOTTLE_TAG_INT32);
     connection.appendInt32(m_height);
     connection.appendInt32(BOTTLE_TAG_FLOAT64);
-    connection.appendFloat64(m_origin.x);
+    connection.appendFloat64(m_origin.get_x());
     connection.appendInt32(BOTTLE_TAG_FLOAT64);
-    connection.appendFloat64(m_origin.y);
+    connection.appendFloat64(m_origin.get_y());
     connection.appendInt32(BOTTLE_TAG_FLOAT64);
-    connection.appendFloat64(m_origin.theta);
+    connection.appendFloat64(m_origin.get_theta());
     connection.appendInt32(BOTTLE_TAG_FLOAT64);
     connection.appendFloat64(m_resolution);
     connection.appendInt32(BOTTLE_TAG_STRING);
@@ -860,26 +863,22 @@ bool MapGrid2D::setOrigin(double x, double y, double theta)
     XYCell orig(-xc, (m_height-1) + yc);
     if (isInsideMap(orig))
     {
-        m_origin.x = x;
-        m_origin.y = y;
-        m_origin.theta = fmod(theta, 360.0);
+        m_origin.setOrigin(x,y, theta);
         return true;
     }
     else
     {
         yWarning() << "MapGrid2D::setOrigin() requested is not inside map!";
-        m_origin.x = x;
-        m_origin.y = y;
-        m_origin.theta = fmod(theta, 360.0);
+        m_origin.setOrigin(x, y, theta);
         return true;
     }
 }
 
 void MapGrid2D::getOrigin(double& x, double& y, double& theta) const
 {
-    x = m_origin.x;
-    y = m_origin.y;
-    theta = m_origin.theta;
+    x = m_origin.get_x();
+    y = m_origin.get_y();
+    theta = m_origin.get_theta();
 }
 
 bool MapGrid2D::setResolution(double resolution)
