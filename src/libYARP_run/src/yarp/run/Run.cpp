@@ -544,9 +544,9 @@ int yarp::run::Run::server()
                     std::string strAlias=msg.find("as").asString();
                     std::string portName="/log";
                     portName+=mPortName+"/";
-                    std::string command=msg.findGroup("cmd").get(1).asString();
-                    int space=command.find(" ");
-                    if (space!=std::string::npos) command=command.substr(0, space);
+                    std::string command = msg.findGroup("cmd").get(1).asString();
+                    command = command.substr(0, command.find(' '));
+                    command = command.substr(command.find_last_of("\\/") + 1);
                     portName+=command;
 
                     yarp::os::Bottle botFwd;
@@ -1041,9 +1041,9 @@ int yarp::run::Run::server()
                         std::string strAlias=msg.find("as").asString();
                         std::string portName="/log";
                         portName+=mPortName+"/";
-                        std::string command=msg.findGroup("cmd").get(1).asString();
-                        size_t space=command.find(' ');
-                        if (space!=std::string::npos) command=command.substr(0, space);
+                        std::string command = msg.findGroup("cmd").get(1).asString();
+                        command = command.substr(0, command.find(' '));
+                        command = command.substr(command.find_last_of("\\/") + 1);
                         portName+=command;
 
                         yarp::os::Bottle botFwd;
@@ -1929,9 +1929,9 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
     std::string strAlias=msg.find("as").asString();
     std::string portName="/log";
     portName+=mPortName+"/";
-    std::string command=msg.findGroup("cmd").get(1).asString();
-    int space=command.find(" ");
-    if (space!=std::string::npos) command=command.substr(0, space);
+    std::string command = msg.findGroup("cmd").get(1).asString();
+    command = command.substr(0, command.find(' '));
+    command = command.substr(command.find_last_of("\\/") + 1);
     portName+=command;
 
     // PIPES
@@ -2869,11 +2869,10 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
     std::string portName="/log";
     portName+=mPortName+"/";
 
-    std::string command=strCmd;
-    size_t space=command.find(' ');
-    if (space != std::string::npos) {
-        command=command.substr(0, space);
-    }
+    std::string command = strCmd;
+    command = command.substr(0, command.find(' '));
+    command = command.substr(command.find_last_of("\\/") + 1);
+
     portName+=command;
 
 
