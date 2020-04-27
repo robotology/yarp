@@ -19,10 +19,8 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/impl/BottleImpl.h>
 
-#include <clocale>
 #include <cstdio>
 #include <cstdlib>
-#include <limits>
 
 using yarp::os::Bottle;
 using yarp::os::ConnectionReader;
@@ -54,75 +52,6 @@ const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
 const int StoreDict::code = BOTTLE_TAG_LIST | BOTTLE_TAG_DICT;
 
-
-/*
- * The maximum string length for a 'double' printed as a string using ("%.*g", DECIMAL_DIG) will be:
- *  Initial +/- sign                        1 char
- *  First digit for exponential notation    1 char
- * '.' decimal separator char               1 char
- *  DECIMAL_DIG digits for the mantissa     DECIMAL_DIG chars
- * 'e+/-'                                   2 chars
- * YARP_DBL_EXP_DIG  for the exponential    YARP_DBL_EXP_DIG chars
- * string terminator                        1 char
- * FILLER                                   10 chars  (you know, for safety)
- * -----------------------------------------------------
- * TOTAL is                                 16 + DECIMAL_DIG + YARP_DBL_EXP_DIG
- */
-#define YARP_DOUBLE_TO_STRING_MAX_LENGTH (16 + DECIMAL_DIG + YARP_DBL_EXP_DIG)
-
-namespace {
-// FIXME These methods should probably be in NetType
-/*
- * Converts a floating point number to a string, dealing with locale issues
- */
-template <typename T>
-inline std::string fp_to_string(T x)
-{
-    char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH]; // -> see comment at the top of the file
-    std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DECIMAL_DIG, x);
-    std::string str(buf);
-
-    // If locale is set, the locale version of the decimal point is used.
-    // In this case we change it to the standard "."
-    // If there is no decimal point, and it is not being used the exponential
-    // notation (i.e. the number is in integer form, for example 100000 and not
-    // 1e5) we add ".0" to ensure that it will be interpreted as a double.
-    struct lconv* lc = localeconv();
-    size_t offset = str.find(lc->decimal_point);
-    if (offset != std::string::npos) {
-        str[offset] = '.';
-    } else if (str.find('e') == std::string::npos && str != "inf" && str != "-inf" && str != "nan") {
-        str += ".0";
-    }
-    return str;
-}
-
-/*
- * Converts a string to a floating point number, dealing with locale issues
- */
-template <typename T>
-inline T fp_from_string(std::string src)
-{
-    if (src == "inf") {
-        return std::numeric_limits<T>::infinity();
-    }
-    if (src == "-inf") {
-        return -std::numeric_limits<T>::infinity();
-    }
-    if (src == "nan") {
-        return std::numeric_limits<T>::quiet_NaN();
-    }
-    // YARP Bug 2526259: Locale settings influence YARP behavior
-    // Need to deal with alternate versions of the decimal point.
-    size_t offset = src.find('.');
-    if (offset != std::string::npos) {
-        struct lconv* lc = localeconv();
-        src[offset] = lc->decimal_point[0];
-    }
-    return static_cast<T>(strtod(src.c_str(), nullptr));
-}
-
-} // namespace
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -398,12 +327,12 @@ bool StoreVocab::writeRaw(ConnectionWriter& writer) const
 
 std::string StoreFloat32::toString() const
 {
-    return fp_to_string<yarp::conf::float32_t>(x);
+    return NetType::toString(x);
 }
 
 void StoreFloat32::fromString(const std::string& src)
 {
-    x = fp_from_string<yarp::conf::float32_t>(src);
+    x = NetType::toFloat32(src);
 }
 
 bool StoreFloat32::readRaw(ConnectionReader& reader)
@@ -424,12 +353,12 @@ bool StoreFloat32::writeRaw(ConnectionWriter& writer) const
 
 std::string StoreFloat64::toString() const
 {
-    return fp_to_string<yarp::conf::float64_t>(x);
+    return NetType::toString(x);
 }
 
 void StoreFloat64::fromString(const std::string& src)
 {
-    x = fp_from_string<yarp::conf::float64_t>(src);
+    x = NetType::toFloat64(src);
 }
 
 bool StoreFloat64::readRaw(ConnectionReader& reader)
