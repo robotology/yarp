@@ -93,6 +93,11 @@ YARP_os_API void useNetworkClock(const std::string& clock, const std::string& lo
 YARP_os_API void useCustomClock(Clock* clock);
 
 /**
+ * Check if YARP clock is initialized.
+ */
+YARP_os_API bool isClockInitialized();
+
+/**
  * Check if YARP is providing system time.
  */
 YARP_os_API bool isSystemClock();

@@ -100,6 +100,13 @@ public:
      */
     static void finiMinimum();
 
+    /*
+     * Return true if network is initialized.
+     * Expect problem if you use things that require a network before
+     * initializing it.
+     */
+    static bool isNetworkInitialized();
+
     /**
      * Request that an output port connect to an input port.
      * @param src the name of an output port
