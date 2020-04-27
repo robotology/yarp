@@ -30,12 +30,24 @@ namespace yarp
         {
             class YARP_dev_API MapGrid2DOrigin
             {
+            private:
+                double sa;
+                double ca;
+            private:
+                double x;     ///< in meters
+                double y;     ///< in meters
+                double theta; ///< in degrees
             public:
                 MapGrid2DOrigin();
                 MapGrid2DOrigin(double x_init, double y_init, double t_init);
-                double x;     ///< in meters
-                double y;     ///< in meters
-                double theta; ///< in radians
+                inline double get_x() const     { return x; }
+                inline double get_y() const     { return y; }
+                inline double get_theta() const { return theta; }
+                void   setOrigin(double x_init, double y_init, double t_init);
+                bool operator != (const MapGrid2DOrigin& other) const;
+            public:
+                inline double get_ca() const { return ca; }
+                inline double get_sa() const { return sa; }
             };
 
             class YARP_dev_API MapGrid2DInfo
