@@ -152,6 +152,10 @@ public:
 
     int cmdSample(int argc, char *argv[]);
 
+    int cmdPriorityQos(int argc, char *argv[]);
+
+    int cmdPrioritySched(int argc, char *argv[]);
+
     int subscribe(const char *src,
                   const char *dest,
                   const char *mode = nullptr);
