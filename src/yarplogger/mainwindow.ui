@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1072</width>
-    <height>531</height>
+    <width>1200</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,6 +33,12 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
       </property>
@@ -43,38 +49,47 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <property name="handleWidth">
-       <number>7</number>
+       <number>10</number>
       </property>
       <widget class="QFrame" name="left_frame">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="minimumSize">
         <size>
-         <width>500</width>
+         <width>0</width>
          <height>0</height>
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Panel</enum>
+        <enum>QFrame::NoFrame</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>0</number>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QTreeView" name="yarprunTreeView">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-            <horstretch>0</horstretch>
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>5</horstretch>
             <verstretch>5</verstretch>
            </sizepolicy>
           </property>
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
@@ -101,7 +116,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>150</height>
+            <height>200</height>
            </size>
           </property>
           <property name="baseSize">
@@ -111,7 +126,7 @@
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
@@ -131,6 +146,12 @@
            </property>
            <item>
             <widget class="QTabWidget" name="tabWidget">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>200</height>
+              </size>
+             </property>
              <property name="currentIndex">
               <number>0</number>
              </property>
@@ -142,7 +163,7 @@
                <item>
                 <widget class="MessageWidget" name="system_message">
                  <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
+                  <enum>QFrame::NoFrame</enum>
                  </property>
                  <property name="frameShadow">
                   <enum>QFrame::Plain</enum>
@@ -158,6 +179,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_6">
                <item>
                 <widget class="QPlainTextEdit" name="plainTextEdit_2">
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
                  <property name="frameShadow">
                   <enum>QFrame::Plain</enum>
                  </property>
@@ -172,6 +196,9 @@
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>
                 <widget class="QPlainTextEdit" name="plainTextEdit">
+                 <property name="frameShape">
+                  <enum>QFrame::NoFrame</enum>
+                 </property>
                  <property name="frameShadow">
                   <enum>QFrame::Plain</enum>
                  </property>
@@ -195,15 +222,18 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>550</width>
+         <width>0</width>
          <height>0</height>
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Panel</enum>
+        <enum>QFrame::StyledPanel</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
@@ -215,7 +245,7 @@
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
@@ -428,7 +458,7 @@
             <string>Filter:</string>
            </property>
           </widget>
-          <widget class="QLineEdit" name="lineEdit_2">
+          <widget class="QLineEdit" name="filterLineEdit">
            <property name="geometry">
             <rect>
              <x>10</x>
@@ -481,6 +511,12 @@
         </item>
         <item>
          <widget class="QTabWidget" name="logtabs">
+          <property name="baseSize">
+           <size>
+            <width>580</width>
+            <height>0</height>
+           </size>
+          </property>
           <property name="currentIndex">
            <number>-1</number>
           </property>
@@ -500,8 +536,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1072</width>
-     <height>21</height>
+     <width>1200</width>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -523,9 +559,22 @@
     </property>
     <addaction name="actionShow_YarprunTimestamps"/>
     <addaction name="actionShow_LocalTimestamps"/>
-    <addaction name="actionShow_Error_Level"/>
+    <addaction name="actionShow_System_Time"/>
+    <addaction name="actionShow_Network_Time"/>
+    <addaction name="actionShow_Log_Level"/>
+    <addaction name="actionShow_Filename"/>
+    <addaction name="actionShow_Line_Number"/>
+    <addaction name="actionShow_Function"/>
+    <addaction name="actionShow_Hostname"/>
+    <addaction name="actionShow_Pid"/>
+    <addaction name="actionShow_Cmd"/>
+    <addaction name="actionShow_Args"/>
+    <addaction name="actionShow_Thread_Id"/>
+    <addaction name="actionShow_Component"/>
+    <addaction name="separator"/>
     <addaction name="actionShow_Colors"/>
     <addaction name="actionShow_Grid"/>
+    <addaction name="separator"/>
     <addaction name="actionShow_Mute_Ports"/>
     <addaction name="separator"/>
     <addaction name="actionAdvanced"/>
@@ -559,14 +608,11 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="separator"/>
    <addaction name="actionStart_Logger"/>
    <addaction name="actionStop_Logger"/>
    <addaction name="actionRefresh"/>
-   <addaction name="separator"/>
    <addaction name="actionSave_Log"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout_QtYarpLogger">
    <property name="text">
     <string>Help</string>
@@ -612,6 +658,9 @@
    </property>
   </action>
   <action name="actionStop_Logger">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/images/stop.png</normaloff>:/images/stop.png</iconset>
@@ -620,7 +669,7 @@
     <string>Stop Logger</string>
    </property>
   </action>
-  <action name="actionShow_Error_Level">
+  <action name="actionShow_Log_Level">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -628,7 +677,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Error Level</string>
+    <string>Show Log Level</string>
    </property>
   </action>
   <action name="actionShow_Colors">
@@ -670,6 +719,9 @@
    </property>
   </action>
   <action name="actionRefresh">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="res.qrc">
      <normaloff>:/images/progress.png</normaloff>:/images/progress.png</iconset>
@@ -712,6 +764,97 @@
   <action name="actionReset_current_log_error_warning_counters">
    <property name="text">
     <string>Reset error/warning counters</string>
+   </property>
+  </action>
+  <action name="actionShow_Filename">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Filename</string>
+   </property>
+  </action>
+  <action name="actionShow_Line_Number">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Line Number</string>
+   </property>
+  </action>
+  <action name="actionShow_Function">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Function</string>
+   </property>
+  </action>
+  <action name="actionShow_Thread_Id">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Thread Id</string>
+   </property>
+  </action>
+  <action name="actionShow_Component">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Component</string>
+   </property>
+  </action>
+  <action name="actionShow_System_Time">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show System Time</string>
+   </property>
+  </action>
+  <action name="actionShow_Network_Time">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Network Time</string>
+   </property>
+  </action>
+  <action name="actionShow_Hostname">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Hostname</string>
+   </property>
+  </action>
+  <action name="actionShow_Pid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Pid</string>
+   </property>
+  </action>
+  <action name="actionShow_Cmd">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Cmd</string>
+   </property>
+  </action>
+  <action name="actionShow_Args">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Args</string>
    </property>
   </action>
  </widget>

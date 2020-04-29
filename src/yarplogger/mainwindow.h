@@ -36,14 +36,15 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    Q_DISABLE_COPY(MainWindow)
 
 public:
-    explicit MainWindow(const yarp::os::ResourceFinder& rf, QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 private slots:
 
-    void on_lineEdit_2_textChanged(const QString &arg1);
+    void on_filterLineEdit_textChanged(const QString &text);
 
     void updateMain();
 
@@ -63,8 +64,6 @@ private slots:
 
     void on_DisplayUnformattedEnable_toggled(bool checked);
 
-    void on_actionShow_YarprunTimestamps_toggled(bool arg1);
-
     void on_actionAbout_QtYarpLogger_triggered();
 
     void on_actionStart_Logger_triggered();
@@ -83,23 +82,47 @@ private slots:
 
     void on_actionLoad_Log_triggered();
 
-    void on_actionShow_Error_Level_toggled(bool arg1);
+    void on_actionShow_YarprunTimestamps_toggled(bool checked);
 
-    void on_actionShow_Colors_toggled(bool arg1);
+    void on_actionShow_LocalTimestamps_toggled(bool checked);
 
-    void on_actionShow_Grid_toggled(bool arg1);
+    void on_actionShow_System_Time_toggled(bool checked);
 
-    void on_actionAdvanced_triggered ();
+    void on_actionShow_Network_Time_toggled(bool checked);
 
-    void on_actionShow_Mute_Ports_toggled(bool arg1);
+    void on_actionShow_Log_Level_toggled(bool checked);
+
+    void on_actionShow_Filename_toggled(bool checked);
+
+    void on_actionShow_Line_Number_toggled(bool checked);
+
+    void on_actionShow_Function_toggled(bool checked);
+
+    void on_actionShow_Hostname_toggled(bool checked);
+
+    void on_actionShow_Pid_toggled(bool checked);
+
+    void on_actionShow_Cmd_toggled(bool checked);
+
+    void on_actionShow_Args_toggled(bool checked);
+
+    void on_actionShow_Thread_Id_toggled(bool checked);
+
+    void on_actionShow_Component_toggled(bool checked);
+
+    void on_actionShow_Colors_toggled(bool checked);
+
+    void on_actionShow_Grid_toggled(bool checked);
+
+    void on_actionShow_Mute_Ports_toggled(bool checked);
+
+    void on_actionAdvanced_triggered();
 
     void on_actionStop_Logger_triggered();
 
     void on_actionRefresh_triggered();
 
     void on_actionClear_triggered();
-
-    void on_actionShow_LocalTimestamps_toggled(bool arg1);
 
     void on_actionClear_current_log_triggered();
 
@@ -122,19 +145,11 @@ private:
     QStandardItemModel               *model_yarprunports;
     QItemSelectionModel              *selection_yarprunports;
     QTimer                           *mainTimer;
-    QLabel                           *statusBarLabel;
     MessageWidget                    *system_message;
     YarprunPortsSortFilterProxyModel *proxyModel;
     void loadTextFile();
     QString recomputeFilters();
     void apply_button_filters();
-
-    bool displayErrorLevel;
-    bool displayGrid;
-    bool displayColors;
-    bool displayYarprunTimestamps;
-    bool displayLocalTimestamps;
-    bool show_mute_ports_enabled;
 
     //helper methods called by other slots
     void on_enableLogTab         (int model_row);
