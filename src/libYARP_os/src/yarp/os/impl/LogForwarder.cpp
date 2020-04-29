@@ -9,11 +9,14 @@
 #include <yarp/os/impl/LogForwarder.h>
 
 #include <yarp/os/Log.h>
+#include <yarp/os/NetType.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/PlatformLimits.h>
+
+#include <sstream>
 
 bool yarp::os::impl::LogForwarder::started{false};
 
@@ -58,8 +61,16 @@ void yarp::os::impl::LogForwarder::forward(const std::string& message)
 void yarp::os::impl::LogForwarder::shutdown()
 {
     if (started) {
+        std::ostringstream ost;
+        auto systemtime = yarp::os::SystemClock::nowSystem();
+        auto networktime = (!yarp::os::NetworkBase::isNetworkInitialized() ? 0.0 : (yarp::os::Time::isSystemClock() ? systemtime : yarp::os::Time::now()));
+
+        ost << "(level INFO)";
+        ost << " (systemtime " << yarp::os::NetType::toString(systemtime)  << ")";
+        ost << " (networktime " << yarp::os::NetType::toString(networktime)  << ")";
+
         yarp::os::impl::LogForwarder& fw = getInstance();
-        fw.forward("[INFO] Execution terminated\n");
+        fw.forward(ost.str());
         while (fw.outputPort.isWriting()) {
             yarp::os::SystemClock::delaySystem(0.2);
         }
