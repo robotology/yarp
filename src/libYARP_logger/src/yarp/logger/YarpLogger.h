@@ -121,6 +121,18 @@ struct yarp::yarpLogger::MessageEntry
 {
     LogLevel      level;
     std::string   text;
+    std::string   filename;
+    unsigned int  line;
+    std::string   function;
+    std::string   hostname;
+    std::string   cmd;
+    std::string   args;
+    int           pid;
+    long          thread_id;
+    std::string   component;
+    double        systemtime;
+    double        networktime;
+    std::string   backtrace;
     std::string   yarprun_timestamp;
     std::string   local_timestamp;
 };

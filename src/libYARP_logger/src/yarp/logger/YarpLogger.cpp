@@ -271,6 +271,13 @@ void LoggerEngine::logger_thread::run()
             }
 
             MessageEntry body;
+
+            char ttstr [20];
+            static int count=0;
+            sprintf(ttstr,"%d",count++);
+            body.yarprun_timestamp = string(ttstr);
+            body.local_timestamp   = machine_current_time_s;
+
             std::string s;
 
             if (b->get(1).isString())
@@ -284,35 +291,129 @@ void LoggerEngine::logger_thread::run()
                 continue;
             }
 
-            body.text = s;
-            char ttstr [20];
-            static int count=0;
-            sprintf(ttstr,"%d",count++);
-            body.yarprun_timestamp = string(ttstr);
-            body.local_timestamp   = machine_current_time_s;
-            body.level = LOGLEVEL_UNDEFINED;
+            yarp::os::Property p(s.c_str());
 
-            size_t str = s.find('[',0);
-            size_t end = s.find(']',0);
-            if (str==std::string::npos || end==std::string::npos )
-            {
+            if (p.check("level")) {
+                body.text = p.find("message").toString();
+
+                auto level = p.find("level").toString();
+                if (level == "TRACE") {
+                    body.level = LOGLEVEL_TRACE;
+                } else if (level == "DEBUG") {
+                    body.level = LOGLEVEL_DEBUG;
+                } else if (level == "INFO") {
+                    body.level = LOGLEVEL_INFO;
+                } else if (level == "WARNING") {
+                    body.level = LOGLEVEL_WARNING;
+                } else if (level == "ERROR") {
+                    body.level = LOGLEVEL_ERROR;
+                } else if (level == "FATAL") {
+                    body.level = LOGLEVEL_FATAL;
+                } else {
+                    body.level = LOGLEVEL_UNDEFINED;
+                }
+
+                if (p.check("filename")) {
+                    body.filename = p.find("filename").asString();
+                } else {
+                    body.filename.clear();
+                }
+
+                if (p.check("line")) {
+                    body.line = static_cast<uint32_t>(p.find("line").asInt32());
+                } else {
+                    body.line = 0;
+                }
+
+                if (p.check("function")) {
+                    body.function = p.find("function").asString();
+                } else {
+                    body.function.clear();
+                }
+
+                if (p.check("hostname")) {
+                    body.hostname = p.find("hostname").asString();
+                } else {
+                    body.hostname.clear();
+                }
+
+                if (p.check("pid")) {
+                    body.pid = p.find("pid").asInt32();
+                } else {
+                    body.pid = 0;
+                }
+
+                if (p.check("cmd")) {
+                    body.cmd = p.find("cmd").asString();
+                } else {
+                    body.cmd.clear();
+                }
+
+                if (p.check("args")) {
+                    body.args = p.find("args").asString();
+                } else {
+                    body.args.clear();
+                }
+
+                if (p.check("thread_id")) {
+                    body.thread_id = p.find("thread_id").asInt64();
+                } else {
+                    body.thread_id = 0;
+                }
+
+                if (p.check("component")) {
+                    body.component = p.find("component").asString();
+                } else {
+                    body.component.clear();
+                }
+
+                if (p.check("systemtime")) {
+                    body.systemtime = p.find("systemtime").asFloat64();
+                } else {
+                    body.systemtime = 0.0;
+                }
+
+                if (p.check("networktime")) {
+                    body.networktime = p.find("networktime").asFloat64();
+                } else {
+                    body.networktime = 0.0;
+                    body.yarprun_timestamp.clear();
+                }
+
+                if (p.check("backtrace")) {
+                    body.backtrace = p.find("backtrace").asString();
+                } else {
+                    body.backtrace.clear();
+                }
+            } else {
+                // This is plain output forwarded by yarprun
+                // Perhaps at some point yarprun could be formatting it properly
+                // But for now we just try to extract the level information
+                body.text = s;
                 body.level = LOGLEVEL_UNDEFINED;
-            }
-            else if (str==0)
-            {
-                std::string level = s.substr(str,end+1);
-                body.level = LOGLEVEL_UNDEFINED;
-                if      (level.find("TRACE")!=std::string::npos)   body.level = LOGLEVEL_TRACE;
-                else if (level.find("DEBUG")!=std::string::npos)   body.level = LOGLEVEL_DEBUG;
-                else if (level.find("INFO")!=std::string::npos)    body.level = LOGLEVEL_INFO;
-                else if (level.find("WARNING")!=std::string::npos) body.level = LOGLEVEL_WARNING;
-                else if (level.find("ERROR")!=std::string::npos)   body.level = LOGLEVEL_ERROR;
-                else if (level.find("FATAL")!=std::string::npos)   body.level = LOGLEVEL_FATAL;
-                body.text = s.substr(end+1);
-            }
-            else
-            {
-                body.level = LOGLEVEL_UNDEFINED;
+
+                size_t str = s.find('[',0);
+                size_t end = s.find(']',0);
+                if (str==std::string::npos || end==std::string::npos )
+                {
+                    body.level = LOGLEVEL_UNDEFINED;
+                }
+                else if (str==0)
+                {
+                    std::string level = s.substr(str,end+1);
+                    body.level = LOGLEVEL_UNDEFINED;
+                    if      (level.find("TRACE")!=std::string::npos)   body.level = LOGLEVEL_TRACE;
+                    else if (level.find("DEBUG")!=std::string::npos)   body.level = LOGLEVEL_DEBUG;
+                    else if (level.find("INFO")!=std::string::npos)    body.level = LOGLEVEL_INFO;
+                    else if (level.find("WARNING")!=std::string::npos) body.level = LOGLEVEL_WARNING;
+                    else if (level.find("ERROR")!=std::string::npos)   body.level = LOGLEVEL_ERROR;
+                    else if (level.find("FATAL")!=std::string::npos)   body.level = LOGLEVEL_FATAL;
+                    body.text = s.substr(end+1);
+                }
+                else
+                {
+                    body.level = LOGLEVEL_UNDEFINED;
+                }
             }
 
             if (body.level == LOGLEVEL_UNDEFINED && listen_to_LOGLEVEL_UNDEFINED == false) {continue;}
