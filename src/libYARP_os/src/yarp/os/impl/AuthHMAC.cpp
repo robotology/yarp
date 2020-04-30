@@ -86,10 +86,10 @@ AuthHMAC::AuthHMAC() :
 
     size_t key_len = key.length();
     auto* tmp = new unsigned char[key_len];
-    strcpy((char*)tmp, key.c_str());
-    HMAC_INIT(&context, tmp, (unsigned int)key_len);
+    strcpy(reinterpret_cast<char*>(tmp), key.c_str());
+    HMAC_INIT(&context, tmp, static_cast<unsigned int>(key_len));
     delete[] tmp;
-    srand((unsigned)time(nullptr));
+    srand(static_cast<unsigned>(time(nullptr)));
 
     if (!authentication_enabled) {
         yInfo("Authentication enabled.\n");
@@ -225,8 +225,8 @@ bool AuthHMAC::authDest(InputStream* streamIn, OutputStream* streamOut)
 
 bool AuthHMAC::send_hmac(OutputStream* stream, unsigned char* nonce, unsigned char* mac)
 {
-    Bytes nonce_bytes((char*)nonce, NONCE_LEN);
-    Bytes mac_bytes((char*)mac, DIGEST_SIZE);
+    Bytes nonce_bytes(reinterpret_cast<char*>(nonce), NONCE_LEN);
+    Bytes mac_bytes(reinterpret_cast<char*>(mac), DIGEST_SIZE);
     stream->write(nonce_bytes);
     stream->write(mac_bytes);
 
@@ -240,8 +240,8 @@ bool AuthHMAC::send_hmac(OutputStream* stream, unsigned char* nonce, unsigned ch
 
 bool AuthHMAC::receive_hmac(InputStream* stream, unsigned char* nonce, unsigned char* mac)
 {
-    Bytes nonce_bytes((char*)nonce, NONCE_LEN);
-    Bytes mac_bytes((char*)mac, DIGEST_SIZE);
+    Bytes nonce_bytes(reinterpret_cast<char*>(nonce), NONCE_LEN);
+    Bytes mac_bytes(reinterpret_cast<char*>(mac), DIGEST_SIZE);
     stream->read(nonce_bytes);
     stream->read(mac_bytes);
 

@@ -1404,8 +1404,8 @@ bool PortCore::sendHelper(const PortWriter& writer,
             if (out != nullptr) {
                 // We got back a report of a message already sent.
                 m_packetMutex.lock();
-                ((PortCorePacket*)out)->dec(); // Message on one fewer connections.
-                m_packets.checkPacket((PortCorePacket*)out);
+                (static_cast<PortCorePacket*>(out))->dec(); // Message on one fewer connections.
+                m_packets.checkPacket(static_cast<PortCorePacket*>(out));
                 m_packetMutex.unlock();
             }
             if (waiter) {
@@ -1490,8 +1490,8 @@ void PortCore::notifyCompletion(void* tracker)
     YMSG(("starting notifyCompletion\n"));
     m_packetMutex.lock();
     if (tracker != nullptr) {
-        ((PortCorePacket*)tracker)->dec();
-        m_packets.checkPacket((PortCorePacket*)tracker);
+        (static_cast<PortCorePacket*>(tracker))->dec();
+        m_packets.checkPacket(static_cast<PortCorePacket*>(tracker));
     }
     m_packetMutex.unlock();
     YMSG(("stopping notifyCompletion\n"));
@@ -1622,11 +1622,14 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
         std::string cmd = v.asString();
         if (cmd == "publisherUpdate") {
             return PortCoreCommand::RosPublisherUpdate;
-        } else if (cmd == "requestTopic") {
+        }
+        if (cmd == "requestTopic") {
             return PortCoreCommand::RosRequestTopic;
-        } else if (cmd == "getPid") {
+        }
+        if (cmd == "getPid") {
             return PortCoreCommand::RosGetPid;
-        } else if (cmd == "getBusInfo") {
+        }
+        if (cmd == "getBusInfo") {
             return PortCoreCommand::RosGetBusInfo;
         }
     }
@@ -2427,7 +2430,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                         if (dscp_class == QosStyle::DSCP_Invalid) {
                                             dscp = qos_prop->find("dscp").asInt32();
                                         } else {
-                                            dscp = (int)dscp_class;
+                                            dscp = static_cast<int>(dscp_class);
                                         }
                                         if ((dscp >= 0) && (dscp < 64)) {
                                             bOk = setTypeOfService(unit, dscp << 2);
@@ -2949,7 +2952,7 @@ bool PortCore::setProcessSchedulingParam(int priority, int policy)
     long tid = 0;
     bool ret = true;
     while ((d = readdir(dir)) != nullptr) {
-        if (isdigit((unsigned char)*d->d_name) == 0) {
+        if (isdigit(static_cast<unsigned char>(*d->d_name)) == 0) {
             continue;
         }
 

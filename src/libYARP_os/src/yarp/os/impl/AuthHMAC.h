@@ -47,10 +47,10 @@ public:
     bool authDest(yarp::os::InputStream* streamIn, yarp::os::OutputStream* streamOut);
 
 private:
-    bool send_hmac(yarp::os::OutputStream* stream, unsigned char* nonce, unsigned char* mac);
-    bool receive_hmac(yarp::os::InputStream* stream, unsigned char* nonce, unsigned char* mac);
-    bool check_hmac(unsigned char* mac, unsigned char* mac_check);
-    void fill_nonce(unsigned char* nonce);
+    static bool send_hmac(yarp::os::OutputStream* stream, unsigned char* nonce, unsigned char* mac);
+    static bool receive_hmac(yarp::os::InputStream* stream, unsigned char* nonce, unsigned char* mac);
+    static bool check_hmac(unsigned char* mac, unsigned char* mac_check);
+    static void fill_nonce(unsigned char* nonce);
 
     bool authentication_enabled;
     HMAC_CONTEXT context;

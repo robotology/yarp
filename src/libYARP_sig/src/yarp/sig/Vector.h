@@ -27,20 +27,21 @@
 * \file Vector.h contains the definition of a Vector type
 */
 namespace yarp {
+namespace sig {
 
-    namespace sig {
-        class VectorBase;
-        template<class T> class VectorOf;
-        // Swig(3.0.12) crashes when generating
-        // ruby bindings without these guards.
-        // Bindings for Vector are generated
-        // anyways throught the %template directive
-        // in the interface file.
+class VectorBase;
+template<class T> class VectorOf;
+// Swig(3.0.12) crashes when generating
+// ruby bindings without these guards.
+// Bindings for Vector are generated
+// anyways throught the %template directive
+// in the interface file.
 #ifndef SWIG
-        typedef VectorOf<double> Vector;
+typedef VectorOf<double> Vector;
 #endif
-    }
-}
+
+} // namespace sig
+} // namespace yarp
 
 
 /**

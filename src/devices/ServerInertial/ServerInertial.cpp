@@ -26,12 +26,6 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
-// needed for the driver factory.
-yarp::dev::DriverCreator *createServerInertial()
-{
-    return new yarp::dev::DriverCreatorOf<ServerInertial>
-            ("inertial", "inertial", "ServerInertial");
-}
 
 /**
  * Constructor.
