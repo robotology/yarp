@@ -49,7 +49,8 @@ bool FakeLaser::open(yarp::os::Searchable& config)
         yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_pattern");
         yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map");
         yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
-        yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient");
+        yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
+        yInfo("yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
         return false;
     }
 
@@ -110,13 +111,15 @@ bool FakeLaser::open(yarp::os::Searchable& config)
             yInfo() << "Robot localization will be obtained from port" << localization_port_name;
             m_loc_mode = LOC_FROM_PORT;
         }
-        else if (config.check("localization_client"))
+        else if (config.check("localization_client") ||
+                 config.check("localization_server" ))
         {
             Property loc_options;
-            string localization_device_name = config.check("localization_client", Value(string("/fakeLaser/localizationClient")), "local name of localization client device").asString();
+            string localization_client_name = config.check("localization_client", Value(string("/fakeLaser/localizationClient")), "local name of localization client device").asString();
+            string localization_server_name = config.check("localization_server", Value(string("/localizationServer")), "the name of the remote localization server device").asString();
             loc_options.put("device", "localization2DClient");
-            loc_options.put("local", localization_device_name);
-            loc_options.put("remote", "/localizationServer");
+            loc_options.put("local", localization_client_name);
+            loc_options.put("remote", localization_server_name);
             loc_options.put("period", 10);
             m_pLoc = new PolyDriver;
             if (m_pLoc->open(loc_options) == false)
@@ -130,7 +133,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
                 yError() << "Unable to open localization interface";
                 return false;
             }
-            yInfo() << "Robot localization will be obtained from localization_client" << localization_device_name;
+            yInfo() << "Robot localization will be obtained from localization server: " << localization_server_name;
             m_loc_mode = LOC_FROM_CLIENT;
         }
         else
