@@ -79,6 +79,15 @@ private:
 #define yCError(component, ...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, component()).error(__VA_ARGS__)
 #define yCFatal(component, ...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, component()).fatal(__VA_ARGS__)
 
+#ifndef NDEBUG
+#  define yCAssert(component, x)                                                       \
+    if (!(x)) {                                                                        \
+        yCFatal(component, "Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); \
+    }
+#else
+#  define yCAssert(x)
+#endif
+
 
 } // namespace yarp
 } // namespace os
