@@ -141,6 +141,7 @@ public:
     static std::atomic<bool> yarprun_format;
     static std::atomic<bool> colored_output;
     static std::atomic<bool> verbose_output;
+    static std::atomic<bool> compact_output;
     static std::atomic<bool> debug_output;
     static std::atomic<bool> trace_output;
     static std::atomic<bool> forward_output;
@@ -374,13 +375,23 @@ inline void printable_output(std::ostream* ost,
     YARP_UNUSED(systemtime);
     YARP_UNUSED(networktime);
 
-    const char *level = yarp::os::impl::LogPrivate::colored_output.load() ? "\u25CF" : logTypeToString(t);
-    const char *color = logTypeToColor(t);
-    const char *bgcolor = logTypeToBgColor(t);
+#if !defined (_MSC_VER)
+    static constexpr const char* level_char = u8"\u25CF";
+#else
+    static constexpr const char* level_char = "*";
+#endif
+
+    const char* level_string = logTypeToString(t);
+    const char* color = logTypeToColor(t);
+    const char* bgcolor = logTypeToBgColor(t);
     static const char *reserved_color = logTypeToColor(yarp::os::Log::LogTypeReserved);
 
     // Print Level
-    *ost << color << bgcolor << level << CLEAR << " ";
+    if (yarp::os::impl::LogPrivate::colored_output.load() && yarp::os::impl::LogPrivate::compact_output.load()) {
+        *ost << color << bgcolor << level_char << CLEAR << " ";
+    } else {
+        *ost << "[" << color << bgcolor << level_string << CLEAR << "] ";
+    }
 
     // Print function information (trace only)
     if (t == yarp::os::Log::TraceType) {
@@ -389,7 +400,7 @@ inline void printable_output(std::ostream* ost,
 
     // Print component
     if (comp_name) {
-        *ost << "[" << comp_name << "] ";
+        *ost << "|" << comp_name << "| ";
     }
 
     // Finally print the message
@@ -414,7 +425,7 @@ inline void printable_output_verbose(std::ostream* ost,
 {
     YARP_UNUSED(systemtime);
 
-    const char *level = logTypeToString(t);
+    const char* level_string = logTypeToString(t);
     const char *color = logTypeToColor(t);
     const char *bgcolor = logTypeToBgColor(t);
     static const char *reserved_color = logTypeToColor(yarp::os::Log::LogTypeReserved);
@@ -423,7 +434,7 @@ inline void printable_output_verbose(std::ostream* ost,
     *ost << "[" << std::fixed << networktime << "] ";
 
     // Print level
-    *ost << color << bgcolor << level << CLEAR << " ";
+    *ost << "[" << color << bgcolor << level_string << CLEAR << "] ";
 
     // Print file, line and function
     *ost << file << ":" << line << " " << color << bgcolor << func << CLEAR << " ";
@@ -433,7 +444,7 @@ inline void printable_output_verbose(std::ostream* ost,
 
     // Print component
     if (comp_name) {
-        *ost << "[" << comp_name << "] ";
+        *ost << "|" << comp_name << "| ";
     }
 
     // Finally print the message
@@ -464,6 +475,9 @@ std::atomic<bool> yarp::os::impl::LogPrivate::colored_output(from_env("YARP_COLO
 #endif
 std::atomic<bool> yarp::os::impl::LogPrivate::verbose_output(from_env("YARP_VERBOSE_OUTPUT", false) &&
                                                              !yarp::os::impl::LogPrivate::yarprun_format.load());
+std::atomic<bool> yarp::os::impl::LogPrivate::compact_output(from_env("YARP_COMPACT_OUTPUT", false) &&
+                                                             !yarp::os::impl::LogPrivate::yarprun_format.load() &&
+                                                             !yarp::os::impl::LogPrivate::verbose_output.load());
 std::atomic<bool> yarp::os::impl::LogPrivate::forward_output(from_env("YARP_FORWARD_LOG_ENABLE", false) &&
                                                              !yarp::os::impl::LogPrivate::yarprun_format.load());
 
