@@ -11,6 +11,11 @@
 
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/impl/LogComponent.h>
+
+namespace {
+YARP_OS_LOG_COMPONENT(PORTCOREADAPTER, "yarp.os.impl.PortCoreAdapter")
+} // namespace
 
 yarp::os::impl::PortCoreAdapter::PortCoreAdapter(Port& owner)
 {
@@ -76,7 +81,7 @@ void yarp::os::impl::PortCoreAdapter::finishWriting()
             pause *= 2;
         } while (isWriting() && (SystemClock::nowSystem() - start < 3));
         if (isWriting()) {
-            YARP_ERROR(Logger::get(), "Closing port that was sending data (slowly)");
+            yCError(PORTCOREADAPTER, "Closing port that was sending data (slowly)");
         }
     }
 }
@@ -115,7 +120,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
     }
 
     if (closed) {
-        YARP_DEBUG(Logger::get(), "Port::read shutting down");
+        yCDebug(PORTCOREADAPTER, "Port::read shutting down");
         readBlock.post();
         return false;
     }
@@ -131,7 +136,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
         readResult = readDelegate->read(reader);
     } else {
         // read and ignore
-        YARP_DEBUG(Logger::get(), "data received in Port, no reader for it");
+        yCDebug(PORTCOREADAPTER, "data received in Port, no reader for it");
         Bottle b;
         b.read(reader);
     }
@@ -147,7 +152,7 @@ bool yarp::os::impl::PortCoreAdapter::read(ConnectionReader& reader)
     if (result && willReply) {
         consume.wait();
         if (closed) {
-            YARP_DEBUG(Logger::get(), "Port::read shutting down");
+            yCDebug(PORTCOREADAPTER, "Port::read shutting down");
             readBlock.post();
             return false;
         }
@@ -256,7 +261,7 @@ void yarp::os::impl::PortCoreAdapter::configReadCreator(PortReaderCreator& creat
 void yarp::os::impl::PortCoreAdapter::configWaitAfterSend(bool waitAfterSend)
 {
     if (waitAfterSend && isManual()) {
-        YARP_ERROR(Logger::get(), "Cannot use background-mode writes on a fake port");
+        yCError(PORTCOREADAPTER, "Cannot use background-mode writes on a fake port");
     }
     recWaitAfterSend = waitAfterSend ? 1 : 0;
     setWaitAfterSend(waitAfterSend);
