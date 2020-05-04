@@ -150,8 +150,6 @@ public:
     static std::atomic<bool> forward_processinfo;
     static std::atomic<bool> forward_backtrace;
     static std::atomic<bool> debug_log;
-    static std::atomic<bool> quiet;
-    static std::atomic<bool> verbose;
 #ifdef YARP_HAS_WIN_VT_SUPPORT
     static std::atomic<bool> vt_colors_enabled;
 #endif
@@ -495,22 +493,15 @@ std::atomic<bool> yarp::os::impl::LogPrivate::trace_output(from_env("YARP_TRACE_
 
 std::atomic<bool> yarp::os::impl::LogPrivate::debug_log(from_env("YARP_DEBUG_LOG_ENABLE", false));
 
-std::atomic<bool> yarp::os::impl::LogPrivate::quiet(from_env("YARP_QUIET", false));
-std::atomic<bool> yarp::os::impl::LogPrivate::verbose(from_env("YARP_VERBOSE", false) &&
-                                                      !yarp::os::impl::LogPrivate::quiet.load());
-
 #ifdef YARP_HAS_WIN_VT_SUPPORT
 std::atomic<bool> yarp::os::impl::LogPrivate::vt_colors_enabled = false;
 #endif
 
 std::atomic<yarp::os::Log::LogType> yarp::os::impl::LogPrivate::minimumPrintLevel(
     (yarp::os::impl::LogPrivate::trace_output.load() ? yarp::os::Log::TraceType :
-    (yarp::os::impl::LogPrivate::debug_output.load() ? yarp::os::Log::DebugType :
-    (yarp::os::impl::LogPrivate::quiet.load() ? yarp::os::Log::WarningType :
-    (yarp::os::impl::LogPrivate::verbose.load() ? yarp::os::Log::DebugType : yarp::os::Log::InfoType)))));
+    (yarp::os::impl::LogPrivate::debug_output.load() ? yarp::os::Log::DebugType : yarp::os::Log::InfoType)));
 std::atomic<yarp::os::Log::LogType> yarp::os::impl::LogPrivate::minimumForwardLevel(
     (yarp::os::impl::LogPrivate::forward_output.load() ? yarp::os::impl::LogPrivate::minimumPrintLevel.load() : yarp::os::Log::LogTypeReserved));
-
 std::atomic<yarp::os::Log::LogCallback> yarp::os::impl::LogPrivate::current_print_callback(
     yarp::os::impl::LogPrivate::print_callback);
 std::atomic<yarp::os::Log::LogCallback> yarp::os::impl::LogPrivate::current_forward_callback(
