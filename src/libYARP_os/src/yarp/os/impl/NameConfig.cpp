@@ -19,7 +19,7 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PlatformIfaddrs.h>
 #include <yarp/os/impl/PlatformLimits.h>
 #include <yarp/os/impl/PlatformNetdb.h>
@@ -48,6 +48,10 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #define CONF_FILENAME YARP_CONFIG_FILENAME
+
+namespace {
+YARP_OS_LOG_COMPONENT(NAMECONFIG, "yarp.os.impl.NameConfig")
+} // namespace
 
 bool NameConfig::fromString(const std::string& txt)
 {
@@ -96,7 +100,7 @@ std::string NameConfig::expandFilename(const char* fname)
         conf = fname;
     }
 
-    YARP_DEBUG(Logger::get(), std::string("Configuration file: ") + conf);
+    yCDebug(NAMECONFIG, "Configuration file: %s", conf.c_str());
     return conf;
 }
 
@@ -246,7 +250,7 @@ std::string NameConfig::getHostName(bool prefer_loopback, const std::string& see
             ip = std::string(hostname);
 #endif
 
-            YARP_DEBUG(Logger::get(), std::string("scanning network interface ") + ip);
+            yCDebug(NAMECONFIG, "scanning network interface %s", ip.c_str());
 
             if (ip.find(':') != std::string::npos) {
                 continue;
