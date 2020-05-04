@@ -19,9 +19,9 @@
 YARP_LOG_COMPONENT(LOG_COMPONENT, "yarp.example.log_test")
 YARP_LOG_COMPONENT(LOG_COMPONENT_NOFW,
                    "yarp.example.log_test.nofw",
-                   yarp::os::Log::defaultMinimumPrintLevel(),
+                   yarp::os::Log::minimumPrintLevel(),
                    yarp::os::Log::LogTypeReserved,
-                   yarp::os::Log::defaultPrintCallback(),
+                   yarp::os::Log::printCallback(),
                    nullptr);
 
 int main(int argc, char *argv[])

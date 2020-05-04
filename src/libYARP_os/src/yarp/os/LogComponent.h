@@ -24,10 +24,10 @@ public:
     using LogType = yarp::os::Log::LogType;
 
     LogComponent(const char* name,
-                 LogType minimumPrintLevel = yarp::os::Log::defaultMinimumPrintLevel(),
-                 LogType minimumForwardLevel = yarp::os::Log::defaultMinimumForwardLevel(),
-                 LogCallback printCallback = yarp::os::Log::defaultPrintCallback(),
-                 LogCallback forwardCallback = yarp::os::Log::defaultForwardCallback());
+                 LogType minimumPrintLevel = yarp::os::Log::minimumPrintLevel(),
+                 LogType minimumForwardLevel = yarp::os::Log::minimumForwardLevel(),
+                 LogCallback printCallback = yarp::os::Log::printCallback(),
+                 LogCallback forwardCallback = yarp::os::Log::forwardCallback());
 
     LogComponent(const LogComponent&) = delete;
     LogComponent(LogComponent&&) noexcept = delete;

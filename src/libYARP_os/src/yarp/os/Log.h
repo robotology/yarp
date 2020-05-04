@@ -99,16 +99,21 @@ public:
     static void setLogCallback(LogCallback);
 #endif // YARP_NO_DEPRECATED
 
-    static void setPrintCallback(LogCallback);
-    static void setForwardCallback(LogCallback);
+    static void setMinimumPrintLevel(LogType level); //!< Set current minimum print level
+    static LogType minimumPrintLevel();              //!< Get current minimum print level
+    static LogType defaultMinimumPrintLevel();       //!< Get default minimum print level
 
-    static const LogComponent& defaultLogComponent();
+    static void setMinimumForwardLevel(LogType level); //!< Set current minimum forward level (it does nothing if forwarding is not enabled)
+    static LogType minimumForwardLevel();              //!< Get current minimum forward level (or LogTypeReserved if forwarding is not enabled)
+    static LogType defaultMinimumForwardLevel();       //!< Get default minimum forward level (or LogTypeReserved if forwarding is not enabled)
 
-    static LogType defaultMinimumPrintLevel();
-    static LogType defaultMinimumForwardLevel();
+    static void setPrintCallback(LogCallback); //!< Set current print callback
+    static LogCallback printCallback();        //!< Get current print callback
+    static LogCallback defaultPrintCallback(); //!< Get default print callback
 
-    static LogCallback defaultPrintCallback();
-    static LogCallback defaultForwardCallback();
+    static void setForwardCallback(LogCallback); //!< Set current forward callback (it does nothing if forwarding is not enabled)
+    static LogCallback forwardCallback();        //!< Get current forward callback (or nullptr if forwarding is not enabled)
+    static LogCallback defaultForwardCallback(); //!< Get default forward callback (or nullptr if forwarding is not enabled)
 
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -125,6 +130,9 @@ private:
                        double systemtime,
                        double networktime,
                        const LogComponent& comp_name);
+
+    // This component is used for yDebug-family output, and is called by LogStream
+    static const LogComponent& defaultLogComponent();
 
     // This component is used for internal debug output, and is called by LogStream
     static const LogComponent& logInternalComponent();

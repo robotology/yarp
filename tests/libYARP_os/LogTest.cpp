@@ -23,7 +23,7 @@ YARP_LOG_COMPONENT(LOG_COMPONENT_NOFW,
                    "yarp.test.os.LogTest.cstyle.nofw",
                    yarp::os::Log::TraceType,
                    yarp::os::Log::LogTypeReserved,
-                   yarp::os::Log::defaultPrintCallback(),
+                   yarp::os::Log::printCallback(),
                    nullptr)
 YARP_LOG_COMPONENT(LOG_COMPONENT_NULL,
                    "yarp.test.os.LogTest.cstyle.null",

@@ -60,7 +60,7 @@ void yarp::os::impl::LogComponent::print_callback(yarp::os::Log::LogType type,
                                                   const char* comp_name)
 {
     if (type >= minimumOsPrintLevel.load()) {
-        yarp::os::Log::defaultPrintCallback()(type, msg, file, line, func, systemtime, networktime, comp_name);
+        yarp::os::Log::printCallback()(type, msg, file, line, func, systemtime, networktime, comp_name);
     }
 }
 

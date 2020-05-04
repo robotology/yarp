@@ -95,14 +95,14 @@ public:
 
     // This is a LogCallback that calls the print callback that is currently
     // set, even if this is changed later
-    static void default_print_callback(yarp::os::Log::LogType type,
-                                       const char* msg,
-                                       const char* file,
-                                       const unsigned int line,
-                                       const char* func,
-                                       double systemtime,
-                                       double networktime,
-                                       const char* comp_name)
+    static void call_current_print_callback(yarp::os::Log::LogType type,
+                                            const char* msg,
+                                            const char* file,
+                                            const unsigned int line,
+                                            const char* func,
+                                            double systemtime,
+                                            double networktime,
+                                            const char* comp_name)
     {
         if (auto cb = current_print_callback.load()) {
             cb(type, msg, file, line, func, systemtime, networktime, comp_name);
@@ -111,14 +111,14 @@ public:
 
     // This is a LogCallback that calls the forward callback that is currently
     // set, even if this is changed later
-    static void default_forward_callback(yarp::os::Log::LogType type,
-                                         const char* msg,
-                                         const char* file,
-                                         const unsigned int line,
-                                         const char* func,
-                                         double systemtime,
-                                         double networktime,
-                                         const char* comp_name)
+    static void call_current_forward_callback(yarp::os::Log::LogType type,
+                                              const char* msg,
+                                              const char* file,
+                                              const unsigned int line,
+                                              const char* func,
+                                              double systemtime,
+                                              double networktime,
+                                              const char* comp_name)
     {
         if (auto cb = current_forward_callback.load()) {
             cb(type, msg, file, line, func, systemtime, networktime, comp_name);
@@ -154,8 +154,8 @@ public:
     static std::atomic<bool> vt_colors_enabled;
 #endif
 
-    static std::atomic<yarp::os::Log::LogType> minimumPrintLevel;
-    static std::atomic<yarp::os::Log::LogType> minimumForwardLevel;
+    static std::atomic<yarp::os::Log::LogType> current_minimum_print_level;
+    static std::atomic<yarp::os::Log::LogType> current_minimum_forward_level;
 
     static std::atomic<Log::LogCallback> current_print_callback;
     static std::atomic<Log::LogCallback> current_forward_callback;
@@ -455,13 +455,13 @@ inline void printable_output_verbose(std::ostream* ost,
     }
 }
 
-
 } // namespace
 
 // END Utilities
 
 // BEGIN LogPrivate static variables initialization
 
+//   BEGIN Environment variables
 std::atomic<bool> yarp::os::impl::LogPrivate::yarprun_format(from_env("YARP_IS_YARPRUN", false) &&
                                                              from_env("YARPRUN_IS_FORWARDING_LOG", false));
 
@@ -492,28 +492,37 @@ std::atomic<bool> yarp::os::impl::LogPrivate::trace_output(from_env("YARP_TRACE_
                                                            yarp::os::impl::LogPrivate::debug_output.load());
 
 std::atomic<bool> yarp::os::impl::LogPrivate::debug_log(from_env("YARP_DEBUG_LOG_ENABLE", false));
+//   END Environment variables
 
 #ifdef YARP_HAS_WIN_VT_SUPPORT
 std::atomic<bool> yarp::os::impl::LogPrivate::vt_colors_enabled = false;
 #endif
 
-std::atomic<yarp::os::Log::LogType> yarp::os::impl::LogPrivate::minimumPrintLevel(
+
+std::atomic<yarp::os::Log::LogType> yarp::os::impl::LogPrivate::current_minimum_print_level(
     (yarp::os::impl::LogPrivate::trace_output.load() ? yarp::os::Log::TraceType :
-    (yarp::os::impl::LogPrivate::debug_output.load() ? yarp::os::Log::DebugType : yarp::os::Log::InfoType)));
-std::atomic<yarp::os::Log::LogType> yarp::os::impl::LogPrivate::minimumForwardLevel(
-    (yarp::os::impl::LogPrivate::forward_output.load() ? yarp::os::impl::LogPrivate::minimumPrintLevel.load() : yarp::os::Log::LogTypeReserved));
-std::atomic<yarp::os::Log::LogCallback> yarp::os::impl::LogPrivate::current_print_callback(
-    yarp::os::impl::LogPrivate::print_callback);
+    (!yarp::os::impl::LogPrivate::debug_output.load() ? yarp::os::Log::InfoType :
+    yarp::os::Log::defaultMinimumPrintLevel())));
+
+std::atomic<yarp::os::Log::LogType> yarp::os::impl::LogPrivate::current_minimum_forward_level(
+    yarp::os::impl::LogPrivate::forward_output.load() ? yarp::os::impl::LogPrivate::current_minimum_print_level.load()
+                                                      : yarp::os::Log::LogTypeReserved);
+
+std::atomic<yarp::os::Log::LogCallback> yarp::os::impl::LogPrivate::current_print_callback(yarp::os::Log::defaultPrintCallback());
+
 std::atomic<yarp::os::Log::LogCallback> yarp::os::impl::LogPrivate::current_forward_callback(
-    (yarp::os::impl::LogPrivate::forward_output ? yarp::os::impl::LogPrivate::forward_callback : nullptr));
+    yarp::os::impl::LogPrivate::forward_output ? yarp::os::impl::LogPrivate::forward_callback
+                                               : nullptr);
 
 // Log internal component never forwards the output and, if enabled, prints
 // all the output using the default print callback
 const yarp::os::LogComponent yarp::os::impl::LogPrivate::log_internal_component(
     "yarp.os.Log",
-    yarp::os::impl::LogPrivate::debug_log.load() ? yarp::os::Log::TraceType : yarp::os::Log::LogTypeReserved,
+    yarp::os::impl::LogPrivate::debug_log.load() ? yarp::os::Log::TraceType
+                                                 : yarp::os::Log::LogTypeReserved,
     yarp::os::Log::LogTypeReserved,
-    yarp::os::impl::LogPrivate::debug_log.load() ? yarp::os::impl::LogPrivate::default_print_callback : nullptr,
+    yarp::os::impl::LogPrivate::debug_log.load() ? yarp::os::impl::LogPrivate::call_current_print_callback
+                                                 : nullptr,
     nullptr);
 
 
@@ -664,26 +673,95 @@ bool yarp::os::impl::LogPrivate::enable_vt_colors()
 // END LogPrivate methods
 
 
+// BEGIN Minimum Print Level
+void yarp::os::Log::setMinimumPrintLevel(yarp::os::Log::LogType level)
+{
+    yarp::os::impl::LogPrivate::current_minimum_print_level = level;
+}
+
+yarp::os::Log::LogType yarp::os::Log::minimumPrintLevel()
+{
+    return yarp::os::impl::LogPrivate::current_minimum_print_level.load();
+}
+
 yarp::os::Log::LogType yarp::os::Log::defaultMinimumPrintLevel()
 {
-    return yarp::os::impl::LogPrivate::minimumPrintLevel.load();
+    return yarp::os::Log::DebugType;
+}
+// END Minimum Print Level
+
+
+// BEGIN Minimum Forward Level
+void yarp::os::Log::setMinimumForwardLevel(yarp::os::Log::LogType level)
+{
+    if (yarp::os::impl::LogPrivate::forward_output.load()) {
+        yarp::os::impl::LogPrivate::current_minimum_forward_level = level;
+    }
+}
+
+yarp::os::Log::LogType yarp::os::Log::minimumForwardLevel()
+{
+    return yarp::os::impl::LogPrivate::forward_output.load() ? yarp::os::impl::LogPrivate::current_minimum_forward_level.load() : yarp::os::Log::LogTypeReserved;
 }
 
 yarp::os::Log::LogType yarp::os::Log::defaultMinimumForwardLevel()
 {
-    return yarp::os::impl::LogPrivate::forward_output.load() ? yarp::os::impl::LogPrivate::minimumForwardLevel.load() : yarp::os::Log::LogTypeReserved;
+    return yarp::os::impl::LogPrivate::forward_output.load() ? yarp::os::Log::InfoType : yarp::os::Log::LogTypeReserved;
+}
+
+// END Minimum Forward Level
+
+
+// BEGIN Print Callback
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+void yarp::os::Log::setLogCallback(yarp::os::Log::LogCallback cb)
+{
+    yarp::os::impl::LogPrivate::current_print_callback = cb;
+}
+#endif
+
+void yarp::os::Log::setPrintCallback(yarp::os::Log::LogCallback cb)
+{
+    yarp::os::impl::LogPrivate::current_print_callback = cb;
+}
+
+yarp::os::Log::LogCallback yarp::os::Log::printCallback()
+{
+    return yarp::os::impl::LogPrivate::call_current_print_callback;
 }
 
 yarp::os::Log::LogCallback yarp::os::Log::defaultPrintCallback()
 {
-    return yarp::os::impl::LogPrivate::default_print_callback;
+    return yarp::os::impl::LogPrivate::print_callback;
+}
+
+// END Print Callback
+
+
+// BEGIN Forward Callback
+
+void yarp::os::Log::setForwardCallback(yarp::os::Log::LogCallback cb)
+{
+    if (yarp::os::impl::LogPrivate::forward_output.load()) {
+        yarp::os::impl::LogPrivate::current_forward_callback = cb;
+    }
+}
+
+yarp::os::Log::LogCallback yarp::os::Log::forwardCallback()
+{
+    return yarp::os::impl::LogPrivate::forward_output.load() ? yarp::os::impl::LogPrivate::call_current_forward_callback : nullptr;
 }
 
 yarp::os::Log::LogCallback yarp::os::Log::defaultForwardCallback()
 {
-    return yarp::os::impl::LogPrivate::forward_output.load() ? yarp::os::impl::LogPrivate::default_forward_callback : nullptr;
-};
+    return yarp::os::impl::LogPrivate::forward_output.load() ? yarp::os::impl::LogPrivate::forward_callback : nullptr;
+}
 
+// END Forward Callback
+
+
+// BEGIN Log Components
 const yarp::os::LogComponent& yarp::os::Log::defaultLogComponent()
 {
     static const yarp::os::LogComponent component(nullptr,
@@ -698,6 +776,8 @@ const yarp::os::LogComponent& yarp::os::Log::logInternalComponent()
 {
     return yarp::os::impl::LogPrivate::log_internal_component;
 }
+// END Log Components
+
 
 yarp::os::Log::Log(const char* file,
                    unsigned int line,
@@ -837,25 +917,6 @@ yarp::os::LogStream yarp::os::Log::fatal() const
                                mPriv->func,
                                mPriv->comp);
 }
-
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
-void yarp::os::Log::setLogCallback(yarp::os::Log::LogCallback cb)
-{
-    yarp::os::impl::LogPrivate::current_print_callback = cb;
-}
-#endif
-
-void yarp::os::Log::setPrintCallback(yarp::os::Log::LogCallback cb)
-{
-    yarp::os::impl::LogPrivate::current_print_callback = cb;
-}
-
-void yarp::os::Log::setForwardCallback(yarp::os::Log::LogCallback cb)
-{
-    yarp::os::impl::LogPrivate::current_forward_callback = cb;
-}
-
-
 
 void yarp_print_trace(FILE* out, const char* file, unsigned int line)
 {
