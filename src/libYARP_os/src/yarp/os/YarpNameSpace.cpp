@@ -9,7 +9,7 @@
 #include <yarp/os/YarpNameSpace.h>
 
 #include <yarp/os/DummyConnector.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 

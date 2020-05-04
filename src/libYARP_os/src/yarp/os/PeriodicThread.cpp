@@ -10,7 +10,6 @@
 #include <yarp/os/PeriodicThread.h>
 
 #include <yarp/os/SystemClock.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/impl/ThreadImpl.h>
 
@@ -173,7 +172,6 @@ public:
                 adaptedPeriod = 0;
             }
 
-            //fprintf(stderr, "dT:%lf, error %lf, adaptedPeriod: %lf, new:%lf\n", dT, error, saved, adaptedPeriod);
             estPIt++;
         }
 

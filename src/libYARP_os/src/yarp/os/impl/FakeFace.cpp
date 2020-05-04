@@ -10,7 +10,6 @@
 #include <yarp/os/impl/FakeFace.h>
 
 #include <yarp/os/impl/FakeTwoWayStream.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Protocol.h>
 
 using namespace yarp::os::impl;

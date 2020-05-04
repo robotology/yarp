@@ -9,7 +9,6 @@
 
 #include <yarp/os/Thread.h>
 
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/ThreadImpl.h>
 
 using namespace yarp::os::impl;
