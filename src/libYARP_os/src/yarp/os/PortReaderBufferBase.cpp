@@ -16,7 +16,7 @@
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PortCorePacket.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
@@ -25,6 +25,10 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+namespace {
+YARP_OS_LOG_COMPONENT(PORTREADERBUFFERBASE, "yarp.os.PortReaderBufferBase")
+} // namespace
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class PortReaderPacket
@@ -133,7 +137,7 @@ public:
             inactive.push_back(obj);
         }
         PortReaderPacket* next = inactive.front();
-        yAssert(next != nullptr);
+        yCAssert(PORTREADERBUFFERBASE, next != nullptr);
         inactive.remove(next);
         return next;
     }
@@ -143,7 +147,7 @@ public:
         PortReaderPacket* next = nullptr;
         if (getCount() >= 1) {
             next = active.front();
-            yAssert(next != nullptr);
+            yCAssert(PORTREADERBUFFERBASE, next != nullptr);
             active.remove(next);
         }
         return next;
@@ -456,7 +460,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
         reader = mPriv->get();
         if ((reader != nullptr) && reader->getReader() == nullptr) {
             PortReader* next = create();
-            yAssert(next != nullptr);
+            yCAssert(PORTREADERBUFFERBASE, next != nullptr);
             reader->setReader(next);
         }
 
@@ -467,7 +471,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
     }
     bool ok = false;
     if (connection.isValid()) {
-        yAssert(reader->getReader() != nullptr);
+        yCAssert(PORTREADERBUFFERBASE, reader->getReader() != nullptr);
         ok = reader->getReader()->read(connection);
         reader->setEnvelope(connection.readEnvelope());
     } else {
@@ -489,15 +493,15 @@ bool PortReaderBufferBase::read(ConnectionReader& connection)
         if (!pruned) {
             mPriv->contentSema.post();
         }
-        //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> adding data");
+        yCTrace(PORTREADERBUFFERBASE, ">>>>>>>>>>>>>>>>> adding data");
     } else {
         mPriv->stateMutex.lock();
         mPriv->pool.addInactivePacket(reader);
         mPriv->stateMutex.unlock();
-        //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> skipping data");
+        yCTrace(PORTREADERBUFFERBASE, ">>>>>>>>>>>>>>>>> skipping data");
 
         // important to give reader a shot anyway, allowing proper closing
-        YARP_DEBUG(Logger::get(), "giving PortReaderBuffer chance to close");
+        yCDebug(PORTREADERBUFFERBASE, "giving PortReaderBuffer chance to close");
         mPriv->contentSema.post();
     }
     return ok;
@@ -582,7 +586,7 @@ bool PortReaderBufferBase::acceptObjectBase(PortReader* obj,
     if (!pruned) {
         mPriv->contentSema.post();
     }
-    //YARP_ERROR(Logger::get(), ">>>>>>>>>>>>>>>>> adding data");
+    yCTrace(PORTREADERBUFFERBASE, ">>>>>>>>>>>>>>>>> adding data");
 
     return true;
 }
@@ -623,5 +627,5 @@ void PortReaderBufferBase::clear()
 
 void typedReaderMissingCallback()
 {
-    YARP_ERROR(Logger::get(), "Missing or incorrectly typed onRead function");
+    yCError(PORTREADERBUFFERBASE, "Missing or incorrectly typed onRead function");
 }
