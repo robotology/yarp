@@ -29,7 +29,6 @@ class MonitorSelector : public YarpPluginSelector {
  */
 MonitorSharedLib::MonitorSharedLib()
 {
-    settings.setVerboseMode(true);
 }
 
 MonitorSharedLib::~MonitorSharedLib()
@@ -45,7 +44,6 @@ bool MonitorSharedLib::load(const yarp::os::Property& options)
     selector.scan();
 
     settings.setPluginName(options.find("filename").asString());
-    settings.setVerboseMode(true);
     if (!settings.setSelector(selector)) {
         return false;
     }
