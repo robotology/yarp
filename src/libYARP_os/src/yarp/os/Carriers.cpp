@@ -13,7 +13,7 @@
 #include <yarp/os/impl/FakeFace.h>
 #include <yarp/os/impl/HttpCarrier.h>
 #include <yarp/os/impl/LocalCarrier.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/McastCarrier.h>
 #include <yarp/os/impl/NameserCarrier.h>
 #include <yarp/os/impl/Protocol.h>
@@ -27,6 +27,10 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+namespace {
+YARP_OS_LOG_COMPONENT(CARRIERS, "yarp.os.Carriers")
+} // namespace
 
 namespace {
 std::string bytes_to_string(const Bytes& header)
@@ -100,10 +104,9 @@ Carrier* Carriers::Private::chooseCarrier(const std::string& name,
         }
     }
 
-    YARP_SPRINTF1(Logger::get(),
-                  error,
-                  "Could not find carrier \"%s\"",
-                  (!name.empty()) ? name.c_str() : "[bytes]");
+    yCError(CARRIERS,
+            "Could not find carrier \"%s\"",
+            (!name.empty()) ? name.c_str() : "[bytes]");
 
     return nullptr;
 }
@@ -125,10 +128,9 @@ Carrier* Carriers::Private::chooseCarrier(const Bytes& header,
         }
     }
 
-    YARP_SPRINTF1(Logger::get(),
-                  error,
-                  "Could not find carrier for a connection starting with: %s",
-                  bytes_to_string(header).c_str());
+    yCError(CARRIERS,
+            "Could not find carrier for a connection starting with: %s",
+            bytes_to_string(header).c_str());
 
     return nullptr;
 }
@@ -180,9 +182,7 @@ bool Carriers::Private::checkForCarrier(const Bytes& header, Searchable& group)
 
 bool Carriers::Private::scanForCarrier(const Bytes& header)
 {
-    YARP_SPRINTF0(Logger::get(),
-                  debug,
-                  "Scanning for a carrier by header.");
+    yCDebug(CARRIERS, "Scanning for a carrier by header.");
     YarpPluginSelector selector;
     selector.scan();
     Bottle lst = selector.getSelectedPlugins();
