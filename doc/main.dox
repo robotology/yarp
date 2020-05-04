@@ -63,6 +63,7 @@ libraries are not licensed under the BSD-3-Clause.
 \li \subpage note_ports
 \li \subpage note_devices
 \li \subpage yarp_data_dirs
+\li \subpage yarp_logging
 
 \section yarp_learning Learning YARP
 The best way to learn how to use YARP is to read the tutorials and documentation
