@@ -9,10 +9,14 @@
 
 #include <yarp/os/impl/PortCorePackets.h>
 
-#include <cstdio>
+#include <yarp/os/impl/LogComponent.h>
 
 using yarp::os::impl::PortCorePacket;
 using yarp::os::impl::PortCorePackets;
+
+namespace {
+YARP_OS_LOG_COMPONENT(PORTCOREPACKETS, "yarp.os.impl.PortCorePackets")
+} // namespace
 
 PortCorePackets::~PortCorePackets()
 {
@@ -36,18 +40,17 @@ PortCorePacket* PortCorePackets::getFreePacket()
     if (inactive.empty()) {
         PortCorePacket* obj = nullptr;
         obj = new PortCorePacket();
-        yAssert(obj != nullptr);
+        yCAssert(PORTCOREPACKETS, obj != nullptr);
         inactive.push_back(obj);
     }
     PortCorePacket* next = inactive.front();
     if (next == nullptr) {
-        fprintf(stderr, "*** YARP consistency check failed.\n");
-        fprintf(stderr, "*** There has been a low-level failure in \"PortCorePackets\".\n");
-        fprintf(stderr, "*** This typically occurs when ports are accessed in a non-threadsafe way.\n");
-        fprintf(stderr, "*** For help: https://github.com/robotology/yarp/issues/new\n");
-        yAssert(1 == 0);
+        yCError(PORTCOREPACKETS, "*** YARP consistency check failed.\n");
+        yCError(PORTCOREPACKETS, "*** There has been a low-level failure in \"PortCorePackets\".\n");
+        yCError(PORTCOREPACKETS, "*** This typically occurs when ports are accessed in a non-threadsafe way.\n");
+        yCError(PORTCOREPACKETS, "*** For help: https://github.com/robotology/yarp/issues/new\n");
     }
-    yAssert(next != nullptr);
+    yCAssert(PORTCOREPACKETS, next != nullptr);
     inactive.remove(next);
     active.push_back(next);
     return next;
