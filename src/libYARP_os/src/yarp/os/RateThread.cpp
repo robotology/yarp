@@ -14,9 +14,14 @@
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
 
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 
 using namespace yarp::os;
+
+namespace {
+YARP_OS_LOG_COMPONENT(RATETHREAD, "yarp.os.RateThread" )
+}
+
 
 RateThread::RateThread(int period) :
         PeriodicThread(period / 1000.0)
@@ -217,9 +222,9 @@ bool RateThreadWrapper::open(double framerate, bool polling)
     double period = 0.0;
     if (framerate > 0) {
         period = (1.0 / framerate);
-        YARP_SPRINTF2(yarp::os::impl::Logger::get(), info, "Setting framerate to: %.0lf[Hz] (thread period %f[s])\n", framerate, period);
+        yCInfo(RATETHREAD, "Setting framerate to: %.0lf[Hz] (thread period %f[s])\n", framerate, period);
     } else {
-        YARP_SPRINTF0(yarp::os::impl::Logger::get(), info, "No framerate specified, polling the device");
+        yCInfo(RATETHREAD, "No framerate specified, polling the device");
         period = 0.0; //continuous
     }
     PeriodicThread::setPeriod(period);
