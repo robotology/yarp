@@ -13,6 +13,7 @@
 
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
 
@@ -32,6 +33,7 @@
     (BOTTLE_TAG_LIST | \
      BOTTLE_TAG_DICT)
 
+YARP_DECLARE_LOG_COMPONENT(STORABLE)
 
 namespace yarp {
 namespace os {
@@ -60,7 +62,7 @@ public:
     virtual Storable* cloneStorable() const
     {
         Storable* item = createStorable();
-        yAssert(item != nullptr);
+        yCAssert(STORABLE, item != nullptr);
         item->copy(*this);
         return item;
     }
