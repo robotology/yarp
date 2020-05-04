@@ -8,11 +8,15 @@
  */
 
 #include <yarp/os/RpcClient.h>
-#include <yarp/os/impl/Logger.h>
+
+#include <yarp/os/impl/LogComponent.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+namespace {
+YARP_OS_LOG_COMPONENT(RPCCLIENT, "yarp.os.RpcClient")
+} // namespace
 
 class RpcClient::Private
 {
@@ -40,10 +44,9 @@ bool RpcClient::read(PortReader& reader, bool willReply)
 {
     YARP_UNUSED(reader);
     YARP_UNUSED(willReply);
-    YARP_SPRINTF1(Logger::get(),
-                  error,
-                  "cannot read from RpcClient %s, please use a regular Port for that",
-                  mPriv->port.getName().c_str());
+    yCError(RPCCLIENT,
+            "cannot read from RpcClient %s, please use a regular Port for that",
+            mPriv->port.getName().c_str());
     return false;
 }
 
@@ -61,17 +64,17 @@ bool RpcClient::replyAndDrop(PortWriter& writer)
 
 void RpcClient::setInputMode(bool expectInput)
 {
-    yAssert(!expectInput);
+    yCAssert(RPCCLIENT, !expectInput);
 }
 
 void RpcClient::setOutputMode(bool expectOutput)
 {
-    yAssert(expectOutput);
+    yCAssert(RPCCLIENT, expectOutput);
 }
 
 void RpcClient::setRpcMode(bool expectRpc)
 {
-    yAssert(expectRpc);
+    yCAssert(RPCCLIENT, expectRpc);
 }
 
 Port& RpcClient::asPort()
