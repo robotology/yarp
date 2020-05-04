@@ -16,7 +16,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/TwoWayStream.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <cstdio>
@@ -26,11 +26,13 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+namespace {
+YARP_OS_LOG_COMPONENT(PROTOCOL, "yarp.os.impl.Protocol")
+} // namespace
 
 Protocol::Protocol(TwoWayStream* stream) :
         messageLen(0),
         pendingAck(false),
-        log(Logger::get()),
         active(true),
         delegate(nullptr),
         recv_delegate(nullptr),
@@ -181,12 +183,6 @@ const std::string& Protocol::getEnvelope() const
 }
 
 
-Log& Protocol::getLog() const
-{
-    return log;
-}
-
-
 void Protocol::setRemainingLength(int len)
 {
     messageLen = len;
@@ -301,7 +297,7 @@ bool Protocol::write(SizedWriter& writer)
     }
     this->writer = &writer;
     bool replied = false;
-    yAssert(delegate != nullptr);
+    yCAssert(PROTOCOL, delegate != nullptr);
     getStreams().beginPacket(); // Message begins.
     bool ok = delegate->write(*this, writer);
     getStreams().endPacket(); // Message ends.
@@ -309,7 +305,7 @@ bool Protocol::write(SizedWriter& writer)
     if (reply != nullptr) {
         if (!delegate->supportReply()) {
             // We are expected to get a reply, but cannot.
-            YARP_INFO(log, std::string("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
+            yCInfo(PROTOCOL, "connection %s does not support replies (try \"tcp\" or \"text_ack\")", getRoute().toString().c_str());
         }
         if (ok) {
             // Read reply.
@@ -512,7 +508,7 @@ bool Protocol::getSendDelegate()
 
 bool Protocol::respondToHeader()
 {
-    yAssert(delegate != nullptr);
+    yCAssert(PROTOCOL, delegate != nullptr);
     bool ok = delegate->respondToHeader(*this);
     if (!ok) {
         return false;
@@ -524,7 +520,7 @@ bool Protocol::respondToHeader()
 
 bool Protocol::expectAck()
 {
-    yAssert(delegate != nullptr);
+    yCAssert(PROTOCOL, delegate != nullptr);
     if (delegate->requireAck()) {
         return delegate->expectAck(*this);
     }
@@ -656,7 +652,7 @@ bool Protocol::expectHeader()
     if (!ok) {
         return false;
     }
-    yAssert(delegate != nullptr);
+    yCAssert(PROTOCOL, delegate != nullptr);
     ok = delegate->expectExtraHeader(*this);
     return ok;
 }
@@ -672,11 +668,11 @@ bool Protocol::expectProtocolSpecifier()
     yarp::os::Bytes header((char*)&buf[0], sizeof(buf));
     yarp::conf::ssize_t len = is().readFull(header);
     if (len == -1) {
-        YARP_DEBUG(log, "no connection");
+        yCDebug(PROTOCOL, "no connection");
         return false;
     }
     if ((size_t)len != header.length()) {
-        YARP_DEBUG(log, "data stream died");
+        yCDebug(PROTOCOL, "data stream died");
         return false;
     }
     bool already = false;
@@ -696,7 +692,7 @@ bool Protocol::expectProtocolSpecifier()
         }
     }
     if (delegate == nullptr) {
-        YARP_DEBUG(log, "unrecognized protocol");
+        yCDebug(PROTOCOL, "unrecognized protocol");
         return false;
     }
     Route r = getRoute();
@@ -709,21 +705,21 @@ bool Protocol::expectProtocolSpecifier()
 
 bool Protocol::expectSenderSpecifier()
 {
-    yAssert(delegate != nullptr);
+    yCAssert(PROTOCOL, delegate != nullptr);
     return delegate->expectSenderSpecifier(*this);
 }
 
 
 bool Protocol::sendHeader()
 {
-    yAssert(delegate != nullptr);
+    yCAssert(PROTOCOL, delegate != nullptr);
     return delegate->sendHeader(*this);
 }
 
 
 bool Protocol::expectReplyToHeader()
 {
-    yAssert(delegate != nullptr);
+    yCAssert(PROTOCOL, delegate != nullptr);
     return delegate->expectReplyToHeader(*this);
 }
 
