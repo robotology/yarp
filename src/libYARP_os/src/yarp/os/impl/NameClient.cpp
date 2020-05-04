@@ -16,7 +16,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/impl/FallbackNameClient.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/TcpFace.h>
@@ -28,6 +28,7 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 namespace {
+YARP_OS_LOG_COMPONENT(NAMECLIENT, "yarp.os.impl.NameClient")
 
 /*
   Old class for splitting string based on spaces
@@ -295,7 +296,7 @@ Contact NameClient::extractAddress(const Bottle& bot)
 
 std::string NameClient::send(const std::string& cmd, bool multi, const ContactStyle& style)
 {
-    //printf("*** OLD YARP command %s\n", cmd.c_str());
+    yCTrace(NAMECLIENT, "*** OLD YARP command %s", cmd.c_str());
     setup();
 
     if (NetworkBase::getQueryBypass() != nullptr) {
@@ -324,15 +325,15 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
 
     do {
 
-        YARP_DEBUG(Logger::get(), std::string("sending to nameserver: ") + cmd);
+        yCDebug(NAMECLIENT, "sending to nameserver: %s", cmd.c_str());
 
         if (isFakeMode()) {
-            //YARP_DEBUG(Logger::get(), "fake mode nameserver");
+            yCDebug(NAMECLIENT, "fake mode nameserver");
             return getServer().apply(cmd, Contact("tcp", "127.0.0.1", NetworkBase::getDefaultPortRange())) + "\n";
         }
 
         TcpFace face;
-        YARP_DEBUG(Logger::get(), std::string("connecting to ") + getAddress().toURI());
+        yCDebug(NAMECLIENT, "connecting to %s", getAddress().toURI().c_str());
         OutputProtocol* ip = nullptr;
         if (!retry) {
             ip = face.write(server);
@@ -340,14 +341,14 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
             retried = true;
         }
         if (ip == nullptr) {
-            YARP_INFO(Logger::get(), "No connection to nameserver");
+            yCInfo(NAMECLIENT, "No connection to nameserver");
             if (!allowScan) {
-                YARP_INFO(Logger::get(), "*** try running: yarp detect ***");
+                yCInfo(NAMECLIENT, "*** try running: yarp detect ***");
             }
             Contact alt;
             if (!isFakeMode()) {
                 if (allowScan) {
-                    YARP_INFO(Logger::get(), "no connection to nameserver, scanning mcast");
+                    yCInfo(NAMECLIENT, "no connection to nameserver, scanning mcast");
                     reportScan = true;
                     alt = FallbackNameClient::seek();
                 }
@@ -364,8 +365,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
                 server.setTimeout(timeout);
                 ip = face.write(server);
                 if (ip == nullptr) {
-                    YARP_ERROR(Logger::get(),
-                               "no connection to nameserver, scanning mcast");
+                    yCError(NAMECLIENT, "no connection to nameserver, scanning mcast");
                     return {};
                 }
             } else {
@@ -381,7 +381,6 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
             std::string line;
             line = ip->getInputStream().readLine();
             if (!(ip->isOk())) {
-                //YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");
                 retry = true;
                 break;
             }
@@ -394,10 +393,7 @@ std::string NameClient::send(const std::string& cmd, bool multi, const ContactSt
         }
         ip->close();
         delete ip;
-        YARP_SPRINTF1(Logger::get(),
-                      debug,
-                      "<<< received from nameserver: %s",
-                      result.c_str());
+        yCDebug(NAMECLIENT, "<<< received from nameserver: %s", result.c_str());
     } while (retry && !retried);
 
     return result;
@@ -412,7 +408,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply)
         return true;
     }
     if (isFakeMode()) {
-        YARP_DEBUG(Logger::get(), "fake mode nameserver");
+        yCDebug(NAMECLIENT, "fake mode nameserver");
         return getServer().apply(cmd, reply, Contact("tcp", "127.0.0.1", NetworkBase::getDefaultPortRange()));
     }
     Contact server = getAddress();
@@ -500,7 +496,7 @@ NameServer& NameClient::getServer()
     if (fakeServer == nullptr) {
         fakeServer = new NameServer;
     }
-    yAssert(fakeServer != nullptr);
+    yCAssert(NAMECLIENT, fakeServer != nullptr);
     return *fakeServer;
 }
 
@@ -510,10 +506,10 @@ void NameClient::setup()
     mutex.lock();
     if ((!fake) && (!isSetup)) {
         if (!updateAddress()) {
-            YARP_ERROR(Logger::get(), "Cannot find name server");
+            yCError(NAMECLIENT, "Cannot find name server");
         }
 
-        YARP_DEBUG(Logger::get(), std::string("name server address is ") + address.toURI());
+        yCDebug(NAMECLIENT, "name server address is %s", address.toURI().c_str());
         isSetup = true;
     }
     mutex.unlock();
