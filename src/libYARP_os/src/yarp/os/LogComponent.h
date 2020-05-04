@@ -97,7 +97,7 @@ private:
         yCFatal(component, "Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); \
     }
 #else
-#  define yCAssert(x)
+#  define yCAssert(component, x)
 #endif
 
 
