@@ -8,8 +8,13 @@
  */
 
 #include <yarp/serversql/impl/ConnectManager.h>
+#include <yarp/serversql/impl/LogComponent.h>
 
 using yarp::serversql::impl::ConnectManager;
+
+namespace {
+YARP_SERVERSQL_LOG_COMPONENT(CONNECTMANAGER, "yarp.serversql.impl.ConnectManager")
+} // namespace
 
 ConnectManager::ConnectManager() = default;
 
@@ -39,20 +44,20 @@ void ConnectManager::connect(const std::string& src,
                              const std::string& dest,
                              bool positive)
 {
-    //printf("  ??? %s %s\n", src, dest);
+    yCTrace(CONNECTMANAGER, "  ??? %s %s", src.c_str(), dest.c_str());
     ConnectThread *t = nullptr;
-    //printf("***** %d threads\n", con.size());
+    yCTrace(CONNECTMANAGER, "***** %zd threads", con.size());
     std::list<ConnectThread *>::iterator it = con.begin();
     bool already = false;
     while (it != con.end()) {
         if ((*it) != nullptr) {
             if (!(*it)->needed) {
                 if (t == nullptr) {
-                    //printf("***** reusing a thread\n");
+                    yCTrace(CONNECTMANAGER, "***** reusing a thread");
                     t = (*it);
                     t->stop();
                 } else {
-                    //printf("***** deleting a thread\n");
+                    yCTrace(CONNECTMANAGER, "***** deleting a thread");
                     (*it)->stop();
                     delete (*it);
                     it = con.erase(it);
@@ -61,10 +66,10 @@ void ConnectManager::connect(const std::string& src,
             } else {
                 if ((*it)->src == src && (*it)->dest == dest) {
                     mutex.lock();
-                    /*
-                    printf("??? prethread %d %d\n", (*it)->needed,
-                           (*it)->ct);
-                    */
+                    yCTrace(CONNECTMANAGER,
+                            "??? prethread %d %d",
+                            (*it)->needed,
+                            (*it)->ct);
                     if ((*it)->needed) {
                         (*it)->positive = positive;
                         (*it)->ct++;

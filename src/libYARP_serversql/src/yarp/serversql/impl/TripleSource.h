@@ -54,11 +54,6 @@ public:
     {
     }
 
-    void setVerbose(int level)
-    {
-        verbose = level;
-    }
-
     virtual int find(Triple& t, TripleContext *context) = 0;
 
     virtual void prune(TripleContext *context) = 0;
@@ -75,9 +70,6 @@ public:
 
     virtual void begin(TripleContext *context) = 0;
     virtual void end(TripleContext *context) = 0;
-
-protected:
-    int verbose {0};
 };
 
 } // namespace impl

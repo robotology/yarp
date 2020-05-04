@@ -7,7 +7,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cstdio>
 #include <cstdlib>
 
 #include <yarp/os/Vocab.h>
@@ -15,6 +14,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/SystemClock.h>
+#include <yarp/serversql/impl/LogComponent.h>
 #include <yarp/serversql/impl/NameServiceOnTriples.h>
 #include <yarp/serversql/impl/ParseName.h>
 
@@ -22,7 +22,9 @@ using namespace yarp::os;
 using namespace yarp::serversql::impl;
 using namespace std;
 
-//#define mutex printf("mutex %s %d\n", __FILE__, __LINE__), mutex
+namespace {
+YARP_SERVERSQL_LOG_COMPONENT(NAMESERVICEONTRIPLES, "yarp.serversql.impl.NameServiceOnTriples")
+} // namespace
 
 
 Contact NameServiceOnTriples::query(const std::string& portName,
@@ -645,9 +647,7 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
         lastRegister = "";
     }
     if (!silent) {
-        printf("%s%s\n",
-               prefix.c_str(),
-               cmd.toString().c_str());
+        yCInfo(NAMESERVICEONTRIPLES, "%s%s", prefix.c_str(), cmd.toString().c_str());
     }
     access.post();
 

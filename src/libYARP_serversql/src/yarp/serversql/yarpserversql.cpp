@@ -12,6 +12,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/serversql/Server.h>
 #include <yarp/serversql/impl/NameServerContainer.h>
+#include <yarp/serversql/impl/LogComponent.h>
 
 using yarp::os::Network;
 using yarp::serversql::impl::NameServerContainer;
@@ -22,7 +23,7 @@ yarp::os::NameStore *yarpserver_create(yarp::os::Searchable& options)
     if (!nc) {
         return nullptr;
     }
-    nc->setSilent(true);
+    yarp::serversql::impl::LogComponent::setMinumumLogType(yarp::os::Log::WarningType);
     if (!nc->open(options)) {
         delete nc;
         return nullptr;

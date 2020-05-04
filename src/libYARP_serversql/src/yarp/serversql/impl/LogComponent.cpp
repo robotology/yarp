@@ -1,0 +1,46 @@
+/*
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
+#include <yarp/serversql/impl/LogComponent.h>
+
+#include <yarp/os/Os.h>
+
+#include <atomic>
+#include <cstring>
+namespace {
+std::atomic<yarp::os::Log::LogType> minimumServersqlPrintLevel(yarp::os::Log::InfoType);
+} // namespace
+
+void yarp::serversql::impl::LogComponent::print_callback(yarp::os::Log::LogType type,
+                                                         const char* msg,
+                                                         const char* file,
+                                                         const unsigned int line,
+                                                         const char* func,
+                                                         double systemtime,
+                                                         double networktime,
+                                                         const char* comp_name)
+{
+    auto minlev = minimumServersqlPrintLevel.load();
+    if (type >= minlev) {
+        if (minlev <= yarp::os::Log::DebugType) {
+            yarp::os::Log::defaultPrintCallback()(type, msg, file, line, func, systemtime, networktime, comp_name);
+        } else {
+            static const char* err_str = "[ERROR] ";
+            static const char* warn_str = "[WARNING] ";
+            static const char* no_str = "";
+            printf("%s%s\n",
+                   ((type == yarp::os::Log::ErrorType) ? err_str : ((type == yarp::os::Log::WarningType) ? warn_str : no_str)),
+                   msg);
+        }
+    }
+}
+
+void yarp::serversql::impl::LogComponent::setMinumumLogType(yarp::os::Log::LogType minumumLogType)
+{
+    minimumServersqlPrintLevel = minumumLogType;
+}

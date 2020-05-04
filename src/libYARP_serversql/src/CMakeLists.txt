@@ -29,7 +29,8 @@ set(YARP_serversql_IMPL_HDRS yarp/serversql/impl/TripleSourceCreator.h
                              yarp/serversql/impl/ConnectManager.h
                              yarp/serversql/impl/ConnectThread.h
                              yarp/serversql/impl/ParseName.h
-                             yarp/serversql/impl/StyleNameService.h)
+                             yarp/serversql/impl/StyleNameService.h
+                             yarp/serversql/impl/LogComponent.h)
 
 set(YARP_serversql_IMPL_SRCS yarp/serversql/impl/TripleSourceCreator.cpp
                              yarp/serversql/impl/SqliteTripleSource.cpp
@@ -41,7 +42,8 @@ set(YARP_serversql_IMPL_SRCS yarp/serversql/impl/TripleSourceCreator.cpp
                              yarp/serversql/impl/Subscriber.cpp
                              yarp/serversql/impl/SubscriberOnSql.cpp
                              yarp/serversql/impl/ParseName.cpp
-                             yarp/serversql/impl/StyleNameService.cpp)
+                             yarp/serversql/impl/StyleNameService.cpp
+                             yarp/serversql/impl/LogComponent.cpp)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Source Files"

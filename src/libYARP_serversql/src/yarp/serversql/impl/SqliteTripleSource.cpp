@@ -9,12 +9,18 @@
 
 #include <yarp/serversql/impl/SqliteTripleSource.h>
 
+#include <yarp/serversql/impl/LogComponent.h>
+
 #include <cstdlib>
 #include <cstdio>
 
 using yarp::serversql::impl::SqliteTripleSource;
 using yarp::serversql::impl::Triple;
 using yarp::serversql::impl::TripleContext;
+
+namespace {
+YARP_SERVERSQL_LOG_COMPONENT(SQLITETRIPLESOURCE, "yarp.serversql.impl.SqliteTripleSource")
+} // namespace
 
 SqliteTripleSource::SqliteTripleSource(sqlite3 *db) : db(db)
 {
@@ -69,19 +75,17 @@ int SqliteTripleSource::find(Triple& t, TripleContext *context)
     char *query = nullptr;
     query = sqlite3_mprintf("SELECT id FROM tags WHERE %s",
                             condition(t,context).c_str());
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SQLITETRIPLESOURCE, "Query: %s", query);
     int result = sqlite3_prepare_v2(db, query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
-        printf("Error in query\n");
+        yCWarning(SQLITETRIPLESOURCE, "Error in query");
     }
     while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
         if (out!=-1) {
-            fprintf(stderr,"*** WARNING: multiple matches ignored\n");
+            yCWarning(SQLITETRIPLESOURCE, "WARNING: multiple matches ignored");
         }
         out = sqlite3_column_int(statement,0);
-        //printf("Match %d\n", out);
+        yCTrace(SQLITETRIPLESOURCE, "Match %d", out);
     }
 
     sqlite3_finalize(statement);
@@ -93,12 +97,10 @@ void SqliteTripleSource::remove_query(Triple& ti, TripleContext *context)
 {
     char *query = nullptr;
     query = sqlite3_mprintf("DELETE FROM tags WHERE %s",condition(ti,context).c_str());
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SQLITETRIPLESOURCE, "Query: %s", query);
     int result = sqlite3_exec(db, query, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
-        printf("Error in query\n");
+        yCWarning(SQLITETRIPLESOURCE, "Error in query");
     }
     sqlite3_free(query);
 }
@@ -107,12 +109,10 @@ void SqliteTripleSource::prune(TripleContext *context)
 {
     char *query = nullptr;
     query = sqlite3_mprintf("DELETE FROM tags WHERE rid IS NOT NULL AND rid  NOT IN (SELECT id FROM tags)");
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SQLITETRIPLESOURCE, "Query: %s", query);
     int result = sqlite3_exec(db, query, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
-        printf("Error in query\n");
+        yCWarning(SQLITETRIPLESOURCE, "Error in query");
     }
     sqlite3_free(query);
 }
@@ -123,12 +123,10 @@ std::list<Triple> SqliteTripleSource::query(Triple& ti, TripleContext *context)
     sqlite3_stmt *statement = nullptr;
     char *query = nullptr;
     query = sqlite3_mprintf("SELECT id, ns, name, value FROM tags WHERE %s",condition(ti,context).c_str());
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SQLITETRIPLESOURCE, "Query: %s", query);
     int result = sqlite3_prepare_v2(db, query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
-        printf("Error in query\n");
+        yCWarning(SQLITETRIPLESOURCE, "Error in query");
     }
     while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
         //int id = sqlite3_column_int(statement,0);
@@ -171,18 +169,13 @@ void SqliteTripleSource::insert(Triple& t, TripleContext *context)
     char *query = sqlite3_mprintf("INSERT INTO tags (rid,ns,name,value) VALUES(%s,%Q,%Q,%Q)",
                                   expressContext(context).c_str(),
                                   t.getNs(),t.getName(),t.getValue());
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SQLITETRIPLESOURCE, "Query: %s", query);
     int result = sqlite3_exec(db, query, nullptr, nullptr, &msg);
     if (result!=SQLITE_OK) {
         if (msg != nullptr) {
-            fprintf(stderr,"Error: %s\n", msg);
-            fprintf(stderr,"(Query was): %s\n", query);
-            fprintf(stderr,"(Location): %s:%d\n", __FILE__, __LINE__);
-            if (verbose) {
-                std::exit(1);
-            }
+            yCError(SQLITETRIPLESOURCE, "Error: %s", msg);
+            yCError(SQLITETRIPLESOURCE, "(Query was): %s", query);
+            yCError(SQLITETRIPLESOURCE, "(Location): %s:%d", __FILE__, __LINE__);
             sqlite3_free(msg);
         }
     }
@@ -204,13 +197,11 @@ void SqliteTripleSource::update(Triple& t, TripleContext *context)
                                 t.getValue(),
                                 expressContext(context).c_str());
     }
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SQLITETRIPLESOURCE, "Query: %s", query);
     int result = sqlite3_exec(db, query, nullptr, nullptr, &msg);
     if (result!=SQLITE_OK) {
         if (msg != nullptr) {
-            fprintf(stderr,"Error: %s\n", msg);
+            yCError(SQLITETRIPLESOURCE, "Error: %s", msg);
             sqlite3_free(msg);
         }
     }
@@ -224,21 +215,17 @@ void SqliteTripleSource::update(Triple& t, TripleContext *context)
 void SqliteTripleSource::begin(TripleContext *context)
 {
     int result = sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
-    if (verbose) {
-        printf("Query: BEGIN TRANSACTION;\n");
-    }
+    yCDebug(SQLITETRIPLESOURCE, "Query: BEGIN TRANSACTION;");
     if (result!=SQLITE_OK) {
-        printf("Error in BEGIN query\n");
+        yCWarning(SQLITETRIPLESOURCE, "Error in BEGIN query");
     }
 }
 
 void SqliteTripleSource::end(TripleContext *context)
 {
     int result = sqlite3_exec(db, "END TRANSACTION;", nullptr, nullptr, nullptr);
-    if (verbose) {
-        printf("Query: END TRANSACTION;\n");
-    }
+    yCDebug(SQLITETRIPLESOURCE, "Query: END TRANSACTION;");
     if (result!=SQLITE_OK) {
-        printf("Error in END query\n");
+        yCWarning(SQLITETRIPLESOURCE, "Error in END query");
     }
 }
