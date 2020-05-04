@@ -42,6 +42,15 @@ public:
     constexpr const char* name() const { return m_name; }
     constexpr operator bool() const { return m_name != nullptr; }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+    // These methods are currently used to support setVerbose and setQuiet
+    // around the code, they should not be used in new code
+    void setMinimumPrintLevel(LogType minimumPrintLevel);
+    void setMinimumForwardLevel(LogType minimumForwardLevel);
+#endif // YARP_NO_DEPRECATED
+
 private:
     const char* m_name { nullptr };
 
@@ -60,6 +69,9 @@ private:
 
     LogCallback m_printCallback { nullptr };
     LogCallback m_forwardCallback { nullptr };
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 };
 
 #define YARP_DECLARE_LOG_COMPONENT(name) \

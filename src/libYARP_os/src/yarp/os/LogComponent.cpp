@@ -74,3 +74,23 @@ LogCallback LogComponent::forwardCallback(LogType t) const
         return nullptr;
     }
 }
+
+void LogComponent::setMinimumPrintLevel(LogType minimumPrintLevel)
+{
+        m_tracePrintEnabled = (minimumPrintLevel <= yarp::os::Log::TraceType);
+        m_debugPrintEnabled = (minimumPrintLevel <= yarp::os::Log::DebugType);
+        m_infoPrintEnabled = (minimumPrintLevel <= yarp::os::Log::InfoType);
+        m_warningPrintEnabled = (minimumPrintLevel <= yarp::os::Log::WarningType);
+        m_errorPrintEnabled = (minimumPrintLevel <= yarp::os::Log::ErrorType);
+        m_fatalPrintEnabled = (minimumPrintLevel <= yarp::os::Log::FatalType);
+}
+
+void LogComponent::setMinimumForwardLevel(LogType minimumForwardLevel)
+{
+        m_traceForwardEnabled = (minimumForwardLevel <= yarp::os::Log::TraceType);
+        m_debugForwardEnabled = (minimumForwardLevel <= yarp::os::Log::DebugType);
+        m_infoForwardEnabled = (minimumForwardLevel <= yarp::os::Log::InfoType);
+        m_warningForwardEnabled = (minimumForwardLevel <= yarp::os::Log::WarningType);
+        m_errorForwardEnabled = (minimumForwardLevel <= yarp::os::Log::ErrorType);
+        m_fatalForwardEnabled = (minimumForwardLevel <= yarp::os::Log::FatalType);
+}
