@@ -19,18 +19,15 @@ namespace serversql {
 namespace impl {
 
 /**
- *
  * Open and close a database, viewed as a collection of triples.
- *
  */
-class TripleSourceCreator {
+class TripleSourceCreator
+{
 public:
-    TripleSourceCreator() :
-            implementation(nullptr),
-            accessor(nullptr) {
-    }
+    TripleSourceCreator() = default;
 
-    virtual ~TripleSourceCreator() {
+    virtual ~TripleSourceCreator()
+    {
         if (implementation != nullptr) {
             close();
         }
@@ -43,8 +40,8 @@ public:
     bool close();
 
 private:
-    void *implementation;
-    TripleSource *accessor;
+    void* implementation {nullptr};
+    TripleSource* accessor {nullptr};
 };
 
 } // namespace impl

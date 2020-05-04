@@ -24,9 +24,7 @@ namespace serversql {
 namespace impl {
 
 /**
- *
  * State information for a single name server operation on a database.
- *
  */
 class NameTripleState
 {
@@ -56,9 +54,7 @@ public:
 };
 
 /**
- *
  * An implementation of name service operators on a triple store.
- *
  */
 class NameServiceOnTriples : public yarp::name::NameService
 {
@@ -137,10 +133,10 @@ public:
 
     bool cmdHelp(NameTripleState& act);
 
-    virtual bool apply(yarp::os::Bottle& cmd,
-                       yarp::os::Bottle& reply,
-                       yarp::os::Bottle& event,
-                       const yarp::os::Contact& remote) override;
+    bool apply(yarp::os::Bottle& cmd,
+               yarp::os::Bottle& reply,
+               yarp::os::Bottle& event,
+               const yarp::os::Contact& remote) override;
 
     void goPublic() override
     {

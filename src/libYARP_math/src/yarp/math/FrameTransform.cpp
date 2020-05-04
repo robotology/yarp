@@ -8,6 +8,8 @@
 
 #include <yarp/math/FrameTransform.h>
 
+#include <yarp/math/Math.h>
+
 #include <cstdio>
 
 

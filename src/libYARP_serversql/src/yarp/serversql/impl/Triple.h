@@ -19,14 +19,13 @@ namespace serversql {
 namespace impl {
 
 /**
- *
  * The basic unit of data the name server works with.  There are three
  * basic fields, all optional: a namespace (ns), a name, and a value.
  * For those keeping score, this representation is a little bit like
  * that of RDF, and a great deal like machine tags.
- *
  */
-class Triple {
+class Triple
+{
 public:
     std::string ns;
     std::string name;
@@ -36,11 +35,13 @@ public:
     bool hasValue;
 
 
-    Triple() {
+    Triple()
+    {
         reset();
     }
 
-    Triple(const Triple& alt) {
+    Triple(const Triple& alt)
+    {
         hasNs = alt.hasNs;
         hasName = alt.hasName;
         hasValue = alt.hasValue;
@@ -49,12 +50,14 @@ public:
         value = alt.value;
     }
 
-    void reset() {
+    void reset()
+    {
         hasNs = hasName = hasValue = false;
         ns = name = value = "";
     }
 
-    void split(const std::string& str) {
+    void split(const std::string& str)
+    {
         hasNs = hasName = hasValue = false;
         ns = name = value = "";
         size_t start = 0;
@@ -75,28 +78,32 @@ public:
         hasName = true;
     }
 
-    const char *getNs() {
+    const char* getNs()
+    {
         if (!hasNs) {
             return nullptr;
         }
         return ns.c_str();
     }
 
-    const char *getName() {
+    const char* getName()
+    {
         if (!hasName) {
             return nullptr;
         }
         return name.c_str();
     }
 
-    const char *getValue() {
+    const char* getValue()
+    {
         if (!hasValue) {
             return nullptr;
         }
         return value.c_str();
     }
 
-    std::string toString() const {
+    std::string toString() const
+    {
         std::string r = "";
         if (hasName) {
             r = name;
@@ -111,13 +118,15 @@ public:
         return r;
     }
 
-    void setNsNameValue(const char *ns, const char *name, const char *value) {
+    void setNsNameValue(const char* ns, const char* name, const char* value)
+    {
         setNameValue(name,value);
         hasNs = true;
         this->ns = ns;
     }
 
-    void setNameValue(const char *name, const char *value) {
+    void setNameValue(const char* name, const char* value)
+    {
         reset();
         hasName = true;
         this->name = name;

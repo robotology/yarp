@@ -18,16 +18,16 @@ namespace serversql {
 namespace impl {
 
 /**
- *
  * Upper and lower bounds on port numbers etc for allocation.
- *
  */
-class AllocatorConfig {
+class AllocatorConfig
+{
 public:
     int minPortNumber;
     int maxPortNumber;
 
-    AllocatorConfig() {
+    AllocatorConfig()
+    {
         minPortNumber = maxPortNumber = -1;
     }
 };
@@ -38,15 +38,16 @@ public:
  * Abstract interface for allocating network resources.
  *
  */
-class Allocator {
+class Allocator
+{
 public:
-    virtual ~Allocator() {}
+    virtual ~Allocator() = default;
 
-    virtual yarp::os::Contact completePortName(const yarp::os::Contact& c)=0;
+    virtual yarp::os::Contact completePortName(const yarp::os::Contact& c) = 0;
 
-    virtual yarp::os::Contact completeSocket(const yarp::os::Contact& c)=0;
+    virtual yarp::os::Contact completeSocket(const yarp::os::Contact& c) = 0;
 
-    virtual bool freePortResources(const yarp::os::Contact& c)=0;
+    virtual bool freePortResources(const yarp::os::Contact& c) = 0;
 };
 
 } // namespace impl

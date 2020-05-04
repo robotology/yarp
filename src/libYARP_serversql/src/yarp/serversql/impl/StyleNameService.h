@@ -17,20 +17,22 @@ namespace yarp {
 namespace serversql {
 namespace impl {
 
-class StyleNameService : public yarp::name::NameService {
+class StyleNameService : public yarp::name::NameService
+{
 public:
-    StyleNameService() {
-    }
+    StyleNameService() = default;
 
-    bool configure(const yarp::os::Searchable& options) {
+    bool configure(const yarp::os::Searchable& options)
+    {
         this->options.fromString(options.toString());
         return true;
     }
 
-    virtual bool apply(yarp::os::Bottle& cmd,
-                       yarp::os::Bottle& reply,
-                       yarp::os::Bottle& event,
-                       const yarp::os::Contact& remote) override;
+    bool apply(yarp::os::Bottle& cmd,
+               yarp::os::Bottle& reply,
+               yarp::os::Bottle& event,
+               const yarp::os::Contact& remote) override;
+
 private:
     yarp::os::Property options;
     yarp::os::Property content;

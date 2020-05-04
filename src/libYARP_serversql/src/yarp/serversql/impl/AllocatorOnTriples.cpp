@@ -43,12 +43,12 @@ Contact AllocatorOnTriples::completePortName(const Contact& c) {
         }
         tmpid++;
         char buf[256];
-        sprintf(buf,"%d",tmpid);
+        std::snprintf(buf, 256, "%d", tmpid);
         t.setNsNameValue("alloc","tmpid",buf);
         db->update(t, nullptr);
         t.setNsNameValue("alloc","tmpid","*");
         context.setRid(db->find(t, nullptr));
-        sprintf(buf,"/tmp/port/%u", tmpid);
+        std::snprintf(buf, 256, "/tmp/port/%u", tmpid);
         name = buf;
     }
 
@@ -132,7 +132,7 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
             regid++;
             Triple t;
             char buf[256];
-            sprintf(buf,"%d",regid);
+            std::snprintf(buf, 256, "%d", regid);
             t.setNsNameValue("alloc","regid",buf);
             db->update(t, nullptr);
             t.setNsNameValue("alloc","regid","*");
@@ -188,7 +188,7 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
         }
         mcastCursor++;
         char buf[256];
-        sprintf(buf,"%d",mcastCursor);
+        std::snprintf(buf, 256, "%d", mcastCursor);
         t.setNsNameValue("alloc","mcastCursor",buf);
         db->update(t, nullptr);
         t.setNsNameValue("alloc","mcastCursor","*");
@@ -200,7 +200,7 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
             fprintf(stderr,"Ran out of mcast addresses\n");
             std::exit(1);
         }
-        sprintf(buf,"224.1.%d.%d", v2+1,v1+1);
+        std::snprintf(buf, 256, "224.1.%d.%d", v2+1, v1+1);
         name = buf;
     }
 
@@ -232,7 +232,7 @@ bool AllocatorOnTriples::freePortResources(const yarp::os::Contact& c) {
     t.setNsNameValue("alloc","regid","*");
     context.setRid(db->find(t, nullptr));
     char buf[256];
-    sprintf(buf,"%d",portNumber);
+    std::snprintf(buf, 256, "%d", portNumber);
     t.setNsNameValue("alloc",buf,"in_use");
     if (db->find(t,&context)>=0) {
         t.setNsNameValue("alloc",buf,"free");

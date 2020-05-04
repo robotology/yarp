@@ -18,11 +18,10 @@ namespace serversql {
 namespace impl {
 
 /**
- *
  * Allocates network resources, and tracks them using a TripleSource.
- *
  */
-class AllocatorOnTriples : public Allocator {
+class AllocatorOnTriples : public Allocator
+{
 public:
     AllocatorOnTriples() {
         regid = -1;
@@ -50,7 +49,6 @@ public:
     bool freePortResources(const yarp::os::Contact& c) override;
 
 private:
-
     int regid;
     int tmpid;
     int mcastCursor;

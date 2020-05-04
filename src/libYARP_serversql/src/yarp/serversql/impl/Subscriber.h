@@ -11,7 +11,7 @@
 #define YARP_SERVERSQL_IMPL_SUBSCRIBER_H
 
 #include <yarp/name/NameService.h>
-#include <yarp/serversql/impl/ConnectThread.h>
+#include <yarp/serversql/impl/ConnectManager.h>
 
 #include <string>
 #include <yarp/os/Vocab.h>
@@ -103,7 +103,8 @@ public:
     {
     }
 
-    int replyCode(bool flag) {
+    int replyCode(bool flag)
+    {
         return flag ? yarp::os::createVocab('o', 'k')
                     : yarp::os::createVocab('f', 'a', 'i', 'l');
     }

@@ -17,7 +17,8 @@ namespace yarp {
 namespace serversql {
 namespace impl {
 
-class ParseName {
+class ParseName
+{
 private:
     std::string carrier;
     std::string networkChoice;
@@ -25,19 +26,23 @@ private:
 public:
     void apply(const std::string& str);
 
-    std::string getPortName() {
+    std::string getPortName()
+    {
         return portName;
     }
 
-    std::string getCarrier() {
+    std::string getCarrier()
+    {
         return carrier;
     }
 
-    std::string getNetworkChoice() {
+    std::string getNetworkChoice()
+    {
         return networkChoice;
     }
 
-    void resetCarrier() {
+    void resetCarrier()
+    {
         carrier = "";
     }
 };

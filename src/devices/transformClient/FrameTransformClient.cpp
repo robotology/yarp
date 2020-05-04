@@ -19,6 +19,7 @@
 #include "FrameTransformClient.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/math/Math.h>
 #include <mutex>
 
 /*! \file FrameTransformClient.cpp */

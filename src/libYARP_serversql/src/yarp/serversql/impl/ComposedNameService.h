@@ -20,51 +20,61 @@ namespace serversql {
 namespace impl {
 
 /**
- *
  * Compose two name services into one.
- *
  */
-class ComposedNameService : public yarp::name::NameService {
+class ComposedNameService : public yarp::name::NameService
+{
 public:
-    ComposedNameService() {
-        ns1 = 0/*NULL*/;
-        ns2 = 0/*NULL*/;
+    ComposedNameService()
+    {
+        ns1 = nullptr;
+        ns2 = nullptr;
     }
 
-    void open(NameService& ns1,NameService& ns2) {
+    void open(NameService& ns1,NameService& ns2)
+    {
         this->ns1 = &ns1;
         this->ns2 = &ns2;
     }
 
-    virtual bool apply(yarp::os::Bottle& cmd,
-                       yarp::os::Bottle& reply,
-                       yarp::os::Bottle& event,
-                       const yarp::os::Contact& remote) override {
+    bool apply(yarp::os::Bottle& cmd,
+               yarp::os::Bottle& reply,
+               yarp::os::Bottle& event,
+               const yarp::os::Contact& remote) override
+    {
         if (ns1->apply(cmd,reply,event,remote)) {
             return true;
         }
         return ns2->apply(cmd,reply,event,remote);
     }
 
-    void onEvent(yarp::os::Bottle& event) override {
+    void onEvent(yarp::os::Bottle& event) override
+    {
         ns1->onEvent(event);
         ns2->onEvent(event);
     }
 
-    void goPublic() override {
+    void goPublic() override
+    {
         ns1->goPublic();
         ns2->goPublic();
     }
 
-    yarp::os::Contact query(const std::string& name) override {
+    yarp::os::Contact query(const std::string& name) override
+    {
         yarp::os::Contact result;
         result = ns1->query(name);
-        if (!result.isValid()) result = ns2->query(name);
+        if (!result.isValid()) {
+            result = ns2->query(name);
+        }
         return result;
     }
 
-    bool announce(const std::string& name, int activity) override {
-        if (ns2->announce(name,activity)) return true;
+    bool announce(const std::string& name, int activity) override
+    {
+        if (ns2->announce(name,activity)) {
+            return true;
+        }
         return ns1->announce(name,activity);
     }
 

@@ -21,17 +21,14 @@ namespace serversql {
 namespace impl {
 
 /**
- *
  * Side information for controlling access to triples.
- *
  */
-class TripleContext {
+class TripleContext
+{
 public:
-    int rid;
+    int rid {-1};
 
-    TripleContext() {
-        rid = -1;
-    }
+    TripleContext()  = default;
 
     void setRid(int rid) {
         this->rid = rid;
@@ -39,27 +36,26 @@ public:
 };
 
 /**
- *
  * Abstract view of a database as a collection of triples.  These are
  * the minimum functions that need to be implemented in order for the
  * name server to use a particular kind of database.
- *
  */
-class TripleSource {
+class TripleSource
+{
 public:
-    TripleSource() {
-        verbose = 0;
+    TripleSource()
+    {
         reset();
     }
 
-    virtual ~TripleSource() {
+    virtual ~TripleSource() = default;
+
+    virtual void reset()
+    {
     }
 
-    virtual void reset() {
-        //verbose = 0;
-    }
-
-    void setVerbose(int level) {
+    void setVerbose(int level)
+    {
         verbose = level;
     }
 
@@ -79,8 +75,9 @@ public:
 
     virtual void begin(TripleContext *context) = 0;
     virtual void end(TripleContext *context) = 0;
+
 protected:
-    int verbose;
+    int verbose {0};
 };
 
 } // namespace impl

@@ -26,11 +26,15 @@ set(YARP_serversql_IMPL_HDRS yarp/serversql/impl/TripleSourceCreator.h
                              yarp/serversql/impl/Subscriber.h
                              yarp/serversql/impl/SubscriberOnSql.h
                              yarp/serversql/impl/ComposedNameService.h
+                             yarp/serversql/impl/ConnectManager.h
                              yarp/serversql/impl/ConnectThread.h
                              yarp/serversql/impl/ParseName.h
                              yarp/serversql/impl/StyleNameService.h)
 
 set(YARP_serversql_IMPL_SRCS yarp/serversql/impl/TripleSourceCreator.cpp
+                             yarp/serversql/impl/SqliteTripleSource.cpp
+                             yarp/serversql/impl/ConnectManager.cpp
+                             yarp/serversql/impl/ConnectThread.cpp
                              yarp/serversql/impl/NameServiceOnTriples.cpp
                              yarp/serversql/impl/NameServerContainer.cpp
                              yarp/serversql/impl/AllocatorOnTriples.cpp

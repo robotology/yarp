@@ -12,7 +12,6 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/api.h>
-#include <yarp/math/Math.h>
 #include <yarp/math/Quaternion.h>
 
 namespace yarp {

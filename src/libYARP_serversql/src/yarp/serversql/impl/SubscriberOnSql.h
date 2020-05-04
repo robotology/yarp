@@ -20,18 +20,19 @@ namespace serversql {
 namespace impl {
 
 /**
- *
  * Interface for maintaining persistent connections using SQL.
- *
  */
-class SubscriberOnSql : public Subscriber {
+class SubscriberOnSql : public Subscriber
+{
 public:
-    SubscriberOnSql() : mutex() {
+    SubscriberOnSql()
+    {
         implementation = nullptr;
         verbose = false;
     }
 
-    virtual ~SubscriberOnSql() {
+    ~SubscriberOnSql() override
+    {
         if (implementation != nullptr) {
             close();
         }
@@ -41,15 +42,15 @@ public:
 
     bool close();
 
-    virtual bool addSubscription(const std::string& src,
-                                 const std::string& dest,
-                                 const std::string& mode) override;
+    bool addSubscription(const std::string& src,
+                         const std::string& dest,
+                         const std::string& mode) override;
 
-    virtual bool removeSubscription(const std::string& src,
-                                    const std::string& dest) override;
+    bool removeSubscription(const std::string& src,
+                            const std::string& dest) override;
 
-    virtual bool listSubscriptions(const std::string& port,
-                                   yarp::os::Bottle& reply) override;
+    bool listSubscriptions(const std::string& port,
+                           yarp::os::Bottle& reply) override;
 
     bool welcome(const std::string& port, int activity) override;
 
@@ -57,8 +58,8 @@ public:
 
     bool breakdown(const std::string& port);
 
-    virtual bool setTopic(const std::string& port,
-                          const std::string& structure, bool active) override;
+    bool setTopic(const std::string& port,
+                  const std::string& structure, bool active) override;
 
     bool listTopics(yarp::os::Bottle& topics) override;
 
@@ -81,12 +82,12 @@ public:
                            const std::string& destFull,
                            const std::string& mode);
 
-    virtual bool setType(const std::string& family,
-                         const std::string& structure,
-                         const std::string& value) override;
+    bool setType(const std::string& family,
+                 const std::string& structure,
+                 const std::string& value) override;
 
-    virtual std::string getType(const std::string& family,
-                                          const std::string& structure) override;
+    std::string getType(const std::string& family,
+                        const std::string& structure) override;
 
 
     void setVerbose(bool verbose) {
@@ -94,8 +95,8 @@ public:
     }
 
 private:
-    void *implementation;
-    bool verbose;
+    void *implementation {nullptr};
+    bool verbose {false};
     std::mutex mutex;
 };
 
