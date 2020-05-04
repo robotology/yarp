@@ -639,7 +639,6 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
             CHECK_FALSE(p.check("data_dir0")); // data_dirs not found
             CHECK_FALSE(p.check("project1")); // project1 not found
             p.clear();
-            //rf.setVerbose(true);
             rf.readConfig(p, "data.ini",
                           ResourceFinderOptions::findAllMatch());
             CHECK(p.find("magic_number").asInt32() == 42); // right priority

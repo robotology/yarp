@@ -299,7 +299,6 @@ int main(int argc, char *argv[])
     }
 
     yarp::os::ResourceFinder rf;
-    rf.setVerbose(true);
     rf.configure(argc, argv);
 
     DemoServerModule demoMod;

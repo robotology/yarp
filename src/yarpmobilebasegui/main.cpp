@@ -55,7 +55,6 @@ int main(int argc, char *argv[])
     }
 
     ResourceFinder rf;
-    rf.setVerbose(true);
     rf.configure(argc,argv);
 
     QApplication a(argc, argv);

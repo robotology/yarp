@@ -44,8 +44,14 @@ int yarp_robot_main(int argc, char *argv[]) {
     }
     if (options.check("list")) {
         yarp::os::ResourceFinder rf;
-        if (options.check("verbose"))
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+        if (options.check("verbose")) {
             rf.setVerbose(true);
+        }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
         if(options.check("user") || options.check("sysadm") || options.check("installed"))
         {
             if (options.check("user"))
@@ -67,20 +73,31 @@ int yarp_robot_main(int argc, char *argv[]) {
     if(options.check("import"))
     {
         Bottle importArg=options.findGroup("import");
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return import(importArg, ROBOTS, options.check("verbose"));
+#else
+        return import(importArg, ROBOTS);
+#endif
     }
 
     if(options.check("import-all-robots"))
     {
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return importAll(ROBOTS, options.check("verbose"));
+#else
+        return importAll(ROBOTS);
+#endif
     }
 
     if(options.check("remove"))
     {
 
         Bottle removeArg=options.findGroup("remove");
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return remove(removeArg, ROBOTS, options.check("verbose"));
+#else
+        return remove(removeArg, ROBOTS);
+#endif
     }
 
     if(options.check("where"))
@@ -103,8 +120,15 @@ int yarp_robot_main(int argc, char *argv[]) {
                 opts.searchLocations= ResourceFinderOptions::SearchLocations ( opts.searchLocations | ResourceFinderOptions::Installed);
         }
         yarp::os::ResourceFinder rf;
-        if (options.check("verbose"))
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+        if (options.check("verbose")) {
             rf.setVerbose(true);
+        }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
+
         yarp::os::Bottle paths=rf.findPaths(std::string("robots") + PATH_SEPARATOR +contextName, opts);
         for (size_t curCont=0; curCont<paths.size(); ++curCont)
             printf("%s\n", paths.get(curCont).asString().c_str());
@@ -151,16 +175,28 @@ int yarp_robot_main(int argc, char *argv[]) {
             printf("No robot name provided\n");
             return 0;
         }
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return diff(contextName, ROBOTS, options.check("verbose"));
+#else
+        return diff(contextName, ROBOTS);
+#endif
     }
     if(options.check("diff-list"))
     {
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return diffList(ROBOTS, options.check("verbose"));
+#else
+        return diffList(ROBOTS);
+#endif
     }
     if(options.check("merge"))
     {
         Bottle mergeArg=options.findGroup("merge");
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return merge(mergeArg, ROBOTS, options.check("verbose"));
+#else
+        return merge(mergeArg, ROBOTS);
+#endif
     }
     yarp_robot_help();
     return 1;

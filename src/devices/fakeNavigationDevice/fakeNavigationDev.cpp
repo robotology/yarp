@@ -42,7 +42,6 @@ bool fakeNavigation :: open(yarp::os::Searchable& config)
     if (config.check("from")) file_name    = config.find("from").asString();
 
     yarp::os::ResourceFinder rf;
-    rf.setVerbose(true);
     rf.setDefaultContext(context_name.c_str());
     rf.setDefaultConfigFile(file_name.c_str());
 

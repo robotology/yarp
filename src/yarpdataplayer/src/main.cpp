@@ -60,7 +60,6 @@ int main(int argc, char *argv[])
     }
 
     yarp::os::ResourceFinder rf;
-    rf.setVerbose( true );
     rf.setDefaultConfigFile( "config.ini" );        //overridden by --from parameter
     rf.setDefaultContext( "yarpdataplayer" );        //overridden by --context parameter
     rf.configure( argc, argv );

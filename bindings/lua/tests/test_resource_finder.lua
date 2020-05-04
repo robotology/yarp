@@ -13,7 +13,6 @@ function test_resource_finder()
   yarp.Network()
 
   local rf = yarp.ResourceFinder()
-  rf:setVerbose(true)
   rf:setDefaultContext("myContext")
   rf:setDefaultConfigFile("default.ini")
   rf:configure(arg)

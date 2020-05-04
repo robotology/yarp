@@ -82,7 +82,6 @@ int main(int argc, char * argv[])
     // prepare and configure the resource finder
     yarp::os::ResourceFinder rf;
     rf.configure(argc, argv);
-    rf.setVerbose(true);
 
     std::cout << "Configuring and starting module.\n";
     // This calls configure(rf) and, upon success, the module execution begins with a call to updateModule()

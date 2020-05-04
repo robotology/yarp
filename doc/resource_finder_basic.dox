@@ -89,7 +89,6 @@ But first let's provide the ResourceFinder with a default configuration file so 
 
 ~~~{.cpp}
 ResourceFinder rf;
-rf.setVerbose(); //logs searched directories
 rf.setDefaultConfigFile("config.ini"); //specifies a default configuration file
 rf.configure(argc, argv);
 ~~~

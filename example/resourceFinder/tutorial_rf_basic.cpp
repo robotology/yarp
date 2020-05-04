@@ -21,7 +21,6 @@ int main(int argc, char *argv[])
     Network yarp;
 
     ResourceFinder rf;
-    rf.setVerbose();
     rf.setDefaultConfigFile("config.ini");
     rf.setDefaultContext("randomMotion");
     rf.configure(argc, argv);

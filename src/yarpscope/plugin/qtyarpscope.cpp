@@ -85,7 +85,6 @@ bool QtYARPScope::parseParameters(QStringList params)
     }
     // Setup resource finder
     yarp::os::ResourceFinder rf;
-    rf.setVerbose();
     // TODO Read default values from yarpscope.ini
     rf.setDefaultConfigFile("yarpscope.ini");
     rf.setDefaultContext("yarpscope");

@@ -595,8 +595,11 @@ int recursiveMerge(std::string srcDirName, std::string destDirName, std::string 
     return (ok ? 0 : 1);//tbm
 }
 
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
+#else
+int import(yarp::os::Bottle& importArg, folderType fType)
+#endif
 {
     std::string contextName;
     if (importArg.size() >1)
@@ -607,7 +610,12 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
         return 0;
     }
     yarp::os::ResourceFinder rf;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     rf.setVerbose(verbose);
+YARP_WARNING_POP
+#endif
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::Installed;
     std::string originalpath = rf.findPath(getFolderStringName(fType).append(PATH_SEPARATOR).append(contextName), opts);
@@ -670,10 +678,19 @@ int import(yarp::os::Bottle& importArg, folderType fType, bool verbose)
     }
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 int importAll(folderType fType, bool verbose)
+#else
+int importAll(folderType fType)
+#endif
 {
     yarp::os::ResourceFinder rf;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     rf.setVerbose(verbose);
+YARP_WARNING_POP
+#endif
 
     prepareHomeFolder(rf, fType);
     ResourceFinderOptions opts;
@@ -716,7 +733,11 @@ int importAll(folderType fType, bool verbose)
     return 0;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
+#else
+int remove(yarp::os::Bottle& removeArg, folderType fType)
+#endif
 {
     std::string contextName;
     if (removeArg.size() >1)
@@ -727,7 +748,12 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
         return 0;
     }
     yarp::os::ResourceFinder rf;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     rf.setVerbose(verbose);
+YARP_WARNING_POP
+#endif
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::User;
     std::string targetPath = rf.findPath(getFolderStringName(fType).append(PATH_SEPARATOR).append(contextName), opts);
@@ -813,10 +839,19 @@ int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose)
     }
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 int diff(std::string contextName, folderType fType, bool verbose)
+#else
+int diff(std::string contextName, folderType fType)
+#endif
 {
     yarp::os::ResourceFinder rf;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     rf.setVerbose(verbose);
+YARP_WARNING_POP
+#endif
 
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::User;
@@ -844,7 +879,11 @@ int diff(std::string contextName, folderType fType, bool verbose)
 #endif
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 int diffList(folderType fType, bool verbose)
+#else
+int diffList(folderType fType)
+#endif
 {
     yarp::os::ResourceFinder rf;
     ResourceFinderOptions opts;
@@ -858,7 +897,12 @@ int diffList(folderType fType, bool verbose)
         {
             ostream tmp(nullptr);
             opts.searchLocations = ResourceFinderOptions::User;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
             rf.setQuiet();
+YARP_WARNING_POP
+#endif
             std::string userPath = rf.findPath(getFolderStringName(fType).append(PATH_SEPARATOR).append(subDir), opts);
             if (userPath == "")
                 continue;
@@ -877,7 +921,11 @@ int diffList(folderType fType, bool verbose)
     return 0;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose)
+#else
+int merge(yarp::os::Bottle& mergeArg, folderType fType)
+#endif
 {
     std::string contextName;
     if (mergeArg.size() >1)
@@ -888,7 +936,12 @@ int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose)
         return 0;
     }
     yarp::os::ResourceFinder rf;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     rf.setVerbose(verbose);
+YARP_WARNING_POP
+#endif
 
     if (mergeArg.size() >2)
     {

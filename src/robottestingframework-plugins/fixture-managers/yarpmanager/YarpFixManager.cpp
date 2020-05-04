@@ -42,7 +42,6 @@ bool YarpFixManager::setup(int argc, char** argv) {
         // load the config file and update the environment if available
         // E.g., "--application myapp.xml"
         yarp::os::ResourceFinder rf;
-        rf.setVerbose(false);
         rf.setDefaultContext("RobotTesting");
         rf.configure(argc, argv, false);
 

@@ -46,8 +46,14 @@ int yarp_context_main(int argc, char *argv[]) {
     }
     if (options.check("list")) {
         yarp::os::ResourceFinder rf;
-        if (options.check("verbose"))
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+        if (options.check("verbose")) {
             rf.setVerbose(true);
+        }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
         if(options.check("user") || options.check("sysadm") || options.check("installed"))
         {
             if (options.check("user"))
@@ -69,18 +75,31 @@ int yarp_context_main(int argc, char *argv[]) {
     if(options.check("import"))
     {
         Bottle importArg=options.findGroup("import");
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return import(importArg, CONTEXTS, options.check("verbose"));
+#else
+        return import(importArg, CONTEXTS);
+#endif
     }
 
     if(options.check("import-all"))
     {
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return importAll(CONTEXTS, options.check("verbose"));
+#else
+        return importAll(CONTEXTS);
+#endif
     }
 
     if(options.check("remove"))
     {
         Bottle removeArg=options.findGroup("remove");
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return remove(removeArg, CONTEXTS, options.check("verbose"));
+#else
+        return remove(removeArg, CONTEXTS);
+#endif
+
     }
 
     if(options.check("where"))
@@ -103,8 +122,14 @@ int yarp_context_main(int argc, char *argv[]) {
                 opts.searchLocations= ResourceFinderOptions::SearchLocations ( opts.searchLocations | ResourceFinderOptions::Installed);
         }
         yarp::os::ResourceFinder rf;
-        if (options.check("verbose"))
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+        if (options.check("verbose")) {
             rf.setVerbose(true);
+        }
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
         yarp::os::Bottle paths=rf.findPaths(std::string("contexts") + PATH_SEPARATOR +contextName, opts);
         for (size_t curCont=0; curCont<paths.size(); ++curCont)
             printf("%s\n", paths.get(curCont).asString().c_str());
@@ -141,16 +166,28 @@ int yarp_context_main(int argc, char *argv[]) {
             printf("No context name provided\n");
             return 0;
         }
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return diff(contextName, CONTEXTS, options.check("verbose"));
+#else
+        return diff(contextName, CONTEXTS);
+#endif
     }
     if(options.check("diff-list"))
     {
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return diffList(CONTEXTS, options.check("verbose"));
+#else
+        return diffList(CONTEXTS);
+#endif
     }
     if(options.check("merge"))
     {
         Bottle mergeArg=options.findGroup("merge");
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
         return merge(mergeArg, CONTEXTS, options.check("verbose"));
+#else
+        return merge(mergeArg, CONTEXTS);
+#endif
     }
     yarp_context_help();
     return 1;

@@ -40,9 +40,8 @@ public:
 
     const ResourceFinder& operator=(const ResourceFinder& alt);
 
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     /**
-     *
      * Request that information be printed to the console on how
      * resources are being found.  This is especially useful to
      * understand why resources are *not* found or the wrong resource
@@ -51,12 +50,11 @@ public:
      * @param verbose set/suppress printing of information
      *
      * @return true iff information will be printed
-     *
+     * @deprecated since YARP 3.4
      */
     bool setVerbose(bool verbose = true);
 
     /**
-     *
      * Request that information be suppressed from the console.  By
      * default ResourceFinder will print messages if it fails to find
      * files, for example.
@@ -64,9 +62,10 @@ public:
      * @param quiet suppress printing of information
      *
      * @return true iff information will be suppressed
-     *
+     * @deprecated since YARP 3.4
      */
     bool setQuiet(bool quiet = true);
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Sets up the ResourceFinder.

@@ -181,7 +181,6 @@ void YarpPluginSelector::scan()
     if (!rf.isConfigured()) {
         rf.configure(0, nullptr);
     }
-    rf.setQuiet(true);
     Bottle plugin_paths = rf.findPaths("plugins");
     if (plugin_paths.size() == 0) {
         plugin_paths = rf.findPaths("share/yarp/plugins");
