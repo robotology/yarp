@@ -12,7 +12,6 @@
 
 #include <yarp/os/InputProtocol.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
 
