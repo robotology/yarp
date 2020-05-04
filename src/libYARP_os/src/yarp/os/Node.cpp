@@ -18,7 +18,7 @@
 #include <yarp/os/PortReport.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Type.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/NameClient.h>
 
 #include <algorithm>
@@ -30,6 +30,11 @@
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+
+namespace {
+YARP_OS_LOG_COMPONENT(NODE, "yarp.os.Node")
+}
+
 
 class ROSReport : public PortReport
 {
@@ -431,7 +436,7 @@ void yarp::os::Node::Helper::add(Contactable& contactable)
         name = item.nc.getNodeName();
     }
     if (name != item.nc.getNodeName()) {
-        fprintf(stderr, "Node name mismatch, expected [%s] but got [%s]\n", name.c_str(), item.nc.getNodeName().c_str());
+        yCError(NODE, "Node name mismatch, expected [%s] but got [%s]\n", name.c_str(), item.nc.getNodeName().c_str());
         return;
     }
     prepare(name);
@@ -494,9 +499,7 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
     }
     NodeArgs na;
     na.request.read(reader);
-    //printf("NODE API for %s received %s\n",
-    //name.c_str(),
-    //na.request.toString().c_str());
+    yCDebug(NODE, "NODE API for %s received %s\n", name.c_str(), na.request.toString().c_str());
     std::string key = na.request.get(0).asString();
     na.args = na.request.tail().tail();
     if (key == "getBusStats") {
@@ -530,9 +533,7 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
         full.addInt32(na.code);
         full.addString(na.msg);
         full.add(na.reply);
-        //printf("NODE %s <<< %s\n",
-        //name.c_str(),
-        //full.toString().c_str());
+        yCDebug(NODE, "NODE %s <<< %s\n", name.c_str(), full.toString().c_str());
         full.write(*reader.getWriter());
     }
     return true;
@@ -542,14 +543,14 @@ bool yarp::os::Node::Helper::read(ConnectionReader& reader)
 Node::Node() :
         mPriv(new Helper)
 {
-    yAssert(mPriv != nullptr);
+    yCAssert(NODE, mPriv != nullptr);
     mPriv->owner = this;
 }
 
 Node::Node(const std::string& name) :
         mPriv(new Helper)
 {
-    yAssert(mPriv != nullptr);
+    yCAssert(NODE, mPriv != nullptr);
     mPriv->owner = this;
     Nodes& nodes = NameClient::getNameClient().getNodes();
     mPriv->prev_name = nodes.getActiveName();
