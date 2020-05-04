@@ -11,7 +11,7 @@
 
 #include <yarp/os/NetType.h>
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PlatformSignal.h>
 
 #include <cstdlib>
@@ -33,6 +33,10 @@
 
 
 using namespace yarp::os::impl;
+
+namespace {
+YARP_OS_LOG_COMPONENT(THREADIMPL, "yarp.os.impl.ThreadImpl")
+} // namespace
 
 static std::atomic<int> threadCount{0};
 
@@ -57,7 +61,7 @@ void theExecutiveBranch(void* args)
 
     auto* thread = (ThreadImpl*)args;
 
-    YARP_DEBUG(Logger::get(), "Thread starting up");
+    yCDebug(THREADIMPL, "Thread starting up");
 
     bool success = thread->threadInit();
     thread->notify(success);
@@ -81,12 +85,8 @@ void theExecutiveBranch(void* args)
         thread->threadRelease();
     }
 
-
-    //YARP_ERROR(Logger::get(), std::string("uncaught exception in thread: ") +
-    //             e.toString());
     --threadCount;
-    YARP_DEBUG(Logger::get(), "Thread shutting down");
-    //ACE_Thread::exit();
+    yCDebug(THREADIMPL, "Thread shutting down");
 
     thread->notify(false);
     thread->synchroPost();
@@ -97,7 +97,7 @@ void theExecutiveBranch(void* args)
 
 ThreadImpl::~ThreadImpl()
 {
-    YARP_DEBUG(Logger::get(), "Thread being deleted");
+    yCDebug(THREADIMPL, "Thread being deleted");
     join();
 }
 
@@ -127,7 +127,7 @@ int ThreadImpl::join(double seconds)
         if (seconds > 0) {
             if (!initWasSuccessful) {
                 // join called before start completed
-                YARP_ERROR(Logger::get(), std::string("Tried to join a thread before starting it"));
+                yCError(THREADIMPL, "Tried to join a thread before starting it");
                 return -1;
             }
             synchro.waitWithTimeout(seconds);
@@ -197,23 +197,21 @@ bool ThreadImpl::start()
         needJoin = true;
 
         // the thread started correctly, wait for the initialization
-        YARP_DEBUG(Logger::get(), std::string("Child thread initializing"));
+        yCDebug(THREADIMPL, "Child thread initializing");
         synchroWait();
         initWasSuccessful = true;
         if (opened) {
             ++threadCount;
-            YARP_DEBUG(Logger::get(), "Child thread initialized ok");
+            yCDebug(THREADIMPL, "Child thread initialized ok");
             afterStart(true);
             return true;
         }
-        YARP_DEBUG(Logger::get(), "Child thread did not initialize ok");
+        yCDebug(THREADIMPL, "Child thread did not initialize ok");
         //wait for the thread to really exit
         ThreadImpl::join(-1);
     }
     //the thread did not start, call afterStart() to warn the user
-    char tmp[80];
-    sprintf(tmp, "%d", result);
-    YARP_ERROR(Logger::get(), std::string("A thread failed to start with error code: ") + std::string(tmp));
+    yCError(THREADIMPL, "A thread failed to start with error code: %d", result);
     afterStart(false);
     return false;
 }
@@ -262,7 +260,7 @@ int ThreadImpl::setPriority(int priority, int policy)
         if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
             return ACE_Thread::setprio(thread.native_handle(), priority, policy);
         }
-        YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
+        yCError(THREADIMPL, "Cannot set priority without ACE");
 #elif defined(__unix__)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
             struct sched_param thread_param;
@@ -270,10 +268,10 @@ int ThreadImpl::setPriority(int priority, int policy)
             int ret = pthread_setschedparam(thread.native_handle(), policy, &thread_param);
             return (ret != 0) ? -1 : 0;
         } else {
-            YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
+            yCError(THREADIMPL, "Cannot set priority without ACE");
         }
 #else
-        YARP_ERROR(Logger::get(), "Cannot set priority without ACE");
+        yCError(THREADIMPL, "Cannot set priority without ACE");
 #endif
     }
     return 0;
@@ -287,7 +285,7 @@ int ThreadImpl::getPriority()
         if (std::is_same<std::thread::native_handle_type, ACE_hthread_t>::value) {
             ACE_Thread::getprio(thread.native_handle(), prio);
         } else {
-            YARP_ERROR(Logger::get(), "Cannot get priority without ACE");
+            yCError(THREADIMPL, "Cannot get priority without ACE");
         }
 #elif defined(__unix__)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
@@ -296,11 +294,11 @@ int ThreadImpl::getPriority()
             if (pthread_getschedparam(thread.native_handle(), &policy, &thread_param) == 0) {
                 prio = thread_param.sched_priority;
             } else {
-                YARP_ERROR(Logger::get(), "Cannot get priority without ACE");
+                yCError(THREADIMPL, "Cannot get priority without ACE");
             }
         }
 #else
-        YARP_ERROR(Logger::get(), "Cannot get priority without ACE");
+        yCError(THREADIMPL, "Cannot get priority without ACE");
 #endif
     }
     return prio;
@@ -315,7 +313,7 @@ int ThreadImpl::getPolicy()
             int prio;
             ACE_Thread::getprio(thread.native_handle(), prio, policy);
         } else {
-            YARP_ERROR(Logger::get(), "Cannot get scheduling policy without ACE");
+            yCError(THREADIMPL, "Cannot get scheduling policy without ACE");
         }
 #elif defined(__unix__)
         if (std::is_same<std::thread::native_handle_type, pthread_t>::value) {
@@ -324,10 +322,10 @@ int ThreadImpl::getPolicy()
                 policy = defaultPolicy;
             }
         } else {
-            YARP_ERROR(Logger::get(), "Cannot get scheduling policy without ACE");
+            yCError(THREADIMPL, "Cannot get scheduling policy without ACE");
         }
 #else
-        YARP_ERROR(Logger::get(), "Cannot get scheduling policy without ACE");
+        yCError(THREADIMPL, "Cannot get scheduling policy without ACE");
 #endif
     }
     return policy;
