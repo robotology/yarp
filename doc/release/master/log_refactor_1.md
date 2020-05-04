@@ -44,3 +44,5 @@ log_refactor_1 {#master}
 
 * When color is enabled, the loglevel is represented by a single colored
   character.
+
+* The `setLogCallback()` method is deprecated in favour of `setPrintCallback()`

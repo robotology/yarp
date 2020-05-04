@@ -847,6 +847,13 @@ yarp::os::LogStream yarp::os::Log::fatal() const
                                mPriv->comp);
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+void yarp::os::Log::setLogCallback(yarp::os::Log::LogCallback cb)
+{
+    yarp::os::impl::LogPrivate::current_print_callback = cb;
+}
+#endif
+
 void yarp::os::Log::setPrintCallback(yarp::os::Log::LogCallback cb)
 {
     yarp::os::impl::LogPrivate::current_print_callback = cb;

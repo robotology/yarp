@@ -94,6 +94,11 @@ public:
                                  double networktime,
                                  const char* comp_name);
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+    YARP_DEPRECATED_MSG("Use setPrintCallback instead")
+    static void setLogCallback(LogCallback);
+#endif // YARP_NO_DEPRECATED
+
     static void setPrintCallback(LogCallback);
     static void setForwardCallback(LogCallback);
 
