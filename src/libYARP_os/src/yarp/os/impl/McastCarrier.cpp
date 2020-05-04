@@ -14,13 +14,16 @@
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Route.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 
 #include <cstdlib>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+namespace {
+YARP_OS_LOG_COMPONENT(MCASTCARRIER, "yarp.os.impl.McastCarrier")
+} // namespace
 
 ElectionOf<PeerRecord<McastCarrier>>* McastCarrier::caster = nullptr;
 
@@ -31,7 +34,7 @@ ElectionOf<PeerRecord<McastCarrier>>& McastCarrier::getCaster()
         caster = new ElectionOf<PeerRecord<McastCarrier>>;
         NetworkBase::unlock();
         if (caster == nullptr) {
-            YARP_ERROR(Logger::get(), "No memory for McastCarrier::caster");
+            yCError(MCASTCARRIER, "No memory for McastCarrier::caster");
             std::exit(1);
         }
     } else {
@@ -59,7 +62,7 @@ yarp::os::impl::McastCarrier::~McastCarrier()
                 NetworkBase::unregisterName(mcastName);
             } else {
                 if (!peer->takeElection()) {
-                    YARP_ERROR(Logger::get(), "Something went wrong during the shift of the election...");
+                    yCError(MCASTCARRIER, "Something went wrong during the shift of the election...");
                 }
             }
         }
@@ -90,7 +93,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto)
         return false;
     }
 
-    YARP_DEBUG(Logger::get(), "Adding extra mcast header");
+    yCDebug(MCASTCARRIER, "Adding extra mcast header");
 
     Contact addr;
 
@@ -98,7 +101,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto)
     std::string altKey = proto.getRoute().getFromName() + "/net=" + alt.getHost();
     McastCarrier* elect = getCaster().getElect(altKey);
     if (elect != nullptr) {
-        YARP_DEBUG(Logger::get(), "picking up peer mcast name");
+        yCDebug(MCASTCARRIER, "picking up peer mcast name");
         addr = elect->mcastAddress;
         mcastName = elect->mcastName;
     } else {
@@ -122,7 +125,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto)
         if (ss.size() != 4) {
             addr = Contact();
         } else {
-            yAssert(ss.size() == 4);
+            yCAssert(MCASTCARRIER, ss.size() == 4);
             for (int i = 0; i < 4; i++) {
                 ip[i] = NetType::toInt(ss.get(i));
             }
@@ -131,8 +134,8 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto)
     }
 
     if (!addr.isValid()) {
-        YARP_ERROR(Logger::get(), "Name server not responding helpfully, setting mcast name arbitrarily.");
-        YARP_ERROR(Logger::get(), "Only a single mcast address supported in this mode.");
+        yCError(MCASTCARRIER, "Name server not responding helpfully, setting mcast name arbitrarily.");
+        yCError(MCASTCARRIER, "Only a single mcast address supported in this mode.");
         addr = Contact("/tmp/mcast", "mcast", "224.3.1.1", 11000);
     }
 
@@ -149,11 +152,11 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto)
 
 bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto)
 {
-    YARP_DEBUG(Logger::get(), "Expecting extra mcast header");
+    yCDebug(MCASTCARRIER, "Expecting extra mcast header");
     ManagedBytes block(6);
     yarp::conf::ssize_t len = proto.is().readFull(block.bytes());
     if ((size_t)len != block.length()) {
-        YARP_ERROR(Logger::get(), "problem with MCAST header");
+        yCError(MCASTCARRIER, "problem with MCAST header");
         return false;
     }
 
@@ -173,7 +176,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto)
     }
     port = 256 * base[4] + base[5];
     Contact addr("mcast", add, port);
-    YARP_DEBUG(Logger::get(), std::string("got mcast header ") + addr.toURI());
+    yCDebug(MCASTCARRIER, "got mcast header %s", addr.toURI().c_str());
     mcastAddress = addr;
 
     return true;
@@ -183,7 +186,7 @@ bool yarp::os::impl::McastCarrier::expectExtraHeader(ConnectionState& proto)
 bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool sender)
 {
     stream = new DgramTwoWayStream();
-    yAssert(stream != nullptr);
+    yCAssert(MCASTCARRIER, stream != nullptr);
     Contact remote = proto.getStreams().getRemoteAddress();
     local = proto.getStreams().getLocalAddress();
     //(yarp::NameConfig::getEnv("YARP_MCAST_TEST")!="");
@@ -202,8 +205,7 @@ bool yarp::os::impl::McastCarrier::becomeMcast(ConnectionState& proto, bool send
         key += "/net=";
         key += local.getHost();
 
-        YARP_DEBUG(Logger::get(),
-                   std::string("multicast key: ") + key);
+        yCDebug(MCASTCARRIER, "multicast key: %s", key.c_str());
         addSender(key);
     }
 
