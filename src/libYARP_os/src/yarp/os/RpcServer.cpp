@@ -8,10 +8,15 @@
  */
 
 #include <yarp/os/RpcServer.h>
-#include <yarp/os/impl/Logger.h>
+
+#include <yarp/os/impl/LogComponent.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
+
+namespace {
+YARP_OS_LOG_COMPONENT(RPCSERVER, "yarp.os.RpcServer")
+} // namespace
 
 RpcServer::RpcServer()
 {
@@ -29,7 +34,7 @@ bool RpcServer::write(const PortWriter& writer, const PortWriter* callback) cons
 {
     YARP_UNUSED(writer);
     YARP_UNUSED(callback);
-    YARP_SPRINTF1(Logger::get(), error, "RpcServer %s cannot write, please use a regular Port or RpcClient for that", port.getName().c_str());
+    yCError(RPCSERVER, "%s cannot write, please use a regular Port or RpcClient for that", port.getName().c_str());
     return false;
 }
 
@@ -40,14 +45,14 @@ bool RpcServer::write(const PortWriter& writer,
     YARP_UNUSED(writer);
     YARP_UNUSED(reader);
     YARP_UNUSED(callback);
-    YARP_SPRINTF1(Logger::get(), error, "RpcServer %s cannot write, please use a regular Port or RpcClient for that", port.getName().c_str());
+    yCError(RPCSERVER, "%s cannot write, please use a regular Port or RpcClient for that", port.getName().c_str());
     return false;
 }
 
 bool RpcServer::read(PortReader& reader, bool willReply)
 {
     if (!willReply) {
-        YARP_SPRINTF1(Logger::get(), error, "RpcServer %s must reply, please use a regular Port if you do not want to", port.getName().c_str());
+        yCError(RPCSERVER, "%s must reply, please use a regular Port if you do not want to", port.getName().c_str());
         // this is an error for RpcServer
         return false;
     }
@@ -56,17 +61,17 @@ bool RpcServer::read(PortReader& reader, bool willReply)
 
 void RpcServer::setInputMode(bool expectInput)
 {
-    yAssert(expectInput);
+    yCAssert(RPCSERVER, expectInput);
 }
 
 
 void RpcServer::setOutputMode(bool expectOutput)
 {
-    yAssert(!expectOutput);
+    yCAssert(RPCSERVER, !expectOutput);
 }
 
 
 void RpcServer::setRpcMode(bool expectRpc)
 {
-    yAssert(expectRpc);
+    yCAssert(RPCSERVER, expectRpc);
 }

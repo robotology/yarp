@@ -18,6 +18,7 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/impl/BottleImpl.h>
+#include <yarp/os/impl/LogComponent.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -39,6 +40,10 @@ using yarp::os::impl::StoreInt8;
 using yarp::os::impl::StoreList;
 using yarp::os::impl::StoreString;
 using yarp::os::impl::StoreVocab;
+
+
+YARP_OS_LOG_COMPONENT(STORABLE, "yarp.os.impl.Storable")
+
 
 const int StoreInt8::code = BOTTLE_TAG_INT8;
 const int StoreInt16::code = BOTTLE_TAG_INT16;
@@ -93,7 +98,7 @@ Storable* Storable::createByCode(std::int32_t id)
         break;
     case StoreList::code:
         storable = new StoreList();
-        yAssert(storable != nullptr);
+        yCAssert(STORABLE, storable != nullptr);
         storable->asList()->implementation->setNested(true);
         break;
     default:
@@ -102,10 +107,10 @@ Storable* Storable::createByCode(std::int32_t id)
             subCode = (id & UNIT_MASK);
             if ((id & BOTTLE_TAG_DICT) != 0) {
                 storable = new StoreDict();
-                yAssert(storable != nullptr);
+                yCAssert(STORABLE, storable != nullptr);
             } else {
                 storable = new StoreList();
-                yAssert(storable != nullptr);
+                yCAssert(STORABLE, storable != nullptr);
                 storable->asList()->implementation->specialize(subCode);
                 storable->asList()->implementation->setNested(true);
             }

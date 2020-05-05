@@ -12,6 +12,7 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformNetdb.h>
 
@@ -40,6 +41,11 @@ using yarp::os::Searchable;
 using yarp::os::Value;
 using yarp::os::impl::NameConfig;
 
+#if !defined(YARP_HAS_ACE)
+namespace {
+YARP_OS_LOG_COMPONENT(CONTACT, "yarp.os.Contact" )
+}
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -343,7 +349,7 @@ std::string Contact::convertHostToIp(const char* name)
     hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
 
     if ((status = yarp::os::impl::getaddrinfo(name, "http", &hints, &res)) != 0) {
-        fprintf(stderr, "getaddrinfo error: %s\n", yarp::os::impl::gai_strerror(status));
+        yCError(CONTACT, "getaddrinfo error: %s\n", yarp::os::impl::gai_strerror(status));
         std::exit(1);
     }
 

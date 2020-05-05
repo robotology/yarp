@@ -9,10 +9,4 @@
 
 #include <yarp/os/impl/Dispatcher.h>
 
-using namespace yarp::os::impl;
-
-// just to keep linkers from complaining about empty archive
-bool dummyDispatcherMethod()
-{
-    return false;
-}
+YARP_OS_LOG_COMPONENT(DISPATCHER, "yarp.os.impl.Dispatcher")

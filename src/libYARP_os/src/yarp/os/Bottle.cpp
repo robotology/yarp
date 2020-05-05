@@ -12,7 +12,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/impl/BottleImpl.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 
 
 using yarp::os::Bottle;
@@ -22,6 +22,10 @@ using yarp::os::Property;
 using yarp::os::Value;
 using yarp::os::impl::BottleImpl;
 using yarp::os::impl::Storable;
+
+namespace {
+YARP_OS_LOG_COMPONENT(BOTTLE, "yarp.os.Bottle")
+}
 
 // FIXME this can be constexpr, but swig 3.0.8 is not happy
 const Bottle::size_type Bottle::npos = static_cast<Bottle::size_type>(-1);
@@ -45,7 +49,7 @@ Bottle::Bottle() :
         Searchable(),
         implementation(new BottleImpl(this))
 {
-    yAssert(implementation != nullptr);
+    yCAssert(BOTTLE, implementation != nullptr);
     implementation->invalid = false;
     implementation->ro = false;
 }
@@ -55,7 +59,7 @@ Bottle::Bottle(const std::string& text) :
         Searchable(),
         implementation(new BottleImpl(this))
 {
-    yAssert(implementation != nullptr);
+    yCAssert(BOTTLE, implementation != nullptr);
     implementation->invalid = false;
     implementation->ro = false;
     fromString(text);
@@ -66,7 +70,7 @@ Bottle::Bottle(const Bottle& rhs) :
         Searchable(rhs),
         implementation(new BottleImpl(this))
 {
-    yAssert(implementation != nullptr);
+    yCAssert(BOTTLE, implementation != nullptr);
     implementation->invalid = false;
     implementation->ro = false;
     copy(rhs);
@@ -86,7 +90,7 @@ Bottle::Bottle(std::initializer_list<Value> values) :
         Searchable(),
         implementation(new BottleImpl(this))
 {
-    yAssert(implementation != nullptr);
+    yCAssert(BOTTLE, implementation != nullptr);
     implementation->invalid = false;
     implementation->ro = false;
 

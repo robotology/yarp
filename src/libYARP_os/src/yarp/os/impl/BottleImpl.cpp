@@ -14,7 +14,7 @@
 
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/MemoryOutputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
@@ -29,12 +29,9 @@ using yarp::os::Value;
 using yarp::os::impl::BottleImpl;
 using yarp::os::impl::Storable;
 
-//#define YMSG(x) printf x;
-//#define YTRACE(x) YMSG(("at %s\n", x))
-
-#define YMSG(x)
-#define YTRACE(x)
-
+namespace {
+YARP_OS_LOG_COMPONENT(BOTTLEIMPL, "yarp.os.impl.BottleImpl")
+} // namespace
 
 BottleImpl::BottleImpl() :
         parent(nullptr),
@@ -340,16 +337,16 @@ bool BottleImpl::fromBytes(ConnectionReader& reader)
         return false;
     }
     std::int32_t id = speciality;
-    YMSG(("READING, nest flag is %d\n", nested));
+    yCTrace(BOTTLEIMPL, "READING, nest flag is %d", nested);
     if (id == 0) {
         id = reader.expectInt32();
-        YMSG(("READ subcode %" PRId32 "\n", id));
+        yCTrace(BOTTLEIMPL, "READ subcode %" PRId32, id);
     } else {
-        YMSG(("READ skipped subcode %" PRId32 "\n", speciality));
+        yCTrace(BOTTLEIMPL, "READ skipped subcode %" PRId32, speciality);
     }
     Storable* storable = Storable::createByCode(id);
     if (storable == nullptr) {
-        YARP_SPRINTF1(Logger::get(), error, "BottleImpl reader failed, unrecognized object code %" PRId32, id);
+        yCError(BOTTLEIMPL, "Reader failed, unrecognized object code %" PRId32, id);
         return false;
     }
     storable->readRaw(reader);
@@ -390,7 +387,7 @@ bool BottleImpl::fromBytes(const Bytes& data)
         if (reader.isError()) {
             return false;
         }
-        YMSG(("READ got top level code %" PRId32 "\n", code));
+        yCTrace(BOTTLEIMPL, "READ got top level code %" PRId32, code);
         code = code & UNIT_MASK;
         if (code != 0) {
             specialize(code);
@@ -400,7 +397,7 @@ bool BottleImpl::fromBytes(const Bytes& data)
     if (reader.isError()) {
         return false;
     }
-    YMSG(("READ bottle length %d\n", len));
+    yCTrace(BOTTLEIMPL, "READ bottle length %d", len);
     for (int i = 0; i < len; i++) {
         bool ok = fromBytes(reader);
         if (!ok) {
@@ -414,14 +411,14 @@ bool BottleImpl::fromBytes(const Bytes& data)
 void BottleImpl::toBytes(Bytes& data)
 {
     synch();
-    yAssert(data.length() == byteCount());
+    yCAssert(BOTTLEIMPL, data.length() == byteCount());
     memcpy(data.get(), getBytes(), byteCount());
 }
 
 
 const char* BottleImpl::getBytes() const
 {
-    YMSG(("am I nested? %d\n", nested));
+    yCTrace(BOTTLEIMPL, "am I nested? %d", nested);
     synch();
     return &data[0];
 }
@@ -444,16 +441,6 @@ bool BottleImpl::write(ConnectionWriter& writer) const
         writer.appendText(toString());
     } else {
         synch();
-        /*
-          if (!nested) {
-          // No byte count any more, to facilitate nesting
-          //YMSG(("bottle byte count %d\n", byteCount()));
-          //writer.appendInt32(byteCount()+sizeof(NetInt32));
-
-          writer.appendInt32(StoreList::code + speciality);
-          }
-        */
-        // writer.appendBlockCopy(Bytes((char*)getBytes(), byteCount()));
         writer.appendBlock(getBytes(), byteCount());
     }
     return !writer.isError();
@@ -503,7 +490,7 @@ bool BottleImpl::read(ConnectionReader& reader)
             if (reader.isError()) {
                 return false;
             }
-            YMSG(("READ got top level code %" PRId32 "\n", code));
+            yCTrace(BOTTLEIMPL, "READ got top level code %" PRId32, code);
             code = code & UNIT_MASK;
             if (code != 0) {
                 specialize(code);
@@ -519,7 +506,7 @@ bool BottleImpl::read(ConnectionReader& reader)
         if (reader.isError()) {
             return false;
         }
-        YMSG(("READ got length %d\n", len));
+        yCTrace(BOTTLEIMPL, "READ got length %d", len);
         for (int i = 0; i < len; i++) {
             bool ok = fromBytes(reader);
             if (!ok) {
@@ -540,23 +527,23 @@ void BottleImpl::synch()
     if (dirty) {
         if (!nested) {
             subCode();
-            YMSG(("bottle code %" PRId32 "\n", StoreList::code + subCode()));
+            yCTrace(BOTTLEIMPL, "bottle code %" PRId32, StoreList::code + subCode());
         }
         data.clear();
         BufferedConnectionWriter writer;
         if (!nested) {
             writer.appendInt32(StoreList::code + speciality);
-            YMSG(("wrote bottle code %" PRId32 "\n", StoreList::code + speciality));
+            yCTrace(BOTTLEIMPL, "wrote bottle code %" PRId32, StoreList::code + speciality);
         }
-        YMSG(("bottle length %zd\n", size()));
+        yCTrace(BOTTLEIMPL, "bottle length %zd", size());
         writer.appendInt32(static_cast<std::int32_t>(size()));
         for (auto s : content) {
             if (speciality == 0) {
-                YMSG(("subcode %" PRId32 "\n", s->getCode()));
+                yCTrace(BOTTLEIMPL, "subcode %" PRId32, s->getCode());
                 writer.appendInt32(s->getCode());
             } else {
-                YMSG(("skipped subcode %" PRId32 "\n", s->getCode()));
-                yAssert(speciality == s->getCode());
+                yCTrace(BOTTLEIMPL, "skipped subcode %" PRId32, s->getCode());
+                yCAssert(BOTTLEIMPL, speciality == s->getCode());
             }
             if (s->isList()) {
                 s->asList()->implementation->setNested(true);
@@ -648,7 +635,7 @@ Storable* BottleImpl::pop()
         content.pop_back();
         dirty = true;
     }
-    yAssert(stb != nullptr);
+    yCAssert(BOTTLEIMPL, stb != nullptr);
     return stb;
 }
 
@@ -698,7 +685,7 @@ void BottleImpl::copyRange(const BottleImpl* alt, size_type first, size_type len
 void BottleImpl::edit()
 {
     if (ro) {
-        yFatal("Attempted to modify the null bottle");
+        yCFatal(BOTTLEIMPL, "Attempted to modify the null bottle");
     }
     if (invalid) {
         invalid = false;

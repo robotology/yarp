@@ -11,6 +11,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/SocketTwoWayStream.h>
 
@@ -19,6 +20,11 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+namespace {
+YARP_OS_LOG_COMPONENT(TERMINATOR, "yarp.os.Terminator")
+}
+
 
 bool Terminator::terminateByName(const char* name)
 {
@@ -46,7 +52,7 @@ bool Terminator::terminateByName(const char* name)
     Bottle reply;
     Contact c = NetworkBase::queryName(s);
     if (!c.isValid()) {
-        fprintf(stderr, "Terminator port not found\n");
+        yCError(TERMINATOR, "Terminator port not found");
         return false;
     }
     ContactStyle style;
@@ -67,7 +73,7 @@ Terminee::Terminee(const char* name)
     implementation = nullptr;
     if (name == nullptr) {
         quit = true;
-        printf("Terminator: Please supply a proper port name\n");
+        yCError(TERMINATOR, "Terminator: Please supply a proper port name");
         return;
     }
 
@@ -79,12 +85,12 @@ Terminee::Terminee(const char* name)
     }
 
     implementation = new TermineeHelper();
-    yAssert(implementation != nullptr);
+    yCAssert(TERMINATOR, implementation != nullptr);
     TermineeHelper& helper = HELPER(implementation);
     ok = helper.open(s);
     if (!ok) {
         quit = true;
-        fprintf(stderr, "Kill port conflict: make sure you supply a distinct --name /PORTNAME\n");
+        yCError(TERMINATOR, "Kill port conflict: make sure you supply a distinct --name /PORTNAME");
     } else {
         quit = false;
         start();

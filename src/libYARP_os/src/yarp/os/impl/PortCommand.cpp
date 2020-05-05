@@ -10,14 +10,19 @@
 #include <yarp/os/impl/PortCommand.h>
 
 #include <yarp/os/NetType.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+
+namespace {
+YARP_OS_LOG_COMPONENT(PORTCOMMAND, "yarp.os.impl.PortCommand")
+} // namespace
+
 bool PortCommand::read(ConnectionReader& reader)
 {
-    //ACE_DEBUG((LM_DEBUG, "PortCommand::readBlock"));
+    yCTrace(PORTCOMMAND, "PortCommand::readBlock");
     ch = '\0';
     str = "";
     if (!reader.isTextMode()) {
@@ -55,14 +60,14 @@ bool PortCommand::read(ConnectionReader& reader)
 
 bool PortCommand::write(ConnectionWriter& writer) const
 {
-    //ACE_DEBUG((LM_DEBUG, "PortCommand::writeBlock"));
-    //printf("Writing port command, text mode %d\n", writer.isTextMode());
+    yCTrace(PORTCOMMAND, "PortCommand::writeBlock");
+    yCDebug(PORTCOMMAND, "Writing port command, text mode [%s]\n", writer.isTextMode() ? "true" : "false");
     if (!writer.isTextMode()) {
         int len = 0;
         if (ch == '\0') {
             len = (int)str.length() + 1;
         }
-        yAssert(header.length() == 8);
+        yCAssert(PORTCOMMAND, header.length() == 8);
         char* base = header.get();
         Bytes b(base, 4);
         NetType::netInt(len, b);

@@ -10,11 +10,11 @@
 #include <yarp/os/impl/AuthHMAC.h>
 
 #include <yarp/os/Bytes.h>
-#include <yarp/os/Log.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/LogComponent.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -23,8 +23,11 @@
 #include <random>
 #include <string>
 
-#ifdef DEBUG_HMAC
-void show_hmac_debug(unsigned char* hex, unsigned int length, std::string context)
+namespace {
+YARP_OS_LOG_COMPONENT(AUTHHMAC, "yarp.os.impl.AuthHMAC")
+} // namespace
+
+void show_hmac_debug(unsigned char* hex, unsigned int length, const std::string& context)
 {
     char* buf;
     int off = context.length();
@@ -33,10 +36,9 @@ void show_hmac_debug(unsigned char* hex, unsigned int length, std::string contex
     for (unsigned int i = 0; i < length; i++) {
         sprintf(&(buf[off + i * 3]), "%X ", hex[i]);
     }
-    yDebug("%s\n", buf);
+    yCDebug(AUTHHMAC, "%s\n", buf);
     delete[] buf;
 }
-#endif
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -62,7 +64,7 @@ AuthHMAC::AuthHMAC() :
 
 
     if (fname.empty()) {
-        //yInfo("Cannot find auth.conf file. Authentication disabled.\n");
+        yCDebug(AUTHHMAC, "Cannot find auth.conf file. Authentication disabled.\n");
         auth_warning_shown = true;
         return;
     }
@@ -72,14 +74,14 @@ AuthHMAC::AuthHMAC() :
     Bottle group = config.findGroup("AUTH");
 
     if (group.isNull()) {
-        yWarning("No \"AUTH\" group found in auth.conf file. Authentication disabled.\n");
+        yCWarning(AUTHHMAC, "No \"AUTH\" group found in auth.conf file. Authentication disabled.\n");
         auth_warning_shown = true;
         return;
     }
 
     key = group.find("key").asString();
     if (!(key.length() > 0)) {
-        yWarning("No \"key\" found in \"AUTH\" group in auth.conf file. Authentication disabled.\n");
+        yCWarning(AUTHHMAC, "No \"key\" found in \"AUTH\" group in auth.conf file. Authentication disabled.\n");
         auth_warning_shown = true;
         return;
     }
@@ -92,7 +94,7 @@ AuthHMAC::AuthHMAC() :
     srand(static_cast<unsigned>(time(nullptr)));
 
     if (!authentication_enabled) {
-        yInfo("Authentication enabled.\n");
+        yCInfo(AUTHHMAC, "Authentication enabled.\n");
         authentication_enabled = true;
     }
 }
@@ -230,10 +232,8 @@ bool AuthHMAC::send_hmac(OutputStream* stream, unsigned char* nonce, unsigned ch
     stream->write(nonce_bytes);
     stream->write(mac_bytes);
 
-#ifdef DEBUG_HMAC
     show_hmac_debug(nonce, NONCE_LEN, "send nonce ");
     show_hmac_debug(mac, DIGEST_SIZE, "send digest ");
-#endif
 
     return stream->isOk();
 }
@@ -245,10 +245,8 @@ bool AuthHMAC::receive_hmac(InputStream* stream, unsigned char* nonce, unsigned 
     stream->read(nonce_bytes);
     stream->read(mac_bytes);
 
-#ifdef DEBUG_HMAC
     show_hmac_debug(nonce, NONCE_LEN, "got nonce ");
     show_hmac_debug(mac, DIGEST_SIZE, "got digest ");
-#endif
 
     return stream->isOk();
 }
@@ -257,15 +255,13 @@ bool AuthHMAC::check_hmac(unsigned char* mac, unsigned char* mac_check)
 {
     int cmp = memcmp(mac, mac_check, DIGEST_SIZE);
 
-#ifdef DEBUG_HMAC
     std::string check = "digest check ";
     if (cmp == 0) {
         check += "successful";
     } else {
         check += "FAILED";
     }
-    show_hmac_debug(mac_check, DIGEST_SIZE, check.c_str());
-#endif
+    show_hmac_debug(mac_check, DIGEST_SIZE, check);
 
     return (cmp == 0);
 }

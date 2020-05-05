@@ -10,7 +10,7 @@
 
 #include <yarp/os/impl/TcpFace.h>
 
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/Protocol.h>
 #include <yarp/os/impl/SocketTwoWayStream.h>
@@ -19,6 +19,10 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+namespace {
+YARP_OS_LOG_COMPONENT(TCPFACE, "yarp.os.impl.TcpFace")
+} // namespace
 
 
 TcpFace::TcpFace() = default;
@@ -31,7 +35,7 @@ TcpFace::~TcpFace()
 
 bool TcpFace::open(const Contact& address)
 {
-    YARP_DEBUG(Logger::get(), std::string("opening for address ") + address.toURI());
+    yCDebug(TCPFACE, "opening for address %s", address.toURI().c_str());
 
     this->address = address;
 #ifdef YARP_HAS_ACE
@@ -71,14 +75,14 @@ void TcpFace::closeFace()
     }
 }
 
-static void showError(Logger& log)
+static void showError()
 {
-    YARP_ERROR(log, "Authentication failed.");
-    YARP_ERROR(log, "Authentication was enabled in the auth.conf file.");
-    YARP_ERROR(log, "If you do not want to use authentication, please");
-    YARP_ERROR(log, "remove this file.");
-    YARP_ERROR(log, "If you do want to set up authentication, check:");
-    YARP_ERROR(log, "  http://www.yarp.it/yarp_port_auth.html");
+    yCError(TCPFACE, "Authentication failed.");
+    yCError(TCPFACE, "Authentication was enabled in the auth.conf file.");
+    yCError(TCPFACE, "If you do not want to use authentication, please");
+    yCError(TCPFACE, "remove this file.");
+    yCError(TCPFACE, "If you do want to set up authentication, check:");
+    yCError(TCPFACE, "  http://www.yarp.it/yarp_port_auth.html");
 }
 
 /**
@@ -87,7 +91,7 @@ static void showError(Logger& log)
 InputProtocol* TcpFace::read()
 {
     auto* stream = new SocketTwoWayStream();
-    yAssert(stream != nullptr);
+    yCAssert(TCPFACE, stream != nullptr);
 
     int result = stream->open(peerAcceptor);
     if (result < 0) {
@@ -103,7 +107,7 @@ InputProtocol* TcpFace::read()
 
         bool success = auth.authSource(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (!success) {
-            showError(Logger::get());
+            showError();
             return nullptr;
         }
         stream->setReadTimeout(0.);
@@ -130,7 +134,7 @@ OutputProtocol* TcpFace::write(const Contact& address)
 
         bool success = auth.authDest(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (!success) {
-            showError(Logger::get());
+            showError();
             return nullptr;
         }
         stream->setReadTimeout(0.);

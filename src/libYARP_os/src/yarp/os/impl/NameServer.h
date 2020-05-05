@@ -12,10 +12,10 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Dispatcher.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SplitString.h>
 
 #include <map>
@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 
+YARP_DECLARE_LOG_COMPONENT(NAMESERVER)
 
 namespace yarp {
 namespace os {
@@ -174,7 +175,7 @@ private:
     public:
         HostRecord()
         {
-            //YARP_DEBUG(Logger::get(), "FIXME: HostRecord has hardcoded base");
+            // FIXME HostRecord has hardcoded base
             base = 0;
         }
 
@@ -186,8 +187,7 @@ private:
         int get()
         {
             int result = ReusableRecord<int>::getFree();
-            //YARP_DEBUG(Logger::get(), std::string("host record says ") +
-            //NetType::toString(result) + " is free");
+            yCTrace(NAMESERVER, "host record says %d is free", result);
             return result;
         }
 
@@ -209,7 +209,7 @@ private:
     public:
         McastRecord()
         {
-            //YARP_DEBUG(Logger::get(), "FIXME: mcast records are never reused");
+            // FIXME: mcast records are never reused
             base = 0;
             basePort = 0;
             last = 0;
@@ -233,7 +233,7 @@ private:
             last = x;
             int v1 = x % 255;
             int v2 = x / 255;
-            yAssert(v2 < 255);
+            yCAssert(NAMESERVER, v2 < 255);
             return std::string("224.1.") + NetType::toString(v2 + 1) + "." + NetType::toString(v1 + 1);
         }
 
@@ -246,14 +246,14 @@ private:
         {
             SplitString ss(addr, '.');
             int ip[] = {224, 3, 1, 1};
-            yAssert(ss.size() == 4);
+            yCAssert(NAMESERVER, ss.size() == 4);
             for (int i = 0; i < 4; i++) {
                 ip[i] = NetType::toInt(ss.get(i));
             }
             int v2 = ip[2] - 1;
             int v1 = ip[3] - 1;
             int x = v2 * 255 + v1;
-            printf("Releasing %s %d  %d:%d\n", addr, x, v2, v1);
+            yCInfo(NAMESERVER, "Releasing %s %d  %d:%d\n", addr, x, v2, v1);
             release(x);
         }
     };
@@ -385,7 +385,7 @@ private:
                 propMap[key] = PropertyRecord();
                 entry = propMap.find(key);
             }
-            yAssert(entry != propMap.end());
+            yCAssert(NAMESERVER, entry != propMap.end());
             return &(entry->second);
         }
 
@@ -460,7 +460,7 @@ private:
     NameRecord& getNameRecord(const std::string& name)
     {
         NameRecord* result = getNameRecord(name, true);
-        yAssert(result != nullptr);
+        yCAssert(NAMESERVER, result != nullptr);
         return *result;
     }
 
@@ -469,7 +469,7 @@ private:
     HostRecord& getHostRecord(const std::string& name)
     {
         HostRecord* result = getHostRecord(name, true);
-        yAssert(result != nullptr);
+        yCAssert(NAMESERVER, result != nullptr);
         return *result;
     }
 

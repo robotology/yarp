@@ -11,7 +11,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformLimits.h>
@@ -22,7 +22,10 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-#define dbg_printf if (0) printf
+namespace {
+YARP_OS_LOG_COMPONENT(ROSNAMESPACE, "yarp.os.RosNameSpace")
+} // namespace
+
 
 RosNameSpace::RosNameSpace(const Contact& contact) :
         mutex()
@@ -42,7 +45,7 @@ Contact RosNameSpace::getNameServerContact() const
 
 Contact RosNameSpace::queryName(const std::string& name)
 {
-    dbg_printf("ROSNameSpace queryName(%s)\n", name.c_str());
+    yCDebug(ROSNAMESPACE, "ROSNameSpace queryName(%s)", name.c_str());
     NestedContact nc(name);
     std::string node = nc.getNodeName();
     std::string srv = nc.getNestedName();
@@ -90,8 +93,8 @@ Contact RosNameSpace::queryName(const std::string& name)
 Contact RosNameSpace::registerName(const std::string& name)
 {
     YARP_UNUSED(name);
-    fprintf(stderr, "ROS name server does not do 'raw' registrations.\n");
-    fprintf(stderr, "Use [Buffered]Port::open to get complete registrations.\n");
+    yCError(ROSNAMESPACE, "ROS name server does not do 'raw' registrations.");
+    yCError(ROSNAMESPACE, "Use [Buffered]Port::open to get complete registrations.");
     std::exit(1);
 
     return Contact();
@@ -104,7 +107,7 @@ Contact RosNameSpace::registerContact(const Contact& contact)
 
 Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
 {
-    dbg_printf("ROSNameSpace registerContact(%s / %s)\n",
+    yCDebug(ROSNAMESPACE, "ROSNameSpace registerContact(%s / %s)",
                contact.toString().c_str(),
                contact.toURI().c_str());
     NestedContact nc = contact.getNested();
@@ -168,7 +171,7 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
                                          cmd,
                                          reply);
             if (!ok) {
-                fprintf(stderr, "ROS registration error: %s\n", reply.toString().c_str());
+                yCError(ROSNAMESPACE, "ROS registration error: %s", reply.toString().c_str());
                 return Contact();
             }
             if (cat == "-") {
@@ -212,17 +215,17 @@ Contact RosNameSpace::registerAdvanced(const Contact& contact, NameStore* store)
     if (pub_idx != std::string::npos) {
         node = name.substr(0, pub_idx);
         pub = name.substr(pub_idx + 2, name.length());
-        YARP_SPRINTF1(Logger::get(), debug, "Publish to %s", pub.c_str());
+        yCDebug(ROSNAMESPACE, "Publish to %s", pub.c_str());
     }
     if (sub_idx != std::string::npos) {
         node = name.substr(0, sub_idx);
         sub = name.substr(sub_idx + 2, name.length());
-        YARP_SPRINTF1(Logger::get(), debug, "Subscribe to %s", sub.c_str());
+        yCDebug(ROSNAMESPACE, "Subscribe to %s", sub.c_str());
     }
     if (node.empty()) {
         node = name;
     }
-    YARP_SPRINTF4(Logger::get(), debug, "Name [%s] Node [%s] sub [%s] pub [%s]", name.c_str(), node.c_str(), sub.c_str(), pub.c_str());
+    yCDebug(ROSNAMESPACE, "Name [%s] Node [%s] sub [%s] pub [%s]", name.c_str(), node.c_str(), sub.c_str(), pub.c_str());
 
     {
         Bottle cmd;
@@ -331,7 +334,7 @@ Contact RosNameSpace::unregisterAdvanced(const std::string& name, NameStore* sto
     if (node.empty()) {
         node = name;
     }
-    YARP_SPRINTF3(Logger::get(), debug, "Name [%s] sub [%s] pub [%s]\n", name.c_str(), sub.c_str(), pub.c_str());
+    yCDebug(ROSNAMESPACE, "Name [%s] sub [%s] pub [%s]", name.c_str(), sub.c_str(), pub.c_str());
 
     if (!pub.empty()) {
         NetworkBase::disconnect(name, std::string("topic:/") + pub);
@@ -492,9 +495,9 @@ bool RosNameSpace::connectTopic(Bottle& cmd,
     bool fail = (reply.check("faultCode", Value(0)).asInt32() != 0) || !ok;
     if (fail) {
         if (!style.quiet) {
-            fprintf(stderr, "Failure: name server did not accept connection to topic.\n");
+            yCError(ROSNAMESPACE, "Failure: name server did not accept connection to topic.");
             if (reply.check("faultString")) {
-                fprintf(stderr, "Cause: %s\n", reply.check("faultString", Value("")).asString().c_str());
+                yCError(ROSNAMESPACE, "Cause: %s", reply.check("faultString", Value("")).asString().c_str());
             }
         }
     }
@@ -550,7 +553,7 @@ Contact RosNameSpace::detectNameServer(bool useDetectedServer,
 
     if (!c.isValid()) {
         scanNeeded = true;
-        fprintf(stderr, "Checking for ROS_MASTER_URI...\n");
+        yCInfo(ROSNAMESPACE, "Checking for ROS_MASTER_URI...");
         std::string addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
         c = Contact::fromString(addr);
         if (c.isValid()) {
@@ -597,7 +600,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
         cmd2.addString("dummy_id");
 
         if (!NetworkBase::write(getNameServerContact(), cmd2, cache, style)) {
-            fprintf(stderr, "Failed to contact ROS server\n");
+            yCError(ROSNAMESPACE, "Failed to contact ROS server");
             return false;
         }
 
@@ -735,7 +738,7 @@ void RosNameSpace::run()
             Bottle curr = *bot;
             mutex.unlock();
 
-            dbg_printf("ROS connection begins: %s\n", curr.toString().c_str());
+            yCDebug(ROSNAMESPACE, "ROS connection begins: %s", curr.toString().c_str());
             ContactStyle style;
             style.admin = true;
             style.carrier = "tcp";
@@ -744,7 +747,7 @@ void RosNameSpace::run()
             contact.setName("");
             Bottle reply;
             NetworkBase::write(contact, cmd, reply, style);
-            dbg_printf("ROS connection ends: %s\n", curr.toString().c_str());
+            yCDebug(ROSNAMESPACE, "ROS connection ends: %s", curr.toString().c_str());
 
             mutex.lock();
             pending = pending.tail();
