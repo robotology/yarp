@@ -25,7 +25,6 @@
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/PortCorePackets.h>
 #include <yarp/os/impl/ThreadImpl.h>
-#include <yarp/os/impl/Logger.h>
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.3
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
@@ -482,10 +481,6 @@ public:
 
     void setTimeout(float timeout);
 
-    void setVerbosity(int level);
-
-    int getVerbosity();
-
     Property* acquireProperties(bool readOnly);
     void releaseProperties(Property* prop);
 
@@ -521,7 +516,6 @@ private:
     yarp::os::Semaphore m_stateSemaphore;       ///< control access to essential port state
     std::mutex m_packetMutex;      ///< control access to message cache
     yarp::os::Semaphore m_connectionChangeSemaphore; ///< signal changes in connections
-    Logger m_log;  ///< message logger
     Face *m_face;  ///< network server
     std::string m_name; ///< name of port
     yarp::os::Contact m_address;    ///< network address of port
@@ -547,7 +541,6 @@ private:
     int m_outputCount;///< how many output connections do we have
     int m_dataOutputCount; ///< how many regular data output connections do we have
     unsigned int m_flags;      ///< binary flags encoding restrictions on port
-    int m_verbosity;  ///< threshold on what warnings or debug messages are shown
     bool m_logNeeded; ///< port needs to monitor message content
     PortCorePackets m_packets; ///< a pool for tracking messages currently being sent
     std::string m_envelope;///< user-defined wrapping data

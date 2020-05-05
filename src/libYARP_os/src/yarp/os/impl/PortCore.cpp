@@ -21,7 +21,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/ConnectionRecorder.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PortCoreInputUnit.h>
 #include <yarp/os/impl/PortCoreOutputUnit.h>
@@ -49,21 +49,18 @@
 #endif
 
 
-//#define YMSG(x) printf x;
-//#define YTRACE(x) YMSG(("at %s\n", x))
-
-#define YMSG(x)
-#define YTRACE(x)
-
 using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp;
+
+namespace {
+YARP_OS_LOG_COMPONENT(PORTCORE, "yarp.os.impl.PortCore")
+} // namespace
 
 PortCore::PortCore() :
         m_stateSemaphore(1),
         m_packetMutex(),
         m_connectionChangeSemaphore(1),
-        m_log("port", Logger::get()),
         m_face(nullptr),
         m_reader(nullptr),
         m_adminReader(nullptr),
@@ -87,7 +84,6 @@ PortCore::PortCore() :
         m_outputCount(0),
         m_dataOutputCount(0),
         m_flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
-        m_verbosity(1),
         m_logNeeded(false),
         m_timeout(-1),
         m_counter(1),
@@ -116,11 +112,11 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // If we're using ACE, we really need to have it initialized before
     // this point.
     if (!NetworkBase::initialized()) {
-        YARP_ERROR(m_log, "YARP not initialized; create a yarp::os::Network object before using ports");
+        yCError(PORTCORE, "YARP not initialized; create a yarp::os::Network object before using ports");
         return false;
     }
 
-    YTRACE("PortCore::listen");
+    yCTrace(PORTCORE, "listen");
 
     m_stateSemaphore.wait();
 
@@ -128,11 +124,11 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
     // We can assume this because it is not a user-facing class,
     // and we carefully never call this method again without
     // calling close().
-    yAssert(!m_listening);
-    yAssert(!m_running);
-    yAssert(!m_closing);
-    yAssert(!m_finished);
-    yAssert(m_face == nullptr);
+    yCAssert(PORTCORE, !m_listening);
+    yCAssert(PORTCORE, !m_running);
+    yCAssert(PORTCORE, !m_closing);
+    yCAssert(PORTCORE, !m_finished);
+    yCAssert(PORTCORE, m_face == nullptr);
 
     // Try to put the port on the network, using the user-supplied
     // address (which may be incomplete).  You can think of
@@ -161,7 +157,6 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
 
     // Move into listening phase
     m_listening = true;
-    m_log.setPrefix(address.getRegName().c_str());
     m_stateSemaphore.post();
 
     // Now that we are on the network, we can let the name server know this.
@@ -185,31 +180,31 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
 void PortCore::setReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
-    yAssert(!m_running);
-    yAssert(m_reader == nullptr);
+    yCAssert(PORTCORE, !m_running);
+    yCAssert(PORTCORE, m_reader == nullptr);
     m_reader = &reader;
 }
 
 void PortCore::setAdminReadHandler(PortReader& reader)
 {
     // Don't even try to do this when the port is hot, it'll burn you
-    yAssert(!m_running);
-    yAssert(m_adminReader == nullptr);
+    yCAssert(PORTCORE, !m_running);
+    yCAssert(PORTCORE, m_adminReader == nullptr);
     m_adminReader = &reader;
 }
 
 void PortCore::setReadCreator(PortReaderCreator& creator)
 {
     // Don't even try to do this when the port is hot, it'll burn you
-    yAssert(!m_running);
-    yAssert(m_readableCreator == nullptr);
+    yCAssert(PORTCORE, !m_running);
+    yCAssert(PORTCORE, m_readableCreator == nullptr);
     m_readableCreator = &creator;
 }
 
 
 void PortCore::run()
 {
-    YTRACE("PortCore::run");
+    yCTrace(PORTCORE, "run");
 
     // This is the server thread for the port.  We listen on
     // the network and handle any incoming connections.
@@ -220,11 +215,11 @@ void PortCore::run()
 
     // We assume that listen() has succeeded and that
     // start() has been called.
-    yAssert(m_listening);
-    yAssert(!m_running);
-    yAssert(!m_closing);
-    yAssert(!m_finished);
-    yAssert(m_starting);
+    yCAssert(PORTCORE, m_listening);
+    yCAssert(PORTCORE, !m_running);
+    yCAssert(PORTCORE, !m_closing);
+    yCAssert(PORTCORE, !m_finished);
+    yCAssert(PORTCORE, m_starting);
 
     // Enter running phase
     m_running = true;
@@ -233,7 +228,7 @@ void PortCore::run()
     // This post is matched with a wait in start()
     m_stateSemaphore.post();
 
-    YTRACE("PortCore::run running");
+    yCTrace(PORTCORE, "run running");
 
     // Enter main loop, where we block on incoming connections.
     // The loop is exited when PortCore#closing is set.  One last
@@ -250,7 +245,7 @@ void PortCore::run()
         // Attach the connection to this port and update its timeout setting
         if (ip != nullptr) {
             ip->attachPort(m_contactable);
-            YARP_DEBUG(m_log, "PortCore received something");
+            yCDebug(PORTCORE, "received something");
             if (m_timeout > 0) {
                 ip->setTimeout(m_timeout);
             }
@@ -271,7 +266,7 @@ void PortCore::run()
             if (ip != nullptr) {
                 addInput(ip);
             }
-            YARP_DEBUG(m_log, "PortCore spun off a connection");
+            yCDebug(PORTCORE, "spun off a connection");
             ip = nullptr;
         }
 
@@ -296,7 +291,7 @@ void PortCore::run()
         m_stateSemaphore.post();
     }
 
-    YTRACE("PortCore::run closing");
+    yCTrace(PORTCORE, "run closing");
 
     // The server thread is shutting down.
     m_stateSemaphore.wait();
@@ -324,17 +319,17 @@ void PortCore::close()
 
 bool PortCore::start()
 {
-    YTRACE("PortCore::start");
+    yCTrace(PORTCORE, "start");
 
     // This wait will, on success, be matched by a post in run()
     m_stateSemaphore.wait();
 
     // We assume that listen() has been called.
-    yAssert(m_listening);
-    yAssert(!m_running);
-    yAssert(!m_starting);
-    yAssert(!m_finished);
-    yAssert(!m_closing);
+    yCAssert(PORTCORE, m_listening);
+    yCAssert(PORTCORE, !m_running);
+    yCAssert(PORTCORE, !m_starting);
+    yCAssert(PORTCORE, !m_finished);
+    yCAssert(PORTCORE, !m_closing);
     m_starting = true;
 
     // Start the server thread.
@@ -345,7 +340,7 @@ bool PortCore::start()
     } else {
         // run() will signal stateSema once it is active
         m_stateSemaphore.wait();
-        yAssert(m_running);
+        yCAssert(PORTCORE, m_running);
 
         // release stateSema for its normal task of controlling access to state
         m_stateSemaphore.post();
@@ -398,7 +393,7 @@ void PortCore::interrupt()
     // update their state.
     m_stateSemaphore.wait();
     if (m_reader != nullptr) {
-        YARP_DEBUG(m_log, "sending update-state message to listener");
+        yCDebug(PORTCORE, "sending update-state message to listener");
         StreamConnectionReader sbr;
         lockCallback();
         m_reader->read(sbr);
@@ -410,22 +405,22 @@ void PortCore::interrupt()
 
 void PortCore::closeMain()
 {
-    YTRACE("PortCore::closeMain");
+    yCTrace(PORTCORE, "closeMain");
 
     m_stateSemaphore.wait();
 
     // We may not have anything to do.
     if (m_finishing || !(m_running || m_manual)) {
-        YTRACE("PortCore::closeMainNothingToDo");
+        yCTrace(PORTCORE, "closeMain - nothing to do");
         m_stateSemaphore.post();
         return;
     }
 
-    YTRACE("PortCore::closeMainCentral");
+    yCTrace(PORTCORE, "closeMain - Central");
 
     // Move into official "finishing" phase.
     m_finishing = true;
-    YARP_DEBUG(m_log, "now preparing to shut down port");
+    yCDebug(PORTCORE, "now preparing to shut down port");
     m_stateSemaphore.post();
 
     // Start disconnecting inputs.  We ask the other side of the
@@ -453,7 +448,7 @@ void PortCore::closeMain()
         }
         m_stateSemaphore.post();
         if (!done) {
-            YARP_DEBUG(m_log, std::string("requesting removal of connection from ") + removeName);
+            yCDebug(PORTCORE, "requesting removal of connection from %s", removeName.c_str());
             bool result = NetworkBase::disconnect(removeName,
                                                   getName(),
                                                   true);
@@ -512,7 +507,7 @@ void PortCore::closeMain()
 
         // We should be finished now.
         m_stateSemaphore.wait();
-        yAssert(m_finished);
+        yCAssert(PORTCORE, m_finished);
         m_stateSemaphore.post();
 
         // Clean up our connection list. We couldn't do this earlier,
@@ -530,7 +525,7 @@ void PortCore::closeMain()
     // There should be no other threads at this point and we
     // can stop listening on the network.
     if (m_listening) {
-        yAssert(m_face != nullptr);
+        yCAssert(PORTCORE, m_face != nullptr);
         m_face->close();
         delete m_face;
         m_face = nullptr;
@@ -541,7 +536,7 @@ void PortCore::closeMain()
     // with the bad news.  An empty message signifies a request to
     // check the port state.
     if (m_reader != nullptr) {
-        YARP_DEBUG(m_log, "sending end-of-port message to listener");
+        yCDebug(PORTCORE, "sending end-of-port message to listener");
         StreamConnectionReader sbr;
         m_reader->read(sbr);
         m_reader = nullptr;
@@ -561,13 +556,13 @@ void PortCore::closeMain()
     m_finishing = false;
 
     // We are fresh as a daisy.
-    yAssert(!m_listening);
-    yAssert(!m_running);
-    yAssert(!m_starting);
-    yAssert(!m_closing);
-    yAssert(!m_finished);
-    yAssert(!m_finishing);
-    yAssert(m_face == nullptr);
+    yCAssert(PORTCORE, !m_listening);
+    yCAssert(PORTCORE, !m_running);
+    yCAssert(PORTCORE, !m_starting);
+    yCAssert(PORTCORE, !m_closing);
+    yCAssert(PORTCORE, !m_finished);
+    yCAssert(PORTCORE, !m_finishing);
+    yCAssert(PORTCORE, m_face == nullptr);
 }
 
 
@@ -586,7 +581,7 @@ void PortCore::closeUnits()
     // Empty the PortCore#units list. This is only possible when
     // the server thread is finished.
     m_stateSemaphore.wait();
-    yAssert(m_finished);
+    yCAssert(PORTCORE, m_finished);
     m_stateSemaphore.post();
 
     // In the "finished" phase, nobody else touches the units,
@@ -594,12 +589,12 @@ void PortCore::closeUnits()
     for (auto& i : m_units) {
         PortCoreUnit* unit = i;
         if (unit != nullptr) {
-            YARP_DEBUG(m_log, "closing a unit");
+            yCDebug(PORTCORE, "closing a unit");
             unit->close();
-            YARP_DEBUG(m_log, "joining a unit");
+            yCDebug(PORTCORE, "joining a unit");
             unit->join();
             delete unit;
-            YARP_DEBUG(m_log, "deleting a unit");
+            yCDebug(PORTCORE, "deleting a unit");
             i = nullptr;
         }
     }
@@ -617,11 +612,11 @@ void PortCore::reapUnits()
         for (auto unit : m_units) {
             if ((unit != nullptr) && unit->isDoomed() && !unit->isFinished()) {
                 std::string s = unit->getRoute().toString();
-                YARP_DEBUG(m_log, std::string("Informing connection ") + s + " that it is doomed");
+                yCDebug(PORTCORE, "Informing connection %s that it is doomed", s.c_str());
                 unit->close();
-                YARP_DEBUG(m_log, std::string("Closed connection ") + s);
+                yCDebug(PORTCORE, "Closed connection %s", s.c_str());
                 unit->join();
-                YARP_DEBUG(m_log, std::string("Joined thread of connection ") + s);
+                yCDebug(PORTCORE, "Joined thread of connection %s", s.c_str());
             }
         }
     }
@@ -649,22 +644,22 @@ void PortCore::cleanUnits(bool blocking)
     int updatedInputCount = 0;
     int updatedOutputCount = 0;
     int updatedDataOutputCount = 0;
-    YARP_DEBUG(m_log, "/ routine check of connections to this port begins");
+    yCDebug(PORTCORE, "/ routine check of connections to this port begins");
     if (!m_finished) {
 
         // First, we delete and null out any defunct entries in the list.
         for (auto& i : m_units) {
             PortCoreUnit* unit = i;
             if (unit != nullptr) {
-                YARP_DEBUG(m_log, std::string("| checking connection ") + unit->getRoute().toString() + " " + unit->getMode());
+                yCDebug(PORTCORE, "| checking connection %s %s", unit->getRoute().toString().c_str(), unit->getMode().c_str());
                 if (unit->isFinished()) {
                     std::string con = unit->getRoute().toString();
-                    YARP_DEBUG(m_log, std::string("|   removing connection ") + con);
+                    yCDebug(PORTCORE, "|   removing connection %s", con.c_str());
                     unit->close();
                     unit->join();
                     delete unit;
                     i = nullptr;
-                    YARP_DEBUG(m_log, std::string("|   removed connection ") + con);
+                    yCDebug(PORTCORE, "|   removed connection %s", con.c_str());
                 } else {
                     // No work to do except updating connection counts.
                     if (!unit->isDoomed()) {
@@ -711,7 +706,7 @@ void PortCore::cleanUnits(bool blocking)
     m_inputCount = updatedInputCount;
     m_outputCount = updatedOutputCount;
     m_packetMutex.unlock();
-    YARP_DEBUG(m_log, "\\ routine check of connections to this port ends");
+    yCDebug(PORTCORE, "\\ routine check of connections to this port ends");
 }
 
 
@@ -722,16 +717,16 @@ void PortCore::addInput(InputProtocol* ip)
     // PortCore#units.  The unit will have its own thread associated
     // with it.
 
-    yAssert(ip != nullptr);
+    yCAssert(PORTCORE, ip != nullptr);
     m_stateSemaphore.wait();
     PortCoreUnit* unit = new PortCoreInputUnit(*this,
                                                getNextIndex(),
                                                ip,
                                                false);
-    yAssert(unit != nullptr);
+    yCAssert(PORTCORE, unit != nullptr);
     unit->start();
     m_units.push_back(unit);
-    YMSG(("there are now %d units\n", (int)m_units.size()));
+    yCTrace(PORTCORE, "there are now %zu units", m_units.size());
     m_stateSemaphore.post();
 }
 
@@ -745,11 +740,11 @@ void PortCore::addOutput(OutputProtocol* op)
     // associated with it, but that thread will be very short-lived
     // if the port is not configured to do background writes.
 
-    yAssert(op != nullptr);
+    yCAssert(PORTCORE, op != nullptr);
     m_stateSemaphore.wait();
     if (!m_finished) {
         PortCoreUnit* unit = new PortCoreOutputUnit(*this, getNextIndex(), op);
-        yAssert(unit != nullptr);
+        yCAssert(PORTCORE, unit != nullptr);
         unit->start();
         m_units.push_back(unit);
     }
@@ -798,10 +793,10 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
     // input thread.
 
     if (except != nullptr) {
-        YARP_DEBUG(m_log, std::string("asked to remove connection in the way of ") + route.toString());
+        yCDebug(PORTCORE, "asked to remove connection in the way of %s", route.toString().c_str());
         *except = false;
     } else {
-        YARP_DEBUG(m_log, std::string("asked to remove connection ") + route.toString());
+        yCDebug(PORTCORE, "asked to remove connection %s", route.toString().c_str());
     }
 
     // Scan for units that match the given route, and collect their IDs.
@@ -833,8 +828,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
                 }
 
                 if (ok) {
-                    YARP_DEBUG(m_log,
-                               std::string("removing connection ") + alt.toString());
+                    yCDebug(PORTCORE, "removing connection %s", alt.toString().c_str());
                     removals.push_back(unit->getIndex());
                     unit->setDoomed();
                     needReap = true;
@@ -849,7 +843,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
     // up eventually, but we can speed this up by waking up the
     // server thread.
     if (needReap) {
-        YARP_DEBUG(m_log, "one or more connections need prodding to die");
+        yCDebug(PORTCORE, "one or more connections need prodding to die");
 
         if (m_manual) {
             // No server thread, no problems.
@@ -861,11 +855,11 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
                 op->close();
                 delete op;
             }
-            YARP_DEBUG(m_log, "sent message to prod connection death");
+            yCDebug(PORTCORE, "sent message to prod connection death");
 
             if (synch) {
                 // Wait for connections to be cleaned up.
-                YARP_DEBUG(m_log, "synchronizing with connection death");
+                yCDebug(PORTCORE, "synchronizing with connection death");
                 bool cont = false;
                 do {
                     m_stateSemaphore.wait();
@@ -896,7 +890,7 @@ bool PortCore::addOutput(const std::string& dest,
                          bool onlyIfNeeded)
 {
     YARP_UNUSED(id);
-    YARP_DEBUG(m_log, std::string("asked to add output to ") + dest);
+    yCDebug(PORTCORE, "asked to add output to %s", dest.c_str());
 
     // Buffer to store text describing outcome (successful connection,
     // or a failure).
@@ -926,7 +920,7 @@ bool PortCore::addOutput(const std::string& dest,
         removeUnit(Route(getName(), address.getRegName(), address.getCarrier()), true, &except);
         if (except) {
             // Connection already present.
-            YARP_DEBUG(m_log, std::string("output already present to ") + dest);
+            yCDebug(PORTCORE, "output already present to %s", dest.c_str());
             bw.appendLine(std::string("Desired connection already present from ") + getName() + " to " + dest);
             if (os != nullptr) {
                 bw.write(*os);
@@ -1009,7 +1003,7 @@ bool PortCore::addOutput(const std::string& dest,
 
         bool ok = op->open(r);
         if (!ok) {
-            YARP_DEBUG(m_log, "open route error");
+            yCDebug(PORTCORE, "open route error");
             delete op;
             op = nullptr;
         }
@@ -1044,7 +1038,7 @@ bool PortCore::addOutput(const std::string& dest,
                                                        getNextIndex(),
                                                        ip,
                                                        true);
-            yAssert(unit != nullptr);
+            yCAssert(PORTCORE, unit != nullptr);
             unit->start();
             m_units.push_back(unit);
         }
@@ -1288,7 +1282,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
         m_interruptible = true;
     } else {
         // Read and ignore message, there is no where to send it.
-        YARP_DEBUG(Logger::get(), "data received in PortCore, no reader for it");
+        yCDebug(PORTCORE, "data received, no reader for it");
         Bottle b;
         result = b.read(reader);
     }
@@ -1342,7 +1336,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     // copied.  So for example the core image array in a yarp::sig::Image
     // is untouched by the port communications code.
 
-    YMSG(("------- send in real\n"));
+    yCTrace(PORTCORE, "------- send in real");
 
     // Give user the chance to know that this object is about to be
     // written.
@@ -1362,12 +1356,12 @@ bool PortCore::sendHelper(const PortWriter& writer,
         return false;
     }
 
-    YMSG(("------- send in\n"));
+    yCTrace(PORTCORE, "------- send in");
     // Prepare a "packet" for tracking a single message which
     // may travel by multiple outputs.
     m_packetMutex.lock();
     PortCorePacket* packet = m_packets.getFreePacket();
-    yAssert(packet != nullptr);
+    yCAssert(PORTCORE, packet != nullptr);
     packet->setContent(&writer, false, callback);
     m_packetMutex.unlock();
 
@@ -1384,11 +1378,11 @@ bool PortCore::sendHelper(const PortWriter& writer,
                 continue;
             }
             bool waiter = m_waitAfterSend || (mode == PORTCORE_SEND_LOG);
-            YMSG(("------- -- inc\n"));
+            yCTrace(PORTCORE, "------- -- inc");
             m_packetMutex.lock();
             packet->inc(); // One more connection carrying message.
             m_packetMutex.unlock();
-            YMSG(("------- -- presend\n"));
+            yCTrace(PORTCORE, "------- -- presend");
             bool gotReplyOne = false;
             // Send the message off on this connection.
             void* out = unit->send(writer,
@@ -1400,7 +1394,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
                                    m_waitBeforeSend,
                                    &gotReplyOne);
             gotReply = gotReply || gotReplyOne;
-            YMSG(("------- -- send\n"));
+            yCTrace(PORTCORE, "------- -- send");
             if (out != nullptr) {
                 // We got back a report of a message already sent.
                 m_packetMutex.lock();
@@ -1413,10 +1407,10 @@ bool PortCore::sendHelper(const PortWriter& writer,
                     all_ok = false;
                 }
             }
-            YMSG(("------- -- dec\n"));
+            yCTrace(PORTCORE, "------- -- dec");
         }
     }
-    YMSG(("------- pack check\n"));
+    yCTrace(PORTCORE, "------- pack check");
     m_packetMutex.lock();
 
     // We no longer concern ourselves with the message.
@@ -1426,15 +1420,15 @@ bool PortCore::sendHelper(const PortWriter& writer,
 
     m_packets.checkPacket(packet);
     m_packetMutex.unlock();
-    YMSG(("------- packed\n"));
-    YMSG(("------- send out\n"));
+    yCTrace(PORTCORE, "------- packed");
+    yCTrace(PORTCORE, "------- send out");
     if (mode == PORTCORE_SEND_LOG) {
         if (logCount == 0) {
             m_logNeeded = false;
         }
     }
     m_stateSemaphore.post();
-    YMSG(("------- send out real\n"));
+    yCTrace(PORTCORE, "------- send out real");
 
     if (m_waitAfterSend && reader != nullptr) {
         all_ok = all_ok && gotReply;
@@ -1487,14 +1481,14 @@ int PortCore::getOutputCount()
 
 void PortCore::notifyCompletion(void* tracker)
 {
-    YMSG(("starting notifyCompletion\n"));
+    yCTrace(PORTCORE, "starting notifyCompletion");
     m_packetMutex.lock();
     if (tracker != nullptr) {
         (static_cast<PortCorePacket*>(tracker))->dec();
         m_packets.checkPacket(static_cast<PortCorePacket*>(tracker));
     }
     m_packetMutex.unlock();
-    YMSG(("stopping notifyCompletion\n"));
+    yCTrace(PORTCORE, "stopping notifyCompletion");
 }
 
 
@@ -1520,7 +1514,7 @@ void PortCore::setEnvelope(const std::string& envelope)
             break;
         }
     }
-    YARP_DEBUG(m_log, std::string("set envelope to ") + m_envelope);
+    yCDebug(PORTCORE, "set envelope to %s", m_envelope.c_str());
 }
 
 std::string PortCore::getEnvelope()
@@ -1565,15 +1559,15 @@ static bool __tcp_check(const Contact& c)
     ACE_INET_Addr addr;
     int result = addr.set(c.getPort(), c.getHost().c_str());
     if (result != 0) {
-        fprintf(stderr, "ACE choked on %s:%d\n", c.getHost().c_str(), c.getPort());
+        yCWarning(PORTCORE, "ACE choked on %s:%d\n", c.getHost().c_str(), c.getPort());
     }
     result = addr.set(c.getPort(), "127.0.0.1");
     if (result != 0) {
-        fprintf(stderr, "ACE choked on 127.0.0.1:%d\n", c.getPort());
+        yCWarning(PORTCORE, "ACE choked on 127.0.0.1:%d\n", c.getPort());
     }
     result = addr.set(c.getPort(), "127.0.1.1");
     if (result != 0) {
-        fprintf(stderr, "ACE choked on 127.0.1.1:%d\n", c.getPort());
+        yCWarning(PORTCORE, "ACE choked on 127.0.1.1:%d\n", c.getPort());
     }
 #endif
     return true;
@@ -1723,7 +1717,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     // it.  So let's read the message and see what we're supposed to do.
     cmd.read(reader);
 
-    YARP_SPRINTF2(m_log, debug, "Port %s received command %s", getName().c_str(), cmd.toString().c_str());
+    yCDebug(PORTCORE, "Port %s received command %s", getName().c_str(), cmd.toString().c_str());
 
     auto handleAdminHelpCmd = []() {
         Bottle result;
@@ -2051,7 +2045,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         } break;
         case PortCoreConnectionDirection::Error:
             // Should never happen
-            yAssert(false);
+            yCAssert(PORTCORE, false);
             break;
         }
         return result;
@@ -2487,7 +2481,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             for (size_t i = 0; i < pubs->size(); i++) {
                 std::string pub = pubs->get(i).asString();
                 if (!present.check(pub)) {
-                    YARP_SPRINTF1(m_log, debug, "ROS ADD %s", pub.c_str());
+                    yCDebug(PORTCORE, "ROS ADD %s", pub.c_str());
                     Bottle req;
                     Bottle reply;
                     req.addString("requestTopic");
@@ -2497,7 +2491,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     Bottle& lst = req.addList();
                     Bottle& sublst = lst.addList();
                     sublst.addString("TCPROS");
-                    YARP_SPRINTF2(m_log, debug, "Sending [%s] to %s", req.toString().c_str(), pub.c_str());
+                    yCDebug(PORTCORE, "Sending [%s] to %s", req.toString().c_str(), pub.c_str());
                     Contact c = Contact::fromString(pub);
                     if (!__pc_rpc(c, "xmlrpc", req, reply, false)) {
                         fprintf(stderr, "Cannot connect to ROS subscriber %s\n", pub.c_str());
@@ -2522,7 +2516,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             portnum = portnum2.asInt32();
                             carrier = "tcpros+role.pub+topic.";
                             carrier += topic;
-                            YARP_SPRINTF3(m_log, debug, "topic %s available at %s:%d", topic.c_str(), hostname.c_str(), portnum);
+                            yCDebug(PORTCORE, "topic %s available at %s:%d", topic.c_str(), hostname.c_str(), portnum);
                         }
                         if (portnum != 0) {
                             Contact addr(hostname, portnum);
@@ -2545,7 +2539,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                                                        getNextIndex(),
                                                                        ip,
                                                                        true);
-                            yAssert(unit != nullptr);
+                            yCAssert(PORTCORE, unit != nullptr);
                             unit->setPupped(pub);
                             unit->start();
                             m_units.push_back(unit);
@@ -2660,7 +2654,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             result = handleAdminSetOutCmd(target, property);
             break;
         case PortCoreConnectionDirection::Error:
-            yAssert(false); // Should never happen (error is out)
+            yCAssert(PORTCORE, false); // Should never happen (error is out)
             break;
         }
     } break;
@@ -2675,7 +2669,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             result = handleAdminGetOutCmd(target);
             break;
         case PortCoreConnectionDirection::Error:
-            yAssert(false); // Should never happen (error is out)
+            yCAssert(PORTCORE, false); // Should never happen (error is out)
             break;
         }
     } break;
@@ -2701,7 +2695,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
     } break;
     case PortCoreCommand::RosPublisherUpdate: {
-        YARP_SPRINTF1(m_log, debug, "publisherUpdate! --> %s", cmd.toString().c_str());
+        yCDebug(PORTCORE, "publisherUpdate! --> %s", cmd.toString().c_str());
         // std::string caller_id = cmd.get(1).asString(); // Currently unused
         std::string topic = RosNameSpace::fromRosName(cmd.get(2).asString());
         Bottle* pubs = cmd.get(3).asList();
@@ -2709,7 +2703,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         reader.requestDrop(); // ROS needs us to close down.
     } break;
     case PortCoreCommand::RosRequestTopic:
-        YARP_SPRINTF1(m_log, debug, "requestTopic! --> %s", cmd.toString().c_str());
+        yCDebug(PORTCORE, "requestTopic! --> %s", cmd.toString().c_str());
         // std::string caller_id = cmd.get(1).asString(); // Currently unused
         // std::string topic = RosNameSpace::fromRosName(cmd.get(2).asString()); // Currently unused
         // Bottle protocols = cmd.get(3).asList(); // Currently unused
@@ -3055,16 +3049,6 @@ bool PortCore::isInterrupted() const
 void PortCore::setTimeout(float timeout)
 {
     m_timeout = timeout;
-}
-
-void PortCore::setVerbosity(int level)
-{
-    m_verbosity = level;
-}
-
-int PortCore::getVerbosity()
-{
-    return m_verbosity;
 }
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.3
