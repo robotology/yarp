@@ -14,6 +14,7 @@
 
 using yarp::serversql::impl::SqliteTripleSource;
 using yarp::serversql::impl::Triple;
+using yarp::serversql::impl::TripleContext;
 
 SqliteTripleSource::SqliteTripleSource(sqlite3 *db) : db(db)
 {
