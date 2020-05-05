@@ -80,7 +80,6 @@ int main(int argc, char *argv[])
     QApplication   a(argc, argv);
     ResourceFinder &finder = ResourceFinder::getResourceFinderSingleton();
     //retrieve information for the list of parts
-    finder.setVerbose();
     finder.setDefaultConfigFile("yarpmotorgui.ini");
     finder.configure(argc, argv);
 

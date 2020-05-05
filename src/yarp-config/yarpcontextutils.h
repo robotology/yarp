@@ -41,11 +41,20 @@ int fileMerge(std::string srcFileName, std::string destFileName, std::string com
 int recursiveMerge(std::string srcDirName, std::string destDirName, std::string commonParentName, std::ostream &output=std::cout);
 
 //actual commands:
+#ifndef YARP_NO_DEPRECATED
 int import(yarp::os::Bottle& importArg, folderType fType, bool verbose=false);
 int importAll(folderType fType, bool verbose=false);
 int remove(yarp::os::Bottle& removeArg, folderType fType, bool verbose=false);
 int diff(std::string contextName, folderType fType, bool verbose=false);
 int diffList(folderType fType, bool verbose=false);
 int merge(yarp::os::Bottle& mergeArg, folderType fType, bool verbose=false);
+#else
+int import(yarp::os::Bottle& importArg, folderType fType);
+int importAll(folderType fType);
+int remove(yarp::os::Bottle& removeArg, folderType fType);
+int diff(std::string contextName, folderType fType);
+int diffList(folderType fType);
+int merge(yarp::os::Bottle& mergeArg, folderType fType);
+#endif
 
 #endif // YARPCONTEXTUTILS_H

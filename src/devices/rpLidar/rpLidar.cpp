@@ -145,7 +145,6 @@ bool RpLidar::open(yarp::os::Searchable& config)
 
     Property prop;
     ResourceFinder rf;
-    rf.setVerbose();
     std::string serial_completefilename= rf.findFileByName(serial_filename);
 
     prop.put("device", "serialport");

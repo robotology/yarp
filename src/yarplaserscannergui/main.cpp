@@ -293,7 +293,6 @@ int main(int argc, char *argv[])
     ResourceFinder rf;
 
     //retrieve information for the list of parts
-    rf.setVerbose();
     rf.setDefaultConfigFile("yarplaserscannergui.ini");
     rf.configure(argc, argv);
     if (rf.check("help"))

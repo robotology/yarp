@@ -12,7 +12,6 @@ import yarp
 yarp.Network.init()
 
 rf = yarp.ResourceFinder()
-rf.setVerbose(True);
 rf.setDefaultContext("myContext");
 rf.setDefaultConfigFile("default.ini");
 

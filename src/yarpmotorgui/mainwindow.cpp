@@ -555,7 +555,6 @@ bool MainWindow::init(QStringList enabledParts,
     QScrollArea *scroll = nullptr;
     PartItem *part = nullptr;
     m_finder = finder;
-    //m_finder.setVerbose(true);
     m_user_script1 = m_finder.find("script1").asString();
     m_user_script2 = m_finder.find("script2").asString();
 

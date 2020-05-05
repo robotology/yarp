@@ -1399,7 +1399,12 @@ int Companion::cmdResource(int argc, char *argv[]) {
         return 0;
     }
     ResourceFinder rf;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
     rf.setVerbose();
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
     Property p;
     p.fromCommand(argc, argv, false);
     if (p.check("find")) {

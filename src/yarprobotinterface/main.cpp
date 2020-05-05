@@ -33,7 +33,6 @@ int main(int argc, char* argv[])
     }
 
     yarp::os::ResourceFinder& rf(yarp::os::ResourceFinder::getResourceFinderSingleton());
-    rf.setVerbose();
     rf.setDefaultConfigFile("yarprobotinterface.ini");
     rf.configure(argc, argv);
 

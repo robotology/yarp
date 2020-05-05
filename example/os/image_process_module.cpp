@@ -83,7 +83,6 @@ int main(int argc, char *argv[]) {
     /* prepare and configure the resource finder */
     ResourceFinder rf;
     rf.configure(argc, argv);
-    rf.setVerbose(true);
 
     // Create and run our module
     ImageProcessModule module;

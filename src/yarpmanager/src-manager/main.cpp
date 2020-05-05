@@ -83,7 +83,6 @@ int main(int argc, char *argv[])
     // Setup resource finder
 
     yarp::os::ResourceFinder& rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
-    rf.setVerbose(false);
     rf.setDefaultContext("yarpmanager");
     rf.setDefaultConfigFile(DEF_CONFIG_FILE);
     rf.configure(argc, argv);

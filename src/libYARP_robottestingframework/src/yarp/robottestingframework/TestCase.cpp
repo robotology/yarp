@@ -54,7 +54,6 @@ bool yarp::robottestingframework::TestCase::setup(int argc, char** argv)
     // load the config file and update the environment if available
     // E.g., "--from mytest.ini"
     yarp::os::ResourceFinder rf;
-    rf.setVerbose(false);
     if(useSuiteContext) {
         rf.setDefaultContext(envprop.find("context").asString().c_str());
     } else {

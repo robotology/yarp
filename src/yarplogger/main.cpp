@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
     }
 
     yarp::os::ResourceFinder &rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
-    rf.setVerbose(true);
     rf.setDefaultConfigFile("yarprunLogger.ini");           //overridden by --from parameter
     rf.setDefaultContext("yarprunLogger");                  //overridden by --context parameter
     rf.configure(argc,argv);

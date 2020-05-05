@@ -21,7 +21,6 @@ int main(int argc, char *argv[])
     Network yarp;
 
     ResourceFinder rf;
-    rf.setVerbose();
     rf.setDefaultConfigFile("or.ini");
     rf.setDefaultContext("orBottle");
     rf.configure(argc, argv);

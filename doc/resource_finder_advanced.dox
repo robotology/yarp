@@ -34,7 +34,6 @@ The main function will be something like:
 
 \code
 ResourceFinder rf;
-rf.setVerbose();
 rf.setDefaultConfigFile("or.ini");
 rf.configure(argc, argv);
 \endcode
