@@ -88,7 +88,6 @@ int main(int argc, char *argv[])
     rf.configure(argc, argv);
 
     yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
-    yarp.setVerbosity(-1);
 
     yarp::os::Property config;
     config.fromString(rf.toString());

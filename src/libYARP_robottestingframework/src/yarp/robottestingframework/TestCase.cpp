@@ -40,7 +40,6 @@ yarp::robottestingframework::TestCase::~TestCase()
 bool yarp::robottestingframework::TestCase::setup(int argc, char** argv)
 {
     // check yarp network
-    mPriv->yarp.setVerbosity(-1);
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(mPriv->yarp.checkNetwork(),
                                                 "YARP network does not seem to be available, is the yarp server accessible?");
 
