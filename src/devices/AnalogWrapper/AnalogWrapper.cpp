@@ -10,7 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::sig;
@@ -18,6 +18,8 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
+
+YARP_LOG_COMPONENT(ANALOGWRAPPER, "yarp.devices.AnalogWrapper")
 
 /**
   * Handler of the rpc port related to an analog sensor.
@@ -266,12 +268,12 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
     p.put("device", prop.find("subdevice").asString());  // subdevice was already checked before
 
     // if errors occurred during open, quit here.
-    yDebug("opening AnalogWrapper subdevice...");
+    yCDebug(ANALOGWRAPPER, "opening AnalogWrapper subdevice...");
     subDeviceOwned->open(p);
 
     if (!subDeviceOwned->isValid())
     {
-        yError("opening AnalogWrapper subdevice... FAILED\n");
+        yCError(ANALOGWRAPPER, "opening AnalogWrapper subdevice... FAILED\n");
         return false;
     }
 
@@ -279,7 +281,7 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
 
     if (analogSensor_p == nullptr)
     {
-        yError("Opening IAnalogSensor interface of AnalogWrapper subdevice... FAILED\n");
+        yCError(ANALOGWRAPPER, "Opening IAnalogSensor interface of AnalogWrapper subdevice... FAILED\n");
         return false;
     }
 
@@ -287,7 +289,7 @@ bool AnalogWrapper::openAndAttachSubDevice(Searchable &prop)
 
     if (chNum <= 0)
     {
-        yError("Calling analog sensor has invalid channels number %d.\n", chNum);
+        yCError(ANALOGWRAPPER, "Calling analog sensor has invalid channels number %d.\n", chNum);
         return false;
     }
 
@@ -301,7 +303,7 @@ bool AnalogWrapper::openDeferredAttach(yarp::os::Searchable &prop)
 {
     // nothing to do here?
     if( (subDeviceOwned != nullptr) || (ownDevices == true) )
-        yError() << "AnalogWrapper: something wrong with the initialization.";
+        yCError(ANALOGWRAPPER) << "AnalogWrapper: something wrong with the initialization.";
     return true;
 }
 
@@ -318,7 +320,7 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
 
     if (analog2attach.size() != 1)
     {
-        yError("AnalogWrapper: cannot attach more than one device");
+        yCError(ANALOGWRAPPER, "AnalogWrapper: cannot attach more than one device");
         return false;
     }
 
@@ -331,7 +333,7 @@ bool AnalogWrapper::attachAll(const PolyDriverList &analog2attach)
 
     if(nullptr == analogSensor_p)
     {
-        yError("AnalogWrapper: subdevice passed to attach method is invalid");
+        yCError(ANALOGWRAPPER, "AnalogWrapper: subdevice passed to attach method is invalid");
         return false;
     }
     attach(analogSensor_p);
@@ -383,7 +385,7 @@ bool AnalogWrapper::threadInit()
         // open data port
         if (!analogPort.port.open(analogPort.port_name))
            {
-               yError("AnalogWrapper: failed to open port %s", analogPort.port_name.c_str());
+               yCError(ANALOGWRAPPER, "AnalogWrapper: failed to open port %s", analogPort.port_name.c_str());
                return false;
            }
     }
@@ -406,16 +408,16 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     if(!config.check("ROS") )
     {
         useROS = ROS_disabled;
-        yInfo()  << "No ROS group found in config file ... skipping ROS initialization.";
+        yCInfo(ANALOGWRAPPER)  << "No ROS group found in config file ... skipping ROS initialization.";
         return true;
     }
 
-    yInfo()  << "ROS group was FOUND in config file.";
+    yCInfo(ANALOGWRAPPER)  << "ROS group was FOUND in config file.";
 
     Bottle &rosGroup = config.findGroup("ROS");
     if(rosGroup.isNull())
     {
-        yError() << sensorId << "ROS group params is not a valid group or empty";
+        yCError(ANALOGWRAPPER) << sensorId << "ROS group params is not a valid group or empty";
         useROS = ROS_config_error;
         return false;
     }
@@ -423,7 +425,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     // check for useROS parameter
     if(!rosGroup.check("useROS"))
     {
-        yError() << sensorId << " cannot find useROS parameter, mandatory when using ROS message. \n \
+        yCError(ANALOGWRAPPER) << sensorId << " cannot find useROS parameter, mandatory when using ROS message. \n \
                     Allowed values are true, false, ROS_only";
         useROS = ROS_config_error;
         return false;
@@ -431,23 +433,23 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     std::string ros_use_type = rosGroup.find("useROS").asString();
     if(ros_use_type == "false")
     {
-        yInfo() << sensorId << "useROS topic if set to 'false'";
+        yCInfo(ANALOGWRAPPER) << sensorId << "useROS topic if set to 'false'";
         useROS = ROS_disabled;
         return true;
     }
     else if(ros_use_type == "true")
     {
-        yInfo() << sensorId << "useROS topic if set to 'true'";
+        yCInfo(ANALOGWRAPPER) << sensorId << "useROS topic if set to 'true'";
         useROS = ROS_enabled;
     }
     else if(ros_use_type == "only")
     {
-        yInfo() << sensorId << "useROS topic if set to 'only";
+        yCInfo(ANALOGWRAPPER) << sensorId << "useROS topic if set to 'only";
         useROS = ROS_only;
     }
     else
     {
-        yInfo() << sensorId << "useROS parameter is set to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+        yCInfo(ANALOGWRAPPER) << sensorId << "useROS parameter is set to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
         useROS = ROS_config_error;
         return false;
     }
@@ -455,17 +457,17 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     // check for ROS_nodeName parameter
     if(!rosGroup.check("ROS_nodeName"))
     {
-        yError() << sensorId << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+        yCError(ANALOGWRAPPER) << sensorId << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
-    yInfo() << sensorId << "rosNodeName is " << rosNodeName;
+    yCInfo(ANALOGWRAPPER) << sensorId << "rosNodeName is " << rosNodeName;
 
     // check for ROS_topicName parameter
     if(!rosGroup.check("ROS_topicName"))
     {
-        yError() << sensorId << " cannot find ROS_topicName parameter, mandatory when using ROS message";
+        yCError(ANALOGWRAPPER) << sensorId << " cannot find ROS_topicName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
@@ -473,13 +475,13 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     if(rosGroup.find("ROS_topicName").isString())
     {
         rosTopicNamesVec.at(0) = rosGroup.find("ROS_topicName").asString();
-        yInfo() << sensorId << "ROS_topicName is " << rosTopicNamesVec.at(0);
+        yCInfo(ANALOGWRAPPER) << sensorId << "ROS_topicName is " << rosTopicNamesVec.at(0);
 
     }
     else if(rosGroup.find("ROS_topicName").isList())
     {
         yarp::os::Bottle *rosTopicNamesBottle = rosGroup.find("ROS_topicName").asList();
-        yInfo() << sensorId << "ROS_topicName list is " << rosTopicNamesBottle->toString();
+        yCInfo(ANALOGWRAPPER) << sensorId << "ROS_topicName list is " << rosTopicNamesBottle->toString();
 
         rosTopicNamesVec.resize(rosTopicNamesBottle->size());
         for(size_t i = 0; i < rosTopicNamesBottle->size(); i++)
@@ -494,7 +496,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     // check for ROS_msgType parameter
     if (!rosGroup.check("ROS_msgType"))
     {
-        yError() << sensorId << " cannot find ROS_msgType parameter, mandatory when using ROS message";
+        yCError(ANALOGWRAPPER) << sensorId << " cannot find ROS_msgType parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
@@ -503,10 +505,10 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     // check for frame_id parameter
     if (rosMsgType == "geometry_msgs/WrenchStamped")
     {
-        yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
+        yCInfo(ANALOGWRAPPER) << sensorId << "ROS_msgType is " << rosMsgType;
         if (!rosGroup.check("frame_id"))
         {
-            yError() << sensorId << " cannot find frame_id parameter, mandatory when using ROS message";
+            yCError(ANALOGWRAPPER) << sensorId << " cannot find frame_id parameter, mandatory when using ROS message";
             useROS = ROS_config_error;
             return false;
         }
@@ -514,7 +516,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
         if(rosGroup.find("frame_id").isString())
         {
             frame_idVec.at(0) = rosGroup.find("frame_id").asString();
-            yInfo() << sensorId << "frame_id is " << frame_idVec.at(0);
+            yCInfo(ANALOGWRAPPER) << sensorId << "frame_id is " << frame_idVec.at(0);
 
         }
         else if(rosGroup.find("frame_id").isList())
@@ -523,11 +525,11 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
 
             if(frame_idBottle->size() != rosTopicNamesVec.size())
             {
-                yError("AnalogWrapper: mismatch between the number of ros topics and frame_ids");
+                yCError(ANALOGWRAPPER, "AnalogWrapper: mismatch between the number of ros topics and frame_ids");
                 return false;
             }
 
-            yInfo() << sensorId << "frame_id list is " << frame_idBottle->toString();
+            yCInfo(ANALOGWRAPPER) << sensorId << "frame_id list is " << frame_idBottle->toString();
 
             frame_idVec.resize(frame_idBottle->size());
             for(size_t i = 0; i < frame_idBottle->size(); i++)
@@ -538,30 +540,30 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
 
         if(!rosGroup.check("rosOffset"))
         {
-            yWarning() << sensorId << "cannot find rosOffset parameter, using the default offset 0 while reading analog sensor data";
+            yCWarning(ANALOGWRAPPER) << sensorId << "cannot find rosOffset parameter, using the default offset 0 while reading analog sensor data";
         }
 
         if(rosGroup.find("rosOffset").isInt32())
         {
             rosOffset = rosGroup.find("rosOffset").asInt32();
-            yInfo() << sensorId << " rosOffset is " << rosOffset;
+            yCInfo(ANALOGWRAPPER) << sensorId << " rosOffset is " << rosOffset;
         }
 
         if(!rosGroup.check("rosPadding"))
         {
-            yWarning() << sensorId << "cannot find rosPadding parameter, using the default padding 0 while reading analog sensor data";
+            yCWarning(ANALOGWRAPPER) << sensorId << "cannot find rosPadding parameter, using the default padding 0 while reading analog sensor data";
         }
 
         if(rosGroup.find("rosPadding").isInt32())
         {
             rosOffset = rosGroup.find("rosPadding").asInt32();
-            yInfo() << sensorId << " rosPadding is " << rosOffset;
+            yCInfo(ANALOGWRAPPER) << sensorId << " rosPadding is " << rosOffset;
         }
     }
     else if (rosMsgType == "sensor_msgs/JointState")
     {
         std::string jointName;
-        yInfo() << sensorId << "ROS_msgType is " << rosMsgType;
+        yCInfo(ANALOGWRAPPER) << sensorId << "ROS_msgType is " << rosMsgType;
         bool oldParam = false;
         bool newParam = false;
 
@@ -569,7 +571,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
         {
             oldParam = true;
             jointName = "joint_names";
-            yWarning() << sensorId << " using DEPRECATED 'joint_names' parameter. Please use 'jointNames' instead.";
+            yCWarning(ANALOGWRAPPER) << sensorId << " using DEPRECATED 'joint_names' parameter. Please use 'jointNames' instead.";
         }
 
         if(rosGroup.check("jointNames"))
@@ -580,14 +582,14 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
 
         if(!oldParam && !newParam)
         {
-            yError() << sensorId << " missing 'jointNames' parameter needed when broadcasting 'sensor_msgs/JointState' message type";
+            yCError(ANALOGWRAPPER) << sensorId << " missing 'jointNames' parameter needed when broadcasting 'sensor_msgs/JointState' message type";
             useROS = ROS_config_error;
             return false;
         }
         // Throw an error if both new and old are present
         if(oldParam && newParam)
         {
-            yError() << sensorId << " found both DEPRECATED 'joint_names' and new 'jointNames' parameters. Please remove the old 'joint_names' from your config file.";
+            yCError(ANALOGWRAPPER) << sensorId << " found both DEPRECATED 'joint_names' and new 'jointNames' parameters. Please remove the old 'joint_names' from your config file.";
             useROS = ROS_config_error;
             return false;
         }
@@ -595,7 +597,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
         yarp::os::Bottle& jnam = rosGroup.findGroup(jointName);
         if(jnam.isNull())
         {
-            yError() << sensorId << "Cannot find 'jointNames' parameters.";
+            yCError(ANALOGWRAPPER) << sensorId << "Cannot find 'jointNames' parameters.";
             return false;
         }
 
@@ -608,7 +610,7 @@ bool AnalogWrapper::checkROSParams(Searchable &config)
     }
     else
     {
-        yError() << sensorId << "ROS_msgType '" << rosMsgType << "' not supported ";
+        yCError(ANALOGWRAPPER) << sensorId << "ROS_msgType '" << rosMsgType << "' not supported ";
         return false;
     }
 
@@ -627,7 +629,7 @@ bool AnalogWrapper::initialize_ROS()
 
             if(rosNode == nullptr)
             {
-                yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
+                yCError(ANALOGWRAPPER) << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
                 success = false;
                 break;
             }
@@ -640,7 +642,7 @@ bool AnalogWrapper::initialize_ROS()
                 {
                     if(!rosPublisherWrenchPortVec.at(i).topic(rosTopicNamesVec.at(i)))
                     {
-                        yError() << " opening " << rosTopicNamesVec.at(i) << " Topic, check your yarp-ROS network configuration\n";
+                        yCError(ANALOGWRAPPER) << " opening " << rosTopicNamesVec.at(i) << " Topic, check your yarp-ROS network configuration\n";
                         success = false;
                         break;
                     }
@@ -650,20 +652,20 @@ bool AnalogWrapper::initialize_ROS()
             {
                 if (!rosPublisherJointPort.topic(rosTopicNamesVec.at(0)))
                 {
-                    yError() << " opening " << rosTopicNamesVec.at(0) << " Topic, check your yarp-ROS network configuration\n";
+                    yCError(ANALOGWRAPPER) << " opening " << rosTopicNamesVec.at(0) << " Topic, check your yarp-ROS network configuration\n";
                     success = false;
                     break;
                 }
             }
             else
             {
-                yError() << sensorId << "Invalid rosMsgType: " << rosMsgType;
+                yCError(ANALOGWRAPPER) << sensorId << "Invalid rosMsgType: " << rosMsgType;
             }
 
-            yInfo() << sensorId << "ROS initialized successfully, node:" << rosNodeName << " and opened the following topics: ";
+            yCInfo(ANALOGWRAPPER) << sensorId << "ROS initialized successfully, node:" << rosNodeName << " and opened the following topics: ";
             for(size_t i = 0; i < rosTopicNamesVec.size(); i++)
             {
-                yInfo() << rosTopicNamesVec.at(0);
+                yCInfo(ANALOGWRAPPER) << rosTopicNamesVec.at(0);
             }
 
             success = true;
@@ -671,19 +673,19 @@ bool AnalogWrapper::initialize_ROS()
 
         case ROS_disabled:
         {
-            yInfo() << sensorId << ": no ROS initialization required";
+            yCInfo(ANALOGWRAPPER) << sensorId << ": no ROS initialization required";
             success = true;
         } break;
 
         case ROS_config_error:
         {
-            yError() << sensorId << " ROS parameter are not correct, check your configuration file";
+            yCError(ANALOGWRAPPER) << sensorId << " ROS parameter are not correct, check your configuration file";
             success = false;
         } break;
 
         default:
         {
-            yError() << sensorId << " something went wrong with ROS configuration, we should never be here!!!";
+            yCError(ANALOGWRAPPER) << sensorId << " something went wrong with ROS configuration, we should never be here!!!";
             success = false;
         } break;
     }
@@ -694,11 +696,11 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString());
-    yTrace() << "AnalogWrapper params are: " << config.toString();
+    yCTrace(ANALOGWRAPPER) << "AnalogWrapper params are: " << config.toString();
 
     if (!config.check("period"))
     {
-        yError() << "AnalogWrapper: missing 'period' parameter. Check you configuration file\n";
+        yCError(ANALOGWRAPPER) << "AnalogWrapper: missing 'period' parameter. Check you configuration file\n";
         return false;
     }
     else
@@ -708,7 +710,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
     if (config.check("deviceId"))
     {
-        yError() << "AnalogWrapper: the parameter 'deviceId' has been removed, please use parameter 'name' instead. \n"
+        yCError(ANALOGWRAPPER) << "AnalogWrapper: the parameter 'deviceId' has been removed, please use parameter 'name' instead. \n"
             << "e.g. In the FT wrapper configuration files of your robot, replace '<param name=""deviceId""> left_arm </param>' \n"
             << "with '/icub/left_arm/analog:o' ";
         return false;
@@ -716,7 +718,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("name"))
     {
-        yError() << "AnalogWrapper: missing 'name' parameter. Check you configuration file; it must be like:\n"
+        yCError(ANALOGWRAPPER) << "AnalogWrapper: missing 'name' parameter. Check you configuration file; it must be like:\n"
                     "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
         return false;
     }
@@ -728,19 +730,19 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
 
     if(!checkROSParams(config) )
     {
-        yError() << sensorId << "ROS parameter are not correct, check your configuration file";
+        yCError(ANALOGWRAPPER) << sensorId << "ROS parameter are not correct, check your configuration file";
         return false;
     }
 
     if(!initialize_YARP(config) )
     {
-        yError() << sensorId << "Error initializing YARP ports";
+        yCError(ANALOGWRAPPER) << sensorId << "Error initializing YARP ports";
         return false;
     }
 
     if(!initialize_ROS() )
     {
-        yError() << sensorId << "Error initializing ROS topics";
+        yCError(ANALOGWRAPPER) << sensorId << "Error initializing ROS topics";
         return false;
     }
 
@@ -751,7 +753,7 @@ bool AnalogWrapper::open(yarp::os::Searchable &config)
         ownDevices=true;
         if(! openAndAttachSubDevice(config))
         {
-            yError("AnalogWrapper: error while opening subdevice\n");
+            yCError(ANALOGWRAPPER, "AnalogWrapper: error while opening subdevice\n");
             return false;
         }
     }
@@ -771,7 +773,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
     {
         case ROS_only:
         {
-            yInfo() << sensorId << " No YARP initialization required";
+            yCInfo(ANALOGWRAPPER) << sensorId << " No YARP initialization required";
             return true;
         } break;
 
@@ -784,7 +786,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
              // if there is no "ports" section open only 1 port and use name as is.
                 if (Network::exists(streamingPortName + "/rpc:i") || Network::exists(streamingPortName))
                 {
-                    yError() << "AnalogWrapper: unable to open the analog server, address conflict";
+                    yCError(ANALOGWRAPPER) << "AnalogWrapper: unable to open the analog server, address conflict";
                     return false;
                 }
                 createPort((streamingPortName ).c_str(), _rate );
@@ -799,7 +801,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                 Value &deviceChannels =  params.find("channels");
                 if (deviceChannels.isNull())
                 {
-                    yError("AnalogWrapper: 'channels' parameters was not found in config file.");
+                    yCError(ANALOGWRAPPER, "AnalogWrapper: 'channels' parameters was not found in config file.");
                     return false;
                 }
 
@@ -814,16 +816,16 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
 
                     if (parameters.size()!=5)
                     {
-                        yError() << "AnalogWrapper: check skin port parameters in part description, I was expecting "
+                        yCError(ANALOGWRAPPER) << "AnalogWrapper: check skin port parameters in part description, I was expecting "
                                  << ports->get(k).asString().c_str() << " followed by four integers";
-                           yError() << " your param is " << parameters.toString();
+                        yCError(ANALOGWRAPPER) << " your param is " << parameters.toString();
                         return false;
                     }
 
                     if (Network::exists(streamingPortName + "/" + string(ports->get(k).asString()) + "/rpc:i")
                         || Network::exists(streamingPortName + "/" + string(ports->get(k).asString())))
                     {
-                        yError() << "AnalogWrapper: unable to open the analog server, address conflict";
+                        yCError(ANALOGWRAPPER) << "AnalogWrapper: unable to open the analog server, address conflict";
                         return false;
                     }
                     int wBase=parameters.get(1).asInt32();
@@ -831,11 +833,11 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                     int base=parameters.get(3).asInt32();
                     int top=parameters.get(4).asInt32();
 
-                    yDebug()<<"--> "<<wBase<<" "<<wTop<<" "<<base<<" "<<top;
+                    yCDebug(ANALOGWRAPPER) << "--> " << wBase << " " << wTop << " " << base << " " << top;
 
                     //check consistenty
                     if(wTop-wBase != top-base){
-                        yError() << "AnalogWrapper: numbers of mapped taxels do not match, check "
+                        yCError(ANALOGWRAPPER) << "AnalogWrapper: numbers of mapped taxels do not match, check "
                                  << ports->get(k).asString().c_str() << " port parameters in part description";
                         return false;
                     }
@@ -843,7 +845,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
 
                     tmpPorts[k].length = portChannels;
                     tmpPorts[k].offset = wBase;
-                    yDebug() << "opening port " << ports->get(k).asString().c_str();
+                    yCDebug(ANALOGWRAPPER) << "opening port " << ports->get(k).asString().c_str();
                     tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString());
 
                     sumOfChannels+=portChannels;
@@ -852,7 +854,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
 
                 if (sumOfChannels!=deviceChannels.asInt32())
                 {
-                    yError() << "AnalogWrapper: Total number of mapped taxels does not correspond to total taxels";
+                    yCError(ANALOGWRAPPER) << "AnalogWrapper: Total number of mapped taxels does not correspond to total taxels";
                     return false;
                 }
             }
@@ -897,7 +899,7 @@ void AnalogWrapper::run()
 
                         // check vector limit
                         if(last>=(int)lastDataRead.size()){
-                            yError()<<"AnalogWrapper: error while sending analog sensor output on port "<< analogPort.port_name
+                            yCError(ANALOGWRAPPER, )<<"AnalogWrapper: error while sending analog sensor output on port "<< analogPort.port_name
                                     <<" Vector size expected to be at least "<<last<<" whereas it is "<< lastDataRead.size();
                             continue;
                         }
@@ -941,7 +943,7 @@ void AnalogWrapper::run()
 
                     if (data_size != ros_joint_names.size())
                     {
-                        yDebug() << "Invalid jointNames size:" << data_size << "!=" << ros_joint_names.size();
+                        yCDebug(ANALOGWRAPPER) << "Invalid jointNames size:" << data_size << "!=" << ros_joint_names.size();
                     }
                     else
                     {
@@ -964,7 +966,7 @@ void AnalogWrapper::run()
             }
             else
             {
-                yError("AnalogWrapper: %s: vector size non valid: %lu", sensorId.c_str(), static_cast<unsigned long> (lastDataRead.size()));
+                yCError(ANALOGWRAPPER, "AnalogWrapper: %s: vector size non valid: %lu", sensorId.c_str(), static_cast<unsigned long> (lastDataRead.size()));
             }
         }
         else
@@ -972,14 +974,14 @@ void AnalogWrapper::run()
             switch(ret)
             {
                 case IAnalogSensor::AS_OVF:
-                    yError("AnalogWrapper: %s: Sensor returned overflow error (code %d).", sensorId.c_str(), ret);
+                    yCError(ANALOGWRAPPER, "AnalogWrapper: %s: Sensor returned overflow error (code %d).", sensorId.c_str(), ret);
                     break;
                 case IAnalogSensor::AS_TIMEOUT:
-                    yError("AnalogWrapper: %s: Sensor returned timeout error (code %d).", sensorId.c_str(), ret);
+                    yCError(ANALOGWRAPPER, "AnalogWrapper: %s: Sensor returned timeout error (code %d).", sensorId.c_str(), ret);
                     break;
                 case IAnalogSensor::AS_ERROR:
                 default:
-                    yError("AnalogWrapper: %s: Sensor returned error with code %d.", sensorId.c_str(), ret);
+                    yCError(ANALOGWRAPPER, "AnalogWrapper: %s: Sensor returned error with code %d.", sensorId.c_str(), ret);
                     break;
             }
         }
@@ -988,7 +990,7 @@ void AnalogWrapper::run()
 
 bool AnalogWrapper::close()
 {
-    yTrace("AnalogWrapper::Close");
+    yCTrace(ANALOGWRAPPER, "AnalogWrapper::Close");
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();
