@@ -43,7 +43,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Protocol();
+     ~Protocol() override;
 
     // yarp::os::ConnectionState.
     void setRoute(const Route& route) override;
