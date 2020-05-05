@@ -75,6 +75,7 @@ LogCallback LogComponent::forwardCallback(LogType t) const
     }
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 void LogComponent::setMinimumPrintLevel(LogType minimumPrintLevel)
 {
         m_tracePrintEnabled = (minimumPrintLevel <= yarp::os::Log::TraceType);
@@ -94,3 +95,4 @@ void LogComponent::setMinimumForwardLevel(LogType minimumForwardLevel)
         m_errorForwardEnabled = (minimumForwardLevel <= yarp::os::Log::ErrorType);
         m_fatalForwardEnabled = (minimumForwardLevel <= yarp::os::Log::FatalType);
 }
+#endif // YARP_NO_DEPRECATED
