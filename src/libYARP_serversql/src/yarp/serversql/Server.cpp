@@ -14,10 +14,13 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/SystemClock.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/name/BootstrapServer.h>
 #include <yarp/name/NameServerManager.h>
 #include <yarp/serversql/impl/NameServerContainer.h>
+#include <yarp/serversql/impl/LogComponent.h>
 
 #include <cstdio>
 #include <cmath>
@@ -32,57 +35,61 @@ using yarp::name::BootstrapServer;
 using yarp::name::NameServerManager;
 using yarp::serversql::impl::NameServerContainer;
 
+YARP_SERVERSQL_LOG_COMPONENT(SERVER, "yarp.serversql.Server")
+
+
 int yarp::serversql::Server::run(int argc, char** argv)
 {
     Property options;
-    bool     silent(false);
-    FILE*    out;
-
     options.fromCommand(argc, argv, false);
-    silent = options.check("silent");
-    out    = silent ? tmpfile() : stdout;
 
-    fprintf(out, "    __  __ ___  ____   ____\n\
-    \\ \\/ //   ||  _ \\ |  _ \\\n\
-     \\  // /| || |/ / | |/ /\n\
-     / // ___ ||  _ \\ |  _/\n\
-    /_//_/  |_||_| \\_\\|_|\n\
-    ========================\n\n");
+    bool verbose = options.check("verbose");
+    bool silent = options.check("silent");
+
+    if (verbose) {
+        yarp::serversql::impl::LogComponent::setMinumumLogType(yarp::os::Log::DebugType);
+    } else if (silent) {
+        yarp::serversql::impl::LogComponent::setMinumumLogType(yarp::os::Log::WarningType);
+    }
+
+    yCInfo(SERVER, R"===(
+     ==========================
+    | __  __ ___  ____   ____  |
+    | \ \/ //   ||  _ \ |  _ \ |
+    |  \  // /| || |/ / | |/ / |
+    |  / // ___ ||  _ \ |  _/  |
+    | /_//_/  |_||_| \_\|_|    |
+    |                          |
+     ==========================)===");
+    yCInfo(SERVER);
 
     if (options.check("help")) {
-        printf("Welcome to the YARP name server.\n");
-        printf("  --write                  Write IP address and socket on the configuration file.\n");
-        printf("  --config filename.conf   Load options from a file.\n");
-        printf("  --portdb ports.db        Store port information in named database.\n");
-        printf("                           Must not be on an NFS file system.\n");
-        printf("                           Set to :memory: to store in memory (faster).\n");
-        printf("  --subdb subs.db          Store subscription information in named database.\n");
-        printf("                           Must not be on an NFS file system.\n");
-        printf("                           Set to :memory: to store in memory (faster).\n");
-        printf("  --ip IP.AD.DR.ESS        Set IP address of server.\n");
-        printf("  --socket NNNNN           Set port number of server.\n");
-        printf("  --web dir                Serve web resources from given directory.\n");
-        printf("  --no-web-cache           Reload pages from file for each request.\n");
-        printf("  --ros                    Delegate pub/sub to ROS name server.\n");
-        printf("  --silent                 Start in silent mode.\n");
+        yCInfo(SERVER, "Welcome to the YARP name server.\n");
+        yCInfo(SERVER, "  --write                  Write IP address and socket on the configuration file.\n");
+        yCInfo(SERVER, "  --config filename.conf   Load options from a file.\n");
+        yCInfo(SERVER, "  --portdb ports.db        Store port information in named database.\n");
+        yCInfo(SERVER, "                           Must not be on an NFS file system.\n");
+        yCInfo(SERVER, "                           Set to :memory: to store in memory (faster).\n");
+        yCInfo(SERVER, "  --subdb subs.db          Store subscription information in named database.\n");
+        yCInfo(SERVER, "                           Must not be on an NFS file system.\n");
+        yCInfo(SERVER, "                           Set to :memory: to store in memory (faster).\n");
+        yCInfo(SERVER, "  --ip IP.AD.DR.ESS        Set IP address of server.\n");
+        yCInfo(SERVER, "  --socket NNNNN           Set port number of server.\n");
+        yCInfo(SERVER, "  --web dir                Serve web resources from given directory.\n");
+        yCInfo(SERVER, "  --no-web-cache           Reload pages from file for each request.\n");
+        yCInfo(SERVER, "  --ros                    Delegate pub/sub to ROS name server.\n");
+        yCInfo(SERVER, "  --silent                 Start in silent mode.\n");
         //this->stop();
-        if (silent) {
-            fclose(out);
-        }
+
         return 0;
     } else {
-        fprintf(out, "Call with --help for information on available options\n");
+        yCInfo(SERVER, "Call with --help for information on available options\n");
     }
 
     NameServerContainer nc;
     if (!nc.open(options)) {
-        if (silent) {
-            fclose(out);
-        }
         return 1;
     }
-
-    nc.setSilent(silent);
 
     bool ok = false;
     NameServerManager name(nc);
@@ -99,20 +106,16 @@ int yarp::serversql::Server::run(int argc, char** argv)
 
     ok = server.open(nc.where(),false);
     if (!ok) {
-        fprintf(stderr, "Name server failed to open\n");
-        if (silent) {
-            fclose(out);
-        }
+        yCError(SERVER, "Name server failed to open\n");
         return 1;
     }
 
-    printf("\n");
     fallback.start();
 
 
     // Repeat registrations for the server and fallback server -
     // these registrations are more complete.
-    fprintf(out, "Registering name server with itself:\n");
+    yCInfo(SERVER, "Registering name server with itself");
     nc.preregister(nc.where());
     nc.preregister(fallback.where());
 
@@ -131,9 +134,10 @@ int yarp::serversql::Server::run(int argc, char** argv)
 
     NameClient::getNameClient().send(cmd, reply);
 
-    fprintf(out, "Name server can be browsed at http://%s:%d/\n",
-           nc.where().getHost().c_str(), nc.where().getPort());
-    fprintf(out, "\nOk.  Ready!\n");
+    yCInfo(SERVER, "Name server can be browsed at http://%s:%d/",
+              nc.where().getHost().c_str(),
+              nc.where().getPort());
+    yCInfo(SERVER, "Ok. Ready!");
 
     while(!shouldStop) {
         messageCounter += pollingRate;
@@ -141,14 +145,11 @@ int yarp::serversql::Server::run(int argc, char** argv)
         double dummy;
 
         if(std::modf(messageCounter / 600.0, &dummy) < .00001) {
-            fprintf(out, "Name server running happily\n");
+            yCInfo(SERVER, "Name server running happily");
         }
     }
 
-    fprintf(out, "closing yarp server\n");
+    yCInfo(SERVER, "closing yarp server");
     server.close();
-    if (silent) {
-        fclose(out);
-    }
     return 0;
 }

@@ -13,6 +13,7 @@
 #include <sqlite3.h>
 
 #include <yarp/os/RosNameSpace.h>
+#include <yarp/serversql/impl/LogComponent.h>
 #include <yarp/serversql/impl/SubscriberOnSql.h>
 #include <yarp/serversql/impl/ParseName.h>
 
@@ -36,13 +37,18 @@ using namespace yarp::os;
 using namespace yarp::serversql::impl;
 using namespace std;
 
+namespace {
+YARP_SERVERSQL_LOG_COMPONENT(SUBSCRIBERONSQL, "yarp.serversql.impl.SubscriberOnSql")
+} // namespace
+
+
 bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
     sqlite3 *db = nullptr;
     if (fresh) {
         int result = access(filename.c_str(),F_OK);
         if (result==0) {
-            fprintf(stderr,"Database needs to be recreated.\n");
-            fprintf(stderr,"Please move %s out of the way.\n", filename.c_str());
+            yCWarning(SUBSCRIBERONSQL, "Database needs to be recreated.");
+            yCWarning(SUBSCRIBERONSQL, "Please move %s out of the way.", filename.c_str());
             return false;
         }
 
@@ -52,7 +58,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
                                  SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_NOMUTEX,
                                  nullptr);
     if (result!=SQLITE_OK) {
-        fprintf(stderr,"Failed to open database %s\n", filename.c_str());
+        yCError(SUBSCRIBERONSQL, "Failed to open database %s", filename.c_str());
         if (db != nullptr) {
             sqlite3_close(db);
         }
@@ -70,7 +76,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
     result = sqlite3_exec(db, create_subscribe_table, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
-        fprintf(stderr,"Failed to set up subscriptions table\n");
+        yCError(SUBSCRIBERONSQL, "Failed to set up subscriptions table");
         std::exit(1);
     }
 
@@ -79,7 +85,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
     sqlite3_stmt *statement = nullptr;
     result = sqlite3_prepare_v2(db, check_subscriptions_size, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
-        fprintf(stderr,"Failed to set up subscriptions table\n");
+        yCError(SUBSCRIBERONSQL, "Failed to set up subscriptions table");
         std::exit(1);
     }
 
@@ -94,7 +100,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
         result = sqlite3_exec(db, add_structure, nullptr, nullptr, nullptr);
         if (result!=SQLITE_OK) {
             sqlite3_close(db);
-            fprintf(stderr,"Failed to set up subscriptions table\n");
+            yCError(SUBSCRIBERONSQL, "Failed to set up subscriptions table");
             std::exit(1);
         }
     }
@@ -107,7 +113,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
     result = sqlite3_exec(db, create_topic_table, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
-        fprintf(stderr,"Failed to set up topics table\n");
+        yCError(SUBSCRIBERONSQL, "Failed to set up topics table");
         std::exit(1);
     }
 
@@ -116,7 +122,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
     statement = nullptr;
     result = sqlite3_prepare_v2(db, check_topic_size, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
-        fprintf(stderr,"Failed to set up topics table\n");
+        yCError(SUBSCRIBERONSQL, "Failed to set up topics table");
         std::exit(1);
     }
 
@@ -132,7 +138,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
         result = sqlite3_exec(db, add_structure, nullptr, nullptr, nullptr);
         if (result!=SQLITE_OK) {
             sqlite3_close(db);
-            fprintf(stderr,"Failed to set up topics table\n");
+            yCError(SUBSCRIBERONSQL, "Failed to set up topics table");
             std::exit(1);
         }
     }
@@ -145,7 +151,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
     result = sqlite3_exec(db, create_live_table, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
-        fprintf(stderr,"Failed to set up live table\n");
+        yCError(SUBSCRIBERONSQL, "Failed to set up live table");
         std::exit(1);
     }
 
@@ -156,7 +162,7 @@ bool SubscriberOnSql::open(const std::string& filename, bool fresh) {
     result = sqlite3_exec(db, create_struct_table, nullptr, nullptr, nullptr);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
-        fprintf(stderr,"Failed to set up structures table\n");
+        yCError(SUBSCRIBERONSQL, "Failed to set up structures table");
         std::exit(1);
     }
 
@@ -196,15 +202,14 @@ bool SubscriberOnSql::addSubscription(const std::string& src,
                                   src.c_str(),
                                   dest.c_str(),
                                   zmode);
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     bool ok = true;
     int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, &msg);
     if (result!=SQLITE_OK) {
         ok = false;
         if (msg != nullptr) {
-            fprintf(stderr,"Error: %s\n", msg);
+            yCError(SUBSCRIBERONSQL, "%s", msg);
             sqlite3_free(msg);
         }
     }
@@ -237,13 +242,12 @@ bool SubscriberOnSql::removeSubscription(const std::string& src,
     char *query = sqlite3_mprintf("DELETE FROM subscriptions WHERE src = %Q AND dest = %Q",
                                   psrc.getPortName().c_str(),
                                   pdest.getPortName().c_str());
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, nullptr);
     bool ok = true;
     if (result!=SQLITE_OK) {
-        printf("Error in query\n");
+        yCError(SUBSCRIBERONSQL, "Error in query");
         ok = false;
     }
     sqlite3_free(query);
@@ -290,15 +294,14 @@ bool SubscriberOnSql::welcome(const std::string& port, int activity) {
                                     port.c_str());
         }
     }
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     bool ok = true;
     int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, &msg);
     if (result!=SQLITE_OK) {
         ok = false;
         if (msg != nullptr) {
-            fprintf(stderr,"Error: %s\n", msg);
+            yCError(SUBSCRIBERONSQL, "%s", msg);
             sqlite3_free(msg);
         }
     }
@@ -326,14 +329,13 @@ bool SubscriberOnSql::hookup(const std::string& port) {
     //query = sqlite3_mprintf("SELECT * FROM subscriptions WHERE src = %Q OR dest= %Q",port, port);
     query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull FROM subscriptions WHERE (src = %Q OR dest= %Q) AND EXISTS (SELECT NULL FROM live WHERE name=src) AND EXISTS (SELECT NULL FROM live WHERE name=dest) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic) AND (s1.src = %Q OR s2.dest = %Q) AND EXISTS (SELECT NULL FROM live WHERE name=s1.src) AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)",port.c_str(), port.c_str(), port.c_str(), port.c_str());
     //
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(SQLDB(implementation));
         if (msg != nullptr) {
-            fprintf(stderr,"Error: %s\n", msg);
+            yCError(SUBSCRIBERONSQL, "%s", msg);
         }
     }
     while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
@@ -364,14 +366,13 @@ bool SubscriberOnSql::breakdown(const std::string& port) {
     char *query = nullptr;
     // query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull,mode FROM subscriptions WHERE ((src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=dest)) OR (dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=src))) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull, NULL FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic AND ((s1.src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)) OR (s2.dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s1.src))))",port, port, port, port);
     query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull,mode FROM subscriptions WHERE ((src = %Q AND (mode IS NOT NULL OR EXISTS (SELECT NULL FROM live WHERE name=dest))) OR (dest = %Q AND (mode IS NOT NULL OR EXISTS (SELECT NULL FROM live WHERE name=src)))) UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull, NULL FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic AND ((s1.src = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s2.dest)) OR (s2.dest = %Q AND EXISTS (SELECT NULL FROM live WHERE name=s1.src))))",port.c_str(), port.c_str(), port.c_str(), port.c_str());
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(SQLDB(implementation));
         if (msg != nullptr) {
-            fprintf(stderr,"Error: %s\n", msg);
+            yCError(SUBSCRIBERONSQL, "%s", msg);
         }
     }
     while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
@@ -403,10 +404,13 @@ bool SubscriberOnSql::checkSubscription(const std::string& src,const std::string
             }
         }
     }
-    if (verbose) {
-        printf("+++ Checking %s %s / %s %s\n",
-               src.c_str(), dest.c_str(), srcFull.c_str(), destFull.c_str());
-    }
+    yCDebug(SUBSCRIBERONSQL,
+            "+++ Checking %s %s / %s %s",
+            src.c_str(),
+            dest.c_str(),
+            srcFull.c_str(),
+            destFull.c_str());
+
     NameStore *store = getStore();
     if (store != nullptr) {
         Contact csrc = store->query(src);
@@ -415,8 +419,10 @@ bool SubscriberOnSql::checkSubscription(const std::string& src,const std::string
             bool srcTopic = (csrc.getCarrier()=="topic");
             bool destTopic = (cdest.getCarrier()=="topic");
             if (!(srcTopic||destTopic)) {
-                if (verbose) printf("++> check connection %s %s\n",
-                                    srcFull.c_str(), destFull.c_str());
+                yCDebug(SUBSCRIBERONSQL,
+                        "++> check connection %s %s",
+                        srcFull.c_str(),
+                        destFull.c_str());
                 connect(srcFull,destFull);
             }
         }
@@ -451,10 +457,12 @@ bool SubscriberOnSql::breakSubscription(const std::string& dropper,
             }
         }
     }
-    if (verbose) {
-        printf("--- Checking %s %s / %s %s\n",
-               src.c_str(), dest.c_str(), srcFull.c_str(), destFull.c_str());
-    }
+    yCDebug(SUBSCRIBERONSQL,
+            "--- Checking %s %s / %s %s",
+            src.c_str(),
+            dest.c_str(),
+            srcFull.c_str(),
+            destFull.c_str());
     NameStore *store = getStore();
     if (store != nullptr) {
         bool srcDrop = std::string(dropper) == src;
@@ -465,8 +473,10 @@ bool SubscriberOnSql::breakSubscription(const std::string& dropper,
             contact = store->query(dest);
         }
         if (contact.isValid()) {
-            printf("--> check connection %s %s\n",
-                   srcFull.c_str(), destFull.c_str());
+            yCDebug(SUBSCRIBERONSQL,
+                    "--> check connection %s %s",
+                    srcFull.c_str(),
+                    destFull.c_str());
             disconnect(srcFull,destFull,srcDrop);
         }
         if (mode!="") {
@@ -497,14 +507,13 @@ bool SubscriberOnSql::listSubscriptions(const std::string& port,
     } else {
         query = sqlite3_mprintf("SELECT s.srcFull, s.destFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest), s.mode FROM subscriptions s ORDER BY s.src, s.dest");
     }
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
    if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(SQLDB(implementation));
         if (msg != nullptr) {
-            fprintf(stderr,"Error: %s\n", msg);
+            yCError(SUBSCRIBERONSQL, "%s", msg);
         }
     }
     reply.addString("subscriptions");
@@ -554,13 +563,12 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
         mutex.lock();
         char *query = sqlite3_mprintf("DELETE FROM topics WHERE topic = %Q",
                                       port.c_str());
-        if (verbose) {
-            printf("Query: %s\n", query);
-        }
+        yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
         int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, nullptr);
         bool ok = true;
         if (result!=SQLITE_OK) {
-            printf("Error in query\n");
+            yCError(SUBSCRIBERONSQL, "Error in query");
             ok = false;
         }
         sqlite3_free(query);
@@ -576,12 +584,11 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
         char *query = nullptr;
         query = sqlite3_mprintf("SELECT topic FROM topics WHERE topic = %Q",
                                 port.c_str());
-        if (verbose) {
-            printf("Query: %s\n", query);
-        }
+        yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
         int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
         if (result!=SQLITE_OK) {
-            printf("Error in query\n");
+            yCError(SUBSCRIBERONSQL, "Error in query");
         }
         if (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
             have_topic = true;
@@ -598,15 +605,14 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
         if (structure=="") pstructure = nullptr;
         char *query = sqlite3_mprintf("INSERT INTO topics (topic,structure) VALUES(%Q,%Q)",
                                       port.c_str(),pstructure);
-        if (verbose) {
-            printf("Query: %s\n", query);
-        }
+        yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
         bool ok = true;
         int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, &msg);
         if (result!=SQLITE_OK) {
             ok = false;
             if (msg != nullptr) {
-                fprintf(stderr,"Error: %s\n", msg);
+                yCError(SUBSCRIBERONSQL, "%s", msg);
                 sqlite3_free(msg);
             }
         }
@@ -621,14 +627,13 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
     mutex.lock();
     sqlite3_stmt *statement = nullptr;
     char *query = sqlite3_mprintf("SELECT s1.src, s2.dest, s1.srcFull, s2.destFull FROM subscriptions s1, subscriptions s2, topics t WHERE (t.topic = %Q AND s1.dest = t.topic AND s2.src = t.topic)", port.c_str());
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(SQLDB(implementation));
         if (msg != nullptr) {
-            fprintf(stderr,"Error: %s\n", msg);
+            yCError(SUBSCRIBERONSQL, "%s", msg);
         }
     }
     while (result == SQLITE_OK &&
@@ -663,12 +668,11 @@ bool SubscriberOnSql::listTopics(yarp::os::Bottle& topics) {
     sqlite3_stmt *statement = nullptr;
     char *query = nullptr;
     query = sqlite3_mprintf("SELECT topic FROM topics");
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     if (result!=SQLITE_OK) {
-        printf("Error in query\n");
+        yCError(SUBSCRIBERONSQL, "Error in query");
     }
     while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
         char *topic = (char *)sqlite3_column_text(statement,0);
@@ -691,15 +695,14 @@ bool SubscriberOnSql::setType(const std::string& family,
                                   family.c_str(),
                                   (structure=="") ? nullptr : structure.c_str(),
                                   value.c_str());
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     bool ok = true;
     int result = sqlite3_exec(SQLDB(implementation), query, nullptr, nullptr, &msg);
     if (result!=SQLITE_OK) {
         ok = false;
         if (msg != nullptr) {
-            fprintf(stderr,"Error: %s\n", msg);
+            yCError(SUBSCRIBERONSQL, "%s", msg);
             sqlite3_free(msg);
         }
     }
@@ -715,13 +718,12 @@ std::string SubscriberOnSql::getType(const std::string& family,
     char *query = nullptr;
     query = sqlite3_mprintf("SELECT %s FROM structures WHERE name = %Q",
                             family.c_str(), structure.c_str());
-    if (verbose) {
-        printf("Query: %s\n", query);
-    }
+    yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
+
     int result = sqlite3_prepare_v2(SQLDB(implementation), query, -1, &statement, nullptr);
     std::string sresult;
     if (result!=SQLITE_OK) {
-        printf("Error in query\n");
+        yCError(SUBSCRIBERONSQL, "Error in query");
     }
     if (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
         sresult = (const char *)sqlite3_column_text(statement,0);

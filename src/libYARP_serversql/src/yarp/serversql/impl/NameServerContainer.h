@@ -36,14 +36,12 @@ private:
     NameServiceOnTriples ns;
     StyleNameService style;
     ComposedNameService combo1;
-    bool silent{false};
     yarp::os::NameSpace *space{nullptr};
 public:
     using ComposedNameService::open;
 
     ~NameServerContainer() override;
 
-    void setSilent(bool silent);
     const yarp::os::Contact& where();
     yarp::os::Contact whereDelegate();
     void preregister(const yarp::os::Contact& c);

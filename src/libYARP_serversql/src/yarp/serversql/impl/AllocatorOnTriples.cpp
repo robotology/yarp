@@ -11,10 +11,15 @@
 #include <cstdlib>
 
 #include <yarp/serversql/impl/AllocatorOnTriples.h>
+#include <yarp/serversql/impl/LogComponent.h>
 
 using namespace yarp::os;
 using namespace yarp::serversql::impl;
 using namespace std;
+
+namespace {
+YARP_SERVERSQL_LOG_COMPONENT(ALLOCATORONTRIPLES, "yarp.serversql.impl.AllocatorOnTriples")
+} // namespace
 
 Contact AllocatorOnTriples::completePortName(const Contact& c) {
     string name;
@@ -123,9 +128,9 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
                 }
             }
             if (nstring=="") {
-                fprintf(stderr,"Ran out of port numbers\n");
-                fprintf(stderr,"* Make sure ports/programs get closed properly.\n");
-                fprintf(stderr,"* If programs terminate without closing ports, run \"yarp clean\" from time to time..\n");
+                yCError(ALLOCATORONTRIPLES, "Ran out of port numbers");
+                yCError(ALLOCATORONTRIPLES, "* Make sure ports/programs get closed properly.");
+                yCError(ALLOCATORONTRIPLES, "* If programs terminate without closing ports, run \"yarp clean\" from time to time..");
                 std::exit(1);
             }
         } else {
@@ -197,7 +202,7 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
         int v1 = mcastCursor%255;
         int v2 = mcastCursor/255;
         if (v2>=255) {
-            fprintf(stderr,"Ran out of mcast addresses\n");
+            yCError(ALLOCATORONTRIPLES, "Ran out of mcast addresses");
             std::exit(1);
         }
         std::snprintf(buf, 256, "224.1.%d.%d", v2+1, v1+1);

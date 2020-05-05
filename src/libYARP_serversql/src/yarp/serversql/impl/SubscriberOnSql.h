@@ -28,7 +28,6 @@ public:
     SubscriberOnSql()
     {
         implementation = nullptr;
-        verbose = false;
     }
 
     ~SubscriberOnSql() override
@@ -89,14 +88,8 @@ public:
     std::string getType(const std::string& family,
                         const std::string& structure) override;
 
-
-    void setVerbose(bool verbose) {
-        this->verbose = verbose;
-    }
-
 private:
     void *implementation {nullptr};
-    bool verbose {false};
     std::mutex mutex;
 };
 

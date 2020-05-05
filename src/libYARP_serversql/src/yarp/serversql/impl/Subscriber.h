@@ -32,7 +32,6 @@ class Subscriber :
 public:
     Subscriber() :
             store(nullptr),
-            silent(false),
             delegate(nullptr)
     {
     }
@@ -45,11 +44,6 @@ public:
     yarp::os::NameStore *getStore()
     {
         return store;
-    }
-
-    void setSilent(bool flag)
-    {
-        this->silent = flag;
     }
 
     void clear()
@@ -122,7 +116,6 @@ public:
 private:
     yarp::os::NameStore *store;
     ConnectManager manager;
-    bool silent;
     yarp::os::NameSpace *delegate;
 };
 
