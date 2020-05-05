@@ -54,18 +54,18 @@ public:
 private:
     const char* m_name { nullptr };
 
-    std::atomic<bool> m_tracePrintEnabled;
-    std::atomic<bool> m_debugPrintEnabled;
-    std::atomic<bool> m_infoPrintEnabled;
-    std::atomic<bool> m_warningPrintEnabled;
-    std::atomic<bool> m_errorPrintEnabled;
-    std::atomic<bool> m_fatalPrintEnabled;
-    std::atomic<bool> m_traceForwardEnabled;
-    std::atomic<bool> m_debugForwardEnabled;
-    std::atomic<bool> m_infoForwardEnabled;
-    std::atomic<bool> m_warningForwardEnabled;
-    std::atomic<bool> m_errorForwardEnabled;
-    std::atomic<bool> m_fatalForwardEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_tracePrintEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_debugPrintEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_infoPrintEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_warningPrintEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_errorPrintEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_fatalPrintEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_traceForwardEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_debugForwardEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_infoForwardEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_warningForwardEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_errorForwardEnabled;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::atomic<bool>) m_fatalForwardEnabled;
 
     LogCallback m_printCallback { nullptr };
     LogCallback m_forwardCallback { nullptr };
