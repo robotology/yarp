@@ -36,7 +36,6 @@ public:
     void start(const char *hostname, int portnum) {
         this->hostname = hostname;
         this->portnum = portnum;
-        slave.setVerbosity(-1);
         slave.setReader(*this);
         slave.open("...");
     }
