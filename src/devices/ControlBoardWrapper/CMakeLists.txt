@@ -16,6 +16,8 @@ if(NOT SKIP_controlboardwrapper2)
 
   target_sources(yarp_controlboardwrapper2 PRIVATE ControlBoardWrapper.cpp
                                                    ControlBoardWrapper.h
+                                                   ControlBoardWrapperLogComponent.cpp
+                                                   ControlBoardWrapperLogComponent.h
                                                    RPCMessagesParser.cpp
                                                    RPCMessagesParser.h
                                                    StreamingMessagesParser.cpp
