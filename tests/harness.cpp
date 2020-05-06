@@ -89,9 +89,11 @@ static void setup_Environment()
 static void init_Network()
 {
     net = new yarp::os::Network;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     if (verbose) {
         yarp::os::NetworkBase::setVerbosity(1);
     }
+#endif // YARP_NO_DEPRECATED
 }
 
 static void fini_Network()

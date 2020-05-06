@@ -23,8 +23,8 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/YarpPlugin.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/LogForwarder.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdio.h>
@@ -50,6 +50,10 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+
+namespace {
+YARP_OS_LOG_COMPONENT(NETWORK, "yarp.os.Network")
+}
 
 static int __yarp_is_initialized = 0;
 static bool __yarp_auto_init_active = false; // was yarp auto-initialized?
@@ -117,15 +121,6 @@ static int noteDud(const Contact& src)
 }
 
 
-//#define DEBUG_CONNECT_CARRIER
-#ifdef DEBUG_CONNECT_CARRIER
-#    define CARRIER_DEBUG_0(fmt) fprintf(stderr, fmt)
-#    define CARRIER_DEBUG(fmt, ...) fprintf(stderr, fmt, ##__VA_ARGS__)
-#else
-#    define CARRIER_DEBUG_0(fmt)
-#    define CARRIER_DEBUG(fmt, ...)
-#endif
-
 static int enactConnection(const Contact& src,
                            const Contact& dest,
                            const ContactStyle& style,
@@ -137,12 +132,13 @@ static int enactConnection(const Contact& src,
     rpc.quiet = style.quiet;
     rpc.timeout = style.timeout;
 
-    CARRIER_DEBUG("enactConnection: SRC %s DST %s using carrier %s, MODE=%d, rev=%d\n",
-                  src.getName().c_str(),
-                  dest.getName().c_str(),
-                  style.carrier.c_str(),
-                  mode,
-                  reversed);
+    yCTrace(NETWORK,
+            "enactConnection: SRC %s DST %s using carrier %s, MODE=%d, rev=%d",
+            src.getName().c_str(),
+            dest.getName().c_str(),
+            style.carrier.c_str(),
+            mode,
+            reversed);
 
     if (style.persistent) {
         bool ok = false;
@@ -153,14 +149,14 @@ static int enactConnection(const Contact& src,
         } else if (mode == YARP_ENACT_DISCONNECT) {
             ok = ns.disconnectPortToPortPersistently(src, dest, style);
         } else {
-            fprintf(stderr, "Failure: cannot check subscriptions yet\n");
+            yCError(NETWORK, "Failure: cannot check subscriptions yet");
             return 1;
         }
         if (!ok) {
             return 1;
         }
         if (!style.quiet) {
-            fprintf(stderr, "Success: port-to-port persistent connection added.\n");
+            yCInfo(NETWORK, "Success: port-to-port persistent connection added.");
         }
         return 0;
     }
@@ -170,7 +166,7 @@ static int enactConnection(const Contact& src,
     cmd.addVocab(Vocab::encode("list"));
     cmd.addVocab(Vocab::encode(reversed ? "in" : "out"));
     cmd.addString(dest.getName().c_str());
-    YARP_SPRINTF2(Logger::get(), debug, "asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
+    yCDebug(NETWORK, "asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
     bool ok = NetworkBase::write(src, cmd, reply, rpc);
     if (!ok) {
         noteDud(src);
@@ -179,7 +175,8 @@ static int enactConnection(const Contact& src,
     if (reply.check("carrier")) {
         std::string carrier = reply.find("carrier").asString();
         if (!style.quiet) {
-            printf("Connection found between %s and %s using carrier %s\n",
+            yCInfo(NETWORK,
+                   "Connection found between %s and %s using carrier %s",
                    src.getName().c_str(),
                    dest.getName().c_str(),
                    carrier.c_str());
@@ -231,7 +228,7 @@ static int enactConnection(const Contact& src,
         c2 = NetworkBase::queryName(c2.getName());
     }
 
-    YARP_SPRINTF2(Logger::get(), debug, "** asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
+    yCDebug(NETWORK, "** asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
     ok = NetworkBase::write(c2, cmd, reply, rpc);
     if (!ok) {
         noteDud(src);
@@ -247,14 +244,16 @@ static int enactConnection(const Contact& src,
         ok = msg[0] == 'A' || msg[0] == 'R';
     }
     if (mode == YARP_ENACT_DISCONNECT && !ok) {
-        msg = "no such connection\n";
+        msg = "no such connection";
     }
     if (mode == YARP_ENACT_CONNECT && !ok) {
         noteDud(dest);
     }
     if (!style.quiet) {
-        if (style.verboseOnSuccess || !ok) {
-            fprintf(stderr, "%s %s", ok ? "Success:" : "Failure:", msg.c_str());
+        if (!ok) {
+            yCError(NETWORK, "%s %s", "Failure:", msg.c_str());
+        } else if (style.verboseOnSuccess) {
+            yCInfo(NETWORK,  "%s %s", "Success:", msg.c_str());
         }
     }
     return ok ? 0 : 1;
@@ -297,27 +296,49 @@ static int metaConnect(const std::string& src,
                        ContactStyle style,
                        int mode)
 {
-    YARP_SPRINTF3(Logger::get(), debug, "working on connection %s to %s (%s)", src.c_str(), dest.c_str(), (mode == YARP_ENACT_CONNECT) ? "connect" : ((mode == YARP_ENACT_DISCONNECT) ? "disconnect" : "check"));
+    yCTrace(NETWORK,
+            "working on connection %s to %s (%s)",
+            src.c_str(),
+            dest.c_str(),
+            (mode == YARP_ENACT_CONNECT) ? "connect" : ((mode == YARP_ENACT_DISCONNECT) ? "disconnect" : "check"));
     // check if source name and destination name contain spaces
     if (dest.find(' ') != std::string::npos || src.find(' ') != std::string::npos) {
-        fprintf(stderr, "Failure: no way to make connection %s->%s, one of the port names contains a space character.\n", src.c_str(), dest.c_str());
+        yCError(NETWORK,
+                "Failure: no way to make connection %s->%s, one of the port names contains a space character.",
+                src.c_str(),
+                dest.c_str());
         return 1;
     }
 
-    CARRIER_DEBUG("METACONNECT: src=%s dest=%s style=%s\n", src.c_str(), dest.c_str(), style.carrier.c_str());
+    yCTrace(NETWORK,
+            "METACONNECT: src=%s dest=%s style=%s",
+            src.c_str(),
+            dest.c_str(),
+            style.carrier.c_str());
+
     // get the expressed contacts, without name server input
     Contact dynamicSrc = Contact::fromString(src);
     Contact dynamicDest = Contact::fromString(dest);
 
-    CARRIER_DEBUG("DYNAMIC_SRC: name=%s, carrier=%s\n", dynamicSrc.getName().c_str(), dynamicSrc.getCarrier().c_str());
-    CARRIER_DEBUG("DYNAMIC_DST: name=%s, carrier=%s\n", dynamicDest.getName().c_str(), dynamicDest.getCarrier().c_str());
+    yCTrace(NETWORK,
+            "DYNAMIC_SRC: name=%s, carrier=%s",
+            dynamicSrc.getName().c_str(),
+            dynamicSrc.getCarrier().c_str());
+    yCTrace(NETWORK,
+            "DYNAMIC_DST: name=%s, carrier=%s",
+            dynamicDest.getName().c_str(),
+            dynamicDest.getCarrier().c_str());
 
     if (!NetworkBase::isValidPortName(dynamicSrc.getName())) {
-        fprintf(stderr, "Failure: no way to make connection, invalid source '%s'\n", dynamicSrc.getName().c_str());
+        yCError(NETWORK,
+                "Failure: no way to make connection, invalid source '%s'",
+                dynamicSrc.getName().c_str());
         return 1;
     }
     if (!NetworkBase::isValidPortName(dynamicDest.getName())) {
-        fprintf(stderr, "Failure: no way to make connection, invalid destination '%s'\n", dynamicDest.getName().c_str());
+        yCError(NETWORK,
+                "Failure: no way to make connection, invalid destination '%s'",
+                dynamicDest.getName().c_str());
         return 1;
     }
 
@@ -336,7 +357,9 @@ static int metaConnect(const std::string& src,
         if (!staticSrc.isValid()) {
             if (!style.persistent) {
                 if (!style.quiet) {
-                    fprintf(stderr, "Failure: could not find source port %s\n", src.c_str());
+                    yCError(NETWORK,
+                            "Failure: could not find source port %s",
+                            src.c_str());
                 }
                 return 1;
             }
@@ -357,7 +380,9 @@ static int metaConnect(const std::string& src,
         if (!staticDest.isValid()) {
             if (!style.persistent) {
                 if (!style.quiet) {
-                    fprintf(stderr, "Failure: could not find destination port %s\n", dest.c_str());
+                    yCError(NETWORK,
+                            "Failure: could not find destination port %s",
+                            dest.c_str());
                 }
                 return 1;
             }
@@ -367,8 +392,14 @@ static int metaConnect(const std::string& src,
         staticDest = dynamicDest;
     }
 
-    CARRIER_DEBUG("STATIC_SRC: name=%s, carrier=%s\n", staticSrc.getName().c_str(), staticSrc.getCarrier().c_str());
-    CARRIER_DEBUG("STATIC_DST: name=%s, carrier=%s\n", staticDest.getName().c_str(), staticDest.getCarrier().c_str());
+    yCTrace(NETWORK,
+            "STATIC_SRC: name=%s, carrier=%s",
+            staticSrc.getName().c_str(),
+            staticSrc.getCarrier().c_str());
+    yCTrace(NETWORK,
+            "STATIC_DST: name=%s, carrier=%s",
+            staticDest.getName().c_str(),
+            staticDest.getCarrier().c_str());
 
     //DynamicSrc and DynamicDst are the contacts created by connect command
     //while staticSrc and staticDest are contacts created by querying th server
@@ -388,22 +419,31 @@ static int metaConnect(const std::string& src,
     if (staticSrc.getCarrier() != "topic") {
         if (!topical) {
             Carrier* srcCarrier = nullptr;
-            CARRIER_DEBUG("staticSrc.getCarrier= %s  ", staticSrc.getCarrier().c_str());
+            yCTrace(NETWORK,
+                    "staticSrc.getCarrier = %s",
+                    staticSrc.getCarrier().c_str());
             if (!staticSrc.getCarrier().empty()) {
                 srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier());
             }
             if (srcCarrier != nullptr) {
-                CARRIER_DEBUG("srcCarrier is NOT null; its name is %s;  ", srcCarrier->getName().c_str());
+                yCTrace(NETWORK,
+                        "srcCarrier is NOT null; its name is %s",
+                        srcCarrier->getName().c_str());
                 std::string srcBootstrap = srcCarrier->getBootstrapCarrierName();
                 if (!srcBootstrap.empty()) {
 
-                    CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n", srcBootstrap.c_str(), srcCarrier->getName().c_str());
+                    yCTrace(NETWORK,
+                            "it is competent (bootstrapname is %s), while its name is %s",
+                            srcBootstrap.c_str(),
+                            srcCarrier->getName().c_str());
                     srcIsCompetent = true;
                 } else {
                     //if the srcCarrier is not competent, (that is it can't perform the starting yarp handshaking)
                     //set the carrier constraint equal to the carrier with which the posrt had been registered.
                     carrierConstraint = staticSrc.getCarrier();
-                    CARRIER_DEBUG(" it is NOT competent. its constraint is %s\n\n", carrierConstraint.c_str());
+                    yCTrace(NETWORK,
+                            "it is NOT competent. its constraint is %s",
+                            carrierConstraint.c_str());
                 }
                 delete srcCarrier;
                 srcCarrier = nullptr;
@@ -419,21 +459,30 @@ static int metaConnect(const std::string& src,
     if (staticDest.getCarrier() != "topic") {
         if (!topical) {
             Carrier* destCarrier = nullptr;
-            CARRIER_DEBUG("staticDest.getCarrier= %s  ", staticDest.getCarrier().c_str());
+            yCTrace(NETWORK,
+                    "staticDest.getCarrier = %s",
+                    staticDest.getCarrier().c_str());
             if (!staticDest.getCarrier().empty()) {
                 destCarrier = Carriers::chooseCarrier(staticDest.getCarrier());
             }
             if (destCarrier != nullptr) {
-                CARRIER_DEBUG("destCarrier is NOT null; its name is %s;  ", destCarrier->getName().c_str());
+                yCTrace(NETWORK,
+                        "destCarrier is NOT null; its name is %s",
+                        destCarrier->getName().c_str());
                 std::string destBootstrap = destCarrier->getBootstrapCarrierName();
                 if (!destBootstrap.empty()) {
-                    CARRIER_DEBUG(" it is competent(bootstrapname is %s), while its name is %s )\n\n\n\n", destBootstrap.c_str(), destCarrier->getName().c_str());
+                    yCTrace(NETWORK,
+                            "it is competent (bootstrapname is %s), while its name is %s",
+                            destBootstrap.c_str(),
+                            destCarrier->getName().c_str());
                     destIsCompetent = true;
                 } else {
                     //if the destCarrier is not competent, (that is it can't perform the starting yarp handshaking)
                     //set the carrier constraint equal to the carrier with which the posrt had been registered.
                     carrierConstraint = staticDest.getCarrier();
-                    CARRIER_DEBUG(" it is NOT competent. its constraint is %s\n\n", carrierConstraint.c_str());
+                    yCTrace(NETWORK,
+                            "it is NOT competent. its constraint is %s",
+                            carrierConstraint.c_str());
                 }
                 delete destCarrier;
                 destCarrier = nullptr;
@@ -455,7 +504,7 @@ static int metaConnect(const std::string& src,
             } else if (mode == YARP_ENACT_DISCONNECT) {
                 ok = ns.disconnectTopicFromPort(staticSrc, staticDest, style);
             } else {
-                fprintf(stderr, "Failure: cannot check subscriptions yet\n");
+                yCError(NETWORK, "Failure: cannot check subscriptions yet");
                 return 1;
             }
         } else {
@@ -464,7 +513,7 @@ static int metaConnect(const std::string& src,
             } else if (mode == YARP_ENACT_DISCONNECT) {
                 ok = ns.disconnectPortFromTopic(staticSrc, staticDest, style);
             } else {
-                fprintf(stderr, "Failure: cannot check subscriptions yet\n");
+                yCError(NETWORK, "Failure: cannot check subscriptions yet");
                 return 1;
             }
         }
@@ -473,34 +522,50 @@ static int metaConnect(const std::string& src,
         }
         if (!style.quiet) {
             if (style.verboseOnSuccess) {
-                fprintf(stderr, "Success: connection to topic %s.\n", mode == YARP_ENACT_CONNECT ? "added" : "removed");
+                yCInfo(NETWORK, "Success: connection to topic %s.", mode == YARP_ENACT_CONNECT ? "added" : "removed");
             }
         }
         return 0;
     }
 
-    CARRIER_DEBUG_0("---------\n");
-    CARRIER_DEBUG("dynamicSrc.getCarrier() = %s\n ", dynamicSrc.getCarrier().c_str());
-    CARRIER_DEBUG("dynamicDest.getCarrier() = %s\n ", dynamicDest.getCarrier().c_str());
-    CARRIER_DEBUG("staticSrc.getCarrier() = %s\n ", staticSrc.getCarrier().c_str());
-    CARRIER_DEBUG("staticDest.getCarrier() = %s\n ", staticDest.getCarrier().c_str());
-    CARRIER_DEBUG("carrierConstraint is %s\n ", carrierConstraint.c_str());
-    CARRIER_DEBUG_0("---------\n");
+    yCTrace(NETWORK,
+            "dynamicSrc.getCarrier() = %s",
+            dynamicSrc.getCarrier().c_str());
+    yCTrace(NETWORK,
+            "dynamicDest.getCarrier() = %s",
+            dynamicDest.getCarrier().c_str());
+    yCTrace(NETWORK,
+            "staticSrc.getCarrier() = %s",
+            staticSrc.getCarrier().c_str());
+    yCTrace(NETWORK,
+            "staticDest.getCarrier() = %s",
+            staticDest.getCarrier().c_str());
+    yCTrace(NETWORK,
+            "carrierConstraint is %s",
+            carrierConstraint.c_str());
 
-    CARRIER_DEBUG("style.carrier (1) is %s\n ", style.carrier.c_str());
+    yCTrace(NETWORK,
+            "style.carrier (1) is %s",
+            style.carrier.c_str());
 
 
     if (!dynamicSrc.getCarrier().empty()) { //if in connect command the user specified the carrier of src port
         style.carrier = dynamicSrc.getCarrier();
-        CARRIER_DEBUG("style.carrier is %s ==> in connect command the user specified the carrier of src port\n ", style.carrier.c_str());
+        yCTrace(NETWORK,
+                "style.carrier is %s ==> in connect command the user specified the carrier of src port",
+                style.carrier.c_str());
     }
 
     if (!dynamicDest.getCarrier().empty()) { //if in connect command the user specified the carrier of dest port or the carrier of the connection
         style.carrier = dynamicDest.getCarrier();
-        CARRIER_DEBUG("style.carrier is %s ==> in connect command the user specified the carrier of dest port or the carrier of the connection\n ", style.carrier.c_str());
+        yCTrace(NETWORK,
+                "style.carrier is %s ==> in connect command the user specified the carrier of dest port or the carrier of the connection",
+                style.carrier.c_str());
     }
 
-    CARRIER_DEBUG("at the end style style.carrier is %s\n ", style.carrier.c_str());
+    yCTrace(NETWORK,
+            "at the end style style.carrier is %s",
+            style.carrier.c_str());
 
     //here we'll check if the style carrier and the constraint carrier are equal.
     //note that in both string may contain params of carrier, so we need to comapare only the name of carrier.
@@ -512,10 +577,13 @@ static int metaConnect(const std::string& src,
         std::string carrier_constraint_name = extractCarrierNameOnly(carrierConstraint);
 
         if (style_carrier_name != carrier_constraint_name) {
-            fprintf(stderr, "Failure: conflict between %s and %s\n", style_carrier_name.c_str(), carrier_constraint_name.c_str());
+            yCError(NETWORK, "Failure: conflict between %s and %s", style_carrier_name.c_str(), carrier_constraint_name.c_str());
             return 1;
         }
-        CARRIER_DEBUG("style_carrier_name=%s and carrier_constraint_name=%s are equals!\n", style_carrier_name.c_str(), carrier_constraint_name.c_str());
+        yCTrace(NETWORK,
+                "style_carrier_name=%s and carrier_constraint_name=%s are equals!",
+                style_carrier_name.c_str(),
+                carrier_constraint_name.c_str());
     }
     //we are going to choose the carrier of this connection, and we collect parameters specified by user
     //in order to pass them to the carrier, so it can configure itself.
@@ -523,7 +591,8 @@ static int metaConnect(const std::string& src,
         style.carrier = carrierConstraint;
         //if I'm here means that sorce or dest is not competent.
         //so we need to get parameters of carrier given in connect command.
-        CARRIER_DEBUG_0("if I'm here means that source or dest is not competent\n");
+        yCTrace(NETWORK,
+                "if I'm here means that source or dest is not competent");
         std::string c = dynamicSrc.getCarrier();
         if (extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier)) {
             style.carrier += collectParams(dynamicSrc);
@@ -536,7 +605,8 @@ static int metaConnect(const std::string& src,
     if (style.carrier.empty()) {
         style.carrier = staticDest.getCarrier();
         //if I'm here means that both src and dest are copentent and the user didn't specified a carrier in the connect command
-        CARRIER_DEBUG_0("if I'm here means that both src and dest are compentent and the user didn't specified a carrier in the connect command\n");
+        yCTrace(NETWORK,
+                "if I'm here means that both src and dest are compentent and the user didn't specified a carrier in the connect command");
         std::string c = dynamicSrc.getCarrier();
         if (extractCarrierNameOnly(c) == extractCarrierNameOnly(style.carrier)) {
             style.carrier += collectParams(staticSrc);
@@ -545,12 +615,14 @@ static int metaConnect(const std::string& src,
 
     if (style.carrier.empty()) {
         style.carrier = staticSrc.getCarrier();
-        CARRIER_DEBUG_0("the chosen style carrier is static src\n ");
+        yCTrace(NETWORK, "the chosen style carrier is static src");
     }
 
     //now stylecarrier contains the carrier chosen for this connection
 
-    CARRIER_DEBUG("style_carrier with params  =%s\n", style.carrier.c_str());
+    yCTrace(NETWORK,
+            "style_carrier with params  =%s",
+            style.carrier.c_str());
 
     bool connectionIsPush = false;
     bool connectionIsPull = false;
@@ -593,17 +665,17 @@ static int metaConnect(const std::string& src,
         if (!style.quiet) {
             if (result == 0) {
                 if (style.verboseOnSuccess) {
-                    printf("Success: added connection using custom carrier method\n");
+                    yCInfo(NETWORK, "Success: added connection using custom carrier method");
                 }
             } else {
-                printf("Failure: custom carrier method did not work\n");
+                yCError(NETWORK, "Failure: custom carrier method did not work");
             }
         }
         return result;
     }
 
     if (mode != YARP_ENACT_DISCONNECT) {
-        fprintf(stderr, "Failure: no way to make connection %s->%s\n", src.c_str(), dest.c_str());
+        yCError(NETWORK, "Failure: no way to make connection %s->%s", src.c_str(), dest.c_str());
     }
 
     return 1;
@@ -686,7 +758,7 @@ bool NetworkBase::exists(const std::string& port, const ContactStyle& style, boo
     Contact address = NetworkBase::queryName(port);
     if (!address.isValid()) {
         if (!silent) {
-            printf("Address of port %s is not valid\n", port.c_str());
+            yCInfo(NETWORK, "Address of port %s is not valid", port.c_str());
         }
         return false;
     }
@@ -699,7 +771,7 @@ bool NetworkBase::exists(const std::string& port, const ContactStyle& style, boo
 
     if (out == nullptr) {
         if (!silent) {
-            printf("Cannot connect to port %s\n", port.c_str());
+            yCInfo(NETWORK, "Cannot connect to port %s", port.c_str());
         }
         return false;
     }
@@ -737,7 +809,7 @@ bool NetworkBase::waitConnection(const std::string& source, const std::string& d
 
         if (ct % 30 == 1) {
             if (!quiet) {
-                yInfo("Waiting for %s->%s...", source.c_str(), destination.c_str());
+                yCInfo(NETWORK, "Waiting for %s->%s...", source.c_str(), destination.c_str());
             }
         }
         ct++;
@@ -759,7 +831,7 @@ bool NetworkBase::waitPort(const std::string& target, bool quiet)
 
         if (ct % 30 == 1) {
             if (!quiet) {
-                yInfo("Waiting for %s...", target.c_str());
+                yCInfo(NETWORK, "Waiting for %s...", target.c_str());
             }
         }
         ct++;
@@ -845,20 +917,6 @@ void NetworkBase::initMinimum(yarp::os::yarpClockType clockType, yarp::os::Clock
         YARP_ACE::init();
 #endif
 
-        std::string quiet = getEnvironment("YARP_QUIET");
-        Bottle b2(quiet);
-        if (b2.get(0).asInt32() > 0) {
-            Logger::get().setVerbosity(-b2.get(0).asInt32());
-        } else {
-            std::string verbose = getEnvironment("YARP_VERBOSE");
-            Bottle b(verbose);
-            if (b.get(0).asInt32() > 0) {
-                YARP_INFO(Logger::get(),
-                          "YARP_VERBOSE environment variable is set");
-                Logger::get().setVerbosity(b.get(0).asInt32());
-            }
-        }
-
         // make sure system is actually able to do things fast
         yarp::os::impl::Time::startTurboBoost();
 
@@ -913,25 +971,25 @@ void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clo
 
     switch (clockType) {
     case YARP_CLOCK_SYSTEM:
-        YARP_DEBUG(Logger::get(), "Using SYSTEM clock");
+        yCDebug(NETWORK, "Using SYSTEM clock");
         yarp::os::Time::useSystemClock();
         break;
 
     case YARP_CLOCK_NETWORK:
-        YARP_DEBUG(Logger::get(), "Using NETWORK clock");
+        yCDebug(NETWORK, "Using NETWORK clock");
         clock = yarp::os::Network::getEnvironment("YARP_CLOCK");
         // check of valid parameter is done inside the call, throws YARP_FAIL in case of error
         yarp::os::Time::useNetworkClock(clock);
         break;
 
     case YARP_CLOCK_CUSTOM: {
-        YARP_DEBUG(Logger::get(), "Using CUSTOM clock");
+        yCDebug(NETWORK, "Using CUSTOM clock");
         // check of valid parameter is done inside the call, throws YARP_FAIL in case of error
         yarp::os::Time::useCustomClock(custom);
     } break;
 
     default:
-        YARP_FAIL(Logger::get(), "yarpClockInit called with unknown clock type. Quitting");
+        yCFatal(NETWORK, "yarpClockInit called with unknown clock type. Quitting");
         break;
     }
     return;
@@ -939,9 +997,9 @@ void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clo
 
 Contact NetworkBase::queryName(const std::string& name)
 {
-    YARP_SPRINTF1(Logger::get(), debug, "query name %s", name.c_str());
+    yCDebug(NETWORK, "query name %s", name.c_str());
     if (getNameServerName() == name) {
-        YARP_SPRINTF1(Logger::get(), debug, "query recognized as name server: %s", name.c_str());
+        yCDebug(NETWORK, "query recognized as name server: %s", name.c_str());
         return getNameServerContact();
     }
     Contact c = c.fromString(name);
@@ -954,14 +1012,14 @@ Contact NetworkBase::queryName(const std::string& name)
 
 Contact NetworkBase::registerName(const std::string& name)
 {
-    YARP_SPRINTF1(Logger::get(), debug, "register name %s", name.c_str());
+    yCDebug(NETWORK, "register name %s", name.c_str());
     return getNameSpace().registerName(name);
 }
 
 
 Contact NetworkBase::registerContact(const Contact& contact)
 {
-    YARP_SPRINTF1(Logger::get(), debug, "register contact %s", contact.toString().c_str());
+    yCDebug(NETWORK, "register contact %s", contact.toString().c_str());
     return getNameSpace().registerContact(contact);
 }
 
@@ -1006,7 +1064,7 @@ void NetworkBase::assertion(bool shouldBeTrue)
 {
     // could replace with ACE assertions, except should not
     // evaporate in release mode
-    yAssert(shouldBeTrue);
+    yCAssert(NETWORK, shouldBeTrue);
 }
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
@@ -1047,13 +1105,13 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
         bool ret = write(srcCon, cmd, reply, true, true, 2.0);
         if (!ret) {
             if (!quiet) {
-                fprintf(stderr, "Cannot write to '%s'\n", src.c_str());
+                yCError(NETWORK, "Cannot write to '%s'", src.c_str());
             }
             return false;
         }
         if (reply.get(0).asString() != "ok") {
             if (!quiet) {
-                fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n", src.c_str(), reply.toString().c_str());
+                yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", src.c_str(), reply.toString().c_str());
             }
             return false;
         }
@@ -1080,13 +1138,13 @@ bool NetworkBase::setConnectionQos(const std::string& src, const std::string& de
         bool ret = write(destCon, cmd, reply, true, true, 2.0);
         if (!ret) {
             if (!quiet) {
-                fprintf(stderr, "Cannot write to '%s'\n", dest.c_str());
+                yCError(NETWORK, "Cannot write to '%s'", dest.c_str());
             }
             return false;
         }
         if (reply.get(0).asString() != "ok") {
             if (!quiet) {
-                fprintf(stderr, "Cannot set qos properties of '%s'. (%s)\n", dest.c_str(), reply.toString().c_str());
+                yCError(NETWORK, "Cannot set qos properties of '%s'. (%s)", dest.c_str(), reply.toString().c_str());
             }
             return false;
         }
@@ -1109,13 +1167,13 @@ static bool getPortQos(const std::string& port, const std::string& unit, QosStyl
     bool ret = NetworkBase::write(portCon, cmd, reply, true, true, 2.0);
     if (!ret) {
         if (!quiet) {
-            fprintf(stderr, "Cannot write to '%s'\n", port.c_str());
+            yCError(NETWORK, "Cannot write to '%s'", port.c_str());
         }
         return false;
     }
     if (reply.size() == 0 || reply.get(0).asString() == "fail") {
         if (!quiet) {
-            fprintf(stderr, "Cannot get qos properties of '%s'. (%s)\n", port.c_str(), reply.toString().c_str());
+            yCError(NETWORK, "Cannot get qos properties of '%s'. (%s)", port.c_str(), reply.toString().c_str());
         }
         return false;
     }
@@ -1200,7 +1258,7 @@ bool NetworkBase::write(const Contact& contact,
         }
         if (!port.addOutput(ec)) {
             if (!style.quiet) {
-                fprintf(stderr, "Cannot make connection to '%s'\n", ec.toString().c_str());
+                yCError(NETWORK, "Cannot make connection to '%s'", ec.toString().c_str());
             }
             return false;
         }
@@ -1218,7 +1276,7 @@ bool NetworkBase::write(const Contact& contact,
     }
     if (!address.isValid()) {
         if (!style.quiet) {
-            YARP_SPRINTF1(Logger::get(), error, "cannot find port %s", targetName);
+            yCError(NETWORK, "cannot find port %s", targetName);
         }
         return false;
     }
@@ -1229,7 +1287,7 @@ bool NetworkBase::write(const Contact& contact,
     OutputProtocol* out = Carriers::connect(address);
     if (out == nullptr) {
         if (!style.quiet) {
-            YARP_SPRINTF1(Logger::get(), error, "Cannot connect to port %s", targetName);
+            yCError(NETWORK, "Cannot connect to port %s", targetName);
         }
         return false;
     }
@@ -1249,7 +1307,7 @@ bool NetworkBase::write(const Contact& contact,
     }
     if (!ok) {
         if (!style.quiet) {
-            YARP_ERROR(Logger::get(), "could not write to connection");
+            yCError(NETWORK, "could not write to connection");
         }
         delete out;
         return false;
@@ -1257,7 +1315,7 @@ bool NetworkBase::write(const Contact& contact,
     ok = cmd.write(bw);
     if (!ok) {
         if (!style.quiet) {
-            YARP_ERROR(Logger::get(), "could not write to connection");
+            yCError(NETWORK, "could not write to connection");
         }
         delete out;
         return false;
@@ -1285,7 +1343,7 @@ bool NetworkBase::isConnected(const std::string& src, const std::string& dest, c
     int result = metaConnect(src, dest, style, YARP_ENACT_EXISTS);
     if (result != 0) {
         if (!style.quiet) {
-            printf("No connection from %s to %s found\n",
+            yCInfo(NETWORK, "No connection from %s to %s found",
                    src.c_str(),
                    dest.c_str());
         }
@@ -1336,11 +1394,18 @@ bool NetworkBase::initialized()
     return __yarp_is_initialized > 0;
 }
 
-
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 void NetworkBase::setVerbosity(int verbosity)
 {
-    Logger::get().setVerbosity(verbosity);
+    if (verbosity < 0) {
+        yarp::os::Log::setMinimumPrintLevel(yarp::os::Log::WarningType);
+        yarp::os::Log::setMinimumForwardLevel(yarp::os::Log::WarningType);
+    } else if (verbosity == 0) {
+        yarp::os::Log::setMinimumPrintLevel(yarp::os::Log::DebugType);
+        yarp::os::Log::setMinimumForwardLevel(yarp::os::Log::DebugType);
+    }
 }
+#endif
 
 void NetworkBase::queryBypass(NameStore* store)
 {
@@ -1426,14 +1491,14 @@ int NetworkBase::sendMessage(const std::string& port,
     Contact srcAddress = NetworkBase::queryName(port);
     if (!srcAddress.isValid()) {
         if (!quiet) {
-            fprintf(stderr, "Cannot find port named %s\n", port.c_str());
+            yCError(NETWORK, "Cannot find port named %s", port.c_str());
         }
         return 1;
     }
     OutputProtocol* out = Carriers::connect(srcAddress);
     if (out == nullptr) {
         if (!quiet) {
-            fprintf(stderr, "Cannot connect to port named %s at %s\n", port.c_str(), srcAddress.toURI().c_str());
+            yCError(NETWORK, "Cannot connect to port named %s at %s", port.c_str(), srcAddress.toURI().c_str());
         }
         return 1;
     }
@@ -1443,7 +1508,7 @@ int NetworkBase::sendMessage(const std::string& port,
     bool ok = out->open(route);
     if (!ok) {
         if (!quiet) {
-            fprintf(stderr, "Cannot make connection\n");
+            yCError(NETWORK, "Cannot make connection");
         }
         delete out;
         return 1;
@@ -1454,14 +1519,14 @@ int NetworkBase::sendMessage(const std::string& port,
     bool wok = writable.write(bw);
     if (!wok) {
         if (!quiet) {
-            fprintf(stderr, "Cannot write on connection\n");
+            yCError(NETWORK, "Cannot write on connection");
         }
         delete out;
         return 1;
     }
     if (!disconnect.write(bw)) {
         if (!quiet) {
-            fprintf(stderr, "Cannot write on connection\n");
+            yCError(NETWORK, "Cannot write on connection");
         }
         delete out;
         return 1;
@@ -1475,8 +1540,7 @@ int NetworkBase::sendMessage(const std::string& port,
     b.read(con);
     output = b.toString();
     if (!quiet) {
-        //fprintf(stderr, "%s\n", b.toString().c_str());
-        YARP_SPRINTF1(Logger::get(), info, "%s", b.toString().c_str());
+        yCInfo(NETWORK, "%s", b.toString().c_str());
     }
     ip.endRead();
     out->close();
@@ -1875,14 +1939,14 @@ bool NetworkBase::registerCarrier(const char* name, const char* dll)
         factory = new StubCarrier(dll, name);
     }
     if (factory == nullptr) {
-        YARP_ERROR(Logger::get(), "Failed to register carrier");
+        yCError(NETWORK, "Failed to register carrier");
         return false;
     }
     if (!factory->isValid()) {
         if (dll != nullptr) {
-            YARP_SPRINTF2(Logger::get(), error, "Failed to find library %s with carrier %s", dll, name);
+            yCError(NETWORK, "Failed to find library %s with carrier %s", dll, name);
         } else {
-            YARP_SPRINTF1(Logger::get(), error, "Failed to find library support for carrier %s", name);
+            yCError(NETWORK, "Failed to find library support for carrier %s", name);
         }
         delete factory;
         factory = nullptr;
