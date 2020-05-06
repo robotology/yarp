@@ -16,7 +16,6 @@
 #include <yarp/os/NullConnection.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/ShiftStream.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
 namespace yarp {
@@ -55,7 +54,6 @@ public:
     void setReference(yarp::os::Portable* ref) override;
     std::string getSenderSpecifier() const override;
     const std::string& getEnvelope() const override;
-    Log& getLog() const override;
     void setRemainingLength(int len) override;
     Connection& getConnection() override;
     Contactable* getContactable() const override;
@@ -187,7 +185,6 @@ private:
 
     int messageLen;                ///< length remaining in current message (if known)
     bool pendingAck;               ///< is an acknowledgement due
-    Logger& log;                   ///< connection-specific logger
     ShiftStream shift;             ///< input and output streams
     bool active;                   ///< is the connection up and running
     Carrier* delegate;             ///< main carrier specifying behavior of connection
