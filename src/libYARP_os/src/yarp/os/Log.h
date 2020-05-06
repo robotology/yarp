@@ -115,8 +115,20 @@ public:
     static LogCallback forwardCallback();        //!< Get current forward callback (or nullptr if forwarding is not enabled)
     static LogCallback defaultForwardCallback(); //!< Get default forward callback (or nullptr if forwarding is not enabled)
 
-private:
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+    static void nolog(const char* msg, ...) {}
+    struct NoLog
+    {
+        template <typename T>
+        NoLog& operator<<(const T&)
+        {
+            return *this;
+        }
+    };
+    static NoLog nolog() { return NoLog(); }
+
+private:
     yarp::os::impl::LogPrivate* const mPriv;
 
     friend class yarp::os::LogStream;
@@ -143,8 +155,19 @@ private:
 } // namespace yarp
 
 
-#define yTrace(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).trace(__VA_ARGS__)
-#define yDebug(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).debug(__VA_ARGS__)
+
+#ifndef NDEBUG
+#  define yTrace(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).trace(__VA_ARGS__)
+#else
+#  define yTrace(...)   yarp::os::Log::nolog(__VA_ARGS__)
+#endif
+
+#ifndef YARP_NO_DEBUG_OUTPUT
+#  define yDebug(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).debug(__VA_ARGS__)
+#else
+#  define yDebug(...)   yarp::os::Log::nolog(__VA_ARGS__)
+#endif
+
 #define yInfo(...)    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).info(__VA_ARGS__)
 #define yWarning(...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).warning(__VA_ARGS__)
 #define yError(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).error(__VA_ARGS__)
