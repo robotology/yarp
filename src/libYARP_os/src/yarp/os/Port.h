@@ -206,19 +206,25 @@ public:
      */
     bool setTimeout(float timeout);
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     /**
      * Set whether the port should issue messages about its operations.
      *
      * @param level verbosity level, -1 to inhibit messages.
+     * @deprecated since YARP 3.4
      */
+    YARP_DEPRECATED_MSG("Use LogComponent instead")
     void setVerbosity(int level);
 
     /**
      * Get port verbosity level.
      *
      * @return port verbosity level.
+     * @deprecated since YARP 3.4
      */
+    YARP_DEPRECATED
     int getVerbosity();
+#endif
 
     // Documented in Contactable
     Type getType() override;

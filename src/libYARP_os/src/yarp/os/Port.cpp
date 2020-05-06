@@ -16,7 +16,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PortCore.h>
@@ -25,6 +25,9 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+namespace {
+YARP_OS_LOG_COMPONENT(PORT, "yarp.os.Port")
+} // namespace
 
 void* Port::needImplementation() const
 {
@@ -33,7 +36,7 @@ void* Port::needImplementation() const
     }
     Port* self = const_cast<Port*>(this);
     self->implementation = new yarp::os::impl::PortCoreAdapter(*self);
-    yAssert(self->implementation != nullptr);
+    yCAssert(PORT, self->implementation != nullptr);
     self->owned = true;
     return self->implementation;
 }
@@ -90,7 +93,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     Contact contact2 = contact;
 
     if (!NetworkBase::initialized()) {
-        YARP_ERROR(Logger::get(), "YARP not initialized; create a yarp::os::Network object before using ports");
+        yCError(PORT, "YARP not initialized; create a yarp::os::Network object before using ports");
         return false;
     }
 
@@ -138,7 +141,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     }
     if (!n.empty() && n[0] != '/' && n[0] != '=' && n != "..." && n.substr(0, 3) != "...") {
         if (fakeName == nullptr) {
-            YARP_SPRINTF1(Logger::get(), error, "Port name '%s' needs to start with a '/' character", n.c_str());
+            yCError(PORT, "Port name '%s' needs to start with a '/' character", n.c_str());
             return false;
         }
     }
@@ -169,14 +172,14 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
                     }
                     contact2.setName(nc.getNestedName() + cat + "@" + nc.getNodeName());
                 } else {
-                    YARP_SPRINTF1(Logger::get(), error, "Error: Port '%s' is not committed to being either an input or output port.", n.c_str());
-                    YARP_SPRINTF0(Logger::get(), error, "YARP does not mind, but we are trying to register with a name server that does.");
-                    YARP_SPRINTF0(Logger::get(), error, "You can call Port::setWriteOnly() or Port::setReadOnly(), OR rename the port.");
+                    yCError(PORT, "Error: Port '%s' is not committed to being either an input or output port.", n.c_str());
+                    yCError(PORT, "YARP does not mind, but we are trying to register with a name server that does.");
+                    yCError(PORT, "You can call Port::setWriteOnly() or Port::setReadOnly(), OR rename the port.");
                     NestedContact nc2 = nc;
                     nc2.setCategoryWrite();
-                    YARP_SPRINTF1(Logger::get(), error, "For an output port, call it: %s (+ adds data)", nc2.toString().c_str());
+                    yCError(PORT, "For an output port, call it: %s (+ adds data)", nc2.toString().c_str());
                     nc2.setCategoryRead();
-                    YARP_SPRINTF1(Logger::get(), error, "For an input port, call it: %s (- takes data)", nc2.toString().c_str());
+                    yCError(PORT, "For an input port, call it: %s (- takes data)", nc2.toString().c_str());
                     return false;
                 }
             }
@@ -186,7 +189,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     // Allow for open() to be called safely many times on the same Port
     if ((currentCore != nullptr) && currentCore->isOpened()) {
         auto* newCore = new PortCoreAdapter(*this);
-        yAssert(newCore != nullptr);
+        yCAssert(PORT, newCore != nullptr);
         // copy state that should survive in a new open()
         if (currentCore->checkPortReader() != nullptr) {
             newCore->configReader(*(currentCore->checkPortReader()));
@@ -218,7 +221,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     core.openable();
 
     if (NetworkBase::localNetworkAllocation() && contact2.getPort() <= 0) {
-        YARP_DEBUG(Logger::get(), "local network allocation needed");
+        yCDebug(PORT, "local network allocation needed");
         local = true;
     }
 
@@ -303,14 +306,15 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
             core.setName(core.getAddress().getRegName());
         }
 
-        if (core.getVerbosity() >= 1) {
-            if (address.getRegName().empty()) {
-                YARP_INFO(Logger::get(),
-                          std::string("Anonymous port active at ") + address.toURI());
-            } else {
-                YARP_INFO(Logger::get(),
-                          std::string("Port ") + address.getRegName() + " active at " + address.toURI());
-            }
+        if (address.getRegName().empty()) {
+            yCInfo(PORT,
+                   "Anonymous port active at %s",
+                   address.toURI().c_str());
+        } else {
+            yCInfo(PORT,
+                   "Port %s active at %s",
+                   address.getRegName().c_str(),
+                   address.toURI().c_str());
         }
     }
 
@@ -320,8 +324,11 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     }
 
     if (!success) {
-        YARP_ERROR(Logger::get(),
-                   std::string("Port ") + (address.isValid() ? (address.getRegName().c_str()) : (contact2.getName().c_str())) + " failed to activate" + (address.isValid() ? " at " : "") + (address.isValid() ? address.toURI() : std::string("")) + " (" + blame + ")");
+        yCError(PORT, "Port %s failed to activate%s%s (%s)",
+                (address.isValid() ? (address.getRegName().c_str()) : (contact2.getName().c_str())),
+                (address.isValid() ? " at " : ""),
+                (address.isValid() ? address.toURI().c_str() : ""),
+                blame.c_str());
     }
 
     if (success) {
@@ -431,7 +438,6 @@ bool Port::write(const PortWriter& writer, const PortWriter* callback) const
     result = core.send(writer, nullptr, callback);
     //writer.onCompletion();
     if (!result) {
-        //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
         if (callback != nullptr) {
             callback->onCompletion();
         } else {
@@ -455,7 +461,6 @@ bool Port::write(const PortWriter& writer,
     bool result = false;
     result = core.send(writer, &reader, callback);
     if (!result) {
-        //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
         if (callback != nullptr) {
             callback->onCompletion();
         } else {
@@ -625,15 +630,17 @@ bool Port::setTimeout(float timeout)
     return true;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 void Port::setVerbosity(int level)
 {
-    IMPL().setVerbosity(level);
+    YARP_UNUSED(level);
 }
 
 int Port::getVerbosity()
 {
-    return IMPL().getVerbosity();
+    return 0;
 }
+#endif
 
 Type Port::getType()
 {
@@ -691,7 +698,7 @@ bool Port::removeCallbackLock()
 bool Port::lockCallback()
 {
     if (!IMPL().lockCallback()) {
-        fprintf(stderr, "Cannot do lockCallback() without setCallbackLock() before opening port\n");
+        yCError(PORT,"Cannot do lockCallback() without setCallbackLock() before opening port");
     }
     return true;
 }
