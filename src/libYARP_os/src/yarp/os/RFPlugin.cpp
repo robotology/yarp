@@ -134,7 +134,6 @@ bool RFPlugin::open(const string& inCommand)
     mPriv->shared->selector.scan();
 
     settings.setPluginName(mPriv->name);
-    settings.setVerboseMode(true);
 
     if (!settings.setSelector(mPriv->shared->selector)) {
         return false;

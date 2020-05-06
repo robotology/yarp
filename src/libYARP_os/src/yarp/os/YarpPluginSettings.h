@@ -30,7 +30,6 @@ public:
     YarpPluginSettings() :
             wrapper_name("unknown")
     {
-        verbose = false;
         selector = nullptr;
     }
 
@@ -97,15 +96,16 @@ public:
         return false;
     }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     /**
      * Should messages be printed showing what searches YARP is trying out?
      *
      * @param verbose verbosity flag
+     * @deprecated since YARP 3.4
      */
-    void setVerboseMode(bool verbose)
-    {
-        this->verbose = verbose;
-    }
+    YARP_DEPRECATED_MSG("Use log components instead")
+    void setVerboseMode(bool verbose);
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Configure settings from a configuration file or other searchable
@@ -220,7 +220,6 @@ private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) class_name;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) baseclass_name;
     YarpPluginSelector* selector;
-    bool verbose;
 
     bool subopen(SharedLibraryFactory& factory,
                  const std::string& dll_name,
@@ -230,23 +229,7 @@ private:
               const std::string& dll_name,
               const std::string& fn_name);
 
-    bool readFromSelector(const std::string& name)
-    {
-        if (!selector)
-            return false;
-        Bottle plugins = selector->getSelectedPlugins();
-        Bottle group = plugins.findGroup(name.c_str()).tail();
-        if (group.isNull()) {
-            yError("Cannot find \"%s\" plugin (not built in, and no .ini file found for it)\n"
-                   "Check that YARP_DATA_DIRS leads to at least one directory with plugins/%s.ini "
-                   "or share/yarp/plugins/%s.ini in it",
-                   name.c_str(),
-                   name.c_str(),
-                   name.c_str());
-            return false;
-        }
-        return readFromSearchable(group, name);
-    }
+    bool readFromSelector(const std::string& name);
 };
 
 } // namespace os

@@ -2132,6 +2132,7 @@ static void plugin_usage()
     printf("Print information about installed plugins\n");
     printf("\n");
     printf("Usage:\n");
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     printf(" * Test a specific plugin:\n");
     printf("     yarp plugin [--verbose] <pluginname>\n");
     printf("     yarp plugin [--verbose] /path/to/plugin/<libraryname>.(so|dll|dylib) <pluginpart>\n");
@@ -2141,6 +2142,17 @@ static void plugin_usage()
     printf("     yarp plugin [--verbose] --list\n");
     printf(" * Print plugin search path:\n");
     printf("     yarp plugin [--verbose] --search-path\n");
+#else
+    printf(" * Test a specific plugin:\n");
+    printf("     yarp plugin <pluginname>\n");
+    printf("     yarp plugin /path/to/plugin/<libraryname>.(so|dll|dylib) <pluginpart>\n");
+    printf(" * Test all the plugins:\n");
+    printf("     yarp plugin --all\n");
+    printf(" * Print a list of plugins:\n");
+    printf("     yarp plugin --list\n");
+    printf(" * Print plugin search path:\n");
+    printf("     yarp plugin --search-path\n");
+#endif // YARP_NO_DEPRECATED
     printf(" * Print this help and exit:\n");
     printf("     yarp plugin --help\n");
     printf("\n");
@@ -2158,6 +2170,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         return 0;
     }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     bool verbose = false;
     if (arg=="--verbose") {
         verbose = true;
@@ -2165,6 +2178,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
         argv++;
         arg = argv[0];
     }
+#endif // YARP_NO_DEPRECATED
 
     YarpPluginSelector selector;
     selector.scan();
@@ -2215,7 +2229,12 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
             options.asList()->pop();
             printf("  * config:         %s\n", options.toString().c_str());
             YarpPluginSettings settings;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
             settings.setVerboseMode(verbose);
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
             settings.setSelector(selector);
             settings.readFromSearchable(options, name);
             ok &= plugin_test(settings);
@@ -2224,7 +2243,12 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
     } else {
         Property p;
         YarpPluginSettings settings;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
         settings.setVerboseMode(verbose);
+YARP_WARNING_POP
+#endif
         if (argc>=2) {
             settings.setLibraryMethodName(argv[0], argv[1]);
         } else {

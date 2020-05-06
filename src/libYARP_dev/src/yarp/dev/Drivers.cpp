@@ -162,13 +162,11 @@ private:
 public:
     StubDriver(const char *dll_name, const char *fn_name, bool verbose = true) {
         settings.setLibraryMethodName(dll_name,fn_name);
-        settings.setVerboseMode(verbose);
         init();
     }
 
     StubDriver(const char *name, bool verbose = true) {
         settings.setPluginName(name);
-        settings.setVerboseMode(verbose);
         YarpPluginSelector selector;
         selector.scan();
         if (!settings.setSelector(selector)) {
