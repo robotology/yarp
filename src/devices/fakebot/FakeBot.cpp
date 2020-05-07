@@ -19,6 +19,9 @@ using namespace yarp::sig::draw;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
+YARP_LOG_COMPONENT(FAKEBOT, "yarp.devices.FakeBot")
+
+
 #define MAXRND 50000
 namespace {
 int rnds[MAXRND];

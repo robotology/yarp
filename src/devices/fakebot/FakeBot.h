@@ -14,7 +14,9 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Image.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/LogComponent.h>
 
+YARP_DECLARE_LOG_COMPONENT(FAKEBOT)
 
 class FakeBot :
         public yarp::dev::DeviceDriver,
@@ -390,19 +392,19 @@ public:
 
     bool calibrateAxisWithParams(int j, unsigned int iv, double v1, double v2, double v3) override
     {
-        fprintf(stderr, "FakeBot: calibrating joint %d with parameters %u %lf %lf %lf\n", j, iv, v1, v2, v3);
+        yCWarning(FAKEBOT, "Calibrating joint %d with parameters %u %lf %lf %lf", j, iv, v1, v2, v3);
         return true;
     }
 
     bool calibrationDone(int j) override
     {
-        fprintf(stderr , "FakeBot: calibration done on joint %d.\n", j);
+        yCWarning(FAKEBOT, "Calibration done on joint %d.", j);
         return true;
     }
 
     bool getLimits(int axis, double *min, double *max) override
     {
-        fprintf(stderr, "FakeBot: get limits\n");
+        yCWarning(FAKEBOT, "Get limits");
         *min=0;
         *max=0;
         return true;
@@ -410,7 +412,7 @@ public:
 
     bool setLimits(int axis, double min, double max) override
     {
-        fprintf(stderr, "FakeBot: set limits\n");
+        yCWarning(FAKEBOT, "Set limits");
         return true;
     }
 
