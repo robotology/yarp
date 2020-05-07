@@ -10,6 +10,7 @@
 
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/math/Math.h>
 #include <sstream>
 #include <cmath>
@@ -19,6 +20,11 @@
 #include <yarp/os/NetInt32.h>
 
 using namespace yarp::math;
+
+namespace {
+YARP_LOG_COMPONENT(VEC2D, "yarp.math.Vec2D")
+}
+
 
 YARP_BEGIN_PACK
 class Vec2DPortContentHeader
@@ -181,7 +187,7 @@ yarp::math::Vec2D<T>::Vec2D() : x(0), y(0)
 template <typename T>
 yarp::math::Vec2D<T>::Vec2D(const yarp::sig::Vector& v)
 {
-    yAssert(v.size() == 2);
+    yCAssert(VEC2D, v.size() == 2);
     x = T(v[0]);
     y = T(v[1]);
 }
@@ -196,7 +202,7 @@ yarp::math::Vec2D<T>::Vec2D(const T& x_value, const T& y_value)
 template <typename T>
  yarp::math::Vec2D<T>  operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<T> rhs)
 {
-    yAssert(lhs.rows() == 2 && lhs.cols() == 2);
+    yCAssert(VEC2D, lhs.rows() == 2 && lhs.cols() == 2);
     T x = rhs.x; T y = rhs.y;
     rhs.x = T(lhs[0][0] * x + lhs[0][1] * y);
     rhs.y = T(lhs[1][0] * x + lhs[1][1] * y);

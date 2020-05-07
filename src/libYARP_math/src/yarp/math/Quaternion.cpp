@@ -10,11 +10,16 @@
 
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/math/Math.h>
 #include <cmath>
 #include <cstdio>
 
 using namespace yarp::math;
+
+namespace {
+YARP_LOG_COMPONENT(QUATERNION, "yarp.math.Quaternion")
+}
 
 YARP_BEGIN_PACK
 class QuaternionPortContentHeader
@@ -150,8 +155,8 @@ void Quaternion::fromRotationMatrix(const yarp::sig::Matrix &R)
 {
     if ((R.rows()<3) || (R.cols()<3))
     {
-        yError("fromRotationMatrix() failed, matrix should be >= 3x3");
-        yAssert(R.rows() >= 3 && R.cols() >= 3);
+        yCError(QUATERNION, "fromRotationMatrix() failed, matrix should be >= 3x3");
+        yCAssert(QUATERNION, R.rows() >= 3 && R.cols() >= 3);
     }
 
     double tr = R(0, 0) + R(1, 1) + R(2, 2);
