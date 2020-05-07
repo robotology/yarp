@@ -26,7 +26,6 @@
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdlib.h>
@@ -175,7 +174,6 @@ int yarp::run::Run::main(int argc, char *argv[])
     // READWRITE
     if (config.check("readwrite"))
     {
-        yarp::os::impl::Logger::get().setVerbosity(-1);
         std::string uuid=config.findGroup("readwrite").get(1).asString();
         std::string fPortName;
         std::string lPortName;
@@ -234,7 +232,6 @@ int yarp::run::Run::main(int argc, char *argv[])
     // WRITE
     if (config.check("write"))
     {
-        yarp::os::impl::Logger::get().setVerbosity(-1);
         std::string portName=config.findGroup("write").get(1).asString();
 
 #if defined(_WIN32)
@@ -276,7 +273,6 @@ int yarp::run::Run::main(int argc, char *argv[])
     // READ
     if (config.check("read"))
     {
-        yarp::os::impl::Logger::get().setVerbosity(-1);
         std::string uuid=config.findGroup("read").get(1).asString();
 
         #if defined(_WIN32)
@@ -874,9 +870,6 @@ int yarp::run::Run::server()
 
         CLOSE(pipe_server2manager[READ_FROM_PIPE]);
         CLOSE(pipe_manager2server[WRITE_TO_PIPE]);
-
-        //yarp::os::Network::init();
-        yarp::os::impl::Logger::get().setVerbosity(-1);
 
         yarp::os::RpcServer port;
 
