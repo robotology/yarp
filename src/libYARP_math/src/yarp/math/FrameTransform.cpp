@@ -9,9 +9,13 @@
 #include <yarp/math/FrameTransform.h>
 
 #include <yarp/math/Math.h>
+#include <yarp/os/LogComponent.h>
 
 #include <cstdio>
 
+namespace {
+YARP_LOG_COMPONENT(FRAMETRANSFORM, "yarp.math.FrameTransform")
+}
 
 yarp::math::FrameTransform::FrameTransform() :
         timestamp(0)
@@ -77,8 +81,8 @@ bool yarp::math::FrameTransform::fromMatrix(const yarp::sig::Matrix& mat)
 {
     if (mat.cols() != 4 || mat.rows() != 4)
     {
-        yError("FrameTransform::fromMatrix() failed, matrix should be = 4x4");
-        yAssert(mat.cols() == 4 && mat.rows() == 4);
+        yCError(FRAMETRANSFORM, "FrameTransform::fromMatrix() failed, matrix should be = 4x4");
+        yCAssert(FRAMETRANSFORM, mat.cols() == 4 && mat.rows() == 4);
         return false;
     }
 

@@ -7,7 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/math/Math.h>
 #include <yarp/math/SVD.h>
 #include <yarp/math/Quaternion.h>
@@ -23,6 +23,9 @@ using namespace yarp::eigen;
 using namespace yarp::sig;
 using namespace yarp::math;
 
+namespace {
+YARP_LOG_COMPONENT(MATH, "yarp.math")
+}
 
 Vector operator+(const Vector &a, const double &s)
 {
@@ -52,7 +55,7 @@ Vector operator+(const Vector &a, const Vector &b)
 Vector& operator+=(Vector &a, const Vector &b)
 {
     size_t s=a.size();
-    yAssert(s==b.size());
+    yCAssert(MATH, s==b.size());
     for (size_t k=0; k<s;k++)
         a[k]+=b[k];
     return a;
@@ -68,7 +71,7 @@ Matrix& operator+=(Matrix &a, const Matrix &b)
 {
     size_t n=a.cols();
     size_t m=a.rows();
-    yAssert(m==b.rows() && n==b.cols());
+    yCAssert(MATH, m==b.rows() && n==b.cols());
     for (size_t r=0; r<m;r++)
         for (size_t c=0; c<n;c++)
             a(r,c)+=b(r,c);
@@ -107,7 +110,7 @@ Vector operator-(const Vector &a, const Vector &b)
 Vector& operator-=(Vector &a, const Vector &b)
 {
     size_t s=a.size();
-    yAssert(s==b.size());
+    yCAssert(MATH, s==b.size());
     for (size_t k=0; k<s;k++)
         a[k]-=b[k];
     return a;
@@ -123,8 +126,8 @@ Matrix& operator-=(Matrix &a, const Matrix &b)
 {
     size_t n=a.cols();
     size_t m=a.rows();
-    yAssert(m==b.rows());
-    yAssert(n==b.cols());
+    yCAssert(MATH, m==b.rows());
+    yCAssert(MATH, n==b.cols());
     for (size_t r=0; r<m;r++)
         for (size_t c=0; c<n;c++)
             a(r,c)-=b(r,c);
@@ -152,7 +155,7 @@ Vector& operator*=(Vector &a, double k)
 
 Vector operator*(const Vector &a, const Matrix &m)
 {
-    yAssert(a.size()==(size_t)m.rows());
+    yCAssert(MATH, a.size()==(size_t)m.rows());
     Vector ret((size_t)m.cols());
 
     toEigen(ret) = toEigen(m).transpose()*toEigen(a);
@@ -162,7 +165,7 @@ Vector operator*(const Vector &a, const Matrix &m)
 
 Vector& operator*=(Vector &a, const Matrix &m)
 {
-    yAssert(a.size()==(size_t)m.rows());
+    yCAssert(MATH, a.size()==(size_t)m.rows());
     Vector a2(a);
     a.resize(m.cols());
 
@@ -173,7 +176,7 @@ Vector& operator*=(Vector &a, const Matrix &m)
 
 Vector operator*(const Matrix &m, const Vector &a)
 {
-    yAssert((size_t)m.cols()==a.size());
+    yCAssert(MATH, (size_t)m.cols()==a.size());
     Vector ret((size_t)m.rows(),0.0);
 
     toEigen(ret) = toEigen(m)*toEigen(a);
@@ -183,7 +186,7 @@ Vector operator*(const Matrix &m, const Vector &a)
 
 Matrix operator*(const Matrix &a, const Matrix &b)
 {
-    yAssert(a.cols()==b.rows());
+    yCAssert(MATH, a.cols()==b.rows());
     Matrix c(a.rows(), b.cols());
 
     toEigen(c) = toEigen(a)*toEigen(b);
@@ -193,7 +196,7 @@ Matrix operator*(const Matrix &a, const Matrix &b)
 
 Matrix& operator*=(Matrix &a, const Matrix &b)
 {
-    yAssert(a.cols()==b.rows());
+    yCAssert(MATH, a.cols()==b.rows());
     Matrix a2(a);   // a copy of a
     a.resize(a.rows(), b.cols());
 
@@ -230,7 +233,7 @@ Vector operator*(const Vector &a, const Vector &b)
 Vector& operator*=(Vector &a, const Vector &b)
 {
     size_t n =a.length();
-    yAssert(n==b.length());
+    yCAssert(MATH, n==b.length());
     for (size_t i=0; i<n; i++)
         a[i]*=b[i];
     return a;
@@ -253,7 +256,7 @@ Vector operator/(const Vector &a, const Vector &b)
 Vector& operator/=(Vector &a, const Vector &b)
 {
     size_t n =a.length();
-    yAssert(n==b.length());
+    yCAssert(MATH, n==b.length());
     for (size_t i=0; i<n; i++)
         a[i]/=b[i];
     return a;
@@ -268,7 +271,7 @@ Vector operator/(const Vector &b, double k)
 Vector& operator/=(Vector &b, double k)
 {
     size_t n=b.length();
-    yAssert(k!=0.0);
+    yCAssert(MATH, k!=0.0);
     for (size_t i = 0; i < n; i++)
         b[i]/=k;
     return b;
@@ -282,7 +285,7 @@ Matrix operator/(const Matrix &M, const double k)
 
 Matrix& operator/=(Matrix &M, const double k)
 {
-    yAssert(k!=0.0);
+    yCAssert(MATH, k!=0.0);
     int rows=M.rows();
     int cols=M.cols();
     for (int r=0; r<rows; r++)
@@ -294,7 +297,7 @@ Matrix& operator/=(Matrix &M, const double k)
 Matrix yarp::math::pile(const Matrix &m1, const Matrix &m2)
 {
     size_t c = m1.cols();
-    yAssert(c==m2.cols());
+    yCAssert(MATH, c==m2.cols());
     size_t r1 = m1.rows();
     size_t r2 = m2.rows();
     Matrix res(r1+r2, c);
@@ -308,7 +311,7 @@ Matrix yarp::math::pile(const Matrix &m1, const Matrix &m2)
 Matrix yarp::math::pile(const Matrix &m, const Vector &v)
 {
     int c = m.cols();
-    yAssert((size_t)c==v.size());
+    yCAssert(MATH, (size_t)c==v.size());
     int r = m.rows();
     Matrix res(r+1, c);
 
@@ -321,7 +324,7 @@ Matrix yarp::math::pile(const Matrix &m, const Vector &v)
 Matrix yarp::math::pile(const Vector &v, const Matrix &m)
 {
     int c = m.cols();
-    yAssert((size_t)c==v.size());
+    yCAssert(MATH, (size_t)c==v.size());
     int r = m.rows();
     Matrix res(r+1, c);
 
@@ -334,7 +337,7 @@ Matrix yarp::math::pile(const Vector &v, const Matrix &m)
 Matrix yarp::math::pile(const Vector &v1, const Vector &v2)
 {
     size_t n = v1.size();
-    yAssert(n==v2.size());
+    yCAssert(MATH, n==v2.size());
     Matrix res(2, (int)n);
 
     toEigen(res).block(0,0,1,n) = toEigen(v1);
@@ -346,7 +349,7 @@ Matrix yarp::math::pile(const Vector &v1, const Vector &v2)
 Matrix yarp::math::cat(const Matrix &m1, const Matrix &m2)
 {
     size_t r = m1.rows();
-    yAssert(r==m2.rows());
+    yCAssert(MATH, r==m2.rows());
     size_t c1 = m1.cols();
     size_t c2 = m2.cols();
     Matrix res(r, c1+c2);
@@ -360,7 +363,7 @@ Matrix yarp::math::cat(const Matrix &m1, const Matrix &m2)
 Matrix yarp::math::cat(const Matrix &m, const Vector &v)
 {
     int r = m.rows();
-    yAssert((size_t)r==v.size());
+    yCAssert(MATH, (size_t)r==v.size());
     int c = m.cols();
     Matrix res(r, c+1);
 
@@ -373,7 +376,7 @@ Matrix yarp::math::cat(const Matrix &m, const Vector &v)
 Matrix yarp::math::cat(const Vector &v, const Matrix &m)
 {
     int r = m.rows();
-    yAssert((size_t)r==v.size());
+    yCAssert(MATH, (size_t)r==v.size());
     int c = m.cols();
     Matrix res(r, c+1);
 
@@ -457,7 +460,7 @@ Vector yarp::math::cat(double s1, double s2, double s3, double s4, double s5)
 
 double yarp::math::dot(const Vector &a, const Vector &b)
 {
-    yAssert(a.size()==b.size());
+    yCAssert(MATH, a.size()==b.size());
 
     return toEigen(a).dot(toEigen(b));
 }
@@ -466,7 +469,7 @@ double yarp::math::dot(const Vector &a, const Vector &b)
 Matrix yarp::math::outerProduct(const Vector &a, const Vector &b)
 {
     size_t s = a.size();
-    yAssert(s==b.size());
+    yCAssert(MATH, s==b.size());
     Matrix res(s, s);
     for(size_t i=0;i<s;i++)
         for(size_t j=0;j<s;j++)
@@ -476,8 +479,8 @@ Matrix yarp::math::outerProduct(const Vector &a, const Vector &b)
 
 Vector yarp::math::cross(const Vector &a, const Vector &b)
 {
-    yAssert(a.size()==3);
-    yAssert(b.size()==3);
+    yCAssert(MATH, a.size()==3);
+    yCAssert(MATH, b.size()==3);
     Vector v(3);
     v[0]=a[1]*b[2]-a[2]*b[1];
     v[1]=a[2]*b[0]-a[0]*b[2];
@@ -487,7 +490,7 @@ Vector yarp::math::cross(const Vector &a, const Vector &b)
 
 Matrix yarp::math::crossProductMatrix(const Vector &v)
 {
-    yAssert(v.size()==3);
+    yCAssert(MATH, v.size()==3);
     Matrix res = zeros(3,3);
     res(1,0) = v(2);
     res(0,1) = -v(2);
@@ -643,7 +646,7 @@ Vector yarp::math::sign(const Vector &v)
 
 Vector yarp::math::dcm2axis(const Matrix &R)
 {
-    yAssert((R.rows()>=3) && (R.cols()>=3));
+    yCAssert(MATH, (R.rows()>=3) && (R.cols()>=3));
 
     Vector v(4);
     v[0]=R(2,1)-R(1,2);
@@ -685,7 +688,7 @@ Vector yarp::math::dcm2axis(const Matrix &R)
 
 Matrix yarp::math::axis2dcm(const Vector &v)
 {
-    yAssert(v.length()>=4);
+    yCAssert(MATH, v.length()>=4);
 
     Matrix R=eye(4,4);
 
@@ -722,7 +725,7 @@ Matrix yarp::math::axis2dcm(const Vector &v)
 
 Vector yarp::math::dcm2euler(const Matrix &R)
 {
-    yAssert((R.rows()>=3) && (R.cols()>=3));
+    yCAssert(MATH, (R.rows()>=3) && (R.cols()>=3));
 
     Vector v(3);
     bool singularity=false;
@@ -753,14 +756,14 @@ Vector yarp::math::dcm2euler(const Matrix &R)
     }
 
     if (singularity)
-        yWarning("dcm2euler() in singularity: choosing one solution among multiple");
+        yCWarning(MATH, "dcm2euler() in singularity: choosing one solution among multiple");
 
     return v;
 }
 
 Matrix yarp::math::euler2dcm(const Vector &v)
 {
-    yAssert(v.length()>=3);
+    yCAssert(MATH, v.length()>=3);
 
     Matrix Rza=eye(4,4); Matrix Ryb=eye(4,4);  Matrix Rzg=eye(4,4);
     double alpha=v[0];   double ca=cos(alpha); double sa=sin(alpha);
@@ -776,7 +779,7 @@ Matrix yarp::math::euler2dcm(const Vector &v)
 
 Vector yarp::math::dcm2rpy(const Matrix &R)
 {
-    yAssert((R.rows()>=3) && (R.cols()>=3));
+    yCAssert(MATH, (R.rows()>=3) && (R.cols()>=3));
 
     Vector v(3);
     bool singularity=false;
@@ -807,14 +810,14 @@ Vector yarp::math::dcm2rpy(const Matrix &R)
     }
 
     if (singularity)
-        yWarning("dcm2rpy() in singularity: choosing one solution among multiple");
+        yCWarning(MATH, "dcm2rpy() in singularity: choosing one solution among multiple");
 
     return v;
 }
 
 Matrix yarp::math::rpy2dcm(const Vector &v)
 {
-    yAssert(v.length()>=3);
+    yCAssert(MATH, v.length()>=3);
 
     Matrix Rz=eye(4,4); Matrix Ry=eye(4,4);   Matrix Rx=eye(4,4);
     double roll=v[0];   double cr=cos(roll);  double sr=sin(roll);
@@ -830,7 +833,7 @@ Matrix yarp::math::rpy2dcm(const Vector &v)
 
 Vector yarp::math::dcm2ypr(const yarp::sig::Matrix &R)
 {
-    yAssert((R.rows() >= 3) && (R.cols() >= 3));
+    yCAssert(MATH, (R.rows() >= 3) && (R.cols() >= 3));
 
     Vector v(3); // yaw pitch roll
 
@@ -863,7 +866,7 @@ Vector yarp::math::dcm2ypr(const yarp::sig::Matrix &R)
 
 Matrix yarp::math::ypr2dcm(const Vector &v)
 {
-    yAssert(v.length() >= 3);
+    yCAssert(MATH, v.length() >= 3);
 
     Matrix Rz = eye(4, 4); Matrix Ry = eye(4, 4);   Matrix Rx = eye(4, 4);
     double roll = v[2];   double cr = cos(roll);  double sr = sin(roll);
@@ -879,7 +882,7 @@ Matrix yarp::math::ypr2dcm(const Vector &v)
 
 Matrix yarp::math::SE3inv(const Matrix &H)
 {
-    yAssert((H.rows()==4) && (H.cols()==4));
+    yCAssert(MATH, (H.rows()==4) && (H.cols()==4));
 
     Vector p(4);
     p[0]=H(0,3);
@@ -900,7 +903,7 @@ Matrix yarp::math::SE3inv(const Matrix &H)
 
 Matrix yarp::math::adjoint(const Matrix &H)
 {
-    yAssert((H.rows()==4) && (H.cols()==4));
+    yCAssert(MATH, (H.rows()==4) && (H.cols()==4));
 
     // the skew matrix coming from the translational part of H: S(r)
     Matrix S(3,3);
@@ -926,7 +929,7 @@ Matrix yarp::math::adjoint(const Matrix &H)
 
 Matrix yarp::math::adjointInv(const Matrix &H)
 {
-    yAssert((H.rows()==4) && (H.cols()==4));
+    yCAssert(MATH, (H.rows()==4) && (H.cols()==4));
 
     // R^T
     Matrix Rt = H.submatrix(0,2,0,2).transposed();
