@@ -10,6 +10,7 @@
 #include <yarp/dev/Drivers.h>
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
@@ -27,6 +28,10 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
+
+namespace {
+YARP_LOG_COMPONENT(DRIVERS, "yarp.dev.Drivers")
+}
 
 class Drivers::Private : public YarpPluginSelector {
 public:
@@ -86,7 +91,7 @@ public:
             std::string location = lib.getName();
             if (location=="") {
               // A wrong library name ends up with empty location
-              yWarning("Wrong library name for plugin %s", name.c_str());
+              yCWarning(DRIVERS, "Wrong library name for plugin %s", name.c_str());
               continue;
             }
 
@@ -160,12 +165,12 @@ private:
     YarpPlugin<DeviceDriver> plugin;
     SharedLibraryClass<DeviceDriver> dev;
 public:
-    StubDriver(const char *dll_name, const char *fn_name, bool verbose = true) {
+    StubDriver(const char *dll_name, const char *fn_name) {
         settings.setLibraryMethodName(dll_name,fn_name);
         init();
     }
 
-    StubDriver(const char *name, bool verbose = true) {
+    StubDriver(const char *name) {
         settings.setPluginName(name);
         YarpPluginSelector selector;
         selector.scan();
@@ -271,7 +276,7 @@ DeviceDriver* Drivers::open(yarp::os::Searchable& prop) {
 }
 
 DriverCreator* Drivers::Private::load(const char *name) {
-    auto* result = new StubDriver(name,false);
+    auto* result = new StubDriver(name);
     if (!result->isValid()) {
         delete result;
         result = nullptr;
@@ -289,10 +294,10 @@ DriverCreator* Drivers::Private::load(const char *name) {
 
 
 // helper method for "yarpdev" body
-static void toDox(PolyDriver& dd, FILE *os) {
-    fprintf(os,"===============================================================\n");
-    fprintf(os,"== Options checked by device:\n== \n");
-
+static void toDox(PolyDriver& dd) {
+    yCDebug(DRIVERS, "===============================================================");
+    yCDebug(DRIVERS, "== Options checked by device:");
+    yCDebug(DRIVERS, "==");
     Bottle order = dd.getOptions();
     for (size_t i=0; i<order.size(); i++) {
         std::string name = order.get(i).toString();
@@ -325,14 +330,13 @@ static void toDox(PolyDriver& dd, FILE *os) {
                 out += "]";
             }
         }
-        if (desc!="") {
-            out += "\n    ";
-            out += desc;
+        yCDebug(DRIVERS, "%s", out.c_str());
+        if (!desc.empty()) {
+            yCDebug(DRIVERS, "    %s", desc.c_str());
         }
-        fprintf(os,"%s\n", out.c_str());
     }
-    fprintf(os,"==\n");
-    fprintf(os,"===============================================================\n");
+    yCDebug(DRIVERS, "==");
+    yCDebug(DRIVERS, "===============================================================");
 }
 
 
@@ -349,15 +353,15 @@ static void handler (int) {
     handleTime = now;
     ct++;
     if (ct>3) {
-        yInfo("Aborting...");
+        yCInfo(DRIVERS, "Aborting...");
         std::exit(1);
     }
     if (terminatorKey!="") {
-        yInfo("[try %d of 3] Trying to shut down %s", ct, terminatorKey.c_str());
+        yCInfo(DRIVERS, "[try %d of 3] Trying to shut down %s", ct, terminatorKey.c_str());
         terminated = true;
         Terminator::terminateByName(terminatorKey.c_str());
     } else {
-        yInfo("Aborting...");
+        yCInfo(DRIVERS, "Aborting...");
         std::exit(1);
     }
 }
@@ -406,15 +410,14 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
     // check if we're being asked to read the options from file
     Value *val;
-    if (options.check("file",val))
-    {
+    if (options.check("file",val)) {
         // FIXME use argv[0]
-        yError("*** yarpdev --file is deprecated, please use --from\n");
-        yError("*** yarpdev --file will be removed in a future version of YARP\n");
+        yCError(DRIVERS, "*** yarpdev --file is deprecated, please use --from");
+        yCError(DRIVERS, "*** yarpdev --file will be removed in a future version of YARP");
 
         std::string fname = val->toString();
         options.unput("file");
-        yDebug("yarpdev: working with config file %s\n", fname.c_str());
+        yCDebug(DRIVERS, "yarpdev: working with config file %s", fname.c_str());
         options.fromConfigFile(fname,false);
 
         // interpret command line options as a set of flags again
@@ -423,43 +426,33 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     }
 
     // check if we want to use nested options (less ambiguous)
-    if (options.check("nested",val)||options.check("lispy",val))
-    {
+    if (options.check("nested", val) || options.check("lispy", val)) {
         std::string lispy = val->toString();
-        yDebug("yarpdev: working with config %s\n", lispy.c_str());
+        yCDebug(DRIVERS, "yarpdev: working with config %s", lispy.c_str());
         options.fromString(lispy);
     }
 
-    if (!options.check("device"))
-    {
+    if (!options.check("device")) {
         // no device mentioned - maybe user needs help
-        if (options.check("list"))
-        {
-            yInfo("Here are devices listed for your system:");
+        if (options.check("list")) {
+            yCInfo(DRIVERS, "Here are devices listed for your system:");
             for (auto& s : split(Drivers::factory().toString(), '\n')) {
-                yInfo("%s", s.c_str());
+                yCInfo(DRIVERS, "%s", s.c_str());
             }
-        }
-        else
-        {
-            yInfo("Welcome to yarpdev, a program to create YARP devices\n");
-            yInfo("To see the devices available, try:\n");
-            yInfo("   yarpdev --list\n");
-            yInfo("To create a device whose name you know, call yarpdev like this:\n");
-            yInfo("   yarpdev --device DEVICENAME --OPTION VALUE ...\n");
-            yInfo("   For example:\n");
-            yInfo("   yarpdev --device test_grabber --width 32 --height 16 --name /grabber\n");
-            yInfo("You can always move options to a configuration file:\n");
-            yInfo("   yarpdev [--device DEVICENAME] --from CONFIG_FILENAME\n");
-            yInfo("If you have problems, you can add the \"verbose\" flag to get more information\n");
-            yInfo("   yarpdev --verbose --device ffmpeg_grabber\n");
-            if (options.check ("from"))
-            {
-                yError("Unable to find --device option in file %s. Closing.", options.find("from").asString().c_str());
-            }
-            else
-            {
-                yWarning("--device option not specified. Closing.");
+        } else {
+            yCInfo(DRIVERS, "Welcome to yarpdev, a program to create YARP devices");
+            yCInfo(DRIVERS, "To see the devices available, try:");
+            yCInfo(DRIVERS, "   yarpdev --list");
+            yCInfo(DRIVERS, "To create a device whose name you know, call yarpdev like this:");
+            yCInfo(DRIVERS, "   yarpdev --device DEVICENAME --OPTION VALUE ...");
+            yCInfo(DRIVERS, "   For example:");
+            yCInfo(DRIVERS, "   yarpdev --device test_grabber --width 32 --height 16 --name /grabber");
+            yCInfo(DRIVERS, "You can always move options to a configuration file:");
+            yCInfo(DRIVERS, "   yarpdev [--device DEVICENAME] --from CONFIG_FILENAME");
+            if (options.check ("from")) {
+                yCError(DRIVERS, "Unable to find --device option in file %s. Closing.", options.find("from").asString().c_str());
+            } else {
+                yCWarning(DRIVERS, "--device option not specified. Closing.");
             }
         }
         return 0;
@@ -469,17 +462,14 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     options.put("wrapped","1");
 
     //YarpDevMonitor monitor;
-    bool verbose = false;
     if (options.check("verbose")) {
-        verbose = true;
-        //options.setMonitor(&monitor,"top-level");
+        yCWarning(DRIVERS, "The verbose option is deprecated.");
     }
 
     // we now need network
     bool ret=Network::checkNetwork();
-    if (!ret)
-    {
-        yError("YARP network not available, check if yarp server is reachable\n");
+    if (!ret) {
+        yCError(DRIVERS, "YARP network not available, check if yarp server is reachable");
         return -1;
     }
 
@@ -496,24 +486,18 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     yarp::os::NetworkBase::yarpClockInit(yarp::os::YARP_CLOCK_DEFAULT);
 
     PolyDriver dd(options);
-    if (verbose) {
-        toDox(dd,stdout);
-    }
+    toDox(dd);
     if (!dd.isValid()) {
-        yError("yarpdev: ***ERROR*** device not available.\n");
+        yCError(DRIVERS, "yarpdev: ***ERROR*** device not available.");
         if (argc==1)
         {
-            yInfo("Here are the known devices:\n");
-            yInfo("%s", Drivers::factory().toString().c_str());
+            yCInfo(DRIVERS, "Here are the known devices:");
+            yCInfo(DRIVERS, "%s", Drivers::factory().toString().c_str());
         }
         else
         {
-            yInfo("Suggestions:\n");
-            yInfo("+ Do \"yarpdev --list\" to see list of supported devices.\n");
-            if (!options.check("verbose"))
-            {
-                yInfo("+ Or append \"--verbose\" option to get more information.\n");
-            }
+            yCInfo(DRIVERS, "Suggestions:");
+            yCInfo(DRIVERS, "+ Do \"yarpdev --list\" to see list of supported devices.");
         }
         return 1;
     }
@@ -533,7 +517,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
                     for (size_t i = 0; i < options.size(); ++i) {
                         auto opt = options.get(i).toString();
                         if (opt.length() > 5 && opt.compare(opt.length() - 5, 5, ".name") == 0) { // C++20 opt.ends_with(".name")
-                            yWarning("%s", opt.c_str());
+                            yCWarning(DRIVERS, "%s", opt.c_str());
                             name = dd.getDefaultValue(opt.c_str()).toString();
                             break;
                         }
@@ -553,13 +537,13 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             terminee = new Terminee(s.c_str());
             terminatorKey = s;
             if (terminee == nullptr) {
-                yError("Can't allocate terminator port\n");
+                yCError(DRIVERS, "Can't allocate terminator port");
                 terminatorKey = "";
                 dd.close();
                 return 1;
             }
             if (!terminee->isOk()) {
-                yError("Failed to create terminator port\n");
+                yCError(DRIVERS, "Failed to create terminator port");
                 terminatorKey = "";
                 delete terminee;
                 terminee = nullptr;
@@ -578,7 +562,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         if (backgrounded) {
             // we don't need to poll this, so forget about the
             // service interface
-            yDebug("yarpdev: service backgrounded\n");
+            yCDebug(DRIVERS, "yarpdev: service backgrounded");
             service = nullptr;
         }
     }
@@ -586,20 +570,20 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         if (service!=nullptr) {
             double now = Time::now();
             if (now-startTime>dnow) {
-                yInfo("device active...");
+                yCInfo(DRIVERS, "device active...");
                 startTime += dnow;
             }
             // we requested single threading, so need to
             // give the device its chance
             if(!service->updateService()) {
                 if(!service->stopService()) {
-                    yWarning("Error while stopping device");
+                    yCWarning(DRIVERS, "Error while stopping device");
                 }
                 terminated = true;
             }
         } else {
             // we don't need to do anything
-            yInfo("device active in background...");
+            yCInfo(DRIVERS, "device active in background...");
             SystemClock::delaySystem(dnow);
         }
     }
@@ -610,20 +594,20 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     }
     dd.close();
 
-    yInfo("yarpdev is finished.");
+    yCInfo(DRIVERS, "yarpdev is finished.");
 
     return 0;
 }
 
 DeviceDriver *StubDriverCreator::create() const {
-    //yDebug("Creating %s from %s\n", desc.c_str(), libname.c_str());
-    auto* result = new StubDriver(libname.c_str(),fnname.c_str(),false);
+    yCTrace(DRIVERS, "Creating %s from %s", desc.c_str(), libname.c_str());
+    auto* result = new StubDriver(libname.c_str(),fnname.c_str());
     if (result==nullptr) return result;
     if (!result->isValid()) {
         delete result;
         result = nullptr;
         return nullptr;
     }
-    //yDebug("Created %s from %s\n", desc.c_str(), libname.c_str());
+    yCTrace(DRIVERS, "Created %s from %s", desc.c_str(), libname.c_str());
     return result;
 }
