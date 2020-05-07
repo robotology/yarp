@@ -12,6 +12,7 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/ImageDraw.h>
 
+#include <cstdio>
 #include <random>
 
 using namespace yarp::os;
@@ -45,18 +46,18 @@ TestFrameGrabber::TestFrameGrabber() :
     mirror(false)
 {
     //the following data are used by [time] test
-    snprintf(num[0].data,  16, "**** ** ** ****");
-    snprintf(num[1].data,  16, " *  *  *  *  * ");
-    snprintf(num[2].data,  16, "***  *****  ***");
-    snprintf(num[3].data,  16, "***  ****  ****");
-    snprintf(num[4].data,  16, "* ** ****  *  *");
-    snprintf(num[5].data,  16, "****  ***  ****");
-    snprintf(num[6].data,  16, "****  **** ****");
-    snprintf(num[7].data,  16, "***  *  *  *  *");
-    snprintf(num[8].data,  16, "**** ***** ****");
-    snprintf(num[9].data,  16, "**** ****  ****");
-    snprintf(num[10].data, 16, "               ");
-    snprintf(num[11].data, 16, "          ** **");
+    std::snprintf(num[0].data,  16, "**** ** ** ****");
+    std::snprintf(num[1].data,  16, " *  *  *  *  * ");
+    std::snprintf(num[2].data,  16, "***  *****  ***");
+    std::snprintf(num[3].data,  16, "***  ****  ****");
+    std::snprintf(num[4].data,  16, "* ** ****  *  *");
+    std::snprintf(num[5].data,  16, "****  ***  ****");
+    std::snprintf(num[6].data,  16, "****  **** ****");
+    std::snprintf(num[7].data,  16, "***  *  *  *  *");
+    std::snprintf(num[8].data,  16, "**** ***** ****");
+    std::snprintf(num[9].data,  16, "**** ****  ****");
+    std::snprintf(num[10].data, 16, "               ");
+    std::snprintf(num[11].data, 16, "          ** **");
     start_time = yarp::os::Time::now();
 }
 
@@ -340,7 +341,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         {
             char txtbuf[50];
             double time = yarp::os::Time::now() - start_time;
-            snprintf(txtbuf, 50, "%.3f", time);
+            std::snprintf(txtbuf, 50, "%.3f", time);
             int len = strlen(txtbuf);
             if (len < 20)
             {
@@ -431,7 +432,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                 image.pixel(i,ct).r = 255;
             }
             char ttxt[50];
-            sprintf(ttxt, "%021.10f", t);
+            std::snprintf(ttxt, 50, "%021.10f", t);
             image.pixel(0, 0).r = ttxt[0] - '0';
             image.pixel(0, 0).g = ttxt[1] - '0';
             image.pixel(0, 0).b = ttxt[2] - '0';
