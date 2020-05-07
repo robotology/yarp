@@ -327,7 +327,7 @@ public:
         status.asList()->addInt32(ok ? 1 : 0);
         cache.put(s, status);
         if (ok) {
-            yCInfo(RESOURCEFINDER, "found %s", s.c_str());
+            yCDebug(RESOURCEFINDER, "found %s", s.c_str());
             return s;
         }
         return {};
@@ -413,7 +413,7 @@ public:
         bool justTop = (opts.duplicateFilesPolicy == ResourceFinderOptions::First);
         if (justTop) {
             if (canShowErrors(opts)) {
-                yCInfo(RESOURCEFINDER, "did not find %s", name.c_str());
+                yCDebug(RESOURCEFINDER, "did not find %s", name.c_str());
             }
         }
     }
