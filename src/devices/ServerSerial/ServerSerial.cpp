@@ -10,9 +10,12 @@
 
 #include "ServerSerial.h"
 
-#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Os.h>
 
+namespace {
+YARP_LOG_COMPONENT(SERVERSERIAL, "yarp.devices.ServerSerial")
+}
 
 ServerSerial::~ServerSerial()
 {
@@ -22,7 +25,7 @@ ServerSerial::~ServerSerial()
 bool ServerSerial::send(const Bottle& msg)
 {
     if(verb)
-        yDebug("std::string to send : %s\n", msg.toString().c_str());
+        yCDebug(SERVERSERIAL, "std::string to send : %s", msg.toString().c_str());
     if(serial != nullptr) {
         serial->send(msg);
         return true;
@@ -34,7 +37,7 @@ bool ServerSerial::send(const Bottle& msg)
 bool ServerSerial::send(char *msg, size_t size)
 {
     if(verb)
-        yDebug("std::string to send : %s\n", msg);
+        yCDebug(SERVERSERIAL, "std::string to send : %s", msg);
     if(serial != nullptr) {
         serial->send(msg, size);
         return true;
@@ -110,11 +113,11 @@ bool ServerSerial::open(Searchable& prop)
 {
     verb = (prop.check("verbose",Value(0),"Specifies if the device is in verbose mode (0/1).").asInt32())>0;
     if (verb)
-        yInfo("running with verbose output\n");
+        yCInfo(SERVERSERIAL, "running with verbose output");
 
     Value *name;
     if (prop.check("subdevice",name,"name of specific control device to wrap")) {
-        yDebug("Subdevice %s\n", name->toString().c_str());
+        yCDebug(SERVERSERIAL, "Subdevice %s", name->toString().c_str());
         if (name->isString()) {
             // maybe user isn't doing nested configuration
             Property p;
@@ -128,10 +131,10 @@ bool ServerSerial::open(Searchable& prop)
             poly.open(subdevice);
         }
         if (!poly.isValid()) {
-            yError("cannot make <%s>\n", name->toString().c_str());
+            yCError(SERVERSERIAL, "cannot make <%s>", name->toString().c_str());
         }
     } else {
-        yError("\"--subdevice <name>\" not set for serial\n");
+        yCError(SERVERSERIAL, "\"--subdevice <name>\" not set for serial");
         return false;
     }
 
@@ -161,14 +164,14 @@ bool ServerSerial::open(Searchable& prop)
         return true;
     }
 
-    yError("subdevice <%s> doesn't look like a serial port (no appropriate interfaces were acquired)\n",
+    yCError(SERVERSERIAL, "subdevice <%s> doesn't look like a serial port (no appropriate interfaces were acquired)",
                     name->toString().c_str());
 
     return false;
 }
 
 void ServerSerial::run() {
-    yInfo("Server Serial starting\n");
+    yCInfo(SERVERSERIAL, "Server Serial starting");
     //double before, now;
     while (!isStopping()) {
         //before = SystemClock::nowSystem();
@@ -181,7 +184,7 @@ void ServerSerial::run() {
         // give other threads the chance to run
         yarp::os::SystemClock::delaySystem(0.010);
     }
-    yInfo("Server Serial stopping\n");
+    yCInfo(SERVERSERIAL, "Server Serial stopping");
 }
 
 
@@ -192,7 +195,7 @@ ImplementCallbackHelper2::ImplementCallbackHelper2(ServerSerial *x)
 {
     ser = dynamic_cast<yarp::dev::ISerialDevice *> (x);
     if (ser==nullptr) {
-        yError("Could not get serial device\n");
+        yCError(SERVERSERIAL, "Could not get serial device");
         std::exit(1);
     }
 
@@ -204,6 +207,6 @@ void ImplementCallbackHelper2::onRead(Bottle &b)
     if (ser) {
         bool ok = ser->send(b);
         if (!ok)
-            yError("Problems while trying to send data\n");
+            yCError(SERVERSERIAL, "Problems while trying to send data");
     }
 }
