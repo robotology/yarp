@@ -11,7 +11,7 @@
 
 #include <cstdio>
 #include <yarp/os/Time.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/DriverLinkCreator.h>
 
@@ -24,6 +24,9 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(DEVICEGROUP, "yarp.devices.DeviceGroup")
+}
 
 #define HELPER(x) (*((DeviceGroupHelper*)(x)))
 
@@ -43,11 +46,11 @@ public:
         mutex.lock();
         std::vector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
-            printf("*** Removing %s\n",names[i].c_str());
+            yCInfo(DEVICEGROUP, "*** Removing %s",names[i].c_str());
             Drivers::factory().remove(names[i].c_str());
-            //printf("*** removed %s\n",names[i].c_str());
+            yCTrace(DEVICEGROUP, "*** removed %s",names[i].c_str());
             delete lst[i];
-            //printf("*** deleted %s\n",names[i].c_str());
+            yCTrace(DEVICEGROUP, "*** deleted %s",names[i].c_str());
         }
         lst.clear();
         names.clear();
@@ -72,9 +75,9 @@ public:
 
     bool close()
     {
-        printf("*** Device group closing\n");
+        yCTrace(DEVICEGROUP, "*** Device group closing");
         clear();
-        printf("*** Device group closed\n");
+        yCTrace(DEVICEGROUP, "*** Device group closed");
         return true;
     }
 
@@ -85,9 +88,9 @@ public:
 
     bool add(const std::string& name, yarp::os::Searchable& config)
     {
-        //printf("ADDING %s\n", config.toString().c_str());
+        yCTrace(DEVICEGROUP, "ADDING %s", config.toString().c_str());
         auto* pd = new PolyDriver();
-        yAssert(pd!=nullptr);
+        yCAssert(DEVICEGROUP, pd!=nullptr);
         bool result = pd->open(config);
         if (!result) {
             delete pd;
@@ -103,7 +106,7 @@ public:
             if (backgrounded) {
                 // we don't need to poll this, so forget about the
                 // service interface
-                printf("group: service backgrounded\n");
+                yCInfo(DEVICEGROUP, "group: service backgrounded");
                 service = nullptr;
             }
         }
@@ -124,16 +127,16 @@ bool DeviceGroup::open(yarp::os::Searchable& config)
         implementation = new DeviceGroupHelper;
     }
     if (implementation==nullptr) {
-        printf("Out of memory\n");
+        yCError(DEVICEGROUP, "Out of memory");
         return false;
     }
 
     if (config.check("part","a list of section names, with each section containing a device")) {
         Bottle bot = config.findGroup("part").tail();
-        printf("Assembly of: %s\n", bot.toString().c_str());
+        yCInfo(DEVICEGROUP, "Assembly of: %s", bot.toString().c_str());
         for (size_t i=0; i<bot.size(); i++) {
             std::string name = bot.get(i).asString();
-            printf("  %s -> %s\n", name.c_str(),
+            yCInfo(DEVICEGROUP, "  %s -> %s", name.c_str(),
                    config.findGroup(name).toString().c_str());
             bool result = HELPER(implementation).add(name,
                                                      config.findGroup(name));
@@ -168,11 +171,11 @@ bool DeviceGroup::open(const char *key, PolyDriver& poly,
             poly.open(subdevice);
         }
         if (!poly.isValid()) {
-            printf("cannot make <%s>\n", name->toString().c_str());
+            yCError(DEVICEGROUP, "cannot make <%s>", name->toString().c_str());
             return false;
         }
     } else {
-        printf("\"--%s <name>\" not set\n", key);
+        yCError(DEVICEGROUP, "\"--%s <name>\" not set", key);
         return false;
     }
     return true;
@@ -181,7 +184,7 @@ bool DeviceGroup::open(const char *key, PolyDriver& poly,
 
 bool DeviceGroup::closeMain()
 {
-    printf("Devices closing\n");
+    yCInfo(DEVICEGROUP, "Devices closing");
     HELPER(implementation).close();
     source.close();
     sink.close();
