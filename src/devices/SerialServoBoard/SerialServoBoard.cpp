@@ -11,9 +11,8 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
-#include <yarp/dev/PolyDriver.h>
-
 #include <yarp/dev/ISerialDevice.h>
+#include <yarp/dev/PolyDriver.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -26,18 +25,102 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 
-bool SerialServoBoard::getAxes(int *ax) {
-    if(servoboard==SSC32) {
+bool SerialServoBoard::open(Searchable& config)
+{
+    if (config.check("help") == true) {
+        printf("SerialServoBoard Available Options:\n");
+        printf(" -board NAME, where name is one of ssc32, minissc, pontech_sv203x, mondotronic_smi, parallax, pololu_usb_16servo, picopic\n");
+        printf(" -comport NAME, where name is COMx on Windows, and /dev/ttySx on Linux\n");
+        printf(" -baudrate RATE, where RATE is the Board baudrate\n");
+        printf("\n -help shows this help\n");
+
+        return false;
+    }
+
+
+    char servoboard_[80];
+
+    strcpy(servoboard_, config.check("board", yarp::os::Value("ssc32")).asString().c_str());
+
+    if (strcmp(servoboard_, "ssc32") == 0) {
+        servoboard = SSC32;
+        move = &movessc32;
+    } else if (strcmp(servoboard_, "minissc") == 0) {
+        servoboard = MINISSC;
+        move = &moveminissc;
+    } else if (strcmp(servoboard_, "pontech_sv203x") == 0) {
+        servoboard = PONTECHSV203X;
+        move = &movepontech;
+    } else if (strcmp(servoboard_, "mondotronic_smi") == 0) {
+        servoboard = MONDOTRONICSMI;
+        move = &movemondotronic;
+    } else if (strcmp(servoboard_, "pololu_usb_16servo") == 0) {
+        servoboard = POLOLUUSB16;
+        move = &movepololu;
+    } else if (strcmp(servoboard_, "picopic") == 0) {
+        servoboard = PICOPIC;
+        move = &movepicopic;
+    }
+
+
+    char comport[80];
+
+    strcpy(comport, config.check("comport", yarp::os::Value("/dev/ttyS0")).asString().c_str());
+
+    int baudrate = config.check("baudrate", yarp::os::Value(38400)).asInt32();
+
+    Property conf;
+    // no arguments, use a default
+    conf.put("device", "serialport");
+    conf.put("comport", comport);
+    conf.put("baudrate", baudrate);
+    conf.put("rcvenb", 1);
+    conf.put("stopbits", 2);
+    conf.put("databits", 8);
+    conf.put("paritymode", "none");
+
+    dd.open(conf);
+    if (!dd.isValid()) {
+        printf("Failed to create and configure a device\n");
+        std::exit(1);
+    }
+
+    if (!dd.view(serial)) {
+        printf("Failed to view device through IGPUDevice interface\n");
+        std::exit(1);
+    }
+
+
+    positions = (double*)malloc(sizeof(double) * 32);
+    speeds = (double*)malloc(sizeof(double) * 32);
+
+    return true;
+}
+
+bool SerialServoBoard::close()
+{
+    dd.close();
+
+    free(positions);
+    free(speeds);
+
+    return true;
+}
+
+
+bool SerialServoBoard::getAxes(int* ax)
+{
+    if (servoboard == SSC32) {
         *ax = 32;
-    }else if(servoboard==MINISSC) {
+    } else if (servoboard == MINISSC) {
         *ax = 8;
-    }else if(servoboard==PONTECHSV203X) {
+    } else if (servoboard == PONTECHSV203X) {
         *ax = 8;
-    }else if(servoboard==MONDOTRONICSMI) {
+    } else if (servoboard == MONDOTRONICSMI) {
         *ax = 2;
-    }else if(servoboard==POLOLUUSB16) {
+    } else if (servoboard == POLOLUUSB16) {
         *ax = 16;
-    }else if(servoboard==PICOPIC) {
+    } else if (servoboard == PICOPIC) {
         *ax = 20;
     }
 
@@ -45,16 +128,17 @@ bool SerialServoBoard::getAxes(int *ax) {
 }
 
 
-
-bool SerialServoBoard::positionMove(int j, double ref) {
-    positions[j]=ref;
+bool SerialServoBoard::positionMove(int j, double ref)
+{
+    positions[j] = ref;
 
     return move(j, ref, positions, speeds, serial);
 }
 
 
-bool SerialServoBoard::positionMove(const double *refs) {
-    for(int k=0; k<32; k++) {
+bool SerialServoBoard::positionMove(const double* refs)
+{
+    for (int k = 0; k < 32; k++) {
         this->positionMove(k, refs[k]);
     }
 
@@ -62,45 +146,51 @@ bool SerialServoBoard::positionMove(const double *refs) {
 }
 
 
-bool SerialServoBoard::relativeMove(int j, double delta) {
-    this->positionMove(j, positions[j]+delta);
+bool SerialServoBoard::relativeMove(int j, double delta)
+{
+    this->positionMove(j, positions[j] + delta);
 
     return true;
 }
 
 
-bool SerialServoBoard::relativeMove(const double *deltas) {
-    for(int k=0; k<32; k++) {
-        this->positionMove(k, positions[k]+deltas[k]);
+bool SerialServoBoard::relativeMove(const double* deltas)
+{
+    for (int k = 0; k < 32; k++) {
+        this->positionMove(k, positions[k] + deltas[k]);
     }
 
     return true;
 }
 
 
-bool SerialServoBoard::checkMotionDone(int j, bool *flag) {
+bool SerialServoBoard::checkMotionDone(int j, bool* flag)
+{
     //TODO: Q?
 
     return true;
 }
 
 
-bool SerialServoBoard::checkMotionDone(bool *flag) {
+bool SerialServoBoard::checkMotionDone(bool* flag)
+{
     //TODO: Q?
 
     return true;
 }
 
 
-bool SerialServoBoard::setRefSpeed(int j, double sp) {
-    speeds[j]=sp;
+bool SerialServoBoard::setRefSpeed(int j, double sp)
+{
+    speeds[j] = sp;
 
     return true;
 }
 
 
-bool SerialServoBoard::setRefSpeeds(const double *spds) {
-    for(int k=0; k<32; k++) {
+bool SerialServoBoard::setRefSpeeds(const double* spds)
+{
+    for (int k = 0; k < 32; k++) {
         setRefSpeed(k, spds[k]);
     }
 
@@ -108,94 +198,109 @@ bool SerialServoBoard::setRefSpeeds(const double *spds) {
 }
 
 
-bool SerialServoBoard::setRefAcceleration(int j, double acc) {
+bool SerialServoBoard::setRefAcceleration(int j, double acc)
+{
     return true;
 }
 
 
-bool SerialServoBoard::setRefAccelerations(const double *accs) {
+bool SerialServoBoard::setRefAccelerations(const double* accs)
+{
     return true;
 }
 
 
-bool SerialServoBoard::getRefSpeed(int j, double *ref) {
-    *ref=speeds[j];
+bool SerialServoBoard::getRefSpeed(int j, double* ref)
+{
+    *ref = speeds[j];
 
     return true;
 }
 
 
-bool SerialServoBoard::getRefSpeeds(double *spds) {
-    for(int k=0; k<32; k++) {
-        spds[k]=speeds[k];
+bool SerialServoBoard::getRefSpeeds(double* spds)
+{
+    for (int k = 0; k < 32; k++) {
+        spds[k] = speeds[k];
     }
 
     return true;
 }
 
 
-bool SerialServoBoard::getRefAcceleration(int j, double *acc) {
+bool SerialServoBoard::getRefAcceleration(int j, double* acc)
+{
     return true;
 }
 
 
-bool SerialServoBoard::getRefAccelerations(double *accs) {
+bool SerialServoBoard::getRefAccelerations(double* accs)
+{
     return true;
 }
 
 
-bool SerialServoBoard::stop(int j) {
+bool SerialServoBoard::stop(int j)
+{
     return true;
 }
 
 
-bool SerialServoBoard::stop() {
+bool SerialServoBoard::stop()
+{
     return true;
 }
 
-bool SerialServoBoard::positionMove(const int n_joint, const int *joints, const double *refs) {
+bool SerialServoBoard::positionMove(const int n_joint, const int* joints, const double* refs)
+{
     return true;
 }
-bool SerialServoBoard::relativeMove(const int n_joint, const int *joints, const double *deltas) {
+bool SerialServoBoard::relativeMove(const int n_joint, const int* joints, const double* deltas)
+{
     return true;
 }
-bool SerialServoBoard::checkMotionDone(const int n_joint, const int *joints, bool *flags) {
+bool SerialServoBoard::checkMotionDone(const int n_joint, const int* joints, bool* flags)
+{
     return true;
 }
-bool SerialServoBoard::setRefSpeeds(const int n_joint, const int *joints, const double *spds) {
+bool SerialServoBoard::setRefSpeeds(const int n_joint, const int* joints, const double* spds)
+{
     return true;
 }
-bool SerialServoBoard::setRefAccelerations(const int n_joint, const int *joints, const double *accs) {
+bool SerialServoBoard::setRefAccelerations(const int n_joint, const int* joints, const double* accs)
+{
     return true;
 }
-bool SerialServoBoard::getRefSpeeds(const int n_joint, const int *joints, double *spds) {
+bool SerialServoBoard::getRefSpeeds(const int n_joint, const int* joints, double* spds)
+{
     return true;
 }
-bool SerialServoBoard::getRefAccelerations(const int n_joint, const int *joints, double *accs) {
+bool SerialServoBoard::getRefAccelerations(const int n_joint, const int* joints, double* accs)
+{
     return true;
 }
-bool SerialServoBoard::stop(const int n_joint, const int *joints) {
+bool SerialServoBoard::stop(const int n_joint, const int* joints)
+{
     return true;
 }
 
 
-
-
-bool movessc32(int j, double ref, double *positions, double *speeds, ISerialDevice *serial) {
-    int pos=1500+round(positions[j]*11.11);
+bool movessc32(int j, double ref, double* positions, double* speeds, ISerialDevice* serial)
+{
+    int pos = 1500 + round(positions[j] * 11.11);
 
     Bottle bot;
     char str[80];
-    if(FABS(speeds[j])<0.1) {
-        sprintf(str, "#%dP%d\r", j, pos);
+    if (FABS(speeds[j]) < 0.1) {
+        std::snprintf(str, 80, "#%dP%d\r", j, pos);
     } else {
-        int speed=round(speeds[j]*11.11);
+        int speed = round(speeds[j] * 11.11);
 
-        sprintf(str, "#%dP%dS%d\r", j, pos, speed);
+        std::snprintf(str, 80, "#%dP%dS%d\r", j, pos, speed);
     }
     //if(j==0) {
-        bot.addString(str);
-        serial->send(bot);
+    bot.addString(str);
+    serial->send(bot);
     //} else {
     //    serial->send(str, 2+strlen(str+3));
     //}
@@ -204,15 +309,16 @@ bool movessc32(int j, double ref, double *positions, double *speeds, ISerialDevi
 }
 
 
-bool moveminissc(int j, double ref, double *positions, double *speeds, ISerialDevice *serial) {
-    auto pos=(unsigned char)((int)(positions[j]*1.411) + 127);
+bool moveminissc(int j, double ref, double* positions, double* speeds, ISerialDevice* serial)
+{
+    auto pos = (unsigned char)((int)(positions[j] * 1.411) + 127);
 
     char cmd[3];
 
     //ignore speed;
-    cmd[0]=255; //sync byte
-    cmd[1]=(unsigned char)j; //servo number byte
-    cmd[2]=pos; //position byte
+    cmd[0] = 255;              //sync byte
+    cmd[1] = (unsigned char)j; //servo number byte
+    cmd[2] = pos;              //position byte
 
     serial->send(cmd, 3);
 
@@ -220,12 +326,13 @@ bool moveminissc(int j, double ref, double *positions, double *speeds, ISerialDe
 }
 
 
-bool movepontech(int j, double ref, double *positions, double *speeds, ISerialDevice *serial) {
-    auto pos=(unsigned char)((int)(positions[j]*1.411) + 127);
+bool movepontech(int j, double ref, double* positions, double* speeds, ISerialDevice* serial)
+{
+    auto pos = (unsigned char)((int)(positions[j] * 1.411) + 127);
 
     Bottle bot;
     char str[80];
-    sprintf(str, "BD1SV%dM%d", j+1, pos);
+    std::snprintf(str, 80, "BD1SV%dM%d", j + 1, pos);
 
     bot.addString(str);
 
@@ -235,15 +342,16 @@ bool movepontech(int j, double ref, double *positions, double *speeds, ISerialDe
 }
 
 
-bool movemondotronic(int j, double ref, double *positions, double *speeds, ISerialDevice *serial) {
-    auto pos=(unsigned char)((int)(positions[j]*1.411) + 127);
+bool movemondotronic(int j, double ref, double* positions, double* speeds, ISerialDevice* serial)
+{
+    auto pos = (unsigned char)((int)(positions[j] * 1.411) + 127);
 
     char cmd[3];
 
     //ignore speed;
-    cmd[0]=255; //sync byte
-    cmd[1]=(unsigned char)j; //servo number byte
-    cmd[2]=pos; //position byte (speed. this board controls speed for dc motors)
+    cmd[0] = 255;              //sync byte
+    cmd[1] = (unsigned char)j; //servo number byte
+    cmd[2] = pos;              //position byte (speed. this board controls speed for dc motors)
 
     serial->send(cmd, 3);
 
@@ -251,19 +359,20 @@ bool movemondotronic(int j, double ref, double *positions, double *speeds, ISeri
 }
 
 
-bool movepololu(int j, double ref, double *positions, double *speeds, ISerialDevice *serial) {
-    int pos=1500+round(positions[j]*11.11);
+bool movepololu(int j, double ref, double* positions, double* speeds, ISerialDevice* serial)
+{
+    int pos = 1500 + round(positions[j] * 11.11);
 
     char cmd[6];
 
-    cmd[0]=0x80;
-    cmd[1]=0x01;
+    cmd[0] = 0x80;
+    cmd[1] = 0x01;
 
-    cmd[2]=0x04;
-    cmd[3]=(unsigned char)j;
+    cmd[2] = 0x04;
+    cmd[3] = (unsigned char)j;
 
-    cmd[4]=(unsigned char)(pos>>8); //high pos byte
-    cmd[5]=(unsigned char)pos; //low pos byte
+    cmd[4] = (unsigned char)(pos >> 8); //high pos byte
+    cmd[5] = (unsigned char)pos;        //low pos byte
 
     serial->send(cmd, 6);
 
@@ -271,23 +380,24 @@ bool movepololu(int j, double ref, double *positions, double *speeds, ISerialDev
 }
 
 
-bool movepicopic(int j, double ref, double *positions, double *speeds, ISerialDevice *serial) {
-    int pos=1500+round(positions[j]*11.11);
+bool movepicopic(int j, double ref, double* positions, double* speeds, ISerialDevice* serial)
+{
+    int pos = 1500 + round(positions[j] * 11.11);
 
     char cmd[5];
 
-    cmd[0]=(int)(j/20)+1; //board address
-    cmd[1]=(j+1); //servo number (1-....)
+    cmd[0] = (int)(j / 20) + 1; //board address
+    cmd[1] = (j + 1);           //servo number (1-....)
 
-    cmd[2]=(unsigned char)(pos>>8); //high pos byte
-    cmd[3]=(unsigned char)pos; //low pos byte
+    cmd[2] = (unsigned char)(pos >> 8); //high pos byte
+    cmd[3] = (unsigned char)pos;        //low pos byte
 
-    if(FABS(speeds[j])<0.1) {
-        cmd[4]=255; //speed
+    if (FABS(speeds[j]) < 0.1) {
+        cmd[4] = 255; //speed
     } else {
-        auto speed=(unsigned char)((int)(speeds[j]*1.411) + 127);
+        auto speed = (unsigned char)((int)(speeds[j] * 1.411) + 127);
 
-        cmd[4]=speed; //speed
+        cmd[4] = speed; //speed
     }
 
     serial->send(cmd, 5);

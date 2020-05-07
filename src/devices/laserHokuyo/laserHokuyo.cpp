@@ -235,7 +235,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     {
         // *** Starts endless acquisition mode***
         char message [255];
-        sprintf (message,"MD%04d%04d%02d%01d%02d\n",start_position,end_position,1,1,0);
+        std::snprintf(message, 255, "MD%04d%04d%02d%01d%02d\n",start_position,end_position,1,1,0);
         b.addString(message);
         pSerial->send(b);
         b.clear();
@@ -246,7 +246,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     {
         // *** Starts one single acquisition ***
         char message [255];
-        sprintf (message,"GD%04d%04d%02d\n",start_position,end_position,1);
+        std::snprintf(message, 255, "GD%04d%04d%02d\n",start_position,end_position,1);
         b.addString(message);
         pSerial->send(b);
         b.clear();
@@ -518,7 +518,7 @@ void laserHokuyo::run()
     //send the GD command: get one single measurement, D precision
     Bottle b;
     Bottle b_ans;
-    const int buffer_size = 128;
+    constexpr int buffer_size = 128;
     char command [buffer_size];
     char answer  [buffer_size];
 #ifdef LASER_DEBUG
@@ -580,7 +580,7 @@ void laserHokuyo::run()
 
     if (laser_mode==GD_MODE)
     {
-        sprintf (command,"GD%04d%04d%02d\n",start_position,end_position,1);
+        std::snprintf(command, buffer_size, "GD%04d%04d%02d\n",start_position,end_position,1);
         b.addString(command);
         pSerial->send(b);
     }

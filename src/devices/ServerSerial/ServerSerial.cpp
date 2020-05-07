@@ -191,7 +191,6 @@ void ServerSerial::run() {
 ImplementCallbackHelper2::ImplementCallbackHelper2(ServerSerial *x)
 {
     ser = dynamic_cast<yarp::dev::ISerialDevice *> (x);
-    //yAssert(ser != 0);
     if (ser==nullptr) {
         yError("Could not get serial device\n");
         std::exit(1);
@@ -202,8 +201,6 @@ ImplementCallbackHelper2::ImplementCallbackHelper2(ServerSerial *x)
 
 void ImplementCallbackHelper2::onRead(Bottle &b)
 {
-    //printf("Data received on the control channel of size: %d\n", v.body.size());
-    //    int i;
     if (ser) {
         bool ok = ser->send(b);
         if (!ok)
