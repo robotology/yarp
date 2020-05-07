@@ -11,11 +11,15 @@
 
 using namespace yarp::sig;
 
+namespace {
+YARP_LOG_COMPONENT(POINTCLOUDUTILS, "yarp.sig.PointCloudUtils")
+}
+
 PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat> &depth,
                                      const yarp::sig::IntrinsicParams &intrinsic)
 {
-    yAssert(depth.width()  != 0);
-    yAssert(depth.height() != 0);
+    yCAssert(POINTCLOUDUTILS, depth.width()  != 0);
+    yCAssert(POINTCLOUDUTILS, depth.height() != 0);
     size_t w = depth.width();
     size_t h = depth.height();
     PointCloud<DataXYZ> pointCloud;
@@ -41,8 +45,8 @@ PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat>& depth
                                      size_t step_x,
                                      size_t step_y)
 {
-    yAssert(depth.width() != 0);
-    yAssert(depth.height() != 0);
+    yCAssert(POINTCLOUDUTILS, depth.width() != 0);
+    yCAssert(POINTCLOUDUTILS, depth.height() != 0);
 
     size_t max_x = 0;
     size_t max_y = 0;

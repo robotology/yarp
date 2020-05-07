@@ -8,7 +8,7 @@
  */
 
 #include <yarp/sig/ImageFile.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 #include <cstdio>
@@ -27,6 +27,11 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
 
+namespace {
+YARP_LOG_COMPONENT(IMAGEFILE, "yarp.sig.ImageFile")
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // private read methods for PNG Files
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,20 +43,20 @@ static bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (!png)
     {
-        yError() << "PNG internal error";
+        yCError(IMAGEFILE) << "PNG internal error";
         return false;
     }
 
     png_infop info = png_create_info_struct(png);
     if (!info)
     {
-        yError() << "PNG internal error";
+        yCError(IMAGEFILE) << "PNG internal error";
         return false;
     }
 
     if (setjmp(png_jmpbuf(png)))
     {
-        yError() << "PNG internal error";
+        yCError(IMAGEFILE) << "PNG internal error";
         return false;
     }
 
@@ -123,7 +128,7 @@ static bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
     free(row_pointers);
     return true;
 #else
-    yError() << "PNG library not available/not found";
+    yCError(IMAGEFILE) << "PNG library not available/not found";
     return false;
 #endif
 }
@@ -131,10 +136,10 @@ static bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
 static bool ImageReadFloat_PNG(ImageOf<PixelFloat>& dest, const std::string& filename)
 {
 #if defined (YARP_HAS_PNG)
-    yError() << "Not yet implemented";
+    yCError(IMAGEFILE) << "Not yet implemented";
     return false;
 #else
-    yError() << "PNG library not available/not found";
+    yCError(IMAGEFILE) << "PNG library not available/not found";
     return false;
 #endif
 }
@@ -142,10 +147,10 @@ static bool ImageReadFloat_PNG(ImageOf<PixelFloat>& dest, const std::string& fil
 static bool ImageReadBGR_PNG(ImageOf<PixelBgr>& img, const char* filename)
 {
 #if defined (YARP_HAS_PNG)
-    yError() << "Not yet implemented";
+    yCError(IMAGEFILE) << "Not yet implemented";
     return false;
 #else
-    yError() << "PNG library not available/not found";
+    yCError(IMAGEFILE) << "PNG library not available/not found";
     return false;
 #endif
 }
@@ -153,10 +158,10 @@ static bool ImageReadBGR_PNG(ImageOf<PixelBgr>& img, const char* filename)
 static bool ImageReadMono_PNG(ImageOf<PixelMono>& img, const char* filename)
 {
 #if defined (YARP_HAS_PNG)
-    yError() << "Not yet implemented";
+    yCError(IMAGEFILE) << "Not yet implemented";
     return false;
 #else
-    yError() << "PNG library not available/not found";
+    yCError(IMAGEFILE) << "PNG library not available/not found";
     return false;
 #endif
 }
@@ -175,7 +180,7 @@ static bool ReadHeader_PxM(FILE *fp, int *height, int *width, int *color)
     //// LATER: replace fscanf (said to be non portable) with getc style functions.
     if (fscanf(fp, "P%c\n", &ch) != 1 || (ch!='6'&&ch!='5'))
     {
-        yWarning("file is not in pgm/ppm raw format; cannot read");
+        yCWarning(IMAGEFILE, "file is not in pgm/ppm raw format; cannot read");
         return false;
     }
 
@@ -203,7 +208,7 @@ static bool ReadHeader_PxM(FILE *fp, int *height, int *width, int *color)
     if (maxval != 255)
     {
         //die("image is not true-color (24 bit); read failed");
-        yWarning("image is not true-color (24 bit); read failed");
+        yCWarning(IMAGEFILE, "image is not true-color (24 bit); read failed");
         return false;
     }
 
@@ -219,14 +224,14 @@ static bool ImageReadRGB_PxM(ImageOf<PixelRgb> &img, const char *filename)
 
     if(fp==nullptr)
     {
-        yError("Error opening %s, check if file exists.\n", filename);
+        yCError(IMAGEFILE, "Error opening %s, check if file exists.\n", filename);
         return false;
     }
 
     if (!ReadHeader_PxM(fp, &height, &width, &color))
     {
         fclose (fp);
-        yError("Error reading header, is file a valid ppm/pgm?\n");
+        yCError(IMAGEFILE, "Error reading header, is file a valid ppm/pgm?\n");
         return false;
     }
 
@@ -301,21 +306,21 @@ static bool ImageReadBGR_PxM(ImageOf<PixelBgr> &img, const char *filename)
 
     if(fp==nullptr)
     {
-        yError("Error opening %s, check if file exists.\n", filename);
+        yCError(IMAGEFILE, "Error opening %s, check if file exists.\n", filename);
         return false;
     }
 
     if (!ReadHeader_PxM(fp, &height, &width, &color))
     {
         fclose (fp);
-        yError("Error reading header, is file a valid ppm/pgm?\n");
+        yCError(IMAGEFILE, "Error reading header, is file a valid ppm/pgm?\n");
         return false;
     }
 
     if (!color)
     {
         fclose(fp);
-        yError("File is grayscale, conversion not yet supported\n");
+        yCError(IMAGEFILE, "File is grayscale, conversion not yet supported\n");
         return false;
     }
 
@@ -348,21 +353,21 @@ static bool ImageReadMono_PxM(ImageOf<PixelMono> &img, const char *filename)
 
     if(fp==nullptr)
     {
-        yError("Error opening %s, check if file exists.\n", filename);
+        yCError(IMAGEFILE, "Error opening %s, check if file exists.\n", filename);
         return false;
     }
 
     if (!ReadHeader_PxM(fp, &height, &width, &color))
     {
         fclose (fp);
-        yError("Error reading header, is file a valid ppm/pgm?\n");
+        yCError(IMAGEFILE, "Error reading header, is file a valid ppm/pgm?\n");
         return false;
     }
 
     if (color)
     {
         fclose(fp);
-        yError("File is color, conversion not yet supported\n");
+        yCError(IMAGEFILE, "File is color, conversion not yet supported\n");
         return false;
     }
 
@@ -395,20 +400,20 @@ static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t 
     // create file
     if (src == nullptr)
     {
-        yError("[write_png_file] Cannot write to file a nullptr image");
+        yCError(IMAGEFILE, "[write_png_file] Cannot write to file a nullptr image");
         return false;
     }
 
     if (filename == nullptr)
     {
-        yError("[write_png_file] Filename is nullptr");
+        yCError(IMAGEFILE, "[write_png_file] Filename is nullptr");
         return false;
     }
 
     FILE *fp = fopen(filename, "wb");
     if (!fp)
     {
-        yError("[write_png_file] File %s could not be opened for writing", filename);
+        yCError(IMAGEFILE, "[write_png_file] File %s could not be opened for writing", filename);
         return false;
     }
 
@@ -416,7 +421,7 @@ static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t 
     png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (!png_ptr)
     {
-        yError("[write_png_file] png_create_write_struct failed");
+        yCError(IMAGEFILE, "[write_png_file] png_create_write_struct failed");
         fclose(fp);
         return false;
     }
@@ -424,7 +429,7 @@ static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t 
     png_infop info_ptr = png_create_info_struct(png_ptr);
     if (!info_ptr)
     {
-        yError("[write_png_file] png_create_info_struct failed");
+        yCError(IMAGEFILE, "[write_png_file] png_create_info_struct failed");
         fclose(fp);
         return false;
     }
@@ -437,7 +442,7 @@ static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t 
 
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        yError("[write_png_file] Error during init_io");
+        yCError(IMAGEFILE, "[write_png_file] Error during init_io");
         free(row_pointers);
         fclose(fp);
         return false;
@@ -448,7 +453,7 @@ static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t 
     // write header
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        yError("[write_png_file] Error during writing header");
+        yCError(IMAGEFILE, "[write_png_file] Error during writing header");
         free(row_pointers);
         return false;
     }
@@ -462,7 +467,7 @@ static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t 
     // write bytes
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        yError("[write_png_file] Error during writing bytes");
+        yCError(IMAGEFILE, "[write_png_file] Error during writing bytes");
         free(row_pointers);
         fclose(fp);
         return false;
@@ -473,7 +478,7 @@ static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t 
     // end write
     if (setjmp(png_jmpbuf(png_ptr)))
     {
-        yError("[write_png_file] Error during end of write");
+        yCError(IMAGEFILE, "[write_png_file] Error during end of write");
         free(row_pointers);
         fclose(fp);
         return false;
@@ -503,7 +508,7 @@ static bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
 
     if ((outfile = fopen(filename, "wb")) == nullptr)
     {
-        yError("can't write file: %s\n", filename);
+        yCError(IMAGEFILE, "can't write file: %s\n", filename);
         return false;
     }
     jpeg_stdio_dest(&cinfo, outfile);
@@ -530,7 +535,7 @@ static bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
     jpeg_destroy_compress(&cinfo);
     return true;
 #else
-    yError() << "libjpeg not installed";
+    yCError(IMAGEFILE) << "libjpeg not installed";
     return false;
 #endif
 }
@@ -540,7 +545,7 @@ static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
     FILE *fp = fopen(filename, "wb");
     if (!fp)
     {
-        yError("cannot open file %s for writing\n", filename);
+        yCError(IMAGEFILE, "cannot open file %s for writing\n", filename);
         return false;
     }
     else
@@ -566,7 +571,7 @@ static bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
     FILE *fp = fopen(filename, "wb");
     if (!fp)
     {
-        yError("cannot open file %s for writing\n", filename);
+        yCError(IMAGEFILE, "cannot open file %s for writing\n", filename);
         return false;
     }
     else
@@ -597,7 +602,7 @@ static bool ImageWritePNG(ImageOf<PixelRgb>& img, const char *filename)
 #if defined (YARP_HAS_PNG)
     return SavePNG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize(), PNG_COLOR_TYPE_RGB, 24);
 #else
-    yError() << "YARP was not built with png support";
+    yCError(IMAGEFILE) << "YARP was not built with png support";
     return false;
 #endif
 }
@@ -607,7 +612,7 @@ static bool ImageWritePNG(ImageOf<PixelMono>& img, const char *filename)
 #if defined (YARP_HAS_PNG)
     return SavePNG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize(), PNG_COLOR_TYPE_GRAY, 8);
 #else
-    yError() << "YARP was not built with png support";
+    yCError(IMAGEFILE) << "YARP was not built with png support";
     return false;
 #endif
 }
@@ -667,10 +672,10 @@ bool file::read(ImageOf<PixelRgb> & dest, const std::string& src, image_fileform
             strcmp(file_ext, ".jpeg") == 0 ||
             format == FORMAT_JPG)
     {
-        yError() << "jpeg not yet implemented";
+        yCError(IMAGEFILE) << "jpeg not yet implemented";
         return false;
     }
-    yError() << "unsupported file format";
+    yCError(IMAGEFILE) << "unsupported file format";
     return false;
 }
 
@@ -694,10 +699,10 @@ bool file::read(ImageOf<PixelBgr> & dest, const std::string& src, image_fileform
         strcmp(file_ext, ".jpeg") == 0 ||
         format == FORMAT_JPG)
     {
-        yError() << "jpeg not yet implemented";
+        yCError(IMAGEFILE) << "jpeg not yet implemented";
         return false;
     }
-    yError() << "unsupported file format";
+    yCError(IMAGEFILE) << "unsupported file format";
     return false;
 }
 
@@ -733,10 +738,10 @@ bool file::read(ImageOf<PixelRgba> & dest, const std::string& src, image_filefor
         strcmp(file_ext, ".jpeg") == 0 ||
         format == FORMAT_JPG)
     {
-        yError() << "jpeg not yet implemented";
+        yCError(IMAGEFILE) << "jpeg not yet implemented";
         return false;
     }
-    yError() << "unsupported file format";
+    yCError(IMAGEFILE) << "unsupported file format";
     return false;
 }
 
@@ -759,10 +764,10 @@ bool file::read(ImageOf<PixelMono> & dest, const std::string& src, image_filefor
         strcmp(file_ext, ".jpeg") == 0 ||
         format == FORMAT_JPG)
     {
-        yError() << "jpeg not yet implemented";
+        yCError(IMAGEFILE) << "jpeg not yet implemented";
         return false;
     }
-    yError() << "unsupported file format";
+    yCError(IMAGEFILE) << "unsupported file format";
     return false;
 }
 
@@ -785,10 +790,10 @@ bool file::read(ImageOf<PixelFloat>& dest, const std::string& src, image_filefor
         strcmp(file_ext, ".jpeg") == 0 ||
         format == FORMAT_JPG)
     {
-        yError() << "jpeg not yet implemented";
+        yCError(IMAGEFILE) << "jpeg not yet implemented";
         return false;
     }
-    yError() << "unsupported file format";
+    yCError(IMAGEFILE) << "unsupported file format";
     return false;
 }
 
@@ -812,7 +817,7 @@ bool file::write(const ImageOf<PixelRgb> & src, const std::string& dest, image_f
     }
     else
     {
-        yError() << "Invalid format, operation not supported";
+        yCError(IMAGEFILE) << "Invalid format, operation not supported";
         return false;
     }
 }
@@ -835,7 +840,7 @@ bool file::write(const ImageOf<PixelBgr> & src, const std::string& dest, image_f
     }
     else
     {
-        yError() << "Invalid format, operation not supported";
+        yCError(IMAGEFILE) << "Invalid format, operation not supported";
         return false;
     }
 }
@@ -859,7 +864,7 @@ bool file::write(const ImageOf<PixelRgba> & src, const std::string& dest, image_
     }
     else
     {
-        yError() << "Invalid format, operation not supported";
+        yCError(IMAGEFILE) << "Invalid format, operation not supported";
         return false;
     }
 }
@@ -877,7 +882,7 @@ bool file::write(const ImageOf<PixelMono> & src, const std::string& dest, image_
     }
     else
     {
-        yError() << "Invalid format, operation not supported";
+        yCError(IMAGEFILE) << "Invalid format, operation not supported";
         return false;
     }
 }
@@ -890,7 +895,7 @@ bool file::write(const ImageOf<PixelFloat>& src, const std::string& dest, image_
     }
     else
     {
-        yError() << "Invalid format, operation not supported";
+        yCError(IMAGEFILE) << "Invalid format, operation not supported";
         return false;
     }
 }
