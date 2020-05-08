@@ -11,6 +11,10 @@
 
 using namespace yarp::sig;
 
+namespace {
+YARP_LOG_COMPONENT(POINTCLOUDBASE, "yarp.sig.PointCloudBase")
+}
+
 // Map that contains the offset of the basic types respect the origin of the struct
 // representing the composite types.
 const std::map<std::pair<int, int>, size_t> offsetMap = {
@@ -117,7 +121,7 @@ void PointCloudBase::copyFromRawData(const char* dst, const char* source, std::v
     if (recipe.empty()) {
         return;
     }
-    yAssert(tmpSrc && tmpDst);
+    yCAssert(POINTCLOUDBASE, tmpSrc && tmpDst);
 
     size_t sizeDst = pointType2Size(getPointType());
     const size_t numPts = height() * width();

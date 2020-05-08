@@ -11,7 +11,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortablePair.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
@@ -22,6 +22,10 @@
 
 using namespace yarp::sig;
 using namespace yarp::os;
+
+namespace {
+YARP_LOG_COMPONENT(SOUND, "yarp.sig.Sound")
+}
 
 #define HELPER(x) (*((FlexImage*)(x)))
 
@@ -45,12 +49,12 @@ Sound& Sound::operator += (const Sound& alt)
 {
     if (alt.m_channels!= m_channels)
     {
-        yError("unable to concatenate sounds with different number of channels!");
+        yCError(SOUND, "unable to concatenate sounds with different number of channels!");
         return *this;
     }
     if (alt.m_frequency!= m_frequency)
     {
-        yError("unable to concatenate sounds with different sample rate!");
+        yCError(SOUND, "unable to concatenate sounds with different sample rate!");
         return *this;
     }
 
@@ -82,7 +86,7 @@ Sound& Sound::operator += (const Sound& alt)
 
 const Sound& Sound::operator = (const Sound& alt)
 {
-    yAssert(getBytesPerSample()==alt.getBytesPerSample());
+    yCAssert(SOUND, getBytesPerSample()==alt.getBytesPerSample());
     FlexImage& img1 = HELPER(implementation);
     FlexImage& img2 = HELPER(alt.implementation);
     img1.copy(img2);
@@ -140,9 +144,9 @@ Sound Sound::subSound(size_t first_sample, size_t last_sample)
 void Sound::init(size_t bytesPerSample)
 {
     implementation = new FlexImage();
-    yAssert(implementation!=nullptr);
+    yCAssert(SOUND, implementation!=nullptr);
 
-    yAssert(bytesPerSample==2); // that's all that's implemented right now
+    yCAssert(SOUND, bytesPerSample==2); // that's all that's implemented right now
     HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO16);
     HELPER(implementation).setQuantum(2);
 
@@ -177,7 +181,7 @@ Sound::audio_sample Sound::get(size_t location, size_t channel) const
     }
     else
     {
-        yError("sound only implemented for 16 bit samples");
+        yCError(SOUND, "sound only implemented for 16 bit samples");
     }
     return 0;
 }
@@ -210,7 +214,7 @@ void Sound::set(audio_sample value, size_t location, size_t channel)
     }
     else
     {
-        yError("sound only implemented for 16 bit samples");
+        yCError(SOUND, "sound only implemented for 16 bit samples");
     }
 }
 
@@ -265,7 +269,7 @@ void Sound::setSafe(audio_sample value, size_t sample, size_t channel)
     }
     else
     {
-        yError() << "Sample out of bound:" << sample << "," << channel;
+        yCError(SOUND) << "Sample out of bound:" << sample << "," << channel;
     }
 }
 

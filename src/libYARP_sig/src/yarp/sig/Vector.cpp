@@ -14,10 +14,9 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
-
-#include <yarp/os/impl/Logger.h>
 
 #include <yarp/sig/Matrix.h>
 
@@ -30,6 +29,9 @@
 using namespace yarp::sig;
 using namespace yarp::os;
 
+namespace {
+YARP_LOG_COMPONENT(VECTOR, "yarp.sig.Vector")
+}
 
 ///////////////////
 
@@ -61,7 +63,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
         if ((size_t)getListSize() != (size_t)(header.listLen))
             resize(header.listLen);
         char* ptr = getMemoryBlock();
-        yAssert(ptr != nullptr);
+        yCAssert(VECTOR, ptr != nullptr);
         int elemSize=getElementSize();
         ok = connection.expectBlock(ptr, elemSize*header.listLen);
         if (!ok) return false;
@@ -82,7 +84,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) const {
     connection.appendBlock((char*)&header, sizeof(header));
     const char *ptr = getMemoryBlock();
     int elemSize=getElementSize();
-    yAssert(ptr != nullptr);
+    yCAssert(VECTOR, ptr != nullptr);
 
     connection.appendExternalBlock(ptr, elemSize*header.listLen);
 

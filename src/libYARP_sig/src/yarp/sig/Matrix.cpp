@@ -19,8 +19,6 @@
 #include <yarp/os/NetFloat64.h>
 #include <yarp/os/NetInt32.h>
 
-#include <yarp/os/impl/Logger.h>
-
 #include <vector>
 #include <cstdio>
 
