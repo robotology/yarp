@@ -9,15 +9,19 @@
 
 #include "DevicePipe.h"
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Time.h>
-#include <cstdio>
-
 #include <yarp/dev/AudioVisualInterfaces.h>
+
+#include <cstdio>
 
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(DEVICEPIPE, "yarp.devices.DevicePipe")
+}
 
 bool DevicePipe::open(yarp::os::Searchable& config)
 {
@@ -56,11 +60,11 @@ bool DevicePipe::open(const char *key,
             poly.open(subdevice);
         }
         if (!poly.isValid()) {
-            printf("cannot make <%s>\n", name->toString().c_str());
+            yCInfo(DEVICEPIPE, "cannot make <%s>", name->toString().c_str());
             return false;
         }
     } else {
-        printf("\"--%s <name>\" not set\n", key);
+        yCInfo(DEVICEPIPE, "\"--%s <name>\" not set", key);
         return false;
     }
     return true;
@@ -69,7 +73,7 @@ bool DevicePipe::open(const char *key,
 
 bool DevicePipe::close()
 {
-    printf("Devices closing\n");
+    yCInfo(DEVICEPIPE, "Devices closing");
     source.close();
     sink.close();
     return true;
@@ -115,25 +119,31 @@ bool DevicePipe::updateService()
         Sound tmpSound;
         imgSndSource->getAudioVisual(tmp,tmpSound);
         imgSndSink->putAudioVisual(tmp,tmpSound);
-        printf("piped %zux%zu image, %zux%zu sound\n",
-               tmp.width(), tmp.height(),
-               tmpSound.getSamples(), tmpSound.getChannels());
+        yCInfo(DEVICEPIPE,
+               "piped %zux%zu image, %zux%zu sound",
+               tmp.width(),
+               tmp.height(),
+               tmpSound.getSamples(),
+               tmpSound.getChannels());
     } else if (imgSource!=nullptr&&imgSink!=nullptr) {
         ImageOf<PixelRgb> tmp;
         imgSource->getImage(tmp);
         imgSink->putImage(tmp);
-        printf("piped %zux%zu image\n", tmp.width(), tmp.height());
+        yCInfo(DEVICEPIPE, "piped %zux%zu image", tmp.width(), tmp.height());
     } else if (sndSource!=nullptr&&sndSink!=nullptr) {
         Sound tmp;
         //the following values have been arbitrarily chosen and may be optimized.
         //4410 samples correspond to 0.1s with a frequency of 44100hz.
         sndSource->getSound(tmp,4410,4410,0);
         sndSink->renderSound(tmp);
-        printf("piped %zux%zu sound\n", tmp.getSamples(), tmp.getChannels());
+        yCInfo(DEVICEPIPE,
+               "piped %zux%zu sound",
+               tmp.getSamples(),
+               tmp.getChannels());
     } else {
-        printf("Don't know how to pipe between these devices.\n");
-        printf("Piping is very limited at the moment.\n");
-        printf("You're probably better off writing some short custom code.\n");
+        yCInfo(DEVICEPIPE, "Don't know how to pipe between these devices.");
+        yCInfo(DEVICEPIPE, "Piping is very limited at the moment.");
+        yCInfo(DEVICEPIPE, "You're probably better off writing some short custom code.");
         return false;
     }
     return true;

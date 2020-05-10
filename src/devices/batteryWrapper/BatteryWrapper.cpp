@@ -20,7 +20,7 @@
 #include <sstream>
 #include <string>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <time.h>
 #include <stdlib.h>
@@ -30,6 +30,9 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
+namespace {
+YARP_LOG_COMPONENT(BATTERYWRAPPER, "yarp.devices.BatteryWrapper")
+}
 
 BatteryWrapper::BatteryWrapper() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
@@ -54,7 +57,7 @@ bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
 
     if (battery2attach.size() != 1)
     {
-        yError("BatteryWrapper: cannot attach more than one device");
+        yCError(BATTERYWRAPPER, "Cannot attach more than one device");
         return false;
     }
 
@@ -67,7 +70,7 @@ bool BatteryWrapper::attachAll(const PolyDriverList &battery2attach)
 
     if(nullptr == m_ibattery_p)
     {
-        yError("BatteryWrapper: subdevice passed to attach method is invalid");
+        yCError(BATTERYWRAPPER, "Subdevice passed to attach method is invalid");
         return false;
     }
     attach(m_ibattery_p);
@@ -122,12 +125,12 @@ bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
         }
         else
         {
-            yError("Invalid vocab received in BatteryWrapper");
+            yCError(BATTERYWRAPPER, "Invalid vocab received");
         }
     }
     else
     {
-        yError("Invalid vocab received in BatteryWrapper");
+        yCError(BATTERYWRAPPER, "Invalid vocab received");
     }
 
     if (!ret)
@@ -157,13 +160,13 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
     if (!config.check("period"))
     {
         m_period = 1.0;
-        yWarning() << "BatteryWrapper: missing 'period' parameter. Assuming default value 1.0 s\n";
+        yCWarning(BATTERYWRAPPER) << "Missing 'period' parameter. Assuming default value 1.0 s";
     }
     else
     {
         m_period = config.find("period").asFloat32();
     }
-    yInfo() << "BatteryWrapper using period: " << m_period << "s";
+    yCInfo(BATTERYWRAPPER) << "Using period:" << m_period << "s";
 
     if (!config.check("quitPortName"))
     {
@@ -172,9 +175,9 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("name"))
     {
-        yError() << "BatteryWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
-        yError() << "--name:    prefix of the ports opened by the device, e.g. /robotName/battery1";
-        yError() << "/data:o and /rpc:i are automatically appended by the wrapper at the end";
+        yCError(BATTERYWRAPPER) << "Missing 'name' parameter. Check you configuration file; it must be like:";
+        yCError(BATTERYWRAPPER) << "--name:    prefix of the ports opened by the device, e.g. /robotName/battery1";
+        yCError(BATTERYWRAPPER) << "/data:o and /rpc:i are automatically appended by the wrapper at the end";
         return false;
     }
     else
@@ -188,13 +191,13 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
 
     if(!initialize_YARP(config))
     {
-        yError() << m_sensorId << "Error initializing YARP ports";
+        yCError(BATTERYWRAPPER) << m_sensorId << "Error initializing YARP ports";
         return false;
     }
 
     if (m_enable_log)
     {
-        yInfo("writing to log file batteryLog.txt");
+        yCInfo(BATTERYWRAPPER, "writing to log file batteryLog.txt");
         m_logFile = fopen("batteryLog.txt", "w");
     }
 
@@ -210,14 +213,14 @@ bool BatteryWrapper::open(yarp::os::Searchable &config)
 
         if (!m_driver.open(p) || !m_driver.isValid())
         {
-            yError() << "BatteryWrapper: failed to open subdevice.. check params";
+            yCError(BATTERYWRAPPER) << "Failed to open subdevice.. check params";
             return false;
         }
 
         driverlist.push(&m_driver, "1");
         if (!attachAll(driverlist))
         {
-            yError() << "BatteryWrapper: failed to open subdevice.. check params";
+            yCError(BATTERYWRAPPER) << "Failed to open subdevice.. check params";
             return false;
         }
         m_ownDevices = true;
@@ -230,12 +233,12 @@ bool BatteryWrapper::initialize_YARP(yarp::os::Searchable &params)
 {
     if (!m_streamingPort.open(m_streamingPortName.c_str()))
     {
-        yError() << "Error opening port " << m_streamingPortName << "\n";
+        yCError(BATTERYWRAPPER) << "Error opening port" << m_streamingPortName;
         return false;
     }
     if (!m_rpcPort.open(m_rpcPortName.c_str()))
     {
-        yError() << "Error opening port " << m_rpcPortName << "\n";
+        yCError(BATTERYWRAPPER) << "Error opening port" << m_rpcPortName;
         return false;
     }
     m_rpcPort.setReader(*this);
@@ -288,20 +291,20 @@ void BatteryWrapper::run()
                 time(&rawtime);
                 timeinfo = localtime(&rawtime);
                 char* battery_timestamp = asctime(timeinfo);
-                snprintf(m_log_buffer, 1024, "battery status: %+6.1fA   % 6.1fV   charge:% 6.1f%%    time: %s", battery_current, battery_voltage, battery_charge, battery_timestamp);
+                std::snprintf(m_log_buffer, 1024, "battery status: %+6.1fA   % 6.1fV   charge:% 6.1f%%    time: %s", battery_current, battery_voltage, battery_charge, battery_timestamp);
                 fprintf(m_logFile, "%s", m_log_buffer);
             }
         }
         else
         {
-            yError("BatteryWrapper: %s: Sensor returned error", m_sensorId.c_str());
+            yCError(BATTERYWRAPPER, "BatteryWrapper: %s: Sensor returned error", m_sensorId.c_str());
         }
     }
 }
 
 bool BatteryWrapper::close()
 {
-    yTrace("BatteryWrapper::Close");
+    yCTrace(BATTERYWRAPPER, "BatteryWrapper::Close");
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();
@@ -329,13 +332,13 @@ bool BatteryWrapper::close()
 void BatteryWrapper::notify_message(string msg)
 {
 #ifdef WIN32
-    yWarning("%s", msg.c_str());
+    yCWarning(BATTERYWRAPPER, "%s", msg.c_str());
 #else
-    yWarning("%s", msg.c_str());
+    yCWarning(BATTERYWRAPPER, "%s", msg.c_str());
     string cmd = "echo " + msg + " | wall";
     int retval;
     retval = system(cmd.c_str());
-    yDebug() << "system executed command" << cmd.c_str() << " with return value:" << retval;
+    yCDebug(BATTERYWRAPPER) << "system executed command" << cmd.c_str() << " with return value:" << retval;
 #endif
 }
 
@@ -344,24 +347,24 @@ void BatteryWrapper::emergency_shutdown(string msg)
 #ifdef WIN32
     string cmd;
     cmd = "shutdown /s /t 120 /c " + msg;
-    yWarning("%s", msg.c_str());
+    yCWarning(BATTERYWRAPPER, "%s", msg.c_str());
     system(cmd.c_str());
 #else
     string cmd;
     int retval;
-    yWarning("%s", msg.c_str());
+    yCWarning(BATTERYWRAPPER, "%s", msg.c_str());
     cmd = "echo " + msg + " | wall";
     retval = system(cmd.c_str());
-    yDebug() << "system executed command" << cmd.c_str() << " with return value:" << retval;
+    yCDebug(BATTERYWRAPPER) << "system executed command" << cmd.c_str() << " with return value:" << retval;
 
     cmd = "sudo shutdown -h 2 " + msg;
     retval = system(cmd.c_str());
-    yDebug() << "system executed command" << cmd.c_str() << " with return value:" << retval;
+    yCDebug(BATTERYWRAPPER) << "system executed command" << cmd.c_str() << " with return value:" << retval;
 
 #ifdef ICUB_SSH_SHUTDOWN
     cmd = "ssh icub@pc104 sudo shutdown -h 2";
     retval = system(cmd.c_str());
-    yDebug() << "system executed command" << cmd.c_str() << " with return value:" << retval;
+    yCDebug(BATTERYWRAPPER) << "system executed command" << cmd.c_str() << " with return value:" << retval;
 #endif
 #endif
 }

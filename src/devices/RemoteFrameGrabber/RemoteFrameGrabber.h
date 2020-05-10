@@ -13,6 +13,7 @@
 #include <cstring>          // for memcpy
 
 #include <yarp/os/Network.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/IVisualParamsImpl.h>
@@ -20,6 +21,7 @@
 
 #include <mutex>
 
+YARP_DECLARE_LOG_COMPONENT(REMOTEFRAMEGRABBER)
 
 class ImplementDC1394 :
         public yarp::dev::IFrameGrabberControlsDC1394
@@ -429,7 +431,7 @@ public:
         image.zero();
         if( (response.get(0).asVocab() != VOCAB_CROP) || (response.size() != 5) || (!response.get(4).isBlob()))
         {
-            yError() << "getImageCrop: malformed response message. Size is " << response.size();
+            yCError(REMOTEFRAMEGRABBER) << "getImageCrop: malformed response message. Size is " << response.size();
             return false;
         }
 
@@ -465,8 +467,8 @@ public:
      */
     bool open(yarp::os::Searchable& config) override
     {
-        yTrace();
-        yDebug() << "config is " << config.toString();
+        yCTrace(REMOTEFRAMEGRABBER);
+        yCDebug(REMOTEFRAMEGRABBER) << "config is " << config.toString();
 
         remote = config.check("remote",yarp::os::Value(""),
                               "port name of real grabber").asString();
@@ -477,13 +479,13 @@ public:
                          "carrier to use for streaming").asString();
         port.open(local);
         if (remote!="") {
-            yInfo() << "connecting "  << local << " to " << remote;
+            yCInfo(REMOTEFRAMEGRABBER) << "connecting "  << local << " to " << remote;
 
             if(!config.check("no_stream") )
             {
                 no_stream = false;
                 if(!yarp::os::Network::connect(remote,local,carrier))
-                    yError() << "cannot connect "  << local << " to " << remote;
+                    yCError(REMOTEFRAMEGRABBER) << "cannot connect "  << local << " to " << remote;
             }
             else
                 no_stream = true;

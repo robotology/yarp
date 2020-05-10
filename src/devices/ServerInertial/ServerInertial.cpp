@@ -26,6 +26,8 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+YARP_LOG_COMPONENT(SERVERINERTIAL, "yarp.devices.ServerInertial")
+
 
 /**
  * Constructor.
@@ -73,7 +75,7 @@ ServerInertial::ServerInertial() :
 //    rosData.orientation.w = 0;
 //    rosData.orientation_covariance = covariance;
 
-//     yDebug() << "covariance size is " << covariance.size();
+//     yCDebug(SERVERINERTIAL) << "covariance size is " << covariance.size();
 }
 
 ServerInertial::~ServerInertial()
@@ -88,16 +90,16 @@ bool ServerInertial::checkROSParams(yarp::os::Searchable &config)
     if(!config.check("ROS") )
     {
         useROS = ROS_disabled;
-        yInfo()  << "No ROS group found in config file ... skipping ROS initialization.";
+        yCInfo(SERVERINERTIAL) << "No ROS group found in config file ... skipping ROS initialization.";
         return true;
     }
 
-    yInfo()  << "ROS group was FOUND in config file.";
+    yCInfo(SERVERINERTIAL) << "ROS group was FOUND in config file.";
 
     Bottle &rosGroup = config.findGroup("ROS");
     if(rosGroup.isNull())
     {
-        yError() << partName << "ROS group params is not a valid group or empty";
+        yCError(SERVERINERTIAL) << partName << "ROS group params is not a valid group or empty";
         useROS = ROS_config_error;
         return false;
     }
@@ -105,7 +107,7 @@ bool ServerInertial::checkROSParams(yarp::os::Searchable &config)
     // check for useROS parameter
     if(!rosGroup.check("useROS"))
     {
-        yError() << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
+        yCError(SERVERINERTIAL) << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
                     Allowed values are true, false, ROS_only";
         useROS = ROS_config_error;
         return false;
@@ -113,23 +115,23 @@ bool ServerInertial::checkROSParams(yarp::os::Searchable &config)
     std::string ros_use_type = rosGroup.find("useROS").asString();
     if(ros_use_type == "false")
     {
-        yInfo() << partName << "useROS topic if set to 'false'";
+        yCInfo(SERVERINERTIAL) << partName << "useROS topic if set to 'false'";
         useROS = ROS_disabled;
         return true;
     }
     else if(ros_use_type == "true")
     {
-        yInfo() << partName << "useROS topic if set to 'true'";
+        yCInfo(SERVERINERTIAL) << partName << "useROS topic if set to 'true'";
         useROS = ROS_enabled;
     }
     else if(ros_use_type == "only")
     {
-        yInfo() << partName << "useROS topic if set to 'only";
+        yCInfo(SERVERINERTIAL) << partName << "useROS topic if set to 'only";
         useROS = ROS_only;
     }
     else
     {
-        yInfo() << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+        yCInfo(SERVERINERTIAL) << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
         useROS = ROS_config_error;
         return false;
     }
@@ -137,32 +139,32 @@ bool ServerInertial::checkROSParams(yarp::os::Searchable &config)
     // check for ROS_nodeName parameter
     if(!rosGroup.check("ROS_nodeName"))
     {
-        yError() << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+        yCError(SERVERINERTIAL) << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
-    yInfo() << partName << "rosNodeName is " << rosNodeName;
+    yCInfo(SERVERINERTIAL) << partName << "rosNodeName is " << rosNodeName;
 
     // check for ROS_topicName parameter
     if(!rosGroup.check("ROS_topicName"))
     {
-        yError() << partName << " cannot find ROS_topicName parameter, mandatory when using ROS message";
+        yCError(SERVERINERTIAL) << partName << " cannot find ROS_topicName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     rosTopicName = rosGroup.find("ROS_topicName").asString();
-    yInfo() << partName << "ROS_topicName is " << rosTopicName;
+    yCInfo(SERVERINERTIAL) << partName << "ROS_topicName is " << rosTopicName;
 
     // check for frame_id parameter
     if(!rosGroup.check("frame_id"))
     {
-        yError() << partName << " cannot find frame_id parameter, mandatory when using ROS message";
+        yCError(SERVERINERTIAL) << partName << " cannot find frame_id parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     frame_id = rosGroup.find("frame_id").asString();
-    yInfo() << partName << "frame_id is " << frame_id;
+    yCInfo(SERVERINERTIAL) << partName << "frame_id is " << frame_id;
 
     return true;
 }
@@ -179,14 +181,14 @@ bool ServerInertial::initialize_ROS()
 
             if(rosNode == nullptr)
             {
-                yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
+                yCError(SERVERINERTIAL) << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration";
                 success = false;
                 break;
             }
 
             if (!rosPublisherPort.topic(rosTopicName) )
             {
-                yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
+                yCError(SERVERINERTIAL) << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration";
                 success = false;
                 break;
             }
@@ -195,19 +197,19 @@ bool ServerInertial::initialize_ROS()
 
         case ROS_disabled:
         {
-            yInfo() << partName << ": no ROS initialization required";
+            yCInfo(SERVERINERTIAL) << partName << ": no ROS initialization required";
             success = true;
         } break;
 
         case ROS_config_error:
         {
-            yError() << partName << " ROS parameter are not correct, check your configuration file";
+            yCError(SERVERINERTIAL) << partName << " ROS parameter are not correct, check your configuration file";
             success = false;
         } break;
 
         default:
         {
-            yError() << partName << " something went wrong with ROS configuration, we should never be here!!!";
+            yCError(SERVERINERTIAL) << partName << " something went wrong with ROS configuration, we should never be here!!!";
             success = false;
         } break;
     }
@@ -226,7 +228,7 @@ bool ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
     yarp::os::Value &subdevice = prop.find("subdevice");
     IMU_polydriver = new yarp::dev::PolyDriver;
 
-//     yDebug("Subdevice %s\n", subdevice.toString().c_str());
+    yCDebug(SERVERINERTIAL, "Subdevice %s", subdevice.toString().c_str());
     if (subdevice.isString())
     {
         // maybe user isn't doing nested configuration
@@ -241,7 +243,7 @@ bool ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
 
     if (!IMU_polydriver->isValid())
     {
-        yError("cannot create device <%s>\n", subdevice.toString().c_str());
+        yCError(SERVERINERTIAL, "cannot create device <%s>", subdevice.toString().c_str());
         return false;
     }
 
@@ -249,7 +251,7 @@ bool ServerInertial::openAndAttachSubDevice(yarp::os::Property& prop)
     IMU_polydriver->view(IMU);     // attach to subdevice
     if(IMU == nullptr)
     {
-        yError("Error, subdevice <%s> has no valid IMU interface\n", subdevice.toString().c_str());
+        yCError(SERVERINERTIAL, "Error, subdevice <%s> has no valid IMU interface", subdevice.toString().c_str());
         IMU_polydriver->close();
         return false;
     }
@@ -287,7 +289,7 @@ bool ServerInertial::open(yarp::os::Searchable& config)
         ownDevices=true;
         if(! openAndAttachSubDevice(prop))
         {
-            yError("ControlBoardWrapper: error while opening subdevice\n");
+            yCError(SERVERINERTIAL, "ControlBoardWrapper: error while opening subdevice");
             return false;
         }
     }
@@ -311,13 +313,13 @@ bool ServerInertial::open(yarp::os::Searchable& config)
             portName = config.find("name").asString();
         else
         {
-            yInfo() << "Using default values for port name, you can change it by using '--name /myPortName' parameter";
+            yCInfo(SERVERINERTIAL) << "Using default values for port name, you can change it by using '--name /myPortName' parameter";
             portName = "/inertial";
         }
 
         if(!p.open(portName))
         {
-            yError() << "ServerInertial, cannot open port " << portName;
+            yCError(SERVERINERTIAL) << "ServerInertial, cannot open port " << portName;
             return false;
         }
         writer.attach(p);
@@ -339,7 +341,7 @@ bool ServerInertial::open(yarp::os::Searchable& config)
 
 bool ServerInertial::close()
 {
-    yInfo("Closing Server Inertial...\n");
+    yCInfo(SERVERINERTIAL, "Closing Server Inertial...");
     stop();
 
     if(rosNode!=nullptr) {
@@ -392,7 +394,7 @@ bool ServerInertial::getInertial(yarp::os::Bottle &bot)
 void ServerInertial::run()
 {
     double before, now;
-    yInfo("Starting server Inertial thread\n");
+    yCInfo(SERVERINERTIAL, "Starting server Inertial thread");
     while (!isStopping())
     {
         before = yarp::os::Time::now();
@@ -421,7 +423,7 @@ void ServerInertial::run()
                     {
                         if (!spoke)
                         {
-                            yDebug("Writing an Inertial measurement.\n");
+                            yCDebug(SERVERINERTIAL, "Writing an Inertial measurement.");
                             spoke = true;
                         }
                         p.setEnvelope(ts);
@@ -480,14 +482,14 @@ void ServerInertial::run()
             yarp::os::Time::delay(k);
         }
     }
-    yInfo("Server Intertial thread finished\n");
+    yCInfo(SERVERINERTIAL, "Server Intertial thread finished");
 }
 
 bool ServerInertial::read(ConnectionReader& connection)
 {
     yarp::os::Bottle cmd, response;
     cmd.read(connection);
-    // printf("command received: %s\n", cmd.toString().c_str());
+    yCTrace(SERVERINERTIAL, "command received: %s", cmd.toString().c_str());
 
     // We receive a command but don't do anything with it.
     return true;
@@ -514,10 +516,10 @@ bool ServerInertial::calibrate(int ch, double v)
 
 bool ServerInertial::attach(PolyDriver* poly)
 {
-    yTrace();
+    yCTrace(SERVERINERTIAL);
     if(!poly)
     {
-        yError("ServerInertial: device to attach to is not valid!");
+        yCError(SERVERINERTIAL, "ServerInertial: device to attach to is not valid!");
         return false;
     }
     IMU_polydriver = poly;
@@ -533,7 +535,7 @@ bool ServerInertial::attach(PolyDriver* poly)
     }
     else
     {
-        yError("ControlBoardWrapper: attach to subdevice failed");
+        yCError(SERVERINERTIAL, "ControlBoardWrapper: attach to subdevice failed");
     }
     return true;
 }
@@ -547,7 +549,7 @@ bool ServerInertial::attachAll(const PolyDriverList &imuToAttachTo)
 {
     if (imuToAttachTo.size() != 1)
     {
-        yError("ServerInertial: cannot attach more than one device");
+        yCError(SERVERINERTIAL, "ServerInertial: cannot attach more than one device");
         return false;
     }
 

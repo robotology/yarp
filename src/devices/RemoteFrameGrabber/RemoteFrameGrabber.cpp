@@ -13,6 +13,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
+YARP_LOG_COMPONENT(REMOTEFRAMEGRABBER, "yarp.devices.RemoteFrameGrabber")
 
 RemoteFrameGrabber::RemoteFrameGrabber() :
         FrameGrabberControls_Sender(port),

@@ -30,6 +30,8 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
+YARP_LOG_COMPONENT(RANGEFINDER2DWRAPPER, "yarp.devices.Rangefinder2DWrapper")
+
 
 /**
   * It reads the data from a rangefinder sensor and sends them on one port.
@@ -67,16 +69,16 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
     if (!config.check("ROS"))
     {
         useROS = ROS_disabled;
-        yInfo() << "No ROS group found in config file ... skipping ROS initialization.";
+        yCInfo(RANGEFINDER2DWRAPPER) << "No ROS group found in config file ... skipping ROS initialization.";
         return true;
     }
 
-    yInfo() << "ROS group was FOUND in config file.";
+    yCInfo(RANGEFINDER2DWRAPPER) << "ROS group was FOUND in config file.";
 
     Bottle &rosGroup = config.findGroup("ROS");
     if (rosGroup.isNull())
     {
-        yError() << partName << "ROS group params is not a valid group or empty";
+        yCError(RANGEFINDER2DWRAPPER) << partName << "ROS group params is not a valid group or empty";
         useROS = ROS_config_error;
         return false;
     }
@@ -84,7 +86,7 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
     // check for useROS parameter
     if (!rosGroup.check("useROS"))
     {
-        yError() << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
+        yCError(RANGEFINDER2DWRAPPER) << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
                                                         Allowed values are true, false, ROS_only";
         useROS = ROS_config_error;
         return false;
@@ -92,23 +94,23 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
     std::string ros_use_type = rosGroup.find("useROS").asString();
     if (ros_use_type == "false")
     {
-        yInfo() << partName << "useROS topic if set to 'false'";
+        yCInfo(RANGEFINDER2DWRAPPER) << partName << "useROS topic if set to 'false'";
         useROS = ROS_disabled;
         return true;
     }
     else if (ros_use_type == "true")
     {
-        yInfo() << partName << "useROS topic if set to 'true'";
+        yCInfo(RANGEFINDER2DWRAPPER) << partName << "useROS topic if set to 'true'";
         useROS = ROS_enabled;
     }
     else if (ros_use_type == "only")
     {
-        yInfo() << partName << "useROS topic if set to 'only";
+        yCInfo(RANGEFINDER2DWRAPPER) << partName << "useROS topic if set to 'only";
         useROS = ROS_only;
     }
     else
     {
-        yInfo() << partName << "useROS parameter is set to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+        yCInfo(RANGEFINDER2DWRAPPER) << partName << "useROS parameter is set to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
         useROS = ROS_config_error;
         return false;
     }
@@ -116,32 +118,32 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
     // check for ROS_nodeName parameter
     if (!rosGroup.check("ROS_nodeName"))
     {
-        yError() << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+        yCError(RANGEFINDER2DWRAPPER) << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
-    yInfo() << partName << "rosNodeName is " << rosNodeName;
+    yCInfo(RANGEFINDER2DWRAPPER) << partName << "rosNodeName is " << rosNodeName;
 
     // check for ROS_topicName parameter
     if (!rosGroup.check("ROS_topicName"))
     {
-        yError() << partName << " cannot find ROS_topicName parameter, mandatory when using ROS message";
+        yCError(RANGEFINDER2DWRAPPER) << partName << " cannot find ROS_topicName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     rosTopicName = rosGroup.find("ROS_topicName").asString();
-    yInfo() << partName << "rosTopicName is " << rosTopicName;
+    yCInfo(RANGEFINDER2DWRAPPER) << partName << "rosTopicName is " << rosTopicName;
 
     // check for frame_id parameter
     if (!rosGroup.check("frame_id"))
     {
-        yError() << partName << " cannot find frame_id parameter, mandatory when using ROS message";
+        yCError(RANGEFINDER2DWRAPPER) << partName << " cannot find frame_id parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     frame_id = rosGroup.find("frame_id").asString();
-    yInfo() << partName << "frame_id is " << frame_id;
+    yCInfo(RANGEFINDER2DWRAPPER) << partName << "frame_id is " << frame_id;
 
     return true;
 }
@@ -157,13 +159,13 @@ bool Rangefinder2DWrapper::initialize_ROS()
             rosNode = new yarp::os::Node(rosNodeName);   // add a ROS node
             if (rosNode == nullptr)
             {
-                yError() << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
+                yCError(RANGEFINDER2DWRAPPER) << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
                 success = false;
                 break;
             }
             if (!rosPublisherPort.topic(rosTopicName))
             {
-                yError() << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
+                yCError(RANGEFINDER2DWRAPPER) << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
                 success = false;
                 break;
             }
@@ -172,19 +174,19 @@ bool Rangefinder2DWrapper::initialize_ROS()
 
         case ROS_disabled:
         {
-            yInfo() << partName << ": no ROS initialization required";
+            yCInfo(RANGEFINDER2DWRAPPER) << partName << ": no ROS initialization required";
             success = true;
         } break;
 
         case ROS_config_error:
         {
-            yError() << partName << " ROS parameter are not correct, check your configuration file";
+            yCError(RANGEFINDER2DWRAPPER) << partName << " ROS parameter are not correct, check your configuration file";
             success = false;
         } break;
 
         default:
         {
-            yError() << partName << " something went wrong with ROS configuration, we should never be here!!!";
+            yCError(RANGEFINDER2DWRAPPER) << partName << " something went wrong with ROS configuration, we should never be here!!!";
             success = false;
         } break;
     }
@@ -199,7 +201,7 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
 {
     if (device2attach.size() != 1)
     {
-        yError("Rangefinder2DWrapper: cannot attach more than one device");
+        yCError(RANGEFINDER2DWRAPPER, "Rangefinder2DWrapper: cannot attach more than one device");
         return false;
     }
 
@@ -213,26 +215,26 @@ bool Rangefinder2DWrapper::attachAll(const PolyDriverList &device2attach)
 
     if (nullptr == sens_p)
     {
-        yError("Rangefinder2DWrapper: subdevice passed to attach method is invalid");
+        yCError(RANGEFINDER2DWRAPPER, "Rangefinder2DWrapper: subdevice passed to attach method is invalid");
         return false;
     }
     attach(sens_p);
 
     if(!sens_p->getDistanceRange(minDistance, maxDistance))
     {
-        yError() << "Laser device does not provide min & max distance range.";
+        yCError(RANGEFINDER2DWRAPPER) << "Laser device does not provide min & max distance range.";
         return false;
     }
 
     if(!sens_p->getScanLimits(minAngle, maxAngle))
     {
-        yError() << "Laser device does not provide min & max angle scan range.";
+        yCError(RANGEFINDER2DWRAPPER) << "Laser device does not provide min & max angle scan range.";
         return false;
     }
 
     if (!sens_p->getHorizontalResolution(resolution))
     {
-        yError() << "Laser device does not provide horizontal resolution ";
+        yCError(RANGEFINDER2DWRAPPER) << "Laser device does not provide horizontal resolution ";
         return false;
     }
 
@@ -377,7 +379,7 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             }
             else
             {
-                yError("Invalid command received in Rangefinder2DWrapper");
+                yCError(RANGEFINDER2DWRAPPER, "Invalid command received in Rangefinder2DWrapper");
             }
         }
         else if (action == VOCAB_SET)
@@ -423,17 +425,17 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
             }
             else
             {
-                yError("Invalid command received in Rangefinder2DWrapper");
+                yCError(RANGEFINDER2DWRAPPER, "Invalid command received in Rangefinder2DWrapper");
             }
         }
         else
         {
-            yError("Invalid action received in Rangefinder2DWrapper");
+            yCError(RANGEFINDER2DWRAPPER, "Invalid action received in Rangefinder2DWrapper");
         }
     }
     else
     {
-        yError("Invalid interface vocab received in Rangefinder2DWrapper");
+        yCError(RANGEFINDER2DWRAPPER, "Invalid interface vocab received in Rangefinder2DWrapper");
     }
 
     if (!ret)
@@ -472,7 +474,7 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("period"))
     {
-        yError() << "Rangefinder2DWrapper: missing 'period' parameter. Check you configuration file\n";
+        yCError(RANGEFINDER2DWRAPPER) << "Rangefinder2DWrapper: missing 'period' parameter. Check you configuration file\n";
         return false;
     }
     else
@@ -480,8 +482,8 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
 
     if (!config.check("name"))
     {
-        yError() << "Rangefinder2DWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
-        yError() << "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
+        yCError(RANGEFINDER2DWRAPPER) << "Rangefinder2DWrapper: missing 'name' parameter. Check you configuration file; it must be like:";
+        yCError(RANGEFINDER2DWRAPPER) << "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
         return false;
     }
     else
@@ -495,7 +497,7 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
 
     if(!initialize_YARP(config) )
     {
-        yError() << sensorId << "Error initializing YARP ports";
+        yCError(RANGEFINDER2DWRAPPER) << sensorId << "Error initializing YARP ports";
         return false;
     }
 
@@ -515,14 +517,14 @@ bool Rangefinder2DWrapper::open(yarp::os::Searchable &config)
 
         if(!driver.open(p) || !driver.isValid())
         {
-            yError() << "RangeFinder2DWrapper: failed to open subdevice.. check params";
+            yCError(RANGEFINDER2DWRAPPER) << "RangeFinder2DWrapper: failed to open subdevice.. check params";
             return false;
         }
 
         driverlist.push(&driver, "1");
         if(!attachAll(driverlist))
         {
-            yError() << "RangeFinder2DWrapper: failed to open subdevice.. check params";
+            yCError(RANGEFINDER2DWRAPPER) << "RangeFinder2DWrapper: failed to open subdevice.. check params";
             return false;
         }
         isDeviceOwned = true;
@@ -536,12 +538,12 @@ bool Rangefinder2DWrapper::initialize_YARP(yarp::os::Searchable &params)
     {
         if (!streamingPort.open(streamingPortName))
             {
-                yError("Rangefinder2DWrapper: failed to open port %s", streamingPortName.c_str());
+                yCError(RANGEFINDER2DWRAPPER, "Rangefinder2DWrapper: failed to open port %s", streamingPortName.c_str());
                 return false;
             }
         if (!rpcPort.open(rpcPortName))
             {
-                yError("Rangefinder2DWrapper: failed to open port %s", rpcPortName.c_str());
+                yCError(RANGEFINDER2DWRAPPER, "Rangefinder2DWrapper: failed to open port %s", rpcPortName.c_str());
                 return false;
             }
         rpcPort.setReader(*this);
@@ -616,14 +618,14 @@ void Rangefinder2DWrapper::run()
         }
         else
         {
-            yError("Rangefinder2DWrapper: %s: Sensor returned error", sensorId.c_str());
+            yCError(RANGEFINDER2DWRAPPER, "Rangefinder2DWrapper: %s: Sensor returned error", sensorId.c_str());
         }
     }
 }
 
 bool Rangefinder2DWrapper::close()
 {
-    yTrace("Rangefinder2DWrapper::Close");
+    yCTrace(RANGEFINDER2DWRAPPER, "Rangefinder2DWrapper::Close");
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();

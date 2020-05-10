@@ -9,6 +9,8 @@
 
 #include "SerialServoBoard.h"
 
+#include <yarp/os/LogComponent.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/ISerialDevice.h>
@@ -24,15 +26,19 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(SERIALSERVOBOARD, "yarp.devices.SerialServoBoard")
+}
+
 
 bool SerialServoBoard::open(Searchable& config)
 {
     if (config.check("help") == true) {
-        printf("SerialServoBoard Available Options:\n");
-        printf(" -board NAME, where name is one of ssc32, minissc, pontech_sv203x, mondotronic_smi, parallax, pololu_usb_16servo, picopic\n");
-        printf(" -comport NAME, where name is COMx on Windows, and /dev/ttySx on Linux\n");
-        printf(" -baudrate RATE, where RATE is the Board baudrate\n");
-        printf("\n -help shows this help\n");
+        yCInfo(SERIALSERVOBOARD, "SerialServoBoard Available Options:");
+        yCInfo(SERIALSERVOBOARD, " -board NAME, where name is one of ssc32, minissc, pontech_sv203x, mondotronic_smi, parallax, pololu_usb_16servo, picopic");
+        yCInfo(SERIALSERVOBOARD, " -comport NAME, where name is COMx on Windows, and /dev/ttySx on Linux");
+        yCInfo(SERIALSERVOBOARD, " -baudrate RATE, where RATE is the Board baudrate");
+        yCInfo(SERIALSERVOBOARD, " -help shows this help");
 
         return false;
     }
@@ -81,12 +87,12 @@ bool SerialServoBoard::open(Searchable& config)
 
     dd.open(conf);
     if (!dd.isValid()) {
-        printf("Failed to create and configure a device\n");
+        yCError(SERIALSERVOBOARD, "Failed to create and configure a device");
         std::exit(1);
     }
 
     if (!dd.view(serial)) {
-        printf("Failed to view device through IGPUDevice interface\n");
+        yCError(SERIALSERVOBOARD, "Failed to view device through ISerialDevice interface");
         std::exit(1);
     }
 
