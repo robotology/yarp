@@ -609,10 +609,19 @@ void Rangefinder2DWrapper::run()
 
                 for (int i = 0; i < ranges_size; i++)
                 {
-                    rosData.ranges[i] = ranges[i];
-                    rosData.intensities[i] = 0.0;
+                    // in yarp, NaN is used when a scan value is missing. For example when the angular range of the rangefinder is smaller than 360.
+                    // is ros, NaN is not used. Hence this check replaces NaN with inf.
+                    if (std::isnan(ranges[i]))
+                    {
+                       rosData.ranges[i] = std::numeric_limits<double>::infinity();
+                       rosData.intensities[i] = 0.0;
+                    }
+                    else
+                    {
+                       rosData.ranges[i] = ranges[i];
+                       rosData.intensities[i] = 0.0;
+                    }
                 }
-
                 rosPublisherPort.write();
             }
         }
