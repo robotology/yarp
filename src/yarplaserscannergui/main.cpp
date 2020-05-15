@@ -223,6 +223,7 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
             y == std::numeric_limits<double>::infinity()) continue; //this is not working
  #endif
         if (std::isinf(x) || std::isinf(y)) continue;
+        if (std::isnan(x) || std::isnan(y)) continue;
 
         //if (length<0)     length = 0;
         //else if (length>15)    length = 15; //15m maximum
