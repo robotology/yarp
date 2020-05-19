@@ -24,6 +24,8 @@ VideoProducer::VideoProducer(QObject *parent) :
 {
     m_format = nullptr;
     m_surface = nullptr;
+    m_frame = nullptr;
+    framed = false;
 }
 
 VideoProducer::~VideoProducer()
@@ -121,6 +123,38 @@ void VideoProducer::onNewVideoContentReceived(QVideoFrame *frame)
         if (!b) {
             qWarning("Surface PRESENT ERROR");
         }
+        else{
+            mutex.lock();
+            if(m_frame != nullptr){
+                delete m_frame;
+            }
+            m_frame = new QVideoFrame(*frame);
+            mutex.unlock();
+            framed = true;
+        }
     }
 
+}
+
+/*! \brief Pics the rgb value of the pixel specified by x and y and return it as a string
+ *  \param x Integer: The x coordinate of the pixel
+ *  \param y Integer: The y coordinate of the pixel
+ */
+
+QString VideoProducer::getPixelAsStr(int x, int y){
+    mutex.lock();
+    if (m_frame == nullptr || x>m_frame->size().width() || y>m_frame->size().height() || x<0 || y<0){
+        mutex.unlock();
+        return QString("Invalid");
+    }
+    m_frame->map( QAbstractVideoBuffer::ReadOnly );
+    QImage image(m_frame->bits(), m_frame->width(),
+                 m_frame->height(), m_frame->bytesPerLine(),
+                 QImage::Format_RGB32);
+    mutex.unlock();
+    QRgb testPixel = image.pixel(x,y);
+    QString rgb("");
+    rgb += QString::number(testPixel,16);
+
+    return rgb;
 }

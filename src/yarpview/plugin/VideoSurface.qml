@@ -37,6 +37,7 @@ Rectangle {
     property int menuHeight: 0
     property string name: "yarpview"
     property string version: "2.0"
+    property bool showPixelCol: false
 
     signal changeWindowSize(int w, int h)
     signal synchRate(bool check);
@@ -136,6 +137,11 @@ Rectangle {
     /******************************/
 
     /********Functions************/
+    function enableColorPicking(flag){
+        coordsMouseArea.hoverEnabled = flag;
+        maincontainer.showPixelCol = flag;
+    }
+
     function parseParameters(params){
         var ret = yarpViewCore.parseParameters(params)
         return ret
@@ -248,23 +254,31 @@ Rectangle {
             property var currY
             property bool pressing: false
 
+            function coordsConverter(x,y){
+
+                var frameW = yarpViewCore.videoProducer.frameWidth;
+                var frameH = yarpViewCore.videoProducer.frameHeight;
+
+                var w = mainVideoOutput.width;
+                var h = mainVideoOutput.height;
+
+                var ratioW = w/frameW;
+                var ratioH = h/frameH;
+
+                var toReturn = {"x":0,"y":0};
+                toReturn["x"] = Math.round(x/ratioW);
+                toReturn["y"] = Math.round(y/ratioH);
+
+                return toReturn;
+            }
+
             onClicked: {
                 startclickX = mouse.x
                 startclickY = mouse.y
-                var x = mouse.x
-                var y = mouse.y
+                var clickCoords = coordsConverter(mouse.x,mouse.y);
 
-                var frameW = yarpViewCore.videoProducer.frameWidth;
-                var frameH = yarpViewCore.videoProducer.frameHeight
-
-                var w = mainVideoOutput.width
-                var h = mainVideoOutput.height
-
-                var ratioW = w/frameW
-                var ratioH = h/frameH
-
-                clickX = x/ratioW
-                clickY = y/ratioH
+                clickX = clickCoords["x"];
+                clickY = clickCoords["y"];
 
                 yarpViewCore.clickCoords_2(clickX,clickY)
             }
@@ -272,20 +286,12 @@ Rectangle {
             onPressed: {
                 startclickX = mouse.x
                 startclickY = mouse.y
-                var x = mouse.x
-                var y = mouse.y
+                startclickX = mouse.x
+                startclickY = mouse.y
+                var clickCoords = coordsConverter(mouse.x,mouse.y);
 
-                var frameW = yarpViewCore.videoProducer.frameWidth;
-                var frameH = yarpViewCore.videoProducer.frameHeight
-
-                var w = mainVideoOutput.width
-                var h = mainVideoOutput.height
-
-                var ratioW = w/frameW
-                var ratioH = h/frameH
-
-                clickX = x/ratioW
-                clickY = y/ratioH
+                clickX = clickCoords["x"];
+                clickY = clickCoords["y"];
             }
 
             onPressAndHold: {
@@ -297,31 +303,29 @@ Rectangle {
                 if (pressing)
                 {
                     pressing = false;
-                    var x = mouse.x
-                    var y = mouse.y
+                    var clickCoords = coordsConverter(mouse.x,mouse.y);
 
-                    var frameW = yarpViewCore.videoProducer.frameWidth;
-                    var frameH = yarpViewCore.videoProducer.frameHeight
+                    lastclickX = clickCoords["x"];
+                    lastclickY = clickCoords["y"];
 
-                    var w = mainVideoOutput.width
-                    var h = mainVideoOutput.height
-
-                    var ratioW = w/frameW
-                    var ratioH = h/frameH
-
-                    lastclickX=mouse.x/ratioW
-                    lastclickY=mouse.y/ratioH
-
-                    yarpViewCore.clickCoords_4(clickX,clickY,lastclickX,lastclickY)
+                    yarpViewCore.clickCoords_4(clickX,clickY,lastclickX,lastclickY);
                 }
-                canvasOverlay.requestPaint()
+                canvasOverlay.requestPaint();
             }
 
             onPositionChanged:
             {
-                currX=mouse.x;
-                currY=mouse.y;
-                canvasOverlay.requestPaint()
+                if(maincontainer.showPixelCol){
+                    var coords = coordsConverter(mouse.x,mouse.y);
+                    dataArea.pixelXStr = ""+coords["x"];
+                    dataArea.pixelYStr = ""+coords["y"];
+                    dataArea.pixelValStr = yarpViewCore.getPixelAsStr(coords["x"],coords["y"]);
+                }
+                if(pressed){
+                    currX=mouse.x;
+                    currY=mouse.y;
+                    canvasOverlay.requestPaint()
+                }
             }
 
             Canvas

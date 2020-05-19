@@ -36,6 +36,11 @@ StatusBar {
 
     property string name: "/name"
 
+    property string pixelValStr: "0"
+    property string pixelXStr: "0"
+    property string pixelYStr: "0"
+    property color pixelValCol: "white"
+
     function setName(name){
         bar.name = name
     }
@@ -54,7 +59,7 @@ StatusBar {
                   " max:" + bar.maxFps +") fps; " +
                   "(size: " + bar.portSizeX + "x" + bar.portSizeY + ")"
             fontSizeMode: Text.VerticalFit
-            height: parent.height/3 - 2
+            height: parent.height/4 - 2
         }
 
         Label{
@@ -68,7 +73,7 @@ StatusBar {
                   " max:" + bar.displayMaxFps +") fps; "+
                   "(size: " + bar.displaySizeX + "x" + bar.displaySizeY + ")"
             fontSizeMode: Text.VerticalFit
-            height: parent.height/3 - 2
+            height: parent.height/4 - 2
 
 
         }
@@ -79,10 +84,19 @@ StatusBar {
 
             text: bar.name
             fontSizeMode: Text.VerticalFit
-            height: parent.height/3 - 2
+            height: parent.height/4 - 2
 
 
         }
+
+        Label{
+            id: pixelValueLabel
+            text: "Pixel ("+bar.pixelXStr+", "+bar.pixelYStr+") = "+bar.pixelValStr
+            fontSizeMode: Text.VerticalFit
+            height: parent.height/4 - 2
+
+        }
+
     }
 
 

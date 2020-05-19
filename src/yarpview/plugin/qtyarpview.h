@@ -92,6 +92,8 @@ public:
     Q_INVOKABLE void clickCoords_2(int x, int y);
     Q_INVOKABLE void clickCoords_4(int start_x, int start_y, int end_x, int end_y);
 
+    Q_INVOKABLE QString getPixelAsStr(int x, int y);
+
     QObject *getVideoProducer();
     int posX();
     int posY();

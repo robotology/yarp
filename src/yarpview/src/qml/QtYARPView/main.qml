@@ -128,6 +128,11 @@ ApplicationWindow {
             vSurface.saveSetImages(checked)
 
         }
+
+        onPickColor:{
+            vSurface.enableColorPicking(checked);
+        }
+
         onAbout:{
             vSurface.about()
         }
