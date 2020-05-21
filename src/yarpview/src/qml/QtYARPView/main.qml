@@ -131,6 +131,7 @@ ApplicationWindow {
 
         onPickColor:{
             vSurface.enableColorPicking(checked);
+            statusBar.setPixelValVisibility(checked);
         }
 
         onAbout:{
@@ -139,6 +140,15 @@ ApplicationWindow {
 
         onQuit:{
             Qt.quit()
+        }
+    }
+
+    Connections{
+        target: statusBar
+
+        onHeightChanged:{
+            calc();
+            vSurface.setOriginalAspectRatio()
         }
     }
 }

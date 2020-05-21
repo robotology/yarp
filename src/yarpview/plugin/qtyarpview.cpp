@@ -521,4 +521,3 @@ void QtYARPView::onWindowSizeChangeRequested()
         emit sizeChanged();
     }
 }
-

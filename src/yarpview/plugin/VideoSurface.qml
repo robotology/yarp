@@ -254,6 +254,11 @@ Rectangle {
             property var currY
             property bool pressing: false
 
+            /*! \brief Converts a pair of mouse XY coordinates to video frame coordinates
+             *  \param x Integer: The mouse X coordinate
+             *  \param y Integer: The mouse Y coordinate
+             *  \return toReturn Dictionary: It contains the X and Y values of the newly computed video frame coordinates
+             */
             function coordsConverter(x,y){
 
                 var frameW = yarpViewCore.videoProducer.frameWidth;
@@ -319,7 +324,7 @@ Rectangle {
                     var coords = coordsConverter(mouse.x,mouse.y);
                     dataArea.pixelXStr = ""+coords["x"];
                     dataArea.pixelYStr = ""+coords["y"];
-                    dataArea.pixelValStr = yarpViewCore.getPixelAsStr(coords["x"],coords["y"]);
+                    dataArea.setPixelVal(yarpViewCore.getPixelAsStr(coords["x"],coords["y"]));
                 }
                 if(pressed){
                     currX=mouse.x;

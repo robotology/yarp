@@ -25,7 +25,6 @@ VideoProducer::VideoProducer(QObject *parent) :
     m_format = nullptr;
     m_surface = nullptr;
     m_frame = nullptr;
-    framed = false;
 }
 
 VideoProducer::~VideoProducer()
@@ -130,7 +129,6 @@ void VideoProducer::onNewVideoContentReceived(QVideoFrame *frame)
             }
             m_frame = new QVideoFrame(*frame);
             mutex.unlock();
-            framed = true;
         }
     }
 
@@ -139,11 +137,11 @@ void VideoProducer::onNewVideoContentReceived(QVideoFrame *frame)
 /*! \brief Pics the rgb value of the pixel specified by x and y and return it as a string
  *  \param x Integer: The x coordinate of the pixel
  *  \param y Integer: The y coordinate of the pixel
+ *  \return rgbHex QString: The hexadecimal string containing the pixel color value
  */
-
 QString VideoProducer::getPixelAsStr(int x, int y){
     mutex.lock();
-    if (m_frame == nullptr || x>m_frame->size().width() || y>m_frame->size().height() || x<0 || y<0){
+    if (m_frame == nullptr || x>=m_frame->size().width() || y>=m_frame->size().height() || x<0 || y<0){
         mutex.unlock();
         return QString("Invalid");
     }
@@ -152,9 +150,9 @@ QString VideoProducer::getPixelAsStr(int x, int y){
                  m_frame->height(), m_frame->bytesPerLine(),
                  QImage::Format_RGB32);
     mutex.unlock();
-    QRgb testPixel = image.pixel(x,y);
-    QString rgb("");
-    rgb += QString::number(testPixel,16);
+    QRgb pixelVal = image.pixel(x,y);
+    QString rgbHex("#");
+    rgbHex += QString::number(pixelVal,16);
 
-    return rgb;
+    return rgbHex;
 }

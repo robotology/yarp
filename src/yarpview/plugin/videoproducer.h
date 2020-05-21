@@ -50,8 +50,7 @@ public:
 private:
     QAbstractVideoSurface *m_surface;
     QVideoSurfaceFormat *m_format;
-    QVideoFrame *m_frame;
-    bool framed;
+    QVideoFrame *m_frame;  // Stores the value of the current video frame to allow "color picking"
     QMutex mutex;
 
 signals:

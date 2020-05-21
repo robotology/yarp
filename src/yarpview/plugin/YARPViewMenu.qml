@@ -126,7 +126,7 @@ MenuBar {
                    }}
         MenuSeparator{}
         MenuItem { id: colorPickerItem
-                   text: "Display px value"
+                   text: "Display pixel value"
                    checkable: true
                    onTriggered: {
                        pickColor(colorPickerItem.checked);
