@@ -69,6 +69,8 @@ const CvScalar color_gray   = cvScalar(100,100,100);
 #define ASPECT_LINE  0
 #define ASPECT_POINT 1
 
+bool g_lidar_debug=false;
+
 void drawGrid(IplImage *img, double scale)
 {
     cvLine(img,cvPoint(0,0),cvPoint(img->width,img->height),color_black);
@@ -223,7 +225,28 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
             y == std::numeric_limits<double>::infinity()) continue; //this is not working
  #endif
         if (std::isinf(x) || std::isinf(y)) continue;
-        if (std::isnan(x) || std::isnan(y)) continue;
+        
+        if (std::isnan(x) || std::isnan(y))
+        {
+            if (g_lidar_debug)
+            {
+                //the following rotation is performed to have x axis aligned with screen vertical
+                double rr, tt;
+                tt= i * 0.5 - 90;
+                //(*las)[i].get_polar(rr,tt);
+                CvPoint ray;
+                //yDebug() << rr << tt;
+                ray.x = 1.0 * cos(tt*DEG2RAD) * scale;
+                ray.y = 1.0 * sin(tt*DEG2RAD) * scale;
+                ray.x += center.x;
+                ray.y += center.y;
+
+                int thickness = 2;
+                //draw a line
+                cvLine(img, center, ray, color_red, thickness);
+            }
+            continue;
+        }
 
         //if (length<0)     length = 0;
         //else if (length>15)    length = 15; //15m maximum
@@ -275,6 +298,7 @@ void display_help()
     yInfo() << "--period <double> the refresh period (default 50 ms)";
     yInfo() << "--aspect <0/1> draws line/points (default 0=lines)";
     yInfo() << "--sens_port <string> the name of the port used by Rangefinder2DClient to connect to the laser device. (mandatory)";
+    yInfo() << "--lidar_debug shows NaN values";
     yInfo() << "";
     yInfo() << "Available commands (pressing the key during execution):";
     yInfo() << "c ...... enables/disables compass.";
@@ -312,7 +336,8 @@ int main(int argc, char *argv[])
     int period = rf.check("period",Value(50),"period [ms]").asInt32(); //ms
     int aspect = rf.check("aspect", Value(0), "0 draw lines, 1 draw points").asInt32();
     string laserport = rf.check("sens_port", Value("/laser:o"), "laser port name").asString();
-
+    g_lidar_debug = rf.check("lidar_debug");
+    
     string laser_map_port_name;
     laser_map_port_name = "/laserScannerGui/laser_map:i";
     string compass_port_name;
