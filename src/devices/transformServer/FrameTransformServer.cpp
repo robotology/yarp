@@ -206,7 +206,7 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
         {
             continue;
         }
-        yDebug() << storages[s]->size();
+
         std::string text_to_print = storageDescription[s] + std::string("(") +std::to_string(storages[s]->size())+ std::string("): ");
         out.addString(text_to_print);
 
