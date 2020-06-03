@@ -48,20 +48,20 @@ class LaserFromPointCloud : public PeriodicThread, public yarp::dev::Lidar2DDevi
 {
 protected:
     PolyDriver m_rgbd_driver;
-    IRGBDSensor* m_iRGBD;
+    IRGBDSensor* m_iRGBD = nullptr;
 
     PolyDriver m_tc_driver;
-    IFrameTransform* m_iTc;
+    IFrameTransform* m_iTc = nullptr;
 
-    int m_depth_width;
-    int m_depth_height;
+    int m_depth_width = 0;
+    int m_depth_height = 0;
     yarp::os::Property m_propIntrinsics;
     yarp::sig::IntrinsicParams m_intrinsics;
     yarp::sig::ImageOf<float> m_depth_image;
 
     //point cloud
-    size_t m_pc_stepx;
-    size_t m_pc_stepy;
+    size_t m_pc_stepx = 0;
+    size_t m_pc_stepy = 0;
     yarp::sig::utils::PCL_ROI m_pc_roi;
 
     //frames and point cloud clipping planes
@@ -73,10 +73,6 @@ protected:
 
 public:
     LaserFromPointCloud(double period = 0.01) : PeriodicThread(period),
-        m_iRGBD(nullptr),
-        m_iTc(nullptr),
-        m_depth_width(0),
-        m_depth_height(0),
         Lidar2DDeviceBase()
     {}
 

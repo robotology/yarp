@@ -50,12 +50,12 @@ protected:
     double         m_resolution;
     bool           m_clip_max_enable;
     bool           m_clip_min_enable;
-    bool           m_do_not_clip_infinity_enable;
+    bool           m_do_not_clip_and_allow_infinity_enable;
     std::vector <Range_t> m_range_skip_vector;
 
 public:
     // the main parse function
-    bool parse (yarp::os::Searchable& config);
+    bool parseConfiguration(yarp::os::Searchable& config);
 
 public:
     //constructor
@@ -71,6 +71,14 @@ public:
     bool getScanLimits(double& min, double& max) override;
     bool getHorizontalResolution(double& step) override;
     bool getScanRate(double& rate) override;
+
+protected:
+    //utility methods called by laser devices
+    void applyLimitsOnLaserData();
+
+private:
+    //utility methods called internally by Lidar2DDeviceBase
+    bool checkSkipAngle(const double& angle, double& distance);
 };
 
 } // dev
