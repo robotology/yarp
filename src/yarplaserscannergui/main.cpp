@@ -232,7 +232,8 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
             {
                 //the following rotation is performed to have x axis aligned with screen vertical
                 double rr, tt;
-                tt= i * 0.5 - 90;
+                double sensor_resolution = 0.5; //@@@fixme
+                tt= - i * sensor_resolution - 90;
                 //(*las)[i].get_polar(rr,tt);
                 CvPoint ray;
                 //yDebug() << rr << tt;
@@ -299,6 +300,7 @@ void display_help()
     yInfo() << "--aspect <0/1> draws line/points (default 0=lines)";
     yInfo() << "--sens_port <string> the name of the port used by Rangefinder2DClient to connect to the laser device. (mandatory)";
     yInfo() << "--lidar_debug shows NaN values";
+    yInfo() << "--local <string> the orefix for the client port. By default /laserScannerGui. Useful in case of multiple instances.";
     yInfo() << "";
     yInfo() << "Available commands (pressing the key during execution):";
     yInfo() << "c ...... enables/disables compass.";
@@ -336,14 +338,15 @@ int main(int argc, char *argv[])
     int period = rf.check("period",Value(50),"period [ms]").asInt32(); //ms
     int aspect = rf.check("aspect", Value(0), "0 draw lines, 1 draw points").asInt32();
     string laserport = rf.check("sens_port", Value("/laser:o"), "laser port name").asString();
+    string localprefix = rf.check("local", Value("/laserScannerGui"), "prefix for the client port").asString();
     g_lidar_debug = rf.check("lidar_debug");
 
     string laser_map_port_name;
-    laser_map_port_name = "/laserScannerGui/laser_map:i";
+    laser_map_port_name = localprefix + "/laser_map:i";
     string compass_port_name;
-    compass_port_name = "/laserScannerGui/compass:i";
+    compass_port_name = localprefix + "/compass:i";
     string nav_display;
-    nav_display = "/laserScannerGui/nav_display:i";
+    nav_display = localprefix + "/nav_display:i";
 
     int width = 600;
     int height = 600;
@@ -351,7 +354,7 @@ int main(int argc, char *argv[])
     yarp::dev::PolyDriver* drv = new yarp::dev::PolyDriver;
     Property   lasOptions;
     lasOptions.put("device", "Rangefinder2DClient");
-    lasOptions.put("local", "/laserScannerGui/laser:i");
+    lasOptions.put("local", localprefix + "/laser:i");
     lasOptions.put("remote", laserport);
     lasOptions.put("period", "10");
     bool b = drv->open(lasOptions);

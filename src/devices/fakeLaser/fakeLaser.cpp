@@ -47,12 +47,14 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     {
         yCInfo(FAKE_LASER,"Some examples:");
         yCInfo(FAKE_LASER,"yarpdev --device fakeLaser --help");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test no_obstacles");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_pattern");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test no_obstacles");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_pattern");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_constant --const_distance 0.5");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_constant --const_distance 0.5 --SENSOR::resolution 0.5 --SKIP::min 0 50 --SKIP::max 10 60");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
         return false;
     }
 
@@ -67,6 +69,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     if      (string_test_mode == "no_obstacles") { m_test_mode = NO_OBSTACLES; }
     else if (string_test_mode == "use_pattern") { m_test_mode = USE_PATTERN; }
     else if (string_test_mode == "use_mapfile") { m_test_mode = USE_MAPFILE; }
+    else if (string_test_mode == "use_constant") { m_test_mode = USE_CONSTANT_VALUE; }
     else    { yCError(FAKE_LASER) << "invalid/unknown value for param 'test'"; return false; }
 
     //parse all the parameters related to the linear/angular range of the sensor
@@ -77,7 +80,14 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     }
 
     //the different fake laser modalities
-    if (m_test_mode == USE_MAPFILE)
+    else if (m_test_mode == USE_CONSTANT_VALUE)
+    {
+        if (config.check("const_distance"))
+        {
+            m_const_value = config.check("const_distance", Value(1.0), "default constant distance").asDouble();
+        }
+    }
+    else if (m_test_mode == USE_MAPFILE)
     {
         string map_file;
         if (config.check("map_file"))
@@ -135,9 +145,9 @@ bool FakeLaser::open(yarp::os::Searchable& config)
             m_loc_mode = LOC_NOT_SET;
         }
 
-        m_loc_x=0;
-        m_loc_y=0;
-        m_loc_t=0;
+        m_robot_loc_x=0;
+        m_robot_loc_y=0;
+        m_robot_loc_t=0;
     }
 
     yCInfo(FAKE_LASER) << "Starting debug mode";
@@ -246,6 +256,13 @@ void FakeLaser::run()
             m_laser_data.push_back(std::numeric_limits<double>::infinity());
         }
     }
+    else if (m_test_mode == USE_CONSTANT_VALUE)
+    {
+        for (size_t i = 0; i < m_sensorsNum; i++)
+        {
+            m_laser_data.push_back(m_const_value);
+        }
+    }
     else if (m_test_mode == USE_MAPFILE)
     {
         if (m_loc_mode == LOC_NOT_SET)
@@ -257,9 +274,9 @@ void FakeLaser::run()
             Bottle* b = m_loc_port->read(false);
             if (b)
             {
-                m_loc_x = b->get(0).asFloat64();
-                m_loc_y = b->get(1).asFloat64();
-                m_loc_t = b->get(2).asFloat64();
+                m_robot_loc_x = b->get(0).asFloat64();
+                m_robot_loc_y = b->get(1).asFloat64();
+                m_robot_loc_t = b->get(2).asFloat64();
             }
         }
         else if (m_loc_mode == LOC_FROM_CLIENT)
@@ -267,9 +284,9 @@ void FakeLaser::run()
             Map2DLocation loc;
             if (m_iLoc->getCurrentPosition(loc))
             {
-                m_loc_x = loc.x;
-                m_loc_y = loc.y;
-                m_loc_t = loc.theta;
+                m_robot_loc_x = loc.x;
+                m_robot_loc_y = loc.y;
+                m_robot_loc_t = loc.theta;
             }
             else
             {
@@ -284,15 +301,15 @@ void FakeLaser::run()
         for (size_t i = 0; i < m_sensorsNum; i++)
         {
             //compute the ray in the robot reference frame
-            double robot_curr_t = i* m_resolution + m_min_angle;
-            double robot_curr_x = m_max_distance * cos(robot_curr_t*DEG2RAD);
-            double robot_curr_y = m_max_distance * sin(robot_curr_t*DEG2RAD);
+            double ray_angle = i* m_resolution + m_min_angle;
+            double ray_target_x = m_max_distance * cos(ray_angle * DEG2RAD);
+            double ray_target_y = m_max_distance * sin(ray_angle * DEG2RAD);
 
             //transforms the ray from the robot to the world reference frame
             XYWorld ray_world;
-            ray_world.x = robot_curr_x*cos(m_loc_t*DEG2RAD) - robot_curr_y*sin(m_loc_t*DEG2RAD) + m_loc_x;
-            ray_world.y = robot_curr_x*sin(m_loc_t*DEG2RAD) + robot_curr_y*cos(m_loc_t*DEG2RAD) + m_loc_y;
-            XYCell src = m_map.world2Cell(XYWorld(m_loc_x, m_loc_y));
+            ray_world.x = ray_target_x *cos(m_robot_loc_t*DEG2RAD) - ray_target_y *sin(m_robot_loc_t*DEG2RAD) + m_robot_loc_x;
+            ray_world.y = ray_target_x *sin(m_robot_loc_t*DEG2RAD) + ray_target_y *cos(m_robot_loc_t*DEG2RAD) + m_robot_loc_y;
+            XYCell src = m_map.world2Cell(XYWorld(m_robot_loc_x, m_robot_loc_y));
             if (m_map.isInsideMap(ray_world))
             {
                 XYCell dst = m_map.world2Cell(ray_world);
