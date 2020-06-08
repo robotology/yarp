@@ -29,14 +29,12 @@
 #include <yarp/dev/LaserScan2D.h>
 #include <yarp/dev/Lidar2DDeviceBase.h>
 #include <yarp/sig/Vector.h>
-
+#include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/PolyDriver.h>
 
 #include <mutex>
 #include <string>
 #include <vector>
-
-using namespace yarp::os;
-using namespace yarp::dev;
 
 typedef unsigned char byte;
 
@@ -48,9 +46,10 @@ class InputPortProcessor :
     std::mutex             m_port_mutex;
     yarp::dev::LaserScan2D m_lastScan;
     yarp::os::Stamp        m_lastStamp;
+    bool                   m_contains_data;
 
 public:
-
+    InputPortProcessor(const InputPortProcessor& alt) {m_lastScan = alt.m_lastScan; m_lastStamp = alt.m_lastStamp; m_contains_data = alt.m_contains_data; }
     InputPortProcessor();
     using yarp::os::BufferedPort<yarp::dev::LaserScan2D>::onRead;
     void onRead(yarp::dev::LaserScan2D& v) override;
@@ -58,20 +57,29 @@ public:
 };
 
 class LaserFromExternalPort : public yarp::dev::Lidar2DDeviceBase,
-                              public PeriodicThread,
-                              public DeviceDriver
+                              public yarp::os::PeriodicThread,
+                              public yarp::dev::DeviceDriver
 {
 protected:
-    std::string        m_port_name;
-    InputPortProcessor m_input_port;
+    bool                            m_option_override_limits;
+    std::vector <std::string>       m_port_names;
+    std::vector<InputPortProcessor> m_input_ports;
+    std::vector <yarp::os::Stamp>        m_last_stamp;
+    std::vector <yarp::dev::LaserScan2D> m_last_scan_data;
+    yarp::dev::PolyDriver                m_tc_driver;
+    yarp::dev::IFrameTransform*          m_iTc = nullptr;
+    
+    std::vector <std::string>            m_src_frame_id;
+    std::string                          m_dst_frame_id;
+    yarp::sig::Vector                    m_empty_laser_data;
 
-    yarp::os::Stamp        m_last_stamp;
-    yarp::dev::LaserScan2D m_last_scan_data;
-
+    void calculate(yarp::dev::LaserScan2D scan, yarp::sig::Matrix m);
 
 public:
     LaserFromExternalPort(double period = 0.01) : Lidar2DDeviceBase(), PeriodicThread(period)
-    {}
+    {
+        m_option_override_limits=false;
+    }
 
     ~LaserFromExternalPort()
     {
