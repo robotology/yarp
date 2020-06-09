@@ -225,7 +225,7 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
             y == std::numeric_limits<double>::infinity()) continue; //this is not working
  #endif
         if (std::isinf(x) || std::isinf(y)) continue;
-        
+
         if (std::isnan(x) || std::isnan(y))
         {
             if (g_lidar_debug)
@@ -337,7 +337,7 @@ int main(int argc, char *argv[])
     int aspect = rf.check("aspect", Value(0), "0 draw lines, 1 draw points").asInt32();
     string laserport = rf.check("sens_port", Value("/laser:o"), "laser port name").asString();
     g_lidar_debug = rf.check("lidar_debug");
-    
+
     string laser_map_port_name;
     laser_map_port_name = "/laserScannerGui/laser_map:i";
     string compass_port_name;
