@@ -458,83 +458,83 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
 
     if (config.check("USER_TF"))
     {
-        Bottle group = config.findGroup("USER_TF").tail();
+        Bottle all_transforms_group = config.findGroup("USER_TF").tail();
+        yDebug()<<all_transforms_group.toString();
 
-        for (size_t i = 0; i < group.size(); i++)
+        for (size_t i = 0; i < all_transforms_group.size(); i++)
         {
-            string         tfName;
             FrameTransform t;
-            Bottle         b;
-            Bottle*        list = group.get(i).asList();
-            if(!list)
+            
+            Bottle*  b = all_transforms_group.get(i).asList();
+            if(!b)
             {
                 yError() << "no entries in USER_TF group";
                 return false;
             }
 
-            tfName   = list->get(0).asString();
-            b        = group.findGroup(tfName).tail();
-            string s = b.toString();
-
-            if(b.size() == 18)
+            if(b->size() == 18)
             {
                 bool   r(true);
                 Matrix m(4, 4);
 
                 for(int i = 0; i < 16; i++)
                 {
-                    if(!b.get(i).isFloat64())
+                    if(!b->get(i).isFloat64())
                     {
-                        yError() << "transformServer: param " << tfName << ", element " << i << " is not a double.";
+                        yError() << "transformServer: element " << i << " is not a double.";
                         r = false;
                     }
                     else
                     {
-                        m.data()[i] = b.get(i).asFloat64();
+                        m.data()[i] = b->get(i).asFloat64();
                     }
                 }
 
-                if(!b.get(16).isString() || !b.get(17).isString())
+                if(!b->get(16).isString() || !b->get(17).isString())
                 {
                     r = false;
                 }
 
                 if(!r)
                 {
-                    yError() << "transformServer: param" << tfName << "not correct.. for the 4x4 matrix mode" <<
+                    yError() << "transformServer: param not correct.. for the 4x4 matrix mode" <<
                                 "you must provide 18 parameter. the matrix, the source frame(string) and the destination frame(string)";
                     return false;
                 }
 
                 t.fromMatrix(m);
-                t.src_frame_id = b.get(16).asString();
-                t.dst_frame_id = b.get(17).asString();
+                t.src_frame_id = b->get(16).asString();
+                t.dst_frame_id = b->get(17).asString();
             }
-            else if( b.size() == 8       &&
-                     b.get(0).isFloat64() &&
-                     b.get(1).isFloat64() &&
-                     b.get(2).isFloat64() &&
-                     b.get(3).isFloat64() &&
-                     b.get(4).isFloat64() &&
-                     b.get(5).isFloat64() &&
-                     b.get(6).isString() &&
-                     b.get(7).isString())
+            else if( b->size() == 8       &&
+                     b->get(0).isFloat64() &&
+                     b->get(1).isFloat64() &&
+                     b->get(2).isFloat64() &&
+                     b->get(3).isFloat64() &&
+                     b->get(4).isFloat64() &&
+                     b->get(5).isFloat64() &&
+                     b->get(6).isString() &&
+                     b->get(7).isString())
             {
-                t.translation.set(b.get(0).asFloat64(), b.get(1).asFloat64(), b.get(2).asFloat64());
-                t.rotFromRPY(b.get(3).asFloat64(), b.get(4).asFloat64(), b.get(5).asFloat64());
-                t.src_frame_id = b.get(6).asString();
-                t.dst_frame_id = b.get(7).asString();
+                t.translation.set(b->get(0).asFloat64(), b->get(1).asFloat64(), b->get(2).asFloat64());
+                t.rotFromRPY(b->get(3).asFloat64(), b->get(4).asFloat64(), b->get(5).asFloat64());
+                t.src_frame_id = b->get(6).asString();
+                t.dst_frame_id = b->get(7).asString();
             }
             else
             {
-                yError() << "transformServer: param" << tfName << "not correct.. a tf requires 8 param in the format:" <<
+                yError() << "transformServer: param not correct.. a tf requires 8 param in the format:" <<
                             "x(dbl) y(dbl) z(dbl) r(dbl) p(dbl) y(dbl) src(str) dst(str)";
                 return false;
             }
 
             if(m_yarp_static_transform_storage->set_transform(t))
             {
-                yInfo() << tfName << "from" << t.src_frame_id << "to" << t.dst_frame_id << "successfully set";
+                yInfo() << "Transform from" << t.src_frame_id << "to" << t.dst_frame_id << "successfully set";
+            }
+            else
+            {
+                yError() << "Unbale to set transform from " << t.src_frame_id << "to" << t.dst_frame_id;
             }
         }
         return true;
