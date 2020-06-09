@@ -39,6 +39,12 @@
 typedef unsigned char byte;
 
 //---------------------------------------------------------------------------------------------------------------
+enum base_enum
+{
+    BASE_IS_NAN = 0,
+    BASE_IS_INF = 1,
+    BASE_IS_ZERO = 2
+};
 
 class InputPortProcessor :
     public yarp::os::BufferedPort<yarp::dev::LaserScan2D>
@@ -72,6 +78,7 @@ protected:
     std::vector <std::string>            m_src_frame_id;
     std::string                          m_dst_frame_id;
     yarp::sig::Vector                    m_empty_laser_data;
+    base_enum                            m_base_type;
 
     void calculate(yarp::dev::LaserScan2D scan, yarp::sig::Matrix m);
 
@@ -79,6 +86,7 @@ public:
     LaserFromExternalPort(double period = 0.01) : Lidar2DDeviceBase(), PeriodicThread(period)
     {
         m_option_override_limits=false;
+        m_base_type = base_enum::BASE_IS_NAN;
     }
 
     ~LaserFromExternalPort()

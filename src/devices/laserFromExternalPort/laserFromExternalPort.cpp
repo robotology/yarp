@@ -70,6 +70,14 @@ yarpdev --device Rangefinder2DWrapper --subdevice laserFromExternalPort \
 --name /outlaser:o
 */
 
+double constrainAngle(double x)
+{
+    x = fmod(x, 360);
+    if (x < 0)
+        x += 360;
+    return x;
+}
+
 InputPortProcessor::InputPortProcessor()
 {
     m_contains_data=false;
@@ -116,8 +124,6 @@ bool LaserFromExternalPort::open(yarp::os::Searchable& config)
         yCError(LASER_FROM_EXTERNAL_PORT) << "Error parsing parameters";
         return false;
     }
-    m_empty_laser_data = m_laser_data;
-    for (size_t i=0; i< m_empty_laser_data.size(); i++) m_empty_laser_data[i] = std::numeric_limits<double>::infinity();
 
     yarp::os::Searchable& general_config = config.findGroup("SENSOR");
 
@@ -141,6 +147,36 @@ bool LaserFromExternalPort::open(yarp::os::Searchable& config)
         }
         m_last_stamp.resize(m_port_names.size());
         m_last_scan_data.resize(m_port_names.size());
+    }
+
+    if (general_config.check("base_type")) //this parameter is optional
+    {
+        string bt = general_config.find("base_type").asString();
+        if (bt=="infinity") { m_base_type = base_enum::BASE_IS_INF; }
+        else if (bt=="nan") { m_base_type = base_enum::BASE_IS_NAN; }
+        else if (bt=="zero") {m_base_type = base_enum::BASE_IS_ZERO;}
+        else { yCError(LASER_FROM_EXTERNAL_PORT) << "Invalid value of param base_type"; return false;
+        }
+    }
+
+    //set the base value
+    m_empty_laser_data = m_laser_data;
+    if (m_base_type == base_enum::BASE_IS_INF)
+    {
+        for (size_t i = 0; i < m_empty_laser_data.size(); i++) m_empty_laser_data[i] = std::numeric_limits<double>::infinity();
+    }
+    else if (m_base_type == base_enum::BASE_IS_NAN)
+    {
+        for (size_t i = 0; i < m_empty_laser_data.size(); i++) m_empty_laser_data[i] = std::nanf("");
+    }
+    else if (m_base_type == base_enum::BASE_IS_ZERO)
+    {
+        for (size_t i = 0; i < m_empty_laser_data.size(); i++) m_empty_laser_data[i] = 0;
+    }
+    else
+    {
+        yCError(LASER_FROM_EXTERNAL_PORT) << "Invalid m_base_type";
+        return false;
     }
 
     if (general_config.check("override")) //this parameter is optional
@@ -287,10 +323,12 @@ bool LaserFromExternalPort::threadInit()
 
 void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::sig::Matrix m)
 {
-    double t_off_deg = 0;
-    double t_off_rad = t_off_deg * DEG2RAD;
-    double x_off = m[3][0];
-    double y_off = m[3][1];
+    yarp::sig::Vector temp(3);
+    temp = yarp::math::dcm2rpy(m);
+    double t_off_rad = temp[2];
+    double x_off = m[0][3];
+    double y_off = m[1][3];
+
 #ifdef DO_NOTHING_DEBUG
     double x_off = 0;
     double y_off = 0;
@@ -327,16 +365,16 @@ void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::si
 
             double angle_output_rad = atan2(By, Bx); //the output is (-pi +pi)
             double angle_output_deg = angle_output_rad * RAD2DEG; //the output is (-180 +180)
-            angle_output_deg += 180; //the output is (0 360)
-            if (angle_output_deg >=360) angle_output_deg=-360; //the output is (0 360(
+            angle_output_deg = constrainAngle(angle_output_deg); //the output is (0 360(
 
-            //check if angle is inside limits
+            //check if angle is inside the min max limits of the target vector, otherwise skip it
             if (angle_output_deg > m_max_angle) { continue; }
             if (angle_output_deg < m_min_angle) { continue; }
 
             //compute the new slot
             int new_i = lrint ((angle_output_deg - m_min_angle)  / m_resolution);
-           
+            if (new_i == m_laser_data.size()) {new_i=0;}
+
             yAssert (new_i >= 0);
             yAssert (new_i < m_laser_data.size());
 
