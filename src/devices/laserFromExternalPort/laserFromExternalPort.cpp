@@ -343,7 +343,7 @@ void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::si
         double distance = scan_data.scans[i];
         if (distance == std::numeric_limits<double>::infinity())
         {
-            //skip infinity
+            distance = 100;
         }
         if (std::isnan(distance))
         {
