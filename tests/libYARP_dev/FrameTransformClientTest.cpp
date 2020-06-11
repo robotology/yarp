@@ -391,6 +391,27 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
             // itf->setTransformStatic still working after duplicate transform
         }
 
+        //test 13
+        {
+            itf->clear();
+            bool bcan = false;
+            bcan = itf->canTransform("not_existing_frame", "not_existing_frame");
+            CHECK(bcan);
+            
+            CHECK(itf->setTransformStatic("frame2", "frame1", m1));
+            bcan = itf->canTransform("frame2", "frame2");
+            CHECK(bcan);
+            bcan = itf->canTransform("frame1", "frame1");
+            CHECK(bcan);
+
+            yarp::sig::Matrix mt1;
+            yarp::sig::Matrix eyemat(4, 4); eyemat.eye();
+            itf->getTransform("frame1", "frame1", mt1);
+            CHECK(isEqual(mt1, eyemat, precision));
+            itf->getTransform("frame2", "frame2", mt1);
+            CHECK(isEqual(mt1, eyemat, precision));
+        }
+
         // Close devices
         CHECK(ddtransformclient.close()); // ddtransformclient successfully closed
         CHECK(ddtransformserver.close()); // ddtransformserver successfully closed
