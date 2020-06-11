@@ -764,22 +764,11 @@ yarp::os::Log::LogCallback yarp::os::Log::defaultForwardCallback()
 // BEGIN Log Components
 const yarp::os::LogComponent& yarp::os::Log::defaultLogComponent()
 {
-    yarp::os::Log::LogCallback fwCbk = defaultForwardCallback();
-    if(nullptr != forwardCallback())
-    {
-        fwCbk = forwardCallback();
-    }
-    
-    yarp::os::Log::LogCallback printCbk = defaultPrintCallback();
-    if(nullptr != printCallback())
-    {
-        printCbk = printCallback();
-    }
     static const yarp::os::LogComponent component(nullptr,
                                                   defaultMinimumPrintLevel(),
                                                   defaultMinimumForwardLevel(),
-                                                  printCbk,
-                                                  fwCbk);
+                                                  printCallback(),
+                                                  forwardCallback());
     return component;
 }
 
