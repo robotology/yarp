@@ -40,7 +40,7 @@ void setMinumumLogType(yarp::os::Log::LogType minumumLogType);
                                                       yarp::os::Log::TraceType, \
                                                       yarp::os::Log::DebugType, \
                                                       yarp::serversql::impl::LogComponent::print_callback, \
-                                                      yarp::os::Log::defaultForwardCallback()); \
+                                                      yarp::os::Log::forwardCallback()); \
         return component; \
     }
 
