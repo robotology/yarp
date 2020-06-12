@@ -36,9 +36,7 @@ public:
     }
 
     void close() override {
-        #ifdef MPI_DEBUG
-        printf("[MpiP2PCarrier @ %s] Closing carrier \n", name.c_str() );
-        #endif
+        yCDebug(MPI_CARRIER, "[MpiP2PCarrier @ %s] Closing carrier", name.c_str() );
         delete comm;
     }
 

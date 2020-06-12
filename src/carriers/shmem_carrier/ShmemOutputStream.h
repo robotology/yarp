@@ -17,7 +17,6 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/Logger.h>
 
 #include <ace/config.h>
 #include <ace/Mutex.h>

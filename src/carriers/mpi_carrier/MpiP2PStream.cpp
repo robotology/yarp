@@ -46,7 +46,7 @@ ssize_t MpiP2PStream::read(Bytes& b) {
             // allocate new buffer
             readBuffer = new char[size];
             MPI_Recv(readBuffer, size, MPI_BYTE, !rank, tag, comm->comm, &status);
-            //printf("got new msg of size %d\n", size);
+            yCDebug(MPI_CARRIER, "got new msg of size %d", size);
             readAvail = size;
             readAt = 0;
         }
@@ -58,7 +58,7 @@ ssize_t MpiP2PStream::read(Bytes& b) {
             take = (int)b.length();
         }
         memcpy(b.get(),readBuffer+readAt,take);
-        //printf("read %d of %d \n", take, readAvail);
+        yCDebug(MPI_CARRIER, "read %d of %d", take, readAvail);
         readAt += take;
         readAvail -= take;
         return take;

@@ -27,9 +27,7 @@ public:
     ssize_t read(yarp::os::Bytes& b) override;
     void write(const yarp::os::Bytes& b) override;
     void close() override {
-        #ifdef MPI_DEBUG
-        printf("[MpiP2PStream @ %s] Closing stream\n", name.c_str());
-        #endif
+        yCDebug(MPI_CARRIER, "[MpiP2PStream @ %s] Closing stream", name.c_str());
         terminate = true;
     }
 };

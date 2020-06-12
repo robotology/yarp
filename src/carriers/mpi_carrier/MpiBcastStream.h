@@ -26,9 +26,7 @@ class MpiBcastStream :
 public:
     MpiBcastStream(std::string name, MpiComm* comm) : MpiStream(name, comm) {};
     ~MpiBcastStream() {
-        #ifdef MPI_DEBUG
-        printf("[MpiBcastStream @ %s] Destructor\n", name.c_str());
-        #endif
+        yCTrace(MPI_CARRIER, "[MpiBcastStream @ %s] Destructor", name.c_str());
     }
 
     using MpiStream::write;
@@ -41,9 +39,7 @@ public:
         comm->sema.post();
     }
     void close() override {
-        #ifdef MPI_DEBUG
-        printf("[MpiBcastStream @ %s] Closing stream\n", name.c_str());
-        #endif
+        yCDebug(MPI_CARRIER, "[MpiBcastStream @ %s] Closing stream", name.c_str());
     }
     void execCmd(int cmd);
 };

@@ -8,6 +8,8 @@
  */
 
 #include "ShmemInputStream.h"
+#include "ShmemLogComponent.h"
+
 #include <yarp/os/Bytes.h>
 #include <yarp/os/impl/PlatformTime.h>
 
@@ -58,7 +60,7 @@ bool ShmemInputStreamImpl::open(int port, ACE_SOCK_Stream* pSock, int size)
     char temp_dir_path[1024];
 
     if (ACE::get_temp_dir(temp_dir_path, 1024) == -1) {
-        yError("ShmemHybridStream: no temp directory found.");
+        yCError(SHMEMCARRIER, "ShmemHybridStream: no temp directory found.");
         return false;
     }
 
@@ -107,14 +109,14 @@ bool ShmemInputStreamImpl::Resize()
 
     ACE_Shared_Memory* pNewMap;
 
-    //yDebug("input stream resize %d to %d", m_ResizeNum, m_pHeader->newsize);
+    yCDebug(SHMEMCARRIER, "input stream resize %d to %d", m_ResizeNum, m_pHeader->newsize);
 
 #ifdef ACE_LACKS_SYSV_SHMEM
 
     char file_path[1024];
 
     if (ACE::get_temp_dir(file_path, 1024) == -1) {
-        yError("ShmemHybridStream: no temp directory found.");
+        yCError(SHMEMCARRIER, "ShmemHybridStream: no temp directory found.");
         return false;
     }
 
@@ -137,7 +139,7 @@ bool ShmemInputStreamImpl::Resize()
 #endif
 
     if (!pNewMap) {
-        yError("ShmemOutputStream can't create shared memory");
+        yCError(SHMEMCARRIER, "ShmemOutputStream can't create shared memory");
         return false;
     }
 
@@ -216,7 +218,7 @@ yarp::conf::ssize_t ShmemInputStreamImpl::read(yarp::os::Bytes& b)
         m_pWaitDataMutex->acquire(tv);
 
         if (!m_pSock->recv(&buf, 1)) {
-            //yDebug("STREAM IS BROKEN");
+            yCDebug(SHMEMCARRIER, "STREAM IS BROKEN");
             close();
             m_ReadSerializerMutex.unlock();
             return -1;

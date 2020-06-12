@@ -15,7 +15,6 @@
 #include <yarp/os/InputStream.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
-#include <yarp/os/impl/Logger.h>
 
 #include <mutex>
 

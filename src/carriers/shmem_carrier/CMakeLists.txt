@@ -21,6 +21,8 @@ if(NOT SKIP_shmem)
                                     ShmemHybridStream.h
                                     ShmemInputStream.cpp
                                     ShmemInputStream.h
+                                    ShmemLogComponent.cpp
+                                    ShmemLogComponent.h
                                     ShmemOutputStream.cpp
                                     ShmemOutputStream.h
                                     ShmemTypes.h)

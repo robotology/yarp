@@ -20,6 +20,8 @@
 
 #include <mpi.h>
 
+#include "MpiLogComponent.h"
+
 class MpiControlThread :
         public yarp::os::Thread
 {
@@ -60,9 +62,7 @@ public:
 
     MpiComm(std::string name);
     ~MpiComm() {
-        #ifdef MPI_DEBUG
-        printf("[MpiComm @ %s] Destructor\n", name.c_str() );
-        #endif
+        yCTrace(MPI_CARRIER, "[MpiComm @ %s] Destructor", name.c_str() );
         MPI_Comm_disconnect(&comm);
     }
     bool connect(std::string port);

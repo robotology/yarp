@@ -14,18 +14,12 @@
 
 using namespace yarp::os;
 
-#ifdef MPI_DEBUG
 MpiBcastCarrier::~MpiBcastCarrier() {
-    printf("[MpiBcastCarrier @ %s] Destructor\n", name.c_str());
+    yCTrace(MPI_CARRIER, "[MpiBcastCarrier @ %s] Destructor", name.c_str());
 }
-#else
-MpiBcastCarrier::~MpiBcastCarrier() = default;
-#endif
 
 void MpiBcastCarrier::close() {
-    #ifdef MPI_DEBUG
-    printf("[MpiBcastCarrier @ %s] Closing carrier \n", name.c_str() );
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiBcastCarrier @ %s] Closing carrier", name.c_str() );
     if (electionMember) {
         getCaster().remove(name, this);
         MpiBcastCarrier* elect = getCaster().getElect(name);
@@ -61,9 +55,7 @@ void MpiBcastCarrier::createStream(bool sender) {
 
 void MpiBcastCarrier::prepareDisconnect() {
     comm->sema.wait();
-    #ifdef MPI_DEBUG
-    printf("[MpiBcastCarrier @ %s] Disconnect : %s\n", name.c_str(), other.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiBcastCarrier @ %s] Disconnect : %s", name.c_str(), other.c_str());
     int cmd = CMD_DISCONNECT;
     MPI_Bcast(&cmd, 1, MPI_INT, 0,comm->comm);
     int length = other.length() + name.length() + 3;
@@ -92,7 +84,7 @@ ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >& MpiBcastCarrier::getCaster()
         caster = new ElectionOf<yarp::os::PeerRecord<MpiBcastCarrier> >;
         yarp::os::NetworkBase::unlock();
         if (caster==nullptr) {
-            yError("No memory for MpiBcastCarrier::caster");
+            yCError(MPI_CARRIER, "No memory for MpiBcastCarrier::caster");
             std::exit(1);
         }
     } else {
