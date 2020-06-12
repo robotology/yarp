@@ -12,15 +12,49 @@
 #include "TcpRosStream.h"
 
 #include <yarp/os/Vocab.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
 
 #include <cstdio>
 #include <string>
 
-
 using namespace yarp::os;
 using namespace std;
 
-bool verbose = false;
+
+namespace {
+void print_callback(yarp::os::Log::LogType type,
+                    const char* msg,
+                    const char* file,
+                    const unsigned int line,
+                    const char* func,
+                    double systemtime,
+                    double networktime,
+                    const char* comp_name)
+{
+    YARP_UNUSED(type);
+    YARP_UNUSED(file);
+    YARP_UNUSED(line);
+    YARP_UNUSED(func);
+    YARP_UNUSED(systemtime);
+    YARP_UNUSED(networktime);
+    YARP_UNUSED(comp_name);
+    static const char* err_str = "[ERROR] ";
+    static const char* warn_str = "[WARNING] ";
+    static const char* no_str = "";
+    printf("%s%s\n",
+           ((type == yarp::os::Log::ErrorType) ? err_str : ((type == yarp::os::Log::WarningType) ? warn_str : no_str)),
+           msg);
+}
+
+YARP_LOG_COMPONENT(YARPROS,
+                   "yarp.carrier.tcpros.yarpros",
+                   yarp::os::Log::InfoType,
+                   yarp::os::Log::LogTypeReserved,
+                   print_callback,
+                   nullptr)
+}
+
 
 string addPart(string t, string name, int code, Value *val, string orig, string mode="") {
     char buf[5000];
@@ -159,25 +193,26 @@ void usage(const char *action,
            const char *msg,
            const char *example = nullptr,
            const char *explanation = nullptr) {
-    printf("\n  yarpros %s\n", action);
-    printf("     %s\n", msg);
+    yCInfo(YARPROS, "\n  yarpros %s", action);
+    yCInfo(YARPROS, "     %s\n", msg);
     if (example!=nullptr) {
-        printf("       $ yarpros %s\n", example);
+        yCInfo(YARPROS, "       $ yarpros %s", example);
     }
     if (explanation!=nullptr) {
-        printf("       # %s\n", explanation);
+        yCInfo(YARPROS, "       # %s", explanation);
     }
 }
 
 void show_usage() {
-    printf("Welcome to yarpros.  Here are the most useful commands available:\n");
+    yCInfo(YARPROS, "Welcome to yarpros.  Here are the most useful commands available:");
     usage("sniff out <port>","suggest .msg for output from <port> ","sniff out /grabber");
     usage("sniff in <port>","suggest .msg for input to <port> ","sniff in /grabber");
     usage("type <name>","(MOVED to yarpidl_rosmsg) generate YARP header files from <name>.msg","type PointCloud2");
     usage("help","show this help",nullptr);
 
-    printf("\nYARP clients can use the ROS name server. If you'd prefer to stick\n");
-    printf("with the native YARP name server, the following commands are useful:\n");
+    yCInfo(YARPROS);
+    yCInfo(YARPROS, "YARP clients can use the ROS name server. If you'd prefer to stick");
+    yCInfo(YARPROS, "with the native YARP name server, the following commands are useful:");
     usage("roscore","register port /roscore to refer to ROS_MASTER_URI","roscore");
     usage("roscore <hostname> <port number>","manually register port /roscore to point to the ros master","roscore 192.168.0.1 11311");
     usage("pub[lisher] <node> <topic>","register a ROS publisher <node>/<topic> pair as a port called <node><topic>","publisher /talker /chatter","this registers a port called /talker/chatter");
@@ -186,9 +221,6 @@ void show_usage() {
     usage("sub[scriber] <yarp> <node> <topic>","register a ROS subscriber <node>/<topic> pair as a port called <port>","subscriber /listener /listener /chatter");
     usage("service <yarp> <node> <service>","register a ROS service <node>/<service> pair as a port called <port>","service /adder /add_two_ints_server /add_two_ints");
     usage("node <name>","register a ROS node name with YARP","node /talker");
-
-    printf("\nHere are some general options:\n");
-    usage("--verbose","give verbose output for debugging",nullptr);
 }
 
 bool announce_port(const char *name,
@@ -250,9 +282,9 @@ int main(int argc, char *argv[]) {
     // Check for flags
     Property options;
     options.fromCommand(argc,argv);
-    verbose = false;
+
     if (options.check("verbose")) {
-        verbose = true;
+        yCWarning(YARPROS, "The 'verbose' option is deprecated");
     }
 
     // Get the command tag
@@ -262,38 +294,38 @@ int main(int argc, char *argv[]) {
     if (tag=="roscore") {
         if (cmd.size()>1) {
             if (!(cmd.get(1).isString()&&cmd.get(2).isInt32())) {
-                fprintf(stderr,"wrong syntax, run with no arguments for help\n");
+                yCError(YARPROS, "wrong syntax, run with no arguments for help");
                 return 1;
             }
             Bottle reply;
             register_port("/roscore", "xmlrpc",
                           cmd.get(1).asString().c_str(), cmd.get(2).asInt32(),
                           reply);
-            printf("%s\n", reply.toString().c_str());
+            yCInfo(YARPROS, "%s", reply.toString().c_str());
         } else {
             Bottle reply;
             Contact c = RosLookup::getRosCoreAddressFromEnv();
             if (!c.isValid()) {
-                fprintf(stderr,"cannot find roscore, is ROS_MASTER_URI set?\n");
+                yCError(YARPROS, "cannot find roscore, is ROS_MASTER_URI set?");
                 return 1;
             }
             register_port("/roscore", "xmlrpc",
                           c.getHost().c_str(), c.getPort(),
                           reply);
-            printf("%s\n", reply.toString().c_str());
+            yCInfo(YARPROS, "%s", reply.toString().c_str());
         }
         return 0;
     } else if (tag=="node") {
         Bottle req, reply;
         if (cmd.size()!=2) {
-            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
+            yCError(YARPROS, "wrong syntax, run with no arguments for help");
             return 1;
         }
         if (!cmd.get(1).isString()) {
-            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
+            yCError(YARPROS, "wrong syntax, run with no arguments for help");
             return 1;
         }
-        RosLookup lookup(verbose);
+        RosLookup lookup;
         bool ok = lookup.lookupCore(cmd.get(1).asString());
         if (ok) {
             register_port(cmd.get(1).asString().c_str(),
@@ -301,14 +333,14 @@ int main(int argc, char *argv[]) {
                           lookup.hostname.c_str(),
                           lookup.portnum,
                           reply);
-            printf("%s\n",reply.toString().c_str());
+            yCInfo(YARPROS, "%s",reply.toString().c_str());
         }
         return ok?0:1;
     } else if (tag=="publisher"||tag=="pub"||tag=="service"||tag=="srv") {
         bool service = (tag=="service"||tag=="srv");
         Bottle req, reply;
         if (cmd.size()!=3 && cmd.size()!=4) {
-            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
+            yCError(YARPROS, "wrong syntax, run with no arguments for help");
             return 1;
         }
         int offset = 0;
@@ -321,15 +353,15 @@ int main(int argc, char *argv[]) {
         if (cmd.size()==3) {
             yarp_port = ros_port + topic;
         }
-        RosLookup lookup(verbose);
-        if (verbose) printf("  * looking up ros node %s\n", ros_port.c_str());
+        RosLookup lookup;
+        yCDebug(YARPROS, "  * looking up ros node %s", ros_port.c_str());
         bool ok = lookup.lookupCore(ros_port);
         if (!ok) return 1;
-        if (verbose) printf("  * found ros node %s\n", ros_port.c_str());
-        if (verbose) printf("  * looking up topic %s\n", topic.c_str());
+        yCDebug(YARPROS, "  * found ros node %s", ros_port.c_str());
+        yCDebug(YARPROS, "  * looking up topic %s", topic.c_str());
         ok = lookup.lookupTopic(topic);
         if (!ok) return 1;
-        if (verbose) printf("  * found topic %s\n", topic.c_str());
+        yCDebug(YARPROS, "  * found topic %s", topic.c_str());
         string carrier = "tcpros+role.pub+topic.";
         if (service) {
             carrier = "rossrv+service.";
@@ -339,12 +371,12 @@ int main(int argc, char *argv[]) {
                       lookup.hostname.c_str(),
                       lookup.portnum,
                       reply);
-        printf("%s\n", reply.toString().c_str());
+        yCInfo(YARPROS, "%s", reply.toString().c_str());
         return 0;
     } else if (tag=="subscriber"||tag=="sub") {
         Bottle req, reply;
         if (cmd.size()!=3 && cmd.size()!=4) {
-            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
+            yCError(YARPROS, "wrong syntax, run with no arguments for help");
             return 1;
         }
         int offset = 0;
@@ -357,24 +389,24 @@ int main(int argc, char *argv[]) {
         if (cmd.size()==3) {
             yarp_port = ros_port + topic;
         }
-        RosLookup lookup(verbose);
-        if (verbose) printf("  * looking up ros node %s\n", ros_port.c_str());
+        RosLookup lookup;
+        yCDebug(YARPROS, "  * looking up ros node %s", ros_port.c_str());
         bool ok = lookup.lookupCore(ros_port);
         if (!ok) return 1;
-        if (verbose) printf("  * found ros node %s\n", ros_port.c_str());
+        yCDebug(YARPROS, "  * found ros node %s", ros_port.c_str());
         ok = register_port(yarp_port.c_str(),
                       (string("tcpros+role.sub+topic.")+topic).c_str(),
                       lookup.hostname.c_str(),
                       lookup.portnum,
                       reply);
-        printf("%s\n", reply.toString().c_str());
+        yCInfo(YARPROS, "%s", reply.toString().c_str());
         return ok?0:1;
     } else if (tag=="type") {
-        fprintf(stderr, "MOVED: 'yarpros type' is now 'yarpidl_rosmsg'\n");
+        yCError(YARPROS, "MOVED: 'yarpros type' is now 'yarpidl_rosmsg'");
         return 1;
     } else if (tag=="sniff") {
         if (cmd.size()<2) {
-            fprintf(stderr,"Show the format of a YARP bottle-compatible message in ROS syntax.\n");
+            yCError(YARPROS, "Show the format of a YARP bottle-compatible message in ROS syntax.");
             return 1;
         }
         std::string dir = cmd.get(1).asString();
@@ -382,7 +414,7 @@ int main(int argc, char *argv[]) {
         if (dir=="in") in = true;
         else if (dir=="out") in = false;
         else {
-            fprintf(stderr,"Please specify one of 'in' or 'out'.\n");
+            yCError(YARPROS, "Please specify one of 'in' or 'out'.");
             return 1;
         }
         std::string pname = cmd.get(2).asString();
@@ -402,10 +434,10 @@ int main(int argc, char *argv[]) {
         } else {
             r = showFormat(b,"v");
         }
-        printf("Got message:\n%s\n",r.c_str());
+        yCInfo(YARPROS, "Got message: [%s]",r.c_str());
         return 0;
     } else {
-        fprintf(stderr,"unknown command, run with no arguments for help\n");
+        yCError(YARPROS, "unknown command, run with no arguments for help");
         return 1;
     }
     return 0;

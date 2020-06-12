@@ -8,6 +8,7 @@
 
 #include "TcpRosCarrier.h"
 #include "RosSlave.h"
+#include "TcpRosLogComponent.h"
 
 #include <string>
 #include <map>
@@ -23,8 +24,6 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::wire_rep_utils;
 using namespace std;
-
-#define dbg_printf if (0) printf
 
 void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
@@ -45,7 +44,7 @@ bool TcpRosCarrier::checkHeader(const Bytes& header) {
         return false;
     }
     // plausibly tcpros.
-    dbg_printf("tcpros! %d %d\n", headerLen1,headerLen2);
+    yCTrace(TCPROSCARRIER, "tcpros! %d %d", headerLen1,headerLen2);
     return true;
 }
 
@@ -85,14 +84,14 @@ std::string TcpRosCarrier::getRosType(ConnectionState& proto) {
         }
     }
 
-    dbg_printf("USER TYPE %s\n", user_type.c_str());
-    dbg_printf("WIRE TYPE %s\n", wire_type.c_str());
+    yCTrace(TCPROSCARRIER, "USER TYPE %s", user_type.c_str());
+    yCTrace(TCPROSCARRIER, "WIRE TYPE %s", wire_type.c_str());
 
     return rtyp;
 }
 
 bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
-    dbg_printf("Route is %s\n", proto.getRoute().toString().c_str());
+    yCTrace(TCPROSCARRIER, "Route is %s", proto.getRoute().toString().c_str());
     Name n(proto.getRoute().getCarrierName() + "://test");
     std::string mode = "topic";
     std::string modeValue = n.getCarrierModifier("topic");
@@ -102,7 +101,7 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
         isService = true;
     }
     if (modeValue=="") {
-        printf("*** no topic or service specified!\n");
+        yCInfo(TCPROSCARRIER, "*** no topic or service specified!");
         mode = "topic";
         modeValue = "notopic";
         isService = false;
@@ -110,18 +109,18 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     std::string rawValue = n.getCarrierModifier("raw");
     if (rawValue=="2") {
         raw = 2;
-        dbg_printf("ROS-native mode requested\n");
+        yCTrace(TCPROSCARRIER, "ROS-native mode requested");
     } else if (rawValue=="1") {
         raw = 1;
-        dbg_printf("Raw mode requested\n");
+        yCTrace(TCPROSCARRIER, "Raw mode requested");
     } else if (rawValue=="0") {
         raw = 0;
-        dbg_printf("Cooked mode requested\n");
+        yCTrace(TCPROSCARRIER, "Cooked mode requested");
     }
 
     RosHeader header;
-    dbg_printf("Writing to %s\n", proto.getStreams().getRemoteAddress().toString().c_str());
-    dbg_printf("Writing from %s\n", proto.getStreams().getLocalAddress().toString().c_str());
+    yCTrace(TCPROSCARRIER, "Writing to %s", proto.getStreams().getRemoteAddress().toString().c_str());
+    yCTrace(TCPROSCARRIER, "Writing from %s", proto.getStreams().getLocalAddress().toString().c_str());
 
     std::string rtyp = getRosType(proto);
     if (rtyp!="") {
@@ -139,13 +138,13 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
     RosHeader::appendInt32(at,header_serial.length());
-    dbg_printf("Writing %s -- %d bytes\n",
+    yCTrace(TCPROSCARRIER, "Writing %s -- %d bytes",
                RosHeader::showMessage(header_len).c_str(),
                (int)header_len.length());
 
     Bytes b1((char*)header_len.c_str(),header_len.length());
     proto.os().write(b1);
-    dbg_printf("Writing %s -- %d bytes\n",
+    yCTrace(TCPROSCARRIER, "Writing %s -- %d bytes",
                RosHeader::showMessage(header_serial).c_str(),
                (int)header_serial.length());
     Bytes b2((char*)header_serial.c_str(),header_serial.length());
@@ -163,36 +162,36 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
 
     int res = proto.is().readFull(mlen_buf);
     if (res<4) {
-        printf("Fail %s %d\n", __FILE__, __LINE__);
+        yCWarning(TCPROSCARRIER, "Fail %s %d", __FILE__, __LINE__);
         return false;
     }
     int len = NetType::netInt(mlen_buf);
-    dbg_printf("Len %d\n", len);
+    yCTrace(TCPROSCARRIER, "Len %d", len);
     if (len>10000) {
-        printf("not ready for serious messages\n");
+        yCWarning(TCPROSCARRIER, "not ready for serious messages");
         return false;
     }
     ManagedBytes m(len);
     res = proto.is().readFull(m.bytes());
     if (res!=len) {
-        printf("Fail %s %d\n", __FILE__, __LINE__);
+        yCWarning(TCPROSCARRIER, "Fail %s %d", __FILE__, __LINE__);
         return false;
     }
     header.readHeader(string(m.get(),m.length()));
-    dbg_printf("Message header: %s\n", header.toString().c_str());
+    yCTrace(TCPROSCARRIER, "Message header: %s", header.toString().c_str());
     std::string rosname;
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"];
     }
-    dbg_printf("<incoming> Type of data is [%s]s\n", rosname.c_str());
+    yCTrace(TCPROSCARRIER, "<incoming> Type of data is [%s]s", rosname.c_str());
     if (header.data.find("callerid")!=header.data.end()) {
         string name = header.data["callerid"];
-        dbg_printf("<incoming> callerid is %s\n", name.c_str());
-        dbg_printf("Route was %s\n", proto.getRoute().toString().c_str());
+        yCTrace(TCPROSCARRIER, "<incoming> callerid is %s", name.c_str());
+        yCTrace(TCPROSCARRIER, "Route was %s", proto.getRoute().toString().c_str());
         Route route = proto.getRoute();
         route.setToName(name);
         proto.setRoute(route);
-        dbg_printf("Route is now %s\n", proto.getRoute().toString().c_str());
+        yCTrace(TCPROSCARRIER, "Route is now %s", proto.getRoute().toString().c_str());
     }
 
     if (!isService) {
@@ -205,7 +204,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     } else {
         rosname = "";
     }
-    dbg_printf("tcpros %s mode\n", isService?"service":"topic");
+    yCTrace(TCPROSCARRIER, "tcpros %s mode", isService?"service":"topic");
 
     // we may be a pull stream
     sender = isService;
@@ -221,7 +220,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
 
     if (stream==nullptr) { return false; }
 
-    dbg_printf("Getting ready to hand off streams...\n");
+    yCTrace(TCPROSCARRIER, "Getting ready to hand off streams...");
 
     proto.takeStreams(stream);
 
@@ -232,26 +231,26 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     Route route = proto.getRoute();
     route.setFromName("tcpros");
     proto.setRoute(route);
-    dbg_printf("Trying for tcpros header\n");
+    yCTrace(TCPROSCARRIER, "Trying for tcpros header");
     ManagedBytes m(headerLen1);
     Bytes mrem(m.get()+4,m.length()-4);
     NetInt32 ni = headerLen2;
     memcpy(m.get(),(char*)(&ni), 4);
-    dbg_printf("reading %d bytes\n", (int)mrem.length());
+    yCTrace(TCPROSCARRIER, "reading %d bytes", (int)mrem.length());
     int res = proto.is().readFull(mrem);
-    dbg_printf("read %d bytes\n", res);
+    yCTrace(TCPROSCARRIER, "read %d bytes", res);
     if (res!=(int)mrem.length()) {
         if (res>=0) {
-            fprintf(stderr,"TCPROS header failure, expected %d bytes, got %d bytes\n",
+            yCError(TCPROSCARRIER, "TCPROS header failure, expected %d bytes, got %d bytes",
                     (int)mrem.length(),res);
         } else {
-            fprintf(stderr,"TCPROS connection has gone terribly wrong\n");
+            yCError(TCPROSCARRIER, "TCPROS connection has gone terribly wrong");
         }
         return false;
     }
     RosHeader header;
     header.readHeader(string(m.get(),m.length()));
-    dbg_printf("Got header %s\n", header.toString().c_str());
+    yCTrace(TCPROSCARRIER, "Got header %s", header.toString().c_str());
 
     std::string rosname;
     if (header.data.find("type")!=header.data.end()) {
@@ -266,7 +265,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
             header.data["message_definition"] = message_definition;
         }
     }
-    dbg_printf("<outgoing> Type of data is %s\n", rosname.c_str());
+    yCTrace(TCPROSCARRIER, "<outgoing> Type of data is %s", rosname.c_str());
 
     route = proto.getRoute();
     if (header.data.find("callerid")!=header.data.end()) {
@@ -286,20 +285,20 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
     RosHeader::appendInt32(at,header_serial.length());
-    dbg_printf("Writing %s -- %d bytes\n",
+    yCTrace(TCPROSCARRIER, "Writing %s -- %d bytes",
                RosHeader::showMessage(header_len).c_str(),
                (int)header_len.length());
 
     Bytes b1((char*)header_len.c_str(),header_len.length());
     proto.os().write(b1);
-    dbg_printf("Writing %s -- %d bytes\n",
+    yCTrace(TCPROSCARRIER, "Writing %s -- %d bytes",
                RosHeader::showMessage(header_serial).c_str(),
                (int)header_serial.length());
     Bytes b2((char*)header_serial.c_str(),header_serial.length());
     proto.os().write(b2);
 
     if (header.data.find("probe")!=header.data.end()) {
-        dbg_printf("================PROBE===============\n");
+        yCTrace(TCPROSCARRIER, "================PROBE===============");
         return false;
     }
 
@@ -343,7 +342,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         // through, and prepare an appropriate byte-rejiggering if
         // needed.
         if (translate==TCPROS_TRANSLATE_UNKNOWN) {
-            dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
+            yCTrace(TCPROSCARRIER, "* TCPROS_TRANSLATE_UNKNOWN");
             FlexImage *img = nullptr;
             if (user_type=="yarp/image"||user_type=="yarp/bottle") {
                 img = wi.checkForImage(writer);
@@ -368,10 +367,10 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     switch (translate) {
     case TCPROS_TRANSLATE_IMAGE:
         {
-            dbg_printf("* TCPROS_TRANSLATE_IMAGE\n");
+            yCTrace(TCPROSCARRIER, "* TCPROS_TRANSLATE_IMAGE");
             FlexImage *img = wi.checkForImage(writer);
             if (img==nullptr) {
-                fprintf(stderr, "TCPROS Expected an image, but did not get one.\n");
+                yCError(TCPROSCARRIER, "TCPROS Expected an image, but did not get one.");
                 return false;
             }
             ri.update(img,seq,Time::now());  // Time here is the timestamp of the ROS message, so Time::now(), the mutable one is correct.
@@ -381,9 +380,9 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         break;
     case TCPROS_TRANSLATE_BOTTLE_BLOB:
         {
-            dbg_printf("* TCPROS_TRANSLATE_BOTTLE_BLOB\n");
+            yCTrace(TCPROSCARRIER, "* TCPROS_TRANSLATE_BOTTLE_BLOB");
             if (!WireBottle::extractBlobFromBottle(writer,wt)) {
-                fprintf(stderr, "TCPROS Expected a bottle blob, but did not get one.\n");
+                yCError(TCPROSCARRIER, "TCPROS Expected a bottle blob, but did not get one.");
                 return false;
             }
             flex_writer = &wt;
@@ -391,7 +390,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         break;
     case TCPROS_TRANSLATE_TWIDDLER:
         {
-            dbg_printf("* TCPROS_TRANSLATE_TWIDDLER\n");
+            yCTrace(TCPROSCARRIER, "* TCPROS_TRANSLATE_TWIDDLER");
             twiddler_output.attach(writer,twiddler);
             if (twiddler_output.update()) {
                 flex_writer = &twiddler_output;
@@ -401,10 +400,10 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
         }
         break;
     case TCPROS_TRANSLATE_INHIBIT:
-        dbg_printf("* TCPROS_TRANSLATE_INHIBIT\n");
+        yCTrace(TCPROSCARRIER, "* TCPROS_TRANSLATE_INHIBIT");
         break;
     default:
-        dbg_printf("* TCPROS_TRANSLATE_OTHER\n");
+        yCTrace(TCPROSCARRIER, "* TCPROS_TRANSLATE_OTHER");
         break;
     }
 
@@ -416,7 +415,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     for (size_t i=0; i<flex_writer->length(); i++) {
         len += (int)flex_writer->length(i);
     }
-    dbg_printf("Prepping to write %d blocks (%d bytes)\n",
+    yCTrace(TCPROSCARRIER, "Prepping to write %d blocks (%d bytes)",
                (int)flex_writer->length(),
                len);
 
@@ -427,7 +426,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     proto.os().write(b1);
     flex_writer->write(proto.os());
 
-    dbg_printf("done sending\n");
+    yCTrace(TCPROSCARRIER, "done sending");
 
     if (isService) {
         if (!sender) {
@@ -456,11 +455,11 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
                            bool reversed) {
     switch (mode) {
     case YARP_ENACT_DISCONNECT:
-        printf("tcpros disconnect not implemented yet in this direction \n");
+        yCInfo(TCPROSCARRIER, "tcpros disconnect not implemented yet in this direction ");
         return -1;
         break;
     case YARP_ENACT_EXISTS:
-        printf("tcpros connection check not implemented yet in this direction \n");
+        yCInfo(TCPROSCARRIER, "tcpros connection check not implemented yet in this direction ");
         return -1;
         break;
     }
@@ -480,12 +479,12 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
     Name n(style.carrier + "://test");
     std::string topic = n.getCarrierModifier("topic");
     if (topic=="") {
-        printf("Warning, no topic!\n");
+        yCInfo(TCPROSCARRIER, "Warning, no topic!");
         topic = "notopic";
     }
 
-    RosSlave slave(false);
-    dbg_printf("Starting temporary slave\n");
+    RosSlave slave;
+    yCTrace(TCPROSCARRIER, "Starting temporary slave");
     slave.start(fullDest.getHost().c_str(),fullDest.getPort());
     Contact addr_slave = slave.where();
     Bottle cmd, reply;
@@ -502,13 +501,13 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
     req.timeout = 4;
     req.quiet = false;
     bool ok = NetworkBase::write(fullSrc,cmd,reply,req);
-    dbg_printf("%s\n",reply.toString().c_str());
+    yCTrace(TCPROSCARRIER, "%s",reply.toString().c_str());
     if (!ok) {
-        fprintf(stderr, "error talking to %s\n", fullSrc.toString().c_str());
+        yCError(TCPROSCARRIER, "error talking to %s", fullSrc.toString().c_str());
     }
     slave.stop();
     if (!slave.isOk()) {
-        fprintf(stderr, "Problem: did not get a callback from ROS - can happen if connection already exists.\n");
+        yCError(TCPROSCARRIER, "Problem: did not get a callback from ROS - can happen if connection already exists.");
         ok = false;
     }
 
