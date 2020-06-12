@@ -155,6 +155,18 @@ void QtYARPView::stopDumpFrames()
     sigHandler.stopDumpFrames();
 }
 
+/*! \brief Pics the rgb value of the pixel specified by x and y and return it as a string
+ *  \param x Integer: The x coordinate of the pixel
+ *  \param y Integer: The y coordinate of the pixel
+ */
+
+QString QtYARPView::getPixelAsStr(int x, int y){
+
+    QString rgbToReturn = videoProducer.getPixelAsStr(x,y);
+
+    return rgbToReturn;
+}
+
 void QtYARPView::periodToFreq(double avT, double mT, double MT, double &avH, double &mH, double &MH)
 {
     if (avT!=0)

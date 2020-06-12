@@ -20,6 +20,7 @@
 #define VIDEOPRODUCER_H
 
 #include <QObject>
+#include <QMutex>
 #include <QAbstractVideoSurface>
 #include <QVideoSurfaceFormat>
 
@@ -38,6 +39,7 @@ class VideoProducer : public QObject
 public:
     VideoProducer(QObject *parent = 0);
     ~VideoProducer();
+    QString getPixelAsStr(int x, int y);
 
     QAbstractVideoSurface *videoSurface() const;
     void setVideoSurface(QAbstractVideoSurface *surface);
@@ -48,6 +50,8 @@ public:
 private:
     QAbstractVideoSurface *m_surface;
     QVideoSurfaceFormat *m_format;
+    QVideoFrame *m_frame;  // Stores the value of the current video frame to allow "color picking"
+    QMutex mutex;
 
 signals:
     void resizeWindowRequest();

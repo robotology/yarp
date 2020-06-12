@@ -32,6 +32,7 @@ MenuBar {
     signal changeRefreshInterval()
     signal saveSingleImage(bool checked)
     signal saveSetImages(bool checked)
+    signal pickColor(bool checked)
 
     function enableSynch(check){
         if(check === true){
@@ -122,6 +123,13 @@ MenuBar {
                    checkable: true
                    onTriggered: {
                        synchDisplaySize(autosizeItem.checked)
+                   }}
+        MenuSeparator{}
+        MenuItem { id: colorPickerItem
+                   text: "Display pixel value"
+                   checkable: true
+                   onTriggered: {
+                       pickColor(colorPickerItem.checked);
                    }}
         MenuSeparator{}
         MenuItem { text: "Change refresh interval"

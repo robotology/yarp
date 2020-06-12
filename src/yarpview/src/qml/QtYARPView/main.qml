@@ -128,12 +128,27 @@ ApplicationWindow {
             vSurface.saveSetImages(checked)
 
         }
+
+        onPickColor:{
+            vSurface.enableColorPicking(checked);
+            statusBar.setPixelValVisibility(checked);
+        }
+
         onAbout:{
             vSurface.about()
         }
 
         onQuit:{
             Qt.quit()
+        }
+    }
+
+    Connections{
+        target: statusBar
+
+        onHeightChanged:{
+            calc();
+            vSurface.setOriginalAspectRatio()
         }
     }
 }
