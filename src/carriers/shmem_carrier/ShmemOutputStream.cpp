@@ -8,6 +8,7 @@
  */
 
 #include "ShmemOutputStream.h"
+#include "ShmemLogComponent.h"
 
 #include <yarp/conf/numeric.h>
 #include <yarp/os/Bytes.h>
@@ -54,7 +55,7 @@ bool ShmemOutputStreamImpl::open(int port, int size)
     char temp_dir_path[1024];
 
     if (ACE::get_temp_dir(temp_dir_path, 1024) == -1) {
-        yError("ShmemHybridStream: no temp directory found.");
+        yCError(SHMEMCARRIER, "ShmemHybridStream: no temp directory found.");
         return false;
     }
 
@@ -112,8 +113,7 @@ bool ShmemOutputStreamImpl::Resize(int newsize)
 {
     ++m_ResizeNum;
 
-    //printf("output stream resize %d to %d\n", m_ResizeNum, newsize);
-    //fflush(stdout);
+    yCDebug(SHMEMCARRIER, "output stream resize %d to %d\n", m_ResizeNum, newsize);
 
     ACE_Shared_Memory* pNewMap;
 
@@ -125,7 +125,7 @@ bool ShmemOutputStreamImpl::Resize(int newsize)
     char file_path[1024];
 
     if (ACE::get_temp_dir(file_path, 1024) == -1) {
-        yError("ShmemHybridStream: no temp directory found.");
+        yCError(SHMEMCARRIER, "ShmemHybridStream: no temp directory found.");
         return false;
     }
 
@@ -148,7 +148,7 @@ bool ShmemOutputStreamImpl::Resize(int newsize)
 #endif
 
     if (!pNewMap) {
-        yError("ShmemOutputStream can't create shared memory");
+        yCError(SHMEMCARRIER, "ShmemOutputStream can't create shared memory");
         return false;
     }
 
