@@ -49,6 +49,8 @@ target_link_libraries(harness_os PRIVATE YARP_harness
 if(YARP_HAS_ACE)
   target_compile_definitions(harness_os PRIVATE YARP_HAS_ACE)
   target_link_libraries(harness_os PRIVATE ACE::ACE_INLINE)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  target_link_libraries(harness_os PRIVATE pthread)
 endif()
 
 set_property(TARGET harness_os PROPERTY FOLDER "Test")
