@@ -87,13 +87,13 @@ private:
 #ifndef NDEBUG
 #  define yCTrace(component, ...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, component()).trace(__VA_ARGS__)
 #else
-#  define yCTrace(component, ...)   yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTrace(component, ...)   YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
 #endif
 
 #ifndef YARP_NO_DEBUG_OUTPUT
 #  define yCDebug(component, ...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, component()).debug(__VA_ARGS__)
 #else
-#  define yCDebug(component, ...)   yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebug(component, ...)   YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
 #endif
 
 #define yCInfo(component, ...)    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, component()).info(__VA_ARGS__)
@@ -107,7 +107,7 @@ private:
         yCFatal(component, "Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); \
     }
 #else
-#  define yCAssert(component, x)
+#  define yCAssert(component, x) { YARP_UNUSED(component); }
 #endif
 
 
