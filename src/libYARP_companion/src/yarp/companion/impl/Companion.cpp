@@ -2130,7 +2130,7 @@ static bool plugin_test(YarpPluginSettings& settings) {
             void* tmp = api.create();
             api.destroy(tmp);
         } catch (...) {
-            yCWarning(COMPANION, "");
+            yCWarning(COMPANION);
             yCWarning(COMPANION, "  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
             yCWarning(COMPANION, "  X                                                     X");
             yCWarning(COMPANION, "  X                       WARNING                       X");
@@ -2248,7 +2248,7 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
             Value& options = lst.get(i);
             std::string name = options.check("name", Value("untitled")).asString();
             std::string type = options.check("type", Value("unknown type")).asString();
-            yCInfo(COMPANION, "");
+            yCInfo(COMPANION);
             yCInfo(COMPANION, "%s %s", type.c_str(), name.c_str());
             yCInfo(COMPANION, "  * ini file:       %s", options.find("inifile").toString().c_str());
             options.asList()->pop();
