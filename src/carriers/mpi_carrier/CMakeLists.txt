@@ -12,11 +12,9 @@ yarp_prepare_plugin(mpi
                     EXTRA_CONFIG CODE="MPI_____"
                     DEPENDS "YARP_HAS_MPI")
 
-include(CMakeDependentOption)
-cmake_dependent_option(YARP_MPI_DEBUG_MSG "Turn on status messages for MPI Carrier" OFF
-                       "NOT SKIP_mpi OR NOT SKIP_mpibcast" OFF)
-include(YarpRenamedOption)
-yarp_renamed_option(MPI_DEBUG_MSG YARP_MPI_DEBUG_MSG) # Since YARP 3.3
+include(YarpDeprecatedOption)
+yarp_deprecated_option(MPI_DEBUG_MSG) # Since YARP 3.3
+yarp_deprecated_option(YARP_MPI_DEBUG_MSG) # Since YARP 3.4
 
 if(NOT SKIP_mpi)
   yarp_add_plugin(yarp_mpi)
@@ -25,15 +23,13 @@ if(NOT SKIP_mpi)
                                   MpiComm.cpp
                                   MpiStream.cpp
                                   MpiP2PStream.cpp
+                                  MpiLogComponent.cpp
                                   MpiCarrier.h
                                   MpiP2PCarrier.h
                                   MpiStream.h
                                   MpiP2PStream.h
-                                  MpiComm.h)
-
-  if(MPI_DEBUG_MSG)
-    target_compile_definitions(yarp_mpi PRIVATE MPI_DEBUG)
-  endif(MPI_DEBUG_MSG)
+                                  MpiComm.h
+                                  MpiLogComponent.h)
 
   target_link_libraries(yarp_mpi PRIVATE YARP::YARP_os)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
@@ -70,15 +66,13 @@ if(NOT SKIP_mpibcast)
                                        MpiComm.cpp
                                        MpiStream.cpp
                                        MpiBcastStream.cpp
+                                       MpiLogComponent.cpp
                                        MpiCarrier.h
                                        MpiBcastCarrier.h
                                        MpiStream.h
                                        MpiBcastStream.h
-                                       MpiComm.h)
-
-  if(MPI_DEBUG_MSG)
-    target_compile_definitions(yarp_mpibcast PRIVATE MPI_DEBUG)
-  endif(MPI_DEBUG_MSG)
+                                       MpiComm.h
+                                       MpiLogComponent.h)
 
   target_link_libraries(yarp_mpibcast PRIVATE YARP::YARP_os)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)

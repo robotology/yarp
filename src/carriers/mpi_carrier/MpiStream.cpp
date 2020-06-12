@@ -25,13 +25,10 @@ MpiStream::MpiStream(std::string n, MpiComm* c)
     resetBuffer();
 
 }
-#ifdef MPI_DEBUG
+
 MpiStream::~MpiStream() {
-    printf("[MpiStream @ %s] Destructor\n", name.c_str());
+    yCTrace(MPI_CARRIER, "[MpiStream @ %s] Destructor", name.c_str());
 }
-#else
-MpiStream::~MpiStream() = default;
-#endif
 
 void MpiStream::resetBuffer() {
     // reset buffer
@@ -46,9 +43,7 @@ bool MpiStream::isOk() const {
 }
 
  void MpiStream::interrupt() {
-    #ifdef MPI_DEBUG
-    printf("[MpiStream @ %s] Trying to interrupt\n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiStream @ %s] Trying to interrupt", name.c_str());
     terminate = true;
 }
 
@@ -70,8 +65,8 @@ const yarp::os::Contact& MpiStream::getRemoteAddress() const {
     return remote;
 }
 void MpiStream::beginPacket() {
-     // nothing to do
+    // nothing to do
 }
 void MpiStream::endPacket() {
-     // nothing to do
+    // nothing to do
 }

@@ -37,9 +37,7 @@ void MpiBcastStream::execCmd(int cmd) {
       char* remote = new char[length];
       MPI_Bcast(remote, length, MPI_CHAR, 0,comm->comm);
       terminate = !strcmp(remote, name.c_str());
-      #ifdef MPI_DEBUG
-      printf("[MpiBcastStream @ %s] Got disconnect : %s => %d\n", name.c_str(), remote, terminate);
-      #endif
+      yCDebug(MPI_CARRIER, "[MpiBcastStream @ %s] Got disconnect : %s => %d", name.c_str(), remote, terminate);
       delete [] remote;
       comm->disconnect(terminate);
       break;
@@ -59,14 +57,10 @@ ssize_t MpiBcastStream::read(Bytes& b) {
         // get new data
         reset();
         int size;
-        #ifdef MPI_DEBUG
-        printf("[MpiBcastStream @ %s] Trying to read\n", name.c_str());
-        #endif
+        yCDebug(MPI_CARRIER, "[MpiBcastStream @ %s] Trying to read", name.c_str());
 
         MPI_Bcast(&size, 1, MPI_INT, 0,comm->comm);
-        #ifdef MPI_DEBUG
-        printf("[MpiBcastStream @ %s] got size %d\n", name.c_str(), size);
-        #endif
+        yCDebug(MPI_CARRIER, "[MpiBcastStream @ %s] got size %d", name.c_str(), size);
         if (size < 0) {
             execCmd(size);
             return 0;
@@ -81,7 +75,7 @@ ssize_t MpiBcastStream::read(Bytes& b) {
             // allocate new buffer
             readBuffer = new char[size];
             MPI_Bcast(readBuffer, size, MPI_BYTE, 0, comm->comm);
-            //printf("got new msg of size %d\n", size);
+            yCDebug(MPI_CARRIER, "got new msg of size %d", size);
             readAvail = size;
             readAt = 0;
         }
@@ -93,7 +87,7 @@ ssize_t MpiBcastStream::read(Bytes& b) {
             take = b.length();
         }
         memcpy(b.get(),readBuffer+readAt,take);
-        //printf("read %d of %d \n", take, readAvail);
+        yCDebug(MPI_CARRIER, "read %d of %d", take, readAvail);
         readAt += take;
         readAvail -= take;
         return take;
@@ -105,20 +99,14 @@ ssize_t MpiBcastStream::read(Bytes& b) {
 // OutputStream
 
 void MpiBcastStream::write(const Bytes& b) {
-    #ifdef MPI_DEBUG
-    printf("[MpiBcastStream @ %s] getting sema for write\n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiBcastStream @ %s] getting sema for write", name.c_str());
     comm->sema.wait();
 
-    #ifdef MPI_DEBUG
-    printf("[MpiBcastStream @ %s] trying to write\n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiBcastStream @ %s] trying to write", name.c_str());
     int size = b.length();
     MPI_Bcast(&size, 1, MPI_INT, 0, comm->comm );
     MPI_Bcast((void*)b.get(), size, MPI_BYTE, 0, comm->comm );
     comm->sema.post();
 
-    #ifdef MPI_DEBUG
-    printf("[MpiBcastStream @ %s] done writing\n", name.c_str());
-    #endif
+    yCDebug(MPI_CARRIER, "[MpiBcastStream @ %s] done writing", name.c_str());
 }
