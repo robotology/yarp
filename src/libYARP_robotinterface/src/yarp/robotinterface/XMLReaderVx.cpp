@@ -21,6 +21,7 @@
 #include <yarp/os/Property.h>
 
 #include <tinyxml.h>
+#include <memory>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -133,7 +134,7 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
 yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotFromString(const std::string& xmlString)
 {
     std::string curr_filename = " XML runtime string ";
-    auto* doc = new TiXmlDocument();
+    std::unique_ptr<TiXmlDocument> doc = std::make_unique<TiXmlDocument>();
     if (!doc->Parse(xmlString.data())) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
         return yarp::robotinterface::XMLReaderResult::ParsingFailed();
