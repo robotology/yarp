@@ -170,6 +170,8 @@ public:
 
     int cmdClock(int argc, char *argv[]);
 
+    int cmdEnv(int argc, char *argv[]);
+
     int cmdPray(int argc, char *argv[]);
 
 private:
