@@ -14,6 +14,7 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/ConnectionState.h>
 #include "MjpegStream.h"
+#include "MjpegLogComponent.h"
 
 #include <cstring>
 
@@ -119,7 +120,7 @@ public:
                 return false;
             }
         }
-        //printf("Got header\n");
+        yCTrace(MJPEGCARRIER, "Got header");
         return true;
     }
 

@@ -8,8 +8,8 @@
 
 #include "MjpegStream.h"
 #include "MjpegDecompression.h"
+#include "MjpegLogComponent.h"
 
-#include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
@@ -21,7 +21,6 @@ using namespace yarp::sig;
 using namespace std;
 
 yarp::conf::ssize_t MjpegStream::read(Bytes& b) {
-    bool debug = false;
     if (remaining==0) {
         if (phase==1) {
             phase = 2;
@@ -39,49 +38,40 @@ yarp::conf::ssize_t MjpegStream::read(Bytes& b) {
         std::string s;
         do {
             s = delegate->getInputStream().readLine();
-            if (debug) {
-                printf("Read \"%s\"\n", s.c_str());
-            }
+            yCTrace(MJPEGCARRIER, "Read \"%s\"", s.c_str());
         } while ((s.length()==0||s[0]!='-') && delegate->getInputStream().isOk());
         s = delegate->getInputStream().readLine();
         if (s!="Content-Type: image/jpeg") {
             if (!delegate->getInputStream().isOk()) {
                 break;
             }
-            printf("Unknown content type - \"%s\"\n", s.c_str());
+            yCWarning(MJPEGCARRIER, "Unknown content type - \"%s\"", s.c_str());
             continue;
         }
-        if (debug) {
-            printf("Read content type - \"%s\"\n", s.c_str());
-        }
+        yCTrace(MJPEGCARRIER, "Read content type - \"%s\"", s.c_str());
+
         s = delegate->getInputStream().readLine();
-        if (debug) {
-            printf("Read content length - \"%s\"\n", s.c_str());
-        }
+        yCTrace(MJPEGCARRIER, "Read content length - \"%s\"", s.c_str());
         Bottle b(s);
         if (b.get(0).asString()!="Content-Length:") {
             if (!delegate->getInputStream().isOk()) {
                 break;
             }
-            printf("Expected Content-Length: got - \"%s\"\n", b.get(0).asString().c_str());
+            yCWarning(MJPEGCARRIER, "Expected Content-Length: got - \"%s\"", b.get(0).asString().c_str());
             continue;
         }
         int len = b.get(1).asInt32();
-        if (debug) {
-            printf("Length is \"%d\"\n", len);
-        }
+        yCTrace(MJPEGCARRIER, "Length is \"%d\"", len);
         do {
             s = delegate->getInputStream().readLine();
-            if (debug) {
-                printf("Read \"%s\"\n", s.c_str());
-            }
+            yCTrace(MJPEGCARRIER, "Read \"%s\"", s.c_str());
         } while (s.length()>0);
         if (autocompress) {
             cimg.allocate(len);
             delegate->getInputStream().readFull(cimg.bytes());
             if (!decompression.decompress(cimg.bytes(), img)) {
                 if (delegate->getInputStream().isOk()) {
-                    yError("Skipping a problematic JPEG frame");
+                    yCError(MJPEGCARRIER, "Skipping a problematic JPEG frame");
                 }
             }
             imgHeader.setFromImage(img);
@@ -109,14 +99,14 @@ yarp::conf::ssize_t MjpegStream::read(Bytes& b) {
             memcpy(b.get(),cursor,allow);
             cursor+=allow;
             remaining-=allow;
-            if (debug) printf("returning %d bytes\n", allow);
+            yCTrace(MJPEGCARRIER, "returning %d bytes", allow);
             return allow;
         } else {
             int result = delegate->getInputStream().read(b);
-            if (debug) printf("Read %d bytes\n", result);
+            yCTrace(MJPEGCARRIER, "Read %d bytes", result);
             if (result>0) {
                 remaining-=result;
-                if (debug) printf("%d bytes of meat\n", result);
+                yCTrace(MJPEGCARRIER, "%d bytes of meat", result);
                 return result;
             }
         }

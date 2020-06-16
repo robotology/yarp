@@ -7,8 +7,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <cstdio>
+#include "MjpegCarrier.h"
+#include "MjpegLogComponent.h"
 
+#include <cstdio>
 
 /*
   On Windows, libjpeg does some slightly odd-ball stuff, including
@@ -41,9 +43,6 @@ extern "C" {
   work around ends.
  */
 
-
-#include "MjpegCarrier.h"
-
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 #include <yarp/os/Name.h>
@@ -57,8 +56,6 @@ extern "C" {
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::wire_rep_utils;
-
-#define dbg_printf if (0) printf
 
 static const std::map<int, J_COLOR_SPACE> yarpCode2Mjpeg { {VOCAB_PIXEL_MONO, JCS_GRAYSCALE},
                                                            {VOCAB_PIXEL_MONO16, JCS_GRAYSCALE},
@@ -87,16 +84,17 @@ struct net_destination_mgr
 using net_destination_ptr = net_destination_mgr*;
 
 void send_net_data(JOCTET *data, int len, void *client) {
-    dbg_printf("Send %d bytes\n", len);
+    yCTrace(MJPEGCARRIER, "Send %d bytes", len);
     auto* p = (ConnectionState *)client;
-    char hdr[1000];
-    sprintf(hdr,"\n");
+    constexpr size_t hdr_size = 1000;
+    char hdr[hdr_size];
+    std::snprintf(hdr, hdr_size, "\n");
     const char *brk = "\n";
     if (hdr[1]=='\0') {
         brk = "\r\n";
     }
-    dbg_printf("Using terminator %s\n",(hdr[1]=='\0')?"\\r\\n":"\\n");
-    sprintf(hdr,"Content-Type: image/jpeg%s\
+    yCTrace(MJPEGCARRIER, "Using terminator %s",(hdr[1]=='\0')?"\\r\\n":"\\n");
+    std::snprintf(hdr, hdr_size, "Content-Type: image/jpeg%s\
 Content-Length: %d%s%s", brk, len, brk, brk);
     Bytes hbuf(hdr,strlen(hdr));
     p->os().write(hbuf);
@@ -106,20 +104,20 @@ Content-Length: %d%s%s", brk, len, brk, brk);
     static int ct = 0;
     ct++;
     if (ct==50) {
-        printf("Adding corruption\n");
+        yCTrace(MJPEGCARRIER, "Adding corruption");
         buf.get()[0] = 'z';
         ct = 0;
     }
     */
     p->os().write(buf);
-    sprintf(hdr,"%s--boundarydonotcross%s",brk,brk);
+    std::snprintf(hdr, hdr_size, "%s--boundarydonotcross%s", brk, brk);
     Bytes hbuf2(hdr,strlen(hdr));
     p->os().write(hbuf2);
 
 }
 
 static void init_net_destination(j_compress_ptr cinfo) {
-    //printf("Initializing destination\n");
+    yCTrace(MJPEGCARRIER, "Initializing destination");
     auto dest = (net_destination_ptr)cinfo->dest;
     dest->buffer = &(dest->cache[0]);
     dest->bufsize = sizeof(dest->cache);
@@ -129,7 +127,7 @@ static void init_net_destination(j_compress_ptr cinfo) {
 
 static boolean empty_net_output_buffer(j_compress_ptr cinfo) {
     auto dest = (net_destination_ptr)cinfo->dest;
-    printf("Empty buffer - PROBLEM\n");
+    yCWarning(MJPEGCARRIER, "Empty buffer - PROBLEM");
     send_net_data(dest->buffer,dest->bufsize-dest->pub.free_in_buffer,
                   cinfo->client_data);
     dest->pub.next_output_byte = dest->buffer;
@@ -139,7 +137,7 @@ static boolean empty_net_output_buffer(j_compress_ptr cinfo) {
 
 static void term_net_destination(j_compress_ptr cinfo) {
     auto dest = (net_destination_ptr)cinfo->dest;
-    //printf("Terminating net %d %d\n", dest->bufsize,dest->pub.free_in_buffer);
+    yCTrace(MJPEGCARRIER, "Terminating net %d %zd", dest->bufsize,dest->pub.free_in_buffer);
     send_net_data(dest->buffer,dest->bufsize-dest->pub.free_in_buffer,
                   cinfo->client_data);
 }
@@ -188,15 +186,15 @@ bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     cinfo.input_components = yarpCode2Channels.at(img->getPixelCode());
     jpeg_set_defaults(&cinfo);
     //jpeg_set_quality(&cinfo, 85, TRUE);
-    dbg_printf("Starting to compress...\n");
+    yCTrace(MJPEGCARRIER, "Starting to compress...");
     jpeg_start_compress(&cinfo, TRUE);
     if(!envelope.empty()) {
         jpeg_write_marker(&cinfo, JPEG_COM, reinterpret_cast<const JOCTET*>(envelope.c_str()), envelope.length() + 1);
         envelope.clear();
     }
-    dbg_printf("Done compressing (height %d)\n", cinfo.image_height);
+    yCTrace(MJPEGCARRIER, "Done compressing (height %d)", cinfo.image_height);
     while (cinfo.next_scanline < cinfo.image_height) {
-        dbg_printf("Writing row %d...\n", cinfo.next_scanline);
+        yCTrace(MJPEGCARRIER, "Writing row %d...", cinfo.next_scanline);
         row_pointer[0] = data + cinfo.next_scanline * row_stride;
         jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
