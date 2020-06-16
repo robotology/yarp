@@ -8,6 +8,7 @@
 
 #include "H264Carrier.h"
 #include "H264Stream.h"
+#include "H264LogComponent.h"
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/FakeFace.h>
 #include <yarp/os/Name.h>
@@ -93,7 +94,7 @@ bool H264Carrier::checkHeader(const Bytes& header)
 void H264Carrier::setParameters(const Bytes& header)
 {
     // no parameters - no carrier variants
-    printf("h264: setParameters \n");
+    yCTrace(H264CARRIER, "setParameters");
 }
 
 
@@ -123,32 +124,31 @@ bool H264Carrier::prepareSend(ConnectionState& proto)
     cfgParams.crop.top = getIntParam(n, "cropTop");
     cfgParams.crop.bottom = getIntParam(n, "cropBottom");
     cfgParams.fps_max = getIntParam(n, "max_fps");
-    cfgParams.verbose = (getIntParam(n, "verbose") >0) ? true: false;
     cfgParams.removeJitter = (getIntParam(n, "removeJitter") > 0) ? true : false;
     return true;
 }
 
 bool H264Carrier::sendHeader(ConnectionState& proto)
 {
-    //printf("h264: sendHeader \n");
+    yCTrace(H264CARRIER, "sendHeader");
     return true;
 }
 
 bool H264Carrier::expectSenderSpecifier(ConnectionState& proto)
 {
-    printf("h264: expectSenderSpecifier \n");
+    yCTrace(H264CARRIER, "expectSenderSpecifier");
     return true;
 }
 
 bool H264Carrier::expectExtraHeader(ConnectionState& proto)
 {
-    printf("h264: expectExtraHeader \n");
+    yCTrace(H264CARRIER, "expectExtraHeader");
     return true;
 }
 
 bool H264Carrier::respondToHeader(ConnectionState& proto)
 {
-    printf("h264: respondToHeader \n");
+    yCTrace(H264CARRIER, "respondToHeader");
     return true;
 }
 

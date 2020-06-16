@@ -7,7 +7,8 @@
  */
 
 #include "H264Decoder.h"
-#include <yarp/os/Log.h>
+#include "H264LogComponent.h"
+
 #include <yarp/os/LogStream.h>
 
 
@@ -54,7 +55,7 @@ static GstBusSyncReply bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 
         case GST_MESSAGE_EOS:
         {
-            g_print ("End of stream\n");
+            yCTrace(H264CARRIER, "End of stream");
             gst_element_set_state (pipeline, GST_STATE_NULL);
             // g_main_loop_quit (loop);
             break;
@@ -68,7 +69,7 @@ static GstBusSyncReply bus_call (GstBus *bus, GstMessage *msg, gpointer data)
             gst_message_parse_error (msg, &error, &debug);
             g_free (debug);
 
-            g_printerr ("GSTREAMER: Error: %s\n", error->message);
+            yCError(H264CARRIER, "GSTREAMER: Error: %s", error->message);
             g_error_free (error);
 
             gst_element_set_state (pipeline, GST_STATE_NULL);
@@ -76,7 +77,7 @@ static GstBusSyncReply bus_call (GstBus *bus, GstMessage *msg, gpointer data)
         }
         default:
         {
-            g_print("GSTREAMER: I received message of type %d\n", GST_MESSAGE_TYPE (msg));
+            yCTrace("GSTREAMER: I received message of type %d", GST_MESSAGE_TYPE (msg));
             break;
         }
     }
@@ -85,7 +86,7 @@ static GstBusSyncReply bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 }
 */
 
-static gboolean link_videosrc2nextWithCaps(GstElement *e1, GstElement *e2, bool verbose)
+static gboolean link_videosrc2nextWithCaps(GstElement *e1, GstElement *e2)
 {
     gboolean link_ok;
     GstCaps *caps;
@@ -109,14 +110,13 @@ static gboolean link_videosrc2nextWithCaps(GstElement *e1, GstElement *e2, bool 
 
 
     link_ok = gst_element_link_filtered(e1, e2, caps);
-    //print error anyway, while print ok message only is verbose
     if(!link_ok)
     {
-         yError() << "H264Decoder-GSTREAMER: link_videosrc2nextWithCaps failed";
+         yCError(H264CARRIER) << "H264Decoder-GSTREAMER: link_videosrc2nextWithCaps failed";
     }
-    else if(verbose)
+    else
     {
-        yDebug() << "H264Decoder-GSTREAMER: link_videosrc2nextWithCaps OK";
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: link_videosrc2nextWithCaps OK";
     }
 
     return (link_ok);
@@ -124,26 +124,25 @@ static gboolean link_videosrc2nextWithCaps(GstElement *e1, GstElement *e2, bool 
 
 
 
-static gboolean link_convert2next(GstElement *e1, GstElement *e2, bool verbose)
+static gboolean link_convert2next(GstElement *e1, GstElement *e2)
 {
     gboolean link_ok;
     GstCaps *caps;
 
     caps = gst_caps_new_simple("video/x-raw",
                                "format", G_TYPE_STRING, "RGB",
-                              NULL);
+                               NULL);
 
 
     link_ok = gst_element_link_filtered(e1, e2, caps);
 
-    //print error anyway, while print ok message only is verbose
     if(!link_ok)
     {
-        yError() << "H264Decoder-GSTREAMER: link_convert2next failed";
+        yCError(H264CARRIER) << "H264Decoder-GSTREAMER: link_convert2next failed";
     }
-    else if(verbose)
+    else
     {
-        yDebug() << "H264Decoder-GSTREAMER: link_convert2next OK";
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: link_convert2next OK";
     }
 
     return (link_ok);
@@ -178,20 +177,20 @@ GstFlowReturn new_sample(GstAppSink *appsink, gpointer user_data)
     g_signal_emit_by_name (appsink, "pull-sample", &sample, NULL);
     if(!sample)
     {
-        g_print("GSTREAMER: could not take a sample!\n");
+        yCWarning(H264CARRIER, "GSTREAMER: could not take a sample!");
         return GST_FLOW_OK;
     }
 
     GstCaps *caps = gst_sample_get_caps (sample);
     if(!caps)
     {
-        g_print("GSTREAMER: could not get caps of sample!\n");
+        yCError(H264CARRIER, "GSTREAMER: could not get caps of sample!");
         return GST_FLOW_ERROR;
     }
     GstStructure *struc = gst_caps_get_structure(caps, 0);
     if(!struc)
     {
-        g_print("GSTREAMER: could not get struct of caps!\n");
+        yCError(H264CARRIER, "GSTREAMER: could not get struct of caps!");
         return GST_FLOW_ERROR;
     }
     gint width, height;
@@ -199,23 +198,23 @@ GstFlowReturn new_sample(GstAppSink *appsink, gpointer user_data)
     res = gst_structure_get_int(struc, "width", &width);
     if(!res)
     {
-        g_print("GSTREAMER: could not get width!\n");
+        yCError(H264CARRIER, "GSTREAMER: could not get width!");
         return GST_FLOW_ERROR;
     }
 
     res = gst_structure_get_int(struc, "height", &height);
     if(!res)
     {
-        g_print("GSTREAMER: could not get height!\n");
+        yCError(H264CARRIER, "GSTREAMER: could not get height!");
         return GST_FLOW_ERROR;
     }
-    //g_print("Image has size %d x %d", width, height);
+    yCTrace(H264CARRIER, "Image has size %d x %d", width, height);
 
     GstBuffer *buffer = gst_sample_get_buffer(sample);
     GstMapInfo map;
     if(!gst_buffer_map(buffer, &map, GST_MAP_READ))
     {
-        g_print("GSTREAMER: could not get map!\n");
+        yCError(H264CARRIER, "GSTREAMER: could not get map!");
         return GST_FLOW_ERROR;
     }
     //HERE I GET MY IMAGE!!!!
@@ -244,8 +243,11 @@ GstFlowReturn new_sample(GstAppSink *appsink, gpointer user_data)
 
     if(count>=MAX_COUNT)
     {
-        g_print("On %d times: NewSampleFunc is long %.6f sec and sleeps %.6f sec\n",
-                MAX_COUNT, (sumOf_timeOfNewSampleFunc/MAX_COUNT), (sumOf_timeBetweenCalls/MAX_COUNT) );
+        yCDebug(H264CARRIER,
+                "On %d times: NewSampleFunc is long %.6f sec and sleeps %.6f sec",
+                MAX_COUNT,
+                (sumOf_timeOfNewSampleFunc/MAX_COUNT),
+                (sumOf_timeBetweenCalls/MAX_COUNT) );
         count = 0;
         isFirst = true;
         sumOf_timeBetweenCalls = 0;
@@ -291,7 +293,6 @@ public:
     GstElement *sizeChanger;
 
     data_for_gst_callback gst_cbk_data;
-    bool verbose;
 
     GstBus *bus; //maybe can be moved in function where i use it
     guint bus_watch_id;
@@ -308,7 +309,6 @@ public:
         convert(nullptr),
         decoder(nullptr),
         sizeChanger(nullptr),
-        verbose(false),
         bus(nullptr),
         bus_watch_id(0)
     {
@@ -333,7 +333,7 @@ public:
 
         if (!pipeline || !source || !rtpDepay || !parser || !decoder || !convert || !sink || !sizeChanger)
         {
-            yError() << "H264Decoder-GSTREAMER: one element could not be created. Exiting.";
+            yCError(H264CARRIER) << "H264Decoder-GSTREAMER: one element could not be created. Exiting.";
             return false;
         }
         if (cfgParams.removeJitter)
@@ -341,12 +341,12 @@ public:
             jitterBuff = gst_element_factory_make("rtpjitterbuffer", "jitterBuffer");
             if (!jitterBuff)
             {
-                yError() << "H264Decoder-GSTREAMER: rtpjitterbuffer could not be created. Exiting.";
+                yCError(H264CARRIER) << "H264Decoder-GSTREAMER: rtpjitterbuffer could not be created. Exiting.";
                 return false;
             }
         }
 
-        if(verbose) yDebug() << "H264Decoder-GSTREAMER: istantiateElements OK";
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: istantiateElements OK";
 
         return true;
     }
@@ -354,12 +354,12 @@ public:
     bool configureElements(h264Decoder_cfgParamters &cfgParams) //maybe i can make callbak configurable in the future.....
     {
         // 1) configure source port
-        if(verbose) yDebug() << "H264Decoder-GSTREAMER: try to configure source port with value" << cfgParams.remotePort;
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: try to configure source port with value" << cfgParams.remotePort;
         g_object_set(source, "port", cfgParams.remotePort, NULL);
-        yDebug() << "H264Decoder-GSTREAMER: configured source port with" << cfgParams.remotePort;
+        yCDebug(H264CARRIER) << "H264Decoder-GSTREAMER: configured source port with" << cfgParams.remotePort;
 
         // 2) configure callback on new frame
-        if(verbose) yDebug() << "H264Decoder-GSTREAMER: try to configure appsink.... ";
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: try to configure appsink.... ";
         //I decided to use callback mechanism because it should have less overhead
         g_object_set( sink, "emit-signals", false, NULL );
 
@@ -381,11 +381,11 @@ public:
     */
 
         //videocrop
-        if(verbose) yDebug() << "H264Decoder-GSTREAMER: try to set new size: left" << cfgParams.crop.left << "right=" << cfgParams.crop.right << "top=" << cfgParams.crop.top << "bottom" << cfgParams.crop.bottom;
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: try to set new size: left" << cfgParams.crop.left << "right=" << cfgParams.crop.right << "top=" << cfgParams.crop.top << "bottom" << cfgParams.crop.bottom;
         g_object_set(G_OBJECT(sizeChanger), "left", cfgParams.crop.left, "right", cfgParams.crop.right, "top", cfgParams.crop.top, "bottom", cfgParams.crop.bottom, NULL);
-        if(verbose) yDebug() << "H264Decoder-GSTREAMER: set new size: left" << cfgParams.crop.left << "right=" << cfgParams.crop.right << "top=" << cfgParams.crop.top << "bottom" << cfgParams.crop.bottom;
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: set new size: left" << cfgParams.crop.left << "right=" << cfgParams.crop.right << "top=" << cfgParams.crop.top << "bottom" << cfgParams.crop.bottom;
 
-        if(verbose) yDebug() << "H264Decoder-GSTREAMER: configureElements OK";
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: configureElements OK";
         return true;
 
     }
@@ -393,7 +393,7 @@ public:
     bool linkElements()
     {
 
-        if(verbose) yDebug() << "H264Decoder-GSTREAMER: try to add elements to pipeline..... ";
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: try to add elements to pipeline..... ";
         /* we add all elements into the pipeline */
         gst_bin_add_many (GST_BIN (pipeline),
                             source, rtpDepay, parser, decoder, sizeChanger, convert, sink, NULL);
@@ -403,40 +403,40 @@ public:
         if (jitterBuff != nullptr)
         {
             result = gst_bin_add(GST_BIN(pipeline), jitterBuff);
-            if (!result) { yError() << "H264Decoder: Error adding jitterBuff to the bin"; return false; }
+            if (!result) { yCError(H264CARRIER) << "H264Decoder: Error adding jitterBuff to the bin"; return false; }
         }
 
-        if(verbose) yDebug() << "H264Decoder-GSTREAMER: elements have been added in pipeline!";
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: elements have been added in pipeline!";
 
-        if (verbose) yDebug() << "H264Decoder-GSTREAMER: try to link_convert2next..... ";
-        result = link_convert2next(convert, sink, verbose);
-        if (!result) { yError() << "H264Decoder: Error linking converter to sink "; return false; }
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: try to link_convert2next..... ";
+        result = link_convert2next(convert, sink);
+        if (!result) { yCError(H264CARRIER) << "H264Decoder: Error linking converter to sink "; return false; }
 
         /* autovideosrc ! "video/x-raw, width=640, height=480, format=(string)I420" ! videoconvert ! 'video/x-raw, format=(string)RGB'  ! yarpdevice ! glimagesink */
 
         if (jitterBuff)
         {
-            if (verbose) yDebug() << "H264Decoder-GSTREAMER: try to link videosrc to rtpjitterBuffer.....";
-            result = link_videosrc2nextWithCaps(source, jitterBuff, verbose);
-            if (!result){ yError() << "H264Decoder: Error linking videosrc to rtpjitterBuffer "; return false;}
+            yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: try to link videosrc to rtpjitterBuffer.....";
+            result = link_videosrc2nextWithCaps(source, jitterBuff);
+            if (!result){ yCError(H264CARRIER) << "H264Decoder: Error linking videosrc to rtpjitterBuffer "; return false;}
 
-            if (verbose)yDebug() << "H264Decoder-GSTREAMER: try to link jitterBuff to rtpDapay.....";
+            yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: try to link jitterBuff to rtpDapay.....";
             result = gst_element_link(jitterBuff, rtpDepay);
-            if (!result) { yError() << "H264Decoder: Error linking jitterBuff to rtpDapay "; return false; }
+            if (!result) { yCError(H264CARRIER) << "H264Decoder: Error linking jitterBuff to rtpDapay "; return false; }
 
         }
         else
         {
-            if (verbose) yDebug() << "H264Decoder-GSTREAMER: try to videosrc to rtpDepay";
-            result = link_videosrc2nextWithCaps(source, rtpDepay, verbose);
-            if (!result) { yError() << "H264Decoder: Error linking videosrc to rtpDepay "; return false; }
+            yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: try to videosrc to rtpDepay";
+            result = link_videosrc2nextWithCaps(source, rtpDepay);
+            if (!result) { yCError(H264CARRIER) << "H264Decoder: Error linking videosrc to rtpDepay "; return false; }
 
         }
 
-        if (verbose)yDebug() << "H264Decoder-GSTREAMER: try to link all other elements.....";
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: try to link all other elements.....";
         gst_element_link_many(rtpDepay, parser, decoder, sizeChanger, convert, NULL);
 
-        if(verbose) yDebug() << "H264Decoder-GSTREAMER: linkElements OK";
+        yCTrace(H264CARRIER) << "H264Decoder-GSTREAMER: linkElements OK";
         return true;
     }
 
@@ -448,14 +448,9 @@ public:
 #define GET_HELPER(x) (*((H264DecoderHelper*)(x)))
 
 H264Decoder::H264Decoder(h264Decoder_cfgParamters &config) :
-    sysResource(nullptr),
+    sysResource(new H264DecoderHelper(&mutex, &semaphore)),
     cfg(config)
 {
-    sysResource = new H264DecoderHelper(&mutex, &semaphore);
-    yAssert(sysResource != nullptr);
-
-    H264DecoderHelper &helper = GET_HELPER(sysResource);
-    helper.verbose = cfg.verbose;
 }
 
 bool H264Decoder::init()
@@ -463,23 +458,23 @@ bool H264Decoder::init()
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     if(!helper.istantiateElements(cfg))
     {
-        yError() << "H264Decoder: Error in istantiateElements";
+        yCError(H264CARRIER) << "H264Decoder: Error in istantiateElements";
         return false;
     }
 
     if(!helper.configureElements(cfg))
     {
-        yError() << "Error in configureElements";
+        yCError(H264CARRIER) << "Error in configureElements";
         return false;
     }
 
     if(!helper.linkElements())
     {
-        yError() << "Error in linkElements";
+        yCError(H264CARRIER) << "Error in linkElements";
         return false;
     }
 
-    yDebug() << "H264Decoder-GSTREAMER:  init ok";
+    yCDebug(H264CARRIER) << "H264Decoder-GSTREAMER:  init ok";
     return true;
 
 }
@@ -489,7 +484,7 @@ bool H264Decoder::start()
 {
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     gst_element_set_state (helper.pipeline, GST_STATE_PLAYING);
-    yDebug() << "H264Decoder: pipeline started!";
+    yCDebug(H264CARRIER) << "H264Decoder: pipeline started!";
 
     return true;
 
@@ -500,7 +495,7 @@ bool H264Decoder::stop()
     H264DecoderHelper &helper = GET_HELPER(sysResource);
     gst_element_set_state (helper.pipeline, GST_STATE_NULL);
     gst_bus_set_sync_handler(gst_pipeline_get_bus (GST_PIPELINE (helper.pipeline)), nullptr, nullptr, nullptr);
-    yDebug() << "H264Decoder: deleting pipeline";
+    yCDebug(H264CARRIER) << "H264Decoder: deleting pipeline";
     gst_object_unref (GST_OBJECT (helper.pipeline));
     return true;
 }
