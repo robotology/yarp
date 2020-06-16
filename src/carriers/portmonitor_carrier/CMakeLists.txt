@@ -18,8 +18,10 @@ if (NOT SKIP_portmonitor)
   target_sources(yarp_portmonitor PRIVATE PortMonitor.h
                                           MonitorBinding.h
                                           MonitorEvent.h
+                                          MonitorLogComponent.h
                                           PortMonitor.cpp
                                           MonitorBinding.cpp
+                                          MonitorLogComponent.cpp
                                           dll/MonitorSharedLib.h
                                           dll/MonitorSharedLib.cpp)
   if(YARP_HAS_Lua)

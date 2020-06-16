@@ -15,6 +15,7 @@
 #include <yarp/os/Network.h>
 
 #include "PortMonitor.h"
+#include "MonitorLogComponent.h"
 
 
 
@@ -58,7 +59,7 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     // check which monitor should be used
     if((binder = MonitorBinding::create(script.c_str())) == nullptr)
     {
-         yError(R"(Currently only 'lua' script and 'dll' object is supported by portmonitor)");
+         yCError(PORTMONITORCARRIER, R"(Currently only 'lua' script and 'dll' object is supported by portmonitor)");
          return false;
     }
 
@@ -238,7 +239,7 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers() {
     if (peers==nullptr) {
         peers = new ElectionOf<PortMonitorGroup>;
         NetworkBase::unlock();
-        yAssert(peers);
+        yCAssert(PORTMONITORCARRIER, peers);
     } else {
         NetworkBase::unlock();
     }
