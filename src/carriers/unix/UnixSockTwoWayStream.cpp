@@ -10,7 +10,7 @@
 
 #include "UnixSockTwoWayStream.h"
 
-#include <yarp/os/impl/Logger.h>
+//#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/LogStream.h>
