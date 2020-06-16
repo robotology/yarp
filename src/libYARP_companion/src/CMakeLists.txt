@@ -11,13 +11,44 @@ add_library(YARP::YARP_companion ALIAS YARP_companion)
 set(YARP_companion_HDRS yarp/companion/api.h
                         yarp/companion/yarpcompanion.h)
 
-set(YARP_companion_SRCS )
+set(YARP_companion_SRCS yarp/companion/yarpcompanion.cpp)
 
-set(YARP_companion_IMPL_HDRS yarp/companion/impl/Companion.h)
+set(YARP_companion_IMPL_HDRS yarp/companion/impl/BottleReader.h
+                             yarp/companion/impl/Companion.h)
 
 set(YARP_companion_IMPL_SRCS yarp/companion/impl/Companion.cpp
-                             yarp/companion/impl/Companion.env.cpp
-                             yarp/companion/impl/Companion.qos.cpp)
+                             yarp/companion/impl/Companion.cmdCheck.cpp
+                             yarp/companion/impl/Companion.cmdClean.cpp
+                             yarp/companion/impl/Companion.cmdClock.cpp
+                             yarp/companion/impl/Companion.cmdCMake.cpp
+                             yarp/companion/impl/Companion.cmdConf.cpp
+                             yarp/companion/impl/Companion.cmdConnect.cpp
+                             yarp/companion/impl/Companion.cmdDetect.cpp
+                             yarp/companion/impl/Companion.cmdDisconnect.cpp
+                             yarp/companion/impl/Companion.cmdEnv.cpp
+                             yarp/companion/impl/Companion.cmdExists.cpp
+                             yarp/companion/impl/Companion.cmdHelp.cpp
+                             yarp/companion/impl/Companion.cmdMerge.cpp
+                             yarp/companion/impl/Companion.cmdName.cpp
+                             yarp/companion/impl/Companion.cmdNamespace.cpp
+                             yarp/companion/impl/Companion.cmdPing.cpp
+                             yarp/companion/impl/Companion.cmdPlugin.cpp
+                             yarp/companion/impl/Companion.cmdPray.cpp
+                             yarp/companion/impl/Companion.cmdPriorityQos.cpp
+                             yarp/companion/impl/Companion.cmdPrioritySched.cpp
+                             yarp/companion/impl/Companion.cmdResource.cpp
+                             yarp/companion/impl/Companion.cmdRead.cpp
+                             yarp/companion/impl/Companion.cmdReadWrite.cpp
+                             yarp/companion/impl/Companion.cmdRpc.cpp
+                             yarp/companion/impl/Companion.cmdRpcServer.cpp
+                             yarp/companion/impl/Companion.cmdSample.cpp
+                             yarp/companion/impl/Companion.cmdTerminate.cpp
+                             yarp/companion/impl/Companion.cmdTime.cpp
+                             yarp/companion/impl/Companion.cmdTopic.cpp
+                             yarp/companion/impl/Companion.cmdVersion.cpp
+                             yarp/companion/impl/Companion.cmdWait.cpp
+                             yarp/companion/impl/Companion.cmdWhere.cpp
+                             yarp/companion/impl/Companion.cmdWrite.cpp)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Source Files"
