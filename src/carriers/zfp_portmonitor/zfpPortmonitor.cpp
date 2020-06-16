@@ -8,12 +8,12 @@
 
 #include "zfpPortmonitor.h"
 
-#include <cstdio>
+#include <yarp/os/LogComponent.h>
+#include <yarp/sig/Image.h>
+
 #include <cstring>
 #include <cmath>
 #include <algorithm>
-#include <yarp/sig/Image.h>
-#include <yarp/os/LogStream.h>
 
 extern "C" {
     #include "zfp.h"
@@ -21,6 +21,15 @@ extern "C" {
 
 using namespace yarp::os;
 using namespace yarp::sig;
+
+namespace {
+YARP_LOG_COMPONENT(ZFPMONITOR,
+                   "yarp.carrier.portmonitor.zfp",
+                   yarp::os::Log::minimumPrintLevel(),
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::printCallback(),
+                   nullptr)
+}
 
 
 bool ZfpMonitorObject::create(const yarp::os::Property& options)
@@ -67,14 +76,14 @@ bool ZfpMonitorObject::accept(yarp::os::Things& thing)
     if(shouldCompress){
         ImageOf<PixelFloat>* img = thing.cast_as< ImageOf<PixelFloat> >();
         if(img == nullptr) {
-            yError()<<"ZfpMonitorObject: expected type ImageOf<PixelFloat> in sender side, but got wrong data type!";
+            yCError(ZFPMONITOR, "Expected type ImageOf<PixelFloat> in sender side, but got wrong data type!");
             return false;
         }
     }
     else{
         Bottle* bt= thing.cast_as<Bottle>();
         if(bt == nullptr){
-            yError()<<"ZfpMonitorObject: expected type Bottle in receiver side, but got wrong data type!";
+            yCError(ZFPMONITOR, "Expected type Bottle in receiver side, but got wrong data type!");
             return false;
         }
 
@@ -93,7 +102,7 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
         int sizeCompressed;
         compress((float*)img->getRawImage(), compressed, sizeCompressed, img->width(),img->height(),1e-3);
         if(!compressed){
-            yError()<<"ZfpMonitorObject:Failed to compress, exiting...";
+            yCError(ZFPMONITOR, "Failed to compress, exiting...");
             return thing;
         }
         data.clear();
@@ -116,7 +125,7 @@ yarp::os::Things& ZfpMonitorObject::update(yarp::os::Things& thing)
        decompress((float*)compressedbt->get(3).asBlob(), decompressed, sizeCompressed, width, height,1e-3);
 
        if(!decompressed){
-           yError()<<"ZfpMonitorObject:Failed to decompress, exiting...";
+           yCError(ZFPMONITOR, "Failed to decompress, exiting...");
            return thing;
        }
        imageOut.resize(width,height);
@@ -180,7 +189,7 @@ int ZfpMonitorObject::compress(float* array, float* &compressed, int &zfpsize, i
     /* compress array and output compressed stream */
     zfpsize = zfp_compress(zfp, field);
     if (!zfpsize) {
-      fprintf(stderr, "compression failed\n");
+      yCError(ZFPMONITOR, "compression failed");
       status = 1;
     }
 
@@ -227,7 +236,7 @@ int ZfpMonitorObject::decompress(float* array, float* &decompressed, int zfpsize
 
     /* read compressed stream and decompress array */
     if (!zfp_decompress(zfp, field)) {
-      fprintf(stderr, "decompression failed\n");
+      yCError(ZFPMONITOR, "decompression failed");
       status = 1;
     }
 
