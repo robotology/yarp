@@ -9,6 +9,7 @@
 
 #include "ShmemCarrier.h"
 #include "ShmemHybridStream.h"
+#include "ShmemLogComponent.h"
 
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/Log.h>
@@ -66,7 +67,7 @@ void ShmemCarrier::setParameters(const yarp::os::Bytes& header)
 bool ShmemCarrier::becomeShmemVersionHybridStream(yarp::os::ConnectionState& proto, bool sender)
 {
     auto* stream = new ShmemHybridStream();
-    yAssert(stream != nullptr);
+    yCAssert(SHMEMCARRIER, stream != nullptr);
     yarp::os::Contact base;
 
     bool ok = true;
