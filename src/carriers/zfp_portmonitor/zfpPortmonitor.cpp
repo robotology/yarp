@@ -26,11 +26,11 @@ using namespace yarp::sig;
 bool ZfpMonitorObject::create(const yarp::os::Property& options)
 {
     shouldCompress = (options.find("sender_side").asBool());
-    compressed=NULL;
-    decompressed=NULL;
-    buffer=NULL;
-    sizeToAllocate=0;
-    sizeToAllocateB=0;
+    compressed = nullptr;
+    decompressed = nullptr;
+    buffer = nullptr;
+    sizeToAllocate = 0;
+    sizeToAllocateB = 0;
     return true;
 }
 
@@ -38,17 +38,17 @@ void ZfpMonitorObject::destroy(void)
 {
     if(compressed){
         free(compressed);
-        compressed=NULL;
+        compressed = nullptr;
     }
 
     if(buffer){
         free(buffer);
-        buffer=NULL;
+        buffer = nullptr;
     }
 
     if(decompressed){
         free(decompressed);
-        decompressed=NULL;
+        decompressed = nullptr;
     }
 }
 
@@ -66,14 +66,14 @@ bool ZfpMonitorObject::accept(yarp::os::Things& thing)
 {
     if(shouldCompress){
         ImageOf<PixelFloat>* img = thing.cast_as< ImageOf<PixelFloat> >();
-        if(img == NULL) {
+        if(img == nullptr) {
             yError()<<"ZfpMonitorObject: expected type ImageOf<PixelFloat> in sender side, but got wrong data type!";
             return false;
         }
     }
     else{
         Bottle* bt= thing.cast_as<Bottle>();
-        if(bt==NULL){
+        if(bt == nullptr){
             yError()<<"ZfpMonitorObject: expected type Bottle in receiver side, but got wrong data type!";
             return false;
         }
@@ -159,7 +159,7 @@ int ZfpMonitorObject::compress(float* array, float* &compressed, int &zfpsize, i
     field = zfp_field_2d(array, type, nx, ny);
 
     /* allocate meta data for a compressed stream */
-    zfp = zfp_stream_open(NULL);
+    zfp = zfp_stream_open(nullptr);
 
     /* set compression mode and parameters via one of three functions */
     /*  zfp_stream_set_rate(zfp, rate, type, 3, 0); */
@@ -208,7 +208,7 @@ int ZfpMonitorObject::decompress(float* array, float* &decompressed, int zfpsize
     field = zfp_field_2d(decompressed, type, nx, ny);
 
     /* allocate meta data for a compressed stream */
-    zfp = zfp_stream_open(NULL);
+    zfp = zfp_stream_open(nullptr);
 
     /* set compression mode and parameters via one of three functions */
     /*  zfp_stream_set_rate(zfp, rate, type, 3, 0); */
