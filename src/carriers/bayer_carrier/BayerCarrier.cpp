@@ -8,6 +8,7 @@
 
 #include "BayerCarrier.h"
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Route.h>
 #include <yarp/sig/ImageDraw.h>
 #include <cstring>
@@ -23,6 +24,15 @@ extern "C" {
 
 using namespace yarp::os;
 using namespace yarp::sig;
+
+namespace {
+    YARP_LOG_COMPONENT(BAYERCARRIER,
+                       "yarp.carrier.bayer",
+                       yarp::os::Log::minimumPrintLevel(),
+                       yarp::os::Log::LogTypeReserved,
+                       yarp::os::Log::printCallback(),
+                       nullptr)
+}
 
 // can't seem to do ipl/opencv/yarp style end-of-row padding
 void setDcImage(yarp::sig::Image& yimg, dc1394video_frame_t *dc,
@@ -126,10 +136,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
             } else if (method=="vng") {
                 m = DC1394_BAYER_METHOD_VNG;
             } else {
-                if (!warned) {
-                    fprintf(stderr,"bayer method %s not recognized, try: ahd bilinear downsample edgesense hqlinear nearest simple vng\n", method.c_str());
-                    warned = true;
-                }
+                yCWarning/*Once*/(BAYERCARRIER, "bayer method %s not recognized, try: ahd bilinear downsample edgesense hqlinear nearest simple vng", method.c_str());
                 happy = false;
                 local->setSize(0);
                 return *local;
@@ -138,7 +145,7 @@ yarp::os::ConnectionReader& BayerCarrier::modifyIncomingData(yarp::os::Connectio
 
         setFormat(config.check("order",Value("grbg")).asString().c_str());
         header_in.setFromImage(in);
-        //printf("Need reset.\n");
+        yCTrace(BAYERCARRIER, "Need reset.");
         bayer_method = m;
         need_reset = false;
         processBuffered();
@@ -162,9 +169,8 @@ bool BayerCarrier::debayerHalf(yarp::sig::ImageOf<PixelMono>& src,
         return true;
     }
 
-    if (bayer_method_set && !warned) {
-        fprintf(stderr, "Not using dc1394 debayer methods (image width not a multiple of 8)\n");
-        warned = true;
+    if (bayer_method_set) {
+        yCWarning/*Once*/(BAYERCARRIER, "Not using dc1394 debayer methods (image width not a multiple of 8)");
     }
 
     // a safer implementation that doesn't use dc1394
@@ -206,9 +212,8 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
         return true;
     }
 
-    if (bayer_method_set && !warned) {
-        fprintf(stderr, "Not using dc1394 debayer methods (image width not a multiple of 8)\n");
-        warned = true;
+    if (bayer_method_set) {
+        yCWarning/*Once*/(BAYERCARRIER, "Not using dc1394 debayer methods (image width not a multiple of 8)");
     }
     int w = dest.width();
     int h = dest.height();
@@ -300,7 +305,7 @@ bool BayerCarrier::processBuffered() const {
 
 bool BayerCarrier::processBuffered() {
     if (!have_result) {
-        //printf("Copy-based conversion.\n");
+        yCTrace(BAYERCARRIER, "Copy-based conversion.");
         if (half) {
             out.resize(in.width()/2,in.height()/2);
             debayerHalf(in,out);
@@ -320,7 +325,7 @@ bool BayerCarrier::processDirect(yarp::os::Bytes& bytes) {
         memcpy(bytes.get(),out.getRawImage(),bytes.length());
         return true;
     }
-    //printf("Copyless conversion\n");
+    yCTrace(BAYERCARRIER, "Copyless conversion");
     ImageOf<PixelRgb> wrap;
     wrap.setQuantum(out.getQuantum());
     wrap.setExternal(bytes.get(),out.width(),out.height());

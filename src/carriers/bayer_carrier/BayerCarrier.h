@@ -44,7 +44,6 @@ private:
     bool have_result;
     bool happy;
     bool half;
-    bool warned;
     bool bayer_method_set;
 
     int bayer_method;
@@ -70,7 +69,6 @@ public:
         have_result(false),
         happy(local!=0),
         half(false),
-        warned(false),
         bayer_method_set(false),
         bayer_method(-1),
         goff(0),
