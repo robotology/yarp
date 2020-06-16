@@ -17,7 +17,9 @@ if(NOT SKIP_xmlrpc)
   target_sources(yarp_xmlrpc PRIVATE XmlRpcCarrier.h
                                      XmlRpcCarrier.cpp
                                      XmlRpcStream.h
-                                     XmlRpcStream.cpp)
+                                     XmlRpcStream.cpp
+                                     XmlRpcLogComponent.h
+                                     XmlRpcLogComponent.cpp)
 
   check_cxx_compiler_flag("-Wformat-nonliteral" CXX_HAS_WFORMAT_NONLITERAL)
   if(CXX_HAS_WFORMAT_NONLITERAL)

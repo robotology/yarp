@@ -8,7 +8,7 @@
 
 #include "XmlRpcCarrier.h"
 
-#include "XmlRpc.h"
+#include "XmlRpcLogComponent.h"
 
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/Name.h>
@@ -18,6 +18,8 @@
 #include <yarp/os/SizedWriter.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Network.h>
+
+#include <XmlRpc.h>
 
 #include <cstdio>
 
@@ -130,7 +132,7 @@ bool XmlRpcCarrier::write(ConnectionState& proto, SizedWriter& writer)
     int start = 0;
     if (sender) {
         if (req.length()<8) {
-            fprintf(stderr, "XmlRpcCarrier fail, %s:%d\n", __FILE__, __LINE__);
+            yCError(XMLRPCCARRIER, "XmlRpcCarrier fail");
             return false;
         }
         for (char i : req) {
