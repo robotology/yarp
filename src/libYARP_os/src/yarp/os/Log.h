@@ -13,6 +13,7 @@
 
 #include <cstdint>
 #include <iosfwd>
+#include <mutex>
 
 #if defined(__GNUC__)
 #    define __YFUNCTION__ __PRETTY_FUNCTION__
@@ -51,9 +52,12 @@ class LogPrivate;
 class YARP_os_API Log
 {
 public:
+    using Predicate = bool(*)();
+
     Log(const char* file,
         const unsigned int line,
         const char* func,
+        const Predicate pred = nullptr,
         const LogComponent& comp = defaultLogComponent());
 
     Log();
@@ -156,22 +160,96 @@ private:
 
 
 
+
+#define YARP_ONCE_CALLBACK                               \
+    [](){                                                \
+        static std::atomic_flag flag = ATOMIC_FLAG_INIT; \
+        return !flag.test_and_set();                     \
+    }
+
+#define YARP_THREADONCE_CALLBACK                               \
+    [](){                                                      \
+        thread_local std::atomic_flag flag = ATOMIC_FLAG_INIT; \
+        return !flag.test_and_set();                           \
+    }
+
+#define YARP_THROTTLE_CALLBACK(period)                   \
+    [](){                                                \
+        static double last = -period;                    \
+        static std::mutex mutex;                         \
+        std::lock_guard<std::mutex> lock(mutex);         \
+        double now = yarp::os::SystemClock::nowSystem(); \
+        if (now >= last + period) {                      \
+            last = now;                                  \
+            return true;                                 \
+        }                                                \
+        return false;                                    \
+    }
+
+#define YARP_THREADTHROTTLE_CALLBACK(period)             \
+    [](){                                                \
+        thread_local double last = -period;              \
+        double now = yarp::os::SystemClock::nowSystem(); \
+        if (now >= last + period) {                      \
+            last = now;                                  \
+            return true;                                 \
+        }                                                \
+        return false;                                    \
+    }
+
+
+
 #ifndef NDEBUG
-#  define yTrace(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).trace(__VA_ARGS__)
+#  define yTrace(...)                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).trace(__VA_ARGS__)
+#  define yTraceOnce(...)                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yTraceThreadOnce(...)             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).trace(__VA_ARGS__)
+#  define yTraceThrottle(period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
+#  define yTraceThreadThrottle(period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).trace(__VA_ARGS__)
 #else
-#  define yTrace(...)   yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTrace(...)                       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceOnce(...)                   yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceThreadOnce(...)             yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceThrottle(period, ...)       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yTraceThreadThrottle(period, ...) yarp::os::Log::nolog(__VA_ARGS__)
 #endif
 
 #ifndef YARP_NO_DEBUG_OUTPUT
-#  define yDebug(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).debug(__VA_ARGS__)
+#  define yDebug(...)                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).debug(__VA_ARGS__)
+#  define yDebugOnce(...)                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yDebugThreadOnce(...)             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).debug(__VA_ARGS__)
+#  define yDebugThrottle(period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
+#  define yDebugThreadThrottle(period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).debug(__VA_ARGS__)
 #else
-#  define yDebug(...)   yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebug(...)                       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugOnce(...)                   yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugThreadOnce(...)             yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugThrottle(period, ...)       yarp::os::Log::nolog(__VA_ARGS__)
+#  define yDebugThreadThrottle(period, ...) yarp::os::Log::nolog(__VA_ARGS__)
 #endif
 
-#define yInfo(...)    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).info(__VA_ARGS__)
-#define yWarning(...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).warning(__VA_ARGS__)
-#define yError(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).error(__VA_ARGS__)
-#define yFatal(...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).fatal(__VA_ARGS__)
+#define yInfo(...)                          yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).info(__VA_ARGS__)
+#define yInfoOnce(...)                      yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).info(__VA_ARGS__)
+#define yInfoThreadOnce(...)                yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).info(__VA_ARGS__)
+#define yInfoThrottle(period, ...)          yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+#define yInfoThreadThrottle(period, ...)    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).info(__VA_ARGS__)
+
+#define yWarning(...)                       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).warning(__VA_ARGS__)
+#define yWarningOnce(...)                   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).warning(__VA_ARGS__)
+#define yWarningThreadOnce(...)             yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).warning(__VA_ARGS__)
+#define yWarningThrottle(period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+#define yWarningThreadThrottle(period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).warning(__VA_ARGS__)
+
+#define yError(...)                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).error(__VA_ARGS__)
+#define yErrorOnce(...)                     yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_ONCE_CALLBACK).error(__VA_ARGS__)
+#define yErrorThreadOnce(...)               yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADONCE_CALLBACK).error(__VA_ARGS__)
+#define yErrorThrottle(period, ...)         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+#define yErrorThreadThrottle(period, ...)   yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, YARP_THREADTHROTTLE_CALLBACK(period)).error(__VA_ARGS__)
+
+#define yFatal(...)                         yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__).fatal(__VA_ARGS__)
+
+
+
+
 
 #ifndef NDEBUG
 #  define yAssert(x)                                                       \

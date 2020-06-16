@@ -59,6 +59,7 @@ public:
     LogPrivate(const char* file,
                const unsigned int line,
                const char* func,
+               const yarp::os::Log::Predicate pred,
                const LogComponent& comp);
 
     void log(yarp::os::Log::LogType type,
@@ -131,12 +132,13 @@ public:
     bool enable_vt_colors();
 #endif
 
-    const char* file;         // NOLINT(misc-non-private-member-variables-in-classes)
-    const unsigned int line;  // NOLINT(misc-non-private-member-variables-in-classes)
-    const char* func;         // NOLINT(misc-non-private-member-variables-in-classes)
-    double systemtime;        // NOLINT(misc-non-private-member-variables-in-classes)
-    double networktime;       // NOLINT(misc-non-private-member-variables-in-classes)
-    const LogComponent& comp; // NOLINT(misc-non-private-member-variables-in-classes)
+    const char* file;                    // NOLINT(misc-non-private-member-variables-in-classes)
+    const unsigned int line;             // NOLINT(misc-non-private-member-variables-in-classes)
+    const char* func;                    // NOLINT(misc-non-private-member-variables-in-classes)
+    double systemtime;                   // NOLINT(misc-non-private-member-variables-in-classes)
+    double networktime;                  // NOLINT(misc-non-private-member-variables-in-classes)
+    const yarp::os::Log::Predicate pred; // NOLINT(misc-non-private-member-variables-in-classes)
+    const LogComponent& comp;            // NOLINT(misc-non-private-member-variables-in-classes)
 
     static std::atomic<bool> yarprun_format;
     static std::atomic<bool> colored_output;
@@ -533,12 +535,14 @@ const yarp::os::LogComponent yarp::os::impl::LogPrivate::log_internal_component(
 yarp::os::impl::LogPrivate::LogPrivate(const char* file,
                                        unsigned int line,
                                        const char* func,
+                                       const yarp::os::Log::Predicate pred,
                                        const LogComponent& comp) :
         file(file),
         line(line),
         func(func),
         systemtime(yarp::os::SystemClock::nowSystem()),
         networktime(!yarp::os::NetworkBase::isNetworkInitialized() ? 0.0 : (yarp::os::Time::isSystemClock() ? systemtime : yarp::os::Time::now())),
+        pred(pred),
         comp(comp)
 {
 #ifdef YARP_HAS_WIN_VT_SUPPORT
@@ -606,22 +610,24 @@ void yarp::os::impl::LogPrivate::log(yarp::os::Log::LogType type,
     constexpr size_t YARP_MAX_LOG_MSG_SIZE = 1024;
 
     if (msg != nullptr) {
-        char buf[YARP_MAX_LOG_MSG_SIZE];
-        auto w = static_cast<size_t>(vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args));
-        buf[YARP_MAX_LOG_MSG_SIZE - 1] = 0;
-        auto p = std::min(w - 1, YARP_MAX_LOG_MSG_SIZE);
-        if (w > 0 && p < YARP_MAX_LOG_MSG_SIZE && buf[p] == '\n' && msg[strlen(msg) - 1] == '\n') {
-            yarp::os::Log(file, line, func, log_internal_component).warning("Removing extra '\\n' (c-style)");
-            buf[p] = 0;
-        }
+        if (!pred || pred()) {
+            char buf[YARP_MAX_LOG_MSG_SIZE];
+            auto w = static_cast<size_t>(vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args));
+            buf[YARP_MAX_LOG_MSG_SIZE - 1] = 0;
+            auto p = std::min(w - 1, YARP_MAX_LOG_MSG_SIZE);
+            if (w > 0 && p < YARP_MAX_LOG_MSG_SIZE && buf[p] == '\n' && msg[strlen(msg) - 1] == '\n') {
+                yarp::os::Log(file, line, func, nullptr, log_internal_component).warning("Removing extra '\\n' (c-style)");
+                buf[p] = 0;
+            }
 
-        do_log(type, buf, file, line, func, systemtime, networktime, comp);
+            do_log(type, buf, file, line, func, systemtime, networktime, comp);
 
-        if (w > YARP_MAX_LOG_MSG_SIZE - 1) {
-            yarp::os::Log(file, line, func, log_internal_component).warning("Previous message was truncated");
+            if (w > YARP_MAX_LOG_MSG_SIZE - 1) {
+                yarp::os::Log(file, line, func, nullptr, log_internal_component).warning("Previous message was truncated");
+            }
         }
     } else {
-        yarp::os::Log(file, line, func, log_internal_component).warning("Unexpected nullptr received");
+        yarp::os::Log(file, line, func, nullptr, log_internal_component).warning("Unexpected nullptr received");
     }
 }
 
@@ -639,7 +645,7 @@ void yarp::os::impl::LogPrivate::do_log(yarp::os::Log::LogType type,
         print_cb(type, msg, file, line, func, systemtime, networktime, comp.name());
     } else {
         if (comp != log_internal_component) {
-            yarp::os::Log(file, line, func, log_internal_component).debug("Not printing [%s][%s]", comp.name(), msg);
+            yarp::os::Log(file, line, func, nullptr, log_internal_component).debug("Not printing [%s][%s]", comp.name(), msg);
         }
     }
 
@@ -648,7 +654,7 @@ void yarp::os::impl::LogPrivate::do_log(yarp::os::Log::LogType type,
         forward_cb(type, msg, file, line, func, systemtime, networktime, comp.name());
     } else {
         if (comp != log_internal_component) {
-            yarp::os::Log(file, line, func, log_internal_component).debug("Not forwarding [%s][%s]", comp.name(), msg);
+            yarp::os::Log(file, line, func, nullptr, log_internal_component).debug("Not forwarding [%s][%s]", comp.name(), msg);
         }
     }
 }
@@ -782,13 +788,14 @@ const yarp::os::LogComponent& yarp::os::Log::logInternalComponent()
 yarp::os::Log::Log(const char* file,
                    unsigned int line,
                    const char* func,
+                   const Predicate pred,
                    const LogComponent& comp) :
-        mPriv(new yarp::os::impl::LogPrivate(file, line, func, comp))
+        mPriv(new yarp::os::impl::LogPrivate(file, line, func, pred, comp))
 {
 }
 
 yarp::os::Log::Log() :
-        mPriv(new yarp::os::impl::LogPrivate(nullptr, 0, nullptr, nullptr))
+        mPriv(new yarp::os::impl::LogPrivate(nullptr, 0, nullptr, nullptr, nullptr))
 {
 }
 
@@ -824,6 +831,7 @@ yarp::os::LogStream yarp::os::Log::trace() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->pred,
                                mPriv->comp);
 }
 
@@ -842,9 +850,9 @@ yarp::os::LogStream yarp::os::Log::debug() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->pred,
                                mPriv->comp);
 }
-
 
 void yarp::os::Log::info(const char* msg, ...) const
 {
@@ -860,6 +868,7 @@ yarp::os::LogStream yarp::os::Log::info() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->pred,
                                mPriv->comp);
 }
 
@@ -878,6 +887,7 @@ yarp::os::LogStream yarp::os::Log::warning() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->pred,
                                mPriv->comp);
 }
 
@@ -896,6 +906,7 @@ yarp::os::LogStream yarp::os::Log::error() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->pred,
                                mPriv->comp);
 }
 
@@ -915,6 +926,7 @@ yarp::os::LogStream yarp::os::Log::fatal() const
                                mPriv->file,
                                mPriv->line,
                                mPriv->func,
+                               mPriv->pred,
                                mPriv->comp);
 }
 

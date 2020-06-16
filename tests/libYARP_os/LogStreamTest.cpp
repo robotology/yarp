@@ -8,8 +8,14 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LogComponent.h>
+#include <yarp/os/SystemClock.h>
+#include <yarp/os/Thread.h>
+#include <yarp/os/NetType.h>
 
 #include <yarp/os/impl/LogForwarder.h>
+
+#include <array>
+#include <thread>
 
 #include <catch.hpp>
 #include <harness.h>
@@ -57,6 +63,7 @@ YARP_LOG_COMPONENT(LOGSTREAM_COMPONENT_NULL,
 # define CNT_RESET int cnt = 1;
 # define CNT fprintf(stderr, "    --- <%d> ---\n", cnt++);
 #endif
+
 
 TEST_CASE("os::LogStreamTest", "[yarp::os]")
 {
@@ -191,6 +198,346 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCError(LOGSTREAM_COMPONENT) << v;
         CNT yCError(LOGSTREAM_COMPONENT_NOFW) << "This error with a component is not forwarded" << i;
         CNT yCError(LOGSTREAM_COMPONENT_NULL) << "This error with a component is neither not printed nor forwarded";
+    }
+
+    SECTION("Test yTraceOnce and yTraceThrottle")
+    {
+        CNT_RESET
+
+        const double start = yarp::os::SystemClock::nowSystem();
+        static constexpr double test_duration = 1.3;
+        static constexpr double period = 0.3;
+        static constexpr size_t SZ = 4;
+        std::array<std::thread, SZ> threads;
+        for (auto& t : threads) {
+            CNT yTraceOnce() << "This line is printed only once.";
+            CNT yTraceOnce() << "Also this line is printed only once.";
+
+            t = std::thread([start]()
+            {
+                while (true) {
+                    double now = yarp::os::SystemClock::nowSystem();
+                    if ((now - start) > test_duration) {
+                        break;
+                    }
+
+                    CNT yTraceOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yTraceThreadOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yTraceThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yTraceThreadThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yCTraceOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yCTraceThreadOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yCTraceThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yCTraceThreadThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+                }
+            });
+        }
+        for (auto& t : threads) {
+            t.join();
+        }
+    }
+
+    SECTION("Test yDebugOnce and yDebugThrottle")
+    {
+        CNT_RESET
+
+        const double start = yarp::os::SystemClock::nowSystem();
+        static constexpr double test_duration = 1.3;
+        static constexpr double period = 0.3;
+        static constexpr size_t SZ = 4;
+        std::array<std::thread, SZ> threads;
+        for (auto& t : threads) {
+            CNT yDebugOnce() << "This line is printed only once.";
+            CNT yDebugOnce() << "Also this line is printed only once.";
+
+            t = std::thread([start]()
+            {
+                while (true) {
+                    double now = yarp::os::SystemClock::nowSystem();
+                    if ((now - start) > test_duration) {
+                        break;
+                    }
+
+                    CNT yDebugOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yDebugThreadOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yDebugThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yDebugThreadThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yCDebugOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yCDebugThreadOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yCDebugThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yCDebugThreadThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+                }
+            });
+        }
+        for (auto& t : threads) {
+            t.join();
+        }
+    }
+
+    SECTION("Test yInfoOnce and yInfoThrottle")
+    {
+        CNT_RESET
+
+        const double start = yarp::os::SystemClock::nowSystem();
+        static constexpr double test_duration = 1.3;
+        static constexpr double period = 0.3;
+        static constexpr size_t SZ = 4;
+        std::array<std::thread, SZ> threads;
+        for (auto& t : threads) {
+            CNT yInfoOnce() << "This line is printed only once.";
+            CNT yInfoOnce() << "Also this line is printed only once.";
+
+            t = std::thread([start]()
+            {
+                while (true) {
+                    double now = yarp::os::SystemClock::nowSystem();
+                    if ((now - start) > test_duration) {
+                        break;
+                    }
+
+                    CNT yInfoOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yInfoThreadOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yInfoThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yInfoThreadThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yCInfoOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yCInfoThreadOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yCInfoThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yCInfoThreadThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+                }
+            });
+        }
+        for (auto& t : threads) {
+            t.join();
+        }
+    }
+
+    SECTION("Test yWarningOnce and yWarningThrottle")
+    {
+        CNT_RESET
+
+        const double start = yarp::os::SystemClock::nowSystem();
+        static constexpr double test_duration = 1.3;
+        static constexpr double period = 0.3;
+        static constexpr size_t SZ = 4;
+        std::array<std::thread, SZ> threads;
+        for (auto& t : threads) {
+            CNT yWarningOnce() << "This line is printed only once.";
+            CNT yWarningOnce() << "Also this line is printed only once.";
+
+            t = std::thread([start]()
+            {
+                while (true) {
+                    double now = yarp::os::SystemClock::nowSystem();
+                    if ((now - start) > test_duration) {
+                        break;
+                    }
+
+                    CNT yWarningOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yWarningThreadOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yWarningThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yWarningThreadThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yCWarningOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yCWarningThreadOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yCWarningThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yCWarningThreadThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+                }
+            });
+        }
+        for (auto& t : threads) {
+            t.join();
+        }
+    }
+
+    SECTION("Test yErrorOnce and yErrorThrottle")
+    {
+        CNT_RESET
+
+        const double start = yarp::os::SystemClock::nowSystem();
+        static constexpr double test_duration = 1.3;
+        static constexpr double period = 0.3;
+        static constexpr size_t SZ = 4;
+        std::array<std::thread, SZ> threads;
+        for (auto& t : threads) {
+            CNT yErrorOnce() << "This line is printed only once.";
+            CNT yErrorOnce() << "Also this line is printed only once.";
+
+            t = std::thread([start]()
+            {
+                while (true) {
+                    double now = yarp::os::SystemClock::nowSystem();
+                    if ((now - start) > test_duration) {
+                        break;
+                    }
+
+                    CNT yErrorOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yErrorThreadOnce()
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yErrorThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yErrorThreadThrottle(period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yCErrorOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yCErrorThreadOnce(LOGSTREAM_COMPONENT)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yCErrorThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yCErrorThreadThrottle(LOGSTREAM_COMPONENT, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+                }
+            });
+        }
+        for (auto& t : threads) {
+            t.join();
+        }
     }
 
     SECTION("Other log tests")
