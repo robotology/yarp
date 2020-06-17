@@ -242,7 +242,7 @@ bool realsense2Tracking::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::s
 
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset dataframe = m_pipeline.wait_for_frames();
-    auto fg = dataframe.first(RS2_STREAM_GYRO, RS2_FORMAT_MOTION_XYZ32F);
+    auto fg = dataframe.first_or_default(RS2_STREAM_GYRO, RS2_FORMAT_MOTION_XYZ32F);
     rs2::motion_frame gyro = fg.as<rs2::motion_frame>();
     m_last_gyro = gyro.get_motion_data();
     out.resize(3);
@@ -282,9 +282,11 @@ bool realsense2Tracking::getThreeAxisLinearAccelerometerFrameName(size_t sens_in
 
 bool realsense2Tracking::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::sig::Vector& out, double& timestamp) const
 {
+    if (sens_index != 0) { return false; }
+
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset dataframe = m_pipeline.wait_for_frames();
-    auto fa = dataframe.first(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F);
+    auto fa = dataframe.first_or_default(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F);
     rs2::motion_frame accel = fa.as<rs2::motion_frame>();
     m_last_accel = accel.get_motion_data();
     out.resize(3);
@@ -326,21 +328,20 @@ bool realsense2Tracking::getOrientationSensorFrameName(size_t sens_index, std::s
 bool realsense2Tracking::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const
 {
     if (sens_index != 0) { return false; }
-    {
-        std::lock_guard<std::mutex> guard(m_mutex);
-        rs2::frameset dataframe = m_pipeline.wait_for_frames();
-        auto fa = dataframe.first(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F);
-        rs2::pose_frame pose = fa.as<rs2::pose_frame>();
-        m_last_pose = pose.get_pose_data();
-        yarp::math::Quaternion q(m_last_pose.rotation.x, m_last_pose.rotation.y, m_last_pose.rotation.z, m_last_pose.rotation.w);
-        yarp::sig::Matrix mat = q.toRotationMatrix3x3();
-        yarp::sig::Vector rpy_temp = yarp::math::dcm2rpy(mat);
-        rpy[0] = 0 + rpy_temp[0] * 180 / M_PI; //here we can eventually adjust the sign and/or sum an offset
-        rpy[1] = 0 + rpy_temp[1] * 180 / M_PI;
-        rpy[2] = 0 + rpy_temp[2] * 180 / M_PI;
-       return true;
-    }
-    return false;
+
+    std::lock_guard<std::mutex> guard(m_mutex);
+    rs2::frameset dataframe = m_pipeline.wait_for_frames();
+    auto fa = dataframe.first_or_default(RS2_STREAM_POSE);
+    rs2::pose_frame pose = fa.as<rs2::pose_frame>();
+    m_last_pose = pose.get_pose_data();
+    yarp::math::Quaternion q(m_last_pose.rotation.x, m_last_pose.rotation.y, m_last_pose.rotation.z, m_last_pose.rotation.w);
+    yarp::sig::Matrix mat = q.toRotationMatrix3x3();
+    yarp::sig::Vector rpy_temp = yarp::math::dcm2rpy(mat);
+    rpy.resize(3);
+    rpy[0] = 0 + rpy_temp[0] * 180 / M_PI; //here we can eventually adjust the sign and/or sum an offset
+    rpy[1] = 0 + rpy_temp[1] * 180 / M_PI;
+    rpy[2] = 0 + rpy_temp[2] * 180 / M_PI;
+    return true;
 }
 
 //-------------------------------------------------------------------------------------------------------
@@ -374,9 +375,11 @@ bool realsense2Tracking::getPositionSensorFrameName(size_t sens_index, std::stri
 
 bool realsense2Tracking::getPositionSensorMeasure(size_t sens_index, yarp::sig::Vector& xyz, double& timestamp) const
 {
+    if (sens_index != 0) { return false; }
+
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset dataframe = m_pipeline.wait_for_frames();
-    auto fa = dataframe.first(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F);
+    auto fa = dataframe.first_or_default(RS2_STREAM_POSE);
     rs2::pose_frame pose = fa.as<rs2::pose_frame>();
     m_last_pose = pose.get_pose_data();
     xyz.resize(3);
@@ -418,7 +421,7 @@ bool realsense2Tracking::getPoseSensorMeasureAsXYZRPY(size_t sens_index, yarp::s
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     rs2::frameset dataframe = m_pipeline.wait_for_frames();
-    auto fa = dataframe.first(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F);
+    auto fa = dataframe.first_or_default(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F);
     rs2::pose_frame pose = fa.as<rs2::pose_frame>();
     m_last_pose = pose.get_pose_data();
     xyzrpy.resize(6);
