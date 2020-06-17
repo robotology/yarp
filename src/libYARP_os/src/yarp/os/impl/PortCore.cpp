@@ -2394,10 +2394,12 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                             if (portName == key) {
                                 Bottle* qos_prop = qos.find("qos").asList();
                                 if (qos_prop != nullptr) {
+                                    int tos = -1;
                                     if (qos_prop->check("priority")) {
-                                        NetInt32 priority = qos_prop->find("priority").asVocab();
-                                        // set the packet DSCP value based on some predefined priority levels
+                                        // set the packet TOS value on the socket based on some predefined
+                                        // priority levels.
                                         // the expected levels are: LOW, NORM, HIGH, CRIT
+                                        NetInt32 priority = qos_prop->find("priority").asVocab();
                                         int dscp;
                                         switch (priority) {
                                         case yarp::os::createVocab('L', 'O', 'W'):
@@ -2416,22 +2418,31 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                             dscp = -1;
                                         }
                                         if (dscp >= 0) {
-                                            bOk = setTypeOfService(unit, dscp << 2);
+                                            tos = (dscp << 2);
                                         }
                                     } else if (qos_prop->check("dscp")) {
+                                        // Set the packet TOS value on the socket based on the DSCP level
                                         QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab());
                                         int dscp = -1;
                                         if (dscp_class == QosStyle::DSCP_Invalid) {
-                                            dscp = qos_prop->find("dscp").asInt32();
+                                            auto dscp_val = qos_prop->find("dscp");
+                                            if (dscp_val.isInt32()) {
+                                                dscp = dscp_val.asInt32();
+                                            }
                                         } else {
                                             dscp = static_cast<int>(dscp_class);
                                         }
                                         if ((dscp >= 0) && (dscp < 64)) {
-                                            bOk = setTypeOfService(unit, dscp << 2);
+                                            tos = (dscp << 2);
                                         }
                                     } else if (qos_prop->check("tos")) {
-                                        int tos = qos_prop->find("tos").asInt32();
-                                        // set the TOS value (backward compatibility)
+                                        // Set the TOS value directly
+                                        auto tos_val = qos_prop->find("tos");
+                                        if (tos_val.isInt32()) {
+                                            tos = tos_val.asInt32();
+                                        }
+                                    }
+                                    if (tos >= 0) {
                                         bOk = setTypeOfService(unit, tos);
                                     }
                                 } else {
@@ -2740,12 +2751,19 @@ bool PortCore::setTypeOfService(PortCoreUnit* unit, int tos)
         return false;
     }
 
+    yCDebug(PORTCORE, "Trying to set TOS = %d", tos);
+
     if (unit->isOutput()) {
         auto* outUnit = dynamic_cast<PortCoreOutputUnit*>(unit);
         if (outUnit != nullptr) {
             OutputProtocol* op = outUnit->getOutPutProtocol();
             if (op != nullptr) {
-                return op->getOutputStream().setTypeOfService(tos);
+                yCDebug(PORTCORE, "Trying to set TOS = %d on output unit", tos);
+                bool ok = op->getOutputStream().setTypeOfService(tos);
+                if (!ok) {
+                    yCWarning(PORTCORE, "Setting TOS on output unit failed");
+                }
+                return ok;
             }
         }
     }
@@ -2760,7 +2778,12 @@ bool PortCore::setTypeOfService(PortCoreUnit* unit, int tos)
         if (inUnit != nullptr) {
             InputProtocol* ip = inUnit->getInPutProtocol();
             if ((ip != nullptr) && ip->getOutput().isOk()) {
-                return ip->getOutput().getOutputStream().setTypeOfService(tos);
+                yCDebug(PORTCORE, "Trying to set TOS = %d on input unit", tos);
+                bool ok = ip->getOutput().getOutputStream().setTypeOfService(tos);
+                if (!ok) {
+                    yCWarning(PORTCORE, "Setting TOS on input unit failed");
+                }
+                return ok;
             }
         }
     }
