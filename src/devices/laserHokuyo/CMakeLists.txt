@@ -10,19 +10,19 @@ yarp_prepare_plugin(laserHokuyo
                     INCLUDE laserHokuyo.h)
 
 if(NOT SKIP_laserHokuyo)
-  yarp_add_plugin(laserHokuyo)
+  yarp_add_plugin(yarp_laserHokuyo)
 
-  target_sources(laserHokuyo PRIVATE laserHokuyo.h
-                                     laserHokuyo.cpp)
+  target_sources(yarp_laserHokuyo PRIVATE laserHokuyo.h
+                                          laserHokuyo.cpp)
 
-  target_link_libraries(laserHokuyo PRIVATE YARP::YARP_os
-                                            YARP::YARP_sig
-                                            YARP::YARP_dev)
+  target_link_libraries(yarp_laserHokuyo PRIVATE YARP::YARP_os
+                                                 YARP::YARP_sig
+                                                 YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 
-  yarp_install(TARGETS laserHokuyo
+  yarp_install(TARGETS yarp_laserHokuyo
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -31,5 +31,5 @@ if(NOT SKIP_laserHokuyo)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET laserHokuyo PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_laserHokuyo PROPERTY FOLDER "Plugins/Device")
 endif()

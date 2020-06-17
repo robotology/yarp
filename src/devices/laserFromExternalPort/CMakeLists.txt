@@ -10,19 +10,19 @@ yarp_prepare_plugin(laserFromExternalPort
                     INCLUDE laserFromExternalPort.h)
 
 if(NOT SKIP_laserFromExternalPort)
-  yarp_add_plugin(laserFromExternalPort)
+  yarp_add_plugin(yarp_laserFromExternalPort)
 
-  target_sources(laserFromExternalPort PRIVATE laserFromExternalPort.h
-                                               laserFromExternalPort.cpp)
+  target_sources(yarp_laserFromExternalPort PRIVATE laserFromExternalPort.h
+                                                    laserFromExternalPort.cpp)
 
-  target_link_libraries(laserFromExternalPort PRIVATE YARP::YARP_os
-                                                      YARP::YARP_sig
-                                                      YARP::YARP_dev)
+  target_link_libraries(yarp_laserFromExternalPort PRIVATE YARP::YARP_os
+                                                           YARP::YARP_sig
+                                                           YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 
-  yarp_install(TARGETS laserFromExternalPort
+  yarp_install(TARGETS yarp_laserFromExternalPort
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -31,5 +31,5 @@ if(NOT SKIP_laserFromExternalPort)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET laserFromExternalPort PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_laserFromExternalPort PROPERTY FOLDER "Plugins/Device")
 endif()

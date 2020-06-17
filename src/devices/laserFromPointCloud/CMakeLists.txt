@@ -10,16 +10,16 @@ yarp_prepare_plugin(laserFromPointCloud
                     INCLUDE laserFromPointCloud.h)
 
 if(NOT SKIP_laserFromPointCloud)
-  yarp_add_plugin(laserFromPointCloud)
+  yarp_add_plugin(yarp_laserFromPointCloud)
 
-  target_sources(laserFromPointCloud PRIVATE laserFromPointCloud.h
-                                             laserFromPointCloud.cpp)
+  target_sources(yarp_laserFromPointCloud PRIVATE laserFromPointCloud.h
+                                                  laserFromPointCloud.cpp)
 
-  target_link_libraries(laserFromPointCloud PRIVATE YARP::YARP_os
-                                                    YARP::YARP_sig
-                                                    YARP::YARP_dev
-                                                    YARP::YARP_math
-                                                    YARP::YARP_rosmsg)
+  target_link_libraries(yarp_laserFromPointCloud PRIVATE YARP::YARP_os
+                                                         YARP::YARP_sig
+                                                         YARP::YARP_dev
+                                                         YARP::YARP_math
+                                                         YARP::YARP_rosmsg)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
@@ -27,7 +27,7 @@ if(NOT SKIP_laserFromPointCloud)
                                                       YARP_math
                                                       YARP_rosmsg)
 
-  yarp_install(TARGETS laserFromPointCloud
+  yarp_install(TARGETS yarp_laserFromPointCloud
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -36,5 +36,5 @@ if(NOT SKIP_laserFromPointCloud)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET laserFromPointCloud PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_laserFromPointCloud PROPERTY FOLDER "Plugins/Device")
 endif()

@@ -10,19 +10,19 @@ yarp_prepare_plugin(laserFromDepth
                     INCLUDE laserFromDepth.h)
 
 if(NOT SKIP_laserFromDepth)
-  yarp_add_plugin(laserFromDepth)
+  yarp_add_plugin(yarp_laserFromDepth)
 
-  target_sources(laserFromDepth PRIVATE laserFromDepth.h
-                                        laserFromDepth.cpp)
+  target_sources(yarp_laserFromDepth PRIVATE laserFromDepth.h
+                                             laserFromDepth.cpp)
 
-  target_link_libraries(laserFromDepth PRIVATE YARP::YARP_os
-                                               YARP::YARP_sig
-                                               YARP::YARP_dev)
+  target_link_libraries(yarp_laserFromDepth PRIVATE YARP::YARP_os
+                                                    YARP::YARP_sig
+                                                    YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 
-  yarp_install(TARGETS laserFromDepth
+  yarp_install(TARGETS yarp_laserFromDepth
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -31,5 +31,5 @@ if(NOT SKIP_laserFromDepth)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET laserFromDepth PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_laserFromDepth PROPERTY FOLDER "Plugins/Device")
 endif()
