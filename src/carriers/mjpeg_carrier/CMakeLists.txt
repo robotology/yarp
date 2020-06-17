@@ -26,7 +26,9 @@ if(NOT SKIP_mjpeg)
                                     MjpegStream.h
                                     MjpegStream.cpp
                                     MjpegDecompression.h
-                                    MjpegDecompression.cpp)
+                                    MjpegDecompression.cpp
+                                    MjpegLogComponent.h
+                                    MjpegLogComponent.cpp)
 
   target_link_libraries(yarp_mjpeg PRIVATE YARP::YARP_os
                                            YARP::YARP_sig

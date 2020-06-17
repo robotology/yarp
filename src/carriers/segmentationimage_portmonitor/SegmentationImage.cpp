@@ -9,13 +9,23 @@
 #include "SegmentationImage.h"
 
 #include <algorithm>
-#include <cstdio>
 #include <cmath>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/sig/Image.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
+
+namespace {
+YARP_LOG_COMPONENT(SEGMENTATIONIMAGE,
+                   "yarp.carrier.portmonitor.segmentationimage",
+                   yarp::os::Log::minimumPrintLevel(),
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::printCallback(),
+                   nullptr)
+}
+
 
 rgbColor string2color(std::string colorstring)
 {
@@ -119,7 +129,7 @@ bool SegmentationImageConverter::accept(yarp::os::Things& thing)
     yarp::sig::Image* img = thing.cast_as<Image>();
     if(img == nullptr)
     {
-        printf("SegmentationImageConverter: expected type FlexImage but got wrong data type!\n");
+        yCError(SEGMENTATIONIMAGE, "SegmentationImageConverter: expected type FlexImage but got wrong data type!");
         return false;
     }
 
@@ -128,7 +138,8 @@ bool SegmentationImageConverter::accept(yarp::os::Things& thing)
         return true;
     }
 
-    printf("SegmentationImageConverter: expected %s or %s, got %s, not doing any conversion!\n",
+    yCError(SEGMENTATIONIMAGE,
+            "SegmentationImageConverter: expected %s or %s, got %s, not doing any conversion!",
             yarp::os::Vocab::decode(VOCAB_PIXEL_MONO).c_str(),
             yarp::os::Vocab::decode(VOCAB_PIXEL_MONO16).c_str(),
             yarp::os::Vocab::decode(img->getPixelCode()).c_str() );

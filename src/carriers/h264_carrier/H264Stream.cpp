@@ -6,14 +6,16 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Log.h>
+#include "H264Stream.h"
+#include "H264LogComponent.h"
+
+#include <yarp/os/LogStream.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
 #include <cstdio>
 #include <cstring>
 
-#include "H264Stream.h"
 
 //#define debug_time 1
 
@@ -114,7 +116,6 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
 
 #endif
 
-    bool debug = false;
     if (remaining==0)
     {
         if (phase==1)
@@ -148,15 +149,21 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
             count++;
             if(count>=MAX_COUNT)
             {
-                printf("STREAM On %d times: timeOnMutex is long %.6f sec\n",
-                        MAX_COUNT, (sumOf_timeOnMutex/MAX_COUNT) );
+                yCDebug(H264CARRIER,
+                       "STREAM On %d times: timeOnMutex is long %.6f sec",
+                       MAX_COUNT, (sumOf_timeOnMutex/MAX_COUNT) );
                 for(int x=0; x<5; x++)
                 {
-                    printf("STREAM: phase:%d, count=%lu, time=%.6f sec\n", x, countPerPhase[x], ((countPerPhase[x]==0) ? 0: sumOf_timeOfCopyPerPahse[x]/countPerPhase[x]) );
+                    yCDebug(H264CARRIER,
+                           "STREAM: phase:%d, count=%u, time=%.6f sec",
+                           x,
+                           countPerPhase[x],
+                           ((countPerPhase[x]==0) ? 0: sumOf_timeOfCopyPerPahse[x]/countPerPhase[x]) );
                     countPerPhase[x] = 0;
                     sumOf_timeOfCopyPerPahse[x] = 0;
                 }
-                printf("H264: sleep=%.6f\n\n", sumOf_timeBetweenCalls/count);
+                yCDebug(H264CARRIER, "sleep=%.6f", sumOf_timeBetweenCalls/count);
+                yCDebug(H264CARRIER);
                 count = 0;
                 isFirst = true;
                 sumOf_timeOnMutex = 0;
@@ -167,7 +174,7 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
         }
         else
         {
-            //printf("h264Stream::read has been called but no frame is available!!\n");
+            yCTrace(H264CARRIER, "h264Stream::read has been called but no frame is available!!");
             phase = 0;
             remaining = 0;
             cursor = nullptr;
@@ -177,11 +184,8 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
             return 0;
         }
 
+        yCTrace(H264CARRIER, "Length is \"%d\"", len);
 
-        if (debug)
-        {
-            printf("Length is \"%d\"\n", len);
-        }
         imgHeader.setFromImage(img);
         phase = 1;
         cursor = (char*)(&imgHeader);
@@ -203,7 +207,7 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
             memcpy(b.get(),cursor,allow);
             cursor+=allow;
             remaining-=allow;
-            if (debug) printf("returning %d bytes\n", static_cast<int>(allow));
+            yCDebug(H264CARRIER, "returning %zd bytes", allow);
             #ifdef debug_time
                 end_time = Time::now();
                 sumOf_timeOfCopyPerPahse[phase] +=(end_time - start_timeCopy);
@@ -213,11 +217,11 @@ yarp::conf::ssize_t H264Stream::read(Bytes& b)
         } else
         {
             yarp::conf::ssize_t result = delegate->getInputStream().read(b);
-            if (debug) printf("Read %zu bytes\n", result);
+            yCTrace(H264CARRIER, "Read %zu bytes", result);
             if (result>0)
             {
                 remaining-=result;
-                if (debug) printf("%zu bytes of meat\n", result);
+                yCTrace(H264CARRIER, "%zu bytes of meat", result);
                 return result;
             }
         }

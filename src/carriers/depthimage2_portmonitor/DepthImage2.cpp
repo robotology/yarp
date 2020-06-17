@@ -9,14 +9,22 @@
 #include "DepthImage2.h"
 
 #include <algorithm>
-#include <cstdio>
 #include <cmath>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/sig/Image.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
 
+namespace {
+YARP_LOG_COMPONENT(DEPTHIMAGE2,
+                   "yarp.carrier.portmonitor.depthimage2",
+                   yarp::os::Log::minimumPrintLevel(),
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::printCallback(),
+                   nullptr)
+}
 
 void getHeatMapColor(float value, unsigned char& r, unsigned char& g, unsigned char& b)
 {
@@ -69,7 +77,7 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
     auto* img = thing.cast_as<Image>();
     if(img == nullptr)
     {
-        printf("DepthImageConverter: expected type FlexImage but got wrong data type!\n");
+        yCError(DEPTHIMAGE2, "DepthImageConverter: expected type FlexImage but got wrong data type!");
         return false;
     }
 
@@ -78,7 +86,10 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
         return true;
     }
 
-    printf("DepthImageConverter: expected %s, got %s, not doing any conversion!\n", yarp::os::Vocab::decode(VOCAB_PIXEL_MONO_FLOAT).c_str(), yarp::os::Vocab::decode(img->getPixelCode()).c_str() );
+    yCError(DEPTHIMAGE2,
+            "DepthImageConverter: expected %s, got %s, not doing any conversion!",
+            yarp::os::Vocab::decode(VOCAB_PIXEL_MONO_FLOAT).c_str(),
+            yarp::os::Vocab::decode(img->getPixelCode()).c_str() );
     return false;
 }
 

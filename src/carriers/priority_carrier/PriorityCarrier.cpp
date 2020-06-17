@@ -9,7 +9,7 @@
 #include "PriorityCarrier.h"
 
 #include <yarp/os/Log.h>
-#include <yarp/os/ConnectionState.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/Route.h>
 
@@ -20,6 +20,16 @@
 
 using namespace yarp::os;
 using namespace yarp::math;
+
+namespace {
+YARP_LOG_COMPONENT(PRIORITYCARRIER,
+                   "yarp.carrier.priority",
+                   yarp::os::Log::minimumPrintLevel(),
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::printCallback(),
+                   nullptr)
+}
+
 
 /**
  * Class PriorityCarrier
@@ -33,7 +43,7 @@ ElectionOf<PriorityGroup>& PriorityCarrier::getPeers() {
     if (peers==nullptr) {
         peers = new ElectionOf<PriorityGroup>;
         NetworkBase::unlock();
-        yAssert(peers);
+        yCAssert(PRIORITYCARRIER, peers);
     } else {
         NetworkBase::unlock();
     }
@@ -43,7 +53,7 @@ ElectionOf<PriorityGroup>& PriorityCarrier::getPeers() {
 // Decide whether data should be accepted.
 bool PriorityCarrier::acceptIncomingData(yarp::os::ConnectionReader& reader) {
     getPeers().lock();
-    yAssert(group);
+    yCAssert(PRIORITYCARRIER, group);
     bool result = group->acceptIncomingData(reader,this);
     getPeers().unlock();
     return result;
@@ -110,7 +120,7 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
         double rate = options.check("rate", Value(10)).asInt32() / 1000.0;
         std::snprintf(dummy, 1024, "   db.rate: %fs\n", rate);
         msg+= dummy;
-        yInfo("%s", msg.c_str());
+        yCInfo(PRIORITYCARRIER, "%s", msg.c_str());
         debugger.stop();
         debugger.setPeriod(rate);
         debugger.start();
@@ -268,13 +278,13 @@ bool PriorityGroup::recalculate(double t)
         row++;
     }
 
-    //fprintf(stdout, "A:\n %s\n", InvA.toString(1).c_str());
+    yCTrace(PRIORITYCARRIER, "A:\n %s", InvA.toString(1).c_str());
 
     // calclulating the determinant
     double determinant = yarp::math::det(InvA);
     if(determinant == 0)
     {
-        yError("Inconsistent regulation! non-invertible weight matrix");
+        yCError(PRIORITYCARRIER, "Inconsistent regulation! non-invertible weight matrix");
         return false;
     }
 
@@ -282,9 +292,9 @@ bool PriorityGroup::recalculate(double t)
     InvA = yarp::math::luinv(InvA);
     Y = InvA * B;
 
-    //fprintf(stdout, "X:\n %s\n", X.toString(1).c_str());
-    //fprintf(stdout, "B:\n %s\n", B.toString(1).c_str());
-    //fprintf(stdout, "Y:\n %s\n", Y.toString(1).c_str());
+    yCTrace(PRIORITYCARRIER, "X:\n %s", X.toString(1).c_str());
+    yCTrace(PRIORITYCARRIER, "B:\n %s", B.toString(1).c_str());
+    yCTrace(PRIORITYCARRIER, "Y:\n %s", Y.toString(1).c_str());
 
     return true;
 }

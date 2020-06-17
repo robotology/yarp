@@ -8,6 +8,7 @@
 
 #include "XmlRpcStream.h"
 #include "XmlRpcValue.h"
+#include "XmlRpcLogComponent.h"
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Value.h>
@@ -81,21 +82,21 @@ Value toValue(XmlRpcValue& v, bool outer)
         return Value::getNullValue();
         break;
     }
-    //printf("Skipping %d\n", t);
+    yCTrace(XMLRPCCARRIER, "Skipping %d", t);
     return Value("(type not supported yet out of laziness)");
 }
 
 yarp::conf::ssize_t XmlRpcStream::read(Bytes& b)
 {
-    //printf("XMLRPC READ\n");
+    yCTrace(XMLRPCCARRIER, "XMLRPC READ");
     yarp::conf::ssize_t result = sis.read(b);
     if (result>0) {
-        //printf("RETURNING %d bytes\n", result);
+        yCTrace(XMLRPCCARRIER, "RETURNING %zd bytes", result);
         return result;
     }
-    //printf("No string\n");
+    yCTrace(XMLRPCCARRIER, "No string");
     if (result==0) {
-        //printf("Reading...\n");
+        yCTrace(XMLRPCCARRIER, "Reading...");
         bool ok = false;
         if (sender) {
             client.reset();
@@ -118,14 +119,14 @@ yarp::conf::ssize_t XmlRpcStream::read(Bytes& b)
                 return result2;
             }
             string s(buf,result2);
-            //printf("Giving %s to parser\n", s.c_str());
+            yCTrace(XMLRPCCARRIER, "Giving %s to parser", s.c_str());
             if (sender) {
                 ok = client.read(s);
             } else {
                 ok = server.read(s);
             }
             if (ok) {
-                //printf("got a block!\n");
+                yCTrace(XMLRPCCARRIER, "got a block!");
                 XmlRpcValue xresult;
                 std::string prefix;
                 std::string cprefix;
@@ -152,20 +153,20 @@ yarp::conf::ssize_t XmlRpcStream::read(Bytes& b)
                     prefix += cprefix;
                     prefix += " ";
                 }
-                //printf("xmlrpc block is %s\n", xresult.toXml().c_str());
+                yCTrace(XMLRPCCARRIER, "xmlrpc block is %s", xresult.toXml().c_str());
                 Value v = toValue(xresult,true);
                 if (!v.isNull()) {
                     sis.reset(prefix + v.toString() + "\n");
                 } else {
                     sis.reset(prefix + "\n");
                 }
-                //printf("String version is %s\n", sis.toString().c_str());
+                yCTrace(XMLRPCCARRIER, "String version is %s", sis.toString().c_str());
                 result = sis.read(b);
                 break;
             }
         }
     }
-    //printf("RETURNING %d bytes\n", result);
+    yCTrace(XMLRPCCARRIER, "RETURNING %zd bytes", result);
     return (result>0)?result:-1;
 }
 

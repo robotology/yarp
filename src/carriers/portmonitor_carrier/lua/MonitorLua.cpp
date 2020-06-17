@@ -8,8 +8,10 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 #include <lua.hpp>
 #include "MonitorLua.h"
+#include "MonitorLogComponent.h"
 
 using namespace yarp::os;
 using namespace std;
@@ -50,7 +52,7 @@ MonitorLua::~MonitorLua()
         if(getLocalFunction("destroy"))
         {
             if(lua_pcall(L, 0, 0, 0) != 0)
-                yError("%s", lua_tostring(L, -1));
+                yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
         }
         // closing lua state handler
         lua_close(L);
@@ -59,11 +61,11 @@ MonitorLua::~MonitorLua()
 
 bool MonitorLua::load(const Property &options)
 {
-    //printf("%s (%d)\n", __FILE__, __LINE__);
+    yCTrace(PORTMONITORCARRIER);
     if(luaL_loadfile(L, options.find("filename").asString().c_str()))
     {
-        yError("Cannot load script file");
-        yError("%s", lua_tostring(L, -1));
+        yCError(PORTMONITORCARRIER, "Cannot load script file");
+        yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
         lua_pop(L,1);
         lua_close(L);
         L = nullptr;
@@ -72,8 +74,8 @@ bool MonitorLua::load(const Property &options)
 
     if(lua_pcall(L,0, LUA_MULTRET, 0))
     {
-        yError("Cannot run script file");
-        yError("%s", lua_tostring(L, -1));
+        yCError(PORTMONITORCARRIER, "Cannot run script file");
+        yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
         lua_pop(L,1);
         lua_close(L);
         L = nullptr;
@@ -89,7 +91,7 @@ bool MonitorLua::load(const Property &options)
     lua_getglobal(L, "PortMonitor");
     if(lua_istable(L, -1) == 0)
     {
-        yError("The script file does not contain any valid \'PortMonitor\' object.");
+        yCError(PORTMONITORCARRIER, "The script file does not contain any valid \'PortMonitor\' object.");
         lua_pop(L, 1);
         lua_close(L);
         L = nullptr;
@@ -105,7 +107,7 @@ bool MonitorLua::load(const Property &options)
         swig_type_info *propType = SWIG_TypeQuery(L, "yarp::os::Property *");
         if(!propType)
         {
-            yError("Swig type of Property is not found");
+            yCError(PORTMONITORCARRIER, "Swig type of Property is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -114,7 +116,7 @@ bool MonitorLua::load(const Property &options)
         SWIG_NewPointerObj(L, &options, propType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            yError("%s", lua_tostring(L, -1));
+            yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             lua_close(L);
             L = nullptr;
@@ -150,7 +152,7 @@ bool MonitorLua::acceptData(Things &thing)
         swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");
         if(!thingsType)
         {
-            yError("Swig type of Things is not found");
+            yCError(PORTMONITORCARRIER, "Swig type of Things is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -160,7 +162,7 @@ bool MonitorLua::acceptData(Things &thing)
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            yError("%s", lua_tostring(L, -1));
+            yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -188,7 +190,7 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");
         if(!thingsType)
         {
-            yError("Swig type of Things is not found");
+            yCError(PORTMONITORCARRIER, "Swig type of Things is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
@@ -198,7 +200,7 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            yError("%s", lua_tostring(L, -1));
+            yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
@@ -208,7 +210,7 @@ yarp::os::Things& MonitorLua::updateData(yarp::os::Things& thing)
         yarp::os::Things* result;
         if(SWIG_Lua_ConvertPtr(L, -1, (void**)(&result), thingsType, 0) != SWIG_OK )
         {
-            yError("Cannot get a valid return value from PortMonitor.update");
+            yCError(PORTMONITORCARRIER, "Cannot get a valid return value from PortMonitor.update");
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
@@ -235,7 +237,7 @@ yarp::os::Things& MonitorLua::updateReply(yarp::os::Things& thing)
         swig_type_info *thingsType = SWIG_TypeQuery(L, "yarp::os::Things *");
         if(!thingsType)
         {
-            yError("Swig type of Things is not found");
+            yCError(PORTMONITORCARRIER, "Swig type of Things is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
@@ -245,7 +247,7 @@ yarp::os::Things& MonitorLua::updateReply(yarp::os::Things& thing)
         SWIG_NewPointerObj(L, &thing, thingsType, 0);
         if(lua_pcall(L, 1, 1, 0) != 0)
         {
-            yError("%s", lua_tostring(L, -1));
+            yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
@@ -255,7 +257,7 @@ yarp::os::Things& MonitorLua::updateReply(yarp::os::Things& thing)
         yarp::os::Things* result;
         if(SWIG_Lua_ConvertPtr(L, -1, (void**)(&result), thingsType, 0) != SWIG_OK )
         {
-            yError("Cannot get a valid return value from PortMonitor.update_reply");
+            yCError(PORTMONITORCARRIER, "Cannot get a valid return value from PortMonitor.update_reply");
             lua_pop(L, 1);
             luaMutex.unlock();
             return thing;
@@ -282,7 +284,7 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
         swig_type_info *propType = SWIG_TypeQuery(L, "yarp::os::Property *");
         if(!propType)
         {
-            yError("Swig type of Property is not found");
+            yCError(PORTMONITORCARRIER, "Swig type of Property is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -292,7 +294,7 @@ bool MonitorLua::setParams(const yarp::os::Property& params)
         SWIG_NewPointerObj(L, &params, propType, 0);
         if(lua_pcall(L, 1, 0, 0) != 0)
         {
-            yError("%s", lua_tostring(L, -1));
+            yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -315,7 +317,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         swig_type_info *propType = SWIG_TypeQuery(L, "yarp::os::Property *");
         if(!propType)
         {
-            yError("Swig type of Property is not found");
+            yCError(PORTMONITORCARRIER, "Swig type of Property is not found");
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -324,7 +326,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         // calling PortMonitor.getparam from lua
         if(lua_pcall(L, 0, 1, 0) != 0)
         {
-            yError("%s", lua_tostring(L, -1));
+            yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -334,7 +336,7 @@ bool MonitorLua::getParams(yarp::os::Property& params)
         yarp::os::Property* result;
         if(SWIG_Lua_ConvertPtr(L, -1, (void**)(&result), propType, 0) != SWIG_OK )
         {
-            yError("Cannot get a valid return value from PortMonitor.getparam");
+            yCError(PORTMONITORCARRIER, "Cannot get a valid return value from PortMonitor.getparam");
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -360,7 +362,7 @@ bool MonitorLua::peerTrigged()
     {
         if(lua_pcall(L, 0, 0, 0) != 0)
         {
-            yError("%s", lua_tostring(L, -1));
+            yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
             lua_pop(L, 1);
             luaMutex.unlock();
             return false;
@@ -431,7 +433,7 @@ bool MonitorLua::canAccept()
         }
         strDummy.erase(0, pos + delimiter.length());
     }
-    //printf("constraint = \'%s\'\n", strConstraint.c_str());
+    yCTrace(PORTMONITORCARRIER, "constraint = \'%s\'", strConstraint.c_str());
 
     /*
      *  Using lua to evaluate the boolean expression
@@ -442,13 +444,13 @@ bool MonitorLua::canAccept()
 
     if(luaL_dostring(L, strConstraint.c_str()) != 0)
     {
-        yError("%s", lua_tostring(L, -1));
+        yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
         return false;
     }
 
     if(!lua_isboolean(L, -1))
     {
-        yError("%s", lua_tostring(L, -1));
+        yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
         return false;
     }
 
@@ -504,12 +506,12 @@ int MonitorLua::setConstraint(lua_State* L)
         lua_getglobal(L, "PortMonitor_Owner");
         if(!lua_islightuserdata(L, -1))
         {
-            yError("Cannot get PortMonitor_Owner");
+            yCError(PORTMONITORCARRIER, "Cannot get PortMonitor_Owner");
             return 0;
         }
 
         auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
-        yAssert(owner);
+        yCAssert(PORTMONITORCARRIER, owner);
         owner->setAcceptConstraint(cst);
     }
     return 0;
@@ -520,12 +522,12 @@ int MonitorLua::getConstraint(lua_State* L)
     lua_getglobal(L, "PortMonitor_Owner");
     if(!lua_islightuserdata(L, -1))
     {
-        yError("Cannot get PortMonitor_Owner");
+        yCError(PORTMONITORCARRIER, "Cannot get PortMonitor_Owner");
         return 0;
     }
 
     auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
-    yAssert(owner);
+    yCAssert(PORTMONITORCARRIER, owner);
     lua_pushstring(L, owner->getAcceptConstraint());
     return 0;
 }
@@ -545,7 +547,7 @@ int MonitorLua::setEvent(lua_State* L)
                 lifetime = (double) luaL_checknumber(L,2);
             else
             {
-                yError("The second arguemnt of setEvent() must be number");
+                yCError(PORTMONITORCARRIER, "The second arguemnt of setEvent() must be number");
                 return 0;
             }
         }
@@ -553,11 +555,11 @@ int MonitorLua::setEvent(lua_State* L)
         lua_getglobal(L, "PortMonitor_Owner");
         if(!lua_islightuserdata(L, -1))
         {
-            yError("Cannot get PortMonitor_Owner");
+            yCError(PORTMONITORCARRIER, "Cannot get PortMonitor_Owner");
             return 0;
         }
         auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
-        yAssert(owner);
+        yCAssert(PORTMONITORCARRIER, owner);
         if(owner->isKeyword(event_name))
             return 0;
         MonitorEventRecord& record = MonitorEventRecord::getInstance();
@@ -576,11 +578,11 @@ int MonitorLua::unsetEvent(lua_State* L)
         lua_getglobal(L, "PortMonitor_Owner");
         if(!lua_islightuserdata(L, -1))
         {
-            yError("Cannot get PortMonitor_Owner");
+            yCError(PORTMONITORCARRIER, "Cannot get PortMonitor_Owner");
             return 0;
         }
         auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
-        yAssert(owner);
+        yCAssert(PORTMONITORCARRIER, owner);
         if(owner->isKeyword(event_name))
             return 0;
         MonitorEventRecord& record = MonitorEventRecord::getInstance();
@@ -599,11 +601,11 @@ int MonitorLua::setTrigInterval(lua_State* L)
         if(lua_isnumber(L, 1))
             period = (double) luaL_checknumber(L,1);
         else {
-            yError("The arguemnt of setTrigInterval() must be number");
+            yCError(PORTMONITORCARRIER, "The arguemnt of setTrigInterval() must be number");
             return 0;
         }
     } else {
-        yError("The setTrigInterval() require the interval number as the parameter");
+        yCError(PORTMONITORCARRIER, "The setTrigInterval() require the interval number as the parameter");
         return 0;
     }
 
@@ -611,12 +613,12 @@ int MonitorLua::setTrigInterval(lua_State* L)
     lua_getglobal(L, "PortMonitor_Owner");
     if(!lua_islightuserdata(L, -1))
     {
-        yError("Cannot get PortMonitor_Owner");
+        yCError(PORTMONITORCARRIER, "Cannot get PortMonitor_Owner");
         return 0;
     }
 
     auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
-    yAssert(owner);
+    yCAssert(PORTMONITORCARRIER, owner);
 
     // start the trigger thread (MonitorTrigger) if it is not running
     if(owner->trigger == nullptr) {

@@ -7,6 +7,7 @@
  */
 
 #include "MjpegDecompression.h"
+#include "MjpegLogComponent.h"
 
 #include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
@@ -61,7 +62,7 @@ boolean fill_net_input_buffer (j_decompress_ptr cinfo)
     // buffer, so any request for more data beyond the given buffer size
     // is treated as an error.
     auto* mybuffer = (JOCTET *) cinfo->client_data;
-    fprintf(stderr, "JPEG data unusually large\n");
+    yCWarning(MJPEGCARRIER, "JPEG data unusually large");
     // Insert a fake EOI marker
     mybuffer[0] = (JOCTET) 0xFF;
     mybuffer[1] = (JOCTET) JPEG_EOI;
@@ -139,8 +140,6 @@ public:
         jpeg_create_decompress(&cinfo);
     }
     bool decompress(const Bytes& cimg, FlexImage& img) {
-        bool debug = false;
-
         if (!active) {
             init();
             active = true;
@@ -167,7 +166,7 @@ public:
             img.setPixelCode(VOCAB_PIXEL_RGB);
         }
 
-        if (debug) printf("Got image %dx%d\n", cinfo.output_width, cinfo.output_height);
+        yCTrace(MJPEGCARRIER, "Got image %dx%d", cinfo.output_width, cinfo.output_height);
         img.resize(cinfo.output_width,cinfo.output_height);
         jpeg_start_decompress(&cinfo);
         //int row_stride = cinfo.output_width * cinfo.output_components;
@@ -183,7 +182,7 @@ public:
             Bytes envelope(reinterpret_cast<char*>(cinfo.marker_list->data), cinfo.marker_list->data_length);
             readEnvelopeCallback(readEnvelopeCallbackData, envelope);
         }
-        if (debug) printf("Read image!\n");
+        yCTrace(MJPEGCARRIER, "Read image!");
         jpeg_finish_decompress(&cinfo);
         return true;
     }
@@ -204,7 +203,7 @@ public:
 
 MjpegDecompression::MjpegDecompression() {
     system_resource = new MjpegDecompressionHelper;
-    yAssert(system_resource!=nullptr);
+    yCAssert(MJPEGCARRIER, system_resource!=nullptr);
 }
 
 MjpegDecompression::~MjpegDecompression() {

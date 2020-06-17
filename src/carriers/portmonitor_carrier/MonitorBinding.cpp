@@ -8,6 +8,7 @@
 
 #include "MonitorBinding.h"
 #include "MonitorSharedLib.h"
+#include "MonitorLogComponent.h"
 
 #ifdef ENABLED_PORTMONITOR_LUA
     #include "MonitorLua.h"
@@ -30,7 +31,7 @@ MonitorBinding* MonitorBinding::create(const char* script_type)
 #ifdef ENABLED_PORTMONITOR_LUA
         return new MonitorLua();
 #else
-        yError()<<"Cannot load LUA plugin. YARP portmonitor was built without LUA support";
+        yCError(PORTMONITORCARRIER) << "Cannot load LUA plugin. YARP portmonitor was built without LUA support";
         return NULL;
 #endif
     }

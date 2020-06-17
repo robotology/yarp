@@ -18,7 +18,9 @@ if(NOT SKIP_h264)
                                    H264Stream.h
                                    H264Stream.cpp
                                    H264Decoder.cpp
-                                   H264Decoder.h)
+                                   H264Decoder.h
+                                   H264LogComponent.cpp
+                                   H264LogComponent.h)
 
   target_link_libraries(yarp_h264 PRIVATE YARP::YARP_os
                                           YARP::YARP_sig
