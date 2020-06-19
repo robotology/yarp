@@ -10,14 +10,13 @@ Logger and print configuration
 
 | Environmental variable        | Description | Related documentation page |
 |:----------------------       :|:-----------:|:--------------------------:|
-| `YARP_QUIET`                  | If this variables exists and is set to a positive integer, it disables the (internal) YARP messages prints. Note: this variable **do not** modify the behavior of `yError`, `yDebug`, ... . | |
-| `YARP_VERBOSE`                | If this variables exists and is set to a nonnegative integer, it sets the verbosity level (the higher the integer, the more messages will be printed) for YARP messages prints. This variable is ignored if `YARP_QUIET` is set to a positive integer. Note: this variable **do not** modify the behavior of `yError`, `yDebug`, ... . | |
-| `YARP_LOGGER_STREAM`          | By default, the `yError`, `yDebug`, ... messages are printed on the `stderr` stream. If this variables exists and is set to `stdout`, the messages will be printed to `stdout` instead. | |
-| `YARP_COLORED_OUTPUT`         | If this variable exists and is set to 1, it enables the YARP colored prints. Otherwise disable the colored prints. | |
-| `YARP_VERBOSE_OUTPUT`         | If this variable exists and is set to 1, it adds to the YARP prints the filename, the line of the source and the function from which the message is printed. | |
-| `YARP_TRACE_ENABLE`           | If this variable exists and is set to 1, it enables the YARP trace prints. Otherwise disable the trace prints. | |
-| `YARP_DEBUG_ENABLE`           | If this variable exists and is set to 0, it disables the YARP debug prints. Otherwise leaves them enabled. | |
-| `YARP_FORWARD_LOG_ENABLE`     | If this variable exists and is set to 1, enables the forwarding of log over ports to be used by the yarplogger. Otherwise disable the forwarding. | |
+| `YARP_QUIET`                  | If this variables exists and is set to a positive integer, it disables the (internal) YARP messages prints. Note: this variable **do not** modify the behavior of `yError`, `yDebug`, ... . | \ref yarp_log |
+| `YARP_VERBOSE`                | If this variables exists and is set to a nonnegative integer, it sets the verbosity level (the higher the integer, the more messages will be printed) for YARP messages prints. This variable is ignored if `YARP_QUIET` is set to a positive integer. Note: this variable **does not** modify the behavior of `yError`, `yDebug`, ... . | \ref yarp_log |
+| `YARP_COLORED_OUTPUT`         | If this variable exists and is set to 1, it enables the YARP colored prints. Otherwise disable the colored prints. | \ref yarp_log |
+| `YARP_VERBOSE_OUTPUT`         | If this variable exists and is set to 1, it adds to the YARP prints the filename, the line of the source and the function from which the message is printed. | \ref yarp_log |
+| `YARP_TRACE_ENABLE`           | If this variable exists and is set to 1, it enables the YARP trace prints. Otherwise disable the trace prints. | \ref yarp_log |
+| `YARP_DEBUG_ENABLE`           | If this variable exists and is set to 0, it disables the YARP debug prints. Otherwise leaves them enabled. | \ref yarp_log |
+| `YARP_FORWARD_LOG_ENABLE`     | If this variable exists and is set to 1, enables the forwarding of log over ports to be used by the yarplogger. Otherwise disable the forwarding. | \ref yarp_log |
 
 
 Configuration files
@@ -75,6 +74,9 @@ Misc configuration
 | `YARP_IP`                     | If this variable is set, it forces the IP address used for registering YARP ports to be in a particular family.  Prefixes are allowed.  For example, on a machine with a 10.11.4.4 address and a 192.168.1.10 address, seeting YARP_IP to 192 or 192.168 or 192.168.1.10 all result in the 192.xxx.xxx.xxx IP address being used. | |
 
 
+TODO YARP_IS_YARPRUN
+TODO YARPRUN_IS_FORWARDING_LOG
+
 Other
 =====
 
@@ -93,6 +95,7 @@ Deprecated Environmental Variables
 |:-----------------------------:|:-----------:|:--------------------------:|
 | `YARP_POLICY`                 | Legacy variable used to change the behavior of the ResourceFinder. Deprecated since YARP 2.3.65 | |
 | `YARP_STACK_SIZE`             | Default stack size (in bytes) for YARP threads. Deprecated since YARP 3.0.0 | |
+| `YARP_LOGGER_STREAM`          | Legacy variable to print legacy debug messages on `stdout` instead instead of `stderr`. Deprecated since YARP 3.4.0 |  |
 
 
 Build system
