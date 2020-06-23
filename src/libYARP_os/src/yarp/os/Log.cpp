@@ -607,23 +607,57 @@ void yarp::os::impl::LogPrivate::log(yarp::os::Log::LogType type,
                                      const char* msg,
                                      va_list args) const
 {
-    constexpr size_t YARP_MAX_LOG_MSG_SIZE = 1024;
+    constexpr size_t YARP_MAX_STATIC_LOG_MSG_SIZE = 1024;
 
     if (msg != nullptr) {
         if (!pred || pred()) {
-            char buf[YARP_MAX_LOG_MSG_SIZE];
-            auto w = static_cast<size_t>(vsnprintf(buf, YARP_MAX_LOG_MSG_SIZE, msg, args));
-            buf[YARP_MAX_LOG_MSG_SIZE - 1] = 0;
-            auto p = std::min(w - 1, YARP_MAX_LOG_MSG_SIZE);
-            if (w > 0 && p < YARP_MAX_LOG_MSG_SIZE && buf[p] == '\n' && msg[strlen(msg) - 1] == '\n') {
-                yarp::os::Log(file, line, func, nullptr, log_internal_component).warning("Removing extra '\\n' (c-style)");
-                buf[p] = 0;
+            char buf[YARP_MAX_STATIC_LOG_MSG_SIZE];
+            char* dyn_buf = nullptr;
+
+            char* out = buf;
+            size_t buf_size = YARP_MAX_STATIC_LOG_MSG_SIZE;
+
+            // Save va_list status in case we need to repeat the operation with
+            // the dynamically allocated buffer (vsnprintf leaves it in an
+            // undefined status).
+            va_list args_bak;
+            va_copy(args_bak, args);
+
+            auto log_line_size = static_cast<size_t>(std::vsnprintf(buf, YARP_MAX_STATIC_LOG_MSG_SIZE, msg, args));
+
+            if (log_line_size > YARP_MAX_STATIC_LOG_MSG_SIZE) {
+                // The static buffer is not big enough for the log line.
+                // Using a dynamic buffer instead.
+                // Round up size to the first power of 2.
+                size_t dyn_buf_size = [](size_t x) {
+                    --x;
+                    x |= x >> 1;
+                    x |= x >> 2;
+                    x |= x >> 4;
+                    x |= x >> 8;
+                    x |= x >> 16;
+                    return x + 1;
+                }(log_line_size);
+
+                dyn_buf = new char[dyn_buf_size];
+                std::vsnprintf(dyn_buf, dyn_buf_size, msg, args_bak);
+                va_end(args_bak);
+
+                out = dyn_buf;
+                buf_size = dyn_buf_size;
             }
 
-            do_log(type, buf, file, line, func, systemtime, networktime, comp);
+            auto p = std::min(log_line_size - 1, buf_size);
+            if (log_line_size > 0 && p < buf_size && out[p] == '\n' && msg[strlen(msg) - 1] == '\n') {
+                yarp::os::Log(file, line, func, nullptr, log_internal_component).warning("Removing extra '\\n' (c-style)");
+                out[p] = 0;
+            }
 
-            if (w > YARP_MAX_LOG_MSG_SIZE - 1) {
-                yarp::os::Log(file, line, func, nullptr, log_internal_component).warning("Previous message was truncated");
+            do_log(type, out, file, line, func, systemtime, networktime, comp);
+
+            if (dyn_buf) {
+                yarp::os::Log(file, line, func, nullptr, log_internal_component).warning("Previous message was longer than the static buffer size, dynamic allocation was used");
+                delete[] dyn_buf;
             }
         }
     } else {
@@ -645,7 +679,11 @@ void yarp::os::impl::LogPrivate::do_log(yarp::os::Log::LogType type,
         print_cb(type, msg, file, line, func, systemtime, networktime, comp.name());
     } else {
         if (comp != log_internal_component) {
-            yarp::os::Log(file, line, func, nullptr, log_internal_component).debug("Not printing [%s][%s]", comp.name(), msg);
+            if (comp.name()) {
+                yarp::os::Log(file, line, func, nullptr, log_internal_component).debug("Not printing [%s][%s]", comp.name(), msg);
+            } else {
+                yarp::os::Log(file, line, func, nullptr, log_internal_component).debug("Not printing [%s]", msg);
+            }
         }
     }
 
@@ -654,7 +692,11 @@ void yarp::os::impl::LogPrivate::do_log(yarp::os::Log::LogType type,
         forward_cb(type, msg, file, line, func, systemtime, networktime, comp.name());
     } else {
         if (comp != log_internal_component) {
-            yarp::os::Log(file, line, func, nullptr, log_internal_component).debug("Not forwarding [%s][%s]", comp.name(), msg);
+            if (comp.name()) {
+                yarp::os::Log(file, line, func, nullptr, log_internal_component).debug("Not forwarding [%s][%s]", comp.name(), msg);
+            } else {
+                yarp::os::Log(file, line, func, nullptr, log_internal_component).debug("Not forwarding [%s]", msg);
+            }
         }
     }
 }
