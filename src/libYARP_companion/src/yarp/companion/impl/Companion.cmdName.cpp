@@ -12,6 +12,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/ContactStyle.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
@@ -96,14 +97,14 @@ int Companion::cmdName(int argc, char* argv[])
         return 1;
     }
     if (reply.size() == 1 && reply.get(0).isString()) {
-        yCInfo(COMPANION, "%s", reply.get(0).asString().c_str());
+        yCInfo(COMPANION) << reply.get(0).asString().c_str();
     } else if (reply.get(0).isVocab() && reply.get(0).asVocab() == yarp::os::createVocab('m', 'a', 'n', 'y')) {
         for (size_t i = 1; i < reply.size(); i++) {
             Value& v = reply.get(i);
             if (v.isString()) {
-                yCInfo(COMPANION, "  %s", v.asString().c_str());
+                yCInfo(COMPANION) << " " << v.asString().c_str();
             } else {
-                yCInfo(COMPANION, "  %s", v.toString().c_str());
+                yCInfo(COMPANION) << " " << v.toString().c_str();
             }
         }
     } else {
