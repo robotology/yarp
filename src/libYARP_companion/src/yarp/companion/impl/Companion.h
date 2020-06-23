@@ -33,152 +33,138 @@ namespace impl {
 class YARP_companion_API Companion
 {
 public:
-
-    static std::string version();
-
-    /**
-     * Request that an output port connect to an input port.
-     * @param src the name of an output port
-     * @param dest the name of an input port
-     * @param silent whether to print comments on the result
-     * @return 0 on success, non-zero on failure
-     */
-    static int connect(const char *src, const char *dest,
-                       bool silent = false);
-
-    /**
-     * Request that an output port disconnect from an input port.
-     * @param src the name of an output port
-     * @param dest the name of an input port
-     * @param silent whether to print comments on the result
-     * @return 0 on success, non-zero on failure
-     */
-    static int disconnect(const char *src, const char *dest,
-                          bool silent = false);
-
-    /**
-     * Create a port to read Bottles and prints them to standard input.
-     * It assumes the Bottles consist of an integer followed by a string.
-     * The integer indicates whether the "end-of-file" has been reached.
-     * The string is what gets printed.
-     * @param name the name which which to register the port
-     * @param src name of a port to connect from, if any
-     * @param showEnvelope set to true if you want envelope information
-     * shown
-     * @return 0 on success, non-zero on failure
-     */
-    int read(const char *name, const char *src = nullptr,
-             bool showEnvelope = false);
-
-    int write(const char *name, int ntargets, char *targets[]);
-
-    int rpc(const char *connectionName, const char *targetName);
-
-    static int forward(const char *localName, const char *targetName);
-
-    static std::string slashify(const std::string& src) {
-        if (src.length()>0) {
-            if (src[0] == '/') {
-                return src;
-            }
-        }
-        return std::string("/") + src;
-    }
-
-    /**
-     * Read a line of arbitrary length from standard input.
-     */
-    static std::string readString(bool *eof=nullptr);
-
     static Companion& getInstance();
 
     void setAdminMode(bool admin);
 
     int dispatch(const char *name, int argc, char *argv[]);
 
-    int cmdVersion(int argc, char *argv[]);
 
-    int cmdTerminate(int argc, char *argv[]);
-
-    int cmdName(int argc, char *argv[]);
-
-    int cmdWhere(int argc, char *argv[]);
-
-    int cmdConf(int argc, char *argv[]);
-
-    int cmdHelp(int argc, char *argv[]);
-
-    int cmdConnect(int argc, char *argv[]);
-
-    int cmdDisconnect(int argc, char *argv[]);
-
-    int cmdRead(int argc, char *argv[]);
-
-    int cmdWrite(int argc, char *argv[]);
-
-    int cmdReadWrite(int argc, char *argv[]);
-
-    int cmdRpc(int argc, char *argv[]);
-
-    int cmdRpc2(int argc, char *argv[]);
-
-    int cmdRpcServer(int argc, char *argv[]);
-
-    int cmdRegression(int argc, char *argv[]);
-
+    // Defined in Companion.cmdCheck.cpp
     int cmdCheck(int argc, char *argv[]);
 
-    int cmdPing(int argc, char *argv[]);
-
-    int cmdExists(int argc, char *argv[]);
-
-    int cmdWait(int argc, char *argv[]);
-
-    int cmdMake(int argc, char *argv[]);
-
-    int cmdNamespace(int argc, char *argv[]);
-
+    // Defined in Companion.cmdClean.cpp
     int cmdClean(int argc, char *argv[]);
 
-    int cmdResource(int argc, char *argv[]);
-
-    int cmdDetect(int argc, char *argv[]);
-
-    int cmdDetectRos(bool write);
-
-    int cmdTopic(int argc, char *argv[]);
-
-    int cmdPlugin(int argc, char *argv[]);
-
-    int cmdMerge(int argc, char *argv[]);
-
-    int cmdSample(int argc, char *argv[]);
-
-    int cmdPriorityQos(int argc, char *argv[]);
-
-    int cmdPrioritySched(int argc, char *argv[]);
-
-    int subscribe(const char *src,
-                  const char *dest,
-                  const char *mode = nullptr);
-
-    int unsubscribe(const char *src, const char *dest);
-
-    int ping(const char *port, bool quiet);
-
-    int cmdTime(int argc, char *argv[]);
-
+    // Defined in Companion.cmdClock.cpp
     int cmdClock(int argc, char *argv[]);
 
+    // Defined in Companion.cmdCMake.cpp
+    int cmdCMake(int argc, char *argv[]);
+
+    // Defined in Companion.cmdConf.cpp
+    int cmdConf(int argc, char *argv[]);
+
+    // Defined in Companion.cmdConnect.cpp
+    static int connect(const char *src, const char *dest, bool silent = false);
+    static int subscribe(const char *src, const char *dest, const char *mode = nullptr);
+    int cmdConnect(int argc, char *argv[]);
+
+    // Defined in Companion.cmdDisconnect.cpp
+    static int disconnect(const char *src, const char *dest, bool silent = false);
+    static int unsubscribe(const char *src, const char *dest);
+    int cmdDisconnect(int argc, char *argv[]);
+
+    // Defined in Companion.cmdDetect.cpp
+    int detectRos(bool write);
+    int cmdDetect(int argc, char *argv[]);
+
+    // Defined in Companion.cmdEnv.cpp
     int cmdEnv(int argc, char *argv[]);
 
+    // Defined in Companion.cmdExists.cpp
+    int cmdExists(int argc, char *argv[]);
+
+    // Defined in Companion.cmdHelp.cpp
+    int cmdHelp(int argc, char *argv[]);
+
+    // Defined in Companion.cmdMerge.cpp
+    int cmdMerge(int argc, char *argv[]);
+
+    // Defined in Companion.cmdName.cpp
+    int cmdName(int argc, char *argv[]);
+
+    // Defined in Companion.cmdNamespace.cpp
+    int cmdNamespace(int argc, char *argv[]);
+
+    // Defined in Companion.cmdPing.cpp
+    int ping(const char *port, bool quiet);
+    int cmdPing(int argc, char *argv[]);
+
+    // Defined in Companion.cmdPlugin.cpp
+    int cmdPlugin(int argc, char *argv[]);
+
+    // Defined in Companion.cmdPray.cpp
     int cmdPray(int argc, char *argv[]);
 
-private:
+    // Defined in Companion.cmdPriorityQos.cpp
+    int cmdPriorityQos(int argc, char *argv[]);
 
+    // Defined in Companion.cmdPrioritySched.cpp
+    int cmdPrioritySched(int argc, char *argv[]);
+
+    // Defined in Companion.cmdRead.cpp
+    int read(const char *name, const char *src = nullptr, bool showEnvelope = false);
+    int cmdRead(int argc, char *argv[]);
+
+    // Defined in Companion.cmdReadWrite.cpp
+    int cmdReadWrite(int argc, char *argv[]);
+
+    // Defined in Companion.cmdResource.cpp
+    int cmdResource(int argc, char *argv[]);
+
+    // Defined in Companion.cmdRpc.cpp
+    int rpc(const char *connectionName, const char *targetName);
+    int rpcClient(int argc, char *argv[]);
+    int cmdRpc(int argc, char *argv[]);
+
+    // Defined in Companion.cmdRpcServer.cpp
+    int cmdRpcServer(int argc, char *argv[]);
+
+    // Defined in Companion.cmdSample.cpp
+    int cmdSample(int argc, char *argv[]);
+
+    // Defined in Companion.cmdTerminate.cpp
+    int cmdTerminate(int argc, char *argv[]);
+
+    // Defined in Companion.cmdTime.cpp
+    int cmdTime(int argc, char *argv[]);
+
+    // Defined in Companion.cmdTopic.cpp
+    int cmdTopic(int argc, char *argv[]);
+
+    // Defined in Companion.cmdVersion.cpp
+    static std::string version();
+    int cmdVersion(int argc, char *argv[]);
+
+    // Defined in Companion.cmdWait.cpp
+    int cmdWait(int argc, char *argv[]);
+
+    // Defined in Companion.cmdWhere.cpp
+    int cmdWhere(int argc, char *argv[]);
+
+    // Defined in Companion.cmdWrite.cpp
+    int write(const char *name, int ntargets, char *targets[]);
+    int cmdWrite(int argc, char *argv[]);
+
+    static yarp::os::Contactable* getActivePort() { return getInstance().active_port; }
+    static void setActivePort(yarp::os::Contactable* port) { getInstance().active_port = port; }
+
+    static std::string getUnregisterName() { return getInstance().unregister_name; }
+    static void setUnregisterName(const std::string& name) { getInstance().unregister_name = name; }
+
+private:
     Companion();
 
+    void add(const char* name,
+             int (Companion::*fn)(int argc, char* argv[]),
+             const char* tip);
+
     void applyArgs(yarp::os::Contactable& port);
+
+    static std::string printTable(std::map<int,std::string> inputTable,int index);
+
+    static void installHandler();
 
     class Entry {
     public:
@@ -201,10 +187,9 @@ private:
     bool adminMode;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) argType;
     bool waitConnect;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) unregister_name;
+    yarp::os::Contactable* active_port {nullptr};
 
-    void add(const char* name,
-             int (Companion::*fn)(int argc, char* argv[]),
-             const char* tip);
 };
 
 } // namespace impl

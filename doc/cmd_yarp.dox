@@ -249,6 +249,7 @@ version of what you are reading right now.
 
 
 
+
 \section yarp_merge yarp merge
 
 \verbatim
@@ -256,7 +257,41 @@ version of what you are reading right now.
   yarp merge --input /PORT1 /PORT2 --output /PORT3 --worker /PORT/PREFIX --carrier udp
 \endverbatim
 
-This command merges input from several ports into a single message, sending that on from an output port.
+This command merges input from several ports into a single message, sending that
+on from an output port.
+
+The user has to specifies a list of streaming ports (i0, i1, ..., iN) that he
+wants to merge in a single output port (o0).
+The module creates a corresponding number of input ports and automatically makes
+the connections.
+The values read from the input ports are merged and synchronized into the output
+port according to the following rules:
+- the data are appended in the output vector using the same order in which the
+  input ports are specified by the user, i.e. o0 = [i0 | i1 | ... | iN].
+- the timestamp of the output port o0 is assigned by the module.
+- if in a time instant no data is received from ALL the input ports
+  (i0, i1, ..., iN), no data is sent on the output port (o0).
+- if in a time instant no data is received from SOME ports (e.g. iJ), the output
+  vector will be o0 = [i0 | i1 | ... |iJ-1| ... |in], i.e. the previous sample
+  will be used.
+
+The output of the module can be logged in order to obtain a quick log of
+multiple data streams on a single file.
+
+For example:
+
+\code
+yarp merge /icub/left_arm/state:o /icub/left_arm/analog:o
+\endcode
+
+the output of the module can be logged on a file:
+
+\code
+yarp read ... /portsMerge/o0 envelope &> logfile.txt
+\endcode
+
+
+
 
 \section yarp_name yarp name
 
