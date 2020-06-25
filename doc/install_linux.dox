@@ -1,37 +1,44 @@
 /**
-\page install_yarp_linux Installing YARP on Linux
+\page install_yarp_linux Installing YARP on GNU/Linux
 
 \tableofcontents
 
-\section install_on_linux Installation on Linux
+\section install_on_linux Installation on GNU/Linux
+
+
+These instructions are for Debian and its derivatives (Ubuntu, etc) GNU/Linux
+distributions. For other distributions the installation from sources is mostly
+the same, but you will need to figure out how to install the dependencies on
+your system.
 
 
 \subsection install_linux_from_binaries Install from binaries
 
-Add www.icub.org to your sources.list. Determine the Linux distribution you use.
+Add www.icub.org to your sources.list.
 
-E.g. for Ubuntu 14.04 Trusty (Note: you need to adapt these instructions
-according to your distribution).
-
-\code
-  sudo sh -c 'echo "deb http://www.icub.org/ubuntu trusty contrib/science" > /etc/apt/sources.list.d/icub.list'
-\endcode
-
-(replace trusty with the name of the distribution).
-
-For Debian 7.0 Wheezy (Note: you need to adapt these instructions according to
-your distribution).
+On Ubuntu:
 
 \code
-  sudo sh -c 'echo "deb http://www.icub.org/debian wheezy contrib/science" > /etc/apt/sources.list.d/icub.list'
+  sudo sh -c 'echo "deb http://www.icub.org/ubuntu focal contrib/science" > /etc/apt/sources.list.d/icub.list'
 \endcode
 
-(replace wheezy with the name of the distribution).
+(replace focal with the code name of the installed version).
+
+
+On Debian:
+
+\code
+  sudo sh -c 'echo "deb http://www.icub.org/debian buster contrib/science" > /etc/apt/sources.list.d/icub.list'
+\endcode
+
+(replace buster with the code name of the installed version).
+
 
 Import the repository public key:
 \code
   sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 57A5ACB6110576A6
 \endcode
+
 
 Update the list of packages and install YARP.
 \code
@@ -41,20 +48,83 @@ Update the list of packages and install YARP.
 
 You are now ready to check you installation, see \ref check_your_installation.
 
+
+
 \subsection install_linux_from_sources Install from sources
+
+
+\subsubsection install_required_debian Required Dependencies
 
 Install the following packages to prepare your development environment and get
 basic dependencies:
 
 \code
-  sudo apt-get install git cmake cmake-curses-gui libeigen3-dev libace-dev libedit-dev
+sudo apt-get install build-essential git cmake cmake-curses-gui
 \endcode
 
-For Qt5 different packages are needed for different systems.
+(Please note that you need some extra step to install CMake 3.12 on Debian 9 and
+Ubuntu 18.40, see https://github.com/robotology/QA/issues/364)
 
-\subsubsection install_qt5_debian_stretch Qt5 for Debian (stretch)
 
-On Debian testing you need to install the following packages:
+Install YCM (https://github.com/robotology/ycm/) from sources or install it from
+binaries by configuring the icub.org repository (Follow the instructions at
+\ref install_linux_from_binaries), and install it with
+
+\code
+sudo apt-get install ycm-cmake-modules
+\endcode
+
+
+Depending on what parts of YARP you want to enable, you will also have to
+install some other packages
+
+
+For convenience's sake, all the required and most optional packages can be
+installed with this command line, if you want to go into further details about
+what is installed and why, proceed to the following sections.
+
+\code
+sudo apt-get install build-essential git cmake cmake-curses-gui \
+  ycm-cmake-modules \
+  libeigen3-dev \
+  libace-dev \
+  libedit-dev \
+  libsqlite3-dev \
+  libtinyxml-dev \
+  qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
+  qml-module-qtquick2 qml-module-qtquick-window2 \
+  qml-module-qtmultimedia qml-module-qtquick-dialogs \
+  qml-module-qtquick-controls qml-module-qt-labs-folderlistmodel \
+  qml-module-qt-labs-settings \
+  libqcustomplot-dev \
+  libgraphviz-dev \
+  libjpeg-dev \
+  libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+  gstreamer1.0-plugins-base \
+  gstreamer1.0-plugins-good \
+  gstreamer1.0-plugins-bad \
+  gstreamer1.0-libav
+\endcode
+
+
+\subsubsection install_recommended_debian Recommended Dependencies
+
+Installing the following packages is recommended:
+
+\code
+sudo apt-get install \
+  libeigen3-dev \
+  libace-dev \
+  libedit-dev \
+  libsqlite3-dev \
+  libtinyxml-dev
+\endcode
+
+
+\subsubsection install_qt5_debian Qt5
+
+On Debian/Ubuntu the following Qt5 packages are required to build and run YARP
+GUIs:
 
 \code
 sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
@@ -64,66 +134,54 @@ sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
   qml-module-qt-labs-settings
 \endcode
 
-\subsubsection install_qt5_debian_jessie Qt5 for Debian (jessie)
 
-On Debian jessie you need to install the following packages:
+\subsubsection install_qcustomplot_debian QCustomPlot
 
-\code
-sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
-  qml-module-qtquick2 qml-module-qtquick-window2 \
-  qml-module-qtmultimedia qml-module-qtquick-dialogs \
-  qml-module-qtquick-controls
-\endcode
-
-\subsubsection install_qt5_debian_wheezy Qt5 for Debian (wheezy)
-On Debian wheezy, Qt5 packages are available in the backports
-repository.
-
-You can enable the backports repository you have to add
-
-\verbatim
-deb http://backports.debian.org/debian-backports/ wheezy-backports main
-\endverbatim
-
-to your \c /etc/apt/sources.list file, and then install the same
-packages required from Debian jessie from the backports repository:
+QCustomPlot is also optionally required for `yarpscope`:
 
 \code
-sudo apt-get update
-sudo apt-get install -t wheezy-backports qtbase5-dev \
-  qtdeclarative5-dev qtmultimedia5-dev qml-module-qtquick2 \
-  qml-module-qtquick-window2 qml-module-qtmultimedia \
-  qml-module-qtquick-dialogs qml-module-qtquick-controls libqt5svg5
+sudo apt-get install libqcustomplot-dev
 \endcode
 
-\subsubsection install_qt5_ubuntu Qt5 for Ubuntu
-Qt5 is available from the main repository. See
-\ref dependencies_qt5_debian_jessie for instructions.
 
-\subsubsection install_qt5_ubuntu_trusty Qt5 on Ubuntu (trusty)
-Qt5 packages are available from the main repository, but the package
-names are slightly different:
+\subsubsection install_graphviz_debian Graphviz
+
+Graphviz is required for `yarpviz`
 
 \code
-sudo apt-get install qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev \
-  qtdeclarative5-qtquick2-plugin qtdeclarative5-window-plugin \
-  qtdeclarative5-qtmultimedia-plugin qtdeclarative5-controls-plugin \
-  qtdeclarative5-dialogs-plugin libqt5svg5
+sudo apt-get install libgraphviz-dev
 \endcode
 
-\subsubsection install_qt5_linux_others Qt5 for other systems
-If your distribution does not supply binary packages for Qt5, you can
-download a binary release from the
-<a href="http://qt-project.org/downloads">Qt Project website</a>, or
-download the source code, and build it yourself.
 
-Alternatively you can compile all dependencies yourself following the procedure
-here: \ref dependencies (notice however that this can be tedious, time consuming
-and error prone).
+\subsubsection install_jpeg_debian Jpeg Library
+
+The jpeg library is required to build the `mjpeg` carrier
+
+\code
+sudo apt-get install libjpeg-dev
+\endcode
+
+
+\subsection install_gstreamer_debian GStreamer
+
+GStreamer is required to enable the h264 carrier
+
+\code
+sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+  gstreamer1.0-plugins-base \
+  gstreamer1.0-plugins-good \
+  gstreamer1.0-plugins-bad \
+  gstreamer1.0-libav
+\endcode
+
+See also \ref how_to_install_gstreamer
+
 
 \subsubsection compiling_yarp Compiling YARP
 
-To get the source choose one of these addresses:
+To get the source you can download the latest release at
+https://github.com/robotology/yarp/releases/
+or clone YARP git repository from one of the following addresses:
 
 \li(git read-only) git://github.com/robotology/yarp.git
 \li(ssh read+write) git@github.com:robotology/yarp.git
@@ -132,9 +190,16 @@ To get the source choose one of these addresses:
 For example:
 
 \code
-  cd /home/user
   git clone https://github.com/robotology/yarp.git
 \endcode
+
+By default the `master` (development) branch is cloned, if you need a stable
+branches they are named `yarp-<version>`. For example
+
+\code
+  git clone -b yarp-3.3 https://github.com/robotology/yarp.git
+\endcode
+
 
 Generate makefiles using CMake:
 
@@ -142,23 +207,13 @@ Generate makefiles using CMake:
   cd yarp
   mkdir build
   cd build
-  ccmake ../
+  cmake ..
 \endcode
 
-Set the following variables to true:
+Usually you want to check in the CMake output that "Compile GUIs" and
+"Compile YARP_math library" are enabled, if they are not, you are probably
+missing some dependency.
 
-\code
-  YARP_COMPILE_GUIS, set to ON
-  YARP_COMPILE_libYARP_math, set to ON
-\endcode
-
-(leave default values as they are unless you know better)
-
-\remark YARP_COMPILE_GUIS and YARP_COMPILE_libYARP_math require you have installed the libraries
-qt5 and eigen3 (you have, if you have followed the instructions above).
-
-Makefiles generation is an iterative process, hit "c" until the option
-"Generate" becomes available. Then hit "g" and quit.
 
 Compile:
 

@@ -75,7 +75,7 @@ gst-launch-1.0 -v udpsrc multicast-group=224.0.0.1 auto-multicast=true port=3000
 
 If you want use a yarp application to read the stream you need to:
 \verbatim
-1)  install Gstreamer (see “How to install Gstreamer” chapter )
+1)  install Gstreamer (see \ref how_to_install_gstreamer )
 2)  compile yarp with “ENABLE_yarpcar_h264” option enabled.
 3)  register the stream server to the yarp server: “yarp name register <SERVER_NAME_PORT>  h264  <SERVER_IP_ADRESS> <SERVER_IP_PORT>”
 4)  run your application
@@ -101,7 +101,7 @@ If you want use a yarp application to read the stream you need to:
     \endverbatim
 
 
-\section hot_to_install_gstreamer How to install Gstreamer
+\section how_to_install_gstreamer How to install Gstreamer
 Currently we are using 1.8.3 version
 
 \subsection ubuntu On Ubuntu
