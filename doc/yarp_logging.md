@@ -551,6 +551,7 @@ YARP_LOG_COMPONENT(FOO, "foo.bar")
 }
 ```
 
+
 ### Component Names
 
 The component name is defined as a string.
@@ -620,6 +621,7 @@ application to open an extra port, that will have one or more extra thread,
 requires the `Network` to be initialized, etc. This could slow down the
 application therefore you should take this into account before enabling it.
 
+
 ### Limited Output
 
 `yDebugOnce()` and the other macros are useful in some cases, but you should
@@ -628,3 +630,25 @@ they use a callback mechanism to decide whether the output should be printed or
 not, and therefore some extra code is executed every time, even when there is no
 output.
 Therefore in some cases there might be good reason for using alternatives.
+
+
+### Formatting Output
+
+The stream version of the debugging macros, is faster to use, and does not
+require to know the type of the variable printed, but they offer a very limited
+way of formatting the output.
+If you require a proper formatting, the c-style macros are recommended.
+
+
+### Performances
+
+The C-style `yDebug()` macro family are slightly more performant than the stream
+version, since the stream version imply objects construction, copies, and
+destruction. If you care about the performances of some parts of code, you
+should take into consideration the C-style version.
+
+Please note normally the C-style version uses an internal buffer, and therefore
+it does not use any dynamic allocation of memory, unless the internal buffer
+is not big enough to fit the output.
+If you care about performances, you should also ensure that your log output does
+not exceed 1024 bytes per log line.
