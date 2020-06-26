@@ -36,7 +36,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/SystemClock.h>
-#include <yarp/math/FrameTransform.h>
+#include <yarp/math/Math.h>
 
 #include <cmath>
 #include <mutex>
