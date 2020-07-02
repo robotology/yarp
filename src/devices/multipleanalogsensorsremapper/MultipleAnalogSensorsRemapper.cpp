@@ -17,8 +17,8 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 
-const size_t MAS_NrOfSensorTypes{9};
-static_assert(MAS_SensorType::SkinPatches+1 == MAS_NrOfSensorTypes, "Consistency error between MAS_NrOfSensorTypes and MAS_SensorType");
+const size_t MAS_NrOfSensorTypes{10};
+static_assert(MAS_SensorType::PositionSensors+1 == MAS_NrOfSensorTypes, "Consistency error between MAS_NrOfSensorTypes and MAS_SensorType");
 
 /**
  * Internal identifier of the type of sensors.
