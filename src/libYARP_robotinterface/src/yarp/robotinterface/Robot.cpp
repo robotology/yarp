@@ -18,7 +18,9 @@
 #include "Param.h"
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #include <string>
+#include <unordered_map>
 
 
 std::ostringstream& operator<<(std::ostringstream& oss, const yarp::robotinterface::Robot& t)
@@ -89,32 +91,61 @@ public:
     // run custom action on one device
     bool custom(const Device& device, const ParamList& params);
 
+    // optionally merge xml devices with external ones
+    yarp::robotinterface::DeviceList allDevicesWithExternal() const;
+
     std::string name;
     unsigned int build;
     std::string portprefix;
     ParamList params;
     DeviceList devices;
+    DeviceList externalDevices;
     yarp::robotinterface::ActionPhase currentPhase;
     unsigned int currentLevel;
 }; // class yarp::robotinterface::Robot::Private
 
 bool yarp::robotinterface::Robot::Private::hasDevice(const std::string& name) const
 {
-    for (const auto& device : devices) {
+    for (const auto& device : allDevicesWithExternal()) {
         if (name == device.name()) {
             return true;
         }
     }
+
     return false;
+}
+
+yarp::robotinterface::DeviceList yarp::robotinterface::Robot::Private::allDevicesWithExternal() const
+{
+    using DeviceName = std::string;
+    std::unordered_map<DeviceName, Device> extDevicesMap;
+
+    for (const auto& externalDevice : externalDevices) {
+        extDevicesMap[externalDevice.name()] = externalDevice;
+    }
+
+    yarp::robotinterface::DeviceList allDevices;
+
+    for (auto& device : devices) {
+
+        if (extDevicesMap.find(device.name()) != extDevicesMap.end()) {
+            allDevices.push_back(extDevicesMap.at(device.name()));
+        } else {
+            allDevices.push_back(device);
+        }
+    }
+
+    return allDevices;
 }
 
 yarp::robotinterface::Device* yarp::robotinterface::Robot::Private::findDevice(const std::string& name)
 {
-    for (auto& device : devices) {
+    for (auto& device : allDevicesWithExternal()) {
         if (name == device.name()) {
             return &device;
         }
     }
+
     yFatal() << "Cannot find device" << name;
     return nullptr;
 }
@@ -122,9 +153,14 @@ yarp::robotinterface::Device* yarp::robotinterface::Robot::Private::findDevice(c
 bool yarp::robotinterface::Robot::Private::openDevices()
 {
     bool ret = true;
-    for (auto& device : devices) {
-        // yDebug() << device;
+    for (auto& device : allDevicesWithExternal()) {
 
+        if (device.isOpen()) {
+            yDebug() << "Device" << device.name() << "is already open";
+            continue;
+        }
+
+        // Open the device if it has not been already opened
         if (!device.open()) {
             yWarning() << "Cannot open device" << device.name();
             ret = false;
@@ -164,7 +200,8 @@ bool yarp::robotinterface::Robot::Private::closeDevices()
 std::vector<unsigned int> yarp::robotinterface::Robot::Private::getLevels(yarp::robotinterface::ActionPhase phase) const
 {
     std::vector<unsigned int> levels;
-    for (const auto& device : devices) {
+    for (const auto& device : allDevicesWithExternal()) {
+
         if (device.actions().empty()) {
             continue;
         }
@@ -187,7 +224,8 @@ std::vector<unsigned int> yarp::robotinterface::Robot::Private::getLevels(yarp::
 std::vector<std::pair<yarp::robotinterface::Device, yarp::robotinterface::Action>> yarp::robotinterface::Robot::Private::getActions(yarp::robotinterface::ActionPhase phase, unsigned int level) const
 {
     std::vector<std::pair<yarp::robotinterface::Device, yarp::robotinterface::Action>> actions;
-    for (const auto& device : devices) {
+
+    for (const auto& device : allDevicesWithExternal()) {
         if (device.actions().empty()) {
             continue;
         }
@@ -261,7 +299,7 @@ bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::De
         drivers.push(targetDevice.driver(), targetNetwork.c_str());
 
     } else if (yarp::robotinterface::hasParam(params, "all")) {
-        for (auto& device : devices) {
+        for (auto& device : allDevicesWithExternal()) {
             drivers.push(device.driver(), "all");
         }
     } else if (yarp::robotinterface::hasParam(params, "networks")) {
@@ -488,9 +526,20 @@ void yarp::robotinterface::Robot::interrupt()
     }
 }
 
-bool yarp::robotinterface::Robot::enterPhase(yarp::robotinterface::ActionPhase phase)
+bool yarp::robotinterface::Robot::enterPhase(
+    yarp::robotinterface::ActionPhase phase,
+    const DeviceList& externalDevices)
 {
     yInfo() << ActionPhaseToString(phase) << "phase starting...";
+
+    // Store the external devices
+    mPriv->externalDevices = externalDevices;
+
+    // Remove external devices with RAII
+    auto deleter = [&](void*) {
+        mPriv->externalDevices = {};
+    };
+    std::unique_ptr<void, decltype(deleter)> raiiExtDevices{nullptr, deleter};
 
     mPriv->currentPhase = phase;
     mPriv->currentLevel = 0;

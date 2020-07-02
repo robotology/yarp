@@ -49,7 +49,8 @@ public:
     std::string findParam(const std::string& name) const;
 
     void interrupt();
-    bool enterPhase(yarp::robotinterface::ActionPhase phase);
+    bool enterPhase(yarp::robotinterface::ActionPhase phase,
+                    const DeviceList& externalDevices = {});
     yarp::robotinterface::ActionPhase currentPhase() const;
     int currentLevel() const;
 
