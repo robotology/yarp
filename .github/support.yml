@@ -1,13 +1,14 @@
 # Configuration for Support Requests - https://github.com/dessant/support-requests
 
 # Label used to mark issues as support requests
-supportLabel: support
+supportLabel: "Issue Type: QA/Support"
 
 # Comment to post on issues marked as support requests, `{issue-author}` is an
 # optional placeholder. Set to `false` to disable
 supportComment: >
   :wave: @{issue-author}, we use the issue tracker exclusively for bug reports
-  and feature requests. However, this issue appears to be a support request.
+  and feature requests. However, this issue appears to be a question or a
+  support request.
   Please use our [Q&A repository](https://github.com/robotology/QA/issues/) for
   to get help with your setup.
 
