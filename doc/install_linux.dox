@@ -162,7 +162,7 @@ sudo apt-get install libjpeg-dev
 \endcode
 
 
-\subsection install_gstreamer_debian GStreamer
+\subsubsection install_gstreamer_debian GStreamer
 
 GStreamer is required to enable the h264 carrier
 
