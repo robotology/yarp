@@ -9,31 +9,44 @@
 #ifndef YARP_ROBOTINTERFACE_CALIBRATORTHREAD_H
 #define YARP_ROBOTINTERFACE_CALIBRATORTHREAD_H
 
-#include <yarp/robotinterface/Types.h>
+#include <yarp/robotinterface/api.h>
 
 #include <yarp/os/Thread.h>
 
-#include <yarp/robotinterface/api.h>
+#include <yarp/robotinterface/Types.h>
 
-namespace yarp { namespace os { class Semaphore; } }
-namespace yarp { namespace dev { class ICalibrator; } }
-namespace yarp { namespace dev { class DeviceDriver; } }
+namespace yarp {
+namespace os {
+class Semaphore;
+}
+}
+namespace yarp {
+namespace dev {
+class ICalibrator;
+}
+}
+namespace yarp {
+namespace dev {
+class DeviceDriver;
+}
+}
 
 namespace yarp {
 namespace robotinterface {
 
-class YARP_robotinterface_API CalibratorThread: public yarp::os::Thread
+class YARP_robotinterface_API CalibratorThread : public yarp::os::Thread
 {
 public:
-    enum Action {
+    enum Action
+    {
         ActionCalibrate,
         ActionPark
     };
 
-    CalibratorThread(yarp::dev::ICalibrator *calibrator,
-                     const std::string &calibratorName,
-                     yarp::dev::DeviceDriver *target,
-                     const std::string &targetName,
+    CalibratorThread(yarp::dev::ICalibrator* calibrator,
+                     const std::string& calibratorName,
+                     yarp::dev::DeviceDriver* target,
+                     const std::string& targetName,
                      yarp::robotinterface::CalibratorThread::Action action);
     virtual ~CalibratorThread();
 
@@ -42,7 +55,7 @@ public:
 
 private:
     class Private;
-    Private * const mPriv;
+    Private* const mPriv;
 };
 
 } // namespace robotinterface

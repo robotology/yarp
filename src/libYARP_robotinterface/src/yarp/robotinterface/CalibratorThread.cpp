@@ -8,16 +8,16 @@
 
 #include "CalibratorThread.h"
 
+#include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
 
-#include <yarp/os/Log.h>
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 class yarp::robotinterface::CalibratorThread::Private
 {
 public:
-    Private(CalibratorThread *parent) :
+    Private(CalibratorThread* parent) :
             parent(parent),
             calibrator(nullptr),
             target(nullptr),
@@ -27,8 +27,7 @@ public:
 
     void run()
     {
-        switch (action)
-        {
+        switch (action) {
         case ActionCalibrate:
             yDebug() << calibratorName << "starting calibration of device" << targetName;
             calibrator->calibrate(target);
@@ -44,8 +43,7 @@ public:
 
     void stop()
     {
-        switch (action)
-        {
+        switch (action) {
         case ActionCalibrate:
             yDebug() << calibratorName << "killing calibration of device" << targetName;
             calibrator->quitCalibrate();
@@ -57,22 +55,21 @@ public:
         }
     }
 
-    yarp::robotinterface::CalibratorThread * const parent;
+    yarp::robotinterface::CalibratorThread* const parent;
 
-    yarp::dev::ICalibrator *calibrator;
+    yarp::dev::ICalibrator* calibrator;
     std::string calibratorName;
-    yarp::dev::DeviceDriver *target;
+    yarp::dev::DeviceDriver* target;
     std::string targetName;
     yarp::robotinterface::CalibratorThread::Action action;
 }; // class yarp::robotinterface::CalibratorThread::Private
 
 
-
-yarp::robotinterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator *calibrator,
-                                                   const std::string &calibratorName,
-                                                   yarp::dev::DeviceDriver *target,
-                                                   const std::string &targetName,
-                                                   yarp::robotinterface::CalibratorThread::Action action) :
+yarp::robotinterface::CalibratorThread::CalibratorThread(yarp::dev::ICalibrator* calibrator,
+                                                         const std::string& calibratorName,
+                                                         yarp::dev::DeviceDriver* target,
+                                                         const std::string& targetName,
+                                                         yarp::robotinterface::CalibratorThread::Action action) :
         mPriv(new Private(this))
 {
     yAssert(calibrator);
