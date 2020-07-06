@@ -18,6 +18,7 @@
 
 
 #include "USBcamera.h"
+#include "USBcameraLogComponent.h"
 
 #if defined(_MSC_VER)
 #    include <WIN_camera.h>
@@ -41,19 +42,19 @@ using namespace yarp::dev;
 USBCameraDriver::USBCameraDriver()
 {
     // initialize stuff
-    yTrace();
+    yCTrace(USBCAMERA);
 }
 
 USBCameraDriver::~USBCameraDriver()
 {
     // delete subdevice, of any
-    yTrace();
+    yCTrace(USBCAMERA);
 }
 
 bool USBCameraDriver::open(yarp::os::Searchable& config)
 {
     // open OS dependant device
-    yTrace() << "input params are " << config.toString();
+    yCTrace(USBCAMERA) << "input params are " << config.toString();
 
 #if defined(_MSC_VER)
     os_device = (DeviceDriver*)new WIN_camera;
@@ -191,7 +192,7 @@ bool USBCameraDriver::getRgbResolution(int& width, int& height)
 bool USBCameraDriver::setRgbResolution(int width, int height)
 {
     if (width <= 0 || height <= 0) {
-        yError() << "usbCamera: invalid width or height";
+        yCError(USBCAMERA) << "usbCamera: invalid width or height";
         return false;
     }
     if (deviceRgbVisualParam != nullptr) {
@@ -247,13 +248,13 @@ bool USBCameraDriver::setRgbMirroring(bool mirror)
 USBCameraDriverRgb::USBCameraDriverRgb() :
         USBCameraDriver()
 {
-    yTrace();
+    yCTrace(USBCAMERA);
     pixelType = VOCAB_PIXEL_RGB;
 }
 
 USBCameraDriverRgb::~USBCameraDriverRgb()
 {
-    yTrace();
+    yCTrace(USBCAMERA);
 }
 
 bool USBCameraDriverRgb::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
@@ -289,13 +290,13 @@ int USBCameraDriverRgb::height() const
 USBCameraDriverRaw::USBCameraDriverRaw() :
         USBCameraDriver()
 {
-    yTrace();
+    yCTrace(USBCAMERA);
     pixelType = VOCAB_PIXEL_MONO;
 }
 
 USBCameraDriverRaw::~USBCameraDriverRaw()
 {
-    yTrace();
+    yCTrace(USBCAMERA);
 }
 
 bool USBCameraDriverRaw::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
