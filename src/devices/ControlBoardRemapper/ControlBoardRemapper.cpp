@@ -8,6 +8,7 @@
 
 #include "ControlBoardRemapper.h"
 #include "ControlBoardRemapperHelpers.h"
+#include "ControlBoardRemapperLogComponent.h"
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
@@ -36,7 +37,7 @@ bool ControlBoardRemapper::open(Searchable& config)
     _verb = (prop.check("verbose","if present, give detailed output"));
     if (_verb)
     {
-        yInfo("ControlBoardRemapper: running with verbose output\n");
+        yCInfo(CONTROLBOARDREMAPPER, "running with verbose output");
     }
 
     if(!parseOptions(prop))
@@ -58,14 +59,14 @@ bool ControlBoardRemapper::parseOptions(Property& prop)
     if( usingAxesNamesForAttachAll &&
         usingNetworksForAttachAll )
     {
-        yError() << "controlBoardRemapper: Both axesNames and networks option present, this is not supported.\n";
+        yCError(CONTROLBOARDREMAPPER) << "Both axesNames and networks option present, this is not supported.";
         return false;
     }
 
     if( !usingAxesNamesForAttachAll &&
         !usingNetworksForAttachAll )
     {
-        yError() << "controlBoardRemapper: axesNames option not found";
+        yCError(CONTROLBOARDREMAPPER) << "axesNames option not found";
         return false;
     }
 
@@ -87,7 +88,7 @@ bool ControlBoardRemapper::parseAxesNames(const Property& prop)
     Bottle *propAxesNames=prop.find("axesNames").asList();
     if(propAxesNames==nullptr)
     {
-       yError() <<"ControlBoardRemapper: Error parsing parameters: \"axesNames\" should be followed by a list\n";
+       yCError(CONTROLBOARDREMAPPER) << "Parsing parameters: \"axesNames\" should be followed by a list";
        return false;
     }
 
@@ -107,13 +108,13 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
     Bottle *nets=prop.find("networks").asList();
     if(nets==nullptr)
     {
-       yError() <<"ControlBoardRemapper: Error parsing parameters: \"networks\" should be followed by a list\n";
+       yCError(CONTROLBOARDREMAPPER) << "Parsing parameters: \"networks\" should be followed by a list";
        return false;
     }
 
     if (!prop.check("joints", "number of joints of the part"))
     {
-        yError() <<"ControlBoardRemapper: joints options not found when reading networks option";
+        yCError(CONTROLBOARDREMAPPER) << "joints options not found when reading networks option";
         return false;
     }
 
@@ -146,9 +147,10 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
 
                 if(tmpBot.size() != 4)
                 {
-                    yError() << "Error: check network parameters in part description"
-                             << "--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis"
-                             << "Got: "<< parameters.toString().c_str() << "\n";
+                    yCError(CONTROLBOARDREMAPPER)
+                        << "Check network parameters in part description"
+                        << "--> I was expecting" << nets->get(k).asString() << "followed by a list of four integers in parenthesis"
+                        << "Got:" << parameters.toString();
                     return false;
                 }
                 else
@@ -165,7 +167,7 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
         }
         else if (parameters.size()==5)
         {
-            // yError<<"Parameter networks use deprecated syntax\n";
+            // yCError(CONTROLBOARDREMAPPER) << "Parameter networks use deprecated syntax";
             wBase=parameters.get(1).asInt32();
             wTop=parameters.get(2).asInt32();
             base=parameters.get(3).asInt32();
@@ -173,9 +175,10 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
         }
         else
         {
-            yError() <<"Error: check network parameters in part description"
-                     <<"--> I was expecting "<<nets->get(k).asString().c_str() << " followed by a list of four integers in parenthesis"
-                     <<"Got: "<< parameters.toString().c_str() << "\n";
+            yCError(CONTROLBOARDREMAPPER)
+                << "Check network parameters in part description"
+                << "--> I was expecting" << nets->get(k).asString() << "followed by a list of four integers in parenthesis"
+                << "Got:" << parameters.toString();
             return false;
         }
 
@@ -184,8 +187,9 @@ bool ControlBoardRemapper::parseNetworks(const Property& prop)
 
         if( (wTop-wBase) != (top-base) )
         {
-            yError() <<"Error: check network parameters in network "<<nets->get(k).asString().c_str() <<
-             "I was expecting a well form quadruple of numbers, got instead: "<< parameters.toString().c_str();
+            yCError(CONTROLBOARDREMAPPER)
+                << "Check network parameters in network " << nets->get(k).asString().c_str()
+                << "I was expecting a well form quadruple of numbers, got instead: "<< parameters.toString().c_str();
         }
 
         tmpDevice->id = nets->get(k).asString();
@@ -257,7 +261,7 @@ bool ControlBoardRemapper::attachAll(const PolyDriverList &polylist)
 
     if (!ready)
     {
-        yError("ControlBoardRemapper: AttachAll failed, some subdevice was not found or its attach failed\n");
+        yCError(CONTROLBOARDREMAPPER, "AttachAll failed, some subdevice was not found or its attach failed");
         return false;
     }
 
@@ -308,7 +312,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
         if( !iencs ||
             !iaxinfos )
         {
-            yError() <<"ControlBoardRemapper: subdevice " << deviceKey << " does not implemented the required IAxisInfo or IEncoders interfaces";
+            yCError(CONTROLBOARDREMAPPER) << "subdevice" << deviceKey << "does not implemented the required IAxisInfo or IEncoders interfaces";
             return false;
         }
 
@@ -317,7 +321,7 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
 
         if( !ok )
         {
-            yError() <<"ControlBoardRemapper: subdevice " << deviceKey << " does not implemented the required getAxes method";
+            yCError(CONTROLBOARDREMAPPER) << "subdevice" << deviceKey << "does not implemented the required getAxes method";
             return false;
         }
 
@@ -330,16 +334,17 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
 
             if( !ok )
             {
-                yError() <<"ControlBoardRemapper: subdevice " << deviceKey << " does not implemented the required getAxisName method";
+                yCError(CONTROLBOARDREMAPPER) << "subdevice" << deviceKey << "does not implemented the required getAxisName method";
                 return false;
             }
 
             auto it = axesLocationMap.find(axName);
             if( it != axesLocationMap.end() )
             {
-                yError() <<"ControlBoardRemapper: multiple axes have the same name " << axName
-                         <<" on on device " << polylist[p]->key << " with index  " << axInSubDevice
-                         <<" and another on device " << it->second.subDeviceKey << " with index " << it->second.indexInSubDevice;
+                yCError(CONTROLBOARDREMAPPER)
+                    << "multiple axes have the same name" << axName
+                    << "on on device " << polylist[p]->key << "with index" << axInSubDevice
+                    <<"and another on device" << it->second.subDeviceKey << "with index" << it->second.indexInSubDevice;
                 return false;
             }
 
@@ -364,9 +369,9 @@ bool ControlBoardRemapper::attachAllUsingAxesNames(const PolyDriverList& polylis
         auto it = axesLocationMap.find(axesName);
         if( it == axesLocationMap.end() )
         {
-            yError() <<"ControlBoardRemapper: axis " << axesName
-                     <<" specified in axesNames was not found in the axes of the controlboards "
-                     <<"passed to attachAll, attachAll failed. ";
+            yCError(CONTROLBOARDREMAPPER)
+                << "axis " << axesName
+                << "specified in axesNames was not found in the axes of the controlboards passed to attachAll, attachAll failed.";
             return false;
         }
 
@@ -440,7 +445,7 @@ bool ControlBoardRemapper::attachAllUsingNetworks(const PolyDriverList &polylist
             {
                 if (!remappedControlBoards.subdevices[k].attach(polylist[p]->poly, subDeviceKey))
                 {
-                    yError("ControlBoardRemapper: attach to subdevice %s failed\n", polylist[p]->key.c_str());
+                    yCError(CONTROLBOARDREMAPPER, "attach to subdevice %s failed", polylist[p]->key.c_str());
                     return false;
                 }
             }
@@ -451,7 +456,7 @@ bool ControlBoardRemapper::attachAllUsingNetworks(const PolyDriverList &polylist
 
     if( !ok )
     {
-        yWarning() << "ControlBoardRemapper: unable to update axesNames";
+        yCWarning(CONTROLBOARDREMAPPER) << "unable to update axesNames";
     }
 
     return true;
@@ -2093,7 +2098,7 @@ bool ControlBoardRemapper::setGearboxRatio(int m, const double val)
 /* IRemoteVariables */
 bool ControlBoardRemapper::getRemoteVariable(std::string key, yarp::os::Bottle& val)
 {
-    yWarning("ControlBoardRemapper: getRemoteVariable is not properly implemented, use at your own risk.");
+    yCWarning(CONTROLBOARDREMAPPER, "getRemoteVariable is not properly implemented, use at your own risk.");
 
     bool b = true;
 
@@ -2127,13 +2132,13 @@ bool ControlBoardRemapper::getRemoteVariable(std::string key, yarp::os::Bottle& 
 
 bool ControlBoardRemapper::setRemoteVariable(std::string key, const yarp::os::Bottle& val)
 {
-    yWarning("ControlBoardRemapper: setRemoteVariable is not properly implemented, use at your own risk.");
+    yCWarning(CONTROLBOARDREMAPPER, "setRemoteVariable is not properly implemented, use at your own risk.");
 
     size_t bottle_size = val.size();
     size_t device_size = remappedControlBoards.getNrOfSubControlBoards();
     if (bottle_size != device_size)
     {
-        yError("ControlBoardRemapper::setRemoteVariable bottle_size != device_size failure");
+        yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable bottle_size != device_size failure");
         return false;
     }
 
@@ -2141,8 +2146,8 @@ bool ControlBoardRemapper::setRemoteVariable(std::string key, const yarp::os::Bo
     for (unsigned int i = 0; i < device_size; i++)
     {
         RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(i);
-        if (!p)  { yError("ControlBoardRemapper::setRemoteVariable !p failure"); return false; }
-        if (!p->iVar) { yError("ControlBoardRemapper::setRemoteVariable !p->iVar failure"); return false; }
+        if (!p)  { yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable !p failure"); return false; }
+        if (!p->iVar) { yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable !p->iVar failure"); return false; }
         Bottle* partial_val = val.get(i).asList();
         if (partial_val)
         {
@@ -2150,7 +2155,7 @@ bool ControlBoardRemapper::setRemoteVariable(std::string key, const yarp::os::Bo
         }
         else
         {
-            yError("ControlBoardRemapper::setRemoteVariable general failure");
+            yCError(CONTROLBOARDREMAPPER, "ControlBoardRemapper::setRemoteVariable general failure");
             return false;
         }
     }
@@ -2160,7 +2165,7 @@ bool ControlBoardRemapper::setRemoteVariable(std::string key, const yarp::os::Bo
 
 bool ControlBoardRemapper::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
 {
-    yWarning("ControlBoardRemapper: getRemoteVariablesList is not properly implemented, use at your own risk.");
+    yCWarning(CONTROLBOARDREMAPPER, "getRemoteVariablesList is not properly implemented, use at your own risk.");
 
     size_t subIndex = remappedControlBoards.lut[0].subControlBoardIndex;
     RemappedSubControlBoard *p = remappedControlBoards.getSubControlBoard(subIndex);
@@ -3135,13 +3140,13 @@ bool ControlBoardRemapper::calibrationDone(int j)
 
 bool ControlBoardRemapper::abortPark()
 {
-    yError("ControlBoardRemapper: Calling abortPark -- not implemented\n");
+    yCError(CONTROLBOARDREMAPPER, "Calling abortPark -- not implemented");
     return false;
 }
 
 bool ControlBoardRemapper::abortCalibration()
 {
-    yError("ControlBoardRemapper: Calling abortCalibration -- not implemented\n");
+    yCError(CONTROLBOARDREMAPPER, "Calling abortCalibration -- not implemented");
     return false;
 }
 

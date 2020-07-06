@@ -24,6 +24,8 @@ if(NOT SKIP_controlboardremapper OR NOT SKIP_remotecontrolboardremapper)
                                                    ControlBoardRemapper.h
                                                    ControlBoardRemapperHelpers.cpp
                                                    ControlBoardRemapperHelpers.h
+                                                   ControlBoardRemapperLogComponent.cpp
+                                                   ControlBoardRemapperLogComponent.h
                                                    RemoteControlBoardRemapper.cpp
                                                    RemoteControlBoardRemapper.h)
 
