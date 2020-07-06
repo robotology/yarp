@@ -9,6 +9,7 @@
 #include "upowerBattery.h"
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -23,16 +24,21 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(UPOWERBATTERY, "yarp.device.upowerBattery")
 const QString UPOWER_SERVICE = QStringLiteral("org.freedesktop.UPower");
 const QString UPOWER_OBJECT = QStringLiteral("org.freedesktop.UPower.Device");
+}
 
 bool UpowerBattery::open(yarp::os::Searchable& config)
 {
-    std::string device_path = config.check("device_path", Value("/org/freedesktop/UPower/devices/battery_BAT0"), "Battery device path (as returned by 'upower -e', for example '/org/freedesktop/UPower/devices/battery_BAT0')").asString();
+    std::string device_path = config.check("device_path",
+                                           Value("/org/freedesktop/UPower/devices/battery_BAT0"),
+                                           "Battery device path (as returned by 'upower -e', for example '/org/freedesktop/UPower/devices/battery_BAT0')").asString();
 
     m_interface = new QDBusInterface(UPOWER_SERVICE, QString(device_path.c_str()), UPOWER_OBJECT, QDBusConnection::systemBus());
     if (!m_interface->isValid()) {
-        yError() << "Interface not found";
+        yCError(UPOWERBATTERY) << "Interface not found";
         delete m_interface;
         return false;
     }
@@ -128,6 +134,6 @@ bool UpowerBattery::getBatteryInfo(string& info)
                 .arg(m_interface->property("Model").toString())
                 .arg(m_interface->property("Serial").toString())
                 .toStdString();
-    yDebug() << info;
+    yCDebug(UPOWERBATTERY) << info;
     return true;
 }
