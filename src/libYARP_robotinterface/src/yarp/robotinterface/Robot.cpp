@@ -16,6 +16,7 @@
 #include "Action.h"
 #include "Device.h"
 #include "Param.h"
+#include "Types.h"
 #include <algorithm>
 #include <iostream>
 #include <memory>
@@ -99,7 +100,7 @@ public:
     std::string portprefix;
     ParamList params;
     DeviceList devices;
-    DeviceList externalDevices;
+    DevicePtrList externalDevices;
     yarp::robotinterface::ActionPhase currentPhase;
     unsigned int currentLevel;
 }; // class yarp::robotinterface::Robot::Private
@@ -120,8 +121,14 @@ yarp::robotinterface::DeviceList yarp::robotinterface::Robot::Private::allDevice
     using DeviceName = std::string;
     std::unordered_map<DeviceName, Device> extDevicesMap;
 
-    for (const auto& externalDevice : externalDevices) {
-        extDevicesMap[externalDevice.name()] = externalDevice;
+    for (auto* externalDevice : externalDevices) {
+
+        if (!(externalDevice && externalDevice->isOpen())) {
+            yDebug() << "Skipping invalid external device";
+            continue;
+        }
+
+        extDevicesMap[externalDevice->name()] = *externalDevice;
     }
 
     yarp::robotinterface::DeviceList allDevices;
@@ -510,6 +517,18 @@ const yarp::robotinterface::DeviceList& yarp::robotinterface::Robot::devices() c
     return mPriv->devices;
 }
 
+const yarp::robotinterface::DevicePtrList yarp::robotinterface::Robot::devicePtrs() const
+{
+    yarp::robotinterface::DevicePtrList ptrs;
+    ptrs.reserve(mPriv->devices.size());
+
+    for (auto& device : mPriv->devices) {
+        ptrs.push_back(&device);
+    }
+
+    return ptrs;
+}
+
 const yarp::robotinterface::Device& yarp::robotinterface::Robot::device(const std::string& name) const
 {
     return *mPriv->findDevice(name);
@@ -528,7 +547,7 @@ void yarp::robotinterface::Robot::interrupt()
 
 bool yarp::robotinterface::Robot::enterPhase(
     yarp::robotinterface::ActionPhase phase,
-    const DeviceList& externalDevices)
+    const DevicePtrList externalDevices)
 {
     yInfo() << ActionPhaseToString(phase) << "phase starting...";
 
@@ -537,7 +556,7 @@ bool yarp::robotinterface::Robot::enterPhase(
 
     // Remove external devices with RAII
     auto deleter = [&](void*) {
-        mPriv->externalDevices = {};
+        mPriv->externalDevices.clear();
     };
     std::unique_ptr<void, decltype(deleter)> raiiExtDevices{nullptr, deleter};
 

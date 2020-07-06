@@ -39,6 +39,7 @@ class Robot;
 typedef std::vector<robotinterface::Param> ParamList;
 typedef std::vector<robotinterface::Action> ActionList;
 typedef std::vector<robotinterface::Device> DeviceList;
+typedef std::vector<robotinterface::Device*> DevicePtrList;
 typedef std::list<yarp::os::Thread*> ThreadList;
 
 YARP_robotinterface_API bool hasParam(const robotinterface::ParamList& list, const std::string& name);

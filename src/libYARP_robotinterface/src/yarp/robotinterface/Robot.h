@@ -43,6 +43,7 @@ public:
     const std::string& portprefix() const;
     const ParamList& params() const;
     const DeviceList& devices() const;
+    const DevicePtrList devicePtrs() const;
     const Device& device(const std::string& name) const;
 
     bool hasParam(const std::string& name) const;
@@ -50,7 +51,7 @@ public:
 
     void interrupt();
     bool enterPhase(yarp::robotinterface::ActionPhase phase,
-                    const DeviceList& externalDevices = {});
+                    const DevicePtrList externalDevices = {});
     yarp::robotinterface::ActionPhase currentPhase() const;
     int currentLevel() const;
 
