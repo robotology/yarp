@@ -9,6 +9,7 @@
 
 #include "AnalogSensorClient.h"
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 
@@ -20,12 +21,15 @@ using namespace yarp::sig;
 
 namespace
 {
-    inline int checkResponse(bool ok, const yarp::os::Bottle& response)
-    {
-        const yarp::os::Value & v = response.get(0);
-        return ok && v.isInt32() ? v.asInt32() : IAnalogSensor::AS_ERROR;
-    }
+YARP_LOG_COMPONENT(ANALOGSENSORCLIENT, "yarp.device.analogsensorclient")
+
+inline int checkResponse(bool ok, const yarp::os::Bottle& response)
+{
+    const yarp::os::Value & v = response.get(0);
+    return ok && v.isInt32() ? v.asInt32() : IAnalogSensor::AS_ERROR;
 }
+
+} // namespace
 
 inline void InputPortProcessor::resetStat()
 {
@@ -168,7 +172,7 @@ void  AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::string &name)
             continue;
         }
 
-        yDebug() << "found is " << found <<  "; length is : " << name.length();
+        yCDebug(ANALOGSENSORCLIENT) << "found is " << found <<  "; length is : " << name.length();
         // remove leading or trailing '/'
         if( (found == 0) || (found == name.length()-1 ) /*found starts from 0, length doesn't*/ )
         {
@@ -179,7 +183,7 @@ void  AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::string &name)
             done = true;        // there is some '/', but their are in the middle and they are allowed
     }
 
-    yDebug() << name;
+    yCDebug(ANALOGSENSORCLIENT) << name;
 }
 
 bool AnalogSensorClient::open(yarp::os::Searchable &config)
@@ -194,12 +198,12 @@ bool AnalogSensorClient::open(yarp::os::Searchable &config)
 
     if (local=="")
     {
-        yError("AnalogSensorClient::open() error you have to provide valid local name");
+        yCError(ANALOGSENSORCLIENT, "AnalogSensorClient::open() error you have to provide valid local name");
         return false;
     }
     if (remote=="")
     {
-        yError("AnalogSensorClient::open() error you have to provide valid remote name\n");
+        yCError(ANALOGSENSORCLIENT, "AnalogSensorClient::open() error you have to provide valid remote name\n");
         return false;
     }
 
@@ -210,28 +214,28 @@ bool AnalogSensorClient::open(yarp::os::Searchable &config)
 
     if (!inputPort.open(local))
     {
-        yError("AnalogSensorClient::open() error could not open port %s, check network", local.c_str());
+        yCError(ANALOGSENSORCLIENT, "AnalogSensorClient::open() error could not open port %s, check network", local.c_str());
         return false;
     }
     inputPort.useCallback();
 
     if (!rpcPort.open(local_rpc))
     {
-        yError("AnalogSensorClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
+        yCError(ANALOGSENSORCLIENT, "AnalogSensorClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
         return false;
     }
 
     bool ok=Network::connect(remote.c_str(), local.c_str(), carrier.c_str());
     if (!ok)
     {
-        yError("AnalogSensorClient::open() error could not connect to %s", remote.c_str());
+        yCError(ANALOGSENSORCLIENT, "AnalogSensorClient::open() error could not connect to %s", remote.c_str());
         return false;
     }
 
     ok=Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
-        yError("AnalogSensorClient::open() error could not connect to %s\n", remote_rpc.c_str());
+        yCError(ANALOGSENSORCLIENT, "AnalogSensorClient::open() error could not connect to %s\n", remote_rpc.c_str());
        return false;
     }
 
