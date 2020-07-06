@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_LOGCOMPONENT_H
-#define YARP_OS_IMPL_LOGCOMPONENT_H
+#ifndef YARP_SERVERSQL_IMPL_LOGCOMPONENT_H
+#define YARP_SERVERSQL_IMPL_LOGCOMPONENT_H
 
 #include <yarp/os/api.h>
 #include <yarp/os/LogComponent.h>
@@ -44,4 +44,4 @@ void setMinumumLogType(yarp::os::Log::LogType minumumLogType);
         return component; \
     }
 
-#endif // YARP_OS_IMPL_LOGCOMPONENT_H
+#endif // YARP_SERVERSQL_IMPL_LOGCOMPONENT_H
