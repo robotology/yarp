@@ -9,6 +9,7 @@
 #include "JoypadControlServer.h"
 #include <map>
 #include <vector>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 #define DEFAULT_THREAD_PERIOD   0.010 //s
@@ -17,6 +18,12 @@ using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
+
+namespace {
+YARP_LOG_COMPONENT(JOYPADCONTROLSERVER, "yarp.device.JoypadControlServer")
+}
+
+
 JoypadCtrlParser::JoypadCtrlParser() : device(nullptr){}
 
 inline void cat(Vector& a, const Vector& b)
@@ -243,18 +250,19 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
 {
     if(params.check("help"))
     {
-        yInfo() << "parameters:\n\n" <<
-                   "period             - refresh period of the broadcasted values in ms.. default" << DEFAULT_THREAD_PERIOD * 1000<< "\n"
-                   "use_separate_ports - set it to 1 to use separate ports (buttons, axes, trackballs, hats) and 0 to stream all in one single port\n" <<
-                   "name               - Prefix name of the ports opened by the JoypadControlServer, e.g. /robotName/joypad\n" <<
-                   "subdevice          - name of the subdevice to open\n" <<
-                   "profile            - print the joypad data for debugging purpose";
+        yCInfo(JOYPADCONTROLSERVER)
+            << "parameters:\n\n"
+            << "period             - refresh period of the broadcasted values in ms.. default" << DEFAULT_THREAD_PERIOD * 1000 << "\n"
+            << "use_separate_ports - set it to 1 to use separate ports (buttons, axes, trackballs, hats) and 0 to stream all in one single port\n"
+            << "name               - Prefix name of the ports opened by the JoypadControlServer, e.g. /robotName/joypad\n"
+            << "subdevice          - name of the subdevice to open\n"
+            << "profile            - print the joypad data for debugging purpose";
         return false;
     }
     std::string rootName;
     if (!params.check("period", "refresh period of the broadcasted values in ms"))
     {
-        yInfo() << "JoypadControlServer: using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
+        yCInfo(JOYPADCONTROLSERVER) << "Using default 'period' parameter of" << DEFAULT_THREAD_PERIOD << "s";
     }
     else
     {
@@ -268,13 +276,13 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
         m_separatePorts = params.find("use_separate_ports").asBool();
         if(!m_separatePorts)
         {
-            yError() << "single port mode not supported at the moment";
+            yCError(JOYPADCONTROLSERVER) << "Single port mode not supported at the moment";
             return false;
         }
     }
     else
     {
-        yError() << "JoypadControlServer: missing use_separate_ports in configuration";
+        yCError(JOYPADCONTROLSERVER) << "Missing use_separate_ports in configuration";
         return false;
     }
     m_coordsMode = yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN;
@@ -282,19 +290,19 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
 
     if (!params.check("name", "Prefix name of the ports opened by the JoypadControlServer."))
     {
-        yError() << "JoypadControlServer: missing 'name' parameter. Check you configuration file; it must be like:";
-        yError() << "   name:         Prefix name of the ports opened by the JoypadControlServer, e.g. /robotName/joypad";
+        yCError(JOYPADCONTROLSERVER) << "Missing 'name' parameter. Check you configuration file; it must be like:";
+        yCError(JOYPADCONTROLSERVER) << "   name:         Prefix name of the ports opened by the JoypadControlServer, e.g. /robotName/joypad";
         return false;
     }
 
-        rootName             = params.find("name").asString();
-        m_rpcPortName        = rootName + "/rpc:i";
-        m_portButtons.name   = rootName + "/buttons:o";
-        m_portAxis.name      = rootName + "/axis:o";
-        m_portStick.name     = rootName + "/stick:o";
-        m_portTouch.name     = rootName + "/touch:o";
-        m_portTrackball.name = rootName + "/trackball:o";
-        m_portHats.name      = rootName + "/hat:o";
+    rootName             = params.find("name").asString();
+    m_rpcPortName        = rootName + "/rpc:i";
+    m_portButtons.name   = rootName + "/buttons:o";
+    m_portAxis.name      = rootName + "/axis:o";
+    m_portStick.name     = rootName + "/stick:o";
+    m_portTouch.name     = rootName + "/touch:o";
+    m_portTrackball.name = rootName + "/trackball:o";
+    m_portHats.name      = rootName + "/hat:o";
 
 
     // check if we need to create subdevice or if they are
@@ -304,7 +312,7 @@ bool JoypadControlServer::open(yarp::os::Searchable& params)
         m_isSubdeviceOwned=true;
         if(!openAndAttachSubDevice(params))
         {
-            yError("JoypadControlServer: error while opening subdevice\n");
+            yCError(JOYPADCONTROLSERVER) << "Error while opening subdevice";
             return false;
         }
     }
@@ -331,7 +339,7 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
 
     if (!m_subDeviceOwned->isValid())
     {
-        yError("JoypadControlServer: opening subdevice... FAILED\n");
+        yCError(JOYPADCONTROLSERVER) << "Opening subdevice... FAILED";
         return false;
     }
     m_isSubdeviceOwned = true;
@@ -340,7 +348,7 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
 
     if(!m_parser.configure(m_device) )
     {
-        yError() << "JoypadControlServer: error configuring interfaces for parsers";
+        yCError(JOYPADCONTROLSERVER) << "Error configuring interfaces for parsers";
         return false;
     }
 
@@ -356,7 +364,7 @@ bool JoypadControlServer::attach(PolyDriver* poly)
 
     if(m_device == nullptr)
     {
-        yError() << "JoypadControlServer: attached device has no valid IJoypadController interface.";
+        yCError(JOYPADCONTROLSERVER) << "Attached device has no valid IJoypadController interface.";
         return false;
     }
     return true;
@@ -366,7 +374,7 @@ bool JoypadControlServer::attach(yarp::dev::IJoypadController *s)
 {
     if(s == nullptr)
     {
-        yError() << "JoypadControlServer: attached device has no valid IJoystickController interface.";
+        yCError(JOYPADCONTROLSERVER) << "Attached device has no valid IJoystickController interface.";
         return false;
     }
     m_device = s;
@@ -399,7 +407,7 @@ bool JoypadControlServer::openPorts()
 
     if(!m_rpcPort.open(m_rpcPortName))
     {
-        yError() << "JoypadControlServer: unable to open rpc Port" << m_rpcPortName.c_str();
+        yCError(JOYPADCONTROLSERVER) << "Unable to open rpc Port" << m_rpcPortName.c_str();
         return false;
     }
     m_rpcPort.setReader(m_parser);
@@ -570,7 +578,7 @@ void JoypadControlServer::profile()
         m_device->getAxis(i, data);
         message += to_string(data) + " ";
     }
-    yInfo() << message;
+    yCInfo(JOYPADCONTROLSERVER) << message;
 
     message = "Hats: ";
     m_device->getHatCount(count);
@@ -580,7 +588,7 @@ void JoypadControlServer::profile()
         m_device->getHat(i, data);
         message += to_string(data) + " ";
     }
-    yInfo() << message;
+    yCInfo(JOYPADCONTROLSERVER) << message;
 
     message = "Buttons: ";
     m_device->getButtonCount(count);
@@ -590,7 +598,7 @@ void JoypadControlServer::profile()
         m_device->getButton(i, data);
         message += to_string(data) + " ";
     }
-    yInfo() << message;
+    yCInfo(JOYPADCONTROLSERVER) << message;
 
     message = "Stick: ";
     m_device->getStickCount(count);
@@ -606,7 +614,7 @@ void JoypadControlServer::profile()
         message += "\n";
 
     }
-    yInfo() << message;
+    yCInfo(JOYPADCONTROLSERVER) << message;
 
     message = "trackball: ";
     m_device->getTrackballCount(count);
@@ -635,7 +643,7 @@ void JoypadControlServer::profile()
         }
         message += "\n";
     }
-    yInfo() << message;
+    yCInfo(JOYPADCONTROLSERVER) << message;
 }
 
 void JoypadControlServer::run()
@@ -693,7 +701,7 @@ void JoypadControlServer::run()
                 double v;
                 if(!m_device->getAxis(i, v))
                 {
-                    yError() << "cannot get axis with id" << i;
+                    yCError(JOYPADCONTROLSERVER) << "Cannot get axis with id" << i;
                     write = false;
                     break;
                 }
@@ -714,7 +722,7 @@ void JoypadControlServer::run()
                 Vector v;
                 if(!m_device->getTrackball(i, v))
                 {
-                    yError() << "cannot get axis with id" << i;
+                    yCError(JOYPADCONTROLSERVER) << "Cannot get axis with id" << i;
                     write = false;
                     break;
                 }
@@ -781,23 +789,23 @@ bool JoypadControlServer::attachAll(const PolyDriverList& p)
 {
     if (p.size() != 1)
     {
-        yError("JoypadControlServer: cannot attach more than one device");
+        yCError(JOYPADCONTROLSERVER) << "Cannot attach more than one device";
         return false;
     }
 
     yarp::dev::PolyDriver* Idevice2attach = p[0]->poly;
     if(p[0]->key == "IJoypadController")
     {
-        yInfo() << "JoypadControlServer: Good name Dude!";
+        yCInfo(JOYPADCONTROLSERVER) << "Good name!";
     }
     else
     {
-        yInfo() << "JoypadControlServer: Bad name Dude!!";
+        yCInfo(JOYPADCONTROLSERVER) << "Bad name!";
     }
 
     if (!Idevice2attach->isValid())
     {
-        yError() << "JoypadControlServer: Device " << p[0]->key << " to attach to is not valid ... cannot proceed";
+        yCError(JOYPADCONTROLSERVER) << "Device " << p[0]->key << " to attach to is not valid ... cannot proceed";
         return false;
     }
 
