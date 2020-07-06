@@ -17,6 +17,7 @@
  */
 
 #include "TextureBattery.h"
+#include "OVRHeadsetLogComponent.h"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/PolyDriver.h>
@@ -108,7 +109,7 @@ bool TextureBattery::initBatteryClient()
     drv = new yarp::dev::PolyDriver(options);
 
     if (!drv || !(drv->isValid())) {
-        yError("Problems instantiating the device driver");
+        yCError(OVRHEADSET, "Problems instantiating the device driver");
         delete drv;
         drv = nullptr;
         ibat = nullptr;
@@ -117,7 +118,7 @@ bool TextureBattery::initBatteryClient()
 
     drv->view(ibat);
     if (!ibat) {
-        yError("Problems viewing the battery interface");
+        yCError(OVRHEADSET, "Problems viewing the battery interface");
         drv->close();
         delete drv;
         drv = nullptr;
@@ -137,13 +138,13 @@ void TextureBattery::run()
 
     if (!ibat) {
         if (!initBatteryClient()) {
-            yWarning() << "Cannot connect to battery. Suspending thread.";
+            yCWarning(OVRHEADSET) << "Cannot connect to battery. Suspending thread.";
             currentTexture = textures[BatteryStatusMissing];
             suspend();
             return;
         }
     }
-    yAssert(ibat);
+    yCAssert(OVRHEADSET, ibat);
 
     yarp::dev::IBattery::Battery_status status;
     double charge;

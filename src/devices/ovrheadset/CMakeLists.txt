@@ -14,6 +14,7 @@ if(NOT SKIP_ovrheadset)
   yarp_add_plugin(yarp_ovrheadset)
 
   set(yarp_ovrheadset_SRCS OVRHeadset.cpp
+                           OVRHeadsetLogComponent.cpp
                            TextureBuffer.cpp
                            TextureStatic.cpp
                            TextureBattery.cpp
@@ -36,6 +37,7 @@ if(NOT SKIP_ovrheadset)
                            img-battery-missing.h)
   set(yarp_ovrheadset_HDRS ImageType.h
                            OVRHeadset.h
+                           OVRHeadsetLogComponent.h
                            TextureBuffer.h
                            TextureStatic.h
                            TextureBattery.h

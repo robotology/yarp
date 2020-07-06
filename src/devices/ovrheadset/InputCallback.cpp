@@ -18,6 +18,7 @@
 
 #include "InputCallback.h"
 #include "TextureBuffer.h"
+#include "OVRHeadsetLogComponent.h"
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/LogStream.h>
@@ -36,13 +37,13 @@ InputCallback::InputCallback(int eye) :
         pitchOffset(0.0f),
         yawOffset(0.0f)
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
 }
 
 
 InputCallback::~InputCallback()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
 
     if (eyeRenderTexture) {
         delete eyeRenderTexture;
@@ -92,7 +93,7 @@ void InputCallback::onRead(ImageType &img)
         }
     }
     if (found != expected) {
-        yWarning() << "InputCallback" << (eye==0?"left ":"right") << "    expected" << expected << "found" << found << "next" <<  (found + 1) % 10;
+        yCWarning(OVRHEADSET) << "InputCallback" << (eye==0?"left ":"right") << "    expected" << expected << "found" << found << "next" <<  (found + 1) % 10;
     }
     expected = (found + 1) % 10;
 #endif // DEBUG_SQUARES
