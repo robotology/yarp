@@ -18,8 +18,10 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/sig/Vector.h>
 
+YARP_DECLARE_LOG_COMPONENT(TESTMOTOR)
 
 /**
  * @ingroup dev_impl_motor
@@ -56,7 +58,7 @@ public:
     bool getAxes(int *ax) override
     {
         *ax = njoints;
-        yInfo("TestMotor reporting %d axes present", *ax);
+        yCInfo(TESTMOTOR, "TestMotor reporting %d axes present", *ax);
         return true;
     }
 
