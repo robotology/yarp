@@ -64,11 +64,11 @@ class yarp::dev::RobotInterfaceTestMockDriver :
         public yarp::dev::DeviceDriver
 {
 public:
-    virtual ~RobotInterfaceTestMockDriver();
+    ~RobotInterfaceTestMockDriver() override;
 
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 };
 
 yarp::dev::RobotInterfaceTestMockDriver::~RobotInterfaceTestMockDriver()
@@ -92,15 +92,15 @@ class yarp::dev::RobotInterfaceTestMockWrapper :
         public yarp::dev::IMultipleWrapper
 {
 public:
-    virtual ~RobotInterfaceTestMockWrapper();
+    ~RobotInterfaceTestMockWrapper() override;
 
     //DEVICE DRIVER
-    virtual bool open(yarp::os::Searchable& config);
-    virtual bool close();
+    bool open(yarp::os::Searchable& config) override;
+    bool close() override;
 
     //IMULTIPLEWRAPPER
-    virtual bool attachAll(const PolyDriverList&);
-    virtual bool detachAll();
+    bool attachAll(const PolyDriverList&) override;
+    bool detachAll() override;
 };
 
 yarp::dev::RobotInterfaceTestMockWrapper::~RobotInterfaceTestMockWrapper()
