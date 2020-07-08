@@ -12,6 +12,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 #include <string>
@@ -21,30 +22,33 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::math;
 
+namespace {
+YARP_LOG_COMPONENT(FAKEIMU, "yarp.device.fakeIMU")
+constexpr double DEFAULT_PERIOD = 0.01; // seconds
+constexpr int DEFAULT_NCHANNELS = 12;
+constexpr double DEFAULT_DUMMY_VALUE = 0.0;
+constexpr const char* DEFAULT_SENSOR_NAME = "sensorName";
+constexpr const char* DEFAULT_FRAME_NAME = "frameName";
+
+constexpr double EARTH_GRAVITY = -9.81;
+}
+
 /**
  * This device implements a fake analog sensor
  * emulating an IMU
- * @author Alberto Cardellino
  */
-fakeIMU::fakeIMU() : PeriodicThread(DEFAULT_PERIOD)
+fakeIMU::fakeIMU() :
+        PeriodicThread(DEFAULT_PERIOD),
+        rpy({0.0, 0.0, 0.0}),
+        gravity({0.0, 0.0, EARTH_GRAVITY, 0.0}),
+        dcm(4, 4),
+        accels({0.0, 0.0, 0.0, 0.0}),
+        nchannels(DEFAULT_NCHANNELS),
+        dummy_value(DEFAULT_DUMMY_VALUE),
+        m_sensorName(DEFAULT_SENSOR_NAME),
+        m_frameName(DEFAULT_FRAME_NAME)
 {
-    nchannels = 12;
-    dummy_value = 0;
-    rpy.resize(3);
-    dcm.resize(4,4);
-    gravity.resize(4);
-    accels.resize(4);
-    rpy.zero();
     dcm.zero();
-    accels.zero();
-
-    gravity[0] = 0.0;
-    gravity[1] = 0;
-    gravity[2] = -9.81;
-    gravity[3] = 0;
-
-    m_sensorName = "sensorName";
-    m_frameName  = "frameName";
 }
 
 fakeIMU::~fakeIMU()
@@ -55,13 +59,12 @@ fakeIMU::~fakeIMU()
 bool fakeIMU::open(yarp::os::Searchable &config)
 {
     double period;
-    if( config.check("period"))
-    {
+    if( config.check("period")) {
         period = config.find("period").asInt32() / 1000.0;
         setPeriod(period);
+    } else  {
+        yCInfo(FAKEIMU) << "Using default period of " << DEFAULT_PERIOD << " s";
     }
-    else
-        yInfo() << "Using default period of " << DEFAULT_PERIOD << " s";
 
     constantValue = config.check("constantValue");
 
@@ -117,7 +120,7 @@ bool fakeIMU::getChannels(int *nc)
 
 bool fakeIMU::calibrate(int ch, double v)
 {
-    yWarning("Not implemented yet\n");
+    yCWarning(FAKEIMU, "Not implemented yet");
     return false;
 }
 
