@@ -7,14 +7,20 @@
  */
 
 #include "VirtualAnalogWrapper.h"
-#include <iostream>
+// #include <iostream>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-#define MAX_ENTRIES 255
+
+namespace {
+YARP_LOG_COMPONENT(VIRTUALANALOGSERVER, "yarp.device.virtualAnalogServer")
+constexpr int MAX_ENTRIES = 255;
+}
+
 
 AnalogSubDevice::AnalogSubDevice()
 {
@@ -32,7 +38,7 @@ bool AnalogSubDevice::configure(int map0, int map1, const std::string &key)
 
     if (map1<map0)
     {
-        yError()<<"VirtualAnalogWrapper: check configuration file top<base.";
+        yCError(VIRTUALANALOGSERVER) << "Check configuration file top<base.";
         return false;
     }
 
@@ -52,20 +58,20 @@ bool AnalogSubDevice::attach(yarp::dev::PolyDriver *device, const std::string &k
 {
     if (key!=mKey)
     {
-        yError()<<"VirtualAnalogWrapper: wrong device" << key.c_str();
+        yCError(VIRTUALANALOGSERVER) << "Wrong device" << key.c_str();
         return false;
     }
 
     //configure first
     if (!mIsConfigured)
     {
-        yError()<<"VirtualAnalogWrapper: You need to call configure before you can attach any device";
+        yCError(VIRTUALANALOGSERVER) << "'configure' should be called before you can attach any device";
         return false;
     }
 
     if (!device)
     {
-        yError()<<"VirtualAnalogWrapper: Invalid device (null pointer)";
+        yCError(VIRTUALANALOGSERVER) << "Invalid device (null pointer)";
         return false;
     }
 
@@ -77,7 +83,7 @@ bool AnalogSubDevice::attach(yarp::dev::PolyDriver *device, const std::string &k
     }
     else
     {
-        yError()<<"VirtualAnalogWrapper: Invalid device " << key << " (isValid() returned false)";
+        yCError(VIRTUALANALOGSERVER) << "Invalid device " << key << " (isValid() returned false)";
         return false;
     }
 
@@ -103,20 +109,20 @@ void AnalogSubDevice::detach()
 
 bool VirtualAnalogWrapper::open(Searchable& config)
 {
-    yDebug() << config.toString().c_str();
+    yCDebug(VIRTUALANALOGSERVER) << config.toString().c_str();
 
     mIsVerbose = (config.check("verbose","if present, give detailed output"));
 
-    if (mIsVerbose) yDebug() << "running with verbose output\n";
+    if (mIsVerbose) yCDebug(VIRTUALANALOGSERVER) << "Running with verbose output\n";
 
     //thus thread period is useful for output port... this input port has callback so maybe can skip it (?)
     //thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt32();
 
-    yDebug() << "Using VirtualAnalogServer\n";
+    yCDebug(VIRTUALANALOGSERVER) << "Using VirtualAnalogServer\n";
 
     if (!config.check("networks", "list of networks merged by this wrapper"))
     {
-        yError() << "VirtualAnalogWrapper: missing networks parameters";
+        yCError(VIRTUALANALOGSERVER) << "Missing networks parameters";
         return false;
     }
 
@@ -126,7 +132,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
 
     mChan2Board.resize(MAX_ENTRIES);
     mChan2BAddr.resize(MAX_ENTRIES);
-    for (int i=0; i< MAX_ENTRIES; i++)
+    for (int i = 0; i < MAX_ENTRIES; i++)
     {
         mChan2Board[i]=-1;
         mChan2BAddr[i]=-1;
@@ -140,8 +146,8 @@ bool VirtualAnalogWrapper::open(Searchable& config)
 
         if (parameters.size()!=5)    // mapping joints using the paradigm: part from - to / network from - to
         {
-            yError() << "VirtualAnalogWrapper: check network parameters in part description"
-                     << " I was expecting " << networks->get(k).asString().c_str() << " followed by four integers";
+            yCError(VIRTUALANALOGSERVER) << "Check network parameters in part description."
+                     << "I was expecting" << networks->get(k).asString().c_str() << "followed by four integers";
             return false;
         }
 
@@ -152,7 +158,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
         if (map0 >= MAX_ENTRIES || map1 >= MAX_ENTRIES || map2>= MAX_ENTRIES || map3>= MAX_ENTRIES ||
             map0 <0             || map1 <0             || map2<0             || map3<0)
         {
-            yError() << "VirtualAnalogWrapper: invalid map entries in networks section, failed initial check";
+            yCError(VIRTUALANALOGSERVER) << "Invalid map entries in networks section, failed initial check";
             return false;
         }
 
@@ -164,7 +170,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
 
         if (!mSubdevices[k].configure(map2,map3,networks->get(k).asString()))
         {
-            yError() << "VirtualAnalogWrapper: configure of subdevice ret false";
+            yCError(VIRTUALANALOGSERVER) << "Configure of subdevice ret false";
             return false;
         }
 
@@ -174,13 +180,13 @@ bool VirtualAnalogWrapper::open(Searchable& config)
     // Verify minimum set of parameters required
     if(!config.check("robotName") )   // ?? qui dentro, da dove lo pesco ??
     {
-        yError() << "VirtualAnalogWrapper:  missing robotName, check your configuration file!";
+        yCError(VIRTUALANALOGSERVER) << "Missing robotName, check your configuration file!";
         return false;
     }
 
     if (config.check("deviceId"))
     {
-        yError() << "VirtualAnalogWrapper: the parameter 'deviceId' has been deprecated, please use parameter 'name' instead. \n"
+        yCError(VIRTUALANALOGSERVER) << "The parameter 'deviceId' has been deprecated, please use parameter 'name' instead. \n"
                  << "e.g. In the VFT wrapper configuration files of your robot, replace '<param name=""deviceId""> left_arm </param>' \n"
                  << "with '/icub/joint_vsens/left_arm:i' ";
         return false;
@@ -191,7 +197,7 @@ bool VirtualAnalogWrapper::open(Searchable& config)
 
     if (!mPortInputTorques.open(port_name))
     {
-        yError() << "VirtualAnalogWrapper: can't open port " << port_name.c_str();
+        yCError(VIRTUALANALOGSERVER) << "Can't open port " << port_name.c_str();
         return false;
     }
 
@@ -269,13 +275,13 @@ bool VirtualAnalogWrapper::perform_first_check(int elems)
     {
         if (mChan2Board[i]==-1 || mChan2BAddr[i]==-1)
         {
-            yError() << "VirtualAnalogWrapper: invalid map entries in networks section, failed runtime check"
+            yCError(VIRTUALANALOGSERVER) << "Invalid map entries in networks section, failed runtime check"
                      << " i: " << i << "mChan2Board[i] is " << mChan2Board[i] << " chan2add is " << mChan2BAddr[i];
             return false;
         }
     }
 
-    yTrace() << "VirtualAnalogWrapper::perform_first_check() successfully completed";
+    yCTrace(VIRTUALANALOGSERVER) << "perform_first_check() successfully completed";
     first_check = true;
     return true;
 }
@@ -338,7 +344,7 @@ void VirtualAnalogWrapper::run()
                 break;
 
                 default:
-                    yError() << "VirtualAnalogWrapper: got unexpected " << pTorques->get(0).asInt32() << " message on virtualAnalogServer.";
+                    yCError(VIRTUALANALOGSERVER) << "Got unexpected " << pTorques->get(0).asInt32() << " message on virtualAnalogServer.";
             }
 
             for (int d=0; d<mNSubdevs; ++d)
@@ -369,7 +375,7 @@ void VirtualAnalogWrapper::run()
                 }
     //          Virtual Sensor status is not handled now because server DO NOT implement IVirtual AnalogSensor Interface.
     //          status=IAnalogSensor::AS_TIMEOUT;
-                yError() << "Virtual analog sensor timeout!! No new value received for more than " << timeNow - lastRecv  << " secs.";
+                yCError(VIRTUALANALOGSERVER) << "Timeout!! No new value received for more than " << timeNow - lastRecv  << " secs.";
                 sendLastValueBeforeTimeout = true;
             }
         }
