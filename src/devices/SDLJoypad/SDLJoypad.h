@@ -66,12 +66,12 @@ class SDLJoypad :
 
     SDL_Event                  m_event;
     std::vector<SDL_Joystick*> m_device;
-    unsigned int               m_buttonCount;
-    unsigned int               m_axisCount;
-    unsigned int               m_stickCount;
-    unsigned int               m_touchCount;
-    unsigned int               m_ballCount;
-    unsigned int               m_hatCount;
+    unsigned int               m_buttonCount {0};
+    unsigned int               m_axisCount {0};
+    unsigned int               m_stickCount {0};
+    unsigned int               m_touchCount {0};
+    unsigned int               m_ballCount {0};
+    unsigned int               m_hatCount {0};
     bool                       m_allJoypad;
     stickVector                m_sticks;
     std::vector<bool>          m_axes;
