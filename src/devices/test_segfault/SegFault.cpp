@@ -9,8 +9,13 @@
 #include "SegFault.h"
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
+
+namespace {
+YARP_LOG_COMPONENT(SEGFAULT, "yarp.device.test_segfault")
+}
 
 SegFault::SegFault()
 {
@@ -26,9 +31,9 @@ bool SegFault::open(yarp::os::Searchable& config)
         delay = config.find("delay").asFloat64();
     }
 
-    yInfo() << "[segfault] Starting thread";
+    yCInfo(SEGFAULT) << "Starting thread";
     start();
-    yInfo() << "[segfault] Thread started";
+    yCInfo(SEGFAULT) << "Thread started";
 
     return true;
 }
@@ -40,8 +45,8 @@ bool SegFault::close()
 
 void SegFault::run()
 {
-    yInfo() << "[segfault] Waiting for" << delay << "seconds before crashing";
+    yCInfo(SEGFAULT) << "Waiting for" << delay << "seconds before crashing";
     yarp::os::Time::delay(delay);
-    yWarning() << "[segfault] Crashing";
+    yCWarning(SEGFAULT) << "Crashing";
     *(int*) 0 = 0;
 }
