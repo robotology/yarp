@@ -10,10 +10,15 @@
 #include <yarp/dev/PolyDriver.h>
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Property.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
+
+namespace {
+YARP_LOG_COMPONENT(POLYDRIVER, "yarp.dev.PolyDriver")
+}
 
 class PolyDriver::Private :
         public SearchMonitor
@@ -129,8 +134,8 @@ PolyDriver::PolyDriver(yarp::os::Searchable& config) :
 PolyDriver::~PolyDriver()
 {
     close();
-    yAssert(dd==nullptr);
-    yAssert(mPriv==nullptr);
+    yCAssert(POLYDRIVER, dd == nullptr);
+    yCAssert(POLYDRIVER, mPriv == nullptr);
 }
 
 
@@ -152,7 +157,7 @@ bool PolyDriver::open(yarp::os::Searchable& config)
     if (mPriv==nullptr) {
         mPriv = new PolyDriver::Private;
     }
-    yAssert(mPriv!=nullptr);
+    yCAssert(POLYDRIVER, mPriv != nullptr);
     bool removeMonitorAfterwards = false;
     if (config.getMonitor()==nullptr) {
         config.setMonitor(mPriv);
@@ -174,7 +179,7 @@ bool PolyDriver::close()
     if (mPriv!=nullptr) {
         int ct = mPriv->removeRef();
         if (ct==0) {
-            yAssert(mPriv!=nullptr);
+            yCAssert(POLYDRIVER, mPriv != nullptr);
             delete mPriv;
             mPriv = nullptr;
             if (dd!=nullptr) {
@@ -204,13 +209,13 @@ bool PolyDriver::link(PolyDriver& alt)
     if (mPriv!=nullptr) {
         int ct = mPriv->removeRef();
         if (ct==0) {
-            yAssert(mPriv!=nullptr);
+            yCAssert(POLYDRIVER, mPriv != nullptr);
             delete mPriv;
         }
     }
     mPriv = alt.mPriv;
-    yAssert(dd!=nullptr);
-    yAssert(mPriv!=nullptr);
+    yCAssert(POLYDRIVER, dd != nullptr);
+    yCAssert(POLYDRIVER, mPriv != nullptr);
     mPriv->addRef();
     return true;
 }
@@ -289,7 +294,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
         }
     } else {
         // FIXME do not use yarpdev here
-        printf("yarpdev: ***ERROR*** could not find device <%s>\n", str.c_str());
+        yCError(POLYDRIVER, "Could not find device <%s>", str.c_str());
         return false;
     }
 
@@ -300,10 +305,10 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
             return true;
         }
 
-        //printf("yarpdev: parameters are %s\n", config->toString().c_str());
+        yCTrace(POLYDRIVER, "Parameters are %s", config->toString().c_str());
         bool ok = driver->open(*config);
         if (!ok) {
-            printf("yarpdev: ***ERROR*** driver <%s> was found but could not open\n", config->find("device").toString().c_str());
+            yCError(POLYDRIVER, "Driver <%s> was found but could not open", config->find("device").toString().c_str());
             delete driver;
             driver = nullptr;
         } else {
@@ -311,9 +316,9 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
             driver->view(ddd);
             if(ddd) {
                 if(config->check("allow-deprecated-devices")) {
-                    yWarning(R"(Device "%s" is deprecated. Opening since the "allow-deprecated-devices" option was passed in the configuration.)", str.c_str());
+                    yCWarning(POLYDRIVER, R"(Device "%s" is deprecated. Opening since the "allow-deprecated-devices" option was passed in the configuration.)", str.c_str());
                 } else {
-                    yError(R"(Device "%s" is deprecated. Pass the "allow-deprecated-devices" option in the configuration if you want to open it anyway.)", str.c_str());
+                    yCError(POLYDRIVER, R"(Device "%s" is deprecated. Pass the "allow-deprecated-devices" option in the configuration if you want to open it anyway.)", str.c_str());
                     driver->close();
                     delete driver;
                     return false;
@@ -322,7 +327,7 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop)
             std::string name = creator->getName();
             std::string wrapper = creator->getWrapper();
             std::string code = creator->getCode();
-            yInfo("created %s <%s>. See C++ class %s for documentation.",
+            yCInfo(POLYDRIVER, "Created %s <%s>. See C++ class %s for documentation.",
                   ((name==wrapper)?"wrapper":"device"),
                   name.c_str(),
                   code.c_str());
@@ -351,7 +356,7 @@ bool PolyDriver::give(DeviceDriver *dd, bool own)
         if (mPriv==nullptr) {
             mPriv = new PolyDriver::Private;
         }
-        yAssert(mPriv!=nullptr);
+        yCAssert(POLYDRIVER, mPriv != nullptr);
         if (!own) {
             mPriv->addRef();
         }
