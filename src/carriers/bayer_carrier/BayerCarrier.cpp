@@ -26,12 +26,12 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 namespace {
-    YARP_LOG_COMPONENT(BAYERCARRIER,
-                       "yarp.carrier.bayer",
-                       yarp::os::Log::minimumPrintLevel(),
-                       yarp::os::Log::LogTypeReserved,
-                       yarp::os::Log::printCallback(),
-                       nullptr)
+YARP_LOG_COMPONENT(BAYERCARRIER,
+                   "yarp.carrier.bayer",
+                   yarp::os::Log::minimumPrintLevel(),
+                   yarp::os::Log::LogTypeReserved,
+                   yarp::os::Log::printCallback(),
+                   nullptr)
 }
 
 // can't seem to do ipl/opencv/yarp style end-of-row padding
