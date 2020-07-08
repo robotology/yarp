@@ -8,6 +8,7 @@
  */
 
 #include "RemoteControlBoard.h"
+#include "RemoteControlBoardLogComponent.h"
 #include "stateExtendedReader.h"
 
 #include <cstring>
@@ -87,12 +88,13 @@ public:
                 double min;
                 owner->getEstFrequency(it, av, min, max);
                 owner->resetStat();
-                yDebug("%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]\n",
-                    ownerName.c_str(),
-                    it,
-                    av,
-                    min,
-                    max);
+                yCDebug(REMOTECONTROLBOARD,
+                        "%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]",
+                        ownerName.c_str(),
+                        it,
+                        av,
+                        min,
+                        max);
             }
 
         }
@@ -148,19 +150,24 @@ bool RemoteControlBoard::checkProtocolVersion(bool ignore)
         return true;
 
     // protocol did not match
-    yError("expecting protocol %d %d %d, but the device we are connecting to has protocol version %d %d %d\n",
-                    PROTOCOL_VERSION_MAJOR, PROTOCOL_VERSION_MINOR, PROTOCOL_VERSION_TWEAK,
-                    protocolVersion.major, protocolVersion.minor, protocolVersion.tweak);
+    yCError(REMOTECONTROLBOARD,
+            "Expecting protocol %d %d %d, but the device we are connecting to has protocol version %d %d %d",
+            PROTOCOL_VERSION_MAJOR,
+            PROTOCOL_VERSION_MINOR,
+            PROTOCOL_VERSION_TWEAK,
+            protocolVersion.major,
+            protocolVersion.minor,
+            protocolVersion.tweak);
 
     bool ret;
     if (ignore)
     {
-        yWarning(" ignoring error but please update YARP or the remotecontrolboard implementation\n");
+        yCWarning(REMOTECONTROLBOARD, "Ignoring error but please update YARP or the remotecontrolboard implementation");
         ret = true;
     }
     else
     {
-        yError(" please update YARP or the remotecontrolboard implementation\n");
+        yCError(REMOTECONTROLBOARD, "Please update YARP or the remotecontrolboard implementation");
         ret = false;
     }
 
@@ -207,25 +214,25 @@ bool RemoteControlBoard::open(Searchable& config)
         {
             writeStrict_singleJoint = true;
             writeStrict_moreJoints  = true;
-            yInfo("RemoteControlBoard is ENABLING the writeStrict option for all commands\n");
+            yCInfo(REMOTECONTROLBOARD, "RemoteControlBoard is ENABLING the writeStrict option for all commands");
         }
         else if(gotStrictVal.asString() == "off")
         {
             writeStrict_singleJoint = false;
             writeStrict_moreJoints  = false;
-            yInfo("RemoteControlBoard is DISABLING the writeStrict opition for all commands\n");
+            yCInfo(REMOTECONTROLBOARD, "RemoteControlBoard is DISABLING the writeStrict opition for all commands");
         }
         else
-            yError("Found writeStrict opition with wrong value. Accepted options are 'on' or 'off'\n");
+            yCError(REMOTECONTROLBOARD, "Found writeStrict opition with wrong value. Accepted options are 'on' or 'off'");
     }
 
     if (local=="") {
-        yError("Problem connecting to remote controlboard, 'local' port prefix not given\n");
+        yCError(REMOTECONTROLBOARD, "Problem connecting to remote controlboard, 'local' port prefix not given");
         return false;
     }
 
     if (remote=="") {
-        yError("Problem connecting to remote controlboard, 'remote' port name not given\n");
+        yCError(REMOTECONTROLBOARD, "Problem connecting to remote controlboard, 'remote' port name not given");
         return false;
     }
 
@@ -264,7 +271,7 @@ bool RemoteControlBoard::open(Searchable& config)
         // ok=Network::connect(rpc_p.getName(), s1.c_str());    //This should work also with YARP_PORT_PREFIX because getting back the name of the port will return the modified name
         ok=rpc_p.addOutput(s1);                         //This works because we are manipulating only remote side and let yarp handle the local side
         if (!ok) {
-            yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+            yCError(REMOTECONTROLBOARD, "Problem connecting to %s, is the remote device available?", s1.c_str());
             connectionProblem = true;
         }
 
@@ -276,7 +283,7 @@ bool RemoteControlBoard::open(Searchable& config)
         // ok=Network::connect(command_p.getName(), s1.c_str(), carrier); //doesn't take into consideration possible YARP_PORT_PREFIX on local ports
         ok = command_p.addOutput(s1, carrier);
         if (!ok) {
-            yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+            yCError(REMOTECONTROLBOARD, "Problem connecting to %s, is the remote device available?", s1.c_str());
             connectionProblem = true;
         }
         // set the QoS preferences for the 'command' port
@@ -297,7 +304,7 @@ bool RemoteControlBoard::open(Searchable& config)
         }
         else
         {
-            yError("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+            yCError(REMOTECONTROLBOARD, "Problem connecting to %s, is the remote device available?", s1.c_str());
             connectionProblem = true;
         }
     }
@@ -315,7 +322,7 @@ bool RemoteControlBoard::open(Searchable& config)
 
     if (!checkProtocolVersion(config.check("ignoreProtocolCheck")))
     {
-        yError() << "checkProtocolVersion failed";
+        yCError(REMOTECONTROLBOARD) << "checkProtocolVersion failed";
         command_buffer.detach();
         rpc_p.close();
         command_p.close();
@@ -325,7 +332,7 @@ bool RemoteControlBoard::open(Searchable& config)
 
     if (!isLive()) {
         if (remote!="") {
-            yError("Problems with obtaining the number of controlled axes\n");
+            yCError(REMOTECONTROLBOARD, "Problems with obtaining the number of controlled axes");
             command_buffer.detach();
             rpc_p.close();
             command_p.close();
@@ -689,7 +696,7 @@ bool RemoteControlBoard::getValWithPidType(int voc, PidControlTypeEnum type, dou
         if (lp == nullptr)
             return false;
         Bottle& l = *lp;
-        yAssert(nj == l.size());
+        yCAssert(REMOTECONTROLBOARD, nj == l.size());
         for (size_t i = 0; i < nj; i++)
             val[i] = l.get(i).asFloat64();
         getTimeStamp(response, lastStamp);
@@ -854,11 +861,15 @@ bool RemoteControlBoard::get2V1I1IA1DA(int v1, int v2, const int n_joints, const
     {
         int i;
         Bottle& list = *(response.get(0).asList());
-        yAssert(list.size() >= (size_t) n_joints)
+        yCAssert(REMOTECONTROLBOARD, list.size() >= (size_t) n_joints)
 
         if (list.size() != (size_t )n_joints)
         {
-            yError("%s length of response does not match: expected %d, received %zu\n ", functionName.c_str(), n_joints , list.size() );
+            yCError(REMOTECONTROLBOARD,
+                    "%s length of response does not match: expected %d, received %zu\n ",
+                    functionName.c_str(),
+                    n_joints ,
+                    list.size() );
             return false;
         }
         else
@@ -899,7 +910,7 @@ bool RemoteControlBoard::get1VIA(int v, int *val)
         if (lp == nullptr)
             return false;
         Bottle& l = *lp;
-        yAssert(nj == l.size());
+        yCAssert(REMOTECONTROLBOARD, nj == l.size());
         for (size_t i = 0; i < nj; i++)
             val[i] = l.get(i).asInt32();
 
@@ -922,7 +933,7 @@ bool RemoteControlBoard::get1VDA(int v, double *val)
         if (lp == nullptr)
             return false;
         Bottle& l = *lp;
-        yAssert(nj == l.size());
+        yCAssert(REMOTECONTROLBOARD, nj == l.size());
         for (size_t i = 0; i < nj; i++)
             val[i] = l.get(i).asFloat64();
 
@@ -946,7 +957,7 @@ bool RemoteControlBoard::get1V1DA(int v1, double *val)
         if (lp == nullptr)
             return false;
         Bottle& l = *lp;
-        yAssert(nj == l.size());
+        yCAssert(REMOTECONTROLBOARD, nj == l.size());
         for (size_t i = 0; i < nj; i++)
             val[i] = l.get(i).asFloat64();
 
@@ -970,7 +981,7 @@ bool RemoteControlBoard::get2V1DA(int v1, int v2, double *val)
         if (lp == nullptr)
             return false;
         Bottle& l = *lp;
-        yAssert(nj == l.size());
+        yCAssert(REMOTECONTROLBOARD, nj == l.size());
         for (size_t i = 0; i < nj; i++)
             val[i] = l.get(i).asFloat64();
 
@@ -1000,8 +1011,8 @@ bool RemoteControlBoard::get2V2DA(int v1, int v2, double *val1, double *val2)
 
         size_t nj1 = l1.size();
         size_t nj2 = l2.size();
-       // yAssert(nj == nj1);
-       // yAssert(nj == nj2);
+       // yCAssert(REMOTECONTROLBOARD, nj == nj1);
+       // yCAssert(REMOTECONTROLBOARD, nj == nj2);
 
         for (size_t i = 0; i < nj1; i++)
             val1[i] = l1.get(i).asFloat64();
@@ -1053,7 +1064,7 @@ bool RemoteControlBoard::get1V1I1IA1DA(int v, const int len, const int *val1, do
         size_t nj2 = l2.size();
         if(nj2 != (unsigned)len)
         {
-            yError("received an answer with an unexpected number of entries!\n");
+            yCError(REMOTECONTROLBOARD, "received an answer with an unexpected number of entries!");
             return false;
         }
         for (size_t i = 0; i < nj2; i++)
@@ -1198,7 +1209,7 @@ bool RemoteControlBoard::getPids(const PidControlTypeEnum& pidtype, Pid *pids)
         if (lp == nullptr)
             return false;
         Bottle& l = *lp;
-        yAssert(nj == l.size());
+        yCAssert(REMOTECONTROLBOARD, nj == l.size());
         for (size_t i = 0; i < nj; i++)
         {
             Bottle* mp = l.get(i).asList();
@@ -2099,7 +2110,7 @@ bool RemoteControlBoard::getMotorTorqueParams(int j, MotorTorqueParameters *para
         Bottle& l = *lp;
         if (l.size() != 4)
         {
-            yError("getMotorTorqueParams return value not understood, size!=4");
+            yCError(REMOTECONTROLBOARD, "getMotorTorqueParams return value not understood, size!=4");
             return false;
         }
         params->bemf        = l.get(0).asFloat64();
@@ -2564,7 +2575,7 @@ bool RemoteControlBoard::homingWholePart()
     cmd.addVocab(VOCAB_REMOTE_CALIBRATOR_INTERFACE);
     cmd.addVocab(VOCAB_HOMING_WHOLE_PART);
     bool ok = rpc_p.write(cmd, response);
-    yDebug() << "Sent homing whole part message";
+    yCDebug(REMOTECONTROLBOARD) << "Sent homing whole part message";
     return CHECK_FAIL(ok, response);
 }
 

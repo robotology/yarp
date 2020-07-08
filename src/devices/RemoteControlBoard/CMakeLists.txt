@@ -16,6 +16,8 @@ if(NOT SKIP_remote_controlboard)
 
   target_sources(yarp_remote_controlboard PRIVATE RemoteControlBoard.cpp
                                                   RemoteControlBoard.h
+                                                  RemoteControlBoardLogComponent.cpp
+                                                  RemoteControlBoardLogComponent.h
                                                   stateExtendedReader.cpp
                                                   stateExtendedReader.h)
   target_link_libraries(yarp_remote_controlboard PRIVATE YARP::YARP_os
