@@ -12,6 +12,11 @@
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
+
+namespace {
+YARP_LOG_COMPONENT(NOP, "yarp.device.test_nop")
+}
+
 Nop::Nop() :
         PeriodicThread(1.0)
 {
@@ -28,9 +33,9 @@ bool Nop::open(yarp::os::Searchable& config)
     }
     setPeriod(period);
 
-    yInfo() << "[nop] Starting thread";
+    yCInfo(NOP) << "Starting thread";
     start();
-    yInfo() << "[nop] Thread started";
+    yCInfo(NOP) << "Thread started";
 
     return true;
 }
@@ -42,5 +47,5 @@ bool Nop::close()
 
 void Nop::run()
 {
-    yInfo() << "[nop] Doing nothing";
+    yCInfo(NOP) << "Doing nothing";
 }
