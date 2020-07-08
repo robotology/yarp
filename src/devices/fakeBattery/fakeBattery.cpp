@@ -9,6 +9,7 @@
 #include "fakeBattery.h"
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -20,6 +21,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 namespace {
+YARP_LOG_COMPONENT(FAKEBATTERY, "yarp.device.fakeBattery")
 constexpr double default_period = 0.02;
 constexpr double default_charge = 50.0;
 constexpr double default_voltage = 30.0;
@@ -57,7 +59,7 @@ bool FakeBattery::open(yarp::os::Searchable& config)
     std::string name = config.find("name").asString();
     this->yarp().attachAsServer(ctrl_port);
     if (!ctrl_port.open(name + "/control/rpc:i")) {
-        yError("Could not open rpc port");
+        yCError(FAKEBATTERY, "Could not open rpc port");
         close();
         return false;
     }
