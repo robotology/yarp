@@ -14,7 +14,8 @@ yarp_prepare_plugin(ServerSoundGrabber
 if(NOT SKIP_ServerSoundGrabber)
   yarp_add_plugin(yarp_ServerSoundGrabber)
 
-  target_sources(yarp_ServerSoundGrabber PRIVATE ServerSoundGrabber.h)
+  target_sources(yarp_ServerSoundGrabber PRIVATE ServerSoundGrabber.cpp
+                                                 ServerSoundGrabber.h)
 
   target_link_libraries(yarp_ServerSoundGrabber PRIVATE YARP::YARP_os
                                                         YARP::YARP_sig
