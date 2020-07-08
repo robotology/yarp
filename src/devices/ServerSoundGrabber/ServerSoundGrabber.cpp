@@ -10,12 +10,17 @@
 #include "ServerSoundGrabber.h"
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 
 #include <yarp/dev/GenericVocabs.h>
 
+
+namespace {
+YARP_LOG_COMPONENT(SERVERSOUNDGRABBER, "yarp.device.ServerSoundGrabber")
+}
 
 ServerSoundGrabber::ServerSoundGrabber()
 #ifdef DEBUG_TIME_SPENT
@@ -45,7 +50,7 @@ bool ServerSoundGrabber::open(yarp::os::Searchable& config)
 {
     yarp::os::Value* name;
     if (config.check("subdevice", name)) {
-        yDebug("Subdevice %s\n", name->toString().c_str());
+        yCDebug(SERVERSOUNDGRABBER, "Subdevice %s", name->toString().c_str());
         if (name->isString()) {
             // maybe user isn't doing nested configuration
             yarp::os::Property p;
@@ -56,19 +61,19 @@ bool ServerSoundGrabber::open(yarp::os::Searchable& config)
             poly.open(*name);
         }
     } else {
-        yError("\"--subdevice <name>\" not set for server_soundgrabber");
+        yCError(SERVERSOUNDGRABBER, "\"--subdevice <name>\" not set for server_soundgrabber");
         return false;
     }
 
     if (poly.isValid()) {
         poly.view(mic);
     } else {
-        yError("cannot make <%s>", name->toString().c_str());
+        yCError(SERVERSOUNDGRABBER, "cannot make <%s>", name->toString().c_str());
         return false;
     }
 
     if (mic == nullptr) {
-        yError("failed to open interface");
+        yCError(SERVERSOUNDGRABBER, "failed to open interface");
         return false;
     }
 
@@ -78,13 +83,13 @@ bool ServerSoundGrabber::open(yarp::os::Searchable& config)
         portname = name->asString();
     }
     if (streamingPort.open(portname) == false) {
-        yError() << "Unable to open port" << portname;
+        yCError(SERVERSOUNDGRABBER) << "Unable to open port" << portname;
         return false;
     }
 
     //set the RPC port
     if (rpcPort.open(portname + "/rpc") == false) {
-        yError() << "Unable to open port" << portname + "/rpc";
+        yCError(SERVERSOUNDGRABBER) << "Unable to open port" << portname + "/rpc";
         return false;
     }
     rpcPort.setReader(*this);
@@ -119,7 +124,7 @@ void ServerSoundGrabber::run()
     while (!isStopping()) {
 #ifdef DEBUG_TIME_SPENT
         double current_time = yarp::os::Time::now();
-        yDebug() << current_time - last_time;
+        yCDebug(SERVERSOUNDGRABBER) << current_time - last_time;
         last_time = current_time;
 #endif
 
@@ -131,7 +136,7 @@ void ServerSoundGrabber::run()
                 audio_buffer_size buf_cur;
                 mic->getRecordingAudioBufferMaxSize(buf_max);
                 mic->getRecordingAudioBufferCurrentSize(buf_cur);
-                yDebug() << "BEFORE Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
+                yCDebug(SERVERSOUNDGRABBER) << "BEFORE Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
             }
 #endif
             mic->getSound(snd, 44100, 44100, 0.0);
@@ -141,19 +146,19 @@ void ServerSoundGrabber::run()
                 audio_buffer_size buf_cur;
                 mic->getRecordingAudioBufferMaxSize(buf_max);
                 mic->getRecordingAudioBufferCurrentSize(buf_cur);
-                yDebug() << "AFTER Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
+                yCDebug(SERVERSOUNDGRABBER) << "AFTER Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
             }
 #endif
 #ifdef PRINT_DEBUG_MESSAGES
-            yDebug() << "Sound size:" << snd.getSamples() * snd.getChannels() * snd.getBytesPerSample() << " bytes";
-            yDebug();
+            yCDebug(SERVERSOUNDGRABBER) << "Sound size:" << snd.getSamples() * snd.getChannels() * snd.getBytesPerSample() << " bytes";
+            yCDebug(SERVERSOUNDGRABBER);
 #endif
             stamp.update();
             streamingPort.setEnvelope(stamp);
             streamingPort.write(snd);
         }
     }
-    yInfo("Sound grabber stopping\n");
+    yCInfo(SERVERSOUNDGRABBER, "Sound grabber stopping");
 }
 
 bool ServerSoundGrabber::read(yarp::os::ConnectionReader& connection)
@@ -176,7 +181,7 @@ bool ServerSoundGrabber::read(yarp::os::ConnectionReader& connection)
         reply.addString("start");
         reply.addString("stop");
     } else {
-        yError() << "Invalid command";
+        yCError(SERVERSOUNDGRABBER) << "Invalid command";
         reply.addVocab(VOCAB_ERR);
     }
 
