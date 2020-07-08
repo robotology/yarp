@@ -13,4 +13,11 @@ service FakeBatteryService
     oneway void setBatteryCharge(1: double charge);
     oneway void setBatteryInfo(1: string info);
     oneway void setBatteryTemperature(1: double temperature);
+
+    double getBatteryVoltage();
+    double getBatteryCurrent();
+    double getBatteryCharge();
+    string getBatteryStatus();
+    string getBatteryInfo();
+    double getBatteryTemperature();
 }

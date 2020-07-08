@@ -163,6 +163,60 @@ void FakeBattery::setBatteryTemperature(const double temperature)
     battery_temperature = temperature;
 }
 
+double FakeBattery::getBatteryVoltage()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_voltage;
+}
+
+double FakeBattery::getBatteryCurrent()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_current;
+}
+
+double FakeBattery::getBatteryCharge()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_charge;
+}
+
+std::string FakeBattery::getBatteryStatus()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    switch (battery_status) {
+    case BATTERY_OK_STANBY:
+        return "0: BATTERY_OK_STANBY";
+    case BATTERY_OK_IN_CHARGE:
+        return "1: BATTERY_OK_IN_CHARGE";
+    case BATTERY_OK_IN_USE:
+        return "2: BATTERY_OK_IN_USE";
+    case BATTERY_GENERAL_ERROR:
+        return "3: BATTERY_GENERAL_ERROR";
+    case BATTERY_TIMEOUT:
+        return "4: BATTERY_TIMEOUT";
+    case BATTERY_LOW_WARNING:
+        return "5: BATTERY_LOW_WARNING";
+    case BATTERY_CRITICAL_WARNING:
+        return "6: BATTERY_CRITICAL_WARNING";
+    default:
+        return "Invalid battery status";
+    };
+}
+
+std::string FakeBattery::getBatteryInfo()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_info;
+}
+
+double FakeBattery::getBatteryTemperature()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_temperature;
+}
+
+
 void FakeBattery::updateStatus()
 {
     battery_charge = yarp::conf::clamp(battery_charge, 0.0, 100.0);

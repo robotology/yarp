@@ -46,11 +46,14 @@ public:
 
     ~FakeBattery() override = default;
 
+    // yarp::dev::DeviceDriver
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
+    // yarp::os::PeriodicThread
     void run() override;
 
+    // yarp::dev::IBattery
     bool getBatteryVoltage(double& voltage) override;
     bool getBatteryCurrent(double& current) override;
     bool getBatteryCharge(double& charge) override;
@@ -58,11 +61,18 @@ public:
     bool getBatteryInfo(std::string& info) override;
     bool getBatteryTemperature(double& temperature) override;
 
+    // FakeBatteryService
     void setBatteryVoltage(const double voltage) override;
     void setBatteryCurrent(const double current) override;
     void setBatteryCharge(const double charge) override;
     void setBatteryInfo(const std::string& info) override;
     void setBatteryTemperature(const double temperature) override;
+    double getBatteryVoltage() override;
+    double getBatteryCurrent() override;
+    double getBatteryCharge() override;
+    std::string getBatteryStatus() override;
+    std::string getBatteryInfo() override;
+    double getBatteryTemperature() override;
 
 private:
     void updateStatus();
