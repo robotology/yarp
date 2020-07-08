@@ -43,8 +43,9 @@
 
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
@@ -61,6 +62,10 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
+
+namespace {
+YARP_LOG_COMPONENT(FFMPEGWRITER, "yarp.device.ffmpeg_writer")
+}
 
 
 /**************************************************************/
@@ -87,8 +92,7 @@ static AVStream *add_audio_stream(AVFormatContext *oc, AVCodecID codec_id)
 
     st = avformat_new_stream(oc, NULL);
     if (!st) {
-        fprintf(stderr, "Could not alloc stream\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Could not alloc stream");
     }
 
     c = st->codec;
@@ -104,7 +108,7 @@ static AVStream *add_audio_stream(AVFormatContext *oc, AVCodecID codec_id)
 
 static void open_audio(AVFormatContext *oc, AVStream *st)
 {
-    printf("Opening audio stream\n");
+    yCInfo(FFMPEGWRITER, "Opening audio stream");
     AVCodecContext *c;
     AVCodec *codec;
 
@@ -113,14 +117,12 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     /* find the audio encoder */
     codec = avcodec_find_encoder(c->codec_id);
     if (!codec) {
-        fprintf(stderr, "audio codec not found\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Audio codec not found");
     }
 
     /* open it */
     if (avcodec_open2(c, codec, nullptr) < 0) {
-        fprintf(stderr, "could not open codec\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Could not open codec");
     }
 
     /* init signal generator */
@@ -155,10 +157,10 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     samples = (int16_t*)av_malloc(samples_size*2*samples_channels);
 
 
-    printf("FRAME SIZE is %d / samples size is %d\n",
-           c->frame_size,
-           samples_size);
-    ::exit(1);
+    yCFatal(FFMPEGWRITER,
+            "FRAME SIZE is %d / samples size is %d\n",
+            c->frame_size,
+            samples_size);
 }
 
 /* prepare a 16 bit dummy audio frame of 'frame_size' samples and
@@ -182,8 +184,7 @@ static void make_audio_frame(AVCodecContext *c, AVFrame * &frame,
                              void *&samples) {
     frame = av_frame_alloc();
     if (!frame) {
-        fprintf(stderr, "Could not allocate audio frame\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Could not allocate audio frame");
     }
     frame->nb_samples     = c->frame_size;
     frame->format         = c->sample_fmt;
@@ -192,21 +193,19 @@ static void make_audio_frame(AVCodecContext *c, AVFrame * &frame,
                                                  c->frame_size,
                                                  c->sample_fmt, 0);
     if (buffer_size < 0) {
-        fprintf(stderr, "Could not get sample buffer size\n");
-        ::exit(1);
+        yCError(FFMPEGWRITER, "Could not get sample buffer size");
     }
     samples = av_malloc(buffer_size);
     if (!samples) {
-        fprintf(stderr, "Could not allocate %d bytes for samples buffer\n",
+        yCFatal(FFMPEGWRITER,
+                "Could not allocate %d bytes for samples buffer",
                 buffer_size);
-        ::exit(1);
     }
     /* setup the data pointers in the AVFrame */
     int ret = avcodec_fill_audio_frame(frame, c->channels, c->sample_fmt,
                                        (const uint8_t*)samples, buffer_size, 0);
     if (ret < 0) {
-        fprintf(stderr, "Could not setup audio frame\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Could not setup audio frame");
     }
 }
 
@@ -246,16 +245,15 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st)
 
     /* write the compressed frame in the media file */
     if (av_write_frame(oc, &pkt) != 0) {
-        fprintf(stderr, "Error while writing audio frame\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Error while writing audio frame");
     } else {
-        printf("Wrote some audio\n");
+        yCInfo(FFMPEGWRITER, "Wrote some audio");
     }
 }
 
 static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
 {
-    printf("Preparing to write audio (%d left over)\n", samples_at);
+    yCInfo(FFMPEGWRITER, "Preparing to write audio (%d left over)", samples_at);
     AVCodecContext *c;
     int key = 1;
 
@@ -305,7 +303,7 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
             pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base,
                                   st->time_base);
             pkt.dts = pkt.pts;
-            //printf("(%d)", pkt.size);
+            yCTrace(FFMPEGWRITER, "(%d)", pkt.size);
             if (key) {
                 pkt.flags |= AV_PKT_FLAG_KEY;
                 key = 0;
@@ -316,18 +314,13 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
 
 
             /* write the compressed frame in the media file */
-            printf("+");
-            fflush(stdout);
             if (av_write_frame(oc, &pkt) != 0) {
-                fprintf(stderr, "Error while writing audio frame\n");
-                ::exit(1);
-            } else {
-                printf(".");
+                yCFatal(FFMPEGWRITER, "Error while writing audio frame");
             }
             samples_at = 0;
         }
     }
-    printf(" wrote audio\n");
+    yCInfo(FFMPEGWRITER, " wrote audio\n");
 }
 
 static void close_audio(AVFormatContext *oc, AVStream *st)
@@ -351,8 +344,7 @@ static AVStream *add_video_stream(AVFormatContext *oc, AVCodecID codec_id,
 
     st = avformat_new_stream(oc, NULL);
     if (!st) {
-        fprintf(stderr, "Could not alloc stream\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Could not alloc stream");
     }
 
     c = st->codec;
@@ -412,7 +404,7 @@ static AVFrame *alloc_picture(int pix_fmt, int width, int height)
 
 void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
 {
-    printf("Opening video stream\n");
+    yCInfo(FFMPEGWRITER, "Opening video stream");
     AVCodec *codec;
     AVCodecContext *c;
 
@@ -421,14 +413,12 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     /* find the video encoder */
     codec = avcodec_find_encoder(c->codec_id);
     if (!codec) {
-        fprintf(stderr, "video codec not found\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Video codec not found");
     }
 
     /* open the codec */
     if (avcodec_open2(c, codec, nullptr) < 0) {
-        fprintf(stderr, "could not open codec\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Could not open codec");
     }
 
     video_outbuf = nullptr;
@@ -444,8 +434,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     /* allocate the encoded raw picture */
     picture = alloc_picture(c->pix_fmt, c->width, c->height);
     if (!picture) {
-        fprintf(stderr, "Could not allocate picture\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Could not allocate picture");
     }
 
     /* if the output format is not YUV420P, then a temporary YUV420P
@@ -455,8 +444,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     if (c->pix_fmt != AV_PIX_FMT_RGB24) {
         tmp_picture = alloc_picture(AV_PIX_FMT_RGB24, c->width, c->height);
         if (!tmp_picture) {
-            fprintf(stderr, "Could not allocate temporary picture\n");
-            ::exit(1);
+            yCFatal(FFMPEGWRITER, "Could not allocate temporary picture");
         }
     }
 }
@@ -522,12 +510,13 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
 
         /*
         static int x = 0;
-        printf("%ld / %ld  :  %ld / %ld  --> %d\n",
-                (long int) c->time_base.num,
-                (long int) c->time_base.den,
-                (long int) st->time_base.num,
-                (long int) st->time_base.den,
-                x);
+        yCInfo(FFMPEGWRITER,
+               "%ld / %ld  :  %ld / %ld  --> %d\n",
+               (long int) c->time_base.num,
+               (long int) c->time_base.den,
+               (long int) st->time_base.num,
+               (long int) st->time_base.den,
+               x);
         pkt.pts = x;
         x++;
         */
@@ -539,8 +528,7 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
     }
 
     if (ret != 0) {
-        fprintf(stderr, "Error while writing video frame\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Error while writing video frame");
     }
     frame_count++;
 }
@@ -564,9 +552,11 @@ void FfmpegWriter::close_video(AVFormatContext *oc, AVStream *st)
 /* YARP adaptation */
 
 bool FfmpegWriter::open(yarp::os::Searchable & config) {
-//     printf("ffmpeg libavcodec version number %d.%d.%d\n", LIBAVCODEC_VERSION_MAJOR,
-//                                                           LIBAVCODEC_VERSION_MINOR,
-//                                                           LIBAVCODEC_VERSION_MICRO);
+    yCTrace(FFMPEGWRITER,
+            "ffmpeg libavcodec version number %d.%d.%d",
+            LIBAVCODEC_VERSION_MAJOR,
+            LIBAVCODEC_VERSION_MINOR,
+            LIBAVCODEC_VERSION_MICRO);
 
     ready = false;
     savedConfig.fromString(config.toString());
@@ -577,7 +567,7 @@ bool FfmpegWriter::open(yarp::os::Searchable & config) {
 
 
 bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
-    //printf("DELAYED OPEN %s\n", config.toString().c_str());
+    yCTrace(FFMPEGWRITER, "DELAYED OPEN %s", config.toString().c_str());
 
     int w = config.check("width",Value(0),
                          "width of image (must be even)").asInt32();
@@ -613,19 +603,17 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
        mpeg. */
     fmt = av_guess_format(nullptr, filename.c_str(), nullptr);
     if (!fmt) {
-        printf("Could not deduce output format from file extension: using MPEG.\n");
+        yCInfo(FFMPEGWRITER, "Could not deduce output format from file extension: using MPEG.");
         fmt = av_guess_format("mpeg", nullptr, nullptr);
     }
     if (!fmt) {
-        fprintf(stderr, "Could not find suitable output format\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Could not find suitable output format");
     }
 
     /* allocate the output media context */
     oc = avformat_alloc_context();
     if (!oc) {
-        fprintf(stderr, "Memory error\n");
-        ::exit(1);
+        yCFatal(FFMPEGWRITER, "Memory error");
     }
     oc->oformat = fmt;
     snprintf(oc->filename, sizeof(oc->filename), "%s", filename.c_str());
@@ -639,7 +627,7 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     }
 
     if (audio) {
-        printf("Adding audio %dx%d\n", sample_rate, channels);
+        yCInfo(FFMPEGWRITER, "Adding audio %dx%d", sample_rate, channels);
         if (fmt->audio_codec != AV_CODEC_ID_NONE) {
             audio_st = add_audio_stream(oc, fmt->audio_codec);
             if (audio_st!=nullptr) {
@@ -647,13 +635,13 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
                 c->sample_rate = sample_rate;
                 c->channels = channels;
             } else {
-                printf("Failed to add audio\n");
+                yCError(FFMPEGWRITER, "Failed to add audio");
             }
         } else {
-            printf("No audio codec available\n");
+            yCWarning(FFMPEGWRITER, "No audio codec available");
         }
     } else {
-        printf("Skipping audio\n");
+        yCInfo(FFMPEGWRITER, "Skipping audio");
     }
 
     av_dump_format(oc, 0, filename.c_str(), 1);
@@ -670,8 +658,7 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     /* open the output file, if needed */
     if (!(fmt->flags & AVFMT_NOFILE)) {
         if (avio_open(&oc->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0) {
-            fprintf(stderr, "Could not open '%s'\n", filename.c_str());
-            ::exit(1);
+            yCFatal(FFMPEGWRITER, "Could not open '%s'", filename.c_str());
         }
     }
 
@@ -707,7 +694,7 @@ bool FfmpegWriter::close() {
     /* free the stream */
     av_free(oc);
 
-    printf("Closed media file %s\n", filename.c_str());
+    yCInfo(FFMPEGWRITER, "Closed media file %s", filename.c_str());
 
     return true;
 }
