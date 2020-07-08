@@ -18,6 +18,7 @@
 
 #include "TextureLogo.h"
 #include "GLDebug.h"
+#include "OVRHeadsetLogComponent.h"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
@@ -39,7 +40,7 @@ TextureLogo::TextureLogo(ovrSession session) :
     bufferSize(rowSize * height),
     ptr((GLubyte*)yarp_logo.pixel_data)
 {
-    yDebug() << width;
+    yCDebug(OVRHEADSET) << width;
     createTexture();
 }
 
@@ -63,7 +64,7 @@ void TextureLogo::createTexture()
     desc.BindFlags = ovrTextureBind_None;
 
     if (ovr_CreateTextureSwapChainGL(session, &desc, &textureSwapChain) != ovrSuccess) {
-        yFatal() << "Failed to create texture swap chain";
+        yCFatal(OVRHEADSET) << "Failed to create texture swap chain";
     }
 
     ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, -1, &chainTexId);
@@ -127,7 +128,7 @@ void TextureCrosshairs::createTexture()
     desc.BindFlags = ovrTextureBind_None;
 
     if (ovr_CreateTextureSwapChainGL(session, &desc, &textureSwapChain) != ovrSuccess) {
-        yFatal() << "Failed to create texture swap chain";
+        yCFatal(OVRHEADSET) << "Failed to create texture swap chain";
     }
 
     ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, -1, &chainTexId);

@@ -17,6 +17,7 @@
  */
 
 #include "GLDebug.h"
+#include "OVRHeadsetLogComponent.h"
 
 #include <yarp/os/LogStream.h>
 #include <GL/glew.h>
@@ -47,5 +48,5 @@ void yarp::dev::checkGlError(const char* file, int line, const char* func)
             break;
         }
     }
-    if (!(error == 0)) { yarp::os::Log(file, line, func).fatal("OpenGL Error at %s:%d (%s)", file, line, func); }
+    if (!(error == 0)) { yarp::os::Log(file, line, func, nullptr, OVRHEADSET()).fatal("OpenGL Error at %s:%d (%s)", file, line, func); }
 }

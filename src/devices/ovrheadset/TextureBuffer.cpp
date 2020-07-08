@@ -18,6 +18,7 @@
 
 #include "TextureBuffer.h"
 #include "GLDebug.h"
+#include "OVRHeadsetLogComponent.h"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
@@ -48,7 +49,7 @@ void TextureBuffer::fromImage(ovrSession inSession, const yarp::sig::Image& img,
     pc = img.getPixelCode();
     if (pc != VOCAB_PIXEL_RGBA && pc != VOCAB_PIXEL_RGB)
     {
-        yError() << "wrong texture format.. must be VOCAB_PIXEL_RGBA or VOCAB_PIXEL_RGB";
+        yCError(OVRHEADSET) << "wrong texture format.. must be VOCAB_PIXEL_RGBA or VOCAB_PIXEL_RGB";
         return;
     }
     alpha = inalpha;
@@ -115,21 +116,21 @@ TextureBuffer::TextureBuffer(int w, int h, int eye, ovrSession session) :
         singleThread(false)
 {
     YARP_UNUSED(eye);
-    yTrace();
+    yCTrace(OVRHEADSET);
     checkGlErrorMacro;
     createTextureAndBuffers();
 }
 
 TextureBuffer::~TextureBuffer()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
 
     deleteTextureAndBuffers();
 }
 
 void TextureBuffer::resize(size_t w, size_t h)
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
     deleteTextureAndBuffers();
     lock();
     width = w;
@@ -242,7 +243,7 @@ void TextureBuffer::update()
 
 void TextureBuffer::createTextureAndBuffers()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
     checkGlErrorMacro;
 
     ovrTextureSwapChainDesc desc = {};
@@ -256,7 +257,7 @@ void TextureBuffer::createTextureAndBuffers()
     desc.StaticImage = ovrFalse;
 
     if (!ovr_CreateTextureSwapChainGL(session, &desc, &textureSwapChain) == ovrSuccess) {
-        yError() << "Failed to create texture swap chain";
+        yCError(OVRHEADSET); << "Failed to create texture swap chain";
         return;
     }
     checkGlErrorMacro;
@@ -306,7 +307,7 @@ void TextureBuffer::createTextureAndBuffers()
 
 void TextureBuffer::deleteTextureAndBuffers()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
 
     lock();
 

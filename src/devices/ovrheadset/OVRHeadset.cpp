@@ -24,6 +24,7 @@
 #include "TextureStatic.h"
 #include "TextureBattery.h"
 #include "GLDebug.h"
+#include "OVRHeadsetLogComponent.h"
 
 #include "img-yarp-robot-64.h"
 #include "img-crosshairs.h"
@@ -137,21 +138,25 @@ inline ovrVector3f vecSubtract(const ovrVector3f& a, const ovrVector3f& b)
 
 static inline void debugTangent(std::string message, float tangent1, float tangent2)
 {
-    yDebug((message + "    %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n").c_str(),
-        tangent1,
-        atan(tangent1),
-        OVR::RadToDegree(atan(tangent1)),
-        tangent2,
-        atan(tangent2),
-        OVR::RadToDegree(atan(tangent2)));
+    yCDebug(OVRHEADSET,
+            (message + "    %10f (%5f[rad] = %5f[deg])        %10f (%5f[rad] = %5f[deg])\n").c_str(),
+            tangent1,
+            atan(tangent1),
+            OVR::RadToDegree(atan(tangent1)),
+            tangent2,
+            atan(tangent2),
+            OVR::RadToDegree(atan(tangent2)));
 }
 static void debugFov(const ovrFovPort fov[2]) {
-    yDebug("             Left Eye                                           Right Eye\n");
+    yCDebug(OVRHEADSET,
+            "             Left Eye                                           Right Eye\n");
     debugTangent("LeftTan",  fov[0].LeftTan , fov[0].LeftTan);
     debugTangent("RightTan", fov[0].RightTan, fov[0].RightTan);
     debugTangent("UpTan",    fov[0].UpTan   , fov[0].UpTan   );
     debugTangent("DownTan",  fov[0].DownTan , fov[0].DownTan );
-    yDebug("\n\n\n");
+    yCDebug(OVRHEADSET);
+    yCDebug(OVRHEADSET);
+    yCDebug(OVRHEADSET);
 }
 
 static int compareLuid(const ovrGraphicsLuid& lhs, const ovrGraphicsLuid& rhs)
@@ -259,11 +264,11 @@ yarp::dev::OVRHeadset::OVRHeadset() :
         yarp::dev::DeviceDriver(),
         yarp::os::PeriodicThread(0.011, yarp::os::ShouldUseSystemClock::Yes) // ~90 fps
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
 }
 yarp::dev::OVRHeadset::~OVRHeadset()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
 }
 
 void yarp::dev::OVRHeadset::fillAxisStorage()
@@ -369,7 +374,7 @@ void yarp::dev::OVRHeadset::fillHatStorage()
 
 bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
 
     typedef std::vector<std::pair<yarp::os::BufferedPort<yarp::os::Bottle>**, std::string> > port_params;
     typedef std::vector<std::tuple<std::string, std::string, bool*, bool> >                 optionalParamType;
@@ -416,7 +421,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
             if (!cfg.check(p.first) || !(cfg.find(p.first).*isFunctionMap[p.second])())
             {
                 std::string err_type = err_msgs.find(p.second) == err_msgs.end() ? "[unknown type]" : err_msgs[p.second];
-                yError() << "ovrHeadset: parameter" << p.first << "not found or not" << err_type << "in configuration file";
+                yCError(OVRHEADSET) << "ovrHeadset: parameter" << p.first << "not found or not" << err_type << "in configuration file";
                 return false;
             }
         }
@@ -439,7 +444,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
                 if (guip.isNull())
                 {
-                    yError() << "group:" << groupName << "not found in configuration file..";
+                    yCError(OVRHEADSET) << "group:" << groupName << "not found in configuration file..";
                     return false;
                 }
 
@@ -448,7 +453,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
                     if (!guip.check(p.first) || !(guip.find(p.first).*isFunctionMap[p.second])())
                     {
                         std::string err_type = err_msgs.find(p.second) == err_msgs.end() ? "[unknow type]" : err_msgs[p.second];
-                        yError() << "ovrHeadset: parameter" << p.first << "not found or not" << err_type << "in" << groupName << "group in configuration file";
+                        yCError(OVRHEADSET) << "ovrHeadset: parameter" << p.first << "not found or not" << err_type << "in" << groupName << "group in configuration file";
                         return false;
                     }
                 }
@@ -494,16 +499,16 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
     if (!driver.open(tfClientCfg))
     {
-        yError() << "unable to open PolyDriver";
+        yCError(OVRHEADSET) << "unable to open PolyDriver";
         return false;
     }
 
     if (!driver.view(tfPublisher) || tfPublisher == nullptr)
     {
-        yError() << "unable to dynamic cast device to IFrameTransform interface";
+        yCError(OVRHEADSET) << "unable to dynamic cast device to IFrameTransform interface";
         return false;
     }
-    yInfo() << "TransformCLient successfully opened at port: " << cfg.find("tfLocal").asString();
+    yCInfo(OVRHEADSET) << "TransformCLient successfully opened at port: " << cfg.find("tfLocal").asString();
 
     //opening ports
     ports =
@@ -534,7 +539,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
         if (!(*port.first)->open(name))
         {
-            yError() << "Cannot open" << port.second << "port";
+            yCError(OVRHEADSET) << "Cannot open" << port.second << "port";
             this->close();
             return false;
         }
@@ -546,7 +551,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
     for (int eye = 0; eye < ovrEye_Count; ++eye) {
         displayPorts[eye] = new InputCallback(eye);
         if (!displayPorts[eye]->open(eye == ovrEye_Left ? "/oculus/display/left:i" : "/oculus/display/right:i")) {
-            yError() << "Cannot open " << (eye == ovrEye_Left ? "left" : "right") << "display port";
+            yCError(OVRHEADSET) << "Cannot open " << (eye == ovrEye_Left ? "left" : "right") << "display port";
             this->close();
             return false;
         }
@@ -591,7 +596,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
     // Start the thread
     if (!this->start()) {
-        yError() << "thread start failed, aborting.";
+        yCError(OVRHEADSET) << "thread start failed, aborting.";
         this->close();
         return false;
     }
@@ -606,7 +611,7 @@ bool yarp::dev::OVRHeadset::open(yarp::os::Searchable& cfg)
 
 bool yarp::dev::OVRHeadset::threadInit()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
     OVR::System::Init();
 
     // Initializes LibOVR, and the Rift
@@ -614,21 +619,21 @@ bool yarp::dev::OVRHeadset::threadInit()
     ovrResult r = ovr_Initialize(&initParams);
 //    VALIDATE(OVR_SUCCESS(r), "Failed to initialize libOVR.");
     if (!OVR_SUCCESS(r)) {
-        yError() << "Failed to initialize libOVR.";
+        yCError(OVRHEADSET) << "Failed to initialize libOVR.";
     }
 
     // Detect and initialize Oculus Rift
     ovrGraphicsLuid luid;
     ovrResult result = ovr_Create(&session, &luid);
     if (!OVR_SUCCESS(result)) {
-        yError() << "Oculus Rift not detected.";
+        yCError(OVRHEADSET) << "Oculus Rift not detected.";
         this->close();
         return false;
     }
 
     if (compareLuid(luid, GetDefaultAdapterLuid())) // If luid that the Rift is on is not the default adapter LUID...
     {
-        yError() << "OpenGL supports only the default graphics adapter.";
+        yCError(OVRHEADSET) << "OpenGL supports only the default graphics adapter.";
         this->close();
         return false;
     }
@@ -640,7 +645,7 @@ bool yarp::dev::OVRHeadset::threadInit()
 
     hmdDesc = ovr_GetHmdDesc(session);
     if (hmdDesc.ProductName[0] == '\0') {
-        yWarning() << "Rift detected, display not enabled.";
+        yCWarning(OVRHEADSET) << "Rift detected, display not enabled.";
     }
 
     DebugHmd(hmdDesc);
@@ -649,7 +654,7 @@ bool yarp::dev::OVRHeadset::threadInit()
     // GLFW must be initialized after LibOVR
     // see http://www.glfw.org/docs/latest/rift.html
     if ( !glfwInit() ) {
-        yError() << "Failed to initialize GLFW";
+        yCError(OVRHEADSET) << "Failed to initialize GLFW";
         this->close();
         return false;
     }
@@ -658,7 +663,7 @@ bool yarp::dev::OVRHeadset::threadInit()
     OVR::Sizei windowSize = hmdDesc.Resolution;
 
     if (!createWindow(windowSize.w, windowSize.h)) {
-        yError() << "Failed to create window";
+        yCError(OVRHEADSET) << "Failed to create window";
         this->close();
         return false;
     }
@@ -669,11 +674,11 @@ bool yarp::dev::OVRHeadset::threadInit()
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (err != GLEW_OK) {
-        yError() << "glewInit failed, aborting.";
+        yCError(OVRHEADSET) << "glewInit failed, aborting.";
         this->close();
         return false;
     }
-    yInfo() << "Using GLEW" << (const char*)glewGetString(GLEW_VERSION);
+    yCInfo(OVRHEADSET) << "Using GLEW" << (const char*)glewGetString(GLEW_VERSION);
     checkGlErrorMacro;
 
 
@@ -706,7 +711,7 @@ bool yarp::dev::OVRHeadset::threadInit()
     result = ovr_CreateMirrorTextureGL(session, &desc, &mirrorTexture);
     if (!OVR_SUCCESS(result))
     {
-        yError() << "Failed to create mirror texture.";
+        yCError(OVRHEADSET) << "Failed to create mirror texture.";
         this->close();
         return false;
     }
@@ -731,7 +736,7 @@ bool yarp::dev::OVRHeadset::threadInit()
 
 void yarp::dev::OVRHeadset::threadRelease()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
 
     // Ensure that threadRelease is not called twice
     if (closed) {
@@ -822,14 +827,14 @@ void yarp::dev::OVRHeadset::threadRelease()
 
 bool yarp::dev::OVRHeadset::close()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
     this->askToStop();
     return true;
 }
 
 bool yarp::dev::OVRHeadset::startService()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
     return false;
 }
 
@@ -840,20 +845,23 @@ bool yarp::dev::OVRHeadset::updateService()
     }
 
     constexpr double delay = 60.0;
-    yDebug("Thread ran %d times, est period %lf[ms], used %lf[ms]",
-           getIterations(),
-           getEstimatedPeriod()*1000,
-           getEstimatedUsed()*1000);
-    yDebug("Display refresh: %3.1f[hz]", getIterations()/delay);
+    yCDebug(OVRHEADSET,
+            "Thread ran %d times, est period %lf[ms], used %lf[ms]",
+            getIterations(),
+            getEstimatedPeriod()*1000,
+            getEstimatedUsed()*1000);
+    yCDebug(OVRHEADSET,
+            "Display refresh: %3.1f[hz]", getIterations()/delay);
 
     for (int eye = 0; eye < ovrEye_Count; ++eye) {
-        yDebug("%s eye: %3.1f[hz] - %d of %d frames missing, %d of %d frames dropped",
-               (eye == ovrEye_Left ? "Left " : "Right"),
-               (getIterations() - displayPorts[eye]->eyeRenderTexture->missingFrames) / delay,
-               displayPorts[eye]->eyeRenderTexture->missingFrames,
-               getIterations(),
-               displayPorts[eye]->droppedFrames,
-               getIterations());
+        yCDebug(OVRHEADSET,
+                "%s eye: %3.1f[hz] - %d of %d frames missing, %d of %d frames dropped",
+                (eye == ovrEye_Left ? "Left " : "Right"),
+                (getIterations() - displayPorts[eye]->eyeRenderTexture->missingFrames) / delay,
+                displayPorts[eye]->eyeRenderTexture->missingFrames,
+                getIterations(),
+                displayPorts[eye]->droppedFrames,
+                getIterations());
         displayPorts[eye]->eyeRenderTexture->missingFrames = 0;
         getIterations(),
         displayPorts[eye]->droppedFrames = 0;
@@ -867,7 +875,7 @@ bool yarp::dev::OVRHeadset::updateService()
 
 bool yarp::dev::OVRHeadset::stopService()
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
     return this->close();
 }
 
@@ -1008,7 +1016,7 @@ void yarp::dev::OVRHeadset::run()
         static double lastOrientWarnTime = 0;
         double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastOrientWarnTime + 5) {
-            yDebug() << "Orientation not tracked";
+            yCDebug(OVRHEADSET) << "Orientation not tracked";
             lastOrientWarnTime = now;
         }
     }
@@ -1024,7 +1032,7 @@ void yarp::dev::OVRHeadset::run()
         static double lastPosWarnTime = 0;
         double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastPosWarnTime + 5) {
-            yDebug() << "Position not tracked";
+            yCDebug(OVRHEADSET) << "Position not tracked";
             lastPosWarnTime = now;
         }
     }
@@ -1053,7 +1061,7 @@ void yarp::dev::OVRHeadset::run()
         static double lastPredOrientWarnTime = 0;
         double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastPredOrientWarnTime + 5) {
-            yDebug() << "Predicted orientation not tracked";
+            yCDebug(OVRHEADSET) << "Predicted orientation not tracked";
             lastPredOrientWarnTime = now;
         }
     }
@@ -1070,7 +1078,7 @@ void yarp::dev::OVRHeadset::run()
         static double lastPredPosWarnTime = 0;
         double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastPredPosWarnTime + 5) {
-            yDebug() << "Position not tracked";
+            yCDebug(OVRHEADSET) << "Position not tracked";
             lastPredPosWarnTime = now;
         }
     }
@@ -1201,7 +1209,7 @@ void yarp::dev::OVRHeadset::run()
         static double lastImgWarnTime = 0;
         double now = yarp::os::SystemClock::nowSystem();
         if (now >= lastImgWarnTime + 5) {
-            yDebug() << "No image received";
+            yCDebug(OVRHEADSET) << "No image received";
             lastImgWarnTime = now;
         }
     }
@@ -1209,11 +1217,11 @@ void yarp::dev::OVRHeadset::run()
 
 bool yarp::dev::OVRHeadset::createWindow(int w, int h)
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
     glfwWindowHint(GLFW_DEPTH_BITS, 16);
     window = glfwCreateWindow(w/2, h/2, "YARP Oculus", nullptr, nullptr);
     if (!window) {
-        yError() << "Could not create window";
+        yCError(OVRHEADSET) << "Could not create window";
         return false;
     }
 
@@ -1226,7 +1234,7 @@ bool yarp::dev::OVRHeadset::createWindow(int w, int h)
 
 void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
 {
-    yTrace();
+    yCTrace(OVRHEADSET);
 
     if (GLFW_PRESS != action) {
         return;
@@ -1246,10 +1254,10 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     case GLFW_KEY_R:
 
         if (!leftShiftPressed && !rightShiftPressed) {
-            yDebug() << "Recentering pose";
+            yCDebug(OVRHEADSET) << "Recentering pose";
             ovr_RecenterTrackingOrigin(session);
         } else {
-            yDebug() << "Resetting yaw offset to current position";
+            yCDebug(OVRHEADSET) << "Resetting yaw offset to current position";
             for (int eye = 0; eye < ovrEye_Count; ++eye) {
                 float iyaw, ipitch, iroll;
                 if (imagePoseEnabled) {
@@ -1263,28 +1271,28 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
 
                 iyaw -= displayPorts[eye]->yawOffset;
                 displayPorts[eye]->yawOffset = - iyaw;
-                yDebug() << (eye == ovrEye_Left? "Left" : "Right") << "eye yaw offset =" << displayPorts[eye]->yawOffset;
+                yCDebug(OVRHEADSET) << (eye == ovrEye_Left? "Left" : "Right") << "eye yaw offset =" << displayPorts[eye]->yawOffset;
             }
         }
         break;
     case GLFW_KEY_F:
         flipInputEnabled = !flipInputEnabled;
-        yDebug() << "Flip input" << (flipInputEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "Flip input" << (flipInputEnabled ? "ON" : "OFF");
         reconfigureRendering();
         break;
     case GLFW_KEY_I:
         imagePoseEnabled = !imagePoseEnabled;
-        yDebug() << "Image pose" << (imagePoseEnabled ? "ON" : "OFF");
-        yDebug() << "User pose" << (userPoseEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "Image pose" << (imagePoseEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "User pose" << (userPoseEnabled ? "ON" : "OFF");
         break;
     case GLFW_KEY_U:
         userPoseEnabled = !userPoseEnabled;
-        yDebug() << "Image pose" << (imagePoseEnabled ? "ON" : "OFF");
-        yDebug() << "User pose" << (userPoseEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "Image pose" << (imagePoseEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "User pose" << (userPoseEnabled ? "ON" : "OFF");
         break;
     case GLFW_KEY_L:
         logoEnabled = !logoEnabled;
-        yDebug() << "Overlays:" <<
+        yCDebug(OVRHEADSET) << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
             "Battery" << (batteryEnabled ? "ON" : "OFF") <<
@@ -1292,7 +1300,7 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         break;
     case GLFW_KEY_C:
         crosshairsEnabled = !crosshairsEnabled;
-        yDebug() << "Overlays:" <<
+        yCDebug(OVRHEADSET) << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
             "Battery" << (batteryEnabled ? "ON" : "OFF") <<
@@ -1305,7 +1313,7 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         } else {
             textureBattery->suspend();
         }
-        yDebug() << "Overlays:" <<
+        yCDebug(OVRHEADSET) << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
             "Battery" << (batteryEnabled ? "ON" : "OFF") <<
@@ -1315,7 +1323,7 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         if (guiCount != 0) {
             guiEnabled = !guiEnabled;
         }
-        yDebug() << "Overlays:" <<
+        yCDebug(OVRHEADSET) << "Overlays:" <<
             "Logo" << (logoEnabled ? "ON" : "OFF") <<
             "Crosshairs" << (crosshairsEnabled ? "ON" : "OFF") <<
             "Battery" << (batteryEnabled ? "ON" : "OFF") <<
@@ -1327,11 +1335,11 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     case GLFW_KEY_Z:
         if (!rightShiftPressed) {
             --camHFOV[0];
-            yDebug() << "Left eye HFOV =" << camHFOV[0];
+            yCDebug(OVRHEADSET) << "Left eye HFOV =" << camHFOV[0];
         }
         if (!leftShiftPressed) {
             --camHFOV[1];
-            yDebug() << "Right eye HFOV =" << camHFOV[1];
+            yCDebug(OVRHEADSET) << "Right eye HFOV =" << camHFOV[1];
         }
         reconfigureFOV();
         reconfigureRendering();
@@ -1339,11 +1347,11 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     case GLFW_KEY_X:
         if (!rightShiftPressed) {
             ++camHFOV[0];
-            yDebug() << "Left eye HFOV =" << camHFOV[0];
+            yCDebug(OVRHEADSET) << "Left eye HFOV =" << camHFOV[0];
         }
         if (!leftShiftPressed) {
             ++camHFOV[1];
-            yDebug() << "Right eye HFOV =" << camHFOV[1];
+            yCDebug(OVRHEADSET) << "Right eye HFOV =" << camHFOV[1];
         }
         reconfigureFOV();
         reconfigureRendering();
@@ -1351,61 +1359,61 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
     case GLFW_KEY_UP:
         if (!rightShiftPressed) {
             displayPorts[0]->pitchOffset += ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Left eye pitch offset =" << displayPorts[0]->pitchOffset;
+            yCDebug(OVRHEADSET) << "Left eye pitch offset =" << displayPorts[0]->pitchOffset;
         }
         if (!leftShiftPressed) {
             displayPorts[1]->pitchOffset += ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Right eye pitch offset =" << displayPorts[1]->pitchOffset;
+            yCDebug(OVRHEADSET) << "Right eye pitch offset =" << displayPorts[1]->pitchOffset;
         }
         break;
     case GLFW_KEY_DOWN:
         if (!rightShiftPressed) {
             displayPorts[0]->pitchOffset -= ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Left eye pitch offset =" << displayPorts[0]->pitchOffset;
+            yCDebug(OVRHEADSET) << "Left eye pitch offset =" << displayPorts[0]->pitchOffset;
         }
         if (!leftShiftPressed) {
             displayPorts[1]->pitchOffset -= ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Right eye pitch offset =" << displayPorts[1]->pitchOffset;
+            yCDebug(OVRHEADSET) << "Right eye pitch offset =" << displayPorts[1]->pitchOffset;
         }
         break;
     case GLFW_KEY_LEFT:
         if (!rightShiftPressed) {
             displayPorts[0]->yawOffset += ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Left eye yaw offset =" << displayPorts[0]->yawOffset;
+            yCDebug(OVRHEADSET) << "Left eye yaw offset =" << displayPorts[0]->yawOffset;
         }
         if (!leftShiftPressed) {
             displayPorts[1]->yawOffset += ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Right eye yaw offset =" << displayPorts[1]->yawOffset;
+            yCDebug(OVRHEADSET) << "Right eye yaw offset =" << displayPorts[1]->yawOffset;
         }
         break;
     case GLFW_KEY_RIGHT:
         if (!rightShiftPressed) {
             displayPorts[0]->yawOffset -= ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Left eye yaw offset =" << displayPorts[0]->yawOffset;
+            yCDebug(OVRHEADSET) << "Left eye yaw offset =" << displayPorts[0]->yawOffset;
         }
         if (!leftShiftPressed) {
             displayPorts[1]->yawOffset -= ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Right eye yaw offset =" << displayPorts[1]->yawOffset;
+            yCDebug(OVRHEADSET) << "Right eye yaw offset =" << displayPorts[1]->yawOffset;
         }
         break;
     case GLFW_KEY_PAGE_UP:
         if (!rightShiftPressed) {
             displayPorts[0]->rollOffset += ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Left eye roll offset =" << displayPorts[0]->rollOffset;
+            yCDebug(OVRHEADSET) << "Left eye roll offset =" << displayPorts[0]->rollOffset;
         }
         if (!leftShiftPressed) {
             displayPorts[1]->rollOffset += ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Right eye roll offset =" << displayPorts[1]->rollOffset;
+            yCDebug(OVRHEADSET) << "Right eye roll offset =" << displayPorts[1]->rollOffset;
         }
         break;
     case GLFW_KEY_PAGE_DOWN:
         if (!rightShiftPressed) {
             displayPorts[0]->rollOffset -= ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Left eye roll offset =" << displayPorts[0]->rollOffset;
+            yCDebug(OVRHEADSET) << "Left eye roll offset =" << displayPorts[0]->rollOffset;
         }
         if (!leftShiftPressed) {
             displayPorts[1]->rollOffset -= ctrlPressed ? 0.05f : 0.0025f;
-            yDebug() << "Right eye roll offset =" << displayPorts[1]->rollOffset;
+            yCDebug(OVRHEADSET) << "Right eye roll offset =" << displayPorts[1]->rollOffset;
         }
         break;
     case GLFW_KEY_SLASH:
@@ -1416,27 +1424,27 @@ void yarp::dev::OVRHeadset::onKey(int key, int scancode, int action, int mods)
         }
         break;
     case GLFW_KEY_P:
-        yDebug() << "--------------------------------------------";
-        yDebug() << "Current settings:";
-        yDebug() << "  Flip input" << (flipInputEnabled ? "ON" : "OFF");
-        yDebug() << "  Image pose" << (imagePoseEnabled ? "ON" : "OFF");
-        yDebug() << "  User pose" << (userPoseEnabled ? "ON" : "OFF");
-        yDebug() << "  Overlays:";
-        yDebug() << "    Logo" << (logoEnabled ? "ON" : "OFF");
-        yDebug() << "    Crosshairs" << (crosshairsEnabled ? "ON" : "OFF");
-        yDebug() << "    Battery" << (batteryEnabled ? "ON" : "OFF");
-        yDebug() << "    Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
-        yDebug() << "  Left eye:";
-        yDebug() << "    HFOV = " << camHFOV[0];
-        yDebug() << "    pitch offset =" << displayPorts[0]->pitchOffset;
-        yDebug() << "    yaw offset =" << displayPorts[0]->yawOffset;
-        yDebug() << "    roll offset =" << displayPorts[0]->rollOffset;
-        yDebug() << "  Right eye:";
-        yDebug() << "    HFOV =" << camHFOV[1];
-        yDebug() << "    pitch offset =" << displayPorts[1]->pitchOffset;
-        yDebug() << "    yaw offset =" << displayPorts[1]->yawOffset;
-        yDebug() << "    roll offset =" << displayPorts[1]->rollOffset;
-        yDebug() << "--------------------------------------------";
+        yCDebug(OVRHEADSET) << "--------------------------------------------";
+        yCDebug(OVRHEADSET) << "Current settings:";
+        yCDebug(OVRHEADSET) << "  Flip input" << (flipInputEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "  Image pose" << (imagePoseEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "  User pose" << (userPoseEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "  Overlays:";
+        yCDebug(OVRHEADSET) << "    Logo" << (logoEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "    Crosshairs" << (crosshairsEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "    Battery" << (batteryEnabled ? "ON" : "OFF");
+        yCDebug(OVRHEADSET) << "    Gui" << ((guiCount != 0) ? (guiEnabled ? "ON" : "OFF") : "DISABLED");
+        yCDebug(OVRHEADSET) << "  Left eye:";
+        yCDebug(OVRHEADSET) << "    HFOV = " << camHFOV[0];
+        yCDebug(OVRHEADSET) << "    pitch offset =" << displayPorts[0]->pitchOffset;
+        yCDebug(OVRHEADSET) << "    yaw offset =" << displayPorts[0]->yawOffset;
+        yCDebug(OVRHEADSET) << "    roll offset =" << displayPorts[0]->rollOffset;
+        yCDebug(OVRHEADSET) << "  Right eye:";
+        yCDebug(OVRHEADSET) << "    HFOV =" << camHFOV[1];
+        yCDebug(OVRHEADSET) << "    pitch offset =" << displayPorts[1]->pitchOffset;
+        yCDebug(OVRHEADSET) << "    yaw offset =" << displayPorts[1]->yawOffset;
+        yCDebug(OVRHEADSET) << "    roll offset =" << displayPorts[1]->rollOffset;
+        yCDebug(OVRHEADSET) << "--------------------------------------------";
         break;
     default:
         break;
@@ -1474,7 +1482,7 @@ void yarp::dev::OVRHeadset::glfwKeyCallback(GLFWwindow* window, int key, int sca
 
 void yarp::dev::OVRHeadset::glfwErrorCallback(int error, const char* description)
 {
-    yError() << error << description;
+    yCError(OVRHEADSET) << error << description;
 }
 
 void yarp::dev::OVRHeadset::ovrDebugCallback(uintptr_t userData, int level, const char* message)
@@ -1489,35 +1497,35 @@ void yarp::dev::OVRHeadset::ovrDebugCallback(uintptr_t userData, int level, cons
 
     switch (level) {
     case ovrLogLevel_Debug:
-        yDebug() << "ovrDebugCallback" << message;
+        yCDebug(OVRHEADSET) << "ovrDebugCallback" << message;
         break;
     case ovrLogLevel_Info:
-        yInfo() << "ovrDebugCallback" << message;
+        yCInfo(OVRHEADSET) << "ovrDebugCallback" << message;
         break;
     case ovrLogLevel_Error:
-        yError() << "ovrDebugCallback" << message;
+        yCError(OVRHEADSET) << "ovrDebugCallback" << message;
         break;
     default:
-        yWarning() << "ovrDebugCallback" << message;
+        yCWarning(OVRHEADSET) << "ovrDebugCallback" << message;
         break;
     }
 }
 
 void yarp::dev::OVRHeadset::DebugHmd(ovrHmdDesc hmdDesc)
 {
-    yDebug("  * ProductName: %s", hmdDesc.ProductName);
-    yDebug("  * Manufacturer: %s", hmdDesc.Manufacturer);
-    yDebug("  * VendorId:ProductId: %04X:%04X", hmdDesc.VendorId, hmdDesc.ProductId);
-    yDebug("  * SerialNumber: %s", hmdDesc.SerialNumber);
-    yDebug("  * Firmware Version: %d.%d", hmdDesc.FirmwareMajor, hmdDesc.FirmwareMinor);
-    yDebug("  * Resolution: %dx%d", hmdDesc.Resolution.w, hmdDesc.Resolution.h);
+    yCDebug(OVRHEADSET, "  * ProductName: %s", hmdDesc.ProductName);
+    yCDebug(OVRHEADSET, "  * Manufacturer: %s", hmdDesc.Manufacturer);
+    yCDebug(OVRHEADSET, "  * VendorId:ProductId: %04X:%04X", hmdDesc.VendorId, hmdDesc.ProductId);
+    yCDebug(OVRHEADSET, "  * SerialNumber: %s", hmdDesc.SerialNumber);
+    yCDebug(OVRHEADSET, "  * Firmware Version: %d.%d", hmdDesc.FirmwareMajor, hmdDesc.FirmwareMinor);
+    yCDebug(OVRHEADSET, "  * Resolution: %dx%d", hmdDesc.Resolution.w, hmdDesc.Resolution.h);
 }
 
 void yarp::dev::OVRHeadset::errorManager(ovrResult error)
 {
     if (error_messages.find(error) != error_messages.end())
     {
-        yError() << error_messages[error].c_str();
+        yCError(OVRHEADSET) << error_messages[error].c_str();
     }
 }
 
@@ -1577,7 +1585,7 @@ bool yarp::dev::OVRHeadset::getButton(unsigned int button_id, float& value)
     std::lock_guard<std::mutex> lock(inputStateMutex);
     if (button_id > buttonIdToOvrButton.size() - 1)
     {
-        yError() << "OVRHeadset: button id out of bound";
+        yCError(OVRHEADSET) << "OVRHeadset: button id out of bound";
         return false;
     }
     value = inputState.Buttons & buttonIdToOvrButton[button_id] ? 1.0f : 0.0f;
@@ -1595,7 +1603,7 @@ bool yarp::dev::OVRHeadset::getHat(unsigned int hat_id, unsigned char& value)
     std::lock_guard<std::mutex> lock(inputStateMutex);
     if (hat_id > 0)
     {
-        yError() << "OVRHeadset: hat id out of bound";
+        yCError(OVRHEADSET) << "OVRHeadset: hat id out of bound";
         return false;
     }
     value = DButtonToHat[inputState.Buttons & ovrButton_Up]    |
@@ -1610,7 +1618,7 @@ bool yarp::dev::OVRHeadset::getAxis(unsigned int axis_id, double& value)
     std::lock_guard<std::mutex> lock(inputStateMutex);
     if (axis_id > axisIdToValue.size())
     {
-        yError() << "OVRHeadset: axis id out of bound";
+        yCError(OVRHEADSET) << "OVRHeadset: axis id out of bound";
         return false;
     }
 
@@ -1629,7 +1637,7 @@ bool yarp::dev::OVRHeadset::getStick(unsigned int stick_id, yarp::sig::Vector& v
 
     if (stick_id > STICK_COUNT - 1)
     {
-        yError() << "stick id out of bound";
+        yCError(OVRHEADSET) << "stick id out of bound";
         return false;
     }
     value.clear();

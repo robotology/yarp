@@ -18,6 +18,7 @@
 
 #include "TextureStatic.h"
 #include "GLDebug.h"
+#include "OVRHeadsetLogComponent.h"
 
 #include <yarp/os/LogStream.h>
 
@@ -58,7 +59,7 @@ void TextureStatic::createTexture()
     desc.BindFlags = ovrTextureBind_None;
 
     if (ovr_CreateTextureSwapChainGL(session, &desc, &textureSwapChain) != ovrSuccess) {
-        yFatal() << "Failed to create texture swap chain";
+        yCFatal(OVRHEADSET) << "Failed to create texture swap chain";
     }
 
     ovr_GetTextureSwapChainBufferGL(session, textureSwapChain, -1, &chainTexId);
