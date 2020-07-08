@@ -19,23 +19,31 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
+namespace {
+constexpr double default_period = 0.02;
+constexpr double default_charge = 50.0;
+constexpr double default_voltage = 30.0;
+constexpr double default_current = 3.0;
+constexpr double default_temperature = 20.0;
+constexpr const char* default_info = "Fake battery system v2.0";
+}
 
 FakeBattery::FakeBattery() :
-        PeriodicThread(0.02)
+        PeriodicThread(default_period)
 {
 }
 
 
 bool FakeBattery::open(yarp::os::Searchable& config)
 {
-    double period = config.check("thread_period", Value(0.02), "Thread period (smaller implies faster charge/discharge)").asFloat64();
+    double period = config.check("thread_period", Value(default_period), "Thread period (smaller implies faster charge/discharge)").asFloat64();
     setPeriod(period);
 
-    double charge = config.check("charge", Value(50.0), "Initial charge (%)").asFloat64();
-    double voltage = config.check("voltage", Value(30.0), "Initial voltage (V)").asFloat64();
-    double current = config.check("current", Value(3.0), "Initial current (A)").asFloat64();
-    double temperature = config.check("temperature", Value(20.0), "Initial temperature (°C)").asFloat64();
-    std::string info = config.check("info", Value("Fake battery system v2.0"), "Initial battery information").asString();
+    double charge = config.check("charge", Value(default_charge), "Initial charge (%)").asFloat64();
+    double voltage = config.check("voltage", Value(default_voltage), "Initial voltage (V)").asFloat64();
+    double current = config.check("current", Value(default_current), "Initial current (A)").asFloat64();
+    double temperature = config.check("temperature", Value(default_temperature), "Initial temperature (°C)").asFloat64();
+    std::string info = config.check("info", Value(default_info), "Initial battery information").asString();
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         battery_charge = charge;
