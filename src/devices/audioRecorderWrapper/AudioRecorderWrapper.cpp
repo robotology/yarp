@@ -21,19 +21,26 @@
 
 using namespace yarp::dev;
 
-#define DEFAULT_THREAD_PERIOD 0.02 //s
+namespace {
+YARP_LOG_COMPONENT(AUDIORECORDERWRAPPER, "yarp.device.AudioRecorderWrapper")
+constexpr double DEFAULT_THREAD_PERIOD = 0.02; // seconds
+constexpr size_t DEFAULT_MIN_NUMBER_OF_SAMPLES_OVER_NETWORK = 11250;
+constexpr size_t DEFAULT_MAX_NUMBER_OF_SAMPLES_OVER_NETWORK = 11250;
+constexpr double DEFAULT_GETSOUND_TIMEOUT = 1.0;
 
 #ifdef DEBUG_TIME_SPENT
 double last_time;
 #endif
+}
+
 
 AudioRecorderWrapper::AudioRecorderWrapper() :
         PeriodicThread(DEFAULT_THREAD_PERIOD),
         m_mic(nullptr),
         m_period(DEFAULT_THREAD_PERIOD),
-        m_min_number_of_samples_over_network(11250),
-        m_max_number_of_samples_over_network(11250),
-        m_getSound_timeout(1.0),
+        m_min_number_of_samples_over_network(DEFAULT_MIN_NUMBER_OF_SAMPLES_OVER_NETWORK),
+        m_max_number_of_samples_over_network(DEFAULT_MAX_NUMBER_OF_SAMPLES_OVER_NETWORK),
+        m_getSound_timeout(DEFAULT_GETSOUND_TIMEOUT),
         m_isDeviceOwned(false)
 #ifdef DEBUG_TIME_SPENT
         , last_time(yarp::os::Time::now()),
@@ -66,14 +73,14 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
 
         if (!m_driver.open(p) || !m_driver.isValid())
         {
-            yError() << "AudioRecorderWrapper: failed to open subdevice.. check params";
+            yCError(AUDIORECORDERWRAPPER) << "Failed to open subdevice.. check params";
             return false;
         }
 
         driverlist.push(&m_driver, "1");
         if (!attachAll(driverlist))
         {
-            yError() << "AudioRecorderWrapper: failed to open subdevice.. check params";
+            yCError(AUDIORECORDERWRAPPER) << "Failed to open subdevice.. check params";
             return false;
         }
         m_isDeviceOwned = true;
@@ -81,7 +88,7 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
 
     if (m_mic == nullptr)
     {
-        yError("Failed to open IAudioGrabberSound interface");
+        yCError(AUDIORECORDERWRAPPER, "Failed to open IAudioGrabberSound interface");
         return false;
     }
 
@@ -94,7 +101,7 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     {
         m_max_number_of_samples_over_network = config.find("max_samples_over_network").asInt64();
     }
-    yInfo() << "Wrapper configured to produce packets with the following size (in samples): " <<
+    yCInfo(AUDIORECORDERWRAPPER) << "Wrapper configured to produce packets with the following size (in samples): " <<
                 m_min_number_of_samples_over_network << " < samples < " << m_max_number_of_samples_over_network;
 
 
@@ -103,7 +110,7 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     {
         m_getSound_timeout = config.find("max_samples_timeout").asFloat64();
     }
-    yInfo() << "Wrapper configured with max_samples_timeout: " << m_getSound_timeout << "s";
+    yCInfo(AUDIORECORDERWRAPPER) << "Wrapper configured with max_samples_timeout: " << m_getSound_timeout << "s";
 
     // Set the streaming port
     std::string portname = "/audioRecorderWrapper";
@@ -113,14 +120,14 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     }
     if (m_streamingPort.open(portname + "/audio:o") == false)
     {
-        yError() << "Unable to open port" << portname;
+        yCError(AUDIORECORDERWRAPPER) << "Unable to open port" << portname;
         return false;
     }
 
     // Set the RPC port
     if (m_rpcPort.open(portname + "/rpc") == false)
     {
-        yError() << "Unable to open port" << portname + "/rpc";
+        yCError(AUDIORECORDERWRAPPER) << "Unable to open port" << portname + "/rpc";
         return false;
     }
     m_rpcPort.setReader(*this);
@@ -156,13 +163,13 @@ void AudioRecorderWrapper::run()
 {
 #ifdef DEBUG_TIME_SPENT
     double current_time = yarp::os::Time::now();
-    yDebug() << current_time - m_last_time;
+    yCDebug(AUDIORECORDERWRAPPER) << current_time - m_last_time;
     m_last_time = current_time;
 #endif
 
     if (m_mic == nullptr)
     {
-        yError() << "The IAudioGrabberSound interface is not available yet!";
+        yCError(AUDIORECORDERWRAPPER) << "The IAudioGrabberSound interface is not available yet!";
         return;
     }
 
@@ -172,7 +179,7 @@ void AudioRecorderWrapper::run()
         audio_buffer_size buf_cur;
         mic->getRecordingAudioBufferMaxSize(buf_max);
         mic->getRecordingAudioBufferCurrentSize(buf_cur);
-        yDebug() << "BEFORE Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
+        yCDebug(AUDIORECORDERWRAPPER) << "BEFORE Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
     }
 #endif
 
@@ -182,7 +189,7 @@ void AudioRecorderWrapper::run()
     if (snd.getSamples() < m_min_number_of_samples_over_network ||
         snd.getSamples() < m_max_number_of_samples_over_network)
     {
-            yWarning() << "subdevice->getSound() is not producing sounds of the requested size ("
+            yCWarning(AUDIORECORDERWRAPPER) << "subdevice->getSound() is not producing sounds of the requested size ("
                        << m_min_number_of_samples_over_network << "<"
                        << snd.getSamples() << "<"
                        << m_max_number_of_samples_over_network << ") failed";
@@ -194,12 +201,12 @@ void AudioRecorderWrapper::run()
         audio_buffer_size buf_cur;
         mic->getRecordingAudioBufferMaxSize(buf_max);
         mic->getRecordingAudioBufferCurrentSize(buf_cur);
-        yDebug() << "AFTER Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
+        yCDebug(AUDIORECORDERWRAPPER) << "AFTER Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
     }
 #endif
 #ifdef PRINT_DEBUG_MESSAGES
-    yDebug() << "Sound size:" << snd.getSamples()*snd.getChannels()*snd.getBytesPerSample() << " bytes";
-    yDebug();
+    yCDebug(AUDIORECORDERWRAPPER) << "Sound size:" << snd.getSamples()*snd.getChannels()*snd.getBytesPerSample() << " bytes";
+    yCDebug(AUDIORECORDERWRAPPER);
 #endif
 
     //prepare the timestamp
@@ -209,17 +216,17 @@ void AudioRecorderWrapper::run()
     //check before sending data
     if (snd.getSamples() == 0)
     {
-        yError() << "Subdevice produced sound of 0 samples!";
+        yCError(AUDIORECORDERWRAPPER) << "Subdevice produced sound of 0 samples!";
         return;
     }
     if (snd.getChannels() == 0)
     {
-        yError() << "Subdevice produced sound of 0 channels!";
+        yCError(AUDIORECORDERWRAPPER) << "Subdevice produced sound of 0 channels!";
         return;
     }
     if (snd.getFrequency() == 0)
     {
-        yError() << "Subdevice produced sound with 0 frequency!";
+        yCError(AUDIORECORDERWRAPPER) << "Subdevice produced sound with 0 frequency!";
         return;
     }
 
@@ -259,7 +266,7 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
     }
     else
     {
-        yError() << "Invalid command";
+        yCError(AUDIORECORDERWRAPPER) << "Invalid command";
         reply.addVocab(VOCAB_ERR);
     }
 
@@ -275,7 +282,7 @@ bool AudioRecorderWrapper::attachAll(const PolyDriverList &device2attach)
 {
     if (device2attach.size() != 1)
     {
-        yError("AudioPlayerWrapper: cannot attach more than one device");
+        yCError(AUDIORECORDERWRAPPER, "Cannot attach more than one device");
         return false;
     }
 
@@ -288,7 +295,7 @@ bool AudioRecorderWrapper::attachAll(const PolyDriverList &device2attach)
 
     if (nullptr == m_mic)
     {
-        yError("AudioPlayerWrapper: subdevice passed to attach method is invalid");
+        yCError(AUDIORECORDERWRAPPER, "Subdevice passed to attach method is invalid");
         return false;
     }
     attach(m_mic);
