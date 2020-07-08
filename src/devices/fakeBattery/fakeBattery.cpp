@@ -45,13 +45,6 @@ bool FakeBattery::open(yarp::os::Searchable& config)
         battery_info = std::move(info);
         updateStatus();
     }
-    Bottle& group_general = config.findGroup("GENERAL");
-    if (group_general.isNull()) {
-        yWarning() << "GENERAL group parameters missing, assuming default";
-    } else {
-        // Other options
-        this->debugEnable = group_general.check("debug", Value(0), "enable/disable the debug mode").asBool();
-    }
 
     std::string name = config.find("name").asString();
     this->yarp().attachAsServer(ctrl_port);
