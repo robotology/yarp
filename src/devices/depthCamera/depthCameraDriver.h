@@ -19,7 +19,6 @@
 #ifndef DEPTHCAMERA_DRIVER_H
 #define DEPTHCAMERA_DRIVER_H
 
-#include <iostream>
 #include <string>
 #include <map>
 
