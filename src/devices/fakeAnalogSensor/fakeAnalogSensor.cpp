@@ -9,29 +9,34 @@
 #include "fakeAnalogSensor.h"
 
 #include <yarp/os/Time.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 using namespace std;
 using namespace yarp::dev;
+
+namespace {
+YARP_LOG_COMPONENT(FAKEANALOGSENSOR, "yarp.device.fakeAnalogSensor")
+}
 
 FakeAnalogSensor::FakeAnalogSensor(double period) : PeriodicThread(period),
         mutex(),
         channelsNum(0),
         status(IAnalogSensor::AS_OK)
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     timeStamp = yarp::os::Time::now();
 }
 
 FakeAnalogSensor::~FakeAnalogSensor()
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
 }
 
 
 bool FakeAnalogSensor::open(yarp::os::Searchable& config)
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     bool correct=true;
 
     //debug
@@ -41,18 +46,18 @@ bool FakeAnalogSensor::open(yarp::os::Searchable& config)
 //     if(!config.check("channels"))
 //     {
 //         correct = false;
-//         yError() << "Parameter 'channels' missing";
+//         yCError(FAKEANALOGSENSOR) << "Parameter 'channels' missing";
 //     }
 
     if(!config.check("period"))
     {
         correct = false;
-        yError() << "Parameter 'period' missing";
+        yCError(FAKEANALOGSENSOR) << "Parameter 'period' missing";
     }
 
     if (!correct)
     {
-        yError() << "Insufficient parameters to FakeAnalogSensor\n";
+        yCError(FAKEANALOGSENSOR) << "Insufficient parameters to FakeAnalogSensor\n";
         return false;
     }
 
@@ -69,7 +74,7 @@ bool FakeAnalogSensor::open(yarp::os::Searchable& config)
 
 bool FakeAnalogSensor::close()
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     //stop the thread
     PeriodicThread::stop();
 
@@ -87,48 +92,48 @@ int FakeAnalogSensor::read(yarp::sig::Vector &out)
 
 int FakeAnalogSensor::getState(int ch)
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     // Always ok for now
     return status;
 }
 
 int FakeAnalogSensor::getChannels()
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     return channelsNum;
 }
 
 int FakeAnalogSensor::calibrateSensor()
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     //NOT YET IMPLEMENTED
     return 0;
 }
 
 int FakeAnalogSensor::calibrateChannel(int ch, double v)
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     //NOT YET IMPLEMENTED
     return 0;
 }
 
 int FakeAnalogSensor::calibrateSensor(const yarp::sig::Vector& v)
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     //NOT YET IMPLEMENTED
     return 0;
 }
 
 int FakeAnalogSensor::calibrateChannel(int ch)
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     //NOT YET IMPLEMENTED
     return 0;
 }
 
 bool FakeAnalogSensor::threadInit()
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
     return true;
 }
 
@@ -151,5 +156,5 @@ void FakeAnalogSensor::run()
 
 void FakeAnalogSensor::threadRelease()
 {
-    yTrace();
+    yCTrace(FAKEANALOGSENSOR);
 }
