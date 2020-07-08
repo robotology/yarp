@@ -9,6 +9,7 @@
 #include <yarp/dev/IRobotDescription.h>
 #include "RobotDescriptionServer.h"
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <mutex>
 
@@ -18,6 +19,9 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
+namespace {
+YARP_LOG_COMPONENT(ROBOTDESCRIPTIONSERVER, "yarp.device.robotDescriptionServer")
+}
 
 //------------------------------------------------------------------------------------------------------------------------------
 
@@ -28,7 +32,7 @@ bool RobotDescriptionServer::open(yarp::os::Searchable &config)
 
     if (m_local_name == "")
     {
-        yError("RobotDescriptionServer::open() error you have to provide valid local name");
+        yCError(ROBOTDESCRIPTIONSERVER, "open(): Invalid local name");
         return false;
     }
 
@@ -37,7 +41,7 @@ bool RobotDescriptionServer::open(yarp::os::Searchable &config)
 
     if (!m_rpc_port.open(local_rpc))
     {
-        yError("RobotDescriptionServer::open() error could not open rpc port %s, check network", local_rpc.c_str());
+        yCError(ROBOTDESCRIPTIONSERVER, "open(): Could not open rpc port %s, check network", local_rpc.c_str());
         return false;
     }
 
@@ -50,15 +54,15 @@ bool RobotDescriptionServer::attachAll(const PolyDriverList &p)
     std::lock_guard<std::mutex> guard(m_external_mutex);
     for (int i = 0; i < p.size(); i++)
     {
-        //yDebug() << "***************" << p[i]->poly->getOptions().toString();
-        //yDebug() << "***************" << p[i]->poly->getValue("device").toString();
-        //yDebug() << "***************" << p[i]->poly->getValue("name").toString();
+        yCTrace(ROBOTDESCRIPTIONSERVER) << p[i]->poly->getOptions().toString();
+        yCTrace(ROBOTDESCRIPTIONSERVER) << p[i]->poly->getValue("device").toString();
+        yCTrace(ROBOTDESCRIPTIONSERVER) << p[i]->poly->getValue("name").toString();
         DeviceDescription dev;
         dev.device_name = p[i]->poly->getValue("name").toString();
         dev.device_type = p[i]->poly->getValue("device").toString();
         if (this->add_device(dev) == false)
         {
-            yError() << "RobotDescriptionServer::attachAll() something strange happened here";
+            yCError(ROBOTDESCRIPTIONSERVER) << "attachAll(): Something strange happened here";
             //return false;
         }
     }
@@ -85,7 +89,7 @@ bool RobotDescriptionServer::add_device(DeviceDescription dev)
     {
         if (dev.device_name == m_robot_device.device_name)
         {
-            yWarning() << "RobotDescriptionServer::add_device() device" << dev.device_name << "already exists, skipping";
+            yCWarning(ROBOTDESCRIPTIONSERVER) << "add_device(): Device" << dev.device_name << "already exists, skipping";
             return false;
         }
     }
@@ -157,7 +161,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
             else
             {
                 ret = false;
-                yError("Invalid vocab received in RobotDescriptionServer");
+                yCError(ROBOTDESCRIPTIONSERVER, "Invalid vocab received");
             }
 
         }
@@ -172,7 +176,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
                 bool b_rem = this->remove_device(dev);
                 if (b_rem == false)
                 {
-                    yError() << "RobotDescriptionServer remove_device failed";
+                    yCError(ROBOTDESCRIPTIONSERVER) << "remove_device failed";
                 }
                 else
                 {
@@ -183,7 +187,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
             else
             {
                 ret = false;
-                yError("Invalid vocab received in RobotDescriptionServer");
+                yCError(ROBOTDESCRIPTIONSERVER, "Invalid vocab received");
             }
         }
         else if (macro_cmd == VOCAB_IROBOT_SET)
@@ -197,7 +201,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
                 bool b_add = this->add_device(desc);
                 if (b_add == false)
                 {
-                    yError() << "RobotDescriptionServer add_device failed";
+                    yCError(ROBOTDESCRIPTIONSERVER) << "add_device failed";
                 }
                 else
                 {
@@ -208,19 +212,19 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
             else
             {
                 ret = false;
-                yError("Invalid vocab received in RobotDescriptionServer");
+                yCError(ROBOTDESCRIPTIONSERVER, "Invalid vocab received");
             }
         }
         else
         {
             ret = false;
-            yError("Invalid vocab received in RobotDescriptionServer");
+            yCError(ROBOTDESCRIPTIONSERVER, "Invalid vocab received");
         }
     }
     else
     {
         ret = false;
-        yError("Invalid vocab received in RobotDescriptionServer");
+        yCError(ROBOTDESCRIPTIONSERVER, "Invalid vocab received");
     }
 
     if (!ret)
