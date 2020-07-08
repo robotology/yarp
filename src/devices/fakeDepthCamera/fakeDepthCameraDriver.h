@@ -9,7 +9,6 @@
 #ifndef YARP_FAKEDEPTHCAMERADRIVER_H
 #define YARP_FAKEDEPTHCAMERADRIVER_H
 
-#include <iostream>
 #include <string>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/all.h>
