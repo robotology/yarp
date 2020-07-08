@@ -15,6 +15,7 @@
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 
 #include <cstdio>
 
@@ -25,6 +26,9 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 
+namespace {
+YARP_LOG_COMPONENT(FFMPEGGRABBER, "yarp.device.ffmpeg_grabber")
+}
 
 class DecoderState
 {
@@ -102,12 +106,12 @@ public:
         for(int i=0; i<(int)(pFormatCtx->nb_streams); i++) {
             if(pFormatCtx->streams[i]->codecpar->codec_type==code) {
                 videoStream=i;
-                printf("First %s stream is stream #%d\n", name, i);
+                yCInfo(FFMPEGGRABBER, "First %s stream is stream #%d", name, i);
                 break;
             }
         }
         if(videoStream==-1) {
-            printf("Could not find %s stream\n", name);
+            yCError(FFMPEGGRABBER, "Could not find %s stream", name);
         }
         index = videoStream;
 
@@ -122,13 +126,13 @@ public:
         // Find the decoder for the video stream
         pCodec = avcodec_find_decoder(pFormatCtx->streams[index]->codecpar->codec_id);
         if(pCodec==nullptr) {
-            printf("Codec not found\n");
+            yCError(FFMPEGGRABBER, "Codec not found");
             return false; // Codec not found
         }
 
         // Open codec
         if (avcodec_open2(pCodecCtx, pCodec, nullptr) < 0) {
-            printf("Could not open codec\n");
+            yCError(FFMPEGGRABBER, "Could not open codec");
             return false; // Could not open codec
         }
 
@@ -144,7 +148,7 @@ public:
         // Allocate an AVFrame structure
         pFrameRGB=av_frame_alloc();
         if(pFrameRGB==nullptr) {
-            printf("Could not allocate a frame\n");
+            yCError(FFMPEGGRABBER, "Could not allocate a frame");
             return false;
         }
 
@@ -164,7 +168,8 @@ public:
         audioBufferLen = MAX_AUDIO_FRAME_SIZE*10;
         audioBuffer = new int16_t[audioBufferLen];
         audioBufferAt = audioBuffer;
-        printf("channels %d, sample_rate %d, frame_size %d\n",
+        yCInfo(FFMPEGGRABBER,
+               "channels %d, sample_rate %d, frame_size %d",
                pCodecCtx->channels,
                pCodecCtx->sample_rate,
                pCodecCtx->frame_size);
@@ -205,8 +210,7 @@ public:
             tmp.size -= bytesRead;
             if (!pAudio) {
                 if (!(pAudio = av_frame_alloc())) {
-                    fprintf(stderr, "out of memory\n");
-                    ::exit(1);
+                    yCFatal(FFMPEGGRABBER, "out of memory");
                 }
             } else {
                 av_frame_unref(pAudio);
@@ -221,7 +225,7 @@ public:
                                                 1);
             }
             if (r<0) {
-                printf("error decoding audio\n");
+                yCError(FFMPEGGRABBER, "error decoding audio");
                 return false;
             }
             int num_channels = getChannels();
@@ -275,8 +279,7 @@ public:
                           ((AVPicture*)pFrameRGB)->data,
                           ((AVPicture*)pFrameRGB)->linesize);
             } else {
-                printf("Software scaling not working\n");
-                ::exit(1);
+                yCFatal(FFMPEGGRABBER, "Software scaling not working");
             }
         }
         return frameFinished;
@@ -342,7 +345,7 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                          Value("/dev/dsp"),
                          "optional audio device name");
     }
-    printf("Device %s\n",v.asString().c_str());
+    yCInfo(FFMPEGGRABBER, "Device %s",v.asString().c_str());
 
     m_uri = v.asString();
 
@@ -412,7 +415,7 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
 
     bool ok = (result==0);
     if (!ok) {
-        fprintf(stderr, "%s: ffmpeg error %d\n", v.asString().c_str(), result);
+        yCError(FFMPEGGRABBER, "%s: ffmpeg error %d", v.asString().c_str(), result);
     }
 
     if (ok) {
@@ -437,7 +440,7 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
                                        Value("/dev/dv1394"),
                                        "firewire device name").asString();
     iformat = av_find_input_format("dv1394");
-    printf("Checking for digital video in %s\n", devname.c_str());
+    yCInfo(FFMPEGGRABBER, "Checking for digital video in %s", devname.c_str());
 
     m_uri = devname;
 
@@ -492,18 +495,18 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config)
     if (config.check("v4l","if present, read from video4linux") || config.check("v4l1","if present, read from video4linux") || config.check("v4l2","if present, read from video4linux2")) {
         needRateControl = false; // reading from live media
         if (!openV4L(config,&pFormatCtx,&pFormatCtx2)) {
-            printf("Could not open Video4Linux input\n");
+            yCError(FFMPEGGRABBER, "Could not open Video4Linux input");
             return false;
         }
     } else if (config.check("ieee1394","if present, read from firewire")) {
         needRateControl = false; // reading from live media
         if (!openFirewire(config,&pFormatCtx)) {
-            printf("Could not open ieee1394 input\n");
+            yCError(FFMPEGGRABBER, "Could not open ieee1394 input");
             return false;
         }
     } else {
         if (!openFile(&pFormatCtx,fname.c_str())) {
-            printf("Could not open media file %s\n", fname.c_str());
+            yCError(FFMPEGGRABBER, "Could not open media file %s", fname.c_str());
             return false; // Couldn't open file
         }
     }
@@ -511,7 +514,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config)
 
     // Retrieve stream information
     if(avformat_find_stream_info(pFormatCtx, nullptr)<0) {
-        printf("Could not find stream information in %s\n", m_uri.c_str());
+        yCError(FFMPEGGRABBER, "Could not find stream information in %s", m_uri.c_str());
         return false; // Couldn't find stream information
     }
 
@@ -521,7 +524,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config)
     if (pFormatCtx2!=nullptr) {
 
         if(avformat_find_stream_info(pFormatCtx2, nullptr)<0) {
-            printf("Could not find stream information in %s\n", m_uri.c_str());
+            yCError(FFMPEGGRABBER, "Could not find stream information in %s", m_uri.c_str());
             return false; // Couldn't find stream information
         }
 
@@ -536,9 +539,10 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config)
         pAudioFormatCtx = pFormatCtx;
     }
 
-    yAssert(system_resource==nullptr);
+    yCAssert(FFMPEGGRABBER, system_resource == nullptr);
     system_resource = new FfmpegHelper;
-    yAssert(system_resource!=nullptr);
+    yCAssert(FFMPEGGRABBER, system_resource != nullptr);
+
     FfmpegHelper& helper = HELPER(system_resource);
     DecoderState& videoDecoder = helper.videoDecoder;
     DecoderState& audioDecoder = helper.audioDecoder;
@@ -585,10 +589,13 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config)
         m_channels = audioDecoder.getChannels();
         m_rate = audioDecoder.getRate();
     }
-    printf("  video size %dx%d, audio %dHz with %d channels, %s sync\n",
-           m_w, m_h,
-           m_rate, m_channels,
-           imageSync?"image":"audio");
+    yCInfo(FFMPEGGRABBER,
+           "  video size %dx%d, audio %dHz with %d channels, %s sync",
+           m_w,
+           m_h,
+           m_rate,
+           m_channels,
+           imageSync ? "image" : "audio");
 
     if (!(_hasVideo||_hasAudio)) {
         return false;
@@ -673,13 +680,13 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
                 done = videoDecoder.getVideo(packet);
                 image.resize(1,1);
                 if (done) {
-                    //printf("got a video frame\n");
+                    yCTrace(FFMPEGGRABBER, "got a video frame");
                     gotVideo = true;
                 }
             } if (packet.stream_index==audioDecoder.getIndex()) {
                 done = audioDecoder.getAudio(packet,sound);
                 if (done) {
-                    //printf("got an audio frame\n");
+                    yCTrace(FFMPEGGRABBER, "got an audio frame");
                     gotAudio = true;
                 }
             }
