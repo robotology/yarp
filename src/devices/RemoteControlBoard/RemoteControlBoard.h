@@ -334,6 +334,7 @@ public:
     bool getTemperatureLimit (int m, double* val) override;
     bool setTemperatureLimit (int m, const double val) override;
     bool getGearboxRatio(int m, double* val) override;
+    bool setGearboxRatio(int m, const double val) override;
 
     // IMotorEncoder
     bool resetMotorEncoder(int j) override;
