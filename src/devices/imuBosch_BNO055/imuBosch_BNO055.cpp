@@ -40,6 +40,7 @@ extern "C" {
 
 #include <mutex>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Time.h>
@@ -50,7 +51,11 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(IMUBOSCH_BNO055, "yarp.device.imuBosch_BNO055")
 constexpr uint8_t i2cAddrA = 0x28;
+}
+
 //constexpr uint8_t i2cAddrB = 0x29;
 
 BoschIMU::BoschIMU() : PeriodicThread(0.02),
@@ -82,17 +87,17 @@ BoschIMU::~BoschIMU() = default;
 bool BoschIMU::open(yarp::os::Searchable& config)
 {
     //debug
-    yTrace("Parameters are:\n\t%s", config.toString().c_str());
+    yCTrace(IMUBOSCH_BNO055, "Parameters are:\n\t%s", config.toString().c_str());
 
     if(!config.check("comport") && !config.check("i2c"))
     {
-        yError() << "BoschImu: Params 'comport' and 'i2c' not found";
+        yCError(IMUBOSCH_BNO055) << "Params 'comport' and 'i2c' not found";
         return false;
     }
 
     if (config.check("comport") && config.check("i2c"))
     {
-        yError() << "BoschImu: Params 'comport' and 'i2c' both specified";
+        yCError(IMUBOSCH_BNO055) << "Params 'comport' and 'i2c' both specified";
         return false;
     }
 
@@ -108,7 +113,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
     {
         if (!config.find("i2c").isString())
         {
-            yError()<<"BoschImu: i2c param malformed, it should be a string, aborting.";
+            yCError(IMUBOSCH_BNO055) << "i2c param malformed, it should be a string, aborting.";
             return false;
         }
 
@@ -117,13 +122,13 @@ bool BoschIMU::open(yarp::os::Searchable& config)
 
         if (fd < 0)
         {
-            yError("BoschImu: can't open %s, %s", i2cDevFile.c_str(), strerror(errno));
+            yCError(IMUBOSCH_BNO055, "Can't open %s, %s", i2cDevFile.c_str(), strerror(errno));
             return false;
         }
 
         if (::ioctl(fd, I2C_SLAVE, i2cAddrA) < 0)
         {
-            yError("BoschImu: ioctl failed on %s, %s", i2cDevFile.c_str(), strerror(errno));
+            yCError(IMUBOSCH_BNO055, "ioctl failed on %s, %s", i2cDevFile.c_str(), strerror(errno));
             return false;
         }
 
@@ -132,7 +137,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
     {
         fd = ::open(config.find("comport").toString().c_str(), O_RDWR | O_NOCTTY );
         if (fd < 0) {
-            yError("can't open %s, %s", config.find("comport").toString().c_str(), strerror(errno));
+            yCError(IMUBOSCH_BNO055, "Can't open %s, %s", config.find("comport").toString().c_str(), strerror(errno));
             return false;
         }
         //Get the current options for the port...
@@ -173,7 +178,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
         //Set the new options for the port...
         if ( tcsetattr(fd, TCSANOW, &options) != 0)
         {
-            yError("Configuring comport failed");
+            yCError(IMUBOSCH_BNO055, "Configuring comport failed");
             return false;
         }
 
@@ -191,7 +196,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
     else
     {
         m_sensorName = "sensor_imu_bosch_bno055";
-        yWarning() << "Bosch BNO055 IMU -  Parameter \"sensor_name\" not set. Using default value  \"" << m_sensorName << "\" for this parameter.";
+        yCWarning(IMUBOSCH_BNO055) << "Parameter \"sensor_name\" not set. Using default value  \"" << m_sensorName << "\" for this parameter.";
     }
 
     if (config.check("frame_name") && config.find("frame_name").isString())
@@ -201,7 +206,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
     else
     {
         m_frameName = m_sensorName;
-        yWarning() << "Bosch BNO055 IMU -  Parameter \"frame_name\" not set. Using the same value as \"sensor_name\" for this parameter.";
+        yCWarning(IMUBOSCH_BNO055) << "Parameter \"frame_name\" not set. Using the same value as \"sensor_name\" for this parameter.";
     }
 
     return PeriodicThread::start();
@@ -209,7 +214,7 @@ bool BoschIMU::open(yarp::os::Searchable& config)
 
 bool BoschIMU::close()
 {
-    yTrace();
+    yCTrace(IMUBOSCH_BNO055);
     //stop the thread
     PeriodicThread::stop();
     return true;
@@ -226,8 +231,9 @@ bool BoschIMU::checkReadResponse(unsigned char* response)
     {
         if(response[1] != REGISTER_NOT_READY)   // if error is 0x07, do not print error messages
         {
-            yError("Bosch BNO055 IMU - Inertial sensor didn't understand the command. \n\
-            If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
+            yCError(IMUBOSCH_BNO055,
+                    "Inertial sensor didn't understand the command. \n\
+                    If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
         }
         errorCounter[response[1]]++;
         readSysError();
@@ -235,7 +241,8 @@ bool BoschIMU::checkReadResponse(unsigned char* response)
     }
 
     errorCounter[0]++;
-    yError("Bosch BNO055 IMU - Received unknown response message. \n\
+    yCError(IMUBOSCH_BNO055,
+            "Received unknown response message. \n\
             If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
     dropGarbage();
     readSysError();
@@ -252,8 +259,9 @@ bool BoschIMU::checkWriteResponse(unsigned char* response)
         }
         if(response[1] != REGISTER_NOT_READY)   // if error is 0x07, do not print error messages
         {
-            yError("Bosch BNO055 IMU - Inertial sensor didn't understand the command. \n\
-            If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
+            yCError(IMUBOSCH_BNO055,
+                    "Inertial sensor didn't understand the command. \n\
+                    If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
         }
         errorCounter[response[1]]++;
         readSysError();
@@ -261,7 +269,8 @@ bool BoschIMU::checkWriteResponse(unsigned char* response)
     }
 
     errorCounter[0]++;
-    yError("Bosch BNO055 IMU - Received unknown response message. \n\
+    yCError(IMUBOSCH_BNO055,
+            "Received unknown response message. \n\
             If this error happens more than once in a row, please check serial communication is working fine and it isn't affected by electrical disturbance.");
     dropGarbage();
     readSysError();
@@ -294,7 +303,7 @@ bool BoschIMU::sendReadCommandSer(unsigned char register_add, int len, unsigned 
 
         if(nbytes_w != command_len)
         {
-            yError() << "BoschIMU device cannot correctly send the message: " << comment;
+            yCError(IMUBOSCH_BNO055) << "Cannot correctly send the message: " << comment;
             // DO NOT return here. If something was sent, then the imu will reply with a message
             // even an error message. I have to parse it before proceeding and not leave garbage behind.
         }
@@ -303,7 +312,7 @@ bool BoschIMU::sendReadCommandSer(unsigned char register_add, int len, unsigned 
         int readbytes = readBytes(buf, RESP_HEADER_SIZE);
         if(readbytes != RESP_HEADER_SIZE)
         {
-            yError("Expected %d bytes, read %d instead\n", RESP_HEADER_SIZE, readbytes);
+            yCError(IMUBOSCH_BNO055, "Expected %d bytes, read %d instead\n", RESP_HEADER_SIZE, readbytes);
             success = false;
         }
         else if(!checkReadResponse(buf))
@@ -324,7 +333,7 @@ bool BoschIMU::sendReadCommandSer(unsigned char register_add, int len, unsigned 
         }
     }
 //     if(!success)
-//         yError("> FAILED reading %s!\n", comment.c_str());
+//         yCError(IMUBOSCH_BNO055, "> FAILED reading %s!\n", comment.c_str());
     return success;
 }
 
@@ -347,7 +356,7 @@ bool BoschIMU::sendWriteCommandSer(unsigned char register_add, int len, unsigned
     nbytes_w = ::write(fd, (void*)command, command_len);
     if(nbytes_w != command_len)
     {
-        yError() << "BoschIMU device cannot correctly send the message: " << comment;
+        yCError(IMUBOSCH_BNO055) << "Cannot correctly send the message: " << comment;
         // DO NOT return here. If something was sent, then the imu will reply with a message
         // even an error message. I have to parse it before proceeding and not leave garbage behind.
     }
@@ -358,7 +367,7 @@ bool BoschIMU::sendWriteCommandSer(unsigned char register_add, int len, unsigned
     if(!checkWriteResponse(response))
     {
 //         printf("> FAILED!\n"); fflush(stdout);
-        yError() << "FAILED writing " << comment;
+        yCError(IMUBOSCH_BNO055) << "FAILED writing " << comment;
         return false;
     }
 //     printf("> SUCCESS!\n"); fflush(stdout);
@@ -410,12 +419,12 @@ void BoschIMU::readSysError()
     yarp::os::SystemClock::delaySystem(0.002);
     if(!sendReadCommandSer(REG_SYS_STATUS, 1, response, "Read SYS_STATUS register") )
     {
-        yError()  << "@ line " << __LINE__;
+        yCError(IMUBOSCH_BNO055)  << "@ line " << __LINE__;
     }
 
     if(!sendReadCommandSer(REG_SYS_ERR, 1, response, "Read SYS_ERR register") )
     {
-        yError()  << "@ line " << __LINE__;
+        yCError(IMUBOSCH_BNO055)  << "@ line " << __LINE__;
     }
     checkError = false;
     return;
@@ -438,7 +447,7 @@ bool BoschIMU::sendReadCommandI2c(unsigned char register_add, int len, unsigned 
 {
     if (i2c_smbus_read_i2c_block_data(fd, register_add, len, buf) < 0)
     {
-        yError() << "BoschIMU device cannot correctly send the message: " << comment;
+        yCError(IMUBOSCH_BNO055) << "Cannot correctly send the message: " << comment;
         return false;
     }
     return true;
@@ -454,7 +463,7 @@ bool BoschIMU::threadInit()
         {
             if (trials == 10)
             {
-                yError()<<"BoschImu: wrong device on the bus, it is not BNO055";
+                yCError(IMUBOSCH_BNO055) << "Wrong device on the bus, it is not BNO055";
                 return false;
             }
             yarp::os::Time::delay(0.1);
@@ -467,7 +476,7 @@ bool BoschIMU::threadInit()
         // Set the device in config mode
         if (i2c_smbus_write_byte_data(fd, REG_OP_MODE, CONFIG_MODE) < 0)
         {
-            yError()<<"BoschImu: Unable to set the Config mode";
+            yCError(IMUBOSCH_BNO055) << "Unable to set the Config mode";
             return false;
         }
 
@@ -475,7 +484,7 @@ bool BoschIMU::threadInit()
 
         if (i2c_smbus_write_byte_data(fd, REG_SYS_TRIGGER, TRIG_EXT_CLK_SEL) < 0)
         {
-            yError()<<"BoschImu: Unable to set external clock";
+            yCError(IMUBOSCH_BNO055) << "Unable to set external clock";
             return false;
         }
 
@@ -486,7 +495,7 @@ bool BoschIMU::threadInit()
 
         if (i2c_smbus_write_byte_data(fd, REG_PAGE_ID, 0x00) < 0)
         {
-            yError()<<"BoschImu: Unable to set the page ID";
+            yCError(IMUBOSCH_BNO055) << "Unable to set the page ID";
             return false;
         }
 
@@ -495,7 +504,7 @@ bool BoschIMU::threadInit()
 
         if (i2c_smbus_write_byte_data(fd, REG_OP_MODE, NDOF_MODE) < 0)
         {
-            yError()<<"BoschImu: Unable to set the Operative mode";
+            yCError(IMUBOSCH_BNO055) << "Unable to set the Operative mode";
             return false;
         }
 
@@ -509,7 +518,7 @@ bool BoschIMU::threadInit()
         msg = 0x00;
         if(!sendAndVerifyCommandSer(REG_PAGE_ID, 1, &msg, "PAGE_ID") )
         {
-            yError()  << "BoschIMU: set page id 0 failed";
+            yCError(IMUBOSCH_BNO055) << "Set page id 0 failed";
             return(false);
         }
 
@@ -524,7 +533,7 @@ bool BoschIMU::threadInit()
     //     msg = 0x00;
     //     if(!sendAndVerifyCommand(REG_POWER_MODE, 1, &msg, "Set power mode") )
     //     {
-    //          yError()  << "BoschIMU: set power mode failed";
+    //          yCError(IMUBOSCH_BNO055)  << "Set power mode failed";
     //          return(false);
     //     }
     //
@@ -540,7 +549,7 @@ bool BoschIMU::threadInit()
         msg = CONFIG_MODE;
         if(!sendAndVerifyCommandSer(REG_OP_MODE, 1, &msg, "Set config mode") )
         {
-            yError()  << "BoschIMU: set config mode failed";
+            yCError(IMUBOSCH_BNO055)  << "Set config mode failed";
             return(false);
         }
 
@@ -556,7 +565,7 @@ bool BoschIMU::threadInit()
         msg = TRIG_EXT_CLK_SEL;
         if(!sendAndVerifyCommandSer(REG_SYS_TRIGGER, 1, &msg, "Set external clock") )
         {
-            yError()  << "BoschIMU: set external clock failed";
+            yCError(IMUBOSCH_BNO055) << "Set external clock failed";
             return(false);
         }
         yarp::os::SystemClock::delaySystem(SWITCHING_TIME);
@@ -580,7 +589,7 @@ bool BoschIMU::threadInit()
         msg = NDOF_MODE;
         if(!sendAndVerifyCommandSer(REG_OP_MODE, 1, &msg, "Set config NDOF_MODE") )
         {
-            yError()  << "BoschIMU: set config NDOF_MODE failed";
+            yCError(IMUBOSCH_BNO055) << "Set config NDOF_MODE failed";
             return false;
         }
 
@@ -601,7 +610,7 @@ bool BoschIMU::threadInit()
 
     if(!dataIsValid)
     {
-        yError() << "First read from the device failed, check everything is fine and retry";
+        yCError(IMUBOSCH_BNO055) << "First read from the device failed, check everything is fine and retry";
         return false;
     }
 
@@ -621,7 +630,7 @@ void BoschIMU::run()
 
     if (!(this->*readFunc)(REG_ACC_DATA, 32, response, "Read all"))
     {
-        yError()<<"BoschImu: failed to read all the data";
+        yCError(IMUBOSCH_BNO055) << "Failed to read all the data";
         errs++;
         dataIsValid = false;
         return;
@@ -694,8 +703,8 @@ void BoschIMU::run()
         // if almost 1 errors occourred in last interval, then print report
         if(errs != 0)
         {
-            yDebug(" IMUBOSCH periodic error report of last %d sec:", TIME_REPORT_INTERVAL);
-            yDebug("\t errors while reading data: %d", errs);
+            yCDebug(IMUBOSCH_BNO055, "Periodic error report of last %d sec:", TIME_REPORT_INTERVAL);
+            yCDebug(IMUBOSCH_BNO055, "\t errors while reading data: %d", errs);
         }
 
         errs = 0;
@@ -741,7 +750,7 @@ yarp::dev::MAS_status BoschIMU::genericGetStatus(size_t sens_index) const
 {
     if (sens_index != 0)
     {
-        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
         return yarp::dev::MAS_status::MAS_ERROR;
     }
 
@@ -752,7 +761,7 @@ bool BoschIMU::genericGetSensorName(size_t sens_index, string& name) const
 {
     if (sens_index != 0)
     {
-        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
         return false;
     }
 
@@ -764,7 +773,7 @@ bool BoschIMU::genericGetFrameName(size_t sens_index, string& frameName) const
 {
     if (sens_index != 0)
     {
-        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
         return false;
     }
 
@@ -798,7 +807,7 @@ bool BoschIMU::getThreeAxisLinearAccelerometerMeasure(size_t sens_index, yarp::s
 {
     if (sens_index != 0)
     {
-        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
         return false;
     }
 
@@ -838,7 +847,7 @@ bool BoschIMU::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::sig::Vector
 {
     if (sens_index != 0)
     {
-        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
         return false;
     }
 
@@ -876,7 +885,7 @@ bool BoschIMU::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp
 {
     if (sens_index != 0)
     {
-        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
         return false;
     }
 
@@ -914,7 +923,7 @@ bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vec
 {
     if (sens_index != 0)
     {
-        yError() << "BoschImu: sens_index must be equal to 0, since there is  only one sensor in consideration";
+        yCError(IMUBOSCH_BNO055) << "sens_index must be equal to 0, since there is only one sensor in consideration";
         return false;
     }
 
@@ -932,7 +941,7 @@ bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vec
 
 void BoschIMU::threadRelease()
 {
-    yTrace("BoschIMU Thread released\n");
+    yCTrace(IMUBOSCH_BNO055, "Thread released\n");
     //TBD write more meaningful report
 //    for(unsigned int i=0; i<errorCounter.size(); i++)
 //        printf("Error type %d, counter is %d\n", i, (int)errorCounter[i]);
