@@ -19,6 +19,7 @@
 #include "Localization2DClient.h"
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <mutex>
 
@@ -29,6 +30,9 @@ using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
 using namespace yarp::sig;
 
+namespace {
+YARP_LOG_COMPONENT(LOCALIZATION2DCLIENT, "yarp.device.localization2DClient")
+}
 
 //------------------------------------------------------------------------------------------------------------------------------
 
@@ -42,13 +46,13 @@ bool Localization2DClient::open(yarp::os::Searchable &config)
 
     if (m_local_name == "")
     {
-        yError("Localization2DClient::open() error you have to provide a valid 'local' param");
+        yCError(LOCALIZATION2DCLIENT, "open() error you have to provide a valid 'local' param");
         return false;
     }
 
     if (m_remote_name == "")
     {
-        yError("Localization2DClient::open() error you have to provide valid 'remote' param");
+        yCError(LOCALIZATION2DCLIENT, "open() error you have to provide valid 'remote' param");
         return false;
     }
 
@@ -65,7 +69,7 @@ bool Localization2DClient::open(yarp::os::Searchable &config)
 
     if (!m_rpc_port_localization_server.open(local_rpc))
     {
-        yError("Localization2DClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
+        yCError(LOCALIZATION2DCLIENT, "open() error could not open rpc port %s, check network", local_rpc.c_str());
         return false;
     }
 
@@ -74,7 +78,7 @@ bool Localization2DClient::open(yarp::os::Searchable &config)
     bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "tcp");
     if (!ok)
     {
-        yError("Localization2DClient::open() error could not connect to %s", remote_streaming_name.c_str());
+        yCError(LOCALIZATION2DCLIENT, "open() error could not connect to %s", remote_streaming_name.c_str());
         return false;
     }*/
 
@@ -83,7 +87,7 @@ bool Localization2DClient::open(yarp::os::Searchable &config)
     ok = Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
-        yError("Localization2DClient::open() error could not connect to %s", remote_rpc.c_str());
+        yCError(LOCALIZATION2DCLIENT, "open() error could not connect to %s", remote_rpc.c_str());
         return false;
     }
 
@@ -107,13 +111,13 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Localization2DClient::setInitialPose() received error from localization server";
+            yCError(LOCALIZATION2DCLIENT) << "setInitialPose() received error from localization server";
             return false;
         }
     }
     else
     {
-        yError() << "Localization2DClient::setInitialPose() error on writing on rpc port";
+        yCError(LOCALIZATION2DCLIENT) << "setInitialPose() error on writing on rpc port";
         return false;
     }
     return true;
@@ -123,7 +127,7 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc, const yarp::
 {
     if (cov.rows() != 3 || cov.cols() != 3)
     {
-        yError() << "Covariance matrix is expected to have size (3,3)";
+        yCError(LOCALIZATION2DCLIENT) << "Covariance matrix is expected to have size (3,3)";
         return false;
     }
     yarp::os::Bottle b;
@@ -143,13 +147,13 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc, const yarp::
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Localization2DClient::setInitialPose() received error from localization server";
+            yCError(LOCALIZATION2DCLIENT) << "setInitialPose() received error from localization server";
             return false;
         }
     }
     else
     {
-        yError() << "Localization2DClient::setInitialPose() error on writing on rpc port";
+        yCError(LOCALIZATION2DCLIENT) << "setInitialPose() error on writing on rpc port";
         return false;
     }
     return true;
@@ -157,7 +161,7 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc, const yarp::
 
 bool  Localization2DClient::getEstimatedOdometry(yarp::dev::OdometryData& odom)
 {
-   yError() << " Localization2DClient::getEstimatedOdometry is not yet implemented";
+   yCError(LOCALIZATION2DCLIENT) << "getEstimatedOdometry is not yet implemented";
    return false;
 }
 
@@ -174,7 +178,7 @@ bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
         {
-            yError() << "Localization2DClient::getCurrentPosition() received error from localization server";
+            yCError(LOCALIZATION2DCLIENT) << "getCurrentPosition() received error from localization server";
             return false;
         }
         else
@@ -188,7 +192,7 @@ bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc)
     }
     else
     {
-        yError() << "Localization2DClient::getCurrentPosition() error on writing on rpc port";
+        yCError(LOCALIZATION2DCLIENT) << "getCurrentPosition() error on writing on rpc port";
         return false;
     }
     return true;
@@ -207,14 +211,14 @@ bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Ma
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 6)
         {
-            yError() << "Localization2DClient::getCurrentPosition() received error from localization server";
+            yCError(LOCALIZATION2DCLIENT) << "getCurrentPosition() received error from localization server";
             return false;
         }
         else
         {
             if (cov.rows() != 3 || cov.cols() != 3)
             {
-                yDebug() << "Performance warning: covariance matrix is not (3,3), resizing...";
+                yCDebug(LOCALIZATION2DCLIENT) << "Performance warning: covariance matrix is not (3,3), resizing...";
                 cov.resize(3, 3);
             }
             loc.map_id = resp.get(1).asString();
@@ -229,7 +233,7 @@ bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Ma
     }
     else
     {
-        yError() << "Localization2DClient::getCurrentPosition() error on writing on rpc port";
+        yCError(LOCALIZATION2DCLIENT) << "getCurrentPosition() error on writing on rpc port";
         return false;
     }
     return true;
@@ -248,7 +252,7 @@ bool  Localization2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Localization2DClient::getEstimatedPoses() received error from localization server";
+            yCError(LOCALIZATION2DCLIENT) << "getEstimatedPoses() received error from localization server";
             return false;
         }
         else
@@ -269,7 +273,7 @@ bool  Localization2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
                 else
                 {
                     poses.clear();
-                    yError() << "Localization2DClient::getEstimatedPoses() parsing error";
+                    yCError(LOCALIZATION2DCLIENT) << "getEstimatedPoses() parsing error";
                     return false;
                 }
                 poses.push_back(loc);
@@ -279,7 +283,7 @@ bool  Localization2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
     }
     else
     {
-        yError() << "Localization2DClient::getEstimatedPoses() error on writing on rpc port";
+        yCError(LOCALIZATION2DCLIENT) << "getEstimatedPoses() error on writing on rpc port";
         return false;
     }
     return true;
@@ -298,7 +302,7 @@ bool  Localization2DClient::getLocalizationStatus(yarp::dev::Nav2D::Localization
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 2)
         {
-            yError() << "Localization2DClient::getLocalizationStatus() received error from localization server";
+            yCError(LOCALIZATION2DCLIENT) << "getLocalizationStatus() received error from localization server";
             return false;
         }
         else
@@ -309,7 +313,7 @@ bool  Localization2DClient::getLocalizationStatus(yarp::dev::Nav2D::Localization
     }
     else
     {
-        yError() << "Localization2DClient::getLocalizationStatus() error on writing on rpc port";
+        yCError(LOCALIZATION2DCLIENT) << "getLocalizationStatus() error on writing on rpc port";
         return false;
     }
     return true;
@@ -328,13 +332,13 @@ bool  Localization2DClient::startLocalizationService()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::startLocalizationService() received error from navigation server";
+            yCError(LOCALIZATION2DCLIENT) << "startLocalizationService() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::startLocalizationService() error on writing on rpc port";
+        yCError(LOCALIZATION2DCLIENT) << "startLocalizationService() error on writing on rpc port";
         return false;
     }
     return true;
@@ -353,13 +357,13 @@ bool  Localization2DClient::stopLocalizationService()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::stopLocalizationService() received error from navigation server";
+            yCError(LOCALIZATION2DCLIENT) << "stopLocalizationService() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::stopLocalizationService() error on writing on rpc port";
+        yCError(LOCALIZATION2DCLIENT) << "stopLocalizationService() error on writing on rpc port";
         return false;
     }
     return true;
