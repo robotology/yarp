@@ -227,7 +227,7 @@ bool PortAudioDeviceDriver::open(yarp::os::Searchable& config)
 
     if (config.check("loopback","if present, send audio read from microphone immediately back to speaker"))
     {
-        yError ("loopback not yet implemented");
+        yCError(PORTAUDIO, "loopback not yet implemented");
         m_loopBack = true;
     }
 
