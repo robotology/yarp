@@ -14,6 +14,8 @@
 #define M_PI (3.14159265358979323846)
 #endif
 
+YARP_LOG_COMPONENT(GENERICSENSORROSPUBLISHER, "yarp.device.PoseStampedRosPublisher")
+
 bool PoseStampedRosPublisher::viewInterfaces()
 {
     // View all the interfaces

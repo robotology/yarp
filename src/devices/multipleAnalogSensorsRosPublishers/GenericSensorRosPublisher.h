@@ -17,7 +17,14 @@
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+
+
+// The log component is defined in each device, with a specialized name
+YARP_DECLARE_LOG_COMPONENT(GENERICSENSORROSPUBLISHER)
+
+
 /**
  * @ingroup dev_impl_wrapper
  *
@@ -91,24 +98,24 @@ template <class ROS_MSG>
 bool GenericSensorRosPublisher<ROS_MSG>::open(yarp::os::Searchable & config)
 {
     if (!config.check("topic")) {
-        yError("GenericSensorRosPublisher: missing `topic` parameter, exiting.");
+        yCError(GENERICSENSORROSPUBLISHER, "Missing `topic` parameter, exiting.");
         return false;
     }
 
     if (!config.check("period")) {
-        yError("GenericSensorRosPublisher: missing `period` parameter, exiting.");
+        yCError(GENERICSENSORROSPUBLISHER, "Missing `period` parameter, exiting.");
         return false;
     }
 
     if (config.find("period").isFloat32()==false && config.find("period").isFloat64()==false) {
-        yError("GenericSensorRosPublisher: `period` parameter is present but it is not a float, exiting.");
+        yCError(GENERICSENSORROSPUBLISHER, "`period` parameter is present but it is not a float, exiting.");
         return false;
     }
 
     m_periodInS = config.find("period").asFloat64();
 
     if (m_periodInS <= 0) {
-        yError("GenericSensorRosPublisher: `period` parameter is present (%f) but it is not a positive value, exiting.", m_periodInS);
+        yCError(GENERICSENSORROSPUBLISHER, "`period` parameter is present (%f) but it is not a positive value, exiting.", m_periodInS);
         return false;
     }
 
@@ -127,19 +134,19 @@ bool GenericSensorRosPublisher<ROS_MSG>::open(yarp::os::Searchable & config)
 
     if (m_rosNodeName == "")
     {
-        yError() << " GenericSensorRosPublisher: invalid node name: " << m_rosNodeName;
+        yCError(GENERICSENSORROSPUBLISHER) << "Invalid node name: " << m_rosNodeName;
         return false;
     }
 
     m_rosNode = new yarp::os::Node(m_rosNodeName); // add a ROS node
 
     if (m_rosNode == nullptr) {
-        yError() << " GenericSensorRosPublisher: opening " << m_rosNodeName << " Node, check your yarp-ROS network configuration\n";
+        yCError(GENERICSENSORROSPUBLISHER) << "Opening " << m_rosNodeName << " Node, check your yarp-ROS network configuration\n";
         return false;
     }
 
     if (!m_publisher.topic(m_publisherName)) {
-        yError() << "GenericSensorRosPublisher: opening " << m_publisherName << " Topic, check your yarp-ROS network configuration\n";
+        yCError(GENERICSENSORROSPUBLISHER) << "Opening " << m_publisherName << " Topic, check your yarp-ROS network configuration\n";
         return false;
     }
 
@@ -152,14 +159,14 @@ bool GenericSensorRosPublisher<ROS_MSG>::open(yarp::os::Searchable & config)
 
         if (!m_subdevicedriver.open(p) || !m_subdevicedriver.isValid())
         {
-            yError() << "GenericSensorRosPublisher: failed to open subdevice.. check params";
+            yCError(GENERICSENSORROSPUBLISHER) << "Failed to open subdevice.. check params";
             return false;
         }
 
         driverlist.push(&m_subdevicedriver, "1");
         if (!attachAll(driverlist))
         {
-            yError() << "GenericSensorRosPublisher: failed to open subdevice.. check params";
+            yCError(GENERICSENSORROSPUBLISHER) << "Failed to open subdevice.. check params";
             return false;
         }
     }
@@ -186,17 +193,17 @@ bool GenericSensorRosPublisher<ROS_MSG>::attachAll(const yarp::dev::PolyDriverLi
     // Attach the device
     if (p.size() > 1)
     {
-        yError("GenericSensorRosPublisher: this device only supports exposing a "
+        yCError(GENERICSENSORROSPUBLISHER, "This device only supports exposing a "
             "single MultipleAnalogSensors device on YARP ports, but %d devices have been passed in attachAll.",
             p.size());
-        yError("GenericSensorRosPublisher: please use the multipleanalogsensorsremapper device to combine several device in a new device.");
+        yCError(GENERICSENSORROSPUBLISHER, "Please use the multipleanalogsensorsremapper device to combine several device in a new device.");
         detachAll();
         return false;
     }
 
     if (p.size() == 0)
     {
-        yError("GenericSensorRosPublisher: no device passed to attachAll, please pass a device to expose on YARP ports.");
+        yCError(GENERICSENSORROSPUBLISHER, "No device passed to attachAll, please pass a device to expose on YARP ports.");
         return false;
     }
 
@@ -204,7 +211,7 @@ bool GenericSensorRosPublisher<ROS_MSG>::attachAll(const yarp::dev::PolyDriverLi
 
     if (!m_poly)
     {
-        yError("GenericSensorRosPublisher: null pointer passed to attachAll.");
+        yCError(GENERICSENSORROSPUBLISHER, "Null pointer passed to attachAll.");
         return false;
     }
 

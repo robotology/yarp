@@ -8,6 +8,8 @@
 
 #include "WrenchStampedRosPublisher.h"
 
+YARP_LOG_COMPONENT(GENERICSENSORROSPUBLISHER, "yarp.device.WrenchStampedRosPublisher")
+
 bool WrenchStampedRosPublisher::viewInterfaces()
 {
     // View all the interfaces

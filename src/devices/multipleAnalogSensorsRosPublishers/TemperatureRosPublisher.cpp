@@ -8,6 +8,8 @@
 
 #include "TemperatureRosPublisher.h"
 
+YARP_LOG_COMPONENT(GENERICSENSORROSPUBLISHER, "yarp.device.PoseStampedRosPublisher")
+
 bool TemperatureRosPublisher::viewInterfaces()
 {
     // View all the interfaces
