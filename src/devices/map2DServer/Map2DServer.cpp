@@ -24,6 +24,7 @@
 #include <yarp/dev/GenericVocabs.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <mutex>
 #include <cstdlib>
@@ -40,6 +41,9 @@ using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
 using namespace std;
 
+namespace {
+YARP_LOG_COMPONENT(MAP2DSERVER, "yarp.device.map2DServer")
+}
 
 /**
   * Map2DServer
@@ -88,7 +92,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
-                yError() << "Error in copyPortable";
+                yCError(MAP2DSERVER) << "Error in copyPortable";
             }
         }
         else if (cmd == VOCAB_IMAP_GET_MAP)
@@ -106,7 +110,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
-                yError() << "Map" << name << "not found";
+                yCError(MAP2DSERVER) << "Map" << name << "not found";
             }
         }
         else if (cmd == VOCAB_IMAP_GET_NAMES)
@@ -125,7 +129,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             size_t rem = m_maps_storage.erase(name);
             if (rem == 0)
             {
-                yError() << "Map not found";
+                yCError(MAP2DSERVER) << "Map not found";
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
@@ -151,7 +155,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             else
             {
-                yError("Map2DServer: Unable to save collection");
+                yCError(MAP2DSERVER, "Unable to save collection");
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
@@ -166,14 +170,14 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             else
             {
-                yError("Map2DServer: Unable to load collection");
+                yCError(MAP2DSERVER, "Unable to load collection");
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
         }
         else
         {
-            yError("Invalid vocab received in Map2DServer");
+            yCError(MAP2DSERVER, "Invalid vocab received in Map2DServer");
             out.clear();
             out.addVocab(VOCAB_IMAP_ERROR);
         }
@@ -193,7 +197,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 l.addString(it->first);
             }
-            yInfo() << "The following locations are currently stored in the server: "<<l.toString();
+            yCInfo(MAP2DSERVER) << "The following locations are currently stored in the server:" << l.toString();
 //             ret = true;
         }
         else if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
@@ -208,7 +212,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 l.addString(it->first);
             }
-            yInfo() << "The following areas are currently stored in the server: "<<l.toString();
+            yCInfo(MAP2DSERVER) << "The following areas are currently stored in the server:" << l.toString();
 //             ret = true;
         }
         else if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
@@ -223,27 +227,27 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 l.addString(it->first);
             }
-            yInfo() << "The following paths are currently stored in the server: " << l.toString();
+            yCInfo(MAP2DSERVER) << "The following paths are currently stored in the server: " << l.toString();
             //             ret = true;
         }
         else if (cmd == VOCAB_NAV_CLEAR_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
         {
             m_locations_storage.clear();
-            yInfo() << "All locations deleted ";
+            yCInfo(MAP2DSERVER) << "All locations deleted";
             out.addVocab(VOCAB_OK);
 //             ret = true;
         }
         else if (cmd == VOCAB_NAV_CLEAR_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
         {
             m_areas_storage.clear();
-            yInfo() << "All areas deleted ";
+            yCInfo(MAP2DSERVER) << "All areas deleted";
             out.addVocab(VOCAB_OK);
             //             ret = true;
         }
         else if (cmd == VOCAB_NAV_CLEAR_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
         {
             m_paths_storage.clear();
-            yInfo() << "All paths deleted ";
+            yCInfo(MAP2DSERVER) << "All paths deleted";
             out.addVocab(VOCAB_OK);
             //             ret = true;
         }
@@ -255,13 +259,13 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             it = m_locations_storage.find(name);
             if (it != m_locations_storage.end())
             {
-                yInfo() << "Deleted location " << name;
+                yCInfo(MAP2DSERVER) << "Deleted location" << name;
                 m_locations_storage.erase(it);
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yError("User requested an invalid location name");
+                yCError(MAP2DSERVER, "User requested an invalid location name");
                 out.addVocab(VOCAB_ERR);
             }
 
@@ -275,13 +279,13 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             it = m_paths_storage.find(name);
             if (it != m_paths_storage.end())
             {
-                yInfo() << "Deleted path " << name;
+                yCInfo(MAP2DSERVER) << "Deleted path" << name;
                 m_paths_storage.erase(it);
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yError("User requested an invalid location name");
+                yCError(MAP2DSERVER, "User requested an invalid location name");
                 out.addVocab(VOCAB_ERR);
             }
 
@@ -300,7 +304,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             if (orig_it != m_locations_storage.end() &&
                 new_it  == m_locations_storage.end())
             {
-                yInfo() << "location: " << orig_name << " renamed to: " << new_name;
+                yCInfo(MAP2DSERVER) << "Location:" << orig_name << "renamed to:" << new_name;
                 auto loc = orig_it->second;
                 m_locations_storage.erase(orig_it);
                 m_locations_storage.insert(std::pair<std::string, Map2DLocation>(new_name, loc));
@@ -308,7 +312,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             else
             {
-                yError("User requested an invalid rename operation");
+                yCError(MAP2DSERVER, "User requested an invalid rename operation");
                 out.addVocab(VOCAB_ERR);
             }
             //             ret = true;
@@ -326,7 +330,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             if (orig_it != m_areas_storage.end() &&
                 new_it == m_areas_storage.end())
             {
-                yInfo() << "area: " << orig_name << " renamed to: " << new_name;
+                yCInfo(MAP2DSERVER) << "Area:" << orig_name << "renamed to:" << new_name;
                 auto area = orig_it->second;
                 m_areas_storage.erase(orig_it);
                 m_areas_storage.insert(std::pair<std::string, Map2DArea>(new_name,area));
@@ -334,7 +338,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             else
             {
-                yError("User requested an invalid rename operation");
+                yCError(MAP2DSERVER, "User requested an invalid rename operation");
                 out.addVocab(VOCAB_ERR);
             }
 //             ret = true;
@@ -352,7 +356,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             if (orig_it != m_paths_storage.end() &&
                 new_it == m_paths_storage.end())
             {
-                yInfo() << "path: " << orig_name << " renamed to: " << new_name;
+                yCInfo(MAP2DSERVER) << "Path:" << orig_name << "renamed to:" << new_name;
                 auto area = orig_it->second;
                 m_paths_storage.erase(orig_it);
                 m_paths_storage.insert(std::pair<std::string, Map2DPath>(new_name, area));
@@ -360,7 +364,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             else
             {
-                yError("User requested an invalid rename operation");
+                yCError(MAP2DSERVER, "User requested an invalid rename operation");
                 out.addVocab(VOCAB_ERR);
             }
             //             ret = true;
@@ -373,13 +377,13 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         it = m_areas_storage.find(name);
         if (it != m_areas_storage.end())
         {
-            yInfo() << "Deleted area " << name;
+            yCInfo(MAP2DSERVER) << "Deleted area" << name;
             m_areas_storage.erase(it);
             out.addVocab(VOCAB_OK);
         }
         else
         {
-            yError("User requested an invalid area name");
+            yCError(MAP2DSERVER, "User requested an invalid area name");
             out.addVocab(VOCAB_ERR);
         }
 
@@ -395,7 +399,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 out.addVocab(VOCAB_OK);
                 Map2DLocation loc = it->second;
-                yInfo() << "Retrieved location " << name << "at " << loc.toString();
+                yCInfo(MAP2DSERVER) << "Retrieved location" << name << "at" << loc.toString();
                 out.addString(loc.map_id);
                 out.addFloat64(loc.x);
                 out.addFloat64(loc.y);
@@ -404,7 +408,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             else
             {
                 out.addVocab(VOCAB_ERR);
-                yError("User requested an invalid location name");
+                yCError(MAP2DSERVER, "User requested an invalid location name");
             }
             //ret = true;
         }
@@ -421,12 +425,12 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 Map2DArea areatemp = area;
                 if (Property::copyPortable(areatemp, areabot) == false)
                 {
-                    yError() << "Map2DServer::VOCAB_NAV_GET_X VOCAB_NAV_AREA failed copyPortable()";
+                    yCError(MAP2DSERVER) << "VOCAB_NAV_GET_X VOCAB_NAV_AREA failed copyPortable()";
                     out.addVocab(VOCAB_ERR);
                 }
                 else
                 {
-                    yInfo() << "Retrieved area " << area_name << "at " << area.toString();
+                    yCInfo(MAP2DSERVER) << "Retrieved area" << area_name << "at" << area.toString();
                     out.addVocab(VOCAB_OK);
 
                     yarp::os::Bottle& areabot = out.addList();
@@ -436,7 +440,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             else
             {
                 out.addVocab(VOCAB_ERR);
-                yError("User requested an invalid area name");
+                yCError(MAP2DSERVER, "User requested an invalid area name");
             }
             //ret = true;
         }
@@ -453,12 +457,12 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             Map2DPath pathtemp = path;
             if (Property::copyPortable(pathtemp, pathbot) == false)
             {
-                yError() << "Map2DServer::VOCAB_NAV_GET_X VOCAB_NAV_PATH failed copyPortable()";
+                yCError(MAP2DSERVER) << "VOCAB_NAV_GET_X VOCAB_NAV_PATH failed copyPortable()";
                 out.addVocab(VOCAB_ERR);
             }
             else
             {
-                yInfo() << "Retrieved path " << path_name << "at " << path.toString();
+                yCInfo(MAP2DSERVER) << "Retrieved path" << path_name << "at" << path.toString();
                 out.addVocab(VOCAB_OK);
 
                 yarp::os::Bottle& pathbot = out.addList();
@@ -468,7 +472,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         else
         {
             out.addVocab(VOCAB_ERR);
-            yError("User requested an invalid path name");
+            yCError(MAP2DSERVER, "User requested an invalid path name");
         }
         //ret = true;
         }
@@ -483,7 +487,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             location.theta  = in.get(7).asFloat64();
 
             m_locations_storage.insert(std::pair<std::string, Map2DLocation>(name, location));
-            yInfo() << "Added location " << name << "at " << location.toString();
+            yCInfo(MAP2DSERVER) << "Added location" << name << "at" << location.toString();
             out.addVocab(VOCAB_OK);
             //ret = true;
         }
@@ -496,12 +500,12 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             if (Property::copyPortable(b, area))
             {
                 m_areas_storage.insert(std::pair<std::string, Map2DArea>(area_name, area));
-                yInfo() << "Added area " << area_name << "at " << area.toString();
+                yCInfo(MAP2DSERVER) << "Added area" << area_name << "at" << area.toString();
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yError() << "Map2DServer::VOCAB_NAV_STORE_X VOCAB_NAV_AREA failed copyPortable()";
+                yCError(MAP2DSERVER) << "VOCAB_NAV_STORE_X VOCAB_NAV_AREA failed copyPortable()";
                 out.addVocab(VOCAB_ERR);
             }
             //ret = true;
@@ -515,26 +519,26 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             if (Property::copyPortable(b, path))
             {
                 m_paths_storage.insert(std::pair<std::string, Map2DPath>(path_name, path));
-                yInfo() << "Added path " << path_name << "at " << path.toString();
+                yCInfo(MAP2DSERVER) << "Added path" << path_name << "at" << path.toString();
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yError() << "Map2DServer::VOCAB_NAV_STORE_X VOCAB_NAV_PATH failed copyPortable()";
+                yCError(MAP2DSERVER) << "VOCAB_NAV_STORE_X VOCAB_NAV_PATH failed copyPortable()";
                 out.addVocab(VOCAB_ERR);
             }
             //ret = true;
         }
         else
         {
-            yError() << "Invalid vocab received in LocationsServer:" << in.toString();
+            yCError(MAP2DSERVER) << "Invalid vocab received:" << in.toString();
             out.clear();
             out.addVocab(VOCAB_ERR);
         }
     }
     else
     {
-        yError() << "Invalid vocab received in Map2DServer" << in.toString();
+        yCError(MAP2DSERVER) << "Invalid vocab received:" << in.toString();
         out.clear();
         out.addVocab(VOCAB_IMAP_ERROR);
     }
@@ -735,7 +739,7 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
     }
     else
     {
-        yError() << "Map2DServer: invalid return to sender";
+        yCError(MAP2DSERVER) << "Invalid return to sender";
     }
     return true;
 }
@@ -744,14 +748,14 @@ bool Map2DServer::saveMaps(std::string mapsfile)
 {
     if (m_maps_storage.size() == 0)
     {
-        yError() << "map storage is empty";
+        yCError(MAP2DSERVER) << "Map storage is empty";
         return false;
     }
     std::ofstream file;
     file.open(mapsfile.c_str());
     if (!file.is_open())
     {
-        yError() << "sorry unable to open" << mapsfile;
+        yCError(MAP2DSERVER) << "Sorry unable to open" << mapsfile;
         return false;
     }
     bool ret = true;
@@ -774,7 +778,7 @@ bool Map2DServer::loadMaps(std::string mapsfile)
     file.open(mapsfile.c_str());
     if (!file.is_open())
     {
-        yError() << "Map2DServer::loadMaps() Unable to open:" << mapsfile;
+        yCError(MAP2DSERVER) << "loadMaps() Unable to open:" << mapsfile;
         return false;
     }
     while (!file.eof())
@@ -806,19 +810,19 @@ bool Map2DServer::loadMaps(std::string mapsfile)
                 }
                 else
                 {
-                    yError() << "A map with the same name '" << map_name << "'was found, skipping...";
+                    yCError(MAP2DSERVER) << "A map with the same name '" << map_name << "'was found, skipping...";
                     ret = false;
                 }
             }
             else
             {
-                yError() << "Problems opening map file" << mapfilenameWithPath;
+                yCError(MAP2DSERVER) << "Problems opening map file" << mapfilenameWithPath;
                 ret = false;
             }
         }
         else
         {
-            yError() << "Invalid syntax, missing mapfile tag";
+            yCError(MAP2DSERVER) << "Invalid syntax, missing mapfile tag";
             ret = false;
         }
     }
@@ -847,64 +851,64 @@ bool Map2DServer::open(yarp::os::Searchable &config)
 
         if (collection_file_with_path=="")
         {
-            yInfo() << "No locations loaded";
+            yCInfo(MAP2DSERVER) << "No locations loaded";
         }
         else
         {
             bool ret  = load_locations_and_areas(locations_file_with_path);
-            if (ret) { yInfo() << "Location file" << locations_file_with_path << "successfully loaded."; }
-            else { yError() << "Problems opening file" << locations_file_with_path; }
+            if (ret) { yCInfo(MAP2DSERVER) << "Location file" << locations_file_with_path << "successfully loaded."; }
+            else { yCError(MAP2DSERVER) << "Problems opening file" << locations_file_with_path; }
         }
 
         if (collection_file_with_path=="")
         {
-            yError() << "Unable to find file "<< collection_file_name << " within the specified context: " << collection_context_name;
+            yCError(MAP2DSERVER) << "Unable to find file" << collection_file_name << "within the specified context:" << collection_context_name;
             return false;
         }
         if (loadMaps(collection_file_with_path))
         {
-            yInfo() << "Map collection file:" << collection_file_with_path << "successfully loaded.";
+            yCInfo(MAP2DSERVER) << "Map collection file:" << collection_file_with_path << "successfully loaded.";
             if (m_maps_storage.size() > 0)
             {
-                yInfo() << "Available maps are:";
+                yCInfo(MAP2DSERVER) << "Available maps are:";
                 for (auto& it : m_maps_storage)
                 {
-                    yInfo() << it.first;
+                    yCInfo(MAP2DSERVER) << it.first;
                 }
             }
             else
             {
-                yInfo() << "No maps available";
+                yCInfo(MAP2DSERVER) << "No maps available";
             }
             if (m_locations_storage.size() > 0)
             {
-                yInfo() << "Available Locations are:";
+                yCInfo(MAP2DSERVER) << "Available Locations are:";
                 for (auto& it : m_locations_storage)
                 {
-                    yInfo() << it.first;
+                    yCInfo(MAP2DSERVER) << it.first;
                 }
             }
             else
             {
-                yInfo() << "No locations available";
+                yCInfo(MAP2DSERVER) << "No locations available";
             }
 
             if (m_areas_storage.size() > 0)
             {
-                yInfo() << "Available areas are:";
+                yCInfo(MAP2DSERVER) << "Available areas are:";
                 for (auto& it : m_areas_storage)
                 {
-                    yInfo() << it.first;
+                    yCInfo(MAP2DSERVER) << it.first;
                 }
             }
             else
             {
-                yInfo() << "No areas available";
+                yCInfo(MAP2DSERVER) << "No areas available";
             }
         }
         else
         {
-            yError() << "Unable to load map collection file:" << collection_file_with_path;
+            yCError(MAP2DSERVER) << "Unable to load map collection file:" << collection_file_with_path;
             return false;
         }
     }
@@ -921,7 +925,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     //open rpc port
     if (!m_rpcPort.open(m_rpcPortName))
     {
-        yError("Map2DServer: failed to open port %s", m_rpcPortName.c_str());
+        yCError(MAP2DSERVER, "Failed to open port %s", m_rpcPortName.c_str());
         return false;
     }
     m_rpcPort.setReader(*this);
@@ -929,27 +933,27 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     //ROS configuration
     if (config.check("ROS"))
     {
-        yInfo ("Configuring ROS params");
+        yCInfo(MAP2DSERVER, "Configuring ROS params");
         Bottle ROS_config = config.findGroup("ROS");
         if (ROS_config.check("enable_ros_publisher") == false)
         {
-            yError() << "Map2DServer: Missing 'enable_ros_publisher' in ROS group";
+            yCError(MAP2DSERVER) << "Missing 'enable_ros_publisher' in ROS group";
             return false;
         }
         if (ROS_config.find("enable_ros_publisher").asInt32() == 1 || ROS_config.find("enable_ros_publisher").asString() == "true")
         {
             m_enable_publish_ros_map = true;
-            yInfo() << "Map2DServer: Enabled ROS publisher";
+            yCInfo(MAP2DSERVER) << "Enabled ROS publisher";
         }
         if (ROS_config.check("enable_ros_subscriber") == false)
         {
-            yError() << "Map2DServer: Missing 'enable_ros_subscriber' in ROS group";
+            yCError(MAP2DSERVER) << "Missing 'enable_ros_subscriber' in ROS group";
             return false;
         }
         if (ROS_config.find("enable_ros_subscriber").asInt32() == 1 || ROS_config.find("enable_ros_subscriber").asString() == "true")
         {
             m_enable_subscribe_ros_map = true;
-            yInfo() << "Map2DServer: Enabled ROS subscriber";
+            yCInfo(MAP2DSERVER) << "Enabled ROS subscriber";
         }
 
         if (m_enable_subscribe_ros_map || m_enable_publish_ros_map)
@@ -960,23 +964,23 @@ bool Map2DServer::open(yarp::os::Searchable &config)
             }
             if (m_enable_publish_ros_map && !m_rosPublisherPort_map.topic(ROSTOPICNAME_MAP))
             {
-                yError() << "Map2DServer: unable to publish to " << ROSTOPICNAME_MAP << " topic, check your yarp-ROS network configuration";
+                yCError(MAP2DSERVER) << "Unable to publish to" << ROSTOPICNAME_MAP << "topic, check your YARP-ROS network configuration";
                 return false;
             }
             if (m_enable_publish_ros_map && !m_rosPublisherPort_metamap.topic(ROSTOPICNAME_MAPMETADATA))
             {
-                yError() << "Map2DServer: unable to publish to " << ROSTOPICNAME_MAPMETADATA << " topic, check your yarp-ROS network configuration";
+                yCError(MAP2DSERVER) << "Unable to publish to " << ROSTOPICNAME_MAPMETADATA << " topic, check your YARP-ROS network configuration";
                 return false;
             }
 
             if (m_enable_subscribe_ros_map && !m_rosSubscriberPort_map.topic(ROSTOPICNAME_MAP))
             {
-                yError() << "Map2DServer: unable to subscribe to " << ROSTOPICNAME_MAP << " topic, check your yarp-ROS network configuration";
+                yCError(MAP2DSERVER) << "Unable to subscribe to " << ROSTOPICNAME_MAP << " topic, check your YARP-ROS network configuration";
                 return false;
             }
             if (m_enable_subscribe_ros_map && !m_rosSubscriberPort_metamap.topic(ROSTOPICNAME_MAPMETADATA))
             {
-                yError() << "Map2DServer: unable to subscribe to " << ROSTOPICNAME_MAPMETADATA << " topic, check your yarp-ROS network configuration";
+                yCError(MAP2DSERVER) << "Unable to subscribe to " << ROSTOPICNAME_MAPMETADATA << " topic, check your YARP-ROS network configuration";
                 return false;
             }
             m_rosSubscriberPort_map.setStrict();
@@ -997,7 +1001,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     metamap_ros = m_rosSubscriberPort_metamap.read(true);
     if (map_ros!=nullptr && metamap_ros!=nullptr)
     {
-        yInfo() << "Received map for ROS";
+        yCInfo(MAP2DSERVER) << "Received map for ROS";
         string map_name = "ros_map";
         MapGrid2D map;
         map.setSize_in_cells(map_ros->info.width,map_ros->info.height);
@@ -1025,7 +1029,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         auto p = m_maps_storage.find(map_name);
         if (p == m_maps_storage.end())
         {
-            yInfo() << "Added map "<< map_name <<" to mapServer";
+            yCInfo(MAP2DSERVER) << "Added map "<< map_name <<" to mapServer";
             m_maps_storage[map_name] = map;
         }
     }
@@ -1034,7 +1038,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
 
 bool Map2DServer::close()
 {
-    yTrace("Map2DServer::Close");
+    yCTrace(MAP2DSERVER, "Close");
     if (m_enable_publish_ros_map)
     {
         m_rosPublisherPort_map.interrupt();
@@ -1058,7 +1062,7 @@ bool Map2DServer::priv_load_locations_and_areas_v1(std::ifstream& file)
     std::getline(file, buffer);
     if (buffer != "Locations:")
     {
-        yError() << "Unable to parse Locations section!";
+        yCError(MAP2DSERVER) << "Unable to parse Locations section!";
         return false;
     }
 
@@ -1068,7 +1072,7 @@ bool Map2DServer::priv_load_locations_and_areas_v1(std::ifstream& file)
         if (buffer == "Areas:") break;
         if (file.eof())
         {
-            yError() << "Unexpected End Of File";
+            yCError(MAP2DSERVER) << "Unexpected End Of File";
             return false;
         }
         Bottle b;
@@ -1076,7 +1080,7 @@ bool Map2DServer::priv_load_locations_and_areas_v1(std::ifstream& file)
         size_t bot_size = b.size();
         if (bot_size != 5)
         {
-            yError() << "Unable to parse contents of Areas section!";
+            yCError(MAP2DSERVER) << "Unable to parse contents of Areas section!";
             return false;
         }
         Map2DLocation   location;
@@ -1090,7 +1094,7 @@ bool Map2DServer::priv_load_locations_and_areas_v1(std::ifstream& file)
 
     if (buffer != "Areas:")
     {
-        yError() << "Unable to parse Areas section!";
+        yCError(MAP2DSERVER) << "Unable to parse Areas section!";
         return false;
     }
 
@@ -1108,7 +1112,7 @@ bool Map2DServer::priv_load_locations_and_areas_v1(std::ifstream& file)
         size_t area_size = b.get(2).asInt32();
         if (area_size <= 0 || bot_size != area_size * 2 + 3)
         {
-            yError() << "Unable to parse contents of Areas section!";
+            yCError(MAP2DSERVER) << "Unable to parse contents of Areas section!";
             return false;
         }
         for (size_t ai = 3; ai < bot_size; ai += 2)
@@ -1128,7 +1132,7 @@ bool Map2DServer::priv_load_locations_and_areas_v2(std::ifstream& file)
     std::getline(file, buffer);
     if (buffer != "Locations:")
     {
-        yError() << "Unable to parse Locations section!";
+        yCError(MAP2DSERVER) << "Unable to parse Locations section!";
         return false;
     }
 
@@ -1138,7 +1142,7 @@ bool Map2DServer::priv_load_locations_and_areas_v2(std::ifstream& file)
         if (buffer == "Areas:") break;
         if (file.eof())
         {
-            yError() << "Unexpected End Of File";
+            yCError(MAP2DSERVER) << "Unexpected End Of File";
             return false;
         }
         Bottle b;
@@ -1146,7 +1150,7 @@ bool Map2DServer::priv_load_locations_and_areas_v2(std::ifstream& file)
         size_t bot_size = b.size();
         if (bot_size != 5)
         {
-            yError() << "Unable to parse contents of Areas section!";
+            yCError(MAP2DSERVER) << "Unable to parse contents of Areas section!";
             return false;
         }
         Map2DLocation   location;
@@ -1160,7 +1164,7 @@ bool Map2DServer::priv_load_locations_and_areas_v2(std::ifstream& file)
 
     if (buffer != "Areas:")
     {
-        yError() << "Unable to parse Areas section!";
+        yCError(MAP2DSERVER) << "Unable to parse Areas section!";
         return false;
     }
 
@@ -1178,7 +1182,7 @@ bool Map2DServer::priv_load_locations_and_areas_v2(std::ifstream& file)
         size_t area_size = b.get(2).asInt32();
         if (area_size <= 0 || bot_size != area_size * 2 + 3)
         {
-            yError() << "Unable to parse contents of Areas section!";
+            yCError(MAP2DSERVER) << "Unable to parse contents of Areas section!";
             return false;
         }
         for (size_t ai = 3; ai < bot_size; ai += 2)
@@ -1199,7 +1203,7 @@ bool Map2DServer::load_locations_and_areas(std::string locations_file)
 
     if(!file.is_open())
     {
-        yError() << "Unable to open" << locations_file << "locations file.";
+        yCError(MAP2DSERVER) << "Unable to open" << locations_file << "locations file.";
         return false;
     }
 
@@ -1208,7 +1212,7 @@ bool Map2DServer::load_locations_and_areas(std::string locations_file)
     std::getline(file, buffer);
     if (buffer != "Version:")
     {
-        yError() << "Unable to parse Version section!";
+        yCError(MAP2DSERVER) << "Unable to parse Version section!";
         file.close();
         return false;
     }
@@ -1219,7 +1223,7 @@ bool Map2DServer::load_locations_and_areas(std::string locations_file)
     {
         if (!priv_load_locations_and_areas_v1(file))
         {
-            yError() << "call to load_locations_and_areas_v1 failed";
+            yCError(MAP2DSERVER) << "Call to load_locations_and_areas_v1 failed";
             file.close();
             return false;
         }
@@ -1228,21 +1232,21 @@ bool Map2DServer::load_locations_and_areas(std::string locations_file)
     {
         if (!priv_load_locations_and_areas_v2(file))
         {
-            yError() << "call to load_locations_and_areas_v2 failed";
+            yCError(MAP2DSERVER) << "Call to load_locations_and_areas_v2 failed";
             file.close();
             return false;
         }
     }
     else
     {
-        yError() << "Only versions 1,2 supported!";
+        yCError(MAP2DSERVER) << "Only versions 1,2 supported!";
         file.close();
         return false;
     }
 
     //on success
     file.close();
-    yDebug() << "Locations file" << locations_file << "loaded, " << m_locations_storage.size() << "locations and "<< m_areas_storage.size() << " areas available";
+    yCDebug(MAP2DSERVER) << "Locations file" << locations_file << "loaded, " << m_locations_storage.size() << "locations and "<< m_areas_storage.size() << " areas available";
     return true;
 }
 
@@ -1253,7 +1257,7 @@ bool Map2DServer::save_locations_and_areas(std::string locations_file)
 
     if(!file.is_open())
     {
-        yError() << "Unable to open" << locations_file << "locations file.";
+        yCError(MAP2DSERVER) << "Unable to open" << locations_file << "locations file.";
         return false;
     }
 
@@ -1307,7 +1311,7 @@ bool Map2DServer::save_locations_and_areas(std::string locations_file)
     }
 
     file.close();
-    yDebug() << "Locations file" << locations_file << "saved.";
+    yCDebug(MAP2DSERVER) << "Locations file" << locations_file << "saved.";
     return true;
 }
 
@@ -1324,7 +1328,7 @@ bool Map2DServer::updateVizMarkers()
     sec_part = (time / 1000000000UL);
     if (sec_part > std::numeric_limits<unsigned int>::max())
     {
-        yWarning() << "Timestamp exceeded the 64 bit representation, resetting it to 0";
+        yCWarning(MAP2DSERVER) << "Timestamp exceeded the 64 bit representation, resetting it to 0";
         sec_part = 0;
     }
 
