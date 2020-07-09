@@ -26,6 +26,7 @@
 #include <yarp/dev/api.h>
 
 #include <yarp/os/Time.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <mutex>
 
@@ -52,6 +53,12 @@ typedef unsigned char SAMPLE;
 #define SAMPLE_SILENCE  (128)
 #define SAMPLE_UNSIGNED
 #endif
+
+
+namespace {
+YARP_LOG_COMPONENT(PORTAUDIORECORDER, "yarp.devices.portaudioRecorder")
+}
+
 
 /* This routine will be called by the PortAudio engine when audio is needed.
 ** It may be called at interrupt level on some machines so don't do anything
@@ -111,7 +118,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         else
         {
 #if 0
-            yDebug() << "Writing" << framesToCalc*2*2 << "bytes in the circular buffer";
+            yCDebug(PORTAUDIORECORDER) << "Writing" << framesToCalc*2*2 << "bytes in the circular buffer";
 #endif
             for( i=0; i<framesToCalc; i++ )
             {
@@ -170,12 +177,12 @@ bool PortAudioRecorderDeviceDriver::open(PortAudioRecorderDeviceDriverSettings& 
     m_err = Pa_Initialize();
     if(m_err != paNoError )
     {
-        yError("portaudio system failed to initialize");
+        yCError(PORTAUDIORECORDER, "portaudio system failed to initialize");
         return false;
     }
 
     m_inputParameters.device = (config.cfg_deviceNumber ==-1)?Pa_GetDefaultInputDevice(): config.cfg_deviceNumber;
-    yInfo("Device number %d", m_inputParameters.device);
+    yCInfo(PORTAUDIORECORDER, "Device number %d", m_inputParameters.device);
     m_inputParameters.channelCount = m_config.cfg_recChannels;
     m_inputParameters.sampleFormat = PA_SAMPLE_TYPE;
     if ((Pa_GetDeviceInfo(m_inputParameters.device ))!=nullptr) {
@@ -195,9 +202,9 @@ bool PortAudioRecorderDeviceDriver::open(PortAudioRecorderDeviceDriverSettings& 
 
     if(m_err != paNoError )
     {
-        yError("An error occurred while using the portaudio stream\n" );
-        yError("Error number: %d\n", m_err );
-        yError("Error message: %s\n", Pa_GetErrorText(m_err ) );
+        yCError(PORTAUDIORECORDER, "An error occurred while using the portaudio stream" );
+        yCError(PORTAUDIORECORDER, "Error number: %d", m_err );
+        yCError(PORTAUDIORECORDER, "Error message: %s", Pa_GetErrorText(m_err ) );
     }
 
     //start the thread
@@ -213,9 +220,9 @@ void recStreamThread::handleError(const PaError& err)
     Pa_Terminate();
     if( err != paNoError )
     {
-        yError("An error occurred while using the portaudio stream\n" );
-        yError("Error number: %d\n", err );
-        yError("Error message: %s\n", Pa_GetErrorText( err ) );
+        yCError(PORTAUDIORECORDER, "An error occurred while using the portaudio stream" );
+        yCError(PORTAUDIORECORDER, "Error number: %d", err );
+        yCError(PORTAUDIORECORDER, "Error message: %s", Pa_GetErrorText( err ) );
     }
 }
 */
@@ -227,9 +234,9 @@ void PortAudioRecorderDeviceDriver::handleError()
 
     if(m_err != paNoError )
     {
-        yError("An error occurred while using the portaudio stream\n" );
-        yError("Error number: %d\n", m_err );
-        yError("Error message: %s\n", Pa_GetErrorText(m_err ) );
+        yCError(PORTAUDIORECORDER, "An error occurred while using the portaudio stream" );
+        yCError(PORTAUDIORECORDER, "Error number: %d", m_err );
+        yCError(PORTAUDIORECORDER, "Error message: %s", Pa_GetErrorText(m_err ) );
     }
 }
 
@@ -241,9 +248,9 @@ bool PortAudioRecorderDeviceDriver::close()
         m_err = Pa_CloseStream(m_stream );
         if(m_err != paNoError )
         {
-            yError( "An error occurred while closing the portaudio stream\n" );
-            yError( "Error number: %d\n", m_err );
-            yError( "Error message: %s\n", Pa_GetErrorText(m_err ) );
+            yCError(PORTAUDIORECORDER,  "An error occurred while closing the portaudio stream" );
+            yCError(PORTAUDIORECORDER,  "Error number: %d", m_err );
+            yCError(PORTAUDIORECORDER,  "Error message: %s", Pa_GetErrorText(m_err ) );
         }
     }
 
@@ -266,7 +273,7 @@ bool PortAudioRecorderDeviceDriver::startRecording()
 #endif
     m_err = Pa_StartStream(m_stream );
     if(m_err < 0 ) {handleError(); return false;}
-    yInfo() << "PortAudioRecorderDeviceDriver started recording";
+    yCInfo(PORTAUDIORECORDER) << "PortAudioRecorderDeviceDriver started recording";
     return true;
 }
 
@@ -280,7 +287,7 @@ bool PortAudioRecorderDeviceDriver::stopRecording()
 #endif
     m_err = Pa_StopStream(m_stream );
     if(m_err < 0 ) {handleError(); return false;}
-    yInfo() << "PortAudioRecorderDeviceDriver stopped recording";
+    yCInfo(PORTAUDIORECORDER) << "PortAudioRecorderDeviceDriver stopped recording";
     return true;
 }
 
@@ -299,7 +306,7 @@ bool PortAudioRecorderDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min
         {
             if (yarp::os::Time::now() - debug_time > 5.0)
             {
-                yInfo() << "getSound() is currently waiting. Use ::startRecording() to start the audio stream";
+                yCInfo(PORTAUDIORECORDER) << "getSound() is currently waiting. Use ::startRecording() to start the audio stream";
                 debug_time = yarp::os::Time::now();
             }
             yarp::os::SystemClock::delaySystem(SLEEP_TIME);
@@ -313,12 +320,12 @@ bool PortAudioRecorderDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min
     //check on input parameters
     if (max_number_of_samples < min_number_of_samples)
     {
-        yError() << "max_number_of_samples must be greater than min_number_of_samples!";
+        yCError(PORTAUDIORECORDER) << "max_number_of_samples must be greater than min_number_of_samples!";
         return false;
     }
     if (max_number_of_samples > this->m_config.cfg_samples)
     {
-        yWarning() << "max_number_of_samples bigger than the internal audio buffer! It will be truncated to:" << this->m_config.cfg_samples;
+        yCWarning(PORTAUDIORECORDER) << "max_number_of_samples bigger than the internal audio buffer! It will be truncated to:" << this->m_config.cfg_samples;
         max_number_of_samples = this->m_config.cfg_samples;
     }
 
@@ -336,7 +343,7 @@ bool PortAudioRecorderDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min
          if (yarp::os::Time::now() - debug_time > 1.0)
          {
              debug_time = yarp::os::Time::now();
-             yDebug() << "PortAudioRecorderDeviceDriver::getSound() Buffer size is " << buff_size << "/" << max_number_of_samples << " after 1s";
+             yCDebug(PORTAUDIORECORDER) << "PortAudioRecorderDeviceDriver::getSound() Buffer size is " << buff_size << "/" << max_number_of_samples << " after 1s";
          }
 
          yarp::os::SystemClock::delaySystem(SLEEP_TIME);
@@ -386,7 +393,7 @@ void PortAudioRecorderDeviceDriver::run()
             if (m_err == 0)
             {
                 Pa_StopStream(m_stream);
-                yDebug() << "The recording stream has been stopped";
+                yCDebug(PORTAUDIORECORDER) << "The recording stream has been stopped";
                 m_isRecording = false;
             }
             if(m_err < 0 )
@@ -419,6 +426,6 @@ bool PortAudioRecorderDeviceDriver::resetRecordingAudioBuffer()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     this->m_recDataBuffer->clear();
-    yDebug() << "PortAudioRecorderDeviceDriver::resetRecordingAudioBuffer";
+    yCDebug(PORTAUDIORECORDER) << "PortAudioRecorderDeviceDriver::resetRecordingAudioBuffer";
     return true;
 }
