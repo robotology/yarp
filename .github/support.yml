@@ -11,15 +11,17 @@ supportComment: >
   issue, or a support request.
   Please use our [Q&A repository](https://github.com/robotology/QA/issues/) to
   get help.
+  Feel free to reopen this issue if you believe that it should be discussed on
+  this issue tracker instead.
 
 # Close issues marked as support requests
 close: true
 
 # Lock issues marked as support requests
-lock: true
+lock: false
 
 # Assign `off-topic` as the reason for locking. Set to `false` to disable
-setLockReason: true
+setLockReason: false
 
 # Repository to extend settings from
 # _extends: repo
