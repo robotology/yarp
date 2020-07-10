@@ -200,6 +200,264 @@ bool FakeBatteryService_setBatteryTemperature_helper::read(yarp::os::ConnectionR
     return true;
 }
 
+class FakeBatteryService_getBatteryVoltage_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit FakeBatteryService_getBatteryVoltage_helper();
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static double s_return_helper;
+};
+
+thread_local double FakeBatteryService_getBatteryVoltage_helper::s_return_helper = {};
+
+FakeBatteryService_getBatteryVoltage_helper::FakeBatteryService_getBatteryVoltage_helper()
+{
+    s_return_helper = {};
+}
+
+bool FakeBatteryService_getBatteryVoltage_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeTag("getBatteryVoltage", 1, 1)) {
+        return false;
+    }
+    return true;
+}
+
+bool FakeBatteryService_getBatteryVoltage_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readFloat64(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class FakeBatteryService_getBatteryCurrent_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit FakeBatteryService_getBatteryCurrent_helper();
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static double s_return_helper;
+};
+
+thread_local double FakeBatteryService_getBatteryCurrent_helper::s_return_helper = {};
+
+FakeBatteryService_getBatteryCurrent_helper::FakeBatteryService_getBatteryCurrent_helper()
+{
+    s_return_helper = {};
+}
+
+bool FakeBatteryService_getBatteryCurrent_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeTag("getBatteryCurrent", 1, 1)) {
+        return false;
+    }
+    return true;
+}
+
+bool FakeBatteryService_getBatteryCurrent_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readFloat64(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class FakeBatteryService_getBatteryCharge_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit FakeBatteryService_getBatteryCharge_helper();
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static double s_return_helper;
+};
+
+thread_local double FakeBatteryService_getBatteryCharge_helper::s_return_helper = {};
+
+FakeBatteryService_getBatteryCharge_helper::FakeBatteryService_getBatteryCharge_helper()
+{
+    s_return_helper = {};
+}
+
+bool FakeBatteryService_getBatteryCharge_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeTag("getBatteryCharge", 1, 1)) {
+        return false;
+    }
+    return true;
+}
+
+bool FakeBatteryService_getBatteryCharge_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readFloat64(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class FakeBatteryService_getBatteryStatus_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit FakeBatteryService_getBatteryStatus_helper();
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static std::string s_return_helper;
+};
+
+thread_local std::string FakeBatteryService_getBatteryStatus_helper::s_return_helper = {};
+
+FakeBatteryService_getBatteryStatus_helper::FakeBatteryService_getBatteryStatus_helper()
+{
+    s_return_helper = {};
+}
+
+bool FakeBatteryService_getBatteryStatus_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeTag("getBatteryStatus", 1, 1)) {
+        return false;
+    }
+    return true;
+}
+
+bool FakeBatteryService_getBatteryStatus_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readString(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class FakeBatteryService_getBatteryInfo_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit FakeBatteryService_getBatteryInfo_helper();
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static std::string s_return_helper;
+};
+
+thread_local std::string FakeBatteryService_getBatteryInfo_helper::s_return_helper = {};
+
+FakeBatteryService_getBatteryInfo_helper::FakeBatteryService_getBatteryInfo_helper()
+{
+    s_return_helper = {};
+}
+
+bool FakeBatteryService_getBatteryInfo_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeTag("getBatteryInfo", 1, 1)) {
+        return false;
+    }
+    return true;
+}
+
+bool FakeBatteryService_getBatteryInfo_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readString(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class FakeBatteryService_getBatteryTemperature_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit FakeBatteryService_getBatteryTemperature_helper();
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static double s_return_helper;
+};
+
+thread_local double FakeBatteryService_getBatteryTemperature_helper::s_return_helper = {};
+
+FakeBatteryService_getBatteryTemperature_helper::FakeBatteryService_getBatteryTemperature_helper()
+{
+    s_return_helper = {};
+}
+
+bool FakeBatteryService_getBatteryTemperature_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeTag("getBatteryTemperature", 1, 1)) {
+        return false;
+    }
+    return true;
+}
+
+bool FakeBatteryService_getBatteryTemperature_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readFloat64(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
 // Constructor
 FakeBatteryService::FakeBatteryService()
 {
@@ -251,6 +509,66 @@ void FakeBatteryService::setBatteryTemperature(const double temperature)
     yarp().write(helper);
 }
 
+double FakeBatteryService::getBatteryVoltage()
+{
+    FakeBatteryService_getBatteryVoltage_helper helper{};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "double FakeBatteryService::getBatteryVoltage()");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? FakeBatteryService_getBatteryVoltage_helper::s_return_helper : double{};
+}
+
+double FakeBatteryService::getBatteryCurrent()
+{
+    FakeBatteryService_getBatteryCurrent_helper helper{};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "double FakeBatteryService::getBatteryCurrent()");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? FakeBatteryService_getBatteryCurrent_helper::s_return_helper : double{};
+}
+
+double FakeBatteryService::getBatteryCharge()
+{
+    FakeBatteryService_getBatteryCharge_helper helper{};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "double FakeBatteryService::getBatteryCharge()");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? FakeBatteryService_getBatteryCharge_helper::s_return_helper : double{};
+}
+
+std::string FakeBatteryService::getBatteryStatus()
+{
+    FakeBatteryService_getBatteryStatus_helper helper{};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "std::string FakeBatteryService::getBatteryStatus()");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? FakeBatteryService_getBatteryStatus_helper::s_return_helper : std::string{};
+}
+
+std::string FakeBatteryService::getBatteryInfo()
+{
+    FakeBatteryService_getBatteryInfo_helper helper{};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "std::string FakeBatteryService::getBatteryInfo()");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? FakeBatteryService_getBatteryInfo_helper::s_return_helper : std::string{};
+}
+
+double FakeBatteryService::getBatteryTemperature()
+{
+    FakeBatteryService_getBatteryTemperature_helper helper{};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "double FakeBatteryService::getBatteryTemperature()");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? FakeBatteryService_getBatteryTemperature_helper::s_return_helper : double{};
+}
+
 // help method
 std::vector<std::string> FakeBatteryService::help(const std::string& functionName)
 {
@@ -263,6 +581,12 @@ std::vector<std::string> FakeBatteryService::help(const std::string& functionNam
         helpString.emplace_back("setBatteryCharge");
         helpString.emplace_back("setBatteryInfo");
         helpString.emplace_back("setBatteryTemperature");
+        helpString.emplace_back("getBatteryVoltage");
+        helpString.emplace_back("getBatteryCurrent");
+        helpString.emplace_back("getBatteryCharge");
+        helpString.emplace_back("getBatteryStatus");
+        helpString.emplace_back("getBatteryInfo");
+        helpString.emplace_back("getBatteryTemperature");
         helpString.emplace_back("help");
     } else {
         if (functionName == "setBatteryVoltage") {
@@ -279,6 +603,24 @@ std::vector<std::string> FakeBatteryService::help(const std::string& functionNam
         }
         if (functionName == "setBatteryTemperature") {
             helpString.emplace_back("void setBatteryTemperature(const double temperature) ");
+        }
+        if (functionName == "getBatteryVoltage") {
+            helpString.emplace_back("double getBatteryVoltage() ");
+        }
+        if (functionName == "getBatteryCurrent") {
+            helpString.emplace_back("double getBatteryCurrent() ");
+        }
+        if (functionName == "getBatteryCharge") {
+            helpString.emplace_back("double getBatteryCharge() ");
+        }
+        if (functionName == "getBatteryStatus") {
+            helpString.emplace_back("std::string getBatteryStatus() ");
+        }
+        if (functionName == "getBatteryInfo") {
+            helpString.emplace_back("std::string getBatteryInfo() ");
+        }
+        if (functionName == "getBatteryTemperature") {
+            helpString.emplace_back("double getBatteryTemperature() ");
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -408,6 +750,90 @@ bool FakeBatteryService::read(yarp::os::ConnectionReader& connection)
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeOnewayResponse()) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "getBatteryVoltage") {
+            FakeBatteryService_getBatteryVoltage_helper::s_return_helper = getBatteryVoltage();
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeFloat64(FakeBatteryService_getBatteryVoltage_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "getBatteryCurrent") {
+            FakeBatteryService_getBatteryCurrent_helper::s_return_helper = getBatteryCurrent();
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeFloat64(FakeBatteryService_getBatteryCurrent_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "getBatteryCharge") {
+            FakeBatteryService_getBatteryCharge_helper::s_return_helper = getBatteryCharge();
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeFloat64(FakeBatteryService_getBatteryCharge_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "getBatteryStatus") {
+            FakeBatteryService_getBatteryStatus_helper::s_return_helper = getBatteryStatus();
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeString(FakeBatteryService_getBatteryStatus_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "getBatteryInfo") {
+            FakeBatteryService_getBatteryInfo_helper::s_return_helper = getBatteryInfo();
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeString(FakeBatteryService_getBatteryInfo_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "getBatteryTemperature") {
+            FakeBatteryService_getBatteryTemperature_helper::s_return_helper = getBatteryTemperature();
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeFloat64(FakeBatteryService_getBatteryTemperature_helper::s_return_helper)) {
                     return false;
                 }
             }

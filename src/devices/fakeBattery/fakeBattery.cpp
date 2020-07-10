@@ -9,6 +9,7 @@
 #include "fakeBattery.h"
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 
@@ -19,23 +20,32 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(FAKEBATTERY, "yarp.device.fakeBattery")
+constexpr double default_period = 0.02;
+constexpr double default_charge = 50.0;
+constexpr double default_voltage = 30.0;
+constexpr double default_current = 3.0;
+constexpr double default_temperature = 20.0;
+constexpr const char* default_info = "Fake battery system v2.0";
+}
 
 FakeBattery::FakeBattery() :
-        PeriodicThread(0.02)
+        PeriodicThread(default_period)
 {
 }
 
 
 bool FakeBattery::open(yarp::os::Searchable& config)
 {
-    double period = config.check("thread_period", Value(0.02), "Thread period (smaller implies faster charge/discharge)").asFloat64();
+    double period = config.check("thread_period", Value(default_period), "Thread period (smaller implies faster charge/discharge)").asFloat64();
     setPeriod(period);
 
-    double charge = config.check("charge", Value(50.0), "Initial charge (%)").asFloat64();
-    double voltage = config.check("voltage", Value(30.0), "Initial voltage (V)").asFloat64();
-    double current = config.check("current", Value(3.0), "Initial current (A)").asFloat64();
-    double temperature = config.check("temperature", Value(20.0), "Initial temperature (°C)").asFloat64();
-    std::string info = config.check("info", Value("Fake battery system v2.0"), "Initial battery information").asString();
+    double charge = config.check("charge", Value(default_charge), "Initial charge (%)").asFloat64();
+    double voltage = config.check("voltage", Value(default_voltage), "Initial voltage (V)").asFloat64();
+    double current = config.check("current", Value(default_current), "Initial current (A)").asFloat64();
+    double temperature = config.check("temperature", Value(default_temperature), "Initial temperature (°C)").asFloat64();
+    std::string info = config.check("info", Value(default_info), "Initial battery information").asString();
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         battery_charge = charge;
@@ -45,18 +55,11 @@ bool FakeBattery::open(yarp::os::Searchable& config)
         battery_info = std::move(info);
         updateStatus();
     }
-    Bottle& group_general = config.findGroup("GENERAL");
-    if (group_general.isNull()) {
-        yWarning() << "GENERAL group parameters missing, assuming default";
-    } else {
-        // Other options
-        this->debugEnable = group_general.check("debug", Value(0), "enable/disable the debug mode").asBool();
-    }
 
     std::string name = config.find("name").asString();
     this->yarp().attachAsServer(ctrl_port);
     if (!ctrl_port.open(name + "/control/rpc:i")) {
-        yError("Could not open rpc port");
+        yCError(FAKEBATTERY, "Could not open rpc port");
         close();
         return false;
     }
@@ -162,6 +165,60 @@ void FakeBattery::setBatteryTemperature(const double temperature)
     std::lock_guard<std::mutex> lock(m_mutex);
     battery_temperature = temperature;
 }
+
+double FakeBattery::getBatteryVoltage()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_voltage;
+}
+
+double FakeBattery::getBatteryCurrent()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_current;
+}
+
+double FakeBattery::getBatteryCharge()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_charge;
+}
+
+std::string FakeBattery::getBatteryStatus()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    switch (battery_status) {
+    case BATTERY_OK_STANBY:
+        return "0: BATTERY_OK_STANBY";
+    case BATTERY_OK_IN_CHARGE:
+        return "1: BATTERY_OK_IN_CHARGE";
+    case BATTERY_OK_IN_USE:
+        return "2: BATTERY_OK_IN_USE";
+    case BATTERY_GENERAL_ERROR:
+        return "3: BATTERY_GENERAL_ERROR";
+    case BATTERY_TIMEOUT:
+        return "4: BATTERY_TIMEOUT";
+    case BATTERY_LOW_WARNING:
+        return "5: BATTERY_LOW_WARNING";
+    case BATTERY_CRITICAL_WARNING:
+        return "6: BATTERY_CRITICAL_WARNING";
+    default:
+        return "Invalid battery status";
+    };
+}
+
+std::string FakeBattery::getBatteryInfo()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_info;
+}
+
+double FakeBattery::getBatteryTemperature()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return battery_temperature;
+}
+
 
 void FakeBattery::updateStatus()
 {

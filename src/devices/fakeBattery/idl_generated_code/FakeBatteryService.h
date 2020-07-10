@@ -34,6 +34,18 @@ public:
 
     virtual void setBatteryTemperature(const double temperature);
 
+    virtual double getBatteryVoltage();
+
+    virtual double getBatteryCurrent();
+
+    virtual double getBatteryCharge();
+
+    virtual std::string getBatteryStatus();
+
+    virtual std::string getBatteryInfo();
+
+    virtual double getBatteryTemperature();
+
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
 
