@@ -2441,7 +2441,7 @@ bool RemoteControlBoard::getInteractionModes(int n_joints, int *joints, yarp::de
     double localArrivalTime=0.0;
 
     extendedPortMutex.lock();
-    bool ret = extendedIntputStatePort.getLastVector(VOCAB_CM_CONTROL_MODES, last_wholePart.interactionMode.data(), lastStamp, localArrivalTime);
+    bool ret = extendedIntputStatePort.getLastVector(VOCAB_INTERACTION_MODES, last_wholePart.interactionMode.data(), lastStamp, localArrivalTime);
     if(ret)
     {
         for (int i = 0; i < n_joints; i++)
