@@ -18,7 +18,7 @@ MpiCarrier::MpiCarrier() : stream(nullptr), comm(nullptr) {
 }
 
 MpiCarrier::~MpiCarrier() {
-    yCDebug(MPI_CARRIER, "[MpiCarrier @ %s] Destructor called", route.c_str() );
+    yCTrace(MPI_CARRIER, "[MpiCarrier @ %s] Destructor called", route.c_str() );
 }
 
 void  MpiCarrier::getHeader(Bytes& header) const {
