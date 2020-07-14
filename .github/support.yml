@@ -10,12 +10,12 @@ supportComment: >
   and feature requests. However, this issue appears to be a question, a setup
   issue, or a support request.
   Please use our [Q&A repository](https://github.com/robotology/QA/issues/) to
-  get help.
-  Feel free to reopen this issue if you believe that it should be discussed on
-  this issue tracker instead.
+  get help next time.
+  This issue will be moved to the correct issue tracker by a human ASAP, so that
+  you can get proper support.
 
 # Close issues marked as support requests
-close: true
+close: false
 
 # Lock issues marked as support requests
 lock: false
