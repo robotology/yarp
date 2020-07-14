@@ -58,7 +58,7 @@ yarpdev --device Rangefinder2DWrapper --subdevice laserFromExternalPort \
 --name /outlaser:o
 
 yarpdev --device Rangefinder2DWrapper --subdevice laserFromExternalPort \
---SENSOR::min_angle 0 
+--SENSOR::min_angle 0
 --SENSOR::max_angle 360
 --SENSOR::resolution 0.5
 --SENSOR::input_ports_name "(/port1 /port2)" \
@@ -334,7 +334,7 @@ void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::si
     double y_off = 0;
     double t_off_deg = 0;
     double t_off_rad = 0;
-#endif 
+#endif
 
 ////////////////////////////
     double resolution = (scan_data.angle_max - scan_data.angle_min)/ scan_data.scans.size(); // deg/elem

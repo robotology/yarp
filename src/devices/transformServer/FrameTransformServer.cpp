@@ -464,7 +464,7 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
         for (size_t i = 0; i < all_transforms_group.size(); i++)
         {
             FrameTransform t;
-            
+
             Bottle*  b = all_transforms_group.get(i).asList();
             if(!b)
             {

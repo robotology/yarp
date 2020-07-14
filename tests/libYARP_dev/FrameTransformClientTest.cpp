@@ -397,7 +397,7 @@ TEST_CASE("dev::FrameTransformClientTest", "[yarp::dev]")
             bool bcan = false;
             bcan = itf->canTransform("not_existing_frame", "not_existing_frame");
             CHECK(bcan);
-            
+
             CHECK(itf->setTransformStatic("frame2", "frame1", m1));
             bcan = itf->canTransform("frame2", "frame2");
             CHECK(bcan);

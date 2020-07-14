@@ -74,7 +74,7 @@ protected:
     std::vector <yarp::dev::LaserScan2D> m_last_scan_data;
     yarp::dev::PolyDriver                m_tc_driver;
     yarp::dev::IFrameTransform*          m_iTc = nullptr;
-    
+
     std::vector <std::string>            m_src_frame_id;
     std::string                          m_dst_frame_id;
     yarp::sig::Vector                    m_empty_laser_data;
