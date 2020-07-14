@@ -518,11 +518,11 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
     yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
     if(device2attach[0]->key == "IRGBDSensor")
     {
-        yCInfo(RGBDSENSORWRAPPER) << "RGBDSensorWrapper: Good name Dude!";
+        yCInfo(RGBDSENSORWRAPPER) << "RGBDSensorWrapper: Good name!";
     }
     else
     {
-        yCInfo(RGBDSENSORWRAPPER) << "RGBDSensorWrapper: Bad name Dude!!";
+        yCInfo(RGBDSENSORWRAPPER) << "RGBDSensorWrapper: Bad name!";
     }
 
     if (!Idevice2attach->isValid())
