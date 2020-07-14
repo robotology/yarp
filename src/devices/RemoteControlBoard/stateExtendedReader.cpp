@@ -7,6 +7,7 @@
  */
 
 #include "stateExtendedReader.h"
+#include "RemoteControlBoardLogComponent.h"
 #include <cstring>
 
 #include <yarp/os/PortablePair.h>
@@ -154,7 +155,7 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, double *data, Stamp
                 break;
 
             default:
-                yError() << "RemoteControlBoard internal error while reading data. Cannot get 'single' data of type " << yarp::os::Vocab::decode(field);
+                yCError(REMOTECONTROLBOARD) << "RemoteControlBoard internal error while reading data. Cannot get 'single' data of type " << yarp::os::Vocab::decode(field);
             break;
         }
 
@@ -187,7 +188,7 @@ bool StateExtendedInputPort::getLastSingle(int j, int field, int *data, Stamp &s
             break;
 
             default:
-                yError() << "RemoteControlBoard internal error while reading data. Cannot get 'single' data of type " << yarp::os::Vocab::decode(field);
+                yCError(REMOTECONTROLBOARD) << "RemoteControlBoard internal error while reading data. Cannot get 'single' data of type " << yarp::os::Vocab::decode(field);
             break;
         }
         localArrivalTime=now;
@@ -254,7 +255,7 @@ bool StateExtendedInputPort::getLastVector(int field, double* data, Stamp& stamp
                 break;
 
             default:
-                yError() << "RemoteControlBoard internal error while reading data. Cannot get 'vector' data of type " << yarp::os::Vocab::decode(field);
+                yCError(REMOTECONTROLBOARD) << "RemoteControlBoard internal error while reading data. Cannot get 'vector' data of type " << yarp::os::Vocab::decode(field);
             break;
         }
 
@@ -287,7 +288,7 @@ bool StateExtendedInputPort::getLastVector(int field, int* data, Stamp& stamp, d
             break;
 
             default:
-                yError() << "RemoteControlBoard internal error while reading data. Cannot get 'vector' data of type " << yarp::os::Vocab::decode(field);
+                yCError(REMOTECONTROLBOARD) << "RemoteControlBoard internal error while reading data. Cannot get 'vector' data of type " << yarp::os::Vocab::decode(field);
             break;
         }
         localArrivalTime=now;

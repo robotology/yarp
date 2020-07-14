@@ -16,10 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "fakeLocalizerDev.h"
+
 #include <yarp/os/Network.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Node.h>
 #include <yarp/dev/PolyDriver.h>
@@ -27,11 +30,11 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <math.h>
+
+#include <cmath>
 #include <random>
 #include <mutex>
 #include <chrono>
-#include "fakeLocalizerDev.h"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -44,6 +47,9 @@ using namespace yarp::dev::Nav2D;
 #define RAD2DEG 180/M_PI
 #define DEG2RAD M_PI/180
 
+namespace {
+YARP_LOG_COMPONENT(FAKELOCALIZER, "yarp.device.fakeLocalizer")
+}
 
 bool   fakeLocalizer::getLocalizationStatus(yarp::dev::Nav2D::LocalizationStatusEnum& status)
 {
@@ -162,13 +168,13 @@ void fakeLocalizerThread::run()
     }
     if (current_time - m_last_locdata_received > 0.1)
     {
-        yWarning() << "No localization data received for more than 0.1s!";
+        yCWarning(FAKELOCALIZER) << "No localization data received for more than 0.1s!";
     }
 }
 
 bool fakeLocalizerThread::initializeLocalization(const Map2DLocation& loc)
 {
-    yInfo() << "fakeLocalizer: Localization init request: (" << loc.map_id << ")";
+    yCInfo(FAKELOCALIZER) << "Localization init request: (" << loc.map_id << ")";
     std::lock_guard<std::mutex> lock(m_mutex);
     m_initial_loc.map_id = loc.map_id;
     m_initial_loc.x = loc.x;
@@ -180,7 +186,7 @@ bool fakeLocalizerThread::initializeLocalization(const Map2DLocation& loc)
 
     if (m_current_loc.map_id != m_initial_loc.map_id)
     {
-        yInfo() << "Map changed from: " << m_current_loc.map_id << " to: " << m_initial_loc.map_id;
+        yCInfo(FAKELOCALIZER) << "Map changed from: " << m_current_loc.map_id << " to: " << m_initial_loc.map_id;
         m_current_loc.map_id = m_initial_loc.map_id;
         //@@@TO BE COMPLETED
         m_current_loc.x = 0+m_initial_loc.x;

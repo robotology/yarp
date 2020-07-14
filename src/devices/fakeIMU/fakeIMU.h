@@ -16,7 +16,6 @@
 #include <yarp/math/Math.h>
 
 
-#define DEFAULT_PERIOD 0.01   //s
 
 /**
 * \brief `fakeIMU` : fake device implementing the device interface typically implemented by an Inertial Measurement Unit
@@ -45,7 +44,12 @@ class fakeIMU :
 {
 public:
     fakeIMU();
-    ~fakeIMU();
+    fakeIMU(const fakeIMU&) = delete;
+    fakeIMU(fakeIMU&&) = delete;
+    fakeIMU& operator=(const fakeIMU&) = delete;
+    fakeIMU& operator=(fakeIMU&&) = delete;
+
+    ~fakeIMU() override;
 
     // Device Driver interface
     bool open(yarp::os::Searchable &config) override;
@@ -87,10 +91,6 @@ public:
     bool getOrientationSensorFrameName(size_t sens_index, std::string &frameName) const override;
     bool getOrientationSensorMeasureAsRollPitchYaw(size_t sens_index, yarp::sig::Vector& rpy, double& timestamp) const override;
 
-    yarp::sig::Vector rpy, gravity;
-    yarp::sig::Matrix dcm;
-    yarp::sig::Vector accels;
-
 private:
     yarp::dev::MAS_status genericGetStatus(size_t sens_index) const;
     bool genericGetSensorName(size_t sens_index, std::string &name) const;
@@ -98,6 +98,12 @@ private:
 
     bool threadInit() override;
     void run() override;
+
+    yarp::sig::Vector rpy;
+    yarp::sig::Vector gravity;
+    yarp::sig::Matrix dcm;
+    yarp::sig::Vector accels;
+
     unsigned int nchannels;
     double dummy_value;
     yarp::os::Stamp lastStamp;

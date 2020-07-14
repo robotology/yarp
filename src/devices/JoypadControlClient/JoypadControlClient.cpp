@@ -7,6 +7,7 @@
  */
 
 #include "JoypadControlClient.h"
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <tuple>
 #include <yarp/dev/DriverLinkCreator.h>
@@ -15,6 +16,10 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace std;
+
+namespace {
+YARP_LOG_COMPONENT(JOYPADCONTROLCLIENT, "yarp.device.JoypadControlClient")
+}
 
 JoypadControlClient::JoypadControlClient() :  m_rpc_only(false)
 {
@@ -60,18 +65,18 @@ bool JoypadControlClient::getJoypadInfo()
                     unsigned int dofCount;
                     if(!getStickDoF(i, dofCount))
                     {
-                        yError() << "unable to get sticks DoF";
+                        yCError(JOYPADCONTROLCLIENT) << "Unable to get sticks DoF";
                         return false;
                     }
                     m_stickDof.push_back(dofCount);
                 }
             }
 
-            yInfo() << "opening" << portname;
+            yCInfo(JOYPADCONTROLCLIENT) << "Opening" << portname;
 
             if(!get<1>(vocab_port)->contactable->open(portname))
             {
-                yError() << "unable to open" << portname << "port";
+                yCError(JOYPADCONTROLCLIENT) << "Unable to open" << portname << "port";
                 return false;
             }
 
@@ -79,7 +84,7 @@ bool JoypadControlClient::getJoypadInfo()
             destination = m_local  + get<2>(vocab_port) + ":i";
             if(!yarp::os::NetworkBase::connect(source.c_str(), destination.c_str(), "udp"))
             {
-                yError() << "unable to connect" << portname << "port";
+                yCError(JOYPADCONTROLCLIENT) << "Unable to connect" << portname << "port";
                 return false;
             }
 
@@ -94,13 +99,13 @@ bool JoypadControlClient::open(yarp::os::Searchable& config)
 {
     if(config.check("help"))
     {
-        yInfo() << "parameter:\n\n" <<
+        yCInfo(JOYPADCONTROLCLIENT) << "Parameter:\n\n" <<
                    "local  - prefix of the local port\n" <<
                    "remote - prefix of the port provided to and opened by JoypadControlServer\n";
     }
     if(!config.check("local"))
     {
-        yError() << "JoypadControlClient: unable to 'local' parameter.. check configuration file";
+        yCError(JOYPADCONTROLCLIENT) << "Unable to 'local' parameter. check configuration file";
         return false;
     }
 
@@ -108,15 +113,15 @@ bool JoypadControlClient::open(yarp::os::Searchable& config)
 
     if(!m_rpcPort.open(m_local + "/rpc:o"))
     {
-        yError() << "JoypadControlClient: unable to open rpc port..";
+        yCError(JOYPADCONTROLCLIENT) << "Unable to open rpc port.";
         return false;
     }
 
-    yInfo() << "rpc port opened.. starting the handshake";
+    yCInfo(JOYPADCONTROLCLIENT) << "rpc port opened. starting the handshake";
 
     if(!config.check("remote"))
     {
-        yError() << "JoypadControlClient: unable to find the 'remote' parameter.. check configuration file";
+        yCError(JOYPADCONTROLCLIENT) << "Unable to find the 'remote' parameter. check configuration file";
         return false;
     }
 
@@ -124,15 +129,15 @@ bool JoypadControlClient::open(yarp::os::Searchable& config)
 
     if(!yarp::os::NetworkBase::connect(m_local + "/rpc:o", m_remote + "/rpc:i"))
     {
-        yError() << "handshake failed.. unable to connect to remote port" << m_remote + "/rpc:i";
+        yCError(JOYPADCONTROLCLIENT) << "Handshake failed. unable to connect to remote port" << m_remote + "/rpc:i";
         return false;
     }
 
-    yInfo() << "handshake succeeded! retrieving info";
+    yCInfo(JOYPADCONTROLCLIENT) << "Handshake succeeded! retrieving info";
 
     if(!getJoypadInfo())
     {
-        yError() << "unable to get joypad info..";
+        yCError(JOYPADCONTROLCLIENT) << "Unable to get joypad info.";
         return false;
     }
 
@@ -277,7 +282,7 @@ bool JoypadControlClient::getRawButton(unsigned int button_id, float& value)
         }
         else
         {
-            yError() << "JoypadControlCLient: GetButton() error.. VOCAB_FAILED";
+            yCError(JOYPADCONTROLCLIENT) << "GetButton() error. VOCAB_FAILED";
             return false;
         }
     }
@@ -291,7 +296,7 @@ bool JoypadControlClient::getRawButton(unsigned int button_id, float& value)
         }
         else
         {
-            yError() << "JoypadControlCLient: GetButton() error.. button_id out of bound";
+            yCError(JOYPADCONTROLCLIENT) << "GetButton() error. button_id out of bound";
             return false;
         }
     }
@@ -393,7 +398,7 @@ bool JoypadControlClient::getRawAxis(unsigned int axis_id, double& value)
         }
         else
         {
-            yError() << "JoypadControlCLient: GetAxis() error.. VOCAB_FAILED";
+            yCError(JOYPADCONTROLCLIENT) << "GetAxis() error. VOCAB_FAILED";
             return false;
         }
     }
@@ -407,7 +412,7 @@ bool JoypadControlClient::getRawAxis(unsigned int axis_id, double& value)
         }
         else
         {
-            yError() << "JoypadControlCLient: GetAxis() error.. Axis_id out of bound";
+            yCError(JOYPADCONTROLCLIENT) << "GetAxis() error. Axis_id out of bound";
             return false;
         }
     }
@@ -472,7 +477,7 @@ bool JoypadControlClient::getRawStick(unsigned int stick_id, yarp::sig::Vector& 
         unsigned int i;
         if(getStickCount(i), stick_id >= i)
         {
-            yError() << "JoypadControlCLient: GetStick() error.. Stick_id out of bound";
+            yCError(JOYPADCONTROLCLIENT) << "GetStick() error. Stick_id out of bound";
             return false;
         }
         for(size_t j = 0; j < stick_id; j++)

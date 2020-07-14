@@ -9,6 +9,7 @@
 #include "RemoteControlBoardRemapper.h"
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 #include <algorithm>
@@ -20,6 +21,11 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace std;
+
+namespace {
+YARP_LOG_COMPONENT(REMOTECONTROLBOARDREMAPPER, "yarp.device.remotecontrolboardremapper")
+}
+
 
 void RemoteControlBoardRemapper::closeAllRemoteControlBoards()
 {
@@ -69,14 +75,14 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
     }
     else
     {
-        yError() <<"RemoteControlBoardRemapper: Error parsing parameters: \"localPortPrefix\" should be a string.";
+        yCError(REMOTECONTROLBOARDREMAPPER) << "Parsing parameters: \"localPortPrefix\" should be a string.";
         return false;
     }
 
     Bottle *remoteControlBoards=prop.find("remoteControlBoards").asList();
     if(remoteControlBoards==nullptr)
     {
-        yError() <<"RemoteControlBoardRemapper: Error parsing parameters: \"remoteControlBoards\" should be followed by a list.";
+        yCError(REMOTECONTROLBOARDREMAPPER) << "Parsing parameters: \"remoteControlBoards\" should be followed by a list.";
         return false;
     }
 
@@ -118,7 +124,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
 
         if( !ok || !(m_remoteControlBoardDevices[ctrlBrd]->isValid()) )
         {
-            yError() << "RemoteControlBoardRemapper: error opening remote_controlboard with remote \"" << remote << "\", opening the device failed.";
+            yCError(REMOTECONTROLBOARDREMAPPER) << "Opening remote_controlboard with remote \"" << remote << "\", opening the device failed.";
             closeAllRemoteControlBoards();
             return false;
         }
@@ -132,7 +138,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
 
     if( !ok )
     {
-        yError() << "RemoteControlBoardRemapper: error opening the controlboardremapper device, opening the device failed.";
+        yCError(REMOTECONTROLBOARDREMAPPER) << "Opening the controlboardremapper device, opening the device failed.";
         ControlBoardRemapper::close();
         closeAllRemoteControlBoards();
         return false;
@@ -143,7 +149,7 @@ bool RemoteControlBoardRemapper::open(Searchable& config)
 
     if( !ok )
     {
-        yError() << "RemoteControlBoardRemapper: error calling attachAll in the controlboardremapper device, opening the device failed.";
+        yCError(REMOTECONTROLBOARDREMAPPER) << "Calling attachAll in the controlboardremapper device, opening the device failed.";
         ControlBoardRemapper::close();
         closeAllRemoteControlBoards();
         return false;

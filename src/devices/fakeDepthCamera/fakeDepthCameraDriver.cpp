@@ -8,6 +8,8 @@
 
 #include "fakeDepthCameraDriver.h"
 
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Value.h>
 
 #include <algorithm>
@@ -18,6 +20,10 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace std;
+
+namespace {
+YARP_LOG_COMPONENT(FAKEDEPTHCAMERA, "yarp.device.fakeDepthCamera")
+}
 
 fakeDepthCameraDriver::fakeDepthCameraDriver() :
     rgb_h(480),
@@ -86,10 +92,12 @@ int fakeDepthCameraDriver::getRgbWidth()
     return image->width();
 }
 
-bool  fakeDepthCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
-    yWarning()<<"fakeDepthCameraDriver:getRgbSupportedConfigurations not implemented yet";
+bool fakeDepthCameraDriver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
+{
+    yCWarning(FAKEDEPTHCAMERA) << "getRgbSupportedConfigurations not implemented yet";
     return false;
 }
+
 bool fakeDepthCameraDriver::getRgbResolution(int &width, int &height)
 {
     width  = image->width();

@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <cstdint>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Value.h>
 #include <yarp/sig/ImageUtils.h>
 
@@ -22,6 +23,11 @@ using namespace yarp::sig;
 using namespace yarp::os;
 
 using namespace std;
+
+namespace {
+YARP_LOG_COMPONENT(REALSENSE2, "yarp.device.realsense2")
+}
+
 
 constexpr char accuracy       [] = "accuracy";
 constexpr char clipPlanes     [] = "clipPlanes";
@@ -78,11 +84,11 @@ static void print_supported_options(const rs2::sensor& sensor)
     //  such as Exposure, Brightness etc.
 
     if (sensor.is<rs2::depth_sensor>())
-        yInfo() << "Depth sensor supports the following options:\n";
+        yCInfo(REALSENSE2) << "Depth sensor supports the following options:\n";
     else if (sensor.get_stream_profiles()[0].stream_type() == RS2_STREAM_COLOR)
-        yInfo() << "RGB camera supports the following options:\n";
+        yCInfo(REALSENSE2) << "RGB camera supports the following options:\n";
     else
-        yInfo() << "Sensor supports the following options:\n";
+        yCInfo(REALSENSE2) << "Sensor supports the following options:\n";
 
     // The following loop shows how to iterate over all available options
     // Starting from 0 until RS2_OPTION_COUNT (exclusive)
@@ -192,7 +198,7 @@ static bool optionPerc2Value(rs2_option option,const rs2::sensor* sensor, const 
     {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "Failed to get option " << option << " range. (" << e.what() << ")";
+        yCError(REALSENSE2) << "Failed to get option " << option << " range. (" << e.what() << ")";
         return false;
     }
 
@@ -215,7 +221,7 @@ static bool optionValue2Perc(rs2_option option,const rs2::sensor* sensor, float&
     {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "Failed to get option " << option << " range. (" << e.what() << ")";
+        yCError(REALSENSE2) << "Failed to get option " << option << " range. (" << e.what() << ")";
         return false;
     }
 
@@ -235,7 +241,7 @@ static bool setOption(rs2_option option,const rs2::sensor* sensor, float value)
     // First, verify that the sensor actually supports this option
     if (!sensor->supports(option))
     {
-        yError() << "realsense2Driver: The option" << rs2_option_to_string(option) << "is not supported by this sensor";
+        yCError(REALSENSE2) << "The option" << rs2_option_to_string(option) << "is not supported by this sensor";
         return false;
     }
 
@@ -248,7 +254,7 @@ static bool setOption(rs2_option option,const rs2::sensor* sensor, float value)
     {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "realsense2Driver: Failed to set option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
+        yCError(REALSENSE2) << "Failed to set option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
         return false;
     }
     return true;
@@ -264,7 +270,7 @@ static bool getOption(rs2_option option,const rs2::sensor *sensor, float &value)
     // First, verify that the sensor actually supports this option
     if (!sensor->supports(option))
     {
-        yError() << "realsense2Driver: The option" << rs2_option_to_string(option) << "is not supported by this sensor";
+        yCError(REALSENSE2) << "The option" << rs2_option_to_string(option) << "is not supported by this sensor";
         return false;
     }
 
@@ -277,7 +283,7 @@ static bool getOption(rs2_option option,const rs2::sensor *sensor, float &value)
     {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "realsense2Driver: Failed to get option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
+        yCError(REALSENSE2) << "Failed to get option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
         return false;
     }
     return true;
@@ -364,7 +370,7 @@ static YarpDistortion rsDistToYarpDist(const rs2_distortion dist)
 
 static void settingErrorMsg(const string& error, bool& ret)
 {
-    yError() << "realsense2Driver:" << error.c_str();
+    yCError(REALSENSE2) << error.c_str();
     ret = false;
 }
 
@@ -391,7 +397,7 @@ static bool setExtrinsicParam(Matrix &extrinsic, const rs2_extrinsics &values)
 
     if (extrinsic.cols() != 4 || extrinsic.rows() != 4)
     {
-        yError()<<"realsense2Driver: extrinsic matrix is not 4x4";
+        yCError(REALSENSE2) << "Extrinsic matrix is not 4x4";
         return false;
     }
 
@@ -441,7 +447,7 @@ bool realsense2Driver::pipelineStartup()
     }
     catch (const rs2::error& e)
     {
-        yError() << "realsense2Driver: failed to start the pipeline:"<< "(" << e.what() << ")";
+        yCError(REALSENSE2) << "Failed to start the pipeline:"<< "(" << e.what() << ")";
         m_lastError = e.what();
         return false;
     }
@@ -456,7 +462,7 @@ bool realsense2Driver::pipelineShutdown()
     }
     catch (const rs2::error& e)
     {
-        yError() << "realsense2Driver: failed to stop the pipeline:"<< "(" << e.what() << ")";
+        yCError(REALSENSE2) << "Failed to stop the pipeline:"<< "(" << e.what() << ")";
         m_lastError = e.what();
         return false;
     }
@@ -505,7 +511,7 @@ void realsense2Driver::fallback()
 {
     m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, m_fps);
     m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, m_fps);
-    yWarning()<<"realsense2Driver: format not supported, use --verbose for more details. Setting the fallback format";
+    yCWarning(REALSENSE2)<<"Format not supported, use --verbose for more details. Setting the fallback format";
     std::cout<<"COLOR: "<<m_color_intrin.width<<"x"<<m_color_intrin.height<<" fps: "<<m_fps<<std::endl;
     std::cout<<"DEPTH: "<<m_depth_intrin.width<<"x"<<m_depth_intrin.height<<" fps: "<<m_fps<<std::endl;
 }
@@ -514,7 +520,7 @@ bool realsense2Driver::initializeRealsenseDevice()
 {
     if (!params_map[rgbRes].isSetting || !params_map[depthRes].isSetting)
     {
-        yError()<<"realsense2Driver: missing depthResolution or rgbResolution from [SETTINGS]";
+        yCError(REALSENSE2)<<"Missing depthResolution or rgbResolution from [SETTINGS]";
         return false;
     }
     double colorW = params_map[rgbRes].val[0].asFloat64();
@@ -533,16 +539,16 @@ bool realsense2Driver::initializeRealsenseDevice()
     m_initialized = true;
 
     // Camera warmup - Dropped frames to allow stabilization
-    yInfo()<<"realsense2Driver: sensor warm-up....";
+    yCInfo(REALSENSE2) << "Sensor warm-up...";
     for (int i = 0; i < 30; i++)
     {
         m_pipeline.wait_for_frames();
     }
-    yInfo()<<"realsense2Driver:....device ready!";
+    yCInfo(REALSENSE2) << "Device ready!";
 
     if (m_ctx.query_devices().size() == 0)
     {
-        yError() << "realsense2Driver: No device connected, please connect a RealSense device";
+        yCError(REALSENSE2) << "No device connected, please connect a RealSense device";
 
         rs2::device_hub device_hub(m_ctx);
 
@@ -555,14 +561,14 @@ bool realsense2Driver::initializeRealsenseDevice()
         // Update the selected device
         m_device = m_profile.get_device();
         if (m_verbose)
-            yInfo()<<get_device_information(m_device).c_str();
+            yCInfo(REALSENSE2) << get_device_information(m_device).c_str();
     }
 
 
     // Given a device, we can query its sensors using:
     m_sensors = m_device.query_sensors();
 
-    yInfo()<< "realsense2Driver: Device consists of" << m_sensors.size()<<"sensors. More infos using --verbose option";
+    yCInfo(REALSENSE2) << "Device consists of" << m_sensors.size() << "sensors. More infos using --verbose option";
     if (m_verbose)
     {
         for (const auto & m_sensor : m_sensors)
@@ -578,7 +584,7 @@ bool realsense2Driver::initializeRealsenseDevice()
             m_depth_sensor =  &m_sensor;
             if (!getOption(RS2_OPTION_DEPTH_UNITS, m_depth_sensor, m_scale))
             {
-                yError()<<"relsense2Driver: failed to retrieve scale";
+                yCError(REALSENSE2) << "Failed to retrieve scale";
                 return false;
             }
         }
@@ -646,7 +652,7 @@ bool realsense2Driver::setParams()
     }
     else
     {
-        yWarning()<<"realsense2Driver: framerate not specified... setting 30 fps by default";
+        yCWarning(REALSENSE2) << "Framerate not specified... setting 30 fps by default";
         m_fps = 30;
     }
 
@@ -669,7 +675,7 @@ bool realsense2Driver::setParams()
     //ALIGNMENT
     if (params_map[needAlignment].isSetting && ret)
     {
-        yWarning()<<"realsense2Driver: needAlignment parameter is deprecated, use alignmentFrame instead.";
+        yCWarning(REALSENSE2) << "needAlignment parameter is deprecated, use alignmentFrame instead.";
         Value& v = params_map[needAlignment].val[0];
         if (!v.isBool())
         {
@@ -755,13 +761,13 @@ bool realsense2Driver::open(Searchable& config)
 
     if (!m_paramParser.parseParam(config, params))
     {
-        yError()<<"realsense2Driver: failed to parse the parameters";
+        yCError(REALSENSE2) << "Failed to parse the parameters";
         return false;
     }
 
     if (!initializeRealsenseDevice())
     {
-        yError()<<"realsense2Driver: failed to initialize the realsense device";
+        yCError(REALSENSE2) << "Failed to initialize the realsense device";
         return false;
     }
 
@@ -788,7 +794,7 @@ int realsense2Driver::getRgbWidth()
 
 bool realsense2Driver::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
 {
-    yWarning()<<"realsense2Driver:getRgbSupportedConfigurations not implemented yet";
+    yCWarning(REALSENSE2) << "getRgbSupportedConfigurations not implemented yet";
     return false;
 }
 
@@ -890,13 +896,13 @@ bool realsense2Driver::getRgbFOV(double &horizontalFov, double &verticalFov)
 
 bool realsense2Driver::getRgbMirroring(bool& mirror)
 {
-    yWarning()<<"realsense2Driver: mirroring not supported";
+    yCWarning(REALSENSE2) << "Mirroring not supported";
     return false;
 }
 
 bool realsense2Driver::setRgbMirroring(bool mirror)
 {
-    yWarning()<<"realsense2Driver: mirroring not supported";
+    yCWarning(REALSENSE2) << "Mirroring not supported";
     return false;
 }
 
@@ -966,13 +972,13 @@ bool realsense2Driver::setDepthClipPlanes(double nearPlane, double farPlane)
 
 bool realsense2Driver::getDepthMirroring(bool& mirror)
 {
-    yWarning()<<"realsense2Driver: mirroring not supported";
+    yCWarning(REALSENSE2) << "Mirroring not supported";
     return false;
 }
 
 bool realsense2Driver::setDepthMirroring(bool mirror)
 {
-    yWarning()<<"realsense2Driver: mirroring not supported";
+    yCWarning(REALSENSE2) << "Mirroring not supported";
     return false;
 }
 
@@ -1015,7 +1021,7 @@ bool realsense2Driver::getImage(FlexImage& Frame, Stamp *timeStamp, rs2::framese
 
     if (pixCode == VOCAB_PIXEL_INVALID)
     {
-        yError() << "realsense2Driver: Pixel Format not recognized";
+        yCError(REALSENSE2) << "Pixel Format not recognized";
         return false;
     }
 
@@ -1024,7 +1030,7 @@ bool realsense2Driver::getImage(FlexImage& Frame, Stamp *timeStamp, rs2::framese
 
     if ((size_t) Frame.getRawImageSize() != mem_to_wrt)
     {
-        yError() << "realsense2Driver: device and local copy data size doesn't match";
+        yCError(REALSENSE2) << "Device and local copy data size doesn't match";
         return false;
     }
 
@@ -1046,7 +1052,7 @@ bool realsense2Driver::getImage(depthImage& Frame, Stamp *timeStamp, const rs2::
 
     if (pixCode == VOCAB_PIXEL_INVALID)
     {
-        yError() << "realsense2Driver: Pixel Format not recognized";
+        yCError(REALSENSE2) << "Pixel Format not recognized";
         return false;
     }
 
@@ -1113,7 +1119,7 @@ bool realsense2Driver::setFeature(int feature, double value)
     bool b = false;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
 
@@ -1170,12 +1176,12 @@ bool realsense2Driver::setFeature(int feature, double value)
             b = setOption(RS2_OPTION_SATURATION, m_color_sensor, valToSet);
         break;
     default:
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
     if (!b)
     {
-        yError()<<"realsense2Driver: something went wrong setting the feature requested, run the device with --verbose for the supported options";
+        yCError(REALSENSE2) << "Something went wrong setting the feature requested, run the device with --verbose for the supported options";
         if (m_verbose)
         {
             print_supported_options(*m_color_sensor);
@@ -1190,7 +1196,7 @@ bool realsense2Driver::getFeature(int feature, double *value)
     bool b = false;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
 
@@ -1231,12 +1237,12 @@ bool realsense2Driver::getFeature(int feature, double *value)
             b = optionValue2Perc(RS2_OPTION_SATURATION, m_color_sensor, (float&) value, valToGet);
         break;
     default:
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
     if (!b)
     {
-        yError()<<"realsense2Driver: something went wrong setting the feature requested, run the device with --verbose for the supported options";
+        yCError(REALSENSE2) << "Something went wrong setting the feature requested, run the device with --verbose for the supported options";
         if (m_verbose)
         {
             print_supported_options(*m_color_sensor);
@@ -1248,13 +1254,13 @@ bool realsense2Driver::getFeature(int feature, double *value)
 
 bool realsense2Driver::setFeature(int feature, double value1, double value2)
 {
-    yError() << "no 2-valued feature are supported";
+    yCError(REALSENSE2) << "No 2-valued feature are supported";
     return false;
 }
 
 bool realsense2Driver::getFeature(int feature, double *value1, double *value2)
 {
-    yError() << "no 2-valued feature are supported";
+    yCError(REALSENSE2) << "No 2-valued feature are supported";
     return false;
 }
 
@@ -1263,7 +1269,7 @@ bool realsense2Driver::hasOnOff(  int feature, bool *HasOnOff)
     bool b;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
 
@@ -1282,13 +1288,13 @@ bool realsense2Driver::setActive( int feature, bool onoff)
     bool b;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
 
     if (!hasOnOff(feature, &b) || !b)
     {
-        yError() << "feature does not have OnOff.. call hasOnOff() to know if a specific feature support OnOff mode";
+        yCError(REALSENSE2) << "Feature does not have OnOff.. call hasOnOff() to know if a specific feature support OnOff mode";
         return false;
     }
 
@@ -1312,13 +1318,13 @@ bool realsense2Driver::getActive( int feature, bool *isActive)
     bool b;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
 
     if (!hasOnOff(feature, &b) || !b)
     {
-        yError() << "feature does not have OnOff.. call hasOnOff() to know if a specific feature support OnOff mode";
+        yCError(REALSENSE2) << "Feature does not have OnOff.. call hasOnOff() to know if a specific feature support OnOff mode";
         return false;
     }
     float response = 0.0;
@@ -1344,7 +1350,7 @@ bool realsense2Driver::hasAuto(int feature, bool *hasAuto)
     bool b;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
 
@@ -1363,7 +1369,7 @@ bool realsense2Driver::hasManual( int feature, bool* hasManual)
     bool b;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
 
@@ -1383,7 +1389,7 @@ bool realsense2Driver::hasOnePush(int feature, bool* hasOnePush)
     bool b;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
 
@@ -1395,7 +1401,7 @@ bool realsense2Driver::setMode(int feature, FeatureMode mode)
     bool b;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
     float one = 1.0;
@@ -1435,7 +1441,7 @@ bool realsense2Driver::setMode(int feature, FeatureMode mode)
     }
 
 
-    yError() << "feature does not have both auto and manual mode";
+    yCError(REALSENSE2) << "Feature does not have both auto and manual mode";
     return false;
 }
 
@@ -1444,7 +1450,7 @@ bool realsense2Driver::getMode(int feature, FeatureMode* mode)
     bool b;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
     float res = 0.0;
@@ -1480,13 +1486,13 @@ bool realsense2Driver::setOnePush(int feature)
     bool b;
     if (!hasFeature(feature, &b) || !b)
     {
-        yError() << "feature not supported!";
+        yCError(REALSENSE2) << "Feature not supported!";
         return false;
     }
 
     if (!hasOnePush(feature, &b) || !b)
     {
-        yError() << "feature doesn't have OnePush";
+        yCError(REALSENSE2) << "Feature doesn't have OnePush";
         return false;
     }
 
@@ -1500,7 +1506,7 @@ bool realsense2Driver::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
     if (!m_stereoMode)
     {
-        yError()<<"realsense2Driver: infrared stereo stream not enabled";
+        yCError(REALSENSE2)<<"Infrared stereo stream not enabled";
         return false;
     }
 
@@ -1515,7 +1521,7 @@ bool realsense2Driver::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 
     if (pixCode != VOCAB_PIXEL_MONO)
     {
-        yError() << "realsense2Driver: expecting Pixel Format MONO";
+        yCError(REALSENSE2) << "Expecting Pixel Format MONO";
         return false;
     }
 

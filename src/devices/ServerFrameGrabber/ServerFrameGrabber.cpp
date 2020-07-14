@@ -9,6 +9,7 @@
 
 #include "ServerFrameGrabber.h"
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
@@ -17,6 +18,10 @@ using namespace yarp::sig;
 
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
+
+namespace {
+YARP_LOG_COMPONENT(SERVERFRAMEGRABBER, "yarp.device.grabber")
+}
 
 bool ServerFrameGrabber::close()
 {
@@ -35,7 +40,7 @@ bool ServerFrameGrabber::close()
 bool ServerFrameGrabber::open(yarp::os::Searchable& config)
 {
     if (active) {
-        yError("Did you just try to open the same ServerFrameGrabber twice?\n");
+        yCError(SERVERFRAMEGRABBER, "Did you just try to open the same ServerFrameGrabber twice?\n");
         return false;
     }
 
@@ -61,11 +66,11 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config)
             poly.open(subdevice);
         }
         if (!poly.isValid()) {
-            //yError("cannot make <%s>\n", name->toString().c_str());
+            //yCError(SERVERFRAMEGRABBER, "cannot make <%s>\n", name->toString().c_str());
             return false;
         }
     } else {
-        yError("\"--subdevice <name>\" not set for server_framegrabber\n");
+        yCError(SERVERFRAMEGRABBER, "\"--subdevice <name>\" not set for server_framegrabber\n");
         return false;
     }
     if (poly.isValid()) {
@@ -101,7 +106,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config)
 
         if(!conf)
         {
-            yWarning() << "ServerFrameGrabber: error configuring interfaces for parsers";
+            yCWarning(SERVERFRAMEGRABBER) << "ServerFrameGrabber: error configuring interfaces for parsers";
         }
     }
 
@@ -125,16 +130,16 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config)
         !config.check("shared-ports",
                       "If present, send audio and images on same port")) {
         separatePorts = true;
-        yAssert(p2==nullptr);
+        yCAssert(SERVERFRAMEGRABBER, p2==nullptr);
         p2 = new Port;
-        yAssert(p2!=nullptr);
+        yCAssert(SERVERFRAMEGRABBER, p2!=nullptr);
         p2->open(config.check("name2",Value("/grabber2"),
                               "Name of second port to send data on, when audio and images sent separately").asString());
     }
 
     if (fgAv!=nullptr) {
         if (separatePorts) {
-            yAssert(p2!=nullptr);
+            yCAssert(SERVERFRAMEGRABBER, p2!=nullptr);
             thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this,canDrop,addStamp));
         } else {
             thread.attach(new DataWriter<ImageRgbSound>(p,*this,canDrop,
@@ -145,7 +150,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config)
     } else if (fgImageRaw!=nullptr) {
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelMono> >(p,*this,canDrop,addStamp,fgTimed));
     } else {
-        yError("subdevice <%s> doesn't look like a framegrabber\n",
+        yCError(SERVERFRAMEGRABBER, "subdevice <%s> doesn't look like a framegrabber\n",
                name->toString().c_str());
         return false;
     }
@@ -325,7 +330,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
         }
     }
     }
-    yError() << "ServerFrameGrabber: command not recognized" << cmd.toString();
+    yCError(SERVERFRAMEGRABBER) << "ServerFrameGrabber: command not recognized" << cmd.toString();
     return DeviceResponder::respond(cmd,response);
 }
 
@@ -334,11 +339,11 @@ bool ServerFrameGrabber::read(ConnectionReader& connection)
 {
     yarp::os::Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
-    yDebug("command received: %s\n", cmd.toString().c_str());
+    yCDebug(SERVERFRAMEGRABBER, "command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
     switch (code) {
     case VOCAB_SET:
-        yDebug("set command received\n");
+        yCDebug(SERVERFRAMEGRABBER, "set command received\n");
         {
             bool ok = false;
             switch(cmd.get(1).asVocab()) {
@@ -359,7 +364,7 @@ bool ServerFrameGrabber::read(ConnectionReader& connection)
         }
         break;
     case VOCAB_GET:
-        yDebug("get command received\n");
+        yCDebug(SERVERFRAMEGRABBER, "get command received\n");
         {
             bool ok = false;
             response.addVocab(VOCAB_IS);
@@ -410,7 +415,7 @@ bool ServerFrameGrabber::read(ConnectionReader& connection)
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=NULL) {
             response.write(*writer);
-            yDebug("response sent: %s\n", response.toString().c_str());
+            yCDebug(SERVERFRAMEGRABBER, "response sent: %s\n", response.toString().c_str());
         }
     }
     return true;

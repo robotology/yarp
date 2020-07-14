@@ -20,6 +20,7 @@
 
 #include "Map2DClient.h"
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <mutex>
 #include <yarp/dev/INavigation2D.h>
@@ -29,6 +30,10 @@ using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
 using namespace yarp::sig;
+
+namespace {
+YARP_LOG_COMPONENT(MAP2DCLIENT, "yarp.device.map2DClient")
+}
 
 //------------------------------------------------------------------------------------------------------------------------------
 
@@ -42,12 +47,12 @@ bool Map2DClient::open(yarp::os::Searchable &config)
 
     if (m_local_name == "")
     {
-        yError("Map2DClient::open() error you have to provide valid local name");
+        yCError(MAP2DCLIENT, "open() error you have to provide valid local name");
         return false;
     }
     if (m_map_server == "")
     {
-        yError("Map2DClient::open() error you have to provide valid remote name");
+        yCError(MAP2DCLIENT, "open() error you have to provide valid remote name");
         return false;
     }
 
@@ -59,7 +64,7 @@ bool Map2DClient::open(yarp::os::Searchable &config)
 
     if (!m_rpcPort_to_Map2DServer.open(local_rpc1))
     {
-        yError("Map2DClient::open() error could not open rpc port %s, check network", local_rpc1.c_str());
+        yCError(MAP2DCLIENT, "open() error could not open rpc port %s, check network", local_rpc1.c_str());
         return false;
     }
 
@@ -67,7 +72,7 @@ bool Map2DClient::open(yarp::os::Searchable &config)
     ok=Network::connect(local_rpc1, remote_rpc1);
     if (!ok)
     {
-        yError("Map2DClient::open() error could not connect to %s", remote_rpc1.c_str());
+        yCError(MAP2DCLIENT, "open() error could not connect to %s", remote_rpc1.c_str());
         return false;
     }
 
@@ -85,22 +90,22 @@ bool Map2DClient::store_map(const MapGrid2D& map)
     MapGrid2D maptemp = map;
     if (Property::copyPortable(maptemp, mapbot) == false)
     {
-        yError() << "Map2DClient::store_map() failed copyPortable()";
+        yCError(MAP2DCLIENT) << "store_map() failed copyPortable()";
         return false;
     }
-    //yDebug() << b.toString();
+    //yCDebug(MAP2DCLIENT) << b.toString();
     bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
     if (ret)
     {
         if (resp.get(0).asVocab() != VOCAB_IMAP_OK)
         {
-            yError() << "Map2DClient::store_map() received error from server";
+            yCError(MAP2DCLIENT) << "store_map() received error from server";
             return false;
         }
     }
     else
     {
-        yError() << "Map2DClient::store_map() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "store_map() error on writing on rpc port";
         return false;
     }
     return true;
@@ -120,7 +125,7 @@ bool Map2DClient::get_map(std::string map_name, MapGrid2D& map)
     {
         if (resp.get(0).asVocab() != VOCAB_IMAP_OK)
         {
-            yError() << "Map2DClient::get_map() received error from server";
+            yCError(MAP2DCLIENT) << "get_map() received error from server";
             return false;
         }
         else
@@ -132,14 +137,14 @@ bool Map2DClient::get_map(std::string map_name, MapGrid2D& map)
             }
             else
             {
-                yError() << "Map2DClient::get_map() failed copyPortable()";
+                yCError(MAP2DCLIENT) << "get_map() failed copyPortable()";
                 return false;
             }
         }
     }
     else
     {
-        yError() << "Map2DClient::get_map() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "get_map() error on writing on rpc port";
         return false;
     }
     return true;
@@ -158,13 +163,13 @@ bool Map2DClient::clearAllMaps()
     {
         if (resp.get(0).asVocab() != VOCAB_IMAP_OK)
         {
-            yError() << "Map2DClient::clear() received error from server";
+            yCError(MAP2DCLIENT) << "clear() received error from server";
             return false;
         }
     }
     else
     {
-        yError() << "Map2DClient::clear() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "clear() error on writing on rpc port";
         return false;
     }
     return true;
@@ -183,7 +188,7 @@ bool Map2DClient::get_map_names(std::vector<std::string>& map_names)
     {
         if (resp.get(0).asVocab() != VOCAB_IMAP_OK)
         {
-            yError() << "Map2DClient::get_map_names() received error from server";
+            yCError(MAP2DCLIENT) << "get_map_names() received error from server";
             return false;
         }
         else
@@ -197,7 +202,7 @@ bool Map2DClient::get_map_names(std::vector<std::string>& map_names)
     }
     else
     {
-        yError() << "Map2DClient::get_map_names() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "get_map_names() error on writing on rpc port";
         return false;
     }
     return true;
@@ -217,13 +222,13 @@ bool Map2DClient::remove_map(std::string map_name)
     {
         if (resp.get(0).asVocab() != VOCAB_IMAP_OK)
         {
-            yError() << "Map2DClient::remove_map() received error from server";
+            yCError(MAP2DCLIENT) << "remove_map() received error from server";
             return false;
         }
     }
     else
     {
-        yError() << "Map2DClient::remove_map() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "remove_map() error on writing on rpc port";
         return false;
     }
     return true;
@@ -248,13 +253,13 @@ bool Map2DClient::storeLocation(std::string location_name, Map2DLocation loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::storeLocation() received error from locations server";
+            yCError(MAP2DCLIENT) << "storeLocation() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::storeLocation() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "storeLocation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -273,7 +278,7 @@ bool Map2DClient::storeArea(std::string area_name, Map2DArea area)
     Map2DArea areatemp = area;
     if (Property::copyPortable(areatemp, areabot) == false)
     {
-        yError() << "Map2DClient::storeArea() failed copyPortable()";
+        yCError(MAP2DCLIENT) << "storeArea() failed copyPortable()";
         return false;
     }
 
@@ -282,13 +287,13 @@ bool Map2DClient::storeArea(std::string area_name, Map2DArea area)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Map2DClient::storeArea() received error from locations server";
+            yCError(MAP2DCLIENT) << "storeArea() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Map2DClient::storeArea() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "storeArea() error on writing on rpc port";
         return false;
     }
     return true;
@@ -307,7 +312,7 @@ bool Map2DClient::storePath(std::string path_name, Map2DPath path)
     Map2DPath pathtemp = path;
     if (Property::copyPortable(pathtemp, areabot) == false)
     {
-        yError() << "Map2DClient::storePath() failed copyPortable()";
+        yCError(MAP2DCLIENT) << "storePath() failed copyPortable()";
         return false;
     }
 
@@ -316,13 +321,13 @@ bool Map2DClient::storePath(std::string path_name, Map2DPath path)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Map2DClient::storePath() received error from locations server";
+            yCError(MAP2DCLIENT) << "storePath() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Map2DClient::storePath() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "storePath() error on writing on rpc port";
         return false;
     }
     return true;
@@ -342,7 +347,7 @@ bool   Map2DClient::getLocationsList(std::vector<std::string>& locations)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getLocationsList() received error from locations server";
+            yCError(MAP2DCLIENT) << "getLocationsList() received error from locations server";
             return false;
         }
         else
@@ -359,14 +364,14 @@ bool   Map2DClient::getLocationsList(std::vector<std::string>& locations)
             }
             else
             {
-                yError() << "Navigation2DClient::getLocationsList() error while reading from locations server";
+                yCError(MAP2DCLIENT) << "getLocationsList() error while reading from locations server";
                 return false;
             }
         }
     }
     else
     {
-        yError() << "Navigation2DClient::getLocationsList() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "getLocationsList() error on writing on rpc port";
         return false;
     }
     return true;
@@ -386,7 +391,7 @@ bool   Map2DClient::getAreasList(std::vector<std::string>& areas)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getAreasList() received error from locations server";
+            yCError(MAP2DCLIENT) << "getAreasList() received error from locations server";
             return false;
         }
         else
@@ -403,14 +408,14 @@ bool   Map2DClient::getAreasList(std::vector<std::string>& areas)
             }
             else
             {
-                yError() << "Navigation2DClient::getAreasList() error while reading from locations server";
+                yCError(MAP2DCLIENT) << "getAreasList() error while reading from locations server";
                 return false;
             }
         }
     }
     else
     {
-        yError() << "Navigation2DClient::getAreasList() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "getAreasList() error on writing on rpc port";
         return false;
     }
     return true;
@@ -430,7 +435,7 @@ bool   Map2DClient::getPathsList(std::vector<std::string>& paths)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getPathsList() received error from locations server";
+            yCError(MAP2DCLIENT) << "getPathsList() received error from locations server";
             return false;
         }
         else
@@ -447,14 +452,14 @@ bool   Map2DClient::getPathsList(std::vector<std::string>& paths)
             }
             else
             {
-                yError() << "Navigation2DClient::getPathsList() error while reading from locations server";
+                yCError(MAP2DCLIENT) << "getPathsList() error while reading from locations server";
                 return false;
             }
         }
     }
     else
     {
-        yError() << "Navigation2DClient::getPathsList() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "getPathsList() error on writing on rpc port";
         return false;
     }
     return true;
@@ -475,7 +480,7 @@ bool   Map2DClient::getLocation(std::string location_name, Map2DLocation& loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getLocation() received error from locations server";
+            yCError(MAP2DCLIENT) << "getLocation() received error from locations server";
             return false;
         }
         else
@@ -488,7 +493,7 @@ bool   Map2DClient::getLocation(std::string location_name, Map2DLocation& loc)
     }
     else
     {
-        yError() << "Navigation2DClient::getLocation() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "getLocation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -509,7 +514,7 @@ bool   Map2DClient::getArea(std::string location_name, Map2DArea& area)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getArea() received error from locations server";
+            yCError(MAP2DCLIENT) << "getArea() received error from locations server";
             return false;
         }
         else
@@ -521,14 +526,14 @@ bool   Map2DClient::getArea(std::string location_name, Map2DArea& area)
             }
             else
             {
-                yError() << "Navigation2DClient::getArea() failed copyPortable()";
+                yCError(MAP2DCLIENT) << "getArea() failed copyPortable()";
                 return false;
             }
         }
     }
     else
     {
-        yError() << "Navigation2DClient::getArea() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "getArea() error on writing on rpc port";
         return false;
     }
     return true;
@@ -549,7 +554,7 @@ bool   Map2DClient::getPath(std::string path_name, Map2DPath& path)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getPath() received error from locations server";
+            yCError(MAP2DCLIENT) << "getPath() received error from locations server";
             return false;
         }
         else
@@ -561,14 +566,14 @@ bool   Map2DClient::getPath(std::string path_name, Map2DPath& path)
             }
             else
             {
-                yError() << "Navigation2DClient::getPath() failed copyPortable()";
+                yCError(MAP2DCLIENT) << "getPath() failed copyPortable()";
                 return false;
             }
         }
     }
     else
     {
-        yError() << "Navigation2DClient::getPath() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "getPath() error on writing on rpc port";
         return false;
     }
     return true;
@@ -589,13 +594,13 @@ bool   Map2DClient::deleteLocation(std::string location_name)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::deleteLocation() received error from locations server";
+            yCError(MAP2DCLIENT) << "deleteLocation() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::deleteLocation() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "deleteLocation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -617,13 +622,13 @@ bool   Map2DClient::renameLocation(std::string original_name, std::string new_na
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::renameLocation() received error from locations server";
+            yCError(MAP2DCLIENT) << "renameLocation() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::renameLocation() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "renameLocation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -644,13 +649,13 @@ bool   Map2DClient::deleteArea(std::string location_name)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::deleteArea() received error from locations server";
+            yCError(MAP2DCLIENT) << "deleteArea() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::deleteArea() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "deleteArea() error on writing on rpc port";
         return false;
     }
     return true;
@@ -671,13 +676,13 @@ bool   Map2DClient::deletePath(std::string path_name)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::deletePath() received error from locations server";
+            yCError(MAP2DCLIENT) << "deletePath() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::deletePath() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "deletePath() error on writing on rpc port";
         return false;
     }
     return true;
@@ -699,13 +704,13 @@ bool   Map2DClient::renameArea(std::string original_name, std::string new_name)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::renameArea() received error from locations server";
+            yCError(MAP2DCLIENT) << "renameArea() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::renameArea() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "renameArea() error on writing on rpc port";
         return false;
     }
     return true;
@@ -727,13 +732,13 @@ bool   Map2DClient::renamePath(std::string original_name, std::string new_name)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::renamePath() received error from locations server";
+            yCError(MAP2DCLIENT) << "renamePath() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::renamePath() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "renamePath() error on writing on rpc port";
         return false;
     }
     return true;
@@ -753,13 +758,13 @@ bool   Map2DClient::clearAllLocations()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::clearAllLocations() received error from locations server";
+            yCError(MAP2DCLIENT) << "clearAllLocations() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::clearAllLocations() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "clearAllLocations() error on writing on rpc port";
         return false;
     }
     return true;
@@ -779,13 +784,13 @@ bool   Map2DClient::clearAllAreas()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::clearAllAreas() received error from locations server";
+            yCError(MAP2DCLIENT) << "clearAllAreas() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::clearAllAreas() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "clearAllAreas() error on writing on rpc port";
         return false;
     }
     return true;
@@ -805,13 +810,13 @@ bool   Map2DClient::clearAllPaths()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::clearAllPaths() received error from locations server";
+            yCError(MAP2DCLIENT) << "clearAllPaths() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::clearAllPaths() error on writing on rpc port";
+        yCError(MAP2DCLIENT) << "clearAllPaths() error on writing on rpc port";
         return false;
     }
     return true;

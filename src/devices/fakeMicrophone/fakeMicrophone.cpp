@@ -12,6 +12,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 #include <mutex>
@@ -27,6 +28,10 @@ using namespace yarp::sig;
 #define CHUNK_SIZE          512
 #define SLEEP_TIME          0.005
 #define SAMPLES_TO_BE_COPIED 512
+
+namespace {
+YARP_LOG_COMPONENT(FAKEMICROPHONE, "yarp.device.fakeMicrophone")
+}
 
 typedef unsigned short int audio_sample_16t;
 
@@ -56,11 +61,11 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
     {
         double period = config.find("period").asFloat64();
         setPeriod(period);
-        yInfo() << "Using chosen period of " << period << " s";
+        yCInfo(FAKEMICROPHONE) << "Using chosen period of " << period << " s";
     }
     else
     {
-        yInfo() << "Using default period of " << DEFAULT_PERIOD << " s";
+        yCInfo(FAKEMICROPHONE) << "Using default period of " << DEFAULT_PERIOD << " s";
     }
 
     //sets the filename
@@ -70,14 +75,14 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
     }
     else
     {
-        yInfo() << "--audio_file option not found. Using default:" << m_audio_filename;
+        yCInfo(FAKEMICROPHONE) << "--audio_file option not found. Using default:" << m_audio_filename;
     }
 
     //opens the file
     bool ret = yarp::sig::file::read(m_audioFile, m_audio_filename.c_str());
     if (ret == false)
     {
-        yError() << "unable to open file" << m_audio_filename.c_str();
+        yCError(FAKEMICROPHONE) << "Unable to open file" << m_audio_filename.c_str();
         return false;
     }
 
@@ -138,7 +143,7 @@ void fakeMicrophone::run()
         m_bpnt++;
     }
 #ifdef ADVANCED_DEBUG
-    yDebug() << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
+    yCDebug(FAKEMICROPHONE) << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
 #endif
 }
 
@@ -149,7 +154,7 @@ bool fakeMicrophone::startRecording()
 #ifdef BUFFER_AUTOCLEAR
     this->m_recDataBuffer->clear();
 #endif
-    yInfo() << "fakeMicrophone started recording";
+    yCInfo(FAKEMICROPHONE) << "Recording started";
     return true;
 }
 
@@ -161,7 +166,7 @@ bool fakeMicrophone::stopRecording()
 #ifdef BUFFER_AUTOCLEAR
     this->m_recDataBuffer->clear();
 #endif
-    yInfo() << "fakeMicrophone stopped recording";
+    yCInfo(FAKEMICROPHONE) << "Recording stopped";
     return true;
 }
 
@@ -186,7 +191,7 @@ bool fakeMicrophone::resetRecordingAudioBuffer()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_inputBuffer->clear();
-    yDebug() << "PortAudioRecorderDeviceDriver::resetRecordingAudioBuffer";
+    yCDebug(FAKEMICROPHONE) << "resetRecordingAudioBuffer";
     return true;
 }
 
@@ -205,7 +210,7 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samp
         {
             if (yarp::os::Time::now() - debug_time > 5.0)
             {
-                yInfo() << "getSound() is currently waiting. Use ::startRecording() to start the audio stream";
+                yCInfo(FAKEMICROPHONE) << "getSound() is currently waiting. Use startRecording() to start the audio stream";
                 debug_time = yarp::os::Time::now();
             }
             yarp::os::SystemClock::delaySystem(SLEEP_TIME);
@@ -219,12 +224,12 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samp
     //check on input parameters
     if (max_number_of_samples < min_number_of_samples)
     {
-        yError() << "max_number_of_samples must be greater than min_number_of_samples!";
+        yCError(FAKEMICROPHONE) << "max_number_of_samples must be greater than min_number_of_samples!";
         return false;
     }
     if (max_number_of_samples > this->m_cfg_numSamples)
     {
-        yWarning() << "max_number_of_samples bigger than the internal audio buffer! It will be truncated to:" << this->m_cfg_numSamples;
+        yCWarning(FAKEMICROPHONE) << "max_number_of_samples bigger than the internal audio buffer! It will be truncated to:" << this->m_cfg_numSamples;
         max_number_of_samples = this->m_cfg_numSamples;
     }
 
@@ -242,7 +247,7 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samp
         if (yarp::os::Time::now() - debug_time > 1.0)
         {
             debug_time = yarp::os::Time::now();
-            yDebug() << "PortAudioRecorderDeviceDriver::getSound() Buffer size is " << buff_size << "/" << max_number_of_samples << " after 1s";
+            yCDebug(FAKEMICROPHONE) << "getSound() Buffer size is " << buff_size << "/" << max_number_of_samples << " after 1s";
         }
 
         yarp::os::SystemClock::delaySystem(SLEEP_TIME);
@@ -272,7 +277,7 @@ bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samp
     auto debug_p = sound.getInterleavedAudioRawData();
 #ifdef DEBUG_TIME_SPENT
     double ct2 = yarp::os::Time::now();
-    yDebug() << ct2 - ct1;
+    yCDebug(FAKEMICROPHONE) << ct2 - ct1;
 #endif
     return true;
 }

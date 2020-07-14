@@ -8,8 +8,7 @@
 
 #include "MagneticFieldRosPublisher.h"
 
-#include <yarp/os/Log.h>
-#include <yarp/os/LogStream.h>
+YARP_LOG_COMPONENT(GENERICSENSORROSPUBLISHER, "yarp.device.MagneticFieldRosPublisher")
 
 bool MagneticFieldRosPublisher::viewInterfaces()
 {

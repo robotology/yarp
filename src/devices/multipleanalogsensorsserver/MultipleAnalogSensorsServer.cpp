@@ -12,10 +12,14 @@
 #include "MultipleAnalogSensorsServer.h"
 
 #include <yarp/os/Log.h>
-#include <yarp/os/LogStream.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/PolyDriverList.h>
 
+
+namespace {
+YARP_LOG_COMPONENT(MULTIPLEANALOGSENSORSSERVER, "yarp.device.multipleanalogsensorsserver")
+}
 
 MultipleAnalogSensorsServer::MultipleAnalogSensorsServer() :
         PeriodicThread(0.02)
@@ -28,19 +32,19 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
 {
     if (!config.check("name"))
     {
-        yError("MultipleAnalogSensorsServer: missing name parameter, exiting.");
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Missing name parameter, exiting.");
         return false;
     }
 
     if (!config.check("period"))
     {
-        yError("MultipleAnalogSensorsClient: missing period parameter, exiting.");
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Missing period parameter, exiting.");
         return false;
     }
 
     if (!config.find("period").isInt32())
     {
-        yError("MultipleAnalogSensorsClient: period parameter is present but it is not an integer, exiting.");
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Period parameter is present but it is not an integer, exiting.");
         return false;
     }
 
@@ -48,7 +52,9 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
 
     if (m_periodInS <= 0)
     {
-        yError("MultipleAnalogSensorsClient: period parameter is present (%f) but it is not a positive integer, exiting.", m_periodInS);
+        yCError(MULTIPLEANALOGSENSORSSERVER,
+                "Period parameter is present (%f) but it is not a positive integer, exiting.",
+                m_periodInS);
         return false;
     }
 
@@ -75,7 +81,7 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
 
         if (!m_subdevice.open(driverConfig))
         {
-            yError("MultipleAnalogSensorsServer: opening subdevice failed.");
+            yCError(MULTIPLEANALOGSENSORSSERVER, "Opening subdevice failed.");
             return false;
         }
 
@@ -84,11 +90,13 @@ bool MultipleAnalogSensorsServer::open(yarp::os::Searchable& config)
 
         if (!attachAll(driverList))
         {
-            yError("MultipleAnalogSensorsServer: attaching subdevice failed.");
+            yCError(MULTIPLEANALOGSENSORSSERVER, "Attaching subdevice failed.");
             return false;
         }
 
-        yInfo("MultipleAnalogSensorsServer: subdevice \"%s\" successfully configured and attached.", subdeviceName.c_str());
+        yCInfo(MULTIPLEANALOGSENSORSSERVER,
+               "Subdevice \"%s\" successfully configured and attached.",
+               subdeviceName.c_str());
         m_isDeviceOwned = true;
     }
 
@@ -129,16 +137,20 @@ bool MultipleAnalogSensorsServer::populateSensorsMetadata(Interface * wrappedDev
             bool ok = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNameMethodPtr)(i, sensorName);
             if (!ok)
             {
-                yError() << "MultipleAnalogSensorsServer: Failure in reading name of sensor of type "
-                         << tag.c_str() << " at index " << i << " .";
+                yCError(MULTIPLEANALOGSENSORSSERVER,
+                        "Failure in reading name of sensor of type %s at index %zu.",
+                        tag.c_str(),
+                        i);
                 return false;
             }
             std::string frameName;
             ok = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getFrameNameMethodPtr)(i, frameName);
             if (!ok)
             {
-                yError() << "MultipleAnalogSensorsServer: Failure in reading frame name of sensor of type "
-                         << tag.c_str() << " at index " << i << " .";
+                yCError(MULTIPLEANALOGSENSORSSERVER,
+                        "Failure in reading frame name of sensor of type %s at index %zu.",
+                        tag.c_str(),
+                        i);
                 return false;
             }
 
@@ -171,8 +183,10 @@ bool MultipleAnalogSensorsServer::populateSensorsMetadataNoFrameName(Interface *
             bool ok = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getNameMethodPtr)(i, sensorName);
             if (!ok)
             {
-                yError() << "MultipleAnalogSensorsServer: Failure in reading name of sensor of type "
-                         << tag.c_str() << " at index " << i << " .";
+                yCError(MULTIPLEANALOGSENSORSSERVER,
+                        "Failure in reading name of sensor of type  %s at index %zu.",
+                        tag.c_str(),
+                        i);
                 return false;
             }
 
@@ -239,16 +253,19 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     // Attach the device
     if (p.size() > 1)
     {
-        yError("MultipleAnalogSensorsServer: this device only supports exposing a "
-                 "single MultipleAnalogSensors device on YARP ports, but %d devices have been passed in attachAll.", p.size());
-        yError("MultipleAnalogSensorsServer: please use the multipleanalogsensorsremapper device to combine several device in a new device.");
+        yCError(MULTIPLEANALOGSENSORSSERVER,
+                "This device only supports exposing a "
+                "single MultipleAnalogSensors device on YARP ports, but %d devices have been passed in attachAll.",
+                p.size());
+        yCError(MULTIPLEANALOGSENSORSSERVER,
+                "Please use the multipleanalogsensorsremapper device to combine several device in a new device.");
         close();
         return false;
     }
 
     if (p.size() == 0)
     {
-        yError("MultipleAnalogSensorsServer: no device passed to attachAll, please pass a device to expose on YARP ports.");
+        yCError(MULTIPLEANALOGSENSORSSERVER, "No device passed to attachAll, please pass a device to expose on YARP ports.");
         close();
         return false;
     }
@@ -257,7 +274,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
 
     if (!poly)
     {
-        yError("MultipleAnalogSensorsServer: null pointer passed to attachAll.");
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Null pointer passed to attachAll.");
         close();
         return false;
     }
@@ -288,7 +305,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     ok = m_streamingPort.open(m_streamingPortName);
     if (!ok)
     {
-        yError("MultipleAnalogSensorsServer: failure in opening port named %s.", m_streamingPortName.c_str());
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Failure in opening port named %s.", m_streamingPortName.c_str());
         close();
         return false;
     }
@@ -296,7 +313,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     ok = this->yarp().attachAsServer(m_rpcPort);
     if (!ok)
     {
-        yError("MultipleAnalogSensorsServer: failure in attaching RPC port to thrift RPC interface.");
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Failure in attaching RPC port to thrift RPC interface.");
         close();
         return false;
     }
@@ -304,7 +321,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     ok = m_rpcPort.open(m_RPCPortName);
     if (!ok)
     {
-        yError("MultipleAnalogSensorsServer: failure in opening port named %s.", m_RPCPortName.c_str());
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Failure in opening port named %s.", m_RPCPortName.c_str());
         close();
         return false;
     }
@@ -314,7 +331,7 @@ bool MultipleAnalogSensorsServer::attachAll(const yarp::dev::PolyDriverList& p)
     ok = ok && this->start();
     if (!ok)
     {
-        yError("MultipleAnalogSensorsServer: failure in starting thread.");
+        yCError(MULTIPLEANALOGSENSORSSERVER, "Failure in starting thread.");
         close();
         return false;
     }
@@ -361,8 +378,9 @@ bool MultipleAnalogSensorsServer::genericStreamData(Interface* wrappedDeviceInte
             yarp::dev::MAS_status status = MAS_CALL_MEMBER_FN(wrappedDeviceInterface, getStatusMethodPtr)(i);
             if (status != yarp::dev::MAS_OK)
             {
-                yError("MultipleAnalogSensorsServer: failure in reading data from sensor %s, no data will be sent on the port.",
-                    m_sensorMetadata.ThreeAxisGyroscopes[i].name.c_str());
+                yCError(MULTIPLEANALOGSENSORSSERVER,
+                        "Failure in reading data from sensor %s, no data will be sent on the port.",
+                        m_sensorMetadata.ThreeAxisGyroscopes[i].name.c_str());
                 return false;
             }
         }

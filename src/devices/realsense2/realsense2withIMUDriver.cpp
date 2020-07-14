@@ -9,6 +9,7 @@
 #include "realsense2withIMUDriver.h"
 
 #include <yarp/os/Value.h>
+#include <yarp/os/LogComponent.h>
 
 #include <yarp/sig/ImageUtils.h>
 
@@ -33,6 +34,11 @@ using namespace yarp::sig;
 using namespace yarp::os;
 
 using namespace std;
+
+namespace {
+YARP_LOG_COMPONENT(REALSENSE2WITHIMU, "yarp.device.realsense2withIMU")
+}
+
 
 struct float3 {
     float x;
@@ -174,7 +180,7 @@ static bool setOption(rs2_option option, const rs2::sensor* sensor, float value)
 
     // First, verify that the sensor actually supports this option
     if (!sensor->supports(option)) {
-        yError() << "realsense2Driver: The option" << rs2_option_to_string(option) << "is not supported by this sensor";
+        yCError(REALSENSE2WITHIMU) << "The option" << rs2_option_to_string(option) << "is not supported by this sensor";
         return false;
     }
 
@@ -184,7 +190,7 @@ static bool setOption(rs2_option option, const rs2::sensor* sensor, float value)
     } catch (const rs2::error& e) {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "realsense2Driver: Failed to set option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
+        yCError(REALSENSE2WITHIMU) << "Failed to set option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
         return false;
     }
     return true;
@@ -198,7 +204,7 @@ static bool getOption(rs2_option option, const rs2::sensor* sensor, float& value
 
     // First, verify that the sensor actually supports this option
     if (!sensor->supports(option)) {
-        yError() << "realsense2Driver: The option" << rs2_option_to_string(option) << "is not supported by this sensor";
+        yCError(REALSENSE2WITHIMU) << "The option" << rs2_option_to_string(option) << "is not supported by this sensor";
         return false;
     }
 
@@ -208,7 +214,7 @@ static bool getOption(rs2_option option, const rs2::sensor* sensor, float& value
     } catch (const rs2::error& e) {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "realsense2Driver: Failed to get option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
+        yCError(REALSENSE2WITHIMU) << "Failed to get option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
         return false;
     }
     return true;
@@ -216,7 +222,7 @@ static bool getOption(rs2_option option, const rs2::sensor* sensor, float& value
 
 static void settingErrorMsg(const string& error, bool& ret)
 {
-    yError() << "realsense2Driver:" << error.c_str();
+    yCError(REALSENSE2WITHIMU) << error.c_str();
     ret = false;
 }
 #endif
@@ -233,7 +239,7 @@ bool realsense2withIMUDriver::pipelineStartup()
     try {
         m_profile = m_pipeline.start(m_cfg);
     } catch (const rs2::error& e) {
-        yError() << "realsense2Driver: failed to start the pipeline:"
+        yCError(REALSENSE2WITHIMU) << "Failed to start the pipeline:"
                  << "(" << e.what() << ")";
         m_lastError = e.what();
         return false;
@@ -246,7 +252,7 @@ bool realsense2withIMUDriver::pipelineShutdown()
     try {
         m_pipeline.stop();
     } catch (const rs2::error& e) {
-        yError() << "realsense2Driver: failed to stop the pipeline:"
+        yCError(REALSENSE2WITHIMU) << "Failed to stop the pipeline:"
                  << "(" << e.what() << ")";
         m_lastError = e.what();
         return false;
@@ -268,7 +274,7 @@ void realsense2Driver::fallback()
 {
     m_cfg.enable_stream(RS2_STREAM_COLOR, m_color_intrin.width, m_color_intrin.height, RS2_FORMAT_RGB8, m_fps);
     m_cfg.enable_stream(RS2_STREAM_DEPTH, m_depth_intrin.width, m_depth_intrin.height, RS2_FORMAT_Z16, m_fps);
-    yWarning() << "realsense2Driver: format not supported, use --verbose for more details. Setting the fallback format";
+    yCWarning(REALSENSE2WITHIMU) << "Format not supported, use --verbose for more details. Setting the fallback format";
     std::cout << "COLOR: " << m_color_intrin.width << "x" << m_color_intrin.height << " fps: " << m_fps << std::endl;
     std::cout << "DEPTH: " << m_depth_intrin.width << "x" << m_depth_intrin.height << " fps: " << m_fps << std::endl;
 }
@@ -276,8 +282,8 @@ void realsense2Driver::fallback()
 
 bool realsense2withIMUDriver::open(Searchable& config)
 {
-    yWarning() << "This software module is experimental.";
-    yWarning() << "It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.";
+    yCWarning(REALSENSE2WITHIMU) << "This software module is experimental.";
+    yCWarning(REALSENSE2WITHIMU) << "It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.";
 
     string sensor_is = "d435i";
     bool b = true;
@@ -312,7 +318,7 @@ bool realsense2withIMUDriver::open(Searchable& config)
     }*/
     else
     {
-        yError() << "Unkwnon device";
+        yCError(REALSENSE2WITHIMU) << "Unkwnon device";
         return false;
     }
 

@@ -15,7 +15,9 @@ yarp_prepare_plugin(IMURosPublisher
 if(ENABLE_IMURosPublisher)
   yarp_add_plugin(yarp_IMURosPublisher)
 
-  target_sources(yarp_IMURosPublisher PRIVATE IMURosPublisher.cpp IMURosPublisher.h GenericSensorRosPublisher.h )
+  target_sources(yarp_IMURosPublisher PRIVATE IMURosPublisher.cpp
+                                              IMURosPublisher.h
+                                              GenericSensorRosPublisher.h)
 
   target_link_libraries(yarp_IMURosPublisher PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
@@ -54,7 +56,9 @@ yarp_prepare_plugin(WrenchStampedRosPublisher
 if(ENABLE_WrenchStampedRosPublisher)
   yarp_add_plugin(yarp_WrenchStampedRosPublisher)
 
-  target_sources(yarp_WrenchStampedRosPublisher PRIVATE WrenchStampedRosPublisher.cpp WrenchStampedRosPublisher.h GenericSensorRosPublisher.h )
+  target_sources(yarp_WrenchStampedRosPublisher PRIVATE WrenchStampedRosPublisher.cpp
+                                                        WrenchStampedRosPublisher.h
+                                                        GenericSensorRosPublisher.h)
 
   target_link_libraries(yarp_WrenchStampedRosPublisher PRIVATE YARP::YARP_os
                                                                YARP::YARP_sig
@@ -91,7 +95,9 @@ yarp_prepare_plugin(TemperatureRosPublisher
 if(ENABLE_TemperatureRosPublisher)
   yarp_add_plugin(yarp_TemperatureRosPublisher)
 
-  target_sources(yarp_TemperatureRosPublisher PRIVATE TemperatureRosPublisher.cpp TemperatureRosPublisher.h GenericSensorRosPublisher.h )
+  target_sources(yarp_TemperatureRosPublisher PRIVATE TemperatureRosPublisher.cpp
+                                                      TemperatureRosPublisher.h
+                                                      GenericSensorRosPublisher.h)
 
   target_link_libraries(yarp_TemperatureRosPublisher PRIVATE YARP::YARP_os
                                                              YARP::YARP_sig
@@ -128,7 +134,9 @@ yarp_prepare_plugin(PoseStampedRosPublisher
 if(ENABLE_PoseStampedRosPublisher)
   yarp_add_plugin(yarp_PoseStampedRosPublisher)
 
-  target_sources(yarp_PoseStampedRosPublisher PRIVATE PoseStampedRosPublisher.cpp PoseStampedRosPublisher.h GenericSensorRosPublisher.h )
+  target_sources(yarp_PoseStampedRosPublisher PRIVATE PoseStampedRosPublisher.cpp
+                                                      PoseStampedRosPublisher.h
+                                                      GenericSensorRosPublisher.h)
 
   target_link_libraries(yarp_PoseStampedRosPublisher PRIVATE YARP::YARP_os
                                                              YARP::YARP_sig
@@ -167,7 +175,9 @@ yarp_prepare_plugin(MagneticFieldRosPublisher
 if(ENABLE_MagneticFieldRosPublisher)
   yarp_add_plugin(yarp_MagneticFieldRosPublisher)
 
-  target_sources(yarp_MagneticFieldRosPublisher PRIVATE MagneticFieldRosPublisher.cpp MagneticFieldRosPublisher.h GenericSensorRosPublisher.h )
+  target_sources(yarp_MagneticFieldRosPublisher PRIVATE MagneticFieldRosPublisher.cpp
+                                                        MagneticFieldRosPublisher.h
+                                                        GenericSensorRosPublisher.h)
 
   target_link_libraries(yarp_MagneticFieldRosPublisher PRIVATE YARP::YARP_os
                                                                YARP::YARP_sig

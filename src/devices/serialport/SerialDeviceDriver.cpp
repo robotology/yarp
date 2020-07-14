@@ -11,6 +11,7 @@
 #include "SerialDeviceDriver.h"
 
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -21,6 +22,10 @@ using namespace yarp::dev;
 #define MAX_FLUSHED_BYTES 10000
 
 //inline SerialHandler& RES(void *res) { return *(SerialHandler *)res; }
+
+namespace {
+YARP_LOG_COMPONENT(SERIALPORT, "yarp.device.serialport")
+}
 
 SerialDeviceDriver::SerialDeviceDriver() {
     //system_resources = (SerialHandler*) new SerialHandler();
@@ -38,13 +43,13 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
     //if(RES(system_resources).initialize(config.CommChannel, config.SerialParams) < 0)
     //    return false;
     //RES(system_resources).setCommandSender(this);
-    //yTrace("SerialHandler::initialize");
-    yInfo("Starting Serial Port in %s \n", config.CommChannel);
+    //yCTrace(SERIALPORT, "SerialHandler::initialize");
+    yCInfo(SERIALPORT, "Starting Serial Port in %s \n", config.CommChannel);
 
     // Initialize serial port
     if(_serialConnector.connect(_serial_dev, ACE_DEV_Addr(config.CommChannel)) == -1)
     {
-        yError("Invalid communications port in %s: %s\n", config.CommChannel, strerror(errno));
+        yCError(SERIALPORT, "Invalid communications port in %s: %s\n", config.CommChannel, strerror(errno));
         return false;
     }
 
@@ -52,7 +57,7 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
     // Set TTY_IO parameter into the ACE_TTY_IO device(_serial_dev)
     if (_serial_dev.control (ACE_TTY_IO::SETPARAMS, &config.SerialParams) == -1)
     {
-        yError("Can not control communications port %s \n", config.CommChannel);
+        yCError(SERIALPORT, "Can not control communications port %s \n", config.CommChannel);
         return false;
     }
 
@@ -120,7 +125,7 @@ bool SerialDeviceDriver::send(const Bottle& msg)
         {
             if (verbose)
             {
-                yDebug("Sending string: %s", msg.get(0).asString().c_str());
+                yCDebug(SERIALPORT, "Sending string: %s", msg.get(0).asString().c_str());
             }
 
             // Write message to the serial device
@@ -128,19 +133,19 @@ bool SerialDeviceDriver::send(const Bottle& msg)
 
             if (bytes_written == -1)
             {
-                yError("Unable to write to serial port");
+                yCError(SERIALPORT, "Unable to write to serial port");
                 return false;
             }
         }
         else
         {
-           if (verbose) yDebug("The input command bottle contains an empty string.");
+           if (verbose) yCDebug(SERIALPORT, "The input command bottle contains an empty string.");
            return false;
         }
     }
     else
     {
-        if (verbose) yDebug("The input command bottle is empty. \n");
+        if (verbose) yCDebug(SERIALPORT, "The input command bottle is empty. \n");
         return false;
     }
 
@@ -153,7 +158,7 @@ bool SerialDeviceDriver::send(char *msg, size_t size)
     {
         if (verbose)
         {
-            yDebug("Sending string: %s", msg);
+            yCDebug(SERIALPORT, "Sending string: %s", msg);
         }
 
         // Write message in the serial device
@@ -161,13 +166,13 @@ bool SerialDeviceDriver::send(char *msg, size_t size)
 
         if (bytes_written == -1)
         {
-            yError("Unable to write to serial port");
+            yCError(SERIALPORT, "Unable to write to serial port");
             return false;
         }
     }
     else
     {
-        if (verbose) yDebug("The input message is empty. \n");
+        if (verbose) yCDebug(SERIALPORT, "The input message is empty. \n");
         return false;
     }
 
@@ -183,7 +188,7 @@ int SerialDeviceDriver::receiveChar(char& c)
 
     if (bytes_read == -1)
     {
-        yError("Error in SerialDeviceDriver::receive()");
+        yCError(SERIALPORT, "Error in SerialDeviceDriver::receive()");
         return 0;
     }
 
@@ -270,7 +275,7 @@ bool SerialDeviceDriver::receive(Bottle& msg)
 
     if (bytes_read == -1)
     {
-        yError("Error in SerialDeviceDriver::receive()");
+        yCError(SERIALPORT, "Error in SerialDeviceDriver::receive()");
         return false;
     }
 
@@ -281,7 +286,7 @@ bool SerialDeviceDriver::receive(Bottle& msg)
 
     if (verbose)
     {
-        yDebug("Data received from serial device: %s", message);
+        yCDebug(SERIALPORT, "Data received from serial device: %s", message);
     }
 
 

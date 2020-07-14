@@ -18,7 +18,6 @@
 
 #include "PortAudioPlayerDeviceDriver.h"
 
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <portaudio.h>
@@ -26,6 +25,7 @@
 #include <yarp/dev/api.h>
 
 #include <yarp/os/Time.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <mutex>
 
@@ -52,6 +52,12 @@ typedef unsigned char SAMPLE;
 #define SAMPLE_SILENCE  (128)
 #define SAMPLE_UNSIGNED
 #endif
+
+
+namespace {
+YARP_LOG_COMPONENT(PORTAUDIOPLAYER, "yarp.devices.portaudioPlayer")
+}
+
 
 /* This routine will be called by the PortAudio engine when audio is needed.
 ** It may be called at interrupt level on some machines so don't do anything
@@ -105,7 +111,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         else
         {
 #if 0
-            yDebug() << "Reading" << framesPerBuffer*2 << "bytes from the circular buffer";
+            yCDebug(PORTAUDIOPLAYER) << "Reading" << framesPerBuffer*2 << "bytes from the circular buffer";
 #endif
             for( i=0; i<framesPerBuffer; i++ )
             {
@@ -120,7 +126,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         return finished;
     }
 
-    printf("No read operations requested, aborting\n");
+    yCError(PORTAUDIOPLAYER, "No read operations requested, aborting");
     return paAbort;
 }
 
@@ -157,7 +163,7 @@ void PlayStreamThread::run()
             }
             if (err == 0)
             {
-                yDebug() << "The playback stream has been stopped";
+                yCDebug(PORTAUDIOPLAYER) << "The playback stream has been stopped";
             }
             if( err < 0 )
             {
@@ -185,9 +191,9 @@ void PlayStreamThread::handleError()
     Pa_Terminate();
     if( err != paNoError )
     {
-        yError( "An error occurred while using the portaudio stream\n" );
-        yError( "Error number: %d\n", err );
-        yError( "Error message: %s\n", Pa_GetErrorText( err ) );
+        yCError(PORTAUDIOPLAYER,  "An error occurred while using the portaudio stream" );
+        yCError(PORTAUDIOPLAYER,  "Error number: %d", err );
+        yCError(PORTAUDIOPLAYER,  "Error message: %s", Pa_GetErrorText( err ) );
     }
 }
 
@@ -244,7 +250,7 @@ bool PortAudioPlayerDeviceDriver::open(PortAudioPlayerDeviceDriverSettings& conf
     m_err = Pa_Initialize();
     if(m_err != paNoError )
     {
-        yError("portaudio system failed to initialize");
+        yCError(PORTAUDIOPLAYER, "portaudio system failed to initialize");
         return false;
     }
 
@@ -266,9 +272,9 @@ bool PortAudioPlayerDeviceDriver::open(PortAudioPlayerDeviceDriverSettings& conf
 
     if(m_err != paNoError )
     {
-        yError("An error occurred while using the portaudio stream\n" );
-        yError("Error number: %d\n", m_err );
-        yError("Error message: %s\n", Pa_GetErrorText(m_err ) );
+        yCError(PORTAUDIOPLAYER, "An error occurred while using the portaudio stream" );
+        yCError(PORTAUDIOPLAYER, "Error number: %d", m_err );
+        yCError(PORTAUDIOPLAYER, "Error message: %s", Pa_GetErrorText(m_err ) );
     }
 
     //start the thread
@@ -285,9 +291,9 @@ void PortAudioPlayerDeviceDriver::handleError()
 
     if(m_err != paNoError )
     {
-        yError( "An error occurred while using the portaudio stream\n" );
-        yError( "Error number: %d\n", m_err );
-        yError( "Error message: %s\n", Pa_GetErrorText(m_err ) );
+        yCError(PORTAUDIOPLAYER,  "An error occurred while using the portaudio stream" );
+        yCError(PORTAUDIOPLAYER,  "Error number: %d", m_err );
+        yCError(PORTAUDIOPLAYER,  "Error message: %s", Pa_GetErrorText(m_err ) );
     }
 }
 
@@ -299,9 +305,9 @@ bool PortAudioPlayerDeviceDriver::close()
         m_err = Pa_CloseStream(m_stream );
         if(m_err != paNoError )
         {
-            yError( "An error occurred while closing the portaudio stream\n" );
-            yError( "Error number: %d\n", m_err );
-            yError( "Error message: %s\n", Pa_GetErrorText(m_err ) );
+            yCError(PORTAUDIOPLAYER,  "An error occurred while closing the portaudio stream" );
+            yCError(PORTAUDIOPLAYER,  "Error number: %d", m_err );
+            yCError(PORTAUDIOPLAYER,  "Error message: %s", Pa_GetErrorText(m_err ) );
         }
     }
 
@@ -316,13 +322,13 @@ bool PortAudioPlayerDeviceDriver::close()
 
 bool PortAudioPlayerDeviceDriver::abortSound()
 {
-    yInfo("=== Stopping and clearing stream.===\n"); fflush(stdout);
+    yCInfo(PORTAUDIOPLAYER, "=== Stopping and clearing stream.==="); fflush(stdout);
     m_err = Pa_StopStream(m_stream );
     if(m_err != paNoError )
     {
-        yError("abortSound: error occurred while stopping the portaudio stream\n" );
-        yError("Error number: %d\n", m_err );
-        yError("Error message: %s\n", Pa_GetErrorText(m_err ) );
+        yCError(PORTAUDIOPLAYER, "abortSound: error occurred while stopping the portaudio stream" );
+        yCError(PORTAUDIOPLAYER, "Error number: %d", m_err );
+        yCError(PORTAUDIOPLAYER, "Error message: %s", Pa_GetErrorText(m_err ) );
     }
 
     m_playDataBuffer->clear();
@@ -355,12 +361,12 @@ bool PortAudioPlayerDeviceDriver::renderSound(const yarp::sig::Sound& sound)
     size_t chans = sound.getChannels();
     if (freq == 0)
     {
-        yError() << "received a bad audio sample of frequency 0";
+        yCError(PORTAUDIOPLAYER) << "received a bad audio sample of frequency 0";
         return false;
     }
     if (chans == 0)
     {
-        yError() << "received a bad audio sample with 0 channels";
+        yCError(PORTAUDIOPLAYER) << "received a bad audio sample with 0 channels";
         return false;
     }
 
@@ -374,8 +380,8 @@ bool PortAudioPlayerDeviceDriver::renderSound(const yarp::sig::Sound& sound)
         }
 
         //reset the driver
-        yInfo("***** audio driver configuration changed, resetting");
-        yInfo() << "changing from: " << this->m_config.cfg_playChannels << "channels, " <<  this->m_config.cfg_rate << " Hz, ->" <<
+        yCInfo(PORTAUDIOPLAYER, "***** audio driver configuration changed, resetting");
+        yCInfo(PORTAUDIOPLAYER) << "changing from: " << this->m_config.cfg_playChannels << "channels, " <<  this->m_config.cfg_rate << " Hz, ->" <<
                                                     chans << "channels, " <<  freq << " Hz";
         this->close();
         m_driverConfig.cfg_playChannels = (int)(chans);
@@ -383,7 +389,7 @@ bool PortAudioPlayerDeviceDriver::renderSound(const yarp::sig::Sound& sound)
         bool ok = open(m_driverConfig);
         if (ok == false)
         {
-            yError("error occurred during audio driver reconfiguration, aborting");
+            yCError(PORTAUDIOPLAYER, "error occurred during audio driver reconfiguration, aborting");
             return false;
         }
     }

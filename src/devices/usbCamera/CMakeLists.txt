@@ -23,6 +23,8 @@ if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
 
   target_sources(yarp_usbCamera PRIVATE common/USBcamera.cpp
                                         common/USBcamera.h
+                                        common/USBcameraLogComponent.cpp
+                                        common/USBcameraLogComponent.h
                                         linux/V4L_camera.cpp
                                         linux/V4L_camera.h
                                         linux/list.cpp

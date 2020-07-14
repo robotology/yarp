@@ -20,6 +20,7 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include "fakeNavigationDev.h"
@@ -29,11 +30,16 @@
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 
+namespace {
+YARP_LOG_COMPONENT(FAKENAVIGATION, "yarp.device.fakeNavigation")
+}
+
+
 bool fakeNavigation :: open(yarp::os::Searchable& config)
 {
 #if 1
 
-    yDebug() << "config configuration: \n" << config.toString().c_str();
+    yCDebug(FAKENAVIGATION) << "config configuration: \n" << config.toString().c_str();
 
     std::string context_name = "robotGoto";
     std::string file_name = "robotGoto_cer.ini";
@@ -48,7 +54,7 @@ bool fakeNavigation :: open(yarp::os::Searchable& config)
     yarp::os::Property p;
     std::string configFile = rf.findFile("from");
     if (configFile != "") p.fromConfigFile(configFile.c_str());
-    yDebug() << "robotGotoDev configuration: \n" << p.toString().c_str();
+    yCDebug(FAKENAVIGATION) << "robotGotoDev configuration: \n" << p.toString().c_str();
 
 #else
     Property p;
@@ -82,85 +88,85 @@ bool fakeNavigation:: close()
 
 bool fakeNavigation::gotoTargetByAbsoluteLocation(Map2DLocation loc)
 {
-    yInfo() << "gotoTargetByAbsoluteLocation not yet implemented";
+    yCInfo(FAKENAVIGATION) << "gotoTargetByAbsoluteLocation not yet implemented";
     return true;
 }
 
 bool fakeNavigation::gotoTargetByRelativeLocation(double x, double y, double theta)
 {
-    yInfo() << "gotoTargetByRelativeLocation not yet implemented";
+    yCInfo(FAKENAVIGATION) << "gotoTargetByRelativeLocation not yet implemented";
     return true;
 }
 
 bool fakeNavigation::gotoTargetByRelativeLocation(double x, double y)
 {
-    yInfo() << "gotoTargetByRelativeLocation not yet implemented";
+    yCInfo(FAKENAVIGATION) << "gotoTargetByRelativeLocation not yet implemented";
     return true;
 }
 
 bool fakeNavigation::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
 {
-    yInfo() << "applyVelocityCommand not yet implemented";
+    yCInfo(FAKENAVIGATION) << "applyVelocityCommand not yet implemented";
     return true;
 }
 
 bool fakeNavigation::stopNavigation()
 {
-    yInfo() << "stopNavigation not yet implemented";
+    yCInfo(FAKENAVIGATION) << "stopNavigation not yet implemented";
     return true;
 }
 
 bool fakeNavigation::suspendNavigation(double time)
 {
-    yInfo() << "suspendNavigation not yet implemented";
+    yCInfo(FAKENAVIGATION) << "suspendNavigation not yet implemented";
     return true;
 }
 
 bool fakeNavigation::resumeNavigation()
 {
-    yInfo() << "resumeNavigation not yet implemented";
+    yCInfo(FAKENAVIGATION) << "resumeNavigation not yet implemented";
     return true;
 }
 
 bool fakeNavigation::getAllNavigationWaypoints(Map2DPath& waypoints)
 {
-    yInfo() << "getAllNavigationWaypoints not yet implemented";
+    yCInfo(FAKENAVIGATION) << "getAllNavigationWaypoints not yet implemented";
     return true;
 }
 
 bool fakeNavigation::getCurrentNavigationWaypoint(Map2DLocation& curr_waypoint)
 {
-    yInfo() << "getCurrentNavigationWaypoint not yet implemented";
+    yCInfo(FAKENAVIGATION) << "getCurrentNavigationWaypoint not yet implemented";
     return true;
 }
 
 bool fakeNavigation::getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, MapGrid2D& map)
 {
-    yInfo() << "getCurrentNavigationMap not yet implemented";
+    yCInfo(FAKENAVIGATION) << "getCurrentNavigationMap not yet implemented";
     return true;
 }
 
 bool fakeNavigation::getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status)
 {
-    yInfo() << "getNavigationStatus not yet implemented";
+    yCInfo(FAKENAVIGATION) << "getNavigationStatus not yet implemented";
     return true;
 }
 
 bool fakeNavigation::getAbsoluteLocationOfCurrentTarget(Map2DLocation& target)
 {
-    yInfo() << "getAbsoluteLocationOfCurrentTarget not yet implemented";
+    yCInfo(FAKENAVIGATION) << "getAbsoluteLocationOfCurrentTarget not yet implemented";
     return true;
 }
 
 bool fakeNavigation::recomputeCurrentNavigationPath()
 {
-    yInfo() << "recomputeCurrentNavigationPath not yet implemented";
+    yCInfo(FAKENAVIGATION) << "recomputeCurrentNavigationPath not yet implemented";
     return true;
 }
 
 bool fakeNavigation::getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta)
 {
-    yInfo() << "getRelativeLocationOfCurrentTarget not yet implemented";
+    yCInfo(FAKENAVIGATION) << "getRelativeLocationOfCurrentTarget not yet implemented";
     return true;
 }
 

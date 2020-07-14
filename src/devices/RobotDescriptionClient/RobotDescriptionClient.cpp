@@ -9,6 +9,7 @@
 
 #include "RobotDescriptionClient.h"
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 /*! \file RobotDescriptionClient.cpp */
@@ -16,6 +17,11 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
+
+
+namespace {
+YARP_LOG_COMPONENT(ROBOTDESCRIPTIONCLIENT, "yarp.device.robotDescriptionClient")
+}
 
 
 //------------------------------------------------------------------------------------------------------------------------------
@@ -30,13 +36,13 @@ bool RobotDescriptionClient::open(yarp::os::Searchable &config)
 
     if (m_local_name == "")
     {
-        yError("RobotDescriptionClient::open() error you have to provide valid local name");
+        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Invalid local name");
         return false;
     }
 
     if (m_remote_name == "")
     {
-        yError("RobotDescriptionClient::open() error you have to provide valid remote name");
+        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Invalid remote name");
         return false;
     }
 
@@ -47,7 +53,7 @@ bool RobotDescriptionClient::open(yarp::os::Searchable &config)
 
     if (!m_rpc_port.open(local_rpc))
     {
-        yError("RobotDescriptionClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
+        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Could not open rpc port %s, check network", local_rpc.c_str());
         return false;
     }
 
@@ -57,7 +63,7 @@ bool RobotDescriptionClient::open(yarp::os::Searchable &config)
     ok = Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
-        yError("RobotDescriptionClient::open() error could not connect to %s", remote_rpc.c_str());
+        yCError(ROBOTDESCRIPTIONCLIENT, "open(): Could not connect to %s", remote_rpc.c_str());
         return false;
     }
 
@@ -87,7 +93,7 @@ bool RobotDescriptionClient::getAllDevicesByType(const std::string &type, std::v
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "RobotDescriptionClient::getAllDevices() received error from server";
+            yCError(ROBOTDESCRIPTIONCLIENT) << "getAllDevices(): Received error from server";
             return false;
         }
         else
@@ -105,7 +111,7 @@ bool RobotDescriptionClient::getAllDevicesByType(const std::string &type, std::v
     }
     else
     {
-        yError() << "RobotDescriptionClient: error on writing on rpc port";
+        yCError(ROBOTDESCRIPTIONCLIENT) << "Error on writing on rpc port";
         return false;
     }
     return true;
@@ -125,13 +131,13 @@ bool RobotDescriptionClient::unregisterDevice(const std::string& device_name)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "RobotDescriptionClient::unregisterDevice() received error from server";
+            yCError(ROBOTDESCRIPTIONCLIENT) << "unregisterDevice(): Received error from server";
             return false;
         }
     }
     else
     {
-        yError() << "RobotDescriptionClient: error on writing on rpc port";
+        yCError(ROBOTDESCRIPTIONCLIENT) << "Error on writing on rpc port";
         return false;
     }
     return true;
@@ -152,13 +158,13 @@ bool RobotDescriptionClient::registerDevice(const DeviceDescription& dev)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "RobotDescriptionClient::registerDevice() received error from server";
+            yCError(ROBOTDESCRIPTIONCLIENT) << "registerDevice(): Received error from server";
             return false;
         }
     }
     else
     {
-        yError() << "RobotDescriptionClient: error on writing on rpc port";
+        yCError(ROBOTDESCRIPTIONCLIENT) << "Error on writing on rpc port";
         return false;
     }
     return true;
@@ -178,7 +184,7 @@ bool RobotDescriptionClient::getAllDevices(std::vector<DeviceDescription>& dev_l
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "RobotDescriptionClient::getAllDevices() received error from server";
+            yCError(ROBOTDESCRIPTIONCLIENT) << "getAllDevices(): Received error from server";
             return false;
         }
         else
@@ -196,7 +202,7 @@ bool RobotDescriptionClient::getAllDevices(std::vector<DeviceDescription>& dev_l
     }
     else
     {
-        yError() << "RobotDescriptionClient: error on writing on rpc port";
+        yCError(ROBOTDESCRIPTIONCLIENT) << "Error on writing on rpc port";
         return false;
     }
     return true;

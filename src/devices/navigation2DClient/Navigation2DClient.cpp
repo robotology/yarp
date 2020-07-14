@@ -19,6 +19,7 @@
 #include "Navigation2DClient.h"
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <mutex>
 #include <cmath>
@@ -30,6 +31,9 @@ using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
 using namespace yarp::sig;
 
+namespace {
+YARP_LOG_COMPONENT(NAVIGATION2DCLIENT, "yarp.device.navigation2DClient")
+}
 
 bool Navigation2DClient::set_current_goal_name(const std::string& name)
 {
@@ -69,25 +73,25 @@ bool Navigation2DClient::open(yarp::os::Searchable &config)
 
     if (m_local_name == "")
     {
-        yError("Navigation2DClient::open() error you have to provide a valid 'local' param");
+        yCError(NAVIGATION2DCLIENT, "open() error you have to provide a valid 'local' param");
         return false;
     }
 
     if (m_navigation_server_name == "")
     {
-        yError("Navigation2DClient::open() error you have to provide a valid 'navigation_server' param");
+        yCError(NAVIGATION2DCLIENT, "open() error you have to provide a valid 'navigation_server' param");
         return false;
     }
 
     if (m_map_locations_server_name == "")
     {
-        yError("Navigation2DClient::open() error you have to provide valid 'map_locations_server' param");
+        yCError(NAVIGATION2DCLIENT, "open() error you have to provide valid 'map_locations_server' param");
         return false;
     }
 
     if (m_localization_server_name == "")
     {
-        yError("Navigation2DClient::open() error you have to provide valid 'localization_server' param");
+        yCError(NAVIGATION2DCLIENT, "open() error you have to provide valid 'localization_server' param");
         return false;
     }
 
@@ -98,7 +102,7 @@ bool Navigation2DClient::open(yarp::os::Searchable &config)
     else
     {
         m_period = 10;
-        yWarning("Navigation2DClient: using default period of %d ms" , m_period);
+        yCWarning(NAVIGATION2DCLIENT, "Using default period of %d ms" , m_period);
     }
 
     std::string
@@ -124,19 +128,19 @@ bool Navigation2DClient::open(yarp::os::Searchable &config)
 
     if (!m_rpc_port_navigation_server.open(local_rpc_1))
     {
-        yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_1.c_str());
+        yCError(NAVIGATION2DCLIENT, "open() error could not open rpc port %s, check network", local_rpc_1.c_str());
         return false;
     }
 
     if (!m_rpc_port_map_locations_server.open(local_rpc_2))
     {
-        yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_2.c_str());
+        yCError(NAVIGATION2DCLIENT, "open() error could not open rpc port %s, check network", local_rpc_2.c_str());
         return false;
     }
 
     if (!m_rpc_port_localization_server.open(local_rpc_3))
     {
-        yError("Navigation2DClient::open() error could not open rpc port %s, check network", local_rpc_3.c_str());
+        yCError(NAVIGATION2DCLIENT, "open() error could not open rpc port %s, check network", local_rpc_3.c_str());
         return false;
     }
 
@@ -145,27 +149,27 @@ bool Navigation2DClient::open(yarp::os::Searchable &config)
     ok = Network::connect(local_rpc_1, remote_rpc_1);
     if (!ok)
     {
-        yError("Navigation2DClient::open() error could not connect to %s", remote_rpc_1.c_str());
+        yCError(NAVIGATION2DCLIENT, "open() error could not connect to %s", remote_rpc_1.c_str());
         return false;
     }
 
     ok = Network::connect(local_rpc_2, remote_rpc_2);
     if (!ok)
     {
-        yError("Navigation2DClient::open() error could not connect to %s", remote_rpc_2.c_str());
+        yCError(NAVIGATION2DCLIENT, "open() error could not connect to %s", remote_rpc_2.c_str());
         return false;
     }
 
     ok = Network::connect(local_rpc_3, remote_rpc_3);
     if (!ok)
     {
-        yError("Navigation2DClient::open() error could not connect to %s", remote_rpc_3.c_str());
+        yCError(NAVIGATION2DCLIENT, "open() error could not connect to %s", remote_rpc_3.c_str());
         return false;
     }
 
     if (!m_rpc_port_user_commands.open(local_rpc_4.c_str()))
     {
-        yError("Navigation2DServer: failed to open port %s", local_rpc_4.c_str());
+        yCError(NAVIGATION2DCLIENT, "Failed to open port %s", local_rpc_4.c_str());
         return false;
     }
     m_rpc_port_user_commands.setReader(*this);
@@ -186,7 +190,7 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
 {
     if (command.get(0).isString() == false)
     {
-        yError() << "General error in Navigation2DClient::parse_respond_string";
+        yCError(NAVIGATION2DCLIENT) << "General error in parse_respond_string";
         return false;
     }
 
@@ -453,7 +457,7 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
         }
         else
         {
-            yError() << "get_last_target failed: goto <location_name> target not found.";
+            yCError(NAVIGATION2DCLIENT) << "get_last_target failed: goto <location_name> target not found.";
             reply.addString("not found");
         }
     }
@@ -487,7 +491,7 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
     }
     else
     {
-        yError() << "Unknown command";
+        yCError(NAVIGATION2DCLIENT) << "Unknown command";
         reply.addVocab(VOCAB_ERR);
     }
     return true;
@@ -507,7 +511,7 @@ bool Navigation2DClient::read(yarp::os::ConnectionReader& connection)
     }
     else
     {
-        yError() << "Invalid command type";
+        yCError(NAVIGATION2DCLIENT) << "Invalid command type";
         reply.addVocab(VOCAB_ERR);
     }
 
@@ -531,7 +535,7 @@ bool Navigation2DClient::getNavigationStatus(NavigationStatusEnum& status)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getNavigationStatus() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "getNavigationStatus() received error from navigation server";
             return false;
         }
         else
@@ -542,7 +546,7 @@ bool Navigation2DClient::getNavigationStatus(NavigationStatusEnum& status)
     }
     else
     {
-        yError() << "Navigation2DClient::getNavigationStatus() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getNavigationStatus() error on writing on rpc port";
         return false;
     }
     return true;
@@ -565,13 +569,13 @@ bool Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::gotoTargetByAbsoluteLocation() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "gotoTargetByAbsoluteLocation() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::gotoTargetByAbsoluteLocation() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "gotoTargetByAbsoluteLocation() error on writing on rpc port";
         return false;
     }
 
@@ -583,8 +587,8 @@ bool Navigation2DClient::locations_are_similar(Map2DLocation loc1, Map2DLocation
 {
     if (linear_tolerance < 0) return false;
     if (angular_tolerance < 0) return false;
-    yAssert(linear_tolerance >= 0);
-    yAssert(angular_tolerance >= 0);
+    yCAssert(NAVIGATION2DCLIENT, linear_tolerance >= 0);
+    yCAssert(NAVIGATION2DCLIENT, angular_tolerance >= 0);
 
     if (loc1.map_id != loc2.map_id)
     {
@@ -608,7 +612,7 @@ bool Navigation2DClient::checkNearToLocation(Map2DLocation loc, double linear_to
     Map2DLocation curr_loc;
     if (getCurrentPosition(curr_loc) == false)
     {
-        yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
+        yCError(NAVIGATION2DCLIENT) << "checkInsideArea() unable to get robot position";
         return false;
     }
 
@@ -623,13 +627,13 @@ bool Navigation2DClient::checkNearToLocation(std::string location_name, double l
     Map2DLocation curr_loc;
     if (this->getLocation(location_name, loc) == false)
     {
-        yError() << "Location" << location_name << "not found";
+        yCError(NAVIGATION2DCLIENT) << "Location" << location_name << "not found";
         return false;
     }
 
     if (getCurrentPosition(curr_loc) == false)
     {
-        yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
+        yCError(NAVIGATION2DCLIENT) << "checkInsideArea() unable to get robot position";
         return false;
     }
 
@@ -641,13 +645,13 @@ bool  Navigation2DClient::checkInsideArea(Map2DArea area)
     Map2DLocation curr_loc;
     if (getCurrentPosition(curr_loc) == false)
     {
-        yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
+        yCError(NAVIGATION2DCLIENT) << "checkInsideArea() unable to get robot position";
         return false;
     }
 
     if (area.checkLocationInsideArea(curr_loc) == false)
     {
-        //yDebug() << "Not inside Area";
+        //yCDebug(NAVIGATION2DCLIENT) << "Not inside Area";
         return false;
     }
 
@@ -660,19 +664,19 @@ bool Navigation2DClient::checkInsideArea(std::string area_name)
     Map2DArea area;
     if (this->getArea(area_name, area) == false)
     {
-        yError() << "Area" << area_name << "not found";
+        yCError(NAVIGATION2DCLIENT) << "Area" << area_name << "not found";
         return false;
     }
 
     if (getCurrentPosition(curr_loc) == false)
     {
-        yError() << "Navigation2DClient::checkInsideArea() unable to get robot position";
+        yCError(NAVIGATION2DCLIENT) << "checkInsideArea() unable to get robot position";
         return false;
     }
 
     if (area.checkLocationInsideArea(curr_loc) == false)
     {
-        //yDebug() << "Not inside Area";
+        //yCDebug(NAVIGATION2DCLIENT) << "Not inside Area";
         return false;
     }
 
@@ -700,7 +704,7 @@ bool Navigation2DClient::gotoTargetByLocationName(std::string location_name)
     //...if it is neither a location, nor an area then quit...
     if (found == false)
     {
-        yError() << "Location not found";
+        yCError(NAVIGATION2DCLIENT) << "Location not found";
         return false;
     }
 
@@ -726,13 +730,13 @@ bool Navigation2DClient::gotoTargetByRelativeLocation(double x, double y)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::gotoTargetByRelativeLocation() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "gotoTargetByRelativeLocation() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::gotoTargetByRelativeLocation() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "gotoTargetByRelativeLocation() error on writing on rpc port";
         return false;
     }
 
@@ -756,13 +760,13 @@ bool Navigation2DClient::gotoTargetByRelativeLocation(double x, double y, double
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::gotoTargetByRelativeLocation() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "gotoTargetByRelativeLocation() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::gotoTargetByRelativeLocation() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "gotoTargetByRelativeLocation() error on writing on rpc port";
         return false;
     }
 
@@ -783,13 +787,13 @@ bool  Navigation2DClient::recomputeCurrentNavigationPath()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::recomputeCurrentNavigationPath() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "recomputeCurrentNavigationPath() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::recomputeCurrentNavigationPath() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "recomputeCurrentNavigationPath() error on writing on rpc port";
         return false;
     }
     return true;
@@ -812,13 +816,13 @@ bool  Navigation2DClient::setInitialPose(const Map2DLocation& loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::setInitialPose() received error from localization server";
+            yCError(NAVIGATION2DCLIENT) << "setInitialPose() received error from localization server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::setInitialPose() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "setInitialPose() error on writing on rpc port";
         return false;
     }
     return true;
@@ -828,7 +832,7 @@ bool Navigation2DClient::setInitialPose(const Map2DLocation& loc, const yarp::si
 {
     if (cov.rows() != 3 || cov.cols() != 3)
     {
-        yError() << "Covariance matrix is expected to have size (3,3)";
+        yCError(NAVIGATION2DCLIENT) << "Covariance matrix is expected to have size (3,3)";
         return false;
     }
     yarp::os::Bottle b;
@@ -848,13 +852,13 @@ bool Navigation2DClient::setInitialPose(const Map2DLocation& loc, const yarp::si
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Localization2DClient::setInitialPose() received error from localization server";
+            yCError(NAVIGATION2DCLIENT) << "setInitialPose() received error from localization server";
             return false;
         }
     }
     else
     {
-        yError() << "Localization2DClient::setInitialPose() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "setInitialPose() error on writing on rpc port";
         return false;
     }
     return true;
@@ -873,14 +877,14 @@ bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matr
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 6)
         {
-            yError() << "Localization2DClient::getCurrentPosition() received error from localization server";
+            yCError(NAVIGATION2DCLIENT) << "getCurrentPosition() received error from localization server";
             return false;
         }
         else
         {
             if (cov.rows() != 3 || cov.cols() != 3)
             {
-                yDebug() << "Performance warning: covariance matrix is not (3,3), resizing...";
+                yCDebug(NAVIGATION2DCLIENT) << "Performance warning: covariance matrix is not (3,3), resizing...";
                 cov.resize(3, 3);
             }
             loc.map_id = resp.get(1).asString();
@@ -895,7 +899,7 @@ bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matr
     }
     else
     {
-        yError() << "Localization2DClient::getCurrentPosition() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getCurrentPosition() error on writing on rpc port";
         return false;
     }
     return true;
@@ -903,7 +907,7 @@ bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matr
 
 bool  Navigation2DClient::getEstimatedOdometry(yarp::dev::OdometryData& odom)
 {
-    yError() << " Localization2DClient::getEstimatedOdometry is not yet implemented";
+    yCError(NAVIGATION2DCLIENT) << " getEstimatedOdometry is not yet implemented";
     return false;
 }
 
@@ -920,7 +924,7 @@ bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
         {
-            yError() << "Navigation2DClient::getCurrentPosition() received error from localization server";
+            yCError(NAVIGATION2DCLIENT) << "getCurrentPosition() received error from localization server";
             return false;
         }
         else
@@ -934,7 +938,7 @@ bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc)
     }
     else
     {
-        yError() << "Navigation2DClient::getCurrentPosition() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getCurrentPosition() error on writing on rpc port";
         return false;
     }
     return true;
@@ -954,13 +958,13 @@ bool Navigation2DClient::suspendNavigation(const double time_s)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::suspendNavigation() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "suspendNavigation() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::suspendNavigation() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "suspendNavigation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -979,7 +983,7 @@ bool Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLocation &loc)
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
         {
-            yError() << "Navigation2DClient::getAbsoluteLocationOfCurrentTarget() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "getAbsoluteLocationOfCurrentTarget() received error from navigation server";
             return false;
         }
         else
@@ -993,7 +997,7 @@ bool Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLocation &loc)
     }
     else
     {
-        yError() << "Navigation2DClient::getAbsoluteLocationOfCurrentTarget() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getAbsoluteLocationOfCurrentTarget() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1009,7 +1013,7 @@ bool Navigation2DClient::getNameOfCurrentTarget(std::string& location_name)
     }
 
     location_name = "";
-    yError() << "No name for the current target, or no target set";
+    yCError(NAVIGATION2DCLIENT) << "No name for the current target, or no target set";
     return true;
 }
 
@@ -1026,7 +1030,7 @@ bool Navigation2DClient::getRelativeLocationOfCurrentTarget(double& x, double& y
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size()!=4)
         {
-            yError() << "Navigation2DClient::getRelativeLocationOfCurrentTarget() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "getRelativeLocationOfCurrentTarget() received error from navigation server";
             return false;
         }
         else
@@ -1039,7 +1043,7 @@ bool Navigation2DClient::getRelativeLocationOfCurrentTarget(double& x, double& y
     }
     else
     {
-        yError() << "Navigation2DClient::getRelativeLocationOfCurrentTarget() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getRelativeLocationOfCurrentTarget() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1060,7 +1064,7 @@ bool Navigation2DClient::storeCurrentPosition(std::string location_name)
     {
         if (resp_nav.get(0).asVocab() != VOCAB_OK || resp_nav.size()!=5)
         {
-            yError() << "Navigation2DClient::storeCurrentPosition() received error from localization server";
+            yCError(NAVIGATION2DCLIENT) << "storeCurrentPosition() received error from localization server";
             return false;
         }
         else
@@ -1073,7 +1077,7 @@ bool Navigation2DClient::storeCurrentPosition(std::string location_name)
     }
     else
     {
-        yError() << "Navigation2DClient::storeCurrentPosition() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "storeCurrentPosition() error on writing on rpc port";
         return false;
     }
 
@@ -1091,13 +1095,13 @@ bool Navigation2DClient::storeCurrentPosition(std::string location_name)
     {
         if (resp_loc.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::storeCurrentPosition() received error from locations server";
+            yCError(NAVIGATION2DCLIENT) << "storeCurrentPosition() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::storeCurrentPosition() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "storeCurrentPosition() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1122,13 +1126,13 @@ bool Navigation2DClient::storeLocation(std::string location_name, Map2DLocation 
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::storeLocation() received error from locations server";
+            yCError(NAVIGATION2DCLIENT) << "storeLocation() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::storeLocation() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "storeLocation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1148,7 +1152,7 @@ bool Navigation2DClient::getLocationsList(std::vector<std::string>& locations)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getLocationsList() received error from locations server";
+            yCError(NAVIGATION2DCLIENT) << "getLocationsList() received error from locations server";
             return false;
         }
         else
@@ -1165,14 +1169,14 @@ bool Navigation2DClient::getLocationsList(std::vector<std::string>& locations)
             }
             else
             {
-                yError() << "Navigation2DClient::getLocationsList() error while reading from locations server";
+                yCError(NAVIGATION2DCLIENT) << "getLocationsList() error while reading from locations server";
                 return false;
             }
         }
     }
     else
     {
-        yError() << "Navigation2DClient::getLocationsList() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getLocationsList() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1193,7 +1197,7 @@ bool Navigation2DClient::getLocation(std::string location_name, Map2DLocation& l
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getLocation() received error from locations server";
+            yCError(NAVIGATION2DCLIENT) << "getLocation() received error from locations server";
             return false;
         }
         else
@@ -1206,7 +1210,7 @@ bool Navigation2DClient::getLocation(std::string location_name, Map2DLocation& l
     }
     else
     {
-        yError() << "Navigation2DClient::getLocation() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getLocation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1229,7 +1233,7 @@ bool Navigation2DClient::getArea(std::string area_name, Map2DArea& area)
         {
             if (resp_loc.get(0).asVocab() != VOCAB_OK)
             {
-                yError() << "Navigation2DClient::getArea() received error from locations server";
+                yCError(NAVIGATION2DCLIENT) << "getArea() received error from locations server";
                 return false;
             }
             else
@@ -1237,14 +1241,14 @@ bool Navigation2DClient::getArea(std::string area_name, Map2DArea& area)
                 Value& b = resp_loc.get(1);
                 if (Property::copyPortable(b, area) == false)
                 {
-                    yError() << "Navigation2DClient::getArea() received error from locations server";
+                    yCError(NAVIGATION2DCLIENT) << "getArea() received error from locations server";
                     return false;
                 }
             }
         }
         else
         {
-            yError() << "Navigation2DClient::getArea() error on writing on rpc port";
+            yCError(NAVIGATION2DCLIENT) << "getArea() error on writing on rpc port";
             return false;
         }
     }
@@ -1266,13 +1270,13 @@ bool Navigation2DClient::deleteLocation(std::string location_name)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::deleteLocation() received error from locations server";
+            yCError(NAVIGATION2DCLIENT) << "deleteLocation() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::deleteLocation() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "deleteLocation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1292,13 +1296,13 @@ bool Navigation2DClient::clearAllLocations()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::clearAllLocations() received error from locations server";
+            yCError(NAVIGATION2DCLIENT) << "clearAllLocations() received error from locations server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::clearAllLocations() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "clearAllLocations() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1317,13 +1321,13 @@ bool Navigation2DClient::stopNavigation()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::stopNavigation() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "stopNavigation() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::stopNavigation() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "stopNavigation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1342,13 +1346,13 @@ bool Navigation2DClient::resumeNavigation()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::resumeNavigation() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "resumeNavigation() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::resumeNavigation() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "resumeNavigation() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1367,18 +1371,18 @@ bool   Navigation2DClient::getAllNavigationWaypoints(Map2DPath& waypoints)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getNavigationWaypoints() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "getNavigationWaypoints() received error from navigation server";
             return false;
         }
         else if (resp.get(1).isList() && resp.get(1).asList()->size()>0)
         {
             waypoints.clear();
             Bottle* waypoints_bottle = resp.get(1).asList();
-            if (waypoints_bottle == 0) { yError() << "getNavigationWaypoints parsing error"; return false; }
+            if (waypoints_bottle == 0) { yCError(NAVIGATION2DCLIENT) << "getNavigationWaypoints parsing error"; return false; }
             for (size_t i = 0; i < waypoints_bottle->size(); i++)
             {
                 Bottle* the_waypoint = waypoints_bottle->get(i).asList();
-                if (the_waypoint == 0) { yError() << "getNavigationWaypoints parsing error"; return false; }
+                if (the_waypoint == 0) { yCError(NAVIGATION2DCLIENT) << "getNavigationWaypoints parsing error"; return false; }
                 Map2DLocation loc;
                 loc.map_id = the_waypoint->get(0).asString();
                 loc.x = the_waypoint->get(1).asFloat64();
@@ -1397,7 +1401,7 @@ bool   Navigation2DClient::getAllNavigationWaypoints(Map2DPath& waypoints)
     }
     else
     {
-        yError() << "Navigation2DClient::getCurrentPosition() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getCurrentPosition() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1416,7 +1420,7 @@ bool   Navigation2DClient::getCurrentNavigationWaypoint(Map2DLocation& curr_wayp
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getCurrentNavigationWaypoint() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "getCurrentNavigationWaypoint() received error from navigation server";
             return false;
         }
         else if (resp.size() == 5)
@@ -1439,7 +1443,7 @@ bool   Navigation2DClient::getCurrentNavigationWaypoint(Map2DLocation& curr_wayp
     }
     else
     {
-        yError() << "Navigation2DClient::getCurrentPosition() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getCurrentPosition() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1459,7 +1463,7 @@ bool Navigation2DClient::getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMap
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getCurrentNavigationMap() received error from server";
+            yCError(NAVIGATION2DCLIENT) << "getCurrentNavigationMap() received error from server";
             return false;
         }
         else
@@ -1471,14 +1475,14 @@ bool Navigation2DClient::getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMap
             }
             else
             {
-                yError() << "Navigation2DClient::getCurrentNavigationMap() failed copyPortable()";
+                yCError(NAVIGATION2DCLIENT) << "getCurrentNavigationMap() failed copyPortable()";
                 return false;
             }
         }
     }
     else
     {
-        yError() << "Navigation2DClient::getCurrentNavigationMap() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getCurrentNavigationMap() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1497,7 +1501,7 @@ bool  Navigation2DClient::getLocalizationStatus(yarp::dev::Nav2D::LocalizationSt
     {
         if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 2)
         {
-            yError() << "Navigation2DClient::getLocalizationStatus() received error from localization server";
+            yCError(NAVIGATION2DCLIENT) << "getLocalizationStatus() received error from localization server";
             return false;
         }
         else
@@ -1508,7 +1512,7 @@ bool  Navigation2DClient::getLocalizationStatus(yarp::dev::Nav2D::LocalizationSt
     }
     else
     {
-        yError() << "Navigation2DClient::getLocalizationStatus() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getLocalizationStatus() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1531,13 +1535,13 @@ bool  Navigation2DClient::applyVelocityCommand(double x_vel, double y_vel, doubl
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::applyVelocityCommand() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "applyVelocityCommand() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::applyVelocityCommand() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "applyVelocityCommand() error on writing on rpc port";
         return false;
     }
 
@@ -1558,7 +1562,7 @@ bool  Navigation2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::getEstimatedPoses() received error from localization server";
+            yCError(NAVIGATION2DCLIENT) << "getEstimatedPoses() received error from localization server";
             return false;
         }
         else
@@ -1579,7 +1583,7 @@ bool  Navigation2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
                 else
                 {
                     poses.clear();
-                    yError() << "Navigation2DClient::getEstimatedPoses() parsing error";
+                    yCError(NAVIGATION2DCLIENT) << "getEstimatedPoses() parsing error";
                     return false;
                 }
                 poses.push_back(loc);
@@ -1589,7 +1593,7 @@ bool  Navigation2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
     }
     else
     {
-        yError() << "Navigation2DClient::getEstimatedPoses() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "getEstimatedPoses() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1625,13 +1629,13 @@ bool  Navigation2DClient::startLocalizationService()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::startLocalizationService() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "startLocalizationService() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::startLocalizationService() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "startLocalizationService() error on writing on rpc port";
         return false;
     }
     return true;
@@ -1650,13 +1654,13 @@ bool  Navigation2DClient::stopLocalizationService()
     {
         if (resp.get(0).asVocab() != VOCAB_OK)
         {
-            yError() << "Navigation2DClient::stopLocalizationService() received error from navigation server";
+            yCError(NAVIGATION2DCLIENT) << "stopLocalizationService() received error from navigation server";
             return false;
         }
     }
     else
     {
-        yError() << "Navigation2DClient::stopLocalizationService() error on writing on rpc port";
+        yCError(NAVIGATION2DCLIENT) << "stopLocalizationService() error on writing on rpc port";
         return false;
     }
     return true;

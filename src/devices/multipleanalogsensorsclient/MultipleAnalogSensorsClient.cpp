@@ -11,6 +11,11 @@
 #include "SensorStreamingData.h"
 #include "MultipleAnalogSensorsMetadata.h"
 
+#include <yarp/os/LogComponent.h>
+
+namespace {
+YARP_LOG_COMPONENT(MULTIPLEANALOGSENSORSCLIENT, "yarp.device.multipleanalogsensorsclient")
+}
 
 void SensorStreamingDataInputPort::onRead(SensorStreamingData& v)
 {
@@ -27,7 +32,9 @@ void SensorStreamingDataInputPort::updateTimeoutStatus() const
         double now = yarp::os::Time::now();
         if ((now-lastTimeStampReadInSeconds) > this->timeoutInSeconds)
         {
-            yError("MultipleAnalogSensorsClient: no data received in the last %lf seconds, timeout enabled.", (now-lastTimeStampReadInSeconds));
+            yCError(MULTIPLEANALOGSENSORSCLIENT,
+                    "No data received in the last %lf seconds, timeout enabled.",
+                    (now-lastTimeStampReadInSeconds));
             status = yarp::dev::MAS_TIMEOUT;
         }
     }
@@ -38,19 +45,19 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
     m_externalConnection = config.check("externalConnection",yarp::os::Value(false)).asBool();
     if (!config.check("remote"))
     {
-        yError("MultipleAnalogSensorsClient: missing name parameter, exiting.");
+        yCError(MULTIPLEANALOGSENSORSCLIENT, "Missing name parameter, exiting.");
         return false;
     }
 
     if (!config.check("local"))
     {
-        yError("MultipleAnalogSensorsClient: missing local parameter, exiting.");
+        yCError(MULTIPLEANALOGSENSORSCLIENT, "Missing local parameter, exiting.");
         return false;
     }
 
     if (config.check("timeout") && !(config.find("timeout").isFloat64()))
     {
-        yError("MultipleAnalogSensorsClient: timeout parameter is present but is not double, exiting.");
+        yCError(MULTIPLEANALOGSENSORSCLIENT, "'timeout' parameter is present but is not double, exiting.");
         return false;
     }
 
@@ -72,7 +79,9 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
     bool ok = m_rpcPort.open(m_localRPCPortName);
     if (!ok)
     {
-        yError("MultipleAnalogSensorsClient: Failure to open the port %s.", m_localRPCPortName.c_str());
+        yCError(MULTIPLEANALOGSENSORSCLIENT,
+                "Failure to open the port %s.",
+                m_localRPCPortName.c_str());
         close();
         return false;
     }
@@ -81,7 +90,9 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
     m_streamingPort.useCallback();
     if (!ok)
     {
-        yError("MultipleAnalogSensorsClient: Failure to open the port %s.", m_localStreamingPortName.c_str());
+        yCError(MULTIPLEANALOGSENSORSCLIENT,
+                "Failure to open the port %s.",
+                m_localStreamingPortName.c_str());
         close();
         return false;
     }
@@ -90,9 +101,11 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
     if (!m_externalConnection) {
         ok = yarp::os::Network::connect(m_localRPCPortName, m_remoteRPCPortName);
         if (!ok) {
-            yError("MultipleAnalogSensorsClient: Failure connecting port %s to %s.", m_localRPCPortName.c_str(),
-                   m_remoteRPCPortName.c_str());
-            yError("MultipleAnalogSensorsClient: Check that the specified MultipleAnalogSensorsServer is up.");
+            yCError(MULTIPLEANALOGSENSORSCLIENT,
+                    "Failure connecting port %s to %s.",
+                    m_localRPCPortName.c_str(),
+                    m_remoteRPCPortName.c_str());
+            yCError(MULTIPLEANALOGSENSORSCLIENT, "Check that the specified MultipleAnalogSensorsServer is up.");
             close();
             return false;
         }
@@ -100,9 +113,11 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
 
         ok = yarp::os::Network::connect(m_remoteStreamingPortName, m_localStreamingPortName);
         if (!ok) {
-            yError("MultipleAnalogSensorsClient: Failure connecting port %s to %s.", m_remoteStreamingPortName.c_str(),
-                   m_localStreamingPortName.c_str());
-            yError("MultipleAnalogSensorsClient: Check that the specified MultipleAnalogSensorsServer is up.");
+            yCError(MULTIPLEANALOGSENSORSCLIENT,
+                    "Failure connecting port %s to %s.",
+                    m_remoteStreamingPortName.c_str(),
+                    m_localStreamingPortName.c_str());
+            yCError(MULTIPLEANALOGSENSORSCLIENT, "Check that the specified MultipleAnalogSensorsServer is up.");
             close();
             return false;
         }
@@ -111,7 +126,7 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
         // Once the connection is active, we just the metadata only once
         ok = m_RPCInterface.yarp().attachAsClient(m_rpcPort);
         if (!ok) {
-            yError("MultipleAnalogSensorsClient: Failure opening Thrift-based RPC interface.");
+            yCError(MULTIPLEANALOGSENSORSCLIENT, "Failure opening Thrift-based RPC interface.");
             return false;
         }
 
@@ -170,14 +185,18 @@ bool MultipleAnalogSensorsClient::genericGetName(const  std::vector<SensorMetada
                                                    size_t sens_index, std::string& name) const
 {
     if (m_externalConnection) {
-        yError("MultipleAnalogSensorsClient: missing metadata, the device has been configured with the option"
-               "externalConnection set to true.");
+        yCError(MULTIPLEANALOGSENSORSCLIENT,
+                "Missing metadata, the device has been configured with the option"
+                "externalConnection set to true.");
         return false;
     }
     if (sens_index >= metadataVector.size())
     {
-        yError("MultipleAnalogSensorsClient: No sensor of type %s with index %lu (nr of sensors: %lu).",
-               tag.c_str(), sens_index, metadataVector.size());
+        yCError(MULTIPLEANALOGSENSORSCLIENT,
+                "No sensor of type %s with index %lu (nr of sensors: %lu).",
+                tag.c_str(),
+                sens_index,
+                metadataVector.size());
         return false;
     }
 
@@ -189,14 +208,18 @@ bool MultipleAnalogSensorsClient::genericGetFrameName(const  std::vector<SensorM
                                                       size_t sens_index, std::string& frameName) const
 {
     if (m_externalConnection) {
-        yError("MultipleAnalogSensorsClient: missing metadata, the device has been configured with the option"
-               "externalConnection set to true.");
+        yCError(MULTIPLEANALOGSENSORSCLIENT,
+                "Missing metadata, the device has been configured with the option"
+                "externalConnection set to true.");
         return false;
     }
     if (sens_index >= metadataVector.size())
     {
-        yError("MultipleAnalogSensorsClient: No sensor of type %s with index %lu (nr of sensors: %lu).",
-               tag.c_str(), sens_index, metadataVector.size());
+        yCError(MULTIPLEANALOGSENSORSCLIENT,
+                "No sensor of type %s with index %lu (nr of sensors: %lu).",
+                tag.c_str(),
+                sens_index,
+                metadataVector.size());
         return false;
     }
 
@@ -213,15 +236,20 @@ bool MultipleAnalogSensorsClient::genericGetMeasure(const std::vector<SensorMeta
     m_streamingPort.updateTimeoutStatus();
     if (m_streamingPort.status != yarp::dev::MAS_OK)
     {
-        yError("MultipleAnalogSensorsClient: Sensor of type %s with index %lu has non-MAS_OK status.",
-               tag.c_str(), sens_index);
+        yCError(MULTIPLEANALOGSENSORSCLIENT,
+                "Sensor of type %s with index %lu has non-MAS_OK status.",
+                tag.c_str(),
+                sens_index);
         return false;
     }
 
     if (m_streamingPort.status != (sens_index >= measurementsVector.measurements.size()))
     {
-        yError("MultipleAnalogSensorsClient: No sensor of type %s with index %lu (nr of sensors: %lu).",
-               tag.c_str(), sens_index, metadataVector.size());
+        yCError(MULTIPLEANALOGSENSORSCLIENT,
+                "No sensor of type %s with index %lu (nr of sensors: %lu).",
+                tag.c_str(),
+                sens_index,
+                metadataVector.size());
         return false;
     }
 
@@ -240,15 +268,18 @@ size_t MultipleAnalogSensorsClient::genericGetSize(const std::vector<SensorMetad
     std::lock_guard<std::mutex> guard(m_streamingPort.dataMutex);
     if (m_streamingPort.status != yarp::dev::MAS_OK)
     {
-        yError("MultipleAnalogSensorsClient: No data received, no information on the size of the specified sensor.");
+        yCError(MULTIPLEANALOGSENSORSCLIENT, "No data received, no information on the size of the specified sensor.");
         return 0;
     }
 
 
     if (sens_index >= measurementsVector.measurements.size())
     {
-        yError("MultipleAnalogSensorsClient: No sensor of type %s with index %lu (nr of sensors: %lu).",
-               tag.c_str(), sens_index, metadataVector.size());
+        yCError(MULTIPLEANALOGSENSORSCLIENT,
+                "No sensor of type %s with index %lu (nr of sensors: %lu).",
+                tag.c_str(),
+                sens_index,
+                metadataVector.size());
         return 0;
     }
 

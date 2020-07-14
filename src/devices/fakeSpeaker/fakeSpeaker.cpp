@@ -13,6 +13,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
@@ -21,6 +22,10 @@ using namespace yarp::sig;
 
 #define HW_CHANNELS         2
 #define SAMPLING_RATE       44100
+
+namespace {
+YARP_LOG_COMPONENT(FAKESPEAKER, "yarp.device.fakeSpeaker")
+}
 
 typedef unsigned short int audio_sample_16t;
 
@@ -41,11 +46,11 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
     {
         double period = config.find("period").asFloat64();
         setPeriod(period);
-        yInfo() << "Using chosen period of " << period << " s";
+        yCInfo(FAKESPEAKER) << "Using chosen period of " << period << " s";
     }
     else
     {
-        yInfo() << "Using default period of " << DEFAULT_PERIOD << " s";
+        yCInfo(FAKESPEAKER) << "Using default period of " << DEFAULT_PERIOD << " s";
     }
 
     //configuration of the simulated audio card
@@ -107,12 +112,12 @@ void fakeSpeaker::run()
         audio_sample_16t s = m_outputBuffer->read();
         YARP_UNUSED(s);
     }
-    yDebug() << "Sound Playback complete";
-    yDebug() << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";
+    yCDebug(FAKESPEAKER) << "Sound Playback complete";
+    yCDebug(FAKESPEAKER) << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";
 
     m_isPlaying = false;
 #ifdef ADVANCED_DEBUG
-    yDebug() << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
+    yCDebug(FAKESPEAKER) << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
 #endif
 }
 

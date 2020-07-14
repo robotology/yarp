@@ -7,10 +7,10 @@
  */
 
 #include "ControlBoardRemapperHelpers.h"
-#include <iostream>
-#include <yarp/os/Log.h>
+#include "ControlBoardRemapperLogComponent.h"
+
 #include <yarp/os/LogStream.h>
-#include <cassert>
+
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -82,13 +82,13 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
 {
     if (id!=k)
     {
-        yError()<<"ControlBoardRemapper: Wrong device" << k.c_str();
+        yCError(CONTROLBOARDREMAPPER) << "Wrong device" << k.c_str();
         return false;
     }
 
     if (d==nullptr)
     {
-        yError()<<"ControlBoardRemapper: Invalid device (null pointer)";
+        yCError(CONTROLBOARDREMAPPER) << "Invalid device (null pointer)";
         return false;
     }
 
@@ -119,78 +119,78 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
     }
     else
     {
-        yError()<<"ControlBoardRemapper: Invalid device " << k << " (isValid() returned false)";
+        yCError(CONTROLBOARDREMAPPER) << "Invalid device" << k << "(isValid() returned false)";
         return false;
     }
 
     if ((iTorque==nullptr) && (_subDevVerbose))
     {
-        yWarning() << "ControlBoardRemapper:  Warning iTorque not valid interface";
+        yCWarning(CONTROLBOARDREMAPPER) << "iTorque not valid interface";
     }
 
     if ((iImpedance==nullptr) && (_subDevVerbose))
     {
-        yWarning() << "ControlBoardRemapper:  Warning iImpedance not valid interface";
+        yCWarning(CONTROLBOARDREMAPPER) << "iImpedance not valid interface";
     }
 
     if ((iInteract==nullptr) && (_subDevVerbose))
     {
-        yWarning() << "ControlBoardRemapper:  Warning iInteractionMode not valid interface";
+        yCWarning(CONTROLBOARDREMAPPER) << "iInteractionMode not valid interface";
     }
 
     if ((iMotEnc==nullptr) && (_subDevVerbose))
     {
-        yWarning() << "ControlBoardRemapper:  Warning IMotorEncoders not valid interface";
+        yCWarning(CONTROLBOARDREMAPPER) << "IMotorEncoders not valid interface";
     }
 
     if ((imotor==nullptr) && (_subDevVerbose))
     {
-        yWarning() << "ControlBoardRemapper:  Warning IMotor not valid interface";
+        yCWarning(CONTROLBOARDREMAPPER) << "IMotor not valid interface";
     }
 
     if ((iVar == nullptr) && (_subDevVerbose))
     {
-        yWarning() << "ControlBoardRemapper:  Warning IRemoveVariables not valid interface";
+        yCWarning(CONTROLBOARDREMAPPER) << "IRemoveVariables not valid interface";
     }
 
     if ((info == nullptr) && (_subDevVerbose))
     {
-        yWarning() << "ControlBoardRemapper:  Warning IAxisInfo not valid interface";
+        yCWarning(CONTROLBOARDREMAPPER) << "IAxisInfo not valid interface";
     }
 
     if ((iPwm == nullptr) && (_subDevVerbose))
     {
-        yWarning() << "ControlBoardRemapper:  Warning IPWMControl not valid interface";
+        yCWarning(CONTROLBOARDREMAPPER) << "IPWMControl not valid interface";
     }
 
     if ((iCurr == nullptr) && (_subDevVerbose))
     {
-        yWarning() << "ControlBoardRemapper:  Warning ICurrentControl not valid interface";
+        yCWarning(CONTROLBOARDREMAPPER) << "ICurrentControl not valid interface";
     }
 
 
     // checking minimum set of intefaces required
     if( !(pos) )
     {
-        yError("ControlBoardRemapper: IPositionControl2 interface was not found in subdevice. Quitting");
+        yCError(CONTROLBOARDREMAPPER, "IPositionControl2 interface was not found in subdevice. Quitting");
         return false;
     }
 
     if( ! (vel) )
     {
-        yError("ControlBoardRemapper: IVelocityControl2 interface was not found in subdevice. Quitting");
+        yCError(CONTROLBOARDREMAPPER, "IVelocityControl2 interface was not found in subdevice. Quitting");
         return false;
     }
 
     if(!iJntEnc)
     {
-        yError("ControlBoardRemapper: IEncoderTimed interface was not found in subdevice, exiting.");
+        yCError(CONTROLBOARDREMAPPER, "IEncoderTimed interface was not found in subdevice, exiting.");
         return false;
     }
 
     if(!iMode)
     {
-        yError("ControlBoardRemapper: IControlMode2 interface was not found in subdevice, exiting.");
+        yCError(CONTROLBOARDREMAPPER, "IControlMode2 interface was not found in subdevice, exiting.");
         return false;
     }
 
@@ -199,12 +199,12 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
     {
         if (!pos->getAxes(&deviceJoints))
         {
-            yError() << "ControlBoardRemapper: failed to get axes number for subdevice " << k.c_str();
+            yCError(CONTROLBOARDREMAPPER) << "failed to get axes number for subdevice" << k.c_str();
             return false;
         }
         if(deviceJoints <= 0)
         {
-            yError("ControlBoardRemapper: attached device has an invalid number of joints (%d)", deviceJoints);
+            yCError(CONTROLBOARDREMAPPER, "attached device has an invalid number of joints (%d)", deviceJoints);
             return false;
         }
     }
@@ -543,7 +543,7 @@ void ControlBoardArbitraryAxesDecomposition::resizeSubControlBoardBuffers(const 
 
     for(size_t ctrlBrd=0; ctrlBrd < remappedControlBoards.getNrOfSubControlBoards(); ctrlBrd++)
     {
-        assert((unsigned)m_nJointsInSubControlBoard[ctrlBrd] == m_jointsInSubControlBoard[ctrlBrd].size());
+        yCAssert(CONTROLBOARDREMAPPER, (unsigned)m_nJointsInSubControlBoard[ctrlBrd] == m_jointsInSubControlBoard[ctrlBrd].size());
         m_bufferForSubControlBoard.resize(m_nJointsInSubControlBoard[ctrlBrd]);
     }
 }

@@ -9,6 +9,8 @@
 
 #include "TestMotor.h"
 
+YARP_LOG_COMPONENT(TESTMOTOR, "yarp.device.test_motor")
+
 void TestMotor::update()
 {
     if (posMode) {

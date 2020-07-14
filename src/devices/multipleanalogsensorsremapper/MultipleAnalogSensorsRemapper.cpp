@@ -10,12 +10,16 @@
 
 #include <map>
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Searchable.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 
+namespace {
+YARP_LOG_COMPONENT(MULTIPLEANALOGSENSORSREMAPPER, "yarp.device.multipleanalogsensorsremapper")
+}
 
 const size_t MAS_NrOfSensorTypes{10};
 static_assert(MAS_SensorType::PositionSensors+1 == MAS_NrOfSensorTypes, "Consistency error between MAS_NrOfSensorTypes and MAS_SensorType");
@@ -77,7 +81,7 @@ bool MultipleAnalogSensorsRemapper::open(Searchable& config)
     m_verbose = (prop.check("verbose","if present, give detailed output"));
     if (m_verbose)
     {
-        yInfo("MultipleAnalogSensorsRemapper: running with verbose output\n");
+        yCInfo(MULTIPLEANALOGSENSORSREMAPPER, "Running with verbose output\n");
     }
 
     if(!parseOptions(prop))
@@ -98,7 +102,7 @@ bool getVectorOfStringFromListInConfig(const std::string& key, const yarp::os::S
     yarp::os::Bottle *propList=prop.find(key).asList();
     if (!propList && keyExists)
     {
-       yError() <<"MultipleAnalogSensorsRemapper : Error parsing parameters: if present " << key << " should be followed by a list of strings.\n";
+       yCError(MULTIPLEANALOGSENSORSREMAPPER) << "Error parsing parameters: if present " << key << " should be followed by a list of strings.\n";
        return false;
     }
 
@@ -130,7 +134,7 @@ bool MultipleAnalogSensorsRemapper::parseOptions(const Property& prop)
         ok = getVectorOfStringFromListInConfig(optionName , prop, m_remappedSensors[i]);
         if (!ok)
         {
-            yError() << "MultipleAnalogSensorsRemapper: " << optionName << " should be followed by a list of string.";
+            yCError(MULTIPLEANALOGSENSORSREMAPPER) << optionName << "should be followed by a list of string.";
             return false;
         }
     }
@@ -168,7 +172,7 @@ bool MultipleAnalogSensorsRemapper::genericAttachAll(const MAS_SensorType sensor
                 bool ok = MAS_CALL_MEMBER_FN(subDeviceVec[p], getNameMethodPtr)(s,name);
                 if (!ok)
                 {
-                    yError() << "MultipleAnalogSensorsRemapper: Failure in getting a name in the device " << polylist[p]->key;
+                    yCError(MULTIPLEANALOGSENSORSREMAPPER) << "Failure in getting a name in the device " << polylist[p]->key;
                     return false;
                 }
 
@@ -176,8 +180,12 @@ bool MultipleAnalogSensorsRemapper::genericAttachAll(const MAS_SensorType sensor
                 if (sensorLocationMap.find(name) != sensorLocationMap.end())
                 {
                     SensorInSubDevice deviceWithSameName = sensorLocationMap.find(name)->second;
-                    yError() << "MultipleAnalogSensorsRemapper: sensor ambiguity: sensor with name " << name
-                             << " present on both device " << polylist[p]->key << " " << polylist[deviceWithSameName.subDevice]->key;
+                    yCError(MULTIPLEANALOGSENSORSREMAPPER)
+                        << "Sensor ambiguity: sensor with name"
+                        << name
+                        << "present on both device"
+                        << polylist[p]->key
+                        << polylist[deviceWithSameName.subDevice]->key;
                     return false;
                 }
 
@@ -194,7 +202,7 @@ bool MultipleAnalogSensorsRemapper::genericAttachAll(const MAS_SensorType sensor
         std::string name = m_remappedSensors[sensorType][i];
         if (sensorLocationMap.find(name) == sensorLocationMap.end())
         {
-            yError() << "MultipleAnalogSensorsRemapper: impossible to find sensor name " << name << ", exiting.";
+            yCError(MULTIPLEANALOGSENSORSREMAPPER) << "Impossible to find sensor name" << name << ", exiting.";
             return false;
         }
 
@@ -262,7 +270,7 @@ MAS_status MultipleAnalogSensorsRemapper::genericGetStatus(const MAS_SensorType 
     {
         if (m_verbose)
         {
-            yError("MultipleAnalogSensorsRemapper::genericGetStatus sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
+            yCError(MULTIPLEANALOGSENSORSREMAPPER, "genericGetStatus sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
         }
         return MAS_ERROR;
     }
@@ -282,7 +290,7 @@ bool MultipleAnalogSensorsRemapper::genericGetName(const MAS_SensorType sensorTy
     {
         if (m_verbose)
         {
-            yError("MultipleAnalogSensorsRemapper::genericGetName sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
+            yCError(MULTIPLEANALOGSENSORSREMAPPER, "genericGetName sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
         }
         return MAS_ERROR;
     }
@@ -302,7 +310,7 @@ bool MultipleAnalogSensorsRemapper::genericGetFrameName(const MAS_SensorType sen
     {
         if (m_verbose)
         {
-            yError("MultipleAnalogSensorsRemapper::genericGetFrameName sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
+            yCError(MULTIPLEANALOGSENSORSREMAPPER, "genericGetFrameName sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
         }
         return MAS_ERROR;
     }
@@ -323,7 +331,7 @@ bool MultipleAnalogSensorsRemapper::genericGetMeasure(const MAS_SensorType senso
     {
         if (m_verbose)
         {
-            yError("MultipleAnalogSensorsRemapper::genericGetMeasure sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
+            yCError(MULTIPLEANALOGSENSORSREMAPPER, "genericGetMeasure sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
         }
         return MAS_ERROR;
     }
@@ -343,7 +351,7 @@ size_t MultipleAnalogSensorsRemapper::genericGetSize(const MAS_SensorType sensor
     {
         if (m_verbose)
         {
-            yError("MultipleAnalogSensorsRemapper::genericGetSize sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
+            yCError(MULTIPLEANALOGSENSORSREMAPPER, "genericGetSize sens_index %zu out of range of available sensors (%zu).", sens_index, nrOfAvailableSensors);
         }
         return MAS_ERROR;
     }

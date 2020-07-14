@@ -8,6 +8,7 @@
 
 #include "realsense2Tracking.h"
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Value.h>
 
 #include <yarp/sig/ImageUtils.h>
@@ -33,6 +34,11 @@ using namespace yarp::sig;
 using namespace yarp::os;
 
 using namespace std;
+
+namespace {
+YARP_LOG_COMPONENT(REALSENSE2TRACKING, "yarp.device.realsense2Tracking")
+}
+
 
 struct float3 {
     float x;
@@ -94,7 +100,7 @@ static bool setOption(rs2_option option, const rs2::sensor* sensor, float value)
 
     // First, verify that the sensor actually supports this option
     if (!sensor->supports(option)) {
-        yError() << "realsense2Driver: The option" << rs2_option_to_string(option) << "is not supported by this sensor";
+        yCError(REALSENSE2TRACKING) << "The option" << rs2_option_to_string(option) << "is not supported by this sensor";
         return false;
     }
 
@@ -104,7 +110,7 @@ static bool setOption(rs2_option option, const rs2::sensor* sensor, float value)
     } catch (const rs2::error& e) {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "realsense2Driver: Failed to set option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
+        yCError(REALSENSE2TRACKING) << "Failed to set option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
         return false;
     }
     return true;
@@ -118,7 +124,7 @@ static bool getOption(rs2_option option, const rs2::sensor* sensor, float& value
 
     // First, verify that the sensor actually supports this option
     if (!sensor->supports(option)) {
-        yError() << "realsense2Driver: The option" << rs2_option_to_string(option) << "is not supported by this sensor";
+        yCError(REALSENSE2TRACKING) << "The option" << rs2_option_to_string(option) << "is not supported by this sensor";
         return false;
     }
 
@@ -128,7 +134,7 @@ static bool getOption(rs2_option option, const rs2::sensor* sensor, float& value
     } catch (const rs2::error& e) {
         // Some options can only be set while the camera is streaming,
         // and generally the hardware might fail so it is good practice to catch exceptions from set_option
-        yError() << "realsense2Driver: Failed to get option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
+        yCError(REALSENSE2TRACKING) << "Failed to get option " << rs2_option_to_string(option) << ". (" << e.what() << ")";
         return false;
     }
     return true;
@@ -136,7 +142,7 @@ static bool getOption(rs2_option option, const rs2::sensor* sensor, float& value
 
 static void settingErrorMsg(const string& error, bool& ret)
 {
-    yError() << "realsense2Driver:" << error.c_str();
+    yCError(REALSENSE2TRACKING) << error.c_str();
     ret = false;
 }
 #endif
@@ -150,7 +156,7 @@ bool realsense2Tracking::pipelineStartup()
     try {
         m_profile = m_pipeline.start(m_cfg);
     } catch (const rs2::error& e) {
-        yError() << "realsense2Driver: failed to start the pipeline:"
+        yCError(REALSENSE2TRACKING) << "Failed to start the pipeline:"
                  << "(" << e.what() << ")";
         m_lastError = e.what();
         return false;
@@ -163,7 +169,7 @@ bool realsense2Tracking::pipelineShutdown()
     try {
         m_pipeline.stop();
     } catch (const rs2::error& e) {
-        yError() << "realsense2Driver: failed to stop the pipeline:"
+        yCError(REALSENSE2TRACKING) << "Failed to stop the pipeline:"
                  << "(" << e.what() << ")";
         m_lastError = e.what();
         return false;
@@ -182,8 +188,8 @@ bool realsense2Tracking::pipelineRestart()
 
 bool realsense2Tracking::open(Searchable& config)
 {
-    yWarning() << "This software module is experimental.";
-    yWarning() << "It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.";
+    yCWarning(REALSENSE2TRACKING) << "This software module is experimental.";
+    yCWarning(REALSENSE2TRACKING) << "It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.";
 
     string sensor_is = "t265";
     bool b= true;
@@ -194,7 +200,7 @@ bool realsense2Tracking::open(Searchable& config)
     b &= pipelineStartup();
     if (b==false)
     {
-        yError() << "Pipeline initialization failed";
+        yCError(REALSENSE2TRACKING) << "Pipeline initialization failed";
         return false;
     }
 

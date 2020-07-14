@@ -9,6 +9,7 @@
 
 #include "TestFrameGrabber.h"
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/ImageDraw.h>
 
@@ -20,12 +21,15 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::sig::draw;
 
+namespace {
+YARP_LOG_COMPONENT(TESTGRABBER, "yarp.device.test_grabber")
 constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
 constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
 constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
 constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab('n','o','n','e');
 constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s','i','z','e');
 constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab('t','i','m','e');
+}
 
 TestFrameGrabber::TestFrameGrabber() :
     ct(0),
@@ -135,10 +139,15 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     use_mono = use_mono||use_bayer;
 
     if (freq!=-1) {
-        yInfo("Test grabber period %g / freq %g , mode [%s]", period, freq,
+        yCInfo(TESTGRABBER,
+               "Test grabber period %g / freq %g , mode [%s]",
+               period,
+               freq,
                yarp::os::Vocab::decode(mode).c_str());
     } else {
-        yInfo("Test grabber period %g / freq [inf], mode [%s]", period,
+        yCInfo(TESTGRABBER,
+               "Test grabber period %g / freq [inf], mode [%s]",
+               period,
                yarp::os::Vocab::decode(mode).c_str());
     }
 
@@ -394,17 +403,17 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         count++;
         if (count== 100)
         {
-            yDebug() << "size 100, 100";
+            yCDebug(TESTGRABBER) << "size 100, 100";
             image.resize(100,100);
         }
         else if (count == 200)
         {
-            yDebug() << "size 200, 100";
+            yCDebug(TESTGRABBER) << "size 200, 100";
             image.resize(200, 100);
         }
         else if (count == 300)
         {
-            yDebug() << "size 300, 50";
+            yCDebug(TESTGRABBER) << "size 300, 50";
             image.resize(300, 50);
             count = 0;
         }

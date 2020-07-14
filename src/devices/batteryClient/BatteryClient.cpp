@@ -17,7 +17,9 @@
  */
 
 #include "BatteryClient.h"
+
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 /*! \file BatteryClient.cpp */
@@ -26,6 +28,9 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
+namespace {
+YARP_LOG_COMPONENT(BATTERYCLIENT, "yarp.device.batteryClient")
+} // namespace
 
 inline void BatteryInputPortProcessor::resetStat()
 {
@@ -182,18 +187,18 @@ bool BatteryClient::open(yarp::os::Searchable &config)
 {
     local.clear();
     remote.clear();
-    yDebug() << config.toString();
+    yCDebug(BATTERYCLIENT) << config.toString();
     local  = config.find("local").asString();
     remote = config.find("remote").asString();
 
     if (local=="")
     {
-        yError("BatteryClient::open() error you have to provide valid local name. --local parameter missing.");
+        yCError(BATTERYCLIENT, "open(): Invalid local name. --local parameter missing.");
         return false;
     }
     if (remote=="")
     {
-        yError("BatteryClient::open() error you have to provide valid remote name. --remote parameter missing.");
+        yCError(BATTERYCLIENT, "open(): Invalid remote name. --remote parameter missing.");
         return false;
     }
 
@@ -208,28 +213,28 @@ bool BatteryClient::open(yarp::os::Searchable &config)
 
     if (!inputPort.open(local_stream))
     {
-        yError("BatteryClient::open() error could not open port %s, check network", local_stream.c_str());
+        yCError(BATTERYCLIENT, "open(): Could not open port %s, check network", local_stream.c_str());
         return false;
     }
     inputPort.useCallback();
 
     if (!rpcPort.open(local_rpc))
     {
-        yError("BatteryClient::open() error could not open rpc port %s, check network", local_rpc.c_str());
+        yCError(BATTERYCLIENT, "open(): Could not open rpc port %s, check network", local_rpc.c_str());
         return false;
     }
 
     bool ok=Network::connect(remote_stream.c_str(), local_stream.c_str(), "udp");
     if (!ok)
     {
-        yError("BatteryClient::open() error could not connect %s -> %s", remote_stream.c_str(), local_stream.c_str());
+        yCError(BATTERYCLIENT, "open(): Could not connect %s -> %s", remote_stream.c_str(), local_stream.c_str());
         return false;
     }
 
     ok=Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
-       yError("BatteryClient::open() error could not connect %s -> %s", remote_rpc.c_str(), local_rpc.c_str());
+       yCError(BATTERYCLIENT, "open() Could not connect %s -> %s", remote_rpc.c_str(), local_rpc.c_str());
        return false;
     }
 

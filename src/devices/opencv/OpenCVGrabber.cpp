@@ -34,10 +34,10 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/sig/Image.h>
 
-#include <cstdio>
 #include <cstring> // memcpy
 
 #include <opencv2/highgui/highgui.hpp>
@@ -66,7 +66,10 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 
-#define DBG if (0)
+namespace {
+YARP_LOG_COMPONENT(OPENCVGRABBER, "yarp.device.opencv_grabber")
+}
+
 
 bool OpenCVGrabber::open(Searchable & config) {
     m_saidSize = false;
@@ -84,7 +87,7 @@ bool OpenCVGrabber::open(Searchable & config) {
         // Try to open a capture object for the file
         m_cap.open(file.c_str());
         if (!m_cap.isOpened()) {
-            yError("Unable to open file '%s' for capture!", file.c_str());
+            yCError(OPENCVGRABBER, "Unable to open file '%s' for capture!", file.c_str());
             return false;
         }
 
@@ -108,12 +111,12 @@ bool OpenCVGrabber::open(Searchable & config) {
         // Try to open a capture object for the first camera
         m_cap.open(camera_idx);
         if (!m_cap.isOpened()) {
-            yError("Unable to open camera for capture!");
+            yCError(OPENCVGRABBER, "Unable to open camera for capture!");
             return false;
         }
         else
         {
-            yInfo("Capturing from camera: %d",camera_idx);
+            yCInfo(OPENCVGRABBER, "Capturing from camera: %d",camera_idx);
         }
 
         if ( config.check("framerate","if present, specifies desired camera device framerate") ) {
@@ -169,7 +172,7 @@ bool OpenCVGrabber::open(Searchable & config) {
 
     // Ignore capture properties - they are unreliable
 
-    yInfo("OpenCVGrabber opened");
+    yCInfo(OPENCVGRABBER, "OpenCVGrabber opened");
     // Success!
 
     // save our configuration for future reference
@@ -213,7 +216,7 @@ bool OpenCVGrabber::sendImage(const cv::Mat & frame, ImageOf<PixelRgb> & image)
     image.resize(frame.cols, frame.rows);
 
     if (!m_saidSize) {
-        yDebug("Received image of size %zux%zu\n", image.width(), image.height());
+        yCDebug(OPENCVGRABBER, "Received image of size %zux%zu", image.width(), image.height());
         m_saidSize = true;
     }
 
@@ -237,7 +240,7 @@ bool OpenCVGrabber::sendImage(const cv::Mat & frame, ImageOf<PixelRgb> & image)
         if (m_w>0 && m_h>0) {
             if (image.width() != m_w || image.height() != m_h) {
                 if (!m_saidResize) {
-                    yDebug("Software scaling from %zux%zu to %zux%zu",  image.width(), image.height(), m_w, m_h);
+                    yCDebug(OPENCVGRABBER, "Software scaling from %zux%zu to %zux%zu",  image.width(), image.height(), m_w, m_h);
                     m_saidResize = true;
                 }
                 image.copy(image, m_w, m_h);
@@ -245,7 +248,7 @@ bool OpenCVGrabber::sendImage(const cv::Mat & frame, ImageOf<PixelRgb> & image)
         }
     }
 
-    DBG yDebug("%zu by %zu image\n", image.width(), image.height());
+    yCTrace(OPENCVGRABBER, "%zu by %zu image", image.width(), image.height());
 
     return true;
 

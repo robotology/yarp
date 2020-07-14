@@ -25,6 +25,10 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
+namespace {
+YARP_LOG_COMPONENT(SERVERGRABBER, "yarp.device.grabberDual")
+}
+
 
 bool DC1394Parser::configure(IFrameGrabberControlsDC1394 *interface)
 {
@@ -139,7 +143,7 @@ bool DC1394Parser::respond(const Bottle& cmd, Bottle& response)
     }
     else
     {
-        yWarning()<<"DC1394Parser:  firewire interface not implemented in subdevice, some features could not be available";
+        yCWarning(SERVERGRABBER) << "DC1394Parser:  firewire interface not implemented in subdevice, some features could not be available";
 //        response.clear();
 //        response.addVocab(VOCAB_FAILED);
         return DeviceResponder::respond(cmd,response);
@@ -162,7 +166,7 @@ bool ServerGrabberResponder::configure(ServerGrabber* _server)
         server=_server;
         return true;
     }
-    yError()<<"ServerGrabberResponder: invalid server pointer";
+    yCError(SERVERGRABBER) << "ServerGrabberResponder: invalid server pointer";
     return false;
 }
 
@@ -255,32 +259,32 @@ bool ServerGrabber::close() {
 
 bool ServerGrabber::open(yarp::os::Searchable& config) {
     if (param.active) {
-        yError("Did you just try to open the same ServerGrabber twice?\n");
+        yCError(SERVERGRABBER, "Did you just try to open the same ServerGrabber twice?");
         return false;
     }
 
     if(!fromConfig(config))
     {
-        yError() << "Device ServerGrabber failed to open, check previous log for error messages.\n";
+        yCError(SERVERGRABBER) << "Device ServerGrabber failed to open, check previous log for error messages.";
         return false;
     }
 
     if(!initialize_YARP(config))
     {
-        yError() <<"ServerGrabber: Error initializing YARP ports";
+        yCError(SERVERGRABBER) <<"Error initializing YARP ports";
         return false;
     }
 
     if(isSubdeviceOwned){
         if(! openAndAttachSubDevice(config))
         {
-            yError("ServerGrabber: error while opening subdevice\n");
+            yCError(SERVERGRABBER, "Error while opening subdevice");
             return false;
         }
     }
     else
     {
-        yInfo()<<"ServerGrabber: running, waiting for attach...";
+        yCInfo(SERVERGRABBER) << "Running, waiting for attach...";
         if(!openDeferredAttach(config))
         return false;
     }
@@ -324,10 +328,10 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
             && config.find("period").isInt32())
         period = config.find("period").asInt32() / 1000.0;
     else
-        yWarning()<<"ServerGrabber: period parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "s";
+        yCWarning(SERVERGRABBER) << "Period parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "s";
     if((config.check("subdevice")) && (config.check("left_config") || config.check("right_config")))
     {
-        yError()<<"ServerGrabber: found both 'subdevice' and 'left_config/right_config' parameters...";
+        yCError(SERVERGRABBER) << "Found both 'subdevice' and 'left_config/right_config' parameters...";
         return false;
     }
     if(!config.check("subdevice", "name of the subdevice to use as a data source")
@@ -346,7 +350,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
             param.cap=RAW;
     }
     else
-        yWarning()<<"ServerGrabber: 'capabilities' parameter not found or misspelled, the option available are COLOR(default) and RAW, using default";
+        yCWarning(SERVERGRABBER) << "'capabilities' parameter not found or misspelled, the option available are COLOR(default) and RAW, using default";
     param.canDrop = !config.check("no_drop","if present, use strict policy for sending data");
     param.addStamp = config.check("stamp","if present, add timestamps to data");
 
@@ -426,7 +430,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
     bRet = true;
     if(!rpcPort.open(rpcPort_Name))
     {
-        yError() << "ServerGrabber: unable to open rpc Port" << rpcPort_Name.c_str();
+        yCError(SERVERGRABBER) << "Unable to open rpc Port" << rpcPort_Name.c_str();
         bRet = false;
     }
     rpcPort.setReader(*responder);
@@ -435,7 +439,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
     pImg.setWriteOnly();
     if(!pImg.open(pImg_Name))
     {
-        yError() << "ServerGrabber: unable to open image streaming Port" << pImg_Name.c_str();
+        yCError(SERVERGRABBER) << "Unable to open image streaming Port" << pImg_Name.c_str();
         bRet = false;
     }
     pImg.setReader(*responder);
@@ -444,7 +448,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
     {
         if(!rpcPort2.open(rpcPort2_Name))
         {
-            yError() << "ServerGrabber: unable to open rpc Port" << rpcPort2_Name.c_str();
+            yCError(SERVERGRABBER) << "Unable to open rpc Port" << rpcPort2_Name.c_str();
             bRet = false;
         }
         rpcPort2.setReader(*responder2);
@@ -456,7 +460,7 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
 
         if(!pImg2.open(pImg2_Name))
         {
-            yError() << "ServerGrabber: unable to open image streaming Port" << pImg2_Name.c_str();
+            yCError(SERVERGRABBER) << "Unable to open image streaming Port" << pImg2_Name.c_str();
             bRet = false;
         }
         pImg2.setReader(*responder2);
@@ -566,7 +570,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                                     if(nPoints != 2)
                                     {
                                         response.addString("GetImageCrop failed: RECT mode requires 2 vertices.");
-                                        yError() << "GetImageCrop failed: RECT mode requires 2 vertices, got " << nPoints;
+                                        yCError(SERVERGRABBER) << "GetImageCrop failed: RECT mode requires 2 vertices, got " << nPoints;
                                         return false;
                                     }
                                     ImageOf< PixelRgb > full;
@@ -610,7 +614,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             case VOCAB_SET:   // Nothing to do here yet
             default:
             {
-                yError() << "FrameGrabberImage interface received an unknown command " << cmd.toString();
+                yCError(SERVERGRABBER) << "FrameGrabberImage interface received an unknown command " << cmd.toString();
             } break;
 
         }
@@ -631,7 +635,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                     response.clear();
                     response.addVocab(VOCAB_FAILED);
                     ret=false;
-                    yWarning()<<"ServerGrabber: response different among cameras or failed";
+                    yCWarning(SERVERGRABBER) << "Response different among cameras or failed";
                 }
             }
             else
@@ -678,7 +682,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                             response.clear();
                             response.addVocab(VOCAB_FAILED);
                             ret=false;
-                            yWarning()<<"ServerGrabber: response different among cameras or failed";
+                            yCWarning(SERVERGRABBER) << "Response different among cameras or failed";
                         }
                         break;
                     }
@@ -707,7 +711,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                     response.clear();
                     response.addString("command not recognized");
                     ret=false;
-                    yWarning()<<"ServerGrabber: responses different among cameras or failed";
+                    yCWarning(SERVERGRABBER) << "Responses different among cameras or failed";
 
                 }
             }
@@ -728,7 +732,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             return ifgCtrl_DC1394_Parser.respond(cmd, response);
     } break;
     }
-    yError() << "ServerGrabber: command not recognized" << cmd.toString();
+    yCError(SERVERGRABBER) << "Command not recognized" << cmd.toString();
     return false;
 }
 
@@ -741,7 +745,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         bool rightDone=false;//for avoiding double right
         if (device2attach.size() != 2)
         {
-            yError("ServerGrabber: expected two devices to be attached");
+            yCError(SERVERGRABBER, "Expected two devices to be attached");
             return false;
         }
         for(int i=0;i<device2attach.size();i++)
@@ -749,7 +753,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             yarp::dev::PolyDriver * Idevice2attach = device2attach[i]->poly;
             if (!Idevice2attach->isValid())
             {
-                yError() << "ServerGrabber: Device " << device2attach[i]->key << " to attach to is not valid ... cannot proceed";
+                yCError(SERVERGRABBER) << "Device " << device2attach[i]->key << " to attach to is not valid ... cannot proceed";
                 return false;
             }
             if(device2attach[i]->key == "LEFT" && !leftDone)
@@ -770,7 +774,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             }
             else
             {
-                yError() << "ServerGrabber: failed to attach. The two targets must be LEFT RIGHT and devices must implement"
+                yCError(SERVERGRABBER) << "Failed to attach. The two targets must be LEFT RIGHT and devices must implement"
                             " either IFrameGrabberImage or IFrameGrabberImageRaw";
                 return false;
 
@@ -782,7 +786,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             {
                 if((fgImage==nullptr) || (fgImage2==nullptr))
                 {
-                    yError()<<"ServerGrabber: capability required not supported";
+                    yCError(SERVERGRABBER) << "Capability required not supported";
                     return false;
                 }
             }
@@ -791,21 +795,21 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             {
                 if((fgImageRaw==nullptr) || (fgImageRaw2==nullptr))
                 {
-                    yError()<<"ServerGrabber: capability required not supported";
+                    yCError(SERVERGRABBER) << "Capability required not supported";
                     return false;
                 }
             }
         }
         if((rgbVis_p == nullptr) || (rgbVis_p2 == nullptr))
         {
-            yWarning()<<"ServerGrabber: Targets has not IVisualParamInterface, some features cannot be available";
+            yCWarning(SERVERGRABBER) << "Targets has not IVisualParamInterface, some features cannot be available";
         }
         //Configuring parsers
         if(rgbVis_p != nullptr && rgbVis_p2 != nullptr)
         {
             if(!(rgbParser.configure(rgbVis_p)) || !(rgbParser2.configure(rgbVis_p2)))
             {
-                yError() << "ServerGrabber: error configuring interfaces for parsers";
+                yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
             }
         }
@@ -813,7 +817,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         {
             if(!(ifgCtrl_Parser.configure(fgCtrl)) || !(ifgCtrl2_Parser.configure(fgCtrl2)))
             {
-                yError() << "ServerGrabber: error configuring interfaces for parsers";
+                yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
             }
         }
@@ -821,7 +825,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         {
             if(!(ifgCtrl_DC1394_Parser.configure(fgCtrl_DC1394)) || !(ifgCtrl2_DC1394_Parser.configure(fgCtrl2_DC1394)))
             {
-                yError() << "ServerGrabber: error configuring interfaces for parsers";
+                yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
             }
         }
@@ -829,7 +833,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
     else{
         if (device2attach.size() != 1)
         {
-            yError("ServerGrabber: expected one device to be attached");
+            yCError(SERVERGRABBER, "Expected one device to be attached");
             return false;
         }
         yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
@@ -843,7 +847,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             {
                 if(fgImage==nullptr)
                 {
-                    yError()<<"ServerGrabber: capability required not supported";
+                    yCError(SERVERGRABBER) << "Capability required not supported";
                     return false;
                 }
             }
@@ -852,7 +856,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             {
                 if(fgImageRaw==nullptr)
                 {
-                    yError()<<"ServerGrabber: capability required not supported";
+                    yCError(SERVERGRABBER) << "Capability required not supported";
                     return false;
                 }
             }
@@ -860,13 +864,13 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
 
         if (!Idevice2attach->isValid())
         {
-            yError() << "ServerGrabber: Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
+            yCError(SERVERGRABBER) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
             return false;
         }
 
         if(rgbVis_p == nullptr)
         {
-            yWarning()<<"ServerGrabber: Targets has not IVisualParamInterface, some features cannot be available";
+            yCWarning(SERVERGRABBER) << "Targets has not IVisualParamInterface, some features cannot be available";
         }
 
         //Configuring parsers
@@ -874,7 +878,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         {
             if(!(rgbParser.configure(rgbVis_p)))
             {
-                yError() << "ServerGrabber: error configuring interfaces for parsers";
+                yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
             }
         }
@@ -882,7 +886,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         {
             if(!(ifgCtrl_Parser.configure(fgCtrl)))
             {
-                yError() << "ServerGrabber: error configuring interfaces for parsers";
+                yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
             }
         }
@@ -891,7 +895,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         {
             if(!(ifgCtrl_DC1394_Parser.configure(fgCtrl_DC1394)))
             {
-                yError() << "ServerGrabber: error configuring interfaces for parsers";
+                yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
             }
         }
@@ -940,7 +944,7 @@ bool ServerGrabber::attach(PolyDriver *poly)
 {
     if(param.twoCameras)
     {
-        yError()<<"ServerGrabber: server grabber configured for two cameras, but only one provided";
+        yCError(SERVERGRABBER) << "Server grabber configured for two cameras, but only one provided";
         return false;
     }
     PolyDriverList plist;
@@ -952,7 +956,7 @@ bool ServerGrabber::attach(PolyDriver *poly)
     }
     else
     {
-        yError()<<"ServerGrabber: invalid device to be attached";
+        yCError(SERVERGRABBER) << "Invalid device to be attached";
         return false;
     }
     return true;
@@ -977,7 +981,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
         std::string file, file2;
         if(!prop.check("left_config") || !prop.check("right_config"))
         {
-            yError()<<"ServerGrabber: missing 'left_config' or 'right_config' filename... ";
+            yCError(SERVERGRABBER) << "Missing 'left_config' or 'right_config' filename... ";
             return false;
         }
         ResourceFinder rf, rf2;
@@ -992,7 +996,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
         p2.fromConfigFile(rf2.findFileByName(file2));
         if(p.isNull() || p2.isNull())
         {
-            yError()<<"ServerGrabber: unable to find files specified in 'left_config' and/or 'right_config'";
+            yCError(SERVERGRABBER) << "Unable to find files specified in 'left_config' and/or 'right_config'";
             return false;
         }
 //        p.fromString(prop.findGroup("LEFT").toString().c_str());
@@ -1009,7 +1013,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
         if(p.find("height").asInt32() != p2.find("height").asInt32() ||
            p.find("width").asInt32() != p2.find("width").asInt32())
         {
-            yError()<<"ServerGrabber: error in the configuration file, the two images have to have the same dimensions";
+            yCError(SERVERGRABBER) << "Error in the configuration file, the two images have to have the same dimensions";
             return false;
         }
         //COSA FA? Serve? Guardarci
@@ -1020,7 +1024,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
 
         if (!(poly->isValid()) || !(poly2->isValid()))
         {
-            yError("ServerGrabber: opening devices... FAILED\n");
+            yCError(SERVERGRABBER, "Opening devices... FAILED");
             return false;
         }
         PolyDriverDescriptor pd(poly,"LEFT");
@@ -1052,7 +1056,7 @@ bool ServerGrabber::openAndAttachSubDevice(Searchable &prop){
 
         if (!(poly->isValid()))
         {
-            yError("opening  subdevice... FAILED\n");
+            yCError(SERVERGRABBER, "opening  subdevice... FAILED");
             return false;
         }
         PolyDriverDescriptor pd(poly,"poly");
@@ -1144,7 +1148,7 @@ void ServerGrabber::run()
                     setupFlexImage(*img2,flex_i2);
                 }
                 else
-                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+                    yCError(SERVERGRABBER) << "Image not captured.. check hardware configuration";
 
             }
             if(param.cap==RAW)
@@ -1157,7 +1161,7 @@ void ServerGrabber::run()
                     setupFlexImage(*img2_Raw,flex_i2);
                 }
                 else
-                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+                    yCError(SERVERGRABBER) << "Image not captured.. check hardware configuration";
 
             }
             Stamp s = Stamp(count,Time::now());
@@ -1187,12 +1191,12 @@ void ServerGrabber::run()
                     bool ok = utils::horzConcat(*img, *img2, flex_i);
                     if (!ok)
                     {
-                        yError()<<"ServerGrabber: failed to concatenate images";
+                        yCError(SERVERGRABBER) << "Failed to concatenate images";
                         return;
                     }
                 }
                 else
-                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+                    yCError(SERVERGRABBER) << "Image not captured.. check hardware configuration";
 
             }
             if(param.cap==RAW)
@@ -1206,12 +1210,12 @@ void ServerGrabber::run()
                     bool ok = utils::horzConcat(*img_Raw, *img2_Raw, flex_i);
                     if (!ok)
                     {
-                        yError()<<"ServerGrabber: failed to concatenate images";
+                        yCError(SERVERGRABBER) << "Failed to concatenate images";
                         return;
                     }
                 }
                 else
-                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+                    yCError(SERVERGRABBER) << "Image not captured.. check hardware configuration";
 
             }
 
@@ -1239,7 +1243,7 @@ void ServerGrabber::run()
                     bool ok = utils::vertSplit(inputImage,*img,*img2);
                     if (!ok)
                     {
-                        yError()<<"ServerGrabber: failed to split the image";
+                        yCError(SERVERGRABBER) << "Failed to split the image";
                         return;
                     }
 
@@ -1247,7 +1251,7 @@ void ServerGrabber::run()
                     setupFlexImage(*img2,flex_i2);
                 }
                 else
-                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+                    yCError(SERVERGRABBER) << "Image not captured.. check hardware configuration";
             }
             if(param.cap==RAW)
             {
@@ -1259,7 +1263,7 @@ void ServerGrabber::run()
                     bool ok = utils::vertSplit(inputImage,*img_Raw,*img2_Raw);
                     if (!ok)
                     {
-                        yError()<<"ServerGrabber: failed to split the image";
+                        yCError(SERVERGRABBER) << "Failed to split the image";
                         return;
                     }
 
@@ -1268,7 +1272,7 @@ void ServerGrabber::run()
 
                 }
                 else
-                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+                    yCError(SERVERGRABBER) << "Image not captured.. check hardware configuration";
             }
             Stamp s = Stamp(count,Time::now());
             pImg.setStrict(!param.canDrop);
@@ -1293,7 +1297,7 @@ void ServerGrabber::run()
                     setupFlexImage(*img,flex_i);
                 }
                 else
-                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+                    yCError(SERVERGRABBER) << "Image not captured.. check hardware configuration";
             }
             if(param.cap==RAW)
             {
@@ -1303,7 +1307,7 @@ void ServerGrabber::run()
                     setupFlexImage(*img_Raw,flex_i);
                 }
                 else
-                    yError()<<"ServerGrabber: Image not captured.. check hardware configuration";
+                    yCError(SERVERGRABBER) << "Image not captured.. check hardware configuration";
             }
             Stamp s = Stamp(count,Time::now());
             pImg.setStrict(!param.canDrop);
