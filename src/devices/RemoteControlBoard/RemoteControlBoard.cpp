@@ -1502,6 +1502,11 @@ bool RemoteControlBoard::getGearboxRatio(int m, double* val)
     return get1V1I1D(VOCAB_GEARBOX_RATIO, m, val);
 }
 
+bool RemoteControlBoard::setGearboxRatio(int m, const double val)
+{
+    return set1V1I1D(VOCAB_GEARBOX_RATIO, m, val);
+}
+
 // END IMotor
 
 // BEGIN IMotorEncoder
