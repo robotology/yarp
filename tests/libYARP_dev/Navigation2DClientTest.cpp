@@ -11,6 +11,7 @@
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <catch.hpp>
@@ -19,6 +20,23 @@
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
+
+void test_similar_angles(INavigation2D* inav, double angle1, double angle2)
+{
+    bool b0, b1;
+    b0 = inav->setInitialPose(Map2DLocation("map_1", 10.2, 20.1, angle1)); CHECK(b0);
+    yarp::os::Time::delay(0.1);
+    yInfo() << "Testing angle" << angle1 << " is similar to:" << angle2;
+    b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2), 0.1, 10.0); CHECK(b1);
+    yInfo() << "Testing angle" << angle1 << " is similar to:" << angle2+5.0;
+    b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 + 5.0), 0.1, 10.0); CHECK(b1);
+    yInfo() << "Testing angle" << angle1 << " is different from:" << angle2 + 20.0;
+    b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 + 20.0), 0.1, 10.0); CHECK(!b1);
+    yInfo() << "Testing angle" << angle1 << " is similar to:" << angle2-5.0;
+    b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 - 5.0), 0.1, 10.0); CHECK(b1);
+    yInfo() << "Testing angle" << angle1 << " is different from:" << angle2 - 20.0;
+    b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, angle2 - 20.0), 0.1, 10.0); CHECK(!b1);
+}
 
 TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
 {
@@ -136,6 +154,27 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
                 b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 - 180), lin_tol, ang_tol); CHECK(b1 == false);
                 b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 - 360), lin_tol, ang_tol); CHECK(b1);
                 b1 = inav->checkNearToLocation(Map2DLocation("map_1", 10.2, 20.1, 15.5 - 720), lin_tol, ang_tol); CHECK(b1);
+
+                //in the following tests, the tolerance is set to 10.0 deg
+                test_similar_angles(inav,   +2.0,   +2.0);
+                test_similar_angles(inav,   -2.0,   +2.0);
+                test_similar_angles(inav,   +2.0,   -2.0);
+                test_similar_angles(inav,   -2.0,   -2.0);
+
+                test_similar_angles(inav, +182.0, +182.0);
+                test_similar_angles(inav, -182.0, +182.0);
+                test_similar_angles(inav, +182.0, -182.0);
+                test_similar_angles(inav, -182.0, -182.0);
+
+                test_similar_angles(inav,   2.0,  358.0);
+                test_similar_angles(inav,  -2.0,  358.0);
+                test_similar_angles(inav,   2.0, -358.0);
+                test_similar_angles(inav,  -2.0, -358.0);
+
+                test_similar_angles(inav,  +2.0,  718.0);
+                test_similar_angles(inav,  -2.0,  718.0);
+                test_similar_angles(inav,  +2.0, -718.0);
+                test_similar_angles(inav,  -2.0, -718.0);
             }
         }
 
