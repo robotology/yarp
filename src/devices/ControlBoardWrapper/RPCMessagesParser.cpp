@@ -2153,6 +2153,12 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                             }
                             break;
 
+                            case VOCAB_GEARBOX_RATIO:
+                            {
+                                ok = rpc_IMotor->setGearboxRatio(cmd.get(2).asInt32(), cmd.get(3).asFloat64());
+                            }
+                            break;
+
                             case VOCAB_VEL_LIMITS:
                             {
                                 ok = rcp_Ilim->setVelLimits(cmd.get(2).asInt32(), cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
