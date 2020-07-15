@@ -9,20 +9,32 @@
 #ifndef YARP_DEV_CONTROLBOARDHELPER_H
 #define YARP_DEV_CONTROLBOARDHELPER_H
 
-#include <cstring> // for memset
 #include <yarp/dev/ControlBoardPid.h>
 #include <yarp/dev/PidEnums.h>
 #include <yarp/os/Log.h>
 
+#include <cstring> // for memset
+#include <type_traits>
+
  /*
  * simple helper template to alloc memory.
  */
-template <class T>
+template <class T,
+          std::enable_if_t<std::is_trivial<T>::value, int> = 0>
 T* allocAndCheck(int size)
 {
     T* t = new T[size];
     yAssert(t != 0);
     memset(t, 0, sizeof(T) * size);
+    return t;
+}
+
+template <class T,
+          std::enable_if_t<!std::is_trivial<T>::value, int> = 0>
+T* allocAndCheck(int size)
+{
+    T* t = new T[size];
+    yAssert(t != 0);
     return t;
 }
 
