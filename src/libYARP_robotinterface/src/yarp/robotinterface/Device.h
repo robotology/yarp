@@ -15,6 +15,7 @@
 #include <yarp/robotinterface/Param.h>
 
 namespace yarp { namespace dev { class PolyDriver; } }
+namespace yarp { namespace dev { class PolyDriverDescriptor; } }
 namespace yarp { namespace dev { class PolyDriverList; } }
 
 namespace yarp {
@@ -60,7 +61,7 @@ public:
     bool configure(const Device &target, const ParamList& params) const;
 
     // calibrate one device
-    bool calibrate(const Device &target) const;
+    bool calibrate(const yarp::dev::PolyDriverDescriptor &target) const;
 
     // attach a list of drivers to this wrapper
     bool attach(const yarp::dev::PolyDriverList &drivers) const;
@@ -72,7 +73,7 @@ public:
     bool detach() const;
 
     // park
-    bool park(const Device &target) const;
+    bool park(const yarp::dev::PolyDriverDescriptor &target) const;
 
     // custom action
     bool custom(const ParamList &params) const;

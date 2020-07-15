@@ -49,6 +49,7 @@ public:
     std::string findParam(const std::string &name) const;
 
     void interrupt();
+    bool setExternalDevices(const yarp::dev::PolyDriverList& list);
     bool enterPhase(yarp::robotinterface::ActionPhase phase);
     yarp::robotinterface::ActionPhase currentPhase() const;
     int currentLevel() const;

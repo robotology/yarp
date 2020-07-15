@@ -19,6 +19,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <unordered_set>
 
 
 std::ostringstream& operator<<(std::ostringstream &oss, const yarp::robotinterface::Robot &t)
@@ -54,6 +55,18 @@ public:
 
     // return the device with the given name or <fatal error> if not found
     Device* findDevice(const std::string &name);
+
+    // return true if a device with the given name exists
+    // considering also the provided external devices
+    bool hasDeviceIncludingExternal(const std::string &name) const;
+
+    // return the device with the given name or nullptr if not found,
+    // considering also the provided external devices
+    yarp::dev::PolyDriverDescriptor findDeviceIncludingExternal(const std::string &name);
+
+    // check if there is no external devices that has the same name of an internal device
+    // return true if there is a conflict, false otherwise
+    bool checkForNamingConflictsInExternalDevices(const yarp::dev::PolyDriverList& newExternalDevicesList);
 
     // open all the devices and return true if all the open calls were successful
     bool openDevices();
@@ -94,6 +107,7 @@ public:
     std::string portprefix;
     ParamList params;
     DeviceList devices;
+    yarp::dev::PolyDriverList externalDevices;
     yarp::robotinterface::ActionPhase currentPhase;
     unsigned int currentLevel;
 }; // class yarp::robotinterface::Robot::Private
@@ -115,9 +129,68 @@ yarp::robotinterface::Device* yarp::robotinterface::Robot::Private::findDevice(c
             return &device;
         }
     }
-    yFatal() << "Cannot find device" << name;
     return nullptr;
 }
+
+bool yarp::robotinterface::Robot::Private::hasDeviceIncludingExternal(const std::string &name) const
+{
+    if (hasDevice(name)) {
+        return true;
+    } else {
+        for (int i=0; i < externalDevices.size(); i++) {
+            const yarp::dev::PolyDriverDescriptor* externalDevice = externalDevices[i];
+            if (name == externalDevice->key) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+yarp::dev::PolyDriverDescriptor
+yarp::robotinterface::Robot::Private::findDeviceIncludingExternal(const std::string &name)
+{
+    yarp::dev::PolyDriverDescriptor deviceFound;
+    deviceFound.poly = nullptr;
+    deviceFound.key = "";
+
+    for (auto& device : devices) {
+        if (name == device.name()) {
+            deviceFound.poly = device.driver();
+            deviceFound.key = device.name();
+            return deviceFound;
+        }
+    }
+
+    for (int i=0; i < externalDevices.size(); i++) {
+        const yarp::dev::PolyDriverDescriptor* externalDevice = externalDevices[i];
+        if(name == externalDevice->key) {
+            deviceFound = *externalDevice;
+        }
+    }
+
+    return deviceFound;
+}
+
+bool yarp::robotinterface::Robot::Private::checkForNamingConflictsInExternalDevices(const yarp::dev::PolyDriverList& externalDevicesList)
+{
+    std::unordered_set<std::string> externalDevicesNames;
+
+    for (int i=0; i < externalDevicesList.size(); i++) {
+        const yarp::dev::PolyDriverDescriptor* externalDevice = externalDevicesList[i];
+        externalDevicesNames.insert(externalDevice->key);
+    }
+
+    for (auto& device : devices) {
+        if (externalDevicesNames.find(device.name()) != externalDevicesNames.end()) {
+            yError() << "Device name " << device.name() << " is used for both an internal and external device.";
+            return true;
+        }
+    }
+
+    return false;
+}
+
 
 bool yarp::robotinterface::Robot::Private::openDevices()
 {
@@ -210,7 +283,8 @@ bool yarp::robotinterface::Robot::Private::configure(const yarp::robotinterface:
     return true;
 }
 
-bool yarp::robotinterface::Robot::Private::calibrate(const yarp::robotinterface::Device &device, const yarp::robotinterface::ParamList &params)
+bool yarp::robotinterface::Robot::Private::calibrate(const yarp::robotinterface::Device &device,
+                                                     const yarp::robotinterface::ParamList &params)
 {
     if (!yarp::robotinterface::hasParam(params, "target")) {
         yError() << "Action \"" << ActionTypeToString(ActionTypeCalibrate) << R"(" requires "target" parameter)";
@@ -218,16 +292,17 @@ bool yarp::robotinterface::Robot::Private::calibrate(const yarp::robotinterface:
     }
     std::string targetDeviceName = yarp::robotinterface::findParam(params, "target");
 
-    if (!hasDevice(targetDeviceName)) {
+    if (!hasDeviceIncludingExternal(targetDeviceName)) {
         yError() << "Target device" << targetDeviceName << "does not exist.";
         return false;
     }
-    Device &targetDevice = *findDevice(targetDeviceName);
+    yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
 
     return device.calibrate(targetDevice);
 }
 
-bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::Device &device, const yarp::robotinterface::ParamList &params)
+bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::Device &device,
+                                                  const yarp::robotinterface::ParamList &params)
 {
     int check = 0;
     if (yarp::robotinterface::hasParam(params, "network")) check++;
@@ -251,14 +326,14 @@ bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::De
         }
         std::string targetDeviceName = yarp::robotinterface::findParam(params, "device");
 
-        if (!hasDevice(targetDeviceName)) {
+        if (!hasDeviceIncludingExternal(targetDeviceName)) {
             yError() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
             return false;
         }
-        Device &targetDevice = *findDevice(targetDeviceName);
+         yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
 
         // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
-        drivers.push(targetDevice.driver(), targetNetwork.c_str());
+        drivers.push(targetDevice.poly, targetNetwork.c_str());
 
     }
     else if (yarp::robotinterface::hasParam(params, "all"))
@@ -266,6 +341,12 @@ bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::De
         for (auto& device : devices)
         {
             drivers.push(device.driver(), "all");
+        }
+
+        for (int i=0; i < externalDevices.size(); i++)
+        {
+            const yarp::dev::PolyDriverDescriptor* externalDevice = externalDevices[i];
+            drivers.push(externalDevice->poly, "all");
         }
     }
     else if (yarp::robotinterface::hasParam(params, "networks")) {
@@ -281,14 +362,14 @@ bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::De
                 return false;
             }
             std::string targetDeviceName = yarp::robotinterface::findParam(params, targetNetwork);
-            if (!hasDevice(targetDeviceName)) {
+            if (!hasDeviceIncludingExternal(targetDeviceName)) {
                 yError() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
                 return false;
             }
-            Device &targetDevice = *findDevice(targetDeviceName);
+            yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
 
             // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
-            drivers.push(targetDevice.driver(), targetNetwork.c_str());
+            drivers.push(targetDevice.poly, targetNetwork.c_str());
         }
     }
     else
@@ -322,7 +403,8 @@ bool yarp::robotinterface::Robot::Private::detach(const yarp::robotinterface::De
     return device.detach();
 }
 
-bool yarp::robotinterface::Robot::Private::park(const yarp::robotinterface::Device &device, const yarp::robotinterface::ParamList &params)
+bool yarp::robotinterface::Robot::Private::park(const yarp::robotinterface::Device &device,
+                                                const yarp::robotinterface::ParamList &params)
 {
     if (!yarp::robotinterface::hasParam(params, "target")) {
         yError() << "Action \"" << ActionTypeToString(ActionTypePark) << R"(" requires "target" parameter)";
@@ -330,11 +412,11 @@ bool yarp::robotinterface::Robot::Private::park(const yarp::robotinterface::Devi
     }
     std::string targetDeviceName = yarp::robotinterface::findParam(params, "target");
 
-    if (!hasDevice(targetDeviceName)) {
+    if (!hasDeviceIncludingExternal(targetDeviceName)) {
         yError() << "Target device" << targetDeviceName << "does not exist.";
         return false;
     }
-    Device &targetDevice = *findDevice(targetDeviceName);
+    yarp::dev::PolyDriverDescriptor targetDevice = findDeviceIncludingExternal(targetDeviceName);
 
     return device.park(targetDevice);
 }
@@ -493,6 +575,17 @@ void yarp::robotinterface::Robot::interrupt()
     for (auto& device : devices()) {
         device.stopThreads();
     }
+}
+
+bool yarp::robotinterface::Robot::setExternalDevices(const yarp::dev::PolyDriverList& list)
+{
+    bool nameConflict = mPriv->checkForNamingConflictsInExternalDevices(list);
+    if (nameConflict) {
+        return false;
+    }
+
+    mPriv->externalDevices = list;
+    return true;
 }
 
 bool yarp::robotinterface::Robot::enterPhase(yarp::robotinterface::ActionPhase phase)
