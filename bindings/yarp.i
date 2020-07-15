@@ -410,7 +410,8 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IControlMode2.h>
 #endif
 %include <yarp/dev/IInteractionMode.h>
-%include <yarp/dev/IEncoders.h>
+%include <yarp/dev/IEncodersTimed.h>
+%include <yarp/dev/IMotor.h>
 %include <yarp/dev/IMotorEncoders.h>
 %include <yarp/dev/ITorqueControl.h>
 %include <yarp/dev/IImpedanceControl.h>
@@ -723,6 +724,8 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     CAST_POLYDRIVER_TO_INTERFACE(IPositionControl)
     CAST_POLYDRIVER_TO_INTERFACE(IVelocityControl)
     CAST_POLYDRIVER_TO_INTERFACE(IEncoders)
+    CAST_POLYDRIVER_TO_INTERFACE(IEncodersTimed)
+    CAST_POLYDRIVER_TO_INTERFACE(IMotor)
     CAST_POLYDRIVER_TO_INTERFACE(IMotorEncoders)
     CAST_POLYDRIVER_TO_INTERFACE(IPidControl)
     CAST_POLYDRIVER_TO_INTERFACE(IAmplifierControl)
@@ -789,6 +792,18 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         if (!ok) return 0;
         return buffer;
     }
+
+    bool getImpedance(int j, std::vector<double>& stiffness, std::vector<double>& damping) {
+        return self->getImpedance(j, &stiffness[0], &damping[0]);
+    }
+
+    bool getImpedanceOffset(int j, std::vector<double>& data) {
+        return self->getImpedanceOffset(j, &data[0]);
+    }
+
+    bool getCurrentImpedanceLimit(int j, std::vector<double>& min_stiff, std::vector<double>& max_stiff, std::vector<double>& min_damp, std::vector<double>& max_damp) {
+        return self->getCurrentImpedanceLimit(j, &min_stiff[0], &max_stiff[0], &min_damp[0], &max_damp[0]);
+    }
 }
 
 %extend yarp::dev::IPositionControl {
@@ -803,12 +818,24 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return self->positionMove(&data[0]);
     }
 
+    bool positionMove(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->positionMove(n_joint, &joints[0], &data[0]);
+    }
+
     bool relativeMove(std::vector<double>& data) {
         return self->relativeMove(&data[0]);
     }
 
+    bool relativeMove(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->relativeMove(n_joint, &joints[0], &data[0]);
+    }
+
     bool setRefSpeeds(std::vector<double>& data) {
         return self->setRefSpeeds(&data[0]);
+    }
+
+    bool setRefSpeeds(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->setRefSpeeds(n_joint, &joints[0], &data[0]);
     }
 
     bool getRefSpeed(int j, std::vector<double>& data) {
@@ -819,6 +846,18 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return self->getRefSpeeds(&data[0]);
     }
 
+    bool getRefSpeeds(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getRefSpeeds(n_joint, &joints[0], &data[0]);
+    }
+
+    bool setRefAccelerations(std::vector<double>& data) {
+        return self->setRefAccelerations(&data[0]);
+    }
+
+    bool setRefAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->setRefAccelerations(n_joint, &joints[0], &data[0]);
+    }
+
     bool getRefAcceleration(int j, std::vector<double>& data) {
         return self->getRefAcceleration(j, &data[0]);
     }
@@ -827,6 +866,9 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return self->getRefAccelerations(&data[0]);
     }
 
+    bool getRefAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getRefAccelerations(n_joint, &joints[0], &data[0]);
+    }
 
     bool checkMotionDone() {
         bool result;
@@ -836,23 +878,32 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 
     bool checkMotionDone(std::vector<bool>& flag) {
-      // complication: vector<bool> is packed in C++
-      // and isn't a regular container.
-      std::vector<char> data(flag.size());
-      bool result = self->checkMotionDone((bool*)(&data[0]));
-      for (size_t i=0; i<data.size(); i++) {
-        flag[i] = data[i]!=0;
-      }
-      return result;
+        // complication: vector<bool> is packed in C++
+        // and isn't a regular container.
+        std::vector<char> data(flag.size());
+        bool result = self->checkMotionDone((bool*)(&data[0]));
+        for (size_t i=0; i<data.size(); i++) {
+            flag[i] = data[i]!=0;
+        }
+        return result;
     }
 
     bool checkMotionDone(int i, std::vector<bool>& flag) {
-      std::vector<char> data(flag.size());
-      bool result = self->checkMotionDone(i,(bool*)(&data[0]));
-      for (size_t i=0; i<data.size(); i++) {
-        flag[i] = data[i]!=0;
-      }
-      return result;
+        std::vector<char> data(flag.size());
+        bool result = self->checkMotionDone(i,(bool*)(&data[0]));
+        for (size_t i=0; i<data.size(); i++) {
+            flag[i] = data[i]!=0;
+        }
+        return result;
+    }
+
+    bool checkMotionDone(int n_joint, std::vector<int>& joints, std::vector<bool>& flag) {
+        std::vector<char> data(n_joint);
+        bool result = self->checkMotionDone(n_joint, &joints[0], (bool*)(&data[0]));
+        for (size_t i=0; i<data.size(); i++) {
+            flag[i] = data[i]!=0;
+        }
+        return result;
     }
 
     bool isMotionDone(int i) {
@@ -873,6 +924,21 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return data;
     }
 
+    bool stop(int n_joint, std::vector<int>& joints) {
+        return self->stop(n_joint, &joints[0]);
+    }
+
+    bool getTargetPosition(int j, std::vector<double>& data) {
+        return self->getTargetPosition(j, &data[0]);
+    }
+
+    bool getTargetPositions(std::vector<double>& data) {
+        return self->getTargetPositions(&data[0]);
+    }
+
+    bool getTargetPositions(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getTargetPositions(n_joint, &joints[0], &data[0]);
+    }
 }
 
 %extend yarp::dev::IVelocityControl {
@@ -897,6 +963,34 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 
     bool getRefAccelerations(std::vector<double>& data) {
         return self->getRefAccelerations(&data[0]);
+    }
+
+    bool velocityMove(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->velocityMove(n_joint, &joints[0], &data[0]);
+    }
+
+    bool getRefVelocity(int j, std::vector<double>& data) {
+        return self->getRefVelocity(j, &data[0]);
+    }
+
+    bool getRefVelocities(std::vector<double>& data) {
+        return self->getRefVelocities(&data[0]);
+    }
+
+    bool getRefVelocities(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getRefVelocities(n_joint, &joints[0], &data[0]);
+    }
+
+    bool setRefAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->setRefAccelerations(n_joint, &joints[0], &data[0]);
+    }
+
+    bool getRefAccelerations(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getRefAccelerations(n_joint, &joints[0], &data[0]);
+    }
+
+    bool stop(int n_joint, std::vector<int>& joints) {
+        return self->stop(n_joint, &joints[0]);
     }
 }
 
@@ -946,12 +1040,30 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 }
 
+%extend yarp::dev::IEncodersTimed {
+    bool getEncodersTimed(std::vector<double>& data, std::vector<double>& time) {
+        return self->getEncodersTimed(&data[0], &time[0]);
+    }
+
+    bool getEncoderTimed(int j, std::vector<double>& data, std::vector<double>& time) {
+        return self->getEncoderTimed(j, &data[0], &time[0]);
+    }
+}
+
 %extend yarp::dev::IMotorEncoders {
     int getNumberOfMotorEncoders() {
         int nbEncs;
         bool ok = self->getNumberOfMotorEncoders(&nbEncs);
         if (!ok) return 0;
         return nbEncs;
+    }
+
+    bool getMotorEncoderCountsPerRevolution(int j, std::vector<double>& data) {
+        return self->getMotorEncoderCountsPerRevolution(j, &data[0]);
+    }
+
+    bool setMotorEncoders(std::vector<double>& encs) {
+        return self->setMotorEncoders(&encs[0]);
     }
 
     double getMotorEncoder(int j) {
@@ -983,10 +1095,25 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     bool getMotorEncoderSpeeds(std::vector<double>& speeds) {
         return self->getMotorEncoderSpeeds(&speeds[0]);
     }
+
+    bool getMotorEncoderAcceleration(int j, std::vector<double>& acc) {
+        return self->getMotorEncoderAcceleration(j, &acc[0]);
+    }
+
+    bool getMotorEncoderAccelerations(std::vector<double>& accs) {
+        return self->getMotorEncoderAccelerations(&accs[0]);
+    }
 }
 
-
 %extend yarp::dev::IAmplifierControl {
+    bool getAmpStatus(std::vector<int>& data) {
+        return self->getAmpStatus(&data[0]);
+    }
+
+    bool getAmpStatus(int j, std::vector<int>& data) {
+        return self->getAmpStatus(j, &data[0]);
+    }
+
     bool getCurrents(std::vector<double>& data) {
         return self->getCurrents(&data[0]);
     }
@@ -994,11 +1121,39 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     bool getCurrent(int j, std::vector<double>& data) {
         return self->getCurrent(j, &data[0]);
     }
+
+    bool getMaxCurrent(int j, std::vector<double>& data) {
+        return self->getMaxCurrent(j, &data[0]);
+    }
+
+    bool getNominalCurrent(int j, std::vector<double>& data) {
+        return self->getNominalCurrent(j, &data[0]);
+    }
+
+    bool getPeakCurrent(int j, std::vector<double>& data) {
+        return self->getPeakCurrent(j, &data[0]);
+    }
+
+    bool getPWM(int j, std::vector<double>& data) {
+        return self->getPWM(j, &data[0]);
+    }
+
+    bool getPWMLimit(int j, std::vector<double>& data) {
+        return self->getPWMLimit(j, &data[0]);
+    }
+
+    bool getPowerSupplyVoltage(int j, std::vector<double>& data) {
+        return self->getPowerSupplyVoltage(j, &data[0]);
+    }
 }
 
 %extend yarp::dev::IControlLimits {
     bool getLimits(int axis, std::vector<double>& min, std::vector<double>& max) {
         return self->getLimits(axis, &min[0], &max[0]);
+    }
+
+    bool getVelLimits(int axis, std::vector<double>& min, std::vector<double>& max) {
+        return self->getVelLimits(axis, &min[0], &max[0]);
     }
 }
 
@@ -1033,6 +1188,22 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
        self->getInteractionMode(axis, &mode);
        return mode;
     }
+
+    bool getInteractionModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
+        return self->getInteractionModes(n_joint, &joints[0], (yarp::dev::InteractionModeEnum*)&data[0]);
+    }
+
+    bool getInteractionModes(std::vector<int>& data) {
+        return self->getInteractionModes((yarp::dev::InteractionModeEnum*)&data[0]);
+    }
+
+    bool setInteractionModes(int n_joint, std::vector<int>& joints, std::vector<int>& data) {
+        return self->setInteractionModes(n_joint, &joints[0], (yarp::dev::InteractionModeEnum*)&data[0]);
+    }
+
+    bool setInteractionModes(std::vector<int>& data) {
+        return self->setInteractionModes((yarp::dev::InteractionModeEnum*)&data[0]);
+    }
 }
 
 %extend yarp::dev::IPositionDirect {
@@ -1043,8 +1214,24 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         return buffer;
     }
 
+    bool setPositions(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->setPositions(n_joint, &joints[0], &data[0]);
+    }
+
     bool setPositions(std::vector<double>& data) {
         return self->setPositions(&data[0]);
+    }
+
+    bool getRefPosition(int j, std::vector<double>& data) {
+        return self->getRefPosition(j, &data[0]);
+    }
+
+    bool getRefPositions(std::vector<double>& data) {
+        return self->getRefPositions(&data[0]);
+    }
+
+    bool getRefPositions(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->getRefPositions(n_joint, &joints[0], &data[0]);
     }
 }
 
@@ -1054,6 +1241,242 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
         bool ok = self->getAxisName(axis, name);
         if (!ok) return "unknown";
         return name;
+    }
+
+    yarp::dev::JointTypeEnum getJointType(int axis) {
+        yarp::dev::JointTypeEnum type;
+        bool ok = self->getJointType(axis, type);
+        if (!ok) return VOCAB_JOINTTYPE_UNKNOWN;
+        return type;
+    }
+}
+
+%extend yarp::dev::ICurrentControl {
+    int getNumberOfMotors() {
+        int buffer;
+        bool ok = self->getNumberOfMotors(&buffer);
+        if (!ok) return 0;
+        return buffer;
+    }
+
+    bool getCurrent(int j, std::vector<double>& data) {
+        return self->getCurrent(j, &data[0]);
+    }
+
+    bool getCurrents(std::vector<double>& data) {
+        return self->getCurrents(&data[0]);
+    }
+
+    bool getCurrentRange(int j, std::vector<double>& min, std::vector<double>& max) {
+        return self->getCurrentRange(j, &min[0], &max[0]);
+    }
+
+    bool getCurrentRanges(std::vector<double>& mins, std::vector<double>& maxs) {
+        return self->getCurrentRanges(&mins[0], &maxs[0]);
+    }
+
+    bool setRefCurrents(std::vector<double>& data) {
+        return self->setRefCurrents(&data[0]);
+    }
+
+    bool setRefCurrents(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->setRefCurrents(n_joint, &joints[0], &data[0]);
+    }
+
+    bool getRefCurrents(std::vector<double>& data) {
+        return self->getRefCurrents(&data[0]);
+    }
+
+    bool getRefCurrent(int j, std::vector<double>& data) {
+        return self->getRefCurrent(j, &data[0]);
+    }
+}
+
+%extend yarp::dev::IMotor {
+    int getNumberOfMotors() {
+        int buffer;
+        bool ok = self->getNumberOfMotors(&buffer);
+        if (!ok) return 0;
+        return buffer;
+    }
+
+    bool getTemperature(int j, std::vector<double>& data) {
+        return self->getTemperature(j, &data[0]);
+    }
+
+    bool getTemperatures(std::vector<double>& data) {
+        return self->getTemperatures(&data[0]);
+    }
+
+    bool getTemperatureLimit(int j, std::vector<double>& data) {
+        return self->getTemperatureLimit(j, &data[0]);
+    }
+
+    bool getGearboxRatio(int j, std::vector<double>& data) {
+        return self->getGearboxRatio(j, &data[0]);
+    }
+}
+
+%extend yarp::dev::IPWMControl {
+    int getNumberOfMotors() {
+        int buffer;
+        bool ok = self->getNumberOfMotors(&buffer);
+        if (!ok) return 0;
+        return buffer;
+    }
+
+    bool setRefDutyCycles(std::vector<double>& data) {
+        return self->setRefDutyCycles(&data[0]);
+    }
+
+    bool getRefDutyCycle(int j, std::vector<double>& data) {
+        return self->getRefDutyCycle(j, &data[0]);
+    }
+
+    bool getRefDutyCycles(std::vector<double>& data) {
+        return self->getRefDutyCycles(&data[0]);
+    }
+
+    bool getDutyCycle(int j, std::vector<double>& data) {
+        return self->getDutyCycle(j, &data[0]);
+    }
+
+    bool getDutyCycles(std::vector<double>& data) {
+        return self->getDutyCycles(&data[0]);
+    }
+}
+
+%extend yarp::dev::ITorqueControl {
+    int getAxes() {
+        int buffer;
+        bool ok = self->getAxes(&buffer);
+        if (!ok) return 0;
+        return buffer;
+    }
+
+    bool getRefTorques(std::vector<double>& data) {
+        return self->getRefTorques(&data[0]);
+    }
+
+    bool getRefTorque(int j, std::vector<double>& data) {
+        return self->getRefTorque(j, &data[0]);
+    }
+
+    bool setRefTorques(std::vector<double>& data) {
+        return self->setRefTorques(&data[0]);
+    }
+
+    bool setRefTorques(int n_joint, std::vector<int>& joints, std::vector<double>& data) {
+        return self->setRefTorques(n_joint, &joints[0], &data[0]);
+    }
+
+    bool getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters& params) {
+        return self->getMotorTorqueParams(j, &params);
+    }
+
+    bool getTorque(int j, std::vector<double>& data) {
+        return self->getTorque(j, &data[0]);
+    }
+
+    bool getTorques(std::vector<double>& data) {
+        return self->getTorques(&data[0]);
+    }
+
+    bool getTorqueRange(int j, std::vector<double>& min, std::vector<double>& max) {
+        return self->getTorqueRange(j, &min[0], &max[0]);
+    }
+
+    bool getTorqueRanges(std::vector<double>& mins, std::vector<double>& maxs) {
+        return self->getTorqueRanges(&mins[0], &maxs[0]);
+    }
+}
+
+%extend yarp::dev::IPidControl {
+    bool setPid(int pidtype, int j, const yarp::dev::Pid& pid) {
+        return self->setPid((yarp::dev::PidControlTypeEnum)pidtype, j, pid);
+    }
+
+    bool setPids(int pidtype, std::vector<yarp::dev::Pid>& pids) {
+        return self->setPids((yarp::dev::PidControlTypeEnum)pidtype, &pids[0]);
+    }
+
+    bool setPidReference(int pidtype, int j, double ref) {
+        return self->setPidReference((yarp::dev::PidControlTypeEnum)pidtype, j, ref);
+    }
+
+    bool setPidReferences(int pidtype, std::vector<double>& data) {
+        return self->setPidReferences((yarp::dev::PidControlTypeEnum)pidtype, &data[0]);
+    }
+
+    bool setPidErrorLimit(int pidtype, int j, double limit) {
+        return self->setPidErrorLimit((yarp::dev::PidControlTypeEnum)pidtype, j, limit);
+    }
+
+    bool setPidErrorLimits(int pidtype, std::vector<double>& data) {
+        return self->setPidErrorLimits((yarp::dev::PidControlTypeEnum)pidtype, &data[0]);
+    }
+
+    bool getPidError(int pidtype, int j, std::vector<double>& data) {
+        return self->getPidError((yarp::dev::PidControlTypeEnum)pidtype, j, &data[0]);
+    }
+
+    bool getPidErrors(int pidtype, std::vector<double>& data) {
+        return self->getPidErrors((yarp::dev::PidControlTypeEnum)pidtype, &data[0]);
+    }
+
+    bool getPidOutput(int pidtype, int j, std::vector<double>& data) {
+        return self->getPidOutput((yarp::dev::PidControlTypeEnum)pidtype, j, &data[0]);
+    }
+
+    bool getPidOutputs(int pidtype, std::vector<double>& data) {
+        return self->getPidOutputs((yarp::dev::PidControlTypeEnum)pidtype, &data[0]);
+    }
+
+    bool getPid(int pidtype, int j, std::vector<yarp::dev::Pid>& data) {
+        return self->getPid((yarp::dev::PidControlTypeEnum)pidtype, j, &data[0]);
+    }
+
+    bool getPids(int pidtype, std::vector<yarp::dev::Pid>& data) {
+        return self->getPids((yarp::dev::PidControlTypeEnum)pidtype, &data[0]);
+    }
+
+    bool getPidReference(int pidtype, int j, std::vector<double>& data) {
+        return self->getPidReference((yarp::dev::PidControlTypeEnum)pidtype, j, &data[0]);
+    }
+
+    bool getPidReferences(int pidtype, std::vector<double>& data) {
+        return self->getPidReferences((yarp::dev::PidControlTypeEnum)pidtype, &data[0]);
+    }
+
+    bool getPidErrorLimit(int pidtype, int j, std::vector<double>& data) {
+        return self->getPidErrorLimit((yarp::dev::PidControlTypeEnum)pidtype, j, &data[0]);
+    }
+
+    bool getPidErrorLimits(int pidtype, std::vector<double>& data) {
+        return self->getPidErrorLimits((yarp::dev::PidControlTypeEnum)pidtype, &data[0]);
+    }
+
+    bool resetPid(int pidtype, int j) {
+        return self->resetPid((yarp::dev::PidControlTypeEnum)pidtype, j);
+    }
+
+    bool disablePid(int pidtype, int j) {
+        return self->disablePid((yarp::dev::PidControlTypeEnum)pidtype, j);
+    }
+
+    bool enablePid(int pidtype, int j) {
+        return self->enablePid((yarp::dev::PidControlTypeEnum)pidtype, j);
+    }
+
+    bool setPidOffset(int pidtype, int j, double offset) {
+        return self->setPidOffset((yarp::dev::PidControlTypeEnum)pidtype, j, offset);
+    }
+
+    bool isPidEnabled(int pidtype, int j, std::vector<bool>& flag) {
+        std::vector<char> data(flag.size());
+        bool result = self->isPidEnabled((yarp::dev::PidControlTypeEnum)pidtype, j, (bool*)(&data[0]));
+        for (size_t i = 0; i < data.size(); i++) flag[i] = data[i] != 0;
+        return result;
     }
 }
 
