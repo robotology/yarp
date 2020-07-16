@@ -70,6 +70,8 @@ protected:
     std::string m_camera_frame_id;
     double m_floor_height;
     double m_ceiling_height;
+    double m_pointcloud_max_distance;
+    yarp::sig::Matrix m_transform_mtrx;
 
 public:
     LaserFromPointCloud(double period = 0.01) : PeriodicThread(period),

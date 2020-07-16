@@ -93,7 +93,7 @@ class FrameTransformClient :
         public yarp::os::PeriodicThread
 {
 private:
-    enum ConnectionType {DISCONNECTED = 0, DIRECT, INVERSE, UNDIRECT};
+    enum ConnectionType {DISCONNECTED = 0, DIRECT, INVERSE, UNDIRECT, IDENTITY};
 
     FrameTransformClient::ConnectionType getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor);
 

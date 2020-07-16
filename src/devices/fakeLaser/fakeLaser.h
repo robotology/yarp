@@ -61,7 +61,7 @@
 class FakeLaser : public yarp::os::PeriodicThread, public yarp::dev::Lidar2DDeviceBase, public yarp::dev::DeviceDriver
 {
 protected:
-    enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2 };
+    enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2, USE_CONSTANT_VALUE =3 };
     enum localization_mode_t { LOC_NOT_SET=0, LOC_FROM_PORT = 1, LOC_FROM_CLIENT = 2 };
 
     yarp::dev::PolyDriver driver;
@@ -75,13 +75,14 @@ protected:
     yarp::dev::Nav2D::ILocalization2D* m_iLoc;
 
     //this is the position of the localized robot in the map
-    double m_loc_x;
-    double m_loc_y;
-    double m_loc_t;
+    double m_robot_loc_x;
+    double m_robot_loc_y;
+    double m_robot_loc_t;
 
     std::random_device* m_rd;
     std::mt19937* m_gen;
     std::uniform_real_distribution<>* m_dis;
+    double m_const_value=1;
 
 public:
     FakeLaser(double period = 0.02) : PeriodicThread(period),
@@ -90,9 +91,9 @@ public:
         m_loc_port(nullptr),
         m_pLoc(nullptr),
         m_iLoc(nullptr),
-        m_loc_x(0.0),
-        m_loc_y(0.0),
-        m_loc_t(0.0)
+        m_robot_loc_x(0.0),
+        m_robot_loc_y(0.0),
+        m_robot_loc_t(0.0)
     {
         //default parameters
         m_min_distance = 0.1;  //m

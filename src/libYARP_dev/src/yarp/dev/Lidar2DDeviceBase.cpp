@@ -156,7 +156,7 @@ bool Lidar2DDeviceBase::parseConfiguration(yarp::os::Searchable& config)
                     }
                     else
                     {
-                        yCError(LASER_BASE) << "Invalid range in SKIP section";
+                        yCError(LASER_BASE) << "Invalid range in SKIP section:"<< range.min << range.max;
                         return false;
                     }
                 }
@@ -200,6 +200,11 @@ bool Lidar2DDeviceBase::parseConfiguration(yarp::os::Searchable& config)
     yCInfo(LASER_BASE) << "resolution:" << m_resolution;
     yCInfo(LASER_BASE) << "sensors:" << m_sensorsNum;
     yCInfo(LASER_BASE) << "allow_infinity:" << (m_do_not_clip_and_allow_infinity_enable ==true);
+    if (m_range_skip_vector.size() >0)
+    {
+        for (size_t i=0; i< m_range_skip_vector.size(); i++)
+        yCInfo(LASER_BASE) << "skip area:" << m_range_skip_vector[i].min << "->" << m_range_skip_vector[i].max;
+    }
     return true;
 }
 

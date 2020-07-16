@@ -479,6 +479,8 @@ bool FrameTransformClient::allFramesAsString(std::string &all_frames)
 
 FrameTransformClient::ConnectionType FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
 {
+    if (target_frame == source_frame) {return IDENTITY;}
+
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, j;
     std::vector<std::string>   tar2root_vec;
@@ -677,6 +679,12 @@ bool FrameTransformClient::getTransform(const std::string& target_frame_id, cons
         getChainedTransform(source_frame_id, ancestor, root2src);
         getChainedTransform(target_frame_id, ancestor, root2tar);
         transform = yarp::math::SE3inv(root2src) * root2tar;
+        return true;
+    }
+    else if (ct == IDENTITY)
+    {
+        yarp::sig::Matrix tmp(4, 4); tmp.eye();
+        transform = tmp;
         return true;
     }
 

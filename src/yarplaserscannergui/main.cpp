@@ -29,6 +29,7 @@
 #include <opencv2/core/version.hpp>
 #if CV_MAJOR_VERSION >= 3
 #include <opencv2/highgui/highgui_c.h>
+#include <opencv2/highgui.hpp>
 #else
 #include <cv.h>
 #include <highgui.h>
@@ -69,7 +70,8 @@ const CvScalar color_gray   = cvScalar(100,100,100);
 #define ASPECT_LINE  0
 #define ASPECT_POINT 1
 
-bool g_lidar_debug=false;
+bool g_lidar_debug_nan = false;
+bool g_lidar_debug_inf = false;
 
 void drawGrid(IplImage *img, double scale)
 {
@@ -224,15 +226,39 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
         if (x == std::numeric_limits<double>::infinity() ||
             y == std::numeric_limits<double>::infinity()) continue; //this is not working
  #endif
-        if (std::isinf(x) || std::isinf(y)) continue;
+        if (std::isinf(x) || std::isinf(y))
+        {
+            if (g_lidar_debug_inf)
+            {
+                //the following rotation is performed to have x axis aligned with screen vertical
+                //double rr;
+                double tt;
+                double sensor_resolution = 0.5; //@@@fixme
+                tt = -i * sensor_resolution - 90;
+                //(*las)[i].get_polar(rr,tt);
+                CvPoint ray;
+                //yDebug() << rr << tt;
+                ray.x = 1.0 * cos(tt * DEG2RAD) * scale;
+                ray.y = 1.0 * sin(tt * DEG2RAD) * scale;
+                ray.x += center.x;
+                ray.y += center.y;
+
+                int thickness = 2;
+                //draw a line
+                cvLine(img, center, ray, color_yellow, thickness);
+            }
+            continue;
+        }
 
         if (std::isnan(x) || std::isnan(y))
         {
-            if (g_lidar_debug)
+            if (g_lidar_debug_nan)
             {
                 //the following rotation is performed to have x axis aligned with screen vertical
-                double rr, tt;
-                tt= i * 0.5 - 90;
+                //double rr;
+                double tt;
+                double sensor_resolution = 0.5; //@@@fixme
+                tt= - i * sensor_resolution - 90;
                 //(*las)[i].get_polar(rr,tt);
                 CvPoint ray;
                 //yDebug() << rr << tt;
@@ -299,6 +325,7 @@ void display_help()
     yInfo() << "--aspect <0/1> draws line/points (default 0=lines)";
     yInfo() << "--sens_port <string> the name of the port used by Rangefinder2DClient to connect to the laser device. (mandatory)";
     yInfo() << "--lidar_debug shows NaN values";
+    yInfo() << "--local <string> the orefix for the client port. By default /laserScannerGui. Useful in case of multiple instances.";
     yInfo() << "";
     yInfo() << "Available commands (pressing the key during execution):";
     yInfo() << "c ...... enables/disables compass.";
@@ -336,14 +363,17 @@ int main(int argc, char *argv[])
     int period = rf.check("period",Value(50),"period [ms]").asInt32(); //ms
     int aspect = rf.check("aspect", Value(0), "0 draw lines, 1 draw points").asInt32();
     string laserport = rf.check("sens_port", Value("/laser:o"), "laser port name").asString();
-    g_lidar_debug = rf.check("lidar_debug");
+    string localprefix = rf.check("local", Value("/laserScannerGui"), "prefix for the client port").asString();
+    if (rf.check ("lidar_debug"))     { g_lidar_debug_nan = g_lidar_debug_inf = true;}
+    if (rf.check ("lidar_debug_nan")) { g_lidar_debug_nan = true; }
+    if (rf.check ("lidar_debug_inf")) { g_lidar_debug_inf = true; }
 
     string laser_map_port_name;
-    laser_map_port_name = "/laserScannerGui/laser_map:i";
+    laser_map_port_name = localprefix + "/laser_map:i";
     string compass_port_name;
-    compass_port_name = "/laserScannerGui/compass:i";
+    compass_port_name = localprefix + "/compass:i";
     string nav_display;
-    nav_display = "/laserScannerGui/nav_display:i";
+    nav_display = localprefix + "/nav_display:i";
 
     int width = 600;
     int height = 600;
@@ -351,7 +381,7 @@ int main(int argc, char *argv[])
     yarp::dev::PolyDriver* drv = new yarp::dev::PolyDriver;
     Property   lasOptions;
     lasOptions.put("device", "Rangefinder2DClient");
-    lasOptions.put("local", "/laserScannerGui/laser:i");
+    lasOptions.put("local", localprefix + "/laser:i");
     lasOptions.put("remote", laserport);
     lasOptions.put("period", "10");
     bool b = drv->open(lasOptions);
@@ -386,9 +416,10 @@ int main(int argc, char *argv[])
     BufferedPort<yarp::os::Bottle> navDisplayInPort;
     navDisplayInPort.open(nav_display);
 
+    string window_name = "LaserScannerGui connected to " + laserport;
     IplImage *img  = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
     IplImage *img2 = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
-    cvNamedWindow("Laser Scanner GUI",CV_WINDOW_AUTOSIZE);
+    cvNamedWindow(window_name.c_str(),CV_WINDOW_AUTOSIZE);
     cvInitFont(&font,    CV_FONT_HERSHEY_SIMPLEX, 0.4, 0.4, 0, 1, CV_AA);
     cvInitFont(&fontBig, CV_FONT_HERSHEY_SIMPLEX, 0.8, 0.8, 0, 1, CV_AA);
 
@@ -398,7 +429,7 @@ int main(int argc, char *argv[])
 
     while(!exit)
     {
-        void *v = cvGetWindowHandle("Laser Scanner GUI");
+        void *v = cvGetWindowHandle(window_name.c_str());
         if (v == nullptr)
         {
             exit = true;
@@ -461,7 +492,7 @@ int main(int argc, char *argv[])
             }
 
             cvAddWeighted(img, 0.7, img2, 0.3, 0.0, img);
-            cvShowImage("Laser Scanner GUI",img);
+            cvShowImage(window_name.c_str(),img);
         }
 
         SystemClock::delaySystem(double(period)/1000.0+0.005);
