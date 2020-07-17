@@ -9,17 +9,14 @@
 #ifndef YARP_ROBOTINTERFACE_XMLREADER_H
 #define YARP_ROBOTINTERFACE_XMLREADER_H
 
-#include <string>
-
 #include <yarp/robotinterface/api.h>
 #include <yarp/robotinterface/Robot.h>
+
+#include <string>
 
 
 namespace yarp {
 namespace robotinterface {
-
-class Robot;
-class XMLReaderFileVx;
 
 /**
  * Result of the parsing of XMLReader.
@@ -27,7 +24,8 @@ class XMLReaderFileVx;
 class YARP_robotinterface_API XMLReaderResult
 {
 public:
-    static XMLReaderResult ParsingFailed() {
+    static XMLReaderResult ParsingFailed()
+    {
         XMLReaderResult result;
         result.parsingIsSuccessful = false;
         return result;
@@ -56,7 +54,7 @@ public:
      * \param filename path to the XML file to load.
      * \return result of parsing.
      */
-    XMLReaderResult getRobotFromFile(const std::string &filename);
+    XMLReaderResult getRobotFromFile(const std::string& filename);
 
     /**
      * Parse the XML description of a robotinterface from a string.
@@ -67,10 +65,11 @@ public:
     XMLReaderResult getRobotFromString(const std::string& xmlString);
     void setVerbose(bool verbose);
     void setEnableDeprecated(bool enab);
+
 private:
-    bool verbose;
-    bool enable_deprecated;
-    XMLReaderFileVx * mReader;
+    class Private;
+    Private* const mPriv;
+
 }; // class XMLReader
 
 } // namespace robotinterface

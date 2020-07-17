@@ -6,24 +6,25 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "XMLReader.h"
-#include "Action.h"
-#include "Device.h"
-#include "Param.h"
-#include "Robot.h"
-#include "Types.h"
-#include "impl/RobotInterfaceDTD.h"
+#include <yarp/robotinterface/impl/RobotInterfaceDTD.h>
+
+#include <yarp/robotinterface/Action.h>
+#include <yarp/robotinterface/Device.h>
+#include <yarp/robotinterface/Param.h>
+#include <yarp/robotinterface/Robot.h>
+#include <yarp/robotinterface/Types.h>
+#include <yarp/robotinterface/XMLReader.h>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 
-#include <tinyxml.h>
-#include <string>
-#include <vector>
-#include <sstream>
-#include <iterator>
 #include <algorithm>
+#include <iterator>
+#include <sstream>
+#include <string>
+#include <tinyxml.h>
+#include <vector>
 
 #define SYNTAX_ERROR(line) yFatal() << "Syntax error while loading" << curr_filename << "at line" << line << "."
 #define SYNTAX_WARNING(line) yWarning() << "Invalid syntax while loading" << curr_filename << "at line" << line << "."
@@ -38,7 +39,8 @@ const std::string RobotInterfaceDTD::baseUri("http://www.yarp.it/DTD/yarprobotin
 const std::string RobotInterfaceDTD::ext(".dtd");
 
 
-RobotInterfaceDTD::DocType StringToDocType(const std::string &type) {
+RobotInterfaceDTD::DocType StringToDocType(const std::string& type)
+{
     if (type == "robot") {
         return RobotInterfaceDTD::DocTypeRobot;
     } else if (type == "devices") {
@@ -53,8 +55,7 @@ RobotInterfaceDTD::DocType StringToDocType(const std::string &type) {
 
 std::string DocTypeToString(RobotInterfaceDTD::DocType doctype)
 {
-    switch (doctype)
-    {
+    switch (doctype) {
     case RobotInterfaceDTD::DocTypeRobot:
         return std::string("robot");
     case RobotInterfaceDTD::DocTypeDevices:
@@ -82,7 +83,8 @@ void RobotInterfaceDTD::setDefault()
     minorVersion = 0;
 }
 
-bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr_filename) {
+bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr_filename)
+{
     // Very basic and ugly DTD tag parsing as TinyXML does not support it
     // We just need the version numbers.
 
@@ -91,16 +93,16 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr
     std::vector<std::string> tokens;
     std::copy(std::istream_iterator<std::string>(iss),
               std::istream_iterator<std::string>(),
-              std::back_inserter<std::vector<std::string> >(tokens));
+              std::back_inserter<std::vector<std::string>>(tokens));
 
     // Merge token in quotes (and remove quotes)
     for (auto it = tokens.begin(); it != tokens.end(); ++it) {
-        if(it->at(0) == '"' ) {
+        if (it->at(0) == '"') {
             if (it->at(it->size() - 1) == '"') {
                 *it = it->substr(1, it->size() - 2);
             } else {
                 std::string s = it->substr(1) + " ";
-                for (auto cit = it + 1; cit != tokens.end(); ) {
+                for (auto cit = it + 1; cit != tokens.end();) {
                     if (cit->at(cit->size() - 1) == '"') {
                         s += cit->substr(0, cit->size() - 1);
                         cit = tokens.erase(cit);
@@ -115,21 +117,20 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr
         }
     }
 
-    if(tokens.size() != 5) {
+    if (tokens.size() != 5) {
         SYNTAX_WARNING(unknownNode->Row()) << "Unknown node found" << tokens.size();
     }
 
-    if(tokens.at(0) != "!DOCTYPE") {
+    if (tokens.at(0) != "!DOCTYPE") {
         SYNTAX_WARNING(unknownNode->Row()) << "Unknown node found";
     }
 
     type = StringToDocType(tokens.at(1));
-    if(type == RobotInterfaceDTD::DocTypeUnknown)
-    {
+    if (type == RobotInterfaceDTD::DocTypeUnknown) {
         SYNTAX_WARNING(unknownNode->Row()) << R"(Unknown document type. Supported document types are: "robot", "devices", "params")";
     }
 
-    if(tokens.at(2) != "PUBLIC") {
+    if (tokens.at(2) != "PUBLIC") {
         SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Expected \"PUBLIC\", found" << tokens.at(2);
     }
 
@@ -154,11 +155,11 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr
     std::string majorVersionString = versionString.substr(0, dot);
     std::string minorVersionString = versionString.substr(dot + 1);
     std::istringstream majiss(majorVersionString);
-    if ( !(majiss >> majorVersion) ) {
+    if (!(majiss >> majorVersion)) {
         SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Missing version in Url" << uri;
     }
     std::istringstream miniss(minorVersionString);
-    if ( !(miniss >> minorVersion) ) {
+    if (!(miniss >> minorVersion)) {
         SYNTAX_WARNING(unknownNode->Row()) << "Unknown document type. Missing version in Url" << uri;
     }
 

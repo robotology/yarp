@@ -6,17 +6,17 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "Types.h"
-#include "Param.h"
+#include <yarp/robotinterface/Types.h>
 
-#include <string>
-#include <sstream>
-
+#include <yarp/robotinterface/Param.h>
 
 #include <yarp/os/LogStream.h>
 
+#include <sstream>
+#include <string>
 
-bool yarp::robotinterface::hasParam(const yarp::robotinterface::ParamList &list, const std::string& name)
+
+bool yarp::robotinterface::hasParam(const yarp::robotinterface::ParamList& list, const std::string& name)
 {
     for (const auto& param : list) {
         if (name == param.name()) {
@@ -26,7 +26,7 @@ bool yarp::robotinterface::hasParam(const yarp::robotinterface::ParamList &list,
     return false;
 }
 
-std::string yarp::robotinterface::findParam(const yarp::robotinterface::ParamList &list, const std::string& name)
+std::string yarp::robotinterface::findParam(const yarp::robotinterface::ParamList& list, const std::string& name)
 {
     for (const auto& param : list) {
         if (name == param.name()) {
@@ -37,7 +37,7 @@ std::string yarp::robotinterface::findParam(const yarp::robotinterface::ParamLis
     return {};
 }
 
-bool yarp::robotinterface::hasGroup(const yarp::robotinterface::ParamList &list, const std::string& name)
+bool yarp::robotinterface::hasGroup(const yarp::robotinterface::ParamList& list, const std::string& name)
 {
     for (const auto& param : list) {
         if (param.isGroup() && name == param.name()) {
@@ -47,7 +47,7 @@ bool yarp::robotinterface::hasGroup(const yarp::robotinterface::ParamList &list,
     return false;
 }
 
-std::string yarp::robotinterface::findGroup(const yarp::robotinterface::ParamList &list, const std::string& name)
+std::string yarp::robotinterface::findGroup(const yarp::robotinterface::ParamList& list, const std::string& name)
 {
     for (const auto& param : list) {
         if (param.isGroup() && name == param.name()) {
@@ -58,13 +58,13 @@ std::string yarp::robotinterface::findGroup(const yarp::robotinterface::ParamLis
     return {};
 }
 
-yarp::robotinterface::ParamList yarp::robotinterface::mergeDuplicateGroups(const yarp::robotinterface::ParamList &list)
+yarp::robotinterface::ParamList yarp::robotinterface::mergeDuplicateGroups(const yarp::robotinterface::ParamList& list)
 {
     yarp::robotinterface::ParamList params = list;
     for (auto it1 = params.begin(); it1 != params.end(); ++it1) {
-        yarp::robotinterface::Param &param1 = *it1;
-        for (auto it2 = it1 + 1; it2 != params.end(); ) {
-            yarp::robotinterface::Param &param2 = *it2;
+        yarp::robotinterface::Param& param1 = *it1;
+        for (auto it2 = it1 + 1; it2 != params.end();) {
+            yarp::robotinterface::Param& param2 = *it2;
             if (param1.name() == param2.name()) {
                 if (!param1.isGroup() || !param2.isGroup()) {
                     yFatal() << "Duplicate parameter \"" << param1.name() << "\" found and at least one of them is not a group.";
@@ -72,15 +72,15 @@ yarp::robotinterface::ParamList yarp::robotinterface::mergeDuplicateGroups(const
                 param1.value() += std::string(" ");
                 param1.value() += param2.value();
                 it2 = params.erase(it2);
-            }
-            else it2++;
+            } else
+                it2++;
         }
     }
     return params;
 }
 
 
-yarp::robotinterface::ActionPhase yarp::robotinterface::StringToActionPhase(const std::string &phase)
+yarp::robotinterface::ActionPhase yarp::robotinterface::StringToActionPhase(const std::string& phase)
 {
     if (phase == "startup") {
         return yarp::robotinterface::ActionPhaseStartup;
@@ -119,13 +119,13 @@ std::string yarp::robotinterface::ActionPhaseToString(yarp::robotinterface::Acti
     }
 }
 
-void yarp::robotinterface::operator>>(const std::stringstream &sstream, yarp::robotinterface::ActionPhase &actionphase)
+void yarp::robotinterface::operator>>(const std::stringstream& sstream, yarp::robotinterface::ActionPhase& actionphase)
 {
     actionphase = yarp::robotinterface::StringToActionPhase(sstream.str());
 }
 
 
-yarp::robotinterface::ActionType yarp::robotinterface::StringToActionType(const std::string &type)
+yarp::robotinterface::ActionType yarp::robotinterface::StringToActionType(const std::string& type)
 {
     if (type == "configure") {
         return yarp::robotinterface::ActionTypeConfigure;
@@ -169,7 +169,7 @@ std::string yarp::robotinterface::ActionTypeToString(yarp::robotinterface::Actio
     }
 }
 
-void yarp::robotinterface::operator>>(const std::stringstream &sstream, yarp::robotinterface::ActionType &actiontype)
+void yarp::robotinterface::operator>>(const std::stringstream& sstream, yarp::robotinterface::ActionType& actiontype)
 {
     actiontype = yarp::robotinterface::StringToActionType(sstream.str());
 }

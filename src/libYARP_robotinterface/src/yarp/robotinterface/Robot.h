@@ -9,10 +9,9 @@
 #ifndef YARP_ROBOTINTERFACE_ROBOT_H
 #define YARP_ROBOTINTERFACE_ROBOT_H
 
-#include <yarp/robotinterface/Types.h>
-#include <yarp/robotinterface/Device.h>
-
 #include <yarp/robotinterface/api.h>
+#include <yarp/robotinterface/Device.h>
+#include <yarp/robotinterface/Types.h>
 
 namespace yarp {
 namespace robotinterface {
@@ -21,9 +20,9 @@ class YARP_robotinterface_API Robot
 {
 public:
     explicit Robot();
-    explicit Robot(const std::string &name, const DeviceList &devices = DeviceList());
-    Robot(const Robot &other);
-    Robot& operator=(const Robot &other);
+    explicit Robot(const std::string& name, const DeviceList& devices = DeviceList());
+    Robot(const Robot& other);
+    Robot& operator=(const Robot& other);
 
     virtual ~Robot();
 
@@ -36,17 +35,17 @@ public:
 
     ParamList& params();
     DeviceList& devices();
-    Device& device(const std::string &name);
+    Device& device(const std::string& name);
 
     const std::string& name() const;
     const unsigned int& build() const;
     const std::string& portprefix() const;
     const ParamList& params() const;
     const DeviceList& devices() const;
-    const Device& device(const std::string &name) const;
+    const Device& device(const std::string& name) const;
 
-    bool hasParam(const std::string &name) const;
-    std::string findParam(const std::string &name) const;
+    bool hasParam(const std::string& name) const;
+    std::string findParam(const std::string& name) const;
 
     void interrupt();
     bool setExternalDevices(const yarp::dev::PolyDriverList& list);
@@ -56,14 +55,14 @@ public:
 
 private:
     class Private;
-    Private * const mPriv;
+    Private* const mPriv;
 }; // class Robot
 
 } // namespace robotinterface
 } // namespace yarp
 
-YARP_robotinterface_API std::ostringstream& operator<<(std::ostringstream &oss, const yarp::robotinterface::Robot &t);
-YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Robot &t);
+YARP_robotinterface_API std::ostringstream& operator<<(std::ostringstream& oss, const yarp::robotinterface::Robot& t);
+YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Robot& t);
 
 
 #endif // YARP_ROBOTINTERFACE_ROBOT_H

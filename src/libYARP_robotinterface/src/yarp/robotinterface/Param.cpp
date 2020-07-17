@@ -6,16 +6,15 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "Param.h"
+#include <yarp/robotinterface/Param.h>
 
 #include <yarp/os/LogStream.h>
-
 #include <yarp/os/Property.h>
 
 #include <string>
 
 
-std::ostream& std::operator<<(std::ostream &oss, const yarp::robotinterface::Param &t)
+std::ostream& std::operator<<(std::ostream& oss, const yarp::robotinterface::Param& t)
 {
     oss << "(\"" << t.name() << "\"" << (t.isGroup() ? " [group]" : "") << " = \"" << t.value() << "\")";
     return oss;
@@ -25,7 +24,7 @@ std::ostream& std::operator<<(std::ostream &oss, const yarp::robotinterface::Par
 class yarp::robotinterface::Param::Private
 {
 public:
-    Private(Param * /*parent*/) :
+    Private(Param* /*parent*/) :
             isGroup(false)
     {
     }
@@ -35,7 +34,7 @@ public:
     bool isGroup;
 };
 
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Param &t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Param& t)
 {
     std::ostringstream oss;
     oss << t;
@@ -44,13 +43,13 @@ yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterfa
 }
 
 yarp::robotinterface::Param::Param(bool isGroup) :
-    mPriv(new Private(this))
+        mPriv(new Private(this))
 {
     mPriv->isGroup = isGroup;
 }
 
-yarp::robotinterface::Param::Param(const std::string &name, const std::string &value, bool isGroup) :
-    mPriv(new Private(this))
+yarp::robotinterface::Param::Param(const std::string& name, const std::string& value, bool isGroup) :
+        mPriv(new Private(this))
 {
     mPriv->name = name;
     mPriv->value = value;
@@ -58,7 +57,7 @@ yarp::robotinterface::Param::Param(const std::string &name, const std::string &v
 }
 
 yarp::robotinterface::Param::Param(const ::yarp::robotinterface::Param& other) :
-    mPriv(new Private(this))
+        mPriv(new Private(this))
 {
     mPriv->name = other.mPriv->name;
     mPriv->value = other.mPriv->value;

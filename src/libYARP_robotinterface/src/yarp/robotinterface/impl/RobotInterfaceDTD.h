@@ -9,24 +9,23 @@
 #ifndef YARP_ROBOTINTERFACE_IMPL_ROBOTINTERFACEDTD_H
 #define YARP_ROBOTINTERFACE_IMPL_ROBOTINTERFACEDTD_H
 
-#include <yarp/robotinterface/XMLReader.h>
+#include <yarp/robotinterface/api.h>
 #include <yarp/robotinterface/Action.h>
 #include <yarp/robotinterface/Device.h>
 #include <yarp/robotinterface/Param.h>
 #include <yarp/robotinterface/Robot.h>
 #include <yarp/robotinterface/Types.h>
+#include <yarp/robotinterface/XMLReader.h>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 
+#include <algorithm>
+#include <iterator>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <iterator>
-#include <algorithm>
-
-#include <yarp/robotinterface/api.h>
 
 class TiXmlUnknown;
 
@@ -38,7 +37,8 @@ namespace robotinterface {
 class RobotInterfaceDTD
 {
 public:
-    enum DocType {
+    enum DocType
+    {
         DocTypeUnknown = 0,
         DocTypeRobot,
         DocTypeDevices,
@@ -47,11 +47,13 @@ public:
     };
 
     RobotInterfaceDTD() :
-        type(DocTypeUnknown),
-        identifier(""),
-        uri(""),
-        majorVersion(0),
-        minorVersion(0) {}
+            type(DocTypeUnknown),
+            identifier(""),
+            uri(""),
+            majorVersion(0),
+            minorVersion(0)
+    {
+    }
 
     bool parse(TiXmlUnknown* unknownNode, const std::string& curr_filename);
 

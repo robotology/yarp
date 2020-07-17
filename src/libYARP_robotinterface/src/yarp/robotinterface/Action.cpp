@@ -6,19 +6,19 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "Action.h"
-#include "Param.h"
+#include <yarp/robotinterface/Action.h>
+
+#include <yarp/robotinterface/Param.h>
 
 #include <yarp/os/LogStream.h>
 
 #include <string>
 
 
-
 class yarp::robotinterface::Action::Private
 {
 public:
-    Private(Action * /*parent*/) :
+    Private(Action* /*parent*/) :
             phase(ActionPhaseUnknown),
             type(ActionTypeUnknown),
             level(0)
@@ -31,7 +31,7 @@ public:
     ParamList params;
 };
 
-std::ostream& std::operator<<(std::ostream &oss, const yarp::robotinterface::Action &t)
+std::ostream& std::operator<<(std::ostream& oss, const yarp::robotinterface::Action& t)
 {
     oss << "(\"" << ActionPhaseToString(t.phase()) << ":" << ActionTypeToString(t.type()) << ":" << t.level() << "\"";
     if (!t.params().empty()) {
@@ -44,7 +44,7 @@ std::ostream& std::operator<<(std::ostream &oss, const yarp::robotinterface::Act
 }
 
 
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Action &t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Action& t)
 {
     std::ostringstream oss;
     oss << t;
@@ -53,12 +53,12 @@ yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterfa
 }
 
 yarp::robotinterface::Action::Action() :
-    mPriv(new Private(this))
+        mPriv(new Private(this))
 {
 }
 
 yarp::robotinterface::Action::Action(const std::string& phase, const std::string& type, unsigned int level) :
-    mPriv(new Private(this))
+        mPriv(new Private(this))
 {
     mPriv->phase = StringToActionPhase(phase);
     mPriv->type = StringToActionType(type);
@@ -66,7 +66,7 @@ yarp::robotinterface::Action::Action(const std::string& phase, const std::string
 }
 
 yarp::robotinterface::Action::Action(yarp::robotinterface::ActionPhase phase, yarp::robotinterface::ActionType type, unsigned int level) :
-    mPriv(new Private(this))
+        mPriv(new Private(this))
 {
     mPriv->phase = phase;
     mPriv->type = type;
@@ -74,7 +74,7 @@ yarp::robotinterface::Action::Action(yarp::robotinterface::ActionPhase phase, ya
 }
 
 yarp::robotinterface::Action::Action(const yarp::robotinterface::Action& other) :
-    mPriv(new Private(this))
+        mPriv(new Private(this))
 {
     mPriv->phase = other.mPriv->phase;
     mPriv->type = other.mPriv->type;

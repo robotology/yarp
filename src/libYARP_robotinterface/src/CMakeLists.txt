@@ -8,27 +8,31 @@
 add_library(YARP_robotinterface)
 add_library(YARP::YARP_robotinterface ALIAS YARP_robotinterface)
 
-set(YARP_robotinterface_HDRS yarp/robotinterface/Action.h
-                             yarp/robotinterface/api.h
-                             yarp/robotinterface/CalibratorThread.h
+set(YARP_robotinterface_HDRS yarp/robotinterface/api.h
+                             yarp/robotinterface/Action.h
                              yarp/robotinterface/Device.h
                              yarp/robotinterface/Param.h
                              yarp/robotinterface/Robot.h
                              yarp/robotinterface/Types.h
                              yarp/robotinterface/XMLReader.h)
 
-set(YARP_robotinterface_IMPL_HDRS yarp/robotinterface/impl/RobotInterfaceDTD.h)
+set(YARP_robotinterface_IMPL_HDRS yarp/robotinterface/impl/CalibratorThread.h
+                                  yarp/robotinterface/impl/RobotInterfaceDTD.h
+                                  yarp/robotinterface/impl/XMLReaderFileVx.h
+                                  yarp/robotinterface/impl/XMLReaderFileV1.h
+                                  yarp/robotinterface/impl/XMLReaderFileV3.h)
 
 set(YARP_robotinterface_SRCS yarp/robotinterface/Action.cpp
-                             yarp/robotinterface/CalibratorThread.cpp
                              yarp/robotinterface/Device.cpp
                              yarp/robotinterface/Param.cpp
                              yarp/robotinterface/Robot.cpp
                              yarp/robotinterface/Types.cpp
-                             yarp/robotinterface/XMLReaderVx.cpp
-                             yarp/robotinterface/XMLReaderV1.cpp
-                             yarp/robotinterface/XMLReaderV3.cpp
-                             yarp/robotinterface/RobotInterfaceDTD.cpp)
+                             yarp/robotinterface/XMLReader.cpp)
+
+set(YARP_robotinterface_IMPL_SRCS yarp/robotinterface/impl/CalibratorThread.cpp
+                                  yarp/robotinterface/impl/RobotInterfaceDTD.cpp
+                                  yarp/robotinterface/impl/XMLReaderFileV1.cpp
+                                  yarp/robotinterface/impl/XMLReaderFileV3.cpp)
 
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
              PREFIX "Source Files"
