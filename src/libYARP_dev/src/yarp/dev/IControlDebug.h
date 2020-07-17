@@ -12,6 +12,14 @@
 
 #include <yarp/dev/api.h>
 
+namespace yarp
+{
+    namespace dev
+    {
+        class IControlDebug;
+    }
+}
+
 /**
  * @ingroup dev_iface_motor
  *
