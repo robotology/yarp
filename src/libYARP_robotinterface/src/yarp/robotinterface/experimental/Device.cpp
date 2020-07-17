@@ -6,10 +6,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/robotinterface/Device.h>
+#include <yarp/robotinterface/experimental/Device.h>
 
-#include <yarp/robotinterface/Action.h>
-#include <yarp/robotinterface/Param.h>
+#include <yarp/robotinterface/experimental/Action.h>
+#include <yarp/robotinterface/experimental/Param.h>
 #include <yarp/robotinterface/impl/CalibratorThread.h>
 
 #include <yarp/os/LogStream.h>
@@ -24,7 +24,7 @@
 #include <string>
 
 
-class yarp::robotinterface::Device::Private
+class yarp::robotinterface::experimental::Device::Private
 {
 
 public:
@@ -81,7 +81,7 @@ public:
     {
         return driver->driver;
     }
-    inline yarp::robotinterface::ThreadList* thr() const
+    inline yarp::robotinterface::experimental::ThreadList* thr() const
     {
         return &driver->runningThreads;
     }
@@ -150,13 +150,13 @@ public:
 
     yarp::os::Property paramsAsProperty() const
     {
-        ParamList p = yarp::robotinterface::mergeDuplicateGroups(params);
+        ParamList p = yarp::robotinterface::experimental::mergeDuplicateGroups(params);
 
         yarp::os::Property prop;
         prop.put("device", type);
 
-        for (yarp::robotinterface::ParamList::const_iterator it = p.begin(); it != p.end(); ++it) {
-            const yarp::robotinterface::Param& param = *it;
+        for (yarp::robotinterface::experimental::ParamList::const_iterator it = p.begin(); it != p.end(); ++it) {
+            const yarp::robotinterface::experimental::Param& param = *it;
 
             // check if parentheses are balanced
             std::string stringFormatValue = param.value();
@@ -186,7 +186,7 @@ public:
     Driver* driver;
 };
 
-std::ostream& std::operator<<(std::ostream& oss, const yarp::robotinterface::Device& t)
+std::ostream& std::operator<<(std::ostream& oss, const yarp::robotinterface::experimental::Device& t)
 {
     oss << "(name = \"" << t.name() << "\", type = \"" << t.type() << "\"";
     if (!t.params().empty()) {
@@ -203,7 +203,7 @@ std::ostream& std::operator<<(std::ostream& oss, const yarp::robotinterface::Dev
     return oss;
 }
 
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Device& t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Device& t)
 {
     std::ostringstream oss;
     oss << t;
@@ -211,16 +211,16 @@ yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterfa
     return dbg;
 }
 
-yarp::robotinterface::Device::Device() :
+yarp::robotinterface::experimental::Device::Device() :
         mPriv(new Private(this))
 {
     mPriv->close();
 }
 
-yarp::robotinterface::Device::Device(const std::string& name,
-                                     const std::string& type,
-                                     const yarp::robotinterface::ParamList& params,
-                                     const yarp::robotinterface::ActionList& actions) :
+yarp::robotinterface::experimental::Device::Device(const std::string& name,
+                                                   const std::string& type,
+                                                   const yarp::robotinterface::experimental::ParamList& params,
+                                                   const yarp::robotinterface::experimental::ActionList& actions) :
         mPriv(new Private(this))
 {
     mPriv->name = name;
@@ -229,7 +229,7 @@ yarp::robotinterface::Device::Device(const std::string& name,
     mPriv->actions = actions;
 }
 
-yarp::robotinterface::Device::Device(const yarp::robotinterface::Device& other) :
+yarp::robotinterface::experimental::Device::Device(const yarp::robotinterface::experimental::Device& other) :
         mPriv(new Private(*other.mPriv))
 {
     mPriv->name = other.mPriv->name;
@@ -239,7 +239,7 @@ yarp::robotinterface::Device::Device(const yarp::robotinterface::Device& other) 
     *mPriv->driver = *other.mPriv->driver;
 }
 
-yarp::robotinterface::Device& yarp::robotinterface::Device::operator=(const yarp::robotinterface::Device& other)
+yarp::robotinterface::experimental::Device& yarp::robotinterface::experimental::Device::operator=(const yarp::robotinterface::experimental::Device& other)
 {
     if (&other != this) {
         mPriv->name = other.mPriv->name;
@@ -256,52 +256,52 @@ yarp::robotinterface::Device& yarp::robotinterface::Device::operator=(const yarp
     return *this;
 }
 
-yarp::robotinterface::Device::~Device()
+yarp::robotinterface::experimental::Device::~Device()
 {
     delete mPriv;
 }
 
-std::string& yarp::robotinterface::Device::name()
+std::string& yarp::robotinterface::experimental::Device::name()
 {
     return mPriv->name;
 }
 
-std::string& yarp::robotinterface::Device::type()
+std::string& yarp::robotinterface::experimental::Device::type()
 {
     return mPriv->type;
 }
 
-yarp::robotinterface::ParamList& yarp::robotinterface::Device::params()
+yarp::robotinterface::experimental::ParamList& yarp::robotinterface::experimental::Device::params()
 {
     return mPriv->params;
 }
 
-yarp::robotinterface::ActionList& yarp::robotinterface::Device::actions()
+yarp::robotinterface::experimental::ActionList& yarp::robotinterface::experimental::Device::actions()
 {
     return mPriv->actions;
 }
 
-const std::string& yarp::robotinterface::Device::name() const
+const std::string& yarp::robotinterface::experimental::Device::name() const
 {
     return mPriv->name;
 }
 
-const std::string& yarp::robotinterface::Device::type() const
+const std::string& yarp::robotinterface::experimental::Device::type() const
 {
     return mPriv->type;
 }
 
-const yarp::robotinterface::ParamList& yarp::robotinterface::Device::params() const
+const yarp::robotinterface::experimental::ParamList& yarp::robotinterface::experimental::Device::params() const
 {
     return mPriv->params;
 }
 
-const yarp::robotinterface::ActionList& yarp::robotinterface::Device::actions() const
+const yarp::robotinterface::experimental::ActionList& yarp::robotinterface::experimental::Device::actions() const
 {
     return mPriv->actions;
 }
 
-bool yarp::robotinterface::Device::open()
+bool yarp::robotinterface::experimental::Device::open()
 {
     if (mPriv->isValid()) {
         yError() << "Trying to open an already opened device.";
@@ -316,7 +316,7 @@ bool yarp::robotinterface::Device::open()
     return true;
 }
 
-bool yarp::robotinterface::Device::close()
+bool yarp::robotinterface::experimental::Device::close()
 {
     if (!mPriv->isValid()) {
         // Trying to close an already closed device. Perhaps open()
@@ -332,37 +332,37 @@ bool yarp::robotinterface::Device::close()
     return true;
 }
 
-bool yarp::robotinterface::Device::hasParam(const std::string& name) const
+bool yarp::robotinterface::experimental::Device::hasParam(const std::string& name) const
 {
-    return yarp::robotinterface::hasParam(mPriv->params, name);
+    return yarp::robotinterface::experimental::hasParam(mPriv->params, name);
 }
 
-std::string yarp::robotinterface::Device::findParam(const std::string& name) const
+std::string yarp::robotinterface::experimental::Device::findParam(const std::string& name) const
 {
-    return yarp::robotinterface::findParam(mPriv->params, name);
+    return yarp::robotinterface::experimental::findParam(mPriv->params, name);
 }
 
-yarp::dev::PolyDriver* yarp::robotinterface::Device::driver() const
+yarp::dev::PolyDriver* yarp::robotinterface::experimental::Device::driver() const
 {
     return mPriv->drv();
 }
 
-void yarp::robotinterface::Device::registerThread(yarp::os::Thread* thread) const
+void yarp::robotinterface::experimental::Device::registerThread(yarp::os::Thread* thread) const
 {
     mPriv->registerThread(thread);
 }
 
-void yarp::robotinterface::Device::joinThreads() const
+void yarp::robotinterface::experimental::Device::joinThreads() const
 {
     mPriv->joinThreads();
 }
 
-void yarp::robotinterface::Device::stopThreads() const
+void yarp::robotinterface::experimental::Device::stopThreads() const
 {
     mPriv->stopThreads();
 }
 
-bool yarp::robotinterface::Device::calibrate(const yarp::dev::PolyDriverDescriptor& target) const
+bool yarp::robotinterface::experimental::Device::calibrate(const yarp::dev::PolyDriverDescriptor& target) const
 {
     if (!driver()) {
         yDebug() << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
@@ -421,7 +421,7 @@ bool yarp::robotinterface::Device::calibrate(const yarp::dev::PolyDriverDescript
     return true;
 }
 
-bool yarp::robotinterface::Device::attach(const yarp::dev::PolyDriverList& drivers) const
+bool yarp::robotinterface::experimental::Device::attach(const yarp::dev::PolyDriverList& drivers) const
 {
     if (!driver()) {
         yDebug() << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
@@ -442,7 +442,7 @@ bool yarp::robotinterface::Device::attach(const yarp::dev::PolyDriverList& drive
     return true;
 }
 
-bool yarp::robotinterface::Device::detach() const
+bool yarp::robotinterface::experimental::Device::detach() const
 {
     yarp::dev::IMultipleWrapper* wrapper;
     if (!driver()) {
@@ -463,7 +463,7 @@ bool yarp::robotinterface::Device::detach() const
     return true;
 }
 
-bool yarp::robotinterface::Device::park(const yarp::dev::PolyDriverDescriptor& target) const
+bool yarp::robotinterface::experimental::Device::park(const yarp::dev::PolyDriverDescriptor& target) const
 {
     yarp::dev::ICalibrator* calibrator;
     if (!driver()) {

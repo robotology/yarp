@@ -10,12 +10,12 @@
 #define YARP_ROBOTINTERFACE_IMPL_ROBOTINTERFACEDTD_H
 
 #include <yarp/robotinterface/api.h>
-#include <yarp/robotinterface/Action.h>
-#include <yarp/robotinterface/Device.h>
-#include <yarp/robotinterface/Param.h>
-#include <yarp/robotinterface/Robot.h>
-#include <yarp/robotinterface/Types.h>
-#include <yarp/robotinterface/XMLReader.h>
+#include <yarp/robotinterface/experimental/Action.h>
+#include <yarp/robotinterface/experimental/Device.h>
+#include <yarp/robotinterface/experimental/Param.h>
+#include <yarp/robotinterface/experimental/Robot.h>
+#include <yarp/robotinterface/experimental/Types.h>
+#include <yarp/robotinterface/experimental/XMLReader.h>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>

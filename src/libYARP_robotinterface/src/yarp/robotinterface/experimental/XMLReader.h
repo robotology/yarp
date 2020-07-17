@@ -10,13 +10,14 @@
 #define YARP_ROBOTINTERFACE_XMLREADER_H
 
 #include <yarp/robotinterface/api.h>
-#include <yarp/robotinterface/Robot.h>
+#include <yarp/robotinterface/experimental/Robot.h>
 
 #include <string>
 
 
 namespace yarp {
 namespace robotinterface {
+namespace experimental {
 
 /**
  * Result of the parsing of XMLReader.
@@ -72,6 +73,7 @@ private:
 
 }; // class XMLReader
 
+} // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
 

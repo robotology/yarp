@@ -10,11 +10,12 @@
 #define YARP_ROBOTINTERFACE_ROBOT_H
 
 #include <yarp/robotinterface/api.h>
-#include <yarp/robotinterface/Device.h>
-#include <yarp/robotinterface/Types.h>
+#include <yarp/robotinterface/experimental/Device.h>
+#include <yarp/robotinterface/experimental/Types.h>
 
 namespace yarp {
 namespace robotinterface {
+namespace experimental {
 
 class YARP_robotinterface_API Robot
 {
@@ -49,8 +50,8 @@ public:
 
     void interrupt();
     bool setExternalDevices(const yarp::dev::PolyDriverList& list);
-    bool enterPhase(yarp::robotinterface::ActionPhase phase);
-    yarp::robotinterface::ActionPhase currentPhase() const;
+    bool enterPhase(yarp::robotinterface::experimental::ActionPhase phase);
+    yarp::robotinterface::experimental::ActionPhase currentPhase() const;
     int currentLevel() const;
 
 private:
@@ -58,11 +59,12 @@ private:
     Private* const mPriv;
 }; // class Robot
 
+} // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
 
-YARP_robotinterface_API std::ostringstream& operator<<(std::ostringstream& oss, const yarp::robotinterface::Robot& t);
-YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Robot& t);
+YARP_robotinterface_API std::ostringstream& operator<<(std::ostringstream& oss, const yarp::robotinterface::experimental::Robot& t);
+YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Robot& t);
 
 
 #endif // YARP_ROBOTINTERFACE_ROBOT_H

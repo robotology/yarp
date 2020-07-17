@@ -6,14 +6,14 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/robotinterface/XMLReader.h>
+#include <yarp/robotinterface/experimental/XMLReader.h>
 
-#include <yarp/robotinterface/Action.h>
-#include <yarp/robotinterface/Device.h>
-#include <yarp/robotinterface/Param.h>
-#include <yarp/robotinterface/Robot.h>
-#include <yarp/robotinterface/Types.h>
-#include <yarp/robotinterface/XMLReader.h>
+#include <yarp/robotinterface/experimental/Action.h>
+#include <yarp/robotinterface/experimental/Device.h>
+#include <yarp/robotinterface/experimental/Param.h>
+#include <yarp/robotinterface/experimental/Robot.h>
+#include <yarp/robotinterface/experimental/Types.h>
+#include <yarp/robotinterface/experimental/XMLReader.h>
 #include <yarp/robotinterface/impl/XMLReaderFileVx.h>
 #include <yarp/robotinterface/impl/XMLReaderFileV1.h>
 #include <yarp/robotinterface/impl/XMLReaderFileV3.h>
@@ -40,7 +40,7 @@
 // When this bug is fixed upstream we can enable this
 #define TINYXML_UNSIGNED_INT_BUG 0
 
-class yarp::robotinterface::XMLReader::Private
+class yarp::robotinterface::experimental::XMLReader::Private
 {
 public:
     ~Private()
@@ -54,27 +54,27 @@ public:
 };
 
 
-yarp::robotinterface::XMLReader::XMLReader() :
+yarp::robotinterface::experimental::XMLReader::XMLReader() :
         mPriv(new Private)
 {
 }
 
-yarp::robotinterface::XMLReader::~XMLReader()
+yarp::robotinterface::experimental::XMLReader::~XMLReader()
 {
     delete mPriv;
 }
 
-void yarp::robotinterface::XMLReader::setVerbose(bool verb)
+void yarp::robotinterface::experimental::XMLReader::setVerbose(bool verb)
 {
     mPriv->verbose = verb;
 }
 
-void yarp::robotinterface::XMLReader::setEnableDeprecated(bool enab)
+void yarp::robotinterface::experimental::XMLReader::setEnableDeprecated(bool enab)
 {
     mPriv->enable_deprecated = enab;
 }
 
-yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotFromFile(const std::string& fileName)
+yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experimental::XMLReader::getRobotFromFile(const std::string& fileName)
 {
     std::string filename = fileName;
 #if defined(_WIN32)
@@ -87,12 +87,12 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
     auto* doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
-        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
     }
 
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
-        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
     }
 
     RobotInterfaceDTD dtd;
@@ -124,7 +124,7 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
             return mPriv->mReader->getRobotFromFile(filename, mPriv->verbose);
         } else {
             yError("Invalid DTD version, execution stopped.");
-            return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+            return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
         }
     } else if (dtd.majorVersion == 3) {
         yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
@@ -134,20 +134,20 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
 
     //ERROR HERE
     yError("Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
-    return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+    return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
 }
 
-yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotFromString(const std::string& xmlString)
+yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experimental::XMLReader::getRobotFromString(const std::string& xmlString)
 {
     std::string curr_filename = " XML runtime string ";
     std::unique_ptr<TiXmlDocument> doc = std::make_unique<TiXmlDocument>();
     if (!doc->Parse(xmlString.data())) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
-        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
     }
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
-        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
     }
 
     RobotInterfaceDTD dtd;
@@ -180,7 +180,7 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
             return mPriv->mReader->getRobotFromString(xmlString, mPriv->verbose);
         } else {
             yError("Invalid DTD version, execution stopped.");
-            return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+            return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
         }
     } else if (dtd.majorVersion == 3) {
         yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
@@ -190,5 +190,5 @@ yarp::robotinterface::XMLReaderResult yarp::robotinterface::XMLReader::getRobotF
 
     //ERROR HERE
     yError("Invalid DTD version. Unable to choose parser for DTD.major: %d", dtd.majorVersion);
-    return yarp::robotinterface::XMLReaderResult::ParsingFailed();
+    return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
 }

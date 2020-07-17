@@ -9,7 +9,7 @@
 #ifndef YARP_ROBOTINTERFACE_PARAM_H
 #define YARP_ROBOTINTERFACE_PARAM_H
 
-#include <yarp/robotinterface/Types.h>
+#include <yarp/robotinterface/experimental/Types.h>
 
 namespace yarp {
 
@@ -18,6 +18,7 @@ class Property;
 } // namespace os
 
 namespace robotinterface {
+namespace experimental {
 
 class YARP_robotinterface_API Param
 {
@@ -44,13 +45,14 @@ private:
     Private* const mPriv;
 }; // class Param
 
+} // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
 
 namespace std {
-YARP_robotinterface_API std::ostream& operator<<(std::ostream& oss, const yarp::robotinterface::Param& t);
+YARP_robotinterface_API std::ostream& operator<<(std::ostream& oss, const yarp::robotinterface::experimental::Param& t);
 }
-YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Param& t);
+YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Param& t);
 
 
 #endif // YARP_ROBOTINTERFACE_PARAM_H

@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/robotinterface/Param.h>
-#include <yarp/robotinterface/XMLReader.h>
+#include <yarp/robotinterface/experimental/Param.h>
+#include <yarp/robotinterface/experimental/XMLReader.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
@@ -16,14 +16,14 @@
 #include <catch.hpp>
 #include <harness.h>
 
-TEST_CASE("robotinterface::ParamTest", "[yarp::robotinterface]")
+TEST_CASE("robotinterface::experimental::ParamTest", "[yarp::robotinterface]")
 {
-    SECTION("Check yarp::robotinterface::Param")
+    SECTION("Check yarp::robotinterface::experimental::Param")
     {
         std::string name = "name";
         std::string value = "value";
         bool isGroup = false;
-        yarp::robotinterface::Param param(name, value, isGroup);
+        yarp::robotinterface::experimental::Param param(name, value, isGroup);
 
         CHECK(param.name() == name);
         CHECK(param.value() == value);
@@ -134,14 +134,14 @@ bool yarp::dev::RobotInterfaceTestMockWrapper::detachAll()
 
 
 
-TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
+TEST_CASE("robotinterface::experimental::XMLReaderTest", "[yarp::robotinterface]")
 {
     SECTION("Check empty string")
     {
         // Load empty XML configuration file
         std::string XMLString = "";
-        yarp::robotinterface::XMLReader reader;
-        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(XMLString);
+        yarp::robotinterface::experimental::XMLReader reader;
+        yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromString(XMLString);
 
         // Check parsing fails on empty string
         CHECK(!result.parsingIsSuccessful);
@@ -157,8 +157,8 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
                                 "  </devices>\n"
                                 "</robot>\n";
 
-        yarp::robotinterface::XMLReader reader;
-        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(XMLString);
+        yarp::robotinterface::experimental::XMLReader reader;
+        yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromString(XMLString);
 
         // Check parsing fails on empty string
         CHECK(result.parsingIsSuccessful);
@@ -194,8 +194,8 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
                                 "  </devices>\n"
                                 "</robot>\n";
 
-        yarp::robotinterface::XMLReader reader;
-        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(XMLString);
+        yarp::robotinterface::experimental::XMLReader reader;
+        yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromString(XMLString);
 
         // Check parsing fails on empty string
         CHECK(result.parsingIsSuccessful);
@@ -212,7 +212,7 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
         CHECK(!globalState.mockDriverWasClosed);
 
         // Start the robot (open the device and call "attach" actions)
-        bool ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup);
+        bool ok = result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseStartup);
         CHECK(ok);
 
         // Check that the device was opened and attach called
@@ -224,9 +224,9 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
         CHECK(!globalState.mockDriverWasClosed);
 
         // Stop the robot
-        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+        ok = result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseInterrupt1);
         CHECK(ok);
-        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
+        ok = result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseShutdown);
         CHECK(ok);
 
         // Check that the device was closed and detach called
@@ -274,8 +274,8 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
                                 "  </devices>\n"
                                 "</robot>\n";
 
-        yarp::robotinterface::XMLReader reader;
-        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(XMLString);
+        yarp::robotinterface::experimental::XMLReader reader;
+        yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromString(XMLString);
 
         // Check parsing fails on empty string
         CHECK(result.parsingIsSuccessful);
@@ -294,7 +294,7 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
         // Start the robot (open the device and call "attach" actions)
         bool ok = result.robot.setExternalDevices(externalDriverList);
         CHECK(ok);
-        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup);
+        ok = result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseStartup);
         CHECK(ok);
 
         // Check that the also the wrapper was opened and attach called
@@ -306,9 +306,9 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
         CHECK(!globalState.mockDriverWasClosed);
 
         // Stop the robot
-        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+        ok = result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseInterrupt1);
         CHECK(ok);
-        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
+        ok = result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseShutdown);
         CHECK(ok);
 
         // Check that the wrapper device was closed and detach called, while the external device was not closed
@@ -355,8 +355,8 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
                                 "  </devices>\n"
                                 "</robot>\n";
 
-        yarp::robotinterface::XMLReader reader;
-        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(XMLString);
+        yarp::robotinterface::experimental::XMLReader reader;
+        yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromString(XMLString);
 
         CHECK(result.parsingIsSuccessful);
 

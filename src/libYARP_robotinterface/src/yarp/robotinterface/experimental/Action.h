@@ -9,10 +9,11 @@
 #ifndef YARP_ROBOTINTERFACE_ACTION_H
 #define YARP_ROBOTINTERFACE_ACTION_H
 
-#include <yarp/robotinterface/Types.h>
+#include <yarp/robotinterface/experimental/Types.h>
 
 namespace yarp {
 namespace robotinterface {
+namespace experimental {
 
 class YARP_robotinterface_API Action
 {
@@ -43,14 +44,15 @@ private:
     Private* const mPriv;
 }; // class Action
 
+} // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
 
 
 namespace std {
-YARP_robotinterface_API std::ostream& operator<<(std::ostream& oss, const yarp::robotinterface::Action& t);
+YARP_robotinterface_API std::ostream& operator<<(std::ostream& oss, const yarp::robotinterface::experimental::Action& t);
 }
-YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Action& t);
+YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Action& t);
 
 
 #endif // YARP_ROBOTINTERFACE_ACTION_H
