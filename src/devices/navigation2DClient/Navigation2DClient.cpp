@@ -1378,13 +1378,14 @@ bool Navigation2DClient::resumeNavigation()
     return true;
 }
 
-bool   Navigation2DClient::getAllNavigationWaypoints(Map2DPath& waypoints)
+bool   Navigation2DClient::getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints)
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
     b.addVocab(VOCAB_NAV_GET_NAVIGATION_WAYPOINTS);
+    b.addVocab(trajectory_type);
 
     bool ret = m_rpc_port_navigation_server.write(b, resp);
     if (ret)

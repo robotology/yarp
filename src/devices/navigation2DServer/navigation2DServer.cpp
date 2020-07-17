@@ -373,7 +373,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     else if (request == VOCAB_NAV_GET_NAVIGATION_WAYPOINTS)
     {
         Map2DPath locs;
-        bool ret = iNav_ctrl->getAllNavigationWaypoints(locs);
+        bool ret = iNav_ctrl->getAllNavigationWaypoints((yarp::dev::Nav2D::TrajectoryTypeEnum)(command.get(2).asInt32()), locs);
         if (ret)
         {
             reply.addVocab(VOCAB_OK);
