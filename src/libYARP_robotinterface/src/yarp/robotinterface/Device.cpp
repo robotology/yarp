@@ -341,7 +341,7 @@ void yarp::robotinterface::Device::stopThreads() const
     mPriv->stopThreads();
 }
 
-bool yarp::robotinterface::Device::calibrate(const yarp::robotinterface::Device &target) const
+bool yarp::robotinterface::Device::calibrate(const yarp::dev::PolyDriverDescriptor &target) const
 {
     if(!driver()) {
        yDebug() << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
@@ -355,8 +355,8 @@ bool yarp::robotinterface::Device::calibrate(const yarp::robotinterface::Device 
     }
 
     yarp::dev::IControlCalibration *controlCalibrator;
-    if (!target.driver()->view(controlCalibrator)) {
-        yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
+    if (!target.poly->view(controlCalibrator)) {
+        yError() << target.key << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypeCalibrate) << "actions";
         return false;
     }
 
@@ -368,8 +368,8 @@ bool yarp::robotinterface::Device::calibrate(const yarp::robotinterface::Device 
     yarp::dev::IRemoteCalibrator *rem_calibrator_calib;
     bool rem_calibrator_available = true;
 
-    if(!target.driver()->view(rem_calibrator_wrap)) {
-        yWarning() << "Device " << target.name() << "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot attach to a Calibrator device. \n \
+    if(!target.poly->view(rem_calibrator_wrap)) {
+        yWarning() << "Device " << target.key << "is not implementing a yarp::dev::IRemoteCalibrator, therefore it cannot attach to a Calibrator device. \n \
                                                      Please verify that the target of calibrate action is a controlBoardWrapper2 device.  \
                                                      This doesn't prevent the yarprobotinterface to correctly operate, but no remote calibration and homing will be available";
         rem_calibrator_available = false;
@@ -387,13 +387,13 @@ bool yarp::robotinterface::Device::calibrate(const yarp::robotinterface::Device 
     // Start the calibrator thread
     yarp::os::Thread *calibratorThread = new yarp::robotinterface::CalibratorThread(calibrator,
                                                                               name(),
-                                                                              target.driver(),
-                                                                              target.name(),
+                                                                              target.poly,
+                                                                              target.key,
                                                                               yarp::robotinterface::CalibratorThread::ActionCalibrate);
     registerThread(calibratorThread);
 
     if (!calibratorThread->start()) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeCalibrate) << "on device" << target.name();
+        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeCalibrate) << "on device" << target.key;
         return false;
     }
 
@@ -442,7 +442,7 @@ bool yarp::robotinterface::Device::detach() const
     return true;
 }
 
-bool yarp::robotinterface::Device::park(const Device &target) const
+bool yarp::robotinterface::Device::park(const yarp::dev::PolyDriverDescriptor &target) const
 {
     yarp::dev::ICalibrator *calibrator;
     if(!driver()) {
@@ -461,8 +461,8 @@ bool yarp::robotinterface::Device::park(const Device &target) const
     }
 
     yarp::dev::IControlCalibration *controlCalibrator;
-    if (!target.driver()->view(controlCalibrator)) {
-        yError() << target.name() << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
+    if (!target.poly->view(controlCalibrator)) {
+        yError() << target.key << "is not a yarp::dev::IControlCalibration2, therefore it cannot have" << ActionTypeToString(ActionTypePark) << "actions";
         return false;
     }
 
@@ -470,13 +470,13 @@ bool yarp::robotinterface::Device::park(const Device &target) const
 
     yarp::os::Thread *parkerThread = new yarp::robotinterface::CalibratorThread(calibrator,
                                                                           name(),
-                                                                          target.driver(),
-                                                                          target.name(),
+                                                                          target.poly,
+                                                                          target.key,
                                                                           yarp::robotinterface::CalibratorThread::ActionPark);
     registerThread(parkerThread);
 
     if (!parkerThread->start()) {
-        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypePark) << "on device" << target.name();
+        yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypePark) << "on device" << target.key;
         return false;
     }
 

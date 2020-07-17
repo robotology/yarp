@@ -10,6 +10,7 @@
 #include <yarp/robotinterface/XMLReader.h>
 
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/PolyDriverList.h>
 #include <yarp/dev/IMultipleWrapper.h>
 
 #include <catch.hpp>
@@ -235,5 +236,139 @@ TEST_CASE("robotinterface::XMLReaderTest", "[yarp::robotinterface]")
         CHECK(globalState.mockDetachWasCalled);
         CHECK(globalState.mockWrapperWasClosed);
         CHECK(globalState.mockDriverWasClosed);
+    }
+
+    SECTION("Check valid robot file with one device attaching to an external device")
+    {
+        // Reset test flags
+        globalState.reset();
+
+        // Add dummy devices to YARP drivers factory
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::RobotInterfaceTestMockDriver>("robotinterface_test_mock_device", "", "RobotInterfaceTestMockDriver"));
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::RobotInterfaceTestMockWrapper>("robotinterface_test_mock_wrapper", "", "RobotInterfaceTestMockWrapper"));
+
+        // Create dummy device externally
+        yarp::os::Property p;
+        p.put("device", "robotinterface_test_mock_device");
+
+        yarp::dev::PolyDriver dummyDevice;
+        dummyDevice.open(p);
+
+        // Add the dummy device to the PolyDriverList with the appropriate name
+        yarp::dev::PolyDriverList externalDriverList;
+        externalDriverList.push(&dummyDevice, "dummy_device");
+
+        // Load  XML configuration file
+        std::string XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                                "<!DOCTYPE robot PUBLIC \"-//YARP//DTD yarprobotinterface 3.0//EN\" \"http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd\">\n"
+                                "<robot name=\"RobotWithOneDevice\" prefix=\"RobotWithOneDevice\">\n"
+                                "  <devices>\n"
+                                "    <device name=\"dummy_wrapper\" type=\"robotinterface_test_mock_wrapper\">\n"
+                                "      <action phase=\"startup\" level=\"5\" type=\"attach\">\n"
+                                "        <paramlist name=\"networks\">\n"
+                                "          <elem name=\"attached_device\">  dummy_device </elem>\n"
+                                "        </paramlist>\n"
+                                "      </action>\n"
+                                "      <action phase=\"shutdown\" level=\"5\" type=\"detach\" />\n"
+                                "    </device>\n"
+                                "  </devices>\n"
+                                "</robot>\n";
+
+        yarp::robotinterface::XMLReader reader;
+        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(XMLString);
+
+        // Check parsing fails on empty string
+        CHECK(result.parsingIsSuccessful);
+
+        // Verify that only one (internal) device has been loaded
+        CHECK(result.robot.devices().size() == 1);
+
+        // Verify that only the robotinterface_test_mock_device device opened and the attach was not called
+        CHECK(globalState.mockDriverWasOpened);
+        CHECK(!globalState.mockWrapperWasClosed);
+        CHECK(!globalState.mockAttachWasCalled);
+        CHECK(!globalState.mockDetachWasCalled);
+        CHECK(!globalState.mockWrapperWasClosed);
+        CHECK(!globalState.mockDriverWasClosed);
+
+        // Start the robot (open the device and call "attach" actions)
+        bool ok = result.robot.setExternalDevices(externalDriverList);
+        CHECK(ok);
+        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup);
+        CHECK(ok);
+
+        // Check that the also the wrapper was opened and attach called
+        CHECK(globalState.mockDriverWasOpened);
+        CHECK(globalState.mockWrapperWasOpened);
+        CHECK(globalState.mockAttachWasCalled);
+        CHECK(!globalState.mockDetachWasCalled);
+        CHECK(!globalState.mockWrapperWasClosed);
+        CHECK(!globalState.mockDriverWasClosed);
+
+        // Stop the robot
+        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+        CHECK(ok);
+        ok = result.robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
+        CHECK(ok);
+
+        // Check that the wrapper device was closed and detach called, while the external device was not closed
+        CHECK(globalState.mockDriverWasOpened);
+        CHECK(globalState.mockWrapperWasOpened);
+        CHECK(globalState.mockAttachWasCalled);
+        CHECK(globalState.mockDetachWasCalled);
+        CHECK(globalState.mockWrapperWasClosed);
+        CHECK(!globalState.mockDriverWasClosed);
+
+        ok = dummyDevice.close();
+        CHECK(ok);
+
+        CHECK(globalState.mockDriverWasClosed);
+    }
+
+    SECTION("Check error in case of name conflict between internal devices and external devices")
+    {
+        // Reset test flags
+        globalState.reset();
+
+        // Add dummy devices to YARP drivers factory
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::RobotInterfaceTestMockDriver>("robotinterface_test_mock_device", "", "RobotInterfaceTestMockDriver"));
+        yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<yarp::dev::RobotInterfaceTestMockWrapper>("robotinterface_test_mock_wrapper", "", "RobotInterfaceTestMockWrapper"));
+
+        // Create dummy device externally
+        yarp::os::Property p;
+        p.put("device", "robotinterface_test_mock_device");
+
+        yarp::dev::PolyDriver dummyDevice;
+        dummyDevice.open(p);
+
+        // Add the dummy device to the PolyDriverList with the name "dummy_device"
+        yarp::dev::PolyDriverList externalDriverList;
+        externalDriverList.push(&dummyDevice, "dummy_device");
+
+        // Load  XML configuration file that also contains an internal device with name "dummy_device"
+        std::string XMLString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                                "<!DOCTYPE robot PUBLIC \"-//YARP//DTD yarprobotinterface 3.0//EN\" \"http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd\">\n"
+                                "<robot name=\"RobotWithOneDevice\" prefix=\"RobotWithOneDevice\">\n"
+                                "  <devices>\n"
+                                "    <device name=\"dummy_device\" type=\"robotinterface_test_mock_wrapper\">\n"
+                                "    </device>\n"
+                                "  </devices>\n"
+                                "</robot>\n";
+
+        yarp::robotinterface::XMLReader reader;
+        yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(XMLString);
+
+        CHECK(result.parsingIsSuccessful);
+
+        // Verify that only one (internal) device has been loaded
+        CHECK(result.robot.devices().size() == 1);
+
+        // Set the external devices list and check that it fails due to naming conflicts
+        bool ok = result.robot.setExternalDevices(externalDriverList);
+        CHECK(!ok);
+
+        // Cleanup
+        ok = dummyDevice.close();
+        CHECK(ok);
     }
 }
