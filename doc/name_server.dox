@@ -332,8 +332,8 @@ automation.
 
 The return format is a list with the string "ports" as its
 first item, followed by one sub-list for each matching port
-(if /PREFIX is supplied, this is all ports named /PREFIX or
-/PREFIX/*; if no prefix is supplied, it is all ports).
+(if `/PREFIX` is supplied, this is all ports named `/PREFIX` or
+`/PREFIX/*`; if no prefix is supplied, it is all ports).
 The sublist contains a series of key-value pairs.  One
 important key is "name", whose value is the name of the port.
 
@@ -341,7 +341,7 @@ important key is "name", whose value is the name of the port.
 
 For yarp utilities to correctly discover how
 to contact the name server,
-there should be a file yarp.conf in the directory $HOME/.yarp/conf/
+there should be a file `yarp.conf` in the directory `$HOME/.yarp/conf/`
 that looks like this:
 \verbatim
 192.168.0.3 10000

@@ -12,16 +12,6 @@
 
 #include <yarp/dev/api.h>
 
-/*! \file ControlDebug.h define control board standard interfaces*/
-
-namespace yarp
-{
-    namespace dev
-    {
-        class IControlDebug;
-    }
-}
-
 /**
  * @ingroup dev_iface_motor
  *
