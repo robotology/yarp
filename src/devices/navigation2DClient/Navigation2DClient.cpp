@@ -599,10 +599,30 @@ bool Navigation2DClient::locations_are_similar(Map2DLocation loc1, Map2DLocation
         return false;
     }
 
-    if (angular_tolerance != std::numeric_limits<double>::infinity() &&
-        fabs(normalize_angle(loc1.theta) - normalize_angle(loc2.theta)) > angular_tolerance)
+    if (angular_tolerance != std::numeric_limits<double>::infinity())
     {
-        return false;
+        //In the following blocks, I'm giving two possibile solution to the problem of
+        //determining if the difference of two angles is below a certain threshold.
+        //The problem is tricky, because it must take in account the critical points 0,180,360,-180, -360 etc.
+        //Both the formulas lead to the same result, however I'm not sure I they have the same performances.
+        //Please do not remove the unused block, since it may be a useful reference for the future.
+#if 1
+        //check in the range 0-360
+        double diff = loc2.theta - loc1.theta + 180.0;
+        diff = fmod(diff, 360.0) - 180.0;
+        diff = (diff < -180.0) ? (diff + 360.0) : (diff);
+        if (fabs(diff) > angular_tolerance)
+#else
+        //check in the range 0-180
+        double angle1 = normalize_angle(loc1.theta);
+        double angle2 = normalize_angle(loc2.theta);
+        double diff = angle1 - angle2;
+        diff += (diff > 180) ? -360 : (diff < -180) ? 360 : 0;
+        if (fabs(diff) > angular_tolerance)
+#endif
+        {
+            return false;
+        }
     }
     return true;
 }
