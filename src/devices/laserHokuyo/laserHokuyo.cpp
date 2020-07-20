@@ -542,7 +542,7 @@ void laserHokuyo::run()
 
     if (timeout)
     {
-        yError ("laserHokuyo Timeout!");
+        yCError(LASERHOKUYO, "laserHokuyo Timeout!");
     }
     if (error)
     {
