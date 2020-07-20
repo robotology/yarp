@@ -6,26 +6,25 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "Param.h"
+#include <yarp/robotinterface/experimental/Param.h>
 
 #include <yarp/os/LogStream.h>
-
 #include <yarp/os/Property.h>
 
 #include <string>
 
 
-std::ostream& std::operator<<(std::ostream &oss, const yarp::robotinterface::Param &t)
+std::ostream& std::operator<<(std::ostream& oss, const yarp::robotinterface::experimental::Param& t)
 {
     oss << "(\"" << t.name() << "\"" << (t.isGroup() ? " [group]" : "") << " = \"" << t.value() << "\")";
     return oss;
 }
 
 
-class yarp::robotinterface::Param::Private
+class yarp::robotinterface::experimental::Param::Private
 {
 public:
-    Private(Param * /*parent*/) :
+    Private(Param* /*parent*/) :
             isGroup(false)
     {
     }
@@ -35,7 +34,7 @@ public:
     bool isGroup;
 };
 
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Param &t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Param& t)
 {
     std::ostringstream oss;
     oss << t;
@@ -43,29 +42,29 @@ yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterfa
     return dbg;
 }
 
-yarp::robotinterface::Param::Param(bool isGroup) :
-    mPriv(new Private(this))
+yarp::robotinterface::experimental::Param::Param(bool isGroup) :
+        mPriv(new Private(this))
 {
     mPriv->isGroup = isGroup;
 }
 
-yarp::robotinterface::Param::Param(const std::string &name, const std::string &value, bool isGroup) :
-    mPriv(new Private(this))
+yarp::robotinterface::experimental::Param::Param(const std::string& name, const std::string& value, bool isGroup) :
+        mPriv(new Private(this))
 {
     mPriv->name = name;
     mPriv->value = value;
     mPriv->isGroup = isGroup;
 }
 
-yarp::robotinterface::Param::Param(const ::yarp::robotinterface::Param& other) :
-    mPriv(new Private(this))
+yarp::robotinterface::experimental::Param::Param(const ::yarp::robotinterface::experimental::Param& other) :
+        mPriv(new Private(this))
 {
     mPriv->name = other.mPriv->name;
     mPriv->value = other.mPriv->value;
     mPriv->isGroup = other.mPriv->isGroup;
 }
 
-yarp::robotinterface::Param& yarp::robotinterface::Param::operator=(const yarp::robotinterface::Param& other)
+yarp::robotinterface::experimental::Param& yarp::robotinterface::experimental::Param::operator=(const yarp::robotinterface::experimental::Param& other)
 {
     if (&other != this) {
         mPriv->name = other.mPriv->name;
@@ -76,37 +75,37 @@ yarp::robotinterface::Param& yarp::robotinterface::Param::operator=(const yarp::
     return *this;
 }
 
-yarp::robotinterface::Param::~Param()
+yarp::robotinterface::experimental::Param::~Param()
 {
     delete mPriv;
 }
 
-std::string& yarp::robotinterface::Param::name()
+std::string& yarp::robotinterface::experimental::Param::name()
 {
     return mPriv->name;
 }
 
-std::string& yarp::robotinterface::Param::value()
+std::string& yarp::robotinterface::experimental::Param::value()
 {
     return mPriv->value;
 }
 
-const std::string& yarp::robotinterface::Param::name() const
+const std::string& yarp::robotinterface::experimental::Param::name() const
 {
     return mPriv->name;
 }
 
-const std::string& yarp::robotinterface::Param::value() const
+const std::string& yarp::robotinterface::experimental::Param::value() const
 {
     return mPriv->value;
 }
 
-bool yarp::robotinterface::Param::isGroup() const
+bool yarp::robotinterface::experimental::Param::isGroup() const
 {
     return mPriv->isGroup;
 }
 
-yarp::os::Property yarp::robotinterface::Param::toProperty() const
+yarp::os::Property yarp::robotinterface::experimental::Param::toProperty() const
 {
     yarp::os::Property p;
     std::string s = "(" + mPriv->name + " " + mPriv->value + ")";

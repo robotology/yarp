@@ -9,51 +9,29 @@
 #ifndef YARP_ROBOTINTERFACE_IMPL_XMLREADERFILEVX_H
 #define YARP_ROBOTINTERFACE_IMPL_XMLREADERFILEVX_H
 
-#include <yarp/robotinterface/Robot.h>
+#include <yarp/robotinterface/experimental/Robot.h>
 
 #include <string>
 
 namespace yarp {
 namespace robotinterface {
 
+namespace experimental {
 class XMLReaderResult;
+} // namespace experimental
+
+namespace impl {
 
 class XMLReaderFileVx
 {
 public:
     bool verbose;
-    virtual ~XMLReaderFileVx() {};
-    virtual XMLReaderResult getRobotFromFile(const std::string& filename, bool verbose = false) = 0;
-    virtual XMLReaderResult getRobotFromString(const std::string& xmlString, bool verbose = false) = 0;
+    virtual ~XMLReaderFileVx(){};
+    virtual yarp::robotinterface::experimental::XMLReaderResult getRobotFromFile(const std::string& filename, bool verbose = false) = 0;
+    virtual yarp::robotinterface::experimental::XMLReaderResult getRobotFromString(const std::string& xmlString, bool verbose = false) = 0;
 };
 
-class XMLReaderFileV1 : public XMLReaderFileVx
-{
-public:
-    XMLReaderFileV1();
-    virtual ~XMLReaderFileV1();
-
-    XMLReaderResult getRobotFromFile(const std::string& filename, bool verbose = false) override;
-    XMLReaderResult getRobotFromString(const std::string& xmlString, bool verbose = false) override;
-private:
-    class privateXMLReaderFileV1;
-    privateXMLReaderFileV1 * const mPriv;
-};
-
-class XMLReaderFileV3: public XMLReaderFileVx
-{
-public:
-    XMLReaderFileV3();
-    virtual ~XMLReaderFileV3();
-
-    XMLReaderResult getRobotFromFile(const std::string& filename, bool verbose = false) override;
-    XMLReaderResult getRobotFromString(const std::string& xmlString, bool verbose = false) override;
-
-private:
-    class privateXMLReaderFileV3;
-    privateXMLReaderFileV3 * const mPriv;
-};
-
+} // namespace impl
 } // namespace robotinterface
 } // namespace yarp
 
