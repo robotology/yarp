@@ -1159,7 +1159,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     // Torque sensors stuff
     if (!extractGroup(general, xtmp, "TorqueId","a list of associated joint torque sensor ids", _njoints))
     {
-        fprintf(stderr, "Using default value = 0 (disabled)\n");
+        yCWarning(FAKEMOTIONCONTROL, "Using default value = 0 (disabled)");
         for(i=1; i<_njoints+1; i++)
             _torqueSensorId[i-1] = 0;
     }
@@ -2096,7 +2096,7 @@ bool FakeMotionControl::positionMoveRaw(const int n_joint, const int *joints, co
 
     for(int j=0; j<n_joint; j++)
     {
-        printf("j: %d; ref %f;\n", joints[j], refs[j]); fflush(stdout);
+        yCDebug(FAKEMOTIONCONTROL, "j: %d; ref %f;\n", joints[j], refs[j]); fflush(stdout);
     }
 
     bool ret = true;
