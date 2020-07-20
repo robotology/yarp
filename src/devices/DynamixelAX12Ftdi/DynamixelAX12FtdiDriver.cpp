@@ -254,7 +254,7 @@ int DynamixelAX12FtdiDriver::sendCommand(unsigned char id, unsigned char inst[],
         do {
             //retCode stores the number of bytes read, which may not correspond to the number of bytes
             //one wants to read (the third parameter). This is a timing issue, so to learn how to fix
-            //it, I should send a command and then continually printf the bytes that I get back. At
+            //it, I should send a command and then continually prints the bytes that I get back. At
             //some point, I will get back the correct number of bytes. After doing this enough times,
             //I should work out the timing issue
             retCode = ftdi_read_data(&ftdic, header, 4);

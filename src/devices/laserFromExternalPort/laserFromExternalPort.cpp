@@ -248,7 +248,7 @@ bool LaserFromExternalPort::open(yarp::os::Searchable& config)
         yarp::os::Time::delay(0.1);
     }
 
-    for (auto i=0; i<m_input_ports.size(); i++)
+    for (size_t i=0; i<m_input_ports.size(); i++)
     {
         m_input_ports[i].useCallback();
         if (m_input_ports[i].open(m_port_names[i]) == false)
@@ -338,7 +338,7 @@ void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::si
 
 ////////////////////////////
     double resolution = (scan_data.angle_max - scan_data.angle_min)/ scan_data.scans.size(); // deg/elem
-    for (auto i = 0; i < scan_data.scans.size(); i++)
+    for (size_t i = 0; i < scan_data.scans.size(); i++)
     {
         double distance = scan_data.scans[i];
         if (distance == std::numeric_limits<double>::infinity())
@@ -373,7 +373,7 @@ void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::si
 
             //compute the new slot
             int new_i = lrint ((angle_output_deg - m_min_angle)  / m_resolution);
-            if (new_i == m_laser_data.size()) {new_i=0;}
+            if (static_cast<size_t>(new_i) == m_laser_data.size()) {new_i=0;}
 
             yAssert (new_i >= 0);
             yAssert (new_i < m_laser_data.size());
@@ -440,7 +440,7 @@ void LaserFromExternalPort::run()
     }
     else //multiple ports
     {
-        for (auto i=0; i<nports;i++)
+        for (size_t i=0; i<nports;i++)
         {
             yarp::sig::Matrix m(4, 4); m.eye();
             bool frame_exists = m_iTc->getTransform(m_src_frame_id[i], m_dst_frame_id, m);

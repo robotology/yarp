@@ -55,7 +55,14 @@ class InputPortProcessor :
     bool                   m_contains_data;
 
 public:
-    InputPortProcessor(const InputPortProcessor& alt) {m_lastScan = alt.m_lastScan; m_lastStamp = alt.m_lastStamp; m_contains_data = alt.m_contains_data; }
+    InputPortProcessor(const InputPortProcessor& alt) :
+            yarp::os::BufferedPort<yarp::dev::LaserScan2D>(),
+            m_lastScan(alt.m_lastScan),
+            m_lastStamp(alt.m_lastStamp),
+            m_contains_data(alt.m_contains_data)
+    {
+    }
+
     InputPortProcessor();
     using yarp::os::BufferedPort<yarp::dev::LaserScan2D>::onRead;
     void onRead(yarp::dev::LaserScan2D& v) override;
