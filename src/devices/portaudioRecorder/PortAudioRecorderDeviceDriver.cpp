@@ -129,7 +129,7 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         return finished;
     }
 
-    printf("No write operations requested, aborting\n");
+    yCError(PORTAUDIORECORDER, "No write operations requested, aborting");
     return paAbort;
 }
 
