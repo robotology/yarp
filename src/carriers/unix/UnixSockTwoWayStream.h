@@ -72,7 +72,7 @@ private:
     yarp::os::ManagedBytes monitor;
     bool closed {false};
     bool interrupting {false};
-    bool reader {false};
+    bool openedAsReader {false};
     yarp::os::Contact localAddress;
     yarp::os::Contact remoteAddress;
     std::mutex mutex;

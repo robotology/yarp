@@ -35,6 +35,7 @@ UnixSockTwoWayStream::UnixSockTwoWayStream(const std::string& _socketPath) :
 
 bool UnixSockTwoWayStream::open(bool sender)
 {
+    openedAsReader = !sender;
     struct sockaddr_un addr;
     if ((reader_fd = ::socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
     {
@@ -155,7 +156,7 @@ void UnixSockTwoWayStream::interrupt()
     }
     mutex.unlock();
     if (act) {
-        if(reader)
+        if(openedAsReader)
         {
             int ct = 3;
             while (happy && ct>0) {
@@ -213,7 +214,7 @@ void UnixSockTwoWayStream::closeMain()
         // If the connect descriptor is valid close socket
         // and free the memory dedicated.
         //socket closure
-        if (reader)
+        if (openedAsReader)
         {
             ::shutdown(sender_fd, SHUT_RDWR);
             ::close(sender_fd);
@@ -231,15 +232,15 @@ void UnixSockTwoWayStream::closeMain()
         mutex.unlock();
     }
     happy = false;
-
 }
 
 yarp::conf::ssize_t UnixSockTwoWayStream::read(Bytes& b)
 {
-    reader = true;
-
+    if(closed || !happy){
+        return -1;
+    }
     int result;
-    result = ::read(sender_fd, b.get(), b.length());
+    result = ::read(openedAsReader?sender_fd:reader_fd, b.get(), b.length());
     if (closed || result == 0) {
         happy = false;
         return -1;
@@ -254,17 +255,12 @@ yarp::conf::ssize_t UnixSockTwoWayStream::read(Bytes& b)
 
 void UnixSockTwoWayStream::write(const Bytes& b)
 {
-    if (reader) {
-        return;
-    }
-
     if (reader_fd < 0)
     {
         close();
         return;
     }
-
-    int writtenMem = ::write(reader_fd, b.get(), b.length());
+    int writtenMem = ::write(openedAsReader?sender_fd:reader_fd, b.get(), b.length());
     if (writtenMem < 0)
     {
         perror("unixSock::write:Packet payload");
