@@ -33,9 +33,6 @@
 #        include <opencv2/core/core_c.h>
 #    endif // CV_MAJOR_VERSION
 
-#define errno_exit printf
-
-
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -1111,14 +1108,14 @@ bool V4L_camera::full_FrameRead()
             }
         } else if ((r > 0) && (FD_ISSET(param.fd, &fds))) {
             if (frameRead()) {
-                // printf("got an image\n");
+                //yCTrace(USBCAMERA, "got an image");
                 got_it = true;
                 break;
             }
-            printf("trial %d failed\n", i);
+            yCWarning(USBCAMERA, "trial %d failed", i);
 
         } else {
-            printf("select woke up for something else\n");
+            yCWarning(USBCAMERA, "select woke up for something else");
         }
 
         /* EAGAIN - continue select loop. */
@@ -1169,7 +1166,7 @@ bool V4L_camera::frameRead()
         timeStamp.update(toEpochOffset + buf.timestamp.tv_sec + buf.timestamp.tv_usec / 1000000.0);
 
         if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf)) {
-            errno_exit("VIDIOC_QBUF");
+            yCError(USBCAMERA, "VIDIOC_QBUF");
             mutex.post();
             return false;
         }
@@ -1204,7 +1201,7 @@ bool V4L_camera::frameRead()
 
 
         if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf)) {
-            errno_exit("VIDIOC_QBUF");
+            yCError(USBCAMERA, "VIDIOC_QBUF");
         }
         break;
 
@@ -1363,14 +1360,14 @@ void V4L_camera::captureStart()
             buf.index = i;
 
             if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf)) {
-                errno_exit("VIDIOC_QBUF");
+                yCError(USBCAMERA, "VIDIOC_QBUF");
             }
         }
 
         type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
         if (-1 == xioctl(param.fd, VIDIOC_STREAMON, &type)) {
-            errno_exit("VIDIOC_STREAMON");
+            yCError(USBCAMERA, "VIDIOC_STREAMON");
         }
 
         break;
@@ -1388,14 +1385,14 @@ void V4L_camera::captureStart()
             buf.length = param.buffers[i].length;
 
             if (-1 == xioctl(param.fd, VIDIOC_QBUF, &buf)) {
-                errno_exit("VIDIOC_QBUF");
+                yCError(USBCAMERA, "VIDIOC_QBUF");
             }
         }
 
         type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
         if (-1 == xioctl(param.fd, VIDIOC_STREAMON, &type)) {
-            errno_exit("VIDIOC_STREAMON");
+            yCError(USBCAMERA, "VIDIOC_STREAMON");
         }
 
         break;
@@ -1466,14 +1463,14 @@ bool V4L_camera::mmapInit()
         buf.index = param.n_buffers;
 
         if (-1 == xioctl(param.fd, VIDIOC_QUERYBUF, &buf)) {
-            errno_exit("VIDIOC_QUERYBUF");
+            yCError(USBCAMERA, "VIDIOC_QUERYBUF");
         }
 
         param.buffers[param.n_buffers].length = buf.length;
         param.buffers[param.n_buffers].start = v4l2_mmap(nullptr, buf.length, PROT_READ | PROT_WRITE, MAP_SHARED, param.fd, buf.m.offset);
 
         if (MAP_FAILED == param.buffers[param.n_buffers].start) {
-            errno_exit("mmap");
+            yCError(USBCAMERA, "mmap");
         }
     }
     return true;
