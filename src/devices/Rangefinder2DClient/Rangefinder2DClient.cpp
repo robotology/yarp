@@ -39,6 +39,10 @@ using namespace yarp::sig;
 #define DEG2RAD M_PI/180.0
 #endif
 
+namespace {
+YARP_LOG_COMPONENT(RANGEFINDER2DCLIENT, "yarp.device.Rangefinder2DClient")
+}
+
 inline void  Rangefinder2DInputPortProcessor::resetStat()
 {
     mutex.lock();
@@ -176,12 +180,12 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
 
     if (local=="")
     {
-        yError("Rangefinder2DClient::open() error you have to provide valid local name");
+        yCError(RANGEFINDER2DCLIENT, "open() error you have to provide valid local name");
         return false;
     }
     if (remote=="")
     {
-        yError("Rangefinder2DClient::open() error you have to provide valid remote name");
+        yCError(RANGEFINDER2DCLIENT, "open() error you have to provide valid remote name");
         return false;
     }
 
@@ -192,28 +196,28 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
 
     if (!inputPort.open(local))
     {
-        yError("Rangefinder2DClient::open() error could not open port %s, check network\n",local.c_str());
+        yCError(RANGEFINDER2DCLIENT, "open() error could not open port %s, check network\n",local.c_str());
         return false;
     }
     inputPort.useCallback();
 
     if (!rpcPort.open(local_rpc))
     {
-        yError("Rangefinder2DClient::open() error could not open rpc port %s, check network\n", local_rpc.c_str());
+        yCError(RANGEFINDER2DCLIENT, "open() error could not open rpc port %s, check network\n", local_rpc.c_str());
         return false;
     }
 
     bool ok=Network::connect(remote.c_str(), local.c_str(), "udp");
     if (!ok)
     {
-        yError("Rangefinder2DClient::open() error could not connect to %s\n", remote.c_str());
+        yCError(RANGEFINDER2DCLIENT, "open() error could not connect to %s\n", remote.c_str());
         return false;
     }
 
     ok=Network::connect(local_rpc, remote_rpc);
     if (!ok)
     {
-        yError("Rangefinder2DClient::open() error could not connect to %s\n", remote_rpc.c_str());
+        yCError(RANGEFINDER2DCLIENT, "open() error could not connect to %s\n", remote_rpc.c_str());
        return false;
     }
 
@@ -248,7 +252,7 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
         drv->view(iTrf);
         if (!iTrf)
         {
-            yError() << "A Problem occurred while trying to view the IFrameTransform interface";
+            yCError(RANGEFINDER2DCLIENT) << "A Problem occurred while trying to view the IFrameTransform interface";
             drv->close();
             delete drv;
             return false;
@@ -262,9 +266,9 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
         device_position_theta = v[2];
         if (fabs(v[0]) < 1e-6 && fabs(v[1]) < 1e-6)
         {
-            yError() << "Laser device is not planar";
+            yCError(RANGEFINDER2DCLIENT) << "Laser device is not planar";
         }
-        yInfo() << "Position information obtained fromtransform server";
+        yCInfo(RANGEFINDER2DCLIENT) << "Position information obtained fromtransform server";
         drv->close();
     }
     else
@@ -273,14 +277,14 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
             config.check("device_position_y") &&
             config.check("device_position_theta"))
         {
-            yInfo() << "Position information obtained from configuration parameters";
+            yCInfo(RANGEFINDER2DCLIENT) << "Position information obtained from configuration parameters";
             device_position_x = config.find("device_position_x").asFloat64();
             device_position_y = config.find("device_position_y").asFloat64();
             device_position_theta = config.find("device_position_theta").asFloat64();
         }
         else
         {
-            yDebug() << "No position information provided for this device";
+            yCDebug(RANGEFINDER2DCLIENT) << "No position information provided for this device";
         }
     }
 
@@ -307,7 +311,7 @@ bool Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasurementData> 
     inputPort.getData(ranges);
     size_t size = ranges.size();
     data.resize(size);
-    if (scan_angle_max < scan_angle_min) { yError() << "getLaserMeasurement failed"; return false; }
+    if (scan_angle_max < scan_angle_min) { yCError(RANGEFINDER2DCLIENT) << "getLaserMeasurement failed"; return false; }
     double laser_angle_of_view = scan_angle_max - scan_angle_min;
     for (size_t i = 0; i < size; i++)
     {
