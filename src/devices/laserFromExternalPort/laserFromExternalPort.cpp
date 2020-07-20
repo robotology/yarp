@@ -99,7 +99,7 @@ inline void InputPortProcessor::getLast(yarp::dev::LaserScan2D& data, Stamp& stm
     while (m_contains_data==false)
     {
         yarp::os::Time::delay(0.1);
-        if (counter++ > 100) {yDebug() << "Waiting for incoming data..."; counter=0;}
+        if (counter++ > 100) {yCDebug(LASER_FROM_EXTERNAL_PORT) << "Waiting for incoming data..."; counter=0;}
     }
 
     m_port_mutex.lock();
@@ -259,7 +259,7 @@ bool LaserFromExternalPort::open(yarp::os::Searchable& config)
     }
     PeriodicThread::start();
 
-    yInfo("LaserFromExternalPort: Sensor ready");
+    yCInfo(LASER_FROM_EXTERNAL_PORT, "LaserFromExternalPort: Sensor ready");
     return true;
 }
 
@@ -375,8 +375,8 @@ void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::si
             int new_i = lrint ((angle_output_deg - m_min_angle)  / m_resolution);
             if (static_cast<size_t>(new_i) == m_laser_data.size()) {new_i=0;}
 
-            yAssert (new_i >= 0);
-            yAssert (new_i < m_laser_data.size());
+            yCAssert(LASER_FROM_EXTERNAL_PORT, new_i >= 0);
+            yCAssert(LASER_FROM_EXTERNAL_PORT, new_i < m_laser_data.size());
 
             //compute the distance
             double newdistance = std::sqrt((Bx * Bx) + (By * By));
