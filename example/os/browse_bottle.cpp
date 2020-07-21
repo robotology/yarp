@@ -7,15 +7,22 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
-using namespace yarp::os;
 
-void showBottle(Bottle& anUnknownBottle, int indentation = 0) {
-    for (int i=0; i<anUnknownBottle.size(); i++) {
-        for (int j=0; j<indentation; j++) { printf(" "); }
-        printf("[%d]: ", i);
+#include <cstdio>
+
+using yarp::os::Bottle;
+using yarp::os::Value;
+
+void showBottle(Bottle& anUnknownBottle, int indentation = 0)
+{
+    for (size_t i = 0; i < anUnknownBottle.size(); i++) {
+        for (int j = 0; j < indentation; j++) {
+            printf(" ");
+        }
+        printf("[%zu]: ", i);
         Value& element = anUnknownBottle.get(i);
         switch (element.getCode()) {
         case BOTTLE_TAG_INT32:
@@ -31,13 +38,13 @@ void showBottle(Bottle& anUnknownBottle, int indentation = 0) {
             printf("binary blob of length %zd\n", element.asBlobLength());
             break;
         case BOTTLE_TAG_VOCAB:
-            printf("vocab [%s]\n", Vocab::decode(element.asVocab()).c_str());
+            printf("vocab [%s]\n", yarp::os::Vocab::decode(element.asVocab()).c_str());
             break;
         default:
             if (element.isList()) {
-                Bottle *lst = element.asList();
+                Bottle* lst = element.asList();
                 printf("list of %zu elements\n", lst->size());
-                showBottle(*lst,indentation+2);
+                showBottle(*lst, indentation + 2);
             } else {
                 printf("unrecognized type\n");
             }
@@ -46,7 +53,11 @@ void showBottle(Bottle& anUnknownBottle, int indentation = 0) {
     }
 }
 
-int main() {
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     Bottle anUnknownBottle("equals 7 (add (add 2 3) 2)");
     showBottle(anUnknownBottle);
     return 0;

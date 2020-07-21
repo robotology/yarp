@@ -24,58 +24,71 @@ showing the number of bytes passed on.
 
 */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Property.h>
 #include <yarp/os/ManagedBytes.h>
-#include <yarp/os/Stamp.h>
-using namespace yarp::os;
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Portable.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
+
+#include <cstdio>
+
+using yarp::os::ConnectionReader;
+using yarp::os::ConnectionWriter;
+using yarp::os::ManagedBytes;
+using yarp::os::Network;
+using yarp::os::Port;
+using yarp::os::Portable;
+using yarp::os::Property;
+using yarp::os::Value;
 
 /*
   Small class for reading and writing messages.
  */
-class Saver : public Portable {
+class Saver : public Portable
+{
 private:
     ManagedBytes mem;
+
 public:
-    virtual bool read(ConnectionReader& reader) {
-        int len = reader.getSize();
-        if (len<=0) {
-            fprintf(stderr,"Length of message not provided by carrier.\n");
+    bool read(ConnectionReader& reader) override
+    {
+        size_t len = reader.getSize();
+        if (len <= 0) {
+            fprintf(stderr, "Length of message not provided by carrier.\n");
             return false;
         }
-        printf("Reading %d bytes\n", len);
-        if (mem.length()<len) {
+        printf("Reading %zu bytes\n", len);
+        if (mem.length() < len) {
             mem.allocate(len);
         }
-        if (mem.length()!=len) {
-            fprintf(stderr,"Could not allocate storage for message.\n");
+        if (mem.length() != len) {
+            fprintf(stderr, "Could not allocate storage for message.\n");
             return false;
         }
-        return reader.expectBlock(mem.get(),mem.length());
+        return reader.expectBlock(mem.get(), mem.length());
     }
 
-    virtual bool write(ConnectionWriter& writer) const {
-        if (mem.length()==0) {
-            fprintf(stderr,"Nothing to write.\n");
+    bool write(ConnectionWriter& writer) const override
+    {
+        if (mem.length() == 0) {
+            fprintf(stderr, "Nothing to write.\n");
             return false;
         }
-        writer.appendExternalBlock(mem.get(),mem.length());
+        writer.appendExternalBlock(mem.get(), mem.length());
         printf("Writing %zu bytes\n", mem.length());
         return true;
-
     }
 };
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
     Network yarp;
 
-    if (argc<2) {
+    if (argc < 2) {
         printf("Call like this:\n");
         printf("  playback --store dirname --name /port/name\n");
         return 0;
@@ -83,13 +96,12 @@ int main(int argc, char *argv[]) {
 
     // Get commandline options
     Property options;
-    options.fromCommand(argc,argv);
-    std::string portName =
-        options.check("name",Value("/playback"),"port name").asString();
+    options.fromCommand(argc, argv);
+    std::string portName = options.check("name", Value("/playback"), "port name").asString();
 
     // Create a port
     Port p;
-    p.open(portName.c_str());
+    p.open(portName);
 
     // Loop forever reading messages and writing them again
     while (true) {

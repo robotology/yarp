@@ -11,23 +11,31 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
+
 #include <iostream>
 
-int main(int argc, char *argv[])
+using yarp::os::Bottle;
+using yarp::os::BufferedPort;
+using yarp::os::Network;
+
+int main(int argc, char* argv[])
 {
-    yarp::os::Network yarp;
-    yarp::os::BufferedPort<yarp::os::Bottle> port;
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
+    Network yarp;
+    BufferedPort<Bottle> port;
     port.open("/summer");
     while (true) {
         yInfo() << "waiting for input";
-        yarp::os::Bottle *input = port.read();
+        Bottle* input = port.read();
         if (input != nullptr) {
             yInfo() << "got " << input->toString().c_str();
             double total = 0;
-            for (int i=0; i<input->size(); i++) {
+            for (size_t i = 0; i < input->size(); i++) {
                 total += input->get(i).asFloat64();
             }
-            yarp::os::Bottle& output = port.prepare();
+            Bottle& output = port.prepare();
             output.clear();
             output.addString("total");
             output.addFloat64(total);

@@ -7,12 +7,25 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/all.h>
-#include <yarp/sig/all.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/RFModule.h>
+#include <yarp/os/ResourceFinder.h>
 
-using namespace yarp::os;
-using namespace yarp::sig;
-using namespace yarp::sig::draw;
+#include <yarp/sig/Image.h>
+#include <yarp/sig/ImageDraw.h>
+
+using yarp::os::BufferedPort;
+using yarp::os::Network;
+using yarp::os::Port;
+using yarp::os::ResourceFinder;
+using yarp::os::RFModule;
+using yarp::os::Searchable;
+
+using yarp::sig::ImageOf;
+using yarp::sig::PixelRgb;
+using yarp::sig::draw::addCircle;
 
 /*
   This example adds a moving circle to an image stream.
@@ -37,35 +50,44 @@ using namespace yarp::sig::draw;
  */
 
 
-class ImageProcessModule : public RFModule {
+class ImageProcessModule : public RFModule
+{
 private:
     // Make a port for reading and writing images
-    BufferedPort<ImageOf<PixelRgb> > port;
+    BufferedPort<ImageOf<PixelRgb>> port;
     Port cmdPort;
-    int ct;
+    size_t ct;
+
 public:
-    bool open(Searchable& config) {
+    bool open(Searchable& config)
+    {
+        YARP_UNUSED(config);
+
         ct = 0;
         port.open(getName());
         cmdPort.open(getName("cmd")); // optional command port
-        attach(cmdPort); // cmdPort will work just like terminal
+        attach(cmdPort);              // cmdPort will work just like terminal
         return true;
     }
 
     // try to interrupt any communications or resource usage
-    bool interruptModule() {
+    bool interruptModule() override
+    {
         port.interrupt();
         return true;
     }
 
-    bool updateModule() {
-        ImageOf<PixelRgb> *img = port.read();
-        if (img==NULL) return false;;
+    bool updateModule() override
+    {
+        ImageOf<PixelRgb>* img = port.read();
+        if (img == nullptr) {
+            return false;
+        }
 
         // add a blue circle
-        PixelRgb blue(0,0,255);
-        addCircle(*img,blue,ct,50,10);
-        ct = (ct+5)%img->width();
+        PixelRgb blue(0, 0, 255);
+        addCircle(*img, blue, ct, 50, 10);
+        ct = (ct + 5) % img->width();
 
         // output the image
         port.prepare() = *img;
@@ -76,12 +98,13 @@ public:
 };
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
     // Initialize the yarp network
     Network yarp;
 
     /* prepare and configure the resource finder */
-    ResourceFinder rf;
+    auto& rf = ResourceFinder::getResourceFinderSingleton();
     rf.configure(argc, argv);
 
     // Create and run our module

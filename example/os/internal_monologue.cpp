@@ -7,22 +7,33 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Network.h>
-#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Time.h>
-#include <stdio.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
 
-using namespace yarp::os;
+#include <cstdio>
 
-class Input : public BufferedPort<Bottle> {
+using yarp::os::Bottle;
+using yarp::os::BufferedPort;
+using yarp::os::Network;
+using yarp::os::Port;
+
+class Input : public BufferedPort<Bottle>
+{
 public:
-    virtual void onRead(Bottle& datum) {
+    using BufferedPort<Bottle>::onRead;
+    void onRead(Bottle& datum) override
+    {
         printf("Got a bottle containing: %s\n", datum.toString().c_str());
     }
 };
 
-int main() {
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     Network yarp;
     Network::setLocalMode(true); // don't actually need a name server
 
@@ -32,7 +43,7 @@ int main() {
     in.useCallback(); // input should go to onRead() callback
     out.open("/out");
 
-    Network::connect("/out","/in");
+    Network::connect("/out", "/in");
     Bottle b("10 10 20");
     out.write(b);
 

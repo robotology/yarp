@@ -7,20 +7,29 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
-#include <stdio.h>
 
-using namespace yarp::os;
+#include <cstdio>
 
-int main() {
+using yarp::os::Bottle;
+using yarp::os::Network;
+using yarp::os::Port;
+
+constexpr double loop_delay = 1.0;
+constexpr size_t top = 100;
+
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     Network yarp;
     Port output;
     output.open("/sender");
-    int top = 100;
-    for (int i=1; i<=top; i++) {
+    for (size_t i = 1; i <= top; i++) {
         // prepare a message
         Bottle bot;
         bot.addString("testing");
@@ -31,7 +40,7 @@ int main() {
         output.write(bot);
         printf("Sent message: %s\n", bot.toString().c_str());
         // wait a while
-        Time::delay(1);
+        yarp::os::Time::delay(loop_delay);
     }
     output.close();
     return 0;

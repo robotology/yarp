@@ -7,15 +7,21 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/Network.h>
-#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Time.h>
-#include <stdio.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Network.h>
 
-using namespace yarp::os;
+#include <cstdio>
 
-int main() {
+using yarp::os::Bottle;
+using yarp::os::BufferedPort;
+using yarp::os::Network;
+
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     // Initialize YARP - some OSes need network and time service initialization
     Network yarp;
 
@@ -38,7 +44,7 @@ int main() {
     out.open("/out");
 
     // Connect the ports so that anything written from /out arrives to /in
-    Network::connect("/out","/in");
+    Network::connect("/out", "/in");
 
     // Send one "Bottle" object.  The port is responsible for creating
     // and reusing/destroying that object, since it needs to be sure
@@ -47,23 +53,23 @@ int main() {
     Bottle& outBot1 = out.prepare();   // Get the object
     outBot1.fromString("hello world"); // Set it up the way we want
     printf("Writing bottle 1 (%s)\n", outBot1.toString().c_str());
-    out.write();                       // Now send it on its way
+    out.write(); // Now send it on its way
 
     // Send another "Bottle" object
     Bottle& outBot2 = out.prepare();
     outBot2.fromString("2 3 5 7 11");
     printf("Writing bottle 2 (%s)\n", outBot2.toString().c_str());
-    out.writeStrict();                 // writeStrict() will wait for any
-                                       // previous communication to finish;
-                                       // write() would skip sending if
-                                       // there was something being sent
+    out.writeStrict(); // writeStrict() will wait for any
+                       // previous communication to finish;
+                       // write() would skip sending if
+                       // there was something being sent
 
     // Read the first object
-    Bottle *inBot1 = in.read();
+    Bottle* inBot1 = in.read();
     printf("Bottle 1 is: %s\n", inBot1->toString().c_str());
 
     // Read the second object
-    Bottle *inBot2 = in.read();
+    Bottle* inBot2 = in.read();
     printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
 
     return 0;

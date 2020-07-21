@@ -7,29 +7,38 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
 
-#include <yarp/os/all.h>
 #include <iostream>
-using namespace yarp::os;
-using namespace yarp::os::impl;
 
-using namespace std;
+using yarp::os::Bottle;
+using yarp::os::Network;
+using yarp::os::Property;
+using yarp::os::Value;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     Network yarp;
 
-    std::string name = yarp.getNameServerName();
-    Bottle msg, reply;
+    std::string name = Network::getNameServerName();
+    Bottle msg;
+    Bottle reply;
     msg.addString("bot");
     msg.addString("list");
 
-    Network::write(name.c_str(), msg, reply);
+    Network::write(name, msg, reply);
 
-    for(int i=1; i<reply.size(); i++) {
-      Property p;
-      p.fromString(reply.get(i).toString());
+    for (size_t i = 1; i < reply.size(); i++) {
+        Property p;
+        p.fromString(reply.get(i).toString());
 
-      cout<<p.check("name", Value("[none]")).asString()<<"  "<<endl;
+        std::cout << p.check("name", Value("[none]")).asString() << '\n';
     }
 
     return 0;

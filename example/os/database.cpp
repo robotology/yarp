@@ -7,16 +7,27 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <yarp/os/all.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Value.h>
+#include <yarp/os/Vocab.h>
+
 #include <yarp/dev/GenericVocabs.h>
 
-using namespace yarp::os;
+#include <cstdio>
+
+using yarp::os::Bottle;
+using yarp::os::Network;
+using yarp::os::Port;
+using yarp::os::Property;
+using yarp::os::Value;
 
 
-
-int main(int argc, char *argv[]) {
-    if (argc<=1) {
+int main(int argc, char* argv[])
+{
+    if (argc <= 1) {
         printf("This is a very simple database\n");
         printf("Call as: %s --name /database\n", argv[0]);
         printf("Then you can test it by running:\n");
@@ -34,25 +45,25 @@ int main(int argc, char *argv[]) {
     Network yarp;
 
     Property option;
-    option.fromCommand(argc,argv);
+    option.fromCommand(argc, argv);
 
     Property state;
 
     Port port;
-    port.open(option.check("name",Value("/database")).asString());
+    port.open(option.check("name", Value("/database")).asString());
 
     while (true) {
         Bottle cmd;
         Bottle response;
-        port.read(cmd,true);  // true -> will reply
+        port.read(cmd, true); // true -> will reply
 
         Bottle tmp;
         tmp.add(cmd.get(1));
         std::string key = tmp.toString();
 
-        switch (Vocab::encode(cmd.get(0).toString())) {
+        switch (yarp::os::Vocab::encode(cmd.get(0).toString())) {
         case VOCAB_SET:
-            state.put(key,cmd.get(2));
+            state.put(key, cmd.get(2));
             break;
         case VOCAB_GET:
             break;
@@ -61,7 +72,7 @@ int main(int argc, char *argv[]) {
             break;
         }
         Value& v = state.find(key);
-        response.addVocab(v.isNull()?VOCAB_NOT:VOCAB_IS);
+        response.addVocab(v.isNull() ? VOCAB_NOT : VOCAB_IS);
         response.add(cmd.get(1));
         if (!v.isNull()) {
             response.add(v);
