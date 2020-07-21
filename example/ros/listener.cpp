@@ -6,17 +6,28 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <iostream>
-#include <yarp/os/all.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Node.h>
+#include <yarp/os/Subscriber.h>
 
-using namespace yarp::os;
-using namespace std;
-
-/* Make sure you run yarpidl_rosmsg std_msg/String */
-/* to generate String.h  */
 #include <yarp/rosmsg/std_msgs/String.h>
 
-int main(int argc, char *argv[]) {
+using yarp::os::Network;
+using yarp::os::Node;
+using yarp::os::Subscriber;
+
+namespace {
+YARP_LOG_COMPONENT(LISTENER, "yarp.example.ros.listener")
+}
+
+
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     Network yarp;
 
     /* creates a node called /yarp/listener */
@@ -25,7 +36,7 @@ int main(int argc, char *argv[]) {
     /* subscribe to topic chatter */
     yarp::os::Subscriber<yarp::rosmsg::std_msgs::String> subscriber;
     if (!subscriber.topic("/chatter")) {
-        cerr<< "Failed to subscriber to /chatter\n";
+        yCError(LISTENER) << "Failed to subscriber to /chatter";
         return -1;
     }
 
@@ -33,7 +44,7 @@ int main(int argc, char *argv[]) {
     while (true) {
         yarp::rosmsg::std_msgs::String data;
         subscriber.read(data);
-        cout << "Received:" << data.data << " " << endl;
+        yCInfo(LISTENER) << "Received:" << data.data;
     }
 
     return 0;

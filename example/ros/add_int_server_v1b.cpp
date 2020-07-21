@@ -6,15 +6,25 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <yarp/os/all.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/RpcServer.h>
+
 #include <yarp/rosmsg/yarp_test/AddTwoInts.h>
 #include <yarp/rosmsg/yarp_test/AddTwoIntsReply.h>
 
-using namespace yarp::os;
+using yarp::os::Network;
+using yarp::os::RpcServer;
 
-int main(int argc, char *argv[]) {
+namespace {
+YARP_LOG_COMPONENT(SERVER_V1B, "yarp.example.ros.add_int_server_v1b")
+}
+
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     Network yarp;
     RpcServer server;
 
@@ -22,16 +32,18 @@ int main(int argc, char *argv[]) {
     server.promiseType(example.getType());
 
     if (!server.open("/add_two_ints@/yarp_add_int_server")) {
-        fprintf(stderr,"Failed to open port\n");
+        yCError(SERVER_V1B, "Failed to open port");
         return 1;
     }
 
     while (true) {
         yarp::rosmsg::yarp_test::AddTwoInts msg;
         yarp::rosmsg::yarp_test::AddTwoIntsReply reply;
-        if (!server.read(msg,true)) continue;
+        if (!server.read(msg, true)) {
+            continue;
+        }
         reply.sum = msg.a + msg.b;
-        printf("Got %d + %d, answering %d\n", (int)msg.a, (int)msg.b, (int)reply.sum);
+        yCInfo(SERVER_V1B, "Got %ld + %ld, answering %ld", msg.a, msg.b, reply.sum);
         server.reply(reply);
     }
 

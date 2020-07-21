@@ -6,28 +6,42 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <yarp/os/all.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Node.h>
+#include <yarp/os/Port.h>
 
-using namespace yarp::os;
+using yarp::os::Bottle;
+using yarp::os::Network;
+using yarp::os::Node;
+using yarp::os::Port;
 
-int main(int argc, char *argv[]) {
+namespace {
+YARP_LOG_COMPONENT(LISTENER_V2, "yarp.example.ros.listener_v2")
+}
+
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     Network yarp;
     Node node("/yarp/listener");
     Port port;
     port.setReadOnly();
     if (!port.open("chatter")) {
-        fprintf(stderr,"Failed to open port\n");
+        yCError(LISTENER_V2, "Failed to open port");
         return 1;
     }
 
     while (true) {
         Bottle msg;
         if (!port.read(msg)) {
-            fprintf(stderr,"Failed to read msg\n");
+            yCError(LISTENER_V2, "Failed to read msg");
             continue;
         }
-        printf("Got [%s]\n", msg.get(0).asString().c_str());
+        yCInfo(LISTENER_V2, "Got [%s]", msg.get(0).asString().c_str());
     }
 
     return 0;

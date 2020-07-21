@@ -6,17 +6,24 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <yarp/os/all.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/RpcClient.h>
+
 #include <yarp/rosmsg/yarp_test/AddTwoInts.h>
 #include <yarp/rosmsg/yarp_test/AddTwoIntsReply.h>
 
-using namespace yarp::os;
+using yarp::os::Network;
+using yarp::os::RpcClient;
 
-int main(int argc, char *argv[]) {
-    if (argc!=3) {
-        fprintf(stderr,"Call as %s X Y\n", argv[0]);
+namespace {
+YARP_LOG_COMPONENT(CLIENT_V1B, "yarp.example.ros.add_int_client_v1b")
+}
+
+int main(int argc, char* argv[])
+{
+    if (argc != 3) {
+        yCError(CLIENT_V1B, "Call as %s X Y", argv[0]);
         return 1;
     }
 
@@ -26,7 +33,7 @@ int main(int argc, char *argv[]) {
     client.promiseType(example.getType());
 
     if (!client.open("/add_two_ints@/yarp_add_int_client")) {
-        fprintf(stderr,"Failed to open port\n");
+        yCError(CLIENT_V1B, "Failed to open port");
         return 1;
     }
 
@@ -34,11 +41,11 @@ int main(int argc, char *argv[]) {
     yarp::rosmsg::yarp_test::AddTwoIntsReply reply;
     msg.a = atoi(argv[1]);
     msg.b = atoi(argv[2]);
-    if (!client.write(msg,reply)) {
-        fprintf(stderr,"Failed to call service\n");
+    if (!client.write(msg, reply)) {
+        yCError(CLIENT_V1B, "Failed to call service");
         return 1;
     }
-    printf("Got %d\n", (int)reply.sum);
+    yCInfo(CLIENT_V1B, "Got %ld\n", reply.sum);
 
     return 0;
 }

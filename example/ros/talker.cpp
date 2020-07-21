@@ -6,17 +6,29 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <iostream>
-#include <yarp/os/all.h>
+#include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Node.h>
+#include <yarp/os/Publisher.h>
+#include <yarp/os/Time.h>
 
-using namespace yarp::os;
-using namespace std;
-
-/* Make sure you run yarpidl_rosmsg std_msg/String */
-/* to generate String.h  */
 #include <yarp/rosmsg/std_msgs/String.h>
 
-int main(int argc, char *argv[]) {
+using yarp::os::Network;
+using yarp::os::Node;
+using yarp::os::Publisher;
+
+namespace {
+YARP_LOG_COMPONENT(TALKER, "yarp.example.ros.talker")
+constexpr double loop_delay = 0.1;
+}
+
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     Network yarp;
 
     /* creates a node called /yarp/talker */
@@ -25,20 +37,20 @@ int main(int argc, char *argv[]) {
     /* subscribe to topic chatter */
     yarp::os::Publisher<yarp::rosmsg::std_msgs::String> publisher;
     if (!publisher.topic("/chatter")) {
-        cerr<< "Failed to create publisher to /chatter\n";
+        yCError(TALKER) << "Failed to create publisher to /chatter";
         return -1;
     }
 
     while (true) {
         /* prepare some data */
         yarp::rosmsg::std_msgs::String data;
-        data.data="Hello from YARP";
+        data.data = "Hello from YARP";
 
         /* publish it to the topic */
         publisher.write(data);
 
         /* wait some time to avoid flooding with messages */
-        Time::delay(0.1);
+        yarp::os::Time::delay(loop_delay);
     }
 
     return 0;
