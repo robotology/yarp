@@ -1,9 +1,5 @@
 *~
-/build*/
-/packaging/windows/build/
-/packaging/linux/build/
-/example/dev/build*/
-/example/portmonitor/simple_dll/build*/
+build*/
 *kdev*
 *.orig
 tags
@@ -20,11 +16,14 @@ tags
 /CMakeLists.txt.user
 *.bak
 *.pyc
-/compile_commands.json
+compile_commands.json
 /.ycm_extra_conf.py
 *.aps
 /CMakeSettings.json
 /.vs/
 /.idea/
 /cmake-build*/
-/.clangd/
+.clangd/
+*.srctrlbm
+*.srctrldb
+*.srctrlprj
