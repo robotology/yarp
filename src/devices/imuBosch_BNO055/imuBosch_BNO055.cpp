@@ -295,8 +295,8 @@ bool BoschIMU::sendReadCommandSer(unsigned char register_add, int len, unsigned 
         command[2]= register_add;   // register to read
         command[3]= len;            // length in bytes
 
-//         printf("> READ_COMMAND: %s ... ", comment.c_str());
-//         printf("\nCommand is:\n");
+//         yCTrace(IMUBOSCH_BNO055, "> READ_COMMAND: %s ... ", comment.c_str());
+//         yCTrace(IMUBOSCH_BNO055, "Command is:");
 //         printBuffer(command, command_len);
 
         nbytes_w = ::write(fd, (void*)command, command_len);
@@ -312,7 +312,7 @@ bool BoschIMU::sendReadCommandSer(unsigned char register_add, int len, unsigned 
         int readbytes = readBytes(buf, RESP_HEADER_SIZE);
         if(readbytes != RESP_HEADER_SIZE)
         {
-            yCError(IMUBOSCH_BNO055, "Expected %d bytes, read %d instead\n", RESP_HEADER_SIZE, readbytes);
+            yCError(IMUBOSCH_BNO055, "Expected %d bytes, read %d instead", RESP_HEADER_SIZE, readbytes);
             success = false;
         }
         else if(!checkReadResponse(buf))
@@ -323,17 +323,17 @@ bool BoschIMU::sendReadCommandSer(unsigned char register_add, int len, unsigned 
         else
         {
             success = true;
-//             printf("> SUCCESS!\n"); fflush(stdout);
+//             yCTrace(IMUBOSCH_BNO055, "> SUCCESS!"); fflush(stdout);
 
             // Read the data payload
             readBytes(&buf[2], (int) buf[1]);
-//             printf("\tReply is:\n");
+//             yCTrace(IMUBOSCH_BNO055, "\tReply is:");
 //             printBuffer(buf, buf[1]+2);
-//             printf("***************\n");
+//             yCTrace(IMUBOSCH_BNO055, "***************");
         }
     }
 //     if(!success)
-//         yCError(IMUBOSCH_BNO055, "> FAILED reading %s!\n", comment.c_str());
+//         yCError(IMUBOSCH_BNO055, "> FAILED reading %s!", comment.c_str());
     return success;
 }
 
@@ -349,8 +349,8 @@ bool BoschIMU::sendWriteCommandSer(unsigned char register_add, int len, unsigned
     for(int i=0; i<len; i++)
         command[4+i] = cmd[i];  // data
 
-//     printf("> WRITE_COMMAND:  %s ... ", comment.c_str());
-//     printf("\nCommand is:\n");
+//     yCTrace(IMUBOSCH_BNO055, "> WRITE_COMMAND:  %s ... ", comment.c_str());
+//     yCTrace(IMUBOSCH_BNO055, "Command is:");
 //     printBuffer(command, command_len);
 
     nbytes_w = ::write(fd, (void*)command, command_len);
@@ -366,14 +366,14 @@ bool BoschIMU::sendWriteCommandSer(unsigned char register_add, int len, unsigned
     readBytes(response, 2);
     if(!checkWriteResponse(response))
     {
-//         printf("> FAILED!\n"); fflush(stdout);
+//         yCTrace(IMUBOSCH_BNO055, "> FAILED!"); fflush(stdout);
         yCError(IMUBOSCH_BNO055) << "FAILED writing " << comment;
         return false;
     }
-//     printf("> SUCCESS!\n"); fflush(stdout);
-//     printf("\tReply is:\n");
+//     yCTrace(IMUBOSCH_BNO055, "> SUCCESS!"); fflush(stdout);
+//     yCTrace(IMUBOSCH_BNO055, "\tReply is:");
 //     printBuffer(response, 2);
-//     printf("***************\n");
+//     yCTrace(IMUBOSCH_BNO055, "***************");
     return true;
 }
 
@@ -397,7 +397,7 @@ void BoschIMU::dropGarbage()
     char byte;
     while( (::read(fd,  (void*) &byte, 1) > 0 ))
     {
-//         printf("Dropping byte 0x%02X \n", byte);
+//         yCTrace(IMUBOSCH_BNO055, "Dropping byte 0x%02X", byte);
     }
     return;
 }
@@ -941,10 +941,10 @@ bool BoschIMU::getThreeAxisMagnetometerMeasure(size_t sens_index, yarp::sig::Vec
 
 void BoschIMU::threadRelease()
 {
-    yCTrace(IMUBOSCH_BNO055, "Thread released\n");
+    yCTrace(IMUBOSCH_BNO055, "Thread released");
     //TBD write more meaningful report
 //    for(unsigned int i=0; i<errorCounter.size(); i++)
-//        printf("Error type %d, counter is %d\n", i, (int)errorCounter[i]);
-//    printf("On overall read operations of %ld\n", totMessagesRead);
+//        yCTrace(IMUBOSCH_BNO055, "Error type %d, counter is %d", i, (int)errorCounter[i]);
+//    yCTrace(IMUBOSCH_BNO055, "On overall read operations of %ld", totMessagesRead);
     ::close(fd);
 }

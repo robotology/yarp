@@ -360,7 +360,7 @@ void LaserFromPointCloud::run()
 #ifdef DEBUG_TIMING
     static double t3 = yarp::os::Time::now();
     double t1 = yarp::os::Time::now();
-    yDebug() << "thread period:" <<t1- t3;
+    yCDebug(LASER_FROM_POINTCLOUD) << "thread period:" <<t1- t3;
     t3 = yarp::os::Time::now();
 #endif
 

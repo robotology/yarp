@@ -20,6 +20,7 @@
 #define RPLIDAR_H
 
 
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -36,6 +37,10 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 typedef unsigned char byte;
+
+
+YARP_DECLARE_LOG_COMPONENT(RPLIDAR)
+
 
 class rpLidarCircularBuffer
 {
@@ -66,7 +71,7 @@ public:
         end = (end + 1) % maxsize;
         if (end == start)
         {
-            yError("rpLidar buffer overrun!");
+            yCError(RPLIDAR, "rpLidar buffer overrun!");
             start = (start + 1) % maxsize; // full, overwrite
             return false;
         }
@@ -98,7 +103,7 @@ public:
     {
         if (end == start)
         {
-            yError("rpLidar buffer underrun!");
+            yCError(RPLIDAR, "rpLidar buffer underrun!");
             return false;
         }
         *elem = elems[start];

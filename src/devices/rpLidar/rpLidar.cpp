@@ -42,6 +42,8 @@ using namespace std;
 #define DEG2RAD M_PI/180.0
 #endif
 
+YARP_LOG_COMPONENT(RPLIDAR, "yarp.device.rpLidar")
+
 rpLidarCircularBuffer::rpLidarCircularBuffer(int bufferSize)
 {
     maxsize = bufferSize + 1;
@@ -63,7 +65,7 @@ bool RpLidar::open(yarp::os::Searchable& config)
     device_status = DEVICE_OK_STANBY;
 
 #ifdef LASER_DEBUG
-    yDebug("%s\n", config.toString().c_str());
+    yCDebug(RPLIDAR, "%s\n", config.toString().c_str());
 #endif
 
     min_distance = 0.1; //m
@@ -77,9 +79,9 @@ bool RpLidar::open(yarp::os::Searchable& config)
         clip_min_enable = general_config.check("clip_min");
         if (clip_max_enable) { max_distance = general_config.find("clip_max").asFloat64(); }
         if (clip_min_enable) { min_distance = general_config.find("clip_min").asFloat64(); }
-        if (general_config.check("max_angle") == false) { yError() << "Missing max_angle param"; return false; }
-        if (general_config.check("min_angle") == false) { yError() << "Missing min_angle param"; return false; }
-        if (general_config.check("resolution") == false) { yError() << "Missing resolution param"; return false; }
+        if (general_config.check("max_angle") == false) { yCError(RPLIDAR) << "Missing max_angle param"; return false; }
+        if (general_config.check("min_angle") == false) { yCError(RPLIDAR) << "Missing min_angle param"; return false; }
+        if (general_config.check("resolution") == false) { yCError(RPLIDAR) << "Missing resolution param"; return false; }
         max_angle = general_config.find("max_angle").asFloat64();
         min_angle = general_config.find("min_angle").asFloat64();
         resolution = general_config.find("resolution").asFloat64();
@@ -87,7 +89,7 @@ bool RpLidar::open(yarp::os::Searchable& config)
     }
     else
     {
-        yError() << "Missing GENERAL section";
+        yCError(RPLIDAR) << "Missing GENERAL section";
         return false;
     }
 
@@ -114,7 +116,7 @@ bool RpLidar::open(yarp::os::Searchable& config)
                 }
                 else
                 {
-                    yError() << "Invalid range in SKIP section";
+                    yCError(RPLIDAR) << "Invalid range in SKIP section";
                     return false;
                 }
             }
@@ -122,23 +124,23 @@ bool RpLidar::open(yarp::os::Searchable& config)
 
     }
 
-    if (max_angle <= min_angle)            { yError() << "max_angle should be > min_angle";  return false; }
+    if (max_angle <= min_angle)            { yCError(RPLIDAR) << "max_angle should be > min_angle";  return false; }
     double fov = (max_angle - min_angle);
-    if (fov >360)                          { yError() << "max_angle - min_angle <= 360";  return false; }
+    if (fov >360)                          { yCError(RPLIDAR) << "max_angle - min_angle <= 360";  return false; }
     sensorsNum = (int)(fov/resolution);
     laser_data.resize(sensorsNum,0.0);
 
-    yInfo("Starting debug mode");
-    yInfo("max_dist %f, min_dist %f", max_distance, min_distance);
-    yInfo("max_angle %f, min_angle %f", max_angle, min_angle);
-    yInfo("resolution %f", resolution);
-    yInfo("sensors %d", sensorsNum);
+    yCInfo(RPLIDAR, "Starting debug mode");
+    yCInfo(RPLIDAR, "max_dist %f, min_dist %f", max_distance, min_distance);
+    yCInfo(RPLIDAR, "max_angle %f, min_angle %f", max_angle, min_angle);
+    yCInfo(RPLIDAR, "resolution %f", resolution);
+    yCInfo(RPLIDAR, "sensors %d", sensorsNum);
 
     yarp::os::Searchable& general_config = config.findGroup("GENERAL");
     bool ok = general_config.check("Serial_Configuration");
     if (!ok)
     {
-        yError("Cannot find configuration file for serial port communication!");
+        yCError(RPLIDAR, "Cannot find configuration file for serial port communication!");
         return false;
     }
     std::string serial_filename = general_config.find("Serial_Configuration").asString();
@@ -151,7 +153,7 @@ bool RpLidar::open(yarp::os::Searchable& config)
     ok = prop.fromConfigFile(serial_completefilename, config, false);
     if (!ok)
     {
-        yError("Unable to read from serial port configuration file");
+        yCError(RPLIDAR, "Unable to read from serial port configuration file");
         return false;
     }
 
@@ -159,13 +161,13 @@ bool RpLidar::open(yarp::os::Searchable& config)
     driver.open(prop);
     if (!driver.isValid())
     {
-        yError("Error opening PolyDriver check parameters");
+        yCError(RPLIDAR, "Error opening PolyDriver check parameters");
         return false;
     }
     driver.view(pSerial);
     if (!pSerial)
     {
-        yError("Error opening serial driver. Device not available");
+        yCError(RPLIDAR, "Error opening serial driver. Device not available");
         return false;
     }
 
@@ -173,27 +175,27 @@ bool RpLidar::open(yarp::os::Searchable& config)
     int cleanup = pSerial->flush();
     if (cleanup > 0)
     {
-        yDebug("cleanup performed, flushed %d chars", cleanup);
+        yCDebug(RPLIDAR, "cleanup performed, flushed %d chars", cleanup);
     }
 
     // check health
     bool b_health = HW_getHealth();
     if (b_health == false)
     {
-        yWarning("Sensor in error status, attempt to recover");
+        yCWarning(RPLIDAR, "Sensor in error status, attempt to recover");
         HW_reset();
         b_health = HW_getHealth();
         if (b_health == false)
         {
-            yError("Unable to recover error");
+            yCError(RPLIDAR, "Unable to recover error");
             return false;
         }
         else
         {
-            yInfo("Sensor recovered from a previous error status");
+            yCInfo(RPLIDAR, "Sensor recovered from a previous error status");
         }
     }
-    yInfo("Sensor ready");
+    yCInfo(RPLIDAR, "Sensor ready");
 
 //     string info;
 //     bool b_info = HW_getInfo(info);
@@ -207,14 +209,14 @@ bool RpLidar::close()
 
     if (!HW_stop())
     {
-        yError("Unable to stop sensor!");
+        yCError(RPLIDAR, "Unable to stop sensor!");
         HW_reset();
     }
 
     if(driver.isValid())
         driver.close();
 
-    yInfo() << "rpLidar closed";
+    yCInfo(RPLIDAR) << "rpLidar closed";
     return true;
 }
 
@@ -267,14 +269,14 @@ bool RpLidar::setHorizontalResolution(double step)
 bool RpLidar::getScanRate(double& rate)
 {
     std::lock_guard<std::mutex> guard(mutex);
-    yWarning("getScanRate not yet implemented");
+    yCWarning(RPLIDAR, "getScanRate not yet implemented");
     return true;
 }
 
 bool RpLidar::setScanRate(double rate)
 {
     std::lock_guard<std::mutex> guard(mutex);
-    yWarning("setScanRate not yet implemented");
+    yCWarning(RPLIDAR, "setScanRate not yet implemented");
     return false;
 }
 
@@ -291,11 +293,11 @@ bool RpLidar::getLaserMeasurement(std::vector<LaserMeasurementData> &data)
 {
     std::lock_guard<std::mutex> guard(mutex);
 #ifdef LASER_DEBUG
-        //yDebug("data: %s\n", laser_data.toString().c_str());
+        //yCDebug(RPLIDAR, "data: %s\n", laser_data.toString().c_str());
 #endif
     size_t size = laser_data.size();
     data.resize(size);
-    if (max_angle < min_angle) { yError() << "getLaserMeasurement failed"; return false; }
+    if (max_angle < min_angle) { yCError(RPLIDAR) << "getLaserMeasurement failed"; return false; }
     double laser_angle_of_view = max_angle - min_angle;
     for (size_t i = 0; i < size; i++)
     {
@@ -315,13 +317,13 @@ bool RpLidar::getDeviceStatus(Device_status &status)
 bool RpLidar::threadInit()
 {
 #ifdef LASER_DEBUG
-    yDebug("RpLidar:: thread initialising...\n");
-    yDebug("... done!\n");
+    yCDebug(RPLIDAR, "RpLidar:: thread initialising...\n");
+    yCDebug(RPLIDAR, "... done!\n");
 #endif
 
     if (!HW_start())
     {
-        yError("Unable to put sensor in scan mode!");
+        yCError(RPLIDAR, "Unable to put sensor in scan mode!");
         return false;
     }
     return true;
@@ -341,20 +343,20 @@ bool RpLidar::HW_getInfo(string& s_info)
     r = pSerial->receiveBytes(s, 7);
     if (r!=7)
     {
-        yError("Received answer with wrong length: %d", r);
+        yCError(RPLIDAR, "Received answer with wrong length: %d", r);
         return false;
     }
 
     if ((unsigned char)s[0] != 0xA5 || (unsigned char)s[1] != 0x5A || (unsigned char)s[2] != 0x14 || (unsigned char)s[6] != 0x04)
     {
-        yError("Invalid answer header");
+        yCError(RPLIDAR, "Invalid answer header");
         return false;
     }
 
     r = pSerial->receiveBytes(s, 20);
     if (r!=20)
     {
-        yError("Received answer with wrong length: %d", r);
+        yCError(RPLIDAR, "Received answer with wrong length: %d", r);
         return false;
     }
     char info[512];
@@ -384,13 +386,13 @@ bool RpLidar::HW_getHealth()
     r = pSerial->receiveBytes(s,7);
     if (r!=7)
     {
-        yError("Received answer with wrong length: %d", r);
+        yCError(RPLIDAR, "Received answer with wrong length: %d", r);
         return false;
     }
 
     if ((unsigned char)s[0] != 0xA5 || (unsigned char)s[1] != 0x5A || (unsigned char)s[2] != 3 || (unsigned char)s[6] != 0x06)
     {
-        yError("Invalid answer header");
+        yCError(RPLIDAR, "Invalid answer header");
         return false;
     }
 
@@ -398,7 +400,7 @@ bool RpLidar::HW_getHealth()
     r = pSerial->receiveBytes(s,3);
     if (r !=3)
     {
-        yError("Received answer with wrong length: %d", r);
+        yCError(RPLIDAR, "Received answer with wrong length: %d", r);
         return false;
     }
 
@@ -410,15 +412,15 @@ bool RpLidar::HW_getHealth()
     }
     else if (status == 1)
     {
-        yWarning("sensor in warning status, code %d", code);
+        yCWarning(RPLIDAR, "sensor in warning status, code %d", code);
         return true;
     }
     else if (status == 2)
     {
-        yError("sensor in error status, code %d", code);
+        yCError(RPLIDAR, "sensor in error status, code %d", code);
         return true;
     }
-    yError("Unkwnon answer code");
+    yCError(RPLIDAR, "Unkwnon answer code");
     return false;
 }
 
@@ -457,14 +459,14 @@ bool RpLidar::HW_start()
     r = pSerial->receiveBytes(s, 7);
     if (r != 7)
     {
-        yError("Received answer with wrong length: %d", r);
+        yCError(RPLIDAR, "Received answer with wrong length: %d", r);
         return false;
     }
 
     if ((unsigned char)s[0] != 0xA5 || (unsigned char)s[1] != 0x5A || (unsigned char)s[2] != 0x05 ||
         (unsigned char)s[5] != 0x40 || (unsigned char)s[6] != 0x81)
     {
-        yError("Invalid answer header");
+        yCError(RPLIDAR, "Invalid answer header");
         return false;
     }
 
@@ -504,7 +506,7 @@ void RpLidar::run()
     {
         r = pSerial->receiveBytes(buff, packet);
 #ifdef DEBUG_BYTES_READ_1
-        yDebug() << r;
+        yCDebug(RPLIDAR) << r;
 #endif
         buffer->write_elems(buff, r);
         count++;
@@ -512,7 +514,7 @@ void RpLidar::run()
 #ifdef DEBUG_BYTES_READ_2
         if (r < packet)
         {
-            yDebug() << "R" << r;
+            yCDebug(RPLIDAR) << "R" << r;
         }
 #endif
     }
@@ -543,7 +545,7 @@ void RpLidar::run()
         if (start == lock)
         {
 #ifdef DEBUG_LOCKING
-            yError() << "lock error 1 " << "previous ok" << ok_count << "total r" << total_r;
+            yCError(RPLIDAR) << "lock error 1 " << "previous ok" << ok_count << "total r" << total_r;
 #endif
            buffer->throw_away_elem();
            new_scan = false;
@@ -554,7 +556,7 @@ void RpLidar::run()
         if (start_n1 == lock_n1)
         {
 #ifdef DEBUG_LOCKING
-            yError() << "lock error 2 " << "previous ok" << ok_count << "total r" << total_r;
+            yCError(RPLIDAR) << "lock error 2 " << "previous ok" << ok_count << "total r" << total_r;
 #endif
            buffer->throw_away_elem();
            new_scan = false;
@@ -565,7 +567,7 @@ void RpLidar::run()
         if (start_n2 == lock_n2)
         {
 #ifdef DEBUG_LOCKING
-            yError() << "lock error 3 " << "previous ok" << ok_count << "total r" << total_r;
+            yCError(RPLIDAR) << "lock error 3 " << "previous ok" << ok_count << "total r" << total_r;
 #endif
            buffer->throw_away_elem();
            new_scan = false;
@@ -576,7 +578,7 @@ void RpLidar::run()
         if (start == 1 && start_n1 == 1)
         {
 #ifdef DEBUG_LOCKING
-            yError() << "lock error 4 " << "previous ok" << ok_count << "total r" << total_r;
+            yCError(RPLIDAR) << "lock error 4 " << "previous ok" << ok_count << "total r" << total_r;
 #endif
             buffer->throw_away_elem();
             new_scan = false;
@@ -587,7 +589,7 @@ void RpLidar::run()
         if (check != 1)
         {
 #ifdef DEBUG_LOCKING
-            yError() << "checksum error 1" << "previous ok" << ok_count << "total r" << total_r;
+            yCError(RPLIDAR) << "checksum error 1" << "previous ok" << ok_count << "total r" << total_r;
 #endif
              buffer->throw_away_elem();
              new_scan = false;
@@ -598,7 +600,7 @@ void RpLidar::run()
         if (check_n1 != 1)
         {
 #ifdef DEBUG_LOCKING
-            yError() << "checksum error 2" << "previous ok" << ok_count << "total r" << total_r;
+            yCError(RPLIDAR) << "checksum error 2" << "previous ok" << ok_count << "total r" << total_r;
 #endif
             buffer->throw_away_elem();
             new_scan = false;
@@ -609,7 +611,7 @@ void RpLidar::run()
         if (check_n2 != 1)
         {
 #ifdef DEBUG_LOCKING
-            yError() << "checksum error 3" << "previous ok" << ok_count << "total r" << total_r;
+            yCError(RPLIDAR) << "checksum error 3" << "previous ok" << ok_count << "total r" << total_r;
 #endif
             buffer->throw_away_elem();
             new_scan = false;
@@ -618,7 +620,7 @@ void RpLidar::run()
         }
 
 #ifdef DEBUG_LOCKING
-   //     yDebug() << "OK" << buffer->get_start() << buffer->get_end() << "total r" << total_r;
+   //     yCDebug(RPLIDAR) << "OK" << buffer->get_start() << buffer->get_end() << "total r" << total_r;
             ok_count++;
 #endif
 
@@ -640,16 +642,16 @@ void RpLidar::run()
 
         if (i_distance == 0)
         {
-            //     yWarning() << "Invalid Measurement " << i/5;
+            //     yCWarning(RPLIDAR) << "Invalid Measurement " << i/5;
         }
         if (quality == 0)
         {
-            //      yWarning() << "Quality Low" << i / 5;
+            //      yCWarning(RPLIDAR) << "Quality Low" << i / 5;
             distance = std::numeric_limits<double>::infinity();
         }
         if (angle > 360)
         {
-            yWarning() << "Invalid angle";
+            yCWarning(RPLIDAR) << "Invalid angle";
         }
 
         if (clip_min_enable)
@@ -678,25 +680,25 @@ void RpLidar::run()
 
         /*--------------------------------------------------------------*/
         /* {
-             yError() << "Wrong scan size: " << r;
+             yCError(RPLIDAR) << "Wrong scan size: " << r;
              bool b_health = HW_getHealth();
              if (b_health == true)
              {
              if (!HW_reset())
              {
-             yError("Unable to reset sensor!");
+             yCError(RPLIDAR, "Unable to reset sensor!");
              }
-             yWarning("Sensor reset after error");
+             yCWarning(RPLIDAR, "Sensor reset after error");
              if (!HW_start())
              {
-             yError("Unable to put sensor in scan mode!");
+             yCError(RPLIDAR, "Unable to put sensor in scan mode!");
              }
              mutex.unlock();
              return;
              }
              else
              {
-             yError() << "System in error state";
+             yCError(RPLIDAR) << "System in error state";
              }
              }*/
         buffer->throw_away_elems(5);
@@ -708,14 +710,14 @@ void RpLidar::run()
         }
         else
         {
-            yDebug() << "RpLidar::run() invalid angle: elem" << elem << ">" << "laser_data.size()" << laser_data.size();
+            yCDebug(RPLIDAR) << "RpLidar::run() invalid angle: elem" << elem << ">" << "laser_data.size()" << laser_data.size();
         }
      }
     while (buffer->size() > packet &&  isRunning() );
 
 #ifdef DEBUG_TIMING
     double t2 = yarp::os::Time::now();
-    yDebug( "Time %f",  (t2 - t1) * 1000.0);
+    yCDebug(RPLIDAR,  "Time %f",  (t2 - t1) * 1000.0);
 #endif
     return;
 }
@@ -723,8 +725,8 @@ void RpLidar::run()
 void RpLidar::threadRelease()
 {
 #ifdef LASER_DEBUG
-    yDebug("RpLidar Thread releasing...");
-    yDebug("... done.");
+    yCDebug(RPLIDAR, "RpLidar Thread releasing...");
+    yCDebug(RPLIDAR, "... done.");
 #endif
 
     return;
