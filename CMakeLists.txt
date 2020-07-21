@@ -82,6 +82,9 @@ add_subdirectory(bindings)
 # Tests
 add_subdirectory(tests)
 
+# Examples
+add_subdirectory(example)
+
 # Platform independent data
 add_subdirectory(data)
 

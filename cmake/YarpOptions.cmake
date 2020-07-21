@@ -143,6 +143,14 @@ option(YARP_COMPILE_UNMAINTAINED "Enable unmaintained components" OFF)
 
 
 #########################################################################
+# Enable/Disable examples
+
+cmake_dependent_option(YARP_COMPILE_EXAMPLES
+                       "Enable YARP examples" OFF
+                       "YARP_COMPILE_EXECUTABLES" OFF)
+
+
+#########################################################################
 # Turn on testing.
 
 option(YARP_COMPILE_TESTS "Enable YARP tests" OFF)
@@ -159,6 +167,9 @@ mark_as_advanced(YARP_ENABLE_BROKEN_TESTS)
 cmake_dependent_option(YARP_ENABLE_INTEGRATION_TESTS OFF "Run integration tests" "YARP_COMPILE_TESTS;UNIX" OFF)
 mark_as_advanced(YARP_ENABLE_INTEGRATION_TESTS)
 yarp_renamed_option(YARP_TEST_INTEGRATION YARP_ENABLE_INTEGRATION_TESTS) # since YARP 3.2.0
+
+cmake_dependent_option(YARP_ENABLE_EXAMPLES_AS_TESTS OFF "Compile examples as unit tests" YARP_COMPILE_TESTS OFF)
+mark_as_advanced(YARP_ENABLE_EXAMPLES_AS_TESTS)
 
 
 #########################################################################
