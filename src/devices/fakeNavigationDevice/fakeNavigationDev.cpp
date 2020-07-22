@@ -128,7 +128,7 @@ bool fakeNavigation::resumeNavigation()
     return true;
 }
 
-bool fakeNavigation::getAllNavigationWaypoints(Map2DPath& waypoints)
+bool fakeNavigation::getAllNavigationWaypoints(yarp::dev::Nav2D::TrajectoryTypeEnum trajectory_type, yarp::dev::Nav2D::Map2DPath& waypoints)
 {
     yCInfo(FAKENAVIGATION) << "getAllNavigationWaypoints not yet implemented";
     return true;
