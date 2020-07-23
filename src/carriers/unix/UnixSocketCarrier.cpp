@@ -7,14 +7,56 @@
  */
 
 #include "UnixSocketCarrier.h"
+#include <yarp/conf/filesystem.h>
 
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/Os.h>
 
 #include "UnixSocketLogComponent.h"
 
 using namespace yarp::os;
+namespace fs = yarp::conf::filesystem;
+
+
+// FIXME: This method should be available somewhere in YARP
+static std::string getYARPRuntimeDir()
+{
+    static std::mutex m;
+    std::lock_guard<std::mutex> lock(m);
+
+    static std::string socketDir;
+    bool found = false;
+
+    // If already populated, there is nothing to do
+    if (!socketDir.empty()) {
+        return socketDir;
+    }
+
+    // Check YARP_RUNTIME_DIR
+    std::string yarp_runtime_dir = NetworkBase::getEnvironment("YARP_RUNTIME_DIR", &found);
+    if (found) {
+        return yarp_runtime_dir;
+    }
+
+    // Check XDG_RUNTIME_DIR
+    std::string xdg_runtime_dir = NetworkBase::getEnvironment("XDG_RUNTIME_DIR", &found);
+    if (found) {
+        yarp_runtime_dir = xdg_runtime_dir + fs::preferred_separator + "yarp";
+        return yarp_runtime_dir;
+    }
+
+    // Use /tmp/runtime-user
+    std::string user = NetworkBase::getEnvironment("USER", &found);
+    if (found) {
+        yarp_runtime_dir = "/tmp/runtime-" + user + fs::preferred_separator + "yarp";
+        return yarp_runtime_dir;
+    }
+
+    // ERROR
+    return {};
+}
 
 yarp::os::Carrier* UnixSocketCarrier::create() const
 {
@@ -106,18 +148,21 @@ bool UnixSocketCarrier::becomeUnixSocket(ConnectionState& proto, bool sender)
 
     proto.takeStreams(YARP_NULLPTR); // free up port from tcp
 
-    if (sender) {
-        socketPath = "/tmp/yarp-" + std::to_string(remote.getPort()) + "_" + std::to_string(local.getPort()) + ".sock";
-    } else {
-        socketPath = "/tmp/yarp-" + std::to_string(local.getPort()) + "_" + std::to_string(remote.getPort()) + ".sock";
-    }
 
-    if (!socketPath.empty()) {
-        stream = new UnixSockTwoWayStream(socketPath);
-    } else {
+    std::string runtime_dir = getYARPRuntimeDir();
+
+    // Make sure that the path exists
+    if (runtime_dir.empty() || yarp::os::mkdir_p(runtime_dir.c_str(), 0) != 0) {
         return false;
     }
 
+    if (sender) {
+        socketPath = runtime_dir + fs::preferred_separator + std::to_string(remote.getPort()) + "_" + std::to_string(local.getPort()) + ".sock";
+    } else {
+        socketPath = runtime_dir + fs::preferred_separator + std::to_string(local.getPort()) + "_" + std::to_string(remote.getPort()) + ".sock";
+    }
+
+    stream = new UnixSockTwoWayStream(socketPath);
     stream->setLocalAddress(local);
     stream->setRemoteAddress(remote);
 
