@@ -9,6 +9,7 @@
 #include <yarp/conf/system.h>
 
 #include "UnixSockTwoWayStream.h"
+#include "UnixSocketLogComponent.h"
 
 //#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Time.h>
@@ -144,6 +145,7 @@ void UnixSockTwoWayStream::setRemoteAddress(Contact &_remoteAddress)
 
 void UnixSockTwoWayStream::interrupt()
 {
+    yCDebug(UNIXSOCK_CARRIER, " interrupting socket");
     bool act = false;
     mutex.lock();
     if ((!closed) && (!interrupting) && happy) {
@@ -182,7 +184,7 @@ void UnixSockTwoWayStream::interrupt()
         // wait for interruption to be done
         if (interrupting) {
             while (interrupting) {
-                yDebug("waiting for dgram interrupt to be finished...");
+                yCDebug(UNIXSOCK_CARRIER,"waiting for dgram interrupt to be finished...");
                 yarp::os::SystemClock::delaySystem(0.1);
             }
         }

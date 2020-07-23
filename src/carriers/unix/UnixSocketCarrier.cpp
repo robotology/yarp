@@ -10,6 +10,8 @@
 
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
+#include "UnixSocketLogComponent.h"
 
 using namespace yarp::os;
 
@@ -45,7 +47,7 @@ bool UnixSocketCarrier::isUnixSockSupported(ConnectionState& proto)
 
     if(remote.getHost() != local.getHost())
     {
-        yError("UnixSocketCarrier: The ports are on different machines, unix socket not supported...");
+        yCError(UNIXSOCK_CARRIER,"The ports are on different machines, unix socket not supported...");
         return false;
     }
     return true;

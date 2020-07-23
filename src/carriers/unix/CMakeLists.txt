@@ -18,7 +18,9 @@ if(ENABLE_unix_stream)
   target_sources(yarp_unix PRIVATE UnixSocketCarrier.cpp
                                    UnixSocketCarrier.h
                                    UnixSockTwoWayStream.cpp
-                                   UnixSockTwoWayStream.h)
+                                   UnixSockTwoWayStream.h
+                                   UnixSocketLogComponent.cpp
+                                   UnixSocketLogComponent.h)
 
   target_link_libraries(yarp_unix YARP::YARP_os)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os)
