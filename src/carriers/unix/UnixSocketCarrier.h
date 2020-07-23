@@ -11,12 +11,13 @@
 #define YARP_UNIX_UNIXSOCKETCARRIER_H
 
 #include <yarp/os/AbstractCarrier.h>
+
 #include "UnixSockTwoWayStream.h"
 
 // The compile pre-defines the "unix" macro, but we don't use it, and it
 // conflicts with the generated yarp_plugin_unix.cpp file
 #ifdef unix
-#  undef unix
+#    undef unix
 #endif
 
 /**
@@ -29,7 +30,7 @@ public:
     UnixSocketCarrier() = default;
     ~UnixSocketCarrier() = default;
 
-    yarp::os::Carrier *create() const override;
+    yarp::os::Carrier* create() const override;
 
     std::string getName() const override;
 
@@ -48,7 +49,6 @@ public:
 
 
 private:
-
     static constexpr const char* name = "unix_stream";
     static constexpr int specifierCode = 11;
     static constexpr const char* headerCode = "UNIX_STR";

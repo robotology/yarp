@@ -11,11 +11,12 @@
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+
 #include "UnixSocketLogComponent.h"
 
 using namespace yarp::os;
 
-yarp::os::Carrier *UnixSocketCarrier::create() const
+yarp::os::Carrier* UnixSocketCarrier::create() const
 {
     return new UnixSocketCarrier();
 }
@@ -43,15 +44,15 @@ bool UnixSocketCarrier::canEscape() const
 bool UnixSocketCarrier::isUnixSockSupported(ConnectionState& proto)
 {
     yarp::os::Contact remote = proto.getStreams().getRemoteAddress();
-    yarp::os::Contact local  = proto.getStreams().getLocalAddress();
+    yarp::os::Contact local = proto.getStreams().getLocalAddress();
 
-    if(remote.getHost() != local.getHost())
-    {
-        yCError(UNIXSOCK_CARRIER,"The ports are on different machines, unix socket not supported...");
+    if (remote.getHost() != local.getHost()) {
+        yCError(
+            UNIXSOCK_CARRIER,
+            "The ports are on different machines, unix socket not supported...");
         return false;
     }
     return true;
-
 }
 
 bool UnixSocketCarrier::checkHeader(const Bytes& header)
@@ -59,7 +60,7 @@ bool UnixSocketCarrier::checkHeader(const Bytes& header)
     if (header.length() != headerSize) {
         return false;
     }
-    const char *target = headerCode;
+    const char* target = headerCode;
     for (size_t i = 0; i < headerSize; i++) {
         if (header.get()[i] != target[i]) {
             return false;
@@ -70,9 +71,8 @@ bool UnixSocketCarrier::checkHeader(const Bytes& header)
 
 void UnixSocketCarrier::getHeader(Bytes& header) const
 {
-    const char *target = headerCode;
-    for (size_t i = 0; i < headerSize && i < header.length(); i++)
-    {
+    const char* target = headerCode;
+    for (size_t i = 0; i < headerSize && i < header.length(); i++) {
         header.get()[i] = target[i];
     }
 }
@@ -87,8 +87,6 @@ bool UnixSocketCarrier::expectIndex(ConnectionState& proto)
     return true;
 }
 
-
-
 bool UnixSocketCarrier::respondToHeader(ConnectionState& proto)
 {
     // I am the receiver
@@ -101,46 +99,35 @@ bool UnixSocketCarrier::expectReplyToHeader(ConnectionState& proto)
     return becomeUnixSocket(proto, true);
 }
 
-bool UnixSocketCarrier::becomeUnixSocket(ConnectionState &proto, bool sender)
+bool UnixSocketCarrier::becomeUnixSocket(ConnectionState& proto, bool sender)
 {
     Contact remote = proto.getStreams().getRemoteAddress();
-    Contact local  = proto.getStreams().getLocalAddress();
+    Contact local = proto.getStreams().getLocalAddress();
 
     proto.takeStreams(YARP_NULLPTR); // free up port from tcp
 
-    if(sender)
-    {
-        socketPath = "/tmp/yarp-" + std::to_string(remote.getPort()) + "_" + std::to_string(local.getPort())+".sock";
-    }
-    else
-    {
-        socketPath = "/tmp/yarp-" + std::to_string(local.getPort()) + "_" + std::to_string(remote.getPort())+".sock";
-
+    if (sender) {
+        socketPath = "/tmp/yarp-" + std::to_string(remote.getPort()) + "_" + std::to_string(local.getPort()) + ".sock";
+    } else {
+        socketPath = "/tmp/yarp-" + std::to_string(local.getPort()) + "_" + std::to_string(remote.getPort()) + ".sock";
     }
 
-    if (!socketPath.empty())
-    {
+    if (!socketPath.empty()) {
         stream = new UnixSockTwoWayStream(socketPath);
-    }
-    else
-    {
+    } else {
         return false;
     }
 
     stream->setLocalAddress(local);
     stream->setRemoteAddress(remote);
 
-
-    if (!stream->open(sender))
-    {
+    if (!stream->open(sender)) {
         delete stream;
         stream = YARP_NULLPTR;
         return false;
     }
-    yAssert(stream!=YARP_NULLPTR);
+    yAssert(stream != YARP_NULLPTR);
 
     proto.takeStreams(stream);
     return true;
-
 }
-

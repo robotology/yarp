@@ -9,9 +9,9 @@
 #ifndef YARP_UNIX_UNIXSOCKTWOWAYSTREAM_H
 #define YARP_UNIX_UNIXSOCKTWOWAYSTREAM_H
 
-#include <yarp/os/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/TwoWayStream.h>
 
 #include <mutex>
 
@@ -25,7 +25,7 @@ class UnixSockTwoWayStream :
 {
 
 public:
-    UnixSockTwoWayStream(const std::string& _socketPath="");
+    UnixSockTwoWayStream(const std::string& _socketPath = "");
 
     ~UnixSockTwoWayStream() override;
 
@@ -40,8 +40,6 @@ public:
     void interrupt() override;
 
     void close() override;
-
-    void closeMain();
 
     using yarp::os::InputStream::read;
     yarp::conf::ssize_t read(yarp::os::Bytes& b) override;
@@ -70,17 +68,17 @@ public:
 
 private:
     yarp::os::ManagedBytes monitor;
-    bool closed {false};
-    bool interrupting {false};
-    bool openedAsReader {false};
+    bool closed{false};
+    bool interrupting{false};
+    bool openedAsReader{false};
     yarp::os::Contact localAddress;
     yarp::os::Contact remoteAddress;
     std::mutex mutex;
-    bool happy {true};
+    bool happy{true};
 
     std::string socketPath;
-    int reader_fd {-1};
-    int sender_fd {-1};
+    int reader_fd{-1};
+    int sender_fd{-1};
 };
 
 #endif // YARP_UNIX_UNIXSOCKTWOWAYSTREAM_H
