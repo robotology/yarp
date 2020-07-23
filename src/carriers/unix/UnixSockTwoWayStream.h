@@ -47,8 +47,6 @@ public:
     using yarp::os::OutputStream::write;
     void write(const yarp::os::Bytes& b) override;
 
-    void flush() override;
-
     bool isOk() const override;
 
     void reset() override;
@@ -56,24 +54,15 @@ public:
     void beginPacket() override;
     void endPacket() override;
 
-    yarp::os::Bytes getMonitor();
-
-    void setMonitor(const yarp::os::Bytes& data);
-
-    void removeMonitor();
-
     bool open(bool sender = false);
     void setLocalAddress(yarp::os::Contact& _localAddress);
     void setRemoteAddress(yarp::os::Contact& _remoteAddress);
 
 private:
-    yarp::os::ManagedBytes monitor;
     bool closed{false};
-    bool interrupting{false};
     bool openedAsReader{false};
     yarp::os::Contact localAddress;
     yarp::os::Contact remoteAddress;
-    std::mutex mutex;
     bool happy{true};
 
     std::string socketPath;

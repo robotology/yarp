@@ -23,7 +23,6 @@
 #include <unistd.h>
 
 using namespace yarp::os;
-using namespace std;
 
 UnixSockTwoWayStream::UnixSockTwoWayStream(const std::string& _socketPath) :
         socketPath(_socketPath)
@@ -128,80 +127,28 @@ void UnixSockTwoWayStream::setRemoteAddress(Contact& _remoteAddress)
 
 void UnixSockTwoWayStream::interrupt()
 {
-    yCDebug(UNIXSOCK_CARRIER, " interrupting socket");
-    bool act = false;
-    mutex.lock();
-    if ((!closed) && (!interrupting) && happy) {
-        act = true;
-        interrupting = true;
-        closed = true;
-    }
-    mutex.unlock();
-    if (act) {
-        if (openedAsReader) {
-            int ct = 3;
-            while (happy && ct > 0) {
-                ct--;
-                UnixSockTwoWayStream tmp(socketPath);
-                tmp.open(true);
-                ManagedBytes empty(10);
-                for (size_t i = 0; i < empty.length(); i++) {
-                    empty.get()[i] = 0;
-                }
-
-                tmp.reader_fd = sender_fd; // this allows the fake stream to write on the socket waiting something to read.
-                tmp.write(empty.bytes());
-                tmp.flush();
-                tmp.close();
-                if (happy) {
-                    yarp::os::SystemClock::delaySystem(0.25);
-                }
-            }
-            yDebug("dgram interrupt done");
-        }
-        mutex.lock();
-        interrupting = false;
-        mutex.unlock();
-    } else {
-        // wait for interruption to be done
-        if (interrupting) {
-            while (interrupting) {
-                yCDebug(UNIXSOCK_CARRIER,"waiting for dgram interrupt to be finished...");
-                yarp::os::SystemClock::delaySystem(0.1);
-            }
-        }
-    }
+    yCDebug(UNIXSOCK_CARRIER, "Interrupting socket");
+    close();
 }
 
 void UnixSockTwoWayStream::close()
 {
-    if (reader_fd > 0) // check socket id
-    {
-        interrupt();
-        mutex.lock();
-        closed = true;
-        mutex.unlock();
-        while (interrupting) {
-            happy = false;
-            yarp::os::SystemClock::delaySystem(0.1);
-        }
-        mutex.lock();
-        // If the connect descriptor is valid close socket
-        // and free the memory dedicated.
-        // socket closure
-        if (openedAsReader) {
-            ::shutdown(sender_fd, SHUT_RDWR);
-            ::close(sender_fd);
-            ::unlink(socketPath.c_str());
-            sender_fd = -1;
-        } else {
-            ::shutdown(reader_fd, SHUT_RDWR);
-            ::close(reader_fd);
-            reader_fd = -1;
-        }
-        happy = false;
-        mutex.unlock();
+    // If the connect descriptor is valid close socket
+    // and free the memory dedicated.
+    // socket closure
+    if (sender_fd > 0) {
+        ::shutdown(sender_fd, SHUT_RDWR);
+        ::close(sender_fd);
+        sender_fd = -1;
     }
+
+    if (reader_fd > 0) {
+        ::shutdown(reader_fd, SHUT_RDWR);
+        ::close(reader_fd);
+        reader_fd = -1;
+    }
+
+    ::unlink(socketPath.c_str());
     happy = false;
 }
 
@@ -239,10 +186,6 @@ void UnixSockTwoWayStream::write(const Bytes& b)
     }
 }
 
-void UnixSockTwoWayStream::flush()
-{
-}
-
 bool UnixSockTwoWayStream::isOk() const
 {
     return happy;
@@ -258,20 +201,4 @@ void UnixSockTwoWayStream::beginPacket()
 
 void UnixSockTwoWayStream::endPacket()
 {
-}
-
-Bytes UnixSockTwoWayStream::getMonitor()
-{
-    return monitor.bytes();
-}
-
-void UnixSockTwoWayStream::setMonitor(const Bytes& data)
-{
-    monitor = yarp::os::ManagedBytes(data, false);
-    monitor.copy();
-}
-
-void UnixSockTwoWayStream::removeMonitor()
-{
-    monitor.clear();
 }
