@@ -32,6 +32,7 @@ if(WIN32)
 endif()
 
 set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/lib/python")
+set(SWIG_OUTFILE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 swig_add_library(yarp_python
                  LANGUAGE python
