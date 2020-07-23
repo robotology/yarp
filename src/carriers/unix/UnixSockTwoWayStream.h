@@ -79,8 +79,8 @@ private:
     bool happy {true};
 
     std::string socketPath;
-    int fd {-1};
-    int cl {-1};
+    int reader_fd {-1};
+    int sender_fd {-1};
 };
 
 #endif // YARP_UNIX_UNIXSOCKTWOWAYSTREAM_H

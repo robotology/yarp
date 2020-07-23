@@ -36,7 +36,7 @@ UnixSockTwoWayStream::UnixSockTwoWayStream(const std::string& _socketPath) :
 bool UnixSockTwoWayStream::open(bool sender)
 {
     struct sockaddr_un addr;
-    if ((fd = ::socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+    if ((reader_fd = ::socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
     {
         perror("UnixSockTwoWayStream error:");
         return false;
@@ -65,7 +65,7 @@ bool UnixSockTwoWayStream::open(bool sender)
         //try connection 5 times, waiting that the receiver bind the socket
         while (attempts < 5)
         {
-            int result = ::connect(fd, (struct sockaddr*)&addr, sizeof(addr));
+            int result = ::connect(reader_fd, (struct sockaddr*)&addr, sizeof(addr));
             if (result == 0)
             {
                 break;
@@ -82,14 +82,14 @@ bool UnixSockTwoWayStream::open(bool sender)
     }
     else
     {
-        if (::bind(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
+        if (::bind(reader_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
         {
             perror("UnixSockTwoWayStream bind error");
             return false;
         }
 
         // the socket will listen only 1 client
-        if (::listen(fd, 2) == -1)
+        if (::listen(reader_fd, 2) == -1)
         {
             perror("UnixSockTwoWayStream listen error");
             return false;
@@ -97,7 +97,7 @@ bool UnixSockTwoWayStream::open(bool sender)
         struct sockaddr_un remote;
         uint lenRemote = sizeof(remote);
 
-        if ((cl = ::accept(fd, (struct sockaddr *)&remote, &lenRemote)) == -1)
+        if ((sender_fd = ::accept(reader_fd, (struct sockaddr *)&remote, &lenRemote)) == -1)
         {
             perror("UnixSockTwoWayStream accept error");
             return false;
@@ -167,7 +167,7 @@ void UnixSockTwoWayStream::interrupt()
                     empty.get()[i] = 0;
                 }
 
-                tmp.fd = cl; // this allows the fake stream to write on the socket waiting something to read.
+                tmp.reader_fd = sender_fd; // this allows the fake stream to write on the socket waiting something to read.
                 tmp.write(empty.bytes());
                 tmp.flush();
                 tmp.close();
@@ -199,7 +199,7 @@ void UnixSockTwoWayStream::close()
 
 void UnixSockTwoWayStream::closeMain()
 {
-    if (fd > 0) //check socket id
+    if (reader_fd > 0) //check socket id
     {
         interrupt();
         mutex.lock();
@@ -215,16 +215,16 @@ void UnixSockTwoWayStream::closeMain()
         //socket closure
         if (reader)
         {
-            ::shutdown(cl, SHUT_RDWR);
-            ::close(cl);
+            ::shutdown(sender_fd, SHUT_RDWR);
+            ::close(sender_fd);
             ::unlink(socketPath.c_str());
-            cl = -1;
+            sender_fd = -1;
         }
         else
         {
-            ::shutdown(fd, SHUT_RDWR);
-            ::close(fd);
-            fd = -1;
+            ::shutdown(reader_fd, SHUT_RDWR);
+            ::close(reader_fd);
+            reader_fd = -1;
 
         }
         happy = false;
@@ -239,7 +239,7 @@ yarp::conf::ssize_t UnixSockTwoWayStream::read(Bytes& b)
     reader = true;
 
     int result;
-    result = ::read(cl, b.get(), b.length());
+    result = ::read(sender_fd, b.get(), b.length());
     if (closed || result == 0) {
         happy = false;
         return -1;
@@ -258,13 +258,13 @@ void UnixSockTwoWayStream::write(const Bytes& b)
         return;
     }
 
-    if (fd < 0)
+    if (reader_fd < 0)
     {
         close();
         return;
     }
 
-    int writtenMem = ::write(fd, b.get(), b.length());
+    int writtenMem = ::write(reader_fd, b.get(), b.length());
     if (writtenMem < 0)
     {
         perror("unixSock::write:Packet payload");
