@@ -28,7 +28,7 @@ class UnixSocketCarrier :
 {
 public:
     UnixSocketCarrier() = default;
-    ~UnixSocketCarrier() = default;
+    ~UnixSocketCarrier() override = default;
 
     yarp::os::Carrier* create() const override;
 
@@ -55,7 +55,7 @@ private:
     static constexpr size_t headerSize = 8;
 
     std::string socketPath;
-    UnixSockTwoWayStream* stream;
+    UnixSockTwoWayStream* stream{nullptr};
 
     bool becomeUnixSocket(yarp::os::ConnectionState& proto, bool sender = false);
 };

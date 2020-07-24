@@ -128,11 +128,16 @@ void UnixSocketCarrier::getHeader(Bytes& header) const
 
 bool UnixSocketCarrier::sendIndex(ConnectionState& proto, SizedWriter& writer)
 {
+    YARP_UNUSED(proto);
+    YARP_UNUSED(writer);
+
     return true;
 }
 
 bool UnixSocketCarrier::expectIndex(ConnectionState& proto)
 {
+    YARP_UNUSED(proto);
+
     return true;
 }
 
@@ -153,8 +158,7 @@ bool UnixSocketCarrier::becomeUnixSocket(ConnectionState& proto, bool sender)
     Contact remote = proto.getStreams().getRemoteAddress();
     Contact local = proto.getStreams().getLocalAddress();
 
-    proto.takeStreams(YARP_NULLPTR); // free up port from tcp
-
+    proto.takeStreams(nullptr); // free up port from tcp
 
     std::string runtime_dir = getYARPRuntimeDir();
 
@@ -175,10 +179,10 @@ bool UnixSocketCarrier::becomeUnixSocket(ConnectionState& proto, bool sender)
 
     if (!stream->open(sender)) {
         delete stream;
-        stream = YARP_NULLPTR;
+        stream = nullptr;
         return false;
     }
-    yAssert(stream != YARP_NULLPTR);
+    yAssert(stream != nullptr);
 
     proto.takeStreams(stream);
     return true;
