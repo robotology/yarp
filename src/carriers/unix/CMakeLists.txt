@@ -12,7 +12,15 @@ yarp_prepare_plugin(unix_stream
                     DEPENDS UNIX
                     DEFAULT ON)
 
-if(ENABLE_unix_stream)
+yarp_prepare_plugin(unix_stream_ack
+                    CATEGORY carrier
+                    TYPE UnixSocketCarrierAck
+                    INCLUDE UnixSocketCarrier.h
+                    EXTRA_CONFIG CODE="UNIX_ACK"
+                    DEPENDS UNIX
+                    DEFAULT ON)
+
+if(ENABLE_unix_stream OR ENABLE_unix_stream_ack)
   yarp_add_plugin(yarp_unix)
 
   target_sources(yarp_unix PRIVATE UnixSocketCarrier.cpp

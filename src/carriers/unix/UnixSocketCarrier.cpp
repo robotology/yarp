@@ -79,19 +79,24 @@ bool isUnixSockSupported(ConnectionState& proto) // FIXME Why is this method unu
 
 } // namespace
 
+UnixSocketCarrier::UnixSocketCarrier(bool requireAckFlag) :
+        requireAckFlag(requireAckFlag)
+{
+}
+
 yarp::os::Carrier* UnixSocketCarrier::create() const
 {
-    return new UnixSocketCarrier();
+    return new UnixSocketCarrier(requireAckFlag);
 }
 
 std::string UnixSocketCarrier::getName() const
 {
-    return name;
+    return requireAckFlag ? name_ack : name;
 }
 
 bool UnixSocketCarrier::requireAck() const
 {
-    return false;
+    return requireAckFlag;
 }
 
 bool UnixSocketCarrier::isConnectionless() const
@@ -104,7 +109,7 @@ bool UnixSocketCarrier::checkHeader(const Bytes& header)
     if (header.length() != headerSize) {
         return false;
     }
-    const char* target = headerCode;
+    const char* target = requireAckFlag ? headerCode_ack : headerCode;
     for (size_t i = 0; i < headerSize; i++) {
         if (header.get()[i] != target[i]) {
             return false;
@@ -115,7 +120,7 @@ bool UnixSocketCarrier::checkHeader(const Bytes& header)
 
 void UnixSocketCarrier::getHeader(Bytes& header) const
 {
-    const char* target = headerCode;
+    const char* target = requireAckFlag ? headerCode_ack : headerCode;
     for (size_t i = 0; i < headerSize && i < header.length(); i++) {
         header.get()[i] = target[i];
     }
@@ -133,6 +138,39 @@ bool UnixSocketCarrier::expectIndex(ConnectionState& proto)
 {
     YARP_UNUSED(proto);
 
+    return true;
+}
+
+bool UnixSocketCarrier::sendAck(ConnectionState& proto)
+{
+    yCTrace(UNIXSOCK_CARRIER);
+    if (requireAckFlag) {
+        const Bytes ack_bytes(const_cast<char*>(ack_string), ack_string_size);
+        proto.os().write(ack_bytes);
+    }
+    return true;
+}
+
+bool UnixSocketCarrier::expectAck(ConnectionState& proto)
+{
+    yCTrace(UNIXSOCK_CARRIER);
+    if (requireAckFlag) {
+        std::array<char, ack_string_size> buf;
+        Bytes ack(buf.data(), buf.size());
+        yarp::conf::ssize_t hdr = proto.is().readFull(ack);
+        if (static_cast<size_t>(hdr) != ack.length()) {
+            yCDebug(UNIXSOCK_CARRIER, "Did not get ack");
+            return false;
+        }
+
+        const char* target = ack_string;
+        for (size_t i = 0; i < ack_string_size; i++) {
+            if (ack.get()[i] != target[i]) {
+                yCDebug(UNIXSOCK_CARRIER, "Bad ack");
+                return false;
+            }
+        }
+    }
     return true;
 }
 
