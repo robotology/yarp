@@ -59,6 +59,24 @@ std::string getYARPRuntimeDir()
     return {};
 }
 
+/**
+ * @brief isUnixSockSupported
+ * @param proto, contains the information of the connection
+ * @return true if the remote and the local port are on the same host
+ */
+bool isUnixSockSupported(ConnectionState& proto) // FIXME Why is this method unused?
+{
+    yarp::os::Contact remote = proto.getStreams().getRemoteAddress();
+    yarp::os::Contact local = proto.getStreams().getLocalAddress();
+
+    if (remote.getHost() != local.getHost()) {
+        yCError(UNIXSOCK_CARRIER,
+                "The ports are on different machines, unix socket not supported...");
+        return false;
+    }
+    return true;
+}
+
 } // namespace
 
 yarp::os::Carrier* UnixSocketCarrier::create() const
@@ -83,20 +101,6 @@ bool UnixSocketCarrier::isConnectionless() const
 
 bool UnixSocketCarrier::canEscape() const
 {
-    return true;
-}
-
-bool UnixSocketCarrier::isUnixSockSupported(ConnectionState& proto)
-{
-    yarp::os::Contact remote = proto.getStreams().getRemoteAddress();
-    yarp::os::Contact local = proto.getStreams().getLocalAddress();
-
-    if (remote.getHost() != local.getHost()) {
-        yCError(
-            UNIXSOCK_CARRIER,
-            "The ports are on different machines, unix socket not supported...");
-        return false;
-    }
     return true;
 }
 

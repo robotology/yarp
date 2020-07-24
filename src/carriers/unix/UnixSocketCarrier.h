@@ -57,12 +57,6 @@ private:
     std::string socketPath;
     UnixSockTwoWayStream* stream;
 
-    /**
-     * @brief isUnixSockSupported
-     * @param proto, contains the information of the connection
-     * @return true if the remote and the local port are on the same host
-     */
-    bool isUnixSockSupported(yarp::os::ConnectionState& proto);
     bool becomeUnixSocket(yarp::os::ConnectionState& proto, bool sender = false);
 };
 
