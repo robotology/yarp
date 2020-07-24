@@ -34,7 +34,7 @@ bool UnixSockTwoWayStream::open(bool sender)
     openedAsReader = !sender;
     struct sockaddr_un addr;
     if ((reader_fd = ::socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-        perror("UnixSockTwoWayStream error:");
+        yCError(UNIXSOCK_CARRIER, "%d, %s", errno, strerror(errno));
         return false;
     }
 
@@ -52,37 +52,37 @@ bool UnixSockTwoWayStream::open(bool sender)
     }
 
     if (sender) {
-        int attempts = 0;
+        size_t attempts = 0;
         // try connection 5 times, waiting that the receiver bind the socket
-        while (attempts < 5) {
-            int result = ::connect(reader_fd, (struct sockaddr*)&addr, sizeof(addr));
+        while (attempts < maxAttempts) {
+            int result = ::connect(reader_fd, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr));
             if (result == 0) {
                 break;
             }
-            yarp::os::Time::delay(0.01);
+            yarp::os::Time::delay(delayBetweenAttempts);
             attempts++;
         }
 
-        if (attempts >= 5) {
-            perror("UnixSockTwoWayStream connect error, I tried 5 times...");
+        if (attempts >= maxAttempts) {
+            yCError(UNIXSOCK_CARRIER, "connect() error, I tried %zu times: %d, %s", maxAttempts, errno, strerror(errno));
             return false;
         }
     } else {
-        if (::bind(reader_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-            perror("UnixSockTwoWayStream bind error");
+        if (::bind(reader_fd, reinterpret_cast<struct sockaddr*>(&addr), sizeof(addr)) == -1) {
+            yCError(UNIXSOCK_CARRIER, "bind() error: %d, %s", errno, strerror(errno));
             return false;
         }
 
         // the socket will listen only 1 client
         if (::listen(reader_fd, 2) == -1) {
-            perror("UnixSockTwoWayStream listen error");
+            yCError(UNIXSOCK_CARRIER, "listen() error: %d, %s", errno, strerror(errno));
             return false;
         }
         struct sockaddr_un remote;
         uint lenRemote = sizeof(remote);
 
-        if ((sender_fd = ::accept(reader_fd, (struct sockaddr*)&remote, &lenRemote)) == -1) {
-            perror("UnixSockTwoWayStream accept error");
+        if ((sender_fd = ::accept(reader_fd, reinterpret_cast<struct sockaddr*>(&remote), &lenRemote)) == -1) {
+            yCError(UNIXSOCK_CARRIER, "accept() error: %d, %s", errno, strerror(errno));
             return false;
         }
     }
@@ -164,7 +164,7 @@ yarp::conf::ssize_t UnixSockTwoWayStream::read(Bytes& b)
         return -1;
     }
     if (result < 0) {
-        perror("unixSock::read():Packet payload");
+        yCError(UNIXSOCK_CARRIER, "read() error: %d, %s", errno, strerror(errno));
         return -1;
     }
     return result;
@@ -178,7 +178,7 @@ void UnixSockTwoWayStream::write(const Bytes& b)
     }
     int writtenMem = ::write(openedAsReader ? sender_fd : reader_fd, b.get(), b.length());
     if (writtenMem < 0) {
-        perror("unixSock::write:Packet payload");
+        yCError(UNIXSOCK_CARRIER, "write() error: %d, %s", errno, strerror(errno));
         if (errno != ETIMEDOUT) {
             close();
         }

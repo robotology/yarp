@@ -68,6 +68,9 @@ private:
     std::string socketPath;
     int reader_fd{-1};
     int sender_fd{-1};
+
+    static constexpr size_t maxAttempts = 5;
+    static constexpr double delayBetweenAttempts = 0.01;
 };
 
 #endif // YARP_UNIX_UNIXSOCKTWOWAYSTREAM_H
