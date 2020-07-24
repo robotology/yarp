@@ -5,30 +5,20 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-project(yarp-bindings)
-cmake_minimum_required(VERSION 3.12)
+if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  cmake_minimum_required(VERSION 3.12)
 
-# UseSWIG generates now standard target names.
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.13)
-  cmake_policy(SET CMP0078 OLD)
-endif()
+  # UseSWIG generates now standard target names.
+  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.13)
+    cmake_policy(SET CMP0078 OLD)
+  endif()
 
-# UseSWIG honors SWIG_MODULE_NAME via -module flag.
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.14)
-  cmake_policy(SET CMP0086 OLD)
-endif()
+  # UseSWIG honors SWIG_MODULE_NAME via -module flag.
+  if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.14)
+    cmake_policy(SET CMP0086 OLD)
+  endif()
 
-include(CMakeDependentOption)
-include(CheckCXXCompilerFlag)
-include(GNUInstallDirs)
-
-# disable all warnings for current folder and subfolders
-set(CMAKE_C_FLAGS -w)
-set(CMAKE_CXX_FLAGS -w)
-
-set(_components conf os sig dev)
-
-if(NOT YARP_VERSION)
+  project(yarp-bindings)
 
   #############################################################################
   ## Discourage inplace compilation
@@ -45,10 +35,25 @@ if(NOT YARP_VERSION)
   # Find YARP for bindings-only builds
   find_package(YARP COMPONENTS ${_components} REQUIRED)
   find_package(SWIG 3.0.12 REQUIRED)
+
   set(_nested_build 0)
+  set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
+  set(YARP_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
 else()
   set(_nested_build 1)
+  set(YARP_COMPILE_BINDINGS_DEFAULT FALSE)
+  set(YARP_BASE_DIR ${CMAKE_BINARY_DIR})
 endif()
+
+include(CMakeDependentOption)
+include(CheckCXXCompilerFlag)
+include(GNUInstallDirs)
+
+# disable all warnings for current folder and subfolders
+set(CMAKE_C_FLAGS -w)
+set(CMAKE_CXX_FLAGS -w)
+
+set(_components conf os sig dev)
 
 # This is necessary for SWIG to parse yarp.i file
 # TODO This might no longer be necessary with some updated UseSWIG.cmake version
@@ -68,13 +73,6 @@ endforeach()
 include(${YARP_MODULE_DIR}/YarpPrintFeature.cmake)
 include(${YARP_MODULE_DIR}/YarpDeprecatedOption.cmake)
 
-set(YARP_COMPILE_BINDINGS_DEFAULT TRUE)
-set(YARP_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
-if(_nested_build)
-  # this is a nested build
-  set(YARP_COMPILE_BINDINGS_DEFAULT FALSE)
-  set(YARP_BASE_DIR ${CMAKE_BINARY_DIR})
-endif()
 option(YARP_COMPILE_BINDINGS "Compile optional language bindings" ${YARP_COMPILE_BINDINGS_DEFAULT})
 yarp_print_feature(YARP_COMPILE_BINDINGS 0 "Bindings")
 
