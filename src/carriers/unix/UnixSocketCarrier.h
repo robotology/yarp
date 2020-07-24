@@ -34,7 +34,6 @@ public:
 
     std::string getName() const override;
 
-    bool canEscape() const override;
     bool requireAck() const override;
     bool isConnectionless() const override;
 

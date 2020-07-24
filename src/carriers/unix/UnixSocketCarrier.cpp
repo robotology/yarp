@@ -99,11 +99,6 @@ bool UnixSocketCarrier::isConnectionless() const
     return false;
 }
 
-bool UnixSocketCarrier::canEscape() const
-{
-    return true;
-}
-
 bool UnixSocketCarrier::checkHeader(const Bytes& header)
 {
     if (header.length() != headerSize) {
