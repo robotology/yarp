@@ -19,9 +19,10 @@
 using namespace yarp::os;
 namespace fs = yarp::conf::filesystem;
 
+namespace {
 
 // FIXME: This method should be available somewhere in YARP
-static std::string getYARPRuntimeDir()
+std::string getYARPRuntimeDir()
 {
     static std::mutex m;
     std::lock_guard<std::mutex> lock(m);
@@ -57,6 +58,8 @@ static std::string getYARPRuntimeDir()
     // ERROR
     return {};
 }
+
+} // namespace
 
 yarp::os::Carrier* UnixSocketCarrier::create() const
 {
