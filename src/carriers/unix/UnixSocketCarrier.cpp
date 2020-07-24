@@ -155,6 +155,10 @@ bool UnixSocketCarrier::expectReplyToHeader(ConnectionState& proto)
 
 bool UnixSocketCarrier::becomeUnixSocket(ConnectionState& proto, bool sender)
 {
+    if (!isUnixSockSupported(proto)) {
+        return false;
+    }
+
     Contact remote = proto.getStreams().getRemoteAddress();
     Contact local = proto.getStreams().getLocalAddress();
 
