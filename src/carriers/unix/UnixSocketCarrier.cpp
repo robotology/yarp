@@ -163,6 +163,7 @@ bool UnixSocketCarrier::becomeUnixSocket(ConnectionState& proto, bool sender)
 
     // Make sure that the path exists
     if (runtime_dir.empty() || yarp::os::mkdir_p(runtime_dir.c_str(), 0) != 0) {
+        yCError(UNIXSOCK_CARRIER, "Failed to create directory %s", runtime_dir.c_str());
         return false;
     }
 
@@ -179,10 +180,13 @@ bool UnixSocketCarrier::becomeUnixSocket(ConnectionState& proto, bool sender)
     if (!stream->open(sender)) {
         delete stream;
         stream = nullptr;
+        yCError(UNIXSOCK_CARRIER, "Failed to open stream on socket %s as %s", socketPath.c_str(), (sender ? "sender" : "receiver"));
         return false;
     }
     yAssert(stream != nullptr);
 
     proto.takeStreams(stream);
+
+    yCDebug(UNIXSOCK_CARRIER, "Connected on socket %s as %s", socketPath.c_str(), (sender ? "sender" : "receiver"));
     return true;
 }
