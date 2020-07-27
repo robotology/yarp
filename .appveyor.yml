@@ -37,7 +37,7 @@ init:
   - cmd: set TIMEOUT=%SystemRoot%\System32\timeout.exe
 
   # Dependencies found in YCM, YARP and iCub packages
-  - cmd: set YCM_LATEST=0.11.0
+  - cmd: set YCM_LATEST=0.11.3
   - cmd: set YCM_LATEST_TAG=v%YCM_LATEST%
   - cmd: set YCM_DIR=%ROBOTOLOGY_ROOT%\ycm-%YCM_LATEST%
 
