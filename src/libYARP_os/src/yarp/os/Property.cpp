@@ -47,7 +47,7 @@ public:
         singleton(rhs.singleton)
     {
         if (rhs.backing) {
-            backing.reset(new Property(*(rhs.backing))); // FIXME: std::make_unique
+            backing = std::make_unique<Property>(*(rhs.backing));
         }
     }
 
@@ -56,7 +56,7 @@ public:
         if (&rhs != this) {
             bot = rhs.bot;
             if (rhs.backing) {
-                backing.reset(new Property(*(rhs.backing))); // FIXME: std::make_unique
+                backing = std::make_unique<Property>(*(rhs.backing));
             }
             singleton = rhs.singleton;
         }
@@ -171,7 +171,7 @@ public:
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
-        p->backing.reset(new Property()); // FIXME: std::make_unique
+        p->backing = std::make_unique<Property>();
         return *(p->backing);
     }
 
@@ -370,7 +370,7 @@ public:
         for (int i = 0; i < n; i++) {
             std::string name = namelist[i]->d_name;
             free(namelist[i]);
-            int len = (int)name.length();
+            auto len = static_cast<int>(name.length());
             if (len < 4) {
                 continue;
             }
@@ -905,7 +905,7 @@ public:
         if (pTmp != nullptr) {
             *pTmp = '\0';
             pTmp++;
-            while (((*pTmp) != 0) && (*pTmp == ' ')) {
+            while (*pTmp == ' ') {
                 pTmp++;
             }
             if (*pTmp == '\0') {
@@ -1065,7 +1065,7 @@ void Property::fromCommand(int argc, char* argv[], bool skipFirst, bool wipe)
 
 void Property::fromCommand(int argc, const char* argv[], bool skipFirst, bool wipe)
 {
-    fromCommand(argc, (char**)argv, skipFirst, wipe);
+    fromCommand(argc, const_cast<char**>(argv), skipFirst, wipe);
 }
 
 void Property::fromArguments(const char* arguments, bool wipe)
@@ -1143,7 +1143,7 @@ Bottle& Property::findGroup(const std::string& key) const
         }
     }
 
-    if (result != ((Bottle*)nullptr)) {
+    if (result != nullptr) {
         return *result;
     }
     return Bottle::getNullBottle();
