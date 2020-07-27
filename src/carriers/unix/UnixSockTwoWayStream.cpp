@@ -10,7 +10,7 @@
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/Time.h>
+#include <yarp/os/SystemClock.h>
 
 #include "UnixSockTwoWayStream.h"
 #include "UnixSocketLogComponent.h"
@@ -59,7 +59,7 @@ bool UnixSockTwoWayStream::open(bool sender)
             if (result == 0) {
                 break;
             }
-            yarp::os::Time::delay(delayBetweenAttempts);
+            yarp::os::SystemClock::delaySystem(delayBetweenAttempts);
             attempts++;
         }
 
