@@ -84,7 +84,7 @@ int main() {
     FakeFrameGrabber fake;
     fake.start();
 
-    PolyDriver dd("(device test_grabber) (local /client) (remote /server)");
+    PolyDriver dd("(device fakeFrameGrabber) (local /client) (remote /server)");
 
     if (!dd.isValid()) {
         printf("Device not available\n");

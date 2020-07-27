@@ -1,24 +1,24 @@
 /**
  * \ingroup dev_examples
  *
- * \defgroup test_grabber_basic Example for test_grabber (test_grabber_basic)
+ * \defgroup fakeFrameGrabber_basic Example for fakeFrameGrabber (fakeFrameGrabber_basic)
 
-Instantiates \ref cmd_device_test_grabber "test_grabber" device implemented by TestFrameGrabber.
+Instantiates \ref cmd_device_fakeFrameGrabber "fakeFrameGrabber" device implemented by FakeFrameGrabber.
 \verbatim
 # start up a fake image source of size 640x480, with 4 images per second
-device test_grabber
+device fakeFrameGrabber
 width 640
 height 480
 period 0.25
 \endverbatim
-If this text is saved in a file called test_grabber_basic.ini then the device can be created by doing:
+If this text is saved in a file called fakeFrameGrabber_basic.ini then the device can be created by doing:
 \verbatim
-yarpdev --file test_grabber_basic.ini
+yarpdev --file fakeFrameGrabber_basic.ini
 \endverbatim
 Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
 \code
 Property p;
-p.fromConfigFile("test_grabber_basic.ini");
+p.fromConfigFile("fakeFrameGrabber_basic.ini");
 // of course you could construct the Property object on-the-fly
 PolyDriver dev;
 dev.open(p);
@@ -37,11 +37,11 @@ So this is just an example
 <tr><td>horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
 <tr><td>verticalFov</td><td>desired vertical fov of test image</td><td>2.0</td></tr>
 <tr><td>mirror</td><td>mirroring disabled by default</td><td>0</td></tr>
-<tr><td>physFocalLength</td><td>Physical focal length of the test_grabber</td><td>3.0</td></tr>
-<tr><td>focalLengthX</td><td>Horizontal component of the focal length of the test_grabber</td><td>4.0</td></tr>
-<tr><td>focalLengthY</td><td>Vertical component of the focal length of the test_grabber</td><td>5.0</td></tr>
-<tr><td>principalPointX</td><td>X coordinate of the principal point of the test_grabber</td><td>6.0</td></tr>
-<tr><td>principalPointY</td><td>Y coordinate of the principal point of the test_grabber</td><td>7.0</td></tr>
+<tr><td>physFocalLength</td><td>Physical focal length of the fakeFrameGrabber</td><td>3.0</td></tr>
+<tr><td>focalLengthX</td><td>Horizontal component of the focal length of the fakeFrameGrabber</td><td>4.0</td></tr>
+<tr><td>focalLengthY</td><td>Vertical component of the focal length of the fakeFrameGrabber</td><td>5.0</td></tr>
+<tr><td>principalPointX</td><td>X coordinate of the principal point of the fakeFrameGrabber</td><td>6.0</td></tr>
+<tr><td>principalPointY</td><td>Y coordinate of the principal point of the fakeFrameGrabber</td><td>7.0</td></tr>
 <tr><td>retificationMatrix</td><td>Matrix that describes the lens' distortion(fake)</td><td>1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0</td></tr>
 <tr><td>distortionModel</td><td>Reference to group of parameters describing the distortion model of the camera</td><td>FishEye</td></tr>
 <tr><td>k1</td><td>Radial distortion coefficient of the lens(fake)</td><td>8.0</td></tr>
@@ -57,6 +57,6 @@ So this is just an example
 <tr><td>mono</td><td>should emit a monochrome image?</td><td></td></tr>
 </table>
 
-\sa TestFrameGrabber
+\sa FakeFrameGrabber
 
  */

@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_TESTFRAMEGRABBER_H
-#define YARP_DEV_TESTFRAMEGRABBER_H
+#ifndef YARP_FAKEFRAMEGRABBER_FAKEFRAMEGRABBER_H
+#define YARP_FAKEFRAMEGRABBER_FAKEFRAMEGRABBER_H
 
 #include <cstdio>
 
@@ -33,7 +33,7 @@ constexpr yarp::conf::vocab32_t VOCAB_LINE = yarp::os::createVocab('l','i','n','
  * Implements the IFrameGrabberImage and IFrameGrabberControls
  * interfaces.
  */
-class TestFrameGrabber :
+class FakeFrameGrabber :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IFrameGrabberImage,
         public yarp::dev::IFrameGrabberImageRaw,
@@ -63,7 +63,7 @@ public:
     /**
      * Constructor.
      */
-    TestFrameGrabber();
+    FakeFrameGrabber();
 
     bool close() override;
 
@@ -171,13 +171,20 @@ private:
 };
 
 
+class TestFrameGrabber : public FakeFrameGrabber
+{
+public:
+    bool open(yarp::os::Searchable& config) override;
+};
+
+
 /**
  * @ingroup dev_runtime
- * \defgroup cmd_device_test_grabber test_grabber
+ * \defgroup cmd_device_fakeFrameGrabber fakeFrameGrabber
 
- A fake framegrabber, see yarp::dev::TestFrameGrabber.
+ A fake framegrabber, see yarp::dev::FakeFrameGrabber.
 
 */
 
 
-#endif // YARP_DEV_TESTFRAMEGRABBER_H
+#endif // YARP_FAKEFRAMEGRABBER_FAKEFRAMEGRABBER_H

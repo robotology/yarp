@@ -1,12 +1,12 @@
 <application>
     <name>FakeEyes</name>
-    <description>A fake robot eye creator based on test_grabber</description>
+    <description>A fake robot eye creator based on fakeFrameGrabber</description>
     <version>1.0</version>
     <authors>
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
     <module>
-        <name>test_grabber</name>
+        <name>fakeFrameGrabber</name>
         <parameters>--mode line </parameters>
         <node>localhost</node>
         <prefix></prefix>

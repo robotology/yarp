@@ -14,7 +14,7 @@ use yarp;
 
 # set up a description of the device we want - just the fake framegrabber
 my $prop = new yarp::Property();
-$prop->put("device","test_grabber");
+$prop->put("device","fakeFrameGrabber");
 $prop->put("width", 640);
 $prop->put("height", 480);
 print "Property is ", $prop->toString(), "\n";

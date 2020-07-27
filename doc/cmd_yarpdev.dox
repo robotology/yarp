@@ -34,7 +34,7 @@ To see the devices available, try:
 To create a device whose name you know, call yarpdev like this:
    yarpdev --device DEVICENAME --OPTION VALUE ...
 For example:
-   yarpdev --device test_grabber --width 32 --height 16 --name /grabber
+   yarpdev --device fakeFrameGrabber --width 32 --height 16 --name /grabber
 You can always move options to a configuration file:
    yarpdev [--device DEVICENAME] --file CONFIG_FILENAME
 If you have problems, you can add the "verbose" flag to get more information
@@ -59,7 +59,7 @@ Device "jameshead", C++ class JamesHead, has no network wrapper
 Device "XSensMTx", C++ class XSensMTx, wrapped by "inertial"
 Device "opencv_grabber", C++ class OpenCVGrabber, wrapped by "grabber"
 Device "ffmpeg_grabber", C++ class FfmpegGrabber, wrapped by "grabber"
-Device "test_grabber", C++ class TestFrameGrabber, wrapped by "grabber"
+Device "fakeFrameGrabber", C++ class FakeFrameGrabber, wrapped by "grabber"
 Device "remote_grabber", C++ class RemoteFrameGrabber, wrapped by "grabber"
 Device "grabber", C++ class ServerFrameGrabber, is a network wrapper.
 Device "inertial", C++ class ServerInertial, is a network wrapper.
@@ -70,7 +70,7 @@ Device "portaudioPlayer", available on request (found in <prefix>/lib/yarp/yarp_
 Device "portaudioRecorder", available on request (found in <prefix>/lib/yarp/yarp_portaudioRecorder.so library), wrapped by "AudioRecorderWrapper".
 \endverbatim
 
-where the first keyword like "test_grabber" is the device name used to instantiate it, class is
+where the first keyword like "fakeFrameGrabber" is the device name used to instantiate it, class is
 the name of the class that implements it and the latter explains if the device is a network wrapper
 or it has a default network wrapper to be used or it does not have a default wrapper.
 
@@ -78,9 +78,9 @@ or it has a default network wrapper to be used or it does not have a default wra
 
 This is the normal way to start up a device.  For example:
 \verbatim
-$ yarpdev --device test_grabber --period 0.5 --width 640 --height 480
+$ yarpdev --device fakeFrameGrabber --period 0.5 --width 640 --height 480
 Test grabber period 0.5 / freq 2, mode [line]
-yarpdev: created device <test_grabber>.  See C++ class TestFrameGrabber for documentation.
+yarpdev: created device <fakeFrameGrabber>.  See C++ class FakeFrameGrabber for documentation.
 yarp: Port /grabber listening at tcp://130.251.4.155:10032
 Grabber for images
 No framerate specified, polling the device
@@ -90,24 +90,24 @@ yarpdev: device active...
 [...]
 \endverbatim
 
-Here we've asked to create the "test_grabber" device, which acts
+Here we've asked to create the "fakeFrameGrabber" device, which acts
 as a fake image source.  We've specified the image size and the
 rate at which images are created.  The yarpdev program
 eventually said "device active" -- this is a good sign.
 
-The program reported that the "test_grabber" device was created.
+The program reported that the "fakeFrameGrabber" device was created.
 It also mentions a "grabber" device that is also created.
 Why is this?  It is because most devices themselves know nothing
 about the network; instead they need to be "wrapped" in a special
 "network wrapper device" that knows how to put them on the network.
-For test_grabber and other camera-like devices, this wrapper is
+For fakeFrameGrabber and other camera-like devices, this wrapper is
 called "grabber".  In fact, our original request of:
 \verbatim
-$ yarpdev --device test_grabber --period 0.5 --width 640 --height 480
+$ yarpdev --device fakeFrameGrabber --period 0.5 --width 640 --height 480
 \endverbatim
 was automatically expanded to:
 \verbatim
-$ yarpdev --device grabberDual --subdevice test_grabber --period 0.5 --width 640 --height 480
+$ yarpdev --device grabberDual --subdevice fakeFrameGrabber --period 0.5 --width 640 --height 480
 \endverbatim
 
 \section yarpdev_verbose yarpdev --verbose --device DEVICENAME  ...

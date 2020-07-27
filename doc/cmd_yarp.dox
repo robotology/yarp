@@ -945,7 +945,7 @@ Now if you type stuff in terminal C, it appears on B again.
 If you have the "yarpdev" and "yarpview" programs, we can go further.
 Try:
 \verbatim
-[in terminal E] yarpdev --device test_grabber --period 2 --width 8 --height 8 --name /grabber
+[in terminal E] yarpdev --device fakeFrameGrabber --period 2 --width 8 --height 8 --name /grabber
 \endverbatim
 This creates a test "device" with a port called "/grabber", outputting a
 very small test image every 2 seconds.  You won't see much happen yet.

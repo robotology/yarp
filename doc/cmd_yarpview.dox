@@ -11,13 +11,13 @@
 yarpview is a standard graphical interface for viewing images transmitted on the network.
 
 \image html yarpview.png
-\image latex yarpview.png "As an example the images above show two instances of yarpview. In this case the port receives data with the framerate of 30Hz while the display runs at 10Hz. Images are from two instances of test_grabber." width=5cm
+\image latex yarpview.png "As an example the images above show two instances of yarpview. In this case the port receives data with the framerate of 30Hz while the display runs at 10Hz. Images are from two instances of fakeFrameGrabber." width=5cm
 
-Let's experiment with it. We need to create a source of images. The "test_grabber" is a virtual framegrabber which broadcasts images on the network
-at a given framerate. Let's start test_grabber:
+Let's experiment with it. We need to create a source of images. The "fakeFrameGrabber" is a virtual framegrabber which broadcasts images on the network
+at a given framerate. Let's start fakeFrameGrabber:
 
 \verbatim
-yarpdev --device test_grabber --name /grabber
+yarpdev --device fakeFrameGrabber --name /grabber
 \endverbatim
 
 You can now run yarpview:
@@ -63,7 +63,7 @@ At its bottom yarpview shows statistics related to the frequency at which it rec
  and displays images (respectively Port and Display). The Port statistics helps montoring
  the performacen of the network and it is useful for debugging.
 
- As an example the images above show two instances of yarpview. In this case the port receives data with the framerate of 30Hz while the display runs at 10Hz. Images are from two instances of "test_grabber".
+ As an example the images above show two instances of yarpview. In this case the port receives data with the framerate of 30Hz while the display runs at 10Hz. Images are from two instances of "fakeFrameGrabber".
 
 Notice that the values in Port and Display should be approximately equal when the option "Synch display" is selected.
 

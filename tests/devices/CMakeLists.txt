@@ -28,7 +28,7 @@ set(_inis AudioPlayerWrapper_fakeSpeaker.ini
           opencv_grabber_basic.ini
           portaudio_basic.ini
           remote_grabber_basic.ini
-          test_grabber_basic.ini
+          fakeFrameGrabber_basic.ini
           test_motor_basic.ini
           usbCamera.ini)
 

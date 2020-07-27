@@ -45,7 +45,7 @@ bool fakeDepthCameraDriver::open(Searchable& config)
     Property cfg;
     cfg.fromString(config.toString());
     cfg.unput("device");
-    cfg.put("device", "test_grabber");
+    cfg.put("device", "fakeFrameGrabber");
     testgrabber.open(cfg);
     testgrabber.view(image);
 

@@ -196,14 +196,14 @@ Generally you can create them with the yarpdev command by
 specifying a "--device" option followed by their name, for example:
 
 \verbatim
-yarpdev --device test_grabber
+yarpdev --device fakeFrameGrabber
 \endverbatim
 
-This creates a test_grabber device with default options.  You will
+This creates a fakeFrameGrabber device with default options.  You will
 generally need to specify additional options, for example:
 
 \verbatim
-yarpdev --device test_grabber --width 640 --height 480 --name /test
+yarpdev --device fakeFrameGrabber --width 640 --height 480 --name /test
 \endverbatim
 
 How do you know what options are available?
@@ -215,7 +215,7 @@ checking, and any documentation present for those options.
 
 For example, try running:
 \verbatim
-yarpdev --device test_grabber --verbose
+yarpdev --device fakeFrameGrabber --verbose
 \endverbatim
 
 */

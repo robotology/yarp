@@ -101,7 +101,7 @@ been enabled.
 For example, doing:
 
 \verbatim
-yarpdev --device test_grabber --name /grabber --framerate 5
+yarpdev --device fakeFrameGrabber --name /grabber --framerate 5
 \endverbatim
 
 We can now view the /grabber port image output at the following URL:

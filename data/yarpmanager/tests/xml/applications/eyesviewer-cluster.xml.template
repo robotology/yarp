@@ -6,7 +6,7 @@
         <author email="ali.paikan@iit.it">Ali Paikan</author>
     </authors>
     <module>
-        <name>test_grabber</name>
+        <name>fakeFrameGrabber</name>
         <parameters>--mode line </parameters>
         <node></node>
         <prefix>/Left</prefix>
@@ -14,7 +14,7 @@
         <geometry>(Pos (x 75) (y 105.9))</geometry>
     </module>
     <module>
-        <name>test_grabber</name>
+        <name>fakeFrameGrabber</name>
         <parameters>--mode line </parameters>
         <node></node>
         <prefix>/Right</prefix>

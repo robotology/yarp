@@ -55,7 +55,7 @@ public:
     /**
      * Configure with a set of options. These are:
      * <TABLE>
-     * <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "test_grabber"). </TD></TR>
+     * <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "fakeFrameGrabber"). </TD></TR>
      * <TR><TD> name </TD><TD> Port name to assign to this server (default /grabber). </TD></TR>
      * </TABLE>
      *

@@ -34,7 +34,7 @@ using yarp::sig::draw::addCircle;
 
 
   Suppose we have an image source on port /source such as:
-    yarpdev --device test_grabber --name /source --mode line --framerate 10
+    yarpdev --device fakeFrameGrabber --name /source --mode line --framerate 10
 
   And suppose we have an image viewer on port /view:
     yarpview --name /view
@@ -44,7 +44,7 @@ using yarp::sig::draw::addCircle;
     yarp connect /source /worker
     yarp connect /worker /view
 
-  You should see the normal scrolling line of test_grabber, with a moving
+  You should see the normal scrolling line of fakeFrameGrabber, with a moving
   circle overlaid.
 
  */

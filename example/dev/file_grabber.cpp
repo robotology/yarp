@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     } else {
         // expect something like '--device file_grabber --pattern "image/%03d.ppm"'
         //                    or '--device dragonfly'
-        //                    or '--device test_grabber --period 0.5 --mode [ball]'
+        //                    or '--device fakeFrameGrabber --period 0.5 --mode [ball]'
         config.fromCommand(argc,argv);
     }
     PolyDriver dd(config);

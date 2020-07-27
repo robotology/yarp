@@ -3,25 +3,25 @@ A simple example shows the arbitration of two different modules connected to
 the same port of "yarpview"
 ****************************************************************************
 
- ______________
-|              | (/Ball/grabber)                          __________
-| test_grabber  >----------------------------------->|   |          |
-|______________|                 ------------------->|---> yarpview |
-                                 -           .......>|   |__________|
- ______________                  -           .
-|              | (/Line/grabber) -           .
-| test_grabber  >-----------------           .
-|______________|                             .
-                                             .
-                                             . (an auxiliary connection)
-                                             .
- ______________                              .
-|              | (/Selector/grabber)         .
-| test_grabber  >.............................
-|______________|
+ __________________
+|                  | (/Ball/grabber)                          __________
+| fakeFrameGrabber  >----------------------------------->|   |          |
+|__________________|                 ------------------->|---> yarpview |
+                                     -           .......>|   |__________|
+ __________________                  -           .
+|                  | (/Line/grabber) -           .
+| fakeFrameGrabber  >-----------------           .
+|__________________|                             .
+                                                 .
+                                                 . (an auxiliary connection)
+                                                 .
+ __________________                              .
+|                  | (/Selector/grabber)         .
+| fakeFrameGrabber  >.............................
+|__________________|
 
 
-The connection from the third "test_grabber" module (/Selector/grabber)
+The connection from the third "fakeFrameGrabber" module (/Selector/grabber)
 is used as an auxiliary connection to activate "/Ball/grabber" and deactivate
  "/Line/grabber". The module runs in low frequency (every 3 seconds) and plays
 as a selector between two other modules. As the result, yarpview switches

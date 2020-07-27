@@ -47,12 +47,12 @@ YARP_DISABLE_DEPRECATED_WARNING
  *
  * Here's a command-line example:
  * \verbatim
- [terminal A] yarpdev --device test_grabber --width 8 --height 8 --name /grabber --framerate 30
+ [terminal A] yarpdev --device fakeFrameGrabber --width 8 --height 8 --name /grabber --framerate 30
  [terminal B] yarp read /read
  [terminal C] yarp connect /grabber /read
  [terminal C] echo "[get] [gain]" | yarp rpc /grabber
  \endverbatim
- * The yarpdev line starts a TestFrameGrabber wrapped in a ServerFrameGrabber.
+ * The yarpdev line starts a FakeFrameGrabber wrapped in a ServerFrameGrabber.
  * Parameters are:
  * --width, --height set the size of the frame in pixels
  * --name portname set the name of the output port
@@ -123,7 +123,7 @@ public:
     /**
      * Configure with a set of options. These are:
      * <TABLE>
-     * <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "test_grabber"). </TD></TR>
+     * <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "fakeFrameGrabber"). </TD></TR>
      * <TR><TD> name </TD><TD> Port name to assign to this server (default /grabber). </TD></TR>
      * </TABLE>
      *
