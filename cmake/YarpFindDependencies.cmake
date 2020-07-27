@@ -660,10 +660,13 @@ yarp_print_feature(YARP_COMPILE_yarpviz 2 "Compile yarpviz${YARP_COMPILE_yarpviz
 yarp_print_feature(YARP_COMPILE_RobotTestingFramework_ADDONS 0 "Compile Robot Testing Framework addons")
 yarp_print_feature(YARP_COMPILE_UNMAINTAINED 0 "Compile Unmaintained components")
 
+yarp_print_feature(YARP_COMPILE_EXAMPLES 0 "Compile YARP examples")
+
 yarp_print_feature(YARP_COMPILE_TESTS 0 "Compile and enable YARP tests")
 yarp_print_feature(YARP_DISABLE_FAILING_TESTS 1 "Disable tests that fail randomly due to race conditions")
 yarp_print_feature(YARP_ENABLE_BROKEN_TESTS 1 "Enable broken tests")
 yarp_print_feature(YARP_ENABLE_INTEGRATION_TESTS 1 "Run integration tests")
+yarp_print_feature(YARP_ENABLE_EXAMPLES_AS_TESTS 1 "Compile examples as unit tests")
 yarp_print_feature(YARP_VALGRIND_TESTS 1 "Run YARP tests under Valgrind")
 
 

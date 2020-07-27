@@ -158,7 +158,12 @@ git:
   export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_DISABLE_FAILING_TESTS:BOOL=ON"
 
 .export_cmake_options_enable_broken_tests_cmd_definition: &export_cmake_options_enable_broken_tests_cmd |-
+  # export_cmake_options_enable_broken_tests_cmd
   export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_BROKEN_TESTS:BOOL=ON"
+
+.export_cmake_options_disable_examples_as_tests_cmd_definition: &export_cmake_options_disable_examples_as_tests_cmd |-
+  # export_cmake_options_disable_examples_as_tests_cmd
+  export YARP_CMAKE_OPTIONS="${YARP_CMAKE_OPTIONS} -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF"
 
 .print_cmake_flags_cmd_definition: &print_cmake_flags_cmd |-
   # Print cmake flags
@@ -183,12 +188,6 @@ git:
 .install_yarp_cmd_definition: &install_yarp_cmd |-
   # Test installation
   (cd build; cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install) || travis_terminate 1
-
-.build_yarp_os_examples_cmd_definition: &build_yarp_os_examples_cmd |-
-  # Build also the os examples
-  mkdir example/os/build
-  (cd example/os/build; cmake -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DYARP_DIR=${YARP_INSTALL_PREFIX}/lib/cmake/YARP ..) || travis_terminate 1
-  (cd example/os/build; cmake --build . --config ${TRAVIS_BUILD_TYPE})
 
 .build_bindings_from_build_cmd_definition: &build_bindings_from_build_cmd |-
   # Build bindings from build directory
@@ -332,7 +331,6 @@ git:
     - *build_yarp_cmd
     - *run_unit_tests_cmd
     - *install_yarp_cmd
-    - *build_yarp_os_examples_cmd
     - *build_bindings_from_build_cmd
     - *build_bindings_from_install_cmd
   after_success: skip
@@ -428,6 +426,7 @@ git:
     - *export_cmake_options_base_cmd
     - *export_cmake_options_osx_cmd
     - *export_cmake_options_disable_failing_tests_cmd
+    - *export_cmake_options_disable_examples_as_tests_cmd
     - *print_cmake_flags_cmd
     - *run_cmake_cmd
     - *print_cmake_cache_cmd
@@ -588,7 +587,6 @@ matrix:
         - *build_yarp_cmd
         - *run_unit_tests_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
 
     - stage: test
       <<: *linux_clang_build_template
@@ -613,7 +611,6 @@ matrix:
         - *build_yarp_cmd
         - *run_unit_tests_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
 
     - stage: test
       <<: *linux_gcc_build_template
@@ -637,7 +634,6 @@ matrix:
       script:
         - *build_yarp_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
 
     - stage: test
       <<: *linux_clang_build_template
@@ -661,7 +657,6 @@ matrix:
       script:
         - *build_yarp_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
 
     - stage: test
       <<: *linux_gcc_build_template
@@ -712,7 +707,6 @@ matrix:
         - *build_yarp_cmd
         - *run_unit_tests_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
 
     - stage: test
       <<: *linux_clang_build_template
@@ -737,7 +731,6 @@ matrix:
         - *build_yarp_cmd
         - *run_unit_tests_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
 
     - stage: test
       <<: *linux_gcc_build_template
@@ -780,7 +773,6 @@ matrix:
       script:
         - *build_yarp_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
         - *build_bindings_from_build_cmd
         - *build_bindings_from_install_cmd
 
@@ -799,7 +791,6 @@ matrix:
       script:
         - *build_yarp_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
         - *build_bindings_from_build_cmd
         - *build_bindings_from_install_cmd
 
@@ -835,7 +826,7 @@ matrix:
 
     - stage: test-long
       <<: *linux_gcc_build_template
-      name: "Standard build with valgrind (linux, gcc) - bindings and failing tests disabled"
+      name: "Standard build with valgrind (linux, gcc) - bindings, failing tests and examples as tests disabled"
       env:
        - TRAVIS_BUILD_TYPE=Debug
       addons:
@@ -853,6 +844,7 @@ matrix:
         - *export_cmake_options_linux_gcc_cmd
         - *export_cmake_options_valgrind_cmd
         - *export_cmake_options_disable_failing_tests_cmd
+        - *export_cmake_options_disable_examples_as_tests_cmd
         - *print_cmake_flags_cmd
         - *run_cmake_cmd
         - *print_cmake_cache_cmd
@@ -860,11 +852,10 @@ matrix:
         - *build_yarp_cmd
         - *run_unit_tests_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
 
     - stage: test-long
       <<: *linux_gcc_build_template
-      name: "No ACE build with valgrind (linux, gcc) - bindings and failing tests disabled"
+      name: "No ACE build with valgrind (linux, gcc) - bindings, failing tests and examples as tests disabled"
       env:
        - TRAVIS_BUILD_TYPE=Debug
       addons:
@@ -882,6 +873,7 @@ matrix:
         - *export_cmake_options_skip_ace_cmd
         - *export_cmake_options_valgrind_cmd
         - *export_cmake_options_disable_failing_tests_cmd
+        - *export_cmake_options_disable_examples_as_tests_cmd
         - *print_cmake_flags_cmd
         - *run_cmake_cmd
         - *print_cmake_cache_cmd
@@ -889,16 +881,15 @@ matrix:
         - *build_yarp_cmd
         - *run_unit_tests_cmd
         - *install_yarp_cmd
-        - *build_yarp_os_examples_cmd
 
     - stage: test-long
       <<: *osx_build_template
-      name: "Standard build (osx, xcode11.3, clang) - installation, examples, bindings and failing tests disabled"
+      name: "Standard build (osx, xcode11.3, clang) - installation, bindings, failing tests and examples as tests disabled"
       osx_image: xcode11.3
 
     - stage: test-long
       <<: *osx_build_template
-      name: "Standard build with Xcode (osx, xcode11.3, clang) - installation, examples, bindings and failing tests disabled"
+      name: "Standard build with Xcode (osx, xcode11.3, clang) - installation, bindings, failing tests and examples as tests disabled"
       osx_image: xcode11.3
       env:
         - TRAVIS_CMAKE_GENERATOR="Xcode"
@@ -949,7 +940,6 @@ matrix:
 #        - build/bin/yarp conf 0 0 local
 #        - *run_unit_tests_cmd
 #        - *install_yarp_cmd
-#        - *build_yarp_os_examples_cmd
 #        - *build_bindings_from_build_cmd
 #        - *build_bindings_from_install_cmd
 #

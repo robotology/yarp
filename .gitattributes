@@ -6,6 +6,7 @@
 .gitignore                      export-ignore
 .mailmap                        export-ignore
 .travis.yml                     export-ignore
+.ci/                            export-ignore
 
 *.txt                           whitespace=trailing-space,space-before-tab,tab-in-indent
 *.md                            whitespace=trailing-space,space-before-tab,tab-in-indent
