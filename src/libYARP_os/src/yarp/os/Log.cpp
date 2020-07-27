@@ -323,7 +323,7 @@ inline void forwardable_output(std::ostream* ost,
     // This generates the same string a Property containing the following keys:
     // * level
     // * systemtime
-    // * networktime
+    // * networktime (if not using system time)
     // * customtime (if defined)
     // * filename (if YARP_FORWARD_CODEINFO_ENABLE is enabled)
     // * line (if YARP_FORWARD_CODEINFO_ENABLE is enabled)
@@ -339,7 +339,9 @@ inline void forwardable_output(std::ostream* ost,
 
     *ost << "(level " << yarp::os::impl::StoreString::quotedString(level) << ")";
     *ost << " (systemtime " << yarp::os::NetType::toString(systemtime)  << ")";
-    *ost << " (networktime " << yarp::os::NetType::toString(networktime)  << ")";
+    if (!yarp::os::Time::isSystemClock()) {
+        *ost << " (networktime " << yarp::os::NetType::toString(networktime)  << ")";
+    }
     if (customtime != 0.0) {
         *ost << "(customtime " << yarp::os::NetType::toString(customtime) << ")";
     }

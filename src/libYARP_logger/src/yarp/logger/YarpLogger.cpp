@@ -376,7 +376,7 @@ void LoggerEngine::logger_thread::run()
                 if (p.check("networktime")) {
                     body.networktime = p.find("networktime").asFloat64();
                 } else {
-                    body.networktime = 0.0;
+                    body.networktime = body.systemtime;
                     body.yarprun_timestamp.clear();
                 }
 
