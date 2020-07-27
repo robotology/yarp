@@ -12,7 +12,7 @@
   This is imported from the iCub repository.
 
   To try it out, start:
-   yarpdev --device test_motor --name /fakebot/head --axes 8
+   yarpdev --device fakeMotor --name /fakebot/head --axes 8
 
   Then do:
    ./simple_motor_client --robot fakebot --part head
@@ -25,7 +25,7 @@
     [set] [pos] 4 5.0
     [get] [encs]
 
-  Other commands may not be supported by test_motor, but may be useful
+  Other commands may not be supported by fakeMotor, but may be useful
   for your specific hardware.
 
   When you type a command, there is an echo with the prefix "Bottle:".

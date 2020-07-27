@@ -27,7 +27,7 @@ class Example4 {
         prop.put("device","remote_controlboard");
         prop.put("local", "/example/motor/client");
         prop.put("remote", "/icubSim/head");  // this is for the icubSim
-        // or fake it with "yarpdev --device test_motor --name /icubSim/head"
+        // or fake it with "yarpdev --device fakeMotor --name /icubSim/head"
         System.out.println("Property is " + prop);
 
         // create the device
