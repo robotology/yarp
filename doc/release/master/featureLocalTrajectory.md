@@ -1,5 +1,5 @@
 featureLocalTrajectory {#master}
------------------------
+----------------------
 
 ### Libraries
 

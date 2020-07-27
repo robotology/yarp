@@ -1,5 +1,5 @@
-feature_companion_qos_command {#yarp_3_3}
----------------
+feature_companion_qos_command {#master}
+-----------------------------
 
 ### Tools
 

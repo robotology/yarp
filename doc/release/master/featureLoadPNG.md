@@ -1,5 +1,5 @@
 featureLoadPNG {#master}
------------------
+--------------
 
 ### libYARP_sig
 

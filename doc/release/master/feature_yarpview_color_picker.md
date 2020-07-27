@@ -1,5 +1,5 @@
 fix_yarpview_color_picker {#master}
----------------
+-------------------------
 
 ### GUIs
 
