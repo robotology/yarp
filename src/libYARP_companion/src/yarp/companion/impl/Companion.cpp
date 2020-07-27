@@ -29,6 +29,7 @@ void print_callback(yarp::os::Log::LogType type,
                     const char* func,
                     double systemtime,
                     double networktime,
+                    double customtime,
                     const char* comp_name)
 {
     YARP_UNUSED(type);
@@ -37,6 +38,7 @@ void print_callback(yarp::os::Log::LogType type,
     YARP_UNUSED(func);
     YARP_UNUSED(systemtime);
     YARP_UNUSED(networktime);
+    YARP_UNUSED(customtime);
     YARP_UNUSED(comp_name);
     static const char* err_str = "[ERROR] ";
     static const char* warn_str = "[WARNING] ";
