@@ -27,16 +27,16 @@ std::string getYARPRuntimeDir()
     static std::mutex m;
     std::lock_guard<std::mutex> lock(m);
 
-    static std::string socketDir;
+    static std::string yarp_runtime_dir;
     bool found = false;
 
     // If already populated, there is nothing to do
-    if (!socketDir.empty()) {
-        return socketDir;
+    if (!yarp_runtime_dir.empty()) {
+        return yarp_runtime_dir;
     }
 
     // Check YARP_RUNTIME_DIR
-    std::string yarp_runtime_dir = NetworkBase::getEnvironment("YARP_RUNTIME_DIR", &found);
+    yarp_runtime_dir = NetworkBase::getEnvironment("YARP_RUNTIME_DIR", &found);
     if (found) {
         return yarp_runtime_dir;
     }
