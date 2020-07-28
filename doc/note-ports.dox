@@ -278,9 +278,9 @@ Our network so far is very simple:
 
 Now let's make a program that transforms the output of /write in some way,
 for example by adding up all the numbers in it.  Here
-is a program for this ("example/os/summer.cpp" in the YARP source):
+is a program for this ("example/os/summer/summer.cpp" in the YARP source):
 
-\include example/os/summer.cpp
+\include example/os/summer/summer.cpp
 
 For now, there's no need to worry too much the details of this code.
 Start another two terminals and do the following (make sure the

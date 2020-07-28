@@ -61,7 +61,7 @@ class StoreList;
  * efficient formats for transmission.
  *
  * Here's an example of using a Bottle:
- * \include example/os/bottle_add.cpp
+ * \include example/os/bottle_add/bottle_add.cpp
  *
  * This class has a well-defined, documented representation in both
  * binary and text form.  The name of this class comes from the idea

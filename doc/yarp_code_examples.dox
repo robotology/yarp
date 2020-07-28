@@ -12,11 +12,11 @@ simple_sender.cpp and simple_receiver.cpp
 
 Here's simple_sender.cpp:
 
-\include example/os/simple_sender.cpp
+\include example/os/simple_sender/simple_sender.cpp
 
 Here's simple_receiver.cpp:
 
-\include example/os/simple_receiver.cpp
+\include example/os/simple_receiver/simple_receiver.cpp
 
 Here's an example CMakeLists.txt file to help with compiling
 if you use CMake
@@ -76,7 +76,7 @@ You can run the receiver many times to connect and reconnect.
 
  \section yarp_code_example_buffer Buffered port example
 
-\include example/os/buffered_port.cpp
+\include example/os/buffered_port/buffered_port.cpp
 
 */
 
