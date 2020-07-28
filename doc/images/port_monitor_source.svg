@@ -117,7 +117,7 @@
            id="tspan3121"
            y="683.93286"
            x="-21.833031"
-           sodipodi:role="line">test_grabber</tspan></text>
+           sodipodi:role="line">fakeFrameGrabber</tspan></text>
       <g
          transform="translate(-84,0)"
          id="g3113">
@@ -299,7 +299,7 @@
            id="tspan3121-0"
            y="615.1615"
            x="-23.145514"
-           sodipodi:role="line">test_grabber</tspan></text>
+           sodipodi:role="line">fakeFrameGrabber</tspan></text>
       <g
          transform="translate(-85.312479,-68.771328)"
          id="g3113-0">
@@ -362,7 +362,7 @@
            id="tspan3121-8"
            y="752.54224"
            x="-22.135355"
-           sodipodi:role="line">test_grabber</tspan></text>
+           sodipodi:role="line">fakeFrameGrabber</tspan></text>
       <g
          transform="translate(-84.302327,68.609417)"
          id="g3113-4">

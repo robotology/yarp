@@ -332,8 +332,8 @@ if is_test images_yarp_to_ros; then
     node="/test/image/node/pid$$"
     typ="sensor_msgs/Image"
     topic="/test/image/$typ/pid$$"
-    echo ${YARP_BIN}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8
-    ${YARP_BIN}/yarpdev --device test_grabber --name $topic@$node --width 16 --height 8 &
+    echo ${YARP_BIN}/yarpdev --device fakeFrameGrabber --name $topic@$node --width 16 --height 8
+    ${YARP_BIN}/yarpdev --device fakeFrameGrabber --name $topic@$node --width 16 --height 8 &
     add_helper $!
 
     wait_node_topic $node $topic

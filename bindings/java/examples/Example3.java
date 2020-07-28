@@ -24,7 +24,7 @@ class Example3 {
         // set up a description of the device we want
         // in this case, a fake framegrabber
         Property prop = new Property();
-        prop.put("device","test_grabber");
+        prop.put("device","fakeFrameGrabber");
         prop.put("width", 640);
         prop.put("height", 480);
         System.out.println("Property is " + prop);

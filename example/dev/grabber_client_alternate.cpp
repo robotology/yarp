@@ -19,7 +19,7 @@ using namespace yarp::sig;
  * camera-like sources.
  *
  * Remote source could be, for example:
- *   yarpdev --device test_grabber --name /fakey
+ *   yarpdev --device fakeFrameGrabber --name /fakey
  *
  */
 

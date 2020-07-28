@@ -133,7 +133,7 @@ struct Configuration
  * device grabberDual
  * capabilities COLOR        # not necessary to specify 'COLOR', this is the default value if capabilities is omitted
  * period 30
- * subdevice test_grabber
+ * subdevice fakeFrameGrabber
  * \endcode
  *
  * Example of configuration file using .xml format, for handling two cameras.

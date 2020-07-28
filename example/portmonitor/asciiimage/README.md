@@ -42,7 +42,7 @@ yarpserver
 * Open another terminal (lets call this the sender terminal) and type
 
 ```bash
-yarpdev --device test_grabber --mode ball
+yarpdev --device fakeFrameGrabber --mode ball
 ```
 
 * In the directory where you you built the dll (lets call this the receiver
@@ -67,7 +67,7 @@ yarpserver
 * Open another terminal (lets call this the sender terminal) and type
 
 ```bash
-yarpdev --device test_grabber --mode ball
+yarpdev --device fakeFrameGrabber --mode ball
 ```
 
 * In the directory where you you built the dll (lets call this the receiver

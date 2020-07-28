@@ -5,9 +5,9 @@
 
 Instantiates \ref cmd_device_grabberDual "grabberDual" device implemented by ServerGrabber.
 \verbatim
-# start up a network wrapper around a test_grabber
+# start up a network wrapper around a fakeFrameGrabber
 device grabberDual
-subdevice test_grabber
+subdevice fakeFrameGrabber
 width 640
 height 480
 period 0.25

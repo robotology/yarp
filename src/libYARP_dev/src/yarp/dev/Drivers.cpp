@@ -446,7 +446,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             yCInfo(DRIVERS, "To create a device whose name you know, call yarpdev like this:");
             yCInfo(DRIVERS, "   yarpdev --device DEVICENAME --OPTION VALUE ...");
             yCInfo(DRIVERS, "   For example:");
-            yCInfo(DRIVERS, "   yarpdev --device test_grabber --width 32 --height 16 --name /grabber");
+            yCInfo(DRIVERS, "   yarpdev --device fakeFrameGrabber --width 32 --height 16 --name /grabber");
             yCInfo(DRIVERS, "You can always move options to a configuration file:");
             yCInfo(DRIVERS, "   yarpdev [--device DEVICENAME] --from CONFIG_FILENAME");
             if (options.check ("from")) {

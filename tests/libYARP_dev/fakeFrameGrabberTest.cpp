@@ -25,21 +25,21 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 
-TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
+TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
 {
-    YARP_REQUIRE_PLUGIN("test_grabber", "device");
+    YARP_REQUIRE_PLUGIN("fakeFrameGrabber", "device");
     YARP_REQUIRE_PLUGIN("remote_grabber", "device");
     YARP_REQUIRE_PLUGIN("grabberDual", "device");
 
     Network::setLocalMode(true);
 
-    SECTION("Test the TestFrameGrabber")
+    SECTION("Test the FakeFrameGrabber")
     {
-        // Try to open a TestFrameGrabber I check its existence,
+        // Try to open a FakeFrameGrabber I check its existence,
         // try to take an image and check the relative port and rpc port
         PolyDriver dd;
         Property p;
-        p.put("device","test_grabber");
+        p.put("device","fakeFrameGrabber");
         REQUIRE(dd.open(p)); // open reported successful
         IFrameGrabberImage *grabber = nullptr;
         REQUIRE(dd.view(grabber)); // interface reported
@@ -59,7 +59,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
         p.put("remote","/grabber");
         p.put("local","/grabber/client");
         p2.put("device","grabberDual");
-        p2.put("subdevice","test_grabber");
+        p2.put("subdevice","fakeFrameGrabber");
 
         REQUIRE(dd2.open(p2)); // server open reported successful
         REQUIRE(dd.open(p)); // client open reported successful
@@ -78,7 +78,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
 
     SECTION("Test the IRgbVisualParams interface")
     {
-        // Try to open a TestFrameGrabber and I check all the parameters
+        // Try to open a FakeFrameGrabber and I check all the parameters
         PolyDriver dd;
         PolyDriver dd2;
         Property p;
@@ -92,7 +92,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
         p.put("no_stream", 1);
 
         p2.put("device","grabberDual");
-        p2.put("subdevice","test_grabber");
+        p2.put("subdevice","fakeFrameGrabber");
 
         REQUIRE(dd2.open(p2)); // server open reported successful
         REQUIRE(dd.open(p)); // client open reported successful
@@ -208,7 +208,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
         p.put("local","/grabber/client");
 
         p2.put("device","grabberDual");
-        p2.put("context","TestFrameGrabberTest");
+        p2.put("context","fakeFrameGrabberTest");
         p2.put("left_config","left_test.ini");
         p2.put("right_config","right_test.ini");
 
@@ -362,7 +362,7 @@ TEST_CASE("dev::TestFrameGrabberTest", "[yarp::dev]")
         p.put("local","/grabber/client");
 
         p2.put("device","grabberDual");
-        p2.put("subdevice","test_grabber");
+        p2.put("subdevice","fakeFrameGrabber");
         size_t width = 320;
         p2.put("width", (int)width);
         p2.put("split", true);

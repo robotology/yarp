@@ -12,7 +12,7 @@ in an input port
 -- Open a terminal and run yarpserver
 
 -- Open another terminal (lets call this the grabber terminal) and type
-   $ yarpdev --device test_grabber --freq 30
+   $ yarpdev --device fakeFrameGrabber --freq 30
 
 -- Open another terminal (lets call this the viewer terminal) and change
    to the 'qos_monitor' directory and run an instance of the 'yarpview'
@@ -23,7 +23,7 @@ in an input port
    $ yarp connect /grabber /view tcp+recv.portmonitor+file.qos_monitor
 
 
-The 'test_grabber' is supposed to transmit the image data to the 'yarpview'
+The 'fakeFrameGrabber' is supposed to transmit the image data to the 'yarpview'
 in every 30ms (30Hrz). This is monitored in the 'qos_monitor.lua' and when
 the real frequency goes below the desired frequency, corresponding message
 will be printed out in the viewer terminal.

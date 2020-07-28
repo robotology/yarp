@@ -301,7 +301,7 @@ For example, suppose port /grabber is streaming bayer images.
 For concreteness, here's a test program to do that (back.ppm is
 an arbitrary test image in PPM format):
 \verbatim
-  yarpdev --device test_grabber --src back.ppm --bayer --name /grabber
+  yarpdev --device fakeFrameGrabber --src back.ppm --bayer --name /grabber
 \endverbatim
 Suppose we start an image viewer and look at the stream from
 /grabber, using (for example) udp:

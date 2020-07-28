@@ -31,7 +31,7 @@ This simple example shows the arbitration of two different connections to the sa
 
 \image html arbitration.png ""
 
-The connection from the third "test_grabber" module (/Selector/grabber) is used as an auxiliary connection to choose between "/Ball/grabber" and "/Line/grabber". To achieve this, its selection rule in the 'selector_monitor.lua' is simply set to 'false'. The  module runs in low frequency (every 3 seconds) and plays as a selector between two other modules by setting/removing some events which are used as constraint in 'ball_monitor.lua' and 'line_monitor.lua'. As the result, yarpview switches between different images coming from "/Ball/grabber" and "/Line/grabber" periodically.
+The connection from the third "fakeFrameGrabber" module (/Selector/grabber) is used as an auxiliary connection to choose between "/Ball/grabber" and "/Line/grabber". To achieve this, its selection rule in the 'selector_monitor.lua' is simply set to 'false'. The  module runs in low frequency (every 3 seconds) and plays as a selector between two other modules by setting/removing some events which are used as constraint in 'ball_monitor.lua' and 'line_monitor.lua'. As the result, yarpview switches between different images coming from "/Ball/grabber" and "/Line/grabber" periodically.
 
 
 \section arbitration_req Requirements

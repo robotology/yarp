@@ -72,7 +72,7 @@ digraph device_example1 {
 
 //	PicoloDeviceDriver;
 	DragonflyDeviceDriver;
-//	TestFrameGrabber;
+//	FakeFrameGrabber;
 //	RemoteFrameGrabber;
 //	ServerFrameGrabber;
 
@@ -80,8 +80,8 @@ digraph device_example1 {
 //	PicoloDeviceDriver    -> IFrameGrabberControls;
 	DragonflyDeviceDriver -> IFrameGrabberImage;
 	DragonflyDeviceDriver -> IFrameGrabberControls;
-//	TestFrameGrabber      -> IFrameGrabberImage;
-//	TestFrameGrabber      -> IFrameGrabberControls;
+//	FakeFrameGrabber      -> IFrameGrabberImage;
+//	FakeFrameGrabber      -> IFrameGrabberControls;
 //	RemoteFrameGrabber    -> IFrameGrabberImage;
 //	RemoteFrameGrabber    -> IFrameGrabberControls;
 //	ServerFrameGrabber    -> IFrameGrabberImage;
@@ -235,8 +235,8 @@ Device <dragonfly>
    documented by the C++ class DragonflyDeviceDriver
    Wrapped for the network by <grabber>
 
-Device <test_grabber>
-   documented by the C++ class TestFrameGrabber
+Device <fakeFrameGrabber>
+   documented by the C++ class FakeFrameGrabber
    Wrapped for the network by <grabber>
 
 Device <grabber>
@@ -248,7 +248,7 @@ We see a "dragonfly" listing associated with the DragonflyDeviceDriver
 class --
 "dragonfly" is this devices <i>common name</i> to which it is referred to in
 configuration files, command line options, etc..
-There is also a "test_grabber" listing associated with a TestFrameGrabber
+There is also a "fakeFrameGrabber" listing associated with a FakeFrameGrabber
 class -- this is in fact a more elaborate version of the fake framegrabber
 we've been working on, for testing purposes.  We can ignore it for now.
 There is also a "grabber" device listed, with is a network wrapper

@@ -3,7 +3,7 @@
 
 <devices robot="grabber" build="2">
     <device name="grabber_left" type="grabber">
-        <param name="subdevice">test_grabber</param>
+        <param name="subdevice">fakeFrameGrabber</param>
         <param name="name">/left</param>
         <param name="width">360</param>
         <param name="height">240</param>
@@ -11,7 +11,7 @@
     </device>
 
     <device name="grabber_right" type="grabber">
-        <param name="subdevice">test_grabber</param>
+        <param name="subdevice">fakeFrameGrabber</param>
         <param name="name">/right</param>
         <param name="width">360</param>
         <param name="height">240</param>

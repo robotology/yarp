@@ -36,9 +36,9 @@ int main() {
 
     printf("*** fakebot created\n");
 
-    PolyDriver dd2("test_grabber");
+    PolyDriver dd2("fakeFrameGrabber");
     if (!dd2.isValid()) {
-        printf("test_grabber not available\n");
+        printf("fakeFrameGrabber not available\n");
         exit(1);
     }
 

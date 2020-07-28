@@ -14,7 +14,7 @@
         <author email=""></author>
     </authors>
     <module>
-        <name>test_grabber</name>
+        <name>fakeFrameGrabber</name>
         <parameters>--mode ball</parameters>
         <node>localhost</node>
         <prefix>/Ball</prefix>
@@ -22,7 +22,7 @@
         <geometry>(Pos (x 135) (y 105.9))</geometry>
     </module>
     <module>
-        <name>test_grabber</name>
+        <name>fakeFrameGrabber</name>
         <parameters>--mode line</parameters>
         <node>localhost</node>
         <prefix>/Line</prefix>
@@ -30,7 +30,7 @@
         <geometry>(Pos (x 135) (y 255.9))</geometry>
     </module>
     <module>
-        <name>test_grabber</name>
+        <name>fakeFrameGrabber</name>
         <parameters>--width 1 --height 1 --freq 0.3 --mode line</parameters>
         <node>localhost</node>
         <prefix>/Selector</prefix>

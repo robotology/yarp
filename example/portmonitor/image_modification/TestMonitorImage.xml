@@ -14,7 +14,7 @@
     </authors>
 
     <module>
-        <name>test_grabber</name>
+        <name>fakeFrameGrabber</name>
         <parameters>--width 120 --height 120 --mode line</parameters>
         <node>localhost</node>
         <prefix></prefix>

@@ -12,7 +12,7 @@
     <module>
         <name>yarpdev</name>
         <node>pc104</node>
-        <parameters>--device test_grabber --name /grabber1 --framerate 30</parameters>
+        <parameters>--device fakeFrameGrabber --name /grabber1 --framerate 30</parameters>
         <tag>grabber1</tag>
         <stdio>icub15</stdio>
     </module>

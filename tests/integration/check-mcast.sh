@@ -10,7 +10,7 @@ killall yarp yarpdev
 killall -9 yarp yarpdev
 sleep 2
 
-yarpdev --device test_grabber --framerate 0.5 --width 4 --height 4 --name /src &
+yarpdev --device fakeFrameGrabber --framerate 0.5 --width 4 --height 4 --name /src &
 yarp wait /src
 sleep 2
 

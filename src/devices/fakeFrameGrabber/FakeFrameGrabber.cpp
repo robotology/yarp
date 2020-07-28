@@ -7,7 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "TestFrameGrabber.h"
+#include "FakeFrameGrabber.h"
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
@@ -22,7 +22,7 @@ using namespace yarp::sig;
 using namespace yarp::sig::draw;
 
 namespace {
-YARP_LOG_COMPONENT(TESTGRABBER, "yarp.device.test_grabber")
+YARP_LOG_COMPONENT(FAKEFRAMEGRABBER, "yarp.device.fakeFrameGrabber")
 constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
 constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
 constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
@@ -31,7 +31,7 @@ constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s'
 constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab('t','i','m','e');
 }
 
-TestFrameGrabber::TestFrameGrabber() :
+FakeFrameGrabber::FakeFrameGrabber() :
     ct(0),
     bx(0),
     by(0),
@@ -66,11 +66,11 @@ TestFrameGrabber::TestFrameGrabber() :
 }
 
 
-bool TestFrameGrabber::close() {
+bool FakeFrameGrabber::close() {
     return true;
 }
 
-bool TestFrameGrabber::open(yarp::os::Searchable& config) {
+bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
     yarp::os::Value *val;
     Value* retM;
     retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
@@ -84,11 +84,11 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
                                "desired vertical fov of test image").asFloat64();
     mirror=config.check("mirror",Value(false),
                         "mirroring disabled by default").asBool();
-    intrinsic.put("physFocalLength",config.check("physFocalLength",Value(3.0),"Physical focal length of the test_grabber").asFloat64());
-    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal length of the test_grabber").asFloat64());
-    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal length of the test_grabber").asFloat64());
-    intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the test_grabber").asFloat64());
-    intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the test_grabber").asFloat64());
+    intrinsic.put("physFocalLength",config.check("physFocalLength",Value(3.0),"Physical focal length of the fakeFrameGrabber").asFloat64());
+    intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal length of the fakeFrameGrabber").asFloat64());
+    intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal length of the fakeFrameGrabber").asFloat64());
+    intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the fakeFrameGrabber").asFloat64());
+    intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the fakeFrameGrabber").asFloat64());
     intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,"Matrix that describes the lens' distortion(fake)"));
     intrinsic.put("distortionModel",config.check("distortionModel",Value("FishEye"),"Reference to group of parameters describing the distortion model of the camera").asString());
     intrinsic.put("k1",config.check("k1",Value(8.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
@@ -139,13 +139,13 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     use_mono = use_mono||use_bayer;
 
     if (freq!=-1) {
-        yCInfo(TESTGRABBER,
+        yCInfo(FAKEFRAMEGRABBER,
                "Test grabber period %g / freq %g , mode [%s]",
                period,
                freq,
                yarp::os::Vocab::decode(mode).c_str());
     } else {
-        yCInfo(TESTGRABBER,
+        yCInfo(FAKEFRAMEGRABBER,
                "Test grabber period %g / freq [inf], mode [%s]",
                period,
                yarp::os::Vocab::decode(mode).c_str());
@@ -156,7 +156,7 @@ bool TestFrameGrabber::open(yarp::os::Searchable& config) {
     return true;
 }
 
-void TestFrameGrabber::timing() {
+void FakeFrameGrabber::timing() {
     double now = yarp::os::Time::now();
 
     if (now-prev>1000) {
@@ -174,73 +174,73 @@ void TestFrameGrabber::timing() {
     prev += period;
 }
 
-int TestFrameGrabber::height() const {
+int FakeFrameGrabber::height() const {
     return h;
 }
 
-int TestFrameGrabber::width() const {
+int FakeFrameGrabber::width() const {
     return w;
 }
 
-int TestFrameGrabber::getRgbHeight(){
+int FakeFrameGrabber::getRgbHeight(){
     return h;
 }
 
-int TestFrameGrabber::getRgbWidth(){
+int FakeFrameGrabber::getRgbWidth(){
     return w;
 }
 
-bool TestFrameGrabber::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
+bool FakeFrameGrabber::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations){
     configurations=this->configurations;
     return true;
 }
 
-bool TestFrameGrabber::getRgbResolution(int &width, int &height){
+bool FakeFrameGrabber::getRgbResolution(int &width, int &height){
     width=w;
     height=h;
     return true;
 }
 
-bool TestFrameGrabber::setRgbResolution(int width, int height){
+bool FakeFrameGrabber::setRgbResolution(int width, int height){
     w=width;
     h=height;
     return true;
 }
 
-bool TestFrameGrabber::getRgbFOV(double &horizontalFov, double &verticalFov){
+bool FakeFrameGrabber::getRgbFOV(double &horizontalFov, double &verticalFov){
     horizontalFov=this->horizontalFov;
     verticalFov=this->verticalFov;
     return true;
 }
 
-bool TestFrameGrabber::setRgbFOV(double horizontalFov, double verticalFov){
+bool FakeFrameGrabber::setRgbFOV(double horizontalFov, double verticalFov){
     this->horizontalFov=horizontalFov;
     this->verticalFov=verticalFov;
     return true;
 }
 
-bool TestFrameGrabber::getRgbIntrinsicParam(yarp::os::Property &intrinsic){
+bool FakeFrameGrabber::getRgbIntrinsicParam(yarp::os::Property &intrinsic){
     intrinsic=this->intrinsic;
     return true;
 }
 
-bool TestFrameGrabber::getRgbMirroring(bool &mirror){
+bool FakeFrameGrabber::getRgbMirroring(bool &mirror){
     mirror=this->mirror;
     return true;}
 
-bool TestFrameGrabber::setRgbMirroring(bool mirror){
+bool FakeFrameGrabber::setRgbMirroring(bool mirror){
     this->mirror=mirror;
     return true;
 }
 
-bool TestFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     timing();
     createTestImage(image);
     return true;
 }
 
 
-bool TestFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
     timing();
     createTestImage(rgb_image);
     if (use_bayer) {
@@ -252,35 +252,35 @@ bool TestFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 }
 
 
-yarp::os::Stamp TestFrameGrabber::getLastInputStamp() {
+yarp::os::Stamp FakeFrameGrabber::getLastInputStamp() {
     return stamp;
 }
 
-bool TestFrameGrabber::hasAudio() { return false; }
+bool FakeFrameGrabber::hasAudio() { return false; }
 
-bool TestFrameGrabber::hasVideo() { return !use_mono; }
+bool FakeFrameGrabber::hasVideo() { return !use_mono; }
 
-bool TestFrameGrabber::hasRawVideo() {
+bool FakeFrameGrabber::hasRawVideo() {
     return use_mono;
 }
 
-bool TestFrameGrabber::getCameraDescription(CameraDescriptor *camera) { return false; }
-bool TestFrameGrabber::hasFeature(int feature, bool *hasFeature) { return false; }
-bool TestFrameGrabber::setFeature(int feature, double value) { return false; }
-bool TestFrameGrabber::getFeature(int feature, double *value) { return false; }
-bool TestFrameGrabber::setFeature(int feature, double  value1, double  value2) { return false; }
-bool TestFrameGrabber::getFeature(int feature, double *value1, double *value2) { return false; }
-bool TestFrameGrabber::hasOnOff(int feature, bool *HasOnOff) { return false; }
-bool TestFrameGrabber::setActive(int feature, bool onoff) { return false; }
-bool TestFrameGrabber::getActive(int feature, bool *isActive) { return false; }
-bool TestFrameGrabber::hasAuto(int feature, bool *hasAuto) { return false; }
-bool TestFrameGrabber::hasManual(int feature, bool *hasManual) { return false; }
-bool TestFrameGrabber::hasOnePush(int feature, bool *hasOnePush) { return false; }
-bool TestFrameGrabber::setMode(int feature, FeatureMode mode) { return false; }
-bool TestFrameGrabber::getMode(int feature, FeatureMode *mode) { return false; }
-bool TestFrameGrabber::setOnePush(int feature) { return false; }
+bool FakeFrameGrabber::getCameraDescription(CameraDescriptor *camera) { return false; }
+bool FakeFrameGrabber::hasFeature(int feature, bool *hasFeature) { return false; }
+bool FakeFrameGrabber::setFeature(int feature, double value) { return false; }
+bool FakeFrameGrabber::getFeature(int feature, double *value) { return false; }
+bool FakeFrameGrabber::setFeature(int feature, double  value1, double  value2) { return false; }
+bool FakeFrameGrabber::getFeature(int feature, double *value1, double *value2) { return false; }
+bool FakeFrameGrabber::hasOnOff(int feature, bool *HasOnOff) { return false; }
+bool FakeFrameGrabber::setActive(int feature, bool onoff) { return false; }
+bool FakeFrameGrabber::getActive(int feature, bool *isActive) { return false; }
+bool FakeFrameGrabber::hasAuto(int feature, bool *hasAuto) { return false; }
+bool FakeFrameGrabber::hasManual(int feature, bool *hasManual) { return false; }
+bool FakeFrameGrabber::hasOnePush(int feature, bool *hasOnePush) { return false; }
+bool FakeFrameGrabber::setMode(int feature, FeatureMode mode) { return false; }
+bool FakeFrameGrabber::getMode(int feature, FeatureMode *mode) { return false; }
+bool FakeFrameGrabber::setOnePush(int feature) { return false; }
 
-void TestFrameGrabber::printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
+void FakeFrameGrabber::printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
 {
     int pixelsize = 5;
     for (int i = 0; i<size; i++)
@@ -332,7 +332,7 @@ void TestFrameGrabber::printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf
     }
 }
 
-void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
+void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                                        image) {
     // to test IPreciselyTimed, make timestamps be mysteriously NNN.NNN42
     double t = Time::now();
@@ -403,17 +403,17 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         count++;
         if (count== 100)
         {
-            yCDebug(TESTGRABBER) << "size 100, 100";
+            yCDebug(FAKEFRAMEGRABBER) << "size 100, 100";
             image.resize(100,100);
         }
         else if (count == 200)
         {
-            yCDebug(TESTGRABBER) << "size 200, 100";
+            yCDebug(FAKEFRAMEGRABBER) << "size 200, 100";
             image.resize(200, 100);
         }
         else if (count == 300)
         {
-            yCDebug(TESTGRABBER) << "size 300, 50";
+            yCDebug(FAKEFRAMEGRABBER) << "size 300, 50";
             image.resize(300, 50);
             count = 0;
         }
@@ -518,7 +518,7 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
 // DF2 bayer sequence.
 // -- in staticgrabber: first row GBGBGB, second row RGRGRG.
 // -- changed here to:  first row GRGRGR, second row BGBGBG.
-bool TestFrameGrabber::makeSimpleBayer(
+bool FakeFrameGrabber::makeSimpleBayer(
         ImageOf<PixelRgb>& img,
         ImageOf<PixelMono>& bayer) {
 
@@ -569,4 +569,10 @@ bool TestFrameGrabber::makeSimpleBayer(
     }
 
     return true;
+}
+
+bool TestFrameGrabber::open(yarp::os::Searchable& config)
+{
+    yCWarning(FAKEFRAMEGRABBER, "'test_grabber' was renamed 'fakeFrameGrabber'. The old name is still supported for compatibility, but it will be deprecated and removed in a future release. Please update your scripts");
+    return FakeFrameGrabber::open(config);
 }
