@@ -561,6 +561,7 @@
     <addaction name="actionShow_LocalTimestamps"/>
     <addaction name="actionShow_System_Time"/>
     <addaction name="actionShow_Network_Time"/>
+    <addaction name="actionShow_Custom_Time"/>
     <addaction name="actionShow_Log_Level"/>
     <addaction name="actionShow_Filename"/>
     <addaction name="actionShow_Line_Number"/>
@@ -823,6 +824,14 @@
    </property>
    <property name="text">
     <string>Show Network Time</string>
+   </property>
+  </action>
+  <action name="actionShow_Custom_Time">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Custom Time</string>
    </property>
   </action>
   <action name="actionShow_Hostname">

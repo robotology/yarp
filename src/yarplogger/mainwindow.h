@@ -90,6 +90,8 @@ private slots:
 
     void on_actionShow_Network_Time_toggled(bool checked);
 
+    void on_actionShow_Custom_Time_toggled(bool checked);
+
     void on_actionShow_Log_Level_toggled(bool checked);
 
     void on_actionShow_Filename_toggled(bool checked);

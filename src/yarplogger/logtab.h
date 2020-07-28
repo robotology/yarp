@@ -56,6 +56,7 @@ private:
     bool                            displayLocalTimestamp_enabled;
     bool                            displaySystemTime_enabled;
     bool                            displayNetworkTime_enabled;
+    bool                            displayCustomTime_enabled;
     bool                            displayLogLevel_enabled;
     bool                            displayFilename_enabled;
     bool                            displayLine_enabled;
@@ -91,6 +92,7 @@ public:
     void displayLocalTimestamp  (bool enabled);
     void displaySystemTime      (bool enabled);
     void displayNetworkTime     (bool enabled);
+    void displayCustomTime      (bool enabled);
     void displayLogLevel        (bool enabled);
     void displayFilename        (bool enabled);
     void displayLine            (bool enabled);

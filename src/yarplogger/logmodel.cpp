@@ -40,6 +40,8 @@ LogModel::LogModel(QObject *parent) :
     m_names[SystemTimeStringRole] = "systemtime_string";
     m_names[NetworkTimeRole] = "networktime";
     m_names[NetworkTimeStringRole] = "networktime_string";
+    m_names[CustomTimeRole] = "customtime";
+    m_names[CustomTimeStringRole] = "customtime_string";
     m_names[LogLevelRole] = "level";
     m_names[LogLevelStringRole] = "level_string";
     m_names[FilenameRole] = "filename";
@@ -98,6 +100,8 @@ QVariant LogModel::headerData(int section, Qt::Orientation orientation, int role
         return tr("system time");
     case NETWORKTIME_COLUMN:
         return tr("network time");
+    case CUSTOMTIME_COLUMN:
+        return tr("custom time");
     case LOGLEVEL_COLUMN:
         return tr("level");
     case FILENAME_COLUMN:
@@ -141,6 +145,8 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
             return data(index, SystemTimeStringRole);
         case NETWORKTIME_COLUMN:
             return data(index, NetworkTimeStringRole);
+        case CUSTOMTIME_COLUMN:
+            return data(index, CustomTimeStringRole);
         case LOGLEVEL_COLUMN:
             return data(index, LogLevelStringRole);
         case FILENAME_COLUMN:
@@ -211,6 +217,7 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
         case LOCALTIMESTAMP_COLUMN:
         case SYSTEMTIME_COLUMN:
         case NETWORKTIME_COLUMN:
+        case CUSTOMTIME_COLUMN:
         case LINE_COLUMN:
         case PID_COLUMN:
         case THREADID_COLUMN:
@@ -261,6 +268,18 @@ QVariant LogModel::data(const QModelIndex &index, int role) const
         auto networktime = m_messages.at(index.row()).networktime;
         if (networktime != 0.0) {
             return QString::number(networktime, 'f'); // FIXME Return properly formatted date/time
+        }
+        return QVariant();
+    }
+
+    if (role == CustomTimeRole) {
+        return m_messages.at(index.row()).customtime;
+    }
+
+    if (role == CustomTimeStringRole) {
+        auto customtime = m_messages.at(index.row()).customtime;
+        if (customtime != 0.0) {
+            return QString::number(customtime, 'f'); // FIXME Return properly formatted date/time
         }
         return QVariant();
     }
