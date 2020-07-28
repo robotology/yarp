@@ -127,6 +127,13 @@ foreach my $filename (@files) {
         next;
     }
 
+    # Check if the file is missing the end of line at EOF
+    unless ("$txt" =~ /\n$/s) {
+        print "[NOT OK (Does not contains end of lines at EOF)] $filename\n";
+        $errors++;
+        next;
+    }
+
     # Ensure that scripts are executable on linux
     stat($filename);
     if ("$txt" =~ /^#!.+/s) {
