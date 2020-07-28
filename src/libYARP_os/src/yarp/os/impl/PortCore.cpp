@@ -9,6 +9,8 @@
 
 #include <yarp/os/impl/PortCore.h>
 
+#include <yarp/conf/environment.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/InputProtocol.h>
@@ -1767,7 +1769,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         Bottle result;
 
         bool found = false;
-        std::string name = NetworkBase::getEnvironment("YARP_ROBOT_NAME", &found);
+        std::string name = yarp::conf::environment::getEnvironment("YARP_ROBOT_NAME", &found);
         if (!found) {
             name = getName();
             // Remove initial "/"

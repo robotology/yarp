@@ -9,6 +9,8 @@
 
 #include <yarp/companion/impl/Companion.h>
 
+#include <yarp/conf/environment.h>
+
 #include <yarp/os/Contact.h>
 #include <yarp/os/Carriers.h>
 #include <yarp/os/Carrier.h>
@@ -48,7 +50,7 @@ int Companion::detectRos(bool write)
         return 1;
     }
 
-    std::string uri = NetworkBase::getEnvironment("ROS_MASTER_URI");
+    std::string uri = yarp::conf::environment::getEnvironment("ROS_MASTER_URI");
     if (uri=="") {
         yCError(COMPANION, "ROS_MASTER_URI environment variable not set.");
         uri = "http://127.0.0.1:11311/";

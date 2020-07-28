@@ -12,7 +12,9 @@ set(YARP_run_HDRS yarp/run/Run.h)
 set(YARP_run_IMPL_HDRS yarp/run/impl/RunCheckpoints.h
                        yarp/run/impl/RunProcManager.h
                        yarp/run/impl/RunReadWrite.h
-                       yarp/run/impl/PlatformSysPrctl.h)
+                       yarp/run/impl/PlatformSysPrctl.h
+                       yarp/run/impl/PlatformStdlib.h
+                       yarp/run/impl/PlatformUnistd.h)
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
   set(YARP_run_os_HDRS yarp/os/Run.h)

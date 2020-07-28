@@ -962,7 +962,7 @@ void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clo
 {
     std::string clock;
     if (clockType == YARP_CLOCK_DEFAULT) {
-        clock = yarp::os::Network::getEnvironment("YARP_CLOCK");
+        clock = yarp::conf::environment::getEnvironment("YARP_CLOCK");
         if (!clock.empty()) {
             clockType = YARP_CLOCK_NETWORK;
         } else {
@@ -978,7 +978,7 @@ void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clo
 
     case YARP_CLOCK_NETWORK:
         yCDebug(NETWORK, "Using NETWORK clock");
-        clock = yarp::os::Network::getEnvironment("YARP_CLOCK");
+        clock = yarp::conf::environment::getEnvironment("YARP_CLOCK");
         // check of valid parameter is done inside the call, throws YARP_FAIL in case of error
         yarp::os::Time::useNetworkClock(clock);
         break;
@@ -2004,7 +2004,7 @@ std::string NetworkBase::getConfigFile(const char* fname)
 
 int NetworkBase::getDefaultPortRange()
 {
-    std::string range = NetworkBase::getEnvironment("YARP_PORT_RANGE");
+    std::string range = yarp::conf::environment::getEnvironment("YARP_PORT_RANGE");
     if (!range.empty()) {
         int irange = NetType::toInt(range);
         if (irange != 0) {

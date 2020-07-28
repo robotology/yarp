@@ -6,11 +6,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+#include <yarp/conf/environment.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/ResourceFinderOptions.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/os/Os.h>
 #include <cstdio>
 
 #include "yarpcontextutils.h"
@@ -136,9 +136,9 @@ YARP_WARNING_POP
     }
     if(options.check("current"))
     {
-        const char *result = yarp::os::getenv("YARP_ROBOT_NAME");
-        if (result != nullptr)
-            printf("Current robot is %s, identified by the environment variable YARP_ROBOT_NAME\n", result);
+        std::string result = yarp::conf::environment::getEnvironment("YARP_ROBOT_NAME");
+        if (result.empty())
+            printf("Current robot is %s, identified by the environment variable YARP_ROBOT_NAME\n", result.c_str());
         else
             printf("No robot is set; please set the YARP_ROBOT_NAME environment variable.\n");
         return 0;

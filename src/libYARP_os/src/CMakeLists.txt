@@ -292,7 +292,6 @@ set(YARP_os_IMPL_HDRS yarp/os/impl/AuthHMAC.h
                       yarp/os/impl/PlatformNetdb.h
                       yarp/os/impl/PlatformSignal.h
                       yarp/os/impl/PlatformStdio.h
-                      yarp/os/impl/PlatformStdlib.h
                       yarp/os/impl/PlatformSysStat.h
                       yarp/os/impl/PlatformSysWait.h
                       yarp/os/impl/PlatformTime.h

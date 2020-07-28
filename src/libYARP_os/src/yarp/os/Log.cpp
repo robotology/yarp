@@ -201,7 +201,7 @@ namespace {
 
 inline bool from_env(const char* name, bool defaultvalue)
 {
-    const char *strvalue = yarp::os::getenv(name);
+    const char *strvalue = std::getenv(name);
 
     if(!strvalue) { return defaultvalue; }
 
