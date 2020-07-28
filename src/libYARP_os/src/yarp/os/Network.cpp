@@ -16,6 +16,7 @@
 #include <yarp/os/MultiNameSpace.h>
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/NetType.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/OutputProtocol.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Route.h>
@@ -1416,29 +1417,25 @@ NameStore* NetworkBase::getQueryBypass()
     return getNameSpace().getQueryBypass();
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4.0
 
 std::string NetworkBase::getEnvironment(const char* key,
                                         bool* found)
 {
-    const char* result = yarp::os::impl::getenv(key);
-    if (found != nullptr) {
-        *found = (result != nullptr);
-    }
-    if (result == nullptr) {
-        return {};
-    }
-    return std::string(result);
+    return yarp::os::getEnvironment(key, found);
 }
 
 void NetworkBase::setEnvironment(const std::string& key, const std::string& val)
 {
-    yarp::os::impl::setenv(key.c_str(), val.c_str(), 1);
+    return yarp::os::setEnvironment(key, val);
 }
 
 void NetworkBase::unsetEnvironment(const std::string& key)
 {
-    yarp::os::impl::unsetenv(key.c_str());
+    return yarp::os::unsetEnvironment(key);
 }
+
+#endif
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.3.0
 
