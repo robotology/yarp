@@ -7,8 +7,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_TESTMOTOR_H
-#define YARP_DEV_TESTMOTOR_H
+#ifndef YARP_FAKEMOTOR_FAKEMOTOR_H
+#define YARP_FAKEMOTOR_FAKEMOTOR_H
 
 #include <cstdio>
 
@@ -21,7 +21,7 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/sig/Vector.h>
 
-YARP_DECLARE_LOG_COMPONENT(TESTMOTOR)
+YARP_DECLARE_LOG_COMPONENT(FAKEMOTOR)
 
 /**
  * @ingroup dev_impl_motor
@@ -29,7 +29,7 @@ YARP_DECLARE_LOG_COMPONENT(TESTMOTOR)
  * A fake motor control board for testing.
  * Implements the IPositionControl, IEncoders and IVelocityControl interfaces.
  */
-class TestMotor :
+class FakeMotor :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IPositionControl,
         public yarp::dev::IEncodersTimed,
@@ -48,17 +48,17 @@ private:
     void update();
 
 public:
-    TestMotor() = default;
-    TestMotor(const TestMotor&) = delete;
-    TestMotor(TestMotor&&) = delete;
-    TestMotor& operator=(const TestMotor&) = delete;
-    TestMotor& operator=(TestMotor&&) = delete;
-    ~TestMotor() override = default;
+    FakeMotor() = default;
+    FakeMotor(const FakeMotor&) = delete;
+    FakeMotor(FakeMotor&&) = delete;
+    FakeMotor& operator=(const FakeMotor&) = delete;
+    FakeMotor& operator=(FakeMotor&&) = delete;
+    ~FakeMotor() override = default;
 
     bool getAxes(int *ax) override
     {
         *ax = njoints;
-        yCInfo(TESTMOTOR, "TestMotor reporting %d axes present", *ax);
+        yCInfo(FAKEMOTOR, "FakeMotor reporting %d axes present", *ax);
         return true;
     }
 
@@ -404,4 +404,12 @@ public:
 
 };
 
-#endif // YARP_DEV_TESTMOTOR_H
+
+class TestMotor : public FakeMotor
+{
+public:
+    bool open(yarp::os::Searchable& config) override;
+};
+
+
+#endif // YARP_FAKEMOTOR_FAKEMOTOR_H

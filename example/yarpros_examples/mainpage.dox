@@ -16,7 +16,7 @@
 waggler is written in unmodified ROS, and does not use YARP.  It publishes
 a stream of position control commands that are suitable for hooking up
 to YARP controlboard implementations (e.g. the iCub robot, simulator,
-or the test_motor device).  They can also be streamed to "yarp read".
+or the fakeMotor device).  They can also be streamed to "yarp read".
 
 YARP users: For compiling:
  * Make sure the $YARP_ROOT/example directory is in your ROS_PACKAGE_PATH.

@@ -26,9 +26,9 @@ a look at the output of ps (this is the undefined behavior I see)
 Lorenzo:
 
 I have uploaded a stressrpcMD.cpp (MD is for motion done). If you run
-the test_motor device like this:
+the fakeMotor device like this:
 
-yarpdev --device controlboard --subdevice test_motor --delay 80
+yarpdev --device controlboard --subdevice fakeMotor --delay 80
 
 and then two instances of stressrpcMD.cpp as:
 
@@ -41,15 +41,15 @@ stressrpcMD --id 1
 you *should* hopefully see that sometimes one of the two (the second?)
 hangs within the "checkMotionDone" call (but sometimes even in the port
 "open" call). The problem is more frequent if you kill and restart one
-of the two clients. When this happens the test_motor device does not
+of the two clients. When this happens the fakeMotor device does not
 close properly unless the clients are killed (similarly to the previous
 bugs I have recently reported)
 
 I believe the problem has to do with timing. In fact it took me a while
-to replicate it in the test_motor device. The problem on the robot was
+to replicate it in the fakeMotor device. The problem on the robot was
 triggered very reliably in the getPid function which took 70-90ms to
 complete. For this reason I have added a Time::delay() in the
-checkMotionDone function of the test_motor device (this delay can be
+checkMotionDone function of the fakeMotor device (this delay can be
 changed with the --delay parameter).  Caveats: the problem happens often
 but with variable likelihood, the --delay 80 appeared to trigger it more
 often, but I'm no longer sure. Maybe adding the sleep was enough to make

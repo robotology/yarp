@@ -7,11 +7,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "TestMotor.h"
+#include "FakeMotor.h"
 
-YARP_LOG_COMPONENT(TESTMOTOR, "yarp.device.test_motor")
+YARP_LOG_COMPONENT(FAKEMOTOR, "yarp.device.fakeMotor")
 
-void TestMotor::update()
+void FakeMotor::update()
 {
     if (posMode) {
         return;
@@ -26,4 +26,11 @@ void TestMotor::update()
         pos[i] += vel[i] * dt;
     }
     last = now;
+}
+
+
+bool TestMotor::open(yarp::os::Searchable& config)
+{
+    yCWarning(FAKEMOTOR, "'test_motor' was renamed 'fakeMotor'. The old name is still supported for compatibility, but it will be deprecated and removed in a future release. Please update your scripts");
+    return FakeMotor::open(config);
 }

@@ -6,7 +6,7 @@
 Instantiates \ref cmd_device_controlboardwrapper2 "controlboardwrapper2" device implemented by ControlBoardWrapper.
 \verbatim
 device controlboardwrapper2
-subdevice test_motor
+subdevice fakeMotor
 name /mymotor
 axes 16
 \endverbatim
@@ -34,10 +34,10 @@ So this is just an example
 <tr><td>rootName</td><td>starting '/' if needed.</td><td>/</td></tr>
 <tr><td>name</td><td>prefix for port names</td><td>controlboard</td></tr>
 <tr><td>subdevice</td><td></td><td></td></tr>
-<tr><td>test_motor.device</td><td></td><td></td></tr>
-<tr><td>test_motor.wrapped</td><td></td><td></td></tr>
-<tr><td>test_motor.axes</td><td>number of axes to pretend to have</td><td>4</td></tr>
-<tr><td>test_motor.delay</td><td>delay in each call for debugging purpose, in ms</td><td>0</td></tr>
+<tr><td>fakeMotor.device</td><td></td><td></td></tr>
+<tr><td>fakeMotor.wrapped</td><td></td><td></td></tr>
+<tr><td>fakeMotor.axes</td><td>number of axes to pretend to have</td><td>4</td></tr>
+<tr><td>fakeMotor.delay</td><td>delay in each call for debugging purpose, in ms</td><td>0</td></tr>
 <tr><td>ROS</td><td></td><td></td></tr>
 </table>
 

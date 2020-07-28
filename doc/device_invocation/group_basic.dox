@@ -11,7 +11,7 @@ Instantiates \ref cmd_device_group "group" device implemented by DeviceGroup.
 device group
 
 [part mymotor]
-device test_motor
+device fakeMotor
 axes 10
 
 [part mycam]
