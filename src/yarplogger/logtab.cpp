@@ -36,6 +36,7 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine* _theLogger,
         displayLocalTimestamp_enabled(true),
         displaySystemTime_enabled(false),
         displayNetworkTime_enabled(false),
+        displayCustomTime_enabled(false),
         displayLogLevel_enabled(true),
         displayFilename_enabled(false),
         displayLine_enabled(false),
@@ -79,6 +80,7 @@ LogTab::LogTab(yarp::yarpLogger::LoggerEngine* _theLogger,
     ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::LOCALTIMESTAMP_COLUMN, QHeaderView::ResizeToContents);
     ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::SYSTEMTIME_COLUMN, QHeaderView::ResizeToContents);
     ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::NETWORKTIME_COLUMN, QHeaderView::ResizeToContents);
+    ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::CUSTOMTIME_COLUMN, QHeaderView::ResizeToContents);
     ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::LOGLEVEL_COLUMN, QHeaderView::ResizeToContents);
     ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::LINE_COLUMN, QHeaderView::ResizeToContents);
     ui->listView->horizontalHeader()->setSectionResizeMode(LogModel::HOSTNAME_COLUMN, QHeaderView::ResizeToContents);
@@ -146,6 +148,7 @@ void LogTab::on_copy_to_clipboard_action()
         if (displayLocalTimestamp_enabled)   { list.append(logModel->data(prox_index, LogModel::LocalTimestampRole).toString()); }
         if (displaySystemTime_enabled)       { list.append(logModel->data(prox_index, LogModel::SystemTimeStringRole).toString()); }
         if (displayNetworkTime_enabled)      { list.append(logModel->data(prox_index, LogModel::NetworkTimeStringRole).toString()); }
+        if (displayCustomTime_enabled)       { list.append(logModel->data(prox_index, LogModel::CustomTimeStringRole).toString()); }
         if (displayLogLevel_enabled)         { list.append(logModel->data(prox_index, LogModel::LogLevelStringRole).toString()); }
         if (displayFilename_enabled)         { list.append(logModel->data(prox_index, LogModel::FilenameRole).toString()); }
         if (displayLine_enabled)             { list.append(logModel->data(prox_index, LogModel::LineStringRole).toString()); }
@@ -194,6 +197,7 @@ void LogTab::updateLog(bool from_beginning)
     ui->listView->setColumnHidden(LogModel::LOCALTIMESTAMP_COLUMN,   !displayLocalTimestamp_enabled);
     ui->listView->setColumnHidden(LogModel::SYSTEMTIME_COLUMN,       !displaySystemTime_enabled);
     ui->listView->setColumnHidden(LogModel::NETWORKTIME_COLUMN,      !displayNetworkTime_enabled);
+    ui->listView->setColumnHidden(LogModel::CUSTOMTIME_COLUMN,       !displayCustomTime_enabled);
     ui->listView->setColumnHidden(LogModel::LOGLEVEL_COLUMN,         !displayLogLevel_enabled);
     ui->listView->setColumnHidden(LogModel::FILENAME_COLUMN,         !displayFilename_enabled);
     ui->listView->setColumnHidden(LogModel::LINE_COLUMN,             !displayLine_enabled);
@@ -229,6 +233,12 @@ void LogTab::displayNetworkTime(bool enabled)
 {
     displayNetworkTime_enabled = enabled;
     ui->listView->setColumnHidden(LogModel::SYSTEMTIME_COLUMN, !displayNetworkTime_enabled);
+}
+
+void LogTab::displayCustomTime(bool enabled)
+{
+    displayCustomTime_enabled = enabled;
+    ui->listView->setColumnHidden(LogModel::SYSTEMTIME_COLUMN, !displayCustomTime_enabled);
 }
 
 

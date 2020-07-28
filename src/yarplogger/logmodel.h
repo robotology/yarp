@@ -38,6 +38,8 @@ public:
         SystemTimeStringRole,
         NetworkTimeRole,
         NetworkTimeStringRole,
+        CustomTimeRole,
+        CustomTimeStringRole,
         LogLevelRole,
         LogLevelStringRole,
         FilenameRole,
@@ -60,18 +62,19 @@ public:
     static constexpr int LOCALTIMESTAMP_COLUMN   = 1;
     static constexpr int SYSTEMTIME_COLUMN       = 2;
     static constexpr int NETWORKTIME_COLUMN      = 3;
-    static constexpr int LOGLEVEL_COLUMN         = 4;
-    static constexpr int FILENAME_COLUMN         = 5;
-    static constexpr int LINE_COLUMN             = 6;
-    static constexpr int FUNCTION_COLUMN         = 7;
-    static constexpr int HOSTNAME_COLUMN         = 8;
-    static constexpr int PID_COLUMN              = 9;
-    static constexpr int CMD_COLUMN              = 10;
-    static constexpr int ARGS_COLUMN             = 11;
-    static constexpr int THREADID_COLUMN         = 12;
-    static constexpr int COMPONENT_COLUMN        = 13;
-    static constexpr int TEXT_COLUMN             = 14;
-    static constexpr int COLUMN_COUNT            = 15;
+    static constexpr int CUSTOMTIME_COLUMN       = 4;
+    static constexpr int LOGLEVEL_COLUMN         = 5;
+    static constexpr int FILENAME_COLUMN         = 6;
+    static constexpr int LINE_COLUMN             = 7;
+    static constexpr int FUNCTION_COLUMN         = 8;
+    static constexpr int HOSTNAME_COLUMN         = 9;
+    static constexpr int PID_COLUMN              = 10;
+    static constexpr int CMD_COLUMN              = 11;
+    static constexpr int ARGS_COLUMN             = 12;
+    static constexpr int THREADID_COLUMN         = 13;
+    static constexpr int COMPONENT_COLUMN        = 14;
+    static constexpr int TEXT_COLUMN             = 15;
+    static constexpr int COLUMN_COUNT            = 16;
 
     explicit LogModel(QObject *parent = nullptr);
     ~LogModel() override;
