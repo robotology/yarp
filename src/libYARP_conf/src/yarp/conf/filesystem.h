@@ -7,8 +7,8 @@
  */
 
 
-#ifndef YARP_OS_FILESYSTEM_H
-#define YARP_OS_FILESYSTEM_H
+#ifndef YARP_CONF_FILESYSTEM_H
+#define YARP_CONF_FILESYSTEM_H
 
 namespace yarp {
 namespace conf {
@@ -33,4 +33,4 @@ static constexpr value_type path_separator = ':';
 } // namespace yarp
 
 
-#endif // YARP_OS_FILESYSTEM_H
+#endif // YARP_CONF_FILESYSTEM_H
