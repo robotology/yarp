@@ -7,18 +7,23 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <yarp/os/all.h>
-#include <yarp/sig/all.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/Drivers.h>
-using namespace yarp::os;
-using namespace yarp::sig;
-using namespace yarp::dev;
 
-int main() {
+#include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
+
+#include <yarp/dev/PolyDriver.h>
+
+#include <cstdio>
+
+using yarp::dev::PolyDriver;
+using yarp::os::Network;
+using yarp::os::Property;
+
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     Network yarp;
 
     Property config;
@@ -41,7 +46,7 @@ int main() {
 
     while (true) {
         printf("Sending data...");
-        Time::delay(5);
+        yarp::os::Time::delay(5);
     }
 
     return 0;

@@ -7,26 +7,34 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <cmath>
+#include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Time.h>
 
-#include <yarp/os/all.h>
+#include <yarp/sig/Sound.h>
 
-#include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
+#include <yarp/dev/PolyDriver.h>
 
-using namespace yarp::os;
-using namespace yarp::sig;
-using namespace yarp::dev;
+#include <cmath>
+#include <cstdio>
 
-int main(int argc, char *argv[]) {
+using yarp::os::Network;
+using yarp::os::Property;
+using yarp::sig::Sound;
+using yarp::dev::IAudioGrabberSound;
+using yarp::dev::IAudioRender;
+using yarp::dev::PolyDriver;
+
+int main(int argc, char* argv[])
+{
     Network yarp;
 
     // Get an audio device.
 
     Property p;
-    if (argc>1) {
-        p.fromCommand(argc,argv);
+    if (argc > 1) {
+        p.fromCommand(argc, argv);
     } else {
         p.fromString("(device portaudio)");
     }
@@ -39,11 +47,11 @@ int main(int argc, char *argv[]) {
 
     // Make sure we can both read and write sound
 
-    IAudioGrabberSound *get;
-    IAudioRender *put;
+    IAudioGrabberSound* get;
+    IAudioRender* put;
     poly.view(get);
     poly.view(put);
-    if (get==NULL&&put==NULL) {
+    if (get == nullptr && put == nullptr) {
         printf("cannot open interface\n");
         return 1;
     }
@@ -54,20 +62,20 @@ int main(int argc, char *argv[]) {
     double vv = 0;
     while (true) {
         Sound s;
-        get->getSound(s);
-        for (int i=0; i<s.getSamples(); i++) {
-            double now = Time::now();
+        get->getSound(s, 100, 100000, 0.0);
+        for (size_t i = 0; i < s.getSamples(); i++) {
+            double now = yarp::os::Time::now();
             static double first = now;
             now -= first;
-            if ((long int) (now*2) % 2 == 0) {
+            if (static_cast<long int>(now * 2) % 2 == 0) {
                 vv += 0.08;
             } else {
                 vv += 0.04;
             }
-            double dv = 500*sin(vv);
-            for (int j=0; j<s.getChannels(); j++) {
-                int v = s.get(i,j);
-                s.set((int)(v+dv+0.5),i,j);
+            double dv = 500 * sin(vv);
+            for (size_t j = 0; j < s.getChannels(); j++) {
+                int v = s.get(i, j);
+                s.set(static_cast<int>(v + dv + 0.5), i, j);
             }
         }
         put->renderSound(s);

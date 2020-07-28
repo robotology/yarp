@@ -7,12 +7,17 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <yarp/os/all.h>
-#include <yarp/sig/all.h>
+#include <yarp/os/BufferedPort.h>
+#include <yarp/os/Network.h>
 
-using namespace yarp::os;
-using namespace yarp::sig;
+#include <yarp/sig/Image.h>
+
+#include <cstdio>
+
+using yarp::os::BufferedPort;
+using yarp::os::Network;
+using yarp::sig::ImageOf;
+using yarp::sig::PixelRgb;
 
 /*
  * Read an image from a remote source using the "port" view of
@@ -20,21 +25,23 @@ using namespace yarp::sig;
  *
  * Remote source could be, for example:
  *   yarpdev --device fakeFrameGrabber --name /fakey
- *
  */
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
 
-int main() {
     Network yarp;
 
     std::string local = "/client";
     std::string remote = "/fakey";
 
-    BufferedPort<ImageOf<PixelRgb> > port;
+    BufferedPort<ImageOf<PixelRgb>> port;
     port.open(local);
-    Network::connect(remote,local);
-    ImageOf<PixelRgb> *img = port.read();
-    if (img!=NULL) {
-        printf("Got a %dx%d image\n", img->width(), img->height());
+    Network::connect(remote, local);
+    ImageOf<PixelRgb>* img = port.read();
+    if (img != nullptr) {
+        printf("Got a %zux%zu image\n", img->width(), img->height());
     }
     port.close();
 

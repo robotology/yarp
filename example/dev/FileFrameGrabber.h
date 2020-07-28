@@ -7,38 +7,45 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <yarp/os/all.h>
-#include <yarp/sig/all.h>
-#include <yarp/dev/all.h>
+#include <yarp/sig/ImageFile.h>
 
-class FileFrameGrabber : public yarp::dev::IFrameGrabberImage,
-                         public yarp::dev::DeviceDriver {
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/FrameGrabberInterfaces.h>
+
+class FileFrameGrabber :
+        public yarp::dev::IFrameGrabberImage,
+        public yarp::dev::DeviceDriver
+{
 private:
-    std::string pattern, lastLoad;
-    int first, last, at;
-    int h, w;
+    std::string pattern{"%d.ppm"};
+    std::string lastLoad;
+    int first{-1};
+    int last{-1};
+    int at{-1};
+    int h{0};
+    int w{0};
 
-    bool findImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+    bool findImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+    {
         bool triedFirst = false;
         char buf[1000];
-        sprintf(buf,pattern.c_str(),at);
-        while (!yarp::sig::file::read(image,buf)) {
-            if (at==first) {
+        sprintf(buf, pattern.c_str(), at);
+        while (!yarp::sig::file::read(image, buf)) {
+            if (at == first) {
                 if (triedFirst) {
                     return false;
                 }
                 triedFirst = true;
             }
-            if (last==-1) {
+            if (last == -1) {
                 at = first;
             } else {
                 at++;
-                if (at>last) {
+                if (at > last) {
                     at = first;
                 }
             }
-            sprintf(buf,pattern.c_str(),at);
+            sprintf(buf, pattern.c_str(), at);
         }
         lastLoad = buf;
         h = image.height();
@@ -47,14 +54,8 @@ private:
     }
 
 public:
-    FileFrameGrabber() {
-        pattern = "%d.ppm";
-        first = last = -1;
-        at = -1;
-        h = w = 0;
-    }
-
-    bool open(const char *pattern, int first, int last) {
+    bool open(const char* pattern, int first, int last)
+    {
         this->pattern = pattern;
         this->first = first;
         this->last = last;
@@ -63,35 +64,39 @@ public:
         return findImage(dummy);
     }
 
-    virtual bool open(yarp::os::Searchable& config) {
-        std::string pattern =
-            config.check("pattern",yarp::os::Value("%d.ppm")).asString();
-        int first = config.check("first",yarp::os::Value(0)).asInt32();
-        int last = config.check("last",yarp::os::Value(-1)).asInt32();
-        return open(pattern.c_str(),first,last);
+    bool open(yarp::os::Searchable& config) override
+    {
+        std::string pattern = config.check("pattern", yarp::os::Value("%d.ppm")).asString();
+        int first = config.check("first", yarp::os::Value(0)).asInt32();
+        int last = config.check("last", yarp::os::Value(-1)).asInt32();
+        return open(pattern.c_str(), first, last);
     }
 
-    virtual bool close() {
+    bool close() override
+    {
         return true; // easy
     }
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override
+    {
         bool ok = findImage(image);
         if (ok) {
             printf("showing image %s\n", lastLoad.c_str());
             at++;
-            if (last!=-1 && at>last) {
+            if (last != -1 && at > last) {
                 at = first;
             }
         }
         return ok;
     }
 
-    virtual int height() const {
+    int height() const override
+    {
         return h;
     }
 
-    virtual int width() const {
+    int width() const override
+    {
         return w;
     }
 };
