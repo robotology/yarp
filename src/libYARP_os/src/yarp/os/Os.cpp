@@ -36,6 +36,28 @@ const char* yarp::os::getenv(const char* var)
     return yarp::os::impl::getenv(var);
 }
 
+std::string yarp::os::getEnvironment(const char* key, bool* found)
+{
+    const char* result = yarp::os::impl::getenv(key);
+    if (found != nullptr) {
+        *found = (result != nullptr);
+    }
+    if (result == nullptr) {
+        return {};
+    }
+    return std::string(result);
+}
+
+void yarp::os::setEnvironment(const std::string& key, const std::string& val)
+{
+    yarp::os::impl::setenv(key.c_str(), val.c_str(), 1);
+}
+
+void yarp::os::unsetEnvironment(const std::string& key)
+{
+    yarp::os::impl::unsetenv(key.c_str());
+}
+
 int yarp::os::mkdir(const char* p)
 {
     return yarp::os::impl::mkdir(p, 0755);

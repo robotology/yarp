@@ -30,6 +30,36 @@ namespace os {
 YARP_os_API const char* getenv(const char* var);
 
 /**
+ * Read a variable from the environment.
+ *
+ * @param key the variable to read
+ * @param found an optional variable to set to true iff variable is found
+ * @return the value of the environment variable, or "" if not found
+ *
+ * @since YARP 3.4
+ */
+YARP_os_API std::string getEnvironment(const char* key, bool* found = nullptr);
+
+/**
+ * Set or change an environment variable.
+ *
+ * @param key the variable to set or change
+ * @param val the target value
+ *
+ * @since YARP 3.4
+ */
+YARP_os_API void setEnvironment(const std::string& key, const std::string& val);
+
+/**
+ * Remove an environment variable.
+ *
+ * @param key the variable to remove
+ *
+ * @since YARP 3.4
+ */
+YARP_os_API void unsetEnvironment(const std::string& key);
+
+/**
  * @brief Portable wrapper for the getppid() function.
  *
  * Get process identification.
