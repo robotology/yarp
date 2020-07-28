@@ -992,7 +992,6 @@ void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clo
         yCFatal(NETWORK, "yarpClockInit called with unknown clock type. Quitting");
         break;
     }
-    return;
 }
 
 Contact NetworkBase::queryName(const std::string& name)

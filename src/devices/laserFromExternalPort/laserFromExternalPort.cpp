@@ -376,7 +376,7 @@ void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::si
             if (static_cast<size_t>(new_i) == m_laser_data.size()) {new_i=0;}
 
             yCAssert(LASER_FROM_EXTERNAL_PORT, new_i >= 0);
-            yCAssert(LASER_FROM_EXTERNAL_PORT, new_i < m_laser_data.size());
+            yCAssert(LASER_FROM_EXTERNAL_PORT, static_cast<size_t>(new_i) < m_laser_data.size());
 
             //compute the distance
             double newdistance = std::sqrt((Bx * Bx) + (By * By));

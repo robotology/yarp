@@ -9,8 +9,8 @@
 #include <yarp/manager/scriptbroker.h>
 
 #include <yarp/conf/filesystem.h>
-#include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Network.h>
 #include <string>
 
 #define CONNECTION_TIMEOUT      5.0         //seconds

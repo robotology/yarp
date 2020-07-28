@@ -273,6 +273,7 @@ bool LaserFromPointCloud::open(yarp::os::Searchable& config)
     m_depth_width = m_iRGBD->getRgbWidth();  //@@@ this is horrible! See yarp issue: https://github.com/robotology/yarp/issues/2290
     m_depth_height = m_iRGBD->getRgbHeight(); //@@@ this is horrible! See yarp issue: https://github.com/robotology/yarp/issues/2290
     bool propintr  = m_iRGBD->getDepthIntrinsicParam(m_propIntrinsics);
+    YARP_UNUSED(propintr);
     yCInfo(LASER_FROM_POINTCLOUD) << "Depth Intrinsics:" << m_propIntrinsics.toString();
     m_intrinsics.fromProperty(m_propIntrinsics);
 
@@ -377,8 +378,8 @@ void LaserFromPointCloud::run()
         return;
     }
 
-    if (m_depth_image.width()!=m_depth_width ||
-        m_depth_image.height()!=m_depth_height)
+    if (m_depth_image.width() != m_depth_width ||
+        m_depth_image.height() != m_depth_height)
     {
         yCDebug(LASER_FROM_POINTCLOUD)<<"invalid image size: (" << m_depth_image.width() << " " << m_depth_image.height() << ") vs (" << m_depth_width << " " << m_depth_height << ")" ;
         return;

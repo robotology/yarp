@@ -84,7 +84,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     {
         if (config.check("const_distance"))
         {
-            m_const_value = config.check("const_distance", Value(1.0), "default constant distance").asDouble();
+            m_const_value = config.check("const_distance", Value(1.0), "default constant distance").asFloat64();
         }
     }
     else if (m_test_mode == USE_MAPFILE)

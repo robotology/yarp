@@ -165,7 +165,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     yCInfo(RP2_LIDAR) << "Device info:" << m_info;
     yCInfo(RP2_LIDAR,"max_angle %f, min_angle %f", m_max_angle, m_min_angle);
     yCInfo(RP2_LIDAR,"resolution %f",              m_resolution);
-    yCInfo(RP2_LIDAR,"sensors %d",                 m_sensorsNum);
+    yCInfo(RP2_LIDAR,"sensors %zu",                m_sensorsNum);
     PeriodicThread::start();
     return true;
 }
