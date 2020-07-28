@@ -24,12 +24,12 @@ namespace manager {
 class AppLoader {
 
 public:
-    AppLoader(void) {}
-    virtual ~AppLoader() {}
-    virtual bool init(void) = 0;
-    virtual void fini(void) = 0;
-    virtual void reset(void) = 0;
-    virtual Application* getNextApplication(void) = 0;
+    AppLoader() = default;
+    virtual ~AppLoader() = default;
+    virtual bool init() = 0;
+    virtual void fini() = 0;
+    virtual void reset() = 0;
+    virtual Application* getNextApplication() = 0;
 
 protected:
 
@@ -40,8 +40,8 @@ private:
 class AppSaver
 {
 public:
-    AppSaver() {}
-    virtual ~AppSaver() {}
+    AppSaver() = default;
+    virtual ~AppSaver() = default;
     virtual bool save(Application* application) = 0;
 
 protected:
@@ -57,12 +57,12 @@ private:
 class ModuleLoader {
 
 public:
-    ModuleLoader(void) {}
-    virtual ~ModuleLoader() {}
-    virtual bool init(void) = 0;
-    virtual void reset(void) = 0;
-    virtual void fini(void) = 0;
-    virtual Module* getNextModule(void) = 0;
+    ModuleLoader() = default;
+    virtual ~ModuleLoader() = default;
+    virtual bool init() = 0;
+    virtual void reset() = 0;
+    virtual void fini() = 0;
+    virtual Module* getNextModule() = 0;
 
 protected:
 
@@ -77,12 +77,12 @@ private:
 class ResourceLoader {
 
 public:
-    ResourceLoader(void) {}
-    virtual ~ResourceLoader() {}
-    virtual bool init(void) = 0;
-    virtual void reset(void) = 0;
-    virtual void fini(void) = 0;
-    virtual GenericResource* getNextResource(void) = 0;
+    ResourceLoader() = default;
+    virtual ~ResourceLoader() = default;
+    virtual bool init() = 0;
+    virtual void reset() = 0;
+    virtual void fini() = 0;
+    virtual GenericResource* getNextResource() = 0;
 
 protected:
 
@@ -103,12 +103,12 @@ struct AppTemplate {
 
 class TempLoader {
 public:
-    TempLoader(void) {}
-    virtual ~TempLoader() {}
-    virtual bool init(void) = 0;
-    virtual void fini(void) = 0;
-    virtual void reset(void) = 0;
-    virtual AppTemplate* getNextAppTemplate(void) = 0;
+    TempLoader() = default;
+    virtual ~TempLoader() = default;
+    virtual bool init() = 0;
+    virtual void fini() = 0;
+    virtual void reset() = 0;
+    virtual AppTemplate* getNextAppTemplate() = 0;
 
 protected:
 

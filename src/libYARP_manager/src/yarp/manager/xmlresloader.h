@@ -26,11 +26,11 @@ class XmlResLoader : public ResourceLoader
 public:
     XmlResLoader(const char* szFileName);
     XmlResLoader(const char* szPath, const char* szResName);
-    virtual ~XmlResLoader();
-    bool init(void) override;
-    void reset(void) override;
-    void fini(void) override;
-    GenericResource* getNextResource(void) override;
+    ~XmlResLoader() override;
+    bool init() override;
+    void reset() override;
+    void fini() override;
+    GenericResource* getNextResource() override;
 
 protected:
 

@@ -22,8 +22,8 @@ class MonitorSharedLib : public MonitorBinding
 {
 
 public:
-    MonitorSharedLib(void);
-    virtual ~MonitorSharedLib();
+    MonitorSharedLib();
+    ~MonitorSharedLib() override;
 
     bool load(const yarp::os::Property &options) override;
     bool setParams(const yarp::os::Property& params) override;
@@ -33,17 +33,18 @@ public:
     yarp::os::Things& updateData(yarp::os::Things &thing) override;
     yarp::os::Things& updateReply(yarp::os::Things &thing) override;
 
-    bool peerTrigged(void) override;
-    bool canAccept(void) override;
+    bool peerTrigged() override;
+    bool canAccept() override;
 
     bool setAcceptConstraint(const char* constraint) override {
-        if(!constraint)
+        if(!constraint) {
             return false;
+        }
         MonitorSharedLib::constraint = constraint;
         return true;
     }
 
-    const char* getAcceptConstraint(void) override {
+    const char* getAcceptConstraint() override {
         return constraint.c_str();
     }
 

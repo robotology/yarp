@@ -108,12 +108,12 @@ public:
      * therefore use statement catch to guarantee the required buffer is not
      * null.
      */
-    Buffer<T> getBuffer(void);
+    Buffer<T> getBuffer();
 
     /**
      * @brief Get the number of elements of a buffer.
      */
-    std::size_t getBufferSize(void);
+    std::size_t getBufferSize();
 
     /**
      * @brief Release a buffer.
@@ -129,7 +129,7 @@ public:
      *
      * Function for debug purpose
      */
-    void printBuffers(void);
+    void printBuffers();
 
 private:
     std::mutex m_mutex;

@@ -166,7 +166,7 @@ bool Application::removeArbitrator(Arbitrator& arb)
 
 
 /*
-void Application::updateConnectionPrefix(void)
+void Application::updateConnectionPrefix()
 {
     CnnIterator itr;
     for(itr=connections.begin(); itr<connections.end(); itr++)

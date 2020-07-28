@@ -240,6 +240,7 @@ static int enactConnection(const Contact& src,
         msg = reply.get(1).asString();
     } else {
         // older protocol
+        // FIXME Is this protocol still in use?
         msg = reply.get(0).asString();
         ok = msg[0] == 'A' || msg[0] == 'R';
     }

@@ -99,7 +99,7 @@ bool USBCameraDriver::open(yarp::os::Searchable& config)
     return true;
 }
 
-bool USBCameraDriver::close(void)
+bool USBCameraDriver::close()
 {
     // close OS dependant device
     os_device->close();

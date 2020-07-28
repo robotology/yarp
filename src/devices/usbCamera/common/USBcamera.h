@@ -78,7 +78,7 @@ public:
      * Closes the device driver.
      * @return returns true/false on success/failure.
      */
-    bool close(void) override;
+    bool close() override;
 
     /**
      * Implements FrameGrabber basic interface.

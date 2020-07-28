@@ -22,11 +22,11 @@ namespace manager {
 class GPU : public GenericResource {
 
 public:
-    GPU(void);
+    GPU();
     GPU(const char* szName);
     GPU(const GPU &res);
-    virtual ~GPU();
-    Node* clone(void) override;
+    ~GPU() override;
+    Node* clone() override;
     bool satisfy(GenericResource* resource) override;
 
     void setCores(size_t n) { cores = n; }
@@ -39,15 +39,15 @@ public:
     void setThreadPerBlock(size_t val) { threadPerBlock = val; }
     void setOverlap(bool flag) { bOverlap = flag;}
 
-    size_t getCores(void) { return cores; }
-    double getFrequency(void) { return frequency; }
-    const char* getCompCompatibility(void) { return compCompatibility.c_str(); }
-    Capacity getGlobalMemory(void) { return globalMemory; }
-    Capacity getSharedMemory(void) { return sharedMemory; }
-    Capacity getConstantMemory(void) { return constantMemory; }
-    size_t getRegisterPerBlock(void) { return registerPerBlock; }
-    size_t getThreadPerBlock(void) { return threadPerBlock; }
-    bool getOverlap(void) { return bOverlap; }
+    size_t getCores() { return cores; }
+    double getFrequency() { return frequency; }
+    const char* getCompCompatibility() { return compCompatibility.c_str(); }
+    Capacity getGlobalMemory() { return globalMemory; }
+    Capacity getSharedMemory() { return sharedMemory; }
+    Capacity getConstantMemory() { return constantMemory; }
+    size_t getRegisterPerBlock() { return registerPerBlock; }
+    size_t getThreadPerBlock() { return threadPerBlock; }
+    bool getOverlap() { return bOverlap; }
 
 protected:
 

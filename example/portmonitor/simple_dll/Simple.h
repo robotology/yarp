@@ -15,12 +15,12 @@ class SimpleMonitorObject : public yarp::os::MonitorObject
 {
 public:
     bool create(const yarp::os::Property& options);
-    void destroy(void);
+    void destroy();
 
     bool setparam(const yarp::os::Property& params);
     bool getparam(yarp::os::Property& params);
 
-    void trig(void);
+    void trig();
 
     bool accept(yarp::os::Things& thing);
     yarp::os::Things& update(yarp::os::Things& thing);

@@ -62,7 +62,7 @@ public:
     /**
      * @brief releaseCalibratorDevice: reset the internal pointer to NULL when stop using the calibrator
      */
-    virtual void releaseCalibratorDevice(void);
+    virtual void releaseCalibratorDevice();
 
     /**
      * @brief calibrateSingleJoint: call the calibration procedure for the single joint

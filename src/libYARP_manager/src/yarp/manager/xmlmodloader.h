@@ -26,11 +26,11 @@ class XmlModLoader : public ModuleLoader {
 public:
     XmlModLoader(const char* szFileName);
     XmlModLoader(const char* szPath, const char* szModuleName);
-    virtual ~XmlModLoader();
-    bool init(void) override;
-    void reset(void) override;
-    void fini(void) override;
-    Module* getNextModule(void) override;
+    ~XmlModLoader() override;
+    bool init() override;
+    void reset() override;
+    void fini() override;
+    Module* getNextModule() override;
 
 protected:
 

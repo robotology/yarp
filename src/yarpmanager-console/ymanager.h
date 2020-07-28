@@ -42,7 +42,7 @@ class YConsoleManager : public yarp::manager::Manager {
 
 public:
     YConsoleManager(int argc, char* argv[]);
-    ~YConsoleManager();
+    ~YConsoleManager() override;
 
 
 protected:
@@ -58,14 +58,14 @@ private:
     yarp::os::Property cmdline;
     yarp::os::Property config;
 
-    void help(void);
-    void myMain(void);
+    void help();
+    void myMain();
     bool process(const std::vector<std::string> &cmdList);
-    bool exit(void);
-    void reportErrors(void);
-    void which(void);
-    void checkStates(void);
-    void checkConnections(void);
+    bool exit();
+    void reportErrors();
+    void which();
+    void checkStates();
+    void checkConnections();
     bool loadRecursiveApplications(const char* szPath);
     void updateAppNames(std::vector<std::string>* apps);
     void setColorTheme(ColorTheme theme);

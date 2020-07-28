@@ -23,17 +23,17 @@ namespace manager {
 
 class Author {
 public:
-    Author(void) {}
+    Author() {}
     Author(const char* name, const char* email) {
         if(name) { strName = name;}
         if(email) { strEmail = email; }
     }
     ~Author() {}
 
-    void setName(const char* name) { if(name) strName = name; }
-    void setEmail(const char* email) { if(email) strEmail = email; }
-    const char* getName(void) { return strName.c_str(); }
-    const char* getEmail(void) { return strEmail.c_str(); }
+    void setName(const char* name) { if(name) { strName = name; } }
+    void setEmail(const char* email) { if(email) { strEmail = email; } }
+    const char* getName() { return strName.c_str(); }
+    const char* getEmail() { return strEmail.c_str(); }
 
     bool operator==(const Author& alt) const {
         return (strName == alt.strName);
@@ -51,25 +51,25 @@ class Argument{
 
 public:
     Argument(const char* szParam, bool required=false,
-             const char* szDesc=NULL, bool _switch=false) {
-        if(szParam) strParam = szParam;
-        if(szDesc) strDesc = szDesc;
+             const char* szDesc=nullptr, bool _switch=false) {
+        if(szParam) { strParam = szParam; }
+        if(szDesc) { strDesc = szDesc; }
         bRequired = required;
         bSwitch = _switch;
-        if(bSwitch) strDefault = "off";
+        if(bSwitch) { strDefault = "off"; }
         strValue = strDefault;
     }
     virtual ~Argument(){}
 
-    void setParam(const char* szParam) { if(szParam) strParam = szParam; }
-    void setDefault(const char* szDefault) {if(szDefault) strDefault = szDefault; }
-    void setValue(const char* szValue) {if(szValue) strValue = szValue; }
-    const char* getDefault(void) { return strDefault.c_str(); }
-    const char* getParam(void) { return strParam.c_str(); }
-    const char* getValue(void) { return strValue.c_str(); }
-    const char* getDescription(void) { return strDesc.c_str(); }
-    bool isSwitch(void) { return bSwitch; }
-    bool isRequired(void) {return bRequired; }
+    void setParam(const char* szParam) { if(szParam) { strParam = szParam; } }
+    void setDefault(const char* szDefault) {if(szDefault) { strDefault = szDefault; } }
+    void setValue(const char* szValue) {if(szValue) { strValue = szValue; } }
+    const char* getDefault() { return strDefault.c_str(); }
+    const char* getParam() { return strParam.c_str(); }
+    const char* getValue() { return strValue.c_str(); }
+    const char* getDescription() { return strDesc.c_str(); }
+    bool isSwitch() { return bSwitch; }
+    bool isRequired() {return bRequired; }
     bool operator==(const Argument& alt) const {
         return (strParam == alt.strParam);
     }
@@ -103,61 +103,61 @@ typedef std::vector<Argument>::iterator ArgumentIterator;
 class Module : public Node{
 
 public:
-    Module(void);
+    Module();
     Module(const char* szName);
     Module(const Module &mod);
-    virtual ~Module();
-    Node* clone(void) override;
+    ~Module() override;
+    Node* clone() override;
     Module& operator=(const Module& rhs);
 
-    void setName(const char* szName) { if(szName) strName = szName; }
+    void setName(const char* szName) { if(szName) { strName = szName; } }
     void setRank(int rank) {iRank = rank;}
-    void setVersion(const char* szVersion) { if(szVersion) strVersion = szVersion; }
-    void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
-    void setHost(const char* szHost) { if(szHost) strHost = szHost; }
+    void setVersion(const char* szVersion) { if(szVersion) { strVersion = szVersion; } }
+    void setDescription(const char* szDesc) { if(szDesc) { strDescription = szDesc; } }
+    void setHost(const char* szHost) { if(szHost) { strHost = szHost; } }
     void setForced(bool flag) { bForced = flag; }
 
     bool setParam(const char* szParam);
-    void setXmlFile(const char* szFilename) { if(szFilename) strXmlFile = szFilename;}
-    void setWorkDir(const char* szWDir) { if(szWDir) strWorkDir = szWDir; }
-    void setStdio(const char* szStdio) { if(szStdio) strStdio = szStdio; }
-    void setBroker(const char* szBroker) { if(szBroker) strBroker = szBroker; }
-    void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
-    void setEnvironment(const char* szEnv) {if(szEnv) strEnvironment = szEnv; }
-    void setBasePrefix(const char* szPrefix) { if(szPrefix) strBasePrefix = szPrefix; }
+    void setXmlFile(const char* szFilename) { if(szFilename) { strXmlFile = szFilename;} }
+    void setWorkDir(const char* szWDir) { if(szWDir) { strWorkDir = szWDir; } }
+    void setStdio(const char* szStdio) { if(szStdio) { strStdio = szStdio; } }
+    void setBroker(const char* szBroker) { if(szBroker) { strBroker = szBroker; } }
+    void setPrefix(const char* szPrefix) { if(szPrefix) { strPrefix = szPrefix; } }
+    void setEnvironment(const char* szEnv) {if(szEnv) { strEnvironment = szEnv; } }
+    void setBasePrefix(const char* szPrefix) { if(szPrefix) { strBasePrefix = szPrefix; } }
     void setNeedDeployer(bool need) { bNeedDeployer = need; }
-    void setDisplay(const char* szDisplay) {if(szDisplay) strDisplay = szDisplay;}
+    void setDisplay(const char* szDisplay) {if(szDisplay) { strDisplay = szDisplay; } }
 
-    int getRank(void) { return iRank; }
-    const char* getName(void) { return strName.c_str(); }
-    const char* getVersion(void) { return strVersion.c_str(); }
-    const char* getDescription(void) { return strDescription.c_str(); }
-    const char* getHost(void) { return strHost.c_str(); }
-    bool getForced(void) { return bForced; }
-    bool getNeedDeployer(void) { return bNeedDeployer; }
+    int getRank() { return iRank; }
+    const char* getName() { return strName.c_str(); }
+    const char* getVersion() { return strVersion.c_str(); }
+    const char* getDescription() { return strDescription.c_str(); }
+    const char* getHost() { return strHost.c_str(); }
+    bool getForced() { return bForced; }
+    bool getNeedDeployer() { return bNeedDeployer; }
 
-    const char* getParam(void) { return strParam.c_str(); }
-    const char* getXmlFile(void) { return strXmlFile.c_str(); }
-    const char* getWorkDir(void) { return strWorkDir.c_str(); }
-    const char* getStdio(void) { return strStdio.c_str(); }
-    const char* getBroker(void) { return strBroker.c_str(); }
-    const char* getPrefix(void) { return strPrefix.c_str(); }
-    const char* getEnvironment(void) { return strEnvironment.c_str(); }
-    const char* getBasePrefix(void) { return strBasePrefix.c_str(); }
+    const char* getParam() { return strParam.c_str(); }
+    const char* getXmlFile() { return strXmlFile.c_str(); }
+    const char* getWorkDir() { return strWorkDir.c_str(); }
+    const char* getStdio() { return strStdio.c_str(); }
+    const char* getBroker() { return strBroker.c_str(); }
+    const char* getPrefix() { return strPrefix.c_str(); }
+    const char* getEnvironment() { return strEnvironment.c_str(); }
+    const char* getBasePrefix() { return strBasePrefix.c_str(); }
     const char* getDisplay() { return strDisplay.c_str(); }
 
 
-    int argumentCount(void) { return arguments.size(); }
+    int argumentCount() { return arguments.size(); }
     Argument& getArgumentAt(int index){ return arguments[index]; }
-    int outputCount(void) { return outputs.size(); }
+    int outputCount() { return outputs.size(); }
     OutputData& getOutputAt(int index) { return outputs[index]; }
-    int inputCount(void) { return inputs.size(); }
+    int inputCount() { return inputs.size(); }
     InputData& getInputAt(int index) { return inputs[index]; }
-    int resourceCount(void) const { return resources.size(); }
+    int resourceCount() const { return resources.size(); }
     GenericResource& getResourceAt(int index) const { return *(resources[index]); }
 
     void addAuthor(Author& author) { authors.push_back(author); }
-    int authorCount(void) { return authors.size(); }
+    int authorCount() { return authors.size(); }
     Author& getAuthorAt(int index) { return authors[index]; }
     bool removeAuthor(Author& author);
 
@@ -176,18 +176,18 @@ public:
     double getPostStopWait() { return waitStop; }
 
 
-    void clearInputs(void) { inputs.clear(); }
-    void clearOutputs(void) { outputs.clear(); }
-    void clearResources(void) { resources.clear(); }
+    void clearInputs() { inputs.clear(); }
+    void clearOutputs() { outputs.clear(); }
+    void clearResources() { resources.clear(); }
 
     void setOwner(Node* owner) { modOwner = owner; }
-    Node* owner(void) { return modOwner; }
+    Node* owner() { return modOwner; }
 
-    void clear(void);
+    void clear();
     // modelBased is used to keep the graphic and geometric
     // information which is directly loaded from application
     // description file.
-    GraphicModel& getModelBase(void) { return modelBase;}
+    GraphicModel& getModelBase() { return modelBase;}
     void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
 

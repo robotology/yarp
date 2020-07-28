@@ -307,7 +307,7 @@ public:
     /**
     * Pop an element out of the vector: size is changed
     */
-    inline void pop_back (void)
+    inline void pop_back()
     {
         bytes.pop_back();
     }

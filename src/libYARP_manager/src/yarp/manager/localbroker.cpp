@@ -123,7 +123,7 @@ BOOL CreatePipeAsync(
                         lpPipeAttributes,
                         OPEN_EXISTING,
                         FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED,
-                        NULL                       // Template file
+                        nullptr                       // Template file
                       );
 
     if (INVALID_HANDLE_VALUE == WritePipeHandle)
@@ -519,7 +519,7 @@ void LocalBroker::run()
     while(!Thread::isStopping())
     {
         BOOL bRet = ReadFile(read_from_pipe_cmd_to_stdout,
-                             buff, 1023, &dwRead, NULL);
+                             buff, 1023, &dwRead, nullptr);
         if(!bRet)
             break;
         buff[dwRead] = (CHAR)0;
@@ -565,11 +565,11 @@ string LocalBroker::lastError2String()
 {
     int error=GetLastError();
     char buff[1024];
-    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,NULL,error,0,buff,1024,NULL);
+    FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,nullptr,error,0,buff,1024,nullptr);
     return string(buff);
 }
 
-bool LocalBroker::startStdout(void)
+bool LocalBroker::startStdout()
 {
     if (!CloseHandle(write_to_pipe_cmd_to_stdout))
         return false;
@@ -577,12 +577,12 @@ bool LocalBroker::startStdout(void)
     return true;
 }
 
-void LocalBroker::stopStdout(void)
+void LocalBroker::stopStdout()
 {
     Thread::stop();
 }
 
-int LocalBroker::ExecuteCmd(void)
+int LocalBroker::ExecuteCmd()
 {
     string strCmdLine = strCmd + string(" ") + strParam;
 
@@ -621,7 +621,7 @@ int LocalBroker::ExecuteCmd(void)
         SECURITY_ATTRIBUTES pipe_sec_attr;
         pipe_sec_attr.nLength = sizeof(SECURITY_ATTRIBUTES);
         pipe_sec_attr.bInheritHandle = TRUE;
-        pipe_sec_attr.lpSecurityDescriptor = NULL;
+        pipe_sec_attr.lpSecurityDescriptor = nullptr;
         CreatePipeAsync(&read_from_pipe_cmd_to_stdout,
                    &write_to_pipe_cmd_to_stdout,
                    &pipe_sec_attr, 0);
@@ -671,23 +671,23 @@ int LocalBroker::ExecuteCmd(void)
     bool bWorkdir=(strWorkdir.size()) ? true : false;
     string strWorkdirOk = bWorkdir ? strWorkdir+string("\\") : "";
 
-    BOOL bSuccess=CreateProcess(NULL,   // command name
+    BOOL bSuccess=CreateProcess(nullptr,   // command name
                                 (char*)(strWorkdirOk+strCmdLine).c_str(), // command line
-                                NULL,          // process security attributes
-                                NULL,          // primary thread security attributes
+                                nullptr,          // process security attributes
+                                nullptr,          // primary thread security attributes
                                 TRUE,          // handles are inherited
                                 dwCreationFlags,
                                 (LPVOID) chNewEnv, // use new environment
-                                bWorkdir?strWorkdirOk.c_str():NULL, // working directory
+                                bWorkdir?strWorkdirOk.c_str():nullptr, // working directory
                                 &cmd_startup_info,   // STARTUPINFO pointer
                                 &cmd_process_info);  // receives PROCESS_INFORMATION
 
     if (!bSuccess && bWorkdir)
     {
-            bSuccess=CreateProcess(NULL,    // command name
+            bSuccess=CreateProcess(nullptr,    // command name
                                     (char*)(strCmdLine.c_str()), // command line
-                                    NULL,          // process security attributes
-                                    NULL,          // primary thread security attributes
+                                    nullptr,          // process security attributes
+                                    nullptr,          // primary thread security attributes
                                     TRUE,          // handles are inherited
                                     dwCreationFlags,
                                     (LPVOID) chNewEnv, // use new environment
@@ -714,7 +714,7 @@ int LocalBroker::ExecuteCmd(void)
 bool LocalBroker::psCmd(int pid)
 {
     HANDLE hProc=OpenProcess(SYNCHRONIZE|PROCESS_QUERY_INFORMATION, FALSE, pid);
-    if (hProc==NULL)
+    if (hProc==nullptr)
         return false;
 
     DWORD status;
@@ -726,7 +726,7 @@ bool LocalBroker::psCmd(int pid)
 bool LocalBroker::killCmd(int pid)
 {
     HANDLE hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE, FALSE, pid);
-    if (hProc==NULL)
+    if (hProc==nullptr)
         return false;
 
     BOOL bRet = TerminateProcess(hProc, 0);
@@ -737,7 +737,7 @@ bool LocalBroker::killCmd(int pid)
 bool LocalBroker::stopCmd(int pid)
 {
     HANDLE hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE, FALSE, pid);
-    if (hProc==NULL)
+    if (hProc==nullptr)
         return false;
 
     LocalTerminateParams params(pid);
@@ -810,12 +810,12 @@ int LocalBroker::waitPipeSignal(int pipe_fd)
     new_action.sa_handler = SIG_IGN;
     sigemptyset (&new_action.sa_mask);
     new_action.sa_flags = 0;
-    sigaction (SIGUSR1, &new_action, NULL);
+    sigaction (SIGUSR1, &new_action, nullptr);
     sigset_t sset, orgmask;
     sigemptyset(&sset);
     sigaddset(&sset, SIGUSR1);
     pthread_sigmask(SIG_BLOCK, &sset, &orgmask);
-    if(pselect(pipe_fd + 1, &fd, NULL, NULL, &timeout, &orgmask))
+    if(pselect(pipe_fd + 1, &fd, nullptr, nullptr, &timeout, &orgmask))
         return PIPE_EVENT;
 #endif
 */

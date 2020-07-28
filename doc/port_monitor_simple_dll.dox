@@ -72,12 +72,12 @@ class SimpleMonitorObject : public yarp::os::MonitorObject
 {
 public:
     bool create(const yarp::os::Property& options) override;
-    void destroy(void) override;
+    void destroy() override;
 
     bool setparam(const yarp::os::Property& params) override;
     bool getparam(yarp::os::Property& params) override;
 
-    void trig(void) override;
+    void trig() override;
 
     bool accept(yarp::os::Things& thing) override;
     yarp::os::Things& update(yarp::os::Things& thing) override;
@@ -107,7 +107,7 @@ bool SimpleMonitorObject::create(const yarp::os::Property& options)
    return true;
 }
 
-void SimpleMonitorObject::destroy(void)
+void SimpleMonitorObject::destroy()
 {
     printf("destroyed!\n");
 }
@@ -147,7 +147,7 @@ yarp::os::Things& SimpleMonitorObject::update(yarp::os::Things& thing)
     return thing;
 }
 
-void SimpleMonitorObject::trig(void)
+void SimpleMonitorObject::trig()
 {
 }
 ~~~

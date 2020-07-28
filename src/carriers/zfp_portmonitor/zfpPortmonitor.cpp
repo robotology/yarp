@@ -43,7 +43,7 @@ bool ZfpMonitorObject::create(const yarp::os::Property& options)
     return true;
 }
 
-void ZfpMonitorObject::destroy(void)
+void ZfpMonitorObject::destroy()
 {
     if(compressed){
         free(compressed);

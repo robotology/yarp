@@ -102,7 +102,7 @@ public:
     void lock() const { mutex.lock(); }
     void unlock() const { mutex.unlock(); }
 
-    MonitorBinding* getBinder(void) {
+    MonitorBinding* getBinder() {
         if(!bReady)
             return NULL;
         return binder;

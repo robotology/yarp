@@ -38,7 +38,7 @@ public:
 
     bool setStream(yarp::os::impl::DgramTwoWayStream *stream);
 
-    void start (void);
+    void start();
 
     InputStream& getInputStream() override;
     OutputStream& getOutputStream() override;

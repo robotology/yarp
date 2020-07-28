@@ -55,7 +55,7 @@ public:
 
     Private& operator=(const Private& other)
     {
-        (void)other; // UNUSED
+        YARP_UNUSED(other);
         YARP_FIXME_NOTIMPLEMENTED("operator=")
         return *this;
     }

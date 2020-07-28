@@ -31,10 +31,10 @@ class GraphIterator;
 class Graph {
 
 public:
-    Graph(void);
+    Graph();
     virtual ~Graph();
 
-    int getSize(void) { return nodes.size(); }
+    int getSize() { return nodes.size(); }
     Node* getNodeAt(int index);
 
     Node* addNode(Node* node);
@@ -46,14 +46,14 @@ public:
                 float weight, bool _virtual=false);
     bool removeLink(Node* first, Node* second);
     bool removeLink(const char* szFirst, const char* szSecond);
-    void clear(void);
+    void clear();
     void setSatisfied(bool sat);
     void setVisited(bool vis);
     bool hasNode(Node* node);
     bool hasNode(const char* szLabel);
     Node* getNode( const char* szLabel);
-    GraphIterator begin(void);
-    GraphIterator end(void);
+    GraphIterator begin();
+    GraphIterator end();
 
 protected:
 
@@ -69,8 +69,8 @@ private:
 class GraphIterator: public std::iterator<std::input_iterator_tag, Node*>
 {
 public:
-    GraphIterator(void){}
-    virtual ~GraphIterator(){}
+    GraphIterator() = default;
+    virtual ~GraphIterator() = default;
     GraphIterator& operator++() {++itr;return *this;}
     GraphIterator operator++(int) {GraphIterator tmp(*this); operator++(); return tmp;}
     bool operator==(const GraphIterator& rhs) const {return itr==rhs.itr;}

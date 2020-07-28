@@ -84,7 +84,7 @@ yarp::dev::impl::FixedSizeBuffersManager<T>::FixedSizeBuffersManager(uint32_t zi
 
 
 template <typename T>
-yarp::dev::impl::Buffer<T> yarp::dev::impl::FixedSizeBuffersManager<T>::getBuffer(void)
+yarp::dev::impl::Buffer<T> yarp::dev::impl::FixedSizeBuffersManager<T>::getBuffer()
 {
     m_mutex.lock();
     //get first free buffer
@@ -169,7 +169,7 @@ void yarp::dev::impl::FixedSizeBuffersManager<T>::releaseBuffer(yarp::dev::impl:
 
 
 template <typename T>
-void yarp::dev::impl::FixedSizeBuffersManager<T>::printBuffers(void)
+void yarp::dev::impl::FixedSizeBuffersManager<T>::printBuffers()
 {
     m_mutex.lock();
     for (std::size_t i = 0; i < m_buffers.size(); i++) {
@@ -190,7 +190,7 @@ yarp::dev::impl::FixedSizeBuffersManager<T>::~FixedSizeBuffersManager()
 
 
 template <typename T>
-std::size_t yarp::dev::impl::FixedSizeBuffersManager<T>::getBufferSize(void)
+std::size_t yarp::dev::impl::FixedSizeBuffersManager<T>::getBufferSize()
 {
     return m_numElem;
 }

@@ -104,7 +104,7 @@ public:
      */
     bool open(SerialDeviceDriverSettings& config);
 
-    bool close(void) override;
+    bool close() override;
 
     /**
      * Sends a string of chars to the serial communications channel.

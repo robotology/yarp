@@ -52,7 +52,7 @@ class MEvent{
 
 public:
     MEvent() {}
-    virtual ~MEvent() {}
+    virtual ~MEvent() = default;
     virtual void onExecutableStart(void* which) {}
     virtual void onExecutableStop(void* which) {}
     virtual void onExecutableDied(void* which) {}
@@ -62,7 +62,7 @@ public:
     virtual void onCnnReleased(void* which) {}
     virtual void onCnnFailed(void* which) {}
     virtual void onError(void* which) {}
-    };
+};
 
 
 class ConcurentWrapper;
@@ -75,40 +75,40 @@ class Executable : public BrokerEventSink
 {
 public:
     Executable(Broker* _broker, MEvent* _event, Module* module, bool bWatchDog=true);
-    virtual ~Executable();
+    ~Executable() override;
 
-    bool start(void);
-    void stop(void);
-    void kill(void);
+    bool start();
+    void stop();
+    void kill();
 
     void setID(int id) { theID = id;}
-    void setCommand(const char* val) { if(val) strCommand = val; }
-    void setParam(const char* val) { if(val) strParam = val; }
-    void setHost(const char* val) { if(val) strHost = val; }
-    void setStdio(const char* val) { if(val) strStdio = val; }
-    void setWorkDir(const char* val) { if(val) strWorkdir = val; }
-    void setEnv(const char* val) {if(val) strEnv = val; }
+    void setCommand(const char* val) { if(val) { strCommand = val; } }
+    void setParam(const char* val) { if(val) { strParam = val; } }
+    void setHost(const char* val) { if(val) { strHost = val; } }
+    void setStdio(const char* val) { if(val) { strStdio = val; } }
+    void setWorkDir(const char* val) { if(val) { strWorkdir = val; } }
+    void setEnv(const char* val) { if(val) { strEnv = val; } }
 
     void addConnection(Connection &cnn) { connections.push_back(cnn); }
-    CnnContainer& getConnections(void) { return connections;}
+    CnnContainer& getConnections() { return connections;}
     void addResource(ResYarpPort &res) { resources.push_back(res); }
-    ResourceContainer& getResources(void) { return resources; }
+    ResourceContainer& getResources() { return resources; }
 
-    RSTATE state(void);
+    RSTATE state();
     BrokerType getBrokerType();
     bool shouldChangeBroker();
-    Broker* getBroker(void) { return broker; }
+    Broker* getBroker() { return broker; }
     void setAndInitializeBroker(Broker* _broker);
-    void removeBroker(void) { if (broker) delete broker;}
+    void removeBroker() { delete broker;}
 
-    MEvent* getEvent(void) { return event; }
-    const char* getCommand(void) { return strCommand.c_str(); }
-    const char* getParam(void) { return strParam.c_str(); }
-    const char* getHost(void) { return strHost.c_str(); }
-    const char* getStdio(void) { return strStdio.c_str(); }
-    const char* getWorkDir(void) { return strWorkdir.c_str(); }
-    const char* getEnv(void) { return strEnv.c_str(); }
-    int getID(void) { return theID; }
+    MEvent* getEvent() { return event; }
+    const char* getCommand() { return strCommand.c_str(); }
+    const char* getParam() { return strParam.c_str(); }
+    const char* getHost() { return strHost.c_str(); }
+    const char* getStdio() { return strStdio.c_str(); }
+    const char* getWorkDir() { return strWorkdir.c_str(); }
+    const char* getEnv() { return strEnv.c_str(); }
+    int getID() { return theID; }
     Module* getModule() { return module; }
 
     void setPostExecWait(double t) { waitStart = t; }
@@ -121,9 +121,9 @@ public:
     void setOriginalPostStopWait(double t){ originalWaitStop = t; }
     void restoreOriginalPostStopWait(){ waitStop = originalWaitStop; }
 
-    void enableAutoConnect(void) { bAutoConnect = true; }
-    void disableAutoConnect(void) { bAutoConnect = false; }
-    bool autoConnect(void) { return bAutoConnect; }
+    void enableAutoConnect() { bAutoConnect = true; }
+    void disableAutoConnect() { bAutoConnect = false; }
+    bool autoConnect() { return bAutoConnect; }
 
     bool startWatchDog();
     void stopWatchDog();
@@ -159,17 +159,17 @@ private:
     ConcurentRateWrapper* watchdogWrapper;
     yarp::os::Semaphore semInitialize;
 
-    void startImplement(void);
-    void stopImplement(void);
-    void killImplement(void);
-    void watchdogImplement(void);
-    bool initialize(void);
+    void startImplement();
+    void stopImplement();
+    void killImplement();
+    void watchdogImplement();
+    bool initialize();
 };
 
 
 typedef std::vector<Executable*> ExecutablePContainer;
 typedef std::vector<Executable*>::iterator ExecutablePIterator;
-typedef void (Executable::*ExecutableFuncPtr)(void);
+typedef void (Executable::*ExecutableFuncPtr)();
 
 class ConcurentWrapper : public yarp::os::Thread
 {
@@ -177,12 +177,13 @@ public:
     ConcurentWrapper(Executable* ptrExecutable, ExecutableFuncPtr ptrLabor)
     : labor(ptrLabor), executable(ptrExecutable) { }
 
-    virtual ~ConcurentWrapper() { if(isRunning()) stop(); }
+    ~ConcurentWrapper() override { if(isRunning()) { stop(); } }
 
 
     void run() override {
-        if(labor && executable)
+        if(labor && executable) {
             (executable->*labor)();
+        }
     }
 
     //bool threadInit();
@@ -201,12 +202,13 @@ public:
     ConcurentRateWrapper(Executable* ptrExecutable, ExecutableFuncPtr ptrLabor)
     : PeriodicThread(WDOG_PERIOD), labor(ptrLabor), executable(ptrExecutable) { }
 
-    virtual ~ConcurentRateWrapper() { if(isRunning()) stop(); }
+    ~ConcurentRateWrapper() override { if(isRunning()) { stop(); } }
 
 
     void run() override {
-        if(labor && executable)
+        if(labor && executable) {
             (executable->*labor)();
+        }
     }
 
     //bool threadInit();

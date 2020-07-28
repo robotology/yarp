@@ -492,7 +492,7 @@ public:
 
     void run() override;
 private:
-    void cleanup(void);
+    void cleanup();
     bool dealloc();
     bool parsePositionPidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[]);
     bool parseTorquePidsGroup(yarp::os::Bottle& pidsGroup, yarp::dev::Pid myPid[], double kbemf[], double ktau[], int filterType[]);

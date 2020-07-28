@@ -32,14 +32,14 @@ class FSM::Event
 {
 public:
     Event(const char* szName) {
-        if(szName) strName = szName;
+        if(szName) { strName = szName; }
         timeStamp = 0;
     }
-    virtual ~Event() {}
+    virtual ~Event() = default;
 
     void setTimeStamp(double t) { timeStamp = t; }
-    double getTimeStamp(void) { return timeStamp; }
-    const char* getName(void) { return strName.c_str(); }
+    double getTimeStamp() { return timeStamp; }
+    const char* getName() { return strName.c_str(); }
 
     inline bool operator==(const Event& alt) const {
         return ((strName == alt.strName)); }
@@ -59,8 +59,8 @@ class FSM::IEventSink
 {
 public:
 
-    IEventSink() {}
-    virtual ~IEventSink() {}
+    IEventSink() = default;
+    virtual ~IEventSink() = default;
 
    /**
    * @param event the event
@@ -79,14 +79,14 @@ private:
 class FSM::StateBase
 {
 public:
-    StateBase(IEventSink* pEventSink, const char* szName=NULL) {
+    StateBase(IEventSink* pEventSink, const char* szName = nullptr) {
         eventSink = pEventSink;
-        if(szName) strName = szName;
+        if(szName) { strName = szName; }
     }
 
-    virtual ~StateBase() {}
+    virtual ~StateBase() = default;
 
-    const char* getName(void) {
+    const char* getName() {
         return strName.c_str(); }
 
 protected:
@@ -110,12 +110,12 @@ class FSM::StateMachineBase : public IEventSink
 {
 public:
     StateMachineBase() {
-        state = NULL;
+        state = nullptr;
         currentTimeStamp = 0.0;
     }
-    virtual ~StateMachineBase() {}
+    ~StateMachineBase() override = default;
 
-    StateBase* currentState(void) {
+    StateBase* currentState() {
         try
         {
     //        typeid(*state);
@@ -129,7 +129,7 @@ public:
     }
 
     void setInitState(StateBase* pState) {
-        if(!state) state = pState;
+        if(!state) { state = pState; }
     }
 
     void addTransition(StateBase* source, Event* event, StateBase* target) {

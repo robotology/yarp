@@ -50,7 +50,7 @@ public:
     bool init(const char* szcmd, const char* szparam,
               const char* szhost, const char* szstdio,
               const char* szworkdir, const char* szenv) override;
-    void fini(void) override;
+    void fini() override;
     bool start() override;
     bool stop() override;
     bool kill() override;
@@ -58,15 +58,15 @@ public:
                  const char* carrier, bool persist=false) override;
     bool disconnect(const char* from, const char* to,
                     const char *carrier) override;
-    int running(void) override;
+    int running() override;
     bool exists(const char* port) override;
     const char* requestRpc(const char* szport, const char* request, double timeout) override;
     bool connected(const char* from, const char* to,
                    const char* carrier) override;
-    const char* error(void) override;
-    bool initialized(void) override { return bInitialized;}
-    bool attachStdout(void) override;
-    void detachStdout(void) override;
+    const char* error() override;
+    bool initialized() override { return bInitialized;}
+    bool attachStdout() override;
+    void detachStdout() override;
 
     /** Define if the application will be visible or not */
     void setWindowMode(WindowMode m);
@@ -95,7 +95,7 @@ private:
     WindowMode windowMode;
 
     bool timeout(double base, double timeout);
-    int ExecuteCmd(void);
+    int ExecuteCmd();
     bool psCmd(int pid);
     bool killCmd(int pid);
     bool stopCmd(int pid);
@@ -109,8 +109,8 @@ private:
     void splitLine(char *pLine, char **pArgs);
     void parseArguments(char *io_pLine, int *o_pArgc, char **o_pArgv);
 #endif
-    bool startStdout(void);
-    void stopStdout(void);
+    bool startStdout();
+    void stopStdout();
 
     inline bool IS_PARENT_OF(int pid){ return pid>0; }
     inline bool IS_NEW_PROCESS(int pid){ return !pid; }

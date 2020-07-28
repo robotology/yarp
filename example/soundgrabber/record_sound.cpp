@@ -37,7 +37,7 @@ using namespace yarp::sig;
 
 
 
-int main (void)
+int main()
 {
     //in order to record to a file
     FILE *outFile;

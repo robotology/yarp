@@ -84,7 +84,7 @@ public:
      */
     bool open(PortAudioRecorderDeviceDriverSettings& config);
 
-    bool close(void) override;
+    bool close() override;
     bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
     bool startRecording() override;
     bool stopRecording() override;
@@ -101,7 +101,7 @@ protected:
     void*   m_system_resource;
 
     PortAudioRecorderDeviceDriverSettings m_driverConfig;
-    void handleError(void);
+    void handleError();
 };
 
 

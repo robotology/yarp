@@ -38,12 +38,12 @@ class YarpBroker: public Broker, public yarp::os::PeriodicThread {
 
 public:
     YarpBroker();
-     virtual ~YarpBroker();
+    ~YarpBroker() override;
      bool init() override;
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
             const char* szworkdir, const char* szenv ) override;
-     void fini(void) override;
+     void fini() override;
      bool start() override;
      bool stop() override;
      bool kill() override;
@@ -51,14 +51,14 @@ public:
                         const char* carrier, bool persist=false) override;
      bool disconnect(const char* from, const char* to, const char* carrier) override;
      bool rmconnect(const char* from, const char* to);
-     int running(void) override;
+     int running() override;
      bool exists(const char* port) override;
      const char* requestRpc(const char* szport, const char* request, double timeout) override;
      bool connected(const char* from, const char* to, const char* carrier) override;
-     const char* error(void) override;
-     bool initialized(void) override { return bInitialized;}
-     bool attachStdout(void) override;
-     void detachStdout(void) override;
+     const char* error() override;
+     bool initialized() override { return bInitialized;}
+     bool attachStdout() override;
+     void detachStdout() override;
 
      bool getSystemInfo(const char* server,
                         yarp::os::SystemInfoSerializer& info);
@@ -97,7 +97,7 @@ private:
     //yarp::os::Port port;
 
     bool timeout(double base, double timeout);
-    yarp::os::Property& runProperty(void);
+    yarp::os::Property& runProperty();
     int requestServer(yarp::os::Property& config);
     int SendMsg(yarp::os::Bottle& msg, std::string target,
                 yarp::os::Bottle& resp, float fTimeout=5.0);

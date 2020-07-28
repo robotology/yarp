@@ -19,7 +19,7 @@ class ZfpMonitorObject : public yarp::os::MonitorObject
 {
 public:
     bool create(const yarp::os::Property& options) override;
-    void destroy(void) override;
+    void destroy() override;
 
     bool setparam(const yarp::os::Property& params) override;
     bool getparam(yarp::os::Property& params) override;

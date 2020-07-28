@@ -113,7 +113,7 @@ public:
 
     std::string getBootstrapCarrierName() const override;
 
-    yarp::os::Face* createFace(void) const override;
+    yarp::os::Face* createFace() const override;
 
 };
 

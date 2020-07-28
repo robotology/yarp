@@ -26,12 +26,12 @@ class XmlAppLoader : public AppLoader {
 public:
     XmlAppLoader(const char* szFileName);
     XmlAppLoader(const char* szPath, const char* szAppName);
-    virtual ~XmlAppLoader();
+    ~XmlAppLoader() override;
 
-    bool         init(void) override;
-    void         fini(void) override;
-    void         reset(void) override;
-    Application* getNextApplication(void) override;
+    bool         init() override;
+    void         fini() override;
+    void         reset() override;
+    Application* getNextApplication() override;
 
 protected:
 

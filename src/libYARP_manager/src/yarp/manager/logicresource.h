@@ -22,16 +22,16 @@ namespace manager {
 class Platform : public GenericResource
 {
 public:
-    Platform(void);
+    Platform();
     Platform(const char* szName);
-    virtual ~Platform();
-    Node* clone(void) override;
+    ~Platform() override;
+    Node* clone() override;
     bool satisfy(GenericResource* resource) override;
 
-    void setDistribution(const char* str) { if(str) strDistrib = str; }
-    void setRelease(const char* str) { if(str) strRelease = str; }
-    const char* getDistribution(void) { return strDistrib.c_str(); }
-    const char* getRelease(void) { return strRelease.c_str(); }
+    void setDistribution(const char* str) { if(str) { strDistrib = str; } }
+    void setRelease(const char* str) { if(str) { strRelease = str; } }
+    const char* getDistribution() { return strDistrib.c_str(); }
+    const char* getRelease() { return strRelease.c_str(); }
 
 protected:
 
@@ -46,18 +46,18 @@ private:
 class ResYarpPort : public GenericResource
 {
 public:
-    ResYarpPort(void);
+    ResYarpPort();
     ResYarpPort(const char* szName);
-    virtual ~ResYarpPort();
-    void setPort(const char* szPort) { if(szPort) strPort = szPort; }
-    const char* getPort(void) { return strPort.c_str(); }
-    void setRequest(const char* szReq) { if(szReq) strRequest = szReq; }
-    void setReply(const char* szRep) { if(szRep) strReply = szRep; }
-    const char* getRequest(void) { return strRequest.c_str(); }
-    const char* getReply(void) { return strReply.c_str(); }
+    ~ResYarpPort() override;
+    void setPort(const char* szPort) { if(szPort) { strPort = szPort; } }
+    const char* getPort() { return strPort.c_str(); }
+    void setRequest(const char* szReq) { if(szReq) { strRequest = szReq; } }
+    void setReply(const char* szRep) { if(szRep) { strReply = szRep; } }
+    const char* getRequest() { return strRequest.c_str(); }
+    const char* getReply() { return strReply.c_str(); }
     void setTimeout(double t) { timeout = t; }
-    double getTimeout(void) { return timeout; }
-    Node* clone(void) override;
+    double getTimeout() { return timeout; }
+    Node* clone() override;
     bool satisfy(GenericResource* resource) override;
 
 protected:

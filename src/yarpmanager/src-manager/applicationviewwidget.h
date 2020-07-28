@@ -47,8 +47,8 @@ public:
                                    yarp::manager::Manager *lazyManager,
                                    yarp::os::Property* config,
                                    bool editingMode = false,
-                                   QWidget *parent = 0);
-    ~ApplicationViewWidget();
+                                   QWidget *parent = nullptr);
+    ~ApplicationViewWidget() override;
 
     void runApplicationSet(bool onlySelected);
     void stopApplicationSet(bool onlySelected);
@@ -70,8 +70,8 @@ public:
     void onResUnAvailable(int which) override;
     void onConAvailable(int from, int to) override;
     void onConUnAvailable(int from, int to) override;
-    void onError(void) override;
-    void onLoadBalance(void) override;
+    void onError() override;
+    void onLoadBalance() override;
     void closeManager();
     QToolBar* getBuilderToolBar();
     bool isBuilderFloating();
@@ -172,8 +172,8 @@ private:
 private slots:
     void onAssignHost();
     void onCloseStdOut(int);
-    void onAttachStdout(void);
-    void onDetachStdout(void);
+    void onAttachStdout();
+    void onDetachStdout();
     void onYARPView();
     void onYARPHear();
     void onYARPRead();

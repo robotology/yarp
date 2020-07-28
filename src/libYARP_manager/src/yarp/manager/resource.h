@@ -21,25 +21,25 @@ class GenericResource : public Node
 {
 public:
     GenericResource(const char* szTypeName);
-    virtual ~GenericResource();
+    ~GenericResource() override;
 
     void setAvailability(bool flag) { bAvailable = flag; }
-    bool getAvailability(void) { return bAvailable; }
+    bool getAvailability() { return bAvailable; }
     void setDisable(bool flag) { bDisabled = flag; }
-    bool getDisable(void) { return bDisabled; }
+    bool getDisable() { return bDisabled; }
 
-    void setName(const char* szName) { if(szName) strName = szName; }
-    const char* getName(void) { return strName.c_str(); }
-    void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
-    const char* getDescription(void) { return strDescription.c_str(); }
-    const char* getTypeName(void) { return strTypeName.c_str(); }
+    void setName(const char* szName) { if(szName) { strName = szName; } }
+    const char* getName() { return strName.c_str(); }
+    void setDescription(const char* szDesc) { if(szDesc) { strDescription = szDesc; } }
+    const char* getDescription() { return strDescription.c_str(); }
+    const char* getTypeName() { return strTypeName.c_str(); }
 
     void setOwner(Node* owner) { modOwner = owner; }
-    Node* owner(void) { return modOwner; }
-    void setXmlFile(const char* szFilename) { if(szFilename) strXmlFile = szFilename;}
-    const char* getXmlFile(void) { return strXmlFile.c_str(); }
+    Node* owner() { return modOwner; }
+    void setXmlFile(const char* szFilename) { if(szFilename) { strXmlFile = szFilename; } }
+    const char* getXmlFile() { return strXmlFile.c_str(); }
 
-    //virtual Node* clone(void);
+    //virtual Node* clone();
     virtual bool satisfy(GenericResource* resource) = 0;
 
     bool operator==(const GenericResource& res) const {
@@ -70,15 +70,15 @@ typedef std::vector<GenericResource*>::iterator ResourcePIterator;
 class MultiResource : public GenericResource
 {
 public:
-    MultiResource(void);
+    MultiResource();
     MultiResource(const char* szName);
     MultiResource(const MultiResource& rhs);
     MultiResource& operator=(const MultiResource& rhs);
-    virtual ~MultiResource();
-    Node* clone(void) override;
+    ~MultiResource() override;
+    Node* clone() override;
     bool satisfy(GenericResource* resource) override;
 
-    int resourceCount(void) const { return resources.size(); }
+    int resourceCount() const { return resources.size(); }
     GenericResource& getResourceAt(int index) const { return *(resources[index]); }
     bool addResource(GenericResource& res);
     void clear();

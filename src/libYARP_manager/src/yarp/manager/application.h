@@ -31,12 +31,12 @@ class Portmap{
 
 public:
     Portmap(const char* szOld, const char* szNew) {
-        if(szOld) strOld = szOld;
-        if(szNew) strNew = szNew;
+        if(szOld) { strOld = szOld; }
+        if(szNew) { strNew = szNew; }
     }
-    virtual ~Portmap(){}
-    const char* oldPort(void) { return strOld.c_str(); }
-    const char* newPort(void) { return strNew.c_str(); }
+    virtual ~Portmap() = default;
+    const char* oldPort() { return strOld.c_str(); }
+    const char* newPort() { return strNew.c_str(); }
     bool operator==(const Portmap& alt) const {
         return ((strOld == alt.strOld) && (strNew == alt.strNew));
     }
@@ -56,34 +56,34 @@ typedef std::vector<Portmap>::iterator PortmapIterator;
 /**
  * Class Connection
  */
-class Connection{
-
+class Connection
+{
 public:
-    Connection(void) { Connection(NULL, NULL); }
-    Connection(const char* szFrom, const char* szTo, const char* szCr=NULL) {
-        if(szFrom) strFrom = szFrom;
-        if(szTo) strTo = szTo;
-        if(szCr) strCarrier = szCr;
+    Connection() { Connection(nullptr, nullptr); }
+    Connection(const char* szFrom, const char* szTo, const char* szCr=nullptr) {
+        if(szFrom) { strFrom = szFrom; }
+        if(szTo) { strTo = szTo; }
+        if(szCr) { strCarrier = szCr; }
         bWithPriority = false;
-        appOwner = NULL;
+        appOwner = nullptr;
         bExternalFrom = false;
         bExternalTo = false;
         existsFrom = false;
         existsTo = false;
         bPersist = false;
-        input = NULL;
-        output = NULL;
-        model = NULL;
+        input = nullptr;
+        output = nullptr;
+        model = nullptr;
     }
-    virtual ~Connection(){}
-    const char* from(void) { return strFrom.c_str();}
-    const char* to(void) { return strTo.c_str();}
-    const char* carrier(void) { return strCarrier.c_str(); }
-    const char* qosFrom(void) { return strQosFrom.c_str(); }
-    const char* qosTo(void) { return strQosTo.c_str(); }
-    void setFrom(const char* szFrom) { if(szFrom) strFrom = szFrom; }
-    void setTo(const char* szTo) { if(szTo) strTo = szTo; }
-    void setCarrier(const char* szCr) { if(szCr) strCarrier = szCr; }
+    virtual ~Connection() = default;
+    const char* from() { return strFrom.c_str();}
+    const char* to() { return strTo.c_str();}
+    const char* carrier() { return strCarrier.c_str(); }
+    const char* qosFrom() { return strQosFrom.c_str(); }
+    const char* qosTo() { return strQosTo.c_str(); }
+    void setFrom(const char* szFrom) { if(szFrom) { strFrom = szFrom; } }
+    void setTo(const char* szTo) { if(szTo) { strTo = szTo; } }
+    void setCarrier(const char* szCr) { if(szCr) { strCarrier = szCr; } }
     void setFromExternal(bool ext) { bExternalFrom = ext;}
     void setToExternal(bool ext) { bExternalTo = ext; }
     void setFromExists(bool exists) { existsFrom = exists;}
@@ -91,34 +91,34 @@ public:
     bool getFromExists() const { return existsFrom; }
     bool getToExists() const { return existsTo; }
     void setPersistent(bool per) { bPersist = per; }
-    void setQosFrom(const char* szQos) { if(szQos) strQosFrom = szQos; }
-    void setQosTo(const char* szQos) { if(szQos) strQosTo = szQos; }
-    bool isExternalFrom(void) { return bExternalFrom; }
-    bool isExternalTo(void) { return bExternalTo; }
-    bool isPersistent(void) { return bPersist; }
+    void setQosFrom(const char* szQos) { if(szQos) { strQosFrom = szQos; } }
+    void setQosTo(const char* szQos) { if(szQos) { strQosTo = szQos; } }
+    bool isExternalFrom() { return bExternalFrom; }
+    bool isExternalTo() { return bExternalTo; }
+    bool isPersistent() { return bPersist; }
 
 
-    void setId(const char* id) { if(id) strId = id; }
-    const char* getId(void) { return strId.c_str(); }
+    void setId(const char* id) { if(id) { strId = id; } }
+    const char* getId() { return strId.c_str(); }
 
     void setOwner(Node* owner){ appOwner = owner; }
-    Node* owner(void) { return appOwner; }
+    Node* owner() { return appOwner; }
 
     void setCorInputData(InputData* in) { input = in;}
-    InputData* getCorInputData(void) { return input;}
+    InputData* getCorInputData() { return input;}
     void setCorOutputData(OutputData* out) { output = out;}
-    OutputData* getCorOutputData(void) { return output;}
+    OutputData* getCorOutputData() { return output;}
 
     void setPriority(bool withprio) { bWithPriority = withprio; }
-    bool withPriority(void) { return bWithPriority; }
+    bool withPriority() { return bWithPriority; }
 
-    GraphicModel* getModel(void) { return model;}
+    GraphicModel* getModel() { return model;}
     void setModel(GraphicModel* mdl) { model = mdl; }
 
     // modelBased is used to keep the graphic and geometric
     // information which is directly loaded from application
     // description file.
-    GraphicModel& getModelBase(void) { return modelBase;}
+    GraphicModel& getModelBase() { return modelBase;}
     void setModelBase(GraphicModel& mdl) { modelBase = mdl; }
 
 
@@ -165,36 +165,36 @@ class ModuleInterface{
 
 public:
     ModuleInterface( const char* szName) {
-        if(szName) strName = szName;
+        if(szName) { strName = szName; }
         iRank = -1;
         waitStart = waitStop = 0.0;
     }
 
     ModuleInterface(Module* module);
 
-    virtual ~ModuleInterface(){}
+    virtual ~ModuleInterface() = default;
 
-    void setHost(const char* szHost) { if(szHost) strHost = szHost; }
-    void setParam(const char* szParam) { if(szParam) strParam = szParam; }
-    void setRank(int irank) { iRank = irank;}
-    void setWorkDir(const char* szWDir) { if(szWDir) strWorkDir = szWDir; }
-    void setStdio(const char* szStdio) { if(szStdio) strStdio = szStdio; }
-    void setBroker(const char* szBroker) { if(szBroker) strBroker = szBroker; }
-    void setPrefix(const char* szPrefix) {if(szPrefix) strPrefix = szPrefix; }
-    void setEnvironment(const char* szEnv) {if(szEnv) strEnvironment = szEnv; }
-    void setTag(const char* szTag) {if(szTag) strTag = szTag; }
-    void setDisplay(const char* szDisplay) {if(szDisplay) strDisplay = szDisplay;}
+    void setHost(const char* szHost) { if(szHost) { strHost = szHost; } }
+    void setParam(const char* szParam) { if(szParam) { strParam = szParam; } }
+    void setRank(int irank) { iRank = irank; }
+    void setWorkDir(const char* szWDir) { if(szWDir) { strWorkDir = szWDir; } }
+    void setStdio(const char* szStdio) { if(szStdio) { strStdio = szStdio; } }
+    void setBroker(const char* szBroker) { if(szBroker) { strBroker = szBroker; } }
+    void setPrefix(const char* szPrefix) {if(szPrefix) { strPrefix = szPrefix; } }
+    void setEnvironment(const char* szEnv) {if(szEnv) { strEnvironment = szEnv; } }
+    void setTag(const char* szTag) {if(szTag) { strTag = szTag; } }
+    void setDisplay(const char* szDisplay) {if(szDisplay) { strDisplay = szDisplay; } }
 
-    const char* getName(void) { return strName.c_str(); }
-    const char* getHost(void) { return strHost.c_str(); }
-    const char* getParam(void) { return strParam.c_str(); }
-    int getRank(void) { return iRank; }
-    const char* getWorkDir(void) { return strWorkDir.c_str(); }
-    const char* getStdio(void) { return strStdio.c_str(); }
-    const char* getBroker(void) { return strBroker.c_str(); }
-    const char* getPrefix(void) { return strPrefix.c_str(); }
-    const char* getEnvironment(void) { return strEnvironment.c_str(); }
-    const char* getTag(void) { return strTag.c_str(); }
+    const char* getName() { return strName.c_str(); }
+    const char* getHost() { return strHost.c_str(); }
+    const char* getParam() { return strParam.c_str(); }
+    int getRank() { return iRank; }
+    const char* getWorkDir() { return strWorkDir.c_str(); }
+    const char* getStdio() { return strStdio.c_str(); }
+    const char* getBroker() { return strBroker.c_str(); }
+    const char* getPrefix() { return strPrefix.c_str(); }
+    const char* getEnvironment() { return strEnvironment.c_str(); }
+    const char* getTag() { return strTag.c_str(); }
     const char* getDisplay() { return strDisplay.c_str(); }
 
     bool operator==(const ModuleInterface& modint) const {
@@ -202,7 +202,7 @@ public:
     }
 
     void addResource(ResYarpPort &res) { resources.push_back(res); }
-    ResourceContainer& getResources(void) { return resources; }
+    ResourceContainer& getResources() { return resources; }
 
     void setPostExecWait(double t) { waitStart = t; }
     double getPostExecWait() { return waitStart; }
@@ -210,15 +210,15 @@ public:
     double getPostStopWait() { return waitStop; }
 
 
-    int portmapCount(void) { return portmaps.size(); }
+    int portmapCount() { return portmaps.size(); }
     Portmap& getPortmapAt(int index){ return portmaps[index]; }
     bool addPortmap(Portmap &portmap);
     bool removePortmap(Portmap& portmap);
 
     //void setModule(Module* mod) { module = mod; }
-    //Module* getModule(void) { return module;}
+    //Module* getModule() { return module;}
 
-    GraphicModel& getModelBase(void) { return modelBase;}
+    GraphicModel& getModelBase() { return modelBase;}
     void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
 
@@ -257,12 +257,12 @@ class ApplicationInterface {
 
 public:
     ApplicationInterface(const char* szName) {
-        if(szName) strName = szName;
+        if(szName) { strName = szName; }
     }
-    virtual ~ApplicationInterface(){}
-    void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
-    const char* getName(void) { return strName.c_str(); }
-    const char* getPrefix(void) { return strPrefix.c_str(); }
+    virtual ~ApplicationInterface() = default;
+    void setPrefix(const char* szPrefix) { if(szPrefix) { strPrefix = szPrefix; } }
+    const char* getName() { return strName.c_str(); }
+    const char* getPrefix() { return strPrefix.c_str(); }
     bool operator==(const ApplicationInterface& alt) const {
         return (strName == alt.strName);
     }
@@ -270,7 +270,7 @@ public:
     // modelBased is used to keep the graphic and geometric
     // information which is directly loaded from application
     // description file.
-    GraphicModel& getModelBase(void) { return modelBase;}
+    GraphicModel& getModelBase() { return modelBase;}
     void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
 
@@ -292,74 +292,74 @@ typedef std::vector<ApplicationInterface>::iterator IApplicationIterator;
 class Application : public Node{
 
 public:
-    Application(void);
+    Application();
     Application(const char* szName);
     Application(const Application &app);
-    virtual ~Application();
+    ~Application() override;
     void setName(const char* szName) {
         if(szName){
             strName = szName;
         }
     }
-    void setVersion(const char* szVersion) { if(szVersion) strVersion = szVersion; }
-    void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
-    const char* getName(void) { return strName.c_str(); }
+    void setVersion(const char* szVersion) { if(szVersion) { strVersion = szVersion; } }
+    void setDescription(const char* szDesc) { if(szDesc) { strDescription = szDesc; } }
+    const char* getName() { return strName.c_str(); }
     size_t getNameLenght() {return strName.length(); }
-    const char* getVersion(void) { return strVersion.c_str(); }
-    const char* getDescription(void) { return strDescription.c_str(); }
-    Node* clone(void) override;
+    const char* getVersion() { return strVersion.c_str(); }
+    const char* getDescription() { return strDescription.c_str(); }
+    Node* clone() override;
 
     void addAuthor(Author& author) { authors.push_back(author); }
-    int authorCount(void) { return authors.size(); }
+    int authorCount() { return authors.size(); }
     Author& getAuthorAt(int index) { return authors[index]; }
     bool removeAuthor(Author& author);
 
-    int imoduleCount(void) { return Imodules.size(); }
+    int imoduleCount() { return Imodules.size(); }
     ModuleInterface& getImoduleAt(int index){ return Imodules[index]; }
     bool addImodule(ModuleInterface &imod);
     bool removeImodule(ModuleInterface& imod);
-    void removeAllImodules(void) { Imodules.clear(); }
+    void removeAllImodules() { Imodules.clear(); }
 
-    int iapplicationCount(void) { return Iapplications.size(); }
+    int iapplicationCount() { return Iapplications.size(); }
     ApplicationInterface& getIapplicationAt(int index){ return Iapplications[index]; }
     bool addIapplication(ApplicationInterface &iapp);
     bool removeIapplication(ApplicationInterface& iapp);
-    void removeAllIapplications(void) { Iapplications.clear(); }
+    void removeAllIapplications() { Iapplications.clear(); }
 
-    int resourcesCount(void) { return resources.size(); }
+    int resourcesCount() { return resources.size(); }
     ResYarpPort& getResourceAt(int index){ return resources[index]; }
     bool addResource(ResYarpPort &res);
     bool removeResource(ResYarpPort& res);
 
-    void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; }
-    const char* getPrefix(void) { return strPrefix.c_str(); }
-    void setBasePrefix(const char* szPrefix) { if(szPrefix) strBasePrefix = szPrefix; }
-    const char* getBasePrefix(void) { return strBasePrefix.c_str(); }
+    void setPrefix(const char* szPrefix) { if(szPrefix) { strPrefix = szPrefix; } }
+    const char* getPrefix() { return strPrefix.c_str(); }
+    void setBasePrefix(const char* szPrefix) { if(szPrefix) { strBasePrefix = szPrefix; } }
+    const char* getBasePrefix() { return strBasePrefix.c_str(); }
 
 
-    void setXmlFile(const char* szFilename) { if(szFilename) strXmlFile = szFilename;}
-    const char* getXmlFile(void) { return strXmlFile.c_str(); }
+    void setXmlFile(const char* szFilename) { if(szFilename) { strXmlFile = szFilename;} }
+    const char* getXmlFile() { return strXmlFile.c_str(); }
 
-    int connectionCount(void) { return connections.size(); }
+    int connectionCount() { return connections.size(); }
     Connection& getConnectionAt(int index){ return connections[index]; }
     Connection& addConnection(Connection &cnn);
     bool removeConnection(Connection& cnn);
-    //void updateConnectionPrefix(void);
+    //void updateConnectionPrefix();
 
-    int arbitratorCount(void) { return arbitrators.size(); }
+    int arbitratorCount() { return arbitrators.size(); }
     Arbitrator& getArbitratorAt(int index){ return arbitrators[index]; }
     Arbitrator& addArbitrator(Arbitrator &arb);
     bool removeArbitrator(Arbitrator& arb);
 
     void setOwner(Node* owner){ appOwner = owner; }
-    Node* owner(void) { return appOwner; }
+    Node* owner() { return appOwner; }
 
 
     bool operator==(const Application& app) const {
         return (strName == app.strName);
     }
 
-    void clear(void) {
+    void clear() {
         strName.clear();
         strVersion.clear();
         strDescription.clear();
@@ -374,7 +374,7 @@ public:
         appOwner=nullptr;
     }
 
-    GraphicModel& getModelBase(void) { return modelBase;}
+    GraphicModel& getModelBase() { return modelBase;}
     void setModelBase(GraphicModel& mdl) { modelBase = mdl; };
 
     std::map<std::string, int> modList;

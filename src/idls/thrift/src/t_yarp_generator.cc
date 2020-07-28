@@ -1240,7 +1240,7 @@ void t_yarp_generator::generate_deserialize_struct(std::ostringstream& f_cpp_,
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
-    (void)tstruct;
+    (void /* unused */)tstruct;
     f_cpp_ << "read" << (force_nested ? "Nested" : "") << "(" << prefix << ")";
 }
 

@@ -59,7 +59,7 @@ class streamThread :
 
    private:
    PaError      err;
-   void handleError(void);
+   void handleError();
 };
 
 class PortAudioDeviceDriver :
@@ -105,7 +105,7 @@ public:
      */
     bool open(PortAudioDeviceDriverSettings& config);
 
-    bool close(void) override;
+    bool close() override;
     bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
     bool renderSound(const yarp::sig::Sound& sound) override;
     bool startRecording() override;
@@ -113,7 +113,7 @@ public:
     bool startPlayback() override;
     bool stopPlayback() override;
 
-    bool abortSound(void);
+    bool abortSound();
     bool immediateSound(const yarp::sig::Sound& sound);
     bool appendSound(const yarp::sig::Sound& sound);
 
@@ -135,7 +135,7 @@ protected:
 
     PortAudioDeviceDriverSettings m_driverConfig;
     enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
-    void handleError(void);
+    void handleError();
 };
 
 

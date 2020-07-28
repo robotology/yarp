@@ -25,11 +25,11 @@ class XmlTempLoader : public TempLoader {
 public:
     XmlTempLoader(const char* szFileName);
     XmlTempLoader(const char* szPath, const char* szAppName);
-    virtual ~XmlTempLoader();
-    bool init(void) override;
-    void fini(void) override;
-    void reset(void) override;
-    AppTemplate* getNextAppTemplate(void) override;
+    ~XmlTempLoader() override;
+    bool init() override;
+    void fini() override;
+    void reset() override;
+    AppTemplate* getNextAppTemplate() override;
 
 protected:
 

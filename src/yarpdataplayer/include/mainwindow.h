@@ -132,7 +132,7 @@ private:
     /**
      * function that setups the required actions
      */
-    void setupActions(void);
+    void setupActions();
     /**
      * function that setups the required signals
      */
@@ -148,11 +148,11 @@ private:
     /**
      * function that closes the module from the gui
      */
-    bool safeExit(void);
+    bool safeExit();
     /**
      * function that closes the module from the terminal
      */
-    bool cmdSafeExit(void);
+    bool cmdSafeExit();
 
     QTreeWidgetItem *getRowByPart(QString szName);
 

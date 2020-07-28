@@ -81,7 +81,7 @@ public:
     void lock() { mutex.lock(); }
     void unlock() { mutex.unlock(); }
 
-    static MonitorEventRecord& getInstance(void) {
+    static MonitorEventRecord& getInstance() {
         static MonitorEventRecord __instance_MonitorEventRecord;
         return __instance_MonitorEventRecord;
     }

@@ -30,14 +30,14 @@ public:
      */
     void setPortWriter(yarp::os::PortWriter* writer);
 
-    yarp::os::PortWriter* getPortWriter(void);
+    yarp::os::PortWriter* getPortWriter();
 
     /**
      * Set the reference to a PortReader object
      */
     void setPortReader(yarp::os::PortReader* reader);
 
-    yarp::os::PortReader* getPortReader(void);
+    yarp::os::PortReader* getPortReader();
 
     /**
      *  set a reference to a ConnectionReader
@@ -54,7 +54,7 @@ public:
     bool hasBeenRead();
 
     template <typename T>
-    T* cast_as(void)
+    T* cast_as()
     {
         if (this->writer) {
             return dynamic_cast<T*>(this->writer);

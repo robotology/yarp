@@ -24,7 +24,7 @@ bool SimpleMonitorObject::create(const yarp::os::Property& options)
    return true;
 }
 
-void SimpleMonitorObject::destroy(void)
+void SimpleMonitorObject::destroy()
 {
     yDebug("destroyed!\n");
 }
@@ -64,6 +64,6 @@ yarp::os::Things& SimpleMonitorObject::update(yarp::os::Things& thing)
     return thing;
 }
 
-void SimpleMonitorObject::trig(void)
+void SimpleMonitorObject::trig()
 {
 }

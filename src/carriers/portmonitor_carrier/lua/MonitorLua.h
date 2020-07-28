@@ -22,8 +22,8 @@ class MonitorLua : public MonitorBinding
 {
 
 public:
-    MonitorLua(void);
-    virtual ~MonitorLua();
+    MonitorLua();
+    ~MonitorLua() override;
 
     bool load(const yarp::os::Property& options) override;
     bool setParams(const yarp::os::Property& params) override;
@@ -33,18 +33,19 @@ public:
     yarp::os::Things& updateData(yarp::os::Things& thing) override;
     yarp::os::Things& updateReply(yarp::os::Things& thing) override;
 
-    bool peerTrigged(void) override;
-    bool canAccept(void) override;
+    bool peerTrigged() override;
+    bool canAccept() override;
 
     bool setAcceptConstraint(const char* constraint) override {
-        if(!constraint)
+        if(!constraint) {
             return false;
+        }
         MonitorLua::constraint = constraint;
         trimString(MonitorLua::constraint);
         return true;
     }
 
-    const char* getAcceptConstraint(void) override {
+    const char* getAcceptConstraint() override {
         return constraint.c_str();
     }
 
@@ -73,7 +74,7 @@ public:
 
 private:
     bool getLocalFunction(const char *name);
-    bool registerExtraFunctions(void);
+    bool registerExtraFunctions();
     void trimString(std::string& str);
     void searchReplace(std::string& str,
                        const std::string& oldStr, const std::string& newStr);

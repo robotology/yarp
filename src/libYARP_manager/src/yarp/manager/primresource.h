@@ -26,16 +26,16 @@ typedef size_t Capacity;
  */
 class Memory : public GenericResource {
 public:
-    Memory(void);
+    Memory();
     Memory(const char* szName);
-    virtual ~Memory();
-    Node* clone(void) override;
+    ~Memory() override;
+    Node* clone() override;
     bool satisfy(GenericResource* resource) override;
 
     void setTotalSpace(Capacity c) { totalSpace = c; }
-    Capacity getTotalSpace(void) { return totalSpace; }
+    Capacity getTotalSpace() { return totalSpace; }
     void setFreeSpace(Capacity c) { freeSpace = c; }
-    Capacity getFreeSpace(void) { return freeSpace; }
+    Capacity getFreeSpace() { return freeSpace; }
 
 protected:
 
@@ -51,16 +51,16 @@ private:
  */
 class Storage : public GenericResource {
 public:
-    Storage(void);
+    Storage();
     Storage(const char* szName);
     virtual ~Storage();
-    Node* clone(void) override;
+    Node* clone() override;
     bool satisfy(GenericResource* resource) override;
 
     void setTotalSpace(Capacity c) { totalSpace = c; }
-    Capacity getTotalSpace(void) { return totalSpace; }
+    Capacity getTotalSpace() { return totalSpace; }
     void setFreeSpace(Capacity c) { freeSpace = c; }
-    Capacity getFreeSpace(void) { return freeSpace; }
+    Capacity getFreeSpace() { return freeSpace; }
 
 protected:
 
@@ -75,18 +75,18 @@ private:
  */
 class Network : public GenericResource {
 public:
-    Network(void);
+    Network();
     Network(const char* szName);
     virtual ~Network();
-    Node* clone(void) override;
+    Node* clone() override;
     bool satisfy(GenericResource* resource) override;
 
     void setIP4(const char* ip) { if(ip) strIP4 = ip; }
     void setIP6(const char* ip) { if(ip) strIP6 = ip; }
     void setMAC(const char* mac) { if(mac) strMAC = mac; }
-    const char* getIP4(void) { return strIP4.c_str(); }
-    const char* getIP6(void) { return strIP6.c_str(); }
-    const char* getMAC(void) { return strMAC.c_str(); }
+    const char* getIP4() { return strIP4.c_str(); }
+    const char* getIP6() { return strIP6.c_str(); }
+    const char* getMAC() { return strMAC.c_str(); }
 
 protected:
 
@@ -110,10 +110,10 @@ typedef struct _LoadAvg {
  */
 class Processor : public GenericResource {
 public:
-    Processor(void);
+    Processor();
     Processor(const char* szName);
     virtual ~Processor();
-    Node* clone(void) override;
+    Node* clone() override;
     bool satisfy(GenericResource* resource) override;
 
     void setArchitecture(const char* arch) {if(arch) strArchitecure = arch; }
@@ -122,12 +122,12 @@ public:
     void setSiblings(size_t n) { siblings = n; }
     void setFrequency(double f) { frequency = f; }
     void setCPULoad(const LoadAvg &avg) { cpuload = avg; }
-    const char* getArchitecture(void) { return strArchitecure.c_str(); }
-    const char* getModel(void) { return strModel.c_str(); }
-    size_t getCores(void) { return cores; }
-    size_t getSiblings(void) { return siblings; }
-    double getFrequency(void) { return frequency; }
-    const LoadAvg& getCPULoad(void) { return cpuload; }
+    const char* getArchitecture() { return strArchitecure.c_str(); }
+    const char* getModel() { return strModel.c_str(); }
+    size_t getCores() { return cores; }
+    size_t getSiblings() { return siblings; }
+    double getFrequency() { return frequency; }
+    const LoadAvg& getCPULoad() { return cpuload; }
 
 protected:
 
@@ -154,12 +154,12 @@ typedef std::vector<Process>::iterator ProcessIterator;
 
 class Computer : public GenericResource {
 public:
-    Computer(void);
+    Computer();
     Computer(const char* szName);
     Computer(const Computer& rhs);
     virtual ~Computer();
     Computer& operator=(const Computer& rhs);
-    Node* clone(void) override;
+    Node* clone() override;
     bool satisfy(GenericResource* resource) override;
 
     void setMemory(Memory& mem) { memory = mem; }
@@ -168,19 +168,19 @@ public:
     void setNetwork(Network& net) { network = net; }
     void setPlatform(Platform& os) {platform = os; }
 
-    Memory& getMemory(void) { return memory; }
-    Storage& getStorage(void) { return storage; }
-    Processor& getProcessor(void) { return processor; }
-    Network& getNetwork(void) { return network; }
-    Platform& getPlatform(void) { return platform; }
+    Memory& getMemory() { return memory; }
+    Storage& getStorage() { return storage; }
+    Processor& getProcessor() { return processor; }
+    Network& getNetwork() { return network; }
+    Platform& getPlatform() { return platform; }
 
-    int peripheralCount(void) const { return peripheralResources.size(); }
+    int peripheralCount() const { return peripheralResources.size(); }
     GenericResource& getPeripheralAt(int index) const { return *(peripheralResources[index]); }
     bool addPeripheral(GenericResource& res);
-    void clear(void);
+    void clear();
 
     // processes list
-    ProcessContainer& getProcesses(void) { return processes; }
+    ProcessContainer& getProcesses() { return processes; }
 
 protected:
 

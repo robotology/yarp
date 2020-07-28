@@ -82,10 +82,10 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
         size_t framesLeft = (recdata->getMaxSize().getSamples()* recdata->getMaxSize().getChannels()) -
                             (recdata->size().getSamples()      * recdata->size().getChannels());
 
-        (void) outputBuffer; // just to prevent unused variable warnings
-        (void) timeInfo;
-        (void) statusFlags;
-        (void) userData;
+        YARP_UNUSED(outputBuffer);
+        YARP_UNUSED(timeInfo);
+        YARP_UNUSED(statusFlags);
+        YARP_UNUSED(userData);
 
         if( framesLeft/ num_rec_channels < framesPerBuffer )
         {
@@ -135,10 +135,10 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
 
         size_t framesLeft = playdata->size().getSamples()* playdata->size().getChannels();
 
-        (void) inputBuffer; // just to prevent unused variable warnings
-        (void) timeInfo;
-        (void) statusFlags;
-        (void) userData;
+        YARP_UNUSED(inputBuffer); // just to prevent unused variable warnings
+        YARP_UNUSED(timeInfo);
+        YARP_UNUSED(statusFlags);
+        YARP_UNUSED(userData);
 
         if( framesLeft/ num_play_channels < framesPerBuffer )
         {

@@ -28,8 +28,8 @@ typedef std::vector<Link>::iterator LinkIterator;
 class GraphicModel {
 
 public:
-    GraphicModel(void) {}
-    virtual ~GraphicModel() {}
+    GraphicModel() = default;
+    virtual ~GraphicModel() = default;
     std::vector<GyPoint> points;
 };
 
@@ -49,9 +49,9 @@ public:
     virtual ~Link(){}
     Node* to() { return connectTo; }
     void setWeight(float w) { fWeight = w; }
-    float weight(void) { return fWeight; }
+    float weight() { return fWeight; }
     void setVirtual(bool virtualLink) { bVirtual = virtualLink;}
-    bool isVirtual(void){ return bVirtual; }
+    bool isVirtual(){ return bVirtual; }
 protected:
 
 private:
@@ -72,40 +72,40 @@ public:
         type = _type;
         bSatisfied = false;
         bVisited = false;
-        model = NULL;
+        model = nullptr;
     }
     Node(NodeType _type, const char* szLabel ){
         type = _type;
         bSatisfied = false;
         bVisited = false;
-        model = NULL;
-        if(szLabel) label = szLabel;
+        model = nullptr;
+        if(szLabel) { label = szLabel; }
     }
 
-    virtual ~Node() { model = NULL; }
+    virtual ~Node() { model = nullptr; }
 
     void setSatisfied(bool sat) { bSatisfied = sat; }
-    bool isSatisfied(void) { return bSatisfied; }
+    bool isSatisfied() { return bSatisfied; }
     void setVisited(bool vis) { bVisited = vis; }
-    bool isVisited(void) { return bVisited; }
-    bool isLeaf(void) {
+    bool isVisited() { return bVisited; }
+    bool isLeaf() {
         return ((sucCount()==0) ? true : false);
     }
 
-    NodeType getType(void) { return type; }
-    void setLabel(const char* szLabel) { if(szLabel) label = szLabel; }
-    const char* getLabel(void) { return label.c_str(); }
-    int sucCount(void) { return (int)sucessors.size(); }
+    NodeType getType() { return type; }
+    void setLabel(const char* szLabel) { if(szLabel) { label = szLabel; } }
+    const char* getLabel() { return label.c_str(); }
+    int sucCount() { return static_cast<int>(sucessors.size()); }
     Link &getLinkAt(int index) { return sucessors[index]; }
 
 
     bool addSuc(Node* node, float weight, bool _virtual=false);
     bool removeSuc(Node* node);
-    void removeAllSuc(void);
+    void removeAllSuc();
     bool hasSuc(Node* node);
     virtual Node* clone() = 0;
 
-    GraphicModel* getModel(void) { return model;}
+    GraphicModel* getModel() { return model;}
     void setModel(GraphicModel* mdl) { model = mdl; };
 
 

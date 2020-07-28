@@ -58,8 +58,8 @@ public:
     virtual void onResUnAvailable(int which) {}
     virtual void onConAvailable(int from, int to) {}
     virtual void onConUnAvailable(int from, int to) {}
-    virtual void onError(void) {}
-    virtual void onLoadBalance(void) {}
+    virtual void onError() {}
+    virtual void onLoadBalance() {}
 };
 
 
@@ -68,8 +68,8 @@ class SafeManager: public yarp::manager::Manager, yarp::os::Thread
 {
 public:
     SafeManager();
-    virtual ~SafeManager();
-    bool prepare(yarp::manager::Manager* lazy, yarp::os::Property* config, ApplicationEvent* event=NULL);
+    ~SafeManager() override;
+    bool prepare(yarp::manager::Manager* lazy, yarp::os::Property* config, ApplicationEvent* event=nullptr);
     void close();
 
     bool threadInit() override;
@@ -86,12 +86,12 @@ public:
                      std::vector<int>& RIDs);
     void safeAttachStdout(std::vector<int>& MIDs);
     void safeDetachStdout(std::vector<int>& MIDs);
-    void safeLoadBalance(void);
-    bool busy(void);
+    void safeLoadBalance();
+    bool busy();
 
-    bool checkSemaphore(void){ return semManage.check(); }
-    void postSemaphore(void) { semManage.post(); }
-    void waitSemaphore(void) { semManage.wait(); }
+    bool checkSemaphore(){ return semManage.check(); }
+    void postSemaphore() { semManage.post(); }
+    void waitSemaphore() { semManage.wait(); }
 
 
 protected:

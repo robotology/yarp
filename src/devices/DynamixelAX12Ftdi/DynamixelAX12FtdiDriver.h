@@ -179,7 +179,7 @@ public:
 
         @return true on success
      */
-    bool close(void) override;
+    bool close() override;
 
     /** Configure device online
         Configures parts of the device that can be configures online.

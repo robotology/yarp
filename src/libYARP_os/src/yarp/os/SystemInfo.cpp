@@ -64,8 +64,8 @@ extern char** environ;
 
 #    include <vector>
 
-static void enableCpuLoadCollector(void);
-static void disableCpuLoadCollector(void);
+static void enableCpuLoadCollector();
+static void disableCpuLoadCollector();
 
 #endif
 
@@ -167,7 +167,7 @@ public:
         sem.post();
     }
 
-    SystemInfo::LoadInfo getCpuLoad(void)
+    SystemInfo::LoadInfo getCpuLoad()
     {
         sem.wait();
         SystemInfo::LoadInfo ld = load;
@@ -226,7 +226,7 @@ private:
 
 static CpuLoadCollector* globalLoadCollector = nullptr;
 
-void enableCpuLoadCollector(void)
+void enableCpuLoadCollector()
 {
     if (globalLoadCollector == nullptr) {
         globalLoadCollector = new CpuLoadCollector();
@@ -234,7 +234,7 @@ void enableCpuLoadCollector(void)
     }
 }
 
-void disableCpuLoadCollector(void)
+void disableCpuLoadCollector()
 {
     if (globalLoadCollector) {
         globalLoadCollector->stop();

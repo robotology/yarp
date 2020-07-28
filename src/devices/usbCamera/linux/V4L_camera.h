@@ -268,7 +268,7 @@ private:
     */
     bool frameRead();
 
-    bool full_FrameRead(void);
+    bool full_FrameRead();
 
     /*
     * This function is intended to perform custom code to adapt

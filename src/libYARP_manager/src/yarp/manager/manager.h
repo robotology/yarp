@@ -27,9 +27,9 @@ public:
     Manager( bool withWatchDog=false);
     Manager(const char* szModPath, const char* szAppPath,
             const char* szResPath, bool withWatchDog=false);
-    virtual ~Manager();
+    ~Manager() override;
 
-    bool addApplication(const char* szFileName, char** szAppName_=NULL, bool modifyName=false);
+    bool addApplication(const char* szFileName, char** szAppName_=nullptr, bool modifyName=false);
     bool addApplications(const char* szPath);
     bool addModule(const char* szFileName);
     bool addModules(const char* szPath);
@@ -41,7 +41,7 @@ public:
     bool removeResource(const char* szResName);
 
     bool loadApplication(const char* szAppName);
-    bool saveApplication(const char* szAppName, const char* fileName=NULL);
+    bool saveApplication(const char* szAppName, const char* fileName=nullptr);
     bool updateExecutable(unsigned int id, const char* szparam,
                 const char* szhost, const char* szstdio,
                 const char* szworkdir, const char* szenv );
@@ -50,62 +50,62 @@ public:
 
     Node* getNode(std::string appName);
 
-    bool run(void);
+    bool run();
     bool run(unsigned int id, bool async=false);
-    bool stop(void);
+    bool stop();
     bool stop(unsigned int id, bool async=false);
-    bool kill(void);
+    bool kill();
     bool kill(unsigned int id, bool async=false);
-    bool connect(void);
+    bool connect();
     bool connect(unsigned int id);
-    bool disconnect(void);
+    bool disconnect();
     bool disconnect(unsigned int id);
     bool rmconnect(unsigned int id);
-    bool rmconnect(void);
-    bool running(void) { return allRunning(); }
+    bool rmconnect();
+    bool running() { return allRunning(); }
     bool running(unsigned int id);
-    bool suspended(void) { return allStopped(); }
+    bool suspended() { return allStopped(); }
     bool suspended(unsigned int id);
-    bool connected(void);
+    bool connected();
     bool connected(unsigned int id);
-    bool checkDependency(void);
+    bool checkDependency();
     bool exist(unsigned int id);
     bool existPortFrom(unsigned int id);
     bool existPortTo(unsigned int id);
     bool attachStdout(unsigned int id);
     bool detachStdout(unsigned int id);
-    bool updateResources(void);
+    bool updateResources();
     bool updateResource(const char* szName);
     bool waitingModuleRun(unsigned int id);
     bool waitingModuleStop(unsigned int id);
     bool waitingModuleKill(unsigned int id);
-    bool loadBalance(void);
+    bool loadBalance();
 
-    void setDefaultBroker(const char* szBroker) { if(szBroker) strDefBroker = szBroker; }
-    const char* defaultBroker(void) { return strDefBroker.c_str(); }
-    ExecutablePContainer& getExecutables(void) { return runnables; }
+    void setDefaultBroker(const char* szBroker) { if(szBroker) { strDefBroker = szBroker; } }
+    const char* defaultBroker() { return strDefBroker.c_str(); }
+    ExecutablePContainer& getExecutables() { return runnables; }
     Executable* getExecutableById(size_t id);
     bool switchBroker(size_t id);
-    CnnContainer& getConnections(void) { return connections;}
-    ResourcePContainer& getResources(void) { return resources; }
-    const char* getApplicationName(void) { return strAppName.c_str(); }
+    CnnContainer& getConnections() { return connections;}
+    ResourcePContainer& getResources() { return resources; }
+    const char* getApplicationName() { return strAppName.c_str(); }
 
     //const char* getDataPort(const char* szDataType);
 
-    void enableRestrictedMode(void) { bRestricted = true; }
-    void disableRestrictedMode(void) { bRestricted = false; }
-    void enableAutoConnect(void) { bAutoConnect = true; }
-    void disableAutoConnect(void) { bAutoConnect = false; }
-    void enableAutoDependency(void) { bAutoDependancy = true; }
-    void disableAutoDependency(void) { bAutoDependancy = false; }
-    void enableWatchDog(void) { bWithWatchDog = true; }
-    void disableWatchod(void) { bWithWatchDog = false; }
+    void enableRestrictedMode() { bRestricted = true; }
+    void disableRestrictedMode() { bRestricted = false; }
+    void enableAutoConnect() { bAutoConnect = true; }
+    void disableAutoConnect() { bAutoConnect = false; }
+    void enableAutoDependency() { bAutoDependancy = true; }
+    void disableAutoDependency() { bAutoDependancy = false; }
+    void enableWatchDog() { bWithWatchDog = true; }
+    void disableWatchod() { bWithWatchDog = false; }
     bool exportDependencyGraph(const char* szFileName) {
         return knowledge.exportAppGraph(szFileName);
     }
 
-    KnowledgeBase* getKnowledgeBase(void) { return &knowledge; }
-    ErrorLogger* getLogger(void) { return logger;}
+    KnowledgeBase* getKnowledgeBase() { return &knowledge; }
+    ErrorLogger* getLogger() { return logger;}
 
 protected:
     void onExecutableStart(void* which) override;
@@ -136,13 +136,13 @@ private:
     ResourcePContainer resources;
 
     bool createKnowledgeBase(AppLoader &appLoader);
-    void clearExecutables(void);
+    void clearExecutables();
     bool isServer(Module* module);
-    bool connectExtraPorts(void);
+    bool connectExtraPorts();
     bool checkPortsAvailable(Broker* broker);
-    bool allRunning(void);
-    bool oneRunning(void);
-    bool allStopped(void);
+    bool allRunning();
+    bool oneRunning();
+    bool allStopped();
     bool prepare(bool silent=true);
     bool timeout(double base, double t);
     bool updateResource(GenericResource* resource);

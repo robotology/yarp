@@ -80,10 +80,10 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
 
         size_t framesLeft = playdata->size().getSamples()* playdata->size().getChannels();
 
-        (void) inputBuffer; // just to prevent unused variable warnings
-        (void) timeInfo;
-        (void) statusFlags;
-        (void) userData;
+        YARP_UNUSED(inputBuffer);
+        YARP_UNUSED(timeInfo);
+        YARP_UNUSED(statusFlags);
+        YARP_UNUSED(userData);
 
         if( framesLeft/ num_play_channels < framesPerBuffer )
         {

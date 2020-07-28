@@ -58,7 +58,7 @@ public:
 
 private:
     PaError err;
-    void handleError(void);
+    void handleError();
 };
 
 class PortAudioPlayerDeviceDriver :
@@ -100,12 +100,12 @@ public:
      */
     bool open(PortAudioPlayerDeviceDriverSettings& config);
 
-    bool close(void) override;
+    bool close() override;
     bool renderSound(const yarp::sig::Sound& sound) override;
     bool startPlayback() override;
     bool stopPlayback() override;
 
-    bool abortSound(void);
+    bool abortSound();
     bool immediateSound(const yarp::sig::Sound& sound);
     bool appendSound(const yarp::sig::Sound& sound);
 
@@ -118,7 +118,7 @@ protected:
 
     PortAudioPlayerDeviceDriverSettings m_driverConfig;
     enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
-    void handleError(void);
+    void handleError();
 };
 
 

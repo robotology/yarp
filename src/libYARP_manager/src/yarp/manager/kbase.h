@@ -36,7 +36,7 @@ typedef std::vector<Node*>::iterator NodePVIterator;
 class KnowledgeBase{
 
 public:
-    KnowledgeBase(void) :
+    KnowledgeBase() :
         modloader(nullptr),
         apploader(nullptr),
         resloader(nullptr),
@@ -52,7 +52,7 @@ public:
                     AppLoader* _apploader,
                     ResourceLoader* _resloader);
     bool addApplication(Application* application,
-                        char **szAppName_=NULL,
+                        char **szAppName_=nullptr,
                         bool modifyName=false);
     bool addModule(Module* module);
     bool addResource(GenericResource* resource);
@@ -64,20 +64,20 @@ public:
                             bool bAutoDependancy=false, bool bSilent=false);
     bool reasolveDependency(Application* app,
                             bool bAutoDependancy=false, bool bSilent=false);
-    bool checkConsistency(void);
+    bool checkConsistency();
 
     Node* getNode(std::string appName);
 
-    const ModulePContainer& getSelModules(void) { return selmodules; }
-    const CnnContainer& getSelConnection(void) { return selconnections; }
-    const ResourcePContainer& getSelResources(void) { return selresources; }
-    const ApplicaitonPContainer& getSelApplications(void) { return selapplications; }
+    const ModulePContainer& getSelModules() { return selmodules; }
+    const CnnContainer& getSelConnection() { return selconnections; }
+    const ResourcePContainer& getSelResources() { return selresources; }
+    const ApplicaitonPContainer& getSelApplications() { return selapplications; }
 
-    const ApplicaitonPContainer& getApplications(Application* parent=NULL);
-    const ModulePContainer& getModules(Application* parent=NULL);
-    const ResourcePContainer& getResources(Application* parent=NULL);
-    const CnnContainer& getConnections(Application* parent=NULL);
-    const ArbContainer& getArbitrators(Application* parent=NULL);
+    const ApplicaitonPContainer& getApplications(Application* parent=nullptr);
+    const ModulePContainer& getModules(Application* parent=nullptr);
+    const ResourcePContainer& getResources(Application* parent=nullptr);
+    const CnnContainer& getConnections(Application* parent=nullptr);
+    const ArbContainer& getArbitrators(Application* parent=nullptr);
 
     const InputContainer& getInputCandidates(OutputData* output);
     const OutputContainer& getOutputCandidates(InputData* input);
@@ -155,7 +155,7 @@ private:
     void linkToOutputs(Graph& graph, InputData* input);
     int getProducerRank(Graph& graph, OutputData* output);
     const char* createDataLabel(const char* modlabel, const char* port,
-                                const char* postfix=NULL);
+                                const char* postfix=nullptr);
     const char* createAppLabel(Application* app);
     Module* replicateModule(Graph& graph,
                             Module* module, const char* szLabel);

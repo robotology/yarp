@@ -70,8 +70,8 @@ int yarp_getattr(const char *path, struct stat *stbuf)
 int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                  off_t offset, struct fuse_file_info *fi)
 {
-    (void) offset;
-    (void) fi;
+    (void /* unused */) offset;
+    (void /* unused */) fi;
 
     printf(">>>>>>>>>>>READING DIR\n");
 
@@ -173,7 +173,7 @@ int yarp_read(const char *path, char *buf, size_t size, off_t offset,
               struct fuse_file_info *fi)
 {
     size_t len;
-    (void) fi;
+    (void /* unused */) fi;
 
 
     YHandle *fh = YHANDLE(fi);
@@ -196,7 +196,7 @@ int yarp_write(const char *path, const char *buf, size_t size,
                off_t offset, struct fuse_file_info *fi)
 {
     size_t len;
-    (void) fi;
+    (void /* unused */) fi;
 
     YHandle *fh = YHANDLE(fi);
     if (fh==NULL) {

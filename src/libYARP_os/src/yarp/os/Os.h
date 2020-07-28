@@ -179,7 +179,7 @@ YARP_os_API void getprogname(char* progname, size_t size);
  * @deprecated since YARP 3.0.0
  */
 YARP_os_DEPRECATED_API_MSG("Use native fork()")
-int fork(void);
+int fork();
 #endif // YARP_NO_DEPRECATED
 
 

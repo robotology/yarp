@@ -46,13 +46,13 @@ public:
 
     H264Decoder(h264Decoder_cfgParamters &config);
     ~H264Decoder();
-    bool init(void);
+    bool init();
     bool start();
     bool stop();
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> & getLastFrame(void);
-    int getLastFrameSize(void);
-    bool newFrameIsAvailable(void);
-    void setReq(void);
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>& getLastFrame();
+    int getLastFrameSize();
+    bool newFrameIsAvailable();
+    void setReq();
 };
 
 #endif

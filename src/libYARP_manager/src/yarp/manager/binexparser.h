@@ -33,7 +33,7 @@ class BinaryNode : public Node
 {
 
 public:
-    BinaryNode(const char* opd) : Node((NodeType)OPERAND) {
+    BinaryNode(const char* opd) : Node(static_cast<NodeType>(OPERAND)) {
         char str[128];
         sprintf(str, "%s%d", opd, node_id++);
         setLabel(str);
@@ -43,42 +43,46 @@ public:
 
     BinaryNode(const char* opt,
                BinaryNode* left,
-               BinaryNode* right ) : Node((NodeType)OPERATOR) {
+               BinaryNode* right ) : Node(static_cast<NodeType>(OPERATOR)) {
 
         char str[128];
         sprintf(str, "%s%d", opt, node_id++);
         setLabel(str);
         strName = opt;
         value = false;
-        if(left)
+        if(left) {
             addSuc(left, 0);
-        if(right)
+        }
+        if(right) {
             addSuc(right, 0);
+        }
     }
 
-    virtual ~BinaryNode() { }
+    ~BinaryNode() override = default;
 
-    Node* clone(void) override {
+    Node* clone() override {
         BinaryNode* binode = new BinaryNode(*this);
         return binode;
     }
 
     BinaryNode* leftOf() {
-        if(sucCount()<1)
-            return NULL;
+        if(sucCount()<1) {
+            return nullptr;
+        }
         return (BinaryNode*) getLinkAt(0).to();
     }
 
     BinaryNode* rightOf() {
-        if(sucCount()<2)
-            return NULL;
+        if(sucCount()<2) {
+            return nullptr;
+        }
         return (BinaryNode*) getLinkAt(1).to();
     }
 
-    bool getValue(void) { return value; }
+    bool getValue() { return value; }
     void setValue(bool val) { value = val; }
 
-    const char* getName(void) {return strName.c_str(); }
+    const char* getName() {return strName.c_str(); }
 
 protected:
 
@@ -100,14 +104,15 @@ public:
     bool parse(std::string _exp);
     bool exportDotGraph(const char* szFileName);
     void addRestrictedOperand(const char* opnd) {
-        if(opnd)
+        if(opnd) {
             validOperands.push_back(opnd);
+        }
     }
 
-    const std::map<std::string, bool> &getOperands(void) {
+    const std::map<std::string, bool> &getOperands() {
         return operands;
     }
-    const std::vector<std::vector<int> > &getTruthTable(void) {
+    const std::vector<std::vector<int> > &getTruthTable() {
         return truthTable;
     }
 
@@ -152,9 +157,9 @@ public:
 
     bool train(const std::vector<std::vector<int> >  &truthTable);
 
-    const std::vector<double> &getAlphas(void) { return alphas; }
-    const std::vector<double> &getErrors(void) { return errors; }
-    double getBias(void) {return bias; }
+    const std::vector<double> &getAlphas() { return alphas; }
+    const std::vector<double> &getErrors() { return errors; }
+    double getBias() {return bias; }
 
 private:
     int maxIteration;

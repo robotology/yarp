@@ -25,18 +25,18 @@ class Executable;
 class ITransition
 {
 public:
-    virtual ~ITransition() {}
-    virtual void kill(void) = 0;
-    virtual void moduleFailed(void) = 0;
-    virtual void refresh(void) {}
+    virtual ~ITransition() = default;
+    virtual void kill() = 0;
+    virtual void moduleFailed() = 0;
+    virtual void refresh() {}
     virtual void connectionFailed(void* which) {}
-    virtual void start(void) {}
-    virtual void stop(void) {}
-    virtual void startModule(void) {}
-    virtual void stopModule(void) {}
-    virtual void killModule(void) {}
-    virtual void connectAllPorts(void) {}
-    virtual void disconnectAllPorts(void) {}
+    virtual void start() {}
+    virtual void stop() {}
+    virtual void startModule() {}
+    virtual void stopModule() {}
+    virtual void killModule() {}
+    virtual void connectAllPorts() {}
+    virtual void disconnectAllPorts() {}
 };
 
 
@@ -67,14 +67,14 @@ class Suspended : public ITransition, public FSM::StateBase
 {
 public:
     Suspended(Executable* pExecutable, FSM::IEventSink* pEventSink);
-    ~Suspended();
+    ~Suspended() override;
 
 public:
-    void start(void) override;
-    void stop(void) override;
-    void kill(void) override;
-    void refresh(void) override;
-    void moduleFailed(void) override;
+    void start() override;
+    void stop() override;
+    void kill() override;
+    void refresh() override;
+    void moduleFailed() override;
 
 public:
     Executable* executable;
@@ -88,17 +88,17 @@ class Ready : public ITransition, public FSM::StateBase
 {
 public:
     Ready(Executable* pExecutable, FSM::IEventSink* pEventSink);
-    ~Ready();
+    ~Ready() override;
 
 public:
-    void kill(void) override;
-    void startModule(void) override;
-    void moduleFailed(void) override;
+    void kill() override;
+    void startModule() override;
+    void moduleFailed() override;
 
 private:
     Executable* executable;
     bool bAborted;
-    bool checkPriorityPorts(void);
+    bool checkPriorityPorts();
     bool checkResources(bool silent=true);
     bool timeout(double base, double timeout);
 };
@@ -112,17 +112,17 @@ class Connecting : public ITransition, public FSM::StateBase
 {
 public:
     Connecting(Executable* pExecutable, FSM::IEventSink* pEventSink);
-    ~Connecting();
+    ~Connecting() override;
 
 public:
-    void refresh(void) override;
-    void kill(void) override;
-    void connectAllPorts(void) override;
-    void moduleFailed(void) override;
+    void refresh() override;
+    void kill() override;
+    void connectAllPorts() override;
+    void moduleFailed() override;
 
 private:
     Executable* executable;
-    bool checkNormalPorts(void);
+    bool checkNormalPorts();
     bool bAborted;
 };
 
@@ -135,14 +135,14 @@ class Running : public ITransition, public FSM::StateBase
 {
 public:
     Running(Executable* pExecutable, FSM::IEventSink* pEventSink);
-    ~Running();
+    ~Running() override;
 
 public:
-    void refresh(void) override;
-    void kill(void) override;
-    void start(void) override;
-    void stop(void) override;
-    void moduleFailed(void) override;
+    void refresh() override;
+    void kill() override;
+    void start() override;
+    void stop() override;
+    void moduleFailed() override;
     void connectionFailed(void* which) override;
 
 private:
@@ -157,15 +157,15 @@ class Dying : public ITransition, public FSM::StateBase
 {
 public:
     Dying(Executable* pExecutable, FSM::IEventSink* pEventSink);
-    ~Dying();
+    ~Dying() override;
 
 public:
-    void refresh(void) override;
-    void kill(void) override;
-    void moduleFailed(void) override;
-    void stopModule(void) override;
-    void killModule(void) override;
-    void disconnectAllPorts(void) override;
+    void refresh() override;
+    void kill() override;
+    void moduleFailed() override;
+    void stopModule() override;
+    void killModule() override;
+    void disconnectAllPorts() override;
 
 private:
     Executable* executable;
@@ -179,14 +179,14 @@ class Dead : public ITransition, public FSM::StateBase
 {
 public:
     Dead(Executable* pExecutable, FSM::IEventSink* pEventSink);
-    ~Dead();
+    ~Dead() override;
 
 public:
-    void start(void) override;
-    void stop(void) override;
-    void kill(void) override;
-    void refresh(void) override;
-    void moduleFailed(void) override;
+    void start() override;
+    void stop() override;
+    void kill() override;
+    void refresh() override;
+    void moduleFailed() override;
 
 private:
     Executable* executable;
@@ -200,18 +200,18 @@ class ExecMachine : public FSM::StateMachineBase
 {
 public:
     ExecMachine(Executable* pExecutable);
-    ~ExecMachine();
+    ~ExecMachine() override;
 
-    void refresh(void);
-    void start(void);
-    void stop(void);
-    void kill(void);
-    void startModule(void);
-    void stopModule(void);
-    void killModule(void);
-    void connectAllPorts(void);
-    void disconnectAllPorts(void);
-    void moduleFailed(void);
+    void refresh();
+    void start();
+    void stop();
+    void kill();
+    void startModule();
+    void stopModule();
+    void killModule();
+    void connectAllPorts();
+    void disconnectAllPorts();
+    void moduleFailed();
     void connectionFailed(void* which);
 
 protected:

@@ -26,10 +26,10 @@ namespace manager {
 class StrStream
 {
 public:
-    StrStream(void);
+    StrStream();
     StrStream(const std::string str);
     ~StrStream();
-    std::string str(void);
+    std::string str();
     StrStream& operator<<(StrStream &oss);
     StrStream& operator<<(const std::string &str);
     StrStream& operator<<(int n);
@@ -59,7 +59,7 @@ private:
 class ErrorLogger
 {
 public:
-    static ErrorLogger* Instance(void);
+    static ErrorLogger* Instance();
 
     void addWarning(const char* szWarning);
     void addWarning(const std::string &str);
@@ -67,13 +67,13 @@ public:
     void addError(const char* szError);
     void addError(const std::string &str);
     void addError(OSTRINGSTREAM &stream);
-    const char* getLastError(void);
-    const char* getLastWarning(void);
+    const char* getLastError();
+    const char* getLastWarning();
     const char* getFormatedErrorString();
     const char* getFormatedWarningString();
-    void clear(void);
-    int errorCount(void);
-    int warningCount(void);
+    void clear();
+    int errorCount();
+    int warningCount();
 
 private:
     ErrorLogger(){}
