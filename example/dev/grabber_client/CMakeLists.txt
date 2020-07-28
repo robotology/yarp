@@ -1,0 +1,26 @@
+# Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
+if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  cmake_minimum_required(VERSION 3.12)
+  project(grabber_client)
+  find_package(YARP REQUIRED COMPONENTS os sig dev)
+endif()
+
+add_executable(grabber_client)
+target_sources(grabber_client PRIVATE grabber_client.cpp)
+target_link_libraries(grabber_client PRIVATE YARP::YARP_os
+                                             YARP::YARP_init
+                                             YARP::YARP_sig
+                                             YARP::YARP_dev)
+
+
+add_executable(grabber_client_alternate)
+target_sources(grabber_client_alternate PRIVATE grabber_client_alternate.cpp)
+target_link_libraries(grabber_client_alternate PRIVATE YARP::YARP_os
+                                                       YARP::YARP_init
+                                                       YARP::YARP_sig
+                                                       YARP::YARP_dev)
