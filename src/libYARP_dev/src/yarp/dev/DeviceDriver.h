@@ -55,7 +55,7 @@ public:
      * yarp developers to add documentation for your device).
      * @return true/false upon success/failure
      */
-    bool open(yarp::os::Searchable& config) override { return true; }
+    bool open(yarp::os::Searchable& config) override { YARP_UNUSED(config); return true; }
 
     /**
      * Close the DeviceDriver.
@@ -150,7 +150,7 @@ public:
      * @param txt the message, in text form
      * @param explain an (optional) what the message means
      */
-    void addUsage(const char *txt, const char *explain=0/*NULL*/);
+    void addUsage(const char *txt, const char *explain = nullptr);
 
     /**
      * Add information about a message that the respond() method
@@ -158,7 +158,7 @@ public:
      * @param bot the message, in bottle form
      * @param explain an (optional) what the message means
      */
-    void addUsage(const yarp::os::Bottle& bot, const char *explain=0/*NULL*/);
+    void addUsage(const yarp::os::Bottle& bot, const char *explain = nullptr);
 
     /**
      * Respond to a message.
