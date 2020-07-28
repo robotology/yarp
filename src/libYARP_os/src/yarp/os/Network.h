@@ -798,7 +798,7 @@ public:
      * classic yarp::Network() method and the environment variable will be
      * used.
      *
-     * In case CUSTOM_CLOCK is used, the Clock pointer must point to a valid
+     * In case YARP_CLOCK_CUSTOM is used, the Clock pointer must point to a valid
      * Clock object already initialized.
      */
     Network(yarp::os::yarpClockType clockType,

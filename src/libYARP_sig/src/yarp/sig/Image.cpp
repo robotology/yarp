@@ -52,17 +52,19 @@ inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, Connecti
     size_t allocatedBytes = dest.getRawImageSize();
     yAssert(mem != nullptr);
     //this check is redundant with assertion, I would remove it
-    if (dest.getRawImageSize() != (size_t) header.imgSize) {
+    if (dest.getRawImageSize() != static_cast<size_t>(header.imgSize)) {
         printf("There is a problem reading an image\n");
-        printf("incoming: width %d, height %d, code %d, quantum %d, size %d\n",
-            (int)header.width, (int)header.height,
-            (int)header.id,
-            (int)header.quantum, (int)header.imgSize);
+        printf("incoming: width %zu, height %zu, code %zu, quantum %zu, size %zu\n",
+               static_cast<size_t>(header.width),
+               static_cast<size_t>(header.height),
+               static_cast<size_t>(header.id),
+               static_cast<size_t>(header.quantum),
+               static_cast<size_t>(header.imgSize));
         printf("my space: width %zu, height %zu, code %d, quantum %zu, size %zu\n",
             dest.width(), dest.height(), dest.getPixelCode(), dest.getQuantum(), allocatedBytes);
     }
     yAssert(allocatedBytes == (size_t) header.imgSize);
-    bool ok = connection.expectBlock((char *)mem, allocatedBytes);
+    bool ok = connection.expectBlock(reinterpret_cast<char*>(mem), allocatedBytes);
     return (!connection.isError() && ok);
 }
 
@@ -166,10 +168,11 @@ void ImageStorage::_alloc () {
 
     if ((type_id == VOCAB_PIXEL_MONO_FLOAT) ||
         (type_id == VOCAB_PIXEL_RGB_FLOAT)  ||
-        (type_id == VOCAB_PIXEL_HSV_FLOAT))
+        (type_id == VOCAB_PIXEL_HSV_FLOAT)) {
         iplAllocateImageFP(pImage, 0, 0);
-    else
+    } else {
         iplAllocateImage (pImage, 0, 0);
+    }
 
     iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
 }
@@ -180,9 +183,11 @@ void ImageStorage::_alloc_extern (const void *buf)
     yAssert(pImage != nullptr);
     yAssert(Data==nullptr);
 
-    if (pImage != nullptr)
-        if (pImage->imageData != nullptr)
+    if (pImage != nullptr) {
+        if (pImage->imageData != nullptr) {
             iplDeallocateImage (pImage);
+        }
+    }
 
     //iplAllocateImage (pImage, 0, 0);
     pImage->imageData = (char*)buf;
@@ -225,29 +230,24 @@ void ImageStorage::_alloc_data ()
 
 void ImageStorage::_free ()
 {
-    if (pImage != nullptr)
-        if (pImage->imageData != nullptr)
-            {
-                if (is_owner)
-                    {
-                        iplDeallocateImage (pImage);
-                        if (Data!=nullptr)
-                            {
-                                delete[] Data;
-                            }
-                    }
-                else
-                    {
-                        if (Data!=nullptr)
-                            {
-                                delete[] Data;
-                            }
-                    }
-
-                is_owner = 1;
-                Data = nullptr;
-                pImage->imageData = nullptr;
+    if (pImage != nullptr) {
+        if (pImage->imageData != nullptr) {
+            if (is_owner) {
+                iplDeallocateImage (pImage);
+                if (Data!=nullptr) {
+                    delete[] Data;
+                }
+            } else {
+                if (Data!=nullptr) {
+                    delete[] Data;
+                }
             }
+
+            is_owner = 1;
+            Data = nullptr;
+            pImage->imageData = nullptr;
+        }
+    }
 }
 
 void ImageStorage::_free_data ()
@@ -490,11 +490,11 @@ void Image::resize(size_t imgWidth, size_t imgHeight) {
 }
 
 void Image::setPixelSize(size_t imgPixelSize) {
-    if(imgPixelSize == pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode))
+    if(imgPixelSize == pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode)) {
         return;
+    }
 
     setPixelCode(-imgPixelSize);
-    return;
 }
 
 void Image::setPixelCode(int imgPixelCode) {
@@ -519,7 +519,8 @@ void Image::synchronize() {
         imgRowSize = impl->pImage->widthStep;
     } else {
         data = nullptr;
-        imgWidth = imgHeight = 0;
+        imgWidth = 0;
+        imgHeight = 0;
     }
 }
 
