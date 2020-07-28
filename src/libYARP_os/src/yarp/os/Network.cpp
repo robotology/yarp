@@ -9,6 +9,7 @@
 
 #include <yarp/os/Network.h>
 
+#include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Carriers.h>
@@ -28,7 +29,6 @@
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdio.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/Terminal.h>
@@ -1417,29 +1417,25 @@ NameStore* NetworkBase::getQueryBypass()
     return getNameSpace().getQueryBypass();
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4.0
 
 std::string NetworkBase::getEnvironment(const char* key,
                                         bool* found)
 {
-    const char* result = yarp::os::impl::getenv(key);
-    if (found != nullptr) {
-        *found = (result != nullptr);
-    }
-    if (result == nullptr) {
-        return {};
-    }
-    return std::string(result);
+    return yarp::conf::environment::getEnvironment(key, found);
 }
 
 void NetworkBase::setEnvironment(const std::string& key, const std::string& val)
 {
-    yarp::os::impl::setenv(key.c_str(), val.c_str(), 1);
+    return yarp::conf::environment::setEnvironment(key, val);
 }
 
 void NetworkBase::unsetEnvironment(const std::string& key)
 {
-    yarp::os::impl::unsetenv(key.c_str());
+    return yarp::conf::environment::unsetEnvironment(key);
 }
+
+#endif
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.3.0
 
