@@ -16,6 +16,9 @@
 
 #include "UnixSocketLogComponent.h"
 
+#include <array>
+#include <mutex>
+
 using namespace yarp::os;
 namespace fs = yarp::conf::filesystem;
 
