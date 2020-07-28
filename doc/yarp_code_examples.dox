@@ -82,7 +82,7 @@ You can run the receiver many times to connect and reconnect.
 
 
 /**
- * \example os/buffered_port.cpp
+ * \example os/buffered_port/buffered_port.cpp
 
 This example shows how to communicate between a pair of buffered ports.
 
@@ -91,7 +91,7 @@ This example shows how to communicate between a pair of buffered ports.
 
 
 /**
- * \example os/simple_sender.cpp
+ * \example os/simple_sender/simple_sender.cpp
 
 This outputs some data to a port.
 Designed to be used with \ref os/simple_receiver.cpp example.
@@ -100,7 +100,7 @@ Designed to be used with \ref os/simple_receiver.cpp example.
 
 
 /**
- * \example os/simple_receiver.cpp
+ * \example os/simple_receiver/simple_receiver.cpp
 
 This reads some data from a port.
 Designed to be used with \ref os/simple_sender.cpp example.
@@ -109,7 +109,7 @@ Designed to be used with \ref os/simple_sender.cpp example.
 
 
 /**
- * \example os/bottle_add.cpp
+ * \example os/bottle_add/bottle_add.cpp
 
 How to construct a very simple bottle.  See also \ref os/browse_bottle.cpp example.
 
@@ -117,7 +117,7 @@ How to construct a very simple bottle.  See also \ref os/browse_bottle.cpp examp
 
 
 /**
- * \example os/database.cpp
+ * \example os/database/database.cpp
 
 A toy "database" program for storing and fetching key-values, accessible
 from a port.
@@ -126,7 +126,7 @@ from a port.
 
 
 /**
- * \example os/image_process.cpp
+ * \example os/image_process/image_process.cpp
 
 An example of how to receive, process, and output images to and from a port.
 
@@ -134,7 +134,7 @@ An example of how to receive, process, and output images to and from a port.
 
 
 /**
- * \example os/image_process_module.cpp
+ * \example os/image_process_module/image_process_module.cpp
 
 This is the \ref os/image_process.cpp example rewritten as a "module".
 It inherits better starting up, configuring, and shutting down behavior.
@@ -143,7 +143,7 @@ It inherits better starting up, configuring, and shutting down behavior.
 
 
 /**
- * \example os/image_source.cpp
+ * \example os/image_source/image_source.cpp
 
 An example of how to create a source of images as a port.
 
@@ -152,7 +152,7 @@ An example of how to create a source of images as a port.
 
 
 /**
- * \example os/make_count.cpp
+ * \example os/make_count/make_count.cpp
 
 Send countdown messages from a port (paired with \ref os/view_count.cpp
 example).
@@ -160,7 +160,7 @@ example).
 */
 
 /**
- * \example os/view_count.cpp
+ * \example os/view_count/view_count.cpp
 
 View countdown messages coming from a port (paired with \ref os/make_count.cpp
 example).
@@ -169,7 +169,7 @@ example).
 
 
 /**
- * \example os/portable_pair.cpp
+ * \example os/portable_pair/portable_pair.cpp
 
 Show use of the yarp::os::PortablePair class, to send messages
 of mixed type.  If the component types follow the YARP network
@@ -180,7 +180,7 @@ data format, then their composition will also.
 
 
 /**
- * \example os/ratethread.cpp
+ * \example os/periodicthread/periodicthread.cpp
 
 Show a class for running some processing at a specified interval.
 
@@ -190,7 +190,7 @@ Show a class for running some processing at a specified interval.
 
 
 /**
- * \example os/summer.cpp
+ * \example os/summer/summer.cpp
 
 Add up numbers received on a port, and send the result back out.
 
@@ -199,17 +199,17 @@ Add up numbers received on a port, and send the result back out.
 
 
 /**
- * \example os/threads.cpp
+ * \example os/threads/threads.cpp
 
-Demonstrate the basic use of threads.  See also \ref os/ratethread.cpp
+Demonstrate the basic use of threads.  See also \ref os/periodicthread/periodicthread.cpp
 
 */
 
 
 /**
- * \example os/browse_bottle.cpp
+ * \example os/browse_bottle/browse_bottle.cpp
 
-Demonstrates one way to access bottle objects.  See also \ref os/bottle_add.cpp
+Demonstrates one way to access bottle objects.  See also \ref os/bottle_add/bottle_add.cpp
 
 */
 
