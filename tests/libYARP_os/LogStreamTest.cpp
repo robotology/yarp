@@ -82,6 +82,8 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
     {
         CNT_RESET
 
+        const double start = yarp::os::SystemClock::nowSystem();
+
         // Warning: By default, trace lines not using the component are
         //          not printed
         CNT yTrace("This is a trace");
@@ -102,11 +104,32 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCTrace(LOGSTREAM_COMPONENT) << v;
         CNT yCTrace(LOGSTREAM_COMPONENT_NOFW) << "This trace with a component is not forwarded" << i;
         CNT yCTrace(LOGSTREAM_COMPONENT_NULL) << "This trace with a component is neither not printed nor forwarded";
+
+        CNT yTraceExternalTime(start, "This is a trace");
+        CNT yTraceExternalTime(start, "This is %s (%d)", "a trace", i);
+        CNT yTraceExternalTime(start, "The end of line is removed from this trace\n");
+        CNT yCTraceExternalTime(LOG_COMPONENT, start, "This is a trace with a component");
+        CNT yCTraceExternalTime(LOG_COMPONENT, start, "This is %s (%d)", "a trace with a component", i);
+        CNT yCTraceExternalTime(LOG_COMPONENT, start, "The end of line is removed from this trace with a component\n");
+        CNT yCTraceExternalTime(LOG_COMPONENT_NOFW, start, "This trace with a component is not forwarded");
+        CNT yCTraceExternalTime(LOG_COMPONENT_NULL, start, "This trace with a component is neither not printed nor forwarded");
+
+        CNT yTraceExternalTime(start);
+        CNT yTraceExternalTime(start) << "This is" << "another" << "trace" << i;
+        CNT yTraceExternalTime(start) << v;
+        CNT yTraceExternalTime(start) << "The end of line is removed from this trace\n";
+        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT, start);
+        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT, start) << "This is" << "another" << "trace with a component" << i;
+        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT, start) << v;
+        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT_NOFW, start) << "This trace with a component is not forwarded" << i;
+        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT_NULL, start) << "This trace with a component is neither not printed nor forwarded";
     }
 
     SECTION("Test yDebug")
     {
         CNT_RESET
+
+        const double start = yarp::os::SystemClock::nowSystem();
 
         CNT yDebug("This is a debug");
         CNT yDebug("This is %s (%d)", "a debug", i);
@@ -126,11 +149,32 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCDebug(LOGSTREAM_COMPONENT) << v;
         CNT yCDebug(LOGSTREAM_COMPONENT_NOFW) << "This debug with a component is not forwarded" << i;
         CNT yCDebug(LOGSTREAM_COMPONENT_NULL) << "This debug with a component is neither not printed nor forwarded";
+
+        CNT yDebugExternalTime(start, "This is a debug");
+        CNT yDebugExternalTime(start, "This is %s (%d)", "a debug", i);
+        CNT yDebugExternalTime(start, "The end of line is removed from this debug\n");
+        CNT yCDebugExternalTime(LOG_COMPONENT, start, "This is a debug with a component");
+        CNT yCDebugExternalTime(LOG_COMPONENT, start, "This is %s (%d)", "a debug with a component", i);
+        CNT yCDebugExternalTime(LOG_COMPONENT, start, "The end of line is removed from this debug with a component\n");
+        CNT yCDebugExternalTime(LOG_COMPONENT_NOFW, start, "This debug with a component is not forwarded");
+        CNT yCDebugExternalTime(LOG_COMPONENT_NULL, start, "This debug with a component is neither not printed nor forwarded");
+
+        CNT yDebugExternalTime(start);
+        CNT yDebugExternalTime(start) << "This is" << "another" << "debug" << i;
+        CNT yDebugExternalTime(start) << v;
+        CNT yDebugExternalTime(start) << "The end of line is removed from this debug\n";
+        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT, start);
+        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT, start) << "This is" << "another" << "debug with a component" << i;
+        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT, start) << v;
+        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT_NOFW, start) << "This debug with a component is not forwarded" << i;
+        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT_NULL, start) << "This debug with a component is neither not printed nor forwarded";
     }
 
     SECTION("Test yInfo")
     {
         CNT_RESET
+
+        const double start = yarp::os::SystemClock::nowSystem();
 
         CNT yInfo("This is info");
         CNT yInfo("This is %s (%d)", "info", i);
@@ -150,11 +194,32 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCInfo(LOGSTREAM_COMPONENT) << v;
         CNT yCInfo(LOGSTREAM_COMPONENT_NOFW) << "This info with a component is not forwarded" << i;
         CNT yCInfo(LOGSTREAM_COMPONENT_NULL) << "This info with a component is neither not printed nor forwarded";
+
+        CNT yInfoExternalTime(start, "This is info");
+        CNT yInfoExternalTime(start, "This is %s (%d)", "info", i);
+        CNT yInfoExternalTime(start, "The end of line is removed from this info\n");
+        CNT yCInfoExternalTime(LOG_COMPONENT, start, "This is info with a component");
+        CNT yCInfoExternalTime(LOG_COMPONENT, start, "This is %s (%d)", "info with a component", i);
+        CNT yCInfoExternalTime(LOG_COMPONENT, start, "The end of line is removed from this info with a component\n");
+        CNT yCInfoExternalTime(LOG_COMPONENT_NOFW, start, "This info with a component is not forwarded");
+        CNT yCInfoExternalTime(LOG_COMPONENT_NULL, start, "This info with a component is neither not printed nor forwarded");
+
+        CNT yInfoExternalTime(start);
+        CNT yInfoExternalTime(start) << "This is" << "more" << "info" << i;
+        CNT yInfoExternalTime(start) << v;
+        CNT yInfoExternalTime(start) << "The end of line is removed from this info\n";
+        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT, start);
+        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT, start) << "This is" << "more" << "info with a component" << i;
+        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT, start) << v;
+        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT_NOFW, start) << "This info with a component is not forwarded" << i;
+        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT_NULL, start) << "This info with a component is neither not printed nor forwarded";
     }
 
     SECTION("Test yWarning")
     {
         CNT_RESET
+
+        const double start = yarp::os::SystemClock::nowSystem();
 
         CNT yWarning("This is a warning");
         CNT yWarning("This is %s (%d)", "a warning", i);
@@ -174,11 +239,33 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCWarning(LOGSTREAM_COMPONENT) << v;
         CNT yCWarning(LOGSTREAM_COMPONENT_NOFW) << "This warning with a component is not forwarded" << i;
         CNT yCWarning(LOGSTREAM_COMPONENT_NULL) << "This warning with a component is neither not printed nor forwarded";
+
+        CNT yWarningExternalTime(start, "This is a warning");
+        CNT yWarningExternalTime(start, "This is %s (%d)", "a warning", i);
+        CNT yWarningExternalTime(start, "The end of line is removed from this warning\n");
+        CNT yCWarningExternalTime(LOG_COMPONENT, start, "This is a warning with a component");
+        CNT yCWarningExternalTime(LOG_COMPONENT, start, "This is %s (%d)", "a warning with a component", i);
+        CNT yCWarningExternalTime(LOG_COMPONENT, start, "The end of line is removed from this warning with a component\n");
+        CNT yCWarningExternalTime(LOG_COMPONENT_NOFW, start, "This warning with a component is not forwarded");
+        CNT yCWarningExternalTime(LOG_COMPONENT_NULL, start, "This warning with a component is neither not printed nor forwarded");
+
+        CNT yWarningExternalTime(start);
+        CNT yWarningExternalTime(start) << "This is" << "another" << "warning" << i;
+        CNT yWarningExternalTime(start) << v;
+        CNT yWarningExternalTime(start) << "The end of line is removed from this warning\n";
+        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT, start);
+        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT, start) << "This is" << "another" << "warning with a component" << i;
+        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT, start) << v;
+        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT_NOFW, start) << "This warning with a component is not forwarded" << i;
+        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT_NULL, start) << "This warning with a component is neither not printed nor forwarded";
+
     }
 
     SECTION("Test yError")
     {
         CNT_RESET
+
+        const double start = yarp::os::SystemClock::nowSystem();
 
         CNT yError("This is a error");
         CNT yError("This is %s (%d)", "a error", i);
@@ -198,6 +285,25 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         CNT yCError(LOGSTREAM_COMPONENT) << v;
         CNT yCError(LOGSTREAM_COMPONENT_NOFW) << "This error with a component is not forwarded" << i;
         CNT yCError(LOGSTREAM_COMPONENT_NULL) << "This error with a component is neither not printed nor forwarded";
+
+        CNT yErrorExternalTime(start, "This is a error");
+        CNT yErrorExternalTime(start, "This is %s (%d)", "a error", i);
+        CNT yErrorExternalTime(start, "The end of line is removed from this error\n");
+        CNT yCErrorExternalTime(LOG_COMPONENT, start, "This is a error with a component");
+        CNT yCErrorExternalTime(LOG_COMPONENT, start, "This is %s (%d)", "a error with a component", i);
+        CNT yCErrorExternalTime(LOG_COMPONENT, start, "The end of line is removed from this error with a component\n");
+        CNT yCErrorExternalTime(LOG_COMPONENT_NOFW, start, "This error with a component is not forwarded");
+        CNT yCErrorExternalTime(LOG_COMPONENT_NULL, start, "This error with a component is neither not printed nor forwarded");
+
+        CNT yErrorExternalTime(start);
+        CNT yErrorExternalTime(start) << "This is" << "another" << "error" << i;
+        CNT yErrorExternalTime(start) << v;
+        CNT yErrorExternalTime(start) << "The end of line is removed from this error\n";
+        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT, start);
+        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT, start) << "This is" << "another" << "error with a component" << i;
+        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT, start) << v;
+        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT_NOFW, start) << "This error with a component is not forwarded" << i;
+        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT_NULL, start) << "This error with a component is neither not printed nor forwarded";
     }
 
     SECTION("Test yTraceOnce and yTraceThrottle")
@@ -212,6 +318,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         for (auto& t : threads) {
             CNT yTraceOnce() << "This line is printed only once.";
             CNT yTraceOnce() << "Also this line is printed only once.";
+            CNT yTraceExternalTimeOnce(start) << "Also this line is printed only once with external time.";
 
             t = std::thread([start]()
             {
@@ -260,6 +367,46 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yTraceExternalTimeOnce(start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yTraceExternalTimeThreadOnce(start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yTraceExternalTimeThrottle(start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yTraceExternalTimeThreadThrottle(start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yCTraceExternalTimeOnce(LOGSTREAM_COMPONENT, start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yCTraceExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yCTraceExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yCTraceExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
                 }
             });
         }
@@ -280,6 +427,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         for (auto& t : threads) {
             CNT yDebugOnce() << "This line is printed only once.";
             CNT yDebugOnce() << "Also this line is printed only once.";
+            CNT yDebugExternalTimeOnce(start) << "Also this line is printed only once with external time.";
 
             t = std::thread([start]()
             {
@@ -328,6 +476,46 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yDebugExternalTimeOnce(start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yDebugExternalTimeThreadOnce(start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yDebugExternalTimeThrottle(start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yDebugExternalTimeThreadThrottle(start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yCDebugExternalTimeOnce(LOGSTREAM_COMPONENT, start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yCDebugExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yCDebugExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yCDebugExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
                 }
             });
         }
@@ -348,6 +536,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         for (auto& t : threads) {
             CNT yInfoOnce() << "This line is printed only once.";
             CNT yInfoOnce() << "Also this line is printed only once.";
+            CNT yInfoExternalTimeOnce(start) << "Also this line is printed only once with external time.";
 
             t = std::thread([start]()
             {
@@ -396,6 +585,46 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yInfoExternalTimeOnce(start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yInfoExternalTimeThreadOnce(start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yInfoExternalTimeThrottle(start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yInfoExternalTimeThreadThrottle(start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yCInfoExternalTimeOnce(LOGSTREAM_COMPONENT, start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yCInfoExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yCInfoExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yCInfoExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
                 }
             });
         }
@@ -416,6 +645,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         for (auto& t : threads) {
             CNT yWarningOnce() << "This line is printed only once.";
             CNT yWarningOnce() << "Also this line is printed only once.";
+            CNT yWarningExternalTimeOnce(start) << "Also this line is printed only once with external time.";
 
             t = std::thread([start]()
             {
@@ -464,6 +694,46 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yWarningExternalTimeOnce(start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yWarningExternalTimeThreadOnce(start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yWarningExternalTimeThrottle(start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yWarningExternalTimeThreadThrottle(start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
+
+                    CNT yCWarningExternalTimeOnce(LOGSTREAM_COMPONENT, start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "] This line is printed only by the first thread coming here";
+
+                    CNT yCWarningExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed by every thread";
+
+                    CNT yCWarningExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s";
+
+                    CNT yCWarningExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
+                        << "[Time:" << now - start
+                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "This line is printed at most once every" << period << "s by every thread";
                 }
             });
         }
@@ -484,6 +754,7 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
         for (auto& t : threads) {
             CNT yErrorOnce() << "This line is printed only once.";
             CNT yErrorOnce() << "Also this line is printed only once.";
+            CNT yErrorExternalTimeOnce(start) << "Also this line is printed only once with external time.";
 
             t = std::thread([start]()
             {
@@ -532,471 +803,43 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
-                }
-            });
-        }
-        for (auto& t : threads) {
-            t.join();
-        }
-    }
 
-    // customtime tests
-    SECTION("Test yTraceExternalTime")
-    {
-        CNT_RESET
-
-        double now = yarp::os::SystemClock::nowSystem();
-        // Warning: By default, trace lines not using the component are
-        //          not printed
-        CNT yTraceExternalTime(now, "This is a trace");
-        CNT yTraceExternalTime(now, "This is %s (%d)", "a trace", i);
-        CNT yTraceExternalTime(now, "The end of line is removed from this trace\n");
-        CNT yCTraceExternalTime(LOG_COMPONENT, now, "This is a trace with a component");
-        CNT yCTraceExternalTime(LOG_COMPONENT, now, "This is %s (%d)", "a trace with a component", i);
-        CNT yCTraceExternalTime(LOG_COMPONENT, now, "The end of line is removed from this trace with a component\n");
-        CNT yCTraceExternalTime(LOG_COMPONENT_NOFW, now, "This trace with a component is not forwarded");
-        CNT yCTraceExternalTime(LOG_COMPONENT_NULL, now, "This trace with a component is neither not printed nor forwarded");
-
-        CNT yTraceExternalTime(now);
-        CNT yTraceExternalTime(now) << "This is" << "another" << "trace" << i;
-        CNT yTraceExternalTime(now) << v;
-        CNT yTraceExternalTime(now) << "The end of line is removed from this trace\n";
-        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT, now);
-        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT, now) << "This is" << "another" << "trace with a component" << i;
-        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT, now) << v;
-        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT_NOFW, now) << "This trace with a component is not forwarded" << i;
-        CNT yCTraceExternalTime(LOGSTREAM_COMPONENT_NULL, now) << "This trace with a component is neither not printed nor forwarded";
-    }
-
-    SECTION("Test yDebugExternalTime")
-    {
-        CNT_RESET
-
-        double now = yarp::os::SystemClock::nowSystem();
-        CNT yDebugExternalTime(now, "This is a debug");
-        CNT yDebugExternalTime(now, "This is %s (%d)", "a debug", i);
-        CNT yDebugExternalTime(now, "The end of line is removed from this debug\n");
-        CNT yCDebugExternalTime(LOG_COMPONENT, now, "This is a debug with a component");
-        CNT yCDebugExternalTime(LOG_COMPONENT, now, "This is %s (%d)", "a debug with a component", i);
-        CNT yCDebugExternalTime(LOG_COMPONENT, now, "The end of line is removed from this debug with a component\n");
-        CNT yCDebugExternalTime(LOG_COMPONENT_NOFW, now, "This debug with a component is not forwarded");
-        CNT yCDebugExternalTime(LOG_COMPONENT_NULL, now, "This debug with a component is neither not printed nor forwarded");
-
-        CNT yDebugExternalTime(now);
-        CNT yDebugExternalTime(now) << "This is" << "another" << "debug" << i;
-        CNT yDebugExternalTime(now) << v;
-        CNT yDebugExternalTime(now) << "The end of line is removed from this debug\n";
-        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT, now);
-        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT, now) << "This is" << "another" << "debug with a component" << i;
-        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT, now) << v;
-        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT_NOFW, now) << "This debug with a component is not forwarded" << i;
-        CNT yCDebugExternalTime(LOGSTREAM_COMPONENT_NULL, now) << "This debug with a component is neither not printed nor forwarded";
-    }
-
-    SECTION("Test yInfoExternalTime")
-    {
-        CNT_RESET
-
-        double now = yarp::os::SystemClock::nowSystem();
-        CNT yInfoExternalTime(now, "This is info");
-        CNT yInfoExternalTime(now, "This is %s (%d)", "info", i);
-        CNT yInfoExternalTime(now, "The end of line is removed from this info\n");
-        CNT yCInfoExternalTime(LOG_COMPONENT, now, "This is info with a component");
-        CNT yCInfoExternalTime(LOG_COMPONENT, now, "This is %s (%d)", "info with a component", i);
-        CNT yCInfoExternalTime(LOG_COMPONENT, now, "The end of line is removed from this info with a component\n");
-        CNT yCInfoExternalTime(LOG_COMPONENT_NOFW, now, "This info with a component is not forwarded");
-        CNT yCInfoExternalTime(LOG_COMPONENT_NULL, now, "This info with a component is neither not printed nor forwarded");
-
-        CNT yInfoExternalTime(now);
-        CNT yInfoExternalTime(now) << "This is" << "more" << "info" << i;
-        CNT yInfoExternalTime(now) << v;
-        CNT yInfoExternalTime(now) << "The end of line is removed from this info\n";
-        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT, now);
-        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT, now) << "This is" << "more" << "info with a component" << i;
-        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT, now) << v;
-        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT_NOFW, now) << "This info with a component is not forwarded" << i;
-        CNT yCInfoExternalTime(LOGSTREAM_COMPONENT_NULL, now) << "This info with a component is neither not printed nor forwarded";
-    }
-
-    SECTION("Test yWarningExternalTime")
-    {
-        CNT_RESET
-
-        double now = yarp::os::SystemClock::nowSystem();
-        CNT yWarningExternalTime(now, "This is a warning");
-        CNT yWarningExternalTime(now, "This is %s (%d)", "a warning", i);
-        CNT yWarningExternalTime(now, "The end of line is removed from this warning\n");
-        CNT yCWarningExternalTime(LOG_COMPONENT, now, "This is a warning with a component");
-        CNT yCWarningExternalTime(LOG_COMPONENT, now, "This is %s (%d)", "a warning with a component", i);
-        CNT yCWarningExternalTime(LOG_COMPONENT, now, "The end of line is removed from this warning with a component\n");
-        CNT yCWarningExternalTime(LOG_COMPONENT_NOFW, now, "This warning with a component is not forwarded");
-        CNT yCWarningExternalTime(LOG_COMPONENT_NULL, now, "This warning with a component is neither not printed nor forwarded");
-
-        CNT yWarningExternalTime(now);
-        CNT yWarningExternalTime(now) << "This is" << "another" << "warning" << i;
-        CNT yWarningExternalTime(now) << v;
-        CNT yWarningExternalTime(now) << "The end of line is removed from this warning\n";
-        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT, now);
-        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT, now) << "This is" << "another" << "warning with a component" << i;
-        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT, now) << v;
-        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT_NOFW, now) << "This warning with a component is not forwarded" << i;
-        CNT yCWarningExternalTime(LOGSTREAM_COMPONENT_NULL, now) << "This warning with a component is neither not printed nor forwarded";
-    }
-
-    SECTION("Test yErrorExternalTime")
-    {
-        CNT_RESET
-
-        double now = yarp::os::SystemClock::nowSystem();
-        CNT yErrorExternalTime(now, "This is a error");
-        CNT yErrorExternalTime(now, "This is %s (%d)", "a error", i);
-        CNT yErrorExternalTime(now, "The end of line is removed from this error\n");
-        CNT yCErrorExternalTime(LOG_COMPONENT, now, "This is a error with a component");
-        CNT yCErrorExternalTime(LOG_COMPONENT, now, "This is %s (%d)", "a error with a component", i);
-        CNT yCErrorExternalTime(LOG_COMPONENT, now, "The end of line is removed from this error with a component\n");
-        CNT yCErrorExternalTime(LOG_COMPONENT_NOFW, now, "This error with a component is not forwarded");
-        CNT yCErrorExternalTime(LOG_COMPONENT_NULL, now, "This error with a component is neither not printed nor forwarded");
-
-        CNT yErrorExternalTime(now);
-        CNT yErrorExternalTime(now) << "This is" << "another" << "error" << i;
-        CNT yErrorExternalTime(now) << v;
-        CNT yErrorExternalTime(now) << "The end of line is removed from this error\n";
-        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT, now);
-        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT, now) << "This is" << "another" << "error with a component" << i;
-        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT, now) << v;
-        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT_NOFW, now) << "This error with a component is not forwarded" << i;
-        CNT yCErrorExternalTime(LOGSTREAM_COMPONENT_NULL, now) << "This error with a component is neither not printed nor forwarded";
-    }
-
-    SECTION("Test yTraceExternalTimeOnce and yTraceExternalTimeThrottle")
-    {
-        CNT_RESET
-
-        const double start = yarp::os::SystemClock::nowSystem();
-        static constexpr double test_duration = 1.3;
-        static constexpr double period = 0.3;
-        static constexpr size_t SZ = 4;
-        std::array<std::thread, SZ> threads;
-        for (auto& t : threads) {
-            CNT yTraceExternalTimeOnce(start) << "This line is printed only once.";
-            CNT yTraceExternalTimeOnce(start) << "Also this line is printed only once.";
-
-            t = std::thread([start]()
-            {
-                while (true) {
-                    double now = yarp::os::SystemClock::nowSystem();
-                    if ((now - start) > test_duration) {
-                        break;
-                    }
-
-                    CNT yTraceExternalTimeOnce(now)
+                    CNT yErrorExternalTimeOnce(start)
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
-                    CNT yTraceExternalTimeThreadOnce(now)
+                    CNT yErrorExternalTimeThreadOnce(start)
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
-                    CNT yTraceExternalTimeThrottle(now, period)
+                    CNT yErrorExternalTimeThrottle(start, period)
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
-                    CNT yTraceExternalTimeThreadThrottle(now, period)
+                    CNT yErrorExternalTimeThreadThrottle(start, period)
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
-                    CNT yCTraceExternalTimeOnce(LOGSTREAM_COMPONENT, now)
+                    CNT yCErrorExternalTimeOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
-                    CNT yCTraceExternalTimeThreadOnce(LOGSTREAM_COMPONENT, now)
+                    CNT yCErrorExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
-                    CNT yCTraceExternalTimeThrottle(LOGSTREAM_COMPONENT, now, period)
+                    CNT yCErrorExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
-                    CNT yCTraceExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s by every thread";
-                }
-            });
-        }
-        for (auto& t : threads) {
-            t.join();
-        }
-    }
-
-    SECTION("Test yDebugExternalTimeOnce and yDebugExternalTimeThrottle")
-    {
-        CNT_RESET
-
-        const double start = yarp::os::SystemClock::nowSystem();
-        static constexpr double test_duration = 1.3;
-        static constexpr double period = 0.3;
-        static constexpr size_t SZ = 4;
-        std::array<std::thread, SZ> threads;
-        for (auto& t : threads) {
-            CNT yDebugExternalTimeOnce(start) << "This line is printed only once.";
-            CNT yDebugExternalTimeOnce(start) << "Also this line is printed only once.";
-
-            t = std::thread([start]()
-            {
-                while (true) {
-                    double now = yarp::os::SystemClock::nowSystem();
-                    if ((now - start) > test_duration) {
-                        break;
-                    }
-
-                    CNT yDebugExternalTimeOnce(now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "] This line is printed only by the first thread coming here";
-
-                    CNT yDebugExternalTimeThreadOnce(now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed by every thread";
-
-                    CNT yDebugExternalTimeThrottle(now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s";
-
-                    CNT yDebugExternalTimeThreadThrottle(now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s by every thread";
-
-                    CNT yCDebugExternalTimeOnce(LOGSTREAM_COMPONENT, now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "] This line is printed only by the first thread coming here";
-
-                    CNT yCDebugExternalTimeThreadOnce(LOGSTREAM_COMPONENT, now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed by every thread";
-
-                    CNT yCDebugExternalTimeThrottle(LOGSTREAM_COMPONENT, now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s";
-
-                    CNT yCDebugExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s by every thread";
-                }
-            });
-        }
-        for (auto& t : threads) {
-            t.join();
-        }
-    }
-
-    SECTION("Test yInfoExternalTimeOnce and yInfoExternalTimeThrottle")
-    {
-        CNT_RESET
-
-        const double start = yarp::os::SystemClock::nowSystem();
-        static constexpr double test_duration = 1.3;
-        static constexpr double period = 0.3;
-        static constexpr size_t SZ = 4;
-        std::array<std::thread, SZ> threads;
-        for (auto& t : threads) {
-            CNT yInfoExternalTimeOnce(start) << "This line is printed only once.";
-            CNT yInfoExternalTimeOnce(start) << "Also this line is printed only once.";
-
-            t = std::thread([start]()
-            {
-                while (true) {
-                    double now = yarp::os::SystemClock::nowSystem();
-                    if ((now - start) > test_duration) {
-                        break;
-                    }
-
-                    CNT yInfoExternalTimeOnce(now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "] This line is printed only by the first thread coming here";
-
-                    CNT yInfoExternalTimeThreadOnce(now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed by every thread";
-
-                    CNT yInfoExternalTimeThrottle(now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s";
-
-                    CNT yInfoExternalTimeThreadThrottle(now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s by every thread";
-
-                    CNT yCInfoExternalTimeOnce(LOGSTREAM_COMPONENT, now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "] This line is printed only by the first thread coming here";
-
-                    CNT yCInfoExternalTimeThreadOnce(LOGSTREAM_COMPONENT, now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed by every thread";
-
-                    CNT yCInfoExternalTimeThrottle(LOGSTREAM_COMPONENT, now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s";
-
-                    CNT yCInfoExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s by every thread";
-                }
-            });
-        }
-        for (auto& t : threads) {
-            t.join();
-        }
-    }
-
-    SECTION("Test yWarningExternalTimeOnce and yWarningExternalTimeThrottle")
-    {
-        CNT_RESET
-
-        const double start = yarp::os::SystemClock::nowSystem();
-        static constexpr double test_duration = 1.3;
-        static constexpr double period = 0.3;
-        static constexpr size_t SZ = 4;
-        std::array<std::thread, SZ> threads;
-        for (auto& t : threads) {
-            CNT yWarningExternalTimeOnce(start) << "This line is printed only once.";
-            CNT yWarningExternalTimeOnce(start) << "Also this line is printed only once.";
-
-            t = std::thread([start]()
-            {
-                while (true) {
-                    double now = yarp::os::SystemClock::nowSystem();
-                    if ((now - start) > test_duration) {
-                        break;
-                    }
-
-                    CNT yWarningExternalTimeOnce(now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "] This line is printed only by the first thread coming here";
-
-                    CNT yWarningExternalTimeThreadOnce(now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed by every thread";
-
-                    CNT yWarningExternalTimeThrottle(now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s";
-
-                    CNT yWarningExternalTimeThreadThrottle(now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s by every thread";
-
-                    CNT yCWarningExternalTimeOnce(LOGSTREAM_COMPONENT, now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "] This line is printed only by the first thread coming here";
-
-                    CNT yCWarningExternalTimeThreadOnce(LOGSTREAM_COMPONENT, now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed by every thread";
-
-                    CNT yCWarningExternalTimeThrottle(LOGSTREAM_COMPONENT, now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s";
-
-                    CNT yCWarningExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s by every thread";
-                }
-            });
-        }
-        for (auto& t : threads) {
-            t.join();
-        }
-    }
-
-    SECTION("Test yErrorExternalTimeOnce and yErrorExternalTimeThrottle")
-    {
-        CNT_RESET
-
-        const double start = yarp::os::SystemClock::nowSystem();
-        static constexpr double test_duration = 1.3;
-        static constexpr double period = 0.3;
-        static constexpr size_t SZ = 4;
-        std::array<std::thread, SZ> threads;
-        for (auto& t : threads) {
-            CNT yErrorExternalTimeOnce(start) << "This line is printed only once.";
-            CNT yErrorExternalTimeOnce(start) << "Also this line is printed only once.";
-
-            t = std::thread([start]()
-            {
-                while (true) {
-                    double now = yarp::os::SystemClock::nowSystem();
-                    if ((now - start) > test_duration) {
-                        break;
-                    }
-
-                    CNT yErrorExternalTimeOnce(now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "] This line is printed only by the first thread coming here";
-
-                    CNT yErrorExternalTimeThreadOnce(now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed by every thread";
-
-                    CNT yErrorExternalTimeThrottle(now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s";
-
-                    CNT yErrorExternalTimeThreadThrottle(now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s by every thread";
-
-                    CNT yCErrorExternalTimeOnce(LOGSTREAM_COMPONENT, now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "] This line is printed only by the first thread coming here";
-
-                    CNT yCErrorExternalTimeThreadOnce(LOGSTREAM_COMPONENT, now)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed by every thread";
-
-                    CNT yCErrorExternalTimeThrottle(LOGSTREAM_COMPONENT, now, period)
-                        << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
-                        << "This line is printed at most once every" << period << "s";
-
-                    CNT yCErrorExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, now, period)
+                    CNT yCErrorExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
                         << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
