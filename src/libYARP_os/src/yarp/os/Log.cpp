@@ -343,7 +343,7 @@ inline void forwardable_output(std::ostream* ost,
         *ost << " (networktime " << yarp::os::NetType::toString(networktime)  << ")";
     }
     if (customtime != 0.0) {
-        *ost << "(customtime " << yarp::os::NetType::toString(customtime) << ")";
+        *ost << " (customtime " << yarp::os::NetType::toString(customtime) << ")";
     }
     if (yarp::os::impl::LogPrivate::forward_codeinfo.load()) {
         *ost << " (filename " << yarp::os::impl::StoreString::quotedString(file) << ")";
