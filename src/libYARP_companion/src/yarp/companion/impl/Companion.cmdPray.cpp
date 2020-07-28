@@ -9,6 +9,7 @@
 #include <yarp/companion/impl/Companion.h>
 
 #include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/Vocab.h>
 
 #include <algorithm>
@@ -125,7 +126,7 @@ int Companion::cmdPray(int argc, char *argv[])
             state = "displeased";
         }
         bool found = false;
-        name = NetworkBase::getEnvironment("YARP_ROBOT_NAME", &found);
+        name = yarp::os::getEnvironment("YARP_ROBOT_NAME", &found);
         if (!found) {
             name = "YARPino";
         }

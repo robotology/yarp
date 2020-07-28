@@ -695,7 +695,7 @@ int yarp::run::Run::server()
             std::string fileName=msg.find("which").asString();
             if (fileName!="")
             {
-                yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
+                yarp::os::Bottle possiblePaths = parsePaths(yarp::os::getEnvironment("PATH"));
                 for (int i=0; i<possiblePaths.size(); ++i)
                 {
                     std::string guessString=possiblePaths.get(i).asString() +
@@ -920,7 +920,7 @@ int yarp::run::Run::server()
                 std::string fileName=msg.find("which").asString();
                 if (fileName!="")
                 {
-                    yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
+                    yarp::os::Bottle possiblePaths = parsePaths(yarp::os::getEnvironment("PATH"));
                     for (size_t i=0; i<possiblePaths.size(); ++i)
                     {
                         std::string guessString=possiblePaths.get(i).asString() + slash + fileName;

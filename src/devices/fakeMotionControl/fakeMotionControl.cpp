@@ -453,7 +453,7 @@ FakeMotionControl::FakeMotionControl() :
     verbose                 (VERY_VERBOSE)
 {
     resizeBuffers();
-    std::string tmp = NetworkBase::getEnvironment("VERBOSE_STICA");
+    std::string tmp = yarp::os::getEnvironment("VERBOSE_STICA");
     verbosewhenok = (tmp != "") ? (bool)NetType::toInt(tmp) :
                                   false;
 }

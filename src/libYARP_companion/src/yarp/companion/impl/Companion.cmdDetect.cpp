@@ -48,7 +48,7 @@ int Companion::detectRos(bool write)
         return 1;
     }
 
-    std::string uri = NetworkBase::getEnvironment("ROS_MASTER_URI");
+    std::string uri = yarp::os::getEnvironment("ROS_MASTER_URI");
     if (uri=="") {
         yCError(COMPANION, "ROS_MASTER_URI environment variable not set.");
         uri = "http://127.0.0.1:11311/";

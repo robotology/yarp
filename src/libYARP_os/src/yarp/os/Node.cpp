@@ -300,7 +300,7 @@ public:
 
     void getMasterUri(NodeArgs& na)
     {
-        na.reply = Value(NetworkBase::getEnvironment("ROS_MASTER_URI"));
+        na.reply = Value(yarp::os::getEnvironment("ROS_MASTER_URI"));
         na.success();
     }
 

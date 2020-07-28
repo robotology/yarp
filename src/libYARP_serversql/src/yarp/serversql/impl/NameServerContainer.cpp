@@ -11,6 +11,7 @@
 
 #include <yarp/os/Carriers.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Value.h>
 #include <yarp/name/BootstrapServer.h>
@@ -127,7 +128,7 @@ bool NameServerContainer::open(Searchable& options)
         }
     }
 
-    if (options.check("ros") || NetworkBase::getEnvironment("YARP_USE_ROS")!="") {
+    if (options.check("ros") || yarp::os::getEnvironment("YARP_USE_ROS")!="") {
         yarp::os::Bottle lst = yarp::os::Carriers::listCarriers();
         std::string lstStr(lst.toString());
         if (lstStr.find("rossrv") == std::string::npos ||
@@ -139,7 +140,7 @@ bool NameServerContainer::open(Searchable& options)
             yCError(NAMESERVERCONTAINER, "Aborting.\n");
             return false;
         }
-        std::string addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
+        std::string addr = yarp::os::getEnvironment("ROS_MASTER_URI");
         Contact c = Contact::fromString(addr);
         if (c.isValid()) {
             c.setCarrier("xmlrpc");

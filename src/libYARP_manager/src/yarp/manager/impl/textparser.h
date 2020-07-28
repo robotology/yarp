@@ -63,7 +63,7 @@ public:
                 std::string envName, envValue;
 
                 envName   = ret.substr(s + startKeyword.size(), e - s -startKeyword.size());
-                envValue  = yarp::os::NetworkBase::getEnvironment(envName.c_str());
+                envValue  = yarp::os::getEnvironment(envName.c_str());
                 ret       = ret.substr(0, s)+ envValue + ret.substr(e + endKeyword.size(), ret.size() - endKeyword.size());
                 return parseText(ret.c_str());
             }

@@ -14,6 +14,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/LogComponent.h>
@@ -101,7 +102,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
 
     NameConfig conf;
     std::string nenv = std::string("YARP_RENAME") + conf.getSafeString(n);
-    std::string rename = NetworkBase::getEnvironment(nenv.c_str());
+    std::string rename = yarp::os::getEnvironment(nenv.c_str());
     if (!rename.empty()) {
         n = rename;
         contact2.setName(n);
@@ -147,7 +148,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     }
     if (!n.empty() && n != "..." && n[0] != '=' && n.substr(0, 3) != "...") {
         if (fakeName == nullptr) {
-            std::string prefix = NetworkBase::getEnvironment("YARP_PORT_PREFIX");
+            std::string prefix = yarp::os::getEnvironment("YARP_PORT_PREFIX");
             if (!prefix.empty()) {
                 n = prefix + n;
                 contact2.setName(n);

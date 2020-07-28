@@ -175,7 +175,7 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
     } else {
         cmd.addString("...");
     }
-    std::string prefix = NetworkBase::getEnvironment("YARP_IP");
+    std::string prefix = yarp::os::getEnvironment("YARP_IP");
     const NestedContact& nc = suggest.getNested();
     std::string typ = nc.getTypeNameStar();
     if (suggest.isValid() || !prefix.empty() || typ != "*") {
