@@ -257,7 +257,8 @@ int Companion::rpcClient(int argc, char *argv[])
         if (yarp::os::impl::Terminal::EOFreached()) {
             break;
         }
-        Bottle cmd(txt), reply;
+        Bottle cmd(txt);
+        Bottle reply;
         ok = p.write(cmd, reply);
         if (ok) {
             yCInfo(COMPANION, "%s", reply.toString().c_str());
