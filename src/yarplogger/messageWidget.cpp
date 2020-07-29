@@ -77,14 +77,14 @@ void MessageWidget::addMessage (QString text, int level)
     {
         QString message_to_add = QString ("[WAR] ") + date_s + text;
         addItem(message_to_add);
-        item(this->count() - 1)->setBackgroundColor(QColor("#FFF6C8"));
+        item(this->count() - 1)->setBackground(QColor("#FFF6C8"));
         setCurrentRow(this->count() - 1);
     }
     else if (level == 2)
     {
         QString message_to_add = QString ("[ERR] ") + date_s + text;
         addItem(message_to_add);
-        item(this->count() - 1)->setBackgroundColor(QColor("#F9CCCA"));
+        item(this->count() - 1)->setBackground(QColor("#F9CCCA"));
         setCurrentRow(this->count() - 1);
     }
 }

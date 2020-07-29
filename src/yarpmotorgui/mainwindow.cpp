@@ -1340,8 +1340,8 @@ void MainWindow::updateModesTree(PartItem *part)
             jointNode->setText(0,QString("Joint %1").arg(i));
             jointNode->setText(1,mode);
             QColor c = getColorMode(modes.at(i));
-            jointNode->setBackgroundColor(0,c);
-            jointNode->setBackgroundColor(1,c);
+            jointNode->setBackground(0,c);
+            jointNode->setBackground(1,c);
 
 
             if(c == hwFaultColor){
@@ -1378,22 +1378,22 @@ void MainWindow::updateModesTree(PartItem *part)
                 if(item->text(1) != mode){
                     item->setText(1,mode);
                 }
-                if(item->backgroundColor(0) != c){
-                    item->setBackgroundColor(0,c);
-                    item->setBackgroundColor(1,c);
+                if(item->background(0) != c){
+                    item->setBackground(0,c);
+                    item->setBackground(1,c);
                 }
             }
         }
 
         if(!foundFaultPart){
             if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_OK){
-                parentNode->setBackgroundColor(0,QColor("white"));
+                parentNode->setBackground(0,QColor("white"));
                 parentNode->setIcon(0,QIcon(":/apply.svg"));
                 parentNode->setData(0,Qt::UserRole,TREEMODE_OK);
             }
         }else{
             if(parentNode->data(0,Qt::UserRole).toInt() != TREEMODE_WARN){
-                parentNode->setBackgroundColor(0,hwFaultColor);
+                parentNode->setBackground(0,hwFaultColor);
                 parentNode->setIcon(0,QIcon(":/warning.svg"));
                 parentNode->setData(0,Qt::UserRole,TREEMODE_WARN);
             }

@@ -635,7 +635,7 @@ void ApplicationViewWidget::updateApplicationWindow()
         //it->setFlags(it->flags() | Qt::ItemIsEditable);
         it->setData(0,Qt::UserRole,yarp::manager::MODULE);
         it->setIcon(0,QIcon(":/close.svg"));
-        it->setTextColor(2,QColor("#BF0303"));
+        it->setForeground(2,QColor("#BF0303"));
         ui->moduleList->addTopLevelItem(it);
     }
 
@@ -686,7 +686,7 @@ void ApplicationViewWidget::updateApplicationWindow()
         ui->connectionList->setItemWidget((QTreeWidgetItem *) it,5, comboBox);
         it->setData(0,Qt::UserRole,yarp::manager::INOUTD);
         it->setIcon(0,QIcon(":/disconnect22.svg"));
-        it->setTextColor(2,QColor("#BF0303"));
+        it->setForeground(2,QColor("#BF0303"));
         id++;
     }
 
@@ -727,10 +727,10 @@ void ApplicationViewWidget::updateApplicationWindow()
         it->setData(0,Qt::UserRole,yarp::manager::RESOURCE);
         if (type == "computer") {
             it->setIcon(0,QIcon(":/computer-unavailable22.svg"));
-            it->setTextColor(3,QColor("#BF0303"));
+            it->setForeground(3,QColor("#BF0303"));
         } else {
             it->setIcon(0,QIcon(":/port-unavailable22.svg"));
-            it->setTextColor(3,QColor("#BF0303"));
+            it->setForeground(3,QColor("#BF0303"));
         }
         id++;
     }
@@ -1032,7 +1032,7 @@ bool ApplicationViewWidget::onRun()
 
                 it->setText(2,"waiting");
                 it->setIcon(0,QIcon(":/refresh.svg"));
-                it->setTextColor(2,QColor("#000000"));
+                it->setForeground(2,QColor("#000000"));
 
         }
 
@@ -1054,7 +1054,7 @@ bool ApplicationViewWidget::onRun()
             RIDs.push_back(it->text(1).toInt());
             it->setText(3,"waiting");
             it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(3,QColor("#000000"));
+            it->setForeground(3,QColor("#000000"));
         }
     }*/
 
@@ -1086,7 +1086,7 @@ void ApplicationViewWidget::runNestedApplication(QTreeWidgetItem *it,std::vector
 
                     ch->setText(2,"waiting");
                     ch->setIcon(0,QIcon(":/refresh.svg"));
-                    ch->setTextColor(2,QColor("#000000"));
+                    ch->setForeground(2,QColor("#000000"));
                 }
             }
 
@@ -1123,7 +1123,7 @@ bool ApplicationViewWidget::onStop()
 
                 it->setText(2,"waiting");
                 it->setIcon(0,QIcon(":/refresh.svg"));
-                it->setTextColor(2,QColor("#000000"));
+                it->setForeground(2,QColor("#000000"));
 
             }
         }
@@ -1143,7 +1143,7 @@ bool ApplicationViewWidget::onStop()
             RIDs.push_back(it->text(1).toInt());
             it->setText(3,"waiting");
             it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(3,QColor("#000000"));
+            it->setForeground(3,QColor("#000000"));
         }
     }*/
 
@@ -1174,7 +1174,7 @@ void ApplicationViewWidget::stopNestedApplication(QTreeWidgetItem *it,std::vecto
 
                     ch->setText(2,"waiting");
                     ch->setIcon(0,QIcon(":/refresh.svg"));
-                    ch->setTextColor(2,QColor("#000000"));
+                    ch->setForeground(2,QColor("#000000"));
                 }
             }
 
@@ -1214,7 +1214,7 @@ bool ApplicationViewWidget::onKill()
 
                 it->setText(2,"waiting");
                 it->setIcon(0,QIcon(":/refresh22.svg"));
-                it->setTextColor(2,QColor("#000000"));
+                it->setForeground(2,QColor("#000000"));
 
             }
         }
@@ -1235,7 +1235,7 @@ bool ApplicationViewWidget::onKill()
             RIDs.push_back(it->text(1).toInt());
             it->setText(3,"waiting");
             it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(3,QColor("#000000"));
+            it->setForeground(3,QColor("#000000"));
         }
     }*/
 
@@ -1266,7 +1266,7 @@ void ApplicationViewWidget::killNestedApplication(QTreeWidgetItem *it,std::vecto
 
                     ch->setText(2,"waiting");
                     ch->setIcon(0,QIcon(":/refresh.svg"));
-                    ch->setTextColor(2,QColor("#000000"));
+                    ch->setForeground(2,QColor("#000000"));
                 }
             }
 
@@ -1344,7 +1344,7 @@ bool ApplicationViewWidget::onRefresh()
                                          it->text(7).toLatin1().data());
                 it->setText(2,"waiting");
                 it->setIcon(0,QIcon(":/refresh22.svg"));
-                it->setTextColor(2,QColor("#000000"));
+                it->setForeground(2,QColor("#000000"));
             }
         }
 
@@ -1360,7 +1360,7 @@ bool ApplicationViewWidget::onRefresh()
             resourcesIDs.push_back(it->text(1).toInt());
             it->setText(3,"waiting");
             it->setIcon(0,QIcon(":/refresh22.svg"));
-            it->setTextColor(3,QColor("#000000"));
+            it->setForeground(3,QColor("#000000"));
         }
     }
 
@@ -1386,7 +1386,7 @@ void ApplicationViewWidget::refreshNestedApplication(QTreeWidgetItem *it,std::ve
                 MIDs->push_back(ch->text(1).toInt());
                 ch->setText(2,"waiting");
                 ch->setIcon(0,QIcon(":/refresh22.svg"));
-                ch->setTextColor(2,QColor("#000000"));
+                ch->setForeground(2,QColor("#000000"));
             }
         }
 
@@ -1563,7 +1563,7 @@ void ApplicationViewWidget::updateConnection(int index, std::vector<int>& CIDs)
 
         it->setText(2,"waiting");
         it->setIcon(0,QIcon(":/refresh22.svg"));
-        it->setTextColor(2,QColor("#000000"));
+        it->setForeground(2,QColor("#000000"));
     }
 
 }
@@ -1997,7 +1997,7 @@ void ApplicationViewWidget::onSelfConnect(int which)
     if (it) {
         it->setText(2,"connected");
         it->setIcon(0,QIcon(":/connect22.svg"));
-        it->setTextColor(2,QColor("#008C00"));
+        it->setForeground(2,QColor("#008C00"));
         QString from = it->text(3);
         QString to = it->text(4);
         auto* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
@@ -2026,7 +2026,7 @@ void ApplicationViewWidget::onSelfDisconnect(int which)
     if (it) {
         it->setText(2,"disconnected");
         it->setIcon(0,QIcon(":/disconnect22.svg"));
-        it->setTextColor(2,QColor("#BF0303"));
+        it->setForeground(2,QColor("#BF0303"));
         QString from = it->text(3);
         QString to = it->text(4);
         auto* box = qobject_cast<QComboBox*>(ui->connectionList->itemWidget((QTreeWidgetItem *)it, 5));
@@ -2050,10 +2050,10 @@ void ApplicationViewWidget::onSelfResAvailable(int which)
         it->setText(3,"available");
         if (it->text(2) == "computer") {
             it->setIcon(0,QIcon(":/computer-available22.svg"));
-            it->setTextColor(3,QColor("#008C00"));
+            it->setForeground(3,QColor("#008C00"));
         } else {
             it->setIcon(0,QIcon(":/port-available22.svg"));
-            it->setTextColor(3,QColor("#008C00"));
+            it->setForeground(3,QColor("#008C00"));
         }
         /*if (row[m_resColumns.m_col_type] == Glib::ustring("computer"))
             row.set_value(0, m_refPixAvailable);
@@ -2079,10 +2079,10 @@ void ApplicationViewWidget::onSelfResUnavailable(int which)
         it->setText(3,"unavailable");
         if (it->text(2) == "computer") {
             it->setIcon(0,QIcon(":/computer-unavailable22.svg"));
-            it->setTextColor(3,QColor("#BF0303"));
+            it->setForeground(3,QColor("#BF0303"));
         } else {
             it->setIcon(0,QIcon(":/port-unavailable22.svg"));
-            it->setTextColor(3,QColor("#BF0303"));
+            it->setForeground(3,QColor("#BF0303"));
         }
     }
     reportErrors();
@@ -2094,7 +2094,7 @@ void ApplicationViewWidget::onSelfStart(int which)
     if (it) {
         it->setText(2,"running");
         it->setIcon(0,QIcon(":/apply.svg"));
-        it->setTextColor(2,QColor("#008C00"));
+        it->setForeground(2,QColor("#008C00"));
         builder->setModuleRunning(true,which);
         //row[m_modColumns.m_col_editable] = false;
         //row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
@@ -2110,7 +2110,7 @@ void ApplicationViewWidget::onSelfStop(int which)
     if (it) {
         it->setText(2,"stopped");
         it->setIcon(0,QIcon(":/close.svg"));
-        it->setTextColor(2,QColor("#BF0303"));
+        it->setForeground(2,QColor("#BF0303"));
         builder->setModuleRunning(false,which);
     }
     reportErrors();
@@ -2209,7 +2209,7 @@ void ApplicationViewWidget::onConAvailable(int from, int to)
     if (from >= 0) {
         int row;
         if (getConRowByID(from, &row)) {
-            ui->connectionList->topLevelItem(row)->setTextColor(3,QColor("#008C00"));
+            ui->connectionList->topLevelItem(row)->setForeground(3,QColor("#008C00"));
             builder->setOutputPortAvailable(ui->connectionList->topLevelItem(row)->text(3),true);
         }
     }
@@ -2217,7 +2217,7 @@ void ApplicationViewWidget::onConAvailable(int from, int to)
     if (to >= 0) {
         int row;
         if (getConRowByID(to, &row)) {
-            ui->connectionList->topLevelItem(row)->setTextColor(4,QColor("#008C00"));
+            ui->connectionList->topLevelItem(row)->setForeground(4,QColor("#008C00"));
             builder->setInputPortAvailable(ui->connectionList->topLevelItem(row)->text(4),true);
         }
     }
@@ -2232,7 +2232,7 @@ void ApplicationViewWidget::onConUnAvailable(int from, int to)
     if (from >= 0) {
         int row;
         if (getConRowByID(from, &row)) {
-            ui->connectionList->topLevelItem(row)->setTextColor(3,QColor("#BF0303"));
+            ui->connectionList->topLevelItem(row)->setForeground(3,QColor("#BF0303"));
             builder->setOutputPortAvailable(ui->connectionList->topLevelItem(row)->text(3),false);
         }
     }
@@ -2240,7 +2240,7 @@ void ApplicationViewWidget::onConUnAvailable(int from, int to)
     if (to >= 0) {
         int row;
         if (getConRowByID(to, &row)) {
-            ui->connectionList->topLevelItem(row)->setTextColor(4,QColor("#BF0303"));
+            ui->connectionList->topLevelItem(row)->setForeground(4,QColor("#BF0303"));
             builder->setInputPortAvailable(ui->connectionList->topLevelItem(row)->text(4),false);
         }
     }

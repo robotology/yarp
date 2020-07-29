@@ -488,12 +488,12 @@ void SequenceWindow::onStoppedSequence()
 
     if(prevCurrentIndex >=0){
         for(int i=0;i<ui->treePositions->columnCount();i++){
-            ui->treePositions->topLevelItem(prevCurrentIndex)->setBackgroundColor(i,QColor(0,0,0,0));
+            ui->treePositions->topLevelItem(prevCurrentIndex)->setBackground(i,QColor(0,0,0,0));
         }
         ui->treePositions->topLevelItem(prevCurrentIndex)->setIcon(0,QIcon());
 
         for(int i=0;i<ui->treeSpeed->columnCount();i++){
-            ui->treeSpeed->topLevelItem(prevCurrentIndex)->setBackgroundColor(i,QColor(0,0,0,0));
+            ui->treeSpeed->topLevelItem(prevCurrentIndex)->setBackground(i,QColor(0,0,0,0));
         }
         ui->treeSpeed->topLevelItem(prevCurrentIndex)->setIcon(0,QIcon());
 
@@ -506,25 +506,25 @@ void SequenceWindow::onSetCurrentSequenceIndex(int index)
 {
     if(prevCurrentIndex >=0){
         for(int i=0;i<ui->treePositions->columnCount();i++){
-            ui->treePositions->topLevelItem(prevCurrentIndex)->setBackgroundColor(i,QColor(0,0,0,0));
+            ui->treePositions->topLevelItem(prevCurrentIndex)->setBackground(i,QColor(0,0,0,0));
         }
         ui->treePositions->topLevelItem(prevCurrentIndex)->setIcon(0,QIcon());
 
         for(int i=0;i<ui->treeSpeed->columnCount();i++){
-            ui->treeSpeed->topLevelItem(prevCurrentIndex)->setBackgroundColor(i,QColor(0,0,0,0));
+            ui->treeSpeed->topLevelItem(prevCurrentIndex)->setBackground(i,QColor(0,0,0,0));
         }
         ui->treeSpeed->topLevelItem(prevCurrentIndex)->setIcon(0,QIcon());
 
 
     }
     for(int i=0;i<ui->treePositions->columnCount();i++){
-        ui->treePositions->topLevelItem(index)->setBackgroundColor(i,QColor(0,255,0,120));
+        ui->treePositions->topLevelItem(index)->setBackground(i,QColor(0,255,0,120));
 
     }
     ui->treePositions->topLevelItem(index)->setIcon(0,QIcon(":/play.svg"));
 
     for(int i=0;i<ui->treeSpeed->columnCount();i++){
-        ui->treeSpeed->topLevelItem(index)->setBackgroundColor(i,QColor(0,255,0,120));
+        ui->treeSpeed->topLevelItem(index)->setBackground(i,QColor(0,255,0,120));
 
     }
     ui->treeSpeed->topLevelItem(index)->setIcon(0,QIcon(":/play.svg"));

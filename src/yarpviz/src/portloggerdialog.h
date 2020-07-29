@@ -21,7 +21,7 @@
 #include <QDialog>
 #include <yarp/profiler/NetworkProfiler.h>
 #include <QTimer>
-#include <QTime>
+#include <QElapsedTimer>
 
 namespace Ui {
 class PortLoggerDialog;
@@ -50,7 +50,7 @@ private:
     bool isStarted;
     yarp::profiler::graph::Graph *graph;
     QTimer *timer;
-    QTime logTime;
+    QElapsedTimer logTime;
 };
 
 #endif // PORTLOGGERDIALOG_H
