@@ -77,8 +77,6 @@ You'll be able to include them in your code as follows:
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 #include <yarp/os/Contact.h>
-using namespace yarp::os;
-using namespace yarp::os::impl;
 \endcode
 
 \section carrier_expert_basics The basics
@@ -147,10 +145,11 @@ the companion.  Here is the companion's source code in its entirety:
 
 \code
 #include <yarp/os/Network.h>
-using namespace yarp::os;
-int main(int argc, char *argv[]) {
+using yarp::os::Network;
+int main(int argc, char* argv[])
+{
     Network yarp;
-    return Network::main(argc,argv);
+    return Network::main(argc, argv);
 }
 \endcode
 

@@ -258,7 +258,11 @@ You can instantiate any device listed here from your code as follows:
 \code
   #include <yarp/dev/PolyDriver.h>
   #include <yarp/dev/FrameGrabberInterfaces.h>
-  using namespace yarp::dev;
+  #include <yarp/sig/Image.h>
+  using yarp::dev::PolyDriver;
+  using yarp::dev::IFrameGrabberImage;
+  using yarp::sig::ImageOf;
+  using yarp::sig::PixelRgb;
   ...
   PolyDriver dd("dragonfly");
   if (!dd.isValid()) {
@@ -271,7 +275,7 @@ You can instantiate any device listed here from your code as follows:
     printf("*** Device can supply images\n");
     ImageOf<PixelRgb> img;
     if (grabber->getImage(img)) {
-      printf("*** Got a %dx%d image\n", img.width(), img.height());
+      printf("*** Got a %zux%zu image\n", img.width(), img.height());
     }
   }
 \endcode
@@ -296,7 +300,7 @@ Now we can do:
   PolyDriver dd("fakey");
   IFrameGrabberImage *grabber;
   dd.view(grabber);
-  if (grabber==NULL) { exit(1); } // failed
+  if (grabber == nullptr) { exit(1); } // failed
   // from here on, we only care that our device implements IFrameGrabberImage
   ImageOf<PixelRgb> img;
   grabber->getImage(img);
