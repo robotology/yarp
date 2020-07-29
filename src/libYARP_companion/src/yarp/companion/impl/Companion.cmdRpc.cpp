@@ -144,6 +144,7 @@ int Companion::rpc(const char *connectionName, const char *targetName)
 
     while (!yarp::os::impl::Terminal::EOFreached()) {
         Port port;
+        port.setRpcClient();
         port.openFake(connectionName);
         if (!port.addOutput(targetName)) {
             yCError(COMPANION, "Cannot make connection");
@@ -239,6 +240,7 @@ int Companion::rpcClient(int argc, char *argv[])
     }
 
     Port p;
+    p.setRpcClient();
     applyArgs(p);
     bool ok;
     if (argc>1) {
