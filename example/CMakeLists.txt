@@ -53,3 +53,4 @@ list(APPEND build_options -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=${CMAKE_BINARY_DIR}/$
 # Add example subdirectories
 
 add_subdirectory(os)
+add_subdirectory(dev)

@@ -7,17 +7,27 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/all.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Searchable.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include <stdio.h>
+#include <cstdio>
 
-using namespace yarp::os;
-using namespace yarp::dev;
+using yarp::dev::DeviceDriver;
+using yarp::dev::DriverCreatorOf;
+using yarp::dev::Drivers;
+using yarp::dev::IPositionControl;
+using yarp::dev::PolyDriver;
+using yarp::os::Network;
+using yarp::os::Searchable;
 
-class FakeMotor : public DeviceDriver, public IPositionControl {
+class FakeMotor :
+        public DeviceDriver,
+        public IPositionControl
+{
 public:
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -25,7 +35,8 @@ public:
      * @param ax pointer to storage
      * @return true/false.
      */
-    virtual bool getAxes(int *ax) {
+    bool getAxes(int* ax) override
+    {
         *ax = 2;
         printf("FakeMotor reporting %d axes present\n", *ax);
         return true;
@@ -36,19 +47,30 @@ public:
      * @param ref specifies the new ref point
      * @return true/false on success/failure
      */
-    virtual bool positionMove(int j, double ref) {
+    bool positionMove(int j, double ref) override
+    {
+        YARP_UNUSED(j);
+        YARP_UNUSED(ref);
         return true;
     }
-
 
     /** Set new reference point for all axes.
      * @param refs array, new reference points.
      * @return true/false on success/failure
      */
-    virtual bool positionMove(const double *refs) {
+    bool positionMove(const double* refs) override
+    {
+        YARP_UNUSED(refs);
         return true;
     }
 
+    bool positionMove(const int n_joint, const int* joints, const double* refs) override
+    {
+        YARP_UNUSED(n_joint);
+        YARP_UNUSED(joints);
+        YARP_UNUSED(refs);
+        return true;
+    }
 
     /** Set relative position. The command is relative to the
      * current position of the axis.
@@ -56,35 +78,57 @@ public:
      * @param delta relative command
      * @return true/false on success/failure
      */
-    virtual bool relativeMove(int j, double delta) {
+    bool relativeMove(int j, double delta) override
+    {
+        YARP_UNUSED(j);
+        YARP_UNUSED(delta);
         return true;
     }
-
 
     /** Set relative position, all joints.
      * @param deltas pointer to the relative commands
      * @return true/false on success/failure
      */
-    virtual bool relativeMove(const double *deltas) {
+    bool relativeMove(const double* deltas) override
+    {
+        YARP_UNUSED(deltas);
         return true;
     }
 
+    bool relativeMove(const int n_joint, const int* joints, const double* deltas) override
+    {
+        YARP_UNUSED(n_joint);
+        YARP_UNUSED(joints);
+        YARP_UNUSED(deltas);
+        return true;
+    }
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @return true if the trajectory is terminated, false otherwise
      */
-    virtual bool checkMotionDone(int j, bool *flag) {
+    bool checkMotionDone(int j, bool* flag) override
+    {
+        YARP_UNUSED(j);
+        YARP_UNUSED(flag);
         return true;
     }
-
 
     /** Check if the current trajectory is terminated. Non blocking.
      * @return true if the trajectory is terminated, false otherwise
      */
-    virtual bool checkMotionDone(bool *flag) {
+    bool checkMotionDone(bool* flag) override
+    {
+        YARP_UNUSED(flag);
         return true;
     }
 
+    bool checkMotionDone(const int n_joint, const int* joints, bool* flag) override
+    {
+        YARP_UNUSED(n_joint);
+        YARP_UNUSED(joints);
+        YARP_UNUSED(flag);
+        return true;
+    }
 
     /** Set reference speed for a joint, this is the speed used during the
      * interpolation of the trajectory.
@@ -92,20 +136,31 @@ public:
      * @param sp speed value
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeed(int j, double sp) {
+    bool setRefSpeed(int j, double sp) override
+    {
+        YARP_UNUSED(j);
+        YARP_UNUSED(sp);
         return true;
     }
-
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.
      * @param spds pointer to the array of speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeeds(const double *spds) {
+    bool setRefSpeeds(const double* spds) override
+    {
+        YARP_UNUSED(spds);
         return true;
     }
 
+    bool setRefSpeeds(const int n_joint, const int* joints, const double* spds) override
+    {
+        YARP_UNUSED(n_joint);
+        YARP_UNUSED(joints);
+        YARP_UNUSED(spds);
+        return true;
+    }
 
     /** Set reference acceleration for a joint. This value is used during the
      * trajectory generation.
@@ -113,20 +168,31 @@ public:
      * @param acc acceleration value
      * @return true/false upon success/failure
      */
-    virtual bool setRefAcceleration(int j, double acc) {
+    bool setRefAcceleration(int j, double acc) override
+    {
+        YARP_UNUSED(j);
+        YARP_UNUSED(acc);
         return true;
     }
-
 
     /** Set reference acceleration on all joints. This is the valure that is
      * used during the generation of the trajectory.
      * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
      */
-    virtual bool setRefAccelerations(const double *accs) {
+    bool setRefAccelerations(const double* accs) override
+    {
+        YARP_UNUSED(accs);
         return true;
     }
 
+    bool setRefAccelerations(const int n_joint, const int* joints, const double* accs) override
+    {
+        YARP_UNUSED(n_joint);
+        YARP_UNUSED(joints);
+        YARP_UNUSED(accs);
+        return true;
+    }
 
     /** Get reference speed for a joint. Returns the speed used to
      * generate the trajectory profile.
@@ -134,19 +200,30 @@ public:
      * @param ref pointer to storage for the return value
      * @return true/false on success or failure
      */
-    virtual bool getRefSpeed(int j, double *ref) {
+    bool getRefSpeed(int j, double* ref) override
+    {
+        YARP_UNUSED(j);
+        YARP_UNUSED(ref);
         return true;
     }
-
 
     /** Get reference speed of all joints. These are the  values used during the
      * interpolation of the trajectory.
      * @param spds pointer to the array that will store the speed values.
      */
-    virtual bool getRefSpeeds(double *spds) {
+    bool getRefSpeeds(double* spds) override
+    {
+        YARP_UNUSED(spds);
         return true;
     }
 
+    bool getRefSpeeds(const int n_joint, const int* joints, double* spds) override
+    {
+        YARP_UNUSED(n_joint);
+        YARP_UNUSED(joints);
+        YARP_UNUSED(spds);
+        return true;
+    }
 
     /** Get reference acceleration for a joint. Returns the acceleration used to
      * generate the trajectory profile.
@@ -154,50 +231,73 @@ public:
      * @param acc pointer to storage for the return value
      * @return true/false on success/failure
      */
-    virtual bool getRefAcceleration(int j, double *acc) {
+    bool getRefAcceleration(int j, double* acc) override
+    {
+        YARP_UNUSED(j);
+        YARP_UNUSED(acc);
         return true;
     }
-
 
     /** Get reference acceleration of all joints. These are the values used during the
      * interpolation of the trajectory.
      * @param accs pointer to the array that will store the acceleration values.
      * @return true/false on success or failure
      */
-    virtual bool getRefAccelerations(double *accs) {
+    bool getRefAccelerations(double* accs) override
+    {
+        YARP_UNUSED(accs);
         return true;
     }
 
+    bool getRefAccelerations(const int n_joint, const int* joints, double* accs) override
+    {
+        YARP_UNUSED(n_joint);
+        YARP_UNUSED(joints);
+        YARP_UNUSED(accs);
+        return true;
+    }
 
     /** Stop motion, single joint
      * @param j joint number
      * @return true/false on success/failure
      */
-    virtual bool stop(int j) {
+    bool stop(int j) override
+    {
+        YARP_UNUSED(j);
         return true;
     }
-
 
     /** Stop motion, multiple joints
      * @return true/false on success/failure
      */
-    virtual bool stop() {
+    bool stop() override
+    {
         return true;
     }
 
-
-    virtual bool open(Searchable& config) {
+    bool stop(const int n_joint, const int* joints) override
+    {
+        YARP_UNUSED(n_joint);
+        YARP_UNUSED(joints);
         return true;
     }
 
-    virtual bool close() {
+    bool open(Searchable& config) override
+    {
+        YARP_UNUSED(config);
+        return true;
+    }
+
+    bool close() override
+    {
         return true;
     }
 };
 
 
-void testMotor(PolyDriver& driver) {
-    IPositionControl *pos;
+void testMotor(PolyDriver& driver)
+{
+    IPositionControl* pos;
     if (driver.view(pos)) {
         int ct = 0;
         pos->getAxes(&ct);
@@ -207,8 +307,13 @@ void testMotor(PolyDriver& driver) {
     }
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     yarp::os::Network yarp;
+
     Drivers::factory().add(new DriverCreatorOf<FakeMotor>("motor",
                                                           "controlboard",
                                                           "FakeMotor"));
@@ -259,8 +364,6 @@ int main(int argc, char *argv[]) {
         client.close();
     }
     server.close();
-
-
 
 
     return 0;

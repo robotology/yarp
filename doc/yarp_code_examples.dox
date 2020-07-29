@@ -215,6 +215,47 @@ Demonstrates one way to access bottle objects.  See also \ref os/bottle_add/bott
 
 
 /**
+ * \example dev/grabber_client/grabber_client.cpp
+
+How to grab images from a remote source using the yarp::dev::IFrameGrabber
+interface.
+
+*/
+
+/**
+ * \example dev/file_grabber/file_grabber.cpp
+
+This example shows how we would make a new device for a camera.
+We make a device that reads images from file.  The only step
+missing here is to integrate the device into the YARP library.
+
+Here's the header file, dev/file_grabber/FileFrameGrabber.h
+
+\include dev/file_grabber/FileFrameGrabber.h
+
+And here's how we can use it.  In fact, we just grab the first
+image from the device.
+
+*/
+
+
+/**
+ * \example dev/fake_motor/fake_motor.cpp
+
+Some tips on how to create a device for a new motor control board.
+
+*/
+
+
+/**
+ \example dev/motortest/motortest.cpp
+
+Example showing how to use the SerialServoBoard driver AND how to configure and use the IPositionControl interface.
+*/
+
+
+
+/**
  * \example opencv/main.cpp
 
 An example of using OpenCV with YARP.
@@ -230,40 +271,6 @@ How to read a configuration file.  This example is designed to
 read a file like the following (property/config.txt):
 
 \include example/property/config.txt
-
-*/
-
-
-/**
- * \example dev/grabber_client.cpp
-
-How to grab images from a remote source using the yarp::dev::IFrameGrabber
-interface.
-
-*/
-
-
-/**
- * \example dev/file_grabber.cpp
-
-This example shows how we would make a new device for a camera.
-We make a device that reads images from file.  The only step
-missing here is to integrate the device into the YARP library.
-
-Here's the header file, dev/FileFrameGrabber.h
-
-\include dev/FileFrameGrabber.h
-
-And here's how we can use it.  In fact, we just grab the first
-image from the device.
-
-*/
-
-
-/**
- * \example dev/fake_motor.cpp
-
-Some tips on how to create a device for a new motor control board.
 
 */
 
@@ -550,11 +557,6 @@ Example showing how to use the CUDA driver to execute custom code onto nVidia gr
 
 */
 
-
-/**
- \example dev/motortest.cpp
-
-Example showing how to use the SerialServoBoard driver AND how to configure and use the IPositionControl interface.
 
 /**
  \example carrier/carrier_stub.cpp
