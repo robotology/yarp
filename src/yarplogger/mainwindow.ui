@@ -831,7 +831,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Custom Time</string>
+    <string>Show External Time</string>
    </property>
   </action>
   <action name="actionShow_Hostname">

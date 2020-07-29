@@ -50,7 +50,7 @@ class YARP_os_API LogStream
                 func(f),
                 systemtime(yarp::os::SystemClock::nowSystem()),
                 networktime(!yarp::os::Time::isClockInitialized() ? 0.0 : (yarp::os::Time::isSystemClock() ? systemtime : yarp::os::Time::now())),
-                customtime(ct),
+                externaltime(ct),
                 pred(pred),
                 comp(c),
                 ref(1)
@@ -63,7 +63,7 @@ class YARP_os_API LogStream
         const char* func;                    // NOLINT(misc-non-private-member-variables-in-classes)
         double systemtime;                   // NOLINT(misc-non-private-member-variables-in-classes)
         double networktime;                  // NOLINT(misc-non-private-member-variables-in-classes)
-        double customtime;                   // NOLINT(misc-non-private-member-variables-in-classes)
+        double externaltime;                 // NOLINT(misc-non-private-member-variables-in-classes)
         const yarp::os::Log::Predicate pred; // NOLINT(misc-non-private-member-variables-in-classes)
         const LogComponent& comp;            // NOLINT(misc-non-private-member-variables-in-classes)
         int ref;                             // NOLINT(misc-non-private-member-variables-in-classes)
@@ -74,10 +74,10 @@ public:
                      const char* file,
                      unsigned int line,
                      const char* func,
-                     const double customtime,
+                     const double externaltime,
                      const yarp::os::Log::Predicate pred = nullptr,
                      const LogComponent& comp = Log::defaultLogComponent()) :
-            stream(new Stream(type, file, line, func, customtime, pred, comp))
+            stream(new Stream(type, file, line, func, externaltime, pred, comp))
     {
     }
 
@@ -116,7 +116,7 @@ public:
                             stream->func,
                             stream->systemtime,
                             stream->networktime,
-                            stream->customtime,
+                            stream->externaltime,
                             stream->comp);
             }
 

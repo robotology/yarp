@@ -380,10 +380,10 @@ void LoggerEngine::logger_thread::run()
                     body.yarprun_timestamp.clear();
                 }
 
-                if (p.check("customtime")) {
-                    body.customtime = p.find("customtime").asFloat64();
+                if (p.check("externaltime")) {
+                    body.externaltime = p.find("externaltime").asFloat64();
                 } else {
-                    body.customtime = 0.0;
+                    body.externaltime = 0.0;
                 }
 
                 if (p.check("backtrace")) {

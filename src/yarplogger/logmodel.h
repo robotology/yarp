@@ -38,8 +38,8 @@ public:
         SystemTimeStringRole,
         NetworkTimeRole,
         NetworkTimeStringRole,
-        CustomTimeRole,
-        CustomTimeStringRole,
+        ExternalTimeRole,
+        ExternalTimeStringRole,
         LogLevelRole,
         LogLevelStringRole,
         FilenameRole,
@@ -62,7 +62,7 @@ public:
     static constexpr int LOCALTIMESTAMP_COLUMN   = 1;
     static constexpr int SYSTEMTIME_COLUMN       = 2;
     static constexpr int NETWORKTIME_COLUMN      = 3;
-    static constexpr int CUSTOMTIME_COLUMN       = 4;
+    static constexpr int EXTERNALTIME_COLUMN     = 4;
     static constexpr int LOGLEVEL_COLUMN         = 5;
     static constexpr int FILENAME_COLUMN         = 6;
     static constexpr int LINE_COLUMN             = 7;

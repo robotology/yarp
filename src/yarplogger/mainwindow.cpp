@@ -423,7 +423,7 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &pre_index)
         tmpLogTab->displayLocalTimestamp(ui->actionShow_LocalTimestamps->isChecked());
         tmpLogTab->displaySystemTime(ui->actionShow_System_Time->isChecked());
         tmpLogTab->displayNetworkTime(ui->actionShow_Network_Time->isChecked());
-        tmpLogTab->displayCustomTime(ui->actionShow_Custom_Time->isChecked());
+        tmpLogTab->displayExternalTime(ui->actionShow_Custom_Time->isChecked());
         tmpLogTab->displayLogLevel(ui->actionShow_Log_Level->isChecked());
         tmpLogTab->displayFilename(ui->actionShow_Filename->isChecked());
         tmpLogTab->displayLine(ui->actionShow_Line_Number->isChecked());
@@ -567,7 +567,7 @@ void MainWindow::on_actionShow_Custom_Time_toggled(bool checked)
         auto* logtab = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
         if (logtab)
         {
-            logtab->displayCustomTime(checked);
+            logtab->displayExternalTime(checked);
         }
     }
 }

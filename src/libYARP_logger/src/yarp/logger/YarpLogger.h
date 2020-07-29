@@ -132,7 +132,7 @@ struct yarp::yarpLogger::MessageEntry
     std::string   component;
     double        systemtime;
     double        networktime;
-    double        customtime;
+    double        externaltime;
     std::string   backtrace;
     std::string   yarprun_timestamp;
     std::string   local_timestamp;

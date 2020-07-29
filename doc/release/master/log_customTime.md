@@ -7,70 +7,74 @@ log_customTime {#master}
 
 ##### `Log`
 
-* Added the following new macros with customTime implementation:
-  * `yTraceCustomTime`
-  * `yTraceCustomTimeOnce`
-  * `yTraceCustomTimeThreadOnce`
-  * `yTraceCustomTimeThrottle`
-  * `yTraceCustomTimeThreadThrottle`
+* Added the following new macros with external time implementation:
+  * `yTraceExternalTime`
+  * `yTraceExternalTimeOnce`
+  * `yTraceExternalTimeThreadOnce`
+  * `yTraceExternalTimeThrottle`
+  * `yTraceExternalTimeThreadThrottle`
 
-  * `yDebugCustomTime`
-  * `yDebugCustomTimeOnce`
-  * `yDebugCustomTimeThreadOnce`
-  * `yDebugCustomTimeThrottle`
-  * `yDebugCustomTimeThreadThrottle`
+  * `yDebugExternalTime`
+  * `yDebugExternalTimeOnce`
+  * `yDebugExternalTimeThreadOnce`
+  * `yDebugExternalTimeThrottle`
+  * `yDebugExternalTimeThreadThrottle`
 
-  * `yInfoCustomTime`
-  * `yInfoCustomTimeOnce`
-  * `yInfoCustomTimeThreadOnce`
-  * `yInfoCustomTimeThrottle`
-  * `yInfoCustomTimeThreadThrottle`
+  * `yInfoExternalTime`
+  * `yInfoExternalTimeOnce`
+  * `yInfoExternalTimeThreadOnce`
+  * `yInfoExternalTimeThrottle`
+  * `yInfoExternalTimeThreadThrottle`
 
-  * `yWarningCustomTime`
-  * `yWarningCustomTimeOnce`
-  * `yWarningCustomTimeThreadOnce`
-  * `yWarningCustomTimeThrottle`
-  * `yWarningCustomTimeThreadThrottle`
+  * `yWarningExternalTime`
+  * `yWarningExternalTimeOnce`
+  * `yWarningExternalTimeThreadOnce`
+  * `yWarningExternalTimeThrottle`
+  * `yWarningExternalTimeThreadThrottle`
 
-  * `yErrorCustomTime`
-  * `yErrorCustomTimeOnce`
-  * `yErrorCustomTimeThreadOnce`
-  * `yErrorCustomTimeThrottle`
-  * `yErrorCustomTimeThreadThrottle`
+  * `yErrorExternalTime`
+  * `yErrorExternalTimeOnce`
+  * `yErrorExternalTimeThreadOnce`
+  * `yErrorExternalTimeThrottle`
+  * `yErrorExternalTimeThreadThrottle`
 
-  * `yFatalCustomTime`
+  * `yFatalExternalTime`
+
+  * `yAssertExternalTime`
 
 ##### `LogComponent`
 
-* Added the following new macros with customTime implementation:
-  * `yCTraceCustomTime`
-  * `yCTraceCustomTimeOnce`
-  * `yCTraceCustomTimeThreadOnce`
-  * `yCTraceCustomTimeThrottle`
-  * `yCTraceCustomTimeThreadThrottle`
+* Added the following new macros with external time implementation:
+  * `yCTraceExternalTime`
+  * `yCTraceExternalTimeOnce`
+  * `yCTraceExternalTimeThreadOnce`
+  * `yCTraceExternalTimeThrottle`
+  * `yCTraceExternalTimeThreadThrottle`
 
-  * `yCDebugCustomTime`
-  * `yCDebugCustomTimeOnce`
-  * `yCDebugCustomTimeThreadOnce`
-  * `yCDebugCustomTimeThrottle`
-  * `yCDebugCustomTimeThreadThrottle`
+  * `yCDebugExternalTime`
+  * `yCDebugExternalTimeOnce`
+  * `yCDebugExternalTimeThreadOnce`
+  * `yCDebugExternalTimeThrottle`
+  * `yCDebugExternalTimeThreadThrottle`
 
-  * `yCInfoCustomTime`
-  * `yCInfoCustomTimeOnce`
-  * `yCInfoCustomTimeThreadOnce`
-  * `yCInfoCustomTimeThrottle`
-  * `yCInfoCustomTimeThreadThrottle`
+  * `yCInfoExternalTime`
+  * `yCInfoExternalTimeOnce`
+  * `yCInfoExternalTimeThreadOnce`
+  * `yCInfoExternalTimeThrottle`
+  * `yCInfoExternalTimeThreadThrottle`
 
-  * `yCWarningCustomTime`
-  * `yCWarningCustomTimeOnce`
-  * `yCWarningCustomTimeThreadOnce`
-  * `yCWarningCustomTimeThrottle`
-  * `yCWarningCustomTimeThreadThrottle`
+  * `yCWarningExternalTime`
+  * `yCWarningExternalTimeOnce`
+  * `yCWarningExternalTimeThreadOnce`
+  * `yCWarningExternalTimeThrottle`
+  * `yCWarningExternalTimeThreadThrottle`
 
-  * `yCErrorCustomTime`
-  * `yCErrorCustomTimeOnce`
-  * `yCErrorCustomTimeThreadOnce`
-  * `yCErrorCustomTimeThrottle`
-  * `yCErrorCustomTimeThreadThrottle`
+  * `yCErrorExternalTime`
+  * `yCErrorExternalTimeOnce`
+  * `yCErrorExternalTimeThreadOnce`
+  * `yCErrorExternalTimeThrottle`
+  * `yCErrorExternalTimeThreadThrottle`
 
-  * `yCFatalCustomTime`
+  * `yCFatalExternalTime`
+
+  * `yCAssertExternalTime`
