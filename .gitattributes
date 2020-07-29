@@ -1,5 +1,6 @@
 .appveyor.yml                   export-ignore
 .clang-format                   export-ignore
+.clang-tidy                     export-ignore
 .coveralls.yml                  export-ignore
 .gitattributes                  export-ignore
 .github/                        export-ignore
