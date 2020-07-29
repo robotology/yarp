@@ -9,9 +9,9 @@
 
 #include <yarp/os/Property.h>
 
+#include <yarp/conf/environment.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetType.h>
-#include <yarp/os/Network.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/LogComponent.h>
@@ -791,7 +791,7 @@ public:
                 }
                 inVar = false;
                 yCTrace(PROPERTY, "VARIABLE %s\n", var.c_str());
-                std::string add = NetworkBase::getEnvironment(var.c_str());
+                std::string add = yarp::conf::environment::getEnvironment(var.c_str());
                 if (add.empty()) {
                     add = env.find(var).toString();
                 }

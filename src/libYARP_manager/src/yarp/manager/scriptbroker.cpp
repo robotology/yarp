@@ -8,9 +8,12 @@
 
 #include <yarp/manager/scriptbroker.h>
 
+#include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
+
 #include <string>
 
 #define CONNECTION_TIMEOUT      5.0         //seconds
@@ -69,7 +72,7 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
     std::string strCmd;
     if(szcmd)
     {
-        yarp::os::Bottle possiblePaths = parsePaths(yarp::os::NetworkBase::getEnvironment("PATH"));
+        yarp::os::Bottle possiblePaths = parsePaths(yarp::conf::environment::getEnvironment("PATH"));
         for (size_t i=0; i<possiblePaths.size(); ++i)
         {
             std::string guessString=possiblePaths.get(i).asString() +

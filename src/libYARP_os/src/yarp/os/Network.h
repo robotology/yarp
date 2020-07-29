@@ -535,38 +535,42 @@ public:
 
     static NameStore* getQueryBypass();
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
     /**
-     *
      * Read a variable from the environment.
      *
      * @param key the variable to read
      * @param found an optional variable to set to true iff variable is found
      * @return the value of the environment variable, or "" if not found
      *
+     * @deprecated Since YARP 3.4. Use yarp::conf::environment::getEnvironment instead
      */
+    YARP_DEPRECATED_MSG("Use yarp::conf::environment::getEnvironment instead")
     static std::string getEnvironment(const char* key,
                                       bool* found = nullptr);
 
     /**
-     *
      * Set or change an environment variable.
      *
      * @param key the variable to set or change
      * @param val the target value
      *
+     * @deprecated Since YARP 3.4. Use yarp::conf::environment::setEnvironment instead
      */
+    YARP_DEPRECATED_MSG("Use yarp::conf::environment::setEnvironment instead")
     static void setEnvironment(const std::string& key,
                                const std::string& val);
 
     /**
-     *
      * Remove an environment variable.
      *
      * @param key the variable to remove
      *
+     * @deprecated Since YARP 3.4. Use yarp::conf::environment::unsetEnvironment instead
      */
+    YARP_DEPRECATED_MSG("Use yarp::conf::environment::unsetEnvironment instead")
     static void unsetEnvironment(const std::string& key);
-
+#endif // YARP_NO_DEPRECATED
 
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.3.0

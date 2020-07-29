@@ -9,6 +9,7 @@
 #include <yarp/os/Node.h>
 
 #include <yarp/conf/compiler.h>
+#include <yarp/conf/environment.h>
 
 #include <yarp/os/NestedContact.h>
 #include <yarp/os/Network.h>
@@ -300,7 +301,7 @@ public:
 
     void getMasterUri(NodeArgs& na)
     {
-        na.reply = Value(NetworkBase::getEnvironment("ROS_MASTER_URI"));
+        na.reply = Value(yarp::conf::environment::getEnvironment("ROS_MASTER_URI"));
         na.success();
     }
 

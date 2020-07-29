@@ -9,7 +9,9 @@
 
 #include <yarp/os/ResourceFinder.h>
 
+#include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
@@ -476,7 +478,7 @@ public:
         if ((locs & ResourceFinderOptions::Robot) != 0) {
             std::string slash{fs::preferred_separator};
             bool found = false;
-            std::string robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME", &found);
+            std::string robot = yarp::conf::environment::getEnvironment("YARP_ROBOT_NAME", &found);
             if (!found) {
                 robot = "default";
             }
@@ -716,7 +718,7 @@ public:
             return configFilePath;
         }
         bool found = false;
-        std::string robot = NetworkBase::getEnvironment("YARP_ROBOT_NAME", &found);
+        std::string robot = yarp::conf::environment::getEnvironment("YARP_ROBOT_NAME", &found);
         if (!found) {
             robot = "default";
         }
@@ -981,23 +983,23 @@ std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
 {
     std::string slash{fs::preferred_separator};
     bool found = false;
-    std::string yarp_version = NetworkBase::getEnvironment("YARP_DATA_HOME",
+    std::string yarp_version = yarp::conf::environment::getEnvironment("YARP_DATA_HOME",
                                                            &found);
     if (!yarp_version.empty()) {
         return yarp_version;
     }
-    std::string xdg_version = NetworkBase::getEnvironment("XDG_DATA_HOME",
+    std::string xdg_version = yarp::conf::environment::getEnvironment("XDG_DATA_HOME",
                                                           &found);
     if (found) {
         return createIfAbsent(mayCreate, xdg_version + slash + "yarp");
     }
 #if defined(_WIN32)
-    std::string app_version = NetworkBase::getEnvironment("APPDATA");
+    std::string app_version = yarp::conf::environment::getEnvironment("APPDATA");
     if (app_version != "") {
         return createIfAbsent(mayCreate, app_version + slash + "yarp");
     }
 #endif
-    std::string home_version = NetworkBase::getEnvironment("HOME");
+    std::string home_version = yarp::conf::environment::getEnvironment("HOME");
 #if defined(__APPLE__)
     if (home_version != "") {
         return createIfAbsent(mayCreate,
@@ -1022,18 +1024,18 @@ std::string ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
 {
     std::string slash{fs::preferred_separator};
     bool found = false;
-    std::string yarp_version = NetworkBase::getEnvironment("YARP_CONFIG_HOME",
+    std::string yarp_version = yarp::conf::environment::getEnvironment("YARP_CONFIG_HOME",
                                                            &found);
     if (found) {
         return yarp_version;
     }
-    std::string xdg_version = NetworkBase::getEnvironment("XDG_CONFIG_HOME",
+    std::string xdg_version = yarp::conf::environment::getEnvironment("XDG_CONFIG_HOME",
                                                           &found);
     if (found) {
         return createIfAbsent(mayCreate, xdg_version + slash + "yarp");
     }
 #if defined(_WIN32)
-    std::string app_version = NetworkBase::getEnvironment("APPDATA");
+    std::string app_version = yarp::conf::environment::getEnvironment("APPDATA");
     if (app_version != "") {
         return createIfAbsent(mayCreate,
                               app_version + slash + "yarp" + slash + "config");
@@ -1048,7 +1050,7 @@ std::string ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
                                   + slash + "config");
     }
 #endif
-    std::string home_version = NetworkBase::getEnvironment("HOME");
+    std::string home_version = yarp::conf::environment::getEnvironment("HOME");
     if (!home_version.empty()) {
         return createIfAbsent(mayCreate,
                               home_version
@@ -1072,19 +1074,19 @@ Bottle ResourceFinder::getDataDirs()
 {
     std::string slash{fs::preferred_separator};
     bool found = false;
-    Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_DATA_DIRS",
+    Bottle yarp_version = parsePaths(yarp::conf::environment::getEnvironment("YARP_DATA_DIRS",
                                                                  &found));
     if (found) {
         return yarp_version;
     }
-    Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_DATA_DIRS",
+    Bottle xdg_version = parsePaths(yarp::conf::environment::getEnvironment("XDG_DATA_DIRS",
                                                                 &found));
     if (found) {
         appendResourceType(xdg_version, "yarp");
         return xdg_version;
     }
 #if defined(_WIN32)
-    std::string app_version = NetworkBase::getEnvironment("YARP_DIR");
+    std::string app_version = yarp::conf::environment::getEnvironment("YARP_DIR");
     if (app_version != "") {
         appendResourceType(app_version, "share");
         appendResourceType(app_version, "yarp");
@@ -1103,19 +1105,19 @@ Bottle ResourceFinder::getDataDirs()
 Bottle ResourceFinder::getConfigDirs()
 {
     bool found = false;
-    Bottle yarp_version = parsePaths(NetworkBase::getEnvironment("YARP_CONFIG_DIRS",
+    Bottle yarp_version = parsePaths(yarp::conf::environment::getEnvironment("YARP_CONFIG_DIRS",
                                                                  &found));
     if (found) {
         return yarp_version;
     }
-    Bottle xdg_version = parsePaths(NetworkBase::getEnvironment("XDG_CONFIG_DIRS",
+    Bottle xdg_version = parsePaths(yarp::conf::environment::getEnvironment("XDG_CONFIG_DIRS",
                                                                 &found));
     if (found) {
         appendResourceType(xdg_version, "yarp");
         return xdg_version;
     }
 #if defined(_WIN32)
-    std::string app_version = NetworkBase::getEnvironment("ALLUSERSPROFILE");
+    std::string app_version = yarp::conf::environment::getEnvironment("ALLUSERSPROFILE");
     if (app_version != "") {
         appendResourceType(app_version, "yarp");
         Bottle result;

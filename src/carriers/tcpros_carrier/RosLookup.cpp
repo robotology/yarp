@@ -9,6 +9,8 @@
 #include "RosLookup.h"
 #include "TcpRosLogComponent.h"
 
+#include <yarp/conf/environment.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Network.h>
@@ -117,7 +119,7 @@ bool RosLookup::lookupTopic(const std::string& name) {
 }
 
 yarp::os::Contact RosLookup::getRosCoreAddressFromEnv() {
-    std::string addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
+    std::string addr = yarp::conf::environment::getEnvironment("ROS_MASTER_URI");
     Contact c = Contact::fromString(addr);
     if (c.isValid()) {
         c.setCarrier("xmlrpc");

@@ -8,6 +8,8 @@
 
 #include "fakeMotionControl.h"
 
+#include <yarp/conf/environment.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/LogComponent.h>
@@ -453,7 +455,7 @@ FakeMotionControl::FakeMotionControl() :
     verbose                 (VERY_VERBOSE)
 {
     resizeBuffers();
-    std::string tmp = NetworkBase::getEnvironment("VERBOSE_STICA");
+    std::string tmp = yarp::conf::environment::getEnvironment("VERBOSE_STICA");
     verbosewhenok = (tmp != "") ? (bool)NetType::toInt(tmp) :
                                   false;
 }

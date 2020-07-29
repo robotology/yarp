@@ -11,7 +11,6 @@
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/PlatformLimits.h>
 #include <yarp/os/impl/PlatformSignal.h>
-#include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 #include <yarp/os/impl/PlatformUnistd.h>
 
@@ -31,10 +30,12 @@
 #    include <yarp/os/impl/macos/MacOSAPI.h>
 #endif
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4.0
 const char* yarp::os::getenv(const char* var)
 {
-    return yarp::os::impl::getenv(var);
+    return std::getenv(var);
 }
+#endif
 
 int yarp::os::mkdir(const char* p)
 {

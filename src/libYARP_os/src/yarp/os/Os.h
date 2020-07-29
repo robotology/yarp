@@ -19,6 +19,7 @@
 namespace yarp {
 namespace os {
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4.0
 /**
  * @brief Portable wrapper for the getenv() function.
  *
@@ -26,8 +27,12 @@ namespace os {
  *
  * @param[in] var string that contains the environment variable name
  * @return the value corresponding to the envarionment variable v
+ *
+ * @deprecated since YARP 3.4.0. Use std::getenv instead.
  */
+YARP_DEPRECATED_MSG("Use std::getenv instead")
 YARP_os_API const char* getenv(const char* var);
+#endif // YARP_NO_DEPRECATED
 
 /**
  * @brief Portable wrapper for the getppid() function.

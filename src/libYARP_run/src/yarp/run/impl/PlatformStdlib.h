@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_OS_IMPL_PLATFORMSTDLIB_H
-#define YARP_OS_IMPL_PLATFORMSTDLIB_H
+#ifndef YARP_RUN_IMPL_PLATFORMSTDLIB_H
+#define YARP_RUN_IMPL_PLATFORMSTDLIB_H
 
 #include <yarp/conf/system.h>
 #ifdef YARP_HAS_ACE
@@ -21,7 +21,7 @@
 #endif
 
 namespace yarp {
-namespace os {
+namespace run {
 namespace impl {
 
 
@@ -52,7 +52,7 @@ using ::putenv;
 #endif
 
 } // namespace impl
-} // namespace os
+} // namespace run
 } // namespace yarp
 
-#endif // YARP_OS_IMPL_PLATFORMSTDLIB_H
+#endif // YARP_RUN_IMPL_PLATFORMSTDLIB_H

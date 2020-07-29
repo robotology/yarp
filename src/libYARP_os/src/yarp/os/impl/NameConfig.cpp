@@ -12,6 +12,7 @@
 
 #include <yarp/conf/system.h>
 #include <yarp/conf/filesystem.h>
+#include <yarp/conf/environment.h>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetType.h>
@@ -435,7 +436,7 @@ void NameConfig::setNamespace(const std::string& ns)
 std::string NameConfig::getNamespace(bool refresh)
 {
     if (space.empty() || refresh) {
-        std::string senv = NetworkBase::getEnvironment("YARP_NAMESPACE");
+        std::string senv = yarp::conf::environment::getEnvironment("YARP_NAMESPACE");
         if (!senv.empty()) {
             spaces.fromString(senv);
         } else {

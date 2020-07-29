@@ -8,6 +8,8 @@
 
 #include <yarp/companion/impl/Companion.h>
 
+#include <yarp/conf/environment.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/LogStream.h>
@@ -61,11 +63,10 @@ int Companion::cmdClock(int argc, char *argv[])
      * If not, we check the environment variable.
      * If no env variable is present, use the '/clock' as fallback.
      */
-    portName = [](){
-        const char *result = yarp::os::getenv("YARP_CLOCK");
-        return std::string{result != nullptr ? result : "/clock"};
-    }();
-
+    portName = yarp::conf::environment::getEnvironment("YARP_CLOCK");
+    if (portName.empty()) {
+        portName = "/clock";
+    }
 
     portName = config.check("name", Value(portName), "name of port broadcasting the time").asString();
 

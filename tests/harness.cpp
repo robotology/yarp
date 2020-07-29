@@ -10,6 +10,7 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
@@ -43,7 +44,7 @@ static void setup_Environment()
             "yarp" +
             std::string{yarp::conf::filesystem::path_separator}  +
             TEST_DATA_DIR;
-    yarp::os::NetworkBase::setEnvironment("YARP_DATA_DIRS", yarp_data_dirs);
+    yarp::conf::environment::setEnvironment("YARP_DATA_DIRS", yarp_data_dirs);
 
     std::string yarp_data_home =
             CMAKE_BINARY_DIR +
@@ -55,7 +56,7 @@ static void setup_Environment()
             ".local" +
             std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp";
-    yarp::os::NetworkBase::setEnvironment("YARP_DATA_HOME", yarp_data_home);
+    yarp::conf::environment::setEnvironment("YARP_DATA_HOME", yarp_data_home);
 
     // To ensure that this will behave in the same way if YARP is configured on
     // the user's system and on the build machines, YARP_CONFIG_DIRS and
@@ -65,7 +66,7 @@ static void setup_Environment()
             "etc" +
             std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp";
-    yarp::os::NetworkBase::setEnvironment("YARP_CONFIG_DIRS", yarp_config_dirs);
+    yarp::conf::environment::setEnvironment("YARP_CONFIG_DIRS", yarp_config_dirs);
 
     std::string yarp_config_home = CMAKE_BINARY_DIR +
             std::string{yarp::conf::filesystem::preferred_separator} +
@@ -76,13 +77,13 @@ static void setup_Environment()
             ".config" +
             std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp";
-    yarp::os::NetworkBase::setEnvironment("YARP_CONFIG_HOME", yarp_config_home);
+    yarp::conf::environment::setEnvironment("YARP_CONFIG_HOME", yarp_config_home);
 
     if (verbose) {
-        printf("YARP_DATA_DIRS=\"%s\"\n", yarp::os::NetworkBase::getEnvironment("YARP_DATA_DIRS").c_str());
-        printf("YARP_DATA_HOME=\"%s\"\n", yarp::os::NetworkBase::getEnvironment("YARP_DATA_HOME").c_str());
-        printf("YARP_CONFIG_DIRS=\"%s\"\n", yarp::os::NetworkBase::getEnvironment("YARP_CONFIG_DIRS").c_str());
-        printf("YARP_CONFIG_HOME=\"%s\"\n", yarp::os::NetworkBase::getEnvironment("YARP_CONFIG_HOME").c_str());
+        printf("YARP_DATA_DIRS=\"%s\"\n", yarp::conf::environment::getEnvironment("YARP_DATA_DIRS").c_str());
+        printf("YARP_DATA_HOME=\"%s\"\n", yarp::conf::environment::getEnvironment("YARP_DATA_HOME").c_str());
+        printf("YARP_CONFIG_DIRS=\"%s\"\n", yarp::conf::environment::getEnvironment("YARP_CONFIG_DIRS").c_str());
+        printf("YARP_CONFIG_HOME=\"%s\"\n", yarp::conf::environment::getEnvironment("YARP_CONFIG_HOME").c_str());
     }
 }
 
