@@ -431,7 +431,8 @@ environment variables.
 The `YARP_COLORED_OUTPUT` can be set to `1` to enable colors in the console
 output (if supported).
 
-If colors are enabled, the `YARP_COMPACT_OUTPUT` can be used to
+If colors are enabled, the `YARP_COMPACT_OUTPUT` can be used to print a single
+colored character instead of the log level.
 
 If the `YARP_VERBOSE_OUTPUT` is set to `1`, YARP will print several extra
 information for each log line.

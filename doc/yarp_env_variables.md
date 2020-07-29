@@ -13,6 +13,7 @@ Logger and print configuration
 | `YARP_QUIET`                  | If this variables exists and is set to a positive integer, it disables the (internal) YARP messages prints. Note: this variable **do not** modify the behavior of `yError`, `yDebug`, ... . | \ref yarp_log |
 | `YARP_VERBOSE`                | If this variables exists and is set to a nonnegative integer, it sets the verbosity level (the higher the integer, the more messages will be printed) for YARP messages prints. This variable is ignored if `YARP_QUIET` is set to a positive integer. Note: this variable **does not** modify the behavior of `yError`, `yDebug`, ... . | \ref yarp_log |
 | `YARP_COLORED_OUTPUT`         | If this variable exists and is set to 1, it enables the YARP colored prints. Otherwise disable the colored prints. | \ref yarp_log |
+| `YARP_COMPACT_OUTPUT`         | If this variable exists and is set to 1, and colors are enabled, print a single colored character instead of the log level. | \ref yarp_log |
 | `YARP_VERBOSE_OUTPUT`         | If this variable exists and is set to 1, it adds to the YARP prints the filename, the line of the source and the function from which the message is printed. | \ref yarp_log |
 | `YARP_TRACE_ENABLE`           | If this variable exists and is set to 1, it enables the YARP trace prints. Otherwise disable the trace prints. | \ref yarp_log |
 | `YARP_DEBUG_ENABLE`           | If this variable exists and is set to 0, it disables the YARP debug prints. Otherwise leaves them enabled. | \ref yarp_log |
