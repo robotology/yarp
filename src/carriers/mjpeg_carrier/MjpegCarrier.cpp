@@ -88,12 +88,7 @@ void send_net_data(JOCTET *data, int len, void *client) {
     auto* p = (ConnectionState *)client;
     constexpr size_t hdr_size = 1000;
     char hdr[hdr_size];
-    std::snprintf(hdr, hdr_size, "\n");
-    const char *brk = "\n";
-    if (hdr[1]=='\0') {
-        brk = "\r\n";
-    }
-    yCTrace(MJPEGCARRIER, "Using terminator %s",(hdr[1]=='\0')?"\\r\\n":"\\n");
+    const char *brk = "\r\n";
     std::snprintf(hdr, hdr_size, "Content-Type: image/jpeg%s\
 Content-Length: %d%s%s", brk, len, brk, brk);
     Bytes hbuf(hdr,strlen(hdr));
