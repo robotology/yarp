@@ -136,6 +136,7 @@ public:
 
     void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type,
                                 size_t quantum, bool topIsLow);
+    int getTypeId();
 
 };
 
@@ -157,7 +158,13 @@ void ImageStorage::resize(size_t x, size_t y, int pixel_type,
     extern_type_quantum = quantum;
 }
 
-
+/**
+ * @brief ImageStorage::getTypeId
+ * @return The type_id value
+ */
+int ImageStorage::getTypeId(){
+    return type_id;
+}
 
 
 // allocates an empty image.
@@ -517,6 +524,8 @@ void Image::synchronize() {
         data = impl->Data;
         imgQuantum = impl->quantum;
         imgRowSize = impl->pImage->widthStep;
+        setPixelCode(impl->getTypeId());
+        topIsLow = impl->pImage->origin == IPL_ORIGIN_TL;
     } else {
         data = nullptr;
         imgWidth = 0;
