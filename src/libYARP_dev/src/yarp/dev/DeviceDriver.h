@@ -40,7 +40,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~DeviceDriver(){}
+    ~DeviceDriver() override = default;
 
     /**
      * Open the DeviceDriver.
