@@ -7,6 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+//! [buffered_port buffered_port.cpp]
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
@@ -74,3 +75,4 @@ int main(int argc, char* argv[])
 
     return 0;
 }
+//! [buffered_port buffered_port.cpp]

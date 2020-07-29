@@ -1,57 +1,57 @@
 /**
 \page yarp_code_examples Some examples
 
-There are many code examples available in the "example/"
+\tableofcontents
+
+There are many code examples available in the `example/`
 subdirectory of YARP. If you're reading
 this online, click on the \ref examples "examples"
 link to see many of them.
 
+\section yarp_code_example_simple Simple port example
+
 Here we work through an example of using YARP communication
 between programs.  We will have two programs, a sender and receiver,
-simple_sender.cpp and simple_receiver.cpp
+`simple_sender` and `simple_receiver`
 
-Here's simple_sender.cpp:
+\subsection yarp_code_example_simple_sender simple_sender
 
-\include example/os/simple_sender/simple_sender.cpp
+Here's `simple_sender/simple_sender.cpp`:
 
-Here's simple_receiver.cpp:
+\snippet{lineno} example/os/simple_sender/simple_sender.cpp simple_sender simple_sender.cpp
 
-\include example/os/simple_receiver/simple_receiver.cpp
+`simple_sender/CMakeLists.txt`
 
-Here's an example CMakeLists.txt file to help with compiling
-if you use CMake
- (of course
-you can compile any way you like, you don't have to use CMake).
-Make sure you set the YARP_DIR environment variable to point to
-where you compiled YARP (or give the path through the CMake GUI).
+\snippet{lineno} example/os/simple_sender/CMakeLists.txt simple_sender CMakeLists.txt
 
-\verbatim
-cmake_minimum_required(VERSION 3.12)
-find_package(YARP COMPONENTS os REQUIRED)
-add_executable(simple_sender)
-target_sources(simple_sender PRIVATE simple_sender.cpp)
-target_link_libraries(simple_sender PRIVATE YARP::YARP_os
-                                            YARP::YARP_init)
-add_executable(simple_receiver)
-target_sources(simple_receiver PRIVATE simple_receiver.cpp)
-target_link_libraries(simple_receiver PRIVATE YARP::YARP_os
-                                              YARP::YARP_init)
-\endverbatim
+
+\subsection yarp_code_example_simple_receiver simple_receiver
+
+Here's `simple_receiver/simple_receiver.cpp`:
+
+\snippet{lineno} example/os/simple_receiver/simple_receiver.cpp simple_receiver simple_receiver.cpp
+
+`simple_receiver/CMakeLists.txt`
+
+\snippet{lineno} example/os/simple_receiver/CMakeLists.txt simple_receiver CMakeLists.txt
+
+
+\subsection yarp_code_example_running Running the example
 
 After compiling, on three separate
 consoles, do:
-\verbatim
+\code{.sh}
  yarp server               # this starts the YARP name server
  ./simple_sender           # this runs the sender
  ./simple_receiver         # this runs the receiver
-\endverbatim
+\endcode
 
 Or in windows that would be:
-\verbatim
+\code{.sh}
  yarp.exe server           # this starts the YARP name server
  simple_sender.exe         # this runs the sender
  simple_receiver.exe       # this runs the receiver
-\endverbatim
+\endcode
 
 You'll need to be in the right directories to run the executables,
 or have them in your path.
@@ -74,9 +74,11 @@ yarp: Removing input from /sender to /receiver
 You can run the receiver many times to connect and reconnect.
 
 
- \section yarp_code_example_buffer Buffered port example
 
-\include example/os/buffered_port/buffered_port.cpp
+\section yarp_code_example_buffer Buffered port example
+
+\snippet{lineno} example/os/buffered_port/buffered_port.cpp buffered_port buffered_port.cpp
+\snippet{lineno} example/os/buffered_port/CMakeLists.txt buffered_port CMakeLists.txt
 
 */
 
@@ -94,7 +96,7 @@ This example shows how to communicate between a pair of buffered ports.
  * \example os/simple_sender/simple_sender.cpp
 
 This outputs some data to a port.
-Designed to be used with \ref os/simple_receiver.cpp example.
+Designed to be used with \ref os/simple_receiver/simple_receiver.cpp example.
 
 */
 
@@ -103,7 +105,7 @@ Designed to be used with \ref os/simple_receiver.cpp example.
  * \example os/simple_receiver/simple_receiver.cpp
 
 This reads some data from a port.
-Designed to be used with \ref os/simple_sender.cpp example.
+Designed to be used with \ref os/simple_sender/simple_sender.cpp example.
 
 */
 
@@ -111,7 +113,7 @@ Designed to be used with \ref os/simple_sender.cpp example.
 /**
  * \example os/bottle_add/bottle_add.cpp
 
-How to construct a very simple bottle.  See also \ref os/browse_bottle.cpp example.
+How to construct a very simple bottle.  See also \ref os/browse_bottle/browse_bottle.cpp example.
 
 */
 
@@ -136,7 +138,7 @@ An example of how to receive, process, and output images to and from a port.
 /**
  * \example os/image_process_module/image_process_module.cpp
 
-This is the \ref os/image_process.cpp example rewritten as a "module".
+This is the \ref os/image_process/image_process.cpp example rewritten as a "module".
 It inherits better starting up, configuring, and shutting down behavior.
 
 */
@@ -231,7 +233,7 @@ missing here is to integrate the device into the YARP library.
 
 Here's the header file, dev/file_grabber/FileFrameGrabber.h
 
-\include dev/file_grabber/FileFrameGrabber.h
+\snippet dev/file_grabber/FileFrameGrabber.h
 
 And here's how we can use it.  In fact, we just grab the first
 image from the device.
@@ -270,7 +272,7 @@ An example of using OpenCV with YARP.
 How to read a configuration file.  This example is designed to
 read a file like the following (property/config.txt):
 
-\include example/property/config.txt
+\snippet example/property/config.txt
 
 */
 

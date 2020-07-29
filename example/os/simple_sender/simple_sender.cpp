@@ -7,6 +7,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
+//! [simple_sender simple_sender.cpp]
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
@@ -45,3 +46,4 @@ int main(int argc, char* argv[])
     output.close();
     return 0;
 }
+//! [simple_sender simple_sender.cpp]
