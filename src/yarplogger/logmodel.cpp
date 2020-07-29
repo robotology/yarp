@@ -372,7 +372,11 @@ void LogModel::addMessages(const std::list<yarp::yarpLogger::MessageEntry> &m_me
     beginInsertRows(QModelIndex(),
                     rowCount(),
                     rowCount() + m_messages.size() - 1);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    this->m_messages.append(QList<yarp::yarpLogger::MessageEntry>(m_messages.begin(), m_messages.end()));
+#else
     this->m_messages.append(QList<yarp::yarpLogger::MessageEntry>::fromStdList(m_messages));
+#endif
     endInsertRows();
 }
 

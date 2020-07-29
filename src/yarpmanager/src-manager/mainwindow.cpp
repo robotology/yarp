@@ -877,7 +877,7 @@ void MainWindow::onLogError(QString msg)
 {
     QString text = QString ("[ERR] %1").arg(msg);
     ui->logWidget->addItem(text);
-    ui->logWidget->item(ui->logWidget->count() - 1)->setBackgroundColor(QColor("#F9CCCA"));
+    ui->logWidget->item(ui->logWidget->count() - 1)->setBackground(QColor("#F9CCCA"));
     ui->logWidget->setCurrentRow(ui->logWidget->count() - 1);
 }
 
@@ -888,7 +888,7 @@ void MainWindow::onLogWarning(QString msg)
 {
     QString text = QString ("[WAR] %1").arg(msg);
     ui->logWidget->addItem(text);
-    ui->logWidget->item(ui->logWidget->count() - 1)->setBackgroundColor(QColor("#FFF6C8"));
+    ui->logWidget->item(ui->logWidget->count() - 1)->setBackground(QColor("#FFF6C8"));
     ui->logWidget->setCurrentRow(ui->logWidget->count() - 1);
 }
 

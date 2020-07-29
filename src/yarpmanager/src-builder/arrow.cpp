@@ -130,7 +130,11 @@ void Arrow::setConnection(const Connection& conn)
         textLbl.setText(label);
     }
     QFontMetrics fontMetric(font);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    textWidth = fontMetric.horizontalAdvance(label);
+#else
     textWidth = fontMetric.width(label);
+#endif
 
     GraphicModel mod = connection.getModelBase();
     if(mod.points.size() > 0){

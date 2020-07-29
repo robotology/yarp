@@ -86,7 +86,11 @@ void ModuleItem::init()
 
 
     QFontMetrics fontMetric(font);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+    int textWidth = fontMetric.horizontalAdvance(itemName);
+#else
     int textWidth = fontMetric.width(itemName);
+#endif
     int mod = textWidth % 16;
     textWidth+=mod;
 

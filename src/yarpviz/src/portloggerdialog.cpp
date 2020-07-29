@@ -261,7 +261,7 @@ void PortLoggerDialog::startStopLoggers() {
 }
 
 void PortLoggerDialog::MyTimerSlot() {
-    ui->lcdNumberLogTime->display(logTime.elapsed()/1000);
+    ui->lcdNumberLogTime->display(logTime.elapsed()/1000.0);
 }
 
 bool PortLoggerDialog::saveLog(std::string filename, yarp::os::Bottle* samples) {
