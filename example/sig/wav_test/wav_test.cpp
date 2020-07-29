@@ -7,11 +7,16 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/sig/all.h>
+#include <yarp/sig/Sound.h>
+#include <yarp/sig/SoundFile.h>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     yarp::sig::Sound sound;
-    yarp::sig::file::read(sound,"in.wav");
-    yarp::sig::file::write(sound,"out.wav");
+    yarp::sig::file::read(sound, "in.wav");
+    yarp::sig::file::write(sound, "out.wav");
     return 0;
 }
