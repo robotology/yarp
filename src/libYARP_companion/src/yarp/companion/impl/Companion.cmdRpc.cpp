@@ -270,10 +270,12 @@ int Companion::rpcClient(int argc, char *argv[])
 int Companion::cmdRpc(int argc, char *argv[])
 {
     if (argc<1) {
-        yCError(COMPANION, "Please supply remote port name");
-
-        yCError(COMPANION, "(and, optionally, a name for this connection or port)");
-        yCError(COMPANION, "You can also do \"yarp rpc --client /port\" to make a port for connecting later");
+        yCInfo(COMPANION, "Usage:");
+        yCInfo(COMPANION, "  yarp [admin] rpc </destport>");
+        yCInfo(COMPANION, "    Open an RPC client and connect to 'destport'");
+        yCInfo(COMPANION, "    If 'admin' is passed, connect to the administrative interface of the port");
+        yCInfo(COMPANION, "  yarp rpc --client </port>");
+        yCInfo(COMPANION, "    Open an RPC client on 'port' amd wait for a connection");
         return 1;
     }
 

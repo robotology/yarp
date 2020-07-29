@@ -39,12 +39,12 @@ int Companion::cmdRpcServer(int argc, char *argv[])
         argc--;
     }
     if (argc<1) {
-        yCError(COMPANION, "Please call as:");
-        yCError(COMPANION, "  yarp rpcserver [--single] [--stop] [--echo] /port/name");
-        yCError(COMPANION, "By default, this shows commands and waits for user to enter replies. Flags:");
-        yCError(COMPANION, "  --single: respond to only a single command per connection, ROS-style");
-        yCError(COMPANION, "  --stop: stop the server entirely after a single command");
-        yCError(COMPANION, "  --echo: reply with the message received");
+        yCInfo(COMPANION, "Usage:");
+        yCInfo(COMPANION, "  yarp rpcserver [--single] [--stop] [--echo] /port/name");
+        yCInfo(COMPANION, "By default, this shows commands and waits for user to enter replies. Flags:");
+        yCInfo(COMPANION, "  --single: respond to only a single command per connection, ROS-style");
+        yCInfo(COMPANION, "  --stop: stop the server entirely after a single command");
+        yCInfo(COMPANION, "  --echo: reply with the message received");
         return 1;
     }
 
