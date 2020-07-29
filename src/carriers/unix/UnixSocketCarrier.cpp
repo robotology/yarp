@@ -84,19 +84,14 @@ bool isUnixSockSupported(ConnectionState& proto) // FIXME Why is this method unu
 
 } // namespace
 
-UnixSocketCarrier::UnixSocketCarrier(bool requireAckFlag) :
-        requireAckFlag(requireAckFlag)
-{
-}
-
 yarp::os::Carrier* UnixSocketCarrier::create() const
 {
-    return new UnixSocketCarrier(requireAckFlag);
+    return new UnixSocketCarrier();
 }
 
 std::string UnixSocketCarrier::getName() const
 {
-    return requireAckFlag ? name_ack : name;
+    return name;
 }
 
 bool UnixSocketCarrier::requireAck() const
@@ -114,13 +109,22 @@ bool UnixSocketCarrier::checkHeader(const Bytes& header)
     if (header.length() != headerSize) {
         return false;
     }
-    const char* target = requireAckFlag ? headerCode_ack : headerCode;
+
+    bool isUnix = true;
+    bool isUnix_ack = true;
+
+    const char* target = headerCode;
+    const char* target_ack = headerCode_ack;
     for (size_t i = 0; i < headerSize; i++) {
         if (header.get()[i] != target[i]) {
-            return false;
+            isUnix = false;
+        }
+        if (header.get()[i] != target_ack[i]) {
+            isUnix_ack = false;
         }
     }
-    return true;
+
+    return (isUnix || isUnix_ack);
 }
 
 void UnixSocketCarrier::getHeader(Bytes& header) const
@@ -148,7 +152,6 @@ bool UnixSocketCarrier::expectIndex(ConnectionState& proto)
 
 bool UnixSocketCarrier::sendAck(ConnectionState& proto)
 {
-    yCTrace(UNIXSOCK_CARRIER);
     if (requireAckFlag) {
         const Bytes ack_bytes(const_cast<char*>(ack_string), ack_string_size);
         proto.os().write(ack_bytes);
@@ -158,7 +161,6 @@ bool UnixSocketCarrier::sendAck(ConnectionState& proto)
 
 bool UnixSocketCarrier::expectAck(ConnectionState& proto)
 {
-    yCTrace(UNIXSOCK_CARRIER);
     if (requireAckFlag) {
         std::array<char, ack_string_size> buf;
         Bytes ack(buf.data(), buf.size());
@@ -232,4 +234,32 @@ bool UnixSocketCarrier::becomeUnixSocket(ConnectionState& proto, bool sender)
 
     yCDebug(UNIXSOCK_CARRIER, "Connected on socket %s as %s", socketPath.c_str(), (sender ? "sender" : "receiver"));
     return true;
+}
+
+
+bool UnixSocketCarrier::configure(yarp::os::ConnectionState& proto)
+{
+    Property options;
+    options.fromString(proto.getSenderSpecifier());
+    return configureFromProperty(options);
+}
+
+bool UnixSocketCarrier::configureFromProperty(yarp::os::Property& options)
+{
+    if (options.check("ack")) {
+        requireAckFlag = true;
+    }
+    return true;
+}
+
+void UnixSocketCarrier::setParameters(const yarp::os::Bytes& header)
+{
+    const char* target_ack = headerCode_ack;
+    for (size_t i = 0; i < headerSize; i++) {
+        if (header.get()[i] != target_ack[i]) {
+            return;
+        }
+    }
+    requireAckFlag = true;
+
 }
