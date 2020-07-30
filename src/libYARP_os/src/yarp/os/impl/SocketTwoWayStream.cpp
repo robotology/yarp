@@ -42,8 +42,7 @@ int SocketTwoWayStream::open(const Contact& address)
 #ifdef YARP_HAS_ACE
     if (address.getHost() == "localhost") {
         // ACE does not like localhost.  At all.
-        NameConfig config;
-        host = config.getHostName(true);
+        host = yarp::os::impl::NameConfig::getHostName(true);
     }
     ACE_INET_Addr addr(address.getPort(), host.c_str());
     YARP_timeval openTimeout;
