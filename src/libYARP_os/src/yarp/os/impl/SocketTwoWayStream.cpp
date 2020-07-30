@@ -30,7 +30,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-YARP_OS_LOG_COMPONENT(SOCKETTWOWAYSTREAM, "yarp.os.impl.PortCoreOutputUnit")
+YARP_OS_LOG_COMPONENT(SOCKETTWOWAYSTREAM, "yarp.os.impl.SocketTwoWayStream")
 
 int SocketTwoWayStream::open(const Contact& address)
 {
