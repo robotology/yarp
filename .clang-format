@@ -149,7 +149,7 @@ SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 SpaceBeforeSquareBrackets: false
-Standard:        Cpp14
+Standard:        Latest
 StatementMacros:
   - YARP_UNUSED
   - Q_UNUSED
