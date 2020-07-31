@@ -27,7 +27,12 @@ class UnixSocketCarrier :
         public yarp::os::AbstractCarrier
 {
 public:
-    UnixSocketCarrier(bool requireAckFlag = false);
+    UnixSocketCarrier() = default;
+    UnixSocketCarrier(const UnixSocketCarrier&) = delete;
+    UnixSocketCarrier(UnixSocketCarrier&&) = delete;
+    UnixSocketCarrier& operator=(const UnixSocketCarrier&) = delete;
+    UnixSocketCarrier& operator=(UnixSocketCarrier&&) = delete;
+
     ~UnixSocketCarrier() override = default;
 
     yarp::os::Carrier* create() const override;
@@ -49,6 +54,13 @@ public:
     bool expectAck(yarp::os::ConnectionState& proto) override;
     bool sendAck(yarp::os::ConnectionState& proto) override;
 
+    // The initiator reads the carrier parameters from the connection string (i.e. unix_stream+ack)
+    bool configure(yarp::os::ConnectionState& proto) override;
+    bool configureFromProperty(yarp::os::Property& options) override;
+
+    // The recipients must decipher the parameters from the first 8 bytes (i.e. UNIX_ACK)
+    void setParameters(const yarp::os::Bytes& header) override;
+
 private:
     static constexpr const char* name = "unix_stream";
     static constexpr int specifierCode = 11;
@@ -68,13 +80,6 @@ private:
     UnixSockTwoWayStream* stream{nullptr};
 
     bool becomeUnixSocket(yarp::os::ConnectionState& proto, bool sender = false);
-};
-
-class UnixSocketCarrierAck :
-        public UnixSocketCarrier
-{
-public:
-    UnixSocketCarrierAck() : UnixSocketCarrier(true) {}
 };
 
 #endif // YARP_UNIX_UNIXSOCKETCARRIER_H
