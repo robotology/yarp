@@ -170,7 +170,8 @@ STRIP_FROM_PATH        = @CMAKE_BINARY_DIR@ \
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = @CMAKE_BINARY_DIR@/src/libYARP_conf/src/ \
+STRIP_FROM_INC_PATH    = @CMAKE_SOURCE_DIR@/src/libYARP_conf/src/ \
+                         @CMAKE_BINARY_DIR@/src/libYARP_conf/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/src/ \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src/idl_generated_code/ \
@@ -840,7 +841,8 @@ WARN_LOGFILE           = @DOX_WARN_LOGFILE@
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
+INPUT                  = @CMAKE_SOURCE_DIR@/src/libYARP_conf/src \
+                         @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src \
@@ -2185,7 +2187,8 @@ SEARCH_INCLUDES        = YES
 # preprocessor.
 # This tag requires that the tag SEARCH_INCLUDES is set to YES.
 
-INCLUDE_PATH           = @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
+INCLUDE_PATH           = @CMAKE_SOURCE_DIR@/src/libYARP_conf/src \
+                         @CMAKE_BINARY_DIR@/src/libYARP_conf/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_os/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_sig/src \
                          @CMAKE_SOURCE_DIR@/src/libYARP_dev/src \
