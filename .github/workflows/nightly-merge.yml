@@ -5,7 +5,7 @@ on:
     - cron:  '0 0 * * *'
 
 jobs:
-  nightly-merge-yarp-3-3:
+  nightly-merge-yarp-3-4:
 
     runs-on: ubuntu-latest
 
@@ -16,7 +16,7 @@ jobs:
     - name: Nightly Merge
       uses: robotology/gh-action-nightly-merge@v1.2.0
       with:
-        stable_branch: 'yarp-3.3'
+        stable_branch: 'yarp-3.4'
         development_branch: 'master'
         allow_ff: false
         user_name: 'Daniele E. Domenichelli (Nightly Merge Action)'
