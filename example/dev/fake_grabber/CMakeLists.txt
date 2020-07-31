@@ -17,6 +17,7 @@ target_link_libraries(fake_grabber PRIVATE YARP::YARP_os
                                            YARP::YARP_init
                                            YARP::YARP_sig
                                            YARP::YARP_dev)
+set_property(TARGET fake_grabber PROPERTY FOLDER "Examples/dev")
 
 
 add_executable(fake_grabber_net)
@@ -26,6 +27,7 @@ target_link_libraries(fake_grabber_net PRIVATE YARP::YARP_os
                                                YARP::YARP_init
                                                YARP::YARP_sig
                                                YARP::YARP_dev)
+set_property(TARGET fake_grabber_net PROPERTY FOLDER "Examples/dev")
 
 
 add_executable(fake_grabber_net2)
@@ -35,3 +37,4 @@ target_link_libraries(fake_grabber_net2 PRIVATE YARP::YARP_os
                                                 YARP::YARP_init
                                                 YARP::YARP_sig
                                                 YARP::YARP_dev)
+set_property(TARGET fake_grabber_net2 PROPERTY FOLDER "Examples/dev")

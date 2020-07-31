@@ -15,3 +15,4 @@ target_sources(queue_manager PRIVATE queue_manager.cpp)
 target_link_libraries(queue_manager PRIVATE YARP::YARP_os
                                             YARP::YARP_init
                                             YARP::YARP_dev)
+set_property(TARGET queue_manager PROPERTY FOLDER "Examples/os")

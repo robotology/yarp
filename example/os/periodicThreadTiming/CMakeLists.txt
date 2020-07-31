@@ -15,3 +15,4 @@ target_sources(periodicThreadTiming PRIVATE periodicThreadTiming.cpp)
 target_link_libraries(periodicThreadTiming PRIVATE YARP::YARP_os
                                                    YARP::YARP_init
                                                    YARP::YARP_sig)
+set_property(TARGET periodicThreadTiming PROPERTY FOLDER "Examples/os")

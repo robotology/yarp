@@ -14,3 +14,4 @@ add_executable(view_count)
 target_sources(view_count PRIVATE view_count.cpp)
 target_link_libraries(view_count PRIVATE YARP::YARP_os
                                          YARP::YARP_init)
+set_property(TARGET view_count PROPERTY FOLDER "Examples/os")

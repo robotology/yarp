@@ -14,3 +14,4 @@ add_executable(rpc_server)
 target_sources(rpc_server PRIVATE rpc_server.cpp)
 target_link_libraries(rpc_server PRIVATE YARP::YARP_os
                                          YARP::YARP_init)
+set_property(TARGET rpc_server PROPERTY FOLDER "Examples/os")

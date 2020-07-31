@@ -15,3 +15,4 @@ target_sources(double_server PRIVATE double_server.cpp)
 target_link_libraries(double_server PRIVATE YARP::YARP_os
                                             YARP::YARP_init
                                             YARP::YARP_dev)
+set_property(TARGET double_server PROPERTY FOLDER "Examples/dev")

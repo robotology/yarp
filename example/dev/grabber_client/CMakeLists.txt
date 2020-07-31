@@ -16,6 +16,7 @@ target_link_libraries(grabber_client PRIVATE YARP::YARP_os
                                              YARP::YARP_init
                                              YARP::YARP_sig
                                              YARP::YARP_dev)
+set_property(TARGET grabber_client PROPERTY FOLDER "Examples/dev")
 
 
 add_executable(grabber_client_alternate)
@@ -24,3 +25,4 @@ target_link_libraries(grabber_client_alternate PRIVATE YARP::YARP_os
                                                        YARP::YARP_init
                                                        YARP::YARP_sig
                                                        YARP::YARP_dev)
+set_property(TARGET grabber_client_alternate PROPERTY FOLDER "Examples/dev")

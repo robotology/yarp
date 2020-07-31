@@ -15,3 +15,4 @@ target_sources(fake_motor PRIVATE fake_motor.cpp)
 target_link_libraries(fake_motor PRIVATE YARP::YARP_os
                                          YARP::YARP_init
                                          YARP::YARP_dev)
+set_property(TARGET fake_motor PROPERTY FOLDER "Examples/dev")

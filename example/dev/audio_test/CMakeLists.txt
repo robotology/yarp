@@ -16,3 +16,4 @@ target_link_libraries(audio_test PRIVATE YARP::YARP_os
                                          YARP::YARP_init
                                          YARP::YARP_sig
                                          YARP::YARP_dev)
+set_property(TARGET audio_test PROPERTY FOLDER "Examples/dev")

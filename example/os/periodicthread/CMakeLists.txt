@@ -14,3 +14,4 @@ add_executable(periodicthread)
 target_sources(periodicthread PRIVATE periodicthread.cpp)
 target_link_libraries(periodicthread PRIVATE YARP::YARP_os
                                              YARP::YARP_init)
+set_property(TARGET periodicthread PROPERTY FOLDER "Examples/os")

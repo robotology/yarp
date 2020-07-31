@@ -14,3 +14,4 @@ add_executable(listports)
 target_sources(listports PRIVATE listports.cpp)
 target_link_libraries(listports PRIVATE YARP::YARP_os
                                         YARP::YARP_init)
+set_property(TARGET listports PROPERTY FOLDER "Examples/os")

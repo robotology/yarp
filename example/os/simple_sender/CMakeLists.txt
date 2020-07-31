@@ -16,3 +16,4 @@ target_sources(simple_sender PRIVATE simple_sender.cpp)
 target_link_libraries(simple_sender PRIVATE YARP::YARP_os
                                             YARP::YARP_init)
 #! [simple_sender CMakeLists.txt]
+set_property(TARGET simple_sender PROPERTY FOLDER "Examples/os")

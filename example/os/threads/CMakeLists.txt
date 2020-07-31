@@ -14,3 +14,4 @@ add_executable(threads)
 target_sources(threads PRIVATE threads.cpp)
 target_link_libraries(threads PRIVATE YARP::YARP_os
                                       YARP::YARP_init)
+set_property(TARGET threads PROPERTY FOLDER "Examples/os")

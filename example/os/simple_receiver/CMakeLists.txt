@@ -16,3 +16,4 @@ target_sources(simple_receiver PRIVATE simple_receiver.cpp)
 target_link_libraries(simple_receiver PRIVATE YARP::YARP_os
                                               YARP::YARP_init)
 #! [simple_receiver CMakeLists.txt]
+set_property(TARGET simple_receiver PROPERTY FOLDER "Examples/os")

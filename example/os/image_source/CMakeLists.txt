@@ -15,3 +15,4 @@ target_sources(image_source PRIVATE image_source.cpp)
 target_link_libraries(image_source PRIVATE YARP::YARP_os
                                            YARP::YARP_init
                                            YARP::YARP_sig)
+set_property(TARGET image_source PROPERTY FOLDER "Examples/os")

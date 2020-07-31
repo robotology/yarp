@@ -14,3 +14,4 @@ add_executable(playback)
 target_sources(playback PRIVATE playback.cpp)
 target_link_libraries(playback PRIVATE YARP::YARP_os
                                        YARP::YARP_init)
+set_property(TARGET playback PROPERTY FOLDER "Examples/os")

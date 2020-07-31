@@ -16,6 +16,7 @@ target_link_libraries(file_grabber PRIVATE YARP::YARP_os
                                            YARP::YARP_init
                                            YARP::YARP_sig
                                            YARP::YARP_dev)
+set_property(TARGET file_grabber PROPERTY FOLDER "Examples/dev")
 
 
 add_executable(file_grabber_net)
@@ -24,3 +25,4 @@ target_link_libraries(file_grabber_net PRIVATE YARP::YARP_os
                                                YARP::YARP_init
                                                YARP::YARP_sig
                                                YARP::YARP_dev)
+set_property(TARGET file_grabber_net PROPERTY FOLDER "Examples/dev")

@@ -15,3 +15,4 @@ target_sources(portable_pair PRIVATE portable_pair.cpp)
 target_link_libraries(portable_pair PRIVATE YARP::YARP_os
                                             YARP::YARP_init
                                             YARP::YARP_sig)
+set_property(TARGET portable_pair PROPERTY FOLDER "Examples/os")
