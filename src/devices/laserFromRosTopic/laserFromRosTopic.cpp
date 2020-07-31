@@ -52,7 +52,7 @@ YARP_LOG_COMPONENT(LASER_FROM_ROS_TOPIC, "yarp.devices.laserFromRosTopic")
 yarpdev --device transformServer --ROS::enable_ros_publisher 0 --ROS::enable_ros_subscriber 1
 
 yarpdev --device Rangefinder2DWrapper --subdevice laserFromRosTopic \
---SENSOR::input_ports_name "(/base_scan)" \
+--SENSOR::input_topics_name "(/base_scan)" \
 --TRANSFORM_CLIENT::local /LaserFromRosTopic/tfClient \
 --TRANSFORM_CLIENT::remote /transformServer \
 --TRANSFORMS::src_frames "(/frame1)" \
@@ -67,7 +67,7 @@ yarpdev --device Rangefinder2DWrapper --subdevice laserFromRosTopic \
 --SENSOR::min_angle 0 \
 --SENSOR::max_angle 360 \
 --SENSOR::resolution 0.5 \
---SENSOR::input_ports_name "(/port1 /port2)" \
+--SENSOR::input_topics_name "(/topic1 /topic2)" \
 --TRANSFORM_CLIENT::local /LaserFromRosTopic/tfClient \
 --TRANSFORM_CLIENT::remote /transformServer \
 --TRANSFORMS::src_frames "(/frame1 /frame2)" \
@@ -92,7 +92,6 @@ InputPortProcessor::InputPortProcessor()
 void InputPortProcessor::onRead(yarp::rosmsg::sensor_msgs::LaserScan& b)
 {
     m_port_mutex.lock();
-     //   m_lastScan = b; //@@@@@@@@@@@@@@@@@@@@@@@
         m_lastScan.angle_max = b.angle_max;
         m_lastScan.angle_min = b.angle_min;
         m_lastScan.range_max = b.range_max;
@@ -146,9 +145,9 @@ bool LaserFromRosTopic::open(yarp::os::Searchable& config)
 
     yarp::os::Searchable& general_config = config.findGroup("SENSOR");
 
-    if (general_config.check("input_ports_name")) //this parameter is optional
+    if (general_config.check("input_topics_name")) //this parameter is optional
     {
-        yarp::os::Bottle* portlist = general_config.find("input_ports_name").asList();
+        yarp::os::Bottle* portlist = general_config.find("input_topics_name").asList();
         if (portlist)
         {
             for (size_t i = 0; i < portlist->size(); i++)
@@ -270,13 +269,13 @@ bool LaserFromRosTopic::open(yarp::os::Searchable& config)
     m_ros_node = new yarp::os::Node("/laserFromRosTopicNode");
     for (auto i=0; i<m_input_ports.size(); i++)
     {
-        //m_input_ports[i].useCallback();    ///<-------------SEGFAULT
+        //m_input_ports[i].useCallback();    ///@@@<-SEGFAULT
         if (m_input_ports[i].topic(m_port_names[i]) == false)
         {
             yCError(LASER_FROM_ROS_TOPIC) << "Error opening port:" << m_port_names[i];
             return false;
         }
-        m_input_ports[i].useCallback();    ///<-------------OK
+        m_input_ports[i].useCallback();    ///@@@<-OK
     }
     PeriodicThread::start();
 
