@@ -247,6 +247,7 @@ bool UnixSocketCarrier::configure(yarp::os::ConnectionState& proto)
 bool UnixSocketCarrier::configureFromProperty(yarp::os::Property& options)
 {
     if (options.check("ack")) {
+        yCInfo(UNIXSOCK_CARRIER, "ACK Enabled");
         requireAckFlag = true;
     }
     return true;
@@ -260,6 +261,6 @@ void UnixSocketCarrier::setParameters(const yarp::os::Bytes& header)
             return;
         }
     }
+    yCInfo(UNIXSOCK_CARRIER, "ACK Enabled");
     requireAckFlag = true;
-
 }
