@@ -34,6 +34,14 @@ public:
     yarp::os::Bottle data;
     yarp::sig::FlexImage imageOut;
     bool senderSide;
+    const AVCodec *codecSender;
+    AVCodecContext *cSender;
+    bool firstTimeSender;
+    const AVCodec *codecReceiver;
+    AVCodecContext *cReceiver;
+    bool firstTimeReceiver;
+    int counter = 0;
+    int counter2 = 0;
 };
 
 #endif
