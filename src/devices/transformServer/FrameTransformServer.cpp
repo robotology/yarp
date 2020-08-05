@@ -224,6 +224,61 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
     }
 }
 
+bool FrameTransformServer::generate_view()
+{
+    string dot_string = "digraph G { ";
+    for (size_t i = 0; i < m_ros_timed_transform_storage->size(); i++)
+    {
+        string trf_text = (*m_ros_timed_transform_storage)[i].src_frame_id + "->" +
+                          (*m_ros_timed_transform_storage)[i].dst_frame_id + " " +
+                          "[color = black]";
+        dot_string += trf_text;
+    }
+    for (size_t i = 0; i < m_ros_static_transform_storage->size(); i++)
+    {
+        string trf_text = (*m_ros_static_transform_storage)[i].src_frame_id + "->" +
+                          (*m_ros_static_transform_storage)[i].dst_frame_id + " " +
+                          "[color = black, style=dashed]";
+        dot_string += trf_text;
+    }
+    for (size_t i = 0; i < m_yarp_timed_transform_storage->size(); i++)
+    {
+        string trf_text = (*m_yarp_timed_transform_storage)[i].src_frame_id + "->" +
+                          (*m_yarp_timed_transform_storage)[i].dst_frame_id + " " +
+                          "[color = blue]";
+        dot_string += trf_text;
+    }
+    for (size_t i = 0; i < m_yarp_static_transform_storage->size(); i++)
+    {
+        string trf_text = (*m_yarp_static_transform_storage)[i].src_frame_id + "->" +
+                          (*m_yarp_static_transform_storage)[i].dst_frame_id + " " +
+                          "[color = blue, style=dashed]";
+        dot_string += trf_text;
+    }
+    dot_string+=" }";
+
+    string command_string = "echo \""+dot_string+ "\" | dot -Tpdf > frames.pdf";
+#if defined (__linux__)
+    int ret = std::system("dot -V");
+    if (ret != 0)
+    {
+        yCError(FRAMETRANSFORMSERVER) << "dot executable not found. Please install graphviz.";
+        return false;
+    }
+
+    ret = std::system(command_string.c_str());
+    if (ret != 0)
+    {
+        yCError(FRAMETRANSFORMSERVER) << "The following command failed to execute:" << command_string;
+        return false;
+    }
+#else
+    yCError(FRAMETRANSFORMSERVER) << "Not yet implemented. Available only Linux";
+    return false;
+#endif
+    return true;
+}
+
 bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -329,6 +384,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         out.addString("'delete_all': delete all transforms");
         out.addString("'set_static_transform <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform");
         out.addString("'delete_static_transform <src> <dst>': delete a static transform");
+        out.addString("'generate_view': generate a frames.pdf file showing the transform tree diagram");
     }
     else if (request == "set_static_transform")
     {
@@ -364,6 +420,11 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     {
         out.addVocab(Vocab::encode("many"));
         list_response(out);
+    }
+    else if (request == "generate_view")
+    {
+        generate_view();
+        out.addString("ok");
     }
     else if (request == "delete_static_transform")
     {

@@ -115,6 +115,7 @@ private:
 
     bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);
+    bool         generate_view();
     bool         parseStartingTf(yarp::os::Searchable &config);
 };
 
