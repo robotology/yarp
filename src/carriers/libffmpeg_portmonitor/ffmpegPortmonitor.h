@@ -42,6 +42,7 @@ public:
     bool firstTimeReceiver;
     int counter = 0;
     int counter2 = 0;
+    int countertot = 0;
 };
 
 #endif

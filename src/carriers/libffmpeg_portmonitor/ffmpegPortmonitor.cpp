@@ -35,7 +35,7 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {
     senderSide = (options.find("sender_side").asBool());
-    if (senderSide) {
+    if (true) {
         codecSender = avcodec_find_encoder(AV_CODEC_ID_H264);
         if (!codecSender) {
             yCError(FFMPEGMONITOR, "Can't find codec %s", "");
@@ -47,7 +47,8 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
             return false;
         }
         firstTimeSender = true;
-    } else {
+    } 
+    if (true) {
         codecReceiver = avcodec_find_decoder(AV_CODEC_ID_H264);
         if (!codecReceiver) {
             yCError(FFMPEGMONITOR, "Can't find codec %s", "");
@@ -296,6 +297,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         firstTimeSender = false;
     }
 
+    // save_frame_as_jpeg(cSender, pFrameYUV, counter, "./outputs/senderYUVbefore");
     
     ret = avcodec_send_frame(cSender, pFrameYUV);
     if (ret < 0) {
@@ -318,6 +320,23 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         return -1;
     }
     counter = 0;
+    
+    // // Saving frames
+    // save_frame_as_jpeg(cSender, pFrameYUV, countertot, "./outputs/senderYUV");
+    // cSender->pix_fmt = AV_PIX_FMT_RGB24;
+    // save_frame_as_jpeg(cSender, pFrame, countertot, "./outputs/senderRGB");
+    // cSender->pix_fmt = AV_PIX_FMT_YUV420P;
+
+    // unsigned char* decompressed;
+    // int sizeDecompressed;
+    // bool ok = true;
+    // if (decompress(pkt, &decompressed, &sizeDecompressed, w, h) != 0) {
+    //     yCError(FFMPEGMONITOR, "Error in decompression");
+    //     ok = false;
+    //     return -1;
+    // }
+    // countertot++;
+
     return 0;
 }
 
@@ -390,8 +409,6 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
     }
     
     counter2 = 0;
-
-    save_frame_as_jpeg(cReceiver, pFrame, 0, "ciao");
     
     // av_packet_unref(pkt);
 
@@ -405,6 +422,11 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
                     w, h,
                     AV_PIX_FMT_RGB24, 16);
     
+    if (success < 0) {
+        yCError(FFMPEGMONITOR, "Error allocating frame!");
+        return -1;
+    }
+
     pFrameRGB->height = h;
     pFrameRGB->width = w;
     pFrameRGB->format = AV_PIX_FMT_RGB24;
@@ -418,8 +440,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
                                         AV_PIX_FMT_RGB24,
                                         SWS_BICUBIC,
                                         NULL, NULL, NULL);
-    if (img_convert_ctx_YUV == NULL)
-    {
+    if (img_convert_ctx_YUV == NULL) {
         yCError(FFMPEGMONITOR, "Cannot initialize the YUV conversion context!");
         return -1;
     }
@@ -427,11 +448,16 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
     ret = sws_scale(img_convert_ctx_YUV, pFrame->data, pFrame->linesize, 0, 
                         h, pFrameRGB->data, pFrameRGB->linesize);
 
-    cReceiver->pix_fmt = AV_PIX_FMT_RGB24;
-    save_frame_as_jpeg(cReceiver, pFrame, 1, "ciao");
+    // Saving frames
+    // save_frame_as_jpeg(cReceiver, pFrame, countertot, "./outputs/receiverYUV");
+    // cReceiver->pix_fmt = AV_PIX_FMT_RGB24;
+    // save_frame_as_jpeg(cReceiver, pFrame, countertot, "./outputs/receiverRGB");
+    // cReceiver->pix_fmt = AV_PIX_FMT_YUV420P;
 
-    *decompressed = *pFrameRGB->data;
-    *sizeDecompressed = sizeof(pFrameRGB->data);
+    countertot++;
+
+    *decompressed = pFrameRGB->data[0];
+    *sizeDecompressed = success;
 
     return 0;
 
