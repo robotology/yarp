@@ -35,8 +35,12 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {
     senderSide = (options.find("sender_side").asBool());
-    if (true) {
-        codecSender = avcodec_find_encoder(AV_CODEC_ID_H264);
+    
+    // TODO: grab desired codec from command line
+    
+    AVCodecID codec = AV_CODEC_ID_H264;
+    if (senderSide) {
+        codecSender = avcodec_find_encoder(codec);
         if (!codecSender) {
             yCError(FFMPEGMONITOR, "Can't find codec %s", "");
             return false;
@@ -47,9 +51,8 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
             return false;
         }
         firstTimeSender = true;
-    } 
-    if (true) {
-        codecReceiver = avcodec_find_decoder(AV_CODEC_ID_H264);
+    } else {
+        codecReceiver = avcodec_find_decoder(codec);
         if (!codecReceiver) {
             yCError(FFMPEGMONITOR, "Can't find codec %s", "");
             return -1;
@@ -66,7 +69,11 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
 void FfmpegMonitorObject::destroy(void)
 {
-    
+    if (senderSide) {
+        avcodec_free_context(&cSender);
+    } else {
+        avcodec_free_context(&cReceiver);
+    }
 }
 
 bool FfmpegMonitorObject::setparam(const yarp::os::Property& params)
