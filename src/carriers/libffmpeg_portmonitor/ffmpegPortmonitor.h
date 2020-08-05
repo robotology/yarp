@@ -35,10 +35,10 @@ public:
     yarp::sig::FlexImage imageOut;
     bool senderSide;
     const AVCodec *codecSender;
-    AVCodecContext *cSender;
-    bool firstTimeSender;
     const AVCodec *codecReceiver;
+    AVCodecContext *cSender;
     AVCodecContext *cReceiver;
+    bool firstTimeSender;
     bool firstTimeReceiver;
     int counter = 0;
     int counter2 = 0;

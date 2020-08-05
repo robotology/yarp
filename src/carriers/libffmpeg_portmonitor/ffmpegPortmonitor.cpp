@@ -38,7 +38,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     
     // TODO: grab desired codec from command line
     
-    AVCodecID codec = AV_CODEC_ID_H264;
+    AVCodecID codec = AV_CODEC_ID_MPEG2VIDEO;
     if (senderSide) {
         codecSender = avcodec_find_encoder(codec);
         if (!codecSender) {
@@ -69,11 +69,11 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
 void FfmpegMonitorObject::destroy(void)
 {
-    if (senderSide) {
-        avcodec_free_context(&cSender);
-    } else {
-        avcodec_free_context(&cReceiver);
-    }
+    // if (senderSide) {
+    //     avcodec_free_context(&cSender);
+    // } else {
+    //     avcodec_free_context(&cReceiver);
+    // }
 }
 
 bool FfmpegMonitorObject::setparam(const yarp::os::Property& params)
@@ -132,20 +132,19 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             data.addInt32(img->height());
             data.addInt32(img->getPixelCode());
             data.addInt32(img->getPixelSize());  
-            img->getRowSize();   
             Value p(packet, sizeof(*packet));
             data.add(p);
             Value d(packet->data, packet->size);
             data.add(d);
-            //Value b(packet->buf->buffer, sizeof(AVBufferRef::buffer));
-            //data.add(b);
             data.addInt(packet->buf->size);
             Value bd(packet->buf->data, packet->buf->size);
             data.add(bd);
-            data.addInt(packet->side_data->size);
-            data.addInt(packet->side_data->type);
-            Value sd(packet->side_data->data, packet->side_data->size);
-            data.add(sd);
+            if (packet->side_data_elems > 0) {
+                data.addInt(packet->side_data->size);
+                data.addInt(packet->side_data->type);
+                Value sd(packet->side_data->data, packet->side_data->size);
+                data.add(sd);
+            }
 
         }
         th.setPortWriter(&data);
@@ -176,13 +175,14 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             packet->size = tmp->size;
             packet->data = (uint8_t *) compressedBottle->get(6).asBlob();
             packet->buf = new AVBufferRef;
-            // packet->buf->buffer = (AVBuffer *) compressedBottle->get(6).asBlob();
             packet->buf->size = compressedBottle->get(7).asInt();
             packet->buf->data = (uint8_t *) compressedBottle->get(8).asBlob();
-            packet->side_data = new AVPacketSideData;
-            packet->side_data->size = compressedBottle->get(9).asInt();
-            packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt();
-            packet->side_data->data = (uint8_t *) compressedBottle->get(11).asBlob();
+            if (packet->side_data_elems > 0) {
+                packet->side_data = new AVPacketSideData;
+                packet->side_data->size = compressedBottle->get(9).asInt();
+                packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt();
+                packet->side_data->data = (uint8_t *) compressedBottle->get(11).asBlob();
+            }
             
             unsigned char* decompressed;
             int sizeDecompressed;
@@ -208,8 +208,6 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     
     yCError(FFMPEGMONITOR, "compress");
-    // const AVCodec *codecSender;
-    // AVCodecContext *cSender = NULL;
     AVFrame *pFrame;
     AVFrame *pFrameYUV;
     const char* codecName = "mpeg1video";
@@ -262,19 +260,6 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     int ret = sws_scale(img_convert_ctx_YUV, pFrame->data, pFrame->linesize, 0, 
                         h, pFrameYUV->data, pFrameYUV->linesize);
 
-    // Create codec for compression
-    // codecSender = avcodec_find_encoder_by_name(codecName);
-    // codecSender = avcodec_find_encoder(AV_CODEC_ID_H264);
-    // if (!codecSender) {
-    //     yCError(FFMPEGMONITOR, "Can't find codec %s", codecName);
-    //     return -1;
-    // }
-    // cSender = avcodec_alloc_context3(codecSender);
-    // if (!cSender) {
-    //     yCError(FFMPEGMONITOR, "Could not allocate video codec context");
-    //     return -1;
-    // }
-
     pkt->data = NULL;
     pkt->size = 0;
     av_init_packet(pkt);
@@ -284,8 +269,8 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     }
 
     if (firstTimeSender) {
-        cSender->width = img->width();
-        cSender->height = img->height();
+        cSender->width = w;
+        cSender->height = h;
         
         // Parameters
         cSender->bit_rate = 400000;
@@ -294,7 +279,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         cSender->gop_size = 10;
         cSender->max_b_frames = 1;
         
-        cSender->pix_fmt = AV_PIX_FMT_YUV420P; // CHECK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        cSender->pix_fmt = AV_PIX_FMT_YUV420P;
 
         ret = avcodec_open2(cSender, codecSender, NULL);
         if (ret < 0) {
@@ -334,40 +319,15 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     // save_frame_as_jpeg(cSender, pFrame, countertot, "./outputs/senderRGB");
     // cSender->pix_fmt = AV_PIX_FMT_YUV420P;
 
-    // unsigned char* decompressed;
-    // int sizeDecompressed;
-    // bool ok = true;
-    // if (decompress(pkt, &decompressed, &sizeDecompressed, w, h) != 0) {
-    //     yCError(FFMPEGMONITOR, "Error in decompression");
-    //     ok = false;
-    //     return -1;
-    // }
-    // countertot++;
-
     return 0;
 }
 
 int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed, int w, int h) {
     
     yCError(FFMPEGMONITOR, "decompress");
-    // const AVCodec *codec;
-    // AVCodecContext *c = NULL;
     AVFrame *pFrame;
     AVFrame *pFrameRGB;
     const char* codecName = "mpeg1video";
-
-    // Create codec for decompression
-    // codecReceiver = avcodec_find_encoder_by_name(codecName);
-    // codecReceiver = avcodec_find_decoder(AV_CODEC_ID_JPEG2000);
-    // if (!codecReceiver) {
-    //     yCError(FFMPEGMONITOR, "Can't find codec %s", codecName);
-    //     return -1;
-    // }
-    // cReceiver = avcodec_alloc_context3(codecReceiver);
-    // if (!cReceiver) {
-    //     yCError(FFMPEGMONITOR, "Could not allocate video codec context");
-    //     return -1;
-    // }
 
     if (firstTimeReceiver) {
         cReceiver->width = w;
@@ -380,7 +340,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
         cReceiver->gop_size = 10;
         cReceiver->max_b_frames = 1;
         
-        cReceiver->pix_fmt = AV_PIX_FMT_YUV420P; // CHECK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        cReceiver->pix_fmt = AV_PIX_FMT_YUV420P;
 
         // Allocate video frame
         pFrame = av_frame_alloc();
@@ -416,10 +376,8 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
     }
     
     counter2 = 0;
-    
-    // av_packet_unref(pkt);
 
-    // Allocate an video frame for RGB
+    // Allocate a video frame for RGB
     pFrameRGB = av_frame_alloc();
     if (pFrameRGB == NULL)
         return -1;
