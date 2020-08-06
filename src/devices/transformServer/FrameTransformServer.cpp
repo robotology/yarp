@@ -224,40 +224,77 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
     }
 }
 
+string FrameTransformServer::get_matrix_as_text(Transforms_server_storage* storage, int i)
+{
+    //add here the latex to code to display the trnasformation matrix
+    //@@@TO BE COMPLETED
+    string s = "\\begin{ bmatrix } \
+        1 & 2 & 3\\ \
+        a & b & c \
+        \\end{ bmatrix }";
+    return "";
+}
+
 bool FrameTransformServer::generate_view()
 {
     string dot_string = "digraph G { ";
     for (size_t i = 0; i < m_ros_timed_transform_storage->size(); i++)
     {
+        string edge_text = get_matrix_as_text(m_ros_timed_transform_storage, i);
         string trf_text = (*m_ros_timed_transform_storage)[i].src_frame_id + "->" +
                           (*m_ros_timed_transform_storage)[i].dst_frame_id + " " +
                           "[color = black]";
-        dot_string += trf_text;
+        dot_string += trf_text + '\n';
     }
     for (size_t i = 0; i < m_ros_static_transform_storage->size(); i++)
     {
+        string edge_text = get_matrix_as_text(m_ros_static_transform_storage,i);
         string trf_text = (*m_ros_static_transform_storage)[i].src_frame_id + "->" +
                           (*m_ros_static_transform_storage)[i].dst_frame_id + " " +
-                          "[color = black, style=dashed]";
-        dot_string += trf_text;
+                          "[color = black, style=dashed "+ edge_text + "]";
+        dot_string += trf_text + '\n';
     }
     for (size_t i = 0; i < m_yarp_timed_transform_storage->size(); i++)
     {
+        string edge_text = get_matrix_as_text(m_yarp_timed_transform_storage, i);
         string trf_text = (*m_yarp_timed_transform_storage)[i].src_frame_id + "->" +
                           (*m_yarp_timed_transform_storage)[i].dst_frame_id + " " +
-                          "[color = blue]";
-        dot_string += trf_text;
+                          "[color = blue "+ edge_text + "]";
+        dot_string += trf_text + '\n';
     }
     for (size_t i = 0; i < m_yarp_static_transform_storage->size(); i++)
     {
+        string edge_text = get_matrix_as_text(m_yarp_static_transform_storage, i);
         string trf_text = (*m_yarp_static_transform_storage)[i].src_frame_id + "->" +
                           (*m_yarp_static_transform_storage)[i].dst_frame_id + " " +
-                          "[color = blue, style=dashed]";
-        dot_string += trf_text;
+                          "[color = blue, style=dashed " + edge_text + "]";
+        dot_string += trf_text + '\n';
     }
-    dot_string+=" }";
 
-    string command_string = "echo \""+dot_string+ "\" | dot -Tpdf > frames.pdf";
+    string legend = "\n\
+        rankdir=LR\n\
+        node[shape=plaintext]\n\
+        subgraph cluster_01 {\n\
+          label = \"Legend\";\n\
+          key[label=<<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" cellborder=\"0\">\n\
+            <tr><td align=\"right\" port=\"i1\">YARP timed transform</td></tr>\n\
+            <tr><td align=\"right\" port=\"i2\">YARP static transform</td></tr>\n\
+            <tr><td align=\"right\" port=\"i3\">ROS timed transform</td></tr>\n\
+            <tr><td align=\"right\" port=\"i4\">ROS static transform</td></tr>\n\
+            </table>>]\n\
+          key2[label=<<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" cellborder=\"0\">\n\
+            <tr><td port = \"i1\">&nbsp;</td></tr>\n\
+            <tr><td port = \"i2\">&nbsp;</td></tr>\n\
+            <tr><td port = \"i3\">&nbsp;</td></tr>\n\
+            <tr><td port = \"i4\">&nbsp;</td></tr>\n\
+            </table>>]\n\
+          key:i1:e -> key2:i1:w [color = blue]\n\
+          key:i2:e -> key2:i2:w [color = blue, style=dashed]\n\
+          key:i3:e -> key2:i3:w [color = black]\n\
+          key:i4:e -> key2:i4:w [color = black, style=dashed]\n\
+        } }";
+
+    string command_string = "printf '"+dot_string+ legend + "' | dot -Tpdf > frames.pdf";
 #if defined (__linux__)
     int ret = std::system("dot -V");
     if (ret != 0)
@@ -266,6 +303,7 @@ bool FrameTransformServer::generate_view()
         return false;
     }
 
+    yCDebug(FRAMETRANSFORMSERVER) << "Command string is:" << command_string;
     ret = std::system(command_string.c_str());
     if (ret != 0)
     {

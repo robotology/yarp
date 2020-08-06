@@ -116,6 +116,7 @@ private:
     bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);
     bool         generate_view();
+    std::string  get_matrix_as_text(Transforms_server_storage* storage, int i);
     bool         parseStartingTf(yarp::os::Searchable &config);
 };
 
