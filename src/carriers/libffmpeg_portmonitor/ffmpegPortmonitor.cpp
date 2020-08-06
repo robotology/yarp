@@ -38,7 +38,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     
     // TODO: grab desired codec from command line
     
-    AVCodecID codec = AV_CODEC_ID_MPEG2VIDEO;
+    AVCodecID codec = AV_CODEC_ID_H264;//AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
     if (senderSide) {
         codecSender = avcodec_find_encoder(codec);
         if (!codecSender) {
