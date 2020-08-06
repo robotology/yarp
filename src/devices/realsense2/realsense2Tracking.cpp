@@ -192,6 +192,19 @@ bool realsense2Tracking::open(Searchable& config)
     yCWarning(REALSENSE2TRACKING) << "It is provided with uncomplete documentation and it may be modified/renamed/removed without any notice.";
 
     string sensor_is = "t265";
+    m_timestamp_type = timestamp_enumtype::yarp_timestamp;
+    if (config.check("timestamp"))
+    {
+        string temp = config.find("timestamp").asString();
+        if (temp == "yarp") m_timestamp_type = timestamp_enumtype::yarp_timestamp;
+        if (temp == "realsense") m_timestamp_type = timestamp_enumtype::rs_timestamp;
+        else
+        {
+            yCError(REALSENSE2TRACKING) << "Invalid value for option 'timestamp'. Valid values are 'yarp','realsense'";
+            return false;
+        }
+    }
+
     bool b= true;
 
     m_cfg.enable_stream(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F);
@@ -250,6 +263,9 @@ bool realsense2Tracking::getThreeAxisGyroscopeMeasure(size_t sens_index, yarp::s
     rs2::frameset dataframe = m_pipeline.wait_for_frames();
     auto fg = dataframe.first_or_default(RS2_STREAM_GYRO, RS2_FORMAT_MOTION_XYZ32F);
     rs2::motion_frame gyro = fg.as<rs2::motion_frame>();
+    if (m_timestamp_type == yarp_timestamp) { timestamp = yarp::os::Time::now(); }
+    else if (m_timestamp_type == rs_timestamp) { timestamp = gyro.get_timestamp(); }
+    else timestamp=0;
     m_last_gyro = gyro.get_motion_data();
     out.resize(3);
     out[0] = m_last_gyro.x;
@@ -295,6 +311,9 @@ bool realsense2Tracking::getThreeAxisLinearAccelerometerMeasure(size_t sens_inde
     auto fa = dataframe.first_or_default(RS2_STREAM_ACCEL, RS2_FORMAT_MOTION_XYZ32F);
     rs2::motion_frame accel = fa.as<rs2::motion_frame>();
     m_last_accel = accel.get_motion_data();
+    if (m_timestamp_type == yarp_timestamp) { timestamp = yarp::os::Time::now(); }
+    else if (m_timestamp_type == rs_timestamp) { timestamp = accel.get_timestamp(); }
+    else timestamp = 0;
     out.resize(3);
     out[0] = m_last_accel.x;
     out[1] = m_last_accel.y;
@@ -340,6 +359,9 @@ bool realsense2Tracking::getOrientationSensorMeasureAsRollPitchYaw(size_t sens_i
     auto fa = dataframe.first_or_default(RS2_STREAM_POSE);
     rs2::pose_frame pose = fa.as<rs2::pose_frame>();
     m_last_pose = pose.get_pose_data();
+    if (m_timestamp_type == yarp_timestamp) { timestamp = yarp::os::Time::now(); }
+    else if (m_timestamp_type == rs_timestamp) { timestamp = pose.get_timestamp(); }
+    else timestamp = 0;
     yarp::math::Quaternion q(m_last_pose.rotation.x, m_last_pose.rotation.y, m_last_pose.rotation.z, m_last_pose.rotation.w);
     yarp::sig::Matrix mat = q.toRotationMatrix3x3();
     yarp::sig::Vector rpy_temp = yarp::math::dcm2rpy(mat);
@@ -388,6 +410,9 @@ bool realsense2Tracking::getPositionSensorMeasure(size_t sens_index, yarp::sig::
     auto fa = dataframe.first_or_default(RS2_STREAM_POSE);
     rs2::pose_frame pose = fa.as<rs2::pose_frame>();
     m_last_pose = pose.get_pose_data();
+    if (m_timestamp_type == yarp_timestamp) { timestamp = yarp::os::Time::now(); }
+    else if (m_timestamp_type == rs_timestamp) { timestamp = pose.get_timestamp(); }
+    else timestamp = 0;
     xyz.resize(3);
     xyz[0] = m_last_pose.translation.x;
     xyz[1] = m_last_pose.translation.y;
