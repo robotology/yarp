@@ -38,7 +38,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     
     // TODO: grab desired codec from command line
     
-    AVCodecID codec = AV_CODEC_ID_H264;//AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
+    AVCodecID codec = AV_CODEC_ID_H264; // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
     if (senderSide) {
         codecSender = avcodec_find_encoder(codec);
         if (!codecSender) {
@@ -145,6 +145,8 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                 Value sd(packet->side_data->data, packet->side_data->size);
                 data.add(sd);
             }
+            counter++;
+            data.addInt(counter);
 
         }
         th.setPortWriter(&data);
@@ -182,6 +184,11 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                 packet->side_data->size = compressedBottle->get(9).asInt();
                 packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt();
                 packet->side_data->data = (uint8_t *) compressedBottle->get(11).asBlob();
+            }
+            counter2++;
+            int count = compressedBottle->get(12).asInt();
+            if (count == 50) {
+                yCError(FFMPEGMONITOR, "Problem");
             }
             
             unsigned char* decompressed;
@@ -290,7 +297,8 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     }
 
     // save_frame_as_jpeg(cSender, pFrameYUV, counter, "./outputs/senderYUVbefore");
-    
+    pFrame->pts = cSender->frame_number;
+
     ret = avcodec_send_frame(cSender, pFrameYUV);
     if (ret < 0) {
         yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
@@ -300,7 +308,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     ret = avcodec_receive_packet(cSender, pkt);
     if (ret == AVERROR(EAGAIN)) {
         yCError(FFMPEGMONITOR, "Error EAGAIN");
-        counter++;
+        // counter++;
         return -1;
     }
     else if (ret == AVERROR_EOF) {
@@ -311,7 +319,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         yCError(FFMPEGMONITOR, "Error during encoding");
         return -1;
     }
-    counter = 0;
+    // counter = 0;
     
     // // Saving frames
     // save_frame_as_jpeg(cSender, pFrameYUV, countertot, "./outputs/senderYUV");
@@ -363,7 +371,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
     ret = avcodec_receive_frame(cReceiver, pFrame);
     if (ret == AVERROR(EAGAIN)) {
         yCError(FFMPEGMONITOR, "Error EAGAIN");
-        counter2++;
+        // counter2++;
         return -1;
     }
     else if (ret == AVERROR_EOF) {
@@ -375,7 +383,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
         return -1;
     }
     
-    counter2 = 0;
+    // counter2 = 0;
 
     // Allocate a video frame for RGB
     pFrameRGB = av_frame_alloc();
@@ -419,7 +427,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
     // save_frame_as_jpeg(cReceiver, pFrame, countertot, "./outputs/receiverRGB");
     // cReceiver->pix_fmt = AV_PIX_FMT_YUV420P;
 
-    countertot++;
+    // countertot++;
 
     *decompressed = pFrameRGB->data[0];
     *sizeDecompressed = success;
