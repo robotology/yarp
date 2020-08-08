@@ -38,7 +38,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     
     // TODO: grab desired codec from command line
     
-    AVCodecID codec = AV_CODEC_ID_H264; // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
+    AVCodecID codec = AV_CODEC_ID_H265; // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
     if (senderSide) {
         codecSender = avcodec_find_encoder(codec);
         if (!codecSender) {
@@ -51,6 +51,26 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
             return false;
         }
         firstTimeSender = true;
+
+        // Pixel formats map
+        pixelMap[VOCAB_PIXEL_RGB] = AV_PIX_FMT_RGB24;
+        pixelMap[VOCAB_PIXEL_RGBA] = AV_PIX_FMT_RGBA;
+        pixelMap[VOCAB_PIXEL_BGR] = AV_PIX_FMT_BGR24;
+        pixelMap[VOCAB_PIXEL_BGRA] = AV_PIX_FMT_BGRA;
+        pixelMap[VOCAB_PIXEL_YUV_420] = AV_PIX_FMT_YUV420P;
+        codecPixelMap[AV_CODEC_ID_H264] = AV_PIX_FMT_YUV420P;
+        codecPixelMap[AV_CODEC_ID_H265] = AV_PIX_FMT_YUV420P;
+        codecPixelMap[AV_CODEC_ID_MPEG2VIDEO] = AV_PIX_FMT_YUV420P;
+
+        // // check if key is present
+        // if (m.find("world") != m.end())
+        //     std::cout << "map contains key world!\n";
+        // // retrieve
+        // std::cout << m["hello"] << '\n';
+        // std::map<std::string, int>::iterator i = m.find("hello");
+        // assert(i != m.end());
+        // std::cout << "Key: " << i->first << " Value: " << i->second << '\n';
+
     } else {
         codecReceiver = avcodec_find_decoder(codec);
         if (!codecReceiver) {
@@ -63,6 +83,16 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
             return -1;
         }
         firstTimeReceiver = true;
+
+        // Pixel formats map
+        pixelMap[AV_PIX_FMT_RGB24] = VOCAB_PIXEL_RGB;
+        pixelMap[AV_PIX_FMT_RGBA] = VOCAB_PIXEL_RGBA;
+        pixelMap[AV_PIX_FMT_BGR24] = VOCAB_PIXEL_BGR;
+        pixelMap[AV_PIX_FMT_BGRA] = VOCAB_PIXEL_BGRA;
+        pixelMap[AV_PIX_FMT_YUV420P] = VOCAB_PIXEL_YUV_420;
+        codecPixelMap[AV_PIX_FMT_YUV420P] = AV_CODEC_ID_H264;
+        codecPixelMap[AV_PIX_FMT_YUV420P] = AV_CODEC_ID_H265;
+        codecPixelMap[AV_PIX_FMT_YUV420P] = AV_CODEC_ID_MPEG2VIDEO;
     }
     return true;
 }
@@ -96,8 +126,7 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
         if(img == nullptr) {
             yCError(FFMPEGMONITOR, "Expected type Image in sender side, but got wrong data type!");
             return false;
-        }
-        
+        }        
     }
     else {
         yCError(FFMPEGMONITOR, "accept - receiver");
@@ -145,9 +174,6 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                 Value sd(packet->side_data->data, packet->side_data->size);
                 data.add(sd);
             }
-            counter++;
-            data.addInt(counter);
-
         }
         th.setPortWriter(&data);
     }
@@ -185,16 +211,11 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                 packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt();
                 packet->side_data->data = (uint8_t *) compressedBottle->get(11).asBlob();
             }
-            counter2++;
-            int count = compressedBottle->get(12).asInt();
-            if (count == 50) {
-                yCError(FFMPEGMONITOR, "Problem");
-            }
-            
+                        
             unsigned char* decompressed;
             int sizeDecompressed;
             bool ok = true;
-            if (decompress(packet, &decompressed, &sizeDecompressed, width, height) != 0) {
+            if (decompress(packet, &decompressed, &sizeDecompressed, width, height, pixelCode) != 0) {
                 yCError(FFMPEGMONITOR, "Error in decompression");
                 ok = false;
             }
@@ -215,57 +236,15 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     
     yCError(FFMPEGMONITOR, "compress");
-    AVFrame *pFrame;
-    AVFrame *pFrameYUV;
-    const char* codecName = "mpeg1video";
+    AVFrame *startFrame;
+    AVFrame *endFrame;
 
-    int w = img->width();
-    int h = img->height();
+    int convertSuccess = convertPixels(pixelMap[img->getPixelCode()], codecPixelMap[cSender->codec_id],
+                                img, &startFrame, &endFrame, senderSide);
 
-    // Allocate video frame for original frames
-    pFrame = av_frame_alloc();
-    if (pFrame == NULL)
-        return -1;
-
-    // Allocate an video frame for YUV
-    pFrameYUV = av_frame_alloc();
-    if (pFrameYUV == NULL)
-        return -1;
-
-    int success = av_image_alloc(pFrame->data, pFrame->linesize,
-                    w, h,
-                    AV_PIX_FMT_RGB24, 16);
-
-    pFrame->linesize[0] = img->getRowSize();
-    pFrame->data[0] = img->getRawImage();
-    pFrame->height = h;
-    pFrame->width = w;
-    pFrame->format = AV_PIX_FMT_RGB24;
-
-    success = av_image_alloc(pFrameYUV->data, pFrameYUV->linesize,
-                    w, h,
-                    AV_PIX_FMT_YUV420P, 16);
-    
-    pFrameYUV->height = h;
-    pFrameYUV->width = w;
-    pFrameYUV->format = AV_PIX_FMT_YUV420P;
-
-    // Convert the image into YUV format
-    static struct SwsContext *img_convert_ctx_YUV;
-    
-    img_convert_ctx_YUV = sws_getContext(w, h, 
-                                        AV_PIX_FMT_RGB24, 
-                                        w, h,
-                                        AV_PIX_FMT_YUV420P,
-                                        SWS_BICUBIC,
-                                        NULL, NULL, NULL);
-    if (img_convert_ctx_YUV == NULL) {
-        yCError(FFMPEGMONITOR, "Cannot initialize the YUV conversion context!");
+    if (convertSuccess == -1) {
         return -1;
     }
-    
-    int ret = sws_scale(img_convert_ctx_YUV, pFrame->data, pFrame->linesize, 0, 
-                        h, pFrameYUV->data, pFrameYUV->linesize);
 
     pkt->data = NULL;
     pkt->size = 0;
@@ -276,8 +255,8 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     }
 
     if (firstTimeSender) {
-        cSender->width = w;
-        cSender->height = h;
+        cSender->width = img->width();
+        cSender->height = img->height();
         
         // Parameters
         cSender->bit_rate = 400000;
@@ -286,9 +265,9 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         cSender->gop_size = 10;
         cSender->max_b_frames = 1;
         
-        cSender->pix_fmt = AV_PIX_FMT_YUV420P;
+        cSender->pix_fmt = (AVPixelFormat) codecPixelMap[cSender->codec_id];
 
-        ret = avcodec_open2(cSender, codecSender, NULL);
+        int ret = avcodec_open2(cSender, codecSender, NULL);
         if (ret < 0) {
             yCError(FFMPEGMONITOR, "Could not open codec");
             return -1;
@@ -296,10 +275,9 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         firstTimeSender = false;
     }
 
-    // save_frame_as_jpeg(cSender, pFrameYUV, counter, "./outputs/senderYUVbefore");
-    pFrame->pts = cSender->frame_number;
+    startFrame->pts = cSender->frame_number;
 
-    ret = avcodec_send_frame(cSender, pFrameYUV);
+    int ret = avcodec_send_frame(cSender, endFrame);
     if (ret < 0) {
         yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
         return -1;
@@ -308,7 +286,6 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     ret = avcodec_receive_packet(cSender, pkt);
     if (ret == AVERROR(EAGAIN)) {
         yCError(FFMPEGMONITOR, "Error EAGAIN");
-        // counter++;
         return -1;
     }
     else if (ret == AVERROR_EOF) {
@@ -319,23 +296,16 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         yCError(FFMPEGMONITOR, "Error during encoding");
         return -1;
     }
-    // counter = 0;
-    
-    // // Saving frames
-    // save_frame_as_jpeg(cSender, pFrameYUV, countertot, "./outputs/senderYUV");
-    // cSender->pix_fmt = AV_PIX_FMT_RGB24;
-    // save_frame_as_jpeg(cSender, pFrame, countertot, "./outputs/senderRGB");
-    // cSender->pix_fmt = AV_PIX_FMT_YUV420P;
 
     return 0;
 }
 
-int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed, int w, int h) {
+int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed,
+                                    int w, int h, int pixelCode) {
     
     yCError(FFMPEGMONITOR, "decompress");
-    AVFrame *pFrame;
-    AVFrame *pFrameRGB;
-    const char* codecName = "mpeg1video";
+    AVFrame *startFrame;
+    AVFrame *endFrame;
 
     if (firstTimeReceiver) {
         cReceiver->width = w;
@@ -348,11 +318,11 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
         cReceiver->gop_size = 10;
         cReceiver->max_b_frames = 1;
         
-        cReceiver->pix_fmt = AV_PIX_FMT_YUV420P;
+        cReceiver->pix_fmt = (AVPixelFormat) codecPixelMap[cReceiver->codec_id];
 
         // Allocate video frame
-        pFrame = av_frame_alloc();
-        if (pFrame == NULL)
+        startFrame = av_frame_alloc();
+        if (startFrame == NULL)
             return -1;
 
         int ret = avcodec_open2(cReceiver, codecReceiver, NULL);
@@ -368,10 +338,9 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
         return -1;
     }
 
-    ret = avcodec_receive_frame(cReceiver, pFrame);
+    ret = avcodec_receive_frame(cReceiver, startFrame);
     if (ret == AVERROR(EAGAIN)) {
         yCError(FFMPEGMONITOR, "Error EAGAIN");
-        // counter2++;
         return -1;
     }
     else if (ret == AVERROR_EOF) {
@@ -383,57 +352,74 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
         return -1;
     }
     
-    // counter2 = 0;
+    int success = convertPixels(startFrame->format, pixelMap[pixelCode], nullptr, &startFrame, &endFrame, senderSide);
 
-    // Allocate a video frame for RGB
-    pFrameRGB = av_frame_alloc();
-    if (pFrameRGB == NULL)
-        return -1;
-
-
-    int success = av_image_alloc(pFrameRGB->data, pFrameRGB->linesize,
-                    w, h,
-                    AV_PIX_FMT_RGB24, 16);
-    
-    if (success < 0) {
-        yCError(FFMPEGMONITOR, "Error allocating frame!");
-        return -1;
-    }
-
-    pFrameRGB->height = h;
-    pFrameRGB->width = w;
-    pFrameRGB->format = AV_PIX_FMT_RGB24;
-
-    // Convert the image into RGB format
-    static struct SwsContext *img_convert_ctx_YUV;
-    
-    img_convert_ctx_YUV = sws_getContext(w, h, 
-                                        AV_PIX_FMT_YUV420P, 
-                                        w, h,
-                                        AV_PIX_FMT_RGB24,
-                                        SWS_BICUBIC,
-                                        NULL, NULL, NULL);
-    if (img_convert_ctx_YUV == NULL) {
-        yCError(FFMPEGMONITOR, "Cannot initialize the YUV conversion context!");
-        return -1;
-    }
-    
-    ret = sws_scale(img_convert_ctx_YUV, pFrame->data, pFrame->linesize, 0, 
-                        h, pFrameRGB->data, pFrameRGB->linesize);
-
-    // Saving frames
-    // save_frame_as_jpeg(cReceiver, pFrame, countertot, "./outputs/receiverYUV");
-    // cReceiver->pix_fmt = AV_PIX_FMT_RGB24;
-    // save_frame_as_jpeg(cReceiver, pFrame, countertot, "./outputs/receiverRGB");
-    // cReceiver->pix_fmt = AV_PIX_FMT_YUV420P;
-
-    // countertot++;
-
-    *decompressed = pFrameRGB->data[0];
+    *decompressed = endFrame->data[0];
     *sizeDecompressed = success;
 
     return 0;
 
+}
+
+int FfmpegMonitorObject::convertPixels(int startPixelFormat, int endPixelFormat, Image *img,
+                                        AVFrame **startFrame, AVFrame **endFrame, bool senderSide) {
+    
+    if (senderSide) {
+        // Allocate video frame for original frames
+        *startFrame = av_frame_alloc();
+        if (*startFrame == NULL)
+            return -1;
+
+        int success = av_image_alloc((*startFrame)->data, (*startFrame)->linesize,
+                        img->width(), img->height(),
+                        (AVPixelFormat) pixelMap[img->getPixelCode()], 16);
+        
+        if (success < 0) {
+            yCError(FFMPEGMONITOR, "Error in allocating frame");
+            return -1;
+        }
+
+        (*startFrame)->linesize[0] = img->getRowSize();
+        (*startFrame)->data[0] = img->getRawImage();
+        (*startFrame)->height = img->height();
+        (*startFrame)->width = img->width();
+        (*startFrame)->format = (AVPixelFormat) pixelMap[img->getPixelCode()];
+    }
+
+    // Allocate an video frame for end frame
+    *endFrame = av_frame_alloc();
+    if (*endFrame == NULL)
+        return -1;
+
+    int success = av_image_alloc((*endFrame)->data, (*endFrame)->linesize,
+                    img->width(), img->height(),
+                    (AVPixelFormat) codecPixelMap[cSender->codec_id], 16);
+
+    if (success < 0) {
+        yCError(FFMPEGMONITOR, "Error in allocating frame");
+        return -1;
+    }
+    
+    (*endFrame)->height = (*startFrame)->height;
+    (*endFrame)->width = (*startFrame)->width;
+    (*endFrame)->format = (AVPixelFormat) codecPixelMap[cSender->codec_id];
+
+    // Convert the image into end format
+    static struct SwsContext *img_convert_ctx;
+    
+    img_convert_ctx = sws_getContext((*startFrame)->height, (*startFrame)->width, 
+                                        (AVPixelFormat) pixelMap[img->getPixelCode()], 
+                                        (*startFrame)->height, (*startFrame)->width,
+                                        (AVPixelFormat) codecPixelMap[cSender->codec_id],
+                                        SWS_BICUBIC,
+                                        NULL, NULL, NULL);
+    if (img_convert_ctx == NULL) {
+        yCError(FFMPEGMONITOR, "Cannot initialize the pixel conversion context!");
+        return -1;
+    }
+    
+    int ret = sws_scale(img_convert_ctx, (*startFrame)->data, (*startFrame)->linesize, 0, 
+                        (*startFrame)->width, (*endFrame)->data, (*endFrame)->linesize);
 }
 
 int FfmpegMonitorObject::save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, int FrameNo, const char* filename) {

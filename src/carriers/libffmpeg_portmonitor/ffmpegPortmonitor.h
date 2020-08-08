@@ -26,8 +26,10 @@ public:
 
 protected:
     int compress(yarp::sig::Image* img, AVPacket* pkt);
-    int decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed, int w, int h);
+    int decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed, int w, int h, int pixelCode);
     int save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, int FrameNo, const char* filename);
+    int convertPixels(int startPixelFormat, int endPixelFormat, yarp::sig::Image *img,
+                        AVFrame **startFrame, AVFrame **endFrame, bool senderSide);
 
 public:
     yarp::os::Things th;
@@ -40,6 +42,8 @@ public:
     AVCodecContext *cReceiver;
     bool firstTimeSender;
     bool firstTimeReceiver;
+    std::map<int, int> pixelMap;
+    std::map<int, int> codecPixelMap;
     int counter = 0;
     int counter2 = 0;
     int countertot = 0;
