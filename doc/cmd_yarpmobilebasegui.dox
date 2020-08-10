@@ -1,0 +1,14 @@
+/**
+\page yarpmobilebasegui yarpmobilebasegui: Control the mobile base of the robot
+
+\ingroup yarp_guis
+\ingroup yarp_tools
+
+\tableofcontents
+
+\section yarpmobilebasegui_intro Description
+
+A simple GUI to control the mobile base of the robot via keyboard or mouse and
+send `yarp::dev::MobileBaseVelocity` commands on a YARP port.
+
+*/
