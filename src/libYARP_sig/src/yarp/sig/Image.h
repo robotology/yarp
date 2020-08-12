@@ -633,7 +633,7 @@ namespace yarp {
 /**
  * Typed image class.
  *
- * This is a wrapper over YARPGenericImage providing type security for
+ * This is a wrapper over yarp::sig::Image providing type security for
  * pixel access.  "T" can be any of sig::PixelMono, sig::PixelMono16,
  * sig::PixelRgb, sig::PixelHsv, sig::PixelBgr, sig::PixelMonoSigned,
  * sig::PixelRgbSigned, sig::PixelFloat, sig::PixelRgbFloat,

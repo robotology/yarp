@@ -1,5 +1,5 @@
 /**
-\page yarpidl_rosmsg yarpidl_rosmsg
+\page yarpidl_rosmsg yarpidl_rosmsg: YARP code generator/compiler for ROS IDL
 
 \ingroup yarp_tools
 

@@ -1,5 +1,5 @@
 /**
-\page yarpidl_thrift yarpidl_thrift
+\page yarpidl_thrift yarpidl_thrift: YARP code generator/compiler for Thrift IDL
 
 \ingroup yarp_tools
 

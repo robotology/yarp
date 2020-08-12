@@ -125,7 +125,7 @@ yarpview_pos yarpview --x X_POSITION --y Y_POSITION
 To change the size:
 
 \verbatim
-\section yarpview_size yarpview --w WIDTH --h HEIGHT
+yarpview_size yarpview --w WIDTH --h HEIGHT
 \endverbatim
 
 You can set the framerate at with which the viewer updates the image:
