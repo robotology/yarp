@@ -16,7 +16,7 @@ swig_add_library(yarp_ruby
                  LANGUAGE ruby
                  SOURCES ${SWIG_BINDINGS_SOURCE_FILE})
 swig_link_libraries(yarp_ruby ${RUBY_LIBRARY} ${SWIG_YARP_LIBRARIES})
-target_include_directories(${SWIG_MODULE_yarp_ruby_REAL_NAME} SYSTEM PRIVATE ${RUBY_INCLUDE_PATH})
+target_include_directories(${SWIG_MODULE_yarp_ruby_REAL_NAME} SYSTEM PRIVATE ${RUBY_INCLUDE_DIRS})
 
 set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME} PROPERTIES PREFIX ""
                                                                     OUTPUT_NAME "yarp")
