@@ -38,7 +38,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     
     // TODO: grab desired codec from command line
     
-    AVCodecID codec = AV_CODEC_ID_H265; // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
+    AVCodecID codec = AV_CODEC_ID_H264; // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
     if (senderSide) {
         codecSender = avcodec_find_encoder(codec);
         if (!codecSender) {
@@ -184,14 +184,23 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             packet->stream_index = tmp->stream_index;
             packet->size = tmp->size;
             packet->data = (uint8_t *) compressedBottle->get(6).asBlob();
-            packet->buf = new AVBufferRef;
-            packet->buf->size = compressedBottle->get(7).asInt();
-            packet->buf->data = (uint8_t *) compressedBottle->get(8).asBlob();
+            packet->buf = av_buffer_create((uint8_t *) compressedBottle->get(8).asBlob(),
+                                            compressedBottle->get(7).asInt(), av_buffer_default_free,
+                                            nullptr, AV_BUFFER_FLAG_READONLY);
+            // packet->buf->size = compressedBottle->get(7).asInt();
+            // packet->buf->data = (uint8_t *) compressedBottle->get(8).asBlob();
+            
             if (packet->side_data_elems > 0) {
                 packet->side_data = new AVPacketSideData;
                 packet->side_data->size = compressedBottle->get(9).asInt();
                 packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt();
                 packet->side_data->data = (uint8_t *) compressedBottle->get(11).asBlob();
+                
+                // uint8_t * dataArray = (uint8_t *) av_malloc(compressedBottle->get(9).asInt());
+                // memcpy(dataArray, (uint8_t *) compressedBottle->get(11).asBlob(), compressedBottle->get(9).asInt());
+                // av_packet_add_side_data(packet, (AVPacketSideDataType) compressedBottle->get(10).asInt(),
+                //                         dataArray, compressedBottle->get(9).asInt());
+
             }
                         
             unsigned char* decompressed;
