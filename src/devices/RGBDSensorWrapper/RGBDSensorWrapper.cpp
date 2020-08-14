@@ -627,45 +627,6 @@ void RGBDSensorWrapper::threadRelease()
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
-string RGBDSensorWrapper::yarp2RosPixelCode(int code)
-{
-    switch(code)
-    {
-        case VOCAB_PIXEL_BGR:
-            return BGR8;
-        case VOCAB_PIXEL_BGRA:
-            return BGRA8;
-        case VOCAB_PIXEL_ENCODING_BAYER_BGGR16:
-            return BAYER_BGGR16;
-        case VOCAB_PIXEL_ENCODING_BAYER_BGGR8:
-            return BAYER_BGGR8;
-        case VOCAB_PIXEL_ENCODING_BAYER_GBRG16:
-            return BAYER_GBRG16;
-        case VOCAB_PIXEL_ENCODING_BAYER_GBRG8:
-            return BAYER_GBRG8;
-        case VOCAB_PIXEL_ENCODING_BAYER_GRBG16:
-            return BAYER_GRBG16;
-        case VOCAB_PIXEL_ENCODING_BAYER_GRBG8:
-            return BAYER_GRBG8;
-        case VOCAB_PIXEL_ENCODING_BAYER_RGGB16:
-            return BAYER_RGGB16;
-        case VOCAB_PIXEL_ENCODING_BAYER_RGGB8:
-            return BAYER_RGGB8;
-        case VOCAB_PIXEL_MONO:
-            return MONO8;
-        case VOCAB_PIXEL_MONO16:
-            return MONO16;
-        case VOCAB_PIXEL_RGB:
-            return RGB8;
-        case VOCAB_PIXEL_RGBA:
-            return RGBA8;
-        case VOCAB_PIXEL_MONO_FLOAT:
-            return TYPE_32FC1;
-        default:
-            return RGB8;
-    }
-}
-
 void RGBDSensorWrapper::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest)
 {
     dest.setPixelCode(src.getPixelCode());
@@ -691,7 +652,7 @@ void RGBDSensorWrapper::deepCopyImages(const yarp::sig::FlexImage&       src,
     dest.width           = src.width();
     dest.height          = src.height();
     memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
-    dest.encoding        = yarp2RosPixelCode(src.getPixelCode());
+    dest.encoding        = yarp::dev::ROSPixelCode::yarp2RosPixelCode(src.getPixelCode());
     dest.step            = src.getRowSize();
     dest.header.frame_id = frame_id;
     dest.header.stamp    = timeStamp;
@@ -712,7 +673,7 @@ void RGBDSensorWrapper::deepCopyImages(const DepthImage&                 src,
 
     memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
 
-    dest.encoding        = yarp2RosPixelCode(src.getPixelCode());
+    dest.encoding        = yarp::dev::ROSPixelCode::yarp2RosPixelCode(src.getPixelCode());
     dest.step            = src.getRowSize();
     dest.header.frame_id = frame_id;
     dest.header.stamp    = timeStamp;
@@ -833,7 +794,6 @@ bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& camera
 
 bool RGBDSensorWrapper::writeData()
 {
-
     //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
     //             depthImage.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
 
@@ -856,7 +816,6 @@ bool RGBDSensorWrapper::writeData()
     {
         return true;
     }
-
     oldDepthStamp = depthStamp;
     oldColorStamp = colorStamp;
 
