@@ -18,6 +18,9 @@
 
 // example: yarpdev --device transformServer --ROS::enable_ros_publisher 0 --ROS::enable_ros_subscriber 0
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include "FrameTransformServer.h"
 #include <sstream>
 #include <limits>
@@ -226,13 +229,32 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
 
 string FrameTransformServer::get_matrix_as_text(Transforms_server_storage* storage, int i)
 {
-    //add here the latex to code to display the trnasformation matrix
-    //@@@TO BE COMPLETED
-    string s = "\\begin{ bmatrix } \
+    if (m_show_transforms_in_diagram==do_not_show)
+    {
+        return "";
+    }
+    else if (m_show_transforms_in_diagram==show_quaternion)
+    {
+        return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_quaternion) + "\"";
+    }
+    else if (m_show_transforms_in_diagram == show_matrix)
+    {
+        return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_matrix) + "\"";
+    }
+    else if (m_show_transforms_in_diagram == show_rpy)
+    {
+        return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_rpy) + "\"";
+    }
+
+    yCError(FRAMETRANSFORMSERVER) << "get_matrix_as_text() invalid option";
+    return "";
+    /*
+        //this is a test to use Latek display
+        string s = "\\begin{ bmatrix } \
         1 & 2 & 3\\ \
         a & b & c \
         \\end{ bmatrix }";
-    return "";
+    */
 }
 
 bool FrameTransformServer::generate_view()
@@ -420,11 +442,17 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         out.addVocab(Vocab::encode("many"));
         out.addString("'list': get all transforms stored");
         out.addString("'delete_all': delete all transforms");
-        out.addString("'set_static_transform <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform");
+        out.addString("'set_static_transform_rad <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform (angles in radians)");
+        out.addString("'set_static_transform_deg <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform (angles in degrees)");
         out.addString("'delete_static_transform <src> <dst>': delete a static transform");
-        out.addString("'generate_view': generate a frames.pdf file showing the transform tree diagram");
+        out.addString("'generate_view <option>': generate a frames.pdf file showing the transform tree diagram.");
+        out.addString("     The following values are valid for option (default=none)");
+        out.addString("    'show_rpy': show roation as rpy angles");
+        out.addString("    'show_quaterion:'show rotation as a quaternion");
+        out.addString("    'show_matrix:'show rotationa as a 3x3 rotation matrix");
     }
-    else if (request == "set_static_transform")
+    else if (request == "set_static_transform_rad" ||
+             request == "set_static_transform_deg")
     {
         FrameTransform t;
         t.src_frame_id = in.get(1).asString();
@@ -432,7 +460,10 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         t.translation.tX = in.get(3).asFloat64();
         t.translation.tY = in.get(4).asFloat64();
         t.translation.tZ = in.get(5).asFloat64();
-        t.rotFromRPY(in.get(6).asFloat64(), in.get(7).asFloat64(), in.get(8).asFloat64());
+        if (request == "set_static_transform_rad")
+            { t.rotFromRPY(in.get(6).asFloat64(), in.get(7).asFloat64(), in.get(8).asFloat64());}
+        else if (request == "set_static_transform_deg")
+            { t.rotFromRPY(in.get(6).asFloat64() * 180 / M_PI, in.get(7).asFloat64() * 180 / M_PI, in.get(8).asFloat64() * 180 / M_PI);}
         t.timestamp = yarp::os::Time::now();
         ret = m_yarp_static_transform_storage->set_transform(t);
         if (ret == true)
@@ -461,6 +492,10 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     }
     else if (request == "generate_view")
     {
+        m_show_transforms_in_diagram  = do_not_show;
+        if      (in.get(1).asString() == "show_quaternion") m_show_transforms_in_diagram = show_quaternion;
+        else if (in.get(1).asString() == "show_matrix") m_show_transforms_in_diagram = show_matrix;
+        else if (in.get(1).asString() == "show_rpy") m_show_transforms_in_diagram = show_rpy;
         generate_view();
         out.addString("ok");
     }
