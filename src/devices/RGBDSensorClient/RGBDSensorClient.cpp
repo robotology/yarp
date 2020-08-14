@@ -58,139 +58,104 @@ bool RGBDSensorClient::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if(!initialize_ROS(config) )
-    {
-        yCError(RGBDSENSORCLIENT) << sensorId << "\n\t* Error initializing ROS topic *";
-        return false;
-    }
     return true;
 }
 
 
 bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
 {
-    Bottle &rosGroup = config.findGroup("ROS");
-    if(rosGroup.isNull())
+    // Parse LOCAL port names
+    // TBD: check if user types '...' as port name, how to create RPC port names
+    if (!config.check("localImagePort", "full name of the port for streaming color image"))
     {
-        if(verbose >= 3)
-            yCInfo(RGBDSENSORCLIENT) << "RGBDSensorClient: ROS configuration parameters are not set, skipping ROS topic initialization.";
-        use_ROS  = false;
-    }
-    else
-    {
-        if(verbose >= 2)
-            yCWarning(RGBDSENSORCLIENT) << "RGBDSensorClient: ROS topic support is not yet implemented";
-        use_ROS = false;
-    }
-
-    if(!use_ROS)  // default
-    {
-        // Parse LOCAL port names
-        // TBD: check if user types '...' as port name, how to create RPC port names
-        if (!config.check("localImagePort", "full name of the port for streaming color image"))
-        {
-            yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'localImagePort' parameter. Check you configuration file; it must be like:";
-            yCError(RGBDSENSORCLIENT) << "   localImagePort:         Full name of the local port to open, e.g. /myApp/image_camera";
-            return false;
-        }
-        else
-        {
-            local_colorFrame_StreamingPort_name  = config.find("localImagePort").asString();
-        }
-
-        if (!config.check("localDepthPort", "full name of the port for streaming depth image"))
-        {
-            yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'localDepthPort' parameter. Check you configuration file; it must be like:";
-            yCError(RGBDSENSORCLIENT) << "   localDepthPort:         Full name of the local port to open, e.g. /myApp/depth_camera";
-            return false;
-        }
-        else
-        {
-            local_depthFrame_StreamingPort_name  = config.find("localDepthPort").asString();
-        }
-
-        // Parse REMOTE port names
-        if (!config.check("remoteImagePort", "full name of the port for streaming color image"))
-        {
-            yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'remoteImagePort' parameter. Check you configuration file; it must be like:";
-            yCError(RGBDSENSORCLIENT) << "   remoteImagePort:         Full name of the port to read color images from, e.g. /robotName/image_camera";
-            return false;
-        }
-        else
-        {
-            remote_colorFrame_StreamingPort_name  = config.find("remoteImagePort").asString();
-        }
-
-        if (!config.check("remoteDepthPort", "full name of the port for streaming depth image"))
-        {
-            yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'remoteDepthPort' parameter. Check you configuration file; it must be like:";
-            yCError(RGBDSENSORCLIENT) << "   remoteDepthPort:         Full name of the port to read depth images from, e.g. /robotName/depth_camera ";
-            return false;
-        }
-        else
-        {
-            remote_depthFrame_StreamingPort_name  = config.find("remoteDepthPort").asString();
-        }
-
-        // Single RPC port
-        if (!config.check("localRpcPort", "full name of the port for streaming depth image"))
-        {
-            yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'localRpcPort' parameter. Check you configuration file; it must be like:";
-            yCError(RGBDSENSORCLIENT) << "   localRpcPort:            Full name of the local RPC port to open, e.g. /myApp/RGBD/rpc";
-            return false;
-        }
-        else
-        {
-            local_rpcPort_name  = config.find("localRpcPort").asString();
-        }
-
-        if (!config.check("remoteRpcPort", "full name of the port for streaming depth image"))
-        {
-            yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'remoteRpcPort' parameter. Check you configuration file; it must be like:";
-            yCError(RGBDSENSORCLIENT) << "   remoteRpcPort:         Full name of the remote RPC port, e.g. /robotName/RGBD/rpc";
-            return false;
-        }
-        else
-        {
-            remote_rpcPort_name  = config.find("remoteRpcPort").asString();
-        }
-
-        image_carrier_type = "udp";
-        depth_carrier_type = "udp";
-
-        if (config.check("ImageCarrier", "carrier for the image stream"))
-        {
-            image_carrier_type = config.find("ImageCarrier").asString();
-        }
-
-        if (config.check("DepthCarrier", "carrier for the depth tream"))
-        {
-            depth_carrier_type = config.find("DepthCarrier").asString();
-        }
-
-        /*
-            * When using multiple RPC ports
-            *
-             local_colorFrame_rpcPort_Name =  local_colorFrame_StreamingPort_Name + "/rpc:i";
-            remote_colorFrame_rpcPort_Name = remote_colorFrame_StreamingPort_Name + "/rpc:i";
-             local_depthFrame_rpcPort_Name =  local_depthFrame_StreamingPort_Name + "/rpc:i";
-            remote_depthFrame_rpcPort_Name = remote_depthFrame_StreamingPort_Name + "/rpc:i";
-
-        */
-    }
-
-    yarp::os::Bottle &ROS_parameters = config.findGroup("ROS");
-    if(!ROS_parameters.isNull())
-    {
-        if(verbose >= 5)
-            yCInfo(RGBDSENSORCLIENT) << "RGBDSensorClient: found 'ROS' group in config file, parsing ROS specific parameters.";
+        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'localImagePort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "   localImagePort:         Full name of the local port to open, e.g. /myApp/image_camera";
         return false;
     }
     else
     {
-        if(verbose >= 5)
-            yCInfo(RGBDSENSORCLIENT) << "RGBDSensorClient: 'ROS' group was NOT found in config file, skipping ROS specific parameters.";
+        local_colorFrame_StreamingPort_name  = config.find("localImagePort").asString();
     }
+
+    if (!config.check("localDepthPort", "full name of the port for streaming depth image"))
+    {
+        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'localDepthPort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "   localDepthPort:         Full name of the local port to open, e.g. /myApp/depth_camera";
+        return false;
+    }
+    else
+    {
+        local_depthFrame_StreamingPort_name  = config.find("localDepthPort").asString();
+    }
+
+    // Parse REMOTE port names
+    if (!config.check("remoteImagePort", "full name of the port for streaming color image"))
+    {
+        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'remoteImagePort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "   remoteImagePort:         Full name of the port to read color images from, e.g. /robotName/image_camera";
+        return false;
+    }
+    else
+    {
+        remote_colorFrame_StreamingPort_name  = config.find("remoteImagePort").asString();
+    }
+
+    if (!config.check("remoteDepthPort", "full name of the port for streaming depth image"))
+    {
+        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'remoteDepthPort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "   remoteDepthPort:         Full name of the port to read depth images from, e.g. /robotName/depth_camera ";
+        return false;
+    }
+    else
+    {
+        remote_depthFrame_StreamingPort_name  = config.find("remoteDepthPort").asString();
+    }
+
+    // Single RPC port
+    if (!config.check("localRpcPort", "full name of the port for streaming depth image"))
+    {
+        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'localRpcPort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "   localRpcPort:            Full name of the local RPC port to open, e.g. /myApp/RGBD/rpc";
+        return false;
+    }
+    else
+    {
+        local_rpcPort_name  = config.find("localRpcPort").asString();
+    }
+
+    if (!config.check("remoteRpcPort", "full name of the port for streaming depth image"))
+    {
+        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'remoteRpcPort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "   remoteRpcPort:         Full name of the remote RPC port, e.g. /robotName/RGBD/rpc";
+        return false;
+    }
+    else
+    {
+        remote_rpcPort_name  = config.find("remoteRpcPort").asString();
+    }
+
+    image_carrier_type = "udp";
+    depth_carrier_type = "udp";
+
+    if (config.check("ImageCarrier", "carrier for the image stream"))
+    {
+        image_carrier_type = config.find("ImageCarrier").asString();
+    }
+
+    if (config.check("DepthCarrier", "carrier for the depth tream"))
+    {
+        depth_carrier_type = config.find("DepthCarrier").asString();
+    }
+
+    /*
+        * When using multiple RPC ports
+        *
+            local_colorFrame_rpcPort_Name =  local_colorFrame_StreamingPort_Name + "/rpc:i";
+        remote_colorFrame_rpcPort_Name = remote_colorFrame_StreamingPort_Name + "/rpc:i";
+            local_depthFrame_rpcPort_Name =  local_depthFrame_StreamingPort_Name + "/rpc:i";
+        remote_depthFrame_rpcPort_Name = remote_depthFrame_StreamingPort_Name + "/rpc:i";
+
+    */
 
     return true;
 }
@@ -292,16 +257,6 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
 
     streamingReader->attach(&colorFrame_StreamingPort, &depthFrame_StreamingPort);
 
-    return true;
-}
-
-bool RGBDSensorClient::initialize_ROS(yarp::os::Searchable &config)
-{
-    if(use_ROS)
-    {
-        yCError(RGBDSENSORCLIENT) << sensorId << "ROS topic is not supported yet";
-        return false;
-    }
     return true;
 }
 
