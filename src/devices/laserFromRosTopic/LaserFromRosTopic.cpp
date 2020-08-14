@@ -291,6 +291,7 @@ bool LaserFromRosTopic::close()
     {
         it->close();
     }
+    if (m_ros_node) { delete m_ros_node; m_ros_node = nullptr; }
 
     yCInfo(LASER_FROM_ROS_TOPIC) << "LaserFromRosTopic closed";
     return true;
