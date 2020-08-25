@@ -6,8 +6,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-//yarpdev --device RGBDSensorWrapper --name /wrapper --subdevice RGBDFromRosTopic
-
 #include <cmath>
 #include <algorithm>
 #include <iomanip>
@@ -197,24 +195,14 @@ bool colorImageInputProcessor::getIntrinsicParam(yarp::os::Property& intrinsic) 
     return false;
 }
 
-RGBDFromRosTopic::RGBDFromRosTopic() : m_paramParser(), m_verbose(false),
-                                       m_initialized(false), m_fps(0)
+RGBDFromRosTopic::RGBDFromRosTopic() : m_verbose(false),
+                                       m_initialized(false)
 {
-    // realsense SDK already provides them
-    m_paramParser.depthIntrinsic.isOptional = true;
-    m_paramParser.rgbIntrinsic.isOptional   = true;
-    m_paramParser.isOptionalExtrinsic       = true;
 }
 
 bool RGBDFromRosTopic::open(Searchable& config)
 {
     m_verbose = config.check("verbose");
-
-    /*if (!m_paramParser.parseParam(config, params))
-    {
-        yCError(RGBD_ROS_TOPIC) << "Failed to parse the parameters";
-        return false;
-    }*/
 
     m_ros_node = new yarp::os::Node("/RGBDFromRosTopicNode");
     m_rgb_topic_name = "/camera/color/image_raw";
@@ -410,6 +398,7 @@ std::string RGBDFromRosTopic::getLastErrorMsg(Stamp* timeStamp)
 }
 
 /*
+//IFrameGrabberControls
 bool RGBDFromRosTopic::getCameraDescription(CameraDescriptor* camera)
 {
     camera->deviceDescription = "Ros Camera";
