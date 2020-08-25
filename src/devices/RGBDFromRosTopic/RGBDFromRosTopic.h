@@ -49,61 +49,61 @@
  * | Parameter name               | SubParameter        | Type                | Units          | Default Value                | Required                         | Description                                                                            | Notes                                                                 |
  * |:----------------------------:|:-------------------:|:-------------------:|:--------------:|:----------------------------:|:--------------------------------:|:--------------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
  * |  verbose                     |      -              | bool                | -              |   false                      |  No                              | Flag for enabling debug prints                                                         |         |
- * |  rgb_topic                   |      -              | string              | -              | /camera/color/image_raw      |  No                              | ROS topic to which the device connects to                                              |         |
- * |  depth_topic                 |      -              | string              | -              | /camera/depth/image_rect_raw |  No                              | ROS topic to which the device connects to                                              |         |
+ * |  rgb_data_topic              |      -              | string              | -              | /camera/color/image_raw      |  No                              | The device connects to this ROS topic to get RGB data                                  |         |
+ * |  depth_data_topic            |      -              | string              | -              | /camera/depth/image_rect_raw |  No                              | The device connects to this ROS topic to get Depth dat                                 |         |
+ * |  rgb_info_topic              |      -              | string              | -              | /camera/color/camera_info    |  No                              | The device connects to this ROS topic to get RGB info/parameters                       |         |
+ * |  depth_info_topic            |      -              | string              | -              | /camera/depth/camera_info    |  No                              | The device connects to this ROS topic to get Depth info/parameters                     |         |
  *
- * Configuration file using .ini format, for using as RGBD device:
+ * Example of configuration file using .ini format.
  *
  * \code{.unparsed}
-
-device       RGBDSensorWrapper
-subdevice    RGBDFromRosTopic
-
+ * device       RGBDSensorWrapper
+ * subdevice    RGBDFromRosTopic
+ * period 30
+ * name /ROSsensor
+ * \endcode
  */
-
-class colorImageInputProcessor :
-    public yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::Image>
-{
-    std::mutex             m_port_mutex;
-    yarp::sig::FlexImage   m_lastRGBImage;
-    yarp::os::Stamp        m_lastStamp;
-    bool                   m_contains_data;
-    yarp::os::Subscriber <yarp::rosmsg::sensor_msgs::CameraInfo> m_subscriber_camera_info;
-    yarp::rosmsg::sensor_msgs::CameraInfo m_lastCameraInfo;
-
-public:
-    colorImageInputProcessor();
-    using yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::Image>::onRead;
-    virtual void onRead(yarp::rosmsg::sensor_msgs::Image& v) override;
-    void getLastData(yarp::sig::FlexImage& data, yarp::os::Stamp& stmp);
-    size_t getWidth() const;
-    size_t getHeight() const;
-    bool getFOV(double& horizontalFov, double& verticalFov) const;
-    bool getIntrinsicParam(yarp::os::Property& intrinsic) const;
-};
 
 typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
 
-class depthImageInputProcessor : public yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::Image>
+class commonImageProcessor:
+    public yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::Image>
 {
-    std::mutex             m_port_mutex;
-    yarp::sig::ImageOf<yarp::sig::PixelFloat>   m_lastDepthImage;
-    yarp::os::Stamp        m_lastStamp;
-    bool                   m_contains_data;
-    yarp::os::Subscriber <yarp::rosmsg::sensor_msgs::CameraInfo> m_subscriber_camera_info;
-    yarp::rosmsg::sensor_msgs::CameraInfo m_lastCameraInfo;
+    protected:
+    union
+    {
+        yarp::sig::FlexImage   m_lastRGBImage;
+        depthImage             m_lastDepthImage;
+    };
 
-public:
-    depthImageInputProcessor();
+    protected:
+    std::mutex             m_port_mutex;
+    mutable yarp::os::Subscriber   <yarp::rosmsg::sensor_msgs::CameraInfo> m_subscriber_camera_info;
+    std::string            m_cameradata_topic_name;
+    std::string            m_camerainfo_topic_name;
+    mutable yarp::rosmsg::sensor_msgs::CameraInfo m_lastCameraInfo;
+    yarp::os::Stamp        m_lastStamp;
+    bool                   m_contains_rgb_data;
+    bool                   m_contains_depth_data;
+
+    public:
+    commonImageProcessor (std::string data_topic_name, std::string camera_info_topic_name);
+    virtual ~commonImageProcessor();
     using yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::Image>::onRead;
     virtual void onRead(yarp::rosmsg::sensor_msgs::Image& v) override;
-    void getLastData(depthImage& data, yarp::os::Stamp& stmp);
+
+    public:
     size_t getWidth() const;
     size_t getHeight() const;
     bool getFOV(double& horizontalFov, double& verticalFov) const;
     bool getIntrinsicParam(yarp::os::Property& intrinsic) const;
+
+    public:
+    void getLastData(yarp::sig::FlexImage& data, yarp::os::Stamp& stmp);
+    void getLastData(yarp::sig::ImageOf<yarp::sig::PixelFloat>& data, yarp::os::Stamp& stmp);
 };
 
+//---------------------------------------------------------------------------------------
 class RGBDFromRosTopic :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IRGBDSensor
@@ -177,10 +177,12 @@ public:
     // ros-topic related
     mutable std::mutex m_mutex;
     yarp::os::Node* m_ros_node = nullptr;
-    colorImageInputProcessor    m_rgb_input_processor;
-    depthImageInputProcessor    m_depth_input_processor;
-    std::string m_rgb_topic_name;
-    std::string m_depth_topic_name;
+    commonImageProcessor*   m_rgb_input_processor = nullptr;
+    commonImageProcessor*   m_depth_input_processor = nullptr;
+    std::string m_rgb_data_topic_name;
+    std::string m_depth_data_topic_name;
+    std::string m_rgb_info_topic_name;
+    std::string m_depth_info_topic_name;
 
     yarp::os::Stamp m_rgb_stamp;
     yarp::os::Stamp m_depth_stamp;
