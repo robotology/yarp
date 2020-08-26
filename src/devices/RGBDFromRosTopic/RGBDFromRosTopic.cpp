@@ -49,36 +49,42 @@ commonImageProcessor::~commonImageProcessor()
     m_subscriber_camera_info.close();
 }
 
-void commonImageProcessor::getLastData(yarp::sig::FlexImage& data, yarp::os::Stamp& stmp)
+bool commonImageProcessor::getLastRGBData(yarp::sig::FlexImage& data, yarp::os::Stamp& stmp)
 {
+    if (m_contains_rgb_data == false) { return false;}
+
     //this blocks untils the first data is received;
-    size_t counter = 0;
+    /*size_t counter = 0;    
     while (m_contains_rgb_data == false)
     {
         yarp::os::Time::delay(0.1);
-        if (counter++ > 100) { yCDebug(RGBD_ROS_TOPIC) << "Waiting for incoming data..."; counter = 0; }
-    }
+        if (counter++ > 100) { yCDebug(RGBD_ROS_TOPIC) << "Waiting for incoming rgb data..."; counter = 0; }
+    }*/
 
     m_port_mutex.lock();
     data = m_lastRGBImage;
     stmp = m_lastStamp;
     m_port_mutex.unlock();
+    return true;
 }
 
-void commonImageProcessor::getLastData(yarp::sig::ImageOf<yarp::sig::PixelFloat>& data, yarp::os::Stamp& stmp)
+bool commonImageProcessor::getLastDepthData(yarp::sig::ImageOf<yarp::sig::PixelFloat>& data, yarp::os::Stamp& stmp)
 {
-    //this blocks untils the first data is received;
-    size_t counter = 0;
+    if (m_contains_depth_data == false) { return false;}
+
+    //this blocks untils the first data is received;        
+    /*size_t counter = 0;
     while (m_contains_depth_data == false)
     {
         yarp::os::Time::delay(0.1);
-        if (counter++ > 100) { yCDebug(RGBD_ROS_TOPIC) << "Waiting for incoming data..."; counter = 0; }
-    }
+        if (counter++ > 100) { yCDebug(RGBD_ROS_TOPIC) << "Waiting for incoming depth data..."; counter = 0; }
+    }*/
 
     m_port_mutex.lock();
     data = m_lastDepthImage;
     stmp = m_lastStamp;
     m_port_mutex.unlock();
+    return true;
 }
 
 size_t commonImageProcessor::getWidth() const
@@ -319,6 +325,11 @@ bool RGBDFromRosTopic::setRgbMirroring(bool mirror)
 
 bool RGBDFromRosTopic::getRgbIntrinsicParam(Property& intrinsic)
 {
+    if (m_rgb_input_processor == nullptr)
+    {
+        intrinsic.clear();
+        return  true;
+    }
     return m_rgb_input_processor->getIntrinsicParam(intrinsic);
 }
 
@@ -401,7 +412,7 @@ bool RGBDFromRosTopic::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     if (m_rgb_input_processor!=nullptr)
-        m_rgb_input_processor->getLastData(rgbImage, *timeStamp);
+        bool rgb_ok = m_rgb_input_processor->getLastRGBData(rgbImage, *timeStamp);
     return true;
 }
 
@@ -409,17 +420,19 @@ bool RGBDFromRosTopic::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* tim
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     if (m_depth_input_processor != nullptr)
-        m_depth_input_processor->getLastData(depthImage, *timeStamp);
+        bool depth_ok = m_depth_input_processor->getLastDepthData(depthImage, *timeStamp);
     return true;
 }
 
 bool RGBDFromRosTopic::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
 {
+    bool rgb_ok = false;
+    bool depth_ok = false;
     std::lock_guard<std::mutex> guard(m_mutex);
     if (m_rgb_input_processor != nullptr)
-        m_rgb_input_processor->getLastData(colorFrame, *colorStamp);
+        rgb_ok = m_rgb_input_processor->getLastRGBData(colorFrame, *colorStamp);
     if (m_depth_input_processor != nullptr)
-        m_depth_input_processor->getLastData(depthFrame, *depthStamp);
+        depth_ok = m_depth_input_processor->getLastDepthData(depthFrame, *depthStamp);
     return true;
 }
 

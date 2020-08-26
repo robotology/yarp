@@ -806,79 +806,86 @@ bool RGBDSensorWrapper::writeData()
 
     static Stamp oldColorStamp = Stamp(0, 0);
     static Stamp oldDepthStamp = Stamp(0, 0);
+    bool rgb_data_ok = true;
+    bool depth_data_ok = true;
 
     if (((colorStamp.getTime() - oldColorStamp.getTime()) > 0) == false)
     {
-        return true;
+        rgb_data_ok=false;
+        //return true;
     }
+    else { oldColorStamp = colorStamp; }
 
     if (((depthStamp.getTime() - oldDepthStamp.getTime()) > 0) == false)
     {
-        return true;
+        depth_data_ok=false;
+        //return true;
     }
-    oldDepthStamp = depthStamp;
-    oldColorStamp = colorStamp;
+    else { oldDepthStamp = depthStamp; }
+   
 
     if (use_YARP)
     {
-        FlexImage& yColorImage           = colorFrame_StreamingPort.prepare();
-        ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
-
-        shallowCopyImages(colorImage, yColorImage);
-        shallowCopyImages(depthImage, yDepthImage);
         // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
-
-        colorFrame_StreamingPort.setEnvelope(colorStamp);
-        colorFrame_StreamingPort.write();
-
-        depthFrame_StreamingPort.setEnvelope(depthStamp);
-        depthFrame_StreamingPort.write();
-
+        if (rgb_data_ok)
+        {
+            FlexImage& yColorImage = colorFrame_StreamingPort.prepare();
+            shallowCopyImages(colorImage, yColorImage);
+            colorFrame_StreamingPort.setEnvelope(colorStamp);
+            colorFrame_StreamingPort.write();
+        }
+        if (depth_data_ok)
+        {
+            ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
+            shallowCopyImages(depthImage, yDepthImage);      
+            depthFrame_StreamingPort.setEnvelope(depthStamp);
+            depthFrame_StreamingPort.write();
+        }
     }
     if (use_ROS)
     {
-        yarp::rosmsg::sensor_msgs::Image&      rColorImage     = rosPublisherPort_color.prepare();
-        yarp::rosmsg::sensor_msgs::Image&      rDepthImage     = rosPublisherPort_depth.prepare();
-        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoC        = rosPublisherPort_colorCaminfo.prepare();
-        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
-        yarp::rosmsg::TickTime                 cRosStamp, dRosStamp;
-
-        cRosStamp = colorStamp.getTime();
-        dRosStamp = depthStamp.getTime();
-
-        deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
-        deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);
         // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
-
-        rosPublisherPort_color.setEnvelope(colorStamp);
-        rosPublisherPort_color.write();
-
-        rosPublisherPort_depth.setEnvelope(depthStamp);
-        rosPublisherPort_depth.write();
-
-        if (setCamInfo(camInfoC, rosFrameId, nodeSeq, COLOR_SENSOR))
+        if (rgb_data_ok)
         {
-            if(forceInfoSync)
-              camInfoC.header.stamp = rColorImage.header.stamp;
-            rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
-            rosPublisherPort_colorCaminfo.write();
+            yarp::rosmsg::sensor_msgs::Image&      rColorImage     = rosPublisherPort_color.prepare();
+            yarp::rosmsg::sensor_msgs::CameraInfo& camInfoC        = rosPublisherPort_colorCaminfo.prepare();
+            yarp::rosmsg::TickTime                 cRosStamp       = colorStamp.getTime();
+            deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
+            rosPublisherPort_color.setEnvelope(colorStamp);
+            rosPublisherPort_color.write();
+            if (setCamInfo(camInfoC, rosFrameId, nodeSeq, COLOR_SENSOR))
+            {
+                if(forceInfoSync)
+                    {camInfoC.header.stamp = rColorImage.header.stamp;}
+                rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
+                rosPublisherPort_colorCaminfo.write();
+            }
+            else
+            {
+                yCWarning(RGBDSENSORWRAPPER, "missing color camera parameters... camera info messages will be not sended");
+            }
         }
-        else
+        if (depth_data_ok)
         {
-            yCWarning(RGBDSENSORWRAPPER, "missing color camera parameters... camera info messages will be not sended");
+            yarp::rosmsg::sensor_msgs::Image&      rDepthImage     = rosPublisherPort_depth.prepare();
+            yarp::rosmsg::sensor_msgs::CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
+            yarp::rosmsg::TickTime                 dRosStamp       = depthStamp.getTime();
+            deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);
+            rosPublisherPort_depth.setEnvelope(depthStamp);
+            rosPublisherPort_depth.write();
+            if (setCamInfo(camInfoD, rosFrameId, nodeSeq, DEPTH_SENSOR))
+            {
+                if(forceInfoSync)
+                    {camInfoD.header.stamp = rDepthImage.header.stamp;}
+                rosPublisherPort_depthCaminfo.setEnvelope(depthStamp);
+                rosPublisherPort_depthCaminfo.write();
+            }
+            else
+            {
+                yCWarning(RGBDSENSORWRAPPER, "missing depth camera parameters... camera info messages will be not sended");
+            }
         }
-        if (setCamInfo(camInfoD, rosFrameId, nodeSeq, DEPTH_SENSOR))
-        {
-            if(forceInfoSync)
-                camInfoD.header.stamp = rDepthImage.header.stamp;
-            rosPublisherPort_depthCaminfo.setEnvelope(depthStamp);
-            rosPublisherPort_depthCaminfo.write();
-        }
-        else
-        {
-            yCWarning(RGBDSENSORWRAPPER, "missing depth camera parameters... camera info messages will be not sended");
-        }
-
+        
         nodeSeq++;
     }
     return true;

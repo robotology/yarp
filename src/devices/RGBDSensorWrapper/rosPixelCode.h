@@ -131,7 +131,7 @@ int Ros2YarpPixelCode(std::string roscode)
     else if (roscode == TYPE_32FC1)
         return VOCAB_PIXEL_MONO_FLOAT;
     else
-        return VOCAB_PIXEL_RGB;
+        return VOCAB_PIXEL_INVALID;
 }
 
 }}}

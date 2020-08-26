@@ -34,7 +34,7 @@
 /**
  *  @ingroup dev_impl_media
  *
- * @brief `RGBDFromRosTopic` : is a driver for a virtual RGBD device: the data is not originated from a physical sensor but from a ROS topic.
+ * @brief `RGBDFromRosTopic` is a driver for a virtual RGBD device: the data is not originated from a physical sensor but from a ROS topic.
  *
  * This device driver exposes the IRGBDSensor interface to read the images published by a ROS node.
  * See the documentation for more details about each interface.
@@ -70,11 +70,8 @@ class commonImageProcessor:
     public yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::Image>
 {
     protected:
-    union
-    {
-        yarp::sig::FlexImage   m_lastRGBImage;
-        depthImage             m_lastDepthImage;
-    };
+    yarp::sig::FlexImage   m_lastRGBImage;
+    depthImage             m_lastDepthImage;
 
     protected:
     std::mutex             m_port_mutex;
@@ -99,8 +96,8 @@ class commonImageProcessor:
     bool getIntrinsicParam(yarp::os::Property& intrinsic) const;
 
     public:
-    void getLastData(yarp::sig::FlexImage& data, yarp::os::Stamp& stmp);
-    void getLastData(yarp::sig::ImageOf<yarp::sig::PixelFloat>& data, yarp::os::Stamp& stmp);
+    bool getLastRGBData(yarp::sig::FlexImage& data, yarp::os::Stamp& stmp);
+    bool getLastDepthData(yarp::sig::ImageOf<yarp::sig::PixelFloat>& data, yarp::os::Stamp& stmp);
 };
 
 //---------------------------------------------------------------------------------------
@@ -145,7 +142,6 @@ public:
     bool   setDepthClipPlanes(double nearPlane, double farPlane) override;
     bool   getDepthMirroring(bool& mirror) override;
     bool   setDepthMirroring(bool mirror) override;
-
 
     bool   getExtrinsicParam(yarp::sig::Matrix &extrinsic) override;
     bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = nullptr) override;
