@@ -4,6 +4,8 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+message("BBB Included")
+
 yarp_prepare_plugin(RGBDFromRosTopic
                     CATEGORY device
                     TYPE RGBDFromRosTopic
@@ -15,6 +17,9 @@ if(NOT SKIP_RGBDFromRosTopic)
 
   target_sources(yarp_RGBDFromRosTopic PRIVATE RGBDFromRosTopic.cpp
                                          RGBDFromRosTopic.h)
+  target_sources(yarp_RGBDFromRosTopic PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
+
+  target_include_directories(yarp_RGBDFromRosTopic PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_RGBDFromRosTopic PRIVATE YARP::YARP_os
                                                 YARP::YARP_sig
@@ -24,7 +29,8 @@ if(NOT SKIP_RGBDFromRosTopic)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
-                                                      YARP_rosmsg)
+                                                      YARP_rosmsg
+                                                      RGBDRosConversionUtils)
 
   target_link_libraries(yarp_RGBDFromRosTopic PRIVATE )
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS )

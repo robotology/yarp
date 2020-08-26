@@ -71,6 +71,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(AnalogSensorClient)
   add_subdirectory(AnalogWrapper)
   add_subdirectory(VirtualAnalogWrapper)
+  add_subdirectory(RGBDRosConversionUtils)
   add_subdirectory(RGBDSensorClient)
   add_subdirectory(ServerInertial)
   add_subdirectory(RGBDSensorWrapper)
