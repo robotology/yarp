@@ -824,6 +824,11 @@ matrix:
       env:
         - TRAVIS_CMAKE_GENERATOR="Ninja"
 
+    - stage: test
+      <<: *linux_gcc_build_template
+      name: "Standard build on s390x architecture (big endian) (linux, gcc)"
+      arch: s390x
+
     - stage: test-long
       <<: *linux_gcc_build_template
       name: "Standard build with valgrind (linux, gcc) - bindings, failing tests and examples as tests disabled"
@@ -988,6 +993,7 @@ matrix:
 #        - *print_cmake_flags_cmd
 #        - *run_cmake_cmd
 #        - *print_cmake_cache_cmd
-#
-#  allow_failure:
+
+  allow_failures:
+    - arch: s390x
 #    - name: "Standard build with broken tests (linux, gcc)"
