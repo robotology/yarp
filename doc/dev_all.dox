@@ -1,5 +1,5 @@
 /**
-\defgroup dev_all Devices
+\page YarpDevicesPage Yarp Devices
 
 Dealing with devices. What do you need to know to use devices in
 YARP?  First, we try to write our devices so that they implement a
@@ -15,8 +15,8 @@ you need to set up at the beginning.  This process of
 to make it easy to control it via external command line switches
 or configuration files.
 
-Under normal use, YARP devices are started from the
-\link dev_runtime commandline\endlink.
+YARP devices can be started from the \link dev_runtime commandline\endlink,
+via yarprobotinterface or from c++ code.
 
 */
 
@@ -173,7 +173,33 @@ yarp::dev::IAudioGrabberSound, etc.
 
 These are devices that expose sensor that can be efficiently expressed as vector of
 real numbers, so-called "analog" sensors, such as gyroscope, accelerometers, force-torque sensors.
+*/
 
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_lidar Lidar Devices
+
+Lidars and similar range measurement devices.
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_navigation Navigation Devices
+
+Virtual devices to perform navigation tasks.
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_fake Fake/test Devices
+
+Devices using for testing purposes.
 */
 
 
@@ -186,7 +212,8 @@ Miscellaneous device implementations.
 */
 
 
-/**
+/*!
+///The following block has been deprecated
 \ingroup dev_all
 
 \defgroup dev_runtime Command-line Accessible Devices

@@ -41,7 +41,11 @@ using namespace yarp::dev;
 typedef unsigned char byte;
 
 //---------------------------------------------------------------------------------------------------------------
-
+/**
+ * @ingroup dev_impl_lidar
+ *
+ * Documentation to be added
+ */
 class RpLidar2 : public PeriodicThread, public yarp::dev::Lidar2DDeviceBase, public DeviceDriver
 {
     typedef rp::standalone::rplidar::RPlidarDriver rplidardrv;

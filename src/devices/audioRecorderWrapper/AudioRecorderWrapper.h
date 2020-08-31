@@ -35,7 +35,11 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Log.h>
 
-
+/**
+* @ingroup dev_impl_wrapper
+*
+* Documentation to be added
+*/
 class AudioRecorderWrapper :
         public yarp::dev::DeviceDriver,
         private yarp::os::PeriodicThread,

@@ -34,7 +34,7 @@
 
 
 /**
- * @ingroup dev_impl_network_clients
+ * @ingroup dev_impl_network_clients dev_impl_navigation
  *
  * \section Map2DClient
  * A device which allows a client application to store/retrieve user maps device in a map server.

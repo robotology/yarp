@@ -42,8 +42,10 @@
 #include <yarp/rosmsg/sensor_msgs/JointState.h>
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 
-
 #define DEFAULT_THREAD_PERIOD 20 //ms
+
+class AnalogServerHandler;
+class AnalogPortEntry;
 
 /**
  *  @ingroup dev_impl_wrapper
@@ -181,11 +183,6 @@
  * </group>
  * \endcode
  * */
-
-
-class AnalogServerHandler;
-class AnalogPortEntry;
-
 
 class AnalogWrapper :
         public yarp::os::PeriodicThread,

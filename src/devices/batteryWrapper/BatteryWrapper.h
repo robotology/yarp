@@ -43,6 +43,8 @@
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/api.h>
 
+#define DEFAULT_THREAD_PERIOD 0.02 //s
+
  /**
  *  @ingroup dev_impl_wrapper
  *
@@ -95,10 +97,6 @@
  *  </device>
  * \endcode
  * */
-
-
-#define DEFAULT_THREAD_PERIOD 0.02 //s
-
 class BatteryWrapper :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,

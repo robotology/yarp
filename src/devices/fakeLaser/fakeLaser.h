@@ -26,7 +26,7 @@
 #include <string>
 
 /**
-* @ingroup dev_impl_media
+* @ingroup dev_impl_fake dev_impl_lidar
 *
 * @brief `fakeLaser` : fake sensor device driver for testing purposes and reference for IRangefinder2D devices.
 *

@@ -37,7 +37,7 @@
 
 
 /**
- *  @ingroup dev_impl_network_clients
+ *  @ingroup dev_impl_network_clients dev_impl_navigation
  *
  * \section Localization2DClient
  * A device which allows a user application retrieve the current position of the robot in the world.
@@ -48,7 +48,6 @@
  * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Localization2DClient device.                             |       |
  * | remote         |      -         | string  | -   |   -           | Yes          | Full port name of the port opened on the server side, to which the Localization2DClient connects to.                           | E.g.(https://github.com/robotology/navigation/src/localizationServer)    |
  */
-
 class Localization2DClient :
         public yarp::dev::DeviceDriver,
         public yarp::dev::Nav2D::ILocalization2D

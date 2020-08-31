@@ -80,10 +80,8 @@ public:
 
 /**
 * @ingroup dev_impl_network_clients
-
 *
-* The client side of any IBattery capable device.
-* Still single thread! concurrent access is unsafe.
+* Documentation to be added
 */
 class FrameTransformClient :
         public yarp::dev::DeviceDriver,

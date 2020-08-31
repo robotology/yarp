@@ -69,6 +69,11 @@ public:
     void getLast(yarp::dev::LaserScan2D& data, yarp::os::Stamp& stmp);
 };
 
+/**
+ * @ingroup dev_impl_lidar
+ *
+ * Documentation to be added
+ */
 class LaserFromRosTopic : public yarp::dev::Lidar2DDeviceBase,
                               public yarp::os::PeriodicThread,
                               public yarp::dev::DeviceDriver

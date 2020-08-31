@@ -36,6 +36,11 @@ public:
     virtual void run() override;
 };
 
+/**
+ * @ingroup dev_impl_fake dev_impl_navigation
+ *
+ * Documentation to be added
+ */
 class fakeNavigation :
         public yarp::dev::DeviceDriver,
         public yarp::dev::Nav2D::INavigation2DTargetActions,

@@ -62,6 +62,11 @@ class streamThread :
    void handleError();
 };
 
+/**
+ * @ingroup dev_impl_media
+ *
+ * Documentation to be added
+ */
 class PortAudioDeviceDriver :
         public yarp::dev::IAudioGrabberSound,
         public yarp::dev::IAudioRender,

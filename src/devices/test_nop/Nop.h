@@ -12,7 +12,11 @@
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 
-
+/**
+* @ingroup dev_impl_other
+*
+* Documentation to be added
+*/
 class Nop :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread

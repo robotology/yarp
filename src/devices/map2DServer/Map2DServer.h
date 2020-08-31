@@ -55,7 +55,7 @@
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_wrapper dev_impl_navigation
  *
  * \section Map2DServer
  * A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.

@@ -61,6 +61,11 @@ private:
     void handleError();
 };
 
+/**
+ * @ingroup dev_impl_media
+ *
+ * Documentation to be added
+ */
 class PortAudioPlayerDeviceDriver :
         public yarp::dev::IAudioRender,
         public yarp::dev::DeviceDriver

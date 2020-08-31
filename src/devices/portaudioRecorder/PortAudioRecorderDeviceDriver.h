@@ -44,6 +44,11 @@ public:
     int cfg_deviceNumber = 0;
 };
 
+/**
+ * @ingroup dev_impl_media
+ *
+ * Documentation to be added
+ */
 class PortAudioRecorderDeviceDriver :
         public yarp::dev::IAudioGrabberSound,
         public yarp::dev::DeviceDriver,

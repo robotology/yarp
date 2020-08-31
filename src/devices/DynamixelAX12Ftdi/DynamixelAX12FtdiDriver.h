@@ -134,6 +134,11 @@ public:
     unsigned int read_chunksize; // ftdi_read_data_set_chunksize(&ftdic, 256);
 };
 
+/**
+* @ingroup dev_impl_motor
+*
+* Documentation to be added
+*/
 class DynamixelAX12FtdiDriver :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IPositionControl,

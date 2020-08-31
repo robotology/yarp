@@ -31,8 +31,11 @@
 #include <yarp/dev/IPreciselyTimed.h>
 
 /**
- *  Yarp device driver implementation for acquiring images from USB cameras
- */
+* @ingroup dev_impl_media
+*
+* Yarp device driver implementation for acquiring images from USB cameras
+* Documentation to be added
+*/
 class USBCameraDriver :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IPreciselyTimed,

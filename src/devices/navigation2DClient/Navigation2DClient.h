@@ -34,7 +34,7 @@
 
 
 /**
- *  @ingroup dev_impl_network_clients
+ *  @ingroup dev_impl_network_clients dev_impl_navigation
  *
  * \section Navigation2DClient
  * A device which allows a client application to perform navigation tasks, such as commanding the robot to reach a specific location in a map.
