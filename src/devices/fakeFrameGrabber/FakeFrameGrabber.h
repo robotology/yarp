@@ -177,14 +177,4 @@ public:
     bool open(yarp::os::Searchable& config) override;
 };
 
-
-/**
- * @ingroup dev_runtime
- * \defgroup cmd_device_fakeFrameGrabber fakeFrameGrabber
-
- A fake framegrabber, see yarp::dev::FakeFrameGrabber.
-
-*/
-
-
 #endif // YARP_FAKEFRAMEGRABBER_FAKEFRAMEGRABBER_H

@@ -47,6 +47,8 @@ public:
 /**
  * @ingroup dev_impl_media
  *
+ * A portable audio source, see yarp::dev::PortAudioRecorderDeviceDriver.
+ * Requires the PortAudio library (http://www.portaudio.com), at least v19.
  * Documentation to be added
  */
 class PortAudioRecorderDeviceDriver :
@@ -108,16 +110,5 @@ protected:
     PortAudioRecorderDeviceDriverSettings m_driverConfig;
     void handleError();
 };
-
-
-/**
- * @ingroup dev_runtime
- * \defgroup cmd_device_portaudio portaudio
-
- A portable audio source, see yarp::dev::PortAudioRecorderDeviceDriver.
- Requires the PortAudio library (http://www.portaudio.com), at least v19.
-
-*/
-
 
 #endif

@@ -105,14 +105,4 @@ private:
     void close_video(AVFormatContext *oc, AVStream *st);
 };
 
-
-/**
- * @ingroup dev_runtime
- * \defgroup cmd_device_ffmpeg_writer ffmpeg_writer
-
- A wrapper for the ffmpeg library's media writing, see FfmpegWriter.
-
-*/
-
-
 #endif
