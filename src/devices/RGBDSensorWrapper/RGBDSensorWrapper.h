@@ -211,21 +211,7 @@ private:
     yarp::os::Stamp                depthStamp;
     yarp::os::Property             m_conf;
 
-    void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
-    void shallowCopyImages(const DepthImage& src, DepthImage& dest);
     bool writeData();
-    void deepCopyImages(const yarp::sig::FlexImage&       src,
-                        yarp::rosmsg::sensor_msgs::Image& dest,
-                        const std::string&                frame_id,
-                        const yarp::rosmsg::TickTime&     timeStamp,
-                        const UInt&                       seq);
-
-    void deepCopyImages(const DepthImage&                 src,
-                        yarp::rosmsg::sensor_msgs::Image& dest,
-                        const std::string&                frame_id,
-                        const yarp::rosmsg::TickTime&     timeStamp,
-                        const UInt&                       seq);
-
     bool setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo,
                     const std::string&                     frame_id,
                     const UInt&                            seq,

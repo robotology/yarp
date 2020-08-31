@@ -8,7 +8,6 @@ if(NOT YARP_COMPILE_DEVICE_PLUGINS)
   return()
 endif()
 
-message("AAA Included")
 add_library(RGBDRosConversionUtils OBJECT)
 
 target_sources(RGBDRosConversionUtils PRIVATE RGBDRosConversionUtils.cpp

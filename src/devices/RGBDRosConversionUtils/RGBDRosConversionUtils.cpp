@@ -22,7 +22,7 @@
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
-
+using namespace yarp::dev::RGBDRosConversionUtils;
 using namespace std;
 
 namespace {
@@ -55,7 +55,7 @@ bool commonImageProcessor::getLastRGBData(yarp::sig::FlexImage& data, yarp::os::
     if (m_contains_rgb_data == false) { return false;}
 
     //this blocks untils the first data is received;
-    /*size_t counter = 0;    
+    /*size_t counter = 0;
     while (m_contains_rgb_data == false)
     {
         yarp::os::Time::delay(0.1);
@@ -73,7 +73,7 @@ bool commonImageProcessor::getLastDepthData(yarp::sig::ImageOf<yarp::sig::PixelF
 {
     if (m_contains_depth_data == false) { return false;}
 
-    //this blocks untils the first data is received;        
+    //this blocks untils the first data is received;
     /*size_t counter = 0;
     while (m_contains_depth_data == false)
     {
@@ -188,4 +188,57 @@ bool commonImageProcessor::getIntrinsicParam(yarp::os::Property& intrinsic) cons
     }
     params.toProperty(intrinsic);
     return false;
+}
+
+
+void yarp::dev::RGBDRosConversionUtils::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest)
+{
+    dest.setPixelCode(src.getPixelCode());
+    dest.setQuantum(src.getQuantum());
+    dest.setExternal(src.getRawImage(), src.width(), src.height());
+}
+
+void yarp::dev::RGBDRosConversionUtils::shallowCopyImages(const ImageOf<PixelFloat>& src, ImageOf<PixelFloat>& dest)
+{
+    dest.setQuantum(src.getQuantum());
+    dest.setExternal(src.getRawImage(), src.width(), src.height());
+}
+
+void yarp::dev::RGBDRosConversionUtils::deepCopyImages(const yarp::sig::FlexImage& src,
+    yarp::rosmsg::sensor_msgs::Image& dest,
+    const string& frame_id,
+    const yarp::rosmsg::TickTime& timeStamp,
+    const unsigned int& seq)
+{
+    dest.data.resize(src.getRawImageSize());
+    dest.width = src.width();
+    dest.height = src.height();
+    memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
+    dest.encoding = yarp::dev::ROSPixelCode::yarp2RosPixelCode(src.getPixelCode());
+    dest.step = src.getRowSize();
+    dest.header.frame_id = frame_id;
+    dest.header.stamp = timeStamp;
+    dest.header.seq = seq;
+    dest.is_bigendian = 0;
+}
+
+void yarp::dev::RGBDRosConversionUtils::deepCopyImages(const DepthImage& src,
+    yarp::rosmsg::sensor_msgs::Image& dest,
+    const string& frame_id,
+    const yarp::rosmsg::TickTime& timeStamp,
+    const unsigned int& seq)
+{
+    dest.data.resize(src.getRawImageSize());
+
+    dest.width = src.width();
+    dest.height = src.height();
+
+    memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
+
+    dest.encoding = yarp::dev::ROSPixelCode::yarp2RosPixelCode(src.getPixelCode());
+    dest.step = src.getRowSize();
+    dest.header.frame_id = frame_id;
+    dest.header.stamp = timeStamp;
+    dest.header.seq = seq;
+    dest.is_bigendian = 0;
 }

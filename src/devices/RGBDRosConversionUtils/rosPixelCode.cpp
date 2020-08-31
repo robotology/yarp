@@ -86,4 +86,3 @@ int Ros2YarpPixelCode(std::string roscode)
 }
 
 }}}
-

@@ -4,24 +4,22 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-message("BBB Included")
-
-yarp_prepare_plugin(RGBDFromRosTopic
+yarp_prepare_plugin(RGBDSensorFromRosTopic
                     CATEGORY device
-                    TYPE RGBDFromRosTopic
-                    INCLUDE RGBDFromRosTopic.h
-                    EXTRA_CONFIG WRAPPER=RGBDSensorWrapper)
+                    TYPE RGBDSensorFromRosTopic
+                    INCLUDE RGBDSensorFromRosTopic.h
+                    EXTRA_CONFIG WRAPPER=RGBDSensorFromRosTopic)
 
-if(NOT SKIP_RGBDFromRosTopic)
-  yarp_add_plugin(yarp_RGBDFromRosTopic)
+if(NOT SKIP_RGBDSensorFromRosTopic)
+  yarp_add_plugin(yarp_RGBDSensorFromRosTopic)
 
-  target_sources(yarp_RGBDFromRosTopic PRIVATE RGBDFromRosTopic.cpp
-                                         RGBDFromRosTopic.h)
-  target_sources(yarp_RGBDFromRosTopic PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
+  target_sources(yarp_RGBDSensorFromRosTopic PRIVATE RGBDSensorFromRosTopic.cpp
+                                                     RGBDSensorFromRosTopic.h)
+  target_sources(yarp_RGBDSensorFromRosTopic PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
 
-  target_include_directories(yarp_RGBDFromRosTopic PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_RGBDSensorFromRosTopic PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
-  target_link_libraries(yarp_RGBDFromRosTopic PRIVATE YARP::YARP_os
+  target_link_libraries(yarp_RGBDSensorFromRosTopic PRIVATE YARP::YARP_os
                                                 YARP::YARP_sig
                                                 YARP::YARP_dev
                                                 YARP::YARP_rosmsg)
@@ -32,10 +30,10 @@ if(NOT SKIP_RGBDFromRosTopic)
                                                       YARP_rosmsg
                                                       RGBDRosConversionUtils)
 
-  target_link_libraries(yarp_RGBDFromRosTopic PRIVATE )
+  target_link_libraries(yarp_RGBDSensorFromRosTopic PRIVATE )
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS )
 
-  yarp_install(TARGETS yarp_RGBDFromRosTopic
+  yarp_install(TARGETS yarp_RGBDSensorFromRosTopic
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -44,5 +42,5 @@ if(NOT SKIP_RGBDFromRosTopic)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_RGBDFromRosTopic PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_RGBDSensorFromRosTopic PROPERTY FOLDER "Plugins/Device")
 endif()

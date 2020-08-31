@@ -15,6 +15,7 @@
 #include <yarp/dev/GenericVocabs.h>
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 #include "rosPixelCode.h"
+#include <RGBDRosConversionUtils.h>
 
 using namespace RGBDImpl;
 using namespace yarp::sig;
@@ -226,7 +227,7 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
     }
 
     // check if we need to create subdevice or if they are
-    // passed later on thorugh attachAll()
+    // passed later on through attachAll()
     if(isSubdeviceOwned)
     {
         if(! openAndAttachSubDevice(config))
@@ -627,60 +628,6 @@ void RGBDSensorWrapper::threadRelease()
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
-void RGBDSensorWrapper::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest)
-{
-    dest.setPixelCode(src.getPixelCode());
-    dest.setQuantum(src.getQuantum());
-    dest.setExternal(src.getRawImage(), src.width(), src.height());
-}
-
-void RGBDSensorWrapper::shallowCopyImages(const ImageOf<PixelFloat>& src, ImageOf<PixelFloat>& dest)
-{
-    dest.setQuantum(src.getQuantum());
-    dest.setExternal(src.getRawImage(), src.width(), src.height());
-}
-
-
-
-void RGBDSensorWrapper::deepCopyImages(const yarp::sig::FlexImage&       src,
-                                       yarp::rosmsg::sensor_msgs::Image& dest,
-                                       const string&                     frame_id,
-                                       const yarp::rosmsg::TickTime&     timeStamp,
-                                       const UInt&                       seq)
-{
-    dest.data.resize(src.getRawImageSize());
-    dest.width           = src.width();
-    dest.height          = src.height();
-    memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
-    dest.encoding        = yarp::dev::ROSPixelCode::yarp2RosPixelCode(src.getPixelCode());
-    dest.step            = src.getRowSize();
-    dest.header.frame_id = frame_id;
-    dest.header.stamp    = timeStamp;
-    dest.header.seq      = seq;
-    dest.is_bigendian    = 0;
-}
-
-void RGBDSensorWrapper::deepCopyImages(const DepthImage&                 src,
-                                       yarp::rosmsg::sensor_msgs::Image& dest,
-                                       const string&                     frame_id,
-                                       const yarp::rosmsg::TickTime&     timeStamp,
-                                       const UInt&                       seq)
-{
-    dest.data.resize(src.getRawImageSize());
-
-    dest.width           = src.width();
-    dest.height          = src.height();
-
-    memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
-
-    dest.encoding        = yarp::dev::ROSPixelCode::yarp2RosPixelCode(src.getPixelCode());
-    dest.step            = src.getRowSize();
-    dest.header.frame_id = frame_id;
-    dest.header.stamp    = timeStamp;
-    dest.header.seq      = seq;
-    dest.is_bigendian    = 0;
-}
-
 bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
     double phyF = 0.0;
@@ -822,7 +769,7 @@ bool RGBDSensorWrapper::writeData()
         //return true;
     }
     else { oldDepthStamp = depthStamp; }
-   
+
 
     if (use_YARP)
     {
@@ -830,14 +777,14 @@ bool RGBDSensorWrapper::writeData()
         if (rgb_data_ok)
         {
             FlexImage& yColorImage = colorFrame_StreamingPort.prepare();
-            shallowCopyImages(colorImage, yColorImage);
+            yarp::dev::RGBDRosConversionUtils::shallowCopyImages(colorImage, yColorImage);
             colorFrame_StreamingPort.setEnvelope(colorStamp);
             colorFrame_StreamingPort.write();
         }
         if (depth_data_ok)
         {
             ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
-            shallowCopyImages(depthImage, yDepthImage);      
+            yarp::dev::RGBDRosConversionUtils::shallowCopyImages(depthImage, yDepthImage);
             depthFrame_StreamingPort.setEnvelope(depthStamp);
             depthFrame_StreamingPort.write();
         }
@@ -850,7 +797,7 @@ bool RGBDSensorWrapper::writeData()
             yarp::rosmsg::sensor_msgs::Image&      rColorImage     = rosPublisherPort_color.prepare();
             yarp::rosmsg::sensor_msgs::CameraInfo& camInfoC        = rosPublisherPort_colorCaminfo.prepare();
             yarp::rosmsg::TickTime                 cRosStamp       = colorStamp.getTime();
-            deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
+            yarp::dev::RGBDRosConversionUtils::deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
             rosPublisherPort_color.setEnvelope(colorStamp);
             rosPublisherPort_color.write();
             if (setCamInfo(camInfoC, rosFrameId, nodeSeq, COLOR_SENSOR))
@@ -862,7 +809,7 @@ bool RGBDSensorWrapper::writeData()
             }
             else
             {
-                yCWarning(RGBDSENSORWRAPPER, "missing color camera parameters... camera info messages will be not sended");
+                yCWarning(RGBDSENSORWRAPPER, "missing color camera parameters... camera info messages will be not sent");
             }
         }
         if (depth_data_ok)
@@ -870,7 +817,7 @@ bool RGBDSensorWrapper::writeData()
             yarp::rosmsg::sensor_msgs::Image&      rDepthImage     = rosPublisherPort_depth.prepare();
             yarp::rosmsg::sensor_msgs::CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
             yarp::rosmsg::TickTime                 dRosStamp       = depthStamp.getTime();
-            deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);
+            yarp::dev::RGBDRosConversionUtils::deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);
             rosPublisherPort_depth.setEnvelope(depthStamp);
             rosPublisherPort_depth.write();
             if (setCamInfo(camInfoD, rosFrameId, nodeSeq, DEPTH_SENSOR))
@@ -882,10 +829,10 @@ bool RGBDSensorWrapper::writeData()
             }
             else
             {
-                yCWarning(RGBDSENSORWRAPPER, "missing depth camera parameters... camera info messages will be not sended");
+                yCWarning(RGBDSENSORWRAPPER, "missing depth camera parameters... camera info messages will be not sent");
             }
         }
-        
+
         nodeSeq++;
     }
     return true;

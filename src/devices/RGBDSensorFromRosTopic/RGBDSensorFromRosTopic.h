@@ -32,19 +32,143 @@
 
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 
+typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
+
 /**
  *  @ingroup dev_impl_media
  *
- * @brief `RGBDFromRosTopic` is a driver for a virtual RGBD device: the data is not originated from a physical sensor but from a ROS topic.
+ * @brief `RGBDSensorFromRosTopic` is a driver for a virtual RGBD device: the data is not originated from a physical sensor but from a ROS topic.
  *
  * This device driver exposes the IRGBDSensor interface to read the images published by a ROS node.
  * See the documentation for more details about each interface.
  *
- * This device is paired with its server called RGBDSensorWrapper to stream the images and perform remote operations.
+ * This device can be used in two different ways:
+ * - as a client, directly opened by your application
+ * - as a device, wrapped by a RGBDSensorWrapper
+ *
+ * When used as a client, the RGBDSensorFromRosTopic device directly connects to the ROS publisher via `tcp_ros` carrier.
+ * This mode does not use a RGBDSensorWrapper and thus minimize latency. It is thus recommended when the application consists of
+ * a single client. However, if multiple clients are involved, as shown in the diagram below, this architecture might be inefficient,
+ * due to the multiple tcp_ros connections.
+ *
+ * \dot
+ * digraph G {
+ *
+ *   subgraph cluster_4 {
+ *     node [style=filled,color=black,fillcolor=white];
+ *     label = "ROS node";
+ *     subgraph cluster_5 {
+ *        node [style=filled,color=black,fillcolor=white];
+ *        label = "";
+ *        SENSOR [label = "physical sensor"]
+ *        bgcolor=palegreen3
+ *        }
+ *     ROS [label=<<B>ROS</B> <BR/> /camera/color/image_raw <BR/> /camera/color/camera_info <BR/> /camera/depth/image_rect_raw <BR/> /camera/depth/camera_info>];
+ *     bgcolor=palegreen1
+ *   }
+ *
+ *   subgraph cluster_0 {
+ *     node [style=filled,color=black,fillcolor=white];
+ *     node [style=filled,color=black,fillcolor=white];
+ *     c1 [label = <<B>RGBDSensorFromRosTopic</B> <BR/> /camera/color/image_raw <BR/> /camera/color/camera_info <BR/> /camera/depth/image_rect_raw <BR/> /camera/depth/camera_info> ];
+ *     label = "process1";
+ *     bgcolor=paleturquoise1
+ *   }
+ *
+ *   subgraph cluster_1 {
+ *     node [style=filled,color=black,fillcolor=white];
+ *     c2 [label = <<B>RGBDSensorFromRosTopic</B> <BR/> /camera/color/image_raw <BR/> /camera/color/camera_info <BR/> /camera/depth/image_rect_raw <BR/> /camera/depth/camera_info> ];
+ *     label = "process2";
+ *     bgcolor=paleturquoise1
+ *   }
+ *
+ *     subgraph cluster_2 {
+ *     node [style=filled,color=black,fillcolor=white];
+ *     c3 [label = <<B>RGBDSensorFromRosTopic</B> <BR/> /camera/color/image_raw <BR/> /camera/color/camera_info <BR/> /camera/depth/image_rect_raw <BR/> /camera/depth/camera_info> ];
+ *     label = "process3";
+ *    bgcolor=paleturquoise1
+ *   }
+ *
+ *   SENSOR -> ROS [ style="dashed" dir="none"]
+ *   ROS -> c1 [ label=<<B>tcp_ros</B>> fontcolor="red"  ];
+ *   ROS ->  c2 [ label=<<B>tcp_ros</B>> fontcolor="red"  ];
+ *   ROS ->  c3 [ label=<<B>tcp_ros</B>> fontcolor="red"  ];
+ * }
+ *  \enddot
+ *
+ *
+ * The second mode, instead, is  useful if the application consists of several modules, and each of them
+ * employ a client connected to the same server (RGBDSensorWrapper). In this case, if all the modules run
+ * on the same machine, the `unix_stream` can be employed to share data between them, minimizing data transfer
+ * operations and greatly boosting the performance. See the digram below.
+ *
+ * \dot
+ * digraph G {
+ *
+ *  subgraph cluster_4 {
+ *    node [style=filled,color=black,fillcolor=white];
+ *    label = "ROS node";
+ *    subgraph cluster_5 {
+ *       node [style=filled,color=black,fillcolor=white];
+ *       label = "";
+ *       SENSOR [label = "physical sensor"]
+ *       bgcolor=palegreen3
+ *       }
+ *    ROS [label=<<B>ROS</B> <BR/> /camera/color/image_raw <BR/> /camera/color/camera_info <BR/> /camera/depth/image_rect_raw <BR/> /camera/depth/camera_info>];
+ *    bgcolor=palegreen1
+ *  }
+ *
+ *  subgraph cluster_0 {
+ *    node [style=filled,color=black,fillcolor=white];
+ *    node [style=filled,color=black,fillcolor=white];
+ *    c1 [label=<<B>RGBDSensorClient</B> <BR/> /client1/rgbImage:i <BR/> /client1/depthImage:i>];
+ *    label = "process1";
+ *    bgcolor=paleturquoise1
+ *  }
+ *
+ *  subgraph cluster_1 {
+ *    node [style=filled,color=black,fillcolor=white];
+ *    c2 [label=<<B>RGBDSensorClient</B> <BR/> /client2/rgbImage:i <BR/> /client2/depthImage:i>];
+ *    label = "process2";
+ *    bgcolor=paleturquoise1
+ *  }
+ *
+ *    subgraph cluster_2 {
+ *    node [style=filled,color=black,fillcolor=white];
+ *    c3 [label=<<B>RGBDSensorClient</B>  <BR/> /client3/rgbImage:i <BR/> /client3/depthImage:i>];
+ *    label = "process3";
+ *   bgcolor=paleturquoise1
+ *  }
+ *
+ *  subgraph cluster_3 {
+ *    node [style=filled,fillcolor=blue, color=black];
+ *    label = "yarpdev process";
+ *    bgcolor=paleturquoise1
+ *    subgraph cluster_3 {
+ *       node [style=filled, fillcolor=white, color=black];
+ *       label = "RGBDSensorWrapper device";
+ *       bgcolor=paleturquoise3
+ *       subgraph cluster_3 {
+ *           node [style=filled, fillcolor=white, color=black];
+ *           label = "RGBDSensorFromRosTopic device";
+ *           bgcolor=paleturquoise2
+ *           rgbtopic [label = <<B>RGBDSensorFromRosTopic</B> <BR/> /camera/color/image_raw <BR/> /camera/color/camera_info <BR/> /camera/depth/image_rect_raw <BR/> /camera/depth/camera_info> ]}
+ *           w_out [label=<<B>Wrapper</B> <BR/> /wrapper/rgbImage:o <BR/> /wrapper/depthImage:o>];
+ *      }
+ *  }
+ *
+ *  SENSOR -> ROS [ style="dashed" dir="none"]
+ *  rgbtopic -> w_out [ style="dashed" dir="none"]
+ *  ROS-> rgbtopic  [ label=<<B>tcp_ros</B>> fontcolor="red"  ];
+ *  w_out -> c1 [ label=<<B>unix_stream</B>> fontcolor="blue"];
+ *  w_out ->  c2 [ label=<<B>unix_stream</B>> fontcolor="blue" ];
+ *  w_out ->  c3 [ label=<<B>unix_stream</B>> fontcolor="blue" ];
+ *  }
+ *  \enddot
  *
  * | YARP device name   |
  * |:------------------:|
- * | `RGBDFromRosTopic` |
+ * | `RGBDSensorFromRosTopic` |
  *
  *   Parameters used by this device are:
  * | Parameter name               | SubParameter        | Type                | Units          | Default Value                | Required                         | Description                                                                            | Notes                                                                 |
@@ -55,20 +179,17 @@
  * |  rgb_info_topic              |      -              | string              | -              | /camera/color/camera_info    |  No                              | The device connects to this ROS topic to get RGB info/parameters                       |         |
  * |  depth_info_topic            |      -              | string              | -              | /camera/depth/camera_info    |  No                              | The device connects to this ROS topic to get Depth info/parameters                     |         |
  *
- * Example of configuration file using .ini format.
+ * Example of configuration file (using .ini format) when the device is wrapped by RGBDSensorWrapper.
  *
  * \code{.unparsed}
  * device       RGBDSensorWrapper
- * subdevice    RGBDFromRosTopic
+ * subdevice    RGBDSensorFromRosTopic
  * period 30
  * name /ROSsensor
  * \endcode
  */
 
-typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
-
-//---------------------------------------------------------------------------------------
-class RGBDFromRosTopic :
+class RGBDSensorFromRosTopic :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IRGBDSensor
 {
@@ -78,8 +199,8 @@ private:
     typedef yarp::sig::FlexImage                      FlexImage;
 
 public:
-    RGBDFromRosTopic();
-    ~RGBDFromRosTopic() override = default;
+    RGBDSensorFromRosTopic();
+    ~RGBDSensorFromRosTopic() override = default;
 
     // DeviceDriver
     bool open(yarp::os::Searchable& config) override;
@@ -140,8 +261,8 @@ public:
     // ros-topic related
     mutable std::mutex m_mutex;
     yarp::os::Node* m_ros_node = nullptr;
-    commonImageProcessor*   m_rgb_input_processor = nullptr;
-    commonImageProcessor*   m_depth_input_processor = nullptr;
+    yarp::dev::RGBDRosConversionUtils::commonImageProcessor*   m_rgb_input_processor = nullptr;
+    yarp::dev::RGBDRosConversionUtils::commonImageProcessor*   m_depth_input_processor = nullptr;
     std::string m_rgb_data_topic_name;
     std::string m_depth_data_topic_name;
     std::string m_rgb_info_topic_name;

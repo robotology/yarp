@@ -26,14 +26,18 @@
 
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 
-typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
+typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> DepthImage;
+
+namespace yarp {
+    namespace dev {
+        namespace RGBDRosConversionUtils {
 
 class commonImageProcessor:
     public yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::Image>
 {
     protected:
     yarp::sig::FlexImage   m_lastRGBImage;
-    depthImage             m_lastDepthImage;
+    DepthImage             m_lastDepthImage;
 
     protected:
     std::mutex             m_port_mutex;
@@ -61,5 +65,25 @@ class commonImageProcessor:
     bool getLastRGBData(yarp::sig::FlexImage& data, yarp::os::Stamp& stmp);
     bool getLastDepthData(yarp::sig::ImageOf<yarp::sig::PixelFloat>& data, yarp::os::Stamp& stmp);
 };
+
+void deepCopyImages(const yarp::sig::FlexImage& src,
+    yarp::rosmsg::sensor_msgs::Image& dest,
+    const std::string& frame_id,
+    const yarp::rosmsg::TickTime& timeStamp,
+    const unsigned int& seq);
+
+void deepCopyImages(const DepthImage& src,
+    yarp::rosmsg::sensor_msgs::Image& dest,
+    const std::string& frame_id,
+    const yarp::rosmsg::TickTime& timeStamp,
+    const unsigned int& seq);
+
+void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest);
+
+void shallowCopyImages(const DepthImage& src, DepthImage& dest);
+
+}
+}
+}
 
 #endif

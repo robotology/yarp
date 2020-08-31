@@ -15,7 +15,7 @@
 #include <yarp/os/Value.h>
 #include <yarp/sig/ImageUtils.h>
 
-#include "RGBDFromRosTopic.h"
+#include "RGBDSensorFromRosTopic.h"
 
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -24,15 +24,15 @@ using namespace yarp::os;
 using namespace std;
 
 namespace {
-YARP_LOG_COMPONENT(RGBD_ROS_TOPIC, "yarp.device.RGBDFromRosTopic")
+YARP_LOG_COMPONENT(RGBD_ROS_TOPIC, "yarp.device.RGBDSensorFromRosTopic")
 }
 
-RGBDFromRosTopic::RGBDFromRosTopic() : m_verbose(false),
+RGBDSensorFromRosTopic::RGBDSensorFromRosTopic() : m_verbose(false),
                                        m_initialized(false)
 {
 }
 
-bool RGBDFromRosTopic::open(Searchable& config)
+bool RGBDSensorFromRosTopic::open(Searchable& config)
 {
     m_rgb_data_topic_name = "/camera/color/image_raw";
     m_rgb_info_topic_name = "/camera/color/camera_info";
@@ -44,57 +44,57 @@ bool RGBDFromRosTopic::open(Searchable& config)
     if (config.check("depth_info_topic")) { m_depth_info_topic_name = config.find("depth_info_topic").asString(); }
     m_verbose = config.check("verbose");
 
-    m_ros_node = new yarp::os::Node("/RGBDFromRosTopicNode");
+    m_ros_node = new yarp::os::Node("/RGBDSensorFromRosTopicNode");
 
     //m_rgb_input_processor.useCallback();    ///@@@<-SEGFAULT
     //m_depth_input_processor.useCallback();    ///@@@<-SEGFAULT
-    m_rgb_input_processor = new commonImageProcessor(m_rgb_data_topic_name, m_rgb_info_topic_name);
-    m_depth_input_processor = new commonImageProcessor(m_depth_data_topic_name, m_depth_info_topic_name);
+    m_rgb_input_processor = new yarp::dev::RGBDRosConversionUtils::commonImageProcessor(m_rgb_data_topic_name, m_rgb_info_topic_name);
+    m_depth_input_processor = new yarp::dev::RGBDRosConversionUtils::commonImageProcessor(m_depth_data_topic_name, m_depth_info_topic_name);
     m_rgb_input_processor->useCallback();    ///@@@<-OK
     m_depth_input_processor->useCallback();    ///@@@<-OK
 
     return true;
 }
 
-bool RGBDFromRosTopic::close()
+bool RGBDSensorFromRosTopic::close()
 {
     if (m_rgb_input_processor)
     {
        delete m_rgb_input_processor;
        m_rgb_input_processor =nullptr;
-    } 
+    }
     if (m_depth_input_processor)
     {
        delete m_depth_input_processor;
        m_depth_input_processor = nullptr;
     }
     if (m_ros_node)
-    { 
+    {
        delete m_ros_node;
        m_ros_node=nullptr;
     }
     return true;
 }
 
-int RGBDFromRosTopic::getRgbHeight()
+int RGBDSensorFromRosTopic::getRgbHeight()
 {
     if (m_rgb_input_processor==nullptr) return 0;
     return (int)m_rgb_input_processor->getHeight();
 }
 
-int RGBDFromRosTopic::getRgbWidth()
+int RGBDSensorFromRosTopic::getRgbWidth()
 {
     if (m_rgb_input_processor == nullptr) return 0;
     return (int)m_rgb_input_processor->getWidth();
 }
 
-bool RGBDFromRosTopic::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
+bool RGBDSensorFromRosTopic::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
 {
     yCWarning(RGBD_ROS_TOPIC) << "getRgbSupportedConfigurations not implemented yet";
     return false;
 }
 
-bool RGBDFromRosTopic::getRgbResolution(int &width, int &height)
+bool RGBDSensorFromRosTopic::getRgbResolution(int &width, int &height)
 {
     if (m_rgb_input_processor == nullptr)
     {
@@ -107,38 +107,38 @@ bool RGBDFromRosTopic::getRgbResolution(int &width, int &height)
     return true;
 }
 
-bool RGBDFromRosTopic::setDepthResolution(int width, int height)
+bool RGBDSensorFromRosTopic::setDepthResolution(int width, int height)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setDepthResolution not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::setRgbResolution(int width, int height)
+bool RGBDSensorFromRosTopic::setRgbResolution(int width, int height)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setRgbResolution not supported";
     return false;
 }
 
 
-bool RGBDFromRosTopic::setRgbFOV(double horizontalFov, double verticalFov)
+bool RGBDSensorFromRosTopic::setRgbFOV(double horizontalFov, double verticalFov)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setRgbFOV not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::setDepthFOV(double horizontalFov, double verticalFov)
+bool RGBDSensorFromRosTopic::setDepthFOV(double horizontalFov, double verticalFov)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setDepthFOV not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::setDepthAccuracy(double accuracy)
+bool RGBDSensorFromRosTopic::setDepthAccuracy(double accuracy)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setDepthAccuracy not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::getRgbFOV(double &horizontalFov, double &verticalFov)
+bool RGBDSensorFromRosTopic::getRgbFOV(double &horizontalFov, double &verticalFov)
 {
     if (m_rgb_input_processor == nullptr)
     {
@@ -149,19 +149,19 @@ bool RGBDFromRosTopic::getRgbFOV(double &horizontalFov, double &verticalFov)
     return m_rgb_input_processor->getFOV(horizontalFov, verticalFov);
 }
 
-bool RGBDFromRosTopic::getRgbMirroring(bool& mirror)
+bool RGBDSensorFromRosTopic::getRgbMirroring(bool& mirror)
 {
     yCWarning(RGBD_ROS_TOPIC) << "Mirroring not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::setRgbMirroring(bool mirror)
+bool RGBDSensorFromRosTopic::setRgbMirroring(bool mirror)
 {
     yCWarning(RGBD_ROS_TOPIC) << "Mirroring not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::getRgbIntrinsicParam(Property& intrinsic)
+bool RGBDSensorFromRosTopic::getRgbIntrinsicParam(Property& intrinsic)
 {
     if (m_rgb_input_processor == nullptr)
     {
@@ -171,7 +171,7 @@ bool RGBDFromRosTopic::getRgbIntrinsicParam(Property& intrinsic)
     return m_rgb_input_processor->getIntrinsicParam(intrinsic);
 }
 
-int  RGBDFromRosTopic::getDepthHeight()
+int  RGBDSensorFromRosTopic::getDepthHeight()
 {
     if (m_depth_input_processor == nullptr)
     {
@@ -180,7 +180,7 @@ int  RGBDFromRosTopic::getDepthHeight()
     return (int)m_depth_input_processor->getHeight();
 }
 
-int  RGBDFromRosTopic::getDepthWidth()
+int  RGBDSensorFromRosTopic::getDepthWidth()
 {
     if (m_depth_input_processor == nullptr)
     {
@@ -189,7 +189,7 @@ int  RGBDFromRosTopic::getDepthWidth()
     return (int)m_depth_input_processor->getWidth();
 }
 
-bool RGBDFromRosTopic::getDepthFOV(double& horizontalFov, double& verticalFov)
+bool RGBDSensorFromRosTopic::getDepthFOV(double& horizontalFov, double& verticalFov)
 {
     if (m_depth_input_processor == nullptr)
     {
@@ -200,7 +200,7 @@ bool RGBDFromRosTopic::getDepthFOV(double& horizontalFov, double& verticalFov)
     return m_depth_input_processor->getFOV(horizontalFov, verticalFov);
 }
 
-bool RGBDFromRosTopic::getDepthIntrinsicParam(Property& intrinsic)
+bool RGBDSensorFromRosTopic::getDepthIntrinsicParam(Property& intrinsic)
 {
     if (m_depth_input_processor == nullptr)
     {
@@ -210,43 +210,43 @@ bool RGBDFromRosTopic::getDepthIntrinsicParam(Property& intrinsic)
     return m_depth_input_processor->getIntrinsicParam(intrinsic);
 }
 
-double RGBDFromRosTopic::getDepthAccuracy()
+double RGBDSensorFromRosTopic::getDepthAccuracy()
 {
     yCWarning(RGBD_ROS_TOPIC) << "getDepthAccuracy not supported";
     return 0;
 }
 
-bool RGBDFromRosTopic::getDepthClipPlanes(double& nearPlane, double& farPlane)
+bool RGBDSensorFromRosTopic::getDepthClipPlanes(double& nearPlane, double& farPlane)
 {
     yCWarning(RGBD_ROS_TOPIC) << "getDepthClipPlanes not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::setDepthClipPlanes(double nearPlane, double farPlane)
+bool RGBDSensorFromRosTopic::setDepthClipPlanes(double nearPlane, double farPlane)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setDepthClipPlanes not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::getDepthMirroring(bool& mirror)
+bool RGBDSensorFromRosTopic::getDepthMirroring(bool& mirror)
 {
     yCWarning(RGBD_ROS_TOPIC) << "getDepthMirroring not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::setDepthMirroring(bool mirror)
+bool RGBDSensorFromRosTopic::setDepthMirroring(bool mirror)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setDepthMirroring not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::getExtrinsicParam(Matrix& extrinsic)
+bool RGBDSensorFromRosTopic::getExtrinsicParam(Matrix& extrinsic)
 {
     yCWarning(RGBD_ROS_TOPIC) << "getExtrinsicParam not supported";
     return  false;
 };
 
-bool RGBDFromRosTopic::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
+bool RGBDSensorFromRosTopic::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     if (m_rgb_input_processor!=nullptr)
@@ -254,7 +254,7 @@ bool RGBDFromRosTopic::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
     return true;
 }
 
-bool RGBDFromRosTopic::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
+bool RGBDSensorFromRosTopic::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     if (m_depth_input_processor != nullptr)
@@ -262,7 +262,7 @@ bool RGBDFromRosTopic::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* tim
     return true;
 }
 
-bool RGBDFromRosTopic::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
+bool RGBDSensorFromRosTopic::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
 {
     bool rgb_ok = false;
     bool depth_ok = false;
@@ -274,105 +274,105 @@ bool RGBDFromRosTopic::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& dep
     return true;
 }
 
-RGBDFromRosTopic::RGBDSensor_status RGBDFromRosTopic::getSensorStatus()
+RGBDSensorFromRosTopic::RGBDSensor_status RGBDSensorFromRosTopic::getSensorStatus()
 {
     return RGBD_SENSOR_OK_IN_USE;
 }
 
-std::string RGBDFromRosTopic::getLastErrorMsg(Stamp* timeStamp)
+std::string RGBDSensorFromRosTopic::getLastErrorMsg(Stamp* timeStamp)
 {
     return m_lastError;
 }
 
 /*
 //IFrameGrabberControls
-bool RGBDFromRosTopic::getCameraDescription(CameraDescriptor* camera)
+bool RGBDSensorFromRosTopic::getCameraDescription(CameraDescriptor* camera)
 {
     camera->deviceDescription = "Ros Camera";
     camera->busType = BusType::BUS_UNKNOWN;
     return true;
 }
 
-bool RGBDFromRosTopic::hasFeature(int feature, bool* hasFeature)
+bool RGBDSensorFromRosTopic::hasFeature(int feature, bool* hasFeature)
 {
     yCWarning(RGBD_ROS_TOPIC) << "hasFeature not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::setFeature(int feature, double value)
+bool RGBDSensorFromRosTopic::setFeature(int feature, double value)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setFeature not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::getFeature(int feature, double *value)
+bool RGBDSensorFromRosTopic::getFeature(int feature, double *value)
 {
     yCWarning(RGBD_ROS_TOPIC) << "getFeature not supported";
     return false;    return true;
 }
 
-bool RGBDFromRosTopic::setFeature(int feature, double value1, double value2)
+bool RGBDSensorFromRosTopic::setFeature(int feature, double value1, double value2)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setFeature not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::getFeature(int feature, double *value1, double *value2)
+bool RGBDSensorFromRosTopic::getFeature(int feature, double *value1, double *value2)
 {
     yCWarning(RGBD_ROS_TOPIC) << "getFeature not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::hasOnOff(  int feature, bool *HasOnOff)
+bool RGBDSensorFromRosTopic::hasOnOff(  int feature, bool *HasOnOff)
 {
     yCWarning(RGBD_ROS_TOPIC) << "hasOnOff not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::setActive( int feature, bool onoff)
+bool RGBDSensorFromRosTopic::setActive( int feature, bool onoff)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setActive not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::getActive( int feature, bool *isActive)
+bool RGBDSensorFromRosTopic::getActive( int feature, bool *isActive)
 {
     yCWarning(RGBD_ROS_TOPIC) << "getActive not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::hasAuto(int feature, bool *hasAuto)
+bool RGBDSensorFromRosTopic::hasAuto(int feature, bool *hasAuto)
 {
     yCWarning(RGBD_ROS_TOPIC) << "hasAuto not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::hasManual( int feature, bool* hasManual)
+bool RGBDSensorFromRosTopic::hasManual( int feature, bool* hasManual)
 {
     yCWarning(RGBD_ROS_TOPIC) << "hasManual not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::hasOnePush(int feature, bool* hasOnePush)
+bool RGBDSensorFromRosTopic::hasOnePush(int feature, bool* hasOnePush)
 {
     yCWarning(RGBD_ROS_TOPIC) << "hasOnePush not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::setMode(int feature, FeatureMode mode)
+bool RGBDSensorFromRosTopic::setMode(int feature, FeatureMode mode)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setMode not supported";
     return false;
 }
 
-bool RGBDFromRosTopic::getMode(int feature, FeatureMode* mode)
+bool RGBDSensorFromRosTopic::getMode(int feature, FeatureMode* mode)
 {
     yCWarning(RGBD_ROS_TOPIC) << "getMode not supported";
     *mode = MODE_UNKNOWN;
     return false;
 }
 
-bool RGBDFromRosTopic::setOnePush(int feature)
+bool RGBDSensorFromRosTopic::setOnePush(int feature)
 {
     yCWarning(RGBD_ROS_TOPIC) << "setOnePush not supported";
     return false;
