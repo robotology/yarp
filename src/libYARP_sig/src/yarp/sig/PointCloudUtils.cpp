@@ -56,17 +56,21 @@ PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat>& depth
     max_y = max_y < depth.height() ? max_y : depth.height();
 
     PointCloud<DataXYZ> pointCloud;
-    pointCloud.resize(max_x-roi.min_x, max_y-roi.min_y);
+    size_t size_x = (max_x-roi.min_x)/step_x;
+    size_t size_y = (max_y-roi.min_y)/step_y;
+    pointCloud.resize(size_x,size_y);
 
-    for (    size_t u = roi.min_x; u < max_x; u += step_x) {
-        for (size_t v = roi.min_y; v < max_y; v += step_y) {
+    size_t i=0;
+    size_t j=0;
+    for (    size_t u = roi.min_x, i=0; u < max_x; u += step_x, i++) {
+        for (size_t v = roi.min_y, j=0; v < max_y; v += step_y, j++) {
             // De-projection equation (pinhole model):
             //                          x = (u - ppx)/ fx * z
             //                          y = (v - ppy)/ fy * z
             //                          z = z
-            pointCloud(u, v).x = (u - intrinsic.principalPointX) / intrinsic.focalLengthX * depth.pixel(u, v);
-            pointCloud(u, v).y = (v - intrinsic.principalPointY) / intrinsic.focalLengthY * depth.pixel(u, v);
-            pointCloud(u, v).z = depth.pixel(u, v);
+            pointCloud(i, j).x = (u - intrinsic.principalPointX) / intrinsic.focalLengthX * depth.pixel(u, v);
+            pointCloud(i, j).y = (v - intrinsic.principalPointY) / intrinsic.focalLengthY * depth.pixel(u, v);
+            pointCloud(i, j).z = depth.pixel(u, v);
         }
     }
     return pointCloud;
