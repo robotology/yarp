@@ -66,7 +66,7 @@ namespace yarp {
 
 std::string yarp2RosPixelCode(int code);
 
-int Ros2YarpPixelCode(std::string roscode);
+int Ros2YarpPixelCode(const std::string& roscode);
 
 }}}
 

@@ -51,7 +51,7 @@ std::string yarp2RosPixelCode(int code)
     }
 }
 
-int Ros2YarpPixelCode(std::string roscode)
+int Ros2YarpPixelCode(const std::string& roscode)
 {
     if (roscode == BGR8)
         return VOCAB_PIXEL_BGR;

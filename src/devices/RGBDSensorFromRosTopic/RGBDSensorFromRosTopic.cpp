@@ -249,17 +249,19 @@ bool RGBDSensorFromRosTopic::getExtrinsicParam(Matrix& extrinsic)
 bool RGBDSensorFromRosTopic::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
+    bool rgb_ok = false;
     if (m_rgb_input_processor!=nullptr)
-        bool rgb_ok = m_rgb_input_processor->getLastRGBData(rgbImage, *timeStamp);
-    return true;
+        { rgb_ok = m_rgb_input_processor->getLastRGBData(rgbImage, *timeStamp); }
+    return rgb_ok;
 }
 
 bool RGBDSensorFromRosTopic::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp* timeStamp)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
+    bool depth_ok =false;
     if (m_depth_input_processor != nullptr)
-        bool depth_ok = m_depth_input_processor->getLastDepthData(depthImage, *timeStamp);
-    return true;
+       { depth_ok = m_depth_input_processor->getLastDepthData(depthImage, *timeStamp); }
+    return depth_ok;
 }
 
 bool RGBDSensorFromRosTopic::getImages(FlexImage& colorFrame, ImageOf<PixelFloat>& depthFrame, Stamp* colorStamp, Stamp* depthStamp)
@@ -268,10 +270,10 @@ bool RGBDSensorFromRosTopic::getImages(FlexImage& colorFrame, ImageOf<PixelFloat
     bool depth_ok = false;
     std::lock_guard<std::mutex> guard(m_mutex);
     if (m_rgb_input_processor != nullptr)
-        rgb_ok = m_rgb_input_processor->getLastRGBData(colorFrame, *colorStamp);
+       { rgb_ok = m_rgb_input_processor->getLastRGBData(colorFrame, *colorStamp); }
     if (m_depth_input_processor != nullptr)
-        depth_ok = m_depth_input_processor->getLastDepthData(depthFrame, *depthStamp);
-    return true;
+       { depth_ok = m_depth_input_processor->getLastDepthData(depthFrame, *depthStamp); }
+    return (rgb_ok && depth_ok);
 }
 
 RGBDSensorFromRosTopic::RGBDSensor_status RGBDSensorFromRosTopic::getSensorStatus()
