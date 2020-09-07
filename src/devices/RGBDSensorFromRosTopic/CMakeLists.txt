@@ -20,9 +20,9 @@ if(NOT SKIP_RGBDSensorFromRosTopic)
   target_include_directories(yarp_RGBDSensorFromRosTopic PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_RGBDSensorFromRosTopic PRIVATE YARP::YARP_os
-                                                YARP::YARP_sig
-                                                YARP::YARP_dev
-                                                YARP::YARP_rosmsg)
+                                                            YARP::YARP_sig
+                                                            YARP::YARP_dev
+                                                            YARP::YARP_rosmsg)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
