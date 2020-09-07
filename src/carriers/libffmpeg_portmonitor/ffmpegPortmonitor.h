@@ -22,7 +22,6 @@ public:
 
     bool accept(yarp::os::Things& thing) override;
     yarp::os::Things& update(yarp::os::Things& thing) override;
-    yarp::os::Things& update2(yarp::sig::Image* thing);
 
 protected:
     int compress(yarp::sig::Image* img, AVPacket* pkt);
