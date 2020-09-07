@@ -106,6 +106,15 @@ private:
     Transforms_server_storage*   m_yarp_static_transform_storage;
     double                       m_FrameTransformTimeout;
 
+    enum show_transforms_in_diagram_t
+    {
+        do_not_show=0,
+        show_quaternion=1,
+        show_matrix=2,
+        show_rpy=3
+    };
+    show_transforms_in_diagram_t  m_show_transforms_in_diagram= do_not_show;
+
     yarp::os::RpcServer                      m_rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> m_streamingPort;
     yarp::os::Publisher<yarp::rosmsg::tf2_msgs::TFMessage> m_rosPublisherPort_tf_timed;
@@ -115,6 +124,8 @@ private:
 
     bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);
+    bool         generate_view();
+    std::string  get_matrix_as_text(Transforms_server_storage* storage, int i);
     bool         parseStartingTf(yarp::os::Searchable &config);
 };
 

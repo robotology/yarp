@@ -61,7 +61,13 @@ public:
     yarp::sig::Matrix toMatrix() const;
     bool fromMatrix(const yarp::sig::Matrix& mat);
 
-    std::string toString() const;
+    enum display_transform_mode_t
+    {
+       rotation_as_quaternion=0,
+       rotation_as_matrix=1,
+       rotation_as_rpy=2
+    };
+    std::string toString(display_transform_mode_t format= rotation_as_quaternion) const;
 };
 
 } // namespace sig

@@ -10,8 +10,9 @@
 
 #include <yarp/math/Math.h>
 #include <yarp/os/LogComponent.h>
-
+#include <yarp/os/LogStream.h>
 #include <cstdio>
+#include <cmath>
 
 namespace {
 YARP_LOG_COMPONENT(FRAMETRANSFORM, "yarp.math.FrameTransform")
@@ -54,6 +55,7 @@ void yarp::math::FrameTransform::rotFromRPY(double R, double P, double Y)
     yarp::sig::Matrix    rotM;
     rotV = yarp::sig::Vector(i, rot);
     rotM = rpy2dcm(rotV);
+    //yCDebug(FRAMETRANSFORM) << rotM.toString();
     rotation.fromRotationMatrix(rotM);
 }
 
@@ -97,18 +99,68 @@ bool yarp::math::FrameTransform::fromMatrix(const yarp::sig::Matrix& mat)
 
 
 
-std::string yarp::math::FrameTransform::toString() const
+std::string yarp::math::FrameTransform::toString(display_transform_mode_t format) const
 {
     char buff[1024];
-    sprintf(buff, "%s -> %s \n tran: %f %f %f \n rot: %f %f %f %f \n\n",
-                  src_frame_id.c_str(),
-                  dst_frame_id.c_str(),
-                  translation.tX,
-                  translation.tY,
-                  translation.tZ,
-                  rotation.x(),
-                  rotation.y(),
-                  rotation.z(),
-                  rotation.w());
+
+    if (format == rotation_as_quaternion)
+    {
+        sprintf(buff, "%s -> %s \n tran: %f %f %f \n rot quaternion: %f %f %f %f\n\n",
+        src_frame_id.c_str(),
+        dst_frame_id.c_str(),
+        translation.tX,
+        translation.tY,
+        translation.tZ,
+        rotation.x(),
+        rotation.y(),
+        rotation.z(),
+        rotation.w());
+        /*
+        Quaternion normrotation= rotation;
+        normrotation.normalize();
+        sprintf(buff, "%s -> %s \n tran: %f %f %f \n rot norm quaternion: %f %f %f %f\n\n",
+        src_frame_id.c_str(),
+        dst_frame_id.c_str(),
+        translation.tX,
+        translation.tY,
+        translation.tZ,
+        normrotation.x(),
+        normrotation.y(),
+        normrotation.z(),
+        normrotation.w());
+        */
+    }
+    else if (format == rotation_as_matrix)
+    {
+        yarp::sig::Matrix rotM;
+        rotM = rotation.toRotationMatrix4x4();
+        rotM[0][3] = translation.tX;
+        rotM[1][3] = translation.tY;
+        rotM[2][3] = translation.tZ;
+        std::string s_rotm =rotM.toString();
+        sprintf(buff, "%s -> %s \n transformation matrix:\n %s \n\n",
+        src_frame_id.c_str(),
+        dst_frame_id.c_str(),
+        s_rotm.c_str());
+    }
+    else if (format == rotation_as_rpy)
+    {
+        yarp::sig::Vector rotVrad;
+        yarp::sig::Matrix rotM;
+        rotM = rotation.toRotationMatrix3x3();
+        //yCDebug(FRAMETRANSFORM)<< rotM.toString();
+        rotVrad = dcm2rpy(rotM);
+        yarp::sig::Vector rotVdeg = rotVrad*180/M_PI;
+        std::string s_rotmr = rotVrad.toString();
+        std::string s_rotmd = rotVdeg.toString();
+        sprintf(buff, "%s -> %s \n tran: %f %f %f \n rotation rpy: %s (deg %s)\n\n",
+        src_frame_id.c_str(),
+        dst_frame_id.c_str(),
+        translation.tX,
+        translation.tY,
+        translation.tZ,
+        s_rotmr.c_str(),
+        s_rotmd.c_str());
+    }
     return std::string(buff);
 }

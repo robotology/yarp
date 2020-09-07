@@ -18,6 +18,9 @@
 
 // example: yarpdev --device transformServer --ROS::enable_ros_publisher 0 --ROS::enable_ros_subscriber 0
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include "FrameTransformServer.h"
 #include <sstream>
 #include <limits>
@@ -224,6 +227,118 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
     }
 }
 
+string FrameTransformServer::get_matrix_as_text(Transforms_server_storage* storage, int i)
+{
+    if (m_show_transforms_in_diagram==do_not_show)
+    {
+        return "";
+    }
+    else if (m_show_transforms_in_diagram==show_quaternion)
+    {
+        return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_quaternion) + "\"";
+    }
+    else if (m_show_transforms_in_diagram == show_matrix)
+    {
+        return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_matrix) + "\"";
+    }
+    else if (m_show_transforms_in_diagram == show_rpy)
+    {
+        return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_rpy) + "\"";
+    }
+
+    yCError(FRAMETRANSFORMSERVER) << "get_matrix_as_text() invalid option";
+    return "";
+    /*
+        //this is a test to use Latek display
+        string s = "\\begin{ bmatrix } \
+        1 & 2 & 3\\ \
+        a & b & c \
+        \\end{ bmatrix }";
+    */
+}
+
+bool FrameTransformServer::generate_view()
+{
+    string dot_string = "digraph G { ";
+    for (size_t i = 0; i < m_ros_timed_transform_storage->size(); i++)
+    {
+        string edge_text = get_matrix_as_text(m_ros_timed_transform_storage, i);
+        string trf_text = (*m_ros_timed_transform_storage)[i].src_frame_id + "->" +
+                          (*m_ros_timed_transform_storage)[i].dst_frame_id + " " +
+                          "[color = black]";
+        dot_string += trf_text + '\n';
+    }
+    for (size_t i = 0; i < m_ros_static_transform_storage->size(); i++)
+    {
+        string edge_text = get_matrix_as_text(m_ros_static_transform_storage,i);
+        string trf_text = (*m_ros_static_transform_storage)[i].src_frame_id + "->" +
+                          (*m_ros_static_transform_storage)[i].dst_frame_id + " " +
+                          "[color = black, style=dashed "+ edge_text + "]";
+        dot_string += trf_text + '\n';
+    }
+    for (size_t i = 0; i < m_yarp_timed_transform_storage->size(); i++)
+    {
+        string edge_text = get_matrix_as_text(m_yarp_timed_transform_storage, i);
+        string trf_text = (*m_yarp_timed_transform_storage)[i].src_frame_id + "->" +
+                          (*m_yarp_timed_transform_storage)[i].dst_frame_id + " " +
+                          "[color = blue "+ edge_text + "]";
+        dot_string += trf_text + '\n';
+    }
+    for (size_t i = 0; i < m_yarp_static_transform_storage->size(); i++)
+    {
+        string edge_text = get_matrix_as_text(m_yarp_static_transform_storage, i);
+        string trf_text = (*m_yarp_static_transform_storage)[i].src_frame_id + "->" +
+                          (*m_yarp_static_transform_storage)[i].dst_frame_id + " " +
+                          "[color = blue, style=dashed " + edge_text + "]";
+        dot_string += trf_text + '\n';
+    }
+
+    string legend = "\n\
+        rankdir=LR\n\
+        node[shape=plaintext]\n\
+        subgraph cluster_01 {\n\
+          label = \"Legend\";\n\
+          key[label=<<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" cellborder=\"0\">\n\
+            <tr><td align=\"right\" port=\"i1\">YARP timed transform</td></tr>\n\
+            <tr><td align=\"right\" port=\"i2\">YARP static transform</td></tr>\n\
+            <tr><td align=\"right\" port=\"i3\">ROS timed transform</td></tr>\n\
+            <tr><td align=\"right\" port=\"i4\">ROS static transform</td></tr>\n\
+            </table>>]\n\
+          key2[label=<<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" cellborder=\"0\">\n\
+            <tr><td port = \"i1\">&nbsp;</td></tr>\n\
+            <tr><td port = \"i2\">&nbsp;</td></tr>\n\
+            <tr><td port = \"i3\">&nbsp;</td></tr>\n\
+            <tr><td port = \"i4\">&nbsp;</td></tr>\n\
+            </table>>]\n\
+          key:i1:e -> key2:i1:w [color = blue]\n\
+          key:i2:e -> key2:i2:w [color = blue, style=dashed]\n\
+          key:i3:e -> key2:i3:w [color = black]\n\
+          key:i4:e -> key2:i4:w [color = black, style=dashed]\n\
+        } }";
+
+    string command_string = "printf '"+dot_string+ legend + "' | dot -Tpdf > frames.pdf";
+#if defined (__linux__)
+    int ret = std::system("dot -V");
+    if (ret != 0)
+    {
+        yCError(FRAMETRANSFORMSERVER) << "dot executable not found. Please install graphviz.";
+        return false;
+    }
+
+    yCDebug(FRAMETRANSFORMSERVER) << "Command string is:" << command_string;
+    ret = std::system(command_string.c_str());
+    if (ret != 0)
+    {
+        yCError(FRAMETRANSFORMSERVER) << "The following command failed to execute:" << command_string;
+        return false;
+    }
+#else
+    yCError(FRAMETRANSFORMSERVER) << "Not yet implemented. Available only Linux";
+    return false;
+#endif
+    return true;
+}
+
 bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -327,10 +442,17 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         out.addVocab(Vocab::encode("many"));
         out.addString("'list': get all transforms stored");
         out.addString("'delete_all': delete all transforms");
-        out.addString("'set_static_transform <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform");
+        out.addString("'set_static_transform_rad <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform (angles in radians)");
+        out.addString("'set_static_transform_deg <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform (angles in degrees)");
         out.addString("'delete_static_transform <src> <dst>': delete a static transform");
+        out.addString("'generate_view <option>': generate a frames.pdf file showing the transform tree diagram.");
+        out.addString("     The following values are valid for option (default=none)");
+        out.addString("    'show_rpy': show roation as rpy angles");
+        out.addString("    'show_quaterion:'show rotation as a quaternion");
+        out.addString("    'show_matrix:'show rotationa as a 3x3 rotation matrix");
     }
-    else if (request == "set_static_transform")
+    else if (request == "set_static_transform_rad" ||
+             request == "set_static_transform_deg")
     {
         FrameTransform t;
         t.src_frame_id = in.get(1).asString();
@@ -338,7 +460,10 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         t.translation.tX = in.get(3).asFloat64();
         t.translation.tY = in.get(4).asFloat64();
         t.translation.tZ = in.get(5).asFloat64();
-        t.rotFromRPY(in.get(6).asFloat64(), in.get(7).asFloat64(), in.get(8).asFloat64());
+        if (request == "set_static_transform_rad")
+            { t.rotFromRPY(in.get(6).asFloat64(), in.get(7).asFloat64(), in.get(8).asFloat64());}
+        else if (request == "set_static_transform_deg")
+            { t.rotFromRPY(in.get(6).asFloat64() * 180 / M_PI, in.get(7).asFloat64() * 180 / M_PI, in.get(8).asFloat64() * 180 / M_PI);}
         t.timestamp = yarp::os::Time::now();
         ret = m_yarp_static_transform_storage->set_transform(t);
         if (ret == true)
@@ -364,6 +489,15 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     {
         out.addVocab(Vocab::encode("many"));
         list_response(out);
+    }
+    else if (request == "generate_view")
+    {
+        m_show_transforms_in_diagram  = do_not_show;
+        if      (in.get(1).asString() == "show_quaternion") m_show_transforms_in_diagram = show_quaternion;
+        else if (in.get(1).asString() == "show_matrix") m_show_transforms_in_diagram = show_matrix;
+        else if (in.get(1).asString() == "show_rpy") m_show_transforms_in_diagram = show_rpy;
+        generate_view();
+        out.addString("ok");
     }
     else if (request == "delete_static_transform")
     {
