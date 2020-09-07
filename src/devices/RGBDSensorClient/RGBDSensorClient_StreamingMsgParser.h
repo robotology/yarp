@@ -9,19 +9,22 @@
 #ifndef YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_STREAMINGMSGPARSER_H
 #define YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_STREAMINGMSGPARSER_H
 
-#include <list>
 #include <yarp/os/Stamp.h>
 #include <yarp/sig/Image.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/LogStream.h>
 
+#include <list>
+#include <mutex>
+
 
 class RgbImageReader_Impl :
         public yarp::os::TypedReaderCallback<yarp::sig::FlexImage>
 {
 private:
-    yarp::sig::FlexImage  last_rgb;
+    yarp::sig::FlexImage last_rgb;
+    mutable std::mutex mutex;
 
 public:
     RgbImageReader_Impl();
@@ -37,7 +40,8 @@ class FloatImageReader_Impl :
         public yarp::os::TypedReaderCallback<yarp::sig::ImageOf< yarp::sig::PixelFloat>>
 {
 private:
-    yarp::sig::ImageOf< yarp::sig::PixelFloat>  last_depth;
+    yarp::sig::ImageOf< yarp::sig::PixelFloat> last_depth;
+    mutable std::mutex mutex;
 
 public:
     FloatImageReader_Impl();
