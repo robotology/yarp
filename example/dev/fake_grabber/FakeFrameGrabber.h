@@ -28,7 +28,7 @@ public:
     {
         h = w = 0;
         ct = 0;
-        circlePixel = yarp::sig::PixelRgb(255, 0, 0);
+        circlePixel = yarp::sig::PixelRgb{255, 0, 0};
     }
 
     bool open(int w, int h)

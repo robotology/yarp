@@ -188,7 +188,7 @@ bool BayerCarrier::debayerHalf(yarp::sig::ImageOf<PixelMono>& src,
             int x = xo*2;
             int y = yo*2;
             if (x+1>=w-1 || y+1>=h-1) {
-                po = PixelRgb(0,0,0);
+                po = PixelRgb{0,0,0};
                 continue;
             }
             po.r = src.pixel(x+roffx,y+roff);

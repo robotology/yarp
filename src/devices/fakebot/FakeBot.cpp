@@ -33,9 +33,9 @@ void FakeBot::init() {
     int rr = 30;
 
     back.resize(m_w,m_h);
-    PixelRgb w(255,255,255);
-    PixelRgb r(128,128,255);
-    PixelRgb b(0,0,255);
+    PixelRgb w{255,255,255};
+    PixelRgb r{128,128,255};
+    PixelRgb b{0,0,255};
     IMGFOR(back,x,y) {
         back(x,y) = r;
         if (y>=m_h*0.75) {
@@ -144,7 +144,7 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
         m_dy += dy;
     }
     image.resize(m_w,m_h);
-    back.safePixel(-1,-1) = PixelRgb(255,0,0);
+    back.safePixel(-1,-1) = PixelRgb{255,0,0};
     loc[0] = m_dx;
     loc[1] = m_dy;
 
