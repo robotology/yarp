@@ -296,6 +296,9 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         cSender->framerate = (AVRational){25, 1};
         cSender->gop_size = 10;
         cSender->max_b_frames = 1;
+
+        cSender->qmin=18;
+        cSender->qmax=28;
         
         cSender->pix_fmt = (AVPixelFormat) codecPixelMap[cSender->codec_id];
 
@@ -349,6 +352,9 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
         cReceiver->framerate = (AVRational){25, 1};
         cReceiver->gop_size = 10;
         cReceiver->max_b_frames = 1;
+
+        cReceiver->qmin=18;
+        cReceiver->qmax=28;
         
         cReceiver->pix_fmt = (AVPixelFormat) codecPixelMap[cReceiver->codec_id];
 
