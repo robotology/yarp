@@ -257,7 +257,7 @@ void TextureBuffer::createTextureAndBuffers()
     desc.StaticImage = ovrFalse;
 
     if (!ovr_CreateTextureSwapChainGL(session, &desc, &textureSwapChain) == ovrSuccess) {
-        yCError(OVRHEADSET); << "Failed to create texture swap chain";
+        yCError(OVRHEADSET) << "Failed to create texture swap chain";
         return;
     }
     checkGlErrorMacro;
