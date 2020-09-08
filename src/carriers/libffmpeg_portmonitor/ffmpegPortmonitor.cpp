@@ -9,7 +9,6 @@
 #include <iostream>
 
 extern "C" {
-    //#include "zfp.h"
     #include <libavcodec/codec.h>
     #include <libavcodec/avcodec.h>
     #include <libavutil/opt.h>

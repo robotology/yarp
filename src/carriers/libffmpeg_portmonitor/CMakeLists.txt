@@ -2,7 +2,7 @@
 yarp_prepare_plugin(libffmpeg TYPE FfmpegMonitorObject
                         INCLUDE ffmpegPortmonitor.h
                         CATEGORY portmonitor
-                        DEPENDS "ENABLE_yarpcar_portmonitor")#;YARP_HAS_ZFP")
+                        DEPENDS "ENABLE_yarpcar_portmonitor")
 
 if(NOT SKIP_libffmpeg)
   yarp_add_plugin(yarp_pm_libffmpeg)
