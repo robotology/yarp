@@ -15,13 +15,16 @@ if(NOT SKIP_RGBDSensorWrapper)
   yarp_add_plugin(yarp_RGBDSensorWrapper)
 
   target_sources(yarp_RGBDSensorWrapper PRIVATE RGBDSensorWrapper.cpp
-                                                RGBDSensorWrapper.h
-                                                rosPixelCode.h)
+                                                RGBDSensorWrapper.h)
+  target_sources(yarp_RGBDSensorWrapper PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
+
+  target_include_directories(yarp_RGBDSensorWrapper PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_RGBDSensorWrapper PRIVATE YARP::YARP_os
                                                        YARP::YARP_sig
                                                        YARP::YARP_dev
                                                        YARP::YARP_rosmsg)
+
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev

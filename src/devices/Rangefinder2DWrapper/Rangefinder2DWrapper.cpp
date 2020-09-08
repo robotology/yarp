@@ -110,7 +110,7 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
     }
     else
     {
-        yCInfo(RANGEFINDER2DWRAPPER) << partName << "useROS parameter is set to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+        yCInfo(RANGEFINDER2DWRAPPER) << partName << "useROS parameter is set to invalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
         useROS = ROS_config_error;
         return false;
     }

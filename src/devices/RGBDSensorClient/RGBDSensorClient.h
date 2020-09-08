@@ -127,9 +127,7 @@ protected:
     IRGBDSensor::RGBDSensor_status sensorStatus{IRGBDSensor::RGBD_SENSOR_NOT_READY};
     int verbose{2};
 
-    bool use_ROS{false};  // if false (default) read from YARP port, if true read from ROS topic instead (Both at the same time is not possible).
     bool initialize_YARP(yarp::os::Searchable &config);
-    bool initialize_ROS(yarp::os::Searchable &config);
 
     yarp::os::Stamp colorStamp;
     yarp::os::Stamp depthStamp;

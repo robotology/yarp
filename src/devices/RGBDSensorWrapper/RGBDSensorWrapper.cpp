@@ -15,6 +15,7 @@
 #include <yarp/dev/GenericVocabs.h>
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 #include "rosPixelCode.h"
+#include <RGBDRosConversionUtils.h>
 
 using namespace RGBDImpl;
 using namespace yarp::sig;
@@ -226,7 +227,7 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
     }
 
     // check if we need to create subdevice or if they are
-    // passed later on thorugh attachAll()
+    // passed later on through attachAll()
     if(isSubdeviceOwned)
     {
         if(! openAndAttachSubDevice(config))
@@ -627,99 +628,6 @@ void RGBDSensorWrapper::threadRelease()
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
-string RGBDSensorWrapper::yarp2RosPixelCode(int code)
-{
-    switch(code)
-    {
-        case VOCAB_PIXEL_BGR:
-            return BGR8;
-        case VOCAB_PIXEL_BGRA:
-            return BGRA8;
-        case VOCAB_PIXEL_ENCODING_BAYER_BGGR16:
-            return BAYER_BGGR16;
-        case VOCAB_PIXEL_ENCODING_BAYER_BGGR8:
-            return BAYER_BGGR8;
-        case VOCAB_PIXEL_ENCODING_BAYER_GBRG16:
-            return BAYER_GBRG16;
-        case VOCAB_PIXEL_ENCODING_BAYER_GBRG8:
-            return BAYER_GBRG8;
-        case VOCAB_PIXEL_ENCODING_BAYER_GRBG16:
-            return BAYER_GRBG16;
-        case VOCAB_PIXEL_ENCODING_BAYER_GRBG8:
-            return BAYER_GRBG8;
-        case VOCAB_PIXEL_ENCODING_BAYER_RGGB16:
-            return BAYER_RGGB16;
-        case VOCAB_PIXEL_ENCODING_BAYER_RGGB8:
-            return BAYER_RGGB8;
-        case VOCAB_PIXEL_MONO:
-            return MONO8;
-        case VOCAB_PIXEL_MONO16:
-            return MONO16;
-        case VOCAB_PIXEL_RGB:
-            return RGB8;
-        case VOCAB_PIXEL_RGBA:
-            return RGBA8;
-        case VOCAB_PIXEL_MONO_FLOAT:
-            return TYPE_32FC1;
-        default:
-            return RGB8;
-    }
-}
-
-void RGBDSensorWrapper::shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& dest)
-{
-    dest.setPixelCode(src.getPixelCode());
-    dest.setQuantum(src.getQuantum());
-    dest.setExternal(src.getRawImage(), src.width(), src.height());
-}
-
-void RGBDSensorWrapper::shallowCopyImages(const ImageOf<PixelFloat>& src, ImageOf<PixelFloat>& dest)
-{
-    dest.setQuantum(src.getQuantum());
-    dest.setExternal(src.getRawImage(), src.width(), src.height());
-}
-
-
-
-void RGBDSensorWrapper::deepCopyImages(const yarp::sig::FlexImage&       src,
-                                       yarp::rosmsg::sensor_msgs::Image& dest,
-                                       const string&                     frame_id,
-                                       const yarp::rosmsg::TickTime&     timeStamp,
-                                       const UInt&                       seq)
-{
-    dest.data.resize(src.getRawImageSize());
-    dest.width           = src.width();
-    dest.height          = src.height();
-    memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
-    dest.encoding        = yarp2RosPixelCode(src.getPixelCode());
-    dest.step            = src.getRowSize();
-    dest.header.frame_id = frame_id;
-    dest.header.stamp    = timeStamp;
-    dest.header.seq      = seq;
-    dest.is_bigendian    = 0;
-}
-
-void RGBDSensorWrapper::deepCopyImages(const DepthImage&                 src,
-                                       yarp::rosmsg::sensor_msgs::Image& dest,
-                                       const string&                     frame_id,
-                                       const yarp::rosmsg::TickTime&     timeStamp,
-                                       const UInt&                       seq)
-{
-    dest.data.resize(src.getRawImageSize());
-
-    dest.width           = src.width();
-    dest.height          = src.height();
-
-    memcpy(dest.data.data(), src.getRawImage(), src.getRawImageSize());
-
-    dest.encoding        = yarp2RosPixelCode(src.getPixelCode());
-    dest.step            = src.getRowSize();
-    dest.header.frame_id = frame_id;
-    dest.header.stamp    = timeStamp;
-    dest.header.seq      = seq;
-    dest.is_bigendian    = 0;
-}
-
 bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
     double phyF = 0.0;
@@ -833,7 +741,6 @@ bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& camera
 
 bool RGBDSensorWrapper::writeData()
 {
-
     //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
     //             depthImage.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
 
@@ -846,78 +753,84 @@ bool RGBDSensorWrapper::writeData()
 
     static Stamp oldColorStamp = Stamp(0, 0);
     static Stamp oldDepthStamp = Stamp(0, 0);
+    bool rgb_data_ok = true;
+    bool depth_data_ok = true;
 
     if (((colorStamp.getTime() - oldColorStamp.getTime()) > 0) == false)
     {
-        return true;
+        rgb_data_ok=false;
+        //return true;
     }
+    else { oldColorStamp = colorStamp; }
 
     if (((depthStamp.getTime() - oldDepthStamp.getTime()) > 0) == false)
     {
-        return true;
+        depth_data_ok=false;
+        //return true;
     }
+    else { oldDepthStamp = depthStamp; }
 
-    oldDepthStamp = depthStamp;
-    oldColorStamp = colorStamp;
 
     if (use_YARP)
     {
-        FlexImage& yColorImage           = colorFrame_StreamingPort.prepare();
-        ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
-
-        shallowCopyImages(colorImage, yColorImage);
-        shallowCopyImages(depthImage, yDepthImage);
         // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
-
-        colorFrame_StreamingPort.setEnvelope(colorStamp);
-        colorFrame_StreamingPort.write();
-
-        depthFrame_StreamingPort.setEnvelope(depthStamp);
-        depthFrame_StreamingPort.write();
-
+        if (rgb_data_ok)
+        {
+            FlexImage& yColorImage = colorFrame_StreamingPort.prepare();
+            yarp::dev::RGBDRosConversionUtils::shallowCopyImages(colorImage, yColorImage);
+            colorFrame_StreamingPort.setEnvelope(colorStamp);
+            colorFrame_StreamingPort.write();
+        }
+        if (depth_data_ok)
+        {
+            ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
+            yarp::dev::RGBDRosConversionUtils::shallowCopyImages(depthImage, yDepthImage);
+            depthFrame_StreamingPort.setEnvelope(depthStamp);
+            depthFrame_StreamingPort.write();
+        }
     }
     if (use_ROS)
     {
-        yarp::rosmsg::sensor_msgs::Image&      rColorImage     = rosPublisherPort_color.prepare();
-        yarp::rosmsg::sensor_msgs::Image&      rDepthImage     = rosPublisherPort_depth.prepare();
-        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoC        = rosPublisherPort_colorCaminfo.prepare();
-        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
-        yarp::rosmsg::TickTime                 cRosStamp, dRosStamp;
-
-        cRosStamp = colorStamp.getTime();
-        dRosStamp = depthStamp.getTime();
-
-        deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
-        deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);
         // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
-
-        rosPublisherPort_color.setEnvelope(colorStamp);
-        rosPublisherPort_color.write();
-
-        rosPublisherPort_depth.setEnvelope(depthStamp);
-        rosPublisherPort_depth.write();
-
-        if (setCamInfo(camInfoC, rosFrameId, nodeSeq, COLOR_SENSOR))
+        if (rgb_data_ok)
         {
-            if(forceInfoSync)
-              camInfoC.header.stamp = rColorImage.header.stamp;
-            rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
-            rosPublisherPort_colorCaminfo.write();
+            yarp::rosmsg::sensor_msgs::Image&      rColorImage     = rosPublisherPort_color.prepare();
+            yarp::rosmsg::sensor_msgs::CameraInfo& camInfoC        = rosPublisherPort_colorCaminfo.prepare();
+            yarp::rosmsg::TickTime                 cRosStamp       = colorStamp.getTime();
+            yarp::dev::RGBDRosConversionUtils::deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
+            rosPublisherPort_color.setEnvelope(colorStamp);
+            rosPublisherPort_color.write();
+            if (setCamInfo(camInfoC, rosFrameId, nodeSeq, COLOR_SENSOR))
+            {
+                if(forceInfoSync)
+                    {camInfoC.header.stamp = rColorImage.header.stamp;}
+                rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
+                rosPublisherPort_colorCaminfo.write();
+            }
+            else
+            {
+                yCWarning(RGBDSENSORWRAPPER, "missing color camera parameters... camera info messages will be not sent");
+            }
         }
-        else
+        if (depth_data_ok)
         {
-            yCWarning(RGBDSENSORWRAPPER, "missing color camera parameters... camera info messages will be not sended");
-        }
-        if (setCamInfo(camInfoD, rosFrameId, nodeSeq, DEPTH_SENSOR))
-        {
-            if(forceInfoSync)
-                camInfoD.header.stamp = rDepthImage.header.stamp;
-            rosPublisherPort_depthCaminfo.setEnvelope(depthStamp);
-            rosPublisherPort_depthCaminfo.write();
-        }
-        else
-        {
-            yCWarning(RGBDSENSORWRAPPER, "missing depth camera parameters... camera info messages will be not sended");
+            yarp::rosmsg::sensor_msgs::Image&      rDepthImage     = rosPublisherPort_depth.prepare();
+            yarp::rosmsg::sensor_msgs::CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
+            yarp::rosmsg::TickTime                 dRosStamp       = depthStamp.getTime();
+            yarp::dev::RGBDRosConversionUtils::deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);
+            rosPublisherPort_depth.setEnvelope(depthStamp);
+            rosPublisherPort_depth.write();
+            if (setCamInfo(camInfoD, rosFrameId, nodeSeq, DEPTH_SENSOR))
+            {
+                if(forceInfoSync)
+                    {camInfoD.header.stamp = rDepthImage.header.stamp;}
+                rosPublisherPort_depthCaminfo.setEnvelope(depthStamp);
+                rosPublisherPort_depthCaminfo.write();
+            }
+            else
+            {
+                yCWarning(RGBDSENSORWRAPPER, "missing depth camera parameters... camera info messages will be not sent");
+            }
         }
 
         nodeSeq++;
