@@ -2,7 +2,6 @@
 .clang-format                   export-ignore
 .clang-tidy                     export-ignore
 .coveralls.yml                  export-ignore
-.gitattributes                  export-ignore
 .github/                        export-ignore
 .gitignore                      export-ignore
 .mailmap                        export-ignore
@@ -37,3 +36,5 @@ CMakeLists.txt                  whitespace=trailing-space,space-before-tab,tab-i
 *.gif                           binary
 *.tiff                          binary
 *.ico                           binary
+
+extern/xmlrpcpp/xmlrpcpp/test/pngnow.png text eol=crlf
