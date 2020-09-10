@@ -72,7 +72,11 @@ yarprobotinterface::Module::Private::~Private() = default;
 void yarprobotinterface::Module::Private::sigsegv_handler(int nSignum, siginfo_t* si, void* vcontext)
 {
     auto context = reinterpret_cast<ucontext_t*>(vcontext);
+#if defined(__x86_64__)
     context->uc_mcontext.gregs[REG_RIP]++;
+#else
+    context->uc_mcontext.gregs[REG_EIP]++;
+#endif
 
     const size_t max_depth = 100;
     size_t stack_depth;
