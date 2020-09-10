@@ -38,7 +38,7 @@ set(YARP_NO_DEPRECATED @YARP_NO_DEPRECATED@)
 if(YARP_NO_DEPRECATED)
   add_definitions("-DYARP_NO_DEPRECATED")
 else(YARP_NO_DEPRECATED)
-  set_and_check(YARP_BINDINGS "@PACKAGE_YARP_BINDINGS@")
+  set(YARP_BINDINGS "@PACKAGE_YARP_BINDINGS@")
 endif(YARP_NO_DEPRECATED)
 
 # Disable deprecated warnings, but add an option to enable it
