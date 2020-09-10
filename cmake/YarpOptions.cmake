@@ -234,7 +234,7 @@ mark_as_advanced(YARP_EXPERIMENTAL_WARNINGS)
 if(YARP_EXPERIMENTAL_WARNINGS)
   set(WANTED_WARNING_FLAGS "${WANTED_WARNING_FLAGS} ${EXPERIMENTAL_WARNING_FLAGS}")
 endif()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WANTED_WARNING_FLAGS} ${UNWANTED_WARNING_FLAGS}")
+set(YARP_CXX_FLAGS "${WANTED_WARNING_FLAGS} ${UNWANTED_WARNING_FLAGS}")
 
 
 #########################################################################
@@ -255,7 +255,7 @@ yarp_deprecated_option(YARP_CLEAN_API) # Since YARP 2.3.68.1
 #########################################################################
 # Show warnings for deprecated declarations
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${DEPRECATED_DECLARATIONS_FLAGS}")
+set(YARP_CXX_FLAGS "${YARP_CXX_FLAGS} ${DEPRECATED_DECLARATIONS_FLAGS}")
 
 
 #########################################################################
@@ -286,7 +286,7 @@ option(YARP_EXPERIMENTAL_HARDENING "Build YARP using hardening flags" OFF)
 mark_as_advanced(YARP_EXPERIMENTAL_HARDENING)
 if(YARP_EXPERIMENTAL_HARDENING)
   add_definitions("-D_FORTIFY_SOURCE=2")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${HARDENING_FLAGS}")
+  set(YARP_CXX_FLAGS "${YARP_CXX_FLAGS} ${HARDENING_FLAGS}")
 endif()
 
 
@@ -319,7 +319,7 @@ if(CXX_HAS_WERROR)
   option(YARP_ABORT_ON_WARNING "Consider compiler warnings as errors and abort compilation (-Werror)." OFF)
   mark_as_advanced(YARP_ABORT_ON_WARNING)
   if(YARP_ABORT_ON_WARNING)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+    set(YARP_CXX_FLAGS "${YARP_CXX_FLAGS} -Werror")
   endif()
 endif()
 
@@ -329,9 +329,28 @@ if(CXX_HAS_WFATAL_ERROR)
   option(YARP_FATAL_ERRORS "Abort compilation on the first error rather than trying to keep going and printing further error messages (-Wfatal-errors)" OFF)
   mark_as_advanced(YARP_FATAL_ERRORS)
   if(YARP_FATAL_ERRORS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfatal-errors")
+    set(YARP_CXX_FLAGS "${YARP_CXX_FLAGS} -Wfatal-errors")
   endif()
 endif()
+
+
+#########################################################################
+# Set build flags and be sure to append user defined flags at the end.
+
+get_property(_USER_CMAKE_C_FLAGS CACHE CMAKE_C_FLAGS PROPERTY VALUE)
+get_property(_USER_CMAKE_CXX_FLAGS CACHE CMAKE_CXX_FLAGS PROPERTY VALUE)
+
+set(CMAKE_C_FLAGS "-w ${_USER_CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-w ${_USER_CMAKE_C_FLAGS}")
+
+# Save the YARP_C_FLAGS and YARP_CXX_FLAGS variables (exported in the
+# YARPConfig.cmake file, but remove a few unwanted options from the build
+# path that should not be used by other packages.
+# -fdebug-prefix-map, -fmacro-prefix-map, -ffile-prefix-map contain the build
+# path, and therefore they lead to unreproducible builds.
+# See also https://reproducible-builds.org/docs/build-path/
+string(REGEX REPLACE "-f(debug|macro|file)-prefix-map=[^ ]+ *" "" YARP_C_FLAGS "${CMAKE_C_FLAGS}")
+string(REGEX REPLACE "-f(debug|macro|file)-prefix-map=[^ ]+ *" "" YARP_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 
 #########################################################################
