@@ -918,7 +918,7 @@ bool V4L_camera::getRgbBuffer(unsigned char* buffer)
         mutex.post();
         res = true;
     } else {
-        yCError(USBCAMERA) << "unable to get the buffer, device unitialized";
+        yCError(USBCAMERA) << "unable to get the buffer, device uninitialized";
         mutex.post();
         res = false;
     }
@@ -935,7 +935,7 @@ bool V4L_camera::getRawBuffer(unsigned char* buffer)
         memcpy(buffer, param.src_image, param.src_image_size);
         res = true;
     } else {
-        yCError(USBCAMERA) << "unable to get the buffer, device unitialized";
+        yCError(USBCAMERA) << "unable to get the buffer, device uninitialized";
         res = false;
     }
     mutex.post();

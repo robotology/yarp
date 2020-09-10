@@ -348,7 +348,7 @@ ErrorCode DynamixelAX12FtdiDriver::checkAnswerPacket(unsigned char* packet, cons
         return OVERLOAD_ERROR;
     }
     if (packet[0] & 64) {
-        message = "Undefined instruction or missing Reg_Write instrcution!";
+        message = "Undefined instruction or missing Reg_Write instruction!";
         return INSTRUCTION_ERROR;
     }
     message = "";

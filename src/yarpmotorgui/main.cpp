@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
         yInfo("yarpmotorgui options:");
         yInfo("--robot <name>: name of the robot");
         yInfo("--parts ""( <name1> <name2> )"": parts of the robot to add to the list. (e.g. left_arm)");
-        yInfo("--names ""( <name1> <name2> )"": full name of the ports of the robot to add to the list. (e.g. /icub/left_arm). This option is mutually execusive with --robot --parts options");
+        yInfo("--names ""( <name1> <name2> )"": full name of the ports of the robot to add to the list. (e.g. /icub/left_arm). This option is mutually exclusive with --robot --parts options");
         yInfo("--skip_parts ""( <name1> <name2> )"": parts of the robot to skip.");
         yInfo("--calib to enable calibration buttons (be careful!)");
         return 0;
