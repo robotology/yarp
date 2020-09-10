@@ -87,6 +87,25 @@ else()
                  APPEND_STRING
                  PROPERTY COMPILE_FLAGS " -Wno-null-conversion")
   endif()
+
+  # Building thrift with clang sanitizer will cause errors when running
+  # thrift, and it will make the build fail since it is executed during
+  # the build.
+  # Therefore the '-fsanitize' build flag is just removed in order to
+  # avoid build failures, and allow to test the rest of YARP with clang
+  # sanitizers.
+  if("${CMAKE_CXX_FLAGS}" MATCHES "(-fsanitize[^ ]+)" OR
+     "${CMAKE_MODULE_LINKER_FLAGS}" MATCHES "(-fsanitize[^ ]+)" OR
+     "${CMAKE_SHARED_LINKER_FLAGS}" MATCHES "(-fsanitize[^ ]+)" OR
+     "${CMAKE_EXE_LINKER_FLAGS}" MATCHES "(-fsanitize[^ ]+)")
+
+    message(WARNING "Sanitizer are not supported for thrift compiler. Disabling them")
+    string(REGEX REPLACE "(-fsanitize[^ ]+)" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+    string(REGEX REPLACE "(-fsanitize[^ ]+)" "" CMAKE_MODULE_LINKER_FLAGS ${CMAKE_MODULE_LINKER_FLAGS})
+    string(REGEX REPLACE "(-fsanitize[^ ]+)" "" CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS})
+    string(REGEX REPLACE "(-fsanitize[^ ]+)" "" CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
+  endif()
+
 endif()
 
 add_executable(yarpidl_thrift)

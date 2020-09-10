@@ -5,8 +5,11 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 # disable all warnings for current folder and subfolders
-set(CMAKE_C_FLAGS -w)
-set(CMAKE_CXX_FLAGS -w)
+# (unless explicitly added by the user)
+get_property(_USER_CMAKE_C_FLAGS CACHE CMAKE_C_FLAGS PROPERTY VALUE)
+get_property(_USER_CMAKE_CXX_FLAGS CACHE CMAKE_CXX_FLAGS PROPERTY VALUE)
+set(CMAKE_C_FLAGS "-w ${_USER_CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-w ${_USER_CMAKE_C_FLAGS}")
 
 # TinyXML
 if(YARP_BUILD_TinyXML)
