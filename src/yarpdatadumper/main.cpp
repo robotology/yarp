@@ -486,7 +486,11 @@ public:
                 double dt=itemEnd.timeStamp.getStamp()-t0;
                 fps=(dt<=0.0)?25:int(double(sz-1)/dt);
 
+#if CV_MAJOR_VERSION >= 3
                 videoWriter.open(videoFile.c_str(),cv::VideoWriter::fourcc('H','F','Y','U'),
+#else
+                videoWriter.open(videoFile.c_str(),CV_FOURCC('H','F','Y','U'),
+#endif
                                  fps,cvSize(frameW,frameH),true);
 
                 doImgParamsExtraction=false;
