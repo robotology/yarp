@@ -88,6 +88,13 @@ if(YARP_HAS_JPEG)
   list(APPEND YARP_sig_PRIVATE_DEPS JPEG)
 endif()
 
+if(YARP_HAS_ZLIB)
+  target_include_directories(YARP_sig SYSTEM PRIVATE ${ZLIB_INCLUDE_DIR})
+  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_ZLIB)
+  target_link_libraries(YARP_sig PRIVATE ${ZLIB_LIBRARY})
+  list(APPEND YARP_sig_PRIVATE_DEPS ZLIB)
+endif()
+
 if(YARP_HAS_PNG)
   target_include_directories(YARP_sig SYSTEM PRIVATE ${PNG_INCLUDE_DIR})
   target_compile_definitions(YARP_sig PRIVATE YARP_HAS_PNG)
