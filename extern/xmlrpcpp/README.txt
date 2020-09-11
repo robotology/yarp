@@ -114,3 +114,5 @@ Patches:
 
  * 0017-xmlrpc-Fix-tmEq-method.patch: xmlrpc++: Fix tmEq() method
    (from commit 95238ffbcd164594ace75baff278ac936a14484b)
+
+ * rm -r extern/xmlrpcpp/xmlrpcpp/test
