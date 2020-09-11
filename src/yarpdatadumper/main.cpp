@@ -45,20 +45,19 @@ using namespace yarp::sig;
 #endif
 
 /**************************************************************************/
-enum class DumpType { bottle, image };
-enum class DumpFormat { plain, image_jpg, image_png } dump_format;
+enum class DumpFormat { bottle, image, image_jpg, image_png, depth, depth_compressed };
 
-// Abstract object definition for queueing
+// Abstract object definition for queuing
 /**************************************************************************/
 class DumpObj
 {
 protected:
-    DumpFormat dump_format{DumpFormat::plain};
+    DumpFormat m_dump_format{DumpFormat::bottle};
 
 public:
     virtual ~DumpObj() = default;
     virtual const string toFile(const string&, unsigned int) = 0;
-    virtual void attachFormat(const DumpFormat &format) { dump_format=format; }
+    virtual void attachFormat(const DumpFormat &format) { m_dump_format=format; }
 };
 
 
@@ -112,39 +111,58 @@ public:
 
     const string toFile(const string &dirName, unsigned int cnt) override
     {
-        file::image_fileformat format;
+        file::image_fileformat fileformat = file::FORMAT_NULL;
         string ext;
 
         int code=p->getPixelCode();
-        if (code==VOCAB_PIXEL_MONO_FLOAT)
+        switch (code)
         {
-            format=file::FORMAT_NUMERIC;
-            ext=".float";
-        }
-        else if (code==VOCAB_PIXEL_MONO)
-        {
-            format=file::FORMAT_PGM;
-            ext=".pgm";
-        }
-        else if (dump_format==DumpFormat::image_jpg)
-        {
-            format=file::FORMAT_JPG;
-            ext=".jpg";
-        }
-        else if (dump_format==DumpFormat::image_png)
-        {
-            format=file::FORMAT_PNG;
-            ext=".png";
-        }
-        else
-        {
-            format=file::FORMAT_PPM;
-            ext=".ppm";
+            //depth images
+            case VOCAB_PIXEL_MONO_FLOAT:
+                if (m_dump_format == DumpFormat::depth)
+                {
+                    fileformat = file::FORMAT_NUMERIC;
+                    ext = ".float";
+                }
+                else if (m_dump_format == DumpFormat::depth_compressed)
+                {
+                    fileformat = file::FORMAT_NUMERIC_COMPRESSED;
+                    ext = ".floatzip";
+                }
+            break;
+
+            //grayscale images
+            case VOCAB_PIXEL_MONO:
+                if (1)
+                {
+                    fileformat = file::FORMAT_PGM;
+                    ext = ".pgm";
+                }
+            break;
+
+            //rgb, bgr and other type of color images
+            default:
+                if (m_dump_format == DumpFormat::image_jpg)
+                {
+                    fileformat = file::FORMAT_JPG;
+                    ext = ".jpg";
+                }
+                else if (m_dump_format == DumpFormat::image_png)
+                {
+                    fileformat = file::FORMAT_PNG;
+                    ext = ".png";
+                }
+                else
+                {
+                    fileformat = file::FORMAT_PPM;
+                    ext = ".ppm";
+                }
+            break;
         }
 
         ostringstream fName;
         fName << setw(8) << setfill('0') << cnt << ext;
-        file::write(*p,dirName+"/"+fName.str(),format);
+        file::write(*p,dirName+"/"+fName.str(), fileformat);
 
         return (fName.str()+" ["+Vocab::decode(code)+"]");
     }
@@ -253,13 +271,13 @@ class DumpPort : public BufferedPort<T>
 {
 public:
     DumpPort(DumpQueue &Q, unsigned int _dwnsample=1,
-             bool _rxTime=true, bool _txTime=false) : buf(Q)
+             bool _rxTime=true, bool _txTime=false, DumpFormat _dataformat= DumpFormat::bottle) : buf(Q)
     {
         rxTime=_rxTime;
         txTime=_txTime;
         dwnsample=_dwnsample>0?_dwnsample:1;
         cnt=0;
-
+        itemformat = _dataformat;
         firstIncomingData=true;
     }
 
@@ -270,6 +288,7 @@ private:
     bool firstIncomingData;
     bool rxTime;
     bool txTime;
+    DumpFormat itemformat;
 
     using BufferedPort<T>::onRead;
     void onRead(T &obj) override
@@ -295,7 +314,7 @@ private:
                 item.timeStamp.setRxStamp(Time::now());
 
             item.obj=factory(obj);
-            item.obj->attachFormat(dump_format);
+            item.obj->attachFormat(itemformat);
 
             buf.lock();
             buf.push_back(item);
@@ -312,7 +331,7 @@ class DumpThread : public PeriodicThread
 {
 private:
     DumpQueue      &buf;
-    DumpType        type;
+    DumpFormat      type;
     ofstream        finfo;
     ofstream        fdata;
     string          dirName;
@@ -341,7 +360,7 @@ private:
 #endif
 
 public:
-    DumpThread(DumpType _type, DumpQueue &Q, const string &_dirName, const int szToWrite,
+    DumpThread(DumpFormat _type, DumpQueue &Q, const string &_dirName, const int szToWrite,
                const bool _saveData, const bool _videoOn, const string &_videoType,
                const bool _rxTime, const bool _txTime) :
         PeriodicThread(0.05),
@@ -406,13 +425,33 @@ public:
         }
 
         finfo<<"Type: ";
-        if (type==DumpType::bottle)
+        if (type== DumpFormat::bottle)
             finfo<<"Bottle;";
-        else if (type==DumpType::image)
+        else if (type== DumpFormat::image)
         {
+            ///this is ppm/pgm image format
             finfo<<"Image;";
-            if (videoOn)
-                finfo<<" Video:"<<videoType<<"(huffyuv);";
+            if (videoOn) finfo<<" Video:"<<videoType<<"(huffyuv);";
+        }
+        else if (type == DumpFormat::depth)
+        { 
+            finfo << "Depth;";
+        }
+        else if (type == DumpFormat::depth_compressed)
+        {
+            finfo << "DepthCompressed;";
+        }
+        else if (type == DumpFormat::image_jpg)
+        {
+            finfo << "Image:jpg";
+        }
+        else if (type == DumpFormat::image_png)
+        {
+            finfo << "Image:png";
+        }
+        else
+        {
+            yError() << "I should not reach this line! Unknown data type" << (int)type;
         }
         finfo<<endl;
 
@@ -422,7 +461,7 @@ public:
         else if (txTime)
             finfo<<"tx;";
         else
-            finfo<<"rx;";
+            finfo<<"ex;";
         finfo<<endl;
 
         fdata.open(dataFile.c_str());
@@ -579,7 +618,7 @@ private:
     DumpThread       *t{nullptr};
     DumpReporter      reporter;
     Port              rpcPort;
-    DumpType          type{DumpType::bottle};
+    DumpFormat        dumptype{ DumpFormat::bottle};
     bool              rxTime{false};
     bool              txTime{false};
     unsigned int      dwnsample{0};
@@ -612,7 +651,7 @@ public:
         if (portName[0]!='/')
             portName="/"+portName;
 
-        dump_format=DumpFormat::plain;
+      //  DumpFormat tmp_format=DumpFormat::bottle;
         bool saveData=true;
         bool videoOn=false;
         string videoType=rf.check("videoType",Value("mkv")).asString();
@@ -621,23 +660,42 @@ public:
         {
             string optTypeName=rf.find("type").asString();
             if (optTypeName=="bottle")
-                type=DumpType::bottle;
-            else if ((optTypeName=="image") || (optTypeName=="image_jpg") || (optTypeName=="image_png"))
             {
-                type=DumpType::image;
-                if (optTypeName=="image_jpg")
-                    dump_format=DumpFormat::image_jpg;
-                else if (optTypeName=="image_png")
-                    dump_format=DumpFormat::image_png;
-            #ifdef ADD_VIDEO
-                if (rf.check("addVideo"))
-                    videoOn=true;
-            #endif
+                dumptype = DumpFormat::bottle;
+            }
+            else if (optTypeName == "depth")
+            {
+                dumptype = DumpFormat::depth;
+            }
+            else if (optTypeName == "depth_compressed")
+            {
+                dumptype = DumpFormat::depth_compressed;
+            }
+            else if ((optTypeName == "image"))
+            {
+                dumptype = DumpFormat::image;
+                #ifdef ADD_VIDEO
+                if (rf.check("addVideo"))   videoOn = true;
+                #endif
+            }
+            else if ((optTypeName == "image_jpg"))
+            {
+                dumptype = DumpFormat::image_jpg;
+                #ifdef ADD_VIDEO
+                if (rf.check("addVideo"))   videoOn = true;
+                #endif
+            }
+            else if ((optTypeName == "image_png"))
+            {
+                dumptype = DumpFormat::image_png;
+                #ifdef ADD_VIDEO
+                if (rf.check("addVideo"))   videoOn = true;
+                #endif
             }
         #ifdef ADD_VIDEO
             else if (optTypeName=="video")
             {
-                type=DumpType::image;
+                dumptype = DumpFormat::image;
                 videoOn=true;
                 saveData=false;
             }
@@ -649,7 +707,9 @@ public:
             }
         }
         else
-            type=DumpType::bottle;
+        {
+            dumptype = DumpFormat::bottle;
+        }
 
         dwnsample=rf.check("downsample",Value(1)).asInt32();
         rxTime=rf.check("rxTime");
@@ -682,7 +742,7 @@ public:
         yarp::os::mkdir_p(dirName.c_str());
 
         q=new DumpQueue();
-        t=new DumpThread(type,*q,dirName,100,saveData,videoOn,videoType,rxTime,txTime);
+        t=new DumpThread(dumptype,*q,dirName,100,saveData,videoOn,videoType,rxTime,txTime);
 
         if (!t->start())
         {
@@ -694,9 +754,9 @@ public:
 
         reporter.setThread(t);
 
-        if (type==DumpType::bottle)
+        if (dumptype == DumpFormat::bottle)
         {
-            p_bottle=new DumpPort<Bottle>(*q,dwnsample,rxTime,txTime);
+            p_bottle=new DumpPort<Bottle>(*q,dwnsample,rxTime,txTime, DumpFormat::bottle);
             p_bottle->useCallback();
             p_bottle->open(portName);
             p_bottle->setStrict();
@@ -704,7 +764,7 @@ public:
         }
         else
         {
-            p_image=new DumpPort<Image>(*q,dwnsample,rxTime,txTime);
+            p_image=new DumpPort<Image>(*q,dwnsample,rxTime,txTime, dumptype);
             p_image->useCallback();
             p_image->open(portName);
             p_image->setStrict();
@@ -715,8 +775,8 @@ public:
         {
             string srcPort=rf.find("connect").asString();
             bool ok=Network::connect(srcPort.c_str(),
-                                     (type==DumpType::bottle)?p_bottle->getName().c_str():
-                                     p_image->getName().c_str(),"tcp");
+                                    (dumptype == DumpFormat::bottle)?  p_bottle->getName().c_str() : p_image->getName().c_str(),
+                                    "tcp");
 
             ostringstream msg;
             msg << "Connection to " << srcPort << " " << (ok?"successful":"failed");
@@ -741,7 +801,7 @@ public:
     {
         t->stop();
 
-        if (type==DumpType::bottle)
+        if (dumptype == DumpFormat::bottle)
         {
             p_bottle->interrupt();
             p_bottle->close();
@@ -784,11 +844,11 @@ int main(int argc, char *argv[])
         yInfo() << "\t--dir        name: provide explicit name of storage directory";
         yInfo() << "\t--overwrite      : overwrite pre-existing storage directory";
     #ifdef ADD_VIDEO
-        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, image_jpg, image_png, video]";
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, image_jpg, image_png, video, depth, depth_compressed]";
         yInfo() << "\t--addVideo       : produce video as well (if image* is selected)";
         yInfo() << "\t--videoType   ext: produce video of specified container type [mkv(default), avi]";
     #else
-        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, image_jpg, image_png]";
+        yInfo() << "\t--type       type: type of the data to be dumped [bottle(default), image, image_jpg, image_png, depth, depth_compressed]";
     #endif
         yInfo() << "\t--downsample    n: downsample rate (default: 1 => downsample disabled)";
         yInfo() << "\t--rxTime         : dump the receiver time instead of the sender time";
