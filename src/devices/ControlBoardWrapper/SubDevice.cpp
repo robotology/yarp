@@ -118,91 +118,94 @@ void SubDevice::detach()
 bool SubDevice::attach(yarp::dev::PolyDriver *d, const std::string &k)
 {
     std::string parentName;
-    if(parent)
-    {
+    if(parent) {
         parentName = parent->getId();
-    }
-    else
+    } else {
         parentName = "";
+    }
 
-    if (id!=k)
-    {
+    if (id!=k) {
         yCError(CONTROLBOARDWRAPPER, "Part <%s>: Wrong or unknown device %s. Cannot attach to it.", parentName.c_str(), k.c_str());
         return false;
     }
 
     //configure first
-    if (!configuredF)
-        {
-            yCError(CONTROLBOARDWRAPPER, "Part <%s>: You need to call configure before you can attach any device", parentName.c_str());
-            return false;
-        }
+    if (!configuredF) {
+        yCError(CONTROLBOARDWRAPPER, "Part <%s>: You need to call configure before you can attach any device", parentName.c_str());
+        return false;
+    }
 
-    if (d==nullptr)
-        {
-            yCError(CONTROLBOARDWRAPPER, "Part <%s>: Invalid device (null pointer)", parentName.c_str());
-            return false;
-        }
+    if (d==nullptr) {
+        yCError(CONTROLBOARDWRAPPER, "Part <%s>: Invalid device (null pointer)", parentName.c_str());
+        return false;
+    }
 
     subdevice=d;
 
-    if (subdevice->isValid())
-        {
-            subdevice->view(pid);
-            subdevice->view(pos);
-            subdevice->view(posDir);
-            subdevice->view(vel);
-            subdevice->view(amp);
-            subdevice->view(lim);
-            subdevice->view(calib);
-            subdevice->view(info);
-            subdevice->view(iTimed);
-            subdevice->view(iTorque);
-            subdevice->view(iImpedance);
-            subdevice->view(iMode);
-            subdevice->view(iJntEnc);
-            subdevice->view(iMotEnc);
-            subdevice->view(iInteract);
-            subdevice->view(imotor);
-            subdevice->view(iVar);
-            subdevice->view(iCurr);
-            subdevice->view(iPWM);
-        }
-    else
-        {
-            yCError(CONTROLBOARDWRAPPER, "Part <%s>: Invalid device %s (isValid() returned false).", parentName.c_str(), k.c_str());
-            return false;
-        }
+    if (subdevice->isValid()) {
+        subdevice->view(pid);
+        subdevice->view(pos);
+        subdevice->view(posDir);
+        subdevice->view(vel);
+        subdevice->view(amp);
+        subdevice->view(lim);
+        subdevice->view(calib);
+        subdevice->view(info);
+        subdevice->view(iTimed);
+        subdevice->view(iTorque);
+        subdevice->view(iImpedance);
+        subdevice->view(iMode);
+        subdevice->view(iJntEnc);
+        subdevice->view(iMotEnc);
+        subdevice->view(iInteract);
+        subdevice->view(imotor);
+        subdevice->view(iVar);
+        subdevice->view(iCurr);
+        subdevice->view(iPWM);
+    } else {
+        yCError(CONTROLBOARDWRAPPER, "Part <%s>: Invalid device %s (isValid() returned false).", parentName.c_str(), k.c_str());
+        return false;
+    }
 
-    if ( ((iMode==nullptr)) && (_subDevVerbose ))
+    if ( ((iMode==nullptr)) && (_subDevVerbose )) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iMode not valid interface.", parentName.c_str());
+    }
 
-    if ((iTorque==nullptr) && (_subDevVerbose))
+    if ((iTorque==nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iTorque not valid interface.", parentName.c_str());
+    }
 
-    if ((iCurr == nullptr) && (_subDevVerbose))
+    if ((iCurr == nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iCurr not valid interface.", parentName.c_str());
+    }
 
-    if ((iPWM == nullptr) && (_subDevVerbose))
+    if ((iPWM == nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iPWM not valid interface.", parentName.c_str());
+    }
 
-    if ((iImpedance==nullptr) && (_subDevVerbose))
+    if ((iImpedance==nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iImpedance not valid interface.", parentName.c_str());
+    }
 
-    if ((iInteract==nullptr) && (_subDevVerbose))
+    if ((iInteract==nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iInteractionMode not valid interface.", parentName.c_str());
+    }
 
-    if ((iMotEnc==nullptr) && (_subDevVerbose))
+    if ((iMotEnc==nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iMotorEncoder not valid interface.", parentName.c_str());
+    }
 
-    if ((imotor==nullptr) && (_subDevVerbose))
+    if ((imotor==nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iMotor not valid interface.", parentName.c_str());
+    }
 
-    if ((iVar == nullptr) && (_subDevVerbose))
+    if ((iVar == nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iRemoteVariable not valid interface.", parentName.c_str());
+    }
 
-    if ((info == nullptr) && (_subDevVerbose))
+    if ((info == nullptr) && (_subDevVerbose)) {
         yCWarning(CONTROLBOARDWRAPPER, "Part <%s>: iAxisInfo not valid interface.", parentName.c_str());
+    }
 
     int deviceJoints=0;
 
