@@ -23,19 +23,61 @@
 #include <png.h>
 #endif
 
+#if defined (YARP_HAS_ZLIB)
+#include <zlib.h>
+#endif
+
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
 
-namespace {
-YARP_LOG_COMPONENT(IMAGEFILE, "yarp.sig.ImageFile")
+namespace
+{
+    YARP_LOG_COMPONENT(IMAGEFILE, "yarp.sig.ImageFile")
 }
 
+namespace
+{
+    bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename);
+    bool ImageReadBGR_PNG(ImageOf<PixelBgr>& img, const char* filename);
+    bool ImageReadMono_PNG(ImageOf<PixelMono>& img, const char* filename);
+
+    bool ReadHeader_PxM(FILE* fp, int* height, int* width, int* color);
+    bool ImageReadMono_PxM(ImageOf<PixelMono>& img, const char* filename);
+    bool ImageReadRGB_PxM(ImageOf<PixelRgb>& img, const char* filename);
+    bool ImageReadBGR_PxM(ImageOf<PixelBgr>& img, const char* filename);
+
+    bool ImageReadFloat_PlainHeaderless(ImageOf<PixelFloat>& dest, const std::string& filename);
+#if defined (YARP_HAS_ZLIB)
+    bool ImageReadFloat_CompressedHeaderless(ImageOf<PixelFloat>& dest, const std::string& filename);
+#endif
+
+    bool SaveJPG(char* src, const char* filename, int h, int w, int rowSize);
+    bool SavePGM(char* src, const char* filename, int h, int w, int rowSize);
+    bool SavePPM(char* src, const char* filename, int h, int w, int rowSize);
+#if defined (YARP_HAS_PNG)
+    bool SavePNG(char* src, const char* filename, size_t h, size_t w, size_t rowSize, png_byte color_type, png_byte bit_depth);
+#endif
+    bool SaveFloatRaw(char* src, const char* filename, int h, int w, int rowSize);
+#if defined (YARP_HAS_ZLIB)
+    bool SaveFloatCompressed(char* src, const char* filename, int h, int w, int rowSize);
+#endif
+
+    bool ImageWriteJPG(ImageOf<PixelRgb>& img, const char* filename);
+    bool ImageWritePNG(ImageOf<PixelRgb>& img, const char* filename);
+    bool ImageWritePNG(ImageOf<PixelMono>& img, const char* filename);
+    bool ImageWriteRGB(ImageOf<PixelRgb>& img, const char* filename);
+    bool ImageWriteMono(ImageOf<PixelMono>& img, const char* filename);
+
+    bool ImageWriteFloat_PlainHeaderless(ImageOf<PixelFloat>& img, const char* filename);
+    bool ImageWriteFloat_CompressedHeaderless(ImageOf<PixelFloat>& img, const char* filename);
+};
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // private read methods for PNG Files
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-static bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
+namespace {
+bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
 {
 #if defined (YARP_HAS_PNG)
     FILE* fp = fopen(filename, "rb");
@@ -133,7 +175,7 @@ static bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
 #endif
 }
 
-static bool ImageReadFloat_PNG(ImageOf<PixelFloat>& dest, const std::string& filename)
+bool ImageReadBGR_PNG(ImageOf<PixelBgr>& img, const char* filename)
 {
 #if defined (YARP_HAS_PNG)
     yCError(IMAGEFILE) << "Not yet implemented";
@@ -144,18 +186,7 @@ static bool ImageReadFloat_PNG(ImageOf<PixelFloat>& dest, const std::string& fil
 #endif
 }
 
-static bool ImageReadBGR_PNG(ImageOf<PixelBgr>& img, const char* filename)
-{
-#if defined (YARP_HAS_PNG)
-    yCError(IMAGEFILE) << "Not yet implemented";
-    return false;
-#else
-    yCError(IMAGEFILE) << "PNG library not available/not found";
-    return false;
-#endif
-}
-
-static bool ImageReadMono_PNG(ImageOf<PixelMono>& img, const char* filename)
+bool ImageReadMono_PNG(ImageOf<PixelMono>& img, const char* filename)
 {
 #if defined (YARP_HAS_PNG)
     yCError(IMAGEFILE) << "Not yet implemented";
@@ -170,7 +201,7 @@ static bool ImageReadMono_PNG(ImageOf<PixelMono>& img, const char* filename)
 // private read methods for PGM/PPM Files
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static bool ReadHeader_PxM(FILE *fp, int *height, int *width, int *color)
+bool ReadHeader_PxM(FILE *fp, int *height, int *width, int *color)
 {
     char ch;
     int  maxval;
@@ -216,7 +247,7 @@ static bool ReadHeader_PxM(FILE *fp, int *height, int *width, int *color)
 }
 
 
-static bool ImageReadRGB_PxM(ImageOf<PixelRgb> &img, const char *filename)
+bool ImageReadRGB_PxM(ImageOf<PixelRgb> &img, const char *filename)
 {
     int width, height, color, num;
     FILE *fp=nullptr;
@@ -275,30 +306,110 @@ static bool ImageReadRGB_PxM(ImageOf<PixelRgb> &img, const char *filename)
     return true;
 }
 
-static bool ImageReadFloat_PxM(ImageOf<PixelFloat>& dest, const std::string& filename)
+#if defined (YARP_HAS_ZLIB)
+bool ImageReadFloat_CompressedHeaderless(ImageOf<PixelFloat>& dest, const std::string& filename)
+{
+    FILE* fp = fopen(filename.c_str(), "rb");
+    if (fp == nullptr) {
+        return false;
+    }
+
+    size_t br = 0;
+    size_t count_ = 0;
+
+    //get the file size
+    fseek(fp, 0, SEEK_END);
+    size_t sizeDataCompressed = ftell(fp);
+    rewind(fp);
+
+    //read the compressed data
+    char* dataReadInCompressed = new char[sizeDataCompressed];
+    br = fread(dataReadInCompressed, 1, sizeDataCompressed, fp);
+    fclose(fp);
+
+    if (br != sizeDataCompressed) { yError() << "problems reading file!"; return false; }
+
+    size_t h = ((size_t*)(dataReadInCompressed))[0]; //byte 0
+    size_t w = ((size_t*)(dataReadInCompressed))[1]; //byte 8, because size_t is 8 bytes long
+    size_t hds = 2* sizeof(size_t); //16 bytes
+
+    dest.resize(w, h);
+    unsigned char* destbuff = dest.getRawImage();
+    //this is the size of the image
+    size_t sizeDataUncompressed = dest.getRawImageSize();
+    //this is the size of the buffer. Extra space is required for temporary operations (I choose arbitrarily *2)
+    size_t sizeDataUncompressedExtra = sizeDataUncompressed*2;
+
+    char* dataUncompressed = new char[sizeDataUncompressedExtra];
+
+    int z_result = uncompress((Bytef*) dataUncompressed, (uLongf*)&sizeDataUncompressedExtra, (const Bytef*)dataReadInCompressed+ hds, sizeDataCompressed- hds);
+    switch (z_result)
+    {
+    case Z_OK:
+        break;
+
+    case Z_MEM_ERROR:
+        yCError(IMAGEFILE, "zlib compression: out of memory");
+        delete[] dataUncompressed;
+        return false;
+        break;
+
+    case Z_BUF_ERROR:
+        yCError(IMAGEFILE, "zlib compression: output buffer wasn't large enough");
+        delete[] dataUncompressed;
+        return false;
+        break;
+
+    case Z_DATA_ERROR:
+        yCError(IMAGEFILE, "zlib compression: file contains corrupted data");
+        delete[] dataUncompressed;
+        return false;
+        break;
+    }
+
+    //here I am copy only the size of the image, obviously the extra space is not needed anymore.
+    for (size_t i=0; i< sizeDataUncompressed; i++)
+    {
+        destbuff[i] = dataUncompressed[i];
+    }
+
+    delete [] dataUncompressed;
+    return true;
+}
+#endif
+
+bool ImageReadFloat_PlainHeaderless(ImageOf<PixelFloat>& dest, const std::string& filename)
 {
     FILE *fp = fopen(filename.c_str(), "rb");
     if (fp == nullptr) {
         return false;
     }
 
-    size_t br = 0;
-    size_t size_ = sizeof(float);
-    size_t count_ = 0;
-
     size_t dims[2];
-    if (fread(dims, sizeof(dims), 1, fp) > 0)
+    if (fread(dims, sizeof(dims), 1, fp) <= 0)
     {
-        count_ = (size_t)(dims[0] * dims[1]);
-        dest.resize(dims[0], dims[1]);
-        br = fread(&dest(0, 0), size_, count_, fp);
+        fclose(fp);
+        return false;
+    }
+
+    size_t h = dims[0];
+    size_t w = dims[1];
+    dest.resize(w, h);
+    size_t pad = dest.getRowSize();
+    size_t bytes_to_read_per_row = w* dest.getPixelSize();
+    unsigned char* dst = dest.getRawImage();
+    size_t num = 0;
+    for (int i = 0; i < h; i++)
+    {
+        num += (int)fread((void*)dst, 1, bytes_to_read_per_row, fp);
+        dst += pad;
     }
 
     fclose(fp);
-    return (br > 0);
+    return (num > 0);
 }
 
-static bool ImageReadBGR_PxM(ImageOf<PixelBgr> &img, const char *filename)
+bool ImageReadBGR_PxM(ImageOf<PixelBgr> &img, const char *filename)
 {
     int width, height, color, num;
     FILE *fp=nullptr;
@@ -345,7 +456,7 @@ static bool ImageReadBGR_PxM(ImageOf<PixelBgr> &img, const char *filename)
 }
 
 
-static bool ImageReadMono_PxM(ImageOf<PixelMono> &img, const char *filename)
+bool ImageReadMono_PxM(ImageOf<PixelMono> &img, const char *filename)
 {
     int width, height, color, num;
     FILE *fp=nullptr;
@@ -380,10 +491,10 @@ static bool ImageReadMono_PxM(ImageOf<PixelMono> &img, const char *filename)
 
     num = 0;
     for (int i = 0; i < h; i++)
-        {
-            num += (int)fread((void *) dst, 1, (size_t) w, fp);
-            dst += pad;
-        }
+    {
+        num += (int)fread((void *) dst, 1, (size_t) w, fp);
+        dst += pad;
+    }
 
     fclose(fp);
 
@@ -395,7 +506,7 @@ static bool ImageReadMono_PxM(ImageOf<PixelMono> &img, const char *filename)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if defined (YARP_HAS_PNG)
-static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t rowSize, png_byte color_type, png_byte bit_depth)
+bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t rowSize, png_byte color_type, png_byte bit_depth)
 {
     // create file
     if (src == nullptr)
@@ -434,72 +545,75 @@ static bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t 
         return false;
     }
 
-    png_bytep * row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * h);
-    for (size_t y = 0; y < h; y++)
-    {
-        row_pointers[y] = (png_bytep)(src)+y*w;
-    }
-
+    //init io
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         yCError(IMAGEFILE, "[write_png_file] Error during init_io");
-        free(row_pointers);
         fclose(fp);
         return false;
     }
     png_init_io(png_ptr, fp);
 
-
     // write header
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         yCError(IMAGEFILE, "[write_png_file] Error during writing header");
-        free(row_pointers);
+        fclose(fp);
         return false;
     }
     png_set_IHDR(png_ptr, info_ptr, w, h,
         bit_depth, color_type, PNG_INTERLACE_NONE,
-        PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+        PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
+    //write info
     png_write_info(png_ptr, info_ptr);
 
+    //allocate data space
+    png_bytep* row_pointers = new png_bytep[h];
+
+    for (size_t y = 0; y < h; y++)
+    {
+        //this is an array of pointers. Each element points to a row of the image
+        row_pointers[y] = (png_bytep)(src) + (y * rowSize);
+    }
 
     // write bytes
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         yCError(IMAGEFILE, "[write_png_file] Error during writing bytes");
-        free(row_pointers);
+        delete [] row_pointers;
+        png_destroy_write_struct(&png_ptr, &info_ptr);
         fclose(fp);
         return false;
     }
     png_write_image(png_ptr, row_pointers);
 
-
     // end write
     if (setjmp(png_jmpbuf(png_ptr)))
     {
         yCError(IMAGEFILE, "[write_png_file] Error during end of write");
-        free(row_pointers);
+        delete [] row_pointers;
+        png_destroy_write_struct(&png_ptr, &info_ptr);
         fclose(fp);
         return false;
     }
-    png_write_end(png_ptr, NULL);
+    png_write_end(png_ptr, info_ptr);
 
-    // cleanup heap allocation
-    free(row_pointers);
-
+    // finished. cleanup  allocation
+    delete[] row_pointers;
+    png_destroy_write_struct(&png_ptr, &info_ptr);
     fclose(fp);
     return true;
 }
 #endif
 
-static bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
+bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
 {
 #if YARP_HAS_JPEG_C
     int quality = 100;
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
-    FILE * outfile;
+    FILE * outfile = nullptr;
     JSAMPROW row_pointer[1];
     int row_stride;
 
@@ -540,7 +654,7 @@ static bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
 #endif
 }
 
-static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
+bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
 {
     FILE *fp = fopen(filename, "wb");
     if (!fp)
@@ -566,7 +680,7 @@ static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
 }
 
 
-static bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
+bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
 {
     FILE *fp = fopen(filename, "wb");
     if (!fp)
@@ -592,22 +706,86 @@ static bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
     return true;
 }
 
-static bool ImageWriteJPG(ImageOf<PixelRgb>& img, const char *filename)
+#if defined (YARP_HAS_ZLIB)
+bool SaveFloatCompressed(char* src, const char* filename, int h, int w, int rowSize)
+{
+    size_t sizeDataOriginal=w*h*sizeof(float);
+    size_t sizeDataCompressed = (sizeDataOriginal * 1.1) + 12;
+    char* dataCompressed = (char*)malloc(sizeDataCompressed);
+
+    int z_result = compress((Bytef*) dataCompressed,(uLongf*) &sizeDataCompressed, (Bytef*)src, sizeDataOriginal);
+    switch (z_result)
+    {
+       case Z_OK:
+       break;
+
+       case Z_MEM_ERROR:
+       yCError(IMAGEFILE, "zlib compression: out of memory");
+       return false;
+       break;
+
+       case Z_BUF_ERROR:
+       yCError(IMAGEFILE, "zlib compression: output buffer wasn't large enough");
+       return false;
+       break;
+    }
+
+    FILE* fp = fopen(filename, "wb");
+    if (fp == nullptr)
+    {
+        return false;
+    }
+
+    size_t bw = 0;
+    size_t dims[2] = { h,w };
+
+    if (fwrite(dims, sizeof(dims), 1, fp) > 0) {
+        bw = fwrite((void*)dataCompressed, sizeDataCompressed, 1, fp);
+    }
+
+    fclose(fp);
+    return (bw > 0);
+}
+#endif
+
+bool SaveFloatRaw(char* src, const char* filename, int h, int w, int rowSize)
+{
+    FILE* fp = fopen(filename, "wb");
+    if (fp == nullptr)
+    {
+        return false;
+    }
+
+    size_t dims[2] = { h,w };
+
+    size_t bw = 0;
+    size_t size_ = sizeof(float);
+    auto count_ = (size_t)(dims[0] * dims[1]);
+
+    if (fwrite(dims, sizeof(dims), 1, fp) > 0) {
+        bw = fwrite((void*)src, size_, count_, fp);
+    }
+
+    fclose(fp);
+    return (bw > 0);
+}
+
+bool ImageWriteJPG(ImageOf<PixelRgb>& img, const char *filename)
 {
     return SaveJPG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize());
 }
 
-static bool ImageWritePNG(ImageOf<PixelRgb>& img, const char *filename)
+bool ImageWritePNG(ImageOf<PixelRgb>& img, const char *filename)
 {
 #if defined (YARP_HAS_PNG)
-    return SavePNG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize(), PNG_COLOR_TYPE_RGB, 24);
+    return SavePNG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize(), PNG_COLOR_TYPE_RGB, 8);
 #else
     yCError(IMAGEFILE) << "YARP was not built with png support";
     return false;
 #endif
 }
 
-static bool ImageWritePNG(ImageOf<PixelMono>& img, const char *filename)
+bool ImageWritePNG(ImageOf<PixelMono>& img, const char *filename)
 {
 #if defined (YARP_HAS_PNG)
     return SavePNG((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize(), PNG_COLOR_TYPE_GRAY, 8);
@@ -617,36 +795,30 @@ static bool ImageWritePNG(ImageOf<PixelMono>& img, const char *filename)
 #endif
 }
 
-static bool ImageWriteRGB(ImageOf<PixelRgb>& img, const char *filename)
+bool ImageWriteRGB(ImageOf<PixelRgb>& img, const char *filename)
 {
     return SavePPM((char*)img.getRawImage(),filename,img.height(),img.width(),img.getRowSize());
 }
 
-static bool ImageWriteMono(ImageOf<PixelMono>& img, const char *filename)
+bool ImageWriteMono(ImageOf<PixelMono>& img, const char *filename)
 {
     return SavePGM((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize());
 }
 
-static bool ImageWriteFloat(ImageOf<PixelFloat>& img, const char *filename)
+bool ImageWriteFloat_PlainHeaderless(ImageOf<PixelFloat>& img, const char *filename)
 {
-    FILE *fp = fopen(filename, "wb");
-    if (fp == nullptr)
-    {
-        return false;
-    }
+    return SaveFloatRaw((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize());
+}
 
-    size_t dims[2] = { img.width(), img.height() };
-
-    size_t bw = 0;
-    size_t size_ = sizeof(float);
-    auto count_ = (size_t)(dims[0] * dims[1]);
-
-    if (fwrite(dims, sizeof(dims), 1, fp) > 0) {
-        bw = fwrite(&img(0, 0), size_, count_, fp);
-    }
-
-    fclose(fp);
-    return (bw > 0);
+bool ImageWriteFloat_CompressedHeaderless(ImageOf<PixelFloat>& img, const char* filename)
+{
+#if defined (YARP_HAS_ZLIB)
+    return SaveFloatCompressed((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize());
+#else
+    yCError(IMAGEFILE) << "YARP was not built with zlib support";
+    return false;
+#endif
+}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -774,24 +946,15 @@ bool file::read(ImageOf<PixelMono> & dest, const std::string& src, image_filefor
 bool file::read(ImageOf<PixelFloat>& dest, const std::string& src, image_fileformat format)
 {
     const char* file_ext = strrchr(src.c_str(), '.');
-    if (strcmp(file_ext, ".pgm") == 0 ||
-        strcmp(file_ext, ".ppm") == 0 ||
-        format == FORMAT_PGM ||
-        format == FORMAT_PPM)
+    if (strcmp(file_ext, ".float") == 0 ||
+        format == FORMAT_NUMERIC)
     {
-        return ImageReadFloat_PxM(dest, src);
+        return ImageReadFloat_PlainHeaderless(dest, src);
     }
-    else if (strcmp(file_ext, ".png") == 0 ||
-             format == FORMAT_PNG)
+    else if (strcmp(file_ext, ".floatzip") == 0 ||
+        format == FORMAT_NUMERIC_COMPRESSED)
     {
-        return ImageReadFloat_PNG(dest, src);
-    }
-    else if (strcmp(file_ext, ".jpg") == 0 ||
-        strcmp(file_ext, ".jpeg") == 0 ||
-        format == FORMAT_JPG)
-    {
-        yCError(IMAGEFILE) << "jpeg not yet implemented";
-        return false;
+        return ImageReadFloat_CompressedHeaderless(dest, src);
     }
     yCError(IMAGEFILE) << "unsupported file format";
     return false;
@@ -891,7 +1054,11 @@ bool file::write(const ImageOf<PixelFloat>& src, const std::string& dest, image_
 {
     if (format == FORMAT_NUMERIC)
     {
-        return ImageWriteFloat(const_cast<ImageOf<PixelFloat> &>(src), dest.c_str());
+        return ImageWriteFloat_PlainHeaderless(const_cast<ImageOf<PixelFloat> &>(src), dest.c_str());
+    }
+    else if (format == FORMAT_NUMERIC_COMPRESSED)
+    {
+        return ImageWriteFloat_CompressedHeaderless(const_cast<ImageOf<PixelFloat>&>(src), dest.c_str());
     }
     else
     {

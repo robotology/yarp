@@ -30,6 +30,7 @@ namespace yarp {
                     FORMAT_PPM,
                     FORMAT_JPG,
                     FORMAT_NUMERIC,
+                    FORMAT_NUMERIC_COMPRESSED,
                     FORMAT_PNG
                 };
 
