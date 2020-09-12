@@ -434,7 +434,7 @@ public:
             if (videoOn) finfo<<" Video:"<<videoType<<"(huffyuv);";
         }
         else if (type == DumpFormat::depth)
-        { 
+        {
             finfo << "Depth;";
         }
         else if (type == DumpFormat::depth_compressed)

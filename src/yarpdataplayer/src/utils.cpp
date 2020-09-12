@@ -382,7 +382,7 @@ bool Utilities::configurePorts(partsData &part)
     if (strcmp (part.type.c_str(),"Bottle") == 0)   {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::os::Bottle>; }
     }
-    else if (strcmp (part.type.c_str(),"Image") == 0 || 
+    else if (strcmp (part.type.c_str(),"Image") == 0 ||
              strcmp(part.type.c_str(), "Image:ppm") == 0 ||
              strcmp(part.type.c_str(), "Image:jpg") == 0 ||
              strcmp (part.type.c_str(),"Image:png") == 0 ||
@@ -409,7 +409,7 @@ bool Utilities::configurePorts(partsData &part)
     }
     else
     {
-        LOG("Something is wrong with the data...%s\nIt seems it is type (%s) is unrecognized\n",part.name.c_str(), part.type.c_str());
+        LOG("Something is wrong with the data...%s\nType (%s) is unrecognized\n",part.name.c_str(), part.type.c_str());
         return false;
     }
 
