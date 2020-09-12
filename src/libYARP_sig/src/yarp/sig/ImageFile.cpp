@@ -327,7 +327,7 @@ bool ImageReadFloat_CompressedHeaderless(ImageOf<PixelFloat>& dest, const std::s
     br = fread(dataReadInCompressed, 1, sizeDataCompressed, fp);
     fclose(fp);
 
-    if (br != sizeDataCompressed) { yError() << "problems reading file!"; return false; }
+    if (br != sizeDataCompressed) { yError() << "problems reading file!"; delete [] dataReadInCompressed; return false; }
 
     size_t h = ((size_t*)(dataReadInCompressed))[0]; //byte 0
     size_t w = ((size_t*)(dataReadInCompressed))[1]; //byte 8, because size_t is 8 bytes long
@@ -386,7 +386,7 @@ bool ImageReadFloat_PlainHeaderless(ImageOf<PixelFloat>& dest, const std::string
     }
 
     size_t dims[2];
-    if (fread(dims, sizeof(dims), 1, fp) <= 0)
+    if (fread(dims, sizeof(dims), 1, fp) == 0)
     {
         fclose(fp);
         return false;

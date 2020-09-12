@@ -461,7 +461,7 @@ public:
         else if (txTime)
             finfo<<"tx;";
         else
-            finfo<<"ex;";
+            finfo<<"rx;";
         finfo<<endl;
 
         fdata.open(dataFile.c_str());
@@ -651,7 +651,6 @@ public:
         if (portName[0]!='/')
             portName="/"+portName;
 
-      //  DumpFormat tmp_format=DumpFormat::bottle;
         bool saveData=true;
         bool videoOn=false;
         string videoType=rf.check("videoType",Value("mkv")).asString();
