@@ -365,10 +365,12 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             if (ct%5!=0) {
                 rnd *= 65537;
                 rnd += 17;
-                bx += (rnd%5)-2;
+                int delta_x = (rnd % 5) - 2;
+                bx += delta_x;
                 rnd *= 65537;
                 rnd += 17;
-                by += (rnd%5)-2;
+                int delta_y = (rnd % 5) - 2;
+                by += delta_y;
             } else {
                 int dx = w/2 - bx;
                 int dy = h/2 - by;
