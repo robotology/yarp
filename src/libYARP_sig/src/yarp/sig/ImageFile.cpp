@@ -52,15 +52,15 @@ namespace
     bool ImageReadFloat_CompressedHeaderless(ImageOf<PixelFloat>& dest, const std::string& filename);
 #endif
 
-    bool SaveJPG(char* src, const char* filename, int h, int w, int rowSize);
-    bool SavePGM(char* src, const char* filename, int h, int w, int rowSize);
-    bool SavePPM(char* src, const char* filename, int h, int w, int rowSize);
+    bool SaveJPG(char* src, const char* filename, size_t h, size_t w, size_t rowSize);
+    bool SavePGM(char* src, const char* filename, size_t h, size_t w, size_t rowSize);
+    bool SavePPM(char* src, const char* filename, size_t h, size_t w, size_t rowSize);
 #if defined (YARP_HAS_PNG)
     bool SavePNG(char* src, const char* filename, size_t h, size_t w, size_t rowSize, png_byte color_type, png_byte bit_depth);
 #endif
-    bool SaveFloatRaw(char* src, const char* filename, int h, int w, int rowSize);
+    bool SaveFloatRaw(char* src, const char* filename, size_t h, size_t w, size_t rowSize);
 #if defined (YARP_HAS_ZLIB)
-    bool SaveFloatCompressed(char* src, const char* filename, int h, int w, int rowSize);
+    bool SaveFloatCompressed(char* src, const char* filename, size_t h, size_t w, size_t rowSize);
 #endif
 
     bool ImageWriteJPG(ImageOf<PixelRgb>& img, const char* filename);
@@ -607,7 +607,7 @@ bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t rowSize
 }
 #endif
 
-bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
+bool SaveJPG(char *src, const char *filename, size_t h, size_t w, size_t rowSize)
 {
 #if YARP_HAS_JPEG_C
     int quality = 100;
@@ -654,7 +654,7 @@ bool SaveJPG(char *src, const char *filename, int h, int w, int rowSize)
 #endif
 }
 
-bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
+bool SavePGM(char *src, const char *filename, size_t h, size_t w, size_t rowSize)
 {
     FILE *fp = fopen(filename, "wb");
     if (!fp)
@@ -680,7 +680,7 @@ bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
 }
 
 
-bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
+bool SavePPM(char *src, const char *filename, size_t h, size_t w, size_t rowSize)
 {
     FILE *fp = fopen(filename, "wb");
     if (!fp)
@@ -707,7 +707,7 @@ bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
 }
 
 #if defined (YARP_HAS_ZLIB)
-bool SaveFloatCompressed(char* src, const char* filename, int h, int w, int rowSize)
+bool SaveFloatCompressed(char* src, const char* filename, size_t h, size_t w, size_t rowSize)
 {
     size_t sizeDataOriginal=w*h*sizeof(float);
     size_t sizeDataCompressed = (sizeDataOriginal * 1.1) + 12;
@@ -748,7 +748,7 @@ bool SaveFloatCompressed(char* src, const char* filename, int h, int w, int rowS
 }
 #endif
 
-bool SaveFloatRaw(char* src, const char* filename, int h, int w, int rowSize)
+bool SaveFloatRaw(char* src, const char* filename, size_t h, size_t w, size_t rowSize)
 {
     FILE* fp = fopen(filename, "wb");
     if (fp == nullptr)
@@ -954,7 +954,12 @@ bool file::read(ImageOf<PixelFloat>& dest, const std::string& src, image_filefor
     else if (strcmp(file_ext, ".floatzip") == 0 ||
         format == FORMAT_NUMERIC_COMPRESSED)
     {
+#if defined (YARP_HAS_ZLIB)
         return ImageReadFloat_CompressedHeaderless(dest, src);
+#else
+        yCError(IMAGEFILE) << "YARP was not built with zlib support";
+        return false;
+#endif
     }
     yCError(IMAGEFILE) << "unsupported file format";
     return false;

@@ -133,7 +133,12 @@ public:
 
             //grayscale images
             case VOCAB_PIXEL_MONO:
-                if (1)
+                if (m_dump_format == DumpFormat::image_png)
+                {
+                    fileformat = file::FORMAT_PNG;
+                    ext = ".png";
+                }
+                else
                 {
                     fileformat = file::FORMAT_PGM;
                     ext = ".pgm";
