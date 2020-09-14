@@ -37,7 +37,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     
     // TODO: grab desired codec from command line
     
-    AVCodecID codec = AV_CODEC_ID_H264; // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
+    AVCodecID codec = AV_CODEC_ID_H265; // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
     if (senderSide) {
         codecSender = avcodec_find_encoder(codec);
         if (!codecSender) {
@@ -89,20 +89,20 @@ void FfmpegMonitorObject::destroy(void)
 
 bool FfmpegMonitorObject::setparam(const yarp::os::Property& params)
 {
-    yCError(FFMPEGMONITOR, "setparam");
+    yCInfo(FFMPEGMONITOR, "setparam");
     return false;
 }
 
 bool FfmpegMonitorObject::getparam(yarp::os::Property& params)
 {
-    yCError(FFMPEGMONITOR, "getparam");
+    yCInfo(FFMPEGMONITOR, "getparam");
     return false;
 }
 
 bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
 {
     if (senderSide) {
-        yCError(FFMPEGMONITOR, "accept - sender");
+        yCInfo(FFMPEGMONITOR, "accept - sender");
         Image* img = thing.cast_as< Image >();
         if(img == nullptr) {
             yCError(FFMPEGMONITOR, "Expected type Image in sender side, but got wrong data type!");
@@ -110,7 +110,7 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
         }        
     }
     else {
-        yCError(FFMPEGMONITOR, "accept - receiver");
+        yCInfo(FFMPEGMONITOR, "accept - receiver");
         Bottle* bt = thing.cast_as<Bottle>();
         if(bt == nullptr){
             yCError(FFMPEGMONITOR, "Expected type Bottle in receiver side, but got wrong data type!");
@@ -123,7 +123,7 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
 yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 {
     if (senderSide) {
-        yCError(FFMPEGMONITOR, "update - sender");
+        yCInfo(FFMPEGMONITOR, "update - sender");
         Image* img = thing.cast_as< Image >();
         AVPacket *packet = new AVPacket;
         bool ok = true;
@@ -159,7 +159,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         th.setPortWriter(&data);
     }
     else {
-        yCError(FFMPEGMONITOR, "update - receiver");
+        yCInfo(FFMPEGMONITOR, "update - receiver");
         Bottle* compressedBottle = thing.cast_as<Bottle>();
 
         int ok = compressedBottle->get(0).asInt();
@@ -225,7 +225,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 
 int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     
-    yCError(FFMPEGMONITOR, "compress");
+    yCInfo(FFMPEGMONITOR, "compress");
     AVFrame *startFrame;
     AVFrame *endFrame;
 
@@ -270,7 +270,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
                                         SWS_BICUBIC,
                                         NULL, NULL, NULL);
     if (img_convert_ctx == NULL) {
-        yCError(FFMPEGMONITOR, "Cannot initialize the YUV conversion context!");
+        yCError(FFMPEGMONITOR, "Cannot initialize the pixel format conversion context!");
         return -1;
     }
     
@@ -296,8 +296,8 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         cSender->gop_size = 10;
         cSender->max_b_frames = 1;
 
-        cSender->qmin=18;
-        cSender->qmax=28;
+        // cSender->qmin=18;
+        // cSender->qmax=28;
         
         cSender->pix_fmt = (AVPixelFormat) codecPixelMap[cSender->codec_id];
 
@@ -337,7 +337,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
 int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed,
                                     int w, int h, int pixelCode) {
     
-    yCError(FFMPEGMONITOR, "decompress");
+    yCInfo(FFMPEGMONITOR, "decompress");
     AVFrame *startFrame;
     AVFrame *endFrame;
 
@@ -352,8 +352,8 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
         cReceiver->gop_size = 10;
         cReceiver->max_b_frames = 1;
 
-        cReceiver->qmin=18;
-        cReceiver->qmax=28;
+        // cReceiver->qmin=18;
+        // cReceiver->qmax=28;
         
         cReceiver->pix_fmt = (AVPixelFormat) codecPixelMap[cReceiver->codec_id];
 
@@ -418,7 +418,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
                                         SWS_BICUBIC,
                                         NULL, NULL, NULL);
     if (img_convert_ctx == NULL) {
-        yCError(FFMPEGMONITOR, "Cannot initialize the YUV conversion context!");
+        yCError(FFMPEGMONITOR, "Cannot initialize the pixel format conversion context!");
         return -1;
     }
     
