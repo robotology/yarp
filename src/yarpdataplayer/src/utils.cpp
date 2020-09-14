@@ -270,6 +270,11 @@ bool Utilities::setupDataFromParts(partsData &part)
             Bottle b( line );
             if (itr == 0){
                 part.type = b.get(1).toString();
+                if (part.type == "")
+                {
+                    LOG("Invalid format, missing data type?!");
+                    return false;
+                }
                 part.type.erase(part.type.size() -1 );          // remove the ";" character
             }
             else{
@@ -377,7 +382,14 @@ bool Utilities::configurePorts(partsData &part)
     if (strcmp (part.type.c_str(),"Bottle") == 0)   {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::os::Bottle>; }
     }
-    else if (strcmp (part.type.c_str(),"Image:ppm") == 0 || strcmp (part.type.c_str(),"Image") == 0)  {
+    else if (strcmp (part.type.c_str(),"Image") == 0 ||
+             strcmp(part.type.c_str(), "Image:ppm") == 0 ||
+             strcmp(part.type.c_str(), "Image:jpg") == 0 ||
+             strcmp (part.type.c_str(),"Image:png") == 0 ||
+             strcmp(part.type.c_str(), "Depth") == 0 ||
+             strcmp(part.type.c_str(), "DepthCompressed") == 0
+            )
+    {
         if (part.outputPort == nullptr) { part.outputPort = new BufferedPort<yarp::sig::Image>; }
     }
     else if (strcmp(part.type.c_str(), "sensor_msgs/LaserScan") == 0 ) {
@@ -397,7 +409,7 @@ bool Utilities::configurePorts(partsData &part)
     }
     else
     {
-        LOG("Something is wrong with the data...%s\nIt seems its missing a type \n",part.name.c_str());
+        LOG("Something is wrong with the data...%s\nType (%s) is unrecognized\n",part.name.c_str(), part.type.c_str());
         return false;
     }
 

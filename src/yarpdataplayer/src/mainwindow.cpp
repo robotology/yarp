@@ -118,11 +118,12 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     connect(this,SIGNAL(internalQuit()),this,SLOT(onInternalQuit()),Qt::QueuedConnection);
     connect(this,SIGNAL(internalGetSliderPercentage(int*)),this,SLOT(onInternalGetSliderPercentage(int*)),Qt::BlockingQueuedConnection);
 
-    QShortcut *openShortcut = new QShortcut(QKeySequence("Ctrl+O"), parent);
-    QObject::connect(openShortcut, SIGNAL(activated()), this, SLOT(onInternalLoad(QString)));
 
-    QShortcut *closeShortcut = new QShortcut(QKeySequence("Ctrl+Q"), parent);
-    QObject::connect(closeShortcut, SIGNAL(activated()), this, SLOT(onInternalQuit()));
+  //    QShortcut *openShortcut = new QShortcut(QKeySequence("Ctrl+O"), parent);
+  //  QObject::connect(openShortcut, SIGNAL(activated()), this, SLOT(onInternalLoad(QString)));
+
+  //  QShortcut *closeShortcut = new QShortcut(QKeySequence("Ctrl+Q"), parent);
+  //  QObject::connect(closeShortcut, SIGNAL(activated()), this, SLOT(onInternalQuit()));
 
 }
 

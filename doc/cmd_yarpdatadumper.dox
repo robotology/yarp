@@ -11,7 +11,7 @@ port.
 \section yarpdatadumper_intro Description
 
 When launched, the service monitors the presence of incoming
-data (bottles or images) and stores it within a folder called
+data (bottles,images,etc.) and stores it within a folder called
 with the same name as the service port (or with a proper suffix
 appended if other data is present in the current path). In this
 folder the file 'data.log' contains the information (taken from
@@ -36,7 +36,7 @@ yarp ports connected or disconnected to the dumper,
 as in the following:
 
 \code
-Type: [Bottle; | Image; | Image; Video:ext(huffyuv);]
+Type: [Bottle; | Image; | Image:jpg | Image:png | Depth | DepthCompressed | Image; Video:ext(huffyuv);]
 Stamp: [rx; | tx; | tx+rx;]
 [local-timestamp] /yarp-port-name [connected]
 [local-timestamp] /yarp-port-name [disconnected]
@@ -112,10 +112,15 @@ by the \ref yarpdatadumper.
 
 `--type datatype`
 - The parameter `datatype` selects the type of items to be
-  stored. It can be \e bottle, \e image, \e image_jpg, \e image_png or
-  \e video; if not specified \e bottle is assumed. Note that images are
-  stored using the corresponding file formats. The data type \e video
-  is available if OpenCV is found and the codec \e huffyuv is installed.
+  stored. It can be one of the following (if not specified \e bottle is assumed):
+  + \e bottle (text file)
+  + \e image  (standard uncompressed bitmap, ppm (rgb) or pgm (monochrome 8bit)
+  + \e image_jpg (jpg compressed, lossy)
+  + \e image_png (png compression, lossless)
+  + \e depth (32-bit float raw, yarp custom format) 
+  + \e depth_compressed (32-bit float, zlib compressed, yarp custom format) 
+  + \e video (.mkv format)
+  The data type \e video is available if OpenCV is found and the codec \e huffyuv is installed.
 
 `--addVideo`
 - In case images are acquired with this option enabled, a video

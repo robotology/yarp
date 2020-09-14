@@ -348,6 +348,9 @@ checkandset_dependency(Libdc1394)
 find_package(JPEG QUIET)
 checkandset_dependency(JPEG)
 
+find_package(ZLIB QUIET)
+checkandset_dependency(ZLIB)
+
 find_package(PNG QUIET)
 checkandset_dependency(PNG)
 
@@ -627,6 +630,7 @@ print_dependency(I2C)
 print_dependency(Libv4l2)
 print_dependency(Libv4lconvert)
 print_dependency(Fuse)
+print_dependency(ZLIB)
 
 ################################################################################
 # Print information for user

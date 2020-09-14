@@ -120,8 +120,16 @@ void WorkerClass::run()
     if (isActive)
     {
         int ret=-1;
-        if (strcmp (utilities->partDetails[part].type.c_str(),"Image:ppm") == 0 ||
-            strcmp (utilities->partDetails[part].type.c_str(),"Image") == 0)  {
+        if (strcmp (utilities->partDetails[part].type.c_str(),"Image") == 0 ||
+            strcmp (utilities->partDetails[part].type.c_str(),"Image:ppm") == 0 ||
+            strcmp(utilities->partDetails[part].type.c_str(), "Image:png") == 0 ||
+            strcmp(utilities->partDetails[part].type.c_str(), "Image:jpg") == 0)
+        {
+            ret = sendImages(part, frame);
+        }
+        else if (strcmp(utilities->partDetails[part].type.c_str(), "Depth") == 0 ||
+                 strcmp(utilities->partDetails[part].type.c_str(), "DepthCompressed") == 0) {
+            //I am keeping depth separated from images only for clarity
             ret = sendImages(part, frame);
         }
         else if (strcmp(utilities->partDetails[part].type.c_str(), "Bottle") == 0)  {
