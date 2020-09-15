@@ -151,7 +151,7 @@ after_build:
   - cmd: move /Y %APPVEYOR_BUILD_FOLDER%\build\*.exe %APPVEYOR_BUILD_FOLDER%
 
 test_script:
-  - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target RUN_TESTS --config %CONFIGURATION%
+  - cmd: if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" cmake --build %APPVEYOR_BUILD_FOLDER%\build --target RUN_TESTS --config %CONFIGURATION%
 
 #after_test:
   #- cmd: move "%ROBOTOLOGY_ROOT%" "%APPVEYOR_BUILD_FOLDER%/robotology"
