@@ -340,8 +340,8 @@ endif()
 get_property(_USER_CMAKE_C_FLAGS CACHE CMAKE_C_FLAGS PROPERTY VALUE)
 get_property(_USER_CMAKE_CXX_FLAGS CACHE CMAKE_CXX_FLAGS PROPERTY VALUE)
 
-set(CMAKE_C_FLAGS "-w ${_USER_CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "-w ${_USER_CMAKE_C_FLAGS}")
+set(CMAKE_C_FLAGS "${YARP_C_FLAGS} ${_USER_CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${YARP_CXX_FLAGS} ${_USER_CMAKE_C_FLAGS}")
 
 # Save the YARP_C_FLAGS and YARP_CXX_FLAGS variables (exported in the
 # YARPConfig.cmake file, but remove a few unwanted options from the build
