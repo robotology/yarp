@@ -53,8 +53,8 @@ include(GNUInstallDirs)
 # (unless explicitly added by the user)
 get_property(_USER_CMAKE_C_FLAGS CACHE CMAKE_C_FLAGS PROPERTY VALUE)
 get_property(_USER_CMAKE_CXX_FLAGS CACHE CMAKE_CXX_FLAGS PROPERTY VALUE)
-set(CMAKE_C_FLAGS "-w ${_USER_CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "-w ${_USER_CMAKE_C_FLAGS}")
+set(CMAKE_C_FLAGS "-w ${_USER_CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "-w ${_USER_CMAKE_CXX_FLAGS}")
 
 set(_components conf os sig dev)
 
