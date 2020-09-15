@@ -912,7 +912,7 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         }
     }
 
-    SECTION("Testing depthToPC")
+    SECTION("Testing depthToPC BGRA")
     {
         ImageOf<PixelFloat> depth;
         size_t width{320};
@@ -929,8 +929,29 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         auto pcCol = utils::depthRgbToPC<DataXYZRGBA, PixelBgra>(depth, color, intp);
         CHECK(pcCol.width() == depth.width()); // Checking PC width
         CHECK(pcCol.height() == depth.height()); // Checking PC height
-
     }
+
+#if defined(ENABLE_BROKEN_TESTS)
+    // Broken, see https://github.com/robotology/yarp/issues/1959
+    SECTION("Testing depthToPC BGR")
+    {
+        ImageOf<PixelFloat> depth;
+        size_t width{320};
+        size_t height{240};
+        depth.resize(width, height);
+        IntrinsicParams intp;
+
+        auto pc = utils::depthToPC(depth, intp);
+        CHECK(pc.width() == depth.width()); // Checking PC width
+        CHECK(pc.height() == depth.height()); // Checking PC height
+
+        ImageOf<PixelBgr> color;
+        color.resize(width, height);
+        auto pcCol = utils::depthRgbToPC<DataXYZRGBA, PixelBgr>(depth, color, intp);
+        CHECK(pcCol.width() == depth.width()); // Checking PC width
+        CHECK(pcCol.height() == depth.height()); // Checking PC height
+    }
+#endif // ENABLE_BROKEN_TESTS
 
     SECTION("Testing move semantics")
     {
