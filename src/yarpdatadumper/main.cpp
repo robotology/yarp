@@ -448,11 +448,11 @@ public:
         }
         else if (type == DumpFormat::image_jpg)
         {
-            finfo << "Image:jpg";
+            finfo << "Image:jpg;";
         }
         else if (type == DumpFormat::image_png)
         {
-            finfo << "Image:png";
+            finfo << "Image:png;";
         }
         else
         {
