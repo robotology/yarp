@@ -448,6 +448,8 @@ void MultipleAnalogSensorsServer::run()
 
     if (ok)
     {
+        m_stamp.update();
+        m_streamingPort.setEnvelope(m_stamp);
         m_streamingPort.write();
     }
     else

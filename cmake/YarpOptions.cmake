@@ -175,17 +175,6 @@ mark_as_advanced(YARP_ENABLE_EXAMPLES_AS_TESTS)
 #########################################################################
 # Run tests under Valgrind
 
-yarp_deprecated_option(YARP_VALGRIND_MEMCHECK_TESTS) # since YARP 3.2.0
-yarp_deprecated_option(YARP_VALGRIND_HELGRIND_TESTS) # since YARP 3.2.0
-yarp_deprecated_option(YARP_VALGRIND_DRD_TESTS) # since YARP 3.2.0
-yarp_deprecated_option(YARP_VALGRIND_SGCHECK_TESTS) # since YARP 3.2.0
-yarp_deprecated_option(YARP_GDB_TESTS) # since YARP 3.2.0
-yarp_deprecated_option(VALGRIND_MEMCHECK_OPTIONS) # since YARP 3.2.0
-yarp_deprecated_option(VALGRIND_HELGRIND_OPTIONS) # since YARP 3.2.0
-yarp_deprecated_option(VALGRIND_DRD_OPTIONS) # since YARP 3.2.0
-yarp_deprecated_option(VALGRIND_SGCHECK_OPTIONS) # since YARP 3.2.0
-yarp_deprecated_option(YARP_GDB_OPTIONS) # since YARP 3.2.0
-
 cmake_dependent_option(YARP_VALGRIND_TESTS
                        "Run YARP tests under Valgrind" OFF
                        "YARP_COMPILE_TESTS" OFF)
@@ -249,8 +238,6 @@ mark_as_advanced(YARP_EXPERIMENTAL_FILTER_API)
 if(YARP_EXPERIMENTAL_FILTER_API)
   set(YARP_FILTER_impl ON)
 endif()
-yarp_deprecated_option(YARP_FILTER_API) # Since YARP 2.3.68.1
-yarp_deprecated_option(YARP_CLEAN_API) # Since YARP 2.3.68.1
 
 #########################################################################
 # Show warnings for deprecated declarations
@@ -340,8 +327,8 @@ endif()
 get_property(_USER_CMAKE_C_FLAGS CACHE CMAKE_C_FLAGS PROPERTY VALUE)
 get_property(_USER_CMAKE_CXX_FLAGS CACHE CMAKE_CXX_FLAGS PROPERTY VALUE)
 
-set(CMAKE_C_FLAGS "-w ${_USER_CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "-w ${_USER_CMAKE_C_FLAGS}")
+set(CMAKE_C_FLAGS "${YARP_C_FLAGS} ${_USER_CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${YARP_CXX_FLAGS} ${_USER_CMAKE_CXX_FLAGS}")
 
 # Save the YARP_C_FLAGS and YARP_CXX_FLAGS variables (exported in the
 # YARPConfig.cmake file, but remove a few unwanted options from the build
@@ -359,9 +346,21 @@ string(REGEX REPLACE "-f(debug|macro|file)-prefix-map=[^ ]+ *" "" YARP_CXX_FLAGS
 yarp_deprecated_option(ENABLE_FORCE_RPATH) # Since YARP 2.3.65
 yarp_deprecated_option(INSTALL_WITH_RPATH) # Since YARP 2.3.65
 yarp_deprecated_option(CREATE_BUILTIN_DEVICE_TESTS) # Since YARP 2.3.68
+yarp_deprecated_option(YARP_FILTER_API) # Since YARP 2.3.68.1
+yarp_deprecated_option(YARP_CLEAN_API) # Since YARP 2.3.68.1
 yarp_deprecated_option(YARP_EXPERIMENTAL_CXX11) # Since YARP 3.0.0
 yarp_deprecated_option(YARP_WRAP_STL_STRING) # Since YARP 3.0.0
 yarp_deprecated_option(YARP_WRAP_STL_STRING_INLINE) # Since YARP 3.0.0
+yarp_deprecated_option(YARP_VALGRIND_MEMCHECK_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_VALGRIND_HELGRIND_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_VALGRIND_DRD_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_VALGRIND_SGCHECK_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_GDB_TESTS) # since YARP 3.2.0
+yarp_deprecated_option(VALGRIND_MEMCHECK_OPTIONS) # since YARP 3.2.0
+yarp_deprecated_option(VALGRIND_HELGRIND_OPTIONS) # since YARP 3.2.0
+yarp_deprecated_option(VALGRIND_DRD_OPTIONS) # since YARP 3.2.0
+yarp_deprecated_option(VALGRIND_SGCHECK_OPTIONS) # since YARP 3.2.0
+yarp_deprecated_option(YARP_GDB_OPTIONS) # since YARP 3.2.0
 yarp_deprecated_option(ENABLE_DASHBOARD_SUBMIT) # Since YARP 3.3.3
 yarp_deprecated_option(TEST_MACHINE_HOSTNAME) # Since YARP 3.3.3
 yarp_deprecated_option(TEST_MACHINE_OS_TYPE) # Since YARP 3.3.3

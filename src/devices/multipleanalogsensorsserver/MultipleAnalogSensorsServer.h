@@ -11,6 +11,7 @@
 #define YARP_DEV_MULTIPLEANALOGSENSORSSERVER_MULTIPLEANALOGSENSORSSERVER_H
 
 #include <yarp/os/PeriodicThread.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IMultipleWrapper.h>
@@ -25,6 +26,9 @@
  * @ingroup dev_impl_wrapper
  *
  * \brief The server side of the MultipleAnalogSensorsClient, useful to expose device implementing MultipleAnalogSensors interfaces over the YARP network.
+ * This device opens two ports: /${name}/measures:o that streams the data of the sensors, and /${name}/rpc:o that is a YARP RPC port that exposes the metadata.
+ * The data on the /${name}/measures:o is streamed every ${period} milliseconds, and an envelope to each data is added with a timestamp obtained by calling the
+ * yarp::os::Time::now() method when the message is written on the port.
  *
  * | YARP device name |
  * |:-----------------:|
@@ -43,6 +47,7 @@ class MultipleAnalogSensorsServer :
         public MultipleAnalogSensorsMetadata
 {
     double m_periodInS{0.01};
+    yarp::os::Stamp m_stamp;
     std::string m_streamingPortName;
     std::string m_RPCPortName;
     yarp::os::BufferedPort<SensorStreamingData> m_streamingPort;
