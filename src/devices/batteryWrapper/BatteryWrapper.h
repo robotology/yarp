@@ -50,7 +50,7 @@
  *
  * \brief Device that expose a battery sensor (using the IBattery interface) on the YARP network.
  *
- * \section batteryWrapper_parameter Description of input parameters
+ * \section batteryWrapper_device_parameters Description of input parameters
  *
  * It reads the data from a battery sensor and sends them on a port, acting as a streaming server for a batteryClient device.
  * It creates one rpc port and its related handler for every output port.

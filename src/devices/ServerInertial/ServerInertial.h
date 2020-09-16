@@ -34,7 +34,7 @@
 /**
  *  @ingroup dev_impl_wrapper
  *
- * \section ServeriInertial_parameter Description of input parameters
+ * \section inertial_device_parameters Description of input parameters
  *
  * Export an inertial sensor.
  * The network interface is a single Port.

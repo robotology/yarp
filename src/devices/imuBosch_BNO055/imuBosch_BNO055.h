@@ -127,7 +127,7 @@ constexpr int MAX_MSG_LENGTH = 128;
 /**
 *  @ingroup dev_impl_analog_sensors
 *
-* \section BoschIMU Description of input parameters
+* \section imuBosch_BNO055_device_parameters Description of input parameters
 *
 *  This device will connect to the proper analogServer and read the data broadcasted making them available to use for the user application. It also made available some function to check and control the state of the remote sensor.
 *

@@ -34,7 +34,7 @@
 * |:-----------------:|
 * | `fakeLaser` |
 *
-* \section Description of input parameters
+* \section fakeLaser_device_parameters Description of input parameters
 *
 * Parameters accepted in the config argument of the open method:
 * | Parameter name      | Type   | Units | Default Value | Required | Description | Notes |

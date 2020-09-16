@@ -70,7 +70,7 @@ public:
 /**
 * @ingroup dev_impl_network_clients
 *
-* \section AnalogSensorClient Description of input parameters
+* \section analogsensorclient_device_parameters Description of input parameters
 * \brief Device that reads an AnalogSensor (using the IAnalogSensor interface) from the YARP network.
 *
 * This device will connect to a port opened by the AnalogWrapper device and read the data broadcasted

@@ -209,10 +209,11 @@ more detail. You can find a list of devices in \ref dev_impl "Device implementat
 
 For example the description for the
 
-yarp::dev::controlBoardWrapper2 device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref ControlBoardWrapper2_parameter "ControlBoardWrapper2 page" \n
-yarp::dev::analogWrapper        device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref analogWrapper_parameter "analogWrapper page" \n
-yarp::dev::ServeriInertial      device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref ServeriInertial_parameter "ServeriInertial page" \n
-
-
+controlboardwrapper2 device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref controlboardwrapper2_parameter "controlboardwrapper2 device page" \n
+analogServer         device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref analogServer_parameter "analogServer device page" \n
+inertial             device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref inertial_parameter "inertial device page" \n
+batteryWrapper       device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref batteryWrapper_parameter "batteryWrapper device page" \n
+RGBDSensorWrapper    device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref RGBDSensorWrapper_device_parameters "RGBDSensorWrapper device page" \n
+grabberDual          device is in the \ref dev_impl "Device implementation" -> Network Wrapper ->  \ref grabberDual_device_parameters "grabberDual device page" \n
 
 */

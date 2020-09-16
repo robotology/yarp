@@ -52,7 +52,7 @@ namespace dev {
 /**
 * @ingroup dev_impl_other
 *
-* \section OVRHeadset Description of input parameters
+* \section ovrheadset_device_parameters Description of input parameters
 * \brief Device that manages the Oculus Rift Headset.
 *
 * Parameters accepted in the config argument of the open method:

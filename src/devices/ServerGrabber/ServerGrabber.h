@@ -89,7 +89,7 @@ struct Configuration
 /**
  * @ingroup dev_impl_wrapper
  *
- * \section ServerGrabber Description of input parameters
+ * \section grabberDual_device_parameters Description of input parameters
  * A Network grabber for camera devices.
  * In base of the configuration this device can handle one or two cameras.\n
  * In case of two cameras, the RGB or RAW streaming will be produced on two separated ports or on a single port with the two images

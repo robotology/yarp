@@ -31,7 +31,7 @@ class RGBDSensor_StreamingMsgParser;
 /**
  *  @ingroup dev_impl_network_clients
  *
- * \section RGBDSensorClient Description of input parameters
+ * \section RGBDSensorClient_device_parameters Description of input parameters
  * A Network client to receive data from kinect-like devices.
  * This device will read from two streams of data through different ports, one for the color frame and the other one
  * for depth image following Framegrabber and IDepthSensor interfaces specification respectively.

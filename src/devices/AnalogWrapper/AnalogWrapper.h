@@ -52,7 +52,7 @@ class AnalogPortEntry;
  *
  * \brief Device that expose an AnalogSensor (using the IAnalogSensor interface) on the YARP or ROS network.
  *
- * \section analogWrapper_parameter Description of input parameters
+ * \section analogServer_device_parameters Description of input parameters
  *
  * It reads the data from an analog sensor and sends them on one or more ports.
  * It creates one rpc port and its related handler for every output port..
