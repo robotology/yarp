@@ -459,9 +459,9 @@ namespace yarp {
             PixelRgb(unsigned char n_r,
                      unsigned char n_g,
                      unsigned char n_b) :
-                    b(n_b),
+                    r(n_r),
                     g(n_g),
-                    r(n_r)
+                    b(n_b)
             {
             }
         };
@@ -585,9 +585,9 @@ namespace yarp {
             PixelRgbFloat(float n_r,
                           float n_g,
                           float n_b) :
-                    b(n_b),
+                    r(n_r),
                     g(n_g),
-                    r(n_r)
+                    b(n_b)
             {
             }
         };
@@ -607,9 +607,9 @@ namespace yarp {
             PixelRgbInt(int n_r,
                         int n_g,
                         int n_b) :
-                    b(n_b),
+                    r(n_r),
                     g(n_g),
-                    r(n_r)
+                    b(n_b)
             {
             }
         };
