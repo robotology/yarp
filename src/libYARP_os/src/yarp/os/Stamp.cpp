@@ -15,6 +15,7 @@
 #include <yarp/os/Time.h>
 
 #include <cfloat>
+#include <limits>
 
 yarp::os::Stamp::Stamp(int count, double time)
 {
@@ -106,8 +107,7 @@ bool yarp::os::Stamp::write(ConnectionWriter& connection) const
 
 int yarp::os::Stamp::getMaxCount() const
 {
-    // a very conservative maximum
-    return 32767;
+    return std::numeric_limits<int>::max();
 }
 
 void yarp::os::Stamp::update()
