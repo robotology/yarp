@@ -85,7 +85,7 @@ public:
         }
 
         // add a blue circle
-        PixelRgb blue(0, 0, 255);
+        PixelRgb blue{0, 0, 255};
         addCircle(*img, blue, ct, 50, 10);
         ct = (ct + 5) % img->width();
 

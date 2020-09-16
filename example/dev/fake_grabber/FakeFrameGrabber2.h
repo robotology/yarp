@@ -29,7 +29,7 @@ public:
     {
         h = w = 0;
         ct = 0;
-        circlePixel = yarp::sig::PixelRgb(255, 0, 0);
+        circlePixel = yarp::sig::PixelRgb{255, 0, 0};
         brightness = 1;
     }
 
@@ -83,7 +83,7 @@ public:
         if (v < 0) {
             v = 0;
         }
-        circlePixel = yarp::sig::PixelRgb(static_cast<unsigned char>(255 * v), 0, 0);
+        circlePixel = yarp::sig::PixelRgb{static_cast<unsigned char>(255 * v), 0, 0};
         brightness = v;
         return true;
     }

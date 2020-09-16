@@ -360,8 +360,8 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         break;
     case VOCAB_BALL:
         {
-            addCircle(image,PixelRgb(0,255,0),bx,by,15);
-            addCircle(image,PixelRgb(0,255,255),bx,by,8);
+            addCircle(image,PixelRgb{0,255,0},bx,by,15);
+            addCircle(image,PixelRgb{0,255,255},bx,by,8);
             if (ct%5!=0) {
                 rnd *= 65537;
                 rnd += 17;
@@ -390,10 +390,11 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                     for (size_t y=0; y<hh; y++) {
                         double xx = ((double)x)/(ww-1);
                         double yy = ((double)y)/(hh-1);
-                        int r = int(0.5+255*xx);
-                        int g = int(0.5+255*yy);
                         bool act = (y==ct);
-                        image.pixel(x,y) = PixelRgb(r,g,act*255);
+                        auto r = static_cast<unsigned char>(0.5 + 255 * xx);
+                        auto g = static_cast<unsigned char>(0.5 + 255 * yy);
+                        auto b = static_cast<unsigned char>(act * 255);
+                        image.pixel(x, y) = PixelRgb{r, g, b};
                     }
                 }
             }
@@ -427,10 +428,11 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                 for (size_t y = 0; y<hh; y++) {
                     double xx = ((double)x) / (ww - 1);
                     double yy = ((double)y) / (hh - 1);
-                    int r = int(0.5 + 255 * xx);
-                    int g = int(0.5 + 255 * yy);
                     bool act = (y == ct);
-                    image.pixel(x, y) = PixelRgb(r, g, act * 255);
+                    auto r = static_cast<unsigned char>(0.5 + 255 * xx);
+                    auto g = static_cast<unsigned char>(0.5 + 255 * yy);
+                    auto b = static_cast<unsigned char>(act * 255);
+                    image.pixel(x, y) = PixelRgb{r, g, b};
                 }
             }
         }
@@ -493,7 +495,7 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                         r += udist(randengine);
                         g += udist(randengine);
                         b += udist(randengine);
-                        image.pixel(x,y) = PixelRgb(r,g,b);
+                        image.pixel(x,y) = PixelRgb{r,g,b};
                     }
                 }
             }

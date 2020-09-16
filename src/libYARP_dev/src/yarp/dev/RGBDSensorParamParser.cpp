@@ -7,11 +7,16 @@
  */
 
 #include <yarp/dev/RGBDSensorParamParser.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace std;
+
+namespace {
+YARP_LOG_COMPONENT(RGBDSENSORPARAMPARSER, "yarp.dev.RGBDSensorParamParser")
+}
 
 static bool checkParam(const Bottle& input, RGBDSensorParamParser::RGBDParam& param, bool& found)
 {
@@ -26,15 +31,17 @@ static bool checkParam(const Bottle& input, RGBDSensorParamParser::RGBDParam& pa
             b = bt.get(0).asList();
         }
         else
+        {
             b = &bt;
+        }
         if (b->isNull())
         {
-            yError()<<"RGBDSensorParamParser: check"<<param.name<<"in config file";
+            yCError(RGBDSENSORPARAMPARSER) << "Check"<<param.name<<"in config file";
             return false;
         }
         if (b->size() != param.size)
         {
-            yError() << "RGBDSensorParamParser: parameter" << param.name << "size should be" << param.size;
+            yCError(RGBDSENSORPARAMPARSER) << "Parameter" << param.name << "size should be" << param.size;
             return false;
         }
         param.val.resize(param.size);
@@ -63,7 +70,7 @@ static bool checkParam(const Bottle& settings, const Bottle& description, RGBDSe
 
     if ( (param.isSetting) && (param.isDescription) )
     {
-        yError() << "Setting " << param.name << " can either be a 'SETTING' or 'HW_DESCRIPTION', not both. Fix the config file. \
+        yCError(RGBDSENSORPARAMPARSER) << "Setting " << param.name << " can either be a 'SETTING' or 'HW_DESCRIPTION', not both. Fix the config file. \
                     Look for documentation online.";
         ret3 = false;
     }
@@ -101,7 +108,7 @@ static bool parseIntrinsic(const Searchable& config, const string& groupName, ya
     {
         if (!intrinsic.check(realParams[i].first))
         {
-            yError() << "RGBDSensorParamParser: missing" << realParams[i].first << "param in" << groupName << "group in the configuration file";
+            yCError(RGBDSENSORPARAMPARSER) << "Missing" << realParams[i].first << "param in" << groupName << "group in the configuration file";
             return false;
         }
 
@@ -110,13 +117,13 @@ static bool parseIntrinsic(const Searchable& config, const string& groupName, ya
 
     if (!intrinsic.check("distortionModel"))
     {
-        yError() << "missing distortionModel param in configuration";
+        yCError(RGBDSENSORPARAMPARSER) << "Missing distortionModel param in configuration";
         return false;
     }
 
     if (!config.check(intrinsic.find("distortionModel").asString()))
     {
-        yError() << "missing" << intrinsic.find("distortionModel").asString() << "group in configuration file";
+        yCError(RGBDSENSORPARAMPARSER) << "Missing" << intrinsic.find("distortionModel").asString() << "group in configuration file";
         return false;
     }
 
@@ -124,12 +131,12 @@ static bool parseIntrinsic(const Searchable& config, const string& groupName, ya
 
     if (!distortion.check("name"))
     {
-        yError() << "RGBDSensorParamParser: missing name param in" << config.find("distortionModel").asString() << "group in configuration file";
+        yCError(RGBDSENSORPARAMPARSER) << "Missing name param in" << config.find("distortionModel").asString() << "group in configuration file";
         return false;
     }
     if (distortion.find("name").asString() != "plumb_bob")
     {
-        yError() << "RGBDSensorParamParser: only plumb_bob distortion model is supported at the moment";
+        yCError(RGBDSENSORPARAMPARSER) << "Only plumb_bob distortion model is supported at the moment";
         return false;
     }
 
@@ -144,7 +151,7 @@ static bool parseIntrinsic(const Searchable& config, const string& groupName, ya
     {
         if (!distortion.check(realParams[i].first))
         {
-            yError() << "RGBDSensorParamParser: missing" << realParams[i].first << "param in" << intrinsic.find("distortionModel").asString() << "group in the configuration file";
+            yCError(RGBDSENSORPARAMPARSER) << "Missing" << realParams[i].first << "param in" << intrinsic.find("distortionModel").asString() << "group in the configuration file";
             return false;
         }
         *(realParams[i].second) = distortion.find(realParams[i].first).asFloat64();
@@ -159,7 +166,7 @@ bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGB
 
     if (!config.check("SETTINGS"))
     {
-        yError() << "RGBDSensorParamParser: missing SETTINGS section on the configuration file";
+        yCError(RGBDSENSORPARAMPARSER) << "Missing SETTINGS section on the configuration file";
         return false;
     }
 
@@ -167,7 +174,7 @@ bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGB
 
     if (!config.check("HW_DESCRIPTION"))
     {
-        yError() << "RGBDSensorParamParser: missing HW_DESCRIPTION section on the configuration file";
+        yCError(RGBDSENSORPARAMPARSER) << "Missing HW_DESCRIPTION section on the configuration file";
         return false;
     }
 
@@ -181,20 +188,20 @@ bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGB
 
     if (!ret)
     {
-        yError() << "RGBDSensorParamParser: driver input file not correct, please fix it!";
+        yCError(RGBDSENSORPARAMPARSER) << "Driver input file not correct, please fix it!";
         return false;
     }
 
     if (!parseIntrinsic(config, "RGB_INTRINSIC_PARAMETERS", rgbIntrinsic))
     {
-        yError() << "RGBDSensorParamParser: incomplete or missing RGB_INTRINSIC_PARAMETERS section on the configuration file";
+        yCError(RGBDSENSORPARAMPARSER) << "Incomplete or missing RGB_INTRINSIC_PARAMETERS section on the configuration file";
         return false;
     }
 
 
     if (!parseIntrinsic(config, "DEPTH_INTRINSIC_PARAMETERS", depthIntrinsic))
     {
-        yError() << "RGBDSensorParamParser: incomplete or missing DEPTH_INTRINSIC_PARAMETERS section on the configuration file";
+        yCError(RGBDSENSORPARAMPARSER) << "Incomplete or missing DEPTH_INTRINSIC_PARAMETERS section on the configuration file";
         return false;
     }
 
@@ -202,7 +209,7 @@ bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGB
     {
         if (!isOptionalExtrinsic)
         {
-            yError() << "RGBDSensorParamParser: missing EXTRINSIC_PARAMETERS section on the configuration file";
+            yCError(RGBDSENSORPARAMPARSER) << "Missing EXTRINSIC_PARAMETERS section on the configuration file";
             return false;
         }
         else
@@ -217,7 +224,7 @@ bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGB
 
         if (!extrinsic.check("transformation"))
         {
-            yError() << "RGBDSensorParamParser: missing transformation parameter under EXTRINSIC_PARAMETERS group in configuration file";
+            yCError(RGBDSENSORPARAMPARSER) << "Missing transformation parameter under EXTRINSIC_PARAMETERS group in configuration file";
             return false;
         }
 
@@ -234,7 +241,7 @@ bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGB
         }
         if (!(tf->size() == 4*4))
         {
-            yError() << "RGBDSensorParamParser: the size of the transformation matrix is wrong";
+            yCError(RGBDSENSORPARAMPARSER) << "The size of the transformation matrix is wrong";
             return false;
         }
 
@@ -246,7 +253,7 @@ bool RGBDSensorParamParser::parseParam(const Searchable &config, std::vector<RGB
                 Value& v = tf->get(k);
                 if (!v.isFloat64())
                 {
-                    yError() << "wrong data format on transformation matrix (position" << k << ")";
+                    yCError(RGBDSENSORPARAMPARSER) << "Wrong data format on transformation matrix (position" << k << ")";
                     return false;
                 }
                 transformationMatrix[i][j] = v.asFloat64();

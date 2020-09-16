@@ -107,6 +107,13 @@ public:
     Image(Image&& other) noexcept;
 
     /**
+     * Assignment operator.
+     * Clones the content of another image.
+     * @param alt the image to clone
+     */
+    Image& operator=(const Image& alt);
+
+    /**
      * @brief Move assignment operator.
      *
      * @param other the Image to be moved
@@ -117,14 +124,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Image();
-
-    /**
-     * Assignment operator.
-     * Clones the content of another image.
-     * @param alt the image to clone
-     */
-    const Image& operator=(const Image& alt);
+    ~Image() override;
 
 
     /**
@@ -203,7 +203,7 @@ public:
     inline unsigned char *getRow(size_t r)
     {
         // should we check limits?
-        return (unsigned char *)(data[r]);
+        return reinterpret_cast<unsigned char *>(data[r]);
     }
 
     /**
@@ -215,7 +215,7 @@ public:
     inline const unsigned char *getRow(size_t r) const
     {
         // should we check limits?
-        return (const unsigned char *)(data[r]);
+        return reinterpret_cast<const unsigned char *>(data[r]);
     }
 
     /**
@@ -225,7 +225,7 @@ public:
      * @return address of pixel in memory
      */
     inline unsigned char *getPixelAddress(size_t x, size_t y) const {
-        return (unsigned char *)(data[y] + x*imgPixelSize);
+        return reinterpret_cast<unsigned char *>(data[y] + x*imgPixelSize);
     }
 
     /**
@@ -451,11 +451,19 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgb
         {
-            unsigned char r,g,b;
+            unsigned char r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
 
-            PixelRgb() { r = g = b = 0; }
-            PixelRgb(unsigned char n_r, unsigned char n_g, unsigned char n_b)
-            { r = n_r;  g = n_g;  b = n_b; }
+            PixelRgb() = default;
+            PixelRgb(unsigned char n_r,
+                     unsigned char n_g,
+                     unsigned char n_b) :
+                    b(n_b),
+                    g(n_g),
+                    r(n_r)
+            {
+            }
         };
         YARP_END_PACK
 
@@ -465,12 +473,22 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgba
         {
-            unsigned char r,g,b,a;
+            PixelRgba() = default;
+            PixelRgba(unsigned char n_r,
+                      unsigned char n_g,
+                      unsigned char n_b,
+                      unsigned char n_a) :
+                    r(n_r),
+                    g(n_g),
+                    b(n_b),
+                    a(n_a)
+            {
+            }
 
-            PixelRgba() { r = g = b = a = 0; }
-            PixelRgba(unsigned char n_r, unsigned char n_g,
-                      unsigned char n_b, unsigned char n_a)
-            { r = n_r;  g = n_g;  b = n_b; a = n_a; }
+            unsigned char r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char a{0}; // NOLINT(misc-non-private-member-variables-in-classes)
         };
         YARP_END_PACK
 
@@ -480,12 +498,22 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelBgra
         {
-            unsigned char b,g,r,a;
+            unsigned char b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char a{0}; // NOLINT(misc-non-private-member-variables-in-classes)
 
-            PixelBgra() { r = g = b = a = 0; }
-            PixelBgra(unsigned char n_r, unsigned char n_g,
-                      unsigned char n_b, unsigned char n_a)
-            { r = n_r;  g = n_g;  b = n_b; a = n_a; }
+            PixelBgra() = default;
+            PixelBgra(unsigned char n_r,
+                      unsigned char n_g,
+                      unsigned char n_b,
+                      unsigned char n_a) :
+                    b(n_b),
+                    g(n_g),
+                    r(n_r),
+                    a(n_a)
+            {
+            }
         };
         YARP_END_PACK
 
@@ -495,10 +523,17 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelBgr
         {
-            unsigned char b,g,r;
-            PixelBgr() { b = g = r = 0; }
-            PixelBgr(unsigned char n_r, unsigned char n_g, unsigned char n_b)
-            { r = n_r;  g = n_g;  b = n_b; }
+            unsigned char b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+
+            PixelBgr() = default;
+            PixelBgr(unsigned char n_r, unsigned char n_g, unsigned char n_b) :
+                    b(n_b),
+                    g(n_g),
+                    r(n_r)
+            {
+            }
         };
         YARP_END_PACK
 
@@ -506,8 +541,11 @@ namespace yarp {
          * Packed HSV (hue/saturation/value pixel type.
          */
         YARP_BEGIN_PACK
-        struct YARP_sig_API PixelHsv {
-            unsigned char h,s,v;
+        struct YARP_sig_API PixelHsv
+        {
+            unsigned char h{0};
+            unsigned char s{0};
+            unsigned char v{0};
         };
         YARP_END_PACK
 
@@ -520,8 +558,11 @@ namespace yarp {
          * Signed, packed RGB pixel type.
          */
         YARP_BEGIN_PACK
-        struct YARP_sig_API PixelRgbSigned {
-            char r,g,b;
+        struct YARP_sig_API PixelRgbSigned
+        {
+            char r{0};
+            char g{0};
+            char b{0};
         };
         YARP_END_PACK
 
@@ -534,11 +575,21 @@ namespace yarp {
          * Floating point RGB pixel type.
          */
         YARP_BEGIN_PACK
-        struct YARP_sig_API PixelRgbFloat {
-            float r,g,b;
-            PixelRgbFloat() { r = g = b = 0; }
-            PixelRgbFloat(float n_r, float n_g, float n_b)
-            { r = n_r;  g = n_g;  b = n_b; }
+        struct YARP_sig_API PixelRgbFloat
+        {
+            float r{0.0F}; // NOLINT(misc-non-private-member-variables-in-classes)
+            float g{0.0F}; // NOLINT(misc-non-private-member-variables-in-classes)
+            float b{0.0F}; // NOLINT(misc-non-private-member-variables-in-classes)
+
+            PixelRgbFloat() = default;
+            PixelRgbFloat(float n_r,
+                          float n_g,
+                          float n_b) :
+                    b(n_b),
+                    g(n_g),
+                    r(n_r)
+            {
+            }
         };
         YARP_END_PACK
 
@@ -546,11 +597,20 @@ namespace yarp {
          * Integer RGB pixel type.
          */
         YARP_BEGIN_PACK
-        struct YARP_sig_API PixelRgbInt {
-            yarp::os::NetInt32 r,g,b;
-            PixelRgbInt() { r = g = b = 0; }
-            PixelRgbInt(int n_r, int n_g, int n_b) {
-                r = n_r; g = n_g; b = n_b;
+        struct YARP_sig_API PixelRgbInt
+        {
+            yarp::os::NetInt32 r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            yarp::os::NetInt32 g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            yarp::os::NetInt32 b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+
+            PixelRgbInt() = default;
+            PixelRgbInt(int n_r,
+                        int n_g,
+                        int n_b) :
+                    b(n_b),
+                    g(n_g),
+                    r(n_r)
+            {
             }
         };
         YARP_END_PACK
@@ -559,11 +619,13 @@ namespace yarp {
          * Floating point HSV pixel type.
          */
         YARP_BEGIN_PACK
-        struct PixelHsvFloat {
-            float h,s,v;
+        struct PixelHsvFloat
+        {
+            float h{0.0F};
+            float s{0.0F};
+            float v{0.0F};
         };
         YARP_END_PACK
-
     }
 }
 
@@ -700,7 +762,7 @@ inline int ImageOf<yarp::sig::PixelInt>::getPixelCode() const {
 
 template<typename T>
 inline int ImageOf<T>::getPixelCode() const {
-    return -((int) sizeof(T));
+    return -(static_cast<int>(sizeof(T)));
 }
 
 } // namespace sig

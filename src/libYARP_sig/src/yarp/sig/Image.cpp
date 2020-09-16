@@ -197,7 +197,7 @@ void ImageStorage::_alloc_extern (const void *buf)
     }
 
     //iplAllocateImage (pImage, 0, 0);
-    pImage->imageData = (char*)buf;
+    pImage->imageData = const_cast<char*>(reinterpret_cast<const char*>(buf));
     // probably need to do more for real IPL
 
     //iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
@@ -241,13 +241,9 @@ void ImageStorage::_free ()
         if (pImage->imageData != nullptr) {
             if (is_owner) {
                 iplDeallocateImage (pImage);
-                if (Data!=nullptr) {
-                    delete[] Data;
-                }
+                delete[] Data;
             } else {
-                if (Data!=nullptr) {
-                    delete[] Data;
-                }
+                delete[] Data;
             }
 
             is_owner = 1;
@@ -274,9 +270,9 @@ void ImageStorage::_free_complete()
 void ImageStorage::_free_ipl_header()
 {
     if (pImage!=nullptr)
-        {
-            iplDeallocate (pImage, IPL_IMAGE_HEADER);
-        }
+    {
+        iplDeallocate (pImage, IPL_IMAGE_HEADER);
+    }
     pImage = nullptr;
 }
 
@@ -444,7 +440,7 @@ void Image::initialize() {
 
 Image::~Image() {
     if (implementation!=nullptr) {
-        delete (ImageStorage*)implementation;
+        delete static_cast<ImageStorage*>(implementation);
         implementation = nullptr;
     }
 }
@@ -475,10 +471,10 @@ void Image::resize(size_t imgWidth, size_t imgHeight) {
         setPixelCode(code);
         change = true;
     }
-    if (imgPixelCode!=((ImageStorage*)implementation)->extern_type_id) {
+    if (imgPixelCode!=(static_cast<ImageStorage*>(implementation))->extern_type_id) {
         change = true;
     }
-    if (imgQuantum!=((ImageStorage*)implementation)->extern_type_quantum) {
+    if (imgQuantum!=(static_cast<ImageStorage*>(implementation))->extern_type_quantum) {
         change = true;
     }
 
@@ -487,17 +483,18 @@ void Image::resize(size_t imgWidth, size_t imgHeight) {
     }
 
     if (change) {
-        ((ImageStorage*)implementation)->resize(imgWidth,imgHeight,
-                                                imgPixelCode,
-                                                imgQuantum,
-                                                topIsLow);
+        (static_cast<ImageStorage*>(implementation))->resize(imgWidth,
+                                                             imgHeight,
+                                                             imgPixelCode,
+                                                             imgQuantum,
+                                                             topIsLow);
         synchronize();
         //printf("CHANGE! %ld\n", (long int)(this));
     }
 }
 
 void Image::setPixelSize(size_t imgPixelSize) {
-    if(imgPixelSize == pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode)) {
+    if(imgPixelSize == pixelCode2Size.at(static_cast<YarpVocabPixelTypesEnum>(imgPixelCode))) {
         return;
     }
 
@@ -506,7 +503,7 @@ void Image::setPixelSize(size_t imgPixelSize) {
 
 void Image::setPixelCode(int imgPixelCode) {
     this->imgPixelCode = imgPixelCode;
-    this->imgPixelSize = (imgPixelCode < 0) ? -imgPixelCode : pixelCode2Size.at((YarpVocabPixelTypesEnum)imgPixelCode);
+    this->imgPixelSize = (imgPixelCode < 0) ? -imgPixelCode : pixelCode2Size.at(static_cast<YarpVocabPixelTypesEnum>(imgPixelCode));
 }
 
 
@@ -516,7 +513,7 @@ void Image::setQuantum(size_t imgQuantum) {
 
 
 void Image::synchronize() {
-    auto* impl = (ImageStorage*)implementation;
+    auto* impl = static_cast<ImageStorage*>(implementation);
     yAssert(impl!=nullptr);
     if (impl->pImage!=nullptr) {
         imgWidth = impl->pImage->width;
@@ -535,16 +532,16 @@ void Image::synchronize() {
 
 
 unsigned char *Image::getRawImage() const {
-    auto* impl = (ImageStorage*)implementation;
+    auto* impl = static_cast<ImageStorage*>(implementation);
     yAssert(impl!=nullptr);
     if (impl->pImage!=nullptr) {
-        return (unsigned char *)impl->pImage->imageData;
+        return reinterpret_cast<unsigned char*>(impl->pImage->imageData);
     }
     return nullptr;
 }
 
 size_t Image::getRawImageSize() const {
-    auto* impl = (ImageStorage*)implementation;
+    auto* impl = static_cast<ImageStorage*>(implementation);
     yAssert(impl!=nullptr);
     if (impl->pImage!=nullptr) {
         return impl->pImage->imageSize;
@@ -554,16 +551,16 @@ size_t Image::getRawImageSize() const {
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.2.0
 void *Image::getIplImage() {
-    return ((ImageStorage*)implementation)->pImage;
+    return (static_cast<ImageStorage*>(implementation))->pImage;
 }
 
 const void *Image::getIplImage() const {
-    return ((const ImageStorage*)implementation)->pImage;
+    return (static_cast<const ImageStorage*>(implementation))->pImage;
 }
 
 void Image::wrapIplImage(void *iplImage) {
     yAssert(iplImage!=nullptr);
-    auto* p = (IplImage *)iplImage;
+    auto* p = static_cast<IplImage *>(iplImage);
     std::string str = p->colorModel;
     int code = -1;
     int color_code = -1;
@@ -672,8 +669,10 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 
     ImageNetworkHeader header;
 
-    bool ok = connection.expectBlock((char*)&header,sizeof(header));
-    if (!ok) return false;
+    bool ok = connection.expectBlock(reinterpret_cast<char*>(&header),sizeof(header));
+    if (!ok) {
+        return false;
+    }
 
     //first check that the received image size is reasonable
     if (header.width == 0 || header.height == 0)
@@ -690,7 +689,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         setQuantum(header.quantum);
         q = getQuantum();
     }
-    if (q!=(size_t) header.quantum) {
+    if (q != static_cast<size_t>(header.quantum)) {
         if ((header.depth*header.width)%header.quantum==0 &&
             (header.depth*header.width)%q==0) {
             header.quantum = q;
@@ -698,7 +697,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     }
 
     // handle easy case, received and current image are compatible, no conversion needed
-    if (getPixelCode() == header.id && q == (size_t) header.quantum && imgPixelSize == (size_t) header.depth)
+    if (getPixelCode() == header.id && q == static_cast<size_t>(header.quantum) && imgPixelSize == static_cast<size_t>(header.depth))
     {
         return readFromConnection(*this, header, connection);
     }
@@ -726,22 +725,25 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         flex.setQuantum(header.quantum);
 
         bool ok = readFromConnection(flex, header, connection);
-        if (!ok)
-            return false;
-
-        if (getPixelCode() == VOCAB_PIXEL_BGR && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8)
-            return deBayer_GRBG8_TO_BGR(flex, *this, 3);
-        else if (getPixelCode() == VOCAB_PIXEL_BGRA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8)
-            return deBayer_GRBG8_TO_BGR(flex, *this, 4);
-        if (getPixelCode() == VOCAB_PIXEL_RGB && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8)
-            return deBayer_GRBG8_TO_RGB(flex, *this, 3);
-        if (getPixelCode() == VOCAB_PIXEL_RGBA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8)
-            return deBayer_GRBG8_TO_RGB(flex, *this, 4);
-        else
-        {
-            YARP_FIXME_NOTIMPLEMENTED("Conversion from bayer encoding not yet implemented\n");
+        if (!ok) {
             return false;
         }
+
+        if (getPixelCode() == VOCAB_PIXEL_BGR && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
+            return deBayer_GRBG8_TO_BGR(flex, *this, 3);
+        }
+        if (getPixelCode() == VOCAB_PIXEL_BGRA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
+            return deBayer_GRBG8_TO_BGR(flex, *this, 4);
+        }
+        if (getPixelCode() == VOCAB_PIXEL_RGB && header.id==VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
+            return deBayer_GRBG8_TO_RGB(flex, *this, 3);
+        }
+        if (getPixelCode() == VOCAB_PIXEL_RGBA && header.id == VOCAB_PIXEL_ENCODING_BAYER_GRBG8) {
+            return deBayer_GRBG8_TO_RGB(flex, *this, 4);
+        }
+
+        YARP_FIXME_NOTIMPLEMENTED("Conversion from bayer encoding not yet implemented\n");
+        return false;
     }
 
     // handle here all bayer encodings 16 bits
@@ -759,8 +761,9 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     flex.setPixelCode(header.id);
     flex.setQuantum(header.quantum);
     ok = readFromConnection(flex, header, connection);
-    if (ok)
+    if (ok) {
         copy(flex);
+    }
 
     return ok;
 }
@@ -787,14 +790,14 @@ bool Image::write(yarp::os::ConnectionWriter& connection) const {
     header.paramBlobLen = getRawImageSize();
     */
 
-    connection.appendBlock((char*)&header,sizeof(header));
+    connection.appendBlock(reinterpret_cast<char*>(&header),sizeof(header));
     unsigned char *mem = getRawImage();
     if (header.width!=0&&header.height!=0) {
         yAssert(mem!=nullptr);
 
         // Note use of external block.
         // Implies care needed about ownership.
-        connection.appendExternalBlock((char *)mem,header.imgSize);
+        connection.appendExternalBlock(reinterpret_cast<char *>(mem),header.imgSize);
     }
 
     // if someone is foolish enough to connect in text mode,
@@ -827,7 +830,7 @@ Image& Image::operator=(Image&& other) noexcept
 }
 
 
-const Image& Image::operator=(const Image& alt)
+Image& Image::operator=(const Image& alt)
 {
     if (&alt != this) {
         copy(alt);
@@ -876,12 +879,12 @@ void Image::setExternal(const void *data, size_t imgWidth, size_t imgHeight) {
     if (imgQuantum==0) {
         imgQuantum = 1;
     }
-    ((ImageStorage*)implementation)->_alloc_complete_extern(data,
-                                                            imgWidth,
-                                                            imgHeight,
-                                                            getPixelCode(),
-                                                            imgQuantum,
-                                                            topIsLow);
+    (static_cast<ImageStorage*>(implementation))->_alloc_complete_extern(data,
+                                                                         imgWidth,
+                                                                         imgHeight,
+                                                                         getPixelCode(),
+                                                                         imgQuantum,
+                                                                         topIsLow);
     synchronize();
 }
 
@@ -913,15 +916,15 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
     w = alt.width();
     h = alt.height();
 
-    float di = ((float)h)/nh;
-    float dj = ((float)w)/nw;
+    float di = (static_cast<float>(h))/nh;
+    float dj = (static_cast<float>(w))/nw;
 
     for (size_t i=0; i<nh; i++)
         {
-            auto i0 = (size_t)(di*i);
+            auto i0 = static_cast<size_t>(di*i);
             for (size_t j=0; j<nw; j++)
                 {
-                    auto j0 = (size_t)(dj*j);
+                    auto j0 = static_cast<size_t>(dj*j);
                     memcpy(getPixelAddress(j,i),
                            alt.getPixelAddress(j0,i0),
                            d);

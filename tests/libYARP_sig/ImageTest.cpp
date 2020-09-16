@@ -349,7 +349,7 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
         ImageOf<PixelRgb> img;
         img.resize(64,64);
         img.zero();
-        addCircle(img,PixelRgb(255,0,0),32,32,200);
+        addCircle(img,PixelRgb{255,0,0},32,32,200);
         // full image should be colored blue
         bool ok = true;
         IMGFOR(img,x,y) {
@@ -484,7 +484,7 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
         ImageOf<PixelRgba> img;
         ImageOf<PixelRgb> img2;
         img.resize(50,50);
-        img(4,2) = PixelRgba(10,20,30,40);
+        img(4,2) = PixelRgba{10,20,30,40};
         img2.copy(img);
         CHECK(img(4,2).a == 40); // "a level"
         CHECK(img2(4,2).r == 10); // "r level"
@@ -495,7 +495,7 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
         ImageOf<PixelRgbInt> img;
         ImageOf<PixelRgb> img2;
         img.resize(50,50);
-        img(4,2) = PixelRgbInt(10,20,30);
+        img(4,2) = PixelRgbInt{10,20,30};
         CHECK(img(4,2).r == 10); // r level original
         img2.copy(img);
         CHECK(img2(4,2).r == 10); // r level copied
