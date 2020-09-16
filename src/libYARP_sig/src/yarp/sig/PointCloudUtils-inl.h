@@ -9,6 +9,61 @@
 #ifndef YARP_SIG_POINTCLOUDUTILS_INL_H
 #define YARP_SIG_POINTCLOUDUTILS_INL_H
 
+#include <type_traits>
+
+
+namespace {
+
+template<typename T1,
+         typename T2,
+         std::enable_if_t<std::is_same<T1, yarp::sig::DataXYZRGBA>::value &&
+                          (std::is_same<T2, yarp::sig::PixelRgb>::value ||
+                           std::is_same<T2, yarp::sig::PixelBgr>::value), int> = 0
+>
+inline void copyColorData(yarp::sig::PointCloud<T1>& pointCloud,
+                          const yarp::sig::ImageOf<T2>& color,
+                          const size_t u,
+                          const size_t v)
+{
+    pointCloud(u,v).r = color.pixel(u,v).r;
+    pointCloud(u,v).g = color.pixel(u,v).g;
+    pointCloud(u,v).b = color.pixel(u,v).b;
+}
+
+template<typename T1,
+         typename T2,
+         std::enable_if_t<std::is_same<T1, yarp::sig::DataXYZRGBA>::value &&
+                          (std::is_same<T2, yarp::sig::PixelRgba>::value ||
+                           std::is_same<T2, yarp::sig::PixelBgra>::value), int> = 0
+>
+inline void copyColorData(yarp::sig::PointCloud<T1>& pointCloud,
+                          const yarp::sig::ImageOf<T2>& color,
+                          const size_t u,
+                          const size_t v)
+{
+    pointCloud(u,v).r = color.pixel(u,v).r;
+    pointCloud(u,v).g = color.pixel(u,v).g;
+    pointCloud(u,v).b = color.pixel(u,v).b;
+    pointCloud(u,v).a = color.pixel(u,v).a;
+}
+
+template<typename T1,
+         typename T2,
+         std::enable_if_t<!std::is_same<T1, yarp::sig::DataXYZRGBA>::value ||
+                          (!std::is_same<T2, yarp::sig::PixelRgb>::value &&
+                           !std::is_same<T2, yarp::sig::PixelBgr>::value &&
+                           !std::is_same<T2, yarp::sig::PixelRgba>::value &&
+                           !std::is_same<T2, yarp::sig::PixelBgra>::value), int> = 0
+>
+inline void copyColorData(yarp::sig::PointCloud<T1>& pointCloud,
+                          const yarp::sig::ImageOf<T2>& color,
+                          size_t u,
+                          size_t v)
+{
+}
+
+} // namespace
+
 template<typename T1, typename T2>
 yarp::sig::PointCloud<T1> yarp::sig::utils::depthRgbToPC(const yarp::sig::ImageOf<yarp::sig::PixelFloat>& depth,
                                                          const yarp::sig::ImageOf<T2>& color,
@@ -34,23 +89,7 @@ yarp::sig::PointCloud<T1> yarp::sig::utils::depthRgbToPC(const yarp::sig::ImageO
             pointCloud(u,v).y = (v - intrinsic.principalPointY)/intrinsic.focalLengthY*depth.pixel(u,v);
             pointCloud(u,v).z = depth.pixel(u,v);
 
-            if (std::is_same<T1, DataXYZRGBA>::value) {
-                if (std::is_same<T2, PixelRgb>::value  ||
-                    std::is_same<T2, PixelBgr>::value  ||
-                    std::is_same<T2, PixelRgba>::value ||
-                    std::is_same<T2, PixelBgra>::value) {
-                    // Color
-                    pointCloud(u,v).r = color.pixel(u,v).r;
-                    pointCloud(u,v).g = color.pixel(u,v).g;
-                    pointCloud(u,v).b = color.pixel(u,v).b;
-                    if (std::is_same<T2, PixelRgba>::value ||
-                        std::is_same<T2, PixelBgra>::value) {
-                        pointCloud(u,v).a = color.pixel(u,v).a;
-                    }
-                }
-            }
-
-
+            copyColorData(pointCloud, color, u, v);
         }
     }
     return pointCloud;
