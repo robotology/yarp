@@ -3,7 +3,7 @@ Checks:          'clang-diagnostic-*,clang-analyzer-*,-*,bugprone-*,-bugprone-ma
 WarningsAsErrors: ''
 AnalyzeTemporaryDtors: false
 HeaderFilterRegex: '.*'
-FormatStyle:     none
+FormatStyle:     file
 CheckOptions:
   - key:             bugprone-argument-comment.CommentBoolLiterals
     value:           '0'
