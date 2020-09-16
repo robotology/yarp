@@ -35,6 +35,13 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {
     senderSide = (options.find("sender_side").asBool());
     
+    std::string carrierString = options.find("carrier").asString();
+    std::string param=carrierString.substr(carrierString.find("libffmpeg_param") + 16);
+    int found= param.find('+');
+    if (found < param.length()) {
+        param=param.substr(0,param.find('+'));
+    }
+    
     // TODO: grab desired codec from command line
     
     AVCodecID codec = AV_CODEC_ID_H265; // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
