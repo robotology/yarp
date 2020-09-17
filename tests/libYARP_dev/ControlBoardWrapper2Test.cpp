@@ -31,7 +31,7 @@ TEST_CASE("dev::ControlBoardWrapper2", "[yarp::dev]")
 
     Network::setLocalMode(true);
 
-    SECTION("test the controlboard wrapper 2")
+    SECTION("test the controlboardwrapper2 device")
     {
         PolyDriver dd;
         Property p;

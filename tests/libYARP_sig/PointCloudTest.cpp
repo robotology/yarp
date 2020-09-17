@@ -931,8 +931,6 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         CHECK(pcCol.height() == depth.height()); // Checking PC height
     }
 
-#if defined(ENABLE_BROKEN_TESTS)
-    // Broken, see https://github.com/robotology/yarp/issues/1959
     SECTION("Testing depthToPC BGR")
     {
         ImageOf<PixelFloat> depth;
@@ -951,7 +949,6 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         CHECK(pcCol.width() == depth.width()); // Checking PC width
         CHECK(pcCol.height() == depth.height()); // Checking PC height
     }
-#endif // ENABLE_BROKEN_TESTS
 
     SECTION("Testing move semantics")
     {

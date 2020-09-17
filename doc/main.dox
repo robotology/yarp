@@ -101,6 +101,7 @@ periodically check it.
 \li \subpage yarpbatterygui
 \li \subpage yarplaserscannergui
 \li \subpage yarpviz
+\li \subpage yarpmobilebasegui
 
 \section yarp_advanced_usage Interoperability and advanced use
 \li \subpage channelprioritization.

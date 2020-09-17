@@ -1,11 +1,11 @@
 /**
-\page yarp_os The YARP OS library
+\page yarp_os The YARP os library
 
 \tableofcontents
 
 \section yarp_os_intro Introduction
 
-Welcome to the YARP OS library.
+Welcome to the YARP os library.
 This library interfaces with your operating system and provides some basic
 services.
 We give you
