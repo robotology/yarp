@@ -34,12 +34,13 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {
     senderSide = (options.find("sender_side").asBool());
-    
-    std::string carrierString = options.find("carrier").asString();
-    std::string param=carrierString.substr(carrierString.find("libffmpeg_param") + 16);
-    int found= param.find('+');
-    if (found < param.length()) {
-        param=param.substr(0,param.find('+'));
+    if (senderSide) {
+        std::string carrierString = options.find("carrier").asString();
+        std::string params = carrierString.substr(carrierString.find("libffmpeg_param") + 16);
+        int found = params.find('+');
+        if (found < params.length()) {
+            params = params.substr(0,params.find('+'));
+        }
     }
     
     // TODO: grab desired codec from command line
