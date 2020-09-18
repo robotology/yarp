@@ -27,7 +27,7 @@
 #include "include/worker.h"
 #include "include/mainwindow.h"
 #include "include/log.h"
-#if CV_MAJOR_VERSION >= 3
+#ifdef HAS_OPENCV
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 #endif
 
@@ -240,11 +240,7 @@ int WorkerClass::sendImages(int part, int frame)
         fileValid = read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath);
     }
     else {
-#if CV_MAJOR_VERSION >= 3
         cv_img = cv::imread(tmpPath, cv::ImreadModes::IMREAD_UNCHANGED);
-#else
-        cv_img = cv::imread(tmpPath, CV_LOAD_IMAGE_UNCHANGED);
-#endif
         if ( cv_img.data != nullptr ) {
             if (code==VOCAB_PIXEL_RGB)
             {

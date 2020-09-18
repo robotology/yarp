@@ -29,10 +29,8 @@
 #ifdef ADD_VIDEO
 #    include <opencv2/opencv.hpp>
 #    include <yarp/cv/Cv.h>
-#    if CV_MAJOR_VERSION >= 3
-#        include <opencv2/core/core_c.h>
-#        include <opencv2/videoio.hpp>
-#    endif // CV_MAJOR_VERSION
+#    include <opencv2/core/core_c.h>
+#    include <opencv2/videoio.hpp>
 #endif // ADD_VIDEO
 
 
@@ -530,11 +528,7 @@ public:
                 double dt=itemEnd.timeStamp.getStamp()-t0;
                 fps=(dt<=0.0)?25:int(double(sz-1)/dt);
 
-#if CV_MAJOR_VERSION >= 3
                 videoWriter.open(videoFile.c_str(),cv::VideoWriter::fourcc('H','F','Y','U'),
-#else
-                videoWriter.open(videoFile.c_str(),CV_FOURCC('H','F','Y','U'),
-#endif
                                  fps,cvSize(frameW,frameH),true);
 
                 doImgParamsExtraction=false;

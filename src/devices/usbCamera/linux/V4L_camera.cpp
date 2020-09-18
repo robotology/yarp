@@ -29,9 +29,7 @@
 #include <ctime>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#    if CV_MAJOR_VERSION >= 3
-#        include <opencv2/core/core_c.h>
-#    endif // CV_MAJOR_VERSION
+#include <opencv2/core/core_c.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;

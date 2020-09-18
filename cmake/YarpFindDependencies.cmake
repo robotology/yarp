@@ -328,15 +328,16 @@ set(SWIG_REQUIRED_VERSION 3.0.12)
 find_package(SWIG ${SWIG_REQUIRED_VERSION} QUIET)
 checkandset_dependency(SWIG)
 
-# First part of workaround for OpenCV 2.4 bug https://github.com/robotology/yarp/issues/1024#issuecomment-267074067
-# Can be removed once we only support OpenCV 3
-get_property(OpenCV24_WORKAROUND_ORIGINAL_INCLUDE_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
-# End first part of workaround
-find_package(OpenCV QUIET)
+# Both OpenCV 3 and 4 are supported
+#
+# WARNING OpenCV 3 must be searched before OpenCV 4, otherwise the build will
+#         fail with OpenCV3. The opposite does not seem to happen.
+set(OpenCV_REQUIRED_VERSION 3)
+find_package(OpenCV ${OpenCV_REQUIRED_VERSION} QUIET)
+if(NOT OpenCV_FOUND)
+  find_package(OpenCV 4 QUIET)
+endif()
 checkandset_dependency(OpenCV)
-# Second part of the workaround
-set_property(DIRECTORY PROPERTY INCLUDE_DIRECTORIES ${OpenCV24_WORKAROUND_ORIGINAL_INCLUDE_DIRS})
-# End second part of workaround
 
 find_package(Lua QUIET)
 checkandset_dependency(Lua)
