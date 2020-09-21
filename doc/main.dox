@@ -74,9 +74,6 @@ end of this page.
 The page \subpage tutorials is continuously updated so it is a good idea to
 periodically check it.
 
-\\\ This is the YARP manual
-\\\ \li \subpage manual
-
 \section yarp_command_line_tools Command line tools
 \li \subpage yarp
 \li \subpage yarpserver
