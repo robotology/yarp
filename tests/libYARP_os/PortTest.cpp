@@ -54,7 +54,7 @@ public:
     /**
      * Constructor.
      */
-    BrokenDevice() : PeriodicThread(0.03), img(nullptr) {}
+    BrokenDevice() : PeriodicThread(0.03) {}
 
     bool close() override
     {
@@ -80,7 +80,7 @@ public:
 
 
 private:
-    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img {nullptr};
     yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>> pImg;
 
 };

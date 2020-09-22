@@ -31,7 +31,15 @@ namespace os {
  */
 class YARP_os_API Carriers
 {
+    Carriers();
+
 public:
+
+    /**
+     * Destructor.
+     */
+    virtual ~Carriers();
+
     /**
      * Select a carrier by name.
      *
@@ -79,12 +87,6 @@ public:
     static OutputProtocol* connect(const Contact& address);
 
     /**
-     * Destructor.
-     */
-    virtual ~Carriers();
-
-
-    /**
      * Remove all carriers.
      */
     void clear();
@@ -104,10 +106,10 @@ public:
     static Bottle listCarriers();
 
 private:
-    Carriers();
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     class Private;
     Private* const mPriv;
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
 } // namespace os

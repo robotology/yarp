@@ -54,6 +54,8 @@ std::string bytes_to_string(const Bytes& header)
 }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class Carriers::Private : public YarpPluginSelector
 {
 public:
@@ -198,6 +200,8 @@ bool Carriers::Private::select(Searchable& options)
 {
     return options.check("type", Value("none")).asString() == "carrier";
 }
+
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 
 Carriers::Carriers() :
