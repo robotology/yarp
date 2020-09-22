@@ -41,8 +41,9 @@ RGBDSensorClient::~RGBDSensorClient()
 
 bool RGBDSensorClient::open(yarp::os::Searchable& config)
 {
-    if(verbose >= 5)
+    if(verbose >= 5) {
         yCTrace(RGBDSENSORCLIENT) << "\n Paramerters are: \n" << config.toString();
+    }
 
     if(!fromConfig(config))
     {
@@ -72,10 +73,8 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         yCError(RGBDSENSORCLIENT) << "   localImagePort:         Full name of the local port to open, e.g. /myApp/image_camera";
         return false;
     }
-    else
-    {
-        local_colorFrame_StreamingPort_name  = config.find("localImagePort").asString();
-    }
+
+    local_colorFrame_StreamingPort_name  = config.find("localImagePort").asString();
 
     if (!config.check("localDepthPort", "full name of the port for streaming depth image"))
     {
@@ -83,10 +82,8 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         yCError(RGBDSENSORCLIENT) << "   localDepthPort:         Full name of the local port to open, e.g. /myApp/depth_camera";
         return false;
     }
-    else
-    {
-        local_depthFrame_StreamingPort_name  = config.find("localDepthPort").asString();
-    }
+
+    local_depthFrame_StreamingPort_name  = config.find("localDepthPort").asString();
 
     // Parse REMOTE port names
     if (!config.check("remoteImagePort", "full name of the port for streaming color image"))
@@ -95,10 +92,8 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         yCError(RGBDSENSORCLIENT) << "   remoteImagePort:         Full name of the port to read color images from, e.g. /robotName/image_camera";
         return false;
     }
-    else
-    {
-        remote_colorFrame_StreamingPort_name  = config.find("remoteImagePort").asString();
-    }
+
+    remote_colorFrame_StreamingPort_name  = config.find("remoteImagePort").asString();
 
     if (!config.check("remoteDepthPort", "full name of the port for streaming depth image"))
     {
@@ -106,10 +101,8 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         yCError(RGBDSENSORCLIENT) << "   remoteDepthPort:         Full name of the port to read depth images from, e.g. /robotName/depth_camera ";
         return false;
     }
-    else
-    {
-        remote_depthFrame_StreamingPort_name  = config.find("remoteDepthPort").asString();
-    }
+
+    remote_depthFrame_StreamingPort_name  = config.find("remoteDepthPort").asString();
 
     // Single RPC port
     if (!config.check("localRpcPort", "full name of the port for streaming depth image"))
@@ -118,10 +111,8 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         yCError(RGBDSENSORCLIENT) << "   localRpcPort:            Full name of the local RPC port to open, e.g. /myApp/RGBD/rpc";
         return false;
     }
-    else
-    {
-        local_rpcPort_name  = config.find("localRpcPort").asString();
-    }
+
+    local_rpcPort_name  = config.find("localRpcPort").asString();
 
     if (!config.check("remoteRpcPort", "full name of the port for streaming depth image"))
     {
@@ -129,10 +120,8 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         yCError(RGBDSENSORCLIENT) << "   remoteRpcPort:         Full name of the remote RPC port, e.g. /robotName/RGBD/rpc";
         return false;
     }
-    else
-    {
-        remote_rpcPort_name  = config.find("remoteRpcPort").asString();
-    }
+
+    remote_rpcPort_name  = config.find("remoteRpcPort").asString();
 
     image_carrier_type = "udp";
     depth_carrier_type = "udp";
@@ -160,7 +149,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
     return true;
 }
 
-bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
+bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
 {
     bool ret;
 
@@ -209,7 +198,8 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable &config)
     }
 
     // Check protocol version
-    yarp::os::Bottle cmd, response;
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle response;
     cmd.addVocab(VOCAB_RGBD_SENSOR);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
@@ -287,7 +277,8 @@ bool RGBDSensorClient::close()
 
 bool RGBDSensorClient::getExtrinsicParam(yarp::sig::Matrix &extrinsic)
 {
-    yarp::os::Bottle cmd, response;
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle response;
     cmd.addVocab(VOCAB_RGBD_SENSOR);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_EXTRINSIC_PARAM);
@@ -306,18 +297,20 @@ bool RGBDSensorClient::getExtrinsicParam(yarp::sig::Matrix &extrinsic)
 
 IRGBDSensor::RGBDSensor_status RGBDSensorClient::getSensorStatus()
 {
-    yarp::os::Bottle cmd, response;
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle response;
     cmd.addVocab(VOCAB_RGBD_SENSOR);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_STATUS);
     rpcPort.write(cmd, response);
-    return (IRGBDSensor::RGBDSensor_status) response.get(3).asInt32();
+    return static_cast<IRGBDSensor::RGBDSensor_status>(response.get(3).asInt32());
 }
 
 
-std::string RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeStamp)
+std::string RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp* /*timeStamp*/)
 {
-    yarp::os::Bottle cmd, response;
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle response;
     cmd.addVocab(VOCAB_RGBD_SENSOR);
     cmd.addVocab(VOCAB_GET);
     cmd.addVocab(VOCAB_ERROR_MSG);
@@ -327,15 +320,17 @@ std::string RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp *timeStamp)
 
 bool RGBDSensorClient::getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp)
 {
-    if(timeStamp)
+    if(timeStamp) {
         timeStamp->update(yarp::os::Time::now());
+    }
     return streamingReader->readRgb(rgbImage);
 }
 
 bool RGBDSensorClient::getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp)
 {
-    if(timeStamp)
+    if(timeStamp) {
         timeStamp->update(yarp::os::Time::now());
+    }
     return streamingReader->readDepth(depthImage);
 }
 
@@ -345,11 +340,13 @@ bool RGBDSensorClient::getImages(FlexImage &rgbImage, ImageOf<PixelFloat> &depth
     ret &= streamingReader->readRgb(rgbImage);
     ret &= streamingReader->readDepth(depthImage);
 
-    if(rgbStamp)
+    if(rgbStamp) {
         rgbStamp->update(yarp::os::Time::now());
+    }
 
-    if(depthStamp)
+    if(depthStamp) {
         depthStamp->update(yarp::os::Time::now());
+    }
     return ret;
 }
 

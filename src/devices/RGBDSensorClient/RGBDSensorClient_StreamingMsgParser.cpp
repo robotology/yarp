@@ -50,16 +50,18 @@ RGBDSensor_StreamingMsgParser::RGBDSensor_StreamingMsgParser() :
 bool RGBDSensor_StreamingMsgParser::readRgb(yarp::sig::FlexImage &data, yarp::os::Stamp *timeStamp)
 {
     data = read_rgb.getImage();
-    if(timeStamp)
+    if(timeStamp) {
         port_rgb->getEnvelope(*timeStamp);
+    }
     return true;
 }
 
 bool RGBDSensor_StreamingMsgParser::readDepth(yarp::sig::ImageOf< yarp::sig::PixelFloat > &data, yarp::os::Stamp *timeStamp)
 {
     data = read_depth.getImage();
-    if(timeStamp)
+    if(timeStamp) {
         port_depth->getEnvelope(*timeStamp);
+    }
     return true;
 }
 
@@ -68,11 +70,13 @@ bool RGBDSensor_StreamingMsgParser::read(yarp::sig::FlexImage &rgbImage, yarp::s
     rgbImage = read_rgb.getImage();
     depthImage = read_depth.getImage();
 
-    if(rgbStamp)
+    if(rgbStamp) {
         port_rgb->getEnvelope(*rgbStamp);
+    }
 
-    if(depthStamp)
+    if(depthStamp) {
         port_depth->getEnvelope(*depthStamp);
+    }
     return true;
 }
 

@@ -25,7 +25,7 @@ private:
 
 public:
     RgbImageReader_Impl();
-    ~RgbImageReader_Impl();
+    ~RgbImageReader_Impl() override;
 
     using yarp::os::TypedReaderCallback<yarp::sig::FlexImage>::onRead;
     void onRead(yarp::sig::FlexImage& datum) override;
@@ -41,7 +41,7 @@ private:
 
 public:
     FloatImageReader_Impl();
-    ~FloatImageReader_Impl();
+    ~FloatImageReader_Impl() override;
 
     using yarp::os::TypedReaderCallback<yarp::sig::ImageOf< yarp::sig::PixelFloat>>::onRead;
     void onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum)  override;
@@ -61,11 +61,11 @@ private:
 public:
     RGBDSensor_StreamingMsgParser();
 
-    bool readRgb(yarp::sig::FlexImage &data, yarp::os::Stamp *timeStamp = NULL);
+    bool readRgb(yarp::sig::FlexImage &data, yarp::os::Stamp *timeStamp = nullptr);
 
-    bool readDepth(yarp::sig::ImageOf< yarp::sig::PixelFloat > &data, yarp::os::Stamp *timeStamp = NULL);
+    bool readDepth(yarp::sig::ImageOf< yarp::sig::PixelFloat > &data, yarp::os::Stamp *timeStamp = nullptr);
 
-    bool read(yarp::sig::FlexImage &rgbImage, yarp::sig::ImageOf< yarp::sig::PixelFloat > &depthImage, yarp::os::Stamp *rgbStamp = NULL, yarp::os::Stamp *depthStamp = NULL);
+    bool read(yarp::sig::FlexImage &rgbImage, yarp::sig::ImageOf< yarp::sig::PixelFloat > &depthImage, yarp::os::Stamp *rgbStamp = nullptr, yarp::os::Stamp *depthStamp = nullptr);
 
     void attach(yarp::os::BufferedPort<yarp::sig::FlexImage> *_port_rgb,
                 yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat>> *_port_depth);
