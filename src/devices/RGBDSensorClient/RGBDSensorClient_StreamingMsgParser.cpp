@@ -18,7 +18,7 @@ RgbImageReader_Impl::~RgbImageReader_Impl() = default;
 void RgbImageReader_Impl::onRead(yarp::sig::FlexImage& datum)
 {
     std::lock_guard<std::mutex> lock(mutex);
-    last_rgb = datum;
+    std::swap(datum, last_rgb);
 }
 
 yarp::sig::FlexImage RgbImageReader_Impl::getImage()
@@ -35,7 +35,7 @@ FloatImageReader_Impl::~FloatImageReader_Impl() = default;
 void FloatImageReader_Impl::onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum)
 {
     std::lock_guard<std::mutex> lock(mutex);
-    last_depth = datum;
+    std::swap(datum, last_depth);
 }
 
 yarp::sig::ImageOf<yarp::sig::PixelFloat> FloatImageReader_Impl::getImage()
