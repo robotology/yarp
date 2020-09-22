@@ -42,7 +42,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~PortCoreOutputUnit();
+    ~PortCoreOutputUnit() override;
 
     /**
      * Prepare to serve this output.  A thread will start if a call
@@ -82,14 +82,14 @@ public:
     Route getRoute() override;
 
     // documented in PortCoreUnit
-    virtual void* send(const yarp::os::PortWriter& writer,
-                       yarp::os::PortReader* reader,
-                       const yarp::os::PortWriter* callback,
-                       void* tracker,
-                       const std::string& envelopeString,
-                       bool waitAfter,
-                       bool waitBefore,
-                       bool* gotReply) override;
+    void* send(const yarp::os::PortWriter& writer,
+               yarp::os::PortReader* reader,
+               const yarp::os::PortWriter* callback,
+               void* tracker,
+               const std::string& envelopeString,
+               bool waitAfter,
+               bool waitBefore,
+               bool* gotReply) override;
 
     // documented in PortCoreUnit
     void* takeTracker() override;

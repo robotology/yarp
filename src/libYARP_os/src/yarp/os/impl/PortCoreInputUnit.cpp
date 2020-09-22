@@ -167,7 +167,7 @@ void PortCoreInputUnit::run()
         done = true;
     }
 
-    void* id = (void*)this;
+    auto* id = reinterpret_cast<void*>(this);
 
     if (ip != nullptr && !ip->getConnection().canEscape()) {
         InputStream* is = &ip->getInputStream();
