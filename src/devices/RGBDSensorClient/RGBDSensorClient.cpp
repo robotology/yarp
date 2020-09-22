@@ -47,7 +47,7 @@ bool RGBDSensorClient::open(yarp::os::Searchable& config)
 
     if(!fromConfig(config))
     {
-        yCError(RGBDSENSORCLIENT) << "Device RGBDSensorClient failed to open, check previous log for error messages.";
+        yCError(RGBDSENSORCLIENT) << "Failed to open, check previous log for error messages.";
         return false;
     }
 
@@ -69,7 +69,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
     // TBD: check if user types '...' as port name, how to create RPC port names
     if (!config.check("localImagePort", "full name of the port for streaming color image"))
     {
-        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'localImagePort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "Missing 'localImagePort' parameter. Check you configuration file; it must be like:";
         yCError(RGBDSENSORCLIENT) << "   localImagePort:         Full name of the local port to open, e.g. /myApp/image_camera";
         return false;
     }
@@ -78,7 +78,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
 
     if (!config.check("localDepthPort", "full name of the port for streaming depth image"))
     {
-        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'localDepthPort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "Missing 'localDepthPort' parameter. Check you configuration file; it must be like:";
         yCError(RGBDSENSORCLIENT) << "   localDepthPort:         Full name of the local port to open, e.g. /myApp/depth_camera";
         return false;
     }
@@ -88,7 +88,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
     // Parse REMOTE port names
     if (!config.check("remoteImagePort", "full name of the port for streaming color image"))
     {
-        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'remoteImagePort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "Missing 'remoteImagePort' parameter. Check you configuration file; it must be like:";
         yCError(RGBDSENSORCLIENT) << "   remoteImagePort:         Full name of the port to read color images from, e.g. /robotName/image_camera";
         return false;
     }
@@ -97,7 +97,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
 
     if (!config.check("remoteDepthPort", "full name of the port for streaming depth image"))
     {
-        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'remoteDepthPort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "Missing 'remoteDepthPort' parameter. Check you configuration file; it must be like:";
         yCError(RGBDSENSORCLIENT) << "   remoteDepthPort:         Full name of the port to read depth images from, e.g. /robotName/depth_camera ";
         return false;
     }
@@ -107,7 +107,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
     // Single RPC port
     if (!config.check("localRpcPort", "full name of the port for streaming depth image"))
     {
-        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'localRpcPort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "Missing 'localRpcPort' parameter. Check you configuration file; it must be like:";
         yCError(RGBDSENSORCLIENT) << "   localRpcPort:            Full name of the local RPC port to open, e.g. /myApp/RGBD/rpc";
         return false;
     }
@@ -116,7 +116,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
 
     if (!config.check("remoteRpcPort", "full name of the port for streaming depth image"))
     {
-        yCError(RGBDSENSORCLIENT) << "RGBDSensorClient: missing 'remoteRpcPort' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORCLIENT) << "Missing 'remoteRpcPort' parameter. Check you configuration file; it must be like:";
         yCError(RGBDSENSORCLIENT) << "   remoteRpcPort:         Full name of the remote RPC port, e.g. /robotName/RGBD/rpc";
         return false;
     }
@@ -366,11 +366,14 @@ int RGBDSensorClient::getRgbWidth()
 {
     return RgbMsgSender->getRgbWidth();
 }
+
 bool RGBDSensorClient::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
 {
     return RgbMsgSender->getRgbSupportedConfigurations(configurations);
 }
-bool RGBDSensorClient::getRgbResolution(int &width, int &height){
+
+bool RGBDSensorClient::getRgbResolution(int &width, int &height)
+{
     return RgbMsgSender->getRgbResolution(width, height);
 }
 
@@ -378,14 +381,17 @@ bool RGBDSensorClient::setRgbResolution(int width, int height)
 {
     return RgbMsgSender->setRgbResolution(width, height);
 }
+
 bool RGBDSensorClient::getRgbFOV(double &horizontalFov, double &verticalFov)
 {
     return RgbMsgSender->getRgbFOV(horizontalFov, verticalFov);
 }
+
 bool RGBDSensorClient::setRgbFOV(double horizontalFov, double verticalFov)
 {
     return RgbMsgSender->getRgbFOV(horizontalFov, verticalFov);
 }
+
 bool RGBDSensorClient::getRgbIntrinsicParam(yarp::os::Property &intrinsic)
 {
     return RgbMsgSender->getRgbIntrinsicParam(intrinsic);
@@ -408,38 +414,47 @@ int RGBDSensorClient::getDepthHeight()
 {
     return DepthMsgSender->getDepthHeight();
 }
+
 int RGBDSensorClient::getDepthWidth()
 {
     return DepthMsgSender->getDepthWidth();
 }
+
 bool RGBDSensorClient::setDepthResolution(int width, int height)
 {
     return DepthMsgSender->setDepthResolution(width, height);
 }
+
 bool RGBDSensorClient::getDepthFOV(double &horizontalFov, double &verticalFov)
 {
     return DepthMsgSender->getDepthFOV(horizontalFov, verticalFov);
 }
+
 bool RGBDSensorClient::setDepthFOV(double horizontalFov, double verticalFov)
 {
     return DepthMsgSender->setDepthFOV(horizontalFov, verticalFov);
 }
+
 double RGBDSensorClient::getDepthAccuracy()
 {
     return DepthMsgSender->getDepthAccuracy();
 }
+
 bool RGBDSensorClient::setDepthAccuracy(double accuracy)
 {
     return DepthMsgSender->setDepthAccuracy(accuracy);
 }
+
 bool RGBDSensorClient::getDepthClipPlanes(double &nearPlane, double &farPlane)
 {
     return DepthMsgSender->getDepthClipPlanes(nearPlane, farPlane);
 }
+
 bool RGBDSensorClient::setDepthClipPlanes(double nearPlane, double farPlane)
 {
     return DepthMsgSender->setDepthClipPlanes(nearPlane, farPlane);
 }
+
 bool RGBDSensorClient::getDepthIntrinsicParam(yarp::os::Property &intrinsic)
 {
     return DepthMsgSender->getDepthIntrinsicParam(intrinsic);
