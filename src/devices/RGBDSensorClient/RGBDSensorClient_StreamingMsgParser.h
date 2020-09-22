@@ -9,11 +9,11 @@
 #ifndef YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_STREAMINGMSGPARSER_H
 #define YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_STREAMINGMSGPARSER_H
 
+#include <yarp/os/LogStream.h>
+#include <yarp/os/PortablePair.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/sig/Image.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/os/PortablePair.h>
-#include <yarp/os/LogStream.h>
 
 #include <list>
 #include <mutex>
@@ -59,17 +59,22 @@ private:
     RgbImageReader_Impl   read_rgb;
     FloatImageReader_Impl read_depth;
 
-    yarp::os::BufferedPort<yarp::sig::FlexImage> *port_rgb;
-    yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat>> *port_depth;
+    yarp::os::BufferedPort<yarp::sig::FlexImage> *port_rgb {nullptr};
+    yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat>> *port_depth {nullptr};
 
 public:
-    RGBDSensor_StreamingMsgParser();
+    RGBDSensor_StreamingMsgParser() = default;
 
-    bool readRgb(yarp::sig::FlexImage &data, yarp::os::Stamp *timeStamp = nullptr);
+    bool readRgb(yarp::sig::FlexImage &data,
+                 yarp::os::Stamp *timeStamp = nullptr);
 
-    bool readDepth(yarp::sig::ImageOf< yarp::sig::PixelFloat > &data, yarp::os::Stamp *timeStamp = nullptr);
+    bool readDepth(yarp::sig::ImageOf< yarp::sig::PixelFloat > &data,
+                   yarp::os::Stamp *timeStamp = nullptr);
 
-    bool read(yarp::sig::FlexImage &rgbImage, yarp::sig::ImageOf< yarp::sig::PixelFloat > &depthImage, yarp::os::Stamp *rgbStamp = nullptr, yarp::os::Stamp *depthStamp = nullptr);
+    bool read(yarp::sig::FlexImage &rgbImage,
+              yarp::sig::ImageOf< yarp::sig::PixelFloat > &depthImage,
+              yarp::os::Stamp *rgbStamp = nullptr,
+              yarp::os::Stamp *depthStamp = nullptr);
 
     void attach(yarp::os::BufferedPort<yarp::sig::FlexImage> *_port_rgb,
                 yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat>> *_port_depth);

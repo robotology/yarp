@@ -46,11 +46,6 @@ yarp::sig::ImageOf<yarp::sig::PixelFloat> FloatImageReader_Impl::getImage()
 
 
 // Streaming handler
-RGBDSensor_StreamingMsgParser::RGBDSensor_StreamingMsgParser() :
-    port_rgb(nullptr),
-    port_depth(nullptr)
-{}
-
 bool RGBDSensor_StreamingMsgParser::readRgb(yarp::sig::FlexImage &data, yarp::os::Stamp *timeStamp)
 {
     data = read_rgb.getImage();
