@@ -16,51 +16,53 @@
 #include <yarp/dev/DeviceDriver.h>
 
 #include <list>
+#include <tuple>
 #include <mutex>
 
 
-class RgbImageReader_Impl :
-        public yarp::os::TypedReaderCallback<yarp::sig::FlexImage>
+class RgbImageBufferedPort :
+        public yarp::os::BufferedPort<yarp::sig::FlexImage>
 {
 private:
+    double local_arrival_time {0.0};
+    yarp::os::Stamp stamp;
     yarp::sig::FlexImage last_rgb;
     mutable std::mutex mutex;
 
 public:
-    RgbImageReader_Impl();
-    ~RgbImageReader_Impl() override;
+    RgbImageBufferedPort() = default;
+    ~RgbImageBufferedPort() override = default;
 
     using yarp::os::TypedReaderCallback<yarp::sig::FlexImage>::onRead;
     void onRead(yarp::sig::FlexImage& datum) override;
-    yarp::sig::FlexImage getImage();
+    std::tuple<bool, yarp::sig::FlexImage, yarp::os::Stamp> getImage() const;
 };
 
 
-class FloatImageReader_Impl :
-        public yarp::os::TypedReaderCallback<yarp::sig::ImageOf< yarp::sig::PixelFloat>>
+class FloatImageBufferedPort :
+        public yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat>>
 {
 private:
+    double local_arrival_time {0.0};
+    yarp::os::Stamp stamp;
     yarp::sig::ImageOf< yarp::sig::PixelFloat> last_depth;
     mutable std::mutex mutex;
 
 public:
-    FloatImageReader_Impl();
-    ~FloatImageReader_Impl() override;
+    FloatImageBufferedPort() = default;
+    ~FloatImageBufferedPort() override = default;
 
     using yarp::os::TypedReaderCallback<yarp::sig::ImageOf< yarp::sig::PixelFloat>>::onRead;
-    void onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum)  override;
-    yarp::sig::ImageOf<yarp::sig::PixelFloat> getImage();
+    void onRead(yarp::sig::ImageOf< yarp::sig::PixelFloat> & datum) override;
+    std::tuple<bool, yarp::sig::ImageOf<yarp::sig::PixelFloat>, yarp::os::Stamp> getImage() const;
 };
 
 
 class RGBDSensor_StreamingMsgParser
 {
 private:
-    RgbImageReader_Impl   read_rgb;
-    FloatImageReader_Impl read_depth;
-
-    yarp::os::BufferedPort<yarp::sig::FlexImage> *port_rgb {nullptr};
-    yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat>> *port_depth {nullptr};
+    RgbImageBufferedPort   *port_rgb {nullptr};
+    FloatImageBufferedPort *port_depth {nullptr};
 
 public:
     RGBDSensor_StreamingMsgParser() = default;
@@ -76,8 +78,8 @@ public:
               yarp::os::Stamp *rgbStamp = nullptr,
               yarp::os::Stamp *depthStamp = nullptr);
 
-    void attach(yarp::os::BufferedPort<yarp::sig::FlexImage> *_port_rgb,
-                yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat>> *_port_depth);
+    void attach(RgbImageBufferedPort* _port_rgb,
+                FloatImageBufferedPort* _port_depth);
 };
 
 #endif  // YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_STREAMINGMSGPARSER_H
