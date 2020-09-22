@@ -33,7 +33,11 @@
 
 using namespace yarp::os;
 
-
+/**
+ * @ingroup dev_impl_fake dev_impl_navigation
+ *
+ * Documentation to be added
+ */
 class fakeLocalizerThread :
         public yarp::os::PeriodicThread
 {

@@ -3,9 +3,9 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="mainpage" visible="yes" title=""/>
+    <tab type="modules" visible="yes" title="Yarp Modules" intro=""/>
     <tab type="usergroup" title="Other Pages">
       <tab type="pages" visible="yes" title="" intro=""/>
-      <tab type="modules" visible="yes" title="" intro=""/>
     </tab>
     <tab type="usergroup" title="API Documentation">
       <tab type="namespaces" visible="yes" title="">

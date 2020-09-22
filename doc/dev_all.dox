@@ -1,5 +1,5 @@
 /**
-\defgroup dev_all Devices
+\defgroup dev_all yarp::dev Yarp Devices
 
 Dealing with devices. What do you need to know to use devices in
 YARP?  First, we try to write our devices so that they implement a
@@ -15,8 +15,35 @@ you need to set up at the beginning.  This process of
 to make it easy to control it via external command line switches
 or configuration files.
 
-Under normal use, YARP devices are started from the
-\link dev_runtime commandline\endlink.
+YARP devices can be started from the \link dev_runtime commandline\endlink,
+via yarprobotinterface or from c++ code.
+
+Devices that can be created and configured from the command-line.
+Generally you can create them with the yarpdev command by
+specifying a "--device" option followed by their name, for example:
+
+\verbatim
+yarpdev --device fakeFrameGrabber
+\endverbatim
+
+This creates a fakeFrameGrabber device with default options.  You will
+generally need to specify additional options, for example:
+
+\verbatim
+yarpdev --device fakeFrameGrabber --width 640 --height 480 --name /test
+\endverbatim
+
+How do you know what options are available?
+You can check our list of \ref dev_examples "device invocation examples".
+Or When you try to run
+"yarpdev --device yourdevice"
+and add the "--verbose" flag, it will tell you what options it is
+checking, and any documentation present for those options.
+
+For example, try running:
+\verbatim
+yarpdev --device fakeFrameGrabber --verbose
+\endverbatim
 
 */
 
@@ -173,7 +200,33 @@ yarp::dev::IAudioGrabberSound, etc.
 
 These are devices that expose sensor that can be efficiently expressed as vector of
 real numbers, so-called "analog" sensors, such as gyroscope, accelerometers, force-torque sensors.
+*/
 
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_lidar Lidar Devices
+
+Lidars and similar range measurement devices.
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_navigation Navigation Devices
+
+Virtual devices to perform navigation tasks.
+*/
+
+
+/**
+\ingroup dev_impl
+
+\defgroup dev_impl_fake Fake/test Devices
+
+Devices using for testing purposes.
 */
 
 
@@ -183,41 +236,6 @@ real numbers, so-called "analog" sensors, such as gyroscope, accelerometers, for
 \defgroup dev_impl_other Other Device Implementations
 
 Miscellaneous device implementations.
-*/
-
-
-/**
-\ingroup dev_all
-
-\defgroup dev_runtime Command-line Accessible Devices
-
-Devices that can be created and configured from the command-line.
-Generally you can create them with the yarpdev command by
-specifying a "--device" option followed by their name, for example:
-
-\verbatim
-yarpdev --device fakeFrameGrabber
-\endverbatim
-
-This creates a fakeFrameGrabber device with default options.  You will
-generally need to specify additional options, for example:
-
-\verbatim
-yarpdev --device fakeFrameGrabber --width 640 --height 480 --name /test
-\endverbatim
-
-How do you know what options are available?
-You can check our list of \ref dev_examples "device invocation examples".
-Or When you try to run
-"yarpdev --device yourdevice"
-and add the "--verbose" flag, it will tell you what options it is
-checking, and any documentation present for those options.
-
-For example, try running:
-\verbatim
-yarpdev --device fakeFrameGrabber --verbose
-\endverbatim
-
 */
 
 

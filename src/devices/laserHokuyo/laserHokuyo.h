@@ -33,6 +33,11 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+/**
+ * @ingroup dev_impl_lidar
+ *
+ * Documentation to be added
+ */
 class laserHokuyo : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {
 protected:

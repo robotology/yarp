@@ -127,14 +127,4 @@ protected:
     yarp::os::Stamp m_laststamp;
 };
 
-
-/**
- * @ingroup dev_runtime
- * \defgroup cmd_device_opencv_grabber opencv_grabber
-
- A wrapper for the opencv library's image sources, see yarp::dev::OpenCVGrabber.
-
-*/
-
-
 #endif // YARP_OPENCV_GRABBER_DEVICE_OPENCVGRABBER_H

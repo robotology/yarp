@@ -6,16 +6,6 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-/*
- * The aim of this device is to mimic the expected behaviour of a
- * real motion control device to help testing the high level software.
- *
- * This device is implementing last version of interfaces and it is compatible
- * with ControlBoardWrapper2 device.
- *
- * WIP - it is very basic now, not all interfaces are implemented yet.
- */
-
 #ifndef YARP_DEVICE_FAKE_MOTIONCONTROL
 #define YARP_DEVICE_FAKE_MOTIONCONTROL
 
@@ -80,6 +70,19 @@ struct ImpedanceParameters
     ImpedanceParameters() {stiffness=0; damping=0;}
 };
 
+/*
+ * @ingroup dev_impl_fake dev_impl_motor
+ *
+ * Documentation to be added
+ *
+ * The aim of this device is to mimic the expected behavior of a
+ * real motion control device to help testing the high level software.
+ *
+ * This device is implementing last version of interfaces and it is compatible
+ * with ControlBoardWrapper2 device.
+ *
+ * WIP - it is very basic now, not all interfaces are implemented yet.
+ */
 class FakeMotionControl :
         public yarp::dev::DeviceDriver,
 //        public yarp::dev::DeviceResponder,

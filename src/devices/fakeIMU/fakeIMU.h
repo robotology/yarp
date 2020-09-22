@@ -15,9 +15,8 @@
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/math/Math.h>
 
-
-
 /**
+* @ingroup dev_impl_fake
 * \brief `fakeIMU` : fake device implementing the device interface typically implemented by an Inertial Measurement Unit
 *
 * | YARP device name |

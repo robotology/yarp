@@ -62,6 +62,12 @@ class streamThread :
    void handleError();
 };
 
+/**
+ * @ingroup dev_impl_media
+ *
+ * Requires the PortAudio library (http://www.portaudio.com), at least v19.
+ * Documentation to be added
+ */
 class PortAudioDeviceDriver :
         public yarp::dev::IAudioGrabberSound,
         public yarp::dev::IAudioRender,
@@ -137,16 +143,5 @@ protected:
     enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
     void handleError();
 };
-
-
-/**
- * @ingroup dev_runtime
- * \defgroup cmd_device_portaudio portaudio
-
- A portable audio source, see yarp::dev::PortAudioDeviceDriver.
- Requires the PortAudio library (http://www.portaudio.com), at least v19.
-
-*/
-
 
 #endif

@@ -18,6 +18,11 @@
 
 YARP_DECLARE_LOG_COMPONENT(FAKEBOT)
 
+/**
+ * @ingroup dev_impl_fake
+ *
+ * Documentation to be added
+ */
 class FakeBot :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IPositionControl,

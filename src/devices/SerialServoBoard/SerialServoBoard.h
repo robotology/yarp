@@ -38,7 +38,11 @@ bool movemondotronic(int j, double ref, double* positions, double* speeds, ISeri
 bool movepololu(int j, double ref, double* positions, double* speeds, ISerialDevice* serial);
 bool movepicopic(int j, double ref, double* positions, double* speeds, ISerialDevice* serial);
 
-
+/**
+* @ingroup dev_impl_motor
+*
+* Documentation to be added
+*/
 class SerialServoBoard : public DeviceDriver, public IPositionControl
 {
 public:

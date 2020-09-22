@@ -20,6 +20,7 @@
 #define DEFAULT_PERIOD 0.01   //s
 
 /**
+* @ingroup dev_impl_fake dev_impl_media
 * \brief `fakeMicrophone` : fake device implementing the IAudioGrabberSound device interface to play sound
 *
 */

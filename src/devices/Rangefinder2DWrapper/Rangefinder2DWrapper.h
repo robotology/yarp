@@ -55,6 +55,11 @@
 
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
+ /**
+ * @ingroup dev_impl_network_wrapper dev_impl_lidar
+  *
+  * Documentation to be added
+  */
 class Rangefinder2DWrapper:
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,

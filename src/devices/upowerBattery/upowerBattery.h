@@ -14,7 +14,11 @@
 
 #include <QDBusInterface>
 
-
+/**
+* @ingroup dev_impl_other
+*
+* Documentation to be added
+*/
 class UpowerBattery :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IBattery

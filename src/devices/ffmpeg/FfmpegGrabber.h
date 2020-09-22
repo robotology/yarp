@@ -152,14 +152,4 @@ protected:
                   const char *fname);
 };
 
-
-/**
- * @ingroup dev_runtime
- * \defgroup cmd_device_ffmpeg_grabber ffmpeg_grabber
-
- A wrapper for the ffmpeg library's image sources, see FfmpegGrabber.
-
-*/
-
-
 #endif

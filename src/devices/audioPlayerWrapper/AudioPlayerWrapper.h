@@ -46,7 +46,11 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/IPreciselyTimed.h>
 
-
+/**
+* @ingroup dev_impl_wrapper
+*
+* Documentation to be added
+*/
 class AudioPlayerWrapper :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,

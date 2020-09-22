@@ -74,7 +74,6 @@ end of this page.
 The page \subpage tutorials is continuously updated so it is a good idea to
 periodically check it.
 
-
 \section yarp_command_line_tools Command line tools
 \li \subpage yarp
 \li \subpage yarpserver
@@ -113,6 +112,9 @@ periodically check it.
 \li \subpage robottestingframework_plugins
 \li \subpage yarp_pointcloud
 \li \subpage carrier_h264_howto
+
+\section Yarp Interfaces and Devices
+\li \subpage YarpDevicesPage
 
 \section yarp_more_info More information
 \li \subpage what_is_yarp

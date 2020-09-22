@@ -61,6 +61,12 @@ private:
     void handleError();
 };
 
+/**
+ * @ingroup dev_impl_media
+ *
+ * Requires the PortAudio library (http://www.portaudio.com), at least v19.
+ * Documentation to be added
+ */
 class PortAudioPlayerDeviceDriver :
         public yarp::dev::IAudioRender,
         public yarp::dev::DeviceDriver
@@ -120,16 +126,5 @@ protected:
     enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
     void handleError();
 };
-
-
-/**
- * @ingroup dev_runtime
- * \defgroup cmd_device_portaudio portaudio
-
- A portable audio source, see yarp::dev::PortAudioPlayerDeviceDriver.
- Requires the PortAudio library (http://www.portaudio.com), at least v19.
-
-*/
-
 
 #endif

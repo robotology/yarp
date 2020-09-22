@@ -39,6 +39,7 @@
 #include <math.h>
 
  /**
+ * @ingroup dev_impl_network_wrapper dev_impl_navigation
  * \section Localization2DServer
  * A localization server which can be wrap multiple algorithms and devices to provide robot in a 2D World.
  *
@@ -52,8 +53,6 @@
  * | ROS            |  publish_tf    | bool    |  -             |  false              | No           | If true, odometry data will be published on global ROS /tf topic      | -     |
  * | ROS            |  publish_odom  | bool    |  -             |  false              | No           | If true, odometry data will be published on a user-defined ROS topic  | The default name of the topic is built as: name+"/odom"     |
  */
-
-
 class Localization2DServer :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,

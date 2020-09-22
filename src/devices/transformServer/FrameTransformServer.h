@@ -74,6 +74,11 @@ public:
      void clear                       ();
 };
 
+/**
+* @ingroup dev_impl_network_wrapper
+ *
+ * Documentation to be added
+ */
 class FrameTransformServer :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,

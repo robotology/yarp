@@ -19,6 +19,11 @@
 
 #include "FakeBatteryService.h"
 
+ /**
+  * @ingroup dev_impl_fake
+  *
+  * Documentation to be added
+  */
 class FakeBattery :
         public yarp::os::PeriodicThread,
         public yarp::dev::IBattery,

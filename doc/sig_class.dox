@@ -1,5 +1,5 @@
 /**
-\defgroup sig_class Signal Processing
+\defgroup sig_class yarp::sig Signal Processing
 
 Basic classes and methods related to signal processing.
 YARP sticks with very basic data types here, with

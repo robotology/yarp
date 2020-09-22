@@ -18,7 +18,11 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
-
+ /**
+  * @ingroup dev_impl_fake
+  *
+  * Documentation to be added
+  */
 class fakeDepthCameraDriver :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IRGBDSensor
