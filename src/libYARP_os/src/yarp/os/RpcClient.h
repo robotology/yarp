@@ -33,7 +33,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~RpcClient();
+    ~RpcClient() override;
 
     // Non-copyable
     RpcClient(const RpcClient& alt) = delete;

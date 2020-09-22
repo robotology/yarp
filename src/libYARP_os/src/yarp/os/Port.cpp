@@ -43,7 +43,7 @@ void* Port::needImplementation() const
 }
 
 // implementation is a PortCoreAdapter
-#define IMPL() (*((yarp::os::impl::PortCoreAdapter*)(needImplementation())))
+#define IMPL() (*(static_cast<yarp::os::impl::PortCoreAdapter*>(needImplementation())))
 
 Port::Port() :
         implementation(nullptr),
@@ -56,7 +56,7 @@ Port::~Port()
     if (implementation != nullptr) {
         close();
         if (owned) {
-            delete ((PortCoreAdapter*)implementation);
+            delete (static_cast<PortCoreAdapter*>(implementation));
         }
         implementation = nullptr;
         owned = false;
@@ -67,7 +67,7 @@ bool Port::sharedOpen(Port& port)
 {
     close();
     if (owned) {
-        delete ((PortCoreAdapter*)implementation);
+        delete (static_cast<PortCoreAdapter*>(implementation));
     }
     implementation = port.implementation;
     owned = false;
@@ -209,7 +209,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
         }
         close();
         if (owned) {
-            delete ((PortCoreAdapter*)implementation);
+            delete (static_cast<PortCoreAdapter*>(implementation));
         }
         implementation = newCore;
         owned = true;

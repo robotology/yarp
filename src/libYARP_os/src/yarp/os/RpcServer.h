@@ -34,7 +34,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~RpcServer();
+    ~RpcServer() override;
 
     /**
      * Write cannot be called by RPCServer

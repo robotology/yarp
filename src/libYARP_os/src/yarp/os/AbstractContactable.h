@@ -120,13 +120,13 @@ public:
     void releaseProperties(Property* prop) override;
 
     // Documented in UnbufferedContactable
-    virtual bool write(const PortWriter& writer,
-                       const PortWriter* callback = nullptr) const override;
+    bool write(const PortWriter& writer,
+               const PortWriter* callback = nullptr) const override;
 
     // Documented in UnbufferedContactable
-    virtual bool write(const PortWriter& writer,
-                       PortReader& reader,
-                       const PortWriter* callback = nullptr) const override;
+    bool write(const PortWriter& writer,
+               PortReader& reader,
+               const PortWriter* callback = nullptr) const override;
 
     // Documented in UnbufferedContactable
     bool read(PortReader& reader, bool willReply = false) override;
