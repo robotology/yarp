@@ -315,7 +315,6 @@ bool ImageReadFloat_CompressedHeaderless(ImageOf<PixelFloat>& dest, const std::s
     }
 
     size_t br = 0;
-    size_t count_ = 0;
 
     //get the file size
     fseek(fp, 0, SEEK_END);
@@ -399,7 +398,7 @@ bool ImageReadFloat_PlainHeaderless(ImageOf<PixelFloat>& dest, const std::string
     size_t bytes_to_read_per_row = w* dest.getPixelSize();
     unsigned char* dst = dest.getRawImage();
     size_t num = 0;
-    for (int i = 0; i < h; i++)
+    for (size_t i = 0; i < h; i++)
     {
         num += (int)fread((void*)dst, 1, bytes_to_read_per_row, fp);
         dst += pad;
@@ -666,8 +665,8 @@ bool SavePGM(char *src, const char *filename, size_t h, size_t w, size_t rowSize
     {
         const int inc = rowSize; ////YARPSimpleOperation::ComputePadding (w, YarpImageAlign) + w;
 
-        fprintf(fp, "P5\n%d %d\n%d\n", w, h, 255);
-        for (int i = 0; i < h; i++)
+        fprintf(fp, "P5\n%zu %zu\n%d\n", w, h, 255);
+        for (size_t i = 0; i < h; i++)
         {
             fwrite((void *)src, 1, (size_t)w, fp);
             src += inc;
@@ -692,8 +691,8 @@ bool SavePPM(char *src, const char *filename, size_t h, size_t w, size_t rowSize
     {
         const int inc = rowSize;//YARPSimpleOperation::ComputePadding (w*3, YarpImageAlign) + w * 3;
 
-        fprintf(fp, "P6\n%d %d\n%d\n", w, h, 255);
-        for (int i = 0; i < h; i++)
+        fprintf(fp, "P6\n%zu %zu\n%d\n", w, h, 255);
+        for (size_t i = 0; i < h; i++)
         {
             fwrite((void *)src, 1, (size_t)(w * 3), fp);
             src += inc;
