@@ -532,7 +532,7 @@ private:
     bool m_waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
     bool m_waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
     bool m_controlRegistration;  ///< should the port unregister its name when shutting down?
-    bool m_interruptible;  ///< is the port in an interruptible state?
+    bool m_interruptable;  ///< is the port in an interruptible state?
     bool m_interrupted;    ///< is the port interrupted?
     bool m_manual;    ///< is the port operating without a server?
     int m_events;     ///< count of events that have occurred on the port
@@ -579,7 +579,7 @@ YARP_WARNING_POP
     bool attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::string& errMsg);
 
     // detach the portmonitor from the port or specific connection
-    bool dettachPortMonitor(bool isOutput);
+    bool detachPortMonitor(bool isOutput);
 
     // set the parameter for the portmonitor of the port (if any)
     bool setParamPortMonitor(const yarp::os::Property& param, bool isOutput, std::string& errMsg);

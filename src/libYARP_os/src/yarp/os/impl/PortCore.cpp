@@ -77,7 +77,7 @@ PortCore::PortCore() :
         m_waitBeforeSend(true),
         m_waitAfterSend(true),
         m_controlRegistration(true),
-        m_interruptible(true),
+        m_interruptable(true),
         m_interrupted(false),
         m_manual(false),
         m_events(0),
@@ -359,7 +359,7 @@ bool PortCore::manualStart(const char* sourceName)
     // for state information, no requests to change connections,
     // nothing.  We set the port's name to something fake, and
     // act like nothing is wrong.
-    m_interruptible = false;
+    m_interruptable = false;
     m_manual = true;
     setName(sourceName);
     return true;
@@ -383,13 +383,13 @@ void PortCore::interrupt()
     m_interrupted = true;
 
     // What about data that is already coming in?
-    // If interruptible is not currently set, no worries, the user
+    // If interruptable is not currently set, no worries, the user
     // did not or will not end up blocked on a read.
-    if (!m_interruptible) {
+    if (!m_interruptable) {
         return;
     }
 
-    // Since interruptible is set, it is possible that the user
+    // Since interruptable is set, it is possible that the user
     // may be blocked on a read.  We send an empty message,
     // which is reserved for giving blocking readers a chance to
     // update their state.
@@ -898,7 +898,7 @@ bool PortCore::addOutput(const std::string& dest,
     // or a failure).
     BufferedConnectionWriter bw(true);
 
-    // Look up the address we'll be connectioning to.
+    // Look up the address we'll be connecting to.
     Contact parts = Name(dest).toAddress();
     Contact contact = NetworkBase::queryName(parts.getRegName());
     Contact address = contact;
@@ -1256,7 +1256,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
     // constant over the lifetime of the input threads.
 
     if (m_reader != nullptr && !m_interrupted) {
-        m_interruptible = false; // No mutexing; user of interrupt() has to be careful.
+        m_interruptable = false; // No mutexing; user of interrupt() has to be careful.
 
         bool haveOutputs = (m_outputCount != 0); // No mutexing, but failure modes are benign.
 
@@ -1281,7 +1281,7 @@ bool PortCore::readBlock(ConnectionReader& reader, void* id, OutputStream* os)
             unlockCallback();
         }
 
-        m_interruptible = true;
+        m_interruptable = true;
     } else {
         // Read and ignore message, there is no where to send it.
         yCDebug(PORTCORE, "data received, no reader for it");
@@ -1367,7 +1367,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
     packet->setContent(&writer, false, callback);
     m_packetMutex.unlock();
 
-    // Scan connections, placing message everyhere we can.
+    // Scan connections, placing message everywhere we can.
     for (auto* unit : m_units) {
         if ((unit != nullptr) && unit->isOutput() && !unit->isFinished()) {
             bool log = (!unit->getMode().empty());
@@ -1384,7 +1384,7 @@ bool PortCore::sendHelper(const PortWriter& writer,
             m_packetMutex.lock();
             packet->inc(); // One more connection carrying message.
             m_packetMutex.unlock();
-            yCTrace(PORTCORE, "------- -- presend");
+            yCTrace(PORTCORE, "------- -- pre-send");
             bool gotReplyOne = false;
             // Send the message off on this connection.
             void* out = unit->send(writer,
@@ -1979,8 +1979,8 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         } break;
         case PortCoreConnectionDirection::Error:
             result.addVocab(Vocab::encode("fail"));
-            result.addString("attach command must be followd by [out] or [in]");
-        };
+            result.addString("attach command must be followed by [out] or [in]");
+        }
         return result;
     };
 
@@ -1988,14 +1988,14 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         Bottle result;
         switch (direction) {
         case PortCoreConnectionDirection::Out: {
-            if (dettachPortMonitor(true)) {
+            if (detachPortMonitor(true)) {
                 result.addVocab(Vocab::encode("ok"));
             } else {
                 result.addVocab(Vocab::encode("fail"));
             }
         } break;
         case PortCoreConnectionDirection::In: {
-            if (dettachPortMonitor(false)) {
+            if (detachPortMonitor(false)) {
                 result.addVocab(Vocab::encode("ok"));
             } else {
                 result.addVocab(Vocab::encode("fail"));
@@ -2003,7 +2003,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         } break;
         case PortCoreConnectionDirection::Error:
             result.addVocab(Vocab::encode("fail"));
-            result.addString("detach command must be followd by [out] or [in]");
+            result.addString("detach command must be followed by [out] or [in]");
         };
         return result;
     };
@@ -2837,7 +2837,7 @@ bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::s
     }
 
     if (isOutput) {
-        dettachPortMonitor(true);
+        detachPortMonitor(true);
         prop.put("source", getName());
         prop.put("destination", "");
         prop.put("sender_side", 1);
@@ -2853,7 +2853,7 @@ bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::s
         }
         m_modifier.outputMutex.unlock();
     } else {
-        dettachPortMonitor(false);
+        detachPortMonitor(false);
         prop.put("source", "");
         prop.put("destination", getName());
         prop.put("sender_side", 0);
@@ -2873,7 +2873,7 @@ bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::s
 }
 
 // detach the portmonitor from the port or specific connection
-bool PortCore::dettachPortMonitor(bool isOutput)
+bool PortCore::detachPortMonitor(bool isOutput)
 {
     if (isOutput) {
         m_modifier.outputMutex.lock();
