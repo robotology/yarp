@@ -61,8 +61,8 @@ PointCloud<DataXYZ> utils::depthToPC(const yarp::sig::ImageOf<PixelFloat>& depth
     pointCloud.resize(size_x,size_y);
 
     size_t i=0;
-    size_t j=0;
     for (    size_t u = roi.min_x; u < max_x; u += step_x) {
+        size_t j=0;
         for (size_t v = roi.min_y; v < max_y; v += step_y) {
             // De-projection equation (pinhole model):
             //                          x = (u - ppx)/ fx * z
