@@ -131,6 +131,8 @@ static inline void CopyPixel(const PixelRgb* src, PixelInt* dest)
 
 static inline void CopyPixel(const PixelRgb* src, PixelHsv* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
@@ -190,6 +192,8 @@ static inline void CopyPixel(const PixelRgb* src, PixelBgr* dest)
 
 static inline void CopyPixel(const PixelRgb* src, PixelHsvFloat* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
@@ -197,66 +201,92 @@ static inline void CopyPixel(const PixelRgb* src, PixelHsvFloat* dest)
 
 static inline void CopyPixel(const PixelHsv* src, PixelMono* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelMono16* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelRgb* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelRgba* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelBgra* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelRgbInt* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelBgr* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelMonoSigned* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelRgbSigned* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelFloat* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelRgbFloat* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelHsvFloat* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 
 static inline void CopyPixel(const PixelHsv* src, PixelInt* dest)
 {
+    YARP_UNUSED(src);
+    YARP_UNUSED(dest);
     yAssert(false); // Not implemented yet
 }
 

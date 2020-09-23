@@ -25,15 +25,10 @@ namespace utils
 
 struct PCL_ROI
 {
-    size_t min_x;
-    size_t max_x;
-    size_t min_y;
-    size_t max_y;
-
-    PCL_ROI()
-    {
-       min_x = 0; min_y = 0; max_x = 0; max_y = 0;
-    }
+    size_t min_x {0};
+    size_t max_x {0};
+    size_t min_y {0};
+    size_t max_y {0};
 };
 
 /**

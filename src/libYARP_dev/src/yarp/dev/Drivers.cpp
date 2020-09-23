@@ -37,9 +37,11 @@ class Drivers::Private : public YarpPluginSelector {
 public:
     std::vector<DriverCreator *> delegates;
 
-    ~Private() {
+    ~Private() override {
         for (auto& delegate : delegates) {
-            if (delegate==nullptr) continue;
+            if (delegate==nullptr) {
+                continue;
+            }
             delete delegate;
         }
         delegates.clear();
@@ -53,7 +55,9 @@ public:
         std::string s;
         Property done;
         for (auto& delegate : delegates) {
-            if (delegate==nullptr) continue;
+            if (delegate==nullptr) {
+                continue;
+            }
             std::string name = delegate->getName();
             done.put(name,1);
             std::string wrapper = delegate->getWrapper();
@@ -64,7 +68,7 @@ public:
             s += " C++ class ";
             s += delegate->getCode();
             s += ", ";
-            if (wrapper=="") {
+            if (wrapper.empty()) {
                 s += "has no network wrapper";
             } else if (wrapper!=name) {
                 s += "wrapped by \"";
@@ -81,7 +85,9 @@ public:
         for (size_t i=0; i<lst.size(); i++) {
             Value& prop = lst.get(i);
             std::string name = prop.check("name",Value("untitled")).asString();
-            if (done.check(name)) continue;
+            if (done.check(name)) {
+                continue;
+            }
 
             SharedLibraryFactory lib;
             YarpPluginSettings settings;
@@ -89,7 +95,7 @@ public:
             settings.readFromSearchable(prop,name);
             settings.open(lib);
             std::string location = lib.getName();
-            if (location=="") {
+            if (location.empty()) {
               // A wrong library name ends up with empty location
               yCWarning(DRIVERS, "Wrong library name for plugin %s", name.c_str());
               continue;
@@ -110,7 +116,7 @@ public:
                 s += "  ";
             }
 
-            if (wrapper=="") {
+            if (wrapper.empty()) {
                 s += "no network wrapper known";  // will never come here since the prop.check fallback is set to unknown few lines above!!!
             } else if (wrapper=="unknown") {
                 //s += "network wrapper unknown";
@@ -137,7 +143,9 @@ public:
 
     DriverCreator *find(const char *name) {
         for (auto& delegate : delegates) {
-            if (delegate == nullptr) continue;
+            if (delegate == nullptr) {
+                continue;
+            }
             std::string s = delegate->toString();
             if (s==name) {
                 return delegate;
@@ -148,7 +156,9 @@ public:
 
     bool remove(const char *name) {
         for (auto& delegate : delegates) {
-            if (delegate == nullptr) continue;
+            if (delegate == nullptr) {
+                continue;
+            }
             std::string s = delegate->toString();
             if (s==name) {
                 delete delegate;
@@ -197,12 +207,16 @@ public:
     }
 
     bool open(yarp::os::Searchable& config) override {
-        if (!isValid()) return false;
+        if (!isValid()) {
+            return false;
+        }
         return dev.getContent().open(config);
     }
 
     bool close() override {
-        if (!isValid()) return false;
+        if (!isValid()) {
+            return false;
+        }
         return dev.getContent().close();
     }
 
@@ -271,7 +285,9 @@ bool Drivers::remove(const char *name) {
 DeviceDriver* Drivers::open(yarp::os::Searchable& prop) {
     PolyDriver poly;
     bool result = poly.open(prop);
-    if (!result) return nullptr;
+    if (!result) {
+        return nullptr;
+    }
     return poly.take();
 }
 
@@ -310,7 +326,7 @@ static void toDox(PolyDriver& dd) {
         std::string out;
         out += name;
         if (!actual.isNull()) {
-            if (actual.toString()!="") {
+            if (!actual.toString().empty()) {
                 out += "=";
                 if (actual.toString().length()<40) {
                     out += actual.toString();
@@ -320,7 +336,7 @@ static void toDox(PolyDriver& dd) {
             }
         }
         if (!def.isNull()) {
-            if (def.toString()!="") {
+            if (!def.toString().empty()) {
                 out += " [";
                 if (def.toString().length()<40) {
                     out += def.toString();
@@ -356,7 +372,7 @@ static void handler (int) {
         yCInfo(DRIVERS, "Aborting...");
         std::exit(1);
     }
-    if (terminatorKey!="") {
+    if (!terminatorKey.empty()) {
         yCInfo(DRIVERS, "[try %d of 3] Trying to shut down %s", ct, terminatorKey.c_str());
         terminated = true;
         Terminator::terminateByName(terminatorKey.c_str());
@@ -602,7 +618,9 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 DeviceDriver *StubDriverCreator::create() const {
     yCTrace(DRIVERS, "Creating %s from %s", desc.c_str(), libname.c_str());
     auto* result = new StubDriver(libname.c_str(),fnname.c_str());
-    if (result==nullptr) return result;
+    if (result==nullptr) {
+        return result;
+    }
     if (!result->isValid()) {
         delete result;
         result = nullptr;

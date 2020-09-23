@@ -54,9 +54,9 @@ public:
     /**
      * Constructor.
      */
-    BrokenDevice() : PeriodicThread(0.03), img(nullptr) {}
+    BrokenDevice() : PeriodicThread(0.03) {}
 
-    virtual bool close() override
+    bool close() override
     {
         pImg.close();
         PeriodicThread::stop();
@@ -64,7 +64,7 @@ public:
 
     }
 
-    virtual bool open(yarp::os::Searchable& config) override { return PeriodicThread::start(); }
+    bool open(yarp::os::Searchable& /*config*/) override { return PeriodicThread::start(); }
 
     //RateThread
     bool threadInit() override { return true; }
@@ -80,7 +80,7 @@ public:
 
 
 private:
-    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb>* img {nullptr};
     yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>> pImg;
 
 };
@@ -135,7 +135,7 @@ class ServiceProvider : public PortReader
 {
 public:
 
-    virtual bool read(ConnectionReader& connection) override {
+    bool read(ConnectionReader& connection) override {
         Bottle receive;
         receive.read(connection);
         receive.addInt32(5);
@@ -150,7 +150,8 @@ public:
 class ServiceTester : public Portable
 {
 public:
-    Bottle send, receive;
+    Bottle send;
+    Bottle receive;
     mutable int ct;
 
     virtual bool write(ConnectionWriter& connection) const override {
