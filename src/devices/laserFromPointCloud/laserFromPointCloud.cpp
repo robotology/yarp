@@ -180,7 +180,8 @@ bool LaserFromPointCloud::open(yarp::os::Searchable& config)
     m_pc_stepx=2;
     m_pc_stepy=2;
 
-    m_transform_mtrx(4,4); m_transform_mtrx.eye();
+    m_transform_mtrx.resize(4,4);
+    m_transform_mtrx.eye();
 
 
     m_ground_frame_id = "/ground_frame";
