@@ -39,6 +39,7 @@ public:
     AVCodecContext *cReceiver;
     bool firstTimeSender;
     bool firstTimeReceiver;
+    std::map<std::string, std::string> paramMap;
     std::map<int, int> pixelMap;
     std::map<int, int> codecPixelMap;
     int counter = 0;

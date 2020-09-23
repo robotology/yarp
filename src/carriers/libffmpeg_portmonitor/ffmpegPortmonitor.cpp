@@ -34,18 +34,43 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {
     senderSide = (options.find("sender_side").asBool());
-    if (senderSide) {
-        std::string carrierString = options.find("carrier").asString();
-        std::string params = carrierString.substr(carrierString.find("libffmpeg_param") + 16);
-        int found = params.find('+');
-        if (found < params.length()) {
-            params = params.substr(0,params.find('+'));
+
+
+    std::string param_list[7] = { "codec", "qmin", "qmax", "bit_rate", "time_base", "gop_size", "max_b_frames" };
+    std::string param="";
+    int found;
+
+    std::string carrierString = options.find("carrier").asString();
+    for (int i=0; i<7;i++){
+        
+        found = carrierString.find(param_list[i]);
+        if (found!=-1){
+            param = carrierString.substr(carrierString.find(param_list[i]) + (param_list[i].length()+1));
+            found = param.find('+');
+            if (found!=-1) {
+                param = param.substr(0,param.find('+'));
+            }
+            if (param!=""){
+                paramMap[param_list[i]] = param;
+            }
         }
     }
     
+    
+
+    AVCodecID codec = AV_CODEC_ID_MPEG2VIDEO;
+
+    if (paramMap["codec"] == "h264"){
+        codec = AV_CODEC_ID_H264;
+    } else if(paramMap["codec"] == "h265"){
+        codec = AV_CODEC_ID_H265;
+    } else if(paramMap["codec"] == "mpeg2video"){
+        codec = AV_CODEC_ID_MPEG2VIDEO;
+    }
+
     // TODO: grab desired codec from command line
     
-    AVCodecID codec = AV_CODEC_ID_H265; // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
+     // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
     if (senderSide) {
         codecSender = avcodec_find_encoder(codec);
         if (!codecSender) {
