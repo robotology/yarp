@@ -27,6 +27,8 @@ protected:
     int compress(yarp::sig::Image* img, AVPacket* pkt);
     int decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed, int w, int h, int pixelCode);
     int save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, int FrameNo, const char* filename);
+    std::map<std::string, std::string> fromCommand1(std::string carrierString);
+    void setCommandParameters(AVCodecContext *cContext, std::map<std::string, std::string> paramsMap);
 
 public:
     yarp::os::Things th;
@@ -39,7 +41,7 @@ public:
     AVCodecContext *cReceiver;
     bool firstTimeSender;
     bool firstTimeReceiver;
-    std::map<std::string, std::string> paramMap;
+    std::map<std::string, std::string> paramsMap;
     std::map<int, int> pixelMap;
     std::map<int, int> codecPixelMap;
     int counter = 0;

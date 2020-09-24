@@ -35,42 +35,27 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {
     senderSide = (options.find("sender_side").asBool());
 
-
-    std::string param_list[7] = { "codec", "qmin", "qmax", "bit_rate", "time_base", "gop_size", "max_b_frames" };
-    std::string param="";
-    int found;
-
-    std::string carrierString = options.find("carrier").asString();
-    for (int i=0; i<7;i++){
-        
-        found = carrierString.find(param_list[i]);
-        if (found!=-1){
-            param = carrierString.substr(carrierString.find(param_list[i]) + (param_list[i].length()+1));
-            found = param.find('+');
-            if (found!=-1) {
-                param = param.substr(0,param.find('+'));
-            }
-            if (param!=""){
-                paramMap[param_list[i]] = param;
-            }
-        }
-    }
-    
-    
-
+    // default codec
     AVCodecID codec = AV_CODEC_ID_MPEG2VIDEO;
 
-    if (paramMap["codec"] == "h264"){
+
+    std::string str = options.find("carrier").asString();
+    // command line
+    paramsMap = fromCommand1(str);
+
+
+    
+    // parse codec from command line arguments
+    if (paramsMap["codec"] == "h264"){
         codec = AV_CODEC_ID_H264;
-    } else if(paramMap["codec"] == "h265"){
+    } else if(paramsMap["codec"] == "h265"){
         codec = AV_CODEC_ID_H265;
-    } else if(paramMap["codec"] == "mpeg2video"){
+    } else if(paramsMap["codec"] == "mpeg2video"){
         codec = AV_CODEC_ID_MPEG2VIDEO;
     }
 
-    // TODO: grab desired codec from command line
+
     
-     // AV_CODEC_ID_H264 - AV_CODEC_ID_MPEG2VIDEO
     if (senderSide) {
         codecSender = avcodec_find_encoder(codec);
         if (!codecSender) {
@@ -84,6 +69,12 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
         }
         firstTimeSender = true;
 
+        // Parameters
+        setCommandParameters(cSender,paramsMap);
+        cSender->time_base = (AVRational){1, 25};
+        cSender->framerate = (AVRational){25, 1};
+
+
     } else {
         codecReceiver = avcodec_find_decoder(codec);
         if (!codecReceiver) {
@@ -96,6 +87,13 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
             return -1;
         }
         firstTimeReceiver = true;
+
+
+        
+        // Parameters
+        setCommandParameters(cReceiver,paramsMap);
+        cReceiver->time_base = (AVRational){1, 25};
+        cReceiver->framerate = (AVRational){25, 1};
     }
 
     // Pixel formats map
@@ -322,15 +320,6 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         cSender->width = w;
         cSender->height = h;
         
-        // Parameters
-        cSender->bit_rate = 400000;
-        cSender->time_base = (AVRational){1, 25};
-        cSender->framerate = (AVRational){25, 1};
-        cSender->gop_size = 10;
-        cSender->max_b_frames = 1;
-
-        // cSender->qmin=18;
-        // cSender->qmax=28;
         
         cSender->pix_fmt = (AVPixelFormat) codecPixelMap[cSender->codec_id];
 
@@ -377,16 +366,6 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
     if (firstTimeReceiver) {
         cReceiver->width = w;
         cReceiver->height = h;
-        
-        // Parameters
-        cReceiver->bit_rate = 400000;
-        cReceiver->time_base = (AVRational){1, 25};
-        cReceiver->framerate = (AVRational){25, 1};
-        cReceiver->gop_size = 10;
-        cReceiver->max_b_frames = 1;
-
-        // cReceiver->qmin=18;
-        // cReceiver->qmax=28;
         
         cReceiver->pix_fmt = (AVPixelFormat) codecPixelMap[cReceiver->codec_id];
 
@@ -521,3 +500,83 @@ int FfmpegMonitorObject::save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *
     return 0;
 }
 
+std::map<std::string, std::string> FfmpegMonitorObject::fromCommand1(std::string carrierString){
+    std::string params_list[7] = { "codec", "qmin", "qmax", "bit_rate", "time_base", "gop_size", "max_b_frames" };
+    std::string param="";
+    std::map<std::string, std::string> mapParams;
+    int found;
+
+    for (int i=0; i<7;i++){
+        
+        found = carrierString.find(params_list[i]);
+        if (found!=-1){
+            param = carrierString.substr(carrierString.find(params_list[i]) + (params_list[i].length()+1));
+            found = param.find('+');
+            if (found!=-1) {
+                param = param.substr(0,param.find('+'));
+            }
+            if (param!=""){
+                mapParams[params_list[i]] = param;
+            }
+        }
+    }
+    return mapParams;
+}
+
+void FfmpegMonitorObject::setCommandParameters(AVCodecContext *cContext, std::map<std::string, std::string> paramsMap){
+        // qmin
+        if (paramsMap["qmin"]!=""){
+            //get int value from a string
+            cContext->qmin = std::stoi(paramsMap["qmin"]);
+        } else {
+            if (paramsMap["codec"]=="h264"){
+                cContext->qmin=18;
+            }
+            if (paramsMap["codec"]=="h265"){
+                cContext->qmin=24;
+            }
+            if (paramsMap["codec"]=="mpeg2video" || paramsMap["codec"]==""){
+                cContext->qmin=3;
+            }
+        }
+
+        // qmax
+        if (paramsMap["qmax"]!=""){
+            //get int value from a string
+            cContext->qmax = std::stoi(paramsMap["qmax"]);
+        } else {
+            if (paramsMap["codec"]=="h264"){
+                cContext->qmax=28;
+            }
+            if (paramsMap["codec"]=="h265"){
+                cContext->qmax=34;
+            }
+            if (paramsMap["codec"]=="mpeg2video" || paramsMap["codec"]==""){
+                cContext->qmax=5;
+            }
+        }
+
+        // bit rate
+        if (paramsMap["bit_rate"]!=""){
+            //get int value from a string
+            cContext->bit_rate= std::stoi(paramsMap["bit_rate"]);
+        } else {
+            cContext->bit_rate = 400000; 
+        }
+
+        // gop size
+        if (paramsMap["gop_size"]!=""){
+            //get int value from a string
+            cContext->gop_size = std::stoi(paramsMap["gop_size"]);
+        } else {
+            cContext->gop_size = 10;
+        }
+
+        // max b frames
+        if (paramsMap["max_b_frames"]!=""){
+            //get int value from a string
+            cContext->max_b_frames = std::stoi(paramsMap["max_b_frames"]);
+        } else {
+            cContext->max_b_frames = 1;
+        }
+}
