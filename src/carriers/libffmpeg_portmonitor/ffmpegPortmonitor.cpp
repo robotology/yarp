@@ -120,20 +120,20 @@ void FfmpegMonitorObject::destroy(void)
 
 bool FfmpegMonitorObject::setparam(const yarp::os::Property& params)
 {
-    yCInfo(FFMPEGMONITOR, "setparam");
+    yCTrace(FFMPEGMONITOR, "setparam");
     return false;
 }
 
 bool FfmpegMonitorObject::getparam(yarp::os::Property& params)
 {
-    yCInfo(FFMPEGMONITOR, "getparam");
+    yCTrace(FFMPEGMONITOR, "getparam");
     return false;
 }
 
 bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
 {
     if (senderSide) {
-        yCInfo(FFMPEGMONITOR, "accept - sender");
+        yCTrace(FFMPEGMONITOR, "accept - sender");
         Image* img = thing.cast_as< Image >();
         if(img == nullptr) {
             yCError(FFMPEGMONITOR, "Expected type Image in sender side, but got wrong data type!");
@@ -141,7 +141,7 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
         }        
     }
     else {
-        yCInfo(FFMPEGMONITOR, "accept - receiver");
+        yCTrace(FFMPEGMONITOR, "accept - receiver");
         Bottle* bt = thing.cast_as<Bottle>();
         if(bt == nullptr){
             yCError(FFMPEGMONITOR, "Expected type Bottle in receiver side, but got wrong data type!");
@@ -154,7 +154,7 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
 yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 {
     if (senderSide) {
-        yCInfo(FFMPEGMONITOR, "update - sender");
+        yCTrace(FFMPEGMONITOR, "update - sender");
         Image* img = thing.cast_as< Image >();
         AVPacket *packet = new AVPacket;
         bool ok = true;
@@ -190,7 +190,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         th.setPortWriter(&data);
     }
     else {
-        yCInfo(FFMPEGMONITOR, "update - receiver");
+        yCTrace(FFMPEGMONITOR, "update - receiver");
         Bottle* compressedBottle = thing.cast_as<Bottle>();
 
         int ok = compressedBottle->get(0).asInt();
@@ -256,7 +256,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 
 int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     
-    yCInfo(FFMPEGMONITOR, "compress");
+    yCTrace(FFMPEGMONITOR, "compress");
     AVFrame *startFrame;
     AVFrame *endFrame;
 
@@ -359,7 +359,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
 int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed,
                                     int w, int h, int pixelCode) {
     
-    yCInfo(FFMPEGMONITOR, "decompress");
+    yCTrace(FFMPEGMONITOR, "decompress");
     AVFrame *startFrame;
     AVFrame *endFrame;
 
