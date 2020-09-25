@@ -9,6 +9,7 @@
 #ifndef YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_H
 #define YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_H
 
+#include "RGBDSensorClient_StreamingMsgParser.h"
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
@@ -96,8 +97,9 @@ protected:
     std::string remote_depthFrame_StreamingPort_name;
     std::string image_carrier_type;
     std::string depth_carrier_type;
-    yarp::os::BufferedPort<yarp::sig::FlexImage> colorFrame_StreamingPort;
-    yarp::os::BufferedPort<yarp::sig::ImageOf< yarp::sig::PixelFloat> > depthFrame_StreamingPort;
+
+    RgbImageBufferedPort   colorFrame_StreamingPort;
+    FloatImageBufferedPort depthFrame_StreamingPort;
 
     // Use a single RPC port for now
     std::string local_rpcPort_name;
