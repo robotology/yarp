@@ -65,7 +65,7 @@ There's a comprehensive list of tutorials here:
 License
 -------
 
-[![License](https://img.shields.io/badge/license-BSD%20%2B%20others-19c2d8.svg)](https://github.com/robotology/yarp/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause%20%2B%20others-19c2d8.svg)](https://github.com/robotology/yarp/blob/master/LICENSE)
 
 Material included in YARP is Copyright of Istituto Italiano di Tecnologia (IIT),
 RobotCub Consortium and other contributors.
