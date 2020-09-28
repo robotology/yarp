@@ -946,7 +946,8 @@ void MainWindow::onTabChangeItem(int index)
             ui->actionSave->setEnabled(false);
             ui->actionSave_As->setEnabled(false);
         }
-
+    }
+    else {
 
         if(w && w->getType() == yarp::manager::RESOURCE){
             ui->actionRefresh_Status->setEnabled(true);
@@ -955,8 +956,7 @@ void MainWindow::onTabChangeItem(int index)
             ui->actionRefresh_Status->setEnabled(false);
             prevWidget = nullptr;
         }
-    }
-    else {
+
         ui->actionSelect_All->setEnabled(false);
         ui->actionExport_Graph->setEnabled(false);
         ui->actionConnect_all->setEnabled(false);
