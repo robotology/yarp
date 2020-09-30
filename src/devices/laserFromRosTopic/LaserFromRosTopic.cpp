@@ -267,7 +267,7 @@ bool LaserFromRosTopic::open(yarp::os::Searchable& config)
     }
 
     m_ros_node = new yarp::os::Node("/laserFromRosTopicNode");
-    for (auto i=0; i<m_input_ports.size(); i++)
+    for (size_t i = 0; i < m_input_ports.size(); i++)
     {
         //m_input_ports[i].useCallback();    ///@@@<-SEGFAULT
         if (m_input_ports[i].topic(m_port_names[i]) == false)
@@ -358,7 +358,7 @@ void LaserFromRosTopic::calculate(yarp::dev::LaserScan2D scan_data, yarp::sig::M
 
 ////////////////////////////
     double resolution = (scan_data.angle_max - scan_data.angle_min)/ scan_data.scans.size(); // deg/elem
-    for (auto i = 0; i < scan_data.scans.size(); i++)
+    for (size_t i = 0; i < scan_data.scans.size(); i++)
     {
         double distance = scan_data.scans[i];
         if (distance == std::numeric_limits<double>::infinity())
@@ -393,10 +393,10 @@ void LaserFromRosTopic::calculate(yarp::dev::LaserScan2D scan_data, yarp::sig::M
 
             //compute the new slot
             int new_i = lrint ((angle_output_deg - m_min_angle)  / m_resolution);
-            if (new_i == m_laser_data.size()) {new_i=0;}
+            if (new_i == static_cast<int>(m_laser_data.size())) {new_i=0;}
 
             yAssert (new_i >= 0);
-            yAssert (new_i < m_laser_data.size());
+            yAssert (new_i < static_cast<int>(m_laser_data.size()));
 
             //compute the distance
             double newdistance = std::sqrt((Bx * Bx) + (By * By));
@@ -460,7 +460,7 @@ void LaserFromRosTopic::run()
     }
     else //multiple ports
     {
-        for (auto i=0; i<nports;i++)
+        for (size_t i = 0; i < nports; i++)
         {
             yarp::sig::Matrix m(4, 4); m.eye();
             bool frame_exists = m_iTc->getTransform(m_src_frame_id[i], m_dst_frame_id, m);
