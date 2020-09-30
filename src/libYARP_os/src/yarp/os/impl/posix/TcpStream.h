@@ -43,36 +43,36 @@ public:
      */
     virtual ~TcpStream();
 
-    inline ssize_t recv_n (void *buf, size_t n)
+    inline ssize_t recv_n(void *buf, size_t n)
     {
         return ::recv(sd, buf, n, 0);
     }
 
-    inline ssize_t recv_n (void *buf, size_t n, struct timeval *tv)
+    inline ssize_t recv_n(void *buf, size_t n, struct timeval *tv)
     {
-        setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
+        setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char *>(tv), sizeof (*tv));
         return ::recv(sd, buf, n, 0);
     }
 
-    inline ssize_t recv (void *buf, size_t n)
+    inline ssize_t recv(void *buf, size_t n)
     {
         return ::recv(sd, buf, n, 0);
     }
 
-    inline ssize_t recv (void *buf, size_t n, struct timeval *tv)
+    inline ssize_t recv(void *buf, size_t n, struct timeval *tv)
     {
-        setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
+        setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<char *>(tv), sizeof (*tv));
         return ::recv(sd, buf, n, 0);
     }
 
-    inline ssize_t send_n (const void *buf, size_t n)
+    inline ssize_t send_n(const void *buf, size_t n)
     {
         return ::send(sd, buf, n, 0);
     }
 
-    inline ssize_t send_n (const void *buf, size_t n, struct timeval *tv)
+    inline ssize_t send_n(const void *buf, size_t n, struct timeval *tv)
     {
-        setsockopt(sd, SOL_SOCKET, SO_SNDTIMEO, (char *)tv, sizeof (*tv));
+        setsockopt(sd, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<char *>(tv), sizeof (*tv));
         return ::send(sd, buf, n, 0);
     }
 
@@ -103,9 +103,9 @@ public:
 
     int open();
 
-    int get_local_addr (sockaddr &);
+    int get_local_addr(sockaddr&);
 
-    int get_remote_addr (sockaddr &);
+    int get_remote_addr(sockaddr&);
 
     // get stream descriptor
     int get_handle() { return sd; }
@@ -116,17 +116,17 @@ public:
     // Wrapper around the setsockopt system call.
     inline int set_option(int level, int option, void *optval, int optlen) const
     {
-        return setsockopt(sd, level, option, (char*)optval, optlen);
+        return setsockopt(sd, level, option, static_cast<char*>(optval), optlen);
     }
 
     // Wrapper around the getsockopt system call.
     inline int get_option(int level, int option, void *optval, int *optlen) const
     {
-        return getsockopt(sd, level, option, (char*)optval, (socklen_t*)optlen);
+        return getsockopt(sd, level, option, static_cast<char*>(optval), reinterpret_cast<socklen_t*>(optlen));
     }
 private:
     // stream descriptor
-    int sd;
+    int sd {-1};
 };
 
 } // namespace posix

@@ -59,48 +59,7 @@ namespace {
 YARP_OS_LOG_COMPONENT(PORTCORE, "yarp.os.impl.PortCore")
 } // namespace
 
-PortCore::PortCore() :
-        m_stateSemaphore(1),
-        m_packetMutex(),
-        m_connectionChangeSemaphore(1),
-        m_face(nullptr),
-        m_reader(nullptr),
-        m_adminReader(nullptr),
-        m_readableCreator(nullptr),
-        m_eventReporter(nullptr),
-        m_listening(false),
-        m_running(false),
-        m_starting(false),
-        m_closing(false),
-        m_finished(false),
-        m_finishing(false),
-        m_waitBeforeSend(true),
-        m_waitAfterSend(true),
-        m_controlRegistration(true),
-        m_interruptable(true),
-        m_interrupted(false),
-        m_manual(false),
-        m_events(0),
-        m_connectionListeners(0),
-        m_inputCount(0),
-        m_outputCount(0),
-        m_dataOutputCount(0),
-        m_flags(PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT),
-        m_logNeeded(false),
-        m_timeout(-1),
-        m_counter(1),
-        m_prop(nullptr),
-        m_contactable(nullptr),
-        m_mutex(nullptr),
-#ifndef YARP_NO_DEPRECATED // since YARP 3.3
-        m_old_mutex(nullptr),
-#endif // YARP_NO_DEPRECATED
-        m_mutexOwned(false),
-        m_envelopeWriter(true),
-        m_typeMutex(),
-        m_checkedType(false)
-{
-}
+PortCore::PortCore() = default;
 
 PortCore::~PortCore()
 {

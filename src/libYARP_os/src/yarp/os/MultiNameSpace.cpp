@@ -359,7 +359,7 @@ Contact MultiNameSpace::registerName(const std::string& name)
     SpaceList lst = HELPER(this).getAll();
     Contact result;
     // loop through namespaces
-    for (int i = 0; i < (int)lst.size(); i++) {
+    for (size_t i = 0; i < lst.size(); i++) {
         Contact iresult;
         // Register name with namespace. If contact information is
         // fleshed out while registering, we carry that along for
@@ -380,7 +380,7 @@ Contact MultiNameSpace::registerContact(const Contact& contact)
 {
     SpaceList lst = HELPER(this).getAll();
     Contact result;
-    for (int i = 0; i < (int)lst.size(); i++) {
+    for (size_t i = 0; i < lst.size(); i++) {
         // we register in *all* namespaces (and query in *any*)
         Contact iresult = lst[i]->registerContact(contact);
         if (i == 0) {
@@ -394,7 +394,7 @@ Contact MultiNameSpace::unregisterName(const std::string& name)
 {
     SpaceList lst = HELPER(this).getAll();
     Contact result;
-    for (int i = 0; i < (int)lst.size(); i++) {
+    for (size_t i = 0; i < lst.size(); i++) {
         // we unregister in *all* namespaces
         Contact iresult = lst[i]->unregisterName(name);
         if (i == 0) {
@@ -408,7 +408,7 @@ Contact MultiNameSpace::unregisterContact(const Contact& contact)
 {
     SpaceList lst = HELPER(this).getAll();
     Contact result;
-    for (int i = 0; i < (int)lst.size(); i++) {
+    for (size_t i = 0; i < lst.size(); i++) {
         // we unregister in *all* namespaces
         Contact iresult = lst[i]->unregisterContact(contact);
         if (i == 0) {

@@ -66,7 +66,7 @@ int TcpConnector::connect(TcpStream& new_stream, const Contact& address, YARP_ti
 
     struct hostent* hostInfo = yarp::os::impl::gethostbyname(address.getHost().c_str());
     if (hostInfo) {
-        bcopy(hostInfo->h_addr, (char*)(&servAddr.sin_addr), hostInfo->h_length);
+        bcopy(hostInfo->h_addr, reinterpret_cast<char*>(&servAddr.sin_addr), hostInfo->h_length);
     } else {
         inet_pton(AF_INET, address.getHost().c_str(), &servAddr.sin_addr);
     }
@@ -106,7 +106,7 @@ int TcpConnector::connect(TcpStream& new_stream, const Contact& address, YARP_ti
                 res = 0;
                 // Socket selected for write
                 lon = sizeof(int);
-                if (getsockopt(handle, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) < 0) {
+                if (getsockopt(handle, SOL_SOCKET, SO_ERROR, reinterpret_cast<void*>(&valopt), &lon) < 0) {
                     yCError(TCPCONNECTOR_POSIX, "connect fail: Error in getsockopt(): %d, %s", errno, strerror(errno));
                     res = -1;
                 }

@@ -15,13 +15,15 @@ using namespace yarp::os;
 
 bool NameService::process(yarp::os::PortWriter& in,
                           yarp::os::PortReader& out,
-                          const yarp::os::Contact& remote) {
-    DummyConnector din, dout;
+                          const yarp::os::Contact& /*remote*/)
+{
+    DummyConnector din;
+    DummyConnector dout;
     din.setTextMode(true);
     dout.setTextMode(true);
     in.write(din.getWriter());
     NameServerConnectionHandler handler(this);
-    bool ok = handler.apply(din.getReader(),&dout.getWriter(),false);
+    bool ok = handler.apply(din.getReader(), &dout.getWriter(), false);
     out.read(dout.getReader());
     return ok;
 }

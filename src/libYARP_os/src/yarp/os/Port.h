@@ -61,7 +61,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Port();
+    ~Port() override;
 
     // Documented in Contactable
     bool open(const std::string& name) override;

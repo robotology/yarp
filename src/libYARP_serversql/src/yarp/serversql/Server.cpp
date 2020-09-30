@@ -134,9 +134,8 @@ int yarp::serversql::Server::run(int argc, char** argv)
 
     NameClient::getNameClient().send(cmd, reply);
 
-    yCInfo(SERVER, "Name server can be browsed at http://%s:%d/",
-              nc.where().getHost().c_str(),
-              nc.where().getPort());
+    yCInfo(SERVER, "Name server can be browsed at http:/%s",
+              nc.where().toURI(false).c_str());
     yCInfo(SERVER, "Ok. Ready!");
 
     while(!shouldStop) {

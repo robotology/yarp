@@ -235,7 +235,7 @@ std::string Contact::getHost() const
 
 void Contact::setHost(const std::string& hostname)
 {
-    this->mPriv->hostname = hostname;
+    mPriv->setHostname(hostname);
 }
 
 
@@ -246,7 +246,7 @@ int Contact::getPort() const
 
 void Contact::setPort(int port)
 {
-    this->mPriv->port = port;
+    mPriv->port = port;
 }
 
 
@@ -357,10 +357,10 @@ std::string Contact::convertHostToIp(const char* name)
         void* addr;
 
         if (p->ai_family == AF_INET) { // IPv4
-            auto* ipv4 = (struct sockaddr_in*)p->ai_addr;
+            auto* ipv4 = reinterpret_cast<struct sockaddr_in*>(p->ai_addr);
             addr = &(ipv4->sin_addr);
         } else { // IPv6
-            auto* ipv6 = (struct sockaddr_in6*)p->ai_addr;
+            auto* ipv6 = reinterpret_cast<struct sockaddr_in6*>(p->ai_addr);
             addr = &(ipv6->sin6_addr);
         }
 

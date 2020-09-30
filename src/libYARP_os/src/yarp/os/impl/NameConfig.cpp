@@ -223,10 +223,12 @@ std::string NameConfig::getHostName(bool prefer_loopback, const std::string& see
         for (size_t i = 0; i < count; i++) {
             std::string ip = ips[i].get_host_addr(hostAddress, 256);
 #else
-    int family, s;
+    int family;
+    int s;
     char hostname[NI_MAXHOST];
     std::string ip;
-    struct ifaddrs *ifaddr, *ifa;
+    struct ifaddrs *ifaddr;
+    struct ifaddrs *ifa;
     if (yarp::os::impl::getifaddrs(&ifaddr) == -1) {
         yCError(NAMECONFIG, "getifaddrs in getIps: %d, %s", errno, strerror(errno));
         std::exit(EXIT_FAILURE);
@@ -373,9 +375,11 @@ yarp::os::Bottle NameConfig::getIpsAsBottle()
         delete[] ips;
     }
 #else
-    int family, s;
+    int family;
+    int s;
     char host[NI_MAXHOST];
-    struct ifaddrs *ifaddr, *ifa;
+    struct ifaddrs *ifaddr;
+    struct ifaddrs *ifa;
     if (getifaddrs(&ifaddr) == -1) {
         yCError(NAMECONFIG, "getifaddrs in getIpsAsBottle: %d, %s", errno, strerror(errno));
         std::exit(EXIT_FAILURE);

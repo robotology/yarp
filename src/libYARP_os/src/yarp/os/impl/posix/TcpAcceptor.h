@@ -30,10 +30,9 @@ namespace posix {
 class YARP_os_impl_API TcpAcceptor
 {
 public:
+    TcpAcceptor() = default;
 
-    TcpAcceptor();
-
-    virtual ~TcpAcceptor() {};
+    virtual ~TcpAcceptor() = default;
 
     int open(const yarp::os::Contact& address);
 
@@ -43,23 +42,28 @@ public:
 
     int accept(TcpStream &new_stream);
 
-    int get_port_number() {
-      return port_number;
+    int get_port_number()
+    {
+        return port_number;
     }
 
-//    const Address& getLocalAddress();
-
-//    const Address& getRemoteAddress();
 protected:
     int shared_open(const yarp::os::Contact& address);
 
-    int get_handle() { return ad; }
+    int get_handle()
+    {
+        return ad;
+    }
 
-    void set_handle(int h) { ad = h; }
+    void set_handle(int h)
+    {
+        ad = h;
+    }
+
 private:
     // acceptor descriptor
-    int ad;
-    int port_number;
+    int ad {-1};
+    int port_number {-1};
 };
 
 } // namespace posix

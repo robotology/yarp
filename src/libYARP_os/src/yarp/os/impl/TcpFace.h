@@ -28,7 +28,7 @@ class YARP_os_impl_API TcpFace : public yarp::os::Face
 public:
     TcpFace();
 
-    virtual ~TcpFace();
+    ~TcpFace() override;
 
     bool open(const Contact& address) override;
     void close() override;

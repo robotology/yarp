@@ -29,7 +29,8 @@ YARP_OS_LOG_COMPONENT(TCPACCEPTOR_POSIX, "yarp.os.impl.TcpAcceptor.posix")
 /**
  * An error handler that reaps the zombies.
  */
-void sigchld_handler(int s) {
+void sigchld_handler(int /*s*/)
+{
     while(waitpid(-1, nullptr, WNOHANG) > 0) {}
 }
 
@@ -38,16 +39,11 @@ void sigchld_handler(int s) {
  * Implementation of TcpAcceptor
  * **************************************************************************************/
 
-TcpAcceptor::TcpAcceptor() {
-    ad = -1;
-    port_number = -1;
-}
-
-int TcpAcceptor::open(const Contact& address) {
-
+int TcpAcceptor::open(const Contact& address)
+{
     yCDebug(TCPACCEPTOR_POSIX, "TCP/IP start in server mode");
     set_handle(socket(AF_INET, SOCK_STREAM, 0));
-    if (get_handle() == -1) {
+    if (get_handle() < 0) {
         yCError(TCPACCEPTOR_POSIX, "At TcpAcceptor::open there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
@@ -65,8 +61,8 @@ int TcpAcceptor::open(const Contact& address) {
 /**
  * Open the server port and listen for clients
  */
-int TcpAcceptor::shared_open(const Contact& address) {
-
+int TcpAcceptor::shared_open(const Contact& address)
+{
     struct sockaddr_in servAddr;
     servAddr.sin_addr.s_addr = INADDR_ANY;
     servAddr.sin_family = AF_INET;
@@ -74,13 +70,12 @@ int TcpAcceptor::shared_open(const Contact& address) {
     inet_pton(AF_INET, address.getHost().c_str(), &servAddr.sin_addr);
     memset(servAddr.sin_zero, '\0', sizeof servAddr.sin_zero);
 
-    if (bind(get_handle(), (struct sockaddr *)&servAddr,
-            sizeof (struct sockaddr)) == -1) {
+    if (bind(get_handle(), (struct sockaddr *)&servAddr, sizeof (struct sockaddr)) < 0) {
         yCError(TCPACCEPTOR_POSIX, "At bind(sockfd) there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
 
-    if (listen(get_handle(), BACKLOG) == -1) {
+    if (listen(get_handle(), BACKLOG) < 0) {
         yCError(TCPACCEPTOR_POSIX, "At listen(sockfd) there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
@@ -89,7 +84,7 @@ int TcpAcceptor::shared_open(const Contact& address) {
     sa.sa_handler = sigchld_handler;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
-    if (sigaction(SIGCHLD, &sa, nullptr) == -1) {
+    if (sigaction(SIGCHLD, &sa, nullptr) < 0) {
         yCError(TCPACCEPTOR_POSIX, "At sigaction(address) there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
@@ -99,7 +94,7 @@ int TcpAcceptor::shared_open(const Contact& address) {
     if (getsockname(get_handle(), (struct sockaddr *)&sin, &addrlen) == 0 &&
             sin.sin_family == AF_INET &&
             addrlen == sizeof(sin)) {
-        port_number = (int)ntohs(sin.sin_port);
+        port_number = static_cast<int>(ntohs(sin.sin_port));
     } else {
         yCError(TCPACCEPTOR_POSIX, "At getsockname(address) there was an error: %d, %s", errno, strerror(errno));
         return -1;
@@ -112,11 +107,13 @@ int TcpAcceptor::shared_open(const Contact& address) {
 /**
  * Accept connection and set field for clientAddress.
  */
-int TcpAcceptor::accept(TcpStream &new_stream) {
-    sockaddr *addr = nullptr;
-    int len = 0; int *len_ptr = &len;
+int TcpAcceptor::accept(TcpStream &new_stream)
+{
+    sockaddr* addr = nullptr;
+    int len = 0;
+    int* len_ptr = &len;
 
-    new_stream.set_handle( ::accept(get_handle(), (struct sockaddr *)&addr, (socklen_t*)len_ptr) );
+    new_stream.set_handle(::accept(get_handle(), reinterpret_cast<struct sockaddr*>(&addr), reinterpret_cast<socklen_t*>(len_ptr)));
     if (new_stream.get_handle() < 0) {
         yCError(TCPACCEPTOR_POSIX, "At accept(sockfd) there was an error: %d, %s", errno, strerror(errno));
         return -1;
@@ -125,11 +122,12 @@ int TcpAcceptor::accept(TcpStream &new_stream) {
     return 1;
 }
 
-int TcpAcceptor::close() {
+int TcpAcceptor::close()
+{
     int result = 0;
 
     if (get_handle() != -1) {
-        result = ::close(get_handle ());
+        result = ::close(get_handle());
         set_handle (-1);
     }
     return result;

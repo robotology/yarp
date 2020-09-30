@@ -58,7 +58,7 @@ int yarp::os::mkdir_p(const char* p, int ignoreLevels)
 #endif
     }
     std::string base = fileName.substr(0, index);
-    if (yarp::os::stat((char*)base.c_str()) < 0) {
+    if (yarp::os::stat(const_cast<char*>(base.c_str())) < 0) {
         int result = yarp::os::mkdir_p(base.c_str(), ignoreLevels - 1);
         if (result != 0) {
             return 1;

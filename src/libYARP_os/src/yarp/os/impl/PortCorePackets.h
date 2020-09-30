@@ -21,11 +21,9 @@ namespace os {
 namespace impl {
 
 /**
- *
  * A collection of messages being transmitted over connections.
  * This tracks uses of the messages for memory management purposes.
  * We call messages "packets" for no particular reason.
- *
  */
 class PortCorePackets
 {

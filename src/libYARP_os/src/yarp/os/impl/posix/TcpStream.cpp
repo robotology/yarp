@@ -28,13 +28,12 @@ YARP_OS_LOG_COMPONENT(TCPSTREAM_POSIX, "yarp.os.impl.TcpStream.posix")
  * Implementation of TcpStream
  * **************************************************************************************/
 
-TcpStream::TcpStream() {
-    sd = -1;
-}
+TcpStream::TcpStream() = default;
 
 TcpStream::~TcpStream() = default;
 
-int TcpStream::open() {
+int TcpStream::open()
+{
     set_handle(socket(AF_INET, SOCK_STREAM, 0));
     if (get_handle() == -1) {
         yCError(TCPSTREAM_POSIX, "At TcpStream::open there was an error: %d, %s", errno, strerror(errno));
@@ -43,20 +42,19 @@ int TcpStream::open() {
     return 0;
 }
 
-int TcpStream::get_local_addr (sockaddr & sa) {
-
+int TcpStream::get_local_addr(sockaddr & sa)
+{
     int len = sizeof(sa);
-
-    if (::getsockname (get_handle (), &sa, (socklen_t*)&len) == -1) {
+    if (::getsockname(get_handle(), &sa, reinterpret_cast<socklen_t*>(&len)) == -1) {
         return -1;
     }
     return 0;
 }
 
-int TcpStream::get_remote_addr (sockaddr & sa) {
+int TcpStream::get_remote_addr (sockaddr & sa)
+{
     int len = sizeof(sa);
-
-    if (::getpeername (get_handle(), &sa, (socklen_t*) &len) == -1) {
+    if (::getpeername(get_handle(), &sa, reinterpret_cast<socklen_t*>(&len)) == -1) {
         return -1;
     }
     return 0;
