@@ -42,6 +42,10 @@ bool NameSpace::checkNetwork()
 
 bool NameSpace::checkNetwork(double timeout)
 {
+    if (localOnly()) {
+        return true;
+    }
+
     Contact c = queryName(getNameServerName());
     if (!c.isValid()) {
         return false;
