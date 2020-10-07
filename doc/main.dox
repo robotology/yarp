@@ -30,7 +30,7 @@ out for world domination.  It is easy to interoperate with YARP-using
 programs without yourself necessarily having to use YARP codebase --
 see the
 \ref yarp_without_yarp "YARP without YARP" tutorial. YARP is written
-in C++.  The <a href="http://www.cs.wustl.edu/~schmidt/ACE.html">ACE</a>
+in C++.  The <a href="https://www.dre.vanderbilt.edu/~schmidt/ACE.html">ACE</a>
 library is used for Windows builds, and to support extra
 protocols.  On Linux and macOS, ACE can optionally be omitted,
 giving a very light footprint (with the trade-off being the
