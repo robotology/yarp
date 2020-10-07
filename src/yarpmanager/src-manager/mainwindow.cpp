@@ -42,6 +42,7 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QInputDialog>
+#include <QtCore/qoperatingsystemversion.h>
 
 #include <QWizardPage>
 #include <QLabel>
@@ -69,6 +70,8 @@
 #endif
 
 using namespace std;
+
+constexpr int32_t win10_1909{18363}; // see https://en.wikipedia.org/wiki/Windows_10#Updates_and_support
 
 
 bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
@@ -170,13 +173,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionAuto_reload->setChecked(true);
 
     ui->action_Manager_Window->setChecked(true);
-#ifdef WIN32
-    ui->tabWidgetLeft->tabBar()->hide();
-#else
     yarp::os::ResourceFinder& rf = yarp::os::ResourceFinder::getResourceFinderSingleton();
 
     std::string confFile = rf.findFileByName("cluster-config.xml");
-    if (!confFile.empty())
+    bool compatible{true};
+    auto current_version = QOperatingSystemVersion::current();
+    if (current_version.type() == QOperatingSystemVersion::Windows &&
+        current_version.majorVersion() < 10
+        && current_version.microVersion() < win10_1909) {
+        compatible = false;
+    }
+
+    if (compatible && !confFile.empty())
     {
         ui->clusterWidget->setConfigFile(confFile);
         ui->clusterWidget->init();
@@ -187,7 +195,6 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         ui->tabWidgetLeft->tabBar()->hide();
     }
-#endif
 
 }
 

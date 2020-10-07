@@ -62,7 +62,7 @@ init:
   - cmd: set Eigen3_REL_DIR=eigen-3.3.0
   - cmd: set Eigen3_ROOT=%ROBOTOLOGY_ROOT%\%Eigen3_REL_DIR%
 
-  - cmd: set Qt5_REL_DIR=Qt-5.6.1_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
+  - cmd: set Qt5_REL_DIR=Qt-5.9.8_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
   - cmd: set Qt5_ROOT=%ROBOTOLOGY_ROOT%\%Qt5_REL_DIR%
   - cmd: set Qt5_DIR=%Qt5_ROOT%\lib\cmake\Qt5
   - cmd: set PATH=%PATH%;%Qt5_ROOT%\bin

@@ -43,11 +43,6 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ClusterWidget), confFile(""), clusLoader(nullptr), checkNs(false)
 {
-
-#ifdef WIN32
-    this->setDisabled(true);
-    return;
-#endif
     ui->setupUi(this);
     ui->executeBtn->setDisabled(true);
     ui->labelNs->setPixmap(QPixmap(":/close.svg").scaledToHeight(ui->checkRos->height()));
