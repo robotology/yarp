@@ -15,7 +15,7 @@ This page reports instructions for compiling the dependencies in case you do not
 
 \subsection dependencies_ace The ACE Library
 
-<a href="http://www.cs.wustl.edu/~schmidt/ACE.html"><b>ACE</b></a>
+<a href="https://www.dre.vanderbilt.edu/~schmidt/ACE.html"><b>ACE</b></a>
 is a free and open source library that provides an excellent portable
 interface to a vast array of operating systems, dealing with the details
 so you don't have to.
@@ -33,18 +33,18 @@ functionality.
     \endverbatim
 \li For Windows and other systems we suggest the latest stable release
     (ACE-N.N.zip/ACE-N.N.tar.gz).  Download ACE
-    <a href="http://download.dre.vanderbilt.edu/">here</a>.
+    <a href="https://download.dre.vanderbilt.edu/">here</a>.
 
 Compile ACE using our summary instructions, below, or through the
 official method given
-<a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html">here (FIXME broken)</a>.
+<a href="https://htmlpreview.github.io/?https://github.com/DOCGroup/ACE_TAO/blob/master/ACE/ACE-INSTALL.html">here</a>.
 Don't panic! The instructions cover a lot of operating systems and
 compilers. Just look carefully for your combination.
 
 \li Windows/DevStudio instructions are
-    <a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#msvc">here (FIXME broken)</a>.
+    <a href="https://htmlpreview.github.io/?https://github.com/DOCGroup/ACE_TAO/blob/master/ACE/ACE-INSTALL.html#msvc">here </a>.
 \li UNIX/gcc instructions are
-    <a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional">here (FIXME broken)</a>.
+    <a href="https://htmlpreview.github.io/?https://github.com/DOCGroup/ACE_TAO/blob/master/ACE/ACE-INSTALL.html#unix_traditional">here</a>.
 \li macOS/gcc users, follow the UNIX instructions.
 
 ACE will take a while to compile, but if you can do it you'll be able to
@@ -107,14 +107,14 @@ can just install that and you are done. Otherwise you need to download
     you run into a lot of trouble, we suggest you delete the
     \c ACE_wrappers directory, recreate it with tar again as above, and
     follow carefully all the detailed instructions
-    <a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional">here (FIXME broken)</a>.
+    <a href="https://htmlpreview.github.io/?https://github.com/DOCGroup/ACE_TAO/blob/master/ACE/ACE-INSTALL.html#unix_traditional">here</a>.
 
 
 \subsubsection ace_windows Compiling ACE on Windows
 
 For Borland C++Builder, MinGW, Cygwin instructions build instructions
 are
-<a href="http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#win32">here (FIXME broken)</a>.
+<a href="https://htmlpreview.github.io/?https://github.com/DOCGroup/ACE_TAO/blob/master/ACE/ACE-INSTALL.html#win32">here</a>.
 
 For Visual Studio, here's a brief summary of the steps.
 \li Get \c ACE-5.5.zip as described above.
