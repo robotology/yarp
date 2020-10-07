@@ -111,6 +111,7 @@ PortCore::~PortCore()
 
 bool PortCore::listen(const Contact& address, bool shouldAnnounce)
 {
+    yCDebug(PORTCORE, "Starting listening on %s", address.toURI().c_str());
     // If we're using ACE, we really need to have it initialized before
     // this point.
     if (!NetworkBase::initialized()) {
@@ -353,6 +354,8 @@ bool PortCore::start()
 
 bool PortCore::manualStart(const char* sourceName)
 {
+    yCTrace(PORTCORE, "manualStart");
+
     // This variant of start() does not create a server thread.
     // That is appropriate if we never expect to receive incoming
     // connections for any reason.  No incoming data, no requests
@@ -374,6 +377,8 @@ void PortCore::resume()
 
 void PortCore::interrupt()
 {
+    yCTrace(PORTCORE, "interrupt");
+
     // This is a no-op if there is no server thread.
     if (!m_listening) {
         return;
@@ -714,6 +719,8 @@ void PortCore::cleanUnits(bool blocking)
 
 void PortCore::addInput(InputProtocol* ip)
 {
+    yCTrace(PORTCORE, "addInput");
+
     // This method is only called by the server thread in its running phase.
     // It wraps up a network connection as a unit and adds it to
     // PortCore#units.  The unit will have its own thread associated
@@ -735,6 +742,8 @@ void PortCore::addInput(InputProtocol* ip)
 
 void PortCore::addOutput(OutputProtocol* op)
 {
+    yCTrace(PORTCORE, "addOutput");
+
     // This method is called from threads associated with input
     // connections.
     // It wraps up a network connection as a unit and adds it to
@@ -1060,6 +1069,8 @@ bool PortCore::addOutput(const std::string& dest,
 void PortCore::removeOutput(const std::string& dest, void* id, OutputStream* os)
 {
     YARP_UNUSED(id);
+    yCDebug(PORTCORE, "asked to remove output to %s", dest.c_str());
+
     // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
     if (removeUnit(Route("*", dest, "*"), true)) {
@@ -1076,6 +1087,8 @@ void PortCore::removeOutput(const std::string& dest, void* id, OutputStream* os)
 void PortCore::removeInput(const std::string& src, void* id, OutputStream* os)
 {
     YARP_UNUSED(id);
+    yCDebug(PORTCORE, "asked to remove input to %s", src.c_str());
+
     // All the real work done by removeUnit().
     BufferedConnectionWriter bw(true);
     if (removeUnit(Route(src, "*", "*"), true)) {

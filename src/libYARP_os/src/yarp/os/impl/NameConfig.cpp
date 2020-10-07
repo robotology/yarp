@@ -66,7 +66,7 @@ bool NameConfig::fromString(const std::string& txt)
 
             Bottle& b = config.findGroup("name");
             if (b.isNull()) {
-                fprintf(stderr, "Cannot find yarp group in config file\n");
+                yCError(NAMECONFIG, "Cannot find yarp group in config file");
                 std::exit(1);
             }
             address = Contact(b.find("host").asString(),
@@ -228,7 +228,7 @@ std::string NameConfig::getHostName(bool prefer_loopback, const std::string& see
     std::string ip;
     struct ifaddrs *ifaddr, *ifa;
     if (yarp::os::impl::getifaddrs(&ifaddr) == -1) {
-        perror("getifaddrs in getIps");
+        yCError(NAMECONFIG, "getifaddrs in getIps: %d, %s", errno, strerror(errno));
         std::exit(EXIT_FAILURE);
     }
     for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
@@ -245,7 +245,7 @@ std::string NameConfig::getHostName(bool prefer_loopback, const std::string& see
                                             0,
                                             NI_NUMERICHOST);
             if (s != 0) {
-                printf("getnameinfo() failed: %s\n", yarp::os::impl::gai_strerror(s));
+                yCError(NAMECONFIG, "getnameinfo() failed: %s", yarp::os::impl::gai_strerror(s));
                 std::exit(EXIT_FAILURE);
             }
             ip = std::string(hostname);
@@ -377,7 +377,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle()
     char host[NI_MAXHOST];
     struct ifaddrs *ifaddr, *ifa;
     if (getifaddrs(&ifaddr) == -1) {
-        perror("getifaddrs in getIpsAsBottle");
+        yCError(NAMECONFIG, "getifaddrs in getIpsAsBottle: %d, %s", errno, strerror(errno));
         std::exit(EXIT_FAILURE);
     }
     for (ifa = ifaddr; ifa != nullptr; ifa = ifa->ifa_next) {
@@ -394,7 +394,7 @@ yarp::os::Bottle NameConfig::getIpsAsBottle()
                                             0,
                                             NI_NUMERICHOST);
             if (s != 0) {
-                printf("getnameinfo() failed: %s\n", yarp::os::impl::gai_strerror(s));
+                yCError(NAMECONFIG, "getnameinfo() failed: %s", yarp::os::impl::gai_strerror(s));
                 std::exit(EXIT_FAILURE);
             }
             result.addString(host);
