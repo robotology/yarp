@@ -36,57 +36,18 @@ init:
 
   - cmd: set TIMEOUT=%SystemRoot%\System32\timeout.exe
 
-  # Dependencies found in YCM, YARP and iCub packages
-  - cmd: set YCM_LATEST=0.11.4
+  # Dependencies found in robotology-superbuild-dependencies and YCM packages.
+  - cmd: set ROBOTOLOGY_SUPERBUILD_DEPENDENCIES_LATEST=0.4.0
+  - cmd: set ROBOTOLOGY_SUPERBUILD_DEPENDENCIES_LATEST_TAG=v%ROBOTOLOGY_SUPERBUILD_DEPENDENCIES_LATEST%
+  - cmd: set PATH=%PATH%;C:\robotology\vcpkg\installed\x64-windows\bin;C:\robotology\vcpkg\installed\x64-windows\debug\bin
+
+  - cmd: set YCM_LATEST=0.12.0
   - cmd: set YCM_LATEST_TAG=v%YCM_LATEST%
-  - cmd: set YCM_DIR=%ROBOTOLOGY_ROOT%\ycm-%YCM_LATEST%
-
-  - cmd: set YARP_LATEST=2.3.70
-  - cmd: set YARP_LATEST_TAG=v%YARP_LATEST%
-  - cmd: set YARP_LATEST_PKG=1
-
-  - cmd: set ICUB_LATEST=1.8.0
-  - cmd: set ICUB_LATEST_TAG=%ICUB_LATEST%
-  - cmd: set ICUB_LATEST_PKG=1
-
-  - cmd: if "%platform%"=="Win32" set ROBOTOLOGY_ROOT=%ProgramFiles(x86)%\robotology
-  - cmd: if "%platform%"=="x64" set ROBOTOLOGY_ROOT=%ProgramFiles%\robotology
-  - cmd: set ROBOTOLOGY_VS=v14
-  - cmd: if "%platform%"=="Win32" set ROBOTOLOGY_ARCH=x86
-  - cmd: if "%platform%"=="x64" set ROBOTOLOGY_ARCH=x86_amd64
-
-  - cmd: set ACE_REL_DIR=ACE-6.3.4_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
-  - cmd: set ACE_ROOT=%ROBOTOLOGY_ROOT%\%ACE_REL_DIR%
-  - cmd: set PATH=%PATH%;%ACE_ROOT%\bin
-
-  - cmd: set Eigen3_REL_DIR=eigen-3.3.0
-  - cmd: set Eigen3_ROOT=%ROBOTOLOGY_ROOT%\%Eigen3_REL_DIR%
-
-  - cmd: set Qt5_REL_DIR=Qt-5.6.1_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
-  - cmd: set Qt5_ROOT=%ROBOTOLOGY_ROOT%\%Qt5_REL_DIR%
-  - cmd: set Qt5_DIR=%Qt5_ROOT%\lib\cmake\Qt5
-  - cmd: set PATH=%PATH%;%Qt5_ROOT%\bin
-
-  - cmd: set OpenCV_DEFAULT_REL_DIR=opencv-2.4.13
-  - cmd: set OpenCV_REL_DIR=opencv-2.4.13_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
-  - cmd: set OpenCV_ROOT=%ROBOTOLOGY_ROOT%\%OpenCV_REL_DIR%
-  - cmd: set OpenCV_DIR=%OpenCV_ROOT%
-  - cmd: set PATH=%PATH%;%OpenCV_ROOT%\bin
-
-  # Other dependencies (libjpeg-turbo)
-  #- cmd: set JPEG_REL_DIR=libjpeg-turbo-1.5.1_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%
-  #- cmd: set JPEG_DEFAULT_ROOT=%ROBOTOLOGY_ROOT%\%JPEG_REL_DIR%
-  #- cmd: set JPEG_ROOT=%ROBOTOLOGY_ROOT%\%JPEG_REL_DIR%
-  #- cmd: set JPEG_INCLUDE_DIR=%JPEG_ROOT%\include
-  #- cmd: set JPEG_LIBRARY=%JPEG_ROOT%\lib\jpeg.lib
-  #- cmd: set PATH=%PATH%;%JPEG_ROOT%\bin
+  - cmd: set YCM_DIR=C:\robotology\YCM-%YCM_LATEST%-all
 
   # Installers URLs
+  - cmd: set ROBOTOLOGY_SUPERBUILD_DEPENDENCIES_INSTALLER=https://github.com/robotology-playground/robotology-superbuild-dependencies/releases/download/%ROBOTOLOGY_SUPERBUILD_DEPENDENCIES_LATEST_TAG%/vcpkg-robotology.zip
   - cmd: set YCM_INSTALLER=https://github.com/robotology/ycm/releases/download/%YCM_LATEST_TAG%/YCM-%YCM_LATEST%-all.tar.gz
-  - cmd: set YARP_INSTALLER=https://github.com/robotology/yarp/releases/download/%YARP_LATEST_TAG%/yarp_%YARP_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
-  - cmd: set ICUB_INSTALLER=https://github.com/robotology/icub-main/releases/download/%ICUB_LATEST_TAG%/iCub_%ICUB_LATEST%_%ROBOTOLOGY_VS%_%ROBOTOLOGY_ARCH%_1.exe
-  #- cmd: if "%platform%"=="Win32" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc.exe/download
-  #- cmd: if "%platform%"=="x64" set JPEG_INSTALLER=https://sourceforge.net/projects/libjpeg-turbo/files/1.5.1/libjpeg-turbo-1.5.1-vc64.exe/download
 
   # Prepare YARP for tests
   - cmd: set PATH=%PATH%;%APPVEYOR_BUILD_FOLDER%\build\bin\%CONFIGURATION%
@@ -100,46 +61,18 @@ init:
 install:
   - cmd: md C:\downloads
 
+  # Get Robotology Superbuild Dependencies
+  - cmd: echo Downloading %ROBOTOLOGY_SUPERBUILD_DEPENDENCIES_INSTALLER%
+  - cmd: appveyor DownloadFile "%ROBOTOLOGY_SUPERBUILD_DEPENDENCIES_INSTALLER%" -FileName "C:\downloads\vcpkg-robotology.zip"
+  - cmd: 7z x -oC:\ "C:\downloads\vcpkg-robotology.zip" > nul
+
   # Get YCM installer
   - cmd: echo Downloading %YCM_INSTALLER%
   - cmd: appveyor DownloadFile "%YCM_INSTALLER%" -FileName "C:\downloads\ycm.tar.gz"
-  - cmd: 7z x "C:\downloads\ycm.tar.gz" -so | 7z x -si -ttar > nul
-  - cmd: move YCM-%YCM_LATEST%-all "%YCM_DIR%"
-
-  # Get YARP installer
-  - cmd: echo Downloading %YARP_INSTALLER%
-  - cmd: appveyor DownloadFile "%YARP_INSTALLER%" -FileName "C:\downloads\yarp.exe"
-  - cmd: start "" /WAIT "c:\downloads\yarp.exe" /S
-  - cmd: "%TIMEOUT% /T 10"
-  - cmd: rmdir "%ROBOTOLOGY_ROOT%\yarp-%YARP_LATEST%" /S /Q
-  - cmd: del "%ROBOTOLOGY_ROOT%\Uninstall_YARP.exe" /F /Q
-  - cmd: del "%ROBOTOLOGY_ROOT%\uninstall_YARP.log" /F /Q
-
-  # Get iCub installer (for opencv)
-  - cmd: echo Downloading %ICUB_INSTALLER%
-  - cmd: appveyor DownloadFile "%ICUB_INSTALLER%" -FileName "C:\downloads\iCub.exe"
-  - cmd: start "" /WAIT "c:\downloads\iCub.exe" /S
-  - cmd: "%TIMEOUT% /T 10"
-  - cmd: move "%ROBOTOLOGY_ROOT%\%OpenCV_DEFAULT_REL_DIR%" "%ROBOTOLOGY_ROOT%\%OpenCV_REL_DIR%"
-  - cmd: rmdir "%ROBOTOLOGY_ROOT%\icub-%ICUB_LATEST%" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_ROOT%\glut-3.7.6" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_ROOT%\gsl-1.14" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_ROOT%\ipopt-3.12.7" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_ROOT%\ode-0.13" /S /Q
-  - cmd: rmdir "%ROBOTOLOGY_ROOT%\sdl-1.2.15" /S /Q
-  - cmd: del "%ROBOTOLOGY_ROOT%\Uninstall_iCub.exe" /F /Q
-
-  # Get libjpeg-turbo installer
-  #- cmd: echo Downloading %JPEG_INSTALLER%
-  #- cmd: appveyor DownloadFile "%JPEG_INSTALLER%" -FileName "C:\downloads\libjpeg-turbo.exe"
-  #- cmd: start "" /WAIT "C:\downloads\libjpeg-turbo.exe" /S /D=%JPEG_DEFAULT_ROOT%
-  #- cmd: "%TIMEOUT% /T 10"
-  #- cmd: rmdir "%JPEG_DEFAULT_ROOT%\classes" /S /Q
-  #- cmd: rmdir "%JPEG_DEFAULT_ROOT%\doc" /S /Q
-  #- cmd: del "%JPEG_DEFAULT_ROOT%\*.exe" /S /F /Q
+  - cmd: 7z x "C:\downloads\ycm.tar.gz" -so | 7z x -si -ttar -oC:\robotology > nul
 
 before_build:
-  - cmd: cmake -H%APPVEYOR_BUILD_FOLDER% -B%APPVEYOR_BUILD_FOLDER%\build -G"%CMAKE_GENERATOR%" -A%CMAKE_PLATFORM% -DCMAKE_INSTALL_PREFIX:PATH=%APPVEYOR_BUILD_FOLDER%\install -C%APPVEYOR_BUILD_FOLDER%\.ci\initial-cache.appveyor.cmake
+  - cmd: cmake -H%APPVEYOR_BUILD_FOLDER% -B%APPVEYOR_BUILD_FOLDER%\build -G"%CMAKE_GENERATOR%" -A%CMAKE_PLATFORM% -DCMAKE_INSTALL_PREFIX:PATH=%APPVEYOR_BUILD_FOLDER%\install -C%APPVEYOR_BUILD_FOLDER%\.ci\initial-cache.appveyor.cmake -DCMAKE_TOOLCHAIN_FILE=C:/robotology/vcpkg/scripts/buildsystems/vcpkg.cmake
 
 build:
   project: build\yarp.sln
@@ -152,17 +85,6 @@ after_build:
 
 test_script:
   - cmd: if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2019" cmake --build %APPVEYOR_BUILD_FOLDER%\build --target RUN_TESTS --config %CONFIGURATION%
-
-#after_test:
-  #- cmd: move "%ROBOTOLOGY_ROOT%" "%APPVEYOR_BUILD_FOLDER%/robotology"
-
-#artifacts:
-  #- path: '*.exe'
-  #- path: 'robotology/$(ACE_REL_DIR)'
-  #- path: 'robotology/$(Eigen3_REL_DIR)'
-  #- path: 'robotology/$(Qt5_REL_DIR)'
-  #- path: 'robotology/$(OpenCV_REL_DIR)'
-  #- path: 'robotology/$(JPEG_REL_DIR)'
 
 notifications:
   - provider: Slack
