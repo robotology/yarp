@@ -18,12 +18,6 @@
 
 using namespace yarp::os;
 
-namespace {
-
-YARP_OS_LOG_COMPONENT(SYSTEMINFO, "yarp.os.SystemInfo")
-
-} // namespace
-
 #if defined(__linux__)
 #    include <arpa/inet.h>
 #    include <ifaddrs.h>
@@ -48,6 +42,13 @@ extern char** environ;
 #    include <sys/sysctl.h>
 #    include <sys/types.h>
 #    include <unistd.h>
+
+namespace {
+
+YARP_OS_LOG_COMPONENT(SYSTEMINFO, "yarp.os.SystemInfo")
+
+} // namespace
+
 #endif
 
 #if defined(_WIN32)
