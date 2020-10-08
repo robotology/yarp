@@ -10,12 +10,19 @@
 #include <yarp/os/SystemInfo.h>
 
 #include <yarp/os/Os.h>
+#include <yarp/os/impl/LogComponent.h>
 
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 
 using namespace yarp::os;
+
+namespace {
+
+YARP_OS_LOG_COMPONENT(SYSTEMINFO, "yarp.os.SystemInfo")
+
+} // namespace
 
 #if defined(__linux__)
 #    include <arpa/inet.h>
@@ -63,6 +70,7 @@ extern char** environ;
 #    include <yarp/os/Semaphore.h>
 
 #    include <vector>
+
 
 static void enableCpuLoadCollector();
 static void disableCpuLoadCollector();
@@ -928,7 +936,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
         //getting length of execute string
         int result = sysctl(mib, 3, nullptr, &argv_len, nullptr, 0);
         if (result != 0) {
-            perror("sysctl");
+            yCError(SYSTEMINFO, "sysctl: %d, %s", errno, strerror(errno));
             return info;
         }
 
@@ -936,7 +944,7 @@ SystemInfo::ProcessInfo SystemInfo::getProcessInfo(int pid)
         proc_argv = (char*)malloc(sizeof(char) * argv_len);
         result = sysctl(mib, 3, proc_argv, &argv_len, nullptr, 0);
         if (result != 0) {
-            perror("sysctl");
+            yCError(SYSTEMINFO, "sysctl: %d, %s", errno, strerror(errno));
             free(proc_argv);
             return info;
         }

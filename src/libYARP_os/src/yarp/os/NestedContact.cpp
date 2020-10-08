@@ -7,8 +7,13 @@
  */
 
 #include <yarp/os/NestedContact.h>
+#include <yarp/os/impl/LogComponent.h>
 
 using namespace yarp::os;
+
+namespace {
+YARP_OS_LOG_COMPONENT(NESTEDCONTACT, "yarp.os.NestedContact" )
+}
 
 class NestedContact::Private
 {
@@ -20,6 +25,15 @@ public:
     std::string nestedName;
     std::string category;
     std::string wireType;
+
+    void dump()
+    {
+        yCTrace(NESTEDCONTACT, "fullName = %s", fullName.c_str());
+        yCTrace(NESTEDCONTACT, "nodeName = %s", nodeName.c_str());
+        yCTrace(NESTEDCONTACT, "nestedName = %s", nestedName.c_str());
+        yCTrace(NESTEDCONTACT, "category = %s", category.c_str());
+        yCTrace(NESTEDCONTACT, "wireType = %s", wireType.c_str());
+    }
 };
 
 bool NestedContact::Private::fromString(const std::string& nFullName)
@@ -141,7 +155,10 @@ NestedContact& NestedContact::operator=(NestedContact&& rhs) noexcept
 
 bool NestedContact::fromString(const std::string& fullName)
 {
-    return mPriv->fromString(fullName);
+    auto ret = mPriv->fromString(fullName);
+    mPriv->dump();
+    return ret;
+
 }
 
 void NestedContact::setTypeName(const std::string& nWireType)

@@ -138,6 +138,9 @@ void SocketTwoWayStream::updateAddresses()
         yCError(SOCKETTWOWAYSTREAM, "Unknown address type");
     }
 #endif
+
+    yCDebug(SOCKETTWOWAYSTREAM, "updateAddresses: local address = %s", localAddress.getHost().c_str());
+    yCDebug(SOCKETTWOWAYSTREAM, "updateAddresses: remote address = %s", remoteAddress.getHost().c_str());
 }
 
 bool SocketTwoWayStream::setTypeOfService(int tos)

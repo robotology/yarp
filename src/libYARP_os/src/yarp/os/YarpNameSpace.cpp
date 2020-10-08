@@ -10,6 +10,7 @@
 
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 
@@ -19,6 +20,10 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 #define HELPER(x) (*((NameClient*)((x)->system_resource)))
+
+namespace {
+YARP_OS_LOG_COMPONENT(YARPNAMESPACE, "yarp.os.YarpNameSpace")
+}
 
 YarpNameSpace::YarpNameSpace(const Contact& contact)
 {
@@ -51,7 +56,10 @@ Contact YarpNameSpace::registerName(const std::string& name)
 Contact YarpNameSpace::registerContact(const Contact& contact)
 {
     NameClient& nic = HELPER(this);
+    yCDebug(YARPNAMESPACE, "Registering contact: %s", contact.toURI().c_str());
     Contact address = nic.registerName(contact.getName(), contact);
+    yCDebug(YARPNAMESPACE, "Registered address: %s", address.toURI().c_str());
+
     if (address.isValid()) {
         NestedContact nc;
         nc.fromString(address.getRegName());
