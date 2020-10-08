@@ -15,11 +15,16 @@
 #include <yarp/os/impl/TcpAcceptor.h>
 #include <yarp/os/impl/PlatformSysWait.h>
 #include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/LogComponent.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #define BACKLOG                1
+
+namespace {
+YARP_OS_LOG_COMPONENT(TCPACCEPTOR_POSIX, "yarp.os.impl.TcpAcceptor.posix")
+}
 
 /**
  * An error handler that reaps the zombies.
@@ -40,17 +45,17 @@ TcpAcceptor::TcpAcceptor() {
 
 int TcpAcceptor::open(const Contact& address) {
 
-//    printf("TCP/IP start in server mode\n");
+    yCDebug(TCPACCEPTOR_POSIX, "TCP/IP start in server mode");
     set_handle(socket(AF_INET, SOCK_STREAM, 0));
     if (get_handle() == -1) {
-        perror("At TcpAcceptor::open there was an error...");
+        yCError(TCPACCEPTOR_POSIX, "At TcpAcceptor::open there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
 
     int yes=1;
     if (setsockopt(get_handle(), SOL_SOCKET, SO_REUSEADDR, &yes,
             sizeof(int)) == -1) {
-        perror("At TcpAcceptor::open there was an error...");
+        yCError(TCPACCEPTOR_POSIX, "At TcpAcceptor::open there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
 
@@ -71,12 +76,12 @@ int TcpAcceptor::shared_open(const Contact& address) {
 
     if (bind(get_handle(), (struct sockaddr *)&servAddr,
             sizeof (struct sockaddr)) == -1) {
-        perror("At bind(sockfd) there was an error...");
+        yCError(TCPACCEPTOR_POSIX, "At bind(sockfd) there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
 
     if (listen(get_handle(), BACKLOG) == -1) {
-        perror("At listen(sockfd) there was an error...");
+        yCError(TCPACCEPTOR_POSIX, "At listen(sockfd) there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
 
@@ -85,7 +90,7 @@ int TcpAcceptor::shared_open(const Contact& address) {
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
     if (sigaction(SIGCHLD, &sa, nullptr) == -1) {
-        perror("At sigaction(address) there was an error...");
+        yCError(TCPACCEPTOR_POSIX, "At sigaction(address) there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
 
@@ -96,7 +101,7 @@ int TcpAcceptor::shared_open(const Contact& address) {
             addrlen == sizeof(sin)) {
         port_number = (int)ntohs(sin.sin_port);
     } else {
-        perror("At getsockname(address) there was an error...");
+        yCError(TCPACCEPTOR_POSIX, "At getsockname(address) there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
 
@@ -113,7 +118,7 @@ int TcpAcceptor::accept(TcpStream &new_stream) {
 
     new_stream.set_handle( ::accept(get_handle(), (struct sockaddr *)&addr, (socklen_t*)len_ptr) );
     if (new_stream.get_handle() < 0) {
-        perror("At accept(sockfd) there was an error...");
+        yCError(TCPACCEPTOR_POSIX, "At accept(sockfd) there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
 

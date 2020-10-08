@@ -215,7 +215,10 @@ Contact NameClient::registerName(const std::string& name, const Contact& suggest
         }
     }
     Bottle reply;
+
+    yCDebug(NAMECLIENT, "Sending command: %s", cmd.toString().c_str());
     send(cmd, reply);
+    yCDebug(NAMECLIENT, "Received reply: %s", reply.toString().c_str());
 
     Contact address = extractAddress(reply);
     if (address.isValid()) {

@@ -574,7 +574,7 @@ bool DgramTwoWayStream::join(const Contact& group, bool sender, const Contact& i
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
     if (setsockopt(s, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
         yCError(DGRAMTWOWAYSTREAM, "could not join the multicast group");
-        perror("sendto");
+        yCError(DGRAMTWOWAYSTREAM, "sendto: %d, %s", errno, strerror(errno));
         happy = false;
         return false;
     }

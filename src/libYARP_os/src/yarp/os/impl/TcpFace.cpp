@@ -58,6 +58,8 @@ bool TcpFace::open(const Contact& address)
                                 peerAcceptor.get_port_number());
     }
 #endif
+    yCDebug(TCPFACE, "Opened at address %s", this->address.toURI().c_str());
+
     return result != -1;
 }
 

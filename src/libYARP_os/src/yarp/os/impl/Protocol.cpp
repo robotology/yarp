@@ -53,6 +53,7 @@ Protocol::Protocol(TwoWayStream* stream) :
     shift.takeStream(stream);
 
     reader.setProtocol(this);
+    yCDebug(PROTOCOL, "Remote contact = %s", reader.getRemoteContact().toURI().c_str());
 }
 
 

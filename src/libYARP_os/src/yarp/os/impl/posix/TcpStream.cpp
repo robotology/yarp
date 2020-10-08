@@ -16,8 +16,13 @@
 #include <cstdio>
 
 #include <yarp/os/impl/TcpStream.h>
+#include <yarp/os/impl/LogComponent.h>
 
 using namespace yarp::os::impl;
+
+namespace {
+YARP_OS_LOG_COMPONENT(TCPSTREAM_POSIX, "yarp.os.impl.TcpStream.posix")
+}
 
 /* **************************************************************************************
  * Implementation of TcpStream
@@ -32,7 +37,7 @@ TcpStream::~TcpStream() = default;
 int TcpStream::open() {
     set_handle(socket(AF_INET, SOCK_STREAM, 0));
     if (get_handle() == -1) {
-        perror("At TcpStream::open there was an error...");
+        yCError(TCPSTREAM_POSIX, "At TcpStream::open there was an error: %d, %s", errno, strerror(errno));
         return -1;
     }
     return 0;
