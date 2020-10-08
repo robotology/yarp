@@ -235,7 +235,7 @@ std::string Contact::getHost() const
 
 void Contact::setHost(const std::string& hostname)
 {
-    mPriv->setHostname(hostname);
+    this->mPriv->hostname = hostname;
 }
 
 
