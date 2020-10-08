@@ -62,7 +62,14 @@ class InputPortProcessor :
     bool                   m_contains_data;
 
 public:
-    InputPortProcessor(const InputPortProcessor& alt) {m_lastScan = alt.m_lastScan; m_lastStamp = alt.m_lastStamp; m_contains_data = alt.m_contains_data; }
+    InputPortProcessor(const InputPortProcessor& alt) :
+            yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::LaserScan>(),
+            m_lastScan(alt.m_lastScan),
+            m_lastStamp(alt.m_lastStamp),
+            m_contains_data(alt.m_contains_data)
+    {
+    }
+
     InputPortProcessor();
     using yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::LaserScan>::onRead;
     virtual void onRead(yarp::rosmsg::sensor_msgs::LaserScan& v) override;

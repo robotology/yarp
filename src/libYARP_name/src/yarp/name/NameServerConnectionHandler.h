@@ -33,43 +33,54 @@ namespace yarp {
 
 
 /**
- *
  * Manage a single connection to the name server.
- *
  */
-class yarp::name::NameServerConnectionHandler : public yarp::os::PortReader {
+class yarp::name::NameServerConnectionHandler :
+        public yarp::os::PortReader
+{
 private:
     NameService *service;
 public:
-    NameServerConnectionHandler(NameService *service) {
+    NameServerConnectionHandler(NameService *service)
+    {
         this->service = service;
     }
 
-    bool read(yarp::os::ConnectionReader& reader) override {
-        return apply(reader,0/*NULL*/);
+    bool read(yarp::os::ConnectionReader& reader) override
+    {
+        return apply(reader, nullptr);
     }
 
     virtual bool apply(yarp::os::ConnectionReader& reader,
                        yarp::os::ConnectionWriter *writer,
-                       bool lock = true) {
-        yarp::os::Bottle cmd, reply, event;
+                       bool lock = true)
+    {
+        yarp::os::Bottle cmd;
+        yarp::os::Bottle reply;
+        yarp::os::Bottle event;
         bool ok = cmd.read(reader);
-        if (!ok) return false;
+        if (!ok) {
+            return false;
+        }
         yarp::os::Contact remote;
         remote = reader.getRemoteContact();
-        if (lock) service->lock();
+        if (lock) {
+            service->lock();
+        }
         service->apply(cmd,reply,event,remote);
         for (size_t i=0; i<event.size(); i++) {
             yarp::os::Bottle *e = event.get(i).asList();
-            if (e!=0/*NULL*/) {
+            if (e != nullptr) {
                 service->onEvent(*e);
             }
         }
-        if (lock) service->unlock();
-        if (writer==0/*NULL*/) {
+        if (lock) {
+            service->unlock();
+        }
+        if (writer == nullptr) {
             writer = reader.getWriter();
         }
-        if (writer!=0/*NULL*/) {
+        if (writer != nullptr) {
             //printf("sending reply %s\n", reply.toString().c_str());
             if (reply.get(0).toString()=="old") {
                 // support old name server messages
@@ -81,11 +92,11 @@ public:
                         std::string si = v.asList()->toString();
                         si.erase(std::remove(si.begin(), si.end(), '\"'), si.end());
                         if (si.length()>0) {
-                            writer->appendText(si.c_str());
+                            writer->appendText(si);
                         }
                     } else {
                         if (v.isString()) {
-                            writer->appendText(v.asString().c_str());
+                            writer->appendText(v.asString());
                         } else {
                             yarp::os::Bottle b;
                             b.add(v);

@@ -45,10 +45,10 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
     {
         Contact c("/foo");
         CHECK_FALSE(c.isValid()); // not a valid Contact
-        CHECK(c.getHost() == ""); // hostname not set
+        CHECK(c.getHost().empty()); // hostname not set
         CHECK(c.getPort() == -1); // port number not set
         CHECK_FALSE(c.hasTimeout()); // timeout not set
-        CHECK(c.getCarrier() == ""); // carrier not set
+        CHECK(c.getCarrier().empty()); // carrier not set
         CHECK(c.getRegName() == "/foo"); // reg name set
         CHECK(c.getName() == "/foo"); // port name set
     }
@@ -57,7 +57,7 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
     {
         Contact c("/foo", "ziggy");
         CHECK_FALSE(c.isValid()); // not a valid Contact
-        CHECK(c.getHost() == ""); // hostname not set
+        CHECK(c.getHost().empty()); // hostname not set
         CHECK(c.getPort() == -1); // port number not set
         CHECK_FALSE(c.hasTimeout()); // timeout not set
         CHECK(c.getCarrier() == "ziggy"); // carrier set
@@ -96,8 +96,8 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
         CHECK(c.getHost() == "www.robotology.yarp"); //  hostname set
         CHECK(c.getPort() == 8080); // port number set
         CHECK_FALSE(c.hasTimeout()); // timeout not set
-        CHECK(c.getCarrier() == ""); // carrier not set
-        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getCarrier().empty()); // carrier not set
+        CHECK(c.getRegName().empty()); // reg name not set
         CHECK(c.getName() == "/www.robotology.yarp:8080"); // port name generated
     }
 
@@ -108,8 +108,8 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
         CHECK(c.getHost() == "www.robotology.yarp"); // hostname set
         CHECK(c.getPort() == 0); // port number set
         CHECK_FALSE(c.hasTimeout()); // timeout not set
-        CHECK(c.getCarrier() == ""); //  carrier not set
-        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getCarrier().empty()); //  carrier not set
+        CHECK(c.getRegName().empty()); // reg name not set
         CHECK(c.getName() == "/www.robotology.yarp:0"); // port name generated
     }
 
@@ -121,7 +121,7 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
         CHECK(c.getPort() == 8080); //  port number set
         CHECK_FALSE(c.hasTimeout()); //  timeout not set
         CHECK(c.getCarrier() == "ziggy"); // carrier set
-        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getRegName().empty()); // reg name not set
         CHECK(c.getName() == "/www.robotology.yarp:8080"); //  "port name generated");
     }
 
@@ -133,7 +133,7 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
         CHECK(c.getPort() == 0); // port number set
         CHECK_FALSE(c.hasTimeout()); // timeout not set
         CHECK(c.getCarrier() == "ziggy"); // carrier set
-        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getRegName().empty()); // reg name not set
         CHECK(c.getName() == "/www.robotology.yarp:0"); // port name generated
     }
 
@@ -154,8 +154,8 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
         CHECK(c1.getHost() == "www.robotology.yarp"); // hostname set
         CHECK(c1.getPort() == 8080); // port number set
         CHECK_FALSE(c1.hasTimeout()); // timeout not set
-        CHECK(c1.getCarrier() == ""); // carrier not set
-        CHECK(c1.getRegName() == ""); // reg name not set
+        CHECK(c1.getCarrier().empty()); // carrier not set
+        CHECK(c1.getRegName().empty()); // reg name not set
         CHECK(c1.getName() == "/www.robotology.yarp:8080"); // port name generated
     }
 
@@ -167,8 +167,8 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
         CHECK(c2.getHost() == "www.robotology.yarp"); // hostname set
         CHECK(c2.getPort() == 8080); // port number set
         CHECK_FALSE(c2.hasTimeout()); // timeout not set
-        CHECK(c2.getCarrier() == ""); // carrier not set
-        CHECK(c2.getRegName() == ""); // reg name not set
+        CHECK(c2.getCarrier().empty()); // carrier not set
+        CHECK(c2.getRegName().empty()); // reg name not set
         CHECK(c2.getName() == "/www.robotology.yarp:8080"); // port name generated
     }
 
@@ -180,8 +180,8 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
         CHECK(c2.getHost() == "www.robotology.yarp"); // hostname set
         CHECK(c2.getPort() == 8080); // port number set
         CHECK_FALSE(c2.hasTimeout()); // timeout not set
-        CHECK(c2.getCarrier() == ""); // carrier not set
-        CHECK(c2.getRegName() == ""); // reg name not set
+        CHECK(c2.getCarrier().empty()); // carrier not set
+        CHECK(c2.getRegName().empty()); // reg name not set
         CHECK(c2.getName() == "/www.robotology.yarp:8080"); // port name generated
     }
 
@@ -193,8 +193,8 @@ TEST_CASE("os::ContactTest", "[yarp::os]")
         CHECK(c.getHost() == "www.robotology.yarp"); // hostname set
         CHECK(c.getPort() == 8080); // port number set
         CHECK_FALSE(c.hasTimeout()); // timeout not set
-        CHECK(c.getCarrier() == ""); // carrier not set
-        CHECK(c.getRegName() == ""); // reg name not set
+        CHECK(c.getCarrier().empty()); // carrier not set
+        CHECK(c.getRegName().empty()); // reg name not set
         CHECK(c.getName() == "/www.robotology.yarp:8080"); // port name generated
     }
 

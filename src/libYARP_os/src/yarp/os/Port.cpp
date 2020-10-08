@@ -43,7 +43,7 @@ void* Port::needImplementation() const
 }
 
 // implementation is a PortCoreAdapter
-#define IMPL() (*(static_cast<yarp::os::impl::PortCoreAdapter*>(needImplementation())))
+#define IMPL() (*reinterpret_cast<yarp::os::impl::PortCoreAdapter*>(needImplementation()))
 
 Port::Port() :
         implementation(nullptr),

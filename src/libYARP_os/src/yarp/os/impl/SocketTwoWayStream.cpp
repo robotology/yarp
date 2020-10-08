@@ -58,8 +58,8 @@ int SocketTwoWayStream::open(const Contact& address)
     if (address.hasTimeout()) {
         YARP_timeval timeout;
         /* set timeout seconds and microseconds */
-        timeout.tv_sec = (int)address.getTimeout();
-        timeout.tv_usec = (address.getTimeout() - (int)address.getTimeout()) * 1000000;
+        timeout.tv_sec = static_cast<int>(address.getTimeout());
+        timeout.tv_usec = (address.getTimeout() - timeout.tv_sec) * 1000000;
         result = connector.connect(stream, address, &timeout);
     } else {
         result = connector.connect(stream, address, nullptr);
@@ -70,9 +70,9 @@ int SocketTwoWayStream::open(const Contact& address)
     if (result >= 0) {
         happy = true;
     } else {
-        yCDebug(SOCKETTWOWAYSTREAM, "TCP connection to tcp://%s:%d failed to open",
-                   host.c_str(),
-                   address.getPort());
+        yCDebug(SOCKETTWOWAYSTREAM,
+                "TCP connection to tcp:/%s failed to open",
+                address.toURI(false).c_str());
     }
     updateAddresses();
     return result;
@@ -88,6 +88,7 @@ int SocketTwoWayStream::open(yarp::os::impl::TcpAcceptor& acceptor)
     return result;
 }
 
+
 void SocketTwoWayStream::updateAddresses()
 {
     int one = 1;
@@ -97,6 +98,7 @@ void SocketTwoWayStream::updateAddresses()
     ACE_INET_Addr remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
+
     char localHostAddress[256];
     char remoteHostAddress[256];
     local.get_host_addr(localHostAddress, 256);
@@ -146,13 +148,13 @@ void SocketTwoWayStream::updateAddresses()
 bool SocketTwoWayStream::setTypeOfService(int tos)
 {
     yCDebug(SOCKETTWOWAYSTREAM, "Setting tos = %d", tos);
-    return (stream.set_option(IPPROTO_IP, IP_TOS, (int*)&tos, (int)sizeof(tos)) == 0);
+    return (stream.set_option(IPPROTO_IP, IP_TOS, &tos, static_cast<int>(sizeof(tos))) == 0);
 }
 
 int SocketTwoWayStream::getTypeOfService()
 {
     int tos = -1;
     int optlen;
-    stream.get_option(IPPROTO_IP, IP_TOS, (int*)&tos, &optlen);
+    stream.get_option(IPPROTO_IP, IP_TOS, &tos, &optlen);
     return tos;
 }

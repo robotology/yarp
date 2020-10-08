@@ -513,53 +513,53 @@ YARP_WARNING_POP
 private:
     // main internal PortCore state and operations
     std::vector<PortCoreUnit *> m_units;  ///< list of connections
-    yarp::os::Semaphore m_stateSemaphore;       ///< control access to essential port state
+    yarp::os::Semaphore m_stateSemaphore {1};       ///< control access to essential port state
     std::mutex m_packetMutex;      ///< control access to message cache
-    yarp::os::Semaphore m_connectionChangeSemaphore; ///< signal changes in connections
-    Face *m_face;  ///< network server
+    yarp::os::Semaphore m_connectionChangeSemaphore {1}; ///< signal changes in connections
+    Face* m_face {nullptr};  ///< network server
     std::string m_name; ///< name of port
     yarp::os::Contact m_address;    ///< network address of port
-    yarp::os::PortReader *m_reader; ///< where to send read events
-    yarp::os::PortReader *m_adminReader; ///< where to send admin read events
-    yarp::os::PortReaderCreator *m_readableCreator; ///< factory for readers
-    yarp::os::PortReport *m_eventReporter; ///< where to send general events
-    bool m_listening; ///< is the port server listening on the network?
-    bool m_running;   ///< is the port server thread running?
-    bool m_starting;  ///< is the port in its startup phase?
-    bool m_closing;   ///< is the port in its closing phase?
-    bool m_finished;  ///< is the port server thread finished running?
-    bool m_finishing; ///< is the port server thread trying to finish?
-    bool m_waitBeforeSend; ///< should we wait for all current writes to complete before writing more?
-    bool m_waitAfterSend;  ///< should we wait for writes to complete immediately after we start them?
-    bool m_controlRegistration;  ///< should the port unregister its name when shutting down?
-    bool m_interruptable;  ///< is the port in an interruptible state?
-    bool m_interrupted;    ///< is the port interrupted?
-    bool m_manual;    ///< is the port operating without a server?
-    int m_events;     ///< count of events that have occurred on the port
-    int m_connectionListeners;  ///< how many threads need notification of connection changes
-    int m_inputCount; ///< how many input connections do we have
-    int m_outputCount;///< how many output connections do we have
-    int m_dataOutputCount; ///< how many regular data output connections do we have
-    unsigned int m_flags;      ///< binary flags encoding restrictions on port
-    bool m_logNeeded; ///< port needs to monitor message content
-    PortCorePackets m_packets; ///< a pool for tracking messages currently being sent
+    yarp::os::PortReader *m_reader {nullptr}; ///< where to send read events
+    yarp::os::PortReader *m_adminReader {nullptr}; ///< where to send admin read events
+    yarp::os::PortReaderCreator *m_readableCreator {nullptr}; ///< factory for readers
+    yarp::os::PortReport *m_eventReporter {nullptr}; ///< where to send general events
+    bool m_listening {false}; ///< is the port server listening on the network?
+    bool m_running {false};   ///< is the port server thread running?
+    bool m_starting {false};  ///< is the port in its startup phase?
+    bool m_closing {false};   ///< is the port in its closing phase?
+    bool m_finished {false};  ///< is the port server thread finished running?
+    bool m_finishing {false}; ///< is the port server thread trying to finish?
+    bool m_waitBeforeSend {true}; ///< should we wait for all current writes to complete before writing more?
+    bool m_waitAfterSend {true};  ///< should we wait for writes to complete immediately after we start them?
+    bool m_controlRegistration {true};  ///< should the port unregister its name when shutting down?
+    bool m_interruptable {true};  ///< is the port in an interruptible state?
+    bool m_interrupted {false};    ///< is the port interrupted?
+    bool m_manual {false};    ///< is the port operating without a server?
+    int m_events {0};     ///< count of events that have occurred on the port
+    int m_connectionListeners {0};  ///< how many threads need notification of connection changes
+    int m_inputCount {0}; ///< how many input connections do we have
+    int m_outputCount {0};///< how many output connections do we have
+    int m_dataOutputCount {0}; ///< how many regular data output connections do we have
+    unsigned int m_flags {PORTCORE_IS_INPUT | PORTCORE_IS_OUTPUT}; ///< binary flags encoding restrictions on port
+    bool m_logNeeded {false}; ///< port needs to monitor message content
+    PortCorePackets m_packets {}; ///< a pool for tracking messages currently being sent
     std::string m_envelope;///< user-defined wrapping data
-    float m_timeout;  ///< a timeout to apply to all network operations
-    int m_counter;    ///< port-unique ids for connections
-    yarp::os::Property *m_prop;  ///< optional unstructured properties associated with port
-    yarp::os::Contactable *m_contactable;  ///< user-facing object that contains this PortCore
-    std::mutex* m_mutex;        ///< callback optional access control lock
+    float m_timeout {-1};  ///< a timeout to apply to all network operations
+    int m_counter {1};    ///< port-unique ids for connections
+    yarp::os::Property *m_prop {nullptr};  ///< optional unstructured properties associated with port
+    yarp::os::Contactable *m_contactable {nullptr}; ///< user-facing object that contains this PortCore
+    std::mutex* m_mutex {nullptr}; ///< callback optional access control lock
 #ifndef YARP_NO_DEPRECATED // since YARP 3.3
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
-    yarp::os::Mutex* m_old_mutex;
+    yarp::os::Mutex* m_old_mutex {nullptr};
 YARP_WARNING_POP
 #endif // YARP_NO_DEPRECATED
-    bool m_mutexOwned;        ///< do we own the optional callback lock
-    BufferedConnectionWriter m_envelopeWriter; ///< storage area for envelope, if present
+    bool m_mutexOwned {false}; ///< do we own the optional callback lock
+    BufferedConnectionWriter m_envelopeWriter {true}; ///< storage area for envelope, if present
 
     std::mutex m_typeMutex; ///< control access to type
-    bool m_checkedType;
+    bool m_checkedType {false};
     Type m_type;
 
     // port data modifier
