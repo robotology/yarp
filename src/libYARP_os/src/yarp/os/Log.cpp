@@ -281,6 +281,51 @@ inline const char* logTypeToBgColor(yarp::os::Log::LogType t)
     }
 }
 
+inline const char* compNameToColor(const char* comp_name)
+{
+    if (!comp_name || comp_name[0] == '\0' || !yarp::os::impl::LogPrivate::colored_output.load()) {
+        return "";
+    }
+
+    // Hashing the component for every log line is probably not optimal, but in
+    // using a hash table will have the hash + a search, and since the
+    // LogCallback has only the name of the component, we cannot store the color
+    // in the LogComponent without breaking the API, therefore this is the less
+    // invasive option.
+    // Anyway, this is enabled only when YARP_COLORED_OUTPUT is set, therefore
+    // it can be easily disabled if this slows down the execution.
+    static std::hash<std::string> hsh; // FIXME C++17: Use string_view
+    std::size_t comp_hash = hsh(comp_name) % 12;
+    switch (comp_hash) {
+    case 0:
+        return RED;
+    case 1:
+        return BOLD_RED;
+    case 2:
+        return GREEN;
+    case 3:
+        return BOLD_GREEN;
+    case 4:
+        return YELLOW;
+    case 5:
+        return BOLD_YELLOW;
+    case 6:
+        return BLUE;
+    case 7:
+        return BOLD_BLUE;
+    case 8:
+        return MAGENTA;
+    case 9:
+        return BOLD_MAGENTA;
+    case 10:
+        return CYAN;
+    case 11:
+        return BOLD_CYAN;
+    default:
+        return "";
+    }
+}
+
 std::string backtrace()
 {
 #ifdef YARP_HAS_ACE
@@ -398,25 +443,26 @@ inline void printable_output(std::ostream* ost,
 #endif
 
     const char* level_string = logTypeToString(t);
-    const char* color = logTypeToColor(t);
-    const char* bgcolor = logTypeToBgColor(t);
+    const char* level_color = logTypeToColor(t);
+    const char* level_bgcolor = logTypeToBgColor(t);
     static const char *reserved_color = logTypeToColor(yarp::os::Log::LogTypeReserved);
+    const char* comp_color = compNameToColor(comp_name);
 
     // Print Level
     if (yarp::os::impl::LogPrivate::colored_output.load() && yarp::os::impl::LogPrivate::compact_output.load()) {
-        *ost << color << bgcolor << level_char << CLEAR << " ";
+        *ost << level_color << level_bgcolor << level_char << CLEAR << " ";
     } else {
-        *ost << "[" << color << bgcolor << level_string << CLEAR << "] ";
+        *ost << "[" << level_color << level_bgcolor << level_string << CLEAR << "] ";
     }
 
     // Print function information (trace only)
     if (t == yarp::os::Log::TraceType) {
-        *ost << color << func << CLEAR << ((msg[0] || comp_name) ? ": " : "");
+        *ost << level_color << func << CLEAR << ((msg[0] || comp_name) ? ": " : "");
     }
 
     // Print component
     if (comp_name) {
-        *ost << "|" << comp_name << "| ";
+        *ost << "|" << comp_color << comp_name << CLEAR << "| ";
     }
 
     // Finally print the message
@@ -443,9 +489,10 @@ inline void printable_output_verbose(std::ostream* ost,
     YARP_UNUSED(systemtime);
 
     const char* level_string = logTypeToString(t);
-    const char *color = logTypeToColor(t);
-    const char *bgcolor = logTypeToBgColor(t);
+    const char *level_color = logTypeToColor(t);
+    const char *level_bgcolor = logTypeToBgColor(t);
     static const char *reserved_color = logTypeToColor(yarp::os::Log::LogTypeReserved);
+    const char* comp_color = compNameToColor(comp_name);
 
     // Print external time
     if (externaltime != 0.0) {
@@ -457,17 +504,17 @@ inline void printable_output_verbose(std::ostream* ost,
     }
 
     // Print level
-    *ost << "[" << color << bgcolor << level_string << CLEAR << "] ";
+    *ost << "[" << level_color << level_bgcolor << level_string << CLEAR << "] ";
 
     // Print file, line and function
-    *ost << file << ":" << line << " " << color << bgcolor << func << CLEAR << " ";
+    *ost << file << ":" << line << " " << level_color << level_bgcolor << func << CLEAR << " ";
 
     // Print thread id
     *ost << "(0x" << std::setfill('0') << std::setw(8) << yarp::os::NetType::toHexString(yarp::os::impl::ThreadImpl::getKeyOfCaller()) << ") ";
 
     // Print component
     if (comp_name) {
-        *ost << "|" << comp_name << "| ";
+        *ost << "|" << comp_color << comp_name << CLEAR << "| ";
     }
 
     // Finally print the message
