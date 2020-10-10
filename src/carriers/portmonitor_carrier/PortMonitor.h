@@ -27,7 +27,8 @@ class PortMonitor;
  * Manager for arbitration-aware inputs to a given port.
  */
 class PortMonitorGroup :
-        public yarp::os::PeerRecord<PortMonitor> {
+        public yarp::os::PeerRecord<PortMonitor>
+{
 public:
     virtual ~PortMonitorGroup() {}
     virtual bool acceptIncomingData(PortMonitor *source);
@@ -53,30 +54,32 @@ class PortMonitor :
 {
 
 public:
-    PortMonitor()
-    {
-        bReady = false;
-        binder = NULL;
-        group = NULL;
-        localReader = NULL;
-    }
+    PortMonitor() = default;
+    PortMonitor(const PortMonitor&) = delete;
+    PortMonitor(PortMonitor&&) = delete;
+    PortMonitor& operator=(const PortMonitor&) = delete;
+    PortMonitor& operator=(PortMonitor&&) = delete;
 
-    virtual ~PortMonitor() {
-        if (portName!="") {
+    ~PortMonitor() override
+    {
+        if (!portName.empty()) {
             getPeers().remove(portName,this);
         }
-        if (binder) delete binder;
+        delete binder;
     }
 
-    Carrier *create() const override {
+    Carrier *create() const override
+    {
         return new PortMonitor();
     }
 
-    std::string getName() const override {
+    std::string getName() const override
+    {
         return "portmonitor";
     }
 
-    std::string toString() const override {
+    std::string toString() const override
+    {
         return "portmonitor_carrier";
     }
 
@@ -102,9 +105,11 @@ public:
     void lock() const { mutex.lock(); }
     void unlock() const { mutex.unlock(); }
 
-    MonitorBinding* getBinder() {
-        if(!bReady)
-            return NULL;
+    MonitorBinding* getBinder()
+    {
+        if(!bReady) {
+            return nullptr;
+        }
         return binder;
     }
 
@@ -118,12 +123,12 @@ private:
 
 
 private:
-    bool bReady;
+    bool bReady {false};
     yarp::os::DummyConnector con;
-    yarp::os::ConnectionReader* localReader;
+    yarp::os::ConnectionReader* localReader {nullptr};
     yarp::os::Things thing;
-    MonitorBinding* binder;
-    PortMonitorGroup *group;
+    MonitorBinding* binder {nullptr};
+    PortMonitorGroup *group {nullptr};
     mutable std::mutex mutex;
 };
 

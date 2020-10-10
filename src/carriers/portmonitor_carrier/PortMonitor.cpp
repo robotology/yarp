@@ -32,7 +32,9 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     portName = proto.getRoute().getToName();
     sourceName = proto.getRoute().getFromName();
     group = getPeers().add(portName,this);
-    if (!group) return false;
+    if (!group) {
+        return false;
+    }
 
     Property options;
     options.fromString(proto.getSenderSpecifier());
@@ -46,8 +48,9 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
     return configureFromProperty(options);
 }
 
-bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
-    if(binder) delete binder;
+bool PortMonitor::configureFromProperty(yarp::os::Property& options)
+{
+    delete binder;
     binder = nullptr;
 
     std::string script = options.check("type", Value("lua")).asString();
@@ -71,11 +74,12 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
     if(script != "dll")
     {
         yarp::os::ResourceFinder rf;
-        rf.setDefaultContext(context.c_str());
+        rf.setDefaultContext(context);
         rf.configure(0, nullptr);
         strFile = rf.findFile(filename);
-        if(strFile == "")
+        if(strFile.empty()) {
             strFile = rf.findFile(filename+".lua");
+        }
     }
 
     // provide some useful information for the monitor object
@@ -98,7 +102,9 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options) {
 
 void PortMonitor::setCarrierParams(const yarp::os::Property& params)
 {
-    if(!bReady) return;
+    if(!bReady) {
+        return;
+    }
     PortMonitor::lock();
     binder->setParams(params);
     PortMonitor::unlock();
@@ -106,7 +112,9 @@ void PortMonitor::setCarrierParams(const yarp::os::Property& params)
 
 void PortMonitor::getCarrierParams(yarp::os::Property& params) const
 {
-    if(!bReady) return;
+    if(!bReady) {
+        return;
+    }
     PortMonitor::lock();
     binder->getParams(params);
     PortMonitor::unlock();
@@ -115,7 +123,9 @@ void PortMonitor::getCarrierParams(yarp::os::Property& params) const
 
 yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::ConnectionReader& reader)
 {
-    if(!bReady) return reader;
+    if(!bReady) {
+        return reader;
+    }
 
     // When we are here,
     // the incoming data should be accessed using localReader.
@@ -141,7 +151,9 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
 
 bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
 {
-    if(!bReady) return false;
+    if(!bReady) {
+        return false;
+    }
 
     bool result = false;
     localReader = &reader;
@@ -154,8 +166,9 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         thing.setConnectionReader(reader);
         result = binder->acceptData(thing);
         PortMonitor::unlock();
-        if(!result)
+        if(!result) {
             return false;
+        }
 
         // When data is read here using the reader passed to this functions,
         // then it won't be available for modifyIncomingData(). Thus, we write
@@ -165,8 +178,9 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         // either the original or modified data.
         if(thing.hasBeenRead()) {
             con.reset();
-            if(thing.write(con.getWriter()))
+            if(thing.write(con.getWriter())) {
                 localReader = &con.getReader();
+            }
         }
     }
 
@@ -181,11 +195,14 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
 
 const yarp::os::PortWriter& PortMonitor::modifyOutgoingData(const yarp::os::PortWriter& writer)
 {
-    if(!bReady) return writer;
+    if(!bReady) {
+        return writer;
+    }
 
     // If no update callback avoid calling it
-    if(!binder->hasUpdate())
+    if(!binder->hasUpdate()) {
         return writer;
+    }
 
     PortMonitor::lock();
     thing.reset();
@@ -197,11 +214,14 @@ const yarp::os::PortWriter& PortMonitor::modifyOutgoingData(const yarp::os::Port
 
 bool PortMonitor::acceptOutgoingData(const yarp::os::PortWriter& writer)
 {
-    if(!bReady) return false;
+    if(!bReady) {
+        return false;
+    }
 
     // If no accept callback avoid calling it
-    if(!binder->hasAccept())
+    if(!binder->hasAccept()) {
         return true;
+    }
 
     PortMonitor::lock();
     yarp::os::Things thing;
@@ -211,13 +231,16 @@ bool PortMonitor::acceptOutgoingData(const yarp::os::PortWriter& writer)
     return result;
 }
 
-yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader) {
-
-    if(!bReady) return reader;
+yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader)
+{
+    if(!bReady) {
+        return reader;
+    }
 
     // If no updateReply callback avoid calling it
-    if(!binder->hasUpdateReply())
+    if(!binder->hasUpdateReply()) {
         return reader;
+    }
 
     PortMonitor::lock();
     thing.reset();
@@ -234,7 +257,8 @@ yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader) {
 ElectionOf<PortMonitorGroup> *PortMonitor::peers = nullptr;
 
 // Make a singleton manager for finding peer carriers.
-ElectionOf<PortMonitorGroup>& PortMonitor::getPeers() {
+ElectionOf<PortMonitorGroup>& PortMonitor::getPeers()
+{
     NetworkBase::lock();
     if (peers==nullptr) {
         peers = new ElectionOf<PortMonitorGroup>;
@@ -258,8 +282,9 @@ bool PortMonitorGroup::acceptIncomingData(PortMonitor *source)
             peer->lock();
             // TODO: check whether we should return false if
             //       the peer monitor object is not ready!
-            if(peer->getBinder())
+            if(peer->getBinder()) {
                 peer->getBinder()->peerTrigged();
+            }
             peer->unlock();
         }
     }
