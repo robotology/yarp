@@ -3,33 +3,32 @@ Logging with YARP {#yarp_logging}
 
 [TOC]
 
-YARP has an internal mechanism to help you debugging your distributed
-application.
+YARP has an internal mechanism to help you debug your distributed application.
 
 While you can simply use `printf` or `std::cout` methods to debug your
 application locally, if you use the functionalities offered, YARP will collect
 and show several additional information, including system and network time,
-file, line, thread id, ecc, and eventually forward them to
+file, line, thread id, etc., and eventually forward them to
 [yarplogger](@ref yarplogger).
 
 YARP is also able to detect if it is running on a console or inside
 [yarprun](@ref yarprun) and if the application output is forwarded to
-[yarplogger](@ref yarplogger) (using the `--log` option), and change it's
-output accordingly, so that the extra information are forwarded properly.
+[yarplogger](@ref yarplogger) (using the `--log` option), and change its
+output accordingly, so that the extra information is forwarded properly.
 
 
 ## Log Levels
 
 YARP defines 6 levels for log.
 
-| Level       | Value | Stream   | Notes                                                         |
-|:-----------:|:-----:|----------|---------------------------------------------------------------|
-| `[TRACE]`   | 1     | `stdout` | Generates no binary code in release mode.                     |
-| `[DEBUG]`   | 2     | `stdout` | Generates no binary code if `YARP_NO_DEBUG_OUTPUT` is defined |
-| `[INFO]`    | 3     | `stdout` |                                                               |
-| `[WARNING]` | 4     | `stderr` |                                                               |
-| `[ERROR]`   | 5     | `stderr` |                                                               |
-| `[FATAL]`   | 6     | `stderr` | Aborts the execution and prints a backtrace                   |
+| Level       | Value | Stream   | Notes                                                          |
+|:-----------:|:-----:|----------|----------------------------------------------------------------|
+| `[TRACE]`   | 1     | `stdout` | Generates no binary code in release mode.                      |
+| `[DEBUG]`   | 2     | `stdout` | Generates no binary code if `YARP_NO_DEBUG_OUTPUT` is defined. |
+| `[INFO]`    | 3     | `stdout` |                                                                |
+| `[WARNING]` | 4     | `stderr` |                                                                |
+| `[ERROR]`   | 5     | `stderr` |                                                                |
+| `[FATAL]`   | 6     | `stderr` | Aborts the execution and prints a backtrace.                   |
 
 For each these levels, YARP offers logging functions.
 
@@ -52,7 +51,8 @@ use the default logging settings.
 
 The `yDebug(const char* msg, ...)` macro family is defined in the
 `<yarp/os/Log.h>` header.
-These macro and work in similar way to the C `printf()` function.
+
+These macros work in a similar way to the C `printf()` function.
 For example:
 
 ```{.cpp}
@@ -71,9 +71,10 @@ it.
 
 ### Stream Macros
 
-The `yDebug()` macro family is defined in the `<yarp/os/LogStream.h>` header.
-These macros work in similar way to C++ `std::cout`.
-For example:
+In order to use the `yDebug()` macro family, you need to include the
+`<yarp/os/LogStream.h>` header.
+
+These macros work in a similar way to C++ `std::cout`. For example:
 
 ```{.cpp}
 int g = 42;
@@ -86,7 +87,7 @@ will print
 [DEBUG] The value of g is 42
 ```
 
-Note that there is no need to add a white space between the fields, since these
+Note that there is no need to add a whitespace between the fields since these
 are added automatically. Also YARP will automatically add a `\n` at the end of
 the stream.
 
@@ -94,7 +95,7 @@ the stream.
 ## Components
 
 The output of YARP applications tends to be very messy, especially when using
-using multiple threads, or several devices at the same time.
+multiple threads, or several devices at the same time.
 
 Therefore YARP allows to define *Log Components* that can be used to filter the
 output and follow the execution flow.
@@ -112,16 +113,16 @@ output and follow the execution flow.
 ### Defining a Logging Component
 
 In order to define a log component, the `YARP_LOG_COMPONENT` macro (defined in
-`<yarp/os/LogComponent.h>`)should be used in a `.cpp` file. For example
+`<yarp/os/LogComponent.h>`) should be used in a `.cpp` file. For example:
 
 ```{.cpp}
 YARP_LOG_COMPONENT(FOO, "foo.bar")
 ```
 
-will define a logging component FOO that will be printed as `foo.bar`. In order
-to use the component in that file there is no need to do anything else.
+will define a logging component `FOO` that will be printed as `foo.bar`. In
+order to use the component in that file, there is no need to do anything else.
 If you need to use it in more than one file, you need to forward declare it
-somewhere else (in a `.h` file):
+somewhere else (e.g. in a `.h` file):
 
 ```{.cpp}
 YARP_DECLARE_LOG_COMPONENT(FOO)
@@ -129,14 +130,15 @@ YARP_DECLARE_LOG_COMPONENT(FOO)
 
 ### C-Style Macros
 
-The `yDebug(const yarp::os::Logcomponent& comp, const char* msg, ...)` macro
+The `yCDebug(const yarp::os::Logcomponent& comp, const char* msg, ...)` macro
 family is defined in the `<yarp/os/LogComponent.h>` header.
-These macros work in similar way to the C `printf()` function.
+
+These macros work in a similar way to the C `printf()` function.
 For example (assuming that the `FOO` component is defined as shown before):
 
 ```{.cpp}
 int g = 42;
-yDebug(FOO, "The value of g is %d", g);
+yCDebug(FOO, "The value of g is %d", g);
 ```
 
 will print
@@ -151,15 +153,15 @@ string.
 
 ### Stream Macros
 
-The `yCDebug(const yarp::os::Logcomponent& comp)` macro family is defined in
-the `<yarp/os/LogComponent.h>` header.
+In order to use the `yCDebug(const yarp::os::Logcomponent& comp)` macro family,
+you need to include the `<yarp/os/LogStream.h>` header.
 
-These macros work in similar way to C++ `std::cout`.
+These macros work in a similar way to C++ `std::cout`.
 For example (assuming that the `FOO` component is defined as shown before):
 
 ```{.cpp}
 int g = 42;
-yDebug(FOO) << "The value of g is" << g;
+yCDebug(FOO) << "The value of g is" << g;
 ```
 
 will print
@@ -168,8 +170,8 @@ will print
 [DEBUG] |foo.bar| The value of g is 42
 ```
 
-Like for the `yDebug` family, there is no need to add a white space between the
-fields, or `\n` at the end of the stream.
+Like for the `yDebug` family, there is no need to add a whitespace between the
+fields, nor `\n` at the end of the stream.
 
 
 ## External timestamp
@@ -202,7 +204,7 @@ These macros expand on the previous macros by including a external time term.
 
 Sometimes some logging line should be printed only once, or only at most once
 in a certain amount of time.
-YARP has several utilities to achieve this
+YARP has several utilities to achieve this.
 
 
 ### yDebugOnce() Family
@@ -396,7 +398,7 @@ The macros
 will check the value of the condition, and throw a fatal error, if the assertion
 is not true.
 
-When the code is compiled in release mode, these assertion will just disappear
+When the code is compiled in release mode, these assertions will just disappear
 from the compiled code.
 
 
@@ -407,7 +409,7 @@ and configuration files.
 
 ### Build flags
 
-When building a project, a few build option can change the behavior of the
+When building a project, a few build options can change the behavior of the
 logging system.
 
 When building in "Release mode" (i.e. `NDEBUG` is defined, and the optimizations
@@ -425,20 +427,20 @@ are enabled or not.
 
 ### Environment variables
 
-The default behaviour for the logger can be configured using the some
+The default behaviour for the logger can be configured using specific
 environment variables.
 
-The `YARP_COLORED_OUTPUT` can be set to `1` to enable colors in the console
-output (if supported).
+`YARP_COLORED_OUTPUT` can be set to `1` to enable colors in the console output
+(if supported).
 
-If colors are enabled, the `YARP_COMPACT_OUTPUT` can be used to print a single
+If colors are enabled, `YARP_COMPACT_OUTPUT` can be used to print a single
 colored character instead of the log level.
 
-If the `YARP_VERBOSE_OUTPUT` is set to `1`, YARP will print several extra
+If `YARP_VERBOSE_OUTPUT` is set to `1`, YARP will print several extra
 information for each log line.
 
-The `YARP_FORWARD_LOG_ENABLE` can be used to enable the forwarding of the log
-to [yarplogger](@ref yarplogger)
+`YARP_FORWARD_LOG_ENABLE` can be used to enable the forwarding of the log to
+[yarplogger](@ref yarplogger).
 
 By default, YARP prints all log from `[DEBUG]` to `[FATAL]`. If `[DEBUG]` is not
 required, it is possible to disable it by setting the `YARP_DEBUG_ENABLE`
@@ -446,10 +448,10 @@ environment variable to `0`. It is also possible to enable the `[TRACE]` level
 by setting `YARP_TRACE_ENABLE` to `1`.
 
 For `yarp::os` internal logging, the default minimum level is `[INFO]`. It is
-possible to changing by using `YARP_QUIET`, to change the minimum level to
-`[WARNING]`, and `YARP_VERBOSE`, to change it to `[DEBUG]`.
+possible to change this by using `YARP_QUIET` to change the minimum level to
+`[WARNING]`, and `YARP_VERBOSE` to change it to `[DEBUG]`.
 
-Finally, the `YARP_DEBUG_LOG_ENABLE` can be enabled to debug the output of the
+Finally, `YARP_DEBUG_LOG_ENABLE` can be enabled to debug the output of the
 logger internal component, in case you want to debug the output of your
 application.
 
@@ -464,7 +466,7 @@ FIXME TODO (configuring the log using configuration files is not enabled yet)
 
 By default, the logging callback prints the output on the `stdout`/`stderr`.
 When a YARP program is started by [yarprun --log](@ref yarprun), this will
-forward the output on a YARP port, that can be read by
+forward the output on a YARP port that can be read by
 [yarplogger](@ref yarplogger), and displayed.
 
 This behaviour can be obtained also without [yarprun](@ref yarprun), by
@@ -494,7 +496,7 @@ It is also possible to change the output format.
 If you don't like the behaviour, or need to change it for some specific
 application, it is possible to change the callback with a custom one using the
 `yarp::os::Log::setPrintCallback()` method.
-It's also possible to disable output completely, by setting it to `nullptr`.
+It's also possible to disable output completely by setting it to `nullptr`.
 
 If log forwarding is enabled, it is also possible to change the forwarding
 callback with a custom one, using the `yarp::os::Log::setForwardCallback()`
@@ -502,7 +504,7 @@ method. This allows, for example, to log everything to a different system.
 
 Inside both the print callback and the forward callback, it is possible to call
 YARP default callbacks by calling `yarp::os::Log::defaultPrintCallback()(...)`
-and `yarp::os::Log::defaultForwardCallback()(...)`
+and `yarp::os::Log::defaultForwardCallback()(...)`.
 
 
 ### Log Components
@@ -552,7 +554,7 @@ yarp::os::LogStream operator<<(yarp::os::LogStream stream, const MyClass& c)
 ```
 
 In order to access your private class members inside this function you also have
-to declare this function as `friend` inside your class declaration
+to declare this function as `friend` inside your class declaration:
 
 ```{.cpp}
 class MyClass
@@ -626,13 +628,13 @@ the network is initialized.
 There are currently 4 possible way to initialize the network clock (see also
 `yarp::os::yarpClockType` and `yarp::os::NetworkBase::yarpClockInit`):
  * Using the default clock (`YARP_CLOCK_DEFAULT`). If the `YARP_CLOCK`
-   environment variable is set to a valid YARP port name and data coming from
-   this port will used as clock, otherwise the system clock is used.
+   environment variable is set to a valid YARP port name, then data coming from
+   this port will be used as clock, otherwise the system clock is used.
  * Using the system clock (`YARP_CLOCK_SYSTEM`). The system clock is used
    everywhere.
  * Using a network clock (`YARP_CLOCK_NETWORK`). A valid YARP port name must be
    specified when initializing the network, and data coming from
-   this port will used as clock.
+   this port will be used as clock.
  * Using a custom clock (`YARP_CLOCK_CUSTOM`). A class inheriting from
    `yarp::os::Clock` must be specified when initializing the network, and this
    class will be used as clock.
@@ -651,7 +653,7 @@ passing an external timestamp.
 In the first case, the timestamp is requested to the clock when the event is
 logged.
 In the second case, the timestamp is already available, and is passed to the
-logging system, that will store it together with the other data.
+logging system, which will store it together with the other data.
 
 
 ## Recommendations
@@ -675,7 +677,7 @@ these guidelines:
 The `[FATAL]` level, in some cases, can be very dangerous, since it will abort
 the execution.
 
-Developers often leave lots of debugging lines commented out in their code
+Developers often leave lots of debugging lines commented out in their code.
 These lines, after a while, tend to become useless, since they are not updated
 when the code is changed, variables renamed or removed, and they just clutter up
 the code.
@@ -689,7 +691,7 @@ therefore that the debug line is updated together with the code.
 ### Component Variable Name
 
 Please be aware that `YARP_LOG_COMPONENT(name)` will generate a method `name`
-that can generate some namimg conflicts. If the component is used only in a
+that can generate some namimg conflicts. If the component is used only in one
 compilation unit (i.e. in a `.cpp` file), you should consider defining it
 inside an anonymous namespace, i.e.
 
@@ -728,7 +730,7 @@ yarp::os::Port p;
 yAssert(p.open("..."));
 ```
 
-Note that, in the first example, the `[[maybe_unused]]` c++ attribute can be
+Note that, in the first example, the `[[maybe_unused]]` C++ attribute can be
 used to disable the unused variable warning in release mode, since the `ret`
 variable is used only inside the `yAssert`, and therefore "unused".
 
@@ -760,14 +762,14 @@ YARP logging system understands that the output is being forwarded, and changes
 the output slightly, to match the format expected by yarplogger.
 This should not have a big impact on the process.
 Also note that [yarprun](@ref yarprun) will forward all the output of the
-application, including `printf`, `std::out`, ecc, even though the extra
+application, including `printf`, `std::out`, etc., even though the extra
 information will not be attached to these output lines.
 
 On the other hand, enabling the `YARP_FORWARD_LOG_ENABLE` environment variable
 will add some extra instructions for every log line, will cause the YARP
 application to open an extra port, that will have one or more extra thread,
 requires the `Network` to be initialized, etc. This could slow down the
-application therefore you should take this into account before enabling it.
+application, therefore you should take this into account before enabling it.
 
 
 ### Limited Output
@@ -777,26 +779,26 @@ take into consideration that these macros do not come completely for free,
 they use a callback mechanism to decide whether the output should be printed or
 not, and therefore some extra code is executed every time, even when there is no
 output.
-Therefore in some cases there might be good reason for using alternatives.
+Therefore in some cases there might be a good reason for using alternatives.
 
 
 ### Formatting Output
 
-The stream version of the debugging macros, is faster to use, and does not
-require to know the type of the variable printed, but they offer a very limited
+The stream version of the debugging macros is faster to use and does not
+require to know the type of the variable printed, but it offers a very limited
 way of formatting the output.
-If you require a proper formatting, the c-style macros are recommended.
+If you require a proper formatting, the C-style macros are recommended.
 
 
-### Performances
+### Performance
 
-The C-style `yDebug()` macro family are slightly more performant than the stream
-version, since the stream version imply objects construction, copies, and
-destruction. If you care about the performances of some parts of code, you
+The C-style `yDebug()` macro family is slightly more performant than the stream
+version, since the stream version implies object construction, copies, and
+destruction. If you care about the performance of some parts of your code, you
 should take into consideration the C-style version.
 
 Please note normally the C-style version uses an internal buffer, and therefore
 it does not use any dynamic allocation of memory, unless the internal buffer
 is not big enough to fit the output.
-If you care about performances, you should also ensure that your log output does
+If you care about performance, you should also ensure that your log output does
 not exceed 1024 bytes per log line.
