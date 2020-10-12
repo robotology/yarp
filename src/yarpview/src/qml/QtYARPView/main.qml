@@ -37,6 +37,10 @@ ApplicationWindow {
     property int menuH: 0
     title: vSurface.moduleTitle
 
+    Component.onCompleted: function(){
+        vSurface.synchronizeRightEnabled();
+    }
+
     function calc()    {
         if(menuH != 0){
             return;
@@ -91,6 +95,9 @@ ApplicationWindow {
         onSaveSingleClosed:{
             menu.saveSingleChecked(check);
         }
+        onRightClickEnabled:{
+            menu.externallyCheckRightClick(enabled);
+        }
     }
 
     Connections{
@@ -132,6 +139,10 @@ ApplicationWindow {
         onPickColor:{
             vSurface.enableColorPicking(checked);
             statusBar.setPixelValVisibility(checked);
+        }
+
+        onRightClickEnable:{
+            vSurface.enableRightClick(checked);
         }
 
         onAbout:{

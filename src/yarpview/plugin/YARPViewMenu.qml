@@ -22,6 +22,8 @@ import QtQuick.Controls 1.1
 
 MenuBar {
 
+    property bool rightClickVisible: false;
+
     signal quit()
     signal about()
     signal freeze(bool checked)
@@ -33,6 +35,7 @@ MenuBar {
     signal saveSingleImage(bool checked)
     signal saveSetImages(bool checked)
     signal pickColor(bool checked)
+    signal rightClickEnable(bool checked)
 
     function enableSynch(check){
         if(check === true){
@@ -40,6 +43,11 @@ MenuBar {
         }else{
             synchItem.checked = false
         }
+    }
+
+    function externallyCheckRightClick(check){
+        rightClickVisible = check;
+        rightClickItem.checked = check;
     }
 
     function enableAutosize(check){
@@ -132,6 +140,16 @@ MenuBar {
                        pickColor(colorPickerItem.checked);
                    }}
         MenuSeparator{}
+        MenuItem { id: rightClickItem
+                   text: "Intercept right click"
+                   visible: rightClickVisible
+                   checkable: true
+                   onTriggered: {
+                       rightClickEnable(rightClickItem.checked);
+                   }}
+        MenuSeparator{
+                   visible: rightClickVisible
+        }
         MenuItem { text: "Change refresh interval"
                     onTriggered: {
                         changeRefreshInterval()

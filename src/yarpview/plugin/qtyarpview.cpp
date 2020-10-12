@@ -26,6 +26,7 @@ QtYARPView::QtYARPView(QQuickItem *parent):
     ptr_portCallback = nullptr;
     setOptionsToDefault();
     _pOutPort = nullptr;
+    _pOutRightPort = nullptr;
 
     connect(&sigHandler,SIGNAL(sendFrame(QVideoFrame*)),&videoProducer,
             SLOT(onNewVideoContentReceived(QVideoFrame*)),Qt::DirectConnection);
@@ -290,6 +291,10 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
     if (options.check("OutPortName",val)||options.check("out",val)) {
         qsnprintf(_options.m_outPortName, 256, "%s", val->asString().c_str());
     }
+    if (options.check("OutRightPortName",val)||options.check("rightout",val)) {
+        qsnprintf(_options.m_outRightPortName, 256, "%s", val->asString().c_str());
+        _options.m_rightEnabled = true;
+    }
     if (options.check("OutNetName",val)||options.check("neto",val)) {
         qsnprintf(_options.m_outNetworkName, 256, "%s", val->asString().c_str());
     }
@@ -335,6 +340,8 @@ void QtYARPView::setOptions(yarp::os::Searchable& options) {
         synchDisplaySize(true);
         emit autosize(true);
     }
+
+    emit optionsSet();
 }
 
 /*! \brief Prints the help menu.*/
@@ -350,6 +357,7 @@ void QtYARPView::printHelp()
     qDebug("  --synch: synchronous display, every image received by the input port is displayed");
     qDebug("  --autosize: the display automatically resizes on every new frame");
     qDebug("  --out: output port name (no default is given, if this option is not specified the port is not created)");
+    qDebug("  --rightout: output port for right click name (no default is given, if this option is not specified the port is not created)");
     qDebug("  --neto: output network");
     qDebug("  --neti: input network");
     qDebug("  --compact: if this flag is enabled, no status bar will be showed");
@@ -365,8 +373,10 @@ void QtYARPView::setOptionsToDefault()
     qsnprintf(_options.m_portName, 256, "%s","/yarpview/img:i");
     qsnprintf(_options.m_networkName, 256, "%s", "default");
     qsnprintf(_options.m_outPortName, 256, "%s","/yarpview/o:point");
+    qsnprintf(_options.m_outRightPortName, 256, "%s","/yarpview/r:o:point");
     qsnprintf(_options.m_outNetworkName, 256, "%s", "default");
     _options.m_outputEnabled = 0;
+    _options.m_rightEnabled = 0;
     _options.m_windWidth = 300;
     _options.m_windHeight = 300;
     _options.m_posX = 100;
@@ -415,6 +425,20 @@ bool QtYARPView::openPorts()
         }
     }
 
+    if (_options.m_rightEnabled == 1){
+        _pOutRightPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
+        qDebug("Registering port %s on network %s...", _options.m_outRightPortName, _options.m_outNetworkName);
+        bool ok = _pOutRightPort->open(_options.m_outRightPortName);
+        if (ok) {
+            qDebug("Port registration succeed!");
+        }
+        else{
+            _pOutRightPort = nullptr;
+            qDebug("ERROR: Port registration failed.\nQuitting, sorry.");
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -433,6 +457,17 @@ void QtYARPView::closePorts()
             qDebug("ERROR: Port %s unregistration failed.\n", _options.m_outPortName);
         delete _pOutPort;
         _pOutPort = nullptr;
+    }
+
+    if (_options.m_rightEnabled == 1 && _pOutRightPort){
+        _pOutRightPort->close();
+        bool ok = true;
+        if  (ok)
+            qDebug("Port %s unregistration succeed!\n", _options.m_outRightPortName);
+        else
+            qDebug("ERROR: Port %s unregistration failed.\n", _options.m_outRightPortName);
+        delete _pOutRightPort;
+        _pOutRightPort = nullptr;
     }
 }
 
@@ -512,6 +547,60 @@ void QtYARPView::clickCoords_2(int x,int y)
     } else {
         qDebug("I would send a position, but there's no image for scaling");
     }
+}
+
+void QtYARPView::rightClickCoords_4(int start_x, int start_y, int end_x, int end_y)
+{
+    int imageWidth, imageHeight;
+
+    imageWidth = videoProducer.getWidth();
+    imageHeight = videoProducer.getHeight();
+
+    if ((imageWidth != 0) && (imageHeight != 0)) {
+        qDebug("Transmitting click information...");
+        if (_pOutRightPort != nullptr) {
+            yarp::os::Bottle& bot = _pOutRightPort->prepare();
+            bot.clear();
+            bot.addInt32(start_x);
+            bot.addInt32(start_y);
+            bot.addInt32(end_x);
+            bot.addInt32(end_y);
+            //_pOutPort->Content() = _outBottle;
+            _pOutRightPort->write();
+        }
+
+    }
+    else {
+        qDebug("I would send a position, but there's no image for scaling");
+    }
+}
+
+void QtYARPView::rightClickCoords_2(int x,int y)
+{
+    int imageWidth, imageHeight;
+
+    imageWidth = videoProducer.getWidth();
+    imageHeight = videoProducer.getHeight();
+
+    if ( (imageWidth != 0) && (imageHeight != 0) ) {
+        qDebug("Transmitting click information...");
+        if (_pOutRightPort!=nullptr) {
+            yarp::os::Bottle& bot = _pOutRightPort->prepare();
+            bot.clear();
+            bot.addInt32(x);
+            bot.addInt32(y);
+            //_pOutPort->Content() = _outBottle;
+            _pOutRightPort->write();
+        }
+
+    } else {
+        qDebug("I would send a position, but there's no image for scaling");
+    }
+}
+
+bool QtYARPView::rightClickEnabled()
+{
+    return _options.m_rightEnabled;
 }
 
 void QtYARPView::onWindowSizeChangeRequested()
