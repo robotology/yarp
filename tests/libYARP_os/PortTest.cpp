@@ -45,16 +45,20 @@ using namespace yarp::os::impl;
  *
  * A fake device for testing closure after a prepare of a closed port.
  */
-class BrokenDevice : public yarp::dev::DeviceDriver,
-                     public yarp::os::PeriodicThread
+class BrokenDevice :
+        public yarp::dev::DeviceDriver,
+        public yarp::os::PeriodicThread
 {
-private:
+    static constexpr double period = 0.03;
 
 public:
     /**
      * Constructor.
      */
-    BrokenDevice() : PeriodicThread(0.03) {}
+    BrokenDevice() :
+            PeriodicThread(period)
+    {
+    }
 
     bool close() override
     {
@@ -64,12 +68,20 @@ public:
 
     }
 
-    bool open(yarp::os::Searchable& /*config*/) override { return PeriodicThread::start(); }
+    bool open(yarp::os::Searchable& /*config*/) override
+    {
+        return PeriodicThread::start();
+    }
 
     //RateThread
-    bool threadInit() override { return true; }
+    bool threadInit() override
+    {
+        return true;
+    }
 
-    void threadRelease() override {}
+    void threadRelease() override
+    {
+    }
 
     void run() override
     {
@@ -85,13 +97,16 @@ private:
 
 };
 
-class TcpTestServer : public PeriodicThread
+class TcpTestServer :
+        public PeriodicThread
 {
-public:
-    TcpTestServer() : PeriodicThread(0.02)
-    {
+    static constexpr double period = 0.02;
 
+public:
+    TcpTestServer() : PeriodicThread(period)
+    {
     }
+
 private:
     BufferedPort<Bottle> tcpPort;
     bool threadInit() override
@@ -117,6 +132,7 @@ private:
 class TcpTestClient
 {
     BufferedPort<Bottle> tcpPort;
+
 public:
     TcpTestClient()
     {
@@ -131,11 +147,12 @@ public:
     }
 };
 
-class ServiceProvider : public PortReader
+class ServiceProvider :
+        public PortReader
 {
 public:
-
-    bool read(ConnectionReader& connection) override {
+    bool read(ConnectionReader& connection) override
+    {
         Bottle receive;
         receive.read(connection);
         receive.addInt32(5);
@@ -147,46 +164,55 @@ public:
     }
 };
 
-class ServiceTester : public Portable
+class ServiceTester :
+        public Portable
 {
 public:
     Bottle send;
     Bottle receive;
     mutable int ct;
 
-    virtual bool write(ConnectionWriter& connection) const override {
+     bool write(ConnectionWriter& connection) const override
+     {
         ct = 0;
         send.write(connection);
         connection.setReplyHandler(const_cast<ServiceTester&>(*this));
         return true;
     }
 
-    virtual bool read(ConnectionReader& connection) override {
+     bool read(ConnectionReader& connection) override
+     {
         receive.read(connection);
         ct++;
         return true;
     }
 
-    void finalCheck() {
+    void finalCheck()
+    {
         CHECK(receive.size() == send.size()+1); // size incremented
         CHECK(ct == 1); // just one read
     }
 };
 
-class DelegatedReader : public Thread
+class DelegatedReader :
+        public Thread
 {
 public:
     bool faithful;
     Port p;
 
-    DelegatedReader(bool faithful = true) {
+    DelegatedReader(bool faithful = true)
+    {
         p.open("/reader");
         this->faithful = faithful;
     }
 
-    virtual void run() override {
-        for (int i=0; i<3; i++) {
-            Bottle b, b2;
+    void run() override
+    {
+        for (int i=0; i<3; i++)
+        {
+            Bottle b;
+            Bottle b2;
             p.read(b, true);
             b2.addInt32(b.get(0).asInt32()+1);
             if ((!faithful)&&i==1) {
@@ -198,21 +224,25 @@ public:
     }
 };
 
-class DelegatedWriter : public Thread
+class DelegatedWriter :
+        public Thread
 {
 public:
     Port p;
     int total;
 
-    DelegatedWriter() {
+    DelegatedWriter()
+    {
         p.open("/writer");
         Network::connect("/writer", "/reader");
     }
 
-    virtual void run() override {
+     void run() override
+     {
         total = 0;
         for (int i=0; i<3; i++) {
-            Bottle b, b2;
+            Bottle b;
+            Bottle b2;
             b.addInt32(i);
             p.write(b, b2);
             total += b2.get(0).asInt32(); // should be i+1
@@ -222,7 +252,8 @@ public:
 };
 
 
-class DelegatedCallback : public TypedReaderCallback<Bottle>
+class DelegatedCallback :
+        public TypedReaderCallback<Bottle>
 {
 public:
     Bottle saved;
@@ -231,25 +262,23 @@ public:
     DelegatedCallback() : produce(0) {}
 
     using TypedReaderCallback<Bottle>::onRead;
-    virtual void onRead(Bottle& bot) override {
+     void onRead(Bottle& bot) override {
         saved = bot;
         produce.post();
     }
 };
 
 
-class MyReport : public PortReport
+class MyReport :
+        public PortReport
 {
 public:
-    int ct;
-    int oct;
-    int ict;
+    int ct {0};
+    int oct {0};
+    int ict {0};
 
-    MyReport() {
-        ict = oct = ct = 0;
-    }
-
-    virtual void report(const PortInfo& info) override {
+    void report(const PortInfo& info) override
+    {
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
             if (info.incoming == false) {
                 oct++;
@@ -261,75 +290,91 @@ public:
     }
 };
 
-class WriteReader : public Thread
+class WriteReader :
+        public Thread
 {
+    static constexpr double delay = 0.25;
+
 public:
     Port p;
     bool done;
 
-    WriteReader() {
+    WriteReader()
+    {
         done = false;
         p.open("/write");
     }
 
-    void finish() {
+    void finish()
+    {
         done = true;
         stop();
     }
 
-    virtual void run() override {
+     void run() override
+     {
         while (!done) {
             Bottle msg("1 \"end of terminal\"");
             p.write(msg);
-            Time::delay(0.25);
+            Time::delay(delay);
         }
     }
 };
 
-class ServiceUser : public Thread
+class ServiceUser :
+        public Thread
 {
 public:
     Port p;
 
-    ServiceUser(const char *name) {
+    ServiceUser(const char *name)
+    {
         p.open(name);
     }
 
-    virtual void run() override {
-        Bottle cmd, reply;
+     void run() override
+    {
+        Bottle cmd;
+        Bottle reply;
         cmd.fromString("[add] 1 2");
         p.write(cmd, reply);
     }
 };
 
-class StreamUser : public Thread
+class StreamUser :
+        public Thread
 {
 public:
     Port p;
 
-    StreamUser(const char *name) {
+    StreamUser(const char *name)
+    {
         p.setTimeout(2);
         p.open(name);
     }
 
-    virtual void run() override {
+     void run() override
+    {
         Bottle cmd;
         cmd.fromString("[add] 1 2");
         p.write(cmd);
     }
 };
 
-class DataPort : public BufferedPort<Bottle>
+class DataPort :
+        public BufferedPort<Bottle>
 {
 public:
     int ct;
 
-    DataPort() {
+    DataPort()
+    {
         ct = 0;
     }
 
     using BufferedPort<Bottle>::onRead;
-    virtual void onRead(Bottle& b) override {
+     void onRead(Bottle& /*b*/) override
+    {
         ct++;
     }
 };
@@ -347,9 +392,15 @@ TEST_CASE("os::PortTest", "[yarp::os]")
                                                                                    "brokenDevice",
                                                                                    "BrokenDevice"));
 
+    constexpr double duration_100ms = 0.1;
+    constexpr double duration_200ms = 0.2;
+    constexpr double duration_250ms = 0.25;
+    constexpr double duration_500ms = 0.5;
+
     SECTION("checking opening and closing ports")
     {
-        Port out, in;
+        Port out;
+        Port in;
 
         in.open("/in");
         out.open(Contact("tcp", "", safePort()));
@@ -364,12 +415,13 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         CHECK(conOut.isValid()); // valid address for /out
 
         out.addOutput(Contact("/in", "tcp"));
-        //Time::delay(0.2);
+        //Time::delay(duration_200ms);
 
         CHECK(conIn.getName() == "/in"); // name is recorded
         CHECK(conOut.getName().find("/tmp") == 0); // name is created
 
-        Bottle bot1, bot2;
+        Bottle bot1;
+        Bottle bot2;
         bot1.fromString("5 10 \"hello\"");
         out.enableBackgroundWrite(true);
         out.write(bot1);
@@ -380,7 +432,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         while (out.isWriting()) {
             printf("Waiting...\n");
-            Time::delay(0.1);
+            Time::delay(duration_100ms);
         }
 
         bot1.fromString("18");
@@ -412,7 +464,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         buf.attach(input);
 
         output.addOutput(Contact("/in", "udp"));
-        //Time::delay(0.2);
+        //Time::delay(duration_200ms);
 
         INFO("writing...");
         output.write(bot1);
@@ -445,7 +497,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
             bot1.addInt32(i);
         }
 
-        Port input, output;
+        Port input;
+        Port output;
         input.open("/in");
         output.open("/out");
 
@@ -453,7 +506,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         buf.attach(input);
 
         output.addOutput(Contact("/in", "udp"));
-        //Time::delay(0.2);
+        //Time::delay(duration_200ms);
 
         INFO("writing/reading three times...");
 
@@ -493,7 +546,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         buf.attach(input);
 
         output.addOutput(Contact("/in", "udp"));
-        //Time::delay(0.2);
+        //Time::delay(duration_200ms);
 
         for (int j=0; j<3; j++) {
             INFO("writing/reading three times...");
@@ -522,7 +575,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         PortReaderBuffer<PortablePair<Bottle, Bottle> > buf;
 
-        Port input, output;
+        Port input;
+        Port output;
         input.open("/in");
         output.open("/out");
 
@@ -530,7 +584,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         buf.attach(input);
 
         output.addOutput(Contact("/in", "tcp"));
-        //Time::delay(0.2);
+        //Time::delay(duration_200ms);
 
         PortablePair<Bottle, Bottle> bot1;
         bot1.head.fromString("1 2 3");
@@ -555,31 +609,34 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         ServiceProvider provider;
 
-        Port input, output;
+        Port input;
+        Port output;
         input.open("/in");
         output.open("/out");
 
         input.setReader(provider);
 
         output.addOutput(Contact("/in", "tcp"));
-        Time::delay(0.1);
+        Time::delay(duration_100ms);
         ServiceTester tester;
         output.write(tester);
-        Time::delay(0.1);
+        Time::delay(duration_100ms);
         tester.finalCheck();
-        Time::delay(0.1);
+        Time::delay(duration_100ms);
         output.close();
         input.close();
     }
 
     SECTION("test communication in background mode")
     {
-        Port input, output;
+        Port input;
+        Port output;
         input.open("/in");
         output.open("/out");
         output.enableBackgroundWrite(true);
 
-        BinPortable<int> bin, bout;
+        BinPortable<int> bin;
+        BinPortable<int> bout;
         bout.content() = 42;
         bin.content() = 20;
 
@@ -594,7 +651,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         while (output.isWriting()) {
             INFO("waiting for port to stabilize");
-            Time::delay(0.2);
+            Time::delay(duration_200ms);
         }
 
         bout.content() = 88;
@@ -612,7 +669,9 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     SECTION("testing write buffering")
     {
-        Port input, output, altInput;
+        Port input;
+        Port output;
+        Port altInput;
         input.open("/in");
         altInput.open("/in2");
         output.open("/out");
@@ -644,7 +703,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         while (output.isWriting()) {
             INFO("waiting for port to stabilize");
-            Time::delay(0.2);
+            Time::delay(duration_200ms);
         }
 
         INFO("port stabilized");
@@ -654,7 +713,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     SECTION("checking buffered port")
     {
-        BufferedPort<BinPortable<int> > output, input;
+        BufferedPort<BinPortable<int>> output;
+        BufferedPort<BinPortable<int>> input;
         output.open("/out");
         input.open("/in");
 
@@ -679,7 +739,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         for (int i=0; i<4; i++) {
             // on OSX there is a problem only tickled upon repetition
-            Port input, output;
+            Port input;
+            Port output;
             input.open("/in");
             output.open("/out");
             output.addOutput("/in");
@@ -695,7 +756,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     SECTION("check that port close order doesn't matter (test 2)")
     {
         for (int i=0; i<4; i++) {
-            Port input, output;
+            Port input;
+            Port output;
             input.open("/in");
             output.open("/out");
             output.addOutput("/in");
@@ -856,7 +918,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         printf("Writing bottle 2: %s\n", outBot2.toString().c_str());
         out.write(true);
 
-        Time::delay(0.25);
+        Time::delay(duration_250ms);
 
         Bottle *inBot2 = in.read();
         CHECK(inBot2!=nullptr); // got 2 of 2 items
@@ -873,12 +935,12 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         sender.open("/sender");
         receiver.open("/receiver");
         Network::connect("/sender", "/receiver");
-        Time::delay(0.25);
+        Time::delay(duration_250ms);
         Bottle& bot = sender.prepare();
         bot.clear();
         bot.addInt32(1);
         sender.write();
-        Time::delay(0.25);
+        Time::delay(duration_250ms);
         INFO("if this hangs, PortTest::testUnbufferedClose is unhappy");
         receiver.close();
         sender.close();
@@ -895,7 +957,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         p.open("/test4");
         p.close();
         INFO("buffered port:");
-        BufferedPort<Bottle> p2, p3;
+        BufferedPort<Bottle> p2;
+        BufferedPort<Bottle> p3;
         p2.open("/test1");
         p2.open("/test2");
         p2.open("/in");
@@ -990,7 +1053,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::connect("/writer", "/reader");
         Network::sync("/writer");
         Network::sync("/reader");
-        Bottle bsend, breply;
+        Bottle bsend;
+        Bottle breply;
         bsend.addInt32(10);
         p1.write(bsend, breply);
         p1.write(bsend, breply);
@@ -1019,7 +1083,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         Port p1;
         Port p2;
-        MyReport report1, report2;
+        MyReport report1;
+        MyReport report2;
         p1.setReporter(report1);
         p2.setReporter(report2);
         p1.open("/foo");
@@ -1058,7 +1123,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         RpcClient p1;
         RpcServer p2;
-        MyReport report1, report2;
+        MyReport report1;
+        MyReport report2;
         p1.setReporter(report1);
         p2.setReporter(report2);
         p1.open("/foo");
@@ -1086,7 +1152,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/p1");
         Network::sync("/p2");
 
-        Bottle cmd("[help]"), reply;
+        Bottle cmd("[help]");
+        Bottle reply;
         p2.setAdminMode();
         p2.write(cmd, reply);
 
@@ -1149,13 +1216,16 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         Port a;
         Port b;
-        bool ok = a.setTimeout(0.5);
-        CHECK(a.setTimeout(0.5)); // set timeout
-        if (!ok) return;
+        bool ok = a.setTimeout(duration_500ms);
+        CHECK(a.setTimeout(duration_500ms)); // set timeout
+        if (!ok) {
+            return;
+        }
         a.open("/a");
         b.open("/b");
         NetworkBase::connect("/a", "/b");
-        Bottle msg("hello"), reply;
+        Bottle msg("hello");
+        Bottle reply;
         ok = a.write(msg, reply);
         CHECK_FALSE(ok); // send failed correctly
     }
@@ -1166,7 +1236,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         writer.start();
         int argc = 2;
         const char *argv[] = {"...", "/write"};
-        yarp::companion::impl::Companion::getInstance().cmdRead(argc, (char**)argv);
+        yarp::companion::impl::Companion::getInstance().cmdRead(argc, const_cast<char**>(argv));
         writer.finish();
     }
 
@@ -1182,7 +1252,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     {
         PortReaderBuffer<PortablePair<Bottle, Bottle> > buf;
 
-        Port input, output;
+        Port input;
+        Port output;
         input.open("/in");
         output.open("/out");
 
@@ -1210,7 +1281,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     SECTION("checking interrupt for BufferedPort")
     {
-        BufferedPort<Bottle> input, output;
+        BufferedPort<Bottle> input;
+        BufferedPort<Bottle> output;
         input.open("/in");
         output.open("/out");
         CHECK(yarp::os::Network::connect("/out", "/in")); // checking connection
@@ -1220,7 +1292,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         botOut1.addInt32(0);
         output.writeStrict();
 
-        yarp::os::Time::delay(0.1);
+        yarp::os::Time::delay(duration_100ms);
 
         Bottle *botIn1 = input.read();
         CHECK(botIn1!=nullptr); // Inserted message received
@@ -1239,7 +1311,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         botOut2.addInt32(1);
         output.writeStrict();
 
-        yarp::os::Time::delay(0.1);
+        yarp::os::Time::delay(duration_100ms);
 
         Bottle *botIn2 = input.read();
         CHECK(botIn2!=nullptr); // Inserted message received
@@ -1254,7 +1326,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         PortReaderBuffer<Bottle> buf;
         buf.setStrict(true);
 
-        Port input, output;
+        Port input;
+        Port output;
         input.open("/in");
         output.open("/out");
 
@@ -1268,7 +1341,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         output.write(bot1);
         for (int i=0; i<20 && buf.getPendingReads()<1; i++) {
-            Time::delay(0.1);
+            Time::delay(duration_100ms);
         }
         CHECK(buf.getPendingReads() == 1); // first msg came through
         Bottle *bot2 = buf.read();
@@ -1282,7 +1355,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         output.write(bot1);
         for (int i=0; i<10 && buf.getPendingReads()<1; i++) {
-            Time::delay(0.1);
+            Time::delay(duration_100ms);
         }
         CHECK(buf.getPendingReads() == 0); // msg after interrupt ignored
 
@@ -1291,7 +1364,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         input.resume();
         output.write(bot1);
         for (int i=0; i<20 && buf.getPendingReads()<1; i++) {
-            Time::delay(0.1);
+            Time::delay(duration_100ms);
         }
         CHECK(buf.getPendingReads() == 1); // next msg came through
         bot2 = buf.read();
@@ -1304,14 +1377,16 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     SECTION("checking interrupt on input side without buffering")
     {
-        Port input, output;
+        Port input;
+        Port output;
         input.open("/in");
         output.enableBackgroundWrite(true);
         output.open("/out");
 
         output.addOutput(Contact("/in", "tcp"));
 
-        Bottle bot1, bot2;
+        Bottle bot1;
+        Bottle bot2;
         bot1.fromString("1 2 3");
 
         output.write(bot1);
@@ -1351,7 +1426,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         input.open("/in");
         Network::connect(output.p.getName(), input.getName());
         output.start();
-        Bottle cmd, reply;
+        Bottle cmd;
+        Bottle reply;
         input.read(cmd, true);
         reply.addInt32(cmd.get(1).asInt32()+cmd.get(2).asInt32());
         CHECK(cmd.toString() == "[add] 1 2"); // cmd received ok
@@ -1397,7 +1473,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         port2.write();
 
         while (port.getPendingReads()<1) {
-            Time::delay(0.1);
+            Time::delay(duration_100ms);
         }
 
         CHECK_FALSE(port.isClosed()); // port tagged as open
@@ -1479,7 +1555,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         pout.setAdminMode();
         pout.open("/out");
         Network::connect("/out", "/in");
-        Bottle cmd("hello"), reply;
+        Bottle cmd("hello");
+        Bottle reply;
         pout.write(cmd, reply);
         CHECK(reply.get(1).asInt32() == 5); // admin_reader was called
         cmd.fromString("[ver]");
@@ -1489,7 +1566,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
     SECTION("checking callback locking")
     {
-        Port pin, pout;
+        Port pin;
+        Port pout;
         Bottle data;
         pin.setCallbackLock();
         pin.setReader(data);
@@ -1500,12 +1578,12 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle cmd("hello");
         pin.lockCallback();
         pout.write(cmd);
-        Time::delay(0.25);
+        Time::delay(duration_250ms);
         CHECK(data.size() == 0); // data does not arrive too early
         pin.unlockCallback();
         while (pout.isWriting()) {
             INFO("waiting for port to stabilize");
-            Time::delay(0.2);
+            Time::delay(duration_200ms);
         }
         CHECK(data.size() == 1); // data does eventually arrive
         pin.close();

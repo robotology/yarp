@@ -449,35 +449,35 @@ public:
      * Get the current pose of the left eye frame. [wait for reply]
      * \param x a 3-d vector which is filled with the actual
      *         position x,y,z [m].
-     * \param od a 4-d vector which is filled with the actual
+     * \param o a 4-d vector which is filled with the actual
      * orientation using axis-angle representation xa, ya, za, theta
      * [m]/[rad].
      * \param stamp the stamp of the encoders employed to compute the
      *              pose.
      * \return true/false on success/failure.
      */
-    virtual bool getLeftEyePose(yarp::sig::Vector &x, yarp::sig::Vector &od,
+    virtual bool getLeftEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o,
                                 yarp::os::Stamp *stamp = NULL) = 0;
 
     /*!
      * Get the current pose of the right eye frame. [wait for reply]
      * \param x a 3-d vector which is filled with the actual
      *         position x,y,z [m].
-     * \param od a 4-d vector which is filled with the actual
+     * \param o a 4-d vector which is filled with the actual
      * orientation using axis-angle representation xa, ya, za, theta
      * [m]/[rad].
      * \param stamp the stamp of the encoders employed to compute the
      *              pose.
      * \return true/false on success/failure.
      */
-    virtual bool getRightEyePose(yarp::sig::Vector &x, yarp::sig::Vector &od,
+    virtual bool getRightEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o,
                                  yarp::os::Stamp *stamp = NULL) = 0;
 
     /*!
      * Get the current pose of the head frame. [wait for reply]
      * \param x a 3-d vector which is filled with the actual
      *         position x,y,z [m].
-     * \param od a 4-d vector which is filled with the actual
+     * \param o a 4-d vector which is filled with the actual
      * orientation using axis-angle representation xa, ya, za, theta
      * [m]/[rad].
      * \param stamp the stamp of the encoders employed to compute the
@@ -490,7 +490,7 @@ public:
      *       z-axis pointing forward, x-axis pointing rightward and
      *       y-axis pointing downward.
      */
-    virtual bool getHeadPose(yarp::sig::Vector &x, yarp::sig::Vector &od,
+    virtual bool getHeadPose(yarp::sig::Vector &x, yarp::sig::Vector &o,
                              yarp::os::Stamp *stamp = NULL) = 0;
 
     /*!
