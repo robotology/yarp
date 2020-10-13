@@ -35,7 +35,6 @@
 /src/devices/portaudio/**                     @randaz81
 /src/devices/portaudioPlayer/**               @randaz81
 /src/devices/portaudioRecorder/**             @randaz81
-/src/devices/realsense2/**                    @Nicogene
 /src/devices/rpLidar/**                       @randaz81
 /src/devices/rpLidar2/**                      @randaz81
 /src/devices/transformClient/**               @randaz81 @aerydna

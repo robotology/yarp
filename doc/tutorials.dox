@@ -46,7 +46,6 @@ Using YARP devices:
 \li \subpage dev_examples
 \li \subpage add_a_plugin (older method: \ref add_a_device)
 \li \subpage yarp_config_files
-\li \subpage subdevice_realsense
 
 More software tutorials:
 \li \subpage yarp_pointcloud

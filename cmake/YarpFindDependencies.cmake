@@ -390,9 +390,6 @@ checkandset_dependency(ZFP)
 find_package(OpenNI2 QUIET)
 checkandset_dependency(OpenNI2)
 
-find_package(realsense2 QUIET)
-checkandset_dependency(realsense2)
-
 find_package(Doxygen)
 checkandset_dependency(Doxygen)
 
@@ -620,7 +617,6 @@ print_dependency(SDL)
 print_dependency(PortAudio)
 print_dependency(ZFP)
 print_dependency(OpenNI2)
-print_dependency(realsense2)
 print_dependency(GLIB2)
 print_dependency(GObject)
 print_dependency(GStreamer)
