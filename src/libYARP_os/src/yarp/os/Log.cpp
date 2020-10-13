@@ -457,7 +457,7 @@ inline void printable_output(std::ostream* ost,
 
     // Print function information (trace only)
     if (t == yarp::os::Log::TraceType) {
-        *ost << level_color << func << CLEAR << ((msg[0] || comp_name) ? ": " : "");
+        *ost << file << ":" << line << " " << level_color << func << CLEAR << ((msg[0] || comp_name) ? ": " : "");
     }
 
     // Print component
