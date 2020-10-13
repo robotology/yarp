@@ -128,13 +128,13 @@ public:
     YARP_DEPRECATED_MSG("Use expectInt32 instead")
     int expectInt()
     {
-        return (int)expectInt32();
+        return static_cast<int>(expectInt32());
     }
 
     YARP_DEPRECATED_MSG("Use expectFloat64 instead")
     double expectDouble()
     {
-        return (double)expectFloat64();
+        return static_cast<double>(expectFloat64());
     }
 #endif // YARP_NO_DEPRECATED
 
