@@ -435,7 +435,7 @@ bool WireReader::readEnum(std::int32_t& x, WireVocab& converter)
             return false;
         }
         std::int32_t v = reader.expectInt32();
-        x = (std::int32_t)v;
+        x = v;
         state->len--;
         return !reader.isError();
     }
@@ -461,7 +461,7 @@ bool WireReader::readEnum(std::int32_t& x, WireVocab& converter)
         if (reader.isError()) {
             return false;
         }
-        x = (std::int32_t)converter.fromString(str);
+        x = static_cast<std::int32_t>(converter.fromString(str));
         return (x >= 0);
     }
     return false;
@@ -594,7 +594,7 @@ void WireReader::readListBegin(WireState& nstate, std::uint32_t& len)
     if (!readListHeader()) {
         return;
     }
-    len = (std::uint32_t)state->len;
+    len = static_cast<std::uint32_t>(state->len);
 }
 
 void WireReader::readSetBegin(WireState& nstate, std::uint32_t& len)

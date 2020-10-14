@@ -67,7 +67,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~BufferedConnectionWriter();
+    ~BufferedConnectionWriter() override;
 
     /**
      * Completely clear the writer and start afresh.

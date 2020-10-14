@@ -37,19 +37,21 @@ YARP_LOG_COMPONENT(BAYERCARRIER,
 // can't seem to do ipl/opencv/yarp style end-of-row padding
 void setDcImage(yarp::sig::Image& yimg, dc1394video_frame_t *dc,
                 int filter) {
-    if (!dc) return;
-    dc->image = (unsigned char *) yimg.getRawImage();
-    dc->size[0] = (uint32_t) yimg.width();
-    dc->size[1] = (uint32_t) yimg.height();
+    if (!dc) {
+        return;
+    }
+    dc->image = yimg.getRawImage();
+    dc->size[0] = static_cast<uint32_t>(yimg.width());
+    dc->size[1] = static_cast<uint32_t>(yimg.height());
     dc->position[0] = 0;
     dc->position[1] = 0;
     dc->color_coding = (yimg.getPixelCode()==VOCAB_PIXEL_MONO)?DC1394_COLOR_CODING_RAW8:DC1394_COLOR_CODING_RGB8;
-    dc->color_filter = (dc1394color_filter_t)filter;
+    dc->color_filter = static_cast<dc1394color_filter_t>(filter);
     dc->yuv_byte_order = 0;
     dc->data_depth = 8;
-    dc->stride = (uint32_t) yimg.getRowSize();
+    dc->stride = static_cast<uint32_t>(yimg.getRowSize());
     dc->video_mode = DC1394_VIDEO_MODE_640x480_RGB8; // we are bluffing
-    dc->image_bytes = (uint32_t)yimg.getRawImageSize();
+    dc->image_bytes = static_cast<uint32_t>(yimg.getRawImageSize());
     dc->padding_bytes = 0;
     dc->total_bytes = dc->image_bytes;
     dc->timestamp = 0;
@@ -193,7 +195,7 @@ bool BayerCarrier::debayerHalf(yarp::sig::ImageOf<PixelMono>& src,
             }
             po.r = src.pixel(x+roffx,y+roff);
             po.b = src.pixel(x+boffx,y+boff);
-            po.g = (PixelMono)(0.5*(src.pixel(x+goff,y)+src.pixel(x+goff1,y+1)));
+            po.g = static_cast<PixelMono>(0.5*(src.pixel(x+goff,y)+src.pixel(x+goff1,y+1)));
         }
     }
     return true;
@@ -208,7 +210,7 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
         setDcImage(src,&dc_src,dcformat);
         setDcImage(dest,&dc_dest,dcformat);
         dc1394_debayer_frames(&dc_src,&dc_dest,
-                              (dc1394bayer_method_t)bayer_method);
+                              static_cast<dc1394bayer_method_t>(bayer_method));
         return true;
     }
 
@@ -235,8 +237,8 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
                 if (x<w-1) { g += src.pixel(x+1,y); ct++; }
                 if (y>0) { g += src.pixel(x,y-1); ct++; }
                 if (y<h-1) { g += src.pixel(x,y+1); ct++; }
-                if (ct>0) g /= ct;
-                po.g = (int)g;
+                if (ct>0) { g /= ct; }
+                po.g = static_cast<int>(g);
             }
 
             // B
@@ -247,15 +249,15 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
                 int ct = 0;
                 if (x>0) { b += src.pixel(x-1,y); ct++; }
                 if (x<w-1) { b += src.pixel(x+1,y); ct++; }
-                if (ct>0) b /= ct;
-                po.b = (int)b;
+                if (ct>0) { b /= ct; }
+                po.b = static_cast<int>(b);
             } else if (x%2==boffx) {
                 float b = 0;
                 int ct = 0;
                 if (y>0) { b += src.pixel(x,y-1); ct++; }
                 if (y<h-1) { b += src.pixel(x,y+1); ct++; }
-                if (ct>0) b /= ct;
-                po.b = (int)b;
+                if (ct>0) { b /= ct; }
+                po.b = static_cast<int>(b);
             } else {
                 float b = 0;
                 int ct = 0;
@@ -263,8 +265,8 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
                 if (x>0&&y<h-1) { b += src.pixel(x-1,y+1); ct++; }
                 if (x<w-1&&y>0) { b += src.pixel(x+1,y-1); ct++; }
                 if (x<w-1&&y<h-1) { b += src.pixel(x+1,y+1); ct++; }
-                if (ct>0) b /= ct;
-                po.b = (int)b;
+                if (ct>0) { b /= ct; }
+                po.b = static_cast<int>(b);
             }
 
             // R
@@ -275,15 +277,15 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
                 int ct = 0;
                 if (x>0) { r += src.pixel(x-1,y); ct++; }
                 if (x<w-1) { r += src.pixel(x+1,y); ct++; }
-                if (ct>0) r /= ct;
-                po.r = (int)r;
+                if (ct>0) { r /= ct; }
+                po.r = static_cast<int>(r);
             } else if (x%2==roffx) {
                 float r = 0;
                 int ct = 0;
                 if (y>0) { r += src.pixel(x,y-1); ct++; }
                 if (y<h-1) { r += src.pixel(x,y+1); ct++; }
-                if (ct>0) r /= ct;
-                po.r = (int)r;
+                if (ct>0) { r /= ct; }
+                po.r = static_cast<int>(r);
             } else {
                 float r = 0;
                 int ct = 0;
@@ -291,8 +293,8 @@ bool BayerCarrier::debayerFull(yarp::sig::ImageOf<PixelMono>& src,
                 if (x>0&&y<h-1) { r += src.pixel(x-1,y+1); ct++; }
                 if (x<w-1&&y>0) { r += src.pixel(x+1,y-1); ct++; }
                 if (x<w-1&&y<h-1) { r += src.pixel(x+1,y+1); ct++; }
-                if (ct>0) r /= ct;
-                po.r = (int)r;
+                if (ct>0) { r /= ct; }
+                po.r = static_cast<int>(r);
             }
         }
     }
@@ -314,7 +316,7 @@ bool BayerCarrier::processBuffered() {
             debayerFull(in,out);
         }
         header.setFromImage(out);
-        image_data_len = (size_t)out.getRawImageSize();
+        image_data_len = out.getRawImageSize();
     }
     have_result = true;
     return true;
@@ -345,9 +347,9 @@ yarp::conf::ssize_t BayerCarrier::read(yarp::os::Bytes& b) {
         if (len>sizeof(header)-consumed) {
             len = sizeof(header)-consumed;
         }
-        memcpy(b.get(),((char*)(&header))+consumed,len);
+        memcpy(b.get(),(reinterpret_cast<char*>(&header))+consumed,len);
         consumed += len;
-        return (yarp::conf::ssize_t) len;
+        return static_cast<yarp::conf::ssize_t>(len);
     }
     // sane client will want to read image into correct-sized block
     if (b.length()==image_data_len) {
@@ -365,7 +367,7 @@ yarp::conf::ssize_t BayerCarrier::read(yarp::os::Bytes& b) {
         }
         memcpy(b.get(),out.getRawImage()+consumed-sizeof(header),len);
         consumed += len;
-        return (yarp::conf::ssize_t) len;
+        return static_cast<yarp::conf::ssize_t>(len);
     }
     return -1;
 }
@@ -374,7 +376,9 @@ yarp::conf::ssize_t BayerCarrier::read(yarp::os::Bytes& b) {
 bool BayerCarrier::setFormat(const char *fmt) {
     dcformat = DC1394_COLOR_FILTER_GRBG;
     std::string f(fmt);
-    if (f.length()<2) return false;
+    if (f.length()<2) {
+        return false;
+    }
     goff = (f[0]=='g'||f[0]=='G')?0:1;
     roff = (f[0]=='r'||f[0]=='R'||f[1]=='r'||f[1]=='R')?0:1;
     if (goff==0&&roff==0) {

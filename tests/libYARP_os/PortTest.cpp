@@ -14,6 +14,8 @@
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Carriers.h>
+#include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/PortablePair.h>
@@ -379,6 +381,86 @@ public:
     }
 };
 
+
+class TestModifyingCarrier :
+        public yarp::os::ModifyingCarrier
+{
+    public:
+    TestModifyingCarrier() = default;
+    TestModifyingCarrier(const TestModifyingCarrier&) = delete;
+    TestModifyingCarrier(TestModifyingCarrier&&) = delete;
+    TestModifyingCarrier& operator=(const TestModifyingCarrier&) = delete;
+    TestModifyingCarrier& operator=(TestModifyingCarrier&&) = delete;
+
+    ~TestModifyingCarrier() override = default;
+
+    Carrier *create() const override
+    {
+        return new TestModifyingCarrier();
+    }
+
+    std::string getName() const override
+    {
+        return "test_mod";
+    }
+
+    std::string toString() const override
+    {
+        return "test_mod_carrier";
+    }
+
+    bool acceptIncomingData(yarp::os::ConnectionReader& reader) override
+    {
+        ++cnt_accept_in;
+        return yarp::os::ModifyingCarrier::acceptIncomingData(reader);
+    }
+
+    yarp::os::ConnectionReader& modifyIncomingData(yarp::os::ConnectionReader& reader) override
+    {
+        ++cnt_modify_in;
+        return yarp::os::ModifyingCarrier::modifyIncomingData(reader);
+    }
+
+    bool acceptOutgoingData(const yarp::os::PortWriter& writer) override
+    {
+        ++cnt_accept_out;
+        return yarp::os::ModifyingCarrier::acceptOutgoingData(writer);
+    }
+
+    const yarp::os::PortWriter& modifyOutgoingData(const yarp::os::PortWriter& writer) override
+    {
+        ++cnt_modify_out;
+        return yarp::os::ModifyingCarrier::modifyOutgoingData(writer);
+    }
+
+    yarp::os::PortReader& modifyReply(yarp::os::PortReader& reader) override
+    {
+        ++cnt_modify_reply;
+        return yarp::os::ModifyingCarrier::modifyReply(reader);
+    }
+
+    static size_t cnt_accept_in;
+    static size_t cnt_modify_in;
+    static size_t cnt_accept_out;
+    static size_t cnt_modify_out;
+    static size_t cnt_modify_reply;
+
+    static void reset()
+    {
+        cnt_accept_in = 0;
+        cnt_modify_in = 0;
+        cnt_accept_out = 0;
+        cnt_modify_out = 0;
+        cnt_modify_reply = 0;
+    }
+};
+
+size_t TestModifyingCarrier::cnt_accept_in = 0;
+size_t TestModifyingCarrier::cnt_modify_in = 0;
+size_t TestModifyingCarrier::cnt_accept_out = 0;
+size_t TestModifyingCarrier::cnt_modify_out = 0;
+size_t TestModifyingCarrier::cnt_modify_reply = 0;
+
 static int safePort()
 {
     return Network::getDefaultPortRange() + 100;
@@ -391,6 +473,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
     yarp::dev::Drivers::factory().add(new yarp::dev::DriverCreatorOf<BrokenDevice>("brokenDevice",
                                                                                    "brokenDevice",
                                                                                    "BrokenDevice"));
+
+    yarp::os::Carriers::addCarrierPrototype(new TestModifyingCarrier);
 
     constexpr double duration_100ms = 0.1;
     constexpr double duration_200ms = 0.2;
@@ -1624,6 +1708,171 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         p.resume();
         p.resume(); //should not lockup here
         p.close();
+    }
+
+    SECTION("Check ModifyingCarrier on output (w/o reply)")
+    {
+        Port out;
+        Port in;
+        CHECK(out.open("/out"));
+        CHECK(in.open("/in"));
+
+        Network::sync("/out");
+        Network::sync("/in");
+
+        TestModifyingCarrier::reset();
+        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod");
+
+        Bottle cmd_out("hello");
+        Bottle cmd_in;
+        out.enableBackgroundWrite(true);
+        out.write(cmd_out);
+        in.read(cmd_in);
+
+        CHECK(TestModifyingCarrier::cnt_accept_in == 0);
+        CHECK(TestModifyingCarrier::cnt_modify_in == 0);
+        CHECK(TestModifyingCarrier::cnt_accept_out == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_out == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_reply == 0);
+    }
+
+    SECTION("Check ModifyingCarrier on output (w/ reply)")
+    {
+        Port out;
+        Port in;
+        CHECK(out.open("/out"));
+        CHECK(in.open("/in"));
+
+        Network::sync("/out");
+        Network::sync("/in");
+
+        TestModifyingCarrier::reset();
+        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod");
+
+        Bottle cmd_out("hello");
+        Bottle cmd_in;
+        Bottle reply_in;
+        Bottle reply_out("hey");
+        out.enableBackgroundWrite(true);
+        out.write(cmd_out, reply_in);
+        in.read(cmd_in, true);
+        in.reply(reply_out);
+
+        CHECK(TestModifyingCarrier::cnt_accept_in == 0);
+        CHECK(TestModifyingCarrier::cnt_modify_in == 0);
+        CHECK(TestModifyingCarrier::cnt_accept_out == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_out == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
+    }
+
+    SECTION("Check ModifyingCarrier on input (w/o reply)")
+    {
+        Port out;
+        Port in;
+        CHECK(out.open("/out"));
+        CHECK(in.open("/in"));
+
+        Network::sync("/out");
+        Network::sync("/in");
+
+        TestModifyingCarrier::reset();
+        Network::connect(out.getName(), in.getName(), "tcp+recv.test_mod");
+
+        Bottle cmd_out("hello");
+        Bottle cmd_in;
+        out.enableBackgroundWrite(true);
+        out.write(cmd_out);
+        in.read(cmd_in);
+
+        CHECK(TestModifyingCarrier::cnt_accept_in == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_in == 1);
+        CHECK(TestModifyingCarrier::cnt_accept_out == 0);
+        CHECK(TestModifyingCarrier::cnt_modify_out == 0);
+        CHECK(TestModifyingCarrier::cnt_modify_reply == 0);
+    }
+
+    SECTION("Check ModifyingCarrier on input (w/ reply)")
+    {
+        Port out;
+        Port in;
+        CHECK(out.open("/out"));
+        CHECK(in.open("/in"));
+
+        Network::sync("/out");
+        Network::sync("/in");
+
+        TestModifyingCarrier::reset();
+        Network::connect(out.getName(), in.getName(), "tcp+recv.test_mod");
+
+        Bottle cmd_out("hello");
+        Bottle cmd_in;
+        Bottle reply_in;
+        Bottle reply_out("hey");
+        out.enableBackgroundWrite(true);
+        out.write(cmd_out, reply_in);
+        in.read(cmd_in, true);
+        in.reply(reply_out);
+
+        CHECK(TestModifyingCarrier::cnt_accept_in == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_in == 1);
+        CHECK(TestModifyingCarrier::cnt_accept_out == 0);
+        CHECK(TestModifyingCarrier::cnt_modify_out == 0);
+        CHECK(TestModifyingCarrier::cnt_modify_reply == 0);
+    }
+
+    SECTION("Check ModifyingCarrier on both input and output (w/o reply)")
+    {
+        Port out;
+        Port in;
+        CHECK(out.open("/out"));
+        CHECK(in.open("/in"));
+
+        Network::sync("/out");
+        Network::sync("/in");
+
+        TestModifyingCarrier::reset();
+        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod+recv.test_mod");
+
+        Bottle cmd_out("hello");
+        Bottle cmd_in;
+        out.enableBackgroundWrite(true);
+        out.write(cmd_out);
+        in.read(cmd_in);
+
+        CHECK(TestModifyingCarrier::cnt_accept_in == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_in == 1);
+        CHECK(TestModifyingCarrier::cnt_accept_out == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_out == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_reply == 0);
+    }
+
+    SECTION("Check ModifyingCarrier on both input and output (w/ reply)")
+    {
+        Port out;
+        Port in;
+        CHECK(out.open("/out"));
+        CHECK(in.open("/in"));
+
+        Network::sync("/out");
+        Network::sync("/in");
+
+        TestModifyingCarrier::reset();
+        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod+recv.test_mod");
+
+        Bottle cmd_out("hello");
+        Bottle cmd_in;
+        Bottle reply_in;
+        Bottle reply_out("hey");
+        out.enableBackgroundWrite(true);
+        out.write(cmd_out, reply_in);
+        in.read(cmd_in, true);
+        in.reply(reply_out);
+
+        CHECK(TestModifyingCarrier::cnt_accept_in == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_in == 1);
+        CHECK(TestModifyingCarrier::cnt_accept_out == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_out == 1);
+        CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
     }
 
     NetworkBase::setLocalMode(false);

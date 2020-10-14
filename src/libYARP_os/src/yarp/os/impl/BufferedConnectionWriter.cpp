@@ -226,11 +226,11 @@ template <typename T, typename NetT>
 inline void appendType(BufferedConnectionWriter* buf, T data)
 {
     if (std::is_same<T, NetT>::value) {
-        yarp::os::Bytes b((char*)(&data), sizeof(T));
+        yarp::os::Bytes b(reinterpret_cast<char*>(&data), sizeof(T));
         buf->push(b, true);
     } else {
         NetT i = data;
-        yarp::os::Bytes b((char*)(&i), sizeof(T));
+        yarp::os::Bytes b(reinterpret_cast<char*>(&i), sizeof(T));
         buf->push(b, true);
     }
 }
@@ -268,7 +268,7 @@ void BufferedConnectionWriter::appendFloat64(yarp::conf::float64_t data)
 
 void BufferedConnectionWriter::appendBlock(const char* data, size_t len)
 {
-    appendBlockCopy(yarp::os::Bytes((char*)data, len));
+    appendBlockCopy(yarp::os::Bytes(const_cast<char*>(data), len));
 }
 
 void BufferedConnectionWriter::appendText(const std::string& str, const char terminate)
@@ -281,13 +281,13 @@ void BufferedConnectionWriter::appendText(const std::string& str, const char ter
     } else {
         std::string s = str;
         s += terminate;
-        appendBlockCopy(yarp::os::Bytes((char*)(s.c_str()), s.length()));
+        appendBlockCopy(yarp::os::Bytes(const_cast<char*>(s.c_str()), s.length()));
     }
 }
 
 void BufferedConnectionWriter::appendExternalBlock(const char* data, size_t len)
 {
-    appendBlock(yarp::os::Bytes((char*)data, len));
+    appendBlock(yarp::os::Bytes(const_cast<char*>(data), len));
 }
 
 void BufferedConnectionWriter::appendBlock(const yarp::os::Bytes& data)
@@ -303,10 +303,10 @@ void BufferedConnectionWriter::appendBlockCopy(const yarp::os::Bytes& data)
 
 void BufferedConnectionWriter::appendLine(const std::string& data)
 {
-    yarp::os::Bytes b((char*)(data.c_str()), data.length());
+    yarp::os::Bytes b(const_cast<char*>(data.c_str()), data.length());
     push(b, true);
     const char* eol = "\r\n"; // for windows compatibility
-    yarp::os::Bytes beol((char*)eol, 2);
+    yarp::os::Bytes beol(const_cast<char*>(eol), 2);
     push(beol, true);
 }
 
@@ -335,10 +335,10 @@ const char* BufferedConnectionWriter::data(size_t index) const
 {
     if (index < header_used) {
         yarp::os::ManagedBytes& b = *(header[index]);
-        return (const char*)b.get();
+        return b.get();
     }
     yarp::os::ManagedBytes& b = *(lst[index - header.size()]);
-    return (const char*)b.get();
+    return b.get();
 }
 
 bool BufferedConnectionWriter::write(ConnectionWriter& connection) const
@@ -477,7 +477,7 @@ std::string BufferedConnectionWriter::toString() const
     stopWrite();
     size_t total_size = dataSize();
     std::string output(total_size, 0);
-    char* dest = (char*)output.c_str();
+    char* dest = const_cast<char*>(output.c_str());
     for (size_t i = 0; i < header_used; i++) {
         const char* data = header[i]->get();
         size_t len = header[i]->used();
@@ -510,7 +510,7 @@ bool BufferedConnectionWriter::applyConvertTextMode()
             sos.write(m.usedBytes());
         }
         const std::string& str = sos.str();
-        b.fromBinary(str.c_str(), (int)str.length());
+        b.fromBinary(str.c_str(), static_cast<int>(str.length()));
         std::string replacement = b.toString() + "\n";
         for (auto& i : lst) {
             delete i;
@@ -519,7 +519,7 @@ bool BufferedConnectionWriter::applyConvertTextMode()
         target = &lst;
         lst.clear();
         stopPool();
-        Bytes data((char*)replacement.c_str(), replacement.length());
+        Bytes data(const_cast<char*>(replacement.c_str()), replacement.length());
         appendBlockCopy(data);
     }
     return true;

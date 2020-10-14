@@ -113,7 +113,7 @@ std::string StreamConnectionReader::expectString(int len)
     yarp::os::Bytes b(buf, len);
     yAssert(in != nullptr);
     yarp::conf::ssize_t r = in->read(b);
-    if (r < 0 || (size_t)r < b.length()) {
+    if (r < 0 || static_cast<size_t>(r) < b.length()) {
         err = true;
         delete[] buf;
         return {};
@@ -190,9 +190,9 @@ inline T StreamConnectionReader::expectType()
     yAssert(in != nullptr);
 
     NetT x = 0;
-    yarp::os::Bytes b((char*)(&x), sizeof(T));
+    yarp::os::Bytes b(reinterpret_cast<char*>(&x), sizeof(T));
     yarp::conf::ssize_t r = in->read(b);
-    if (r < 0 || (size_t)r < b.length()) {
+    if (r < 0 || static_cast<size_t>(r) < b.length()) {
         err = true;
         return 0;
     }
@@ -377,7 +377,7 @@ Bytes StreamConnectionReader::readEnvelope()
 {
     if (protocol != nullptr) {
         const std::string& env = protocol->getEnvelope();
-        return {(char*)env.c_str(), env.length()};
+        return {const_cast<char*>(env.c_str()), env.length()};
     }
     if (parentConnectionReader != nullptr) {
         return parentConnectionReader->readEnvelope();
