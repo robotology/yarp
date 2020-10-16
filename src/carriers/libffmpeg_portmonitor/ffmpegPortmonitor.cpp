@@ -36,68 +36,49 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     // Check if this is sender or not
     senderSide = (options.find("sender_side").asBool());
 
-    // Default codec
-    AVCodecID codec = AV_CODEC_ID_MPEG2VIDEO;
 
     // Parse command line parameters and set them into global variable "paramsMap"
     std::string str = options.find("carrier").asString();
     getParamsFromCommandLine(str);
 
-    // Get codec from command line arguments
-    if (paramsMap["codec"] == "h264"){
-        codec = AV_CODEC_ID_H264;
-    } else if(paramsMap["codec"] == "h265"){
-        codec = AV_CODEC_ID_H265;
-    } else if(paramsMap["codec"] == "mpeg2video"){
-        codec = AV_CODEC_ID_MPEG2VIDEO;
+    // Set codec name if specified in command line params
+    if (paramsMap.find("codec") != paramsMap.end()) {
+        codecName = paramsMap["codec"].c_str();
+    } else {
+        codecName = "mpeg2video";   // Default codec
     }
     
+    // Find encoder/decoder
     if (senderSide) {
-        codecSender = avcodec_find_encoder(codec);
-        if (!codecSender) {
-            yCError(FFMPEGMONITOR, "Can't find codec %s", "");
-            return false;
-        }
-        cSender = avcodec_alloc_context3(codecSender);
-        if (!cSender) {
-            yCError(FFMPEGMONITOR, "Could not allocate video codec context");
-            return false;
-        }
-        firstTimeSender = true;
-
-        // Parameters
-        setCommandParameters(cSender,paramsMap);
-        cSender->time_base = (AVRational){1, 25};
-        cSender->framerate = (AVRational){25, 1};
-
-
+        codec = avcodec_find_encoder_by_name(codecName);
     } else {
-        codecReceiver = avcodec_find_decoder(codec);
-        if (!codecReceiver) {
-            yCError(FFMPEGMONITOR, "Can't find codec %s", "");
-            return -1;
-        }
-        cReceiver = avcodec_alloc_context3(codecReceiver);
-        if (!cReceiver) {
-            yCError(FFMPEGMONITOR, "Could not allocate video codec context");
-            return -1;
-        }
-        firstTimeReceiver = true;
-
-
-        
-        // Parameters
-        setCommandParameters(cReceiver,paramsMap);
-        cReceiver->time_base = (AVRational){1, 25};
-        cReceiver->framerate = (AVRational){25, 1};
+        codec = avcodec_find_decoder_by_name(codecName);
+    }
+    if (!codec) {
+        yCError(FFMPEGMONITOR, "Can't find codec %s", codecName);
+        return false;
     }
 
+    // Prepare codec context
+    codecContext = avcodec_alloc_context3(codec);
+    if (!codecContext) {
+        yCError(FFMPEGMONITOR, "Could not allocate video codec context");
+        return false;
+    }
+
+    firstTime = true;
+
+    // Set command line params
+    if (setCommandLineParams() == -1)
+        return false;
+    
     // Pixel formats map
     pixelMap[VOCAB_PIXEL_RGB] = AV_PIX_FMT_RGB24;
     pixelMap[VOCAB_PIXEL_RGBA] = AV_PIX_FMT_RGBA;
     pixelMap[VOCAB_PIXEL_BGR] = AV_PIX_FMT_BGR24;
     pixelMap[VOCAB_PIXEL_BGRA] = AV_PIX_FMT_BGRA;
     pixelMap[VOCAB_PIXEL_YUV_420] = AV_PIX_FMT_YUV420P;
+
     codecPixelMap[AV_CODEC_ID_H264] = AV_PIX_FMT_YUV420P;
     codecPixelMap[AV_CODEC_ID_H265] = AV_PIX_FMT_YUV420P;
     codecPixelMap[AV_CODEC_ID_MPEG2VIDEO] = AV_PIX_FMT_YUV420P;
@@ -108,11 +89,9 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 void FfmpegMonitorObject::destroy(void)
 {
     paramsMap.clear();
-    // if (senderSide) {
-    //     avcodec_free_context(&cSender);
-    // } else {
-    //     avcodec_free_context(&cReceiver);
-    // }
+    avcodec_close(codecContext);
+    avcodec_free_context(&codecContext);
+
 }
 
 bool FfmpegMonitorObject::setparam(const yarp::os::Property& params)
@@ -154,15 +133,15 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         yCTrace(FFMPEGMONITOR, "update - sender");
         Image* img = thing.cast_as< Image >();
         AVPacket *packet = new AVPacket;
-        bool ok = true;
+        bool success = true;
         if (compress(img, packet) != 0) {
             yCError(FFMPEGMONITOR, "Error in compression");
-            ok = false;
+            success = false;
         }
 
         // Insert compressed image into a Bottle to be sent
         data.clear();
-        if (!ok) {
+        if (!success) {
             data.addInt32(0);
         } else {
             data.addInt32(1);
@@ -185,13 +164,15 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             }
         }
         th.setPortWriter(&data);
+        // av_free_packet(packet);
+        // delete packet;
     }
     else {
         yCTrace(FFMPEGMONITOR, "update - receiver");
         Bottle* compressedBottle = thing.cast_as<Bottle>();
 
-        int ok = compressedBottle->get(0).asInt32();
-        if (ok == 0) {
+        int success = compressedBottle->get(0).asInt32();
+        if (success == 0) {
             imageOut.zero();
         } else {
             // Get compressed image from Bottle and decompress
@@ -200,8 +181,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             int pixelCode = compressedBottle->get(3).asInt32();
             int pixelSize = compressedBottle->get(4).asInt32();
             AVPacket* tmp = (AVPacket*) compressedBottle->get(5).asBlob();
-            AVPacket * packet = av_packet_alloc();
-            // packet->convergence_duration = tmp->convergence_duration;
+            AVPacket* packet = av_packet_alloc();
             packet->dts = tmp->dts;
             packet->duration = tmp->duration;
             packet->flags = tmp->flags;
@@ -214,39 +194,37 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             packet->buf = av_buffer_create((uint8_t *) compressedBottle->get(8).asBlob(),
                                             compressedBottle->get(7).asInt32(), av_buffer_default_free,
                                             nullptr, AV_BUFFER_FLAG_READONLY);
-            // packet->buf->size = compressedBottle->get(7).asInt();
-            // packet->buf->data = (uint8_t *) compressedBottle->get(8).asBlob();
-            
+                        
             if (packet->side_data_elems > 0) {
                 packet->side_data = new AVPacketSideData;
                 packet->side_data->size = compressedBottle->get(9).asInt32();
                 packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt32();
                 packet->side_data->data = (uint8_t *) compressedBottle->get(11).asBlob();
-                
-                // uint8_t * dataArray = (uint8_t *) av_malloc(compressedBottle->get(9).asInt());
-                // memcpy(dataArray, (uint8_t *) compressedBottle->get(11).asBlob(), compressedBottle->get(9).asInt());
-                // av_packet_add_side_data(packet, (AVPacketSideDataType) compressedBottle->get(10).asInt(),
-                //                         dataArray, compressedBottle->get(9).asInt());
-
             }
                         
             unsigned char* decompressed;
             int sizeDecompressed;
-            bool ok = true;
+            bool success = true;
             if (decompress(packet, &decompressed, &sizeDecompressed, width, height, pixelCode) != 0) {
                 yCError(FFMPEGMONITOR, "Error in decompression");
-                ok = false;
+                success = false;
             }
 
             imageOut.zero();
-            if (ok) {
+            if (success) {
                 imageOut.setPixelCode(pixelCode);
                 imageOut.setPixelSize(pixelSize);
                 imageOut.resize(width, height);
                 memcpy(imageOut.getRawImage(), decompressed, sizeDecompressed);
             }
+
+            // if (packet->side_data_elems > 0)
+            //     delete packet->side_data;
+            // if (success)
+            //     av_packet_free(&packet);
         }
         th.setPortWriter(&imageOut);
+        
     }
     return th;
 }
@@ -285,11 +263,11 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
 
     success = av_image_alloc(endFrame->data, endFrame->linesize,
                     w, h,
-                    (AVPixelFormat) codecPixelMap[cSender->codec_id], 16);
+                    (AVPixelFormat) codecPixelMap[codecContext->codec_id], 16);
     
     endFrame->height = h;
     endFrame->width = w;
-    endFrame->format = (AVPixelFormat) codecPixelMap[cSender->codec_id];
+    endFrame->format = (AVPixelFormat) codecPixelMap[codecContext->codec_id];
 
     // Convert the image into end format
     static struct SwsContext *img_convert_ctx;
@@ -297,7 +275,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     img_convert_ctx = sws_getContext(w, h, 
                                         (AVPixelFormat) pixelMap[img->getPixelCode()], 
                                         w, h,
-                                        (AVPixelFormat) codecPixelMap[cSender->codec_id],
+                                        (AVPixelFormat) codecPixelMap[codecContext->codec_id],
                                         SWS_BICUBIC,
                                         NULL, NULL, NULL);
     if (img_convert_ctx == NULL) {
@@ -316,30 +294,28 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         return -1;
     }
 
-    if (firstTimeSender) {
-        cSender->width = w;
-        cSender->height = h;
-        
-        
-        cSender->pix_fmt = (AVPixelFormat) codecPixelMap[cSender->codec_id];
+    if (firstTime) {
+        codecContext->width = w;
+        codecContext->height = h;
+        codecContext->pix_fmt = (AVPixelFormat) codecPixelMap[codecContext->codec_id];
 
-        ret = avcodec_open2(cSender, codecSender, NULL);
+        ret = avcodec_open2(codecContext, codec, NULL);
         if (ret < 0) {
             yCError(FFMPEGMONITOR, "Could not open codec");
             return -1;
         }
-        firstTimeSender = false;
+        firstTime = false;
     }
 
-    startFrame->pts = cSender->frame_number;
+    startFrame->pts = codecContext->frame_number;
 
-    ret = avcodec_send_frame(cSender, endFrame);
+    ret = avcodec_send_frame(codecContext, endFrame);
     if (ret < 0) {
         yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
         return -1;
     }
 
-    ret = avcodec_receive_packet(cSender, pkt);
+    ret = avcodec_receive_packet(codecContext, pkt);
     if (ret == AVERROR(EAGAIN)) {
         yCError(FFMPEGMONITOR, "Error EAGAIN");
         return -1;
@@ -353,6 +329,12 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         return -1;
     }
 
+    // sws_freeContext(img_convert_ctx);
+    // av_free(endFrame->data);
+    // av_free(startFrame->data);
+    // av_frame_free(&startFrame);
+    // av_frame_free(&endFrame);
+
     return 0;
 }
 
@@ -363,31 +345,31 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
     AVFrame *startFrame;
     AVFrame *endFrame;
 
-    if (firstTimeReceiver) {
-        cReceiver->width = w;
-        cReceiver->height = h;
-        
-        cReceiver->pix_fmt = (AVPixelFormat) codecPixelMap[cReceiver->codec_id];
+    if (firstTime) {
+        codecContext->width = w;
+        codecContext->height = h;
+        codecContext->pix_fmt = (AVPixelFormat) codecPixelMap[codecContext->codec_id];
 
-        // Allocate video frame
-        startFrame = av_frame_alloc();
-        if (startFrame == NULL)
-            return -1;
-
-        int ret = avcodec_open2(cReceiver, codecReceiver, NULL);
+        int ret = avcodec_open2(codecContext, codec, NULL);
         if (ret < 0) {
             yCError(FFMPEGMONITOR, "Could not open codec");
             return -1;
         }
+        firstTime = false;
     }
 
-    int ret = avcodec_send_packet(cReceiver, pkt);
+    // Allocate video frame
+    startFrame = av_frame_alloc();
+    if (startFrame == NULL)
+        return -1;
+
+    int ret = avcodec_send_packet(codecContext, pkt);
     if (ret < 0) {
         yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
         return -1;
     }
 
-    ret = avcodec_receive_frame(cReceiver, startFrame);
+    ret = avcodec_receive_frame(codecContext, startFrame);
     if (ret == AVERROR(EAGAIN)) {
         yCError(FFMPEGMONITOR, "Error EAGAIN");
         return -1;
@@ -424,7 +406,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
     static struct SwsContext *img_convert_ctx;
     
     img_convert_ctx = sws_getContext(w, h, 
-                                        (AVPixelFormat) codecPixelMap[cReceiver->codec_id], 
+                                        (AVPixelFormat) codecPixelMap[codecContext->codec_id], 
                                         w, h,
                                         (AVPixelFormat) pixelMap[pixelCode],
                                         SWS_BICUBIC,
@@ -441,62 +423,15 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
     *decompressed = endFrame->data[0];
     *sizeDecompressed = success;
 
+    // sws_freeContext(img_convert_ctx);
+    // av_free(startFrame->data);
+    // av_free(endFrame->data);
+    // av_frame_free(&endFrame);
+    // av_frame_free(&startFrame);
+
+
     return 0;
 
-}
-
-int FfmpegMonitorObject::save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, int FrameNo, const char* filename) {
-
-    AVCodec *jpegCodec = avcodec_find_encoder(AV_CODEC_ID_JPEG2000);
-    if (!jpegCodec) {
-        return -1;
-    }
-
-    AVCodecContext *jpegContext = avcodec_alloc_context3(jpegCodec);
-    if (!jpegContext) {
-        return -1;
-    }
-
-    jpegContext->pix_fmt = pCodecCtx->pix_fmt;
-    jpegContext->height = pFrame->height;
-    jpegContext->width = pFrame->width;
-
-    jpegContext->time_base = pCodecCtx->time_base;
-    jpegContext->framerate = pCodecCtx->framerate;
-
-    if (avcodec_open2(jpegContext, jpegCodec, NULL) < 0) {
-        return -1;
-    }
-
-    FILE *JPEGFile;
-    char JPEGFName[256];
-
-    AVPacket packet1;
-    packet1.data = NULL;
-    packet1.size = 0;
-    av_init_packet(&packet1);
-
-    int ret = avcodec_send_frame(jpegContext, pFrame);
-    
-    if (ret == 0)
-    {
-        ret = avcodec_receive_packet(jpegContext, &packet1);
-        if (ret != 0)
-        {
-            return -1;
-        }
-    } else {
-        return -1;
-    }
-
-    sprintf(JPEGFName, "%s-%d", filename, FrameNo);
-    JPEGFile = fopen(JPEGFName, "wb");
-    fwrite(packet1.data, 1, packet1.size, JPEGFile);
-    fclose(JPEGFile);
-
-    av_packet_unref(&packet1);
-    avcodec_close(jpegContext);
-    return 0;
 }
 
 void FfmpegMonitorObject::getParamsFromCommandLine(string carrierString) {
@@ -507,7 +442,8 @@ void FfmpegMonitorObject::getParamsFromCommandLine(string carrierString) {
                             "bit_rate",
                             "time_base",
                             "gop_size",
-                            "max_b_frames" };
+                            "max_b_frames",
+                            "framerate" };
     
     for (string paramKey : paramsList) {
         int startPosition = carrierString.find(paramKey);
@@ -525,60 +461,77 @@ void FfmpegMonitorObject::getParamsFromCommandLine(string carrierString) {
     }
 }
 
-void FfmpegMonitorObject::setCommandParameters(AVCodecContext *cContext, std::map<std::string, std::string> paramsMap){
-        // qmin
-        if (paramsMap["qmin"]!=""){
-            //get int value from a string
-            cContext->qmin = std::stoi(paramsMap["qmin"]);
+int FfmpegMonitorObject::setCommandLineParams() {
+        
+    try {
+        // Qmin
+        if (paramsMap.find("qmin") != paramsMap.end()) {
+            codecContext->qmin = stoi(paramsMap["qmin"]);
+
         } else {
-            if (paramsMap["codec"]=="h264"){
-                cContext->qmin=18;
-            }
-            if (paramsMap["codec"]=="h265"){
-                cContext->qmin=24;
-            }
-            if (paramsMap["codec"]=="mpeg2video" || paramsMap["codec"]==""){
-                cContext->qmin=3;
+            if (codecName == "h264") {
+                codecContext->qmin = 18;
+            } else if (codecName == "h265") {
+                codecContext->qmin = 24;
+            } else if (codecName == "mpeg2video") {
+                codecContext->qmin = 3;
             }
         }
 
-        // qmax
-        if (paramsMap["qmax"]!=""){
-            //get int value from a string
-            cContext->qmax = std::stoi(paramsMap["qmax"]);
+        // Qmax
+        if (paramsMap.find("qmax") != paramsMap.end()){
+            codecContext->qmax = stoi(paramsMap["qmax"]);
+
         } else {
-            if (paramsMap["codec"]=="h264"){
-                cContext->qmax=28;
-            }
-            if (paramsMap["codec"]=="h265"){
-                cContext->qmax=34;
-            }
-            if (paramsMap["codec"]=="mpeg2video" || paramsMap["codec"]==""){
-                cContext->qmax=5;
+            if (codecName == "h264") {
+                codecContext->qmax = 28;
+            } else if (codecName == "h265") {
+                codecContext->qmax = 34;
+            } else if (codecName == "mpeg2video") {
+                codecContext->qmax = 5;
             }
         }
 
-        // bit rate
-        if (paramsMap["bit_rate"]!=""){
-            //get int value from a string
-            cContext->bit_rate= std::stoi(paramsMap["bit_rate"]);
+        // Bit rate
+        if (paramsMap.find("bit_rate") != paramsMap.end()) {
+            codecContext->bit_rate = stoi(paramsMap["bit_rate"]);
+
         } else {
-            cContext->bit_rate = 400000; 
+            codecContext->bit_rate = 400000; 
         }
 
-        // gop size
-        if (paramsMap["gop_size"]!=""){
-            //get int value from a string
-            cContext->gop_size = std::stoi(paramsMap["gop_size"]);
+        // Gop size
+        if (paramsMap.find("gop_size") != paramsMap.end()) {
+            codecContext->gop_size = stoi(paramsMap["gop_size"]);
+
         } else {
-            cContext->gop_size = 10;
+            codecContext->gop_size = 10;
         }
 
-        // max b frames
-        if (paramsMap["max_b_frames"]!=""){
-            //get int value from a string
-            cContext->max_b_frames = std::stoi(paramsMap["max_b_frames"]);
+        // Max b frames
+        if (paramsMap.find("max_b_frames") != paramsMap.end()) {
+            codecContext->max_b_frames = stoi(paramsMap["max_b_frames"]);
+
         } else {
-            cContext->max_b_frames = 1;
+            codecContext->max_b_frames = 1;
         }
+
+        // Framerate & time_base
+        if (paramsMap.find("framerate") != paramsMap.end()) {
+            int framerate = stoi(paramsMap["framerate"]);
+            codecContext->framerate = (AVRational){ framerate , 1 };
+            codecContext->time_base = (AVRational){ 1 , framerate };
+
+        } else {
+            codecContext->time_base = (AVRational){1, 30};
+            codecContext->framerate = (AVRational){30, 1};
+        }        
+        return 0;
+
+    } catch (invalid_argument e) {
+        return -1;
+    } catch (out_of_range e) {
+        return -1;
+    }
+    
 }

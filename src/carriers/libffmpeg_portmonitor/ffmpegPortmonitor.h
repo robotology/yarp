@@ -26,21 +26,18 @@ public:
 protected:
     int compress(yarp::sig::Image* img, AVPacket* pkt);
     int decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed, int w, int h, int pixelCode);
-    int save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, int FrameNo, const char* filename);
     void getParamsFromCommandLine(std::string carrierString);
-    void setCommandParameters(AVCodecContext *cContext, std::map<std::string, std::string> paramsMap);
+    int setCommandLineParams();
 
 public:
     yarp::os::Things th;
     yarp::os::Bottle data;
     yarp::sig::FlexImage imageOut;
     bool senderSide;
-    const AVCodec *codecSender;
-    const AVCodec *codecReceiver;
-    AVCodecContext *cSender;
-    AVCodecContext *cReceiver;
-    bool firstTimeSender;
-    bool firstTimeReceiver;
+    const char* codecName;
+    const AVCodec *codec;
+    AVCodecContext *codecContext;
+    bool firstTime;
     std::map<std::string, std::string> paramsMap;
     std::map<int, int> pixelMap;
     std::map<int, int> codecPixelMap;
