@@ -32,20 +32,18 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
 
 
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
-{
+{   
+    // Check if this is sender or not
     senderSide = (options.find("sender_side").asBool());
 
-    // default codec
+    // Default codec
     AVCodecID codec = AV_CODEC_ID_MPEG2VIDEO;
 
-
+    // Parse command line parameters and set them into global variable "paramsMap"
     std::string str = options.find("carrier").asString();
-    // command line
-    paramsMap = fromCommand1(str);
+    getParamsFromCommandLine(str);
 
-
-    
-    // parse codec from command line arguments
+    // Get codec from command line arguments
     if (paramsMap["codec"] == "h264"){
         codec = AV_CODEC_ID_H264;
     } else if(paramsMap["codec"] == "h265"){
@@ -53,8 +51,6 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     } else if(paramsMap["codec"] == "mpeg2video"){
         codec = AV_CODEC_ID_MPEG2VIDEO;
     }
-
-
     
     if (senderSide) {
         codecSender = avcodec_find_encoder(codec);
@@ -111,6 +107,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
 void FfmpegMonitorObject::destroy(void)
 {
+    paramsMap.clear();
     // if (senderSide) {
     //     avcodec_free_context(&cSender);
     // } else {
@@ -166,9 +163,9 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         // Insert compressed image into a Bottle to be sent
         data.clear();
         if (!ok) {
-            data.addInt(0);
+            data.addInt32(0);
         } else {
-            data.addInt(1);
+            data.addInt32(1);
             data.addInt32(img->width());
             data.addInt32(img->height());
             data.addInt32(img->getPixelCode());
@@ -177,12 +174,12 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             data.add(p);
             Value d(packet->data, packet->size);
             data.add(d);
-            data.addInt(packet->buf->size);
+            data.addInt32(packet->buf->size);
             Value bd(packet->buf->data, packet->buf->size);
             data.add(bd);
             if (packet->side_data_elems > 0) {
-                data.addInt(packet->side_data->size);
-                data.addInt(packet->side_data->type);
+                data.addInt32(packet->side_data->size);
+                data.addInt32(packet->side_data->type);
                 Value sd(packet->side_data->data, packet->side_data->size);
                 data.add(sd);
             }
@@ -193,7 +190,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         yCTrace(FFMPEGMONITOR, "update - receiver");
         Bottle* compressedBottle = thing.cast_as<Bottle>();
 
-        int ok = compressedBottle->get(0).asInt();
+        int ok = compressedBottle->get(0).asInt32();
         if (ok == 0) {
             imageOut.zero();
         } else {
@@ -204,7 +201,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             int pixelSize = compressedBottle->get(4).asInt32();
             AVPacket* tmp = (AVPacket*) compressedBottle->get(5).asBlob();
             AVPacket * packet = av_packet_alloc();
-            packet->convergence_duration = tmp->convergence_duration;
+            // packet->convergence_duration = tmp->convergence_duration;
             packet->dts = tmp->dts;
             packet->duration = tmp->duration;
             packet->flags = tmp->flags;
@@ -215,15 +212,15 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             packet->size = tmp->size;
             packet->data = (uint8_t *) compressedBottle->get(6).asBlob();
             packet->buf = av_buffer_create((uint8_t *) compressedBottle->get(8).asBlob(),
-                                            compressedBottle->get(7).asInt(), av_buffer_default_free,
+                                            compressedBottle->get(7).asInt32(), av_buffer_default_free,
                                             nullptr, AV_BUFFER_FLAG_READONLY);
             // packet->buf->size = compressedBottle->get(7).asInt();
             // packet->buf->data = (uint8_t *) compressedBottle->get(8).asBlob();
             
             if (packet->side_data_elems > 0) {
                 packet->side_data = new AVPacketSideData;
-                packet->side_data->size = compressedBottle->get(9).asInt();
-                packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt();
+                packet->side_data->size = compressedBottle->get(9).asInt32();
+                packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt32();
                 packet->side_data->data = (uint8_t *) compressedBottle->get(11).asBlob();
                 
                 // uint8_t * dataArray = (uint8_t *) av_malloc(compressedBottle->get(9).asInt());
@@ -277,6 +274,9 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
                     w, h,
                     (AVPixelFormat) pixelMap[img->getPixelCode()], 16);
 
+    if (success < 0)
+        return -1;
+
     startFrame->linesize[0] = img->getRowSize();
     startFrame->data[0] = img->getRawImage();
     startFrame->height = h;
@@ -311,7 +311,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     pkt->data = NULL;
     pkt->size = 0;
     av_init_packet(pkt);
-    if (!&pkt) {
+    if (!pkt) {
         yCError(FFMPEGMONITOR, "Could not allocate packet");
         return -1;
     }
@@ -475,7 +475,6 @@ int FfmpegMonitorObject::save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *
     packet1.data = NULL;
     packet1.size = 0;
     av_init_packet(&packet1);
-    int gotFrame;
 
     int ret = avcodec_send_frame(jpegContext, pFrame);
     
@@ -500,27 +499,30 @@ int FfmpegMonitorObject::save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *
     return 0;
 }
 
-std::map<std::string, std::string> FfmpegMonitorObject::fromCommand1(std::string carrierString){
-    std::string params_list[7] = { "codec", "qmin", "qmax", "bit_rate", "time_base", "gop_size", "max_b_frames" };
-    std::string param="";
-    std::map<std::string, std::string> mapParams;
-    int found;
-
-    for (int i=0; i<7;i++){
-        
-        found = carrierString.find(params_list[i]);
-        if (found!=-1){
-            param = carrierString.substr(carrierString.find(params_list[i]) + (params_list[i].length()+1));
-            found = param.find('+');
-            if (found!=-1) {
-                param = param.substr(0,param.find('+'));
+void FfmpegMonitorObject::getParamsFromCommandLine(string carrierString) {
+    
+    string paramsList[] = { "codec",
+                            "qmin",
+                            "qmax",
+                            "bit_rate",
+                            "time_base",
+                            "gop_size",
+                            "max_b_frames" };
+    
+    for (string paramKey : paramsList) {
+        int startPosition = carrierString.find(paramKey);
+        if (startPosition != -1) {
+            string paramValue = carrierString.substr(startPosition + paramKey.length() + 1);
+            
+            int endPosition = paramValue.find('+');
+            if (endPosition != -1) {
+                paramValue = paramValue.substr(0, endPosition);
             }
-            if (param!=""){
-                mapParams[params_list[i]] = param;
+            if (paramValue != "") {
+                paramsMap.insert( pair<string, string>(paramKey, paramValue) );
             }
         }
     }
-    return mapParams;
 }
 
 void FfmpegMonitorObject::setCommandParameters(AVCodecContext *cContext, std::map<std::string, std::string> paramsMap){

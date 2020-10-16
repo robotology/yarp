@@ -27,7 +27,7 @@ protected:
     int compress(yarp::sig::Image* img, AVPacket* pkt);
     int decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed, int w, int h, int pixelCode);
     int save_frame_as_jpeg(AVCodecContext *pCodecCtx, AVFrame *pFrame, int FrameNo, const char* filename);
-    std::map<std::string, std::string> fromCommand1(std::string carrierString);
+    void getParamsFromCommandLine(std::string carrierString);
     void setCommandParameters(AVCodecContext *cContext, std::map<std::string, std::string> paramsMap);
 
 public:
