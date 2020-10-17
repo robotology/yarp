@@ -339,7 +339,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     }
 
     sws_freeContext(img_convert_ctx);
-    av_freep_ciao(&endFrame->data[0]);
+    av_freep(&endFrame->data[0]);
     av_frame_free(&startFrame);
     av_frame_free(&endFrame);
 
