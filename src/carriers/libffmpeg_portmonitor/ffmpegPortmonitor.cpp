@@ -185,13 +185,11 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
     else {
         yCTrace(FFMPEGMONITOR, "update - receiver");
         Bottle* compressedBottle = thing.cast_as<Bottle>();
+        imageOut.zero();
 
-        int ok = compressedBottle->get(0).asInt32();
-        if (ok != 1) {
-            imageOut.zero();
-        } else {
+        if (compressedBottle->get(0).asInt32() == 1) {
             bool success = true;
-            // Get compressed image from Bottle and decompress
+            // Get compressed image from Bottle
             int width = compressedBottle->get(1).asInt32();
             int height = compressedBottle->get(2).asInt32();
             int pixelCode = compressedBottle->get(3).asInt32();
@@ -212,7 +210,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                                             nullptr, AV_BUFFER_FLAG_READONLY);
                         
             if (packet->side_data_elems > 0) {
-                packet->side_data = new AVPacketSideData;
+                packet->side_data = new AVPacketSideData();
                 packet->side_data->size = compressedBottle->get(9).asInt32();
                 packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt32();
                 packet->side_data->data = (uint8_t *) compressedBottle->get(11).asBlob();
@@ -225,18 +223,15 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                 success = false;
             }
 
-            imageOut.zero();
             if (success) {
                 imageOut.setPixelCode(pixelCode);
                 imageOut.setPixelSize(pixelSize);
                 imageOut.resize(width, height);
                 memcpy(imageOut.getRawImage(), decompressed, sizeDecompressed);
+                packet->data = NULL;
+                // av_buffer_unref(&packet->buf);
+                // av_packet_free_ciao(&packet);
             }
-
-            // if (packet->side_data_elems > 0)
-            //     delete packet->side_data;
-            // if (success)
-            //     av_packet_free(&packet);
         }
         th.setPortWriter(&imageOut);
         
