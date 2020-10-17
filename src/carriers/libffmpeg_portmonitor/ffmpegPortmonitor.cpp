@@ -60,7 +60,12 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     }
 
     // Prepare codec context
-    codecContext = avcodec_alloc_context3(codec);
+    if (codecContext == NULL) {
+        codecContext = avcodec_alloc_context3(codec);
+    } else {
+        yCError(FFMPEGMONITOR, "Codec context is already allocated");
+        return false;
+    }
     if (!codecContext) {
         yCError(FFMPEGMONITOR, "Could not allocate video codec context");
         return false;
@@ -89,8 +94,13 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 void FfmpegMonitorObject::destroy(void)
 {
     paramsMap.clear();
-    avcodec_close(codecContext);
-    avcodec_free_context(&codecContext);
+
+    // Check if codec context is freeable, if yes free it.
+    if (codecContext != NULL) {
+        avcodec_close(codecContext);
+        avcodec_free_context(&codecContext);
+        codecContext = NULL;
+    }
 
 }
 
@@ -114,7 +124,7 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
         if(img == nullptr) {
             yCError(FFMPEGMONITOR, "Expected type Image in sender side, but got wrong data type!");
             return false;
-        }        
+        }
     }
     else {
         yCTrace(FFMPEGMONITOR, "accept - receiver");
@@ -130,11 +140,16 @@ bool FfmpegMonitorObject::accept(yarp::os::Things& thing)
 yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 {
     if (senderSide) {
+        bool success = true;
         yCTrace(FFMPEGMONITOR, "update - sender");
         Image* img = thing.cast_as< Image >();
-        AVPacket *packet = new AVPacket;
-        bool success = true;
-        if (compress(img, packet) != 0) {
+        AVPacket *packet = av_packet_alloc();
+        if (packet == NULL) {
+            yCError(FFMPEGMONITOR, "Error in packet allocation");
+            success = false;
+        }
+        
+        if (success && compress(img, packet) != 0) {
             yCError(FFMPEGMONITOR, "Error in compression");
             success = false;
         }
@@ -156,25 +171,26 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             data.addInt32(packet->buf->size);
             Value bd(packet->buf->data, packet->buf->size);
             data.add(bd);
-            if (packet->side_data_elems > 0) {
-                data.addInt32(packet->side_data->size);
-                data.addInt32(packet->side_data->type);
-                Value sd(packet->side_data->data, packet->side_data->size);
+
+            for (int i = 0; i < packet->side_data_elems; i++) {
+                data.addInt32(packet->side_data[i].size);
+                data.addInt32(packet->side_data[i].type);
+                Value sd(packet->side_data[i].data, packet->side_data[i].size);
                 data.add(sd);
             }
         }
         th.setPortWriter(&data);
-        // av_free_packet(packet);
-        // delete packet;
+        av_free_packet(packet);
     }
     else {
         yCTrace(FFMPEGMONITOR, "update - receiver");
         Bottle* compressedBottle = thing.cast_as<Bottle>();
 
-        int success = compressedBottle->get(0).asInt32();
-        if (success == 0) {
+        int ok = compressedBottle->get(0).asInt32();
+        if (ok != 1) {
             imageOut.zero();
         } else {
+            bool success = true;
             // Get compressed image from Bottle and decompress
             int width = compressedBottle->get(1).asInt32();
             int height = compressedBottle->get(2).asInt32();
@@ -204,8 +220,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                         
             unsigned char* decompressed;
             int sizeDecompressed;
-            bool success = true;
-            if (decompress(packet, &decompressed, &sizeDecompressed, width, height, pixelCode) != 0) {
+            if (success && decompress(packet, &decompressed, &sizeDecompressed, width, height, pixelCode) != 0) {
                 yCError(FFMPEGMONITOR, "Error in decompression");
                 success = false;
             }
@@ -256,6 +271,8 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         return -1;
 
     startFrame->linesize[0] = img->getRowSize();
+    // Free old pointer
+    av_freep(&startFrame->data[0]);
     startFrame->data[0] = img->getRawImage();
     startFrame->height = h;
     startFrame->width = w;
@@ -285,14 +302,6 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     
     int ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0, 
                         h, endFrame->data, endFrame->linesize);
-
-    pkt->data = NULL;
-    pkt->size = 0;
-    av_init_packet(pkt);
-    if (!pkt) {
-        yCError(FFMPEGMONITOR, "Could not allocate packet");
-        return -1;
-    }
 
     if (firstTime) {
         codecContext->width = w;
@@ -329,11 +338,10 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         return -1;
     }
 
-    // sws_freeContext(img_convert_ctx);
-    // av_free(endFrame->data);
-    // av_free(startFrame->data);
-    // av_frame_free(&startFrame);
-    // av_frame_free(&endFrame);
+    sws_freeContext(img_convert_ctx);
+    av_freep_ciao(&endFrame->data[0]);
+    av_frame_free(&startFrame);
+    av_frame_free(&endFrame);
 
     return 0;
 }

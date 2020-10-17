@@ -36,7 +36,7 @@ public:
     bool senderSide;
     const char* codecName;
     const AVCodec *codec;
-    AVCodecContext *codecContext;
+    AVCodecContext *codecContext = NULL;
     bool firstTime;
     std::map<std::string, std::string> paramsMap;
     std::map<int, int> pixelMap;
