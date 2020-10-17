@@ -34,7 +34,7 @@ public:
     yarp::os::Bottle data;
     yarp::sig::FlexImage imageOut;
     bool senderSide;
-    const char* codecName;
+    std::string codecName;
     const AVCodec *codec;
     AVCodecContext *codecContext = NULL;
     bool firstTime;

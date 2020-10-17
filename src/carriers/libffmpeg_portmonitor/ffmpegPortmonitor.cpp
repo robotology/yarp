@@ -42,17 +42,22 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     getParamsFromCommandLine(str);
 
     // Set codec name if specified in command line params
-    if (paramsMap.find("codec") != paramsMap.end()) {
-        codecName = paramsMap["codec"].c_str();
-    } else {
-        codecName = "mpeg2video";   // Default codec
+    AVCodecID codecId = AV_CODEC_ID_MPEG2VIDEO;
+    codecName = "mpeg2video";
+
+    if (paramsMap["codec"] == "h264") {       
+        codecId = AV_CODEC_ID_H264;
+    } else if (paramsMap["codec"] == "h265") {
+        codecId = AV_CODEC_ID_H265;
+    } else if (paramsMap["codec"] == "mpeg2video") {
+        codecId = AV_CODEC_ID_MPEG2VIDEO;
     }
     
     // Find encoder/decoder
     if (senderSide) {
-        codec = avcodec_find_encoder_by_name(codecName);
+        codec = avcodec_find_encoder(codecId);
     } else {
-        codec = avcodec_find_decoder_by_name(codecName);
+        codec = avcodec_find_decoder(codecId);
     }
     if (!codec) {
         yCError(FFMPEGMONITOR, "Can't find codec %s", codecName);
