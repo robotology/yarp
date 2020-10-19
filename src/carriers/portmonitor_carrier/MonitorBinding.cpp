@@ -32,12 +32,13 @@ MonitorBinding* MonitorBinding::create(const char* script_type)
         return new MonitorLua();
 #else
         yCError(PORTMONITORCARRIER) << "Cannot load LUA plugin. YARP portmonitor was built without LUA support";
-        return NULL;
+        return nullptr;
 #endif
     }
 
-    if(std::string(script_type) == "dll")
+    if(std::string(script_type) == "dll") {
         return new MonitorSharedLib();
+    }
 
     return nullptr;
 }
