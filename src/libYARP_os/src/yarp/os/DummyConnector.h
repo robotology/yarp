@@ -17,12 +17,11 @@ namespace yarp {
 namespace os {
 
 /**
- *
  * A dummy connection to test yarp::os::Portable implementations.
  * This class provides simple means to test read and write methods of the Portable interface.
  *
  * Pseudocode for a test should look something like this:
- * \code
+ * \code{.cpp}
  *   DummyConnector dummy; // create new connection with textmode=false
  *   PortableObject object;
  *   ... // set object values
@@ -31,9 +30,6 @@ namespace os {
  *   newObject.read(dummy.getReader()); // write from the connection to the new object
  *   ... // assert newObject values
  * \endcode
- *
- * \author Freyr Magnusson
- *
  */
 class YARP_os_API DummyConnector
 {
@@ -75,6 +71,7 @@ public:
      * it was last reset.
      * \return a loaded ConnectionReader if it was previously written to
      * \sa ConnectionReader Portable
+     * \warning Calling this method twice will reset the reader
      */
     ConnectionReader& getReader();
 
@@ -93,4 +90,4 @@ private:
 } // namespace os
 } // namespace yarp
 
-#endif // DUMMYCONNECTOR_H
+#endif // YARP_OS_DUMMYCONNECTOR_H
