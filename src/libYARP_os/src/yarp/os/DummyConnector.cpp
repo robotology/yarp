@@ -35,14 +35,13 @@ public:
 class DummyConnector::Private
 {
 private:
-    BufferedConnectionWriter writer;
+    BufferedConnectionWriter writer{false};
     DummyConnectorReader reader;
     StringInputStream sis;
     bool textMode{false};
 
 public:
-    Private() :
-            writer(false)
+    Private()
     {
         reader.altWriter = &writer;
         reader.tmode = textMode;
@@ -54,7 +53,6 @@ public:
         writer.reset(textMode);
         reader.tmode = textMode;
     }
-
 
     ConnectionWriter& getCleanWriter()
     {
