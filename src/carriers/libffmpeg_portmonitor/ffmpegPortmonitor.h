@@ -25,7 +25,7 @@ public:
 
 protected:
     int compress(yarp::sig::Image* img, AVPacket* pkt);
-    int decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed, int w, int h, int pixelCode);
+    int decompress(AVPacket* pkt, int w, int h, int pixelCode, int pixelSize);
     void getParamsFromCommandLine(std::string carrierString);
     int setCommandLineParams();
 
@@ -41,9 +41,6 @@ public:
     std::map<std::string, std::string> paramsMap;
     std::map<int, int> pixelMap;
     std::map<int, int> codecPixelMap;
-    int counter = 0;
-    int counter2 = 0;
-    int countertot = 0;
 };
 
 #endif

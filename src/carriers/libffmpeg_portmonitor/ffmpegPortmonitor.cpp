@@ -30,7 +30,6 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
                    nullptr)
 }
 
-
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {   
     // Check if this is sender or not
@@ -206,7 +205,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             packet->flags = tmp->flags;
             packet->pos = tmp->pos;
             packet->pts = tmp->pts;
-            packet->side_data_elems = tmp->side_data_elems;
+            packet->side_data_elems = 0;
             packet->stream_index = tmp->stream_index;
             packet->size = tmp->size;
             packet->data = (uint8_t *) compressedBottle->get(6).asBlob();
@@ -214,29 +213,26 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                                             compressedBottle->get(7).asInt32(), av_buffer_default_free,
                                             nullptr, AV_BUFFER_FLAG_READONLY);
                         
-            if (packet->side_data_elems > 0) {
-                packet->side_data = new AVPacketSideData();
-                packet->side_data->size = compressedBottle->get(9).asInt32();
-                packet->side_data->type = (AVPacketSideDataType) compressedBottle->get(10).asInt32();
-                packet->side_data->data = (uint8_t *) compressedBottle->get(11).asBlob();
+            for (int i = 0; i < tmp->side_data_elems; i++) {
+
+                int ret = av_packet_add_side_data(packet,
+                                                    (AVPacketSideDataType) compressedBottle->get(10).asInt32(),     // Type
+                                                    (uint8_t *) compressedBottle->get(11).asBlob(),                 // Data
+                                                    compressedBottle->get(9).asInt32());                            // Size
+                if (ret < 0) {
+                    success = false;
+                    break;
+                }
             }
                         
-            unsigned char* decompressed;
-            int sizeDecompressed;
-            if (success && decompress(packet, &decompressed, &sizeDecompressed, width, height, pixelCode) != 0) {
+            if (success && decompress(packet, width, height, pixelCode, pixelSize) != 0) {
                 yCError(FFMPEGMONITOR, "Error in decompression");
                 success = false;
             }
+            
+            av_freep(&packet->side_data);
+            av_freep(&packet);
 
-            if (success) {
-                imageOut.setPixelCode(pixelCode);
-                imageOut.setPixelSize(pixelSize);
-                imageOut.resize(width, height);
-                memcpy(imageOut.getRawImage(), decompressed, sizeDecompressed);
-                packet->data = NULL;
-                // av_buffer_unref(&packet->buf);
-                // av_packet_free_ciao(&packet);
-            }
         }
         th.setPortWriter(&imageOut);
         
@@ -346,8 +342,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     return 0;
 }
 
-int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed, int* sizeDecompressed,
-                                    int w, int h, int pixelCode) {
+int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, int pixelSize) {
     
     yCTrace(FFMPEGMONITOR, "decompress");
     AVFrame *startFrame;
@@ -428,14 +423,14 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, unsigned char** decompressed,
                         h, endFrame->data, endFrame->linesize);
 
 
-    *decompressed = endFrame->data[0];
-    *sizeDecompressed = success;
-
-    // sws_freeContext(img_convert_ctx);
-    // av_free(startFrame->data);
-    // av_free(endFrame->data);
-    // av_frame_free(&endFrame);
-    // av_frame_free(&startFrame);
+    imageOut.setPixelCode(pixelCode);
+    imageOut.setPixelSize(pixelSize);
+    imageOut.resize(w, h);
+    memcpy(imageOut.getRawImage(), endFrame->data[0], success);
+    av_freep(&endFrame->data[0]);
+    av_frame_free(&endFrame);
+    av_frame_free(&startFrame);
+    sws_freeContext(img_convert_ctx);
 
 
     return 0;
