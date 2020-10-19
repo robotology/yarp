@@ -49,8 +49,10 @@ struct mOptions
     char            m_fileName[256];
     int             m_saveOnExit;
     char            m_outPortName[256];
+    char            m_outRightPortName[256]; //Name for the mouse right click related port
     char            m_outNetworkName[256];
     int             m_outputEnabled;
+    int             m_rightEnabled; //If true the right click related output is enabled
     bool            m_synchRate;
     bool            m_autosize;
 };
@@ -89,8 +91,11 @@ public:
     Q_INVOKABLE void startDumpFrames();
     Q_INVOKABLE void stopDumpFrames();
     Q_INVOKABLE bool parseParameters(QStringList);
+    Q_INVOKABLE bool rightClickEnabled();
     Q_INVOKABLE void clickCoords_2(int x, int y);
     Q_INVOKABLE void clickCoords_4(int start_x, int start_y, int end_x, int end_y);
+    Q_INVOKABLE void rightClickCoords_2(int x, int y);
+    Q_INVOKABLE void rightClickCoords_4(int start_x, int start_y, int end_x, int end_y);
 
     Q_INVOKABLE QString getPixelAsStr(int x, int y);
 
@@ -124,10 +129,12 @@ private:
     yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgba> > *ptr_inputPort;
 #endif
     yarp::os::BufferedPort<yarp::os::Bottle> *_pOutPort;
+    yarp::os::BufferedPort<yarp::os::Bottle> *_pOutRightPort;
     InputCallback *ptr_portCallback;
     pgmOptions _options;
 
 signals:
+    void optionsSet();
     void refreshIntervalChanged();
     void videoProducerChanged();
     void posXChanged();

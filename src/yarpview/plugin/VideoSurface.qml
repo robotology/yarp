@@ -38,6 +38,7 @@ Rectangle {
     property string name: "yarpview"
     property string version: "2.0"
     property bool showPixelCol: false
+    property bool rightClickOn: false
 
     signal changeWindowSize(int w, int h)
     signal synchRate(bool check);
@@ -45,6 +46,7 @@ Rectangle {
     signal setName(string name);
     signal saveSetClosed(bool check);
     signal saveSingleClosed(bool check);
+    signal rightClickEnabled(bool enabled);
 
     /*********Connections*********/
     Connections{
@@ -66,6 +68,10 @@ Rectangle {
                 dataArea.displaySizeX = width
                 dataArea.displaySizeY = height
             }
+        }
+
+        onOptionsSet:{
+            maincontainer.synchronizeRightEnabled();
         }
 
         onSynchRate:{
@@ -140,6 +146,15 @@ Rectangle {
     function enableColorPicking(flag){
         coordsMouseArea.hoverEnabled = flag;
         maincontainer.showPixelCol = flag;
+    }
+
+    function enableRightClick(flag){
+        maincontainer.rightClickOn = flag;
+    }
+
+    function synchronizeRightEnabled(){
+        rightClickOn = yarpViewCore.rightClickEnabled();
+        rightClickEnabled(yarpViewCore.rightClickEnabled());
     }
 
     function parseParameters(params){
@@ -244,6 +259,7 @@ Rectangle {
         MouseArea{
             anchors.fill: parent
             id: coordsMouseArea
+            acceptedButtons: maincontainer.rightClickOn ? Qt.LeftButton | Qt.RightButton : Qt.LeftButton
             property var clickX
             property var clickY
             property var startclickX
@@ -284,8 +300,12 @@ Rectangle {
 
                 clickX = clickCoords["x"];
                 clickY = clickCoords["y"];
-
-                yarpViewCore.clickCoords_2(clickX,clickY)
+                if(mouse.button === Qt.LeftButton){
+                    yarpViewCore.clickCoords_2(clickX,clickY);
+                }
+                if(mouse.button === Qt.RightButton){
+                    yarpViewCore.rightClickCoords_2(clickX,clickY);
+                }
             }
 
             onPressed: {
@@ -297,6 +317,13 @@ Rectangle {
 
                 clickX = clickCoords["x"];
                 clickY = clickCoords["y"];
+
+                if(mouse.button === Qt.LeftButton){
+                    canvasOverlay.lineColor = "red";
+                }
+                if(mouse.button === Qt.RightButton){
+                    canvasOverlay.lineColor = "green";
+                }
             }
 
             onPressAndHold: {
@@ -313,7 +340,12 @@ Rectangle {
                     lastclickX = clickCoords["x"];
                     lastclickY = clickCoords["y"];
 
-                    yarpViewCore.clickCoords_4(clickX,clickY,lastclickX,lastclickY);
+                    if(mouse.button === Qt.LeftButton){
+                        yarpViewCore.clickCoords_4(clickX,clickY,lastclickX,lastclickY);
+                    }
+                    if(mouse.button === Qt.RightButton){
+                        yarpViewCore.rightClickCoords_4(clickX,clickY,lastclickX,lastclickY);
+                    }
                 }
                 canvasOverlay.requestPaint();
             }
@@ -340,6 +372,7 @@ Rectangle {
                 height: parent.height
                 anchors.fill: parent
                 visible: true
+                property string lineColor: "red"
 
                 onPaint:
                 {
@@ -348,7 +381,7 @@ Rectangle {
                     if (coordsMouseArea.pressing)
                     {
                         ctx.lineWidth = 1
-                        ctx.strokeStyle = "red"
+                        ctx.strokeStyle = lineColor
                         ctx.beginPath()
                         ctx.moveTo(coordsMouseArea.startclickX,coordsMouseArea.startclickY)
                         ctx.lineTo(coordsMouseArea.currX,coordsMouseArea.currY)
