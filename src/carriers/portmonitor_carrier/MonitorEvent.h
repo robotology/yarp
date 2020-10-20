@@ -17,13 +17,15 @@
 
 class MonitorBinding;
 
-class MonitorEvent {
+class MonitorEvent
+{
 public:
-    MonitorEvent(const char* _name, MonitorBinding* _owner, double lf=-1.0) {
-        if(_name) name = _name;
-        owner = _owner;
-        lifetime = lf;              // default: infinite life time
-        create_time = yarp::os::Time::now();
+    MonitorEvent(const char* _name, MonitorBinding* _owner, double lf=-1.0) :
+            owner(_owner),
+            name(_name ? _name : ""),
+            lifetime(lf),  // default: infinite life time
+            create_time(yarp::os::Time::now())
+    {
     }
 
     MonitorBinding* owner;          // event's owner
@@ -36,13 +38,15 @@ public:
 /**
  *  A singleton class to record the port monitor events
  */
-class MonitorEventRecord {
+class MonitorEventRecord
+{
 public:
     typedef std::vector<MonitorEvent> vector_type;
     typedef vector_type::iterator iterator;
     typedef vector_type::const_iterator const_iterator;
 
-    void setEvent(const char* name, MonitorBinding* owner, double lifetime=-1.0) {
+    void setEvent(const char* name, MonitorBinding* owner, double lifetime=-1.0)
+    {
         // if event already exists just update the create_time and lifetime
         MonitorEventRecord::iterator itr = findEvent(name, owner);
         if(itr != events.end())
@@ -52,50 +56,65 @@ public:
             return;
         }
         events.push_back(MonitorEvent(name, owner, lifetime));
-        return;
     }
 
-    void unsetEvent(const char* name, MonitorBinding* owner) {
+    void unsetEvent(const char* name, MonitorBinding* owner)
+    {
         MonitorEventRecord::iterator itr = findEvent(name, owner);
-        if(itr == events.end())
+        if(itr == events.end()) {
             return;
+        }
         events.erase(itr);
-        return;
     }
 
-    bool hasEvent(const char* name){
+    bool hasEvent(const char* name)
+    {
         MonitorEventRecord::iterator itr;
-        for(itr=events.begin(); itr<events.end(); itr++)
+        for(itr=events.begin(); itr<events.end(); itr++) {
             if((*itr).name == name)
             {
-                if((*itr).lifetime < 0.0)
+                if((*itr).lifetime < 0.0) {
                     return true;
-                if((yarp::os::Time::now() - (*itr).create_time) < (*itr).lifetime)
+                }
+                if((yarp::os::Time::now() - (*itr).create_time) < (*itr).lifetime) {
                     return true;
+                }
                 events.erase(itr);          // remove expired event
                 return false;
             }
+        }
         return false;
     }
 
-    void lock() { mutex.lock(); }
-    void unlock() { mutex.unlock(); }
+    void lock()
+    {
+        mutex.lock();
+    }
 
-    static MonitorEventRecord& getInstance() {
+    void unlock()
+    {
+        mutex.unlock();
+    }
+
+    static MonitorEventRecord& getInstance()
+    {
         static MonitorEventRecord __instance_MonitorEventRecord;
         return __instance_MonitorEventRecord;
     }
 
 private:
-    MonitorEventRecord() { }
-    MonitorEventRecord(MonitorEventRecord const &);
-    void operator=(MonitorEventRecord const &);
+    MonitorEventRecord() = default;
+    MonitorEventRecord(MonitorEventRecord const &) = delete;
+    void operator=(MonitorEventRecord const &) = delete;
 
-    MonitorEventRecord::iterator findEvent(const char* name, MonitorBinding* owner) {
+    MonitorEventRecord::iterator findEvent(const char* name, MonitorBinding* owner)
+    {
         MonitorEventRecord::iterator itr;
-        for(itr=events.begin(); itr<events.end(); itr++)
-            if (((*itr).name == name) && ((*itr).owner == owner))
+        for(itr=events.begin(); itr<events.end(); itr++) {
+            if (((*itr).name == name) && ((*itr).owner == owner)) {
                 return itr;
+            }
+        }
         return events.end();
     }
 
@@ -103,7 +122,6 @@ private:
 private:
     vector_type events;
     std::mutex mutex;
-
 };
 
 #endif // MONITOREVENT_INC
