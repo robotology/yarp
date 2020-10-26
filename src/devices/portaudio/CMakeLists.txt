@@ -28,7 +28,7 @@ if(NOT SKIP_portaudio)
                                                       YARP_sig
                                                       YARP_dev)
 
-  target_include_directories(yarp_portaudio SYSTEM PRIVATE ${PortAudio_INCLUDE_DIR})
+  target_include_directories(yarp_portaudio SYSTEM PRIVATE ${PortAudio_INCLUDE_DIRS})
   target_link_libraries(yarp_portaudio PRIVATE ${PortAudio_LIBRARIES})
 #   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS PortAudio) (not using targets)
 
