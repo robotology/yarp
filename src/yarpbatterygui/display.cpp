@@ -215,8 +215,8 @@ MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, yarp::dev::IBattery* 
     //this->setWindowFlags(Qt::BypassWindowManagerHint); //Set window with no title bar
     //this->setWindowFlags(Qt::CustomizeWindowHint); //Set window with no title bar
     this->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint); //Set window to fixed size
-   // this->setWindowFlags(Qt::FramelessWindowHint); //Set a frameless window
-    this->setWindowFlags(Qt::WindowStaysOnTopHint); //Always on  top
+    //this->setWindowFlags(Qt::FramelessWindowHint); //Set a frameless window
+    //this->setWindowFlags(Qt::WindowStaysOnTopHint); //Always on  top
 
     bool ret_load = true;
     ret_load &= img_background1.load(":/images/background.bmp");
