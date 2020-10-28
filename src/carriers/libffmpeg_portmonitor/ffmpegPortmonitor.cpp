@@ -160,14 +160,15 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
 
         // Insert compressed image into a Bottle to be sent
         data.clear();
-        if (!success) {
-            data.addInt32(0);
-        } else {
-            data.addInt32(1);
-            data.addInt32(img->width());
-            data.addInt32(img->height());
-            data.addInt32(img->getPixelCode());
-            data.addInt32(img->getPixelSize());  
+
+        int successCode = success ? 1 : 0;
+        data.addInt32(successCode);
+        data.addInt32(img->width());
+        data.addInt32(img->height());
+        data.addInt32(img->getPixelCode());
+        data.addInt32(img->getPixelSize());
+
+        if (success) {              
             Value p(packet, sizeof(*packet));
             data.add(p);
             Value d(packet->data, packet->size);
@@ -190,14 +191,17 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         yCTrace(FFMPEGMONITOR, "update - receiver");
         Bottle* compressedBottle = thing.cast_as<Bottle>();
         imageOut.zero();
+        int width = compressedBottle->get(1).asInt32();
+        int height = compressedBottle->get(2).asInt32();
+        int pixelCode = compressedBottle->get(3).asInt32();
+        int pixelSize = compressedBottle->get(4).asInt32();
+        imageOut.setPixelCode(pixelCode);
+        imageOut.setPixelSize(pixelSize);
+        imageOut.resize(width, height);
 
         if (compressedBottle->get(0).asInt32() == 1) {
             bool success = true;
-            // Get compressed image from Bottle
-            int width = compressedBottle->get(1).asInt32();
-            int height = compressedBottle->get(2).asInt32();
-            int pixelCode = compressedBottle->get(3).asInt32();
-            int pixelSize = compressedBottle->get(4).asInt32();
+            // Get compressed image from Bottle            
             AVPacket* tmp = (AVPacket*) compressedBottle->get(5).asBlob();
             AVPacket* packet = av_packet_alloc();
             packet->dts = tmp->dts;
@@ -398,7 +402,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
     // Allocate video frame
     startFrame = av_frame_alloc();
     if (startFrame == NULL) {
-        yCError(FFMPEGMONITOR, "Could not allocating start frame!");
+        yCError(FFMPEGMONITOR, "Could not allocate start frame!");
         return -1;
     }
 
@@ -479,9 +483,6 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
         return -1;
     }
 
-    imageOut.setPixelCode(pixelCode);
-    imageOut.setPixelSize(pixelSize);
-    imageOut.resize(w, h);
     memcpy(imageOut.getRawImage(), endFrame->data[0], success);
     av_freep(&endFrame->data[0]);
     av_frame_free(&endFrame);
