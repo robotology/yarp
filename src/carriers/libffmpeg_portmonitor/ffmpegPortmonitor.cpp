@@ -251,20 +251,29 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
 
     // Allocate video frame for original frames
     startFrame = av_frame_alloc();
-    if (startFrame == NULL)
+    if (startFrame == NULL) {
+        yCError(FFMPEGMONITOR, "Cannot allocate starting frame!");
         return -1;
+    }
 
     // Allocate an video frame for end frame
     endFrame = av_frame_alloc();
-    if (endFrame == NULL)
+    if (endFrame == NULL) {
+        yCError(FFMPEGMONITOR, "Cannot allocate end frame!");
+        av_frame_free(&startFrame);
         return -1;
+    }
 
     int success = av_image_alloc(startFrame->data, startFrame->linesize,
                     w, h,
                     (AVPixelFormat) pixelMap[img->getPixelCode()], 16);
 
-    if (success < 0)
+    if (success < 0) {
+        yCError(FFMPEGMONITOR, "Cannot allocate starting frame buffer!");
+        av_frame_free(&startFrame);
+        av_frame_free(&endFrame);
         return -1;
+    }
 
     startFrame->linesize[0] = img->getRowSize();
     // Free old pointer
@@ -277,6 +286,13 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     success = av_image_alloc(endFrame->data, endFrame->linesize,
                     w, h,
                     (AVPixelFormat) codecPixelMap[codecContext->codec_id], 16);
+
+    if (success < 0) {
+        yCError(FFMPEGMONITOR, "Cannot allocate end frame buffer!");
+        av_frame_free(&startFrame);
+        av_frame_free(&endFrame);
+        return -1;
+    }
     
     endFrame->height = h;
     endFrame->width = w;
@@ -292,12 +308,24 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
                                         SWS_BICUBIC,
                                         NULL, NULL, NULL);
     if (img_convert_ctx == NULL) {
-        yCError(FFMPEGMONITOR, "Cannot initialize the pixel format conversion context!");
+        yCError(FFMPEGMONITOR, "Cannot initialize pixel format conversion context!");
+        av_freep(&endFrame->data[0]);
+        av_frame_free(&startFrame);
+        av_frame_free(&endFrame);
         return -1;
     }
     
     int ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0, 
                         h, endFrame->data, endFrame->linesize);
+
+    if (ret < 0) {
+        yCError(FFMPEGMONITOR, "Could not convert pixel format!");
+        sws_freeContext(img_convert_ctx);
+        av_freep(&endFrame->data[0]);
+        av_frame_free(&startFrame);
+        av_frame_free(&endFrame);
+        return -1;
+    }
 
     if (firstTime) {
         codecContext->width = w;
@@ -307,6 +335,10 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         ret = avcodec_open2(codecContext, codec, NULL);
         if (ret < 0) {
             yCError(FFMPEGMONITOR, "Could not open codec");
+            sws_freeContext(img_convert_ctx);
+            av_freep(&endFrame->data[0]);
+            av_frame_free(&startFrame);
+            av_frame_free(&endFrame);
             return -1;
         }
         firstTime = false;
@@ -317,27 +349,29 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     ret = avcodec_send_frame(codecContext, endFrame);
     if (ret < 0) {
         yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
+        sws_freeContext(img_convert_ctx);
+        av_freep(&endFrame->data[0]);
+        av_frame_free(&startFrame);
+        av_frame_free(&endFrame);
         return -1;
     }
 
     ret = avcodec_receive_packet(codecContext, pkt);
-    if (ret == AVERROR(EAGAIN)) {
-        yCError(FFMPEGMONITOR, "Error EAGAIN");
-        return -1;
-    }
-    else if (ret == AVERROR_EOF) {
-        yCError(FFMPEGMONITOR, "Error EOF");
-        return -1;
-    }
-    else if (ret < 0) {
-        yCError(FFMPEGMONITOR, "Error during encoding");
-        return -1;
-    }
-
     sws_freeContext(img_convert_ctx);
     av_freep(&endFrame->data[0]);
     av_frame_free(&startFrame);
     av_frame_free(&endFrame);
+
+    if (ret == AVERROR(EAGAIN)) {
+        yCError(FFMPEGMONITOR, "Error EAGAIN");
+        return -1;
+    } else if (ret == AVERROR_EOF) {
+        yCError(FFMPEGMONITOR, "Error EOF");
+        return -1;
+    } else if (ret < 0) {
+        yCError(FFMPEGMONITOR, "Error during encoding");
+        return -1;
+    }
 
     return 0;
 }
@@ -363,33 +397,42 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
 
     // Allocate video frame
     startFrame = av_frame_alloc();
-    if (startFrame == NULL)
+    if (startFrame == NULL) {
+        yCError(FFMPEGMONITOR, "Could not allocating start frame!");
         return -1;
+    }
 
     int ret = avcodec_send_packet(codecContext, pkt);
     if (ret < 0) {
         yCError(FFMPEGMONITOR, "Error sending a frame for encoding");
+        av_frame_free(&startFrame);
         return -1;
     }
 
     ret = avcodec_receive_frame(codecContext, startFrame);
     if (ret == AVERROR(EAGAIN)) {
         yCError(FFMPEGMONITOR, "Error EAGAIN");
+        av_frame_free(&startFrame);
         return -1;
     }
     else if (ret == AVERROR_EOF) {
         yCError(FFMPEGMONITOR, "Error EOF");
+        av_frame_free(&startFrame);
         return -1;
     }
     else if (ret < 0) {
         yCError(FFMPEGMONITOR, "Error during encoding");
+        av_frame_free(&startFrame);
         return -1;
     }
     
     // Allocate a video frame for end frame
     endFrame = av_frame_alloc();
-    if (endFrame == NULL)
+    if (endFrame == NULL) {
+        yCError(FFMPEGMONITOR, "Could not allocating start frame!");
+        av_frame_free(&startFrame);
         return -1;
+    }
 
 
     int success = av_image_alloc(endFrame->data, endFrame->linesize,
@@ -397,7 +440,9 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
                     (AVPixelFormat) pixelMap[pixelCode], 16);
     
     if (success < 0) {
-        yCError(FFMPEGMONITOR, "Error allocating frame!");
+        yCError(FFMPEGMONITOR, "Error allocating end frame buffer!");
+        av_frame_free(&startFrame);
+        av_frame_free(&endFrame);
         return -1;
     }
 
@@ -416,12 +461,23 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
                                         NULL, NULL, NULL);
     if (img_convert_ctx == NULL) {
         yCError(FFMPEGMONITOR, "Cannot initialize the pixel format conversion context!");
+        av_freep(&endFrame->data[0]);
+        av_frame_free(&endFrame);
+        av_frame_free(&startFrame);
         return -1;
     }
     
     ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0, 
                         h, endFrame->data, endFrame->linesize);
 
+    if (ret < 0) {
+        yCError(FFMPEGMONITOR, "Could not convert pixel format!");
+        av_freep(&endFrame->data[0]);
+        av_frame_free(&endFrame);
+        av_frame_free(&startFrame);
+        sws_freeContext(img_convert_ctx);
+        return -1;
+    }
 
     imageOut.setPixelCode(pixelCode);
     imageOut.setPixelSize(pixelSize);
@@ -431,7 +487,6 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
     av_frame_free(&endFrame);
     av_frame_free(&startFrame);
     sws_freeContext(img_convert_ctx);
-
 
     return 0;
 
