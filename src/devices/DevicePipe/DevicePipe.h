@@ -52,10 +52,10 @@ protected:
     yarp::dev::PolyDriver source;
     yarp::dev::PolyDriver sink;
 
-    bool open(const char *key,
-              yarp::dev::PolyDriver& poly,
-              yarp::os::Searchable& config,
-              const char *comment);
+    static bool open(const char* key,
+                     yarp::dev::PolyDriver& poly,
+                     yarp::os::Searchable& config,
+                     const char* comment);
 };
 
 
