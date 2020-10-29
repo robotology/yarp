@@ -13,6 +13,7 @@ foreach(example_name bottle_add
                      image_source
                      internal_monologue
                      listports
+                     log
                      make_count
                      playback
                      portable_pair
