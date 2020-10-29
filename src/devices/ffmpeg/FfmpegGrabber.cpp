@@ -220,7 +220,7 @@ public:
             if (gotFrame) {
                 ct = av_samples_get_buffer_size(nullptr,
                                                 pCodecCtx->channels,
-                                                pFrame->nb_samples,
+                                                pAudio->nb_samples,
                                                 pCodecCtx->sample_fmt,
                                                 1);
             }
