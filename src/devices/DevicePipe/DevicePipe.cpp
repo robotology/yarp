@@ -11,6 +11,7 @@
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/Time.h>
+
 #include <yarp/dev/AudioVisualInterfaces.h>
 
 #include <cstdio>
@@ -25,10 +26,17 @@ YARP_LOG_COMPONENT(DEVICEPIPE, "yarp.devices.DevicePipe")
 
 bool DevicePipe::open(yarp::os::Searchable& config)
 {
-    bool ok = open("source",source,config,
+    bool ok = open("source",
+                   source,
+                   config,
                    "device to read from (string or nested properties)");
-    if (!ok) return false;
-    ok = open("sink",sink,config,"device to write to (string or nested properties)");
+    if (!ok) {
+        return false;
+    }
+    ok = open("sink",
+              sink,
+              config,
+              "device to write to (string or nested properties)");
     if (!ok) {
         source.close();
         return false;
@@ -37,21 +45,21 @@ bool DevicePipe::open(yarp::os::Searchable& config)
 }
 
 
-bool DevicePipe::open(const char *key,
+bool DevicePipe::open(const char* key,
                       PolyDriver& poly,
                       yarp::os::Searchable& config,
-                      const char *comment)
+                      const char* comment)
 {
 
-    Value *name;
-    if (config.check(key,name,comment)) {
+    Value* name;
+    if (config.check(key, name, comment)) {
         if (name->isString()) {
             // maybe user isn't doing nested configuration
             yarp::os::Property p;
             p.setMonitor(config.getMonitor(),
                          name->toString().c_str()); // pass on any monitoring
             p.fromString(config.toString());
-            p.put("device",name->toString());
+            p.put("device", name->toString());
             p.unput("subdevice");
             p.unput("wrapped");
             poly.open(p);
@@ -82,15 +90,15 @@ bool DevicePipe::close()
 
 bool DevicePipe::updateService()
 {
-    IFrameGrabberImage *imgSource;
-    IAudioGrabberSound *sndSource;
-    IAudioVisualGrabber *imgSndSource;
-    IAudioVisualStream *sourceType;
+    IFrameGrabberImage* imgSource;
+    IAudioGrabberSound* sndSource;
+    IAudioVisualGrabber* imgSndSource;
+    IAudioVisualStream* sourceType;
 
-    IAudioRender *sndSink;
-    IFrameWriterImage *imgSink;
-    IFrameWriterAudioVisual *imgSndSink;
-    IAudioVisualStream *sinkType;
+    IAudioRender* sndSink;
+    IFrameWriterImage* imgSink;
+    IFrameWriterAudioVisual* imgSndSink;
+    IAudioVisualStream* sinkType;
 
     source.view(imgSource);
     source.view(sndSource);
@@ -102,39 +110,39 @@ bool DevicePipe::updateService()
     sink.view(imgSndSink);
     sink.view(sinkType);
 
-    if (sourceType!=nullptr) {
-        if (!(sourceType->hasAudio()&&sourceType->hasVideo())) {
+    if (sourceType != nullptr) {
+        if (!(sourceType->hasAudio() && sourceType->hasVideo())) {
             imgSndSource = nullptr;
         }
     }
-    if (sinkType!=nullptr) {
-        if (!(sinkType->hasAudio()&&sinkType->hasVideo())) {
+    if (sinkType != nullptr) {
+        if (!(sinkType->hasAudio() && sinkType->hasVideo())) {
             imgSndSink = nullptr;
         }
     }
 
 
-    if (imgSndSource!=nullptr&&imgSndSink!=nullptr) {
+    if (imgSndSource != nullptr && imgSndSink != nullptr) {
         ImageOf<PixelRgb> tmp;
         Sound tmpSound;
-        imgSndSource->getAudioVisual(tmp,tmpSound);
-        imgSndSink->putAudioVisual(tmp,tmpSound);
+        imgSndSource->getAudioVisual(tmp, tmpSound);
+        imgSndSink->putAudioVisual(tmp, tmpSound);
         yCInfo(DEVICEPIPE,
                "piped %zux%zu image, %zux%zu sound",
                tmp.width(),
                tmp.height(),
                tmpSound.getSamples(),
                tmpSound.getChannels());
-    } else if (imgSource!=nullptr&&imgSink!=nullptr) {
+    } else if (imgSource != nullptr && imgSink != nullptr) {
         ImageOf<PixelRgb> tmp;
         imgSource->getImage(tmp);
         imgSink->putImage(tmp);
         yCInfo(DEVICEPIPE, "piped %zux%zu image", tmp.width(), tmp.height());
-    } else if (sndSource!=nullptr&&sndSink!=nullptr) {
+    } else if (sndSource != nullptr && sndSink != nullptr) {
         Sound tmp;
         //the following values have been arbitrarily chosen and may be optimized.
         //4410 samples correspond to 0.1s with a frequency of 44100hz.
-        sndSource->getSound(tmp,4410,4410,0);
+        sndSource->getSound(tmp, 4410, 4410, 0);
         sndSink->renderSound(tmp);
         yCInfo(DEVICEPIPE,
                "piped %zux%zu sound",
