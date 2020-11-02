@@ -382,6 +382,10 @@ public:
 };
 
 
+#if !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
+// Tests with ModifyingCarrier are currently failing when running under
+// valgrind, see #2395
+
 class TestModifyingCarrier :
         public yarp::os::ModifyingCarrier
 {
@@ -474,6 +478,7 @@ public:
         return reply.write(*reader.getWriter());
     }
 };
+#endif // !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
 
 static int safePort()
 {
@@ -488,7 +493,11 @@ TEST_CASE("os::PortTest", "[yarp::os]")
                                                                                    "brokenDevice",
                                                                                    "BrokenDevice"));
 
+#if !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
+// Tests with ModifyingCarrier are currently failing when running under
+// valgrind, see #2395
     yarp::os::Carriers::addCarrierPrototype(new TestModifyingCarrier);
+#endif // !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
 
     constexpr double duration_100ms = 0.1;
     constexpr double duration_200ms = 0.2;
@@ -1724,6 +1733,10 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         p.close();
     }
 
+#if !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
+// Tests with ModifyingCarrier are currently failing when running under
+// valgrind, see #2395
+
     SECTION("Check ModifyingCarrier on output (w/o reply)")
     {
         Port out;
@@ -1735,7 +1748,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/in");
 
         TestModifyingCarrier::reset();
-        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod");
+        REQUIRE(Network::connect(out.getName(), in.getName(), "tcp+send.test_mod"));
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
@@ -1761,7 +1774,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/in");
 
         TestModifyingCarrier::reset();
-        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod");
+        REQUIRE(Network::connect(out.getName(), in.getName(), "tcp+send.test_mod"));
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
@@ -1777,6 +1790,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
         CHECK(TestModifyingCarrier::cnt_modify_out == 1);
 #if defined(ENABLE_BROKEN_TESTS)
+        // Due to some race condition, this is randomly failing, see #2379
         CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
 #endif // ENABLE_BROKEN_TESTS
     }
@@ -1796,7 +1810,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/in");
 
         TestModifyingCarrier::reset();
-        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod");
+        REQUIRE(Network::connect(out.getName(), in.getName(), "tcp+send.test_mod"));
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
@@ -1808,6 +1822,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
         CHECK(TestModifyingCarrier::cnt_modify_out == 1);
 #if defined(ENABLE_BROKEN_TESTS)
+        // Due to some race condition, this is randomly failing, see #2379
         CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
 #endif // ENABLE_BROKEN_TESTS
 
@@ -1824,7 +1839,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/in");
 
         TestModifyingCarrier::reset();
-        Network::connect(out.getName(), in.getName(), "tcp+recv.test_mod");
+        REQUIRE(Network::connect(out.getName(), in.getName(), "tcp+recv.test_mod"));
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
@@ -1850,7 +1865,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/in");
 
         TestModifyingCarrier::reset();
-        Network::connect(out.getName(), in.getName(), "tcp+recv.test_mod");
+        REQUIRE(Network::connect(out.getName(), in.getName(), "tcp+recv.test_mod"));
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
@@ -1883,7 +1898,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/in");
 
         TestModifyingCarrier::reset();
-        Network::connect(out.getName(), in.getName(), "tcp+recv.test_mod");
+        REQUIRE(Network::connect(out.getName(), in.getName(), "tcp+recv.test_mod"));
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
@@ -1908,7 +1923,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/in");
 
         TestModifyingCarrier::reset();
-        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod+recv.test_mod");
+        REQUIRE(Network::connect(out.getName(), in.getName(), "tcp+send.test_mod+recv.test_mod"));
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
@@ -1934,7 +1949,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/in");
 
         TestModifyingCarrier::reset();
-        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod+recv.test_mod");
+        REQUIRE(Network::connect(out.getName(), in.getName(), "tcp+send.test_mod+recv.test_mod"));
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
@@ -1950,6 +1965,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
         CHECK(TestModifyingCarrier::cnt_modify_out == 1);
 #if defined(ENABLE_BROKEN_TESTS)
+        // Due to some race condition, this is randomly failing, see #2379
         CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
 #endif // ENABLE_BROKEN_TESTS
     }
@@ -1969,7 +1985,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/in");
 
         TestModifyingCarrier::reset();
-        Network::connect(out.getName(), in.getName(), "tcp+send.test_mod+recv.test_mod");
+        REQUIRE(Network::connect(out.getName(), in.getName(), "tcp+send.test_mod+recv.test_mod"));
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
@@ -1981,9 +1997,11 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
         CHECK(TestModifyingCarrier::cnt_modify_out == 1);
 #if defined(ENABLE_BROKEN_TESTS)
+        // Due to some race condition, this is randomly failing, see #2379
         CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
 #endif // ENABLE_BROKEN_TESTS
     }
+#endif // !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
 
     NetworkBase::setLocalMode(false);
 }
