@@ -474,7 +474,7 @@ public:
         bool ok = yarp::os::Bottle::read(reader);
         if (!ok) { return false; }
         yarp::os::Bottle reply;
-        reply.addString("ACK");
+        reply.addString("hey");
         return reply.write(*reader.getWriter());
     }
 };
@@ -1785,6 +1785,9 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         in.read(cmd_in, true);
         in.reply(reply_out);
 
+        CHECK(reply_in.toString() == "hey");
+
+
         CHECK(TestModifyingCarrier::cnt_accept_in == 0);
         CHECK(TestModifyingCarrier::cnt_modify_in == 0);
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
@@ -1816,6 +1819,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle cmd_in;
         Bottle reply_in;
         out.write(cmd_out, reply_in);
+
+        CHECK(reply_in.toString() == "hey");
 
         CHECK(TestModifyingCarrier::cnt_accept_in == 0);
         CHECK(TestModifyingCarrier::cnt_modify_in == 0);
@@ -1876,6 +1881,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         in.read(cmd_in, true);
         in.reply(reply_out);
 
+        CHECK(reply_in.toString() == "hey");
+
         CHECK(TestModifyingCarrier::cnt_accept_in == 1);
         CHECK(TestModifyingCarrier::cnt_modify_in == 1);
         CHECK(TestModifyingCarrier::cnt_accept_out == 0);
@@ -1904,6 +1911,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle cmd_in;
         Bottle reply_in;
         out.write(cmd_out, reply_in);
+
+        CHECK(reply_in.toString() == "hey");
 
         CHECK(TestModifyingCarrier::cnt_accept_in == 1);
         CHECK(TestModifyingCarrier::cnt_modify_in == 1);
@@ -1960,6 +1969,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         in.read(cmd_in, true);
         in.reply(reply_out);
 
+        CHECK(reply_in.toString() == "hey");
+
         CHECK(TestModifyingCarrier::cnt_accept_in == 1);
         CHECK(TestModifyingCarrier::cnt_modify_in == 1);
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
@@ -1991,6 +2002,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle cmd_in;
         Bottle reply_in;
         out.write(cmd_out, reply_in);
+
+        CHECK(reply_in.toString() == "hey");
 
         CHECK(TestModifyingCarrier::cnt_accept_in == 1);
         CHECK(TestModifyingCarrier::cnt_modify_in == 1);
