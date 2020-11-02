@@ -140,7 +140,6 @@ int main(int argc, char *argv[])
         // Execution ends here, the next calls are never executed
         yFatal("This is the end.");
         yFatal("This is the end and the end of line is removed\n");
-        yFatalNoFw("This is the end and is not forwarded");
         yCFatal(LOG_COMPONENT) << "This is the end.";
         yCFatal(LOG_COMPONENT, "This is the end.");
         yCFatal(LOG_COMPONENT, "This is the end and the end of line is removed\n");
