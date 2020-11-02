@@ -91,7 +91,6 @@ void MainWindow::updateMain()
         QPixmap qpm = img_background1.copy(rect);
         QGraphicsPixmapItem *p1 = scene->addPixmap(qpm);
         p1->setScale(1);
-        p1->setFlag(QGraphicsItem::ItemIsMovable, true);
         p1->setPos(0, 0);
     }
     else
@@ -100,7 +99,6 @@ void MainWindow::updateMain()
         QPixmap qpm = img_background2.copy(rect);
         QGraphicsPixmapItem *p1 = scene->addPixmap(qpm);
         p1->setScale(1);
-        p1->setFlag(QGraphicsItem::ItemIsMovable, true);
         p1->setPos(0, 0);
     }
 
@@ -112,7 +110,6 @@ void MainWindow::updateMain()
             QPixmap qpm = img_charge.copy(rect);
             QGraphicsPixmapItem *p1 = scene->addPixmap(qpm);
             p1->setScale(1);
-            p1->setFlag(QGraphicsItem::ItemIsMovable, true);
             p1->setPos(56, 77);
         }
         else
@@ -121,7 +118,6 @@ void MainWindow::updateMain()
             QPixmap qpm = img_charge.copy(rect);
             QGraphicsPixmapItem *p1 = scene->addPixmap(qpm);
             p1->setScale(1);
-            p1->setFlag(QGraphicsItem::ItemIsMovable, true);
             p1->setPos(56, 77);
         }
     }
@@ -146,7 +142,6 @@ void MainWindow::updateMain()
 
             QGraphicsPixmapItem *p1 = scene->addPixmap(*qpp);
             p1->setScale(1);
-            p1->setFlag(QGraphicsItem::ItemIsMovable, true);
             p1->setPos(xpos, ypos);
         }
     }
@@ -166,7 +161,6 @@ void MainWindow::updateMain()
                 QPixmap  qpm = img_numbers.copy(rect);
                 QGraphicsPixmapItem *p1 = scene->addPixmap(qpm);
                 p1->setScale(1);
-                p1->setFlag(QGraphicsItem::ItemIsMovable, true);
                 p1->setPos(19 + i * 29 - point_off, 21);
             }
         }
@@ -187,7 +181,6 @@ void MainWindow::updateMain()
                 QPixmap  qpm = img_numbers.copy(rect);
                 QGraphicsPixmapItem *p1 = scene->addPixmap(qpm);
                 p1->setScale(1);
-                p1->setFlag(QGraphicsItem::ItemIsMovable, true);
                 p1->setPos(19 + i * 29 - point_off, 88);
             }
         }
@@ -215,8 +208,8 @@ MainWindow::MainWindow(const yarp::os::ResourceFinder& rf, yarp::dev::IBattery* 
     //this->setWindowFlags(Qt::BypassWindowManagerHint); //Set window with no title bar
     //this->setWindowFlags(Qt::CustomizeWindowHint); //Set window with no title bar
     this->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint); //Set window to fixed size
-   // this->setWindowFlags(Qt::FramelessWindowHint); //Set a frameless window
-    this->setWindowFlags(Qt::WindowStaysOnTopHint); //Always on  top
+    //this->setWindowFlags(Qt::FramelessWindowHint); //Set a frameless window
+    //this->setWindowFlags(Qt::WindowStaysOnTopHint); //Always on  top
 
     bool ret_load = true;
     ret_load &= img_background1.load(":/images/background.bmp");
