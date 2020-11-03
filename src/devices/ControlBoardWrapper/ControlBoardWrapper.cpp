@@ -891,7 +891,10 @@ void ControlBoardWrapper::run()
     bool torqueOk    = getTorques(ros_struct.effort.data());
 
     // Update the port envelope time by averaging all timestamps
+    timeMutex.lock();
     time.update(std::accumulate(times.begin(), times.end(), 0.0) / controlledJoints);
+    yarp::os::Stamp averageTime = time;
+    timeMutex.unlock();
 
     if(useROS != ROS_only)
     {
@@ -932,7 +935,7 @@ void ControlBoardWrapper::run()
         yarp_struct.controlMode_isValid         = getControlModes(yarp_struct.controlMode.data());
         yarp_struct.interactionMode_isValid     = getInteractionModes((yarp::dev::InteractionModeEnum* ) yarp_struct.interactionMode.data());
 
-        extendedOutputStatePort.setEnvelope(time);
+        extendedOutputStatePort.setEnvelope(averageTime);
         extendedOutputState_buffer.write();
 
         // handle state:o
@@ -940,7 +943,7 @@ void ControlBoardWrapper::run()
         v.resize(controlledJoints);
         std::copy(yarp_struct.jointPosition.begin(), yarp_struct.jointPosition.end(), v.begin());
 
-        outputPositionStatePort.setEnvelope(time);
+        outputPositionStatePort.setEnvelope(averageTime);
         outputPositionStatePort.write();
     }
 
@@ -961,7 +964,7 @@ void ControlBoardWrapper::run()
         ros_struct.name=jointNames;
 
         ros_struct.header.seq = rosMsgCounter++;
-        ros_struct.header.stamp = time.getTime();
+        ros_struct.header.stamp = averageTime.getTime();
 
         rosPublisherPort.write(ros_struct);
     }
