@@ -13,6 +13,7 @@
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/GenericVocabs.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -23,15 +24,15 @@
 typedef yarp::os::PortablePair <yarp::os::Bottle, yarp::sig::Vector> CommandMessage;
 
 /* check whether the last command failed */
-inline bool CHECK_FAIL(bool ok, yarp::os::Bottle& response) {
-
+inline bool CHECK_FAIL(bool ok, yarp::os::Bottle& response)
+{
     if (ok) {
         if (response.get(0).isVocab() && response.get(0).asVocab() == VOCAB_FAILED) {
             return false;
         }
-    }
-    else
+    } else {
         return false;
+    }
 
     return true;
 }

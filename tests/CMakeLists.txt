@@ -20,6 +20,10 @@ if(YARP_ENABLE_BROKEN_TESTS)
   add_definitions(-DENABLE_BROKEN_TESTS)
 endif()
 
+if(YARP_VALGRIND_TESTS)
+  add_definitions(-DWITH_VALGRIND)
+endif()
+
 if(YARP_DISABLE_FAILING_TESTS)
   add_definitions(-DDISABLE_FAILING_TESTS)
 endif()
