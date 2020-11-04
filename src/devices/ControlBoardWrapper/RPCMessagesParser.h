@@ -12,18 +12,19 @@
 
 // This file contains helper functions for the ControlBoardWrapper
 
-#include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/PortablePair.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 
+#include <yarp/sig/Vector.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/IPreciselyTimed.h>
-#include <yarp/sig/Vector.h>
+#include <yarp/dev/PolyDriver.h>
 
 #include <mutex>
 #include <string>
@@ -31,7 +32,7 @@
 
 
 #ifdef MSVC
-    #pragma warning(disable:4355)
+#    pragma warning(disable : 4355)
 #endif
 
 /*
@@ -40,7 +41,7 @@
  * (we could also use the actual joint number for each subdevice using a for loop). TODO
  */
 
-class ControlBoardWrapper;
+class ControlBoardWrapperCommon;
 
 /* the control command message type
 * head is a Bottle which contains the specification of the message type
@@ -52,40 +53,40 @@ typedef yarp::os::PortablePair<yarp::os::Bottle, yarp::sig::Vector> CommandMessa
 /**
 * Helper object for parsing RPC port messages
 */
-class  RPCMessagesParser :
+class RPCMessagesParser :
         public yarp::dev::DeviceResponder
 {
 protected:
-    ControlBoardWrapper                 *ControlBoardWrapper_p;
-    yarp::dev::IPidControl              *rpc_IPid;
-    yarp::dev::IPositionControl         *rpc_IPosCtrl;
-    yarp::dev::IPositionDirect          *rpc_IPosDirect;
-    yarp::dev::IVelocityControl         *rpc_IVelCtrl;
-    yarp::dev::IEncodersTimed           *rpc_IEncTimed;
-    yarp::dev::IMotorEncoders           *rpc_IMotEnc;
-    yarp::dev::IAmplifierControl        *rcp_IAmp;
-    yarp::dev::IControlLimits           *rcp_Ilim;
-    yarp::dev::ITorqueControl           *rpc_ITorque;
-    yarp::dev::IControlMode             *rpc_iCtrlMode;
-    yarp::dev::IAxisInfo                *rpc_AxisInfo;
-    yarp::dev::IRemoteCalibrator        *rpc_IRemoteCalibrator;
-    yarp::dev::IControlCalibration      *rpc_Icalib;
-    yarp::dev::IImpedanceControl        *rpc_IImpedance;
-    yarp::dev::IInteractionMode         *rpc_IInteract;
-    yarp::dev::IMotor                   *rpc_IMotor;
-    yarp::dev::IRemoteVariables         *rpc_IVar;
-    yarp::dev::ICurrentControl          *rpc_ICurrent;
-    yarp::dev::IPWMControl              *rpc_IPWM;
-    yarp::sig::Vector                   tmpVect;
-    yarp::os::Stamp                     lastRpcStamp;
-    std::mutex                          mutex;
-    int                                 controlledJoints;
+    ControlBoardWrapperCommon* ControlBoardWrapper_p {nullptr};
+    yarp::dev::IPidControl* rpc_IPid {nullptr};
+    yarp::dev::IPositionControl* rpc_IPosCtrl {nullptr};
+    yarp::dev::IPositionDirect* rpc_IPosDirect {nullptr};
+    yarp::dev::IVelocityControl* rpc_IVelCtrl {nullptr};
+    yarp::dev::IEncodersTimed* rpc_IEncTimed {nullptr};
+    yarp::dev::IMotorEncoders* rpc_IMotEnc {nullptr};
+    yarp::dev::IAmplifierControl* rcp_IAmp {nullptr};
+    yarp::dev::IControlLimits* rcp_Ilim {nullptr};
+    yarp::dev::ITorqueControl* rpc_ITorque {nullptr};
+    yarp::dev::IControlMode* rpc_iCtrlMode {nullptr};
+    yarp::dev::IAxisInfo* rpc_AxisInfo {nullptr};
+    yarp::dev::IRemoteCalibrator* rpc_IRemoteCalibrator {nullptr};
+    yarp::dev::IControlCalibration* rpc_Icalib {nullptr};
+    yarp::dev::IImpedanceControl* rpc_IImpedance {nullptr};
+    yarp::dev::IInteractionMode* rpc_IInteract {nullptr};
+    yarp::dev::IMotor* rpc_IMotor {nullptr};
+    yarp::dev::IRemoteVariables* rpc_IVar {nullptr};
+    yarp::dev::ICurrentControl* rpc_ICurrent {nullptr};
+    yarp::dev::IPWMControl* rpc_IPWM {nullptr};
+    yarp::sig::Vector tmpVect;
+    yarp::os::Stamp lastRpcStamp;
+    std::mutex mutex;
+    int controlledJoints {0};
 
 public:
     /**
     * Constructor.
     */
-    RPCMessagesParser();
+    RPCMessagesParser() = default;
 
     /**
     * Initialization.
@@ -93,34 +94,44 @@ public:
     * This is required to recover the pointers to the interfaces that implement the responses
     * to the commands.
     */
-    void init(ControlBoardWrapper *x);
+    void init(yarp::dev::DeviceDriver* x);
 
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 
     void handleTorqueMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
+                         yarp::os::Bottle& response,
+                         bool* rec,
+                         bool* ok);
 
     void handleControlModeMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
+                              yarp::os::Bottle& response,
+                              bool* rec,
+                              bool* ok);
 
     void handleImpedanceMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
+                            yarp::os::Bottle& response,
+                            bool* rec,
+                            bool* ok);
 
     void handleInteractionModeMsg(const yarp::os::Bottle& cmd,
-        yarp::os::Bottle& response, bool *rec, bool *ok);
+                                  yarp::os::Bottle& response,
+                                  bool* rec,
+                                  bool* ok);
 
     void handleProtocolVersionRequest(const yarp::os::Bottle& cmd,
-         yarp::os::Bottle& response, bool *rec, bool *ok);
+                                      yarp::os::Bottle& response,
+                                      bool* rec,
+                                      bool* ok);
 
-    void handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
+    void handleRemoteCalibratorMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool* rec, bool* ok);
 
-    void handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
+    void handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool* rec, bool* ok);
 
-    void handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
+    void handleCurrentMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool* rec, bool* ok);
 
-    void handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
+    void handlePWMMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool* rec, bool* ok);
 
-    void handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool *rec, bool *ok);
+    void handlePidMsg(const yarp::os::Bottle& cmd, yarp::os::Bottle& response, bool* rec, bool* ok);
 
     /**
     * Initialize the internal data.
