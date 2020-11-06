@@ -13,8 +13,6 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/GenericVocabs.h>
-#include "rosPixelCode.h"
-#include <RGBDRosConversionUtils.h>
 
 using namespace RGBDImpl;
 using namespace yarp::sig;
@@ -604,14 +602,17 @@ bool RGBDSensorWrapperYARP::writeData()
     if (rgb_data_ok)
     {
         FlexImage& yColorImage = colorFrame_StreamingPort.prepare();
-        yarp::dev::RGBDRosConversionUtils::shallowCopyImages(colorImage, yColorImage);
+        yColorImage.setPixelCode(colorImage.getPixelCode());
+        yColorImage.setQuantum(colorImage.getQuantum());
+        yColorImage.setExternal(colorImage.getRawImage(), colorImage.width(), colorImage.height());
         colorFrame_StreamingPort.setEnvelope(colorStamp);
         colorFrame_StreamingPort.write();
     }
     if (depth_data_ok)
     {
         ImageOf<PixelFloat>& yDepthImage = depthFrame_StreamingPort.prepare();
-        yarp::dev::RGBDRosConversionUtils::shallowCopyImages(depthImage, yDepthImage);
+        yDepthImage.setQuantum(depthImage.getQuantum());
+        yDepthImage.setExternal(depthImage.getRawImage(), depthImage.width(), depthImage.height());
         depthFrame_StreamingPort.setEnvelope(depthStamp);
         depthFrame_StreamingPort.write();
     }

@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H
-#define YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H
+#ifndef YARP_DEV_RGBDSENSORWRAPPER_ROS_H
+#define YARP_DEV_RGBDSENSORWRAPPER_ROS_H
 
 #include <vector>
 #include <iostream>
@@ -27,7 +27,6 @@
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
-#include <yarp/dev/IVisualParamsImpl.h>
 #include <yarp/dev/FrameGrabberControlImpl.h>
 
 // ROS stuff
@@ -198,4 +197,4 @@ public:
     void        run() override;
 };
 
-#endif   // YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPER_H
+#endif   // YARP_DEV_RGBDSENSORWRAPPER_ROS_H

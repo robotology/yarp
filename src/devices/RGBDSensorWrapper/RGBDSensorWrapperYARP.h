@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPERYARP_H
-#define YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPERYARP_H
+#ifndef YARP_DEV_RGBDSENSORWRAPPER_YARP_H
+#define YARP_DEV_RGBDSENSORWRAPPER_YARP_H
 
 #include <vector>
 #include <iostream>
@@ -211,4 +211,4 @@ public:
     void        run() override;
 };
 
-#endif   // YARP_DEV_RGBDSENSORWRAPPER_RGBDSENSORWRAPPERYARP_H
+#endif   // YARP_DEV_RGBDSENSORWRAPPER_YARP_H
