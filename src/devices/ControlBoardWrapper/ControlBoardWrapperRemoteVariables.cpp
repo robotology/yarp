@@ -16,7 +16,7 @@ bool ControlBoardWrapperRemoteVariables::getRemoteVariable(std::string key, yarp
 {
     bool b = true;
 
-    for (unsigned int i = 0; i < device.subdevices.size(); i++) {
+    for (size_t i = 0; i < device.subdevices.size(); i++) {
         SubDevice* p = device.getSubdevice(i);
 
         if (!p) {
@@ -45,7 +45,7 @@ bool ControlBoardWrapperRemoteVariables::setRemoteVariable(std::string key, cons
     }
 
     bool b = true;
-    for (unsigned int i = 0; i < device_size; i++) {
+    for (size_t i = 0; i < device_size; i++) {
         SubDevice* p = device.getSubdevice(i);
         if (!p) {
             yCError(CONTROLBOARDWRAPPER, "setRemoteVariable !p failure");
@@ -70,7 +70,7 @@ bool ControlBoardWrapperRemoteVariables::setRemoteVariable(std::string key, cons
 bool ControlBoardWrapperRemoteVariables::getRemoteVariablesList(yarp::os::Bottle* listOfKeys)
 {
     //int off = device.lut[0].offset;
-    int subIndex = device.lut[0].deviceEntry;
+    size_t subIndex = device.lut[0].deviceEntry;
     SubDevice* p = device.getSubdevice(subIndex);
 
     if (!p) {

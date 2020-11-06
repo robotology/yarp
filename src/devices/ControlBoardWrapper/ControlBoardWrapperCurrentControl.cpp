@@ -13,14 +13,14 @@
 
 bool ControlBoardWrapperCurrentControl::getCurrentRange(int j, double* min, double* max)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -28,7 +28,7 @@ bool ControlBoardWrapperCurrentControl::getCurrentRange(int j, double* min, doub
     }
 
     if (p->iCurr) {
-        return p->iCurr->getCurrentRange(off + p->base, min, max);
+        return p->iCurr->getCurrentRange(static_cast<int>(off + p->base), min, max);
     }
 
     return false;
@@ -39,7 +39,7 @@ bool ControlBoardWrapperCurrentControl::getCurrentRanges(double* min, double* ma
     auto* c_min = new double[device.maxNumOfJointsInDevices];
     auto* c_max = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -47,7 +47,7 @@ bool ControlBoardWrapperCurrentControl::getCurrentRanges(double* min, double* ma
         }
 
         if ((p->iCurr) && (ret = p->iCurr->getCurrentRanges(c_min, c_max))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 min[juser] = c_min[jdevice];
                 max[juser] = c_max[jdevice];
             }
@@ -67,9 +67,9 @@ bool ControlBoardWrapperCurrentControl::setRefCurrents(const double* t)
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -77,7 +77,7 @@ bool ControlBoardWrapperCurrentControl::setRefCurrents(const double* t)
         }
 
         if (p->iCurr) {
-            ret = ret && p->iCurr->setRefCurrent(off + p->base, t[l]);
+            ret = ret && p->iCurr->setRefCurrent(static_cast<int>(off + p->base), t[l]);
         } else {
             ret = false;
         }
@@ -87,14 +87,14 @@ bool ControlBoardWrapperCurrentControl::setRefCurrents(const double* t)
 
 bool ControlBoardWrapperCurrentControl::setRefCurrent(int j, double t)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -102,7 +102,7 @@ bool ControlBoardWrapperCurrentControl::setRefCurrent(int j, double t)
     }
 
     if (p->iCurr) {
-        return p->iCurr->setRefCurrent(off + p->base, t);
+        return p->iCurr->setRefCurrent(static_cast<int>(off + p->base), t);
     }
     return false;
 }
@@ -116,10 +116,11 @@ bool ControlBoardWrapperCurrentControl::setRefCurrents(const int n_joint, const 
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joint; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = t[j];
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
@@ -139,7 +140,7 @@ bool ControlBoardWrapperCurrentControl::getRefCurrents(double* t)
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -147,7 +148,7 @@ bool ControlBoardWrapperCurrentControl::getRefCurrents(double* t)
         }
 
         if ((p->iCurr) && (ret = p->iCurr->getRefCurrents(references))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 t[juser] = references[jdevice];
             }
         } else {
@@ -163,14 +164,14 @@ bool ControlBoardWrapperCurrentControl::getRefCurrents(double* t)
 
 bool ControlBoardWrapperCurrentControl::getRefCurrent(int j, double* t)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -178,7 +179,7 @@ bool ControlBoardWrapperCurrentControl::getRefCurrent(int j, double* t)
     }
 
     if (p->iCurr) {
-        return p->iCurr->getRefCurrent(off + p->base, t);
+        return p->iCurr->getRefCurrent(static_cast<int>(off + p->base), t);
     }
 
     return false;

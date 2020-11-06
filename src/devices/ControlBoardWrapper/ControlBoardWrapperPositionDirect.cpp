@@ -13,14 +13,14 @@
 
 bool ControlBoardWrapperPositionDirect::setPosition(int j, double ref)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -28,7 +28,7 @@ bool ControlBoardWrapperPositionDirect::setPosition(int j, double ref)
     }
 
     if (p->posDir) {
-        return p->posDir->setPosition(off + p->base, ref);
+        return p->posDir->setPosition(static_cast<int>(off + p->base), ref);
     }
 
     return false;
@@ -44,7 +44,7 @@ bool ControlBoardWrapperPositionDirect::setPositions(const int n_joints, const i
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
         int offset = device.lut[joints[j]].offset;
@@ -71,9 +71,9 @@ bool ControlBoardWrapperPositionDirect::setPositions(const double* refs)
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -81,7 +81,7 @@ bool ControlBoardWrapperPositionDirect::setPositions(const double* refs)
         }
 
         if (p->posDir) {
-            ret = p->posDir->setPosition(off + p->base, refs[l]) && ret;
+            ret = p->posDir->setPosition(static_cast<int>(off + p->base), refs[l]) && ret;
         } else {
             ret = false;
         }
@@ -92,14 +92,14 @@ bool ControlBoardWrapperPositionDirect::setPositions(const double* refs)
 
 bool ControlBoardWrapperPositionDirect::getRefPosition(const int j, double* ref)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
 
@@ -108,7 +108,7 @@ bool ControlBoardWrapperPositionDirect::getRefPosition(const int j, double* ref)
     }
 
     if (p->posDir) {
-        bool ret = p->posDir->getRefPosition(off + p->base, ref);
+        bool ret = p->posDir->getRefPosition(static_cast<int>(off + p->base), ref);
         return ret;
     }
     *ref = 0;
@@ -120,7 +120,7 @@ bool ControlBoardWrapperPositionDirect::getRefPositions(double* spds)
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -128,7 +128,7 @@ bool ControlBoardWrapperPositionDirect::getRefPositions(double* spds)
         }
 
         if ((p->posDir) && (ret = p->posDir->getRefPositions(references))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 spds[juser] = references[jdevice];
             }
         } else {
@@ -152,10 +152,11 @@ bool ControlBoardWrapperPositionDirect::getRefPositions(const int n_joints, cons
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
@@ -167,7 +168,7 @@ bool ControlBoardWrapperPositionDirect::getRefPositions(const int n_joints, cons
 
     if (ret) {
         // ReMix values by user expectations
-        for (int i = 0; i < rpcData.deviceNum; i++) {
+        for (size_t i = 0; i < rpcData.deviceNum; i++) {
             rpcData.subdev_jointsVectorLen[i] = 0; // reset tmp index
         }
 

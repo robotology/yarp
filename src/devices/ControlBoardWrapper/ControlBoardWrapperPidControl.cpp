@@ -16,18 +16,18 @@ using yarp::dev::PidControlTypeEnum;
 
 bool ControlBoardWrapperPidControl::setPid(const PidControlTypeEnum& pidtype, int j, const Pid& p)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
         yCError(CONTROLBOARDWRAPPER,
-                "Joint number %d out of bound [0-%d] for part %s",
+                "Joint number %d out of bound [0-%zu] for part %s",
                 j,
                 controlledJoints,
                 partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* s = device.getSubdevice(subIndex);
     if (!s) {
@@ -35,7 +35,7 @@ bool ControlBoardWrapperPidControl::setPid(const PidControlTypeEnum& pidtype, in
     }
 
     if (s->pid) {
-        return s->pid->setPid(pidtype, off + s->base, p);
+        return s->pid->setPid(pidtype, static_cast<int>(off + s->base), p);
     }
     return false;
 }
@@ -45,9 +45,9 @@ bool ControlBoardWrapperPidControl::setPids(const PidControlTypeEnum& pidtype, c
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -55,7 +55,7 @@ bool ControlBoardWrapperPidControl::setPids(const PidControlTypeEnum& pidtype, c
         }
 
         if (p->pid) {
-            ret = ret && p->pid->setPid(pidtype, off + p->base, ps[l]);
+            ret = ret && p->pid->setPid(pidtype, static_cast<int>(off + p->base), ps[l]);
         } else {
             ret = false;
         }
@@ -66,18 +66,18 @@ bool ControlBoardWrapperPidControl::setPids(const PidControlTypeEnum& pidtype, c
 
 bool ControlBoardWrapperPidControl::setPidReference(const PidControlTypeEnum& pidtype, int j, double ref)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
         yCError(CONTROLBOARDWRAPPER,
-                "Joint number %d out of bound [0-%d] for part %s",
+                "Joint number %d out of bound [0-%zu] for part %s",
                 j,
                 controlledJoints,
                 partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -85,7 +85,7 @@ bool ControlBoardWrapperPidControl::setPidReference(const PidControlTypeEnum& pi
     }
 
     if (p->pid) {
-        return p->pid->setPidReference(pidtype, off + p->base, ref);
+        return p->pid->setPidReference(pidtype, static_cast<int>(off + p->base), ref);
     }
     return false;
 }
@@ -95,9 +95,9 @@ bool ControlBoardWrapperPidControl::setPidReferences(const PidControlTypeEnum& p
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -105,7 +105,7 @@ bool ControlBoardWrapperPidControl::setPidReferences(const PidControlTypeEnum& p
         }
 
         if (p->pid) {
-            ret = ret && p->pid->setPidReference(pidtype, off + p->base, refs[l]);
+            ret = ret && p->pid->setPidReference(pidtype, static_cast<int>(off + p->base), refs[l]);
         } else {
             ret = false;
         }
@@ -116,14 +116,14 @@ bool ControlBoardWrapperPidControl::setPidReferences(const PidControlTypeEnum& p
 
 bool ControlBoardWrapperPidControl::setPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double limit)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -131,7 +131,7 @@ bool ControlBoardWrapperPidControl::setPidErrorLimit(const PidControlTypeEnum& p
     }
 
     if (p->pid) {
-        return p->pid->setPidErrorLimit(pidtype, off + p->base, limit);
+        return p->pid->setPidErrorLimit(pidtype, static_cast<int>(off + p->base), limit);
     }
     return false;
 }
@@ -141,9 +141,9 @@ bool ControlBoardWrapperPidControl::setPidErrorLimits(const PidControlTypeEnum& 
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -151,7 +151,7 @@ bool ControlBoardWrapperPidControl::setPidErrorLimits(const PidControlTypeEnum& 
         }
 
         if (p->pid) {
-            ret = ret && p->pid->setPidErrorLimit(pidtype, off + p->base, limits[l]);
+            ret = ret && p->pid->setPidErrorLimit(pidtype, static_cast<int>(off + p->base), limits[l]);
         } else {
             ret = false;
         }
@@ -162,14 +162,14 @@ bool ControlBoardWrapperPidControl::setPidErrorLimits(const PidControlTypeEnum& 
 
 bool ControlBoardWrapperPidControl::getPidError(const PidControlTypeEnum& pidtype, int j, double* err)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -177,7 +177,7 @@ bool ControlBoardWrapperPidControl::getPidError(const PidControlTypeEnum& pidtyp
     }
 
     if (p->pid) {
-        return p->pid->getPidError(pidtype, off + p->base, err);
+        return p->pid->getPidError(pidtype, static_cast<int>(off + p->base), err);
     }
     *err = 0.0;
     return false;
@@ -189,14 +189,14 @@ bool ControlBoardWrapperPidControl::getPidErrors(const PidControlTypeEnum& pidty
     auto* errors = new double[device.maxNumOfJointsInDevices];
 
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
             break;
         }
         if ((p->pid) && (ret = p->pid->getPidErrors(pidtype, errors))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 errs[juser] = errors[jdevice];
             }
         } else {
@@ -213,14 +213,14 @@ bool ControlBoardWrapperPidControl::getPidErrors(const PidControlTypeEnum& pidty
 
 bool ControlBoardWrapperPidControl::getPidOutput(const PidControlTypeEnum& pidtype, int j, double* out)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -228,7 +228,7 @@ bool ControlBoardWrapperPidControl::getPidOutput(const PidControlTypeEnum& pidty
     }
 
     if (p->pid) {
-        return p->pid->getPidOutput(pidtype, off + p->base, out);
+        return p->pid->getPidOutput(pidtype, static_cast<int>(off + p->base), out);
     }
     *out = 0.0;
     return false;
@@ -239,7 +239,7 @@ bool ControlBoardWrapperPidControl::getPidOutputs(const PidControlTypeEnum& pidt
 {
     auto* outputs = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -247,7 +247,7 @@ bool ControlBoardWrapperPidControl::getPidOutputs(const PidControlTypeEnum& pidt
         }
 
         if ((p->pid) && (ret = p->pid->getPidOutputs(pidtype, outputs))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 outs[juser] = outputs[jdevice];
             }
         } else {
@@ -264,14 +264,14 @@ bool ControlBoardWrapperPidControl::getPidOutputs(const PidControlTypeEnum& pidt
 
 bool ControlBoardWrapperPidControl::setPidOffset(const PidControlTypeEnum& pidtype, int j, double v)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -279,7 +279,7 @@ bool ControlBoardWrapperPidControl::setPidOffset(const PidControlTypeEnum& pidty
     }
 
     if (p->pid) {
-        return p->pid->setPidOffset(pidtype, off + p->base, v);
+        return p->pid->setPidOffset(pidtype, static_cast<int>(off + p->base), v);
     }
     return false;
 }
@@ -288,14 +288,14 @@ bool ControlBoardWrapperPidControl::setPidOffset(const PidControlTypeEnum& pidty
 bool ControlBoardWrapperPidControl::getPid(const PidControlTypeEnum& pidtype, int j, Pid* p)
 {
     //#warning "check for max number of joints!?!?!"
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* s = device.getSubdevice(subIndex);
     if (!s) {
@@ -303,7 +303,7 @@ bool ControlBoardWrapperPidControl::getPid(const PidControlTypeEnum& pidtype, in
     }
 
     if (s->pid) {
-        return s->pid->getPid(pidtype, off + s->base, p);
+        return s->pid->getPid(pidtype, static_cast<int>(off + s->base), p);
     }
     return false;
 }
@@ -313,7 +313,7 @@ bool ControlBoardWrapperPidControl::getPids(const PidControlTypeEnum& pidtype, P
 {
     Pid* pids_device = new Pid[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -321,7 +321,7 @@ bool ControlBoardWrapperPidControl::getPids(const PidControlTypeEnum& pidtype, P
         }
 
         if ((p->pid) && (ret = p->pid->getPids(pidtype, pids_device))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 pids[juser] = pids_device[jdevice];
             }
         } else {
@@ -338,21 +338,21 @@ bool ControlBoardWrapperPidControl::getPids(const PidControlTypeEnum& pidtype, P
 
 bool ControlBoardWrapperPidControl::getPidReference(const PidControlTypeEnum& pidtype, int j, double* ref)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
         return false;
     }
     if (p->pid) {
-        return p->pid->getPidReference(pidtype, off + p->base, ref);
+        return p->pid->getPidReference(pidtype, static_cast<int>(off + p->base), ref);
     }
     return false;
 }
@@ -362,7 +362,7 @@ bool ControlBoardWrapperPidControl::getPidReferences(const PidControlTypeEnum& p
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -370,7 +370,7 @@ bool ControlBoardWrapperPidControl::getPidReferences(const PidControlTypeEnum& p
         }
 
         if ((p->pid) && (ret = p->pid->getPidReferences(pidtype, references))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 refs[juser] = references[jdevice];
             }
         } else {
@@ -387,14 +387,14 @@ bool ControlBoardWrapperPidControl::getPidReferences(const PidControlTypeEnum& p
 
 bool ControlBoardWrapperPidControl::getPidErrorLimit(const PidControlTypeEnum& pidtype, int j, double* limit)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -402,7 +402,7 @@ bool ControlBoardWrapperPidControl::getPidErrorLimit(const PidControlTypeEnum& p
     }
 
     if (p->pid) {
-        return p->pid->getPidErrorLimit(pidtype, off + p->base, limit);
+        return p->pid->getPidErrorLimit(pidtype, static_cast<int>(off + p->base), limit);
     }
     return false;
 }
@@ -412,7 +412,7 @@ bool ControlBoardWrapperPidControl::getPidErrorLimits(const PidControlTypeEnum& 
 {
     auto* lims = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -420,7 +420,7 @@ bool ControlBoardWrapperPidControl::getPidErrorLimits(const PidControlTypeEnum& 
         }
 
         if ((p->pid) && (ret = p->pid->getPidErrorLimits(pidtype, lims))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 limits[juser] = lims[jdevice];
             }
         } else {
@@ -437,14 +437,14 @@ bool ControlBoardWrapperPidControl::getPidErrorLimits(const PidControlTypeEnum& 
 
 bool ControlBoardWrapperPidControl::resetPid(const PidControlTypeEnum& pidtype, int j)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -452,7 +452,7 @@ bool ControlBoardWrapperPidControl::resetPid(const PidControlTypeEnum& pidtype, 
     }
 
     if (p->pid) {
-        return p->pid->resetPid(pidtype, off + p->base);
+        return p->pid->resetPid(pidtype, static_cast<int>(off + p->base));
     }
     return false;
 }
@@ -460,14 +460,14 @@ bool ControlBoardWrapperPidControl::resetPid(const PidControlTypeEnum& pidtype, 
 
 bool ControlBoardWrapperPidControl::disablePid(const PidControlTypeEnum& pidtype, int j)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -475,7 +475,7 @@ bool ControlBoardWrapperPidControl::disablePid(const PidControlTypeEnum& pidtype
     }
 
     if (p->pid) {
-        return p->pid->disablePid(pidtype, off + p->base);
+        return p->pid->disablePid(pidtype, static_cast<int>(off + p->base));
     }
     return false;
 }
@@ -483,14 +483,14 @@ bool ControlBoardWrapperPidControl::disablePid(const PidControlTypeEnum& pidtype
 
 bool ControlBoardWrapperPidControl::enablePid(const PidControlTypeEnum& pidtype, int j)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -498,7 +498,7 @@ bool ControlBoardWrapperPidControl::enablePid(const PidControlTypeEnum& pidtype,
     }
 
     if (p->pid) {
-        return p->pid->enablePid(pidtype, off + p->base);
+        return p->pid->enablePid(pidtype, static_cast<int>(off + p->base));
     }
     return false;
 }
@@ -506,14 +506,14 @@ bool ControlBoardWrapperPidControl::enablePid(const PidControlTypeEnum& pidtype,
 
 bool ControlBoardWrapperPidControl::isPidEnabled(const PidControlTypeEnum& pidtype, int j, bool* enabled)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -521,7 +521,7 @@ bool ControlBoardWrapperPidControl::isPidEnabled(const PidControlTypeEnum& pidty
     }
 
     if (p->pid) {
-        return p->pid->isPidEnabled(pidtype, off + p->base, enabled);
+        return p->pid->isPidEnabled(pidtype, static_cast<int>(off + p->base), enabled);
     }
 
     return false;

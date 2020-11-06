@@ -20,7 +20,7 @@ class ControlBoardWrapperCommon
 public:
 // COMMON MEMBERS
     WrappedDevice device;
-    int controlledJoints {0};
+    size_t controlledJoints {0};
     std::string partName; // to open ports and print more detailed debug messages
 
     // RPC calls are concurrent from multiple clients, data used inside the calls has to be protected

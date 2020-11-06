@@ -14,8 +14,8 @@
 class MultiJointData
 {
 public:
-    int deviceNum {0};
-    int maxJointsNumForDevice {0};
+    size_t deviceNum {0};
+    size_t maxJointsNumForDevice {0};
 
     int* subdev_jointsVectorLen {nullptr}; // number of joints belonging to each subdevice
     int** jointNumbers {nullptr};
@@ -42,7 +42,7 @@ public:
         subdevices_p = new SubDevice*[deviceNum];
         subdevices_p[0] = _device->getSubdevice(0);
 
-        for (int i = 1; i < deviceNum; i++) {
+        for (size_t i = 1; i < deviceNum; i++) {
             jointNumbers[i] = jointNumbers[i - 1] + _maxJointsNumForDevice; // set pointer to correct location
             values[i] = values[i - 1] + _maxJointsNumForDevice;             // set pointer to correct location
             modes[i] = modes[i - 1] + _maxJointsNumForDevice;               // set pointer to correct location

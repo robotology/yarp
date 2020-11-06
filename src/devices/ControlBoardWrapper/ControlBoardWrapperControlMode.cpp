@@ -13,14 +13,14 @@
 
 bool ControlBoardWrapperControlMode::getControlMode(int j, int* mode)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -28,7 +28,7 @@ bool ControlBoardWrapperControlMode::getControlMode(int j, int* mode)
     }
 
     if (p->iMode) {
-        return p->iMode->getControlMode(off + p->base, mode);
+        return p->iMode->getControlMode(static_cast<int>(off + p->base), mode);
     }
     return false;
 }
@@ -38,7 +38,7 @@ bool ControlBoardWrapperControlMode::getControlModes(int* modes)
 {
     int* all_mode = new int[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -46,7 +46,7 @@ bool ControlBoardWrapperControlMode::getControlModes(int* modes)
         }
 
         if ((p->iMode) && (ret = p->iMode->getControlModes(all_mode))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 modes[juser] = all_mode[jdevice];
             }
         } else {
@@ -67,7 +67,7 @@ bool ControlBoardWrapperControlMode::getControlModes(const int n_joint, const in
 
     for (int l = 0; l < n_joint; l++) {
         int off = device.lut[joints[l]].offset;
-        int subIndex = device.lut[joints[l]].deviceEntry;
+        size_t subIndex = device.lut[joints[l]].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -75,7 +75,7 @@ bool ControlBoardWrapperControlMode::getControlModes(const int n_joint, const in
         }
 
         if (p->iMode) {
-            ret = ret && p->iMode->getControlMode(off + p->base, &modes[l]);
+            ret = ret && p->iMode->getControlMode(static_cast<int>(off + p->base), &modes[l]);
         } else {
             ret = false;
         }
@@ -87,14 +87,14 @@ bool ControlBoardWrapperControlMode::getControlModes(const int n_joint, const in
 bool ControlBoardWrapperControlMode::setControlMode(const int j, const int mode)
 {
     bool ret = true;
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -102,7 +102,7 @@ bool ControlBoardWrapperControlMode::setControlMode(const int j, const int mode)
     }
 
     if (p->iMode) {
-        ret = p->iMode->setControlMode(off + p->base, mode);
+        ret = p->iMode->setControlMode(static_cast<int>(off + p->base), mode);
     }
     return ret;
 }
@@ -117,10 +117,11 @@ bool ControlBoardWrapperControlMode::setControlModes(const int n_joints, const i
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.modes[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = modes[j];
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
@@ -144,19 +145,19 @@ bool ControlBoardWrapperControlMode::setControlModes(int* modes)
 
     int nDev = device.subdevices.size();
     for (int subDev_idx = 0; subDev_idx < nDev; subDev_idx++) {
-        int subIndex = device.lut[j_wrap].deviceEntry;
+        size_t subIndex = device.lut[j_wrap].deviceEntry;
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
             return false;
         }
 
-        int wrapped_joints = (p->top - p->base) + 1;
+        int wrapped_joints = static_cast<int>((p->top - p->base) + 1);
         int* joints = new int[wrapped_joints];
 
         if (p->iMode) {
             // versione comandi su subset di giunti
             for (int j_dev = 0; j_dev < wrapped_joints; j_dev++) {
-                joints[j_dev] = p->base + j_dev; // for all joints is equivalent to add offset term
+                joints[j_dev] = static_cast<int>(p->base + j_dev); // for all joints is equivalent to add offset term
             }
 
             ret = ret && p->iMode->setControlModes(wrapped_joints, joints, &modes[j_wrap]);

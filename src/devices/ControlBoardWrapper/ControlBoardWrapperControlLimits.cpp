@@ -13,14 +13,14 @@
 
 bool ControlBoardWrapperControlLimits::setLimits(int j, double min, double max)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -28,21 +28,21 @@ bool ControlBoardWrapperControlLimits::setLimits(int j, double min, double max)
     }
 
     if (p->lim) {
-        return p->lim->setLimits(off + p->base, min, max);
+        return p->lim->setLimits(static_cast<int>(off + p->base), min, max);
     }
     return false;
 }
 
 bool ControlBoardWrapperControlLimits::getLimits(int j, double* min, double* max)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -52,7 +52,7 @@ bool ControlBoardWrapperControlLimits::getLimits(int j, double* min, double* max
     }
 
     if (p->lim) {
-        return p->lim->getLimits(off + p->base, min, max);
+        return p->lim->getLimits(static_cast<int>(off + p->base), min, max);
     }
     *min = 0.0;
     *max = 0.0;
@@ -61,14 +61,14 @@ bool ControlBoardWrapperControlLimits::getLimits(int j, double* min, double* max
 
 bool ControlBoardWrapperControlLimits::setVelLimits(int j, double min, double max)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -78,19 +78,19 @@ bool ControlBoardWrapperControlLimits::setVelLimits(int j, double min, double ma
     if (!p->lim) {
         return false;
     }
-    return p->lim->setVelLimits(off + p->base, min, max);
+    return p->lim->setVelLimits(static_cast<int>(off + p->base), min, max);
 }
 
 bool ControlBoardWrapperControlLimits::getVelLimits(int j, double* min, double* max)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     *min = 0.0;
     *max = 0.0;
@@ -103,5 +103,5 @@ bool ControlBoardWrapperControlLimits::getVelLimits(int j, double* min, double* 
     if (!p->lim) {
         return false;
     }
-    return p->lim->getVelLimits(off + p->base, min, max);
+    return p->lim->getVelLimits(static_cast<int>(off + p->base), min, max);
 }

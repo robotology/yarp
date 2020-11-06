@@ -13,7 +13,7 @@
 bool ControlBoardWrapperMotor::getTemperature(int m, double* val)
 {
     int off = device.lut[m].offset;
-    int subIndex = device.lut[m].deviceEntry;
+    size_t subIndex = device.lut[m].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -21,7 +21,7 @@ bool ControlBoardWrapperMotor::getTemperature(int m, double* val)
     }
 
     if (p->imotor) {
-        return p->imotor->getTemperature(off + p->base, val);
+        return p->imotor->getTemperature(static_cast<int>(off + p->base), val);
     }
     *val = 0.0;
     return false;
@@ -31,7 +31,7 @@ bool ControlBoardWrapperMotor::getTemperatures(double* vals)
 {
     auto* temps = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -39,7 +39,7 @@ bool ControlBoardWrapperMotor::getTemperatures(double* vals)
         }
 
         if ((p->imotor) && (ret = p->imotor->getTemperatures(temps))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 vals[juser] = temps[jdevice];
             }
         } else {
@@ -56,7 +56,7 @@ bool ControlBoardWrapperMotor::getTemperatures(double* vals)
 bool ControlBoardWrapperMotor::getTemperatureLimit(int m, double* val)
 {
     int off = device.lut[m].offset;
-    int subIndex = device.lut[m].deviceEntry;
+    size_t subIndex = device.lut[m].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -64,7 +64,7 @@ bool ControlBoardWrapperMotor::getTemperatureLimit(int m, double* val)
     }
 
     if (p->imotor) {
-        return p->imotor->getTemperatureLimit(off + p->base, val);
+        return p->imotor->getTemperatureLimit(static_cast<int>(off + p->base), val);
     }
     *val = 0.0;
     return false;
@@ -73,7 +73,7 @@ bool ControlBoardWrapperMotor::getTemperatureLimit(int m, double* val)
 bool ControlBoardWrapperMotor::setTemperatureLimit(int m, const double val)
 {
     int off = device.lut[m].offset;
-    int subIndex = device.lut[m].deviceEntry;
+    size_t subIndex = device.lut[m].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -81,7 +81,7 @@ bool ControlBoardWrapperMotor::setTemperatureLimit(int m, const double val)
     }
 
     if (p->imotor) {
-        return p->imotor->setTemperatureLimit(off + p->base, val);
+        return p->imotor->setTemperatureLimit(static_cast<int>(off + p->base), val);
     }
     return false;
 }
@@ -89,7 +89,7 @@ bool ControlBoardWrapperMotor::setTemperatureLimit(int m, const double val)
 bool ControlBoardWrapperMotor::getGearboxRatio(int m, double* val)
 {
     int off = device.lut[m].offset;
-    int subIndex = device.lut[m].deviceEntry;
+    size_t subIndex = device.lut[m].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -97,7 +97,7 @@ bool ControlBoardWrapperMotor::getGearboxRatio(int m, double* val)
     }
 
     if (p->imotor) {
-        return p->imotor->getGearboxRatio(off + p->base, val);
+        return p->imotor->getGearboxRatio(static_cast<int>(off + p->base), val);
     }
     *val = 0.0;
     return false;
@@ -106,7 +106,7 @@ bool ControlBoardWrapperMotor::getGearboxRatio(int m, double* val)
 bool ControlBoardWrapperMotor::setGearboxRatio(int m, const double val)
 {
     int off = device.lut[m].offset;
-    int subIndex = device.lut[m].deviceEntry;
+    size_t subIndex = device.lut[m].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -114,7 +114,7 @@ bool ControlBoardWrapperMotor::setGearboxRatio(int m, const double val)
     }
 
     if (p->imotor) {
-        return p->imotor->setGearboxRatio(off + p->base, val);
+        return p->imotor->setGearboxRatio(static_cast<int>(off + p->base), val);
     }
     return false;
 }

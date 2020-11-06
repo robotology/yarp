@@ -14,14 +14,14 @@ using yarp::dev::VOCAB_IM_UNKNOWN;
 
 bool ControlBoardWrapperInteractionMode::getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* s = device.getSubdevice(subIndex);
     if (!s) {
@@ -29,7 +29,7 @@ bool ControlBoardWrapperInteractionMode::getInteractionMode(int j, yarp::dev::In
     }
 
     if (s->iInteract) {
-        return s->iInteract->getInteractionMode(off + s->base, mode);
+        return s->iInteract->getInteractionMode(static_cast<int>(off + s->base), mode);
     }
     return false;
 }
@@ -43,10 +43,11 @@ bool ControlBoardWrapperInteractionMode::getInteractionModes(int n_joints, int* 
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
@@ -63,7 +64,7 @@ bool ControlBoardWrapperInteractionMode::getInteractionModes(int n_joints, int* 
 
     if (ret) {
         // ReMix values by user expectations
-        for (int i = 0; i < rpcData.deviceNum; i++) {
+        for (size_t i = 0; i < rpcData.deviceNum; i++) {
             rpcData.subdev_jointsVectorLen[i] = 0; // reset tmp index
         }
 
@@ -87,7 +88,7 @@ bool ControlBoardWrapperInteractionMode::getInteractionModes(yarp::dev::Interact
 
     auto* imodes = new yarp::dev::InteractionModeEnum[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -95,7 +96,7 @@ bool ControlBoardWrapperInteractionMode::getInteractionModes(yarp::dev::Interact
         }
 
         if ((p->iInteract) && (ret = p->iInteract->getInteractionModes(imodes))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 modes[juser] = imodes[jdevice];
             }
         } else {
@@ -111,14 +112,14 @@ bool ControlBoardWrapperInteractionMode::getInteractionModes(yarp::dev::Interact
 
 bool ControlBoardWrapperInteractionMode::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* s = device.getSubdevice(subIndex);
     if (!s) {
@@ -126,7 +127,7 @@ bool ControlBoardWrapperInteractionMode::setInteractionMode(int j, yarp::dev::In
     }
 
     if (s->iInteract) {
-        return s->iInteract->setInteractionMode(off + s->base, mode);
+        return s->iInteract->setInteractionMode(static_cast<int>(off + s->base), mode);
     }
     return false;
 }
@@ -140,10 +141,11 @@ bool ControlBoardWrapperInteractionMode::setInteractionModes(int n_joints, int* 
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.modes[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = static_cast<int>(modes[j]);
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
@@ -166,15 +168,15 @@ bool ControlBoardWrapperInteractionMode::setInteractionModes(yarp::dev::Interact
 {
     bool ret = true;
 
-    for (int j = 0; j < controlledJoints; j++) {
-        int off;
+    for (size_t j = 0; j < controlledJoints; j++) {
+        size_t off;
         try {
             off = device.lut.at(j).offset;
         } catch (...) {
-            yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+            yCError(CONTROLBOARDWRAPPER, "Joint number %zu out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
             return false;
         }
-        int subIndex = device.lut[j].deviceEntry;
+        size_t subIndex = device.lut[j].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -182,7 +184,7 @@ bool ControlBoardWrapperInteractionMode::setInteractionModes(yarp::dev::Interact
         }
 
         if (p->iInteract) {
-            ret = ret && p->iInteract->setInteractionMode(off + p->base, modes[j]);
+            ret = ret && p->iInteract->setInteractionMode(static_cast<int>(off + p->base), modes[j]);
         } else {
             ret = false;
         }

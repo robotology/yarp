@@ -15,7 +15,7 @@ bool ControlBoardWrapperTorqueControl::getRefTorques(double* refs)
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -23,7 +23,7 @@ bool ControlBoardWrapperTorqueControl::getRefTorques(double* refs)
         }
 
         if ((p->iTorque) && (ret = p->iTorque->getRefTorques(references))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 refs[juser] = references[jdevice];
             }
         } else {
@@ -40,14 +40,14 @@ bool ControlBoardWrapperTorqueControl::getRefTorques(double* refs)
 bool ControlBoardWrapperTorqueControl::getRefTorque(int j, double* t)
 {
 
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -55,7 +55,7 @@ bool ControlBoardWrapperTorqueControl::getRefTorque(int j, double* t)
     }
 
     if (p->iTorque) {
-        return p->iTorque->getRefTorque(off + p->base, t);
+        return p->iTorque->getRefTorque(static_cast<int>(off + p->base), t);
     }
     return false;
 }
@@ -64,9 +64,9 @@ bool ControlBoardWrapperTorqueControl::setRefTorques(const double* t)
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -74,7 +74,7 @@ bool ControlBoardWrapperTorqueControl::setRefTorques(const double* t)
         }
 
         if (p->iTorque) {
-            ret = ret && p->iTorque->setRefTorque(off + p->base, t[l]);
+            ret = ret && p->iTorque->setRefTorque(static_cast<int>(off + p->base), t[l]);
         } else {
             ret = false;
         }
@@ -84,14 +84,14 @@ bool ControlBoardWrapperTorqueControl::setRefTorques(const double* t)
 
 bool ControlBoardWrapperTorqueControl::setRefTorque(int j, double t)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -99,7 +99,7 @@ bool ControlBoardWrapperTorqueControl::setRefTorque(int j, double t)
     }
 
     if (p->iTorque) {
-        return p->iTorque->setRefTorque(off + p->base, t);
+        return p->iTorque->setRefTorque(static_cast<int>(off + p->base), t);
     }
     return false;
 }
@@ -113,10 +113,11 @@ bool ControlBoardWrapperTorqueControl::setRefTorques(const int n_joints, const i
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = t[j];
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
@@ -134,14 +135,14 @@ bool ControlBoardWrapperTorqueControl::setRefTorques(const int n_joints, const i
 
 bool ControlBoardWrapperTorqueControl::getMotorTorqueParams(int j, yarp::dev::MotorTorqueParameters* params)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -149,21 +150,21 @@ bool ControlBoardWrapperTorqueControl::getMotorTorqueParams(int j, yarp::dev::Mo
     }
 
     if (p->iTorque) {
-        return p->iTorque->getMotorTorqueParams(off + p->base, params);
+        return p->iTorque->getMotorTorqueParams(static_cast<int>(off + p->base), params);
     }
     return false;
 }
 
 bool ControlBoardWrapperTorqueControl::setMotorTorqueParams(int j, const yarp::dev::MotorTorqueParameters params)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -171,21 +172,21 @@ bool ControlBoardWrapperTorqueControl::setMotorTorqueParams(int j, const yarp::d
     }
 
     if (p->iTorque) {
-        return p->iTorque->setMotorTorqueParams(off + p->base, params);
+        return p->iTorque->setMotorTorqueParams(static_cast<int>(off + p->base), params);
     }
     return false;
 }
 
 bool ControlBoardWrapperTorqueControl::getTorque(int j, double* t)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -193,7 +194,7 @@ bool ControlBoardWrapperTorqueControl::getTorque(int j, double* t)
     }
 
     if (p->iTorque) {
-        return p->iTorque->getTorque(off + p->base, t);
+        return p->iTorque->getTorque(static_cast<int>(off + p->base), t);
     }
 
     return false;
@@ -203,7 +204,7 @@ bool ControlBoardWrapperTorqueControl::getTorques(double* t)
 {
     auto* trqs = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -211,7 +212,7 @@ bool ControlBoardWrapperTorqueControl::getTorques(double* t)
         }
 
         if ((p->iTorque) && (ret = p->iTorque->getTorques(trqs))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 t[juser] = trqs[jdevice];
             }
         } else {
@@ -227,14 +228,14 @@ bool ControlBoardWrapperTorqueControl::getTorques(double* t)
 
 bool ControlBoardWrapperTorqueControl::getTorqueRange(int j, double* min, double* max)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -242,7 +243,7 @@ bool ControlBoardWrapperTorqueControl::getTorqueRange(int j, double* min, double
     }
 
     if (p->iTorque) {
-        return p->iTorque->getTorqueRange(off + p->base, min, max);
+        return p->iTorque->getTorqueRange(static_cast<int>(off + p->base), min, max);
     }
 
     return false;
@@ -253,7 +254,7 @@ bool ControlBoardWrapperTorqueControl::getTorqueRanges(double* min, double* max)
     auto* t_min = new double[device.maxNumOfJointsInDevices];
     auto* t_max = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -261,7 +262,7 @@ bool ControlBoardWrapperTorqueControl::getTorqueRanges(double* min, double* max)
         }
 
         if ((p->iTorque) && (ret = p->iTorque->getTorqueRanges(t_min, t_max))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 min[juser] = t_min[jdevice];
                 max[juser] = t_max[jdevice];
             }

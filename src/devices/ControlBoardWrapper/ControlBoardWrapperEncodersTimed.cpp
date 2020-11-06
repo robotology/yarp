@@ -12,14 +12,14 @@
 
 bool ControlBoardWrapperEncodersTimed::resetEncoder(int j)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -27,7 +27,7 @@ bool ControlBoardWrapperEncodersTimed::resetEncoder(int j)
     }
 
     if (p->iJntEnc) {
-        return p->iJntEnc->resetEncoder(off + p->base);
+        return p->iJntEnc->resetEncoder(static_cast<int>(off + p->base));
     }
     return false;
 }
@@ -37,9 +37,9 @@ bool ControlBoardWrapperEncodersTimed::resetEncoders()
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -47,7 +47,7 @@ bool ControlBoardWrapperEncodersTimed::resetEncoders()
         }
 
         if (p->iJntEnc) {
-            ret = ret && p->iJntEnc->resetEncoder(off + p->base);
+            ret = ret && p->iJntEnc->resetEncoder(static_cast<int>(off + p->base));
         } else {
             ret = false;
         }
@@ -58,14 +58,14 @@ bool ControlBoardWrapperEncodersTimed::resetEncoders()
 
 bool ControlBoardWrapperEncodersTimed::setEncoder(int j, double val)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -73,7 +73,7 @@ bool ControlBoardWrapperEncodersTimed::setEncoder(int j, double val)
     }
 
     if (p->iJntEnc) {
-        return p->iJntEnc->setEncoder(off + p->base, val);
+        return p->iJntEnc->setEncoder(static_cast<int>(off + p->base), val);
     }
     return false;
 }
@@ -83,9 +83,9 @@ bool ControlBoardWrapperEncodersTimed::setEncoders(const double* vals)
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -93,7 +93,7 @@ bool ControlBoardWrapperEncodersTimed::setEncoders(const double* vals)
         }
 
         if (p->iJntEnc) {
-            ret = ret && p->iJntEnc->setEncoder(off + p->base, vals[l]);
+            ret = ret && p->iJntEnc->setEncoder(static_cast<int>(off + p->base), vals[l]);
         } else {
             ret = false;
         }
@@ -104,14 +104,14 @@ bool ControlBoardWrapperEncodersTimed::setEncoders(const double* vals)
 
 bool ControlBoardWrapperEncodersTimed::getEncoder(int j, double* v)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -119,7 +119,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoder(int j, double* v)
     }
 
     if (p->iJntEnc) {
-        return p->iJntEnc->getEncoder(off + p->base, v);
+        return p->iJntEnc->getEncoder(static_cast<int>(off + p->base), v);
     }
     *v = 0.0;
     return false;
@@ -130,7 +130,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoders(double* encs)
 {
     auto* encValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -138,7 +138,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoders(double* encs)
         }
 
         if ((p->iJntEnc) && (ret = p->iJntEnc->getEncoders(encValues))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 encs[juser] = encValues[jdevice];
             }
         } else {
@@ -158,7 +158,7 @@ bool ControlBoardWrapperEncodersTimed::getEncodersTimed(double* encs, double* t)
     auto* encValues = new double[device.maxNumOfJointsInDevices];
     auto* tValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -166,7 +166,7 @@ bool ControlBoardWrapperEncodersTimed::getEncodersTimed(double* encs, double* t)
         }
 
         if ((p->iJntEnc) && (ret = p->iJntEnc->getEncodersTimed(encValues, tValues))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 encs[juser] = encValues[jdevice];
                 t[juser] = tValues[jdevice];
             }
@@ -185,14 +185,14 @@ bool ControlBoardWrapperEncodersTimed::getEncodersTimed(double* encs, double* t)
 
 bool ControlBoardWrapperEncodersTimed::getEncoderTimed(int j, double* v, double* t)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -200,7 +200,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoderTimed(int j, double* v, double*
     }
 
     if (p->iJntEnc) {
-        return p->iJntEnc->getEncoderTimed(off + p->base, v, t);
+        return p->iJntEnc->getEncoderTimed(static_cast<int>(off + p->base), v, t);
     }
     *v = 0.0;
     return false;
@@ -209,14 +209,14 @@ bool ControlBoardWrapperEncodersTimed::getEncoderTimed(int j, double* v, double*
 
 bool ControlBoardWrapperEncodersTimed::getEncoderSpeed(int j, double* sp)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -224,7 +224,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoderSpeed(int j, double* sp)
     }
 
     if (p->iJntEnc) {
-        return p->iJntEnc->getEncoderSpeed(off + p->base, sp);
+        return p->iJntEnc->getEncoderSpeed(static_cast<int>(off + p->base), sp);
     }
     *sp = 0.0;
     return false;
@@ -235,7 +235,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoderSpeeds(double* spds)
 {
     auto* sValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -243,7 +243,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoderSpeeds(double* spds)
         }
 
         if ((p->iJntEnc) && (ret = p->iJntEnc->getEncoderSpeeds(sValues))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 spds[juser] = sValues[jdevice];
             }
         } else {
@@ -260,14 +260,14 @@ bool ControlBoardWrapperEncodersTimed::getEncoderSpeeds(double* spds)
 
 bool ControlBoardWrapperEncodersTimed::getEncoderAcceleration(int j, double* acc)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -275,7 +275,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoderAcceleration(int j, double* acc
     }
 
     if (p->iJntEnc) {
-        return p->iJntEnc->getEncoderAcceleration(off + p->base, acc);
+        return p->iJntEnc->getEncoderAcceleration(static_cast<int>(off + p->base), acc);
     }
     *acc = 0.0;
     return false;
@@ -286,7 +286,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoderAccelerations(double* accs)
 {
     auto* aValues = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -294,7 +294,7 @@ bool ControlBoardWrapperEncodersTimed::getEncoderAccelerations(double* accs)
         }
 
         if ((p->iJntEnc) && (ret = p->iJntEnc->getEncoderAccelerations(aValues))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 accs[juser] = aValues[jdevice];
             }
         } else {

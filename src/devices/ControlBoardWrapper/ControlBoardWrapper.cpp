@@ -215,7 +215,7 @@ bool ControlBoardWrapper::checkROSParams(Searchable& config)
         }
 
         jointNames.clear();
-        for (int i = 0; i < controlledJoints; i++) {
+        for (size_t i = 0; i < controlledJoints; i++) {
             jointNames.push_back(nameList.get(i).toString());
         }
     }
@@ -447,18 +447,18 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
     controlledJoints = prop.find("joints").asInt32();
 
-    int nsubdevices = nets->size();
+    size_t nsubdevices = nets->size();
     device.lut.resize(controlledJoints);
     device.subdevices.resize(nsubdevices);
 
     // configure the devices
-    int totalJ = 0;
+    size_t totalJ = 0;
     for (size_t k = 0; k < nets->size(); k++) {
         Bottle parameters;
-        int wBase;
-        int wTop;
-        int base;
-        int top;
+        size_t wBase;
+        size_t wTop;
+        size_t base;
+        size_t top;
 
         parameters = prop.findGroup(nets->get(k).asString());
 
@@ -481,16 +481,16 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             }
 
             // If I came here, bot is correct
-            wBase = bot->get(0).asInt32();
-            wTop = bot->get(1).asInt32();
-            base = bot->get(2).asInt32();
-            top = bot->get(3).asInt32();
+            wBase = static_cast<size_t>(bot->get(0).asInt32());
+            wTop = static_cast<size_t>(bot->get(1).asInt32());
+            base = static_cast<size_t>(bot->get(2).asInt32());
+            top = static_cast<size_t>(bot->get(3).asInt32());
         } else if (parameters.size() == 5) {
             yCError(CONTROLBOARDWRAPPER) << "Parameter networks use deprecated syntax";
-            wBase = parameters.get(1).asInt32();
-            wTop = parameters.get(2).asInt32();
-            base = parameters.get(3).asInt32();
-            top = parameters.get(4).asInt32();
+            wBase = static_cast<size_t>(parameters.get(1).asInt32());
+            wTop = static_cast<size_t>(parameters.get(2).asInt32());
+            base = static_cast<size_t>(parameters.get(3).asInt32());
+            top = static_cast<size_t>(parameters.get(4).asInt32());
         } else {
             yCError(CONTROLBOARDWRAPPER) << "Error: check network parameters in part description"
                                          << "--> I was expecting " << nets->get(k).asString() << " followed by a list of four integers in parenthesis"
@@ -504,20 +504,20 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             return false;
         }
 
-        int axes = top - base + 1;
+        size_t axes = top - base + 1;
         if (!tmpDevice->configure(wBase, wTop, base, top, axes, nets->get(k).asString(), this)) {
             yCError(CONTROLBOARDWRAPPER) << "Configure of subdevice ret false";
             return false;
         }
 
         // Check input values are in range
-        if ((wBase < 0) || (wBase >= controlledJoints)) {
+        if ((wBase == static_cast<size_t>(-1)) || (wBase >= controlledJoints)) {
             yCError(CONTROLBOARDWRAPPER) << "Input configuration for device " << partName << "has a wrong attach map."
                                          << "First index " << wBase << "must be inside range from 0 to 'joints' (" << controlledJoints << ")";
             return false;
         }
 
-        if ((wTop < 0) || (wTop >= controlledJoints)) {
+        if ((wTop == static_cast<size_t>(-1)) || (wTop >= controlledJoints)) {
             yCError(CONTROLBOARDWRAPPER) << "Input configuration for device " << partName << "has a wrong attach map."
                                          << "Second index " << wTop << "must be inside range from 0 to 'joints' (" << controlledJoints << ")";
             return false;
@@ -529,9 +529,9 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             return false;
         }
 
-        for (int j = wBase, jInDev = base; j <= wTop; j++, jInDev++) {
+        for (size_t j = wBase, jInDev = base; j <= wTop; j++, jInDev++) {
             device.lut[j].deviceEntry = k;
-            device.lut[j].offset = j - wBase;
+            device.lut[j].offset = static_cast<int>(j - wBase);
             device.lut[j].jointIndexInDev = jInDev;
         }
 
@@ -576,24 +576,27 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
         return false;
     }
 
-    bool getAx = iencs->getAxes(&controlledJoints);
+    int tmp_axes;
+    bool getAx = iencs->getAxes(&tmp_axes);
 
     if (!getAx) {
         yCError(CONTROLBOARDWRAPPER, "Calling getAxes of subdevice... FAILED");
         return false;
     }
-    yCDebug(CONTROLBOARDWRAPPER, "Joints parameter is %d", controlledJoints);
+    controlledJoints = static_cast<size_t>(tmp_axes);
+
+    yCDebug(CONTROLBOARDWRAPPER, "Joints parameter is %zu", controlledJoints);
 
 
     device.lut.resize(controlledJoints);
     device.subdevices.resize(1);
 
     // configure the device
-    int base = 0;
-    int top = controlledJoints - 1;
+    size_t base = 0;
+    size_t top = controlledJoints - 1;
 
-    int wbase = base;
-    int wtop = top;
+    size_t wbase = base;
+    size_t wtop = top;
     SubDevice* tmpDevice = device.getSubdevice(0);
 
     std::string subDevName((partName + "_" + subdevice));
@@ -602,7 +605,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
         return false;
     }
 
-    for (int j = 0; j < controlledJoints; j++) {
+    for (size_t j = 0; j < controlledJoints; j++) {
         device.lut[j].deviceEntry = 0;
         device.lut[j].offset = j;
     }
@@ -623,7 +626,7 @@ void ControlBoardWrapper::calculateMaxNumOfJointsInDevices()
 {
     device.maxNumOfJointsInDevices = 0;
 
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (p->totalAxis > device.maxNumOfJointsInDevices) {
             device.maxNumOfJointsInDevices = p->totalAxis;
@@ -653,7 +656,7 @@ bool ControlBoardWrapper::updateAxisName()
     bool ret = true;
 
     tmpVect.clear();
-    for (int i = 0; i < controlledJoints; i++) {
+    for (size_t i = 0; i < controlledJoints; i++) {
         if ((ret = getAxisName(i, tmp) && ret)) {
             std::string tmp2(tmp);
             tmpVect.push_back(tmp2);
@@ -664,7 +667,7 @@ bool ControlBoardWrapper::updateAxisName()
         if (!jointNames.empty()) {
             yCWarning(CONTROLBOARDWRAPPER) << "Found 2 instance of jointNames parameter: one in the wrapper [ROS] group and another one in the subdevice, the latter one will be used.";
             std::string fullNames;
-            for (int i = 0; i < controlledJoints; i++) {
+            for (size_t i = 0; i < controlledJoints; i++) {
                 fullNames.append(tmpVect[i]);
             }
         }
@@ -708,7 +711,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList& polylist)
         }
 
         // find appropriate entry in list of subdevices and attach
-        unsigned int k = 0;
+        size_t k = 0;
         for (k = 0; k < device.subdevices.size(); k++) {
             if (device.subdevices[k].id == tmpKey) {
                 if (!device.subdevices[k].attach(polylist[p]->poly, tmpKey)) {
@@ -849,7 +852,7 @@ void ControlBoardWrapper::run()
     if (useROS != ROS_disabled) {
         // Data from HW have been gathered few lines before
         JointTypeEnum jType;
-        for (int i = 0; i < controlledJoints; i++) {
+        for (size_t i = 0; i < controlledJoints; i++) {
             getJointType(i, jType);
             if (jType == VOCAB_JOINTTYPE_REVOLUTE) {
                 ros_struct.position[i] = convertDegreesToRadians(ros_struct.position[i]);

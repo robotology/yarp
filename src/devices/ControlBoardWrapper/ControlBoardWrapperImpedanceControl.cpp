@@ -13,14 +13,14 @@
 
 bool ControlBoardWrapperImpedanceControl::setImpedance(int j, double stiff, double damp)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -28,7 +28,7 @@ bool ControlBoardWrapperImpedanceControl::setImpedance(int j, double stiff, doub
     }
 
     if (p->iImpedance) {
-        return p->iImpedance->setImpedance(off + p->base, stiff, damp);
+        return p->iImpedance->setImpedance(static_cast<int>(off + p->base), stiff, damp);
     }
 
     return false;
@@ -37,14 +37,14 @@ bool ControlBoardWrapperImpedanceControl::setImpedance(int j, double stiff, doub
 
 bool ControlBoardWrapperImpedanceControl::setImpedanceOffset(int j, double offset)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -52,7 +52,7 @@ bool ControlBoardWrapperImpedanceControl::setImpedanceOffset(int j, double offse
     }
 
     if (p->iImpedance) {
-        return p->iImpedance->setImpedanceOffset(off + p->base, offset);
+        return p->iImpedance->setImpedanceOffset(static_cast<int>(off + p->base), offset);
     }
 
     return false;
@@ -61,14 +61,14 @@ bool ControlBoardWrapperImpedanceControl::setImpedanceOffset(int j, double offse
 
 bool ControlBoardWrapperImpedanceControl::getImpedance(int j, double* stiff, double* damp)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -76,7 +76,7 @@ bool ControlBoardWrapperImpedanceControl::getImpedance(int j, double* stiff, dou
     }
 
     if (p->iImpedance) {
-        return p->iImpedance->getImpedance(off + p->base, stiff, damp);
+        return p->iImpedance->getImpedance(static_cast<int>(off + p->base), stiff, damp);
     }
 
     return false;
@@ -85,14 +85,14 @@ bool ControlBoardWrapperImpedanceControl::getImpedance(int j, double* stiff, dou
 
 bool ControlBoardWrapperImpedanceControl::getImpedanceOffset(int j, double* offset)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -100,7 +100,7 @@ bool ControlBoardWrapperImpedanceControl::getImpedanceOffset(int j, double* offs
     }
 
     if (p->iImpedance) {
-        return p->iImpedance->getImpedanceOffset(off + p->base, offset);
+        return p->iImpedance->getImpedanceOffset(static_cast<int>(off + p->base), offset);
     }
 
     return false;
@@ -109,14 +109,14 @@ bool ControlBoardWrapperImpedanceControl::getImpedanceOffset(int j, double* offs
 
 bool ControlBoardWrapperImpedanceControl::getCurrentImpedanceLimit(int j, double* min_stiff, double* max_stiff, double* min_damp, double* max_damp)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -124,7 +124,7 @@ bool ControlBoardWrapperImpedanceControl::getCurrentImpedanceLimit(int j, double
     }
 
     if (p->iImpedance) {
-        return p->iImpedance->getCurrentImpedanceLimit(off + p->base, min_stiff, max_stiff, min_damp, max_damp);
+        return p->iImpedance->getCurrentImpedanceLimit(static_cast<int>(off + p->base), min_stiff, max_stiff, min_damp, max_damp);
     }
 
     return false;

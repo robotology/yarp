@@ -24,7 +24,7 @@ using namespace yarp::sig;
 using namespace std;
 
 
-bool SubDevice::configure(int wb, int wt, int b, int t, int n, const std::string& key, ControlBoardWrapper* _parent)
+bool SubDevice::configure(size_t wb, size_t wt, size_t b, size_t t, size_t n, const std::string& key, ControlBoardWrapper* _parent)
 {
     parent = _parent;
     configuredF = false;
@@ -176,7 +176,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver* d, const std::string& k)
         yCDebug(CONTROLBOARDWRAPPER, "Part <%s>: iAxisInfo not valid interface.", parentName.c_str());
     }
 
-    int deviceJoints = 0;
+    size_t deviceJoints = 0;
 
     // checking minimum set of intefaces required
     if (!pos) {
@@ -195,28 +195,32 @@ bool SubDevice::attach(yarp::dev::PolyDriver* d, const std::string& k)
     }
 
     if (pos != nullptr) {
-        if (!pos->getAxes(&deviceJoints)) {
+        int tmp_axes;
+        if (!pos->getAxes(&tmp_axes)) {
             yCError(CONTROLBOARDWRAPPER) << "Failed to get axes number for subdevice " << k.c_str();
             return false;
         }
-        if (deviceJoints <= 0) {
-            yCError(CONTROLBOARDWRAPPER, "Part <%s>: attached device has an invalid number of joints (%d)", parentName.c_str(), deviceJoints);
+        if (tmp_axes <= 0) {
+            yCError(CONTROLBOARDWRAPPER, "Part <%s>: attached device has an invalid number of joints (%d)", parentName.c_str(), tmp_axes);
             return false;
         }
+        deviceJoints = static_cast<size_t>(tmp_axes);
     } else {
-        if (!pos->getAxes(&deviceJoints)) {
+        int tmp_axes;
+        if (!pos->getAxes(&tmp_axes)) {
             yCError(CONTROLBOARDWRAPPER, "Part <%s>: failed to get axes number for subdevice %s.", parentName.c_str(), k.c_str());
             return false;
         }
-        if (deviceJoints <= 0) {
-            yCError(CONTROLBOARDWRAPPER, "Part <%s>: attached device has an invalid number of joints (%d)", parentName.c_str(), deviceJoints);
+        if (tmp_axes <= 0) {
+            yCError(CONTROLBOARDWRAPPER, "Part <%s>: attached device has an invalid number of joints (%d)", parentName.c_str(), tmp_axes);
             return false;
         }
+        deviceJoints = static_cast<size_t>(tmp_axes);
     }
 
     if (deviceJoints < axes) {
-        yCError(CONTROLBOARDWRAPPER, "Part <%s>: check device configuration, number of joints of attached device '%d' less \
-                than the one specified during configuration '%d' for %s.",
+        yCError(CONTROLBOARDWRAPPER, "Part <%s>: check device configuration, number of joints of attached device '%zu' less \
+                than the one specified during configuration '%zu' for %s.",
                 parentName.c_str(),
                 deviceJoints,
                 axes,

@@ -55,12 +55,12 @@ class SubDevice
 {
 public:
     std::string id;
-    int base {-1};
-    int top {-1};
-    int wbase;     //wrapper base
-    int wtop;      //wrapper top
-    int axes {0};  //number of used axis of this subdevice
-    int totalAxis; //Numeber of total axis that the subdevice can control
+    size_t base {static_cast<size_t>(-1)};
+    size_t top {static_cast<size_t>(-1)};
+    size_t wbase;     //wrapper base
+    size_t wtop;      //wrapper top
+    size_t axes {0};  //number of used axis of this subdevice
+    size_t totalAxis; //Numeber of total axis that the subdevice can control
 
     bool configuredF {false};
 
@@ -98,7 +98,7 @@ public:
     bool attach(yarp::dev::PolyDriver* d, const std::string& id);
     void detach();
 
-    bool configure(int wbase, int wtop, int base, int top, int axes, const std::string& id, ControlBoardWrapper* _parent);
+    bool configure(size_t wbase, size_t wtop, size_t base, size_t top, size_t axes, const std::string& id, ControlBoardWrapper* _parent);
 
     bool isAttached()
     {
@@ -113,9 +113,9 @@ typedef std::vector<SubDevice> SubDeviceVector;
 
 struct DevicesLutEntry
 {
-    int offset;          //an offset, the device is mapped starting from this joint
-    int deviceEntry;     //index to the joint corresponding subdevice in the list
-    int jointIndexInDev; //the index of joint in the numeration inside the device
+    size_t offset;          //an offset, the device is mapped starting from this joint
+    size_t deviceEntry;     //index to the joint corresponding subdevice in the list
+    size_t jointIndexInDev; //the index of joint in the numeration inside the device
 };
 
 
@@ -124,9 +124,9 @@ class WrappedDevice
 public:
     SubDeviceVector subdevices;
     std::vector<DevicesLutEntry> lut;
-    int maxNumOfJointsInDevices;
+    size_t maxNumOfJointsInDevices;
 
-    inline SubDevice* getSubdevice(unsigned int i)
+    inline SubDevice* getSubdevice(size_t i)
     {
         if (i >= subdevices.size()) {
             return nullptr;

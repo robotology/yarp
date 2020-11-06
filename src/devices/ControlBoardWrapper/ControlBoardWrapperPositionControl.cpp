@@ -13,14 +13,14 @@
 
 bool ControlBoardWrapperPositionControl::positionMove(int j, double ref)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -28,7 +28,7 @@ bool ControlBoardWrapperPositionControl::positionMove(int j, double ref)
     }
 
     if (p->pos) {
-        return p->pos->positionMove(off + p->base, ref);
+        return p->pos->positionMove(static_cast<int>(off + p->base), ref);
     }
 
     return false;
@@ -42,20 +42,20 @@ bool ControlBoardWrapperPositionControl::positionMove(const double* refs)
 
     int nDev = device.subdevices.size();
     for (int subDev_idx = 0; subDev_idx < nDev; subDev_idx++) {
-        int subIndex = device.lut[j_wrap].deviceEntry;
+        size_t subIndex = device.lut[j_wrap].deviceEntry;
         SubDevice* p = device.getSubdevice(subIndex);
 
         if (!p) {
             return false;
         }
 
-        int wrapped_joints = (p->top - p->base) + 1;
+        int wrapped_joints = static_cast<int>((p->top - p->base) + 1);
         int* joints = new int[wrapped_joints];
 
         if (p->pos) {
             // versione comandi su subset di giunti
             for (int j_dev = 0; j_dev < wrapped_joints; j_dev++) {
-                joints[j_dev] = p->base + j_dev; // for all joints is equivalent to add offset term
+                joints[j_dev] = static_cast<int>(p->base + j_dev); // for all joints is equivalent to add offset term
             }
 
             ret = ret && p->pos->positionMove(wrapped_joints, joints, &refs[j_wrap]);
@@ -83,10 +83,11 @@ bool ControlBoardWrapperPositionControl::positionMove(const int n_joints, const 
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = refs[j];
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
@@ -105,14 +106,14 @@ bool ControlBoardWrapperPositionControl::positionMove(const int n_joints, const 
 
 bool ControlBoardWrapperPositionControl::getTargetPosition(const int j, double* ref)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
 
@@ -121,7 +122,7 @@ bool ControlBoardWrapperPositionControl::getTargetPosition(const int j, double* 
     }
 
     if (p->pos) {
-        bool ret = p->pos->getTargetPosition(off + p->base, ref);
+        bool ret = p->pos->getTargetPosition(static_cast<int>(off + p->base), ref);
         return ret;
     }
     *ref = 0;
@@ -133,7 +134,7 @@ bool ControlBoardWrapperPositionControl::getTargetPositions(double* spds)
 {
     auto* targets = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -141,7 +142,7 @@ bool ControlBoardWrapperPositionControl::getTargetPositions(double* spds)
         }
 
         if ((p->pos) && (ret = p->pos->getTargetPositions(targets))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 spds[juser] = targets[jdevice];
             }
         } else {
@@ -165,10 +166,11 @@ bool ControlBoardWrapperPositionControl::getTargetPositions(const int n_joints, 
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
@@ -180,7 +182,7 @@ bool ControlBoardWrapperPositionControl::getTargetPositions(const int n_joints, 
 
     if (ret) {
         // ReMix values by user expectations
-        for (int i = 0; i < rpcData.deviceNum; i++) {
+        for (size_t i = 0; i < rpcData.deviceNum; i++) {
             rpcData.subdev_jointsVectorLen[i] = 0; // reset tmp index
         }
 
@@ -202,14 +204,14 @@ bool ControlBoardWrapperPositionControl::getTargetPositions(const int n_joints, 
 
 bool ControlBoardWrapperPositionControl::relativeMove(int j, double delta)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -217,7 +219,7 @@ bool ControlBoardWrapperPositionControl::relativeMove(int j, double delta)
     }
 
     if (p->pos) {
-        return p->pos->relativeMove(off + p->base, delta);
+        return p->pos->relativeMove(static_cast<int>(off + p->base), delta);
     }
 
     return false;
@@ -228,9 +230,9 @@ bool ControlBoardWrapperPositionControl::relativeMove(const double* deltas)
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -238,7 +240,7 @@ bool ControlBoardWrapperPositionControl::relativeMove(const double* deltas)
         }
 
         if (p->pos) {
-            ret = ret && p->pos->relativeMove(off + p->base, deltas[l]);
+            ret = ret && p->pos->relativeMove(static_cast<int>(off + p->base), deltas[l]);
         } else {
             ret = false;
         }
@@ -256,10 +258,11 @@ bool ControlBoardWrapperPositionControl::relativeMove(const int n_joints, const 
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = deltas[j];
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
@@ -278,14 +281,14 @@ bool ControlBoardWrapperPositionControl::relativeMove(const int n_joints, const 
 
 bool ControlBoardWrapperPositionControl::checkMotionDone(int j, bool* flag)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
 
@@ -294,7 +297,7 @@ bool ControlBoardWrapperPositionControl::checkMotionDone(int j, bool* flag)
     }
 
     if (p->pos) {
-        return p->pos->checkMotionDone(off + p->base, flag);
+        return p->pos->checkMotionDone(static_cast<int>(off + p->base), flag);
     }
 
     return false;
@@ -314,10 +317,11 @@ bool ControlBoardWrapperPositionControl::checkMotionDone(bool* flag)
     // called because the return value is an 'and' of all joints.
     // Therefore only the corret joints must be evaluated.
 
-    int subIndex = 0;
-    for (int j = 0; j < controlledJoints; j++) {
+    size_t subIndex = 0;
+    for (size_t j = 0; j < controlledJoints; j++) {
         subIndex = device.lut[j].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[j].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[j].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
@@ -350,10 +354,11 @@ bool ControlBoardWrapperPositionControl::checkMotionDone(const int n_joints, con
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
@@ -377,14 +382,14 @@ bool ControlBoardWrapperPositionControl::checkMotionDone(const int n_joints, con
 
 bool ControlBoardWrapperPositionControl::setRefSpeed(int j, double sp)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -392,7 +397,7 @@ bool ControlBoardWrapperPositionControl::setRefSpeed(int j, double sp)
     }
 
     if (p->pos) {
-        return p->pos->setRefSpeed(off + p->base, sp);
+        return p->pos->setRefSpeed(static_cast<int>(off + p->base), sp);
     }
     return false;
 }
@@ -403,20 +408,20 @@ bool ControlBoardWrapperPositionControl::setRefSpeeds(const double* spds)
     bool ret = true;
     int j_wrap = 0; // index of the wrapper joint
 
-    for (unsigned int subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
         SubDevice* p = device.getSubdevice(subDev_idx);
 
         if (!p) {
             return false;
         }
 
-        int wrapped_joints = (p->top - p->base) + 1;
+        int wrapped_joints = static_cast<int>((p->top - p->base) + 1);
         int* joints = new int[wrapped_joints];
 
         if (p->pos) {
             // verione comandi su subset di giunti
             for (int j_dev = 0; j_dev < wrapped_joints; j_dev++) {
-                joints[j_dev] = p->base + j_dev;
+                joints[j_dev] = static_cast<int>(p->base + j_dev);
             }
 
             ret = ret && p->pos->setRefSpeeds(wrapped_joints, joints, &spds[j_wrap]);
@@ -444,10 +449,11 @@ bool ControlBoardWrapperPositionControl::setRefSpeeds(const int n_joints, const 
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.values[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = spds[j];
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
@@ -466,14 +472,14 @@ bool ControlBoardWrapperPositionControl::setRefSpeeds(const int n_joints, const 
 
 bool ControlBoardWrapperPositionControl::getRefSpeed(int j, double* ref)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
 
@@ -482,7 +488,7 @@ bool ControlBoardWrapperPositionControl::getRefSpeed(int j, double* ref)
     }
 
     if (p->pos) {
-        return p->pos->getRefSpeed(off + p->base, ref);
+        return p->pos->getRefSpeed(static_cast<int>(off + p->base), ref);
     }
     *ref = 0;
     return false;
@@ -493,7 +499,7 @@ bool ControlBoardWrapperPositionControl::getRefSpeeds(double* spds)
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -501,7 +507,7 @@ bool ControlBoardWrapperPositionControl::getRefSpeeds(double* spds)
         }
 
         if ((p->pos) && (ret = p->pos->getRefSpeeds(references))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 spds[juser] = references[jdevice];
             }
         } else {
@@ -525,10 +531,11 @@ bool ControlBoardWrapperPositionControl::getRefSpeeds(const int n_joints, const 
     memset(rpcData.subdev_jointsVectorLen, 0x00, sizeof(int) * rpcData.deviceNum);
 
     // Create a map of joints for each subDevice
-    int subIndex = 0;
+    size_t subIndex = 0;
     for (int j = 0; j < n_joints; j++) {
         subIndex = device.lut[joints[j]].deviceEntry;
-        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] = device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base;
+        rpcData.jointNumbers[subIndex][rpcData.subdev_jointsVectorLen[subIndex]] =
+            static_cast<int>(device.lut[joints[j]].offset + rpcData.subdevices_p[subIndex]->base);
         rpcData.subdev_jointsVectorLen[subIndex]++;
     }
 
@@ -542,7 +549,7 @@ bool ControlBoardWrapperPositionControl::getRefSpeeds(const int n_joints, const 
 
     if (ret) {
         // ReMix values by user expectations
-        for (int i = 0; i < rpcData.deviceNum; i++) {
+        for (size_t i = 0; i < rpcData.deviceNum; i++) {
             rpcData.subdev_jointsVectorLen[i] = 0; // reset tmp index
         }
 

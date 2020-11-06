@@ -13,14 +13,14 @@
 
 bool ControlBoardWrapperAxisInfo::getAxisName(int j, std::string& name)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -28,7 +28,7 @@ bool ControlBoardWrapperAxisInfo::getAxisName(int j, std::string& name)
     }
 
     if (p->info) {
-        return p->info->getAxisName(off + p->base, name);
+        return p->info->getAxisName(static_cast<int>(off + p->base), name);
     }
     return false;
 }
@@ -36,7 +36,7 @@ bool ControlBoardWrapperAxisInfo::getAxisName(int j, std::string& name)
 bool ControlBoardWrapperAxisInfo::getJointType(int j, yarp::dev::JointTypeEnum& type)
 {
     int off = device.lut[j].offset;
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -44,7 +44,7 @@ bool ControlBoardWrapperAxisInfo::getJointType(int j, yarp::dev::JointTypeEnum& 
     }
 
     if (p->info) {
-        return p->info->getJointType(off + p->base, type);
+        return p->info->getJointType(static_cast<int>(off + p->base), type);
     }
     return false;
 }

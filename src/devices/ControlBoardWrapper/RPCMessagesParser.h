@@ -80,7 +80,7 @@ protected:
     yarp::sig::Vector tmpVect;
     yarp::os::Stamp lastRpcStamp;
     std::mutex mutex;
-    int controlledJoints {0};
+    size_t controlledJoints {0};
 
 public:
     /**

@@ -13,14 +13,14 @@
 
 bool ControlBoardWrapperPWMControl::setRefDutyCycle(int j, double v)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -28,7 +28,7 @@ bool ControlBoardWrapperPWMControl::setRefDutyCycle(int j, double v)
     }
 
     if (p->iPWM) {
-        return p->iPWM->setRefDutyCycle(off + p->base, v);
+        return p->iPWM->setRefDutyCycle(static_cast<int>(off + p->base), v);
     }
     return false;
 }
@@ -37,9 +37,9 @@ bool ControlBoardWrapperPWMControl::setRefDutyCycles(const double* v)
 {
     bool ret = true;
 
-    for (int l = 0; l < controlledJoints; l++) {
+    for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
-        int subIndex = device.lut[l].deviceEntry;
+        size_t subIndex = device.lut[l].deviceEntry;
 
         SubDevice* p = device.getSubdevice(subIndex);
         if (!p) {
@@ -47,7 +47,7 @@ bool ControlBoardWrapperPWMControl::setRefDutyCycles(const double* v)
         }
 
         if (p->iPWM) {
-            ret = ret && p->iPWM->setRefDutyCycle(off + p->base, v[l]);
+            ret = ret && p->iPWM->setRefDutyCycle(static_cast<int>(off + p->base), v[l]);
         } else {
             ret = false;
         }
@@ -57,14 +57,14 @@ bool ControlBoardWrapperPWMControl::setRefDutyCycles(const double* v)
 
 bool ControlBoardWrapperPWMControl::getRefDutyCycle(int j, double* v)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -72,7 +72,7 @@ bool ControlBoardWrapperPWMControl::getRefDutyCycle(int j, double* v)
     }
 
     if (p->iPWM) {
-        return p->iPWM->getRefDutyCycle(off + p->base, v);
+        return p->iPWM->getRefDutyCycle(static_cast<int>(off + p->base), v);
     }
     return false;
 }
@@ -81,7 +81,7 @@ bool ControlBoardWrapperPWMControl::getRefDutyCycles(double* v)
 {
     auto* references = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -89,7 +89,7 @@ bool ControlBoardWrapperPWMControl::getRefDutyCycles(double* v)
         }
 
         if ((p->iPWM) && (ret = p->iPWM->getRefDutyCycles(references))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 v[juser] = references[jdevice];
             }
         } else {
@@ -105,14 +105,14 @@ bool ControlBoardWrapperPWMControl::getRefDutyCycles(double* v)
 
 bool ControlBoardWrapperPWMControl::getDutyCycle(int j, double* v)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -120,7 +120,7 @@ bool ControlBoardWrapperPWMControl::getDutyCycle(int j, double* v)
     }
 
     if (p->iPWM) {
-        return p->iPWM->getDutyCycle(off + p->base, v);
+        return p->iPWM->getDutyCycle(static_cast<int>(off + p->base), v);
     }
     return false;
 }
@@ -129,7 +129,7 @@ bool ControlBoardWrapperPWMControl::getDutyCycles(double* v)
 {
     auto* dutyCicles = new double[device.maxNumOfJointsInDevices];
     bool ret = true;
-    for (unsigned int d = 0; d < device.subdevices.size(); d++) {
+    for (size_t d = 0; d < device.subdevices.size(); d++) {
         SubDevice* p = device.getSubdevice(d);
         if (!p) {
             ret = false;
@@ -137,7 +137,7 @@ bool ControlBoardWrapperPWMControl::getDutyCycles(double* v)
         }
 
         if ((p->iPWM) && (ret = p->iPWM->getDutyCycles(dutyCicles))) {
-            for (int juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
+            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
                 v[juser] = dutyCicles[jdevice];
             }
         } else {

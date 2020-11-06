@@ -14,18 +14,18 @@ using yarp::dev::CalibrationParameters;
 
 bool ControlBoardWrapperControlCalibration::calibrateAxisWithParams(int j, unsigned int ui, double v1, double v2, double v3)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (p && p->calib) {
-        return p->calib->calibrateAxisWithParams(off + p->base, ui, v1, v2, v3);
+        return p->calib->calibrateAxisWithParams(static_cast<int>(off + p->base), ui, v1, v2, v3);
     }
     return false;
 }
@@ -34,11 +34,11 @@ bool ControlBoardWrapperControlCalibration::calibrateAxisWithParams(int j, unsig
 bool ControlBoardWrapperControlCalibration::setCalibrationParameters(int j, const CalibrationParameters& params)
 {
     int off = device.lut[j].offset;
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (p && p->calib) {
-        return p->calib->setCalibrationParameters(off + p->base, params);
+        return p->calib->setCalibrationParameters(static_cast<int>(off + p->base), params);
     }
     return false;
 }
@@ -46,14 +46,14 @@ bool ControlBoardWrapperControlCalibration::setCalibrationParameters(int j, cons
 
 bool ControlBoardWrapperControlCalibration::calibrationDone(int j)
 {
-    int off;
+    size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%d] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
-    int subIndex = device.lut[j].deviceEntry;
+    size_t subIndex = device.lut[j].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
     if (!p) {
@@ -61,7 +61,7 @@ bool ControlBoardWrapperControlCalibration::calibrationDone(int j)
     }
 
     if (p->calib) {
-        return p->calib->calibrationDone(off + p->base);
+        return p->calib->calibrationDone(static_cast<int>(off + p->base));
     }
     return false;
 }
