@@ -1501,14 +1501,10 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                         break;
                     }
 
-                    int* j_tmp = new int[len];
+                    auto* j_tmp = new int[len];
                     auto* pos_tmp = new double[len];
-
                     for (int i = 0; i < len; i++) {
                         j_tmp[i] = jlut->get(i).asInt32();
-                    }
-
-                    for (int i = 0; i < len; i++) {
                         pos_tmp[i] = pos_val->get(i).asFloat64();
                     }
 
