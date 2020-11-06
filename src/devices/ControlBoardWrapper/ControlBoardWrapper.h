@@ -233,10 +233,6 @@ private:
     RPCMessagesParser              RPC_parser;                     // Message parser associated to the inputRPCPort port
     StreamingMessagesParser        streaming_parser;               // Message parser associated to the inputStreamingPort port
 
-
-    int               base {0};         // to be removed // FIXME
-    int               top {0};          // to be removed // FIXME
-
     static constexpr double default_period = 0.02; // s
     double period {default_period};
 

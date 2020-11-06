@@ -457,6 +457,8 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         Bottle parameters;
         int wBase;
         int wTop;
+        int base;
+        int top;
 
         parameters = prop.findGroup(nets->get(k).asString());
 
@@ -587,8 +589,8 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     device.subdevices.resize(1);
 
     // configure the device
-    base = 0;
-    top = controlledJoints - 1;
+    int base = 0;
+    int top = controlledJoints - 1;
 
     int wbase = base;
     int wtop = top;
