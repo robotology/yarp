@@ -1451,11 +1451,7 @@ bool RPCMessagesParser::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& r
                 rec = true;
                 yCTrace(CONTROLBOARDWRAPPER, "Calling park function");
                 int flag = cmd.get(1).asInt32();
-                if (flag) {
-                    ok = rpc_Icalib->park(true);
-                } else {
-                    ok = rpc_Icalib->park(false);
-                }
+                ok = rpc_Icalib->park(flag ? true : false);
                 ok = true; //client would get stuck if returning false
             } break;
 
