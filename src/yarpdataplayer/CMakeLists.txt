@@ -19,14 +19,12 @@ if(YARP_COMPILE_yarpdataplayer)
                           src/main.cpp
                           src/mainwindow.cpp
                           src/utils.cpp
-                          src/worker.cpp
-                          src/worker-impl.cpp)
+                          src/worker.cpp)
 
 
   set(yarpdataplayer_HDRS include/aboutdlg.h
                           include/genericinfodlg.h
                           include/loadingwidget.h
-                          include/log.h
                           include/mainwindow.h
                           include/utils.h
                           include/worker.h)
@@ -79,6 +77,7 @@ if(YARP_COMPILE_yarpdataplayer)
   target_link_libraries(yarpdataplayer PRIVATE YARP::YARP_os
                                                YARP::YARP_init
                                                YARP::YARP_sig
+                                               YARP::YARP_dataplayer
                                                Qt5::Widgets
                                                YARP::YARP_rosmsg)
 

@@ -19,6 +19,8 @@
 #include "include/mainwindow.h"
 #include <QApplication>
 
+#include <yarp/dataplayer/YarpDataplayer.h>
+
 #if defined(_WIN32)
     #pragma warning (disable : 4099)
     #pragma warning (disable : 4250)

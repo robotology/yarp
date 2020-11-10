@@ -32,6 +32,7 @@
 #include <map>
 #include <fstream>
 #include "include/utils.h"
+#include "include/worker.h"
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
@@ -39,6 +40,7 @@
 #include <yarp/os/RpcServer.h>
 #include "yarpdataplayer_IDL.h"
 #include "include/loadingwidget.h"
+#include <yarp/dataplayer/YarpDataplayer.h>
 
 class InitThread;
 
@@ -49,8 +51,8 @@ class MainWindow;
 class MainWindow : public QMainWindow, public yarp::os::ResourceFinder, public yarpdataplayer_IDL
 {
     Q_OBJECT
-    friend class Utilities;
-
+    friend class QUtilities;
+    friend class MasterThread;
 
 public:
     explicit MainWindow(yarp::os::ResourceFinder &rf,QWidget *parent = 0);
@@ -181,14 +183,15 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
+   //yarp::yarpDataplayer::DataplayerEngine* dataEngine;
+    
     Ui::MainWindow              *ui;
     QString                     moduleName;
     bool                        add_prefix; //indicates if ports have to be opened with /<moduleName> as prefix
     yarp::os::RpcServer         rpcPort;
-    std::vector<RowInfo>        rowInfoVec;
+    std::vector<yarp::yarpDataplayer::RowInfo>        rowInfoVec;
     int                         subDirCnt;
     std::vector<std::string>    dataType;
-
 
     QMutex waitMutex;
     QWaitCondition waitCond;
@@ -200,10 +203,11 @@ private:
     LoadingWidget loadingWidget;
     QString errorMessage;
 
-
-
 protected:
-    Utilities                   *utilities;
+    yarp::yarpDataplayer::DataplayerUtilities         *utilities;
+    QUtilities *qutilities;
+    MasterThread *masterThread;
+    
     std::map<const char*,int>   partMap;
     int                         itr;
     int                         column;
@@ -269,22 +273,22 @@ class InitThread : public QThread
     Q_OBJECT
 
 public:
-    InitThread(Utilities *utilities,
+    InitThread(QUtilities *qutilities,
                QString newPath,
-               std::vector<RowInfo>& rowInfoVec,
+               std::vector<yarp::yarpDataplayer::RowInfo>& rowInfoVec,
                QObject *parent = 0);
 
 protected:
     void run() override;
 
 private:
-    Utilities *utilities;
+    MasterThread *masterThread;
+    QUtilities *qutilities;
     QString newPath;
     QMainWindow *mainWindow;
-    std::vector<RowInfo>        rowInfoVec;
+    std::vector<yarp::yarpDataplayer::RowInfo>        rowInfoVec;
 signals:
     void initDone(int subDirCount);
 };
-
 
 #endif // MAINWINDOW_H
