@@ -372,7 +372,8 @@ public:
  * @ingroup dev_impl_network_clients
  *
  * \section remoteFrameGrabber
- * Connect to a ServerFrameGrabber.  See ServerFrameGrabber for
+ *
+ * \brief `remote_grabber`: Connect to a ServerFrameGrabber.  See ServerFrameGrabber for
  * the network protocol used.
  */
 class RemoteFrameGrabber :

@@ -48,7 +48,7 @@
  /**
  *  @ingroup dev_impl_wrapper
  *
- * \brief Device that expose a battery sensor (using the IBattery interface) on the YARP network.
+ * \brief `batteryWrapper`: Device that expose a battery sensor (using the IBattery interface) on the YARP network.
  *
  * \section batteryWrapper_device_parameters Description of input parameters
  *

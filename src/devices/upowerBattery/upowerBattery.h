@@ -17,6 +17,9 @@
 /**
 * @ingroup dev_impl_other
 *
+* \brief `upowerBattery`: A device to view the battery of a linux laptop in YARP
+* using the `yarp::dev::IBattery` interface.
+*
 * Documentation to be added
 */
 class UpowerBattery :

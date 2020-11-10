@@ -24,9 +24,10 @@
 YARP_DECLARE_LOG_COMPONENT(FAKEMOTOR)
 
 /**
- * @ingroup dev_impl_motor
+ * @ingroup dev_impl_fake dev_impl_motor
  *
- * A fake motor control board for testing.
+ * \brief `fakeMotor`: A fake motor control board for testing.
+ *
  * Implements the IPositionControl, IEncoders and IVelocityControl interfaces.
  */
 class FakeMotor :

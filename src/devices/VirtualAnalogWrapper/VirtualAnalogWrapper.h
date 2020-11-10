@@ -51,7 +51,7 @@ class AnalogSubDevice;
 /**
  *  @ingroup dev_impl_wrapper
  *
- * An analog wrapper for virtual device
+ * \brief `virtualAnalogServer`: An analog wrapper for virtual device
  * A virtual device is a software emulated device, for example force-torque computed from a real sensor
  * and then relocated to another part of the robot or some kind of estimated measurement needed by the
  * robot.

@@ -46,7 +46,7 @@ class  streamFrameListener;
 /**
  *  @ingroup dev_impl_media
  *
- * @brief `depthCamera` : YARP driver for OpenNI2 compatible devices.
+ * @brief `depthCamera`: YARP driver for OpenNI2 compatible devices.
  *
  * This device driver exposes the IRGBDSensor and IFrameGrabberControls
  * interfaces to read the images and operate on the available settings.

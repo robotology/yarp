@@ -31,11 +31,13 @@
 #include <yarp/dev/IPreciselyTimed.h>
 
 /**
-* @ingroup dev_impl_media
-*
-* Yarp device driver implementation for acquiring images from USB cameras
-* Documentation to be added
-*/
+ * @ingroup dev_impl_media
+ *
+ * \brief `usbCamera`: YARP device driver implementation for acquiring images
+ * from USB cameras.
+ *
+ * Documentation to be added
+ */
 class USBCameraDriver :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IPreciselyTimed,
@@ -268,7 +270,11 @@ public:
     int width() const override;
 };
 
-
+/**
+ * @ingroup dev_impl_media
+ *
+ * \brief `usbCameraRaw`: Documentation to be added
+ */
 class USBCameraDriverRaw :
         public USBCameraDriver,
         public yarp::dev::IFrameGrabberImageRaw

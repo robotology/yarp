@@ -19,7 +19,8 @@
 /**
 *
 * @ingroup dev_impl_fake dev_impl_media dev_impl_analog_sensors
-* Fake analog sensor device for testing purpose and reference for new analog devices
+*
+* \brief `fakeAnalogSensor`: Fake analog sensor device for testing purpose and reference for new analog devices
 *
 * Parameters accepted in the config argument of the open method:
 * | Parameter name | Type   | Units | Default Value | Required | Description | Notes |

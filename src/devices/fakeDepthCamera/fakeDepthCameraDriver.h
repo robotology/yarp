@@ -21,7 +21,7 @@
  /**
   * @ingroup dev_impl_fake
   *
-  * Documentation to be added
+  * \brief `fakeDepthCamera`: Documentation to be added
   */
 class fakeDepthCameraDriver :
         public yarp::dev::DeviceDriver,

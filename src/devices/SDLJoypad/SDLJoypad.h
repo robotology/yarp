@@ -42,8 +42,9 @@ struct SDLJoypadImpl::stick
 /**
 * @ingroup dev_impl_other
 *
+* \brief `SDLJoypad`: Device that reads inputs of Joypads compatible with the SDL library.
+*
 * \section SDLJoypad_device_parameters Description of input parameters
-* \brief Device that reads inputs of Joypads compatible with the SDL library.
 *
 * Parameters accepted in the config argument of the open method:
 * |   Parameter name      | Type   | Units | Default Value | Required                                    | Description                               | Notes                                                                                                                                   |

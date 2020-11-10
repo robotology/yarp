@@ -13,9 +13,9 @@
 #include <yarp/dev/DeviceDriver.h>
 
 /**
-* @ingroup dev_impl_other
+* @ingroup dev_impl_fake
 *
-* Documentation to be added
+* \brief `test_segfault`: A test device that causes a segmentation fault.
 */
 class SegFault :
         public yarp::dev::DeviceDriver,

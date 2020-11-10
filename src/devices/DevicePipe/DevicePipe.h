@@ -17,7 +17,7 @@
 /**
  * @ingroup dev_impl_other
  *
- * Tries to connect the output of one device to the input of another.
+ * \brief `pipe`: Tries to connect the output of one device to the input of another.
  */
 class DevicePipe :
         public yarp::dev::DeviceDriver,

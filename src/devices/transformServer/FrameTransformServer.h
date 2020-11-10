@@ -77,7 +77,7 @@ public:
 /**
 * @ingroup dev_impl_network_wrapper
  *
- * Documentation to be added
+ * \brief `transformServer`: Documentation to be added
  */
 class FrameTransformServer :
         public yarp::os::PeriodicThread,

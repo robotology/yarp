@@ -126,12 +126,12 @@ public:
 /**
  *  @ingroup dev_impl_wrapper
  *
- * \section controlboardwrapper2_device_parameters Description of input parameters
- * A updated version of the controlBoard network wrapper.
+ * \brief `controlboardwrapper2`: An updated version of the controlBoard network wrapper.
  * It can merge together more than one control board device, or use only a
  * portion of it by remapping functionality.
  * Allows also deferred attach/detach of a subdevice.
  *
+ * \section controlboardwrapper2_device_parameters Description of input parameters
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |

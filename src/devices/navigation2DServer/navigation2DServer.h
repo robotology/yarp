@@ -37,7 +37,7 @@
  /**
  * @ingroup dev_impl_network_wrapper dev_impl_navigation
   *
-  * Documentation to be added
+  * \brief `navigation2DServer`: Documentation to be added
   */
 class navigation2DServer : public yarp::dev::DeviceDriver,
                          public yarp::os::PeriodicThread,

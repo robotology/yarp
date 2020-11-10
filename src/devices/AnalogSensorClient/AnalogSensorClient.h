@@ -61,32 +61,31 @@ public:
     int getChannels();
 };
 
-/**
- *
+/*
  * The client side of any IAnalogSensor capable device.
  * Still single thread! concurrent access is unsafe.
  */
 
 /**
-* @ingroup dev_impl_network_clients
-*
-* \section analogsensorclient_device_parameters Description of input parameters
-* \brief Device that reads an AnalogSensor (using the IAnalogSensor interface) from the YARP network.
-*
-* This device will connect to a port opened by the AnalogWrapper device and read the data broadcasted
-* making them available to use for the user application. It also made available some function to check and control the state of the remote sensor.
-*
-* Parameters accepted in the config argument of the open method:
-* | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
-* |:--------------:|:------:|:-----:|:-------------:|:--------: |:-------------:|:-----:|
-* | local          | string |       |               | Yes       | full name if the port opened by the device  | must start with a '/' character |
-* | remote         | string |       |               | Yes       | full name of the port the device need to connect to | must start with a '/' character |
-* | carrier        | string |       | udp           | No        | type of carrier to use, like tcp, udp and so on ...  | - |
-*
-*  The device will create a port with name <local> and will connect to a port colled <remote> at startup,
-* ex: <b> /myModule/left_arm/ForceTorque </b>, and will connect to a port called <b> /icub/left_arm/ForceTorque<b>.
-*
-**/
+ * @ingroup dev_impl_network_clients
+ *
+ * \brief `analogsensorclient`: Device that reads an AnalogSensor (using the IAnalogSensor interface) from the YARP network.
+ *
+ * \section analogsensorclient_device_parameters Description of input parameters
+ *
+ * This device will connect to a port opened by the AnalogWrapper device and read the data broadcasted
+ * making them available to use for the user application. It also made available some function to check and control the state of the remote sensor.
+ *
+ * Parameters accepted in the config argument of the open method:
+ * | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |
+ * |:--------------:|:------:|:-----:|:-------------:|:--------: |:-------------:|:-----:|
+ * | local          | string |       |               | Yes       | full name if the port opened by the device  | must start with a '/' character |
+ * | remote         | string |       |               | Yes       | full name of the port the device need to connect to | must start with a '/' character |
+ * | carrier        | string |       | udp           | No        | type of carrier to use, like tcp, udp and so on ...  | - |
+ *
+ *  The device will create a port with name <local> and will connect to a port colled <remote> at startup,
+ * ex: <b> /myModule/left_arm/ForceTorque </b>, and will connect to a port called <b> /icub/left_arm/ForceTorque<b>.
+ **/
 class AnalogSensorClient :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IPreciselyTimed,

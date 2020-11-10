@@ -65,8 +65,9 @@ class streamThread :
 /**
  * @ingroup dev_impl_media
  *
+ * \brief `portaudio`:  Documentation to be added
+ *
  * Requires the PortAudio library (http://www.portaudio.com), at least v19.
- * Documentation to be added
  */
 class PortAudioDeviceDriver :
         public yarp::dev::IAudioGrabberSound,

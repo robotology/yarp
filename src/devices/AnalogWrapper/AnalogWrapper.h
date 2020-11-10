@@ -50,7 +50,7 @@ class AnalogPortEntry;
 /**
  *  @ingroup dev_impl_wrapper
  *
- * \brief Device that expose an AnalogSensor (using the IAnalogSensor interface) on the YARP or ROS network.
+ * \brief `analogServer`: Device that expose an AnalogSensor (using the IAnalogSensor interface) on the YARP or ROS network.
  *
  * \section analogServer_device_parameters Description of input parameters
  *

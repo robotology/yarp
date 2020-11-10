@@ -38,7 +38,7 @@
 /**
 * @ingroup dev_impl_wrapper
 *
-* Documentation to be added
+* \brief `AudioRecorderWrapper`: Documentation to be added
 */
 class AudioRecorderWrapper :
         public yarp::dev::DeviceDriver,

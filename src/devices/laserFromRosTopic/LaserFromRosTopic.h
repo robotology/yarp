@@ -79,7 +79,7 @@ public:
 /**
  * @ingroup dev_impl_lidar
  *
- * Documentation to be added
+ * \brief `laserFromRosTopic`: Documentation to be added
  */
 class LaserFromRosTopic : public yarp::dev::Lidar2DDeviceBase,
                               public yarp::os::PeriodicThread,

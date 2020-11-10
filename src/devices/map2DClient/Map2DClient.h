@@ -37,7 +37,8 @@
  * @ingroup dev_impl_network_clients dev_impl_navigation
  *
  * \section Map2DClient
- * A device which allows a client application to store/retrieve user maps device in a map server.
+ *
+ * \brief `map2DClient`: A device which allows a client application to store/retrieve user maps device in a map server.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |

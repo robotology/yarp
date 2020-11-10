@@ -73,8 +73,7 @@ public:
 /**
  * @ingroup dev_impl_other
  *
- * A basic Serial Communications Link (RS232, USB).
- *
+ * \brief `serialport`: A basic Serial Communications Link (RS232, USB).
  */
 class SerialDeviceDriver :
         public yarp::dev::DeviceDriver,

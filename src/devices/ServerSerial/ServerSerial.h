@@ -60,7 +60,8 @@ public:
 /**
  * @ingroup dev_impl_wrapper
  *
- * Export a serial sensor.
+ * \brief `serial`: Export a serial sensor.
+ *
  * The network interface is composed by two ports.
  * The input port accepts bottles and sends their contents as
  * text to the serial port.

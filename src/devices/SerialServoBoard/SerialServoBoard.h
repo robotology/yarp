@@ -41,7 +41,7 @@ bool movepicopic(int j, double ref, double* positions, double* speeds, ISerialDe
 /**
 * @ingroup dev_impl_motor
 *
-* Documentation to be added
+* \brief `SerialServoBoard`: Documentation to be added
 */
 class SerialServoBoard : public DeviceDriver, public IPositionControl
 {

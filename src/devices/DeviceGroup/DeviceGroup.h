@@ -16,8 +16,7 @@
 /**
  * @ingroup dev_impl_other
  *
- * Lets you make a bunch of devices as a group.
- *
+ * \brief `group`: Lets you make a bunch of devices as a group.
  */
 class DeviceGroup :
         public yarp::dev::DeviceDriver,

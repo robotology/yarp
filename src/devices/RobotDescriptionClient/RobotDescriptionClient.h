@@ -24,7 +24,8 @@
 
 /**
 * @ingroup dev_impl_network_clients
-* This client device is used to connect to a robotDescriptionServer and ask info about the currently opened devices.
+*
+* \brief `robotDescriptionClient`: This client device is used to connect to a robotDescriptionServer and ask info about the currently opened devices.
 *
 * Parameters required by this device are:
 * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                                 | Notes |

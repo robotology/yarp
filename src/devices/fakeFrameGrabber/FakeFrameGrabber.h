@@ -29,7 +29,8 @@ constexpr yarp::conf::vocab32_t VOCAB_LINE = yarp::os::createVocab('l','i','n','
 /**
  * @ingroup dev_impl_media dev_impl_fake
  *
- * A fake camera for testing.
+ * \brief `fakeFrameGrabber`: A fake camera for testing.
+ *
  * Implements the IFrameGrabberImage and IFrameGrabberControls
  * interfaces.
  */

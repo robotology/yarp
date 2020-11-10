@@ -13,10 +13,10 @@
 #include "GenericSensorRosPublisher.h"
 #include <yarp/rosmsg/geometry_msgs/PoseStamped.h>
 
-    /**
+/**
  * @ingroup dev_impl_wrapper
  *
- * \brief This wrapper connects to a device and publishes a ROS topic of type geometry_msgs::PoseStamped.
+ * \brief `PoseStampedRosPublisher`: This wrapper connects to a device and publishes a ROS topic of type geometry_msgs::PoseStamped.
  *
  * | YARP device name |
  * |:-----------------:|

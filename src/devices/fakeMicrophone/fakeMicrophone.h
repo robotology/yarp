@@ -21,8 +21,8 @@
 
 /**
 * @ingroup dev_impl_fake dev_impl_media
-* \brief `fakeMicrophone` : fake device implementing the IAudioGrabberSound device interface to play sound
 *
+* \brief `fakeMicrophone` : fake device implementing the IAudioGrabberSound device interface to play sound
 */
 class fakeMicrophone :
         public yarp::dev::DeviceDriver,

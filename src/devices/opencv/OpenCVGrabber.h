@@ -38,9 +38,8 @@
 /**
  * @ingroup dev_impl_media
  *
- * An image frame grabber device using OpenCV to capture images from
- * cameras and AVI files.
- * @author Eric Mislivec
+ * @brief `opencv_grabber`: An image frame grabber device using OpenCV to
+ * capture images from cameras and AVI files.
  */
 class OpenCVGrabber :
         public yarp::dev::IFrameGrabberImage,
@@ -53,9 +52,6 @@ public:
      * Create an OpenCV image grabber. This initializes members to
      * reasonable default values, the real initialization is done in
      * open().
-     *
-     * \author Eric Mislevic
-     *
      */
     OpenCVGrabber() : IFrameGrabberImage(), DeviceDriver(),
         m_w(0),

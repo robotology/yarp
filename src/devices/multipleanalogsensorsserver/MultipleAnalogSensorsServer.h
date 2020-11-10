@@ -25,7 +25,7 @@
 /**
  * @ingroup dev_impl_wrapper
  *
- * \brief The server side of the MultipleAnalogSensorsClient, useful to expose device implementing MultipleAnalogSensors interfaces over the YARP network.
+ * \brief `multipleanalogsensorsserver`: The server side of the MultipleAnalogSensorsClient, useful to expose device implementing MultipleAnalogSensors interfaces over the YARP network.
  * This device opens two ports: /${name}/measures:o that streams the data of the sensors, and /${name}/rpc:o that is a YARP RPC port that exposes the metadata.
  * The data on the /${name}/measures:o is streamed every ${period} milliseconds, and an envelope to each data is added with a timestamp obtained by calling the
  * yarp::os::Time::now() method when the message is written on the port.

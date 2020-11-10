@@ -25,7 +25,9 @@
 
 /**
 * @ingroup dev_impl_wrapper
-* This device is a storage which contains a list of the currently opened device drivers.
+*
+* \brief `robotDescriptionServer`: This device is a storage which contains a list of the currently opened device drivers.
+*
 * yarprobotinterfaces adds/removes devices to the storage using attachAll()/detachAll() methods.
 * A robotDescriptionClient devices can bused by the user to retrieve information about the currently opened devices.
 *

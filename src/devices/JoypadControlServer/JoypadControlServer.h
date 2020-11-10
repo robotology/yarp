@@ -41,7 +41,7 @@ public:
 /**
  * @ingroup dev_impl_wrapper
  *
- * Documentation to be added
+ * `JoypadControlServer`: Documentation to be added
  */
 class JoypadControlServer :
         public yarp::dev::DeviceDriver,

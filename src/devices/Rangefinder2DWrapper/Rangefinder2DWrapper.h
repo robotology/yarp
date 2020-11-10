@@ -58,7 +58,7 @@
  /**
  * @ingroup dev_impl_network_wrapper dev_impl_lidar
   *
-  * Documentation to be added
+  * \brief `Rangefinder2DWrapper`: Documentation to be added
   */
 class Rangefinder2DWrapper:
         public yarp::os::PeriodicThread,

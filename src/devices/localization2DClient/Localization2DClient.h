@@ -40,7 +40,8 @@
  *  @ingroup dev_impl_network_clients dev_impl_navigation
  *
  * \section Localization2DClient
- * A device which allows a user application retrieve the current position of the robot in the world.
+ *
+ * \brief `localization2DClient` A device which allows a user application retrieve the current position of the robot in the world.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |

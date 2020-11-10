@@ -64,8 +64,9 @@ private:
 /**
  * @ingroup dev_impl_media
  *
+ * \brief `portaudioPlayer`: Documentation to be added
+ *
  * Requires the PortAudio library (http://www.portaudio.com), at least v19.
- * Documentation to be added
  */
 class PortAudioPlayerDeviceDriver :
         public yarp::dev::IAudioRender,

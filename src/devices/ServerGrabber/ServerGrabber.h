@@ -89,8 +89,8 @@ struct Configuration
 /**
  * @ingroup dev_impl_wrapper
  *
- * \section grabberDual_device_parameters Description of input parameters
- * A Network grabber for camera devices.
+ * \brief `grabberDual`: A Network grabber for camera devices.
+ *
  * In base of the configuration this device can handle one or two cameras.\n
  * In case of two cameras, the RGB or RAW streaming will be produced on two separated ports or on a single port with the two images
  * stitched horizontally.\n
@@ -100,7 +100,9 @@ struct Configuration
  *
  * This device is paired with its client called RemoteFrameGrabber to receive the data streams and perform remote operations.
  *
- *   Parameters required by this device are:
+ * \section grabberDual_device_parameters Description of input parameters
+ *
+ * Parameters required by this device are:
  * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                                                                                                                                  | Description                                                                                                  | Notes |
  * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------:|:-----:|
  * | period         |      -                  | int     | ms             |   30          | No                                                                                                                                        | refresh period(in ms) of the broadcasted values through yarp ports                                                                | default 30ms |

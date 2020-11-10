@@ -21,12 +21,8 @@
 /**
  * @ingroup dev_impl_wrapper
  *
- * Export a microphone device
-
- * streaming sound samples
- *
- * \author (adapted) Júlio Gomes, VisLab ISR/IST - 2006
- *
+ * \brief `ServerSoundGrabber`: Export a microphone device streaming sound
+ * samples
  */
 class ServerSoundGrabber :
         public yarp::dev::DeprecatedDeviceDriver,

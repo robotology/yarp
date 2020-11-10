@@ -36,7 +36,7 @@ YARP_DISABLE_DEPRECATED_WARNING
 /**
  * @ingroup dev_impl_wrapper
  *
- * Export a frame grabber to the network.  Provides the
+ * \brief `grabber`: Export a frame grabber to the network.  Provides the
  * IFrameGrabberImage, IFrameGrabberControls, and IAudioGrabberSound
  * interfaces.  The corresponding client is a RemoteFrameGrabber.
  *

@@ -72,7 +72,7 @@ public:
 /**
  * @ingroup dev_impl_lidar
  *
- * Documentation to be added
+ * \brief `laserFromExternalPort`: Documentation to be added
  */
 class LaserFromExternalPort : public yarp::dev::Lidar2DDeviceBase,
                               public yarp::os::PeriodicThread,

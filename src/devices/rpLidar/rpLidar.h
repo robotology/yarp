@@ -179,7 +179,7 @@ struct Range_t
 /**
  * @ingroup dev_impl_lidar
  *
- * Documentation to be added
+ * \brief `rpLidar`: Documentation to be added
  */
 class RpLidar : public PeriodicThread, public yarp::dev::IRangefinder2D, public DeviceDriver
 {

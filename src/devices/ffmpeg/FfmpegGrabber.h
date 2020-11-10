@@ -30,8 +30,8 @@ extern "C" {
 /**
  * @ingroup dev_impl_media
  *
- * An image frame grabber device using ffmpeg to capture images from
- * AVI files.
+ * \brief `ffmpeg_grabber`: An image frame grabber device using ffmpeg to
+ * capture images from AVI files.
  */
 class FfmpegGrabber :
         public yarp::dev::IFrameGrabberImage,

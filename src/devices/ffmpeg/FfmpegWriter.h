@@ -28,8 +28,7 @@ extern "C" {
 /**
  * @ingroup dev_impl_media
  *
- * Uses ffmpeg to write images/sounds to movie files (AVI, MOV, ...).
- *
+ * \brief `ffmpeg_writer`: Uses ffmpeg to write images/sounds to movie files (AVI, MOV, ...).
  */
 class FfmpegWriter :
         public yarp::dev::IFrameWriterImage,

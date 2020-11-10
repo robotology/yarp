@@ -30,8 +30,9 @@ public:
 /**
 * @ingroup dev_impl_network_clients
 *
+* \brief `JoypadControlClient`: joypad input network wrapper on client side
+*
 * \section JoypadControlClient Description of input parameters
-* \brief joypad input network wrapper on client side
 *
 * Parameters accepted in the config argument of the open method:
 * |   Parameter name  | Type   | Units | Default Value | Required  | Description                                  | Notes |

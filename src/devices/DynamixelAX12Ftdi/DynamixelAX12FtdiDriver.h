@@ -137,7 +137,7 @@ public:
 /**
 * @ingroup dev_impl_motor
 *
-* Documentation to be added
+* \brief `dynamixelAX12Ftdi`: Documentation to be added
 */
 class DynamixelAX12FtdiDriver :
         public yarp::dev::DeviceDriver,

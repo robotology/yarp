@@ -22,7 +22,7 @@
  /**
   * @ingroup dev_impl_fake
   *
-  * Documentation to be added
+  * \brief `fakeBattery`: Documentation to be added
   */
 class FakeBattery :
         public yarp::os::PeriodicThread,

@@ -19,11 +19,12 @@
 #define DEFAULT_PERIOD 0.01   //s
 
 /**
-* @ingroup dev_impl_fake dev_impl_media
-* Documentation to be added
-* \brief `fakeSpeaker` : fake device implementing the IAudioRender device interface to play sound
-*
-*/
+ * @ingroup dev_impl_fake dev_impl_media
+ *
+ * \brief `fakeSpeaker` : fake device implementing the IAudioRender device interface to play sound
+ *
+ * Documentation to be added
+ */
 class fakeSpeaker :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IAudioRender,

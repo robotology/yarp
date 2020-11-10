@@ -70,10 +70,10 @@ struct ImpedanceParameters
     ImpedanceParameters() {stiffness=0; damping=0;}
 };
 
-/*
+/**
  * @ingroup dev_impl_fake dev_impl_motor
  *
- * Documentation to be added
+ * \brief `fakeMotionControl`: Documentation to be added
  *
  * The aim of this device is to mimic the expected behavior of a
  * real motion control device to help testing the high level software.

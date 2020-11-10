@@ -127,9 +127,13 @@ constexpr int MAX_MSG_LENGTH = 128;
 /**
 *  @ingroup dev_impl_analog_sensors
 *
+* \brief `imuBosch_BNO055`: This device will connect to the proper analogServer
+* and read the data broadcasted making them available to use for the user
+* application. It also made available some function to check and control the
+* state of the remote sensor.
+*
 * \section imuBosch_BNO055_device_parameters Description of input parameters
 *
-*  This device will connect to the proper analogServer and read the data broadcasted making them available to use for the user application. It also made available some function to check and control the state of the remote sensor.
 *
 * Parameters accepted in the config argument of the open method:
 * | Parameter name | Type   | Units | Default Value | Required  | Description   | Notes |

@@ -16,11 +16,11 @@
 /**
  *  @ingroup dev_impl_network_clients
  *
- * \section RemoteControlBoardRemapper
- * A device that takes a list of axes from multiple controlboards, a list
- * of remote controlboards in which this axes are located, that is opening
- * all the remote controlboards but is exposing them
+ * @brief `remotecontrolboardremapper` A device that takes a list of axes from
+ * multiple controlboards, a list of remote controlboards in which this axes are
+ * located, that is opening all the remote controlboards but is exposing them
  *
+ * \section RemoteControlBoardRemapper
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |

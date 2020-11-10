@@ -16,7 +16,7 @@
     /**
  * @ingroup dev_impl_wrapper
  *
- * \brief This wrapper connects to a device and publishes a ROS topic of type geometry_msgs::WrenchStamped.
+ * \brief `WrenchStampedRosPublisher`: This wrapper connects to a device and publishes a ROS topic of type geometry_msgs::WrenchStamped.
  *
  * | YARP device name |
  * |:-----------------:|

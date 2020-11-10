@@ -49,7 +49,7 @@
 /**
 * @ingroup dev_impl_wrapper
 *
-* Documentation to be added
+* \brief `AudioPlayerWrapper`: Documentation to be added
 */
 class AudioPlayerWrapper :
         public yarp::os::PeriodicThread,

@@ -34,9 +34,7 @@
 /**
  *  @ingroup dev_impl_wrapper
  *
- * \section inertial_device_parameters Description of input parameters
- *
- * Export an inertial sensor.
+ * \brief `inertial`: Export an inertial sensor.
  * The network interface is a single Port.
  * We will stream bottles with 12 floats:
  * \code{.unparsed}
@@ -46,10 +44,9 @@
  * 9 10  11  = Calibrated 3-axis (X, Y, Z) magnetometer data
  * \endcode
  *
- * @author Alexis Maldonado, Radu Bogdan Rusu, Alberto Cardellino
- *
- *
  *  It reads the data from an Inertial measurement unit sensor and sends them through yarp port.
+ *
+ * \section inertial_device_parameters Description of input parameters
  *
  * Parameters accepted in the config argument of the open method:
  * | Parameter name | Type    | Units          | Default Value | Required  | Description   | Notes |

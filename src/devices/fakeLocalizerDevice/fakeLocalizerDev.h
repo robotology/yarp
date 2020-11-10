@@ -33,11 +33,6 @@
 
 using namespace yarp::os;
 
-/**
- * @ingroup dev_impl_fake dev_impl_navigation
- *
- * Documentation to be added
- */
 class fakeLocalizerThread :
         public yarp::os::PeriodicThread
 {
@@ -64,7 +59,11 @@ public:
     bool getCurrentLoc(yarp::dev::Nav2D::Map2DLocation& loc);
 };
 
-
+/**
+ * @ingroup dev_impl_fake dev_impl_navigation
+ *
+ * \brief `fakeLocalizer` Documentation to be added
+ */
 class fakeLocalizer :
         public yarp::dev::DeviceDriver,
         public yarp::dev::Nav2D::ILocalization2D

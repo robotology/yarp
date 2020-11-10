@@ -39,7 +39,7 @@ public:
 /**
  * @ingroup dev_impl_fake dev_impl_navigation
  *
- * Documentation to be added
+ * \brief `fakeNavigation`: Documentation to be added
  */
 class fakeNavigation :
         public yarp::dev::DeviceDriver,

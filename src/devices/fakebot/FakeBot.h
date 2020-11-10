@@ -21,7 +21,7 @@ YARP_DECLARE_LOG_COMPONENT(FAKEBOT)
 /**
  * @ingroup dev_impl_fake
  *
- * Documentation to be added
+ * \brief `fakebot`: Documentation to be added
  */
 class FakeBot :
         public yarp::dev::DeviceDriver,

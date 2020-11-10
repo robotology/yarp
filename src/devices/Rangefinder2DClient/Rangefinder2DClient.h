@@ -76,7 +76,7 @@ public:
 /**
 * @ingroup dev_impl_network_clients dev_impl_network_lidar
 *
-* The client side of any ILaserRangefinder2D capable device.
+* \brief `Rangefinder2DClient`: The client side of any ILaserRangefinder2D capable device.
 * Still single thread! concurrent access is unsafe.
 */
 class Rangefinder2DClient:

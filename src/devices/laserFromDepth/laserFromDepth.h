@@ -41,7 +41,7 @@ typedef unsigned char byte;
 /**
  * @ingroup dev_impl_lidar
  *
- * Documentation to be added
+ * \brief `laserFromDepth`: Documentation to be added
  */
 class LaserFromDepth : public PeriodicThread, public yarp::dev::Lidar2DDeviceBase, public DeviceDriver
 {

@@ -13,9 +13,9 @@
 #include <yarp/dev/DeviceDriver.h>
 
 /**
-* @ingroup dev_impl_other
+* @ingroup dev_impl_fake
 *
-* Documentation to be added
+* \brief `test_nop`: A test device that does absolutely nothing.
 */
 class Nop :
         public yarp::dev::DeviceDriver,

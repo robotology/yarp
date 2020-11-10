@@ -18,7 +18,7 @@
     /**
  * @ingroup dev_impl_wrapper
  *
- * \brief This wrapper connects to a device and publishes a ROS topic of type sensor_msgs::Imu.
+ * \brief `IMURosPublisher`: This wrapper connects to a device and publishes a ROS topic of type sensor_msgs::Imu.
  *
  * | YARP device name |
  * |:-----------------:|

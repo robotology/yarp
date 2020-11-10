@@ -81,7 +81,7 @@ public:
 /**
 * @ingroup dev_impl_network_clients
 *
-* Documentation to be added
+* \brief `transformClient`: Documentation to be added
 */
 class FrameTransformClient :
         public yarp::dev::DeviceDriver,

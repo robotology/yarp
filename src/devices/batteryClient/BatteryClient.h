@@ -78,7 +78,7 @@ public:
 /**
 * @ingroup dev_impl_network_clients
 *
-* The client side of any IBattery capable device.
+* \brief `batteryClient`: The client side of any IBattery capable device.
 * Still single thread! concurrent access is unsafe.
 */
 class BatteryClient :

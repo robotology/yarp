@@ -47,7 +47,8 @@ public:
 /**
  * @ingroup dev_impl_media
  *
- * A portable audio source, see yarp::dev::PortAudioRecorderDeviceDriver.
+ * \brief `portaudioRecorder`: A portable audio source, see yarp::dev::PortAudioRecorderDeviceDriver.
+ *
  * Requires the PortAudio library (http://www.portaudio.com), at least v19.
  * Documentation to be added
  */

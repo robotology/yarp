@@ -40,8 +40,11 @@
 
  /**
  * @ingroup dev_impl_network_wrapper dev_impl_navigation
+ *
  * \section Localization2DServer
- * A localization server which can be wrap multiple algorithms and devices to provide robot in a 2D World.
+ *
+ * \brief `localization2DServer`: A localization server which can be wrap multiple algorithms and devices to provide robot in a 2D World.
+ *
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value       | Required     | Description                                                       | Notes |
