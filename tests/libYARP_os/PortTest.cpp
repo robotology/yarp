@@ -36,6 +36,9 @@
 
 #include <yarp/companion/impl/Companion.h>
 
+#include <mutex>
+#include <condition_variable>
+
 #include <catch.hpp>
 #include <harness.h>
 
@@ -382,10 +385,6 @@ public:
 };
 
 
-#if !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
-// Tests with ModifyingCarrier are currently failing when running under
-// valgrind, see #2395
-
 class TestModifyingCarrier :
         public yarp::os::ModifyingCarrier
 {
@@ -478,7 +477,38 @@ public:
         return reply.write(*reader.getWriter());
     }
 };
-#endif // !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
+
+// A minimal PortWriter to be used when using Port::enableBackgroundWrite(), to
+// block until the write operation is over
+class cvNotifier :
+        public yarp::os::PortWriter
+{
+private:
+    mutable std::mutex mtx;
+    mutable std::condition_variable cv;
+    mutable bool done {false};
+
+public:
+    bool write(ConnectionWriter& writer) const override
+    {
+        return false;
+    }
+
+    void onCompletion() const override
+    {
+        mtx.lock();
+        done = true;
+        mtx.unlock();
+        cv.notify_all();
+    }
+
+    void wait()
+    {
+        // Wait until write is finished
+        std::unique_lock<std::mutex> lk(mtx);
+        cv.wait(lk, [&]{ return done; });
+    }
+};
 
 static int safePort()
 {
@@ -493,11 +523,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
                                                                                    "brokenDevice",
                                                                                    "BrokenDevice"));
 
-#if !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
-// Tests with ModifyingCarrier are currently failing when running under
-// valgrind, see #2395
     yarp::os::Carriers::addCarrierPrototype(new TestModifyingCarrier);
-#endif // !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
 
     constexpr double duration_100ms = 0.1;
     constexpr double duration_200ms = 0.2;
@@ -1733,10 +1759,6 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         p.close();
     }
 
-#if !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
-// Tests with ModifyingCarrier are currently failing when running under
-// valgrind, see #2395
-
     SECTION("Check ModifyingCarrier on output (w/o reply)")
     {
         Port out;
@@ -1752,9 +1774,14 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
+
         out.enableBackgroundWrite(true);
-        out.write(cmd_out);
+        cvNotifier nf;
+
+        out.write(cmd_out, &nf);
         in.read(cmd_in);
+
+        nf.wait();
 
         CHECK(TestModifyingCarrier::cnt_accept_in == 0);
         CHECK(TestModifyingCarrier::cnt_modify_in == 0);
@@ -1780,10 +1807,15 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle cmd_in;
         Bottle reply_in;
         Bottle reply_out("hey");
+
         out.enableBackgroundWrite(true);
-        out.write(cmd_out, reply_in);
+        cvNotifier nf;
+
+        out.write(cmd_out, reply_in, &nf);
         in.read(cmd_in, true);
         in.reply(reply_out);
+
+        nf.wait();
 
         CHECK(reply_in.toString() == "hey");
 
@@ -1792,10 +1824,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         CHECK(TestModifyingCarrier::cnt_modify_in == 0);
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
         CHECK(TestModifyingCarrier::cnt_modify_out == 1);
-#if defined(ENABLE_BROKEN_TESTS)
-        // Due to some race condition, this is randomly failing, see #2379
         CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
-#endif // ENABLE_BROKEN_TESTS
     }
 
     SECTION("Check ModifyingCarrier on output (w/ reply in portable)")
@@ -1826,11 +1855,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         CHECK(TestModifyingCarrier::cnt_modify_in == 0);
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
         CHECK(TestModifyingCarrier::cnt_modify_out == 1);
-#if defined(ENABLE_BROKEN_TESTS)
-        // Due to some race condition, this is randomly failing, see #2379
         CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
-#endif // ENABLE_BROKEN_TESTS
-
     }
 
     SECTION("Check ModifyingCarrier on input (w/o reply)")
@@ -1848,9 +1873,14 @@ TEST_CASE("os::PortTest", "[yarp::os]")
 
         Bottle cmd_out("hello");
         Bottle cmd_in;
+
         out.enableBackgroundWrite(true);
-        out.write(cmd_out);
+        cvNotifier nf;
+
+        out.write(cmd_out, &nf);
         in.read(cmd_in);
+
+        nf.wait();
 
         CHECK(TestModifyingCarrier::cnt_accept_in == 1);
         CHECK(TestModifyingCarrier::cnt_modify_in == 1);
@@ -1876,10 +1906,15 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle cmd_in;
         Bottle reply_in;
         Bottle reply_out("hey");
+
         out.enableBackgroundWrite(true);
-        out.write(cmd_out, reply_in);
+        cvNotifier nf;
+
+        out.write(cmd_out, reply_in, &nf);
         in.read(cmd_in, true);
         in.reply(reply_out);
+
+        nf.wait();
 
         CHECK(reply_in.toString() == "hey");
 
@@ -1910,6 +1945,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle cmd_out("hello");
         Bottle cmd_in;
         Bottle reply_in;
+
         out.write(cmd_out, reply_in);
 
         CHECK(reply_in.toString() == "hey");
@@ -1937,8 +1973,12 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle cmd_out("hello");
         Bottle cmd_in;
         out.enableBackgroundWrite(true);
-        out.write(cmd_out);
+        cvNotifier nf;
+
+        out.write(cmd_out, &nf);
         in.read(cmd_in);
+
+        nf.wait();
 
         CHECK(TestModifyingCarrier::cnt_accept_in == 1);
         CHECK(TestModifyingCarrier::cnt_modify_in == 1);
@@ -1964,10 +2004,15 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Bottle cmd_in;
         Bottle reply_in;
         Bottle reply_out("hey");
+
         out.enableBackgroundWrite(true);
-        out.write(cmd_out, reply_in);
+        cvNotifier nf;
+
+        out.write(cmd_out, reply_in, &nf);
         in.read(cmd_in, true);
         in.reply(reply_out);
+
+        nf.wait();
 
         CHECK(reply_in.toString() == "hey");
 
@@ -1975,10 +2020,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         CHECK(TestModifyingCarrier::cnt_modify_in == 1);
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
         CHECK(TestModifyingCarrier::cnt_modify_out == 1);
-#if defined(ENABLE_BROKEN_TESTS)
-        // Due to some race condition, this is randomly failing, see #2379
         CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
-#endif // ENABLE_BROKEN_TESTS
     }
 
     SECTION("Check ModifyingCarrier on output (w/ reply in portable)")
@@ -2009,12 +2051,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         CHECK(TestModifyingCarrier::cnt_modify_in == 1);
         CHECK(TestModifyingCarrier::cnt_accept_out == 1);
         CHECK(TestModifyingCarrier::cnt_modify_out == 1);
-#if defined(ENABLE_BROKEN_TESTS)
-        // Due to some race condition, this is randomly failing, see #2379
         CHECK(TestModifyingCarrier::cnt_modify_reply == 1);
-#endif // ENABLE_BROKEN_TESTS
     }
-#endif // !defined(WITH_VALGRIND) || defined(ENABLE_BROKEN_TESTS)
 
     NetworkBase::setLocalMode(false);
 }
