@@ -119,6 +119,15 @@ namespace yarp
                     return false;
                 }
 
+                /**
+                * Compares two Map2DLocations
+                * @return true if the two locations are near.
+                */
+                bool is_near_to(const Map2DLocation& other_loc, double linear_tolerance, double angular_tolerance) const;
+
+                /**
+                * Serialization methods
+                */
                 bool read(yarp::os::idl::WireReader& reader) override { return Map2DLocationData::read(reader); }
                 bool write(const yarp::os::idl::WireWriter& writer) const override { return Map2DLocationData::write(writer); }
                 bool read(yarp::os::ConnectionReader& reader) override { return Map2DLocationData::read(reader); }
