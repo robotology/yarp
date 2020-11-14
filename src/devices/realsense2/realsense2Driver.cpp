@@ -1036,7 +1036,10 @@ bool realsense2Driver::getImage(FlexImage& Frame, Stamp *timeStamp, rs2::framese
 
     memcpy((void*)Frame.getRawImage(), (void*)color_frm.get_data(), mem_to_wrt);
     m_rgb_stamp.update();
-    *timeStamp = m_rgb_stamp;
+    if (timeStamp != nullptr)
+    {
+        *timeStamp = m_rgb_stamp;
+    }
     return true;
 }
 
@@ -1067,7 +1070,10 @@ bool realsense2Driver::getImage(depthImage& Frame, Stamp *timeStamp, const rs2::
     }
 
     m_depth_stamp.update();
-    *timeStamp   = m_depth_stamp;
+    if (timeStamp != nullptr)
+    {
+        *timeStamp = m_depth_stamp;
+    }
     return true;
 }
 
