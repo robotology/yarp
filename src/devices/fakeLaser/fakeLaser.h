@@ -58,7 +58,10 @@
 * yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
 */
 
-class FakeLaser : public yarp::os::PeriodicThread, public yarp::dev::Lidar2DDeviceBase, public yarp::dev::DeviceDriver
+class FakeLaser : public yarp::os::PeriodicThread, 
+                  public yarp::dev::Lidar2DDeviceBase,
+                  public yarp::dev::DeviceDriver,
+                  public yarp::os::PortReader
 {
 protected:
     enum test_mode_t { NO_OBSTACLES = 0, USE_PATTERN =1, USE_MAPFILE =2, USE_CONSTANT_VALUE =3 };
@@ -69,6 +72,7 @@ protected:
     localization_mode_t m_loc_mode;
 
     double m_period;
+    yarp::dev::Nav2D::MapGrid2D   m_originally_loaded_map;
     yarp::dev::Nav2D::MapGrid2D   m_map;
     yarp::os::BufferedPort<yarp::os::Bottle>* m_loc_port;
     yarp::dev::PolyDriver*      m_pLoc;
@@ -83,6 +87,8 @@ protected:
     std::mt19937* m_gen;
     std::uniform_real_distribution<>* m_dis;
     double m_const_value=1;
+
+    yarp::os::Port  m_rpcPort;
 
 public:
     FakeLaser(double period = 0.02) : PeriodicThread(period),
@@ -136,6 +142,12 @@ public:
 
 private:
     double checkStraightLine(yarp::dev::Nav2D::XYCell src, yarp::dev::Nav2D::XYCell dst);
+    void drawStraightLine(yarp::dev::Nav2D::XYCell src, yarp::dev::Nav2D::XYCell dst);
+
+    void wall_the_robot(double siz = 1.0, double dist = 1.0);
+    void obst_the_robot(double siz = 1.0, double dist = 1.0);
+    void trap_the_robot(double siz = 1.0);
+    void free_the_robot();
 
 public:
     //IRangefinder2D interface
@@ -144,6 +156,8 @@ public:
     bool setHorizontalResolution      (double step) override;
     bool setScanRate         (double rate) override;
 
+public:
+    bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 #endif

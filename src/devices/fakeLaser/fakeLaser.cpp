@@ -99,12 +99,13 @@ bool FakeLaser::open(yarp::os::Searchable& config)
             yCError(FAKE_LASER) << "Missing map_file";
             return false;
         }
-        bool ret = m_map.loadFromFile(map_file);
+        bool ret = m_originally_loaded_map.loadFromFile(map_file);
         if (ret == false)
         {
             yCError(FAKE_LASER) << "A problem occurred while opening:" << map_file;
             return false;
         }
+        m_map = m_originally_loaded_map;
 
         if (config.check("localization_port"))
         {
@@ -152,6 +153,14 @@ bool FakeLaser::open(yarp::os::Searchable& config)
 
     yCInfo(FAKE_LASER) << "Starting debug mode";
     yCInfo(FAKE_LASER) << "test mode:"<< m_test_mode;
+
+    if (!m_rpcPort.open("/fakeLaser/rpc:i"))
+    {
+        yCError(FAKE_LASER, "Failed to open port %s", "/fakeLaser/rpc:i");
+        return false;
+    }
+    m_rpcPort.setReader(*this);
+
     return PeriodicThread::start();
 }
 
@@ -331,6 +340,235 @@ void FakeLaser::run()
 
     m_mutex.unlock();
     return;
+}
+
+void FakeLaser::wall_the_robot(double siz, double dist)
+{
+    //double res;
+    //m_map.getResolution(res);
+    //size_t siz_cell = siz / res;
+    //size_t dist_cell = dist / res;
+    XYCell robot = m_map.world2Cell(XYWorld(m_robot_loc_x, m_robot_loc_y));
+
+    XYWorld ray_start;
+    XYWorld start (0+dist, 0 - siz);
+    ray_start.x = start.x * cos(m_robot_loc_t * DEG2RAD) - start.y * sin(m_robot_loc_t * DEG2RAD) + m_robot_loc_x;
+    ray_start.y = start.x * sin(m_robot_loc_t * DEG2RAD) + start.y * cos(m_robot_loc_t * DEG2RAD) + m_robot_loc_y;
+    XYCell start_cell = m_map.world2Cell(ray_start);
+
+    XYWorld ray_end;
+    XYWorld end(0 + dist, 0 + siz);
+    ray_end.x = end.x * cos(m_robot_loc_t * DEG2RAD) - end.y * sin(m_robot_loc_t * DEG2RAD) + m_robot_loc_x;
+    ray_end.y = end.x * sin(m_robot_loc_t * DEG2RAD) + end.y * cos(m_robot_loc_t * DEG2RAD) + m_robot_loc_y;
+    XYCell end_cell = m_map.world2Cell(ray_end);
+
+    drawStraightLine(start_cell,end_cell);
+}
+
+void FakeLaser::obst_the_robot(double siz, double dist)
+{
+    double res;
+    m_map.getResolution(res);
+    size_t siz_cell = siz / res;
+    size_t dist_cell = dist / res;
+    XYCell robot = m_map.world2Cell(XYWorld(m_robot_loc_x, m_robot_loc_y));
+}
+
+void FakeLaser::trap_the_robot(double siz)
+{
+    double res;
+    m_map.getResolution(res);
+    size_t siz_cell = siz / res;
+    XYCell robot  = m_map.world2Cell(XYWorld (m_robot_loc_x, m_robot_loc_y));
+    for (int x= robot.x- siz_cell; x< robot.x + siz_cell; x++)
+    {
+        int y=robot.y- siz_cell;
+        m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
+    }
+    for (int x = robot.x - siz_cell; x < robot.x + siz_cell; x++)
+    {
+        int y = robot.y + siz_cell;
+        m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
+    }
+    for (int y = robot.y - siz_cell; y < robot.y + siz_cell; y++)
+    {
+        int x = robot.x - siz_cell;
+        m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
+    }
+    for (int y = robot.y - siz_cell; y < robot.y + siz_cell; y++)
+    {
+        int x = robot.x + siz_cell;
+        m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
+    }
+}
+
+void FakeLaser::free_the_robot()
+{
+    m_map=m_originally_loaded_map;
+}
+
+bool FakeLaser::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::Bottle command;
+    yarp::os::Bottle reply;
+    bool ok = command.read(connection);
+    if (!ok) {
+        return false;
+    }
+    reply.clear();
+
+    if (command.get(0).asString() == "trap")
+    {
+        if (command.size() == 1)
+        {
+            trap_the_robot();
+            reply.addVocab(VOCAB_OK);
+        }
+        else if (command.size() == 2)
+        {
+            trap_the_robot(command.get(1).asFloat64());
+            reply.addVocab(VOCAB_OK);
+        }       
+        else
+        {
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (command.get(0).asString() == "wall")
+    {
+        if (command.size() == 1)
+        {
+            wall_the_robot(1.0, 1.0);
+            wall_the_robot(1.0, 1.05);
+            reply.addVocab(VOCAB_OK);
+        }
+        else if (command.size() == 2)
+        {
+            wall_the_robot(command.get(1).asFloat64(), 1.0);
+            wall_the_robot(command.get(1).asFloat64(), 1.05);
+            reply.addVocab(VOCAB_OK);
+        }
+        else if (command.size() == 3)
+        {
+            wall_the_robot(command.get(1).asFloat64(), command.get(2).asFloat64());
+            wall_the_robot(command.get(1).asFloat64(), command.get(2).asFloat64()+0.05);
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (command.get(0).asString() == "free")
+    {
+        free_the_robot();
+        reply.addVocab(VOCAB_OK);
+    }
+    else if (command.get(0).asString() == "help")
+    {
+        reply.addVocab(yarp::os::Vocab::encode("many"));
+        reply.addString("wall <size> <distance>: creates a wall in front of the robot");
+        reply.addString("trap <size>: traps the robot in a box obstacle");
+        reply.addString("free: removes all generated obstacles");
+    }
+    else
+    {
+        yCError(FAKE_LASER) << "Invalid command";
+        reply.addVocab(VOCAB_ERR);
+    }
+
+    yarp::os::ConnectionWriter* returnToSender = connection.getWriter();
+    if (returnToSender != nullptr)
+    {
+        reply.write(*returnToSender);
+    }
+    return true;
+}
+
+
+void FakeLaser::drawStraightLine(XYCell src, XYCell dst)
+{
+    int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
+    dx = dst.x - src.x;
+    dy = dst.y - src.y;
+    dx1 = fabs(dx);
+    dy1 = fabs(dy);
+    px = 2 * dy1 - dx1;
+    py = 2 * dx1 - dy1;
+    if (dy1 <= dx1)
+    {
+        if (dx >= 0)
+        {
+            x = src.x;
+            y = src.y;
+            xe = dst.x;
+        }
+        else
+        {
+            x = dst.x;
+            y = dst.y;
+            xe = src.x;
+        }
+        m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
+        for (i = 0; x < xe; i++)
+        {
+            x = x + 1;
+            if (px < 0)
+            {
+                px = px + 2 * dy1;
+            }
+            else
+            {
+                if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0))
+                {
+                    y = y + 1;
+                }
+                else
+                {
+                    y = y - 1;
+                }
+                px = px + 2 * (dy1 - dx1);
+            }
+            m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
+        }
+    }
+    else
+    {
+        if (dy >= 0)
+        {
+            x = src.x;
+            y = src.y;
+            ye = dst.y;
+        }
+        else
+        {
+            x = dst.x;
+            y = dst.y;
+            ye = src.y;
+        }
+        m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
+        for (i = 0; y < ye; i++)
+        {
+            y = y + 1;
+            if (py <= 0)
+            {
+                py = py + 2 * dx1;
+            }
+            else
+            {
+                if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0))
+                {
+                    x = x + 1;
+                }
+                else
+                {
+                    x = x - 1;
+                }
+                py = py + 2 * (dx1 - dy1);
+            }
+            m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
+        }
+    }
 }
 
 double FakeLaser::checkStraightLine(XYCell src, XYCell dst)
