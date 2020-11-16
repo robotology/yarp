@@ -2,8 +2,6 @@ name: Run CMake
 
 on:
   push:
-    branches:
-      - ci/GitHubActions
   pull_request:
 
 jobs:
