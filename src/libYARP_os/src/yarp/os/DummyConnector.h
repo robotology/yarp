@@ -69,11 +69,12 @@ public:
     /**
      * Get the dummy ConnectionReader loaded with whatever was written the ConnectionWriter since
      * it was last reset.
+     * \param replyWriter A writer to be used for replies received on the connection.
      * \return a loaded ConnectionReader if it was previously written to
      * \sa ConnectionReader Portable
      * \warning Calling this method twice will reset the reader
      */
-    ConnectionReader& getReader();
+    ConnectionReader& getReader(ConnectionWriter* replyWriter = nullptr);
 
     /**
      * Reset and clear the current ConnectionWriter

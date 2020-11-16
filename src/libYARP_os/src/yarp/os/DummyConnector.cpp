@@ -22,12 +22,15 @@ class DummyConnectorReader :
         public StreamConnectionReader
 {
 public:
-    BufferedConnectionWriter* altWriter;
+    ConnectionWriter* altWriter;
+    BufferedConnectionWriter* bufWriter;
     bool tmode;
 
-    BufferedConnectionWriter* getWriter() override
+    ConnectionWriter* getWriter() override
     {
-        altWriter->reset(tmode);
+        if (bufWriter) {
+            bufWriter->reset(tmode);
+        }
         return altWriter;
     }
 };
@@ -44,6 +47,7 @@ public:
     Private()
     {
         reader.altWriter = &writer;
+        reader.bufWriter = dynamic_cast<BufferedConnectionWriter*>(reader.altWriter);
         reader.tmode = textMode;
     }
 
@@ -65,7 +69,7 @@ public:
         return writer;
     }
 
-    ConnectionReader& getReader()
+    ConnectionReader& getReader(ConnectionWriter* replyWriter)
     {
         writer.stopWrite();
         std::string s = writer.toString();
@@ -73,6 +77,8 @@ public:
         sis.add(s);
         Route r;
         reader.reset(sis, nullptr, r, s.length(), textMode);
+        reader.altWriter = ((replyWriter != nullptr) ? replyWriter : &writer);
+        reader.bufWriter = dynamic_cast<BufferedConnectionWriter*>(reader.altWriter);
         return reader;
     }
 
@@ -108,9 +114,9 @@ ConnectionWriter& DummyConnector::getWriter()
     return mPriv->getWriter();
 }
 
-ConnectionReader& DummyConnector::getReader()
+ConnectionReader& DummyConnector::getReader(ConnectionWriter* replywriter)
 {
-    return mPriv->getReader();
+    return mPriv->getReader(replywriter);
 }
 
 void DummyConnector::reset()
