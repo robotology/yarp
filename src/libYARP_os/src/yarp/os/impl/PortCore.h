@@ -32,6 +32,8 @@
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #endif
 
+#include <atomic>
+#include <condition_variable>
 #include <mutex>
 #include <vector>
 
@@ -481,7 +483,14 @@ public:
 
     void setTimeout(float timeout);
 
+    /**
+     * @warning Must be called in the same thread as releaseProperties
+     */
     Property* acquireProperties(bool readOnly);
+
+    /**
+     * @warning Must be called in the same thread as acquireProperties
+     */
     void releaseProperties(Property* prop);
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.3
@@ -513,7 +522,9 @@ YARP_WARNING_POP
 private:
     // main internal PortCore state and operations
     std::vector<PortCoreUnit *> m_units;  ///< list of connections
-    yarp::os::Semaphore m_stateSemaphore {1};       ///< control access to essential port state
+    std::mutex m_stateMutex;
+    std::condition_variable m_stateCv;
+
     std::mutex m_packetMutex;      ///< control access to message cache
     yarp::os::Semaphore m_connectionChangeSemaphore {1}; ///< signal changes in connections
     Face* m_face {nullptr};  ///< network server
@@ -523,11 +534,11 @@ private:
     yarp::os::PortReader *m_adminReader {nullptr}; ///< where to send admin read events
     yarp::os::PortReaderCreator *m_readableCreator {nullptr}; ///< factory for readers
     yarp::os::PortReport *m_eventReporter {nullptr}; ///< where to send general events
-    bool m_listening {false}; ///< is the port server listening on the network?
-    bool m_running {false};   ///< is the port server thread running?
-    bool m_starting {false};  ///< is the port in its startup phase?
-    bool m_closing {false};   ///< is the port in its closing phase?
-    bool m_finished {false};  ///< is the port server thread finished running?
+    std::atomic<bool> m_listening {false}; ///< is the port server listening on the network?
+    std::atomic<bool> m_running {false};   ///< is the port server thread running?
+    std::atomic<bool> m_starting {false};  ///< is the port in its startup phase?
+    std::atomic<bool> m_closing {false};   ///< is the port in its closing phase?
+    std::atomic<bool> m_finished {false};  ///< is the port server thread finished running?
     bool m_finishing {false}; ///< is the port server thread trying to finish?
     bool m_waitBeforeSend {true}; ///< should we wait for all current writes to complete before writing more?
     bool m_waitAfterSend {true};  ///< should we wait for writes to complete immediately after we start them?
