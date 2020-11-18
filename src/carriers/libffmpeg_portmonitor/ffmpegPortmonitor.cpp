@@ -46,10 +46,13 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
     if (paramsMap["codec"] == "h264") {       
         codecId = AV_CODEC_ID_H264;
+        codecName = "h264";
     } else if (paramsMap["codec"] == "h265") {
         codecId = AV_CODEC_ID_H265;
+        codecName = "h265";	
     } else if (paramsMap["codec"] == "mpeg2video") {
         codecId = AV_CODEC_ID_MPEG2VIDEO;
+        codecName = "mpeg2video";	
     }
     
     // Find encoder/decoder
