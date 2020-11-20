@@ -6,6 +6,7 @@ on:
 
 jobs:
   check-style:
+    name: 'Check Style'
 
     runs-on: ubuntu-latest
 

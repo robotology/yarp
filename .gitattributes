@@ -1,11 +1,8 @@
-.appveyor.yml                   export-ignore
 .clang-format                   export-ignore
 .clang-tidy                     export-ignore
-.coveralls.yml                  export-ignore
 .github/                        export-ignore
 .gitignore                      export-ignore
 .mailmap                        export-ignore
-.travis.yml                     export-ignore
 .ci/                            export-ignore
 
 *.txt                           whitespace=trailing-space,space-before-tab,tab-in-indent
