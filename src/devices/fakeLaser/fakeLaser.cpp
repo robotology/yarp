@@ -224,20 +224,20 @@ bool FakeLaser::threadInit()
 
 
 bool FakeLaser::LiangBarsky_clip(int edgeLeft, int edgeRight, int edgeTop, int edgeBottom,
-                                 int x0src, int y0src, int x1src, int y1src,
-                                 int& x0clip, int& y0clip, int& x1clip, int& y1clip)
+                                 XYCell_unbounded src, XYCell_unbounded dst,
+                                 XYCell& src_clipped, XYCell& dst_clipped)
 {
     double t0 = 0.0;    double t1 = 1.0;
-    double xdelta = double(x1src - x0src);
-    double ydelta = double(y1src - y0src);
+    double xdelta = double(dst.x - src.x);
+    double ydelta = double(dst.y - src.y);
     double p, q, r;
 
     for (int edge = 0; edge < 4; edge++)
     {
-        if (edge == 0) { p = -xdelta;    q = -(edgeLeft - x0src); }
-        if (edge == 1) { p = xdelta;     q = (edgeRight - x0src); }
-        if (edge == 2) { p = -ydelta;    q = -(edgeTop - y0src); }
-        if (edge == 3) { p = ydelta;     q = (edgeBottom - y0src); }
+        if (edge == 0) { p = -xdelta;    q = -(edgeLeft - src.x); }
+        if (edge == 1) { p = xdelta;     q = (edgeRight - src.x); }
+        if (edge == 2) { p = -ydelta;    q = -(edgeTop - src.y); }
+        if (edge == 3) { p = ydelta;     q = (edgeBottom - src.y); }
         r = q / p;
         if (p == 0 && q < 0) {return false;}   //line is outside (parallel)
 
@@ -253,10 +253,10 @@ bool FakeLaser::LiangBarsky_clip(int edgeLeft, int edgeRight, int edgeTop, int e
         }
     }
 
-    x0clip = x0src + t0 * xdelta;
-    y0clip = y0src + t0 * ydelta;
-    x1clip = x0src + t1 * xdelta;
-    y1clip = y0src + t1 * ydelta;
+    src_clipped.x = size_t(double(src.x) + t0 * xdelta);
+    src_clipped.y = size_t(double(src.y) + t0 * ydelta);
+    dst_clipped.x = size_t(double(src.x) + t1 * xdelta);
+    dst_clipped.y = size_t(double(src.y) + t1 * ydelta);
 
     return true;        //line is clipped
 }
@@ -370,15 +370,14 @@ void FakeLaser::run()
             ray_world_rot.x = ray_world.x * m_map.m_origin.get_ca() - ray_world.y * m_map.m_origin.get_sa();
             ray_world_rot.y = ray_world.x * m_map.m_origin.get_sa() + ray_world.y * m_map.m_origin.get_ca();
             dst.x = int((+ray_world_rot.x - this->m_map.m_origin.get_x()) / this->m_map.m_resolution) + 0;
-            dst.y = int((-ray_world_rot.y + this->m_map.m_origin.get_y()) / this->m_map.m_resolution) + m_map.m_height - 1;
-           
-            XYCell_unbounded newsrc;
-            XYCell_unbounded newdst;
+            dst.y = int((-ray_world_rot.y + this->m_map.m_origin.get_y()) / this->m_map.m_resolution) + (int)m_map.m_height - 1;
+
+            XYCell newsrc;
+            XYCell newdst;
             double distance;
-            if (LiangBarsky_clip(0,m_map.width(),0, m_map.height(),
-                                src.x,src.y,dst.x,dst.y,
-                                newsrc.x, newsrc.y, newdst.x,newdst.y))
-            { 
+            if (LiangBarsky_clip(0,(int)m_map.width(),0, (int)m_map.height(),
+                                XYCell_unbounded(src.x,src.y), dst, newsrc, newdst))
+            {
                 distance = checkStraightLine(src, newdst);
                 double simulated_noise = (*m_dis)(*m_gen);
                 m_laser_data.push_back(distance + simulated_noise);
@@ -428,37 +427,38 @@ void FakeLaser::wall_the_robot(double siz, double dist)
 
 void FakeLaser::obst_the_robot(double siz, double dist)
 {
-    double res;
+    //NOT YET IMPLEMENTED
+    /*double res;
     m_map.getResolution(res);
-    size_t siz_cell = siz / res;
-    size_t dist_cell = dist / res;
-    XYCell robot = m_map.world2Cell(XYWorld(m_robot_loc_x, m_robot_loc_y));
+    size_t siz_cell = size_t(siz / res);
+    size_t dist_cell = size_t(dist / res);
+    XYCell robot = m_map.world2Cell(XYWorld(m_robot_loc_x, m_robot_loc_y));*/
 }
 
 void FakeLaser::trap_the_robot(double siz)
 {
     double res;
     m_map.getResolution(res);
-    size_t siz_cell = siz / res;
+    size_t siz_cell = size_t(siz / res);
     XYCell robot  = m_map.world2Cell(XYWorld (m_robot_loc_x, m_robot_loc_y));
-    for (int x= robot.x- siz_cell; x< robot.x + siz_cell; x++)
+    for (size_t x= robot.x- siz_cell; x< robot.x + siz_cell; x++)
     {
-        int y=robot.y- siz_cell;
+        size_t y=robot.y- siz_cell;
         m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
     }
-    for (int x = robot.x - siz_cell; x < robot.x + siz_cell; x++)
+    for (size_t x = robot.x - siz_cell; x < robot.x + siz_cell; x++)
     {
-        int y = robot.y + siz_cell;
+        size_t y = robot.y + siz_cell;
         m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
     }
-    for (int y = robot.y - siz_cell; y < robot.y + siz_cell; y++)
+    for (size_t y = robot.y - siz_cell; y < robot.y + siz_cell; y++)
     {
-        int x = robot.x - siz_cell;
+        size_t x = robot.x - siz_cell;
         m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
     }
-    for (int y = robot.y - siz_cell; y < robot.y + siz_cell; y++)
+    for (size_t y = robot.y - siz_cell; y < robot.y + siz_cell; y++)
     {
-        int x = robot.x + siz_cell;
+        size_t x = robot.x + siz_cell;
         m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
     }
 }
@@ -489,7 +489,7 @@ bool FakeLaser::read(yarp::os::ConnectionReader& connection)
         {
             trap_the_robot(command.get(1).asFloat64());
             reply.addVocab(VOCAB_OK);
-        }       
+        }
         else
         {
             reply.addVocab(VOCAB_ERR);
@@ -549,26 +549,27 @@ bool FakeLaser::read(yarp::os::ConnectionReader& connection)
 
 void FakeLaser::drawStraightLine(XYCell src, XYCell dst)
 {
-    int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
-    dx = dst.x - src.x;
-    dy = dst.y - src.y;
-    dx1 = fabs(dx);
-    dy1 = fabs(dy);
+    long int x, y;
+    long int dx, dy, dx1, dy1, px, py, xe, ye, i;
+    dx = (long int)dst.x - (long int)src.x;
+    dy = (long int)dst.y - (long int)src.y;
+    dx1 = abs(dx);
+    dy1 = abs(dy);
     px = 2 * dy1 - dx1;
     py = 2 * dx1 - dy1;
     if (dy1 <= dx1)
     {
         if (dx >= 0)
         {
-            x = src.x;
-            y = src.y;
-            xe = dst.x;
+            x = (long int)src.x;
+            y = (long int)src.y;
+            xe = (long int)dst.x;
         }
         else
         {
-            x = dst.x;
-            y = dst.y;
-            xe = src.x;
+            x = (long int)dst.x;
+            y = (long int)dst.y;
+            xe = (long int)src.x;
         }
         m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
         for (i = 0; x < xe; i++)
@@ -597,15 +598,15 @@ void FakeLaser::drawStraightLine(XYCell src, XYCell dst)
     {
         if (dy >= 0)
         {
-            x = src.x;
-            y = src.y;
-            ye = dst.y;
+            x = (long int)src.x;
+            y = (long int)src.y;
+            ye = (long int)dst.y;
         }
         else
         {
-            x = dst.x;
-            y = dst.y;
-            ye = src.y;
+            x = (long int)dst.x;
+            y = (long int)dst.y;
+            ye = (long int)src.y;
         }
         m_map.setMapFlag(XYCell(x, y), yarp::dev::Nav2D::MapGrid2D::map_flags::MAP_CELL_WALL);
         for (i = 0; y < ye; i++)
@@ -632,9 +633,10 @@ void FakeLaser::drawStraightLine(XYCell src, XYCell dst)
     }
 }
 
-double FakeLaser::checkStraightLine(XYCell src, XYCell_unbounded dst)
+double FakeLaser::checkStraightLine(XYCell src, XYCell dst)
 {
-    XYCell_unbounded test_point;
+    //BEWARE: src and dest must be already clipped and >0 in this function
+    XYCell test_point;
     test_point.x = src.x;
     test_point.y = src.y;
 
@@ -645,14 +647,14 @@ double FakeLaser::checkStraightLine(XYCell src, XYCell_unbounded dst)
 
     int sx;
     int sy;
-    if (src.x < dst.x) { sx = 1; } else { sx = -1; }////////////WARN
-    if (src.y < dst.y) { sy = 1; } else { sy = -1; }///////////WARN
+    if (src.x < dst.x) { sx = 1; } else { sx = -1; }
+    if (src.y < dst.y) { sy = 1; } else { sy = -1; }
 
     while (true)
     {
         //the test point is going to move from src until it reaches dst OR
         //if it reaches the boundaries of the image
-        if (test_point.x<=0 || test_point.y <=0 || test_point.x>=m_map.width() || test_point.y>=m_map.height())//////////WARN
+        if (test_point.x==0 || test_point.y ==0 || test_point.x>=m_map.width() || test_point.y>=m_map.height())
         {
             break;
         }

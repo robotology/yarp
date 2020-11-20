@@ -58,7 +58,7 @@
 * yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
 */
 
-class FakeLaser : public yarp::os::PeriodicThread, 
+class FakeLaser : public yarp::os::PeriodicThread,
                   public yarp::dev::Lidar2DDeviceBase,
                   public yarp::dev::DeviceDriver,
                   public yarp::os::PortReader
@@ -147,10 +147,10 @@ private:
     void trap_the_robot(double siz = 1.0);
     void free_the_robot();
 
-    double checkStraightLine(yarp::dev::Nav2D::XYCell src, yarp::dev::Nav2D::XYCell_unbounded dst);
+    double checkStraightLine(yarp::dev::Nav2D::XYCell src, yarp::dev::Nav2D::XYCell dst);
     bool   LiangBarsky_clip(int edgeLeft, int edgeRight, int edgeTop, int edgeBottom,
-                            int x0src, int y0src, int x1src, int y1src,
-                            int& x0clip, int& y0clip, int& x1clip, int& y1clip);
+                            yarp::dev::Nav2D::XYCell_unbounded src, yarp::dev::Nav2D::XYCell_unbounded dst,
+                            yarp::dev::Nav2D::XYCell& src_clipped, yarp::dev::Nav2D::XYCell& dst_clipped);
 
 public:
     //IRangefinder2D interface
