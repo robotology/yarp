@@ -7,7 +7,8 @@
 yarp_prepare_plugin(laserFromExternalPort
                     CATEGORY device
                     TYPE LaserFromExternalPort
-                    INCLUDE laserFromExternalPort.h)
+                    INCLUDE laserFromExternalPort.h
+                    DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_laserFromExternalPort)
   yarp_add_plugin(yarp_laserFromExternalPort)

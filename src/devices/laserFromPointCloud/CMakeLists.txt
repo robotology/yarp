@@ -7,7 +7,8 @@
 yarp_prepare_plugin(laserFromPointCloud
                     CATEGORY device
                     TYPE LaserFromPointCloud
-                    INCLUDE laserFromPointCloud.h)
+                    INCLUDE laserFromPointCloud.h
+                    DEPENDS "TARGET YARP::YARP_math")
 
 if(NOT SKIP_laserFromPointCloud)
   yarp_add_plugin(yarp_laserFromPointCloud)

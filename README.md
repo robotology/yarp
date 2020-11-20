@@ -79,9 +79,7 @@ See the file COPYING and LICENSE files for details.
 CI Status
 ---------
 
-[![Build Status (Linux/macOS)](https://img.shields.io/travis/robotology/yarp/master.svg?logo=travis&label=build%20(Linux/macOS))](https://travis-ci.org/robotology/yarp)
-[![Build status (Windows)](https://img.shields.io/appveyor/ci/robotology/yarp/master.svg?logo=appveyor&label=build%20(Windows))](https://ci.appveyor.com/project/robotology/yarp)
-
+[![Build Status](https://github.com/robotology/yarp/workflows/CI%20Workflow/badge.svg)](https://github.com/robotology/yarp/actions?query=workflow%3A%22CI+Workflow%22)
 
 Stats
 -----
@@ -106,10 +104,6 @@ Development Powered by
 ----------------------
 
 [![GitHub](https://img.shields.io/badge/Hosted_on-GitHub-24292e.svg?logo=github)](https://github.com)
-
-[![Travis](https://img.shields.io/badge/CI_(Linux/macOS)_by-Travis-blue.svg?logo=travis)](https://travis-ci.org)
-
-[![AppVeyor](https://img.shields.io/badge/CI_(Windows)_by-AppVeyor-322525.svg?logo=appveyor)](https://ci.appveyor.com)
 
 [![Slack](https://img.shields.io/badge/-Slack-4d394b.svg?logo=slack)](https://icub-facility.slack.com)
 

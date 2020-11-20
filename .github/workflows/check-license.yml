@@ -1,10 +1,12 @@
 name: 'License Check'
 
 on:
+  push:
   pull_request:
 
 jobs:
   check-license:
+    name: 'Check License'
 
     runs-on: ubuntu-latest
 
