@@ -222,6 +222,46 @@ bool FakeLaser::threadInit()
     return true;
 }
 
+
+bool FakeLaser::LiangBarsky_clip(int edgeLeft, int edgeRight, int edgeTop, int edgeBottom,
+                                 int x0src, int y0src, int x1src, int y1src,
+                                 int& x0clip, int& y0clip, int& x1clip, int& y1clip)
+{
+    double t0 = 0.0;    double t1 = 1.0;
+    double xdelta = double(x1src - x0src);
+    double ydelta = double(y1src - y0src);
+    double p, q, r;
+
+    for (int edge = 0; edge < 4; edge++)
+    {
+        if (edge == 0) { p = -xdelta;    q = -(edgeLeft - x0src); }
+        if (edge == 1) { p = xdelta;     q = (edgeRight - x0src); }
+        if (edge == 2) { p = -ydelta;    q = -(edgeTop - y0src); }
+        if (edge == 3) { p = ydelta;     q = (edgeBottom - y0src); }
+        r = q / p;
+        if (p == 0 && q < 0) {return false;}   //line is outside (parallel)
+
+        if (p < 0)
+        {
+            if (r > t1) {return false;}            //line is outside.
+            else if (r > t0) {t0 = r;}             //line is clipped
+        }
+        else if (p > 0)
+        {
+            if (r < t0) {return false;}        //line is outside.
+            else if (r < t1) {t1 = r;}         //line is clipped
+        }
+    }
+
+    x0clip = x0src + t0 * xdelta;
+    y0clip = y0src + t0 * ydelta;
+    x1clip = x0src + t1 * xdelta;
+    y1clip = y0src + t1 * ydelta;
+
+    return true;        //line is clipped
+}
+
+
 void FakeLaser::run()
 {
     m_mutex.lock();
@@ -319,19 +359,40 @@ void FakeLaser::run()
             ray_world.x = ray_target_x *cos(m_robot_loc_t*DEG2RAD) - ray_target_y *sin(m_robot_loc_t*DEG2RAD) + m_robot_loc_x;
             ray_world.y = ray_target_x *sin(m_robot_loc_t*DEG2RAD) + ray_target_y *cos(m_robot_loc_t*DEG2RAD) + m_robot_loc_y;
             XYCell src = m_map.world2Cell(XYWorld(m_robot_loc_x, m_robot_loc_y));
-            if (m_map.isInsideMap(ray_world))
-            {
-                XYCell dst = m_map.world2Cell(ray_world);
-                double distance = checkStraightLine(src, dst);
+
+            //beware! src is the robot position and it is always inside the image.
+            //dst is the end of the ray, and it can be out of the image!
+            //for this reason i am not going to call world2Cell() on dst, because that functions clips the point to the border without
+            //knowing the angular coefficient of the ray. I thus need the unclipped value, and run the LiangBarsky algorithm
+            //(which knows the angular coefficient of the ray) on it.
+            XYWorld ray_world_rot;
+            XYCell_unbounded dst;
+            ray_world_rot.x = ray_world.x * m_map.m_origin.get_ca() - ray_world.y * m_map.m_origin.get_sa();
+            ray_world_rot.y = ray_world.x * m_map.m_origin.get_sa() + ray_world.y * m_map.m_origin.get_ca();
+            dst.x = int((+ray_world_rot.x - this->m_map.m_origin.get_x()) / this->m_map.m_resolution) + 0;
+            dst.y = int((-ray_world_rot.y + this->m_map.m_origin.get_y()) / this->m_map.m_resolution) + m_map.m_height - 1;
+           
+            XYCell_unbounded newsrc;
+            XYCell_unbounded newdst;
+            double distance;
+            if (LiangBarsky_clip(0,m_map.width(),0, m_map.height(),
+                                src.x,src.y,dst.x,dst.y,
+                                newsrc.x, newsrc.y, newdst.x,newdst.y))
+            { 
+                distance = checkStraightLine(src, newdst);
                 double simulated_noise = (*m_dis)(*m_gen);
                 m_laser_data.push_back(distance + simulated_noise);
             }
             else
             {
+                //This should never happen, unless the robot is outside the map!
+                yDebug() << "Robot is outside the map?!";
                 m_laser_data.push_back(std::numeric_limits<double>::infinity());
             }
+
         }
     }
+
     //for all the different types of tests, apply the limits
     applyLimitsOnLaserData();
 
@@ -571,9 +632,11 @@ void FakeLaser::drawStraightLine(XYCell src, XYCell dst)
     }
 }
 
-double FakeLaser::checkStraightLine(XYCell src, XYCell dst)
+double FakeLaser::checkStraightLine(XYCell src, XYCell_unbounded dst)
 {
-    XYCell src_final = src;
+    XYCell_unbounded test_point;
+    test_point.x = src.x;
+    test_point.y = src.y;
 
     //here using the fast Bresenham algorithm
     int dx = abs(int(dst.x - src.x));
@@ -582,29 +645,42 @@ double FakeLaser::checkStraightLine(XYCell src, XYCell dst)
 
     int sx;
     int sy;
-    if (src.x < dst.x) { sx = 1; } else { sx = -1; }
-    if (src.y < dst.y) { sy = 1; } else { sy = -1; }
+    if (src.x < dst.x) { sx = 1; } else { sx = -1; }////////////WARN
+    if (src.y < dst.y) { sy = 1; } else { sy = -1; }///////////WARN
 
     while (true)
     {
+        //the test point is going to move from src until it reaches dst OR
+        //if it reaches the boundaries of the image
+        if (test_point.x<=0 || test_point.y <=0 || test_point.x>=m_map.width() || test_point.y>=m_map.height())//////////WARN
+        {
+            break;
+        }
+
         //if (m_map.isFree(src) == false)
-        if (m_map.isWall(src))
+        if (m_map.isWall(XYCell(test_point.x,test_point.y)))
         {
             XYWorld world_start =  m_map.cell2World(src);
-            XYWorld world_end =  m_map.cell2World(src_final);
-            return sqrt(pow(world_start.x - world_end.x, 2) + pow(world_start.y - world_end.y, 2));
+            XYWorld world_end =  m_map.cell2World(XYCell(test_point.x, test_point.y));
+            double dist = sqrt(pow(world_start.x - world_end.x, 2) + pow(world_start.y - world_end.y, 2));
+            return dist;
         }
-        if (src.x == dst.x && src.y == dst.y) break;
+
+        if (test_point.x == dst.x && test_point.y == dst.y)
+        {
+            break;
+        }
+
         int e2 = err * 2;
         if (e2 > -dy)
         {
             err = err - dy;
-            src.x += sx;
+            test_point.x += sx;
         }
         if (e2 < dx)
         {
             err = err + dx;
-            src.y += sy;
+            test_point.y += sy;
         }
     }
     return std::numeric_limits<double>::infinity();
