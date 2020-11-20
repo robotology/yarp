@@ -207,6 +207,8 @@
 %ignore yarp::sig::Image::getReadType() const;
 %ignore yarp::sig::VectorOf<double>::getType() const;
 %ignore yarp::sig::VectorOf<double>::VectorOf(std::initializer_list<double>);
+%ignore yarp::sig::VectorOf<int>::getType() const;
+%ignore yarp::sig::VectorOf<int>::VectorOf(std::initializer_list<int>);
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
 %rename(toString) std::string::operator const char *() const;
@@ -519,6 +521,7 @@ typedef yarp::os::BufferedPort<Sound> BufferedPortSound;
 %inline
 %{
 typedef yarp::sig::VectorOf<double> Vector;
+typedef yarp::sig::VectorOf<int> VectorInt;
 %}
 
 %{
@@ -596,6 +599,11 @@ typedef yarp::os::BufferedPort<Vector> BufferedPortVector;
 %template(TypedReaderVector) yarp::os::TypedReader<yarp::sig::VectorOf<double> >;
 %template(TypedReaderCallbackVector) yarp::os::TypedReaderCallback<yarp::sig::VectorOf<double> >;
 %template(BufferedPortVector) yarp::os::BufferedPort<yarp::sig::VectorOf<double> >;
+
+%template(VectorInt) yarp::sig::VectorOf<int>;
+%template(TypedReaderVectorInt) yarp::os::TypedReader<yarp::sig::VectorOf<int> >;
+%template(TypedReaderCallbackVectorInt) yarp::os::TypedReaderCallback<yarp::sig::VectorOf<int> >;
+%template(BufferedPortVectorInt) yarp::os::BufferedPort<yarp::sig::VectorOf<int> >;
 
 // Add getPixel and setPixel methods to access float values
 %extend yarp::sig::ImageOf<yarp::sig::PixelFloat> {
@@ -1530,6 +1538,47 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
     }
 
     double __len__() {
+        return self->length();
+    }
+#endif
+}
+
+%extend yarp::sig::VectorOf<int> {
+
+    // This in not a real constructor actually, it is converted by swig to a function returning a pointer.
+    // See: http://www.swig.org/Doc3.0/CPlusPlus11.html#CPlusPlus11_initializer_lists
+    VectorOf<int>(const std::vector<int>& values)
+    {
+        VectorOf<int>* newVec = new VectorOf<int>(0);
+        newVec->reserve(values.size());
+        for (const auto& element : values) {
+            newVec->push_back(element);
+        }
+        return newVec;
+    }
+
+    int get(int j)
+    {
+        return self->operator [](j);
+    }
+
+    void set(int j, int v)
+    {
+        self->operator [](j) = v;
+    }
+
+
+
+#ifdef SWIGPYTHON
+    void __setitem__(int key, int value) {
+        self->operator[](key) = value;
+    }
+
+    int __getitem__(int key) {
+        return self->operator[](key);
+    }
+
+    int __len__() {
         return self->length();
     }
 #endif
