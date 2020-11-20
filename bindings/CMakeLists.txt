@@ -32,7 +32,9 @@ if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
     endif()
   endif()
 
-  # Find YARP for bindings-only builds
+  # Find YCM, YARP and SWIG for bindings-only builds
+  set(YCM_REQUIRED_VERSION 0.11.0)
+  find_package(YCM ${YCM_REQUIRED_VERSION} REQUIRED)
   find_package(YARP COMPONENTS ${_components} REQUIRED)
   find_package(SWIG 3.0.12 REQUIRED)
 

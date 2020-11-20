@@ -6,6 +6,7 @@ on:
 
 jobs:
   check-license:
+    name: 'Check License'
 
     runs-on: ubuntu-latest
 

@@ -50,5 +50,5 @@ foreach(_ini_file ${_inis})
            COMMAND ${_cmd}
            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   set_property(TEST "device::${_test}" PROPERTY SKIP_RETURN_CODE 255)
-  set_property(TEST "device::${_test}" PROPERTY TIMEOUT 10)
+  set_property(TEST "device::${_test}" PROPERTY TIMEOUT 20)
 endforeach()

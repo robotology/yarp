@@ -163,11 +163,12 @@ TEST_CASE("math::RandTest", "[yarp::math]")
         Vector v2=Rand::vector(N);
 
         //check that v1 and v2 are equal
-        CHECK(v1==v2); // same seed produces identical sequences
+        bool tmp=(v1==v2);
+        CHECK(tmp); // same seed produces identical sequences
 
         Rand::init(456);
         Vector v3=Rand::vector(N);
-        bool tmp=(v1==v3);
+        tmp=(v1==v3);
         CHECK(!tmp); // different seeds generate different sequences
 
         Rand::init();
