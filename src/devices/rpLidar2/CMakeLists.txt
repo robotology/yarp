@@ -8,7 +8,7 @@ yarp_prepare_plugin(rpLidar2
                     CATEGORY device
                     TYPE RpLidar2
                     INCLUDE rpLidar2.h
-                    DEPENDS "NOT APPLE;TARGET YARP::YARP_math")
+                    DEPENDS "NOT APPLE;NOT CMAKE_C_COMPILER_ID STREQUAL Clang;TARGET YARP::YARP_math")
 
 if(NOT SKIP_rpLidar2)
   # Build rpLidar2 SDK

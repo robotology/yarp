@@ -17,8 +17,7 @@ if(NOT SKIP_upowerBattery)
   yarp_add_plugin(yarp_upowerBattery)
 
   target_sources(yarp_upowerBattery PRIVATE upowerBattery.cpp
-                                            upowerBattery.h
-                                            ${DBUS_STCS})
+                                            upowerBattery.h)
 
   target_link_libraries(yarp_upowerBattery PRIVATE YARP::YARP_os
                                                    YARP::YARP_sig
@@ -26,7 +25,8 @@ if(NOT SKIP_upowerBattery)
                                                    Qt5::DBus)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
-                                                      YARP_dev)
+                                                      YARP_dev
+                                                      "Qt5 COMPONENTS DBus")
 
   yarp_install(TARGETS yarp_upowerBattery
                EXPORT YARP_${YARP_PLUGIN_MASTER}
