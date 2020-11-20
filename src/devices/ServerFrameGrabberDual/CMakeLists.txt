@@ -7,15 +7,15 @@
 yarp_prepare_plugin(grabberDual
                     CATEGORY device
                     TYPE ServerGrabber
-                    INCLUDE ServerGrabber.h
+                    INCLUDE ServerFrameGrabberDual.h
                     EXTRA_CONFIG WRAPPER=grabberDual
                     DEFAULT ON)
 
 if(NOT SKIP_grabberDual)
   yarp_add_plugin(yarp_grabberDual)
 
-  target_sources(yarp_grabberDual PRIVATE ServerGrabber.cpp
-                                          ServerGrabber.h)
+  target_sources(yarp_grabberDual PRIVATE ServerFrameGrabberDual.cpp
+                                          ServerFrameGrabberDual.h)
 
   target_link_libraries(yarp_grabberDual PRIVATE YARP::YARP_os
                                                  YARP::YARP_sig
