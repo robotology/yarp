@@ -205,6 +205,7 @@ if(TARGET YARP::YARP_math)
                             yarp/dev/IMap2D.cpp
                             yarp/dev/INavigation2D.cpp
                             yarp/dev/MapGrid2D.cpp
+                            yarp/dev/Map2DLocation.cpp
                             yarp/dev/Map2DArea.cpp
                             yarp/dev/Map2DPath.cpp
                             yarp/dev/MapGrid2DInfo.cpp)

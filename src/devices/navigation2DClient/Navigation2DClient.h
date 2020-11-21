@@ -74,11 +74,6 @@ private:
 
 private: //math stuff
     double                        normalize_angle(double angle);
-    bool                          locations_are_similar(yarp::dev::Nav2D::Map2DLocation loc1,
-                                                        yarp::dev::Nav2D::Map2DLocation loc2,
-                                                        double lin_tol,
-                                                        double ang_tol);
-
 
 public:
 

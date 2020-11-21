@@ -583,50 +583,6 @@ bool Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation loc)
     return true;
 }
 
-bool Navigation2DClient::locations_are_similar(Map2DLocation loc1, Map2DLocation loc2, double linear_tolerance, double angular_tolerance)
-{
-    if (linear_tolerance < 0) return false;
-    if (angular_tolerance < 0) return false;
-    yCAssert(NAVIGATION2DCLIENT, linear_tolerance >= 0);
-    yCAssert(NAVIGATION2DCLIENT, angular_tolerance >= 0);
-
-    if (loc1.map_id != loc2.map_id)
-    {
-        return false;
-    }
-    if (sqrt(pow((loc1.x - loc2.x),2) + pow((loc1.y - loc2.y),2)) > linear_tolerance)
-    {
-        return false;
-    }
-
-    if (angular_tolerance != std::numeric_limits<double>::infinity())
-    {
-        //In the following blocks, I'm giving two possibile solution to the problem of
-        //determining if the difference of two angles is below a certain threshold.
-        //The problem is tricky, because it must take in account the critical points 0,180,360,-180, -360 etc.
-        //Both the formulas lead to the same result, however I'm not sure I they have the same performances.
-        //Please do not remove the unused block, since it may be a useful reference for the future.
-#if 1
-        //check in the range 0-360
-        double diff = loc2.theta - loc1.theta + 180.0;
-        diff = fmod(diff, 360.0) - 180.0;
-        diff = (diff < -180.0) ? (diff + 360.0) : (diff);
-        if (fabs(diff) > angular_tolerance)
-#else
-        //check in the range 0-180
-        double angle1 = normalize_angle(loc1.theta);
-        double angle2 = normalize_angle(loc2.theta);
-        double diff = angle1 - angle2;
-        diff += (diff > 180) ? -360 : (diff < -180) ? 360 : 0;
-        if (fabs(diff) > angular_tolerance)
-#endif
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 bool Navigation2DClient::checkNearToLocation(Map2DLocation loc, double linear_tolerance, double angular_tolerance)
 {
     Map2DLocation curr_loc;
@@ -636,9 +592,7 @@ bool Navigation2DClient::checkNearToLocation(Map2DLocation loc, double linear_to
         return false;
     }
 
-    return locations_are_similar(loc, curr_loc, linear_tolerance, angular_tolerance);
-
-    return true;
+    return curr_loc.is_near_to(loc, linear_tolerance, angular_tolerance);
 }
 
 bool Navigation2DClient::checkNearToLocation(std::string location_name, double linear_tolerance, double angular_tolerance)
@@ -657,7 +611,7 @@ bool Navigation2DClient::checkNearToLocation(std::string location_name, double l
         return false;
     }
 
-    return locations_are_similar(loc, curr_loc, linear_tolerance, angular_tolerance);
+    return curr_loc.is_near_to(loc, linear_tolerance, angular_tolerance);
 }
 
 bool  Navigation2DClient::checkInsideArea(Map2DArea area)
