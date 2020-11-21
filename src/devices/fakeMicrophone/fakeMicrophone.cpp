@@ -26,7 +26,6 @@ using namespace yarp::sig;
 #define HW_CHANNELS         2
 #define SAMPLING_RATE       44100
 #define CHUNK_SIZE          512
-#define SLEEP_TIME          0.005
 #define SAMPLES_TO_BE_COPIED 512
 
 namespace {
@@ -37,15 +36,8 @@ typedef unsigned short int audio_sample_16t;
 
 fakeMicrophone::fakeMicrophone() :
         PeriodicThread(DEFAULT_PERIOD),
-        m_isRecording(false),
-        m_cfg_numSamples(0),
-        m_cfg_numChannels(0),
-        m_cfg_frequency(0),
-        m_cfg_bytesPerSample(0),
         m_audio_filename("audio.wav"),
-        m_bpnt(0),
-        m_inputBuffer(nullptr),
-        m_getSoundIsNotBlocking(false)
+        m_bpnt(0)
 {
 }
 
@@ -145,139 +137,4 @@ void fakeMicrophone::run()
 #ifdef ADVANCED_DEBUG
     yCDebug(FAKEMICROPHONE) << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
 #endif
-}
-
-bool fakeMicrophone::startRecording()
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_isRecording = true;
-#ifdef BUFFER_AUTOCLEAR
-    this->m_recDataBuffer->clear();
-#endif
-    yCInfo(FAKEMICROPHONE) << "Recording started";
-    return true;
-}
-
-
-bool fakeMicrophone::stopRecording()
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_isRecording = false;
-#ifdef BUFFER_AUTOCLEAR
-    this->m_recDataBuffer->clear();
-#endif
-    yCInfo(FAKEMICROPHONE) << "Recording stopped";
-    return true;
-}
-
-
-bool fakeMicrophone::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
-{
-    //no lock guard is needed here
-    size = this->m_inputBuffer->getMaxSize();
-    return true;
-}
-
-
-bool fakeMicrophone::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
-{
-    //no lock guard is needed here
-    size = this->m_inputBuffer->size();
-    return true;
-}
-
-
-bool fakeMicrophone::resetRecordingAudioBuffer()
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_inputBuffer->clear();
-    yCDebug(FAKEMICROPHONE) << "resetRecordingAudioBuffer";
-    return true;
-}
-
-bool fakeMicrophone::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
-{
-    //check for something_to_record
-    {
-#ifdef AUTOMATIC_REC_START
-        if (m_isRecording == false)
-        {
-            this->startRecording();
-        }
-#else
-        double debug_time = yarp::os::Time::now();
-        while (m_isRecording == false)
-        {
-            if (yarp::os::Time::now() - debug_time > 5.0)
-            {
-                yCInfo(FAKEMICROPHONE) << "getSound() is currently waiting. Use startRecording() to start the audio stream";
-                debug_time = yarp::os::Time::now();
-            }
-            yarp::os::SystemClock::delaySystem(SLEEP_TIME);
-        }
-#endif
-    }
-
-    //prevents simultaneous start/stop/reset etc.
-    //std::lock_guard<std::mutex> lock(m_mutex); //This must be used carefully
-
-    //check on input parameters
-    if (max_number_of_samples < min_number_of_samples)
-    {
-        yCError(FAKEMICROPHONE) << "max_number_of_samples must be greater than min_number_of_samples!";
-        return false;
-    }
-    if (max_number_of_samples > this->m_cfg_numSamples)
-    {
-        yCWarning(FAKEMICROPHONE) << "max_number_of_samples bigger than the internal audio buffer! It will be truncated to:" << this->m_cfg_numSamples;
-        max_number_of_samples = this->m_cfg_numSamples;
-    }
-
-    //wait until the desired number of samples are obtained
-    size_t buff_size = 0;
-    double start_time = yarp::os::Time::now();
-    double debug_time = yarp::os::Time::now();
-    do
-    {
-        buff_size = m_inputBuffer->size().getSamples();
-        if (buff_size >= max_number_of_samples) { break; }
-        if (buff_size >= min_number_of_samples && yarp::os::Time::now() - start_time > max_samples_timeout_s) { break; }
-        if (m_isRecording == false) { break; }
-
-        if (yarp::os::Time::now() - debug_time > 1.0)
-        {
-            debug_time = yarp::os::Time::now();
-            yCDebug(FAKEMICROPHONE) << "getSound() Buffer size is " << buff_size << "/" << max_number_of_samples << " after 1s";
-        }
-
-        yarp::os::SystemClock::delaySystem(SLEEP_TIME);
-    }
-    while (true);
-
-    //prepare the sound data struct
-    size_t samples_to_be_copied = buff_size;
-    if (samples_to_be_copied > max_number_of_samples) samples_to_be_copied = max_number_of_samples;
-    if (sound.getChannels() != this->m_cfg_numChannels && sound.getSamples() != samples_to_be_copied)
-    {
-        sound.resize(samples_to_be_copied, this->m_cfg_numChannels);
-    }
-    sound.setFrequency(this->m_cfg_frequency);
-
-    //fill the sound data struct, reading samples from the circular buffer
-#ifdef DEBUG_TIME_SPENT
-    double ct1 = yarp::os::Time::now();
-#endif
-    for (size_t i = 0; i< samples_to_be_copied; i++)
-        for (size_t j = 0; j<this->m_cfg_numChannels; j++)
-        {
-            int16_t s = (int16_t)(m_inputBuffer->read());
-            sound.set(s, i, j);
-        }
-
-    auto debug_p = sound.getInterleavedAudioRawData();
-#ifdef DEBUG_TIME_SPENT
-    double ct2 = yarp::os::Time::now();
-    yCDebug(FAKEMICROPHONE) << ct2 - ct1;
-#endif
-    return true;
 }

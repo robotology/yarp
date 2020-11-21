@@ -23,10 +23,9 @@
 #include <yarp/os/Thread.h>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/AudioGrabberInterfaces.h>
+#include <yarp/dev/AudioRecorderDeviceBase.h>
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <portaudio.h>
-#include <mutex>
 
 #define DEFAULT_SAMPLE_RATE  (44100)
 #define DEFAULT_NUM_CHANNELS    (2)
@@ -53,7 +52,7 @@ public:
  * Documentation to be added
  */
 class PortAudioRecorderDeviceDriver :
-        public yarp::dev::IAudioGrabberSound,
+        public yarp::dev::AudioRecorderDeviceBase,
         public yarp::dev::DeviceDriver,
         public yarp::os::Thread
 {
@@ -61,10 +60,7 @@ private:
     PaStreamParameters  m_inputParameters;
     PaStream*           m_stream;
     PaError             m_err;
-    yarp::dev::CircularAudioBuffer_16t*  m_recDataBuffer;
     PortAudioRecorderDeviceDriverSettings m_config;
-    std::mutex     m_mutex;
-    bool                m_isRecording;
 
 public:
     PortAudioRecorderDeviceDriver();
@@ -75,32 +71,16 @@ public:
 
     ~PortAudioRecorderDeviceDriver() override;
 
+    public:
     bool open(yarp::os::Searchable& config) override;
-
-    /**
-     * Configures the device.
-     *
-     * rate: Sample rate to use, in Hertz.  Specify 0 to use a default.
-     *
-     * samples: Number of samples per call to getSound.  Specify
-     * 0 to use a default.
-     *
-     * channels: Number of channels of input.  Specify
-     * 0 to use a default.
-     *
-     * @return true on success
-     */
     bool open(PortAudioRecorderDeviceDriverSettings& config);
-
     bool close() override;
-    bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
+
+    public:
     bool startRecording() override;
     bool stopRecording() override;
 
-    bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
-    bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
-    bool resetRecordingAudioBuffer() override;
-
+    public:
     void threadRelease() override;
     bool threadInit() override;
     void run() override;
