@@ -20,6 +20,7 @@ namespace yarp
     {
         namespace Nav2D
         {
+            typedef yarp::math::Vec2D<int>       XYCell_unbounded;
             typedef yarp::math::Vec2D<size_t>    XYCell;
             typedef yarp::math::Vec2D<double>    XYWorld;
         }
