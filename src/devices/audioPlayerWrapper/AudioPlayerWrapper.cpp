@@ -218,6 +218,10 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
         m_isDeviceOwned = true;
     }
 
+    if (config.check("start"))
+    {
+        yInfo() << "Not yet implemented";
+    }
 
     if (m_irender == nullptr)
     {

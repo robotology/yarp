@@ -21,6 +21,7 @@
 * \brief `audioToFileDevice` : This device driver, wrapped by default by AudioPlayerWrapper,
 * is used to save to a file an audio stream. Use the option --file_name to set the output file name
 */
+
 class audioToFileDevice :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IAudioRender

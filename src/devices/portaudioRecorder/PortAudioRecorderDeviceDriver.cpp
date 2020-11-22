@@ -394,4 +394,3 @@ void PortAudioRecorderDeviceDriver::run()
     }
     return;
 }
-

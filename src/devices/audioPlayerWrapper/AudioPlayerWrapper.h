@@ -47,10 +47,20 @@
 #include <yarp/dev/IPreciselyTimed.h>
 
 /**
-* @ingroup dev_impl_wrapper
-*
-* \brief `AudioPlayerWrapper`: Documentation to be added
+ * @ingroup dev_impl_wrapper
+ *
+ * \brief `AudioPlayerWrapper`: A Wrapper which receives audio streams from a network port and sends it to device for playback
+ * \section AudioPlayerWrapper_device_parameters Description of input parameters
+ * Parameters required by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value           | Required                    | Description                                                                | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:-----------------------:|:--------------------------: |:--------------------------------------------------------------------------:|:-----:|
+ * | name           |      -         | string  | -              |   /audioPlayerWrapper   | No                          | full name of the port opened by the device                                 | MUST start with a '/' character, xxx/audio:i, xxx/rpc:i, xxx/status:o, ports are openend  |
+ * | period         |      -         | int     | ms             |   20                    | No                          | period of the internal thread, in ms                                       | default 20ms |
+ * | debug          |      -         | bool    | -              |   -                     | No                          | developers use only                                                        | |
+ * | playback_network_buffer_lenght  | - | int | s              |   5                     | No                          | size of the audio buffer, increase this value to robustify the real-time audio stream (it will increase latency too) | Audio playback will start when the buffer is filled |
+ * | start          |      -         | bool    | -              |   true                  | NOT YET IMPLEMENTED         | automatically activates the playback when the device is started            | if false, the playback is enabled via rpc port |
 */
+
 class AudioPlayerWrapper :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,

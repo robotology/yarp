@@ -22,6 +22,7 @@
 * \brief `audioToFileDevice` : This device driver, wrapped by default by AudioRecorderWrapper,
 * is used to read data from a file and stream it to the network.
 */
+
 class audioFromFileDevice :
         public yarp::dev::DeviceDriver,
         public yarp::dev::AudioRecorderDeviceBase,

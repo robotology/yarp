@@ -13,6 +13,7 @@
 #include <mutex>
 #include <limits>
 #include <cmath>
+#include <functional>
 
 using namespace yarp::os;
 using namespace yarp::dev;
