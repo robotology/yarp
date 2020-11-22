@@ -12,6 +12,8 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
                                   DEFAULT ON)
   add_subdirectory(audioPlayerWrapper)
   add_subdirectory(audioRecorderWrapper)
+  add_subdirectory(audioFromFileDevice)
+  add_subdirectory(audioToFileDevice)
   add_subdirectory(depthCamera)
   add_subdirectory(fakeDepthCamera)
   add_subdirectory(fakebot)

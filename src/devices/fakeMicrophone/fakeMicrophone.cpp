@@ -16,6 +16,8 @@
 #include <yarp/os/LogStream.h>
 
 #include <mutex>
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <string>
 
 
@@ -35,9 +37,7 @@ YARP_LOG_COMPONENT(FAKEMICROPHONE, "yarp.device.fakeMicrophone")
 typedef unsigned short int audio_sample_16t;
 
 fakeMicrophone::fakeMicrophone() :
-        PeriodicThread(DEFAULT_PERIOD),
-        m_audio_filename("audio.wav"),
-        m_bpnt(0)
+        PeriodicThread(DEFAULT_PERIOD)
 {
 }
 
@@ -60,34 +60,16 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
         yCInfo(FAKEMICROPHONE) << "Using default period of " << DEFAULT_PERIOD << " s";
     }
 
-    //sets the filename
-    if (config.check("audio_file"))
-    {
-        m_audio_filename = config.find("audio_file").asString();
-    }
-    else
-    {
-        yCInfo(FAKEMICROPHONE) << "--audio_file option not found. Using default:" << m_audio_filename;
-    }
-
-    //opens the file
-    bool ret = yarp::sig::file::read(m_audioFile, m_audio_filename.c_str());
-    if (ret == false)
-    {
-        yCError(FAKEMICROPHONE) << "Unable to open file" << m_audio_filename.c_str();
-        return false;
-    }
-
-    //sets the fake mic configuration equal to the audio file
-    m_cfg_numSamples = m_audioFile.getSamples();
-    m_cfg_numChannels = m_audioFile.getChannels();
-    m_cfg_frequency = m_audioFile.getFrequency();
-    m_cfg_bytesPerSample = m_audioFile.getBytesPerSample();
+    m_cfg_numSamples = 44100*5; //5sec
+    m_cfg_numChannels = 2; //stereo
+    m_cfg_frequency = 44100; //hz
+    m_cfg_bytesPerSample = 2; //16bit
     const size_t EXTRA_SPACE = 2;
     AudioBufferSize buffer_size(m_cfg_numSamples*EXTRA_SPACE, m_cfg_numChannels, m_cfg_bytesPerSample);
     m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
 
     //start the capture thread
+    start_time = yarp::os::Time::now();
     start();
     return true;
 }
@@ -95,6 +77,8 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
 bool fakeMicrophone::close()
 {
     fakeMicrophone::stop();
+    //wait until the thread is stopped
+
     if (m_inputBuffer)
     {
         delete m_inputBuffer;
@@ -118,23 +102,19 @@ void fakeMicrophone::run()
         return;
     }
 
-    // Just acquire raw data and put them in the buffer
-    auto p = m_audioFile.getInterleavedAudioRawData();
-    size_t fsize_in_samples = m_audioFile.getSamples();
-//     size_t bps = m_audioFile.getBytesPerSample();
-
+    //fill the buffer with a sine tone
     //each iteration, which occurs every xxx ms, I copy a bunch of samples in the buffer.
-    //When the pointer reaches the end of the sound (audioFile), just restart from the beginning in an endless loop
     for (size_t i = 0; i < SAMPLES_TO_BE_COPIED; i++)
     {
-        if (m_bpnt >= fsize_in_samples)
-        {
-            m_bpnt = 0;
-        }
-        m_inputBuffer->write((unsigned short)(p.at(m_bpnt).get()));
-        m_bpnt++;
+        //this sine waveform has amplitude (-32000,32000)
+        // on the left  channel it has frequency 440Hz (A4 note)
+        // on the right channel it has frequency 220Hz (A3 note)
+        double wt1 = double(t) / double (m_cfg_frequency) * 440.0 * 2 * M_PI;
+        unsigned short elem1 = double(32000 * sin(wt1));
+        double wt2 = double(t) / double(m_cfg_frequency) * 220.0 * 2 * M_PI;
+        unsigned short elem2 = double(32000 * sin(wt2));
+        m_inputBuffer->write(elem1); //chan1
+        m_inputBuffer->write(elem2); //chan2
+        t++;
     }
-#ifdef ADVANCED_DEBUG
-    yCDebug(FAKEMICROPHONE) << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
-#endif
 }

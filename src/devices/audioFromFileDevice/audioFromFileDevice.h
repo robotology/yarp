@@ -16,25 +16,24 @@
 #include <string>
 #include <mutex>
 
-#define DEFAULT_PERIOD 0.01   //s
-
 /**
-* @ingroup dev_impl_fake dev_impl_media
+* @ingroup dev_impl_media
 *
-* \brief `fakeMicrophone` : fake device implementing the IAudioGrabberSound device interface to play sound
+* \brief `audioToFileDevice` : This device driver, wrapped by default by AudioRecorderWrapper,
+* is used to read data from a file and stream it to the network.
 */
-class fakeMicrophone :
+class audioFromFileDevice :
         public yarp::dev::DeviceDriver,
         public yarp::dev::AudioRecorderDeviceBase,
         public yarp::os::PeriodicThread
 {
 public:
-    fakeMicrophone();
-    fakeMicrophone(const fakeMicrophone&) = delete;
-    fakeMicrophone(fakeMicrophone&&) = delete;
-    fakeMicrophone& operator=(const fakeMicrophone&) = delete;
-    fakeMicrophone& operator=(fakeMicrophone&&) = delete;
-    ~fakeMicrophone() override;
+    audioFromFileDevice();
+    audioFromFileDevice(const audioFromFileDevice&) = delete;
+    audioFromFileDevice(audioFromFileDevice&&) = delete;
+    audioFromFileDevice& operator=(const audioFromFileDevice&) = delete;
+    audioFromFileDevice& operator=(audioFromFileDevice&&) = delete;
+    ~audioFromFileDevice() override;
 
     // Device Driver interface
     bool open(yarp::os::Searchable &config) override;
@@ -46,6 +45,7 @@ private:
     void run() override;
 
 private:
-    double t=0;
-    double start_time = yarp::os::Time::now();
+    yarp::sig::Sound m_audioFile;
+    std::string m_audio_filename;
+    size_t m_bpnt;
 };
