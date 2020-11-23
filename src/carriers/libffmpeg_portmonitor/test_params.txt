@@ -21,3 +21,4 @@ codecContext->flags2 |= AV_CODEC_FLAG2_FAST;
 
 av_opt_set(codecContext->priv_data, "preset", "ultrafast", 0);
 av_opt_set(codecContext->priv_data, "tune", "zerolatency", 0);
+av_opt_set(codecContext, "cabac", "0", 0);
