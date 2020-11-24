@@ -19,7 +19,6 @@
 #include <yarp/os/PortReport.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/Semaphore.h>
 #include <yarp/os/Type.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -524,9 +523,8 @@ private:
     std::vector<PortCoreUnit *> m_units;  ///< list of connections
     std::mutex m_stateMutex;
     std::condition_variable m_stateCv;
-
     std::mutex m_packetMutex;      ///< control access to message cache
-    yarp::os::Semaphore m_connectionChangeSemaphore {1}; ///< signal changes in connections
+    std::condition_variable m_connectionChangeCv; ///< signal changes in connections
     Face* m_face {nullptr};  ///< network server
     std::string m_name; ///< name of port
     yarp::os::Contact m_address;    ///< network address of port

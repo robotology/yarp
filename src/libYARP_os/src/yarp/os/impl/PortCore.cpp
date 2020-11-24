@@ -249,29 +249,17 @@ void PortCore::run()
         reapUnits();
 
         // Notify anyone listening for connection changes.
-        // This should be using a condition variable once we have them,
-        // this is not solid TODO
-        {
-            // Critical section
-            std::lock_guard<std::mutex> lock(m_stateMutex);
-            for (int i = 0; i < m_connectionListeners; i++) {
-                m_connectionChangeSemaphore.post();
-            }
-            m_connectionListeners = 0;
-        }
+        std::lock_guard<std::mutex> lock(m_stateMutex);
+        m_connectionListeners = 0;
+        m_connectionChangeCv.notify_all();
     }
 
     yCTrace(PORTCORE, "run closing");
 
     // The server thread is shutting down.
-    {
-        // Critical section
-        std::lock_guard<std::mutex> lock(m_stateMutex);
-        for (int i = 0; i < m_connectionListeners; i++) {
-            m_connectionChangeSemaphore.post();
-        }
-        m_connectionListeners = 0;
-    }
+    std::lock_guard<std::mutex> lock(m_stateMutex);
+    m_connectionListeners = 0;
+    m_connectionChangeCv.notify_all();
     m_finished.store(true);
 }
 
@@ -840,25 +828,14 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool* except)
             if (synch) {
                 // Wait for connections to be cleaned up.
                 yCDebug(PORTCORE, "synchronizing with connection death");
-                bool cont = false;
-                do {
-                    {
-                        // Critical section
-                        std::lock_guard<std::mutex> lock(m_stateMutex);
-                        for (int removal : removals) {
-                            cont = isUnit(route, removal);
-                            if (cont) {
-                                break;
-                            }
-                        }
-                        if (cont) {
-                            m_connectionListeners++;
-                        }
+                {
+                    // Critical section
+                    std::unique_lock<std::mutex> lock(m_stateMutex);
+                    while (std::any_of(removals.begin(), removals.end(), [&](int removal){ return isUnit(route, removal); })) {
+                        m_connectionListeners++;
+                        m_connectionChangeCv.wait(lock, [&]{ return m_connectionListeners == 0; });
                     }
-                    if (cont) {
-                        m_connectionChangeSemaphore.wait();
-                    }
-                } while (cont);
+                }
             }
         }
     }
