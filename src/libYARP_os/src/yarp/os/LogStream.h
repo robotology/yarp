@@ -24,12 +24,6 @@
 #include <string>
 #include <vector>
 
-
-namespace std {
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& t);
-}
-
 namespace yarp {
 namespace os {
 
@@ -232,21 +226,5 @@ public:
 
 } // namespace os
 } // namespace yarp
-
-
-template <typename T>
-inline std::ostream& std::operator<<(std::ostream& os, const std::vector<T>& t)
-{
-    os << '[';
-    for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); ++it) {
-        const T& p = *it;
-        if (it != t.begin()) {
-            os << ", ";
-        }
-        os << p;
-    }
-    os << ']';
-    return os;
-}
 
 #endif // YARP_OS_LOGSTREAM_H

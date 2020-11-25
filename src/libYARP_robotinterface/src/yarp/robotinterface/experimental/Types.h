@@ -15,6 +15,7 @@
 #include <list>
 #include <string>
 #include <vector>
+#include <ostream>
 
 namespace yarp {
 
@@ -25,6 +26,9 @@ class LogStream;
 
 namespace robotinterface {
 namespace experimental {
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& t);
 
 class Param;
 class Action;
@@ -83,5 +87,20 @@ YARP_robotinterface_API void operator>>(const std::stringstream& sstream, roboti
 } // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
+
+template <typename T>
+inline std::ostream& yarp::robotinterface::experimental::operator<<(std::ostream& os, const std::vector<T>& t)
+{
+    os << '[';
+    for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); ++it) {
+        const T& p = *it;
+        if (it != t.begin()) {
+            os << ", ";
+        }
+        os << p;
+    }
+    os << ']';
+    return os;
+}
 
 #endif // YARP_ROBOTINTERFACE_TYPES_H
