@@ -251,7 +251,7 @@ struct DataRGBA
         YARP_UNUSED(width);
         std::string ret = "";
         char tmp[128];
-        snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
+        snprintf(tmp, 128, "%d %d %d %d\t", r, g, b, a);
         ret += tmp;
         return ret;
     }
@@ -524,7 +524,7 @@ struct DataXYZRGBA
                                                            width, precision, z);
             ret += tmp;
         }
-        snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
+        snprintf(tmp, 128, "%d %d %d %d\t", r, g, b, a);
         ret += tmp;
         return ret;
     }
@@ -864,7 +864,7 @@ struct DataXYZNormalRGBA
                                                                    width, precision, curvature);
             ret += tmp;
         }
-        snprintf(tmp, 128, "%c %c %c %c\t", r, g, b, a);
+        snprintf(tmp, 128, "%d %d %d %d\t", r, g, b, a);
         ret += tmp;
         return ret;
     }
