@@ -35,7 +35,6 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     // Check if this is sender or not
     senderSide = (options.find("sender_side").asBool());
 
-
     // Parse command line parameters and set them into global variable "paramsMap"
     std::string str = options.find("carrier").asString();
     getParamsFromCommandLine(str);
@@ -219,7 +218,8 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             packet->buf = av_buffer_create((uint8_t *) compressedBottle->get(8).asBlob(),
                                             compressedBottle->get(7).asInt32(), av_buffer_default_free,
                                             nullptr, AV_BUFFER_FLAG_READONLY);
-                        
+            
+            // Packet side data
             for (int i = 0; i < tmp->side_data_elems; i++) {
 
                 int ret = av_packet_add_side_data(packet,
