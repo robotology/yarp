@@ -78,12 +78,12 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
     }
 
     //sets the audio configuration equal to the audio file
-    m_cfg_numSamples = m_audioFile.getSamples();
-    m_cfg_numChannels = m_audioFile.getChannels();
-    m_cfg_frequency = m_audioFile.getFrequency();
-    m_cfg_bytesPerSample = m_audioFile.getBytesPerSample();
+    m_audiorecorder_cfg.numSamples = m_audioFile.getSamples();
+    m_audiorecorder_cfg.numChannels = m_audioFile.getChannels();
+    m_audiorecorder_cfg.frequency = m_audioFile.getFrequency();
+    m_audiorecorder_cfg.bytesPerSample = m_audioFile.getBytesPerSample();
     const size_t EXTRA_SPACE = 2;
-    AudioBufferSize buffer_size(m_cfg_numSamples*EXTRA_SPACE, m_cfg_numChannels, m_cfg_bytesPerSample);
+    AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples*EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
     m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
 
     //start the capture thread

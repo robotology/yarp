@@ -59,10 +59,10 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
         yCError(AUDIORECORDER_BASE) << "max_number_of_samples must be greater than min_number_of_samples!";
         return false;
     }
-    if (max_number_of_samples > this->m_cfg_numSamples)
+    if (max_number_of_samples > this->m_audiorecorder_cfg.numSamples)
     {
-        yCWarning(AUDIORECORDER_BASE) << "max_number_of_samples bigger than the internal audio buffer! It will be truncated to:" << this->m_cfg_numSamples;
-        max_number_of_samples = this->m_cfg_numSamples;
+        yCWarning(AUDIORECORDER_BASE) << "max_number_of_samples bigger than the internal audio buffer! It will be truncated to:" << this->m_audiorecorder_cfg.numSamples;
+        max_number_of_samples = this->m_audiorecorder_cfg.numSamples;
     }
 
     //wait until the desired number of samples are obtained
@@ -88,18 +88,18 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
     //prepare the sound data struct
     size_t samples_to_be_copied = buff_size;
     if (samples_to_be_copied > max_number_of_samples) samples_to_be_copied = max_number_of_samples;
-    if (sound.getChannels() != this->m_cfg_numChannels && sound.getSamples() != samples_to_be_copied)
+    if (sound.getChannels() != this->m_audiorecorder_cfg.numChannels && sound.getSamples() != samples_to_be_copied)
     {
-        sound.resize(samples_to_be_copied, this->m_cfg_numChannels);
+        sound.resize(samples_to_be_copied, this->m_audiorecorder_cfg.numChannels);
     }
-    sound.setFrequency(this->m_cfg_frequency);
+    sound.setFrequency(this->m_audiorecorder_cfg.frequency);
 
     //fill the sound data struct, reading samples from the circular buffer
 #ifdef DEBUG_TIME_SPENT
     double ct1 = yarp::os::Time::now();
 #endif
     for (size_t i = 0; i < samples_to_be_copied; i++)
-        for (size_t j = 0; j < this->m_cfg_numChannels; j++)
+        for (size_t j = 0; j < this->m_audiorecorder_cfg.numChannels; j++)
         {
             int16_t s = (int16_t)(m_inputBuffer->read());
             sound.set(s, i, j);

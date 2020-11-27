@@ -146,26 +146,19 @@ PortAudioRecorderDeviceDriver::~PortAudioRecorderDeviceDriver()
 
 bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
 {
-    m_driverConfig.cfg_rate = config.check("rate",Value(0),"audio sample rate (0=automatic)").asInt32();
-    m_driverConfig.cfg_samples = config.check("samples",Value(0),"number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
-    m_driverConfig.cfg_recChannels = config.check("channels", Value(0), "number of audio channels (0=automatic, max is 2)").asInt32();
-    m_driverConfig.cfg_deviceNumber = config.check("id",Value(-1),"which portaudio index to use (-1=automatic)").asInt32();
+    m_audiorecorder_cfg.frequency = config.check("rate",Value(0),"audio sample rate (0=automatic)").asInt32();
+    m_audiorecorder_cfg.numSamples = config.check("samples",Value(0),"number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
+    m_audiorecorder_cfg.numChannels = config.check("channels", Value(0), "number of audio channels (0=automatic, max is 2)").asInt32();
+    m_device_id = config.check("id",Value(-1),"which portaudio index to use (-1=automatic)").asInt32();
 
-    return open(m_driverConfig);
-}
+    if (m_audiorecorder_cfg.numChannels == 0)  m_audiorecorder_cfg.numChannels = DEFAULT_NUM_CHANNELS;
 
-bool PortAudioRecorderDeviceDriver::open(PortAudioRecorderDeviceDriverSettings& config)
-{
-    m_config = config;
+    if (m_audiorecorder_cfg.frequency == 0)  m_audiorecorder_cfg.frequency = DEFAULT_SAMPLE_RATE;
 
-    if (m_config.cfg_recChannels == 0)  m_config.cfg_recChannels = DEFAULT_NUM_CHANNELS;
-
-    if (m_config.cfg_rate == 0)  m_config.cfg_rate = DEFAULT_SAMPLE_RATE;
-
-    if (m_config.cfg_samples == 0) m_config.cfg_samples = m_config.cfg_rate; //  by default let's use chunks of 1 second
+    if (m_audiorecorder_cfg.numSamples == 0) m_audiorecorder_cfg.numSamples = m_audiorecorder_cfg.frequency; //  by default let's use chunks of 1 second
 
 //     size_t debug_numRecBytes = m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_recChannels;
-    AudioBufferSize rec_buffer_size (m_config.cfg_samples, m_config.cfg_recChannels, sizeof(SAMPLE));
+    AudioBufferSize rec_buffer_size (m_audiorecorder_cfg.numSamples, m_audiorecorder_cfg.numChannels, sizeof(SAMPLE));
     if (m_inputBuffer ==nullptr)
         m_inputBuffer = new CircularAudioBuffer_16t("portatudio_rec", rec_buffer_size);
 
@@ -176,9 +169,9 @@ bool PortAudioRecorderDeviceDriver::open(PortAudioRecorderDeviceDriverSettings& 
         return false;
     }
 
-    m_inputParameters.device = (config.cfg_deviceNumber ==-1)?Pa_GetDefaultInputDevice(): config.cfg_deviceNumber;
+    m_inputParameters.device = (m_device_id ==-1)?Pa_GetDefaultInputDevice(): m_device_id;
     yCInfo(PORTAUDIORECORDER, "Device number %d", m_inputParameters.device);
-    m_inputParameters.channelCount = (int) m_config.cfg_recChannels;
+    m_inputParameters.channelCount = (int)m_audiorecorder_cfg.numChannels;
     m_inputParameters.sampleFormat = PA_SAMPLE_TYPE;
     if ((Pa_GetDeviceInfo(m_inputParameters.device ))!=nullptr) {
         m_inputParameters.suggestedLatency = Pa_GetDeviceInfo(m_inputParameters.device )->defaultLowInputLatency;
@@ -189,7 +182,7 @@ bool PortAudioRecorderDeviceDriver::open(PortAudioRecorderDeviceDriverSettings& 
               &m_stream,
               &m_inputParameters,
               nullptr,
-              m_config.cfg_rate,
+              m_audiorecorder_cfg.frequency,
               DEFAULT_FRAMES_PER_BUFFER,
               paClipOff,
               bufferIOCallback,

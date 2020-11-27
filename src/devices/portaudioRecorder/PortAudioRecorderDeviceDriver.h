@@ -34,15 +34,6 @@
 //#define DEFAULT_FRAMES_PER_BUFFER (1024)
 
 
-class PortAudioRecorderDeviceDriverSettings
-{
-public:
-    size_t cfg_rate = 0;
-    size_t cfg_samples = 0;
-    size_t cfg_recChannels = 0;
-    int cfg_deviceNumber = 0;
-};
-
 /**
  * @ingroup dev_impl_media
  *
@@ -60,7 +51,6 @@ private:
     PaStreamParameters  m_inputParameters;
     PaStream*           m_stream;
     PaError             m_err;
-    PortAudioRecorderDeviceDriverSettings m_config;
 
 public:
     PortAudioRecorderDeviceDriver();
@@ -73,7 +63,6 @@ public:
 
     public:
     bool open(yarp::os::Searchable& config) override;
-    bool open(PortAudioRecorderDeviceDriverSettings& config);
     bool close() override;
 
     public:
@@ -87,8 +76,7 @@ public:
 
 protected:
     void*   m_system_resource;
-
-    PortAudioRecorderDeviceDriverSettings m_driverConfig;
+    int  m_device_id;
     void handleError();
 };
 

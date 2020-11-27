@@ -21,6 +21,15 @@ namespace yarp {
 namespace dev {
 
 
+class AudioDeviceDriverSettings
+{
+    public:
+    size_t numSamples = 0;
+    size_t numChannels = 0;
+    size_t frequency = 0;
+    size_t bytesPerSample = 0;
+};
+
 class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSound
 {
     protected:
@@ -29,10 +38,7 @@ class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSoun
     yarp::dev::CircularAudioBuffer_16t* m_inputBuffer = nullptr;
 
     protected:
-    size_t m_cfg_numSamples = 0;
-    size_t m_cfg_numChannels = 0;
-    size_t m_cfg_frequency = 0;
-    size_t m_cfg_bytesPerSample =0;
+    AudioDeviceDriverSettings m_audiorecorder_cfg;
 
     public:
     virtual bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;

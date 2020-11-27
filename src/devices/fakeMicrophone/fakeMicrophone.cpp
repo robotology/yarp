@@ -60,12 +60,12 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
         yCInfo(FAKEMICROPHONE) << "Using default period of " << DEFAULT_PERIOD << " s";
     }
 
-    m_cfg_numSamples = 44100*5; //5sec
-    m_cfg_numChannels = 2; //stereo
-    m_cfg_frequency = 44100; //hz
-    m_cfg_bytesPerSample = 2; //16bit
+    m_audiorecorder_cfg.numSamples = 44100*5; //5sec
+    m_audiorecorder_cfg.numChannels = 2; //stereo
+    m_audiorecorder_cfg.frequency = 44100; //hz
+    m_audiorecorder_cfg.bytesPerSample = 2; //16bit
     const size_t EXTRA_SPACE = 2;
-    AudioBufferSize buffer_size(m_cfg_numSamples*EXTRA_SPACE, m_cfg_numChannels, m_cfg_bytesPerSample);
+    AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples*EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
     m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
 
     //start the capture thread
@@ -109,9 +109,9 @@ void fakeMicrophone::run()
         //this sine waveform has amplitude (-32000,32000)
         // on the left  channel it has frequency 440Hz (A4 note)
         // on the right channel it has frequency 220Hz (A3 note)
-        double wt1 = double(t) / double (m_cfg_frequency) * 440.0 * 2 * M_PI;
+        double wt1 = double(t) / double (m_audiorecorder_cfg.frequency) * 440.0 * 2 * M_PI;
         unsigned short elem1 = double(32000 * sin(wt1));
-        double wt2 = double(t) / double(m_cfg_frequency) * 220.0 * 2 * M_PI;
+        double wt2 = double(t) / double(m_audiorecorder_cfg.frequency) * 220.0 * 2 * M_PI;
         unsigned short elem2 = double(32000 * sin(wt2));
         m_inputBuffer->write(elem1); //chan1
         m_inputBuffer->write(elem2); //chan2
