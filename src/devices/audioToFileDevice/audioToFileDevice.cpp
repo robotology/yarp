@@ -43,12 +43,12 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
     if (config.check("file_name"))
     {
         m_audio_filename=config.find("file_name").asString();
-        yCInfo(AUDIOTOFILE) << "Audio will be save on exit to file:" << m_audio_filename;
+        yCInfo(AUDIOTOFILE) << "Audio will be saved on exit to file:" << m_audio_filename;
         return true;
     }
     else
     {
-        yCInfo(AUDIOTOFILE) << "No `file_name` option specified. Audio will be save on exit to default file:" << m_audio_filename;
+        yCInfo(AUDIOTOFILE) << "No `file_name` option specified. Audio will be saved on exit to default file:" << m_audio_filename;
     }
 
     if      (config.find("save_mode").toString() == "overwrite_file") { m_save_mode = save_mode_t::save_overwrite_file;}

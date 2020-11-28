@@ -14,11 +14,11 @@ if(NOT SKIP_audioToFileDevice)
   yarp_add_plugin(yarp_audioToFileDevice)
 
   target_sources(yarp_audioToFileDevice PRIVATE audioToFileDevice.cpp
-                                                  audioToFileDevice.h)
+                                                audioToFileDevice.h)
 
   target_link_libraries(yarp_audioToFileDevice PRIVATE YARP::YARP_os
-                                                         YARP::YARP_sig
-                                                         YARP::YARP_dev)
+                                                       YARP::YARP_sig
+                                                       YARP::YARP_dev)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)

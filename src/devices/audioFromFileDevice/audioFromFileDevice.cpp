@@ -66,7 +66,7 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
     }
     else
     {
-        yCInfo(AUDIOFROMFILE) << "No `file_name` option specified. Audio will loaded from default file:" << m_audio_filename;
+        yCInfo(AUDIOFROMFILE) << "No `file_name` option specified. Audio will be loaded from default file:" << m_audio_filename;
     }
 
     //opens the file
