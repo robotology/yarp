@@ -32,15 +32,14 @@ class AudioDeviceDriverSettings
 
 class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSound
 {
-    protected:
+protected:
     bool m_isRecording = false;
     std::mutex  m_mutex;
     yarp::dev::CircularAudioBuffer_16t* m_inputBuffer = nullptr;
 
-    protected:
     AudioDeviceDriverSettings m_audiorecorder_cfg;
 
-    public:
+public:
     virtual bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
     virtual bool startRecording() override;
     virtual bool stopRecording() override;
@@ -48,11 +47,10 @@ class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSoun
     virtual bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
     virtual bool resetRecordingAudioBuffer() override;
 
-    public:
     virtual ~AudioRecorderDeviceBase();
 };
 
-} // dev
-} // yarp
+} // namespace dev
+} // namespace yarp
 
 #endif
