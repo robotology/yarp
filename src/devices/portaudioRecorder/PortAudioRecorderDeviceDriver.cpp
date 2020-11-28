@@ -51,6 +51,10 @@ typedef unsigned char SAMPLE;
 #define SAMPLE_UNSIGNED
 #endif
 
+#define DEFAULT_SAMPLE_RATE  (44100)
+#define DEFAULT_NUM_CHANNELS    (2)
+#define DEFAULT_DITHER_FLAG     (0)
+#define DEFAULT_FRAMES_PER_BUFFER (512)
 
 namespace {
 YARP_LOG_COMPONENT(PORTAUDIORECORDER, "yarp.devices.portaudioRecorder")
@@ -150,12 +154,12 @@ bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
     m_audiorecorder_cfg.numSamples = config.check("samples",Value(0),"number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
     m_audiorecorder_cfg.numChannels = config.check("channels", Value(0), "number of audio channels (0=automatic, max is 2)").asInt32();
     m_device_id = config.check("id",Value(-1),"which portaudio index to use (-1=automatic)").asInt32();
-
-    if (m_audiorecorder_cfg.numChannels == 0)  m_audiorecorder_cfg.numChannels = DEFAULT_NUM_CHANNELS;
+    int driver_frame_size = config.check("driver_frame_size", Value(0), "" ).asInt32();
 
     if (m_audiorecorder_cfg.frequency == 0)  m_audiorecorder_cfg.frequency = DEFAULT_SAMPLE_RATE;
-
+    if (m_audiorecorder_cfg.numChannels == 0)  m_audiorecorder_cfg.numChannels = DEFAULT_NUM_CHANNELS;
     if (m_audiorecorder_cfg.numSamples == 0) m_audiorecorder_cfg.numSamples = m_audiorecorder_cfg.frequency; //  by default let's use chunks of 1 second
+    if (driver_frame_size == 0)  driver_frame_size = DEFAULT_FRAMES_PER_BUFFER;
 
 //     size_t debug_numRecBytes = m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_recChannels;
     AudioBufferSize rec_buffer_size (m_audiorecorder_cfg.numSamples, m_audiorecorder_cfg.numChannels, sizeof(SAMPLE));
@@ -183,7 +187,7 @@ bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
               &m_inputParameters,
               nullptr,
               m_audiorecorder_cfg.frequency,
-              DEFAULT_FRAMES_PER_BUFFER,
+              driver_frame_size,
               paClipOff,
               bufferIOCallback,
               m_inputBuffer);
@@ -201,19 +205,6 @@ bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
 
     return (m_err==paNoError);
 }
-
-/*
-void recStreamThread::handleError(const PaError& err)
-{
-    Pa_Terminate();
-    if( err != paNoError )
-    {
-        yCError(PORTAUDIORECORDER, "An error occurred while using the portaudio stream" );
-        yCError(PORTAUDIORECORDER, "Error number: %d", err );
-        yCError(PORTAUDIORECORDER, "Error message: %s", Pa_GetErrorText( err ) );
-    }
-}
-*/
 
 void PortAudioRecorderDeviceDriver::handleError()
 {
@@ -268,86 +259,6 @@ bool PortAudioRecorderDeviceDriver::stopRecording()
     yCInfo(PORTAUDIORECORDER) << "PortAudioRecorderDeviceDriver stopped recording";
     return true;
 }
-
-#if 0
-bool PortAudioRecorderDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
-{
-    //check for something_to_record
-    {
-    #ifdef AUTOMATIC_REC_START
-        if (m_isRecording == false)
-        {
-            this->startRecording();
-        }
-    #else
-        double debug_time = yarp::os::Time::now();
-        while (m_isRecording == false)
-        {
-            if (yarp::os::Time::now() - debug_time > 5.0)
-            {
-                yCInfo(PORTAUDIORECORDER) << "getSound() is currently waiting. Use ::startRecording() to start the audio stream";
-                debug_time = yarp::os::Time::now();
-            }
-            yarp::os::SystemClock::delaySystem(SLEEP_TIME);
-        }
-    #endif
-    }
-
-    //prevents simultaneous start/stop/reset etc.
-    //std::lock_guard<std::mutex> lock(m_mutex);  //This must be used carefully
-
-    //check on input parameters
-    if (max_number_of_samples < min_number_of_samples)
-    {
-        yCError(PORTAUDIORECORDER) << "max_number_of_samples must be greater than min_number_of_samples!";
-        return false;
-    }
-    if (max_number_of_samples > this->m_config.cfg_samples)
-    {
-        yCWarning(PORTAUDIORECORDER) << "max_number_of_samples bigger than the internal audio buffer! It will be truncated to:" << this->m_config.cfg_samples;
-        max_number_of_samples = this->m_config.cfg_samples;
-    }
-
-    //wait until the desired number of samples are obtained
-    size_t buff_size = 0;
-    double start_time = yarp::os::Time::now();
-    double debug_time = yarp::os::Time::now();
-    do
-    {
-         buff_size = m_recDataBuffer->size().getSamples();
-         if (buff_size >= max_number_of_samples) { break; }
-         if (buff_size >= min_number_of_samples && yarp::os::Time::now() - start_time > max_samples_timeout_s) { break; }
-         if (m_isRecording == false) { break; }
-
-         if (yarp::os::Time::now() - debug_time > 1.0)
-         {
-             debug_time = yarp::os::Time::now();
-             yCDebug(PORTAUDIORECORDER) << "PortAudioRecorderDeviceDriver::getSound() Buffer size is " << buff_size << "/" << max_number_of_samples << " after 1s";
-         }
-
-         yarp::os::SystemClock::delaySystem(SLEEP_TIME);
-    }
-    while (true);
-
-    //prepare the sound data struct
-    size_t samples_to_be_copied = buff_size;
-    if (samples_to_be_copied > max_number_of_samples) samples_to_be_copied = max_number_of_samples;
-    if (sound.getChannels()!=this->m_config.cfg_recChannels && sound.getSamples() != samples_to_be_copied)
-    {
-        sound.resize(samples_to_be_copied, this->m_config.cfg_recChannels);
-    }
-    sound.setFrequency(this->m_config.cfg_rate);
-
-    //fill the sound data struct, reading samples from the circular buffer
-    for (size_t i=0; i< samples_to_be_copied; i++)
-        for (size_t j=0; j<this->m_config.cfg_recChannels; j++)
-            {
-                SAMPLE s = m_recDataBuffer->read();
-                sound.set(s,i,j);
-            }
-    return true;
-}
-#endif
 
 void PortAudioRecorderDeviceDriver::threadRelease()
 {

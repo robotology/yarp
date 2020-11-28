@@ -27,20 +27,22 @@
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <portaudio.h>
 
-#define DEFAULT_SAMPLE_RATE  (44100)
-#define DEFAULT_NUM_CHANNELS    (2)
-#define DEFAULT_DITHER_FLAG     (0)
-#define DEFAULT_FRAMES_PER_BUFFER (512)
-//#define DEFAULT_FRAMES_PER_BUFFER (1024)
-
-
 /**
- * @ingroup dev_impl_media
- *
- * \brief `portaudioRecorder`: A portable audio source, see yarp::dev::PortAudioRecorderDeviceDriver.
- *
- * Requires the PortAudio library (http://www.portaudio.com), at least v19.
- * Documentation to be added
+* @ingroup dev_impl_media
+*
+* \brief `portaudioRecorder`: A device driver for an audio source wrapped by PortAudio library.
+* Requires the PortAudio library (http://www.portaudio.com), at least v19.
+* Only 16bits sample format is currently supported by this device.
+*
+* Parameters used by this device are:
+* | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | rate           |      -         | int     | Hz             |  44100                   | No                          | bitrate / sampling frequency                                      |       |
+* | samples        |      -         | int     | samples        |  44100                   | No                          | The size of the internal circular buffer                          | By default this value is equal to the sampling rate, so the buffer size is one second |
+* | channels       |      -         | int     | -              |  2                       | No                          | Number of channels (e.g. 1=mono, 2 =stereo etc                    |       |
+* | sample_format  |      -         | int     | bits           |  16 cannot be modified   | Not yet implemented         | Not yet implemented                                               |  Not yet implemented   |
+* | driver_frame_size   |     -     | int     | samples        |  512                     | No                          | Number of samples grabbed by the device in a single uninterruptible operation |  It is recommended to NOT CHANGE this value from its default=512  |
+* | id             |      -         | int     | -              |  -1                      | No                          | Id of the sound card.                                             | if == -1, portaudio will choose automatically  |
  */
 class PortAudioRecorderDeviceDriver :
         public yarp::dev::AudioRecorderDeviceBase,
