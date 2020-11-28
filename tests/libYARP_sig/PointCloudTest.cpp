@@ -950,6 +950,22 @@ TEST_CASE("sig::PointCloudTest", "[yarp::sig]")
         CHECK(pcCol.height() == depth.height()); // Checking PC height
     }
 
+    SECTION("Testing depthToPC with ROI")
+    {
+        ImageOf<PixelFloat> depth;
+        size_t width{320};
+        size_t height{240};
+        depth.resize(width, height);
+        IntrinsicParams intp;
+        utils::PCL_ROI roi {100, 300, 150, 200}; // {min_x, max_x, min_y, max_y}
+        size_t step_x = 2; // (300 - 100) / 2 = 100 pixels wide
+        size_t step_y = 5; // (200 - 150) / 5 = 10 pixels high
+
+        auto pc = utils::depthToPC(depth, intp, roi, step_x, step_y);
+        CHECK(pc.width() == (roi.max_x - roi.min_x) / step_x); // Checking PC width
+        CHECK(pc.height() == (roi.max_y - roi.min_y) / step_y); // Checking PC height
+    }
+
     SECTION("Testing move semantics")
     {
         INFO("Testing the copy constructor with PC of the same type");
