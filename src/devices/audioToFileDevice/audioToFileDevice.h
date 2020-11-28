@@ -19,7 +19,23 @@
 * @ingroup dev_impl_media
 *
 * \brief `audioToFileDevice` : This device driver, wrapped by default by AudioPlayerWrapper,
-* is used to save to a file an audio stream. Use the option --file_name to set the output file name
+* is used to save to a file an audio stream.
+*
+* Three different operating modes are available, defined by the optional string parameter `save_mode`:
+* if save_mode == "append_data", the file is written only when the module terminates.
+* Every start/stop operation just pauses the module. On resume, the new data is concatenated at the end of the file.
+*
+* if save_mode == "overwrite_file", the output file is written every time the stop() method is called or when the module terminates.
+* If the file already exists, it will be overwritten with the new data.
+*
+* if save_mode = "rename_file", the output file is written every time the stop() method is called or when the module terminates.
+* The file name is modified, using an incremental counter appended at the end of the file name.
+*
+* Parameters required by this device are:
+* | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | file_name      |      -         | string  | -              |  audio_out.wav           | No                          | The name of the file written by the module                        | Only .wav files supported   |
+* | save_mode      |      -         | string  | -              |  overwrite_file          | No                          | Affects the behavior of the module and defines the save mode, as described in the documentation.   |       |
 */
 
 class audioToFileDevice :
@@ -52,4 +68,13 @@ private:
     std::mutex       m_mutex;
     bool             m_playback_running = false;
     std::deque<yarp::sig::Sound> m_sounds;
+    enum save_mode_t
+    {
+        save_overwrite_file = 0,
+        save_append_data =1,
+        save_rename_file =2
+    } m_save_mode = save_overwrite_file;
+    size_t m_filename_counter = 0;
+
+    void save_to_file();
 };

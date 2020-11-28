@@ -29,7 +29,7 @@ YARP_LOG_COMPONENT(AUDIOTOFILE, "yarp.device.audioToFileDevice")
 typedef unsigned short int audio_sample_16t;
 
 audioToFileDevice::audioToFileDevice() :
-        m_audio_filename("audio_out.wav")
+        m_audio_filename("audio_out")
 {
 }
 
@@ -50,29 +50,53 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
     {
         yCInfo(AUDIOTOFILE) << "No `file_name` option specified. Audio will be save on exit to default file:" << m_audio_filename;
     }
+
+    if      (config.find("save_mode").toString() == "overwrite_file") { m_save_mode = save_mode_t::save_overwrite_file;}
+    else if (config.find("save_mode").toString() == "append_data")    { m_save_mode = save_mode_t::save_append_data; }
+    else if (config.find("save_mode").toString() == "rename_file")    { m_save_mode = save_mode_t::save_rename_file; }
+    else if (config.check("save_mode")) {yError() << "Unsupported value for save_mode parameter"; return false;}
+
+    if      (m_save_mode == save_mode_t::save_overwrite_file) { yCInfo(AUDIOTOFILE) << "overwrite_file mode selected. File will be saved both on exit and on stop"; }
+    else if (m_save_mode == save_mode_t::save_append_data)    { yCInfo(AUDIOTOFILE) << "append_data mode selected. File will be saved on exit only"; }
+    else if (m_save_mode == save_mode_t::save_rename_file)    { yCInfo(AUDIOTOFILE) << "rename_file mode selected. File will be saved both on exit and on stop"; }
+
     return true;
 }
 
-bool audioToFileDevice::close()
+void audioToFileDevice::save_to_file()
 {
-    if (m_sounds.size() == 0) { return true; }
+    //of the buffer is empty, there is nothing to save
+    if (m_sounds.size() == 0) return;
 
     //we need to set the number of channels and the frequency before calling the
     //concatenation operator
     m_audioFile.setFrequency(m_sounds.front().getFrequency());
-    m_audioFile.resize(0,m_sounds.front().getChannels());
+    m_audioFile.resize(0, m_sounds.front().getChannels());
     while (!m_sounds.empty())
     {
         m_audioFile += m_sounds.front();
         m_sounds.pop_front();
     }
 
-    bool ok = yarp::sig::file::write(m_audioFile, m_audio_filename.c_str());
+    //remove the extension .wav from the filename
+    size_t lastindex = m_audio_filename.find(".wav");
+    std::string rawname = m_audio_filename.substr(0, lastindex);
+
+    if (m_save_mode == save_mode_t::save_rename_file)
+    {
+        rawname = rawname +std::to_string(m_filename_counter++);
+    }
+    rawname = rawname +".wav";
+    bool ok = yarp::sig::file::write(m_audioFile, rawname.c_str());
     if (ok)
     {
-        yCDebug(AUDIOTOFILE) <<"Wrote audio to:" << m_audio_filename;
+        yCDebug(AUDIOTOFILE) << "Wrote audio to:" << rawname;
     }
+}
 
+bool audioToFileDevice::close()
+{
+    save_to_file();
     return true;
 }
 
@@ -102,6 +126,10 @@ bool audioToFileDevice::startPlayback()
     std::lock_guard<std::mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "start";
     m_playback_running = true;
+    if (m_save_mode != save_mode_t::save_append_data)
+    {
+        m_sounds.clear();
+    }
     return true;
 }
 
@@ -110,6 +138,10 @@ bool audioToFileDevice::stopPlayback()
     std::lock_guard<std::mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "stop";
     m_playback_running = false;
+    if (m_save_mode != save_mode_t::save_append_data)
+    {
+        save_to_file();
+    }
     return true;
 }
 
