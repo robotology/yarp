@@ -1,4 +1,5 @@
 #include "ffmpegPortmonitor.h"
+#include "cl_params.h"
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/sig/all.h>
@@ -30,29 +31,28 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
                    nullptr)
 }
 
+
+void split(const std::string &s, char delim, vector<string> &elements) {
+    std::istringstream iss(s);
+    std::string item;
+    while (std::getline(iss, item, delim)) {
+        elements.push_back(item);
+    }
+}
+
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 {   
     // Check if this is sender or not
     senderSide = (options.find("sender_side").asBool());
 
-    // Parse command line parameters and set them into global variable "paramsMap"
-    std::string str = options.find("carrier").asString();
-    getParamsFromCommandLine(str);
-
-    // Set codec name if specified in command line params
+    // Set default codec
     AVCodecID codecId = AV_CODEC_ID_MPEG2VIDEO;
     codecName = "mpeg2video";
 
-    if (paramsMap["codec"] == "h264") {       
-        codecId = AV_CODEC_ID_H264;
-        codecName = "h264";
-    } else if (paramsMap["codec"] == "h265") {
-        codecId = AV_CODEC_ID_H265;
-        codecName = "h265";	
-    } else if (paramsMap["codec"] == "mpeg2video") {
-        codecId = AV_CODEC_ID_MPEG2VIDEO;
-        codecName = "mpeg2video";	
-    }
+    // Parse command line parameters and set them into global variable "paramsMap"
+    std::string str = options.find("carrier").asString();
+    if (getParamsFromCommandLine(str, codecId) == -1)
+        return false;
     
     // Find encoder/decoder
     if (senderSide) {
@@ -83,6 +83,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     if (setCommandLineParams() == -1)
         return false;
     
+
     // Pixel formats map
     pixelMap[VOCAB_PIXEL_RGB] = AV_PIX_FMT_RGB24;
     pixelMap[VOCAB_PIXEL_RGBA] = AV_PIX_FMT_RGBA;
@@ -496,104 +497,68 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
 
 }
 
-void FfmpegMonitorObject::getParamsFromCommandLine(string carrierString) {
+int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecID &codecId) {
     
-    string paramsList[] = { "codec",
-                            "qmin",
-                            "qmax",
-                            "bit_rate",
-                            "time_base",
-                            "gop_size",
-                            "max_b_frames",
-                            "framerate" };
-    
-    for (string paramKey : paramsList) {
-        int startPosition = carrierString.find(paramKey);
-        if (startPosition != -1) {
-            string paramValue = carrierString.substr(startPosition + paramKey.length() + 1);
-            
-            int endPosition = paramValue.find('+');
-            if (endPosition != -1) {
-                paramValue = paramValue.substr(0, endPosition);
-            }
-            if (paramValue != "") {
-                paramsMap.insert( pair<string, string>(paramKey, paramValue) );
-            }
+    vector<string> parameters;
+    split(carrierString, '+', parameters);
+    for (string param: parameters) {
+
+        if (find(FFMPEGPORTMONITOR_IGNORE_PARAMS.begin(), FFMPEGPORTMONITOR_IGNORE_PARAMS.end(), param) != FFMPEGPORTMONITOR_IGNORE_PARAMS.end()) {
+            continue;   // Skip yarp initial parameters
         }
+
+        int pointPosition = param.find('.');
+        if (pointPosition == string::npos) {
+            yCError(FFMPEGMONITOR, "Error parsing parameters!");
+            return -1;
+        }
+        string paramKey = param.substr(0, pointPosition);
+        string paramValue = param.substr(pointPosition + 1, param.length());
+        
+        // Parsing codec
+        if (paramKey == FFMPEGPORTMONITOR_CL_CODEC_KEY) {
+            bool found = false;
+            for (int i = 0; i < FFMPEGPORTMONITOR_CL_CODECS.size(); i++) {
+                if (paramValue == FFMPEGPORTMONITOR_CL_CODECS[i]) {
+                    codecId = (AVCodecID) FFMPEGPORTMONITOR_CODE_CODECS[i];
+                    codecName = paramValue;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                yCError(FFMPEGMONITOR, "Unrecognized codec: %s", paramValue.c_str());
+                return -1;
+            } else {
+                continue;
+            }
+            
+        }
+        
+        // Parsing codec context params
+        paramsMap.insert( pair<string, string>(paramKey, paramValue) );
     }
+
 }
 
 int FfmpegMonitorObject::setCommandLineParams() {
         
-    try {
-        // Qmin
-        if (paramsMap.find("qmin") != paramsMap.end()) {
-            codecContext->qmin = stoi(paramsMap["qmin"]);
+    for (auto const& x : paramsMap) {
 
-        } else {
-            if (codecName == "h264") {
-                codecContext->qmin = 18;
-            } else if (codecName == "h265") {
-                codecContext->qmin = 24;
-            } else if (codecName == "mpeg2video") {
-                codecContext->qmin = 3;
-            }
+        string key = x.first;
+        string value = x.second;
+
+        char *opt;
+
+        if (find(FFMPEGPORTMONITOR_PRIV_PARAMS.begin(), FFMPEGPORTMONITOR_PRIV_PARAMS.end(), key) != FFMPEGPORTMONITOR_PRIV_PARAMS.end()) {
+            av_opt_set(codecContext->priv_data, key.c_str(), value.c_str(), 0);
+            av_opt_get(codecContext->priv_data, key.c_str(), 0, (uint8_t **) &opt);
+            continue;
         }
 
-        // Qmax
-        if (paramsMap.find("qmax") != paramsMap.end()){
-            codecContext->qmax = stoi(paramsMap["qmax"]);
-
-        } else {
-            if (codecName == "h264") {
-                codecContext->qmax = 28;
-            } else if (codecName == "h265") {
-                codecContext->qmax = 34;
-            } else if (codecName == "mpeg2video") {
-                codecContext->qmax = 5;
-            }
-        }
-
-        // Bit rate
-        if (paramsMap.find("bit_rate") != paramsMap.end()) {
-            codecContext->bit_rate = stoi(paramsMap["bit_rate"]);
-
-        } else {
-            codecContext->bit_rate = 400000; 
-        }
-
-        // Gop size
-        if (paramsMap.find("gop_size") != paramsMap.end()) {
-            codecContext->gop_size = stoi(paramsMap["gop_size"]);
-
-        } else {
-            codecContext->gop_size = 10;
-        }
-
-        // Max b frames
-        if (paramsMap.find("max_b_frames") != paramsMap.end()) {
-            codecContext->max_b_frames = stoi(paramsMap["max_b_frames"]);
-
-        } else {
-            codecContext->max_b_frames = 1;
-        }
-
-        // Framerate & time_base
-        if (paramsMap.find("framerate") != paramsMap.end()) {
-            int framerate = stoi(paramsMap["framerate"]);
-            codecContext->framerate = (AVRational){ framerate , 1 };
-            codecContext->time_base = (AVRational){ 1 , framerate };
-
-        } else {
-            codecContext->time_base = (AVRational){1, 30};
-            codecContext->framerate = (AVRational){30, 1};
-        }        
-        return 0;
-
-    } catch (invalid_argument e) {
-        return -1;
-    } catch (out_of_range e) {
-        return -1;
+        av_opt_set(codecContext, key.c_str(), value.c_str(), 0);        
+        av_opt_get(codecContext, key.c_str(), 0, (uint8_t **) &opt);
     }
     
 }

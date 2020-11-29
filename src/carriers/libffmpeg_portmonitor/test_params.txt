@@ -22,3 +22,39 @@ codecContext->flags2 |= AV_CODEC_FLAG2_FAST;
 av_opt_set(codecContext->priv_data, "preset", "ultrafast", 0);
 av_opt_set(codecContext->priv_data, "tune", "zerolatency", 0);
 av_opt_set(codecContext, "cabac", "0", 0);
+
+static const std::vector<std::string> FFMPEGPORTMONITOR_CL_CODECCONTEXT {
+    ""
+ 
+ 
+    "bit_rate",
+    "bit_rate_tolerance",
+    "rc_max_rate",
+    "rc_buffer_size",
+    "gop_size",
+    "max_b_frames",
+    "b_frame_strategy",
+    "coder_type",
+    "me_cmp",
+    "me_range",
+    "qmin",
+    "qmax",
+    "scenechange_threshold",
+    "flags",
+    "me_method",
+    "me_subpel_quality",
+    "i_quant_factor",
+    "qcompress",
+    "directpred",
+    "flags2",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+};

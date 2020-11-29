@@ -26,7 +26,7 @@ public:
 protected:
     int compress(yarp::sig::Image* img, AVPacket* pkt);
     int decompress(AVPacket* pkt, int w, int h, int pixelCode, int pixelSize);
-    void getParamsFromCommandLine(std::string carrierString);
+    int getParamsFromCommandLine(std::string carrierString, AVCodecID &codecId);
     int setCommandLineParams();
 
 public:
