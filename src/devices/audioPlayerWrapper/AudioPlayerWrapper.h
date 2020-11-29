@@ -58,7 +58,7 @@
  * | period         |      -         | int     | ms             |   20                    | No                          | period of the internal thread, in ms                                       | default 20ms |
  * | debug          |      -         | bool    | -              |   -                     | No                          | developers use only                                                        | |
  * | playback_network_buffer_lenght  | - | int | s              |   5                     | No                          | size of the audio buffer, increase this value to robustify the real-time audio stream (it will increase latency too) | Audio playback will start when the buffer is filled |
- * | start          |      -         | bool    | -              |   true                  | NOT YET IMPLEMENTED         | automatically activates the playback when the device is started            | if false, the playback is enabled via rpc port |
+ * | start          |      -         | bool    | -              |   false                 | No                          | automatically activates the playback when the device is started            | if false, the playback is enabled via rpc port |
 */
 
 class AudioPlayerWrapper :
@@ -118,6 +118,7 @@ private:
     double m_buffer_delay;
     bool   m_isDeviceOwned;
     bool   m_debug_enabled;
+    bool   m_isPlaying = false;
 
     bool initialize_YARP(yarp::os::Searchable &config);
     bool read(yarp::os::ConnectionReader& connection) override;
