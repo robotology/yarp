@@ -54,10 +54,10 @@
  * Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value           | Required                    | Description                                                                | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-----------------------:|:--------------------------: |:--------------------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              |   /audioPlayerWrapper   | No                          | full name of the port opened by the device                                 | MUST start with a '/' character, xxx/audio:i, xxx/rpc:i, xxx/status:o, ports are openend  |
+ * | name           |      -         | string  | -              |   /audioPlayerWrapper   | No                          | full name of the port opened by the device                                 | MUST start with a '/' character, xxx/audio:i, xxx/rpc:i, xxx/status:o, ports are opened  |
  * | period         |      -         | int     | ms             |   20                    | No                          | period of the internal thread, in ms                                       | default 20ms |
  * | debug          |      -         | bool    | -              |   -                     | No                          | developers use only                                                        | |
- * | playback_network_buffer_lenght  | - | int | s              |   5                     | No                          | size of the audio buffer, increase this value to robustify the real-time audio stream (it will increase latency too) | Audio playback will start when the buffer is filled |
+ * | playback_network_buffer_size  | - | float | s              |   5.0                   | No                          | size of the audio buffer in seconds, increasing this value to robustify the real-time audio stream (it will increase latency too) | Audio playback will start when the buffer is full |
  * | start          |      -         | bool    | -              |   false                 | No                          | automatically activates the playback when the device is started            | if false, the playback is enabled via rpc port |
 */
 

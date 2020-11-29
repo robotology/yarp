@@ -191,11 +191,11 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if (config.check("playback_network_buffer_lenght"))
+    if (config.check("playback_network_buffer_size"))
     {
-        m_buffer_delay = config.find("playback_network_buffer_lenght").asFloat64();
+        m_buffer_delay = config.find("playback_network_buffer_size").asFloat64();
     }
-    yCInfo(AUDIOPLAYERWRAPPER) << "Using a 'playback_network_buffer_lenght' of" << m_buffer_delay << "s";
+    yCInfo(AUDIOPLAYERWRAPPER) << "Using a 'playback_network_buffer_size' of" << m_buffer_delay << "s";
     yCInfo(AUDIOPLAYERWRAPPER) << "Increase this value to robustify the real-time audio stream (it will increase latency too)";
 
     if(config.check("subdevice"))
