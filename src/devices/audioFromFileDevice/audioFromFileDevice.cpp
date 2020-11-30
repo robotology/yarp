@@ -23,8 +23,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
-#define SAMPLES_TO_BE_COPIED 512
-#define DEFAULT_PERIOD 0.01   //s
+constexpr double c_DEFAULT_PERIOD=0.01;   //s
 
 namespace {
 YARP_LOG_COMPONENT(AUDIOFROMFILE, "yarp.device.audioFromFileDevice")
@@ -33,15 +32,13 @@ YARP_LOG_COMPONENT(AUDIOFROMFILE, "yarp.device.audioFromFileDevice")
 typedef unsigned short int audio_sample_16t;
 
 audioFromFileDevice::audioFromFileDevice() :
-        PeriodicThread(DEFAULT_PERIOD),
-        m_audio_filename("audio.wav"),
-        m_bpnt(0)
+        PeriodicThread(c_DEFAULT_PERIOD)
 {
 }
 
 audioFromFileDevice::~audioFromFileDevice()
 {
-    close();
+    delete m_inputBuffer;
 }
 
 bool audioFromFileDevice::open(yarp::os::Searchable &config)
@@ -55,8 +52,15 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
     }
     else
     {
-        yCInfo(AUDIOFROMFILE) << "Using default period of " << DEFAULT_PERIOD << " s";
+        yCInfo(AUDIOFROMFILE) << "Using default period of " << c_DEFAULT_PERIOD << " s";
     }
+
+    //sets the number of samples period
+    if (config.check("samples"))
+    {
+        m_samples_to_be_copied = config.find("samples").asFloat64();
+    }
+    yCDebug(AUDIOFROMFILE) << m_samples_to_be_copied << " will be processed every iteration";
 
     //sets the filename
     if (config.check("file_name"))
@@ -82,8 +86,8 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
     m_audiorecorder_cfg.numChannels = m_audioFile.getChannels();
     m_audiorecorder_cfg.frequency = m_audioFile.getFrequency();
     m_audiorecorder_cfg.bytesPerSample = m_audioFile.getBytesPerSample();
-    const size_t EXTRA_SPACE = 2;
-    AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples*EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
+    constexpr size_t c_EXTRA_SPACE = 2;
+    AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples* c_EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
     m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
 
     //start the capture thread
@@ -94,11 +98,6 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
 bool audioFromFileDevice::close()
 {
     audioFromFileDevice::stop();
-    if (m_inputBuffer)
-    {
-        delete m_inputBuffer;
-        m_inputBuffer = 0;
-    }
     return true;
 }
 
@@ -124,7 +123,7 @@ void audioFromFileDevice::run()
 
     //each iteration, which occurs every xxx ms, I copy a bunch of samples in the buffer.
     //When the pointer reaches the end of the sound (audioFile), just restart from the beginning in an endless loop
-    for (size_t i = 0; i < SAMPLES_TO_BE_COPIED; i++)
+    for (size_t i = 0; i < m_samples_to_be_copied; i++)
     {
         if (m_bpnt >= fsize_in_samples)
         {

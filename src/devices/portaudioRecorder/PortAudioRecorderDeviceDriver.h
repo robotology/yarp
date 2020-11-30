@@ -60,18 +60,17 @@ public:
     PortAudioRecorderDeviceDriver(PortAudioRecorderDeviceDriver&&) = delete;
     PortAudioRecorderDeviceDriver& operator=(const PortAudioRecorderDeviceDriver&) = delete;
     PortAudioRecorderDeviceDriver& operator=(PortAudioRecorderDeviceDriver&&) = delete;
-
     ~PortAudioRecorderDeviceDriver() override;
 
-    public:
+public: //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    public:
+public: //AudioRecorderDeviceBase(IAudioGrabberSound)
     bool startRecording() override;
     bool stopRecording() override;
 
-    public:
+ public: //Thread
     void threadRelease() override;
     bool threadInit() override;
     void run() override;

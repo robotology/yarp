@@ -25,10 +25,10 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
-#define HW_CHANNELS         2
-#define SAMPLING_RATE       44100
-#define CHUNK_SIZE          512
-#define SAMPLES_TO_BE_COPIED 512
+constexpr size_t c_SAMPLES_TO_BE_COPIED=512; //samples
+constexpr size_t c_default_freq = 44100; //hz
+constexpr size_t c_channels = 2; //stereo
+constexpr size_t c_bytes_form = 2; //16bit
 
 namespace {
 YARP_LOG_COMPONENT(FAKEMICROPHONE, "yarp.device.fakeMicrophone")
@@ -39,6 +39,7 @@ typedef unsigned short int audio_sample_16t;
 fakeMicrophone::fakeMicrophone() :
         PeriodicThread(DEFAULT_PERIOD)
 {
+    start_time = yarp::os::Time::now();
 }
 
 fakeMicrophone::~fakeMicrophone()
@@ -60,10 +61,10 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
         yCInfo(FAKEMICROPHONE) << "Using default period of " << DEFAULT_PERIOD << " s";
     }
 
-    m_audiorecorder_cfg.numSamples = 44100*5; //5sec
-    m_audiorecorder_cfg.numChannels = 2; //stereo
-    m_audiorecorder_cfg.frequency = 44100; //hz
-    m_audiorecorder_cfg.bytesPerSample = 2; //16bit
+    m_audiorecorder_cfg.numSamples = c_default_freq *5; //5sec
+    m_audiorecorder_cfg.numChannels = c_channels;
+    m_audiorecorder_cfg.frequency = c_default_freq;
+    m_audiorecorder_cfg.bytesPerSample = c_bytes_form;
     const size_t EXTRA_SPACE = 2;
     AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples*EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
     m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
@@ -104,15 +105,16 @@ void fakeMicrophone::run()
 
     //fill the buffer with a sine tone
     //each iteration, which occurs every xxx ms, I copy a bunch of samples in the buffer.
-    for (size_t i = 0; i < SAMPLES_TO_BE_COPIED; i++)
+    for (size_t i = 0; i < c_SAMPLES_TO_BE_COPIED; i++)
     {
         //this sine waveform has amplitude (-32000,32000)
+        constexpr double c_wave_ampl = 32000;
         // on the left  channel it has frequency 440Hz (A4 note)
         // on the right channel it has frequency 220Hz (A3 note)
         double wt1 = double(t) / double (m_audiorecorder_cfg.frequency) * 440.0 * 2 * M_PI;
-        unsigned short elem1 = double(32000 * sin(wt1));
+        unsigned short elem1 = double(c_wave_ampl * sin(wt1));
         double wt2 = double(t) / double(m_audiorecorder_cfg.frequency) * 220.0 * 2 * M_PI;
-        unsigned short elem2 = double(32000 * sin(wt2));
+        unsigned short elem2 = double(c_wave_ampl * sin(wt2));
         m_inputBuffer->write(elem1); //chan1
         m_inputBuffer->write(elem2); //chan2
         t++;

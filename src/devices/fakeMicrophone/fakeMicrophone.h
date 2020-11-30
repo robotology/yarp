@@ -36,7 +36,7 @@ public:
     fakeMicrophone& operator=(fakeMicrophone&&) = delete;
     ~fakeMicrophone() override;
 
-    // Device Driver interface
+public: // DeviceDriver
     bool open(yarp::os::Searchable &config) override;
     bool close() override;
 
@@ -47,5 +47,5 @@ private:
 
 private:
     double t=0;
-    double start_time = yarp::os::Time::now();
+    double start_time;
 };

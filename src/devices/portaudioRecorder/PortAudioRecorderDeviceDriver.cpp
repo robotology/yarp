@@ -175,7 +175,7 @@ bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
 
     m_inputParameters.device = (m_device_id ==-1)?Pa_GetDefaultInputDevice(): m_device_id;
     yCInfo(PORTAUDIORECORDER, "Device number %d", m_inputParameters.device);
-    m_inputParameters.channelCount = (int)m_audiorecorder_cfg.numChannels;
+    m_inputParameters.channelCount = static_cast<int>(m_audiorecorder_cfg.numChannels);
     m_inputParameters.sampleFormat = PA_SAMPLE_TYPE;
     if ((Pa_GetDeviceInfo(m_inputParameters.device ))!=nullptr) {
         m_inputParameters.suggestedLatency = Pa_GetDeviceInfo(m_inputParameters.device )->defaultLowInputLatency;

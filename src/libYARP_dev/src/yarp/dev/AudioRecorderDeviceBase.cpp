@@ -23,15 +23,20 @@ using namespace std;
 #define DEG2RAD M_PI/180.0
 #endif
 
-#define SLEEP_TIME          0.005
+constexpr double c_sleep_time=0.005;
 
 YARP_LOG_COMPONENT(AUDIORECORDER_BASE, "yarp.devices.AudioRecorderDeviceBase")
+
+//the following macros should never be modified and are used only for development purposes
+#define AUTOMATIC_REC_START 0
+#define DEBUG_TIME_SPENT 0
+#define BUFFER_AUTOCLEAR 0
 
 bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s)
 {
     //check for something_to_record
     {
-#ifdef AUTOMATIC_REC_START
+#if AUTOMATIC_REC_START
         if (m_isRecording == false)
         {
             this->startRecording();
@@ -45,7 +50,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
                 yCInfo(AUDIORECORDER_BASE) << "getSound() is currently waiting. Use startRecording() to start the audio stream";
                 debug_time = yarp::os::Time::now();
             }
-            yarp::os::SystemClock::delaySystem(SLEEP_TIME);
+            yarp::os::SystemClock::delaySystem(c_sleep_time);
         }
 #endif
     }
@@ -82,7 +87,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
             yCDebug(AUDIORECORDER_BASE) << "getSound() Buffer size is " << buff_size << "/" << max_number_of_samples << " after 1s";
         }
 
-        yarp::os::SystemClock::delaySystem(SLEEP_TIME);
+        yarp::os::SystemClock::delaySystem(c_sleep_time);
     } while (true);
 
     //prepare the sound data struct
@@ -95,7 +100,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
     sound.setFrequency(this->m_audiorecorder_cfg.frequency);
 
     //fill the sound data struct, reading samples from the circular buffer
-#ifdef DEBUG_TIME_SPENT
+#if DEBUG_TIME_SPENT
     double ct1 = yarp::os::Time::now();
 #endif
     for (size_t i = 0; i < samples_to_be_copied; i++)
@@ -106,7 +111,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
         }
 
     auto debug_p = sound.getInterleavedAudioRawData();
-#ifdef DEBUG_TIME_SPENT
+#if DEBUG_TIME_SPENT
     double ct2 = yarp::os::Time::now();
     yCDebug(AUDIORECORDER_BASE) << ct2 - ct1;
 #endif
@@ -141,7 +146,7 @@ bool AudioRecorderDeviceBase::startRecording()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_isRecording = true;
-#ifdef BUFFER_AUTOCLEAR
+#if BUFFER_AUTOCLEAR
     this->m_recDataBuffer->clear();
 #endif
     yCInfo(AUDIORECORDER_BASE) << "Recording started";
@@ -153,7 +158,7 @@ bool AudioRecorderDeviceBase::stopRecording()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_isRecording = false;
-#ifdef BUFFER_AUTOCLEAR
+#if BUFFER_AUTOCLEAR
     this->m_recDataBuffer->clear();
 #endif
     yCInfo(AUDIORECORDER_BASE) << "Recording stopped";
@@ -162,9 +167,5 @@ bool AudioRecorderDeviceBase::stopRecording()
 
 AudioRecorderDeviceBase::~AudioRecorderDeviceBase()
 {
-    if (this->m_inputBuffer != nullptr)
-    {
-        delete this->m_inputBuffer;
-        this->m_inputBuffer = nullptr;
-    }
+    delete m_inputBuffer;
 }

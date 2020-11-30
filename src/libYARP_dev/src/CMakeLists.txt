@@ -13,6 +13,7 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/AudioBufferSize.h
                   yarp/dev/AudioGrabberInterfaces.h
                   yarp/dev/AudioGrabberVocabs.h
+                  yarp/dev/AudioRecorderDeviceBase.h
                   yarp/dev/AudioVisualInterfaces.h
                   yarp/dev/CalibratorInterfaces.h
                   yarp/dev/CalibratorVocabs.h
@@ -108,7 +109,6 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/ImplementVirtualAnalogSensor.h
                   yarp/dev/LaserMeasurementData.h
                   yarp/dev/Lidar2DDeviceBase.h
-                  yarp/dev/AudioRecorderDeviceBase.h
                   yarp/dev/MultipleAnalogSensorsInterfaces.h
                   yarp/dev/PidEnums.h
                   yarp/dev/PolyDriver.h
@@ -143,6 +143,7 @@ set(YARP_dev_IMPL_HDRS yarp/dev/impl/FixedSizeBuffersManager.h
                        yarp/dev/impl/FixedSizeBuffersManager-inl.h)
 
 set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
+                  yarp/dev/AudioRecorderDeviceBase.cpp
                   yarp/dev/CanBusInterface.cpp
                   yarp/dev/CartesianControl.cpp
                   yarp/dev/ControlBoardHelper.cpp
@@ -194,7 +195,6 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/ImplementVirtualAnalogSensor.cpp
                   yarp/dev/LaserMeasurementData.cpp
                   yarp/dev/Lidar2DDeviceBase.cpp
-                  yarp/dev/AudioRecorderDeviceBase.cpp
                   yarp/dev/MultipleAnalogSensorsInterfaces.cpp
                   yarp/dev/PolyDriver.cpp
                   yarp/dev/PolyDriverDescriptor.cpp

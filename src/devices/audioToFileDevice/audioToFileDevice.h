@@ -64,17 +64,17 @@ public:
 
 private:
     yarp::sig::Sound m_audioFile;
-    std::string      m_audio_filename;
+    std::string      m_audio_filename = "audio_out.wav";
     std::mutex       m_mutex;
     bool             m_playback_running = false;
     std::deque<yarp::sig::Sound> m_sounds;
+    size_t m_filename_counter = 0;
     enum save_mode_t
     {
         save_overwrite_file = 0,
         save_append_data =1,
         save_rename_file =2
     } m_save_mode = save_overwrite_file;
-    size_t m_filename_counter = 0;
 
     void save_to_file();
 };
