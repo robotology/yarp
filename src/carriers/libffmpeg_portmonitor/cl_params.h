@@ -61,4 +61,4 @@ static const std::vector<std::string> FFMPEGPORTMONITOR_PRIV_PARAMS {
     "profile"
 };
 
-#endif
+#endif  // YARP_FFMPEG_CARRIER_FFMPEGPORTMONITOR_CL_PARAMS_H

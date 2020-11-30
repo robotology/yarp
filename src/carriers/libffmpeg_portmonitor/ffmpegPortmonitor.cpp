@@ -538,6 +538,7 @@ int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecI
         
         // Parsing codec context params
         paramsMap.insert( pair<string, string>(paramKey, paramValue) );
+        return 0;
     }
 
 }
