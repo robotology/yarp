@@ -23,37 +23,29 @@
 #include <yarp/os/Thread.h>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/AudioGrabberInterfaces.h>
+#include <yarp/dev/AudioRecorderDeviceBase.h>
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <portaudio.h>
-#include <mutex>
-
-#define DEFAULT_SAMPLE_RATE  (44100)
-#define DEFAULT_NUM_CHANNELS    (2)
-#define DEFAULT_DITHER_FLAG     (0)
-#define DEFAULT_FRAMES_PER_BUFFER (512)
-//#define DEFAULT_FRAMES_PER_BUFFER (1024)
-
-
-class PortAudioRecorderDeviceDriverSettings
-{
-public:
-    size_t cfg_rate = 0;
-    size_t cfg_samples = 0;
-    size_t cfg_recChannels = 0;
-    int cfg_deviceNumber = 0;
-};
 
 /**
- * @ingroup dev_impl_media
- *
- * \brief `portaudioRecorder`: A portable audio source, see yarp::dev::PortAudioRecorderDeviceDriver.
- *
- * Requires the PortAudio library (http://www.portaudio.com), at least v19.
- * Documentation to be added
+* @ingroup dev_impl_media
+*
+* \brief `portaudioRecorder`: A device driver for an audio source wrapped by PortAudio library.
+* Requires the PortAudio library (http://www.portaudio.com), at least v19.
+* Only 16bits sample format is currently supported by this device.
+*
+* Parameters used by this device are:
+* | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | rate           |      -         | int     | Hz             |  44100                   | No                          | bitrate / sampling frequency                                      |       |
+* | samples        |      -         | int     | samples        |  44100                   | No                          | The size of the internal circular buffer                          | By default this value is equal to the sampling rate, so the buffer size is one second |
+* | channels       |      -         | int     | -              |  2                       | No                          | Number of channels (e.g. 1=mono, 2 =stereo etc                    |       |
+* | sample_format  |      -         | int     | bits           |  16 cannot be modified   | Not yet implemented         | Not yet implemented                                               |  Not yet implemented   |
+* | driver_frame_size   |     -     | int     | samples        |  512                     | No                          | Number of samples grabbed by the device in a single uninterruptible operation |  It is recommended to NOT CHANGE this value from its default=512  |
+* | id             |      -         | int     | -              |  -1                      | No                          | Id of the sound card.                                             | if == -1, portaudio will choose automatically  |
  */
 class PortAudioRecorderDeviceDriver :
-        public yarp::dev::IAudioGrabberSound,
+        public yarp::dev::AudioRecorderDeviceBase,
         public yarp::dev::DeviceDriver,
         public yarp::os::Thread
 {
@@ -61,10 +53,6 @@ private:
     PaStreamParameters  m_inputParameters;
     PaStream*           m_stream;
     PaError             m_err;
-    yarp::dev::CircularAudioBuffer_16t*  m_recDataBuffer;
-    PortAudioRecorderDeviceDriverSettings m_config;
-    std::mutex     m_mutex;
-    bool                m_isRecording;
 
 public:
     PortAudioRecorderDeviceDriver();
@@ -72,43 +60,24 @@ public:
     PortAudioRecorderDeviceDriver(PortAudioRecorderDeviceDriver&&) = delete;
     PortAudioRecorderDeviceDriver& operator=(const PortAudioRecorderDeviceDriver&) = delete;
     PortAudioRecorderDeviceDriver& operator=(PortAudioRecorderDeviceDriver&&) = delete;
-
     ~PortAudioRecorderDeviceDriver() override;
 
+public: //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
-
-    /**
-     * Configures the device.
-     *
-     * rate: Sample rate to use, in Hertz.  Specify 0 to use a default.
-     *
-     * samples: Number of samples per call to getSound.  Specify
-     * 0 to use a default.
-     *
-     * channels: Number of channels of input.  Specify
-     * 0 to use a default.
-     *
-     * @return true on success
-     */
-    bool open(PortAudioRecorderDeviceDriverSettings& config);
-
     bool close() override;
-    bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
+
+public: //AudioRecorderDeviceBase(IAudioGrabberSound)
     bool startRecording() override;
     bool stopRecording() override;
 
-    bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
-    bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
-    bool resetRecordingAudioBuffer() override;
-
+ public: //Thread
     void threadRelease() override;
     bool threadInit() override;
     void run() override;
 
 protected:
     void*   m_system_resource;
-
-    PortAudioRecorderDeviceDriverSettings m_driverConfig;
+    int  m_device_id;
     void handleError();
 };
 
