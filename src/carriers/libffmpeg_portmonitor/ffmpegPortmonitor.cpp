@@ -437,7 +437,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
     // Allocate a video frame for end frame
     endFrame = av_frame_alloc();
     if (endFrame == NULL) {
-        yCError(FFMPEGMONITOR, "Could not allocating start frame!");
+        yCError(FFMPEGMONITOR, "Could not allocate start frame!");
         av_frame_free(&startFrame);
         return -1;
     }
