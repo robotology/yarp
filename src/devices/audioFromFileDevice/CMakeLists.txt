@@ -8,7 +8,8 @@ yarp_prepare_plugin(audioFromFileDevice
                     CATEGORY device
                     TYPE audioFromFileDevice
                     INCLUDE audioFromFileDevice.h
-                    EXTRA_CONFIG WRAPPER=AudioRecorderWrapper)
+                    EXTRA_CONFIG WRAPPER=AudioRecorderWrapper
+                    DEFAULT ON)
 
 if(NOT SKIP_audioFromFileDevice)
   yarp_add_plugin(yarp_audioFromFileDevice)

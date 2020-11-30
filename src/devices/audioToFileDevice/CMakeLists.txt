@@ -8,7 +8,8 @@ yarp_prepare_plugin(audioToFileDevice
                     CATEGORY device
                     TYPE audioToFileDevice
                     INCLUDE audioToFileDevice.h
-                    EXTRA_CONFIG WRAPPER=AudioPlayerWrapper)
+                    EXTRA_CONFIG WRAPPER=AudioPlayerWrapper
+                    DEFAULT ON)
 
 if(NOT SKIP_audioToFileDevice)
   yarp_add_plugin(yarp_audioToFileDevice)
