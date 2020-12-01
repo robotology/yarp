@@ -1,5 +1,5 @@
 #include "ffmpegPortmonitor.h"
-#include "cl_params.h"
+#include "constants.h"
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/sig/all.h>
@@ -82,18 +82,6 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     // Set command line params
     if (setCommandLineParams() == -1)
         return false;
-    
-
-    // Pixel formats map
-    pixelMap[VOCAB_PIXEL_RGB] = AV_PIX_FMT_RGB24;
-    pixelMap[VOCAB_PIXEL_RGBA] = AV_PIX_FMT_RGBA;
-    pixelMap[VOCAB_PIXEL_BGR] = AV_PIX_FMT_BGR24;
-    pixelMap[VOCAB_PIXEL_BGRA] = AV_PIX_FMT_BGRA;
-    pixelMap[VOCAB_PIXEL_YUV_420] = AV_PIX_FMT_YUV420P;
-
-    codecPixelMap[AV_CODEC_ID_H264] = AV_PIX_FMT_YUV420P;
-    codecPixelMap[AV_CODEC_ID_H265] = AV_PIX_FMT_YUV420P;
-    codecPixelMap[AV_CODEC_ID_MPEG2VIDEO] = AV_PIX_FMT_YUV420P;
 
     return true;
 }
@@ -274,7 +262,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
 
     int success = av_image_alloc(startFrame->data, startFrame->linesize,
                     w, h,
-                    (AVPixelFormat) pixelMap[img->getPixelCode()], 16);
+                    (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()], 16);
 
     if (success < 0) {
         yCError(FFMPEGMONITOR, "Cannot allocate starting frame buffer!");
@@ -289,11 +277,11 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     startFrame->data[0] = img->getRawImage();
     startFrame->height = h;
     startFrame->width = w;
-    startFrame->format = (AVPixelFormat) pixelMap[img->getPixelCode()];
+    startFrame->format = (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()];
 
     success = av_image_alloc(endFrame->data, endFrame->linesize,
                     w, h,
-                    (AVPixelFormat) codecPixelMap[codecContext->codec_id], 16);
+                    (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id], 16);
 
     if (success < 0) {
         yCError(FFMPEGMONITOR, "Cannot allocate end frame buffer!");
@@ -304,15 +292,15 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     
     endFrame->height = h;
     endFrame->width = w;
-    endFrame->format = (AVPixelFormat) codecPixelMap[codecContext->codec_id];
+    endFrame->format = (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id];
 
     // Convert the image into end format
     static struct SwsContext *img_convert_ctx;
     
     img_convert_ctx = sws_getContext(w, h, 
-                                        (AVPixelFormat) pixelMap[img->getPixelCode()], 
+                                        (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()], 
                                         w, h,
-                                        (AVPixelFormat) codecPixelMap[codecContext->codec_id],
+                                        (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id],
                                         SWS_BICUBIC,
                                         NULL, NULL, NULL);
     if (img_convert_ctx == NULL) {
@@ -338,7 +326,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
     if (firstTime) {
         codecContext->width = w;
         codecContext->height = h;
-        codecContext->pix_fmt = (AVPixelFormat) codecPixelMap[codecContext->codec_id];
+        codecContext->pix_fmt = (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id];
 
         ret = avcodec_open2(codecContext, codec, NULL);
         if (ret < 0) {
@@ -393,7 +381,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
     if (firstTime) {
         codecContext->width = w;
         codecContext->height = h;
-        codecContext->pix_fmt = (AVPixelFormat) codecPixelMap[codecContext->codec_id];
+        codecContext->pix_fmt = (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id];
 
         int ret = avcodec_open2(codecContext, codec, NULL);
         if (ret < 0) {
@@ -445,7 +433,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
 
     int success = av_image_alloc(endFrame->data, endFrame->linesize,
                     w, h,
-                    (AVPixelFormat) pixelMap[pixelCode], 16);
+                    (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode], 16);
     
     if (success < 0) {
         yCError(FFMPEGMONITOR, "Error allocating end frame buffer!");
@@ -456,15 +444,15 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode, 
 
     endFrame->height = h;
     endFrame->width = w;
-    endFrame->format = (AVPixelFormat) pixelMap[pixelCode];
+    endFrame->format = (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode];
 
     // Convert the image into RGB format
     static struct SwsContext *img_convert_ctx;
     
     img_convert_ctx = sws_getContext(w, h, 
-                                        (AVPixelFormat) codecPixelMap[codecContext->codec_id], 
+                                        (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id], 
                                         w, h,
-                                        (AVPixelFormat) pixelMap[pixelCode],
+                                        (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode],
                                         SWS_BICUBIC,
                                         NULL, NULL, NULL);
     if (img_convert_ctx == NULL) {

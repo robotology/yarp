@@ -39,8 +39,6 @@ public:
     AVCodecContext *codecContext = NULL;
     bool firstTime;
     std::map<std::string, std::string> paramsMap;
-    std::map<int, int> pixelMap;
-    std::map<int, int> codecPixelMap;
 };
 
 #endif

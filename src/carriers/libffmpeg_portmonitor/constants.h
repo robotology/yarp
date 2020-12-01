@@ -3,7 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <map>
+
 #include "libavcodec/codec_id.h"
+#include <yarp/sig/Image.h>
 
 static const std::vector<std::string> FFMPEGPORTMONITOR_IGNORE_PARAMS {
     "tcp",
@@ -59,6 +62,20 @@ static const std::vector<std::string> FFMPEGPORTMONITOR_PRIV_PARAMS {
     "nal_hrd",
     "x265opts",
     "profile"
+};
+
+static std::map<int, int> FFMPEGPORTMONITOR_PIXELMAP = {
+  { VOCAB_PIXEL_RGB, AV_PIX_FMT_RGB24 },
+  { VOCAB_PIXEL_RGBA, AV_PIX_FMT_RGBA },
+  { VOCAB_PIXEL_BGR, AV_PIX_FMT_BGR24 },
+  { VOCAB_PIXEL_BGRA, AV_PIX_FMT_BGRA },
+  { VOCAB_PIXEL_YUV_420, AV_PIX_FMT_YUV420P }
+};
+
+static std::map<int, int> FFMPEGPORTMONITOR_CODECPIXELMAP = {
+    { AV_CODEC_ID_H264, AV_PIX_FMT_YUV420P },
+    { AV_CODEC_ID_H265, AV_PIX_FMT_YUV420P },
+    { AV_CODEC_ID_MPEG2VIDEO, AV_PIX_FMT_YUV420P }
 };
 
 #endif  // YARP_FFMPEG_CARRIER_FFMPEGPORTMONITOR_CL_PARAMS_H
