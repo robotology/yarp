@@ -83,6 +83,8 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     if (setCommandLineParams() == -1)
         return false;
 
+    codecContext->time_base = (AVRational) { 1, 15 };
+
     return true;
 }
 
