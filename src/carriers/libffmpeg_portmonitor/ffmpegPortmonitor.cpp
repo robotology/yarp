@@ -538,16 +538,12 @@ int FfmpegMonitorObject::setCommandLineParams() {
         string key = x.first;
         string value = x.second;
 
-        char *opt;
-
         if (find(FFMPEGPORTMONITOR_PRIV_PARAMS.begin(), FFMPEGPORTMONITOR_PRIV_PARAMS.end(), key) != FFMPEGPORTMONITOR_PRIV_PARAMS.end()) {
             av_opt_set(codecContext->priv_data, key.c_str(), value.c_str(), 0);
-            av_opt_get(codecContext->priv_data, key.c_str(), 0, (uint8_t **) &opt);
             continue;
         }
 
-        av_opt_set(codecContext, key.c_str(), value.c_str(), 0);        
-        av_opt_get(codecContext, key.c_str(), 0, (uint8_t **) &opt);
+        av_opt_set(codecContext, key.c_str(), value.c_str(), 0);
     }
     
 }
