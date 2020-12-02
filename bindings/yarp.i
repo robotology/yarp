@@ -629,34 +629,62 @@ typedef yarp::os::BufferedPort<Vector> BufferedPortVector;
 }
 
 %extend yarp::sig::Sound{
-    std::vector<short int> sound2vec_noninterleaved()
+    std::vector<short int> sound2VecNonInterleaved()
     {
-        int m_samples=self->getSamples();
+        int samples=self->getSamples();
         int channels=self->getChannels();
-
         std::vector<short int> vec;
-        vec.reserve(m_samples*channels);
+        vec.reserve(samples*channels);
         for (size_t c = 0; c < channels; c++)
         {
-            for (size_t t = 0; t < m_samples; t++)
+            for (size_t t = 0; t < samples; t++)
             {
                 vec.push_back(self->get(t, c));
             }
         }
         return vec;
- }
+    }
 
-    void vec_notinterleaved2sound(std::vector<short int> vec,int m_samples,int channels)
+    void vecNonInterleaved2Sound(std::vector<short int> vec,int samples,int channels)
     {
         for (size_t c = 0; c < channels; c++)
         {
-            for (size_t t = 0; t <m_samples; t++)
+            for (size_t t = 0; t <samples; t++)
             {
-                self->set(vec[t],t, c);
+                self->set(vec[t+samples*c],t, c);
             }
         }
         return;
- }
+    }
+
+    std::vector<short int> sound2VecInterleaved()
+    {
+        int samples=self->getSamples();
+        int channels=self->getChannels();
+
+        std::vector<short int> vec;
+        vec.reserve(samples*channels);
+        for (size_t t = 0; t < samples; t++)
+        {
+            for (size_t c = 0; c < channels; c++)
+            {
+                vec.push_back(self->get(t, c));
+            }
+        }
+        return vec;
+    }
+
+    void vecInterleaved2Sound(std::vector<short int> vec,int samples,int channels)
+    {
+        for (size_t t = 0; t < channels; t++)
+        {
+            for (size_t c = 0; c <samples; c++)
+            {
+                self->set(vec[c+t*channels],t, c);
+            }
+        }
+        return;
+    }
 }
 
 %{
