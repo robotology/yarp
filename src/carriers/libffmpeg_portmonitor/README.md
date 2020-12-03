@@ -49,7 +49,7 @@ In order to insert other parameters into the connection string, you have to foll
 ```
 connection_base_string+parameter_name.parameter_value
 ```
-So you concatenate a "+" to the connection base string, followed by the name of the parameter to be set and a "." followed by the value to assign to the parameter.
+concatenating a "+" to the connection base string, followed by the name of the parameter to be set and a "." followed by the value to assign to the parameter.
 All the parameters will be passed to the compression/decompression context of the Ffmpeg library.
 
 ## Parameters
