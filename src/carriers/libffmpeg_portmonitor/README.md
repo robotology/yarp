@@ -110,9 +110,9 @@ The following image is the output video stream, which is compressed in sender si
 
 ![testgrabber](Img/testgrabber.png)
 <br>
-**N.B.**: you need to configure YARP properly to connect two different machines. <br>
 
-To check the configuration you can use the command:
+### Note
+You need to configure YARP properly to connect two different machines. To check the configuration you can use the command:
 ```
 yarp conf
 ```
