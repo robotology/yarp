@@ -4,16 +4,16 @@
 
 This port monitor allows you to compress a video stream while transmitting it from a source YARP port to a destination YARP port. The port monitor relies on the open source library Ffmpeg to encode and decode video streams.
 <br>
-You can choose the desired codec usign the command line, along with numerous other possible parameters (see [Parameters](#Parameters)).
+You can choose the desired codec using the command line, along with numerous other possible parameters (see [Parameters](#Parameters)).
 If the "codec" parameter is not set, it will be set to a default value.
 
 ## Installation
 
-To install/activate the port monitor you need to enter the <yarp_root>/build folder (if the "build" folder does not exist, create it) and run the following command:
+To install/activate the port monitor you need to enter the <yarp_root>/build folder in a terminal (if the "build" folder does not exist, create it) and run the following command:
 ```
 cmake .. -DENABLE_yarpcar_libffmpeg=on
 ```
-Once the command is run, make sure there is an "x" in the brackets on the libffmpeg_portmonitor line in the CMake configuration (command ccmake ..), as you can see below:
+Once the command is run, make sure there is an "x" in the brackets on the libffmpeg_portmonitor line in the command output in terminal, as you can see below:
 ```
 --  [x]   Plugin: yarpcar_libffmpeg (ENABLE_yarpcar_libffmpeg)
 ```
@@ -30,7 +30,7 @@ to execute 4 recipes at a time.
 
 ## Usage
 
-The software allows the entry of a wide range of parameters via the command line.<br>
+The software allows the insertion of a wide range of parameters via the command line.<br>
 The string:
 ```
 yarp connect /grabber /view <protocol>+send.portmonitor.+file.libffmpeg+recv.portmonitor+file.libffmpeg+type.dll
@@ -48,7 +48,7 @@ In order to insert other parameters into the connection string, you have to foll
 ```
 connection_base_string+parameter_name.parameter_value
 ```
-concatenating a "+" to the connection base string, followed by the name of the parameter to be set and a "." followed by the value to assign to the parameter.
+concatenating a "+" to the connection base string, followed by the name of the parameter to set and a "." followed by the desired value for the parameter.
 All the parameters will be passed to the compression/decompression context of the Ffmpeg library.
 
 ## Parameters
@@ -82,7 +82,7 @@ The best values for the parameter "crf" can be still found in the page above.
 
 ## Example
 
-We can use the YARP device *test_grabber* to generate a test video stream, composed of frames with a rainbow background and a horizontal red line flowing from top to bottom. In order to visualize the video stream at the destination port, we can use the YARP device *yarpview*.<br>
+You can use the YARP device *test_grabber* to generate a test video stream, composed of frames with a rainbow background and a horizontal red line flowing from top to bottom. In order to visualize the video stream at the destination port, you can use the YARP device *yarpview*.<br>
 The commands needed are listed below: <br>
 
 ### Terminal 1 (sender)
