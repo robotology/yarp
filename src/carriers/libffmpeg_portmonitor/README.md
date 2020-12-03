@@ -70,7 +70,7 @@ The best values for these two parameters for each codec are defined in [this pag
 | mpeg2video  | 3           | 5           |
 
 In order to control image quality, you can also use the "crf" parameter. The lower the crf value, the better the image quality and vice versa. <br>
-Furthermore, changing the value of the "crf" parameter (as well as of "qmin" and "qmax") indirectly affects the occupied bandwidth, making the encoding a VBR one (Variable Bit Rate).
+Changing the value of the "crf" parameter (as well as of "qmin" and "qmax") indirectly affects the occupied bandwidth, making the encoding a VBR one (Variable Bit Rate).
 The best values for the parameter "crf" can be still found in the page above.
 
 | Codec       | crf         |
