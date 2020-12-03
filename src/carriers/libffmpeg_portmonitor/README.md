@@ -64,12 +64,15 @@ The best parameters for each codec are defined in [this page](https://slhck.info
 | h264        | 18          | 28          |
 | h265        | 24          | 34          |
 | mpeg2video  | 3           | 5           |
-<br>Alternatively, the "crf" parameter can be used. We always find the best values ​​on the same page.
+
+Alternatively, the "crf" parameter can be used. We always find the best values ​​on the same page.
+
 | Codec       | crf         |
 | ----------- | ----------- |
 | h264        | 23          |
 | h265        | 28          |
 | mpeg2video  | 3           |
+
 The values ​​of the crf allow to improve the quality of the image. The lower the crf value, the better the image quality and vice versa. <br>
 Furthermore, changing the value of the "crf" parameter as well as of "qmin" and "qmax" indirectly affects the occupied bandwidth and fps, making the encoding VBR (variable bit rate).
 
