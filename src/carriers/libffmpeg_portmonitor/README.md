@@ -80,49 +80,47 @@ The best values for the parameter "crf" can be still found in the page above.
 | mpeg2video  | 3           |
 
 
----------------------------------------------------------------------QUIII
+
 ## Example
 
-A very simple example is to use, for the port monitor, as input the test_grabber device and as output the view. <br>
-Using different terminals the next procedure can be followed: <br>
-### Terminal 1
+We can use the YARP device *test_grabber* to generate a test video stream, composed of frames with a rainbow background and a horizontal red line flowing from top to bottom. In order to visualize the video stream at the destination port, we can use the YARP device *yarpview*.<br>
+The commands needed are listed below: <br>
+
+### Terminal 1 (sender)
 ```
 yarp server
 ```
 
-### Terminal 2
+### Terminal 2 (sender)
 ```
 yarpdev --device test_grabber --mode grid
 ```
 
-### Terminal 3
+### Terminal 3 (receiver)
 ```
 yarpview --name /view
 ```
 
-### Terminal 4
+### Terminal 4 (can be run on both sides)
 ```
 yarp connect /grabber /view fast_tcp+send.portmonitor+file.libffmpeg+recv.portmonitor+file.libffmpeg+type.dll
 ```
 <br>
-The result is a line moving from top to bottom in a colored space, as seen in the following image.
+The following image is the output video stream, which is compressed in sender side, transmitted, decompressed in receiver side and then visualized through the YARP viewer.
 <br><br>
 
 ![testgrabber](Img/testgrabber.png)
 <br>
-The terminals can be on different machines, as long as the IP address and port is set in the yarp configuration of each machine where the command
-```
-yarp server
-```
-is executed.<br>
+**N.B.**: you need to configure YARP properly to connect two different machines. <br>
+
 To check the configuration you can use the command:
 ```
 yarp conf
 ```
-which returns the file location to change the IP address and port.
+which returns the location of the file that contains the IP address and the port of the server to connect to.
 <br><br>
-Installing the necessary plugins and following the same procedure, you can for example play videos saved on the machine by running the following command (instead of the terminal 2 command)
+After installing the necessary plugins and following the same procedure, you can also play videos saved on the machine by running the following command (instead of the Terminal 2 command)
 ```
 yarpdev --device ffmpeg_grabber --source path/to/file
 ```
-or even see live the video stream of a video camera, such as that of the gazebo simulator.
+It is also possible to use this portmonitor with the USBCamera device in YARP.
