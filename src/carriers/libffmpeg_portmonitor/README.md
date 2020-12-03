@@ -2,8 +2,7 @@
 # libffmpeg_portmonitor
 ## Description
 
-This port monitor allows you to compress a video stream while transmitting it from a source YARP port to a destination YARP port. <br>
-The port monitor relies on the open source library Ffmpeg to encode and decode video streams.
+This port monitor allows you to compress a video stream while transmitting it from a source YARP port to a destination YARP port. The port monitor relies on the open source library Ffmpeg to encode and decode video streams.
 <br>
 You can choose the desired codec usign the command line, along with numerous other possible parameters (see [Parameters](#Parameters)).
 If the "codec" parameter is not set, it will be set to a default value.
