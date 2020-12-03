@@ -5,7 +5,7 @@
 The portmonitor allows you to transmit compressed videos from a source to a destination, so as to occupy less bandwidth and also be able to manipulate the output video. <br>
 The portmonitor relies on the open source library of ffmpeg to be able to encode and decode video streams.
 <br>
-In addition to the codecs, various other parameters can be chosen from the command line (see [Parameters](##Parameters)), if not specified, default values ​​are set.
+In addition to the codecs, various other parameters can be chosen from the command line (see [Parameters](#Parameters)), if not specified, default values ​​are set.
 
 ## Installation
 
