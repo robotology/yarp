@@ -43,6 +43,7 @@ The \<protocol\> section in the connection base string represents the protocol u
 -   fast_tcp
 -   udp
 
+<br>
 In order to insert other parameters into the connection string, you have to follow the syntax below:
 ```
 connection_base_string+parameter_name.parameter_value
