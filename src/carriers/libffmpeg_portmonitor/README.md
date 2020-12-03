@@ -38,7 +38,7 @@ yarp connect /grabber /view <protocol>+send.portmonitor.+file.libffmpeg+recv.por
 ```
 is the basic command to connect source and receiver through the port monitor; we will refer to this string in the following as “Connection base string”. <br>
 
-The <protocol> section in the connection base string represents the protocol used for the transmission between sender and receiver; for example, it can be:
+The \<protocol\> section in the connection base string represents the protocol used for the transmission between sender and receiver; for example, it can be:
 -   tcp
 -   fast_tcp
 -   udp
