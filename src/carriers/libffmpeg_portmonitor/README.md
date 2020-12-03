@@ -111,13 +111,15 @@ The following image is the output video stream, which is compressed in sender si
 ![testgrabber](Img/testgrabber.png)
 <br>
 
-#### Note
+#### Connection
 You need to configure YARP properly to connect two different machines. To check the configuration you can use the command:
 ```
 yarp conf
 ```
 which returns the location of the file that contains the IP address and the port of the server to connect to.
-<br><br>
+<br>
+
+#### Other Usages
 After installing the necessary plugins and following the same procedure, you can also play videos saved on the machine by running the following command (instead of the Terminal 2 command)
 ```
 yarpdev --device ffmpeg_grabber --source path/to/file
