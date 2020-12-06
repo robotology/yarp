@@ -76,7 +76,8 @@ The best values for the parameter "crf" can be still found in the page above.
 | ----------- | ----------- |
 | h264        | 23          |
 | h265        | 28          |
-| mpeg2video  | 3           |
+
+The crf parameter is not supported by mpeg2video, so the values are shown only for the other two codecs.
 
 
 
