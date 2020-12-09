@@ -342,7 +342,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         firstTime = false;
     }
 
-    startFrame->pts = codecContext->frame_number;
+    endFrame->pts = codecContext->frame_number;
 
     ret = avcodec_send_frame(codecContext, endFrame);
     if (ret < 0) {
