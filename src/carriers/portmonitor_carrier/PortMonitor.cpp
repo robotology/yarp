@@ -12,6 +12,7 @@
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/Route.h>
 #include <yarp/os/Contactable.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
 
 #include "PortMonitor.h"
@@ -29,10 +30,13 @@ using namespace yarp::os;
 // Read connection settings.
 bool PortMonitor::configure(yarp::os::ConnectionState& proto)
 {
+    yCTrace(PORTMONITORCARRIER);
+
     portName = proto.getRoute().getToName();
     sourceName = proto.getRoute().getFromName();
     group = getPeers().add(portName,this);
     if (!group) {
+        yCError(PORTMONITORCARRIER) << "Cannot find group";
         return false;
     }
 
@@ -50,6 +54,8 @@ bool PortMonitor::configure(yarp::os::ConnectionState& proto)
 
 bool PortMonitor::configureFromProperty(yarp::os::Property& options)
 {
+    yCTrace(PORTMONITORCARRIER);
+
     delete binder;
     binder = nullptr;
 
@@ -102,6 +108,8 @@ bool PortMonitor::configureFromProperty(yarp::os::Property& options)
 
 void PortMonitor::setCarrierParams(const yarp::os::Property& params)
 {
+    yCTrace(PORTMONITORCARRIER);
+
     if(!bReady) {
         return;
     }
@@ -112,6 +120,8 @@ void PortMonitor::setCarrierParams(const yarp::os::Property& params)
 
 void PortMonitor::getCarrierParams(yarp::os::Property& params) const
 {
+    yCTrace(PORTMONITORCARRIER);
+
     if(!bReady) {
         return;
     }
@@ -123,6 +133,8 @@ void PortMonitor::getCarrierParams(yarp::os::Property& params) const
 
 yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::ConnectionReader& reader)
 {
+    yCTrace(PORTMONITORCARRIER);
+
     if(!bReady) {
         return reader;
     }
@@ -151,6 +163,8 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
 
 bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
 {
+    yCTrace(PORTMONITORCARRIER);
+
     if(!bReady) {
         return false;
     }
@@ -195,6 +209,8 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
 
 const yarp::os::PortWriter& PortMonitor::modifyOutgoingData(const yarp::os::PortWriter& writer)
 {
+    yCTrace(PORTMONITORCARRIER);
+
     if(!bReady) {
         return writer;
     }
@@ -214,6 +230,8 @@ const yarp::os::PortWriter& PortMonitor::modifyOutgoingData(const yarp::os::Port
 
 bool PortMonitor::acceptOutgoingData(const yarp::os::PortWriter& writer)
 {
+    yCTrace(PORTMONITORCARRIER);
+
     if(!bReady) {
         return false;
     }
@@ -233,6 +251,8 @@ bool PortMonitor::acceptOutgoingData(const yarp::os::PortWriter& writer)
 
 yarp::os::PortReader& PortMonitor::modifyReply(yarp::os::PortReader& reader)
 {
+    yCTrace(PORTMONITORCARRIER);
+
     if(!bReady) {
         return reader;
     }
@@ -259,6 +279,8 @@ ElectionOf<PortMonitorGroup> *PortMonitor::peers = nullptr;
 // Make a singleton manager for finding peer carriers.
 ElectionOf<PortMonitorGroup>& PortMonitor::getPeers()
 {
+    yCTrace(PORTMONITORCARRIER);
+
     NetworkBase::lock();
     if (peers==nullptr) {
         peers = new ElectionOf<PortMonitorGroup>;
@@ -273,6 +295,8 @@ ElectionOf<PortMonitorGroup>& PortMonitor::getPeers()
 // Decide whether data should be accepted, for real.
 bool PortMonitorGroup::acceptIncomingData(PortMonitor *source)
 {
+    yCTrace(PORTMONITORCARRIER);
+
     //bool accept = true;
     for (auto& it : peerSet)
     {
