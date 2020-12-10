@@ -49,6 +49,7 @@
  * | min_samples_over_network  | -   | int     | samples        |   11250                  | No                          | sends the network packet ifs n samples are collected AND the timeout is expired | the algorithm is implemented in AudioRecorderDeviceBase |
  * | max_samples_over_network  | -   | int     | samples        |   11250                  | No                          | sends the network packet as soon as n samples have been collected          | the algorithm is implemented in AudioRecorderDeviceBase |
  * | max_samples_timeout  |  -       | float   | s              |   1.0                    | No                          | timeout for sample collection                                              | the algorithm is implemented in AudioRecorderDeviceBase |
+ * | wrapper_volume |      -         | float   | -              |   1.0                    | No                          | the volume gain which will be applied by the wrapper to the processed sound chunks | This is a software gain and it does not change the settings of the physical hardware |
  * | start          |      -         | bool    | -              |   false                  | No                          | automatically activates the recording when the device is started           | if false, the recording is enabled via rpc port |
 */
 class AudioRecorderWrapper :
@@ -59,7 +60,7 @@ class AudioRecorderWrapper :
 {
 private:
     yarp::dev::PolyDriver          m_driver;
-    yarp::dev::IAudioGrabberSound* m_mic; //The microphone device
+    yarp::dev::IAudioGrabberSound* m_mic = nullptr; //The microphone device
     double                         m_period;
     yarp::os::Port                 m_rpcPort;
     yarp::os::Port                 m_streamingPort;
@@ -67,7 +68,11 @@ private:
     size_t                         m_min_number_of_samples_over_network;
     size_t                         m_max_number_of_samples_over_network;
     double                         m_getSound_timeout;
-    bool                           m_isDeviceOwned;
+    bool                           m_isDeviceOwned =false;
+
+    //negative value is a special value used to skip computation. it is equivalent to a 1.0 gain.
+    double m_wrapper_volume = -1.0;
+
 public:
     /**
      * Constructor.

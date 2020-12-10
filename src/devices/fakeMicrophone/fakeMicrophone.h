@@ -22,7 +22,7 @@
 * @ingroup dev_impl_fake dev_impl_media
 *
 * \brief `fakeMicrophone` : fake microphone device implementing the IAudioGrabberSound interface to generate a test sound.
-* It can generate various signals, i.e. sine, sawtooth, square wave, constant
+* It can generate various signals, i.e. sine, sawtooth, square wave, constant.
 *
 * Parameters required by this device are:
 * | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |

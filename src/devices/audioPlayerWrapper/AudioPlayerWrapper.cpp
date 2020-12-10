@@ -41,11 +41,8 @@ constexpr double DEFAULT_BUFFER_DELAY = 5.0; // seconds
 
 AudioPlayerWrapper::AudioPlayerWrapper() :
         PeriodicThread(DEFAULT_THREAD_PERIOD),
-        m_irender(nullptr),
         m_period(DEFAULT_THREAD_PERIOD),
-        m_buffer_delay(DEFAULT_BUFFER_DELAY),
-        m_isDeviceOwned(false),
-        m_debug_enabled(false)
+        m_buffer_delay(DEFAULT_BUFFER_DELAY)
 {
 }
 
@@ -130,6 +127,20 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
         m_irender->stopPlayback();
         reply.addVocab(VOCAB_OK);
     }
+    else if (command.get(0).asString() == "wrapper_volume")
+    {
+        double val = command.get(1).asFloat64();
+        if (val>=0)
+        {
+            m_wrapper_volume = val;
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yCError(AUDIOPLAYERWRAPPER) << "Invalid volume";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
     else if (command.get(0).asString() == "clear")
     {
         m_irender->resetPlaybackAudioBuffer();
@@ -141,6 +152,7 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
         reply.addString("start");
         reply.addString("stop");
         reply.addString("clear");
+        reply.addString("wrapper_volume");
     }
     else
     {
@@ -174,6 +186,20 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
     if (config.check("period"))
     {
         m_period = config.find("period").asFloat64();
+    }
+
+    if (config.check("wrapper_volume"))
+    {
+        double val = config.find("wrapper_volume").asFloat64();
+        if (val >= 0)
+        {
+            m_wrapper_volume = val;
+            yCInfo(AUDIOPLAYERWRAPPER) << "Wrapper volume set to" << m_wrapper_volume;
+        }
+        else
+        {
+            yCError(AUDIOPLAYERWRAPPER) << "Invalid volume";
+        }
     }
 
     string name = "/audioPlayerWrapper";
@@ -280,6 +306,12 @@ void AudioPlayerWrapper::run()
     Sound* s = m_audioInPort.read(false);
     if (s != nullptr)
     {
+        //negative value (default) is used to skip this computation
+        if (m_wrapper_volume>=0)
+        {
+            s->amplify(m_wrapper_volume);
+        }
+
         scheduled_sound_type ss;
 #if 1
         //This is simple, but we don't know how big the sound is...

@@ -58,6 +58,7 @@
  * | period         |      -         | int     | ms             |   20                    | No                          | period of the internal thread, in ms                                       | default 20ms |
  * | debug          |      -         | bool    | -              |   -                     | No                          | developers use only                                                        | |
  * | playback_network_buffer_size  | - | float | s              |   5.0                   | No                          | size of the audio buffer in seconds, increasing this value to robustify the real-time audio stream (it will increase latency too) | Audio playback will start when the buffer is full |
+ * | wrapper_volume |      -         | float   | -              |   1.0                   | No                          | the volume gain which will be applied by the wrapper to the processed sound chunks | This is a software gain and it does not change the settings of the physical hardware |
  * | start          |      -         | bool    | -              |   false                 | No                          | automatically activates the playback when the device is started            | if false, the playback is enabled via rpc port |
 */
 
@@ -109,16 +110,19 @@ private:
     std::string  m_statusPortName;
     yarp::os::BufferedPort<yarp::os::Bottle>  m_statusPort;
 
-    yarp::dev::IAudioRender *m_irender;
+    yarp::dev::IAudioRender *m_irender = nullptr;
     yarp::os::Stamp m_lastStateStamp;
     yarp::dev::AudioBufferSize m_current_buffer_size;
     yarp::dev::AudioBufferSize m_max_buffer_size;
     std::queue<scheduled_sound_type> m_sound_buffer;
     double m_period;
     double m_buffer_delay;
-    bool   m_isDeviceOwned;
-    bool   m_debug_enabled;
+    bool   m_isDeviceOwned = false;
+    bool   m_debug_enabled = false;
     bool   m_isPlaying = false;
+
+    //negative value is a special value used to skip computation. it is equivalent to a 1.0 gain.
+    double m_wrapper_volume = -1.0;
 
     bool initialize_YARP(yarp::os::Searchable &config);
     bool read(yarp::os::ConnectionReader& connection) override;

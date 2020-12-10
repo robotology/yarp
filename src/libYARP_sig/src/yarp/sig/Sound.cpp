@@ -415,3 +415,54 @@ double Sound::getDuration() const
 {
     return (double)(this->m_samples)*(double)(1 / this->m_frequency);
 }
+
+void Sound::normalizeChannel(size_t channel)
+{
+    size_t maxsampleid = 0;
+    audio_sample maxsamplevalue = 0;
+    findPeakChannel(channel, maxsampleid, maxsamplevalue);
+    double gain = 1 / (maxsamplevalue / 32767.0);
+    amplifyChannel(channel,gain);
+}
+
+void Sound::normalize()
+{
+    size_t maxsampleid = 0;
+    size_t maxchannelid = 0;
+    audio_sample maxsamplevalue = 0;
+    findPeak(maxchannelid, maxsampleid, maxsamplevalue);
+    double gain = 1 / (maxsamplevalue/32767.0);
+    amplify(gain);
+}
+
+void Sound::amplifyChannel(size_t channel, double gain)
+{
+    unsigned char* p = this->getRawData();
+
+    for (size_t t = 0; t < this->m_samples; t++)
+    {
+        
+    }
+}
+
+void Sound::amplify(double gain)
+{
+    for (size_t c = 0; c < this->m_channels; c++)
+    {
+        amplifyChannel(c,gain);
+    }
+}
+
+void Sound::findPeakChannel(size_t channelId, size_t& sampleId, audio_sample& sampleValue) const 
+{
+    size_t maxsampleid = 0;
+    size_t maxchannelid = 0;
+    audio_sample maxsamplevalue = 0;
+}
+
+void Sound::findPeak(size_t& channelId, size_t& sampleId, audio_sample& sampleValue) const
+{
+    size_t maxsampleid = 0;
+    size_t maxchannelid = 0;
+    audio_sample maxsamplevalue = 0;
+}
