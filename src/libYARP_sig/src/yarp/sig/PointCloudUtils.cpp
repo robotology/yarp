@@ -7,7 +7,7 @@
  */
 
 #include <yarp/sig/PointCloudUtils.h>
-#include <cmath>
+#include <algorithm>
 #include <cstring>
 
 using namespace yarp::sig;
