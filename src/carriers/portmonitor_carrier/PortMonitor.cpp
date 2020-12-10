@@ -155,8 +155,12 @@ yarp::os::ConnectionReader& PortMonitor::modifyIncomingData(yarp::os::Connection
     PortMonitor::unlock();
     con.reset();
     if(result.write(con.getWriter())) {
-        con.getReader().setParentConnectionReader(&reader);
-        return con.getReader();
+        auto& cReader = con.getReader(reader.getWriter());
+        cReader.setParentConnectionReader(&reader);
+        if (result.getPortReader() != nullptr) {
+            cReader.getWriter()->setReplyHandler(*result.getPortReader());
+        }
+        return cReader;
     }
     return *localReader;
 }
@@ -193,7 +197,7 @@ bool PortMonitor::acceptIncomingData(yarp::os::ConnectionReader& reader)
         if(thing.hasBeenRead()) {
             con.reset();
             if(thing.write(con.getWriter())) {
-                localReader = &con.getReader();
+                localReader = &con.getReader(reader.getWriter());
             }
         }
     }
