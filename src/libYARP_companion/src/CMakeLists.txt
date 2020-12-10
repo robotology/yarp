@@ -43,6 +43,7 @@ set(YARP_companion_IMPL_SRCS yarp/companion/impl/Companion.cpp
                              yarp/companion/impl/Companion.cmdRpc.cpp
                              yarp/companion/impl/Companion.cmdRpcServer.cpp
                              yarp/companion/impl/Companion.cmdSample.cpp
+                             yarp/companion/impl/Companion.cmdStats.cpp
                              yarp/companion/impl/Companion.cmdTerminate.cpp
                              yarp/companion/impl/Companion.cmdTime.cpp
                              yarp/companion/impl/Companion.cmdTrafficGen.cpp
