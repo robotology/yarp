@@ -93,7 +93,7 @@ int Companion::cmdStats(int argc, char *argv[])
     {
         yCInfo(COMPANION, "This is yarp stats. Syntax:");
         yCInfo(COMPANION, "yarp stats /remote_port");
-        yCInfo(COMPANION, "yarp stats /remote_port --duration <time_in_s>");
+        yCInfo(COMPANION, "yarp stats /remote_port --duration <time_in_s> --protocol <protocol_name>");
         return -1;
     }
 
@@ -109,10 +109,9 @@ int Companion::cmdStats(int argc, char *argv[])
 
     //makes the connection
     std::string remote_port = argv[0];
-    std::string protocol="tcp";
+    std::string protocol= options.check("protocol", Value("tcp")).asString();
     double max_time = options.check("duration", Value(0)).asFloat32();
 
-    if (argc == 2) { protocol = argv[1]; }
     bool b = yarp::os::NetworkBase::connect(remote_port.c_str(), localPort.getName().c_str(), protocol, false);
     if (!b)
     {
