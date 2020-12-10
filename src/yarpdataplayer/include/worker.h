@@ -45,37 +45,31 @@ class QUtilities;
 //class MainWindow;
 
 /**********************************************************/
-class MasterThread : public QObject
+class QEngine : public QObject, public yarp::yarpDataplayer::DataplayerEngine
 {
-    friend class QUtilities;
-
-protected:
-    QUtilities *qutilities;
-    
 
 public:
-  
-    QMainWindow* wnd;
+    QUtilities *qutils;
+    QMainWindow* gui;
 
     /**
-     * Master thread class
+     * QEngine class
      */
-    MasterThread(QUtilities *qutilities, int numPart, QMainWindow *gui, QObject *parent = NULL);
-    
-    bool init();
-    
-    void tick();
+    QEngine(QUtilities *qutilities, int subDirCnt, QMainWindow *gui, QObject *parent = NULL);
+    ~QEngine();
+
+    class QMasterThread : public yarp::yarpDataplayer::DataplayerEngine::dataplayer_thread
+    {
+        QEngine *qEngine;
+        public:
+        void setEngine(QEngine &qEngine)
+                    { this->qEngine = &qEngine; }
+        void        run() override;
+    } *thread;
+
     void stepFromCmd();
     void runNormally();
-    void goToPercentage(int value);
-    void run();
-    
-    void forward(int steps);
-    void backward(int steps);
-    
-    void pause();
-    void resume();
-    void release();
+
 };
 
 #endif

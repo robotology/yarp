@@ -60,7 +60,6 @@ using namespace yarp::sig::file;
 DataplayerUtilities::~DataplayerUtilities()
 {
     if(dataplayerEngine){
-        //masterThread->stop();
         delete dataplayerEngine;
         dataplayerEngine = nullptr;
     }
@@ -73,8 +72,29 @@ DataplayerUtilities::~DataplayerUtilities()
     }
 }
 
-DataplayerUtilities::DataplayerUtilities(string name, bool _add_prefix) :
+DataplayerUtilities::DataplayerUtilities() :
 
+    dir_count(0),
+    moduleName(""),
+    add_prefix(false),
+    partDetails(nullptr),
+    speed(1.0),
+    repeat(false),
+    sendStrict(false),
+    totalSent(0),
+    totalThreads(0),
+    recursiveIterations(0),
+    dataplayerEngine(nullptr),
+    withExtraColumn(false),
+    column(0),
+    maxTimeStamp(0.0),
+    minTimeStamp(0.0),
+    verbose(false)
+{
+    dataplayerEngine = new DataplayerEngine(this);
+}
+
+DataplayerUtilities::DataplayerUtilities(string name, bool _add_prefix, bool _verbose) :
     dir_count(0),
     moduleName(std::move(name)),
     add_prefix(_add_prefix),
@@ -89,8 +109,25 @@ DataplayerUtilities::DataplayerUtilities(string name, bool _add_prefix) :
     withExtraColumn(false),
     column(0),
     maxTimeStamp(0.0),
-    minTimeStamp(0.0)
+    minTimeStamp(0.0),
+    verbose(_verbose)
 {
+    dataplayerEngine = new DataplayerEngine(this);
+}
+
+void DataplayerUtilities::setModuleName(const std::string &name)
+{
+    moduleName = std::move(name);
+}
+
+void DataplayerUtilities::addPrefix(const bool &prefix)
+{
+    add_prefix = prefix;
+}
+
+void DataplayerUtilities::setVerbose(const bool &verbose)
+{
+    this->verbose = verbose;
 }
 
 string DataplayerUtilities::getCurrentPath()
@@ -165,7 +202,9 @@ int DataplayerUtilities::getRecSubDirList(const string& dir, vector<RowInfo>& ro
                 bool checkData = checkLogValidity( dataFileName.c_str() );
                 //check log file validity before proceeding
                 if ( checkLog && checkData && (stat(dataFileName.c_str(), &st) == 0)) {
-                    yInfo() << filename << " IS present adding it to the gui";
+                    if (verbose){
+                        yInfo() << filename << " IS present adding it to the gui";
+                    }
                     RowInfo row;
 
                     if (recursiveName.empty()){
@@ -181,12 +220,16 @@ int DataplayerUtilities::getRecSubDirList(const string& dir, vector<RowInfo>& ro
                     dir_count++;
                 } else {
                     if (!checkLog){
-                        yInfo() << filename << " IS present BUT corrupted not using file";
-                        //errorMessage(QString("%1").arg(filename));
+                        if (verbose){
+                            yInfo() << filename << " IS present BUT corrupted not using file";
+                            //errorMessage(QString("%1").arg(filename));
+                        }
                     }
                     if (!checkData){
-                        yInfo() << dataFileName.c_str() << " IS present BUT corrupted not using file";
-                        //errorMessage(QString("%1").arg(dataFileName.c_str()));
+                        if (verbose){
+                            yInfo() << dataFileName.c_str() << " IS present BUT corrupted not using file";
+                            //errorMessage(QString("%1").arg(dataFileName.c_str()));
+                        }
                     }
                 }
             }
@@ -238,7 +281,9 @@ bool DataplayerUtilities::checkLogValidity(const char *filename)
             itr++;
         }
         str.close();
-        fprintf (stdout, "The file contains at least %d non-empty lines\n",itr );
+        if (verbose){
+            fprintf (stdout, "The file contains at least %d non-empty lines\n",itr );
+        }
     }
     return check;
 }
@@ -248,7 +293,9 @@ bool DataplayerUtilities::setupDataFromParts(PartsData &part)
     fstream str;
 
     // info part
-    yInfo() << "opening file " <<  part.infoFile.c_str() ;
+    if (verbose){
+        yInfo() << "opening file " <<  part.infoFile.c_str() ;
+    }
 
     str.open (part.infoFile.c_str(), ios_base::in);//, ios::binary);
     if (str.is_open()){
@@ -260,7 +307,9 @@ bool DataplayerUtilities::setupDataFromParts(PartsData &part)
                 part.type = b.get(1).toString();
                 if (part.type == "")
                 {
-                    yError() << "Invalid format, missing data type?!";
+                    if (verbose){
+                        yError() << "Invalid format, missing data type?!";
+                    }
                     return false;
                 }
                 part.type.erase(part.type.size() -1 );          // remove the ";" character
@@ -269,7 +318,9 @@ bool DataplayerUtilities::setupDataFromParts(PartsData &part)
                 string stamp_tag = b.get(0).toString();
                 if (stamp_tag.find("Stamp") == string::npos){   // skip stamp information
                     part.portName = b.get(1).toString();
-                    yInfo() << "the name of the port is " << part.portName.c_str();
+                    if (verbose) {
+                        yInfo() << "the name of the port is " << part.portName.c_str();
+                    }
                     break;
                 }
             }
@@ -280,7 +331,9 @@ bool DataplayerUtilities::setupDataFromParts(PartsData &part)
         return false;
     }
 
-    yInfo() <<"opening file " << part.logFile.c_str();
+    if (verbose){
+        yInfo() <<"opening file " << part.logFile.c_str();
+    }
     str.open (part.logFile.c_str(), ios_base::in);//, ios::binary);
 
     //read throughout
@@ -314,13 +367,17 @@ void DataplayerUtilities::getMaxTimeStamp()
     maxTimeStamp = 0.0;
     int index = 0;
     for (int i=0; i< (int)allTimeStamps.size(); i++ ){
-        yInfo() << allTimeStamps[i];
+        if (verbose){
+            yInfo() << allTimeStamps[i];
+        }
         if ( maxTimeStamp < allTimeStamps[i] ){
             maxTimeStamp = allTimeStamps[i];
             index = i;
         }
     }
-    yInfo() << "the biggest timestamp is: index " << index << "with value " << allTimeStamps[index];
+    if (verbose){
+        yInfo() << "the biggest timestamp is: index " << index << "with value " << allTimeStamps[index];
+    }
 }
 
 void DataplayerUtilities::getMinTimeStamp()
@@ -328,13 +385,17 @@ void DataplayerUtilities::getMinTimeStamp()
     minTimeStamp = allTimeStamps[0];
     int index = 0;
     for (int i=0; i< (int)allTimeStamps.size(); i++ ){
-        yInfo() << allTimeStamps[i];
+        if (verbose){
+            yInfo() << allTimeStamps[i];
+        }
         if ( minTimeStamp > allTimeStamps[i] ){
             minTimeStamp = allTimeStamps[i];
             index = i;
         }
     }
-    yInfo() << "the smallest timestamp is: index " << index << "with value " << allTimeStamps[index];
+    if (verbose){
+        yInfo() << "the smallest timestamp is: index " << index << "with value " << allTimeStamps[index];
+    }
 }
 
 int DataplayerUtilities::amendPartFrames(PartsData &part)
@@ -342,7 +403,9 @@ int DataplayerUtilities::amendPartFrames(PartsData &part)
     while (part.timestamp[part.currFrame] < maxTimeStamp){
         part.currFrame++;
     }
-    yInfo() << "the first frame of part " << part.name.c_str() << " is " << part.currFrame;
+    if (verbose) {
+        yInfo() << "the first frame of part " << part.name.c_str() << " is " << part.currFrame;
+    }
     return part.currFrame;
 }
 
@@ -394,20 +457,28 @@ bool DataplayerUtilities::configurePorts(PartsData &part)
     }
     else
     {
-        yError() << "Something is wrong with the data..." << part.name.c_str() << "Type (" << part.type.c_str()  << ") is unrecognized";
+        if (verbose){
+            yError() << "Something is wrong with the data..." << part.name.c_str() << "Type (" << part.type.c_str()  << ") is unrecognized";
+        }
         return false;
     }
 
     if (!yarp::os::Network::exists(tmp_port_name))
     {
-        yInfo() << "need to create new port " << part.type.c_str() << " for " << part.name.c_str();
+        if (verbose){
+            yInfo() << "need to create new port " << part.type.c_str() << " for " << part.name.c_str();
+        }
         part.outputPort->close();
-        yInfo() << "creating and opening " << part.type.c_str() << " port for part " << part.name.c_str();
+        if (verbose){
+            yInfo() << "creating and opening " << part.type.c_str() << " port for part " << part.name.c_str();
+        }
         part.outputPort->open(tmp_port_name);
     }
     else
     {
-        yInfo() << "port " << tmp_port_name.c_str() << "already exists, skipping";
+        if (verbose){
+            yInfo() << "port " << tmp_port_name.c_str() << "already exists, skipping";
+        }
     }
 
     return true;
@@ -433,36 +504,50 @@ bool DataplayerUtilities::closePorts(PartsData &part)
 
 void DataplayerUtilities::stopAtEnd()
 {
-    yInfo() << "asking utils to stop the thread";
+    if (verbose){
+        yInfo() << "asking utils to stop the thread";
+    }
     dataplayerEngine->askToStop();
     for (int i=0; i < totalThreads; i++){
         partDetails[i].currFrame = (int)initialFrame[i];
     }
-
-    dataplayerEngine->pause();
-    yInfo() << "ok................";
+    if (verbose){
+        yInfo() << "ok................";
+    }
 }
 /**********************************************************/
 void DataplayerUtilities::stepThread()
 {
     dataplayerEngine->stepfromCmd = true;
-    yInfo() << "asking utils to step the thread";
+    if (verbose){
+        yInfo() << "asking utils to step the thread";
+    }
     if ( dataplayerEngine->isRunning() ){
+        dataplayerEngine->pause();
+    }
+    if ( dataplayerEngine->isSuspended() ){
         dataplayerEngine->resume();
-    } else {
+    } else if ( !dataplayerEngine->isRunning() ) {
         for (int i=0; i < totalThreads; i++){
             partDetails[i].worker->init();
         }
         dataplayerEngine->start();
     }
-    yInfo() << "ok................ \n";
+    if (verbose){
+        yInfo() << "ok................ \n";
+    }
 
 }
 /**********************************************************/
 void DataplayerUtilities::pauseThread()
-{   yInfo() << "asking the thread to pause";
+{
+    if (verbose){
+        yInfo() << "asking the thread to pause";
+    }
     dataplayerEngine->pause();
-    yInfo() << "ok................ ";
+    if (verbose){
+        yInfo() << "ok................ ";
+    }
     dataplayerEngine->stepfromCmd = false;
 }
 
@@ -488,11 +573,13 @@ bool DataplayerWorker::init()
     frameRate = 0.0;
     utilities->partDetails[part].hasNotified = false;
 
-    #ifdef HAS_OPENCV
+    if (utilities->verbose){
+#ifdef HAS_OPENCV
         yInfo() << "USING OPENCV FOR SENDING THE IMAGES";
-    #else
+#else
         yInfo() << "USING YARP IMAGE FOR SENDING THE IMAGES";
-    #endif
+#endif
+    }
 
     return true;
 }
@@ -570,11 +657,15 @@ void DataplayerWorker::run()
             ret = sendGenericData<yarp::rosmsg::geometry_msgs::Pose2D>(part, frame);
         }
         else  {
-            yInfo() << "Unknown data type: " << utilities->partDetails[part].type.c_str();
+            if (utilities->verbose){
+                yInfo() << "Unknown data type: " << utilities->partDetails[part].type.c_str();
+            }
         }
 
         if (ret==-1)  {
-            yInfo() << "Failed to send data:" << utilities->partDetails[part].type.c_str();
+            if (utilities->verbose){
+                yInfo() << "Failed to send data:" << utilities->partDetails[part].type.c_str();
+            }
         }
     }
     utilities->partDetails[part].sent++;
@@ -606,8 +697,12 @@ int DataplayerWorker::sendBottle(int part, int frame)
     }
 
     yarp::os::BufferedPort<Bottle>* the_port = dynamic_cast<yarp::os::BufferedPort<yarp::os::Bottle>*> (utilities->partDetails[part].outputPort);
-    if (the_port == nullptr)
-    {  yError() << "dynamic_cast failed"; return -1;}
+    if (the_port == nullptr){
+        if (utilities->verbose){
+            yError() << "dynamic_cast failed";
+        }
+        return -1;
+    }
 
     Bottle& outBot = the_port->prepare();
     outBot = tmp;
@@ -707,7 +802,9 @@ int DataplayerWorker::sendImages(int part, int frame)
     }
 #endif
     if (!fileValid) {
-        yError() << "Cannot load file " << tmpPath.c_str() ;
+        if (utilities->verbose){
+            yError() << "Cannot load file " << tmpPath.c_str() ;
+        }
         return 1;
     }
     else
@@ -776,9 +873,8 @@ int DataplayerWorker::sendGenericData(int part, int id)
 }
 
 /**********************************************************/
-DataplayerEngine::DataplayerEngine(DataplayerUtilities *utilities, int numPart)
+DataplayerEngine::DataplayerEngine()
 {
-//    dataplayer_updater=new dataplayer_thread ();
     this->dataplayer_updater = new dataplayer_thread ();
     this->dataplayer_updater->SetDataplayerEngine(*this);
     numThreads = 0;
@@ -788,7 +884,42 @@ DataplayerEngine::DataplayerEngine(DataplayerUtilities *utilities, int numPart)
     stepfromCmd = false;
     pauseStart = 0.0;
     pauseEnd = 0.0;
+    allPartsStatus = false;
+    this->utilities = nullptr;
+}
+
+/**********************************************************/
+DataplayerEngine::DataplayerEngine(DataplayerUtilities *utilities)
+{
+    this->dataplayer_updater = new dataplayer_thread ();
+    this->dataplayer_updater->SetDataplayerEngine(*this);
+    numThreads = 0;
+    timePassed = 0.0;
+    initTime = 0;
+    virtualTime = 0.0;
+    stepfromCmd = false;
+    pauseStart = 0.0;
+    pauseEnd = 0.0;
+    allPartsStatus = false;
+    this->utilities = utilities;
+}
+
+/**********************************************************/
+DataplayerEngine::DataplayerEngine(DataplayerUtilities *utilities, int numPart)
+{
+    this->dataplayer_updater = new dataplayer_thread ();
+    this->dataplayer_updater->SetDataplayerEngine(*this);
+    numThreads = 0;
+    timePassed = 0.0;
+    initTime = 0;
+    virtualTime = 0.0;
+    stepfromCmd = false;
+    pauseStart = 0.0;
+    pauseEnd = 0.0;
+    allPartsStatus = false;
     this->numPart = numPart;
+    isPartActive.resize(this->numPart);
+    std::fill(isPartActive.begin(), isPartActive.end(), true);
     this->utilities = utilities;
 }
 
@@ -802,7 +933,22 @@ DataplayerEngine::~DataplayerEngine()
 bool DataplayerEngine::setNumPart(int numPart)
 {
     this->numPart = numPart;
+    isPartActive.resize(this->numPart);
+    std::fill(isPartActive.begin(), isPartActive.end(), true);
     return true;
+}
+
+/**********************************************************/
+void DataplayerEngine::setUtilities(DataplayerUtilities *utilities)
+{
+    this->utilities = utilities;
+}
+
+/**********************************************************/
+void DataplayerEngine::setThread(dataplayer_thread *dataplayer_updater)
+{
+    this->dataplayer_updater = dataplayer_updater;
+    this->dataplayer_updater->SetDataplayerEngine(*this);
 }
 
 /**********************************************************/
@@ -814,8 +960,8 @@ DataplayerEngine::dataplayer_thread::dataplayer_thread (double _period) : Period
 /**********************************************************/
 bool DataplayerEngine::dataplayer_thread::threadInit()
 {
+    this->dataplayerEngine->allPartsStatus = false;
     this->dataplayerEngine->initTime = 0;
-
     for (int i =0; i < this->dataplayerEngine->numPart; i++)
     {
         this->dataplayerEngine->utilities->partDetails[i].currFrame = 0;
@@ -824,12 +970,15 @@ bool DataplayerEngine::dataplayer_thread::threadInit()
     //virtualTime = utilities->partDetails[0].timestamp[ utilities->partDetails[0].currFrame ];
     this->dataplayerEngine->virtualTime = this->dataplayerEngine->utilities->minTimeStamp;
 
-    yDebug() << "virtual time is " << this->dataplayerEngine->virtualTime ;
+    if (this->dataplayerEngine->utilities->verbose)
+    {
+        yDebug() << "virtual time is " << this->dataplayerEngine->virtualTime ;
+    }
 
     this->dataplayerEngine->lastUpdate = std::chrono::high_resolution_clock::now();
     this->dataplayerEngine->dtSeconds = 0.f;
     this->dataplayerEngine->fps = 0.f;
-    
+
     return true;
 }
 
@@ -842,53 +991,98 @@ void DataplayerEngine::dataplayer_thread::threadRelease()
 /**********************************************************/
 void DataplayerEngine::dataplayer_thread::run()
 {
-    for (int i=0; i < this->dataplayerEngine->numPart; i++){
-        bool isActive = true;
-//        bool isActive  = ((MainWindow*)wnd)->getPartActivation(qutilities->utils->partDetails[i].name.c_str());
-        if ( this->dataplayerEngine->utilities->partDetails[i].currFrame <= this->dataplayerEngine->utilities->partDetails[i].maxFrame ){
-            if ( this->dataplayerEngine->virtualTime >= this->dataplayerEngine->utilities->partDetails[i].timestamp[ this->dataplayerEngine->utilities->partDetails[i].currFrame ] ){
-                if ( this->dataplayerEngine->initTime > 300){
-//                    emit qutilities->updateGuiThread();
-                    this->dataplayerEngine->initTime = 0;
+    if (this->dataplayerEngine->stepfromCmd){
+        this->dataplayerEngine->stepFromCmd();
+    } else {
+        this->dataplayerEngine->runNormally();
+    }
+}
+
+/**********************************************************/
+void DataplayerEngine::stepFromCmd()
+{
+    if (utilities->verbose){
+        yInfo() << "Step from command";
+    }
+    bool sentAll = false;
+    for (int i=0; i < this->numPart; i++){
+        this->utilities->partDetails[i].sent = 0;
+    }
+    this->utilities->totalSent = 0;
+
+    while ( !sentAll ){
+        runNormally();
+        for (int i=0; i < this->numPart; i++){
+            if (this->utilities->partDetails[i].sent == 1){
+                this->utilities->totalSent ++;
+                this->utilities->partDetails[i].sent = 2;
+            }
+            if (this->utilities->totalSent == this->numPart){
+                sentAll = true;
+            }
+        }
+    }
+
+    for (int i=0; i < this->numPart; i++){
+        this->utilities->partDetails[i].sent = 0;
+    }
+
+    this->utilities->totalSent = 0;
+    this->utilities->pauseThread();
+    for (int i=0; i < this->numPart; i++){
+        this->virtualTime = this->utilities->partDetails[i].timestamp[this->utilities->partDetails[i].currFrame];
+    }
+    this->virtualTime = this->utilities->partDetails[0].timestamp[this->utilities->partDetails[0].currFrame];
+}
+
+/**********************************************************/
+void DataplayerEngine::runNormally()
+{
+    for (int i=0; i < this->numPart; i++){
+        bool isActive = this->isPartActive[i];
+        if ( this->utilities->partDetails[i].currFrame <= this->utilities->partDetails[i].maxFrame ){
+            if ( this->virtualTime >= this->utilities->partDetails[i].timestamp[ this->utilities->partDetails[i].currFrame ] ){
+                if ( this->initTime > 300 && this->virtualTime < this->utilities->partDetails[i].timestamp[this->utilities->partDetails[i].timestamp.length()-1]){
+                    this->initTime = 0;
                 }
-                if (!this->dataplayerEngine->utilities->partDetails[i].hasNotified){
-                    this->dataplayerEngine->utilities->partDetails[i].worker->sendData(this->dataplayerEngine->utilities->partDetails[i].currFrame, isActive, this->dataplayerEngine->virtualTime );
-                    this->dataplayerEngine->utilities->partDetails[i].currFrame++;
+                if (!this->utilities->partDetails[i].hasNotified){
+                    this->utilities->partDetails[i].worker->sendData(this->utilities->partDetails[i].currFrame, isActive, this->virtualTime );
+                    this->utilities->partDetails[i].currFrame++;
                 }
             }
         } else {
-            if (this->dataplayerEngine->utilities->repeat) {
-                this->dataplayerEngine->initThread();
-                this->dataplayerEngine->utilities->partDetails[i].worker->init();
+            if (this->utilities->repeat) {
+                this->initThread();
+                this->utilities->partDetails[i].worker->init();
             } else {
-                if ( !this->dataplayerEngine->utilities->partDetails[i].hasNotified ) {
-                    yInfo() << "partID:" << i << "has finished";
-                    this->dataplayerEngine->utilities->partDetails[i].hasNotified = true;
+                if ( !this->utilities->partDetails[i].hasNotified ) {
+                    if (utilities->verbose){
+                        yInfo() << "partID:" << i << "has finished";
+                    }
+                    this->utilities->partDetails[i].hasNotified = true;
                 }
 
                 int stopAll = 0;
-                for (int x=0; x < this->dataplayerEngine->numPart; x++){
-                    if (this->dataplayerEngine->utilities->partDetails[x].hasNotified){
+                for (int x=0; x < this->numPart; x++){
+                    if (this->utilities->partDetails[x].hasNotified){
                         stopAll++;
                     }
 
-                    if (stopAll == this->dataplayerEngine->numPart){
-                        yInfo() << "All parts have Finished!";
-                        if (this->dataplayerEngine->utilities->partDetails[i].currFrame > 1)
-//                            emit qutilities->updateGuiThread();
-                        this->dataplayerEngine->utilities->stopAtEnd();
+                    if (stopAll == this->numPart){
+                        if (utilities->verbose) {
+                            yInfo() << "All parts have Finished!";
+                        }
+                        this->utilities->stopAtEnd();
+                        this->allPartsStatus = true;
                     }
                 }
             }
         }
     }
 
-    this->dataplayerEngine->virtualTime += this->dataplayerEngine->diff_seconds() * this->dataplayerEngine->utilities->speed;
-
-    this->dataplayerEngine->tick();
-
-    this->dataplayerEngine->initTime++;
-
+    this->virtualTime += this->diff_seconds() * this->utilities->speed;
+    this->tick();
+    this->initTime++;
 }
 
 /**********************************************************/
@@ -951,13 +1145,20 @@ void DataplayerEngine::backward(int steps)
 /**********************************************************/
 void DataplayerEngine::pause()
 {
+    if (utilities->verbose){
+        yInfo()<<"pausing thread";
+    }
     pauseStart = yarp::os::Time::now();
     dataplayer_updater->suspend();
 }
 
 /**********************************************************/
 void DataplayerEngine::resume()
-{
+{    
+    if (utilities->verbose){
+        yInfo()<<"resuming thread";
+    }
+    allPartsStatus = false;
     pauseEnd = yarp::os::Time::now();
     virtualTime -= pauseEnd - pauseStart;
     //PeriodicThread::resume();

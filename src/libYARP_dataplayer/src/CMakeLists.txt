@@ -29,6 +29,10 @@ target_sources(YARP_dataplayer PRIVATE ${YARP_dataplayer_SRCS}
 
 target_include_directories(YARP_dataplayer PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+if(MSVC)
+  target_include_directories(YARP_dataplayer SYSTEM PRIVATE ${dirent_INCLUDE_DIRS})
+endif()
+
 target_compile_features(YARP_dataplayer PUBLIC cxx_std_14)
 
 target_link_libraries(YARP_dataplayer PUBLIC YARP::YARP_os
@@ -37,6 +41,7 @@ list(APPEND YARP_dataplayer_PUBLIC_DEPS YARP_os)
 list(APPEND YARP_dataplayer_PRIVATE_DEPS YARP_sig)
 list(APPEND YARP_dataplayer_PRIVATE_DEPS YARP_init)
 list(APPEND YARP_dataplayer_PRIVATE_DEPS YARP_rosmsg)
+
 
 set_property(TARGET YARP_dataplayer PROPERTY PUBLIC_HEADER ${YARP_dataplayer_HDRS})
 set_property(TARGET YARP_dataplayer PROPERTY PRIVATE_HEADER ${YARP_dataplayer_IMPL_HDRS})

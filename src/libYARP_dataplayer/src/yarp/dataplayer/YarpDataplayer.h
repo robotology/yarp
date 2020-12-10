@@ -10,9 +10,9 @@
 #define YARP_DATAPLAYER
 
 #if defined(_WIN32)
-    #pragma warning (disable : 4099)
-    #pragma warning (disable : 4250)
-    #pragma warning (disable : 4520)
+#pragma warning (disable : 4099)
+#pragma warning (disable : 4250)
+#pragma warning (disable : 4520)
 #endif
 
 #include <yarp/os/Network.h>
@@ -48,15 +48,15 @@
 
 namespace yarp
 {
-    namespace yarpDataplayer
-    {
-        class  DataplayerEngine;
-        class  DataplayerWorker;
-        class  DataplayerUtilities;
-    
-        struct PartsData;
-        struct RowInfo;
-    }
+namespace yarpDataplayer
+{
+class  DataplayerEngine;
+class  DataplayerWorker;
+class  DataplayerUtilities;
+
+struct PartsData;
+struct RowInfo;
+}
 }
 
 struct yarp::yarpDataplayer::PartsData
@@ -90,14 +90,15 @@ struct yarp::yarpDataplayer::RowInfo
 
 class yarp::yarpDataplayer::DataplayerUtilities
 {
-    protected:
+protected:
     int                 dir_count;      //integer containing the directory count
     std::string         moduleName;     //string containing module name
     bool                add_prefix;     //true if /<moduleName> must be added to every port opened
     yarp::sig::Vector   allTimeStamps;  //save all timestamps
     
-    public:
-    DataplayerUtilities(std::string name, bool _add_prefix=false);
+public:
+    DataplayerUtilities();
+    DataplayerUtilities(std::string name, bool _add_prefix=false, bool _verbose=false);
     ~DataplayerUtilities();
     PartsData           *partDetails;
     double              speed;
@@ -115,6 +116,7 @@ class yarp::yarpDataplayer::DataplayerUtilities
     int                 column;
     double              maxTimeStamp;   //get the max Time stamp
     double              minTimeStamp;
+    bool                verbose;
 
     /**
     * function that returns the current path string
@@ -180,13 +182,29 @@ class yarp::yarpDataplayer::DataplayerUtilities
     * function that pauses the main thread for cmd step
     */
     void pauseThread();
+
+    /**
+    * function that sets the module name
+    */
+    void setModuleName(const std::string &name);
+
+    /**
+    * function that sets the add prefix
+    */
+    void addPrefix(const bool &prefix);
+
+    /**
+    * function that sets verbosity
+    */
+    void setVerbose(const bool &verbose);
+
 };
 
 
 
 class yarp::yarpDataplayer::DataplayerWorker
 {
-    protected:
+protected:
     DataplayerUtilities *utilities;
 
     void run();
@@ -199,7 +217,7 @@ class yarp::yarpDataplayer::DataplayerWorker
     yarp::os::Semaphore semIndex;
     double startTime;
     
-    public:
+public:
     /**
     * Worker class that does the work of sending the data for each part
     */
@@ -247,46 +265,47 @@ class yarp::yarpDataplayer::DataplayerWorker
 class yarp::yarpDataplayer::DataplayerEngine
 {
 
-    //private class
+protected:
     class dataplayer_thread : public yarp::os::PeriodicThread
     {
         DataplayerEngine *dataplayerEngine;
-        public:
+    public:
         void SetDataplayerEngine(DataplayerEngine &dataplayerEngine)
-                    { this->dataplayerEngine = &dataplayerEngine; }
-        dataplayer_thread (double _period=0.02);
+        { this->dataplayerEngine = &dataplayerEngine; }
+        dataplayer_thread (double _period=0.002);
 
         bool        threadInit() override;
         void        run() override;
         void        threadRelease() override;
 
     } *dataplayer_updater;
-
-    protected:
     
     DataplayerUtilities *utilities;
-//    dataplayer_thread* dataplayer_updater;
     
-    public:
+public:
 
     int                     numThreads;
     double                  timePassed, initTime, virtualTime;
     double                  pauseStart, pauseEnd;
     bool                    stepfromCmd;
     int                     numPart;
+    bool                    allPartsStatus;
+    std::vector<bool>       isPartActive;
 
     using Moment = std::chrono::time_point<std::chrono::high_resolution_clock>;
 
-   //static void initialize();
+    //static void initialize();
 
     void tick();
 
     float diff_seconds() const { return dtSeconds; }
     float framesPerSecond() const { return fps; }
 
+    DataplayerEngine    ();
+    DataplayerEngine    (DataplayerUtilities *utilities);
     DataplayerEngine    (DataplayerUtilities *utilities, int numPart);
     ~DataplayerEngine   ();
-  
+
     /**
      * Function that sets the numPart
      */
@@ -308,21 +327,36 @@ class yarp::yarpDataplayer::DataplayerEngine
      * Function that resumes the data set
      */
     void resume();
+    /**
+     * Function that steps from command rpc
+     */
+    void stepFromCmd();
+    /**
+      * Function that steps normally (without using terminal or rpc)
+    */
+    void runNormally();
+
+    void setPart(const int partID, const bool on) { isPartActive[partID] = on; }
+
+    bool getAllPartsStatus() { return allPartsStatus; }
+    void setAllPartsStatus(bool status) { allPartsStatus = status; }
+
+    void setUtilities(yarp::yarpDataplayer::DataplayerUtilities *utilities);
+    void setThread(yarp::yarpDataplayer::DataplayerEngine::dataplayer_thread *dataplayer_updater);
 
     void goToPercentage(int value);
-    
-    
-    bool initThread(){return dataplayer_updater->threadInit(); }
-    void runThread(){return dataplayer_updater->run(); }
-    void releaseThread(){return dataplayer_updater->threadRelease(); }
-    
-    bool isSuspended(){return dataplayer_updater->isSuspended(); }
-    void stop(){return dataplayer_updater->stop(); }
+
+    bool initThread(){ return dataplayer_updater->threadInit(); }
+    void runThread(){ return dataplayer_updater->run(); }
+    void releaseThread(){ return dataplayer_updater->threadRelease(); }
+
+    bool isSuspended(){ return dataplayer_updater->isSuspended(); }
+    void stop(){ return dataplayer_updater->stop(); }
     bool isRunning(){ return dataplayer_updater->isRunning(); }
     bool start(){ return dataplayer_updater->start(); }
     void askToStop() {return dataplayer_updater->askToStop(); }
     
-    private:
+protected:
     Moment lastUpdate;
     float dtSeconds, fps;
 

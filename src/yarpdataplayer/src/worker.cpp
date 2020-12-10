@@ -39,7 +39,6 @@
 #include <yarp/rosmsg/geometry_msgs/Pose.h>
 #include <yarp/rosmsg/geometry_msgs/Pose2D.h>
 
-
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 using namespace yarp::os;
@@ -50,148 +49,119 @@ using namespace std;
 #endif
 
 /**********************************************************/
-MasterThread::MasterThread(QUtilities *qutilities, int numPart, QMainWindow *gui, QObject *parent) :
+QEngine::QEngine(QUtilities *qutilities, int subDirCnt, QMainWindow *gui, QObject *parent) :
     QObject(parent),
-    wnd(gui)
+    qutils(qutilities),
+    gui(gui)
 {
-    qutilities->utils->dataplayerEngine->setNumPart(numPart);
+    this->numPart = subDirCnt;
+    thread = new QMasterThread();
+    this->setThread(thread);
+    thread->setEngine(*this);
+    this->setUtilities(this->qutils);
 }
 
 /**********************************************************/
-bool MasterThread::init()
+QEngine::~QEngine()
 {
-    return qutilities->utils->dataplayerEngine->initThread();
+    delete thread;
 }
 
 /**********************************************************/
-void MasterThread::tick()
+void QEngine::stepFromCmd()
 {
-    qutilities->utils->dataplayerEngine->tick();
-}
-
-/**********************************************************/
-void MasterThread::stepFromCmd()
-{
-    //fprintf( stdout, "in step from command\n");
+    yInfo() << "in step from command";
     bool sentAll = false;
-    for (int i=0; i < qutilities->utils->dataplayerEngine->numPart; i++){
-        qutilities->utils->partDetails[i].sent = 0;
+    for (int i=0; i < this->numPart; i++){
+        qutils->partDetails[i].sent = 0;
     }
-    qutilities->utils->totalSent = 0;
+    qutils->totalSent = 0;
 
     while ( !sentAll ){
         runNormally();
-        for (int i=0; i < qutilities->utils->dataplayerEngine->numPart; i++){
-            if (qutilities->utils->partDetails[i].sent == 1){
-                qutilities->utils->totalSent ++;
-                qutilities->utils->partDetails[i].sent = 2;
+        for (int i=0; i < this->numPart; i++){
+            if (qutils->partDetails[i].sent == 1){
+                qutils->totalSent ++;
+                qutils->partDetails[i].sent = 2;
             }
-            if (qutilities->utils->totalSent == qutilities->utils->dataplayerEngine->numPart){
+            if (qutils->totalSent == this->numPart){
                 sentAll = true;
             }
         }
     }
 
-    for (int i=0; i < qutilities->utils->dataplayerEngine->numPart; i++){
-        qutilities->utils->partDetails[i].sent = 0;
+    for (int i=0; i < this->numPart; i++){
+        qutils->partDetails[i].sent = 0;
     }
 
-    qutilities->utils->totalSent = 0;
-    qutilities->utils->pauseThread();
+    qutils->totalSent = 0;
+    qutils->qengine->pause();
+    for (int i=0; i < this->numPart; i++){
+        qutils->qengine->virtualTime = qutils->partDetails[i].timestamp[qutils->partDetails[i].currFrame];
+    }
+    qutils->qengine->virtualTime = qutils->partDetails[0].timestamp[qutils->partDetails[0].currFrame];
+    yInfo() << "ok................ ";
+    qutils->qengine->stepfromCmd = false;
 }
 
 /**********************************************************/
-void MasterThread::runNormally()
+void QEngine::runNormally()
 {
-    for (int i=0; i < qutilities->utils->dataplayerEngine->numPart; i++){
-        bool isActive  = ((MainWindow*)wnd)->getPartActivation(qutilities->utils->partDetails[i].name.c_str());
-        if ( qutilities->utils->partDetails[i].currFrame <= qutilities->utils->partDetails[i].maxFrame ){
-            if ( qutilities->utils->dataplayerEngine->virtualTime >= qutilities->utils->partDetails[i].timestamp[ qutilities->utils->partDetails[i].currFrame ] ){
-                if ( qutilities->utils->dataplayerEngine->initTime > 300){
-                    emit qutilities->updateGuiThread();
-                    qutilities->utils->dataplayerEngine->initTime = 0;
+    for (int i=0; i < this->numPart; i++){
+        bool isActive = ((MainWindow*)gui)->getPartActivation(qutils->partDetails[i].name.c_str());
+        if ( qutils->partDetails[i].currFrame <= qutils->partDetails[i].maxFrame ){
+            if ( this->virtualTime >= qutils->partDetails[i].timestamp[ qutils->partDetails[i].currFrame ] ){
+                if ( this->initTime > 300 && this->virtualTime < qutils->partDetails[i].timestamp[qutils->partDetails[i].timestamp.length()-1]){
+                    emit qutils->updateGuiThread();
+                    this->initTime = 0;
                 }
-                if (!qutilities->utils->partDetails[i].hasNotified){
-                    qutilities->utils->partDetails[i].worker->sendData(qutilities->utils->partDetails[i].currFrame, isActive, qutilities->utils->dataplayerEngine->virtualTime );
-                    qutilities->utils->partDetails[i].currFrame++;
+                if (!qutils->partDetails[i].hasNotified){
+                    qutils->partDetails[i].worker->sendData(qutils->partDetails[i].currFrame, isActive, this->virtualTime );
+                    qutils->partDetails[i].currFrame++;
                 }
             }
         } else {
-            if (qutilities->utils->repeat) {
-                qutilities->utils->dataplayerEngine->initThread();
-                qutilities->utils->partDetails[i].worker->init();
+            if (qutils->repeat) {
+                this->initThread();
+                qutils->partDetails[i].worker->init();
             } else {
-                if ( !qutilities->utils->partDetails[i].hasNotified ) {
+                if ( !qutils->partDetails[i].hasNotified ) {
                     yInfo() << "partID: " <<  i << " has finished";
-                    qutilities->utils->partDetails[i].hasNotified = true;
+                    qutils->partDetails[i].hasNotified = true;
                 }
 
                 int stopAll = 0;
-                for (int x=0; x < qutilities->utils->dataplayerEngine->numPart; x++){
-                    if (qutilities->utils->partDetails[x].hasNotified){
+                for (int x=0; x < this->numPart; x++){
+                    if (qutils->partDetails[x].hasNotified){
                         stopAll++;
                     }
 
-                    if (stopAll == qutilities->utils->dataplayerEngine->numPart){
+                    if (stopAll == this->numPart){
                         yInfo() << "All parts have Finished!";
-                        if (qutilities->utils->partDetails[i].currFrame > 1)
-                            emit qutilities->updateGuiThread();
-                        qutilities->utils->stopAtEnd();
+                        if (qutils->partDetails[i].currFrame > 1)
+                            emit qutils->updateGuiThread();
+                        qutils->stopAtEnd();
+                        qutils->resetButton();
+                        allPartsStatus = true;
                     }
                 }
             }
         }
     }
 
-    qutilities->utils->dataplayerEngine->virtualTime += qutilities->utils->dataplayerEngine->diff_seconds() * qutilities->utils->speed;
-
-    tick();
-
-    qutilities->utils->dataplayerEngine->initTime++;
+    this->virtualTime += this->diff_seconds() * qutils->speed;
+    this->tick();
+    this->initTime++;
 }
 
 /**********************************************************/
-void MasterThread::goToPercentage(int value)
+void QEngine::QMasterThread::run()
 {
-    qutilities->utils->dataplayerEngine->goToPercentage(value);
-}
-
-/**********************************************************/
-void MasterThread::run()
-{
-    if (qutilities->utils->dataplayerEngine->stepfromCmd){
-        stepFromCmd();
+    if (this->qEngine->stepfromCmd){
+        this->qEngine->stepFromCmd();
     } else {
-        runNormally();
+        this->qEngine->runNormally();
     }
 }
 
-/**********************************************************/
-void MasterThread::forward(int steps)
-{
-    qutilities->utils->dataplayerEngine->forward(steps);
-}
 
-/**********************************************************/
-void MasterThread::backward(int steps)
-{
-    qutilities->utils->dataplayerEngine->backward(steps);
-}
-
-/**********************************************************/
-void MasterThread::pause()
-{
-    qutilities->utils->dataplayerEngine->pause();
-}
-
-/**********************************************************/
-void MasterThread::resume()
-{
-    qutilities->utils->dataplayerEngine->resume();
-}
-
-/**********************************************************/
-void MasterThread::release()
-{
-    qutilities->utils->dataplayerEngine->releaseThread();
-}

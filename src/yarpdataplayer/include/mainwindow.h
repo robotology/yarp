@@ -52,7 +52,6 @@ class MainWindow : public QMainWindow, public yarp::os::ResourceFinder, public y
 {
     Q_OBJECT
     friend class QUtilities;
-    friend class MasterThread;
 
 public:
     explicit MainWindow(yarp::os::ResourceFinder &rf,QWidget *parent = 0);
@@ -99,7 +98,7 @@ public:
     /**
      * function that handles an IDL message - setFrame
      */
-    bool setFrame(const std::string &name, const int frameNum) override;
+    bool setFrame(const int frameNum) override;
     /**
      * function that handles an IDL message - getFrame
      */
@@ -162,7 +161,7 @@ protected:
     /**
      * function that updates the frame number
      */
-    bool updateFrameNumber(const char* part, int number);
+    bool updateFrameNumber(int number);
     /**
      * function that creates utilities
      */
@@ -183,11 +182,12 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
-   //yarp::yarpDataplayer::DataplayerEngine* dataEngine;
     
     Ui::MainWindow              *ui;
     QString                     moduleName;
     bool                        add_prefix; //indicates if ports have to be opened with /<moduleName> as prefix
+    bool                        verbose;
+    std::string                      dataset;
     yarp::os::RpcServer         rpcPort;
     std::vector<yarp::yarpDataplayer::RowInfo>        rowInfoVec;
     int                         subDirCnt;
@@ -204,9 +204,7 @@ private:
     QString errorMessage;
 
 protected:
-    yarp::yarpDataplayer::DataplayerUtilities         *utilities;
     QUtilities *qutilities;
-    MasterThread *masterThread;
     
     std::map<const char*,int>   partMap;
     int                         itr;
@@ -228,7 +226,7 @@ signals:
     void internalPause();
     void internalStop();
     void internalStep(yarp::os::Bottle *reply);
-    void internalSetFrame(const std::string &name, const int frameNum);
+    void internalSetFrame(const int frameNum);
     void internalGetFrame(const std::string &name, int *frame);
     void internalGetSliderPercentage(int * percentage);
 
@@ -261,7 +259,7 @@ private slots:
     void onInternalPause();
     void onInternalStop();
     void onInternalStep(yarp::os::Bottle *reply);
-    void onInternalSetFrame(const std::string &name, const int frameNum);
+    void onInternalSetFrame(const int frameNum);
     void onInternalGetFrame(const std::string &name, int *frame);
     void onInternalGetSliderPercentage(int *frame);
 
@@ -282,7 +280,6 @@ protected:
     void run() override;
 
 private:
-    MasterThread *masterThread;
     QUtilities *qutilities;
     QString newPath;
     QMainWindow *mainWindow;

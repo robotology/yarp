@@ -34,20 +34,23 @@
 #include <yarp/dataplayer/YarpDataplayer.h>
 
 class QMainWindow;
+class QEngine;
 
 /**********************************************************/
-class QUtilities : public QObject
+class QUtilities : public QObject, public yarp::yarpDataplayer::DataplayerUtilities
 {
     Q_OBJECT
 
-protected:
-   
 public:
-    QUtilities(yarp::yarpDataplayer::DataplayerUtilities *utilities, QObject *parent = NULL);
-    yarp::yarpDataplayer::DataplayerUtilities * utils;
+    QUtilities(QObject *parent = NULL);
     ~QUtilities();
 
     QMainWindow         *wnd;
+    QEngine             *qengine;
+
+    void stepThread();
+
+    void resetButton();
 
 signals:
     void updateGuiThread();

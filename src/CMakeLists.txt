@@ -49,6 +49,7 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarprobotinterface)
     add_subdirectory(yarpmanager-console)
     add_subdirectory(yarplogger-console)
+    add_subdirectory(yarpdataplayer-console)
     add_subdirectory(yarpdatadumper)
 
     # Qt5 GUIs

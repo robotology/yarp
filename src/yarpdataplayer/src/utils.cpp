@@ -60,10 +60,8 @@ QUtilities::~QUtilities()
 {
 }
 /**********************************************************/
-QUtilities::QUtilities(yarp::yarpDataplayer::DataplayerUtilities *utilities, QObject *parent) : QObject(parent)
-{
-    utils=utilities;
-    
+QUtilities::QUtilities(QObject *parent) : QObject(parent)
+{   
     connect(this,SIGNAL(updateGuiThread()),(MainWindow*)parent,
             SLOT(onUpdateGuiRateThread()),Qt::BlockingQueuedConnection);
 
@@ -72,4 +70,33 @@ QUtilities::QUtilities(yarp::yarpDataplayer::DataplayerUtilities *utilities, QOb
 
     connect(this,SIGNAL(errorMessage(QString)),(MainWindow*)parent,
             SLOT(onErrorMessage(QString)),Qt::QueuedConnection);
+}
+
+/**********************************************************/
+void QUtilities::stepThread()
+{
+    this->qengine->stepfromCmd = true;
+    yInfo() << "asking qutils to step the thread";
+    if ( this->qengine->isRunning() ){
+        yInfo() << "asking qutils to pause the thread";
+        this->qengine->pause();
+    }
+    if ( this->qengine->isSuspended() ){
+        yInfo() << "asking qutils to resume the thread";
+        this->qengine->resume();
+    } else if ( !this->qengine->isRunning() ) {
+        yInfo() << "asking qutils to start the thread";
+        for (int i=0; i < totalThreads; i++){
+            this->partDetails[i].worker->init();
+        }
+        this->qengine->start();
+    }
+    yInfo() << "ok................ \n";
+
+}
+
+/**********************************************************/
+void QUtilities::resetButton()
+{
+    pause();
 }
