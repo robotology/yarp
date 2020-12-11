@@ -82,15 +82,15 @@ public:
 
     void interrupt() override
     {
-        yCDebug(SOCKETTWOWAYSTREAM, "^^^^^^^^^^^ interrupting socket");
+        yCDebug(SOCKETTWOWAYSTREAM, "Interrupting socket");
         if (happy) {
             happy = false;
             stream.close_reader();
-            yCDebug(SOCKETTWOWAYSTREAM, "^^^^^^^^^^^ interrupting socket reader");
+            yCDebug(SOCKETTWOWAYSTREAM, "Interrupting socket reader");
             stream.close_writer();
-            yCDebug(SOCKETTWOWAYSTREAM, "^^^^^^^^^^^ interrupting socket writer");
+            yCDebug(SOCKETTWOWAYSTREAM, "Interrupting socket writer");
             stream.close();
-            yCDebug(SOCKETTWOWAYSTREAM, "^^^^^^^^^^^ interrupting socket fully");
+            yCDebug(SOCKETTWOWAYSTREAM, "Interrupting socket fully");
         }
     }
 
