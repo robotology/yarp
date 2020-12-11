@@ -162,10 +162,11 @@ int main(int argc, char *argv[])
     fini_Network();
 
     // 0 = All assertion passed
-    // 255 = All assertion passed, one or more tests skipped
-    // 1-254 = The number of assertion failed (max 254)
+    // 255 = Probably an assert was hit and the program exited somewhere else
+    // 254 = All assertion passed, one or more tests skipped
+    // 1-253 = The number of assertion failed (max 253)
     // Every test skipped generates also a failed assertion, therefore
     // the number of skips is subtracted.
-    assertions_failed = std::min(assertions_failed - yarp_tests_skipped, 254);
-    return (assertions_failed ? assertions_failed : (yarp_tests_skipped ? 255 : 0));
+    assertions_failed = std::min(assertions_failed - yarp_tests_skipped, 253);
+    return (assertions_failed ? assertions_failed : (yarp_tests_skipped ? 254 : 0));
 }
