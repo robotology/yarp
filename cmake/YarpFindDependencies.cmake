@@ -283,10 +283,6 @@ checkandset_dependency(YCM)
 
 find_package(ACE 6.0.0 QUIET)
 checkandset_dependency(ACE)
-# FIXME Deprecate SKIP_ACE in favour of YARP_USE_ACE
-# YARP_USE_ACE is marked as internal
-set_property(CACHE YARP_USE_ACE PROPERTY TYPE INTERNAL)
-set_property(CACHE YARP_USE_ACE PROPERTY VALUE TRUE)
 
 set(RobotTestingFramework_REQUIRED_VERSION 2)
 find_package(RobotTestingFramework ${RobotTestingFramework_REQUIRED_VERSION} QUIET)
@@ -483,12 +479,23 @@ macro(YARP_DEPENDENT_OPTION _option _doc _default _deps _force)
 endmacro()
 
 
+# FIXME Deprecate SKIP_ACE in favour of YARP_USE_ACE
+# YARP_USE_ACE is marked as internal
 option(SKIP_ACE "Compile YARP without ACE (Linux only, limited functionality)" OFF)
 mark_as_advanced(SKIP_ACE)
 if(SKIP_ACE)
   set_property(CACHE YARP_USE_ACE PROPERTY VALUE FALSE)
   unset(YARP_HAS_ACE) # Not set = disabled
+elseif(YARP_HAS_SYSTEM_ACE)
+  set_property(CACHE YARP_USE_ACE PROPERTY VALUE TRUE)
+  set(YARP_HAS_ACE TRUE)
+  set(YARP_USE_SYSTEM_ACE TRUE)
+else()
+  set_property(CACHE YARP_USE_ACE PROPERTY VALUE FALSE)
+  set(YARP_HAS_ACE FALSE)
 endif()
+set_property(CACHE YARP_USE_ACE PROPERTY TYPE INTERNAL)
+
 
 yarp_dependent_option(YARP_COMPILE_libYARP_math "Create math library YARP_math?" ON
                       YARP_HAS_Eigen3 OFF)
