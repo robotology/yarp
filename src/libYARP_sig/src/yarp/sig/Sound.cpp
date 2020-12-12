@@ -456,7 +456,7 @@ void Sound::amplify(double gain)
     }
 }
 
-void Sound::findPeakInChannel(size_t channelId, size_t& sampleId, audio_sample& sampleValue) const 
+void Sound::findPeakInChannel(size_t channelId, size_t& sampleId, audio_sample& sampleValue) const
 {
     sampleId = 0;
     sampleValue = 0;
