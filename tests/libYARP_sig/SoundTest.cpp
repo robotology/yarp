@@ -159,6 +159,81 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         }
     }
 
+    SECTION("check amplify.")
+    {
+        double gain = 2;
+        Sound snd1;
+        snd1.resize(10, 3);
+        generate_test_sound(snd1, 10, 3);
+
+        Sound snd2 = snd1;
+        snd2.amplify(gain);
+
+        Sound snd3 = snd1;
+        snd3.amplifyChannel(1, gain);
+
+        bool ok=true;
+        for (size_t s = 0; s < snd2.getSamples(); s++)
+        {
+            ok &= ((snd2.get(s, 0) == snd1.get(s, 0) * gain));
+            ok &= ((snd2.get(s, 1) == snd1.get(s, 1) * gain));
+            ok &= ((snd2.get(s, 2) == snd1.get(s, 2) * gain));
+        }
+        CHECK(ok);
+        for (size_t s = 0; s < snd3.getSamples(); s++)
+        {
+            ok &= ((snd3.get(s, 0) == snd1.get(s, 0) * 1.0));
+            ok &= ((snd3.get(s, 1) == snd1.get(s, 1) * gain));
+            ok &= ((snd3.get(s, 2) == snd1.get(s, 2) * 1.0));
+        }
+        CHECK(ok);
+    }
+
+    SECTION("check findPeak.")
+    {
+        bool ok;
+        Sound snd1;
+        snd1.resize(4, 2);
+        snd1.set(10,0,0);  snd1.set(20, 1, 0); snd1.set(30, 2, 0); snd1.set(-10, 3, 0);
+        snd1.set(15,0,1);  snd1.set(35, 1, 1); snd1.set(25, 2, 1); snd1.set(-15, 3, 1);
+        size_t cid=0;
+        size_t sid=0;
+        short v=0;
+        snd1.findPeak(cid,sid,v);
+        ok = (cid == 1) && (sid == 1) && (v == 35);
+        CHECK(ok);
+        snd1.findPeakInChannel(0, sid, v);
+        ok = (sid == 2) && (v == 30);
+        CHECK(ok);
+        snd1.findPeakInChannel(1, sid, v);
+        ok = (sid == 1) && (v == 35);
+        CHECK(ok);
+    }
+
+    SECTION("check normalize.")
+    {
+        Sound snd1;
+        Sound snt2;
+        Sound snt3;
+        snd1.resize(4, 2);
+        snt2.resize(4, 2);
+        snt3.resize(4, 2);
+        snd1.set(10, 0, 0);     snd1.set(20, 1, 0);    snd1.set(30, 2, 0);    snd1.set(-10, 3, 0);
+        snd1.set(15, 0, 1);     snd1.set(35, 1, 1);    snd1.set(25, 2, 1);    snd1.set(-15, 3, 1);
+
+        snt2.set(9362,  0, 0);  snt2.set(18724, 1, 0); snt2.set(28086, 2, 0); snt2.set(-9362, 3, 0);
+        snt2.set(14043, 0, 1);  snt2.set(32767, 1, 1); snt2.set(23405, 2, 1); snt2.set(-14043, 3, 1);
+
+        snt3.set(10922, 0, 0);  snt3.set(21844, 1, 0); snt3.set(32767, 2, 0); snt3.set(-10922, 3, 0);
+        snt3.set(15, 0, 1);     snt3.set(35, 1, 1);    snt3.set(25, 2, 1);    snt3.set(-15, 3, 1);
+        Sound snd2 = snd1;
+        snd2.normalize();
+        CHECK (snd2==snt2);
+        Sound snd3 = snd1;
+        snd3.normalizeChannel(0);
+        CHECK(snd3 == snt3);
+    }
+
     SECTION("check set/get sample.")
     {
         Sound snd1, snd2, sndSum;

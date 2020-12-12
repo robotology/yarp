@@ -420,7 +420,7 @@ void Sound::normalizeChannel(size_t channel)
 {
     size_t maxsampleid = 0;
     audio_sample maxsamplevalue = 0;
-    findPeakChannel(channel, maxsampleid, maxsamplevalue);
+    findPeakInChannel(channel, maxsampleid, maxsamplevalue);
     double gain = 1 / (maxsamplevalue / 32767.0);
     amplifyChannel(channel,gain);
 }
@@ -437,11 +437,14 @@ void Sound::normalize()
 
 void Sound::amplifyChannel(size_t channel, double gain)
 {
-    unsigned char* p = this->getRawData();
+    unsigned char* pc = this->getRawData();
+    audio_sample* p = reinterpret_cast<audio_sample*>(pc);
+    p+= this->m_samples * channel;
 
-    for (size_t t = 0; t < this->m_samples; t++)
+    for (size_t t = 0; t < this->m_samples; t++, p++)
     {
-        
+        double amplified_value = (*p) * gain;
+        *p = (int)(amplified_value); //should i limit this range
     }
 }
 
@@ -453,16 +456,36 @@ void Sound::amplify(double gain)
     }
 }
 
-void Sound::findPeakChannel(size_t channelId, size_t& sampleId, audio_sample& sampleValue) const 
+void Sound::findPeakInChannel(size_t channelId, size_t& sampleId, audio_sample& sampleValue) const 
 {
-    size_t maxsampleid = 0;
-    size_t maxchannelid = 0;
-    audio_sample maxsamplevalue = 0;
+    sampleId = 0;
+    sampleValue = 0;
+    unsigned char* pc = this->getRawData();
+    audio_sample* p = reinterpret_cast<audio_sample*>(pc);
+    p += this->m_samples * channelId;
+
+    for (size_t t = 0; t < this->m_samples; t++, p++)
+    {
+        if (*p > sampleValue)
+        {
+            sampleValue = (*p);
+            sampleId= t;
+        }
+    }
 }
 
 void Sound::findPeak(size_t& channelId, size_t& sampleId, audio_sample& sampleValue) const
 {
-    size_t maxsampleid = 0;
-    size_t maxchannelid = 0;
-    audio_sample maxsamplevalue = 0;
+    for (size_t c = 0; c < this->m_channels; c++)
+    {
+        size_t maxsampleid_inchannel=0;
+        audio_sample maxsamplevalue_inchannel=0;
+        findPeakInChannel(c, maxsampleid_inchannel, maxsamplevalue_inchannel);
+        if (maxsamplevalue_inchannel > sampleValue)
+        {
+            sampleValue = maxsamplevalue_inchannel;
+            sampleId = maxsampleid_inchannel;
+            channelId = c;
+        }
+    }
 }
