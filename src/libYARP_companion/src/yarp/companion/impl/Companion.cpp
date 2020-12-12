@@ -154,6 +154,7 @@ Companion::Companion() :
     add("priority-qos",    &Companion::cmdPriorityQos,    "set/get the packet priority for a given connection");
     add("read",            &Companion::cmdRead,           "read from the network and print to standard output");
     add("readwrite",       &Companion::cmdReadWrite,      "read from the network and print to standard output, write to the network from standard input");
+    add("repeat",          &Companion::cmdRepeat,         "repeats on the output port the same data received in the input port");
     add("resource",        &Companion::cmdResource,       "locates resource files (see ResourceFinder class)");
     add("rpc",             &Companion::cmdRpc,            "write commands to a port, and read replies");
     add("rpcserver",       &Companion::cmdRpcServer,      "make a test RPC server to receive and reply to Bottle-format messages");
