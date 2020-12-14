@@ -33,8 +33,9 @@ So this is just an example
 <tr><td>debug</td><td></td><td></td></tr>
 <tr><td>period</td><td></td><td></td></tr>
 <tr><td>name</td><td></td><td></td></tr>
-<tr><td>playback_network_buffer_lenght</td><td></td><td></td></tr>
+<tr><td>playback_network_buffer_size</td><td></td><td></td></tr>
 <tr><td>subdevice</td><td></td><td></td></tr>
+<tr><td>start</td><td></td><td></td></tr>
 </table>
 
 \sa AudioPlayerWrapper
