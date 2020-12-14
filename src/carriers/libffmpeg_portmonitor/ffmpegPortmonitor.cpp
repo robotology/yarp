@@ -79,11 +79,10 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
     firstTime = true;
 
+    codecContext->time_base = (AVRational) { 1, 15 };
     // Set command line params
     if (setCommandLineParams() == -1)
         return false;
-
-    codecContext->time_base = (AVRational) { 1, 15 };
 
     return true;
 }
@@ -98,7 +97,6 @@ void FfmpegMonitorObject::destroy(void)
         avcodec_free_context(&codecContext);
         codecContext = NULL;
     }
-
 }
 
 bool FfmpegMonitorObject::setparam(const yarp::os::Property& params)
@@ -525,11 +523,11 @@ int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecI
             }
             
         }
-        
+
         // Parsing codec context params
         paramsMap.insert( pair<string, string>(paramKey, paramValue) );
-        return 0;
     }
+    return 0;
 
 }
 
@@ -540,12 +538,19 @@ int FfmpegMonitorObject::setCommandLineParams() {
         string key = x.first;
         string value = x.second;
 
-        if (find(FFMPEGPORTMONITOR_PRIV_PARAMS.begin(), FFMPEGPORTMONITOR_PRIV_PARAMS.end(), key) != FFMPEGPORTMONITOR_PRIV_PARAMS.end()) {
-            av_opt_set(codecContext->priv_data, key.c_str(), value.c_str(), 0);
-            continue;
-        }
+        int globalError = av_opt_set(codecContext, key.c_str(), value.c_str(), 0);
+        int privError = av_opt_set(codecContext->priv_data, key.c_str(), value.c_str(), 0);
 
-        av_opt_set(codecContext, key.c_str(), value.c_str(), 0);
-    }
-    
+        if (globalError == AVERROR(ERANGE) || privError == AVERROR(ERANGE)) {
+            yCError(FFMPEGMONITOR, "Parameter out of range: %s", key.c_str());
+            return -1;
+        } else if (globalError == AVERROR(EINVAL) || privError == AVERROR(EINVAL)) {
+            yCError(FFMPEGMONITOR, "Invalid value for parameter: %s", key.c_str());
+            return -1;
+        } else if (senderSide && globalError == AVERROR_OPTION_NOT_FOUND && privError == AVERROR_OPTION_NOT_FOUND) {
+            yCError(FFMPEGMONITOR, "Parameter not found: %s", key.c_str());
+            return -1;
+        }
+        
+    }    
 }

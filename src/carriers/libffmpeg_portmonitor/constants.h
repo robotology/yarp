@@ -32,38 +32,6 @@ static const std::vector<int> FFMPEGPORTMONITOR_CODE_CODECS {
     AV_CODEC_ID_H265
 };
 
-static const std::vector<std::string> FFMPEGPORTMONITOR_PRIV_PARAMS {
-    "preset",
-    "tune",
-    "crf",
-    "cqp",
-    "crf_max",
-    "x264opts",
-    "aq_mode",
-    "aq_strength",
-    "psy",
-    "rc_lookahead",
-    "weightp",
-    "weightb",
-    "cplxblur",
-    "ssim",
-    "intra_refresh",
-    "b_bias",
-    "b_pyramid",
-    "mixed_refs",
-    "dct8x8",
-    "fast_pskip",
-    "aud",
-    "mbtree",
-    "direct_pred",
-    "slice_max_size",
-    "fastfirstpass",
-    "profile",
-    "nal_hrd",
-    "x265opts",
-    "profile"
-};
-
 static std::map<int, int> FFMPEGPORTMONITOR_PIXELMAP = {
   { VOCAB_PIXEL_RGB, AV_PIX_FMT_RGB24 },
   { VOCAB_PIXEL_RGBA, AV_PIX_FMT_RGBA },
