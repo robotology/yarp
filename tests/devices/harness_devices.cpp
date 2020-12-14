@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
     yInfo("Opening PolyDriver for device %s", deviceName.c_str());
     if (!dd.open(p)) {
         yError("PolyDriver failed to opened.");
-        return 255;
+        return 254;
     }
 
     yInfo("PolyDriver opened.");
