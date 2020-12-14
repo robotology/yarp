@@ -423,7 +423,7 @@ jobs:
       if: runner.os == 'Linux'
       uses: nick-invision/retry@v2.2.0
       with:
-        timeout_minutes: 10
+        timeout_minutes: 20
         retry_wait_seconds: 300
         max_attempts: 3
         command: |
@@ -488,7 +488,7 @@ jobs:
       if: runner.os == 'Windows'
       uses: nick-invision/retry@v2.2.0
       with:
-        timeout_minutes: 10
+        timeout_minutes: 20
         retry_wait_seconds: 300
         max_attempts: 3
         command: >-
@@ -519,7 +519,7 @@ jobs:
       if: runner.os == 'macOS'
       uses: nick-invision/retry@v2.2.0
       with:
-        timeout_minutes: 15
+        timeout_minutes: 20
         retry_wait_seconds: 300
         max_attempts: 3
         command: |
