@@ -15,6 +15,7 @@ function(add_lua_unit_test luascript)
     string(REGEX REPLACE "\\.lua$" "" name "${name}")
     add_test(NAME "${name}" COMMAND ${LUA_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${luascript})
     set_tests_properties("${name}" PROPERTIES ENVIRONMENT "LUA_CPATH=\;\;\;$<TARGET_FILE:${SWIG_MODULE_yarp_lua_REAL_NAME}>")
+    set_tests_properties("${name}" PROPERTIES TIMEOUT 60)
   endif()
 endfunction()
 

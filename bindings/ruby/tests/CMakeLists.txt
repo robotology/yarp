@@ -10,6 +10,7 @@ macro(add_ruby_unit_test rubyscript)
     string(REGEX REPLACE "\\.rb$" "" name "${name}")
     add_test(NAME "${name}" COMMAND ${RUBY_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${rubyscript})
     set_tests_properties("${name}" PROPERTIES ENVIRONMENT "RUBYLIB=$<TARGET_FILE_DIR:${SWIG_MODULE_yarp_ruby_REAL_NAME}>")
+    set_tests_properties("${name}" PROPERTIES TIMEOUT 60)
   endif()
 endmacro()
 
