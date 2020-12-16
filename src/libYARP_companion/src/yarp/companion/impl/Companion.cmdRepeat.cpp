@@ -25,32 +25,26 @@ int Companion::cmdRepeat(int argc, char *argv[])
 
     Property options;
     options.fromCommand(argc, argv, false);
-    if (argc==0 || !(options.check("output")))
+    if (argc==0 || options.check("help"))
     {
         yCInfo(COMPANION, "This is yarp repeat. Syntax:");
-        yCInfo(COMPANION, "  yarp sample --output /port");
-        yCInfo(COMPANION, "Data is read from the input port and repeated on the output port");
+        yCInfo(COMPANION, "  yarp repeat /port");
+        yCInfo(COMPANION, "/port is both the input port and the output port which repeats data");
         return 1;
     }
 
-    if (!port.open(options.find("output").asString()))
+    if (argc==1)
     {
-        yCError(COMPANION, "Failed to open output port");
-        return 1;
+        if (!port.open(argv[0]))
+        {
+            yCError(COMPANION, "Failed to open port: %s", argv[0]);
+            return 1;
+        }
     }
-
-    if (options.check("input"))
+    else
     {
-        std::string input = options.find("input").asString();
-        std::string carrier = options.find("carrier").asString();
-        if (carrier!="")
-        {
-            NetworkBase::connect(input.c_str(), port.getName().c_str(), carrier.c_str());
-        }
-        else
-        {
-            NetworkBase::connect(input, port.getName());
-        }
+        yCError(COMPANION, "Invalid command syntax");
+        return 1;
     }
 
     while (true)
