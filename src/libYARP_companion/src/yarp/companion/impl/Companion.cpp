@@ -163,6 +163,7 @@ Companion::Companion() :
     add("terminate",       &Companion::cmdTerminate,      "terminate a yarp-terminate-aware process by name");
     add("time",            &Companion::cmdTime,           "show the time");
     add("topic",           &Companion::cmdTopic,          "set a topic name");
+    add("trafficGen",      &Companion::cmdTrafficGen,     "generates and streams some test data traffic on a port");
     add("version",         &Companion::cmdVersion,        "get version information");
     add("wait",            &Companion::cmdWait,           "wait for a port to be alive");
     add("where",           &Companion::cmdWhere,          "report where the yarp name server is running");
