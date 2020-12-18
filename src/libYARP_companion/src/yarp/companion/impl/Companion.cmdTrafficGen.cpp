@@ -13,6 +13,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/PeriodicThread.h>
+#include <limits>
 
 using yarp::companion::impl::Companion;
 using yarp::os::Bottle;
@@ -24,34 +25,40 @@ using namespace std;
 class datasender : public yarp::os::PeriodicThread
 {
 private:
-    size_t data_size = 1;
+    double m_data_size_MB;
     char* data_buff =nullptr;
-    std::string portname = "/trafficGen";
-    yarp::os::BufferedPort<yarp::os::Bottle> outport;
+    std::string m_portname;
+    yarp::os::Port outport;
+    yarp::os::Bottle pp;
 
 public:
-    datasender(double period) : PeriodicThread (period)
+    datasender(double period, string portname, double data_size_MB) : PeriodicThread (period)
     {
+        m_portname=portname;
+        m_data_size_MB = data_size_MB;
     }
 
     bool threadInit()
     {
-        data_buff = new char[data_size*1000000];
- 
-        if (!outport.open(portname))
+        size_t data_size_B= (size_t)(m_data_size_MB*1000000.0);
+        data_buff = new char[data_size_B +1];
+        memset(data_buff,'0', data_size_B);
+        data_buff[data_size_B]=0;
+
+        if (!outport.open(m_portname))
         {
-            yCError(COMPANION, "Failed to open port: %s", portname);
+            yCError(COMPANION, "Failed to open port: %s", m_portname);
             return false;
         }
 
-        Bottle& pp = outport.prepare();
-        pp.addString(data_buff);
+        pp.addString(std::string(data_buff).c_str());
+        return true;
     }
 
     void run() override
     {
         if (outport.getOutputCount()>0)
-            outport.write();
+            outport.write(pp);
     }
 
     void threadRelease()
@@ -67,22 +74,49 @@ int Companion::cmdTrafficGen(int argc, char *argv[])
     options.fromCommand(argc, argv, false);
     if (argc==0 || options.check("help"))
     {
-        yCInfo(COMPANION, "This is yarp trafficGen. Syntax:");
-        yCInfo(COMPANION, "  yarp trafficGen /port --period [s] --size [MB] --duration [s]");
+        yCInfo(COMPANION, "This is yarp trafficGen. Syntax/available options:");
+        yCInfo(COMPANION, "  yarp trafficGen /port --bandwidth [Mb/s]");
         yCInfo(COMPANION, "  yarp trafficGen /port --bandwidth [Mb/s] --duration [s]");
+        yCInfo(COMPANION, "  yarp trafficGen /port --period [s] --size [MB]");
+        yCInfo(COMPANION, "  yarp trafficGen /port --period [s] --size [MB] --duration [s]");
         return 1;
     }
 
-    double period = 1;
-    string portname = "/trafficGen";
-    size_t size = 1;
-    double duration = 10;
+    double period;
+    double size_MB;
+    double duration = options.check("duration", yarp::os::Value(std::numeric_limits<double>::infinity()), "duration (s)").asFloat32();
+    
+    if (options.check("bandwidth") && !options.check("size") && !options.check("period"))
+    {
+        double bandwidth_Mbs = options.check("bandwidth", yarp::os::Value(1), "bandwidth (Mb/s)").asFloat32();
+        period = 1.0;
+        size_MB = bandwidth_Mbs/8;
+    }
+    else if (!options.check("bandwidth") && options.check("size") && options.check("period"))
+    {
+        period = options.check("period", yarp::os::Value(1), "period (s)").asFloat32();
+        size_MB = options.check("size", yarp::os::Value(1), "size (MB)").asFloat32();
+    }
+    else if (!options.check("bandwidth") && !options.check("size") && !options.check("period"))
+    {
+        period = 1.0;
+        size_MB = 1.0;
+    }
+    else 
+    {
+        yCError(COMPANION, "Invalid combination of options. Please check the available options with: yarp trafficGen --help");
+        return 0;
+    }
 
-    datasender pt(period);
+    string portname = argv[0];
+
+    yCInfo (COMPANION, "Starting trafficGen with the following options: period:%.3f(s), size:%.3f(MB), duration:%.3f(s), bandwidth:%.3f(Mb/s) ", period, size_MB, duration, period* size_MB *8);
+
+    datasender pt(period, portname, size_MB);
     double start_time = yarp::os::Time::now();
     if (pt.start() == false)
     {
-        yCInfo(COMPANION, "Failed to start the main thread");
+        yCError(COMPANION, "Failed to start the main thread");
         return 0;
     }
 
