@@ -74,18 +74,18 @@ int Companion::cmdTrafficGen(int argc, char *argv[])
     options.fromCommand(argc, argv, false);
     if (argc==0 || options.check("help"))
     {
-        yCInfo(COMPANION, "This is yarp trafficGen. Syntax/available options:");
-        yCInfo(COMPANION, "  yarp trafficGen /port --bandwidth [Mb/s]");
-        yCInfo(COMPANION, "  yarp trafficGen /port --bandwidth [Mb/s] --duration [s]");
-        yCInfo(COMPANION, "  yarp trafficGen /port --period [s] --size [MB]");
-        yCInfo(COMPANION, "  yarp trafficGen /port --period [s] --size [MB] --duration [s]");
+        yCInfo(COMPANION, "This is yarp trafficgen. Syntax/available options:");
+        yCInfo(COMPANION, "  yarp trafficgen /port --bandwidth [Mb/s]");
+        yCInfo(COMPANION, "  yarp trafficgen /port --bandwidth [Mb/s] --duration [s]");
+        yCInfo(COMPANION, "  yarp trafficgen /port --period [s] --size [MB]");
+        yCInfo(COMPANION, "  yarp trafficgen /port --period [s] --size [MB] --duration [s]");
         return 1;
     }
 
     double period;
     double size_MB;
     double duration = options.check("duration", yarp::os::Value(std::numeric_limits<double>::infinity()), "duration (s)").asFloat32();
-    
+
     if (options.check("bandwidth") && !options.check("size") && !options.check("period"))
     {
         double bandwidth_Mbs = options.check("bandwidth", yarp::os::Value(1), "bandwidth (Mb/s)").asFloat32();
@@ -102,15 +102,15 @@ int Companion::cmdTrafficGen(int argc, char *argv[])
         period = 1.0;
         size_MB = 1.0;
     }
-    else 
+    else
     {
-        yCError(COMPANION, "Invalid combination of options. Please check the available options with: yarp trafficGen --help");
+        yCError(COMPANION, "Invalid combination of options. Please check the available options with: yarp trafficgen --help");
         return 0;
     }
 
     string portname = argv[0];
 
-    yCInfo (COMPANION, "Starting trafficGen with the following options: period:%.3f(s), size:%.3f(MB), duration:%.3f(s), bandwidth:%.3f(Mb/s) ", period, size_MB, duration, period* size_MB *8);
+    yCInfo (COMPANION, "Starting trafficgen with the following options: period:%.3f(s), size:%.3f(MB), duration:%.3f(s), bandwidth:%.3f(Mb/s) ", period, size_MB, duration, period* size_MB *8);
 
     datasender pt(period, portname, size_MB);
     double start_time = yarp::os::Time::now();
