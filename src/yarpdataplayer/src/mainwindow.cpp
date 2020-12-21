@@ -119,6 +119,13 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     connect(this,SIGNAL(internalGetFrame(std::string, int*)),this,SLOT(onInternalGetFrame(std::string,int*)),Qt::BlockingQueuedConnection);
     connect(this,SIGNAL(internalQuit()),this,SLOT(onInternalQuit()),Qt::QueuedConnection);
     connect(this,SIGNAL(internalGetSliderPercentage(int*)),this,SLOT(onInternalGetSliderPercentage(int*)),Qt::BlockingQueuedConnection);
+
+   if (!dataset.empty()){
+        if (!load(dataset) && verbose){
+            yError() << "Could not load " << dataset;
+        }
+    }
+
 }
 
 /**********************************************************/
@@ -223,6 +230,21 @@ void MainWindow::onInternalGetSliderPercentage(int *percentage)
 }
 
 /**********************************************************/
+string MainWindow::getStatus()
+{
+    if (qutilities->qengine->isSuspended()){
+        return "paused";
+    }
+    if (qutilities->qengine->isRunning()){
+        return "playing";
+    }
+    else {
+        return "stopped";
+    }
+    return "";
+}
+
+/**********************************************************/
 bool MainWindow::load(const string &path)
 {
     string cmdPath = path;
@@ -239,9 +261,9 @@ bool MainWindow::load(const string &path)
         emit internalLoad(sPath);
     }
 
-    waitMutex.lock();
-    waitCond.wait(&waitMutex);
-    waitMutex.unlock();
+//    waitMutex.lock();
+//    waitCond.wait(&waitMutex);
+//    waitMutex.unlock();
 
     if (subDirCnt <= 0 ){
         return false;
@@ -628,6 +650,7 @@ void MainWindow::onInitDone(int subDirCount)
     }
 
     errorMessage = "";
+
     waitCond.wakeAll();
 }
 

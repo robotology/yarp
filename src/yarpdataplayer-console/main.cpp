@@ -50,6 +50,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     yarp::os::RpcServer rpcPort;
     bool verbose;
     string dataset;
+    string status;
     
     float progress;
     
@@ -75,8 +76,9 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
         attach(rpcPort);
         
         progress = 0.0;
-        
-        //std::cout<<std::endl<<std::endl<<LOGO_MESSAGE<<std::endl<<std::endl;
+        status = "";
+
+        std::cout<<std::endl<<std::endl<<LOGO_MESSAGE<<std::endl<<std::endl;
 
         if (!dataset.empty())
         {
@@ -123,24 +125,24 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     /**********************************************************/
     bool updateModule() override
     {
-        std::cout<<std::endl<<std::endl<<LOGO_MESSAGE<<std::endl<<std::endl;
-        for (int x=0; x < subDirCnt; x++)
-        {
-            int barWidth = 70;
-            std::cout << " [";
-            int pos = barWidth * (progress/100);
-            for (int i = 0; i < barWidth; ++i) {
-                if (i < pos) std::cout << "=";
-                else if (i == pos) std::cout << ">";
-                else std::cout << " ";
-            }
-            std::cout << "] " << int(progress) << " % " << utilities->partDetails[x].name << "\r" << std::endl;
-            progress = ((utilities->partDetails[x].currFrame * 100) / utilities->partDetails[x].maxFrame);
-            std::cout.flush();
-        }
+//        std::cout<<std::endl<<std::endl<<LOGO_MESSAGE<<std::endl<<std::endl;
+//        for (int x=0; x < subDirCnt; x++)
+//        {
+//            int barWidth = 70;
+//            std::cout << " [";
+//            int pos = barWidth * (progress/100);
+//            for (int i = 0; i < barWidth; ++i) {
+//                if (i < pos) std::cout << "=";
+//                else if (i == pos) std::cout << ">";
+//                else std::cout << " ";
+//            }
+//            std::cout << "] " << int(progress) << " % " << utilities->partDetails[x].name << "\r" << std::endl;
+//            progress = ((utilities->partDetails[x].currFrame * 100) / utilities->partDetails[x].maxFrame);
+//            std::cout.flush();
+//        }
         
-        printf("\033[2J");
-        printf("\033[%d;%dH", 0, 0);
+//        printf("\033[2J");
+//        printf("\033[%d;%dH", 0, 0);
         
         return true;
     }
@@ -279,6 +281,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
                 }
                 utilities->dataplayerEngine->start();
             }
+            status = "playing";
             return true;
         }
         else
@@ -301,6 +304,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
                 yInfo() << "asking the threads to pause...";
             }
             utilities->dataplayerEngine->pause();
+            status = "paused";
             return true;
         }
         else
@@ -360,6 +364,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
             {
                 yInfo() << "done stopping the thread...";
             }
+            status = "stopped";
             return true;
         }
         else
@@ -579,6 +584,39 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
             return true;
         }
         return false;
+    }
+
+    /**********************************************************/
+    double getProgress() override
+    {
+        if (subDirCnt > 0)
+        {
+            double prog = 0.0;
+            int nactivParts = 0;
+            for (int x=0; x < subDirCnt; x++)
+            {
+                if (utilities->dataplayerEngine->isPartActive[x])
+                {
+                    prog += ((utilities->partDetails[x].currFrame * 100) / utilities->partDetails[x].maxFrame);
+                    nactivParts++;
+                }
+            }
+
+            prog /= nactivParts;
+            return prog;
+        }
+
+        if (verbose)
+        {
+            yError() << "Dataset not loaded";
+        }
+        return -1.0;
+    }
+
+    /**********************************************************/
+    string getStatus() override
+    {
+        return status;
     }
 
     /**********************************************************/

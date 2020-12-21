@@ -148,6 +148,18 @@ service yarpdataplayer_console_IDL
   bool backward(1:i32 steps=5);
 
   /**
+  * Get the progress of the parts
+  * @return the progress of the parts
+  */
+  double getProgress();
+
+  /**
+  * Get the status of playing
+  * @return the status (playing, paused, stopped)
+  */
+  string getStatus();
+
+  /**
   * Resume dataset from where it was paused
   * @return true/false on success/failure
   */

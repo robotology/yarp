@@ -61,6 +61,12 @@ service yarpdataplayer_IDL
   i32 getSliderPercentage();
 
   /**
+  * Get the status of playing
+  * @return the status (playing, paused, stopped)
+  */
+  string getStatus();
+
+  /**
   * Plays the dataSets
   * @return true/false on success/failure
   */
