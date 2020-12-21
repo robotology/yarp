@@ -151,18 +151,18 @@ int DataplayerUtilities::getRecSubDirList(const string& dir, vector<RowInfo>& ro
 
     /* Check validity of directory */
     if (!path){
-        return errno;
+        return 0;
     }
     /* Get length of the directory */
     path_len = strlen(path);
     /* Check length of the directory */
     if (!path || !path_len || (path_len > FILENAME_MAX)){
-        return errno;
+        return 0;
     }
     /* Check if file is opened */
     if((dirp  = opendir(path)) == nullptr){
-        yError() << "Error( %d " << errno << " opening " << dir.c_str();
-        return errno;
+        yError() << "Error opening " << dir.c_str();
+        return 0;
     }
     /* read through */
     while ((direntp = readdir(dirp)) != nullptr){

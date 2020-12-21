@@ -60,8 +60,8 @@ QUtilities::~QUtilities()
 {
 }
 /**********************************************************/
-QUtilities::QUtilities(QObject *parent) : QObject(parent)
-{   
+QUtilities::QUtilities(QObject *parent) : QObject(parent), qengine(nullptr)
+{
     connect(this,SIGNAL(updateGuiThread()),(MainWindow*)parent,
             SLOT(onUpdateGuiRateThread()),Qt::BlockingQueuedConnection);
 

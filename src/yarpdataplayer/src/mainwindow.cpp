@@ -410,16 +410,13 @@ bool MainWindow::cmdSafeExit()
 /**********************************************************/
 bool MainWindow::safeExit()
 {
-    yDebug() << __LINE__;
     if(qutilities->qengine){
         if (verbose){
             yInfo() << "asking the threads to stop...";
         }
-        yDebug() << __LINE__;
         if (qutilities->qengine->isSuspended()){
             qutilities->qengine->resume();
         }
-        yDebug() << __LINE__;
         qutilities->qengine->stop();
         if (verbose){
             yInfo() << "done stopping!";
@@ -445,12 +442,10 @@ bool MainWindow::safeExit()
         for (int x=0; x < subDirCnt; x++){
             qutilities->closePorts(qutilities->partDetails[x]);
         }
-        yDebug() << __LINE__;
         clearUtilities();
         if (verbose){
             yInfo() <<  "Done!...";
         }
-            yDebug() << __LINE__;
     }
     return true;
 }
