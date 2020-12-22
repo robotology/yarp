@@ -62,11 +62,10 @@ class yarpdataplayer_IDL_setFrame_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_IDL_setFrame_helper(const std::string& name, const std::int32_t frameNum);
+    explicit yarpdataplayer_IDL_setFrame_helper(const std::int32_t frameNum);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    std::string m_name;
     std::int32_t m_frameNum;
 
     thread_local static bool s_return_helper;
@@ -74,8 +73,7 @@ public:
 
 thread_local bool yarpdataplayer_IDL_setFrame_helper::s_return_helper = {};
 
-yarpdataplayer_IDL_setFrame_helper::yarpdataplayer_IDL_setFrame_helper(const std::string& name, const std::int32_t frameNum) :
-        m_name{name},
+yarpdataplayer_IDL_setFrame_helper::yarpdataplayer_IDL_setFrame_helper(const std::int32_t frameNum) :
         m_frameNum{frameNum}
 {
     s_return_helper = {};
@@ -84,13 +82,10 @@ yarpdataplayer_IDL_setFrame_helper::yarpdataplayer_IDL_setFrame_helper(const std
 bool yarpdataplayer_IDL_setFrame_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(3)) {
+    if (!writer.writeListHeader(2)) {
         return false;
     }
     if (!writer.writeTag("setFrame", 1, 1)) {
-        return false;
-    }
-    if (!writer.writeString(m_name)) {
         return false;
     }
     if (!writer.writeI32(m_frameNum)) {
@@ -247,6 +242,49 @@ bool yarpdataplayer_IDL_getSliderPercentage_helper::read(yarp::os::ConnectionRea
         return false;
     }
     if (!reader.readI32(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class yarpdataplayer_IDL_getStatus_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit yarpdataplayer_IDL_getStatus_helper();
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static std::string s_return_helper;
+};
+
+thread_local std::string yarpdataplayer_IDL_getStatus_helper::s_return_helper = {};
+
+yarpdataplayer_IDL_getStatus_helper::yarpdataplayer_IDL_getStatus_helper()
+{
+    s_return_helper = {};
+}
+
+bool yarpdataplayer_IDL_getStatus_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeTag("getStatus", 1, 1)) {
+        return false;
+    }
+    return true;
+}
+
+bool yarpdataplayer_IDL_getStatus_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readString(s_return_helper)) {
         reader.fail();
         return false;
     }
@@ -441,11 +479,11 @@ bool yarpdataplayer_IDL::step()
     return ok ? yarpdataplayer_IDL_step_helper::s_return_helper : bool{};
 }
 
-bool yarpdataplayer_IDL::setFrame(const std::string& name, const std::int32_t frameNum)
+bool yarpdataplayer_IDL::setFrame(const std::int32_t frameNum)
 {
-    yarpdataplayer_IDL_setFrame_helper helper{name, frameNum};
+    yarpdataplayer_IDL_setFrame_helper helper{frameNum};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool yarpdataplayer_IDL::setFrame(const std::string& name, const std::int32_t frameNum)");
+        yError("Missing server method '%s'?", "bool yarpdataplayer_IDL::setFrame(const std::int32_t frameNum)");
     }
     bool ok = yarp().write(helper, helper);
     return ok ? yarpdataplayer_IDL_setFrame_helper::s_return_helper : bool{};
@@ -479,6 +517,16 @@ std::int32_t yarpdataplayer_IDL::getSliderPercentage()
     }
     bool ok = yarp().write(helper, helper);
     return ok ? yarpdataplayer_IDL_getSliderPercentage_helper::s_return_helper : std::int32_t{};
+}
+
+std::string yarpdataplayer_IDL::getStatus()
+{
+    yarpdataplayer_IDL_getStatus_helper helper{};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "std::string yarpdataplayer_IDL::getStatus()");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? yarpdataplayer_IDL_getStatus_helper::s_return_helper : std::string{};
 }
 
 bool yarpdataplayer_IDL::play()
@@ -533,6 +581,7 @@ std::vector<std::string> yarpdataplayer_IDL::help(const std::string& functionNam
         helpString.emplace_back("getFrame");
         helpString.emplace_back("load");
         helpString.emplace_back("getSliderPercentage");
+        helpString.emplace_back("getStatus");
         helpString.emplace_back("play");
         helpString.emplace_back("pause");
         helpString.emplace_back("stop");
@@ -546,9 +595,8 @@ std::vector<std::string> yarpdataplayer_IDL::help(const std::string& functionNam
             helpString.emplace_back("@return true/false on success/failure ");
         }
         if (functionName == "setFrame") {
-            helpString.emplace_back("bool setFrame(const std::string& name, const std::int32_t frameNum) ");
+            helpString.emplace_back("bool setFrame(const std::int32_t frameNum) ");
             helpString.emplace_back("Sets the frame number to the user desired frame. ");
-            helpString.emplace_back("@param name specifies the name of the loaded data ");
             helpString.emplace_back("@param frameNum specifies the frame number the user ");
             helpString.emplace_back(" would like to skip to ");
             helpString.emplace_back("@return true/false on success/failure ");
@@ -569,6 +617,11 @@ std::vector<std::string> yarpdataplayer_IDL::help(const std::string& functionNam
             helpString.emplace_back("std::int32_t getSliderPercentage() ");
             helpString.emplace_back("Get slider percentage ");
             helpString.emplace_back("@return i32 percentage ");
+        }
+        if (functionName == "getStatus") {
+            helpString.emplace_back("std::string getStatus() ");
+            helpString.emplace_back("Get the status of playing ");
+            helpString.emplace_back("@return the status (playing, paused, stopped) ");
         }
         if (functionName == "play") {
             helpString.emplace_back("bool play() ");
@@ -634,17 +687,12 @@ bool yarpdataplayer_IDL::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "setFrame") {
-            std::string name;
             std::int32_t frameNum;
-            if (!reader.readString(name)) {
-                reader.fail();
-                return false;
-            }
             if (!reader.readI32(frameNum)) {
                 reader.fail();
                 return false;
             }
-            yarpdataplayer_IDL_setFrame_helper::s_return_helper = setFrame(name, frameNum);
+            yarpdataplayer_IDL_setFrame_helper::s_return_helper = setFrame(frameNum);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
@@ -703,6 +751,20 @@ bool yarpdataplayer_IDL::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
                 if (!writer.writeI32(yarpdataplayer_IDL_getSliderPercentage_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "getStatus") {
+            yarpdataplayer_IDL_getStatus_helper::s_return_helper = getStatus();
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeString(yarpdataplayer_IDL_getStatus_helper::s_return_helper)) {
                     return false;
                 }
             }
