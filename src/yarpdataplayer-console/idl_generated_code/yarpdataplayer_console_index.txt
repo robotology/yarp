@@ -1,0 +1,2 @@
+yarpdataplayer_console_IDL.h
+yarpdataplayer_console_IDL.cpp
