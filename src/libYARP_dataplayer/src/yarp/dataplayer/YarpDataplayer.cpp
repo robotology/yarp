@@ -57,6 +57,7 @@ using namespace yarp::sig::file;
   using namespace cv;
 #endif
 
+/**********************************************************/
 DataplayerUtilities::~DataplayerUtilities()
 {
     if(dataplayerEngine){
@@ -72,6 +73,7 @@ DataplayerUtilities::~DataplayerUtilities()
     }
 }
 
+/**********************************************************/
 DataplayerUtilities::DataplayerUtilities() :
 
     dir_count(0),
@@ -94,6 +96,7 @@ DataplayerUtilities::DataplayerUtilities() :
     dataplayerEngine = new DataplayerEngine(this);
 }
 
+/**********************************************************/
 DataplayerUtilities::DataplayerUtilities(string name, bool _add_prefix, bool _verbose) :
     dir_count(0),
     moduleName(std::move(name)),
@@ -115,21 +118,25 @@ DataplayerUtilities::DataplayerUtilities(string name, bool _add_prefix, bool _ve
     dataplayerEngine = new DataplayerEngine(this);
 }
 
+/**********************************************************/
 void DataplayerUtilities::setModuleName(const std::string &name)
 {
     moduleName = std::move(name);
 }
 
+/**********************************************************/
 void DataplayerUtilities::addPrefix(const bool &prefix)
 {
     add_prefix = prefix;
 }
 
+/**********************************************************/
 void DataplayerUtilities::setVerbose(const bool &verbose)
 {
     this->verbose = verbose;
 }
 
+/**********************************************************/
 string DataplayerUtilities::getCurrentPath()
 {
     char cCurrentPath[FILENAME_MAX];
@@ -142,6 +149,7 @@ string DataplayerUtilities::getCurrentPath()
     return currentPath;
 }
 
+/**********************************************************/
 int DataplayerUtilities::getRecSubDirList(const string& dir, vector<RowInfo>& rowInfoVec, int recursive)
 {
     struct dirent *direntp = nullptr;
@@ -263,6 +271,7 @@ int DataplayerUtilities::getRecSubDirList(const string& dir, vector<RowInfo>& ro
     return dir_count;
 }
 
+/**********************************************************/
 bool DataplayerUtilities::checkLogValidity(const char *filename)
 {
     bool check = true;
@@ -288,6 +297,7 @@ bool DataplayerUtilities::checkLogValidity(const char *filename)
     return check;
 }
 
+/**********************************************************/
 bool DataplayerUtilities::setupDataFromParts(PartsData &part)
 {
     fstream str;
@@ -362,6 +372,7 @@ bool DataplayerUtilities::setupDataFromParts(PartsData &part)
     return true;
 }
 
+/**********************************************************/
 void DataplayerUtilities::getMaxTimeStamp()
 {
     maxTimeStamp = 0.0;
@@ -380,6 +391,7 @@ void DataplayerUtilities::getMaxTimeStamp()
     }
 }
 
+/**********************************************************/
 void DataplayerUtilities::getMinTimeStamp()
 {
     minTimeStamp = allTimeStamps[0];
@@ -398,6 +410,7 @@ void DataplayerUtilities::getMinTimeStamp()
     }
 }
 
+/**********************************************************/
 int DataplayerUtilities::amendPartFrames(PartsData &part)
 {
     while (part.timestamp[part.currFrame] < maxTimeStamp){
@@ -409,17 +422,20 @@ int DataplayerUtilities::amendPartFrames(PartsData &part)
     return part.currFrame;
 }
 
+/**********************************************************/
 void DataplayerUtilities::resetMaxTimeStamp()
 {
     allTimeStamps.clear();
     maxTimeStamp = 0.0;
 }
 
+/**********************************************************/
 void DataplayerUtilities::resetDirCount()
 {
     dir_count = 0;
 }
 
+/**********************************************************/
 bool DataplayerUtilities::configurePorts(PartsData &part)
 {
     string tmp_port_name=part.portName;
@@ -484,6 +500,7 @@ bool DataplayerUtilities::configurePorts(PartsData &part)
     return true;
 }
 
+/**********************************************************/
 bool DataplayerUtilities::interruptPorts(PartsData &part)
 {
     if (part.outputPort == nullptr)  {
@@ -493,6 +510,7 @@ bool DataplayerUtilities::interruptPorts(PartsData &part)
     return true;
 }
 
+/**********************************************************/
 bool DataplayerUtilities::closePorts(PartsData &part)
 {
     if (part.outputPort == nullptr)  {
@@ -502,6 +520,7 @@ bool DataplayerUtilities::closePorts(PartsData &part)
     return true;
 }
 
+/**********************************************************/
 void DataplayerUtilities::stopAtEnd()
 {
     if (verbose){
