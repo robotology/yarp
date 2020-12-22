@@ -6,6 +6,13 @@
 
 project(YARP_cv)
 
+# OpenCV is required, otherwise the OpenCV_INCLUDE_DIR and OpenCV_LIBRARIES
+# (used in the CMakeLists.txt file in the src direcrory) are not expanded).
+# FIXME Remove this check when OpenCV targets will be used.
+if (NOT YARP_HAS_OpenCV)
+  return()
+endif()
+
 add_subdirectory(src)
 
 include(YarpInstallBasicPackageFiles)
