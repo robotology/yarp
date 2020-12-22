@@ -163,5 +163,3 @@ void QEngine::QMasterThread::run()
         this->qEngine->runNormally();
     }
 }
-
-

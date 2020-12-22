@@ -73,7 +73,7 @@ MainWindow::MainWindow(yarp::os::ResourceFinder &rf, QWidget *parent) :
     moduleName =  QString("%1").arg(rf.check("name", Value("yarpdataplayer"), "module name (string)").asString().c_str());
     verbose = rf.check("verbose", Value(false)).asBool();
     dataset = rf.check("dataset",Value("")).asString();
-        
+
     if (rf.check("withExtraTimeCol")){
         withExtraTimeCol = true;
         column = rf.check("withExtraTimeCol",Value(1)).asInt32();
@@ -164,7 +164,7 @@ bool MainWindow::attach(RpcServer &source)
 bool MainWindow::step()
 {
     Bottle reply;
-    emit internalStep(&reply);  
+    emit internalStep(&reply);
     if (reply.toString() == "error"){
         return false;
     }
@@ -349,7 +349,7 @@ bool MainWindow::updateFrameNumber(int frameNum)
             //frameNum = 1;
 
         for (auto& itr : partMap){
-            
+
             qutilities->qengine->virtualTime = qutilities->partDetails[itr.second].timestamp[qutilities->partDetails[itr.second].currFrame];
             qutilities->partDetails[itr.second].currFrame = frameNum;
         }
@@ -393,7 +393,7 @@ bool MainWindow::cmdSafeExit()
         }
         if (qutilities->qengine->isSuspended()){
             qutilities->qengine->resume();
-            
+
         }
         qutilities->qengine->stop();
         if (verbose){
@@ -424,7 +424,7 @@ bool MainWindow::cmdSafeExit()
         if (verbose){
             yInfo() <<  "Done!...";
         }
-        
+
     }
     return true;
 }
@@ -886,7 +886,7 @@ void MainWindow::onMenuPlayBackPlay()
 
             for (int i=0; i < subDirCnt; i++)
                 qutilities->partDetails[i].worker->resetTime();
-            
+
             qutilities->qengine->resume();
         } else if (!qutilities->qengine->isRunning()) {
             if (verbose){
@@ -1232,7 +1232,7 @@ void InitThread::run()
         }
 
     }
-    
+
     qutilities->qengine = new QEngine(qutilities, subDirCnt, mainWindow);
 
 //    connect(masterThread,SIGNAL(updateGuiRateThread()),this,SLOT(onUpdateGuiRateThread()),Qt::QueuedConnection);

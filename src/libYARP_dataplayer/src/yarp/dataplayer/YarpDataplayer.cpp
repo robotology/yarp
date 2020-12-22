@@ -75,7 +75,6 @@ DataplayerUtilities::~DataplayerUtilities()
 
 /**********************************************************/
 DataplayerUtilities::DataplayerUtilities() :
-
     dir_count(0),
     moduleName(""),
     add_prefix(false),
@@ -1173,7 +1172,7 @@ void DataplayerEngine::pause()
 
 /**********************************************************/
 void DataplayerEngine::resume()
-{    
+{
     if (utilities->verbose){
         yInfo()<<"resuming thread";
     }

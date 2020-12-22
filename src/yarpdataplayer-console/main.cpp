@@ -51,9 +51,9 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     bool verbose;
     string dataset;
     string status;
-    
+
     float progress;
-    
+
     /**********************************************************/
     bool configure(yarp::os::ResourceFinder &rf) override
     {
@@ -61,7 +61,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
         bool add_prefix = rf.check("add_prefix", Value(false)).asBool();
         verbose = rf.check("verbose",Value(false)).asBool();
         dataset = rf.check("dataset",Value("")).asString();
-        
+
         utilities = new DataplayerUtilities(moduleName, add_prefix, verbose);
         if (rf.check("withExtraTimeCol"))
         {
@@ -74,7 +74,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
 
         rpcPort.open("/yarpdataplayer/rpc:i");
         attach(rpcPort);
-        
+
         progress = 0.0;
         status = "";
 
@@ -83,7 +83,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
         if (!dataset.empty())
         {
             load(dataset);
-             std::cout << std::endl << std::endl;
+            std::cout << std::endl << std::endl;
         }
         return true;
     }
@@ -125,25 +125,6 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     /**********************************************************/
     bool updateModule() override
     {
-//        std::cout<<std::endl<<std::endl<<LOGO_MESSAGE<<std::endl<<std::endl;
-//        for (int x=0; x < subDirCnt; x++)
-//        {
-//            int barWidth = 70;
-//            std::cout << " [";
-//            int pos = barWidth * (progress/100);
-//            for (int i = 0; i < barWidth; ++i) {
-//                if (i < pos) std::cout << "=";
-//                else if (i == pos) std::cout << ">";
-//                else std::cout << " ";
-//            }
-//            std::cout << "] " << int(progress) << " % " << utilities->partDetails[x].name << "\r" << std::endl;
-//            progress = ((utilities->partDetails[x].currFrame * 100) / utilities->partDetails[x].maxFrame);
-//            std::cout.flush();
-//        }
-        
-//        printf("\033[2J");
-//        printf("\033[%d;%dH", 0, 0);
-        
         return true;
     }
 
@@ -207,9 +188,9 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
             utilities->configurePorts(utilities->partDetails[x]);
         }
 
-        utilities->dataplayerEngine->setNumPart(subDirCnt);  
+        utilities->dataplayerEngine->setNumPart(subDirCnt);
 
-        
+
         if (subDirCnt > 0)
         {
             return true;

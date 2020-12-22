@@ -56,7 +56,6 @@ signals:
     void updateGuiThread();
     void pause();
     void errorMessage(QString);
-    
-};
 
+};
 #endif

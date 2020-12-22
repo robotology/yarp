@@ -95,7 +95,7 @@ protected:
     std::string         moduleName;     //string containing module name
     bool                add_prefix;     //true if /<moduleName> must be added to every port opened
     yarp::sig::Vector   allTimeStamps;  //save all timestamps
-    
+
 public:
     DataplayerUtilities();
     DataplayerUtilities(std::string name, bool _add_prefix=false, bool _verbose=false);
@@ -109,7 +109,7 @@ public:
     int                 totalThreads;
     std::string         recursiveName;
     int                 recursiveIterations;
-    
+
     DataplayerEngine    *dataplayerEngine;
 
     bool                withExtraColumn;
@@ -216,7 +216,7 @@ protected:
     double frameRate, initTime, virtualTime;
     yarp::os::Semaphore semIndex;
     double startTime;
-    
+
 public:
     /**
     * Worker class that does the work of sending the data for each part
@@ -279,9 +279,9 @@ protected:
         void        threadRelease() override;
 
     } *dataplayer_updater;
-    
+
     DataplayerUtilities *utilities;
-    
+
 public:
 
     int                     numThreads;
@@ -310,7 +310,7 @@ public:
      * Function that sets the numPart
      */
     bool setNumPart(int numPart);
-    
+
     /**
      * Function that steps forwards the data set
      */
@@ -355,11 +355,9 @@ public:
     bool isRunning(){ return dataplayer_updater->isRunning(); }
     bool start(){ return dataplayer_updater->start(); }
     void askToStop() {return dataplayer_updater->askToStop(); }
-    
+
 protected:
     Moment lastUpdate;
     float dtSeconds, fps;
-
 };
-
 #endif

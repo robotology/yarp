@@ -75,20 +75,20 @@ service yarpdataplayer_console_IDL
   * Enables the specified part.
   * @param name specifies the name of the loaded data
   * @return true/false on success/failure
-  */  
+  */
   bool enable(1:string part);
 
   /**
   * Disable the specified part.
   * @param name specifies the name of the loaded data
   * @return true/false on success/failure
-  */  
+  */
   bool disable(1:string part);
 
   /**
   * Gets the names of all parts loaded.
   * @return list of names of the loaded parts.
-  */  
+  */
   list<string> getAllParts();
 
   /**
@@ -108,7 +108,7 @@ service yarpdataplayer_console_IDL
 
   /**
   * Sets the player speed
-  * @param speed specifies 
+  * @param speed specifies
   * @return true/false on success/failure
   */
   bool setSpeed(1:double speed);
@@ -121,28 +121,28 @@ service yarpdataplayer_console_IDL
 
   /**
   * Sets repeat mode
-  * @param val if true repeat mode is active. 
+  * @param val if true repeat mode is active.
   * @return true/false on success/failure
   */
   bool repeat(1:bool val=false);
 
   /**
   * Sets strict mode
-  * @param val if true strict mode is active. 
+  * @param val if true strict mode is active.
   * @return true/false on success/failure
   */
   bool setStrict(1:bool val=false);
 
   /**
   * Steps forward
-  * @param steps number of steps to go forward (default=5). 
+  * @param steps number of steps to go forward (default=5).
   * @return true/false on success/failure
   */
   bool forward(1:i32 steps=5);
 
   /**
   * Steps backward
-  * @param steps number of steps to go backward (default=5). 
+  * @param steps number of steps to go backward (default=5).
   * @return true/false on success/failure
   */
   bool backward(1:i32 steps=5);

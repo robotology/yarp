@@ -186,7 +186,7 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
-    
+
     Ui::MainWindow              *ui;
     QString                     moduleName;
     bool                        add_prefix; //indicates if ports have to be opened with /<moduleName> as prefix
@@ -209,7 +209,7 @@ private:
 
 protected:
     QUtilities *qutilities;
-    
+
     std::map<const char*,int>   partMap;
     int                         itr;
     int                         column;
@@ -291,5 +291,4 @@ private:
 signals:
     void initDone(int subDirCount);
 };
-
 #endif // MAINWINDOW_H
