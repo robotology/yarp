@@ -9,7 +9,7 @@ supportComment: >
   :wave: @{issue-author}, we use the issue tracker exclusively for bug reports
   and feature requests. However, this issue appears to be a question, a setup
   issue, or a support request.
-  Please use our [Q&A repository](https://github.com/robotology/QA/issues/) to
+  Please use our [`robotology/community` repository](https://github.com/robotology/community/discussions/) to
   get help next time.
   This issue will be moved to the correct issue tracker by a human ASAP, so that
   you can get proper support.
