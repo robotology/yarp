@@ -204,6 +204,18 @@ public:
     * @return true/false
     */
     virtual bool clearAllPaths() = 0;
+
+    /**
+    * Clear all temporary flags from all stored maps
+    * @return true/false
+    */
+    virtual bool clearAllMapsTemporaryFlags() = 0;
+
+    /**
+    * Clear all temporary flags from a specific map
+    * @return true/false
+    */
+    virtual bool clearMapTemporaryFlags(std::string map_name) = 0;
 };
 
 constexpr yarp::conf::vocab32_t VOCAB_IMAP                    = yarp::os::createVocab('i','m','a','p');

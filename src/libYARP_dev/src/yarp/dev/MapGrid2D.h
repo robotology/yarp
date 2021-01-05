@@ -80,18 +80,21 @@ namespace yarp
                 * @return true if cell is valid cell inside the map, false otherwise.
                 */
                 bool   isWall(XYCell cell) const;
+
                 /**
                 * Checks if a specific cell of the map is free, i.e. the robot can freely pass through the cell
                 * @param cell is the cell location, referred to the top-left corner of the map.
                 * @return true if cell is valid cell inside the map, false otherwise.
                 */
                 bool   isFree(XYCell cell) const;
+
                 /**
                 * Checks if a specific cell of the map contains is not free. It may be occupied by a wall, an obstacle, a keep-out area etc.
                 * @param cell is the cell location, referred to the top-left corner of the map.
                 * @return true if cell is valid cell inside the map, false otherwise.
                 */
                 bool   isNotFree(XYCell cell) const;
+
                 /**
                 * Checks if a specific cell of the map is marked as keep-out.
                 * User can set a cell as keep-out to prevent a robot to pass through it, even if no obstacles are present in the path.
@@ -99,24 +102,33 @@ namespace yarp
                 * @return true if cell is valid cell inside the map, false otherwise.
                 */
                 bool   isKeepOut(XYCell cell) const;
+
                 /**
                 * Get the flag of a specific cell of the map.
                 * @param cell is the cell location, referred to the top-left corner of the map.
                 * @return true if cell is valid cell inside the map, false otherwise.
                 */
                 bool   getMapFlag(XYCell cell, map_flags& flag) const;
+
                 /**
                 * Set the flag of a specific cell of the map.
                 * @param cell is the cell location, referred to the top-left corner of the map.
                 * @return true if cell is valid cell inside the map, false otherwise.
                 */
                 bool   setMapFlag(XYCell cell, map_flags flag);
+
+                /**
+                * Clear map temporary flags, such as: MAP_CELL_TEMPORARY_OBSTACLE, MAP_CELL_ENLARGED_OBSTACLE etc.
+                */
+                void   clearMapTemporaryFlags();
+
                 /**
                 * Set the occupancy data of a specific cell of the map.
                 * @param occupancy represents the probability (0-100) of the cell of being occupied by a wall/obstacle etc.
                 * @return true if cell is valid cell inside the map, false otherwise.
                 */
                 bool   setOccupancyData(XYCell cell, double  occupancy);
+
                 /**
                 * Retrieves the occupancy data of a specific cell of the map.
                 * @param occupancy represents the probability (0-100) of the cell of being occupied by a wall/obstacle etc.
@@ -161,17 +173,20 @@ namespace yarp
                 * @return true if the operation was successful, false otherwise.
                 */
                 bool   setSize_in_meters(double x, double y);
+
                 /**
                 * Sets the size of the map in cells
                 * @param x,y is the map size in cells.
                 * @return true if the operation was successful, false otherwise.
                 */
                 bool   setSize_in_cells(size_t x, size_t y);
+
                 /**
                 * Returns the size of the map in meters, according to the current map resolution.
                 * @param x,y is the map size in meters.
                 */
                 void   getSize_in_meters(double& x, double& y) const;
+
                 /**
                 * Returns the size of the map in cells.
                 * @param x,y is the map size in cells.

@@ -1262,7 +1262,7 @@ bool Navigation2DClient::clearAllLocations()
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_CLEAR_X);
+    b.addVocab(VOCAB_NAV_CLEARALL_X);
     b.addVocab(VOCAB_NAV_LOCATION);
 
     bool ret = m_rpc_port_map_locations_server.write(b, resp);

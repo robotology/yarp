@@ -1027,3 +1027,20 @@ bool MapGrid2D::getOccupancyGrid(yarp::sig::ImageOf<yarp::sig::PixelMono>& image
     image = m_map_occupancy;
     return true;
 }
+
+void MapGrid2D::clearMapTemporaryFlags()
+{
+    for (size_t y = 0; y < m_height; y++)
+    {
+        for (size_t x = 0; x < m_width; x++)
+        {
+            switch (m_map_flags.safePixel(x, y))
+            {
+                case MapGrid2D::map_flags::MAP_CELL_TEMPORARY_OBSTACLE:
+                case MapGrid2D::map_flags::MAP_CELL_ENLARGED_OBSTACLE:
+                     m_map_flags.safePixel(x, y) = MAP_CELL_FREE;
+                break;
+            }
+        }
+    }
+}
