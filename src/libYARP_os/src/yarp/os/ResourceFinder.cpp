@@ -138,7 +138,7 @@ static void appendResourceType(Bottle& paths,
     }
 }
 
-
+//---------------------------------------------------------------------------------------------------
 class ResourceFinder::Private
 {
 private:
@@ -176,7 +176,7 @@ public:
         return {};
     }
 
-    bool configure(Property& config, int argc, char* argv[], bool skip)
+    bool configureProp(Property& config, int argc, char* argv[], bool skip)
     {
         Property p;
         p.fromCommand(argc, argv, skip);
@@ -200,9 +200,7 @@ public:
 
         config.fromCommand(argc, argv, skip, false);
         if (config.check("from")) {
-            std::string from = config.check("from",
-                                            Value("config.ini"))
-                                   .toString();
+            std::string from = config.check("from", Value("config.ini")).toString();
             yCDebug(RESOURCEFINDER, "default config file specified as %s", from.c_str());
             mainActive = true;
             std::string corrected = findFile(config, from, nullptr);
@@ -744,11 +742,12 @@ public:
 };
 
 
+//---------------------------------------------------------------------------------------------------
 ResourceFinder::ResourceFinder() :
         Searchable(),
-        owned(true),
-        nullConfig(false),
-        isConfiguredFlag(false),
+        m_owned(true),
+        m_nullConfig(false),
+        m_isConfiguredFlag(false),
         mPriv(nullptr)
 {
     NetworkBase::autoInitMinimum(yarp::os::YARP_CLOCK_SYSTEM);
@@ -757,9 +756,9 @@ ResourceFinder::ResourceFinder() :
 
 ResourceFinder::ResourceFinder(const ResourceFinder& alt) :
         Searchable(alt),
-        owned(true),
-        nullConfig(false),
-        isConfiguredFlag(false),
+        m_owned(true),
+        m_nullConfig(false),
+        m_isConfiguredFlag(false),
         mPriv(nullptr)
 {
     NetworkBase::autoInitMinimum(yarp::os::YARP_CLOCK_SYSTEM);
@@ -769,21 +768,21 @@ ResourceFinder::ResourceFinder(const ResourceFinder& alt) :
 
 ResourceFinder::ResourceFinder(Searchable& data, Private* altPriv) :
         Searchable(),
-        owned(false),
-        nullConfig(data.isNull()),
-        isConfiguredFlag(true),
+        m_owned(false),
+        m_nullConfig(data.isNull()),
+        m_isConfiguredFlag(true),
         mPriv(nullptr)
 {
     NetworkBase::autoInitMinimum(yarp::os::YARP_CLOCK_SYSTEM);
     this->mPriv = altPriv;
     if (!data.isNull()) {
-        config.fromString(data.toString());
+        m_configprop.fromString(data.toString());
     }
 }
 
 ResourceFinder::~ResourceFinder()
 {
-    if (owned) {
+    if (m_owned) {
         delete mPriv;
     }
 }
@@ -792,18 +791,18 @@ const ResourceFinder& ResourceFinder::operator=(const ResourceFinder& alt)
 {
     if (&alt != this) {
         *(mPriv) = *(alt.mPriv);
-        owned = true;
-        nullConfig = alt.nullConfig;
-        isConfiguredFlag = alt.isConfiguredFlag;
-        config = alt.config;
+        m_owned = true;
+        m_nullConfig = alt.m_nullConfig;
+        m_isConfiguredFlag = alt.m_isConfiguredFlag;
+        m_configprop = alt.m_configprop;
     }
     return *this;
 }
 
 bool ResourceFinder::configure(int argc, char* argv[], bool skipFirstArgument)
 {
-    isConfiguredFlag = true;
-    return mPriv->configure(config, argc, argv, skipFirstArgument);
+    m_isConfiguredFlag = true;
+    return mPriv->configureProp(m_configprop, argc, argv, skipFirstArgument);
 }
 
 
@@ -826,81 +825,81 @@ bool ResourceFinder::setDefault(const std::string& key, const std::string& val)
 {
     Value val2;
     val2.fromString(val.c_str());
-    return mPriv->setDefault(config, key, val2);
+    return mPriv->setDefault(m_configprop, key, val2);
 }
 
 bool ResourceFinder::setDefault(const std::string& key, std::int32_t val)
 {
-    return mPriv->setDefault(config, key, Value(val));
+    return mPriv->setDefault(m_configprop, key, Value(val));
 }
 
 bool ResourceFinder::setDefault(const std::string& key, yarp::conf::float64_t val)
 {
-    return mPriv->setDefault(config, key, Value(val));
+    return mPriv->setDefault(m_configprop, key, Value(val));
 }
 
 bool ResourceFinder::setDefault(const std::string& key, const yarp::os::Value& val)
 {
-    return mPriv->setDefault(config, key, val);
+    return mPriv->setDefault(m_configprop, key, val);
 }
 
 std::string ResourceFinder::findFile(const std::string& name)
 {
     yCDebug(RESOURCEFINDER, "finding file [%s]", name.c_str());
-    return mPriv->findFile(config, name, nullptr);
+    return mPriv->findFile(m_configprop, name, nullptr);
 }
 
 std::string ResourceFinder::findFile(const std::string& name,
                                      const ResourceFinderOptions& options)
 {
     yCDebug(RESOURCEFINDER, "finding file [%s]", name.c_str());
-    return mPriv->findFile(config, name, &options);
+    return mPriv->findFile(m_configprop, name, &options);
 }
 
 std::string ResourceFinder::findFileByName(const std::string& name)
 {
     yCDebug(RESOURCEFINDER, "finding file %s", name.c_str());
-    return mPriv->findFileByName(config, name, nullptr);
+    return mPriv->findFileByName(m_configprop, name, nullptr);
 }
 
 std::string ResourceFinder::findFileByName(const std::string& name,
                                            const ResourceFinderOptions& options)
 {
     yCDebug(RESOURCEFINDER, "finding file %s", name.c_str());
-    return mPriv->findFileByName(config, name, &options);
+    return mPriv->findFileByName(m_configprop, name, &options);
 }
 
 
 std::string ResourceFinder::findPath(const std::string& name)
 {
     yCDebug(RESOURCEFINDER, "finding path [%s]", name.c_str());
-    return mPriv->findPath(config, name, nullptr);
+    return mPriv->findPath(m_configprop, name, nullptr);
 }
 
 std::string ResourceFinder::findPath(const std::string& name,
                                      const ResourceFinderOptions& options)
 {
     yCDebug(RESOURCEFINDER, "finding path [%s]", name.c_str());
-    return mPriv->findPath(config, name, &options);
+    return mPriv->findPath(m_configprop, name, &options);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const std::string& name)
 {
     yCDebug(RESOURCEFINDER, "finding paths [%s]", name.c_str());
-    return mPriv->findPaths(config, name, nullptr);
+    return mPriv->findPaths(m_configprop, name, nullptr);
 }
 
 yarp::os::Bottle ResourceFinder::findPaths(const std::string& name,
                                            const ResourceFinderOptions& options)
 {
     yCDebug(RESOURCEFINDER, "finding paths [%s]", name.c_str());
-    return mPriv->findPaths(config, name, &options);
+    return mPriv->findPaths(m_configprop, name, &options);
 }
 
 std::string ResourceFinder::findPath()
 {
     yCDebug(RESOURCEFINDER, "finding path");
-    return mPriv->findPath(config);
+    return mPriv->findPath(m_configprop);
 }
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.4
@@ -919,31 +918,31 @@ bool ResourceFinder::setQuiet(bool quiet)
 
 bool ResourceFinder::check(const std::string& key) const
 {
-    return config.check(key);
+    return m_configprop.check(key);
 }
 
 
 Value& ResourceFinder::find(const std::string& key) const
 {
-    return config.find(key);
+    return m_configprop.find(key);
 }
 
 
 Bottle& ResourceFinder::findGroup(const std::string& key) const
 {
-    return config.findGroup(key);
+    return m_configprop.findGroup(key);
 }
 
 
 bool ResourceFinder::isNull() const
 {
-    return nullConfig || config.isNull();
+    return m_nullConfig || m_configprop.isNull();
 }
 
 
 std::string ResourceFinder::toString() const
 {
-    return config.toString();
+    return m_configprop.toString();
 }
 
 std::string ResourceFinder::getContext()
@@ -953,7 +952,7 @@ std::string ResourceFinder::getContext()
 
 std::string ResourceFinder::getHomeContextPath()
 {
-    return mPriv->getHomeContextPath(config, mPriv->getContext());
+    return mPriv->getHomeContextPath(m_configprop, mPriv->getContext());
 }
 
 std::string ResourceFinder::getHomeRobotPath()
