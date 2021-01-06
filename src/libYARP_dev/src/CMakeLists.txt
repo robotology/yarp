@@ -284,6 +284,13 @@ if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_PUBLIC_DEPS YARP_math)
 endif()
 
+if(YARP_HAS_ZLIB)
+  target_include_directories(YARP_dev SYSTEM PRIVATE ${ZLIB_INCLUDE_DIR})
+  target_compile_definitions(YARP_dev PRIVATE YARP_HAS_ZLIB)
+  target_link_libraries(YARP_dev PRIVATE ${ZLIB_LIBRARY})
+  list(APPEND YARP_dev_PRIVATE_DEPS ZLIB)
+endif()
+
 set_property(TARGET YARP_dev PROPERTY PUBLIC_HEADER ${YARP_dev_HDRS}
                                                     ${YARP_dev_idl_HDRS})
 set_property(TARGET YARP_dev PROPERTY PRIVATE_HEADER ${YARP_dev_IMPL_HDRS}

@@ -19,6 +19,11 @@
 #include <fstream>
 #include <cmath>
 
+#if defined (YARP_HAS_ZLIB)
+#include <zlib.h>
+#endif
+
+
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
@@ -85,6 +90,11 @@ MapGrid2D::MapGrid2D()
             m_map_flags.safePixel(x, y) = MapGrid2D::map_flags::MAP_CELL_FREE;
         }
     }
+#if defined (YARP_HAS_ZLIB)
+    m_compressed_data_over_network = true;
+#else
+    m_compressed_data_over_network = false;
+#endif
 }
 
 MapGrid2D::~MapGrid2D() = default;
@@ -791,30 +801,63 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
     char buff[255]; memset(buff, 0, 255);
     connection.expectBlock((char*)buff, siz);
     m_map_name = buff;
+    connection.expectInt32();
+    m_compressed_data_over_network = connection.expectInt8();
     m_map_occupancy.resize(m_width, m_height);
     m_map_flags.resize(m_width, m_height);
-    bool ok = true;
-    unsigned char *mem = nullptr;
-    size_t memsize = 0;
-    connection.expectInt32();
-    memsize = connection.expectInt32();
-    if (memsize != m_map_occupancy.getRawImageSize()) { return false; }
-    mem = m_map_occupancy.getRawImage();
-    ok &= connection.expectBlock((char*)mem, memsize);
-    connection.expectInt32();
-    memsize = connection.expectInt32();
-    if (memsize != m_map_flags.getRawImageSize()) { return false; }
-    mem = m_map_flags.getRawImage();
-    ok &= connection.expectBlock((char*)mem, memsize);
-    if (!ok) return false;
 
+    if (m_compressed_data_over_network)
+    {
+#if defined (YARP_HAS_ZLIB)
+        bool ok = true;
+        {
+            connection.expectInt32();
+            size_t sizeCompressed = connection.expectInt32();
+            unsigned char* dataCompressed = new unsigned char[sizeCompressed];
+            ok &= connection.expectBlock((char*)dataCompressed, sizeCompressed);
+            size_t sizeUncompressed = m_map_occupancy.getRawImageSize();
+            unsigned char* dataUncompressed = m_map_occupancy.getRawImage();
+            int z_result = uncompress((Bytef*)dataUncompressed, (uLongf*)&sizeUncompressed, (const Bytef*) dataCompressed, sizeCompressed);
+            delete[] dataCompressed;
+        }
+        {
+            connection.expectInt32();
+            size_t sizeCompressed = connection.expectInt32();
+            unsigned char* dataCompressed = new unsigned char[sizeCompressed];
+            ok &= connection.expectBlock((char*)dataCompressed, sizeCompressed);
+            size_t sizeUncompressed = m_map_flags.getRawImageSize();
+            unsigned char* dataUncompressed = m_map_flags.getRawImage();
+            int z_result = uncompress((Bytef*)dataUncompressed, (uLongf*)&sizeUncompressed, (const Bytef*)dataCompressed, sizeCompressed);
+            delete[] dataCompressed;
+        }
+#endif
+    }
+    else
+    {
+        bool ok = true;
+        {
+            connection.expectInt32();
+            size_t memsize = connection.expectInt32();
+            if (memsize != m_map_occupancy.getRawImageSize()) { return false; }
+            unsigned char* mem = m_map_occupancy.getRawImage();
+            ok &= connection.expectBlock((char*)mem, memsize);
+        }
+        {
+            connection.expectInt32();
+            size_t memsize = connection.expectInt32();
+            if (memsize != m_map_flags.getRawImageSize()) { return false; }
+            unsigned char* mem = m_map_flags.getRawImage();
+            ok &= connection.expectBlock((char*)mem, memsize);
+        }
+        if (!ok) return false;
+    }
     return !connection.isError();
 }
 
 bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
 {
     connection.appendInt32(BOTTLE_TAG_LIST);
-    connection.appendInt32(9);
+    connection.appendInt32(10);
     connection.appendInt32(BOTTLE_TAG_INT32);
     connection.appendInt32(m_width);
     connection.appendInt32(BOTTLE_TAG_INT32);
@@ -829,19 +872,53 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
     connection.appendFloat64(m_resolution);
     connection.appendInt32(BOTTLE_TAG_STRING);
     connection.appendString(m_map_name);
+    connection.appendInt32(BOTTLE_TAG_INT8);
+    connection.appendInt8(m_compressed_data_over_network);
 
-    unsigned char *mem = nullptr;
-    int            memsize = 0;
-    mem     = m_map_occupancy.getRawImage();
-    memsize = m_map_occupancy.getRawImageSize();
-    connection.appendInt32(BOTTLE_TAG_BLOB);
-    connection.appendInt32(memsize);
-    connection.appendExternalBlock((char*)mem, memsize);
-    mem     = m_map_flags.getRawImage();
-    memsize = m_map_flags.getRawImageSize();
-    connection.appendInt32(BOTTLE_TAG_BLOB);
-    connection.appendInt32(memsize);
-    connection.appendExternalBlock((char*)mem, memsize);
+    if (m_compressed_data_over_network)
+    {
+#if defined (YARP_HAS_ZLIB)
+        {
+            size_t      sizeUncompressed = m_map_occupancy.getRawImageSize();
+            unsigned char* dataUncompressed = m_map_occupancy.getRawImage();
+            size_t      sizeCompressed = compressBound(sizeUncompressed);
+            unsigned char* dataCompressed = new unsigned char[sizeCompressed];
+            int z_result = compress((Bytef*)dataCompressed, (uLongf*)&sizeCompressed, (Bytef*)dataUncompressed, sizeUncompressed);
+            connection.appendInt32(BOTTLE_TAG_BLOB);
+            connection.appendInt32(sizeCompressed);
+            connection.appendBlock((char*)dataCompressed, sizeCompressed);
+            delete [] dataCompressed;
+        }
+        {
+            size_t      sizeUncompressed = m_map_flags.getRawImageSize();
+            unsigned char* dataUncompressed = m_map_flags.getRawImage();
+            size_t      sizeCompressed = compressBound(sizeUncompressed);
+            unsigned char* dataCompressed = new unsigned char[sizeCompressed];
+            int z_result = compress((Bytef*)dataCompressed, (uLongf*)&sizeCompressed, (Bytef*)dataUncompressed, sizeUncompressed);
+            connection.appendInt32(BOTTLE_TAG_BLOB);
+            connection.appendInt32(sizeCompressed);
+            connection.appendBlock((char*)dataCompressed, sizeCompressed);
+            delete[] dataCompressed;
+        }
+#endif
+    }
+    else
+    {
+        {
+            unsigned char* mem     = m_map_occupancy.getRawImage();
+            int memsize = m_map_occupancy.getRawImageSize();
+            connection.appendInt32(BOTTLE_TAG_BLOB);
+            connection.appendInt32(memsize);
+            connection.appendExternalBlock((char*)mem, memsize);
+        }
+        {
+            unsigned char* mem     = m_map_flags.getRawImage();
+            int memsize = m_map_flags.getRawImageSize();
+            connection.appendInt32(BOTTLE_TAG_BLOB);
+            connection.appendInt32(memsize);
+            connection.appendExternalBlock((char*)mem, memsize);
+        }
+    }
 
     connection.convertTextMode();
     return !connection.isError();
@@ -1043,4 +1120,14 @@ void MapGrid2D::clearMapTemporaryFlags()
             }
         }
     }
+}
+
+bool MapGrid2D::enable_map_compression_over_network(bool val)
+{
+#if defined (YARP_HAS_ZLIB)
+    m_compressed_data_over_network = val;
+    return true;
+#else
+    return false;
+#endif
 }
