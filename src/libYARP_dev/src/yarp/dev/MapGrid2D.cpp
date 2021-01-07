@@ -1128,6 +1128,7 @@ bool MapGrid2D::enable_map_compression_over_network(bool val)
     m_compressed_data_over_network = val;
     return true;
 #else
+    yWarning() << "Zlib library not found, unable to set compression";
     return false;
 #endif
 }

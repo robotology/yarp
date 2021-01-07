@@ -716,9 +716,11 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
     }
     else if (in.get(0).asString() == "enable_maps_compression")
     {
+        bool b = true;
         for (auto it=m_maps_storage.begin(); it!= m_maps_storage.end(); it++)
-            {it->second.enable_map_compression_over_network(in.get(1).asBool());}
-        out.addString("compression mode of all maps set to:"+ in.get(1).asString());
+            {b &= it->second.enable_map_compression_over_network(in.get(1).asBool());}
+        if (b) {out.addString("compression mode of all maps set to:"+ in.get(1).asString());}
+        else   {out.addString("failed to set compression mode");}
     }
     else if(in.get(0).asString() == "help")
     {
