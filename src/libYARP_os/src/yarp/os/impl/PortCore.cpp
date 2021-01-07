@@ -485,7 +485,6 @@ void PortCore::closeMain()
             m_finished.store(false);
             m_closing.store(false);
             m_running.store(false);
-            yCInfo(PORTCORE, "Resetting. m_running = %s", m_running.load() ? "true" : "false");
         }
     }
 
