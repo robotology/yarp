@@ -242,7 +242,7 @@ public:
 
     bool isConfigured() const
     {
-        return isConfiguredFlag;
+        return m_isConfiguredFlag;
     }
 
     /**
@@ -400,10 +400,10 @@ private:
     // this might be useful, but is not in spec
     bool clearContext();
 
-    bool owned;
-    bool nullConfig;
-    bool isConfiguredFlag;
-    yarp::os::Property config;
+    bool m_owned;
+    bool m_nullConfig;
+    bool m_isConfiguredFlag;
+    yarp::os::Property m_configprop;
 
     static std::string getDataHomeWithPossibleCreation(bool mayCreate);
     static std::string getConfigHomeWithPossibleCreation(bool mayCreate);
