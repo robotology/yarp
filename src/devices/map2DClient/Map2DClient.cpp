@@ -750,7 +750,7 @@ bool   Map2DClient::clearAllLocations()
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_CLEAR_X);
+    b.addVocab(VOCAB_NAV_CLEARALL_X);
     b.addVocab(VOCAB_NAV_LOCATION);
 
     bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
@@ -776,7 +776,7 @@ bool   Map2DClient::clearAllAreas()
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_CLEAR_X);
+    b.addVocab(VOCAB_NAV_CLEARALL_X);
     b.addVocab(VOCAB_NAV_AREA);
 
     bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
@@ -796,13 +796,66 @@ bool   Map2DClient::clearAllAreas()
     return true;
 }
 
+bool   Map2DClient::clearAllMapsTemporaryFlags()
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_CLEARALL_X);
+    b.addVocab(VOCAB_NAV_TEMPORARY_FLAGS);
+
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yCError(MAP2DCLIENT) << "clearAllMapsTemporaryFlags() received error from locations server";
+            return false;
+        }
+    }
+    else
+    {
+        yCError(MAP2DCLIENT) << "clearAllAreas() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
+bool   Map2DClient::clearMapTemporaryFlags(std::string map_name)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_DELETE_X);
+    b.addVocab(VOCAB_NAV_TEMPORARY_FLAGS);
+    b.addString(map_name);
+
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yCError(MAP2DCLIENT) << "clearMapTemporaryFlags() received error from locations server";
+            return false;
+        }
+    }
+    else
+    {
+        yCError(MAP2DCLIENT) << "clearAllAreas() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
 bool   Map2DClient::clearAllPaths()
 {
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_CLEAR_X);
+    b.addVocab(VOCAB_NAV_CLEARALL_X);
     b.addVocab(VOCAB_NAV_PATH);
 
     bool ret = m_rpcPort_to_Map2DServer.write(b, resp);

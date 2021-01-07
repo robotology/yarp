@@ -230,25 +230,53 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             yCInfo(MAP2DSERVER) << "The following paths are currently stored in the server: " << l.toString();
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_CLEAR_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
+        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
         {
             m_locations_storage.clear();
             yCInfo(MAP2DSERVER) << "All locations deleted";
             out.addVocab(VOCAB_OK);
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_CLEAR_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
         {
             m_areas_storage.clear();
             yCInfo(MAP2DSERVER) << "All areas deleted";
             out.addVocab(VOCAB_OK);
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_CLEAR_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
+        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
         {
             m_paths_storage.clear();
             yCInfo(MAP2DSERVER) << "All paths deleted";
             out.addVocab(VOCAB_OK);
+            //             ret = true;
+        }
+        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_TEMPORARY_FLAGS)
+        {
+            for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
+            {
+                it->second.clearMapTemporaryFlags();
+            }
+            yCInfo(MAP2DSERVER) << "Temporary flags deleted from all maps";
+            out.addVocab(VOCAB_OK);
+            //             ret = true;
+        }
+        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_TEMPORARY_FLAGS)
+        {
+            std::string name = in.get(3).asString();
+
+            auto it = m_maps_storage.find(name);
+            if (it != m_maps_storage.end())
+            {
+                yCInfo(MAP2DSERVER) << "Temporary flags cleaned" << name;
+                it->second.clearMapTemporaryFlags();
+                out.addVocab(VOCAB_OK);
+            }
+            else
+            {
+                yCError(MAP2DSERVER, "User requested an invalid map name");
+                out.addVocab(VOCAB_ERR);
+            }
             //             ret = true;
         }
         else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
@@ -268,7 +296,6 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 yCError(MAP2DSERVER, "User requested an invalid location name");
                 out.addVocab(VOCAB_ERR);
             }
-
 //             ret = true;
         }
         else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_PATH)

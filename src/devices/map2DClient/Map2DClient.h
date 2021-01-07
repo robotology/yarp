@@ -92,6 +92,10 @@ public:
     bool     clearAllLocations() override;
     bool     clearAllAreas() override;
     bool     clearAllPaths() override;
+
+    bool     clearAllMapsTemporaryFlags() override;
+    bool     clearMapTemporaryFlags(std::string map_name) override;
+
 };
 
 #endif // YARP_DEV_MAP2DCLIENT_H
