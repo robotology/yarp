@@ -583,7 +583,6 @@ public:
                                     std::string contextName = bot.get(1).toString();
                                     std::string fileName = bot.get(2).toString();
                                     yarp::os::ResourceFinder rf;
-                                    rf.setVerbose(true);
                                     rf.setDefaultContext(contextName);
                                     rf.setDefaultConfigFile(fileName);
                                     bool b = rf.configure(0,nullptr);
