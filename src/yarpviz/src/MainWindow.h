@@ -115,6 +115,7 @@ private slots:
     void onProfilePortsRate();
     void onSubGraphContextMenuProcess(QGVSubGraph *node);
     void onAbout();
+    void onBackgroundGrid();
 
 private:
     Ui::MainWindow *ui;

@@ -37,7 +37,7 @@ class QGVCORE_EXPORT QGVScene : public QGraphicsScene
     Q_OBJECT
 public:
 
-    explicit QGVScene(const QString &name, QObject *parent = 0);
+    explicit QGVScene(const QString &name, QObject *parent = 0, bool gridNeeded = true);
     ~QGVScene();
 
     void setGraphAttribute(const QString &name, const QString &value);
@@ -57,6 +57,9 @@ public:
     void loadLayout(const QString &text);
     void applyLayout();
     void clear();
+
+    void enableBgGrid(bool enable);  // Enables or disables the "backgroung grid" added when rendering the scene
+    bool bgGridEnabled();
 
 
 signals:
@@ -89,6 +92,8 @@ private:
     QList<QGVNode*> _nodes;
     QList<QGVEdge*> _edges;
     QList<QGVSubGraph*> _subGraphs;
+
+    bool m_gridNeeded;  // If false, the drawBackground function will not apply the grid to the image background
 };
 
 #endif // QGVSCENE_H
