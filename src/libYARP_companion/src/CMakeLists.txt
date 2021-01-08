@@ -39,6 +39,7 @@ set(YARP_companion_IMPL_SRCS yarp/companion/impl/Companion.cpp
                              yarp/companion/impl/Companion.cmdResource.cpp
                              yarp/companion/impl/Companion.cmdRead.cpp
                              yarp/companion/impl/Companion.cmdReadWrite.cpp
+                             yarp/companion/impl/Companion.cmdRepeat.cpp
                              yarp/companion/impl/Companion.cmdRpc.cpp
                              yarp/companion/impl/Companion.cmdRpcServer.cpp
                              yarp/companion/impl/Companion.cmdSample.cpp

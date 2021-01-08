@@ -110,6 +110,9 @@ public:
     // Defined in Companion.cmdReadWrite.cpp
     int cmdReadWrite(int argc, char *argv[]);
 
+    // Defined in Companion.cmdRepeat.cpp
+    int cmdRepeat(int argc, char* argv[]);
+
     // Defined in Companion.cmdResource.cpp
     int cmdResource(int argc, char *argv[]);
 
