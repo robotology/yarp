@@ -56,6 +56,11 @@ namespace yarp
                 //std::vector<map_link> links_to_other_maps;
 
             private:
+                bool m_compressed_data_over_network;
+            public:
+                bool enable_map_compression_over_network (bool val);
+
+            private:
                 //performs an obstacles enlargement on the specified cell.
                 void enlargeCell(XYCell cell);
 

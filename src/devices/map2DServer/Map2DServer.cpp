@@ -714,6 +714,14 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         m_maps_storage.clear();
         out.addString("all maps cleared");
     }
+    else if (in.get(0).asString() == "enable_maps_compression")
+    {
+        bool b = true;
+        for (auto it=m_maps_storage.begin(); it!= m_maps_storage.end(); it++)
+            {b &= it->second.enable_map_compression_over_network(in.get(1).asBool());}
+        if (b) {out.addString("compression mode of all maps set to:"+ in.get(1).asString());}
+        else   {out.addString("failed to set compression mode");}
+    }
     else if(in.get(0).asString() == "help")
     {
         out.addVocab(Vocab::encode("many"));
@@ -731,6 +739,7 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         out.addString("'load_map <full path>' to load a single map");
         out.addString("'list_maps' to view a list of all stored maps");
         out.addString("'clear_all_maps' to clear all stored maps");
+        out.addString("'enable_maps_compression <0/1>' to set the map transmission mode");
     }
     else
     {
