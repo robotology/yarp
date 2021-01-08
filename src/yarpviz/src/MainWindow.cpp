@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionUpdateConnectionQosStatus, SIGNAL(triggered()),this,SLOT(onUpdateQosStatus()));
     connect(ui->actionProfilePortsRate, SIGNAL(triggered()),this,SLOT(onProfilePortsRate()));
     connect(ui->actionAbout, SIGNAL(triggered()),this,SLOT(onAbout()));
+    connect(ui->actionBackground_grid, SIGNAL(triggered()),this,SLOT(onBackgroundGrid()));
 
     //progressDlg = new QProgressDialog("...", "Cancel", 0, 100, this);
 
@@ -870,4 +871,9 @@ void MainWindow::onExportScene() {
     this->scene->render( &p );
     p.end();
     */
+}
+
+void MainWindow::onBackgroundGrid()
+{
+    scene->enableBgGrid(ui->actionBackground_grid->isChecked());
 }
