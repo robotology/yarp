@@ -1,0 +1,36 @@
+name: 'Handle commands in PR comments'
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  rebase-pr:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Rebase PR
+      uses: drdanz/rebase@pr_from_fork
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        drdanz_TOKEN: ${{ secrets.drdanz_TOKEN }}
+        randaz81_TOKEN: ${{ secrets.randaz81_TOKEN }}
+        Nicogene_TOKEN: ${{ secrets.Nicogene_TOKEN }}
+        elandini84_TOKEN: ${{ secrets.elandini84_TOKEN }}
+
+  squash-pr:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Squash PR
+      uses: robotology/gh-action-squash@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        drdanz_TOKEN: ${{ secrets.drdanz_TOKEN }}
+        randaz81_TOKEN: ${{ secrets.randaz81_TOKEN }}
+        Nicogene_TOKEN: ${{ secrets.Nicogene_TOKEN }}
+        elandini84_TOKEN: ${{ secrets.elandini84_TOKEN }}
