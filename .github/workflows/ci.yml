@@ -2,11 +2,119 @@ name: CI Workflow
 
 on:
   push:
-    branches:
-      - ci/GitHubActions
   pull_request:
 
 jobs:
+  check-license:
+    name: 'Check License'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -qq -y perl
+
+    - name: Check License
+      run: |
+        tests/misc/check_license.pl
+
+
+  check-style:
+    name: 'Check Style'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -qq -y perl
+
+    - name: Check Style
+      run: |
+        tests/misc/check_style.pl
+
+
+  run_cmake:
+    name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/robotology/ycm:cmake-${{ matrix.config.cmake_version }}_ycm-${{ matrix.config.ycm_version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            os: ubuntu-latest,
+            cmake_version: "3.12",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.12.0",
+          }
+        - {
+            os: ubuntu-latest,
+            cmake_version: "3.13",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.12.0",
+          }
+        - {
+            os: ubuntu-latest,
+            cmake_version: "3.14",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.12.0",
+          }
+        - {
+            os: ubuntu-latest,
+            cmake_version: "3.15",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.12.0",
+          }
+        - {
+            os: ubuntu-latest,
+            cmake_version: "3.16",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.12.0",
+          }
+        - {
+            os: ubuntu-latest,
+            cmake_version: "3.17",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.12.0",
+          }
+        - {
+            os: ubuntu-latest,
+            cmake_version: "3.18",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.12.0",
+          }
+        - {
+            os: ubuntu-latest,
+            cmake_version: "3.18",
+            cmake_generator: "Ninja",
+            ycm_version: "0.12.0",
+          }
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: Print CMake version
+      run: |
+        cmake --version
+
+    - name: Print YCM version
+      run: |
+        grep YCM_VERSION /usr/share/cmake/YCM/YCMConfig.cmake
+
+    - name: Run CMake
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DSKIP_ACE=ON
+
+
   build:
     name: '[${{ matrix.config.id }}][${{ matrix.config.os }}|${{ matrix.config.cc }}|${{ matrix.config.cmake_generator }} (${{ matrix.config.cmake_toolset }} ${{ matrix.config.cmake_platform }})|${{ matrix.config.build_type }}] ${{ matrix.config.description }}'
     runs-on: ${{ matrix.config.os }}
