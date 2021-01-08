@@ -39,8 +39,9 @@ jobs:
         tests/misc/check_style.pl
 
 
-  run_cmake:
+  run-cmake:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
+    needs: [check-license, check-style]
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/robotology/ycm:cmake-${{ matrix.config.cmake_version }}_ycm-${{ matrix.config.ycm_version }}
@@ -117,6 +118,7 @@ jobs:
 
   build:
     name: '[${{ matrix.config.id }}][${{ matrix.config.os }}|${{ matrix.config.cc }}|${{ matrix.config.cmake_generator }} (${{ matrix.config.cmake_toolset }} ${{ matrix.config.cmake_platform }})|${{ matrix.config.build_type }}] ${{ matrix.config.description }}'
+    needs: run-cmake
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
