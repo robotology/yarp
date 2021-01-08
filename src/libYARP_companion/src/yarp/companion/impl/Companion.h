@@ -136,6 +136,9 @@ public:
     // Defined in Companion.cmdTopic.cpp
     int cmdTopic(int argc, char *argv[]);
 
+    // Defined in Companion.cmdTrafficGen.cpp
+    int cmdTrafficGen(int argc, char* argv[]);
+
     // Defined in Companion.cmdVersion.cpp
     static std::string version();
     int cmdVersion(int argc, char *argv[]);
