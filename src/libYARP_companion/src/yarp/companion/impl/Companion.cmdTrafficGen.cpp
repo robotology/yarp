@@ -48,7 +48,7 @@ public:
 
         if (!outport.open(m_portname))
         {
-            yCError(COMPANION, "Failed to open port: %s", m_portname);
+            yCError(COMPANION, "Failed to open port: %s", m_portname.c_str());
             return false;
         }
 
