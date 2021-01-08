@@ -14,6 +14,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/PeriodicThread.h>
 #include <limits>
+#include <cstring>
 
 using yarp::companion::impl::Companion;
 using yarp::os::Bottle;
