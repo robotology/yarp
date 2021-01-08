@@ -463,6 +463,35 @@ check $x $y\n\
         }
     }
 
+    SECTION("checking import behavior")
+    {
+        {
+            const char* fname1 = "_yarp_regression_import.txt";
+            FILE* fout = fopen(fname1, "w");
+            REQUIRE(fout != nullptr);
+            fprintf(fout, "[import context1 c1f1.ini]\n");
+            fclose(fout);
+            fout = nullptr;
+
+            Property p;
+            p.fromConfigFile(fname1);
+            yDebug("Expanded property: %s", p.toString().c_str());
+            CHECK(p.find                    ("c1f1p1").asInt32()   == 10);
+            CHECK(p.find                    ("c1f1p2").asInt32()   == 20);
+            CHECK(p.find                    ("c1f1p3").asInt32()   == 30);
+            CHECK(p.findGroup("c1f1s1").find("c1f1s1p1").asInt32() == 40);
+            CHECK(p.findGroup("c1f1s1").find("c1f1s1p2").asInt32() == 50);
+            CHECK(p.find                    ("c2f1p1").asInt32()   == 11);
+            CHECK(p.find                    ("c2f1p2").asInt32()   == 12);
+            CHECK(p.findGroup("c2f1s1").find("c2f1s1p1").asInt32() == 13);
+            CHECK(p.findGroup("c2f1s1").find("c2f1s1p2").asInt32() == 14);
+            CHECK(p.find                    ("c2f2p1").asInt32()   == 15);
+            CHECK(p.find                    ("c2f2p2").asInt32()   == 16);
+            CHECK(p.findGroup("c2f2s1").find("c2f2s1p1").asInt32() == 17);
+            CHECK(p.findGroup("c2f2s1").find("c2f2s1p2").asInt32() == 18);
+        }
+    }
+
     SECTION("checking that issue https://github.com/robotology/yarp/issues/459 is properly solved")
     {
 
