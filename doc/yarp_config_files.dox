@@ -116,6 +116,9 @@ do:
 [include "preamble.ini"]
 \endcode
 This will insert the content of preamble.ini as if cut-and-pasted.
+If the .ini file is not located in the current directory you have to specify
+the path to reach it.
+
 If you would rather have the content included within a subsection
 called FOO, do instead:
 \code
@@ -146,10 +149,23 @@ y 10
 we end up with top-level groups of x, y, and setup (alpha and tweaks
 are nested within setup).
 
-As of YARP 2.3.21, it is possible to include a whole directory.  In
+It is also possible to include a whole directory.  In
 this case, all files with the extension ".ini" from that directory
 will be merged together.  An example is given in \ref
 yarp_config_file_dir_includes.
+
+\section yarp_config_file_nesting Nesting configuration files belonging to different ResourceFinder contexts
+
+If you need to include a configuration file from a specific context, using yarp::os::ResourceFinder (\subpage yarp_resource_finder_tutorials) do:
+\code
+[import contextname filename.ini]
+\endcode
+The import tag also supports multi-level nesting.
+The imported file is inserted at the specific point where the import directive is found, as if cut-and-pasted.
+It is not possibile to import a file inside a section, as done using the syntax [include FOO filename.ini] previously described.
+The options included by the imported file may be overwritten by the options located in the parent configuration file (or viceversa),
+so be careful about the order in which the parameters are processed.
+This mechanism can be exploited to include a base configuration file and then override specific parameters.
 
 \section yarp_config_file_lists Section collections
 
@@ -295,7 +311,7 @@ tmpdir "/tmp/robot_${username}_cache"
 \endcode
 This would give "tmpdir" set to "/tmp/robot_paulfitz_cache".
 
-Extra "psuedo-environment" variables can be made available by calling
+Extra "pseudo-environment" variables can be made available by calling
 yarp::os::Property::fromConfigFile with an extra Property argument.
 
 \section yarp_config_file_equals Compatibility with other INI readers

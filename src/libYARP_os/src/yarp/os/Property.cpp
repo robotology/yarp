@@ -17,6 +17,7 @@
 #include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PlatformDirent.h>
 #include <yarp/os/impl/SplitString.h>
+#include <yarp/os/ResourceFinder.h>
 
 #include <algorithm>
 #include <cctype>
@@ -572,6 +573,34 @@ public:
                             Bottle bot(buf);
                             // BEGIN Handle include option
                             if (bot.size() > 1) {
+                                if (bot.get(0).toString() == "import")
+                                {
+                                    including = true;
+                                    // close an open group if an [include something] tag is found
+                                    if (!tag.empty()) {
+                                        if (accum.size() >= 1) {
+                                            putBottleCompat(tag.c_str(), accum);
+                                        }
+                                        tag = "";
+                                    }
+                                    std::string contextName = bot.get(1).toString();
+                                    std::string fileName = bot.get(2).toString();
+                                    yarp::os::ResourceFinder rf;
+                                    rf.setDefaultContext(contextName);
+                                    rf.setDefaultConfigFile(fileName);
+                                    bool b = rf.configure(0,nullptr);
+                                    if (b)
+                                    {
+                                        tag = "";
+                                        std::string fname = rf.findFile(fileName);
+                                        yCTrace(PROPERTY, "Importing: %s\n", fname.c_str());
+                                        fromConfigFile(fname, env, false);
+                                    }
+                                    else
+                                    {
+                                        yCWarning(PROPERTY, "Unable to import file: %s from context %s\n", fileName.c_str(), contextName.c_str());
+                                    }
+                                } else
                                 if (bot.get(0).toString() == "include") {
                                     including = true;
                                     // close an open group if an [include something] tag is found
