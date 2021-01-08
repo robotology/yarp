@@ -573,7 +573,10 @@ public:
                             Bottle bot(buf);
                             // BEGIN Handle include option
                             if (bot.size() > 1) {
-                                if (bot.get(0).toString() == "import") {
+                                if (bot.get(0).toString() == "import")
+                                {
+                                    including = true;
+                                    // close an open group if an [include something] tag is found
                                     if (!tag.empty()) {
                                         if (accum.size() >= 1) {
                                             putBottleCompat(tag.c_str(), accum);
