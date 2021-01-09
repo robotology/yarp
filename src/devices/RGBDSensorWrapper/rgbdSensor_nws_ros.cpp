@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "RGBDSensorWrapperROS.h"
+#include "rgbdSensor_nws_ros.h"
 #include <sstream>
 #include <cstdio>
 #include <cstring>
@@ -23,10 +23,10 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
-YARP_LOG_COMPONENT(RGBDSENSORWRAPPERROS, "yarp.devices.RGBDSensorWrapperROS")
+YARP_LOG_COMPONENT(RGBDSENSORNWSROS, "yarp.devices.RgbdSensor_nws_ros")
 
 
-RGBDSensorWrapperROS::RGBDSensorWrapperROS() :
+RgbdSensor_nws_ros::RgbdSensor_nws_ros() :
     PeriodicThread(DEFAULT_THREAD_PERIOD),
     rosNode(nullptr),
     nodeSeq(0),
@@ -40,7 +40,7 @@ RGBDSensorWrapperROS::RGBDSensorWrapperROS() :
     subDeviceOwned(nullptr)
 {}
 
-RGBDSensorWrapperROS::~RGBDSensorWrapperROS()
+RgbdSensor_nws_ros::~RgbdSensor_nws_ros()
 {
     close();
     sensor_p = nullptr;
@@ -49,15 +49,15 @@ RGBDSensorWrapperROS::~RGBDSensorWrapperROS()
 
 /** Device driver interface */
 
-bool RGBDSensorWrapperROS::open(yarp::os::Searchable &config)
+bool RgbdSensor_nws_ros::open(yarp::os::Searchable &config)
 {
     m_conf.fromString(config.toString());
     if(verbose >= 5)
-        yCTrace(RGBDSENSORWRAPPERROS) << "\nParameters are: \n" << config.toString();
+        yCTrace(RGBDSENSORNWSROS) << "\nParameters are: \n" << config.toString();
 
     if(!fromConfig(config))
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Failed to open, check previous log for error messages.";
+        yCError(RGBDSENSORNWSROS) << "Failed to open, check previous log for error messages.";
         return false;
     }
 
@@ -65,7 +65,7 @@ bool RGBDSensorWrapperROS::open(yarp::os::Searchable &config)
 
     if(!initialize_ROS(config))
     {
-        yCError(RGBDSENSORWRAPPERROS) << sensorId << "Error initializing ROS topic";
+        yCError(RGBDSENSORNWSROS) << sensorId << "Error initializing ROS topic";
         return false;
     }
 
@@ -75,7 +75,7 @@ bool RGBDSensorWrapperROS::open(yarp::os::Searchable &config)
     {
         if(! openAndAttachSubDevice(config))
         {
-            yCError(RGBDSENSORWRAPPERROS, "Error while opening subdevice");
+            yCError(RGBDSENSORNWSROS, "Error while opening subdevice");
             return false;
         }
     }
@@ -88,12 +88,12 @@ bool RGBDSensorWrapperROS::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool RGBDSensorWrapperROS::fromConfig(yarp::os::Searchable &config)
+bool RgbdSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
 {
     if (!config.check("period", "refresh period of the broadcasted values in ms"))
     {
         if(verbose >= 3)
-            yCInfo(RGBDSENSORWRAPPERROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
+            yCInfo(RGBDSENSORNWSROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
     }
     else
         period = config.find("period").asInt32() / 1000.0;
@@ -117,7 +117,7 @@ bool RGBDSensorWrapperROS::fromConfig(yarp::os::Searchable &config)
         {
             if(verbose >= 3)
             {
-                yCError(RGBDSENSORWRAPPERROS) << "Missing " << prm->parname << "check your configuration file";
+                yCError(RGBDSENSORNWSROS) << "Missing " << prm->parname << "check your configuration file";
             }
             return false;
         }
@@ -138,14 +138,14 @@ bool RGBDSensorWrapperROS::fromConfig(yarp::os::Searchable &config)
     return true;
 }
 
-bool RGBDSensorWrapperROS::openDeferredAttach(Searchable& prop)
+bool RgbdSensor_nws_ros::openDeferredAttach(Searchable& prop)
 {
     // I dunno what to do here now...
     isSubdeviceOwned = false;
     return true;
 }
 
-bool RGBDSensorWrapperROS::openAndAttachSubDevice(Searchable& prop)
+bool RgbdSensor_nws_ros::openAndAttachSubDevice(Searchable& prop)
 {
     Property p;
     subDeviceOwned = new PolyDriver;
@@ -156,12 +156,12 @@ bool RGBDSensorWrapperROS::openAndAttachSubDevice(Searchable& prop)
     p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
 
     // if errors occurred during open, quit here.
-    yCDebug(RGBDSENSORWRAPPERROS, "Opening IRGBDSensor subdevice");
+    yCDebug(RGBDSENSORNWSROS, "Opening IRGBDSensor subdevice");
     subDeviceOwned->open(p);
 
     if (!subDeviceOwned->isValid())
     {
-        yCError(RGBDSENSORWRAPPERROS, "Opening IRGBDSensor subdevice... FAILED");
+        yCError(RGBDSENSORNWSROS, "Opening IRGBDSensor subdevice... FAILED");
         return false;
     }
     isSubdeviceOwned = true;
@@ -172,9 +172,9 @@ bool RGBDSensorWrapperROS::openAndAttachSubDevice(Searchable& prop)
     return true;
 }
 
-bool RGBDSensorWrapperROS::close()
+bool RgbdSensor_nws_ros::close()
 {
-    yCTrace(RGBDSENSORWRAPPERROS, "Close");
+    yCTrace(RGBDSENSORNWSROS, "Close");
     detachAll();
 
     // close subdevice if it was created inside the open (--subdevice option)
@@ -202,40 +202,40 @@ bool RGBDSensorWrapperROS::close()
 
 /* Helper functions */
 
-bool RGBDSensorWrapperROS::initialize_ROS(yarp::os::Searchable &params)
+bool RgbdSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
 {
     // open topics here if needed
     rosNode = new yarp::os::Node(nodeName);
     nodeSeq = 0;
     if (!rosPublisherPort_color.topic(colorTopicName))
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Unable to publish data on " << colorTopicName.c_str() << " topic, check your yarp-ROS network configuration";
+        yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << colorTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
     if (!rosPublisherPort_depth.topic(depthTopicName))
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Unable to publish data on " << depthTopicName.c_str() << " topic, check your yarp-ROS network configuration";
+        yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << depthTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
     if (!rosPublisherPort_colorCaminfo.topic(cInfoTopicName))
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Unable to publish data on " << cInfoTopicName.c_str() << " topic, check your yarp-ROS network configuration";
+        yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << cInfoTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
     if (!rosPublisherPort_depthCaminfo.topic(dInfoTopicName))
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Unable to publish data on " << dInfoTopicName.c_str() << " topic, check your yarp-ROS network configuration";
+        yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << dInfoTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
     return true;
 }
 
-void RGBDSensorWrapperROS::setId(const std::string &id)
+void RgbdSensor_nws_ros::setId(const std::string &id)
 {
     sensorId=id;
 }
 
-std::string RGBDSensorWrapperROS::getId()
+std::string RgbdSensor_nws_ros::getId()
 {
     return sensorId;
 }
@@ -243,7 +243,7 @@ std::string RGBDSensorWrapperROS::getId()
 /**
   * IWrapper and IMultipleWrapper interfaces
   */
-bool RGBDSensorWrapperROS::attachAll(const PolyDriverList &device2attach)
+bool RgbdSensor_nws_ros::attachAll(const PolyDriverList &device2attach)
 {
     // First implementation only accepts devices with both the interfaces Framegrabber and IDepthSensor,
     // on a second version maybe two different devices could be accepted, one for each interface.
@@ -251,23 +251,23 @@ bool RGBDSensorWrapperROS::attachAll(const PolyDriverList &device2attach)
     // interface to view could be a good initial guess.
     if (device2attach.size() != 1)
     {
-        yCError(RGBDSENSORWRAPPERROS, "Cannot attach more than one device");
+        yCError(RGBDSENSORNWSROS, "Cannot attach more than one device");
         return false;
     }
 
     yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
     if(device2attach[0]->key == "IRGBDSensor")
     {
-        yCInfo(RGBDSENSORWRAPPERROS) << "Good name!";
+        yCInfo(RGBDSENSORNWSROS) << "Good name!";
     }
     else
     {
-        yCInfo(RGBDSENSORWRAPPERROS) << "Bad name!";
+        yCInfo(RGBDSENSORNWSROS) << "Bad name!";
     }
 
     if (!Idevice2attach->isValid())
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
+        yCError(RGBDSENSORNWSROS) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
         return false;
     }
 
@@ -280,7 +280,7 @@ bool RGBDSensorWrapperROS::attachAll(const PolyDriverList &device2attach)
     return PeriodicThread::start();
 }
 
-bool RGBDSensorWrapperROS::detachAll()
+bool RgbdSensor_nws_ros::detachAll()
 {
     if (yarp::os::PeriodicThread::isRunning())
         yarp::os::PeriodicThread::stop();
@@ -293,11 +293,11 @@ bool RGBDSensorWrapperROS::detachAll()
     return true;
 }
 
-bool RGBDSensorWrapperROS::attach(yarp::dev::IRGBDSensor *s)
+bool RgbdSensor_nws_ros::attach(yarp::dev::IRGBDSensor *s)
 {
     if(s == nullptr)
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Attached device has no valid IRGBDSensor interface.";
+        yCError(RGBDSENSORNWSROS) << "Attached device has no valid IRGBDSensor interface.";
         return false;
     }
     sensor_p = s;
@@ -306,7 +306,7 @@ bool RGBDSensorWrapperROS::attach(yarp::dev::IRGBDSensor *s)
     return PeriodicThread::start();
 }
 
-bool RGBDSensorWrapperROS::attach(PolyDriver* poly)
+bool RgbdSensor_nws_ros::attach(PolyDriver* poly)
 {
     if(poly)
     {
@@ -316,7 +316,7 @@ bool RGBDSensorWrapperROS::attach(PolyDriver* poly)
 
     if(sensor_p == nullptr)
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Attached device has no valid IRGBDSensor interface.";
+        yCError(RGBDSENSORNWSROS) << "Attached device has no valid IRGBDSensor interface.";
         return false;
     }
 
@@ -324,7 +324,7 @@ bool RGBDSensorWrapperROS::attach(PolyDriver* poly)
     return PeriodicThread::start();
 }
 
-bool RGBDSensorWrapperROS::detach()
+bool RgbdSensor_nws_ros::detach()
 {
     sensor_p = nullptr;
     return true;
@@ -332,18 +332,18 @@ bool RGBDSensorWrapperROS::detach()
 
 /* IRateThread interface */
 
-bool RGBDSensorWrapperROS::threadInit()
+bool RgbdSensor_nws_ros::threadInit()
 {
     // Get interface from attached device if any.
     return true;
 }
 
-void RGBDSensorWrapperROS::threadRelease()
+void RgbdSensor_nws_ros::threadRelease()
 {
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
-bool RGBDSensorWrapperROS::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
+bool RgbdSensor_nws_ros::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
     double phyF = 0.0;
     double fx = 0.0;
@@ -369,20 +369,20 @@ bool RGBDSensorWrapperROS::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cam
 
     if (!ok)
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Unable to get intrinsic param from" << currentSensor << "sensor!";
+        yCError(RGBDSENSORNWSROS) << "Unable to get intrinsic param from" << currentSensor << "sensor!";
         return false;
     }
 
     if(!camData.check("distortionModel"))
     {
-        yCWarning(RGBDSENSORWRAPPERROS) << "Missing distortion model";
+        yCWarning(RGBDSENSORNWSROS) << "Missing distortion model";
         return false;
     }
 
     distModel = camData.find("distortionModel").asString();
     if (distModel != "plumb_bob")
     {
-        yCError(RGBDSENSORWRAPPERROS) << "Distortion model not supported";
+        yCError(RGBDSENSORNWSROS) << "Distortion model not supported";
         return false;
     }
 
@@ -406,7 +406,7 @@ bool RGBDSensorWrapperROS::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cam
 
         if(!camData.check(par->parname))
         {
-            yCWarning(RGBDSENSORWRAPPERROS) << "Driver has not the param:" << par->parname;
+            yCWarning(RGBDSENSORNWSROS) << "Driver has not the param:" << par->parname;
             return false;
         }
         *par->var = camData.find(par->parname).asFloat64();
@@ -454,7 +454,7 @@ bool RGBDSensorWrapperROS::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cam
     return true;
 }
 
-bool RGBDSensorWrapperROS::writeData()
+bool RgbdSensor_nws_ros::writeData()
 {
     //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
     //             depthImage.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
@@ -503,7 +503,7 @@ bool RGBDSensorWrapperROS::writeData()
         }
         else
         {
-            yCWarning(RGBDSENSORWRAPPERROS, "Missing color camera parameters... camera info messages will be not sent");
+            yCWarning(RGBDSENSORNWSROS, "Missing color camera parameters... camera info messages will be not sent");
         }
     }
     if (depth_data_ok)
@@ -523,7 +523,7 @@ bool RGBDSensorWrapperROS::writeData()
         }
         else
         {
-            yCWarning(RGBDSENSORWRAPPERROS, "Missing depth camera parameters... camera info messages will be not sent");
+            yCWarning(RGBDSENSORNWSROS, "Missing depth camera parameters... camera info messages will be not sent");
         }
     }
 
@@ -532,7 +532,7 @@ bool RGBDSensorWrapperROS::writeData()
     return true;
 }
 
-void RGBDSensorWrapperROS::run()
+void RgbdSensor_nws_ros::run()
 {
     if (sensor_p!=nullptr)
     {
@@ -543,7 +543,7 @@ void RGBDSensorWrapperROS::run()
             case(IRGBDSensor::RGBD_SENSOR_OK_IN_USE) :
             {
                 if (!writeData()) {
-                    yCError(RGBDSENSORWRAPPERROS, "Image not captured.. check hardware configuration");
+                    yCError(RGBDSENSORNWSROS, "Image not captured.. check hardware configuration");
                 }
                 i = 0;
             }
@@ -552,10 +552,10 @@ void RGBDSensorWrapperROS::run()
             {
                 if(i < 1000) {
                     if((i % 30) == 0) {
-                        yCInfo(RGBDSENSORWRAPPERROS) << "Device not ready, waiting...";
+                        yCInfo(RGBDSENSORNWSROS) << "Device not ready, waiting...";
                     }
                 } else {
-                    yCWarning(RGBDSENSORWRAPPERROS) << "Device is taking too long to start..";
+                    yCWarning(RGBDSENSORNWSROS) << "Device is taking too long to start..";
                 }
                 i++;
             }
@@ -563,7 +563,7 @@ void RGBDSensorWrapperROS::run()
             default:
             {
                 if (verbose >= 1) {  // better not to print it every cycle anyway, too noisy
-                    yCError(RGBDSENSORWRAPPERROS, "%s: Sensor returned error", sensorId.c_str());
+                    yCError(RGBDSENSORNWSROS, "%s: Sensor returned error", sensorId.c_str());
                 }
             }
         }
@@ -571,7 +571,7 @@ void RGBDSensorWrapperROS::run()
     else
     {
         if(verbose >= 6) {
-            yCError(RGBDSENSORWRAPPERROS, "%s: Sensor interface is not valid", sensorId.c_str());
+            yCError(RGBDSENSORNWSROS, "%s: Sensor interface is not valid", sensorId.c_str());
         }
     }
 }

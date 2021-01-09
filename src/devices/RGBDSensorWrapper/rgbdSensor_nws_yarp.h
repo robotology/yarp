@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_RGBDSENSORWRAPPER_YARP_H
-#define YARP_DEV_RGBDSENSORWRAPPER_YARP_H
+#ifndef YARP_DEV_RGBDSENSOR_NWS_YARP_H
+#define YARP_DEV_RGBDSENSOR_NWS_YARP_H
 
 #include <vector>
 #include <iostream>
@@ -71,13 +71,13 @@ public:
 /**
  *  @ingroup dev_impl_wrapper
  *
- * \section RGBDSensorWrapper_device_parameters Description of input parameters
+ * \section RgbdSensor_nws_yarp_device_parameters Description of input parameters
  * A Network grabber for kinect-like devices.
  * This device will produce two streams of data through different ports, one for the color frame and the other one
  * for depth image following Framegrabber and IDepthSensor interfaces specification respectively.
  * See they documentation for more details about each interface.
  *
- * This device is paired with its client called RGBDSensorWrapper to receive the data streams and perform remote operations.
+ * This device is paired with its client called RgbdSensor_nws_yarp to receive the data streams and perform remote operations.
  *
  *   Parameters required by this device are:
  * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                                                         | Notes |
@@ -98,7 +98,7 @@ public:
  * \endcode
  */
 
-class RGBDSensorWrapperYARP :
+class RgbdSensor_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IWrapper,
         public yarp::dev::IMultipleWrapper,
@@ -182,12 +182,12 @@ private:
                     const SensorType&                      sensorType);
 
 public:
-    RGBDSensorWrapperYARP();
-    RGBDSensorWrapperYARP(const RGBDSensorWrapperYARP&) = delete;
-    RGBDSensorWrapperYARP(RGBDSensorWrapperYARP&&) = delete;
-    RGBDSensorWrapperYARP& operator=(const RGBDSensorWrapperYARP&) = delete;
-    RGBDSensorWrapperYARP& operator=(RGBDSensorWrapperYARP&&) = delete;
-    ~RGBDSensorWrapperYARP() override;
+    RgbdSensor_nws_yarp();
+    RgbdSensor_nws_yarp(const RgbdSensor_nws_yarp&) = delete;
+    RgbdSensor_nws_yarp(RgbdSensor_nws_yarp&&) = delete;
+    RgbdSensor_nws_yarp& operator=(const RgbdSensor_nws_yarp&) = delete;
+    RgbdSensor_nws_yarp& operator=(RgbdSensor_nws_yarp&&) = delete;
+    ~RgbdSensor_nws_yarp() override;
 
     bool        open(yarp::os::Searchable &params) override;
     bool        fromConfig(yarp::os::Searchable &params);
@@ -211,4 +211,4 @@ public:
     void        run() override;
 };
 
-#endif   // YARP_DEV_RGBDSENSORWRAPPER_YARP_H
+#endif   // YARP_DEV_RGBDSENSOR_NWS_YARP_H

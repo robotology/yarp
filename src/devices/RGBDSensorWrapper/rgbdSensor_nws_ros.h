@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_RGBDSENSORWRAPPER_ROS_H
-#define YARP_DEV_RGBDSENSORWRAPPER_ROS_H
+#ifndef YARP_DEV_RGBDSENSOR_NWS_ROS_H
+#define YARP_DEV_RGBDSENSOR_NWS_ROS_H
 
 #include <vector>
 #include <iostream>
@@ -52,13 +52,13 @@ namespace RGBDImpl
 /**
  *  @ingroup dev_impl_wrapper
  *
- * \section RGBDSensorWrapperROS_device_parameters Description of input parameters
+ * \section RgbdSensor_nws_ros_device_parameters Description of input parameters
  * A Network grabber for kinect-like devices.
  * This device will produce two streams of data through different ports, one for the color frame and the other one
  * for depth image following Framegrabber and IDepthSensor interfaces specification respectively.
  * See they documentation for more details about each interface.
  *
- * This device is paired with its client called RGBDSensorWrapperROS to receive the data streams.
+ * This device is paired with its client called RgbdSensor_nws_ros to receive the data streams.
  *
  *   Parameters required by this device are:
  * | Parameter name         | SubParameter            | Type    | Units          | Default Value | Required                        | Description                                                                                         | Notes |
@@ -79,7 +79,7 @@ namespace RGBDImpl
  * Example of configuration file using .ini format.
  *
  * \code{.unparsed}
- * device RGBDSensorWrapperROS
+ * device rgbdSensor_nws_ros
  * subdevice <RGBDsensor>
  * period 30
  * ROS_colorTopicName /<robotName>/RGBDSensorColor
@@ -91,7 +91,7 @@ namespace RGBDImpl
  * \endcode
  */
 
-class RGBDSensorWrapperROS :
+class RgbdSensor_nws_ros :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IWrapper,
         public yarp::dev::IMultipleWrapper,
@@ -168,12 +168,12 @@ private:
     static std::string yarp2RosPixelCode(int code);
 
 public:
-    RGBDSensorWrapperROS();
-    RGBDSensorWrapperROS(const RGBDSensorWrapperROS&) = delete;
-    RGBDSensorWrapperROS(RGBDSensorWrapperROS&&) = delete;
-    RGBDSensorWrapperROS& operator=(const RGBDSensorWrapperROS&) = delete;
-    RGBDSensorWrapperROS& operator=(RGBDSensorWrapperROS&&) = delete;
-    ~RGBDSensorWrapperROS() override;
+    RgbdSensor_nws_ros();
+    RgbdSensor_nws_ros(const RgbdSensor_nws_ros&) = delete;
+    RgbdSensor_nws_ros(RgbdSensor_nws_ros&&) = delete;
+    RgbdSensor_nws_ros& operator=(const RgbdSensor_nws_ros&) = delete;
+    RgbdSensor_nws_ros& operator=(RgbdSensor_nws_ros&&) = delete;
+    ~RgbdSensor_nws_ros() override;
 
     bool        open(yarp::os::Searchable &params) override;
     bool        fromConfig(yarp::os::Searchable &params);
@@ -197,4 +197,4 @@ public:
     void        run() override;
 };
 
-#endif   // YARP_DEV_RGBDSENSORWRAPPER_ROS_H
+#endif   // YARP_DEV_RGBDSENSOR_NWS_ROS_H

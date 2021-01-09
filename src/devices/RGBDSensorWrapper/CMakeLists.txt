@@ -43,23 +43,23 @@ if(NOT SKIP_RGBDSensorWrapper)
 endif()
 
 ## ROS WRAPPER #################################################################### START #
-yarp_prepare_plugin(RGBDSensorWrapperROS
+yarp_prepare_plugin(rgbdSensor_nws_ros
                     CATEGORY device
-                    TYPE RGBDSensorWrapperROS
-                    INCLUDE RGBDSensorWrapperROS.h
-                    EXTRA_CONFIG WRAPPER=RGBDSensorWrapperROS
+                    TYPE RgbdSensor_nws_ros
+                    INCLUDE rgbdSensor_nws_ros.h
+                    EXTRA_CONFIG WRAPPER=rgbdSensor_nws_ros
                     DEFAULT ON)
 
-if(NOT SKIP_RGBDSensorWrapper)
-  yarp_add_plugin(yarp_RGBDSensorWrapperROS)
+if(NOT SKIP_rgbdSensor_nws_ros)
+  yarp_add_plugin(yarp_rgbdSensor_nws_ros)
 
-  target_sources(yarp_RGBDSensorWrapperROS PRIVATE RGBDSensorWrapperROS.cpp
-                                                   RGBDSensorWrapperROS.h)
-  target_sources(yarp_RGBDSensorWrapperROS PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
+  target_sources(yarp_rgbdSensor_nws_ros PRIVATE rgbdSensor_nws_ros.cpp
+                                                   rgbdSensor_nws_ros.h)
+  target_sources(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
 
-  target_include_directories(yarp_RGBDSensorWrapperROS PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
-  target_link_libraries(yarp_RGBDSensorWrapperROS PRIVATE YARP::YARP_os
+  target_link_libraries(yarp_rgbdSensor_nws_ros PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev
                                                           YARP::YARP_rosmsg)
@@ -69,7 +69,7 @@ if(NOT SKIP_RGBDSensorWrapper)
                                                       YARP_dev
                                                       YARP_rosmsg)
 
-  yarp_install(TARGETS yarp_RGBDSensorWrapperROS
+  yarp_install(TARGETS yarp_rgbdSensor_nws_ros
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -78,25 +78,25 @@ if(NOT SKIP_RGBDSensorWrapper)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_RGBDSensorWrapperROS PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_rgbdSensor_nws_ros PROPERTY FOLDER "Plugins/Device")
 endif()
 ## ROS WRAPPER ###################################################################### END #
 
 ## YARP WRAPPER ################################################################### START #
-yarp_prepare_plugin(RGBDSensorWrapperYARP
+yarp_prepare_plugin(rgbdSensor_nws_yarp
                     CATEGORY device
-                    TYPE RGBDSensorWrapperYARP
-                    INCLUDE RGBDSensorWrapperYARP.h
-                    EXTRA_CONFIG WRAPPER=RGBDSensorWrapperYARP
+                    TYPE RgbdSensor_nws_yarp
+                    INCLUDE rgbdSensor_nws_yarp.h
+                    EXTRA_CONFIG WRAPPER=rgbdSensor_nws_yarp
                     DEFAULT ON)
 
-if(NOT SKIP_RGBDSensorWrapper)
-  yarp_add_plugin(yarp_RGBDSensorWrapperYARP)
+if(NOT SKIP_rgbdSensor_nws_yarp)
+  yarp_add_plugin(yarp_rgbdSensor_nws_yarp)
 
-  target_sources(yarp_RGBDSensorWrapperYARP PRIVATE RGBDSensorWrapperYARP.cpp
-                                                    RGBDSensorWrapperYARP.h)
+  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE rgbdSensor_nws_yarp.cpp
+                                                    rgbdSensor_nws_yarp.h)
 
-  target_link_libraries(yarp_RGBDSensorWrapperYARP PRIVATE YARP::YARP_os
+  target_link_libraries(yarp_rgbdSensor_nws_yarp PRIVATE YARP::YARP_os
                                                            YARP::YARP_sig
                                                            YARP::YARP_dev)
 
@@ -104,7 +104,7 @@ if(NOT SKIP_RGBDSensorWrapper)
                                                       YARP_sig
                                                       YARP_dev)
 
-  yarp_install(TARGETS yarp_RGBDSensorWrapperYARP
+  yarp_install(TARGETS yarp_rgbdSensor_nws_yarp
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -113,6 +113,6 @@ if(NOT SKIP_RGBDSensorWrapper)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_RGBDSensorWrapperYARP PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_rgbdSensor_nws_yarp PROPERTY FOLDER "Plugins/Device")
 endif()
 ## YARP WRAPPER ##################################################################### END #

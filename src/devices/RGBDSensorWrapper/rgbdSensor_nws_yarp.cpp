@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "RGBDSensorWrapperYARP.h"
+#include "rgbdSensor_nws_yarp.h"
 #include <sstream>
 #include <cstdio>
 #include <cstring>
@@ -20,7 +20,7 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
-YARP_LOG_COMPONENT(RGBDSENSORWRAPPERYARP, "yarp.devices.RGBDSensorWrapperYARP")
+YARP_LOG_COMPONENT(RGBDSENSORNWSYARP, "yarp.devices.RgbdSensor_nws_yarp")
 
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MINOR 0
@@ -138,7 +138,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
                         default:
                         {
-                            yCError(RGBDSENSORWRAPPERYARP) << "Interface parser received an unknown GET command. Command is " << cmd.toString();
+                            yCError(RGBDSENSORNWSYARP) << "Interface parser received an unknown GET command. Command is " << cmd.toString();
                             response.addVocab(VOCAB_FAILED);
                         }
                         break;
@@ -148,7 +148,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
                 case VOCAB_SET:
                 {
-                    yCError(RGBDSENSORWRAPPERYARP) << "Interface parser received an unknown SET command. Command is " << cmd.toString();
+                    yCError(RGBDSENSORNWSYARP) << "Interface parser received an unknown SET command. Command is " << cmd.toString();
                     response.addVocab(VOCAB_FAILED);
                 }
                 break;
@@ -158,7 +158,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
         default:
         {
-            yCError(RGBDSENSORWRAPPERYARP) << "Received a command for a wrong interface " << yarp::os::Vocab::decode(interfaceType);
+            yCError(RGBDSENSORNWSYARP) << "Received a command for a wrong interface " << yarp::os::Vocab::decode(interfaceType);
             return DeviceResponder::respond(cmd,response);
         }
         break;
@@ -167,7 +167,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 }
 
 
-RGBDSensorWrapperYARP::RGBDSensorWrapperYARP() :
+RgbdSensor_nws_yarp::RgbdSensor_nws_yarp() :
     PeriodicThread(DEFAULT_THREAD_PERIOD),
     nodeSeq(0),
     period(DEFAULT_THREAD_PERIOD),
@@ -180,7 +180,7 @@ RGBDSensorWrapperYARP::RGBDSensorWrapperYARP() :
     subDeviceOwned(nullptr)
 {}
 
-RGBDSensorWrapperYARP::~RGBDSensorWrapperYARP()
+RgbdSensor_nws_yarp::~RgbdSensor_nws_yarp()
 {
     close();
     sensor_p = nullptr;
@@ -189,7 +189,7 @@ RGBDSensorWrapperYARP::~RGBDSensorWrapperYARP()
 
 /** Device driver interface */
 
-bool RGBDSensorWrapperYARP::open(yarp::os::Searchable &config)
+bool RgbdSensor_nws_yarp::open(yarp::os::Searchable &config)
 {
 //     DeviceResponder::makeUsage();
 //     addUsage("[set] [bri] $fBrightness", "set brightness");
@@ -197,11 +197,11 @@ bool RGBDSensorWrapperYARP::open(yarp::os::Searchable &config)
 //
     m_conf.fromString(config.toString());
     if(verbose >= 5)
-        yCTrace(RGBDSENSORWRAPPERYARP) << "\nParameters are: \n" << config.toString();
+        yCTrace(RGBDSENSORNWSYARP) << "\nParameters are: \n" << config.toString();
 
     if(!fromConfig(config))
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Failed to open, check previous log for error messages.";
+        yCError(RGBDSENSORNWSYARP) << "Failed to open, check previous log for error messages.";
         return false;
     }
 
@@ -209,7 +209,7 @@ bool RGBDSensorWrapperYARP::open(yarp::os::Searchable &config)
 
     if(!initialize_YARP(config))
     {
-        yCError(RGBDSENSORWRAPPERYARP) << sensorId << "Error initializing YARP ports";
+        yCError(RGBDSENSORNWSYARP) << sensorId << "Error initializing YARP ports";
         return false;
     }
 
@@ -219,7 +219,7 @@ bool RGBDSensorWrapperYARP::open(yarp::os::Searchable &config)
     {
         if(! openAndAttachSubDevice(config))
         {
-            yCError(RGBDSENSORWRAPPERYARP, "Error while opening subdevice");
+            yCError(RGBDSENSORNWSYARP, "Error while opening subdevice");
             return false;
         }
     }
@@ -232,12 +232,12 @@ bool RGBDSensorWrapperYARP::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool RGBDSensorWrapperYARP::fromConfig(yarp::os::Searchable &config)
+bool RgbdSensor_nws_yarp::fromConfig(yarp::os::Searchable &config)
 {
     if (!config.check("period", "refresh period of the broadcasted values in ms"))
     {
         if(verbose >= 3)
-            yCInfo(RGBDSENSORWRAPPERYARP) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
+            yCInfo(RGBDSENSORNWSYARP) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
     }
     else
         period = config.find("period").asInt32() / 1000.0;
@@ -246,8 +246,8 @@ bool RGBDSensorWrapperYARP::fromConfig(yarp::os::Searchable &config)
     rootName = config.check("name",Value("/"), "starting '/' if needed.").asString();
 
     if (!config.check("name", "Prefix name of the ports opened by the RGBD wrapper.")) {
-        yCError(RGBDSENSORWRAPPERYARP) << "Missing 'name' parameter. Check you configuration file; it must be like:";
-        yCError(RGBDSENSORWRAPPERYARP) << "   name:         Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD";
+        yCError(RGBDSENSORNWSYARP) << "Missing 'name' parameter. Check you configuration file; it must be like:";
+        yCError(RGBDSENSORNWSYARP) << "   name:         Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD";
         return false;
     }
 
@@ -265,14 +265,14 @@ bool RGBDSensorWrapperYARP::fromConfig(yarp::os::Searchable &config)
     return true;
 }
 
-bool RGBDSensorWrapperYARP::openDeferredAttach(Searchable& prop)
+bool RgbdSensor_nws_yarp::openDeferredAttach(Searchable& prop)
 {
     // I dunno what to do here now...
     isSubdeviceOwned = false;
     return true;
 }
 
-bool RGBDSensorWrapperYARP::openAndAttachSubDevice(Searchable& prop)
+bool RgbdSensor_nws_yarp::openAndAttachSubDevice(Searchable& prop)
 {
     Property p;
     subDeviceOwned = new PolyDriver;
@@ -283,12 +283,12 @@ bool RGBDSensorWrapperYARP::openAndAttachSubDevice(Searchable& prop)
     p.put("device",prop.find("subdevice").asString());  // subdevice was already checked before
 
     // if errors occurred during open, quit here.
-    yCDebug(RGBDSENSORWRAPPERYARP, "Opening IRGBDSensor subdevice");
+    yCDebug(RGBDSENSORNWSYARP, "Opening IRGBDSensor subdevice");
     subDeviceOwned->open(p);
 
     if (!subDeviceOwned->isValid())
     {
-        yCError(RGBDSENSORWRAPPERYARP, "Opening IRGBDSensor subdevice... FAILED");
+        yCError(RGBDSENSORNWSYARP, "Opening IRGBDSensor subdevice... FAILED");
         return false;
     }
     isSubdeviceOwned = true;
@@ -299,9 +299,9 @@ bool RGBDSensorWrapperYARP::openAndAttachSubDevice(Searchable& prop)
     return true;
 }
 
-bool RGBDSensorWrapperYARP::close()
+bool RgbdSensor_nws_yarp::close()
 {
-    yCTrace(RGBDSENSORWRAPPERYARP, "Close");
+    yCTrace(RGBDSENSORNWSYARP, "Close");
     detachAll();
 
     // close subdevice if it was created inside the open (--subdevice option)
@@ -332,38 +332,38 @@ bool RGBDSensorWrapperYARP::close()
 
 /* Helper functions */
 
-bool RGBDSensorWrapperYARP::initialize_YARP(yarp::os::Searchable &params)
+bool RgbdSensor_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
 {
     // Open ports
     bool bRet;
     bRet = true;
     if(!rpcPort.open(rpcPort_Name))
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Unable to open rpc Port" << rpcPort_Name.c_str();
+        yCError(RGBDSENSORNWSYARP) << "Unable to open rpc Port" << rpcPort_Name.c_str();
         bRet = false;
     }
     rpcPort.setReader(rgbdParser);
 
     if(!colorFrame_StreamingPort.open(colorFrame_StreamingPort_Name))
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Unable to open color streaming Port" << colorFrame_StreamingPort_Name.c_str();
+        yCError(RGBDSENSORNWSYARP) << "Unable to open color streaming Port" << colorFrame_StreamingPort_Name.c_str();
         bRet = false;
     }
     if(!depthFrame_StreamingPort.open(depthFrame_StreamingPort_Name))
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Unable to open depth streaming Port" << depthFrame_StreamingPort_Name.c_str();
+        yCError(RGBDSENSORNWSYARP) << "Unable to open depth streaming Port" << depthFrame_StreamingPort_Name.c_str();
         bRet = false;
     }
 
     return bRet;
 }
 
-void RGBDSensorWrapperYARP::setId(const std::string &id)
+void RgbdSensor_nws_yarp::setId(const std::string &id)
 {
     sensorId=id;
 }
 
-std::string RGBDSensorWrapperYARP::getId()
+std::string RgbdSensor_nws_yarp::getId()
 {
     return sensorId;
 }
@@ -371,7 +371,7 @@ std::string RGBDSensorWrapperYARP::getId()
 /**
   * IWrapper and IMultipleWrapper interfaces
   */
-bool RGBDSensorWrapperYARP::attachAll(const PolyDriverList &device2attach)
+bool RgbdSensor_nws_yarp::attachAll(const PolyDriverList &device2attach)
 {
     // First implementation only accepts devices with both the interfaces Framegrabber and IDepthSensor,
     // on a second version maybe two different devices could be accepted, one for each interface.
@@ -379,23 +379,23 @@ bool RGBDSensorWrapperYARP::attachAll(const PolyDriverList &device2attach)
     // interface to view could be a good initial guess.
     if (device2attach.size() != 1)
     {
-        yCError(RGBDSENSORWRAPPERYARP, "Cannot attach more than one device");
+        yCError(RGBDSENSORNWSYARP, "Cannot attach more than one device");
         return false;
     }
 
     yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
     if(device2attach[0]->key == "IRGBDSensor")
     {
-        yCInfo(RGBDSENSORWRAPPERYARP) << "Good name!";
+        yCInfo(RGBDSENSORNWSYARP) << "Good name!";
     }
     else
     {
-        yCInfo(RGBDSENSORWRAPPERYARP) << "Bad name!";
+        yCInfo(RGBDSENSORNWSYARP) << "Bad name!";
     }
 
     if (!Idevice2attach->isValid())
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
+        yCError(RGBDSENSORNWSYARP) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
         return false;
     }
 
@@ -408,7 +408,7 @@ bool RGBDSensorWrapperYARP::attachAll(const PolyDriverList &device2attach)
     return PeriodicThread::start();
 }
 
-bool RGBDSensorWrapperYARP::detachAll()
+bool RgbdSensor_nws_yarp::detachAll()
 {
     if (yarp::os::PeriodicThread::isRunning())
         yarp::os::PeriodicThread::stop();
@@ -421,24 +421,24 @@ bool RGBDSensorWrapperYARP::detachAll()
     return true;
 }
 
-bool RGBDSensorWrapperYARP::attach(yarp::dev::IRGBDSensor *s)
+bool RgbdSensor_nws_yarp::attach(yarp::dev::IRGBDSensor *s)
 {
     if(s == nullptr)
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Attached device has no valid IRGBDSensor interface.";
+        yCError(RGBDSENSORNWSYARP) << "Attached device has no valid IRGBDSensor interface.";
         return false;
     }
     sensor_p = s;
     if(!rgbdParser.configure(sensor_p))
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Error configuring interfaces for parsers";
+        yCError(RGBDSENSORNWSYARP) << "Error configuring interfaces for parsers";
         return false;
     }
     if (fgCtrl)
     {
         if(!rgbdParser.configure(fgCtrl))
         {
-            yCError(RGBDSENSORWRAPPERYARP) << "Error configuring interfaces for parsers";
+            yCError(RGBDSENSORNWSYARP) << "Error configuring interfaces for parsers";
             return false;
         }
     }
@@ -447,7 +447,7 @@ bool RGBDSensorWrapperYARP::attach(yarp::dev::IRGBDSensor *s)
     return PeriodicThread::start();
 }
 
-bool RGBDSensorWrapperYARP::attach(PolyDriver* poly)
+bool RgbdSensor_nws_yarp::attach(PolyDriver* poly)
 {
     if(poly)
     {
@@ -457,26 +457,26 @@ bool RGBDSensorWrapperYARP::attach(PolyDriver* poly)
 
     if(sensor_p == nullptr)
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Attached device has no valid IRGBDSensor interface.";
+        yCError(RGBDSENSORNWSYARP) << "Attached device has no valid IRGBDSensor interface.";
         return false;
     }
 
     if(!rgbdParser.configure(sensor_p))
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Error configuring IRGBD interface";
+        yCError(RGBDSENSORNWSYARP) << "Error configuring IRGBD interface";
         return false;
     }
 
     if (!rgbdParser.configure(fgCtrl))
     {
-        yCWarning(RGBDSENSORWRAPPERYARP) <<"Interface IFrameGrabberControl not implemented by the device";
+        yCWarning(RGBDSENSORNWSYARP) <<"Interface IFrameGrabberControl not implemented by the device";
     }
 
     PeriodicThread::setPeriod(period);
     return PeriodicThread::start();
 }
 
-bool RGBDSensorWrapperYARP::detach()
+bool RgbdSensor_nws_yarp::detach()
 {
     sensor_p = nullptr;
     return true;
@@ -484,18 +484,18 @@ bool RGBDSensorWrapperYARP::detach()
 
 /* IRateThread interface */
 
-bool RGBDSensorWrapperYARP::threadInit()
+bool RgbdSensor_nws_yarp::threadInit()
 {
     // Get interface from attached device if any.
     return true;
 }
 
-void RGBDSensorWrapperYARP::threadRelease()
+void RgbdSensor_nws_yarp::threadRelease()
 {
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
-bool RGBDSensorWrapperYARP::setCamInfo(const string& frame_id, const UInt& seq, const SensorType& sensorType)
+bool RgbdSensor_nws_yarp::setCamInfo(const string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
     double phyF = 0.0;
     double fx = 0.0;
@@ -521,20 +521,20 @@ bool RGBDSensorWrapperYARP::setCamInfo(const string& frame_id, const UInt& seq, 
 
     if (!ok)
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Unable to get intrinsic param from" << currentSensor << "sensor!";
+        yCError(RGBDSENSORNWSYARP) << "Unable to get intrinsic param from" << currentSensor << "sensor!";
         return false;
     }
 
     if(!camData.check("distortionModel"))
     {
-        yCWarning(RGBDSENSORWRAPPERYARP) << "Missing distortion model";
+        yCWarning(RGBDSENSORNWSYARP) << "Missing distortion model";
         return false;
     }
 
     distModel = camData.find("distortionModel").asString();
     if (distModel != "plumb_bob")
     {
-        yCError(RGBDSENSORWRAPPERYARP) << "Distortion model not supported";
+        yCError(RGBDSENSORNWSYARP) << "Distortion model not supported";
         return false;
     }
 
@@ -558,7 +558,7 @@ bool RGBDSensorWrapperYARP::setCamInfo(const string& frame_id, const UInt& seq, 
 
         if(!camData.check(par->parname))
         {
-            yCWarning(RGBDSENSORWRAPPERYARP) << "Driver has not the param:" << par->parname;
+            yCWarning(RGBDSENSORNWSYARP) << "Driver has not the param:" << par->parname;
             return false;
         }
         *par->var = camData.find(par->parname).asFloat64();
@@ -567,7 +567,7 @@ bool RGBDSensorWrapperYARP::setCamInfo(const string& frame_id, const UInt& seq, 
     return true;
 }
 
-bool RGBDSensorWrapperYARP::writeData()
+bool RgbdSensor_nws_yarp::writeData()
 {
     //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
     //             depthImage.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
@@ -620,7 +620,7 @@ bool RGBDSensorWrapperYARP::writeData()
     return true;
 }
 
-void RGBDSensorWrapperYARP::run()
+void RgbdSensor_nws_yarp::run()
 {
     if (sensor_p!=nullptr)
     {
@@ -631,7 +631,7 @@ void RGBDSensorWrapperYARP::run()
             case(IRGBDSensor::RGBD_SENSOR_OK_IN_USE) :
             {
                 if (!writeData()) {
-                    yCError(RGBDSENSORWRAPPERYARP, "Image not captured.. check hardware configuration");
+                    yCError(RGBDSENSORNWSYARP, "Image not captured.. check hardware configuration");
                 }
                 i = 0;
             }
@@ -640,10 +640,10 @@ void RGBDSensorWrapperYARP::run()
             {
                 if(i < 1000) {
                     if((i % 30) == 0) {
-                        yCInfo(RGBDSENSORWRAPPERYARP) << "Device not ready, waiting...";
+                        yCInfo(RGBDSENSORNWSYARP) << "Device not ready, waiting...";
                     }
                 } else {
-                    yCWarning(RGBDSENSORWRAPPERYARP) << "Device is taking too long to start..";
+                    yCWarning(RGBDSENSORNWSYARP) << "Device is taking too long to start..";
                 }
                 i++;
             }
@@ -651,7 +651,7 @@ void RGBDSensorWrapperYARP::run()
             default:
             {
                 if (verbose >= 1) {  // better not to print it every cycle anyway, too noisy
-                    yCError(RGBDSENSORWRAPPERYARP, "%s: Sensor returned error", sensorId.c_str());
+                    yCError(RGBDSENSORNWSYARP, "%s: Sensor returned error", sensorId.c_str());
                 }
             }
         }
@@ -659,7 +659,7 @@ void RGBDSensorWrapperYARP::run()
     else
     {
         if(verbose >= 6) {
-            yCError(RGBDSENSORWRAPPERYARP, "%s: Sensor interface is not valid", sensorId.c_str());
+            yCError(RGBDSENSORNWSYARP, "%s: Sensor interface is not valid", sensorId.c_str());
         }
     }
 }
