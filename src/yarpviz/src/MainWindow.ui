@@ -14,7 +14,7 @@
    <string>yarpviz</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="ress.qrc">
+   <iconset resource="res.qrc">
     <normaloff>:/icons/resources/profiling.png</normaloff>:/icons/resources/profiling.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -98,7 +98,7 @@
      <x>0</x>
      <y>0</y>
      <width>817</width>
-     <height>19</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -146,8 +146,16 @@
      <addaction name="separator"/>
      <addaction name="actionSubgraph"/>
     </widget>
+    <widget class="QMenu" name="menuRender_options">
+     <property name="title">
+      <string>Render options</string>
+     </property>
+     <addaction name="actionBackground_grid"/>
+    </widget>
     <addaction name="separator"/>
     <addaction name="menuLayout"/>
+    <addaction name="separator"/>
+    <addaction name="menuRender_options"/>
     <addaction name="separator"/>
     <addaction name="actionHidePorts"/>
     <addaction name="actionHideConnectionsLable"/>
@@ -217,7 +225,7 @@
   </action>
   <action name="actionProfile_YARP_network">
    <property name="icon">
-    <iconset resource="ress.qrc">
+    <iconset resource="res.qrc">
      <normaloff>:/icons/resources/profiling.png</normaloff>:/icons/resources/profiling.png</iconset>
    </property>
    <property name="text">
@@ -282,7 +290,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ress.qrc">
+    <iconset resource="res.qrc">
      <normaloff>:/icons/resources/chain.png</normaloff>:/icons/resources/chain.png</iconset>
    </property>
    <property name="text">
@@ -305,7 +313,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ress.qrc">
+    <iconset resource="res.qrc">
      <normaloff>:/icons/resources/port_hide.svg</normaloff>:/icons/resources/port_hide.svg</iconset>
    </property>
    <property name="text">
@@ -322,7 +330,7 @@
   </action>
   <action name="actionUpdateConnectionQosStatus">
    <property name="icon">
-    <iconset resource="ress.qrc">
+    <iconset resource="res.qrc">
      <normaloff>:/icons/resources/qos.png</normaloff>:/icons/resources/qos.png</iconset>
    </property>
    <property name="text">
@@ -331,7 +339,7 @@
   </action>
   <action name="actionProfilePortsRate">
    <property name="icon">
-    <iconset resource="ress.qrc">
+    <iconset resource="res.qrc">
      <normaloff>:/icons/resources/profile_rate.png</normaloff>:/icons/resources/profile_rate.png</iconset>
    </property>
    <property name="text">
@@ -361,7 +369,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ress.qrc">
+    <iconset resource="res.qrc">
      <normaloff>:/icons/resources/debugMode.svg</normaloff>:/icons/resources/debugMode.svg</iconset>
    </property>
    <property name="text">
@@ -376,7 +384,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="ress.qrc">
+    <iconset resource="res.qrc">
      <normaloff>:/icons/resources/atooma.svg</normaloff>:/icons/resources/atooma.svg</iconset>
    </property>
    <property name="text">
@@ -384,6 +392,20 @@
    </property>
    <property name="toolTip">
     <string>Enable the Color Mode</string>
+   </property>
+  </action>
+  <action name="actionBackground_grid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Background grid</string>
+   </property>
+   <property name="toolTip">
+    <string>Background grid</string>
    </property>
   </action>
  </widget>
@@ -396,7 +418,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="ress.qrc"/>
+  <include location="res.qrc"/>
  </resources>
  <connections>
   <connection>
