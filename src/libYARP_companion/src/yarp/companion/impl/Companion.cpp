@@ -159,6 +159,7 @@ Companion::Companion() :
     add("rpc",             &Companion::cmdRpc,            "write commands to a port, and read replies");
     add("rpcserver",       &Companion::cmdRpcServer,      "make a test RPC server to receive and reply to Bottle-format messages");
     add("sample",          &Companion::cmdSample,         "drop or duplicate messages to achieve a constant frame-rate");
+    add("stats",           &Companion::cmdStats,          "print statics about the data received from a specific port");
     add("priority-sched",  &Companion::cmdPrioritySched,  "set/get the thread policy and priority for a given connection");
     add("terminate",       &Companion::cmdTerminate,      "terminate a yarp-terminate-aware process by name");
     add("time",            &Companion::cmdTime,           "show the time");

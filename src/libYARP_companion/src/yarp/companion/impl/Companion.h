@@ -127,6 +127,9 @@ public:
     // Defined in Companion.cmdSample.cpp
     int cmdSample(int argc, char *argv[]);
 
+    // Defined in Companion.cmdStats.cpp
+    int cmdStats(int argc, char* argv[]);
+
     // Defined in Companion.cmdTerminate.cpp
     int cmdTerminate(int argc, char *argv[]);
 
