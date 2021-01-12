@@ -124,6 +124,7 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
    + tools:
      - \`yarplogger-console\`
      - \`yarpmanager-console\`
+     - \`yarpdataplayer-console\`
      - \`yarprobotinterface\`
    + GUIs:
      - \`yarpbatterygui\`

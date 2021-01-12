@@ -41,6 +41,7 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
    + tools:
      - `yarplogger-console`
      - `yarpmanager-console`
+     - `yarpdataplayer-console`
      - `yarprobotinterface`
    + GUIs:
      - `yarpbatterygui`
@@ -106,10 +107,10 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Davide Perrone
   Alessandro Roncone
   Valentina Gaggero
+  Bartek Łukawski
   Claudio Fantacci
   Konstantinos Theofilis
   Alexandre Bernardino
-  Bartek Łukawski
   Tobias Fischer
   Duarte Aragao
   Francesco Nori
@@ -120,8 +121,8 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Carlos Beltran-Gonzalez
   Claudio Castellini
   Daniel Krieg
-  Diego Ferigo
   Ettore Landini
+  Diego Ferigo
   Prashanth Ramadoss
   Alexandros Paraschos
   Yeshasvi Tirupachuri
@@ -131,11 +132,12 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Lorenzo Rapetti
   Michael Bucko
   Stefano Dafarra
+  Valentina Vasco
   Giulio Romualdi
   Massimo Regoli
+  Aiko Dinale
   Alessio Rocchi
   Mirko Ferrati
-  Aiko Dinale
   Alexandre Gomes Pereira Antunes
   Andrea Ruzzenenti
   Bertrand Higy
@@ -148,9 +150,12 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Fabien Benureau
   Francesco Orabona
   Gabriele Nava
+  Gianpaolo Bontempo
   Holger Friedrich
+  Johnny Willemsen
   Mohamed Babiker Mohamed Elobaid
   Naeem Assif Mirza
+  Nicola Piga
   Plinio Moreno
   Ze Ji
   Austin Kothig
@@ -167,7 +172,6 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Marco Monforte
   Massimiliano Iacono
   Matej Hoffmann
-  Nicola Piga
   Pedro Vicente
   Serena Ivaldi
   Vítor Galvão
@@ -175,8 +179,8 @@ The list of committers in the YARP repository (ordered by number of commit) is:
 
 The list of copyright holders for YARP is:
   Copyright (C) 1995, 2000, 2003, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020
-    Istituto Italiano di Tecnologia (IIT) (2394 files)
-    RobotCub Consortium (762 files)
+    Istituto Italiano di Tecnologia (IIT) (2453 files)
+    RobotCub Consortium (760 files)
     Daniel Krieg <krieg@fias.uni-frankfurt.de> (16 files)
     David Miller <miller@oxygen-icons.org> (13 files)
     David Vignoni <david@icon-king.com> (13 files)
