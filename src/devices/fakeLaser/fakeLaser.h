@@ -160,6 +160,10 @@ public:
     bool setScanRate         (double rate) override;
 
 public:
+    //Lidar2DDeviceBase
+    bool updateLogic() override final;
+
+public:
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 

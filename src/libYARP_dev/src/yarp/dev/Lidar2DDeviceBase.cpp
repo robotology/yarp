@@ -223,7 +223,7 @@ bool Lidar2DDeviceBase::checkSkipAngle(const double& angle, double& distance)
     return false;
 }
 
-void Lidar2DDeviceBase::applyLimitsOnLaserData()
+bool Lidar2DDeviceBase::applyLimitsOnLaserData()
 {
     for (size_t i = 0; i < m_sensorsNum; i++)
     {
@@ -258,4 +258,29 @@ void Lidar2DDeviceBase::applyLimitsOnLaserData()
             }
         }
     }
+    return true;
+}
+
+yarp::os::Stamp Lidar2DDeviceBase::getLastInputStamp()
+{
+    std::lock_guard<std::mutex> guard(m_mutex);
+    return m_timestamp;
+}
+
+
+bool Lidar2DDeviceBase::updateLidarData()
+{
+    bool b = true;
+    b &= updateLogic();
+    if (!b) return false;
+    b &= applyLimitsOnLaserData();
+    if (!b) return false;
+    b &= updateTimestamp();
+    return b;
+}
+
+bool Lidar2DDeviceBase::updateTimestamp()
+{
+    m_timestamp.update();
+    return true;
 }

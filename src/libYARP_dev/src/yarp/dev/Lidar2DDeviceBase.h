@@ -10,6 +10,7 @@
 
 #include <yarp/os/Searchable.h>
 #include <yarp/dev/IRangefinder2D.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/api.h>
 #include <mutex>
 
@@ -29,12 +30,14 @@ struct Range_t
  * @brief The DLidarDeviceTemplate class.
  * This class has been designed to uniform the parsing of lidar yarp devices.
  */
-class YARP_dev_API Lidar2DDeviceBase: public yarp::dev::IRangefinder2D
+class YARP_dev_API Lidar2DDeviceBase: public yarp::dev::IRangefinder2D,
+                                      public yarp::dev::IPreciselyTimed
 {
 
 protected:
     //internal data
     yarp::sig::Vector     m_laser_data;
+    yarp::os::Stamp       m_timestamp;
     yarp::dev::IRangefinder2D::Device_status m_device_status;
     std::mutex     m_mutex;
 
@@ -61,24 +64,30 @@ public:
     //constructor
     Lidar2DDeviceBase();
 
-public:
-    //IRangefinder2D interface
-    bool getRawData(yarp::sig::Vector& data) override;
-    bool getLaserMeasurement(std::vector<LaserMeasurementData>& data) override;
-    bool getDeviceStatus(Device_status& status) override;
-    bool getDeviceInfo(std::string& device_info) override;
-    bool getDistanceRange(double& min, double& max) override;
-    bool getScanLimits(double& min, double& max) override;
-    bool getHorizontalResolution(double& step) override;
-    bool getScanRate(double& rate) override;
-
 protected:
     //utility methods called by laser devices
-    void applyLimitsOnLaserData();
+    virtual bool updateLidarData();
+    virtual bool updateTimestamp();
+    virtual bool applyLimitsOnLaserData();
+    virtual bool updateLogic() = 0;
+
+public:
+    //IRangefinder2D interface
+    virtual bool getRawData(yarp::sig::Vector& data) override;
+    virtual bool getLaserMeasurement(std::vector<LaserMeasurementData>& data) override;
+    virtual bool getDeviceStatus(Device_status& status) override;
+    virtual bool getDeviceInfo(std::string& device_info) override;
+    virtual bool getDistanceRange(double& min, double& max) override;
+    virtual bool getScanLimits(double& min, double& max) override;
+    virtual bool getHorizontalResolution(double& step) override;
+    virtual bool getScanRate(double& rate) override;
+
+    //IPreciselyTimed interface
+    virtual  yarp::os::Stamp getLastInputStamp() override;
 
 private:
     //utility methods called internally by Lidar2DDeviceBase
-    bool checkSkipAngle(const double& angle, double& distance);
+    virtual bool checkSkipAngle(const double& angle, double& distance);
 };
 
 } // dev

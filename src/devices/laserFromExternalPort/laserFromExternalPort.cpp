@@ -394,15 +394,14 @@ void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::si
     }
 }
 
-void LaserFromExternalPort::run()
+bool LaserFromExternalPort::updateLogic()
 {
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();
 #endif
-    std::lock_guard<std::mutex> guard(m_mutex);
     m_laser_data = m_empty_laser_data;
 
-    size_t nports= m_input_ports.size();
+    size_t nports = m_input_ports.size();
     if (nports == 1) //one single port, optimes version
     {
         m_input_ports[0].getLast(m_last_scan_data[0], m_last_stamp[0]);
@@ -420,7 +419,7 @@ void LaserFromExternalPort::run()
             if (m_laser_data.size() != m_sensorsNum) m_laser_data.resize(m_sensorsNum);
         }
 
-        if (m_iTc==nullptr)
+        if (m_iTc == nullptr)
         {
             for (size_t elem = 0; elem < m_sensorsNum; elem++)
             {
@@ -440,7 +439,7 @@ void LaserFromExternalPort::run()
     }
     else //multiple ports
     {
-        for (size_t i=0; i<nports;i++)
+        for (size_t i = 0; i < nports; i++)
         {
             yarp::sig::Matrix m(4, 4); m.eye();
             bool frame_exists = m_iTc->getTransform(m_src_frame_id[i], m_dst_frame_id, m);
@@ -452,9 +451,14 @@ void LaserFromExternalPort::run()
             calculate(m_last_scan_data[i], m);
         }
     }
+    return true;
+}
 
-    applyLimitsOnLaserData();
-
+void LaserFromExternalPort::run()
+{
+    m_mutex.lock();
+    updateLidarData();
+    m_mutex.unlock();
     return;
 }
 
