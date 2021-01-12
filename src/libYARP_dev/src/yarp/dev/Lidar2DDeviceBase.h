@@ -27,7 +27,7 @@ struct Range_t
 };
 
 /**
- * @brief The DLidarDeviceTemplate class.
+ * @brief The Lidar2DDeviceBase class.
  * This class has been designed to uniform the parsing of lidar yarp devices.
  */
 class YARP_dev_API Lidar2DDeviceBase: public yarp::dev::IRangefinder2D,
