@@ -37,12 +37,11 @@ public:
 
     /**
      * Sets the frame number to the user desired frame.
-     * @param name specifies the name of the loaded data
      * @param frameNum specifies the frame number the user
      *  would like to skip to
      * @return true/false on success/failure
      */
-    virtual bool setFrame(const std::string& name, const std::int32_t frameNum);
+    virtual bool setFrame(const std::int32_t frameNum);
 
     /**
      * Gets the frame number the user is requesting
@@ -63,6 +62,12 @@ public:
      * @return i32 percentage
      */
     virtual std::int32_t getSliderPercentage();
+
+    /**
+     * Get the status of playing
+     * @return the status (playing, paused, stopped)
+     */
+    virtual std::string getStatus();
 
     /**
      * Plays the dataSets

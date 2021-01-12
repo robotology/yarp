@@ -32,6 +32,7 @@
 #include <map>
 #include <fstream>
 #include "include/utils.h"
+#include "include/worker.h"
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Bottle.h>
@@ -39,6 +40,7 @@
 #include <yarp/os/RpcServer.h>
 #include "yarpdataplayer_IDL.h"
 #include "include/loadingwidget.h"
+#include <yarp/dataplayer/YarpDataplayer.h>
 
 class InitThread;
 
@@ -49,8 +51,7 @@ class MainWindow;
 class MainWindow : public QMainWindow, public yarp::os::ResourceFinder, public yarpdataplayer_IDL
 {
     Q_OBJECT
-    friend class Utilities;
-
+    friend class QUtilities;
 
 public:
     explicit MainWindow(yarp::os::ResourceFinder &rf,QWidget *parent = 0);
@@ -97,7 +98,7 @@ public:
     /**
      * function that handles an IDL message - setFrame
      */
-    bool setFrame(const std::string &name, const int frameNum) override;
+    bool setFrame(const int frameNum) override;
     /**
      * function that handles an IDL message - getFrame
      */
@@ -110,6 +111,10 @@ public:
      * function that returns slider percentage
      */
     int  getSliderPercentage() override;
+    /**
+     * function that returns the player status (playing, paused, stopped)
+     */
+    std::string getStatus() override;
     /**
      * function that handles an IDL message - play
      */
@@ -160,7 +165,7 @@ protected:
     /**
      * function that updates the frame number
      */
-    bool updateFrameNumber(const char* part, int number);
+    bool updateFrameNumber(int number);
     /**
      * function that creates utilities
      */
@@ -181,14 +186,16 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
+
     Ui::MainWindow              *ui;
     QString                     moduleName;
     bool                        add_prefix; //indicates if ports have to be opened with /<moduleName> as prefix
+    bool                        verbose;
+    std::string                      dataset;
     yarp::os::RpcServer         rpcPort;
-    std::vector<RowInfo>        rowInfoVec;
+    std::vector<yarp::yarpDataplayer::RowInfo>        rowInfoVec;
     int                         subDirCnt;
     std::vector<std::string>    dataType;
-
 
     QMutex waitMutex;
     QWaitCondition waitCond;
@@ -200,10 +207,9 @@ private:
     LoadingWidget loadingWidget;
     QString errorMessage;
 
-
-
 protected:
-    Utilities                   *utilities;
+    QUtilities *qutilities;
+
     std::map<const char*,int>   partMap;
     int                         itr;
     int                         column;
@@ -224,7 +230,7 @@ signals:
     void internalPause();
     void internalStop();
     void internalStep(yarp::os::Bottle *reply);
-    void internalSetFrame(const std::string &name, const int frameNum);
+    void internalSetFrame(const int frameNum);
     void internalGetFrame(const std::string &name, int *frame);
     void internalGetSliderPercentage(int * percentage);
 
@@ -257,7 +263,7 @@ private slots:
     void onInternalPause();
     void onInternalStop();
     void onInternalStep(yarp::os::Bottle *reply);
-    void onInternalSetFrame(const std::string &name, const int frameNum);
+    void onInternalSetFrame(const int frameNum);
     void onInternalGetFrame(const std::string &name, int *frame);
     void onInternalGetSliderPercentage(int *frame);
 
@@ -269,22 +275,20 @@ class InitThread : public QThread
     Q_OBJECT
 
 public:
-    InitThread(Utilities *utilities,
+    InitThread(QUtilities *qutilities,
                QString newPath,
-               std::vector<RowInfo>& rowInfoVec,
+               std::vector<yarp::yarpDataplayer::RowInfo>& rowInfoVec,
                QObject *parent = 0);
 
 protected:
     void run() override;
 
 private:
-    Utilities *utilities;
+    QUtilities *qutilities;
     QString newPath;
     QMainWindow *mainWindow;
-    std::vector<RowInfo>        rowInfoVec;
+    std::vector<yarp::yarpDataplayer::RowInfo>        rowInfoVec;
 signals:
     void initDone(int subDirCount);
 };
-
-
 #endif // MAINWINDOW_H

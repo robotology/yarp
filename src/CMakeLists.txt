@@ -26,6 +26,7 @@ add_subdirectory(libYARP_run)
 add_subdirectory(libYARP_manager)
 add_subdirectory(libYARP_profiler)
 add_subdirectory(libYARP_logger)
+add_subdirectory(libYARP_dataplayer)
 add_subdirectory(libYARP_wire_rep_utils)
 add_subdirectory(libYARP_robottestingframework)
 
@@ -48,6 +49,7 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarprobotinterface)
     add_subdirectory(yarpmanager-console)
     add_subdirectory(yarplogger-console)
+    add_subdirectory(yarpdataplayer-console)
     add_subdirectory(yarpdatadumper)
 
     # Qt5 GUIs

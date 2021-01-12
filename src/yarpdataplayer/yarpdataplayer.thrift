@@ -33,12 +33,11 @@ service yarpdataplayer_IDL
 
   /**
   * Sets the frame number to the user desired frame.
-  * @param name specifies the name of the loaded data
   * @param frameNum specifies the frame number the user
   *  would like to skip to
   * @return true/false on success/failure
   */
-  bool setFrame(1:string name, 2:i32 frameNum);
+  bool setFrame(1:i32 frameNum);
 
   /**
   * Gets the frame number the user is requesting
@@ -60,6 +59,12 @@ service yarpdataplayer_IDL
    * @return i32 percentage
    */
   i32 getSliderPercentage();
+
+  /**
+  * Get the status of playing
+  * @return the status (playing, paused, stopped)
+  */
+  string getStatus();
 
   /**
   * Plays the dataSets
