@@ -1149,3 +1149,269 @@ jobs:
 
         # Reset ccache stats before uploading
         execute_process_x(COMMAND ccache -z)
+
+
+  codacy-clang-tidy:
+    name: 'Codacy - clang-tidy'
+    needs: run-cmake
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+
+    # This step is copied from the build step, please keep them in sync until we
+    # find a better way to do it automatically
+    - name: Dependencies [Linux]
+      if: runner.os == 'Linux'
+      uses: nick-invision/retry@v2.2.0
+      with:
+        timeout_minutes: 20
+        retry_wait_seconds: 300
+        max_attempts: 3
+        command: |
+          # Install Robotology dependencies from robotology ppa
+          sudo apt-add-repository -y ppa:robotology/ppa
+          sudo apt-get install -qq -y ycm-cmake-modules \
+                                      librobottestingframework-dev
+
+          # Install build tools
+          sudo apt-get install -qq -y cmake \
+                                      ccache \
+                                      ninja-build \
+                                      valgrind \
+                                      lcov
+
+          sudo apt-get install -qq -y libace-dev \
+                                      libsqlite3-dev \
+                                      libtinyxml-dev \
+                                      libedit-dev \
+                                      qtbase5-dev \
+                                      qtdeclarative5-dev \
+                                      qtmultimedia5-dev \
+                                      libqt5opengl5-dev \
+                                      libqcustomplot-dev \
+                                      libopencv-dev \
+                                      libeigen3-dev \
+                                      libgraphviz-dev \
+                                      libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev \
+                                      libpng-dev \
+                                      libv4l-dev \
+                                      libavcodec-dev \
+                                      libavdevice-dev \
+                                      libavformat-dev \
+                                      libavutil-dev \
+                                      portaudio19-dev \
+                                      libsdl1.2-dev \
+                                      libopenni2-dev \
+                                      libftdi-dev \
+                                      libi2c-dev \
+                                      libfuse-dev \
+                                      libjpeg-dev
+
+          # Install SWIG and bindings dependencies
+          sudo apt-get install -qq -y swig \
+                                      mono-mcs \
+                                      liblua5.3-dev \
+                                      lua5.3 \
+                                      tcl-dev \
+                                      tk-dev \
+                                      python3-dev \
+                                      liboctave-dev \
+                                      default-jdk \
+                                      ruby-dev \
+                                      ruby \
+                                      perl
+
+          # Remove old packages from apt cache
+          sudo apt-get autoclean -qq
+
+    - name: Download codacy-clang-tidy
+      if: runner.os == 'Linux'
+      uses: nick-invision/retry@v2.2.0
+      with:
+        timeout_minutes: 20
+        retry_wait_seconds: 300
+        max_attempts: 3
+        command: |
+          # Download extra packages required
+          sudo apt-get install -qq -y wget \
+                                      curl \
+                                      clang-10 \
+                                      clang-tidy-10 \
+                                      jq
+
+          # Download codacy-clang-tidy
+          export CODACY_CLANG_TIDY_VERSION=1.2.1
+
+          sudo wget https://github.com/codacy/codacy-clang-tidy/releases/download/${CODACY_CLANG_TIDY_VERSION}/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} -O /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
+          sudo chmod -v +x /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
+
+          cat > /tmp/run-codacy-clang-tidy << EOF
+          #!/bin/bash
+
+          /usr/bin/clang-tidy-\${CLANG_TIDY_VERSION} \$@ > /tmp/out1
+          cat /tmp/out1
+
+          cat /tmp/out1 | \\
+          /usr/local/bin/codacy-clang-tidy-\${CODACY_CLANG_TIDY_VERSION} > /tmp/out2
+          cat /tmp/out2
+
+          cat /tmp/out2 | \\
+          curl -XPOST -L -H "project-token: \${PROJECT_TOKEN}" \\
+              -H "Content-type: application/json" -d @- \\
+              "\${CODACY_URL}/2.0/commit/\${COMMIT}/issuesRemoteResults"
+          echo
+
+          rm -Rf /tmp/out1
+          rm -Rf /tmp/out2
+          EOF
+
+          sudo mv -v /tmp/run-codacy-clang-tidy /usr/local/bin/run-codacy-clang-tidy
+          sudo chmod -v +x /usr/local/bin/run-codacy-clang-tidy
+
+          echo "---- /usr/local/bin/run-codacy-clang-tidy ----"
+          cat /usr/local/bin/run-codacy-clang-tidy
+          echo "----------------------------------------------"
+
+          echo "----------------------------------------------"
+          clang-tidy-10 --list-checks
+          echo "----------------------------------------------"
+
+    - name: Build
+      env:
+        CODACY_TOKEN: ${{ secrets.CODACY_TOKEN }}
+      run: |
+        export CC=/usr/bin/clang-10
+        export CXX=/usr/bin/clang++-10
+        export CLICOLOR_FORCE=1
+        export YARP_COLORED_OUTPUT=1
+
+        export PROJECT_TOKEN="${CODACY_TOKEN}"
+        export COMMIT="${GITHUB_SHA}"
+        export CODACY_URL="https://api.codacy.com"
+        export CODACY_CLANG_TIDY_VERSION=1.2.1
+        export CLANG_TIDY_VERSION=10
+
+
+        /usr/bin/cmake -S. -Bbuild \
+          -C .ci/initial-cache.gh.linux.cmake \
+          -DCMAKE_C_FLAGS=-fcolor-diagnostics \
+          -DCMAKE_CXX_FLAGS=-fcolor-diagnostics \
+          -DCMAKE_C_CLANG_TIDY=/usr/local/bin/run-codacy-clang-tidy \
+          -DCMAKE_CXX_CLANG_TIDY=/usr/local/bin/run-codacy-clang-tidy
+
+        (cd build && make)
+
+        curl -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+          -H "Content-type: application/json" \
+          "${CODACY_URL}/2.0/commit/${COMMIT}/resultsFinal"
+
+  codacy-coverage:
+    name: 'Codacy - coverage'
+    needs: run-cmake
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+
+    # This step is copied from the build step, please keep them in sync until we
+    # find a better way to do it automatically
+    - name: Dependencies [Linux]
+      if: runner.os == 'Linux'
+      uses: nick-invision/retry@v2.2.0
+      with:
+        timeout_minutes: 20
+        retry_wait_seconds: 300
+        max_attempts: 3
+        command: |
+          # Install Robotology dependencies from robotology ppa
+          sudo apt-add-repository -y ppa:robotology/ppa
+          sudo apt-get install -qq -y ycm-cmake-modules \
+                                      librobottestingframework-dev
+
+          # Install build tools
+          sudo apt-get install -qq -y cmake \
+                                      ccache \
+                                      ninja-build \
+                                      valgrind \
+                                      lcov
+
+          sudo apt-get install -qq -y libace-dev \
+                                      libsqlite3-dev \
+                                      libtinyxml-dev \
+                                      libedit-dev \
+                                      qtbase5-dev \
+                                      qtdeclarative5-dev \
+                                      qtmultimedia5-dev \
+                                      libqt5opengl5-dev \
+                                      libqcustomplot-dev \
+                                      libopencv-dev \
+                                      libeigen3-dev \
+                                      libgraphviz-dev \
+                                      libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev \
+                                      libpng-dev \
+                                      libv4l-dev \
+                                      libavcodec-dev \
+                                      libavdevice-dev \
+                                      libavformat-dev \
+                                      libavutil-dev \
+                                      portaudio19-dev \
+                                      libsdl1.2-dev \
+                                      libopenni2-dev \
+                                      libftdi-dev \
+                                      libi2c-dev \
+                                      libfuse-dev \
+                                      libjpeg-dev
+
+          # Install SWIG and bindings dependencies
+          sudo apt-get install -qq -y swig \
+                                      mono-mcs \
+                                      liblua5.3-dev \
+                                      lua5.3 \
+                                      tcl-dev \
+                                      tk-dev \
+                                      python3-dev \
+                                      liboctave-dev \
+                                      default-jdk \
+                                      ruby-dev \
+                                      ruby \
+                                      perl
+
+          # Remove old packages from apt cache
+          sudo apt-get autoclean -qq
+
+    - name: Build
+      env:
+        CODACY_TOKEN: ${{ secrets.CODACY_TOKEN }}
+      run: |
+        export CLICOLOR_FORCE=1
+        export YARP_COLORED_OUTPUT=1
+
+        /usr/bin/cmake -S. -Bbuild \
+          -C .ci/initial-cache.gh.linux.cmake \
+          -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
+          -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always \
+          -DCMAKE_BUILD_TYPE=Profile \
+          "-DCMAKE_C_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+          "-DCMAKE_CXX_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG"
+
+        (cd build && lcov --directory . --zerocounters)
+
+        (cd build && make && make test)
+
+        # Capture coverage info for Profile builds
+        (cd build; lcov --directory . --capture --output-file coverage.info)
+
+        # Filter out system and test code
+        (cd build; lcov --remove coverage.info '/usr/*' 'tests/*' 'example/*' 'extern/*' 'build/*' --output-file coverage.info)
+
+        # Debug before upload
+        (cd build; lcov --list coverage.info)
+
+    - name: Run codacy-coverage-reporter
+      uses: codacy/codacy-coverage-reporter-action@master
+      with:
+        project-token: ${{ secrets.CODACY_TOKEN }}
+        coverage-reports: build/coverage.info
