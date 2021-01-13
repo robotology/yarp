@@ -124,8 +124,8 @@ class SubDevice;
  * \code{.xml}
  * <paramlist name="networks">
  *   <!-- elem name hereafter are custom names that live only in this file, they are used in the attach phase -->
- *   <elem name="FirstSetOfJoints">  0  3  0  3  </elem>
- *   <elem name="SecondSetOfJoints"> 4  6  0  2  </elem>
+ *   <elem name="FirstSetOfJoints">  (0  3  0  3)  </elem>
+ *   <elem name="SecondSetOfJoints"> (4  6  0  2)  </elem>
  * </paramlist>
  *
  * <param name="period"> 20                 </param>

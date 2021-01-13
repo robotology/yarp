@@ -191,7 +191,12 @@ void MainWindow::drawGraph(Graph &graph)
                     sgraph->setVertex(*itr);
                     //sgraph->setAttribute("label", prop.find("name").asString().c_str());
                     sgraph->setAttribute("color", "#FFFFFF");
-                    sgraph->setAttribute("label", prop.find("hostname").toString().c_str());
+                    string sgraphLabel = prop.find("hostname").toString();
+                    int blankLength = std::max(int(sgraphLabel.length()/2.5),4);
+                    blankLength = blankLength%2!=0 ? blankLength+1 : blankLength;
+                    string nodeS(size_t(blankLength/2), ' ');
+                    sgraphLabel = nodeS+sgraphLabel+nodeS;
+                    sgraph->setAttribute("label", sgraphLabel.c_str());
                     string host = prop.find("os").asString();
                     if(host == "Linux")
                         sgraph->setIcon(QImage(":/icons/resources/os-linux.png"));
@@ -248,11 +253,15 @@ void MainWindow::drawGraph(Graph &graph)
                 continue;
             }
 
-            std::stringstream label;
-            label << "   " << prop.find("name").asString().c_str()
-                  << " (" << prop.find("pid").asInt32() << ")   ";
+            std::stringstream labelStream;
+            labelStream  << prop.find("name").asString().c_str()
+                         << " (" << prop.find("pid").asInt32() << ")";
+            int blankLength = std::max(int(labelStream.str().length()/2.5),4);
+            blankLength = blankLength%2!=0 ? blankLength+1 : blankLength;
+            string nodeS(size_t(blankLength/2), ' ');
+            string label = nodeS+labelStream.str()+nodeS;
             sgraph->setAttribute("shape", "box");
-            sgraph->setAttribute("label", label.str().c_str());
+            sgraph->setAttribute("label", label.c_str());
             if(prop.check("color")) {
                 sgraph->setAttribute("fillcolor", prop.find("color").asString().c_str());
                 sgraph->setAttribute("color", prop.find("color").asString().c_str());
@@ -307,12 +316,17 @@ void MainWindow::drawGraph(Graph &graph)
                 continue;
             QGVNode *node;
             QString colorProcess;
+
+            int blankLength = std::round(portName.length()/7);
+            blankLength = blankLength%2!=0 ? blankLength+1 : blankLength;
+            string nodeS(size_t(blankLength/2), ' ');
+            string nodeName = nodeS+portName+nodeS;
             if(layoutSubgraph) {
                 key<<v->property.find("hostname").asString()<<v->property.find("pid").asInt32();
                 QGVSubGraph *sgraph = sceneSubGraphMap[key.str()];
                 if(sgraph)
                 {
-                    node =  sgraph->addNode(portName.c_str());
+                    node =  sgraph->addNode(nodeName.c_str());
                     if(ui->actionColorMode->isChecked())
                     {
                         QColor color(sgraph->getAttribute("colorOfTheProcess"));
@@ -322,10 +336,10 @@ void MainWindow::drawGraph(Graph &graph)
                     }
                 }
                 else
-                    node =  scene->addNode(portName.c_str());
+                    node =  scene->addNode(nodeName.c_str());
             }
             else
-                node =  scene->addNode(portName.c_str());
+                node =  scene->addNode(nodeName.c_str());
             node->setAttribute("shape", "ellipse");
             if(prop.check("color")) {
                 node->setAttribute("fillcolor", prop.find("color").asString().c_str());
@@ -373,7 +387,13 @@ void MainWindow::drawGraph(Graph &graph)
                     //                               edge.property.find("carrier").asString().c_str());
                     string label;
                     if(!ui->actionHideConnectionsLable->isChecked())
+                    {
                         label = edge.property.find("carrier").asString();
+                        int blankLength = std::max(int(label.length()/2.5),4);
+                        blankLength = blankLength%2!=0 ? blankLength+1 : blankLength;
+                        string nodeS(size_t(blankLength/2), ' ');
+                        label = nodeS+label+nodeS;
+                    }
                     QGVEdge* gve = scene->addEdge((QGVNode*)((GraphicVertex*)&v1)->getGraphicItem(),
                                                   (QGVNode*)((GraphicVertex*)&v2)->getGraphicItem(),
                                                    label.c_str());
