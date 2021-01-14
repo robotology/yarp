@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_DEV_LOCALIZATION2DSERVER_H
-#define YARP_DEV_LOCALIZATION2DSERVER_H
+#ifndef YARP_DEV_LOCALIZATION2D_NWS_YARP_H
+#define YARP_DEV_LOCALIZATION2D_NWS_YARP_H
 
 
 #include <yarp/os/Network.h>
@@ -41,9 +41,9 @@
  /**
  * @ingroup dev_impl_network_wrapper dev_impl_navigation
  *
- * \section Localization2DServer
+ * \section Localization2D_nws_yarp
  *
- * \brief `localization2DServer`: A localization server which can be wrap multiple algorithms and devices to provide robot localization in a 2D World.
+ * \brief `Localization2D_nws_yarp`: A localization server which can be wrap multiple algorithms and devices to provide robot localization in a 2D World.
  *
  *
  *  Parameters required by this device are:
@@ -53,20 +53,14 @@
  * | GENERAL        |  retrieve_position_periodically     | bool  | -  | true         | No           | If true, the subdevice is asked periodically to retrieve the current location. Otherwise the current location is obtained asynchronously when a getCurrentPosition() command is issued.     | -     |
  * | GENERAL        |  name          | string  |  -             | /localizationServer | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /localizationServer/rpc and /localizationServer/streaming:o     |
  * | subdevice      |  -             | string  |  -             |  -                  | Yes          | The name of the of Localization device to be used                 | -     |
- * | ROS            |  publish_tf    | bool    |  -             |  false              | No           | If true, odometry data will be published on global ROS /tf topic      | -     |
- * | ROS            |  publish_odom  | bool    |  -             |  false              | No           | If true, odometry data will be published on a user-defined ROS topic  | The default name of the topic is built as: name+"/odom"     |
  */
-class Localization2DServer :
+class Localization2D_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
         public yarp::dev::IMultipleWrapper,
         public yarp::os::PortReader
 {
 protected:
-
-    //general options
-    bool m_ros_publish_odometry_on_topic;
-    bool m_ros_publish_odometry_on_tf;
 
     //yarp
     std::string                               m_local_name;
@@ -78,13 +72,6 @@ protected:
     std::string                               m_odometryPortName;
     std::string                               m_robot_frame;
     std::string                               m_fixed_frame;
-
-    //ROS
-    std::string                                           m_child_frame_id;
-    std::string                                           m_parent_frame_id;
-    yarp::os::Node*                                       m_ros_node;
-    yarp::os::Publisher<yarp::rosmsg::nav_msgs::Odometry> m_odometry_publisher;
-    yarp::os::Publisher<yarp::rosmsg::tf2_msgs::TFMessage>  m_tf_publisher;
 
     //drivers and interfaces
     yarp::dev::PolyDriver                   pLoc;
@@ -103,11 +90,9 @@ protected:
 private:
     void publish_2DLocation_on_yarp_port();
     void publish_odometry_on_yarp_port();
-    void publish_odometry_on_ROS_topic();
-    void publish_odometry_on_TF_topic();
 
 public:
-    Localization2DServer();
+    Localization2D_nws_yarp();
 
 public:
     virtual bool open(yarp::os::Searchable& prop) override;
@@ -117,8 +102,7 @@ public:
     virtual void run() override;
 
     bool initialize_YARP(yarp::os::Searchable &config);
-    bool initialize_ROS(yarp::os::Searchable& config);
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-#endif // YARP_DEV_LOCALIZATION2DSERVER_H
+#endif // YARP_DEV_LOCALIZATION2D_NWS_YARP_H

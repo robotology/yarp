@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_DEV_LOCALIZATION2DSERVER_H
-#define YARP_DEV_LOCALIZATION2DSERVER_H
+#ifndef YARP_DEV_LOCALIZATION2D_NWS_ROS_H
+#define YARP_DEV_LOCALIZATION2D_NWS_ROS_H
 
 
 #include <yarp/os/Network.h>
@@ -41,9 +41,9 @@
  /**
  * @ingroup dev_impl_network_wrapper dev_impl_navigation
  *
- * \section Localization2DServer
+ * \section Localization2D_nws_ros
  *
- * \brief `localization2DServer`: A localization server which can be wrap multiple algorithms and devices to provide robot localization in a 2D World.
+ * \brief `Localization2D_nws_ros`: A localization server which can be wrap multiple algorithms and devices to provide robot localization in a 2D World.
  *
  *
  *  Parameters required by this device are:
@@ -53,10 +53,8 @@
  * | GENERAL        |  retrieve_position_periodically     | bool  | -  | true         | No           | If true, the subdevice is asked periodically to retrieve the current location. Otherwise the current location is obtained asynchronously when a getCurrentPosition() command is issued.     | -     |
  * | GENERAL        |  name          | string  |  -             | /localizationServer | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /localizationServer/rpc and /localizationServer/streaming:o     |
  * | subdevice      |  -             | string  |  -             |  -                  | Yes          | The name of the of Localization device to be used                 | -     |
- * | ROS            |  publish_tf    | bool    |  -             |  false              | No           | If true, odometry data will be published on global ROS /tf topic      | -     |
- * | ROS            |  publish_odom  | bool    |  -             |  false              | No           | If true, odometry data will be published on a user-defined ROS topic  | The default name of the topic is built as: name+"/odom"     |
  */
-class Localization2DServer :
+class Localization2D_nws_ros :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
         public yarp::dev::IMultipleWrapper,
@@ -64,18 +62,10 @@ class Localization2DServer :
 {
 protected:
 
-    //general options
-    bool m_ros_publish_odometry_on_topic;
-    bool m_ros_publish_odometry_on_tf;
-
     //yarp
     std::string                               m_local_name;
     yarp::os::Port                            m_rpcPort;
     std::string                               m_rpcPortName;
-    yarp::os::BufferedPort<yarp::dev::Nav2D::Map2DLocation>  m_2DLocationPort;
-    std::string                               m_2DLocationPortName;
-    yarp::os::BufferedPort<yarp::dev::OdometryData>  m_odometryPort;
-    std::string                               m_odometryPortName;
     std::string                               m_robot_frame;
     std::string                               m_fixed_frame;
 
@@ -101,13 +91,11 @@ protected:
     yarp::dev::Nav2D::LocalizationStatusEnum    m_current_status;
 
 private:
-    void publish_2DLocation_on_yarp_port();
-    void publish_odometry_on_yarp_port();
     void publish_odometry_on_ROS_topic();
     void publish_odometry_on_TF_topic();
 
 public:
-    Localization2DServer();
+    Localization2D_nws_ros();
 
 public:
     virtual bool open(yarp::os::Searchable& prop) override;
@@ -121,4 +109,4 @@ public:
     virtual bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-#endif // YARP_DEV_LOCALIZATION2DSERVER_H
+#endif // YARP_DEV_LOCALIZATION2D_NWS_ROS
