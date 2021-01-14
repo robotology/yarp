@@ -257,7 +257,7 @@ public:
 
 public:
     //Lidar2DDeviceBase
-    //bool updateLogic() override;
+    //bool acquireDataFromHW() final;
 
 private:
     bool  HW_getHealth();

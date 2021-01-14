@@ -394,7 +394,7 @@ void LaserFromExternalPort::calculate(yarp::dev::LaserScan2D scan_data, yarp::si
     }
 }
 
-bool LaserFromExternalPort::updateLogic()
+bool LaserFromExternalPort::acquireDataFromHW()
 {
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();

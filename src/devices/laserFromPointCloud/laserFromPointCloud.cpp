@@ -357,7 +357,7 @@ void rotate_pc (yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc, const yarp::sig::
     }
 }
 
-bool LaserFromPointCloud::updateLogic()
+bool LaserFromPointCloud::acquireDataFromHW()
 {
 #ifdef DEBUG_TIMING
     static double t3 = yarp::os::Time::now();

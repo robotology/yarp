@@ -271,7 +271,7 @@ yarp::os::Stamp Lidar2DDeviceBase::getLastInputStamp()
 bool Lidar2DDeviceBase::updateLidarData()
 {
     bool b = true;
-    b &= updateLogic();
+    b &= acquireDataFromHW();
     if (!b) return false;
     b &= applyLimitsOnLaserData();
     if (!b) return false;

@@ -227,7 +227,7 @@ void RpLidar2::run()
     return;
 }
 
-bool RpLidar2::updateLogic()
+bool RpLidar2::acquireDataFromHW()
 {
     u_result                            op_result;
     rplidar_response_measurement_node_t nodes[2048];

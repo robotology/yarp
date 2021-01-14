@@ -261,7 +261,7 @@ bool FakeLaser::LiangBarsky_clip(int edgeLeft, int edgeRight, int edgeTop, int e
     return true;        //line is clipped
 }
 
-bool FakeLaser::updateLogic()
+bool FakeLaser::acquireDataFromHW()
 {
     m_laser_data.clear();
     double t = yarp::os::Time::now();

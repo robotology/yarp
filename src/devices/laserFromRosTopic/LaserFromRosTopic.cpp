@@ -415,7 +415,7 @@ void LaserFromRosTopic::calculate(yarp::dev::LaserScan2D scan_data, yarp::sig::M
     }
 }
 
-bool LaserFromRosTopic::updateLogic()
+bool LaserFromRosTopic::acquireDataFromHW()
 {
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();

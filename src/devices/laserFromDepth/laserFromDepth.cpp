@@ -149,7 +149,7 @@ bool LaserFromDepth::threadInit()
     return true;
 }
 
-bool LaserFromDepth::updateLogic()
+bool LaserFromDepth::acquireDataFromHW()
 {
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();
