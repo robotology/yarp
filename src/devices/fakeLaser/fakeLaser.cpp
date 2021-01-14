@@ -261,12 +261,10 @@ bool FakeLaser::LiangBarsky_clip(int edgeLeft, int edgeRight, int edgeTop, int e
     return true;        //line is clipped
 }
 
-
-void FakeLaser::run()
+bool FakeLaser::acquireDataFromHW()
 {
-    m_mutex.lock();
     m_laser_data.clear();
-    double t      = yarp::os::Time::now();
+    double t = yarp::os::Time::now();
     static double t_orig = yarp::os::Time::now();
     double size = (t - (t_orig));
 
@@ -279,9 +277,13 @@ void FakeLaser::run()
         {
             double value = 0;
             if (test == 0)
-                { value = i / 100.0; }
+            {
+                value = i / 100.0;
+            }
             else if (test == 1)
-                { value = size * 2; }
+            {
+                value = size * 2;
+            }
             else if (test == 2)
             {
                 if (i <= 10) { value = 1.0 + i / 20.0; }
@@ -350,14 +352,14 @@ void FakeLaser::run()
         for (size_t i = 0; i < m_sensorsNum; i++)
         {
             //compute the ray in the robot reference frame
-            double ray_angle = i* m_resolution + m_min_angle;
+            double ray_angle = i * m_resolution + m_min_angle;
             double ray_target_x = m_max_distance * cos(ray_angle * DEG2RAD);
             double ray_target_y = m_max_distance * sin(ray_angle * DEG2RAD);
 
             //transforms the ray from the robot to the world reference frame
             XYWorld ray_world;
-            ray_world.x = ray_target_x *cos(m_robot_loc_t*DEG2RAD) - ray_target_y *sin(m_robot_loc_t*DEG2RAD) + m_robot_loc_x;
-            ray_world.y = ray_target_x *sin(m_robot_loc_t*DEG2RAD) + ray_target_y *cos(m_robot_loc_t*DEG2RAD) + m_robot_loc_y;
+            ray_world.x = ray_target_x * cos(m_robot_loc_t * DEG2RAD) - ray_target_y * sin(m_robot_loc_t * DEG2RAD) + m_robot_loc_x;
+            ray_world.y = ray_target_x * sin(m_robot_loc_t * DEG2RAD) + ray_target_y * cos(m_robot_loc_t * DEG2RAD) + m_robot_loc_y;
             XYCell src = m_map.world2Cell(XYWorld(m_robot_loc_x, m_robot_loc_y));
 
             //beware! src is the robot position and it is always inside the image.
@@ -375,8 +377,8 @@ void FakeLaser::run()
             XYCell newsrc;
             XYCell newdst;
             double distance;
-            if (LiangBarsky_clip(0,(int)m_map.width(),0, (int)m_map.height(),
-                                XYCell_unbounded(src.x,src.y), dst, newsrc, newdst))
+            if (LiangBarsky_clip(0, (int)m_map.width(), 0, (int)m_map.height(),
+                XYCell_unbounded(src.x, src.y), dst, newsrc, newdst))
             {
                 distance = checkStraightLine(src, newdst);
                 double simulated_noise = (*m_dis)(*m_gen);
@@ -392,12 +394,16 @@ void FakeLaser::run()
         }
     }
 
-    //for all the different types of tests, apply the limits
-    applyLimitsOnLaserData();
-
     //set the device status
     m_device_status = yarp::dev::IRangefinder2D::DEVICE_OK_IN_USE;
 
+    return true;
+}
+
+void FakeLaser::run()
+{
+    m_mutex.lock();
+    updateLidarData();
     m_mutex.unlock();
     return;
 }

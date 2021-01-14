@@ -149,25 +149,24 @@ bool LaserFromDepth::threadInit()
     return true;
 }
 
-void LaserFromDepth::run()
+bool LaserFromDepth::acquireDataFromHW()
 {
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();
 #endif
-    std::lock_guard<std::mutex> guard(m_mutex);
 
     iRGBD->getDepthImage(m_depth_image);
-    if (m_depth_image.getRawImage()==nullptr)
+    if (m_depth_image.getRawImage() == nullptr)
     {
-        yCDebug(LASER_FROM_DEPTH)<<"invalid image received";
-        return;
+        yCError(LASER_FROM_DEPTH) << "invalid image received";
+        return false;
     }
 
-    if (m_depth_image.width()!=m_depth_width ||
-        m_depth_image.height()!=m_depth_height)
+    if (m_depth_image.width() != m_depth_width ||
+        m_depth_image.height() != m_depth_height)
     {
-        yCDebug(LASER_FROM_DEPTH)<<"invalid image size";
-        return;
+        yCError(LASER_FROM_DEPTH) << "invalid image size";
+        return false;
     }
 
 
@@ -178,14 +177,21 @@ void LaserFromDepth::run()
 
     for (size_t elem = 0; elem < m_sensorsNum; elem++)
     {
-        angle    = elem * m_resolution;    //deg
+        angle = elem * m_resolution;    //deg
         //the 1 / cos(blabla) distortion simulate the way RGBD devices calculate the distance..
         distance = *(pointer + elem);
         distance /= cos((angle - angleShift) * DEG2RAD); //m
         m_laser_data[m_sensorsNum - 1 - elem] = distance;
     }
-    applyLimitsOnLaserData();
 
+    return true;
+}
+
+void LaserFromDepth::run()
+{
+    m_mutex.lock();
+    updateLidarData();
+    m_mutex.unlock();
     return;
 }
 

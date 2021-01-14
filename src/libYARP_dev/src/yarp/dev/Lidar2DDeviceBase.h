@@ -10,6 +10,7 @@
 
 #include <yarp/os/Searchable.h>
 #include <yarp/dev/IRangefinder2D.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/api.h>
 #include <mutex>
 
@@ -26,15 +27,17 @@ struct Range_t
 };
 
 /**
- * @brief The DLidarDeviceTemplate class.
+ * @brief The Lidar2DDeviceBase class.
  * This class has been designed to uniform the parsing of lidar yarp devices.
  */
-class YARP_dev_API Lidar2DDeviceBase: public yarp::dev::IRangefinder2D
+class YARP_dev_API Lidar2DDeviceBase: public yarp::dev::IRangefinder2D,
+                                      public yarp::dev::IPreciselyTimed
 {
 
 protected:
     //internal data
     yarp::sig::Vector     m_laser_data;
+    yarp::os::Stamp       m_timestamp;
     yarp::dev::IRangefinder2D::Device_status m_device_status;
     std::mutex     m_mutex;
 
@@ -61,6 +64,36 @@ public:
     //constructor
     Lidar2DDeviceBase();
 
+protected:
+    //This section contains utility methods called by laser devices
+
+    /**
+    * This utility method calls in sequence: grabDataFromHW(), updateTimestamp and applyLimitsOnLaserData().
+    * It is recommended that the device driver implementation calls this method to perform the
+    * aforementioned three operations.
+    * @return true/false if the methods called internally are all successful
+    */
+    virtual bool updateLidarData();
+
+    /**
+    * By default, it automatically updates the internal timestamp with the yarp time.
+    * It can be redefined by the user if the timestamp source is for example the hardware device.
+    * @return true/false if the update is successful.
+    */
+    virtual bool updateTimestamp();
+
+    /**
+    * Apply the limits on the internally stored lidar measurements.
+    * @return true/false if the method is successful.
+    */
+    virtual bool applyLimitsOnLaserData();
+
+    /**
+    * This method should be implemented by the user, and contain the logic to grab data from the hardware.
+    * @return true/false if the method is successful.
+    */
+    virtual bool acquireDataFromHW() = 0;
+
 public:
     //IRangefinder2D interface
     bool getRawData(yarp::sig::Vector& data) override;
@@ -72,13 +105,12 @@ public:
     bool getHorizontalResolution(double& step) override;
     bool getScanRate(double& rate) override;
 
-protected:
-    //utility methods called by laser devices
-    void applyLimitsOnLaserData();
+    //IPreciselyTimed interface
+    virtual  yarp::os::Stamp getLastInputStamp() override;
 
 private:
     //utility methods called internally by Lidar2DDeviceBase
-    bool checkSkipAngle(const double& angle, double& distance);
+    virtual bool checkSkipAngle(const double& angle, double& distance);
 };
 
 } // dev

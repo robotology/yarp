@@ -357,40 +357,40 @@ void rotate_pc (yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc, const yarp::sig::
     }
 }
 
-void LaserFromPointCloud::run()
+bool LaserFromPointCloud::acquireDataFromHW()
 {
 #ifdef DEBUG_TIMING
     static double t3 = yarp::os::Time::now();
     double t1 = yarp::os::Time::now();
-    yCDebug(LASER_FROM_POINTCLOUD) << "thread period:" <<t1- t3;
+    yCDebug(LASER_FROM_POINTCLOUD) << "thread period:" << t1 - t3;
     t3 = yarp::os::Time::now();
 #endif
 
     bool depth_ok = m_iRGBD->getDepthImage(m_depth_image);
     if (depth_ok == false)
     {
-        yCDebug(LASER_FROM_POINTCLOUD) << "getDepthImage failed";
-        return;
+        yCError(LASER_FROM_POINTCLOUD) << "getDepthImage failed";
+        return false;
     }
 
-    if (m_depth_image.getRawImage()==nullptr)
+    if (m_depth_image.getRawImage() == nullptr)
     {
-        yCDebug(LASER_FROM_POINTCLOUD)<<"invalid image received";
-        return;
+        yCError(LASER_FROM_POINTCLOUD) << "invalid image received";
+        return false;
     }
 
     if (m_depth_image.width() != m_depth_width ||
         m_depth_image.height() != m_depth_height)
     {
-        yCDebug(LASER_FROM_POINTCLOUD)<<"invalid image size: (" << m_depth_image.width() << " " << m_depth_image.height() << ") vs (" << m_depth_width << " " << m_depth_height << ")" ;
-        return;
+        yCError(LASER_FROM_POINTCLOUD) << "invalid image size: (" << m_depth_image.width() << " " << m_depth_image.height() << ") vs (" << m_depth_width << " " << m_depth_height << ")";
+        return false;
     }
 
-    const double myinf =std::numeric_limits<double>::infinity();
-    const double mynan =std::nan("");
+    const double myinf = std::numeric_limits<double>::infinity();
+    const double mynan = std::nan("");
 
     //compute the point cloud
-    yarp::sig::PointCloud<yarp::sig::DataXYZ> pc = yarp::sig::utils::depthToPC(m_depth_image, m_intrinsics,m_pc_roi,m_pc_stepx,m_pc_stepy);
+    yarp::sig::PointCloud<yarp::sig::DataXYZ> pc = yarp::sig::utils::depthToPC(m_depth_image, m_intrinsics, m_pc_roi, m_pc_stepx, m_pc_stepy);
 
 
     //if (m_publish_ros_pc) {ros_compute_and_send_pc(pc,m_camera_frame_id);}//<-------------------------
@@ -403,14 +403,14 @@ void LaserFromPointCloud::run()
 
 #ifdef TEST_M
     yarp::sig::Vector vvv(3);
-    vvv(0)=-1.57;
-    vvv(1)=0;
-    vvv(2)=-1.57;
+    vvv(0) = -1.57;
+    vvv(1) = 0;
+    vvv(2) = -1.57;
     m = yarp::math::rpy2dcm(vvv);
-    m(2,3)=1.2; //z translation
+    m(2, 3) = 1.2; //z translation
 #else
-    bool frame_exists = m_iTc->getTransform(m_camera_frame_id,m_ground_frame_id, m_transform_mtrx);
-    if (frame_exists==false)
+    bool frame_exists = m_iTc->getTransform(m_camera_frame_id, m_ground_frame_id, m_transform_mtrx);
+    if (frame_exists == false)
     {
         yCWarning(LASER_FROM_POINTCLOUD) << "Unable to found m matrix";
     }
@@ -419,17 +419,17 @@ void LaserFromPointCloud::run()
     //we rototranslate the full pointcloud
     rotate_pc(pc, m_transform_mtrx);
 
-    if (m_publish_ros_pc) {ros_compute_and_send_pc(pc,m_ground_frame_id);}//<-------------------------
+    if (m_publish_ros_pc) { ros_compute_and_send_pc(pc, m_ground_frame_id); }//<-------------------------
 
     yarp::sig::Vector left(4);
-    left[0] = (0 - m_intrinsics.principalPointX)/m_intrinsics.focalLengthX*1000;
-    left[1] = (0 - m_intrinsics.principalPointY)/m_intrinsics.focalLengthY*1000;
+    left[0] = (0 - m_intrinsics.principalPointX) / m_intrinsics.focalLengthX * 1000;
+    left[1] = (0 - m_intrinsics.principalPointY) / m_intrinsics.focalLengthY * 1000;
     left[2] = 1000;
     left[3] = 1;
 
     yarp::sig::Vector right(4);
-    right[0] = (m_depth_image.width() - m_intrinsics.principalPointX)/m_intrinsics.focalLengthX*1000;
-    right[1] = (0 - m_intrinsics.principalPointY)/m_intrinsics.focalLengthY*1000;
+    right[0] = (m_depth_image.width() - m_intrinsics.principalPointX) / m_intrinsics.focalLengthX * 1000;
+    right[1] = (0 - m_intrinsics.principalPointY) / m_intrinsics.focalLengthY * 1000;
     right[2] = 1000;
     right[3] = 1;
 
@@ -441,34 +441,34 @@ void LaserFromPointCloud::run()
     right = m_transform_mtrx * right;
 
     LaserMeasurementData data_left;
-    data_left.set_cartesian(left[0],left[1]);
+    data_left.set_cartesian(left[0], left[1]);
     data_left.get_polar(left_dist, left_theta);
 
     LaserMeasurementData data_right;
-    data_right.set_cartesian(right[0],right[1]);
+    data_right.set_cartesian(right[0], right[1]);
     data_right.get_polar(right_dist, right_theta);
 
     bool left_elem_neg = 0;
     bool right_elem_neg = 0;
 
-    left_theta=left_theta*180/M_PI;
-    right_theta=right_theta*180/M_PI;
+    left_theta = left_theta * 180 / M_PI;
+    right_theta = right_theta * 180 / M_PI;
 
-    if      (left_theta<0)
+    if (left_theta < 0)
     {
-        left_theta+=360;
+        left_theta += 360;
         left_elem_neg = 1;
     }
-    else if (left_theta>360) left_theta-=360;
-    size_t left_elem= left_theta/m_resolution;
+    else if (left_theta > 360) left_theta -= 360;
+    size_t left_elem = left_theta / m_resolution;
 
-    if      (right_theta<0)
+    if (right_theta < 0)
     {
-        right_theta+=360;
+        right_theta += 360;
         right_elem_neg = 1;
     }
-    else if (right_theta>360) right_theta-=360;
-    size_t right_elem= right_theta/m_resolution;
+    else if (right_theta > 360) right_theta -= 360;
+    size_t right_elem = right_theta / m_resolution;
 
     //enter critical section and protect m_laser_data
     std::lock_guard<std::mutex> guard(m_mutex);
@@ -476,53 +476,52 @@ void LaserFromPointCloud::run()
     double t4 = yarp::os::Time::now();
 #endif
     //prepare an empty laserscan vector with the resolution we want
-    for (auto it= m_laser_data.begin(); it!=m_laser_data.end(); it++)
+    for (auto it = m_laser_data.begin(); it != m_laser_data.end(); it++)
     {
-        *it= mynan;
+        *it = mynan;
     }
 
     if ((!left_elem_neg) && (right_elem_neg))
     {
-        for (size_t i=0; i<left_elem; i++)
+        for (size_t i = 0; i < left_elem; i++)
         {
             m_laser_data[i] = myinf;
         }
-        for (size_t i=right_elem; i<m_sensorsNum; i++)
+        for (size_t i = right_elem; i < m_sensorsNum; i++)
         {
             m_laser_data[i] = myinf;
         }
     }
     else
     {
-        for (size_t i=right_elem; i<left_elem; i++)
+        for (size_t i = right_elem; i < left_elem; i++)
         {
             m_laser_data[i] = myinf;
         }
     }
 
 
-
-    for (size_t i=0; i<pc.size(); i++)
+    for (size_t i = 0; i < pc.size(); i++)
     {
 
 #ifdef TEST_M
-     //yCDebug(LASER_FROM_POINTCLOUD) << pc(i).toString(5,5);
+        //yCDebug(LASER_FROM_POINTCLOUD) << pc(i).toString(5,5);
 #endif
 
         //we obtain a point from the point cloud
-        yarp::sig::Vector vec= pc(i).toVector4();
+        yarp::sig::Vector vec = pc(i).toVector4();
 
         //we check if the point is in the volume that we want to consider as possibile obstacle
-        if (vec[2]>m_floor_height && vec[2]<m_ceiling_height &&
-            vec[0]<m_pointcloud_max_distance)
+        if (vec[2] > m_floor_height&& vec[2] < m_ceiling_height&&
+            vec[0] < m_pointcloud_max_distance)
         {
 #ifdef TEST_M
-    //        yCDebug(LASER_FROM_POINTCLOUD) << "This point is ok:" << i <<"its z is:" << tvec[2];
+            //        yCDebug(LASER_FROM_POINTCLOUD) << "This point is ok:" << i <<"its z is:" << tvec[2];
 #endif
             //by removing z, we project the 3d point on the 2D plane on which the laser works.
             //we use LaserMeasurementData struct to easily obtain a polar representation from a cartesian representation
             LaserMeasurementData data;
-            data.set_cartesian(vec[0],vec[1]);
+            data.set_cartesian(vec[0], vec[1]);
 
             //get the polar representation
             double distance;
@@ -530,11 +529,11 @@ void LaserFromPointCloud::run()
             data.get_polar(distance, theta);
 
             //compute the right element of the vector where to put distance data. This is done by clusterizing angles, depending on the laser resolution.
-            theta=theta*180/M_PI;
-            if      (theta<0)   theta+=360;
-            else if (theta>360) theta-=360;
-            size_t elem= theta/m_resolution;
-            if (elem>=m_laser_data.size())
+            theta = theta * 180 / M_PI;
+            if (theta < 0)   theta += 360;
+            else if (theta > 360) theta -= 360;
+            size_t elem = theta / m_resolution;
+            if (elem >= m_laser_data.size())
             {
                 yCError(LASER_FROM_POINTCLOUD) << "Error in computing elem" << i << ">" << m_laser_data.size();
                 continue;
@@ -544,9 +543,9 @@ void LaserFromPointCloud::run()
             // yCDebug(LASER_FROM_POINTCLOUD) <<theta << elem <<distance;
 #endif
             //update the vector of measurements, putting the NEAREST obstacle in right element of the vector.
-            if (distance<m_laser_data[elem])
+            if (distance < m_laser_data[elem])
             {
-                m_laser_data[elem]=distance;
+                m_laser_data[elem] = distance;
             }
         }
         else
@@ -556,14 +555,21 @@ void LaserFromPointCloud::run()
 #endif
         }
     }
-    applyLimitsOnLaserData();
+
 
 #ifdef DEBUG_TIMING
     double t2 = yarp::os::Time::now();
-    yCDebug(LASER_FROM_POINTCLOUD) << "tot run:" << t2 - t1 << "crit run:" << t2-t4;
+    yCDebug(LASER_FROM_POINTCLOUD) << "tot run:" << t2 - t1 << "crit run:" << t2 - t4;
 #endif
 
-    return;
+    return true;
+}
+
+void LaserFromPointCloud::run()
+{
+    m_mutex.lock();
+    updateLidarData();
+    m_mutex.unlock();
 }
 
 void LaserFromPointCloud::threadRelease()

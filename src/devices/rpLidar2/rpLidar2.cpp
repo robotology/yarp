@@ -221,6 +221,14 @@ bool RpLidar2::threadInit()
 
 void RpLidar2::run()
 {
+    m_mutex.lock();
+    updateLidarData();
+    m_mutex.unlock();
+    return;
+}
+
+bool RpLidar2::acquireDataFromHW()
+{
     u_result                            op_result;
     rplidar_response_measurement_node_t nodes[2048];
     size_t                              count = _countof(nodes);
@@ -230,15 +238,16 @@ void RpLidar2::run()
     {
         yCError(RP2_LIDAR) << m_serialPort << ": grabbing scan data failed";
         handleError(op_result);
-        return;
+        return false;
     }
 
-    float frequency=0;
-    bool is4kmode=false;
+    float frequency = 0;
+    bool is4kmode = false;
     op_result = m_drv->getFrequency(m_inExpressMode, count, frequency, is4kmode);
     if (op_result != RESULT_OK)
     {
         yCError(RP2_LIDAR) << "getFrequency failed";
+        return false;
     }
 
     m_drv->ascendScanData(nodes, count);
@@ -247,15 +256,15 @@ void RpLidar2::run()
     {
         yCError(RP2_LIDAR) << "ascending scan data failed\n";
         handleError(op_result);
-        return;
+        return false;
     }
 
-    if (m_buffer_life && life%m_buffer_life == 0)
+    if (m_buffer_life && life % m_buffer_life == 0)
     {
-        for (size_t i=0 ;i<m_laser_data.size(); i++)
+        for (size_t i = 0; i < m_laser_data.size(); i++)
         {
             //m_laser_data[i]=0; //0 is a terribly unsafe value and should be avoided.
-            m_laser_data[i]=std::numeric_limits<double>::infinity();
+            m_laser_data[i] = std::numeric_limits<double>::infinity();
         }
     }
 
@@ -263,8 +272,8 @@ void RpLidar2::run()
     {
 
         double distance = nodes[i].distance_q2 / 4.0f / 1000.0; //m
-        double angle    = (float)((nodes[i].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT)/64.0f); //deg
-        double quality  = nodes[i].sync_quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
+        double angle = (float)((nodes[i].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT) / 64.0f); //deg
+        double quality = nodes[i].sync_quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT;
         angle = (360 - angle);
 
         if (angle >= 360)
@@ -293,10 +302,9 @@ void RpLidar2::run()
             yCDebug(RP2_LIDAR) << "RpLidar::run() invalid angle: elem" << elem << ">" << "laser_data.size()" << m_laser_data.size();
         }
     }
-    applyLimitsOnLaserData();
 
     life++;
-    return;
+    return true;
 }
 
 void RpLidar2::threadRelease()

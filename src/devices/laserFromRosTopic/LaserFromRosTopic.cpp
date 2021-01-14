@@ -415,7 +415,7 @@ void LaserFromRosTopic::calculate(yarp::dev::LaserScan2D scan_data, yarp::sig::M
     }
 }
 
-void LaserFromRosTopic::run()
+bool LaserFromRosTopic::acquireDataFromHW()
 {
 #ifdef DEBUG_TIMING
     double t1 = yarp::os::Time::now();
@@ -423,7 +423,7 @@ void LaserFromRosTopic::run()
     std::lock_guard<std::mutex> guard(m_mutex);
     m_laser_data = m_empty_laser_data;
 
-    size_t nports= m_input_ports.size();
+    size_t nports = m_input_ports.size();
     if (nports == 1) //one single port, optimes version
     {
         m_input_ports[0].getLast(m_last_scan_data[0], m_last_stamp[0]);
@@ -441,7 +441,7 @@ void LaserFromRosTopic::run()
             if (m_laser_data.size() != m_sensorsNum) m_laser_data.resize(m_sensorsNum);
         }
 
-        if (m_iTc==nullptr)
+        if (m_iTc == nullptr)
         {
             for (size_t elem = 0; elem < m_sensorsNum; elem++)
             {
@@ -474,9 +474,14 @@ void LaserFromRosTopic::run()
         }
     }
 
-    applyLimitsOnLaserData();
+    return true;
+}
 
-    return;
+void LaserFromRosTopic::run()
+{
+    m_mutex.lock();
+    updateLidarData();
+    m_mutex.unlock();
 }
 
 void LaserFromRosTopic::threadRelease()

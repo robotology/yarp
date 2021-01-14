@@ -255,6 +255,10 @@ public:
     bool getScanRate         (double& rate) override;
     bool setScanRate         (double rate) override;
 
+public:
+    //Lidar2DDeviceBase
+    //bool acquireDataFromHW() override final;
+
 private:
     bool  HW_getHealth();
     bool  HW_reset();
