@@ -161,7 +161,7 @@ public:
 
 public:
     //Lidar2DDeviceBase
-    bool acquireDataFromHW() final;
+    bool acquireDataFromHW() override final;
 
 public:
     bool read(yarp::os::ConnectionReader& connection) override;

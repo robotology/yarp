@@ -77,7 +77,7 @@ public:
 
 public:
     //Lidar2DDeviceBase
-    bool acquireDataFromHW() final;
+    bool acquireDataFromHW() override final;
 };
 
 #endif
