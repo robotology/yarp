@@ -879,3 +879,55 @@ bool Map2DClient::close()
 {
     return true;
 }
+
+bool Map2DClient::saveMapsCollection(std::string maps_collection)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_IMAP);
+    b.addVocab(VOCAB_IMAP_SAVE_COLLECTION);
+    b.addString(maps_collection);
+
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yCError(MAP2DCLIENT) << "saveMapsCollection() received error from locations server";
+            return false;
+        }
+    }
+    else
+    {
+        yCError(MAP2DCLIENT) << "saveMapsCollection() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}
+
+bool Map2DClient::loadMapsCollection(std::string maps_collection)
+{
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_IMAP);
+    b.addVocab(VOCAB_IMAP_LOAD_COLLECTION);
+    b.addString(maps_collection);
+
+    bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yCError(MAP2DCLIENT) << "loadMapsCollection() received error from locations server";
+            return false;
+        }
+    }
+    else
+    {
+        yCError(MAP2DCLIENT) << "loadMapsCollection() error on writing on rpc port";
+        return false;
+    }
+    return true;
+}

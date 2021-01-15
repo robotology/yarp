@@ -216,6 +216,18 @@ public:
     * @return true/false
     */
     virtual bool clearMapTemporaryFlags(std::string map_name) = 0;
+
+    /**
+    * Save a collection of maps
+    * @return true/false
+    */
+    virtual bool saveMapsCollection(std::string maps_colletion) = 0;
+
+    /**
+    * Load a collection of maps
+    * @return true/false
+    */
+    virtual bool loadMapsCollection(std::string maps_colletion) = 0;
 };
 
 constexpr yarp::conf::vocab32_t VOCAB_IMAP                    = yarp::os::createVocab('i','m','a','p');
