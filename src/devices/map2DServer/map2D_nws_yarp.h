@@ -35,6 +35,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/dev/IMap2D.h>
 #include <yarp/dev/MapGrid2D.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
@@ -44,13 +45,6 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/api.h>
-#include <yarp/os/Publisher.h>
-#include <yarp/os/Subscriber.h>
-#include <yarp/os/Node.h>
-#include <yarp/rosmsg/visualization_msgs/MarkerArray.h>
-#include <yarp/rosmsg/nav_msgs/MapMetaData.h>
-#include <yarp/rosmsg/nav_msgs/OccupancyGrid.h>
-
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
@@ -75,30 +69,16 @@ class Map2D_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader
 {
-private:
-    std::map<std::string, yarp::dev::Nav2D::MapGrid2D>     m_maps_storage;
-    std::map<std::string, yarp::dev::Nav2D::Map2DLocation> m_locations_storage;
-    std::map<std::string, yarp::dev::Nav2D::Map2DPath>     m_paths_storage;
-    std::map<std::string, yarp::dev::Nav2D::Map2DArea>     m_areas_storage;
-
 public:
     Map2D_nws_yarp();
     ~Map2D_nws_yarp();
     bool open(yarp::os::Searchable& params) override;
     bool close() override;
 
-public:
-    bool saveMaps(std::string filename);
-    bool loadMaps(std::string filename);
-    bool load_locations_and_areas(std::string locations_file);
-    bool save_locations_and_areas(std::string locations_file);
+private:
+    yarp::dev::Nav2D::IMap2D* m_iMap2D = nullptr;
 
 private:
-    bool priv_load_locations_and_areas_v1(std::ifstream& file);
-    bool priv_load_locations_and_areas_v2(std::ifstream& file);
-
-private:
-    yarp::os::ResourceFinder     m_rf_mapCollection;
     std::mutex                   m_mutex;
     std::string                  m_rpcPortName;
 
