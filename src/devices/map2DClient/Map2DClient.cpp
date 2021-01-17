@@ -156,7 +156,7 @@ bool Map2DClient::clearAllMaps()
     yarp::os::Bottle resp;
 
     b.addVocab(VOCAB_IMAP);
-    b.addVocab(VOCAB_IMAP_CLEAR);
+    b.addVocab(VOCAB_IMAP_CLEAR_ALL_MAPS);
 
     bool ret = m_rpcPort_to_Map2DServer.write(b, resp);
     if (ret)

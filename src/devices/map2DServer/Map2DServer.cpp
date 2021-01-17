@@ -139,7 +139,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 out.addVocab(VOCAB_IMAP_OK);
             }
         }
-        else if (cmd == VOCAB_IMAP_CLEAR)
+        else if (cmd == VOCAB_IMAP_CLEAR_ALL_MAPS)
         {
             m_maps_storage.clear();
             out.clear();

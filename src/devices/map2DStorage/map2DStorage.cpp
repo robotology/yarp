@@ -46,9 +46,6 @@ YARP_LOG_COMPONENT(MAP2DSERVER, "yarp.device.map2DServer")
 
 Map2DStorage::Map2DStorage()
 {
-    m_enable_publish_ros_map = false;
-    m_enable_subscribe_ros_map = false;
-    m_rosNode = nullptr;
 }
 
 Map2DStorage::~Map2DStorage() = default;
@@ -510,100 +507,273 @@ bool Map2DStorage::save_locations_and_areas(std::string locations_file)
 
 bool Map2DStorage::clearAllMaps()
 {
+    m_maps_storage.clear();
+    return true;
 }
 
 bool Map2DStorage::store_map(const yarp::dev::Nav2D::MapGrid2D& map)
 {
+    string map_name = map.getMapName();
+    auto it = m_maps_storage.find(map_name);
+    if (it == m_maps_storage.end())
+    {
+        //add a new map
+        m_maps_storage[map_name] = map;
+    }
+    else
+    {
+        //the map already exists
+        m_maps_storage[map_name] = map;
+    }
+    return true;
 }
 
 bool Map2DStorage::get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map) 
 {
+    auto it = m_maps_storage.find(map_name);
+    if (it != m_maps_storage.end())
+    {
+        map=it->second;
+        return true;
+    }
+    return false;
 }
 
 bool Map2DStorage::get_map_names(std::vector<std::string>& map_names) 
 {
+    map_names.clear();
+    for (auto& it : m_maps_storage)
+    {
+        map_names.push_back(it.first);
+    }
+    return true;
 }
 
 bool Map2DStorage::remove_map(std::string map_name) 
 {
+    size_t rem = m_maps_storage.erase(map_name);
+    if (rem == 0)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 bool Map2DStorage::storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) 
 {
+    m_locations_storage.insert(std::pair<std::string, Map2DLocation>(location_name, loc));
+    return true;
 }
 
-bool Map2DStorage::storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea area) 
+bool Map2DStorage::storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea area)
 {
+    m_areas_storage.insert(std::pair<std::string, Map2DArea>(area_name, area));
+    return true;
 }
 
 bool Map2DStorage::storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) 
 {
+    m_paths_storage.insert(std::pair<std::string, Map2DPath>(path_name, path));
+    return true;
 }
 
 bool Map2DStorage::getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) 
 {
+    auto it = m_locations_storage.find(location_name);
+    if (it != m_locations_storage.end())
+    {
+        loc = it->second;
+        return true;
+    }
+    return false;
 }
 
 bool Map2DStorage::getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area) 
 {
+    auto it = m_areas_storage.find(area_name);
+    if (it != m_areas_storage.end())
+    {
+        area = it->second;
+        return true;
+    }
+    return false;
 }
 
 bool Map2DStorage::getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) 
 {
+    auto it = m_paths_storage.find(path_name);
+    if (it != m_paths_storage.end())
+    {
+        path = it->second;
+        return true;
+    }
+    return false;
 }
 
 bool Map2DStorage::getLocationsList(std::vector<std::string>& locations) 
 {
+    locations.clear();
+    for (auto& it : m_locations_storage)
+    {
+        locations.push_back(it.first);
+    }
+    return true;
 }
 
 bool Map2DStorage::getAreasList(std::vector<std::string>& areas) 
 {
+    areas.clear();
+    for (auto& it : m_areas_storage)
+    {
+        areas.push_back(it.first);
+    }
+    return true;
 }
 
 bool Map2DStorage::getPathsList(std::vector<std::string>& paths) 
 {
+    paths.clear();
+    for (auto& it : m_paths_storage)
+    {
+        paths.push_back(it.first);
+    }
+    return true;
 }
 
 bool Map2DStorage::renameLocation(std::string original_name, std::string new_name) 
 {
+    std::map<std::string, Map2DLocation>::iterator orig_it;
+    orig_it = m_locations_storage.find(original_name);
+    std::map<std::string, Map2DLocation>::iterator new_it;
+    new_it = m_locations_storage.find(new_name);
+
+    if (orig_it != m_locations_storage.end() &&
+        new_it == m_locations_storage.end())
+    {
+        auto loc = orig_it->second;
+        m_locations_storage.erase(orig_it);
+        m_locations_storage.insert(std::pair<std::string, Map2DLocation>(new_name, loc));
+        return true;
+    }
+    return false;
 }
 
 bool Map2DStorage::deleteLocation(std::string location_name) 
 {
+    std::map<std::string, Map2DLocation>::iterator it;
+    it = m_locations_storage.find(location_name);
+    if (it != m_locations_storage.end())
+    {
+        m_locations_storage.erase(it);
+        return true;
+    }
+    return false;
+}
+
+bool Map2DStorage::deleteArea(std::string area_name)
+{
+    std::map<std::string, Map2DArea>::iterator it;
+    it = m_areas_storage.find(area_name);
+    if (it != m_areas_storage.end())
+    {
+        m_areas_storage.erase(it);
+        return true;
+    }
+    return false;
 }
 
 bool Map2DStorage::deletePath(std::string path_name) 
 {
+    std::map<std::string, Map2DPath>::iterator it;
+    it = m_paths_storage.find(path_name);
+    if (it != m_paths_storage.end())
+    {
+        m_paths_storage.erase(it);
+        return true;
+    }
+    return false;
 }
 
 bool Map2DStorage::renameArea(std::string original_name, std::string new_name) 
 {
+
+    std::map<std::string, Map2DArea>::iterator orig_it;
+    orig_it = m_areas_storage.find(original_name);
+    std::map<std::string, Map2DArea>::iterator new_it;
+    new_it = m_areas_storage.find(new_name);
+
+    if (orig_it != m_areas_storage.end() &&
+        new_it == m_areas_storage.end())
+    {
+        auto area = orig_it->second;
+        m_areas_storage.erase(orig_it);
+        m_areas_storage.insert(std::pair<std::string, Map2DArea>(new_name, area));
+        return true;
+    }
+    return false;
 }
 
 bool Map2DStorage::renamePath(std::string original_name, std::string new_name) 
 {
+
+    std::map<std::string, Map2DPath>::iterator orig_it;
+    orig_it = m_paths_storage.find(original_name);
+    std::map<std::string, Map2DPath>::iterator new_it;
+    new_it = m_paths_storage.find(new_name);
+
+    if (orig_it != m_paths_storage.end() &&
+        new_it == m_paths_storage.end())
+    {
+        auto area = orig_it->second;
+        m_paths_storage.erase(orig_it);
+        m_paths_storage.insert(std::pair<std::string, Map2DPath>(new_name, area));
+        return true;
+    }
+    return false;
 }
 
-bool Map2DStorage::deleteArea(std::string area_name) 
-{
-}
+
 
 bool Map2DStorage::clearAllLocations() 
 {
+    m_locations_storage.clear();
+    return true;
 }
 
 bool Map2DStorage::clearAllAreas() 
 {
+    m_areas_storage.clear();
+    return true;
 }
 
 bool Map2DStorage::clearAllPaths() 
 {
+    m_paths_storage.clear();
+    return true;
 }
 
 bool Map2DStorage::clearAllMapsTemporaryFlags() 
 {
+    for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
+    {
+        it->second.clearMapTemporaryFlags();
+    }
+    return true;
 }
 
 bool Map2DStorage::clearMapTemporaryFlags(std::string map_name) 
 {
+    auto it = m_maps_storage.find(map_name);
+    if (it != m_maps_storage.end())
+    {
+        it->second.clearMapTemporaryFlags();
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

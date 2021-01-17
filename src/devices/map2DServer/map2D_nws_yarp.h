@@ -76,7 +76,7 @@ public:
     bool close() override;
 
 private:
-    yarp::dev::Nav2D::IMap2D* m_iMap2D = nullptr;
+    yarp::dev::Nav2D::IMap2D*    m_iMap2D = nullptr;
 
 private:
     std::mutex                   m_mutex;
@@ -86,7 +86,7 @@ private:
 
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
+    //void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
     void parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
 };
 

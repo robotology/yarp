@@ -45,9 +45,6 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/api.h>
-#include <yarp/os/Publisher.h>
-#include <yarp/os/Subscriber.h>
-#include <yarp/os/Node.h>
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
@@ -124,19 +121,11 @@ private:
 
 private:
     yarp::os::ResourceFinder     m_rf_mapCollection;
-    std::mutex              m_mutex;
+    std::mutex                   m_mutex;
     std::string                  m_rpcPortName;
-    yarp::os::Node*              m_rosNode;
-    bool                         m_enable_publish_ros_map;
-    bool                         m_enable_subscribe_ros_map;
-
-    #define ROSNODENAME "/map2DServerNode"
-    #define ROSTOPICNAME_MAP "/map"
-    #define ROSTOPICNAME_MAPMETADATA "/map_metadata"
-
-    yarp::os::RpcServer                                     m_rpcPort;
+    yarp::os::RpcServer          m_rpcPort;
 
     bool read(yarp::os::ConnectionReader& connection) override;
 };
 
-#endif // YARP_DEV_MAP2DSERVER_H
+#endif // YARP_DEV_MAP2DSTORAGE_H
