@@ -33,7 +33,7 @@
 
 #include <cmath>
 
-/*! \file Localization2DServer.cpp */
+/*! \file Localization2D_nws_yarp.cpp */
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -47,7 +47,7 @@ using namespace std;
 #endif
 
 namespace {
-YARP_LOG_COMPONENT(LOCALIZATION2DSERVER, "yarp.device.localization2DServer")
+YARP_LOG_COMPONENT(LOCALIZATION2D_NWS_YARP, "yarp.device.localization2D_nws_yarp")
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ bool Localization2D_nws_yarp::attachAll(const PolyDriverList &device2attach)
 {
     if (device2attach.size() != 1)
     {
-        yCError(LOCALIZATION2DSERVER, "Cannot attach more than one device");
+        yCError(LOCALIZATION2D_NWS_YARP, "Cannot attach more than one device");
         return false;
     }
 
@@ -78,7 +78,7 @@ bool Localization2D_nws_yarp::attachAll(const PolyDriverList &device2attach)
 
     if (nullptr == iLoc)
     {
-        yCError(LOCALIZATION2DSERVER, "Subdevice passed to attach method is invalid");
+        yCError(LOCALIZATION2D_NWS_YARP, "Subdevice passed to attach method is invalid");
         return false;
     }
 
@@ -95,7 +95,7 @@ bool Localization2D_nws_yarp::attachAll(const PolyDriverList &device2attach)
     }
     else
     {
-        yCWarning(LOCALIZATION2DSERVER) << "Localization data not yet available during server initialization";
+        yCWarning(LOCALIZATION2D_NWS_YARP) << "Localization data not yet available during server initialization";
     }
 
     PeriodicThread::setPeriod(m_period);
@@ -116,50 +116,50 @@ bool Localization2D_nws_yarp::open(Searchable& config)
 {
     Property params;
     params.fromString(config.toString().c_str());
-    yCDebug(LOCALIZATION2DSERVER) << "Configuration: \n" << config.toString().c_str();
+    yCDebug(LOCALIZATION2D_NWS_YARP) << "Configuration: \n" << config.toString().c_str();
 
     if (config.check("GENERAL") == false)
     {
-        yCWarning(LOCALIZATION2DSERVER) << "Missing GENERAL group, assuming default options";
+        yCWarning(LOCALIZATION2D_NWS_YARP) << "Missing GENERAL group, assuming default options";
     }
 
     Bottle& general_group = config.findGroup("GENERAL");
     if (!general_group.check("period"))
     {
-        yCInfo(LOCALIZATION2DSERVER) << "Missing 'period' parameter. Using default value: " << DEFAULT_THREAD_PERIOD;
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'period' parameter. Using default value: " << DEFAULT_THREAD_PERIOD;
         m_period = DEFAULT_THREAD_PERIOD;
     }
     else
     {
         m_period = general_group.find("period").asFloat64();
-        yCInfo(LOCALIZATION2DSERVER) << "Period requested: " << m_period;
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "Period requested: " << m_period;
     }
 
     if (!general_group.check("retrieve_position_periodically"))
     {
-        yCInfo(LOCALIZATION2DSERVER) << "Missing 'retrieve_position_periodically' parameter. Using default value: true. Period:" << m_period ;
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'retrieve_position_periodically' parameter. Using default value: true. Period:" << m_period ;
         m_getdata_using_periodic_thread = true;
     }
     else
     {
         m_getdata_using_periodic_thread = general_group.find("retrieve_position_periodically").asBool();
         if (m_getdata_using_periodic_thread)
-            { yCInfo(LOCALIZATION2DSERVER) << "retrieve_position_periodically requested, Period:" << m_period; }
+            { yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically requested, Period:" << m_period; }
         else
-            { yCInfo(LOCALIZATION2DSERVER) << "retrieve_position_periodically NOT requested. Localization data obtained asynchronously."; }
+            { yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically NOT requested. Localization data obtained asynchronously."; }
     }
 
 
     m_local_name = "/localizationServer";
     if (!general_group.check("name"))
     {
-        yCInfo(LOCALIZATION2DSERVER) << "Missing 'name' parameter. Using default value: /localizationServer";
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'name' parameter. Using default value: /localizationServer";
     }
     else
     {
         m_local_name = general_group.find("name").asString();
-        if (m_local_name.c_str()[0] != '/') { yCError(LOCALIZATION2DSERVER) << "Missing '/' in name parameter" ;  return false; }
-        yCInfo(LOCALIZATION2DSERVER) << "Using local name:" << m_local_name;
+        if (m_local_name.c_str()[0] != '/') { yCError(LOCALIZATION2D_NWS_YARP) << "Missing '/' in name parameter" ;  return false; }
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "Using local name:" << m_local_name;
     }
 
     m_rpcPortName = m_local_name + "/rpc";
@@ -175,26 +175,26 @@ bool Localization2D_nws_yarp::open(Searchable& config)
 
         if (!pLoc.open(p) || !pLoc.isValid())
         {
-            yCError(LOCALIZATION2DSERVER) << "Failed to open subdevice.. check params";
+            yCError(LOCALIZATION2D_NWS_YARP) << "Failed to open subdevice.. check params";
             return false;
         }
 
         driverlist.push(&pLoc, "1");
         if (!attachAll(driverlist))
         {
-            yCError(LOCALIZATION2DSERVER) << "Failed to open subdevice.. check params";
+            yCError(LOCALIZATION2D_NWS_YARP) << "Failed to open subdevice.. check params";
             return false;
         }
     }
     else
     {
-        yCInfo(LOCALIZATION2DSERVER) << "Waiting for device to attach";
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "Waiting for device to attach";
     }
     m_stats_time_last = yarp::os::Time::now();
 
     if (!initialize_YARP(config))
     {
-        yCError(LOCALIZATION2DSERVER) << "Error initializing YARP ports";
+        yCError(LOCALIZATION2D_NWS_YARP) << "Error initializing YARP ports";
         return false;
     }
 
@@ -205,19 +205,19 @@ bool Localization2D_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
 {
     if (!m_2DLocationPort.open(m_2DLocationPortName.c_str()))
     {
-        yCError(LOCALIZATION2DSERVER, "Failed to open port %s", m_2DLocationPortName.c_str());
+        yCError(LOCALIZATION2D_NWS_YARP, "Failed to open port %s", m_2DLocationPortName.c_str());
         return false;
     }
 
     if (!m_odometryPort.open(m_odometryPortName.c_str()))
     {
-        yCError(LOCALIZATION2DSERVER, "Failed to open port %s", m_odometryPortName.c_str());
+        yCError(LOCALIZATION2D_NWS_YARP, "Failed to open port %s", m_odometryPortName.c_str());
         return false;
     }
 
     if (!m_rpcPort.open(m_rpcPortName.c_str()))
     {
-        yCError(LOCALIZATION2DSERVER, "Failed to open port %s", m_rpcPortName.c_str());
+        yCError(LOCALIZATION2D_NWS_YARP, "Failed to open port %s", m_rpcPortName.c_str());
         return false;
     }
     m_rpcPort.setReader(*this);
@@ -227,7 +227,7 @@ bool Localization2D_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
 
 bool Localization2D_nws_yarp::close()
 {
-    yCTrace(LOCALIZATION2DSERVER, "Close");
+    yCTrace(LOCALIZATION2D_NWS_YARP, "Close");
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();
@@ -242,7 +242,7 @@ bool Localization2D_nws_yarp::close()
     m_rpcPort.interrupt();
     m_rpcPort.close();
 
-    yCDebug(LOCALIZATION2DSERVER) << "Execution terminated";
+    yCDebug(LOCALIZATION2D_NWS_YARP) << "Execution terminated";
     return true;
 }
 
@@ -374,7 +374,7 @@ bool Localization2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
         }
         else
         {
-            yCError(LOCALIZATION2DSERVER) << "Invalid vocab received";
+            yCError(LOCALIZATION2D_NWS_YARP) << "Invalid vocab received";
             reply.addVocab(VOCAB_ERR);
         }
     }
@@ -405,7 +405,7 @@ bool Localization2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
     }
     else
     {
-        yCError(LOCALIZATION2DSERVER) << "Invalid command type";
+        yCError(LOCALIZATION2D_NWS_YARP) << "Invalid command type";
         reply.addVocab(VOCAB_ERR);
     }
 
@@ -423,7 +423,7 @@ void Localization2D_nws_yarp::run()
     double m_stats_time_curr = yarp::os::Time::now();
     if (m_stats_time_curr - m_stats_time_last > 5.0)
     {
-        yCInfo(LOCALIZATION2DSERVER) << "Running";
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "Running";
         m_stats_time_last = yarp::os::Time::now();
     }
 
@@ -432,7 +432,7 @@ void Localization2D_nws_yarp::run()
         bool ret = iLoc->getLocalizationStatus(m_current_status);
         if (ret == false)
         {
-            yCError(LOCALIZATION2DSERVER) << "getLocalizationStatus() failed";
+            yCError(LOCALIZATION2D_NWS_YARP) << "getLocalizationStatus() failed";
         }
 
         if (m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
@@ -443,7 +443,7 @@ void Localization2D_nws_yarp::run()
             bool ret2 = iLoc->getCurrentPosition(m_current_position);
             if (ret2 == false)
             {
-                yCError(LOCALIZATION2DSERVER) << "getCurrentPosition() failed";
+                yCError(LOCALIZATION2D_NWS_YARP) << "getCurrentPosition() failed";
             }
             else
             {
@@ -452,7 +452,7 @@ void Localization2D_nws_yarp::run()
             bool ret3 = iLoc->getEstimatedOdometry(m_current_odometry);
             if (ret3 == false)
             {
-                //yCError(LOCALIZATION2DSERVER) << "getEstimatedOdometry() failed";
+                //yCError(LOCALIZATION2D_NWS_YARP) << "getEstimatedOdometry() failed";
             }
             else
             {
@@ -461,7 +461,7 @@ void Localization2D_nws_yarp::run()
         }
         else
         {
-            yCWarning(LOCALIZATION2DSERVER, "The system is not properly localized!");
+            yCWarning(LOCALIZATION2D_NWS_YARP, "The system is not properly localized!");
         }
     }
 

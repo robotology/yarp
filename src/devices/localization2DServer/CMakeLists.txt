@@ -49,7 +49,7 @@ yarp_prepare_plugin(localization2D_nws_yarp
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
-if(NOT SKIP_llocalization2D_nws_yarp)
+if(NOT SKIP_localization2D_nws_yarp)
   yarp_add_plugin(yarp_localization2D_nws_yarp)
 
   target_sources(yarp_localization2D_nws_yarp PRIVATE localization2D_nws_yarp.h
@@ -58,13 +58,11 @@ if(NOT SKIP_llocalization2D_nws_yarp)
   target_link_libraries(yarp_localization2D_nws_yarp YARP::YARP_os
                                                   YARP::YARP_sig
                                                   YARP::YARP_dev
-                                                  YARP::YARP_rosmsg
                                                   YARP::YARP_math)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
-                                                      YARP_rosmsg
                                                       YARP_math)
 
   yarp_install(TARGETS yarp_localization2D_nws_yarp
