@@ -385,8 +385,8 @@ jobs:
         \`\`\`
         EOF
 
-
-        sed -i "/^\* \\subpage v${YARP_VERSION}$/i * \\subpage ${YARP_NEXT_BRANCH_C}" doc/releases.md
+        # Link the next release in the doc/releases.md file
+        sed -i "/^\* \\\\subpage v${YARP_VERSION_C}$/i * \\\\subpage ${YARP_NEXT_BRANCH_C}" doc/releases.md
 
         git fetch origin
         git checkout -f ${YARP_NEXT_BRANCH}
