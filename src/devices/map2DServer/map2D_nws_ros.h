@@ -40,6 +40,7 @@
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
 #include <yarp/dev/Map2DPath.h>
+#include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -52,21 +53,19 @@
 #include <yarp/rosmsg/nav_msgs/MapMetaData.h>
 #include <yarp/rosmsg/nav_msgs/OccupancyGrid.h>
 
-
-#define DEFAULT_THREAD_PERIOD 20 //ms
-
 /**
  *  @ingroup dev_impl_wrapper dev_impl_navigation
  *
- * \section Map2DServer
+ * \section Map2D_nws_ros
  *
- * \brief `map2DServer`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
+ * \brief `Map2D_nws_ros`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
  *
  *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              | /mapServer/rpc   | No           | Full name of the rpc port opened by the Map2DServer device.       |       |
- * | mapCollection  |      -         | string  | -              |   -              | No           | The name of .ini file containing a map collection.                |       |
+ * | Parameter name | SubParameter           | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
+ * |:--------------:|:----------------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+ * | name           |      -                 | string  | -              | /map2D_nws_ros/rpc   | No       | Full name of the rpc port opened by the Map2DServer device.       |       |
+ * | ROS            | enable_ros_publisher   | bool    | -              | false            | No           | Publishes maps stored in a map2DStorage on a ROS topic            |       |
+ * | ROS            | enable_ros_subscriber  | bool    | -              | false            | No           | Receives maps from a ROS topic and stores them in a map2DStorage  |       |
 
  * \section Notes:
  * Integration with ROS map server is currently under development.
@@ -74,17 +73,21 @@
 
 class Map2D_nws_ros :
         public yarp::dev::DeviceDriver,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public yarp::dev::IMultipleWrapper
 {
 public:
     Map2D_nws_ros();
     ~Map2D_nws_ros();
-
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
+    bool detachAll() override;
+    bool attachAll(const yarp::dev::PolyDriverList& l) override;
 
 private:
+    //drivers and interfaces
     yarp::dev::Nav2D::IMap2D*    m_iMap2D = nullptr;
+    yarp::dev::PolyDriver        m_drv;
 
 private:
     std::mutex                   m_mutex;
@@ -97,7 +100,7 @@ private:
     #define ROSTOPICNAME_MAP "/map"
     #define ROSTOPICNAME_MAPMETADATA "/map_metadata"
 
-    yarp::os::RpcServer                                     m_rpcPort;
+    yarp::os::RpcServer                                                    m_rpcPort;
     yarp::os::Publisher<yarp::rosmsg::nav_msgs::OccupancyGrid>             m_rosPublisherPort_map;
     yarp::os::Publisher<yarp::rosmsg::nav_msgs::MapMetaData>               m_rosPublisherPort_metamap;
     yarp::os::Subscriber<yarp::rosmsg::nav_msgs::OccupancyGrid>            m_rosSubscriberPort_map;
@@ -106,8 +109,8 @@ private:
 
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
-    void parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
+    //void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
+    //void parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
     bool updateVizMarkers();
 };
 

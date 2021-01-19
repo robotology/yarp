@@ -40,26 +40,24 @@
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
 #include <yarp/dev/Map2DPath.h>
+#include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/api.h>
 
-#define DEFAULT_THREAD_PERIOD 20 //ms
-
 /**
  *  @ingroup dev_impl_wrapper dev_impl_navigation
  *
- * \section Map2DServer
+ * \section Map2D_nws_yarp
  *
- * \brief `map2DServer`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
+ * \brief `Map2D_nws_yarp`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              | /mapServer/rpc   | No           | Full name of the rpc port opened by the Map2DServer device.       |       |
- * | mapCollection  |      -         | string  | -              |   -              | No           | The name of .ini file containing a map collection.                |       |
+ * | name           |      -         | string  | -              | /map2D_nws_yarp/rpc   | No           | Full name of the rpc port opened by the Map2DServer device.       |       |
 
  * \section Notes:
  * Integration with ROS map server is currently under development.
@@ -67,21 +65,25 @@
 
 class Map2D_nws_yarp :
         public yarp::dev::DeviceDriver,
-        public yarp::os::PortReader
+        public yarp::os::PortReader,
+        public yarp::dev::IMultipleWrapper
 {
 public:
     Map2D_nws_yarp();
     ~Map2D_nws_yarp();
     bool open(yarp::os::Searchable& params) override;
     bool close() override;
+    bool detachAll() override;
+    bool attachAll(const yarp::dev::PolyDriverList& l) override;
 
 private:
+    //drivers and interfaces
     yarp::dev::Nav2D::IMap2D*    m_iMap2D = nullptr;
+    yarp::dev::PolyDriver        m_drv;
 
 private:
     std::mutex                   m_mutex;
     std::string                  m_rpcPortName;
-
     yarp::os::RpcServer          m_rpcPort;
 
     bool read(yarp::os::ConnectionReader& connection) override;

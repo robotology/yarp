@@ -37,7 +37,7 @@ using namespace yarp::os;
 using namespace std;
 
 namespace {
-YARP_LOG_COMPONENT(MAP2DSERVER, "yarp.device.map2DServer")
+YARP_LOG_COMPONENT(MAP2DSTORAGE, "yarp.device.map2DStorage")
 }
 
 /**
@@ -54,14 +54,14 @@ bool Map2DStorage::saveMapsCollection(std::string mapsfile)
 {
     if (m_maps_storage.size() == 0)
     {
-        yCError(MAP2DSERVER) << "Map storage is empty";
+        yCError(MAP2DSTORAGE) << "Map storage is empty";
         return false;
     }
     std::ofstream file;
     file.open(mapsfile.c_str());
     if (!file.is_open())
     {
-        yCError(MAP2DSERVER) << "Sorry unable to open" << mapsfile;
+        yCError(MAP2DSTORAGE) << "Sorry unable to open" << mapsfile;
         return false;
     }
     bool ret = true;
@@ -84,7 +84,7 @@ bool Map2DStorage::loadMapsCollection(std::string mapsfile)
     file.open(mapsfile.c_str());
     if (!file.is_open())
     {
-        yCError(MAP2DSERVER) << "loadMaps() Unable to open:" << mapsfile;
+        yCError(MAP2DSTORAGE) << "loadMaps() Unable to open:" << mapsfile;
         return false;
     }
     while (!file.eof())
@@ -116,19 +116,19 @@ bool Map2DStorage::loadMapsCollection(std::string mapsfile)
                 }
                 else
                 {
-                    yCError(MAP2DSERVER) << "A map with the same name '" << map_name << "'was found, skipping...";
+                    yCError(MAP2DSTORAGE) << "A map with the same name '" << map_name << "'was found, skipping...";
                     ret = false;
                 }
             }
             else
             {
-                yCError(MAP2DSERVER) << "Problems opening map file" << mapfilenameWithPath;
+                yCError(MAP2DSTORAGE) << "Problems opening map file" << mapfilenameWithPath;
                 ret = false;
             }
         }
         else
         {
-            yCError(MAP2DSERVER) << "Invalid syntax, missing mapfile tag";
+            yCError(MAP2DSTORAGE) << "Invalid syntax, missing mapfile tag";
             ret = false;
         }
     }
@@ -157,71 +157,71 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
 
         if (collection_file_with_path=="")
         {
-            yCInfo(MAP2DSERVER) << "No locations loaded";
+            yCInfo(MAP2DSTORAGE) << "No locations loaded";
         }
         else
         {
             bool ret  = load_locations_and_areas(locations_file_with_path);
-            if (ret) { yCInfo(MAP2DSERVER) << "Location file" << locations_file_with_path << "successfully loaded."; }
-            else { yCError(MAP2DSERVER) << "Problems opening file" << locations_file_with_path; }
+            if (ret) { yCInfo(MAP2DSTORAGE) << "Location file" << locations_file_with_path << "successfully loaded."; }
+            else { yCError(MAP2DSTORAGE) << "Problems opening file" << locations_file_with_path; }
         }
 
         if (collection_file_with_path=="")
         {
-            yCError(MAP2DSERVER) << "Unable to find file" << collection_file_name << "within the specified context:" << collection_context_name;
+            yCError(MAP2DSTORAGE) << "Unable to find file" << collection_file_name << "within the specified context:" << collection_context_name;
             return false;
         }
         if (loadMapsCollection(collection_file_with_path))
         {
-            yCInfo(MAP2DSERVER) << "Map collection file:" << collection_file_with_path << "successfully loaded.";
+            yCInfo(MAP2DSTORAGE) << "Map collection file:" << collection_file_with_path << "successfully loaded.";
             if (m_maps_storage.size() > 0)
             {
-                yCInfo(MAP2DSERVER) << "Available maps are:";
+                yCInfo(MAP2DSTORAGE) << "Available maps are:";
                 for (auto& it : m_maps_storage)
                 {
-                    yCInfo(MAP2DSERVER) << it.first;
+                    yCInfo(MAP2DSTORAGE) << it.first;
                 }
             }
             else
             {
-                yCInfo(MAP2DSERVER) << "No maps available";
+                yCInfo(MAP2DSTORAGE) << "No maps available";
             }
             if (m_locations_storage.size() > 0)
             {
-                yCInfo(MAP2DSERVER) << "Available Locations are:";
+                yCInfo(MAP2DSTORAGE) << "Available Locations are:";
                 for (auto& it : m_locations_storage)
                 {
-                    yCInfo(MAP2DSERVER) << it.first;
+                    yCInfo(MAP2DSTORAGE) << it.first;
                 }
             }
             else
             {
-                yCInfo(MAP2DSERVER) << "No locations available";
+                yCInfo(MAP2DSTORAGE) << "No locations available";
             }
 
             if (m_areas_storage.size() > 0)
             {
-                yCInfo(MAP2DSERVER) << "Available areas are:";
+                yCInfo(MAP2DSTORAGE) << "Available areas are:";
                 for (auto& it : m_areas_storage)
                 {
-                    yCInfo(MAP2DSERVER) << it.first;
+                    yCInfo(MAP2DSTORAGE) << it.first;
                 }
             }
             else
             {
-                yCInfo(MAP2DSERVER) << "No areas available";
+                yCInfo(MAP2DSTORAGE) << "No areas available";
             }
         }
         else
         {
-            yCError(MAP2DSERVER) << "Unable to load map collection file:" << collection_file_with_path;
+            yCError(MAP2DSTORAGE) << "Unable to load map collection file:" << collection_file_with_path;
             return false;
         }
     }
 
     if (!config.check("name"))
     {
-        m_rpcPortName = "/mapServer/rpc";
+        m_rpcPortName = "/map2DStorage/rpc";
     }
     else
     {
@@ -231,7 +231,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
     //open rpc port
     if (!m_rpcPort.open(m_rpcPortName))
     {
-        yCError(MAP2DSERVER, "Failed to open port %s", m_rpcPortName.c_str());
+        yCError(MAP2DSTORAGE, "Failed to open port %s", m_rpcPortName.c_str());
         return false;
     }
     m_rpcPort.setReader(*this);
@@ -241,7 +241,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
 
 bool Map2DStorage::close()
 {
-    yCTrace(MAP2DSERVER, "Close");
+    yCTrace(MAP2DSTORAGE, "Close");
     return true;
 }
 
@@ -251,7 +251,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v1(std::ifstream& file)
     std::getline(file, buffer);
     if (buffer != "Locations:")
     {
-        yCError(MAP2DSERVER) << "Unable to parse Locations section!";
+        yCError(MAP2DSTORAGE) << "Unable to parse Locations section!";
         return false;
     }
 
@@ -261,7 +261,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v1(std::ifstream& file)
         if (buffer == "Areas:") break;
         if (file.eof())
         {
-            yCError(MAP2DSERVER) << "Unexpected End Of File";
+            yCError(MAP2DSTORAGE) << "Unexpected End Of File";
             return false;
         }
         Bottle b;
@@ -269,7 +269,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v1(std::ifstream& file)
         size_t bot_size = b.size();
         if (bot_size != 5)
         {
-            yCError(MAP2DSERVER) << "Unable to parse contents of Areas section!";
+            yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
             return false;
         }
         Map2DLocation   location;
@@ -283,7 +283,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v1(std::ifstream& file)
 
     if (buffer != "Areas:")
     {
-        yCError(MAP2DSERVER) << "Unable to parse Areas section!";
+        yCError(MAP2DSTORAGE) << "Unable to parse Areas section!";
         return false;
     }
 
@@ -301,7 +301,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v1(std::ifstream& file)
         size_t area_size = b.get(2).asInt32();
         if (area_size <= 0 || bot_size != area_size * 2 + 3)
         {
-            yCError(MAP2DSERVER) << "Unable to parse contents of Areas section!";
+            yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
             return false;
         }
         for (size_t ai = 3; ai < bot_size; ai += 2)
@@ -321,7 +321,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
     std::getline(file, buffer);
     if (buffer != "Locations:")
     {
-        yCError(MAP2DSERVER) << "Unable to parse Locations section!";
+        yCError(MAP2DSTORAGE) << "Unable to parse Locations section!";
         return false;
     }
 
@@ -331,7 +331,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
         if (buffer == "Areas:") break;
         if (file.eof())
         {
-            yCError(MAP2DSERVER) << "Unexpected End Of File";
+            yCError(MAP2DSTORAGE) << "Unexpected End Of File";
             return false;
         }
         Bottle b;
@@ -339,7 +339,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
         size_t bot_size = b.size();
         if (bot_size != 5)
         {
-            yCError(MAP2DSERVER) << "Unable to parse contents of Areas section!";
+            yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
             return false;
         }
         Map2DLocation   location;
@@ -353,7 +353,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
 
     if (buffer != "Areas:")
     {
-        yCError(MAP2DSERVER) << "Unable to parse Areas section!";
+        yCError(MAP2DSTORAGE) << "Unable to parse Areas section!";
         return false;
     }
 
@@ -371,7 +371,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
         size_t area_size = b.get(2).asInt32();
         if (area_size <= 0 || bot_size != area_size * 2 + 3)
         {
-            yCError(MAP2DSERVER) << "Unable to parse contents of Areas section!";
+            yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
             return false;
         }
         for (size_t ai = 3; ai < bot_size; ai += 2)
@@ -392,7 +392,7 @@ bool Map2DStorage::load_locations_and_areas(std::string locations_file)
 
     if(!file.is_open())
     {
-        yCError(MAP2DSERVER) << "Unable to open" << locations_file << "locations file.";
+        yCError(MAP2DSTORAGE) << "Unable to open" << locations_file << "locations file.";
         return false;
     }
 
@@ -401,7 +401,7 @@ bool Map2DStorage::load_locations_and_areas(std::string locations_file)
     std::getline(file, buffer);
     if (buffer != "Version:")
     {
-        yCError(MAP2DSERVER) << "Unable to parse Version section!";
+        yCError(MAP2DSTORAGE) << "Unable to parse Version section!";
         file.close();
         return false;
     }
@@ -412,7 +412,7 @@ bool Map2DStorage::load_locations_and_areas(std::string locations_file)
     {
         if (!priv_load_locations_and_areas_v1(file))
         {
-            yCError(MAP2DSERVER) << "Call to load_locations_and_areas_v1 failed";
+            yCError(MAP2DSTORAGE) << "Call to load_locations_and_areas_v1 failed";
             file.close();
             return false;
         }
@@ -421,21 +421,21 @@ bool Map2DStorage::load_locations_and_areas(std::string locations_file)
     {
         if (!priv_load_locations_and_areas_v2(file))
         {
-            yCError(MAP2DSERVER) << "Call to load_locations_and_areas_v2 failed";
+            yCError(MAP2DSTORAGE) << "Call to load_locations_and_areas_v2 failed";
             file.close();
             return false;
         }
     }
     else
     {
-        yCError(MAP2DSERVER) << "Only versions 1,2 supported!";
+        yCError(MAP2DSTORAGE) << "Only versions 1,2 supported!";
         file.close();
         return false;
     }
 
     //on success
     file.close();
-    yCDebug(MAP2DSERVER) << "Locations file" << locations_file << "loaded, " << m_locations_storage.size() << "locations and "<< m_areas_storage.size() << " areas available";
+    yCDebug(MAP2DSTORAGE) << "Locations file" << locations_file << "loaded, " << m_locations_storage.size() << "locations and "<< m_areas_storage.size() << " areas available";
     return true;
 }
 
@@ -446,7 +446,7 @@ bool Map2DStorage::save_locations_and_areas(std::string locations_file)
 
     if(!file.is_open())
     {
-        yCError(MAP2DSERVER) << "Unable to open" << locations_file << "locations file.";
+        yCError(MAP2DSTORAGE) << "Unable to open" << locations_file << "locations file.";
         return false;
     }
 
@@ -500,7 +500,7 @@ bool Map2DStorage::save_locations_and_areas(std::string locations_file)
     }
 
     file.close();
-    yCDebug(MAP2DSERVER) << "Locations file" << locations_file << "saved.";
+    yCDebug(MAP2DSTORAGE) << "Locations file" << locations_file << "saved.";
     return true;
 }
 
@@ -528,7 +528,7 @@ bool Map2DStorage::store_map(const yarp::dev::Nav2D::MapGrid2D& map)
     return true;
 }
 
-bool Map2DStorage::get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map) 
+bool Map2DStorage::get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& map)
 {
     auto it = m_maps_storage.find(map_name);
     if (it != m_maps_storage.end())
@@ -539,7 +539,7 @@ bool Map2DStorage::get_map(std::string map_name, yarp::dev::Nav2D::MapGrid2D& ma
     return false;
 }
 
-bool Map2DStorage::get_map_names(std::vector<std::string>& map_names) 
+bool Map2DStorage::get_map_names(std::vector<std::string>& map_names)
 {
     map_names.clear();
     for (auto& it : m_maps_storage)
@@ -549,7 +549,7 @@ bool Map2DStorage::get_map_names(std::vector<std::string>& map_names)
     return true;
 }
 
-bool Map2DStorage::remove_map(std::string map_name) 
+bool Map2DStorage::remove_map(std::string map_name)
 {
     size_t rem = m_maps_storage.erase(map_name);
     if (rem == 0)
@@ -562,7 +562,7 @@ bool Map2DStorage::remove_map(std::string map_name)
     }
 }
 
-bool Map2DStorage::storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) 
+bool Map2DStorage::storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc)
 {
     m_locations_storage.insert(std::pair<std::string, Map2DLocation>(location_name, loc));
     return true;
@@ -574,13 +574,13 @@ bool Map2DStorage::storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea 
     return true;
 }
 
-bool Map2DStorage::storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) 
+bool Map2DStorage::storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path)
 {
     m_paths_storage.insert(std::pair<std::string, Map2DPath>(path_name, path));
     return true;
 }
 
-bool Map2DStorage::getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) 
+bool Map2DStorage::getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc)
 {
     auto it = m_locations_storage.find(location_name);
     if (it != m_locations_storage.end())
@@ -591,7 +591,7 @@ bool Map2DStorage::getLocation(std::string location_name, yarp::dev::Nav2D::Map2
     return false;
 }
 
-bool Map2DStorage::getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area) 
+bool Map2DStorage::getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& area)
 {
     auto it = m_areas_storage.find(area_name);
     if (it != m_areas_storage.end())
@@ -602,7 +602,7 @@ bool Map2DStorage::getArea(std::string area_name, yarp::dev::Nav2D::Map2DArea& a
     return false;
 }
 
-bool Map2DStorage::getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) 
+bool Map2DStorage::getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path)
 {
     auto it = m_paths_storage.find(path_name);
     if (it != m_paths_storage.end())
@@ -613,7 +613,7 @@ bool Map2DStorage::getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& p
     return false;
 }
 
-bool Map2DStorage::getLocationsList(std::vector<std::string>& locations) 
+bool Map2DStorage::getLocationsList(std::vector<std::string>& locations)
 {
     locations.clear();
     for (auto& it : m_locations_storage)
@@ -623,7 +623,7 @@ bool Map2DStorage::getLocationsList(std::vector<std::string>& locations)
     return true;
 }
 
-bool Map2DStorage::getAreasList(std::vector<std::string>& areas) 
+bool Map2DStorage::getAreasList(std::vector<std::string>& areas)
 {
     areas.clear();
     for (auto& it : m_areas_storage)
@@ -633,7 +633,7 @@ bool Map2DStorage::getAreasList(std::vector<std::string>& areas)
     return true;
 }
 
-bool Map2DStorage::getPathsList(std::vector<std::string>& paths) 
+bool Map2DStorage::getPathsList(std::vector<std::string>& paths)
 {
     paths.clear();
     for (auto& it : m_paths_storage)
@@ -643,7 +643,7 @@ bool Map2DStorage::getPathsList(std::vector<std::string>& paths)
     return true;
 }
 
-bool Map2DStorage::renameLocation(std::string original_name, std::string new_name) 
+bool Map2DStorage::renameLocation(std::string original_name, std::string new_name)
 {
     std::map<std::string, Map2DLocation>::iterator orig_it;
     orig_it = m_locations_storage.find(original_name);
@@ -661,7 +661,7 @@ bool Map2DStorage::renameLocation(std::string original_name, std::string new_nam
     return false;
 }
 
-bool Map2DStorage::deleteLocation(std::string location_name) 
+bool Map2DStorage::deleteLocation(std::string location_name)
 {
     std::map<std::string, Map2DLocation>::iterator it;
     it = m_locations_storage.find(location_name);
@@ -685,7 +685,7 @@ bool Map2DStorage::deleteArea(std::string area_name)
     return false;
 }
 
-bool Map2DStorage::deletePath(std::string path_name) 
+bool Map2DStorage::deletePath(std::string path_name)
 {
     std::map<std::string, Map2DPath>::iterator it;
     it = m_paths_storage.find(path_name);
@@ -697,7 +697,7 @@ bool Map2DStorage::deletePath(std::string path_name)
     return false;
 }
 
-bool Map2DStorage::renameArea(std::string original_name, std::string new_name) 
+bool Map2DStorage::renameArea(std::string original_name, std::string new_name)
 {
 
     std::map<std::string, Map2DArea>::iterator orig_it;
@@ -716,7 +716,7 @@ bool Map2DStorage::renameArea(std::string original_name, std::string new_name)
     return false;
 }
 
-bool Map2DStorage::renamePath(std::string original_name, std::string new_name) 
+bool Map2DStorage::renamePath(std::string original_name, std::string new_name)
 {
 
     std::map<std::string, Map2DPath>::iterator orig_it;
@@ -737,25 +737,25 @@ bool Map2DStorage::renamePath(std::string original_name, std::string new_name)
 
 
 
-bool Map2DStorage::clearAllLocations() 
+bool Map2DStorage::clearAllLocations()
 {
     m_locations_storage.clear();
     return true;
 }
 
-bool Map2DStorage::clearAllAreas() 
+bool Map2DStorage::clearAllAreas()
 {
     m_areas_storage.clear();
     return true;
 }
 
-bool Map2DStorage::clearAllPaths() 
+bool Map2DStorage::clearAllPaths()
 {
     m_paths_storage.clear();
     return true;
 }
 
-bool Map2DStorage::clearAllMapsTemporaryFlags() 
+bool Map2DStorage::clearAllMapsTemporaryFlags()
 {
     for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
     {
@@ -764,7 +764,7 @@ bool Map2DStorage::clearAllMapsTemporaryFlags()
     return true;
 }
 
-bool Map2DStorage::clearMapTemporaryFlags(std::string map_name) 
+bool Map2DStorage::clearMapTemporaryFlags(std::string map_name)
 {
     auto it = m_maps_storage.find(map_name);
     if (it != m_maps_storage.end())
@@ -776,4 +776,37 @@ bool Map2DStorage::clearMapTemporaryFlags(std::string map_name)
     {
         return false;
     }
+}
+
+bool Map2DStorage::read(yarp::os::ConnectionReader& connection)
+{
+    yCWarning(MAP2DSTORAGE) << "not yet implemented";
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+    yarp::os::Bottle in;
+    yarp::os::Bottle out;
+    bool ok = in.read(connection);
+    if (!ok) return false;
+
+    //parse string command
+    if (in.get(0).isString())
+    {
+        //parse_string_command(in, out);
+    }
+    // parse vocab command
+    else if (in.get(0).isVocab())
+    {
+        //parse_vocab_command(in, out);
+    }
+
+    yarp::os::ConnectionWriter* returnToSender = connection.getWriter();
+    if (returnToSender != nullptr)
+    {
+        out.write(*returnToSender);
+    }
+    else
+    {
+        yCError(MAP2DSTORAGE) << "Invalid return to sender";
+    }
+    return true;
 }

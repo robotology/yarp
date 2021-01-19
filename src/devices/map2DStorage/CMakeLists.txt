@@ -8,6 +8,7 @@ yarp_prepare_plugin(map2DStorage
                     CATEGORY device
                     TYPE Map2DStorage
                     INCLUDE map2DStorage.h
+                    EXTRA_CONFIG WRAPPER=map2D_nws_yarp
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 

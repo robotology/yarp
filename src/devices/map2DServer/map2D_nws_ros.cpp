@@ -18,7 +18,7 @@
 
 #include <sstream>
 #include <limits>
-#include "Map2D_nws_ros.h"
+#include "map2D_nws_ros.h"
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/GenericVocabs.h>
@@ -60,6 +60,8 @@ Map2D_nws_ros::~Map2D_nws_ros() = default;
 
 bool Map2D_nws_ros::read(yarp::os::ConnectionReader& connection)
 {
+    yCWarning(MAP2D_NWS_ROS) << "not yet implemented";
+
     std::lock_guard<std::mutex> lock(m_mutex);
     yarp::os::Bottle in;
     yarp::os::Bottle out;
@@ -69,12 +71,12 @@ bool Map2D_nws_ros::read(yarp::os::ConnectionReader& connection)
     //parse string command
     if(in.get(0).isString())
     {
-        parse_string_command(in, out);
+      //  parse_string_command(in, out);
     }
     // parse vocab command
     else if(in.get(0).isVocab())
     {
-        parse_vocab_command(in, out);
+   //     parse_vocab_command(in, out);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
@@ -94,20 +96,39 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
     Property params;
     params.fromString(config.toString());
 
-    string collection_file_name="maps_collection.ini";
-    string locations_file_name="locations.ini";
-    if (config.check("mapCollectionFile"))
-    {
-        collection_file_name= config.find("mapCollectionFile").asString();
-    }
-
     if (!config.check("name"))
     {
-        m_rpcPortName = "/mapServer/rpc";
+        m_rpcPortName = "/map2D_nws_ros/rpc";
     }
     else
     {
         m_rpcPortName = config.find("name").asString();
+    }
+
+    //subdevice handling
+    if (config.check("subdevice"))
+    {
+        Property       p;
+        PolyDriverList driverlist;
+        p.fromString(config.toString(), false);
+        p.put("device", config.find("subdevice").asString());
+
+        if (!m_drv.open(p) || !m_drv.isValid())
+        {
+            yCError(MAP2D_NWS_ROS) << "Failed to open subdevice.. check params";
+            return false;
+        }
+
+        driverlist.push(&m_drv, "1");
+        if (!attachAll(driverlist))
+        {
+            yCError(MAP2D_NWS_ROS) << "Failed to open subdevice.. check params";
+            return false;
+        }
+    }
+    else
+    {
+        yCInfo(MAP2D_NWS_ROS) << "Waiting for device to attach";
     }
 
     //open rpc port
@@ -175,12 +196,14 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
             m_rosSubscriberPort_metamap.setStrict();
 
         }
-        // m_rosPublisherPort_markers.topic("/locationServerMarkers");
     }
     else
     {
         //no ROS options
+        yCWarning(MAP2D_NWS_ROS) << "ROS Group not configured";
     }
+
+    //In this block receives data from a ROS topic and stores data on attached device
     //yarp::os::Time::delay(5);
     yarp::rosmsg::nav_msgs::OccupancyGrid*   map_ros = nullptr;
     yarp::rosmsg::nav_msgs::MapMetaData*     metamap_ros = nullptr;
@@ -225,6 +248,7 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
             yCInfo(MAP2D_NWS_ROS) << "Unable to add map " << map.getMapName() << " to storage";
         }
     }
+
     return true;
 }
 
@@ -250,6 +274,10 @@ bool Map2D_nws_ros::close()
 
 bool Map2D_nws_ros::updateVizMarkers()
 {
+    if (m_rosPublisherPort_markers.asPort().isOpen()==false)
+    {
+        m_rosPublisherPort_markers.topic("/locationServerMarkers");
+    }
     yarp::rosmsg::TickDuration dur; dur.sec = 0xFFFFFFFF;
     double yarpTimeStamp = yarp::os::Time::now();
     uint64_t time;
@@ -273,13 +301,16 @@ bool Map2D_nws_ros::updateVizMarkers()
     yarp::rosmsg::visualization_msgs::MarkerArray& markers = m_rosPublisherPort_markers.prepare();
     markers.markers.clear();
 
-    std::map<std::string, Map2DLocation>::iterator it;
+    std::vector<std::string> locations;
     int count = 1;
-    for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it, ++count)
+    m_iMap2D->getLocationsList(locations);
+    for (auto it : locations)
     {
+        yarp::dev::Nav2D::Map2DLocation loc;
+        m_iMap2D->getLocation(it, loc);
         rpy[0] = 0; //x
         rpy[1] = 0; //y
-        rpy[2] = it->second.theta / 180 * 3.14159265359; //z
+        rpy[2] = loc.theta / 180 * 3.14159265359; //z
         yarp::sig::Matrix m = yarp::math::rpy2dcm(rpy);
         q.fromRotationMatrix(m);
 
@@ -291,8 +322,8 @@ bool Map2D_nws_ros::updateVizMarkers()
         marker.id                 = count;
         marker.type               = yarp::rosmsg::visualization_msgs::Marker::ARROW;
         marker.action             = yarp::rosmsg::visualization_msgs::Marker::ADD;
-        marker.pose.position.x    = it->second.x;
-        marker.pose.position.y    = it->second.y;
+        marker.pose.position.x    = loc.x;
+        marker.pose.position.y    = loc.y;
         marker.pose.position.z    = 0;
         marker.pose.orientation.x = q.x();
         marker.pose.orientation.y = q.y();
@@ -306,10 +337,42 @@ bool Map2D_nws_ros::updateVizMarkers()
         marker.color.g            = 1.0;
         marker.color.b            = 0.0;
         marker.lifetime           = dur;
-        marker.text               = it->first;
+        marker.text               = it;
         markers.markers.push_back(marker);
+        count++;
     }
 
     m_rosPublisherPort_markers.write();
+    return true;
+}
+
+
+bool Map2D_nws_ros::detachAll()
+{
+    m_iMap2D = nullptr;
+    return true;
+}
+
+bool Map2D_nws_ros::attachAll(const PolyDriverList& device2attach)
+{
+    if (device2attach.size() != 1)
+    {
+        yCError(MAP2D_NWS_ROS, "Cannot attach more than one device");
+        return false;
+    }
+
+    yarp::dev::PolyDriver* Idevice2attach = device2attach[0]->poly;
+
+    if (Idevice2attach->isValid())
+    {
+        Idevice2attach->view(m_iMap2D);
+    }
+
+    if (nullptr == m_iMap2D)
+    {
+        yCError(MAP2D_NWS_ROS, "Subdevice passed to attach method is invalid");
+        return false;
+    }
+
     return true;
 }

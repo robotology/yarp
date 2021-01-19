@@ -18,7 +18,7 @@
 
 #include <sstream>
 #include <limits>
-#include "Map2D_nws_yarp.h"
+#include "map2D_nws_yarp.h"
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/GenericVocabs.h>
@@ -42,7 +42,7 @@ using namespace yarp::os;
 using namespace std;
 
 namespace {
-YARP_LOG_COMPONENT(MAP2DSERVER, "yarp.device.map2DServer")
+YARP_LOG_COMPONENT(MAP2D_NWS_YARP, "yarp.device.map2D_nws_yarp")
 }
 
 /**
@@ -75,7 +75,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             {
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
-                yCError(MAP2DSERVER) << "Error in copyPortable";
+                yCError(MAP2D_NWS_YARP) << "Error in copyPortable";
             }
         }
         else if (cmd == VOCAB_IMAP_GET_MAP)
@@ -94,7 +94,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             {
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
-                yCError(MAP2DSERVER) << "Map" << name << "not found";
+                yCError(MAP2D_NWS_YARP) << "Map" << name << "not found";
             }
         }
         else if (cmd == VOCAB_IMAP_GET_NAMES)
@@ -118,7 +118,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             }
             else
             {
-                yCError(MAP2DSERVER) << "Map not found";
+                yCError(MAP2D_NWS_YARP) << "Map not found";
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
@@ -139,7 +139,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             }
             else
             {
-                yCError(MAP2DSERVER, "Unable to save collection");
+                yCError(MAP2D_NWS_YARP, "Unable to save collection");
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
@@ -154,14 +154,14 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             }
             else
             {
-                yCError(MAP2DSERVER, "Unable to load collection");
+                yCError(MAP2D_NWS_YARP, "Unable to load collection");
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
         }
         else
         {
-            yCError(MAP2DSERVER, "Invalid vocab received in Map2D_nws_yarp");
+            yCError(MAP2D_NWS_YARP, "Invalid vocab received in Map2D_nws_yarp");
             out.clear();
             out.addVocab(VOCAB_IMAP_ERROR);
         }
@@ -182,7 +182,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             {
                 out.addString(it);
             }
-            yCInfo(MAP2DSERVER) << "The following locations are currently stored in the server:" << l.toString();
+            yCInfo(MAP2D_NWS_YARP) << "The following locations are currently stored in the server:" << l.toString();
         }
         else if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
         {
@@ -197,7 +197,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             {
                 out.addString(it);
             }
-            yCInfo(MAP2DSERVER) << "The following areas are currently stored in the server:" << l.toString();
+            yCInfo(MAP2D_NWS_YARP) << "The following areas are currently stored in the server:" << l.toString();
         }
         else if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
         {
@@ -212,32 +212,32 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             {
                 out.addString(it);
             }
-            yCInfo(MAP2DSERVER) << "The following paths are currently stored in the server: " << l.toString();
+            yCInfo(MAP2D_NWS_YARP) << "The following paths are currently stored in the server: " << l.toString();
         }
         else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
         {
             m_iMap2D->clearAllLocations();
 
-            yCInfo(MAP2DSERVER) << "All locations deleted";
+            yCInfo(MAP2D_NWS_YARP) << "All locations deleted";
             out.addVocab(VOCAB_OK);
         }
         else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
         {
             m_iMap2D->clearAllAreas();
 
-            yCInfo(MAP2DSERVER) << "All areas deleted";
+            yCInfo(MAP2D_NWS_YARP) << "All areas deleted";
             out.addVocab(VOCAB_OK);
         }
         else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
         {
             m_iMap2D->clearAllPaths();
-            yCInfo(MAP2DSERVER) << "All paths deleted";
+            yCInfo(MAP2D_NWS_YARP) << "All paths deleted";
             out.addVocab(VOCAB_OK);
         }
         else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_TEMPORARY_FLAGS)
         {
             m_iMap2D->clearAllMapsTemporaryFlags();
-            yCInfo(MAP2DSERVER) << "Temporary flags deleted from all maps";
+            yCInfo(MAP2D_NWS_YARP) << "Temporary flags deleted from all maps";
             out.addVocab(VOCAB_OK);
         }
         else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_TEMPORARY_FLAGS)
@@ -245,12 +245,12 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             std::string map_name = in.get(3).asString();
             if (m_iMap2D->clearMapTemporaryFlags(map_name))
             {
-                yCInfo(MAP2DSERVER) << "Temporary flags cleaned" << map_name;
+                yCInfo(MAP2D_NWS_YARP) << "Temporary flags cleaned" << map_name;
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yCError(MAP2DSERVER, "User requested an invalid map name");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid map name");
                 out.addVocab(VOCAB_ERR);
             }
         }
@@ -260,11 +260,11 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             if (m_iMap2D->deletePath(location_name))
             {
                 out.addVocab(VOCAB_OK);
-                yCInfo(MAP2DSERVER) << "Deleted location" << location_name;
+                yCInfo(MAP2D_NWS_YARP) << "Deleted location" << location_name;
             }
             else
             {
-                yCError(MAP2DSERVER, "User requested an invalid location name");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid location name");
                 out.addVocab(VOCAB_ERR);
             }
         }
@@ -273,12 +273,12 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             std::string area_name = in.get(3).asString();
             if (m_iMap2D->deleteArea(area_name))
             {
-                yCInfo(MAP2DSERVER) << "Deleted area" << area_name;
+                yCInfo(MAP2D_NWS_YARP) << "Deleted area" << area_name;
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yCError(MAP2DSERVER, "User requested an invalid area name");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid area name");
                 out.addVocab(VOCAB_ERR);
             }
         }
@@ -287,12 +287,12 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             std::string path_name = in.get(3).asString();
             if (m_iMap2D->deletePath(path_name))
             {
-                yCInfo(MAP2DSERVER) << "Deleted path" << path_name;
+                yCInfo(MAP2D_NWS_YARP) << "Deleted path" << path_name;
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yCError(MAP2DSERVER, "User requested an invalid location name");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid location name");
                 out.addVocab(VOCAB_ERR);
             }
         }
@@ -303,12 +303,12 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
 
             if (m_iMap2D->renameLocation(orig_name, new_name))
             {
-                yCInfo(MAP2DSERVER) << "Location:" << orig_name << "renamed to:" << new_name;
+                yCInfo(MAP2D_NWS_YARP) << "Location:" << orig_name << "renamed to:" << new_name;
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yCError(MAP2DSERVER, "User requested an invalid rename operation");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid rename operation");
                 out.addVocab(VOCAB_ERR);
             }
         }
@@ -319,12 +319,12 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
 
             if (m_iMap2D->renameArea(orig_name, new_name))
             {
-                yCInfo(MAP2DSERVER) << "Area:" << orig_name << "renamed to:" << new_name;
+                yCInfo(MAP2D_NWS_YARP) << "Area:" << orig_name << "renamed to:" << new_name;
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yCError(MAP2DSERVER, "User requested an invalid rename operation");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid rename operation");
                 out.addVocab(VOCAB_ERR);
             }
         }
@@ -335,12 +335,12 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
 
             if (m_iMap2D->renamePath(orig_name, new_name))
             {
-                yCInfo(MAP2DSERVER) << "Path:" << orig_name << "renamed to:" << new_name;
+                yCInfo(MAP2D_NWS_YARP) << "Path:" << orig_name << "renamed to:" << new_name;
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yCError(MAP2DSERVER, "User requested an invalid rename operation");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid rename operation");
                 out.addVocab(VOCAB_ERR);
             }
         }
@@ -351,7 +351,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             if (m_iMap2D->getLocation(loc_name, loc))
             {
                 out.addVocab(VOCAB_OK);
-                yCInfo(MAP2DSERVER) << "Retrieved location" << loc_name << "at" << loc.toString();
+                yCInfo(MAP2D_NWS_YARP) << "Retrieved location" << loc_name << "at" << loc.toString();
                 out.addString(loc.map_id);
                 out.addFloat64(loc.x);
                 out.addFloat64(loc.y);
@@ -360,7 +360,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             else
             {
                 out.addVocab(VOCAB_ERR);
-                yCError(MAP2DSERVER, "User requested an invalid location name");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid location name");
             }
         }
         else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
@@ -373,12 +373,12 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
                 Map2DArea areatemp = area;
                 if (Property::copyPortable(areatemp, areabot) == false)
                 {
-                    yCError(MAP2DSERVER) << "VOCAB_NAV_GET_X VOCAB_NAV_AREA failed copyPortable()";
+                    yCError(MAP2D_NWS_YARP) << "VOCAB_NAV_GET_X VOCAB_NAV_AREA failed copyPortable()";
                     out.addVocab(VOCAB_ERR);
                 }
                 else
                 {
-                    yCInfo(MAP2DSERVER) << "Retrieved area" << area_name << "at" << area.toString();
+                    yCInfo(MAP2D_NWS_YARP) << "Retrieved area" << area_name << "at" << area.toString();
                     out.addVocab(VOCAB_OK);
 
                     yarp::os::Bottle& areabot = out.addList();
@@ -388,7 +388,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             else
             {
                 out.addVocab(VOCAB_ERR);
-                yCError(MAP2DSERVER, "User requested an invalid area name");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid area name");
             }
         }
         else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
@@ -400,12 +400,12 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
                 yarp::os::Bottle pathbot;
                 if (Property::copyPortable(path, pathbot) == false)
                 {
-                    yCError(MAP2DSERVER) << "VOCAB_NAV_GET_X VOCAB_NAV_PATH failed copyPortable()";
+                    yCError(MAP2D_NWS_YARP) << "VOCAB_NAV_GET_X VOCAB_NAV_PATH failed copyPortable()";
                     out.addVocab(VOCAB_ERR);
                 }
                 else
                 {
-                    yCInfo(MAP2DSERVER) << "Retrieved path" << path_name << "at" << path.toString();
+                    yCInfo(MAP2D_NWS_YARP) << "Retrieved path" << path_name << "at" << path.toString();
                     out.addVocab(VOCAB_OK);
 
                     yarp::os::Bottle& pathbot = out.addList();
@@ -415,7 +415,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             else
             {
                 out.addVocab(VOCAB_ERR);
-                yCError(MAP2DSERVER, "User requested an invalid path name");
+                yCError(MAP2D_NWS_YARP, "User requested an invalid path name");
             }
         }
         else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
@@ -429,7 +429,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             location.theta  = in.get(7).asFloat64();
 
             m_iMap2D->storeLocation(name, location);
-            yCInfo(MAP2DSERVER) << "Added location" << name << "at" << location.toString();
+            yCInfo(MAP2D_NWS_YARP) << "Added location" << name << "at" << location.toString();
             out.addVocab(VOCAB_OK);
         }
         else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
@@ -441,12 +441,12 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             if (Property::copyPortable(b, area))
             {
                 m_iMap2D->storeArea(area_name, area);
-                yCInfo(MAP2DSERVER) << "Added area" << area_name << "at" << area.toString();
+                yCInfo(MAP2D_NWS_YARP) << "Added area" << area_name << "at" << area.toString();
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yCError(MAP2DSERVER) << "VOCAB_NAV_STORE_X VOCAB_NAV_AREA failed copyPortable()";
+                yCError(MAP2D_NWS_YARP) << "VOCAB_NAV_STORE_X VOCAB_NAV_AREA failed copyPortable()";
                 out.addVocab(VOCAB_ERR);
             }
         }
@@ -459,25 +459,25 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             if (Property::copyPortable(b, path))
             {
                 m_iMap2D->storePath(path_name, path);
-                yCInfo(MAP2DSERVER) << "Added path" << path_name << "at" << path.toString();
+                yCInfo(MAP2D_NWS_YARP) << "Added path" << path_name << "at" << path.toString();
                 out.addVocab(VOCAB_OK);
             }
             else
             {
-                yCError(MAP2DSERVER) << "VOCAB_NAV_STORE_X VOCAB_NAV_PATH failed copyPortable()";
+                yCError(MAP2D_NWS_YARP) << "VOCAB_NAV_STORE_X VOCAB_NAV_PATH failed copyPortable()";
                 out.addVocab(VOCAB_ERR);
             }
         }
         else
         {
-            yCError(MAP2DSERVER) << "Invalid vocab received:" << in.toString();
+            yCError(MAP2D_NWS_YARP) << "Invalid vocab received:" << in.toString();
             out.clear();
             out.addVocab(VOCAB_ERR);
         }
     }
     else
     {
-        yCError(MAP2DSERVER) << "Invalid vocab received:" << in.toString();
+        yCError(MAP2D_NWS_YARP) << "Invalid vocab received:" << in.toString();
         out.clear();
         out.addVocab(VOCAB_IMAP_ERROR);
     }
@@ -687,7 +687,7 @@ bool Map2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
     }
     else
     {
-        yCError(MAP2DSERVER) << "Invalid return to sender";
+        yCError(MAP2D_NWS_YARP) << "Invalid return to sender";
     }
     return true;
 }
@@ -699,7 +699,7 @@ bool Map2D_nws_yarp::open(yarp::os::Searchable &config)
 
     if (!config.check("name"))
     {
-        m_rpcPortName = "/mapServer/rpc";
+        m_rpcPortName = "/map2D_nws_yarp/rpc";
     }
     else
     {
@@ -709,16 +709,72 @@ bool Map2D_nws_yarp::open(yarp::os::Searchable &config)
     //open rpc port
     if (!m_rpcPort.open(m_rpcPortName))
     {
-        yCError(MAP2DSERVER, "Failed to open port %s", m_rpcPortName.c_str());
+        yCError(MAP2D_NWS_YARP, "Failed to open port %s", m_rpcPortName.c_str());
         return false;
     }
     m_rpcPort.setReader(*this);
+
+    //subdevice handling
+    if (config.check("subdevice"))
+    {
+        Property       p;
+        PolyDriverList driverlist;
+        p.fromString(config.toString(), false);
+        p.put("device", config.find("subdevice").asString());
+
+        if (!m_drv.open(p) || !m_drv.isValid())
+        {
+            yCError(MAP2D_NWS_YARP) << "Failed to open subdevice.. check params";
+            return false;
+        }
+
+        driverlist.push(&m_drv, "1");
+        if (!attachAll(driverlist))
+        {
+            yCError(MAP2D_NWS_YARP) << "Failed to open subdevice.. check params";
+            return false;
+        }
+    }
+    else
+    {
+        yCInfo(MAP2D_NWS_YARP) << "Waiting for device to attach";
+    }
 
     return true;
 }
 
 bool Map2D_nws_yarp::close()
 {
-    yCTrace(MAP2DSERVER, "Close");
+    yCTrace(MAP2D_NWS_YARP, "Close");
+    return true;
+}
+
+bool Map2D_nws_yarp::detachAll()
+{
+    m_iMap2D = nullptr;
+    return true;
+}
+
+bool Map2D_nws_yarp::attachAll(const PolyDriverList& device2attach)
+{
+    if (device2attach.size() != 1)
+    {
+        yCError(MAP2D_NWS_YARP, "Cannot attach more than one device");
+        return false;
+    }
+
+    yarp::dev::PolyDriver* Idevice2attach = device2attach[0]->poly;
+
+    if (Idevice2attach->isValid())
+    {
+        Idevice2attach->view(m_iMap2D);
+    }
+
+    if (nullptr == m_iMap2D)
+    {
+        yCError(MAP2D_NWS_YARP, "Subdevice passed to attach method is invalid");
+        return false;
+    }
+
     return true;
 }

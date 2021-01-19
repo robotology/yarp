@@ -51,9 +51,9 @@
 /**
  *  @ingroup dev_impl_wrapper dev_impl_navigation
  *
- * \section Map2DServer
+ * \section Map2DStorage
  *
- * \brief `map2DServer`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
+ * \brief `Map2DStorage`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
