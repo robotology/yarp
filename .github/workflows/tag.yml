@@ -157,12 +157,6 @@ jobs:
     - name: Sanity checks
       run: |
 
-        # Check that a stable tag was requested
-        if [ ! ${{ github.event.inputs.stable }} == true ]; then
-            echo "ERROR: Only stable tags are supported at the moment"
-            exit 1
-        fi
-
         # Check that the tag does not exist yet
         if git rev-parse "v${YARP_VERSION}" >/dev/null 2>&1; then
           echo "ERROR: Tag already exists"
@@ -279,6 +273,25 @@ jobs:
         git reset --hard origin/${YARP_MERGE_BRANCH}
         git merge --no-ff -s recursive -X ours --no-edit ${YARP_TAG_BRANCH}
         git push -v origin ${YARP_MERGE_BRANCH}
+
+    - name: Create GitHub Release
+      env:
+        INPUT_PUSH_TOKEN: ${{ secrets.drdanz_TOKEN }}
+      run: |
+        echo "Create GitHub Release"
+        curl \
+          -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${INPUT_PUSH_TOKEN}" \
+          https://api.github.com/repos/drdanz/yarp-tag-test/releases \
+          -d "
+          {
+            \"tag_name\": \"v${YARP_VERSION}\",
+            \"draft\": true,
+            \"prerelease\": false,
+            \"name\": \"YARP ${YARP_VERSION}\",
+            \"body\": \"$(tail -n +6 ${YARP_RELEASE_NOTES_FILE} | sed -z 's/\n/\\n/g' | sed 's/\t/\\t/g' | sed 's/"/\\\"/g')\"
+          }"
 
     - name: Create and Rename Labels
       env:
