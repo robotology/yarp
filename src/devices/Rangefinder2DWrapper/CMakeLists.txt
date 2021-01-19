@@ -38,28 +38,28 @@ if(NOT SKIP_Rangefinder2DWrapper)
 endif()
 
 ####################################################################################################
-yarp_prepare_plugin(Rangefinder2DWrapperROS
+yarp_prepare_plugin(rangefinder2D_nws_ros
                     CATEGORY device
-                    TYPE Rangefinder2DWrapperROS
-                    INCLUDE Rangefinder2DWrapperROS.h
+                    TYPE Rangefinder2D_nws_ros
+                    INCLUDE rangefinder2D_nws_ros.h
                     DEFAULT ON)
 
-if(NOT SKIP_Rangefinder2DWrapper)
-  yarp_add_plugin(yarp_Rangefinder2DWrapperROS)
+if(NOT SKIP_rangefinder2D_nws_ros)
+  yarp_add_plugin(yarp_rangefinder2D_nws_ros)
 
-  target_sources(yarp_Rangefinder2DWrapperROS PRIVATE Rangefinder2DWrapperROS.cpp
-                                                   Rangefinder2DWrapperROS.h)
+  target_sources(yarp_rangefinder2D_nws_ros PRIVATE rangefinder2D_nws_ros.cpp
+                                                      rangefinder2D_nws_ros.h)
 
-  target_link_libraries(yarp_Rangefinder2DWrapperROS PRIVATE YARP::YARP_os
-                                                          YARP::YARP_sig
-                                                          YARP::YARP_dev
-                                                          YARP::YARP_rosmsg)
+  target_link_libraries(yarp_rangefinder2D_nws_ros PRIVATE YARP::YARP_os
+                                                           YARP::YARP_sig
+                                                           YARP::YARP_dev
+                                                           YARP::YARP_rosmsg)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
                                                       YARP_rosmsg)
 
-  yarp_install(TARGETS yarp_Rangefinder2DWrapperROS
+  yarp_install(TARGETS yarp_rangefinder2D_nws_ros
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -68,23 +68,23 @@ if(NOT SKIP_Rangefinder2DWrapper)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_Rangefinder2DWrapperROS PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_rangefinder2D_nws_ros PROPERTY FOLDER "Plugins/Device")
 endif()
 
 ####################################################################################################
-yarp_prepare_plugin(Rangefinder2DWrapperYARP
+yarp_prepare_plugin(rangefinder2D_nws_yarp
                     CATEGORY device
-                    TYPE Rangefinder2DWrapperYARP
-                    INCLUDE Rangefinder2DWrapperYARP.h
+                    TYPE Rangefinder2D_nws_yarp
+                    INCLUDE rangefinder2D_nws_yarp.h
                     DEFAULT ON)
 
-if(NOT SKIP_Rangefinder2DWrapper)
-  yarp_add_plugin(yarp_Rangefinder2DWrapperYARP)
+if(NOT SKIP_rangefinder2D_nws_yarp)
+  yarp_add_plugin(yarp_rangefinder2D_nws_yarp)
 
-  target_sources(yarp_Rangefinder2DWrapperYARP PRIVATE Rangefinder2DWrapperYARP.cpp
-                                                       Rangefinder2DWrapperYARP.h)
+  target_sources(yarp_rangefinder2D_nws_yarp PRIVATE rangefinder2D_nws_yarp.cpp
+                                                     rangefinder2D_nws_yarp.h)
 
-  target_link_libraries(yarp_Rangefinder2DWrapperYARP PRIVATE YARP::YARP_os
+  target_link_libraries(yarp_rangefinder2D_nws_yarp PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev)
 
@@ -92,7 +92,7 @@ if(NOT SKIP_Rangefinder2DWrapper)
                                                       YARP_sig
                                                       YARP_dev)
 
-  yarp_install(TARGETS yarp_Rangefinder2DWrapperYARP
+  yarp_install(TARGETS yarp_rangefinder2D_nws_yarp
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -101,5 +101,5 @@ if(NOT SKIP_Rangefinder2DWrapper)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_Rangefinder2DWrapperYARP PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_rangefinder2D_nws_yarp PROPERTY FOLDER "Plugins/Device")
 endif()

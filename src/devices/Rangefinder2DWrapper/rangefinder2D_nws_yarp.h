@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_DEV_RANGEFINDER2DWRAPPER_YARP_H
-#define YARP_DEV_RANGEFINDER2DWRAPPER_YARP_H
+#ifndef YARP_DEV_RANGEFINDER2D_NWS_YARP_H
+#define YARP_DEV_RANGEFINDER2D_NWS_YARP_H
 
  //#include <list>
 #include <vector>
@@ -51,7 +51,7 @@
   /**
    *  @ingroup dev_impl_wrapper dev_impl_network_wrapper dev_impl_lidar
    *
-   * \section Rangefinder2DWrapperROS_device_parameters Description of input parameters
+   * \section rangefinder2D_nws_yarp_device_parameters Description of input parameters
    * A Network grabber for 2D Rangefinder devices.
    * This device will stream data on the specified YARP ports.
    *
@@ -68,21 +68,21 @@
    * Example of configuration file using .ini format.
    *
    * \code{.unparsed}
-   * device Rangefinder2DWrapperYARP
+   * device rangefinder2D_nws_yarp
    * subdevice <Rangefinder2DSensor>
    * period 20
    * name /<robotName>/Rangefinder2DSensor
    * \endcode
    */
-class Rangefinder2DWrapperYARP :
+class Rangefinder2D_nws_yarp :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
         public yarp::dev::IMultipleWrapper,
         public yarp::os::PortReader
 {
 public:
-    Rangefinder2DWrapperYARP();
-    ~Rangefinder2DWrapperYARP();
+    Rangefinder2D_nws_yarp();
+    ~Rangefinder2D_nws_yarp();
 
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
@@ -126,4 +126,4 @@ private:
     bool initialize_YARP(yarp::os::Searchable &config);
 };
 
-#endif //YARP_DEV_RANGEFINDER2DWRAPPER_YARP_H
+#endif //YARP_DEV_RANGEFINDER2D_NWS_YARP_H

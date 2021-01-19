@@ -18,7 +18,7 @@
 
 #define _USE_MATH_DEFINES
 
-#include "Rangefinder2DWrapperYARP.h"
+#include "rangefinder2D_nws_yarp.h"
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/LogStream.h>
 
@@ -30,7 +30,7 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
-YARP_LOG_COMPONENT(RANGEFINDER2DWRAPPERYARP, "yarp.devices.Rangefinder2DWrapperYARP")
+YARP_LOG_COMPONENT(RANGEFINDER2D_NWS_YARP, "yarp.devices.Rangefinder2D_nws_yarp")
 
 
 /**
@@ -38,7 +38,7 @@ YARP_LOG_COMPONENT(RANGEFINDER2DWRAPPERYARP, "yarp.devices.Rangefinder2DWrapperY
   * It also creates one rpc port.
   */
 
-    Rangefinder2DWrapperYARP::Rangefinder2DWrapperYARP() : PeriodicThread(DEFAULT_THREAD_PERIOD),
+    Rangefinder2D_nws_yarp::Rangefinder2D_nws_yarp() : PeriodicThread(DEFAULT_THREAD_PERIOD),
     sens_p(nullptr),
     iTimed(nullptr),
     _period(DEFAULT_THREAD_PERIOD),
@@ -50,7 +50,7 @@ YARP_LOG_COMPONENT(RANGEFINDER2DWRAPPERYARP, "yarp.devices.Rangefinder2DWrapperY
     isDeviceOwned(false)
 {}
 
-Rangefinder2DWrapperYARP::~Rangefinder2DWrapperYARP()
+Rangefinder2D_nws_yarp::~Rangefinder2D_nws_yarp()
 {
     sens_p = nullptr;
 }
@@ -59,11 +59,11 @@ Rangefinder2DWrapperYARP::~Rangefinder2DWrapperYARP()
   * Specify which sensor this thread has to read from.
   */
 
-bool Rangefinder2DWrapperYARP::attachAll(const PolyDriverList &device2attach)
+bool Rangefinder2D_nws_yarp::attachAll(const PolyDriverList &device2attach)
 {
     if (device2attach.size() != 1)
     {
-        yCError(RANGEFINDER2DWRAPPERYARP, "cannot attach more than one device");
+        yCError(RANGEFINDER2D_NWS_YARP, "cannot attach more than one device");
         return false;
     }
 
@@ -77,26 +77,26 @@ bool Rangefinder2DWrapperYARP::attachAll(const PolyDriverList &device2attach)
 
     if (nullptr == sens_p)
     {
-        yCError(RANGEFINDER2DWRAPPERYARP, "subdevice passed to attach method is invalid");
+        yCError(RANGEFINDER2D_NWS_YARP, "subdevice passed to attach method is invalid");
         return false;
     }
     attach(sens_p);
 
     if(!sens_p->getDistanceRange(minDistance, maxDistance))
     {
-        yCError(RANGEFINDER2DWRAPPERYARP) << "Laser device does not provide min & max distance range.";
+        yCError(RANGEFINDER2D_NWS_YARP) << "Laser device does not provide min & max distance range.";
         return false;
     }
 
     if(!sens_p->getScanLimits(minAngle, maxAngle))
     {
-        yCError(RANGEFINDER2DWRAPPERYARP) << "Laser device does not provide min & max angle scan range.";
+        yCError(RANGEFINDER2D_NWS_YARP) << "Laser device does not provide min & max angle scan range.";
         return false;
     }
 
     if (!sens_p->getHorizontalResolution(resolution))
     {
-        yCError(RANGEFINDER2DWRAPPERYARP) << "Laser device does not provide horizontal resolution ";
+        yCError(RANGEFINDER2D_NWS_YARP) << "Laser device does not provide horizontal resolution ";
         return false;
     }
 
@@ -104,7 +104,7 @@ bool Rangefinder2DWrapperYARP::attachAll(const PolyDriverList &device2attach)
     return PeriodicThread::start();
 }
 
-bool Rangefinder2DWrapperYARP::detachAll()
+bool Rangefinder2D_nws_yarp::detachAll()
 {
     if (PeriodicThread::isRunning())
     {
@@ -114,12 +114,12 @@ bool Rangefinder2DWrapperYARP::detachAll()
     return true;
 }
 
-void Rangefinder2DWrapperYARP::attach(yarp::dev::IRangefinder2D *s)
+void Rangefinder2D_nws_yarp::attach(yarp::dev::IRangefinder2D *s)
 {
     sens_p = s;
 }
 
-void Rangefinder2DWrapperYARP::detach()
+void Rangefinder2D_nws_yarp::detach()
 {
     if (PeriodicThread::isRunning())
     {
@@ -128,7 +128,7 @@ void Rangefinder2DWrapperYARP::detach()
     sens_p = nullptr;
 }
 
-bool Rangefinder2DWrapperYARP::read(yarp::os::ConnectionReader& connection)
+bool Rangefinder2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::Bottle in;
     yarp::os::Bottle out;
@@ -241,7 +241,7 @@ bool Rangefinder2DWrapperYARP::read(yarp::os::ConnectionReader& connection)
             }
             else
             {
-                yCError(RANGEFINDER2DWRAPPERYARP, "Invalid command received in Rangefinder2DWrapperYARP");
+                yCError(RANGEFINDER2D_NWS_YARP, "Invalid command received in Rangefinder2D_nws_yarp");
             }
         }
         else if (action == VOCAB_SET)
@@ -287,17 +287,17 @@ bool Rangefinder2DWrapperYARP::read(yarp::os::ConnectionReader& connection)
             }
             else
             {
-                yCError(RANGEFINDER2DWRAPPERYARP, "Invalid command received in Rangefinder2DWrapperYARP");
+                yCError(RANGEFINDER2D_NWS_YARP, "Invalid command received in Rangefinder2D_nws_yarp");
             }
         }
         else
         {
-            yCError(RANGEFINDER2DWRAPPERYARP, "Invalid action received in Rangefinder2DWrapperYARP");
+            yCError(RANGEFINDER2D_NWS_YARP, "Invalid action received in Rangefinder2D_nws_yarp");
         }
     }
     else
     {
-        yCError(RANGEFINDER2DWRAPPERYARP, "Invalid interface vocab received in Rangefinder2DWrapperYARP");
+        yCError(RANGEFINDER2D_NWS_YARP, "Invalid interface vocab received in Rangefinder2D_nws_yarp");
     }
 
     if (!ret)
@@ -313,19 +313,19 @@ bool Rangefinder2DWrapperYARP::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool Rangefinder2DWrapperYARP::threadInit()
+bool Rangefinder2D_nws_yarp::threadInit()
 {
     return true;
 }
 
-bool Rangefinder2DWrapperYARP::open(yarp::os::Searchable &config)
+bool Rangefinder2D_nws_yarp::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString());
 
     if (!config.check("period"))
     {
-        yCError(RANGEFINDER2DWRAPPERYARP) << "missing 'period' parameter. Check you configuration file\n";
+        yCError(RANGEFINDER2D_NWS_YARP) << "missing 'period' parameter. Check you configuration file\n";
         return false;
     }
     else
@@ -333,8 +333,8 @@ bool Rangefinder2DWrapperYARP::open(yarp::os::Searchable &config)
 
     if (!config.check("name"))
     {
-        yCError(RANGEFINDER2DWRAPPERYARP) << "Rangefinder2DWrapperYARP: missing 'name' parameter. Check you configuration file; it must be like:";
-        yCError(RANGEFINDER2DWRAPPERYARP) << "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
+        yCError(RANGEFINDER2D_NWS_YARP) << "Rangefinder2D_nws_yarp: missing 'name' parameter. Check you configuration file; it must be like:";
+        yCError(RANGEFINDER2D_NWS_YARP) << "   name:         full name of the port, like /robotName/deviceId/sensorType:o";
         return false;
     }
     else
@@ -350,7 +350,7 @@ bool Rangefinder2DWrapperYARP::open(yarp::os::Searchable &config)
 
     if(!initialize_YARP(config) )
     {
-        yCError(RANGEFINDER2DWRAPPERYARP) << streamingPortName << "Error initializing YARP ports";
+        yCError(RANGEFINDER2D_NWS_YARP) << streamingPortName << "Error initializing YARP ports";
         return false;
     }
 
@@ -363,14 +363,14 @@ bool Rangefinder2DWrapperYARP::open(yarp::os::Searchable &config)
 
         if(!driver.open(p) || !driver.isValid())
         {
-            yCError(RANGEFINDER2DWRAPPERYARP) << "failed to open subdevice.. check params";
+            yCError(RANGEFINDER2D_NWS_YARP) << "failed to open subdevice.. check params";
             return false;
         }
 
         driverlist.push(&driver, "1");
         if(!attachAll(driverlist))
         {
-            yCError(RANGEFINDER2DWRAPPERYARP) << "failed to open subdevice.. check params";
+            yCError(RANGEFINDER2D_NWS_YARP) << "failed to open subdevice.. check params";
             return false;
         }
         isDeviceOwned = true;
@@ -378,23 +378,23 @@ bool Rangefinder2DWrapperYARP::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool Rangefinder2DWrapperYARP::initialize_YARP(yarp::os::Searchable &params)
+bool Rangefinder2D_nws_yarp::initialize_YARP(yarp::os::Searchable &params)
 {
     if (!streamingPort.open(streamingPortName))
         {
-            yCError(RANGEFINDER2DWRAPPERYARP, "failed to open port %s", streamingPortName.c_str());
+            yCError(RANGEFINDER2D_NWS_YARP, "failed to open port %s", streamingPortName.c_str());
             return false;
         }
     if (!rpcPort.open(rpcPortName))
         {
-            yCError(RANGEFINDER2DWRAPPERYARP, "failed to open port %s", rpcPortName.c_str());
+            yCError(RANGEFINDER2D_NWS_YARP, "failed to open port %s", rpcPortName.c_str());
             return false;
         }
     rpcPort.setReader(*this);
     return true;
 }
 
-void Rangefinder2DWrapperYARP::threadRelease()
+void Rangefinder2D_nws_yarp::threadRelease()
 {
     streamingPort.interrupt();
     streamingPort.close();
@@ -402,7 +402,7 @@ void Rangefinder2DWrapperYARP::threadRelease()
     rpcPort.close();
 }
 
-void Rangefinder2DWrapperYARP::run()
+void Rangefinder2D_nws_yarp::run()
 {
     if (sens_p!=nullptr)
     {
@@ -435,14 +435,14 @@ void Rangefinder2DWrapperYARP::run()
         }
         else
         {
-            yCError(RANGEFINDER2DWRAPPERYARP, "%s: Sensor returned error", streamingPortName.c_str());
+            yCError(RANGEFINDER2D_NWS_YARP, "%s: Sensor returned error", streamingPortName.c_str());
         }
     }
 }
 
-bool Rangefinder2DWrapperYARP::close()
+bool Rangefinder2D_nws_yarp::close()
 {
-    yCTrace(RANGEFINDER2DWRAPPERYARP, "Rangefinder2DWrapperYARP::Close");
+    yCTrace(RANGEFINDER2D_NWS_YARP, "Rangefinder2D_nws_yarp::Close");
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();

@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_DEV_RANGEFINDER2DWRAPPER_ROS_H
-#define YARP_DEV_RANGEFINDER2DWRAPPER_ROS_H
+#ifndef YARP_DEV_RANGEFINDER2D_NWS_ROS_H
+#define YARP_DEV_RANGEFINDER2D_NWS_ROS_H
 
  //#include <list>
 #include <vector>
@@ -59,7 +59,7 @@
   /**
    *  @ingroup dev_impl_wrapper dev_impl_network_wrapper dev_impl_lidar
    *
-   * \section Rangefinder2DWrapperROS_device_parameters Description of input parameters
+   * \section Rangefinder2D_nws_ros_device_parameters Description of input parameters
    * A Network grabber for 2D Rangefinder devices.
    * This device will publish data on the specified ROS topic.
    *
@@ -77,20 +77,20 @@
    * Example of configuration file using .ini format.
    *
    * \code{.unparsed}
-   * device Rangefinder2DWrapperYARP
+   * device rangefinder2D_nws_ros
    * subdevice <Rangefinder2DSensor>
    * period 20
    * name /<robotName>/Rangefinder2DSensor
    * \endcode
    */
-class Rangefinder2DWrapperROS:
+class Rangefinder2D_nws_ros :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
         public yarp::dev::IMultipleWrapper
 {
 public:
-    Rangefinder2DWrapperROS();
-    ~Rangefinder2DWrapperROS();
+    Rangefinder2D_nws_ros();
+    ~Rangefinder2D_nws_ros();
 
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
@@ -135,4 +135,4 @@ private:
     bool initialize_ROS();
 };
 
-#endif //YARP_DEV_RANGEFINDER2DWRAPPER_ROS_H
+#endif //YARP_DEV_RANGEFINDER2D_NWS_ROS_H
