@@ -21,8 +21,8 @@ target_compile_features(YARP_conf INTERFACE cxx_std_14)
 target_link_libraries(YARP_cv INTERFACE YARP::YARP_sig)
 list(APPEND YARP_cv_PUBLIC_DEPS YARP_sig)
 
-target_include_directories(YARP_cv SYSTEM INTERFACE ${OPENCV_INCLUDE_DIR})
-target_link_libraries(YARP_cv INTERFACE ${OPENCV_INCLUDE_DIR})
+target_include_directories(YARP_cv SYSTEM INTERFACE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(YARP_cv INTERFACE ${OpenCV_LIBRARIES})
 list(APPEND YARP_cv_PUBLIC_DEPS OpenCV)
 
 # set_property(TARGET YARP_cv PROPERTY PUBLIC_HEADER ${YARP_cv_HDRS})

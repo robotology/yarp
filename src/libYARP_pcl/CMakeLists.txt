@@ -6,6 +6,13 @@
 
 project(YARP_pcl)
 
+# PCL is required, otherwise the PCL_INCLUDE_DIRS and PCL_LIBRARIES
+# (used in the CMakeLists.txt file in the src direcrory) are not expanded).
+# FIXME Remove this check when PCL targets will be used.
+if (NOT YARP_HAS_PCL)
+  return()
+endif()
+
 add_subdirectory(src)
 
 include(YarpInstallBasicPackageFiles)

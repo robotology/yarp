@@ -335,6 +335,9 @@ if(NOT OpenCV_FOUND)
 endif()
 checkandset_dependency(OpenCV)
 
+find_package(PCL COMPONENTS common io QUIET)
+checkandset_dependency(PCL)
+
 find_package(Lua QUIET)
 checkandset_dependency(Lua)
 
@@ -609,6 +612,7 @@ print_dependency(QGVCore)
 print_dependency(Libedit)
 print_dependency(SWIG)
 print_dependency(OpenCV)
+print_dependency(PCL)
 print_dependency(Lua)
 print_dependency(LibOVR)
 print_dependency(GLFW3)

@@ -20,9 +20,9 @@ target_compile_features(YARP_pcl INTERFACE cxx_std_14)
 target_link_libraries(YARP_pcl INTERFACE YARP::YARP_sig)
 list(APPEND YARP_pcl_PUBLIC_DEPS YARP_sig)
 
-target_include_directories(YARP_pcl SYSTEM INTERFACE ${PCL_INCLUDE_DIR})
+target_include_directories(YARP_pcl SYSTEM INTERFACE ${PCL_INCLUDE_DIRS})
 target_link_libraries(YARP_pcl INTERFACE ${PCL_LIBRARIES})
-list(APPEND YARP_pcl_PUBLIC_DEPS PCL)
+list(APPEND YARP_pcl_PUBLIC_DEPS "PCL COMPONENTS common io")
 
 # set_property(TARGET YARP_pcl PROPERTY PUBLIC_HEADER ${YARP_pcl_HDRS})
 # set_property(TARGET YARP_pcl PROPERTY PRIVATE_HEADER ${YARP_pcl_IMPL_HDRS})
