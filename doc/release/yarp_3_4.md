@@ -1,0 +1,99 @@
+YARP <yarp-3.4> (UNRELEASED)                                         {#yarp_3_4}
+============================
+
+[TOC]
+
+YARP <yarp-3.4> Release Notes
+=============================
+
+
+A (partial) list of bug fixed and issues resolved in this release can be found
+[here](https://github.com/robotology/yarp/issues?q=label%3A%22Fixed+in%3A+YARP+yarp-3.4%22).
+
+
+### Build System
+
+* YCM is now searched when compiling bindings externally.
+* Fixed dependency on `YARP_math` for several devices (`laserFromExternalPort`,
+  `laserFromPointCloud`, `laserFromRosTopic`).
+* `rpLidar2` device is now disabled when building with Clang.
+* Fixed `upowerBattery` device in static builds.
+* Fixed include directories for PortAudio on Windows (#2387).
+* Fixed toggling the value of `SKIP_ACE` from `ON` to `OFF`
+* Dependencies for the `INTERFACE` libraries (YARP_cv, YARP_pcl)
+  are now properly set (#2438).
+* PCL is now required to build the YARP_pcl library.
+* OpenCV is now required to build the YARP_cv library.
+
+### Libraries
+
+#### `os`
+
+##### `LogComponent`
+
+* Log components are now printed in colors when `YARP_COLORED_OUTPUT` is
+  enabled.
+
+#### `NameSpace`
+
+* Fix `checkNetwork` timeout variant not working as `checkNetwork`
+  when `NetworkBase::setLocalMode(true)` is called.---
+
+
+#### `sig`
+
+##### `PointCloudTypes`
+
+* Fixed logging of RGBA values via `toString()` for types `DataRGBA`,
+  `DataXYZRGBA` and `DataXYZNormalRGBA`.
+
+##### `utils`
+
+* Fixed ROI bug in `depthToPC()`, values are now correctly clipped.
+
+
+### Devices
+
+#### `controlboardwrapper2`
+
+* Fixed access to the timestamp not protected by mutex (#2396).
+* Deprecated old format of `networks` keyword in the XML files to favor the use
+  of parentheses.
+
+#### `ffmpeg`
+
+* Corrected a minor error in `FfmpegGrabber.cpp` that caused a segmentation
+  fault when using a video with audio track as a `source` for the device.
+
+#### `realsense2`
+
+* Avoid dereferencing nullptr on optional argument.
+
+
+### Tools
+
+#### `yarpmotorgui`
+
+* Fixed UI file (slider options). Some text was truncated.
+
+#### `yarpmobilebasegui`
+
+* Fixed gui buttons when the value of max linear/angular velocity is < 0
+
+
+
+### GUIs
+
+#### `yarpviz`
+
+* Added a new menu voice `View`-> `Render options`.
+  This checkable option labbelled `Background grid` allows to enable/disable the
+  background grid.
+* Labels are now fully readable regardless of their length.
+
+#### `yarpbatterygui`
+
+* The window can no longer be resized.
+* The window background can no longer be moved around.
+* The window no longer stays on top automatically. A new `--keep-above` switch
+  is provided to restore this behavior.
