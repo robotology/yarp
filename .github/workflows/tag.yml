@@ -283,7 +283,7 @@ jobs:
           -X POST \
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: token ${INPUT_PUSH_TOKEN}" \
-          https://api.github.com/repos/drdanz/yarp-tag-test/releases \
+          https://api.github.com/repos/${GITHUB_REPOSITORY}/releases \
           -d "
           {
             \"tag_name\": \"v${YARP_VERSION}\",
@@ -364,7 +364,7 @@ jobs:
 
 
         A (partial) list of bug fixed and issues resolved in this release can be found
-        [here](https://github.com/robotology/yarp/issues?q=label%3A%22Fixed+in%3A+YARP+${YARP_NEXT_BRANCH}%22).
+        [here](https://github.com/${GITHUB_REPOSITORY}/issues?q=label%3A%22Fixed+in%3A+YARP+${YARP_NEXT_BRANCH}%22).
 
         EOF
 
@@ -385,8 +385,8 @@ jobs:
         \`\`\`
         EOF
 
-
-        sed -i "/^\* \\subpage v${YARP_VERSION}$/i * \\subpage ${YARP_NEXT_BRANCH_C}" doc/releases.md
+        # Link the next release in the doc/releases.md file
+        sed -i "/^\* \\\\subpage v${YARP_VERSION_C}$/i * \\\\subpage ${YARP_NEXT_BRANCH_C}" doc/releases.md
 
         git fetch origin
         git checkout -f ${YARP_NEXT_BRANCH}
