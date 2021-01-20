@@ -42,6 +42,7 @@ yarp_prepare_plugin(rangefinder2D_nws_ros
                     CATEGORY device
                     TYPE Rangefinder2D_nws_ros
                     INCLUDE rangefinder2D_nws_ros.h
+                    EXTRA_CONFIG WRAPPER=rangefinder2D_nws_ros
                     DEFAULT ON)
 
 if(NOT SKIP_rangefinder2D_nws_ros)
@@ -76,6 +77,7 @@ yarp_prepare_plugin(rangefinder2D_nws_yarp
                     CATEGORY device
                     TYPE Rangefinder2D_nws_yarp
                     INCLUDE rangefinder2D_nws_yarp.h
+                    EXTRA_CONFIG WRAPPER=rangefinder2D_nws_yarp
                     DEFAULT ON)
 
 if(NOT SKIP_rangefinder2D_nws_yarp)
