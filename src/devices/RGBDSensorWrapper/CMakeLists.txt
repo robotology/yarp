@@ -54,15 +54,15 @@ if(NOT SKIP_rgbdSensor_nws_ros)
   yarp_add_plugin(yarp_rgbdSensor_nws_ros)
 
   target_sources(yarp_rgbdSensor_nws_ros PRIVATE rgbdSensor_nws_ros.cpp
-                                                   rgbdSensor_nws_ros.h)
+                                                 rgbdSensor_nws_ros.h)
   target_sources(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
 
   target_include_directories(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_rgbdSensor_nws_ros PRIVATE YARP::YARP_os
-                                                          YARP::YARP_sig
-                                                          YARP::YARP_dev
-                                                          YARP::YARP_rosmsg)
+                                                        YARP::YARP_sig
+                                                        YARP::YARP_dev
+                                                        YARP::YARP_rosmsg)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
@@ -94,11 +94,11 @@ if(NOT SKIP_rgbdSensor_nws_yarp)
   yarp_add_plugin(yarp_rgbdSensor_nws_yarp)
 
   target_sources(yarp_rgbdSensor_nws_yarp PRIVATE rgbdSensor_nws_yarp.cpp
-                                                    rgbdSensor_nws_yarp.h)
+                                                  rgbdSensor_nws_yarp.h)
 
   target_link_libraries(yarp_rgbdSensor_nws_yarp PRIVATE YARP::YARP_os
-                                                           YARP::YARP_sig
-                                                           YARP::YARP_dev)
+                                                         YARP::YARP_sig
+                                                         YARP::YARP_dev)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
