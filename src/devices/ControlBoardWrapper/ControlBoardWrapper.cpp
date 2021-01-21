@@ -929,7 +929,6 @@ void ControlBoardWrapper::run()
         yarp_struct.motorPosition_isValid       = getMotorEncoders(yarp_struct.motorPosition.data());
         yarp_struct.motorVelocity_isValid       = getMotorEncoderSpeeds(yarp_struct.motorVelocity.data());
         yarp_struct.motorAcceleration_isValid   = getMotorEncoderAccelerations(yarp_struct.motorAcceleration.data());
-        yarp_struct.torque_isValid              = getTorques(yarp_struct.torque.data());
         yarp_struct.pwmDutycycle_isValid        = getDutyCycles(yarp_struct.pwmDutycycle.data());
         yarp_struct.current_isValid             = getCurrents(yarp_struct.current.data());
         yarp_struct.controlMode_isValid         = getControlModes(yarp_struct.controlMode.data());
