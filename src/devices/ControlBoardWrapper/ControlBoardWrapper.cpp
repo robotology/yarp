@@ -31,8 +31,7 @@ using namespace std;
 
 
 ControlBoardWrapper::ControlBoardWrapper() :
-        yarp::os::PeriodicThread(default_period),
-        ownDevices(true)
+        yarp::os::PeriodicThread(default_period)
 {
     streaming_parser.init(this);
     RPC_parser.init(this);
@@ -505,7 +504,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
         }
 
         size_t axes = top - base + 1;
-        if (!tmpDevice->configure(wBase, wTop, base, top, axes, nets->get(k).asString(), this)) {
+        if (!tmpDevice->configure(wBase, wTop, base, top, axes, nets->get(k).asString(), getId())) {
             yCError(CONTROLBOARDWRAPPER) << "Configure of subdevice ret false";
             return false;
         }
@@ -600,7 +599,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     SubDevice* tmpDevice = device.getSubdevice(0);
 
     std::string subDevName((partName + "_" + subdevice));
-    if (!tmpDevice->configure(wbase, wtop, base, top, controlledJoints, subDevName, this)) {
+    if (!tmpDevice->configure(wbase, wtop, base, top, controlledJoints, subDevName, getId())) {
         yCError(CONTROLBOARDWRAPPER) << "Configure of subdevice ret false";
         return false;
     }
@@ -702,7 +701,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList& polylist)
         // look if we have to attach to a calibrator
         std::string tmpKey = polylist[p]->key;
         if (tmpKey == "Calibrator" || tmpKey == "calibrator") {
-            // Set the IRemoteCalibrator interface, the wrapper must point to the calibrato rdevice
+            // Set the IRemoteCalibrator interface, the wrapper must point to the calibrator device
             yarp::dev::IRemoteCalibrator* calibrator;
             polylist[p]->poly->view(calibrator);
 
@@ -778,7 +777,7 @@ void ControlBoardWrapper::run()
 {
     // check we are not overflowing with input messages
     if (inputStreamingPort.getPendingReads() >= 20) {
-        yCWarning(CONTROLBOARDWRAPPER) << "Number of streaming intput messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
+        yCWarning(CONTROLBOARDWRAPPER) << "Number of streaming input messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
     }
 
     // Small optimization: Avoid to call getEncoders twice, one for YARP port

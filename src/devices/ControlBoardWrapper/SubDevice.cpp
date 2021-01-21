@@ -24,9 +24,10 @@ using namespace yarp::sig;
 using namespace std;
 
 
-bool SubDevice::configure(size_t wb, size_t wt, size_t b, size_t t, size_t n, const std::string& key, ControlBoardWrapper* _parent)
+bool SubDevice::configure(size_t wb, size_t wt, size_t b, size_t t, size_t n, const std::string& key, const std::string& _parentName)
 {
-    parent = _parent;
+    parentName = _parentName;
+
     configuredF = false;
 
     wbase = wb;
@@ -86,13 +87,6 @@ void SubDevice::detach()
 
 bool SubDevice::attach(yarp::dev::PolyDriver* d, const std::string& k)
 {
-    std::string parentName;
-    if (parent) {
-        parentName = parent->getId();
-    } else {
-        parentName = "";
-    }
-
     if (id != k) {
         yCError(CONTROLBOARDWRAPPER, "Part <%s>: Wrong or unknown device %s. Cannot attach to it.", parentName.c_str(), k.c_str());
         return false;
