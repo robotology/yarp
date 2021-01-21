@@ -109,7 +109,6 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      - \`map2DServer\`
      - \`navigation2DClient\`
      - \`opencv\`
-     - \`ovrheadset\`
      - \`portaudio\`
      - \`portaudioPlayer\`
      - \`portaudioRecorder\`
@@ -153,8 +152,6 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      [SDL 1.2](https://libsdl.org/license.php).
    + The ffmpeg_grabber and ffmpeg_writer devices use
      [Ffmpeg](https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md).
-   + The ovrheadset device use the
-     [Oculis SDK](https://developer.oculus.com/licenses/).
  * A few optional parts of YARP are released under the terms of the GPL license,
    version 2 or later:
    + \`YARP_gsl\` uses the GNU Scientific Library, under the GPL 2 or later.
