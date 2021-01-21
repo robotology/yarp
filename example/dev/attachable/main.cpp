@@ -7,34 +7,44 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <yarp/sig/Vector.h>
-
-#include <iostream>
-#include <vector>
 
 #include <yarp/dev/IMultipleWrapper.h>
 
-using namespace yarp::dev;
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <vector>
 
-class MyWrapper: public IMultipleWrapper, public DeviceDriver
+using yarp::dev::DeviceDriver;
+using yarp::dev::DriverCreator;
+using yarp::dev::DriverCreatorOf;
+using yarp::dev::Drivers;
+using yarp::dev::IMultipleWrapper;
+using yarp::dev::PolyDriver;
+using yarp::dev::PolyDriverList;
+using yarp::os::Property;
+using yarp::os::Searchable;
+
+class MyWrapper :
+        public IMultipleWrapper,
+        public DeviceDriver
 {
-    PolyDriverList drivers;
+    PolyDriverList m_drivers;
 
 public:
-    bool open(yarp::os::Property &config)
+    bool open(Searchable& config) override
     {
+        YARP_UNUSED(config);
         // parse options
         // probably here we tell the wrappers what devices it needs
         // "p1", "p2"...
         return true;
     }
 
-    bool attachAll(const PolyDriverList &p)
+    bool attachAll(const PolyDriverList& p) override
     {
-        drivers=p;
+        m_drivers = p;
 
         // we got the list of drivers, now we can do what we want
         // usually we will acquire the interfaces we need by
@@ -42,49 +52,47 @@ public:
 
 
         // here we just do a simple check
-        std::cout<<"MyWrapper::attachAll\n";
+        std::cout << "MyWrapper::attachAll\n";
 
-        int nd=drivers.size();
+        int nd = m_drivers.size();
 
-        std::cout<<"Received list of "<<nd << " drivers:\n";
+        std::cout << "Received list of " << nd << " drivers:\n";
 
-        bool allValid=true;;
-        for(int k=0;k<nd;k++)
-        {
-            std::cout << drivers[k]->key.c_str();
-            if (drivers[k]->poly)
-            {
+        bool allValid = true;
+        for (int k = 0; k < nd; k++) {
+            std::cout << m_drivers[k]->key.c_str();
+            if (m_drivers[k]->poly) {
                 // this could be a good place where to call
-                // drivers[k]->poly.view() and get some interfaces
-                std::cout<<" is valid\n";
-            }
-            else
-            {
-                std::cout<<" not valid\n";
-                allValid=false;
+                // m_drivers[k]->poly.view() and get some interfaces
+                std::cout << " is valid\n";
+            } else {
+                std::cout << " not valid\n";
+                allValid = false;
             }
         }
 
-        return false;
+        return allValid;
     }
 
-    bool detachAll()
+    bool detachAll() override
     {
         //nothing to do
-        std::cout<<"Detaching all devices (actually doing nothing)\n";
+        std::cout << "Detaching all devices (actually doing nothing)\n";
         return true;
     }
 };
 
-using namespace yarp::dev;
-using namespace yarp::os;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
+
     //add new device to yarp
-    DriverCreator *fakey_factory = new DriverCreatorOf<MyWrapper>("wrapper","","MyWrapper");
+    DriverCreator* fakey_factory = new DriverCreatorOf<MyWrapper>("wrapper", "", "MyWrapper");
     Drivers::factory().add(fakey_factory); // hand factory over to YARP
 
-    std::cout<<"Testing multiple attachable interface/data structure\n";
+    std::cout << "Testing multiple attachable interface/data structure\n";
 
     // create list of devices we are going to wrap
     PolyDriver p1;
@@ -102,7 +110,7 @@ int main(int argc, char *argv[]) {
     wrapper.open(config);
 
     //attach devices, first get interface
-    IMultipleWrapper *iat;
+    IMultipleWrapper* iat;
     wrapper.view(iat);
 
     PolyDriverList list;
@@ -114,7 +122,7 @@ int main(int argc, char *argv[]) {
 
     iat->detachAll();
 
-    std::cout<<"Goodbye\n";
+    std::cout << "Goodbye\n";
 
     return 0;
 }
