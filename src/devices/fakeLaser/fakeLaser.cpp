@@ -13,6 +13,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogStream.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/math/Vec2D.h>
 #include <iostream>
 #include <limits>
@@ -55,6 +56,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
         yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
         yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
         yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_context context --map_file mymap.map");
         return false;
     }
 
@@ -90,13 +92,40 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     else if (m_test_mode == USE_MAPFILE)
     {
         string map_file;
-        if (config.check("map_file"))
+        if (config.check("map_context") && config.check("map_file"))
         {
-            map_file = config.check("map_file",Value(string("map.yaml")),"map filename").asString();
+            yarp::os::ResourceFinder rf;
+            string tmp_filename = config.find("map_file").asString();
+            string tmp_contextname = config.find("map_context").asString();
+            rf.setDefaultContext(tmp_contextname);
+            rf.setDefaultConfigFile(tmp_filename);
+            bool b = rf.configure(0, nullptr);
+            if (b)
+            {
+                map_file = rf.findFile(tmp_filename);
+                if (map_file == "")
+                {
+                    yCWarning(FAKE_LASER, "Unable to find file: %s from context: %s\n", tmp_filename.c_str(), tmp_contextname.c_str());
+                }
+            }
+            else
+            {
+                yCWarning(FAKE_LASER, "Unable to find file: %s from context: %s\n", tmp_filename.c_str(), tmp_contextname.c_str());
+            }
+        }
+        else if (config.check("map_file"))
+        {
+            map_file = config.check("map_file", Value(string("map.yaml")), "map filename").asString();
         }
         else
         {
-            yCError(FAKE_LASER) << "Missing map_file";
+            yCError(FAKE_LASER) << "Missing `map_file` or `map_context`+`map_file` parameters";
+            return false;
+        }
+
+        if (map_file=="")
+        {
+            yCError(FAKE_LASER) << "File not found";
             return false;
         }
         bool ret = m_originally_loaded_map.loadFromFile(map_file);
