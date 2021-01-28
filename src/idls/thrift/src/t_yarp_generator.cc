@@ -3470,7 +3470,12 @@ void t_yarp_generator::generate_service_helper_classes_impl_read(t_function* fun
     {
         if (!function->is_oneway()) {
             f_cpp_ << indent_cpp() << "yarp::os::idl::WireReader reader(connection);\n";
-            f_cpp_ << indent_cpp() << "if (!reader.readListReturn())" << inline_return_cpp("false");
+            if (returntype->annotations_.find("yarp.name") == (returntype->annotations_.end())) {
+                // Types annotated with yarp.name therefore are expected
+                // to be able to serialize by themselves, therefore there is
+                // no need to read them as lists.
+                f_cpp_ << indent_cpp() << "if (!reader.readListReturn())" << inline_return_cpp("false");
+            }
             if (!returntype->is_void()) {
                 generate_deserialize_field(f_cpp_, &returnfield, "");
             }
@@ -3744,7 +3749,13 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                     indent_up_cpp();
                     {
                         if (!function->is_oneway()) {
-                            f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(returntype) << "))" << inline_return_cpp("false");
+                            if (returntype->annotations_.find("yarp.name") == (returntype->annotations_.end())) {
+                                // Types annotated with yarp.name therefore are expected
+                                // to be able to serialize by themselves, therefore there is
+                                // no need to write them as lists.
+                                // For all the other types, append the number of fields
+                                f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(returntype) << "))" << inline_return_cpp("false");
+                            }
                             if (!returntype->is_void()) {
                                 generate_serialize_field(f_cpp_, &returnfield, helper_class + "::");
                             }
