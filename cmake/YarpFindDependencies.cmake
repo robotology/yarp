@@ -357,16 +357,6 @@ checkandset_dependency(PNG)
 find_package(MPI QUIET)
 checkandset_dependency(MPI)
 
-set(LibOVR_REQUIRED_VERSION 1.19)
-find_package(LibOVR ${LibOVR_REQUIRED_VERSION} QUIET)
-checkandset_dependency(LibOVR)
-
-find_package(GLFW3 QUIET)
-checkandset_dependency(GLFW3)
-
-find_package(GLEW QUIET)
-checkandset_dependency(GLEW)
-
 find_package(OpenGL QUIET)
 checkandset_dependency(OpenGL)
 
@@ -614,9 +604,6 @@ print_dependency(SWIG)
 print_dependency(OpenCV)
 print_dependency(PCL)
 print_dependency(Lua)
-print_dependency(LibOVR)
-print_dependency(GLFW3)
-print_dependency(GLEW)
 print_dependency(OpenGL)
 print_dependency(Libdc1394)
 print_dependency(JPEG)

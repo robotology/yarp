@@ -39,7 +39,6 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(rpLidar)
   add_subdirectory(rpLidar2)
   add_subdirectory(laserHokuyo)
-  add_subdirectory(ovrheadset)
   add_subdirectory(fakeFrameGrabber)
   add_subdirectory(SDLJoypad)
   add_subdirectory(batteryClient)

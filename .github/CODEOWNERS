@@ -31,7 +31,6 @@
 /src/devices/multipleanalogsensorsserver/**   @traversaro
 /src/devices/navigation2DClient/**            @randaz81
 /src/devices/navigation2DServer/**            @randaz81
-/src/devices/ovrheadset/**                    @drdanz @aerydna
 /src/devices/portaudio/**                     @randaz81
 /src/devices/portaudioPlayer/**               @randaz81
 /src/devices/portaudioRecorder/**             @randaz81
