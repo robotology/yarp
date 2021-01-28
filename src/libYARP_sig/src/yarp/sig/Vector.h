@@ -159,6 +159,12 @@ public:
         memcpy(this->data(), p, sizeof(T)*s);
     }
 
+    VectorOf(const VectorOf& r) = default;
+    VectorOf<T> &operator=(const VectorOf<T>& r) = default;
+    VectorOf(VectorOf<T>&& other) noexcept = default;
+    VectorOf& operator=(VectorOf<T>&& other) noexcept = default;
+    ~VectorOf() override = default;
+
     size_t getElementSize() const override {
         return sizeof(T);
     }
