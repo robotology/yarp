@@ -19,6 +19,7 @@
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/IWrapper.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <string>
@@ -428,13 +429,29 @@ bool yarp::robotinterface::experimental::Device::attach(const yarp::dev::PolyDri
         return false;
     }
 
-    yarp::dev::IMultipleWrapper* wrapper;
-    if (!driver()->view(wrapper)) {
-        yError() << name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
+    yarp::dev::IMultipleWrapper* multiplewrapper;
+    driver()->view(multiplewrapper);
+
+    if (drivers.size() == 1) {
+        yarp::dev::IWrapper* wrapper;
+        if (!driver()->view(wrapper)) {
+            yInfo() << name() << "is not an IWrapper. Trying IMultipleWrapper";
+        } else if (wrapper->attach(drivers[0]->poly)) {
+            return true;
+        } else if (!multiplewrapper) {
+            yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeAttach);
+            return false;
+        } else {
+            yInfo() << name() << "IWrapper::attach() failed. Trying IMultipleWrapper::attach().";
+        }
+    }
+
+    if (!multiplewrapper) {
+        yError() << name() << "is not a multiplewrapper, therefore it cannot have" << ActionTypeToString(ActionTypeAttach) << "actions";
         return false;
     }
 
-    if (!wrapper->attachAll(drivers)) {
+    if (!multiplewrapper->attachAll(drivers)) {
         yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeAttach);
         return false;
     }
@@ -444,18 +461,33 @@ bool yarp::robotinterface::experimental::Device::attach(const yarp::dev::PolyDri
 
 bool yarp::robotinterface::experimental::Device::detach() const
 {
-    yarp::dev::IMultipleWrapper* wrapper;
     if (!driver()) {
         yDebug() << "Device do not exists, cannot do " << ActionTypeToString(ActionTypeDetach) << "action";
         return false;
     }
 
-    if (!driver()->view(wrapper)) {
-        yError() << name() << "is not a wrapper, therefore it cannot have" << ActionTypeToString(ActionTypeDetach) << "actions";
+    yarp::dev::IWrapper* wrapper;
+    yarp::dev::IMultipleWrapper* multiplewrapper;
+    driver()->view(wrapper);
+    driver()->view(multiplewrapper);
+
+    if (!wrapper && !multiplewrapper) {
+        yError() << name() << "is neither a wrapper nor a multiplewrapper, therefore it cannot have" << ActionTypeToString(ActionTypeDetach) << "actions";
         return false;
     }
 
-    if (!wrapper->detachAll()) {
+    if (multiplewrapper) {
+        if (multiplewrapper->detachAll()) {
+            return true;
+        }
+        if (!wrapper) {
+            yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeDetach);
+            return false;
+        }
+        yInfo() << name() << "IMultipleWrapper::detachAll() failed. Trying IWrapper::detach().";
+    }
+
+    if (wrapper && !wrapper->detach()) {
         yError() << "Device" << name() << "cannot execute" << ActionTypeToString(ActionTypeDetach);
         return false;
     }
