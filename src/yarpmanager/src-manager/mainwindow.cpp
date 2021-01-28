@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1353,7 +1353,7 @@ void MainWindow::onOpen()
 /*! \brief Opens the About Dialog */
 void MainWindow::onAbout()
 {
-    QString copyright = "Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)";
+    QString copyright = "Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)";
     QString name = APP_NAME;
     QString version = YARP_VERSION;
     AboutDlg dlg(name,version,copyright,"https://www.iit.it/");

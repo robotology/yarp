@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 
-# Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # Copyright (C) 2006-2010 RobotCub Consortium
 # All rights reserved.
 #

@@ -5,7 +5,7 @@
 # A set of macros for building YARP plugins.
 #
 
-# Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # Copyright (C) 2006-2010 RobotCub Consortium
 # All rights reserved.
 #
@@ -456,7 +456,7 @@ library \@YARPPLUG_LIBRARY\@
       else()
         file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${_YPP_TEMPLATE}"
 "/*
- * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
  * This software may be modified and distributed under the terms of the

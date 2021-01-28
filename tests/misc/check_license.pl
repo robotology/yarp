@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # All rights reserved.
 #
 # This software may be modified and distributed under the terms of the
@@ -25,7 +25,7 @@ chomp(my @skip_files = <$handle>);
 close $handle;
 
 
-my $copyright_iit = "Copyright \\(C\\) 2006-2020 Istituto Italiano di Tecnologia \\(IIT\\)";
+my $copyright_iit = "Copyright \\(C\\) 2006-2021 Istituto Italiano di Tecnologia \\(IIT\\)";
 my $copyright_robocub = "Copyright \\(C\\) 2006-2010 RobotCub Consortium";
 my $copyright_others = "Copyright \\(C\\) [^\n]+";
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # Copyright (C) 2006-2010 RobotCub Consortium
 # Copyright (C) 2007 Giacomo Spigler
 # All rights reserved.
