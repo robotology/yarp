@@ -41,12 +41,12 @@
 
 namespace RGBDImpl
 {
-    const std::string frameId_param            = "ROS_frame_Id";
-    const std::string nodeName_param           = "ROS_nodeName";
-    const std::string colorTopicName_param     = "ROS_colorTopicName";
-    const std::string depthTopicName_param     = "ROS_depthTopicName";
-    const std::string depthInfoTopicName_param = "ROS_depthInfoTopicName";
-    const std::string colorInfoTopicName_param = "ROS_colorInfoTopicName";
+    const std::string frameId_param            = "frame_Id";
+    const std::string nodeName_param           = "nodeName";
+    const std::string colorTopicName_param     = "colorTopicName";
+    const std::string depthTopicName_param     = "depthTopicName";
+    const std::string depthInfoTopicName_param = "depthInfoTopicName";
+    const std::string colorInfoTopicName_param = "colorInfoTopicName";
 }
 
 /**
@@ -66,12 +66,12 @@ namespace RGBDImpl
  * | period                 |      -                  | int     |  ms            |   20          |  No                             | refresh period of the broadcasted values in ms                                                      | default 20ms |
  * | subdevice              |      -                  | string  |  -             |   -           |  alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | forceInfoSync          |      -                  | string  | bool           |   -           |  no                             | set 'true' to force the timestamp on the camera_info message to match the image one                 |  - |
- * | ROS_colorTopicName     |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS image topic                                                                    | must start with a leading '/' |
- * | ROS_depthTopicName     |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS depth topic                                                                    | must start with a leading '/' |
- * | ROS_colorInfoTopicName |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS imageInfo topic                                                                | must start with a leading '/' |
- * | ROS_depthInfoTopicName |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS depthInfo topic                                                                | must start with a leading '/' |
- * | ROS_frame_Id           |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame                                                                 |                               |
- * | ROS_nodeName           |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS node                                                                           | must start with a leading '/' |
+ * | colorTopicName         |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS image topic                                                                    | must start with a leading '/' |
+ * | depthTopicName         |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS depth topic                                                                    | must start with a leading '/' |
+ * | colorInfoTopicName     |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS imageInfo topic                                                                | must start with a leading '/' |
+ * | depthInfoTopicName     |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS depthInfo topic                                                                | must start with a leading '/' |
+ * | frame_Id               |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame                                                                 |                               |
+ * | nodeName               |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS node                                                                           | must start with a leading '/' |
  *
  * ROS message type used is sensor_msgs/Image.msg ( http://docs.ros.org/api/sensor_msgs/html/msg/Image.html)
  * Some example of configuration files:
@@ -82,12 +82,12 @@ namespace RGBDImpl
  * device rgbdSensor_nws_ros
  * subdevice <RGBDsensor>
  * period 30
- * ROS_colorTopicName /<robotName>/RGBDSensorColor
- * ROS_depthTopicName /<robotName>/RGBDSensorDepth
- * ROS_colorInfoTopicName /<robotName>/RGBDSensorColorInfo
- * ROS_depthInfoTopicName /<robotName>/RGBDSensorDepthInfo
- * ROS_frame_Id /<robotName>/<framed_Id>
- * ROS_nodeName /<robotName>/RGBDSensorNode
+ * colorTopicName /<robotName>/RGBDSensorColor
+ * depthTopicName /<robotName>/RGBDSensorDepth
+ * colorInfoTopicName /<robotName>/RGBDSensorColorInfo
+ * depthInfoTopicName /<robotName>/RGBDSensorDepthInfo
+ * frame_Id /<robotName>/<framed_Id>
+ * nodeName /<robotName>/RGBDSensorNode
  * \endcode
  */
 
