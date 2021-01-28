@@ -575,7 +575,8 @@ jobs:
                                       libftdi-dev \
                                       libi2c-dev \
                                       libfuse-dev \
-                                      libjpeg-dev
+                                      libjpeg-dev \
+                                      libpcl-dev
 
           # Install SWIG and bindings dependencies
           sudo apt-get install -qq -y swig \
@@ -1154,7 +1155,7 @@ jobs:
   codacy-clang-tidy:
     name: 'Codacy - clang-tidy'
     needs: run-cmake
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v2
@@ -1207,7 +1208,8 @@ jobs:
                                       libftdi-dev \
                                       libi2c-dev \
                                       libfuse-dev \
-                                      libjpeg-dev
+                                      libjpeg-dev \
+                                      libpcl-dev
 
           # Install SWIG and bindings dependencies
           sudo apt-get install -qq -y swig \
@@ -1310,7 +1312,7 @@ jobs:
   codacy-coverage:
     name: 'Codacy - coverage'
     needs: run-cmake
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v2
@@ -1363,7 +1365,8 @@ jobs:
                                       libftdi-dev \
                                       libi2c-dev \
                                       libfuse-dev \
-                                      libjpeg-dev
+                                      libjpeg-dev \
+                                      libpcl-dev
 
           # Install SWIG and bindings dependencies
           sudo apt-get install -qq -y swig \
