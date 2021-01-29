@@ -142,19 +142,49 @@ bool VirtualAnalogWrapper::open(Searchable& config)
 
     for (size_t k=0; k<networks->size(); ++k)
     {
-        Bottle parameters=config.findGroup(networks->get(k).asString());
+        auto parameters = config.findGroup(networks->get(k).asString());
+        int map0, map1, map2, map3;
 
-        if (parameters.size()!=5)    // mapping joints using the paradigm: part from - to / network from - to
+        if (parameters.size() == 2)
         {
-            yCError(VIRTUALANALOGSERVER) << "Check network parameters in part description."
-                     << "I was expecting" << networks->get(k).asString().c_str() << "followed by four integers";
+            auto* bot = parameters.get(1).asList();
+            Bottle tmpBot;
+            if (bot == nullptr)
+            {
+                // try to read data as a string in the last resort
+                tmpBot.fromString(parameters.get(1).asString());
+                if (tmpBot.size() != 4)
+                {
+                    yCError(VIRTUALANALOGSERVER) << "Error: check network parameters in part description"
+                                                 << "--> I was expecting" << networks->get(k).asString() << "followed by four integers between parentheses"
+                                                 << "Got: " << parameters.toString();
+                    return false;
+                }
+
+                bot = &tmpBot;
+            }
+
+            map0 = bot->get(0).asInt32();
+            map1 = bot->get(1).asInt32();
+            map2 = bot->get(2).asInt32();
+            map3 = bot->get(3).asInt32();
+        }
+        else if (parameters.size() == 5)
+        {
+            yCError(VIRTUALANALOGSERVER) << "Parameter networks use deprecated syntax";
+            map0 = parameters.get(1).asInt32();
+            map1 = parameters.get(2).asInt32();
+            map2 = parameters.get(3).asInt32();
+            map3 = parameters.get(4).asInt32();
+        }
+        else
+        {
+            yCError(VIRTUALANALOGSERVER) << "Error: check network parameters in part description"
+                                         << "--> I was expecting" << networks->get(k).asString() << "followed by four integers between parentheses"
+                                         << "Got: " << parameters.toString();
             return false;
         }
 
-        int map0=parameters.get(1).asInt32();
-        int map1=parameters.get(2).asInt32();
-        int map2=parameters.get(3).asInt32();
-        int map3=parameters.get(4).asInt32();
         if (map0 >= MAX_ENTRIES || map1 >= MAX_ENTRIES || map2>= MAX_ENTRIES || map3>= MAX_ENTRIES ||
             map0 <0             || map1 <0             || map2<0             || map3<0)
         {
