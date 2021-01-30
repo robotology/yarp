@@ -94,6 +94,12 @@ jobs:
         - {
             os: ubuntu-latest,
             cmake_version: "3.19",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.12.1",
+          }
+        - {
+            os: ubuntu-latest,
+            cmake_version: "3.19",
             cmake_generator: "Ninja",
             ycm_version: "0.12.1",
           }
