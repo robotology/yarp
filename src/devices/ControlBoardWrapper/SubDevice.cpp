@@ -197,17 +197,6 @@ bool SubDevice::attach(yarp::dev::PolyDriver* d, const std::string& k)
     if (pos != nullptr) {
         int tmp_axes;
         if (!pos->getAxes(&tmp_axes)) {
-            yCError(CONTROLBOARDWRAPPER) << "Failed to get axes number for subdevice " << k.c_str();
-            return false;
-        }
-        if (tmp_axes <= 0) {
-            yCError(CONTROLBOARDWRAPPER, "Part <%s>: attached device has an invalid number of joints (%d)", parentName.c_str(), tmp_axes);
-            return false;
-        }
-        deviceJoints = static_cast<size_t>(tmp_axes);
-    } else {
-        int tmp_axes;
-        if (!pos->getAxes(&tmp_axes)) {
             yCError(CONTROLBOARDWRAPPER, "Part <%s>: failed to get axes number for subdevice %s.", parentName.c_str(), k.c_str());
             return false;
         }
@@ -225,13 +214,6 @@ bool SubDevice::attach(yarp::dev::PolyDriver* d, const std::string& k)
                 deviceJoints,
                 axes,
                 k.c_str());
-        return false;
-    }
-
-    int subdevAxes;
-    if (!pos || !pos->getAxes(&subdevAxes)) {
-        yCError(CONTROLBOARDWRAPPER) << "Device <" << parentName << "> attached to subdevice " << k.c_str() << " but it was not ready yet. \n"
-                                     << "Please check the device has been correctly created and all required initialization actions has been performed.";
         return false;
     }
 
