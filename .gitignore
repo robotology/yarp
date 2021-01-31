@@ -21,7 +21,11 @@ compile_commands.json
 *.aps
 /CMakeSettings.json
 /.vs/
+/.vscode/
 /.idea/
+/.project
+/.cproject
+/.settings/
 /cmake-build*/
 .clangd/
 *.srctrlbm
