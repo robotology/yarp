@@ -40,40 +40,26 @@ bool ControlBoardWrapperPositionControl::positionMove(int j, double ref)
 
 bool ControlBoardWrapperPositionControl::positionMove(const double* refs)
 {
-    bool ret = true;
-    int j_wrap = 0; // index of the wrapper joint
+    int j_wrap = 0;
 
-    int nDev = device.subdevices.size();
-    for (int subDev_idx = 0; subDev_idx < nDev; subDev_idx++) {
-        size_t subIndex = device.lut[j_wrap].deviceEntry;
-        SubDevice* p = device.getSubdevice(subIndex);
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
 
-        if (!p) {
-            return false;
-        }
+        if (p && p->pos) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
 
-        int wrapped_joints = static_cast<int>((p->top - p->base) + 1);
-        int* joints = new int[wrapped_joints];
-
-        if (p->pos) {
-            // versione comandi su subset di giunti
-            for (int j_dev = 0; j_dev < wrapped_joints; j_dev++) {
-                joints[j_dev] = static_cast<int>(p->base + j_dev); // for all joints is equivalent to add offset term
+            if (!p->pos->positionMove(joints.size(), joints.data(), &refs[j_wrap])) {
+                return false;
             }
 
-            ret = ret && p->pos->positionMove(wrapped_joints, joints, &refs[j_wrap]);
-            j_wrap += wrapped_joints;
+            j_wrap += joints.size();
         } else {
-            ret = false;
-        }
-
-        if (joints != nullptr) {
-            delete[] joints;
-            joints = nullptr;
+            return false;
         }
     }
 
-    return ret;
+    return true;
 }
 
 
@@ -408,38 +394,26 @@ bool ControlBoardWrapperPositionControl::setRefSpeed(int j, double sp)
 
 bool ControlBoardWrapperPositionControl::setRefSpeeds(const double* spds)
 {
-    bool ret = true;
-    int j_wrap = 0; // index of the wrapper joint
+    int j_wrap = 0;
 
     for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
-        SubDevice* p = device.getSubdevice(subDev_idx);
+        auto* p = device.getSubdevice(subDev_idx);
 
-        if (!p) {
-            return false;
-        }
+        if (p && p->pos) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
 
-        int wrapped_joints = static_cast<int>((p->top - p->base) + 1);
-        int* joints = new int[wrapped_joints];
-
-        if (p->pos) {
-            // verione comandi su subset di giunti
-            for (int j_dev = 0; j_dev < wrapped_joints; j_dev++) {
-                joints[j_dev] = static_cast<int>(p->base + j_dev);
+            if (!p->pos->setRefSpeeds(joints.size(), joints.data(), &spds[j_wrap])) {
+                return false;
             }
 
-            ret = ret && p->pos->setRefSpeeds(wrapped_joints, joints, &spds[j_wrap]);
-            j_wrap += wrapped_joints;
+            j_wrap += joints.size();
         } else {
-            ret = false;
-        }
-
-        if (joints != nullptr) {
-            delete[] joints;
-            joints = nullptr;
+            return false;
         }
     }
 
-    return ret;
+    return true;
 }
 
 

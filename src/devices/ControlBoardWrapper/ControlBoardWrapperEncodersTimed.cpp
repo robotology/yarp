@@ -35,24 +35,17 @@ bool ControlBoardWrapperEncodersTimed::resetEncoder(int j)
 
 bool ControlBoardWrapperEncodersTimed::resetEncoders()
 {
-    bool ret = true;
-
     for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
         size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (!p || !p->iJntEnc || !p->iJntEnc->resetEncoder(static_cast<int>(off + p->base))) {
             return false;
         }
-
-        if (p->iJntEnc) {
-            ret = ret && p->iJntEnc->resetEncoder(static_cast<int>(off + p->base));
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 
@@ -81,24 +74,17 @@ bool ControlBoardWrapperEncodersTimed::setEncoder(int j, double val)
 
 bool ControlBoardWrapperEncodersTimed::setEncoders(const double* vals)
 {
-    bool ret = true;
-
     for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
         size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (!p || !p->iJntEnc || !p->iJntEnc->setEncoder(static_cast<int>(off + p->base), vals[l])) {
             return false;
         }
-
-        if (p->iJntEnc) {
-            ret = ret && p->iJntEnc->setEncoder(static_cast<int>(off + p->base), vals[l]);
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 

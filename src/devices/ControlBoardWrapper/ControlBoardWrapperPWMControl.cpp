@@ -35,24 +35,17 @@ bool ControlBoardWrapperPWMControl::setRefDutyCycle(int j, double v)
 
 bool ControlBoardWrapperPWMControl::setRefDutyCycles(const double* v)
 {
-    bool ret = true;
-
     for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
         size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (!p || !p->iPWM || !p->iPWM->setRefDutyCycle(static_cast<int>(off + p->base), v[l])) {
             return false;
         }
-
-        if (p->iPWM) {
-            ret = ret && p->iPWM->setRefDutyCycle(static_cast<int>(off + p->base), v[l]);
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 bool ControlBoardWrapperPWMControl::getRefDutyCycle(int j, double* v)

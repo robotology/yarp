@@ -141,35 +141,24 @@ bool ControlBoardWrapperControlMode::setControlModes(const int n_joints, const i
 
 bool ControlBoardWrapperControlMode::setControlModes(int* modes)
 {
-    bool ret = true;
-    int j_wrap = 0; // index of the wrapper joint
+    int j_wrap = 0;
 
-    int nDev = device.subdevices.size();
-    for (int subDev_idx = 0; subDev_idx < nDev; subDev_idx++) {
-        size_t subIndex = device.lut[j_wrap].deviceEntry;
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
-            return false;
-        }
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
 
-        int wrapped_joints = static_cast<int>((p->top - p->base) + 1);
-        int* joints = new int[wrapped_joints];
+        if (p && p->iMode) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
 
-        if (p->iMode) {
-            // versione comandi su subset di giunti
-            for (int j_dev = 0; j_dev < wrapped_joints; j_dev++) {
-                joints[j_dev] = static_cast<int>(p->base + j_dev); // for all joints is equivalent to add offset term
+            if (!p->iMode->setControlModes(joints.size(), joints.data(), &modes[j_wrap])) {
+                return false;
             }
 
-            ret = ret && p->iMode->setControlModes(wrapped_joints, joints, &modes[j_wrap]);
-            j_wrap += wrapped_joints;
-        }
-
-        if (joints != nullptr) {
-            delete[] joints;
-            joints = nullptr;
+            j_wrap += joints.size();
+        } else {
+            return false;
         }
     }
 
-    return ret;
+    return true;
 }

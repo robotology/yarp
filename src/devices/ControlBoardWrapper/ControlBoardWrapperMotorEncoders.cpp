@@ -29,24 +29,17 @@ bool ControlBoardWrapperMotorEncoders::resetMotorEncoder(int m)
 
 bool ControlBoardWrapperMotorEncoders::resetMotorEncoders()
 {
-    bool ret = true;
-
     for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
         size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (!p || !p->iMotEnc || !p->iMotEnc->resetMotorEncoder(static_cast<int>(off + p->base))) {
             return false;
         }
-
-        if (p->iMotEnc) {
-            ret = ret && p->iMotEnc->resetMotorEncoder(static_cast<int>(off + p->base));
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 
@@ -69,24 +62,17 @@ bool ControlBoardWrapperMotorEncoders::setMotorEncoder(int m, const double val)
 
 bool ControlBoardWrapperMotorEncoders::setMotorEncoders(const double* vals)
 {
-    bool ret = true;
-
     for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
         size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (!p || !p->iMotEnc || !p->iMotEnc->setMotorEncoder(static_cast<int>(off + p->base), vals[l])) {
             return false;
         }
-
-        if (p->iMotEnc) {
-            ret = ret && p->iMotEnc->setMotorEncoder(static_cast<int>(off + p->base), vals[l]);
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 

@@ -47,39 +47,26 @@ bool ControlBoardWrapperCommon::setRefAcceleration(int j, double acc)
 
 bool ControlBoardWrapperCommon::setRefAccelerations(const double* accs)
 {
-    bool ret = true;
-    int j_wrap = 0; // index of the joint from the wrapper side (useful if wrapper joins 2 subdevices)
+    int j_wrap = 0;
 
-    // for all subdevices
     for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
-        SubDevice* p = device.getSubdevice(subDev_idx);
+        auto* p = device.getSubdevice(subDev_idx);
 
-        if (!p) {
-            return false;
-        }
+        if (p && p->pos) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
 
-        int wrapped_joints = static_cast<int>((p->top - p->base) + 1);
-        int* joints = new int[wrapped_joints]; // to be defined once and for all?
-
-        if (p->pos) {
-            // verione comandi su subset di giunti
-            for (int j_dev = 0; j_dev < wrapped_joints; j_dev++) {
-                joints[j_dev] = static_cast<int>(p->base + j_dev);
+            if (!p->pos->setRefAccelerations(joints.size(), joints.data(), &accs[j_wrap])) {
+                return false;
             }
 
-            ret = ret && p->pos->setRefAccelerations(wrapped_joints, joints, &accs[j_wrap]);
-            j_wrap += wrapped_joints;
+            j_wrap += joints.size();
         } else {
-            ret = false;
-        }
-
-        if (joints != nullptr) {
-            delete[] joints;
-            joints = nullptr;
+            return false;
         }
     }
 
-    return ret;
+    return true;
 }
 
 

@@ -40,38 +40,26 @@ bool ControlBoardWrapperVelocityControl::velocityMove(int j, double v)
 
 bool ControlBoardWrapperVelocityControl::velocityMove(const double* v)
 {
-    bool ret = true;
-    int j_wrap = 0; // index of the wrapper joint
+    int j_wrap = 0;
 
     for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
-        SubDevice* p = device.getSubdevice(subDev_idx);
+        auto* p = device.getSubdevice(subDev_idx);
 
-        if (!p) {
-            return false;
-        }
+        if (p && p->vel) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
 
-        int wrapped_joints = static_cast<int>((p->top - p->base) + 1);
-        int* joints = new int[wrapped_joints];
-
-        if (p->vel) {
-            // verione comandi su subset di giunti
-            for (int j_dev = 0; j_dev < wrapped_joints; j_dev++) {
-                joints[j_dev] = static_cast<int>(p->base + j_dev);
+            if (!p->vel->velocityMove(joints.size(), joints.data(), &v[j_wrap])) {
+                return false;
             }
 
-            ret = ret && p->vel->velocityMove(wrapped_joints, joints, &v[j_wrap]);
-            j_wrap += wrapped_joints;
+            j_wrap += joints.size();
         } else {
-            ret = false;
-        }
-
-        if (joints != nullptr) {
-            delete[] joints;
-            joints = nullptr;
+            return false;
         }
     }
 
-    return ret;
+    return true;
 }
 
 bool ControlBoardWrapperVelocityControl::velocityMove(const int n_joints, const int* joints, const double* spds)

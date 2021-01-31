@@ -43,24 +43,17 @@ bool ControlBoardWrapperPidControl::setPid(const PidControlTypeEnum& pidtype, in
 
 bool ControlBoardWrapperPidControl::setPids(const PidControlTypeEnum& pidtype, const Pid* ps)
 {
-    bool ret = true;
-
     for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
         size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (!p || !p->pid || !p->pid->setPid(pidtype, static_cast<int>(off + p->base), ps[l])) {
             return false;
         }
-
-        if (p->pid) {
-            ret = ret && p->pid->setPid(pidtype, static_cast<int>(off + p->base), ps[l]);
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 
@@ -93,24 +86,17 @@ bool ControlBoardWrapperPidControl::setPidReference(const PidControlTypeEnum& pi
 
 bool ControlBoardWrapperPidControl::setPidReferences(const PidControlTypeEnum& pidtype, const double* refs)
 {
-    bool ret = true;
-
     for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
         size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (!p || !p->pid || !p->pid->setPidReference(pidtype, static_cast<int>(off + p->base), refs[l])) {
             return false;
         }
-
-        if (p->pid) {
-            ret = ret && p->pid->setPidReference(pidtype, static_cast<int>(off + p->base), refs[l]);
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 
@@ -139,24 +125,17 @@ bool ControlBoardWrapperPidControl::setPidErrorLimit(const PidControlTypeEnum& p
 
 bool ControlBoardWrapperPidControl::setPidErrorLimits(const PidControlTypeEnum& pidtype, const double* limits)
 {
-    bool ret = true;
-
     for (size_t l = 0; l < controlledJoints; l++) {
         int off = device.lut[l].offset;
         size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (!p || !p->pid || !p->pid->setPidErrorLimit(pidtype, static_cast<int>(off + p->base), limits[l])) {
             return false;
         }
-
-        if (p->pid) {
-            ret = ret && p->pid->setPidErrorLimit(pidtype, static_cast<int>(off + p->base), limits[l]);
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 
