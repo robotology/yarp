@@ -10,6 +10,9 @@
 
 #include "ControlBoardWrapperLogComponent.h"
 
+#include <numeric> // std::iota
+#include <vector>
+
 
 bool ControlBoardWrapperCommon::getAxes(int* ax)
 {
@@ -137,28 +140,26 @@ bool ControlBoardWrapperCommon::getRefAcceleration(int j, double* acc)
 
 bool ControlBoardWrapperCommon::getRefAccelerations(double* accs)
 {
-    auto* references = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    int j_wrap = 0;
 
-        if ((p->pos) && (ret = p->pos->getRefAccelerations(references))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                accs[juser] = references[jdevice];
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
+
+        if (p && p->pos) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
+
+            if (!p->pos->getRefAccelerations(joints.size(), joints.data(), &accs[j_wrap])) {
+                return false;
             }
+
+            j_wrap += joints.size();
         } else {
-            printError("getRefAccelerations", p->id, ret);
-            ret = false;
-            break;
+            return false;
         }
     }
 
-    delete[] references;
-    return ret;
+    return true;
 }
 
 
@@ -235,25 +236,22 @@ bool ControlBoardWrapperCommon::stop(int j)
 
 bool ControlBoardWrapperCommon::stop()
 {
-    bool ret = true;
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
 
-    for (size_t l = 0; l < controlledJoints; l++) {
-        size_t off = device.lut[l].offset;
-        size_t subIndex = device.lut[l].deviceEntry;
+        if (p && p->pos) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-
-        if (!p) {
+            if (!p->pos->stop(joints.size(), joints.data())) {
+                return false;
+            }
+        } else {
             return false;
         }
-
-        if (p->pos) {
-            ret = ret && p->pos->stop(static_cast<int>(off + p->base));
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 
@@ -295,32 +293,27 @@ bool ControlBoardWrapperCommon::getNumberOfMotors(int* num)
 
 bool ControlBoardWrapperCommon::getCurrents(double* vals)
 {
-    auto* currs = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        ret = false;
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if (p->iCurr) {
-            ret = p->iCurr->getCurrents(currs);
-        } else if (p->amp) {
-            ret = p->amp->getCurrents(currs);
-        }
+        if (p) {
+            int j = static_cast<int>(off + p->base);
 
-        if (ret) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                vals[juser] = currs[jdevice];
+            if (p->iCurr && p->iCurr->getCurrent(j, &vals[l])) {
+                continue;
+            } else if (p->amp && p->amp->getCurrent(j, &vals[l])) {
+                continue;
+            } else {
+                return false;
             }
         } else {
-            printError("getCurrents", p->id, ret);
-            break;
+            return false;
         }
     }
-    delete[] currs;
-    return ret;
+
+    return true;
 }
 
 

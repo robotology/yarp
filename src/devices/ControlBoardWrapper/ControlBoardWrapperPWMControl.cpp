@@ -79,28 +79,17 @@ bool ControlBoardWrapperPWMControl::getRefDutyCycle(int j, double* v)
 
 bool ControlBoardWrapperPWMControl::getRefDutyCycles(double* v)
 {
-    auto* references = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iPWM) && (ret = p->iPWM->getRefDutyCycles(references))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                v[juser] = references[jdevice];
-            }
-        } else {
-            printError("getRefDutyCycles", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iPWM || !p->iPWM->getRefDutyCycle(static_cast<int>(off + p->base), &v[l])) {
+            return false;
         }
     }
 
-    delete[] references;
-    return ret;
+    return true;
 }
 
 bool ControlBoardWrapperPWMControl::getDutyCycle(int j, double* v)
@@ -127,26 +116,15 @@ bool ControlBoardWrapperPWMControl::getDutyCycle(int j, double* v)
 
 bool ControlBoardWrapperPWMControl::getDutyCycles(double* v)
 {
-    auto* dutyCicles = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iPWM) && (ret = p->iPWM->getDutyCycles(dutyCicles))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                v[juser] = dutyCicles[jdevice];
-            }
-        } else {
-            printError("getDutyCycles", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iPWM || !p->iPWM->getDutyCycle(static_cast<int>(off + p->base), &v[l])) {
+            return false;
         }
     }
 
-    delete[] dutyCicles;
-    return ret;
+    return true;
 }

@@ -12,6 +12,9 @@
 
 #include "ControlBoardWrapperLogComponent.h"
 
+#include <numeric> // std::iota
+#include <vector>
+
 bool ControlBoardWrapperVelocityControl::velocityMove(int j, double v)
 {
     size_t off;
@@ -130,28 +133,26 @@ bool ControlBoardWrapperVelocityControl::getRefVelocity(const int j, double* vel
 
 bool ControlBoardWrapperVelocityControl::getRefVelocities(double* vels)
 {
-    auto* references = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    int j_wrap = 0;
 
-        if ((p->vel) && (ret = p->vel->getRefVelocities(references))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                vels[juser] = references[jdevice];
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
+
+        if (p && p->vel) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
+
+            if (!p->vel->getRefVelocities(joints.size(), joints.data(), &vels[j_wrap])) {
+                return false;
             }
+
+            j_wrap += joints.size();
         } else {
-            printError("getRefVelocities", p->id, ret);
-            ret = false;
-            break;
+            return false;
         }
     }
 
-    delete[] references;
-    return ret;
+    return true;
 }
 
 bool ControlBoardWrapperVelocityControl::getRefVelocities(const int n_joints, const int* joints, double* vels)

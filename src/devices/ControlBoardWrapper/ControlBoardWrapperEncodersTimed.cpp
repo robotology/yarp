@@ -128,58 +128,33 @@ bool ControlBoardWrapperEncodersTimed::getEncoder(int j, double* v)
 
 bool ControlBoardWrapperEncodersTimed::getEncoders(double* encs)
 {
-    auto* encValues = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iJntEnc) && (ret = p->iJntEnc->getEncoders(encValues))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                encs[juser] = encValues[jdevice];
-            }
-        } else {
-            printError("getEncoders", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iJntEnc || !p->iJntEnc->getEncoder(static_cast<int>(off + p->base), &encs[l])) {
+            return false;
         }
     }
 
-    delete[] encValues;
-    return ret;
+    return true;
 }
 
 
 bool ControlBoardWrapperEncodersTimed::getEncodersTimed(double* encs, double* t)
 {
-    auto* encValues = new double[device.maxNumOfJointsInDevices];
-    auto* tValues = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iJntEnc) && (ret = p->iJntEnc->getEncodersTimed(encValues, tValues))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                encs[juser] = encValues[jdevice];
-                t[juser] = tValues[jdevice];
-            }
-        } else {
-            printError("getEncodersTimed", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iJntEnc || !p->iJntEnc->getEncoderTimed(static_cast<int>(off + p->base), &encs[l], &t[l])) {
+            return false;
         }
     }
 
-    delete[] encValues;
-    delete[] tValues;
-    return ret;
+    return true;
 }
 
 
@@ -233,28 +208,17 @@ bool ControlBoardWrapperEncodersTimed::getEncoderSpeed(int j, double* sp)
 
 bool ControlBoardWrapperEncodersTimed::getEncoderSpeeds(double* spds)
 {
-    auto* sValues = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iJntEnc) && (ret = p->iJntEnc->getEncoderSpeeds(sValues))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                spds[juser] = sValues[jdevice];
-            }
-        } else {
-            printError("getEncoderSpeeds", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iJntEnc || !p->iJntEnc->getEncoderSpeed(static_cast<int>(off + p->base), &spds[l])) {
+            return false;
         }
     }
 
-    delete[] sValues;
-    return ret;
+    return true;
 }
 
 
@@ -284,26 +248,15 @@ bool ControlBoardWrapperEncodersTimed::getEncoderAcceleration(int j, double* acc
 
 bool ControlBoardWrapperEncodersTimed::getEncoderAccelerations(double* accs)
 {
-    auto* aValues = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iJntEnc) && (ret = p->iJntEnc->getEncoderAccelerations(aValues))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                accs[juser] = aValues[jdevice];
-            }
-        } else {
-            printError("getEncoderAccelerations", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iJntEnc || !p->iJntEnc->getEncoderAcceleration(static_cast<int>(off + p->base), &accs[l])) {
+            return false;
         }
     }
 
-    delete[] aValues;
-    return ret;
+    return true;
 }

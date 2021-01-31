@@ -145,59 +145,33 @@ bool ControlBoardWrapperMotorEncoders::getMotorEncoder(int m, double* v)
 
 bool ControlBoardWrapperMotorEncoders::getMotorEncoders(double* encs)
 {
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-    auto* encValues = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
-
-        if ((p->iMotEnc) && (ret = p->iMotEnc->getMotorEncoders(encValues))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                encs[juser] = encValues[jdevice];
-            }
-        } else {
-            printError("getMotorEncoders", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iMotEnc || !p->iMotEnc->getMotorEncoder(static_cast<int>(off + p->base), &encs[l])) {
+            return false;
         }
     }
 
-    delete[] encValues;
-    return ret;
+    return true;
 }
 
 
 bool ControlBoardWrapperMotorEncoders::getMotorEncodersTimed(double* encs, double* t)
 {
-    auto* encValues = new double[device.maxNumOfJointsInDevices];
-    auto* tValues = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iMotEnc) && (ret = p->iMotEnc->getMotorEncodersTimed(encValues, tValues))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                encs[juser] = encValues[jdevice];
-                t[juser] = tValues[jdevice];
-            }
-        } else {
-            printError("getMotorEncodersTimed", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iMotEnc || !p->iMotEnc->getMotorEncoderTimed(static_cast<int>(off + p->base), &encs[l], &t[l])) {
+            return false;
         }
     }
 
-    delete[] encValues;
-    delete[] tValues;
-    return ret;
+    return true;
 }
 
 
@@ -239,28 +213,17 @@ bool ControlBoardWrapperMotorEncoders::getMotorEncoderSpeed(int m, double* sp)
 
 bool ControlBoardWrapperMotorEncoders::getMotorEncoderSpeeds(double* spds)
 {
-    auto* sValues = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iMotEnc) && (ret = p->iMotEnc->getMotorEncoderSpeeds(sValues))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                spds[juser] = sValues[jdevice];
-            }
-        } else {
-            printError("getMotorEncoderSpeeds", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iMotEnc || !p->iMotEnc->getMotorEncoderSpeed(static_cast<int>(off + p->base), &spds[l])) {
+            return false;
         }
     }
 
-    delete[] sValues;
-    return ret;
+    return true;
 }
 
 
@@ -284,28 +247,17 @@ bool ControlBoardWrapperMotorEncoders::getMotorEncoderAcceleration(int m, double
 
 bool ControlBoardWrapperMotorEncoders::getMotorEncoderAccelerations(double* accs)
 {
-    auto* aValues = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iMotEnc) && (ret = p->iMotEnc->getMotorEncoderAccelerations(aValues))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                accs[juser] = aValues[jdevice];
-            }
-        } else {
-            printError("getMotorEncoderAccelerations", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iMotEnc || !p->iMotEnc->getMotorEncoderAcceleration(static_cast<int>(off + p->base), &accs[l])) {
+            return false;
         }
     }
 
-    delete[] aValues;
-    return ret;
+    return true;
 }
 
 

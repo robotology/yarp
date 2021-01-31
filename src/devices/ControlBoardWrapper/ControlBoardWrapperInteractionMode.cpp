@@ -10,6 +10,9 @@
 
 #include "ControlBoardWrapperLogComponent.h"
 
+#include <numeric> // std::iota
+#include <vector>
+
 using yarp::dev::VOCAB_IM_UNKNOWN;
 
 bool ControlBoardWrapperInteractionMode::getInteractionMode(int j, yarp::dev::InteractionModeEnum* mode)
@@ -85,29 +88,26 @@ bool ControlBoardWrapperInteractionMode::getInteractionModes(int n_joints, int* 
 
 bool ControlBoardWrapperInteractionMode::getInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
+    int j_wrap = 0;
 
-    auto* imodes = new yarp::dev::InteractionModeEnum[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
 
-        if ((p->iInteract) && (ret = p->iInteract->getInteractionModes(imodes))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                modes[juser] = imodes[jdevice];
+        if (p && p->iInteract) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
+
+            if (!p->iInteract->getInteractionModes(joints.size(), joints.data(), &modes[j_wrap])) {
+                return false;
             }
+
+            j_wrap += joints.size();
         } else {
-            printError("getInteractionModes", p->id, ret);
-            ret = false;
-            break;
+            return false;
         }
     }
 
-    delete[] imodes;
-    return ret;
+    return true;
 }
 
 bool ControlBoardWrapperInteractionMode::setInteractionMode(int j, yarp::dev::InteractionModeEnum mode)
@@ -166,28 +166,24 @@ bool ControlBoardWrapperInteractionMode::setInteractionModes(int n_joints, int* 
 
 bool ControlBoardWrapperInteractionMode::setInteractionModes(yarp::dev::InteractionModeEnum* modes)
 {
-    bool ret = true;
+    int j_wrap = 0;
 
-    for (size_t j = 0; j < controlledJoints; j++) {
-        size_t off;
-        try {
-            off = device.lut.at(j).offset;
-        } catch (...) {
-            yCError(CONTROLBOARDWRAPPER, "Joint number %zu out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
-            return false;
-        }
-        size_t subIndex = device.lut[j].deviceEntry;
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
-            return false;
-        }
+        if (p && p->iInteract) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
 
-        if (p->iInteract) {
-            ret = ret && p->iInteract->setInteractionMode(static_cast<int>(off + p->base), modes[j]);
+            if (!p->iInteract->setInteractionModes(joints.size(), joints.data(), &modes[j_wrap])) {
+                return false;
+            }
+
+            j_wrap += joints.size();
         } else {
-            ret = false;
+            return false;
         }
     }
-    return ret;
+
+    return true;
 }

@@ -10,6 +10,9 @@
 
 #include "ControlBoardWrapperLogComponent.h"
 
+#include <numeric> // std::iota
+#include <vector>
+
 
 bool ControlBoardWrapperControlMode::getControlMode(int j, int* mode)
 {
@@ -36,28 +39,26 @@ bool ControlBoardWrapperControlMode::getControlMode(int j, int* mode)
 
 bool ControlBoardWrapperControlMode::getControlModes(int* modes)
 {
-    int* all_mode = new int[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    int j_wrap = 0;
 
-        if ((p->iMode) && (ret = p->iMode->getControlModes(all_mode))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                modes[juser] = all_mode[jdevice];
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
+
+        if (p && p->iMode) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
+
+            if (!p->iMode->getControlModes(joints.size(), joints.data(), &modes[j_wrap])) {
+                return false;
             }
+
+            j_wrap += joints.size();
         } else {
-            printError("getControlModes", p->id, ret);
-            ret = false;
-            break;
+            return false;
         }
     }
 
-    delete[] all_mode;
-    return ret;
+    return true;
 }
 
 

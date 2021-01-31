@@ -29,28 +29,17 @@ bool ControlBoardWrapperMotor::getTemperature(int m, double* val)
 
 bool ControlBoardWrapperMotor::getTemperatures(double* vals)
 {
-    auto* temps = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->imotor) && (ret = p->imotor->getTemperatures(temps))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                vals[juser] = temps[jdevice];
-            }
-        } else {
-            printError("getTemperatures", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->imotor || !p->imotor->getTemperature(static_cast<int>(off + p->base), &vals[l])) {
+            return false;
         }
     }
 
-    delete[] temps;
-    return ret;
+    return true;
 }
 
 bool ControlBoardWrapperMotor::getTemperatureLimit(int m, double* val)

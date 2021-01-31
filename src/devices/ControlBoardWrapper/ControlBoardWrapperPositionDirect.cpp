@@ -10,6 +10,9 @@
 
 #include "ControlBoardWrapperLogComponent.h"
 
+#include <numeric> // std::iota
+#include <vector>
+
 
 bool ControlBoardWrapperPositionDirect::setPosition(int j, double ref)
 {
@@ -69,24 +72,26 @@ bool ControlBoardWrapperPositionDirect::setPositions(const int n_joints, const i
 
 bool ControlBoardWrapperPositionDirect::setPositions(const double* refs)
 {
-    bool ret = true;
+    int j_wrap = 0;
 
-    for (size_t l = 0; l < controlledJoints; l++) {
-        int off = device.lut[l].offset;
-        size_t subIndex = device.lut[l].deviceEntry;
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (p && p->posDir) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
+
+            if (!p->posDir->setPositions(joints.size(), joints.data(), &refs[j_wrap])) {
+                return false;
+            }
+
+            j_wrap += joints.size();
+        } else {
             return false;
         }
-
-        if (p->posDir) {
-            ret = p->posDir->setPosition(static_cast<int>(off + p->base), refs[l]) && ret;
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 
@@ -118,28 +123,26 @@ bool ControlBoardWrapperPositionDirect::getRefPosition(const int j, double* ref)
 
 bool ControlBoardWrapperPositionDirect::getRefPositions(double* spds)
 {
-    auto* references = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    int j_wrap = 0;
 
-        if ((p->posDir) && (ret = p->posDir->getRefPositions(references))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                spds[juser] = references[jdevice];
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
+
+        if (p && p->posDir) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
+
+            if (!p->posDir->getRefPositions(joints.size(), joints.data(), &spds[j_wrap])) {
+                return false;
             }
+
+            j_wrap += joints.size();
         } else {
-            printError("getRefPositions", p->id, ret);
-            ret = false;
-            break;
+            return false;
         }
     }
 
-    delete[] references;
-    return ret;
+    return true;
 }
 
 

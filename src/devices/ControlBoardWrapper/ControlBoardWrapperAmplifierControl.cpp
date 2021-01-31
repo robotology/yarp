@@ -69,28 +69,17 @@ bool ControlBoardWrapperAmplifierControl::disableAmp(int j)
 
 bool ControlBoardWrapperAmplifierControl::getAmpStatus(int* st)
 {
-    int* status = new int[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->amp) && (ret = p->amp->getAmpStatus(status))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                st[juser] = status[jdevice];
-            }
-        } else {
-            printError("getAmpStatus", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->amp || !p->amp->getAmpStatus(static_cast<int>(off + p->base), &st[l])) {
+            return false;
         }
     }
 
-    delete[] status;
-    return ret;
+    return true;
 }
 
 

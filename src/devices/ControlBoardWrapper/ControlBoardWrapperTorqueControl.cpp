@@ -10,31 +10,23 @@
 
 #include "ControlBoardWrapperLogComponent.h"
 
+#include <numeric> // std::iota
+#include <vector>
+
 
 bool ControlBoardWrapperTorqueControl::getRefTorques(double* refs)
 {
-    auto* references = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iTorque) && (ret = p->iTorque->getRefTorques(references))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                refs[juser] = references[jdevice];
-            }
-        } else {
-            printError("getRefTorques", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iTorque || !p->iTorque->getRefTorque(static_cast<int>(off + p->base), &refs[l])) {
+            return false;
         }
     }
 
-    delete[] references;
-    return ret;
+    return true;
 }
 
 bool ControlBoardWrapperTorqueControl::getRefTorque(int j, double* t)
@@ -62,24 +54,26 @@ bool ControlBoardWrapperTorqueControl::getRefTorque(int j, double* t)
 
 bool ControlBoardWrapperTorqueControl::setRefTorques(const double* t)
 {
-    bool ret = true;
+    int j_wrap = 0;
 
-    for (size_t l = 0; l < controlledJoints; l++) {
-        int off = device.lut[l].offset;
-        size_t subIndex = device.lut[l].deviceEntry;
+    for (size_t subDev_idx = 0; subDev_idx < device.subdevices.size(); subDev_idx++) {
+        auto* p = device.getSubdevice(subDev_idx);
 
-        SubDevice* p = device.getSubdevice(subIndex);
-        if (!p) {
+        if (p && p->iTorque) {
+            std::vector<int> joints((p->top - p->base) + 1);
+            std::iota(joints.begin(), joints.end(), p->base);
+
+            if (!p->iTorque->setRefTorques(joints.size(), joints.data(), &t[j_wrap])) {
+                return false;
+            }
+
+            j_wrap += joints.size();
+        } else {
             return false;
         }
-
-        if (p->iTorque) {
-            ret = ret && p->iTorque->setRefTorque(static_cast<int>(off + p->base), t[l]);
-        } else {
-            ret = false;
-        }
     }
-    return ret;
+
+    return true;
 }
 
 bool ControlBoardWrapperTorqueControl::setRefTorque(int j, double t)
@@ -202,28 +196,17 @@ bool ControlBoardWrapperTorqueControl::getTorque(int j, double* t)
 
 bool ControlBoardWrapperTorqueControl::getTorques(double* t)
 {
-    auto* trqs = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iTorque) && (ret = p->iTorque->getTorques(trqs))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                t[juser] = trqs[jdevice];
-            }
-        } else {
-            printError("getTorques", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iTorque || !p->iTorque->getTorque(static_cast<int>(off + p->base), &t[l])) {
+            return false;
         }
     }
 
-    delete[] trqs;
-    return ret;
+    return true;
 }
 
 bool ControlBoardWrapperTorqueControl::getTorqueRange(int j, double* min, double* max)
@@ -251,29 +234,15 @@ bool ControlBoardWrapperTorqueControl::getTorqueRange(int j, double* min, double
 
 bool ControlBoardWrapperTorqueControl::getTorqueRanges(double* min, double* max)
 {
-    auto* t_min = new double[device.maxNumOfJointsInDevices];
-    auto* t_max = new double[device.maxNumOfJointsInDevices];
-    bool ret = true;
-    for (size_t d = 0; d < device.subdevices.size(); d++) {
-        SubDevice* p = device.getSubdevice(d);
-        if (!p) {
-            ret = false;
-            break;
-        }
+    for (size_t l = 0; l < controlledJoints; l++) {
+        int off = device.lut[l].offset;
+        size_t subIndex = device.lut[l].deviceEntry;
+        auto* p = device.getSubdevice(subIndex);
 
-        if ((p->iTorque) && (ret = p->iTorque->getTorqueRanges(t_min, t_max))) {
-            for (size_t juser = p->wbase, jdevice = p->base; juser <= p->wtop; juser++, jdevice++) {
-                min[juser] = t_min[jdevice];
-                max[juser] = t_max[jdevice];
-            }
-        } else {
-            printError("getTorqueRanges", p->id, ret);
-            ret = false;
-            break;
+        if (!p || !p->iTorque || !p->iTorque->getTorqueRange(static_cast<int>(off + p->base), &min[l], &max[l])) {
+            return false;
         }
     }
 
-    delete[] t_min;
-    delete[] t_max;
-    return ret;
+    return true;
 }
