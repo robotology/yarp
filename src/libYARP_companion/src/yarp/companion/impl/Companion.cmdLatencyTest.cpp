@@ -55,21 +55,21 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
 
     if (p.check("server"))
     {
-        double server_wait = p.find("server_wait").asDouble();
+        double server_wait = p.find("server_wait").asFloat64();
         size_t servercounter=0;
         while(1)
         {
             int returncode = server(server_wait, verbose);
-            if      (returncode == SERVER_END_TEST) { yCInfo(COMPANION, "Test %d complete", servercounter++);}
-            else if (returncode == SERVER_QUIT)     { yCInfo(COMPANION, "Test %d complete, quitting"); break;}
-            else if (returncode == SERVER_ERROR)    { yCError(COMPANION, "Test %d error"); }
+            if      (returncode == SERVER_END_TEST) { yCInfo(COMPANION, "Test %zu complete", servercounter++);}
+            else if (returncode == SERVER_QUIT)     { yCInfo(COMPANION, "Test %zu complete, quitting", servercounter++); break;}
+            else if (returncode == SERVER_ERROR)    { yCError(COMPANION, "Test %zu error", servercounter++); }
         }
     }
     else if (p.check("client"))
     {
         if (p.check("nframes") == false)
         {  yCError(COMPANION) << "Missing mandatory parameter nframes. See available options with yarp latency-test";  return -1; }
-        int frames = p.find("nframes").asInt();
+        int frames = p.find("nframes").asInt32();
 
         double client_wait = 0;
         if (p.check("client_wait")) client_wait = p.find("client_wait").asFloat64();
@@ -79,12 +79,19 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
 
         if (p.check("payload_size") && !p.check ("multitest"))
         {
-            int payload = p.find("payload_size").asInt();
+            int payload = p.find("payload_size").asInt32();
             return client(frames, payload, client_wait, logfilename, verbose);
         }
         else if (!p.check("payload_size") && p.check("multitest"))
         {
-            std::array<int,7> psizes {1e3,1e4,1e5,1e6,1e7,1e8,1e9};
+            std::array<int,6> psizes {
+                      1'000,
+                     10'000,
+                    100'000,
+                  1'000'000,
+                 10'000'000,
+                100'000'000
+            };
             for (size_t i = 0; i < psizes.size(); i++)
             {
                client(frames, psizes[i], client_wait, logfilename, verbose);
@@ -93,7 +100,8 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
         }
         else
         {
-            yCError(COMPANION) << "Syntax error. Choose either payload_size or multitest. See available options with yarp latency-test";  return -1;
+            yCError(COMPANION) << "Syntax error. Choose either payload_size or multitest. See available options with yarp latency-test";
+            return -1;
         }
 
     }
@@ -102,6 +110,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
         yCError(COMPANION) << "Missing option. Use --help";
         return -1;
     }
+    return -1;
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
@@ -123,15 +132,15 @@ server_return_code_t server(double server_wait, bool verbose)
     }
 
     //Creates a payload bottle, consisting of a string with the size requested by the client
-    int payload_reqsize = startbot.get(1).asInt();
+    int payload_reqsize = startbot.get(1).asInt32();
     char* buf = new char[payload_reqsize];
-    for (size_t elem = 0; elem < payload_reqsize; elem++)
+    for (int elem = 0; elem < payload_reqsize; elem++)
     {
         buf[elem] = 112;
     }
     Bottle payloadbottle;
     payloadbottle.addString(buf);
-    yCInfo(COMPANION,"Generated a string of %d bytes, as requested by the client (%d)", payloadbottle.get(0).asString().size(), payload_reqsize);
+    yCInfo(COMPANION,"Generated a string of %zu bytes, as requested by the client (%d)", payloadbottle.get(0).asString().size(), payload_reqsize);
 
     size_t serverframecounter=0;
     while(true)
@@ -145,15 +154,15 @@ server_return_code_t server(double server_wait, bool verbose)
         double tt1 = yarp::os::Time::now();
         b.append(payloadbottle);
         double tt2 = yarp::os::Time::now();
-        b.addDouble(tt2-tt1);
-        b.addInt(serverframecounter);
+        b.addFloat64(tt2-tt1);
+        b.addInt32(serverframecounter);
         port.write(b);
 
         //verbose prints
         if (verbose)
         {
             yCInfo(COMPANION, "This time was required to append the payload: %f\n", tt2 - tt1);
-            yCInfo(COMPANION, "Sending the frame number:%d\n", serverframecounter);
+            yCInfo(COMPANION, "Sending the frame number:%zu\n", serverframecounter);
         }
 
         //Give the CPU some idle time
@@ -196,7 +205,7 @@ client_return_code_t client(int nframes, int payload_size, double client_wait, s
     //Send to the server a command 'start', followed by the requested size of the payload (in bytes)"
     Bottle startbot;
     startbot.addString("start");
-    startbot.addDouble(payload_size);
+    startbot.addFloat64(payload_size);
     port.write(startbot);
 
     //Performs the test, by sending request to the server. The duration of the test depends on the number of requested frames.
@@ -209,8 +218,8 @@ client_return_code_t client(int nframes, int payload_size, double client_wait, s
         //1 clientframetime the current time
         Bottle datum;
         double clientframetime = Time::now();
-        datum.addInt(clientframecounter);
-        datum.addDouble(clientframetime);
+        datum.addInt32(clientframecounter);
+        datum.addFloat64(clientframetime);
         port.write(datum);
 
         //receives back from the server the frame just sent, with the additional stuff appended by the server.
@@ -221,10 +230,11 @@ client_return_code_t client(int nframes, int payload_size, double client_wait, s
         //3 the copytime computed by the server
         //4 the serverframecounter
         port.read(datum);
-        int recT =datum.get(0).asInt();
-        double time = datum.get(1).asDouble();
+        int recT =datum.get(0).asInt32();
+        YARP_UNUSED(recT);
+        double time = datum.get(1).asFloat64();
         std::string recstringpayload = datum.get(2).asString();
-        double copytime = datum.get(3).asDouble();
+        double copytime = datum.get(3).asFloat64();
         double finaltime=Time::now();
         double latency_ms = (finaltime - time) * 1000;
         latency_mean_accumulator += latency_ms;
@@ -234,7 +244,7 @@ client_return_code_t client(int nframes, int payload_size, double client_wait, s
         if (verbose)
         {
             //These prints are ok for debug, but they will slow down the tests.
-            yCInfo(COMPANION, "Received a payload of %d bytes", recstringpayload.size());
+            yCInfo(COMPANION, "Received a payload of %zu bytes", recstringpayload.size());
             yCInfo(COMPANION, "latency for frame %d is: %lf ms\n", clientframecounter, (finaltime -time)*1000);
         }
 
