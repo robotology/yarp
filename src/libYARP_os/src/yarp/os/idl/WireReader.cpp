@@ -197,6 +197,9 @@ bool WireReader::readI32(std::int32_t& x)
     case BOTTLE_TAG_INT32:
         x = reader.expectInt32();
         break;
+    case BOTTLE_TAG_VOCAB:
+        x = reader.expectInt32();
+        break;
     default:
         return false;
     }
