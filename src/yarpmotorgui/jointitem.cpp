@@ -182,7 +182,8 @@ JointItem::JointItem(int index,QWidget *parent) :
             "padding: 1px 18px 1px 3px;"
             "min-width: 6em;}"
             "QComboBox:editable {"
-            "background: white;}"
+            "background: white;"
+            "foreground: rgb(35, 38, 41);}"
             "QComboBox::down-arrow {"
             "image: url(:/images/downArrow.png);}";
 
@@ -205,8 +206,9 @@ JointItem::JointItem(int index,QWidget *parent) :
 
     installFilter();
 
-    ui->comboInteraction->setItemData(0,QColor(Qt::darkGray),Qt::BackgroundRole);
-    ui->comboInteraction->setItemData(1,QColor(0,80,255),Qt::BackgroundRole);
+    ui->comboInteraction->setItemData(0,QColor(Qt::darkGray), Qt::BackgroundRole);
+    ui->comboInteraction->setItemData(1,QColor(0,80,255), Qt::BackgroundRole);
+    ui->comboInteraction->setItemData(1,QColor(35, 38, 41), Qt::ForegroundRole);
 
     ui->comboMode->setItemData( IDLE,           idleColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( POSITION,       positionColor, Qt::BackgroundRole );
@@ -217,6 +219,15 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( PWM,            pwmColor, Qt::BackgroundRole );
     ui->comboMode->setItemData( CURRENT,        currentColor, Qt::BackgroundRole);
 
+    ui->comboMode->setItemData( IDLE,           QColor(35, 38, 41), Qt::ForegroundRole );
+    ui->comboMode->setItemData( POSITION,       QColor(35, 38, 41), Qt::ForegroundRole );
+    ui->comboMode->setItemData( POSITION_DIR,   QColor(35, 38, 41), Qt::ForegroundRole );
+    ui->comboMode->setItemData( MIXED,          QColor(35, 38, 41), Qt::ForegroundRole );
+    ui->comboMode->setItemData( VELOCITY,       QColor(35, 38, 41), Qt::ForegroundRole );
+    ui->comboMode->setItemData( TORQUE,         QColor(35, 38, 41), Qt::ForegroundRole );
+    ui->comboMode->setItemData( PWM,            QColor(35, 38, 41), Qt::ForegroundRole );
+    ui->comboMode->setItemData( CURRENT,        QColor(35, 38, 41), Qt::ForegroundRole );
+
     ui->comboMode->setItemData( IDLE,           Idle, Qt::UserRole);
     ui->comboMode->setItemData( POSITION,       Position, Qt::UserRole );
     ui->comboMode->setItemData( POSITION_DIR,   PositionDirect, Qt::UserRole );
@@ -226,17 +237,7 @@ JointItem::JointItem(int index,QWidget *parent) :
     ui->comboMode->setItemData( PWM,            Pwm, Qt::UserRole);
     ui->comboMode->setItemData( CURRENT,        Current, Qt::UserRole);
 
-  //  QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(149,221,186);} %2").arg(comboStyle1).arg(comboStyle2);
- //   ui->comboMode->setStyleSheet(styleSheet);
-
     setJointInternalState(IDLE);
-
-    QVariant variant = ui->comboInteraction->itemData(0,Qt::BackgroundRole);
-//    QColor c = variant.value<QColor>();
-
-  //  styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
-//    ui->comboInteraction->setStyleSheet(styleSheet);
-
 
     ui->stackedWidget->widget(VELOCITY)->setEnabled(false);
     velocityTimer.setInterval(50);
@@ -1362,21 +1363,21 @@ void JointItem::updateMotionDone(bool done)
     int index = ui->stackedWidget->currentIndex();
     if (index == POSITION) {
         if(!done){
-            ui->editPositionJointPos->setStyleSheet("background-color: rgb(255, 38, 41);");
+            ui->editPositionJointPos->setStyleSheet("background-color: rgb(255, 38, 41); color: rgb(35, 38, 41);");
         }else{
-            ui->editPositionJointPos->setStyleSheet("background-color: rgb(255, 255, 255);");
+            ui->editPositionJointPos->setStyleSheet("background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);");
         }
     } else if (index == POSITION_DIR) {
         if(!done){
-            ui->editPositionDirJointPos->setStyleSheet("background-color: rgb(255, 38, 41);");
+            ui->editPositionDirJointPos->setStyleSheet("background-color: rgb(255, 38, 41); color: rgb(35, 38, 41);");
         }else{
-            ui->editPositionDirJointPos->setStyleSheet("background-color: rgb(255, 255, 255);");
+            ui->editPositionDirJointPos->setStyleSheet("background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);");
         }
     } else if (index == MIXED) {
         if(!done){
-            ui->editMixedJointPos->setStyleSheet("background-color: rgb(255, 38, 41);");
+            ui->editMixedJointPos->setStyleSheet("background-color: rgb(255, 38, 41); color: rgb(35, 38, 41);");
         }else{
-            ui->editMixedJointPos->setStyleSheet("background-color: rgb(255, 255, 255);");
+            ui->editMixedJointPos->setStyleSheet("background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);");
         }
     }
 }
@@ -1539,12 +1540,12 @@ void JointItem::setRefTrajectorySpeed(double val)
 
         if (val < 0.001)
         {
-            ui->groupBox_12->setStyleSheet("background-color:orange;");
+            ui->groupBox_12->setStyleSheet("background-color:orange; color: rgb(35, 38, 41);");
             ui->groupBox_12->setTitle("Velocity is ZERO!");
         }
         else
         {
-            ui->groupBox_12->setStyleSheet("background-color:transparent;");
+            ui->groupBox_12->setStyleSheet("background-color:transparent; color: rgb(35, 38, 41);");
             ui->groupBox_12->setTitle("Velocity");
         }
     }
@@ -1769,14 +1770,6 @@ void JointItem::setJointInternalInteraction(int interaction)
     disconnect(ui->comboInteraction,SIGNAL(currentIndexChanged(int)),this,SLOT(onInteractionChanged(int)));
     ui->comboInteraction->setCurrentIndex(interaction);
     connect(ui->comboInteraction,SIGNAL(currentIndexChanged(int)),this,SLOT(onInteractionChanged(int)));
-
-    if(ui->stackedWidget->widget(interaction)){
-        QVariant variant = ui->comboInteraction->itemData(interaction,Qt::BackgroundRole);
-  //      QColor c = variant.value<QColor>();
-
-  //      QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
-  //      ui->comboInteraction->setStyleSheet(styleSheet);
-    }
 }
 
 void JointItem::setJointInternalState(int mode)
@@ -1819,12 +1812,7 @@ void JointItem::setJointInternalState(int mode)
             }
         }
 
-
-        //ui->stackedWidget->widget(mode)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-        setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-
-        QString styleSheet = QString("%1 QComboBox:!editable, QComboBox::drop-down:editable {background-color: rgb(%2,%3,%4);} %5").arg(comboStyle1).arg(c.red()).arg(c.green()).arg(c.blue()).arg(comboStyle2);
-  //      ui->comboMode->setStyleSheet(styleSheet);
+        setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3); color: rgb(35, 38, 41);").arg(c.red()).arg(c.green()).arg(c.blue()));
     }
 }
 
@@ -1866,8 +1854,7 @@ void JointItem::setJointState(JointState newState)
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3); color: rgb(35, 38, 41);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
@@ -1879,8 +1866,7 @@ void JointItem::setJointState(JointState newState)
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3); color: rgb(35, 38, 41);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
@@ -1910,8 +1896,7 @@ void JointItem::setJointState(JointState newState)
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3); color: rgb(35, 38, 41);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
@@ -1924,8 +1909,7 @@ void JointItem::setJointState(JointState newState)
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3); color: rgb(35, 38, 41);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
@@ -1937,8 +1921,7 @@ void JointItem::setJointState(JointState newState)
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = calibratingColor;
-            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3); color: rgb(35, 38, 41);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
@@ -1957,8 +1940,7 @@ void JointItem::setJointState(JointState newState)
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = hwFaultColor;
-            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3); color: rgb(35, 38, 41);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
@@ -1970,8 +1952,7 @@ void JointItem::setJointState(JointState newState)
         int index = ui->stackedWidget->currentIndex();
         if(ui->stackedWidget->widget(index)){
             QColor c = disconnectColor;
-            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
-            //ui->stackedWidget->widget(index)->setStyleSheet(QString("background-color: rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue()));
+            setStyleSheet(QString("font: 8pt; background-color: rgb(%1,%2,%3); color: rgb(35, 38, 41);").arg(c.red()).arg(c.green()).arg(c.blue()));
         }
         break;
     }
