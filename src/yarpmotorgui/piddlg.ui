@@ -133,6 +133,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -155,6 +164,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -183,6 +201,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -205,6 +232,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -233,6 +269,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -255,6 +300,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -283,6 +337,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -308,6 +371,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -330,6 +402,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -439,6 +520,15 @@
           </color>
          </brush>
         </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
         <property name="flags">
          <set>ItemIsEnabled</set>
         </property>
@@ -461,6 +551,15 @@
            <red>207</red>
            <green>207</green>
            <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
           </color>
          </brush>
         </property>
@@ -489,6 +588,15 @@
           </color>
          </brush>
         </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
         <property name="flags">
          <set>ItemIsEnabled</set>
         </property>
@@ -511,6 +619,15 @@
            <red>207</red>
            <green>207</green>
            <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
           </color>
          </brush>
         </property>
@@ -539,6 +656,15 @@
           </color>
          </brush>
         </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
         <property name="flags">
          <set>ItemIsEnabled</set>
         </property>
@@ -561,6 +687,15 @@
            <red>207</red>
            <green>207</green>
            <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
           </color>
          </brush>
         </property>
@@ -589,6 +724,15 @@
           </color>
          </brush>
         </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
         <property name="flags">
          <set>ItemIsEnabled</set>
         </property>
@@ -614,6 +758,15 @@
           </color>
          </brush>
         </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
         <property name="flags">
          <set>ItemIsEnabled</set>
         </property>
@@ -636,6 +789,15 @@
            <red>207</red>
            <green>207</green>
            <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
           </color>
          </brush>
         </property>
@@ -777,6 +939,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -799,6 +970,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -827,6 +1007,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -849,6 +1038,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -877,6 +1075,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -899,6 +1106,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -927,6 +1143,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -949,6 +1174,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -977,6 +1211,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -999,6 +1242,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -1027,6 +1279,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1049,6 +1310,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -1077,6 +1347,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1099,6 +1378,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -1197,6 +1485,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1214,6 +1511,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1228,6 +1534,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -1256,6 +1571,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1273,6 +1597,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1287,6 +1620,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -1315,6 +1657,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1332,6 +1683,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1346,6 +1706,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -1429,6 +1798,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1454,6 +1832,15 @@
             </color>
            </brush>
           </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
+            </color>
+           </brush>
+          </property>
           <property name="flags">
            <set>ItemIsEnabled</set>
           </property>
@@ -1468,6 +1855,15 @@
              <red>207</red>
              <green>207</green>
              <blue>207</blue>
+            </color>
+           </brush>
+          </property>
+          <property name="foreground">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>35</red>
+             <green>38</green>
+             <blue>41</blue>
             </color>
            </brush>
           </property>
@@ -1559,6 +1955,15 @@
           </color>
          </brush>
         </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
         <property name="flags">
          <set>ItemIsEnabled</set>
         </property>
@@ -1581,6 +1986,15 @@
            <red>207</red>
            <green>207</green>
            <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
           </color>
          </brush>
         </property>
@@ -1609,6 +2023,15 @@
           </color>
          </brush>
         </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
         <property name="flags">
          <set>ItemIsEnabled</set>
         </property>
@@ -1631,6 +2054,15 @@
            <red>207</red>
            <green>207</green>
            <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
           </color>
          </brush>
         </property>
@@ -1659,6 +2091,15 @@
           </color>
          </brush>
         </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
         <property name="flags">
          <set>ItemIsEnabled</set>
         </property>
@@ -1684,6 +2125,15 @@
           </color>
          </brush>
         </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
+          </color>
+         </brush>
+        </property>
         <property name="flags">
          <set>ItemIsEnabled</set>
         </property>
@@ -1706,6 +2156,15 @@
            <red>207</red>
            <green>207</green>
            <blue>207</blue>
+          </color>
+         </brush>
+        </property>
+        <property name="foreground">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>35</red>
+           <green>38</green>
+           <blue>41</blue>
           </color>
          </brush>
         </property>
