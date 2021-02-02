@@ -29,7 +29,7 @@ set(_inis AudioPlayerWrapper_fakeSpeaker.ini
           portaudio_basic.ini
           remote_grabber_basic.ini
           fakeFrameGrabber_basic.ini
-          fakeMotor_basic.ini
+          fakeMotionControl_basic.ini
           usbCamera.ini)
 
 if(YARP_ENABLE_BROKEN_TESTS)
