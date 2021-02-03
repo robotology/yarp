@@ -78,6 +78,9 @@ public:
     // Defined in Companion.cmdHelp.cpp
     int cmdHelp(int argc, char *argv[]);
 
+    // Defined in Companion.cmdLatencyTest.cpp
+    int cmdLatencyTest(int argc, char* argv[]);
+
     // Defined in Companion.cmdMerge.cpp
     int cmdMerge(int argc, char *argv[]);
 

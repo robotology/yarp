@@ -146,6 +146,7 @@ Companion::Companion() :
     add("env",             &Companion::cmdEnv,            "print the value of environment variables");
     add("exists",          &Companion::cmdExists,         "check if a port or connection is alive");
     add("help",            &Companion::cmdHelp,           "get this list");
+    add("latency-test",    &Companion::cmdLatencyTest,    "perform a latency test by exchanging data between a server and a client");
     add("merge",           &Companion::cmdMerge,          "concatenate input from several ports into a single unit");
     add("name",            &Companion::cmdName,           "send commands to the yarp name server");
     add("namespace",       &Companion::cmdNamespace,      "set or query the name of the yarp name server (default is /root)");
