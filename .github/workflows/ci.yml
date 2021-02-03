@@ -1314,14 +1314,16 @@ jobs:
     - name: Send the results to Codacy
       run: |
         cat /tmp/out2 | \
-        curl -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+        curl --silent --show-error --fail \
+            -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
             -H "Content-type: application/json" -d @- \
             "${CODACY_URL}/2.0/commit/${COMMIT}/issuesRemoteResults"
         echo
 
     - name: Signal that Codacy can use the sent results and start a new analysis
       run: |
-        curl -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+        curl --silent --show-error --fail \
+          -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
           -H "Content-type: application/json" \
           "${CODACY_URL}/2.0/commit/${COMMIT}/resultsFinal"
         echo
@@ -1404,8 +1406,6 @@ jobs:
           sudo apt-get autoclean -qq
 
     - name: Build
-      env:
-        CODACY_TOKEN: ${{ secrets.CODACY_TOKEN }}
       run: |
         export CLICOLOR_FORCE=1
         export YARP_COLORED_OUTPUT=1

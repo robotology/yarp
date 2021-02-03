@@ -61,7 +61,9 @@
            <string notr="true">QTreeWidget{
 	alternate-background-color: rgb(225, 224, 234);
 background-color: rgb(255, 255, 255);
-}</string>
+alternate-color: rgb(35, 38, 41);
+color: rgb(35, 38, 41);
+          }</string>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
@@ -116,6 +118,8 @@ background-color: rgb(255, 255, 255);
            <string notr="true">QTreeWidget{
 	alternate-background-color: rgb(225, 224, 234);
 background-color: rgb(255, 255, 255);
+alternate-color: rgb(35, 38, 41);
+color: rgb(35, 38, 41);
 }</string>
           </property>
           <attribute name="headerDefaultSectionSize">

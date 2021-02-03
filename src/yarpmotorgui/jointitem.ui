@@ -109,6 +109,7 @@
      border-radius: 4px;
      background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                        stop: 0 #f6f7fa, stop: 1 #dadbde);
+     color: rgb(35, 38, 41);
      min-width: 80px;
 	min-height:18px;
  }
@@ -116,11 +117,19 @@
  QPushButton:pressed {
      background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                        stop: 0 #dadbde, stop: 1 #f6f7fa);
+     color: rgb(35, 38, 41);
  }
 
  QPushButton:flat {
      border: none; /* no border for a flat push button */
  }
+
+ QPushButton:disabled {
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0 #dadbde, stop: 1 #f6f7fa);
+     color: rgb(169, 152, 163);
+ }
+
 
  QPushButton:default {
      border-color: navy; /* make the default button prominent */
@@ -461,7 +470,7 @@ QSlider::groove:horizontal:disabled {
              <item row="4" column="1">
               <widget class="QLineEdit" name="editIdleCurrent">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -491,7 +500,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -515,7 +524,7 @@ QSlider::groove:horizontal:disabled {
              <item row="3" column="1">
               <widget class="QLineEdit" name="editIdleMotorPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -545,7 +554,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -562,7 +571,7 @@ QSlider::groove:horizontal:disabled {
              <item row="0" column="1">
               <widget class="QLineEdit" name="editIdleJointPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -820,7 +829,7 @@ QSlider::groove:horizontal:disabled {
              <item row="5" column="1">
               <widget class="QLineEdit" name="editPositionCurrent">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -836,7 +845,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -880,7 +889,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -890,7 +899,7 @@ QSlider::groove:horizontal:disabled {
              <item row="4" column="1">
               <widget class="QLineEdit" name="editPositionMotorPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1018,7 +1027,7 @@ QSlider::groove:horizontal:disabled {
              <item row="0" column="1">
               <widget class="QLineEdit" name="editPositionDirJointPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1062,7 +1071,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1100,7 +1109,7 @@ QSlider::groove:horizontal:disabled {
              <item row="5" column="1">
               <widget class="QLineEdit" name="editPositionDirCurrent">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1116,7 +1125,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1133,7 +1142,7 @@ QSlider::groove:horizontal:disabled {
              <item row="4" column="1">
               <widget class="QLineEdit" name="editPositionDirMotorPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -1147,7 +1156,7 @@ QSlider::groove:horizontal:disabled {
              <item row="1" column="1">
               <widget class="QLineEdit" name="editPositionDirDuty">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -1374,7 +1383,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1408,7 +1417,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1439,7 +1448,7 @@ QSlider::groove:horizontal:disabled {
              <item row="4" column="1">
               <widget class="QLineEdit" name="editMixedCurrent">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1477,7 +1486,7 @@ QSlider::groove:horizontal:disabled {
              <item row="3" column="1">
               <widget class="QLineEdit" name="editMixedMotorPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -1589,7 +1598,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1612,7 +1621,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1636,7 +1645,7 @@ QSlider::groove:horizontal:disabled {
              <item row="4" column="1">
               <widget class="QLineEdit" name="editVelocityCurrent">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1653,7 +1662,7 @@ QSlider::groove:horizontal:disabled {
              <item row="0" column="1">
               <widget class="QLineEdit" name="editVelocityJointPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1677,7 +1686,7 @@ QSlider::groove:horizontal:disabled {
              <item row="3" column="1">
               <widget class="QLineEdit" name="editVelocityMotorPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -1818,7 +1827,7 @@ QSlider::groove:horizontal:disabled {
              <item row="2" column="1">
               <widget class="QLineEdit" name="editTorqueJointPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1828,7 +1837,7 @@ QSlider::groove:horizontal:disabled {
              <item row="6" column="1">
               <widget class="QLineEdit" name="editTorqueCurrent">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1851,7 +1860,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1867,7 +1876,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -1905,7 +1914,7 @@ QSlider::groove:horizontal:disabled {
              <item row="5" column="1">
               <widget class="QLineEdit" name="editTorqueMotorPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -1919,7 +1928,7 @@ QSlider::groove:horizontal:disabled {
              <item row="1" column="1">
               <widget class="QLineEdit" name="editTorqueDuty">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -2034,7 +2043,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -2057,7 +2066,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -2095,7 +2104,7 @@ QSlider::groove:horizontal:disabled {
              <item row="5" column="1">
               <widget class="QLineEdit" name="editPWMCurrent">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -2112,7 +2121,7 @@ QSlider::groove:horizontal:disabled {
              <item row="1" column="1">
               <widget class="QLineEdit" name="editPWMJointPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -2129,7 +2138,7 @@ QSlider::groove:horizontal:disabled {
              <item row="0" column="1">
               <widget class="QLineEdit" name="editPWMDuty">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -2164,7 +2173,7 @@ QSlider::groove:horizontal:disabled {
              <item row="4" column="1">
               <widget class="QLineEdit" name="editPWMMotorPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -2279,7 +2288,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -2302,7 +2311,7 @@ QSlider::groove:horizontal:disabled {
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -2312,7 +2321,7 @@ QSlider::groove:horizontal:disabled {
              <item row="0" column="1">
               <widget class="QLineEdit" name="editCurrentCurrent">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -2333,7 +2342,7 @@ QSlider::groove:horizontal:disabled {
              <item row="2" column="1">
               <widget class="QLineEdit" name="editCurrentJointPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
                <property name="readOnly">
                 <bool>true</bool>
@@ -2364,7 +2373,7 @@ QSlider::groove:horizontal:disabled {
              <item row="5" column="1">
               <widget class="QLineEdit" name="editCurrentMotorPos">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>
@@ -2399,7 +2408,7 @@ QSlider::groove:horizontal:disabled {
              <item row="1" column="1">
               <widget class="QLineEdit" name="editCurrentDuty">
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(255, 255, 255);</string>
+                <string notr="true">background-color: rgb(255, 255, 255); color: rgb(35, 38, 41);</string>
                </property>
               </widget>
              </item>

@@ -1342,6 +1342,8 @@ void MainWindow::updateModesTree(PartItem *part)
             QColor c = getColorMode(modes.at(i));
             jointNode->setBackground(0,c);
             jointNode->setBackground(1,c);
+            jointNode->setForeground(0,QColor(Qt::black));
+            jointNode->setForeground(1,QColor(Qt::black));
 
 
             if(c == hwFaultColor){
@@ -1381,6 +1383,8 @@ void MainWindow::updateModesTree(PartItem *part)
                 if(item->background(0) != c){
                     item->setBackground(0,c);
                     item->setBackground(1,c);
+                    item->setForeground(0,QColor(Qt::black));
+                    item->setForeground(1,QColor(Qt::black));
                 }
             }
         }
