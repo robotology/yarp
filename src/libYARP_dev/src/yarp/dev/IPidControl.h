@@ -12,8 +12,8 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/GenericVocabs.h>
+#include <yarp/dev/Pid.h>
 #include <yarp/dev/PidEnums.h>
-#include <yarp/dev/ControlBoardPid.h>
 
 namespace yarp
 {

@@ -20,7 +20,7 @@
 #include <yarp/dev/IAmplifierControl.h>
 #include <yarp/dev/IControlDebug.h>
 #include <yarp/dev/IControlLimits.h>
-#include <yarp/dev/ControlBoardPid.h>
+#include <yarp/dev/Pid.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/DriverLinkCreator.h>
 #include <yarp/dev/Drivers.h>

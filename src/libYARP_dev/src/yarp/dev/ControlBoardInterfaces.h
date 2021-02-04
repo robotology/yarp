@@ -11,7 +11,7 @@
 #define YARP_DEV_CONTROLBOARDINTERFACES_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/ControlBoardPid.h>
+#include <yarp/dev/Pid.h>
 
 #include <yarp/dev/ICalibrator.h>
 #include <yarp/dev/IRemoteCalibrator.h>

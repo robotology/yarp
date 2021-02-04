@@ -24,7 +24,6 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/ControlBoardHelpers.h
                   yarp/dev/ControlBoardInterfaces.h
                   yarp/dev/ControlBoardInterfacesImpl.h
-                  yarp/dev/ControlBoardPid.h
                   yarp/dev/ControlBoardVocabs.h
                   yarp/dev/DeviceDriver.h
                   yarp/dev/DriverLinkCreator.h
@@ -110,6 +109,7 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/LaserMeasurementData.h
                   yarp/dev/Lidar2DDeviceBase.h
                   yarp/dev/MultipleAnalogSensorsInterfaces.h
+                  yarp/dev/Pid.h
                   yarp/dev/PidEnums.h
                   yarp/dev/PolyDriver.h
                   yarp/dev/PolyDriverDescriptor.h
@@ -136,7 +136,8 @@ if(NOT YARP_NO_DEPRECATED)
                             yarp/dev/GenericSensorInterfaces.h # DEPRECATED Since YARP 3.3.0
                             yarp/dev/PreciselyTimed.h          # DEPRECATED Since YARP 3.3.0
                             yarp/dev/SerialInterfaces.h        # DEPRECATED Since YARP 3.3.0
-                            yarp/dev/Wrapper.h)                # DEPRECATED Since YARP 3.3.0
+                            yarp/dev/Wrapper.h                 # DEPRECATED Since YARP 3.3.0
+                            yarp/dev/ControlBoardPid.h)        # DEPRECATED Since YARP 3.5.0
 endif()
 
 set(YARP_dev_IMPL_HDRS yarp/dev/impl/FixedSizeBuffersManager.h

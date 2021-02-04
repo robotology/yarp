@@ -9,7 +9,7 @@
 #ifndef YARP_DEV_CONTROLBOARDHELPER_H
 #define YARP_DEV_CONTROLBOARDHELPER_H
 
-#include <yarp/dev/ControlBoardPid.h>
+#include <yarp/dev/Pid.h>
 #include <yarp/dev/PidEnums.h>
 #include <yarp/os/Log.h>
 
