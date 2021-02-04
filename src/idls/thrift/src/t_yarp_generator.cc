@@ -984,6 +984,12 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
         throw "CANNOT GENERATE SERIALIZE CODE FOR void TYPE: " + name;
     }
 
+    // Force nesting for fields annotated as "yarp.nested"
+    auto it = tfield->annotations_.find("yarp.nested");
+    if (it != tfield->annotations_.end() && it->second == "true") {
+        force_nesting = true;
+    }
+
     if (type->is_struct() || type->is_xception()) {
         f_cpp_ << indent_cpp() << "if (!writer.";
         generate_serialize_struct(f_cpp_,
@@ -1168,6 +1174,12 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
 
     if (type->is_void()) {
         throw "CANNOT GENERATE DESERIALIZE CODE FOR void TYPE: " + prefix + tfield->get_name();
+    }
+
+    // Force nesting for fields annotated as "yarp.nested"
+    auto it = tfield->annotations_.find("yarp.nested");
+    if (it != tfield->annotations_.end() && it->second == "true") {
+        force_nested = true;
     }
 
     std::string name = prefix + tfield->get_name() + suffix;
@@ -1585,7 +1597,14 @@ int t_yarp_generator::flat_element_count(t_struct* tstruct)
 {
     int ct = 0;
     for (const auto& member : tstruct->get_members()) {
-        ct += flat_element_count(member->get_type());
+        // If field is annotated as "yarp.nested", increment by one (it will be
+        // serialized as a list), otherwise increment by the number of members).
+        auto it = member->annotations_.find("yarp.nested");
+        if (it != member->annotations_.end() && it->second == "true") {
+            ++ct;
+        } else {
+            ct += flat_element_count(member->get_type());
+        }
     }
     return ct;
 }
@@ -1594,7 +1613,14 @@ int t_yarp_generator::flat_element_count(t_function* fn)
 {
     int ct = 0;
     for (const auto& member : fn->get_arglist()->get_members()) {
-        ct += flat_element_count(member->get_type());
+        // If field is annotated as "yarp.nested", increment by one (it will be
+        // serialized as a list), otherwise increment by the number of members).
+        auto it = member->annotations_.find("yarp.nested");
+        if (it != member->annotations_.end() && it->second == "true") {
+            ++ct;
+        } else {
+            ct += flat_element_count(member->get_type());
+        }
     }
     return ct;
 }
