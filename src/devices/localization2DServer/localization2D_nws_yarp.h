@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,8 +34,6 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/OdometryData.h>
-#include <yarp/rosmsg/nav_msgs/Odometry.h>
-#include <yarp/rosmsg/tf2_msgs/TFMessage.h>
 #include <math.h>
 
  /**
@@ -72,20 +70,22 @@ protected:
     std::string                               m_odometryPortName;
     std::string                               m_robot_frame;
     std::string                               m_fixed_frame;
+    bool                                      m_enable_publish_odometry=true;
+    bool                                      m_enable_publish_location=true;
 
     //drivers and interfaces
     yarp::dev::PolyDriver                   pLoc;
-    yarp::dev::Nav2D::ILocalization2D*      iLoc;
+    yarp::dev::Nav2D::ILocalization2D*      iLoc = nullptr;
 
     double                                  m_stats_time_last;
     double                                  m_period;
     yarp::os::Stamp                         m_loc_stamp;
     yarp::os::Stamp                         m_odom_stamp;
-    bool                                    m_getdata_using_periodic_thread;
+    bool                                    m_getdata_using_periodic_thread = true;
 
     yarp::dev::OdometryData                     m_current_odometry;
     yarp::dev::Nav2D::Map2DLocation             m_current_position;
-    yarp::dev::Nav2D::LocalizationStatusEnum    m_current_status;
+    yarp::dev::Nav2D::LocalizationStatusEnum    m_current_status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_not_yet_localized;
 
 private:
     void publish_2DLocation_on_yarp_port();

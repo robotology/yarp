@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IFrameTransform.h>
 #include <yarp/math/Math.h>
-#include "Localization2D_nws_ros.h"
+#include "localization2D_nws_ros.h"
 
 #include <cmath>
 
@@ -52,14 +52,10 @@ YARP_LOG_COMPONENT(LOCALIZATION2D_NWS_ROS, "yarp.device.localization2D_nws_ros")
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-Localization2D_nws_ros::Localization2D_nws_ros() : PeriodicThread(DEFAULT_THREAD_PERIOD)
+Localization2D_nws_ros::Localization2D_nws_ros() : PeriodicThread(DEFAULT_THREAD_PERIOD),
+                                                   m_period(DEFAULT_THREAD_PERIOD)
 {
-    m_ros_node = nullptr;
-    m_current_status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_not_yet_localized;
-    m_period = DEFAULT_THREAD_PERIOD;
     m_stats_time_last = yarp::os::Time::now();
-    iLoc = nullptr;
-    m_getdata_using_periodic_thread = true;
 }
 
 bool Localization2D_nws_ros::attachAll(const PolyDriverList &device2attach)
@@ -135,21 +131,6 @@ bool Localization2D_nws_ros::open(Searchable& config)
         m_period = general_group.find("period").asFloat64();
         yCInfo(LOCALIZATION2D_NWS_ROS) << "Period requested: " << m_period;
     }
-
-    if (!general_group.check("retrieve_position_periodically"))
-    {
-        yCInfo(LOCALIZATION2D_NWS_ROS) << "Missing 'retrieve_position_periodically' parameter. Using default value: true. Period:" << m_period ;
-        m_getdata_using_periodic_thread = true;
-    }
-    else
-    {
-        m_getdata_using_periodic_thread = general_group.find("retrieve_position_periodically").asBool();
-        if (m_getdata_using_periodic_thread)
-            { yCInfo(LOCALIZATION2D_NWS_ROS) << "retrieve_position_periodically requested, Period:" << m_period; }
-        else
-            { yCInfo(LOCALIZATION2D_NWS_ROS) << "retrieve_position_periodically NOT requested. Localization data obtained asynchronously."; }
-    }
-
 
     m_local_name = "/localizationServer";
     if (!general_group.check("name"))
@@ -308,91 +289,14 @@ bool Localization2D_nws_ros::read(yarp::os::ConnectionReader& connection)
 
     reply.clear();
 
-    if (command.get(0).isVocab())
-    {
-        if (command.get(0).asVocab() == VOCAB_INAVIGATION && command.get(1).isVocab())
-        {
-            int request = command.get(1).asVocab();
-            if (request == VOCAB_NAV_SET_INITIAL_POS)
-            {
-                Map2DLocation init_loc;
-                init_loc.map_id = command.get(2).asString();
-                init_loc.x = command.get(3).asFloat64();
-                init_loc.y = command.get(4).asFloat64();
-                init_loc.theta = command.get(5).asFloat64();
-                iLoc->setInitialPose(init_loc);
-                reply.addVocab(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_SET_INITIAL_POSCOV)
-            {
-                Map2DLocation init_loc;
-                yarp::sig::Matrix cov(3,3);
-                init_loc.map_id = command.get(2).asString();
-                init_loc.x = command.get(3).asFloat64();
-                init_loc.y = command.get(4).asFloat64();
-                init_loc.theta = command.get(5).asFloat64();
-                Bottle* mc = command.get(6).asList();
-                if (mc!=nullptr && mc->size() == 9)
-                {
-                    for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = mc->get(i * 3 + j).asFloat64(); } }
-                    bool ret = iLoc->setInitialPose(init_loc, cov);
-                    if (ret) { reply.addVocab(VOCAB_OK); }
-                    else     { reply.addVocab(VOCAB_ERR); }
-                }
-                else
-                {
-                    reply.addVocab(VOCAB_ERR);
-                }
-            }
-            else if (request == VOCAB_NAV_LOCALIZATION_START)
-            {
-                iLoc->startLocalizationService();
-                reply.addVocab(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_LOCALIZATION_STOP)
-            {
-                iLoc->stopLocalizationService();
-                reply.addVocab(VOCAB_OK);
-            }
-            else
-            {
-                reply.addVocab(VOCAB_ERR);
-            }
-        }
-        else
-        {
-            yCError(LOCALIZATION2D_NWS_ROS) << "Invalid vocab received";
-            reply.addVocab(VOCAB_ERR);
-        }
-    }
-    else if (command.get(0).isString() && command.get(0).asString() == "help")
+    if (command.get(0).isString() && command.get(0).asString() == "help")
     {
         reply.addVocab(Vocab::encode("many"));
-        reply.addString("Available commands are:");
-        reply.addString("getLoc");
-        reply.addString("initLoc <map_name> <x> <y> <angle in degrees>");
-    }
-    else if (command.get(0).isString() && command.get(0).asString() == "getLoc")
-    {
-        Map2DLocation curr_loc;
-        iLoc->getCurrentPosition(curr_loc);
-        std::string s = std::string("Current Location is: ") + curr_loc.toString();
-        reply.addString(s);
-    }
-    else if (command.get(0).isString() && command.get(0).asString() == "initLoc")
-    {
-        Map2DLocation init_loc;
-        init_loc.map_id = command.get(1).asString();
-        init_loc.x = command.get(2).asFloat64();
-        init_loc.y = command.get(3).asFloat64();
-        init_loc.theta = command.get(4).asFloat64();
-        iLoc->setInitialPose(init_loc);
-        std::string s = std::string("Localization initialized to: ") + init_loc.toString();
-        reply.addString(s);
+        reply.addString("No commands currently available:");
     }
     else
     {
-        yCError(LOCALIZATION2D_NWS_ROS) << "Invalid command type";
+        yCError(LOCALIZATION2D_NWS_ROS) << "Invalid command. Try `help`";
         reply.addVocab(VOCAB_ERR);
     }
 
@@ -414,46 +318,40 @@ void Localization2D_nws_ros::run()
         m_stats_time_last = yarp::os::Time::now();
     }
 
-    if (m_getdata_using_periodic_thread)
+    bool ret = iLoc->getLocalizationStatus(m_current_status);
+    if (ret == false)
     {
-        bool ret = iLoc->getLocalizationStatus(m_current_status);
-        if (ret == false)
+        yCError(LOCALIZATION2D_NWS_ROS) << "getLocalizationStatus() failed";
+    }
+
+    if (m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
+    {
+        bool ret2 = iLoc->getCurrentPosition(m_current_position);
+        if (ret2 == false)
         {
-            yCError(LOCALIZATION2D_NWS_ROS) << "getLocalizationStatus() failed";
-        }
-
-        if (m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
-        {
-            //update the stamp
-
-
-            bool ret2 = iLoc->getCurrentPosition(m_current_position);
-            if (ret2 == false)
-            {
-                yCError(LOCALIZATION2D_NWS_ROS) << "getCurrentPosition() failed";
-            }
-            else
-            {
-                m_loc_stamp.update();
-            }
-            bool ret3 = iLoc->getEstimatedOdometry(m_current_odometry);
-            if (ret3 == false)
-            {
-                //yCError(LOCALIZATION2D_NWS_ROS) << "getEstimatedOdometry() failed";
-            }
-            else
-            {
-                m_odom_stamp.update();
-            }
+            yCError(LOCALIZATION2D_NWS_ROS) << "getCurrentPosition() failed";
         }
         else
         {
-            yCWarning(LOCALIZATION2D_NWS_ROS, "The system is not properly localized!");
+            m_loc_stamp.update();
+        }
+        bool ret3 = iLoc->getEstimatedOdometry(m_current_odometry);
+        if (ret3 == false)
+        {
+            //yCError(LOCALIZATION2D_NWS_ROS) << "getEstimatedOdometry() failed";
+        }
+        else
+        {
+            m_odom_stamp.update();
         }
     }
+    else
+    {
+        yCWarning(LOCALIZATION2D_NWS_ROS, "The system is not properly localized!");
+    }
 
-    if (1) publish_odometry_on_ROS_topic();
-    if (1) publish_odometry_on_TF_topic();
+    if (m_enable_publish_odometry_topic) publish_odometry_on_ROS_topic();
+    if (m_enable_publish_odometry_tf)    publish_odometry_on_TF_topic();
 
 }
 

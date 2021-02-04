@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,7 +50,6 @@
  * | Parameter name | SubParameter   | Type    | Units          | Default Value       | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
  * | GENERAL        |  period        | double  | s              | 0.01                | No           | The period of the working thread                                  |       |
- * | GENERAL        |  retrieve_position_periodically     | bool  | -  | true         | No           | If true, the subdevice is asked periodically to retrieve the current location. Otherwise the current location is obtained asynchronously when a getCurrentPosition() command is issued.     | -     |
  * | GENERAL        |  name          | string  |  -             | /localizationServer | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /localizationServer/rpc and /localizationServer/streaming:o     |
  * | subdevice      |  -             | string  |  -             |  -                  | Yes          | The name of the of Localization device to be used                 | -     |
  */
@@ -68,27 +67,28 @@ protected:
     std::string                               m_rpcPortName;
     std::string                               m_robot_frame;
     std::string                               m_fixed_frame;
+    bool                                      m_enable_publish_odometry_topic = true;
+    bool                                      m_enable_publish_odometry_tf = true;
 
     //ROS
     std::string                                           m_child_frame_id;
     std::string                                           m_parent_frame_id;
-    yarp::os::Node*                                       m_ros_node;
+    yarp::os::Node*                                       m_ros_node = nullptr;
     yarp::os::Publisher<yarp::rosmsg::nav_msgs::Odometry> m_odometry_publisher;
     yarp::os::Publisher<yarp::rosmsg::tf2_msgs::TFMessage>  m_tf_publisher;
 
     //drivers and interfaces
     yarp::dev::PolyDriver                   pLoc;
-    yarp::dev::Nav2D::ILocalization2D*      iLoc;
+    yarp::dev::Nav2D::ILocalization2D*      iLoc = nullptr;
 
     double                                  m_stats_time_last;
     double                                  m_period;
     yarp::os::Stamp                         m_loc_stamp;
     yarp::os::Stamp                         m_odom_stamp;
-    bool                                    m_getdata_using_periodic_thread;
 
     yarp::dev::OdometryData                     m_current_odometry;
     yarp::dev::Nav2D::Map2DLocation             m_current_position;
-    yarp::dev::Nav2D::LocalizationStatusEnum    m_current_status;
+    yarp::dev::Nav2D::LocalizationStatusEnum    m_current_status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_not_yet_localized;
 
 private:
     void publish_odometry_on_ROS_topic();

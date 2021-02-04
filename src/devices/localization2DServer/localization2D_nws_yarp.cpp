@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IFrameTransform.h>
 #include <yarp/math/Math.h>
-#include "Localization2D_nws_yarp.h"
+#include "localization2D_nws_yarp.h"
 
 #include <cmath>
 
@@ -46,19 +46,17 @@ using namespace std;
 #define M_PI 3.14159265358979323846
 #endif
 
-namespace {
-YARP_LOG_COMPONENT(LOCALIZATION2D_NWS_YARP, "yarp.device.localization2D_nws_yarp")
+namespace
+{
+    YARP_LOG_COMPONENT(LOCALIZATION2D_NWS_YARP, "yarp.device.localization2D_nws_yarp")
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-Localization2D_nws_yarp::Localization2D_nws_yarp() : PeriodicThread(DEFAULT_THREAD_PERIOD)
+Localization2D_nws_yarp::Localization2D_nws_yarp() : PeriodicThread(DEFAULT_THREAD_PERIOD),
+                                                     m_period(DEFAULT_THREAD_PERIOD)
 {
-    m_current_status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_not_yet_localized;
-    m_period = DEFAULT_THREAD_PERIOD;
     m_stats_time_last = yarp::os::Time::now();
-    iLoc = nullptr;
-    m_getdata_using_periodic_thread = true;
 }
 
 bool Localization2D_nws_yarp::attachAll(const PolyDriverList &device2attach)
@@ -437,9 +435,6 @@ void Localization2D_nws_yarp::run()
 
         if (m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
         {
-            //update the stamp
-
-
             bool ret2 = iLoc->getCurrentPosition(m_current_position);
             if (ret2 == false)
             {
@@ -465,9 +460,8 @@ void Localization2D_nws_yarp::run()
         }
     }
 
-    if (1) publish_odometry_on_yarp_port();
-    if (1) publish_2DLocation_on_yarp_port();
-
+    if (m_enable_publish_odometry) publish_odometry_on_yarp_port();
+    if (m_enable_publish_location) publish_2DLocation_on_yarp_port();
 }
 
 void Localization2D_nws_yarp::publish_odometry_on_yarp_port()
