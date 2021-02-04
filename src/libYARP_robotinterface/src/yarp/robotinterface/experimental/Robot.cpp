@@ -318,14 +318,13 @@ bool yarp::robotinterface::experimental::Robot::Private::attach(const yarp::robo
 
     yarp::dev::PolyDriverList drivers;
 
-    if (yarp::robotinterface::experimental::hasParam(params, "network")) {
-        std::string targetNetwork = yarp::robotinterface::experimental::findParam(params, "network");
-
-        if (!yarp::robotinterface::experimental::hasParam(params, "device")) {
-            yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << R"(" requires "device" parameter)";
-            return false;
-        }
+    if (yarp::robotinterface::experimental::hasParam(params, "device")) {
         std::string targetDeviceName = yarp::robotinterface::experimental::findParam(params, "device");
+
+        std::string targetNetwork = "...";
+        if (yarp::robotinterface::experimental::hasParam(params, "network")) {
+            targetNetwork = yarp::robotinterface::experimental::findParam(params, "network");
+        }
 
         if (!hasDeviceIncludingExternal(targetDeviceName)) {
             yError() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
