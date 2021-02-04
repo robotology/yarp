@@ -147,11 +147,9 @@ bool Localization2D_nws_yarp::open(Searchable& config)
             { yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically NOT requested. Localization data obtained asynchronously."; }
     }
 
-
-    m_local_name = "/localizationServer";
     if (!general_group.check("name"))
     {
-        yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'name' parameter. Using default value: /localizationServer";
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'name' parameter. Using default value:" << m_local_name;
     }
     else
     {

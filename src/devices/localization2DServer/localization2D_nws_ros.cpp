@@ -132,10 +132,9 @@ bool Localization2D_nws_ros::open(Searchable& config)
         yCInfo(LOCALIZATION2D_NWS_ROS) << "Period requested: " << m_period;
     }
 
-    m_local_name = "/localizationServer";
     if (!general_group.check("name"))
     {
-        yCInfo(LOCALIZATION2D_NWS_ROS) << "Missing 'name' parameter. Using default value: /localizationServer";
+        yCInfo(LOCALIZATION2D_NWS_ROS) << "Missing 'name' parameter. Using default value: " << m_local_name;
     }
     else
     {
@@ -189,49 +188,46 @@ bool Localization2D_nws_ros::open(Searchable& config)
 
 bool Localization2D_nws_ros::initialize_ROS(yarp::os::Searchable& params)
 {
+    m_ros_node_name = m_local_name + "_ROSnode";
+    m_odom_topic_name = m_local_name + "/odom";
+
     if (params.check("ROS"))
     {
         Bottle& ros_group = params.findGroup("ROS");
-        if (!ros_group.check("parent_frame_id"))
-        {
-            yCError(LOCALIZATION2D_NWS_ROS) << "Missing 'parent_frame_id' parameter";
-            //return false;
-        }
-        else
+        if (ros_group.check("parent_frame_id"))
         {
             m_parent_frame_id = ros_group.find("parent_frame_id").asString();
         }
-        if (!ros_group.check("child_frame_id"))
-        {
-            yCError(LOCALIZATION2D_NWS_ROS) << "Missing 'child_frame_id' parameter";
-            //return false;
-        }
-        else
+
+        if (ros_group.check("child_frame_id"))
         {
             m_child_frame_id = ros_group.find("child_frame_id").asString();
         }
 
-    }
-    else
-    {
-        yCInfo(LOCALIZATION2D_NWS_ROS) << "ROS initialization not requested";
-        return true;
+        if (ros_group.check("odometry_topic"))
+        {
+            m_odom_topic_name = ros_group.find("odometry_topic").asString();
+        }
+
+        if (ros_group.check("node_name"))
+        {
+            m_ros_node_name = ros_group.find("node_name").asString();
+        }
     }
 
     if (m_ros_node == nullptr)
     {
         bool b= false;
-        m_ros_node = new yarp::os::Node(m_local_name+"_ROSnode");
+        m_ros_node = new yarp::os::Node(m_ros_node_name);
         if (m_ros_node == nullptr)
         {
-            yCError(LOCALIZATION2D_NWS_ROS) << "Opening " << m_local_name << " Node, check your yarp-ROS network configuration";
+            yCError(LOCALIZATION2D_NWS_ROS) << "Opening " << m_ros_node_name << " Node, check your yarp-ROS network configuration";
         }
 
-        string ros_odom_topic = m_local_name + string("/odom");
-        b = m_odometry_publisher.topic(ros_odom_topic);
+        b = m_odometry_publisher.topic(m_odom_topic_name);
         if (!b)
         {
-            yCError(LOCALIZATION2D_NWS_ROS) << "Unable to publish data on" << ros_odom_topic << "topic";
+            yCError(LOCALIZATION2D_NWS_ROS) << "Unable to publish data on" << m_odom_topic_name << "topic";
         }
         b = m_tf_publisher.topic("/tf");
         if (!b)

@@ -47,11 +47,15 @@
  *
  *
  *  Parameters required by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value       | Required     | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:-------------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | GENERAL        |  period        | double  | s              | 0.01                | No           | The period of the working thread                                  |       |
- * | GENERAL        |  name          | string  |  -             | /localizationServer | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /localizationServer/rpc and /localizationServer/streaming:o     |
- * | subdevice      |  -             | string  |  -             |  -                  | Yes          | The name of the of Localization device to be used                 | -     |
+ * | Parameter name   | SubParameter     | Type    | Units          | Default Value            | Required     | Description                                                       | Notes |
+ * |:----------------:|:----------------:|:-------:|:--------------:|:------------------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+ * | GENERAL          |  period          | double  | s              | 0.01                     | No           | The period of the working thread                                  |       |
+ * | GENERAL          |  name            | string  |  -             | /localization2D_nws_ros  | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are: /xxx/rpc |
+ * | subdevice        |  -               | string  |  -             |  -                       | Yes          | The name of the of Localization device to be used                 | -     |
+ * | ROS              | parent_frame_id  | string  |  -             | odom                     | No           | The name of the of the parent frame published in the /tf topic    | -     |
+ * | ROS              | child_frame_id   | string  |  -             | base_link                | No           | The name of the of the child frame published in the /tf topic     | -     |
+ * | ROS              | odometry_topic   | string  |  -             | GENERAL::name+"/odom"    | No           | The name of the of the odometry topic                             | -     |
+ * | ROS              | node_name        | string  |  -             | GENERAL::name+"_ROSnode" | No           | The name of the of the ROS node                                   | -     |
  */
 class Localization2D_nws_ros :
         public yarp::dev::DeviceDriver,
@@ -62,7 +66,7 @@ class Localization2D_nws_ros :
 protected:
 
     //yarp
-    std::string                               m_local_name;
+    std::string                               m_local_name = "/localization2D_nws_ros";
     yarp::os::Port                            m_rpcPort;
     std::string                               m_rpcPortName;
     std::string                               m_robot_frame;
@@ -71,9 +75,11 @@ protected:
     bool                                      m_enable_publish_odometry_tf = true;
 
     //ROS
-    std::string                                           m_child_frame_id;
-    std::string                                           m_parent_frame_id;
+    std::string                                           m_child_frame_id = "base_link";
+    std::string                                           m_parent_frame_id = "odom";
+    std::string                                           m_ros_node_name;
     yarp::os::Node*                                       m_ros_node = nullptr;
+    std::string                                           m_odom_topic_name;
     yarp::os::Publisher<yarp::rosmsg::nav_msgs::Odometry> m_odometry_publisher;
     yarp::os::Publisher<yarp::rosmsg::tf2_msgs::TFMessage>  m_tf_publisher;
 
