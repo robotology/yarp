@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperControlCalibration.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 using yarp::dev::CalibrationParameters;
 
@@ -18,7 +18,7 @@ bool ControlBoardWrapperControlCalibration::calibrateAxisWithParams(int j, unsig
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -50,7 +50,7 @@ bool ControlBoardWrapperControlCalibration::calibrationDone(int j)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -69,13 +69,13 @@ bool ControlBoardWrapperControlCalibration::calibrationDone(int j)
 
 bool ControlBoardWrapperControlCalibration::abortPark()
 {
-    yCError(CONTROLBOARDWRAPPER, "Calling abortPark -- not implemented");
+    yCError(CONTROLBOARD, "Calling abortPark -- not implemented");
     return false;
 }
 
 
 bool ControlBoardWrapperControlCalibration::abortCalibration()
 {
-    yCError(CONTROLBOARDWRAPPER, "Calling abortCalibration -- not implemented");
+    yCError(CONTROLBOARD, "Calling abortCalibration -- not implemented");
     return false;
 }

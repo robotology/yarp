@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperRemoteVariables.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 using yarp::os::Bottle;
 
@@ -40,7 +40,7 @@ bool ControlBoardWrapperRemoteVariables::setRemoteVariable(std::string key, cons
     size_t bottle_size = val.size();
     size_t device_size = device.subdevices.size();
     if (bottle_size != device_size) {
-        yCError(CONTROLBOARDWRAPPER, "setRemoteVariable bottle_size != device_size failure");
+        yCError(CONTROLBOARD, "setRemoteVariable bottle_size != device_size failure");
         return false;
     }
 
@@ -48,18 +48,18 @@ bool ControlBoardWrapperRemoteVariables::setRemoteVariable(std::string key, cons
     for (size_t i = 0; i < device_size; i++) {
         SubDevice* p = device.getSubdevice(i);
         if (!p) {
-            yCError(CONTROLBOARDWRAPPER, "setRemoteVariable !p failure");
+            yCError(CONTROLBOARD, "setRemoteVariable !p failure");
             return false;
         }
         if (!p->iVar) {
-            yCError(CONTROLBOARDWRAPPER, "setRemoteVariable !p->iVar failure");
+            yCError(CONTROLBOARD, "setRemoteVariable !p->iVar failure");
             return false;
         }
         Bottle* partial_val = val.get(i).asList();
         if (partial_val) {
             b &= p->iVar->setRemoteVariable(key, *partial_val);
         } else {
-            yCError(CONTROLBOARDWRAPPER, "setRemoteVariable general failure");
+            yCError(CONTROLBOARD, "setRemoteVariable general failure");
             return false;
         }
     }

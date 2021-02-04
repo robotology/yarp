@@ -16,6 +16,11 @@ yarp_prepare_plugin(
 if(NOT SKIP_controlboardwrapper2)
   yarp_add_plugin(yarp_controlboardwrapper2)
 
+  target_compile_definitions(yarp_controlboardwrapper2
+    PRIVATE
+      LOG_COMPONENT="yarp.devices.controlboardwrapper2"
+  )
+
   target_sources(yarp_controlboardwrapper2
     PRIVATE
       ControlBoardWrapper.cpp
@@ -40,8 +45,8 @@ if(NOT SKIP_controlboardwrapper2)
       ControlBoardWrapperImpedanceControl.h
       ControlBoardWrapperInteractionMode.cpp
       ControlBoardWrapperInteractionMode.h
-      ControlBoardWrapperLogComponent.cpp
-      ControlBoardWrapperLogComponent.h
+      ControlBoardLogComponent.cpp
+      ControlBoardLogComponent.h
       ControlBoardWrapperMotor.cpp
       ControlBoardWrapperMotor.h
       ControlBoardWrapperMotorEncoders.cpp

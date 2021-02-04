@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperAxisInfo.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 
 bool ControlBoardWrapperAxisInfo::getAxisName(int j, std::string& name)
@@ -17,7 +17,7 @@ bool ControlBoardWrapperAxisInfo::getAxisName(int j, std::string& name)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;

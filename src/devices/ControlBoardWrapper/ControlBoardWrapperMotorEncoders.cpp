@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperMotorEncoders.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 bool ControlBoardWrapperMotorEncoders::resetMotorEncoder(int m)
 {
