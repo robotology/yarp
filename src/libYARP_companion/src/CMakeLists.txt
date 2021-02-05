@@ -28,6 +28,7 @@ set(YARP_companion_IMPL_SRCS yarp/companion/impl/Companion.cpp
                              yarp/companion/impl/Companion.cmdEnv.cpp
                              yarp/companion/impl/Companion.cmdExists.cpp
                              yarp/companion/impl/Companion.cmdHelp.cpp
+                             yarp/companion/impl/Companion.cmdLatencyTest.cpp
                              yarp/companion/impl/Companion.cmdMerge.cpp
                              yarp/companion/impl/Companion.cmdName.cpp
                              yarp/companion/impl/Companion.cmdNamespace.cpp
