@@ -125,8 +125,6 @@
  }
 
  QPushButton:disabled {
-     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                       stop: 0 #dadbde, stop: 1 #f6f7fa);
      color: rgb(169, 152, 163);
  }
 
@@ -175,7 +173,10 @@
             <bool>false</bool>
            </property>
            <property name="styleSheet">
-            <string notr="true"/>
+            <string notr="true">
+ QComboBox:disabled {
+     color: rgb(169, 152, 163);
+ }</string>
            </property>
            <property name="editable">
             <bool>false</bool>
@@ -244,6 +245,12 @@
            </property>
            <property name="mouseTracking">
             <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">
+ QComboBox:disabled {
+     color: rgb(169, 152, 163);
+ }</string>
            </property>
            <item>
             <property name="text">
