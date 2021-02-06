@@ -132,6 +132,17 @@ bool Localization2D_nws_ros::open(Searchable& config)
         yCInfo(LOCALIZATION2D_NWS_ROS) << "Period requested: " << m_period;
     }
 
+    if (!general_group.check("publish_odometry"))
+    {
+        m_enable_publish_odometry_topic = general_group.find("publish_odometry").asBool();
+        yCInfo(LOCALIZATION2D_NWS_ROS) << "publish_odometry=" << m_enable_publish_odometry_topic;
+    }
+    if (!general_group.check("publish_tf"))
+    {
+        m_enable_publish_odometry_tf = general_group.find("publish_tf").asBool();
+        yCInfo(LOCALIZATION2D_NWS_ROS) << "publish_tf=" << m_enable_publish_odometry_tf;
+    }
+
     if (!general_group.check("name"))
     {
         yCInfo(LOCALIZATION2D_NWS_ROS) << "Missing 'name' parameter. Using default value: " << m_local_name;

@@ -133,6 +133,17 @@ bool Localization2D_nws_yarp::open(Searchable& config)
         yCInfo(LOCALIZATION2D_NWS_YARP) << "Period requested: " << m_period;
     }
 
+    if (!general_group.check("publish_odometry"))
+    {
+        m_enable_publish_odometry = general_group.find("publish_odometry").asBool();
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "publish_odometry=" << m_enable_publish_odometry;
+    }
+    if (!general_group.check("publish_location"))
+    {
+        m_enable_publish_location = general_group.find("publish_location").asBool();
+        yCInfo(LOCALIZATION2D_NWS_YARP) << "publish_location=" << m_enable_publish_location;
+    }
+
     if (!general_group.check("retrieve_position_periodically"))
     {
         yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'retrieve_position_periodically' parameter. Using default value: true. Period:" << m_period ;

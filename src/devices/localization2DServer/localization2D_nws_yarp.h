@@ -50,6 +50,8 @@
  * | GENERAL        |  period        | double  | s                  | 0.01                     | No           | The period of the working thread                                  |       |
  * | GENERAL        |  retrieve_position_periodically  | bool  | -  | true                     | No           | If true, the subdevice is asked periodically to retrieve the current location. Otherwise the current location is obtained asynchronously when a getCurrentPosition() command is issued.     | -     |
  * | GENERAL        |  name          | string  |  -                 | /localization2D_nws_yarp | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are /xxx/rpc and /xxx/streaming:o     |
+ * | GENERAL        |  publish_odometry | bool |  -                 | true                     | No           | Periodically publish odometry data over the network               | -     |
+ * | GENERAL        |  publish_location | bool |  -                 | true                     | No           | PEriodically publish location data over the network               | -     |
  * | subdevice      |  -             | string  |  -                 |  -                       | Yes          | The name of the of Localization device to be used                 | -     |
  */
 class Localization2D_nws_yarp :
@@ -61,7 +63,7 @@ class Localization2D_nws_yarp :
 protected:
 
     //yarp
-    std::string                               m_local_name = "/localizationServer";
+    std::string                               m_local_name = "/localization2D_nws_yarp";
     yarp::os::Port                            m_rpcPort;
     std::string                               m_rpcPortName;
     yarp::os::BufferedPort<yarp::dev::Nav2D::Map2DLocation>  m_2DLocationPort;

@@ -51,11 +51,13 @@
  * |:----------------:|:----------------:|:-------:|:--------------:|:------------------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
  * | GENERAL          |  period          | double  | s              | 0.01                     | No           | The period of the working thread                                  |       |
  * | GENERAL          |  name            | string  |  -             | /localization2D_nws_ros  | No           | The name of the server, used as a prefix for the opened ports     | By default ports opened are: /xxx/rpc |
- * | subdevice        |  -               | string  |  -             |  -                       | Yes          | The name of the of Localization device to be used                 | -     |
+ * | GENERAL          |  publish_odometry | bool   |  -             | true                     | No           | Periodically publish odometry data over the network               | -     |
+ * | GENERAL          |  publish_tf       | bool   |  -             | true                     | No           | Periodically publish tf data over the network                     | -     |
  * | ROS              | parent_frame_id  | string  |  -             | odom                     | No           | The name of the of the parent frame published in the /tf topic    | -     |
  * | ROS              | child_frame_id   | string  |  -             | base_link                | No           | The name of the of the child frame published in the /tf topic     | -     |
  * | ROS              | odometry_topic   | string  |  -             | GENERAL::name+"/odom"    | No           | The name of the of the odometry topic                             | -     |
  * | ROS              | node_name        | string  |  -             | GENERAL::name+"_ROSnode" | No           | The name of the of the ROS node                                   | -     |
+ * | subdevice        |  -               | string  |  -             |  -                       | Yes          | The name of the of Localization device to be used                 | -     |
  */
 class Localization2D_nws_ros :
         public yarp::dev::DeviceDriver,
