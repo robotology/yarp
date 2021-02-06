@@ -109,9 +109,9 @@ private:
 
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    //void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
-    //void parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
-    bool updateVizMarkers();
+    bool updateVizMarkers(std::string map_name = "ros_map");
+    bool subscribeMapFromRos(std::string map_name = "ros_map");
+    bool publishMapToRos(std::string map_name = "ros_map");
 };
 
 #endif // YARP_DEV_MAP2D_NWS_ROS_H

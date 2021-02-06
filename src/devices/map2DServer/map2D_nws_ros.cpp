@@ -45,6 +45,13 @@ namespace {
 YARP_LOG_COMPONENT(MAP2D_NWS_ROS, "yarp.device.map2D_nws_ros")
 }
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+#define RAD2DEG 180/M_PI
+#define DEG2RAD M_PI/180
+
 /**
   * Map2D_nws_ros
   */
@@ -60,34 +67,30 @@ Map2D_nws_ros::~Map2D_nws_ros() = default;
 
 bool Map2D_nws_ros::read(yarp::os::ConnectionReader& connection)
 {
-    yCWarning(MAP2D_NWS_ROS) << "not yet implemented";
-
-    std::lock_guard<std::mutex> lock(m_mutex);
-    yarp::os::Bottle in;
-    yarp::os::Bottle out;
-    bool ok = in.read(connection);
+    yarp::os::Bottle command;
+    yarp::os::Bottle reply;
+    bool ok = command.read(connection);
     if (!ok) return false;
 
-    //parse string command
-    if(in.get(0).isString())
-    {
-      //  parse_string_command(in, out);
-    }
-    // parse vocab command
-    else if(in.get(0).isVocab())
-    {
-   //     parse_vocab_command(in, out);
-    }
+    reply.clear();
 
-    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != nullptr)
+    if (command.get(0).isString() && command.get(0).asString() == "help")
     {
-        out.write(*returnToSender);
+        reply.addVocab(Vocab::encode("many"));
+        reply.addString("No commands currently available:");
     }
     else
     {
-        yCError(MAP2D_NWS_ROS) << "Invalid return to sender";
+        yCError(MAP2D_NWS_ROS) << "Invalid command. Try `help`";
+        reply.addVocab(VOCAB_ERR);
     }
+
+    yarp::os::ConnectionWriter* returnToSender = connection.getWriter();
+    if (returnToSender != nullptr)
+    {
+        reply.write(*returnToSender);
+    }
+
     return true;
 }
 
@@ -144,28 +147,20 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
     {
         yCInfo(MAP2D_NWS_ROS, "Configuring ROS params");
         Bottle ROS_config = config.findGroup("ROS");
-        if (ROS_config.check("enable_ros_publisher") == false)
-        {
-            yCError(MAP2D_NWS_ROS) << "Missing 'enable_ros_publisher' in ROS group";
-            return false;
-        }
+
         if (ROS_config.find("enable_ros_publisher").asInt32() == 1 || ROS_config.find("enable_ros_publisher").asString() == "true")
         {
             m_enable_publish_ros_map = true;
             yCInfo(MAP2D_NWS_ROS) << "Enabled ROS publisher";
         }
-        if (ROS_config.check("enable_ros_subscriber") == false)
-        {
-            yCError(MAP2D_NWS_ROS) << "Missing 'enable_ros_subscriber' in ROS group";
-            return false;
-        }
+
         if (ROS_config.find("enable_ros_subscriber").asInt32() == 1 || ROS_config.find("enable_ros_subscriber").asString() == "true")
         {
             m_enable_subscribe_ros_map = true;
             yCInfo(MAP2D_NWS_ROS) << "Enabled ROS subscriber";
         }
 
-        if (m_enable_subscribe_ros_map || m_enable_publish_ros_map)
+        if (m_enable_publish_ros_map)
         {
             if (m_rosNode == nullptr)
             {
@@ -181,7 +176,12 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
                 yCError(MAP2D_NWS_ROS) << "Unable to publish to " << ROSTOPICNAME_MAPMETADATA << " topic, check your YARP-ROS network configuration";
                 return false;
             }
+            //should I publish the map now? with which name ?
+            //publishMapToRos();
+        }
 
+        if (m_enable_subscribe_ros_map)
+        {
             if (m_enable_subscribe_ros_map && !m_rosSubscriberPort_map.topic(ROSTOPICNAME_MAP))
             {
                 yCError(MAP2D_NWS_ROS) << "Unable to subscribe to " << ROSTOPICNAME_MAP << " topic, check your YARP-ROS network configuration";
@@ -195,6 +195,8 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
             m_rosSubscriberPort_map.setStrict();
             m_rosSubscriberPort_metamap.setStrict();
 
+            //should I subscribe the map now ? with which name ?
+            //subscribeMapFromRos();
         }
     }
     else
@@ -203,53 +205,107 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
         yCWarning(MAP2D_NWS_ROS) << "ROS Group not configured";
     }
 
+    return true;
+}
+
+bool Map2D_nws_ros::publishMapToRos(string map_name)
+{
+    MapGrid2D current_map;
+    if (!m_iMap2D->get_map(map_name, current_map));
+    {
+        yCError(MAP2D_NWS_ROS) << "publishMapToRos() " << map_name << " does not exists";
+        return false;
+    }
+
+    double tmp = 0;
+    yarp::rosmsg::nav_msgs::OccupancyGrid& ogrid = m_rosPublisherPort_map.prepare();
+    ogrid.clear();
+    ogrid.info.height = current_map.height();
+    ogrid.info.width = current_map.width();
+    current_map.getResolution(tmp);
+    ogrid.info.resolution = tmp;
+    ogrid.header.frame_id = "map";
+    ogrid.info.map_load_time.sec = 0;
+    ogrid.info.map_load_time.nsec = 0;
+    double x, y, t;
+    current_map.getOrigin(x, y, t);
+    ogrid.info.origin.position.x = x;
+    ogrid.info.origin.position.y = y;
+    yarp::math::Quaternion q;
+    yarp::sig::Vector v(4);
+    v[0] = 0; v[1] = 0; v[2] = 1; v[3] = t * DEG2RAD;
+    q.fromAxisAngle(v);
+    ogrid.info.origin.orientation.x = q.x();
+    ogrid.info.origin.orientation.y = q.y();
+    ogrid.info.origin.orientation.z = q.z();
+    ogrid.info.origin.orientation.w = q.w();
+    ogrid.data.resize(current_map.width() * current_map.height());
+    int index = 0;
+    yarp::dev::Nav2D::XYCell cell;
+    for (cell.y = current_map.height(); cell.y-- > 0;)
+        for (cell.x = 0; cell.x < current_map.width(); cell.x++)
+        {
+            current_map.getOccupancyData(cell, tmp);
+            ogrid.data[index++] = (int)tmp;
+        }
+
+    m_rosPublisherPort_map.write();
+
+    //what about the m_rosPublisherPort_metamap ?
+    //I don't know...
+
+    return true;
+}
+
+bool Map2D_nws_ros::subscribeMapFromRos(string map_name)
+{
     //In this block receives data from a ROS topic and stores data on attached device
     //yarp::os::Time::delay(5);
-    yarp::rosmsg::nav_msgs::OccupancyGrid*   map_ros = nullptr;
-    yarp::rosmsg::nav_msgs::MapMetaData*     metamap_ros = nullptr;
+    yarp::rosmsg::nav_msgs::OccupancyGrid* map_ros = nullptr;
+    yarp::rosmsg::nav_msgs::MapMetaData* metamap_ros = nullptr;
 
     map_ros = m_rosSubscriberPort_map.read(true);
     metamap_ros = m_rosSubscriberPort_metamap.read(true);
-    if (map_ros!=nullptr && metamap_ros!=nullptr)
+    if (map_ros != nullptr && metamap_ros != nullptr)
     {
         yCInfo(MAP2D_NWS_ROS) << "Received map for ROS";
         string map_name = "ros_map";
         MapGrid2D map;
         map.setSize_in_cells(map_ros->info.width,map_ros->info.height);
-        map.setResolution( map_ros->info.resolution);
+        map.setResolution(map_ros->info.resolution);
         map.setMapName(map_name);
         yarp::math::Quaternion quat(map_ros->info.origin.orientation.x,
                                     map_ros->info.origin.orientation.y,
                                     map_ros->info.origin.orientation.z,
                                     map_ros->info.origin.orientation.w);
-        yarp::sig::Matrix mat=quat.toRotationMatrix4x4();
-        yarp::sig::Vector vec=yarp::math::dcm2rpy(mat);
+        yarp::sig::Matrix mat = quat.toRotationMatrix4x4();
+        yarp::sig::Vector vec = yarp::math::dcm2rpy(mat);
         double orig_angle = vec[2];
         map.setOrigin(map_ros->info.origin.position.x,map_ros->info.origin.position.y,orig_angle);
-        for (size_t y=0; y< map_ros->info.height; y++)
+        for (size_t y = 0; y < map_ros->info.height; y++)
         {
-            for (size_t x=0; x< map_ros->info.width; x++)
+            for (size_t x = 0; x < map_ros->info.width; x++)
             {
-                XYCell cell(x,map_ros->info.height-1-y);
-                double occ = map_ros->data[x+y*map_ros->info.width];
+                XYCell cell(x,map_ros->info.height - 1 - y);
+                double occ = map_ros->data[x + y * map_ros->info.width];
                 map.setOccupancyData(cell,occ);
 
-                if      (occ >= 0   && occ <= 70)  map.setMapFlag(cell, MapGrid2D::MAP_CELL_FREE);
+                if (occ >= 0 && occ <= 70)  map.setMapFlag(cell, MapGrid2D::MAP_CELL_FREE);
                 else if (occ >= 71 && occ <= 100)  map.setMapFlag(cell, MapGrid2D::MAP_CELL_WALL);
                 else                               map.setMapFlag(cell, MapGrid2D::MAP_CELL_UNKNOWN);
             }
         }
-        if(m_iMap2D->store_map(map))
+        if (m_iMap2D->store_map(map))
         {
             yCInfo(MAP2D_NWS_ROS) << "Added map " << map.getMapName() << " to storage";
+            return true;
         }
         else
         {
             yCInfo(MAP2D_NWS_ROS) << "Unable to add map " << map.getMapName() << " to storage";
+            return false;
         }
     }
-
-    return true;
 }
 
 bool Map2D_nws_ros::close()
@@ -272,7 +328,7 @@ bool Map2D_nws_ros::close()
     return true;
 }
 
-bool Map2D_nws_ros::updateVizMarkers()
+bool Map2D_nws_ros::updateVizMarkers(std::string map_name)
 {
     if (m_rosPublisherPort_markers.asPort().isOpen()==false)
     {

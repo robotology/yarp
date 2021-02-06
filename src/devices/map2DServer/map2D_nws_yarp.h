@@ -59,8 +59,6 @@
  * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
  * | name           |      -         | string  | -              | /map2D_nws_yarp/rpc   | No           | Full name of the rpc port opened by the Map2DServer device.       |       |
 
- * \section Notes:
- * Integration with ROS map server is currently under development.
  */
 
 class Map2D_nws_yarp :
@@ -88,7 +86,7 @@ private:
 
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    //void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
+    void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
     void parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
 };
 

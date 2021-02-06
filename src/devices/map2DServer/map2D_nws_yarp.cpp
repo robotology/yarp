@@ -483,7 +483,6 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
     }
 }
 
-/*
 void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out)
 {
     if (in.get(0).asString() == "save_locations&areas" && in.get(1).isString())
@@ -510,31 +509,34 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
     }
     else if(in.get(0).asString() == "list_locations")
     {
-        std::map<std::string, Map2DLocation>::iterator it;
-        for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
+        std::vector<std::string> vec;
+        m_iMap2D->getLocationsList(vec);
+        for (auto it = vec.begin(); it != vec.end(); ++it)
         {
-            out.addString(it->first);
+            out.addString(*it);
         }
     }
     else if (in.get(0).asString() == "list_areas")
     {
-        std::map<std::string, Map2DArea>::iterator it;
-        for (it = m_areas_storage.begin(); it != m_areas_storage.end(); ++it)
+        std::vector<std::string> vec;
+        m_iMap2D->getAreasList(vec);
+        for (auto it = vec.begin(); it != vec.end(); ++it)
         {
-            out.addString(it->first);
+            out.addString(*it);
         }
     }
     else if (in.get(0).asString() == "list_paths")
     {
-        std::map<std::string, Map2DPath>::iterator it;
-        for (it = m_paths_storage.begin(); it != m_paths_storage.end(); ++it)
+        std::vector<std::string> vec;
+        m_iMap2D->getPathsList(vec);
+        for (auto it = vec.begin(); it != vec.end(); ++it)
         {
-            out.addString(it->first);
+            out.addString(*it);
         }
     }
     else if (in.get(0).asString() == "save_maps" && in.get(1).isString())
     {
-        if(saveMaps(in.get(1).asString()))
+        if(m_iMap2D->saveMapsCollection(in.get(1).asString()))
         {
             out.addString(in.get(1).asString() + " successfully saved");
         }
@@ -545,7 +547,7 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
     }
     else if (in.get(0).asString() == "load_maps" && in.get(1).isString())
     {
-        if(loadMaps(in.get(1).asString()))
+        if(m_iMap2D->loadMapsCollection(in.get(1).asString()))
         {
             out.addString(in.get(1).asString() + " successfully loaded");
         }
@@ -558,14 +560,15 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
     {
         std::string map_name = in.get(1).asString();
         std::string map_file = in.get(2).asString() + ".map";
-        auto p = m_maps_storage.find(map_name);
-        if (p == m_maps_storage.end())
+
+        MapGrid2D map;
+        if (m_iMap2D->get_map(map_name, map)==false)
         {
             out.addString("save_map failed: map " + map_name + " not found");
         }
         else
         {
-            bool b = p->second.saveToFile(map_file);
+            bool b = map.saveToFile(map_file);
             if (b)
             {
                 out.addString(map_file + " successfully saved");
@@ -582,11 +585,8 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
         bool r = map.loadFromFile(in.get(1).asString());
         if(r)
         {
-            string map_name= map.getMapName();
-            auto p = m_maps_storage.find(map_name);
-            if (p == m_maps_storage.end())
+            if (m_iMap2D->store_map(map))
             {
-                m_maps_storage[map_name] = map;
                 out.addString(in.get(1).asString() + " successfully loaded.");
             }
             else
@@ -601,30 +601,31 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
     }
     else if(in.get(0).asString() == "list_maps")
     {
-        std::map<std::string, MapGrid2D>::iterator it;
-        for (it = m_maps_storage.begin(); it != m_maps_storage.end(); ++it)
+        std::vector<std::string> vec;
+        m_iMap2D->get_map_names(vec);
+        for (auto it = vec.begin(); it != vec.end(); ++it)
         {
-            out.addString(it->first);
+            out.addString(*it);
         }
     }
     else if(in.get(0).asString() == "clear_all_locations")
     {
-        m_locations_storage.clear();
+        m_iMap2D->clearAllLocations();
         out.addString("all locations cleared");
     }
     else if (in.get(0).asString() == "clear_all_areas")
     {
-        m_areas_storage.clear();
+        m_iMap2D->clearAllAreas();
         out.addString("all areas cleared");
     }
     else if (in.get(0).asString() == "clear_all_paths")
     {
-        m_paths_storage.clear();
+        m_iMap2D->clearAllPaths();
         out.addString("all paths cleared");
     }
     else if(in.get(0).asString() == "clear_all_maps")
     {
-        m_maps_storage.clear();
+        m_iMap2D->clearAllMaps();
         out.addString("all maps cleared");
     }
     else if (in.get(0).asString() == "enable_maps_compression")
@@ -659,7 +660,7 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
         out.addString("request not understood, call 'help' to see a list of available commands");
     }
 }
-*/
+
 
 bool Map2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
@@ -672,7 +673,7 @@ bool Map2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
     //parse string command
     if(in.get(0).isString())
     {
-        //parse_string_command(in, out);
+        parse_string_command(in, out);
     }
     // parse vocab command
     else if(in.get(0).isVocab())
