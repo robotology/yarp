@@ -23,7 +23,7 @@
 #include <yarp/os/Thread.h>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/AudioGrabberInterfaces.h>
+#include <yarp/dev/AudioPlayerDeviceBase.h>
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <portaudio.h>
 #include <mutex>
@@ -33,16 +33,6 @@
 #define DEFAULT_DITHER_FLAG     (0)
 #define DEFAULT_FRAMES_PER_BUFFER (512)
 //#define DEFAULT_FRAMES_PER_BUFFER (1024)
-
-
-class PortAudioPlayerDeviceDriverSettings
-{
-public:
-    size_t cfg_rate = 0;
-    size_t cfg_samples = 0;
-    size_t cfg_playChannels = 0;
-    int cfg_deviceNumber = 0;
-};
 
 class PlayStreamThread : public yarp::os::Thread
 {
@@ -69,17 +59,14 @@ private:
  * Requires the PortAudio library (http://www.portaudio.com), at least v19.
  */
 class PortAudioPlayerDeviceDriver :
-        public yarp::dev::IAudioRender,
+        public yarp::dev::AudioPlayerDeviceBase,
         public yarp::dev::DeviceDriver
 {
 private:
     PaStreamParameters  m_outputParameters;
     PaStream*           m_stream;
     PaError             m_err;
-    yarp::dev::CircularAudioBuffer_16t* m_playDataBuffer;
-    PortAudioPlayerDeviceDriverSettings m_config;
     PlayStreamThread    m_pThread;
-    std::mutex     m_mutex;
 
 public:
     PortAudioPlayerDeviceDriver();
@@ -91,23 +78,8 @@ public:
     ~PortAudioPlayerDeviceDriver() override;
 
     bool open(yarp::os::Searchable& config) override;
-
-    /**
-     * Configures the device.
-     *
-     * rate: Sample rate to use, in Hertz.  Specify 0 to use a default.
-     *
-     * samples: Number of samples per call to getSound.  Specify
-     * 0 to use a default.
-     *
-     * channels: Number of channels of input.  Specify
-     * 0 to use a default.
-     *
-     * @return true on success
-     */
-    bool open(PortAudioPlayerDeviceDriverSettings& config);
-
     bool close() override;
+
     bool renderSound(const yarp::sig::Sound& sound) override;
     bool startPlayback() override;
     bool stopPlayback() override;
@@ -116,15 +88,13 @@ public:
     bool immediateSound(const yarp::sig::Sound& sound);
     bool appendSound(const yarp::sig::Sound& sound);
 
-    bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
-    bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
-    bool resetPlaybackAudioBuffer() override;
+    bool setHWGain(double gain) override;
 
 protected:
     void*   m_system_resource;
 
-    PortAudioPlayerDeviceDriverSettings m_driverConfig;
     enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
+    int  m_device_id;
     void handleError();
 };
 

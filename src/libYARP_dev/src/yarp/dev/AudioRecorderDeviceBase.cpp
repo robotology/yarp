@@ -133,6 +133,10 @@ bool AudioRecorderDeviceBase::getRecordingAudioBufferCurrentSize(yarp::dev::Audi
     return true;
 }
 
+bool AudioRecorderDeviceBase::setSWGain(double gain)
+{
+    return false;
+}
 
 bool AudioRecorderDeviceBase::resetRecordingAudioBuffer()
 {

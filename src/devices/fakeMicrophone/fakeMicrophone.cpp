@@ -121,6 +121,11 @@ bool fakeMicrophone::close()
     return true;
 }
 
+bool fakeMicrophone::setHWGain(double gain)
+{
+    yCInfo(FAKEMICROPHONE) << "Not yet implemented";
+    return false;
+}
 
 bool fakeMicrophone::threadInit()
 {

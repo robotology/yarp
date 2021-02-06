@@ -121,26 +121,6 @@ void fakeSpeaker::run()
 #endif
 }
 
-bool fakeSpeaker::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
-{
-    size = this->m_outputBuffer->getMaxSize();
-    return true;
-}
-
-
-bool fakeSpeaker::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
-{
-    size = this->m_outputBuffer->size();
-    return true;
-}
-
-
-bool fakeSpeaker::resetPlaybackAudioBuffer()
-{
-    m_outputBuffer->clear();
-    return true;
-}
-
 bool fakeSpeaker::renderSound(const yarp::sig::Sound& sound)
 {
     if (m_renderSoundImmediate) m_outputBuffer->clear();
@@ -156,4 +136,10 @@ bool fakeSpeaker::renderSound(const yarp::sig::Sound& sound)
 
     m_isPlaying = true;
     return true;
+}
+
+bool fakeSpeaker::setHWGain(double gain)
+{
+    yCError(FAKESPEAKER, "Not yet implemented");
+    return false;
 }

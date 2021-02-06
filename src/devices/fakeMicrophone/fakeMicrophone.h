@@ -47,6 +47,9 @@ public:
     fakeMicrophone& operator=(fakeMicrophone&&) = delete;
     ~fakeMicrophone() override;
 
+public:
+    bool setHWGain(double gain) override;
+
 public: // DeviceDriver
     bool open(yarp::os::Searchable &config) override;
     bool close() override;

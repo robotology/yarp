@@ -1,9 +1,19 @@
 /*
  * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * All rights reserved.
  *
- * This software may be modified and distributed under the terms of the
- * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include "audioToFileDevice.h"
@@ -100,27 +110,6 @@ bool audioToFileDevice::close()
     return true;
 }
 
-bool audioToFileDevice::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
-{
-    //no lock guard is needed here
-    //size = 0;
-    return true;
-}
-
-bool audioToFileDevice::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
-{
-    //no lock guard is needed here
-    //size = 0;
-    return true;
-}
-
-bool audioToFileDevice::resetPlaybackAudioBuffer()
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_sounds.clear();
-    return true;
-}
-
 bool audioToFileDevice::startPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -153,4 +142,10 @@ bool audioToFileDevice::renderSound(const yarp::sig::Sound& sound)
         m_sounds.push_back(sound);
     }
     return true;
+}
+
+bool audioToFileDevice::setHWGain(double gain)
+{
+    yCError(AUDIOTOFILE, "Not yet implemented");
+    return false;
 }

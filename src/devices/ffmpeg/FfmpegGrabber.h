@@ -110,6 +110,14 @@ public:
         return false;
     }
 
+    bool setHWGain(double gain) override {
+        return false;
+    }
+
+    bool setSWGain(double gain) override {
+        return false;
+    }
+
 protected:
     void *system_resource;
 

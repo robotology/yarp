@@ -14,6 +14,7 @@
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
+#include <yarp/dev/AudioPlayerDeviceBase.h>
 
 
 #define DEFAULT_PERIOD 0.01   //s
@@ -27,7 +28,7 @@
  */
 class fakeSpeaker :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IAudioRender,
+        public yarp::dev::AudioPlayerDeviceBase,
         public yarp::os::PeriodicThread
 {
 public:
@@ -46,21 +47,17 @@ public:
     virtual bool startPlayback() override;
     virtual bool stopPlayback() override;
     virtual bool renderSound(const yarp::sig::Sound& sound)  override;
-    virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)  override;
-    virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)  override;
-    virtual bool resetPlaybackAudioBuffer() override;
+    virtual bool setHWGain(double gain) override;
 
 private:
     bool threadInit() override;
     void run() override;
 
-    bool m_isPlaying = false;
-
     size_t m_cfg_numSamples = 0;
     size_t m_cfg_numChannels = 0;
     size_t m_cfg_frequency = 0;
     size_t m_cfg_bytesPerSample = 0;
+    double m_hw_gain = 1.0;
 
-    yarp::dev::CircularAudioBuffer_16t* m_outputBuffer = nullptr;
     bool m_renderSoundImmediate = false;
 };

@@ -52,6 +52,9 @@ private:
     bool threadInit() override;
     void run() override;
 
+public:
+    bool setHWGain(double gain) override;
+
 private:
     yarp::sig::Sound m_audioFile;
     std::string m_audio_filename = "audio.wav";

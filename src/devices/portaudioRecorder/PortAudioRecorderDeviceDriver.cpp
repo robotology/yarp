@@ -247,8 +247,14 @@ bool PortAudioRecorderDeviceDriver::startRecording()
     AudioRecorderDeviceBase::startRecording();
     m_err = Pa_StartStream(m_stream );
     if(m_err < 0 ) {handleError(); return false;}
-    yCInfo(PORTAUDIORECORDER) << "PortAudioRecorderDeviceDriver started recording";
+    yCInfo(PORTAUDIORECORDER) << "started recording";
     return true;
+}
+
+bool PortAudioRecorderDeviceDriver::setHWGain(double gain)
+{
+    yCInfo(PORTAUDIORECORDER) << "not yet implemented recording";
+    return false;
 }
 
 bool PortAudioRecorderDeviceDriver::stopRecording()
@@ -256,7 +262,7 @@ bool PortAudioRecorderDeviceDriver::stopRecording()
     AudioRecorderDeviceBase::stopRecording();
     m_err = Pa_StopStream(m_stream );
     if(m_err < 0 ) {handleError(); return false;}
-    yCInfo(PORTAUDIORECORDER) << "PortAudioRecorderDeviceDriver stopped recording";
+    yCInfo(PORTAUDIORECORDER) << "stopped recording";
     return true;
 }
 

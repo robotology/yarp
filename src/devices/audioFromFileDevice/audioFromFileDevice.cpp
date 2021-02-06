@@ -41,6 +41,12 @@ audioFromFileDevice::~audioFromFileDevice()
     delete m_inputBuffer;
 }
 
+bool audioFromFileDevice::setHWGain(double gain)
+{
+    yCInfo(AUDIOFROMFILE) << "Not yet implemented";
+    return false;
+}
+
 bool audioFromFileDevice::open(yarp::os::Searchable &config)
 {
     //sets the thread period

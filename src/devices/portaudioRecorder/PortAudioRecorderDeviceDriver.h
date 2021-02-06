@@ -69,6 +69,7 @@ public: //DeviceDriver
 public: //AudioRecorderDeviceBase(IAudioGrabberSound)
     bool startRecording() override;
     bool stopRecording() override;
+    bool setHWGain(double gain) override;
 
  public: //Thread
     void threadRelease() override;

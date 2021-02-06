@@ -9,6 +9,11 @@ audio_volume {#master}
 * `yarp::sig::sound` added the following methods:  amplifyChannel(), amplify(), findPeakInChannel(), findPeak(), normalizeChannel(), normalize() 
 * `harness_sig`: added tests to check the new methods
 
+#### yarp::dev
+* Added the new class `AudioPlayerDeviceBase`, all playback device drivers now derive from this class.
+* Added the new methods to `setHWGain()`, `setHWGain()` to `IAudioRender` interface.
+* Added the new methods to `setHWGain()`, `setHWGain()` to `IAudioGrabberSound` interface.
+
 ### Devices
-* `AudioPlayerWrapper` and `AudioRecorderWrapper` added option `--wrapper_volume` to adjust the gain of the played/recorded sound. 
-* The same option `wrapper_volume` is also available via rpc command, to interactively change the volume.
+* Added RPC commands to `AudioPlayerWrapper` and `AudioRecorderWrapper`, to control the volume via setHWGain()`, `setSWGain()`
+* All playback device drivers, i.e. XXXXXX ,now derive from this class.

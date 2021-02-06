@@ -10,6 +10,7 @@
 #include <yarp/dev/IAudioRender.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
+#include <yarp/dev/AudioPlayerDeviceBase.h>
 
 #include <string>
 #include <mutex>
@@ -40,7 +41,7 @@
 
 class audioToFileDevice :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IAudioRender
+        public yarp::dev::AudioPlayerDeviceBase
 {
 public:
     audioToFileDevice();
@@ -58,9 +59,7 @@ public:
     virtual bool renderSound(const yarp::sig::Sound& sound) override;
     virtual bool startPlayback() override;
     virtual bool stopPlayback()override;
-    virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
-    virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
-    virtual bool resetPlaybackAudioBuffer() override;
+    virtual bool setHWGain(double gain) override;
 
 private:
     yarp::sig::Sound m_audioFile;

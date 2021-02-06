@@ -13,6 +13,7 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/AudioBufferSize.h
                   yarp/dev/AudioGrabberInterfaces.h
                   yarp/dev/AudioGrabberVocabs.h
+                  yarp/dev/AudioPlayerDeviceBase.h
                   yarp/dev/AudioRecorderDeviceBase.h
                   yarp/dev/AudioVisualInterfaces.h
                   yarp/dev/CalibratorInterfaces.h
@@ -143,6 +144,7 @@ set(YARP_dev_IMPL_HDRS yarp/dev/impl/FixedSizeBuffersManager.h
                        yarp/dev/impl/FixedSizeBuffersManager-inl.h)
 
 set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
+                  yarp/dev/AudioPlayerDeviceBase.cpp
                   yarp/dev/AudioRecorderDeviceBase.cpp
                   yarp/dev/CanBusInterface.cpp
                   yarp/dev/CartesianControl.cpp

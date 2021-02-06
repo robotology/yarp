@@ -46,6 +46,7 @@ public:
     virtual bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
     virtual bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
     virtual bool resetRecordingAudioBuffer() override;
+    virtual bool setSWGain(double gain) override;
 
     virtual ~AudioRecorderDeviceBase();
 };
