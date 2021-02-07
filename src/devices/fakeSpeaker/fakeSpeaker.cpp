@@ -84,16 +84,6 @@ bool fakeSpeaker::threadInit()
     return true;
 }
 
-bool fakeSpeaker::startPlayback()
-{
-    return true;
-}
-
-bool fakeSpeaker::stopPlayback()
-{
-    return true;
-}
-
 void fakeSpeaker::run()
 {
     // when not playing, do nothing
@@ -121,25 +111,26 @@ void fakeSpeaker::run()
 #endif
 }
 
-bool fakeSpeaker::renderSound(const yarp::sig::Sound& sound)
+bool fakeSpeaker::setHWGain(double gain)
 {
-    if (m_renderSoundImmediate) m_outputBuffer->clear();
+    yCError(FAKESPEAKER, "setHWGain() Not yet implemented");
+    return false;
+}
 
-//     size_t num_bytes = sound.getBytesPerSample();
-    size_t num_channels = sound.getChannels();
-    size_t num_samples = sound.getSamples();
-
-    for (size_t i = 0; i<num_samples; i++)
-        for (size_t j = 0; j<num_channels; j++)
-            m_outputBuffer->write(sound.get(i, j));
-    auto debug_p = sound.getInterleavedAudioRawData();
-
-    m_isPlaying = true;
+bool fakeSpeaker::configureDeviceAndStart()
+{
+    yCError(FAKESPEAKER, "configureDeviceAndStart() Not yet implemented");
     return true;
 }
 
-bool fakeSpeaker::setHWGain(double gain)
+bool fakeSpeaker::interruptDeviceAndClose()
 {
-    yCError(FAKESPEAKER, "Not yet implemented");
-    return false;
+    yCError(FAKESPEAKER, "interruptDeviceAndClose() Not yet implemented");
+    return true;
+}
+
+void fakeSpeaker::waitUntilPlaybackStreamIsComplete()
+{
+    yCError(FAKESPEAKER, "waitUntilPlaybackStreamIsComplete() Not yet implemented");
+    return;
 }

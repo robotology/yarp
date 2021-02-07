@@ -72,7 +72,7 @@ public:
     virtual bool setSWGain(double gain) = 0;
 
     /**
-     * Sets the hardware gain of the grabbing device (if supported by the hardware) 
+     * Sets the hardware gain of the grabbing device (if supported by the hardware)
      * @param gain the audio gain (1.0 is the default value)
      * @return true/false upon success/failure
      */

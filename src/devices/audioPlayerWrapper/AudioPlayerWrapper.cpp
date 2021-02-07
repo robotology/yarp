@@ -117,13 +117,11 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
 
     if (command.get(0).asString() == "start")
     {
-        m_isPlaying = true;
         m_irender->startPlayback();
         reply.addVocab(VOCAB_OK);
     }
     else if (command.get(0).asString() == "stop")
     {
-        m_isPlaying = false;
         m_irender->stopPlayback();
         reply.addVocab(VOCAB_OK);
     }
@@ -234,7 +232,6 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
 
     if (config.check("start"))
     {
-        m_isPlaying = true;
         m_irender->startPlayback();
     }
 

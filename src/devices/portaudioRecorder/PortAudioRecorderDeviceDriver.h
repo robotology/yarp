@@ -71,7 +71,7 @@ public: //AudioRecorderDeviceBase(IAudioGrabberSound)
     bool stopRecording() override;
     bool setHWGain(double gain) override;
 
- public: //Thread
+public: //Thread
     void threadRelease() override;
     bool threadInit() override;
     void run() override;

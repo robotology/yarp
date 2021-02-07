@@ -33,11 +33,12 @@ class AudioDeviceDriverSettings
 class YARP_dev_API AudioPlayerDeviceBase : public yarp::dev::IAudioRender
 {
 protected:
-    bool m_isPlaying = false;
-    std::mutex  m_mutex;
+    bool                                m_isPlaying = false;
+    std::mutex                          m_mutex;
     yarp::dev::CircularAudioBuffer_16t* m_outputBuffer = nullptr;
-
-    AudioDeviceDriverSettings m_audioplayer_cfg;
+    bool                                m_something_to_play = false;
+    AudioDeviceDriverSettings           m_audioplayer_cfg;
+    enum { RENDER_APPEND = 0, RENDER_IMMEDIATE = 1 } m_renderMode= RENDER_APPEND;
 
 public:
     virtual bool renderSound(const yarp::sig::Sound& sound) override;
@@ -49,6 +50,15 @@ public:
     virtual bool setSWGain(double gain) override;
 
     virtual ~AudioPlayerDeviceBase();
+
+protected:
+    virtual bool configureDeviceAndStart() = 0;
+    virtual bool interruptDeviceAndClose() = 0;
+    virtual void waitUntilPlaybackStreamIsComplete() = 0;
+    virtual bool immediateSound(const yarp::sig::Sound& sound);
+    virtual bool appendSound(const yarp::sig::Sound& sound);
+
+    bool configurePlayerAudioDevice(yarp::os::Searchable& config);
 };
 
 } // namespace dev

@@ -51,15 +51,11 @@ typedef unsigned char SAMPLE;
 #define SAMPLE_UNSIGNED
 #endif
 
-#define DEFAULT_SAMPLE_RATE  (44100)
-#define DEFAULT_NUM_CHANNELS    (2)
-#define DEFAULT_DITHER_FLAG     (0)
-#define DEFAULT_FRAMES_PER_BUFFER (512)
-
 namespace {
 YARP_LOG_COMPONENT(PORTAUDIORECORDER, "yarp.devices.portaudioRecorder")
 }
 
+#define DEFAULT_FRAMES_PER_BUFFER (512)
 
 /* This routine will be called by the PortAudio engine when audio is needed.
 ** It may be called at interrupt level on some machines so don't do anything
@@ -150,21 +146,12 @@ PortAudioRecorderDeviceDriver::~PortAudioRecorderDeviceDriver()
 
 bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
 {
-    m_audiorecorder_cfg.frequency = config.check("rate",Value(0),"audio sample rate (0=automatic)").asInt32();
-    m_audiorecorder_cfg.numSamples = config.check("samples",Value(0),"number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
-    m_audiorecorder_cfg.numChannels = config.check("channels", Value(0), "number of audio channels (0=automatic, max is 2)").asInt32();
-    m_device_id = config.check("id",Value(-1),"which portaudio index to use (-1=automatic)").asInt32();
-    int driver_frame_size = config.check("driver_frame_size", Value(0), "" ).asInt32();
+    bool b = configureRecorderAudioDevice(config);
+    if (!b) { return false; }
 
-    if (m_audiorecorder_cfg.frequency == 0)  m_audiorecorder_cfg.frequency = DEFAULT_SAMPLE_RATE;
-    if (m_audiorecorder_cfg.numChannels == 0)  m_audiorecorder_cfg.numChannels = DEFAULT_NUM_CHANNELS;
-    if (m_audiorecorder_cfg.numSamples == 0) m_audiorecorder_cfg.numSamples = m_audiorecorder_cfg.frequency; //  by default let's use chunks of 1 second
+    m_device_id = config.check("id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();
+    int driver_frame_size = config.check("driver_frame_size", Value(0), "").asInt32();
     if (driver_frame_size == 0)  driver_frame_size = DEFAULT_FRAMES_PER_BUFFER;
-
-//     size_t debug_numRecBytes = m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_recChannels;
-    AudioBufferSize rec_buffer_size (m_audiorecorder_cfg.numSamples, m_audiorecorder_cfg.numChannels, sizeof(SAMPLE));
-    if (m_inputBuffer ==nullptr)
-        m_inputBuffer = new CircularAudioBuffer_16t("portatudio_rec", rec_buffer_size);
 
     m_err = Pa_Initialize();
     if(m_err != paNoError )

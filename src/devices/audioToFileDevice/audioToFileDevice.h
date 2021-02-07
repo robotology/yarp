@@ -60,6 +60,9 @@ public:
     virtual bool startPlayback() override;
     virtual bool stopPlayback()override;
     virtual bool setHWGain(double gain) override;
+    virtual bool configureDeviceAndStart() override;
+    virtual bool interruptDeviceAndClose() override;
+    virtual void waitUntilPlaybackStreamIsComplete() override;
 
 private:
     yarp::sig::Sound m_audioFile;

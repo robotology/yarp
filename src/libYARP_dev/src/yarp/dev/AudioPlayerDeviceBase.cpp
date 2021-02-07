@@ -32,6 +32,11 @@ YARP_LOG_COMPONENT(AUDIOPLAYER_BASE, "yarp.devices.AudioPlayerDeviceBase")
 #define DEBUG_TIME_SPENT 0
 #define BUFFER_AUTOCLEAR 0
 
+//Default device parameters
+#define DEFAULT_SAMPLE_RATE  (44100)
+#define DEFAULT_NUM_CHANNELS    (2)
+#define DEFAULT_SAMPLE_SIZE     (2)
+
 bool AudioPlayerDeviceBase::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
 {
     //no lock guard is needed here
@@ -56,7 +61,6 @@ bool AudioPlayerDeviceBase::setSWGain(double gain)
     return true;
 }
 
-bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound) { return false; }
 bool AudioPlayerDeviceBase::startPlayback() { return false; }
 bool AudioPlayerDeviceBase::stopPlayback() { return false; }
 
@@ -64,5 +68,108 @@ bool AudioPlayerDeviceBase::resetPlaybackAudioBuffer()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     this->m_outputBuffer->clear();
+    return true;
+}
+
+bool AudioPlayerDeviceBase::appendSound(const yarp::sig::Sound& sound)
+{
+    //Do I need a lockguard?
+    size_t num_channels = sound.getChannels();
+    size_t num_samples = sound.getSamples();
+
+    for (size_t i = 0; i < num_samples; i++)
+        for (size_t j = 0; j < num_channels; j++)
+            m_outputBuffer->write(sound.get(i, j));
+
+    m_something_to_play = true;
+    return true;
+}
+
+bool AudioPlayerDeviceBase::immediateSound(const yarp::sig::Sound& sound)
+{
+    //Do I need a lockguard?
+    m_outputBuffer->clear();
+
+    size_t num_channels = sound.getChannels();
+    size_t num_samples = sound.getSamples();
+
+    for (size_t i = 0; i < num_samples; i++)
+        for (size_t j = 0; j < num_channels; j++)
+            m_outputBuffer->write(sound.get(i, j));
+
+    m_something_to_play = true;
+    return true;
+}
+
+bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
+{
+    //prevents simultaneous start/stop/reset etc.
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    size_t freq = sound.getFrequency();
+    size_t chans = sound.getChannels();
+    if (freq == 0)
+    {
+        yCError(AUDIOPLAYER_BASE) << "received a bad audio sample of frequency 0";
+        return false;
+    }
+    if (chans == 0)
+    {
+        yCError(AUDIOPLAYER_BASE) << "received a bad audio sample with 0 channels";
+        return false;
+    }
+
+    if (freq != this->m_audioplayer_cfg.frequency ||
+        chans != this->m_audioplayer_cfg.numChannels)
+    {
+        //wait for current playback to finish
+        waitUntilPlaybackStreamIsComplete();
+
+        //reset the driver
+        yCInfo(AUDIOPLAYER_BASE, "***** audio driver configuration changed, resetting");
+        yCInfo(AUDIOPLAYER_BASE) << "changing from: " << this->m_audioplayer_cfg.numChannels << "channels, " << this->m_audioplayer_cfg.frequency << " Hz, ->" <<
+            chans << "channels, " << freq << " Hz";
+
+        //close is called in order to destroy the buffer
+        this->interruptDeviceAndClose();
+
+        //The device is re-opened with new configuration parameters
+        m_audioplayer_cfg.numChannels = (int)(chans);
+        m_audioplayer_cfg.frequency = (int)(freq);
+        bool ok = configureDeviceAndStart();
+        if (ok == false)
+        {
+            yCError(AUDIOPLAYER_BASE, "error occurred during audio driver reconfiguration, aborting");
+            return false;
+        }
+    }
+
+    if (m_renderMode == RENDER_IMMEDIATE)
+        return immediateSound(sound);
+    else if (m_renderMode == RENDER_APPEND)
+        return appendSound(sound);
+
+    return false;
+}
+
+bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& config)
+{
+    m_audioplayer_cfg.frequency = config.check("rate", Value(0), "audio sample rate (0=automatic)").asInt32();
+    m_audioplayer_cfg.numSamples = config.check("samples", Value(0), "number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
+    m_audioplayer_cfg.numChannels = config.check("channels", Value(0), "number of audio channels (0=automatic, max is 2)").asInt32();
+
+    if (m_audioplayer_cfg.numChannels == 0)  m_audioplayer_cfg.numChannels = DEFAULT_NUM_CHANNELS;
+    if (m_audioplayer_cfg.frequency == 0)  m_audioplayer_cfg.frequency = DEFAULT_SAMPLE_RATE;
+    if (m_audioplayer_cfg.numSamples == 0) m_audioplayer_cfg.numSamples = m_audioplayer_cfg.frequency; //  by default let's use chunks of 1 second
+
+    if (config.check("render_mode_append"))
+    {
+        m_renderMode = RENDER_APPEND;
+    }
+    if (config.check("render_mode_immediate"))
+    {
+        m_renderMode = RENDER_IMMEDIATE;
+    }
+
     return true;
 }

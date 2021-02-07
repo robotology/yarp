@@ -44,10 +44,11 @@ public:
     bool open(yarp::os::Searchable &config) override;
     bool close() override;
 
-    virtual bool startPlayback() override;
-    virtual bool stopPlayback() override;
-    virtual bool renderSound(const yarp::sig::Sound& sound)  override;
+    //interface
     virtual bool setHWGain(double gain) override;
+    virtual bool configureDeviceAndStart() override;
+    virtual bool interruptDeviceAndClose() override;
+    virtual void waitUntilPlaybackStreamIsComplete() override;
 
 private:
     bool threadInit() override;
@@ -58,6 +59,4 @@ private:
     size_t m_cfg_frequency = 0;
     size_t m_cfg_bytesPerSample = 0;
     double m_hw_gain = 1.0;
-
-    bool m_renderSoundImmediate = false;
 };

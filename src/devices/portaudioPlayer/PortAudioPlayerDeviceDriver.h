@@ -28,29 +28,6 @@
 #include <portaudio.h>
 #include <mutex>
 
-#define DEFAULT_SAMPLE_RATE  (44100)
-#define DEFAULT_NUM_CHANNELS    (2)
-#define DEFAULT_DITHER_FLAG     (0)
-#define DEFAULT_FRAMES_PER_BUFFER (512)
-//#define DEFAULT_FRAMES_PER_BUFFER (1024)
-
-class PlayStreamThread : public yarp::os::Thread
-{
-public:
-    PlayStreamThread();
-
-    void threadRelease() override;
-    bool threadInit() override;
-    void run() override;
-
-    bool something_to_play;
-    PaStream* stream;
-
-private:
-    PaError err;
-    void handleError();
-};
-
 /**
  * @ingroup dev_impl_media
  *
@@ -60,13 +37,13 @@ private:
  */
 class PortAudioPlayerDeviceDriver :
         public yarp::dev::AudioPlayerDeviceBase,
-        public yarp::dev::DeviceDriver
+        public yarp::dev::DeviceDriver,
+        public yarp::os::Thread
 {
 private:
     PaStreamParameters  m_outputParameters;
     PaStream*           m_stream;
     PaError             m_err;
-    PlayStreamThread    m_pThread;
 
 public:
     PortAudioPlayerDeviceDriver();
@@ -74,26 +51,29 @@ public:
     PortAudioPlayerDeviceDriver(PortAudioPlayerDeviceDriver&&) = delete;
     PortAudioPlayerDeviceDriver& operator=(const PortAudioPlayerDeviceDriver&) = delete;
     PortAudioPlayerDeviceDriver& operator=(PortAudioPlayerDeviceDriver&&) = delete;
-
     ~PortAudioPlayerDeviceDriver() override;
 
+private:
+    bool abortSound();
+    bool configureDeviceAndStart();
+
+public: //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
-    bool renderSound(const yarp::sig::Sound& sound) override;
-    bool startPlayback() override;
-    bool stopPlayback() override;
-
-    bool abortSound();
-    bool immediateSound(const yarp::sig::Sound& sound);
-    bool appendSound(const yarp::sig::Sound& sound);
-
+public: //AudioRecorderDeviceBase(IAudioGrabberSound)
+    void waitUntilPlaybackStreamIsComplete() override;
     bool setHWGain(double gain) override;
+    bool interruptDeviceAndClose() override;
+
+public: //Thread
+    void threadRelease() override;
+    bool threadInit() override;
+    void run() override;
 
 protected:
     void*   m_system_resource;
 
-    enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
     int  m_device_id;
     void handleError();
 };

@@ -5,7 +5,7 @@ audio_volume {#master}
 
 ### Libraries
 
-#### sig
+#### yarp::sig
 * `yarp::sig::sound` added the following methods:  amplifyChannel(), amplify(), findPeakInChannel(), findPeak(), normalizeChannel(), normalize() 
 * `harness_sig`: added tests to check the new methods
 
@@ -16,4 +16,4 @@ audio_volume {#master}
 
 ### Devices
 * Added RPC commands to `AudioPlayerWrapper` and `AudioRecorderWrapper`, to control the volume via setHWGain()`, `setSWGain()`
-* All playback device drivers, i.e. XXXXXX ,now derive from this class.
+* All playback device drivers, i.e. `audioToFileDevice`, `fakeSpeaker`, `portaudioPlayer` ,now derive from this class.

@@ -49,6 +49,9 @@ public:
     virtual bool setSWGain(double gain) override;
 
     virtual ~AudioRecorderDeviceBase();
+
+protected:
+    bool configureRecorderAudioDevice(yarp::os::Searchable& config);
 };
 
 } // namespace dev

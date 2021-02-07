@@ -149,3 +149,21 @@ bool audioToFileDevice::setHWGain(double gain)
     yCError(AUDIOTOFILE, "Not yet implemented");
     return false;
 }
+
+bool audioToFileDevice::configureDeviceAndStart()
+{
+    yCError(AUDIOTOFILE, "configureDeviceAndStart() Not yet implemented");
+    return true;
+}
+
+bool audioToFileDevice::interruptDeviceAndClose()
+{
+    yCError(AUDIOTOFILE, "interruptDeviceAndClose() Not yet implemented");
+    return true;
+}
+
+void audioToFileDevice::waitUntilPlaybackStreamIsComplete()
+{
+    yCError(AUDIOTOFILE, "waitUntilPlaybackStreamIsComplete() Not yet implemented");
+    return;
+}
