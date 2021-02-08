@@ -49,6 +49,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "PythonCameraHelper.h"
+
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
 // minimum number of buffers to request in VIDIOC_REQBUFS call
@@ -68,6 +70,7 @@ typedef enum
 {
     STANDARD_UVC = 0,
     LEOPARD_PYTHON,
+    PYTHON
 } supported_cams;
 
 
@@ -206,7 +209,7 @@ public:
     bool setOnePush(int feature) override;
 
 private:
-    bool verbose;
+    bool verbose{false};
     v4lconvert_data* _v4lconvert_data;
     bool use_exposure_absolute;
 
@@ -224,7 +227,7 @@ private:
     int myCounter;
     int frameCounter;
 
-    std::map<std::string, supported_cams> camMap;
+    std::map<std::string, supported_cams> camMap{{"default",STANDARD_UVC},{"leopard_python",LEOPARD_PYTHON},{"python",PYTHON}};   
 
     bool fromConfig(yarp::os::Searchable& config);
 
@@ -311,6 +314,13 @@ private:
     int bit_shift;
     int bit_bayer;
     int pixel_fmt_leo;
+
+private:
+    //Only for PythonCamera
+    PythonCameraHelper pythonCameraHelper_;
+    void pythonPreprocess(const void* pythonbuffer,size_t size);
+    const void* pythonBuffer_{nullptr};
+    unsigned int pythonBufferSize_{0};
 };
 
 #endif // YARP_DEVICE_USBCAMERA_LINUX_V4L_CAMERA_H

@@ -28,7 +28,11 @@ if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
                                         linux/V4L_camera.cpp
                                         linux/V4L_camera.h
                                         linux/list.cpp
-                                        linux/list.h)
+                                        linux/list.h
+                                        linux/PythonCameraHelper.cpp
+                                        linux/PythonCameraHelper.h
+                                        linux/xilinx-v4l2-controls.h
+                                        )
 
   target_include_directories(yarp_usbCamera PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/common")
   target_include_directories(yarp_usbCamera PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/linux")
@@ -51,6 +55,8 @@ if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
   target_include_directories(yarp_usbCamera SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
   target_link_libraries(yarp_usbCamera PRIVATE ${OpenCV_LIBRARIES})
 #   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS OpenCV) (not using targets)
+
+  target_link_libraries(yarp_usbCamera PRIVATE udev) #only for ARM PYTHON
 
   yarp_install(TARGETS yarp_usbCamera
                EXPORT YARP_${YARP_PLUGIN_MASTER}

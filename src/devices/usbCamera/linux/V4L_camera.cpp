@@ -18,18 +18,18 @@
 
 
 #include "V4L_camera.h"
-#include "list.h"
-#include "USBcameraLogComponent.h"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 
+#include "USBcameraLogComponent.h"
+#include "list.h"
 #include <cstdio>
 #include <ctime>
 #include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core_c.h>
+#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -100,7 +100,9 @@ int V4L_camera::convertYARP_to_V4L(int feature)
 V4L_camera::V4L_camera() :
         PeriodicThread(1.0 / DEFAULT_FRAMERATE), doCropping(false), toEpochOffset(getEpochTimeShift())
 {
-    verbose = false;
+    pythonCameraHelper_.setInjectedProcess([this](const void* pythonBuffer, size_t size)
+                                           { pythonPreprocess(pythonBuffer, size); });
+
     param.fps = DEFAULT_FRAMERATE;
     param.io = IO_METHOD_MMAP;
     param.deviceId = "/dev/video0";
@@ -133,8 +135,6 @@ V4L_camera::V4L_camera() :
     param.dst_image_size_rgb = 0;
 
     use_exposure_absolute = false;
-    camMap["default"] = STANDARD_UVC;
-    camMap["leopard_python"] = LEOPARD_PYTHON;
 
     configFx = false;
     configFy = false;
@@ -165,7 +165,7 @@ int V4L_camera::convertV4L_to_YARP_format(int format)
         return VOCAB_PIXEL_MONO16;
     case V4L2_PIX_FMT_RGB24:
         return VOCAB_PIXEL_RGB;
-//     case V4L2_PIX_FMT_ABGR32  : return VOCAB_PIXEL_BGRA; //unsupported by linux travis configuration
+        //     case V4L2_PIX_FMT_ABGR32  : return VOCAB_PIXEL_BGRA; //unsupported by linux travis configuration
     case V4L2_PIX_FMT_BGR24:
         return VOCAB_PIXEL_BGR;
     case V4L2_PIX_FMT_SGRBG8:
@@ -252,6 +252,19 @@ bool V4L_camera::open(yarp::os::Searchable& config)
         yCError(USBCAMERA, "%s is no device", param.deviceId.c_str());
         return false;
     }
+
+    if (param.camModel == PYTHON) {
+        //pythonCameraHelper_.injectedProcessImage_=std::bind(&V4L_camera::pythonPreprocess, this, _1);
+        yCTrace(USBCAMERA) << "PYTHON";
+        pythonCameraHelper_.openPipeline();
+        pythonCameraHelper_.initDevice();
+        configured = true;
+        pythonCameraHelper_.startCapturing();
+        yarp::os::Time::delay(0.5);
+        start();
+        return true;
+    }
+
 
     // open device
     param.fd = v4l2_open(param.deviceId.c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
@@ -519,7 +532,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
             || bt.find("k2").isNull() || bt.find("k3").isNull()
             || bt.find("t1").isNull() || bt.find("t2").isNull()) {
             yCError(USBCAMERA) << "group cameraDistortionModelGroup incomplete, "
-                        "fields k1, k2, k3, t1, t2, name are required when using cameraDistortionModelGroup";
+                                  "fields k1, k2, k3, t1, t2, name are required when using cameraDistortionModelGroup";
             configIntrins = false;
             return false;
         }
@@ -584,12 +597,16 @@ bool V4L_camera::threadInit()
 
 void V4L_camera::run()
 {
-    if (full_FrameRead()) {
+    if (param.camModel == PYTHON) {
+        pythonCameraHelper_.mainLoop();
         frameCounter++;
     } else {
-        yCError(USBCAMERA) << "Failed acquiring new frame";
+        if (full_FrameRead()) {
+            frameCounter++;
+        } else {
+            yCError(USBCAMERA) << "Failed acquiring new frame";
+        }
     }
-
     timeNow = yarp::os::Time::now();
     if ((timeElapsed = timeNow - timeStart) > 1.0f) {
         yCInfo(USBCAMERA, "frames acquired %d in %f sec", frameCounter, timeElapsed);
@@ -704,11 +721,9 @@ bool V4L_camera::deviceInit()
     }
 
     // Check if dst_fmt has been changed by the v4lconvert_try_format
-    if (param.dst_fmt.fmt.pix.width != param.user_width ||
-        param.dst_fmt.fmt.pix.height != param.user_height ||
-        param.dst_fmt.fmt.pix.pixelformat != param.pixelType) {
+    if (param.dst_fmt.fmt.pix.width != param.user_width || param.dst_fmt.fmt.pix.height != param.user_height || param.dst_fmt.fmt.pix.pixelformat != param.pixelType) {
         yCWarning(USBCAMERA) << "Conversion from HW supported configuration into user requested format will require addictional step.\n"
-                   << "Performance issue may arise.";
+                             << "Performance issue may arise.";
 
         param.addictionalResize = true;
 
@@ -783,7 +798,7 @@ bool V4L_camera::deviceInit()
         param.raw_image_size = param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height * 2;
         param.raw_image = new unsigned char[param.raw_image_size];
         param.read_image = param.raw_image; // store the image read in the raw_image buffer
-    } else // This buffer should not be used for STANDARD_UVC cameras
+    } else                                  // This buffer should not be used for STANDARD_UVC cameras
     {
         param.read_image = param.src_image; // store the image read in the src_image buffer
         param.raw_image_size = 0;
@@ -898,6 +913,11 @@ bool V4L_camera::close()
     return true;
 }
 
+void V4L_camera::pythonPreprocess(const void* pythonbuffer, size_t size)
+{
+    pythonBuffer_ = pythonbuffer;
+    pythonBufferSize_ = size;
+}
 
 // IFrameGrabberRgb Interface 777
 bool V4L_camera::getRgbBuffer(unsigned char* buffer)
@@ -905,14 +925,19 @@ bool V4L_camera::getRgbBuffer(unsigned char* buffer)
     bool res = false;
     mutex.wait();
     if (configured) {
-        imagePreProcess();
-        imageProcess();
 
-        if (!param.addictionalResize) {
-            memcpy(buffer, param.dst_image_rgb, param.dst_image_size_rgb);
+        if (param.camModel == PYTHON) {
+            memcpy(buffer, pythonBuffer_, pythonBufferSize_);
         } else {
-            memcpy(buffer, param.outMat.data, param.outMat.total() * 3);
+            imagePreProcess();
+            imageProcess();
+            if (!param.addictionalResize) {
+                memcpy(buffer, param.dst_image_rgb, param.dst_image_size_rgb);
+            } else {
+                memcpy(buffer, param.outMat.data, param.outMat.total() * 3);
+            }
         }
+
         mutex.post();
         res = true;
     } else {
@@ -1218,8 +1243,7 @@ bool V4L_camera::frameRead()
 void V4L_camera::imagePreProcess()
 {
     switch (param.camModel) {
-    case LEOPARD_PYTHON:
-    {
+    case LEOPARD_PYTHON: {
         // Here we are resizing the byte information from 10 to 8 bits.
         // Width and Height are not modified by this operation.
         const uint _pixelNum = param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height;
@@ -1810,8 +1834,7 @@ bool V4L_camera::setActive(int feature, bool onoff)
 bool V4L_camera::getActive(int feature, bool* _isActive)
 {
     switch (feature) {
-    case YARP_FEATURE_WHITE_BALANCE:
-    {
+    case YARP_FEATURE_WHITE_BALANCE: {
         double tmp = get_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
         if (tmp == 1) {
             *_isActive = true;
@@ -1821,12 +1844,11 @@ bool V4L_camera::getActive(int feature, bool* _isActive)
         break;
     }
 
-    case YARP_FEATURE_EXPOSURE:
-    {
+    case YARP_FEATURE_EXPOSURE: {
         bool _hasMan(false);
         bool _hasMan2(false);
         hasFeature(V4L2_CID_EXPOSURE, &_hasMan) || hasFeature(V4L2_CID_EXPOSURE_ABSOLUTE, &_hasMan2); // check manual version (normal and asbolute)
-        double _hasAuto = get_V4L2_control(V4L2_CID_EXPOSURE_AUTO, true); // check auto version
+        double _hasAuto = get_V4L2_control(V4L2_CID_EXPOSURE_AUTO, true);                             // check auto version
 
         *_isActive = (_hasAuto == V4L2_EXPOSURE_AUTO) || _hasMan || _hasMan2;
         break;
@@ -1936,8 +1958,7 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
         }
         break;
 
-    case YARP_FEATURE_BRIGHTNESS:
-    {
+    case YARP_FEATURE_BRIGHTNESS: {
         bool _tmpAuto;
         hasAuto(YARP_FEATURE_BRIGHTNESS, &_tmpAuto);
 
@@ -1972,15 +1993,13 @@ bool V4L_camera::getMode(int feature, FeatureMode* mode)
 {
     bool _tmpAuto;
     switch (feature) {
-    case YARP_FEATURE_WHITE_BALANCE:
-    {
+    case YARP_FEATURE_WHITE_BALANCE: {
         double ret = get_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
         *mode = toFeatureMode(ret != 0.0);
         break;
     }
 
-    case YARP_FEATURE_EXPOSURE:
-    {
+    case YARP_FEATURE_EXPOSURE: {
         double ret = get_V4L2_control(V4L2_CID_EXPOSURE_AUTO);
         if (ret == -1.0) {
             *mode = MODE_MANUAL;
