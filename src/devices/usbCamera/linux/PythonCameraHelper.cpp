@@ -484,7 +484,8 @@ int PythonCameraHelper::readFrame(void)
 
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
-    //	usleep(5000);
+
+    Locker locker(*this);
     if (-1 == xioctl(mainSubdeviceFd_, VIDIOC_DQBUF, &buf)) {
         switch (errno) {
         case EAGAIN:
@@ -511,8 +512,6 @@ int PythonCameraHelper::readFrame(void)
 
     seq = buf.sequence;
     processImage(mMapBuffers_[buf.index].start, buf.bytesused);
-    static unsigned char dbg = 0;
-    memset(mMapBuffers_[buf.index].start, dbg++, buf.bytesused);
 
     if (-1 == xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
         fs << "ERROR-VIDIOC_QBUF" << std::endl;
@@ -601,4 +600,17 @@ void PythonCameraHelper::fpsCalculus()
 double PythonCameraHelper::getCurrentFps()
 {
     return fps_;
+}
+
+void PythonCameraHelper::setInjectedProcess(std::function<void(const void*, int)> toinJect)
+{
+    injectedProcessImage_ = toinJect;
+}
+void PythonCameraHelper::setUnlock(std::function<void()> toinJect)
+{
+    unlock_ = toinJect;
+}
+void PythonCameraHelper::setLock(std::function<void()> toinJect)
+{
+    lock_ = toinJect;
 }

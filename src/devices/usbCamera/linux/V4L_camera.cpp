@@ -102,6 +102,11 @@ V4L_camera::V4L_camera() :
 {
     pythonCameraHelper_.setInjectedProcess([this](const void* pythonBuffer, size_t size)
                                            { pythonPreprocess(pythonBuffer, size); });
+    pythonCameraHelper_.setLock([this]()
+                                { mutex.wait(); });
+    pythonCameraHelper_.setUnlock([this]()
+                                  { mutex.post(); });
+
 
     param.fps = DEFAULT_FRAMERATE;
     param.io = IO_METHOD_MMAP;
