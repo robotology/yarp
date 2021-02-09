@@ -7,6 +7,7 @@
 #include <linux/media.h>
 #include <linux/v4l2-subdev.h>
 #include <linux/videodev2.h>
+#include <sstream>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -17,21 +18,21 @@
 
 void PythonCameraHelper::openPipeline(void)
 {
-    fs << "openPipeline" << methodName << std::endl;
+    log("openPipeline", Severity::info);
 
     // Open main device
     int fd = open(mediaName_.c_str(), O_RDWR);
     if (fd == -1) {
-        fs << "ERROR-cannot open media dev" << std::endl;
+        log("ERROR-cannot open media dev");
         exit(EXIT_FAILURE);
     }
-    fs << "open:" << mediaName_ << " fd:" << fd << std::endl;
+    log("open:" + mediaName_, Severity::info);
 
 
     struct udev* udev;
     udev = udev_new();
     if (udev == NULL) {
-        fs << "ERROR-cannot open udev" << std::endl;
+        log("ERROR-cannot open udev", Severity::error);
         exit(EXIT_FAILURE);
     }
 
@@ -45,10 +46,10 @@ void PythonCameraHelper::openPipeline(void)
         int ret = ioctl(fd, MEDIA_IOC_ENUM_ENTITIES, &info);
         if (ret < 0) {
             ret = errno != EINVAL ? -errno : 0;
-            fs << "WARNING-cannot open device not media" << std::endl;
+            log("WARNING-cannot open device not media");
             break;
         }
-        fs << "found entity num:" << id << " name:" << info.name << std::endl;
+        log("found entity name:" + std::string(info.name));
 
         dev_t devnum = makedev(info.v4l.major, info.v4l.minor);
         struct udev_device* device;
@@ -65,11 +66,10 @@ void PythonCameraHelper::openPipeline(void)
         if ((std::strcmp(info.name, pipelineVideoName) == 0) || (std::strcmp(info.name, pipelineDummyName) == 0)) {
             mainSubdeviceFd_ = open(deviceName, O_RDWR /* required */ | O_NONBLOCK, 0);
             if (mainSubdeviceFd_ == -1) {
-                fs << "ERROR-cannot open device:" << mainSubdeviceFd_ << std::endl;
+                log("ERROR-cannot open device:" + std::string(deviceName), Severity::error);
                 exit(EXIT_FAILURE);
             }
-            fs << "open no pipeline:" << deviceName << " fd:" << mainSubdeviceFd_
-               << " device number:" << devnum << std::endl;
+            log("open no pipeline:" + std::string(deviceName));
         } else {
             // Open other subdevice
 
@@ -99,34 +99,29 @@ void PythonCameraHelper::openPipeline(void)
             }
             pipelineSubdeviceFd_[subdeviceIndex] = open(deviceName, O_RDWR /* required */ | O_NONBLOCK, 0);
             if (pipelineSubdeviceFd_[subdeviceIndex] == -1) {
-                fs << "ERROR-cannot open device:" << deviceName << std::endl;
+                log("ERROR-cannot open device:" + std::string(deviceName), Severity::error);
                 exit(EXIT_FAILURE);
             }
-            fs << "open pipeline:" << deviceName
-               << " fd:" << pipelineSubdeviceFd_[subdeviceIndex]
-               << " device number:" << devnum << std::endl;
+            log("open pipeline:" + std::string(deviceName));
             subdeviceIndex++;
         }
 
         udev_device_unref(device);
     }
     if (mainSubdeviceFd_ == -1) {
-        fs << "ERROR-Cannot find main pipe V4L2 device" << std::endl;
+        log("ERROR-Cannot find main pipe V4L2 device", Severity::error);
         exit(EXIT_FAILURE);
     }
     if (sourceSubDeviceIndex1_ == -1) {
-        fs << "ERROR-Cannot find source subdev" << std::endl;
+        log("ERROR-Cannot find source subdev", Severity::error);
         exit(EXIT_FAILURE);
     }
-
-    fs << "final fd:" << mainSubdeviceFd_ << std::endl;
 }
 
 void PythonCameraHelper::setSubDevFormat(int width, int height)
 {
     int i, j, n;
     struct v4l2_subdev_format fmt;
-    char buf[256];
 
     for (i = 0; pipelineSubdeviceFd_[i] != -1; i++) {
         if (i == imgfusionIndex_)
@@ -138,9 +133,9 @@ void PythonCameraHelper::setSubDevFormat(int width, int height)
             fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
             fmt.pad = j;
             if (-1 == xioctl(pipelineSubdeviceFd_[i], VIDIOC_SUBDEV_G_FMT, &fmt)) {
-                sprintf(buf, "VIDIOC_SUBDEV_G_FMT. subdev %d, pad %d", i, j);
-                fs << "ERROR-VIDIOC_SUBDEV_G_FMT. subdev:" << i << " pad:" << j
-                   << std::endl;
+                std::stringstream ss;
+                ss << "VIDIOC_SUBDEV_G_FMT. subdev" << i << "pad" << j;
+                log(ss.str(), Severity::error);
                 exit(EXIT_FAILURE);
             }
 
@@ -166,12 +161,15 @@ void PythonCameraHelper::setSubDevFormat(int width, int height)
             if (j == 2)
                 fmt.format.width *= 2;
 
-            fprintf(stderr, "subdev idx:%d, pad %d, setting format %dx%d\n", i, j, fmt.format.width, fmt.format.height);
-
+            {
+                std::stringstream ss;
+                ss << "subdev idx:" << i << " pad" << j << " setting format:" << fmt.format.width << ":" << fmt.format.height;
+                log(ss.str(), Severity::debug);
+            }
             if (-1 == xioctl(pipelineSubdeviceFd_[i], VIDIOC_SUBDEV_S_FMT, &fmt)) {
-                sprintf(buf, "VIDIOC_SUBDEV_S_FMT. subdev %d, pad %d", i, j);
-                fs << "ERROR-VIDIOC_SUBDEV_S_FMT. subdev:" << i << " pad:" << j
-                   << std::endl;
+                std::stringstream ss;
+                ss << "VIDIOC_SUBDEV_S_FMT. subdev" << i << "pad" << j;
+                log(ss.str(), Severity::error);
                 exit(EXIT_FAILURE);
             }
             if ((i == sourceSubDeviceIndex1_) || (i == sourceSubDeviceIndex2_))
@@ -227,8 +225,7 @@ void PythonCameraHelper::crop(int top, int left, int w, int h, int mytry)
 
     cropCheck();
 
-    fs << "crop is" << (cropEnabledProperty_ ? "ENABLED" : "DISABLED")
-       << std::endl;
+    log("crop is" + std::string(cropEnabledProperty_ ? "ENABLED" : "DISABLED"));
     if (!cropEnabledProperty_)
         return;
 
@@ -252,24 +249,23 @@ void PythonCameraHelper::crop(int top, int left, int w, int h, int mytry)
 
 void PythonCameraHelper::setSubsampling(void)
 {
-    fs << "subsampling is"
-       << (subsamplingEnabledProperty_ ? "ENABLED" : "DISABLED") << std::endl;
+    log("subsampling is" + std::string(subsamplingEnabledProperty_ ? "ENABLED" : "DISABLED"));
     if (!subsamplingEnabledProperty_)
         return;
 
-    fs << "setSubsampling" << methodName << std::endl;
+    log("setSubsampling");
     struct v4l2_control ctrl;
 
     ctrl.id = V4L2_CID_XILINX_PYTHON1300_SUBSAMPLING;
     ctrl.value = 1;
     if (-1 == xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_], VIDIOC_S_CTRL, &ctrl)) {
-        fs << "ERROR-setSubsampling" << std::endl;
+        log("ERROR-setSubsampling", Severity::error);
         exit(EXIT_FAILURE);
     }
 
     if (sourceSubDeviceIndex2_ != -1) {
         if (-1 == xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex2_], VIDIOC_S_CTRL, &ctrl)) {
-            fs << "ERROR-setSubsampling" << std::endl;
+            log("ERROR-setSubsampling", Severity::error);
             exit(EXIT_FAILURE);
         }
     }
@@ -277,13 +273,13 @@ void PythonCameraHelper::setSubsampling(void)
     ctrl.id = V4L2_CID_XILINX_PYTHON1300_RXIF_REMAPPER_MODE;
     ctrl.value = 1;
     if (-1 == xioctl(pipelineSubdeviceFd_[rxif1Index_], VIDIOC_S_CTRL, &ctrl)) {
-        fs << "ERROR-setSubsampling remapper" << std::endl;
+        log("ERROR-setSubsampling remapper", Severity::error);
         exit(EXIT_FAILURE);
     }
 
     if (rxif2Index_ != -1) {
         if (-1 == xioctl(pipelineSubdeviceFd_[rxif2Index_], VIDIOC_S_CTRL, &ctrl)) {
-            fs << "ERROR-setSubsampling remapper2" << std::endl;
+            log("ERROR-setSubsampling remapper2", Severity::error);
             exit(EXIT_FAILURE);
         }
     }
@@ -294,7 +290,7 @@ bool PythonCameraHelper::checkDevice(int mainSubdeviceFd)
     struct v4l2_capability cap;
     if (-1 == xioctl(mainSubdeviceFd, VIDIOC_QUERYCAP, &cap)) {
         if (EINVAL == errno) {
-            fs << "ERROR-initDevice:device is no V4L2 device" << std::endl;
+            log("ERROR-initDevice:device is no V4L2 device", Severity::error);
             exit(EXIT_FAILURE);
         } else {
             exit(EXIT_FAILURE);
@@ -302,12 +298,12 @@ bool PythonCameraHelper::checkDevice(int mainSubdeviceFd)
     }
 
     if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
-        fs << "ERROR-initDevice:device is no video capture device" << std::endl;
+        log("ERROR-initDevice:device is no video capture device", Severity::error);
         exit(EXIT_FAILURE);
     }
 
     if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
-        fs << "ERROR-device does not support streaming i/o" << std::endl;
+        log("ERROR-device does not support streaming i/o", Severity::error);
         exit(EXIT_FAILURE);
     }
 
@@ -316,7 +312,7 @@ bool PythonCameraHelper::checkDevice(int mainSubdeviceFd)
 
 void PythonCameraHelper::initDevice(void)
 {
-    fs << "initDevice" << methodName << std::endl;
+    log("initDevice");
 
     checkDevice(mainSubdeviceFd_);
     setSubsampling();
@@ -339,15 +335,15 @@ bool PythonCameraHelper::cropCheck()
         if (-1 == xioctl(mainSubdeviceFd_, VIDIOC_S_CROP, &tmpCrop)) {
             switch (errno) {
             case EINVAL:
-                fs << "ERROR-cropping not supported" << std::endl;
+                log("ERROR-cropping not supported", Severity::error);
                 break;
             default:
-                fs << "ERROR-cropping" << std::endl;
+                log("ERROR-cropping", Severity::error);
                 break;
             }
         }
     } else {
-        fs << "ERROR-cropping-2 ??" << std::endl;
+        log("WARNING-cropping-2");
     }
     return true;
 }
@@ -365,7 +361,7 @@ int PythonCameraHelper::xioctl(int fh, int request, void* arg)
 
 void PythonCameraHelper::initMmap(void)
 {
-    fs << "initMmap" << std::endl;
+    log("initMmap");
     struct v4l2_requestbuffers req;
 
     CLEAR(req);
@@ -376,16 +372,16 @@ void PythonCameraHelper::initMmap(void)
 
     if (-1 == xioctl(mainSubdeviceFd_, VIDIOC_REQBUFS, &req)) {
         if (EINVAL == errno) {
-            fs << "ERROR-device does not support memmap" << std::endl;
+            log("ERROR-device does not support memmap", Severity::error);
             exit(EXIT_FAILURE);
         } else {
-            fs << "ERROR-device does not support memmap" << std::endl;
+            log("ERROR-device does not support memmap", Severity::error);
             exit(EXIT_FAILURE);
         }
     }
 
     if (req.count < 1) {
-        fs << "ERROR-Insufficient buffer memory on" << std::endl;
+        log("ERROR-Insufficient buffer memory on", Severity::error);
         exit(EXIT_FAILURE);
     }
 
@@ -413,7 +409,7 @@ void PythonCameraHelper::initMmap(void)
 
 void PythonCameraHelper::startCapturing()
 {
-    fs << "startCapturing" << std::endl;
+    log("startCapturing");
     enum v4l2_buf_type type;
 
     for (size_t i = 0; i < requestBufferNumber_; ++i) {
@@ -425,18 +421,18 @@ void PythonCameraHelper::startCapturing()
         buf.index = i;
 
         if (-1 == xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
-            fs << "ERROR-VIDIOC_QBUF" << std::endl;
+            log("ERROR-VIDIOC_QBUF", Severity::error);
             exit(EXIT_FAILURE);
         }
     }
     type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     if (-1 == xioctl(mainSubdeviceFd_, VIDIOC_STREAMON, &type)) {
-        fs << "ERROR-VIDIOC_STREAMON" << std::endl;
+        log("ERROR-VIDIOC_STREAMON", Severity::error);
         exit(EXIT_FAILURE);
     }
 }
 
-void PythonCameraHelper::mainLoop()
+void PythonCameraHelper::step()
 {
 
     static int seq = 0;
@@ -457,18 +453,18 @@ void PythonCameraHelper::mainLoop()
     if (-1 == ret) {
         if (EINTR == errno)
             return;
-        fs << "ERROR-select" << std::endl;
+        log("ERROR-select", Severity::error);
         exit(EXIT_FAILURE);
     }
 
     if (0 == ret) {
-        fs << "ERROR-select timeout" << std::endl;
+        log("ERROR-select timeout", Severity::error);
         exit(EXIT_FAILURE);
     }
 
     seq = readFrame();
     if (seq != sequence++) {
-        fs << "WANNING-dropped frame.." << std::endl;
+        log("WANNING-dropped frame..", Severity::warning);
         sequence = seq + 1;
     }
     if (seq) {
@@ -490,23 +486,23 @@ int PythonCameraHelper::readFrame(void)
         switch (errno) {
         case EAGAIN:
 
-            fs << "ERROR-VIDIOC_DQBUF eagain" << std::endl;
+            log("ERROR-VIDIOC_DQBUF eagain", Severity::error);
             exit(EXIT_FAILURE);
 
         case EIO:
         default:
-            fs << "ERROR-VIDIOC_DQBUF" << std::endl;
+            log("ERROR-VIDIOC_DQBUF", Severity::error);
             exit(EXIT_FAILURE);
         }
     }
 
     if (buf.index >= requestBufferNumber_) {
-        fs << "ERROR-readframe" << std::endl;
+        log("ERROR-readframe", Severity::error);
         exit(EXIT_FAILURE);
     }
 
     if (buf.flags & V4L2_BUF_FLAG_ERROR) {
-        fs << "ERROR-V4L2_BUF_FLAG_ERROR" << std::endl;
+        log("ERROR-V4L2_BUF_FLAG_ERROR", Severity::error);
         exit(EXIT_FAILURE);
     }
 
@@ -514,20 +510,11 @@ int PythonCameraHelper::readFrame(void)
     processImage(mMapBuffers_[buf.index].start, buf.bytesused);
 
     if (-1 == xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
-        fs << "ERROR-VIDIOC_QBUF" << std::endl;
+        log("ERROR-VIDIOC_QBUF", Severity::error);
         exit(EXIT_FAILURE);
     }
 
     return seq;
-}
-
-unsigned long PythonCameraHelper::subTimeMs(struct timeval* time1,
-                                            struct timeval* time2)
-{
-    struct timeval res;
-
-    timersub(time1, time2, &res);
-    return res.tv_sec * 1000 + res.tv_usec / 1000;
 }
 
 void PythonCameraHelper::processImage(const void* p, int size)
@@ -535,6 +522,16 @@ void PythonCameraHelper::processImage(const void* p, int size)
     if (injectedProcessImage_ == nullptr)
         return;
     injectedProcessImage_(p, size);
+}
+
+void PythonCameraHelper::log(const std::string& toBeLogged, Severity severity)
+{
+    if (logOnFile_)
+        fs << toBeLogged;
+
+    if (log_ == nullptr)
+        return;
+    log_(toBeLogged, severity);
 }
 
 void PythonCameraHelper::closeAll()
@@ -546,12 +543,12 @@ void PythonCameraHelper::closeAll()
 
 void PythonCameraHelper::unInitDevice()
 {
-    fs << "uninit_device" << methodName << std::endl;
+    log("uninit_device");
     unsigned int i;
 
     for (i = 0; i < requestBufferNumber_; ++i)
         if (-1 == munmap(mMapBuffers_[i].start, mMapBuffers_[i].length)) {
-            fs << "ERROR-munmap" << std::endl;
+            log("ERROR-munmap", Severity::error);
             exit(EXIT_FAILURE);
         }
 }
@@ -562,7 +559,7 @@ void PythonCameraHelper::stopCapturing()
 
     type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     if (-1 == xioctl(mainSubdeviceFd_, VIDIOC_STREAMOFF, &type)) {
-        fs << "ERROR-VIDIOC_STREAMOFF" << std::endl;
+        log("ERROR-VIDIOC_STREAMOFF", Severity::error);
         exit(EXIT_FAILURE);
     }
 }
@@ -573,7 +570,7 @@ void PythonCameraHelper::closePipeline()
 
     for (i = 0; pipelineSubdeviceFd_[i] != -1; i++)
         if (-1 == close(pipelineSubdeviceFd_[i])) {
-            fs << "ERROR-close pipeline" << std::endl;
+            log("ERROR-close pipeline", Severity::error);
             exit(EXIT_FAILURE);
         }
 }
@@ -591,13 +588,13 @@ void PythonCameraHelper::fpsCalculus()
 
     if (time_delta >= 1000) {
         fps_ = (((double)frames / (double)time_delta) * 1000.0);
-        fs << "FPS:" << fps_ << std::endl;
+        //log("FPS:" << fps_);
         prev = current;
         frames = 0;
     }
 }
 
-double PythonCameraHelper::getCurrentFps()
+double PythonCameraHelper::getCurrentFps() const
 {
     return fps_;
 }
@@ -617,5 +614,22 @@ void PythonCameraHelper::setLock(std::function<void()> toinJect)
 
 void PythonCameraHelper::setSubsamplingProperty(bool value)
 {
-    subsamplingEnabledProperty_=value;
+    subsamplingEnabledProperty_ = value;
+}
+
+void PythonCameraHelper::openAll()
+{
+    openPipeline();
+    initDevice();
+    startCapturing();
+}
+
+void PythonCameraHelper::setLog(std::function<void(const std::string&, Severity)> toinJect)
+{
+    log_ = toinJect;
+}
+
+void PythonCameraHelper::setFileLog(bool value)
+{
+    logOnFile_ = value;
 }

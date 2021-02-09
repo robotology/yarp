@@ -106,7 +106,23 @@ V4L_camera::V4L_camera() :
                                 { mutex.wait(); });
     pythonCameraHelper_.setUnlock([this]()
                                   { mutex.post(); });
-
+    pythonCameraHelper_.setLog([this](const std::string& toLog, Severity severity)
+                               {
+                                   switch (severity) {
+                                   case Severity::error:
+                                       yCError(USBCAMERA) << toLog;
+                                       break;
+                                   case Severity::info:
+                                       yCInfo(USBCAMERA) << toLog;
+                                       break;
+                                   case Severity::debug:
+                                       yCDebug(USBCAMERA) << toLog;
+                                       break;
+                                   case Severity::warning:
+                                       yCWarning(USBCAMERA) << toLog;
+                                       break;
+                                   }
+                               });
 
     param.fps = DEFAULT_FRAMERATE;
     param.io = IO_METHOD_MMAP;
@@ -259,12 +275,9 @@ bool V4L_camera::open(yarp::os::Searchable& config)
     }
 
     if (param.camModel == PYTHON) {
-        //pythonCameraHelper_.injectedProcessImage_=std::bind(&V4L_camera::pythonPreprocess, this, _1);
         yCTrace(USBCAMERA) << "PYTHON";
-        pythonCameraHelper_.openPipeline();
-        pythonCameraHelper_.initDevice();
+        pythonCameraHelper_.openAll();
         configured = true;
-        pythonCameraHelper_.startCapturing();
         yarp::os::Time::delay(0.5);
         start();
         return true;
@@ -621,7 +634,7 @@ bool V4L_camera::threadInit()
 void V4L_camera::run()
 {
     if (param.camModel == PYTHON) {
-        pythonCameraHelper_.mainLoop();
+        pythonCameraHelper_.step();
         frameCounter++;
     } else {
         if (full_FrameRead()) {

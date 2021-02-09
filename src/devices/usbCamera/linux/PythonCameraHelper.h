@@ -19,6 +19,14 @@ enum class SpaceColor
     grgb
 };
 
+enum class Severity
+{
+    debug,
+    info,
+    warning,
+    error
+};
+
 class PythonCameraHelper
 {
 private:
@@ -41,41 +49,28 @@ private:
 
     static constexpr const char* methodName = "------------";
 
-    // Public property
-    bool subsamplingEnabledProperty_ {true};
-    bool cropEnabledProperty_ {false};
-    bool forceFormatProperty_ {true}; // Overwrite preesistent format
-    
 public:
-    void openPipeline();
-    void initDevice();
-    void startCapturing();
-    void mainLoop();
+    void openAll();
+    void step();
     void closeAll();
-    double getCurrentFps();
-
+    double getCurrentFps() const;
     void setSubsamplingProperty(bool value);
-
-    SpaceColor spaceColor_ {SpaceColor::rgb};
-
-    std::string mediaName_ {"/dev/media0"};
-
-    // Crop size
-    unsigned int cropLeft_ {0};
-    unsigned int cropTop_ {0};
-    unsigned int cropHeight_ {0};
-    unsigned int cropWidth_ {0};
+    void setFileLog(bool value);
 
     void setInjectedProcess(std::function<void(const void*, int)> toinJect);
     void setUnlock(std::function<void()> toinJect);
     void setLock(std::function<void()> toinJect);
-
-    // Log
-    std::ofstream fs {"./log.log"};
+    void setLog(std::function<void(const std::string&, Severity severity)> toinJect);
 
 private:
-    // Loop is active
-    bool keepCapturing_ {true};
+    void openPipeline();
+    void initDevice();
+    void startCapturing();
+
+    //Property
+    bool subsamplingEnabledProperty_ {true};
+    bool cropEnabledProperty_ {false};
+    bool forceFormatProperty_ {true}; // Overwrite preesistent format
 
     // Image memory map
     MmapBuffer mMapBuffers_[requestBufferNumber_];
@@ -124,13 +119,28 @@ private:
     int xioctl(int fh, int request, void* arg);
     void initMmap(void);
     bool cropCheck();
-    unsigned long subTimeMs(struct timeval* time1, struct timeval* time2);
     void fpsCalculus();
+    void log(const std::string& toBeLogged,Severity severity=Severity::debug);
+
+    SpaceColor spaceColor_ {SpaceColor::rgb};
+
+    std::string mediaName_ {"/dev/media0"};
+
+    // Crop size
+    unsigned int cropLeft_ {0};
+    unsigned int cropTop_ {0};
+    unsigned int cropHeight_ {0};
+    unsigned int cropWidth_ {0};
 
     // injected functionality
     std::function<void(const void*, int)> injectedProcessImage_; //Process image external
-    std::function<void()> lock_;                                 //Mutex
-    std::function<void()> unlock_;                               //Mutex
+    std::function<void()> lock_;                                 //Mutex injected method
+    std::function<void()> unlock_;                               //Mutex injected method
+    std::function<void(const std::string&, Severity)> log_;
+
+    // file log
+    std::ofstream fs {"./log.log"};
+    bool logOnFile_ {false};
 
     class Locker
     {
@@ -139,7 +149,7 @@ private:
         PythonCameraHelper& parent_;
 
     public:
-        Locker(PythonCameraHelper& parent) :
+        explicit Locker(PythonCameraHelper& parent) :
                 parent_(parent)
         {
             if (parent_.lock_)
