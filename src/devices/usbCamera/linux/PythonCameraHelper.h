@@ -41,6 +41,11 @@ private:
 
     static constexpr const char* methodName = "------------";
 
+    // Public property
+    bool subsamplingEnabledProperty_ {true};
+    bool cropEnabledProperty_ {false};
+    bool forceFormatProperty_ {true}; // Overwrite preesistent format
+    
 public:
     void openPipeline();
     void initDevice();
@@ -49,10 +54,8 @@ public:
     void closeAll();
     double getCurrentFps();
 
-    // Public property
-    bool subsamplingEnabledProperty_ {true};
-    bool cropEnabledProperty_ {false};
-    bool forceFormatProperty_ {true}; // Overwrite preesistent format
+    void setSubsamplingProperty(bool value);
+
     SpaceColor spaceColor_ {SpaceColor::rgb};
 
     std::string mediaName_ {"/dev/media0"};

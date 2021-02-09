@@ -614,3 +614,8 @@ void PythonCameraHelper::setLock(std::function<void()> toinJect)
 {
     lock_ = toinJect;
 }
+
+void PythonCameraHelper::setSubsamplingProperty(bool value)
+{
+    subsamplingEnabledProperty_=value;
+}

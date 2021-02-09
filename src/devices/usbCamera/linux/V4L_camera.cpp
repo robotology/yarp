@@ -401,39 +401,6 @@ bool V4L_camera::setRgbMirroring(bool mirror)
 
 bool V4L_camera::fromConfig(yarp::os::Searchable& config)
 {
-    if (config.check("verbose")) {
-        verbose = true;
-    }
-
-    if (!config.check("width")) {
-        yCDebug(USBCAMERA) << "width parameter not found, using default value of " << DEFAULT_WIDTH;
-        param.user_width = DEFAULT_WIDTH;
-    } else {
-        param.user_width = config.find("width").asInt32();
-    }
-
-    if (!config.check("height")) {
-        yCDebug(USBCAMERA) << "height parameter not found, using default value of " << DEFAULT_HEIGHT;
-        param.user_height = DEFAULT_HEIGHT;
-    } else {
-        param.user_height = config.find("height").asInt32();
-    }
-
-    if (!config.check("framerate")) {
-        yCDebug(USBCAMERA) << "framerate parameter not found, using default value of " << DEFAULT_FRAMERATE;
-        param.fps = DEFAULT_FRAMERATE;
-    } else {
-        param.fps = config.find("framerate").asInt32();
-    }
-
-    if (!config.check("d")) {
-        yCError(USBCAMERA) << "No camera identifier was specified! (e.g. '--d /dev/video0' on Linux OS)";
-        return false;
-    }
-
-    param.deviceId = config.find("d").asString();
-    param.flip = config.check("flip", Value("false")).asBool();
-
     if (!config.check("camModel")) {
         yCInfo(USBCAMERA) << "No 'camModel' was specified, working with 'standard' uvc";
         param.camModel = STANDARD_UVC;
@@ -451,6 +418,57 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
             return false;
         }
     }
+
+    if (config.check("verbose")) {
+        verbose = true;
+    }
+
+    if (param.camModel != PYTHON) {
+        if (!config.check("width")) {
+            yCDebug(USBCAMERA) << "width parameter not found, using default value of " << DEFAULT_WIDTH;
+            param.user_width = DEFAULT_WIDTH;
+        } else {
+            param.user_width = config.find("width").asInt32();
+        }
+
+        if (!config.check("height")) {
+            yCDebug(USBCAMERA) << "height parameter not found, using default value of " << DEFAULT_HEIGHT;
+            param.user_height = DEFAULT_HEIGHT;
+        } else {
+            param.user_height = config.find("height").asInt32();
+        }
+    }
+
+    if (!config.check("framerate")) {
+        yCDebug(USBCAMERA) << "framerate parameter not found, using default value of " << DEFAULT_FRAMERATE;
+        param.fps = DEFAULT_FRAMERATE;
+    } else {
+        param.fps = config.find("framerate").asInt32();
+    }
+
+    if (param.camModel == PYTHON) {
+        if (!config.check("subsampling")) {
+            yCDebug(USBCAMERA) << "Python cam full-sampling ";
+            pythonCameraHelper_.setSubsamplingProperty(false);
+            param.user_height = 1024;
+            param.user_width = 2560;
+            param.fps = DEFAULT_FRAMERATE;
+        } else {
+            param.user_height = 512;
+            param.user_width = 1280;
+            yCDebug(USBCAMERA) << "Python cam sub-sampling ";
+            pythonCameraHelper_.setSubsamplingProperty(true);
+        }
+    }
+
+    if (!config.check("d")) {
+        yCError(USBCAMERA) << "No camera identifier was specified! (e.g. '--d /dev/video0' on Linux OS)";
+        return false;
+    }
+
+    param.deviceId = config.find("d").asString();
+    param.flip = config.check("flip", Value("false")).asBool();
+
 
     // Check for addictional leopard parameter for debugging purpose
     if (param.camModel == LEOPARD_PYTHON) {
