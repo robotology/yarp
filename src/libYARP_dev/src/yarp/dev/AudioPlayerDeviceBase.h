@@ -27,7 +27,7 @@ class AudioDeviceDriverSettings
     size_t numSamples = 0;
     size_t numChannels = 0;
     size_t frequency = 0;
-    size_t bytesPerSample = 0;
+    size_t bytesPerSample = 2;
 };
 
 class YARP_dev_API AudioPlayerDeviceBase : public yarp::dev::IAudioRender
@@ -59,7 +59,7 @@ protected:
     virtual bool immediateSound(const yarp::sig::Sound& sound);
     virtual bool appendSound(const yarp::sig::Sound& sound);
 
-    bool configurePlayerAudioDevice(yarp::os::Searchable& config);
+    bool configurePlayerAudioDevice(yarp::os::Searchable& config, std::string device_name);
 };
 
 } // namespace dev

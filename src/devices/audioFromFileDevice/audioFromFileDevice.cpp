@@ -49,6 +49,9 @@ bool audioFromFileDevice::setHWGain(double gain)
 
 bool audioFromFileDevice::open(yarp::os::Searchable &config)
 {
+    bool b = configureRecorderAudioDevice(config, "audioFromFileDevice");
+    if (!b) { return false; }
+
     //sets the thread period
     if(config.check("period"))
     {
@@ -88,13 +91,9 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
     }
 
     //sets the audio configuration equal to the audio file
-    m_audiorecorder_cfg.numSamples = m_audioFile.getSamples();
-    m_audiorecorder_cfg.numChannels = m_audioFile.getChannels();
-    m_audiorecorder_cfg.frequency = m_audioFile.getFrequency();
-    m_audiorecorder_cfg.bytesPerSample = m_audioFile.getBytesPerSample();
-    constexpr size_t c_EXTRA_SPACE = 2;
-    AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples* c_EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
-    m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
+    //constexpr size_t c_EXTRA_SPACE = 2;
+    //AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples* c_EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
+    //m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
 
     //start the capture thread
     start();

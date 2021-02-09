@@ -27,7 +27,7 @@ class AudioDeviceDriverSettings
     size_t numSamples = 0;
     size_t numChannels = 0;
     size_t frequency = 0;
-    size_t bytesPerSample = 0;
+    size_t bytesPerSample = 2;
 };
 
 class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSound
@@ -51,7 +51,7 @@ public:
     virtual ~AudioRecorderDeviceBase();
 
 protected:
-    bool configureRecorderAudioDevice(yarp::os::Searchable& config);
+    bool configureRecorderAudioDevice(yarp::os::Searchable& config, std::string device_name);
 };
 
 } // namespace dev

@@ -226,8 +226,7 @@ bool PortAudioPlayerDeviceDriver::interruptDeviceAndClose()
 
 bool PortAudioPlayerDeviceDriver::configureDeviceAndStart()
 {
-//     size_t debug_numPlayBytes = (m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_playChannels);
-    AudioBufferSize playback_buffer_size(m_audioplayer_cfg.numSamples, m_audioplayer_cfg.numChannels, sizeof(SAMPLE));
+    AudioBufferSize playback_buffer_size(m_audioplayer_cfg.numSamples, m_audioplayer_cfg.numChannels, m_audioplayer_cfg.bytesPerSample);
     if (m_outputBuffer == nullptr)
         m_outputBuffer = new CircularAudioBuffer_16t("portatudio_play", playback_buffer_size);
 
@@ -269,7 +268,7 @@ bool PortAudioPlayerDeviceDriver::configureDeviceAndStart()
 
 bool PortAudioPlayerDeviceDriver::open(yarp::os::Searchable& config)
 {
-    bool b = configurePlayerAudioDevice(config);
+    bool b = configurePlayerAudioDevice(config, "portaudioPlayer");
     if (!b) { return false; }
 
     m_device_id = config.check("id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();

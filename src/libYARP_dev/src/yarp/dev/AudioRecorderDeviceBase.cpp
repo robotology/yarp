@@ -189,7 +189,7 @@ AudioRecorderDeviceBase::~AudioRecorderDeviceBase()
     delete m_inputBuffer;
 }
 
-bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable& config)
+bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable& config, string device_name)
 {
     m_audiorecorder_cfg.frequency = config.check("rate", Value(0), "audio sample rate (0=automatic)").asInt32();
     m_audiorecorder_cfg.numSamples = config.check("samples", Value(0), "number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
@@ -199,10 +199,11 @@ bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable&
     if (m_audiorecorder_cfg.numChannels == 0)  m_audiorecorder_cfg.numChannels = DEFAULT_NUM_CHANNELS;
     if (m_audiorecorder_cfg.numSamples == 0) m_audiorecorder_cfg.numSamples = m_audiorecorder_cfg.frequency; //  by default let's use chunks of 1 second
 
-    //     size_t debug_numRecBytes = m_config.cfg_samples * sizeof(SAMPLE) * m_config.cfg_recChannels;
-    AudioBufferSize rec_buffer_size(m_audiorecorder_cfg.numSamples, m_audiorecorder_cfg.numChannels, DEFAULT_SAMPLE_SIZE);
+    AudioBufferSize rec_buffer_size(m_audiorecorder_cfg.numSamples, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
     if (m_inputBuffer == nullptr)
-    m_inputBuffer = new CircularAudioBuffer_16t("portatudio_rec", rec_buffer_size);
+    {
+         m_inputBuffer = new CircularAudioBuffer_16t(device_name, rec_buffer_size);
+    }
 
     return true;
 }

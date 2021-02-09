@@ -54,9 +54,5 @@ private:
     bool threadInit() override;
     void run() override;
 
-    size_t m_cfg_numSamples = 0;
-    size_t m_cfg_numChannels = 0;
-    size_t m_cfg_frequency = 0;
-    size_t m_cfg_bytesPerSample = 0;
     double m_hw_gain = 1.0;
 };

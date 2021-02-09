@@ -165,7 +165,7 @@ bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
     return false;
 }
 
-bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& config)
+bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& config, string device_name)
 {
     m_audioplayer_cfg.frequency = config.check("rate", Value(0), "audio sample rate (0=automatic)").asInt32();
     m_audioplayer_cfg.numSamples = config.check("samples", Value(0), "number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
@@ -182,6 +182,13 @@ bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& con
     if (config.check("render_mode_immediate"))
     {
         m_renderMode = RENDER_IMMEDIATE;
+    }
+
+    //create the buffer
+    AudioBufferSize buffer_size(m_audioplayer_cfg.numSamples, m_audioplayer_cfg.numChannels, m_audioplayer_cfg.bytesPerSample);
+    if (m_outputBuffer == nullptr)
+    {
+        m_outputBuffer = new yarp::dev::CircularAudioBuffer_16t(device_name, buffer_size);
     }
 
     return true;

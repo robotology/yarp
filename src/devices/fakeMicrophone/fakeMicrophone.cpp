@@ -26,7 +26,6 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 constexpr size_t c_SAMPLES_TO_BE_COPIED=512; //samples
-constexpr size_t c_bytes_form = 2; //16bit
 
 namespace {
 YARP_LOG_COMPONENT(FAKEMICROPHONE, "yarp.device.fakeMicrophone")
@@ -46,6 +45,9 @@ fakeMicrophone::~fakeMicrophone()
 
 bool fakeMicrophone::open(yarp::os::Searchable &config)
 {
+    bool b = configureRecorderAudioDevice(config, "fakeMicrophone");
+    if (!b) { return false; }
+
     //sets the thread period
     if(config.check("period"))
     {
@@ -56,18 +58,6 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
     else
     {
         yCInfo(FAKEMICROPHONE) << "Using default period of " << DEFAULT_PERIOD << " s";
-    }
-
-    size_t tmp_freq = 44100; //Hz
-    size_t tmp_channels = 2;
-    if (config.check("channels"))
-    {
-        tmp_channels = config.find("channels").asInt32();
-    }
-
-    if (config.check("sampling_frequency"))
-    {
-        tmp_freq = config.find("frequency").asInt32();
     }
 
     if (config.check("signal_frequency"))
@@ -91,14 +81,10 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
     }
 
     //data structure initialization
-    m_audiorecorder_cfg.numSamples = tmp_freq * 5; //5sec
-    m_audiorecorder_cfg.numChannels = tmp_channels;
-    m_audiorecorder_cfg.frequency = tmp_freq;
-    m_audiorecorder_cfg.bytesPerSample = c_bytes_form;
-
-    const size_t EXTRA_SPACE = 2;
-    AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples*EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
-    m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
+    //m_audiorecorder_cfg.numSamples = tmp_freq * 5; //5sec
+    //const size_t EXTRA_SPACE = 2;
+    //AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples*EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
+    //m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
 
     m_max_count.resize(m_audiorecorder_cfg.numChannels);
     m_counter.resize(m_audiorecorder_cfg.numChannels);

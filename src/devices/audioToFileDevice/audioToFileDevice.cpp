@@ -114,7 +114,7 @@ bool audioToFileDevice::startPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "start";
-    m_playback_running = true;
+    m_isPlaying = true;
     if (m_save_mode != save_mode_t::save_append_data)
     {
         m_sounds.clear();
@@ -126,7 +126,7 @@ bool audioToFileDevice::stopPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "stop";
-    m_playback_running = false;
+    m_isPlaying = false;
     if (m_save_mode != save_mode_t::save_append_data)
     {
         save_to_file();
@@ -137,7 +137,7 @@ bool audioToFileDevice::stopPlayback()
 bool audioToFileDevice::renderSound(const yarp::sig::Sound& sound)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (m_playback_running)
+    if (m_isPlaying)
     {
         m_sounds.push_back(sound);
     }
@@ -146,7 +146,12 @@ bool audioToFileDevice::renderSound(const yarp::sig::Sound& sound)
 
 bool audioToFileDevice::setHWGain(double gain)
 {
-    yCError(AUDIOTOFILE, "Not yet implemented");
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (gain > 0)
+    {
+        m_hw_gain = gain;
+        return true;
+    }
     return false;
 }
 

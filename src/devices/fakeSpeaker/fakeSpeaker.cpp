@@ -41,6 +41,9 @@ fakeSpeaker::~fakeSpeaker()
 
 bool fakeSpeaker::open(yarp::os::Searchable &config)
 {
+    bool b = configurePlayerAudioDevice(config, "fakeSpeaker");
+    if (!b) { return false; }
+
     //sets the thread period
     if( config.check("period"))
     {
@@ -52,15 +55,6 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
     {
         yCInfo(FAKESPEAKER) << "Using default period of " << DEFAULT_PERIOD << " s";
     }
-
-    //configuration of the simulated audio card
-    m_cfg_numSamples = config.check("samples",Value(SAMPLING_RATE),"Number of samples per network packet.").asInt32();
-    m_cfg_numChannels = config.check("channels",Value(HW_CHANNELS),"Number of audio channels.").asInt32();
-    m_cfg_frequency = config.check("frequency",Value(SAMPLING_RATE),"Sampling frequency.").asInt32();
-    m_cfg_bytesPerSample = config.check("channels",Value(2),"Bytes per sample.").asInt8();
-
-    AudioBufferSize buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
-    m_outputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_speaker_buffer", buffer_size);
 
     //start the capture thread
     start();
@@ -100,7 +94,7 @@ void fakeSpeaker::run()
     for (size_t i = 0; i<buffer_size; i++)
     {
         audio_sample_16t s = m_outputBuffer->read();
-        YARP_UNUSED(s);
+        s=s*m_hw_gain;
     }
     yCDebug(FAKESPEAKER) << "Sound Playback complete";
     yCDebug(FAKESPEAKER) << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";
@@ -113,7 +107,12 @@ void fakeSpeaker::run()
 
 bool fakeSpeaker::setHWGain(double gain)
 {
-    yCError(FAKESPEAKER, "setHWGain() Not yet implemented");
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (gain > 0)
+    {
+        m_hw_gain = gain;
+        return true;
+    }
     return false;
 }
 
