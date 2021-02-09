@@ -20,8 +20,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
-#define HW_CHANNELS         2
-#define SAMPLING_RATE       44100
+constexpr double c_DEFAULT_PERIOD = 0.01;   //s
 
 namespace {
 YARP_LOG_COMPONENT(FAKESPEAKER, "yarp.device.fakeSpeaker")
@@ -30,7 +29,7 @@ YARP_LOG_COMPONENT(FAKESPEAKER, "yarp.device.fakeSpeaker")
 typedef unsigned short int audio_sample_16t;
 
 fakeSpeaker::fakeSpeaker() :
-        PeriodicThread(DEFAULT_PERIOD)
+        PeriodicThread(c_DEFAULT_PERIOD)
 {
 }
 
@@ -41,6 +40,14 @@ fakeSpeaker::~fakeSpeaker()
 
 bool fakeSpeaker::open(yarp::os::Searchable &config)
 {
+    if (config.check("help"))
+    {
+        yCInfo(FAKESPEAKER, "Some examples:");
+        yCInfo(FAKESPEAKER, "yarpdev --device fakeSpeaker --help");
+        yCInfo(FAKESPEAKER, "yarpdev --device AudioPlayerWrapper --subdevice fakeSpeaker --start");
+        return false;
+    }
+
     bool b = configurePlayerAudioDevice(config, "fakeSpeaker");
     if (!b) { return false; }
 
@@ -53,7 +60,7 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
     }
     else
     {
-        yCInfo(FAKESPEAKER) << "Using default period of " << DEFAULT_PERIOD << " s";
+        yCInfo(FAKESPEAKER) << "Using default period of " << c_DEFAULT_PERIOD << " s";
     }
 
     //start the capture thread
@@ -64,11 +71,9 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
 bool fakeSpeaker::close()
 {
     fakeSpeaker::stop();
-    if (m_outputBuffer)
-    {
-        delete m_outputBuffer;
-        m_outputBuffer = 0;
-    }
+
+    //wait until the thread is stopped...
+
     return true;
 }
 
@@ -94,7 +99,7 @@ void fakeSpeaker::run()
     for (size_t i = 0; i<buffer_size; i++)
     {
         audio_sample_16t s = m_outputBuffer->read();
-        s=s*m_hw_gain;
+        s= audio_sample_16t(double(s)*m_hw_gain);
     }
     yCDebug(FAKESPEAKER) << "Sound Playback complete";
     yCDebug(FAKESPEAKER) << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";

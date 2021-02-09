@@ -68,7 +68,6 @@ private:
     yarp::sig::Sound m_audioFile;
     std::string      m_audio_filename = "audio_out.wav";
     std::deque<yarp::sig::Sound> m_sounds;
-    double m_hw_gain = 1.0;
     size_t m_filename_counter = 0;
 
     enum save_mode_t

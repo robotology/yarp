@@ -16,16 +16,17 @@
 #include <yarp/sig/SoundFile.h>
 #include <yarp/dev/AudioPlayerDeviceBase.h>
 
-
-#define DEFAULT_PERIOD 0.01   //s
-
 /**
- * @ingroup dev_impl_fake dev_impl_media
- *
- * \brief `fakeSpeaker` : fake device implementing the IAudioRender device interface to play sound
- *
- * Documentation to be added
- */
+* @ingroup dev_impl_fake dev_impl_media
+*
+* \brief `fakeSpeaker` : fake device implementing the IAudioRender device interface to play sound
+*
+* Parameters used by this device are:
+* | Parameter name   | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | period           |      -         | double  | s              |  0.010                   | No                          | the period of processing thread                                   | A value of 10ms is recommended. Do to not modify it |
+*/
+
 class fakeSpeaker :
         public yarp::dev::DeviceDriver,
         public yarp::dev::AudioPlayerDeviceBase,
@@ -37,7 +38,6 @@ public:
     fakeSpeaker(fakeSpeaker&&) = delete;
     fakeSpeaker& operator=(const fakeSpeaker&) = delete;
     fakeSpeaker& operator=(fakeSpeaker&&) = delete;
-
     ~fakeSpeaker() override;
 
     // Device Driver interface
@@ -53,6 +53,4 @@ public:
 private:
     bool threadInit() override;
     void run() override;
-
-    double m_hw_gain = 1.0;
 };

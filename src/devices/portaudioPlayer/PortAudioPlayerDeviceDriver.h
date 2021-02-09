@@ -31,10 +31,17 @@
 /**
  * @ingroup dev_impl_media
  *
- * \brief `portaudioPlayer`: Documentation to be added
- *
+ * \brief `portaudioPlayer`: A device driver for an audio playback device wrapped by PortAudio library.
  * Requires the PortAudio library (http://www.portaudio.com), at least v19.
+ * Only 16bits sample format is currently supported by this device.
+ *
+ * Parameters used by this device are:
+ * | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+ * |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+ * | id             |      -         | int     | -              |  -                       | No                          | The device id, if multiple sound cards are present                | if not specified, the default system device will be used |
+ * | driver_frame_size |      -      | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the main thread  | - | *
  */
+
 class PortAudioPlayerDeviceDriver :
         public yarp::dev::AudioPlayerDeviceBase,
         public yarp::dev::DeviceDriver,
@@ -75,6 +82,7 @@ protected:
     void*   m_system_resource;
 
     int  m_device_id;
+    int  m_driver_frame_size;
     void handleError();
 };
 

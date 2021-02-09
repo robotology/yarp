@@ -49,6 +49,15 @@ bool audioFromFileDevice::setHWGain(double gain)
 
 bool audioFromFileDevice::open(yarp::os::Searchable &config)
 {
+    if (config.check("help"))
+    {
+        yCInfo(AUDIOFROMFILE, "Some examples:");
+        yCInfo(AUDIOFROMFILE, "yarpdev --device audioFromFileDevice --help");
+        yCInfo(AUDIOFROMFILE, "yarpdev --device AudioRecorderWrapper --subdevice audioFromFileDevice --start");
+        yCInfo(AUDIOFROMFILE, "yarpdev --device AudioRecorderWrapper --subdevice audioFromFileDevice --start --file_name myaudio.wav");
+        return false;
+    }
+
     bool b = configureRecorderAudioDevice(config, "audioFromFileDevice");
     if (!b) { return false; }
 
@@ -64,10 +73,10 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
         yCInfo(AUDIOFROMFILE) << "Using default period of " << c_DEFAULT_PERIOD << " s";
     }
 
-    //sets the number of samples period
-    if (config.check("samples"))
+    //sets the number of samples processed atomically every thread iteration
+    if (config.check("driver_frame_size"))
     {
-        m_samples_to_be_copied = config.find("samples").asFloat64();
+        m_samples_to_be_copied = config.find("driver_frame_size").asFloat64();
     }
     yCDebug(AUDIOFROMFILE) << m_samples_to_be_copied << " will be processed every iteration";
 

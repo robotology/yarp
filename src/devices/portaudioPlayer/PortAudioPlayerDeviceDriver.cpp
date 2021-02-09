@@ -238,7 +238,7 @@ bool PortAudioPlayerDeviceDriver::configureDeviceAndStart()
     }
 
     m_outputParameters.device = (m_device_id == -1) ? Pa_GetDefaultOutputDevice() : m_device_id;
-    m_outputParameters.channelCount = m_audioplayer_cfg.numChannels;
+    m_outputParameters.channelCount = static_cast<int>(m_audioplayer_cfg.numChannels);
     m_outputParameters.sampleFormat = PA_SAMPLE_TYPE;
     m_outputParameters.suggestedLatency = Pa_GetDeviceInfo(m_outputParameters.device)->defaultLowOutputLatency;
     m_outputParameters.hostApiSpecificStreamInfo = nullptr;
@@ -247,8 +247,8 @@ bool PortAudioPlayerDeviceDriver::configureDeviceAndStart()
         &m_stream,
         nullptr,
         &m_outputParameters,
-        m_audioplayer_cfg.frequency,
-        DEFAULT_FRAMES_PER_BUFFER,
+        (double)(m_audioplayer_cfg.frequency),
+        m_driver_frame_size,
         paClipOff,
         bufferIOCallback,
         m_outputBuffer);
@@ -268,10 +268,20 @@ bool PortAudioPlayerDeviceDriver::configureDeviceAndStart()
 
 bool PortAudioPlayerDeviceDriver::open(yarp::os::Searchable& config)
 {
+    if (config.check("help"))
+    {
+        yCInfo(PORTAUDIOPLAYER, "Some examples:");
+        yCInfo(PORTAUDIOPLAYER, "yarpdev --device portaudioPlayer --help");
+        yCInfo(PORTAUDIOPLAYER, "yarpdev --device AudioPlayerWrapper --subdevice portaudioPlayer --start");
+        return false;
+    }
+
     bool b = configurePlayerAudioDevice(config, "portaudioPlayer");
     if (!b) { return false; }
 
     m_device_id = config.check("id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();
+    m_driver_frame_size = config.check("driver_frame_size", Value(0), "").asInt32();
+    if (m_driver_frame_size == 0)  m_driver_frame_size = DEFAULT_FRAMES_PER_BUFFER;
 
     b = configureDeviceAndStart();
     return (m_err==paNoError);

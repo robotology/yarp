@@ -146,14 +146,14 @@ public:
      * @param sampleid the sample id
      * @return the timestamp of the sample
      */
-    inline double sample2timestamp( size_t sampleid) const {return sampleid / m_frequency;}
+    inline double sample2timestamp( size_t sampleid) const {return static_cast<double>(sampleid / m_frequency);}
 
     /**
      * Utility function: return the sample id given the timestamp (in seconds)
      * @param time the timestamp
      * @return the sample id
      */
-    inline size_t timestamp2sample( double time) const { return time * m_frequency;}
+    inline size_t timestamp2sample( double time) const { return static_cast<size_t>(time * m_frequency);}
 
     /**
      * set to zero all the samples of the specified channel

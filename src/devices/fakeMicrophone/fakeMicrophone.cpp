@@ -25,7 +25,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
-constexpr size_t c_SAMPLES_TO_BE_COPIED=512; //samples
+constexpr double c_DEFAULT_PERIOD=0.01;   //s
 
 namespace {
 YARP_LOG_COMPONENT(FAKEMICROPHONE, "yarp.device.fakeMicrophone")
@@ -34,7 +34,7 @@ YARP_LOG_COMPONENT(FAKEMICROPHONE, "yarp.device.fakeMicrophone")
 typedef unsigned short int audio_sample_16t;
 
 fakeMicrophone::fakeMicrophone() :
-        PeriodicThread(DEFAULT_PERIOD)
+        PeriodicThread(c_DEFAULT_PERIOD)
 {
 }
 
@@ -45,6 +45,18 @@ fakeMicrophone::~fakeMicrophone()
 
 bool fakeMicrophone::open(yarp::os::Searchable &config)
 {
+    if (config.check("help"))
+    {
+        yCInfo(FAKEMICROPHONE, "Some examples:");
+        yCInfo(FAKEMICROPHONE, "yarpdev --device fakeMicrophone --help");
+        yCInfo(FAKEMICROPHONE, "yarpdev --device AudioRecorderWrapper --subdevice fakeMicrophone --start");
+        yCInfo(FAKEMICROPHONE, "yarpdev --device AudioRecorderWrapper --subdevice fakeMicrophone --start --signal_frequency 400 --waveform sine");
+        yCInfo(FAKEMICROPHONE, "yarpdev --device AudioRecorderWrapper --subdevice fakeMicrophone --start --signal_frequency 400 --waveform sawtooth");
+        yCInfo(FAKEMICROPHONE, "yarpdev --device AudioRecorderWrapper --subdevice fakeMicrophone --start --signal_frequency 400 --waveform square");
+        yCInfo(FAKEMICROPHONE, "yarpdev --device AudioRecorderWrapper --subdevice fakeMicrophone --start --waveform constant");
+        return false;
+    }
+
     bool b = configureRecorderAudioDevice(config, "fakeMicrophone");
     if (!b) { return false; }
 
@@ -57,13 +69,25 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
     }
     else
     {
-        yCInfo(FAKEMICROPHONE) << "Using default period of " << DEFAULT_PERIOD << " s";
+        yCInfo(FAKEMICROPHONE) << "Using default period of " << c_DEFAULT_PERIOD << " s";
     }
 
     if (config.check("signal_frequency"))
     {
         m_sig_freq = config.find("signal_frequency").asInt32();
     }
+
+    if (config.check("amplitude"))
+    {
+        m_wave_amplitude = config.find("amplitude").asInt32();
+    }
+
+    //sets the number of samples processed atomically every thread iteration
+    if (config.check("driver_frame_size"))
+    {
+        m_samples_to_be_copied = config.find("driver_frame_size").asFloat64();
+    }
+    yCDebug(FAKEMICROPHONE) << m_samples_to_be_copied << " will be processed every iteration";
 
     if (config.check("waveform"))
     {
@@ -88,6 +112,7 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
 
     m_max_count.resize(m_audiorecorder_cfg.numChannels);
     m_counter.resize(m_audiorecorder_cfg.numChannels);
+
     //start the capture thread
     start();
     return true;
@@ -97,19 +122,19 @@ bool fakeMicrophone::close()
 {
     fakeMicrophone::stop();
 
-    //wait until the thread is stopped
+    //wait until the thread is stopped...
 
-    if (m_inputBuffer)
-    {
-        delete m_inputBuffer;
-        m_inputBuffer = 0;
-    }
     return true;
 }
 
 bool fakeMicrophone::setHWGain(double gain)
 {
-    yCInfo(FAKEMICROPHONE) << "Not yet implemented";
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (gain > 0)
+    {
+        m_hw_gain = gain;
+        return true;
+    }
     return false;
 }
 
@@ -129,7 +154,7 @@ void fakeMicrophone::run()
 
     //fill the buffer with a sine tone
     //each iteration, which occurs every xxx ms, I copy a bunch of samples in the buffer.
-    for (size_t i = 0; i < c_SAMPLES_TO_BE_COPIED; i++)
+    for (size_t i = 0; i < m_samples_to_be_copied; i++)
     {
         // Default values:
         // this signal has amplitude (-32000,32000)
@@ -141,19 +166,19 @@ void fakeMicrophone::run()
             for (size_t i = 0; i < m_audiorecorder_cfg.numChannels; i++)
             {
                 m_max_count[i] = double(m_audiorecorder_cfg.frequency) / m_sig_freq / double(i + 1);
-                unsigned short elem1 = double(m_wave_amplitude * sin(double(m_counter[i]) / m_max_count[i] * 2 * M_PI));
-                m_inputBuffer->write(elem1);
+                double elem1 = double(m_wave_amplitude * sin(double(m_counter[i]) / m_max_count[i] * 2 * M_PI));
+                m_inputBuffer->write(elem1 * m_hw_gain);
                 m_counter[i]++;
                 if (m_counter[i] >= m_max_count[i]) m_counter[i] = 0;
             }
-       }
+        }
         else if(m_waveform == waveform_t::sawtooth)
         {
             for (size_t i = 0; i < m_audiorecorder_cfg.numChannels; i++)
             {
                 m_max_count[i] = double(m_audiorecorder_cfg.frequency) / m_sig_freq / double(i + 1);
-                unsigned short elem1 = m_wave_amplitude * 2 * (double(m_counter[i])/ m_max_count[i]) - m_wave_amplitude;
-                m_inputBuffer->write(elem1);
+                double elem1 = m_wave_amplitude * 2 * (double(m_counter[i])/ m_max_count[i]) - m_wave_amplitude;
+                m_inputBuffer->write(elem1 * m_hw_gain);
                 m_counter[i]++;
                 if (m_counter[i] >= m_max_count[i]) m_counter[i] = 0;
             }
@@ -163,8 +188,8 @@ void fakeMicrophone::run()
             for (size_t i = 0; i < m_audiorecorder_cfg.numChannels; i++)
             {
                 m_max_count[i] = double(m_audiorecorder_cfg.frequency) / m_sig_freq / double(i + 1);
-                unsigned short elem1 = m_counter[i] < m_max_count[i]/2  ? m_wave_amplitude : 0;
-                m_inputBuffer->write(elem1);
+                double elem1 = m_counter[i] < m_max_count[i]/2  ? m_wave_amplitude : 0;
+                m_inputBuffer->write(elem1 * m_hw_gain);
                 m_counter[i]++;
                 if (m_counter[i] >= m_max_count[i]) m_counter[i] = 0;
             }
@@ -173,7 +198,7 @@ void fakeMicrophone::run()
         {
             for (size_t i = 0; i < m_audiorecorder_cfg.numChannels; i++)
             {
-                m_inputBuffer->write(m_wave_amplitude / double(i + 1));
+                m_inputBuffer->write(m_wave_amplitude * m_hw_gain / double(i + 1));
                 m_counter[i]++;
                 if (m_counter[i] >= m_max_count[i]) m_counter[i] = 0;
             }

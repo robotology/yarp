@@ -20,7 +20,6 @@
 namespace yarp {
 namespace dev {
 
-
 class AudioDeviceDriverSettings
 {
     public:
@@ -30,13 +29,28 @@ class AudioDeviceDriverSettings
     size_t bytesPerSample = 2;
 };
 
+/**
+* \brief `AudioRecorderDeviceBase` : a base class for all audio recorder devices
+*
+* Parameters required by this device are:
+* | Parameter name   | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | rate             |      -         | int     | Hz             | 44100                    | No                          | The frequency of the audio device                                 | - |
+* | samples          |      -         | int     | samples        | 44100                    | No                          | The size of the internal buffer (in samples) | A default value identical to device frequency implies a buffer length of 1s |
+* | channels         |      -         | int     | -              | 2                        | No                          | The number of channels | - |
+* | bits             |      -         | int     | -              | 16                       | No                          | Not yet implemented | - | *
+* | hw_gain          |      -         | double  | -              | 1.0                      | No                          | The device audio gain. Its implementation is device dependent (and it may also be not implemented)  | - | *
+* | sw_gain          |      -         | double  | -              | 1.0                      | No                          | A SW gain for audio waveform amplification | - | *
+*/
+
 class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSound
 {
 protected:
     bool m_isRecording = false;
     std::mutex  m_mutex;
     yarp::dev::CircularAudioBuffer_16t* m_inputBuffer = nullptr;
-    double m_sw_gain=1.0;
+    double m_sw_gain = 1.0;
+    double m_hw_gain = 1.0;
     AudioDeviceDriverSettings m_audiorecorder_cfg;
 
 public:

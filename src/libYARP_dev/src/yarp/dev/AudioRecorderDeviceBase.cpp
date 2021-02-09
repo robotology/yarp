@@ -19,10 +19,6 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace std;
 
-#ifndef DEG2RAD
-#define DEG2RAD M_PI/180.0
-#endif
-
 constexpr double c_sleep_time=0.005;
 
 YARP_LOG_COMPONENT(AUDIORECORDER_BASE, "yarp.devices.AudioRecorderDeviceBase")
@@ -198,6 +194,14 @@ bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable&
     if (m_audiorecorder_cfg.frequency == 0)  m_audiorecorder_cfg.frequency = DEFAULT_SAMPLE_RATE;
     if (m_audiorecorder_cfg.numChannels == 0)  m_audiorecorder_cfg.numChannels = DEFAULT_NUM_CHANNELS;
     if (m_audiorecorder_cfg.numSamples == 0) m_audiorecorder_cfg.numSamples = m_audiorecorder_cfg.frequency; //  by default let's use chunks of 1 second
+
+    yCInfo(AUDIORECORDER_BASE) << "Device configured with the following options:";
+    yCInfo(AUDIORECORDER_BASE) << "Frequency:"<< m_audiorecorder_cfg.frequency;
+    yCInfo(AUDIORECORDER_BASE) << "Samples (buffer size):"<< m_audiorecorder_cfg.numSamples;
+    yCInfo(AUDIORECORDER_BASE) << "Channels:"<< m_audiorecorder_cfg.numChannels;
+    yCInfo(AUDIORECORDER_BASE) << "BytesForSample:"<< m_audiorecorder_cfg.bytesPerSample;
+    yCInfo(AUDIORECORDER_BASE) << "HW gain:" << m_hw_gain;
+    yCInfo(AUDIORECORDER_BASE) << "SW gain:" << m_sw_gain;
 
     AudioBufferSize rec_buffer_size(m_audiorecorder_cfg.numSamples, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
     if (m_inputBuffer == nullptr)

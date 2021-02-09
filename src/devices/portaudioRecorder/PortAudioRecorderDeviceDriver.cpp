@@ -146,12 +146,20 @@ PortAudioRecorderDeviceDriver::~PortAudioRecorderDeviceDriver()
 
 bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
 {
+    if (config.check("help"))
+    {
+        yCInfo(PORTAUDIORECORDER, "Some examples:");
+        yCInfo(PORTAUDIORECORDER, "yarpdev --device portaudioRecorder --help");
+        yCInfo(PORTAUDIORECORDER, "yarpdev --device AudioRecorderWrapper --subdevice portaudioRecorder --start");
+        return false;
+    }
+
     bool b = configureRecorderAudioDevice(config,"portaudioRecorder");
     if (!b) { return false; }
 
     m_device_id = config.check("id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();
-    int driver_frame_size = config.check("driver_frame_size", Value(0), "").asInt32();
-    if (driver_frame_size == 0)  driver_frame_size = DEFAULT_FRAMES_PER_BUFFER;
+    m_driver_frame_size = config.check("driver_frame_size", Value(0), "").asInt32();
+    if (m_driver_frame_size == 0)  m_driver_frame_size = DEFAULT_FRAMES_PER_BUFFER;
 
     m_err = Pa_Initialize();
     if(m_err != paNoError )
@@ -173,8 +181,8 @@ bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
               &m_stream,
               &m_inputParameters,
               nullptr,
-              m_audiorecorder_cfg.frequency,
-              driver_frame_size,
+              (double)(m_audiorecorder_cfg.frequency),
+              m_driver_frame_size,
               paClipOff,
               bufferIOCallback,
               m_inputBuffer);

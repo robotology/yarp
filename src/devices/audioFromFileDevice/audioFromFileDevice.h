@@ -23,11 +23,11 @@
 * is used to read data from a file and stream it to the network.
 *
 * Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | file_name      |      -         | string  | -              |  audio.wav               | No                          | The name of the file opened by the module                         | Only .wav files supported   |
-* | period         |      -         | double  | s              |  0.010                   | No                          | the period of thread which processes the file                     | On each iteration xxx samples are processed |
-* | samples        |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the thread  | - |
+* | Parameter name    | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:-----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | file_name         |      -         | string  | -              |  audio.wav               | No                          | The name of the file opened by the module                         | Only .wav files supported   |
+* | period            |      -         | double  | s              |  0.010                   | No                          | the period of thread which processes the file                     | On each iteration xxx samples are processed |
+* | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the thread  | - |
 */
 
 class audioFromFileDevice :

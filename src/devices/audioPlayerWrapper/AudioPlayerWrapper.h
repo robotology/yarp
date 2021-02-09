@@ -70,7 +70,7 @@ class AudioPlayerWrapper :
 
     struct scheduled_sound_type
     {
-        double scheduled_time;
+        double scheduled_time=0;
         yarp::sig::Sound sound_data;
     };
 

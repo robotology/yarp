@@ -16,24 +16,22 @@
 #include <string>
 #include <mutex>
 
-#define DEFAULT_PERIOD 0.01   //s
-
 /**
 * @ingroup dev_impl_fake dev_impl_media
 *
 * \brief `fakeMicrophone` : fake microphone device implementing the IAudioGrabberSound interface to generate a test sound.
 * It can generate various signals, i.e. sine, sawtooth, square wave, constant.
 *
-* Parameters required by this device are:
-* | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
-* |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | period         |      -         | double  | s              |  0.010                   | No                          | the period of processing thread                                   | A value of 10ms is recommended. Do to not modify it |
-* | channels       |      -         | size_t  | -              | 2                        | No                          | Number of channels (e.g. 1=mono, 2-stereo etc)                    | - |
-* | waveform       |      -         | string  | -              | sine                     | No                          | Defines the shape of the waveform. Can be one of the following: sine,sawtooth,square,constant | - |
-* | sampling_frequency |      -     | int     | Hz             | 44100                    | No                          | Sampling frequency | - |
-* | signal_frequency   |      -     | int     | Hz             | 440                      | No                          | Frequency of the generated signal | - |
-
+* Parameters used by this device are:
+* | Parameter name    | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:-----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | period            |      -         | double  | s              |  0.010                   | No                          | the period of processing thread                                   | A value of 10ms is recommended. Do to not modify it |
+* | waveform          |      -         | string  | -              | sine                     | No                          | Defines the shape of the waveform. Can be one of the following: sine,sawtooth,square,constant | - |
+* | signal_frequency  |      -         | int     | Hz             | 440                      | No                          | Frequency of the generated signal | - |
+* | signal_amplitude  |      -         | int     |                | 32000                    | No                          | Amplitude of the generated signal | - |
+* | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the thread  | - |
 */
+
 class fakeMicrophone :
         public yarp::dev::DeviceDriver,
         public yarp::dev::AudioRecorderDeviceBase,
@@ -64,6 +62,7 @@ private:
     std::vector<size_t> m_max_count;
     size_t m_wave_amplitude = 32000;
     double m_sig_freq=440; //Hz
+    size_t m_samples_to_be_copied = 512;
 
     enum waveform_t
     {

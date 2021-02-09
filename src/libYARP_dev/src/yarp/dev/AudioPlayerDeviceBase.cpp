@@ -184,6 +184,15 @@ bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& con
         m_renderMode = RENDER_IMMEDIATE;
     }
 
+    yCInfo(AUDIOPLAYER_BASE) << "Device configured with the following options:";
+    yCInfo(AUDIOPLAYER_BASE) << "Frequency:" << m_audioplayer_cfg.frequency;
+    yCInfo(AUDIOPLAYER_BASE) << "Samples (buffer size):" << m_audioplayer_cfg.numSamples;
+    yCInfo(AUDIOPLAYER_BASE) << "Channels:" << m_audioplayer_cfg.numChannels;
+    yCInfo(AUDIOPLAYER_BASE) << "BytesForSample:" << m_audioplayer_cfg.bytesPerSample;
+    yCInfo(AUDIOPLAYER_BASE) << "HW gain:" << m_hw_gain;
+    yCInfo(AUDIOPLAYER_BASE) << "SW gain:" << m_sw_gain;
+    yCInfo(AUDIOPLAYER_BASE) << "Render mode:" << (m_renderMode==RENDER_APPEND?"append":"immediate");
+
     //create the buffer
     AudioBufferSize buffer_size(m_audioplayer_cfg.numSamples, m_audioplayer_cfg.numChannels, m_audioplayer_cfg.bytesPerSample);
     if (m_outputBuffer == nullptr)

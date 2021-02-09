@@ -50,6 +50,15 @@ audioToFileDevice::~audioToFileDevice()
 
 bool audioToFileDevice::open(yarp::os::Searchable &config)
 {
+    if (config.check("help"))
+    {
+        yCInfo(AUDIOTOFILE, "Some examples:");
+        yCInfo(AUDIOTOFILE, "yarpdev --device audioToFileDevice --help");
+        yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start");
+        yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start --audio_out.wav --save_mode overwrite_file");
+        return false;
+    }
+
     if (config.check("file_name"))
     {
         m_audio_filename=config.find("file_name").asString();
