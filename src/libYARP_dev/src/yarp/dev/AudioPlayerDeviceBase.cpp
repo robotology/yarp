@@ -58,7 +58,13 @@ AudioPlayerDeviceBase::~AudioPlayerDeviceBase()
 
 bool AudioPlayerDeviceBase::setSWGain(double gain)
 {
-    return true;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (gain>0)
+    {
+        m_sw_gain = gain;
+        return true;
+    }
+    return false;
 }
 
 bool AudioPlayerDeviceBase::startPlayback() { return false; }
@@ -119,6 +125,13 @@ bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
         return false;
     }
 
+    //process the sound, if required
+    yarp::sig::Sound procsound = sound;
+    if (m_sw_gain != 1.0)
+    {
+        procsound.amplify(m_sw_gain);
+    }
+
     if (freq != this->m_audioplayer_cfg.frequency ||
         chans != this->m_audioplayer_cfg.numChannels)
     {
@@ -145,9 +158,9 @@ bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
     }
 
     if (m_renderMode == RENDER_IMMEDIATE)
-        return immediateSound(sound);
+        return immediateSound(procsound);
     else if (m_renderMode == RENDER_APPEND)
-        return appendSound(sound);
+        return appendSound(procsound);
 
     return false;
 }

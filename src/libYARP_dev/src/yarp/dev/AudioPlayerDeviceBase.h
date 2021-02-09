@@ -38,6 +38,7 @@ protected:
     yarp::dev::CircularAudioBuffer_16t* m_outputBuffer = nullptr;
     bool                                m_something_to_play = false;
     AudioDeviceDriverSettings           m_audioplayer_cfg;
+    double                              m_sw_gain = 1.0;
     enum { RENDER_APPEND = 0, RENDER_IMMEDIATE = 1 } m_renderMode= RENDER_APPEND;
 
 public:

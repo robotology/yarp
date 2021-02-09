@@ -125,7 +125,7 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
         m_irender->stopPlayback();
         reply.addVocab(VOCAB_OK);
     }
-    else if (command.get(0).asString() == "sw_volume")
+    else if (command.get(0).asString() == "sw_audio_gain")
     {
         double val = command.get(1).asFloat64();
         if (val>=0)
@@ -135,7 +135,21 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
         }
         else
         {
-            yCError(AUDIOPLAYERWRAPPER) << "Invalid volume";
+            yCError(AUDIOPLAYERWRAPPER) << "Invalid audio gain";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (command.get(0).asString() == "hw_audio_gain")
+    {
+        double val = command.get(1).asFloat64();
+        if (val >= 0)
+        {
+            m_irender->setHWGain(val);
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yCError(AUDIOPLAYERWRAPPER) << "Invalid audio gain";
             reply.addVocab(VOCAB_ERR);
         }
     }
@@ -150,7 +164,8 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
         reply.addString("start");
         reply.addString("stop");
         reply.addString("clear");
-        reply.addString("sw_volume");
+        reply.addString("sw_audio_gain <gain>");
+        reply.addString("hw_audio_gain <gain>");
     }
     else
     {

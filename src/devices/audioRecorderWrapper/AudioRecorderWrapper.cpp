@@ -250,7 +250,7 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
         m_mic->stopRecording();
         reply.addVocab(VOCAB_OK);
     }
-    else if (command.get(0).asString() == "volume")
+    else if (command.get(0).asString() == "sw_audio_gain")
     {
         double val = command.get(1).asFloat64();
         if (val >= 0)
@@ -260,7 +260,21 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
         }
         else
         {
-            yCError(AUDIORECORDERWRAPPER) << "Invalid volume";
+            yCError(AUDIORECORDERWRAPPER) << "Invalid audio gain";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (command.get(0).asString() == "hw_audio_gain")
+    {
+        double val = command.get(1).asFloat64();
+        if (val >= 0)
+        {
+            m_mic->setHWGain(val);
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yCError(AUDIORECORDERWRAPPER) << "Invalid audio gain";
             reply.addVocab(VOCAB_ERR);
         }
     }
@@ -275,7 +289,8 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
         reply.addString("start");
         reply.addString("stop");
         reply.addString("clear");
-        reply.addString("wrapper_volume");
+        reply.addString("sw_audio_gain <gain>");
+        reply.addString("hw_audio_gain <gain>");
     }
     else
     {

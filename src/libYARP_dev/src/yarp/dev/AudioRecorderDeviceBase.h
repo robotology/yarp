@@ -36,7 +36,7 @@ protected:
     bool m_isRecording = false;
     std::mutex  m_mutex;
     yarp::dev::CircularAudioBuffer_16t* m_inputBuffer = nullptr;
-
+    double m_sw_gain=1.0;
     AudioDeviceDriverSettings m_audiorecorder_cfg;
 
 public:
