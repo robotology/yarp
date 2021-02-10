@@ -48,7 +48,7 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool b = configurePlayerAudioDevice(config, "fakeSpeaker");
+    bool b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "fakeSpeaker");
     if (!b) { return false; }
 
     //sets the thread period

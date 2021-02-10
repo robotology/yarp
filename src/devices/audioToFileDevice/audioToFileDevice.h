@@ -32,9 +32,12 @@
 * if save_mode = "rename_file", the output file is written every time the stop() method is called or when the module terminates.
 * The file name is modified, using an incremental counter appended at the end of the file name.
 *
+* This device driver derives from AudioPlayerDeviceBase base class. Please check its documentation for additional details.
+*
 * Parameters required by this device are:
 * | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
 * |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | AUDIO_BASE     |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioPlayerDeviceBase |       |
 * | file_name      |      -         | string  | -              |  audio_out.wav           | No                          | The name of the file written by the module                        | Only .wav files supported   |
 * | save_mode      |      -         | string  | -              |  overwrite_file          | No                          | Affects the behavior of the module and defines the save mode, as described in the documentation.   |       |
 */

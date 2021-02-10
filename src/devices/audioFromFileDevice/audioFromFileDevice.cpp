@@ -58,7 +58,7 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool b = configureRecorderAudioDevice(config, "audioFromFileDevice");
+    bool b = configureRecorderAudioDevice(config.findGroup("AUDIO_BASE"), "audioFromFileDevice");
     if (!b) { return false; }
 
     //sets the thread period

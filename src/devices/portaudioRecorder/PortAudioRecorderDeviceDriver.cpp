@@ -154,7 +154,7 @@ bool PortAudioRecorderDeviceDriver::open(yarp::os::Searchable& config)
         return false;
     }
 
-    bool b = configureRecorderAudioDevice(config,"portaudioRecorder");
+    bool b = configureRecorderAudioDevice(config.findGroup("AUDIO_BASE"),"portaudioRecorder");
     if (!b) { return false; }
 
     m_device_id = config.check("id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();

@@ -57,7 +57,7 @@ bool fakeMicrophone::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool b = configureRecorderAudioDevice(config, "fakeMicrophone");
+    bool b = configureRecorderAudioDevice(config.findGroup("AUDIO_BASE"), "fakeMicrophone");
     if (!b) { return false; }
 
     //sets the thread period

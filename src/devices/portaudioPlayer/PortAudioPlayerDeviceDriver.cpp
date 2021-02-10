@@ -276,7 +276,7 @@ bool PortAudioPlayerDeviceDriver::open(yarp::os::Searchable& config)
         return false;
     }
 
-    bool b = configurePlayerAudioDevice(config, "portaudioPlayer");
+    bool b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "portaudioPlayer");
     if (!b) { return false; }
 
     m_device_id = config.check("id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();

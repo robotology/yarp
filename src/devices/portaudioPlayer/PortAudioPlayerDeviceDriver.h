@@ -34,12 +34,14 @@
  * \brief `portaudioPlayer`: A device driver for an audio playback device wrapped by PortAudio library.
  * Requires the PortAudio library (http://www.portaudio.com), at least v19.
  * Only 16bits sample format is currently supported by this device.
+ * This device driver derives from AudioPlayerDeviceBase base class. Please check its documentation for additional details.
  *
  * Parameters used by this device are:
- * | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
- * |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
- * | id             |      -         | int     | -              |  -                       | No                          | The device id, if multiple sound cards are present                | if not specified, the default system device will be used |
- * | driver_frame_size |      -      | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the main thread  | - | *
+ * | Parameter name    | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+ * |:-----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+ * | AUDIO_BASE        |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioPlayerDeviceBase |       |
+ * | id                |      -         | int     | -              |  -                       | No                          | The device id, if multiple sound cards are present                | if not specified, the default system device will be used |
+ * | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the main thread  | - | *
  */
 
 class PortAudioPlayerDeviceDriver :
