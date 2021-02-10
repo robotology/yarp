@@ -10,13 +10,16 @@
 #include <cstdio>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/LogComponent.h>
 #include <yarp/os/Value.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-
+namespace {
+    YARP_LOG_COMPONENT(DEVICERESPONDER, "yarp.dev.DeviceResponder")
+}
 
 DeviceResponder::DeviceResponder() {
     makeUsage();
@@ -59,16 +62,20 @@ bool DeviceResponder::respond(const Bottle& command, Bottle& reply) {
     return false;
 }
 
-bool DeviceResponder::read(ConnectionReader& connection) {
-    Bottle cmd, response;
-    if (!cmd.read(connection)) { return false; }
-    //printf("command received: %s\n", cmd.toString().c_str());
-    respond(cmd,response);
-    if (response.size()>=1) {
-        ConnectionWriter *writer = connection.getWriter();
-        if (writer!=nullptr) {
-            if (response.get(0).toString()=="many"&&writer->isTextMode()) {
-                for (size_t i=1; i<response.size(); i++) {
+bool DeviceResponder::read(ConnectionReader& connection)
+{
+    Bottle cmd;
+    Bottle response;
+    if (!cmd.read(connection)) {
+        return false;
+    }
+    yCDebug(DEVICERESPONDER, "Command received: %s", cmd.toString().c_str());
+    respond(cmd, response);
+    if (response.size() >= 1) {
+        ConnectionWriter* writer = connection.getWriter();
+        if (writer != nullptr) {
+            if (response.get(0).toString() == "many" && writer->isTextMode()) {
+                for (size_t i = 1; i < response.size(); i++) {
                     Value& v = response.get(i);
                     if (v.isList()) {
                         v.asList()->write(*writer);
@@ -82,11 +89,11 @@ bool DeviceResponder::read(ConnectionReader& connection) {
                 response.write(*writer);
             }
 
-            //printf("response sent: %s\n", response.toString().c_str());
+            yCDebug(DEVICERESPONDER, "Response sent: %s", response.toString().c_str());
         }
     } else {
-        ConnectionWriter *writer = connection.getWriter();
-        if (writer!=nullptr) {
+        ConnectionWriter* writer = connection.getWriter();
+        if (writer != nullptr) {
             response.clear();
             response.addVocab(Vocab::encode("nak"));
             response.write(*writer);
