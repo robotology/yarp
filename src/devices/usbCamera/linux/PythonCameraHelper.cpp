@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 #include "PythonCameraHelper.h"
 
 #include "xilinx-v4l2-controls.h"
@@ -250,14 +268,15 @@ void PythonCameraHelper::crop(int top, int left, int w, int h, int mytry)
 void PythonCameraHelper::setSubsampling(void)
 {
     log("subsampling is" + std::string(subsamplingEnabledProperty_ ? "ENABLED" : "DISABLED"));
-    if (!subsamplingEnabledProperty_)
-        return;
+    int subSamplingValue=0;
+    if (subsamplingEnabledProperty_)
+        subSamplingValue=1;
 
     log("setSubsampling");
     struct v4l2_control ctrl;
 
     ctrl.id = V4L2_CID_XILINX_PYTHON1300_SUBSAMPLING;
-    ctrl.value = 1;
+    ctrl.value = subSamplingValue;
     if (-1 == xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_], VIDIOC_S_CTRL, &ctrl)) {
         log("ERROR-setSubsampling", Severity::error);
         exit(EXIT_FAILURE);
@@ -271,7 +290,7 @@ void PythonCameraHelper::setSubsampling(void)
     }
 
     ctrl.id = V4L2_CID_XILINX_PYTHON1300_RXIF_REMAPPER_MODE;
-    ctrl.value = 1;
+    ctrl.value = subSamplingValue;
     if (-1 == xioctl(pipelineSubdeviceFd_[rxif1Index_], VIDIOC_S_CTRL, &ctrl)) {
         log("ERROR-setSubsampling remapper", Severity::error);
         exit(EXIT_FAILURE);
@@ -603,11 +622,11 @@ void PythonCameraHelper::setInjectedProcess(std::function<void(const void*, int)
 {
     injectedProcessImage_ = toinJect;
 }
-void PythonCameraHelper::setUnlock(std::function<void()> toinJect)
+void PythonCameraHelper::setInjectedUnlock(std::function<void()> toinJect)
 {
     unlock_ = toinJect;
 }
-void PythonCameraHelper::setLock(std::function<void()> toinJect)
+void PythonCameraHelper::setInjectedLock(std::function<void()> toinJect)
 {
     lock_ = toinJect;
 }
@@ -624,7 +643,7 @@ void PythonCameraHelper::openAll()
     startCapturing();
 }
 
-void PythonCameraHelper::setLog(std::function<void(const std::string&, Severity)> toinJect)
+void PythonCameraHelper::setInjectedLog(std::function<void(const std::string&, Severity)> toinJect)
 {
     log_ = toinJect;
 }

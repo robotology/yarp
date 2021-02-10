@@ -102,11 +102,11 @@ V4L_camera::V4L_camera() :
 {
     pythonCameraHelper_.setInjectedProcess([this](const void* pythonBuffer, size_t size)
                                            { pythonPreprocess(pythonBuffer, size); });
-    pythonCameraHelper_.setLock([this]()
-                                { mutex.wait(); });
-    pythonCameraHelper_.setUnlock([this]()
+    pythonCameraHelper_.setInjectedUnlock([this]()
                                   { mutex.post(); });
-    pythonCameraHelper_.setLog([this](const std::string& toLog, Severity severity)
+    pythonCameraHelper_.setInjectedLock([this]()
+                                { mutex.wait(); });
+    pythonCameraHelper_.setInjectedLog([this](const std::string& toLog, Severity severity)
                                {
                                    switch (severity) {
                                    case Severity::error:

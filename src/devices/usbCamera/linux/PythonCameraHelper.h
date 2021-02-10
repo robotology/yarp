@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 #pragma once
 
 #include <array>
@@ -47,8 +65,6 @@ private:
     static constexpr unsigned int nativeWidth_ {1280};
     static constexpr unsigned int nativeHeight_ {1024};
 
-    static constexpr const char* methodName = "------------";
-
 public:
     void openAll();
     void step();
@@ -58,9 +74,9 @@ public:
     void setFileLog(bool value);
 
     void setInjectedProcess(std::function<void(const void*, int)> toinJect);
-    void setUnlock(std::function<void()> toinJect);
-    void setLock(std::function<void()> toinJect);
-    void setLog(std::function<void(const std::string&, Severity severity)> toinJect);
+    void setInjectedUnlock(std::function<void()> toinJect);
+    void setInjectedLock(std::function<void()> toinJect);
+    void setInjectedLog(std::function<void(const std::string&, Severity severity)> toinJect);
 
 private:
     void openPipeline();
