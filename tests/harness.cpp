@@ -42,7 +42,7 @@ static void setup_Environment()
             "share" +
             std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp" +
-            std::string{yarp::conf::filesystem::path_separator}  +
+            std::string{yarp::conf::environment::path_separator}  +
             TEST_DATA_DIR;
     yarp::conf::environment::setEnvironment("YARP_DATA_DIRS", yarp_data_dirs);
 

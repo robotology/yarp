@@ -25,7 +25,7 @@ using namespace std;
 namespace fs = yarp::conf::filesystem;
 
 constexpr fs::value_type slash = fs::preferred_separator;
-constexpr fs::value_type sep   = fs::path_separator;
+constexpr auto sep = yarp::conf::environment::path_separator;
 
 ////// adapted from YARP_os: ResourceFinder.cpp
 static Bottle parsePaths(const std::string& txt) {

@@ -92,7 +92,7 @@ static void mkdir(const Bottle& dirs)
 
 static void setUpTestArea(bool etc_pathd)
 {
-    std::string colon = std::string{yarp::conf::filesystem::path_separator};
+    std::string colon = std::string{yarp::conf::environment::path_separator};
     std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
     FILE *fout;
 
@@ -555,7 +555,7 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         saveEnvironment("YARP_DATA_DIRS");
         saveEnvironment("XDG_DATA_DIRS");
         std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
-        std::string colon = std::string{yarp::conf::filesystem::path_separator};
+        std::string colon = std::string{yarp::conf::environment::path_separator};
         std::string foobar = std::string("/foo") + colon + "/bar";
         std::string yfoo = std::string("/foo") + slash + "yarp";
         std::string ybar = std::string("/bar") + slash + "yarp";
@@ -593,7 +593,7 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         saveEnvironment("YARP_CONFIG_DIRS");
         saveEnvironment("XDG_CONFIG_DIRS");
         std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
-        std::string colon = std::string{yarp::conf::filesystem::path_separator};
+        std::string colon = std::string{yarp::conf::environment::path_separator};
         std::string foobar = std::string("/foo") + colon + "/bar";
         std::string yfoo = std::string("/foo") + slash + "yarp";
         std::string ybar = std::string("/bar") + slash + "yarp";

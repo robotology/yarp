@@ -577,7 +577,7 @@ public:
     /**
      *  Get an OS-appropriate directory separator (e.g. "/" on linux)
      *
-     *  @deprecated since YARP 3.3.0
+     *  @deprecated since YARP 3.3.0. Use yarp::conf::filesystem::preferred_separator instead
      */
     YARP_DEPRECATED_MSG("Use yarp::conf::filesystem::preferred_separator instead")
     static std::string getDirectorySeparator();
@@ -585,9 +585,9 @@ public:
     /**
      * Get an OS-appropriate path separator (e.g. ":" on linux)
      *
-     * @deprecated since YARP 3.3.0
+     * @deprecated since YARP 3.3.0. Use yarp::conf::environment::path_separator instead
      */
-    YARP_DEPRECATED_MSG("Use yarp::conf::filesystem::path_separator instead")
+    YARP_DEPRECATED_MSG("Use yarp::conf::environment::path_separator instead")
     static std::string getPathSeparator();
 #endif // YARP_NO_DEPRECATED
 

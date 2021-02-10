@@ -98,7 +98,7 @@ void sigstdio_handler(int sig)
 ////////////////////////////////////
 
 constexpr fs::value_type slash = fs::preferred_separator;
-constexpr fs::value_type sep   = fs::path_separator;
+constexpr auto sep = yarp::conf::environment::path_separator;
 ////// adapted from libYARP_OS: ResourceFinder.cpp
 static yarp::os::Bottle parsePaths(const std::string& txt)
 {

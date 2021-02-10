@@ -77,7 +77,7 @@ static Bottle parsePaths(const std::string& txt)
         return Bottle();
     }
     constexpr fs::value_type slash = fs::preferred_separator;
-    constexpr fs::value_type sep   = fs::path_separator;
+    constexpr auto sep = yarp::conf::environment::path_separator;
     Bottle result;
     const char* at = txt.c_str();
     int slash_tweak = 0;

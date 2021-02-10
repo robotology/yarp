@@ -19,6 +19,13 @@ namespace yarp {
 namespace conf {
 namespace environment {
 
+#if defined(_WIN32)
+static constexpr char path_separator = ';';
+#else
+static constexpr char path_separator = ':';
+#endif
+
+
 /**
  * Read a variable from the environment.
  *

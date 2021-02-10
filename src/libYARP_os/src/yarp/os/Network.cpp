@@ -1446,7 +1446,7 @@ std::string NetworkBase::getDirectorySeparator()
 
 std::string NetworkBase::getPathSeparator()
 {
-    return std::string{yarp::conf::filesystem::path_separator};
+    return std::string{yarp::conf::environment::path_separator};
 }
 
 #endif // YARP_NO_DEPRECATED
