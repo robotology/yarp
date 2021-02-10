@@ -9,7 +9,7 @@ yarp_prepare_plugin(fakeMotor
                     TYPE FakeMotor
                     INCLUDE FakeMotor.h
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2
-                    DEFAULT ON)
+                    DEFAULT OFF)
 
 # As discussed in #2308 test_motor should be renamed fakeMotor
 #
@@ -21,7 +21,7 @@ yarp_prepare_plugin(test_motor
                     TYPE TestMotor
                     INCLUDE FakeMotor.h
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2
-                    DEFAULT ON)
+                    DEFAULT OFF)
 
 if(NOT SKIP_fakeMotor)
   yarp_add_plugin(yarp_fakeMotor)

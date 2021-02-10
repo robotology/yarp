@@ -31,7 +31,7 @@ YARP_DECLARE_LOG_COMPONENT(FAKEMOTOR)
  * Implements the IPositionControl, IEncoders and IVelocityControl interfaces.
  */
 class FakeMotor :
-        public yarp::dev::DeviceDriver,
+        public yarp::dev::DeprecatedDeviceDriver,
         public yarp::dev::IPositionControl,
         public yarp::dev::IEncodersTimed,
         public yarp::dev::IVelocityControl

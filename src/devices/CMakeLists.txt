@@ -65,7 +65,6 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(DeviceGroup)
   add_subdirectory(DevicePipe)
   add_subdirectory(ServerSerial)
-  add_subdirectory(fakeMotor)
   add_subdirectory(RemoteFrameGrabber)
   add_subdirectory(RemoteControlBoard)
   add_subdirectory(AnalogSensorClient)
@@ -88,6 +87,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
   add_subdirectory(ServerSoundGrabber) # DEPRECATED Since YARP 3.2
   add_subdirectory(ServerFrameGrabber) # DEPRECATED Since YARP 3.3
+  add_subdirectory(fakeMotor) # DEPRECATED Since YARP 3.5
 
   # Test devices
   add_subdirectory(test_segfault)

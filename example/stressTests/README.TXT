@@ -26,7 +26,7 @@ a look at the output of ps (this is the undefined behavior I see)
 Lorenzo:
 
 I have uploaded a stressrpcMD.cpp (MD is for motion done). If you run
-the fakeMotor device like this:
+the fakeMotionControl device like this:
 
 yarpdev --device controlboard --subdevice fakeMotor --delay 80
 

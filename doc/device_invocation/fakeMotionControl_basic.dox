@@ -1,0 +1,48 @@
+/**
+ * \ingroup dev_examples
+ *
+ * \defgroup fakeMotionControl_basic Example for fakeMotionControl (fakeMotionControl_basic)
+
+Instantiates \ref cmd_device_fakeMotionControl "fakeMotionControl" device implemented by FakeMotionControl.
+\verbatim
+# set up a fake motion control device with 8 joints
+device fakeMotionControl
+name /motor
+
+[GENERAL]
+Joints 8
+\endverbatim
+If this text is saved in a file called fakeMotionControl_basic.ini then the device can be created by doing:
+\verbatim
+yarpdev --file fakeMotionControl_basic.ini
+\endverbatim
+Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
+\code
+Property p;
+p.fromConfigFile("fakeMotionControl_basic.ini");
+// of course you could construct the Property object on-the-fly
+PolyDriver dev;
+dev.open(p);
+if (dev.isValid()) { /* use the device via view method */ }
+\endcode
+Here is a list of properties checked when starting up a device based on this configuration file.
+Note that which properties are checked can depend on whether other properties are present.
+In some cases properties can also vary between operating systems.
+So this is just an example
+
+<table>
+<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
+<tr><td>device</td><td></td><td></td></tr>
+<tr><td>GENERAL</td><td></td><td></td></tr>
+<tr><td>GENERAL.Joints</td><td>Number of degrees of freedom</td><td>1</td></tr>
+<tr><td>GENERAL.AxisMap</td><td></td><td></td></tr>
+<tr><td>GENERAL.AxisName</td><td></td><td></td></tr>
+<tr><td>GENERAL.AxisType</td><td></td><td></td></tr>
+<tr><td>GENERAL.ampsToSensor</td><td></td><td></td></tr>
+<tr><td>GENERAL.fullscalePWM</td><td></td><td></td></tr>
+<tr><td>GENERAL.Encoder</td><td></td><td></td></tr>
+</table>
+
+\sa FakeMotionControl
+
+ */

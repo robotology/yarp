@@ -25,7 +25,7 @@ using namespace yarp::dev;
 TEST_CASE("dev::GroupDriver", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("group", "device");
-    YARP_REQUIRE_PLUGIN("fakeMotor", "device");
+    YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
     YARP_REQUIRE_PLUGIN("controlboardwrapper2", "device");
 
     Network::setLocalMode(true);
@@ -37,8 +37,8 @@ TEST_CASE("dev::GroupDriver", "[yarp::dev]")
 device group\n\
 \n\
 [part mymotor]\n\
-device fakeMotor\n\
-axes 10\n\
+device fakeMotionControl\n\
+GENERAL (Joints 10)\n\
 \n\
 [part broadcast]\n\
 device controlboardwrapper2\n\

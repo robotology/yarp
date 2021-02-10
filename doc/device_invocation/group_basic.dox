@@ -11,8 +11,8 @@ Instantiates \ref cmd_device_group "group" device implemented by DeviceGroup.
 device group
 
 [part mymotor]
-device fakeMotor
-axes 10
+device fakeMotionControl
+GENERAL (Joints 10)
 
 [part mycam]
 device fakeFrameGrabber
@@ -47,8 +47,14 @@ So this is just an example
 <tr><td>mymotor</td><td></td><td></td></tr>
 <tr><td>mymotor.device</td><td></td><td></td></tr>
 <tr><td>mymotor.wrapped</td><td></td><td></td></tr>
-<tr><td>mymotor.axes</td><td>number of axes to pretend to have</td><td>4</td></tr>
-<tr><td>mymotor.delay</td><td>delay in each call for debugging purpose, in ms</td><td>0</td></tr>
+<tr><td>mymotor.GENERAL</td><td></td><td></td></tr>
+<tr><td>mymotor.GENERAL.Joints</td><td>Number of degrees of freedom</td><td>1</td></tr>
+<tr><td>mymotor.GENERAL.AxisMap</td><td></td><td></td></tr>
+<tr><td>mymotor.GENERAL.AxisName</td><td></td><td></td></tr>
+<tr><td>mymotor.GENERAL.AxisType</td><td></td><td></td></tr>
+<tr><td>mymotor.GENERAL.ampsToSensor</td><td></td><td></td></tr>
+<tr><td>mymotor.GENERAL.fullscalePWM</td><td></td><td></td></tr>
+<tr><td>mymotor.GENERAL.Encoder</td><td></td><td></td></tr>
 <tr><td>mycam</td><td></td><td></td></tr>
 <tr><td>mycam.device</td><td></td><td></td></tr>
 <tr><td>mycam.wrapped</td><td></td><td></td></tr>

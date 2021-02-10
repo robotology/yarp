@@ -74,7 +74,7 @@ This will sit and wait for messages and render them as Bottle text format.
 For example, doing:
 
 \verbatim
-yarpdev --device fakeMotor --name /motor
+yarpdev --device fakeMotionControl --name /motor --GENERAL::Joints 4
 \endverbatim
 
 Gives a vector stream at port /motor/state:o.  Finding its URL and then
