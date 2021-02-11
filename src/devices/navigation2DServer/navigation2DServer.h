@@ -82,6 +82,12 @@ private:
     std::string getStatusAsString(yarp::dev::Nav2D::NavigationStatusEnum status);
     bool parse_respond_string(const yarp::os::Bottle& command, yarp::os::Bottle& reply);
     bool parse_respond_vocab(const yarp::os::Bottle& command, yarp::os::Bottle& reply);
+
+private:
+    std::string m_current_goal_name;
+    bool navigation2DServer::set_current_goal_name(const std::string& name);
+    bool navigation2DServer::get_current_goal_name(std::string& name);
+    bool navigation2DServer::clear_current_goal_name();
 };
 
 #endif

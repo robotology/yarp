@@ -217,8 +217,29 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
         loc.y = command.get(4).asFloat64();
         loc.theta = command.get(5).asFloat64();
         bool ret = iNav_target->gotoTargetByAbsoluteLocation(loc);
+        clear_current_goal_name();
         if (ret)
         {
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yCError(NAVIGATION2DSERVER) << "gotoTargetByAbsoluteLocation() failed";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    if (request == VOCAB_NAV_GOTOABS_AND_NAME)
+    {
+        Map2DLocation loc;
+        loc.map_id = command.get(2).asString();
+        loc.x = command.get(3).asFloat64();
+        loc.y = command.get(4).asFloat64();
+        loc.theta = command.get(5).asFloat64();
+        string location_name = command.get(6).asString();
+        bool ret = iNav_target->gotoTargetByAbsoluteLocation(loc);
+        if (ret)
+        {
+            set_current_goal_name(location_name);
             reply.addVocab(VOCAB_OK);
         }
         else
@@ -249,6 +270,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
             double y = command.get(3).asFloat64();
             double theta = command.get(4).asFloat64();
             bool ret = iNav_target->gotoTargetByRelativeLocation(x, y, theta);
+            clear_current_goal_name();
             if (ret)
             {
                 reply.addVocab(VOCAB_OK);
@@ -264,6 +286,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
             double x = command.get(2).asFloat64();
             double y = command.get(3).asFloat64();
             bool ret = iNav_target->gotoTargetByRelativeLocation(x, y);
+            clear_current_goal_name();
             if (ret)
             {
                 reply.addVocab(VOCAB_OK);
@@ -287,16 +310,21 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
         double t_vel   = command.get(4).asFloat64();
         double timeout = command.get(5).asFloat64();
         bool ret = iNav_target->applyVelocityCommand(x_vel,y_vel,t_vel,timeout);
+        clear_current_goal_name();
         if (ret)
         {
             reply.addVocab(VOCAB_OK);
-            reply.addInt32(VOCAB_OK);
         }
         else
         {
             yCError(NAVIGATION2DSERVER) << "applyVelocityCommand() failed";
             reply.addVocab(VOCAB_ERR);
         }
+    }
+    else if (request == VOCAB_NAV_GET_NAME_TARGET)
+    {
+        reply.addVocab(VOCAB_OK);
+        reply.addString(m_current_goal_name);
     }
     else if (request == VOCAB_NAV_GET_NAVIGATION_STATUS)
     {
@@ -537,4 +565,26 @@ std::string navigation2DServer::getStatusAsString(NavigationStatusEnum status)
     else if (status == navigation_status_thinking) return std::string("navigation_status_thinking");
     else if (status == navigation_status_error) return std::string("navigation_status_error");
     return std::string("navigation_status_error");
+}
+
+bool navigation2DServer::set_current_goal_name(const std::string& name)
+{
+    m_current_goal_name = name;
+    return true;
+}
+
+bool navigation2DServer::get_current_goal_name(std::string& name)
+{
+    if (m_current_goal_name == "")
+    {
+        return false;
+    }
+    name = m_current_goal_name;
+    return true;
+}
+
+bool navigation2DServer::clear_current_goal_name()
+{
+    m_current_goal_name = "";
+    return true;
 }
