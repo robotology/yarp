@@ -23,7 +23,9 @@
 #include <map>
 
 // Ffmpeg imports
-#include "libavcodec/codec_id.h"
+extern "C" {
+    #include <libavcodec/codec_id.h>
+}
 
 // YARP imports
 #include <yarp/sig/Image.h>
