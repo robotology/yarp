@@ -21,6 +21,7 @@ compile_commands.json
 *.aps
 /CMakeSettings.json
 /.vs/
+/.vscode/
 /.idea/
 /cmake-build*/
 .clangd/
