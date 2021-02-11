@@ -387,6 +387,7 @@ jobs:
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
+                                  -DENABLE_yarpcar_libffmpeg:BOOL=OFF
                                   -DENABLE_yarpmod_usbCamera:BOOL=OFF
                                   -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
                                   -DENABLE_yarpmod_ffmpeg_grabber:BOOL=OFF
@@ -416,6 +417,7 @@ jobs:
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
+                                  -DENABLE_yarpcar_libffmpeg:BOOL=OFF
                                   -DENABLE_yarpmod_usbCamera:BOOL=OFF
                                   -DENABLE_yarpmod_usbCameraRaw:BOOL=OFF
                                   -DENABLE_yarpmod_ffmpeg_grabber:BOOL=OFF
