@@ -159,40 +159,11 @@ public:
         memcpy(this->data(), p, sizeof(T)*s);
     }
 
-    VectorOf(const VectorOf& r) : VectorBase(), bytes(r.bytes) {
-    }
-
-    /**
-     * Copy operator;
-     */
-    const VectorOf<T> &operator=(const VectorOf<T>& r)
-    {
-
-        if (this == &r) return *this;
-        bytes = r.bytes;
-        return *this;
-    }
-
-    /**
-     * @brief Move constructor.
-     *
-     * @param other the VectorOf to be moved
-     */
-    VectorOf(VectorOf<T>&& other) noexcept : bytes(std::move(other.bytes)) {
-    }
-
-    /**
-     * @brief Move assignment operator.
-     *
-     * @param other the VectorOf to be moved
-     * @return this object
-     */
-    VectorOf& operator=(VectorOf<T>&& other) noexcept
-    {
-        bytes = std::move(other.bytes);
-        return *this;
-    }
-
+    VectorOf(const VectorOf& r) = default;
+    VectorOf<T> &operator=(const VectorOf<T>& r) = default;
+    VectorOf(VectorOf<T>&& other) noexcept = default;
+    VectorOf& operator=(VectorOf<T>&& other) noexcept = default;
+    ~VectorOf() override = default;
 
     size_t getElementSize() const override {
         return sizeof(T);
