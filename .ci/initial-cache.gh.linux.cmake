@@ -28,6 +28,7 @@ set(ENABLE_yarpcar_depthimage2 ON CACHE BOOL "")
 set(ENABLE_yarpcar_segmentationimage ON CACHE BOOL "")
 set(ENABLE_yarpcar_h264 ON CACHE BOOL "" ON CACHE BOOL "")
 set(ENABLE_yarpcar_unix_stream ON CACHE BOOL "")
+set(ENABLE_yarpcar_libffmpeg ON CACHE BOOL "")
 
 set(ENABLE_yarpmod_AudioPlayerWrapper ON CACHE BOOL "")
 set(ENABLE_yarpmod_AudioRecorderWrapper ON CACHE BOOL "")
