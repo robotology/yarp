@@ -1,11 +1,19 @@
+/*
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
 /**
  * @file constants.h
  * @author Giulia Martino, Fabio Valla
  * @brief File containing constans used in FfmpegPortmonitor.cpp
  * @version 1.0
  * @date 2021-01-04
- * 
  */
+
 #ifndef YARP_FFMPEG_CARRIER_FFMPEGPORTMONITOR_CL_PARAMS_H
 #define YARP_FFMPEG_CARRIER_FFMPEGPORTMONITOR_CL_PARAMS_H
 
@@ -22,7 +30,7 @@
 
 /**
  * @brief This vector contains all parameters that have to be ignored while parsing command line string.
- * 
+ *
  */
 static const std::vector<std::string> FFMPEGPORTMONITOR_IGNORE_PARAMS {
     "tcp",
@@ -36,13 +44,13 @@ static const std::vector<std::string> FFMPEGPORTMONITOR_IGNORE_PARAMS {
 
 /**
  * @brief This string is the "key" value for the codec parameter
- * 
+ *
  */
 static const std::string FFMPEGPORTMONITOR_CL_CODEC_KEY = "codec";
 
 /**
  * @brief This vector contains the only accepted values for the command line parameter "codec"
- * 
+ *
  */
 static const std::vector<std::string> FFMPEGPORTMONITOR_CL_CODECS {
     "mpeg2video",
@@ -52,7 +60,7 @@ static const std::vector<std::string> FFMPEGPORTMONITOR_CL_CODECS {
 
 /**
  * @brief This vector contains the codec ids corresponding to the codecs of the FFMPEGPORTMONITOR_CL_CODECS vector.
- * 
+ *
  */
 static const std::vector<int> FFMPEGPORTMONITOR_CODE_CODECS {
     AV_CODEC_ID_MPEG2VIDEO,
@@ -62,7 +70,7 @@ static const std::vector<int> FFMPEGPORTMONITOR_CODE_CODECS {
 
 /**
  * @brief This structure maps YARP pixel format codec into Ffmpeg pixel format codes.
- * 
+ *
  */
 static std::map<int, int> FFMPEGPORTMONITOR_PIXELMAP = {
   { VOCAB_PIXEL_RGB, AV_PIX_FMT_RGB24 },
@@ -74,7 +82,7 @@ static std::map<int, int> FFMPEGPORTMONITOR_PIXELMAP = {
 
 /**
  * @brief This structure maps Ffmpeg video codecs with their needed Ffmpeg pixel format code.
- * 
+ *
  */
 static std::map<int, int> FFMPEGPORTMONITOR_CODECPIXELMAP = {
     { AV_CODEC_ID_H264, AV_PIX_FMT_YUV420P },

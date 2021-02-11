@@ -1,10 +1,17 @@
+/*
+ * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
+ *
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ */
+
 /**
  * @file ffmpegPortmonitor.cpp
  * @author Giulia Martino, Fabio Valla
  * @brief Implementation of FfmpegPortmonitor: a port monitor for video compression/decompression
  * @version 1.0
  * @date 2021-01-04
- * 
  */
 
 
@@ -48,7 +55,7 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
 /**
  * @brief This function simply splits a string into a vector of strings basing on a delimiter character.
  * It it used for command line parameters parsing.
- * 
+ *
  * @param s         The initial string.
  * @param delim     The delimiter character.
  * @param elements  The final vector of strings.
@@ -62,7 +69,7 @@ void split(const std::string &s, char delim, vector<string> &elements) {
 }
 
 bool FfmpegMonitorObject::create(const yarp::os::Property& options)
-{   
+{
     // Check if this is sender or not
     senderSide = (options.find("sender_side").asBool());
 
@@ -74,7 +81,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     std::string str = options.find("carrier").asString();
     if (getParamsFromCommandLine(str, codecId) == -1)
         return false;
-    
+
     // Find encoder/decoder
     if (senderSide) {
         codec = avcodec_find_encoder(codecId);
@@ -173,7 +180,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             yCError(FFMPEGMONITOR, "Error in packet allocation");
             success = false;
         }
-        
+
         // Call compress function
         if (success && compress(img, packet) != 0) {
             yCError(FFMPEGMONITOR, "Error in compression");
@@ -190,7 +197,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         data.addInt32(img->getPixelCode());
         data.addInt32(img->getPixelSize());
 
-        if (success) {  // If compression was successful, insert also compressed data         
+        if (success) {  // If compression was successful, insert also compressed data
             // Packet
             Value p(packet, sizeof(*packet));
             data.add(p);
@@ -235,7 +242,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         // Check if compression was successful
         if (compressedBottle->get(0).asInt32() == 1) {
             bool success = true;
-            // Get compressed image from Bottle            
+            // Get compressed image from Bottle
             AVPacket* tmp = (AVPacket*) compressedBottle->get(5).asBlob();
             // Allocate memory for packet
             AVPacket* packet = av_packet_alloc();
@@ -254,7 +261,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
             packet->buf = av_buffer_create((uint8_t *) compressedBottle->get(8).asBlob(),
                                             compressedBottle->get(7).asInt32(), av_buffer_default_free,
                                             nullptr, AV_BUFFER_FLAG_READONLY);
-            
+
             // Packet side data
             for (int i = 0; i < tmp->side_data_elems; i++) {
 
@@ -267,26 +274,26 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
                     break;
                 }
             }
-            
+
             // Call to decompress function
             if (success && decompress(packet, width, height, pixelCode) != 0) {
                 yCError(FFMPEGMONITOR, "Error in decompression");
                 success = false;
             }
-            
+
             // Free memory allocated for side data and packet
             av_freep(&packet->side_data);
             av_freep(&packet);
 
         }
         th.setPortWriter(&imageOut);
-        
+
     }
     return th;
 }
 
 int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
-    
+
     yCTrace(FFMPEGMONITOR, "compress");
     AVFrame *startFrame;
     AVFrame *endFrame;
@@ -342,7 +349,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         av_frame_free(&endFrame);
         return -1;
     }
-    
+
     // Set end frame parameters
     endFrame->height = h;
     endFrame->width = w;
@@ -350,10 +357,10 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
 
     // Convert the image from start format into end format
     static struct SwsContext *img_convert_ctx;
-    
+
     // Allocate context for conversion
-    img_convert_ctx = sws_getContext(w, h, 
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()], 
+    img_convert_ctx = sws_getContext(w, h,
+                                        (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[img->getPixelCode()],
                                         w, h,
                                         (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id],
                                         SWS_BICUBIC,
@@ -365,9 +372,9 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
         av_frame_free(&endFrame);
         return -1;
     }
-    
+
     // Perform conversion
-    int ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0, 
+    int ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
                         h, endFrame->data, endFrame->linesize);
 
     if (ret < 0) {
@@ -438,7 +445,7 @@ int FfmpegMonitorObject::compress(Image* img, AVPacket *pkt) {
 }
 
 int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) {
-    
+
     yCTrace(FFMPEGMONITOR, "decompress");
     AVFrame *startFrame;
     AVFrame *endFrame;
@@ -494,7 +501,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
         av_frame_free(&startFrame);
         return -1;
     }
-    
+
     // Allocate a video frame for end frame
     endFrame = av_frame_alloc();
     if (endFrame == NULL) {
@@ -507,7 +514,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
     int success = av_image_alloc(endFrame->data, endFrame->linesize,
                     w, h,
                     (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode], 16);
-    
+
     if (success < 0) {
         yCError(FFMPEGMONITOR, "Error allocating end frame buffer!");
         av_frame_free(&startFrame);
@@ -522,10 +529,10 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
 
     // Convert the image into RGB format
     static struct SwsContext *img_convert_ctx;
-    
+
     // Allocate conversion context
-    img_convert_ctx = sws_getContext(w, h, 
-                                        (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id], 
+    img_convert_ctx = sws_getContext(w, h,
+                                        (AVPixelFormat) FFMPEGPORTMONITOR_CODECPIXELMAP[codecContext->codec_id],
                                         w, h,
                                         (AVPixelFormat) FFMPEGPORTMONITOR_PIXELMAP[pixelCode],
                                         SWS_BICUBIC,
@@ -537,9 +544,9 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
         av_frame_free(&startFrame);
         return -1;
     }
-    
+
     // Perform conversion
-    ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0, 
+    ret = sws_scale(img_convert_ctx, startFrame->data, startFrame->linesize, 0,
                         h, endFrame->data, endFrame->linesize);
 
     if (ret < 0) {
@@ -565,7 +572,7 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
 }
 
 int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecID &codecId) {
-    
+
     vector<string> parameters;
     // Split command line string using '+' delimiter
     split(carrierString, '+', parameters);
@@ -588,7 +595,7 @@ int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecI
         // Otherwise, separate key and value
         string paramKey = param.substr(0, pointPosition);
         string paramValue = param.substr(pointPosition + 1, param.length());
-        
+
         // Parsing codec
         if (paramKey == FFMPEGPORTMONITOR_CL_CODEC_KEY) {
             bool found = false;
@@ -611,7 +618,7 @@ int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecI
             } else {
                 continue;
             }
-            
+
         }
 
         // Save param into params map
@@ -622,7 +629,7 @@ int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecI
 }
 
 int FfmpegMonitorObject::setCommandLineParams() {
-    
+
     // Iterate over all saved parameters
     for (auto const& x : paramsMap) {
 
@@ -650,6 +657,6 @@ int FfmpegMonitorObject::setCommandLineParams() {
             yCError(FFMPEGMONITOR, "Parameter not found: %s", key.c_str());
             return -1;
         }
-        
-    }    
+
+    }
 }
