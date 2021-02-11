@@ -2364,25 +2364,48 @@ bool RPCMessagesParser::initialize()
 
 void RPCMessagesParser::init(yarp::dev::DeviceDriver* x)
 {
-    ControlBoardWrapper_p = dynamic_cast<ControlBoardWrapperCommon*>(x);
-    rpc_IPid = dynamic_cast<yarp::dev::IPidControl*>(x);
-    rpc_IPosCtrl = dynamic_cast<yarp::dev::IPositionControl*>(x);
-    rpc_IPosDirect = dynamic_cast<yarp::dev::IPositionDirect*>(x);
-    rpc_IVelCtrl = dynamic_cast<yarp::dev::IVelocityControl*>(x);
-    rpc_IEncTimed = dynamic_cast<yarp::dev::IEncodersTimed*>(x);
-    rpc_IMotEnc = dynamic_cast<yarp::dev::IMotorEncoders*>(x);
-    rpc_IMotor = dynamic_cast<yarp::dev::IMotor*>(x);
-    rpc_IVar = dynamic_cast<yarp::dev::IRemoteVariables*>(x);
-    rcp_IAmp = dynamic_cast<yarp::dev::IAmplifierControl*>(x);
-    rcp_Ilim = dynamic_cast<yarp::dev::IControlLimits*>(x);
-    rpc_AxisInfo = dynamic_cast<yarp::dev::IAxisInfo*>(x);
-    rpc_IRemoteCalibrator = dynamic_cast<yarp::dev::IRemoteCalibrator*>(x);
-    rpc_Icalib = dynamic_cast<yarp::dev::IControlCalibration*>(x);
-    rpc_IImpedance = dynamic_cast<yarp::dev::IImpedanceControl*>(x);
-    rpc_ITorque = dynamic_cast<yarp::dev::ITorqueControl*>(x);
-    rpc_iCtrlMode = dynamic_cast<yarp::dev::IControlMode*>(x);
-    rpc_IInteract = dynamic_cast<yarp::dev::IInteractionMode*>(x);
-    rpc_ICurrent = dynamic_cast<yarp::dev::ICurrentControl*>(x);
-    rpc_IPWM = dynamic_cast<yarp::dev::IPWMControl*>(x);
+    x->view(rpc_IPid);
+    x->view(rpc_IPosCtrl);
+    x->view(rpc_IPosDirect);
+    x->view(rpc_IVelCtrl);
+    x->view(rpc_IEncTimed);
+    x->view(rpc_IMotEnc);
+    x->view(rpc_IMotor);
+    x->view(rpc_IVar);
+    x->view(rcp_IAmp);
+    x->view(rcp_Ilim);
+    x->view(rpc_AxisInfo);
+    x->view(rpc_IRemoteCalibrator);
+    x->view(rpc_Icalib);
+    x->view(rpc_IImpedance);
+    x->view(rpc_ITorque);
+    x->view(rpc_iCtrlMode);
+    x->view(rpc_IInteract);
+    x->view(rpc_ICurrent);
+    x->view(rpc_IPWM);
+    controlledJoints = 0;
+}
+
+void RPCMessagesParser::reset()
+{
+    rpc_IPid = nullptr;
+    rpc_IPosCtrl = nullptr;
+    rpc_IPosDirect = nullptr;
+    rpc_IVelCtrl = nullptr;
+    rpc_IEncTimed = nullptr;
+    rpc_IMotEnc = nullptr;
+    rpc_IMotor = nullptr;
+    rpc_IVar = nullptr;
+    rcp_IAmp = nullptr;
+    rcp_Ilim = nullptr;
+    rpc_AxisInfo = nullptr;
+    rpc_IRemoteCalibrator = nullptr;
+    rpc_Icalib = nullptr;
+    rpc_IImpedance = nullptr;
+    rpc_ITorque = nullptr;
+    rpc_iCtrlMode = nullptr;
+    rpc_IInteract = nullptr;
+    rpc_ICurrent = nullptr;
+    rpc_IPWM = nullptr;
     controlledJoints = 0;
 }

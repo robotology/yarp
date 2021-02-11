@@ -25,14 +25,24 @@ using namespace std;
 void StreamingMessagesParser::init(yarp::dev::DeviceDriver* x)
 {
     stream_nJoints = 0;
-    stream_IPosCtrl = dynamic_cast<yarp::dev::IPositionControl*>(x);
-    stream_IPosDirect = dynamic_cast<yarp::dev::IPositionDirect*>(x);
-    stream_IVel = dynamic_cast<yarp::dev::IVelocityControl*>(x);
-    stream_ITorque = dynamic_cast<yarp::dev::ITorqueControl*>(x);
-    stream_IPWM = dynamic_cast<yarp::dev::IPWMControl*>(x);
-    stream_ICurrent = dynamic_cast<yarp::dev::ICurrentControl*>(x);
+    x->view(stream_IPosCtrl);
+    x->view(stream_IPosDirect);
+    x->view(stream_IVel);
+    x->view(stream_ITorque);
+    x->view(stream_IPWM);
+    x->view(stream_ICurrent);
 }
 
+void StreamingMessagesParser::reset()
+{
+    stream_nJoints = 0;
+    stream_IPosCtrl = nullptr;
+    stream_IPosDirect = nullptr;
+    stream_IVel = nullptr;
+    stream_ITorque = nullptr;
+    stream_IPWM = nullptr;
+    stream_ICurrent = nullptr;
+}
 
 bool StreamingMessagesParser::initialize()
 {

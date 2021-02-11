@@ -74,6 +74,8 @@ public:
      */
     void init(yarp::dev::DeviceDriver* x);
 
+    void reset();
+
     using yarp::os::TypedReaderCallback<CommandMessage>::onRead;
     /**
      * Callback function.
