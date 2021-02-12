@@ -14,6 +14,7 @@
 #include <array>
 #include <vector>
 #include <cmath>
+#include <limits>
 #include <yarp/os/Time.h>
 #include <yarp/os/all.h>
 
@@ -252,7 +253,8 @@ client_return_code_t client(int nframes, int payload_size, string proto, double 
 
     //Performs the test, by sending request to the server. The duration of the test depends on the number of requested frames.
     int clientframecounter = 0;
-    double latency_mean_accumulator = 0;
+    double latency_max = 0;
+    double latency_min = std::numeric_limits<double>::infinity();
     while(clientframecounter <nframes)
     {
         //sends the frame to server. The frame is composed by
@@ -279,9 +281,10 @@ client_return_code_t client(int nframes, int payload_size, string proto, double 
         double copytime = datum.get(3).asFloat64();
         double finaltime=Time::now();
         double latency_ms = (finaltime - time) * 1000;
-        latency_mean_accumulator += latency_ms;
         test_data[clientframecounter].latency = latency_ms;
         test_data[clientframecounter].copytime = copytime;
+        if (latency_ms>latency_max) latency_max = latency_ms;
+        if (latency_ms<latency_min) latency_min = latency_ms;
 
         if (verbose)
         {
@@ -306,8 +309,19 @@ client_return_code_t client(int nframes, int payload_size, string proto, double 
     port.close();
 
     //prints stats to screen
-    double latency_mean = latency_mean_accumulator / clientframecounter;
-    yCInfo(COMPANION, "Processed %d frames of %d bytes, average latency %.3lf[ms]\n", clientframecounter, payload_size, latency_mean);
+    double latency_mean = 0;
+    double latency_stdev = 0;
+    for (int i = 0; i < nframes; i++)
+    {
+        latency_mean+=test_data[i].latency;
+    }
+    latency_mean/=nframes;
+    for (int i = 0; i < nframes; i++)
+    {
+        latency_stdev+=pow(test_data[i].latency-latency_mean,2);
+    }
+    latency_stdev=sqrt(latency_stdev/nframes);
+    yCInfo(COMPANION, "Processed %d frames of %d bytes, average latency %.3lf[ms], max %.3lf[ms], min %.3lf[ms], stdev %.3lf[ms]\n", clientframecounter, payload_size, latency_mean, latency_max, latency_min, latency_stdev);
 
     //save the stats to a logfile
     std::fstream fs;
