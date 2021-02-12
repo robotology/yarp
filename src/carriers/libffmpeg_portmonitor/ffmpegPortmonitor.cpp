@@ -88,7 +88,7 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
         codec = avcodec_find_decoder(codecId);
     }
     if (!codec) {
-        yCError(FFMPEGMONITOR, "Can't find codec %s", codecName);
+        yCError(FFMPEGMONITOR, "Can't find codec %s", codecName.c_str());
         return false;
     }
 
