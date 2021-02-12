@@ -24,7 +24,7 @@
 
 // Ffmpeg imports
 extern "C" {
-    #include <libavcodec/codec_id.h>
+    #include <libavcodec/avcodec.h>
 }
 
 // YARP imports

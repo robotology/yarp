@@ -29,7 +29,6 @@
 
 // Ffmpeg imports
 extern "C" {
-    #include <libavcodec/codec.h>
     #include <libavcodec/avcodec.h>
     #include <libavutil/opt.h>
     #include <libavutil/imgutils.h>
