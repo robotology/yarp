@@ -18,8 +18,6 @@
 
 using yarp::companion::impl::Companion;
 using yarp::os::Bottle;
-using yarp::os::BufferedPort;
-using yarp::os::NetworkBase;
 using yarp::os::Property;
 using namespace std;
 
@@ -33,13 +31,14 @@ private:
     yarp::os::Bottle pp;
 
 public:
-    datasender(double period, string portname, double data_size_MB) : PeriodicThread (period)
+    datasender(double period, string portname, double data_size_MB) :
+            PeriodicThread (period),
+            m_data_size_MB(data_size_MB),
+            m_portname(std::move(portname))
     {
-        m_portname=portname;
-        m_data_size_MB = data_size_MB;
     }
 
-    bool threadInit()
+    bool threadInit() override
     {
         size_t data_size_B= (size_t)(m_data_size_MB*1000000.0);
         data_buff = new char[data_size_B +1];
@@ -62,7 +61,7 @@ public:
             outport.write(pp);
     }
 
-    void threadRelease()
+    void threadRelease() override
     {
         outport.interrupt();
         outport.close();
