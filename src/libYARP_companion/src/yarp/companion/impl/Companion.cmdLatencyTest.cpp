@@ -93,11 +93,11 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
             Bottle* b =p.find("multitest").asList();
             double min = 1;
             double max = 800'000'000;
-            if (b && b->size()==2) 
+            if (b && b->size()==2)
             {
                 min = b->get(0).asFloat64();
                 max = b->get(1).asFloat64();
-                //yCInfo(COMPANION) << min << max; 
+                //yCInfo(COMPANION) << min << max;
             }
             //prepare the test array
             //the generated sequence is similar to 1 2 4 8 10 20 40 80 100...
