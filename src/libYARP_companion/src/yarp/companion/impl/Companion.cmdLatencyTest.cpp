@@ -13,6 +13,7 @@
 #include <string>
 #include <array>
 #include <vector>
+#include <cmath>
 #include <yarp/os/Time.h>
 #include <yarp/os/all.h>
 
@@ -26,7 +27,7 @@ enum client_return_code_t { CLIENT_END_TEST = 0};
 enum server_return_code_t { SERVER_END_TEST = 0, SERVER_QUIT = 1,SERVER_ERROR =2 };
 
 server_return_code_t server(double server_wait, bool verbose = false);
-client_return_code_t client(int nframes, int payload_size, double pause, string logfilename = "log_", bool verbose = false);
+client_return_code_t client(int nframes, int payload_size, string proto, double pause, string logfilename = "log_", bool verbose = false);
 
 //------------------------------------------------------------------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
 {
     Property p;
     p.fromCommand(argc, argv, false);
+    string proto="tcp";
 
     if (p.check("help") || argc==0)
     {
@@ -46,6 +48,8 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
         yCInfo(COMPANION, "yarp latency-test --client [--details]");
         yCInfo(COMPANION, "--nframes <X> --payload_size <Y> --client_wait <Z> [--logfile <filename_prefix>]");
         yCInfo(COMPANION, "--nframes <X> --multitest --client_wait <Z> [--logfile <filename_prefix>]");
+        yCInfo(COMPANION, "--nframes <X> --multitest \"(1 400000)\" --client_wait <Z> [--logfile <filename_prefix>]");
+        yCInfo(COMPANION, "--nframes <X> --customtest \"(1 40 100 10000)\" --client_wait <Z> [--logfile <filename_prefix>]");
         yCInfo(COMPANION, "Default value for filename_prefix: log_");
         return -1;
     }
@@ -77,30 +81,68 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
         string logfilename = "log_";
         if (p.check("logfile")) logfilename = p.find("logfile").asString();
 
-        if (p.check("payload_size") && !p.check ("multitest"))
+        if (p.check("protocol")) proto = p.find("protocol").asString();
+
+        if (p.check("payload_size") && !p.check ("multitest") && !p.check ("customtest"))
         {
             int payload = p.find("payload_size").asInt32();
-            return client(frames, payload, client_wait, logfilename, verbose);
+            return client(frames, payload, proto, client_wait, logfilename, verbose);
         }
-        else if (!p.check("payload_size") && p.check("multitest"))
+        else if (!p.check("payload_size") && p.check("multitest") && !p.check ("customtest"))
         {
-            std::array<int,6> psizes {
-                      1'000,
-                     10'000,
-                    100'000,
-                  1'000'000,
-                 10'000'000,
-                100'000'000
-            };
+            Bottle* b =p.find("multitest").asList();
+            double min = 1;
+            double max = 800'000'000;
+            if (b && b->size()==2) 
+            {
+                min = b->get(0).asFloat64();
+                max = b->get(1).asFloat64();
+                //yCInfo(COMPANION) << min << max; 
+            }
+            //prepare the test array
+            //the generated sequence is similar to 1 2 4 8 10 20 40 80 100...
+            std::vector<int> psizes;
+            {
+                int val =1;
+                for (size_t pot=1; pot <10; pot++)
+                {
+                    for (size_t id=0 ; id<4; id++)
+                    {
+                        //yCInfo(COMPANION) << val;
+                        if (val>=min && val<=max) psizes.push_back(val);
+                        val*=2;
+                    }
+                    val=val-val%(int(pow(10,pot)));
+                }
+            }
+            //execute the tests
             for (size_t i = 0; i < psizes.size(); i++)
             {
-               client(frames, psizes[i], client_wait, logfilename, verbose);
+               client(frames, psizes[i], proto, client_wait, logfilename, verbose);
             }
             return 0;
         }
+        else if (!p.check("payload_size") && !p.check("multitest") && p.check ("customtest"))
+        {
+            Bottle* b =p.find("customtest").asList();
+            if (b)
+            {
+                for (size_t i = 0; i < b->size(); i++)
+                {
+                    if (b->get(i).isInt32())
+                    {
+                        client(frames, b->get(i).asInt32(), proto, client_wait, logfilename, verbose);
+                    }
+                    else
+                    {
+                        yCError(COMPANION) << "Syntax error. Invalid value for customtest. See available options with yarp latency-test";
+                    }
+                }
+            }
+        }
         else
         {
-            yCError(COMPANION) << "Syntax error. Choose either payload_size or multitest. See available options with yarp latency-test";
+            yCError(COMPANION) << "Syntax error. See available options with yarp latency-test";
             return -1;
         }
 
@@ -177,7 +219,7 @@ server_return_code_t server(double server_wait, bool verbose)
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-client_return_code_t client(int nframes, int payload_size, double client_wait, string logfilename, bool verbose)
+client_return_code_t client(int nframes, int payload_size, string proto, double client_wait, string logfilename, bool verbose)
 {
     //the structure where to save the data
     struct stats
@@ -191,12 +233,12 @@ client_return_code_t client(int nframes, int payload_size, double client_wait, s
     //opens a local port and connects bidirectionally with the server
     Port port;
     port.open("/latencyTest/client");
-    while(!Network::connect("/latencyTest/server","/latencyTest/client"))
+    while(!Network::connect("/latencyTest/server","/latencyTest/client", proto))
     {
         yCInfo(COMPANION, "Waiting for connection..\n");
         Time::delay(0.5);
     }
-    while (!Network::connect("/latencyTest/client", "/latencyTest/server"))
+    while (!Network::connect("/latencyTest/client", "/latencyTest/server", proto))
     {
         yCInfo(COMPANION, "Waiting for connection..\n");
         Time::delay(0.5);
