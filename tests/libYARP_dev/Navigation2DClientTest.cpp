@@ -58,7 +58,9 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
         PolyDriver ddmapclient;
         PolyDriver ddlocserver;
         PolyDriver ddnavclient;
+        PolyDriver ddnavclient2;
         INavigation2D* inav = nullptr;
+        INavigation2D* inav2 = nullptr;
         IMap2D* imap = nullptr;
 
         ////////"Checking opening navigation2DServer and navigation2DClient polydrivers"
@@ -81,7 +83,7 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
 
             Property pnavserver_cfg;
             pnavserver_cfg.put("device", "navigation2DServer");
-            plocserver_cfg.put("subdevice", "fakeNavigation");
+            pnavserver_cfg.put("subdevice", "fakeNavigation");
             REQUIRE(ddnavserver.open(pnavserver_cfg));
 
             Property pnavclient_cfg;
@@ -92,6 +94,15 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
             pnavclient_cfg.put("localization_server", "/localizationServer");
             REQUIRE(ddnavclient.open(pnavclient_cfg));
             REQUIRE(ddnavclient.view(inav));
+
+            Property pnavclient_cfg2;
+            pnavclient_cfg2.put("device", "navigation2DClient");
+            pnavclient_cfg2.put("local", "/navigationClientTest2");
+            pnavclient_cfg2.put("navigation_server", "/navigationServer");
+            pnavclient_cfg2.put("map_locations_server", "/mapServer");
+            pnavclient_cfg2.put("localization_server", "/localizationServer");
+            REQUIRE(ddnavclient2.open(pnavclient_cfg2));
+            REQUIRE(ddnavclient2.view(inav2));
         }
 
         //////////"Checking INavigation2D methods
@@ -179,9 +190,69 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
             }
         }
 
+        //////////"Checking INavigation2D methods
+        {
+            bool b0,b1,b2, bl;
+            Map2DLocation tloc ("test",1,2,3);
+            Map2DLocation gloc1;
+            Map2DLocation gloc2;
+            Map2DLocation gloc_empty;
+            std::string tname ("testLoc");
+            std::string gname1;
+            std::string gname2;
+            NavigationStatusEnum gstat1;
+            NavigationStatusEnum gstat2;
+
+            b0 = inav->storeLocation(tname, tloc); CHECK(b0);
+
+            //going to a location by absolute value
+            b1 = inav->stopNavigation(); CHECK(b1);
+            b1 = inav->getNavigationStatus(gstat1); CHECK(b1); CHECK(gstat1==NavigationStatusEnum::navigation_status_idle);
+            b2 = inav2->getNavigationStatus(gstat2);  CHECK(b2); CHECK(gstat2 == NavigationStatusEnum::navigation_status_idle);
+
+            b1 = inav->getAbsoluteLocationOfCurrentTarget(gloc1); CHECK(b1); CHECK(gloc1==gloc_empty);
+            b1 = inav->getNameOfCurrentTarget(gname1); CHECK(b1); CHECK(gname1 == "");
+            b2 = inav2->getAbsoluteLocationOfCurrentTarget(gloc2); CHECK(b2); CHECK(gloc2 == gloc_empty);
+            b2 = inav2->getNameOfCurrentTarget(gname2); CHECK(b2); CHECK(gname2 == "");
+
+            b1 = inav->gotoTargetByAbsoluteLocation(tloc); CHECK(b1);
+            b1 = inav->getAbsoluteLocationOfCurrentTarget(gloc1); CHECK(b1); CHECK(gloc1==tloc);
+            b1 = inav->getNameOfCurrentTarget(gname1); CHECK(b1); CHECK(gname1 == "");
+            b2 = inav2->getAbsoluteLocationOfCurrentTarget(gloc2); CHECK(b2); CHECK(gloc2 == tloc);
+            b2 = inav2->getNameOfCurrentTarget(gname2); CHECK(b1); CHECK(gname1 == "");
+
+            //going to an existing location by name
+            b1 = inav->stopNavigation(); CHECK(b1);
+            b1 = inav->getNavigationStatus(gstat1); CHECK(b1); CHECK(gstat1 == NavigationStatusEnum::navigation_status_idle);
+            b2 = inav2->getNavigationStatus(gstat2); CHECK(b2); CHECK(gstat2 == NavigationStatusEnum::navigation_status_idle);
+
+            b1 = inav->getAbsoluteLocationOfCurrentTarget(gloc1); CHECK(b1); CHECK(gloc1 == gloc_empty);
+            b1 = inav->getNameOfCurrentTarget(gname1); CHECK(b1); CHECK(gname1 == "");
+            b2 = inav2->getAbsoluteLocationOfCurrentTarget(gloc2); CHECK(b2); CHECK(gloc2 == gloc_empty);
+            b2 = inav2->getNameOfCurrentTarget(gname2); CHECK(b2); CHECK(gname2 == "");
+
+            b1 = inav->gotoTargetByLocationName(tname); CHECK(b1);
+            b1 = inav->getAbsoluteLocationOfCurrentTarget(gloc1); CHECK(b1); CHECK(gloc1 == tloc);
+            b1 = inav->getNameOfCurrentTarget(gname1); CHECK(b1); CHECK(gname1 == tname);
+            b2 = inav2->getAbsoluteLocationOfCurrentTarget(gloc2); CHECK(b2); CHECK(gloc2 == tloc);
+            b2 = inav2->getNameOfCurrentTarget(gname2); CHECK(b2); CHECK(gname2 == tname);
+
+            //trying to goto to a non-existing location by name
+            b1 = inav->stopNavigation(); CHECK(b1);
+            b1 = inav->getNavigationStatus(gstat1); CHECK(b1); CHECK(gstat1 == NavigationStatusEnum::navigation_status_idle);
+            b2 = inav2->getNavigationStatus(gstat2); CHECK(b2); CHECK(gstat2 == NavigationStatusEnum::navigation_status_idle);
+
+            b1 = inav->gotoTargetByLocationName("non-existing-loc"); CHECK(b1==false);
+            b1 = inav->getAbsoluteLocationOfCurrentTarget(gloc1); CHECK(b1); CHECK(gloc1 == gloc_empty);
+            b1 = inav->getNameOfCurrentTarget(gname1); CHECK(b1); CHECK(gname1 == "");
+            b2 = inav2->getAbsoluteLocationOfCurrentTarget(gloc2); CHECK(b2); CHECK(gloc2 == gloc_empty);
+            b2 = inav2->getNameOfCurrentTarget(gname2); CHECK(b2); CHECK(gname2 == "");
+        }
+
         //"Close all polydrivers and check"
         {
             CHECK(ddnavclient.close());
+            CHECK(ddnavclient2.close());
             CHECK(ddnavserver.close());
             CHECK(ddlocserver.close());
             CHECK(ddmapclient.close());

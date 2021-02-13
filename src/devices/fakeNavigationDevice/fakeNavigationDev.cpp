@@ -88,7 +88,11 @@ bool fakeNavigation:: close()
 
 bool fakeNavigation::gotoTargetByAbsoluteLocation(Map2DLocation loc)
 {
-    yCInfo(FAKENAVIGATION) << "gotoTargetByAbsoluteLocation not yet implemented";
+    if (m_status == NavigationStatusEnum::navigation_status_idle)
+    {
+        m_status = NavigationStatusEnum::navigation_status_moving;
+        m_absgoal_loc = loc;
+    }
     return true;
 }
 
@@ -112,19 +116,26 @@ bool fakeNavigation::applyVelocityCommand(double x_vel, double y_vel, double the
 
 bool fakeNavigation::stopNavigation()
 {
-    yCInfo(FAKENAVIGATION) << "stopNavigation not yet implemented";
+    m_status=NavigationStatusEnum::navigation_status_idle;
+    m_absgoal_loc=Map2DLocation();
     return true;
 }
 
 bool fakeNavigation::suspendNavigation(double time)
 {
-    yCInfo(FAKENAVIGATION) << "suspendNavigation not yet implemented";
+    if (m_status == NavigationStatusEnum::navigation_status_moving)
+    {
+        m_status=NavigationStatusEnum::navigation_status_paused;
+    }
     return true;
 }
 
 bool fakeNavigation::resumeNavigation()
 {
-    yCInfo(FAKENAVIGATION) << "resumeNavigation not yet implemented";
+    if (m_status == NavigationStatusEnum::navigation_status_paused)
+    {
+        m_status = NavigationStatusEnum::navigation_status_moving;
+    }
     return true;
 }
 
@@ -148,19 +159,22 @@ bool fakeNavigation::getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapType
 
 bool fakeNavigation::getNavigationStatus(yarp::dev::Nav2D::NavigationStatusEnum& status)
 {
-    yCInfo(FAKENAVIGATION) << "getNavigationStatus not yet implemented";
+    status = m_status;
     return true;
 }
 
 bool fakeNavigation::getAbsoluteLocationOfCurrentTarget(Map2DLocation& target)
 {
-    yCInfo(FAKENAVIGATION) << "getAbsoluteLocationOfCurrentTarget not yet implemented";
+    target=m_absgoal_loc;
     return true;
 }
 
 bool fakeNavigation::recomputeCurrentNavigationPath()
 {
-    yCInfo(FAKENAVIGATION) << "recomputeCurrentNavigationPath not yet implemented";
+    if (m_status == NavigationStatusEnum::navigation_status_moving)
+    {
+        //do something
+    }
     return true;
 }
 

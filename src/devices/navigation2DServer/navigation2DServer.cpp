@@ -217,9 +217,9 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
         loc.y = command.get(4).asFloat64();
         loc.theta = command.get(5).asFloat64();
         bool ret = iNav_target->gotoTargetByAbsoluteLocation(loc);
-        clear_current_goal_name();
         if (ret)
         {
+            clear_current_goal_name();
             reply.addVocab(VOCAB_OK);
         }
         else
@@ -270,9 +270,9 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
             double y = command.get(3).asFloat64();
             double theta = command.get(4).asFloat64();
             bool ret = iNav_target->gotoTargetByRelativeLocation(x, y, theta);
-            clear_current_goal_name();
             if (ret)
             {
+                clear_current_goal_name();
                 reply.addVocab(VOCAB_OK);
             }
             else
@@ -286,9 +286,9 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
             double x = command.get(2).asFloat64();
             double y = command.get(3).asFloat64();
             bool ret = iNav_target->gotoTargetByRelativeLocation(x, y);
-            clear_current_goal_name();
             if (ret)
             {
+                clear_current_goal_name();
                 reply.addVocab(VOCAB_OK);
             }
             else
@@ -310,9 +310,9 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
         double t_vel   = command.get(4).asFloat64();
         double timeout = command.get(5).asFloat64();
         bool ret = iNav_target->applyVelocityCommand(x_vel,y_vel,t_vel,timeout);
-        clear_current_goal_name();
         if (ret)
         {
+            clear_current_goal_name();
             reply.addVocab(VOCAB_OK);
         }
         else
@@ -346,6 +346,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
         bool ret = iNav_ctrl->stopNavigation();
         if (ret)
         {
+            clear_current_goal_name();
             reply.addVocab(VOCAB_OK);
         }
         else
@@ -493,7 +494,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
     }
     else
     {
-        yCError(NAVIGATION2DSERVER) << "Invalid vocab received";
+        yCError(NAVIGATION2DSERVER) << "Invalid vocab received:" << yarp::os::Vocab::decode(request);
         reply.addVocab(VOCAB_ERR);
     }
 
