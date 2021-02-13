@@ -228,7 +228,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
             reply.addVocab(VOCAB_ERR);
         }
     }
-    if (request == VOCAB_NAV_GOTOABS_AND_NAME)
+    else if (request == VOCAB_NAV_GOTOABS_AND_NAME)
     {
         Map2DLocation loc;
         loc.map_id = command.get(2).asString();
