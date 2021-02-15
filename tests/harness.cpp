@@ -12,12 +12,15 @@
 
 #include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Property.h>
-#include <yarp/os/NameStore.h>
-#include <yarp/os/YarpPlugin.h>
 
-#include <yarp/serversql/yarpserversql.h>
+#if !defined(WITHOUT_NETWORK)
+#  include <yarp/os/Network.h>
+#  include <yarp/os/Property.h>
+#  include <yarp/os/NameStore.h>
+#  include <yarp/os/YarpPlugin.h>
+
+#  include <yarp/serversql/yarpserversql.h>
+#endif // WITHOUT_NETWORK
 
 #include <YarpBuildLocation.h>
 
@@ -25,10 +28,7 @@ int yarp_tests_skipped = 0;
 
 namespace {
 
-static yarp::os::Network* net = nullptr;
-static yarp::os::NameStore* store = nullptr;
 static bool verbose = false;
-static bool no_bypass = false;
 
 static void setup_Environment()
 {
@@ -87,6 +87,13 @@ static void setup_Environment()
     }
 }
 
+#if !defined(WITHOUT_NETWORK)
+
+static bool no_bypass = false;
+
+static yarp::os::Network* net = nullptr;
+static yarp::os::NameStore* store = nullptr;
+
 static void init_Network()
 {
     net = new yarp::os::Network;
@@ -135,6 +142,8 @@ static void fini_NameStore()
     }
 }
 
+#endif // WITHOUT_NETWORK
+
 } // namespace
 
 
@@ -143,7 +152,12 @@ int main(int argc, char *argv[])
     Catch::Session session;
 
     auto cli = session.cli() | Catch::clara::Opt(verbose)["--yarp-verbose"]("Enable verbose mode")
+#if !defined(WITHOUT_NETWORK)
                              | Catch::clara::Opt(no_bypass)["--yarp-no-bypass"]("Do not bypass yarpserver");
+#else
+                             ;
+#endif // WITHOUT_NETWORK
+
     session.cli( cli );
 
     int returnCode = session.applyCommandLine( argc, argv );
@@ -153,13 +167,17 @@ int main(int argc, char *argv[])
 
     setup_Environment();
 
+#if !defined(WITHOUT_NETWORK)
     init_Network();
     init_NameStore();
+#endif // WITHOUT_NETWORK
 
     int assertions_failed = session.run();
 
+#if !defined(WITHOUT_NETWORK)
     fini_NameStore();
     fini_Network();
+#endif // WITHOUT_NETWORK
 
     // 0 = All assertion passed
     // 255 = Probably an assert was hit and the program exited somewhere else
