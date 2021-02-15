@@ -56,6 +56,10 @@ target_include_directories(demo_yarp_idl_to_dir PRIVATE ${generated_libs_dir}/in
 target_link_libraries(demo_yarp_idl_to_dir PRIVATE YARP::YARP_os
                                                    YARP::YARP_init
                                                    YARP::YARP_sig)
+get_property(_tests TARGET demo_yarp_idl_to_dir PROPERTY ParseAndAddCatchTests_TESTS)
+foreach(_test IN LISTS _tests)
+  set_property(TEST ${_test} PROPERTY TIMEOUT 120)
+endforeach()
 
 
 
@@ -71,4 +75,7 @@ target_sources(demo_yarp_add_idl PRIVATE ${IDL_GEN_FILES})
 target_link_libraries(demo_yarp_add_idl PRIVATE YARP::YARP_os
                                                 YARP::YARP_init
                                                 YARP::YARP_sig)
-
+get_property(_tests TARGET demo_yarp_add_idl PROPERTY ParseAndAddCatchTests_TESTS)
+foreach(_test IN LISTS _tests)
+  set_property(TEST ${_test} PROPERTY TIMEOUT 120)
+endforeach()
