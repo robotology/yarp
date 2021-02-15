@@ -47,24 +47,26 @@ yarp_idl_to_dir(INPUT_FILES ${IDL_FILES}
 add_executable(demo_yarp_idl_to_dir)
 
 target_include_directories(demo_yarp_idl_to_dir PRIVATE ${generated_libs_dir}/include)
-target_sources(demo_yarp_idl_to_dir PRIVATE main.cpp
-                                            ${IDL_GEN_SRCS}
+target_sources(demo_yarp_idl_to_dir PRIVATE main.cpp)
+# Parse now, before adding the generated which do not exist yet
+ParseAndAddCatchTests(demo_yarp_idl_to_dir)
+target_sources(demo_yarp_idl_to_dir PRIVATE ${IDL_GEN_SRCS}
                                             ${IDL_GEN_HDRS})
 target_link_libraries(demo_yarp_idl_to_dir PRIVATE YARP::YARP_os
                                                    YARP::YARP_init
                                                    YARP::YARP_sig)
 
-ParseAndAddCatchTests(demo_yarp_idl_to_dir)
 
 
 # Test using yarp_add_idl
 yarp_add_idl(IDL_GEN_FILES ${IDL_FILES})
 
 add_executable(demo_yarp_add_idl)
-target_sources(demo_yarp_add_idl PRIVATE main.cpp
-                                         ${IDL_GEN_FILES})
+target_sources(demo_yarp_add_idl PRIVATE main.cpp)
+# Parse now, before adding the generated which do not exist yet
+ParseAndAddCatchTests(demo_yarp_add_idl)
+target_sources(demo_yarp_add_idl PRIVATE ${IDL_GEN_FILES})
 target_link_libraries(demo_yarp_add_idl PRIVATE YARP::YARP_os
                                                 YARP::YARP_init
                                                 YARP::YARP_sig)
 
-ParseAndAddCatchTests(demo_yarp_add_idl)
