@@ -70,7 +70,7 @@ typedef enum
 {
     STANDARD_UVC = 0,
     LEOPARD_PYTHON,
-    PYTHON
+    ULTRAPYTON
 } supported_cams;
 
 
@@ -227,7 +227,7 @@ private:
     int myCounter;
     int frameCounter;
 
-    std::map<std::string, supported_cams> camMap{{"default",STANDARD_UVC},{"leopard_python",LEOPARD_PYTHON},{"python",PYTHON}};   
+    std::map<std::string, supported_cams> camMap{{"default",STANDARD_UVC},{"leopard_python",LEOPARD_PYTHON},{"python",ULTRAPYTON}};   
 
     bool fromConfig(yarp::os::Searchable& config);
 

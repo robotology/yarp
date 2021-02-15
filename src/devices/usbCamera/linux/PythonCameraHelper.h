@@ -15,6 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+//# @author Luca Tricerri <luca.tricerri@iit.it> 
 
 #pragma once
 
@@ -72,6 +73,7 @@ public:
     double getCurrentFps() const;
     void setSubsamplingProperty(bool value);
     void setFileLog(bool value);
+    bool setControl(uint32_t controlId,double value);
 
     void setInjectedProcess(std::function<void(const void*, int)> toinJect);
     void setInjectedUnlock(std::function<void()> toinJect);

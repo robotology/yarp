@@ -274,8 +274,8 @@ bool V4L_camera::open(yarp::os::Searchable& config)
         return false;
     }
 
-    if (param.camModel == PYTHON) {
-        yCTrace(USBCAMERA) << "PYTHON";
+    if (param.camModel == ULTRAPYTON) {
+        yCTrace(USBCAMERA) << "ULTRAPYTON";
         pythonCameraHelper_.openAll();
         configured = true;
         yarp::os::Time::delay(0.5);
@@ -436,7 +436,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
         verbose = true;
     }
 
-    if (param.camModel != PYTHON) {
+    if (param.camModel != ULTRAPYTON) {
         if (!config.check("width")) {
             yCDebug(USBCAMERA) << "width parameter not found, using default value of " << DEFAULT_WIDTH;
             param.user_width = DEFAULT_WIDTH;
@@ -459,7 +459,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
         param.fps = config.find("framerate").asInt32();
     }
 
-    if (param.camModel == PYTHON) {
+    if (param.camModel == ULTRAPYTON) {
         if (!config.check("subsampling")) {
             yCDebug(USBCAMERA) << "Python cam full-sampling ";
             pythonCameraHelper_.setSubsamplingProperty(false);
@@ -633,7 +633,7 @@ bool V4L_camera::threadInit()
 
 void V4L_camera::run()
 {
-    if (param.camModel == PYTHON) {
+    if (param.camModel == ULTRAPYTON) {
         pythonCameraHelper_.step();
         frameCounter++;
     } else {
@@ -962,7 +962,7 @@ bool V4L_camera::getRgbBuffer(unsigned char* buffer)
     mutex.wait();
     if (configured) {
 
-        if (param.camModel == PYTHON) {
+        if (param.camModel == ULTRAPYTON) {
             memcpy(buffer, pythonBuffer_, pythonBufferSize_);
         } else {
             imagePreProcess();
@@ -1577,6 +1577,11 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
 
 bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
 {
+    if (param.camModel == ULTRAPYTON)
+    {
+        return pythonCameraHelper_.setControl(id,value);
+    }
+    
     if (value < 0) {
         return false;
     }

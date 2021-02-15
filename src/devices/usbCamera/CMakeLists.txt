@@ -4,6 +4,24 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+include(FetchContent)
+
+option(COMPILE_WITHUNITTEST_ULTRAPYTHON "Compile also unittest for UltraPython cam board" OFF)
+
+if(COMPILE_WITHUNITTEST_ULTRAPYTHON)
+  FetchContent_Declare(
+    unittest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        release-1.10.0
+  )
+  FetchContent_GetProperties(unittest)
+  if(NOT unittest)
+    FetchContent_Populate(unittest)
+    add_subdirectory(unittest)
+    add_subdirectory(${unittest_SOURCE_DIR} ${unittest_BINARY_DIR})
+  endif()
+endif()
+
 yarp_prepare_plugin(usbCamera
                     CATEGORY device
                     TYPE USBCameraDriverRgb

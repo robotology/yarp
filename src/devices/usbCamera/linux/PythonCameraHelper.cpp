@@ -15,6 +15,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+//# @author Luca Tricerri <luca.tricerri@iit.it>
 
 #include "PythonCameraHelper.h"
 
@@ -90,7 +91,6 @@ void PythonCameraHelper::openPipeline(void)
             log("open no pipeline:" + std::string(deviceName));
         } else {
             // Open other subdevice
-
             /*
        * If a python camera is found in pipeline, then that's the
        * source. If only a TPG is present, then it's the source.
@@ -120,7 +120,9 @@ void PythonCameraHelper::openPipeline(void)
                 log("ERROR-cannot open device:" + std::string(deviceName), Severity::error);
                 exit(EXIT_FAILURE);
             }
-            log("open pipeline:" + std::string(deviceName));
+            std::stringstream ss;
+            ss << "Open pipeline devicename:" << std::string(deviceName) << " info name:" << info.name << " fd:" << pipelineSubdeviceFd_[subdeviceIndex] << std::endl;
+            log(ss.str(), Severity::debug);
             subdeviceIndex++;
         }
 
@@ -268,9 +270,9 @@ void PythonCameraHelper::crop(int top, int left, int w, int h, int mytry)
 void PythonCameraHelper::setSubsampling(void)
 {
     log("subsampling is" + std::string(subsamplingEnabledProperty_ ? "ENABLED" : "DISABLED"));
-    int subSamplingValue=0;
+    int subSamplingValue = 0;
     if (subsamplingEnabledProperty_)
-        subSamplingValue=1;
+        subSamplingValue = 1;
 
     log("setSubsampling");
     struct v4l2_control ctrl;
@@ -651,4 +653,54 @@ void PythonCameraHelper::setInjectedLog(std::function<void(const std::string&, S
 void PythonCameraHelper::setFileLog(bool value)
 {
     logOnFile_ = value;
+}
+
+bool PythonCameraHelper::setControl(uint32_t controlId, double value)
+{
+    if (value < 0) {
+        log("setControl wrong value control", Severity::error);
+        return false;
+    }
+
+    struct v4l2_queryctrl queryctrl;
+    struct v4l2_control control;
+
+    memset(&queryctrl, 0, sizeof(queryctrl));
+    queryctrl.id = controlId;
+
+    if (-1 == ioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_], VIDIOC_QUERYCTRL, &queryctrl)) {
+        if (errno != EINVAL) {
+            std::stringstream ss;
+            ss << "Cannot setControl1 value:" << value << " index:" << sourceSubDeviceIndex1_ << " fd:" << pipelineSubdeviceFd_[sourceSubDeviceIndex1_] << std::endl;
+        } else {
+
+            std::stringstream ss;
+            ss << "Cannot setControl2 value:" << value << " index:" << sourceSubDeviceIndex1_ << " fd:" << pipelineSubdeviceFd_[sourceSubDeviceIndex1_] << std::endl;
+            log(ss.str(), Severity::error);
+        }
+        return false;
+    }
+
+    if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED) {
+        log("Cannot setControl is disabled", Severity::error);
+        return false;
+    }
+    memset(&control, 0, sizeof(control));
+    control.id = controlId;
+    control.value = value;
+
+    //Set Left and right cam
+    if (-1 == ioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_], VIDIOC_S_CTRL, &control)) {
+        log("Cannot setControl3", Severity::error);
+        return false;
+    }
+    if (-1 == ioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex2_], VIDIOC_S_CTRL, &control)) {
+        log("Cannot setControl4", Severity::error);
+        return false;
+    }
+
+    std::stringstream ss;
+    ss << "SetControl done --> Ctrl name:" << queryctrl.name << " Ctrl value:" << control.value << std::endl;
+    log(ss.str(), Severity::debug);
+    return true;
 }
