@@ -49,6 +49,7 @@ navigation2DServer::navigation2DServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
     iNav_target = nullptr;
     iNav_ctrl = nullptr;
     m_navigation_status=yarp::dev::Nav2D::navigation_status_idle;
+    m_stats_time_last = yarp::os::Time::now();
 }
 
 bool navigation2DServer::attachAll(const PolyDriverList &device2attach)
@@ -137,7 +138,6 @@ bool navigation2DServer::open(Searchable& config)
             return false;
         }
     }
-    m_stats_time_last = yarp::os::Time::now();
 
     if (!initialize_YARP(config))
     {
