@@ -15,6 +15,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 
+find_package(YCM 0.11.0 REQUIRED)
 find_package(YARP COMPONENTS os sig idl_tools REQUIRED)
 
 include(ParseAndAddCatchTests)

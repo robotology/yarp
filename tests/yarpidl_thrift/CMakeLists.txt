@@ -51,7 +51,7 @@ add_test(NAME idl::thrift::demo::run
                                         ${build_generator}
                                         --build-project demo
                                         --build-options ${build_options}
-                                                        ${build_module_path}
+                                                        -DYCM_DIR=${YCM_DIR}
                                                         -DYARP_DIR=${CMAKE_BINARY_DIR}
                                                         -DALLOW_IDL_GENERATION=TRUE
                                         --test-command ${CMAKE_CTEST_COMMAND} ${build_generator}
