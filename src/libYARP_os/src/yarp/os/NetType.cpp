@@ -47,6 +47,7 @@ bool NetType::netInt(int data, yarp::os::Bytes& code)
     return true;
 }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
 std::string NetType::toHexString(int x)
 {
     return yarp::conf::numeric::to_hex_string(x);
@@ -113,6 +114,7 @@ yarp::conf::float64_t NetType::toFloat64(std::string&& s)
 {
     return yarp::conf::numeric::from_string<yarp::conf::float64_t>(s);
 }
+#endif
 
 /*
   PNG's nice and simple CRC code
