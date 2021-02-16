@@ -330,82 +330,82 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
 
                     CNT yTraceOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yTraceThreadOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yTraceThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yTraceThreadThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCTraceOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCTraceThreadOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCTraceThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCTraceThreadThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yTraceExternalTimeOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yTraceExternalTimeThreadOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yTraceExternalTimeThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yTraceExternalTimeThreadThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCTraceExternalTimeOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCTraceExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCTraceExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCTraceExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
                 }
             });
@@ -439,82 +439,82 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
 
                     CNT yDebugOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yDebugThreadOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yDebugThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yDebugThreadThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCDebugOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCDebugThreadOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCDebugThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCDebugThreadThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yDebugExternalTimeOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yDebugExternalTimeThreadOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yDebugExternalTimeThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yDebugExternalTimeThreadThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCDebugExternalTimeOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCDebugExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCDebugExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCDebugExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
                 }
             });
@@ -548,82 +548,82 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
 
                     CNT yInfoOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yInfoThreadOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yInfoThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yInfoThreadThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCInfoOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCInfoThreadOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCInfoThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCInfoThreadThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yInfoExternalTimeOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yInfoExternalTimeThreadOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yInfoExternalTimeThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yInfoExternalTimeThreadThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCInfoExternalTimeOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCInfoExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCInfoExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCInfoExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
                 }
             });
@@ -657,82 +657,82 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
 
                     CNT yWarningOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yWarningThreadOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yWarningThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yWarningThreadThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCWarningOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCWarningThreadOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCWarningThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCWarningThreadThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yWarningExternalTimeOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yWarningExternalTimeThreadOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yWarningExternalTimeThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yWarningExternalTimeThreadThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCWarningExternalTimeOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCWarningExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCWarningExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCWarningExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
                 }
             });
@@ -766,82 +766,82 @@ TEST_CASE("os::LogStreamTest", "[yarp::os]")
 
                     CNT yErrorOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yErrorThreadOnce()
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yErrorThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yErrorThreadThrottle(period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCErrorOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCErrorThreadOnce(LOGSTREAM_COMPONENT)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCErrorThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCErrorThreadThrottle(LOGSTREAM_COMPONENT, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yErrorExternalTimeOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yErrorExternalTimeThreadOnce(start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yErrorExternalTimeThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yErrorExternalTimeThreadThrottle(start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
 
                     CNT yCErrorExternalTimeOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "] This line is printed only by the first thread coming here";
 
                     CNT yCErrorExternalTimeThreadOnce(LOGSTREAM_COMPONENT, start)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed by every thread";
 
                     CNT yCErrorExternalTimeThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s";
 
                     CNT yCErrorExternalTimeThreadThrottle(LOGSTREAM_COMPONENT, start, period)
                         << "[Time:" << now - start
-                        << "][Thread id: 0x" << yarp::os::NetType::toHexString(yarp::os::Thread::getKeyOfCaller()).c_str()
+                        << "][Thread id: 0x" << yarp::conf::numeric::to_hex_string(yarp::os::Thread::getKeyOfCaller()).c_str()
                         << "This line is printed at most once every" << period << "s by every thread";
                 }
             });

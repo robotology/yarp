@@ -211,7 +211,7 @@ std::string Contact::getName() const
         return mPriv->regName;
     }
     if (!mPriv->hostname.empty() && mPriv->port >= 0) {
-        std::string name = std::string("/") + mPriv->hostname + ":" + NetType::toString(mPriv->port);
+        std::string name = std::string("/") + mPriv->hostname + ":" + yarp::conf::numeric::to_string(mPriv->port);
         return name;
     }
     return {};
@@ -324,7 +324,7 @@ std::string Contact::toURI(bool includeCarrier) const
         result += "/";
         result += mPriv->hostname;
         result += ":";
-        result += NetType::toString(mPriv->port);
+        result += yarp::conf::numeric::to_string(mPriv->port);
         result += "/";
     }
     return result;

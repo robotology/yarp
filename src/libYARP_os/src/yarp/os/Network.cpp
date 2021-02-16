@@ -2006,7 +2006,7 @@ int NetworkBase::getDefaultPortRange()
 {
     std::string range = yarp::conf::environment::getEnvironment("YARP_PORT_RANGE");
     if (!range.empty()) {
-        int irange = NetType::toInt(range);
+        int irange = yarp::conf::numeric::from_string<int>(range);
         if (irange != 0) {
             return irange;
         }

@@ -456,7 +456,7 @@ FakeMotionControl::FakeMotionControl() :
 {
     resizeBuffers();
     std::string tmp = yarp::conf::environment::getEnvironment("VERBOSE_STICA");
-    verbosewhenok = (tmp != "") ? (bool)NetType::toInt(tmp) :
+    verbosewhenok = (tmp != "") ? (bool)yarp::conf::numeric::from_string<int>(tmp) :
                                   false;
 }
 

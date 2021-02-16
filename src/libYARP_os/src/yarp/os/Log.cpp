@@ -383,12 +383,12 @@ inline void forwardable_output(std::ostream* ost,
     // * backtrace (for FATAL or if requested using YARP_FORWARD_BACKTRACE_ENABLE)
 
     *ost << "(level " << yarp::os::impl::StoreString::quotedString(level) << ")";
-    *ost << " (systemtime " << yarp::os::NetType::toString(systemtime)  << ")";
+    *ost << " (systemtime " << yarp::conf::numeric::to_string(systemtime)  << ")";
     if (!yarp::os::Time::isSystemClock()) {
-        *ost << " (networktime " << yarp::os::NetType::toString(networktime)  << ")";
+        *ost << " (networktime " << yarp::conf::numeric::to_string(networktime)  << ")";
     }
     if (externaltime != 0.0) {
-        *ost << " (externaltime " << yarp::os::NetType::toString(externaltime) << ")";
+        *ost << " (externaltime " << yarp::conf::numeric::to_string(externaltime) << ")";
     }
     if (yarp::os::impl::LogPrivate::forward_codeinfo.load()) {
         *ost << " (filename " << yarp::os::impl::StoreString::quotedString(file) << ")";
@@ -406,7 +406,7 @@ inline void forwardable_output(std::ostream* ost,
         *ost << " (pid " << processInfo.pid << ")";
         *ost << " (cmd " << yarp::os::impl::StoreString::quotedString(cmd) << ")";
         *ost << " (args " << yarp::os::impl::StoreString::quotedString(processInfo.arguments) << ")";
-        *ost << " (thread_id 0x" << std::setfill('0') << std::setw(8) << yarp::os::NetType::toHexString(thread_id) << ")";
+        *ost << " (thread_id 0x" << std::setfill('0') << std::setw(8) << yarp::conf::numeric::to_hex_string(thread_id) << ")";
     }
     if (comp_name) {
         *ost << " (component " << yarp::os::impl::StoreString::quotedString(comp_name) << ")";
@@ -510,7 +510,7 @@ inline void printable_output_verbose(std::ostream* ost,
     *ost << file << ":" << line << " " << level_color << level_bgcolor << func << CLEAR << " ";
 
     // Print thread id
-    *ost << "(0x" << std::setfill('0') << std::setw(8) << yarp::os::NetType::toHexString(yarp::os::impl::ThreadImpl::getKeyOfCaller()) << ") ";
+    *ost << "(0x" << std::setfill('0') << std::setw(8) << yarp::conf::numeric::to_hex_string(yarp::os::impl::ThreadImpl::getKeyOfCaller()) << ") ";
 
     // Print component
     if (comp_name) {

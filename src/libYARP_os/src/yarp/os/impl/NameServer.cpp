@@ -274,7 +274,7 @@ std::string NameServer::cmdRegister(int argc, char* argv[])
         if (std::string("...") == argv[3]) {
             port = 0;
         } else {
-            port = NetType::toInt(argv[3]);
+            port = yarp::conf::numeric::from_string<int>(argv[3]);
         }
     }
 
@@ -633,7 +633,7 @@ std::string NameServer::textify(const Contact& address)
     if (address.isValid()) {
         if (address.getPort() >= 0) {
             result = "registration name ";
-            result = result + address.getRegName() + " ip " + address.getHost() + " port " + NetType::toString(address.getPort()) + " type " + address.getCarrier() + "\n";
+            result = result + address.getRegName() + " ip " + address.getHost() + " port " + yarp::conf::numeric::to_string(address.getPort()) + " type " + address.getCarrier() + "\n";
         } else {
             result = "registration name ";
             result = result + address.getRegName() + " ip " + "none" + " port " + "none" + " type " + address.getCarrier() + "\n";

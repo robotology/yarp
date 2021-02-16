@@ -2345,7 +2345,7 @@ bool RPCMessagesParser::initialize()
             args += " ";
         }
         // removed dependency from yarp internals
-        //args = args + "$f" + yarp::NetType::toString(i);
+        //args = args + "$f" + yarp::yarp::conf::numeric::to_string(i);
     }
     addUsage((std::string("[set] [poss] (") + args + ")").c_str(),
              "command the position of all axes");

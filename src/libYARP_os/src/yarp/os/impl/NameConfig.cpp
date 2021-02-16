@@ -77,7 +77,7 @@ bool NameConfig::fromString(const std::string& txt)
     }
 
     if (ss.size() >= 2) {
-        address = Contact(ss.get(0), NetType::toInt(ss.get(1)));
+        address = Contact(ss.get(0), yarp::conf::numeric::from_string<int>(ss.get(1)));
         if (ss.size() >= 3) {
             mode = ss.get(2);
         } else {
@@ -174,7 +174,7 @@ bool NameConfig::toFile(bool clean)
         std::string txt;
         if (!clean) {
             std::string m = (!mode.empty()) ? mode : "yarp";
-            txt += address.getHost() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
+            txt += address.getHost() + " " + yarp::conf::numeric::to_string(address.getPort()) + " " + m + "\n";
         }
         return writeConfig(fname, txt);
     }

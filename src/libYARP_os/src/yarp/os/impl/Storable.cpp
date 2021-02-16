@@ -332,12 +332,12 @@ bool StoreVocab::writeRaw(ConnectionWriter& writer) const
 
 std::string StoreFloat32::toString() const
 {
-    return NetType::toString(x);
+    return yarp::conf::numeric::to_string(x);
 }
 
 void StoreFloat32::fromString(const std::string& src)
 {
-    x = NetType::toFloat32(src);
+    x = yarp::conf::numeric::from_string<yarp::conf::float32_t>(src);
 }
 
 bool StoreFloat32::readRaw(ConnectionReader& reader)
@@ -358,12 +358,12 @@ bool StoreFloat32::writeRaw(ConnectionWriter& writer) const
 
 std::string StoreFloat64::toString() const
 {
-    return NetType::toString(x);
+    return yarp::conf::numeric::to_string(x);
 }
 
 void StoreFloat64::fromString(const std::string& src)
 {
-    x = NetType::toFloat64(src);
+    x = yarp::conf::numeric::from_string<yarp::conf::float64_t>(src);
 }
 
 bool StoreFloat64::readRaw(ConnectionReader& reader)
@@ -523,7 +523,7 @@ std::string StoreBlob::toString() const
             result += " ";
         }
         const auto* src = reinterpret_cast<const unsigned char*>(&x[i]);
-        result += NetType::toString(*src);
+        result += yarp::conf::numeric::to_string(*src);
     }
     return result;
 }

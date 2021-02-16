@@ -127,7 +127,7 @@ bool yarp::os::impl::McastCarrier::sendHeader(ConnectionState& proto)
         } else {
             yCAssert(MCASTCARRIER, ss.size() == 4);
             for (int i = 0; i < 4; i++) {
-                ip[i] = NetType::toInt(ss.get(i));
+                ip[i] = yarp::conf::numeric::from_string<int>(ss.get(i));
             }
             port = addr.getPort();
         }

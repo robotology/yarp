@@ -37,7 +37,7 @@ std::string bytes_to_string(const Bytes& header)
 {
     std::string ret;
     for (size_t i = 0; i < header.length(); i++) {
-        ret += NetType::toString(header.get()[i]);
+        ret += yarp::conf::numeric::to_string(header.get()[i]);
         ret += " ";
     }
     ret += "[";

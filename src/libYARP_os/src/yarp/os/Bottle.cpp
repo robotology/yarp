@@ -400,7 +400,7 @@ Bottle Bottle::tail() const
 
 std::string Bottle::toString(int x)
 {
-    return NetType::toString(x);
+    return yarp::conf::numeric::to_string(x);
 }
 
 std::string Bottle::describeBottleCode(int code)

@@ -144,7 +144,7 @@ private:
 
         std::string get()
         {
-            return prefix + NetType::toString(getFree());
+            return prefix + yarp::conf::numeric::to_string(getFree());
         }
 
         int fresh() override
@@ -158,7 +158,7 @@ private:
         {
             if (name.find(prefix) == 0) {
                 std::string num = name.substr(prefix.length());
-                int x = NetType::toInt(num.c_str());
+                int x = yarp::conf::numeric::from_string<int>(num);
                 ReusableRecord<int>::release(x);
                 return true;
             }
@@ -234,7 +234,7 @@ private:
             int v1 = x % 255;
             int v2 = x / 255;
             yCAssert(NAMESERVER, v2 < 255);
-            return std::string("224.1.") + NetType::toString(v2 + 1) + "." + NetType::toString(v1 + 1);
+            return std::string("224.1.") + yarp::conf::numeric::to_string(v2 + 1) + "." + yarp::conf::numeric::to_string(v1 + 1);
         }
 
         int lastPortNumber()
@@ -248,7 +248,7 @@ private:
             int ip[] = {224, 3, 1, 1};
             yCAssert(NAMESERVER, ss.size() == 4);
             for (int i = 0; i < 4; i++) {
-                ip[i] = NetType::toInt(ss.get(i));
+                ip[i] = yarp::conf::numeric::from_string<int>(ss.get(i));
             }
             int v2 = ip[2] - 1;
             int v1 = ip[3] - 1;

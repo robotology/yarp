@@ -200,7 +200,7 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize)
         _env_dgram = _env_mode;
     }
     if (!_env_dgram.empty()) {
-        int sz = NetType::toInt(_env_dgram);
+        int sz = yarp::conf::numeric::from_string<int>(_env_dgram);
         if (sz != 0) {
             _read_size = _write_size = sz;
         }
@@ -267,16 +267,16 @@ void DgramTwoWayStream::configureSystemBuffers()
 
     int readBufferSize = -1;
     if (!socketReadBufferSize.empty()) {
-        readBufferSize = NetType::toInt(socketReadBufferSize);
+        readBufferSize = yarp::conf::numeric::from_string<int>(socketReadBufferSize);
     } else if (!socketBufferSize.empty()) {
-        readBufferSize = NetType::toInt(socketBufferSize);
+        readBufferSize = yarp::conf::numeric::from_string<int>(socketBufferSize);
     }
 
     int writeBufferSize = -1;
     if (!socketSendBufferSize.empty()) {
-        writeBufferSize = NetType::toInt(socketSendBufferSize);
+        writeBufferSize = yarp::conf::numeric::from_string<int>(socketSendBufferSize);
     } else if (!socketBufferSize.empty()) {
-        writeBufferSize = NetType::toInt(socketBufferSize);
+        writeBufferSize = yarp::conf::numeric::from_string<int>(socketBufferSize);
     }
     // The writeBufferSize can't be set greater than udp datagram
     // maximum size
