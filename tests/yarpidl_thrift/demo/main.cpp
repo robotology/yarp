@@ -584,8 +584,7 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         cmd.fromString("getBottle");
         client_port.write(cmd,reply);
         INFO("Bottle is " << reply.get(0).toString());
-        REQUIRE(reply.get(0).isList());
-        CHECK(reply.get(0).asList()->size() == 5);
+        CHECK(reply.size() == 5);
     }
 
     SECTION("test_missing_method")

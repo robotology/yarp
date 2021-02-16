@@ -37,7 +37,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/
 
 
 #########################################################################
-# Prepare 'build_generator', 'build_options' and 'build_module_path' variables
+# Prepare 'build_generator' and 'build_options' variables
 # for tests in subdirectories
 set(build_generator --build-generator "${CMAKE_GENERATOR}")
 if(CMAKE_GENERATOR_PLATFORM)
@@ -59,10 +59,6 @@ if(YARP_TEST_LAUNCHER)
   string(REPLACE ";" "\;" _test_launcher "${_test_launcher}")
   list(APPEND build_options "${_test_launcher}")
 endif()
-
-# Use only if cmake modules not installed by YARP are required by the test
-set(build_module_path "-DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}")
-string(REPLACE ";" "\;" build_module_path "${build_module_path}")
 
 # Add the CMAKE_BINARY_DIR as a macro so the testing infrastructure
 # can find the device compiled as dynamic plugins
