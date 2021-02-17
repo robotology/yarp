@@ -8,12 +8,13 @@ may require additional headers.
 
 Homepage: https://github.com/catchorg/Catch2
 
-Copyright: 2010-2019 Two Blue Cubes Ltd
+Copyright: 2010-2020 Two Blue Cubes Ltd
            2012, 2015 Martin Moene
            2017 Justin R. Wilson
+           Catch2 Authors
 
 License:
  Distributed under the Boost Software License, Version 1.0. (See accompanying
  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-Version: 2.8.0
+Version: 2.13.4
