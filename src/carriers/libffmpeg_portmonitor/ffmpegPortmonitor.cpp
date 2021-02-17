@@ -219,7 +219,7 @@ yarp::os::Things& FfmpegMonitorObject::update(yarp::os::Things& thing)
         }
         th.setPortWriter(&data);
         // Free the memory allocated for the packet
-        av_free_packet(packet);
+        av_packet_unref(packet);
     }
     else {
 
