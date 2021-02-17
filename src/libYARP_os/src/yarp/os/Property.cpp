@@ -820,7 +820,7 @@ public:
                 }
                 inVar = false;
                 yCTrace(PROPERTY, "VARIABLE %s\n", var.c_str());
-                std::string add = yarp::conf::environment::getEnvironment(var.c_str());
+                std::string add = yarp::conf::environment::get_string(var);
                 if (add.empty()) {
                     add = env.find(var).toString();
                 }

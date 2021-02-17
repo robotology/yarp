@@ -543,9 +543,9 @@ public:
      * @param found an optional variable to set to true iff variable is found
      * @return the value of the environment variable, or "" if not found
      *
-     * @deprecated Since YARP 3.4. Use yarp::conf::environment::getEnvironment instead
+     * @deprecated Since YARP 3.4. Use yarp::conf::environment::get_string instead
      */
-    YARP_DEPRECATED_MSG("Use yarp::conf::environment::getEnvironment instead")
+    YARP_DEPRECATED_MSG("Use yarp::conf::environment::get_string instead")
     static std::string getEnvironment(const char* key,
                                       bool* found = nullptr);
 
@@ -555,9 +555,9 @@ public:
      * @param key the variable to set or change
      * @param val the target value
      *
-     * @deprecated Since YARP 3.4. Use yarp::conf::environment::setEnvironment instead
+     * @deprecated Since YARP 3.4. Use yarp::conf::environment::set_string instead
      */
-    YARP_DEPRECATED_MSG("Use yarp::conf::environment::setEnvironment instead")
+    YARP_DEPRECATED_MSG("Use yarp::conf::environment::set_string instead")
     static void setEnvironment(const std::string& key,
                                const std::string& val);
 
@@ -566,9 +566,9 @@ public:
      *
      * @param key the variable to remove
      *
-     * @deprecated Since YARP 3.4. Use yarp::conf::environment::unsetEnvironment instead
+     * @deprecated Since YARP 3.4. Use yarp::conf::environment::unset instead
      */
-    YARP_DEPRECATED_MSG("Use yarp::conf::environment::unsetEnvironment instead")
+    YARP_DEPRECATED_MSG("Use yarp::conf::environment::unset instead")
     static void unsetEnvironment(const std::string& key);
 #endif // YARP_NO_DEPRECATED
 

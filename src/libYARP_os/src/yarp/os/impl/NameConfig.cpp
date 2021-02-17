@@ -440,7 +440,7 @@ void NameConfig::setNamespace(const std::string& ns)
 std::string NameConfig::getNamespace(bool refresh)
 {
     if (space.empty() || refresh) {
-        std::string senv = yarp::conf::environment::getEnvironment("YARP_NAMESPACE");
+        std::string senv = yarp::conf::environment::get_string("YARP_NAMESPACE");
         if (!senv.empty()) {
             spaces.fromString(senv);
         } else {

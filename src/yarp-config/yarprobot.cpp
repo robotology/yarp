@@ -136,7 +136,7 @@ YARP_WARNING_POP
     }
     if(options.check("current"))
     {
-        std::string result = yarp::conf::environment::getEnvironment("YARP_ROBOT_NAME");
+        std::string result = yarp::conf::environment::get_string("YARP_ROBOT_NAME");
         if (result.empty())
             printf("Current robot is %s, identified by the environment variable YARP_ROBOT_NAME\n", result.c_str());
         else

@@ -455,7 +455,7 @@ FakeMotionControl::FakeMotionControl() :
     verbose                 (VERY_VERBOSE)
 {
     resizeBuffers();
-    std::string tmp = yarp::conf::environment::getEnvironment("VERBOSE_STICA");
+    std::string tmp = yarp::conf::environment::get_string("VERBOSE_STICA");
     verbosewhenok = (tmp != "") ? (bool)yarp::conf::numeric::from_string<int>(tmp) :
                                   false;
 }

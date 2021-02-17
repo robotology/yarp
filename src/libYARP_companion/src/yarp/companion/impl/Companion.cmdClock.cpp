@@ -63,7 +63,7 @@ int Companion::cmdClock(int argc, char *argv[])
      * If not, we check the environment variable.
      * If no env variable is present, use the '/clock' as fallback.
      */
-    portName = yarp::conf::environment::getEnvironment("YARP_CLOCK");
+    portName = yarp::conf::environment::get_string("YARP_CLOCK");
     if (portName.empty()) {
         portName = "/clock";
     }

@@ -72,7 +72,7 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
     std::string strCmd;
     if(szcmd)
     {
-        yarp::os::Bottle possiblePaths = parsePaths(yarp::conf::environment::getEnvironment("PATH"));
+        yarp::os::Bottle possiblePaths = parsePaths(yarp::conf::environment::get_string("PATH"));
         for (size_t i=0; i<possiblePaths.size(); ++i)
         {
             std::string guessString=possiblePaths.get(i).asString() +

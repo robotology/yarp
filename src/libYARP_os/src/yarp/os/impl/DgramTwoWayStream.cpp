@@ -189,12 +189,12 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize)
     int _read_size = -1;
     int _write_size = -1;
 
-    std::string _env_dgram = yarp::conf::environment::getEnvironment("YARP_DGRAM_SIZE");
+    std::string _env_dgram = yarp::conf::environment::get_string("YARP_DGRAM_SIZE");
     std::string _env_mode;
     if (multiMode) {
-        _env_mode = yarp::conf::environment::getEnvironment("YARP_MCAST_SIZE");
+        _env_mode = yarp::conf::environment::get_string("YARP_MCAST_SIZE");
     } else {
-        _env_mode = yarp::conf::environment::getEnvironment("YARP_UDP_SIZE");
+        _env_mode = yarp::conf::environment::get_string("YARP_UDP_SIZE");
     }
     if (!_env_mode.empty()) {
         _env_dgram = _env_mode;
@@ -259,11 +259,11 @@ void DgramTwoWayStream::configureSystemBuffers()
     //By default the buffers are forced to the datagram size limit.
     //These can be overwritten by environment variables
     //Generic variable
-    std::string socketBufferSize = yarp::conf::environment::getEnvironment("YARP_DGRAM_BUFFER_SIZE");
+    std::string socketBufferSize = yarp::conf::environment::get_string("YARP_DGRAM_BUFFER_SIZE");
     //Specific read
-    std::string socketReadBufferSize = yarp::conf::environment::getEnvironment("YARP_DGRAM_RECV_BUFFER_SIZE");
+    std::string socketReadBufferSize = yarp::conf::environment::get_string("YARP_DGRAM_RECV_BUFFER_SIZE");
     //Specific write
-    std::string socketSendBufferSize = yarp::conf::environment::getEnvironment("YARP_DGRAM_SND_BUFFER_SIZE");
+    std::string socketSendBufferSize = yarp::conf::environment::get_string("YARP_DGRAM_SND_BUFFER_SIZE");
 
     int readBufferSize = -1;
     if (!socketReadBufferSize.empty()) {

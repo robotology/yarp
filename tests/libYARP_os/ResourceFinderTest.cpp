@@ -30,7 +30,7 @@ static yarp::os::Bottle env;
 static void saveEnvironment(const char *key)
 {
     bool found = false;
-    std::string val = yarp::conf::environment::getEnvironment(key, &found);
+    std::string val = yarp::conf::environment::get_string(key, &found);
     Bottle& lst = env.addList();
     lst.addString(key);
     lst.addString(val);
@@ -46,9 +46,9 @@ static void restoreEnvironment()
         std::string val = lst->get(1).asString();
         bool found = lst->get(2).asInt32()?true:false;
         if (!found) {
-            yarp::conf::environment::unsetEnvironment(key);
+            yarp::conf::environment::unset(key);
         } else {
-            yarp::conf::environment::setEnvironment(key, val);
+            yarp::conf::environment::set_string(key, val);
         }
     }
     env.clear();
@@ -233,14 +233,14 @@ static void setUpTestArea(bool etc_pathd)
     saveEnvironment("YARP_CONFIG_DIRS");
     saveEnvironment("YARP_ROBOT_NAME");
 
-    yarp::conf::environment::setEnvironment("YARP_DATA_HOME", pathify(yarp_data_home));
-    yarp::conf::environment::setEnvironment("YARP_CONFIG_HOME", pathify(yarp_config_home));
-    yarp::conf::environment::setEnvironment("YARP_DATA_DIRS",
+    yarp::conf::environment::set_string("YARP_DATA_HOME", pathify(yarp_data_home));
+    yarp::conf::environment::set_string("YARP_CONFIG_HOME", pathify(yarp_config_home));
+    yarp::conf::environment::set_string("YARP_DATA_DIRS",
                             pathify(yarp_data_dir0) +
                             colon +
                             pathify(yarp_data_dir1));
-    yarp::conf::environment::setEnvironment("YARP_CONFIG_DIRS", pathify(yarp_config_dir0));
-    yarp::conf::environment::setEnvironment("YARP_ROBOT_NAME", "dummyRobot");
+    yarp::conf::environment::set_string("YARP_CONFIG_DIRS", pathify(yarp_config_dir0));
+    yarp::conf::environment::set_string("YARP_ROBOT_NAME", "dummyRobot");
 
 
     fout = fopen((pathify(yarp_data_home)+slash+"data.ini").c_str(), "w");
@@ -517,15 +517,15 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         saveEnvironment("YARP_DATA_HOME");
         saveEnvironment("XDG_DATA_HOME");
         saveEnvironment("HOME");
-        yarp::conf::environment::setEnvironment("YARP_DATA_HOME", "/foo");
+        yarp::conf::environment::set_string("YARP_DATA_HOME", "/foo");
         CHECK(ResourceFinder::getDataHome() == "/foo"); // YARP_DATA_HOME noticed
-        yarp::conf::environment::unsetEnvironment("YARP_DATA_HOME");
-        yarp::conf::environment::setEnvironment("XDG_DATA_HOME", "/foo");
+        yarp::conf::environment::unset("YARP_DATA_HOME");
+        yarp::conf::environment::set_string("XDG_DATA_HOME", "/foo");
         std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
         CHECK(ResourceFinder::getDataHome() == (std::string("/foo") + slash + "yarp")); // XDG_DATA_HOME noticed
-        yarp::conf::environment::unsetEnvironment("XDG_DATA_HOME");
+        yarp::conf::environment::unset("XDG_DATA_HOME");
 #ifdef __linux__
-        yarp::conf::environment::setEnvironment("HOME", "/foo");
+        yarp::conf::environment::set_string("HOME", "/foo");
         CHECK(ResourceFinder::getDataHome() == "/foo/.local/share/yarp"); // HOME noticed
 #endif
         restoreEnvironment();
@@ -536,15 +536,15 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         saveEnvironment("YARP_CONFIG_HOME");
         saveEnvironment("XDG_CONFIG_HOME");
         saveEnvironment("HOME");
-        yarp::conf::environment::setEnvironment("YARP_CONFIG_HOME", "/foo");
+        yarp::conf::environment::set_string("YARP_CONFIG_HOME", "/foo");
         CHECK(ResourceFinder::getConfigHome() == "/foo"); // YARP_CONFIG_HOME noticed
-        yarp::conf::environment::unsetEnvironment("YARP_CONFIG_HOME");
-        yarp::conf::environment::setEnvironment("XDG_CONFIG_HOME", "/foo");
+        yarp::conf::environment::unset("YARP_CONFIG_HOME");
+        yarp::conf::environment::set_string("XDG_CONFIG_HOME", "/foo");
         std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
         CHECK(ResourceFinder::getConfigHome() == (std::string("/foo") + slash + "yarp")); // XDG_CONFIG_HOME noticed
-        yarp::conf::environment::unsetEnvironment("XDG_CONFIG_HOME");
+        yarp::conf::environment::unset("XDG_CONFIG_HOME");
 #ifdef __linux__
-        yarp::conf::environment::setEnvironment("HOME", "/foo");
+        yarp::conf::environment::set_string("HOME", "/foo");
         CHECK(ResourceFinder::getConfigHome() == "/foo/.config/yarp"); // HOME noticed
 #endif
         restoreEnvironment();
@@ -559,25 +559,25 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         std::string foobar = std::string("/foo") + colon + "/bar";
         std::string yfoo = std::string("/foo") + slash + "yarp";
         std::string ybar = std::string("/bar") + slash + "yarp";
-        yarp::conf::environment::setEnvironment("YARP_DATA_DIRS", foobar);
+        yarp::conf::environment::set_string("YARP_DATA_DIRS", foobar);
         Bottle dirs;
         dirs = ResourceFinder::getDataDirs();
         CHECK(dirs.size() == (size_t) 2); // YARP_DATA_DIRS parsed as two directories
         CHECK(dirs.get(0).asString() == "/foo"); // YARP_DATA_DIRS first dir ok
         CHECK(dirs.get(1).asString() == "/bar"); // YARP_DATA_DIRS second dir ok
 
-        yarp::conf::environment::setEnvironment("YARP_DATA_DIRS", "/foo");
+        yarp::conf::environment::set_string("YARP_DATA_DIRS", "/foo");
         dirs = ResourceFinder::getDataDirs();
         CHECK(dirs.size() == (size_t) 1); // YARP_DATA_DIRS parsed as one directory
 
-        yarp::conf::environment::unsetEnvironment("YARP_DATA_DIRS");
-        yarp::conf::environment::setEnvironment("XDG_DATA_DIRS", foobar);
+        yarp::conf::environment::unset("YARP_DATA_DIRS");
+        yarp::conf::environment::set_string("XDG_DATA_DIRS", foobar);
         dirs = ResourceFinder::getDataDirs();
         CHECK(dirs.size() == (size_t) 2); // XDG_DATA_DIRS gives two directories
         CHECK(dirs.get(0).asString() == yfoo); // XDG_DATA_DIRS first dir ok
         CHECK(dirs.get(1).asString() == ybar); // XDG_DATA_DIRS second dir ok
 
-        yarp::conf::environment::unsetEnvironment("XDG_DATA_DIRS");
+        yarp::conf::environment::unset("XDG_DATA_DIRS");
 #ifdef __linux__
         dirs = ResourceFinder::getDataDirs();
         CHECK(dirs.size() == (size_t) 2); // DATA_DIRS default length 2
@@ -597,21 +597,21 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         std::string foobar = std::string("/foo") + colon + "/bar";
         std::string yfoo = std::string("/foo") + slash + "yarp";
         std::string ybar = std::string("/bar") + slash + "yarp";
-        yarp::conf::environment::setEnvironment("YARP_CONFIG_DIRS", foobar);
+        yarp::conf::environment::set_string("YARP_CONFIG_DIRS", foobar);
         Bottle dirs;
         dirs = ResourceFinder::getConfigDirs();
         CHECK(dirs.size() == (size_t) 2); // YARP_CONFIG_DIRS parsed as two directories
         CHECK(dirs.get(0).asString() == "/foo"); // YARP_CONFIG_DIRS first dir ok
         CHECK(dirs.get(1).asString() == "/bar"); // YARP_CONFIG_DIRS second dir ok
 
-        yarp::conf::environment::unsetEnvironment("YARP_CONFIG_DIRS");
-        yarp::conf::environment::setEnvironment("XDG_CONFIG_DIRS", foobar);
+        yarp::conf::environment::unset("YARP_CONFIG_DIRS");
+        yarp::conf::environment::set_string("XDG_CONFIG_DIRS", foobar);
         dirs = ResourceFinder::getConfigDirs();
         CHECK(dirs.size() == (size_t) 2); // XDG_CONFIG_DIRS gives two directories
         CHECK(dirs.get(0).asString() == yfoo); // XDG_CONFIG_DIRS first dir ok
         CHECK(dirs.get(1).asString() == ybar); // XDG_CONFIG_DIRS second dir ok
 
-        yarp::conf::environment::unsetEnvironment("XDG_CONFIG_DIRS");
+        yarp::conf::environment::unset("XDG_CONFIG_DIRS");
 #ifdef __linux__
         dirs = ResourceFinder::getConfigDirs();
         CHECK(dirs.size() == (size_t) 1); // CONFIG_DIRS default length 1
@@ -763,7 +763,7 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
             rf.configure(0, nullptr);
 
             bool found;
-            std::string robot = yarp::conf::environment::getEnvironment("YARP_ROBOT_NAME", &found);
+            std::string robot = yarp::conf::environment::get_string("YARP_ROBOT_NAME", &found);
             if (!found) robot = "default";
             CHECK(rf.getHomeContextPath() == ResourceFinder::getDataHome() + slash + "contexts" + slash + "my_app"); // $YARP_DATA_HOME/contexts/my_app found as directory for writing
             CHECK(rf.getHomeRobotPath() == ResourceFinder::getDataHome() + slash + "robots" + slash + robot); // $YARP_DATA_HOME/robots/dummyRobot found as directory for writing

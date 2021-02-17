@@ -1721,7 +1721,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         Bottle result;
 
         bool found = false;
-        std::string name = yarp::conf::environment::getEnvironment("YARP_ROBOT_NAME", &found);
+        std::string name = yarp::conf::environment::get_string("YARP_ROBOT_NAME", &found);
         if (!found) {
             name = getName();
             // Remove initial "/"
