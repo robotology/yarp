@@ -1369,7 +1369,7 @@ bool CustomView::getEditingMode()
 
 void CustomView::wheelEvent(QWheelEvent *event){
     if(event->modifiers() == Qt::CTRL){
-        if(event->delta() > 0){
+        if(event->angleDelta().y() > 0){
             scale(1.1,1.1);
         }else{
             scale(0.9,0.9);
