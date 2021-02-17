@@ -8,7 +8,8 @@ add_executable(harness_conf)
 
 target_sources(harness_conf
   PRIVATE
-    numeric.cpp)
+    numeric.cpp
+    string.cpp)
 
 target_link_libraries(harness_conf
   PRIVATE
