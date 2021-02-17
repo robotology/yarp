@@ -658,4 +658,5 @@ int FfmpegMonitorObject::setCommandLineParams() {
         }
 
     }
+    return 0;
 }
