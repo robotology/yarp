@@ -64,7 +64,7 @@ public:
 
     bool configuredF {false};
 
-    ControlBoardWrapper* parent {nullptr};
+    std::string parentName;
 
     yarp::dev::PolyDriver* subdevice {nullptr};
     yarp::dev::IPidControl* pid {nullptr};
@@ -93,14 +93,13 @@ public:
     yarp::sig::Vector motorEncodersTimes;
 
     SubDevice() = default;
-    ;
 
     bool attach(yarp::dev::PolyDriver* d, const std::string& id);
     void detach();
 
-    bool configure(size_t wbase, size_t wtop, size_t base, size_t top, size_t axes, const std::string& id, ControlBoardWrapper* _parent);
+    bool configure(size_t wbase, size_t wtop, size_t base, size_t top, size_t axes, const std::string& id, const std::string& _parentName);
 
-    bool isAttached()
+    bool isAttached() const
     {
         return attachedF;
     }

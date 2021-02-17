@@ -252,7 +252,7 @@ private:
     yarp::dev::PolyDriver *subDeviceOwned {nullptr};
     bool openAndAttachSubDevice(yarp::os::Property& prop);
 
-    bool ownDevices;
+    bool ownDevices {true};
 
     void calculateMaxNumOfJointsInDevices();
 
