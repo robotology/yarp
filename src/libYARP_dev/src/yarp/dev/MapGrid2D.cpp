@@ -818,6 +818,7 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
             size_t sizeUncompressed = m_map_occupancy.getRawImageSize();
             unsigned char* dataUncompressed = m_map_occupancy.getRawImage();
             int z_result = uncompress((Bytef*)dataUncompressed, (uLongf*)&sizeUncompressed, (const Bytef*) dataCompressed, sizeCompressed);
+            YARP_UNUSED(z_result);
             delete[] dataCompressed;
         }
         {
@@ -828,6 +829,7 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
             size_t sizeUncompressed = m_map_flags.getRawImageSize();
             unsigned char* dataUncompressed = m_map_flags.getRawImage();
             int z_result = uncompress((Bytef*)dataUncompressed, (uLongf*)&sizeUncompressed, (const Bytef*)dataCompressed, sizeCompressed);
+            YARP_UNUSED(z_result);
             delete[] dataCompressed;
         }
 #endif
@@ -884,6 +886,7 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
             size_t      sizeCompressed = compressBound(sizeUncompressed);
             unsigned char* dataCompressed = new unsigned char[sizeCompressed];
             int z_result = compress((Bytef*)dataCompressed, (uLongf*)&sizeCompressed, (Bytef*)dataUncompressed, sizeUncompressed);
+            YARP_UNUSED(z_result);
             connection.appendInt32(BOTTLE_TAG_BLOB);
             connection.appendInt32(sizeCompressed);
             connection.appendBlock((char*)dataCompressed, sizeCompressed);
@@ -895,6 +898,7 @@ bool MapGrid2D::write(yarp::os::ConnectionWriter& connection) const
             size_t      sizeCompressed = compressBound(sizeUncompressed);
             unsigned char* dataCompressed = new unsigned char[sizeCompressed];
             int z_result = compress((Bytef*)dataCompressed, (uLongf*)&sizeCompressed, (Bytef*)dataUncompressed, sizeUncompressed);
+            YARP_UNUSED(z_result);
             connection.appendInt32(BOTTLE_TAG_BLOB);
             connection.appendInt32(sizeCompressed);
             connection.appendBlock((char*)dataCompressed, sizeCompressed);

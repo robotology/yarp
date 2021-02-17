@@ -192,7 +192,7 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
 
         //////////"Checking INavigation2D methods
         {
-            bool b0,b1,b2, bl;
+            bool b0,b1,b2;
             Map2DLocation tloc ("test",1,2,3);
             Map2DLocation gloc1;
             Map2DLocation gloc2;
