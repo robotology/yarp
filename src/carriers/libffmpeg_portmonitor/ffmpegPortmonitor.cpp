@@ -585,7 +585,7 @@ int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecI
         }
 
         // If there is no '.', the param is bad formatted, return error
-        int pointPosition = param.find('.');
+        auto pointPosition = param.find('.');
         if (pointPosition == string::npos) {
             yCError(FFMPEGMONITOR, "Error parsing parameters!");
             return -1;
@@ -599,7 +599,7 @@ int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecI
         if (paramKey == FFMPEGPORTMONITOR_CL_CODEC_KEY) {
             bool found = false;
             // Iterate over codecs command line possibilities
-            for (int i = 0; i < FFMPEGPORTMONITOR_CL_CODECS.size(); i++) {
+            for (size_t i = 0; i < FFMPEGPORTMONITOR_CL_CODECS.size(); i++) {
                 // If found
                 if (paramValue == FFMPEGPORTMONITOR_CL_CODECS[i]) {
                     // Set codec id basing on codec command line name
