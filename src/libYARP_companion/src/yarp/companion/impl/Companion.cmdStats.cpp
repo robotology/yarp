@@ -134,7 +134,7 @@ int Companion::cmdStats(int argc, char *argv[])
         yCInfo(COMPANION, "yarp stats /remote_port --port_type BufferedPort");
         yCInfo(COMPANION, "yarp stats /remote_port --port_type Port");
         yCInfo(COMPANION, "yarp stats /remote_port --duration <time_in_s> --protocol <protocol_name>");
-        yCInfo(COMPANION, "");
+        yCInfo(COMPANION);
         yCInfo(COMPANION, "If port_type is not specified, BufferedPort is assumed as default");
         return -1;
     }
