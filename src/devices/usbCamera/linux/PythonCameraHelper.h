@@ -15,10 +15,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-//# @author Luca Tricerri <luca.tricerri@iit.it> 
+//# @author Luca Tricerri <luca.tricerri@iit.it>
 
 #pragma once
 
+#include "InterfaceForCFunction.h"
 #include <array>
 #include <cstring>
 #include <fstream>
@@ -72,15 +73,20 @@ public:
     void closeAll();
     double getCurrentFps() const;
     void setSubsamplingProperty(bool value);
-    void setFileLog(bool value);
-    bool setControl(uint32_t controlId,double value);
+    bool setControl(uint32_t v4lCtrl, double value);
+    double getControl(uint32_t v4lCtrl);
+    bool hasControl(uint32_t v4lCtrl);
 
     void setInjectedProcess(std::function<void(const void*, int)> toinJect);
     void setInjectedUnlock(std::function<void()> toinJect);
     void setInjectedLock(std::function<void()> toinJect);
     void setInjectedLog(std::function<void(const std::string&, Severity severity)> toinJect);
 
+    //Minor
+    void setFileLog(bool value);
+
 private:
+    InterfaceForCFunction interface_;
     void openPipeline();
     void initDevice();
     void startCapturing();
@@ -138,7 +144,7 @@ private:
     void initMmap(void);
     bool cropCheck();
     void fpsCalculus();
-    void log(const std::string& toBeLogged,Severity severity=Severity::debug);
+    void log(const std::string& toBeLogged, Severity severity = Severity::debug);
 
     SpaceColor spaceColor_ {SpaceColor::rgb};
 

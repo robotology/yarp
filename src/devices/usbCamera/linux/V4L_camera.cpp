@@ -103,26 +103,26 @@ V4L_camera::V4L_camera() :
     pythonCameraHelper_.setInjectedProcess([this](const void* pythonBuffer, size_t size)
                                            { pythonPreprocess(pythonBuffer, size); });
     pythonCameraHelper_.setInjectedUnlock([this]()
-                                  { mutex.post(); });
+                                          { mutex.post(); });
     pythonCameraHelper_.setInjectedLock([this]()
-                                { mutex.wait(); });
+                                        { mutex.wait(); });
     pythonCameraHelper_.setInjectedLog([this](const std::string& toLog, Severity severity)
-                               {
-                                   switch (severity) {
-                                   case Severity::error:
-                                       yCError(USBCAMERA) << toLog;
-                                       break;
-                                   case Severity::info:
-                                       yCInfo(USBCAMERA) << toLog;
-                                       break;
-                                   case Severity::debug:
-                                       yCDebug(USBCAMERA) << toLog;
-                                       break;
-                                   case Severity::warning:
-                                       yCWarning(USBCAMERA) << toLog;
-                                       break;
-                                   }
-                               });
+                                       {
+                                           switch (severity) {
+                                           case Severity::error:
+                                               yCError(USBCAMERA) << toLog;
+                                               break;
+                                           case Severity::info:
+                                               yCInfo(USBCAMERA) << toLog;
+                                               break;
+                                           case Severity::debug:
+                                               yCDebug(USBCAMERA) << toLog;
+                                               break;
+                                           case Severity::warning:
+                                               yCWarning(USBCAMERA) << toLog;
+                                               break;
+                                           }
+                                       });
 
     param.fps = DEFAULT_FRAMERATE;
     param.io = IO_METHOD_MMAP;
@@ -1577,13 +1577,12 @@ bool V4L_camera::userptrInit(unsigned int buffer_size)
 
 bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
 {
-    if (param.camModel == ULTRAPYTON)
-    {
-        return pythonCameraHelper_.setControl(id,value);
-    }
-    
     if (value < 0) {
         return false;
+    }
+
+    if (param.camModel == ULTRAPYTON) {
+        return pythonCameraHelper_.setControl(id, value);
     }
 
     struct v4l2_queryctrl queryctrl;
@@ -1655,6 +1654,10 @@ bool V4L_camera::check_V4L2_control(uint32_t id)
 
 double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
 {
+    if (param.camModel == ULTRAPYTON) {
+        return pythonCameraHelper_.getControl(id);
+    }
+
     struct v4l2_queryctrl queryctrl;
     struct v4l2_control control;
 
@@ -1702,6 +1705,9 @@ bool V4L_camera::getCameraDescription(CameraDescriptor* camera)
 
 bool V4L_camera::hasFeature(int feature, bool* _hasFeature)
 {
+    if (param.camModel == ULTRAPYTON) {
+        return pythonCameraHelper_.hasControl(convertYARP_to_V4L(feature));
+    }
     bool tmpMan(false);
     bool tmpAuto(false);
     bool tmpOnce(false);

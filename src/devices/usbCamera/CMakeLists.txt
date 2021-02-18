@@ -8,6 +8,21 @@ include(FetchContent)
 
 option(COMPILE_WITHUNITTEST_ULTRAPYTHON "Compile also unittest for UltraPython cam board" OFF)
 
+# Get rid of undef while compiling gtest -- START
+get_property(
+    compile_options
+    DIRECTORY
+    PROPERTY COMPILE_OPTIONS
+)
+set_property(
+    DIRECTORY
+    APPEND
+    PROPERTY COMPILE_OPTIONS -Wno-undef -Wno-error
+)
+
+
+# Get rid of undef while compiling gtest -- END
+
 if(COMPILE_WITHUNITTEST_ULTRAPYTHON)
   FetchContent_Declare(
     unittest
@@ -17,10 +32,22 @@ if(COMPILE_WITHUNITTEST_ULTRAPYTHON)
   FetchContent_GetProperties(unittest)
   if(NOT unittest)
     FetchContent_Populate(unittest)
+    set(BUILD_SHARED_LIBS_SAVED "${BUILD_SHARED_LIBS}")
+    set(BUILD_SHARED_LIBS OFF)
     add_subdirectory(unittest)
+    set(BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS_SAVED}")
     add_subdirectory(${unittest_SOURCE_DIR} ${unittest_BINARY_DIR})
   endif()
 endif()
+
+# Get rid of undef while compiling gtest -- START
+set_property(
+    DIRECTORY
+    PROPERTY COMPILE_OPTIONS ${compile_options}
+)
+unset(compile_options)
+
+# Get rid of undef while compiling gtest -- END
 
 yarp_prepare_plugin(usbCamera
                     CATEGORY device
@@ -50,6 +77,7 @@ if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
                                         linux/PythonCameraHelper.cpp
                                         linux/PythonCameraHelper.h
                                         linux/xilinx-v4l2-controls.h
+                                        linux/InterfaceForCFunction.h
                                         )
 
   target_include_directories(yarp_usbCamera PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/common")

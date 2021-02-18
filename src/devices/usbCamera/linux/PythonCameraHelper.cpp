@@ -40,7 +40,7 @@ void PythonCameraHelper::openPipeline(void)
     log("openPipeline", Severity::info);
 
     // Open main device
-    int fd = open(mediaName_.c_str(), O_RDWR);
+    int fd = interface_.open_c(mediaName_.c_str(), O_RDWR);
     if (fd == -1) {
         log("ERROR-cannot open media dev");
         exit(EXIT_FAILURE);
@@ -655,18 +655,26 @@ void PythonCameraHelper::setFileLog(bool value)
     logOnFile_ = value;
 }
 
-bool PythonCameraHelper::setControl(uint32_t controlId, double value)
+bool PythonCameraHelper::setControl(uint32_t v4lCtrl, double value)
 {
     if (value < 0) {
         log("setControl wrong value control", Severity::error);
         return false;
     }
 
+    if (!hasControl(v4lCtrl)) {
+        std::stringstream ss;
+        ss << "setControl Missing ctr id:" << v4lCtrl << std::endl;
+        log(ss.str(), Severity::error);
+        return false;
+    }
+
+
     struct v4l2_queryctrl queryctrl;
     struct v4l2_control control;
 
     memset(&queryctrl, 0, sizeof(queryctrl));
-    queryctrl.id = controlId;
+    queryctrl.id = v4lCtrl;
 
     if (-1 == ioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_], VIDIOC_QUERYCTRL, &queryctrl)) {
         if (errno != EINVAL) {
@@ -686,8 +694,9 @@ bool PythonCameraHelper::setControl(uint32_t controlId, double value)
         return false;
     }
     memset(&control, 0, sizeof(control));
-    control.id = controlId;
-    control.value = value;
+    control.id = v4lCtrl;
+    //control.value = value;
+    control.value = (int32_t)(value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
 
     //Set Left and right cam
     if (-1 == ioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_], VIDIOC_S_CTRL, &control)) {
@@ -703,4 +712,61 @@ bool PythonCameraHelper::setControl(uint32_t controlId, double value)
     ss << "SetControl done --> Ctrl name:" << queryctrl.name << " Ctrl value:" << control.value << std::endl;
     log(ss.str(), Severity::debug);
     return true;
+}
+
+double PythonCameraHelper::getControl(uint32_t v4lCtrl)
+{
+    if (!hasControl(v4lCtrl)) {
+        std::stringstream ss;
+        ss << "getControl Missing ctr id:" << v4lCtrl << std::endl;
+        log(ss.str(), Severity::error);
+        return false;
+    }
+
+
+    struct v4l2_queryctrl queryctrl;
+    struct v4l2_control control;
+
+    memset(&control, 0, sizeof(control));
+    memset(&queryctrl, 0, sizeof(queryctrl));
+
+    control.id = v4lCtrl;
+    queryctrl.id = v4lCtrl;
+
+    if (-1 == ioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_], VIDIOC_QUERYCTRL, &queryctrl)) {
+        if (errno != EINVAL) {
+            log("VIDIOC_QUERYCTRL", Severity::error);
+        }
+        return -1.0;
+    }
+
+    if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED) {
+        log("Control is disabled", Severity::error);
+    } else {
+        if (-1 == ioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_], VIDIOC_G_CTRL, &control)) {
+            log("VIDIOC_G_CTRL", Severity::error);
+            return -1.0;
+        }
+    }
+
+
+    return (double)(control.value - queryctrl.minimum) / (queryctrl.maximum - queryctrl.minimum);
+
+
+    return 0;
+}
+
+bool PythonCameraHelper::hasControl(uint32_t v4lCtr)
+{
+    std::stringstream ss;
+    ss << "hascontrol for:" << v4lCtr;
+    log(ss.str(), Severity::debug);
+    switch (v4lCtr) {
+    case V4L2_CID_GAIN:
+    case V4L2_CID_BRIGHTNESS:
+        return true;
+    default:
+        return false;
+    }
+    return false;
 }
