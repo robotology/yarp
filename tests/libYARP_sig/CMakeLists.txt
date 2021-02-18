@@ -20,4 +20,4 @@ target_link_libraries(harness_sig PRIVATE YARP_harness
 
 set_property(TARGET harness_sig PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_sig)
+yarp_catch_discover_tests(harness_sig)

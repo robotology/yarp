@@ -27,4 +27,4 @@ endif()
 
 set_property(TARGET harness_os_impl PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_os_impl)
+yarp_catch_discover_tests(harness_os_impl)

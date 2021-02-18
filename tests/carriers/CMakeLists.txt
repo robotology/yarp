@@ -13,4 +13,4 @@ target_link_libraries(harness_carriers PRIVATE YARP_harness
 
 set_property(TARGET harness_carriers PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_carriers)
+yarp_catch_discover_tests(harness_carriers)

@@ -20,4 +20,4 @@ target_link_libraries(harness_wire_rep_utils PRIVATE YARP_harness
 
 set_property(TARGET harness_wire_rep_utils PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_wire_rep_utils)
+yarp_catch_discover_tests(harness_wire_rep_utils)
