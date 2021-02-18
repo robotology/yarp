@@ -18,15 +18,21 @@ set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 find_package(YCM 0.11.0 REQUIRED)
 find_package(YARP COMPONENTS os sig idl_tools REQUIRED)
 
-include(ParseAndAddCatchTests)
-set(PARSE_CATCH_TESTS_VERBOSE OFF CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_NO_HIDDEN_TESTS ON CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_ADD_TARGET_IN_TEST_NAME ON CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_ADD_FIXTURE_IN_TEST_NAME ON CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_ADD_TO_CONFIGURE_DEPENDS ON CACHE INTERNAL "")
+include(Catch)
+set_property(CACHE YARP_TEST_TIMEOUT PROPERTY VALUE 120)
+function(yarp_catch_discover_tests _target)
+  # Workaround to force catch_discover_tests to run tests under valgrind
+  if(DEFINED YARP_TEST_LAUNCHER)
+    set_property(TARGET ${_target} PROPERTY CROSSCOMPILING_EMULATOR "${YARP_TEST_LAUNCHER}")
+  endif()
+  catch_discover_tests(
+    ${_target}
+    EXTRA_ARGS "-s" "--use-colour" "yes"
+    PROPERTIES
+      TIMEOUT ${YARP_TEST_TIMEOUT}
+    )
+endfunction()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/catch2)
-set(AdditionalCatchParameters "-s" "--use-colour" "yes")
-set(OptionalCatchTestLauncher ${YARP_TEST_LAUNCHER})
 
 set(IDL_FILES demo.thrift
               namespaced.thrift
@@ -48,20 +54,15 @@ yarp_idl_to_dir(INPUT_FILES ${IDL_FILES}
 add_executable(demo_yarp_idl_to_dir)
 target_compile_definitions(demo_yarp_idl_to_dir PRIVATE THRIFT_INCLUDE_PREFIX
                                                         THRIFT_NO_NAMESPACE_PREFIX)
-target_sources(demo_yarp_idl_to_dir PRIVATE main.cpp)
-# Parse now, before adding the generated which do not exist yet
-ParseAndAddCatchTests(demo_yarp_idl_to_dir)
-target_sources(demo_yarp_idl_to_dir PRIVATE ${IDL_GEN_SRCS}
+target_sources(demo_yarp_idl_to_dir PRIVATE main.cpp
+                                            ${IDL_GEN_SRCS}
                                             ${IDL_GEN_HDRS})
 target_include_directories(demo_yarp_idl_to_dir PRIVATE ${generated_libs_dir}/include)
 target_link_libraries(demo_yarp_idl_to_dir PRIVATE YARP::YARP_os
                                                    YARP::YARP_init
                                                    YARP::YARP_sig)
-get_property(_tests TARGET demo_yarp_idl_to_dir PROPERTY ParseAndAddCatchTests_TESTS)
-foreach(_test IN LISTS _tests)
-  set_property(TEST ${_test} PROPERTY TIMEOUT 120)
-endforeach()
 
+yarp_catch_discover_tests(demo_yarp_idl_to_dir)
 
 
 # Test using yarp_add_idl
@@ -69,14 +70,10 @@ yarp_add_idl(IDL_GEN_FILES ${IDL_FILES})
 add_executable(demo_yarp_add_idl)
 target_compile_definitions(demo_yarp_add_idl PRIVATE THRIFT_INCLUDE_PREFIX
                                                      THRIFT_NO_NAMESPACE_PREFIX)
-target_sources(demo_yarp_add_idl PRIVATE main.cpp)
-# Parse now, before adding the generated which do not exist yet
-ParseAndAddCatchTests(demo_yarp_add_idl)
-target_sources(demo_yarp_add_idl PRIVATE ${IDL_GEN_FILES})
+target_sources(demo_yarp_add_idl PRIVATE main.cpp
+                                         ${IDL_GEN_FILES})
 target_link_libraries(demo_yarp_add_idl PRIVATE YARP::YARP_os
                                                 YARP::YARP_init
                                                 YARP::YARP_sig)
-get_property(_tests TARGET demo_yarp_add_idl PROPERTY ParseAndAddCatchTests_TESTS)
-foreach(_test IN LISTS _tests)
-  set_property(TEST ${_test} PROPERTY TIMEOUT 120)
-endforeach()
+
+yarp_catch_discover_tests(demo_yarp_add_idl)

@@ -33,4 +33,4 @@ endif()
 
 set_property(TARGET harness_dev PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_dev)
+yarp_catch_discover_tests(harness_dev)

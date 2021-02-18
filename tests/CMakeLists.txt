@@ -9,7 +9,6 @@
 if(NOT YARP_COMPILE_TESTS)
   return()
 endif()
-# set(YARP_TEST_LAUNCHER ${VALGRIND_MEMCHECK_COMMAND})
 
 #########################################################################
 # Options
@@ -59,6 +58,7 @@ if(YARP_TEST_LAUNCHER)
   string(REPLACE ";" "\;" _test_launcher "${_test_launcher}")
   list(APPEND build_options "${_test_launcher}")
 endif()
+list(APPEND build_options -DYARP_TEST_TIMEOUT=${YARP_TEST_TIMEOUT})
 
 # Add the CMAKE_BINARY_DIR as a macro so the testing infrastructure
 # can find the device compiled as dynamic plugins
@@ -76,40 +76,20 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 
 #########################################################################
-# Wrapper for the ParseAndAddCatchTests that also sets the
-# SKIP_RETURN_CODE test property
+# Wrapper for the catch_discover_tests that also enables colors, and sets
+# the TIMEOUT and SKIP_RETURN_CODE test properties.
 
-set(PARSE_CATCH_TESTS_VERBOSE OFF CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_NO_HIDDEN_TESTS OFF CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_HIDDEN_TESTS_DISABLED ON CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_ADD_TARGET_IN_TEST_NAME OFF CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_ADD_FIXTURE_IN_TEST_NAME ON CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_ADD_TO_CONFIGURE_DEPENDS ON CACHE INTERNAL "")
-set(AdditionalCatchParameters "-s" "--use-colour" "yes")
-set(OptionalCatchTestLauncher ${YARP_TEST_LAUNCHER})
-
-include(ParseAndAddCatchTests)
-
-function(yarp_parse_and_add_catch_tests _target)
-  ParseAndAddCatchTests(${_target})
-  get_property(_tests TARGET ${_target} PROPERTY ParseAndAddCatchTests_TESTS)
-  foreach(_test IN LISTS _tests)
-    set_property(TEST ${_test} PROPERTY TIMEOUT 120)
-    set_property(TEST ${_test} PROPERTY SKIP_RETURN_CODE 254)
-  endforeach()
-  get_property(_sources TARGET ${_target} PROPERTY SOURCES)
-  foreach(_source IN LISTS _sources)
-    get_property(_header_only_set SOURCE ${_source} PROPERTY HEADER_FILE_ONLY SET)
-    if(_header_only_set)
-      get_property(_header_only SOURCE ${_source} PROPERTY HEADER_FILE_ONLY)
-      if(_header_only)
-        get_property(_tests SOURCE ${_source} PROPERTY ParseAndAddCatchTests_TESTS)
-        foreach(_test IN LISTS _tests)
-          set_property(TEST ${_test} PROPERTY DISABLED ON)
-        endforeach()
-      endif()
-    endif()
-  endforeach()
+include(Catch)
+function(yarp_catch_discover_tests _target)
+  # Workaround to force catch_discover_tests to run tests under valgrind
+  set_property(TARGET ${_target} PROPERTY CROSSCOMPILING_EMULATOR "${YARP_TEST_LAUNCHER}")
+  catch_discover_tests(
+    ${_target}
+    EXTRA_ARGS "-s" "--use-colour" "yes"
+    PROPERTIES
+      TIMEOUT ${YARP_TEST_TIMEOUT}
+      SKIP_RETURN_CODE 254
+    )
 endfunction()
 
 

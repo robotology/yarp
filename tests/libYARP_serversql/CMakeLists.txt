@@ -15,4 +15,4 @@ target_link_libraries(harness_serversql PRIVATE YARP_harness
                                                 YARP::YARP_serversql)
 set_property(TARGET harness_serversql PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_serversql)
+yarp_catch_discover_tests(harness_serversql)

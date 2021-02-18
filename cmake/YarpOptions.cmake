@@ -173,6 +173,13 @@ mark_as_advanced(YARP_ENABLE_EXAMPLES_AS_TESTS)
 
 
 #########################################################################
+# Test timeout.
+set(YARP_TEST_TIMEOUT_DEFAULT 120)
+set(YARP_TEST_TIMEOUT ${YARP_TEST_TIMEOUT_DEFAULT} CACHE STRING "Timeout for unit tests")
+mark_as_advanced(YARP_TEST_TIMEOUT)
+
+
+#########################################################################
 # Run tests under Valgrind
 
 cmake_dependent_option(YARP_VALGRIND_TESTS
@@ -196,8 +203,17 @@ if(YARP_VALGRIND_TESTS)
 endif()
 
 unset(YARP_TEST_LAUNCHER)
+set(YARP_TEST_TIMEOUT_DEFAULT_VALGRIND 300)
 if(DEFINED VALGRIND_COMMAND)
   set(YARP_TEST_LAUNCHER ${VALGRIND_COMMAND})
+  # The default timeout is not enough when running under valgrind
+  if(YARP_TEST_TIMEOUT EQUAL YARP_TEST_TIMEOUT_DEFAULT)
+    set_property(CACHE YARP_TEST_TIMEOUT PROPERTY VALUE ${YARP_TEST_TIMEOUT_DEFAULT_VALGRIND})
+  endif()
+else()
+  if(YARP_TEST_TIMEOUT EQUAL YARP_TEST_TIMEOUT_DEFAULT_VALGRIND)
+    set_property(CACHE YARP_TEST_TIMEOUT PROPERTY VALUE ${YARP_TEST_TIMEOUT_DEFAULT})
+  endif()
 endif()
 
 #########################################################################

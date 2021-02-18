@@ -55,7 +55,7 @@ endif()
 
 set_property(TARGET harness_os PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_os)
+yarp_catch_discover_tests(harness_os)
 
 
 add_executable(print_value_table)

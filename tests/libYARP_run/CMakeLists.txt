@@ -14,7 +14,7 @@ target_link_libraries(harness_run PRIVATE YARP_harness
 
 set_property(TARGET harness_run PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_run)
+yarp_catch_discover_tests(harness_run)
 
 get_property(_tests SOURCE RunTest.cpp PROPERTY ParseAndAddCatchTests_TESTS)
 foreach(_test IN LISTS _tests)
