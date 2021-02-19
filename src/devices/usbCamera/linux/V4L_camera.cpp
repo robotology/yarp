@@ -1633,6 +1633,10 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
 
 bool V4L_camera::check_V4L2_control(uint32_t id)
 {
+    if (param.camModel == ULTRAPYTON) {
+        return pythonCameraHelper_.checkControl(id);
+    }
+
     //     yCTrace(USBCAMERA);
     struct v4l2_queryctrl queryctrl;
     struct v4l2_control control;
@@ -1698,6 +1702,11 @@ double V4L_camera::get_V4L2_control(uint32_t id, bool verbatim)
 
 bool V4L_camera::getCameraDescription(CameraDescriptor* camera)
 {
+    if (param.camModel == ULTRAPYTON) {
+        camera->busType = BUS_UNKNOWN;
+        camera->deviceDescription = "XININX camera";
+        return true;
+    }
     camera->busType = BUS_USB;
     camera->deviceDescription = "USB3 camera";
     return true;
@@ -1705,12 +1714,23 @@ bool V4L_camera::getCameraDescription(CameraDescriptor* camera)
 
 bool V4L_camera::hasFeature(int feature, bool* _hasFeature)
 {
-    if (param.camModel == ULTRAPYTON) {
-        return pythonCameraHelper_.hasControl(convertYARP_to_V4L(feature));
-    }
     bool tmpMan(false);
     bool tmpAuto(false);
     bool tmpOnce(false);
+
+    if (param.camModel == ULTRAPYTON) {
+
+        if (feature == YARP_FEATURE_WHITE_BALANCE) {
+            tmpMan = pythonCameraHelper_.hasControl(V4L2_CID_RED_BALANCE) && pythonCameraHelper_.hasControl(V4L2_CID_BLUE_BALANCE);
+            tmpOnce = check_V4L2_control(V4L2_CID_DO_WHITE_BALANCE);
+            tmpAuto = check_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
+            *_hasFeature = tmpMan || tmpOnce || tmpAuto;
+            return true;
+        }
+
+        *_hasFeature = pythonCameraHelper_.hasControl(convertYARP_to_V4L(feature));
+        return true;
+    }
 
     switch (feature) {
     case YARP_FEATURE_WHITE_BALANCE:
@@ -1880,6 +1900,12 @@ bool V4L_camera::setActive(int feature, bool onoff)
 
 bool V4L_camera::getActive(int feature, bool* _isActive)
 {
+    if (param.camModel == ULTRAPYTON) {
+        if (feature == YARP_FEATURE_WHITE_BALANCE) {
+            return true;
+        }
+    }
+
     switch (feature) {
     case YARP_FEATURE_WHITE_BALANCE: {
         double tmp = get_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
@@ -1911,6 +1937,13 @@ bool V4L_camera::getActive(int feature, bool* _isActive)
 
 bool V4L_camera::hasAuto(int feature, bool* _hasAuto)
 {
+    if (param.camModel == ULTRAPYTON) {
+        if (feature == YARP_FEATURE_WHITE_BALANCE) {
+            return false;
+        }
+
+        return pythonCameraHelper_.hasAutoControl(convertYARP_to_V4L(feature));
+    }
     switch (feature) {
     case YARP_FEATURE_WHITE_BALANCE:
         *_hasAuto = check_V4L2_control(V4L2_CID_AUTO_WHITE_BALANCE);
@@ -1941,6 +1974,17 @@ bool V4L_camera::hasAuto(int feature, bool* _hasAuto)
 
 bool V4L_camera::hasManual(int feature, bool* _hasManual)
 {
+    if (param.camModel == ULTRAPYTON) {
+
+        if (feature == YARP_FEATURE_WHITE_BALANCE) {
+            *_hasManual = true;
+            return true;
+        }
+
+        *_hasManual = pythonCameraHelper_.hasControl(convertYARP_to_V4L(feature));
+        return true;
+    }
+
     if (feature == YARP_FEATURE_WHITE_BALANCE) {
         *_hasManual = check_V4L2_control(V4L2_CID_RED_BALANCE) && check_V4L2_control(V4L2_CID_BLUE_BALANCE);
         return true;

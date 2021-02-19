@@ -68,15 +68,21 @@ private:
     static constexpr unsigned int nativeHeight_ {1024};
 
 public:
+    //Main
     void openAll();
     void step();
     void closeAll();
+
+    //Settings
     double getCurrentFps() const;
     void setSubsamplingProperty(bool value);
     bool setControl(uint32_t v4lCtrl, double value);
     double getControl(uint32_t v4lCtrl);
     bool hasControl(uint32_t v4lCtrl);
+    bool hasAutoControl(uint32_t v4lCtrl);
+    bool checkControl(uint32_t v4lCtr);
 
+    //Inject function from out
     void setInjectedProcess(std::function<void(const void*, int)> toinJect);
     void setInjectedUnlock(std::function<void()> toinJect);
     void setInjectedLock(std::function<void()> toinJect);
@@ -90,6 +96,25 @@ private:
     void openPipeline();
     void initDevice();
     void startCapturing();
+    bool setDefaultControl();               //Some important default controls
+    uint32_t remapControl(uint32_t v4lCtr); //Different id from the official ones
+    bool setControl(uint32_t v4lCtrl, int fd, double value);
+    double getControl(uint32_t v4lCtrl, int fd);
+    void setSubDevFormat(int width, int height);
+    void setFormat();
+    void setSubsampling(void);
+    void crop(int top, int left, int w, int h, int mytry);
+    bool checkDevice(int mainSubdeviceFd);
+    int readFrame();
+    void processImage(const void* p, int size);
+    void unInitDevice(void);
+    void stopCapturing();
+    void closePipeline();
+    int xioctl(int fh, int request, void* arg);
+    void initMmap(void);
+    bool cropCheck();
+    void fpsCalculus();
+    void log(const std::string& toBeLogged, Severity severity = Severity::debug);
 
     //Property
     bool subsamplingEnabledProperty_ {true};
@@ -130,25 +155,9 @@ private:
 
     double fps_;
 
-    void setSubDevFormat(int width, int height);
-    void setFormat();
-    void setSubsampling(void);
-    void crop(int top, int left, int w, int h, int mytry);
-    bool checkDevice(int mainSubdeviceFd);
-    int readFrame();
-    void processImage(const void* p, int size);
-    void unInitDevice(void);
-    void stopCapturing();
-    void closePipeline();
-    int xioctl(int fh, int request, void* arg);
-    void initMmap(void);
-    bool cropCheck();
-    void fpsCalculus();
-    void log(const std::string& toBeLogged, Severity severity = Severity::debug);
+    const SpaceColor spaceColor_ {SpaceColor::rgb};
 
-    SpaceColor spaceColor_ {SpaceColor::rgb};
-
-    std::string mediaName_ {"/dev/media0"};
+    const std::string mediaName_ {"/dev/media0"};
 
     // Crop size
     unsigned int cropLeft_ {0};
