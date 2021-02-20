@@ -407,7 +407,7 @@ void QtYARPScope::routeMouseEvents( QWheelEvent* event )
 
         if(r.contains(x,y)){
             QPoint pos = QPoint(x - r.x(), y - r.y());
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
             QWheelEvent* newEvent = new QWheelEvent(pos,
                                                     event->globalPosition(),
                                                     event->pixelDelta(),
