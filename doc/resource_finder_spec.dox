@@ -101,7 +101,7 @@ Default values for YARP are therefore:
 <b>$YARP\_DATA\_DIRS</b>:
 > `/usr/local/share/yarp:/usr/share/yarp`
 <b>$YARP\_CONFIG\_DIRS</b>:
-> `/etc/yarp:Library/Preferences/yarp`
+> `/etc/yarp:/Library/Preferences/yarp`
 
 Configuration Files
 ===================
