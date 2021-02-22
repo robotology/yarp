@@ -9,7 +9,6 @@
 /src/devices/**                               @randaz81 @traversaro @Nicogene
 /src/devices/Rangefinder2DClient/**           @randaz81
 /src/devices/Rangefinder2DWrapper/**          @randaz81
-/src/devices/SDLJoypad/**                     @aerydna
 /src/devices/audioPlayerWrapper/**            @randaz81
 /src/devices/audioRecorderWrapper/**          @randaz81
 /src/devices/batteryClient/**                 @randaz81
@@ -31,15 +30,15 @@
 /src/devices/multipleanalogsensorsserver/**   @traversaro
 /src/devices/navigation2DClient/**            @randaz81
 /src/devices/navigation2DServer/**            @randaz81
-/src/devices/ovrheadset/**                    @drdanz @aerydna
+/src/devices/ovrheadset/**                    @drdanz
 /src/devices/portaudio/**                     @randaz81
 /src/devices/portaudioPlayer/**               @randaz81
 /src/devices/portaudioRecorder/**             @randaz81
 /src/devices/realsense2/**                    @Nicogene
 /src/devices/rpLidar/**                       @randaz81
 /src/devices/rpLidar2/**                      @randaz81
-/src/devices/transformClient/**               @randaz81 @aerydna
-/src/devices/transformServer/**               @randaz81 @aerydna
+/src/devices/transformClient/**               @randaz81
+/src/devices/transformServer/**               @randaz81
 /src/devices/usbCamera/**                     @Nicogene
 /src/idls/rosmsg/**                           @drdanz
 /src/idls/thrift/**                           @drdanz
@@ -57,13 +56,13 @@
 /src/libYARP_os/**                            @drdanz
 /src/libYARP_pcl/**                           @Nicogene
 /src/libYARP_profiler/**                      @Nicogene
-/src/libYARP_robottestingframework/**         @Nicogene @aerydna
+/src/libYARP_robottestingframework/**         @Nicogene
 /src/libYARP_rosmsg/**                        @drdanz
-/src/libYARP_run/**                           @drdanz @aerydna
-/src/libYARP_serversql/**                     @drdanz @aerydna
+/src/libYARP_run/**                           @drdanz
+/src/libYARP_serversql/**                     @drdanz
 /src/libYARP_sig/**                           @drdanz
 /src/libYARP_wire_rep_utils/**                @drdanz
-/src/robottestingframework-plugins/**         @Nicogene @aerydna
+/src/robottestingframework-plugins/**         @Nicogene
 /src/yarp/**                                  @drdanz
 /src/yarpbatterygui/**                        @randaz81
 /src/yarpdatadumper/**                        @pattacini
