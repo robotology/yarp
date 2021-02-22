@@ -126,6 +126,7 @@ constexpr size_t num_height = 5;
 
 
 bool FakeFrameGrabber::close() {
+    stop();
     return true;
 }
 
@@ -236,6 +237,14 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
 
     bx = w/2;
     by = h/2;
+
+    for (auto& buff : buffs) {
+        buff.resize(w, h);
+        buff.zero();
+    }
+
+    start();
+
     return true;
 }
 
@@ -316,21 +325,77 @@ bool FakeFrameGrabber::setRgbMirroring(bool mirror){
     return true;
 }
 
-bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+void FakeFrameGrabber::run()
+{
+    while (!isStopping()) {
+        for (size_t i = 0; i < 2; ++i) {
+            std::unique_lock<std::mutex> lk(mutex[i]);
+            img_consumed_cv[i].wait(lk, [&]{ if (img_ready[i]) {img_ready_cv[i].notify_one();} return (isStopping() || img_consumed[i]);});
+            if (isStopping()) {
+                break;
+            }
+            img_ready[i] = false;
+            img_consumed[i] = false;
+            createTestImage(buffs[i], buff_ts[i]);
+            img_ready[i] = true;
+            img_ready_cv[i].notify_all();
+        }
+    }
+}
+
+void FakeFrameGrabber::onStop()
+{
+    // Unlock any blocked thread.
+    for (size_t i = 0; i < 2; ++i) {
+        std::unique_lock<std::mutex> lk(mutex[i]);
+        img_consumed[i] = true;
+        img_consumed_cv[i].notify_all();
+        img_ready[i] = true;
+        img_ready_cv[i].notify_all();
+    }
+}
+
+
+bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+{
     timing();
-    createTestImage(image);
+
+    std::unique_lock<std::mutex> lk(mutex[curr_buff]);
+    img_ready_cv[curr_buff].wait(lk, [&]{return (!isRunning() || img_ready[curr_buff]);});
+    if (!isRunning()) {
+        return false;
+    }
+    image.copy(buffs[curr_buff]);
+    stamp.update(buff_ts[curr_buff]);
+    img_consumed[curr_buff] = true;
+    img_consumed_cv[curr_buff].notify_one();
+
+    curr_buff = (curr_buff + 1) % 2;
+
     return true;
 }
 
 
-bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+{
     timing();
-    createTestImage(rgb_image);
-    if (use_bayer) {
-        makeSimpleBayer(rgb_image,image);
-    } else {
-        image.copy(rgb_image);
+
+    std::unique_lock<std::mutex> lk(mutex[curr_buff]);
+    img_ready_cv[curr_buff].wait(lk, [&]{return !isRunning() || img_ready[curr_buff];});
+    if (!isRunning()) {
+        return false;
     }
+    if (use_bayer) {
+        makeSimpleBayer(buffs[curr_buff],image);
+    } else {
+        image.copy(buffs[curr_buff]);
+    }
+    stamp.update(buff_ts[curr_buff]);
+    img_consumed[curr_buff] = true;
+    img_consumed_cv[curr_buff].notify_one();
+
+    curr_buff = (curr_buff + 1) % 2;
+
     return true;
 }
 
@@ -408,13 +473,13 @@ void FakeFrameGrabber::printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t 
     }
 }
 
-void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
-                                       image) {
+void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                       double& timestamp) {
     // to test IPreciselyTimed, make timestamps be mysteriously NNN.NNN42
     double t = Time::now();
     t -= (((t*1000) - static_cast<int64_t>(t*1000)) / 1000);
     t += 0.00042;
-    stamp.update(t);
+    timestamp = t;
     image.resize(w,h);
 
     switch (mode) {
@@ -607,7 +672,7 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
 
     if (add_timestamp) {
         char ttxt[50];
-        std::snprintf(ttxt, 50, "%021.10f", t);
+        std::snprintf(ttxt, 50, "%021.10f", timestamp);
         image.pixel(0, 0).r = ttxt[0] - '0';
         image.pixel(0, 0).g = ttxt[1] - '0';
         image.pixel(0, 0).b = ttxt[2] - '0';

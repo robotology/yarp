@@ -17,6 +17,7 @@
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Searchable.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
@@ -25,6 +26,7 @@
 
 #include <cstdio>
 #include <random>
+#include <condition_variable>
 
 /**
  * @ingroup dev_impl_media dev_impl_fake
@@ -41,7 +43,8 @@ class FakeFrameGrabber :
         public yarp::dev::IFrameGrabberControls,
         public yarp::dev::IPreciselyTimed,
         public yarp::dev::IAudioVisualStream,
-        public yarp::dev::IRgbVisualParams
+        public yarp::dev::IRgbVisualParams,
+        public yarp::os::Thread
 {
 public:
     FakeFrameGrabber() = default;
@@ -71,6 +74,10 @@ public:
      * @return true iff the object could be configured.
      */
     bool open(yarp::os::Searchable& config) override;
+
+    // yarp::os::Thread
+    void run() override;
+    void onStop() override;
 
     void timing();
 
@@ -173,11 +180,21 @@ private:
     std::uniform_int_distribution<int> udist{-1, 1};
     std::uniform_real_distribution<double> ucdist{0.0, 1.0};
 
+    size_t curr_buff{1};
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> buffs[2];
+    bool img_ready[2] {false, false};
+    bool img_consumed[2] {true, true};
+    std::mutex mutex[2];
+    std::condition_variable img_ready_cv[2];
+    std::condition_variable img_consumed_cv[2];
+    double buff_ts[2];
+
     yarp::sig::ImageOf<yarp::sig::PixelRgb> background;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> rgb_image;
     yarp::os::Stamp stamp;
 
-    void createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+    void createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                         double& timestamp);
 
     bool makeSimpleBayer(yarp::sig::ImageOf<yarp::sig::PixelRgb>& src,
                          yarp::sig::ImageOf<yarp::sig::PixelMono>& bayer);
