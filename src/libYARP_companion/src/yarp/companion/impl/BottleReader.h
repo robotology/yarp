@@ -42,6 +42,7 @@ private:
     yarp::os::Semaphore done;
     bool raw;
     bool env;
+    std::string::size_type trim;
     Contact address;
 public:
     Port core;
@@ -49,12 +50,14 @@ public:
     BottleReader() : done(0) {
         raw = false;
         env = false;
+        trim = std::string::npos;
         core.setReader(*this);
         core.setReadOnly();
     }
 
-    void open(const char *name, bool showEnvelope) {
+    void open(const char *name, bool showEnvelope, int trim_at = -1) {
         env = showEnvelope;
+        trim = (trim_at > 0 ? static_cast<std::string::size_type>(trim_at) : std::string::npos);
         if (core.open(name)) {
             Companion::setActivePort(&core);
             address = core.where();
@@ -90,7 +93,7 @@ public:
                 int code = bot.get(0).asInt32();
                 if (code!=1) {
                     showEnvelope();
-                    yCInfo(COMPANION, "%s", bot.get(1).asString().c_str());
+                    yCInfo(COMPANION, "%s", bot.get(1).asString().substr(0, trim).c_str());
                     fflush(stdout);
                 }
                 if (code==1) {
@@ -99,7 +102,7 @@ public:
             } else {
                 // raw = true; // don't make raw mode "sticky"
                 showEnvelope();
-                yCInfo(COMPANION, "%s", bot.toString().c_str());
+                yCInfo(COMPANION, "%s", bot.toString().substr(0, trim).c_str());
                 fflush(stdout);
             }
             return true;
