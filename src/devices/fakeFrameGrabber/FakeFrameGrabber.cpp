@@ -406,8 +406,8 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                                        image) {
     // to test IPreciselyTimed, make timestamps be mysteriously NNN.NNN42
     double t = Time::now();
-    t -= ((t*1000)-(int)t)/1000;
-    t+= 0.00042;
+    t -= (((t*1000) - static_cast<int64_t>(t*1000)) / 1000);
+    t += 0.00042;
     stamp.update(t);
     if (background.width()>0) {
         image.copy(background);
