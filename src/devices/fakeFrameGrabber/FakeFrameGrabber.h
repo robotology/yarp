@@ -24,6 +24,7 @@
 #include <yarp/dev/IVisualParams.h>
 
 #include <cstdio>
+#include <random>
 
 /**
  * @ingroup dev_impl_media
@@ -160,6 +161,10 @@ private:
     bool mirror{false};
     yarp::os::Property intrinsic;
     yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
+
+    std::random_device rnddev;
+    std::default_random_engine randengine{rnddev()};
+    std::uniform_int_distribution<int> udist{-1, 1};
 
     yarp::sig::ImageOf<yarp::sig::PixelRgb> background;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> rgb_image;

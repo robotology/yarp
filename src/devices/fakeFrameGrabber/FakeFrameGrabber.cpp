@@ -556,8 +556,6 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             size_t hh = image.height();
 
             if (ww>1&&hh>1) {
-                std::default_random_engine randengine;
-                std::uniform_real_distribution<double> udist(-1.0, 1.0);
                 for (size_t x=0; x<ww; x++) {
                     for (size_t y=0; y<hh; y++) {
                         r += udist(randengine);
