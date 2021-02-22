@@ -208,6 +208,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
             }
             w = background.width();
             h = background.height();
+            have_bg = true;
         }
     }
 
@@ -409,15 +410,16 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     t -= (((t*1000) - static_cast<int64_t>(t*1000)) / 1000);
     t += 0.00042;
     stamp.update(t);
-    if (background.width()>0) {
-        image.copy(background);
-    } else {
-        image.resize(w,h);
-        image.zero();
-    }
+    image.resize(w,h);
+
     switch (mode) {
     case VOCAB_TIMETEXT:
         {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
             char txtbuf[50];
             static const double start_time = t;
             double time = t - start_time;
@@ -431,6 +433,11 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         break;
     case VOCAB_BALL:
         {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
             addCircle(image,PixelRgb{0,255,0},bx,by,15);
             addCircle(image,PixelRgb{0,255,255},bx,by,8);
             if (ct%5!=0) {
@@ -512,6 +519,11 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     case VOCAB_LINE:
     default:
         {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
             for (size_t i=0; i<image.width(); i++) {
                 image.pixel(i,ct).r = 255;
             }
@@ -568,6 +580,13 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         }
         break;
     case VOCAB_NONE:
+        {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
+        }
         break;
     }
     ct++;

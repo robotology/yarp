@@ -155,6 +155,7 @@ private:
     double horizontalFov{0.0};
     double verticalFov{0.0};
     double prev{0};
+    bool have_bg{false};
     int mode{0};
     bool use_bayer{false};
     bool use_mono{false};
