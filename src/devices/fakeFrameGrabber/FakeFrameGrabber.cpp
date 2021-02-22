@@ -23,46 +23,104 @@ using namespace yarp::sig::draw;
 
 namespace {
 YARP_LOG_COMPONENT(FAKEFRAMEGRABBER, "yarp.device.fakeFrameGrabber")
+constexpr yarp::conf::vocab32_t VOCAB_LINE           = yarp::os::createVocab('l','i','n','e');
 constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
 constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
 constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
 constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab('n','o','n','e');
 constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s','i','z','e');
 constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab('t','i','m','e');
-}
 
-FakeFrameGrabber::FakeFrameGrabber() :
-    ct(0),
-    bx(0),
-    by(0),
-    w(128),
-    h(128),
-    rnd(0),
-    freq(30),
-    period(1/freq),
-    first(0),
-    horizontalFov(0.0),
-    verticalFov(0.0),
-    prev(0),
-    mode(0),
-    use_bayer(false),
-    use_mono(false),
-    mirror(false)
+//the following data are used by [time] test
+constexpr char num[12][16]
 {
-    //the following data are used by [time] test
-    std::snprintf(num[0].data,  16, "**** ** ** ****");
-    std::snprintf(num[1].data,  16, " *  *  *  *  * ");
-    std::snprintf(num[2].data,  16, "***  *****  ***");
-    std::snprintf(num[3].data,  16, "***  ****  ****");
-    std::snprintf(num[4].data,  16, "* ** ****  *  *");
-    std::snprintf(num[5].data,  16, "****  ***  ****");
-    std::snprintf(num[6].data,  16, "****  **** ****");
-    std::snprintf(num[7].data,  16, "***  *  *  *  *");
-    std::snprintf(num[8].data,  16, "**** ***** ****");
-    std::snprintf(num[9].data,  16, "**** ****  ****");
-    std::snprintf(num[10].data, 16, "               ");
-    std::snprintf(num[11].data, 16, "          ** **");
-    start_time = yarp::os::Time::now();
+    // '0'
+    "***"
+    "* *"
+    "* *"
+    "* *"
+    "***",
+
+    // '1'
+    " * "
+    " * "
+    " * "
+    " * "
+    " * ",
+
+    // '2'
+    "***"
+    "  *"
+    "***"
+    "*  "
+    "***",
+
+    // '3'
+    "***"
+    "  *"
+    "***"
+    "  *"
+    "***",
+
+    // '4'
+    "* *"
+    "* *"
+    "***"
+    "  *"
+    "  *",
+
+    // '5'
+    "***"
+    "*  "
+    "***"
+    "  *"
+    "***",
+
+    // '6'
+    "***"
+    "*  "
+    "***"
+    "* *"
+    "***",
+
+    // '7'
+    "***"
+    "  *"
+    "  *"
+    "  *"
+    "  *",
+
+    // '8'
+    "***"
+    "* *"
+    "***"
+    "* *"
+    "***",
+
+    // '9'
+    "***"
+    "* *"
+    "***"
+    "  *"
+    "***",
+
+    // ' '
+    "   "
+    "   "
+    "   "
+    "   "
+    "   ",
+
+    // '.'
+    "   "
+    "   "
+    "   "
+    " **"
+    " **",
+};
+constexpr size_t num_width = 3;
+constexpr size_t num_height = 5;
+
 }
 
 
@@ -71,9 +129,6 @@ bool FakeFrameGrabber::close() {
 }
 
 bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
-    yarp::os::Value *val;
-    Value* retM;
-    retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
     w = config.check("width",yarp::os::Value(320),
                      "desired width of test image").asInt32();
     h = config.check("height",yarp::os::Value(240),
@@ -89,7 +144,12 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
     intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal length of the fakeFrameGrabber").asFloat64());
     intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the fakeFrameGrabber").asFloat64());
     intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the fakeFrameGrabber").asFloat64());
+
+    Value* retM;
+    retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
     intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,"Matrix that describes the lens' distortion(fake)"));
+    delete retM;
+
     intrinsic.put("distortionModel",config.check("distortionModel",Value("FishEye"),"Reference to group of parameters describing the distortion model of the camera").asString());
     intrinsic.put("k1",config.check("k1",Value(8.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
     intrinsic.put("k2",config.check("k2",Value(9.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
@@ -97,19 +157,32 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
     intrinsic.put("t1",config.check("t1",Value(11.0),"Tangential distortion of the lens(fake)").asFloat64());
     intrinsic.put("t2",config.check("t2",Value(12.0),"Tangential distortion of the lens(fake)").asFloat64());
     //Only for debug
-    CameraConfig conf1, conf2, conf3;
-    conf1.height=128; conf1.width=128; conf1.framerate=60.0; conf1.pixelCoding=VOCAB_PIXEL_RGB;
-    conf2.height=256; conf2.width=256; conf2.framerate=30.0; conf2.pixelCoding=VOCAB_PIXEL_BGR;
-    conf3.height=512; conf3.width=512; conf3.framerate=15.0; conf3.pixelCoding=VOCAB_PIXEL_MONO;
+    CameraConfig conf1;
+    conf1.height=128;
+    conf1.width=128;
+    conf1.framerate=60.0;
+    conf1.pixelCoding=VOCAB_PIXEL_RGB;
     configurations.push_back(conf1);
-    configurations.push_back(conf2);
-    configurations.push_back(conf3);
-    delete retM;
 
-    if (config.check("freq",val,"rate of test images in Hz")) {
+    CameraConfig conf2;
+    conf2.height=256;
+    conf2.width=256;
+    conf2.framerate=30.0;
+    conf2.pixelCoding=VOCAB_PIXEL_BGR;
+    configurations.push_back(conf2);
+
+    CameraConfig conf3;
+    conf3.height=512;
+    conf3.width=512;
+    conf3.framerate=15.0;
+    conf3.pixelCoding=VOCAB_PIXEL_MONO;
+    configurations.push_back(conf3);
+
+    yarp::os::Value *val;
+    if (config.check("freq", val, "rate of test images in Hz")) {
         freq = val->asFloat64();
         period = 1/freq;
-    } else if (config.check("period",val,
+    } else if (config.check("period", val,
                             "period of test images in seconds")) {
         period = val->asFloat64() / 1000.0;
         if(period<=0) {
@@ -117,6 +190,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
             freq = -1;
         }
     }
+
     mode = config.check("mode",
                         yarp::os::Value(VOCAB_LINE, true),
                         "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]").asVocab();
@@ -129,6 +203,9 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
             return false;
         }
         if (background.width()>0) {
+            if (config.check("width") || config.check("height")) {
+                yCWarning(FAKEFRAMEGRABBER, "width and height option are ignored when passing a background image");
+            }
             w = background.width();
             h = background.height();
         }
@@ -280,47 +357,40 @@ bool FakeFrameGrabber::setMode(int feature, FeatureMode mode) { return false; }
 bool FakeFrameGrabber::getMode(int feature, FeatureMode *mode) { return false; }
 bool FakeFrameGrabber::setOnePush(int feature) { return false; }
 
-void FakeFrameGrabber::printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
+void FakeFrameGrabber::printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t pixbuf_h, size_t x, size_t y, char* s, size_t size)
 {
-    int pixelsize = 5;
-    for (int i = 0; i<size; i++)
+    for (size_t i = 0; i < size; i++)
     {
-        char* num_p = nullptr;
-        switch (s[i])
-        {
-            case '0': num_p = num[0].data; break;
-            case '1': num_p = num[1].data; break;
-            case '2': num_p = num[2].data; break;
-            case '3': num_p = num[3].data; break;
-            case '4': num_p = num[4].data; break;
-            case '5': num_p = num[5].data; break;
-            case '6': num_p = num[6].data; break;
-            case '7': num_p = num[7].data; break;
-            case '8': num_p = num[8].data; break;
-            case '9': num_p = num[9].data; break;
-            case ' ': num_p = num[10].data; break;
-            case '.': num_p = num[11].data; break;
+        const char* num_p = nullptr;
+        switch (s[i]) {
+            case '0': num_p = num[0]; break;
+            case '1': num_p = num[1]; break;
+            case '2': num_p = num[2]; break;
+            case '3': num_p = num[3]; break;
+            case '4': num_p = num[4]; break;
+            case '5': num_p = num[5]; break;
+            case '6': num_p = num[6]; break;
+            case '7': num_p = num[7]; break;
+            case '8': num_p = num[8]; break;
+            case '9': num_p = num[9]; break;
+            case ' ': num_p = num[10]; break;
+            case '.': num_p = num[11]; break;
+            default: num_p = num[10]; break;
         }
 
-        for (int yi = 0; yi<5; yi++)
-            for (int xi = 0; xi<3; xi++)
-            {
-                int ii = yi * 3 + xi;
-                if (num_p[ii] == '*')
-                {
-                    for (int r = yi * pixelsize; r<yi*pixelsize + pixelsize; r++)
-                    {
-                        int off = i * (pixelsize + 20);
-                        for (int c = xi * pixelsize + off; c<xi*pixelsize + pixelsize + off; c++)
-                        {
-                            if (c >= pixbuf_h ||
-                                r >= pixbuf_w)
-                            {
+        for (size_t yi = 0; yi < num_height; yi++)
+            for (size_t xi = 0; xi < num_width; xi++) {
+                size_t ii = yi * num_width + xi;
+                if (num_p[ii] == '*') {
+                    for (size_t r = yi * num_height; r < yi*num_height + num_height; r++) {
+                        size_t off = i * (num_height + 20);
+                        for (size_t c = xi * num_height + off; c < xi*num_height + num_height + off; c++) {
+                            if (c >= pixbuf_h || r >= pixbuf_w) {
                                 //avoid drawing out of the image memory
                                 return;
                             }
                             unsigned char *pixel = pixbuf;
-                            size_t offset = c * 3 + r * (pixbuf_w * 3);
+                            size_t offset = c * sizeof(yarp::sig::PixelRgb) + r * (pixbuf_w * sizeof(yarp::sig::PixelRgb));
                             pixel = pixel + offset;
                             pixel[0] = 0;
                             pixel[1] = 0;
@@ -349,7 +419,8 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     case VOCAB_TIMETEXT:
         {
             char txtbuf[50];
-            double time = yarp::os::Time::now() - start_time;
+            static const double start_time = t;
+            double time = t - start_time;
             std::snprintf(txtbuf, 50, "%.3f", time);
             int len = strlen(txtbuf);
             if (len < 20)
@@ -477,9 +548,9 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         break;
     case VOCAB_RAND:
         {
-            // from Alessandro Scalzo
-
-            static unsigned char r=128,g=128,b=128;
+            static unsigned char r = 128;
+            static unsigned char g = 128;
+            static unsigned char b = 128;
 
             size_t ww = image.width();
             size_t hh = image.height();
@@ -489,9 +560,6 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                 std::uniform_real_distribution<double> udist(-1.0, 1.0);
                 for (size_t x=0; x<ww; x++) {
                     for (size_t y=0; y<hh; y++) {
-                        //r+=(rand()%3)-1;
-                        //g+=(rand()%3)-1;
-                        //b+=(rand()%3)-1;
                         r += udist(randengine);
                         g += udist(randengine);
                         b += udist(randengine);
