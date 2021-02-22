@@ -158,6 +158,7 @@ private:
     double prev{0};
     bool have_bg{false};
     int mode{0};
+    bool add_timestamp{false};
     bool use_bayer{false};
     bool use_mono{false};
     bool mirror{false};

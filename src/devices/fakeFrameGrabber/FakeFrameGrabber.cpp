@@ -212,6 +212,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
         }
     }
 
+    add_timestamp = config.check("timestamp", "should write the timestamp in the first bytes of the image");
     use_bayer = config.check("bayer","should emit bayer test image?");
     use_mono = config.check("mono","should emit a monochrome image?");
     use_mono = use_mono||use_bayer;
@@ -527,35 +528,6 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             for (size_t i=0; i<image.width(); i++) {
                 image.pixel(i,ct).r = 255;
             }
-            char ttxt[50];
-            std::snprintf(ttxt, 50, "%021.10f", t);
-            image.pixel(0, 0).r = ttxt[0] - '0';
-            image.pixel(0, 0).g = ttxt[1] - '0';
-            image.pixel(0, 0).b = ttxt[2] - '0';
-
-            image.pixel(1, 0).r = ttxt[3] - '0';
-            image.pixel(1, 0).g = ttxt[4] - '0';
-            image.pixel(1, 0).b = ttxt[5] - '0';
-
-            image.pixel(2, 0).r = ttxt[6] - '0';
-            image.pixel(2, 0).g = ttxt[7] - '0';
-            image.pixel(2, 0).b = ttxt[8] - '0';
-
-            image.pixel(3, 0).r = ttxt[9] - '0';
-            image.pixel(3, 0).g = ttxt[10] - '0';
-            image.pixel(3, 0).b = ttxt[11] - '0';
-
-            image.pixel(4, 0).r = ttxt[12] - '0';
-            image.pixel(4, 0).g = ttxt[13] - '0';
-            image.pixel(4, 0).b = ttxt[14] - '0';
-
-            image.pixel(5, 0).r = ttxt[15] - '0';
-            image.pixel(5, 0).g = ttxt[16] - '0';
-            image.pixel(5, 0).b = ttxt[17] - '0';
-
-            image.pixel(6, 0).r = ttxt[18] - '0';
-            image.pixel(6, 0).g = ttxt[19] - '0';
-            image.pixel(6, 0).b = ttxt[20] - '0';
         }
         break;
     case VOCAB_RAND:
@@ -598,6 +570,38 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     }
     if (bx>=image.width()) {
         bx = image.width()-1;
+    }
+
+    if (add_timestamp) {
+        char ttxt[50];
+        std::snprintf(ttxt, 50, "%021.10f", t);
+        image.pixel(0, 0).r = ttxt[0] - '0';
+        image.pixel(0, 0).g = ttxt[1] - '0';
+        image.pixel(0, 0).b = ttxt[2] - '0';
+
+        image.pixel(1, 0).r = ttxt[3] - '0';
+        image.pixel(1, 0).g = ttxt[4] - '0';
+        image.pixel(1, 0).b = ttxt[5] - '0';
+
+        image.pixel(2, 0).r = ttxt[6] - '0';
+        image.pixel(2, 0).g = ttxt[7] - '0';
+        image.pixel(2, 0).b = ttxt[8] - '0';
+
+        image.pixel(3, 0).r = ttxt[9] - '0';
+        image.pixel(3, 0).g = ttxt[10] - '0';
+        image.pixel(3, 0).b = ttxt[11] - '0';
+
+        image.pixel(4, 0).r = ttxt[12] - '0';
+        image.pixel(4, 0).g = ttxt[13] - '0';
+        image.pixel(4, 0).b = ttxt[14] - '0';
+
+        image.pixel(5, 0).r = ttxt[15] - '0';
+        image.pixel(5, 0).g = ttxt[16] - '0';
+        image.pixel(5, 0).b = ttxt[17] - '0';
+
+        image.pixel(6, 0).r = ttxt[18] - '0';
+        image.pixel(6, 0).g = ttxt[19] - '0';
+        image.pixel(6, 0).b = ttxt[20] - '0';
     }
 }
 
