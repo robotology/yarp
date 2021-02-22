@@ -10,7 +10,6 @@
 #ifndef YARP_FAKEFRAMEGRABBER_FAKEFRAMEGRABBER_H
 #define YARP_FAKEFRAMEGRABBER_FAKEFRAMEGRABBER_H
 
-#include <cstdio>
 
 #include <yarp/sig/ImageFile.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -24,7 +23,8 @@
 #include <yarp/os/Value.h>
 #include <yarp/dev/IVisualParams.h>
 
-constexpr yarp::conf::vocab32_t VOCAB_LINE = yarp::os::createVocab('l','i','n','e');
+#include <cstdio>
+#include <random>
 
 /**
  * @ingroup dev_impl_media dev_impl_fake
@@ -43,28 +43,13 @@ class FakeFrameGrabber :
         public yarp::dev::IAudioVisualStream,
         public yarp::dev::IRgbVisualParams
 {
-private:
-    size_t ct;
-    size_t bx, by;
-    size_t w, h;
-    unsigned long rnd;
-    double freq;
-    double period;
-    double first;
-    double horizontalFov,verticalFov;
-    double prev;
-    int mode;
-    bool use_bayer;
-    bool use_mono;
-    bool mirror;
-    yarp::os::Property intrinsic;
-    yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
-
 public:
-    /**
-     * Constructor.
-     */
-    FakeFrameGrabber();
+    FakeFrameGrabber() = default;
+    FakeFrameGrabber(const FakeFrameGrabber&) = delete;
+    FakeFrameGrabber(FakeFrameGrabber&&) = delete;
+    FakeFrameGrabber& operator=(const FakeFrameGrabber&) = delete;
+    FakeFrameGrabber& operator=(FakeFrameGrabber&&) = delete;
+    ~FakeFrameGrabber() override = default;
 
     bool close() override;
 
@@ -155,20 +140,44 @@ public:
     bool setOnePush(int feature) override;
 
 private:
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> background, rgb_image;
+    static constexpr size_t default_w = 128;
+    static constexpr size_t default_h = 128;
+    static constexpr size_t default_freq = 30;
+
+    size_t ct{0};
+    size_t bx{0};
+    size_t by{0};
+    size_t w{default_w};
+    size_t h{default_h};
+    unsigned long rnd{0};
+    double freq{default_freq};
+    double period{1/freq};
+    double first{0};
+    double horizontalFov{0.0};
+    double verticalFov{0.0};
+    double prev{0};
+    bool have_bg{false};
+    int mode{0};
+    bool use_bayer{false};
+    bool use_mono{false};
+    bool mirror{false};
+    yarp::os::Property intrinsic;
+    yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
+
+    std::random_device rnddev;
+    std::default_random_engine randengine{rnddev()};
+    std::uniform_int_distribution<int> udist{-1, 1};
+
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> background;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> rgb_image;
     yarp::os::Stamp stamp;
+
     void createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
     bool makeSimpleBayer(yarp::sig::ImageOf<yarp::sig::PixelRgb>& src,
                          yarp::sig::ImageOf<yarp::sig::PixelMono>& bayer);
 
-    void printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size);
-    struct txtnum_type
-    {
-        char data[16];
-    };
-    txtnum_type num[12];
-    double start_time;
+    void printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t pixbuf_h, size_t x, size_t y, char* s, size_t size);
 };
 
 
