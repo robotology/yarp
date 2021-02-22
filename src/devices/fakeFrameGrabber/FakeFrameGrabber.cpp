@@ -27,6 +27,7 @@ constexpr yarp::conf::vocab32_t VOCAB_LINE           = yarp::os::createVocab('l'
 constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
 constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
 constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
+constexpr yarp::conf::vocab32_t VOCAB_NOIS           = yarp::os::createVocab('n','o','i','s');
 constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab('n','o','n','e');
 constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s','i','z','e');
 constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab('t','i','m','e');
@@ -193,7 +194,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
 
     mode = config.check("mode",
                         yarp::os::Value(VOCAB_LINE, true),
-                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]").asVocab();
+                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], noise [nois], none [none], time test[time]").asVocab();
 
     if (config.check("src")) {
         if (!yarp::sig::file::read(background,
@@ -213,6 +214,9 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
     }
 
     add_timestamp = config.check("timestamp", "should write the timestamp in the first bytes of the image");
+
+    snr = yarp::conf::clamp(config.check("snr",Value(default_snr), "Signal noise ratio ([0.0-1.0] default 0.5)").asFloat64(), 0.0, 1.0);
+
     use_bayer = config.check("bayer","should emit bayer test image?");
     use_mono = config.check("mono","should emit a monochrome image?");
     use_mono = use_mono||use_bayer;
@@ -551,6 +555,35 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             }
         }
         break;
+    case VOCAB_NOIS:
+        {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
+            static const double nsr = 1.0 - snr;
+            for (size_t x = 0; x < image.width(); ++x) {
+                for (size_t y = 0; y < image.height(); ++y) {
+                    auto rand = ucdist(randengine);
+                    if (have_bg) {
+                        image.pixel(x,y) = PixelRgb {
+                            static_cast<unsigned char>(image.pixel(x,y).r * snr + rand * nsr * 255),
+                            static_cast<unsigned char>(image.pixel(x,y).g * snr + rand * nsr * 255),
+                            static_cast<unsigned char>(image.pixel(x,y).b * snr + rand * nsr * 255)
+                        };
+                    } else {
+                        image.pixel(x,y) = PixelRgb{
+                            static_cast<unsigned char>(rand * nsr),
+                            static_cast<unsigned char>(rand * nsr),
+                            static_cast<unsigned char>(rand * nsr)
+                        };
+                    }
+                }
+            }
+        }
+        break;
+
     case VOCAB_NONE:
         {
             if (have_bg) {
