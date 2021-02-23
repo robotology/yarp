@@ -533,9 +533,10 @@ jobs:
       with:
         path: |
           .ccache
-        key: build-${{ matrix.config.id }}-ccache-${{ steps.prepare_cache_timestamp.outputs.timestamp }}
+        key: build-${{ matrix.config.id }}-ccache-${{ github.ref }}-${{ steps.prepare_cache_timestamp.outputs.timestamp }}
         restore-keys: |
-          build-${{ matrix.config.id }}-ccache-
+          build-${{ matrix.config.id }}-${{ github.base_ref }}-ccache-
+          build-${{ matrix.config.id }}-${{ github.ref }}-ccache-
 
     - name: Dependencies [Linux]
       if: runner.os == 'Linux'
