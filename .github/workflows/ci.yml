@@ -2,12 +2,15 @@ name: CI Workflow
 
 on:
   push:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
 
 jobs:
   check-license:
     name: 'Check License'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -24,7 +27,7 @@ jobs:
 
   check-style:
     name: 'Check Style'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -42,7 +45,7 @@ jobs:
   run-cmake:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
     needs: [check-license, check-style]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     container:
       image: ghcr.io/robotology/ycm:cmake-${{ matrix.config.cmake_version }}_ycm-${{ matrix.config.ycm_version }}
     strategy:
@@ -50,55 +53,46 @@ jobs:
       matrix:
         config:
         - {
-            os: ubuntu-latest,
             cmake_version: "3.12",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.12.1",
           }
         - {
-            os: ubuntu-latest,
             cmake_version: "3.13",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.12.1",
           }
         - {
-            os: ubuntu-latest,
             cmake_version: "3.14",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.12.1",
           }
         - {
-            os: ubuntu-latest,
             cmake_version: "3.15",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.12.1",
           }
         - {
-            os: ubuntu-latest,
             cmake_version: "3.16",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.12.1",
           }
         - {
-            os: ubuntu-latest,
             cmake_version: "3.17",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.12.1",
           }
         - {
-            os: ubuntu-latest,
             cmake_version: "3.18",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.12.1",
           }
         - {
-            os: ubuntu-latest,
             cmake_version: "3.19",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.12.1",
           }
         - {
-            os: ubuntu-latest,
             cmake_version: "3.19",
             cmake_generator: "Ninja",
             ycm_version: "0.12.1",
@@ -515,8 +509,16 @@ jobs:
 
     steps:
 
-    - name: Clone repository
+    - name: Clone repository [push]
+      if: github.event_name == 'push'
       uses: actions/checkout@v2
+
+    - name: Clone repository [pull_request_target]
+      if: github.event_name == 'pull_request_target'
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
+        ref: ${{ github.event.pull_request.head.ref }}
 
     - name: Prepare cache timestamp
       id: prepare_cache_timestamp
@@ -598,6 +600,11 @@ jobs:
                                       ruby-dev \
                                       ruby \
                                       perl
+
+          # Other tools useful in github actions
+          sudo apt-get install -qq -y jq \
+                                      wget \
+                                      curl
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
@@ -1160,12 +1167,21 @@ jobs:
 
 
   codacy-clang-tidy:
+    environment: code-analysis
     name: 'Codacy - clang-tidy'
     needs: run-cmake
     runs-on: ubuntu-20.04
     steps:
-    - name: Clone repository
+    - name: Clone repository [push]
+      if: github.event_name == 'push'
       uses: actions/checkout@v2
+
+    - name: Clone repository [pull_request_target]
+      if: github.event_name == 'pull_request_target'
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
+        ref: ${{ github.event.pull_request.head.ref }}
 
     # This step is copied from the build step, please keep them in sync until we
     # find a better way to do it automatically
@@ -1232,6 +1248,11 @@ jobs:
                                       ruby \
                                       perl
 
+          # Other tools useful in github actions
+          sudo apt-get install -qq -y jq \
+                                      wget \
+                                      curl
+
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
 
@@ -1253,7 +1274,12 @@ jobs:
         echo "CLICOLOR_FORCE=1" >> $GITHUB_ENV
         echo "YARP_COLORED_OUTPUT=1" >> $GITHUB_ENV
         echo "PROJECT_TOKEN=${CODACY_TOKEN}" >> $GITHUB_ENV
-        echo "COMMIT=${GITHUB_SHA}" >> $GITHUB_ENV
+        if [[ "$GITHUB_EVENT_NAME" = "pull_request" ]]; then
+          COMMIT=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.head.sha)
+        else
+          COMMIT=${GITHUB_SHA}
+        fi
+        echo "COMMIT=${COMMIT}" >> $GITHUB_ENV
         echo "CODACY_URL=https://api.codacy.com" >> $GITHUB_ENV
         echo "CODACY_CLANG_TIDY_VERSION=${CODACY_CLANG_TIDY_VERSION}" >> $GITHUB_ENV
 
@@ -1266,9 +1292,7 @@ jobs:
         max_attempts: 3
         command: |
           # Download extra packages required
-          sudo apt-get install -qq -y wget \
-                                      curl \
-                                      clang-${CLANG_VERSION} \
+          sudo apt-get install -qq -y clang-${CLANG_VERSION} \
                                       clang-tidy-${CLANG_VERSION}
 
           # Download codacy-clang-tidy
@@ -1314,6 +1338,7 @@ jobs:
 
     - name: Send the results to Codacy
       run: |
+        set -x
         cat /tmp/out2 | \
         curl --silent --show-error --fail \
             -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
@@ -1323,6 +1348,7 @@ jobs:
 
     - name: Signal that Codacy can use the sent results and start a new analysis
       run: |
+        set -x
         curl --silent --show-error --fail \
           -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
           -H "Content-type: application/json" \
@@ -1331,12 +1357,21 @@ jobs:
 
 
   codacy-coverage:
+    environment: code-analysis
     name: 'Codacy - coverage'
     needs: run-cmake
     runs-on: ubuntu-20.04
     steps:
-    - name: Clone repository
+    - name: Clone repository [push]
+      if: github.event_name == 'push'
       uses: actions/checkout@v2
+
+    - name: Clone repository [pull_request_target]
+      if: github.event_name == 'pull_request_target'
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
+        ref: ${{ github.event.pull_request.head.ref }}
 
     # This step is copied from the build step, please keep them in sync until we
     # find a better way to do it automatically
@@ -1403,6 +1438,11 @@ jobs:
                                       ruby \
                                       perl
 
+          # Other tools useful in github actions
+          sudo apt-get install -qq -y jq \
+                                      wget \
+                                      curl
+
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
 
@@ -1439,3 +1479,327 @@ jobs:
       with:
         project-token: ${{ secrets.CODACY_TOKEN }}
         coverage-reports: build/coverage.info
+
+
+  sonarcloud:
+    environment: code-analysis
+    name: 'SonarCloud'
+    needs: run-cmake
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+    - name: Get YARP Project Version
+      if: github.event_name == 'release'
+      id: get_yarp_version
+      run: |
+        echo "::set-output name=yarp_version::$(awk '/ VERSION /{print $2}' CMakeLists.txt)"
+
+    - name: Get Timestamp
+      id: get_timestamp
+      run: |
+        echo "::set-output name=timestamp::$(/bin/date -u +%Y%m%d-%H%M%S)"
+
+    - name: Get Sonar and Prepare Environment
+      id: get_sonar
+      env:
+        SONAR_ORGANIZATION: 'robotology'
+        SONAR_PROJECT_KEY: 'robotology_yarp'
+        SONAR_PROJECT_NAME: 'yarp'
+        SONAR_PROJECT_DESCRIPTION: 'Yet Another Robot Platform'
+        SONAR_PROJECT_VERSION: ${{ steps.get_yarp_version.outputs.yarp_version }}
+        SONAR_LINKS_HOMEPAGE: 'https://www.yarp.it/'
+        SONAR_SOURCES: 'src'
+        SONAR_TESTS: 'tests'
+        SONAR_CFAMILY_GCOV_REPORTSPATH: 'build/coverage.info'
+        SONAR_CFAMILY_CACHE_ENABLED: true
+        SONAR_SCANNER_VERSION: '4.6.0.2311'
+        SONAR_THREADS: 2
+      run: |
+        # Internal variables
+        SONAR_HOME_PATH=.sonar
+        SONAR_CACHE_PATH=${SONAR_HOME_PATH}/cache
+        SONAR_HOME=${HOME}/${SONAR_HOME_PATH}
+
+        # project name from SonarCloud projet creation page -Dsonar.projectKey=XXXX
+        echo "SONAR_PROJECT_KEY=${SONAR_PROJECT_KEY}" >> $GITHUB_ENV
+
+        # project name from SonarCloud projet creation page -Dsonar.projectKey=XXXX
+        echo "SONAR_PROJECT_NAME=${SONAR_PROJECT_NAME}" >> $GITHUB_ENV
+
+        # project name from SonarCloud projet creation page -Dsonar.projectName=XXXX
+        echo "SONAR_ORGANIZATION=${SONAR_ORGANIZATION}" >> $GITHUB_ENV
+
+        # project version
+        [[ ! -z "${SONAR_PROJECT_VERSION}" ]] && echo "SONAR_PROJECT_VERSION=${SONAR_PROJECT_VERSION}" >> $GITHUB_ENV
+
+        # Links
+        echo "SONAR_LINKS_HOMEPAGE=${SONAR_LINKS_HOMEPAGE:-https://github.com/${GITHUB_REPOSITORY}/}" >> $GITHUB_ENV
+        echo "SONAR_LINKS_CI=${SONAR_LINKS_CI:-https://github.com/${GITHUB_REPOSITORY}/actions/}" >> $GITHUB_ENV
+        echo "SONAR_LINKS_ISSUE=${SONAR_LINKS_ISSUE:-https://github.com/${GITHUB_REPOSITORY}/issues/}" >> $GITHUB_ENV
+        echo "SONAR_LINKS_SCM=${SONAR_LINKS_SCM:-https://github.com/${GITHUB_REPOSITORY}/}" >> $GITHUB_ENV
+
+        # Set default to SONAR_HOST_URL in not provided
+        echo "SONAR_HOST_URL=${SONAR_HOST_URL:-https://sonarcloud.io}" >> $GITHUB_ENV
+
+        echo "SONAR_SCANNER_VERSION=${SONAR_SCANNER_VERSION}" >> $GITHUB_ENV
+
+        SONAR_SCANNER_HOME=${SONAR_HOME}/sonar-scanner-${SONAR_SCANNER_VERSION}-linux
+        echo "SONAR_SCANNER_HOME=${SONAR_SCANNER_HOME}" >> $GITHUB_ENV
+
+        echo "SONAR_SCANNER_OPTS=${SONAR_SCANNER_OPTS:--server}" >> $GITHUB_ENV
+        echo "SONAR_SOURCES=${SONAR_SOURCES:-src}" >> $GITHUB_ENV
+        [[ -v SONAR_TESTS ]] && echo "SONAR_TESTS=${SONAR_TESTS}" >> $GITHUB_ENV
+
+        echo "SONAR_SOURCEENCODING=${SONAR_SOURCEENCODING:-UTF-8}" >> $GITHUB_ENV
+        echo "SONAR_THREADS=${SONAR_THREADS:-1}" >> $GITHUB_ENV
+
+        [[ -v SONAR_CFAMILY_GCOV_REPORTSPATH ]] && echo "SONAR_CFAMILY_GCOV_REPORTSPATH=${SONAR_CFAMILY_GCOV_REPORTSPATH}" >> $GITHUB_ENV
+
+        echo "SONAR_CFAMILY_CACHE_ENABLED=$([[ $SONAR_CFAMILY_CACHE_ENABLED = true ]] && echo true || echo false)" >> $GITHUB_ENV
+        [[ $SONAR_CFAMILY_CACHE_ENABLED = true ]] && echo "SONAR_CFAMILY_CACHE_PATH=${SONAR_CACHE_PATH}" >> $GITHUB_ENV
+
+        echo "PATH=${SONAR_HOME}/build-wrapper-linux-x86:${SONAR_SCANNER_HOME}/bin:${PATH}" >> $GITHUB_ENV
+
+        mkdir -p ${SONAR_HOME}
+        mkdir -p ${SONAR_CACHE_PATH}
+
+        cat $GITHUB_ENV
+
+        # Download sonar-scanner
+        curl -sSLo ${SONAR_HOME}/sonar-scanner.zip https://binaries${SONAR_HOME_PATH}source.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+        unzip -o ${SONAR_HOME}/sonar-scanner.zip -d ${SONAR_HOME}/
+
+        # Download build-wrapper
+        curl -sSLo ${SONAR_HOME}/build-wrapper-linux-x86.zip https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+        unzip -o ${SONAR_HOME}/build-wrapper-linux-x86.zip -d ${SONAR_HOME}/
+
+        echo "::set-output name=sonar_path::${SONAR_HOME_PATH}"
+        echo "::set-output name=sonar_cache_path::${SONAR_CACHE_PATH}"
+
+    # This step is copied from the build step, please keep them in sync until we
+    # find a better way to do it automatically
+    - name: Dependencies [Linux]
+      if: runner.os == 'Linux'
+      uses: nick-invision/retry@v2.2.0
+      with:
+        timeout_minutes: 20
+        retry_wait_seconds: 300
+        max_attempts: 3
+        command: |
+          # Install Robotology dependencies from robotology ppa
+          sudo apt-add-repository -y ppa:robotology/ppa
+          sudo apt-get install -qq -y ycm-cmake-modules \
+                                      librobottestingframework-dev
+
+          # Install build tools
+          sudo apt-get install -qq -y cmake \
+                                      ccache \
+                                      ninja-build \
+                                      valgrind \
+                                      lcov
+
+          sudo apt-get install -qq -y libace-dev \
+                                      libsqlite3-dev \
+                                      libtinyxml-dev \
+                                      libedit-dev \
+                                      qtbase5-dev \
+                                      qtdeclarative5-dev \
+                                      qtmultimedia5-dev \
+                                      libqt5opengl5-dev \
+                                      libqcustomplot-dev \
+                                      libopencv-dev \
+                                      libeigen3-dev \
+                                      libgraphviz-dev \
+                                      libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev \
+                                      libpng-dev \
+                                      libv4l-dev \
+                                      libavcodec-dev \
+                                      libavdevice-dev \
+                                      libavformat-dev \
+                                      libavutil-dev \
+                                      portaudio19-dev \
+                                      libsdl1.2-dev \
+                                      libopenni2-dev \
+                                      libftdi-dev \
+                                      libi2c-dev \
+                                      libfuse-dev \
+                                      libjpeg-dev \
+                                      libpcl-dev
+
+          # Install SWIG and bindings dependencies
+          sudo apt-get install -qq -y swig \
+                                      mono-mcs \
+                                      liblua5.3-dev \
+                                      lua5.3 \
+                                      tcl-dev \
+                                      tk-dev \
+                                      python3-dev \
+                                      liboctave-dev \
+                                      default-jdk \
+                                      ruby-dev \
+                                      ruby \
+                                      perl
+
+          # Other tools useful in github actions
+          sudo apt-get install -qq -y jq \
+                                      wget \
+                                      curl
+
+          # Remove old packages from apt cache
+          sudo apt-get autoclean -qq
+
+    - name: Prepare ccache environment variables
+      id: init_ccache
+      run: |
+        CCACHE_HOME_PATH=.ccache
+        CCACHE_BASEDIR=$GITHUB_WORKSPACE
+
+        echo "CCACHE_BASEDIR=${CCACHE_BASEDIR}" >> $GITHUB_ENV
+        echo "CCACHE_HOME_PATH=.ccache" >> $GITHUB_ENV
+        echo "CCACHE_DIR=${CCACHE_BASEDIR}/${CCACHE_HOME_PATH}" >> $GITHUB_ENV
+        echo "CCACHE_COMPRESS=true" >> $GITHUB_ENV
+        echo "CCACHE_COMPRESSLEVEL=6" >> $GITHUB_ENV
+        echo "CCACHE_MAXSIZE=400M" >> $GITHUB_ENV
+        echo "CCACHE_CPP2=yes" >> $GITHUB_ENV
+        echo "PATH=/usr/lib/ccache::${PATH}" >> $GITHUB_ENV
+
+        cat $GITHUB_ENV
+
+        echo "::set-output name=ccache_path::${CCACHE_HOME_PATH}"
+
+    - name: Print info and reset stats before build
+      run: |
+        set -x
+
+        which ccache
+        ccache --version
+        ccache -p
+
+        ls -la --color=always /usr/lib/ccache
+
+        # Reset ccache stats before starting
+        ccache -z
+
+        gcov --version
+        gcovr --version
+
+    - name: Handle cache
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ steps.init_ccache.outputs.ccache_path }}
+          ${{ steps.get_sonar.outputs.sonar_cache_path }}
+        key: sonar-cache-${{ steps.get_timestamp.outputs.timestamp }}
+        restore-keys: |
+          sonar-cache-
+
+    - name: Run CMake
+      run: |
+        export CLICOLOR_FORCE=1
+        export YARP_COLORED_OUTPUT=1
+
+        /usr/bin/cmake -S. -Bbuild \
+          -C .ci/initial-cache.gh.linux.cmake \
+          -DCMAKE_C_FLAGS=-fdiagnostics-color=always \
+          -DCMAKE_CXX_FLAGS=-fdiagnostics-color=always \
+          -DCMAKE_BUILD_TYPE=Profile \
+          "-DCMAKE_C_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+          "-DCMAKE_CXX_FLAGS_PROFILE=-pg -g3 -ggdb -fno-inline -ftest-coverage -fprofile-arcs -DNDEBUG" \
+          -DCMAKE_EXE_LINKER_FLAGS_PROFILE=-lgcov \
+          -DCMAKE_MODULE_LINKER_FLAGS_PROFILE=-lgcov \
+          -DCMAKE_SHARED_LINKER_FLAGS_PROFILE=-lgcov \
+          -DCMAKE_STATIC_LINKER_FLAGS_PROFILE= \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
+          -DYARP_NO_DEPRECATED:BOOL=ON \
+          -DYARP_COMPILE_BINDINGS:BOOL=OFF
+
+    - name: Link compile_commands.json in the source directory
+      run: |
+        ln -s build/compile_commands.json .
+
+    - name: Build inside the build-wrapper
+      run: |
+        build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build --config Profile
+
+    - name: Run tests
+      run: |
+        # Download CTest2JUnit.xsl
+        wget https://raw.githubusercontent.com/zanata/zanata-tests/master/scripts/CTest2JUnit.xsl -O CTest2JUnit.xsl
+
+        # -T Test produces the xml output with the results
+        (cd build && ctest -T test)
+        xsltproc CTest2JUnit.xsl build/Testing/$(head -n 1 < build/Testing/TAG)/Test.xml > build/JUnitTestResults.xml
+
+    - name: Print tests results file
+      run: |
+        xmllint --format build/JUnitTestResults.xml | source-highlight -s xml --out-format=esc -o STDOUT
+
+    - name: Print ccache stats after build
+      run: |
+        set -x
+
+        # Print ccache stats
+        ccache -s
+
+    - name: Capture coverage info
+      run: |
+        (cd build && gcovr --sonarqube --branches --output coverage.xml --root .. .)
+
+    - name: Print coverage info file
+      run: |
+        xmllint --format build/coverage.xml | source-highlight -s xml --out-format=esc -o STDOUT
+
+    - name: Run sonar scanner
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+
+        # Run sonar scanner (here, arguments are passed through the command line but most of them can be written in the sonar-project.properties file)
+        [[ -v SONAR_TOKEN ]] && SONAR_TOKEN_CMD_ARG="-Dsonar.login=${SONAR_TOKEN}"
+        [[ -v SONAR_ORGANIZATION ]] && SONAR_ORGANIZATION_CMD_ARG="-Dsonar.organization=${SONAR_ORGANIZATION}"
+        [[ -v SONAR_PROJECT_NAME ]] && SONAR_PROJECT_NAME_CMD_ARG="-Dsonar.projectName=${SONAR_PROJECT_NAME}"
+        [[ -v SONAR_PROJECT_DESCRIPTION ]] && SONAR_PROJECT_DESCRIPTION_CMD_ARG="-Dsonar.projectDescription=${SONAR_PROJECT_DESCRIPTION}"
+        [[ -v SONAR_PROJECT_VERSION ]] && SONAR_PROJECT_VERSION_CMD_ARG="-Dsonar.projectVersion=${SONAR_PROJECT_VERSION}"
+
+        # Paths to test files
+        [[ -v SONAR_TESTS ]] && SONAR_TESTS_CMD_ARG="-Dsonar.tests=${SONAR_TESTS}"
+
+        # Path to coverage files
+        [[ -v SONAR_CFAMILY_GCOV_REPORTSPATH ]] && SONAR_CFAMILY_GCOV_REPORTSPATH_CMD_ARG="-Dsonar.cfamily.gcov.reportsPath=${SONAR_CFAMILY_GCOV_REPORTSPATH}"
+
+        # Path to cache
+        [[ -v SONAR_CFAMILY_CACHE_PATH ]] && SONAR_CFAMILY_CACHE_PATH_CMD_ARG="-Dsonar.cfamily.cache.path=${SONAR_CFAMILY_CACHE_PATH}"
+
+        set -x
+
+        sonar-scanner \
+            -Dsonar.host.url="${SONAR_HOST_URL}" \
+            -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+            -Dsonar.language=c++ \
+            -Dsonar.sources=${SONAR_SOURCES} \
+            -Dsonar.links.homepage=${SONAR_LINKS_HOMEPAGE} \
+            -Dsonar.links.ci=${SONAR_LINKS_CI} \
+            -Dsonar.links.issue=${SONAR_LINKS_ISSUE} \
+            -Dsonar.links.scm=${SONAR_LINKS_SCM} \
+            -Dsonar.cfamily.build-wrapper-output=build_wrapper_output_directory \
+            -Dsonar.sourceEncoding=${SONAR_SOURCEENCODING} \
+            -Dsonar.cfamily.threads=${SONAR_THREADS} \
+            -Dsonar.cfamily.cache.enabled=${SONAR_CFAMILY_CACHE_ENABLED} \
+            -Dsonar.coverageReportPaths=build/coverage.xml \
+            -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
+            -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
+            -Dsonar.coverage.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/*" \
+            -Dsonar.branch.longLivedBranches.regex="yarp-.*" \
+            ${SONAR_TESTS_CMD_ARG} \
+            ${SONAR_PROJECT_NAME_CMD_ARG} \
+            ${SONAR_PROJECT_DESCRIPTION_CMD_ARG} \
+            ${SONAR_PROJECT_VERSION_CMD_ARG} \
+            ${SONAR_TOKEN_CMD_ARG} \
+            ${SONAR_ORGANIZATION_CMD_ARG} \
+            ${SONAR_CFAMILY_CACHE_PATH_CMD_ARG}
