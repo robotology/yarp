@@ -121,7 +121,7 @@ void PythonCameraHelper::openPipeline(void)
                 exit(EXIT_FAILURE);
             }
             std::stringstream ss;
-            ss << "Open pipeline devicename:" << std::string(deviceName) << " info name:" << info.name << " fd:" << pipelineSubdeviceFd_[subdeviceIndex] << std::endl;
+            ss << "Open pipeline devicename:" << std::string(deviceName) << " info name:" << info.name << " fd:" << pipelineSubdeviceFd_[subdeviceIndex] << " index:" << subdeviceIndex << std::endl;
             log(ss.str(), Severity::debug);
             subdeviceIndex++;
         }
@@ -668,18 +668,21 @@ bool PythonCameraHelper::setControl(uint32_t v4lCtrl, double value)
     }
 
     std::stringstream ss;
-    ss << "setControl main for:" << v4lCtrl;
+    ss << "try setControl for:" << v4lCtrl << " value:" << value;
     log(ss.str(), Severity::debug);
     switch (v4lCtrl) {
     case V4L2_CID_GAIN:
     case V4L2_CID_BRIGHTNESS:
-    case 0x0098cc03: //EXT_TRIGGER
+    case V4L2_EXTTRIGGGER_ULTRA_PYTON: //EXT_TRIGGER
         setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex1_], value);
         setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex2_], value);
         return true;
-
-    case 0x0098c9a3: //V4L2_CID_RED_BALANCE
-    case 0x0098c9a5: //V4L2_CID_BLUE_BALANCE
+    case V4L2_REDBALANCE_ULTRA_PYTON: //V4L2_CID_RED_BALANCE
+    case V4L2_BLUEBALANCE_ULTRA_PYTON: //V4L2_CID_BLUE_BALANCE
+        setControl(v4lCtrl, mainSubdeviceFd_, value);
+        return true;
+    case V4L2_DEADTIME_ULTRA_PYTON: //trg_h
+    case V4L2_EXPOSURE_ULTRA_PYTON: //EXPOSURE trg_l
         setControl(v4lCtrl, mainSubdeviceFd_, value);
         return true;
     default:
@@ -708,6 +711,7 @@ bool PythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value)
         if (errno != EINVAL) {
             std::stringstream ss;
             ss << "Cannot setControl1 value:" << value << " fd:" << fd << std::endl;
+            log(ss.str(), Severity::error);
         } else {
 
             std::stringstream ss;
@@ -723,7 +727,12 @@ bool PythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value)
     }
     memset(&control, 0, sizeof(control));
     control.id = v4lCtrl;
-    //control.value = value;
+
+    if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTON /*&& control.value > maxExposition_*/) //trg_l
+    {
+        queryctrl.maximum=maxExposition_;
+        //control.value = maxExposition_;
+    }
     control.value = (int32_t)(value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
 
     //Do set
@@ -733,7 +742,7 @@ bool PythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value)
     }
 
     std::stringstream ss;
-    ss << "SetControl done --> Ctrl name:" << queryctrl.name << " Ctrl value:" << control.value << std::endl;
+    ss << "SetControl done --> Ctrl name:" << queryctrl.name << " Ctrl value:" << control.value<< " Ctrl id:" << control.id << std::endl;
     log(ss.str(), Severity::debug);
     return true;
 }
@@ -752,7 +761,7 @@ double PythonCameraHelper::getControl(uint32_t v4lCtrl)
     switch (v4lCtrl) {
     case V4L2_CID_GAIN:
     case V4L2_CID_BRIGHTNESS:
-    case 0x0098cc03: //EXT_TRIGGER
+    case V4L2_EXTTRIGGGER_ULTRA_PYTON: //EXT_TRIGGER
     {
         double left = getControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex1_]);
         double right = getControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex2_]);
@@ -761,14 +770,16 @@ double PythonCameraHelper::getControl(uint32_t v4lCtrl)
         }
         return left;
     }
-    case 0x0098c9a3: //V4L2_CID_RED_BALANCE
-    case 0x0098c9a5: //V4L2_CID_BLUE_BALANCE
-        return getControl(v4lCtrl, mainSubdeviceFd_);
+    case V4L2_REDBALANCE_ULTRA_PYTON: //V4L2_CID_RED_BALANCE
+    case V4L2_BLUEBALANCE_ULTRA_PYTON: //V4L2_CID_BLUE_BALANCE
+    return getControl(v4lCtrl, mainSubdeviceFd_);
+    case V4L2_EXPOSURE_ULTRA_PYTON: //EXPOSURE trg_l
+    case V4L2_DEADTIME_ULTRA_PYTON: //trg_h
+        return getControl(v4lCtrl, 4);
     default:
         return -1.0;
     }
 }
-
 
 double PythonCameraHelper::getControl(uint32_t v4lCtrl, int fd)
 {
@@ -796,6 +807,12 @@ double PythonCameraHelper::getControl(uint32_t v4lCtrl, int fd)
             return -1.0;
         }
     }
+
+    if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTON) //trg_l
+    {
+        queryctrl.maximum=maxExposition_;
+    }
+
     return (double)(control.value - queryctrl.minimum) / (queryctrl.maximum - queryctrl.minimum);
 }
 
@@ -809,9 +826,11 @@ bool PythonCameraHelper::hasControl(uint32_t v4lCtrl)
     switch (v4lCtrl) {
     case V4L2_CID_GAIN:
     case V4L2_CID_BRIGHTNESS:
-    case 0x0098c9a3: //V4L2_CID_RED_BALANCE
-    case 0x0098c9a5: //V4L2_CID_BLUE_BALANCE
-    case 0x0098cc03: //EXT_TRIGGER
+    case V4L2_REDBALANCE_ULTRA_PYTON: //V4L2_CID_RED_BALANCE
+    case V4L2_BLUEBALANCE_ULTRA_PYTON: //V4L2_CID_BLUE_BALANCE
+    case V4L2_EXTTRIGGGER_ULTRA_PYTON: //EXT_TRIGGER
+    case V4L2_EXPOSURE_ULTRA_PYTON: //EXPOSURE  trg_l
+    case V4L2_DEADTIME_ULTRA_PYTON: //trg_h
         return true;
     default:
         return false;
@@ -856,7 +875,9 @@ bool PythonCameraHelper::checkControl(uint32_t v4lCtrl)
 
 bool PythonCameraHelper::setDefaultControl()
 {
-    setControl(0x0098cc03, 1); //ext_trigger
+    setControl(V4L2_EXTTRIGGGER_ULTRA_PYTON, 1);  //ext_trigger
+    setControl(V4L2_EXPOSURE_ULTRA_PYTON,4, 10); //trg_l
+    setControl(V4L2_DEADTIME_ULTRA_PYTON,4, 10); //trg_h
     return true;
 }
 
@@ -865,12 +886,16 @@ uint32_t PythonCameraHelper::remapControl(uint32_t v4lCtr)
     uint32_t out = v4lCtr;
     switch (v4lCtr) {
     case V4L2_CID_RED_BALANCE:
-        out = 0x0098c9a3;
+        out = V4L2_REDBALANCE_ULTRA_PYTON;
         log("remap RED BALANCE", Severity::debug);
         break;
     case V4L2_CID_BLUE_BALANCE:
-        out = 0x0098c9a5;
+        out = V4L2_BLUEBALANCE_ULTRA_PYTON;
         log("remap BLUE BALANCE", Severity::debug);
+        break;
+    case V4L2_CID_EXPOSURE:
+        out = V4L2_EXPOSURE_ULTRA_PYTON; // trg_l
+        log("remap EXPOSURE", Severity::debug);
         break;
     default:
         break;

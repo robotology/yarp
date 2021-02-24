@@ -20,6 +20,7 @@
 #ifndef YARP_DEVICE_USBCAMERA_LINUX_V4L_CAMERA_H
 #define YARP_DEVICE_USBCAMERA_LINUX_V4L_CAMERA_H
 
+
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 

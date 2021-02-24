@@ -1727,6 +1727,10 @@ bool V4L_camera::hasFeature(int feature, bool* _hasFeature)
             *_hasFeature = tmpMan || tmpOnce || tmpAuto;
             return true;
         }
+        if (feature == YARP_FEATURE_EXPOSURE) {
+            *_hasFeature = true;
+            return true;
+        }
 
         *_hasFeature = pythonCameraHelper_.hasControl(convertYARP_to_V4L(feature));
         return true;
@@ -1822,6 +1826,11 @@ bool V4L_camera::getFeature(int feature, double* value1, double* value2)
 
 bool V4L_camera::hasOnOff(int feature, bool* _hasOnOff)
 {
+    if (param.camModel == ULTRAPYTON) {
+        *_hasOnOff = false;
+        return true;
+    }
+
     bool _hasAuto;
     // I can't find any meaning of setting a feature to off on V4l ... what it is supposed to do????
     switch (feature) {
@@ -1939,7 +1948,12 @@ bool V4L_camera::hasAuto(int feature, bool* _hasAuto)
 {
     if (param.camModel == ULTRAPYTON) {
         if (feature == YARP_FEATURE_WHITE_BALANCE) {
-            return false;
+            *_hasAuto=false;
+            return true;
+        }
+        if (feature == YARP_FEATURE_EXPOSURE) {
+            *_hasAuto=false;
+            return true;
         }
 
         return pythonCameraHelper_.hasAutoControl(convertYARP_to_V4L(feature));
@@ -1977,6 +1991,11 @@ bool V4L_camera::hasManual(int feature, bool* _hasManual)
     if (param.camModel == ULTRAPYTON) {
 
         if (feature == YARP_FEATURE_WHITE_BALANCE) {
+            *_hasManual = true;
+            return true;
+        }
+
+        if (feature == YARP_FEATURE_EXPOSURE) {
             *_hasManual = true;
             return true;
         }

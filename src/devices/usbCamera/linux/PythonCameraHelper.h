@@ -58,14 +58,24 @@ private:
     static constexpr const char* pipelineCscName = "v_proc_ss";
     static constexpr const char* pipelinePacket32Name = "Packet32";
     static constexpr const char* pipelineImgfusionName = "imgfusion";
-    static constexpr const char* pipelineRxifName = "PYTHON1300_RXIF";
+    static constexpr const char* pipelineRxifName = "PYTHON1300_RXIF";  
 
     static constexpr unsigned int requestBufferNumber_ = {8};
     static constexpr unsigned int pipelineMaxLen = {16};
-
+    
     // Native resolution for cam
     static constexpr unsigned int nativeWidth_ {1280};
     static constexpr unsigned int nativeHeight_ {1024};
+
+    // Control value max
+    static constexpr unsigned int maxExposition_{100};
+
+    // Ctrl for Python
+    static constexpr unsigned int V4L2_EXPOSURE_ULTRA_PYTON{0x0098cb03};//trg_l
+    static constexpr unsigned int V4L2_DEADTIME_ULTRA_PYTON{0x0098cb02};//trg_h
+    static constexpr unsigned int V4L2_EXTTRIGGGER_ULTRA_PYTON{0x0098cc03};//ext_trigger
+    static constexpr unsigned int V4L2_REDBALANCE_ULTRA_PYTON{0x0098c9a3};//Red Balance
+    static constexpr unsigned int V4L2_BLUEBALANCE_ULTRA_PYTON{0x0098c9a5};//Blue balance
 
 public:
     //Main
