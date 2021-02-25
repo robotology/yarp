@@ -987,6 +987,10 @@ bool V4L_camera::getRgbBuffer(unsigned char* buffer)
 // IFrameGrabber Interface
 bool V4L_camera::getRawBuffer(unsigned char* buffer)
 {
+    if (param.camModel == ULTRAPYTON) {
+        yCError(USBCAMERA) << "unable to get the RAW buffer not awailable for ULTRAPYTHON";
+        return false;
+    }
     bool res = false;
     mutex.wait();
     if (configured) {
@@ -1582,7 +1586,7 @@ bool V4L_camera::set_V4L2_control(uint32_t id, double value, bool verbatim)
     }
 
     if (param.camModel == ULTRAPYTON) {
-        return pythonCameraHelper_.setControl(id, value);
+        return pythonCameraHelper_.setControl(id, value,false);
     }
 
     struct v4l2_queryctrl queryctrl;

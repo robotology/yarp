@@ -76,7 +76,8 @@ private:
     static constexpr unsigned int V4L2_EXTTRIGGGER_ULTRA_PYTON{0x0098cc03};//ext_trigger
     static constexpr unsigned int V4L2_REDBALANCE_ULTRA_PYTON{0x0098c9a3};//Red Balance
     static constexpr unsigned int V4L2_BLUEBALANCE_ULTRA_PYTON{0x0098c9a5};//Blue balance
-
+    static constexpr unsigned int V4L2_ANALOGGAIN_ULTRA_PYTON{0x009e0903};//Analog gain
+    
 public:
     //Main
     void openAll();
@@ -86,7 +87,7 @@ public:
     //Settings
     double getCurrentFps() const;
     void setSubsamplingProperty(bool value);
-    bool setControl(uint32_t v4lCtrl, double value);
+    bool setControl(uint32_t v4lCtrl, double value,bool absolute);
     double getControl(uint32_t v4lCtrl);
     bool hasControl(uint32_t v4lCtrl);
     bool hasAutoControl(uint32_t v4lCtrl);
@@ -108,7 +109,7 @@ private:
     void startCapturing();
     bool setDefaultControl();               //Some important default controls
     uint32_t remapControl(uint32_t v4lCtr); //Different id from the official ones
-    bool setControl(uint32_t v4lCtrl, int fd, double value);
+    bool setControl(uint32_t v4lCtrl, int fd, double value,bool absolute);
     double getControl(uint32_t v4lCtrl, int fd);
     void setSubDevFormat(int width, int height);
     void setFormat();
