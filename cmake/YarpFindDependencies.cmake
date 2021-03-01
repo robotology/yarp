@@ -416,7 +416,8 @@ checkandset_dependency(Libv4lconvert)
 find_package(Fuse QUIET)
 checkandset_dependency(Fuse)
 
-
+find_package(UDev QUIET)
+checkandset_dependency(UDev)
 ################################################################################
 # Options
 
@@ -626,6 +627,7 @@ print_dependency(Libv4l2)
 print_dependency(Libv4lconvert)
 print_dependency(Fuse)
 print_dependency(ZLIB)
+print_dependency(LibUdev)
 
 ################################################################################
 # Print information for user

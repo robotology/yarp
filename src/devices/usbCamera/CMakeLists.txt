@@ -54,14 +54,14 @@ yarp_prepare_plugin(usbCamera
                     TYPE USBCameraDriverRgb
                     INCLUDE common/USBcamera.h
                     EXTRA_CONFIG WRAPPER=grabberDual
-                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV")
+                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV;YARP_HAS_LibUDev")
 
 yarp_prepare_plugin(usbCameraRaw
                     CATEGORY device
                     TYPE USBCameraDriverRaw
                     INCLUDE common/USBcamera.h
                     EXTRA_CONFIG WRAPPER=grabberDual
-                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV")
+                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV;YARP_HAS_LibUDev")
 
 if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
   yarp_add_plugin(yarp_usbCamera)
@@ -102,7 +102,11 @@ if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
   target_link_libraries(yarp_usbCamera PRIVATE ${OpenCV_LIBRARIES})
 #   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS OpenCV) (not using targets)
 
-  target_link_libraries(yarp_usbCamera PRIVATE udev) #only for ARM PYTHON
+  target_include_directories(yarp_usbCamera SYSTEM PRIVATE ${UDev_INCLUDE_DIRS})
+  target_link_libraries(yarp_usbCamera PRIVATE ${UDev_LIBRARIES})
+#   list(APPEND YARP_${​YARP_PLUGIN_MASTER}​_PRIVATE_DEPS UDev) (not using targets until FindUDev.cmake is in YCM)
+
+  #target_link_libraries(yarp_usbCamera PRIVATE udev) #only for ARM PYTHON
 
   yarp_install(TARGETS yarp_usbCamera
                EXPORT YARP_${YARP_PLUGIN_MASTER}
