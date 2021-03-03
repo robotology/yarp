@@ -42,7 +42,7 @@ typedef unsigned char byte;
 
 //---------------------------------------------------------------------------------------------------------------
 /**
- *  @ingroup dev_impl_lidar 
+ *  @ingroup dev_impl_lidar
  *
  * \brief `rpLidar2`: The device driver for the RP2 lidar
  *
@@ -70,7 +70,7 @@ protected:
     rplidardrv*           m_drv;
 
 public:
-    RpLidar2(double period = 0) : PeriodicThread(period), //period=0 allows to run the thead as fast as possibile, but it is not a busy loop since yield() is called internally  
+    RpLidar2(double period = 0) : PeriodicThread(period), //period=0 allows to run the thead as fast as possibile, but it is not a busy loop since yield() is called internally
         m_buffer_life(0),
         m_inExpressMode(false),
         m_pwm_val(0),

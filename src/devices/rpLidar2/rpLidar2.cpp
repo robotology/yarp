@@ -270,7 +270,7 @@ bool RpLidar2::acquireDataFromHW()
     //this lock protects m_laser_data. It is released at the end of the run(),
     //after that the following methods are called: applyLimitsOnLaserData(), updateTimestamp()
     m_mutex.lock();
-    
+
     for (size_t i = 0; i < count; ++i)
     {
 
