@@ -37,4 +37,6 @@ struct LaserScan2D
 (
     yarp.api.include = "yarp/dev/api.h"
     yarp.api.keyword = "YARP_dev_API"
+    yarp.type.name = "yarp/LaserScan2D"
+    yarp.type.version = "1.0"
 )

@@ -316,7 +316,9 @@ public:
     void generate_struct_read_connectionreader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_write_wirereader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_write_connectionreader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_typeconstexpr(t_struct* tstruct, std::ostringstream& f_h_, const std::string& type, const std::string& version);
     void generate_struct_tostring(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_gettype(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_unwrapped_helper(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_editor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_editor_default_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
@@ -1891,6 +1893,22 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
         yarp_api_keyword = annotations.at("yarp.api.keyword");
     }
 
+    std::string yarp_type_name{};
+    if (annotations.find("yarp.type.name") != annotations.end()) {
+        yarp_type_name = annotations.at("yarp.type.name");
+    }
+    else {
+        yarp_type_name = "";
+    }
+
+    std::string yarp_type_version{};
+    if (annotations.find("yarp.type.version") != annotations.end()) {
+        yarp_type_version = annotations.at("yarp.type.version");
+    }
+    else {
+        yarp_type_version = "";
+    }
+
     // Open header file
     std::string f_header_name = get_out_dir() + get_include_prefix(program_) + name + ".h";
     ofstream_with_content_based_conditional_update f_h_;
@@ -1925,6 +1943,7 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
 
     f_h_ << "#include <yarp/os/Wire.h>\n";
     f_h_ << "#include <yarp/os/idl/WireTypes.h>\n";
+    f_h_ << "#include <yarp/os/Type.h>\n";
     if (need_common_) {
         f_h_ << '\n';
         f_h_ << "#include <" << get_include_prefix(program_) << program_->get_name() << "_common.h>" << '\n';
@@ -1966,7 +1985,9 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     generate_struct_read_connectionreader(tstruct, f_h_, f_cpp_);
     generate_struct_write_wirereader(tstruct, f_h_, f_cpp_);
     generate_struct_write_connectionreader(tstruct, f_h_, f_cpp_);
+    generate_struct_typeconstexpr(tstruct, f_h_, yarp_type_name, yarp_type_version);
     generate_struct_tostring(tstruct, f_h_, f_cpp_);
+    generate_struct_gettype(tstruct, f_h_, f_cpp_);
     generate_struct_unwrapped_helper(tstruct, f_h_, f_cpp_);
 
     // Add editor class, if not disabled
@@ -2260,6 +2281,48 @@ void t_yarp_generator::generate_struct_tostring(t_struct* tstruct, std::ostrings
         f_cpp_ << indent_cpp() << "yarp::os::Bottle b;\n";
         f_cpp_ << indent_cpp() << "b.read(*this);\n";
         f_cpp_ << indent_cpp() << "return b.toString();\n";
+    }
+    indent_down_cpp();
+    f_cpp_ << indent_cpp() << "}\n";
+    f_cpp_ << '\n';
+
+    assert(indent_count_h() == 1);
+    assert(indent_count_cpp() == 0);
+}
+
+void t_yarp_generator::generate_struct_typeconstexpr(t_struct* tstruct, std::ostringstream& f_h_, const std::string& yarp_type_name, const std::string& yarp_type_version)
+{
+    THRIFT_DEBUG_COMMENT(f_h_);
+
+    const auto& name = tstruct->get_name();
+
+    f_h_ << indent_h() << "//The name and the version for this message\n";
+    f_h_ << indent_h() << "static constexpr const char* typeName = \"" << yarp_type_name << "\";\n";
+    f_h_ << indent_h() << "static constexpr const char* typeVersion = \"" << yarp_type_version << "\";\n";
+    f_h_ << '\n';
+
+    assert(indent_count_h() == 1);
+}
+
+void t_yarp_generator::generate_struct_gettype(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
+{
+    THRIFT_DEBUG_COMMENT(f_h_);
+    THRIFT_DEBUG_COMMENT(f_cpp_);
+
+    const auto& name = tstruct->get_name();
+
+    f_h_ << indent_h() << "// Get the message type\n";
+    f_h_ << indent_h() << "yarp::os::Type getType() const;\n";
+    f_h_ << '\n';
+
+    f_cpp_ << indent_cpp() << "// Get the message type\n";
+    f_cpp_ << indent_cpp() << "yarp::os::Type " << name << "::getType() const\n";
+    f_cpp_ << indent_cpp() << "{\n";
+    indent_up_cpp();
+    {
+        f_cpp_ << indent_cpp() << "yarp::os::Type typ = yarp::os::Type::byNameOnWire(typeName);\n";
+        f_cpp_ << indent_cpp() << "typ.setVersion(typeVersion);\n";
+        f_cpp_ << indent_cpp() << "return typ;\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
