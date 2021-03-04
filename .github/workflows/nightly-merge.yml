@@ -7,7 +7,8 @@ on:
 
 jobs:
   nightly-merge-yarp-3-4:
-    runs-on: ubuntu-latest
+    if: github.repository == 'robotology/yarp'
+    runs-on: ubuntu-20.04
     steps:
     - name: Checkout
       uses: actions/checkout@v1
