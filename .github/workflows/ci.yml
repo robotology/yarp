@@ -584,8 +584,7 @@ jobs:
           sudo apt-get install -qq -y cmake \
                                       ccache \
                                       ninja-build \
-                                      valgrind \
-                                      lcov
+                                      valgrind
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -633,7 +632,16 @@ jobs:
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
-                                      curl
+                                      curl \
+                                      lcov \
+                                      gcovr \
+                                      wget \
+                                      curl \
+                                      clang-11 \
+                                      clang-tidy-11 \
+                                      xsltproc \
+                                      libxml2-utils \
+                                      source-highlight
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
@@ -1226,8 +1234,7 @@ jobs:
           sudo apt-get install -qq -y cmake \
                                       ccache \
                                       ninja-build \
-                                      valgrind \
-                                      lcov
+                                      valgrind
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -1275,7 +1282,16 @@ jobs:
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
-                                      curl
+                                      curl \
+                                      lcov \
+                                      gcovr \
+                                      wget \
+                                      curl \
+                                      clang-11 \
+                                      clang-tidy-11 \
+                                      xsltproc \
+                                      libxml2-utils \
+                                      source-highlight
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
@@ -1411,8 +1427,7 @@ jobs:
           sudo apt-get install -qq -y cmake \
                                       ccache \
                                       ninja-build \
-                                      valgrind \
-                                      lcov
+                                      valgrind
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -1460,7 +1475,16 @@ jobs:
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
-                                      curl
+                                      curl \
+                                      lcov \
+                                      gcovr \
+                                      wget \
+                                      curl \
+                                      clang-11 \
+                                      clang-tidy-11 \
+                                      xsltproc \
+                                      libxml2-utils \
+                                      source-highlight
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
@@ -1620,8 +1644,7 @@ jobs:
           sudo apt-get install -qq -y cmake \
                                       ccache \
                                       ninja-build \
-                                      valgrind \
-                                      lcov
+                                      valgrind
 
           sudo apt-get install -qq -y libace-dev \
                                       libsqlite3-dev \
@@ -1669,7 +1692,16 @@ jobs:
           # Other tools useful in github actions
           sudo apt-get install -qq -y jq \
                                       wget \
-                                      curl
+                                      curl \
+                                      lcov \
+                                      gcovr \
+                                      wget \
+                                      curl \
+                                      clang-11 \
+                                      clang-tidy-11 \
+                                      xsltproc \
+                                      libxml2-utils \
+                                      source-highlight
 
           # Remove old packages from apt cache
           sudo apt-get autoclean -qq
