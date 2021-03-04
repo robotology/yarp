@@ -6,7 +6,8 @@ on:
 
 jobs:
   rebase-pr:
-    runs-on: ubuntu-latest
+    if: github.repository == 'robotology/yarp'
+    runs-on: ubuntu-20.04
     steps:
     - name: Checkout
       uses: actions/checkout@v1
@@ -21,7 +22,8 @@ jobs:
         elandini84_TOKEN: ${{ secrets.elandini84_TOKEN }}
 
   squash-pr:
-    runs-on: ubuntu-latest
+    if: github.repository == 'robotology/yarp'
+    runs-on: ubuntu-20.04
     steps:
     - name: Checkout
       uses: actions/checkout@v1
