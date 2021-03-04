@@ -885,9 +885,9 @@ bool Map2DServer::open(yarp::os::Searchable &config)
         string collection_file_with_path = m_rf_mapCollection.findFile(collection_file_name);
         string locations_file_with_path = m_rf_mapCollection.findFile(locations_file_name);
 
-        if (collection_file_with_path=="")
+        if (locations_file_with_path=="")
         {
-            yCInfo(MAP2DSERVER) << "No locations loaded";
+            yCWarning(MAP2DSERVER) << "Unable to find file:" << locations_file_with_path << "within the specified context:" << collection_context_name;
         }
         else
         {
@@ -898,54 +898,56 @@ bool Map2DServer::open(yarp::os::Searchable &config)
 
         if (collection_file_with_path=="")
         {
-            yCError(MAP2DSERVER) << "Unable to find file" << collection_file_name << "within the specified context:" << collection_context_name;
-            return false;
-        }
-        if (loadMaps(collection_file_with_path))
-        {
-            yCInfo(MAP2DSERVER) << "Map collection file:" << collection_file_with_path << "successfully loaded.";
-            if (m_maps_storage.size() > 0)
-            {
-                yCInfo(MAP2DSERVER) << "Available maps are:";
-                for (auto& it : m_maps_storage)
-                {
-                    yCInfo(MAP2DSERVER) << it.first;
-                }
-            }
-            else
-            {
-                yCInfo(MAP2DSERVER) << "No maps available";
-            }
-            if (m_locations_storage.size() > 0)
-            {
-                yCInfo(MAP2DSERVER) << "Available Locations are:";
-                for (auto& it : m_locations_storage)
-                {
-                    yCInfo(MAP2DSERVER) << it.first;
-                }
-            }
-            else
-            {
-                yCInfo(MAP2DSERVER) << "No locations available";
-            }
-
-            if (m_areas_storage.size() > 0)
-            {
-                yCInfo(MAP2DSERVER) << "Available areas are:";
-                for (auto& it : m_areas_storage)
-                {
-                    yCInfo(MAP2DSERVER) << it.first;
-                }
-            }
-            else
-            {
-                yCInfo(MAP2DSERVER) << "No areas available";
-            }
+            yCWarning(MAP2DSERVER) << "Unable to find file:" << collection_file_name << "within the specified context:" << collection_context_name;
         }
         else
         {
-            yCError(MAP2DSERVER) << "Unable to load map collection file:" << collection_file_with_path;
-            return false;
+            if (loadMaps(collection_file_with_path))
+            {
+                yCInfo(MAP2DSERVER) << "Map collection file:" << collection_file_with_path << "successfully loaded.";
+                if (m_maps_storage.size() > 0)
+                {
+                    yCInfo(MAP2DSERVER) << "Available maps are:";
+                    for (auto& it : m_maps_storage)
+                    {
+                        yCInfo(MAP2DSERVER) << it.first;
+                    }
+                }
+                else
+                {
+                    yCInfo(MAP2DSERVER) << "No maps available";
+                }
+                if (m_locations_storage.size() > 0)
+                {
+                    yCInfo(MAP2DSERVER) << "Available Locations are:";
+                    for (auto& it : m_locations_storage)
+                    {
+                        yCInfo(MAP2DSERVER) << it.first;
+                    }
+                }
+                else
+                {
+                    yCInfo(MAP2DSERVER) << "No locations available";
+                }
+
+                if (m_areas_storage.size() > 0)
+                {
+                    yCInfo(MAP2DSERVER) << "Available areas are:";
+                    for (auto& it : m_areas_storage)
+                    {
+                        yCInfo(MAP2DSERVER) << it.first;
+                    }
+                }
+                else
+                {
+                    yCInfo(MAP2DSERVER) << "No areas available";
+                }
+            }
+            else
+            {
+                yCError(MAP2DSERVER) << "Unable to load map collection file:" << collection_file_with_path;
+                return false;
+            }
         }
     }
 
