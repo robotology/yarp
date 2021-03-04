@@ -4,16 +4,43 @@ on:
   push:
   pull_request_target:
     types: [opened, synchronize, reopened]
+    branches:
+      - 'master'
+      - 'yarp-*'
   release:
     types: [published]
 
 jobs:
+  select_environment:
+    name: 'Select Environment for this workflow'
+    runs-on: ubuntu-20.04
+    outputs:
+      repository: ${{ steps.select.outputs.repository }}
+      ref: ${{ steps.select.outputs.ref }}
+      environment: ${{ steps.select.outputs.environment }}
+    steps:
+    - id: select
+      run: |
+        if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
+          echo "::set-output name=environment::code-analysis_unsafe"
+          echo "::set-output name=repository::${{ github.event.pull_request.head.repo.full_name }}"
+          echo "::set-output name=ref::${{ github.event.pull_request.head.ref }}"
+        else
+          echo "::set-output name=repository::${{ github.repository }}"
+          echo "::set-output name=ref::${{ github.ref }}"
+          echo "::set-output name=environment::code-analysis"
+        fi
+
   check-license:
     name: 'Check License'
+    needs: select_environment
     runs-on: ubuntu-20.04
     steps:
-    - name: Checkout
-      uses: actions/checkout@master
+    - name: Clone repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Install Dependencies
       run: |
@@ -27,10 +54,14 @@ jobs:
 
   check-style:
     name: 'Check Style'
+    needs: select_environment
     runs-on: ubuntu-20.04
     steps:
-    - name: Checkout
-      uses: actions/checkout@master
+    - name: Clone repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Install Dependencies
       run: |
@@ -44,7 +75,7 @@ jobs:
 
   run-cmake:
     name: 'Run CMake [CMake ${{ matrix.config.cmake_version }} (${{ matrix.config.cmake_generator }}), YCM ${{ matrix.config.ycm_version }}]'
-    needs: [check-license, check-style]
+    needs: [select_environment, check-license, check-style]
     runs-on: ubuntu-20.04
     container:
       image: ghcr.io/robotology/ycm:cmake-${{ matrix.config.cmake_version }}_ycm-${{ matrix.config.ycm_version }}
@@ -98,8 +129,11 @@ jobs:
             ycm_version: "0.12.1",
           }
     steps:
-    - name: Checkout
-      uses: actions/checkout@master
+    - name: Clone repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Print CMake version
       run: |
@@ -118,7 +152,7 @@ jobs:
 
   build:
     name: '[${{ matrix.config.id }}][${{ matrix.config.os }}|${{ matrix.config.cc }}|${{ matrix.config.cmake_generator }} (${{ matrix.config.cmake_toolset }} ${{ matrix.config.cmake_platform }})|${{ matrix.config.build_type }}] ${{ matrix.config.description }}'
-    needs: run-cmake
+    needs: [select_environment, run-cmake]
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
@@ -509,16 +543,11 @@ jobs:
 
     steps:
 
-    - name: Clone repository [push]
-      if: github.event_name == 'push'
-      uses: actions/checkout@v2
-
-    - name: Clone repository [pull_request_target]
-      if: github.event_name == 'pull_request_target'
+    - name: Clone repository
       uses: actions/checkout@v2
       with:
-        repository: ${{ github.event.pull_request.head.repo.full_name }}
-        ref: ${{ github.event.pull_request.head.ref }}
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
 
     - name: Prepare cache timestamp
       id: prepare_cache_timestamp
@@ -1169,19 +1198,14 @@ jobs:
   codacy-clang-tidy:
     environment: code-analysis
     name: 'Codacy - clang-tidy'
-    needs: run-cmake
+    needs: [select_environment, run-cmake]
     runs-on: ubuntu-20.04
     steps:
-    - name: Clone repository [push]
-      if: github.event_name == 'push'
-      uses: actions/checkout@v2
-
-    - name: Clone repository [pull_request_target]
-      if: github.event_name == 'pull_request_target'
+    - name: Clone repository
       uses: actions/checkout@v2
       with:
-        repository: ${{ github.event.pull_request.head.repo.full_name }}
-        ref: ${{ github.event.pull_request.head.ref }}
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
 
     # This step is copied from the build step, please keep them in sync until we
     # find a better way to do it automatically
@@ -1359,19 +1383,14 @@ jobs:
   codacy-coverage:
     environment: code-analysis
     name: 'Codacy - coverage'
-    needs: run-cmake
+    needs: [select_environment, run-cmake]
     runs-on: ubuntu-20.04
     steps:
-    - name: Clone repository [push]
-      if: github.event_name == 'push'
-      uses: actions/checkout@v2
-
-    - name: Clone repository [pull_request_target]
-      if: github.event_name == 'pull_request_target'
+    - name: Clone repository
       uses: actions/checkout@v2
       with:
-        repository: ${{ github.event.pull_request.head.repo.full_name }}
-        ref: ${{ github.event.pull_request.head.ref }}
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
 
     # This step is copied from the build step, please keep them in sync until we
     # find a better way to do it automatically
@@ -1484,12 +1503,14 @@ jobs:
   sonarcloud:
     environment: code-analysis
     name: 'SonarCloud'
-    needs: run-cmake
+    needs: [select_environment, run-cmake]
     runs-on: ubuntu-20.04
     steps:
     - name: Clone repository
       uses: actions/checkout@v2
       with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
     - name: Get YARP Project Version
