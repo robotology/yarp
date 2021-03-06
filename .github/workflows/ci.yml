@@ -11,16 +11,23 @@ on:
     types: [published]
 
 jobs:
+
   select_environment:
-    name: 'Select Environment for this workflow'
+    name: 'Prepare Environment'
     runs-on: ubuntu-20.04
     outputs:
+      timestamp: ${{ steps.select.outputs.timestamp }}
       repository: ${{ steps.select.outputs.repository }}
       ref: ${{ steps.select.outputs.ref }}
       environment: ${{ steps.select.outputs.environment }}
+      sha: ${{ steps.select.outputs.sha }}
+      yarp_version: ${{ steps.select.outputs.yarp_version }}
     steps:
-    - id: select
+    - name: "Set output variables"
+      id: select
       run: |
+        echo "::set-output name=timestamp::$(/bin/date -u +%Y%m%d-%H%M%S)"
+
         if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
           echo "::set-output name=environment::code-analysis_unsafe"
           echo "::set-output name=repository::${{ github.event.pull_request.head.repo.full_name }}"
@@ -30,6 +37,33 @@ jobs:
           echo "::set-output name=ref::${{ github.ref }}"
           echo "::set-output name=environment::code-analysis"
         fi
+        if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
+          echo "::set-output name=sha::${{ github.event.pull_request.head.sha }}"
+        else
+          echo "::set-output name=sha::${{ github.sha }}"
+        fi
+
+        # Get YARP Project Version
+        if [[ "$GITHUB_EVENT_NAME" = "release" ]]; then
+          echo "::set-output name=yarp_version::$(awk '/ VERSION /{print $2}' CMakeLists.txt)"
+        fi
+
+    - name: 'Debug output variables'
+      env:
+        TIMESTAMP: ${{ steps.select.outputs.timestamp }}
+        REPOSITORY: ${{ steps.select.outputs.repository }}
+        REF: ${{ steps.select.outputs.ref }}
+        ENVIRONMENT: ${{ steps.select.outputs.environment }}
+        SHA: ${{ steps.select.outputs.sha }}
+        YARP_VERSION: ${{ steps.select.outputs.yarp_version }}
+      run: |
+        echo "TIMESTAMP = ${TIMESTAMP}"
+        echo "REPOSITORY = ${REPOSITORY}"
+        echo "REF = ${REF}"
+        echo "ENVIRONMENT = ${ENVIRONMENT}"
+        echo "SHA = ${SHA}"
+        echo "YARP_VERSION = ${YARP_VERSION}"
+
 
   check-license:
     name: 'Check License'
@@ -551,20 +585,12 @@ jobs:
         repository: ${{ needs.select_environment.outputs.repository }}
         ref: ${{ needs.select_environment.outputs.ref }}
 
-    - name: Prepare cache timestamp
-      id: prepare_cache_timestamp
-      shell: cmake -P {0}
-      run: |
-        cmake_minimum_required(VERSION 3.17)
-        string(TIMESTAMP current_date "%Y%m%d-%H%M%S" UTC)
-        message("::set-output name=timestamp::${current_date}")
-
     - name: Handle cache
       uses: actions/cache@v2
       with:
         path: |
           .ccache
-        key: build-${{ matrix.config.id }}-ccache-${{ github.ref }}-${{ steps.prepare_cache_timestamp.outputs.timestamp }}
+        key: build-${{ matrix.config.id }}-ccache-${{ github.ref }}-${{ needs.select_environment.outputs.timestamp }}
         restore-keys: |
           build-${{ matrix.config.id }}-${{ github.base_ref }}-ccache-
           build-${{ matrix.config.id }}-${{ github.ref }}-ccache-
@@ -1316,12 +1342,7 @@ jobs:
         echo "CLICOLOR_FORCE=1" >> $GITHUB_ENV
         echo "YARP_COLORED_OUTPUT=1" >> $GITHUB_ENV
         echo "PROJECT_TOKEN=${CODACY_TOKEN}" >> $GITHUB_ENV
-        if [[ "$GITHUB_EVENT_NAME" = "pull_request" ]]; then
-          COMMIT=$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.head.sha)
-        else
-          COMMIT=${GITHUB_SHA}
-        fi
-        echo "COMMIT=${COMMIT}" >> $GITHUB_ENV
+        echo "COMMIT=${{ needs.select_environment.outputs.sha }}" >> $GITHUB_ENV
         echo "CODACY_URL=https://api.codacy.com" >> $GITHUB_ENV
         echo "CODACY_CLANG_TIDY_VERSION=${CODACY_CLANG_TIDY_VERSION}" >> $GITHUB_ENV
 
@@ -1539,17 +1560,6 @@ jobs:
         ref: ${{ needs.select_environment.outputs.ref }}
         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
-    - name: Get YARP Project Version
-      if: github.event_name == 'release'
-      id: get_yarp_version
-      run: |
-        echo "::set-output name=yarp_version::$(awk '/ VERSION /{print $2}' CMakeLists.txt)"
-
-    - name: Get Timestamp
-      id: get_timestamp
-      run: |
-        echo "::set-output name=timestamp::$(/bin/date -u +%Y%m%d-%H%M%S)"
-
     - name: Get Sonar and Prepare Environment
       id: get_sonar
       env:
@@ -1557,7 +1567,7 @@ jobs:
         SONAR_PROJECT_KEY: 'robotology_yarp'
         SONAR_PROJECT_NAME: 'yarp'
         SONAR_PROJECT_DESCRIPTION: 'Yet Another Robot Platform'
-        SONAR_PROJECT_VERSION: ${{ steps.get_yarp_version.outputs.yarp_version }}
+        SONAR_PROJECT_VERSION: ${{ needs.select_environment.outputs.yarp_version }}
         SONAR_LINKS_HOMEPAGE: 'https://www.yarp.it/'
         SONAR_SOURCES: 'src'
         SONAR_TESTS: 'tests'
@@ -1749,7 +1759,7 @@ jobs:
         path: |
           ${{ steps.init_ccache.outputs.ccache_path }}
           ${{ steps.get_sonar.outputs.sonar_cache_path }}
-        key: sonar-cache-${{ steps.get_timestamp.outputs.timestamp }}
+        key: sonar-cache-${{ needs.select_environment.outputs.timestamp }}
         restore-keys: |
           sonar-cache-
 
