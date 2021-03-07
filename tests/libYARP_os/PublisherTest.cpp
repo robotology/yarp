@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/Publisher.h>
+#include <yarp/os/PublisherLatched.h>
 #include <yarp/os/Subscriber.h>
 #include <yarp/os/Node.h>
 #include <yarp/os/Network.h>
@@ -138,7 +139,7 @@ TEST_CASE("os::PublisherTest", "[yarp::os]")
         }
     }
 
-    SECTION("Unbuffereded Subscriber test")
+    SECTION("Unbuffered Subscriber test")
     {
         Node n("/node");
         BufferedPort<Bottle> pout;
@@ -162,6 +163,62 @@ TEST_CASE("os::PublisherTest", "[yarp::os]")
             pout.waitForWrite();
             CHECK(bin.get(0).asInt32() == 42);  // "message is correct"
         }
+    }
+
+    SECTION("Latched Publisher test")
+    {
+        Node nout("/node_o");
+        PublisherLatched<Bottle> pout("/latched_topic");
+        Bottle& b = pout.prepare();
+        b.clear();
+        b.addInt32(42);
+        pout.write();
+        {
+            Node nin1("/node_i1");
+            Subscriber<Bottle> sub_in1("/latched_topic");
+
+            Bottle* bin = sub_in1.read();
+
+            REQUIRE(bin != nullptr);
+            CHECK(bin->get(0).asInt32() == 42);
+        }
+        {
+            Node nin2("/node_i2");
+            Subscriber<Bottle> sub_in2("/latched_topic");
+
+            Bottle* bin = sub_in2.read();
+
+            REQUIRE(bin != nullptr);
+            CHECK(bin->get(0).asInt32() == 42);
+        }
+        pout.close();
+    }
+
+    SECTION("Latched Publisher test (no writes called, uninitialized publisher)")
+    {
+        Node nout("/node_o");
+        PublisherLatched<Bottle> pout("/latched_topic");
+        {
+            Node nin1("/node_i1");
+            Subscriber<Bottle> sub_in1("/latched_topic");
+            waitForOutput(pout, 10);
+
+            Bottle* bin = sub_in1.read();
+
+            REQUIRE(bin != nullptr);
+            CHECK(bin->size() == 0);
+        }
+        {
+            Node nin2("/node_i2");
+            Subscriber<Bottle> sub_in2("/latched_topic");
+            waitForOutput(pout, 10);
+
+            Bottle* bin = sub_in2.read();
+
+            REQUIRE(bin != nullptr);
+            CHECK(bin->size() == 0);
+        }
+        pout.close();
     }
 
     Network::setLocalMode(false);

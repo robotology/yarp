@@ -94,6 +94,7 @@ set(YARP_os_HDRS yarp/os/AbstractCarrier.h
                  yarp/os/PortWriter.h
                  yarp/os/Property.h
                  yarp/os/Publisher.h
+                 yarp/os/PublisherLatched.h
                  yarp/os/Random.h
                  yarp/os/ResourceFinder.h
                  yarp/os/ResourceFinderOptions.h
