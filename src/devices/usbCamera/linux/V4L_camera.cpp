@@ -276,7 +276,8 @@ bool V4L_camera::open(yarp::os::Searchable& config)
 
     if (param.camModel == ULTRAPYTON) {
         yCTrace(USBCAMERA) << "ULTRAPYTON";
-        pythonCameraHelper_.openAll();
+        if(!pythonCameraHelper_.openAll())
+            return false;
         configured = true;
         yarp::os::Time::delay(0.5);
         start();
@@ -935,6 +936,11 @@ bool V4L_camera::close()
     yCTrace(USBCAMERA);
 
     stop(); // stop yarp thread acquiring images
+
+    if(param.camModel == ULTRAPYTON)
+    {
+        return pythonCameraHelper_->closeAll();
+    }
 
     if (param.fd != -1) {
         captureStop();
