@@ -23,22 +23,35 @@ set_property(
 
 # Get rid of undef while compiling gtest -- END
 
+
+#test
 if(COMPILE_WITHUNITTEST_ULTRAPYTHON)
   FetchContent_Declare(
-    unittest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        release-1.10.0
+      googletest
+      GIT_REPOSITORY "https://github.com/google/googletest"
+      GIT_TAG        master
   )
-  FetchContent_GetProperties(unittest)
-  if(NOT unittest)
-    FetchContent_Populate(unittest)
-    set(BUILD_SHARED_LIBS_SAVED "${BUILD_SHARED_LIBS}")
-    set(BUILD_SHARED_LIBS OFF)
-    add_subdirectory(unittest)
-    set(BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS_SAVED}")
-    add_subdirectory(${unittest_SOURCE_DIR} ${unittest_BINARY_DIR})
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(googletest)
+  add_subdirectory(unittest)
   endif()
-endif()
+
+# if(COMPILE_WITHUNITTEST_ULTRAPYTHON)
+#   FetchContent_Declare(
+#     unittest
+#     GIT_REPOSITORY https://github.com/google/googletest.git
+#     GIT_TAG        release-1.10.0
+#   )
+#   FetchContent_GetProperties(unittest)
+#   if(NOT unittest)
+#     FetchContent_Populate(unittest)
+#     set(BUILD_SHARED_LIBS_SAVED "${BUILD_SHARED_LIBS}")
+#     set(BUILD_SHARED_LIBS OFF)
+#     add_subdirectory(unittest)
+#     set(BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS_SAVED}")
+#     add_subdirectory(${unittest_SOURCE_DIR} ${unittest_BINARY_DIR})
+#   endif()
+# endif()
 
 # Get rid of undef while compiling gtest -- START
 set_property(
