@@ -110,7 +110,7 @@ int Companion::cmdTrafficGen(int argc, char *argv[])
 
     string portname = argv[0];
 
-    yCInfo (COMPANION, "Starting trafficgen with the following options: period:%.3f(s), size:%.3f(MB), duration:%.3f(s), bandwidth:%.3f(Mb/s) ", period, size_MB, duration, period* size_MB *8);
+    yCInfo (COMPANION, "Starting trafficgen with the following options: period:%.3f(s), size:%.3f(MB), duration:%.3f(s), bandwidth:%.3f(Mb/s) ", period, size_MB, duration, size_MB / period *8);
 
     datasender pt(period, portname, size_MB);
     double start_time = yarp::os::Time::now();
