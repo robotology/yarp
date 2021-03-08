@@ -37,6 +37,8 @@ enum class Severity { debug, info, warning, error };
 
 class PythonCameraHelper {
 private:
+  static constexpr const char *mediaName_ = "/dev/media0";
+
   // Pipeline string
   static constexpr const char *pipelineVideoName = "vcap_python output 0";
   static constexpr const char *pipelinePythonName = "PYTHON1300";
@@ -89,9 +91,6 @@ public:
   void setInjectedLock(std::function<void()> toinJect);
   void setInjectedLog(
       std::function<void(const std::string &, Severity severity)> toinJect);
-
-  // Minor
-  void setFileLog(bool value);
 
   PythonCameraHelper(InterfaceForCFunction *interfaceC);
   virtual ~PythonCameraHelper();
@@ -147,8 +146,6 @@ private:
 
   const SpaceColor spaceColor_{SpaceColor::rgb};
 
-  const std::string mediaName_{"/dev/media0"};
-
   // Crop size
   unsigned int cropLeft_{0};
   unsigned int cropTop_{0};
@@ -162,14 +159,9 @@ private:
   std::function<void()> unlock_; // Mutex injected method
   std::function<void(const std::string &, Severity)> log_;
 
-  // file log
-  std::ofstream fs{"./log.log"};
-  bool logOnFile_{false};
-
   class Locker {
-
   private:
-    PythonCameraHelper &parent_;
+    const PythonCameraHelper &parent_;
 
   public:
     explicit Locker(PythonCameraHelper &parent) : parent_(parent) {
@@ -185,7 +177,7 @@ private:
 
   class Log {
   private:
-    PythonCameraHelper &parent_;
+    const PythonCameraHelper &parent_;
     Severity severity_;
     std::stringstream ss_;
 

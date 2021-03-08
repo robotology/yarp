@@ -4,6 +4,10 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include <chrono>
+#include <thread>
+
+using namespace std::chrono_literals;
 using namespace testing;
 
 // Dummy
@@ -165,12 +169,13 @@ TEST(UltraPython, log_ok_001) {
   // given
   InterfaceFoCFunctionMock *interface = new InterfaceFoCFunctionMock();
   PythonCameraHelper helper(interface);
-  helper.setInjectedLog(
-      [](const std::string &str, Severity severity) {
-          EXPECT_EQ("hasauto for:12", str);
-          EXPECT_TRUE(severity==Severity::debug);
-          return str; });
+  {
+    helper.setInjectedLog([](const std::string &str, Severity severity) {
+      EXPECT_EQ("::~PythonCameraHelper", str);
+      EXPECT_TRUE(severity == Severity::debug);
+      return str;
+    });
 
-  // when
-  helper.hasAutoControl(12);
+    // when
+  }
 }

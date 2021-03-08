@@ -36,6 +36,7 @@
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
 PythonCameraHelper::PythonCameraHelper(InterfaceForCFunction *interfaceC) {
+  Log(*this, Severity::debug) << "::PythonCameraHelper";
   if (interfaceC == nullptr) {
     interfaceC = new InterfaceForCFunction();
   }
@@ -43,26 +44,26 @@ PythonCameraHelper::PythonCameraHelper(InterfaceForCFunction *interfaceC) {
 }
 
 PythonCameraHelper::~PythonCameraHelper() {
+  Log(*this, Severity::debug) << "::~PythonCameraHelper";
   if (interface_ != nullptr) {
     // delete interface_;
   }
 }
 
 bool PythonCameraHelper::openPipeline() {
-  log("openPipeline", Severity::info);
+  Log(*this, Severity::debug) << "::openPipeline";
 
   // Open main device
-  int fd = interface_->open_c(mediaName_.c_str(), O_RDWR);
+  int fd = interface_->open_c(mediaName_, O_RDWR);
   if (fd == -1) {
-    log("ERROR-cannot open media dev");
+    Log(*this, Severity::error) << "ERROR-cannot open media dev";
     return false;
   }
-  log("open:" + mediaName_, Severity::info);
 
   struct udev *udev;
   udev = interface_->udev_new_c();
   if (udev == nullptr) {
-    log("ERROR-cannot open udev", Severity::error);
+    Log(*this, Severity::error) << "ERROR-cannot open udev";
     return false;
   }
 
@@ -76,10 +77,11 @@ bool PythonCameraHelper::openPipeline() {
     int ret = interface_->ioctl_c(fd, MEDIA_IOC_ENUM_ENTITIES, &info);
     if (ret < 0) {
       ret = errno != EINVAL ? -errno : 0;
-      log("WARNING-cannot open device not media");
+      Log(*this, Severity::warning) << "WARNING-cannot open device not media";
       break;
     }
-    log("found entity name:" + std::string(info.name));
+    Log(*this, Severity::debug)
+        << "found entity name:" << std::string(info.name);
 
     dev_t devnum = interface_->makedev_c(info.v4l.major, info.v4l.minor);
     struct udev_device *device;
@@ -96,11 +98,12 @@ bool PythonCameraHelper::openPipeline() {
     if ((std::strcmp(info.name, pipelineVideoName) == 0)) {
       mainSubdeviceFd_ = interface_->open_c(deviceName, O_RDWR | O_NONBLOCK, 0);
       if (mainSubdeviceFd_ == -1) {
-        log("ERROR-cannot open device:" + std::string(deviceName),
-            Severity::error);
+        Log(*this, Severity::error)
+            << "ERROR-cannot open device:" << std::string(deviceName);
         return false;
       }
-      log("open no pipeline:" + std::string(deviceName));
+      Log(*this, Severity::debug)
+          << "open no pipeline:" << std::string(deviceName);
     } else {
       // Open other subdevice
       /*
@@ -132,59 +135,58 @@ bool PythonCameraHelper::openPipeline() {
       pipelineSubdeviceFd_[subdeviceIndex] =
           interface_->open_c(deviceName, O_RDWR | O_NONBLOCK, 0);
       if (pipelineSubdeviceFd_[subdeviceIndex] == -1) {
-        log("ERROR-cannot open device:" + std::string(deviceName),
-            Severity::error);
+        Log(*this, Severity::error)
+            << "ERROR-cannot open device:" << std::string(deviceName);
         return false;
       }
-      std::stringstream ss;
-      ss << "Open pipeline devicename:" << std::string(deviceName)
-         << " info name:" << info.name
-         << " fd:" << pipelineSubdeviceFd_[subdeviceIndex]
-         << " index:" << subdeviceIndex << std::endl;
-      log(ss.str(), Severity::debug);
+      Log(*this, Severity::debug)
+          << "Open pipeline devicename:" << std::string(deviceName)
+          << " info name:" << info.name
+          << " fd:" << pipelineSubdeviceFd_[subdeviceIndex]
+          << " index:" << subdeviceIndex;
       subdeviceIndex++;
     }
     interface_->udev_device_unref_c(device);
   }
-
+  Log(*this, Severity::debug) << "open:" << mediaName_;
   return checkIndex();
 }
 
 bool PythonCameraHelper::checkIndex() {
   if (mainSubdeviceFd_ == -1) {
-    log("ERROR-Cannot find main pipe V4L2 device", Severity::error);
+    Log(*this, Severity::error) << "Cannot find main pipe V4L2 device";
     return false;
   }
   if (sourceSubDeviceIndex1_ == -1) {
-    log("ERROR-Cannot find source subdev1", Severity::error);
+    Log(*this, Severity::error) << "Cannot find source subdev1";
     return false;
   }
   if (sourceSubDeviceIndex2_ == -1) {
-    log("ERROR-Cannot find source subdev2", Severity::error);
+    Log(*this, Severity::error) << "Cannot find source subdev2";
     return false;
   }
   if (rxif1Index_ == -1) {
-    log("ERROR-Cannot find rxif1Index", Severity::error);
+    Log(*this, Severity::error) << "Cannot find rxif1Index";
     return false;
   }
   if (rxif2Index_ == -1) {
-    log("ERROR-Cannot find rxif2Index", Severity::error);
+    Log(*this, Severity::error) << "Cannot find rxif2Index";
     return false;
   }
   if (cscIndex_ == -1) {
-    log("ERROR-Cannot find cscIndex", Severity::error);
+    Log(*this, Severity::error) << "Cannot find cscIndex";
     return false;
   }
   if (tpgIndex_ == -1) {
-    log("ERROR-Cannot find tpgIndex", Severity::error);
+    Log(*this, Severity::error) << "Cannot find tpgIndex";
     return false;
   }
   if (imgfusionIndex_ == -1) {
-    log("ERROR-Cannot find imgfusionIndex", Severity::error);
+    Log(*this, Severity::error) << "Cannot find imgfusionIndex";
     return false;
   }
   if (packet32Index_ == -1) {
-    log("ERROR-Cannot find packet32Index", Severity::error);
+    Log(*this, Severity::error) << "Cannot find packet32Index";
     return false;
   }
   return true;
@@ -208,9 +210,8 @@ bool PythonCameraHelper::setSubDevFormat(int width, int height) {
       fmt.pad = j;
       if (-1 == interface_->xioctl(pipelineSubdeviceFd_[i], VIDIOC_SUBDEV_G_FMT,
                                    &fmt)) {
-        std::stringstream ss;
-        ss << "VIDIOC_SUBDEV_G_FMT. subdev" << i << "pad" << j;
-        log(ss.str(), Severity::error);
+        Log(*this, Severity::error)
+            << "VIDIOC_SUBDEV_G_FMT. subdev" << i << "pad" << j;
         return false;
       }
 
@@ -238,17 +239,15 @@ bool PythonCameraHelper::setSubDevFormat(int width, int height) {
         fmt.format.width *= 2;
 
       {
-        std::stringstream ss;
-        ss << "subdev idx:" << i << " pad" << j
-           << " setting format:" << fmt.format.width << ":"
-           << fmt.format.height;
-        log(ss.str(), Severity::debug);
+        Log(*this, Severity::debug) << "subdev idx:" << i << " pad" << j
+                                    << " setting format:" << fmt.format.width
+                                    << ":" << fmt.format.height;
       }
       if (-1 == interface_->xioctl(pipelineSubdeviceFd_[i], VIDIOC_SUBDEV_S_FMT,
                                    &fmt)) {
-        std::stringstream ss;
-        ss << "VIDIOC_SUBDEV_S_FMT. subdev" << i << "pad" << j;
-        log(ss.str(), Severity::error);
+        Log(*this, Severity::error)
+            << "VIDIOC_SUBDEV_S_FMT. subdev" << i << "pad" << j;
+
         return false;
       }
       if ((i == sourceSubDeviceIndex1_) || (i == sourceSubDeviceIndex2_)) {
@@ -308,7 +307,9 @@ bool PythonCameraHelper::crop(int top, int left, int w, int h, int mytry) {
 
   cropCheck();
 
-  log("crop is" + std::string(cropEnabledProperty_ ? "ENABLED" : "DISABLED"));
+  Log(*this, Severity::debug)
+      << "crop is"
+      << std::string(cropEnabledProperty_ ? "ENABLED" : "DISABLED");
   if (!cropEnabledProperty_)
     return true;
 
@@ -336,28 +337,29 @@ bool PythonCameraHelper::crop(int top, int left, int w, int h, int mytry) {
 }
 
 bool PythonCameraHelper::setSubsampling() {
-  log("subsampling is" +
-      std::string(subsamplingEnabledProperty_ ? "ENABLED" : "DISABLED"));
+  Log(*this, Severity::debug)
+      << "subsampling is"
+      << std::string(subsamplingEnabledProperty_ ? "ENABLED" : "DISABLED");
   int subSamplingValue = 0;
   if (subsamplingEnabledProperty_) {
     subSamplingValue = 1;
   }
 
-  log("setSubsampling");
+  Log(*this, Severity::debug) << "setSubsampling";
   struct v4l2_control ctrl;
 
   ctrl.id = V4L2_CID_XILINX_PYTHON1300_SUBSAMPLING;
   ctrl.value = subSamplingValue;
   if (-1 == interface_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
                                VIDIOC_S_CTRL, &ctrl)) {
-    log("ERROR-setSubsampling", Severity::error);
+    Log(*this, Severity::error) << "setSubsampling";
     return false;
   }
 
   if (sourceSubDeviceIndex2_ != -1) {
     if (-1 == interface_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex2_],
                                  VIDIOC_S_CTRL, &ctrl)) {
-      log("ERROR-setSubsampling", Severity::error);
+      Log(*this, Severity::error) << "setSubsampling";
       return false;
     }
   }
@@ -366,14 +368,14 @@ bool PythonCameraHelper::setSubsampling() {
   ctrl.value = subSamplingValue;
   if (-1 == interface_->xioctl(pipelineSubdeviceFd_[rxif1Index_], VIDIOC_S_CTRL,
                                &ctrl)) {
-    log("ERROR-setSubsampling remapper", Severity::error);
+    Log(*this, Severity::error) << "setSubsampling remapper";
     return false;
   }
 
   if (rxif2Index_ != -1) {
     if (-1 == interface_->xioctl(pipelineSubdeviceFd_[rxif2Index_],
                                  VIDIOC_S_CTRL, &ctrl)) {
-      log("ERROR-setSubsampling remapper2", Severity::error);
+      Log(*this, Severity::error) << "setSubsampling remapper2";
       return false;
     }
   }
@@ -384,7 +386,7 @@ bool PythonCameraHelper::checkDevice(int mainSubdeviceFd) {
   struct v4l2_capability cap;
   if (-1 == interface_->xioctl(mainSubdeviceFd, VIDIOC_QUERYCAP, &cap)) {
     if (EINVAL == errno) {
-      log("ERROR-checkDevice:device is no V4L2 device", Severity::error);
+      Log(*this, Severity::error) << "checkDevice:device is no V4L2 device";
     }
     return false;
   }
@@ -403,7 +405,7 @@ bool PythonCameraHelper::checkDevice(int mainSubdeviceFd) {
 }
 
 bool PythonCameraHelper::initDevice() {
-  log("initDevice");
+  Log(*this, Severity::debug) << "initDevice";
 
   if (!checkDevice(mainSubdeviceFd_)) {
     return false;
@@ -437,21 +439,21 @@ bool PythonCameraHelper::cropCheck() {
     if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_S_CROP, &tmpCrop)) {
       switch (errno) {
       case EINVAL:
-        log("ERROR-cropping not supported", Severity::error);
+        Log(*this, Severity::error) << "cropping not supported";
         break;
       default:
-        log("ERROR-cropping", Severity::error);
+        Log(*this, Severity::error) << "cropping";
         break;
       }
     }
   } else {
-    log("WARNING-cropping-2");
+    Log(*this, Severity::warning) << "cropping-2";
   }
   return true;
 }
 
 bool PythonCameraHelper::initMmap() {
-  log("initMmap");
+  Log(*this, Severity::debug) << "initMmap";
   struct v4l2_requestbuffers req;
 
   CLEAR(req);
@@ -462,15 +464,15 @@ bool PythonCameraHelper::initMmap() {
 
   if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_REQBUFS, &req)) {
     if (EINVAL == errno) {
-      log("ERROR-device does not support memmap", Severity::error);
+      Log(*this, Severity::error) << "device does not support memmap";
       return false;
     }
-    log("ERROR-device does not support memmap", Severity::error);
+    Log(*this, Severity::error) << "device does not support memmap";
     return false;
   }
 
   if (req.count < 1) {
-    log("ERROR-Insufficient buffer memory on", Severity::error);
+    Log(*this, Severity::error) << "Insufficient buffer memory on";
     return false;
   }
 
@@ -502,7 +504,7 @@ bool PythonCameraHelper::initMmap() {
 }
 
 bool PythonCameraHelper::startCapturing() {
-  log("startCapturing");
+  Log(*this, Severity::debug) << "startCapturing";
   enum v4l2_buf_type type;
 
   for (size_t i = 0; i < requestBufferNumber_; ++i) {
@@ -514,13 +516,13 @@ bool PythonCameraHelper::startCapturing() {
     buf.index = i;
 
     if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
-      log("ERROR-VIDIOC_QBUF", Severity::error);
+      Log(*this, Severity::error) << "VIDIOC_QBUF";
       return false;
     }
   }
   type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_STREAMON, &type)) {
-    log("ERROR-VIDIOC_STREAMON", Severity::error);
+    Log(*this, Severity::error) << "VIDIOC_STREAMON";
     return false;
   }
   return true;
@@ -546,12 +548,12 @@ bool PythonCameraHelper::step() {
     if (EINTR == errno) {
       return false;
     }
-    log("ERROR-select", Severity::error);
+    Log(*this, Severity::error) << "select";
     return false;
   }
 
   if (0 == ret) {
-    log("ERROR-select timeout", Severity::error);
+    Log(*this, Severity::error) << "-select timeout";
     return false;
   }
 
@@ -560,7 +562,7 @@ bool PythonCameraHelper::step() {
     return false;
   }
   if (seq != sequence++) {
-    log("WANNING-dropped frame..", Severity::warning);
+    Log(*this, Severity::warning) << "dropped frame..";
     sequence = seq + 1;
   }
   if (seq) {
@@ -582,23 +584,23 @@ int PythonCameraHelper::readFrame() {
     switch (errno) {
     case EAGAIN:
 
-      log("ERROR-VIDIOC_DQBUF eagain", Severity::error);
+      Log(*this, Severity::error) << "VIDIOC_DQBUF eagain";
       return -1;
 
     case EIO:
     default:
-      log("ERROR-VIDIOC_DQBUF", Severity::error);
+      Log(*this, Severity::error) << "-VIDIOC_DQBUF";
       return -1;
     }
   }
 
   if (buf.index >= requestBufferNumber_) {
-    log("ERROR-readframe", Severity::error);
+    Log(*this, Severity::error) << "readframe";
     return -1;
   }
 
   if (buf.flags & V4L2_BUF_FLAG_ERROR) {
-    log("ERROR-V4L2_BUF_FLAG_ERROR", Severity::error);
+    Log(*this, Severity::error) << "V4L2_BUF_FLAG_ERROR";
     return -1;
   }
 
@@ -606,7 +608,7 @@ int PythonCameraHelper::readFrame() {
   processImage(mMapBuffers_[buf.index].start, buf.bytesused);
 
   if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
-    log("ERROR-VIDIOC_QBUF", Severity::error);
+    Log(*this, Severity::error) << "VIDIOC_QBUF";
     return -1;
   }
 
@@ -617,15 +619,6 @@ void PythonCameraHelper::processImage(const void *p, int size) {
   if (injectedProcessImage_ == nullptr)
     return;
   injectedProcessImage_(p, size);
-}
-
-void PythonCameraHelper::log(const std::string &toBeLogged, Severity severity) {
-  if (logOnFile_)
-    fs << toBeLogged;
-
-  if (log_ == nullptr)
-    return;
-  log_(toBeLogged, severity);
 }
 
 bool PythonCameraHelper::closeAll() {
@@ -639,12 +632,12 @@ bool PythonCameraHelper::closeAll() {
 }
 
 bool PythonCameraHelper::unInitDevice() {
-  log("uninit_device");
+  Log(*this, Severity::debug) << "uninit_device";
   unsigned int i;
 
   for (i = 0; i < requestBufferNumber_; ++i) {
     if (-1 == munmap(mMapBuffers_[i].start, mMapBuffers_[i].length)) {
-      log("ERROR-munmap", Severity::error);
+      Log(*this, Severity::error) << "munmap";
       return false;
     }
   }
@@ -656,7 +649,7 @@ bool PythonCameraHelper::stopCapturing() {
 
   type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_STREAMOFF, &type)) {
-    log("ERROR-VIDIOC_STREAMOFF", Severity::error);
+    Log(*this, Severity::error) << "VIDIOC_STREAMOFF";
     return false;
   }
   return true;
@@ -667,7 +660,7 @@ bool PythonCameraHelper::closePipeline() {
 
   for (i = 0; pipelineSubdeviceFd_[i] != -1; i++) {
     if (-1 == close(pipelineSubdeviceFd_[i])) {
-      log("ERROR-close pipeline", Severity::error);
+      Log(*this, Severity::error) << "close pipeline";
       return false;
     }
   }
@@ -682,14 +675,13 @@ void PythonCameraHelper::fpsCalculus() {
 
   current = std::chrono::steady_clock::now();
   frames++;
-  unsigned int time_delta =
+  unsigned int timeDelta =
       std::chrono::duration_cast<std::chrono::milliseconds>(current - prev)
           .count();
 
-  if (time_delta >= 1000) {
-    fps_ = ((static_cast<double>(frames) / static_cast<double>(time_delta)) *
+  if (timeDelta >= 1000) {
+    fps_ = ((static_cast<double>(frames) / static_cast<double>(timeDelta)) *
             1000.0);
-    // log("FPS:" << fps_);
     prev = current;
     frames = 0;
   }
@@ -736,22 +728,18 @@ void PythonCameraHelper::setInjectedLog(
   log_ = toinJect;
 }
 
-void PythonCameraHelper::setFileLog(bool value) { logOnFile_ = value; }
-
 bool PythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
                                     bool absolute) {
   v4lCtrl = remapControl(v4lCtrl);
 
   if (!hasControl(v4lCtrl)) {
-    std::stringstream ss;
-    ss << "setControl Missing ctr id:" << v4lCtrl << std::endl;
-    log(ss.str(), Severity::error);
+    Log(*this, Severity::error) << "setControl Missing ctr id:" << v4lCtrl;
     return false;
   }
 
   std::stringstream ss;
-  ss << "try setControl for:" << v4lCtrl << " value:" << value;
-  log(ss.str(), Severity::debug);
+  Log(*this, Severity::debug)
+      << "try setControl for:" << v4lCtrl << " value:" << value;
   switch (v4lCtrl) {
   case V4L2_CID_GAIN:
   case V4L2_ANALOGGAIN_ULTRA_PYTON:
@@ -779,7 +767,7 @@ bool PythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
 bool PythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
                                     bool absolute) {
   if (value < 0) {
-    log("setControl wrong value control", Severity::error);
+    Log(*this, Severity::error) << "setControl wrong value control";
     return false;
   }
 
@@ -793,20 +781,18 @@ bool PythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
 
   if (-1 == ioctl(fd, VIDIOC_QUERYCTRL, &queryctrl)) {
     if (errno != EINVAL) {
-      std::stringstream ss;
-      ss << "Cannot setControl1 value:" << value << " fd:" << fd << std::endl;
-      log(ss.str(), Severity::error);
+      Log(*this, Severity::error)
+          << "Cannot setControl1 value:" << value << " fd:" << fd;
     } else {
 
-      std::stringstream ss;
-      ss << "Cannot setControl2 value:" << value << " fd:" << fd << std::endl;
-      log(ss.str(), Severity::error);
+      Log(*this, Severity::error)
+          << "Cannot setControl2 value:" << value << " fd:" << fd;
     }
     return false;
   }
 
   if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED) {
-    log("Cannot setControl is disabled", Severity::error);
+    Log(*this, Severity::error) << "Cannot setControl is disabled";
     return false;
   }
   memset(&control, 0, sizeof(control));
@@ -826,15 +812,14 @@ bool PythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
 
   // Do set
   if (-1 == ioctl(fd, VIDIOC_S_CTRL, &control)) {
-    log("Cannot setControl3", Severity::error);
+    Log(*this, Severity::error) << "Cannot setControl3";
     return false;
   }
 
   std::stringstream ss;
-  ss << "SetControl done --> Ctrl name:" << queryctrl.name
-     << " Ctrl value:" << control.value << " Ctrl id:" << control.id
-     << std::endl;
-  log(ss.str(), Severity::debug);
+  Log(*this, Severity::debug)
+      << "SetControl done --> Ctrl name:" << queryctrl.name
+      << " Ctrl value:" << control.value << " Ctrl id:" << control.id;
   return true;
 }
 
@@ -842,9 +827,7 @@ double PythonCameraHelper::getControl(uint32_t v4lCtrl) {
   v4lCtrl = remapControl(v4lCtrl);
 
   if (!hasControl(v4lCtrl)) {
-    std::stringstream ss;
-    ss << "getControl Missing ctr id:" << v4lCtrl << std::endl;
-    log(ss.str(), Severity::error);
+    Log(*this, Severity::error) << "getControl Missing ctr id:" << v4lCtrl;
     return false;
   }
 
@@ -859,7 +842,7 @@ double PythonCameraHelper::getControl(uint32_t v4lCtrl) {
     double right =
         getControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex2_]);
     if (left != right) {
-      log("getControl left and right different", Severity::error);
+      Log(*this, Severity::error) << "getControl left and right different";
     }
     return left;
   }
@@ -886,16 +869,16 @@ double PythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
 
   if (-1 == ioctl(fd, VIDIOC_QUERYCTRL, &queryctrl)) {
     if (errno != EINVAL) {
-      log("getControl VIDIOC_QUERYCTRL", Severity::error);
+      Log(*this, Severity::error) << "getControl VIDIOC_QUERYCTRL";
     }
     return -1.0;
   }
 
   if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED) {
-    log("Control is disabled", Severity::error);
+    Log(*this, Severity::error) << "Control is disabled";
   } else {
     if (-1 == ioctl(fd, VIDIOC_G_CTRL, &control)) {
-      log("getControl VIDIOC_G_CTRL", Severity::error);
+      Log(*this, Severity::error) << "getControl VIDIOC_G_CTRL";
       return -1.0;
     }
   }
@@ -912,9 +895,7 @@ double PythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
 bool PythonCameraHelper::hasControl(uint32_t v4lCtrl) {
   v4lCtrl = remapControl(v4lCtrl);
 
-  std::stringstream ss;
-  ss << "hascontrol for:" << v4lCtrl;
-  log(ss.str(), Severity::debug);
+  Log(*this, Severity::debug) << "hascontrol for:" << v4lCtrl;
   switch (v4lCtrl) {
   case V4L2_CID_GAIN:
   case V4L2_ANALOGGAIN_ULTRA_PYTON:
@@ -936,16 +917,14 @@ bool PythonCameraHelper::hasAutoControl(uint32_t v4lCtrl) {
   // std::stringstream ss;
   // ss << "hasauto for:" << v4lCtrl;
   // log(ss.str(), Severity::debug);
-  Log(*this, Severity::debug) << "hasauto for:" << v4lCtrl << std::endl;
+  Log(*this, Severity::debug) << "hasauto for:" << v4lCtrl;
   return false;
 }
 
 bool PythonCameraHelper::checkControl(uint32_t v4lCtrl) {
   v4lCtrl = remapControl(v4lCtrl);
 
-  std::stringstream ss;
-  ss << "checkCcontrol for:" << v4lCtrl;
-  log(ss.str(), Severity::debug);
+  Log(*this, Severity::debug) << "checkCcontrol for:" << v4lCtrl;
 
   struct v4l2_queryctrl queryctrl;
   struct v4l2_control control;
@@ -959,7 +938,7 @@ bool PythonCameraHelper::checkControl(uint32_t v4lCtrl) {
   if (-1 == ioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
                   VIDIOC_QUERYCTRL, &queryctrl)) {
     if (errno != EINVAL) {
-      log("checkControl VIDIOC_QUERYCTRL", Severity::error);
+      Log(*this, Severity::error) << "checkControl VIDIOC_QUERYCTRL";
     }
     return false;
   }
@@ -981,15 +960,15 @@ uint32_t PythonCameraHelper::remapControl(uint32_t v4lCtr) {
   switch (v4lCtr) {
   case V4L2_CID_RED_BALANCE:
     out = V4L2_REDBALANCE_ULTRA_PYTON;
-    log("remap RED BALANCE", Severity::debug);
+    Log(*this, Severity::debug) << "remap RED BALANCE";
     break;
   case V4L2_CID_BLUE_BALANCE:
     out = V4L2_BLUEBALANCE_ULTRA_PYTON;
-    log("remap BLUE BALANCE", Severity::debug);
+    Log(*this, Severity::debug) << "remap BLUE BALANCE";
     break;
   case V4L2_CID_EXPOSURE:
     out = V4L2_EXPOSURE_ULTRA_PYTON; // trg_l
-    log("remap EXPOSURE", Severity::debug);
+    Log(*this, Severity::debug) << "remap EXPOSURE";
     break;
   default:
     break;
