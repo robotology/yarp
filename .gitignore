@@ -23,6 +23,9 @@ compile_commands.json
 /.vs/
 /.vscode/
 /.idea/
+/.settings/
+/.project
+/.cproject
 /cmake-build*/
 .clangd/
 *.srctrlbm
