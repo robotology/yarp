@@ -189,7 +189,7 @@ bool UltraPythonCameraHelper::checkIndex() {
   }
   if (packet32Index_ == -1) {
     Log(*this, Severity::error) << "Cannot find packet32Index";
-    //return false;
+    // return false;
   }
   return true;
 }
@@ -547,7 +547,8 @@ bool UltraPythonCameraHelper::step() {
   FD_ZERO(&fds);
   FD_SET(mainSubdeviceFd_, &fds);
 
-  ret = interfaceCApi_->select_c(mainSubdeviceFd_ + 1, &fds, nullptr, nullptr, &tv);
+  ret = interfaceCApi_->select_c(mainSubdeviceFd_ + 1, &fds, nullptr, nullptr,
+                                 &tv);
 
   if (-1 == ret) {
     if (EINTR == errno) {
@@ -698,7 +699,8 @@ void UltraPythonCameraHelper::setInjectedProcess(
     std::function<void(const void *, int)> toinJect) {
   injectedProcessImage_ = toinJect;
 }
-void UltraPythonCameraHelper::setInjectedUnlock(std::function<void()> toinJect) {
+void UltraPythonCameraHelper::setInjectedUnlock(
+    std::function<void()> toinJect) {
   unlock_ = toinJect;
 }
 void UltraPythonCameraHelper::setInjectedLock(std::function<void()> toinJect) {
@@ -734,7 +736,7 @@ void UltraPythonCameraHelper::setInjectedLog(
 }
 
 bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
-                                    bool absolute) {
+                                         bool absolute) {
   v4lCtrl = remapControl(v4lCtrl);
 
   if (!hasControl(v4lCtrl)) {
@@ -742,25 +744,26 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
     return false;
   }
 
-  std::stringstream ss;
   Log(*this, Severity::debug)
       << "try setControl for:" << v4lCtrl << " value:" << value;
   switch (v4lCtrl) {
   case V4L2_CID_GAIN:
-  case V4L2_ANALOGGAIN_ULTRA_PYTON:
+    setGain(value);
+    return true;
+  case V4L2_ANALOGGAIN_ULTRA_PYTHON:
   case V4L2_CID_BRIGHTNESS:
-  case V4L2_EXTTRIGGGER_ULTRA_PYTON: // EXT_TRIGGER
+  case V4L2_EXTTRIGGGER_ULTRA_PYTHON: // EXT_TRIGGER
     setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex1_], value,
                absolute);
     setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex2_], value,
                absolute);
     return true;
-  case V4L2_REDBALANCE_ULTRA_PYTON:  // V4L2_CID_RED_BALANCE
-  case V4L2_BLUEBALANCE_ULTRA_PYTON: // V4L2_CID_BLUE_BALANCE
+  case V4L2_REDBALANCE_ULTRA_PYTHON:  // V4L2_CID_RED_BALANCE
+  case V4L2_BLUEBALANCE_ULTRA_PYTHON: // V4L2_CID_BLUE_BALANCE
     setControl(v4lCtrl, mainSubdeviceFd_, value, absolute);
     return true;
-  case V4L2_DEADTIME_ULTRA_PYTON: // trg_h
-  case V4L2_EXPOSURE_ULTRA_PYTON: // EXPOSURE trg_l
+  case V4L2_DEADTIME_ULTRA_PYTHON: // trg_h
+  case V4L2_EXPOSURE_ULTRA_PYTHON: // EXPOSURE trg_l
     setControl(v4lCtrl, mainSubdeviceFd_, value, absolute);
     return true;
   default:
@@ -770,7 +773,7 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
 }
 
 bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
-                                    bool absolute) {
+                                         bool absolute) {
   if (value < 0) {
     Log(*this, Severity::error) << "setControl wrong value control";
     return false;
@@ -804,7 +807,7 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
   control.id = v4lCtrl;
 
   if (v4lCtrl ==
-      V4L2_EXPOSURE_ULTRA_PYTON /*&& control.value > maxExposition_*/) // trg_l
+      V4L2_EXPOSURE_ULTRA_PYTHON /*&& control.value > maxExposition_*/) // trg_l
   {
     queryctrl.maximum = maxExposition_;
     // control.value = maxExposition_;
@@ -838,9 +841,9 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl) {
 
   switch (v4lCtrl) {
   case V4L2_CID_GAIN:
-  case V4L2_ANALOGGAIN_ULTRA_PYTON:
+  case V4L2_ANALOGGAIN_ULTRA_PYTHON:
   case V4L2_CID_BRIGHTNESS:
-  case V4L2_EXTTRIGGGER_ULTRA_PYTON: // EXT_TRIGGER
+  case V4L2_EXTTRIGGGER_ULTRA_PYTHON: // EXT_TRIGGER
   {
     double left =
         getControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex1_]);
@@ -851,11 +854,11 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl) {
     }
     return left;
   }
-  case V4L2_REDBALANCE_ULTRA_PYTON:  // V4L2_CID_RED_BALANCE
-  case V4L2_BLUEBALANCE_ULTRA_PYTON: // V4L2_CID_BLUE_BALANCE
+  case V4L2_REDBALANCE_ULTRA_PYTHON:  // V4L2_CID_RED_BALANCE
+  case V4L2_BLUEBALANCE_ULTRA_PYTHON: // V4L2_CID_BLUE_BALANCE
     return getControl(v4lCtrl, mainSubdeviceFd_);
-  case V4L2_EXPOSURE_ULTRA_PYTON: // EXPOSURE trg_l
-  case V4L2_DEADTIME_ULTRA_PYTON: // trg_h
+  case V4L2_EXPOSURE_ULTRA_PYTHON: // EXPOSURE trg_l
+  case V4L2_DEADTIME_ULTRA_PYTHON: // trg_h
     return getControl(v4lCtrl, 4);
   default:
     return -1.0;
@@ -863,6 +866,13 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl) {
 }
 
 double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
+
+  if (v4lCtrl == V4L2_CID_GAIN) {
+    double min = gainMap_.begin()->first;
+    double max = gainMap_.end()->first;
+    return (double)(currentGainValue_ - min) / (max - min);
+  }
+
   struct v4l2_queryctrl queryctrl;
   struct v4l2_control control;
 
@@ -888,7 +898,7 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
     }
   }
 
-  if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTON) // trg_l
+  if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTHON) // trg_l
   {
     queryctrl.maximum = maxExposition_;
   }
@@ -897,19 +907,19 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
          (queryctrl.maximum - queryctrl.minimum);
 }
 
-bool UltraPythonCameraHelper::hasControl(uint32_t v4lCtrl) {
+bool UltraPythonCameraHelper::hasControl(uint32_t v4lCtrl) const {
   v4lCtrl = remapControl(v4lCtrl);
 
   Log(*this, Severity::debug) << "hascontrol for:" << v4lCtrl;
   switch (v4lCtrl) {
   case V4L2_CID_GAIN:
-  case V4L2_ANALOGGAIN_ULTRA_PYTON:
+  case V4L2_ANALOGGAIN_ULTRA_PYTHON:
   case V4L2_CID_BRIGHTNESS:
-  case V4L2_REDBALANCE_ULTRA_PYTON:  // V4L2_CID_RED_BALANCE
-  case V4L2_BLUEBALANCE_ULTRA_PYTON: // V4L2_CID_BLUE_BALANCE
-  case V4L2_EXTTRIGGGER_ULTRA_PYTON: // EXT_TRIGGER
-  case V4L2_EXPOSURE_ULTRA_PYTON:    // EXPOSURE  trg_l
-  case V4L2_DEADTIME_ULTRA_PYTON:    // trg_h
+  case V4L2_REDBALANCE_ULTRA_PYTHON:  // V4L2_CID_RED_BALANCE
+  case V4L2_BLUEBALANCE_ULTRA_PYTHON: // V4L2_CID_BLUE_BALANCE
+  case V4L2_EXTTRIGGGER_ULTRA_PYTHON: // EXT_TRIGGER
+  case V4L2_EXPOSURE_ULTRA_PYTHON:    // EXPOSURE  trg_l
+  case V4L2_DEADTIME_ULTRA_PYTHON:    // trg_h
     return true;
   default:
     return false;
@@ -917,7 +927,7 @@ bool UltraPythonCameraHelper::hasControl(uint32_t v4lCtrl) {
   return false;
 }
 
-bool UltraPythonCameraHelper::hasAutoControl(uint32_t v4lCtrl) {
+bool UltraPythonCameraHelper::hasAutoControl(uint32_t v4lCtrl) const {
   v4lCtrl = remapControl(v4lCtrl);
   // std::stringstream ss;
   // ss << "hasauto for:" << v4lCtrl;
@@ -951,32 +961,62 @@ bool UltraPythonCameraHelper::checkControl(uint32_t v4lCtrl) {
 }
 
 bool UltraPythonCameraHelper::setDefaultControl() {
-  setControl(V4L2_EXTTRIGGGER_ULTRA_PYTON, 1, true); // ext_trigger
-  setControl(V4L2_EXPOSURE_ULTRA_PYTON, 20, true);   // trg_l
-  setControl(V4L2_DEADTIME_ULTRA_PYTON, 10, true);   // trg_h
+  setControl(V4L2_EXTTRIGGGER_ULTRA_PYTHON, 1, true); // ext_trigger
+  setControl(V4L2_EXPOSURE_ULTRA_PYTHON, 20, true);   // trg_l
+  setControl(V4L2_DEADTIME_ULTRA_PYTHON, 10, true);   // trg_h
   setControl(V4L2_CID_BRIGHTNESS, 200, true);
   setControl(V4L2_CID_GAIN, 1, true);
-  setControl(V4L2_ANALOGGAIN_ULTRA_PYTON, 2, true);
+  setControl(V4L2_ANALOGGAIN_ULTRA_PYTHON, 2, true);
   return true;
 }
 
-uint32_t UltraPythonCameraHelper::remapControl(uint32_t v4lCtr) {
+uint32_t UltraPythonCameraHelper::remapControl(uint32_t v4lCtr) const {
   uint32_t out = v4lCtr;
   switch (v4lCtr) {
   case V4L2_CID_RED_BALANCE:
-    out = V4L2_REDBALANCE_ULTRA_PYTON;
+    out = V4L2_REDBALANCE_ULTRA_PYTHON;
     Log(*this, Severity::debug) << "remap RED BALANCE";
     break;
   case V4L2_CID_BLUE_BALANCE:
-    out = V4L2_BLUEBALANCE_ULTRA_PYTON;
+    out = V4L2_BLUEBALANCE_ULTRA_PYTHON;
     Log(*this, Severity::debug) << "remap BLUE BALANCE";
     break;
   case V4L2_CID_EXPOSURE:
-    out = V4L2_EXPOSURE_ULTRA_PYTON; // trg_l
+    out = V4L2_EXPOSURE_ULTRA_PYTHON; // trg_l
     Log(*this, Severity::debug) << "remap EXPOSURE";
     break;
   default:
     break;
   }
   return out;
+}
+
+bool UltraPythonCameraHelper::setGain(double value) {
+
+  double min = gainMap_.begin()->first;
+  double max = gainMap_.end()->first;
+  int absoluteValue = (int32_t)(value * (max - min) + min);
+
+  auto it = gainMap_.find(absoluteValue);
+  if (it == gainMap_.end()) {
+    Log(*this, Severity::error) << "wrong gain value";
+    return false;
+  }
+
+  auto current = gainMap_.at(absoluteValue);
+  currentGainValue_ = absoluteValue;
+  Log(*this, Severity::debug) << "gain:" << absoluteValue << " digital:"
+                              << current.first << " analog:" << current.second;
+
+  setControl(V4L2_CID_GAIN, pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
+             current.first, true);
+  setControl(V4L2_CID_GAIN, pipelineSubdeviceFd_[sourceSubDeviceIndex2_],
+             current.first, true);
+  setControl(V4L2_ANALOGGAIN_ULTRA_PYTHON,
+             pipelineSubdeviceFd_[sourceSubDeviceIndex1_], current.second,
+             true);
+  setControl(V4L2_ANALOGGAIN_ULTRA_PYTHON,
+             pipelineSubdeviceFd_[sourceSubDeviceIndex2_], current.second,
+             true);
+  return true;
 }

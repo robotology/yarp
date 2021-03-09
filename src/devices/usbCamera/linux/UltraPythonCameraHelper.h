@@ -24,6 +24,7 @@
 #include <fstream>
 #include <functional>
 #include <sstream>
+#include <map>
 
 struct v4l2_format;
 
@@ -59,15 +60,15 @@ private:
   static constexpr unsigned int maxExposition_{100};
 
   // Ctrl for Python
-  static constexpr unsigned int V4L2_EXPOSURE_ULTRA_PYTON{0x0098cb03}; // trg_l
-  static constexpr unsigned int V4L2_DEADTIME_ULTRA_PYTON{0x0098cb02}; // trg_h
-  static constexpr unsigned int V4L2_EXTTRIGGGER_ULTRA_PYTON{
+  static constexpr unsigned int V4L2_EXPOSURE_ULTRA_PYTHON{0x0098cb03}; // trg_l
+  static constexpr unsigned int V4L2_DEADTIME_ULTRA_PYTHON{0x0098cb02}; // trg_h
+  static constexpr unsigned int V4L2_EXTTRIGGGER_ULTRA_PYTHON{
       0x0098cc03}; // ext_trigger
-  static constexpr unsigned int V4L2_REDBALANCE_ULTRA_PYTON{
+  static constexpr unsigned int V4L2_REDBALANCE_ULTRA_PYTHON{
       0x0098c9a3}; // Red Balance
-  static constexpr unsigned int V4L2_BLUEBALANCE_ULTRA_PYTON{
+  static constexpr unsigned int V4L2_BLUEBALANCE_ULTRA_PYTHON{
       0x0098c9a5}; // Blue balance
-  static constexpr unsigned int V4L2_ANALOGGAIN_ULTRA_PYTON{
+  static constexpr unsigned int V4L2_ANALOGGAIN_ULTRA_PYTHON{
       0x009e0903}; // Analog gain
 
 public:
@@ -80,9 +81,9 @@ public:
   double getCurrentFps() const;
   void setSubsamplingProperty(bool value);
   bool setControl(uint32_t v4lCtrl, double value, bool absolute);
-  double getControl(uint32_t v4lCtrl);
-  bool hasControl(uint32_t v4lCtrl);
-  bool hasAutoControl(uint32_t v4lCtrl);
+  double getControl(uint32_t v4lCtrl);//Normalize control value
+  bool hasControl(uint32_t v4lCtrl) const;
+  bool hasAutoControl(uint32_t v4lCtrl) const;
   bool checkControl(uint32_t v4lCtr);
 
   // Inject function from out
@@ -102,7 +103,7 @@ private:
   bool initDevice();
   bool startCapturing();
   bool setDefaultControl();               // Some important default controls
-  uint32_t remapControl(uint32_t v4lCtr); // Different id from the official ones
+  uint32_t remapControl(uint32_t v4lCtr) const; // Different id from the official ones
   bool setControl(uint32_t v4lCtrl, int fd, double value, bool absolute);
   double getControl(uint32_t v4lCtrl, int fd);
   bool setSubDevFormat(int width, int height);
@@ -120,6 +121,7 @@ private:
   void fpsCalculus();
   void log(const std::string &toBeLogged, Severity severity = Severity::debug);
   bool checkIndex();
+  bool setGain(double value);
 
   // Property
   bool subsamplingEnabledProperty_{true};
@@ -147,6 +149,22 @@ private:
 
   const SpaceColor spaceColor_{SpaceColor::rgb};
 
+  //Gain
+  double currentGainValue_{1};
+  const std::map<unsigned int,std::pair<unsigned int,unsigned int>> gainMap_{
+                                                                      {1,{1,1}},
+                                                                      {2,{1,2}},
+                                                                      {3,{1,3}},
+                                                                      {4,{1,4}},
+                                                                      {5,{1,5}},
+                                                                      {6,{2,2}},
+                                                                      {7,{2,3}},
+                                                                      {8,{2,4}},
+                                                                      {9,{2,5}},
+                                                                      {10,{2,6}},
+                                                                      {11,{2,7}}
+                                                                      };
+
   // Crop size
   unsigned int cropLeft_{0};
   unsigned int cropTop_{0};
@@ -158,8 +176,10 @@ private:
       injectedProcessImage_;     // Process image external
   std::function<void()> lock_;   // Mutex injected method
   std::function<void()> unlock_; // Mutex injected method
-  std::function<void(const std::string &, Severity)> log_; // Logging injected method
+  std::function<void(const std::string &, Severity)>
+      log_; // Logging injected method
 
+  //Injected RAI mutex
   class Locker {
   private:
     const UltraPythonCameraHelper &parent_;
@@ -176,6 +196,7 @@ private:
     };
   };
 
+  //Injected RAI log
   class Log {
   private:
     const UltraPythonCameraHelper &parent_;
