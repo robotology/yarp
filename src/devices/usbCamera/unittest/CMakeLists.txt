@@ -2,10 +2,10 @@
 project(ultrapythonunittest)
 
 set(SOURCES gtest_main.cc
-            test1.cpp
-            ../linux/InterfaceForCFunction.h
-            ../linux/PythonCameraHelper.h
-            ../linux/PythonCameraHelper.cpp
+            testUltraPythonGeneral.cpp
+            ../linux/InterfaceForCApi.h
+            ../linux/UltraPythonCameraHelper.h
+            ../linux/UltraPythonCameraHelper.cpp
             )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

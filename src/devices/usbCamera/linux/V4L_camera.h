@@ -50,7 +50,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "PythonCameraHelper.h"
+#include "UltraPythonCameraHelper.h"
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
@@ -228,7 +228,7 @@ private:
     int myCounter;
     int frameCounter;
 
-    std::map<std::string, supported_cams> camMap{{"default",STANDARD_UVC},{"leopard_python",LEOPARD_PYTHON},{"python",ULTRAPYTON}};   
+    std::map<std::string, supported_cams> camMap{{"default",STANDARD_UVC},{"leopard_python",LEOPARD_PYTHON},{"ultrapython",ULTRAPYTON}};   
 
     bool fromConfig(yarp::os::Searchable& config);
 
@@ -318,7 +318,7 @@ private:
 
 private:
     //Only for PythonCamera
-    PythonCameraHelper pythonCameraHelper_;
+    UltraPythonCameraHelper pythonCameraHelper_;
     void pythonPreprocess(const void* pythonbuffer,size_t size);
     const void* pythonBuffer_{nullptr};
     unsigned int pythonBufferSize_{0};

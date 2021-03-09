@@ -17,7 +17,7 @@
  */
 //# @author Luca Tricerri <luca.tricerri@iit.it>
 
-#include "PythonCameraHelper.h"
+#include "UltraPythonCameraHelper.h"
 
 #include "xilinx-v4l2-controls.h"
 #include <chrono>
@@ -35,33 +35,34 @@
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
-PythonCameraHelper::PythonCameraHelper(InterfaceForCFunction *interfaceC) {
-  Log(*this, Severity::debug) << "::PythonCameraHelper";
+UltraPythonCameraHelper::UltraPythonCameraHelper(InterfaceForCApi *interfaceC) {
+  Log(*this, Severity::debug) << "::UltraPythonCameraHelper";
   if (interfaceC == nullptr) {
-    interfaceC = new InterfaceForCFunction();
+    ownerCApi_ = true;
+    interfaceC = new InterfaceForCApi();
   }
-  interface_ = interfaceC;
+  interfaceCApi_ = interfaceC;
 }
 
-PythonCameraHelper::~PythonCameraHelper() {
-  Log(*this, Severity::debug) << "::~PythonCameraHelper";
-  if (interface_ != nullptr) {
-    // delete interface_;
+UltraPythonCameraHelper::~UltraPythonCameraHelper() {
+  Log(*this, Severity::debug) << "::~UltraPythonCameraHelper";
+  if (interfaceCApi_ != nullptr && ownerCApi_) {
+    delete interfaceCApi_;
   }
 }
 
-bool PythonCameraHelper::openPipeline() {
+bool UltraPythonCameraHelper::openPipeline() {
   Log(*this, Severity::debug) << "::openPipeline";
 
   // Open main device
-  int fd = interface_->open_c(mediaName_, O_RDWR);
+  int fd = interfaceCApi_->open_c(mediaName_, O_RDWR);
   if (fd == -1) {
     Log(*this, Severity::error) << "ERROR-cannot open media dev";
     return false;
   }
 
   struct udev *udev;
-  udev = interface_->udev_new_c();
+  udev = interfaceCApi_->udev_new_c();
   if (udev == nullptr) {
     Log(*this, Severity::error) << "ERROR-cannot open udev";
     return false;
@@ -74,7 +75,7 @@ bool PythonCameraHelper::openPipeline() {
     memset(&info, 0, sizeof(info));
     info.id = id | MEDIA_ENT_ID_FLAG_NEXT;
 
-    int ret = interface_->ioctl_c(fd, MEDIA_IOC_ENUM_ENTITIES, &info);
+    int ret = interfaceCApi_->ioctl_c(fd, MEDIA_IOC_ENUM_ENTITIES, &info);
     if (ret < 0) {
       ret = errno != EINVAL ? -errno : 0;
       Log(*this, Severity::warning) << "WARNING-cannot open device not media";
@@ -83,20 +84,21 @@ bool PythonCameraHelper::openPipeline() {
     Log(*this, Severity::debug)
         << "found entity name:" << std::string(info.name);
 
-    dev_t devnum = interface_->makedev_c(info.v4l.major, info.v4l.minor);
+    dev_t devnum = interfaceCApi_->makedev_c(info.v4l.major, info.v4l.minor);
     struct udev_device *device;
-    device = interface_->udev_device_new_from_devnum_c(udev, 'c', devnum);
+    device = interfaceCApi_->udev_device_new_from_devnum_c(udev, 'c', devnum);
     if (device == nullptr) {
       udev_device_unref(device);
       continue;
     }
 
     const char *deviceName;
-    deviceName = interface_->udev_device_get_devnode_c(device);
+    deviceName = interfaceCApi_->udev_device_get_devnode_c(device);
 
     // Open main subdevice
     if ((std::strcmp(info.name, pipelineVideoName) == 0)) {
-      mainSubdeviceFd_ = interface_->open_c(deviceName, O_RDWR | O_NONBLOCK, 0);
+      mainSubdeviceFd_ =
+          interfaceCApi_->open_c(deviceName, O_RDWR | O_NONBLOCK, 0);
       if (mainSubdeviceFd_ == -1) {
         Log(*this, Severity::error)
             << "ERROR-cannot open device:" << std::string(deviceName);
@@ -133,7 +135,7 @@ bool PythonCameraHelper::openPipeline() {
         }
       }
       pipelineSubdeviceFd_[subdeviceIndex] =
-          interface_->open_c(deviceName, O_RDWR | O_NONBLOCK, 0);
+          interfaceCApi_->open_c(deviceName, O_RDWR | O_NONBLOCK, 0);
       if (pipelineSubdeviceFd_[subdeviceIndex] == -1) {
         Log(*this, Severity::error)
             << "ERROR-cannot open device:" << std::string(deviceName);
@@ -146,13 +148,13 @@ bool PythonCameraHelper::openPipeline() {
           << " index:" << subdeviceIndex;
       subdeviceIndex++;
     }
-    interface_->udev_device_unref_c(device);
+    interfaceCApi_->udev_device_unref_c(device);
   }
   Log(*this, Severity::debug) << "open:" << mediaName_;
   return checkIndex();
 }
 
-bool PythonCameraHelper::checkIndex() {
+bool UltraPythonCameraHelper::checkIndex() {
   if (mainSubdeviceFd_ == -1) {
     Log(*this, Severity::error) << "Cannot find main pipe V4L2 device";
     return false;
@@ -187,12 +189,12 @@ bool PythonCameraHelper::checkIndex() {
   }
   if (packet32Index_ == -1) {
     Log(*this, Severity::error) << "Cannot find packet32Index";
-    return false;
+    //return false;
   }
   return true;
 }
 
-bool PythonCameraHelper::setSubDevFormat(int width, int height) {
+bool UltraPythonCameraHelper::setSubDevFormat(int width, int height) {
   int i;
   int j;
   int n;
@@ -208,8 +210,8 @@ bool PythonCameraHelper::setSubDevFormat(int width, int height) {
       CLEAR(fmt);
       fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
       fmt.pad = j;
-      if (-1 == interface_->xioctl(pipelineSubdeviceFd_[i], VIDIOC_SUBDEV_G_FMT,
-                                   &fmt)) {
+      if (-1 == interfaceCApi_->xioctl(pipelineSubdeviceFd_[i],
+                                       VIDIOC_SUBDEV_G_FMT, &fmt)) {
         Log(*this, Severity::error)
             << "VIDIOC_SUBDEV_G_FMT. subdev" << i << "pad" << j;
         return false;
@@ -243,8 +245,8 @@ bool PythonCameraHelper::setSubDevFormat(int width, int height) {
                                     << " setting format:" << fmt.format.width
                                     << ":" << fmt.format.height;
       }
-      if (-1 == interface_->xioctl(pipelineSubdeviceFd_[i], VIDIOC_SUBDEV_S_FMT,
-                                   &fmt)) {
+      if (-1 == interfaceCApi_->xioctl(pipelineSubdeviceFd_[i],
+                                       VIDIOC_SUBDEV_S_FMT, &fmt)) {
         Log(*this, Severity::error)
             << "VIDIOC_SUBDEV_S_FMT. subdev" << i << "pad" << j;
 
@@ -258,7 +260,7 @@ bool PythonCameraHelper::setSubDevFormat(int width, int height) {
   return true;
 }
 
-bool PythonCameraHelper::setFormat() {
+bool UltraPythonCameraHelper::setFormat() {
   struct v4l2_format fmt;
   // todo check dimensions correctness
   CLEAR(fmt);
@@ -291,19 +293,19 @@ bool PythonCameraHelper::setFormat() {
       fmt.fmt.pix.width *= 2;
     }
 
-    if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_S_FMT, &fmt))
+    if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_S_FMT, &fmt))
       return false;
 
     /* Note VIDIOC_S_FMT may change width and height. */
     return true;
   }
   /* Preserve original settings as set by v4l2-ctl for example */
-  if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_G_FMT, &fmt))
+  if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_G_FMT, &fmt))
     return false;
   return true;
 }
 
-bool PythonCameraHelper::crop(int top, int left, int w, int h, int mytry) {
+bool UltraPythonCameraHelper::crop(int top, int left, int w, int h, int mytry) {
 
   cropCheck();
 
@@ -323,20 +325,21 @@ bool PythonCameraHelper::crop(int top, int left, int w, int h, int mytry) {
   _crop.which = mytry ? V4L2_SUBDEV_FORMAT_TRY : V4L2_SUBDEV_FORMAT_ACTIVE;
   _crop.pad = 0;
 
-  if (-1 == interface_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
-                               VIDIOC_SUBDEV_S_CROP, &_crop)) {
+  if (-1 == interfaceCApi_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
+                                   VIDIOC_SUBDEV_S_CROP, &_crop)) {
     return false;
   }
   if (sourceSubDeviceIndex2_ != -1) {
-    if (-1 == interface_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex2_],
-                                 VIDIOC_SUBDEV_S_CROP, &_crop)) {
+    if (-1 ==
+        interfaceCApi_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex2_],
+                               VIDIOC_SUBDEV_S_CROP, &_crop)) {
       return false;
     }
   }
   return true;
 }
 
-bool PythonCameraHelper::setSubsampling() {
+bool UltraPythonCameraHelper::setSubsampling() {
   Log(*this, Severity::debug)
       << "subsampling is"
       << std::string(subsamplingEnabledProperty_ ? "ENABLED" : "DISABLED");
@@ -350,15 +353,16 @@ bool PythonCameraHelper::setSubsampling() {
 
   ctrl.id = V4L2_CID_XILINX_PYTHON1300_SUBSAMPLING;
   ctrl.value = subSamplingValue;
-  if (-1 == interface_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
-                               VIDIOC_S_CTRL, &ctrl)) {
+  if (-1 == interfaceCApi_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
+                                   VIDIOC_S_CTRL, &ctrl)) {
     Log(*this, Severity::error) << "setSubsampling";
     return false;
   }
 
   if (sourceSubDeviceIndex2_ != -1) {
-    if (-1 == interface_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex2_],
-                                 VIDIOC_S_CTRL, &ctrl)) {
+    if (-1 ==
+        interfaceCApi_->xioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex2_],
+                               VIDIOC_S_CTRL, &ctrl)) {
       Log(*this, Severity::error) << "setSubsampling";
       return false;
     }
@@ -366,15 +370,15 @@ bool PythonCameraHelper::setSubsampling() {
 
   ctrl.id = V4L2_CID_XILINX_PYTHON1300_RXIF_REMAPPER_MODE;
   ctrl.value = subSamplingValue;
-  if (-1 == interface_->xioctl(pipelineSubdeviceFd_[rxif1Index_], VIDIOC_S_CTRL,
-                               &ctrl)) {
+  if (-1 == interfaceCApi_->xioctl(pipelineSubdeviceFd_[rxif1Index_],
+                                   VIDIOC_S_CTRL, &ctrl)) {
     Log(*this, Severity::error) << "setSubsampling remapper";
     return false;
   }
 
   if (rxif2Index_ != -1) {
-    if (-1 == interface_->xioctl(pipelineSubdeviceFd_[rxif2Index_],
-                                 VIDIOC_S_CTRL, &ctrl)) {
+    if (-1 == interfaceCApi_->xioctl(pipelineSubdeviceFd_[rxif2Index_],
+                                     VIDIOC_S_CTRL, &ctrl)) {
       Log(*this, Severity::error) << "setSubsampling remapper2";
       return false;
     }
@@ -382,9 +386,9 @@ bool PythonCameraHelper::setSubsampling() {
   return true;
 }
 
-bool PythonCameraHelper::checkDevice(int mainSubdeviceFd) {
+bool UltraPythonCameraHelper::checkDevice(int mainSubdeviceFd) {
   struct v4l2_capability cap;
-  if (-1 == interface_->xioctl(mainSubdeviceFd, VIDIOC_QUERYCAP, &cap)) {
+  if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd, VIDIOC_QUERYCAP, &cap)) {
     if (EINVAL == errno) {
       Log(*this, Severity::error) << "checkDevice:device is no V4L2 device";
     }
@@ -404,7 +408,7 @@ bool PythonCameraHelper::checkDevice(int mainSubdeviceFd) {
   return true;
 }
 
-bool PythonCameraHelper::initDevice() {
+bool UltraPythonCameraHelper::initDevice() {
   Log(*this, Severity::debug) << "initDevice";
 
   if (!checkDevice(mainSubdeviceFd_)) {
@@ -426,17 +430,18 @@ bool PythonCameraHelper::initDevice() {
   return true;
 }
 
-bool PythonCameraHelper::cropCheck() {
+bool UltraPythonCameraHelper::cropCheck() {
   struct v4l2_cropcap cropcap;
   struct v4l2_crop tmpCrop;
   CLEAR(cropcap);
 
   cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  if (0 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_CROPCAP, &cropcap)) {
+  if (0 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_CROPCAP, &cropcap)) {
     tmpCrop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     tmpCrop.c = cropcap.defrect; /* reset to default */
 
-    if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_S_CROP, &tmpCrop)) {
+    if (-1 ==
+        interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_S_CROP, &tmpCrop)) {
       switch (errno) {
       case EINVAL:
         Log(*this, Severity::error) << "cropping not supported";
@@ -452,7 +457,7 @@ bool PythonCameraHelper::cropCheck() {
   return true;
 }
 
-bool PythonCameraHelper::initMmap() {
+bool UltraPythonCameraHelper::initMmap() {
   Log(*this, Severity::debug) << "initMmap";
   struct v4l2_requestbuffers req;
 
@@ -462,7 +467,7 @@ bool PythonCameraHelper::initMmap() {
   req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   req.memory = V4L2_MEMORY_MMAP;
 
-  if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_REQBUFS, &req)) {
+  if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_REQBUFS, &req)) {
     if (EINVAL == errno) {
       Log(*this, Severity::error) << "device does not support memmap";
       return false;
@@ -486,12 +491,12 @@ bool PythonCameraHelper::initMmap() {
     buf.memory = V4L2_MEMORY_MMAP;
     buf.index = currentUsedBufferIndex;
 
-    if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_QUERYBUF, &buf)) {
+    if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_QUERYBUF, &buf)) {
       return false;
     }
 
     mMapBuffers_[currentUsedBufferIndex].length = buf.length;
-    mMapBuffers_[currentUsedBufferIndex].start = interface_->mmap_c(
+    mMapBuffers_[currentUsedBufferIndex].start = interfaceCApi_->mmap_c(
         nullptr /* start anywhere */, buf.length,
         PROT_READ | PROT_WRITE /* required */, MAP_SHARED /* recommended */,
         mainSubdeviceFd_, buf.m.offset);
@@ -503,7 +508,7 @@ bool PythonCameraHelper::initMmap() {
   return true;
 }
 
-bool PythonCameraHelper::startCapturing() {
+bool UltraPythonCameraHelper::startCapturing() {
   Log(*this, Severity::debug) << "startCapturing";
   enum v4l2_buf_type type;
 
@@ -515,20 +520,20 @@ bool PythonCameraHelper::startCapturing() {
     buf.memory = V4L2_MEMORY_MMAP;
     buf.index = i;
 
-    if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
+    if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
       Log(*this, Severity::error) << "VIDIOC_QBUF";
       return false;
     }
   }
   type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_STREAMON, &type)) {
+  if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_STREAMON, &type)) {
     Log(*this, Severity::error) << "VIDIOC_STREAMON";
     return false;
   }
   return true;
 }
 
-bool PythonCameraHelper::step() {
+bool UltraPythonCameraHelper::step() {
 
   static int seq = 0;
   static int sequence = 0;
@@ -542,7 +547,7 @@ bool PythonCameraHelper::step() {
   FD_ZERO(&fds);
   FD_SET(mainSubdeviceFd_, &fds);
 
-  ret = select(mainSubdeviceFd_ + 1, &fds, nullptr, nullptr, &tv);
+  ret = interfaceCApi_->select_c(mainSubdeviceFd_ + 1, &fds, nullptr, nullptr, &tv);
 
   if (-1 == ret) {
     if (EINTR == errno) {
@@ -571,7 +576,7 @@ bool PythonCameraHelper::step() {
   return true;
 }
 
-int PythonCameraHelper::readFrame() {
+int UltraPythonCameraHelper::readFrame() {
   struct v4l2_buffer buf;
   int seq = 1;
   CLEAR(buf);
@@ -580,7 +585,7 @@ int PythonCameraHelper::readFrame() {
   buf.memory = V4L2_MEMORY_MMAP;
 
   Locker locker(*this);
-  if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_DQBUF, &buf)) {
+  if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_DQBUF, &buf)) {
     switch (errno) {
     case EAGAIN:
 
@@ -607,7 +612,7 @@ int PythonCameraHelper::readFrame() {
   seq = buf.sequence;
   processImage(mMapBuffers_[buf.index].start, buf.bytesused);
 
-  if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
+  if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
     Log(*this, Severity::error) << "VIDIOC_QBUF";
     return -1;
   }
@@ -615,13 +620,13 @@ int PythonCameraHelper::readFrame() {
   return seq;
 }
 
-void PythonCameraHelper::processImage(const void *p, int size) {
+void UltraPythonCameraHelper::processImage(const void *p, int size) {
   if (injectedProcessImage_ == nullptr)
     return;
   injectedProcessImage_(p, size);
 }
 
-bool PythonCameraHelper::closeAll() {
+bool UltraPythonCameraHelper::closeAll() {
   if (!stopCapturing())
     return false;
   if (!unInitDevice())
@@ -631,7 +636,7 @@ bool PythonCameraHelper::closeAll() {
   return true;
 }
 
-bool PythonCameraHelper::unInitDevice() {
+bool UltraPythonCameraHelper::unInitDevice() {
   Log(*this, Severity::debug) << "uninit_device";
   unsigned int i;
 
@@ -644,18 +649,18 @@ bool PythonCameraHelper::unInitDevice() {
   return true;
 }
 
-bool PythonCameraHelper::stopCapturing() {
+bool UltraPythonCameraHelper::stopCapturing() {
   enum v4l2_buf_type type;
 
   type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  if (-1 == interface_->xioctl(mainSubdeviceFd_, VIDIOC_STREAMOFF, &type)) {
+  if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_STREAMOFF, &type)) {
     Log(*this, Severity::error) << "VIDIOC_STREAMOFF";
     return false;
   }
   return true;
 }
 
-bool PythonCameraHelper::closePipeline() {
+bool UltraPythonCameraHelper::closePipeline() {
   int i;
 
   for (i = 0; pipelineSubdeviceFd_[i] != -1; i++) {
@@ -667,7 +672,7 @@ bool PythonCameraHelper::closePipeline() {
   return true;
 }
 
-void PythonCameraHelper::fpsCalculus() {
+void UltraPythonCameraHelper::fpsCalculus() {
   static unsigned int frames = 0;
   static std::chrono::steady_clock::time_point current;
   static std::chrono::steady_clock::time_point prev =
@@ -687,24 +692,24 @@ void PythonCameraHelper::fpsCalculus() {
   }
 }
 
-double PythonCameraHelper::getCurrentFps() const { return fps_; }
+double UltraPythonCameraHelper::getCurrentFps() const { return fps_; }
 
-void PythonCameraHelper::setInjectedProcess(
+void UltraPythonCameraHelper::setInjectedProcess(
     std::function<void(const void *, int)> toinJect) {
   injectedProcessImage_ = toinJect;
 }
-void PythonCameraHelper::setInjectedUnlock(std::function<void()> toinJect) {
+void UltraPythonCameraHelper::setInjectedUnlock(std::function<void()> toinJect) {
   unlock_ = toinJect;
 }
-void PythonCameraHelper::setInjectedLock(std::function<void()> toinJect) {
+void UltraPythonCameraHelper::setInjectedLock(std::function<void()> toinJect) {
   lock_ = toinJect;
 }
 
-void PythonCameraHelper::setSubsamplingProperty(bool value) {
+void UltraPythonCameraHelper::setSubsamplingProperty(bool value) {
   subsamplingEnabledProperty_ = value;
 }
 
-bool PythonCameraHelper::openAll() {
+bool UltraPythonCameraHelper::openAll() {
   if (!openPipeline()) {
     return false;
   }
@@ -723,12 +728,12 @@ bool PythonCameraHelper::openAll() {
   return true;
 }
 
-void PythonCameraHelper::setInjectedLog(
+void UltraPythonCameraHelper::setInjectedLog(
     std::function<void(const std::string &, Severity)> toinJect) {
   log_ = toinJect;
 }
 
-bool PythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
+bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
                                     bool absolute) {
   v4lCtrl = remapControl(v4lCtrl);
 
@@ -764,7 +769,7 @@ bool PythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
   return false;
 }
 
-bool PythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
+bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
                                     bool absolute) {
   if (value < 0) {
     Log(*this, Severity::error) << "setControl wrong value control";
@@ -823,7 +828,7 @@ bool PythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
   return true;
 }
 
-double PythonCameraHelper::getControl(uint32_t v4lCtrl) {
+double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl) {
   v4lCtrl = remapControl(v4lCtrl);
 
   if (!hasControl(v4lCtrl)) {
@@ -857,7 +862,7 @@ double PythonCameraHelper::getControl(uint32_t v4lCtrl) {
   }
 }
 
-double PythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
+double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
   struct v4l2_queryctrl queryctrl;
   struct v4l2_control control;
 
@@ -892,7 +897,7 @@ double PythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
          (queryctrl.maximum - queryctrl.minimum);
 }
 
-bool PythonCameraHelper::hasControl(uint32_t v4lCtrl) {
+bool UltraPythonCameraHelper::hasControl(uint32_t v4lCtrl) {
   v4lCtrl = remapControl(v4lCtrl);
 
   Log(*this, Severity::debug) << "hascontrol for:" << v4lCtrl;
@@ -912,7 +917,7 @@ bool PythonCameraHelper::hasControl(uint32_t v4lCtrl) {
   return false;
 }
 
-bool PythonCameraHelper::hasAutoControl(uint32_t v4lCtrl) {
+bool UltraPythonCameraHelper::hasAutoControl(uint32_t v4lCtrl) {
   v4lCtrl = remapControl(v4lCtrl);
   // std::stringstream ss;
   // ss << "hasauto for:" << v4lCtrl;
@@ -921,7 +926,7 @@ bool PythonCameraHelper::hasAutoControl(uint32_t v4lCtrl) {
   return false;
 }
 
-bool PythonCameraHelper::checkControl(uint32_t v4lCtrl) {
+bool UltraPythonCameraHelper::checkControl(uint32_t v4lCtrl) {
   v4lCtrl = remapControl(v4lCtrl);
 
   Log(*this, Severity::debug) << "checkCcontrol for:" << v4lCtrl;
@@ -945,7 +950,7 @@ bool PythonCameraHelper::checkControl(uint32_t v4lCtrl) {
   return true;
 }
 
-bool PythonCameraHelper::setDefaultControl() {
+bool UltraPythonCameraHelper::setDefaultControl() {
   setControl(V4L2_EXTTRIGGGER_ULTRA_PYTON, 1, true); // ext_trigger
   setControl(V4L2_EXPOSURE_ULTRA_PYTON, 20, true);   // trg_l
   setControl(V4L2_DEADTIME_ULTRA_PYTON, 10, true);   // trg_h
@@ -955,7 +960,7 @@ bool PythonCameraHelper::setDefaultControl() {
   return true;
 }
 
-uint32_t PythonCameraHelper::remapControl(uint32_t v4lCtr) {
+uint32_t UltraPythonCameraHelper::remapControl(uint32_t v4lCtr) {
   uint32_t out = v4lCtr;
   switch (v4lCtr) {
   case V4L2_CID_RED_BALANCE:

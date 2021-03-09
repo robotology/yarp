@@ -36,23 +36,6 @@ if(COMPILE_WITHUNITTEST_ULTRAPYTHON)
   add_subdirectory(unittest)
   endif()
 
-# if(COMPILE_WITHUNITTEST_ULTRAPYTHON)
-#   FetchContent_Declare(
-#     unittest
-#     GIT_REPOSITORY https://github.com/google/googletest.git
-#     GIT_TAG        release-1.10.0
-#   )
-#   FetchContent_GetProperties(unittest)
-#   if(NOT unittest)
-#     FetchContent_Populate(unittest)
-#     set(BUILD_SHARED_LIBS_SAVED "${BUILD_SHARED_LIBS}")
-#     set(BUILD_SHARED_LIBS OFF)
-#     add_subdirectory(unittest)
-#     set(BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS_SAVED}")
-#     add_subdirectory(${unittest_SOURCE_DIR} ${unittest_BINARY_DIR})
-#   endif()
-# endif()
-
 # Get rid of undef while compiling gtest -- START
 set_property(
     DIRECTORY
@@ -67,14 +50,14 @@ yarp_prepare_plugin(usbCamera
                     TYPE USBCameraDriverRgb
                     INCLUDE common/USBcamera.h
                     EXTRA_CONFIG WRAPPER=grabberDual
-                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV;YARP_HAS_LibUDev")
+                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV;YARP_HAS_UDev")
 
 yarp_prepare_plugin(usbCameraRaw
                     CATEGORY device
                     TYPE USBCameraDriverRaw
                     INCLUDE common/USBcamera.h
                     EXTRA_CONFIG WRAPPER=grabberDual
-                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV;YARP_HAS_LibUDev")
+                    DEPENDS "UNIX;NOT APPLE;YARP_HAS_Libv4l2;YARP_HAS_Libv4lconvert;YARP_HAS_OpenCV;YARP_HAS_UDev")
 
 if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
   yarp_add_plugin(yarp_usbCamera)
@@ -87,10 +70,10 @@ if(ENABLE_usbCamera OR ENABLE_usbCameraRaw)
                                         linux/V4L_camera.h
                                         linux/list.cpp
                                         linux/list.h
-                                        linux/PythonCameraHelper.cpp
-                                        linux/PythonCameraHelper.h
+                                        linux/UltraPythonCameraHelper.cpp
+                                        linux/UltraPythonCameraHelper.h
                                         linux/xilinx-v4l2-controls.h
-                                        linux/InterfaceForCFunction.h
+                                        linux/InterfaceForCApi.h
                                         )
 
   target_include_directories(yarp_usbCamera PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/common")

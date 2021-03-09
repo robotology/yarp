@@ -18,7 +18,7 @@
 //# @author Luca Tricerri <luca.tricerri@iit.it>
 #pragma once
 
-#include "InterfaceForCFunction.h"
+#include "InterfaceForCApi.h"
 #include <array>
 #include <cstring>
 #include <fstream>
@@ -35,7 +35,7 @@ enum class SpaceColor { yuv, rgb, grgb };
 
 enum class Severity { debug, info, warning, error };
 
-class PythonCameraHelper {
+class UltraPythonCameraHelper {
 private:
   static constexpr const char *mediaName_ = "/dev/media0";
 
@@ -92,11 +92,12 @@ public:
   void setInjectedLog(
       std::function<void(const std::string &, Severity severity)> toinJect);
 
-  PythonCameraHelper(InterfaceForCFunction *interfaceC);
-  virtual ~PythonCameraHelper();
+  explicit UltraPythonCameraHelper(InterfaceForCApi *interfaceC);
+  virtual ~UltraPythonCameraHelper();
 
 private:
-  InterfaceForCFunction *interface_; // Unittest purpouse
+  InterfaceForCApi *interfaceCApi_; // Unittest purpouse
+  bool ownerCApi_{false};
   bool openPipeline();
   bool initDevice();
   bool startCapturing();
@@ -157,14 +158,14 @@ private:
       injectedProcessImage_;     // Process image external
   std::function<void()> lock_;   // Mutex injected method
   std::function<void()> unlock_; // Mutex injected method
-  std::function<void(const std::string &, Severity)> log_;
+  std::function<void(const std::string &, Severity)> log_; // Logging injected method
 
   class Locker {
   private:
-    const PythonCameraHelper &parent_;
+    const UltraPythonCameraHelper &parent_;
 
   public:
-    explicit Locker(PythonCameraHelper &parent) : parent_(parent) {
+    explicit Locker(const UltraPythonCameraHelper &parent) : parent_(parent) {
       if (parent_.lock_)
         parent_.lock_();
     };
@@ -177,12 +178,12 @@ private:
 
   class Log {
   private:
-    const PythonCameraHelper &parent_;
+    const UltraPythonCameraHelper &parent_;
     Severity severity_;
     std::stringstream ss_;
 
   public:
-    Log(PythonCameraHelper &parent, Severity severity)
+    Log(const UltraPythonCameraHelper &parent, Severity severity)
         : parent_(parent), severity_(severity){};
     ~Log() {
       if (parent_.log_) {

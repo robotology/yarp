@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 #include "V4L_camera.h"
 
 #include <yarp/os/LogStream.h>
@@ -98,7 +97,7 @@ int V4L_camera::convertYARP_to_V4L(int feature)
 }
 
 V4L_camera::V4L_camera() :
-        PeriodicThread(1.0 / DEFAULT_FRAMERATE), doCropping(false), toEpochOffset(getEpochTimeShift())
+        PeriodicThread(1.0 / DEFAULT_FRAMERATE), doCropping(false), toEpochOffset(getEpochTimeShift()),pythonCameraHelper_(nullptr)
 {
     pythonCameraHelper_.setInjectedProcess([this](const void* pythonBuffer, size_t size)
                                            { pythonPreprocess(pythonBuffer, size); });
@@ -939,7 +938,7 @@ bool V4L_camera::close()
 
     if(param.camModel == ULTRAPYTON)
     {
-        return pythonCameraHelper_->closeAll();
+        return pythonCameraHelper_.closeAll();
     }
 
     if (param.fd != -1) {

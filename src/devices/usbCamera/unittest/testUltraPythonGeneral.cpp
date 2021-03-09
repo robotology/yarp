@@ -1,6 +1,6 @@
 //# @author Luca Tricerri <luca.tricerri@iit.it>
-#include "../linux/InterfaceForCFunction.h"
-#include "../linux/PythonCameraHelper.h"
+#include "../linux/InterfaceForCApi.h"
+#include "../linux/UltraPythonCameraHelper.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -20,7 +20,7 @@ struct udev_device {
 };
 
 // Mock
-class InterfaceFoCFunctionMock : public InterfaceForCFunction {
+class InterfaceFoCApiMock : public InterfaceForCApi {
 public:
   MOCK_METHOD(int, open_c, (const char *, int), (override));
   MOCK_METHOD(int, open_c, (const char *, int, mode_t), (override));
@@ -40,8 +40,8 @@ public:
 
 TEST(UltraPython, openAll_ok_002) {
   // given
-  InterfaceFoCFunctionMock *interface = new InterfaceFoCFunctionMock();
-  PythonCameraHelper helper(interface);
+  InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
+  UltraPythonCameraHelper helper(interface);
   EXPECT_CALL(*interface, open_c(_, _)).Times(1);
   EXPECT_CALL(*interface, open_c(_, _, _)).Times(9);
   EXPECT_CALL(*interface, udev_new_c()).WillOnce(Return(new udev()));
@@ -126,8 +126,8 @@ TEST(UltraPython, openAll_ok_002) {
 
 TEST(UltraPython, openAll_ko_001) {
   // given
-  InterfaceFoCFunctionMock *interface = new InterfaceFoCFunctionMock();
-  PythonCameraHelper helper(interface);
+  InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
+  UltraPythonCameraHelper helper(interface);
   EXPECT_CALL(*interface, open_c(_, _)).Times(1);
   EXPECT_CALL(*interface, open_c(_, _, _)).Times(2);
   EXPECT_CALL(*interface, udev_new_c()).WillOnce(Return(new udev()));
@@ -167,11 +167,11 @@ TEST(UltraPython, openAll_ko_001) {
 
 TEST(UltraPython, log_ok_001) {
   // given
-  InterfaceFoCFunctionMock *interface = new InterfaceFoCFunctionMock();
-  PythonCameraHelper helper(interface);
+  InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
+  UltraPythonCameraHelper helper(interface);
   {
     helper.setInjectedLog([](const std::string &str, Severity severity) {
-      EXPECT_EQ("::~PythonCameraHelper", str);
+      EXPECT_EQ("::~UltraPythonCameraHelper", str);
       EXPECT_TRUE(severity == Severity::debug);
       return str;
     });
