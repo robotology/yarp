@@ -75,3 +75,14 @@ jobs:
         echo "::endgroup::"
 
         cat $GITHUB_EVENT_PATH | jq -C
+
+  clone_repo:
+    name: 'Clone Repository'
+    needs: select_environment
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
