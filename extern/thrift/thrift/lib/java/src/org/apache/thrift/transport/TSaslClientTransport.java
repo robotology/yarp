@@ -19,7 +19,7 @@
 
 package org.apache.thrift.transport;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import javax.security.auth.callback.CallbackHandler;
@@ -27,6 +27,7 @@ import javax.security.sasl.Sasl;
 import javax.security.sasl.SaslClient;
 import javax.security.sasl.SaslException;
 
+import org.apache.thrift.transport.sasl.NegotiationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,14 +47,14 @@ public class TSaslClientTransport extends TSaslTransport {
 
   /**
    * Uses the given <code>SaslClient</code>.
-   * 
+   *
    * @param saslClient
    *          The <code>SaslClient</code> to use for the subsequent SASL
    *          negotiation.
    * @param transport
    *          Transport underlying this one.
    */
-  public TSaslClientTransport(SaslClient saslClient, TTransport transport) {
+  public TSaslClientTransport(SaslClient saslClient, TTransport transport) throws TTransportException {
     super(saslClient, transport);
     mechanism = saslClient.getMechanismName();
   }
@@ -62,14 +63,14 @@ public class TSaslClientTransport extends TSaslTransport {
    * Creates a <code>SaslClient</code> using the given SASL-specific parameters.
    * See the Java documentation for <code>Sasl.createSaslClient</code> for the
    * details of the parameters.
-   * 
+   *
    * @param transport
    *          The underlying Thrift transport.
    * @throws SaslException
    */
   public TSaslClientTransport(String mechanism, String authorizationId, String protocol,
       String serverName, Map<String, String> props, CallbackHandler cbh, TTransport transport)
-      throws SaslException {
+          throws SaslException, TTransportException {
     super(Sasl.createSaslClient(new String[] { mechanism }, authorizationId, protocol, serverName,
         props, cbh), transport);
     this.mechanism = mechanism;
@@ -97,12 +98,7 @@ public class TSaslClientTransport extends TSaslTransport {
     LOGGER.debug("Sending mechanism name {} and initial response of length {}", mechanism,
         initialResponse.length);
 
-    byte[] mechanismBytes;
-	try {
-		mechanismBytes = mechanism.getBytes("UTF-8");
-	} catch (UnsupportedEncodingException e) {
-		throw new TTransportException(e);
-	}
+    byte[] mechanismBytes = mechanism.getBytes(StandardCharsets.UTF_8);
     sendSaslMessage(NegotiationStatus.START,
                     mechanismBytes);
     // Send initial response

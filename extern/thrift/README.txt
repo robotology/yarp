@@ -29,8 +29,21 @@ License: Apache-2.0
  specific language governing permissions and limitations
  under the License.
 
-Version: 0.12.0
+Version: 0.14.1
 
 Patches:
 
-* Removed compiler/cpp/src/thrift/version.h file
+* Modified version string in compiler/cpp/src/thrift/version.h
+
+```diff
+--- a/extern/thrift/thrift/compiler/cpp/src/thrift/version.h
++++ b/extern/thrift/thrift/compiler/cpp/src/thrift/version.h
+@@ -24,6 +24,6 @@
+ #pragma once
+ #endif // _MSC_VER
+
+-#define THRIFT_VERSION "0.14.1"
++#define THRIFT_VERSION "0.14.1-yarped"
+
+ #endif // _THRIFT_VERSION_H_
+```

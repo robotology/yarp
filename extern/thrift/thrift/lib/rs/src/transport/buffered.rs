@@ -139,7 +139,7 @@ impl TBufferedReadTransportFactory {
 
 impl TReadTransportFactory for TBufferedReadTransportFactory {
     /// Create a `TBufferedReadTransport`.
-    fn create(&self, channel: Box<Read + Send>) -> Box<TReadTransport + Send> {
+    fn create(&self, channel: Box<dyn Read + Send>) -> Box<dyn TReadTransport + Send> {
         Box::new(TBufferedReadTransport::new(channel))
     }
 }
@@ -200,7 +200,7 @@ where
         TBufferedWriteTransport {
             buf: Vec::with_capacity(write_capacity),
             cap: write_capacity,
-            channel: channel,
+            channel,
         }
     }
 }
@@ -254,7 +254,7 @@ impl TBufferedWriteTransportFactory {
 
 impl TWriteTransportFactory for TBufferedWriteTransportFactory {
     /// Create a `TBufferedWriteTransport`.
-    fn create(&self, channel: Box<Write + Send>) -> Box<TWriteTransport + Send> {
+    fn create(&self, channel: Box<dyn Write + Send>) -> Box<dyn TWriteTransport + Send> {
         Box::new(TBufferedWriteTransport::new(channel))
     }
 }
@@ -264,7 +264,7 @@ mod tests {
     use std::io::{Read, Write};
 
     use super::*;
-    use transport::TBufferChannel;
+    use crate::transport::TBufferChannel;
 
     #[test]
     fn must_return_zero_if_read_buffer_is_empty() {
@@ -347,8 +347,8 @@ mod tests {
 
         // fill the underlying transport's byte buffer
         let mut readable_bytes = [0u8; 10];
-        for i in 0..10 {
-            readable_bytes[i] = i as u8;
+        for (i, b) in readable_bytes.iter_mut().enumerate() {
+            *b = i as u8;
         }
 
         t.chan.set_readable_bytes(&readable_bytes);
@@ -365,8 +365,8 @@ mod tests {
         assert_eq!(&buf, &[0, 1, 2, 3, 4, 5, 6, 7]);
 
         // let's clear out the buffer and try read again
-        for i in 0..8 {
-            buf[i] = 0;
+        for b in &mut buf{
+            *b = 0;
         }
         let read_result = t.read(&mut buf);
 

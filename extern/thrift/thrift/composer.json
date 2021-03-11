@@ -1,7 +1,7 @@
 {
     "name": "apache/thrift",
     "description": "Apache Thrift RPC system",
-    "homepage": "https://thrift.apache.org/",
+    "homepage": "http://thrift.apache.org",
     "type": "library",
     "keywords": ["RPC"],
     "license": "Apache-2.0",

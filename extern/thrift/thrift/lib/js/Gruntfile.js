@@ -39,27 +39,22 @@ module.exports = function(grunt) {
     },
     shell: {
       InstallThriftJS: {
-        command: 'mkdir -p test/build/js/lib; cp src/thrift.js test/build/js/thrift.js'
+        command: 'cp src/thrift.js test/build/js/thrift.js'
       },
       InstallThriftNodeJSDep: {
-        command: 'cd ../..; npm install'
+        command: 'cd ../.. && npm install'
       },
       InstallTestLibs: {
-        command: 'cd test; ant download_jslibs'
+        command: 'cd test && ant download_jslibs'
       },
       ThriftGen: {
         command: [
-          'mkdir -p test/gen-js',
-          '../../compiler/cpp/thrift -gen js --out test/gen-js ../../test/ThriftTest.thrift',
-          '../../compiler/cpp/thrift -gen js --out test/gen-js ../../test/JsDeepConstructorTest.thrift',
-          'mkdir -p test/gen-js-jquery',
-          '../../compiler/cpp/thrift -gen js:jquery --out test/gen-js-jquery ../../test/ThriftTest.thrift',
-          'mkdir -p test/gen-nodejs',
-          '../../compiler/cpp/thrift -gen js:node --out test/gen-nodejs ../../test/ThriftTest.thrift',
-          'mkdir -p test/gen-js-es6',
-          '../../compiler/cpp/thrift -gen js:es6 --out test/gen-js-es6 ../../test/ThriftTest.thrift',
-          'mkdir -p test/gen-nodejs-es6',
-          '../../compiler/cpp/thrift -gen js:node,es6 --out ./test/gen-nodejs-es6 ../../test/ThriftTest.thrift',
+          '"../../compiler/cpp/thrift" -gen js --out test/gen-js ../../test/ThriftTest.thrift',
+          '"../../compiler/cpp/thrift" -gen js --out test/gen-js ../../test/JsDeepConstructorTest.thrift',
+          '"../../compiler/cpp/thrift" -gen js:jquery --out test/gen-js-jquery ../../test/ThriftTest.thrift',
+          '"../../compiler/cpp/thrift" -gen js:node --out test/gen-nodejs ../../test/ThriftTest.thrift',
+          '"../../compiler/cpp/thrift" -gen js:es6 --out test/gen-js-es6 ../../test/ThriftTest.thrift',
+          '"../../compiler/cpp/thrift" -gen js:node,es6 --out ./test/gen-nodejs-es6 ../../test/ThriftTest.thrift',
         ].join(' && ')
       },
       ThriftGenJQ: {
@@ -67,6 +62,16 @@ module.exports = function(grunt) {
       },
       ThriftGenDeepConstructor: {
         command: '../../compiler/cpp/thrift -gen js -o test ../../test/JsDeepConstructorTest.thrift'
+      },
+      ThriftBrowserifyNodeInt64: {
+        command: [
+          './node_modules/browserify/bin/cmd.js ./node_modules/node-int64/Int64.js -s Int64 -o test/build/js/lib/Int64.js',
+          './node_modules/browserify/bin/cmd.js ../nodejs/lib/thrift/int64_util.js -s Int64Util -o test/build/js/lib/Int64Util.js',
+          './node_modules/browserify/bin/cmd.js ./node_modules/json-int64/index.js -s JSONInt64 -o test/build/js/lib/JSONInt64.js'
+        ].join(' && ')
+      },
+      ThriftGenInt64: {
+        command: '../../compiler/cpp/thrift -gen js -o test ../../test/Int64Test.thrift'
       },
       ThriftGenDoubleConstants: {
         command: '../../compiler/cpp/thrift -gen js -o test ../../test/DoubleConstantsTest.thrift'
@@ -147,6 +152,18 @@ module.exports = function(grunt) {
           },
         }
       },
+      ThriftJS_Int64: {
+        options: {
+          urls: [
+            'http://localhost:8089/test-int64.html'
+          ],
+          puppeteer: {
+            headless: true,
+            args: ['--no-sandbox'],
+            ignoreHTTPSErrors: true,
+          },
+        }
+      },
       ThriftWS: {
         options: {
           urls: [
@@ -218,7 +235,7 @@ module.exports = function(grunt) {
       }
     },
     jshint: {
-      // The main thrift library file. not es6 yet :(
+      // The main Thrift library file. not es6 yet :(
       lib: {
         src: ['src/**/*.js'],
       },
@@ -261,32 +278,55 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-shell-spawn');
 
-  grunt.registerTask('wait', 'Wait just one second for server to start', function () {
+  grunt.registerTask('wait', 'Wait just one second for the server to start', function () {
     var done = this.async();
     setTimeout(function() {
       done(true);
     }, 1000);
   });
 
+  grunt.registerTask('CreateDirectories', 'Creating required local directories', function () {
+    grunt.file.mkdir('test/build/js/lib');
+    grunt.file.mkdir('test/gen-js');
+    grunt.file.mkdir('test/gen-js-jquery');
+    grunt.file.mkdir('test/gen-nodejs');
+    grunt.file.mkdir('test/gen-js-es6');
+    grunt.file.mkdir('test/gen-nodejs-es6');
+});
+
   grunt.registerTask('installAndGenerate', [
-    'shell:InstallThriftJS', 'shell:InstallThriftNodeJSDep', 'shell:ThriftGen',
+    'CreateDirectories',
+    'shell:InstallThriftJS',
+    'shell:InstallThriftNodeJSDep',
+    'shell:ThriftGen',
     'shell:ThriftGenDeepConstructor',
+    'shell:ThriftGenDoubleConstants',
     'shell:InstallTestLibs',
+    'shell:ThriftBrowserifyNodeInt64',
+    'shell:ThriftGenInt64'
   ]);
 
   grunt.registerTask('test', [
     'installAndGenerate',
     'jshint',
-    'shell:ThriftTestServer', 'shell:ThriftTestServer_TLS',
-    'shell:ThriftTestServerES6', 'shell:ThriftTestServerES6_TLS',
+    'shell:ThriftTestServer',
+    'shell:ThriftTestServer_TLS',
+    'shell:ThriftTestServerES6',
+    'shell:ThriftTestServerES6_TLS',
     'wait',
     'qunit:ThriftDeepConstructor',
-    'qunit:ThriftJS', 'qunit:ThriftJS_TLS',
+    'qunit:ThriftJS',
+    'qunit:ThriftJS_TLS',
+    'qunit:ThriftJS_DoubleRendering',
     'qunit:ThriftWS',
-    'qunit:ThriftJSJQ', 'qunit:ThriftJSJQ_TLS',
+    'qunit:ThriftJSJQ',
+    'qunit:ThriftJSJQ_TLS',
     'qunit:ThriftWSES6',
-    'shell:ThriftTestServer:kill', 'shell:ThriftTestServer_TLS:kill',
-    'shell:ThriftTestServerES6:kill', 'shell:ThriftTestServerES6_TLS:kill',
+    'qunit:ThriftJS_Int64',
+    'shell:ThriftTestServer:kill',
+    'shell:ThriftTestServer_TLS:kill',
+    'shell:ThriftTestServerES6:kill',
+    'shell:ThriftTestServerES6_TLS:kill',
   ]);
   grunt.registerTask('default', ['test', 'concat', 'uglify', 'jsdoc']);
 };

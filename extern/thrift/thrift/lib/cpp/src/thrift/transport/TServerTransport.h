@@ -22,7 +22,6 @@
 
 #include <thrift/transport/TTransport.h>
 #include <thrift/transport/TTransportException.h>
-#include <thrift/stdcxx.h>
 
 namespace apache {
 namespace thrift {
@@ -36,7 +35,12 @@ namespace transport {
  */
 class TServerTransport {
 public:
-  virtual ~TServerTransport() {}
+  virtual ~TServerTransport() = default;
+
+  /**
+   * Whether this transport is open.
+   */
+  virtual bool isOpen() const { return false; }
 
   /**
    * Starts the server transport listening for new connections. Prior to this
@@ -50,16 +54,16 @@ public:
    * Gets a new dynamically allocated transport object and passes it to the
    * caller. Note that it is the explicit duty of the caller to free the
    * allocated object. The returned TTransport object must always be in the
-   * opened state. NULL should never be returned, instead an Exception should
+   * opened state. nullptr should never be returned, instead an Exception should
    * always be thrown.
    *
    * @return A new TTransport object
    * @throws TTransportException if there is an error
    */
-  stdcxx::shared_ptr<TTransport> accept() {
-    stdcxx::shared_ptr<TTransport> result = acceptImpl();
+  std::shared_ptr<TTransport> accept() {
+    std::shared_ptr<TTransport> result = acceptImpl();
     if (!result) {
-      throw TTransportException("accept() may not return NULL");
+      throw TTransportException("accept() may not return nullptr");
     }
     return result;
   }
@@ -97,7 +101,7 @@ public:
   virtual void close() = 0;
 
 protected:
-  TServerTransport() {}
+  TServerTransport() = default;
 
   /**
    * Subclasses should implement this function for accept.
@@ -105,7 +109,7 @@ protected:
    * @return A newly allocated TTransport object
    * @throw TTransportException If an error occurs
    */
-  virtual stdcxx::shared_ptr<TTransport> acceptImpl() = 0;
+  virtual std::shared_ptr<TTransport> acceptImpl() = 0;
 };
 }
 }

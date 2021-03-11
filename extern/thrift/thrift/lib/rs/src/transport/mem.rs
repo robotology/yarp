@@ -31,7 +31,7 @@ use super::{ReadHalf, TIoChannel, WriteHalf};
 /// `set_readable_bytes(...)`. Callers can then read until the buffer is
 /// depleted. No further reads are accepted until the internal read buffer is
 /// replenished again.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TBufferChannel {
     read: Arc<Mutex<ReadData>>,
     write: Arc<Mutex<WriteData>>,
@@ -139,7 +139,7 @@ impl TBufferChannel {
 }
 
 impl TIoChannel for TBufferChannel {
-    fn split(self) -> ::Result<(ReadHalf<Self>, WriteHalf<Self>)>
+    fn split(self) -> crate::Result<(ReadHalf<Self>, WriteHalf<Self>)>
     where
         Self: Sized,
     {
@@ -153,7 +153,9 @@ impl TIoChannel for TBufferChannel {
             WriteHalf {
                 handle: TBufferChannel {
                     read: self.read.clone(),
-                    write: self.write.clone(),
+                    // NOTE: not cloning here, since this is the last statement
+                    // in this method and `write` can take ownership of `self.write`
+                    write: self.write,
                 },
             },
         ))

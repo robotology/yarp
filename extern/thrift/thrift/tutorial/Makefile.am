@@ -58,8 +58,8 @@ if WITH_HAXE
 SUBDIRS += haxe
 endif
 
-if WITH_DOTNETCORE
-SUBDIRS += netcore
+if WITH_DOTNET
+SUBDIRS += netstd
 endif
 
 if WITH_GO
@@ -82,6 +82,14 @@ if WITH_CL
 SUBDIRS += cl
 endif
 
+if WITH_PERL
+SUBDIRS += perl
+endif
+
+if WITH_PHP
+SUBDIRS += php
+endif
+
 #
 # generate html for ThriftTest.thrift
 #
@@ -97,14 +105,11 @@ endif
 # EXTRA_DIST to be included in the release
 EXTRA_DIST = \
 	as3 \
-	csharp \
 	d \
 	delphi \
 	erl \
 	hs \
 	ocaml \
-	perl \
-	php \
 	shared.thrift \
 	tutorial.thrift \
 	README.md

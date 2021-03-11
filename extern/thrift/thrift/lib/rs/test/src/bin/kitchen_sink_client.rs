@@ -15,11 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#[macro_use]
-extern crate clap;
-
-extern crate kitchen_sink;
-extern crate thrift;
+use clap::{clap_app, value_t};
 
 use std::convert::Into;
 
@@ -28,6 +24,8 @@ use kitchen_sink::midlayer::{MealServiceSyncClient, TMealServiceSyncClient};
 use kitchen_sink::recursive;
 use kitchen_sink::recursive::{CoRec, CoRec2, RecList, RecTree, TTestServiceSyncClient};
 use kitchen_sink::ultimate::{FullMealServiceSyncClient, TFullMealServiceSyncClient};
+
+use thrift;
 use thrift::protocol::{
     TBinaryInputProtocol, TBinaryOutputProtocol, TCompactInputProtocol, TCompactOutputProtocol,
     TInputProtocol, TOutputProtocol,
@@ -69,7 +67,7 @@ fn run() -> thrift::Result<()> {
         TFramedWriteTransport::new(o_chan),
     );
 
-    let (i_prot, o_prot): (Box<TInputProtocol>, Box<TOutputProtocol>) = match protocol {
+    let (i_prot, o_prot): (Box<dyn TInputProtocol>, Box<dyn TOutputProtocol>) = match protocol {
         "binary" => (
             Box::new(TBinaryInputProtocol::new(i_tran, true)),
             Box::new(TBinaryOutputProtocol::new(o_tran, true)),
@@ -86,8 +84,8 @@ fn run() -> thrift::Result<()> {
 
 fn run_client(
     service: &str,
-    i_prot: Box<TInputProtocol>,
-    o_prot: Box<TOutputProtocol>,
+    i_prot: Box<dyn TInputProtocol>,
+    o_prot: Box<dyn TOutputProtocol>,
 ) -> thrift::Result<()> {
     match service {
         "full" => exec_full_meal_client(i_prot, o_prot),
@@ -110,8 +108,8 @@ fn tcp_channel(
 }
 
 fn exec_meal_client(
-    i_prot: Box<TInputProtocol>,
-    o_prot: Box<TOutputProtocol>,
+    i_prot: Box<dyn TInputProtocol>,
+    o_prot: Box<dyn TOutputProtocol>,
 ) -> thrift::Result<()> {
     let mut client = MealServiceSyncClient::new(i_prot, o_prot);
 
@@ -127,8 +125,8 @@ fn exec_meal_client(
 }
 
 fn exec_full_meal_client(
-    i_prot: Box<TInputProtocol>,
-    o_prot: Box<TOutputProtocol>,
+    i_prot: Box<dyn TInputProtocol>,
+    o_prot: Box<dyn TOutputProtocol>,
 ) -> thrift::Result<()> {
     let mut client = FullMealServiceSyncClient::new(i_prot, o_prot);
 
@@ -141,8 +139,8 @@ fn exec_full_meal_client(
 }
 
 fn exec_recursive_client(
-    i_prot: Box<TInputProtocol>,
-    o_prot: Box<TOutputProtocol>,
+    i_prot: Box<dyn TInputProtocol>,
+    o_prot: Box<dyn TOutputProtocol>,
 ) -> thrift::Result<()> {
     let mut client = recursive::TestServiceSyncClient::new(i_prot, o_prot);
 

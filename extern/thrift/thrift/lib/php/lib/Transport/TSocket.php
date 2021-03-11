@@ -251,8 +251,9 @@ class TSocket extends TTransport
         }
 
         if (function_exists('socket_import_stream') && function_exists('socket_set_option')) {
-            $socket = socket_import_stream($this->handle_);
-            socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
+            // warnings silenced due to bug https://bugs.php.net/bug.php?id=70939
+            $socket = @socket_import_stream($this->handle_);
+            @socket_set_option($socket, SOL_TCP, TCP_NODELAY, 1);
         }
     }
 
@@ -328,7 +329,8 @@ class TSocket extends TTransport
             if ($writable > 0) {
                 // write buffer to stream
                 $written = fwrite($this->handle_, $buf);
-                if ($written === -1 || $written === false) {
+                $closed_socket = $written === 0 && feof($this->handle_);
+                if ($written === -1 || $written === false || $closed_socket) {
                     throw new TTransportException(
                         'TSocket: Could not write ' . TStringFuncFactory::create()->strlen($buf) . ' bytes ' .
                         $this->host_ . ':' . $this->port_

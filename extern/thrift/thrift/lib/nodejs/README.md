@@ -68,3 +68,75 @@ Since JavaScript represents all numbers as doubles, int64 values cannot be accur
 ## Client and server examples
 
 Several example clients and servers are included in the thrift/lib/nodejs/examples folder and the cross language tutorial thrift/tutorial/nodejs folder.
+
+## Use on browsers
+
+You can use code generated with js:node on browsers with Webpack. Here is an example.
+
+thrift --gen js:node,ts,es6,with_ns
+
+```javascript
+import * as thrift from 'thrift';
+import { MyServiceClient } from '../gen-nodejs/MyService';
+
+let host = window.location.hostname;
+let port = 443;
+let opts = {
+  transport: thrift.TBufferedTransport,
+  protocol: thrift.TJSONProtocol, 
+    headers: {
+     'Content-Type': 'application/vnd.apache.thrift.json',
+    },
+    https: true,
+    path: '/url/path',
+    useCORS: true,
+};
+
+let connection = thrift.createXHRConnection(host, port, opts);
+let thriftClient = thrift.createXHRClient(MyServiceClient, connection);
+
+connection.on('error', (err) => {
+  console.error(err);
+});
+
+thriftClient.myService(param)
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((err) => {
+    ....
+  });
+```
+
+Bundlers, like webpack, will use thrift/browser.js by default because of the 
+`"browser": "./lib/nodejs/lib/thrift/browser.js"` field in package.json.
+
+### Browser example with WebSocket, BufferedTransport and BinaryProtocol
+```javascript
+import thrift from 'thrift';
+import { MyServiceClient } from '../gen-nodejs/MyService';
+
+const host = window.location.hostname;
+const port = 9090;
+const opts = {
+  transport: thrift.TBufferedTransport,
+  protocol: thrift.TBinaryProtocol
+}
+const connection = thrift.createWSConnection(host, port, opts);
+connection.open();
+const thriftClient = thrift.createWSClient(MyServiceClient, connection);
+
+connection.on('error', (err) => {
+  console.error(err);
+});
+
+thriftClient.myService(param)
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((err) => {
+    ....
+  });
+```
+
+

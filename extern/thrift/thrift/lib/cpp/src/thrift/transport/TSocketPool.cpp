@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 #if __cplusplus >= 201703L
 #include <random>
 #endif
@@ -35,7 +36,7 @@ namespace apache {
 namespace thrift {
 namespace transport {
 
-using stdcxx::shared_ptr;
+using std::shared_ptr;
 
 /**
  * TSocketPoolServer implementation
@@ -94,8 +95,8 @@ TSocketPool::TSocketPool(const vector<pair<string, int> >& servers)
     maxConsecutiveFailures_(1),
     randomize_(true),
     alwaysTryLast_(true) {
-  for (unsigned i = 0; i < servers.size(); ++i) {
-    addServer(servers[i].first, servers[i].second);
+  for (const auto & server : servers) {
+    addServer(server.first, server.second);
   }
 }
 
@@ -129,7 +130,7 @@ TSocketPool::~TSocketPool() {
 }
 
 void TSocketPool::addServer(const string& host, int port) {
-  servers_.push_back(shared_ptr<TSocketPoolServer>(new TSocketPoolServer(host, port)));
+  servers_.push_back(std::make_shared<TSocketPoolServer>(host, port));
 }
 
 void TSocketPool::addServer(shared_ptr<TSocketPoolServer>& server) {
@@ -177,7 +178,7 @@ void TSocketPool::setCurrentServer(const shared_ptr<TSocketPoolServer>& server) 
  * This function throws an exception if socket open fails. When socket
  * opens fails, the socket in the current server is reset.
  */
-/* TODO: without apc we ignore a lot of functionality from the php version */
+/* TODO: without apcu we ignore a lot of functionality from the php version */
 void TSocketPool::open() {
 
   size_t numServers = servers_.size();
@@ -216,7 +217,7 @@ void TSocketPool::open() {
 
     if (server->lastFailTime_ > 0) {
       // The server was marked as down, so check if enough time has elapsed to retry
-      time_t elapsedTime = time(NULL) - server->lastFailTime_;
+      time_t elapsedTime = time(nullptr) - server->lastFailTime_;
       if (elapsedTime > retryInterval_) {
         retryIntervalPassed = true;
       }
@@ -245,7 +246,7 @@ void TSocketPool::open() {
       if (server->consecutiveFailures_ > maxConsecutiveFailures_) {
         // Mark server as down
         server->consecutiveFailures_ = 0;
-        server->lastFailTime_ = time(NULL);
+        server->lastFailTime_ = time(nullptr);
       }
     }
   }

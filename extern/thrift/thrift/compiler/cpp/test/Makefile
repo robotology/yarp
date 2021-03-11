@@ -37,7 +37,6 @@
 # Please see doc/old-thrift-license.txt in the Thrift distribution for
 # details.
 
-
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
     false; \
@@ -111,9 +110,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
-#check_PROGRAMS = plugintest$(EXEEXT)
-#noinst_PROGRAMS = thrift-gen-mycpp$(EXEEXT)
-#am__append_1 = -I$(top_srcdir)/lib/cpp/src -I$(top_builddir)/lib/cpp/src
 subdir = compiler/cpp/test
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
@@ -137,7 +133,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/aclocal/tar.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -147,25 +143,6 @@ CONFIG_HEADER = $(top_builddir)/config.h \
 	$(top_builddir)/lib/c_glib/src/thrift/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-PROGRAMS = $(noinst_PROGRAMS)
-am__plugintest_SOURCES_DIST = plugin/conversion_test.cc
-am__dirstamp = $(am__leading_dot)dirstamp
-#am_plugintest_OBJECTS =  \
-#	plugin/conversion_test.$(OBJEXT)
-plugintest_OBJECTS = $(am_plugintest_OBJECTS)
-#plugintest_DEPENDENCIES =  \
-#	$(top_builddir)/compiler/cpp/libthriftc.la
-AM_V_lt = $(am__v_lt_$(V))
-am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
-am__v_lt_0 = --silent
-am__v_lt_1 = 
-am__thrift_gen_mycpp_SOURCES_DIST = plugin/cpp_plugin.cc \
-	plugin/t_cpp_generator.cc
-#am_thrift_gen_mycpp_OBJECTS = plugin/thrift_gen_mycpp-cpp_plugin.$(OBJEXT) \
-#	plugin/thrift_gen_mycpp-t_cpp_generator.$(OBJEXT)
-thrift_gen_mycpp_OBJECTS = $(am_thrift_gen_mycpp_OBJECTS)
-#thrift_gen_mycpp_DEPENDENCIES =  \
-#	$(top_builddir)/compiler/cpp/libthriftc.la
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -178,31 +155,8 @@ AM_V_at = $(am__v_at_$(V))
 am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I. -I$(top_builddir) -I$(top_builddir)/lib/cpp/src/thrift -I$(top_builddir)/lib/c_glib/src/thrift
-depcomp = $(SHELL) $(top_srcdir)/depcomp
-am__depfiles_maybe = depfiles
-am__mv = mv -f
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
-AM_V_CXX = $(am__v_CXX_$(V))
-am__v_CXX_ = $(am__v_CXX_$(AM_DEFAULT_VERBOSITY))
-am__v_CXX_0 = @echo "  CXX     " $@;
-am__v_CXX_1 = 
-CXXLD = $(CXX)
-CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CXXLD = $(am__v_CXXLD_$(V))
-am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
-am__v_CXXLD_0 = @echo "  CXXLD   " $@;
-am__v_CXXLD_1 = 
-SOURCES = $(plugintest_SOURCES) $(thrift_gen_mycpp_SOURCES)
-DIST_SOURCES = $(am__plugintest_SOURCES_DIST) \
-	$(am__thrift_gen_mycpp_SOURCES_DIST)
+SOURCES =
+DIST_SOURCES =
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -210,47 +164,7 @@ am__can_run_installinfo = \
   esac
 am__extra_recursive_targets = style-recursive
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
-# Read a list of newline-separated strings from the standard input,
-# and print each of them once, without duplicates.  Input order is
-# *not* preserved.
-am__uniquify_input = $(AWK) '\
-  BEGIN { nonempty = 0; } \
-  { items[$$0] = 1; nonempty = 1; } \
-  END { if (nonempty) { for (i in items) print i; }; } \
-'
-# Make sure the list of sources is unique.  This is necessary because,
-# e.g., the same source file might be shared among _SOURCES variables
-# for different programs/libraries.
-am__define_uniq_tagged_files = \
-  list='$(am__tagged_files)'; \
-  unique=`for i in $$list; do \
-    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-  done | $(am__uniquify_input)`
-ETAGS = etags
-CTAGS = ctags
-am__tty_colors_dummy = \
-  mgn= red= grn= lgn= blu= brg= std=; \
-  am__color_tests=no
-am__tty_colors = { \
-  $(am__tty_colors_dummy); \
-  if test "X$(AM_COLOR_TESTS)" = Xno; then \
-    am__color_tests=no; \
-  elif test "X$(AM_COLOR_TESTS)" = Xalways; then \
-    am__color_tests=yes; \
-  elif test "X$$TERM" != Xdumb && { test -t 1; } 2>/dev/null; then \
-    am__color_tests=yes; \
-  fi; \
-  if test $$am__color_tests = yes; then \
-    red='[0;31m'; \
-    grn='[0;32m'; \
-    lgn='[1;32m'; \
-    blu='[1;34m'; \
-    mgn='[0;35m'; \
-    brg='[1m'; \
-    std='[m'; \
-  fi; \
-}
-am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp
+am__DIST_COMMON = $(srcdir)/Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = ${SHELL} /thrift/src/missing aclocal-1.15
 ALLOCA = 
@@ -275,7 +189,7 @@ BOOST_THREAD_LDADD = /usr/lib/x86_64-linux-gnu/libboost_thread.a
 BUNDLER = /usr/bin/bundle
 CABAL = /usr/bin/cabal
 CABAL_CONFIGURE_FLAGS = 
-CARGO = /usr/bin/cargo
+CARGO = /root/.cargo/bin/cargo
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -298,7 +212,7 @@ DMD_LIBEVENT_FLAGS = -L-fuse-ld=gold -L-levent
 DMD_OF_DIRSEP = /
 DMD_OPENSSL_FLAGS = -L-fuse-ld=gold -L-lssl -L-lcrypto
 DOTNETCORE = /usr/bin/dotnet
-DOTNETCORE_VERSION = 2.2.101
+DOTNETCORE_VERSION = 3.1.102
 DSYMUTIL = 
 DUMPBIN = 
 D_EVENT_LIB_NAME = libthriftd-event.a
@@ -312,12 +226,13 @@ EGREP = /bin/grep -E
 ENABLE_COVERAGE = 2
 ERL = /usr/bin/erl
 ERLANG_INSTALL_LIB_DIR = /usr/lib/erlang/lib
-ERLANG_INSTALL_LIB_DIR_thrift = ${ERLANG_INSTALL_LIB_DIR}/thrift-0.12.0
+ERLANG_INSTALL_LIB_DIR_thrift = ${ERLANG_INSTALL_LIB_DIR}/thrift-0.14.1
 ERLANG_LIB_DIR = /usr/lib/erlang/lib
 ERLC = /usr/bin/erlc
 ERLCFLAGS = 
 EXEEXT = 
 FGREP = /bin/grep -F
+FLEX_COMPC = /usr/local/adobe/flex/4.6/bin/compc
 GCOV_CFLAGS = 
 GCOV_CXXFLAGS = 
 GCOV_LDFLAGS = 
@@ -328,6 +243,7 @@ GOBJECT_CFLAGS = -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/in
 GOBJECT_LIBS = -lgobject-2.0 -lglib-2.0
 GRADLE_OPTS = 
 GREP = /bin/grep
+GSETTINGS = /usr/bin/gsettings
 HAVE_CXX11 = 1
 HAXE = /usr/bin/haxe
 HAXE_VERSION = 3.4.4
@@ -363,18 +279,18 @@ LUA_SHORT_VERSION = 52
 LUA_VERSION = 5.2
 MAKEINFO = ${SHELL} /thrift/src/missing makeinfo
 MANIFEST_TOOL = :
+MAYBE_AS3 = as3
 MAYBE_CL = cl
 MAYBE_CPP = cpp
-MAYBE_CSHARP = csharp
 MAYBE_C_GLIB = c_glib
 MAYBE_D = d
 MAYBE_DART = dart
-MAYBE_DOTNETCORE = netcore
 MAYBE_ERLANG = erl
 MAYBE_GO = go
 MAYBE_HASKELL = hs
 MAYBE_JAVA = java
 MAYBE_LUA = lua
+MAYBE_NETSTD = netstd
 MAYBE_NODEJS = nodejs
 MAYBE_NODETS = nodets
 MAYBE_PERL = perl
@@ -383,10 +299,8 @@ MAYBE_PY3 = py3
 MAYBE_PYTHON = py
 MAYBE_RS = rs
 MAYBE_RUBY = rb
-MCS = /usr/bin/mcs
+MAYBE_SWIFT = swift
 MKDIR_P = /bin/mkdir -p
-MONO_CFLAGS = 
-MONO_LIBS = 
 NM = /usr/bin/nm -B
 NMEDIT = 
 NODEJS = /usr/bin/nodejs
@@ -402,10 +316,10 @@ OTOOL64 =
 PACKAGE = thrift
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = thrift
-PACKAGE_STRING = thrift 0.12.0
+PACKAGE_STRING = thrift 0.14.1
 PACKAGE_TARNAME = thrift
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.12.0
+PACKAGE_VERSION = 0.14.1
 PATH_SEPARATOR = :
 PERL = /usr/bin/perl
 PERL_PREFIX = /usr/local
@@ -426,23 +340,21 @@ PY_PREFIX = /usr
 QT5_CFLAGS = -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
 QT5_LIBS = -lQt5Network -lQt5Core
 QT5_MOC = /usr/bin/moc
-QT_CFLAGS = 
-QT_LIBS = 
-QT_MOC = 
 RANLIB = ranlib
-REBAR = /usr/bin/rebar
+REBAR = /usr/bin/rebar3
 RUBY = /usr/bin/ruby
 RUBY_PREFIX = 
 RUNHASKELL = /usr/bin/runhaskell
-RUSTC = /usr/bin/rustc
+RUSTC = /root/.cargo/bin/rustc
 SBCL = /usr/local/bin/sbcl
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = strip
+SWIFT = /usr/bin/swift
 THRIFT = /thrift/src/compiler/cpp/thrift
 TRIAL = /usr/bin/trial
-VERSION = 0.12.0
+VERSION = 0.14.1
 YACC = bison -y
 YFLAGS = 
 ZLIB_CPPFLAGS = 
@@ -459,7 +371,7 @@ ac_ct_DUMPBIN =
 am__include = include
 am__leading_dot = .
 am__quote = 
-am__tar = tar --format=ustar -chf - "$$tardir"
+am__tar = tar --hard-dereference --format=ustar -chf - "$$tardir"
 am__untar = tar -xf -
 bindir = ${exec_prefix}/bin
 build = x86_64-pc-linux-gnu
@@ -473,7 +385,7 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-golang_version = go version go1.11.4 linux/amd64
+golang_version = go version go1.13.1 linux/amd64
 have_prog_bison = yes
 host = x86_64-pc-linux-gnu
 host_alias = 
@@ -504,7 +416,7 @@ psdir = ${docdir}
 pyexecdir = ${exec_prefix}/lib/python2.7/dist-packages
 pythondir = ${prefix}/lib/python2.7/dist-packages
 runstatedir = ${localstatedir}/run
-rustc_version = rustc 1.30.0
+rustc_version = rustc 1.35.0 (3c235d560 2019-05-20)
 sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
 srcdir = .
@@ -514,23 +426,12 @@ target_alias =
 top_build_prefix = ../../../
 top_builddir = ../../..
 top_srcdir = ../../..
-AUTOMAKE_OPTIONS = subdir-objects serial-tests
-AM_CPPFLAGS = $(BOOST_CPPFLAGS) -I$(top_srcdir)/compiler/cpp/src \
-	$(am__append_1)
-AM_LDFLAGS = $(BOOST_LDFLAGS)
+AUTOMAKE_OPTIONS = subdir-objects serial-tests nostdinc
+AM_CPPFLAGS = -I$(top_srcdir)/compiler/cpp/src
 AM_CXXFLAGS = -Wall -Wextra -pedantic
-#plugintest_SOURCES = plugin/conversion_test.cc
-#plugintest_LDADD = $(top_builddir)/compiler/cpp/libthriftc.la
-#thrift_gen_mycpp_SOURCES = plugin/cpp_plugin.cc \
-#                           plugin/t_cpp_generator.cc
-
-#thrift_gen_mycpp_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/compiler/cpp -I$(top_srcdir)/compiler/cpp/src/generate
-#thrift_gen_mycpp_LDADD = $(top_builddir)/compiler/cpp/libthriftc.la
-#TESTS = $(check_PROGRAMS) cpp_plugin_test.sh plugin_stability_test.sh
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .cc .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -561,258 +462,18 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 
-clean-checkPROGRAMS:
-	@list='$(check_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-
-clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-plugin/$(am__dirstamp):
-	@$(MKDIR_P) plugin
-	@: > plugin/$(am__dirstamp)
-plugin/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) plugin/$(DEPDIR)
-	@: > plugin/$(DEPDIR)/$(am__dirstamp)
-plugin/conversion_test.$(OBJEXT): plugin/$(am__dirstamp) \
-	plugin/$(DEPDIR)/$(am__dirstamp)
-
-plugintest$(EXEEXT): $(plugintest_OBJECTS) $(plugintest_DEPENDENCIES) $(EXTRA_plugintest_DEPENDENCIES) 
-	@rm -f plugintest$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(plugintest_OBJECTS) $(plugintest_LDADD) $(LIBS)
-plugin/thrift_gen_mycpp-cpp_plugin.$(OBJEXT): plugin/$(am__dirstamp) \
-	plugin/$(DEPDIR)/$(am__dirstamp)
-plugin/thrift_gen_mycpp-t_cpp_generator.$(OBJEXT):  \
-	plugin/$(am__dirstamp) plugin/$(DEPDIR)/$(am__dirstamp)
-
-thrift-gen-mycpp$(EXEEXT): $(thrift_gen_mycpp_OBJECTS) $(thrift_gen_mycpp_DEPENDENCIES) $(EXTRA_thrift_gen_mycpp_DEPENDENCIES) 
-	@rm -f thrift-gen-mycpp$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(thrift_gen_mycpp_OBJECTS) $(thrift_gen_mycpp_LDADD) $(LIBS)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT)
-	-rm -f plugin/*.$(OBJEXT)
-
-distclean-compile:
-	-rm -f *.tab.c
-
-include plugin/$(DEPDIR)/conversion_test.Po
-include plugin/$(DEPDIR)/thrift_gen_mycpp-cpp_plugin.Po
-include plugin/$(DEPDIR)/thrift_gen_mycpp-t_cpp_generator.Po
-
-.cc.o:
-	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CXX)source='$<' object='$@' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ $<
-
-.cc.obj:
-	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-	$(am__mv) $$depbase.Tpo $$depbase.Po
-#	$(AM_V_CXX)source='$<' object='$@' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.cc.lo:
-	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-	$(am__mv) $$depbase.Tpo $$depbase.Plo
-#	$(AM_V_CXX)source='$<' object='$@' libtool=yes \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(LTCXXCOMPILE) -c -o $@ $<
-
-plugin/thrift_gen_mycpp-cpp_plugin.o: plugin/cpp_plugin.cc
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(thrift_gen_mycpp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT plugin/thrift_gen_mycpp-cpp_plugin.o -MD -MP -MF plugin/$(DEPDIR)/thrift_gen_mycpp-cpp_plugin.Tpo -c -o plugin/thrift_gen_mycpp-cpp_plugin.o `test -f 'plugin/cpp_plugin.cc' || echo '$(srcdir)/'`plugin/cpp_plugin.cc
-	$(AM_V_at)$(am__mv) plugin/$(DEPDIR)/thrift_gen_mycpp-cpp_plugin.Tpo plugin/$(DEPDIR)/thrift_gen_mycpp-cpp_plugin.Po
-#	$(AM_V_CXX)source='plugin/cpp_plugin.cc' object='plugin/thrift_gen_mycpp-cpp_plugin.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(thrift_gen_mycpp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o plugin/thrift_gen_mycpp-cpp_plugin.o `test -f 'plugin/cpp_plugin.cc' || echo '$(srcdir)/'`plugin/cpp_plugin.cc
-
-plugin/thrift_gen_mycpp-cpp_plugin.obj: plugin/cpp_plugin.cc
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(thrift_gen_mycpp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT plugin/thrift_gen_mycpp-cpp_plugin.obj -MD -MP -MF plugin/$(DEPDIR)/thrift_gen_mycpp-cpp_plugin.Tpo -c -o plugin/thrift_gen_mycpp-cpp_plugin.obj `if test -f 'plugin/cpp_plugin.cc'; then $(CYGPATH_W) 'plugin/cpp_plugin.cc'; else $(CYGPATH_W) '$(srcdir)/plugin/cpp_plugin.cc'; fi`
-	$(AM_V_at)$(am__mv) plugin/$(DEPDIR)/thrift_gen_mycpp-cpp_plugin.Tpo plugin/$(DEPDIR)/thrift_gen_mycpp-cpp_plugin.Po
-#	$(AM_V_CXX)source='plugin/cpp_plugin.cc' object='plugin/thrift_gen_mycpp-cpp_plugin.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(thrift_gen_mycpp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o plugin/thrift_gen_mycpp-cpp_plugin.obj `if test -f 'plugin/cpp_plugin.cc'; then $(CYGPATH_W) 'plugin/cpp_plugin.cc'; else $(CYGPATH_W) '$(srcdir)/plugin/cpp_plugin.cc'; fi`
-
-plugin/thrift_gen_mycpp-t_cpp_generator.o: plugin/t_cpp_generator.cc
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(thrift_gen_mycpp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT plugin/thrift_gen_mycpp-t_cpp_generator.o -MD -MP -MF plugin/$(DEPDIR)/thrift_gen_mycpp-t_cpp_generator.Tpo -c -o plugin/thrift_gen_mycpp-t_cpp_generator.o `test -f 'plugin/t_cpp_generator.cc' || echo '$(srcdir)/'`plugin/t_cpp_generator.cc
-	$(AM_V_at)$(am__mv) plugin/$(DEPDIR)/thrift_gen_mycpp-t_cpp_generator.Tpo plugin/$(DEPDIR)/thrift_gen_mycpp-t_cpp_generator.Po
-#	$(AM_V_CXX)source='plugin/t_cpp_generator.cc' object='plugin/thrift_gen_mycpp-t_cpp_generator.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(thrift_gen_mycpp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o plugin/thrift_gen_mycpp-t_cpp_generator.o `test -f 'plugin/t_cpp_generator.cc' || echo '$(srcdir)/'`plugin/t_cpp_generator.cc
-
-plugin/thrift_gen_mycpp-t_cpp_generator.obj: plugin/t_cpp_generator.cc
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(thrift_gen_mycpp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT plugin/thrift_gen_mycpp-t_cpp_generator.obj -MD -MP -MF plugin/$(DEPDIR)/thrift_gen_mycpp-t_cpp_generator.Tpo -c -o plugin/thrift_gen_mycpp-t_cpp_generator.obj `if test -f 'plugin/t_cpp_generator.cc'; then $(CYGPATH_W) 'plugin/t_cpp_generator.cc'; else $(CYGPATH_W) '$(srcdir)/plugin/t_cpp_generator.cc'; fi`
-	$(AM_V_at)$(am__mv) plugin/$(DEPDIR)/thrift_gen_mycpp-t_cpp_generator.Tpo plugin/$(DEPDIR)/thrift_gen_mycpp-t_cpp_generator.Po
-#	$(AM_V_CXX)source='plugin/t_cpp_generator.cc' object='plugin/thrift_gen_mycpp-t_cpp_generator.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(thrift_gen_mycpp_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o plugin/thrift_gen_mycpp-t_cpp_generator.obj `if test -f 'plugin/t_cpp_generator.cc'; then $(CYGPATH_W) 'plugin/t_cpp_generator.cc'; else $(CYGPATH_W) '$(srcdir)/plugin/t_cpp_generator.cc'; fi`
-
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
 style-local: 
+tags TAGS:
 
-ID: $(am__tagged_files)
-	$(am__define_uniq_tagged_files); mkid -fID $$unique
-tags: tags-am
-TAGS: tags
+ctags CTAGS:
 
-tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
-	set x; \
-	here=`pwd`; \
-	$(am__define_uniq_tagged_files); \
-	shift; \
-	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
-	  test -n "$$unique" || unique=$$empty_fix; \
-	  if test $$# -gt 0; then \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      "$$@" $$unique; \
-	  else \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      $$unique; \
-	  fi; \
-	fi
-ctags: ctags-am
+cscope cscopelist:
 
-CTAGS: ctags
-ctags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
-	$(am__define_uniq_tagged_files); \
-	test -z "$(CTAGS_ARGS)$$unique" \
-	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
-	     $$unique
-
-GTAGS:
-	here=`$(am__cd) $(top_builddir) && pwd` \
-	  && $(am__cd) $(top_srcdir) \
-	  && gtags -i $(GTAGS_ARGS) "$$here"
-cscopelist: cscopelist-am
-
-cscopelist-am: $(am__tagged_files)
-	list='$(am__tagged_files)'; \
-	case "$(srcdir)" in \
-	  [\\/]* | ?:[\\/]*) sdir="$(srcdir)" ;; \
-	  *) sdir=$(subdir)/$(srcdir) ;; \
-	esac; \
-	for i in $$list; do \
-	  if test -f "$$i"; then \
-	    echo "$(subdir)/$$i"; \
-	  else \
-	    echo "$$sdir/$$i"; \
-	  fi; \
-	done >> $(top_builddir)/cscope.files
-
-distclean-tags:
-	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
-
-check-TESTS: $(TESTS)
-	@failed=0; all=0; xfail=0; xpass=0; skip=0; \
-	srcdir=$(srcdir); export srcdir; \
-	list=' $(TESTS) '; \
-	$(am__tty_colors); \
-	if test -n "$$list"; then \
-	  for tst in $$list; do \
-	    if test -f ./$$tst; then dir=./; \
-	    elif test -f $$tst; then dir=; \
-	    else dir="$(srcdir)/"; fi; \
-	    if $(TESTS_ENVIRONMENT) $${dir}$$tst $(AM_TESTS_FD_REDIRECT); then \
-	      all=`expr $$all + 1`; \
-	      case " $(XFAIL_TESTS) " in \
-	      *[\ \	]$$tst[\ \	]*) \
-		xpass=`expr $$xpass + 1`; \
-		failed=`expr $$failed + 1`; \
-		col=$$red; res=XPASS; \
-	      ;; \
-	      *) \
-		col=$$grn; res=PASS; \
-	      ;; \
-	      esac; \
-	    elif test $$? -ne 77; then \
-	      all=`expr $$all + 1`; \
-	      case " $(XFAIL_TESTS) " in \
-	      *[\ \	]$$tst[\ \	]*) \
-		xfail=`expr $$xfail + 1`; \
-		col=$$lgn; res=XFAIL; \
-	      ;; \
-	      *) \
-		failed=`expr $$failed + 1`; \
-		col=$$red; res=FAIL; \
-	      ;; \
-	      esac; \
-	    else \
-	      skip=`expr $$skip + 1`; \
-	      col=$$blu; res=SKIP; \
-	    fi; \
-	    echo "$${col}$$res$${std}: $$tst"; \
-	  done; \
-	  if test "$$all" -eq 1; then \
-	    tests="test"; \
-	    All=""; \
-	  else \
-	    tests="tests"; \
-	    All="All "; \
-	  fi; \
-	  if test "$$failed" -eq 0; then \
-	    if test "$$xfail" -eq 0; then \
-	      banner="$$All$$all $$tests passed"; \
-	    else \
-	      if test "$$xfail" -eq 1; then failures=failure; else failures=failures; fi; \
-	      banner="$$All$$all $$tests behaved as expected ($$xfail expected $$failures)"; \
-	    fi; \
-	  else \
-	    if test "$$xpass" -eq 0; then \
-	      banner="$$failed of $$all $$tests failed"; \
-	    else \
-	      if test "$$xpass" -eq 1; then passes=pass; else passes=passes; fi; \
-	      banner="$$failed of $$all $$tests did not behave as expected ($$xpass unexpected $$passes)"; \
-	    fi; \
-	  fi; \
-	  dashes="$$banner"; \
-	  skipped=""; \
-	  if test "$$skip" -ne 0; then \
-	    if test "$$skip" -eq 1; then \
-	      skipped="($$skip test was not run)"; \
-	    else \
-	      skipped="($$skip tests were not run)"; \
-	    fi; \
-	    test `echo "$$skipped" | wc -c` -le `echo "$$banner" | wc -c` || \
-	      dashes="$$skipped"; \
-	  fi; \
-	  report=""; \
-	  if test "$$failed" -ne 0 && test -n "$(PACKAGE_BUGREPORT)"; then \
-	    report="Please report to $(PACKAGE_BUGREPORT)"; \
-	    test `echo "$$report" | wc -c` -le `echo "$$banner" | wc -c` || \
-	      dashes="$$report"; \
-	  fi; \
-	  dashes=`echo "$$dashes" | sed s/./=/g`; \
-	  if test "$$failed" -eq 0; then \
-	    col="$$grn"; \
-	  else \
-	    col="$$red"; \
-	  fi; \
-	  echo "$${col}$$dashes$${std}"; \
-	  echo "$${col}$$banner$${std}"; \
-	  test -z "$$skipped" || echo "$${col}$$skipped$${std}"; \
-	  test -z "$$report" || echo "$${col}$$report$${std}"; \
-	  echo "$${col}$$dashes$${std}"; \
-	  test "$$failed" -eq 0; \
-	else :; fi
 
 distdir: $(DISTFILES)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -845,11 +506,8 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
-	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
-all-local:
-all-am: Makefile $(PROGRAMS) all-local
+all-am: Makefile
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -877,23 +535,17 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f plugin/$(DEPDIR)/$(am__dirstamp)
-	-rm -f plugin/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean-local:
 clean: clean-am
 
-clean-am: clean-checkPROGRAMS clean-generic clean-libtool clean-local \
-	clean-noinstPROGRAMS mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf plugin/$(DEPDIR)
 	-rm -f Makefile
-distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-tags
+distclean-am: clean-am distclean-generic
 
 dvi: dvi-am
 
@@ -936,14 +588,12 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf plugin/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
 pdf: pdf-am
 
@@ -959,38 +609,22 @@ style-am: style-local
 
 uninstall-am:
 
-.MAKE: check-am install-am install-strip
+.MAKE: install-am install-strip
 
-.PHONY: CTAGS GTAGS TAGS all all-am all-local check check-TESTS \
-	check-am clean clean-checkPROGRAMS clean-generic clean-libtool \
-	clean-local clean-noinstPROGRAMS cscopelist-am ctags ctags-am \
-	distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
+.PHONY: all all-am check check-am clean clean-generic clean-libtool \
+	cscopelist-am ctags-am distclean distclean-generic \
+	distclean-libtool distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	style-am style-local tags tags-am uninstall uninstall-am
+	style-am style-local tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
-
-#all-local: thrift-gen-bincat
-
-#cpp_plugin_test.sh: thrift-gen-mycpp
-
-#thrift-gen-bincat:
-#	cp bincat.sh $@
-#	chmod 755 $@
-
-#plugin_stability_test.sh: thrift-gen-bincat
-
-#clean-local:
-#	$(RM) -rf gen-cpp gen-mycpp gen-bincat thrift-gen-bincat
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
