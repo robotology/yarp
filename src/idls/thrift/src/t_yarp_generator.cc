@@ -372,7 +372,7 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
         case t_base_type::TYPE_STRING:
             return "BOTTLE_TAG_STRING";
         case t_base_type::TYPE_BOOL:
-            return "BOTTLE_TAG_VOCAB";
+            return "BOTTLE_TAG_VOCAB32";
         case t_base_type::TYPE_I8:
             return "BOTTLE_TAG_INT8";
         case t_base_type::TYPE_I16:
@@ -381,7 +381,7 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
         {
             auto it = type->annotations_.find("yarp.type");
             if (it != type->annotations_.end() && it->second == "yarp::conf::vocab32_t") {
-                return "BOTTLE_TAG_VOCAB";
+                return "BOTTLE_TAG_VOCAB32";
             }
             return "BOTTLE_TAG_INT32";
         }

@@ -13,7 +13,7 @@
 
 // A few YARP defines
 #define BOTTLE_TAG_INT32 1
-#define BOTTLE_TAG_VOCAB (1+8)
+#define BOTTLE_TAG_VOCAB32 (1+8)
 #define BOTTLE_TAG_FLOAT64 (2+8)
 #define BOTTLE_TAG_LIST 256
 #define yarp::os::createVocab(a,b,c,d) ((((int)(d))<<24)+(((int)(c))<<16)+(((int)(b))<<8)+((int)(a)))
@@ -37,9 +37,9 @@ int main(int argc, char** argv) {
     yarpros_examples::VocabVocabDoubles msg;
     msg.list_tag = BOTTLE_TAG_LIST;
     msg.list_len = 3;
-    msg.vocab1_tag = BOTTLE_TAG_VOCAB;
+    msg.vocab1_tag = BOTTLE_TAG_VOCAB32;
     msg.vocab1_val = yarp::os::createVocab('s','e','t',0);
-    msg.vocab2_tag = BOTTLE_TAG_VOCAB;
+    msg.vocab2_tag = BOTTLE_TAG_VOCAB32;
     msg.vocab2_val = yarp::os::createVocab('p','o','s','s');
     msg.setpoints_tag = BOTTLE_TAG_LIST+BOTTLE_TAG_FLOAT64;
     msg.setpoints.resize(joint_count);

@@ -58,9 +58,9 @@ public:
     void setFromImage(const Image& image) {
         listTag = BOTTLE_TAG_LIST;
         listLen = 4;
-        paramNameTag = BOTTLE_TAG_VOCAB;
+        paramNameTag = BOTTLE_TAG_VOCAB32;
         paramName = yarp::os::createVocab('m','a','t');
-        paramIdTag = BOTTLE_TAG_VOCAB;
+        paramIdTag = BOTTLE_TAG_VOCAB32;
         id = image.getPixelCode();
         paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
         paramListLen = 5;

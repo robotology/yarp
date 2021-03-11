@@ -105,7 +105,7 @@ bool WireReader::readBool(bool& x)
             return false;
         }
         std::int32_t tag = reader.expectInt32();
-        if (tag != BOTTLE_TAG_INT32 && tag != BOTTLE_TAG_VOCAB) {
+        if (tag != BOTTLE_TAG_INT32 && tag != BOTTLE_TAG_VOCAB32) {
             return false;
         }
     }
@@ -197,7 +197,7 @@ bool WireReader::readI32(std::int32_t& x)
     case BOTTLE_TAG_INT32:
         x = reader.expectInt32();
         break;
-    case BOTTLE_TAG_VOCAB:
+    case BOTTLE_TAG_VOCAB32:
         x = reader.expectInt32();
         break;
     default:
@@ -328,7 +328,7 @@ bool WireReader::readVocab(std::int32_t& x)
         }
         tag = reader.expectInt32();
     }
-    if (tag != BOTTLE_TAG_VOCAB) {
+    if (tag != BOTTLE_TAG_VOCAB32) {
         return false;
     }
     if (noMore()) {
@@ -350,12 +350,12 @@ bool WireReader::readString(std::string& str, bool* is_vocab)
             return false;
         }
         tag = reader.expectInt32();
-        if (tag != BOTTLE_TAG_STRING && tag != BOTTLE_TAG_VOCAB) {
+        if (tag != BOTTLE_TAG_STRING && tag != BOTTLE_TAG_VOCAB32) {
             return false;
         }
     }
     state->len--;
-    if (tag == BOTTLE_TAG_VOCAB) {
+    if (tag == BOTTLE_TAG_VOCAB32) {
         if (is_vocab != nullptr) {
             *is_vocab = true;
         }
@@ -567,14 +567,14 @@ std::string WireReader::readTag()
     }
     while (is_vocab && state->len > 0) {
         if (state->code >= 0) {
-            is_vocab = (state->code == BOTTLE_TAG_VOCAB);
+            is_vocab = (state->code == BOTTLE_TAG_VOCAB32);
         } else {
             if (noMore()) {
                 return {};
             }
             std::int32_t x = reader.expectInt32();
             reader.pushInt(x);
-            is_vocab = (x == BOTTLE_TAG_VOCAB);
+            is_vocab = (x == BOTTLE_TAG_VOCAB32);
         }
         if (is_vocab) {
             std::string str2;
