@@ -64,6 +64,18 @@ jobs:
         echo "SHA = ${SHA}"
         echo "YARP_VERSION = ${YARP_VERSION}"
 
+    - name: "Print Environment"
+      run: |
+        env
+
+    - name: "Print Event Json"
+      run: |
+        echo "::group::install jq"
+        sudo apt-get update -qq
+        sudo apt-get install -qq -y jq
+        echo "::endgroup::"
+
+        cat $GITHUB_EVENT_PATH | jq -C
 
   check-license:
     name: 'Check License'
