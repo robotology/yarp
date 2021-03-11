@@ -1027,7 +1027,7 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
             {
                 auto it = type->annotations_.find("yarp.type");
                 if (it != type->annotations_.end() && it->second == "yarp::conf::vocab32_t") {
-                    f_cpp_ << "writeVocab(" << name << ")";
+                    f_cpp_ << "writeVocab32(" << name << ")";
                 } else {
                     f_cpp_ << "writeI32(" << name << ")";
                 }
@@ -1223,7 +1223,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         {
             auto it = type->annotations_.find("yarp.type");
             if (it != type->annotations_.end() && it->second == "yarp::conf::vocab32_t") {
-                f_cpp_ << "readVocab(" << name << ")";
+                f_cpp_ << "readVocab32(" << name << ")";
             } else {
                 f_cpp_ << "readI32(" << name << ")";
             }
@@ -2961,7 +2961,7 @@ void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ostri
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(reader);\n";
         f_cpp_ << indent_cpp() << "if (writer.isNull())" << inline_return_cpp("true");
         f_cpp_ << indent_cpp() << "writer.writeListHeader(1);\n";
-        f_cpp_ << indent_cpp() << "writer.writeVocab(yarp::os::createVocab('o', 'k'));\n";
+        f_cpp_ << indent_cpp() << "writer.writeVocab32(yarp::os::createVocab('o', 'k'));\n";
         f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();

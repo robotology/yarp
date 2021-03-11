@@ -121,7 +121,7 @@ bool WireWriter::writeFloat64(yarp::conf::float64_t x) const
     return !writer.isError();
 }
 
-bool WireWriter::writeVocab(std::int32_t x) const
+bool WireWriter::writeVocab32(yarp::conf::vocab32_t x) const
 {
     writer.appendInt32(BOTTLE_TAG_VOCAB32);
     writer.appendInt32(x);
@@ -151,7 +151,7 @@ bool WireWriter::writeTag(const char* tag, int split, int len) const
         tag++;
         if (ch == '\0' || ch == '_') {
             if (bit.length() <= 4) {
-                writeVocab(Vocab::encode(bit));
+                writeVocab32(Vocab::encode(bit));
             } else {
                 writeString(bit);
             }

@@ -32,7 +32,7 @@ WireReader::~WireReader()
 {
     if (state->need_ok) {
         std::int32_t dummy;
-        readVocab(dummy);
+        readVocab32(dummy);
         state->need_ok = false;
     }
     if (flush_if_needed) {
@@ -319,7 +319,7 @@ bool WireReader::readFloat64(yarp::conf::float64_t& x)
 }
 
 
-bool WireReader::readVocab(std::int32_t& x)
+bool WireReader::readVocab32(yarp::conf::vocab32_t& x)
 {
     std::int32_t tag = state->code;
     if (tag < 0) {
@@ -517,7 +517,7 @@ bool WireReader::readListReturn()
     }
     // possibly old-style return: [is] foo val [ok]
     std::int32_t v = 0;
-    if (!readVocab(v)) {
+    if (!readVocab32(v)) {
         return false;
     }
     if (v != VOCAB_IS) {
