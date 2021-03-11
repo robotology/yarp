@@ -195,8 +195,6 @@ bool WireReader::readI32(std::int32_t& x)
         x = static_cast<std::int32_t>(reader.expectInt16());
         break;
     case BOTTLE_TAG_INT32:
-        x = reader.expectInt32();
-        break;
     case BOTTLE_TAG_VOCAB32:
         x = reader.expectInt32();
         break;
