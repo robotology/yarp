@@ -1,49 +1,60 @@
-/**
-\page thrift_tutorial Thrift IDL in YARP: advanced tutorial
+Thrift IDL in YARP: advanced tutorial                         {#thrift_tutorial}
+=====================================
 
-\tableofcontents
+[TOC]
 
 This tutorial shows how to use the Apache Thrift Interface Definition Language
 to serialize data sent over YARP ports and define interfaces for RPC-based
 services in YARP Modules.
 
-\section thrift_tutorial_intro Introduction
+
+Introduction                                            {#thrift_tutorial_intro}
+------------
 
 Apache Thrift allows to define data types and service interfaces in a simple
 definition file.
 Taking that file as input, a compiler generates source code which can be used by
 different client modules and a server.
 
-\section thrift_tutorial_language Language Reference
+Language Reference                                   {#thrift_tutorial_language}
+------------------
 
 The following is a summary of the Thrift language reference, with corresponding
 mapping to YARP (C++) code.
-Most of it was adapted from\n
-http://thrift.apache.org/ \n
-http://diwakergupta.github.com/thrift-missing-guide/
+Most of it was adapted from
+ * http://thrift.apache.org/
+ * http://diwakergupta.github.com/thrift-missing-guide/
 
 The **Thrift type system** consists of pre-defined base types, user-defined
 structs, container types, and service definitions.
-\subsection thrift_tutorial_subs_basetypes Base Types
+
+
+### Base Types                                 {#thrift_tutorial_subs_basetypes}
 
 \arg `bool`: A boolean value (true or false), one byte; mapped to `bool`
-\arg `byte`: A signed byte; mapped to `int8_t`
+\arg `i8`: A 8-bit signed integer; mapped to `int8_t`
 \arg `i16`: A 16-bit signed integer; mapped to `int16_t`
 \arg `i32`: A 32-bit signed integer; mapped to `int32_t`
 \arg `i64`: A 64-bit signed integer; mapped to `int64_t`
-\arg `double`: A 64-bit floating point number; mapped to `double`
+\arg `double`: A 64-bit floating point number; mapped to `float64_t`
 \arg `string`: Encoding agnostic text or binary string; mapped to `std::string`
 
-Note that Thrift does not support unsigned integers.
+Note that Thrift does not support unsigned integers, but YARP thrift generator
+is able to generate unsigned types using annotated typedefs (see
+\ref thrift_tutorial_subs_typedef)
 
-\subsection thrift_tutorial_subs_containers Containers
+
+### Containers                                {#thrift_tutorial_subs_containers}
+
 \arg `list<t1>`: An ordered list of elements of type t1. May contain duplicates. Mapped to `std::vector`.
 \arg `set<t1>`: An unordered set of unique elements of type t1. Mapped to `std::set<t1>`.
 \arg `map<t1, t2>`: A map of strictly unique keys of type t1 to values of type t2. Mapped to `std::map<t1, t2>`.
 
 Types used in containers many be any valid Thrift type excluding services.
 
-\subsection thrift_tutorial_subs_structs Structs
+
+### Structs                                      {#thrift_tutorial_subs_structs}
+
 Structs are the basic building blocks in a Thrift IDL.
 A struct is composed of fields; each field has a unique, positive integer
 identifier, a type, a name and an optional default value.
@@ -76,7 +87,8 @@ In case a certain structure should be translated to an existing YARP type, this
 can be declared with `yarp.name` and, if needed, `yarp.includefile` annotations:
 
 ~~~{.thrift}
-struct Vector {
+struct Vector
+{
   1: list<double> content;
 } (
   yarp.name = "yarp::sig::Vector"
@@ -84,7 +96,32 @@ struct Vector {
 )
 ~~~
 
-\subsection thrift_tutorial_subs_typedef Typedefs
+All structs inside structs are usually serialized as a flat struct when
+serialized to a WireWriter (e.g. in RPC calls to thrift services).
+In some cases, this is not desired (e.g. when writing a thrift file to interact
+with an existing RPC server that uses nested structs). In this case it is
+possible to annotate the struct using the `yarp.nested` annotation, for example:
+
+~~~{.thrift}
+    struct Foo
+    {
+        1: double foo1;
+        2: double foo2;
+    }
+
+    struct Bar
+    {
+        1: double bar1;
+        2: Foo ( yarp.nested = "true" );
+    }
+~~~
+
+In this case, the `Bar` struct will be serialized as `bar1 (foo1 foo2)`, instead
+of as a flat struct `bar1 foo1 foo2`.
+
+
+### Typedefs                                     {#thrift_tutorial_subs_typedef}
+
 Thrift supports C/C++ style typedefs.
 
 ~~~{.thrift}
@@ -98,8 +135,39 @@ defined, a `<thriftFileName>_common.h` file is generated, which contains all
 typedefs and constants;
 this file is automatically included by all the other generated files.
 
+Typedefs to base types can be used in order to use unsigned types, vocabs, and
+a few other simple types. For example:
 
-\subsection thrift_tutorial_subs_const Constants
+~~~{.thrift}
+typedef i32 ( yarp.type = "yarp::conf::vocab32_t" ) vocab
+typedef i8 ( yarp.type = "std::uint8_t" ) ui8
+typedef i16 ( yarp.type = "std::uint16_t" ) ui16
+typedef i32 ( yarp.type = "std::uint32_t" ) ui32
+typedef i64 ( yarp.type = "std::uint64_t" ) ui64
+typedef i32 ( yarp.type = "size_t" ) size_t
+typedef double ( yarp.type = "yarp::conf::float32_t" ) float32
+typedef double ( yarp.type = "yarp::conf::float64_t" ) float64
+
+struct TestAnnotatedTypes
+{
+  1: vocab a_vocab,
+  2: ui8 a_ui8,
+  3: ui16 a_ui16,
+  4: ui32 a_ui32,
+  5: ui64 a_ui64,
+  6: float32 a_float32,
+  7: float64 a_float64,
+  8: size_t a_size;
+}
+~~~
+
+Note that `size_t` in YARP uses 32 bit integers for retro-compatibility, and to
+save some bandwidth.
+Also note that `float64` here is not actually useful, since it can be replaced
+with double, and it is defined only for coherence.
+
+### Constants                                      {#thrift_tutorial_subs_const}
+
 Thrift lets you define constants for use across languages.
 Complex types and structs are specified using JSON notation.
 
@@ -113,20 +181,24 @@ defined, a `<thriftFileName>_common.h` file is generated, which contains all
 typedefs and constants;
 this file is automatically included by all other generated files.
 
-\subsection thrift_tutorial_subs_enums Enums
+
+### Enums                                          {#thrift_tutorial_subs_enums}
+
 Enums are specified C-style.
 Compiler assigns default values starting at 0, but specific integral values (in
 the range of positive 32-bit integers) can be specified for constants.
 Hex values are also acceptable.
 
 ~~~{.thrift}
-enum PointQuality{
+enum PointQuality
+{
   UNKNOWN = 0,
   GOOD = 1,
   BAD = 2
 }
 
-struct PointWithQuality{
+struct PointWithQuality
+{
   1: PointD point;
   2: PointQuality quality= PointQuality.UNKNOWN;
 }
@@ -138,7 +210,8 @@ For each enum, a `.h` and a `.cpp` file are created, which contain the
 definition of the enum and a helper class that handles number/string conversion
 for the enum elements.
 
-\subsection thrift_tutorial_subs_namespace Namespaces
+
+### Namespaces                                 {#thrift_tutorial_subs_namespace}
 
 Namespaces in Thrift are akin to namespaces in C++ or packages in Java: they
 offer a convenient way of organizing (or isolating) your code.
@@ -161,7 +234,8 @@ namespace test {
 }
 ~~~
 
-\subsection thrift_tutorial_subs_include Includes
+
+### Includes                                     {#thrift_tutorial_subs_include}
 
 It is often useful to split up Thrift definitions in separate files to ease
 maintenance, enable reuse and improve modularity/organization.
@@ -180,7 +254,9 @@ In generated files, the needed header files generated from the `PointD.thrift`
 file will be included with the same inclusion prefix (in this case,
 `firstInterface`).
 
-\subsection thrift_tutorial_subs_services Services
+
+
+### Services                                    {#thrift_tutorial_subs_services}
 
 Service definitions are semantically equivalent to defining an interface (or a
 pure virtual abstract class) in object-oriented programming.
@@ -230,7 +306,7 @@ modules is provided in sections \ref thrift_tutorial_server and
 \ref thrift_tutorial_client respectively.
 
 
-\subsection thrift_tutorial_subs_comments Comments
+### Comments                                    {#thrift_tutorial_subs_comments}
 
 Thrift supports shell-style, C-style multi-line as well as single-line Java/C++
 style comments.
@@ -246,7 +322,8 @@ style comments.
 // C++/Java style single-line comments work just as well.
 ~~~
 
-\section thrift_tutorial_codegen Code generation
+
+### Code generation                                   {#thrift_tutorial_codegen}
 
 Generation of code for a Thrift definition file `PointD.thrift` in the
 `firstInterface` directory can be automatically performed by CMake calling the
@@ -307,7 +384,10 @@ target_sources(test_program PRIVATE test_program.cpp
 target_include_directories(test_program PRIVATE ${include_dirs})
 ~~~
 
-\section thrift_tutorial_server Server implementation
+
+Server implementation                                  {#thrift_tutorial_server}
+---------------------
+
 The purpose of a server is to listen for commands on a YARP port, execute the
 method that each command refers to, and send back the reply.
 With Thrift, a server is created from a `service` interface class (generated as
@@ -446,7 +526,8 @@ int main(int argc, char *argv[])
 }
 ~~~
 
-\section thrift_tutorial_client Client use
+Client Use                                             {#thrift_tutorial_client}
+----------
 
 Clients can invoke a remote procedure on the server by simply declaring the
 interface and attaching it to a YARP port connected to the server.
@@ -509,7 +590,8 @@ int main(int argc, char *argv[])
 }
 ~~~
 
-\section thrift_tutorial_completex Complete example
+Complete example                                    {#thrift_tutorial_completex}
+----------------
 
 A complete example of Thrift code generation and server/client creation with
 CMake is available in `example/idl/thrift/`
@@ -522,9 +604,9 @@ cd <build_directory>
 userImpl/DemoServer
 ~~~
 
-\verbatim
+~~~
 yarp: Port /demoServer active at tcp://10.xxx.xx.xx:10002
-\endverbatim
+~~~
 
 From another terminal, the communication on the server port can be eavesdropped
 with this command:
@@ -539,7 +621,8 @@ From yet another terminal, the client can be run with the following command:
 cd <build_directory>
 userImpl/DemoClient --server /demoServer
 ~~~
-\verbatim
+
+~~~
 yarp: Port /demo/client active at tcp://10.xxx.xx.xx:10004
 yarp: Sending output from /demo/client to /demoServer using tcp
 == get_answer ==
@@ -551,13 +634,14 @@ yarp: Sending output from /demo/client to /demoServer using tcp
 == add_point ==
 == done! ==
 yarp: Removing output from /demo/client to /demoServer
-\endverbatim
+~~~
 
 Note that RPC calls can also be sent to the server from command line:
 ~~~{.sh}
 yarp rpc /demoServer
 ~~~
-\verbatim
+
+~~~
 get answer
 Response: 42
 get_answer
@@ -570,6 +654,4 @@ add point 1 2 3 4 5 6
 Response: 5 7 9
 add one
 1
-\endverbatim
-
-*/
+~~~
