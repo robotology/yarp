@@ -68,8 +68,17 @@ public:
 
     bool readFloat64(yarp::conf::float64_t& x);
 
+    bool readUI8(std::uint8_t& x);
+
+    bool readUI16(std::uint16_t& x);
+
+    bool readUI32(std::uint32_t& x);
+
+    bool readUI64(std::uint64_t& x);
+
     bool readVocab32(yarp::conf::vocab32_t& x);
 
+    bool readSizeT(std::size_t& x);
 
     std::int8_t expectInt8()
     {

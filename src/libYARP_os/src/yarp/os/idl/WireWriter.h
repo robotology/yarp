@@ -62,8 +62,17 @@ public:
 
     bool writeFloat64(yarp::conf::float64_t x) const;
 
+    bool writeUI8(std::uint8_t x) const;
+
+    bool writeUI16(std::uint16_t x) const;
+
+    bool writeUI32(std::uint32_t x) const;
+
+    bool writeUI64(std::uint64_t x) const;
 
     bool writeVocab32(yarp::conf::vocab32_t x) const;
+
+    bool writeSizeT(std::size_t x) const;
 
     bool isValid() const;
 
