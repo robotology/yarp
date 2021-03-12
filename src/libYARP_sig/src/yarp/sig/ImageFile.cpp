@@ -135,7 +135,7 @@ bool ImageReadRGB_JPG(ImageOf<PixelRgb>& img, const char* filename)
 
     free(j_data);
     j_data = nullptr;
-    
+
     return true;
 #else
     yCError(IMAGEFILE) << "JPG library not available/not found";
