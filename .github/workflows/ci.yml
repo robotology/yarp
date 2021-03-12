@@ -21,6 +21,9 @@ jobs:
       ref: ${{ steps.select.outputs.ref }}
       environment: ${{ steps.select.outputs.environment }}
       sha: ${{ steps.select.outputs.sha }}
+      head_ref: ${{ steps.select.outputs.head_ref }}
+      head_ref: ${{ steps.select.outputs.base_ref }}
+      pr_number: ${{ steps.select.outputs.pr_number }}
       yarp_version: ${{ steps.select.outputs.yarp_version }}
     steps:
     - name: "Set output variables"
@@ -39,6 +42,9 @@ jobs:
         fi
         if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
           echo "::set-output name=sha::${{ github.event.pull_request.head.sha }}"
+          echo "::set-output name=head_ref::${GITHUB_HEAD_REF}"
+          echo "::set-output name=base_ref::${GITHUB_BASE_REF}"
+          echo "::set-output name=pr_number::$(cat $GITHUB_EVENT_PATH | jq .number)"
         else
           echo "::set-output name=sha::${{ github.sha }}"
         fi
@@ -55,6 +61,9 @@ jobs:
         REF: ${{ steps.select.outputs.ref }}
         ENVIRONMENT: ${{ steps.select.outputs.environment }}
         SHA: ${{ steps.select.outputs.sha }}
+        HEAD_REF: ${{ steps.select.outputs.head_ref }}
+        BASE_REF: ${{ steps.select.outputs.base_ref }}
+        PR_NUMBER: ${{ steps.select.outputs.pr_number }}
         YARP_VERSION: ${{ steps.select.outputs.yarp_version }}
       run: |
         echo "TIMESTAMP = ${TIMESTAMP}"
@@ -62,6 +71,9 @@ jobs:
         echo "REF = ${REF}"
         echo "ENVIRONMENT = ${ENVIRONMENT}"
         echo "SHA = ${SHA}"
+        echo "HEAD_REF = ${HEAD_REF}"
+        echo "BASE_REF = ${BASE_REF}"
+        echo "PR_NUMBER = ${PR_NUMBER}"
         echo "YARP_VERSION = ${YARP_VERSION}"
 
     - name: "Print Environment"
@@ -1624,8 +1636,6 @@ jobs:
         echo "SONAR_SOURCEENCODING=${SONAR_SOURCEENCODING:-UTF-8}" >> $GITHUB_ENV
         echo "SONAR_THREADS=${SONAR_THREADS:-1}" >> $GITHUB_ENV
 
-        [[ -v SONAR_CFAMILY_GCOV_REPORTSPATH ]] && echo "SONAR_CFAMILY_GCOV_REPORTSPATH=${SONAR_CFAMILY_GCOV_REPORTSPATH}" >> $GITHUB_ENV
-
         echo "SONAR_CFAMILY_CACHE_ENABLED=$([[ $SONAR_CFAMILY_CACHE_ENABLED = true ]] && echo true || echo false)" >> $GITHUB_ENV
         [[ $SONAR_CFAMILY_CACHE_ENABLED = true ]] && echo "SONAR_CFAMILY_CACHE_PATH=${SONAR_CACHE_PATH}" >> $GITHUB_ENV
 
@@ -1842,11 +1852,18 @@ jobs:
         [[ -v SONAR_PROJECT_DESCRIPTION ]] && SONAR_PROJECT_DESCRIPTION_CMD_ARG="-Dsonar.projectDescription=${SONAR_PROJECT_DESCRIPTION}"
         [[ -v SONAR_PROJECT_VERSION ]] && SONAR_PROJECT_VERSION_CMD_ARG="-Dsonar.projectVersion=${SONAR_PROJECT_VERSION}"
 
+        if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
+          SONAR_PR_CMD_ARGS="\
+            -Dsonar.pullrequest.provider=github \
+            -Dsonar.pullrequest.github.repository=${SONAR_ORGANIZATION}/${SONAR_PROJECT_NAME} \
+            -Dsonar.pullrequest.branch=${{ needs.select_environment.outputs.head_ref }} \
+            -Dsonar.pullrequest.key=${{ needs.select_environment.outputs.pr_number }} \
+            -Dsonar.pullrequest.base=${{ needs.select_environment.outputs.base_ref }} \
+            -Dsonar.pullrequest.github.endpoint=https://api.github.com"
+        fi
+
         # Paths to test files
         [[ -v SONAR_TESTS ]] && SONAR_TESTS_CMD_ARG="-Dsonar.tests=${SONAR_TESTS}"
-
-        # Path to coverage files
-        [[ -v SONAR_CFAMILY_GCOV_REPORTSPATH ]] && SONAR_CFAMILY_GCOV_REPORTSPATH_CMD_ARG="-Dsonar.cfamily.gcov.reportsPath=${SONAR_CFAMILY_GCOV_REPORTSPATH}"
 
         # Path to cache
         [[ -v SONAR_CFAMILY_CACHE_PATH ]] && SONAR_CFAMILY_CACHE_PATH_CMD_ARG="-Dsonar.cfamily.cache.path=${SONAR_CFAMILY_CACHE_PATH}"
@@ -1870,11 +1887,12 @@ jobs:
             -Dsonar.junit.reportPaths=build/JUnitTestResults.xml \
             -Dsonar.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/* tests/**/*" \
             -Dsonar.coverage.exclusions="src/yarp*/**/* src/carriers/**/* src/devices/**/* src/idls/**/* src/libyarp*/**/* src/robottestingframework-plugins/**/*" \
-            -Dsonar.branch.longLivedBranches.regex="yarp-.*" \
+            -Dsonar.branch.longLivedBranches.regex="^(master|yarp-.+)$" \
             ${SONAR_TESTS_CMD_ARG} \
             ${SONAR_PROJECT_NAME_CMD_ARG} \
             ${SONAR_PROJECT_DESCRIPTION_CMD_ARG} \
             ${SONAR_PROJECT_VERSION_CMD_ARG} \
+            ${SONAR_PR_CMD_ARGS} \
             ${SONAR_TOKEN_CMD_ARG} \
             ${SONAR_ORGANIZATION_CMD_ARG} \
             ${SONAR_CFAMILY_CACHE_PATH_CMD_ARG}
