@@ -44,7 +44,8 @@ class FakeFrameGrabber :
         public yarp::dev::IPreciselyTimed,
         public yarp::dev::IAudioVisualStream,
         public yarp::dev::IRgbVisualParams,
-        public yarp::os::Thread
+        public yarp::os::Thread,
+        public yarp::os::PortReader
 {
 public:
     FakeFrameGrabber() = default;
@@ -74,6 +75,9 @@ public:
      * @return true iff the object could be configured.
      */
     bool open(yarp::os::Searchable& config) override;
+
+    // yarp::os::PortReader
+    bool read(yarp::os::ConnectionReader& connection) override;
 
     // yarp::os::Thread
     void run() override;
@@ -152,6 +156,9 @@ private:
     static constexpr size_t default_h = 128;
     static constexpr size_t default_freq = 30;
     static constexpr double default_snr = 0.5;
+
+    std::string        m_rpcPortName="/fakeFrameGrabber/rpc";
+    yarp::os::Port     m_rpcPort;
 
     size_t ct{0};
     size_t bx{0};

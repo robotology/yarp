@@ -124,6 +124,63 @@ constexpr size_t num_height = 5;
 
 }
 
+bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::Bottle command;
+    yarp::os::Bottle reply;
+    bool ok = command.read(connection);
+    if (!ok) return false;
+    reply.clear();
+
+    if (command.get(0).asString()=="help")
+    {
+        reply.addVocab(Vocab::encode("many"));
+        reply.addString("set_mode <mode>");
+        reply.addString("set_image <file_name>/off");
+        reply.addString("available modes: ball, line, grid, size, rand, nois, none, time");
+        reply.addString("");
+    }
+    else if (command.get(0).asString() == "set_mode")
+    {
+        mode= command.get(1).asVocab();
+        reply.addString("ack");
+    }
+    else if (command.get(0).asString() == "set_image")
+    {
+        if (command.get(1).asString() == "off")
+        {
+            have_bg=false;
+            reply.addString("ack");
+        }
+        else
+        {
+            if (yarp::sig::file::read(background, command.get(1).asString()))
+            {
+                w = background.width();
+                h = background.height();
+                have_bg = true;
+                reply.addString("ack");
+            }
+            else
+            {
+                have_bg = false;
+                reply.addString("err");
+            }
+        }
+    }
+    else
+    {
+        reply.addString("Unknown command. Type 'help'.");
+    }
+
+    yarp::os::ConnectionWriter* returnToSender = connection.getWriter();
+    if (returnToSender != nullptr)
+    {
+        reply.write(*returnToSender);
+    }
+
+    return true;
+}
 
 bool FakeFrameGrabber::close() {
     stop();
@@ -131,6 +188,7 @@ bool FakeFrameGrabber::close() {
 }
 
 bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
+    m_rpcPortName = config.check("rpc_port", yarp::os::Value("/fakeFrameGrabber/rpc"), "rpc port for the fakeFrameGrabber").asString();
     w = config.check("width",yarp::os::Value(320),
                      "desired width of test image").asInt32();
     h = config.check("height",yarp::os::Value(240),
@@ -242,6 +300,13 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
         buff.resize(w, h);
         buff.zero();
     }
+
+    if (!m_rpcPort.open(m_rpcPortName.c_str()))
+    {
+        yCError(FAKEFRAMEGRABBER, "Failed to open port %s", m_rpcPortName.c_str());
+        return false;
+    }
+    m_rpcPort.setReader(*this);
 
     start();
 
