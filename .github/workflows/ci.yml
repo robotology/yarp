@@ -22,7 +22,7 @@ jobs:
       environment: ${{ steps.select.outputs.environment }}
       sha: ${{ steps.select.outputs.sha }}
       head_ref: ${{ steps.select.outputs.head_ref }}
-      head_ref: ${{ steps.select.outputs.base_ref }}
+      base_ref: ${{ steps.select.outputs.base_ref }}
       pr_number: ${{ steps.select.outputs.pr_number }}
       yarp_version: ${{ steps.select.outputs.yarp_version }}
     steps:

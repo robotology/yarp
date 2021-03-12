@@ -20,6 +20,9 @@ jobs:
       ref: ${{ steps.select.outputs.ref }}
       environment: ${{ steps.select.outputs.environment }}
       sha: ${{ steps.select.outputs.sha }}
+      head_ref: ${{ steps.select.outputs.head_ref }}
+      base_ref: ${{ steps.select.outputs.base_ref }}
+      pr_number: ${{ steps.select.outputs.pr_number }}
       yarp_version: ${{ steps.select.outputs.yarp_version }}
     steps:
     - name: "Set output variables"
@@ -38,6 +41,9 @@ jobs:
         fi
         if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
           echo "::set-output name=sha::${{ github.event.pull_request.head.sha }}"
+          echo "::set-output name=head_ref::${GITHUB_HEAD_REF}"
+          echo "::set-output name=base_ref::${GITHUB_BASE_REF}"
+          echo "::set-output name=pr_number::$(cat $GITHUB_EVENT_PATH | jq .number)"
         else
           echo "::set-output name=sha::${{ github.sha }}"
         fi
@@ -54,6 +60,9 @@ jobs:
         REF: ${{ steps.select.outputs.ref }}
         ENVIRONMENT: ${{ steps.select.outputs.environment }}
         SHA: ${{ steps.select.outputs.sha }}
+        HEAD_REF: ${{ steps.select.outputs.head_ref }}
+        BASE_REF: ${{ steps.select.outputs.base_ref }}
+        PR_NUMBER: ${{ steps.select.outputs.pr_number }}
         YARP_VERSION: ${{ steps.select.outputs.yarp_version }}
       run: |
         echo "TIMESTAMP = ${TIMESTAMP}"
@@ -61,6 +70,9 @@ jobs:
         echo "REF = ${REF}"
         echo "ENVIRONMENT = ${ENVIRONMENT}"
         echo "SHA = ${SHA}"
+        echo "HEAD_REF = ${HEAD_REF}"
+        echo "BASE_REF = ${BASE_REF}"
+        echo "PR_NUMBER = ${PR_NUMBER}"
         echo "YARP_VERSION = ${YARP_VERSION}"
 
     - name: "Print Environment"
