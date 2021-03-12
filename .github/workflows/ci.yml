@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-20.04
     outputs:
       timestamp: ${{ steps.select.outputs.timestamp }}
+      repository_owner: ${{ steps.select.outputs.repository_owner }}
+      repository_name: ${{ steps.select.outputs.repository_name }}
       repository: ${{ steps.select.outputs.repository }}
       ref: ${{ steps.select.outputs.ref }}
       environment: ${{ steps.select.outputs.environment }}
@@ -33,11 +35,13 @@ jobs:
       run: |
         echo "::set-output name=timestamp::$(/bin/date -u +%Y%m%d-%H%M%S)"
 
+        echo "::set-output name=repository_owner::${{ github.repository_owner }}
+        echo "::set-output name=repository_name::$(cat $GITHUB_EVENT_PATH | jq -r .repository.name)
         echo "::set-output name=repository::${{ github.repository }}"
 
         if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
           echo "::set-output name=environment::code-analysis_unsafe"
-          echo "::set-output name=ref::refs/pull/$(cat $GITHUB_EVENT_PATH | jq .number)/merge"
+          echo "::set-output name=ref::refs/pull/$(cat $GITHUB_EVENT_PATH | jq -r .number)/merge"
         else
           echo "::set-output name=environment::code-analysis"
           echo "::set-output name=ref::${{ github.ref }}"
@@ -46,7 +50,7 @@ jobs:
           echo "::set-output name=sha::${{ github.event.pull_request.head.sha }}"
           echo "::set-output name=head_ref::${GITHUB_HEAD_REF}"
           echo "::set-output name=base_ref::${GITHUB_BASE_REF}"
-          echo "::set-output name=pr_number::$(cat $GITHUB_EVENT_PATH | jq .number)"
+          echo "::set-output name=pr_number::$(cat $GITHUB_EVENT_PATH | jq -r .number)"
         else
           echo "::set-output name=sha::${{ github.sha }}"
         fi
@@ -59,6 +63,8 @@ jobs:
     - name: 'Debug output variables'
       env:
         TIMESTAMP: ${{ steps.select.outputs.timestamp }}
+        REPOSITORY_OWNER: ${{ steps.select.outputs.repository_owner }}
+        REPOSITORY_NAME: ${{ steps.select.outputs.repository_name }}
         REPOSITORY: ${{ steps.select.outputs.repository }}
         REF: ${{ steps.select.outputs.ref }}
         ENVIRONMENT: ${{ steps.select.outputs.environment }}
@@ -69,6 +75,8 @@ jobs:
         YARP_VERSION: ${{ steps.select.outputs.yarp_version }}
       run: |
         echo "TIMESTAMP = ${TIMESTAMP}"
+        echo "REPOSITORY_OWNER = ${REPOSITORY_OWNER}"
+        echo "REPOSITORY_NAME = ${REPOSITORY_NAME}"
         echo "REPOSITORY = ${REPOSITORY}"
         echo "REF = ${REF}"
         echo "ENVIRONMENT = ${ENVIRONMENT}"
@@ -1630,9 +1638,9 @@ jobs:
     - name: Get Sonar and Prepare Environment
       id: get_sonar
       env:
-        SONAR_ORGANIZATION: 'robotology'
-        SONAR_PROJECT_KEY: 'robotology_yarp'
-        SONAR_PROJECT_NAME: 'yarp'
+        SONAR_ORGANIZATION: ${{ needs.select_environment.outputs.repository_owner }}
+        SONAR_PROJECT_KEY: ${{ needs.select_environment.outputs.repository_owner }}_${{ needs.select_environment.outputs.repository_name }}
+        SONAR_PROJECT_NAME: ${{ needs.select_environment.outputs.repository_name }}
         SONAR_PROJECT_DESCRIPTION: 'Yet Another Robot Platform'
         SONAR_PROJECT_VERSION: ${{ needs.select_environment.outputs.yarp_version }}
         SONAR_LINKS_HOMEPAGE: 'https://www.yarp.it/'
