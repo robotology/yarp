@@ -17,6 +17,8 @@
 #include <yarp/os/Vocab.h>
 
 #include <yarp/sig/Sound.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
 
 #include <cstdio>
 #include <cstring>
@@ -24,6 +26,11 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
+
+namespace
+{
+    YARP_LOG_COMPONENT(SOUNDFILE, "yarp.sig.SoundFile")
+}
 
 YARP_BEGIN_PACK
 class PcmWavHeader {
@@ -58,89 +65,90 @@ YARP_END_PACK
 
 bool PcmWavHeader::parse_from_file(FILE *fp)
 {
-    printf("bool PcmWavHeader::parse_from_file(FILE *fp)\n");
+    yCTrace(SOUNDFILE, "bool PcmWavHeader::parse_from_file(FILE *fp)\n");
 
     size_t ret;
 
     ret = fread(&wavHeader, sizeof(wavHeader), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&wavLength, sizeof(wavLength), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&formatHeader1, sizeof(formatHeader1), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&formatHeader2, sizeof(formatHeader2), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&formatLength, sizeof(formatLength), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&pcm.pcmFormatTag, sizeof(pcm.pcmFormatTag), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&pcm.pcmChannels, sizeof(pcm.pcmChannels), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&pcm.pcmSamplesPerSecond, sizeof(pcm.pcmSamplesPerSecond), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&pcm.pcmBytesPerSecond, sizeof(pcm.pcmBytesPerSecond), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&pcm.pcmBlockAlign, sizeof(pcm.pcmBlockAlign), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
     ret = fread(&pcm.pcmBitsPerSample, sizeof(pcm.pcmBitsPerSample), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
     if (pcm.pcmBitsPerSample != 16)
     {
-        printf("sorry, lousy wav read code only does 16-bit ints\n");
+        yCError(SOUNDFILE, "sorry, lousy wav read code only does 16-bit ints\n");
         return false;
     }
 
     //extra bytes in pcm chuck
     int extra_size = formatLength - sizeof(pcm);
-    if (extra_size != 0) {
-        printf("extra_size = %d\n", extra_size);
+    if (extra_size != 0)
+    {
+        yCError(SOUNDFILE, "extra_size = %d\n", extra_size);
         pcmExtraData.allocate(extra_size);
         ret = fread(&pcmExtraData, extra_size, 1, fp);
         if (ret != 1) {
-            printf("failed to read wav file");
+            yCError(SOUNDFILE, "failed to read wav file");
             return false;
         }
     }
@@ -148,7 +156,7 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     //extra chunks
     ret = fread(&dummyHeader, sizeof(dummyHeader), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
@@ -156,19 +164,19 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     {
         fread(&dummyLength, sizeof(dummyLength), 1, fp);
         if (ret != 1) {
-            printf("failed to read wav file");
+            yCError(SOUNDFILE, "failed to read wav file");
             return false;
         }
         dummyData.clear();
         dummyData.allocate(dummyLength);
         fread(&dummyData, dummyLength, 1, fp);
         if (ret != 1) {
-            printf("failed to read wav file");
+            yCError(SOUNDFILE, "failed to read wav file");
             return false;
         }
         fread(&dummyHeader, sizeof(dummyHeader), 1, fp);
         if (ret != 1) {
-            printf("failed to read wav file");
+            yCError(SOUNDFILE, "failed to read wav file");
             return false;
         }
     }
@@ -176,7 +184,7 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     dataHeader = dummyHeader;
     fread(&dataLength, sizeof(dataLength), 1, fp);
     if (ret != 1) {
-        printf("failed to read wav file");
+        yCError(SOUNDFILE, "failed to read wav file");
         return false;
     }
 
@@ -226,18 +234,76 @@ void PcmWavHeader::setup_to_write(const Sound& src, FILE *fp)
 
 }
 
-bool yarp::sig::file::read(Sound& dest, const char *src)
+//#######################################################################################################
+
+bool yarp::sig::file::read(Sound& data, const char* filename)
 {
-    FILE *fp = fopen(src, "rb");
+    const char* file_ext = strrchr(filename, '.');
+    if (file_ext == nullptr)
+    {
+        yCError(SOUNDFILE) << "cannot find file extension in file name";
+        return false;
+    }
+
+    if (strcmp(file_ext, ".wav") == 0)
+    {
+        return read_wav(data, filename);
+    }
+    else if (strcmp(file_ext, ".mp3") == 0)
+    {
+        return read_mp3(data, filename);
+    }
+    yCError(SOUNDFILE) << "Unknown file format";
+    return false;
+}
+
+bool yarp::sig::file::write(const Sound& sound_data, const char* filename)
+{
+    const char* file_ext = strrchr(filename, '.');
+    if (file_ext == nullptr)
+    {
+        yCError(SOUNDFILE) << "cannot find file extension in file name";
+        return false;
+    }
+
+    if (strcmp(file_ext, ".wav") == 0)
+    {
+        return write_wav(sound_data, filename);
+    }
+    else if (strcmp(file_ext, ".mp3") == 0)
+    {
+        return write_mp3(sound_data, filename);
+    }
+
+    yCError(SOUNDFILE) << "Unknown file format";
+    return false;
+}
+
+//#######################################################################################################
+bool yarp::sig::file::read_mp3(Sound& sound_data, const char* filename)
+{
+    yCError(SOUNDFILE) << "Not yet implemented";
+    return false;
+}
+
+bool yarp::sig::file::write_mp3(const Sound& sound_data, const char* filename)
+{
+    yCError(SOUNDFILE) << "Not yet implemented";
+    return false;
+}
+
+bool yarp::sig::file::read_wav(Sound& sound_data, const char * filename)
+{
+    FILE *fp = fopen(filename, "rb");
     if (!fp) {
-        printf("cannot open file %s for reading\n", src);
+        yCError(SOUNDFILE, "cannot open file %s for reading\n", filename);
         return false;
     }
 
     PcmWavHeader header;
     if (!header.parse_from_file(fp))
     {
-        printf("error parsing header of file %s\n", src);
+        yCError(SOUNDFILE, "error parsing header of file %s\n", filename);
         fclose(fp);
         return false;
     };
@@ -247,10 +313,10 @@ bool yarp::sig::file::read(Sound& dest, const char *src)
     int channels = header.pcm.pcmChannels;
     int bits = header.pcm.pcmBitsPerSample;
     int samples = header.dataLength/(bits/8)/channels;
-    dest.resize(samples,channels);
-    dest.setFrequency(freq);
+    sound_data.resize(samples,channels);
+    sound_data.setFrequency(freq);
     ManagedBytes bytes(header.dataLength);
-    printf("%d channels %d samples %d frequency\n", channels, samples, freq);
+    yCDebug(SOUNDFILE, "%d channels %d samples %d frequency\n", channels, samples, freq);
 
     size_t result;
     result = fread(bytes.get(),bytes.length(),1,fp);
@@ -260,7 +326,7 @@ bool yarp::sig::file::read(Sound& dest, const char *src)
     int ct = 0;
     for (int i=0; i<samples; i++) {
         for (int j=0; j<channels; j++) {
-            dest.set(data[ct],i,j);
+            sound_data.set(data[ct],i,j);
             ct++;
         }
     }
@@ -270,25 +336,25 @@ bool yarp::sig::file::read(Sound& dest, const char *src)
 }
 
 
-bool yarp::sig::file::write(const Sound& src, const char *dest)
+bool yarp::sig::file::write_wav(const Sound& sound_data, const char * filename)
 {
-    FILE *fp = fopen(dest, "wb");
+    FILE *fp = fopen(filename, "wb");
     if (!fp) {
-        printf("cannot open file %s for writing\n", dest);
+        yCError(SOUNDFILE, "cannot open file %s for writing\n", filename);
         return false;
     }
 
     PcmWavHeader header;
-    header.setup_to_write(src, fp);
+    header.setup_to_write(sound_data, fp);
 
     ManagedBytes bytes(header.dataLength);
     auto* data = reinterpret_cast<NetInt16*>(bytes.get());
     int ct = 0;
-    size_t samples = src.getSamples();
-    size_t channels = src.getChannels();
+    size_t samples = sound_data.getSamples();
+    size_t channels = sound_data.getChannels();
     for (size_t i=0; i<samples; i++) {
         for (size_t j=0; j<channels; j++) {
-            int v = src.get(i,j);
+            int v = sound_data.get(i,j);
             data[ct] = v;
             ct++;
         }
@@ -299,25 +365,27 @@ bool yarp::sig::file::write(const Sound& src, const char *dest)
     return true;
 }
 
+//#######################################################################################################
+
 bool yarp::sig::file::soundStreamReader::open(const char *filename)
 {
     if (fp)
     {
-        printf("file %s is already open\n", fname);
+        yCError(SOUNDFILE, "file %s is already open\n", fname);
         return false;
     }
 
     fp = fopen(filename, "rb");
     if (!fp)
     {
-        printf("cannot open file %s for reading\n", filename);
+        yCError(SOUNDFILE, "cannot open file %s for reading\n", filename);
         return false;
     }
     strcpy(fname,filename);
     PcmWavHeader header;
     if (!header.parse_from_file(fp))
     {
-        printf("error parsing header of file %s\n", fname);
+        yCError(SOUNDFILE, "error parsing header of file %s\n", fname);
         fclose(fp);
         return false;
     }
@@ -334,7 +402,7 @@ bool yarp::sig::file::soundStreamReader::close()
 {
     if (!fp)
     {
-        printf("no files open\n");
+        yCError(SOUNDFILE, "no files open\n");
         return false;
     }
 
@@ -375,13 +443,13 @@ bool  yarp::sig::file::soundStreamReader::rewind(size_t sample_offset)
 {
     if (!fp)
     {
-        printf("no files open\n");
+        yCError(SOUNDFILE, "no files open\n");
         return false;
     }
 
     if ((int)sample_offset>this->soundInfo.samples)
     {
-        printf("invalid sample_offset\n");
+        yCError(SOUNDFILE, "invalid sample_offset\n");
         return false;
     }
 

@@ -17,20 +17,52 @@ namespace yarp {
     namespace sig{
         namespace file {
             /**
-             * Read a sound from file.
-             * @param dest sound to read
-             * @param src name of file (should be a WAV file)
+             * Read a sound from a .wav audio file.
+             * @param data sound to read
+             * @param filename name of file
              * @return true on success
              */
-            bool YARP_sig_API read(Sound& dest, const char *src);
+            bool YARP_sig_API read_wav(Sound& data, const char* filename);
 
             /**
-             * Write a sound to file.
-             * @param src sound to write
-             * @param dest name of file (will be a WAV file)
+             * Write a sound to a .wav file.
+             * @param data sound to write
+             * @param filename name of file
              * @return true on success
              */
-            bool YARP_sig_API write(const Sound& src, const char *dest);
+            bool YARP_sig_API write_wav(const Sound& data, const char* filename);
+
+            /**
+             * Read a sound from a .mp3 audio file.
+             * @param data sound to read
+             * @param filename name of file
+             * @return true on success
+             */
+            bool YARP_sig_API read_mp3(Sound& data, const char* filename);
+
+            /**
+             * Write a sound to a mp3 file.
+             * @param data sound to write
+             * @param filename name of file
+             * @return true on success
+             */
+            bool YARP_sig_API write_mp3(const Sound& data, const char* filename);
+
+            /**
+             * Read a sound from a generic audio file.
+             * @param data sound to read
+             * @param filename name of file (supported extensions: .wav, .mp3)
+             * @return true on success
+             */
+            bool YARP_sig_API read(Sound& data, const char * filename);
+
+            /**
+             * Write a sound to file. The format is specified by the extension.
+             * @param data sound to write
+             * @param filename name of file (supported extensions: .wav, .mp3)
+             * @return true on success
+             */
+            bool YARP_sig_API write(const Sound& data, const char * filename);
 
             class YARP_sig_API soundStreamReader
             {
