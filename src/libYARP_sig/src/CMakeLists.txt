@@ -102,6 +102,13 @@ if(YARP_HAS_PNG)
   list(APPEND YARP_sig_PRIVATE_DEPS PNG)
 endif()
 
+if (YARP_HAS_FFMPEG)
+  target_include_directories(YARP_sig SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIR})
+  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_FFMPEG)
+  target_link_libraries(YARP_sig PRIVATE ${FFMPEG_LIBRARIES})
+  list(APPEND YARP_sig_PRIVATE_DEPS FFMPEG)
+endif()
+
 set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS})
 set_property(TARGET YARP_sig PROPERTY PRIVATE_HEADER ${YARP_sig_IMPL_HDRS})
 set_property(TARGET YARP_sig PROPERTY VERSION ${YARP_VERSION_SHORT})
