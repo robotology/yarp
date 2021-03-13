@@ -184,11 +184,12 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
 
 bool FakeFrameGrabber::close() {
     stop();
+    m_rpcPort.close();
     return true;
 }
 
 bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
-    m_rpcPortName = config.check("rpc_port", yarp::os::Value("/fakeFrameGrabber/rpc"), "rpc port for the fakeFrameGrabber").asString();
+    m_rpcPortName = config.check("fakeFrameGrabber_rpc_port", yarp::os::Value("/fakeFrameGrabber/rpc"), "rpc port for the fakeFrameGrabber").asString();
     w = config.check("width",yarp::os::Value(320),
                      "desired width of test image").asInt32();
     h = config.check("height",yarp::os::Value(240),
@@ -304,6 +305,8 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
     if (!m_rpcPort.open(m_rpcPortName.c_str()))
     {
         yCError(FAKEFRAMEGRABBER, "Failed to open port %s", m_rpcPortName.c_str());
+        yCError(FAKEFRAMEGRABBER, "Do you have multiple FakeFrameGrabber devices running?");
+        yCError(FAKEFRAMEGRABBER, "If yes, use the `fakeFrameGrabber_rpc_port` parameter to set a different name for each of them");
         return false;
     }
     m_rpcPort.setReader(*this);
