@@ -24,8 +24,10 @@ set(YARP_sig_HDRS yarp/sig/all.h
                   yarp/sig/PointCloudTypes.h
                   yarp/sig/PointCloudUtils.h
                   yarp/sig/PointCloudUtils-inl.h
-                  yarp/sig/SoundFile.h
                   yarp/sig/Sound.h
+                  yarp/sig/SoundFile.h
+                  yarp/sig/SoundFileMp3.h
+                  yarp/sig/SoundFileWav.h
                   yarp/sig/Vector.h)
 
 if(NOT YARP_NO_DEPRECATED) # Since YARP 3.0.0
@@ -42,6 +44,8 @@ set(YARP_sig_SRCS yarp/sig/Image.cpp
                   yarp/sig/PointCloudUtils.cpp
                   yarp/sig/Sound.cpp
                   yarp/sig/SoundFile.cpp
+                  yarp/sig/SoundFileMp3.cpp
+                  yarp/sig/SoundFileWav.cpp
                   yarp/sig/Vector.cpp)
 
 set(YARP_sig_IMPL_HDRS yarp/sig/impl/DeBayer.h

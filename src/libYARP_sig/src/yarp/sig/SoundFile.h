@@ -11,43 +11,10 @@
 #define YARP_SIG_SOUNDFILE_H
 
 #include <yarp/sig/Sound.h>
-#include <cstdio>
 
 namespace yarp {
     namespace sig{
         namespace file {
-            /**
-             * Read a sound from a .wav audio file.
-             * @param data sound to read
-             * @param filename name of file
-             * @return true on success
-             */
-            bool YARP_sig_API read_wav(Sound& data, const char* filename);
-
-            /**
-             * Write a sound to a .wav file.
-             * @param data sound to write
-             * @param filename name of file
-             * @return true on success
-             */
-            bool YARP_sig_API write_wav(const Sound& data, const char* filename);
-
-            /**
-             * Read a sound from a .mp3 audio file.
-             * @param data sound to read
-             * @param filename name of file
-             * @return true on success
-             */
-            bool YARP_sig_API read_mp3(Sound& data, const char* filename);
-
-            /**
-             * Write a sound to a mp3 file.
-             * @param data sound to write
-             * @param filename name of file
-             * @return true on success
-             */
-            bool YARP_sig_API write_mp3(const Sound& data, const char* filename);
-
             /**
              * Read a sound from a generic audio file.
              * @param data sound to read
@@ -67,34 +34,13 @@ namespace yarp {
             class YARP_sig_API soundStreamReader
             {
                 private:
-                FILE *fp;
-                size_t index;
-                char fname [255];
-                struct
-                {
-                    int freq;
-                    int channels;
-                    int bits;
-                    int samples;
-                    size_t data_start_offset;
-                } soundInfo;
+                Sound  m_sound_data;
+                size_t m_index=0;
+                size_t m_totsize=0;
 
                 public:
-                soundStreamReader()
-                {
-                    fp = 0;
-                    index=0;
-                    fname[0]=0;
-                }
-
-                ~soundStreamReader()
-                {
-                    if (fp)
-                    {
-                        close();
-                        fp=0;
-                    }
-                }
+                soundStreamReader() {}
+                ~soundStreamReader() {}
 
                 bool   open(const char *filename);
                 bool   close();
