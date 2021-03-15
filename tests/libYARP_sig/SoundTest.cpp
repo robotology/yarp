@@ -8,6 +8,7 @@
  */
 
 #include <yarp/sig/Sound.h>
+#include <yarp/sig/SoundFile.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Log.h>
@@ -284,6 +285,16 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
 
         output.close();
         input.close();
+    }
+
+    SECTION("check write file.")
+    {
+        Sound snd1;
+        snd1.resize(30000, 2);
+        snd1.setFrequency(44100);
+        generate_test_sound(snd1, 30000, 2);
+        yarp::sig::file::write(snd1, "testmp3.mp3");
+        yarp::sig::file::write(snd1, "testwav.wav");
     }
 
     NetworkBase::setLocalMode(false);

@@ -47,7 +47,7 @@ using namespace yarp::sig::file;
 
 namespace
 {
-    YARP_LOG_COMPONENT(SOUNDFILE, "yarp.sig.SoundFileMp3")
+    YARP_LOG_COMPONENT(SOUNDFILE_MP3, "yarp.sig.SoundFileMp3")
 }
 
 //#######################################################################################################
@@ -182,6 +182,94 @@ bool yarp::sig::file::read_mp3(Sound& sound_data, const char* filename)
 #endif
 }
 
+int check_sample_fmt(const AVCodec * codec, enum AVSampleFormat sample_fmt)
+{
+    const enum AVSampleFormat* p = codec->sample_fmts;
+
+    while (*p != AV_SAMPLE_FMT_NONE)
+    {
+        if (*p == sample_fmt)
+            return 1;
+        p++;
+    }
+    return 0;
+}
+
+int select_sample_rate(const AVCodec * codec)
+{
+    const int* p;
+    int best_samplerate = 0;
+
+    if (!codec->supported_samplerates)
+        return 44100;
+
+    p = codec->supported_samplerates;
+    while (*p)
+    {
+         if (!best_samplerate || abs(44100 - *p) < abs(44100 - best_samplerate))
+            best_samplerate = *p;
+         p++;
+    }
+    return best_samplerate;
+}
+
+bool encode(AVCodecContext* ctx, AVFrame* frame, AVPacket* pkt, FILE * output)
+{
+    int ret;
+
+    // send the frame for encoding 
+    ret = avcodec_send_frame(ctx, frame);
+    if (ret < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Error sending the frame to the encoder\n");
+        return false;
+    }
+
+     // read all the available output packets (in general there may be any
+     // number of them
+     while (ret >= 0)
+     {
+         ret = avcodec_receive_packet(ctx, pkt);
+         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+         {
+             return true;
+         }
+         else if (ret < 0)
+         {
+             yCError(SOUNDFILE_MP3, "Error encoding audio frame\n");
+             return false;
+         }
+         fwrite(pkt->data, 1, pkt->size, output);
+         av_packet_unref(pkt);
+     }
+     return true;
+}
+
+/* select layout with the highest channel count */
+int select_channel_layout(const AVCodec * codec)
+{
+   const uint64_t * p;
+   uint64_t best_ch_layout = 0;
+   int best_nb_channels = 0;
+
+   if (!codec->channel_layouts)
+      return AV_CH_LAYOUT_STEREO;
+
+   p = codec->channel_layouts;
+   while (*p)
+   {
+       int nb_channels = av_get_channel_layout_nb_channels(*p);
+
+       if (nb_channels > best_nb_channels)
+       {
+           best_ch_layout = *p;
+           best_nb_channels = nb_channels;
+       }
+       p++;
+    }
+    return best_ch_layout;
+}
+
 bool yarp::sig::file::write_mp3(const Sound& sound_data, const char* filename)
 {
 #if (!YARP_HAS_FFMPEG)
@@ -189,7 +277,122 @@ bool yarp::sig::file::write_mp3(const Sound& sound_data, const char* filename)
     yCError(SOUNDFILE) << "Not yet implemented";
     return false;
 #else
-    yCError(SOUNDFILE) << "Not yet implemented";
-    return false;
+    const AVCodec * codec;
+    AVCodecContext * c = NULL;
+    AVFrame * frame;
+    AVPacket * pkt;
+    int i, j, k, ret;
+    FILE * f;
+    uint16_t * samples;
+
+    // find the MP3 encoder
+    codec = avcodec_find_encoder(AV_CODEC_ID_MP2);
+    if (!codec)
+    {
+        yCError(SOUNDFILE_MP3, "Codec not found");
+        return false;
+    }
+
+    c = avcodec_alloc_context3(codec);
+    if (!c)
+    {
+        yCError(SOUNDFILE_MP3, "Could not allocate audio codec context");
+        return false;
+    }
+
+    // the compressed output bitrate
+    c->bit_rate = 64000;
+
+    // check that the encoder supports s16 pcm input
+    c->sample_fmt = AV_SAMPLE_FMT_S16;
+    if (!check_sample_fmt(codec, c->sample_fmt))
+    {
+        yCError(SOUNDFILE_MP3, "Encoder does not support sample format %s",
+        av_get_sample_fmt_name(c->sample_fmt));
+        return false;
+    }
+
+    // select other audio parameters supported by the encoder
+    c->sample_rate = select_sample_rate(codec);
+    c->channel_layout = select_channel_layout(codec);
+    c->channels = av_get_channel_layout_nb_channels(c->channel_layout);
+
+    // open it
+    if (avcodec_open2(c, codec, NULL) < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Could not open codec");
+        return false;
+    }
+
+    f = fopen(filename, "wb");
+    if (!f)
+    {
+        yCError(SOUNDFILE_MP3, "Could not open %s", filename);
+        return false;
+    }
+
+    // packet for holding encoded output
+    pkt = av_packet_alloc();
+    if (!pkt)
+    {
+        yCError(SOUNDFILE_MP3, "could not allocate the packet");
+        fclose(f);
+        return false;
+    }
+
+    // frame containing input raw audio
+    frame = av_frame_alloc();
+    if (!frame)
+    {
+        yCError(SOUNDFILE_MP3, "Could not allocate audio frame");
+        fclose(f);
+        return false;
+    }
+
+    frame->nb_samples = c->frame_size;
+    frame->format = c->sample_fmt;
+    frame->channel_layout = c->channel_layout;
+    
+    // allocate the data buffers
+    ret = av_frame_get_buffer(frame, 0);
+    if (ret < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Could not allocate audio data buffers");
+        fclose(f);
+        return false;
+    }
+
+    // encode
+    size_t soundsize = sound_data.getSamples();
+    for (i = 0; i < soundsize/c->frame_size ; i++)
+    {
+        ret = av_frame_make_writable(frame);
+        if (ret < 0)  exit(1);
+
+        samples = (uint16_t*)frame->data[0];
+        for (j = 0; j < c->frame_size; j++)
+        {
+            for (k = 0; k < c->channels; k++)
+                samples[j*c->channels + k] = sound_data.get(j+i* c->frame_size,k);
+        }
+        if (encode(c, frame, pkt, f) == false)
+        {
+            yCError(SOUNDFILE_MP3, "Encode failed, memory could be corrupted, should I exit?");
+        }
+    }
+
+    // flush the encoder
+    if (encode(c, NULL, pkt, f) == false)
+    {
+        yCError(SOUNDFILE_MP3, "Encode failed, memory could be corrupted, should I exit?");
+    }
+
+    fclose(f);
+
+    av_frame_free(&frame);
+    av_packet_free(&pkt);
+    avcodec_free_context(&c);
+
+    return true;
 #endif
 }
