@@ -33,3 +33,8 @@ compile_commands.json
 *.srctrlprj
 /.cache/
 gmon.out
+/src/devices/RGBDToPointCloudSensorWrapper/RGBDSensorWrapper.cpp
+/src/devices/RGBDToPointCloudSensorWrapper/RGBDSensorWrapper.h
+/src/devices/RGBDToPointCloudSensorWrapper/rgbdSensor_nws_yarp.h
+/src/devices/RGBDToPointCloudSensorWrapper/rgbdSensor_nws_yarp.cpp
+/src/devices/RGBDToPointCloudSensorWrapper/CMakeLists.txt
