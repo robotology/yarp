@@ -368,9 +368,12 @@ bool RgbdToPointCloudSensor_nws_ros::writeData()
 
 
     // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
-    if (rgb_data_ok) {
-        if (depth_data_ok){
-            if (intrinsic_ok) {
+    if (rgb_data_ok) 
+    {
+        if (depth_data_ok)
+        {
+            if (intrinsic_ok) 
+            {
 				
                 yarp::sig::IntrinsicParams intrinsics(propIntrinsic);
 				yarp::sig::ImageOf<yarp::sig::PixelRgb> colorImagePixelRGB;
