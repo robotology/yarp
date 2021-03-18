@@ -17,14 +17,16 @@
 #include "rosPixelCode.h"
 #include <RGBDRosConversionUtils.h>
 #include <yarp/sig/PointCloudUtils.h>
+#include <yarp/rosmsg/std_msgs/Header.h>
+#include <yarp/rosmsg/sensor_msgs/PointField.h>
 
-using namespace RGBDImpl;
+using namespace RGBDToPointCloudImpl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
-YARP_LOG_COMPONENT(RGBDTOPOINTCLOUDSENSORNWSROS, "yarp.devices.RgbdToPointCloudSensor_nws_ros")
+YARP_LOG_COMPONENT(RGBDTOPOINTCLOUDSENSORNWSROS, "yarp.devices.RgbdToPointCloudSensor_nws_ros");
 
 RgbdToPointCloudSensor_nws_ros::RgbdToPointCloudSensor_nws_ros() :
     PeriodicThread(DEFAULT_THREAD_PERIOD),
@@ -39,13 +41,7 @@ RgbdToPointCloudSensor_nws_ros::RgbdToPointCloudSensor_nws_ros() :
     isSubdeviceOwned(false),
     subDeviceOwned(nullptr)
 {
-    m_depth_width = 0;
-    m_depth_height = 0;
-    m_pc_stepx = 1;
-    m_pc_stepy = 1;
-    //m_col_granularity = 10;
-    m_ground_frame_id = "/ground_frame";
-    m_camera_frame_id = "/depth_camera_frame";
+
 }
 
 
@@ -214,7 +210,7 @@ bool RgbdToPointCloudSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params
     // open topics here if needed
     rosNode = new yarp::os::Node(nodeName);
     nodeSeq = 0;
-    if (!rosPublisherPort_color.topic(colorTopicName))
+    if (!rosPublisherPort_pointCloud.topic(pointCloudTopicName))
     {
         yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Unable to publish data on " << pointCloudTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
@@ -335,117 +331,7 @@ void RgbdToPointCloudSensor_nws_ros::threadRelease()
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
-//bool RgbdToPointCloudSensor_nws_ros::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
-//{
-//    double phyF = 0.0;
-//    double fx = 0.0;
-//    double fy = 0.0;
-//    double cx = 0.0;
-//    double cy = 0.0;
-//    double k1 = 0.0;
-//    double k2 = 0.0;
-//    double t1 = 0.0;
-//    double t2 = 0.0;
-//    double k3 = 0.0;
-//    double stamp = 0.0;
-//
-//    string                  distModel, currentSensor;
-//    UInt                    i;
-//    Property                camData;
-//    vector<param<double> >  parVector;
-//    param<double>*          par;
-//    bool                    ok;
-//
-//    currentSensor = sensorType == COLOR_SENSOR ? "Rgb" : "Depth";
-//    ok            = sensorType == COLOR_SENSOR ? sensor_p->getRgbIntrinsicParam(camData) : sensor_p->getDepthIntrinsicParam(camData);
-//
-//    if (!ok)
-//    {
-//        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Unable to get intrinsic param from" << currentSensor << "sensor!";
-//        return false;
-//    }
-//
-//    if(!camData.check("distortionModel"))
-//    {
-//        yCWarning(RGBDTOPOINTCLOUDSENSORNWSROS) << "Missing distortion model";
-//        return false;
-//    }
-//
-//    distModel = camData.find("distortionModel").asString();
-//    if (distModel != "plumb_bob")
-//    {
-//        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Distortion model not supported";
-//        return false;
-//    }
-//
-//    //std::vector<param<string> >     rosStringParam;
-//    //rosStringParam.push_back(param<string>(nodeName, "asd"));
-//
-//    parVector.emplace_back(phyF,"physFocalLength");
-//    parVector.emplace_back(fx,"focalLengthX");
-//    parVector.emplace_back(fy,"focalLengthY");
-//    parVector.emplace_back(cx,"principalPointX");
-//    parVector.emplace_back(cy,"principalPointY");
-//    parVector.emplace_back(k1,"k1");
-//    parVector.emplace_back(k2,"k2");
-//    parVector.emplace_back(t1,"t1");
-//    parVector.emplace_back(t2,"t2");
-//    parVector.emplace_back(k3,"k3");
-//    parVector.emplace_back(stamp,"stamp");
-//    for(i = 0; i < parVector.size(); i++)
-//    {
-//        par = &parVector[i];
-//
-//        if(!camData.check(par->parname))
-//        {
-//            yCWarning(RGBDTOPOINTCLOUDSENSORNWSROS) << "Driver has not the param:" << par->parname;
-//            return false;
-//        }
-//        *par->var = camData.find(par->parname).asFloat64();
-//    }
-//
-//    cameraInfo.header.frame_id    = frame_id;
-//    cameraInfo.header.seq         = seq;
-//    cameraInfo.header.stamp       = stamp;
-//    cameraInfo.width              = sensorType == COLOR_SENSOR ? sensor_p->getRgbWidth() : sensor_p->getDepthWidth();
-//    cameraInfo.height             = sensorType == COLOR_SENSOR ? sensor_p->getRgbHeight() : sensor_p->getDepthHeight();
-//    cameraInfo.distortion_model   = distModel;
-//
-//    cameraInfo.D.resize(5);
-//    cameraInfo.D[0] = k1;
-//    cameraInfo.D[1] = k2;
-//    cameraInfo.D[2] = t1;
-//    cameraInfo.D[3] = t2;
-//    cameraInfo.D[4] = k3;
-//
-//    cameraInfo.K.resize(9);
-//    cameraInfo.K[0]  = fx;       cameraInfo.K[1] = 0;        cameraInfo.K[2] = cx;
-//    cameraInfo.K[3]  = 0;        cameraInfo.K[4] = fy;       cameraInfo.K[5] = cy;
-//    cameraInfo.K[6]  = 0;        cameraInfo.K[7] = 0;        cameraInfo.K[8] = 1;
-//
-//    /*
-//     * ROS documentation on cameraInfo message:
-//     * "Rectification matrix (stereo cameras only)
-//     * A rotation matrix aligning the camera coordinate system to the ideal
-//     * stereo image plane so that epipolar lines in both stereo images are
-//     * parallel."
-//     * useless in our case, it will be an identity matrix
-//     */
-//
-//    cameraInfo.R.assign(9, 0);
-//    cameraInfo.R.at(0) = cameraInfo.R.at(4) = cameraInfo.R.at(8) = 1;
-//
-//    cameraInfo.P.resize(12);
-//    cameraInfo.P[0]  = fx;      cameraInfo.P[1] = 0;    cameraInfo.P[2]  = cx;  cameraInfo.P[3]  = 0;
-//    cameraInfo.P[4]  = 0;       cameraInfo.P[5] = fy;   cameraInfo.P[6]  = cy;  cameraInfo.P[7]  = 0;
-//    cameraInfo.P[8]  = 0;       cameraInfo.P[9] = 0;    cameraInfo.P[10] = 1;   cameraInfo.P[11] = 0;
-//
-//    cameraInfo.binning_x  = cameraInfo.binning_y = 0;
-//    cameraInfo.roi.height = cameraInfo.roi.width = cameraInfo.roi.x_offset = cameraInfo.roi.y_offset = 0;
-//    cameraInfo.roi.do_rectify = false;
-//    return true;
-//}
-
+  
 bool RgbdToPointCloudSensor_nws_ros::writeData()
 {
     //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
@@ -478,29 +364,47 @@ bool RgbdToPointCloudSensor_nws_ros::writeData()
         //return true;
     }
     else { oldDepthStamp = depthStamp; }
-    intrinsic_ok = sensor_p->getRgbIntrinsicParam(propIntrinsics);
+    intrinsic_ok = sensor_p->getRgbIntrinsicParam(propIntrinsic);
 
 
     // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
     if (rgb_data_ok) {
         if (depth_data_ok){
             if (intrinsic_ok) {
-                yarp::sig::IntrinsicParams intrinsics(propIntrinsics);
+				
+                yarp::sig::IntrinsicParams intrinsics(propIntrinsic);
+				yarp::sig::ImageOf<yarp::sig::PixelRgb> colorImagePixelRGB;
+				colorImagePixelRGB.setExternal(colorImage.getRawImage(), colorImage.width(), colorImage.height());
+				// create point cloud in yarp format
+                yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> yarpCloud = yarp::sig::utils::depthRgbToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depthImage, colorImagePixelRGB, intrinsics);
+                
+                PointCloud2Type& pc2Ros = rosPublisherPort_pointCloud.prepare();
+                
+                // filling ros header
+                yarp::rosmsg::std_msgs::Header headerRos;
+                headerRos.clear();
+                headerRos.seq = nodeSeq;
+                headerRos.frame_id = rosFrameId;
+                headerRos.stamp = depthStamp.getTime();
+                
+                // filling ros point field
+                std::vector<yarp::rosmsg::sensor_msgs::PointField> pointFieldRos;
+                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField("x", 0,7,1));
+                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField("y", 4,7,1));
+                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField("z", 8,7,1));
+                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField("rgb", 16,7,1));
+                pc2Ros.fields = pointFieldRos;
 
-                yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> yarpCloud = yarp::sig::utils::depthRGBToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depthImage, colorImage, intrinsics);
-                yarp::pcl::PointCloud<yarp::pcl::PointXYZRGBA> pclCloud;
-                yarp::pcl::toPCL<yarp::sig::DataXYZRGBA, yarp::pcl::PointXYZRGBA>(yarpCloud, pclCloud);
+				vector<unsigned char> vec(yarpCloud.getRawData(), yarpCloud.getRawData() + yarpCloud.dataSizeBytes() );
+				pc2Ros.data = vec;
+                pc2Ros.header = headerRos;
+                pc2Ros.width = yarpCloud.width() * yarpCloud.height();
+                pc2Ros.height = 1;
+                pc2Ros.is_dense = yarpCloud.isDense();
+                
+                pc2Ros.point_step = sizeof (yarp::sig::DataXYZRGBA);
+				pc2Ros.row_step   = static_cast<std::uint32_t> (sizeof (yarp::sig::DataXYZRGBA) * pc2Ros.width);
 
-                // conversion from yarp point cloud to pcl point cloud
-                yarp::pcl::pclCloud.points.resize(yarpCloud.size());
-                pclCloud.width = yarpCloud.width();
-                pclCloud.height = yarpCloud.height();
-                pclCloud.is_dense = yarpCloud.isDense();
-                memcpy((char*)&pclCloud.points.at(0), yarpCloud.getRawData(), yarpCloud.dataSizeBytes());
-
-                PointCloud2Type& rPointCloud = rosPublisherPort_pointCloud.prepare();
-                yarp::rosmsg::TickTime pcTickTime = colorStamp.getTime();
-                rosPublisherPort_pointCloud.setEnvelope(colorStamp);
                 rosPublisherPort_pointCloud.write();
             }
         }

@@ -38,14 +38,11 @@
 
 #define DEFAULT_THREAD_PERIOD   0.03 // s
 
-namespace RGBDToPointCloudImpl
-{
+namespace RGBDToPointCloudImpl{
     const std::string frameId_param            = "frame_Id";
     const std::string nodeName_param           = "nodeName";
     const std::string pointCloudTopicName_param     = "pointCloudTopicName";
-    // TODO remove const std::string pointCloudInfoTopicName_param = "pointCloudInfoTopicName";
 }
-//TO_HERE_ARRIVED
 /**
  *  @ingroup dev_impl_wrapper
  *
@@ -74,13 +71,13 @@ namespace RGBDToPointCloudImpl
  * device RgbdToPointCloudSensor_nws_ros
  * subdevice <RGBDsensor>
  * period 30
- * colorTopicName /<robotName>/RGBD2PointCloud
+ * pointCloudTopicName /<robotName>/RGBDToPointCloud
  * frame_Id /<robotName>/<framed_Id>
- * nodeName /<robotName>/RGBD2PointCloudSensorNode
+ * nodeName /<robotName>/RGBDToPointCloudSensorNode
  * \endcode
  */
 
-class Rgbd2PointCloudSensor_nws_ros :
+class RgbdToPointCloudSensor_nws_ros :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IWrapper,
         public yarp::dev::IMultipleWrapper,
@@ -88,9 +85,8 @@ class Rgbd2PointCloudSensor_nws_ros :
 {
 private:
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> DepthImage;
-    typedef yarp::os::Publisher<yarp::rosmsg::sensor_msgs::PointCloud2>       PointCloudTopicType;
+    typedef yarp::os::Publisher<yarp::rosmsg::sensor_msgs::PointCloud2> PointCloudTopicType;
     typedef yarp::rosmsg::sensor_msgs::PointCloud2 PointCloud2Type;
-    // TODO remove typedef yarp::os::Publisher<yarp::rosmsg::sensor_msgs::CameraInfo>  DepthTopicType;
     typedef unsigned int                                 UInt;
 
     enum SensorType{COLOR_SENSOR, DEPTH_SENSOR};
@@ -118,11 +114,6 @@ private:
     UInt                  nodeSeq;
 
 
-    // parameters for computation 
-
-
-    // Image data specs
-    // int hDim, vDim;
     // this is the sub device or the real device
 
     double                         period;
@@ -130,7 +121,6 @@ private:
     yarp::dev::IRGBDSensor*        sensor_p;
     yarp::dev::IFrameGrabberControls* fgCtrl;
     yarp::dev::IRGBDSensor::RGBDSensor_status sensorStatus;
-    yarp::dev::IFrameTransform* m_iTc {nullptr};
     int                            verbose;
     bool                           forceInfoSync;
     bool                           initialize_ROS(yarp::os::Searchable& config);
@@ -147,15 +137,11 @@ private:
     bool                           openAndAttachSubDevice(yarp::os::Searchable& prop);
 
     // Synch
-    yarp::os::Stamp                pointCloudStamp;
+    yarp::os::Stamp                colorStamp;
+    yarp::os::Stamp                depthStamp;   
     yarp::os::Property             m_conf;
 
     bool writeData();
-    // TODO FIXME remove
-    //bool setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo,
-    //                const std::string&                     frame_id,
-    //                const UInt&                            seq,
-    //                const SensorType&                      sensorType);
 
     static std::string yarp2RosPixelCode(int code);
 
