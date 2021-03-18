@@ -392,10 +392,26 @@ bool RgbdToPointCloudSensor_nws_ros::writeData()
                 
                 // filling ros point field
                 std::vector<yarp::rosmsg::sensor_msgs::PointField> pointFieldRos;
-                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField("x", 0,7,1));
-                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField("y", 4,7,1));
-                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField("z", 8,7,1));
-                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField("rgb", 16,7,1));
+                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField());
+                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField());
+                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField());
+                pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField());
+                pointFieldRos[0].name = "x";
+                pointFieldRos[0].offset = 0;
+                pointFieldRos[0].datatype = 7;
+                pointFieldRos[0].count = 1;
+                pointFieldRos[1].name = "y";
+                pointFieldRos[1].offset = 4;
+                pointFieldRos[1].datatype = 7;
+                pointFieldRos[1].count = 1;
+                pointFieldRos[2].name = "z";
+                pointFieldRos[2].offset = 8;
+                pointFieldRos[2].datatype = 7;
+                pointFieldRos[2].count = 1;
+                pointFieldRos[3].name = "rgb";
+                pointFieldRos[3].offset = 16;
+                pointFieldRos[3].datatype = 7;
+                pointFieldRos[3].count = 1;
                 pc2Ros.fields = pointFieldRos;
 
 				vector<unsigned char> vec(yarpCloud.getRawData(), yarpCloud.getRawData() + yarpCloud.dataSizeBytes() );

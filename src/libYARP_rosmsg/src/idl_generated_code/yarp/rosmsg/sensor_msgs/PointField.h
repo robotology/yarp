@@ -63,19 +63,6 @@ public:
             count(0)
     {
     }
-    
-    
-    PointField(    std::string name_p,
-    std::uint32_t offset_p,
-    std::uint8_t datatype_p,
-    std::uint32_t count_p) :
-            name(name_p),
-            offset(offset_p),
-            datatype(datatype_p),
-            count(count_p)
-    {
-    }
-
 
     void clear()
     {
