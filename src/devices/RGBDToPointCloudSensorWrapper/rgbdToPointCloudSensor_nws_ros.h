@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_RGBDTOPOINTLOUDSENSOR_NWS_ROS_H
-#define YARP_DEV_RGBDTOPOINTLOUDSENSOR_NWS_ROS_H
+#ifndef YARP_DEV_RGBDTOPOINTCLOUDSENSOR_NWS_ROS_H
+#define YARP_DEV_RGBDTOPOINTCLOUDSENSOR_NWS_ROS_H
 
 #include <vector>
 #include <iostream>
@@ -177,4 +177,4 @@ public:
     void        run() override;
 };
 
-#endif   // YARP_DEV_RGBDTOPOINTLOUDSENSOR_NWS_ROS_H
+#endif   // YARP_DEV_RGBDTOPOINTCLOUDSENSOR_NWS_ROS_H
