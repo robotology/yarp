@@ -39,8 +39,8 @@
 #define DEFAULT_THREAD_PERIOD   0.03 // s
 
 namespace RGBDToPointCloudImpl{
-    const std::string frameId_param            = "frame_Id";
-    const std::string nodeName_param           = "nodeName";
+    const std::string frameId_param                 = "frame_Id";
+    const std::string nodeName_param                = "nodeName";
     const std::string pointCloudTopicName_param     = "pointCloudTopicName";
 }
 /**
@@ -84,10 +84,10 @@ class RGBDToPointCloudSensor_nws_ros :
 {
 private:
     // defining types for shorter names
-    typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> DepthImage;
+    typedef yarp::sig::ImageOf<yarp::sig::PixelFloat>                   DepthImage;
     typedef yarp::os::Publisher<yarp::rosmsg::sensor_msgs::PointCloud2> PointCloudTopicType;
-    typedef yarp::rosmsg::sensor_msgs::PointCloud2 PointCloud2Type;
-    typedef unsigned int                                 UInt;
+    typedef yarp::rosmsg::sensor_msgs::PointCloud2                      PointCloud2Type;
+    typedef unsigned int                                                UInt;
 
     enum SensorType{COLOR_SENSOR, DEPTH_SENSOR};
 
@@ -117,15 +117,16 @@ private:
 
     // this is the sub device or the real device
 
-    double                         period;
-    std::string                    sensorId;
-    yarp::dev::IRGBDSensor*        sensor_p;
-    yarp::dev::IFrameGrabberControls* fgCtrl;
-    yarp::dev::IRGBDSensor::RGBDSensor_status sensorStatus;
-    int                            verbose;
-    bool                           forceInfoSync;
-    bool                           initialize_ROS(yarp::os::Searchable& config);
-    bool                           read(yarp::os::ConnectionReader& connection);
+    double                                      period;
+    std::string                                 sensorId;
+    yarp::dev::IRGBDSensor*                     sensor_p;
+    yarp::dev::IFrameGrabberControls*           fgCtrl;
+    yarp::dev::IRGBDSensor::RGBDSensor_status   sensorStatus;
+
+    int         verbose;
+    bool        forceInfoSync;
+    bool        initialize_ROS(yarp::os::Searchable& config);
+    bool        read(yarp::os::ConnectionReader& connection);
 
     // Open the wrapper only, the attach method needs to be called before using it
     // Typical usage: yarprobotinterface
