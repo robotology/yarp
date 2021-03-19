@@ -44,7 +44,7 @@ else()
 endif()
 
 install(FILES ${CMAKE_BINARY_DIR}/lib/python3/yarp.py
-        DESTINATION ${Python3_INSTDIR})
+        DESTINATION ${CMAKE_INSTALL_PYTHON3DIR})
 
 
 # Update RPATH
