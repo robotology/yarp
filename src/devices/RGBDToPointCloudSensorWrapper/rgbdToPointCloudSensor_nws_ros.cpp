@@ -331,7 +331,7 @@ void RGBDToPointCloudSensor_nws_ros::threadRelease()
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
-  
+
 bool RGBDToPointCloudSensor_nws_ros::writeData()
 {
     //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
@@ -368,27 +368,27 @@ bool RGBDToPointCloudSensor_nws_ros::writeData()
 
 
     // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
-    if (rgb_data_ok) 
+    if (rgb_data_ok)
     {
         if (depth_data_ok)
         {
-            if (intrinsic_ok) 
+            if (intrinsic_ok)
             {
                 yarp::sig::IntrinsicParams intrinsics(propIntrinsic);
                 yarp::sig::ImageOf<yarp::sig::PixelRgb> colorImagePixelRGB;
                 colorImagePixelRGB.setExternal(colorImage.getRawImage(), colorImage.width(), colorImage.height());
                 // create point cloud in yarp format
                 yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> yarpCloud = yarp::sig::utils::depthRgbToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depthImage, colorImagePixelRGB, intrinsics);
-                
+
                 PointCloud2Type& pc2Ros = rosPublisherPort_pointCloud.prepare();
-                
+
                 // filling ros header
                 yarp::rosmsg::std_msgs::Header headerRos;
                 headerRos.clear();
                 headerRos.seq = nodeSeq;
                 headerRos.frame_id = rosFrameId;
                 headerRos.stamp = depthStamp.getTime();
-                
+
                 // filling ros point field
                 std::vector<yarp::rosmsg::sensor_msgs::PointField> pointFieldRos;
                 pointFieldRos.push_back(yarp::rosmsg::sensor_msgs::PointField());
@@ -419,7 +419,7 @@ bool RGBDToPointCloudSensor_nws_ros::writeData()
                 pc2Ros.width = yarpCloud.width() * yarpCloud.height();
                 pc2Ros.height = 1;
                 pc2Ros.is_dense = yarpCloud.isDense();
-                
+
                 pc2Ros.point_step = sizeof (yarp::sig::DataXYZRGBA);
                 pc2Ros.row_step   = static_cast<std::uint32_t> (sizeof (yarp::sig::DataXYZRGBA) * pc2Ros.width);
 
@@ -443,12 +443,10 @@ void RGBDToPointCloudSensor_nws_ros::run()
         {
             case(IRGBDSensor::RGBD_SENSOR_OK_IN_USE) :
             {
-                
                 if (!writeData()) {
                     yCError(RGBDTOPOINTCLOUDSENSORNWSROS, "Image not captured.. check hardware configuration");
                 }
                 i = 0;
-                
             }
             break;
             case(IRGBDSensor::RGBD_SENSOR_NOT_READY):
