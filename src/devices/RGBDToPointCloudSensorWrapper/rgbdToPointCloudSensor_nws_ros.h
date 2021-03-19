@@ -48,7 +48,7 @@ namespace RGBDToPointCloudImpl{
  *
  * \section RGBDToPointCloudSensor_nws_ros_device_parameters Description of input parameters
  * A Network grabber for kinect-like devices.
- * This device will produce one stream of data for the point cloud 
+ * This device will produce one stream of data for the point cloud
  * derived fron the combination of the data derived from Framegrabber and IDepthSensor interfaces.
  * See they documentation for more details about each interface.
  *
@@ -140,7 +140,7 @@ private:
 
     // Synch
     yarp::os::Stamp                colorStamp;
-    yarp::os::Stamp                depthStamp;   
+    yarp::os::Stamp                depthStamp;
     yarp::os::Property             m_conf;
 
     bool writeData();
