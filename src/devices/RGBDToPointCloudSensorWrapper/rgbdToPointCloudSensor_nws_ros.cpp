@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "rgbdToPointCloudSensor_nws_ros.h"
+#include "RGBDToPointCloudSensor_nws_ros.h"
 #include <sstream>
 #include <cstdio>
 #include <cstring>
@@ -26,9 +26,9 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace std;
 
-YARP_LOG_COMPONENT(RGBDTOPOINTCLOUDSENSORNWSROS, "yarp.devices.RgbdToPointCloudSensor_nws_ros");
+YARP_LOG_COMPONENT(RGBDTOPOINTCLOUDSENSORNWSROS, "yarp.devices.RGBDToPointCloudSensor_nws_ros");
 
-RgbdToPointCloudSensor_nws_ros::RgbdToPointCloudSensor_nws_ros() :
+RGBDToPointCloudSensor_nws_ros::RGBDToPointCloudSensor_nws_ros() :
     PeriodicThread(DEFAULT_THREAD_PERIOD),
     rosNode(nullptr),
     nodeSeq(0),
@@ -46,7 +46,7 @@ RgbdToPointCloudSensor_nws_ros::RgbdToPointCloudSensor_nws_ros() :
 
 
 /* destructor of the wrapper */
-RgbdToPointCloudSensor_nws_ros::~RgbdToPointCloudSensor_nws_ros()
+RGBDToPointCloudSensor_nws_ros::~RGBDToPointCloudSensor_nws_ros()
 {
     close();
     sensor_p = nullptr;
@@ -55,7 +55,7 @@ RgbdToPointCloudSensor_nws_ros::~RgbdToPointCloudSensor_nws_ros()
 
 /** Device driver interface */
 
-bool RgbdToPointCloudSensor_nws_ros::open(yarp::os::Searchable &config)
+bool RGBDToPointCloudSensor_nws_ros::open(yarp::os::Searchable &config)
 {
     m_conf.fromString(config.toString());
     if(verbose >= 5)
@@ -94,7 +94,7 @@ bool RgbdToPointCloudSensor_nws_ros::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool RgbdToPointCloudSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
+bool RGBDToPointCloudSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
 {
     if (!config.check("period", "refresh period of the broadcasted values in ms"))
     {
@@ -141,14 +141,14 @@ bool RgbdToPointCloudSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
     return true;
 }
 
-bool RgbdToPointCloudSensor_nws_ros::openDeferredAttach(Searchable& prop)
+bool RGBDToPointCloudSensor_nws_ros::openDeferredAttach(Searchable& prop)
 {
     // I dunno what to do here now...
     isSubdeviceOwned = false;
     return true;
 }
 
-bool RgbdToPointCloudSensor_nws_ros::openAndAttachSubDevice(Searchable& prop)
+bool RGBDToPointCloudSensor_nws_ros::openAndAttachSubDevice(Searchable& prop)
 {
     Property p;
     subDeviceOwned = new PolyDriver;
@@ -175,7 +175,7 @@ bool RgbdToPointCloudSensor_nws_ros::openAndAttachSubDevice(Searchable& prop)
     return true;
 }
 
-bool RgbdToPointCloudSensor_nws_ros::close()
+bool RGBDToPointCloudSensor_nws_ros::close()
 {
     yCTrace(RGBDTOPOINTCLOUDSENSORNWSROS, "Close");
     detachAll();
@@ -205,7 +205,7 @@ bool RgbdToPointCloudSensor_nws_ros::close()
 
 /* Helper functions */
 
-bool RgbdToPointCloudSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
+bool RGBDToPointCloudSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
 {
     // open topics here if needed
     rosNode = new yarp::os::Node(nodeName);
@@ -218,12 +218,12 @@ bool RgbdToPointCloudSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params
     return true;
 }
 
-void RgbdToPointCloudSensor_nws_ros::setId(const std::string &id)
+void RGBDToPointCloudSensor_nws_ros::setId(const std::string &id)
 {
     sensorId=id;
 }
 
-std::string RgbdToPointCloudSensor_nws_ros::getId()
+std::string RGBDToPointCloudSensor_nws_ros::getId()
 {
     return sensorId;
 }
@@ -231,7 +231,7 @@ std::string RgbdToPointCloudSensor_nws_ros::getId()
 /**
   * IWrapper and IMultipleWrapper interfaces
   */
-bool RgbdToPointCloudSensor_nws_ros::attachAll(const PolyDriverList &device2attach)
+bool RGBDToPointCloudSensor_nws_ros::attachAll(const PolyDriverList &device2attach)
 {
     // First implementation only accepts devices with both the interfaces Framegrabber and IDepthSensor,
     // on a second version maybe two different devices could be accepted, one for each interface.
@@ -268,7 +268,7 @@ bool RgbdToPointCloudSensor_nws_ros::attachAll(const PolyDriverList &device2atta
     return PeriodicThread::start();
 }
 
-bool RgbdToPointCloudSensor_nws_ros::detachAll()
+bool RGBDToPointCloudSensor_nws_ros::detachAll()
 {
     if (yarp::os::PeriodicThread::isRunning())
         yarp::os::PeriodicThread::stop();
@@ -281,7 +281,7 @@ bool RgbdToPointCloudSensor_nws_ros::detachAll()
     return true;
 }
 
-bool RgbdToPointCloudSensor_nws_ros::attach(yarp::dev::IRGBDSensor *s)
+bool RGBDToPointCloudSensor_nws_ros::attach(yarp::dev::IRGBDSensor *s)
 {
     if(s == nullptr)
     {
@@ -294,7 +294,7 @@ bool RgbdToPointCloudSensor_nws_ros::attach(yarp::dev::IRGBDSensor *s)
     return PeriodicThread::start();
 }
 
-bool RgbdToPointCloudSensor_nws_ros::attach(PolyDriver* poly)
+bool RGBDToPointCloudSensor_nws_ros::attach(PolyDriver* poly)
 {
     if(poly)
     {
@@ -312,7 +312,7 @@ bool RgbdToPointCloudSensor_nws_ros::attach(PolyDriver* poly)
     return PeriodicThread::start();
 }
 
-bool RgbdToPointCloudSensor_nws_ros::detach()
+bool RGBDToPointCloudSensor_nws_ros::detach()
 {
     sensor_p = nullptr;
     return true;
@@ -320,19 +320,19 @@ bool RgbdToPointCloudSensor_nws_ros::detach()
 
 /* IRateThread interface */
 
-bool RgbdToPointCloudSensor_nws_ros::threadInit()
+bool RGBDToPointCloudSensor_nws_ros::threadInit()
 {
     // Get interface from attached device if any.
     return true;
 }
 
-void RgbdToPointCloudSensor_nws_ros::threadRelease()
+void RGBDToPointCloudSensor_nws_ros::threadRelease()
 {
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
   
-bool RgbdToPointCloudSensor_nws_ros::writeData()
+bool RGBDToPointCloudSensor_nws_ros::writeData()
 {
     //colorImage.setPixelCode(VOCAB_PIXEL_RGB);
     //             depthImage.setPixelCode(VOCAB_PIXEL_MONO_FLOAT);
@@ -374,11 +374,10 @@ bool RgbdToPointCloudSensor_nws_ros::writeData()
         {
             if (intrinsic_ok) 
             {
-				
                 yarp::sig::IntrinsicParams intrinsics(propIntrinsic);
-				yarp::sig::ImageOf<yarp::sig::PixelRgb> colorImagePixelRGB;
-				colorImagePixelRGB.setExternal(colorImage.getRawImage(), colorImage.width(), colorImage.height());
-				// create point cloud in yarp format
+                yarp::sig::ImageOf<yarp::sig::PixelRgb> colorImagePixelRGB;
+                colorImagePixelRGB.setExternal(colorImage.getRawImage(), colorImage.width(), colorImage.height());
+                // create point cloud in yarp format
                 yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> yarpCloud = yarp::sig::utils::depthRgbToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depthImage, colorImagePixelRGB, intrinsics);
                 
                 PointCloud2Type& pc2Ros = rosPublisherPort_pointCloud.prepare();
@@ -414,15 +413,15 @@ bool RgbdToPointCloudSensor_nws_ros::writeData()
                 pointFieldRos[3].count = 1;
                 pc2Ros.fields = pointFieldRos;
 
-				vector<unsigned char> vec(yarpCloud.getRawData(), yarpCloud.getRawData() + yarpCloud.dataSizeBytes() );
-				pc2Ros.data = vec;
+                vector<unsigned char> vec(yarpCloud.getRawData(), yarpCloud.getRawData() + yarpCloud.dataSizeBytes() );
+                pc2Ros.data = vec;
                 pc2Ros.header = headerRos;
                 pc2Ros.width = yarpCloud.width() * yarpCloud.height();
                 pc2Ros.height = 1;
                 pc2Ros.is_dense = yarpCloud.isDense();
                 
                 pc2Ros.point_step = sizeof (yarp::sig::DataXYZRGBA);
-				pc2Ros.row_step   = static_cast<std::uint32_t> (sizeof (yarp::sig::DataXYZRGBA) * pc2Ros.width);
+                pc2Ros.row_step   = static_cast<std::uint32_t> (sizeof (yarp::sig::DataXYZRGBA) * pc2Ros.width);
 
                 rosPublisherPort_pointCloud.write();
             }
@@ -434,7 +433,7 @@ bool RgbdToPointCloudSensor_nws_ros::writeData()
     return true;
 }
 
-void RgbdToPointCloudSensor_nws_ros::run()
+void RGBDToPointCloudSensor_nws_ros::run()
 {
     if (sensor_p!=nullptr)
     {

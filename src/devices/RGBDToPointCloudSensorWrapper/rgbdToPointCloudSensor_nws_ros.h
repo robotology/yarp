@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_DEV_RGBDTOPOINTCLOUDSENSOR_NWS_ROS_H
-#define YARP_DEV_RGBDTOPOINTCLOUDSENSOR_NWS_ROS_H
+#ifndef YARP_DEV_RGBDTOPOINTLOUDSENSOR_NWS_ROS_H
+#define YARP_DEV_RGBDTOPOINTLOUDSENSOR_NWS_ROS_H
 
 #include <vector>
 #include <iostream>
@@ -46,7 +46,7 @@ namespace RGBDToPointCloudImpl{
 /**
  *  @ingroup dev_impl_wrapper
  *
- * \section RgbdToPointCloudSensor_nws_ros_device_parameters Description of input parameters
+ * \section RGBDToPointCloudSensor_nws_ros_device_parameters Description of input parameters
  * A Network grabber for kinect-like devices.
  * This device will produce one stream of data for the point cloud 
  * derived fron the combination of the data derived from Framegrabber and IDepthSensor interfaces.
@@ -67,7 +67,7 @@ namespace RGBDToPointCloudImpl{
  * Example of configuration file using .ini format.
  *
  * \code{.unparsed}
- * device RgbdToPointCloudSensor_nws_ros
+ * device RGBDToPointCloudSensor_nws_ros
  * subdevice <RGBDsensor>
  * period 30
  * pointCloudTopicName /<robotName>/RGBDToPointCloud
@@ -76,13 +76,14 @@ namespace RGBDToPointCloudImpl{
  * \endcode
  */
 
-class RgbdToPointCloudSensor_nws_ros :
+class RGBDToPointCloudSensor_nws_ros :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IWrapper,
         public yarp::dev::IMultipleWrapper,
         public yarp::os::PeriodicThread
 {
 private:
+    // defining types for shorter names
     typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> DepthImage;
     typedef yarp::os::Publisher<yarp::rosmsg::sensor_msgs::PointCloud2> PointCloudTopicType;
     typedef yarp::rosmsg::sensor_msgs::PointCloud2 PointCloud2Type;
@@ -107,6 +108,7 @@ private:
     std::string           nodeName;
     std::string           pointCloudTopicName;
     std::string           rosFrameId;
+
     // images from device
     yarp::sig::FlexImage  colorImage;
     DepthImage            depthImage;
@@ -145,12 +147,12 @@ private:
     static std::string yarp2RosPixelCode(int code);
 
 public:
-    RgbdToPointCloudSensor_nws_ros();
-    RgbdToPointCloudSensor_nws_ros(const RgbdToPointCloudSensor_nws_ros&) = delete;
-    RgbdToPointCloudSensor_nws_ros(RgbdToPointCloudSensor_nws_ros&&) = delete;
-    RgbdToPointCloudSensor_nws_ros& operator=(const RgbdToPointCloudSensor_nws_ros&) = delete;
-    RgbdToPointCloudSensor_nws_ros& operator=(RgbdToPointCloudSensor_nws_ros&&) = delete;
-    ~RgbdToPointCloudSensor_nws_ros() override;
+    RGBDToPointCloudSensor_nws_ros();
+    RGBDToPointCloudSensor_nws_ros(const RGBDToPointCloudSensor_nws_ros&) = delete;
+    RGBDToPointCloudSensor_nws_ros(RGBDToPointCloudSensor_nws_ros&&) = delete;
+    RGBDToPointCloudSensor_nws_ros& operator=(const RGBDToPointCloudSensor_nws_ros&) = delete;
+    RGBDToPointCloudSensor_nws_ros& operator=(RGBDToPointCloudSensor_nws_ros&&) = delete;
+    ~RGBDToPointCloudSensor_nws_ros() override;
 
     bool        open(yarp::os::Searchable &params) override;
     bool        fromConfig(yarp::os::Searchable &params);
@@ -174,4 +176,4 @@ public:
     void        run() override;
 };
 
-#endif   // YARP_DEV_RGBDTOPOINTCLOUDSENSOR_NWS_ROS_H
+#endif   // YARP_DEV_RGBDTOPOINTLOUDSENSOR_NWS_ROS_H
