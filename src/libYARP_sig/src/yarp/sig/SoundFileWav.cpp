@@ -281,7 +281,7 @@ bool yarp::sig::file::read_wav_file(Sound& sound_data, const char * filename)
 
 bool yarp::sig::file::read_wav_bytestream(Sound& data, const char* bytestream)
 {
-    yCError(SOUNDFILE_WAV, "Not yet implemented");
+    yCError(SOUNDFILE_WAV, "read_wav_bytestream() Not yet implemented");
     return true;
 }
 

@@ -296,53 +296,90 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         snd1.resize(30000, 2);
         snd1.setFrequency(44100);
         generate_test_sound(snd1, 30000, 2);
-        yarp::sig::file::write(snd1, "testmp3.mp3");
-        yarp::sig::file::write(snd1, "testwav.wav");
+        bool b1 = yarp::sig::file::write(snd1, "testmp3.mp3");
+        #if (YARP_MP3_SUPPORTED)
+            CHECK (b1);
+        #endif
+        if (!b1)
+        {
+            WARN("Failed to write file, test skipped");
+        }
+        bool b2 = yarp::sig::file::write(snd1, "testwav.wav");
+        if (!b2)
+        {
+            WARN("Failed to write file, test skipped");
+        }
     }
 
     SECTION("check read file.")
     {
         Sound snd1;
-        yarp::sig::file::read(snd1, "testmp3.mp3");
-        //CHECK(snd1.getSamples() == 30000);
-        CHECK(snd1.getFrequency() == 44100);
-        CHECK(snd1.getBytesPerSample() == 2);
+        bool b1 = yarp::sig::file::read(snd1, "testmp3.mp3");
+        #if (YARP_MP3_SUPPORTED)
+            CHECK(b1);
+            //CHECK(snd1.getSamples() == 30000);
+            CHECK(snd1.getFrequency() == 44100);
+            CHECK(snd1.getBytesPerSample() == 2);
+        #endif
+        if (!b1)
+        {
+            WARN("Failed to read file, test skipped");
+        }
 
         Sound snd2;
-        yarp::sig::file::read(snd2, "testwav.wav");
-        CHECK(snd2.getSamples() == 30000);
-        CHECK(snd2.getFrequency() == 44100);
-        CHECK(snd2.getBytesPerSample() == 2);
+        bool b2 =yarp::sig::file::read(snd2, "testwav.wav");
+        if (b2)
+        {
+            CHECK(snd2.getSamples() == 30000);
+            CHECK(snd2.getFrequency() == 44100);
+            CHECK(snd2.getBytesPerSample() == 2);
+        }
+        else
+        {
+            WARN("Failed to read file, test skipped");
+        }
     }
 
     SECTION("check conversions")
     {
-        Sound snd1;
-        yarp::sig::file::read (snd1, "testmp3.mp3");
-        yarp::sig::file::write(snd1, "testmp3b.mp3");
-        yarp::sig::file::write(snd1, "testmp3towav.wav");
-        Sound snd2;
-        yarp::sig::file::read (snd2, "testwav.wav");
-        yarp::sig::file::write(snd2, "testwavb.wav");
-        yarp::sig::file::write(snd2, "testwavtomp3.mp3");
+        #if (YARP_MP3_SUPPORTED)
+            Sound snd1;
+            yarp::sig::file::read (snd1, "testmp3.mp3");
+            yarp::sig::file::write(snd1, "testmp3b.mp3");
+            yarp::sig::file::write(snd1, "testmp3towav.wav");
+            Sound snd2;
+            yarp::sig::file::read (snd2, "testwav.wav");
+            yarp::sig::file::write(snd2, "testwavb.wav");
+            yarp::sig::file::write(snd2, "testwavtomp3.mp3");
+        #endif
     }
 
     SECTION("check read bytestream.")
     {
         std::ifstream is;
         is.open("testmp3.mp3", std::ios::binary);
-        // get length of file and allocate space
-        is.seekg(0, std::ios::end);
-        size_t length = is.tellg();
-        is.seekg(0, std::ios::beg);
-        char* buffer = new char[length];
-        // read data as a block:
-        is.read(buffer, length);
-        is.close();
+        #if (YARP_MP3_SUPPORTED)
+            CHECK (is.is_open());
+        #endif
+        if (is.is_open())
+        {
+            // get length of file and allocate space
+            is.seekg(0, std::ios::end);
+            size_t length = is.tellg();
+            is.seekg(0, std::ios::beg);
+            char* buffer = new char[length];
+            // read data as a block:
+            is.read(buffer, length);
+            is.close();
 
-        Sound snd1;
-        yarp::sig::file::read_bytestream(snd1, buffer, length, ".mp3");
-        yarp::sig::file::write(snd1, "testmp3c.mp3");
+            Sound snd1;
+            yarp::sig::file::read_bytestream(snd1, buffer, length, ".mp3");
+            yarp::sig::file::write(snd1, "testmp3c.mp3");
+        }
+        else
+        {
+            WARN("Failed to open file, test skipped");
+        }
     }
 
     NetworkBase::setLocalMode(false);

@@ -200,7 +200,7 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
 {
 #if (!YARP_HAS_FFMPEG)
 
-    yCError(SOUNDFILE_MP3) << "Not yet implemented";
+    yCError(SOUNDFILE_MP3) << "write_mp3_file() not supported: lib ffmpeg not found";
     return false;
 #else
     const AVCodec * codec = nullptr;
@@ -253,7 +253,7 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
     fos.open(filename, std::fstream::out | std::fstream::binary);
     if (fos.is_open()==false)
     {
-        yCError(SOUNDFILE_MP3, "Could not open %s", filename);
+        yCError(SOUNDFILE_MP3, "Cannot open %s for writing", filename);
         return false;
     }
 
@@ -328,7 +328,7 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
 bool read_mp3_istream(Sound& sound_data, std::istream& istream)
 {
 #if (!YARP_HAS_FFMPEG)
-    yCError(SOUNDFILE_MP3) << "Not yet implemented";
+    yCError(SOUNDFILE_MP3) << "read_mp3_istream() not supported: lib ffmpeg not found";
     return false;
 #else
     const AVCodec* codec = nullptr;
@@ -425,7 +425,7 @@ bool yarp::sig::file::read_mp3_file(Sound& sound_data, const char* filename)
     fis.open(filename, std::fstream::in | std::fstream::binary);
     if (fis.is_open() == false)
     {
-        yCError(SOUNDFILE_MP3, "Could not open %s", filename);
+        yCError(SOUNDFILE_MP3, "Cannot open %s for reading", filename);
         return false;
     }
 
