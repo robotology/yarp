@@ -22,15 +22,11 @@
 
 #include <cstdio>
 #include <cstring>
+#include <fstream>
 
 #if (YARP_HAS_FFMPEG)
-extern "C" {
-    /*#include <libavcodec/avcodec.h>
-    #include <libavutil/opt.h>
-    #include <libavutil/imgutils.h>
-    #include <libavformat/avformat.h>
-    #include <libswscale/swscale.h>*/
-
+extern "C"
+{
     #include <libavutil/opt.h>
     #include <libavcodec/avcodec.h>
     #include <libavutil/channel_layout.h>
@@ -55,125 +51,144 @@ namespace
 #define AUDIO_INBUF_SIZE 20480
 #define AV_INPUT_BUFFER_PADDING_SIZE   64
 #define AUDIO_REFILL_THRESH   4096
-static void decode(AVCodecContext* dec_ctx, AVPacket* pkt, AVFrame* frame, FILE* outfile)
+
+//#######################################################################################################
+bool decode(AVCodecContext* dec_ctx, AVPacket* pkt, AVFrame* frame, Sound& sound_data)
 {
     int i, ch;
     int ret, data_size;
     /* send the packet with the compressed data to the decoder */
     ret = avcodec_send_packet(dec_ctx, pkt);
-    if (ret < 0) {
-        fprintf(stderr, "Error submitting the packet to the decoder\n");
-        exit(1);
+    if (ret < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Error submitting the packet to the decoder");
+        return false;
     }
     /* read all the output frames (in general there may be any number of them */
-    while (ret >= 0) {
+    while (ret >= 0)
+    {
         ret = avcodec_receive_frame(dec_ctx, frame);
         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
-            return;
-        else if (ret < 0) {
-            fprintf(stderr, "Error during decoding\n");
-            exit(1);
+        {
+            return false;
         }
+        else if (ret < 0)
+        {
+            yCError(SOUNDFILE_MP3, "Error during decoding");
+            return false;
+        }
+        //this seems to be 2: S16P
         data_size = av_get_bytes_per_sample(dec_ctx->sample_fmt);
-        if (data_size < 0) {
+        if (data_size < 0)
+        {
             /* This should not occur, checking just for paranoia */
-            fprintf(stderr, "Failed to calculate data size\n");
-            exit(1);
+            yCError(SOUNDFILE_MP3, "Failed to calculate data size\n");
+            return false;
         }
-        for (i = 0; i < frame->nb_samples; i++)
-            for (ch = 0; ch < dec_ctx->channels; ch++)
-                fwrite(frame->data[ch] + data_size * i, 1, data_size, outfile);
+
+        yarp::sig::Sound frame_sound;
+        frame_sound.resize(frame->nb_samples, dec_ctx->channels);
+        if (sound_data.getChannels()==0) { sound_data.resize(0, dec_ctx->channels);}
+
+        for (i = 0; i < frame->nb_samples; i++) //1152
+        {
+            for (ch = 0; ch < dec_ctx->channels; ch++) //2
+            {
+                short int val = *((short int*)frame->data[ch] + i);
+                frame_sound.set(val,i,ch);
+            }
+        }
+        sound_data += frame_sound;
     }
+    return true;
 }
 
-bool yarp::sig::file::read_mp3(Sound& sound_data, const char* filename)
+bool read_mp3_istream(Sound& sound_data, std::istream& istream)
 {
 #if (!YARP_HAS_FFMPEG)
-
     yCError(SOUNDFILE) << "Not yet implemented";
     return false;
 #else
-    std::string test = "testoutdecompress.wav";
-    const char* outfilename = test.c_str();
-    const AVCodec* codec;
-    AVCodecContext* c = NULL;
-    AVCodecParserContext* parser = NULL;
+    const AVCodec* codec = nullptr;
+    AVCodecContext* c = nullptr;
+    AVCodecParserContext* parser = nullptr;
     int len, ret;
-    FILE* f, * outfile;
     uint8_t inbuf[AUDIO_INBUF_SIZE + AV_INPUT_BUFFER_PADDING_SIZE];
-    uint8_t* data;
+    uint8_t* data = nullptr;
     size_t   data_size;
-    AVPacket* pkt;
-    AVFrame* decoded_frame = NULL;
+    AVPacket* pkt = nullptr;
+    AVFrame* decoded_frame = nullptr;
 
     pkt = av_packet_alloc();
-    /* find the MPEG audio decoder */
-    codec = avcodec_find_decoder(AV_CODEC_ID_MP3);
-    if (!codec) {
-        fprintf(stderr, "Codec not found\n");
-        exit(1);
+    // find the MPEG audio decoder
+    codec = avcodec_find_decoder(AV_CODEC_ID_MP2);
+    if (!codec)
+    {
+        yCError(SOUNDFILE_MP3, "Codec not found");
+        return false;
     }
     parser = av_parser_init(codec->id);
-    if (!parser) {
-        fprintf(stderr, "Parser not found\n");
-        exit(1);
+    if (!parser)
+    {
+        yCError(SOUNDFILE_MP3, "Parser not found");
+        return false;
     }
     c = avcodec_alloc_context3(codec);
-    if (!c) {
-        fprintf(stderr, "Could not allocate audio codec context\n");
-        exit(1);
+    if (!c)
+    {
+        yCError(SOUNDFILE_MP3, "Could not allocate audio codec context");
+        return false;
     }
-    /* open it */
-    if (avcodec_open2(c, codec, NULL) < 0) {
-        fprintf(stderr, "Could not open codec\n");
-        exit(1);
+    //open the codec
+    if (avcodec_open2(c, codec, NULL) < 0)
+    {
+        yCError(SOUNDFILE_MP3, "Could not open codec");
+        return false;
     }
-    f = fopen(filename, "rb");
-    if (!f) {
-        fprintf(stderr, "Could not open %s\n", filename);
-        exit(1);
-    }
-    outfile = fopen(outfilename, "wb");
-    if (!outfile) {
-        av_free(c);
-        exit(1);
-    }
-    /* decode until eof */
+
+    // decode until eof
     data = inbuf;
-    data_size = fread(inbuf, 1, AUDIO_INBUF_SIZE, f);
-    while (data_size > 0) {
-        if (!decoded_frame) {
-            if (!(decoded_frame = av_frame_alloc())) {
-                fprintf(stderr, "Could not allocate audio frame\n");
-                exit(1);
+    istream.read((char*)(inbuf), AUDIO_INBUF_SIZE);
+    data_size = istream.gcount();
+    while (data_size > 0)
+    {
+        if (!decoded_frame)
+        {
+            if (!(decoded_frame = av_frame_alloc()))
+            {
+                yCError(SOUNDFILE_MP3, "Could not allocate audio frame");
+                return false;
             }
         }
-        ret = av_parser_parse2(parser, c, &pkt->data, &pkt->size,
-            data, data_size,
-            AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
-        if (ret < 0) {
-            fprintf(stderr, "Error while parsing\n");
-            exit(1);
+        ret = av_parser_parse2(parser, c, &pkt->data, &pkt->size, data, data_size, AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
+        if (ret < 0)
+        {
+            yCError(SOUNDFILE_MP3, "Error while parsing");
+            return false;
         }
         data += ret;
         data_size -= ret;
         if (pkt->size)
-            decode(c, pkt, decoded_frame, outfile);
-        if (data_size < AUDIO_REFILL_THRESH) {
+            decode(c, pkt, decoded_frame, sound_data);
+        if (data_size < AUDIO_REFILL_THRESH)
+        {
             memmove(inbuf, data, data_size);
             data = inbuf;
-            len = fread(data + data_size, 1,
-                AUDIO_INBUF_SIZE - data_size, f);
+            istream.read((char*)(data + data_size), AUDIO_INBUF_SIZE - data_size);
+            len = istream.gcount();
             if (len > 0)
                 data_size += len;
         }
     }
-    /* flush the decoder */
+    // flush the decoder
     pkt->data = NULL;
     pkt->size = 0;
-    decode(c, pkt, decoded_frame, outfile);
-    fclose(outfile);
-    fclose(f);
+    decode(c, pkt, decoded_frame, sound_data);
+
+    //set the sample rate (is it ok? maybe some codecs allow variable sample rate?)
+    sound_data.setFrequency(c->sample_rate);
+
+    //cleanup
     avcodec_free_context(&c);
     av_parser_close(parser);
     av_frame_free(&decoded_frame);
@@ -181,6 +196,31 @@ bool yarp::sig::file::read_mp3(Sound& sound_data, const char* filename)
     return true;
 #endif
 }
+
+bool yarp::sig::file::read_mp3_file(Sound& sound_data, const char* filename)
+{
+    std::fstream fis;
+    fis.open(filename, std::fstream::in | std::fstream::binary);
+    if (fis.is_open() == false)
+    {
+        yCError(SOUNDFILE_MP3, "Could not open %s", filename);
+        return false;
+    }
+
+    bool b = read_mp3_istream(sound_data, fis);
+    fis.close();
+    return b;
+}
+
+bool yarp::sig::file::read_mp3_bytestream(Sound& data, const char* bytestream, size_t streamsize)
+{
+    std::istringstream iss (std::string(bytestream, streamsize));
+    //iss.write(bytestream, streamsize);
+    //iss.seekg(0, std::ios::beg);
+    return read_mp3_istream(data, iss);
+}
+
+//#######################################################################################################
 
 int check_sample_fmt(const AVCodec * codec, enum AVSampleFormat sample_fmt)
 {
@@ -213,7 +253,7 @@ int select_sample_rate(const AVCodec * codec)
     return best_samplerate;
 }
 
-bool encode(AVCodecContext* ctx, AVFrame* frame, AVPacket* pkt, FILE * output)
+bool encode(AVCodecContext* ctx, AVFrame* frame, AVPacket* pkt, std::fstream& os)
 {
     int ret;
 
@@ -239,7 +279,7 @@ bool encode(AVCodecContext* ctx, AVFrame* frame, AVPacket* pkt, FILE * output)
              yCError(SOUNDFILE_MP3, "Error encoding audio frame\n");
              return false;
          }
-         fwrite(pkt->data, 1, pkt->size, output);
+         os.write((const char*)(pkt->data), pkt->size);
          av_packet_unref(pkt);
      }
      return true;
@@ -270,20 +310,20 @@ int select_channel_layout(const AVCodec * codec)
     return best_ch_layout;
 }
 
-bool yarp::sig::file::write_mp3(const Sound& sound_data, const char* filename)
+bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filename)
 {
 #if (!YARP_HAS_FFMPEG)
 
     yCError(SOUNDFILE) << "Not yet implemented";
     return false;
 #else
-    const AVCodec * codec;
-    AVCodecContext * c = NULL;
-    AVFrame * frame;
-    AVPacket * pkt;
+    const AVCodec * codec = nullptr;
+    AVCodecContext * c = nullptr;
+    AVFrame * frame = nullptr;
+    AVPacket * pkt = nullptr;
     int i, j, k, ret;
-    FILE * f;
-    uint16_t * samples;
+    std::fstream fos;
+    uint16_t * samples = nullptr;
 
     // find the MP3 encoder
     codec = avcodec_find_encoder(AV_CODEC_ID_MP2);
@@ -324,8 +364,8 @@ bool yarp::sig::file::write_mp3(const Sound& sound_data, const char* filename)
         return false;
     }
 
-    f = fopen(filename, "wb");
-    if (!f)
+    fos.open(filename, std::fstream::out | std::fstream::binary);
+    if (fos.is_open()==false)
     {
         yCError(SOUNDFILE_MP3, "Could not open %s", filename);
         return false;
@@ -336,7 +376,7 @@ bool yarp::sig::file::write_mp3(const Sound& sound_data, const char* filename)
     if (!pkt)
     {
         yCError(SOUNDFILE_MP3, "could not allocate the packet");
-        fclose(f);
+        fos.close();
         return false;
     }
 
@@ -345,7 +385,7 @@ bool yarp::sig::file::write_mp3(const Sound& sound_data, const char* filename)
     if (!frame)
     {
         yCError(SOUNDFILE_MP3, "Could not allocate audio frame");
-        fclose(f);
+        fos.close();
         return false;
     }
 
@@ -358,13 +398,15 @@ bool yarp::sig::file::write_mp3(const Sound& sound_data, const char* filename)
     if (ret < 0)
     {
         yCError(SOUNDFILE_MP3, "Could not allocate audio data buffers");
-        fclose(f);
+        fos.close();
         return false;
     }
 
     // encode
     size_t soundsize = sound_data.getSamples();
-    for (i = 0; i < soundsize/c->frame_size ; i++)
+    size_t nframes = soundsize / c->frame_size;
+    size_t rem_lastframe = soundsize % c->frame_size;
+    for (i = 0; i < nframes; i++)
     {
         ret = av_frame_make_writable(frame);
         if (ret < 0)  exit(1);
@@ -375,19 +417,19 @@ bool yarp::sig::file::write_mp3(const Sound& sound_data, const char* filename)
             for (k = 0; k < c->channels; k++)
                 samples[j*c->channels + k] = sound_data.get(j+i* c->frame_size,k);
         }
-        if (encode(c, frame, pkt, f) == false)
+        if (encode(c, frame, pkt, fos) == false)
         {
             yCError(SOUNDFILE_MP3, "Encode failed, memory could be corrupted, should I exit?");
         }
     }
 
     // flush the encoder
-    if (encode(c, NULL, pkt, f) == false)
+    if (encode(c, NULL, pkt, fos) == false)
     {
         yCError(SOUNDFILE_MP3, "Encode failed, memory could be corrupted, should I exit?");
     }
 
-    fclose(f);
+    fos.close();
 
     av_frame_free(&frame);
     av_packet_free(&pkt);

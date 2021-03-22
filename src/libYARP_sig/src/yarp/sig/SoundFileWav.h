@@ -16,12 +16,20 @@ namespace yarp {
     namespace sig{
         namespace file {
             /**
+             * Read a sound from a byte array.
+             * @param data sound to read
+             * @param bytestream the byte array
+             * @return true on success
+             */
+            bool YARP_sig_API read_wav_bytestream(Sound& data, const char* bytestream);
+
+            /**
              * Read a sound from a .wav audio file.
              * @param data sound to read
              * @param filename name of file
              * @return true on success
              */
-            bool YARP_sig_API read_wav(Sound& data, const char* filename);
+            bool YARP_sig_API read_wav_file(Sound& data, const char* filename);
 
             /**
              * Write a sound to a .wav file.
@@ -29,7 +37,7 @@ namespace yarp {
              * @param filename name of file
              * @return true on success
              */
-            bool YARP_sig_API write_wav(const Sound& data, const char* filename);
+            bool YARP_sig_API write_wav_file(const Sound& data, const char* filename);
         }
     }
 }

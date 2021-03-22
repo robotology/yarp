@@ -12,9 +12,12 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Log.h>
+#include <fstream>
+#include <iostream>
 
 #include <catch.hpp>
 #include <harness.h>
+#include <sstream>
 #include <vector>
 
 using namespace yarp::os::impl;
@@ -295,6 +298,51 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         generate_test_sound(snd1, 30000, 2);
         yarp::sig::file::write(snd1, "testmp3.mp3");
         yarp::sig::file::write(snd1, "testwav.wav");
+    }
+
+    SECTION("check read file.")
+    {
+        Sound snd1;
+        yarp::sig::file::read(snd1, "testmp3.mp3");
+        //CHECK(snd1.getSamples() == 30000);
+        CHECK(snd1.getFrequency() == 44100);
+        CHECK(snd1.getBytesPerSample() == 2);
+
+        Sound snd2;
+        yarp::sig::file::read(snd2, "testwav.wav");
+        CHECK(snd2.getSamples() == 30000);
+        CHECK(snd2.getFrequency() == 44100);
+        CHECK(snd2.getBytesPerSample() == 2);
+    }
+
+    SECTION("check conversions")
+    {
+        Sound snd1;
+        yarp::sig::file::read (snd1, "testmp3.mp3");
+        yarp::sig::file::write(snd1, "testmp3b.mp3");
+        yarp::sig::file::write(snd1, "testmp3towav.wav");
+        Sound snd2;
+        yarp::sig::file::read (snd2, "testwav.wav");
+        yarp::sig::file::write(snd2, "testwavb.wav");
+        yarp::sig::file::write(snd2, "testwavtomp3.mp3");
+    }
+
+    SECTION("check read bytestream.")
+    {
+        std::ifstream is;
+        is.open("testmp3.mp3", std::ios::binary);
+        // get length of file and allocate space
+        is.seekg(0, std::ios::end);
+        size_t length = is.tellg();
+        is.seekg(0, std::ios::beg);
+        char* buffer = new char[length];
+        // read data as a block:
+        is.read(buffer, length);
+        is.close();
+
+        Sound snd1;
+        yarp::sig::file::read_bytestream(snd1, buffer, length, ".mp3");
+        yarp::sig::file::write(snd1, "testmp3c.mp3");
     }
 
     NetworkBase::setLocalMode(false);

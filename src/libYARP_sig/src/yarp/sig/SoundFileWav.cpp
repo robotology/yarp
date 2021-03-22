@@ -236,7 +236,7 @@ void PcmWavHeader::setup_to_write(const Sound& src, FILE *fp)
 
 //#######################################################################################################
 
-bool yarp::sig::file::read_wav(Sound& sound_data, const char * filename)
+bool yarp::sig::file::read_wav_file(Sound& sound_data, const char * filename)
 {
     FILE *fp = fopen(filename, "rb");
     if (!fp) {
@@ -279,8 +279,13 @@ bool yarp::sig::file::read_wav(Sound& sound_data, const char * filename)
     return true;
 }
 
+bool yarp::sig::file::read_wav_bytestream(Sound& data, const char* bytestream)
+{
+    yCError(SOUNDFILE_WAV, "Not yet implemented");
+    return true;
+}
 
-bool yarp::sig::file::write_wav(const Sound& sound_data, const char * filename)
+bool yarp::sig::file::write_wav_file(const Sound& sound_data, const char * filename)
 {
     FILE *fp = fopen(filename, "wb");
     if (!fp) {
