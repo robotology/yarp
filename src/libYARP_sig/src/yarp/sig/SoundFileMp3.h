@@ -35,9 +35,10 @@ namespace yarp {
              * Write a sound to a mp3 file.
              * @param data sound to write
              * @param filename name of file
+             * @param bitrate the compressed audio bitrate
              * @return true on success
              */
-            bool YARP_sig_API write_mp3_file(const Sound& data, const char* filename);
+            bool YARP_sig_API write_mp3_file(const Sound& data, const char* filename, size_t bitrate=64000);
         }
     }
 }

@@ -215,8 +215,6 @@ bool yarp::sig::file::read_mp3_file(Sound& sound_data, const char* filename)
 bool yarp::sig::file::read_mp3_bytestream(Sound& data, const char* bytestream, size_t streamsize)
 {
     std::istringstream iss (std::string(bytestream, streamsize));
-    //iss.write(bytestream, streamsize);
-    //iss.seekg(0, std::ios::beg);
     return read_mp3_istream(data, iss);
 }
 
@@ -257,7 +255,7 @@ bool encode(AVCodecContext* ctx, AVFrame* frame, AVPacket* pkt, std::fstream& os
 {
     int ret;
 
-    // send the frame for encoding 
+    // send the frame for encoding
     ret = avcodec_send_frame(ctx, frame);
     if (ret < 0)
     {
@@ -310,7 +308,7 @@ int select_channel_layout(const AVCodec * codec)
     return best_ch_layout;
 }
 
-bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filename)
+bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filename, size_t bitrate)
 {
 #if (!YARP_HAS_FFMPEG)
 
@@ -341,7 +339,7 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
     }
 
     // the compressed output bitrate
-    c->bit_rate = 64000;
+    c->bit_rate = bitrate;
 
     // check that the encoder supports s16 pcm input
     c->sample_fmt = AV_SAMPLE_FMT_S16;
@@ -392,7 +390,7 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
     frame->nb_samples = c->frame_size;
     frame->format = c->sample_fmt;
     frame->channel_layout = c->channel_layout;
-    
+
     // allocate the data buffers
     ret = av_frame_get_buffer(frame, 0);
     if (ret < 0)
