@@ -13,6 +13,10 @@ target_sources(harness_sig PRIVATE ImageTest.cpp
                                    VectorOfTest.cpp
                                    VectorTest.cpp)
 
+if (YARP_HAS_FFMPEG)
+   target_compile_definitions(harness_sig PRIVATE YARP_MP3_SUPPORTED)
+endif()
+
 target_link_libraries(harness_sig PRIVATE YARP_harness
                                           YARP::YARP_os
                                           YARP::YARP_sig

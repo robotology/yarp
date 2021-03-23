@@ -11,58 +11,44 @@
 #define YARP_SIG_SOUNDFILE_H
 
 #include <yarp/sig/Sound.h>
-#include <cstdio>
 
 namespace yarp {
     namespace sig{
         namespace file {
             /**
-             * Read a sound from file.
-             * @param dest sound to read
-             * @param src name of file (should be a WAV file)
+             * Read a sound from a generic audio file.
+             * @param data sound to read
+             * @param filename name of file (supported extensions: .wav, .mp3)
              * @return true on success
              */
-            bool YARP_sig_API read(Sound& dest, const char *src);
+            bool YARP_sig_API read(Sound& data, const char * filename);
 
             /**
-             * Write a sound to file.
-             * @param src sound to write
-             * @param dest name of file (will be a WAV file)
+             *Read a sound from a byte array.
+            * @param data sound to read
+            * @param bytestream the byte array
+            * @return true on success
+            */
+            bool YARP_sig_API read_bytestream(Sound& data, const char* filename, size_t streamsize, std::string format);
+
+            /**
+             * Write a sound to file. The format is specified by the extension.
+             * @param data sound to write
+             * @param filename name of file (supported extensions: .wav, .mp3)
              * @return true on success
              */
-            bool YARP_sig_API write(const Sound& src, const char *dest);
+            bool YARP_sig_API write(const Sound& data, const char * filename);
 
             class YARP_sig_API soundStreamReader
             {
                 private:
-                FILE *fp;
-                size_t index;
-                char fname [255];
-                struct
-                {
-                    int freq;
-                    int channels;
-                    int bits;
-                    int samples;
-                    size_t data_start_offset;
-                } soundInfo;
+                Sound  m_sound_data;
+                size_t m_index=0;
+                size_t m_totsize=0;
 
                 public:
-                soundStreamReader()
-                {
-                    fp = 0;
-                    index=0;
-                    fname[0]=0;
-                }
-
-                ~soundStreamReader()
-                {
-                    if (fp)
-                    {
-                        close();
-                        fp=0;
-                    }
-                }
+                soundStreamReader() {}
+                ~soundStreamReader() {}
 
                 bool   open(const char *filename);
                 bool   close();
