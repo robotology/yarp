@@ -11,6 +11,7 @@ target_sources(harness_os PRIVATE BinPortableTest.cpp
                                   ContactTest.cpp
                                   ElectionTest.cpp
                                   EventTest.cpp
+                                  HeaderTest.cpp
                                   LogStreamTest.cpp
                                   LogTest.cpp
                                   MessageStackTest.cpp
