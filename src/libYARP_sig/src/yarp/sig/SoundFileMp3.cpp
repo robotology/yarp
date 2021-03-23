@@ -371,6 +371,11 @@ bool read_mp3_istream(Sound& sound_data, std::istream& istream)
     data = inbuf;
     istream.read((char*)(inbuf), AUDIO_INBUF_SIZE);
     data_size = istream.gcount();
+    if (data_size == 0)
+    {
+        yCError(SOUNDFILE_MP3, "Cannot process invalid (empty) stream");
+        return false;
+    }
     while (data_size > 0)
     {
         if (!decoded_frame)
