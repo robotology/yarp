@@ -48,9 +48,7 @@ namespace
 
 //#######################################################################################################
 #if (YARP_HAS_FFMPEG)
-#define INBUF_SIZE 4096
 #define AUDIO_INBUF_SIZE 20480
-#define AV_INPUT_BUFFER_PADDING_SIZE   64
 #define AUDIO_REFILL_THRESH   4096
 #endif
 
@@ -207,7 +205,7 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
     AVCodecContext * c = nullptr;
     AVFrame * frame = nullptr;
     AVPacket * pkt = nullptr;
-    int i, j, k, ret;
+    int ret;
     std::fstream fos;
     uint16_t * samples = nullptr;
 
@@ -292,15 +290,16 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
     size_t soundsize = sound_data.getSamples();
     size_t nframes = soundsize / c->frame_size;
     size_t rem_lastframe = soundsize % c->frame_size;
-    for (i = 0; i < nframes; i++)
+    YARP_UNUSED(rem_lastframe);
+    for (size_t i = 0; i < nframes; i++)
     {
         ret = av_frame_make_writable(frame);
         if (ret < 0)  exit(1);
 
         samples = (uint16_t*)frame->data[0];
-        for (j = 0; j < c->frame_size; j++)
+        for (int j = 0; j < c->frame_size; j++)
         {
-            for (k = 0; k < c->channels; k++)
+            for (int k = 0; k < c->channels; k++)
                 samples[j*c->channels + k] = sound_data.get(j+i* c->frame_size,k);
         }
         if (encode(c, frame, pkt, fos) == false)
