@@ -363,18 +363,15 @@ bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename
         {
             for (size_t x = 0; x < m_width; x++)
             {
-                yarp::sig::PixelRgb pix_occ = ros_img.safePixel(x, y);
-                if (pix_occ.r == 205 && pix_occ.g == 205 && pix_occ.b == 205)
-                {
-                    //m_map_occupancy.safePixel(x, y) = -1;
-                    m_map_occupancy.safePixel(x, y) = 255;
-                }
-                else
-                {
-                    int color_avg = (pix_occ.r + pix_occ.g + pix_occ.b) / 3;
-                    auto occ = (unsigned char)((254 - color_avg) / 254.0);
-                    m_map_occupancy.safePixel(x, y) = occ * 100;
-                }
+                MapGrid2D::CellData pix_occ = PixelToCellData(ros_img.safePixel(x, y));
+
+                if      (pix_occ == MAP_CELL_FREE) m_map_occupancy.safePixel(x, y) = 0;
+                else if (pix_occ == MAP_CELL_KEEP_OUT) m_map_occupancy.safePixel(x, y) = 100;
+                else if (pix_occ == MAP_CELL_TEMPORARY_OBSTACLE) m_map_occupancy.safePixel(x, y) = 100;
+                else if (pix_occ == MAP_CELL_ENLARGED_OBSTACLE) m_map_occupancy.safePixel(x, y) = 100;
+                else if (pix_occ == MAP_CELL_WALL) m_map_occupancy.safePixel(x, y) = 100;
+                else if (pix_occ == MAP_CELL_UNKNOWN) m_map_occupancy.safePixel(x, y) = 255;
+                else m_map_occupancy.safePixel(x, y) = 255;
             }
         }
     }
