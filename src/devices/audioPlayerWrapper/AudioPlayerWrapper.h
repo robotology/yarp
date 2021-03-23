@@ -107,7 +107,7 @@ private:
     std::string  m_audioInPortName;
     yarp::os::BufferedPort<yarp::sig::Sound> m_audioInPort;
     std::string  m_statusPortName;
-    yarp::os::BufferedPort<yarp::os::Bottle>  m_statusPort;
+    yarp::os::Port m_statusPort;
 
     yarp::dev::IAudioRender *m_irender = nullptr;
     yarp::os::Stamp m_lastStateStamp;
@@ -118,6 +118,7 @@ private:
     double m_buffer_delay;
     bool   m_isDeviceOwned = false;
     bool   m_debug_enabled = false;
+    bool   m_playing = false;
 
     bool initialize_YARP(yarp::os::Searchable &config);
     bool read(yarp::os::ConnectionReader& connection) override;

@@ -20,6 +20,7 @@
 #include <yarp/os/LogStream.h>
 
 using namespace yarp::dev;
+using namespace yarp::os;
 
 namespace {
 YARP_LOG_COMPONENT(AUDIORECORDERWRAPPER, "yarp.device.AudioRecorderWrapper")
@@ -118,10 +119,14 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     }
     if (m_streamingPort.open(portname + "/audio:o") == false)
     {
-        yCError(AUDIORECORDERWRAPPER) << "Unable to open port" << portname;
+        yCError(AUDIORECORDERWRAPPER) << "Unable to open port" << portname + "/audio:o";
         return false;
     }
-
+    if (m_statusPort.open(portname + "/status:o") == false)
+    {
+        yCError(AUDIORECORDERWRAPPER) << "Unable to open port" << portname + "/status:o";
+        return false;
+    }
     // Set the RPC port
     if (m_rpcPort.open(portname + "/rpc") == false)
     {
@@ -134,6 +139,7 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     if (config.check("start")) {
         yarp::os::SystemClock::delaySystem(1);
         m_mic->startRecording();
+        m_recording = true;
     }
 
     return true;
@@ -151,6 +157,8 @@ bool AudioRecorderWrapper::close()
         m_streamingPort.close();
         m_rpcPort.interrupt();
         m_rpcPort.close();
+        m_statusPort.interrupt();
+        m_statusPort.close();
 
         return true;
     }
@@ -230,6 +238,13 @@ void AudioRecorderWrapper::run()
 
     //send data
     m_streamingPort.write(snd);
+
+    //status port
+    Bottle b;
+    b.addInt(m_recording);
+    b.addInt64(m_current_buffer_size.getSamples());
+    b.addInt64(m_max_buffer_size.getSamples());
+    m_statusPort.write(b);
 }
 
 bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
@@ -243,11 +258,13 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
     if (command.get(0).asString()=="start")
     {
         m_mic->startRecording();
+        m_recording = true;
         reply.addVocab(VOCAB_OK);
     }
     else if (command.get(0).asString() == "stop")
     {
         m_mic->stopRecording();
+        m_recording = true;
         reply.addVocab(VOCAB_OK);
     }
     else if (command.get(0).asString() == "sw_audio_gain")
@@ -363,10 +380,4 @@ bool AudioRecorderWrapper::threadInit()
 
 void AudioRecorderWrapper::threadRelease()
 {
-/*    m_audioInPort.interrupt();
-    m_audioInPort.close();
-    m_rpcPort.interrupt();
-    m_rpcPort.close();
-    m_statusPort.interrupt();
-    m_statusPort.close();*/
 }

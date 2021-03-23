@@ -63,11 +63,15 @@ private:
     double                         m_period;
     yarp::os::Port                 m_rpcPort;
     yarp::os::Port                 m_streamingPort;
+    yarp::os::Port                 m_statusPort;
     yarp::os::Stamp                m_stamp;
     size_t                         m_min_number_of_samples_over_network;
     size_t                         m_max_number_of_samples_over_network;
+    yarp::dev::AudioBufferSize     m_current_buffer_size;
+    yarp::dev::AudioBufferSize     m_max_buffer_size;
     double                         m_getSound_timeout;
     bool                           m_isDeviceOwned =false;
+    bool                           m_recording=false;
 
 public:
     /**
