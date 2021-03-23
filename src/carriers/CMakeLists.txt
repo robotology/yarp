@@ -26,6 +26,7 @@ yarp_begin_plugin_library(yarpcar OPTION YARP_COMPILE_CARRIER_PLUGINS
   add_subdirectory(h264_carrier)
   add_subdirectory(unix)
   add_subdirectory(libffmpeg_portmonitor)
+  add_subdirectory(mp3Sound_portmonitor)
 yarp_end_plugin_library(yarpcar QUIET)
 add_library(YARP::yarpcar ALIAS yarpcar)
 
