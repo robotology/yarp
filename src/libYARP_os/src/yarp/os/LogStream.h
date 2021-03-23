@@ -56,17 +56,17 @@ class YARP_os_API LogStream
                 ref(1)
         {
         }
-        std::ostringstream oss;              // NOLINT(misc-non-private-member-variables-in-classes)
-        Log::LogType type;                   // NOLINT(misc-non-private-member-variables-in-classes)
-        const char* file;                    // NOLINT(misc-non-private-member-variables-in-classes)
-        unsigned int line;                   // NOLINT(misc-non-private-member-variables-in-classes)
-        const char* func;                    // NOLINT(misc-non-private-member-variables-in-classes)
-        double systemtime;                   // NOLINT(misc-non-private-member-variables-in-classes)
-        double networktime;                  // NOLINT(misc-non-private-member-variables-in-classes)
-        double externaltime;                 // NOLINT(misc-non-private-member-variables-in-classes)
-        const yarp::os::Log::Predicate pred; // NOLINT(misc-non-private-member-variables-in-classes)
-        const LogComponent& comp;            // NOLINT(misc-non-private-member-variables-in-classes)
-        int ref;                             // NOLINT(misc-non-private-member-variables-in-classes)
+        std::ostringstream oss;
+        Log::LogType type;
+        const char* file;
+        unsigned int line;
+        const char* func;
+        double systemtime;
+        double networktime;
+        double externaltime;
+        const yarp::os::Log::Predicate pred;
+        const LogComponent& comp;
+        int ref;
     } * stream;
 
 public:
