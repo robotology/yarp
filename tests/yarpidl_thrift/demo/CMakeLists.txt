@@ -34,7 +34,8 @@ function(yarp_catch_discover_tests _target)
 endfunction()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/catch2)
 
-set(IDL_FILES demo.thrift
+set(IDL_FILES annotated.thrift
+              demo.thrift
               namespaced.thrift
               objects3D.thrift
               wrapping.thrift

@@ -414,7 +414,7 @@ std::string Bottle::describeBottleCode(int code)
     case BOTTLE_TAG_INT32:
         unitName = "int";
         break;
-    case BOTTLE_TAG_VOCAB:
+    case BOTTLE_TAG_VOCAB32:
         unitName = "vocab";
         break;
     case BOTTLE_TAG_FLOAT64:

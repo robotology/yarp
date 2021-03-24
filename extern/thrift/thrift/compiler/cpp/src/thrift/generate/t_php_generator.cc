@@ -61,6 +61,8 @@ public:
     oop_ = false;
     validate_ = false;
     json_serializable_ = false;
+    getters_setters_ = false;
+	    
     nsglobal_ = ""; // by default global namespace is empty
     classmap_ = false;
     for (iter = parsed_options.begin(); iter != parsed_options.end(); ++iter) {
@@ -86,6 +88,8 @@ public:
         } else {
           pwarning(0, "psr4 is default option! needn't add psr4 option!\n");
         }
+      } else if (iter->first.compare("getters_setters") == 0) {
+        getters_setters_ = true;
       } else {
         throw "unknown option php:" + iter->first;
       }
@@ -99,7 +103,7 @@ public:
     escape_['$'] = "\\$";
   }
 
-  virtual std::string indent_str() const {
+  std::string indent_str() const override {
     return "    ";
   }
 
@@ -109,19 +113,19 @@ public:
    * Init and close methods
    */
 
-  void init_generator();
-  void close_generator();
+  void init_generator() override;
+  void close_generator() override;
 
   /**
    * Program-level generation functions
    */
 
-  void generate_typedef(t_typedef* ttypedef);
-  void generate_enum(t_enum* tenum);
-  void generate_consts(vector<t_const*> consts);
-  void generate_struct(t_struct* tstruct);
-  void generate_xception(t_struct* txception);
-  void generate_service(t_service* tservice);
+  void generate_typedef(t_typedef* ttypedef) override;
+  void generate_enum(t_enum* tenum) override;
+  void generate_consts(vector<t_const*> consts) override;
+  void generate_struct(t_struct* tstruct) override;
+  void generate_xception(t_struct* txception) override;
+  void generate_service(t_service* tservice) override;
 
   std::string render_const_value(t_type* type, t_const_value* value);
 
@@ -150,6 +154,13 @@ public:
 
   void generate_php_type_spec(std::ostream& out, t_type* t);
   void generate_php_struct_spec(std::ostream& out, t_struct* tstruct);
+  void generate_generic_field_getters_setters(std::ostream& out, t_struct* tstruct);
+
+  void generate_reflection_setters(ostringstream& out, string field_name, string cap_name);
+  void generate_reflection_getters(ostringstream& out, string field_name, string cap_name);
+
+  std::string get_cap_name(std::string name);
+
 
   /**
    * Service-level generation functions
@@ -284,9 +295,9 @@ public:
     }
 
     // Transform the java-style namespace into a path.
-    for (std::string::iterator it = ns.begin(); it != ns.end(); ++it) {
-      if (*it == '.') {
-        *it = '/';
+    for (char & n : ns) {
+      if (n == '.') {
+        n = '/';
       }
     }
 
@@ -304,8 +315,8 @@ public:
 
     vector<string> x = split(str, '_');
 
-    for (size_t i = 0; i < x.size(); ++i) {
-      classe = classe + capitalize(x[i]);
+    for (const auto & i : x) {
+      classe = classe + capitalize(i);
     }
 
     return classe;
@@ -400,6 +411,11 @@ private:
    * Global namespace for PHP 5.3
    */
   std::string nsglobal_;
+
+  /**
+   * Whether to generate getters and setters
+   */
+  bool getters_setters_;
 };
 
 bool t_php_generator::is_valid_namespace(const std::string& sub_namespace) {
@@ -420,8 +436,8 @@ void t_php_generator::init_generator() {
   vector<string> NSx = split(php_namespace_suffix(get_program()), '\\');
   package_dir_ = get_out_dir();
 
-  for (size_t i = 0; i < NSx.size(); ++i) {
-    package_dir_ = package_dir_ + "/" + NSx[i] + "/";
+  for (const auto & i : NSx) {
+    package_dir_ = package_dir_ + "/" + i + "/";
     MKDIR(package_dir_.c_str());
   }
 
@@ -651,13 +667,13 @@ string t_php_generator::render_const_value(t_type* type, t_const_value* value) {
     const map<t_const_value*, t_const_value*, t_const_value::value_compare>& val = value->get_map();
     map<t_const_value*, t_const_value*, t_const_value::value_compare>::const_iterator v_iter;
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
-      t_type* field_type = NULL;
+      t_type* field_type = nullptr;
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
         if ((*f_iter)->get_name() == v_iter->first->get_string()) {
           field_type = (*f_iter)->get_type();
         }
       }
-      if (field_type == NULL) {
+      if (field_type == nullptr) {
         throw "type error: " + type->get_name() + " has no field " + v_iter->first->get_string();
       }
       out << indent();
@@ -746,9 +762,9 @@ void t_php_generator::generate_php_type_spec(ostream& out, t_type* t) {
   t = get_true_type(t);
   indent(out) << "'type' => " << type_to_enum(t) << "," << endl;
 
-  if (t->is_base_type() || t->is_enum()) {
+  if (t->is_base_type()) {
     // Noop, type is all we need
-  } else if (t->is_struct() || t->is_xception()) {
+  } else if (t->is_struct() || t->is_xception() || t->is_enum()) {
     indent(out) << "'class' => '" << php_namespace(t->get_program()) << t->get_name() << "',"
                 << endl;
   } else if (t->is_map()) {
@@ -808,7 +824,80 @@ void t_php_generator::generate_php_struct_spec(ostream& out, t_struct* tstruct) 
   indent_down();
   indent(out) << ");" << endl << endl;
 }
+/**
+ * Generates necessary accessors and mutators for the fields
+ */
+void t_php_generator::generate_generic_field_getters_setters(std::ostream& out,
+                                                              t_struct* tstruct) {
+  std::ostringstream getter_stream;
+  std::ostringstream setter_stream;
 
+  // build up the bodies of both the getter and setter at once
+  const vector<t_field*>& fields = tstruct->get_members();
+  vector<t_field*>::const_iterator f_iter;
+  for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
+    t_field* field = *f_iter;
+    std::string field_name = field->get_name();
+    std::string cap_name = get_cap_name(field_name);
+
+    indent_up();
+    generate_reflection_setters(setter_stream, field_name, cap_name);
+    generate_reflection_getters(getter_stream, field_name, cap_name);
+    indent_down();
+  }
+
+  indent(out) << endl;
+  out << getter_stream.str();
+  out << setter_stream.str();
+  indent(out) << endl;
+}
+/**
+ * Generates a getter for the generated private fields
+ */
+void t_php_generator::generate_reflection_getters(ostringstream& out,
+                                                   string field_name,
+                                                   string cap_name) {
+
+
+  out << indent() << "public function " << "get" << cap_name << "()" << endl
+      << indent() << "{" << endl;
+
+  indent_up();
+
+  out << indent() << "return $this->" << field_name << ";" << endl;
+
+  indent_down();
+  out << indent() << "}" << endl;
+  out << endl;
+}
+/**
+ * Generates a setter for the generated private fields
+ */
+void t_php_generator::generate_reflection_setters(ostringstream& out,
+						  string field_name,
+						  string cap_name) {
+
+  out << indent() << "public function set" << cap_name << "(" << "$" << field_name << ")" << endl
+      << indent() << "{" << endl;
+
+  indent_up();
+
+  out << indent() << "$this->" << field_name << " = $" << field_name << ";" << endl;
+
+
+  indent_down();
+  out << indent() << "}" << endl;
+  out << endl;
+}
+/**
+ * Gets the first-letter capitalized name for the field
+ *
+ * @param std::string name of the field
+ */
+std::string t_php_generator::get_cap_name(std::string name) {
+  name[0] = toupper(name[0]);
+  return name;
+}
 /**
  * Generates a struct definition for a thrift data type. This is nothing in PHP
  * where the objects are all just associative arrays (unless of course we
@@ -846,11 +935,12 @@ void t_php_generator::generate_php_struct_definition(ostream& out,
   for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
     string dval = "null";
     t_type* t = get_true_type((*m_iter)->get_type());
-    if ((*m_iter)->get_value() != NULL && !(t->is_struct() || t->is_xception())) {
+    if ((*m_iter)->get_value() != nullptr && !(t->is_struct() || t->is_xception())) {
       dval = render_const_value((*m_iter)->get_type(), (*m_iter)->get_value());
     }
     generate_php_doc(out, *m_iter);
-    indent(out) << "public $" << (*m_iter)->get_name() << " = " << dval << ";" << endl;
+    string access = (getters_setters_) ? "private" : "public";
+    indent(out) << access << " $" << (*m_iter)->get_name() << " = " << dval << ";" << endl;
   }
 
   out << endl;
@@ -864,7 +954,7 @@ void t_php_generator::generate_php_struct_definition(ostream& out,
   if (members.size() > 0) {
     for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
       t_type* t = get_true_type((*m_iter)->get_type());
-      if ((*m_iter)->get_value() != NULL && (t->is_struct() || t->is_xception())) {
+      if ((*m_iter)->get_value() != nullptr && (t->is_struct() || t->is_xception())) {
         indent(out) << "$this->" << (*m_iter)->get_name() << " = "
                     << render_const_value(t, (*m_iter)->get_value()) << ";" << endl;
       }
@@ -901,6 +991,9 @@ void t_php_generator::generate_php_struct_definition(ostream& out,
   out << indent() << "}" << endl << endl;
 
   out << endl;
+  if (getters_setters_) {
+    generate_generic_field_getters_setters(out, tstruct);
+  }
   generate_php_struct_reader(out, tstruct, is_result);
   out << endl;
   generate_php_struct_writer(out, tstruct, is_result);
@@ -1293,7 +1386,7 @@ void t_php_generator::generate_service_processor(t_service* tservice) {
 
   string extends = "";
   string extends_processor = "";
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     extends = tservice->get_extends()->get_name();
     extends_processor = " extends " + php_namespace(tservice->get_extends()->get_program())
                         + extends + "Processor";
@@ -1618,7 +1711,7 @@ void t_php_generator::generate_service_interface(t_service* tservice) {
 
   string extends = "";
   string extends_if = "";
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     extends = " extends " + php_namespace(tservice->get_extends()->get_program())
               + tservice->get_extends()->get_name();
     extends_if = " extends " + php_namespace(tservice->get_extends()->get_program())
@@ -1657,7 +1750,7 @@ void t_php_generator::generate_service_rest(t_service* tservice) {
 
   string extends = "";
   string extends_if = "";
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     extends = " extends " + php_namespace(tservice->get_extends()->get_program())
               + tservice->get_extends()->get_name();
     extends_if = " extends " + php_namespace(tservice->get_extends()->get_program())
@@ -1738,7 +1831,7 @@ void t_php_generator::generate_service_client(t_service* tservice) {
 
   string extends = "";
   string extends_client = "";
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     extends = tservice->get_extends()->get_name();
     extends_client = " extends " + php_namespace(tservice->get_extends()->get_program()) + extends
                      + "Client";
@@ -2782,4 +2875,5 @@ THRIFT_REGISTER_GENERATOR(
     "    rest:            Generate PHP REST processors\n"
     "    nsglobal=NAME:   Set global namespace\n"
     "    validate:        Generate PHP validator methods\n"
-    "    json:            Generate JsonSerializable classes (requires PHP >= 5.4)\n")
+    "    json:            Generate JsonSerializable classes (requires PHP >= 5.4)\n"
+    "    getters_setters: Generate Getters and Setters for struct variables\n")

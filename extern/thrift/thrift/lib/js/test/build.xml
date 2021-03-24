@@ -28,13 +28,13 @@
   <property name="build" location="build" />
   <property name="jar.file" location="${build}/jstest.jar" />
 
-  <!-- the root directory, where you unpack thrift distibution (e.g. thrift-0.x.x.tar.gz) -->
+  <!-- the root directory, where you unpack thrift distibution (e.g.: thrift-0.x.x.tar.gz) -->
   <property name="thrift.dir" location="../../../" />
   <property name="thrift.java.dir" location="${thrift.dir}/lib/java" />
   <property name="build.tools.dir" location="${thrift.java.dir}/build/tools/"/>
   <property file="${basedir}/build.properties"/>
 
-  <!-- Include the base java properties file -->
+  <!-- Include the base Java properties file -->
   <property file="${thrift.java.dir}/gradle.properties" />
 
   <property name="thrift.compiler" location="${thrift.dir}/compiler/cpp/thrift" />
@@ -73,7 +73,7 @@
       </condition>
       You need libthrift*.jar and libthrift*test.jar located at
       ${thrift.java.dir}/build/libs
-      Did you compile Thrift Java library and its test suite by "ant compile-test"?
+      Did you compile Thrift Java library and its test suite by "make check"?
     </fail>
     <fail>
       <condition>
@@ -187,7 +187,6 @@
     -->
     <jsl:jslint options="evil,forin,browser,bitwise,regexp,newcap,immed" encoding="UTF-8">
       <formatter type="plain" />
-      <fileset dir="${genjs}" includes="**/*.js" />
       <fileset dir="../src" includes="thrift.js" />
 
       <!-- issues with unsafe character -->
@@ -236,6 +235,7 @@
       <dependency groupId="org.apache.httpcomponents" artifactId="httpclient" version="4.0.1"/>
       <dependency groupId="com.googlecode.jslint4java" artifactId="jslint4java-ant" version="1.4.6"/>
       <dependency groupId="eu.medsea.mimeutil" artifactId="mime-util" version="2.1.3"/>
+      <remoteRepository url="${mvn.repo}"/>
     </artifact:dependencies>
 
     <!-- Copy the dependencies to the build/lib dir -->

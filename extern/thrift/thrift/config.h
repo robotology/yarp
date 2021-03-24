@@ -321,7 +321,7 @@
 #define PACKAGE_NAME "thrift"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "thrift 0.12.0"
+#define PACKAGE_STRING "thrift 0.14.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "thrift"
@@ -330,7 +330,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.12.0"
+#define PACKAGE_VERSION "0.14.1"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -370,10 +370,6 @@
 
 /* Possible value for SIGNED_RIGHT_SHIFT_IS */
 #define UNKNOWN_RIGHT_SHIFT 3
-
-/* experimental --enable-boostthreads that replaces POSIX pthread by
-   boost::thread */
-/* #undef USE_BOOST_THREAD */
 
 /* Version number of package */
 

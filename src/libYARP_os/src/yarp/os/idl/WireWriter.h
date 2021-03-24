@@ -62,21 +62,17 @@ public:
 
     bool writeFloat64(yarp::conf::float64_t x) const;
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-    YARP_DEPRECATED_MSG("Use writeI8 instead")
-    bool writeByte(std::int8_t x) const
-    {
-        return writeI8(x);
-    }
+    bool writeUI8(std::uint8_t x) const;
 
-    YARP_DEPRECATED_MSG("Use writeFloat64 instead")
-    bool writeDouble(double x) const
-    {
-        return writeFloat64(static_cast<yarp::conf::float64_t>(x));
-    }
-#endif // YARP_NO_DEPRECATED
+    bool writeUI16(std::uint16_t x) const;
 
-    bool writeVocab(std::int32_t x) const;
+    bool writeUI32(std::uint32_t x) const;
+
+    bool writeUI64(std::uint64_t x) const;
+
+    bool writeVocab32(yarp::conf::vocab32_t x) const;
+
+    bool writeSizeT(std::size_t x) const;
 
     bool isValid() const;
 
@@ -103,6 +99,28 @@ public:
     bool writeMapEnd() const;
 
     bool writeOnewayResponse() const;
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use writeI8 instead")
+    bool writeByte(std::int8_t x) const
+    {
+        return writeI8(x);
+    }
+
+    YARP_DEPRECATED_MSG("Use writeFloat64 instead")
+    bool writeDouble(double x) const
+    {
+        return writeFloat64(static_cast<yarp::conf::float64_t>(x));
+    }
+#endif // YARP_NO_DEPRECATED
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use writeVocab32 instead")
+    bool writeVocab(std::int32_t x) const
+    {
+        return writeVocab32(x);
+    }
+#endif // YARP_NO_DEPRECATED
 
 private:
     bool get_mode;

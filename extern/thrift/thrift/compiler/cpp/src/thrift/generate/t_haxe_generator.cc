@@ -74,20 +74,20 @@ public:
    * Init and close methods
    */
 
-  void init_generator();
-  void close_generator();
+  void init_generator() override;
+  void close_generator() override;
 
-  void generate_consts(std::vector<t_const*> consts);
+  void generate_consts(std::vector<t_const*> consts) override;
 
   /**
    * Program-level generation functions
    */
 
-  void generate_typedef(t_typedef* ttypedef);
-  void generate_enum(t_enum* tenum);
-  void generate_struct(t_struct* tstruct);
-  void generate_xception(t_struct* txception);
-  void generate_service(t_service* tservice);
+  void generate_typedef(t_typedef* ttypedef) override;
+  void generate_enum(t_enum* tenum) override;
+  void generate_struct(t_struct* tstruct) override;
+  void generate_xception(t_struct* txception) override;
+  void generate_service(t_service* tservice) override;
 
   void print_const_value(std::ostream& out,
                          std::string name,
@@ -190,7 +190,7 @@ public:
   std::string function_signature_normal(t_function* tfunction);
   std::string argument_list(t_struct* tstruct);
   std::string type_to_enum(t_type* ttype);
-  std::string get_enum_class_name(t_type* type);
+  std::string get_enum_class_name(t_type* type) override;
   string generate_service_method_onsuccess(t_function* tfunction, bool as_type, bool omit_name);
   void generate_service_method_signature_callback(t_function* tfunction, bool is_interface);
   void generate_service_method_signature_normal(t_function* tfunction, bool is_interface);
@@ -319,7 +319,7 @@ string t_haxe_generator::haxe_thrift_gen_imports(t_struct* tstruct, string& impo
   // For each type check if it is from a different namespace
   for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
     t_program* program = (*m_iter)->get_type()->get_program();
-    if (program != NULL && program != program_) {
+    if (program != nullptr && program != program_) {
       string package = program->get_namespace("haxe");
       if (!package.empty()) {
         if (imports.find(package + "." + (*m_iter)->get_type()->get_name()) == string::npos) {
@@ -344,7 +344,7 @@ string t_haxe_generator::haxe_thrift_gen_imports(t_service* tservice) {
   // For each type check if it is from a different namespace
   for (f_iter = functions.begin(); f_iter != functions.end(); ++f_iter) {
     t_program* program = (*f_iter)->get_returntype()->get_program();
-    if (program != NULL && program != program_) {
+    if (program != nullptr && program != program_) {
       string package = program->get_namespace("haxe");
       if (!package.empty()) {
         if (imports.find(package + "." + (*f_iter)->get_returntype()->get_name()) == string::npos) {
@@ -514,13 +514,13 @@ void t_haxe_generator::print_const_value(std::ostream& out,
       indent_up();
     }
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
-      t_type* field_type = NULL;
+      t_type* field_type = nullptr;
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
         if ((*f_iter)->get_name() == v_iter->first->get_string()) {
           field_type = (*f_iter)->get_type();
         }
       }
-      if (field_type == NULL) {
+      if (field_type == nullptr) {
         throw "type error: " + type->get_name() + " has no field " + v_iter->first->get_string();
       }
       string val = render_const_value(out, name, field_type, v_iter->second);
@@ -788,7 +788,7 @@ void t_haxe_generator::generate_haxe_struct_definition(ostream& out,
     indent(out) << "super();" << endl;
   }
   for (m_iter = members.begin(); m_iter != members.end(); ++m_iter) {
-    if ((*m_iter)->get_value() != NULL) {
+    if ((*m_iter)->get_value() != nullptr) {
       indent(out) << "this." << (*m_iter)->get_name() << " = "
                   << (*m_iter)->get_value()->get_integer() << ";" << endl;
     }
@@ -1483,7 +1483,7 @@ void t_haxe_generator::generate_service(t_service* tservice) {
   f_service_ << endl << haxe_type_imports() << haxe_thrift_imports()
              << haxe_thrift_gen_imports(tservice);
 
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     t_type* parent = tservice->get_extends();
     string parent_namespace = parent->get_program()->get_namespace("haxe");
     if (!parent_namespace.empty() && parent_namespace != package_name_) {
@@ -1504,7 +1504,7 @@ void t_haxe_generator::generate_service(t_service* tservice) {
   f_service_ << autogen_comment() << haxe_package() << ";" << endl << endl << haxe_type_imports()
              << haxe_thrift_imports() << haxe_thrift_gen_imports(tservice) << endl;
 
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     t_type* parent = tservice->get_extends();
     string parent_namespace = parent->get_program()->get_namespace("haxe");
     if (!parent_namespace.empty() && parent_namespace != package_name_) {
@@ -1629,7 +1629,7 @@ void t_haxe_generator::generate_service_method_signature_callback(t_function* tf
  */
 void t_haxe_generator::generate_service_interface(t_service* tservice) {
   string extends_iface = "";
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     extends_iface = " extends " + tservice->get_extends()->get_name();
   }
 
@@ -1674,7 +1674,7 @@ void t_haxe_generator::generate_service_helpers(t_service* tservice) {
 void t_haxe_generator::generate_service_client(t_service* tservice) {
   string extends = "";
   string extends_client = "";
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     extends = get_cap_name(tservice->get_extends()->get_name());
     extends_client = " extends " + extends + "Impl";
   }
@@ -1891,7 +1891,7 @@ void t_haxe_generator::generate_service_server(t_service* tservice) {
   // Extends stuff
   string extends = "";
   string extends_processor = "";
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     extends = get_cap_name(type_name(tservice->get_extends()));
     extends_processor = " extends " + extends + "Processor";
   }
@@ -1932,7 +1932,7 @@ void t_haxe_generator::generate_service_server(t_service* tservice) {
 
   // Generate the server implementation
   string override = "";
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     override = "override ";
   }
   indent(f_service_) << override
@@ -2606,7 +2606,7 @@ string t_haxe_generator::type_name(t_type* ttype, bool in_container, bool in_ini
 
   // Check for namespacing
   t_program* program = ttype->get_program();
-  if (program != NULL && program != program_) {
+  if (program != nullptr && program != program_) {
     string package = program->get_namespace("haxe");
     if (!package.empty()) {
       return package + "." + ttype->get_name();
@@ -2660,7 +2660,7 @@ string t_haxe_generator::declare_field(t_field* tfield, bool init) {
   string result = "var " + tfield->get_name() + " : " + type_name(tfield->get_type());
   if (init) {
     t_type* ttype = get_true_type(tfield->get_type());
-    if (ttype->is_base_type() && tfield->get_value() != NULL) {
+    if (ttype->is_base_type() && tfield->get_value() != nullptr) {
       std::ofstream dummy;
       result += " = " + render_const_value(dummy, tfield->get_name(), ttype, tfield->get_value());
     } else if (ttype->is_base_type()) {
@@ -2884,9 +2884,7 @@ string t_haxe_generator::constant_name(string name) {
 
   bool is_first = true;
   bool was_previous_char_upper = false;
-  for (string::iterator iter = name.begin(); iter != name.end(); ++iter) {
-    string::value_type character = (*iter);
-
+  for (char character : name) {
     bool is_upper = isupper(character);
 
     if (is_upper && !is_first && !was_previous_char_upper) {
@@ -2968,7 +2966,7 @@ void t_haxe_generator::generate_isset_set(ostream& out, t_field* field) {
 std::string t_haxe_generator::get_enum_class_name(t_type* type) {
   string package = "";
   t_program* program = type->get_program();
-  if (program != NULL /*&& program != program_*/) {
+  if (program != nullptr /*&& program != program_*/) {
     package = program->get_namespace("haxe") + ".";
   }
   return package + type->get_name();

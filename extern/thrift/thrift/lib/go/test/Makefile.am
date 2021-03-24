@@ -39,7 +39,16 @@ gopath: $(THRIFT) $(THRIFTTEST) \
 				InitialismsTest.thrift \
 				DontExportRWTest.thrift \
 				dontexportrwtest/compile_test.go \
-				IgnoreInitialismsTest.thrift
+				IgnoreInitialismsTest.thrift \
+				ConflictNamespaceTestA.thrift \
+				ConflictNamespaceTestB.thrift \
+				ConflictNamespaceTestC.thrift \
+				ConflictNamespaceTestD.thrift \
+				ConflictNamespaceTestSuperThing.thrift \
+				ConflictNamespaceServiceTest.thrift \
+				DuplicateImportsTest.thrift \
+				EqualsTest.thrift \
+				ConflictArgNamesTest.thrift
 	mkdir -p gopath/src
 	grep -v list.*map.*list.*map $(THRIFTTEST) | grep -v 'set<Insanity>' > ThriftTest.thrift
 	$(THRIFT) $(THRIFTARGS) -r IncludesTest.thrift
@@ -59,6 +68,15 @@ gopath: $(THRIFT) $(THRIFTTEST) \
 	$(THRIFT) $(THRIFTARGS) InitialismsTest.thrift
 	$(THRIFT) $(THRIFTARGS),read_write_private DontExportRWTest.thrift
 	$(THRIFT) $(THRIFTARGS),ignore_initialisms IgnoreInitialismsTest.thrift
+	$(THRIFT) $(THRIFTARGS) ConflictNamespaceTestA.thrift
+	$(THRIFT) $(THRIFTARGS) ConflictNamespaceTestB.thrift
+	$(THRIFT) $(THRIFTARGS) ConflictNamespaceTestC.thrift
+	$(THRIFT) $(THRIFTARGS) ConflictNamespaceTestD.thrift
+	$(THRIFT) $(THRIFTARGS) ConflictNamespaceTestSuperThing.thrift
+	$(THRIFT) $(THRIFTARGS) ConflictNamespaceServiceTest.thrift
+	$(THRIFT) $(THRIFTARGS) -r DuplicateImportsTest.thrift
+	$(THRIFT) $(THRIFTARGS) EqualsTest.thrift
+	$(THRIFT) $(THRIFTARGS) ConflictArgNamesTest.thrift
 	GOPATH=`pwd`/gopath $(GO) get github.com/golang/mock/gomock || true
 	sed -i 's/\"context\"/\"golang.org\/x\/net\/context\"/g' gopath/src/github.com/golang/mock/gomock/controller.go || true
 	GOPATH=`pwd`/gopath $(GO) get github.com/golang/mock/gomock
@@ -79,7 +97,13 @@ check: gopath
 				initialismstest \
 				dontexportrwtest \
 				ignoreinitialismstest \
-				unionbinarytest
+				unionbinarytest \
+				conflictnamespacetestsuperthing \
+				conflict/context/conflict_service-remote \
+				servicestest/container_test-remote \
+				duplicateimportstest \
+				equalstest \
+				conflictargnamestest
 	GOPATH=`pwd`/gopath $(GO) test thrift tests dontexportrwtest
 
 clean-local:
@@ -91,21 +115,31 @@ client: stubs
 EXTRA_DIST = \
 	dontexportrwtest \
 	tests \
+	common \
 	BinaryKeyTest.thrift \
+	ConflictArgNamesTest.thrift \
+	ConflictNamespaceServiceTest.thrift \
+	ConflictNamespaceTestA.thrift \
+	ConflictNamespaceTestB.thrift \
+	ConflictNamespaceTestC.thrift \
+	ConflictNamespaceTestD.thrift \
+	ConflictNamespaceTestSuperThing.thrift \
+	DontExportRWTest.thrift \
+	DuplicateImportsTest.thrift \
+	ErrorTest.thrift \
+	EqualsTest.thrift \
 	GoTagTest.thrift \
+	IgnoreInitialismsTest.thrift \
 	IncludesTest.thrift \
+	InitialismsTest.thrift \
 	MultiplexedProtocolTest.thrift \
 	NamespacedTest.thrift \
+	NamesTest.thrift \
 	OnewayTest.thrift \
 	OptionalFieldsTest.thrift \
-	RequiredFieldTest.thrift \
 	RefAnnotationFieldsTest.thrift \
-	UnionDefaultValueTest.thrift \
-	UnionBinaryTest.thrift \
+	RequiredFieldTest.thrift \
 	ServicesTest.thrift \
 	TypedefFieldTest.thrift \
-	ErrorTest.thrift \
-	NamesTest.thrift \
-	InitialismsTest.thrift \
-	DontExportRWTest.thrift \
-	IgnoreInitialismsTest.thrift
+	UnionBinaryTest.thrift \
+	UnionDefaultValueTest.thrift

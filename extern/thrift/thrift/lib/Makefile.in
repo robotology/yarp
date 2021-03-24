@@ -106,11 +106,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-
-# cpp dir is picked directly by plugin build
-@WITH_CPP_TRUE@@WITH_PLUGIN_FALSE@am__append_1 = cpp
-@WITH_C_GLIB_TRUE@am__append_2 = c_glib
-@WITH_MONO_TRUE@am__append_3 = csharp
+@WITH_AS3_TRUE@am__append_1 = as3
+@WITH_CPP_TRUE@am__append_2 = cpp
+@WITH_C_GLIB_TRUE@am__append_3 = c_glib
 # JavaScript unit test depends on java
 # so test only if java, ant & co is available
 @WITH_JAVA_TRUE@am__append_4 = java js
@@ -122,7 +120,7 @@ host_triplet = @host@
 @WITH_PERL_TRUE@am__append_10 = perl
 @WITH_PHP_TRUE@am__append_11 = php
 @WITH_DART_TRUE@am__append_12 = dart
-@WITH_DOTNETCORE_TRUE@am__append_13 = netcore
+@WITH_DOTNET_TRUE@am__append_13 = netstd
 @WITH_GO_TRUE@am__append_14 = go
 @WITH_D_TRUE@am__append_15 = d
 @WITH_D_TRUE@am__append_16 = precross-d
@@ -131,6 +129,7 @@ host_triplet = @host@
 @WITH_LUA_TRUE@am__append_19 = lua
 @WITH_RS_TRUE@am__append_20 = rs
 @WITH_CL_TRUE@am__append_21 = cl
+@WITH_SWIFT_TRUE@am__append_22 = swift
 subdir = lib
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
@@ -154,7 +153,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/aclocal/tar.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -219,8 +218,8 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = json xml cpp c_glib csharp java js py erl rb hs perl \
-	php dart netcore go d nodejs nodets lua rs cl
+DIST_SUBDIRS = json xml as3 cpp c_glib java js py erl rb hs perl php \
+	dart netstd go d nodejs nodets lua rs cl swift
 am__DIST_COMMON = $(srcdir)/Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
@@ -314,6 +313,7 @@ ERLC = @ERLC@
 ERLCFLAGS = @ERLCFLAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FLEX_COMPC = @FLEX_COMPC@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_CXXFLAGS = @GCOV_CXXFLAGS@
 GCOV_LDFLAGS = @GCOV_LDFLAGS@
@@ -324,6 +324,7 @@ GOBJECT_CFLAGS = @GOBJECT_CFLAGS@
 GOBJECT_LIBS = @GOBJECT_LIBS@
 GRADLE_OPTS = @GRADLE_OPTS@
 GREP = @GREP@
+GSETTINGS = @GSETTINGS@
 HAVE_CXX11 = @HAVE_CXX11@
 HAXE = @HAXE@
 HAXE_VERSION = @HAXE_VERSION@
@@ -359,18 +360,18 @@ LUA_SHORT_VERSION = @LUA_SHORT_VERSION@
 LUA_VERSION = @LUA_VERSION@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
+MAYBE_AS3 = @MAYBE_AS3@
 MAYBE_CL = @MAYBE_CL@
 MAYBE_CPP = @MAYBE_CPP@
-MAYBE_CSHARP = @MAYBE_CSHARP@
 MAYBE_C_GLIB = @MAYBE_C_GLIB@
 MAYBE_D = @MAYBE_D@
 MAYBE_DART = @MAYBE_DART@
-MAYBE_DOTNETCORE = @MAYBE_DOTNETCORE@
 MAYBE_ERLANG = @MAYBE_ERLANG@
 MAYBE_GO = @MAYBE_GO@
 MAYBE_HASKELL = @MAYBE_HASKELL@
 MAYBE_JAVA = @MAYBE_JAVA@
 MAYBE_LUA = @MAYBE_LUA@
+MAYBE_NETSTD = @MAYBE_NETSTD@
 MAYBE_NODEJS = @MAYBE_NODEJS@
 MAYBE_NODETS = @MAYBE_NODETS@
 MAYBE_PERL = @MAYBE_PERL@
@@ -379,10 +380,8 @@ MAYBE_PY3 = @MAYBE_PY3@
 MAYBE_PYTHON = @MAYBE_PYTHON@
 MAYBE_RS = @MAYBE_RS@
 MAYBE_RUBY = @MAYBE_RUBY@
-MCS = @MCS@
+MAYBE_SWIFT = @MAYBE_SWIFT@
 MKDIR_P = @MKDIR_P@
-MONO_CFLAGS = @MONO_CFLAGS@
-MONO_LIBS = @MONO_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 NODEJS = @NODEJS@
@@ -422,9 +421,6 @@ PY_PREFIX = @PY_PREFIX@
 QT5_CFLAGS = @QT5_CFLAGS@
 QT5_LIBS = @QT5_LIBS@
 QT5_MOC = @QT5_MOC@
-QT_CFLAGS = @QT_CFLAGS@
-QT_LIBS = @QT_LIBS@
-QT_MOC = @QT_MOC@
 RANLIB = @RANLIB@
 REBAR = @REBAR@
 RUBY = @RUBY@
@@ -436,6 +432,7 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SWIFT = @SWIFT@
 THRIFT = @THRIFT@
 TRIAL = @TRIAL@
 VERSION = @VERSION@
@@ -515,14 +512,14 @@ SUBDIRS = json xml $(am__append_1) $(am__append_2) $(am__append_3) \
 	$(am__append_8) $(am__append_9) $(am__append_10) \
 	$(am__append_11) $(am__append_12) $(am__append_13) \
 	$(am__append_14) $(am__append_15) $(am__append_17) \
-	$(am__append_19) $(am__append_20) $(am__append_21)
+	$(am__append_19) $(am__append_20) $(am__append_21) \
+	$(am__append_22)
 PRECROSS_TARGET = $(am__append_5) $(am__append_16) $(am__append_18)
 
 # All of the libs that don't use Automake need to go in here
 # so they will end up in our release tarballs.
 EXTRA_DIST = \
 	as3 \
-	cocoa \
 	d \
 	dart \
 	delphi \

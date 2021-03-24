@@ -109,12 +109,12 @@ new one for you:
 
 To run all unit tests (just like Travis CI does):
 
-    thrift$ dockerrun ubuntu-bionic
+    thrift$ dockerrun thrift/thrift-build:ubuntu-bionic
     root@8caf56b0ce7b:/thrift/src# build/docker/scripts/autotools.sh
 
 To run the cross tests (just like Travis CI does):
 
-    thrift$ dockerrun ubuntu-bionic
+    thrift$ dockerrun thrift/thrift-build:ubuntu-bionic
     root@8caf56b0ce7b:/thrift/src# build/docker/scripts/cross-test.sh
 
 When you are done, you want to clean up occasionally so that docker isn't using lots of extra disk space:
@@ -167,32 +167,31 @@ Last updated: October 1, 2017
 
 | Language  | ubuntu-xenial | ubuntu-bionic | Notes |
 | :-------- | :------------ | :------------ | :---- |
-| as of     | Mar 06, 2018  | Jul 6, 2018   |       |
-| as3       |               |               | Not in CI |
-| C++ gcc   | 5.4.0         | 7.3.0         |       |
+| as of     | Mar 06, 2018  | Jul 1, 2019   |       |
+| as3       |               | 4.6.0         |       |
+| C++ gcc   | 5.4.0         | 7.4.0         |       |
 | C++ clang | 3.8           | 6.0           |       |
 | C# (mono) | 4.2.1.0       | 4.6.2.7       |       |
-| c_glib    | 2.48.2        | 2.56.0        |       |
-| cl (sbcl) |               | 1.4.9         |       |
-| cocoa     |               |               | Not in CI |
-| d         | 2.075.1       | 2.081.0       |       |
-| dart      | 1.22.1        | 1.24.3        |       |
+| c_glib    | 2.48.2        | 2.56.4        |       |
+| cl (sbcl) |               | 1.5.3         |       |
+| d         | 2.075.1       | 2.087.0       |       |
+| dart      | 2.0.0         | 2.4.0         |       |
 | delphi    |               |               | Not in CI |
-| dotnet    | 2.1.4         | 2.1.301       |       |
-| erlang    | 18.3          | 20.2.2        |       |
-| go        | 1.7.6         | 1.10.3        |       |
+| erlang    | 18.3          | 22.0          |       |
+| go        | 1.14.14       | 1.15.7        |       |
 | haskell   | 7.10.3        | 8.0.2         |       |
 | haxe      | 3.2.1         | 3.4.4         | THRIFT-4352: avoid 3.4.2 |
-| java      | 1.8.0_151     | 1.8.0_171     |       |
-| js        |               |               | Unsure how to look for version info? |
-| lua       | 5.2.4         | 5.2.4         | Lua 5.3: see THRIFT-4386 |
-| nodejs    | 6.13.0        | 8.11.3        |       |
+| java      | 1.8.0_191     | 11.0.3        |       |
+| js        | Node.js 6.17.1, V8 5.1.281.111, npm 3.10.10 | Node.js 10.18.0, V8 6.8.275.32, npm 6.13.4 |     |
+| lua       |               | 5.2.4         | Lua 5.3: see THRIFT-4386 |
+| netstd    | 3.1           | 3.1           | LTS version |
+| nodejs    | 6.16.0        | 10.16.0       |       |
 | ocaml     |               | 4.05.0        | THRIFT-4517: ocaml 4.02.3 on xenial appears broken |
 | perl      | 5.22.1        | 5.26.1        |       |
-| php       | 7.0.22        | 7.2.5         |       |
-| python    | 2.7.12        | 2.7.15rc1     |       |
-| python3   | 3.5.2         | 3.6.5         |       |
+| php       | 7.0.32        | 7.2.19        |       |
+| python    | 2.7.12        | 2.7.15        |       |
+| python3   | 3.5.2         | 3.6.8         |       |
 | ruby      | 2.3.1p112     | 2.5.1p57      |       |
-| rust      | 1.17.0        | 1.24.1        |       |
+| rust      | 1.40.0        | 1.40.0        |       |
 | smalltalk |               |               | Not in CI |
-| swift     |               |               | Not in CI |
+| swift     |               | 5.1.4         |       |

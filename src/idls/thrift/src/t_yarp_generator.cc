@@ -372,7 +372,7 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
         case t_base_type::TYPE_STRING:
             return "BOTTLE_TAG_STRING";
         case t_base_type::TYPE_BOOL:
-            return "BOTTLE_TAG_VOCAB";
+            return "BOTTLE_TAG_VOCAB32";
         case t_base_type::TYPE_I8:
             return "BOTTLE_TAG_INT8";
         case t_base_type::TYPE_I16:
@@ -381,14 +381,21 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
         {
             auto it = type->annotations_.find("yarp.type");
             if (it != type->annotations_.end() && it->second == "yarp::conf::vocab32_t") {
-                return "BOTTLE_TAG_VOCAB";
+                return "BOTTLE_TAG_VOCAB32";
             }
             return "BOTTLE_TAG_INT32";
         }
         case t_base_type::TYPE_I64:
             return "BOTTLE_TAG_INT64";
         case t_base_type::TYPE_DOUBLE:
-            return "BOTTLE_TAG_FLOAT64";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
+                return "BOTTLE_TAG_FLOAT32";
+            } else {
+                return "BOTTLE_TAG_FLOAT64";
+            }
+        }
         }
     } else if (type->is_enum()) {
         return "BOTTLE_TAG_INT32";
@@ -1018,27 +1025,68 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
                 f_cpp_ << "writeBool(" << name << ")";
                 break;
             case t_base_type::TYPE_I8:
-                f_cpp_ << "writeI8(" << name << ")";
+            {
+                auto it = type->annotations_.find("yarp.type");
+                if (it != type->annotations_.end() && (it->second == "std::uint8_t" ||
+                                                       it->second == "uint8_t" ||
+                                                       it->second.find("unsigned") != std::string::npos)) {
+                    f_cpp_ << "writeUI8(" << name << ")";
+                } else {
+                    f_cpp_ << "writeI8(" << name << ")";
+                }
                 break;
+            }
             case t_base_type::TYPE_I16:
-                f_cpp_ << "writeI16(" << name << ")";
+            {
+                auto it = type->annotations_.find("yarp.type");
+                if (it != type->annotations_.end() && (it->second == "std::uint16_t" ||
+                                                       it->second == "uint16_t" ||
+                                                       it->second.find("unsigned") != std::string::npos)) {
+                    f_cpp_ << "writeUI16(" << name << ")";
+                } else {
+                    f_cpp_ << "writeI16(" << name << ")";
+                }
                 break;
+            }
             case t_base_type::TYPE_I32:
             {
                 auto it = type->annotations_.find("yarp.type");
                 if (it != type->annotations_.end() && it->second == "yarp::conf::vocab32_t") {
-                    f_cpp_ << "writeVocab(" << name << ")";
+                    f_cpp_ << "writeVocab32(" << name << ")";
+                } else if (it != type->annotations_.end() && (it->second == "std::size_t" ||
+                                                              it->second == "size_t")) {
+                    f_cpp_ << "writeSizeT(" << name << ")";
+                } else if (it != type->annotations_.end() && (it->second == "std::uint32_t" ||
+                                                              it->second == "uint32_t" ||
+                                                              it->second.find("unsigned") != std::string::npos)) {
+                    f_cpp_ << "writeUI32(" << name << ")";
                 } else {
                     f_cpp_ << "writeI32(" << name << ")";
                 }
                 break;
             }
             case t_base_type::TYPE_I64:
-                f_cpp_ << "writeI64(" << name << ")";
+            {
+                auto it = type->annotations_.find("yarp.type");
+                if (it != type->annotations_.end() && (it->second == "std::uint64_t" ||
+                                                       it->second == "uint64_t" ||
+                                                       it->second.find("unsigned") != std::string::npos)) {
+                    f_cpp_ << "writeUI64(" << name << ")";
+                } else {
+                    f_cpp_ << "writeI64(" << name << ")";
+                }
                 break;
+            }
             case t_base_type::TYPE_DOUBLE:
-                f_cpp_ << "writeFloat64(" << name << ")";
+            {
+                auto it = type->annotations_.find("yarp.type");
+                if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
+                    f_cpp_ << "writeFloat32(" << name << ")";
+                } else {
+                    f_cpp_ << "writeFloat64(" << name << ")";
+                }
                 break;
+                }
             default:
                 throw "compiler error: no C++ writer for base type " + t_base_type::t_base_name(tbase) + name;
             }
@@ -1214,27 +1262,68 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
             f_cpp_ << "readBool(" << name << ")";
             break;
         case t_base_type::TYPE_I8:
-            f_cpp_ << "readI8(" << name << ")";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && (it->second == "std::uint8_t" ||
+                                                   it->second == "uint8_t" ||
+                                                   it->second.find("unsigned") != std::string::npos)) {
+                f_cpp_ << "readUI8(" << name << ")";
+            } else {
+                f_cpp_ << "readI8(" << name << ")";
+            }
             break;
+        }
         case t_base_type::TYPE_I16:
-            f_cpp_ << "readI16(" << name << ")";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && (it->second == "std::uint16_t" ||
+                                                   it->second == "uint16_t" ||
+                                                   it->second.find("unsigned") != std::string::npos)) {
+                f_cpp_ << "readUI16(" << name << ")";
+            } else {
+                f_cpp_ << "readI16(" << name << ")";
+            }
             break;
+        }
         case t_base_type::TYPE_I32:
         {
             auto it = type->annotations_.find("yarp.type");
             if (it != type->annotations_.end() && it->second == "yarp::conf::vocab32_t") {
-                f_cpp_ << "readVocab(" << name << ")";
+                f_cpp_ << "readVocab32(" << name << ")";
+            } else if (it != type->annotations_.end() && (it->second == "std::size_t" ||
+                                                          it->second == "size_t")) {
+                f_cpp_ << "readSizeT(" << name << ")";
+            } else if (it != type->annotations_.end() && (it->second == "std::uint32_t" ||
+                                                          it->second == "uint32_t" ||
+                                                          it->second.find("unsigned") != std::string::npos)) {
+                f_cpp_ << "readUI32(" << name << ")";
             } else {
                 f_cpp_ << "readI32(" << name << ")";
             }
             break;
         }
         case t_base_type::TYPE_I64:
-            f_cpp_ << "readI64(" << name << ")";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && (it->second == "std::uint64_t" ||
+                                                   it->second == "uint64_t" ||
+                                                   it->second.find("unsigned") != std::string::npos)) {
+                f_cpp_ << "readUI64(" << name << ")";
+            } else {
+                f_cpp_ << "readI64(" << name << ")";
+            }
             break;
+        }
         case t_base_type::TYPE_DOUBLE:
-            f_cpp_ << "readFloat64(" << name << ")";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
+                f_cpp_ << "readFloat32(" << name << ")";
+            } else {
+                f_cpp_ << "readFloat64(" << name << ")";
+            }
             break;
+        }
         default:
             throw "compiler error: no C++ reader for base type " + t_base_type::t_base_name(tbase) + name;
         }
@@ -2961,7 +3050,7 @@ void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ostri
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(reader);\n";
         f_cpp_ << indent_cpp() << "if (writer.isNull())" << inline_return_cpp("true");
         f_cpp_ << indent_cpp() << "writer.writeListHeader(1);\n";
-        f_cpp_ << indent_cpp() << "writer.writeVocab(yarp::os::createVocab('o', 'k'));\n";
+        f_cpp_ << indent_cpp() << "writer.writeVocab32(yarp::os::createVocab('o', 'k'));\n";
         f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();

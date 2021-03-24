@@ -67,6 +67,7 @@ def run_setup(with_binary):
         extensions = dict(
             ext_modules=[
                 Extension('thrift.protocol.fastbinary',
+                          extra_compile_args=['-std=c++11'],
                           sources=[
                               'src/ext/module.cpp',
                               'src/ext/types.cpp',
@@ -90,9 +91,9 @@ def run_setup(with_binary):
     twisted_deps = ['twisted']
 
     setup(name='thrift',
-          version='0.12.0',
+          version='0.14.1',
           description='Python bindings for the Apache Thrift RPC system',
-          author='Thrift Developers',
+          author='Apache Thrift Developers',
           author_email='dev@thrift.apache.org',
           url='http://thrift.apache.org',
           license='Apache License 2.0',
