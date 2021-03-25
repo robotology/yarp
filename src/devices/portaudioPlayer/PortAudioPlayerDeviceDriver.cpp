@@ -32,7 +32,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-#define SLEEP_TIME 0.005f
+#define SLEEP_TIME 0.010f
 
 #if 0
 #define PA_SAMPLE_TYPE  paFloat32
@@ -131,14 +131,6 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
     return paAbort;
 }
 
-/*
-PlayStreamThread::PlayStreamThread() :
-        something_to_play(false),
-        stream(nullptr),
-        err(paNoError)
-{
-}*/
-
 void PortAudioPlayerDeviceDriver::threadRelease()
 {
 }
@@ -153,36 +145,27 @@ void PortAudioPlayerDeviceDriver::run()
 {
     while(this->isStopping()==false)
     {
-        if(m_something_to_play)
+        //The status of the buffer (i.e. the return value of Pa_IsStreamActive() depends on the returned value
+        //of the callback function bufferIOCallback() which may return paContinue or paComplete.
+        if(m_playback_enabled)
         {
-            m_something_to_play = false;
-            m_err = Pa_StartStream(m_stream);
-            if(m_err != paNoError ) {handleError(); return;}
-
-            while( (m_err = Pa_IsStreamActive(m_stream) ) == 1 )
-            {
-                yarp::os::SystemClock::delaySystem(SLEEP_TIME);
-            }
-            if (m_err == 0)
-            {
-                yCDebug(PORTAUDIOPLAYER) << "The playback stream has been stopped";
-            }
-            if(m_err < 0 )
+            m_err = Pa_IsStreamActive(m_stream);
+            if (m_err < 0)
             {
                 handleError();
-                return;
+                yCError(PORTAUDIOPLAYER) << "Unhandled error. Calling abortSound()";
+                abortSound();
+                continue;
             }
-
-            m_err = Pa_StopStream(m_stream);
-            //err = Pa_AbortStream( stream );
-            if(m_err < 0 )
+            if (m_err == 1)
             {
-                handleError();
-                return;
+                //already playing something
             }
-
+            else if (m_err == 0)
+            {
+                //the playback is stopped
+            }
         }
-
         yarp::os::Time::delay(SLEEP_TIME);
     }
     return;
@@ -333,4 +316,22 @@ void PortAudioPlayerDeviceDriver::waitUntilPlaybackStreamIsComplete()
     {
         yarp::os::Time::delay(SLEEP_TIME);
     }
+}
+
+bool PortAudioPlayerDeviceDriver::startPlayback()
+{
+    AudioPlayerDeviceBase::startPlayback();
+    m_err = Pa_StartStream(m_stream);
+    if (m_err < 0) { handleError(); return false; }
+    yCInfo(PORTAUDIOPLAYER) << "started playback";
+    return true;
+}
+
+bool PortAudioPlayerDeviceDriver::stopPlayback()
+{
+    AudioPlayerDeviceBase::stopPlayback();
+    m_err = Pa_StopStream(m_stream);
+    if (m_err < 0) { handleError(); return false; }
+    yCInfo(PORTAUDIOPLAYER) << "stopped playback";
+    return true;
 }

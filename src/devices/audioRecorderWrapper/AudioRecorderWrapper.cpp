@@ -18,6 +18,7 @@
 
 #include "AudioRecorderWrapper.h"
 #include <yarp/os/LogStream.h>
+#include <yarp/dev/audioRecorderStatus.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -240,11 +241,11 @@ void AudioRecorderWrapper::run()
     m_streamingPort.write(snd);
 
     //status port
-    Bottle b;
-    b.addInt(m_recording);
-    b.addInt64(m_current_buffer_size.getSamples());
-    b.addInt64(m_max_buffer_size.getSamples());
-    m_statusPort.write(b);
+    yarp::dev::audioRecorderStatus status;
+    status.enabled = m_recording;
+    status.current_buffer_size = m_current_buffer_size.getSamples();
+    status.max_buffer_size = m_max_buffer_size.getSamples();
+    m_statusPort.write(status);
 }
 
 bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)

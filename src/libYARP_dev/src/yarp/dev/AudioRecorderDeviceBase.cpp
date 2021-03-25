@@ -26,7 +26,6 @@ YARP_LOG_COMPONENT(AUDIORECORDER_BASE, "yarp.devices.AudioRecorderDeviceBase")
 //the following macros should never be modified and are used only for development purposes
 #define AUTOMATIC_REC_START 0
 #define DEBUG_TIME_SPENT 0
-#define BUFFER_AUTOCLEAR 0
 
 //Default device parameters
 #define DEFAULT_SAMPLE_RATE  (44100)
@@ -44,7 +43,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
     }
     #else
     double debug_time = yarp::os::Time::now();
-    while (m_isRecording == false)
+    while (m_recording_enabled == false)
     {
         if (yarp::os::Time::now() - debug_time > 5.0)
         {
@@ -80,7 +79,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
         buff_size = m_inputBuffer->size().getSamples();
         if (buff_size >= max_number_of_samples) { break; }
         if (buff_size >= min_number_of_samples && yarp::os::Time::now() - start_time > max_samples_timeout_s) { break; }
-        if (m_isRecording == false) { break; }
+        if (m_recording_enabled == false) { break; }
 
         if (yarp::os::Time::now() - debug_time > 1.0)
         {
@@ -160,22 +159,23 @@ bool AudioRecorderDeviceBase::resetRecordingAudioBuffer()
 bool AudioRecorderDeviceBase::startRecording()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_isRecording = true;
-    #if BUFFER_AUTOCLEAR
-    this->m_recDataBuffer->clear();
-    #endif
+    m_recording_enabled = true;
+    if (m_enable_buffer_autoclear)
+    {
+        this->m_inputBuffer->clear();
+    }
     yCInfo(AUDIORECORDER_BASE) << "Recording started";
     return true;
 }
 
-
 bool AudioRecorderDeviceBase::stopRecording()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_isRecording = false;
-    #if BUFFER_AUTOCLEAR
-    this->m_recDataBuffer->clear();
-    #endif
+    m_recording_enabled = false;
+    if (m_enable_buffer_autoclear)
+    {
+        this->m_inputBuffer->clear();
+    }
     yCInfo(AUDIORECORDER_BASE) << "Recording stopped";
     return true;
 }

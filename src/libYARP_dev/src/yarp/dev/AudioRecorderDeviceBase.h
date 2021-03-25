@@ -46,7 +46,8 @@ class AudioDeviceDriverSettings
 class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSound
 {
 protected:
-    bool m_isRecording = false;
+    bool m_enable_buffer_autoclear = false;
+    bool m_recording_enabled = false;
     std::mutex  m_mutex;
     yarp::dev::CircularAudioBuffer_16t* m_inputBuffer = nullptr;
     double m_sw_gain = 1.0;

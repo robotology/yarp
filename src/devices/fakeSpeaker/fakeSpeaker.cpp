@@ -86,7 +86,7 @@ bool fakeSpeaker::threadInit()
 void fakeSpeaker::run()
 {
     // when not playing, do nothing
-    if (!m_isPlaying)
+    if (!m_playback_enabled)
     {
         return;
     }
@@ -104,7 +104,7 @@ void fakeSpeaker::run()
     yCDebug(FAKESPEAKER) << "Sound Playback complete";
     yCDebug(FAKESPEAKER) << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";
 
-    m_isPlaying = false;
+    m_playback_enabled = false;
 #ifdef ADVANCED_DEBUG
     yCDebug(FAKESPEAKER) << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
 #endif

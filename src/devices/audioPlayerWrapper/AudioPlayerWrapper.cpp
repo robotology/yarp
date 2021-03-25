@@ -23,6 +23,7 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
+#include <yarp/dev/audioPlayerStatus.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include <cmath>
@@ -339,11 +340,11 @@ void AudioPlayerWrapper::run()
     }
 
     //status port
-    Bottle b;
-    b.addInt(m_playing);
-    b.addInt64(m_current_buffer_size.getSamples());
-    b.addInt64(m_max_buffer_size.getSamples());
-    m_statusPort.write(b);
+    yarp::dev::audioPlayerStatus status;
+    status.enabled = m_playing;
+    status.current_buffer_size = m_current_buffer_size.getSamples();
+    status.max_buffer_size = m_max_buffer_size.getSamples();
+    m_statusPort.write(status);
 }
 
 bool AudioPlayerWrapper::close()

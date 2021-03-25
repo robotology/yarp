@@ -267,7 +267,7 @@ void PortAudioRecorderDeviceDriver::threadRelease()
 
 bool PortAudioRecorderDeviceDriver::threadInit()
 {
-    m_isRecording=false;
+    m_recording_enabled=false;
     return true;
 }
 
@@ -275,7 +275,7 @@ void PortAudioRecorderDeviceDriver::run()
 {
     while(this->isStopping()==false)
     {
-        if (m_isRecording)
+        if (m_recording_enabled)
         {
             while( ( m_err = Pa_IsStreamActive(m_stream) ) == 1 )
             {
@@ -286,12 +286,13 @@ void PortAudioRecorderDeviceDriver::run()
             {
                 Pa_StopStream(m_stream);
                 yCDebug(PORTAUDIORECORDER) << "The recording stream has been stopped";
-                m_isRecording = false;
+                m_recording_enabled = false;
             }
             if(m_err < 0 )
             {
                 handleError();
-                return;
+                yCError(PORTAUDIORECORDER) << "Unhandled error. What should I do?";
+                continue;
             }
         }
 

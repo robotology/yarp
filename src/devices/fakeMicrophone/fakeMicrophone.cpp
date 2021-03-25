@@ -147,7 +147,7 @@ bool fakeMicrophone::threadInit()
 void fakeMicrophone::run()
 {
     // when not recording, do nothing
-    if (!m_isRecording)
+    if (!m_recording_enabled)
     {
         return;
     }

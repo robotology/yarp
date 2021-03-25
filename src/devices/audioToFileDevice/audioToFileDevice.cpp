@@ -123,7 +123,7 @@ bool audioToFileDevice::startPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "start";
-    m_isPlaying = true;
+    m_playback_enabled = true;
     if (m_save_mode != save_mode_t::save_append_data)
     {
         m_sounds.clear();
@@ -135,7 +135,7 @@ bool audioToFileDevice::stopPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "stop";
-    m_isPlaying = false;
+    m_playback_enabled = false;
     if (m_save_mode != save_mode_t::save_append_data)
     {
         save_to_file();
@@ -146,7 +146,7 @@ bool audioToFileDevice::stopPlayback()
 bool audioToFileDevice::renderSound(const yarp::sig::Sound& sound)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (m_isPlaying)
+    if (m_playback_enabled)
     {
         m_sounds.push_back(sound);
     }

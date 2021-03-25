@@ -74,6 +74,8 @@ public: //AudioRecorderDeviceBase(IAudioGrabberSound)
     void waitUntilPlaybackStreamIsComplete() override;
     bool setHWGain(double gain) override;
     bool interruptDeviceAndClose() override;
+    bool startPlayback() override;
+    bool stopPlayback() override;
 
 public: //Thread
     void threadRelease() override;

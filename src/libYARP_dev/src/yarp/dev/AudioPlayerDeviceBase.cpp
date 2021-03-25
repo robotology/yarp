@@ -19,18 +19,12 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace std;
 
-#ifndef DEG2RAD
-#define DEG2RAD M_PI/180.0
-#endif
-
 constexpr double c_sleep_time=0.005;
 
 YARP_LOG_COMPONENT(AUDIOPLAYER_BASE, "yarp.devices.AudioPlayerDeviceBase")
 
 //the following macros should never be modified and are used only for development purposes
-#define AUTOMATIC_REC_START 0
 #define DEBUG_TIME_SPENT 0
-#define BUFFER_AUTOCLEAR 0
 
 //Default device parameters
 #define DEFAULT_SAMPLE_RATE  (44100)
@@ -67,8 +61,25 @@ bool AudioPlayerDeviceBase::setSWGain(double gain)
     return false;
 }
 
-bool AudioPlayerDeviceBase::startPlayback() { return false; }
-bool AudioPlayerDeviceBase::stopPlayback() { return false; }
+bool AudioPlayerDeviceBase::startPlayback()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_playback_enabled = true;
+    if (m_enable_buffer_autoclear)
+        {this->m_outputBuffer->clear();}
+    yCInfo(AUDIOPLAYER_BASE) << "Playback started";
+    return true;
+}
+
+bool AudioPlayerDeviceBase::stopPlayback()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_playback_enabled = false;
+    if (m_enable_buffer_autoclear)
+        {this->m_outputBuffer->clear();}
+    yCInfo(AUDIOPLAYER_BASE) << "Playback stopped";
+    return true;
+}
 
 bool AudioPlayerDeviceBase::resetPlaybackAudioBuffer()
 {
@@ -87,7 +98,6 @@ bool AudioPlayerDeviceBase::appendSound(const yarp::sig::Sound& sound)
         for (size_t j = 0; j < num_channels; j++)
             m_outputBuffer->write(sound.get(i, j));
 
-    m_something_to_play = true;
     return true;
 }
 
@@ -103,7 +113,6 @@ bool AudioPlayerDeviceBase::immediateSound(const yarp::sig::Sound& sound)
         for (size_t j = 0; j < num_channels; j++)
             m_outputBuffer->write(sound.get(i, j));
 
-    m_something_to_play = true;
     return true;
 }
 
