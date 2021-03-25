@@ -75,7 +75,7 @@ bool UltraPythonCameraHelper::openPipeline() {
     memset(&info, 0, sizeof(info));
     info.id = id | MEDIA_ENT_ID_FLAG_NEXT;
 
-    int ret = interfaceCApi_->ioctl_c(fd, MEDIA_IOC_ENUM_ENTITIES, &info);
+    int ret = interfaceCApi_->ioctl_media_c(fd, MEDIA_IOC_ENUM_ENTITIES, info);
     if (ret < 0) {
       ret = errno != EINVAL ? -errno : 0;
       Log(*this, Severity::warning) << "WARNING-cannot open device not media";
@@ -787,7 +787,7 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
   memset(&queryctrl, 0, sizeof(queryctrl));
   queryctrl.id = v4lCtrl;
 
-  if (-1 == ioctl(fd, VIDIOC_QUERYCTRL, &queryctrl)) {
+  if (-1 == interfaceCApi_->ioctl_query_c(fd, VIDIOC_QUERYCTRL, queryctrl)) {
     if (errno != EINVAL) {
       Log(*this, Severity::error)
           << "Cannot setControl1 value:" << value << " fd:" << fd;
@@ -819,7 +819,7 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
     control.value = (int32_t)value;
 
   // Do set
-  if (-1 == ioctl(fd, VIDIOC_S_CTRL, &control)) {
+  if (-1 == interfaceCApi_->ioctl_control_c(fd, VIDIOC_S_CTRL, control)) {
     Log(*this, Severity::error) << "Cannot setControl3";
     return false;
   }
@@ -882,7 +882,7 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
   control.id = v4lCtrl;
   queryctrl.id = v4lCtrl;
 
-  if (-1 == ioctl(fd, VIDIOC_QUERYCTRL, &queryctrl)) {
+  if (-1 == interfaceCApi_->ioctl_query_c(fd, VIDIOC_QUERYCTRL, queryctrl)) {
     if (errno != EINVAL) {
       Log(*this, Severity::error) << "getControl VIDIOC_QUERYCTRL";
     }
@@ -892,7 +892,7 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl, int fd) {
   if (queryctrl.flags & V4L2_CTRL_FLAG_DISABLED) {
     Log(*this, Severity::error) << "Control is disabled";
   } else {
-    if (-1 == ioctl(fd, VIDIOC_G_CTRL, &control)) {
+    if (-1 == interfaceCApi_->ioctl_control_c(fd, VIDIOC_G_CTRL, control)) {
       Log(*this, Severity::error) << "getControl VIDIOC_G_CTRL";
       return -1.0;
     }
@@ -950,8 +950,8 @@ bool UltraPythonCameraHelper::checkControl(uint32_t v4lCtrl) {
   control.id = v4lCtrl;
   queryctrl.id = v4lCtrl;
 
-  if (-1 == ioctl(pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
-                  VIDIOC_QUERYCTRL, &queryctrl)) {
+  if (-1 == interfaceCApi_->ioctl_query_c(pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
+                  VIDIOC_QUERYCTRL, queryctrl)) {
     if (errno != EINVAL) {
       Log(*this, Severity::error) << "checkControl VIDIOC_QUERYCTRL";
     }
@@ -966,7 +966,6 @@ bool UltraPythonCameraHelper::setDefaultControl() {
   setControl(V4L2_DEADTIME_ULTRA_PYTHON, 10, true);   // trg_h
   setControl(V4L2_CID_BRIGHTNESS, 200, true);
   setControl(V4L2_CID_GAIN, 1, true);
-  setControl(V4L2_ANALOGGAIN_ULTRA_PYTHON, 2, true);
   return true;
 }
 

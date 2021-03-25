@@ -31,8 +31,16 @@ public:
     return r;
   }
 
-  virtual int ioctl_c(int fd, int value, struct media_entity_desc *info) {
-    return ioctl(fd, value, info);
+  virtual int ioctl_media_c(int fd, int value, struct media_entity_desc &info) {
+    return ioctl(fd, value, &info);
+  }
+
+  virtual int ioctl_control_c(int fd, int value, struct v4l2_control &info) {
+    return ioctl(fd, value, &info);
+  }
+
+  virtual int ioctl_query_c(int fd, int value, struct v4l2_queryctrl &info) {
+    return ioctl(fd, value, &info);
   }
 
   virtual dev_t makedev_c(int major, int minor) {

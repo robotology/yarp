@@ -1,6 +1,8 @@
 //# @author Luca Tricerri <luca.tricerri@iit.it>
 #include "../linux/InterfaceForCApi.h"
 #include "../linux/UltraPythonCameraHelper.h"
+#include "CApiMock.h"
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -10,33 +12,6 @@
 using namespace std::chrono_literals;
 using namespace testing;
 
-// Dummy
-struct udev {
-  int dummy;
-};
-
-struct udev_device {
-  int dummy;
-};
-
-// Mock
-class InterfaceFoCApiMock : public InterfaceForCApi {
-public:
-  MOCK_METHOD(int, open_c, (const char *, int), (override));
-  MOCK_METHOD(int, open_c, (const char *, int, mode_t), (override));
-  MOCK_METHOD(struct udev *, udev_new_c, (), (override));
-  MOCK_METHOD(int, ioctl_c, (int, int, struct media_entity_desc *), (override));
-  MOCK_METHOD(int, xioctl, (int, int, void *), (override));
-  MOCK_METHOD(dev_t, makedev_c, (int, int), (override));
-  MOCK_METHOD(struct udev_device *, udev_device_new_from_devnum_c,
-              (struct udev *, char, dev_t), (override));
-  MOCK_METHOD(const char *, udev_device_get_devnode_c, (struct udev_device *),
-              (override));
-  MOCK_METHOD(struct udev_device *, udev_device_unref_c, (struct udev_device *),
-              (override));
-  MOCK_METHOD(void *, mmap_c, (void *, size_t, int, int, int, __off_t),
-              (override));
-};
 
 TEST(UltraPython, openAll_ok_002) {
   // given
@@ -59,17 +34,18 @@ TEST(UltraPython, openAll_ok_002) {
   strcpy(info6.name, "imgfusion");
   struct media_entity_desc info7;
   strcpy(info7.name, "PYTHON1300_RXIF");
-  EXPECT_CALL(*interface, ioctl_c(_, _, _))
-      .WillOnce(DoAll(SetArgPointee<2>(info1), Return(1)))
-      .WillOnce(DoAll(SetArgPointee<2>(info2), Return(1)))
-      .WillOnce(DoAll(SetArgPointee<2>(info2), Return(1)))
-      .WillOnce(DoAll(SetArgPointee<2>(info3), Return(1)))
-      .WillOnce(DoAll(SetArgPointee<2>(info4), Return(1)))
-      .WillOnce(DoAll(SetArgPointee<2>(info5), Return(1)))
-      .WillOnce(DoAll(SetArgPointee<2>(info6), Return(1)))
-      .WillOnce(DoAll(SetArgPointee<2>(info7), Return(1)))
-      .WillOnce(DoAll(SetArgPointee<2>(info7), Return(1)))
+  EXPECT_CALL(*interface, ioctl_media_c(_, _,_ ))
+      .WillOnce(DoAll(SetArgReferee<2>(info1), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(info2), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(info2), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(info3), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(info4), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(info5), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(info6), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(info7), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(info7), Return(1)))
       .WillOnce(Return(-1));
+      
   EXPECT_CALL(*interface, xioctl(_, _, _)).WillRepeatedly(Return(1));
   EXPECT_CALL(*interface, makedev_c(_, _))
       .WillOnce(Return(1))
@@ -135,9 +111,9 @@ TEST(UltraPython, openAll_ko_001) {
   strcpy(info1.name, "vcap_python output 0");
   struct media_entity_desc info2;
   strcpy(info2.name, "PYTHON1300");
-  EXPECT_CALL(*interface, ioctl_c(_, _, _))
-      .WillOnce(DoAll(SetArgPointee<2>(info1), Return(1)))
-      .WillOnce(DoAll(SetArgPointee<2>(info2), Return(1)))
+  EXPECT_CALL(*interface, ioctl_media_c(_, _,_))
+      .WillOnce(DoAll(SetArgReferee<2>(info1), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(info2), Return(1)))
       .WillOnce(Return(-1));
   EXPECT_CALL(*interface, xioctl(_, _, _)).WillRepeatedly(Return(1));
   EXPECT_CALL(*interface, makedev_c(_, _))
@@ -177,5 +153,7 @@ TEST(UltraPython, log_ok_001) {
     });
 
     // when
+
+    delete interface;
   }
 }
