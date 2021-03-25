@@ -121,7 +121,7 @@ private:
   void fpsCalculus();
   void log(const std::string &toBeLogged, Severity severity = Severity::debug);
   bool checkIndex();
-  bool setGain(double value);
+  bool setGain(double value,bool absolute);
 
   // Property
   bool subsamplingEnabledProperty_{true};
