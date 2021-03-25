@@ -180,6 +180,12 @@ bool AudioRecorderDeviceBase::stopRecording()
     return true;
 }
 
+bool AudioRecorderDeviceBase::isRecording(bool& recording_enabled)
+{
+    recording_enabled = m_recording_enabled;
+    return true;
+}
+
 AudioRecorderDeviceBase::~AudioRecorderDeviceBase()
 {
     delete m_inputBuffer;

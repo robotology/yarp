@@ -120,6 +120,8 @@ public:
     bool stopRecording() override;
     bool startPlayback() override;
     bool stopPlayback() override;
+    bool isPlaying(bool& playback_enabled) override;
+    bool isRecording(bool& recording_enabled) override;
 
     bool abortSound();
     bool immediateSound(const yarp::sig::Sound& sound);

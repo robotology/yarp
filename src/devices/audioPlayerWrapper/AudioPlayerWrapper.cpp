@@ -119,13 +119,13 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
     if (command.get(0).asString() == "start")
     {
         m_irender->startPlayback();
-        m_playing = true;
+        m_irender->isPlaying(m_isPlaying);
         reply.addVocab(VOCAB_OK);
     }
     else if (command.get(0).asString() == "stop")
     {
         m_irender->stopPlayback();
-        m_playing = false;
+        m_irender->isPlaying(m_isPlaying);
         reply.addVocab(VOCAB_OK);
     }
     else if (command.get(0).asString() == "sw_audio_gain")
@@ -251,7 +251,7 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
     if (config.check("start"))
     {
         m_irender->startPlayback();
-        m_playing=true;
+        m_irender->isPlaying(m_isPlaying);
     }
 
     if (m_irender == nullptr)
@@ -339,9 +339,11 @@ void AudioPlayerWrapper::run()
         }
     }
 
+    m_irender->isPlaying(m_isPlaying);
+
     //status port
     yarp::dev::audioPlayerStatus status;
-    status.enabled = m_playing;
+    status.enabled = m_isPlaying;
     status.current_buffer_size = m_current_buffer_size.getSamples();
     status.max_buffer_size = m_max_buffer_size.getSamples();
     m_statusPort.write(status);

@@ -118,7 +118,7 @@ private:
     double m_buffer_delay;
     bool   m_isDeviceOwned = false;
     bool   m_debug_enabled = false;
-    bool   m_playing = false;
+    bool   m_isPlaying = false;
 
     bool initialize_YARP(yarp::os::Searchable &config);
     bool read(yarp::os::ConnectionReader& connection) override;

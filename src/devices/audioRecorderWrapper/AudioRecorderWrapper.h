@@ -71,7 +71,7 @@ private:
     yarp::dev::AudioBufferSize     m_max_buffer_size;
     double                         m_getSound_timeout;
     bool                           m_isDeviceOwned =false;
-    bool                           m_recording=false;
+    bool                           m_isRecording=false;
 
 public:
     /**

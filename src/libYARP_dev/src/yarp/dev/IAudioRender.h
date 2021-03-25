@@ -47,6 +47,13 @@ public:
      */
     virtual bool stopPlayback() = 0;
 
+    /**
+     * Check if the playback has been enabled (e.g. via startPlayback()/stopPlayback())
+     * @param playback_enabled the status of the device
+     * @return true/false upon success/failure
+     */
+    virtual bool isPlaying(bool& playback_enabled) = 0;
+
     virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) = 0;
 
     virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) = 0;

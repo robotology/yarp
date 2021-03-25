@@ -140,7 +140,7 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     if (config.check("start")) {
         yarp::os::SystemClock::delaySystem(1);
         m_mic->startRecording();
-        m_recording = true;
+        m_mic->isRecording(m_isRecording);
     }
 
     return true;
@@ -240,9 +240,11 @@ void AudioRecorderWrapper::run()
     //send data
     m_streamingPort.write(snd);
 
+    m_mic->isRecording(m_isRecording);
+
     //status port
     yarp::dev::audioRecorderStatus status;
-    status.enabled = m_recording;
+    status.enabled = m_isRecording;
     status.current_buffer_size = m_current_buffer_size.getSamples();
     status.max_buffer_size = m_max_buffer_size.getSamples();
     m_statusPort.write(status);
@@ -259,13 +261,13 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
     if (command.get(0).asString()=="start")
     {
         m_mic->startRecording();
-        m_recording = true;
+        m_mic->isRecording(m_isRecording);
         reply.addVocab(VOCAB_OK);
     }
     else if (command.get(0).asString() == "stop")
     {
         m_mic->stopRecording();
-        m_recording = true;
+        m_mic->isRecording(m_isRecording);
         reply.addVocab(VOCAB_OK);
     }
     else if (command.get(0).asString() == "sw_audio_gain")

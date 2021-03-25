@@ -58,6 +58,7 @@ public:
     virtual bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;
     virtual bool startRecording() override;
     virtual bool stopRecording() override;
+    virtual bool isRecording(bool& recording_enabled) override;
     virtual bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
     virtual bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
     virtual bool resetRecordingAudioBuffer() override;

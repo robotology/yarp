@@ -58,6 +58,13 @@ public:
      */
     virtual bool stopRecording() = 0;
 
+    /**
+     * Check if the recording has been enabled (e.g. via startRecording()/stopRecording())
+     * @param recording_enabled the status of the device
+     * @return true/false upon success/failure
+     */
+    virtual bool isRecording(bool& recording_enabled) = 0;
+
     virtual bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) = 0;
 
     virtual bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) = 0;

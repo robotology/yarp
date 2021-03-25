@@ -62,6 +62,7 @@ public:
     virtual bool renderSound(const yarp::sig::Sound& sound) override;
     virtual bool startPlayback() override;
     virtual bool stopPlayback() override;
+    virtual bool isPlaying(bool& playback_enabled) override;
     virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
     virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
     virtual bool resetPlaybackAudioBuffer() override;

@@ -81,6 +81,12 @@ bool AudioPlayerDeviceBase::stopPlayback()
     return true;
 }
 
+bool AudioPlayerDeviceBase::isPlaying(bool& playback_enabled)
+{
+    playback_enabled = m_playback_enabled;
+    return true;
+}
+
 bool AudioPlayerDeviceBase::resetPlaybackAudioBuffer()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
