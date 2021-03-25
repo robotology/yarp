@@ -33,6 +33,11 @@ YARP_LOG_COMPONENT(AUDIOPLAYER_BASE, "yarp.devices.AudioPlayerDeviceBase")
 
 bool AudioPlayerDeviceBase::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
 {
+    if (m_outputBuffer == nullptr)
+    {
+        yCError(AUDIOPLAYER_BASE) << "getPlaybackAudioBufferCurrentSize() called, but no audio buffer is allocated yet";
+        return false;
+    }
     //no lock guard is needed here
     size = this->m_outputBuffer->size();
     return true;
@@ -40,6 +45,11 @@ bool AudioPlayerDeviceBase::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBu
 
 bool AudioPlayerDeviceBase::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
 {
+    if (m_outputBuffer == nullptr)
+    {
+        yCError(AUDIOPLAYER_BASE) << "getPlaybackAudioBufferMaxSize() called, but no audio buffer is allocated yet";
+        return false;
+    }
     //no lock guard is needed here
     size = this->m_outputBuffer->getMaxSize();
     return true;
@@ -65,7 +75,7 @@ bool AudioPlayerDeviceBase::startPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_playback_enabled = true;
-    if (m_enable_buffer_autoclear)
+    if (m_enable_buffer_autoclear && this->m_outputBuffer)
         {this->m_outputBuffer->clear();}
     yCInfo(AUDIOPLAYER_BASE) << "Playback started";
     return true;
@@ -75,7 +85,7 @@ bool AudioPlayerDeviceBase::stopPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_playback_enabled = false;
-    if (m_enable_buffer_autoclear)
+    if (m_enable_buffer_autoclear && this->m_outputBuffer)
         {this->m_outputBuffer->clear();}
     yCInfo(AUDIOPLAYER_BASE) << "Playback stopped";
     return true;
@@ -89,6 +99,11 @@ bool AudioPlayerDeviceBase::isPlaying(bool& playback_enabled)
 
 bool AudioPlayerDeviceBase::resetPlaybackAudioBuffer()
 {
+    if (m_outputBuffer == nullptr)
+    {
+        yCError(AUDIOPLAYER_BASE) << "resetPlaybackAudioBuffer() called, but no audio buffer is allocated yet";
+        return false;
+    }
     std::lock_guard<std::mutex> lock(m_mutex);
     this->m_outputBuffer->clear();
     return true;

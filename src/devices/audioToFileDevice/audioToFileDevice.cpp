@@ -36,10 +36,8 @@ namespace {
 YARP_LOG_COMPONENT(AUDIOTOFILE, "yarp.device.audioToFileDevice")
 }
 
-typedef unsigned short int audio_sample_16t;
-
 audioToFileDevice::audioToFileDevice() :
-        m_audio_filename("audio_out")
+        m_audio_filename("audio_out.wav")
 {
 }
 
@@ -58,6 +56,9 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
         yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start --audio_out.wav --save_mode overwrite_file");
         return false;
     }
+
+    bool b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "audioToFileDevice");
+    if (!b) { return false; }
 
     if (config.check("file_name"))
     {
@@ -98,18 +99,24 @@ void audioToFileDevice::save_to_file()
     }
 
     //remove the extension .wav from the filename
-    size_t lastindex = m_audio_filename.find(".wav");
-    std::string rawname = m_audio_filename.substr(0, lastindex);
+    size_t lastindex = m_audio_filename.find_last_of(".");
+    std::string trunc_filename  = m_audio_filename.substr(0, lastindex);
+    std::string trunc_extension =".wav";
+    if (lastindex!= std::string::npos)
+    {
+        trunc_extension = m_audio_filename.substr(lastindex, std::string::npos);
+    }
 
     if (m_save_mode == save_mode_t::save_rename_file)
     {
-        rawname = rawname +std::to_string(m_filename_counter++);
+        trunc_filename = trunc_filename +std::to_string(m_filename_counter++);
     }
-    rawname = rawname +".wav";
-    bool ok = yarp::sig::file::write(m_audioFile, rawname.c_str());
+
+    std::string complete_filename = trunc_filename + trunc_extension;
+    bool ok = yarp::sig::file::write(m_audioFile, complete_filename.c_str());
     if (ok)
     {
-        yCDebug(AUDIOTOFILE) << "Wrote audio to:" << rawname;
+        yCDebug(AUDIOTOFILE) << "Wrote audio to:" << complete_filename;
     }
 }
 

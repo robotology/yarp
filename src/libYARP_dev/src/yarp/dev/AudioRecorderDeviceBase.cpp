@@ -124,6 +124,11 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
 
 bool AudioRecorderDeviceBase::getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
 {
+    if (m_inputBuffer == nullptr)
+    {
+        yCError(AUDIORECORDER_BASE) << "getRecordingAudioBufferMaxSize() called, but no audio buffer is allocated yet";
+        return false;
+    }
     //no lock guard is needed here
     size = this->m_inputBuffer->getMaxSize();
     return true;
@@ -132,6 +137,11 @@ bool AudioRecorderDeviceBase::getRecordingAudioBufferMaxSize(yarp::dev::AudioBuf
 
 bool AudioRecorderDeviceBase::getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
 {
+    if (m_inputBuffer == nullptr)
+    {
+        yCError(AUDIORECORDER_BASE) << "getRecordingAudioBufferCurrentSize() called, but no audio buffer is allocated yet";
+        return false;
+    }
     //no lock guard is needed here
     size = this->m_inputBuffer->size();
     return true;
@@ -150,6 +160,11 @@ bool AudioRecorderDeviceBase::setSWGain(double gain)
 
 bool AudioRecorderDeviceBase::resetRecordingAudioBuffer()
 {
+    if (m_inputBuffer == nullptr)
+    {
+        yCError(AUDIORECORDER_BASE) << "resetRecordingAudioBuffer() called, but no audio buffer is allocated yet";
+        return false;
+    }
     std::lock_guard<std::mutex> lock(m_mutex);
     m_inputBuffer->clear();
     yCDebug(AUDIORECORDER_BASE) << "resetRecordingAudioBuffer";
@@ -160,7 +175,7 @@ bool AudioRecorderDeviceBase::startRecording()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_recording_enabled = true;
-    if (m_enable_buffer_autoclear)
+    if (m_enable_buffer_autoclear && this->m_inputBuffer)
     {
         this->m_inputBuffer->clear();
     }
@@ -172,7 +187,7 @@ bool AudioRecorderDeviceBase::stopRecording()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_recording_enabled = false;
-    if (m_enable_buffer_autoclear)
+    if (m_enable_buffer_autoclear && this->m_inputBuffer)
     {
         this->m_inputBuffer->clear();
     }
