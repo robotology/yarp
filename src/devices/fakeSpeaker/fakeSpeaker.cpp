@@ -90,6 +90,11 @@ void fakeSpeaker::run()
     {
         return;
     }
+    // if the buffer is empty, do nothing
+    if (m_outputBuffer->size().getSamples() == 0)
+    {
+        return;
+    }
 
     //playing implies emptying all the buffer
     size_t siz_sam = m_outputBuffer->size().getSamples();
@@ -100,14 +105,16 @@ void fakeSpeaker::run()
     {
         audio_sample_16t s = m_outputBuffer->read();
         s= audio_sample_16t(double(s)*m_hw_gain);
+        // if a stop is received during the playback, then exits...
+        if (!m_playback_enabled) {return;}
     }
-    yCDebug(FAKESPEAKER) << "Sound Playback complete";
-    yCDebug(FAKESPEAKER) << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";
 
-    m_playback_enabled = false;
-#ifdef ADVANCED_DEBUG
-    yCDebug(FAKESPEAKER) << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
-#endif
+    //the playback is complete...
+    if (m_outputBuffer->size().getSamples()==0)
+    {
+        yCDebug(FAKESPEAKER) << "Sound Playback complete";
+        yCDebug(FAKESPEAKER) << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";
+    }
 }
 
 bool fakeSpeaker::setHWGain(double gain)
@@ -131,10 +138,4 @@ bool fakeSpeaker::interruptDeviceAndClose()
 {
     yCError(FAKESPEAKER, "interruptDeviceAndClose() Not yet implemented");
     return true;
-}
-
-void fakeSpeaker::waitUntilPlaybackStreamIsComplete()
-{
-    yCError(FAKESPEAKER, "waitUntilPlaybackStreamIsComplete() Not yet implemented");
-    return;
 }

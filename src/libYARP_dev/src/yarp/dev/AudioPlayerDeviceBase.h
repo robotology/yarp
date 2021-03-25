@@ -73,7 +73,7 @@ public:
 protected:
     virtual bool configureDeviceAndStart() = 0;
     virtual bool interruptDeviceAndClose() = 0;
-    virtual void waitUntilPlaybackStreamIsComplete() = 0;
+    virtual void waitUntilPlaybackStreamIsComplete();
     virtual bool immediateSound(const yarp::sig::Sound& sound);
     virtual bool appendSound(const yarp::sig::Sound& sound);
 

@@ -217,3 +217,17 @@ bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& con
 
     return true;
 }
+
+void AudioPlayerDeviceBase::waitUntilPlaybackStreamIsComplete()
+{
+    if (m_outputBuffer == nullptr)
+    {
+        yCError(AUDIOPLAYER_BASE) << "waitUntilPlaybackStreamIsComplete() called, but no audio buffer is allocated yet";
+        return;
+    }
+
+    while (m_outputBuffer->size().getSamples() != 0)
+    {
+        yarp::os::Time::delay(0.20);
+    }
+}
