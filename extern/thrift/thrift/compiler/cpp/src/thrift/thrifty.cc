@@ -1537,7 +1537,7 @@ yyreduce:
 #line 251 "thrift/thrifty.yy" /* yacc.c:1646  */
     {
       pdebug("Program -> Headers DefinitionList");
-      if((g_program_doctext_candidate != NULL) && (g_program_doctext_status != ALREADY_PROCESSED))
+      if((g_program_doctext_candidate != nullptr) && (g_program_doctext_status != ALREADY_PROCESSED))
       {
         g_program->set_doc(g_program_doctext_candidate);
         g_program_doctext_status = ALREADY_PROCESSED;
@@ -1552,9 +1552,9 @@ yyreduce:
     {
       if (g_parse_mode == PROGRAM) {
         (yyval.dtext) = g_doctext;
-        g_doctext = NULL;
+        g_doctext = nullptr;
       } else {
-        (yyval.dtext) = NULL;
+        (yyval.dtext) = nullptr;
       }
     }
 #line 1561 "thrift/thrifty.cc" /* yacc.c:1646  */
@@ -1602,7 +1602,7 @@ yyreduce:
       if (g_parse_mode == PROGRAM) {
         g_program->set_namespace((yyvsp[-2].id), (yyvsp[-1].id));
       }
-      if ((yyvsp[0].ttype) != NULL) {
+      if ((yyvsp[0].ttype) != nullptr) {
         g_program->set_namespace_annotations((yyvsp[-2].id), (yyvsp[0].ttype)->annotations_);
         delete (yyvsp[0].ttype);
       }
@@ -1653,7 +1653,7 @@ yyreduce:
 #line 340 "thrift/thrifty.yy" /* yacc.c:1646  */
     {
       pdebug("DefinitionList -> DefinitionList Definition");
-      if ((yyvsp[-1].dtext) != NULL && (yyvsp[0].tdoc) != NULL) {
+      if ((yyvsp[-1].dtext) != nullptr && (yyvsp[0].tdoc) != nullptr) {
         (yyvsp[0].tdoc)->set_doc((yyvsp[-1].dtext));
       }
     }
@@ -1686,7 +1686,7 @@ yyreduce:
       pdebug("Definition -> TypeDefinition");
       if (g_parse_mode == PROGRAM) {
         g_scope->add_type((yyvsp[0].ttype)->get_name(), (yyvsp[0].ttype));
-        if (g_parent_scope != NULL) {
+        if (g_parent_scope != nullptr) {
           g_parent_scope->add_type(g_parent_prefix + (yyvsp[0].ttype)->get_name(), (yyvsp[0].ttype));
         }
         if (! g_program->is_unique_typename((yyvsp[0].ttype))) {
@@ -1705,7 +1705,7 @@ yyreduce:
       pdebug("Definition -> Service");
       if (g_parse_mode == PROGRAM) {
         g_scope->add_service((yyvsp[0].tservice)->get_name(), (yyvsp[0].tservice));
-        if (g_parent_scope != NULL) {
+        if (g_parent_scope != nullptr) {
           g_parent_scope->add_service(g_parent_prefix + (yyvsp[0].tservice)->get_name(), (yyvsp[0].tservice));
         }
         g_program->add_service((yyvsp[0].tservice));
@@ -1799,7 +1799,7 @@ yyreduce:
       validate_simple_identifier( (yyvsp[-2].id));
       t_typedef *td = new t_typedef(g_program, (yyvsp[-3].ttype), (yyvsp[-2].id));
       (yyval.ttypedef) = td;
-      if ((yyvsp[-1].ttype) != NULL) {
+      if ((yyvsp[-1].ttype) != nullptr) {
         (yyval.ttypedef)->annotations_ = (yyvsp[-1].ttype)->annotations_;
         delete (yyvsp[-1].ttype);
       }
@@ -1814,7 +1814,7 @@ yyreduce:
       (yyval.tenum) = (yyvsp[-2].tenum);
       validate_simple_identifier( (yyvsp[-4].id));
       (yyval.tenum)->set_name((yyvsp[-4].id));
-      if ((yyvsp[0].ttype) != NULL) {
+      if ((yyvsp[0].ttype) != nullptr) {
         (yyval.tenum)->annotations_ = (yyvsp[0].ttype)->annotations_;
         delete (yyvsp[0].ttype);
       }
@@ -1828,7 +1828,7 @@ yyreduce:
           t_const_value* const_val = new t_const_value((*c_iter)->get_value());
           const_val->set_enum((yyval.tenum));
           g_scope->add_constant(const_name, new t_const(g_type_i32, (*c_iter)->get_name(), const_val));
-          if (g_parent_scope != NULL) {
+          if (g_parent_scope != nullptr) {
             g_parent_scope->add_constant(g_parent_prefix + const_name, new t_const(g_type_i32, (*c_iter)->get_name(), const_val));
           }
         }
@@ -1862,10 +1862,10 @@ yyreduce:
     {
       pdebug("EnumDef -> EnumValue");
       (yyval.tenumv) = (yyvsp[-2].tenumv);
-      if ((yyvsp[-3].dtext) != NULL) {
+      if ((yyvsp[-3].dtext) != nullptr) {
         (yyval.tenumv)->set_doc((yyvsp[-3].dtext));
       }
-	  if ((yyvsp[-1].ttype) != NULL) {
+	  if ((yyvsp[-1].ttype) != nullptr) {
         (yyval.tenumv)->annotations_ = (yyvsp[-1].ttype)->annotations_;
         delete (yyvsp[-1].ttype);
       }
@@ -1911,7 +1911,7 @@ yyreduce:
       pdebug("Senum -> tok_senum tok_identifier { SenumDefList }");
       validate_simple_identifier( (yyvsp[-4].id));
       (yyval.ttypedef) = new t_typedef(g_program, (yyvsp[-2].tbase), (yyvsp[-4].id));
-      if ((yyvsp[0].ttype) != NULL) {
+      if ((yyvsp[0].ttype) != nullptr) {
         (yyval.ttypedef)->annotations_ = (yyvsp[0].ttype)->annotations_;
         delete (yyvsp[0].ttype);
       }
@@ -1959,11 +1959,11 @@ yyreduce:
         validate_const_type((yyval.tconst));
 
         g_scope->add_constant((yyvsp[-3].id), (yyval.tconst));
-        if (g_parent_scope != NULL) {
+        if (g_parent_scope != nullptr) {
           g_parent_scope->add_constant(g_parent_prefix + (yyvsp[-3].id), (yyval.tconst));
         }
       } else {
-        (yyval.tconst) = NULL;
+        (yyval.tconst) = nullptr;
       }
     }
 #line 1970 "thrift/thrifty.cc" /* yacc.c:1646  */
@@ -2112,7 +2112,7 @@ yyreduce:
       (yyvsp[-2].tstruct)->set_union((yyvsp[-6].iconst) == struct_is_union);
       (yyval.tstruct) = (yyvsp[-2].tstruct);
       (yyval.tstruct)->set_name((yyvsp[-5].id));
-      if ((yyvsp[0].ttype) != NULL) {
+      if ((yyvsp[0].ttype) != nullptr) {
         (yyval.tstruct)->annotations_ = (yyvsp[0].ttype)->annotations_;
         delete (yyvsp[0].ttype);
       }
@@ -2179,7 +2179,7 @@ yyreduce:
   case 59:
 #line 726 "thrift/thrifty.yy" /* yacc.c:1646  */
     {
-      (yyval.tstruct) = NULL;
+      (yyval.tstruct) = nullptr;
     }
 #line 2185 "thrift/thrifty.cc" /* yacc.c:1646  */
     break;
@@ -2192,7 +2192,7 @@ yyreduce:
       (yyvsp[-2].tstruct)->set_name((yyvsp[-4].id));
       (yyvsp[-2].tstruct)->set_xception(true);
       (yyval.tstruct) = (yyvsp[-2].tstruct);
-      if ((yyvsp[0].ttype) != NULL) {
+      if ((yyvsp[0].ttype) != nullptr) {
         (yyval.tstruct)->annotations_ = (yyvsp[0].ttype)->annotations_;
         delete (yyvsp[0].ttype);
       }
@@ -2208,7 +2208,7 @@ yyreduce:
       (yyval.tservice) = (yyvsp[-3].tservice);
       (yyval.tservice)->set_name((yyvsp[-7].id));
       (yyval.tservice)->set_extends((yyvsp[-6].tservice));
-      if ((yyvsp[0].ttype) != NULL) {
+      if ((yyvsp[0].ttype) != nullptr) {
         (yyval.tservice)->annotations_ = (yyvsp[0].ttype)->annotations_;
         delete (yyvsp[0].ttype);
       }
@@ -2236,10 +2236,10 @@ yyreduce:
 #line 770 "thrift/thrifty.yy" /* yacc.c:1646  */
     {
       pdebug("Extends -> tok_extends tok_identifier");
-      (yyval.tservice) = NULL;
+      (yyval.tservice) = nullptr;
       if (g_parse_mode == PROGRAM) {
         (yyval.tservice) = g_scope->get_service((yyvsp[0].id));
-        if ((yyval.tservice) == NULL) {
+        if ((yyval.tservice) == nullptr) {
           yyerror("Service \"%s\" has not been defined.", (yyvsp[0].id));
           exit(1);
         }
@@ -2251,7 +2251,7 @@ yyreduce:
   case 65:
 #line 782 "thrift/thrifty.yy" /* yacc.c:1646  */
     {
-      (yyval.tservice) = NULL;
+      (yyval.tservice) = nullptr;
     }
 #line 2257 "thrift/thrifty.cc" /* yacc.c:1646  */
     break;
@@ -2281,10 +2281,10 @@ yyreduce:
       validate_simple_identifier( (yyvsp[-6].id));
       (yyvsp[-4].tstruct)->set_name(std::string((yyvsp[-6].id)) + "_args");
       (yyval.tfunction) = new t_function((yyvsp[-7].ttype), (yyvsp[-6].id), (yyvsp[-4].tstruct), (yyvsp[-2].tstruct), (yyvsp[-8].tbool));
-      if ((yyvsp[-9].dtext) != NULL) {
+      if ((yyvsp[-9].dtext) != nullptr) {
         (yyval.tfunction)->set_doc((yyvsp[-9].dtext));
       }
-      if ((yyvsp[-1].ttype) != NULL) {
+      if ((yyvsp[-1].ttype) != nullptr) {
         (yyval.tfunction)->annotations_ = (yyvsp[-1].ttype)->annotations_;
         delete (yyvsp[-1].ttype);
       }
@@ -2367,20 +2367,20 @@ yyreduce:
       (yyval.tfield) = new t_field((yyvsp[-8].ttype), (yyvsp[-6].id), (yyvsp[-10].tfieldid).value);
       (yyval.tfield)->set_reference((yyvsp[-7].tbool));
       (yyval.tfield)->set_req((yyvsp[-9].ereq));
-      if ((yyvsp[-5].tconstv) != NULL) {
+      if ((yyvsp[-5].tconstv) != nullptr) {
         g_scope->resolve_const_value((yyvsp[-5].tconstv), (yyvsp[-8].ttype));
         validate_field_value((yyval.tfield), (yyvsp[-5].tconstv));
         (yyval.tfield)->set_value((yyvsp[-5].tconstv));
       }
       (yyval.tfield)->set_xsd_optional((yyvsp[-4].tbool));
       (yyval.tfield)->set_xsd_nillable((yyvsp[-3].tbool));
-      if ((yyvsp[-11].dtext) != NULL) {
+      if ((yyvsp[-11].dtext) != nullptr) {
         (yyval.tfield)->set_doc((yyvsp[-11].dtext));
       }
-      if ((yyvsp[-2].tstruct) != NULL) {
+      if ((yyvsp[-2].tstruct) != nullptr) {
         (yyval.tfield)->set_xsd_attrs((yyvsp[-2].tstruct));
       }
-      if ((yyvsp[-1].ttype) != NULL) {
+      if ((yyvsp[-1].ttype) != nullptr) {
         (yyval.tfield)->annotations_ = (yyvsp[-1].ttype)->annotations_;
         delete (yyvsp[-1].ttype);
       }
@@ -2497,7 +2497,7 @@ yyreduce:
       if (g_parse_mode == PROGRAM) {
         (yyval.tconstv) = (yyvsp[0].tconstv);
       } else {
-        (yyval.tconstv) = NULL;
+        (yyval.tconstv) = nullptr;
       }
     }
 #line 2504 "thrift/thrifty.cc" /* yacc.c:1646  */
@@ -2506,7 +2506,7 @@ yyreduce:
   case 84:
 #line 981 "thrift/thrifty.yy" /* yacc.c:1646  */
     {
-      (yyval.tconstv) = NULL;
+      (yyval.tconstv) = nullptr;
     }
 #line 2512 "thrift/thrifty.cc" /* yacc.c:1646  */
     break;
@@ -2535,11 +2535,11 @@ yyreduce:
       pdebug("FieldType -> tok_identifier");
       if (g_parse_mode == INCLUDES) {
         // Ignore identifiers in include mode
-        (yyval.ttype) = NULL;
+        (yyval.ttype) = nullptr;
       } else {
         // Lookup the identifier in the current scope
         (yyval.ttype) = g_scope->get_type((yyvsp[0].id));
-        if ((yyval.ttype) == NULL) {
+        if ((yyval.ttype) == nullptr) {
           /*
            * Either this type isn't yet declared, or it's never
              declared.  Either way allow it and we'll figure it out
@@ -2574,7 +2574,7 @@ yyreduce:
 #line 1029 "thrift/thrifty.yy" /* yacc.c:1646  */
     {
       pdebug("BaseType -> SimpleBaseType TypeAnnotations");
-      if ((yyvsp[0].ttype) != NULL) {
+      if ((yyvsp[0].ttype) != nullptr) {
         (yyval.ttype) = new t_base_type(*static_cast<t_base_type*>((yyvsp[-1].ttype)));
         (yyval.ttype)->annotations_ = (yyvsp[0].ttype)->annotations_;
         delete (yyvsp[0].ttype);
@@ -2671,7 +2671,7 @@ yyreduce:
     {
       pdebug("ContainerType -> SimpleContainerType TypeAnnotations");
       (yyval.ttype) = (yyvsp[-1].ttype);
-      if ((yyvsp[0].ttype) != NULL) {
+      if ((yyvsp[0].ttype) != nullptr) {
         (yyval.ttype)->annotations_ = (yyvsp[0].ttype)->annotations_;
         delete (yyvsp[0].ttype);
       }
@@ -2711,7 +2711,7 @@ yyreduce:
     {
       pdebug("MapType -> tok_map <FieldType, FieldType>");
       (yyval.ttype) = new t_map((yyvsp[-3].ttype), (yyvsp[-1].ttype));
-      if ((yyvsp[-5].id) != NULL) {
+      if ((yyvsp[-5].id) != nullptr) {
         ((t_container*)(yyval.ttype))->set_cpp_name(std::string((yyvsp[-5].id)));
       }
     }
@@ -2723,7 +2723,7 @@ yyreduce:
     {
       pdebug("SetType -> tok_set<FieldType>");
       (yyval.ttype) = new t_set((yyvsp[-1].ttype));
-      if ((yyvsp[-3].id) != NULL) {
+      if ((yyvsp[-3].id) != nullptr) {
         ((t_container*)(yyval.ttype))->set_cpp_name(std::string((yyvsp[-3].id)));
       }
     }
@@ -2736,7 +2736,7 @@ yyreduce:
       pdebug("ListType -> tok_list<FieldType>");
       check_for_list_of_bytes((yyvsp[-2].ttype));
       (yyval.ttype) = new t_list((yyvsp[-2].ttype));
-      if ((yyvsp[0].id) != NULL) {
+      if ((yyvsp[0].id) != nullptr) {
         ((t_container*)(yyval.ttype))->set_cpp_name(std::string((yyvsp[0].id)));
       }
     }
@@ -2754,7 +2754,7 @@ yyreduce:
   case 108:
 #line 1151 "thrift/thrifty.yy" /* yacc.c:1646  */
     {
-      (yyval.id) = NULL;
+      (yyval.id) = nullptr;
     }
 #line 2760 "thrift/thrifty.cc" /* yacc.c:1646  */
     break;
@@ -2771,7 +2771,7 @@ yyreduce:
   case 110:
 #line 1162 "thrift/thrifty.yy" /* yacc.c:1646  */
     {
-      (yyval.ttype) = NULL;
+      (yyval.ttype) = nullptr;
     }
 #line 2777 "thrift/thrifty.cc" /* yacc.c:1646  */
     break;

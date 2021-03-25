@@ -103,16 +103,16 @@ public:
   }
 
   /* initialization and destruction */
-  void init_generator();
-  void close_generator();
+  void init_generator() override;
+  void close_generator() override;
 
   /* generation functions */
-  void generate_typedef(t_typedef* ttypedef);
-  void generate_enum(t_enum* tenum);
-  void generate_consts(vector<t_const*> consts);
-  void generate_struct(t_struct* tstruct);
-  void generate_service(t_service* tservice);
-  void generate_xception(t_struct* tstruct);
+  void generate_typedef(t_typedef* ttypedef) override;
+  void generate_enum(t_enum* tenum) override;
+  void generate_consts(vector<t_const*> consts) override;
+  void generate_struct(t_struct* tstruct) override;
+  void generate_service(t_service* tservice) override;
+  void generate_xception(t_struct* tstruct) override;
 
 private:
   /* file streams */
@@ -253,15 +253,13 @@ void t_c_glib_generator::init_generator() {
   if (!includes.empty()) {
     f_types_ << "/* other thrift includes */" << endl;
 
-    for (vector<t_program*>::const_iterator iter = includes.begin();
-         iter != includes.end();
-         ++iter) {
-      const std::string& include_nspace = (*iter)->get_namespace("c_glib");
+    for (auto include : includes) {
+      const std::string& include_nspace = include->get_namespace("c_glib");
       std::string include_nspace_prefix =
         include_nspace.empty() ? "" : initial_caps_to_underscores(include_nspace) + "_";
 
       f_types_ << "#include \"" << include_nspace_prefix
-               << initial_caps_to_underscores((*iter)->get_name()) << "_types.h\"" << endl;
+               << initial_caps_to_underscores(include->get_name()) << "_types.h\"" << endl;
     }
     f_types_ << endl;
   }
@@ -269,11 +267,11 @@ void t_c_glib_generator::init_generator() {
   /* include custom headers */
   const vector<string>& c_includes = program_->get_c_includes();
   f_types_ << "/* custom thrift includes */" << endl;
-  for (size_t i = 0; i < c_includes.size(); ++i) {
-    if (c_includes[i][0] == '<') {
-      f_types_ << "#include " << c_includes[i] << endl;
+  for (const auto & c_include : c_includes) {
+    if (c_include[0] == '<') {
+      f_types_ << "#include " << c_include << endl;
     } else {
-      f_types_ << "#include \"" << c_includes[i] << "\"" << endl;
+      f_types_ << "#include \"" << c_include << "\"" << endl;
     }
   }
   f_types_ << endl;
@@ -473,7 +471,7 @@ void t_c_glib_generator::generate_service(t_service* tservice) {
 
   // if we are inheriting from another service, include its header
   t_service* extends_service = tservice->get_extends();
-  if (extends_service != NULL) {
+  if (extends_service != nullptr) {
     f_header_ << "#include \"" << this->nspace_lc
               << to_lower_case(initial_caps_to_underscores(extends_service->get_name())) << ".h\""
               << endl;
@@ -1014,7 +1012,7 @@ void t_c_glib_generator::generate_const_initializer(string name,
 
     // initialize any constants that may be referenced by this initializer
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
-      t_type* field_type = NULL;
+      t_type* field_type = nullptr;
       string field_name = "";
 
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
@@ -1024,7 +1022,7 @@ void t_c_glib_generator::generate_const_initializer(string name,
           break;
         }
       }
-      if (field_type == NULL) {
+      if (field_type == nullptr) {
         throw "type error: " + type->get_name() + " has no field "
           + v_iter->first->get_string();
       }
@@ -1056,7 +1054,7 @@ void t_c_glib_generator::generate_const_initializer(string name,
     scope_down(f_types_impl_);
 
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
-      t_type* field_type = NULL;
+      t_type* field_type = nullptr;
       string field_name = "";
 
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
@@ -1066,7 +1064,7 @@ void t_c_glib_generator::generate_const_initializer(string name,
           break;
         }
       }
-      if (field_type == NULL) {
+      if (field_type == nullptr) {
         throw "type error: " + type->get_name() + " has no field "
           + v_iter->first->get_string();
       }
@@ -1173,7 +1171,7 @@ void t_c_glib_generator::generate_const_initializer(string name,
                   << indent() << "if (constant == NULL)" << endl;
     scope_up(f_types_impl_);
     f_types_impl_ << initializers.str() << endl
-                  << indent() << "constant = " << generate_new_hash_from_type(etype, NULL) << endl
+                  << indent() << "constant = " << generate_new_hash_from_type(etype, nullptr) << endl
                   << appenders.str();
     scope_down(f_types_impl_);
     f_types_impl_ << indent() << "return constant;" << endl;
@@ -1275,7 +1273,7 @@ void t_c_glib_generator::generate_service_client(t_service* tservice) {
   string parent_class_name = "GObject";
   string parent_type_name = "G_TYPE_OBJECT";
 
-  // The service this service extends, or NULL if it extends no
+  // The service this service extends, or nullptr if it extends no
   // service
   t_service* extends_service = tservice->get_extends();
   if (extends_service) {
@@ -1853,7 +1851,7 @@ void t_c_glib_generator::generate_service_handler(t_service* tservice) {
 
   string args_indent;
 
-  // The service this service extends, or NULL if it extends no service
+  // The service this service extends, or nullptr if it extends no service
   t_service* extends_service = tservice->get_extends();
 
   // Determine the name of our parent service (if any) and the handler class'
@@ -2083,7 +2081,7 @@ void t_c_glib_generator::generate_service_processor(t_service* tservice) {
   string function_name;
   string args_indent;
 
-  // The service this service extends, or NULL if it extends no service
+  // The service this service extends, or nullptr if it extends no service
   t_service* extends_service = tservice->get_extends();
 
   // Determine the name of our parent service (if any) and the
@@ -2373,48 +2371,6 @@ void t_c_glib_generator::generate_service_processor(t_service* tservice) {
         }
         f_service_ << "return_value, "
                    << "NULL);" << endl;
-
-        // Deallocate (or unref) return_value
-        return_type = get_true_type(return_type);
-        if (return_type->is_base_type()) {
-          t_base_type* base_type = ((t_base_type*)return_type);
-
-          if (base_type->get_base() == t_base_type::TYPE_STRING) {
-            f_service_ << indent() << "if (return_value != NULL)" << endl;
-            indent_up();
-            if (base_type->is_binary()) {
-              f_service_ << indent() << "g_byte_array_unref (return_value);" << endl;
-            } else {
-              f_service_ << indent() << "g_free (return_value);" << endl;
-            }
-            indent_down();
-          }
-        } else if (return_type->is_container()) {
-          f_service_ << indent() << "if (return_value != NULL)" << endl;
-          indent_up();
-
-          if (return_type->is_list()) {
-            t_type* elem_type = ((t_list*)return_type)->get_elem_type();
-
-            f_service_ << indent();
-            if (is_numeric(elem_type)) {
-              f_service_ << "g_array_unref";
-            } else {
-              f_service_ << "g_ptr_array_unref";
-            }
-            f_service_ << " (return_value);" << endl;
-          } else if (return_type->is_map() || return_type->is_set()) {
-            f_service_ << indent() << "g_hash_table_unref (return_value);" << endl;
-          }
-
-          indent_down();
-        } else if (return_type->is_struct()) {
-          f_service_ << indent() << "if (return_value != NULL)" << endl;
-          indent_up();
-          f_service_ << indent() << "g_object_unref (return_value);" << endl;
-          indent_down();
-        }
-
         f_service_ << endl;
       }
       f_service_ << indent() << "result =" << endl;
@@ -2447,6 +2403,7 @@ void t_c_glib_generator::generate_service_processor(t_service* tservice) {
         f_service_ << args_indent << "\"" << (*xception_iter)->get_name() << "\", "
                    << (*xception_iter)->get_name() << "," << endl << args_indent << "NULL);" << endl
                    << endl;
+        f_service_ << indent() << "g_object_unref ("<< (*xception_iter)->get_name() <<");"<< endl;
         f_service_ << indent() << "result =" << endl;
         indent_up();
         f_service_ << indent() << "((thrift_protocol_write_message_begin (output_protocol," << endl;
@@ -2552,6 +2509,47 @@ void t_c_glib_generator::generate_service_processor(t_service* tservice) {
     }
 
     if (!(*function_iter)->is_oneway()) {
+      if (has_return_value) {
+        // Deallocate (or unref) return_value
+        return_type = get_true_type(return_type);
+        if (return_type->is_base_type()) {
+          t_base_type* base_type = ((t_base_type*)return_type);
+            if (base_type->get_base() == t_base_type::TYPE_STRING) {
+            f_service_ << indent() << "if (return_value != NULL)" << endl;
+            indent_up();
+            if (base_type->is_binary()) {
+              f_service_ << indent() << "g_byte_array_unref (return_value);" << endl;
+            } else {
+              f_service_ << indent() << "g_free (return_value);" << endl;
+            }
+            indent_down();
+          }
+        } else if (return_type->is_container()) {
+          f_service_ << indent() << "if (return_value != NULL)" << endl;
+          indent_up();
+
+          if (return_type->is_list()) {
+            t_type* elem_type = ((t_list*)return_type)->get_elem_type();
+
+            f_service_ << indent();
+            if (is_numeric(elem_type)) {
+              f_service_ << "g_array_unref";
+            } else {
+              f_service_ << "g_ptr_array_unref";
+            }
+            f_service_ << " (return_value);" << endl;
+          } else if (return_type->is_map() || return_type->is_set()) {
+            f_service_ << indent() << "g_hash_table_unref (return_value);" << endl;
+          }
+
+          indent_down();
+        } else if (return_type->is_struct()) {
+          f_service_ << indent() << "if (return_value != NULL)" << endl;
+          indent_up();
+          f_service_ << indent() << "g_object_unref (return_value);" << endl;
+          indent_down();
+        }
+      }
       f_service_ << indent() << "g_object_unref (result_struct);" << endl << endl << indent()
                  << "if (result == TRUE)" << endl;
       indent_up();
@@ -3098,7 +3096,7 @@ void t_c_glib_generator::generate_object(t_struct* tstruct) {
     t_field* member = *m_iter;
     t_const_value* member_value = member->get_value();
 
-    if (member_value != NULL) {
+    if (member_value != nullptr) {
       string member_name = member->get_name();
       t_type* member_type = get_true_type(member->get_type());
 
@@ -3147,7 +3145,7 @@ void t_c_glib_generator::generate_object(t_struct* tstruct) {
         dval += "(" + type_name(t) + ")";
       }
       t_const_value* cv = (*m_iter)->get_value();
-      if (cv != NULL) {
+      if (cv != nullptr) {
         dval += constant_value("", t, cv);
       } else {
         dval += t->is_string() ? "NULL" : "0";
@@ -3169,7 +3167,7 @@ void t_c_glib_generator::generate_object(t_struct* tstruct) {
     } else if (t->is_container()) {
       string name = (*m_iter)->get_name();
       string init_function;
-      t_type* etype = NULL;
+      t_type* etype = nullptr;
 
       if (t->is_map()) {
         t_type* key = ((t_map*)t)->get_key_type();
@@ -3177,7 +3175,7 @@ void t_c_glib_generator::generate_object(t_struct* tstruct) {
         init_function = generate_new_hash_from_type(key, value);
       } else if (t->is_set()) {
         etype = ((t_set*)t)->get_elem_type();
-        init_function = generate_new_hash_from_type(etype, NULL);
+        init_function = generate_new_hash_from_type(etype, nullptr);
       } else if (t->is_list()) {
         etype = ((t_list*)t)->get_elem_type();
         init_function = generate_new_array_from_type(etype);
@@ -3414,7 +3412,7 @@ void t_c_glib_generator::generate_object(t_struct* tstruct) {
             break;
           }
 
-          if (member_value != NULL) {
+          if (member_value != nullptr) {
             default_value << (base_type == t_base_type::TYPE_DOUBLE ? member_value->get_double()
                                                                     : member_value->get_integer());
           } else {
@@ -3433,8 +3431,8 @@ void t_c_glib_generator::generate_object(t_struct* tstruct) {
       } else if (member_type->is_enum()) {
         t_enum_value* enum_min_value = ((t_enum*)member_type)->get_min_value();
         t_enum_value* enum_max_value = ((t_enum*)member_type)->get_max_value();
-        int min_value = (enum_min_value != NULL) ? enum_min_value->get_value() : 0;
-        int max_value = (enum_max_value != NULL) ? enum_max_value->get_value() : 0;
+        int min_value = (enum_min_value != nullptr) ? enum_min_value->get_value() : 0;
+        int max_value = (enum_max_value != nullptr) ? enum_max_value->get_value() : 0;
 
         args_indent += string(18, ' ');
         f_types_impl_ << "g_param_spec_int (\"" << member_name << "\"," << endl << args_indent
@@ -4334,13 +4332,14 @@ void t_c_glib_generator::generate_deserialize_list_element(ostream& out,
     throw std::runtime_error("compiler error: list element type cannot be void");
   } else if (is_numeric(ttype)) {
     indent(out) << "g_array_append_vals (" << prefix << ", " << elem << ", 1);" << endl;
+    indent(out) << "g_free (" << elem << ");" << endl;
   } else {
     indent(out) << "g_ptr_array_add (" << prefix << ", " << elem << ");" << endl;
   }
 }
 
 string t_c_glib_generator::generate_free_func_from_type(t_type* ttype) {
-  if (ttype == NULL)
+  if (ttype == nullptr)
     return "NULL";
 
   if (ttype->is_base_type()) {
@@ -4406,7 +4405,7 @@ string t_c_glib_generator::generate_free_func_from_type(t_type* ttype) {
 }
 
 string t_c_glib_generator::generate_hash_func_from_type(t_type* ttype) {
-  if (ttype == NULL)
+  if (ttype == nullptr)
     return "NULL";
 
   if (ttype->is_base_type()) {
@@ -4444,7 +4443,7 @@ string t_c_glib_generator::generate_hash_func_from_type(t_type* ttype) {
 }
 
 string t_c_glib_generator::generate_cmp_func_from_type(t_type* ttype) {
-  if (ttype == NULL)
+  if (ttype == nullptr)
     return "NULL";
 
   if (ttype->is_base_type()) {
@@ -4507,23 +4506,21 @@ string t_c_glib_generator::generate_new_array_from_type(t_type* ttype) {
  ***************************************/
 
 /**
- * Upper case a string.  Wraps boost's string utility.
+ * Upper case a string.
  */
 string to_upper_case(string name) {
   string s(name);
   std::transform(s.begin(), s.end(), s.begin(), ::toupper);
   return s;
-  //  return boost::to_upper_copy (name);
 }
 
 /**
- * Lower case a string.  Wraps boost's string utility.
+ * Lower case a string.
  */
 string to_lower_case(string name) {
   string s(name);
   std::transform(s.begin(), s.end(), s.begin(), ::tolower);
   return s;
-  //  return boost::to_lower_copy (name);
 }
 
 /**

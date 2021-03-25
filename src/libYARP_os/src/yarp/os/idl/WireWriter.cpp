@@ -74,7 +74,7 @@ bool WireWriter::writeNested(const yarp::os::PortWriter& obj) const
 
 bool WireWriter::writeBool(bool x) const
 {
-    writer.appendInt32(BOTTLE_TAG_VOCAB);
+    writer.appendInt32(BOTTLE_TAG_VOCAB32);
     writer.appendInt32(x ? VOCAB_OK : VOCAB_FAIL);
     return !writer.isError();
 }
@@ -121,11 +121,37 @@ bool WireWriter::writeFloat64(yarp::conf::float64_t x) const
     return !writer.isError();
 }
 
-bool WireWriter::writeVocab(std::int32_t x) const
+bool WireWriter::writeUI8(std::uint8_t x) const
 {
-    writer.appendInt32(BOTTLE_TAG_VOCAB);
+    return writeI8(reinterpret_cast<std::int8_t&>(x));
+}
+
+bool WireWriter::writeUI16(std::uint16_t x) const
+{
+    return writeI16(reinterpret_cast<std::int16_t&>(x));
+}
+
+bool WireWriter::writeUI32(std::uint32_t x) const
+{
+    return writeI32(reinterpret_cast<std::int32_t&>(x));
+}
+
+bool WireWriter::writeUI64(std::uint64_t x) const
+{
+    return writeI64(reinterpret_cast<std::int64_t&>(x));
+}
+
+bool WireWriter::writeVocab32(yarp::conf::vocab32_t x) const
+{
+    writer.appendInt32(BOTTLE_TAG_VOCAB32);
     writer.appendInt32(x);
     return !writer.isError();
+}
+
+bool WireWriter::writeSizeT(std::size_t x) const
+{
+    int tmp = x;
+    return writeI32(tmp);
 }
 
 bool WireWriter::isValid() const
@@ -151,7 +177,7 @@ bool WireWriter::writeTag(const char* tag, int split, int len) const
         tag++;
         if (ch == '\0' || ch == '_') {
             if (bit.length() <= 4) {
-                writeVocab(Vocab::encode(bit));
+                writeVocab32(Vocab::encode(bit));
             } else {
                 writeString(bit);
             }
@@ -185,10 +211,10 @@ bool WireWriter::writeListHeader(int len) const
     writer.appendInt32(BOTTLE_TAG_LIST);
     if (get_mode) {
         writer.appendInt32(len + 3);
-        writer.appendInt32(BOTTLE_TAG_VOCAB);
+        writer.appendInt32(BOTTLE_TAG_VOCAB32);
         writer.appendInt32(VOCAB_IS);
         if (get_is_vocab) {
-            writer.appendInt32(BOTTLE_TAG_VOCAB);
+            writer.appendInt32(BOTTLE_TAG_VOCAB32);
             writer.appendInt32(Vocab::encode(get_string));
         } else {
             writeString(get_string);
@@ -244,7 +270,7 @@ bool WireWriter::writeOnewayResponse() const
     if (!writeListHeader(1)) {
         return false;
     }
-    writer.appendInt32(BOTTLE_TAG_VOCAB);
+    writer.appendInt32(BOTTLE_TAG_VOCAB32);
     writer.appendInt32(VOCAB_DONE);
     return true;
 }

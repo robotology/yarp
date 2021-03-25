@@ -15,21 +15,16 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#[macro_use]
-extern crate log;
-extern crate env_logger;
+use env_logger;
+use log::*;
+use clap::{clap_app, value_t};
 
-#[macro_use]
-extern crate clap;
-extern crate ordered_float;
-extern crate thrift;
-extern crate thrift_test;
-
-use ordered_float::OrderedFloat;
 use std::collections::{BTreeMap, BTreeSet};
 use std::thread;
 use std::time::Duration;
 
+use thrift;
+use thrift::OrderedFloat;
 use thrift::protocol::{TBinaryInputProtocolFactory, TBinaryOutputProtocolFactory,
                        TCompactInputProtocolFactory, TCompactOutputProtocolFactory,
                        TInputProtocolFactory, TOutputProtocolFactory};
@@ -40,7 +35,7 @@ use thrift::transport::{TBufferedReadTransportFactory, TBufferedWriteTransportFa
 use thrift_test::*;
 
 fn main() {
-    env_logger::init().expect("logger setup failed");
+    env_logger::init();
 
     debug!("initialized logger - running cross-test server");
 
@@ -57,7 +52,7 @@ fn run() -> thrift::Result<()> {
 
     // unsupported options:
     // --domain-socket
-    // --named-pipe
+    // --pipe
     // --ssl
     let matches = clap_app!(rust_test_client =>
         (version: "1.0")
@@ -80,8 +75,8 @@ fn run() -> thrift::Result<()> {
 
     info!("binding to {}", listen_address);
 
-    let (i_transport_factory, o_transport_factory): (Box<TReadTransportFactory>,
-                                                     Box<TWriteTransportFactory>) =
+    let (i_transport_factory, o_transport_factory): (Box<dyn TReadTransportFactory>,
+                                                     Box<dyn TWriteTransportFactory>) =
         match &*transport {
             "buffered" => {
                 (Box::new(TBufferedReadTransportFactory::new()),
@@ -96,8 +91,8 @@ fn run() -> thrift::Result<()> {
             }
         };
 
-    let (i_protocol_factory, o_protocol_factory): (Box<TInputProtocolFactory>,
-                                                   Box<TOutputProtocolFactory>) =
+    let (i_protocol_factory, o_protocol_factory): (Box<dyn TInputProtocolFactory>,
+                                                   Box<dyn TOutputProtocolFactory>) =
         match &*protocol {
             "binary" | "multi" | "multi:binary" => {
                 (Box::new(TBinaryInputProtocolFactory::new()),
@@ -274,7 +269,7 @@ impl ThriftTestSyncHandler for ThriftTestSyncHandlerImpl {
         info!("testInsanity({:?})", argument);
         let mut map_0: BTreeMap<Numberz, Insanity> = BTreeMap::new();
         map_0.insert(Numberz::Two, argument.clone());
-        map_0.insert(Numberz::Three, argument.clone());
+        map_0.insert(Numberz::Three, argument);
 
         let mut map_1: BTreeMap<Numberz, Insanity> = BTreeMap::new();
         let insanity = Insanity {

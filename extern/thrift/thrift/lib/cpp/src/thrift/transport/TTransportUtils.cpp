@@ -26,6 +26,7 @@ namespace thrift {
 namespace transport {
 
 uint32_t TPipedTransport::read(uint8_t* buf, uint32_t len) {
+  checkReadBytesAvailable(len);
   uint32_t need = len;
 
   // We don't have enough data yet
@@ -41,8 +42,8 @@ uint32_t TPipedTransport::read(uint8_t* buf, uint32_t len) {
     // Double the size of the underlying buffer if it is full
     if (rLen_ == rBufSize_) {
       rBufSize_ *= 2;
-      uint8_t *tmpBuf = (uint8_t*)std::realloc(rBuf_, sizeof(uint8_t) * rBufSize_);
-      if (tmpBuf == NULL) {
+      auto *tmpBuf = (uint8_t*)std::realloc(rBuf_, sizeof(uint8_t) * rBufSize_);
+      if (tmpBuf == nullptr) {
        throw std::bad_alloc();
       }
       rBuf_ = tmpBuf;
@@ -77,8 +78,8 @@ void TPipedTransport::write(const uint8_t* buf, uint32_t len) {
     while ((len + wLen_) >= newBufSize) {
       newBufSize *= 2;
     }
-    uint8_t *tmpBuf= (uint8_t*)std::realloc(wBuf_, sizeof(uint8_t) * newBufSize);
-    if (tmpBuf == NULL) {
+    auto *tmpBuf= (uint8_t*)std::realloc(wBuf_, sizeof(uint8_t) * newBufSize);
+    if (tmpBuf == nullptr) {
       throw std::bad_alloc();
     }
     wBuf_ = tmpBuf;
@@ -103,15 +104,15 @@ void TPipedTransport::flush() {
 }
 
 TPipedFileReaderTransport::TPipedFileReaderTransport(
-    stdcxx::shared_ptr<TFileReaderTransport> srcTrans,
-    stdcxx::shared_ptr<TTransport> dstTrans)
-  : TPipedTransport(srcTrans, dstTrans), srcTrans_(srcTrans) {
+    std::shared_ptr<TFileReaderTransport> srcTrans,
+    std::shared_ptr<TTransport> dstTrans,
+    std::shared_ptr<TConfiguration> config)
+  : TPipedTransport(srcTrans, dstTrans, config), srcTrans_(srcTrans) {
 }
 
-TPipedFileReaderTransport::~TPipedFileReaderTransport() {
-}
+TPipedFileReaderTransport::~TPipedFileReaderTransport() = default;
 
-bool TPipedFileReaderTransport::isOpen() {
+bool TPipedFileReaderTransport::isOpen() const {
   return TPipedTransport::isOpen();
 }
 
@@ -132,6 +133,7 @@ uint32_t TPipedFileReaderTransport::read(uint8_t* buf, uint32_t len) {
 }
 
 uint32_t TPipedFileReaderTransport::readAll(uint8_t* buf, uint32_t len) {
+  checkReadBytesAvailable(len);
   uint32_t have = 0;
   uint32_t get = 0;
 

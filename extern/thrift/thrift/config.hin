@@ -370,10 +370,6 @@
 /* Possible value for SIGNED_RIGHT_SHIFT_IS */
 #undef UNKNOWN_RIGHT_SHIFT
 
-/* experimental --enable-boostthreads that replaces POSIX pthread by
-   boost::thread */
-#undef USE_BOOST_THREAD
-
 /* Version number of package */
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a

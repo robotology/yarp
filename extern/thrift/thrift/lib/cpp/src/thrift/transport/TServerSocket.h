@@ -21,7 +21,6 @@
 #define _THRIFT_TRANSPORT_TSERVERSOCKET_H_ 1
 
 #include <thrift/concurrency/Mutex.h>
-#include <thrift/stdcxx.h>
 #include <thrift/transport/PlatformSocket.h>
 #include <thrift/transport/TServerTransport.h>
 
@@ -39,22 +38,6 @@ namespace transport {
 
 class TSocket;
 
-class TGetAddrInfoWrapper {
-public:
-  TGetAddrInfoWrapper(const char* node, const char* service, const struct addrinfo* hints);
-
-  virtual ~TGetAddrInfoWrapper();
-
-  int init();
-  const struct addrinfo* res();
-
-private:
-  const char* node_;
-  const char* service_;
-  const struct addrinfo* hints_;
-  struct addrinfo* res_;
-};
-
 /**
  * Server socket implementation of TServerTransport. Wrapper around a unix
  * socket listen and accept calls.
@@ -62,7 +45,7 @@ private:
  */
 class TServerSocket : public TServerTransport {
 public:
-  typedef apache::thrift::stdcxx::function<void(THRIFT_SOCKET fd)> socket_func_t;
+  typedef std::function<void(THRIFT_SOCKET fd)> socket_func_t;
 
   const static int DEFAULT_BACKLOG = 1024;
 
@@ -97,7 +80,10 @@ public:
    */
   TServerSocket(const std::string& path);
 
-  virtual ~TServerSocket();
+  ~TServerSocket() override;
+
+
+  bool isOpen() const override;
 
   void setSendTimeout(int sendTimeout);
   void setRecvTimeout(int recvTimeout);
@@ -137,23 +123,26 @@ public:
   // \throws std::logic_error if listen() has been called
   void setInterruptableChildren(bool enable);
 
-  THRIFT_SOCKET getSocketFD() { return serverSocket_; }
+  THRIFT_SOCKET getSocketFD() override { return serverSocket_; }
 
   int getPort();
 
-  void listen();
-  void interrupt();
-  void interruptChildren();
-  void close();
+  void listen() override;
+  void interrupt() override;
+  void interruptChildren() override;
+  void close() override;
 
 protected:
-  stdcxx::shared_ptr<TTransport> acceptImpl();
-  virtual stdcxx::shared_ptr<TSocket> createSocket(THRIFT_SOCKET client);
+  std::shared_ptr<TTransport> acceptImpl() override;
+  virtual std::shared_ptr<TSocket> createSocket(THRIFT_SOCKET client);
   bool interruptableChildren_;
-  stdcxx::shared_ptr<THRIFT_SOCKET> pChildInterruptSockReader_; // if interruptableChildren_ this is shared with child TSockets
+  std::shared_ptr<THRIFT_SOCKET> pChildInterruptSockReader_; // if interruptableChildren_ this is shared with child TSockets
 
 private:
   void notify(THRIFT_SOCKET notifySock);
+  void _setup_sockopts();
+  void _setup_unixdomain_sockopts();
+  void _setup_tcp_sockopts();
 
   int port_;
   std::string address_;

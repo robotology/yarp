@@ -26,7 +26,6 @@
 #include <vector>
 
 #include <stdlib.h>
-#include <boost/tokenizer.hpp>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sstream>
@@ -35,6 +34,7 @@
 
 #include "thrift/platform.h"
 #include "t_oop_generator.h"
+
 using namespace std;
 
 
@@ -70,15 +70,15 @@ class t_cl_generator : public t_oop_generator {
     copy_options_ = option_string;
   }
 
-  void init_generator();
-  void close_generator();
+  void init_generator() override;
+  void close_generator() override;
 
-  void generate_typedef     (t_typedef*  ttypedef);
-  void generate_enum        (t_enum*     tenum);
-  void generate_const       (t_const*    tconst);
-  void generate_struct      (t_struct*   tstruct);
-  void generate_xception    (t_struct*   txception);
-  void generate_service     (t_service*  tservice);
+  void generate_typedef     (t_typedef*  ttypedef) override;
+  void generate_enum        (t_enum*     tenum) override;
+  void generate_const       (t_const*    tconst) override;
+  void generate_struct      (t_struct*   tstruct) override;
+  void generate_xception    (t_struct*   txception) override;
+  void generate_service     (t_service*  tservice) override;
   void generate_cl_struct (std::ostream& out, t_struct* tstruct, bool is_exception);
   void generate_cl_struct_internal (std::ostream& out, t_struct* tstruct, bool is_exception);
   void generate_exception_sig(std::ostream& out, t_function* f);
@@ -128,9 +128,9 @@ void t_cl_generator::init_generator() {
   string f_types_name = program_dir + "/" + program_name_ + "-types.lisp";
   string f_vars_name = program_dir + "/" + program_name_ + "-vars.lisp";
 
-  f_types_.open(f_types_name.c_str());
+  f_types_.open(f_types_name);
   f_types_ << cl_autogen_comment() << endl;
-  f_vars_.open(f_vars_name.c_str());
+  f_vars_.open(f_vars_name);
   f_vars_ << cl_autogen_comment() << endl;
 
   package_def(f_types_);
@@ -139,7 +139,7 @@ void t_cl_generator::init_generator() {
 
   if (!no_asd) {
     string f_asd_name = program_dir + "/" + system_prefix + program_name_ + ".asd";
-    f_asd_.open(f_asd_name.c_str());
+    f_asd_.open(f_asd_name);
     f_asd_ << cl_autogen_comment() << endl;
     asdf_def(f_asd_);
   }
@@ -152,8 +152,8 @@ string t_cl_generator::render_includes() {
   const vector<t_program*>& includes = program_->get_includes();
   string result = "";
   result += ":depends-on (:thrift";
-  for (size_t i = 0; i < includes.size(); ++i) {
-    result += " :" + system_prefix + underscore(includes[i]->get_name());
+  for (auto include : includes) {
+    result += " :" + system_prefix + underscore(include->get_name());
   }
   result += ")\n";
   return result;
@@ -215,8 +215,8 @@ void t_cl_generator::package_def(std::ostream &out) {
   out << "(thrift:def-package :" << package();
   if ( includes.size() > 0 ) {
     out << " :use (";
-    for (size_t i = 0; i < includes.size(); ++i) {
-      out << " :" << includes[i]->get_name();
+    for (auto include : includes) {
+      out << " :" << include->get_name();
     }
     out << ")";
   }
@@ -314,13 +314,13 @@ string t_cl_generator::render_const_value(t_type* type, t_const_value* value) {
     map<t_const_value*, t_const_value*, t_const_value::value_compare>::const_iterator v_iter;
 
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
-      t_type* field_type = NULL;
+      t_type* field_type = nullptr;
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
         if ((*f_iter)->get_name() == v_iter->first->get_string()) {
           field_type = (*f_iter)->get_type();
         }
       }
-      if (field_type == NULL) {
+      if (field_type == nullptr) {
         throw "type error: " + type->get_name() + " has no field " + v_iter->first->get_string();
       }
 
@@ -396,7 +396,7 @@ void t_cl_generator::generate_cl_struct_internal(std::ostream& out, t_struct* ts
       out << endl << indent() << " ";
     }
     out << "(" << prefix((*m_iter)->get_name()) << " " <<
-        ( (NULL != value) ? render_const_value(type, value) : "nil" ) <<
+        ( (nullptr != value) ? render_const_value(type, value) : "nil" ) <<
         " :id " << (*m_iter)->get_key();
     if ( type->is_base_type() && "string" == typespec(type) )
       if ( ((t_base_type*)type)->is_binary() )
@@ -441,7 +441,7 @@ void t_cl_generator::generate_service(t_service* tservice) {
   vector<t_function*> functions = tservice->get_functions();
   vector<t_function*>::iterator f_iter;
 
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     extends_client = type_name(tservice->get_extends());
   }
 
@@ -540,7 +540,7 @@ string t_cl_generator::type_name(t_type* ttype) {
   string prefix = "";
   t_program* program = ttype->get_program();
 
-  if (program != NULL && program != program_)
+  if (program != nullptr && program != program_)
     prefix = package_of(program) == package() ? "" : package_of(program) + ":";
 
   string name = ttype->get_name();

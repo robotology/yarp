@@ -19,29 +19,22 @@
 
 package org.apache.thrift.test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.protocol.TProtocolFactory;
-import org.apache.thrift.protocol.TMultiplexedProtocol;
 import org.apache.thrift.server.ServerContext;
 import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TServer.Args;
 import org.apache.thrift.server.TSimpleServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.ServerTestBase.TestHandler;
 import org.apache.thrift.server.TServerEventHandler;
 import org.apache.thrift.server.TThreadedSelectorServer;
 import org.apache.thrift.server.TNonblockingServer;
-import org.apache.thrift.transport.TFramedTransport;
-import org.apache.thrift.transport.TFastFramedTransport;
+import org.apache.thrift.transport.layered.TFramedTransport;
+import org.apache.thrift.transport.layered.TFastFramedTransport;
+import org.apache.thrift.transport.TZlibTransport;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TTransport;
@@ -49,14 +42,8 @@ import org.apache.thrift.transport.TTransportFactory;
 import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.TMultiplexedProcessor;
 
-import thrift.test.Insanity;
-import thrift.test.Numberz;
 import thrift.test.SecondService;
 import thrift.test.ThriftTest;
-import thrift.test.Xception;
-import thrift.test.Xception2;
-import thrift.test.Xtruct;
-import thrift.test.Xtruct2;
 
 public class TestServer {
 
@@ -94,6 +81,24 @@ public class TestServer {
             this.connectionId = connectionId;
         }
 
+    @Override
+    public <T> T unwrap(Class<T> iface) {
+      try {
+        if (isWrapperFor(iface)) {
+          return iface.cast(this);
+        } else {
+          throw new RuntimeException("The context is not a wrapper for " + iface.getName());
+        }
+      } catch (Exception e) {
+        throw new RuntimeException("The context is not a wrapper and does not implement the interface");
+      }
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) {
+      return iface.isInstance(this);
+    }
+
   }
 
   static class TestServerEventHandler implements TServerEventHandler {
@@ -112,12 +117,12 @@ public class TestServer {
         }
 
         public void deleteContext(ServerContext serverContext, TProtocol input, TProtocol output) {
-            TestServerContext ctx = (TestServerContext)serverContext;
+            TestServerContext ctx = serverContext.unwrap(TestServerContext.class);
             System.out.println("TServerEventHandler.deleteContext - connection #"+ctx.getConnectionId()+" terminated");
         }
 
         public void processContext(ServerContext serverContext, TTransport inputTransport, TTransport outputTransport) {
-            TestServerContext ctx = (TestServerContext)serverContext;
+            TestServerContext ctx = serverContext.unwrap(TestServerContext.class);
             System.out.println("TServerEventHandler.processContext - connection #"+ctx.getConnectionId()+" is ready to process next request");
         }
 
@@ -127,6 +132,7 @@ public class TestServer {
     try {
       int port = 9090;
       boolean ssl = false;
+      boolean zlib = false;
       String transport_type = "buffered";
       String protocol_type = "binary";
       String server_type = "thread-pool";
@@ -150,6 +156,8 @@ public class TestServer {
             transport_type.trim();
           } else if (args[i].equals("--ssl")) {
             ssl = true;
+          } else if (args[i].equals("--zlib")) {
+            zlib = true;
           } else if (args[i].startsWith("--string-limit")) {
             string_limit = Integer.valueOf(args[i].split("=")[1]);
           } else if (args[i].startsWith("--container-limit")) {
@@ -158,9 +166,10 @@ public class TestServer {
             System.out.println("Allowed options:");
             System.out.println("  --help\t\t\tProduce help message");
             System.out.println("  --port=arg (=" + port + ")\tPort number to connect");
-            System.out.println("  --transport=arg (=" + transport_type + ")\n\t\t\t\tTransport: buffered, framed, fastframed");
+            System.out.println("  --transport=arg (=" + transport_type + ")\n\t\t\t\tTransport: buffered, framed, fastframed, zlib");
             System.out.println("  --protocol=arg (=" + protocol_type + ")\tProtocol: binary, compact, json, multi, multic, multij");
             System.out.println("  --ssl\t\t\tEncrypted Transport using SSL");
+            System.out.println("  --zlib\t\t\tCompressed Transport using Zlib");
             System.out.println("  --server-type=arg (=" + server_type +")\n\t\t\t\tType of server: simple, thread-pool, nonblocking, threaded-selector");
             System.out.println("  --string-limit=arg (=" + string_limit + ")\tString read length limit");
             System.out.println("  --container-limit=arg (=" + container_limit + ")\tContainer read length limit");
@@ -198,6 +207,7 @@ public class TestServer {
         if (transport_type.equals("buffered")) {
         } else if (transport_type.equals("framed")) {
         } else if (transport_type.equals("fastframed")) {
+        } else if (transport_type.equals("zlib")) {
         } else {
           throw new Exception("Unknown transport type! " + transport_type);
         }
@@ -229,6 +239,8 @@ public class TestServer {
         tTransportFactory = new TFramedTransport.Factory();
       } else if (transport_type.equals("fastframed")) {
         tTransportFactory = new TFastFramedTransport.Factory();
+      } else if (transport_type.equals("zlib")) {
+        tTransportFactory = new TZlibTransport.Factory();
       } else { // .equals("buffered") => default value
         tTransportFactory = new TTransportFactory();
       }

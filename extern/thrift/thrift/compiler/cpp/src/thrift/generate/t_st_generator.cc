@@ -71,19 +71,19 @@ public:
    * Init and close methods
    */
 
-  void init_generator();
-  void close_generator();
+  void init_generator() override;
+  void close_generator() override;
 
   /**
    * Program-level generation functions
    */
 
-  void generate_typedef(t_typedef* ttypedef);
-  void generate_enum(t_enum* tenum);
-  void generate_const(t_const* tconst);
-  void generate_struct(t_struct* tstruct);
-  void generate_xception(t_struct* txception);
-  void generate_service(t_service* tservice);
+  void generate_typedef(t_typedef* ttypedef) override;
+  void generate_enum(t_enum* tenum) override;
+  void generate_const(t_const* tconst) override;
+  void generate_struct(t_struct* tstruct) override;
+  void generate_xception(t_struct* txception) override;
+  void generate_service(t_service* tservice) override;
   void generate_class_side_definition();
   void generate_force_consts();
 
@@ -233,9 +233,9 @@ string t_st_generator::generated_category() {
   string cat = program_->get_namespace("smalltalk.category");
   // For compatibility with the Thrift grammar, the category must
   // be punctuated by dots.  Replaces them with dashes here.
-  for (string::iterator iter = cat.begin(); iter != cat.end(); ++iter) {
-    if (*iter == '.') {
-      *iter = '-';
+  for (char & iter : cat) {
+    if (iter == '.') {
+      iter = '-';
     }
   }
   return cat.size() ? cat : "Generated-" + class_name();
@@ -406,13 +406,13 @@ string t_st_generator::render_const_value(t_type* type, t_const_value* value) {
     map<t_const_value*, t_const_value*, t_const_value::value_compare>::const_iterator v_iter;
 
     for (v_iter = val.begin(); v_iter != val.end(); ++v_iter) {
-      t_type* field_type = NULL;
+      t_type* field_type = nullptr;
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
         if ((*f_iter)->get_name() == v_iter->first->get_string()) {
           field_type = (*f_iter)->get_type();
         }
       }
-      if (field_type == NULL) {
+      if (field_type == nullptr) {
         throw "type error: " + type->get_name() + " has no field " + v_iter->first->get_string();
       }
 
@@ -934,7 +934,7 @@ void t_st_generator::generate_service_client(t_service* tservice) {
   vector<t_function*> functions = tservice->get_functions();
   vector<t_function*>::iterator f_iter;
 
-  if (tservice->get_extends() != NULL) {
+  if (tservice->get_extends() != nullptr) {
     extends = type_name(tservice->get_extends());
     extends_client = extends + "Client";
   }
@@ -1000,7 +1000,7 @@ string t_st_generator::argument_list(t_struct* tstruct) {
 string t_st_generator::type_name(t_type* ttype) {
   string prefix = "";
   t_program* program = ttype->get_program();
-  if (program != NULL && program != program_) {
+  if (program != nullptr && program != program_) {
     if (!ttype->is_service()) {
       prefix = program->get_name() + "_types.";
     }

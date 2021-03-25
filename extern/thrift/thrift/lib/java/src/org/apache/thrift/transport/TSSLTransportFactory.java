@@ -37,11 +37,17 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *  A Factory for providing and setting up Client and Server SSL wrapped
  *  TSocket and TServerSocket
  */
 public class TSSLTransportFactory {
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(TSSLTransportFactory.class);
 
   /**
    * Get a SSL wrapped TServerSocket bound to the specified port. In this
@@ -166,7 +172,7 @@ public class TSSLTransportFactory {
    */
   public static TSocket getClientSocket(String host, int port, int timeout, TSSLTransportParameters params) throws TTransportException {
     if (params == null || !(params.isKeyStoreSet || params.isTrustStoreSet)) {
-      throw new TTransportException("Either one of the KeyStore or TrustStore must be set for SSLTransportParameters");
+      throw new TTransportException(TTransportException.NOT_OPEN, "Either one of the KeyStore or TrustStore must be set for SSLTransportParameters");
     }
 
     SSLContext ctx = createSSLContext(params);
@@ -219,20 +225,20 @@ public class TSSLTransportFactory {
       }
 
     } catch (Exception e) {
-      throw new TTransportException("Error creating the transport", e);
+      throw new TTransportException(TTransportException.NOT_OPEN, "Error creating the transport", e);
     } finally {
       if (in != null) {
         try {
           in.close();
         } catch (IOException e) {
-          e.printStackTrace();
+          LOGGER.warn("Unable to close stream", e);
         }
       }
       if (is != null) {
         try {
           is.close();
         } catch (IOException e) {
-          e.printStackTrace();
+          LOGGER.warn("Unable to close stream", e);
         }
       }
     }
@@ -269,8 +275,10 @@ public class TSSLTransportFactory {
       SSLSocket socket = (SSLSocket) factory.createSocket(host, port);
       socket.setSoTimeout(timeout);
       return new TSocket(socket);
+    } catch (TTransportException tte) {
+      throw tte;
     } catch (Exception e) {
-      throw new TTransportException("Could not connect to " + host + " on port " + port, e);
+      throw new TTransportException(TTransportException.NOT_OPEN, "Could not connect to " + host + " on port " + port, e);
     }
   }
 
@@ -342,7 +350,7 @@ public class TSSLTransportFactory {
       }
       isKeyStoreSet = true;
     }
-    
+
     /**
      * Set the keystore, password, certificate type and the store type
      *
@@ -355,7 +363,7 @@ public class TSSLTransportFactory {
     	this.keyStoreStream = keyStoreStream;
     	setKeyStore("", keyPass, keyManagerType, keyStoreType);
     }
-    
+
     /**
      * Set the keystore and password
      *
@@ -365,7 +373,7 @@ public class TSSLTransportFactory {
     public void setKeyStore(String keyStore, String keyPass) {
       setKeyStore(keyStore, keyPass, null, null);
     }
-    
+
     /**
      * Set the keystore and password
      *
@@ -375,7 +383,7 @@ public class TSSLTransportFactory {
     public void setKeyStore(InputStream keyStoreStream, String keyPass) {
       setKeyStore(keyStoreStream, keyPass, null, null);
     }
-    
+
     /**
      * Set the truststore, password, certificate type and the store type
      *
@@ -395,7 +403,7 @@ public class TSSLTransportFactory {
       }
       isTrustStoreSet = true;
     }
-    
+
     /**
      * Set the truststore, password, certificate type and the store type
      *
@@ -418,7 +426,7 @@ public class TSSLTransportFactory {
     public void setTrustStore(String trustStore, String trustPass) {
       setTrustStore(trustStore, trustPass, null, null);
     }
-    
+
     /**
      * Set the truststore and password
      *

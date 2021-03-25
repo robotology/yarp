@@ -143,8 +143,8 @@ string showFormat(Bottle& b, string root) {
         sprintf(val_name,"%s%zu", root.c_str(), i);
         if (v.isVocab()) {
             if (!specialized) {
-                r += addPart("int32",tag_name,BOTTLE_TAG_VOCAB,nullptr,
-                             "BOTTLE_TAG_VOCAB");
+                r += addPart("int32",tag_name,BOTTLE_TAG_VOCAB32,nullptr,
+                             "BOTTLE_TAG_VOCAB32");
                 r += "\n";
             }
             r += addPart("int32",val_name,v.asInt32(),nullptr,v.toString(),"vocab");

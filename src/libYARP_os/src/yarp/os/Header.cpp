@@ -19,6 +19,8 @@
 
 
 using yarp::os::Header;
+using yarp::os::ConnectionReader;
+using yarp::os::ConnectionWriter;
 
 namespace {
 YARP_OS_LOG_COMPONENT(HEADER, "yarp.os.Header");
