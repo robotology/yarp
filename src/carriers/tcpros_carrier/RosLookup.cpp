@@ -119,7 +119,7 @@ bool RosLookup::lookupTopic(const std::string& name) {
 }
 
 yarp::os::Contact RosLookup::getRosCoreAddressFromEnv() {
-    std::string addr = yarp::conf::environment::getEnvironment("ROS_MASTER_URI");
+    std::string addr = yarp::conf::environment::get_string("ROS_MASTER_URI");
     Contact c = Contact::fromString(addr);
     if (c.isValid()) {
         c.setCarrier("xmlrpc");

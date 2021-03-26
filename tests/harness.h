@@ -10,7 +10,10 @@
 #ifndef YARP_TESTS_HARNESS_H
 #define YARP_TESTS_HARNESS_H
 
-#include <yarp/os/YarpPluginSelector.h>
+#if !defined(WITHOUT_NETWORK)
+#  include <yarp/os/YarpPluginSelector.h>
+#endif // WITHOUT_NETWORK
+
 #include <iostream>
 #include <catch.hpp>
 
@@ -22,6 +25,7 @@ extern int yarp_tests_skipped;
     FAIL(__VA_ARGS__); \
 }
 
+#if !defined(WITHOUT_NETWORK)
 #define YARP_REQUIRE_PLUGIN(name, type) \
 { \
     bool has_plugin = yarp::os::YarpPluginSelector::checkPlugin(name, type); \
@@ -29,5 +33,6 @@ extern int yarp_tests_skipped;
         YARP_SKIP_TEST("Required plugin is missing: " << type << " - " << name); \
     } \
 }
+#endif // WITHOUT_NETWORK
 
 #endif // YARP_TESTS_HARNESS_H

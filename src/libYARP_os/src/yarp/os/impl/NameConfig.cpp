@@ -13,6 +13,7 @@
 #include <yarp/conf/system.h>
 #include <yarp/conf/filesystem.h>
 #include <yarp/conf/environment.h>
+#include <yarp/conf/string.h>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetType.h>
@@ -26,7 +27,6 @@
 #include <yarp/os/impl/PlatformNetdb.h>
 #include <yarp/os/impl/PlatformSysStat.h>
 #include <yarp/os/impl/PlatformUnistd.h>
-#include <yarp/os/impl/SplitString.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -57,29 +57,32 @@ YARP_OS_LOG_COMPONENT(NAMECONFIG, "yarp.os.impl.NameConfig")
 bool NameConfig::fromString(const std::string& txt)
 {
     address = Contact();
-    SplitString ss(txt.c_str());
-    if (ss.size() >= 1) {
-        if (ss.get(0)[0] == '[') {
-            // use Property format
-            Property config;
-            config.fromConfig(txt.c_str());
+    auto ss = yarp::conf::string::split(txt, ' ');
 
-            Bottle& b = config.findGroup("name");
-            if (b.isNull()) {
-                yCError(NAMECONFIG, "Cannot find yarp group in config file");
-                std::exit(1);
-            }
-            address = Contact(b.find("host").asString(),
-                              b.find("port").asInt32());
-            mode = b.check("mode", Value("yarp")).asString();
-            return (address.getPort() != 0);
+    if (ss.empty()) {
+        return false;
+    }
+
+    if (ss[0].c_str()[0] == '[') {
+        // use Property format
+        Property config;
+        config.fromConfig(txt.c_str());
+
+        Bottle& b = config.findGroup("name");
+        if (b.isNull()) {
+            yCError(NAMECONFIG, "Cannot find yarp group in config file");
+            std::exit(1);
         }
+        address = Contact(b.find("host").asString(),
+                          b.find("port").asInt32());
+        mode = b.check("mode", Value("yarp")).asString();
+        return (address.getPort() != 0);
     }
 
     if (ss.size() >= 2) {
-        address = Contact(ss.get(0), NetType::toInt(ss.get(1)));
+        address = Contact(ss[0]), yarp::conf::numeric::from_string<int>(ss[1]);
         if (ss.size() >= 3) {
-            mode = ss.get(2);
+            mode = ss.at(2);
         } else {
             mode = "yarp";
         }
@@ -88,6 +91,7 @@ bool NameConfig::fromString(const std::string& txt)
         }
         return true;
     }
+
     return false;
 }
 
@@ -174,7 +178,7 @@ bool NameConfig::toFile(bool clean)
         std::string txt;
         if (!clean) {
             std::string m = (!mode.empty()) ? mode : "yarp";
-            txt += address.getHost() + " " + NetType::toString(address.getPort()) + " " + m + "\n";
+            txt += address.getHost() + " " + yarp::conf::numeric::to_string(address.getPort()) + " " + m + "\n";
         }
         return writeConfig(fname, txt);
     }
@@ -440,7 +444,7 @@ void NameConfig::setNamespace(const std::string& ns)
 std::string NameConfig::getNamespace(bool refresh)
 {
     if (space.empty() || refresh) {
-        std::string senv = yarp::conf::environment::getEnvironment("YARP_NAMESPACE");
+        std::string senv = yarp::conf::environment::get_string("YARP_NAMESPACE");
         if (!senv.empty()) {
             spaces.fromString(senv);
         } else {

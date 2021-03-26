@@ -113,7 +113,7 @@ bool PortCore::listen(const Contact& address, bool shouldAnnounce)
         if (m_address.getPort() <= 0) {
             m_address = m_face->getLocalAddress();
             if (m_address.getRegName() == "...") {
-                m_address.setName(std::string("/") + m_address.getHost() + "_" + NetType::toString(m_address.getPort()));
+                m_address.setName(std::string("/") + m_address.getHost() + "_" + yarp::conf::numeric::to_string(m_address.getPort()));
                 setName(m_address.getRegName());
             }
         }
@@ -1721,7 +1721,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         Bottle result;
 
         bool found = false;
-        std::string name = yarp::conf::environment::getEnvironment("YARP_ROBOT_NAME", &found);
+        std::string name = yarp::conf::environment::get_string("YARP_ROBOT_NAME", &found);
         if (!found) {
             name = getName();
             // Remove initial "/"

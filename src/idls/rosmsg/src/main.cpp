@@ -73,7 +73,7 @@ static void generateTypeMap1(RosType& t, std::string& txt)
         }
         if (!simple) {
             txt += " list ";
-            txt += NetType::toString((int)lst.size());
+            txt += yarp::conf::numeric::to_string((int)lst.size());
 
             for (auto& i : lst) {
                 generateTypeMap1(i, txt);
@@ -82,7 +82,7 @@ static void generateTypeMap1(RosType& t, std::string& txt)
             txt += " vector ";
             txt += lst[0].rosType;
             txt += " ";
-            txt += NetType::toString((int)lst.size());
+            txt += yarp::conf::numeric::to_string((int)lst.size());
             txt += " *";
         }
         return;

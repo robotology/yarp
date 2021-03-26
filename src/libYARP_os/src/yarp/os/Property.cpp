@@ -10,13 +10,14 @@
 #include <yarp/os/Property.h>
 
 #include <yarp/conf/environment.h>
+#include <yarp/conf/string.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PlatformDirent.h>
-#include <yarp/os/impl/SplitString.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <algorithm>
@@ -428,9 +429,8 @@ public:
         bool ok = true;
         if (!readFile(fname, txt, true)) {
             ok = false;
-            SplitString ss(searchPath.c_str(), ';');
-            for (int i = 0; i < ss.size(); i++) {
-                std::string trial = ss.get(i);
+            for (const auto& s : yarp::conf::string::split(searchPath, ';')) {
+                std::string trial = s;
                 trial += '/';
                 trial += fname;
 
@@ -439,7 +439,7 @@ public:
                 txt = "";
                 if (readFile(trial, txt, true)) {
                     ok = true;
-                    pathPrefix = ss.get(i);
+                    pathPrefix = s;
                     pathPrefix += '/';
                     break;
                 }
@@ -820,7 +820,7 @@ public:
                 }
                 inVar = false;
                 yCTrace(PROPERTY, "VARIABLE %s\n", var.c_str());
-                std::string add = yarp::conf::environment::getEnvironment(var.c_str());
+                std::string add = yarp::conf::environment::get_string(var);
                 if (add.empty()) {
                     add = env.find(var).toString();
                 }

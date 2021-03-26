@@ -10,13 +10,15 @@
 #ifndef YARP_OS_IMPL_NAMESERVER_H
 #define YARP_OS_IMPL_NAMESERVER_H
 
+#include <yarp/conf/string.h>
+#include <yarp/conf/numeric.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Dispatcher.h>
-#include <yarp/os/impl/SplitString.h>
 
 #include <map>
 #include <mutex>
@@ -144,7 +146,7 @@ private:
 
         std::string get()
         {
-            return prefix + NetType::toString(getFree());
+            return prefix + yarp::conf::numeric::to_string(getFree());
         }
 
         int fresh() override
@@ -158,7 +160,7 @@ private:
         {
             if (name.find(prefix) == 0) {
                 std::string num = name.substr(prefix.length());
-                int x = NetType::toInt(num.c_str());
+                int x = yarp::conf::numeric::from_string<int>(num);
                 ReusableRecord<int>::release(x);
                 return true;
             }
@@ -234,7 +236,7 @@ private:
             int v1 = x % 255;
             int v2 = x / 255;
             yCAssert(NAMESERVER, v2 < 255);
-            return std::string("224.1.") + NetType::toString(v2 + 1) + "." + NetType::toString(v1 + 1);
+            return std::string("224.1.") + yarp::conf::numeric::to_string(v2 + 1) + "." + yarp::conf::numeric::to_string(v1 + 1);
         }
 
         int lastPortNumber()
@@ -244,12 +246,14 @@ private:
 
         void releaseAddress(const char* addr)
         {
-            SplitString ss(addr, '.');
+            auto ss = yarp::conf::string::split(addr, '.');
+            constexpr size_t ipv4_size = 4;
             int ip[] = {224, 3, 1, 1};
-            yCAssert(NAMESERVER, ss.size() == 4);
-            for (int i = 0; i < 4; i++) {
-                ip[i] = NetType::toInt(ss.get(i));
+            yCAssert(NAMESERVER, ss.size() == ipv4_size);
+            for (size_t i = 0; i < ipv4_size; ++i) {
+                ip[i] = yarp::conf::numeric::from_string<int>(ss[i]);
             }
+
             int v2 = ip[2] - 1;
             int v1 = ip[3] - 1;
             int x = v2 * 255 + v1;

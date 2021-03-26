@@ -309,7 +309,6 @@ set(YARP_os_IMPL_HDRS yarp/os/impl/AuthHMAC.h
                       yarp/os/impl/Protocol.h
                       yarp/os/impl/RFModuleFactory.h
                       yarp/os/impl/SocketTwoWayStream.h
-                      yarp/os/impl/SplitString.h
                       yarp/os/impl/Storable.h
                       yarp/os/impl/StreamConnectionReader.h
                       yarp/os/impl/TcpAcceptor.h
@@ -350,7 +349,6 @@ set(YARP_os_IMPL_SRCS yarp/os/impl/AuthHMAC.cpp
                       yarp/os/impl/Protocol.cpp
                       yarp/os/impl/RFModuleFactory.cpp
                       yarp/os/impl/SocketTwoWayStream.cpp
-                      yarp/os/impl/SplitString.cpp
                       yarp/os/impl/Storable.cpp
                       yarp/os/impl/StreamConnectionReader.cpp
                       yarp/os/impl/TcpCarrier.cpp

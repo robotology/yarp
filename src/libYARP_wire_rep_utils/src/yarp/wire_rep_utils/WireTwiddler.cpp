@@ -323,7 +323,7 @@ std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
         result += codeName;
         result += " ";
     }
-    result += NetType::toString(len);
+    result += yarp::conf::numeric::to_string(len);
     result += " ";
     for (int i=0; i<len; i++) {
         Value&v = msg.get(i);
