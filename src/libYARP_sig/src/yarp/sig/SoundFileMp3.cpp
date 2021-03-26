@@ -24,7 +24,7 @@
 #include <cstring>
 #include <fstream>
 
-#if (YARP_HAS_FFMPEG)
+#if defined (YARP_HAS_FFMPEG)
 extern "C"
 {
     #include <libavutil/opt.h>
@@ -47,13 +47,13 @@ namespace
 }
 
 //#######################################################################################################
-#if (YARP_HAS_FFMPEG)
+#if defined (YARP_HAS_FFMPEG)
 #define AUDIO_INBUF_SIZE 20480
 #define AUDIO_REFILL_THRESH   4096
 #endif
 
 //#######################################################################################################
-#if (YARP_HAS_FFMPEG)
+#if defined (YARP_HAS_FFMPEG)
 bool decode(AVCodecContext* dec_ctx, AVPacket* pkt, AVFrame* frame, Sound& sound_data)
 {
     int i, ch;
@@ -196,7 +196,7 @@ int select_channel_layout(const AVCodec * codec)
 //#######################################################################################################
 bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filename, size_t bitrate)
 {
-#if (!YARP_HAS_FFMPEG)
+#if !defined (YARP_HAS_FFMPEG)
 
     yCError(SOUNDFILE_MP3) << "write_mp3_file() not supported: lib ffmpeg not found";
     return false;
@@ -326,7 +326,7 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
 
 bool read_mp3_istream(Sound& sound_data, std::istream& istream)
 {
-#if (!YARP_HAS_FFMPEG)
+#if !defined (YARP_HAS_FFMPEG)
     yCError(SOUNDFILE_MP3) << "read_mp3_istream() not supported: lib ffmpeg not found";
     return false;
 #else
