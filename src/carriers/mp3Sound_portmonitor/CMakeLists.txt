@@ -19,8 +19,9 @@ if(NOT SKIP_mp3Sound)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig)
 
-  target_include_directories(yarp_pm_mp3Sound SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIR})
-  target_link_libraries(yarp_pm_mp3Sound PRIVATE ${FFMPEG_LIBRARIES})
+  target_include_directories(yarp_pm_mp3Sound SYSTEM PRIVATE ${FFMPEG_avcodec_INCLUDE_DIRS})
+  target_link_libraries(yarp_pm_mp3Sound PRIVATE ${FFMPEG_avcodec_LIBRARIES})
+  # list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS FFMPEG) # Not using targets
 
   yarp_install(TARGETS yarp_pm_mp3Sound
                EXPORT YARP_${YARP_PLUGIN_MASTER}
