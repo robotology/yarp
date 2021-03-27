@@ -248,12 +248,6 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
         m_isDeviceOwned = true;
     }
 
-    if (config.check("start"))
-    {
-        m_irender->startPlayback();
-        m_irender->isPlaying(m_isPlaying);
-    }
-
     if (m_irender == nullptr)
     {
         yCError(AUDIOPLAYERWRAPPER, "m_irender is null\n");
@@ -265,6 +259,12 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
     {
         yCError(AUDIOPLAYERWRAPPER, "getPlaybackAudioBufferMaxSize failed\n");
         return false;
+    }
+
+    if (config.check("start"))
+    {
+        m_irender->startPlayback();
+        m_irender->isPlaying(m_isPlaying);
     }
 
     return true;
