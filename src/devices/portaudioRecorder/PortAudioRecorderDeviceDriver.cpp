@@ -75,7 +75,6 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
     {
         const auto* rptr = (const SAMPLE*)inputBuffer;
         size_t framesToCalc;
-        unsigned int i;
         size_t framesLeft = (recdata->getMaxSize().getSamples()* recdata->getMaxSize().getChannels()) -
                             (recdata->size().getSamples()      * recdata->size().getChannels());
 
@@ -106,21 +105,22 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
 
         if( inputBuffer == nullptr )
         {
-            for( i=0; i<framesToCalc; i++ )
+            for( size_t i=0; i<framesToCalc; i++ )
             {
-                recdata->write(0); // left
-                if(num_rec_channels == 2 ) recdata->write(0);  // right
+                for (size_t j=0; j < num_rec_channels; j++)
+                {
+                    recdata->write(0);
+                }
             }
         }
         else
         {
-#if 0
-            yCDebug(PORTAUDIORECORDER) << "Writing" << framesToCalc*2*2 << "bytes in the circular buffer";
-#endif
-            for( i=0; i<framesToCalc; i++ )
+            for( size_t i=0; i<framesToCalc; i++ )
             {
-                recdata->write(*rptr++);  // left
-                if(num_rec_channels == 2 ) recdata->write(*rptr++);  // right
+                for (size_t j = 0; j < num_rec_channels; j++)
+                {
+                    recdata->write(*rptr++);
+                }
             }
         }
         return finished;
@@ -267,7 +267,6 @@ void PortAudioRecorderDeviceDriver::threadRelease()
 
 bool PortAudioRecorderDeviceDriver::threadInit()
 {
-    m_recording_enabled=false;
     return true;
 }
 
@@ -275,24 +274,25 @@ void PortAudioRecorderDeviceDriver::run()
 {
     while(this->isStopping()==false)
     {
+        //The status of the buffer (i.e. the return value of Pa_IsStreamActive() depends on the returned value
+        //of the callback function bufferIOCallback() which may return paContinue or paComplete.
         if (m_recording_enabled)
         {
-            while( ( m_err = Pa_IsStreamActive(m_stream) ) == 1 )
-            {
-                yarp::os::SystemClock::delaySystem(SLEEP_TIME);
-            }
-
-            if (m_err == 0)
-            {
-                Pa_StopStream(m_stream);
-                yCDebug(PORTAUDIORECORDER) << "The recording stream has been stopped";
-                m_recording_enabled = false;
-            }
-            if(m_err < 0 )
+            m_err = Pa_IsStreamActive(m_stream);
+            if (m_err < 0)
             {
                 handleError();
-                yCError(PORTAUDIORECORDER) << "Unhandled error. What should I do?";
+                yCError(PORTAUDIORECORDER) << "Unhandled error. Calling abortSound()";
+                //abortSound();
                 continue;
+            }
+            if (m_err == 1)
+            {
+                //already doing something
+            }
+            else if (m_err == 0)
+            {
+                //the recording is stopped
             }
         }
 
