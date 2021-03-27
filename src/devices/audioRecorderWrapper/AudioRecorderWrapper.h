@@ -35,6 +35,9 @@
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Log.h>
 
+class AudioRecorderStatusThread;
+class AudioRecorderDataThread;
+
 /**
  * @ingroup dev_impl_wrapper
  *
@@ -53,7 +56,6 @@
 */
 class AudioRecorderWrapper :
         public yarp::dev::DeviceDriver,
-        private yarp::os::PeriodicThread,
         public yarp::dev::IMultipleWrapper,
         public yarp::os::PortReader
 {
@@ -72,6 +74,9 @@ private:
     double                         m_getSound_timeout;
     bool                           m_isDeviceOwned =false;
     bool                           m_isRecording=false;
+    AudioRecorderStatusThread*     m_statusThread = nullptr;
+    AudioRecorderDataThread*       m_dataThread =nullptr;
+    bool                           m_debug_enabled = false;
 
 public:
     /**
@@ -93,11 +98,37 @@ public:
     void attach(yarp::dev::IAudioGrabberSound *igrab);
     void detach();
 
-    bool threadInit() override;
-    void threadRelease() override;
-    void run() override;
-
     bool read(yarp::os::ConnectionReader& connection) override;
+    friend class AudioRecorderStatusThread;
+    friend class AudioRecorderDataThread;
+};
+
+//----------------------------------------------------------------
+class AudioRecorderStatusThread : public yarp::os::PeriodicThread
+{
+public:
+    AudioRecorderWrapper* m_ARW = nullptr;
+
+public:
+    AudioRecorderStatusThread(AudioRecorderWrapper* mi) : PeriodicThread(0.010), m_ARW(mi) {}
+
+    bool threadInit() override { return true; }
+    void threadRelease() override { return; }
+    void run() override;
+};
+
+//----------------------------------------------------------------
+class AudioRecorderDataThread : public yarp::os::PeriodicThread
+{
+public:
+    AudioRecorderWrapper* m_ARW = nullptr;
+
+public:
+    AudioRecorderDataThread(AudioRecorderWrapper* mi) : PeriodicThread(0.010), m_ARW(mi) {}
+
+    bool threadInit() override { return true; }
+    void threadRelease() override { return; }
+    void run() override;
 };
 
 #endif // YARP_DEV_AUDIORECORDERWRAPPER_H

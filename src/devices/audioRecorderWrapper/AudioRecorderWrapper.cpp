@@ -37,7 +37,6 @@ double last_time;
 
 
 AudioRecorderWrapper::AudioRecorderWrapper() :
-        PeriodicThread(DEFAULT_THREAD_PERIOD),
         m_period(DEFAULT_THREAD_PERIOD),
         m_min_number_of_samples_over_network(DEFAULT_MIN_NUMBER_OF_SAMPLES_OVER_NETWORK),
         m_max_number_of_samples_over_network(DEFAULT_MAX_NUMBER_OF_SAMPLES_OVER_NETWORK),
@@ -136,6 +135,13 @@ bool AudioRecorderWrapper::open(yarp::os::Searchable& config)
     }
     m_rpcPort.setReader(*this);
 
+    bool b = m_mic->getRecordingAudioBufferMaxSize(m_max_buffer_size);
+    if (!b)
+    {
+        yCError(AUDIORECORDERWRAPPER, "getPlaybackAudioBufferMaxSize failed\n");
+        return false;
+    }
+
     // Wait a little and then start if requested
     if (config.check("start")) {
         yarp::os::SystemClock::delaySystem(1);
@@ -150,7 +156,8 @@ bool AudioRecorderWrapper::close()
 {
     if (m_mic != nullptr)
     {
-        PeriodicThread::stop();
+        m_dataThread->stop();
+        m_statusThread->stop();
         m_mic->stopRecording();
         m_mic = nullptr;
 
@@ -164,90 +171,6 @@ bool AudioRecorderWrapper::close()
         return true;
     }
     return false;
-}
-
-void AudioRecorderWrapper::run()
-{
-#ifdef DEBUG_TIME_SPENT
-    double current_time = yarp::os::Time::now();
-    yCDebug(AUDIORECORDERWRAPPER) << current_time - m_last_time;
-    m_last_time = current_time;
-#endif
-
-    if (m_mic == nullptr)
-    {
-        yCError(AUDIORECORDERWRAPPER) << "The IAudioGrabberSound interface is not available yet!";
-        return;
-    }
-
-#ifdef PRINT_DEBUG_MESSAGES
-    {
-        audio_buffer_size buf_max;
-        audio_buffer_size buf_cur;
-        mic->getRecordingAudioBufferMaxSize(buf_max);
-        mic->getRecordingAudioBufferCurrentSize(buf_cur);
-        yCDebug(AUDIORECORDERWRAPPER) << "BEFORE Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
-    }
-#endif
-
-    yarp::sig::Sound snd;
-    m_mic->getSound(snd, m_min_number_of_samples_over_network, m_max_number_of_samples_over_network, m_getSound_timeout);
-
-    if (snd.getSamples() < m_min_number_of_samples_over_network ||
-        snd.getSamples() < m_max_number_of_samples_over_network)
-    {
-            yCWarning(AUDIORECORDERWRAPPER) << "subdevice->getSound() is not producing sounds of the requested size ("
-                       << m_min_number_of_samples_over_network << "<"
-                       << snd.getSamples() << "<"
-                       << m_max_number_of_samples_over_network << ") failed";
-    }
-
-#ifdef PRINT_DEBUG_MESSAGES
-    {
-        audio_buffer_size buf_max;
-        audio_buffer_size buf_cur;
-        mic->getRecordingAudioBufferMaxSize(buf_max);
-        mic->getRecordingAudioBufferCurrentSize(buf_cur);
-        yCDebug(AUDIORECORDERWRAPPER) << "AFTER Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
-    }
-#endif
-#ifdef PRINT_DEBUG_MESSAGES
-    yCDebug(AUDIORECORDERWRAPPER) << "Sound size:" << snd.getSamples()*snd.getChannels()*snd.getBytesPerSample() << " bytes";
-    yCDebug(AUDIORECORDERWRAPPER);
-#endif
-
-    //prepare the timestamp
-    m_stamp.update();
-    m_streamingPort.setEnvelope(m_stamp);
-
-    //check before sending data
-    if (snd.getSamples() == 0)
-    {
-        yCError(AUDIORECORDERWRAPPER) << "Subdevice produced sound of 0 samples!";
-        return;
-    }
-    if (snd.getChannels() == 0)
-    {
-        yCError(AUDIORECORDERWRAPPER) << "Subdevice produced sound of 0 channels!";
-        return;
-    }
-    if (snd.getFrequency() == 0)
-    {
-        yCError(AUDIORECORDERWRAPPER) << "Subdevice produced sound with 0 frequency!";
-        return;
-    }
-
-    //send data
-    m_streamingPort.write(snd);
-
-    m_mic->isRecording(m_isRecording);
-
-    //status port
-    yarp::dev::audioRecorderStatus status;
-    status.enabled = m_isRecording;
-    status.current_buffer_size = m_current_buffer_size.getSamples();
-    status.max_buffer_size = m_max_buffer_size.getSamples();
-    m_statusPort.write(status);
 }
 
 bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
@@ -348,15 +271,23 @@ bool AudioRecorderWrapper::attachAll(const PolyDriverList &device2attach)
     }
     attach(m_mic);
 
-    PeriodicThread::setPeriod(m_period);
-    return PeriodicThread::start();
+    m_dataThread = new AudioRecorderDataThread(this);
+    m_statusThread = new AudioRecorderStatusThread(this);
+    m_dataThread->setPeriod(m_period);
+    m_dataThread->start();
+    m_statusThread->start();
+    return true;
 }
 
 bool AudioRecorderWrapper::detachAll()
 {
-    if (PeriodicThread::isRunning())
+    if (m_dataThread->isRunning())
     {
-        PeriodicThread::stop();
+        m_dataThread->stop();
+    }
+    if (m_statusThread->isRunning())
+    {
+        m_statusThread->stop();
     }
     m_mic = nullptr;
     return true;
@@ -369,18 +300,111 @@ void AudioRecorderWrapper::attach(yarp::dev::IAudioGrabberSound *igrab)
 
 void AudioRecorderWrapper::detach()
 {
-    if (PeriodicThread::isRunning())
+    if (m_dataThread->isRunning())
     {
-        PeriodicThread::stop();
+        m_dataThread->stop();
+    }
+    if (m_statusThread->isRunning())
+    {
+        m_statusThread->stop();
     }
     m_mic = nullptr;
 }
 
-bool AudioRecorderWrapper::threadInit()
+void AudioRecorderStatusThread::run()
 {
-    return true;
+    m_ARW->m_mic->getRecordingAudioBufferCurrentSize(m_ARW->m_current_buffer_size);
+    if (m_ARW->m_debug_enabled)
+    {
+        static double printer_wdt = yarp::os::Time::now();
+        if (yarp::os::Time::now() - printer_wdt > 1.0)
+        {
+            yCDebug(AUDIORECORDERWRAPPER) << m_ARW->m_current_buffer_size.getSamples() << "/" << m_ARW->m_max_buffer_size.getSamples() << "samples";
+            printer_wdt = yarp::os::Time::now();
+        }
+    }
+
+    m_ARW->m_mic->isRecording(m_ARW->m_isRecording);
+
+    //status port
+    yarp::dev::audioRecorderStatus status;
+    status.enabled = m_ARW->m_isRecording;
+    status.current_buffer_size = m_ARW->m_current_buffer_size.getSamples();
+    status.max_buffer_size = m_ARW->m_max_buffer_size.getSamples();
+    m_ARW->m_statusPort.write(status);
 }
 
-void AudioRecorderWrapper::threadRelease()
+void AudioRecorderDataThread::run()
 {
+#ifdef DEBUG_TIME_SPENT
+    double current_time = yarp::os::Time::now();
+    yCDebug(AUDIORECORDERWRAPPER) << current_time - m_last_time;
+    m_last_time = current_time;
+#endif
+
+    if (m_ARW->m_mic == nullptr)
+    {
+        yCError(AUDIORECORDERWRAPPER) << "The IAudioGrabberSound interface is not available yet!";
+        return;
+    }
+
+#ifdef PRINT_DEBUG_MESSAGES
+    {
+        audio_buffer_size buf_max;
+        audio_buffer_size buf_cur;
+        mic->getRecordingAudioBufferMaxSize(buf_max);
+        mic->getRecordingAudioBufferCurrentSize(buf_cur);
+        yCDebug(AUDIORECORDERWRAPPER) << "BEFORE Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
+    }
+#endif
+
+    yarp::sig::Sound snd;
+    m_ARW->m_mic->getSound(snd, m_ARW->m_min_number_of_samples_over_network, m_ARW->m_max_number_of_samples_over_network, m_ARW->m_getSound_timeout);
+
+    if (snd.getSamples() < m_ARW->m_min_number_of_samples_over_network ||
+        snd.getSamples() < m_ARW->m_max_number_of_samples_over_network)
+    {
+        yCWarning(AUDIORECORDERWRAPPER) << "subdevice->getSound() is not producing sounds of the requested size ("
+            << m_ARW->m_min_number_of_samples_over_network << "<"
+            << snd.getSamples() << "<"
+            << m_ARW->m_max_number_of_samples_over_network << ") failed";
+    }
+
+#ifdef PRINT_DEBUG_MESSAGES
+    {
+        audio_buffer_size buf_max;
+        audio_buffer_size buf_cur;
+        mic->getRecordingAudioBufferMaxSize(buf_max);
+        mic->getRecordingAudioBufferCurrentSize(buf_cur);
+        yCDebug(AUDIORECORDERWRAPPER) << "AFTER Buffer status:" << buf_cur.getBytes() << "/" << buf_max.getBytes() << "bytes";
+    }
+#endif
+#ifdef PRINT_DEBUG_MESSAGES
+    yCDebug(AUDIORECORDERWRAPPER) << "Sound size:" << snd.getSamples() * snd.getChannels() * snd.getBytesPerSample() << " bytes";
+    yCDebug(AUDIORECORDERWRAPPER);
+#endif
+
+    //prepare the timestamp
+    m_ARW->m_stamp.update();
+    m_ARW->m_streamingPort.setEnvelope(m_ARW->m_stamp);
+
+    //check before sending data
+    if (snd.getSamples() == 0)
+    {
+        yCError(AUDIORECORDERWRAPPER) << "Subdevice produced sound of 0 samples!";
+        return;
+    }
+    if (snd.getChannels() == 0)
+    {
+        yCError(AUDIORECORDERWRAPPER) << "Subdevice produced sound of 0 channels!";
+        return;
+    }
+    if (snd.getFrequency() == 0)
+    {
+        yCError(AUDIORECORDERWRAPPER) << "Subdevice produced sound with 0 frequency!";
+        return;
+    }
+
+    //send data
+    m_ARW->m_streamingPort.write(snd);
 }
