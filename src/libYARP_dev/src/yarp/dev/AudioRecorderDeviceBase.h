@@ -33,14 +33,15 @@ class AudioDeviceDriverSettings
 * \brief `AudioRecorderDeviceBase` : a base class for all audio recorder devices
 *
 * Parameters required by this device are:
-* | Parameter name   | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
-* |:----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | AUDIO_BASE       |  rate          | int     | Hz             | 44100                    | No                          | The frequency of the audio device                                 | - |
-* | AUDIO_BASE       |  samples       | int     | samples        | 44100                    | No                          | The size of the internal buffer (in samples) | A default value identical to device frequency implies a buffer length of 1s |
-* | AUDIO_BASE       |  channels      | int     | -              | 2                        | No                          | The number of channels | - |
-* | AUDIO_BASE       |  bits          | int     | -              | 16                       | No                          | Not yet implemented | - | *
-* | AUDIO_BASE       |  hw_gain       | double  | -              | 1.0                      | No                          | The device audio gain. Its implementation is device dependent (and it may also be not implemented)  | - | *
-* | AUDIO_BASE       |  sw_gain       | double  | -              | 1.0                      | No                          | A SW gain for audio waveform amplification | - | *
+* | Parameter name   | SubParameter      | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:----------------:|:-----------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | AUDIO_BASE       |  rate             | int     | Hz             | 44100                    | No                          | The frequency of the audio device                                 | - |
+* | AUDIO_BASE       |  samples          | int     | samples        | 44100                    | No                          | The size of the internal buffer (in samples) | A default value identical to device frequency implies a buffer length of 1s |
+* | AUDIO_BASE       |  channels         | int     | -              | 2                        | No                          | The number of channels | - |
+* | AUDIO_BASE       |  bits             | int     | -              | 16                       | No                          | Not yet implemented | - | *
+* | AUDIO_BASE       |  hw_gain          | double  | -              | 1.0                      | No                          | The device audio gain. Its implementation is device dependent (and it may also be not implemented)  | - | *
+* | AUDIO_BASE       |  sw_gain          | double  | -              | 1.0                      | No                          | A SW gain for audio waveform amplification | - | *
+* | AUDIO_BASE       | buffer_autoclear  | bool    | -              | true                     | No                          | Automatically clear the buffer every time the devices is started/stopped | - | *
 */
 
 class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSound

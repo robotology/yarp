@@ -189,7 +189,9 @@ bool AudioRecorderDeviceBase::stopRecording()
     m_recording_enabled = false;
     if (m_enable_buffer_autoclear && this->m_inputBuffer)
     {
-        this->m_inputBuffer->clear();
+        //In this case we do not want to clear the because we want to transmit the last sound frame
+        //which has been partially captured until the stopRecording has been called.
+        //this->m_inputBuffer->clear();
     }
     yCInfo(AUDIORECORDER_BASE) << "Recording stopped";
     return true;
@@ -229,6 +231,9 @@ bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable&
     {
          m_inputBuffer = new CircularAudioBuffer_16t(device_name, rec_buffer_size);
     }
+
+    //additional options
+    m_enable_buffer_autoclear = config.check("buffer_autoclear", Value(true), "Automatically clear the buffer every time the devices is started/stopped").asBool();
 
     return true;
 }

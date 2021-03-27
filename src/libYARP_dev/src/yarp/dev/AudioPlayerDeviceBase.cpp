@@ -230,6 +230,9 @@ bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& con
         m_outputBuffer = new yarp::dev::CircularAudioBuffer_16t(device_name, buffer_size);
     }
 
+    //additional options
+    m_enable_buffer_autoclear = config.check("buffer_autoclear", Value(false), "Automatically clear the buffer every time the devices is started/stopped").asBool();
+
     return true;
 }
 
