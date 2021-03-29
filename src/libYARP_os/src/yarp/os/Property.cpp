@@ -39,14 +39,12 @@ class PropertyItem
 public:
     Bottle bot;
     std::unique_ptr<Property> backing;
-    bool singleton{false};
 
     PropertyItem() = default;
 
     PropertyItem(const PropertyItem& rhs) :
         bot(rhs.bot),
-        backing(nullptr),
-        singleton(rhs.singleton)
+        backing(nullptr)
     {
         if (rhs.backing) {
             backing = std::make_unique<Property>(*(rhs.backing));
@@ -60,7 +58,6 @@ public:
             if (rhs.backing) {
                 backing = std::make_unique<Property>(*(rhs.backing));
             }
-            singleton = rhs.singleton;
         }
         return *this;
     }
@@ -139,7 +136,6 @@ public:
     void put(const std::string& key, const std::string& val)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = true;
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
@@ -149,7 +145,6 @@ public:
     void put(const std::string& key, const Value& bit)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = true;
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
@@ -159,7 +154,6 @@ public:
     void put(const std::string& key, Value* bit)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = true;
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
@@ -169,7 +163,6 @@ public:
     Property& addGroup(const std::string& key)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = true;
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
@@ -230,7 +223,6 @@ public:
     Bottle& putBottle(const char* key, const Bottle& val)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = false;
         p->clear();
         p->bot = val;
         return p->bot;
@@ -240,7 +232,6 @@ public:
     Bottle& putBottle(const char* key)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = false;
         p->clear();
         p->bot.clear();
         return p->bot;
