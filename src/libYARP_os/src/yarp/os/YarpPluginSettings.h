@@ -27,11 +27,7 @@ public:
     /**
      * Constructor.
      */
-    YarpPluginSettings() :
-            wrapper_name("unknown")
-    {
-        selector = nullptr;
-    }
+    YarpPluginSettings() = default;
 
     /**
      * Set the name of the library to load and the method name to use
@@ -216,10 +212,10 @@ private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) name;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) dll_name;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) fn_name;
-    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) wrapper_name;
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) wrapper_name {"unknown"};
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) class_name;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) baseclass_name;
-    YarpPluginSelector* selector;
+    YarpPluginSelector* selector {nullptr};
 
     bool subopen(SharedLibraryFactory& factory,
                  const std::string& dll_name,
