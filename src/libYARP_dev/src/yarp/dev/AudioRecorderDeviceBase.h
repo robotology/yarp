@@ -41,19 +41,21 @@ class AudioDeviceDriverSettings
 * | AUDIO_BASE       |  bits             | int     | -              | 16                       | No                          | Not yet implemented | - | *
 * | AUDIO_BASE       |  hw_gain          | double  | -              | 1.0                      | No                          | The device audio gain. Its implementation is device dependent (and it may also be not implemented)  | - | *
 * | AUDIO_BASE       |  sw_gain          | double  | -              | 1.0                      | No                          | A SW gain for audio waveform amplification | - | *
-* | AUDIO_BASE       | buffer_autoclear  | bool    | -              | true                     | No                          | Automatically clear the buffer every time the devices is started/stopped | - | *
+* | AUDIO_BASE       |  buffer_autoclear | bool    | -              | true                     | No                          | Automatically clear the buffer every time the devices is started/stopped | - | *
+* | AUDIO_BASE       |  debug            | bool    | -              | false                    | No                          | Enable debug mode | The value is stored into variable m_audiobase_debug | *
 */
 
 class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSound
 {
 protected:
-    bool m_enable_buffer_autoclear = false;
-    bool m_recording_enabled = false;
-    std::mutex  m_mutex;
+    bool            m_enable_buffer_autoclear = false;
+    bool            m_recording_enabled = false;
+    std::mutex      m_mutex;
     yarp::dev::CircularAudioBuffer_16t* m_inputBuffer = nullptr;
-    double m_sw_gain = 1.0;
-    double m_hw_gain = 1.0;
+    double          m_sw_gain = 1.0;
+    double          m_hw_gain = 1.0;
     AudioDeviceDriverSettings m_audiorecorder_cfg;
+    bool            m_audiobase_debug = false;
 
 public:
     virtual bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;

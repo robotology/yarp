@@ -62,4 +62,6 @@ private:
     std::string m_audio_filename = "audio.wav";
     size_t m_bpnt = 0;
     size_t m_samples_to_be_copied = 512;
+    size_t m_fsize_in_samples = 0;
+    std::vector<std::reference_wrapper<yarp::sig::Sound::audio_sample>> m_datap;
 };

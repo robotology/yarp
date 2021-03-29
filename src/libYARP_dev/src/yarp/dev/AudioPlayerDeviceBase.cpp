@@ -232,6 +232,7 @@ bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& con
 
     //additional options
     m_enable_buffer_autoclear = config.check("buffer_autoclear", Value(false), "Automatically clear the buffer every time the devices is started/stopped").asBool();
+    m_audiobase_debug = config.check("debug", Value(false), "Enable debug mode").asBool();
 
     return true;
 }

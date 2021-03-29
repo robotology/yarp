@@ -98,11 +98,20 @@ bool audioFromFileDevice::open(yarp::os::Searchable &config)
         yCError(AUDIOFROMFILE) << "Unable to open file" << m_audio_filename.c_str();
         return false;
     }
+    yCInfo(AUDIOFROMFILE) << "Loaded file has the following properties: samples:" << m_audioFile.getSamples() << " channels:"<< m_audioFile.getChannels() << " bytes per samples:" << m_audioFile.getBytesPerSample();
+    if (m_audioFile.getChannels() != this->m_audiorecorder_cfg.numChannels)
+    {
+        yCInfo(AUDIOFROMFILE) << "Number of channels mismatch!";
+        return false;
+    }
 
     //sets the audio configuration equal to the audio file
     //constexpr size_t c_EXTRA_SPACE = 2;
     //AudioBufferSize buffer_size(m_audiorecorder_cfg.numSamples* c_EXTRA_SPACE, m_audiorecorder_cfg.numChannels, m_audiorecorder_cfg.bytesPerSample);
     //m_inputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_mic_buffer", buffer_size);
+
+    m_datap = m_audioFile.getInterleavedAudioRawData();
+    m_fsize_in_samples = m_audioFile.getSamples();
 
     //start the capture thread
     start();
@@ -131,22 +140,25 @@ void audioFromFileDevice::run()
     }
 
     // Just acquire raw data and put them in the buffer
-    auto p = m_audioFile.getInterleavedAudioRawData();
-    size_t fsize_in_samples = m_audioFile.getSamples();
-//     size_t bps = m_audioFile.getBytesPerSample();
-
-    //each iteration, which occurs every xxx ms, I copy a bunch of samples in the buffer.
-    //When the pointer reaches the end of the sound (audioFile), just restart from the beginning in an endless loop
+    //each iteration, which occurs every xxx ms (thread period), I copy a fixed amount of
+    //samples (m_samples_to_be_copied) in the buffer. This operation cannot be interrupted by stopping the device
+    //with m_recording_enabled=false. When the pointer reaches the end of the sound (audioFile),
+    //just restart from the beginning in an endless loop
     for (size_t i = 0; i < m_samples_to_be_copied; i++)
     {
-        if (m_bpnt >= fsize_in_samples)
+        if (m_bpnt >= m_fsize_in_samples)
         {
             m_bpnt = 0;
         }
-        m_inputBuffer->write((unsigned short)(p.at(m_bpnt).get()));
+        for (size_t c=0; c< m_audioFile.getChannels(); c++)
+        {
+            m_inputBuffer->write((unsigned short)(m_datap.at(m_bpnt+c).get()));
+        }
         m_bpnt++;
     }
-#ifdef ADVANCED_DEBUG
-    yCDebug(AUDIOFROMFILE) << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
-#endif
+
+    if (m_audiobase_debug)
+    {
+        yCDebug(AUDIOFROMFILE) << "b_pnt" << m_bpnt << "/" << m_fsize_in_samples << " samples";
+    }
 }

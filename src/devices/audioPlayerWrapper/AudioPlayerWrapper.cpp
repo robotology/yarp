@@ -308,6 +308,11 @@ void AudioPlayerWrapper::run()
     Sound* s = m_audioInPort.read(false);
     if (s != nullptr)
     {
+        if (m_debug_enabled)
+        {
+            yCDebug(AUDIOPLAYERWRAPPER) << "Received sound of:" << s->getSamples() << " samples";
+        }
+
         scheduled_sound_type ss;
 #if 1
         //This is simple, but we don't know how big the sound is...

@@ -152,8 +152,10 @@ void fakeMicrophone::run()
         return;
     }
 
-    //fill the buffer with a sine tone
-    //each iteration, which occurs every xxx ms, I copy a bunch of samples in the buffer.
+    //fill the buffer with a generated tone.
+    //each iteration, which occurs every xxx ms (thread period), I copy a fixed amount of
+    //samples (m_samples_to_be_copied) in the buffer. This operation cannot be interrupted by stopping the device
+    //with m_recording_enabled=false.
     for (size_t i = 0; i < m_samples_to_be_copied; i++)
     {
         // Default values:

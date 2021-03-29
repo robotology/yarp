@@ -6,13 +6,10 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#define _USE_MATH_DEFINES
-
 #include <yarp/dev/AudioRecorderDeviceBase.h>
 #include <yarp/os/LogStream.h>
 #include <mutex>
 #include <limits>
-#include <cmath>
 #include <functional>
 
 using namespace yarp::os;
@@ -234,6 +231,7 @@ bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable&
 
     //additional options
     m_enable_buffer_autoclear = config.check("buffer_autoclear", Value(true), "Automatically clear the buffer every time the devices is started/stopped").asBool();
+    m_audiobase_debug         = config.check("debug", Value(false), "Enable debug mode").asBool();
 
     return true;
 }

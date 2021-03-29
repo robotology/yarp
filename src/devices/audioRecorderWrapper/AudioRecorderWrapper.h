@@ -78,6 +78,9 @@ private:
     AudioRecorderDataThread*       m_dataThread =nullptr;
     bool                           m_debug_enabled = false;
 
+private:
+    double                         m_debug_last_time=0;
+
 public:
     /**
      * Constructor.

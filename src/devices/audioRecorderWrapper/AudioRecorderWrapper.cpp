@@ -30,9 +30,6 @@ constexpr size_t DEFAULT_MIN_NUMBER_OF_SAMPLES_OVER_NETWORK = 11250;
 constexpr size_t DEFAULT_MAX_NUMBER_OF_SAMPLES_OVER_NETWORK = 11250;
 constexpr double DEFAULT_GETSOUND_TIMEOUT = 1.0;
 
-#ifdef DEBUG_TIME_SPENT
-double last_time;
-#endif
 }
 
 
@@ -41,9 +38,6 @@ AudioRecorderWrapper::AudioRecorderWrapper() :
         m_min_number_of_samples_over_network(DEFAULT_MIN_NUMBER_OF_SAMPLES_OVER_NETWORK),
         m_max_number_of_samples_over_network(DEFAULT_MAX_NUMBER_OF_SAMPLES_OVER_NETWORK),
         m_getSound_timeout(DEFAULT_GETSOUND_TIMEOUT)
-#ifdef DEBUG_TIME_SPENT
-        , last_time(yarp::os::Time::now()),
-#endif
 {
     m_stamp.update();
 }
@@ -336,11 +330,13 @@ void AudioRecorderStatusThread::run()
 
 void AudioRecorderDataThread::run()
 {
-#ifdef DEBUG_TIME_SPENT
-    double current_time = yarp::os::Time::now();
-    yCDebug(AUDIORECORDERWRAPPER) << current_time - m_last_time;
-    m_last_time = current_time;
-#endif
+    if (0)
+    {
+        //debug: print the duration of the thread
+        double current_time = yarp::os::Time::now();
+        yCDebug(AUDIORECORDERWRAPPER) << (current_time - m_ARW->m_debug_last_time);
+        m_ARW->m_debug_last_time = current_time;
+    }
 
     if (m_ARW->m_mic == nullptr)
     {

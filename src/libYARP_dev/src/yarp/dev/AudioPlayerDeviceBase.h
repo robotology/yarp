@@ -45,6 +45,7 @@ class AudioDeviceDriverSettings
 * | AUDIO_BASE       | render_mode_append     | bool    | -              | true                     | No                          | A new sound is appended to the playback buffer and reproduced accordingly | - | *
 * | AUDIO_BASE       | render_mode_immediate  | bool    | -              | false                    | No                          | Every new sound is immediately reproduced, stopping the current playback | - | *
 * | AUDIO_BASE       | buffer_autoclear       | bool    | -              | false                    | No                          | Automatically clear the buffer every time the devices is started/stopped | If false, stop acts like a pause, and start allows to resume the playback | *
+* | AUDIO_BASE       | debug                  | bool    | -              | false                    | No                          | Enable debug mode | The value is stored into variable m_audiobase_debug | *
 */
 
 class YARP_dev_API AudioPlayerDeviceBase : public yarp::dev::IAudioRender
@@ -57,6 +58,7 @@ protected:
     AudioDeviceDriverSettings           m_audioplayer_cfg;
     double                              m_sw_gain = 1.0;
     double                              m_hw_gain = 1.0;
+    bool                                m_audiobase_debug = false;
     enum { RENDER_APPEND = 0, RENDER_IMMEDIATE = 1 } m_renderMode= RENDER_APPEND;
 
 public:
