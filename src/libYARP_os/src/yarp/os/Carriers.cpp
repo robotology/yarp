@@ -126,7 +126,7 @@ Carrier* Carriers::Private::chooseCarrier(const Bytes& header,
     if (load_if_needed) {
         if (scanForCarrier(header)) {
             // We made progress, let's try again...
-            return Carriers::Private::chooseCarrier(header, true);
+            return Carriers::Private::chooseCarrier(header, false);
         }
     }
 
