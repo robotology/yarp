@@ -363,7 +363,7 @@ checkandset_dependency(OpenGL)
 find_package(FTDI QUIET)
 checkandset_dependency(FTDI)
 
-find_package(FFMPEG QUIET)
+find_package(FFMPEG COMPONENTS avcodec avutil OPTIONAL_COMPONENTS avformat avdevice QUIET)
 checkandset_dependency(FFMPEG)
 
 find_package(SDL QUIET)

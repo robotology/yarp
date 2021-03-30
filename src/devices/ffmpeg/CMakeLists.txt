@@ -10,12 +10,12 @@ yarp_prepare_plugin(ffmpeg_grabber
                     TYPE FfmpegGrabber
                     INCLUDE FfmpegGrabber.h
                     EXTRA_CONFIG WRAPPER=grabberDual
-                    DEPENDS "YARP_HAS_FFMPEG")
+                    DEPENDS "YARP_HAS_FFMPEG;FFMPEG_avformat_FOUND;FFMPEG_avdevice_FOUND")
 yarp_prepare_plugin(ffmpeg_writer
                     CATEGORY device
                     TYPE FfmpegWriter
                     INCLUDE FfmpegWriter.h
-                    DEPENDS "YARP_HAS_FFMPEG")
+                    DEPENDS "YARP_HAS_FFMPEG;FFMPEG_avformat_FOUND;FFMPEG_avdevice_FOUND")
 
 if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
   yarp_add_plugin(yarp_ffmpeg)
@@ -34,9 +34,13 @@ if(NOT SKIP_ffmpeg_grabber OR NOT SKIP_ffmpeg_writer)
                                                       YARP_sig
                                                       YARP_dev)
 
-  target_include_directories(yarp_ffmpeg SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIR})
-  target_link_libraries(yarp_ffmpeg PRIVATE ${FFMPEG_LIBRARIES})
-#   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS FFMPEG) (not using targets)
+  target_include_directories(yarp_ffmpeg SYSTEM PRIVATE ${FFMPEG_avcodec_INCLUDE_DIRS}
+                                                        ${FFMPEG_avformat_INCLUDE_DIRS}
+                                                        ${FFMPEG_avdevice_INCLUDE_DIRS})
+  target_link_libraries(yarp_ffmpeg PRIVATE ${FFMPEG_avcodec_LIBRARIES}
+                                            ${FFMPEG_avformat_LIBRARIES}
+                                            ${FFMPEG_avdevice_LIBRARIES})
+  # list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS FFMPEG) # Not using targets
 
   if(MINGW)
     target_link_libraries(yarp_ffmpeg PRIVATE ws2_32)

@@ -107,10 +107,12 @@ if(YARP_HAS_PNG)
 endif()
 
 if (YARP_HAS_FFMPEG)
-  target_include_directories(YARP_sig SYSTEM PRIVATE ${FFMPEG_INCLUDE_DIR})
+  target_include_directories(YARP_sig SYSTEM PRIVATE ${FFMPEG_avcodec_INCLUDE_DIRS}
+                                                     ${FFMPEG_avutil_INCLUDE_DIRS})
   target_compile_definitions(YARP_sig PRIVATE YARP_HAS_FFMPEG)
-  target_link_libraries(YARP_sig PRIVATE ${FFMPEG_LIBRARIES})
-  list(APPEND YARP_sig_PRIVATE_DEPS FFMPEG)
+  target_link_libraries(YARP_sig PRIVATE ${FFMPEG_avcodec_LIBRARIES}
+                                         ${FFMPEG_avutil_LIBRARIES})
+  # list(APPEND YARP_sig_PRIVATE_DEPS FFMPEG) # Not using targets
 endif()
 
 set_property(TARGET YARP_sig PROPERTY PUBLIC_HEADER ${YARP_sig_HDRS})
