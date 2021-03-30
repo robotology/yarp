@@ -80,7 +80,7 @@ bool NameConfig::fromString(const std::string& txt)
     }
 
     if (ss.size() >= 2) {
-        address = Contact(ss[0]), yarp::conf::numeric::from_string<int>(ss[1]);
+        address = Contact(ss[0], yarp::conf::numeric::from_string<int>(ss[1]));
         if (ss.size() >= 3) {
             mode = ss.at(2);
         } else {
