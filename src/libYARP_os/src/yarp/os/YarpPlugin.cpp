@@ -229,6 +229,9 @@ void YarpPluginSelector::scan()
 
     // Search plugins directories
     ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
+    static std::mutex rf_mutex;
+    std::lock_guard<std::mutex> rf_guard(rf_mutex);
+
     if (!rf.isConfigured()) {
         rf.configure(0, nullptr);
     }
