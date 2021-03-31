@@ -98,6 +98,10 @@ public:
         return true;
     }
 
+    bool isRecording(bool& recording_enabled) override {
+        return false;
+    }
+
     bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize&) override {
         return false;
     }
