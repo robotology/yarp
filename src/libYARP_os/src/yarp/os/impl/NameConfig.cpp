@@ -57,7 +57,7 @@ YARP_OS_LOG_COMPONENT(NAMECONFIG, "yarp.os.impl.NameConfig")
 bool NameConfig::fromString(const std::string& txt)
 {
     address = Contact();
-    auto ss = yarp::conf::string::split(txt, ' ');
+    auto ss = yarp::conf::string::split(txt, std::regex{"[\" \t\n]+"});
 
     if (ss.empty()) {
         return false;
