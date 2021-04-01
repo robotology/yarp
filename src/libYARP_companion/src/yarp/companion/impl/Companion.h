@@ -75,6 +75,9 @@ public:
     // Defined in Companion.cmdExists.cpp
     int cmdExists(int argc, char *argv[]);
 
+    // Defined in Companion.cmdEmergency.cpp
+    int cmdEmergency(int argc, char *argv[]);
+
     // Defined in Companion.cmdHelp.cpp
     int cmdHelp(int argc, char *argv[]);
 

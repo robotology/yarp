@@ -143,6 +143,7 @@ Companion::Companion() :
     add("connect",         &Companion::cmdConnect,        "create a connection between two ports");
     add("detect",          &Companion::cmdDetect,         "search for the yarp name server");
     add("disconnect",      &Companion::cmdDisconnect,     "remove a connection between two ports");
+    add("emergency",       &Companion::cmdEmergency,      "call an emergency meeting");
     add("env",             &Companion::cmdEnv,            "print the value of environment variables");
     add("exists",          &Companion::cmdExists,         "check if a port or connection is alive");
     add("help",            &Companion::cmdHelp,           "get this list");

@@ -25,6 +25,7 @@ set(YARP_companion_IMPL_SRCS yarp/companion/impl/Companion.cpp
                              yarp/companion/impl/Companion.cmdConnect.cpp
                              yarp/companion/impl/Companion.cmdDetect.cpp
                              yarp/companion/impl/Companion.cmdDisconnect.cpp
+                             yarp/companion/impl/Companion.cmdEmergency.cpp
                              yarp/companion/impl/Companion.cmdEnv.cpp
                              yarp/companion/impl/Companion.cmdExists.cpp
                              yarp/companion/impl/Companion.cmdHelp.cpp

@@ -1534,6 +1534,7 @@ enum class PortCoreCommand : yarp::conf::vocab32_t
     Help = yarp::os::createVocab('h', 'e', 'l', 'p'),
     Ver = yarp::os::createVocab('v', 'e', 'r'),
     Pray = yarp::os::createVocab('p', 'r', 'a', 'y'),
+    Emer = yarp::os::createVocab('e', 'm', 'e', 'r'),
     Add = yarp::os::createVocab('a', 'd', 'd'),
     Del = yarp::os::createVocab('d', 'e', 'l'),
     Atch = yarp::os::createVocab('a', 't', 'c', 'h'),
@@ -1587,6 +1588,7 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
     case PortCoreCommand::Help:
     case PortCoreCommand::Ver:
     case PortCoreCommand::Pray:
+    case PortCoreCommand::Emer:
     case PortCoreCommand::Add:
     case PortCoreCommand::Del:
     case PortCoreCommand::Atch:
@@ -1867,6 +1869,78 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             break;
         }
 
+        return result;
+    };
+
+    auto handleAdminEmerCmd = [this](Bottle* ports) {
+        Bottle result;
+
+        if (ports->size() < 2) {
+            result.addVocab(Vocab::encode("fail"));
+            result.addString("I'm not going to accuse myself!");
+        }
+
+        std::random_device rd;
+        std::mt19937 mt(rd());
+
+        std::uniform_int_distribution<int> dist(0, ports->size() - 1);
+        size_t index[2];
+        std::string port[2];
+        for (size_t i = 0; i < 2; ++i) {
+            do {
+                index[i] = dist(mt);
+                port[i] = ports->get(index[i]).asString();
+            } while (port[i] == this->getName());
+        }
+
+        static const char* locations[] = {
+            "cafeteria",
+            "medbay",
+            "reactor",
+            "storage",
+            "lower engine",
+            "upper engine",
+            "laboratory",
+            "greenhouse",
+            "hallway",
+            "office",
+            "lounge",
+            "vault",
+            "cockpit",
+            "main hall",
+            "kitchen"
+        };
+        std::uniform_int_distribution<int> location_dist(0, (sizeof(locations) / sizeof(locations[0])) - 1);
+        auto location = [&]() {
+            return std::string(locations[location_dist(mt)]);
+        };
+
+        static const char* replies[] = {
+            "<SUS>!",
+            "It was <SUS>!",
+            "<SUS> is sus.",
+            "I sus <SUS>.",
+            "I think it is <SUS>.",
+            "Vote <SUS>, now!",
+            "I accuse <SUS>.",
+            "It wasn't me!",
+            "I saw <SUS> venting.",
+            "Not <NSUS>.",
+            "<SUS> is the killer.",
+            "I was in the <LOC>.",
+            "<NSUS> was in the <LOC>."
+        };
+        std::uniform_int_distribution<int> replies_dist(0, (sizeof(replies) / sizeof(replies[0])) - 1);
+        auto reply = [&](){
+            auto reply = std::string(replies[replies_dist(mt)]);
+            reply = std::regex_replace(reply, std::regex("<SUS>"), port[0]);
+            reply = std::regex_replace(reply, std::regex("<NSUS>"), port[1]);
+            reply = std::regex_replace(reply, std::regex("<LOC>"), location());
+            return reply;
+        };
+
+        result.addInt32(index[1]);
+        result.addString(reply());
         return result;
     };
 
@@ -2581,6 +2655,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     case PortCoreCommand::Pray:
         result = handleAdminPrayCmd();
         break;
+    case PortCoreCommand::Emer: {
+        Bottle* ports = cmd.get(1).asList();
+        result = handleAdminEmerCmd(ports);
+    } break;
     case PortCoreCommand::Add: {
         std::string output = cmd.get(1).asString();
         std::string carrier = cmd.get(2).asString();
