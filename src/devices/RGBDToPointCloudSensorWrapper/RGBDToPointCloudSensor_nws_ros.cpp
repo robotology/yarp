@@ -30,16 +30,6 @@ YARP_LOG_COMPONENT(RGBDTOPOINTCLOUDSENSORNWSROS, "yarp.devices.RGBDToPointCloudS
 
 RGBDToPointCloudSensor_nws_ros::RGBDToPointCloudSensor_nws_ros() :
     PeriodicThread(DEFAULT_THREAD_PERIOD),
-    rosNode(nullptr),
-    nodeSeq(0),
-    period(DEFAULT_THREAD_PERIOD),
-    sensor_p(nullptr),
-    fgCtrl(nullptr),
-    sensorStatus(IRGBDSensor::RGBD_SENSOR_NOT_READY),
-    verbose(4),
-    forceInfoSync(true),
-    isSubdeviceOwned(false),
-    subDeviceOwned(nullptr)
 {
 
 }
