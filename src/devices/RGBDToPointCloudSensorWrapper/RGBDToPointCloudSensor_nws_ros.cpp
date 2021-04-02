@@ -29,7 +29,7 @@ using namespace std;
 YARP_LOG_COMPONENT(RGBDTOPOINTCLOUDSENSORNWSROS, "yarp.devices.RGBDToPointCloudSensor_nws_ros");
 
 RGBDToPointCloudSensor_nws_ros::RGBDToPointCloudSensor_nws_ros() :
-    PeriodicThread(DEFAULT_THREAD_PERIOD),
+    PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
 
 }

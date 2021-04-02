@@ -121,7 +121,7 @@ private:
     std::string                                 sensorId;
     yarp::dev::IRGBDSensor*                     sensor_p = nullptr;
     yarp::dev::IFrameGrabberControls*           fgCtrl = nullptr;
-    yarp::dev::IRGBDSensor::RGBDSensor_status   sensorStatus = IRGBDSensor::RGBD_SENSOR_NOT_READY;
+    yarp::dev::IRGBDSensor::RGBDSensor_status   sensorStatus = yarp::dev::IRGBDSensor::RGBD_SENSOR_NOT_READY;
 
     int         verbose = 4;
     bool        forceInfoSync = true;
