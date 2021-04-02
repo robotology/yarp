@@ -36,7 +36,7 @@
 #include <yarp/rosmsg/TickTime.h>
 #include <yarp/rosmsg/sensor_msgs/PointCloud2.h>
 
-#define DEFAULT_THREAD_PERIOD   0.03 // s
+constexpr double DEFAULT_THREAD_PERIOD = 0.03; // s
 
 namespace RGBDToPointCloudImpl{
     const std::string frameId_param                 = "frame_Id";
@@ -55,7 +55,7 @@ namespace RGBDToPointCloudImpl{
  *   Parameters required by this device are:
  * | Parameter name         | SubParameter            | Type    | Units          | Default Value | Required                        | Description                                                                                         | Notes |
  * |:----------------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:------------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
- * | period                 |      -                  | int     |  ms            |   20          |  No                             | refresh period of the broadcasted values in ms                                                      | default 20ms |
+ * | period                 |      -                  | int     |  s             |   0.03        |  No                             | refresh period of the broadcasted values in ms                                                      | default 0.03 s |
  * | subdevice              |      -                  | string  |  -             |   -           |  alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | pointCloudTopicName    |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS point cloud topic                                                              | must start with a leading '/' |
  * | frame_Id               |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame                                                                 |                               |

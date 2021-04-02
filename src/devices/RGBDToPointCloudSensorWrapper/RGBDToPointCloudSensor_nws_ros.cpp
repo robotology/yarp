@@ -49,8 +49,6 @@ RGBDToPointCloudSensor_nws_ros::RGBDToPointCloudSensor_nws_ros() :
 RGBDToPointCloudSensor_nws_ros::~RGBDToPointCloudSensor_nws_ros()
 {
     close();
-    sensor_p = nullptr;
-    fgCtrl = nullptr;
 }
 
 /** Device driver interface */
@@ -69,11 +67,9 @@ bool RGBDToPointCloudSensor_nws_ros::open(yarp::os::Searchable &config)
         return false;
     }
 
-    setId("RGBDToPointCloudSensorWrapper for " + nodeName);
-
     if(!initialize_ROS(config))
     {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << sensorId << "Error initializing ROS topic";
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << nodeName << "Error initializing ROS topic";
         return false;
     }
 
@@ -110,7 +106,7 @@ bool RGBDToPointCloudSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
     }
     else
     {
-        period = config.find("period").asInt32() / 1000.0;
+        period = config.find("period").asDouble();
     }
 
     //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
@@ -227,16 +223,6 @@ bool RGBDToPointCloudSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params
     return true;
 }
 
-void RGBDToPointCloudSensor_nws_ros::setId(const std::string &id)
-{
-    sensorId=id;
-}
-
-std::string RGBDToPointCloudSensor_nws_ros::getId()
-{
-    return sensorId;
-}
-
 /**
   * IWrapper and IMultipleWrapper interfaces
   */
@@ -253,14 +239,6 @@ bool RGBDToPointCloudSensor_nws_ros::attachAll(const PolyDriverList &device2atta
     }
 
     yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-    if(device2attach[0]->key == "IRGBDSensor")
-    {
-        yCInfo(RGBDTOPOINTCLOUDSENSORNWSROS) << "Good name!";
-    }
-    else
-    {
-        yCInfo(RGBDTOPOINTCLOUDSENSORNWSROS) << "Bad name!";
-    }
 
     if (!Idevice2attach->isValid())
     {
@@ -478,7 +456,7 @@ void RGBDToPointCloudSensor_nws_ros::run()
             default:
             {
                 if (verbose >= 1) {  // better not to print it every cycle anyway, too noisy
-                    yCError(RGBDTOPOINTCLOUDSENSORNWSROS, "%s: Sensor returned error", sensorId.c_str());
+                    yCError(RGBDTOPOINTCLOUDSENSORNWSROS, "%s: Sensor returned error", nodeName.c_str());
                 }
             }
         }
@@ -486,7 +464,7 @@ void RGBDToPointCloudSensor_nws_ros::run()
     else
     {
         if(verbose >= 6) {
-            yCError(RGBDTOPOINTCLOUDSENSORNWSROS, "%s: Sensor interface is not valid", sensorId.c_str());
+            yCError(RGBDTOPOINTCLOUDSENSORNWSROS, "%s: Sensor interface is not valid", nodeName.c_str());
         }
     }
 }
