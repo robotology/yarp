@@ -59,7 +59,9 @@ bool RGBDToPointCloudSensor_nws_ros::open(yarp::os::Searchable &config)
 {
     m_conf.fromString(config.toString());
     if(verbose >= 5)
+    {
         yCTrace(RGBDTOPOINTCLOUDSENSORNWSROS) << "\nParameters are: \n" << config.toString();
+    }
 
     if(!fromConfig(config))
     {
@@ -88,7 +90,9 @@ bool RGBDToPointCloudSensor_nws_ros::open(yarp::os::Searchable &config)
     else
     {
         if(!openDeferredAttach(config))
+        {
             return false;
+        }
     }
 
     return true;
@@ -99,10 +103,15 @@ bool RGBDToPointCloudSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
     if (!config.check("period", "refresh period of the broadcasted values in ms"))
     {
         if(verbose >= 3)
+        {
             yCInfo(RGBDTOPOINTCLOUDSENSORNWSROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
+        }
+
     }
     else
+    {
         period = config.find("period").asInt32() / 1000.0;
+    }
 
     //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
     unsigned int                    i;
@@ -262,7 +271,9 @@ bool RGBDToPointCloudSensor_nws_ros::attachAll(const PolyDriverList &device2atta
     Idevice2attach->view(sensor_p);
     Idevice2attach->view(fgCtrl);
     if(!attach(sensor_p))
+    {
         return false;
+    }
 
     PeriodicThread::setPeriod(period);
     return PeriodicThread::start();
@@ -271,12 +282,15 @@ bool RGBDToPointCloudSensor_nws_ros::attachAll(const PolyDriverList &device2atta
 bool RGBDToPointCloudSensor_nws_ros::detachAll()
 {
     if (yarp::os::PeriodicThread::isRunning())
+    {
         yarp::os::PeriodicThread::stop();
+    }
 
     //check if we already instantiated a subdevice previously
     if (isSubdeviceOwned)
+    {
         return false;
-
+    }
     sensor_p = nullptr;
     return true;
 }
