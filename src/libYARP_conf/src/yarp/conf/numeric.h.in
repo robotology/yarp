@@ -111,11 +111,11 @@ namespace numeric {
 /*
  * Converts an integer number to a string
  */
-template <typename Integer,
+template <typename IntegerType,
           std::enable_if_t<
-            std::is_integral<Integer>::value &&
-            !std::is_same<Integer, bool>::value, bool> = true>
-inline std::string to_string(Integer x)
+            std::is_integral<IntegerType>::value &&
+            !std::is_same<IntegerType, bool>::value, bool> = true>
+inline std::string to_string(IntegerType x)
 {
     return std::to_string(x);
 }
@@ -123,9 +123,9 @@ inline std::string to_string(Integer x)
 /*
  * Converts a boolean to a string
  */
-template <typename Bool,
-          std::enable_if_t<std::is_same<Bool, bool>::value, bool> = true>
-inline std::string to_string(Bool x)
+template <typename BoolType,
+          std::enable_if_t<std::is_same<BoolType, bool>::value, bool> = true>
+inline std::string to_string(BoolType x)
 {
     return {x ? "true" : "false"};
 }
@@ -133,9 +133,9 @@ inline std::string to_string(Bool x)
 /*
  * Converts a floating point number to a string, dealing with locale issues
  */
-template <typename Floating,
-          std::enable_if_t<std::is_floating_point<Floating>::value, bool> = true>
-inline std::string to_string(Floating x)
+template <typename FloatingType,
+          std::enable_if_t<std::is_floating_point<FloatingType>::value, bool> = true>
+inline std::string to_string(FloatingType x)
 {
     char buf[YARP_DOUBLE_TO_STRING_MAX_LENGTH]; // -> see comment at the top of the file
     std::snprintf(buf, YARP_DOUBLE_TO_STRING_MAX_LENGTH, "%.*g", DECIMAL_DIG, x);
@@ -159,12 +159,12 @@ inline std::string to_string(Floating x)
 /*
  * Converts a string to a signed integer number
  */
-template <typename Integer,
+template <typename IntegerType,
           std::enable_if_t<
-            std::is_integral<Integer>::value &&
-            std::is_signed<Integer>::value &&
-            !std::is_same<Integer, bool>::value, bool> = true>
-inline Integer from_string(const std::string& src, Integer defaultValue = static_cast<Integer>(0))
+            std::is_integral<IntegerType>::value &&
+            std::is_signed<IntegerType>::value &&
+            !std::is_same<IntegerType, bool>::value, bool> = true>
+inline IntegerType from_string(const std::string& src, IntegerType defaultValue = static_cast<IntegerType>(0))
 {
     char *endptr = nullptr;
     const char* startptr = src.c_str();
@@ -188,23 +188,23 @@ inline Integer from_string(const std::string& src, Integer defaultValue = static
         return defaultValue;
     }
 
-    if (ret < std::numeric_limits<Integer>::min() || ret > std::numeric_limits<Integer>::max()) {
+    if (ret < std::numeric_limits<IntegerType>::min() || ret > std::numeric_limits<IntegerType>::max()) {
         // Out of bound
         return defaultValue;
     }
 
-    return static_cast<Integer>(ret);
+    return static_cast<IntegerType>(ret);
 }
 
 /*
  * Converts a string to an unsigned integer number
  */
-template <typename Integer,
+template <typename IntegerType,
           std::enable_if_t<
-            std::is_integral<Integer>::value &&
-            !std::is_signed<Integer>::value &&
-            !std::is_same<Integer, bool>::value, bool> = true>
-inline Integer from_string(const std::string& src, Integer defaultValue = static_cast<Integer>(0))
+            std::is_integral<IntegerType>::value &&
+            !std::is_signed<IntegerType>::value &&
+            !std::is_same<IntegerType, bool>::value, bool> = true>
+inline IntegerType from_string(const std::string& src, IntegerType defaultValue = static_cast<IntegerType>(0))
 {
     char *endptr = nullptr;
     const char* startptr = src.c_str();
@@ -228,7 +228,7 @@ inline Integer from_string(const std::string& src, Integer defaultValue = static
         return defaultValue;
     }
 
-    if (ret > std::numeric_limits<Integer>::max()) {
+    if (ret > std::numeric_limits<IntegerType>::max()) {
         // Out of bound
         return defaultValue;
     }
@@ -238,16 +238,16 @@ inline Integer from_string(const std::string& src, Integer defaultValue = static
         return defaultValue;
     }
 
-    return static_cast<Integer>(ret);
+    return static_cast<IntegerType>(ret);
 }
 
 
 /*
  * Converts a string to a boolean
  */
-template <typename Bool,
-          std::enable_if_t<std::is_same<Bool, bool>::value, bool> = true>
-inline Bool from_string(const std::string& src, Bool defaultValue = false)
+template <typename BoolType,
+          std::enable_if_t<std::is_same<BoolType, bool>::value, bool> = true>
+inline BoolType from_string(const std::string& src, BoolType defaultValue = false)
 {
     if (src == "1") { return true; }
     if (src == "true") { return true; }
@@ -277,18 +277,18 @@ inline Bool from_string(const std::string& src, Bool defaultValue = false)
 /*
  * Converts a string to a floating point number, dealing with locale issues
  */
-template <typename Floating,
-          std::enable_if_t<std::is_floating_point<Floating>::value, bool> = true>
-inline Floating from_string(const std::string& src, Floating defaultValue = static_cast<Floating>(0.0))
+template <typename FloatingType,
+          std::enable_if_t<std::is_floating_point<FloatingType>::value, bool> = true>
+inline FloatingType from_string(const std::string& src, FloatingType defaultValue = static_cast<FloatingType>(0.0))
 {
     if (src == "inf") {
-        return std::numeric_limits<Floating>::infinity();
+        return std::numeric_limits<FloatingType>::infinity();
     }
     if (src == "-inf") {
-        return -std::numeric_limits<Floating>::infinity();
+        return -std::numeric_limits<FloatingType>::infinity();
     }
     if (src == "nan") {
-        return std::numeric_limits<Floating>::quiet_NaN();
+        return std::numeric_limits<FloatingType>::quiet_NaN();
     }
     // Need to deal with alternate versions of the decimal point.
     // We need a copy of the string where the decimal point can be replaced.
@@ -301,7 +301,7 @@ inline Floating from_string(const std::string& src, Floating defaultValue = stat
 
     char *endptr = nullptr;
     const char* startptr = src_c.c_str();
-    auto ret = static_cast<Floating>(strtod(startptr, &endptr));
+    auto ret = static_cast<FloatingType>(strtod(startptr, &endptr));
 
     if (endptr == startptr) {
         // No digits were found
@@ -316,12 +316,12 @@ inline Floating from_string(const std::string& src, Floating defaultValue = stat
     return ret;
 }
 
-template <typename Integer,
+template <typename IntegerType,
           std::enable_if_t<
-            std::is_integral<Integer>::value &&
-            sizeof(Integer) != 1 &&
-            !std::is_same<Integer, bool>::value, bool> = true>
-std::string to_hex_string(Integer i)
+            std::is_integral<IntegerType>::value &&
+            sizeof(IntegerType) != 1 &&
+            !std::is_same<IntegerType, bool>::value, bool> = true>
+std::string to_hex_string(IntegerType i)
 {
     std::stringstream stream;
     stream << std::hex << i;
@@ -329,9 +329,9 @@ std::string to_hex_string(Integer i)
 }
 
 // FIXME C++17 use constexpr if
-template <typename Integer,
-          std::enable_if_t<sizeof(Integer) == 1, bool> = true>
-std::string to_hex_string(Integer i)
+template <typename IntegerType,
+          std::enable_if_t<sizeof(IntegerType) == 1, bool> = true>
+std::string to_hex_string(IntegerType i)
 {
     // char and unsigned char are interpreted as characters, and therefore
     // printed as the corresponding character
