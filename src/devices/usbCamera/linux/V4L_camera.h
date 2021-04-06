@@ -320,7 +320,7 @@ private:
     //Only for PythonCamera
     UltraPythonCameraHelper pythonCameraHelper_;
     void pythonPreprocess(const void* pythonbuffer,size_t size);
-    const void* pythonBuffer_{nullptr};
+    unsigned char pythonBuffer_[2560*1024*3];//Max size
     unsigned int pythonBufferSize_{0};
 };
 

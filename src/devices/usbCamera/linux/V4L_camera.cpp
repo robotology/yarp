@@ -956,8 +956,10 @@ bool V4L_camera::close()
 
 void V4L_camera::pythonPreprocess(const void* pythonbuffer, size_t size)
 {
-    pythonBuffer_ = pythonbuffer;
+    //mutex.wait();
+    memcpy(pythonBuffer_,pythonbuffer,size);
     pythonBufferSize_ = size;
+    //mutex.post();
 }
 
 // IFrameGrabberRgb Interface 777

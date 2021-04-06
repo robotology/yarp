@@ -188,7 +188,8 @@ bool UltraPythonCameraHelper::checkIndex() {
     return false;
   }
   if (packet32Index_ == -1) {
-    Log(*this, Severity::error) << "Cannot find packet32Index";
+    //TO BE REMOVED
+    Log(*this, Severity::warning) << "Cannot find packet32Index";
     // return false;
   }
   return true;
@@ -542,6 +543,8 @@ bool UltraPythonCameraHelper::step() {
   struct timeval tv {
     80, 0
   }; // Timeout
+  tv.tv_sec = 80;
+  tv.tv_usec = 0;
   int ret;
 
   FD_ZERO(&fds);
@@ -612,7 +615,9 @@ int UltraPythonCameraHelper::readFrame() {
 
   seq = buf.sequence;
   processImage(mMapBuffers_[buf.index].start, buf.bytesused);
-
+  //**Debug start
+  //memset(mMapBuffers_[buf.index].start, 255, buf.bytesused);
+  //**Debug end
   if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf)) {
     Log(*this, Severity::error) << "VIDIOC_QBUF";
     return -1;
