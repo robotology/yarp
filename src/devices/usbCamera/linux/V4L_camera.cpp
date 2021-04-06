@@ -643,6 +643,7 @@ void V4L_camera::run()
             yCError(USBCAMERA) << "Failed acquiring new frame";
         }
     }
+    
     timeNow = yarp::os::Time::now();
     if ((timeElapsed = timeNow - timeStart) > 1.0f) {
         yCInfo(USBCAMERA, "frames acquired %d in %f sec", frameCounter, timeElapsed);
@@ -956,15 +957,20 @@ bool V4L_camera::close()
 
 void V4L_camera::pythonPreprocess(const void* pythonbuffer, size_t size)
 {
-    if(size>maxPythonBufferSize_)
+    if(size!=UltraPythonCameraHelper::hiresImageBufferSize_ && size!=UltraPythonCameraHelper::lowresImageBufferSize_)
+    {
+        yCError(USBCAMERA) << "Wrong buffer size"<<size; 
+    }
+
+    if(size>UltraPythonCameraHelper::hiresImageBufferSize_)
     {
         yCError(USBCAMERA) << "Python buffer too big";
-        size=maxPythonBufferSize_;
+        size=UltraPythonCameraHelper::hiresImageBufferSize_;
     }
-    //mutex.wait();
+    mutex.wait();
     memcpy(pythonBuffer_,pythonbuffer,size);
     pythonBufferSize_ = size;
-    //mutex.post();
+    mutex.post();
 }
 
 // IFrameGrabberRgb Interface 777

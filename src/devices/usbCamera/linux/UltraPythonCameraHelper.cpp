@@ -588,7 +588,6 @@ int UltraPythonCameraHelper::readFrame() {
   buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
   buf.memory = V4L2_MEMORY_MMAP;
 
-  Locker locker(*this);
   if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_DQBUF, &buf)) {
     switch (errno) {
     case EAGAIN:

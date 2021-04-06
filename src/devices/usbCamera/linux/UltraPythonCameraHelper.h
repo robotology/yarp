@@ -37,6 +37,15 @@ enum class SpaceColor { yuv, rgb, grgb };
 enum class Severity { debug, info, warning, error };
 
 class UltraPythonCameraHelper {
+
+public:
+  static constexpr unsigned int hiresWidth_{2560};//HI RES width image
+  static constexpr unsigned int hiresHeight_{1024};//HI RES height image
+  static constexpr unsigned int lowresWidth_{1280};//LOW RES width image
+  static constexpr unsigned int lowresHeight_{512};//LOW RES height image
+  static constexpr unsigned int hiresImageBufferSize_{hiresWidth_*hiresHeight_*3};//HI RES buffer size
+  static constexpr unsigned int lowresImageBufferSize_{lowresWidth_*lowresHeight_*3};//LOW RES buffer size
+
 private:
   static constexpr const char *mediaName_ = "/dev/media0";
 
@@ -53,8 +62,8 @@ private:
   static constexpr unsigned int pipelineMaxLen = {16};
 
   // Native resolution for cam
-  static constexpr unsigned int nativeWidth_{1280};
-  static constexpr unsigned int nativeHeight_{1024};
+  static constexpr unsigned int nativeWidth_{1280};//Sensor HI RES width
+  static constexpr unsigned int nativeHeight_{1024};//Sensor HI RES height
 
   // Control value max
   static constexpr unsigned int maxExposition_{100};
