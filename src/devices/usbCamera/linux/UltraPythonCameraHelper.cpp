@@ -742,6 +742,14 @@ void UltraPythonCameraHelper::setInjectedLog(
 
 bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
                                          bool absolute) {
+  if (!absolute) {
+    if (value > 1.0 || value < 0.0) {
+      Log(*this, Severity::error)
+          << "Not absolute settings should be between 0,1:" << v4lCtrl;
+      return false;
+    }
+  }
+
   v4lCtrl = remapControl(v4lCtrl);
 
   if (!hasControl(v4lCtrl)) {
@@ -753,8 +761,7 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value,
       << "try setControl for:" << v4lCtrl << " value:" << value;
   switch (v4lCtrl) {
   case V4L2_CID_GAIN:
-    setGain(value);
-    return true;
+    return setGain(value, absolute);
   case V4L2_ANALOGGAIN_ULTRA_PYTHON:
   case V4L2_CID_BRIGHTNESS:
   case V4L2_EXTTRIGGGER_ULTRA_PYTHON: // EXT_TRIGGER
@@ -955,8 +962,9 @@ bool UltraPythonCameraHelper::checkControl(uint32_t v4lCtrl) {
   control.id = v4lCtrl;
   queryctrl.id = v4lCtrl;
 
-  if (-1 == interfaceCApi_->ioctl_query_c(pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
-                  VIDIOC_QUERYCTRL, queryctrl)) {
+  if (-1 == interfaceCApi_->ioctl_query_c(
+                pipelineSubdeviceFd_[sourceSubDeviceIndex1_], VIDIOC_QUERYCTRL,
+                queryctrl)) {
     if (errno != EINVAL) {
       Log(*this, Severity::error) << "checkControl VIDIOC_QUERYCTRL";
     }
@@ -995,11 +1003,12 @@ uint32_t UltraPythonCameraHelper::remapControl(uint32_t v4lCtr) const {
   return out;
 }
 
-bool UltraPythonCameraHelper::setGain(double value) {
-
+bool UltraPythonCameraHelper::setGain(double value, bool absolute) {
   double min = gainMap_.begin()->first;
   double max = gainMap_.end()->first;
-  int absoluteValue = (int32_t)(value * (max - min) + min);
+  int absoluteValue = (int32_t)value;
+  if (!absolute)
+    absoluteValue = (int32_t)(value * (max - min) + min);
 
   auto it = gainMap_.find(absoluteValue);
   if (it == gainMap_.end()) {
@@ -1009,8 +1018,9 @@ bool UltraPythonCameraHelper::setGain(double value) {
 
   auto current = gainMap_.at(absoluteValue);
   currentGainValue_ = absoluteValue;
-  Log(*this, Severity::debug) << "gain:" << absoluteValue << " digital:"
-                              << current.first << " analog:" << current.second;
+  Log(*this, Severity::debug)
+      << "gain:" << absoluteValue << " digital:" << current.first
+      << " analog:" << current.second;
 
   setControl(V4L2_CID_GAIN, pipelineSubdeviceFd_[sourceSubDeviceIndex1_],
              current.first, true);
