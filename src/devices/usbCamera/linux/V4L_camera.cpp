@@ -956,6 +956,11 @@ bool V4L_camera::close()
 
 void V4L_camera::pythonPreprocess(const void* pythonbuffer, size_t size)
 {
+    if(size>maxPythonBufferSize_)
+    {
+        yCError(USBCAMERA) << "Python buffer too big";
+        size=maxPythonBufferSize_;
+    }
     //mutex.wait();
     memcpy(pythonBuffer_,pythonbuffer,size);
     pythonBufferSize_ = size;
