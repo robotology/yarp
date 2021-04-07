@@ -1,9 +1,19 @@
 /*
  * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * All rights reserved.
  *
- * This software may be modified and distributed under the terms of the
- * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include "audioToFileDevice.h"
@@ -26,10 +36,8 @@ namespace {
 YARP_LOG_COMPONENT(AUDIOTOFILE, "yarp.device.audioToFileDevice")
 }
 
-typedef unsigned short int audio_sample_16t;
-
 audioToFileDevice::audioToFileDevice() :
-        m_audio_filename("audio_out")
+        m_audio_filename("audio_out.wav")
 {
 }
 
@@ -40,6 +48,18 @@ audioToFileDevice::~audioToFileDevice()
 
 bool audioToFileDevice::open(yarp::os::Searchable &config)
 {
+    if (config.check("help"))
+    {
+        yCInfo(AUDIOTOFILE, "Some examples:");
+        yCInfo(AUDIOTOFILE, "yarpdev --device audioToFileDevice --help");
+        yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start");
+        yCInfo(AUDIOTOFILE, "yarpdev --device AudioPlayerWrapper --subdevice audioToFileDevice --start --audio_out.wav --save_mode overwrite_file");
+        return false;
+    }
+
+    bool b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "audioToFileDevice");
+    if (!b) { return false; }
+
     if (config.check("file_name"))
     {
         m_audio_filename=config.find("file_name").asString();
@@ -79,18 +99,24 @@ void audioToFileDevice::save_to_file()
     }
 
     //remove the extension .wav from the filename
-    size_t lastindex = m_audio_filename.find(".wav");
-    std::string rawname = m_audio_filename.substr(0, lastindex);
+    size_t lastindex = m_audio_filename.find_last_of(".");
+    std::string trunc_filename  = m_audio_filename.substr(0, lastindex);
+    std::string trunc_extension =".wav";
+    if (lastindex!= std::string::npos)
+    {
+        trunc_extension = m_audio_filename.substr(lastindex, std::string::npos);
+    }
 
     if (m_save_mode == save_mode_t::save_rename_file)
     {
-        rawname = rawname +std::to_string(m_filename_counter++);
+        trunc_filename = trunc_filename +std::to_string(m_filename_counter++);
     }
-    rawname = rawname +".wav";
-    bool ok = yarp::sig::file::write(m_audioFile, rawname.c_str());
+
+    std::string complete_filename = trunc_filename + trunc_extension;
+    bool ok = yarp::sig::file::write(m_audioFile, complete_filename.c_str());
     if (ok)
     {
-        yCDebug(AUDIOTOFILE) << "Wrote audio to:" << rawname;
+        yCDebug(AUDIOTOFILE) << "Wrote audio to:" << complete_filename;
     }
 }
 
@@ -100,32 +126,11 @@ bool audioToFileDevice::close()
     return true;
 }
 
-bool audioToFileDevice::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
-{
-    //no lock guard is needed here
-    //size = 0;
-    return true;
-}
-
-bool audioToFileDevice::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
-{
-    //no lock guard is needed here
-    //size = 0;
-    return true;
-}
-
-bool audioToFileDevice::resetPlaybackAudioBuffer()
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_sounds.clear();
-    return true;
-}
-
 bool audioToFileDevice::startPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "start";
-    m_playback_running = true;
+    m_playback_enabled = true;
     if (m_save_mode != save_mode_t::save_append_data)
     {
         m_sounds.clear();
@@ -137,7 +142,7 @@ bool audioToFileDevice::stopPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "stop";
-    m_playback_running = false;
+    m_playback_enabled = false;
     if (m_save_mode != save_mode_t::save_append_data)
     {
         save_to_file();
@@ -148,9 +153,38 @@ bool audioToFileDevice::stopPlayback()
 bool audioToFileDevice::renderSound(const yarp::sig::Sound& sound)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (m_playback_running)
+    if (m_playback_enabled)
     {
         m_sounds.push_back(sound);
     }
     return true;
+}
+
+bool audioToFileDevice::setHWGain(double gain)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (gain > 0)
+    {
+        m_hw_gain = gain;
+        return true;
+    }
+    return false;
+}
+
+bool audioToFileDevice::configureDeviceAndStart()
+{
+    yCError(AUDIOTOFILE, "configureDeviceAndStart() Not yet implemented");
+    return true;
+}
+
+bool audioToFileDevice::interruptDeviceAndClose()
+{
+    yCError(AUDIOTOFILE, "interruptDeviceAndClose() Not yet implemented");
+    return true;
+}
+
+void audioToFileDevice::waitUntilPlaybackStreamIsComplete()
+{
+    yCError(AUDIOTOFILE, "waitUntilPlaybackStreamIsComplete() Not yet implemented");
+    return;
 }

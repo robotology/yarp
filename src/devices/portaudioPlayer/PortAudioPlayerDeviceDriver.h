@@ -23,63 +23,36 @@
 #include <yarp/os/Thread.h>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/AudioGrabberInterfaces.h>
+#include <yarp/dev/AudioPlayerDeviceBase.h>
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <portaudio.h>
 #include <mutex>
 
-#define DEFAULT_SAMPLE_RATE  (44100)
-#define DEFAULT_NUM_CHANNELS    (2)
-#define DEFAULT_DITHER_FLAG     (0)
-#define DEFAULT_FRAMES_PER_BUFFER (512)
-//#define DEFAULT_FRAMES_PER_BUFFER (1024)
-
-
-class PortAudioPlayerDeviceDriverSettings
-{
-public:
-    size_t cfg_rate = 0;
-    size_t cfg_samples = 0;
-    size_t cfg_playChannels = 0;
-    int cfg_deviceNumber = 0;
-};
-
-class PlayStreamThread : public yarp::os::Thread
-{
-public:
-    PlayStreamThread();
-
-    void threadRelease() override;
-    bool threadInit() override;
-    void run() override;
-
-    bool something_to_play;
-    PaStream* stream;
-
-private:
-    PaError err;
-    void handleError();
-};
-
 /**
  * @ingroup dev_impl_media
  *
- * \brief `portaudioPlayer`: Documentation to be added
- *
+ * \brief `portaudioPlayer`: A device driver for an audio playback device wrapped by PortAudio library.
  * Requires the PortAudio library (http://www.portaudio.com), at least v19.
+ * Only 16bits sample format is currently supported by this device.
+ * This device driver derives from AudioPlayerDeviceBase base class. Please check its documentation for additional details.
+ *
+ * Parameters used by this device are:
+ * | Parameter name    | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+ * |:-----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+ * | AUDIO_BASE        |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioPlayerDeviceBase |       |
+ * | id                |      -         | int     | -              |  -                       | No                          | The device id, if multiple sound cards are present                | if not specified, the default system device will be used |
+ * | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the main thread  | - | *
  */
+
 class PortAudioPlayerDeviceDriver :
-        public yarp::dev::IAudioRender,
-        public yarp::dev::DeviceDriver
+        public yarp::dev::AudioPlayerDeviceBase,
+        public yarp::dev::DeviceDriver,
+        public yarp::os::Thread
 {
 private:
     PaStreamParameters  m_outputParameters;
     PaStream*           m_stream;
     PaError             m_err;
-    yarp::dev::CircularAudioBuffer_16t* m_playDataBuffer;
-    PortAudioPlayerDeviceDriverSettings m_config;
-    PlayStreamThread    m_pThread;
-    std::mutex     m_mutex;
 
 public:
     PortAudioPlayerDeviceDriver();
@@ -87,44 +60,33 @@ public:
     PortAudioPlayerDeviceDriver(PortAudioPlayerDeviceDriver&&) = delete;
     PortAudioPlayerDeviceDriver& operator=(const PortAudioPlayerDeviceDriver&) = delete;
     PortAudioPlayerDeviceDriver& operator=(PortAudioPlayerDeviceDriver&&) = delete;
-
     ~PortAudioPlayerDeviceDriver() override;
 
+private:
+    bool abortSound();
+    bool configureDeviceAndStart();
+
+public: //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
-
-    /**
-     * Configures the device.
-     *
-     * rate: Sample rate to use, in Hertz.  Specify 0 to use a default.
-     *
-     * samples: Number of samples per call to getSound.  Specify
-     * 0 to use a default.
-     *
-     * channels: Number of channels of input.  Specify
-     * 0 to use a default.
-     *
-     * @return true on success
-     */
-    bool open(PortAudioPlayerDeviceDriverSettings& config);
-
     bool close() override;
-    bool renderSound(const yarp::sig::Sound& sound) override;
+
+public: //AudioRecorderDeviceBase(IAudioGrabberSound)
+    void waitUntilPlaybackStreamIsComplete() override;
+    bool setHWGain(double gain) override;
+    bool interruptDeviceAndClose() override;
     bool startPlayback() override;
     bool stopPlayback() override;
 
-    bool abortSound();
-    bool immediateSound(const yarp::sig::Sound& sound);
-    bool appendSound(const yarp::sig::Sound& sound);
-
-    bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
-    bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
-    bool resetPlaybackAudioBuffer() override;
+public: //Thread
+    void threadRelease() override;
+    bool threadInit() override;
+    void run() override;
 
 protected:
     void*   m_system_resource;
 
-    PortAudioPlayerDeviceDriverSettings m_driverConfig;
-    enum {RENDER_APPEND=0, RENDER_IMMEDIATE=1} renderMode;
+    int  m_device_id;
+    int  m_driver_frame_size;
     void handleError();
 };
 
