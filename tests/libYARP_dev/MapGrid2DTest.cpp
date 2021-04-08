@@ -106,6 +106,54 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         // IMap2D isInsideMap() test successful
     }
 
+    SECTION("Test copyPortable MapGrid2D")
+    {
+        {
+            Nav2D::MapGrid2D input_map;
+            yarp::os::Bottle output_bot;
+            bool b1 = Property::copyPortable(input_map, output_bot);
+            CHECK(b1);
+            yarp::os::Bottle input_bot= output_bot;
+            Nav2D::MapGrid2D output_map;
+            bool b2 = Property::copyPortable(input_bot, output_map);
+            CHECK(b2);
+        }
+        {
+            Nav2D::MapGrid2D input_map;
+            input_map.enable_map_compression_over_network(false);
+            yarp::os::Bottle output_bot;
+            bool b1 = Property::copyPortable(input_map, output_bot);
+            CHECK(b1);
+            yarp::os::Bottle input_bot = output_bot;
+            Nav2D::MapGrid2D output_map;
+            bool b2 = Property::copyPortable(input_bot, output_map);
+            CHECK(b2);
+        }
+        {
+            Nav2D::MapGrid2D input_map;
+            input_map.setSize_in_cells(100, 100);
+            yarp::os::Bottle output_bot;
+            bool b1 = Property::copyPortable(input_map, output_bot);
+            CHECK(b1);
+            yarp::os::Bottle input_bot = output_bot;
+            Nav2D::MapGrid2D output_map;
+            bool b2 = Property::copyPortable(input_bot, output_map);
+            CHECK(b2);
+        }
+        {
+            Nav2D::MapGrid2D input_map;
+            input_map.setSize_in_cells(100, 100);
+            input_map.enable_map_compression_over_network(false);
+            yarp::os::Bottle output_bot;
+            bool b1 = Property::copyPortable(input_map, output_bot);
+            CHECK(b1);
+            yarp::os::Bottle input_bot = output_bot;
+            Nav2D::MapGrid2D output_map;
+            bool b2 = Property::copyPortable(input_bot, output_map);
+            CHECK(b2);
+        }
+    }
+
     SECTION("Test data type Map2DArea, Map2DLocation")
     {
         bool b;
