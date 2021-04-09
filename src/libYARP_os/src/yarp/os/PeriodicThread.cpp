@@ -10,25 +10,90 @@
 #include <yarp/os/PeriodicThread.h>
 
 #include <yarp/os/SystemClock.h>
-#include <yarp/os/impl/PlatformTime.h>
 #include <yarp/os/impl/ThreadImpl.h>
 
 #include <cmath>
+#include <algorithm> // std::max
+#include <memory>
 #include <mutex>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
+namespace
+{
+    class DelayEstimatorBase
+    {
+    public:
+        DelayEstimatorBase(double period) : adaptedPeriod(std::max(period, 0.0)) {}
+        virtual ~DelayEstimatorBase() = default;
+        double getPeriod() const { return adaptedPeriod; }
+        virtual void onPeriodChange(double period) { adaptedPeriod = std::max(period, 0.0); };
+        virtual void onSchedule(unsigned int count, double currentRun) {};
+        virtual double computeDelay(unsigned int count, double now, double elapsed) const = 0;
+        virtual void reset(double now) {};
+
+    private:
+        double adaptedPeriod;
+    };
+
+    class AbsoluteDelayEstimator : public DelayEstimatorBase
+    {
+    public:
+        using DelayEstimatorBase::DelayEstimatorBase;
+
+        void onPeriodChange(double period) override
+        {
+            DelayEstimatorBase::onPeriodChange(period);
+            scheduleAdapt = true;
+        }
+
+        void onSchedule(unsigned int count, double currentRun) override
+        {
+            if (scheduleAdapt) {
+                countOffset = count;
+                refTime = currentRun;
+                scheduleAdapt = false;
+            }
+        }
+
+        double computeDelay(unsigned int count, double now, double elapsed) const override
+        {
+            return refTime + getPeriod() * (count - countOffset) - now;
+        }
+
+        void reset(double now) override
+        {
+            countOffset = 0;
+            refTime = now;
+            scheduleAdapt = false;
+        }
+
+    private:
+        unsigned int countOffset {0}; // iteration to count from for delay calculation
+        double refTime {0.0};         // absolute reference time for delay calculation
+        bool scheduleAdapt {false};
+    };
+
+    class RelativeDelayEstimator : public DelayEstimatorBase
+    {
+    public:
+        using DelayEstimatorBase::DelayEstimatorBase;
+
+        double computeDelay(unsigned int count, double now, double elapsed) const override
+        {
+            return getPeriod() - elapsed;
+        }
+    };
+}
+
+
 class yarp::os::PeriodicThread::Private : public ThreadImpl
 {
 private:
-    double adaptedPeriod;
     PeriodicThread* owner;
     mutable std::mutex mutex;
-
-    double elapsed;
-    double sleepPeriod;
 
     bool suspended;
     double totalUsed;    //total time taken iterations
@@ -38,8 +103,9 @@ private:
     double sumTSq;       //cumulative sum sq of estimated period dT
     double sumUsedSq;    //cumulative sum sq of estimated thread tun
     double previousRun;  //time when last iteration started
-    double currentRun;   //time when this iteration started
     bool scheduleReset;
+
+    std::unique_ptr<DelayEstimatorBase> delayEstimator;
 
     using NowFuncPtr = double (*)();
     using DelayFuncPtr = void (*)(double);
@@ -54,16 +120,13 @@ private:
         totalT = 0;
         sumUsedSq = 0;
         sumTSq = 0;
-        elapsed = 0;
         scheduleReset = false;
+        delayEstimator->reset(nowFunc());
     }
 
 public:
-    Private(PeriodicThread* owner, double p, ShouldUseSystemClock useSystemClock) :
-            adaptedPeriod(p),
+    Private(PeriodicThread* owner, double p, ShouldUseSystemClock useSystemClock, PeriodicThreadClock clockAccuracy) :
             owner(owner),
-            elapsed(0),
-            sleepPeriod(adaptedPeriod),
             suspended(false),
             totalUsed(0),
             count(0),
@@ -72,11 +135,15 @@ public:
             sumTSq(0),
             sumUsedSq(0),
             previousRun(0),
-            currentRun(0),
             scheduleReset(false),
             nowFunc(useSystemClock == ShouldUseSystemClock::Yes ? SystemClock::nowSystem : yarp::os::Time::now),
             delayFunc(useSystemClock == ShouldUseSystemClock::Yes ? SystemClock::delaySystem : yarp::os::Time::delay)
     {
+        if (clockAccuracy == PeriodicThreadClock::Relative) {
+            delayEstimator = std::make_unique<RelativeDelayEstimator>(p);
+        } else {
+            delayEstimator = std::make_unique<AbsoluteDelayEstimator>(p);
+        }
     }
 
     void resetStat()
@@ -152,26 +219,20 @@ public:
         unlock();
     }
 
-
     void step()
     {
         lock();
-        currentRun = nowFunc();
+        double currentRun = nowFunc();
+        delayEstimator->onSchedule(count, currentRun);
 
         if (scheduleReset) {
             _resetStat();
         }
 
         if (count > 0) {
-            double dT = (currentRun - previousRun);
-
+            double dT = currentRun - previousRun;
             sumTSq += dT * dT;
             totalT += dT;
-
-            if (adaptedPeriod < 0) {
-                adaptedPeriod = 0;
-            }
-
             estPIt++;
         }
 
@@ -182,29 +243,30 @@ public:
             owner->run();
         }
 
-
         // At the end of each run of updateModule function, the thread is supposed
         // to be suspended and release CPU to other threads.
         // Calling a yield here will help the threads to alternate in the execution.
         // Note: call yield BEFORE computing elapsed time, so that any time spent due to
-        // yield is took into account and the sleep time is correct.
+        // yield is taken into account and the sleep time is correct.
         yield();
 
         lock();
         count++;
-        double elapsed = nowFunc() - currentRun;
+        double now = nowFunc();
+        double elapsed = now - currentRun;
+        double sleepPeriod = delayEstimator->computeDelay(count, now, elapsed);
         //save last
         totalUsed += elapsed;
         sumUsedSq += elapsed * elapsed;
         unlock();
-
-        sleepPeriod = adaptedPeriod - elapsed; // everything is in [seconds] except period, for it is used in the interface as [ms]
 
         delayFunc(sleepPeriod);
     }
 
     void run() override
     {
+        delayEstimator->reset(nowFunc());
+
         while (!isClosing()) {
             step();
         }
@@ -222,13 +284,15 @@ public:
 
     bool setPeriod(double period)
     {
-        adaptedPeriod = period;
+        lock();
+        delayEstimator->onPeriodChange(period);
+        unlock();
         return true;
     }
 
     double getPeriod() const
     {
-        return adaptedPeriod;
+        return delayEstimator->getPeriod();
     }
 
     bool isSuspended() const
@@ -268,8 +332,13 @@ public:
 };
 
 
-PeriodicThread::PeriodicThread(double period, ShouldUseSystemClock useSystemClock) :
-        mPriv(new Private(this, period, useSystemClock))
+PeriodicThread::PeriodicThread(double period, ShouldUseSystemClock useSystemClock, PeriodicThreadClock clockAccuracy) :
+    mPriv(new Private(this, period, useSystemClock, clockAccuracy))
+{
+}
+
+PeriodicThread::PeriodicThread(double period, PeriodicThreadClock clockAccuracy) :
+    mPriv(new Private(this, period, ShouldUseSystemClock::No, clockAccuracy))
 {
 }
 
