@@ -66,7 +66,7 @@ public:
     double period;
     int n;
 
-    PeriodicThread1(double r): PeriodicThread(r){}
+    PeriodicThread1(double r, PeriodicThreadClock acc): PeriodicThread(r, acc){}
 
     bool threadInit() override
     {
@@ -247,10 +247,10 @@ public:
     }
 };
 
-double test(double period, double delay)
+double test(double period, double delay, PeriodicThreadClock clockAccuracy)
 {
     double estPeriod=0;
-    PeriodicThread1 *thread1=new PeriodicThread1(period);
+    PeriodicThread1 *thread1=new PeriodicThread1(period, clockAccuracy);
 
     thread1->start();
     Time::delay(delay);
@@ -289,7 +289,7 @@ TEST_CASE("os::PeriodicThreadTest", "[yarp::os]")
         CHECK(-1); // t.state
     }
 
-    SECTION("Checking init/release synchronization")
+    SECTION("checking init/release synchronization")
     {
         PeriodicThread3 t(0.200);
         t.threadWillFail(false);
@@ -307,52 +307,48 @@ TEST_CASE("os::PeriodicThreadTest", "[yarp::os]")
         CHECK(-2); // t.state
     }
 
-    SECTION("testing rate thread precision")
+    SECTION("testing periodic thread accuracy (relative)")
     {
-        bool success = false;
-        double acceptedThreshold = 0.10;
+        double delay = 1.0;
+        PeriodicThreadClock clockAccuracy = PeriodicThreadClock::Relative;
 
-        char message[255];
+        double desiredPeriod1 = 0.015;
+        double actualPeriod1 = test(desiredPeriod1, delay, clockAccuracy);
+        CHECK(actualPeriod1 > desiredPeriod1);
 
-        //try plausible rates
-        double desiredPeriod, actualPeriod;
-        desiredPeriod = 0.015;
-        sprintf(message, "Thread1 requested period: %f[s]", desiredPeriod);
-        INFO(message);
-        actualPeriod = test(desiredPeriod, 1);
-        if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
-            success = true;
-        sprintf(message, "Thread1 estimated period: %f[s]", actualPeriod);
-        INFO(message);
-        sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
-        if(!success)
-            WARN(message);
+        double desiredPeriod2 = 0.010;
+        double actualPeriod2 = test(desiredPeriod2, delay, clockAccuracy);
+        CHECK(actualPeriod2 > desiredPeriod2);
 
-        desiredPeriod = 0.010;
-        sprintf(message, "Thread2 requested period: %f[s]", desiredPeriod);
-        INFO(message);
-        actualPeriod = test(desiredPeriod, 1);
-        if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
-            success = true;
-        sprintf(message, "Thread2 estimated period: %f[s]", actualPeriod);
-        INFO(message);
-        sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
-        if(!success)
-            WARN(message);
+        double desiredPeriod3 = 0.001;
+        double actualPeriod3 = test(desiredPeriod3, delay, clockAccuracy);
+        CHECK(actualPeriod3 > desiredPeriod3);
+    }
 
-        desiredPeriod = 0.001;
-        sprintf(message, "Thread3 requested period: %f[s]", desiredPeriod);
-        INFO(message);
-        actualPeriod = test(desiredPeriod, 1);
-        if( (actualPeriod > (desiredPeriod*(1-acceptedThreshold))) && (actualPeriod < (desiredPeriod * (1+acceptedThreshold))) )
-            success = true;
-        sprintf(message, "Thread3 estimated period: %f[s]", actualPeriod);
-        INFO(message);
-        sprintf(message, "Period NOT within range of %d%%", (int)(acceptedThreshold*100));
-        if(!success)
-            WARN(message);
+    SECTION("testing periodic thread accuracy (absolute)")
+    {
+        double threshold = 0.001;
+        double delay = 1.0;
+        PeriodicThreadClock clockAccuracy = PeriodicThreadClock::Absolute;
 
-        INFO("Testing askToStop() function");
+        double desiredPeriod1 = 0.015;
+        double actualPeriod1 = test(desiredPeriod1, delay, clockAccuracy);
+        CHECK(actualPeriod1 > desiredPeriod1 * (1.0 - threshold));
+        CHECK(actualPeriod1 < desiredPeriod1 * (1.0 + threshold));
+
+        double desiredPeriod2 = 0.010;
+        double actualPeriod2 = test(desiredPeriod2, delay, clockAccuracy);
+        CHECK(actualPeriod2 > desiredPeriod2 * (1.0 - threshold));
+        CHECK(actualPeriod2 < desiredPeriod2 * (1.0 + threshold));
+
+        double desiredPeriod3 = 0.001;
+        double actualPeriod3 = test(desiredPeriod3, delay, clockAccuracy);
+        CHECK(actualPeriod3 > desiredPeriod3 * (1.0 - threshold));
+        CHECK(actualPeriod3 < desiredPeriod3 * (1.0 + threshold));
+    }
+
+    SECTION("testing askToStop() function")
+    {
         PeriodicThread4 thread(0.010);
         thread.start();
 
@@ -380,7 +376,7 @@ TEST_CASE("os::PeriodicThreadTest", "[yarp::os]")
         CHECK(true); // Negative delay on reteThread is safe.
     }
 
-    SECTION("Testing simulated time")
+    SECTION("testing simulated time")
     {
         MyClock clock;
         Time::useCustomClock(&clock);
