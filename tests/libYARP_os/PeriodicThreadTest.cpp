@@ -22,6 +22,7 @@
 
 #include <catch.hpp>
 #include <harness.h>
+#include <cmath> // std::floor, std::ceil
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -247,21 +248,6 @@ public:
     }
 };
 
-double test(double period, double delay, PeriodicThreadClock clockAccuracy)
-{
-    double estPeriod=0;
-    PeriodicThread1 *thread1=new PeriodicThread1(period, clockAccuracy);
-
-    thread1->start();
-    Time::delay(delay);
-    thread1->stop();
-
-    estPeriod=thread1->period;
-
-    delete thread1;
-    return estPeriod;
-}
-
 } // namespace harness_os
 } // namespace periodicThread
 
@@ -312,39 +298,90 @@ TEST_CASE("os::PeriodicThreadTest", "[yarp::os]")
         double delay = 1.0;
         PeriodicThreadClock clockAccuracy = PeriodicThreadClock::Relative;
 
-        double desiredPeriod1 = 0.015;
-        double actualPeriod1 = test(desiredPeriod1, delay, clockAccuracy);
-        CHECK(actualPeriod1 > desiredPeriod1);
+        double desiredPeriod1 = 0.100;
+        PeriodicThread1 thread1(desiredPeriod1, clockAccuracy);
+        thread1.start();
+        Time::delay(delay);
+        thread1.stop();
+        CHECK(thread1.period > desiredPeriod1);
+        CHECK(thread1.getIterations() <= std::ceil(delay / desiredPeriod1));
 
         double desiredPeriod2 = 0.010;
-        double actualPeriod2 = test(desiredPeriod2, delay, clockAccuracy);
-        CHECK(actualPeriod2 > desiredPeriod2);
+        PeriodicThread1 thread2(desiredPeriod2, clockAccuracy);
+        thread2.start();
+        Time::delay(delay);
+        thread2.stop();
+        CHECK(thread2.period > desiredPeriod2);
+        CHECK(thread2.getIterations() <= std::ceil(delay / desiredPeriod2));
 
         double desiredPeriod3 = 0.001;
-        double actualPeriod3 = test(desiredPeriod3, delay, clockAccuracy);
-        CHECK(actualPeriod3 > desiredPeriod3);
+        PeriodicThread1 thread3(desiredPeriod3, clockAccuracy);
+        thread3.start();
+        Time::delay(delay);
+        thread3.stop();
+        CHECK(thread3.period > desiredPeriod3);
+        CHECK(thread3.getIterations() <= std::ceil(delay / desiredPeriod3));
+
+        thread3.resetStat(); // get the iteration counter back to zero
+
+        thread3.start();
+        Time::delay(delay / 2.0);
+        thread3.setPeriod(desiredPeriod2);
+        Time::delay(delay / 2.0);
+        thread3.stop();
+        CHECK(thread3.getPeriod() == desiredPeriod2);
+        unsigned int countEstimation = 0.5 * (delay / desiredPeriod3 + delay / desiredPeriod2);
+        CHECK(thread3.getIterations() <= std::ceil(countEstimation));
     }
 
     SECTION("testing periodic thread accuracy (absolute)")
     {
-        double threshold = 0.001;
+        double periodThreshold = 0.001;
+        int countThreshold = 2;
         double delay = 1.0;
         PeriodicThreadClock clockAccuracy = PeriodicThreadClock::Absolute;
 
-        double desiredPeriod1 = 0.015;
-        double actualPeriod1 = test(desiredPeriod1, delay, clockAccuracy);
-        CHECK(actualPeriod1 > desiredPeriod1 * (1.0 - threshold));
-        CHECK(actualPeriod1 < desiredPeriod1 * (1.0 + threshold));
+        double desiredPeriod1 = 0.100;
+        PeriodicThread1 thread1(desiredPeriod1, clockAccuracy);
+        thread1.start();
+        Time::delay(delay);
+        thread1.stop();
+        CHECK(thread1.period > desiredPeriod1 * (1.0 - periodThreshold));
+        CHECK(thread1.period < desiredPeriod1 * (1.0 + periodThreshold));
+        CHECK(thread1.getIterations() >= std::floor(delay / desiredPeriod1) - countThreshold);
+        CHECK(thread1.getIterations() <= std::ceil(delay / desiredPeriod1) + countThreshold);
 
         double desiredPeriod2 = 0.010;
-        double actualPeriod2 = test(desiredPeriod2, delay, clockAccuracy);
-        CHECK(actualPeriod2 > desiredPeriod2 * (1.0 - threshold));
-        CHECK(actualPeriod2 < desiredPeriod2 * (1.0 + threshold));
+        PeriodicThread1 thread2(desiredPeriod2, clockAccuracy);
+        thread2.start();
+        Time::delay(delay);
+        thread2.stop();
+        CHECK(thread2.period > desiredPeriod2 * (1.0 - periodThreshold));
+        CHECK(thread2.period < desiredPeriod2 * (1.0 + periodThreshold));
+        CHECK(thread2.getIterations() >= std::floor(delay / desiredPeriod2) - countThreshold);
+        CHECK(thread2.getIterations() <= std::ceil(delay / desiredPeriod2) + countThreshold);
 
         double desiredPeriod3 = 0.001;
-        double actualPeriod3 = test(desiredPeriod3, delay, clockAccuracy);
-        CHECK(actualPeriod3 > desiredPeriod3 * (1.0 - threshold));
-        CHECK(actualPeriod3 < desiredPeriod3 * (1.0 + threshold));
+        PeriodicThread1 thread3(desiredPeriod3, clockAccuracy);
+        thread3.start();
+        Time::delay(delay);
+        thread3.stop();
+        CHECK(thread3.period > desiredPeriod3 * (1.0 - periodThreshold));
+        CHECK(thread3.period < desiredPeriod3 * (1.0 + periodThreshold));
+        CHECK(thread3.getIterations() >= std::floor(delay / desiredPeriod3) - countThreshold);
+        CHECK(thread3.getIterations() <= std::ceil(delay / desiredPeriod3) + countThreshold);
+
+        thread3.resetStat(); // get the iteration counter back to zero
+
+        thread3.start();
+        Time::delay(delay / 2.0);
+        thread3.setPeriod(desiredPeriod2);
+        Time::delay(delay / 2.0);
+        thread3.stop();
+        CHECK(thread3.getPeriod() == desiredPeriod2);
+        double countEstimation = 0.5 * (delay / desiredPeriod3 + delay / desiredPeriod2);
+        CHECK(thread3.getIterations() >= std::floor(countEstimation) - countThreshold);
+        CHECK(thread3.getIterations() <= std::ceil(countEstimation) + countThreshold);
     }
 
     SECTION("testing askToStop() function")

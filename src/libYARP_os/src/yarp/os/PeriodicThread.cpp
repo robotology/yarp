@@ -29,10 +29,11 @@ namespace
         DelayEstimatorBase(double period) : adaptedPeriod(std::max(period, 0.0)) {}
         virtual ~DelayEstimatorBase() = default;
         double getPeriod() const { return adaptedPeriod; }
-        virtual void onPeriodChange(double period) { adaptedPeriod = std::max(period, 0.0); };
-        virtual void onSchedule(unsigned int count, double currentRun) {};
+        virtual void setPeriod(double period) { adaptedPeriod = std::max(period, 0.0); }
+        virtual void onInit() {};
+        virtual void onSchedule(unsigned int count, double now) {};
         virtual double computeDelay(unsigned int count, double now, double elapsed) const = 0;
-        virtual void reset(double now) {};
+        virtual void reset(unsigned int count, double now) {};
 
     private:
         double adaptedPeriod;
@@ -41,20 +42,24 @@ namespace
     class AbsoluteDelayEstimator : public DelayEstimatorBase
     {
     public:
-        using DelayEstimatorBase::DelayEstimatorBase;
+        AbsoluteDelayEstimator(double period) : DelayEstimatorBase(period), scheduledPeriod(period) {}
 
-        void onPeriodChange(double period) override
+        void onInit() override
         {
-            DelayEstimatorBase::onPeriodChange(period);
             scheduleAdapt = true;
         }
 
-        void onSchedule(unsigned int count, double currentRun) override
+        void setPeriod(double period) override
+        {
+            scheduledPeriod = period;
+            scheduleAdapt = true;
+        }
+
+        void onSchedule(unsigned int count, double now) override
         {
             if (scheduleAdapt) {
-                countOffset = count;
-                refTime = currentRun;
-                scheduleAdapt = false;
+                DelayEstimatorBase::setPeriod(scheduledPeriod);
+                reset(count, now);
             }
         }
 
@@ -63,9 +68,9 @@ namespace
             return refTime + getPeriod() * (count - countOffset) - now;
         }
 
-        void reset(double now) override
+        void reset(unsigned int count, double now) override
         {
-            countOffset = 0;
+            countOffset = count;
             refTime = now;
             scheduleAdapt = false;
         }
@@ -73,6 +78,7 @@ namespace
     private:
         unsigned int countOffset {0}; // iteration to count from for delay calculation
         double refTime {0.0};         // absolute reference time for delay calculation
+        double scheduledPeriod {0.0}; // new period, to be configured on schedule
         bool scheduleAdapt {false};
     };
 
@@ -121,7 +127,6 @@ private:
         sumUsedSq = 0;
         sumTSq = 0;
         scheduleReset = false;
-        delayEstimator->reset(nowFunc());
     }
 
 public:
@@ -227,6 +232,7 @@ public:
 
         if (scheduleReset) {
             _resetStat();
+            delayEstimator->reset(count, currentRun);
         }
 
         if (count > 0) {
@@ -265,8 +271,6 @@ public:
 
     void run() override
     {
-        delayEstimator->reset(nowFunc());
-
         while (!isClosing()) {
             step();
         }
@@ -274,6 +278,7 @@ public:
 
     bool threadInit() override
     {
+        delayEstimator->onInit();
         return owner->threadInit();
     }
 
@@ -285,7 +290,7 @@ public:
     bool setPeriod(double period)
     {
         lock();
-        delayEstimator->onPeriodChange(period);
+        delayEstimator->setPeriod(period);
         unlock();
         return true;
     }
