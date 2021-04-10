@@ -638,7 +638,7 @@ MapGrid2D::CellOccupancyData MapGrid2D::PixelToCellOccupancyData(const yarp::sig
         auto occ = (unsigned char)((254 - pixin) / 254.0);
         return occ * 100;
     }
-    else 
+    else
     {
         //255 is an invalid value
         return 255;
