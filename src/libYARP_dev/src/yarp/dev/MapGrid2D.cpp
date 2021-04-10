@@ -718,6 +718,8 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
 
 bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
 {
+    string mapfile_path = extractPathFromFile(map_file_with_path);
+
     std::string yarp_filename = this->getMapName() + "_yarpflags.ppm";
     std::string yaml_filename = this->getMapName() + "_grid.yaml";
     std::string pgm_occ_filename = this->getMapName() + "_grid.pgm";
@@ -734,7 +736,7 @@ bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
     map_file.close();
 
     std::ofstream yaml_file;
-    yaml_file.open(yaml_filename.c_str());
+    yaml_file.open(mapfile_path + yaml_filename.c_str());
     if (!yaml_file.is_open())
     {
         return false;
@@ -770,8 +772,8 @@ bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
     //std::string ppm_flg_filename = (pgm_occ_filename.substr(0, pgm_occ_filename.size() - 4)) + "_yarpflags" + ".ppm";
     std::string ppm_flg_filename = yarp_filename;
     bool ret = true;
-    ret &= yarp::sig::file::write(img_occ, pgm_occ_filename);
-    ret &= yarp::sig::file::write(img_flg, ppm_flg_filename);
+    ret &= yarp::sig::file::write(img_occ, mapfile_path + pgm_occ_filename);
+    ret &= yarp::sig::file::write(img_flg, mapfile_path + ppm_flg_filename);
     return ret;
 }
 
