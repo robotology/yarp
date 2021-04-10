@@ -40,7 +40,7 @@ using namespace std;
 #endif
 
 //helper functions
-string extractPathFromFile(string full_filename)
+static string extractPathFromFile(string full_filename)
 {
     size_t found;
     found = full_filename.find_last_of('/');
@@ -50,7 +50,7 @@ string extractPathFromFile(string full_filename)
     return full_filename;
 }
 
-string extractExtensionFromFile(string full_filename)
+static string extractExtensionFromFile(string full_filename)
 {
     int start = full_filename.length() - 3;
     return full_filename.substr(start, 3);
