@@ -145,32 +145,80 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             out.clear();
             out.addVocab(VOCAB_IMAP_OK);
         }
-        else if (cmd == VOCAB_IMAP_SAVE_COLLECTION)
+        else if (cmd == VOCAB_IMAP_SAVE_X)
         {
-            string mapfile = in.get(2).asString();
-            if (saveMaps(mapfile))
+            if (in.get(2).asVocab() == VOCAB_IMAP_MAPS_COLLECTION)
             {
-                out.clear();
-                out.addVocab(VOCAB_IMAP_OK);
+                string mapfile = in.get(3).asString();
+                if (saveMaps(mapfile))
+                {
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_OK);
+                }
+                else
+                {
+                    yCError(MAP2DSERVER, "Unable to save collection");
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_ERROR);
+                }
+            }
+            else if (in.get(2).asVocab() == VOCAB_IMAP_LOCATIONS_COLLECTION)
+            {
+                string locfile = in.get(3).asString();
+                if (save_locations_and_areas(locfile))
+                {
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_OK);
+                }
+                else
+                {
+                    yCError(MAP2DSERVER, "Unable to save collection");
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_ERROR);
+                }
             }
             else
             {
-                yCError(MAP2DSERVER, "Unable to save collection");
+                yCError(MAP2DSERVER, "Parser error");
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
         }
-        else if (cmd == VOCAB_IMAP_LOAD_COLLECTION)
+        else if (cmd == VOCAB_IMAP_LOAD_X)
         {
-            string mapfile = in.get(2).asString();
-            if (loadMaps(mapfile))
+            if (in.get(2).asVocab()==VOCAB_IMAP_MAPS_COLLECTION)
             {
-                out.clear();
-                out.addVocab(VOCAB_IMAP_OK);
+                string mapfile = in.get(3).asString();
+                if (loadMaps(mapfile))
+                {
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_OK);
+                }
+                else
+                {
+                    yCError(MAP2DSERVER, "Unable to load collection");
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_ERROR);
+                }
+            }
+            if (in.get(2).asVocab() == VOCAB_IMAP_LOCATIONS_COLLECTION)
+            {
+                string locfile = in.get(3).asString();
+                if (load_locations_and_areas(locfile))
+                {
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_OK);
+                }
+                else
+                {
+                    yCError(MAP2DSERVER, "Unable to load collection");
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_ERROR);
+                }
             }
             else
             {
-                yCError(MAP2DSERVER, "Unable to load collection");
+                yCError(MAP2DSERVER, "Parser error");
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
@@ -1210,6 +1258,7 @@ bool Map2DServer::priv_load_locations_and_areas_v2(std::ifstream& file)
     {
         Map2DArea       area;
         std::getline(file, buffer);
+        if (buffer == "Paths:") break;
         if (file.eof()) break;
 
         Bottle b;
@@ -1231,6 +1280,54 @@ bool Map2DServer::priv_load_locations_and_areas_v2(std::ifstream& file)
         }
         m_areas_storage[name] = area;
     }
+
+    if (buffer != "Paths:")
+    {
+        yCError(MAP2DSERVER) << "Unable to parse Paths section!";
+        return false;
+    }
+
+    while (1)
+    {
+        Map2DPath       path;
+        std::getline(file, buffer);
+        if (file.eof()) break;
+
+        Bottle b;
+        b.fromString(buffer);
+        size_t bot_size = b.size();
+        std::string name = b.get(0).asString();
+        size_t i=1;
+        do
+        {
+            if (b.get(i).isList())
+            {
+                Bottle* ll = b.get(i).asList();
+                if (ll && ll->size() == 4)
+                {
+                    Map2DLocation loc;
+                    loc.map_id = ll->get(0).asString();
+                    loc.x = ll->get(1).asFloat64();
+                    loc.y = ll->get(2).asFloat64();
+                    loc.theta= ll->get(3).asFloat64();
+                    path.push_back(loc);
+                }
+                else
+                {
+                    yCError(MAP2DSERVER) << "Unable to parse contents of Paths section!";
+                    return false;
+                }
+            }
+            else
+            {
+                break;
+            }
+            i++;
+        }
+        while (1);
+        m_paths_storage[name] = path;
+    }
+
     return true;
 }
 
@@ -1284,7 +1381,10 @@ bool Map2DServer::load_locations_and_areas(std::string locations_file)
 
     //on success
     file.close();
-    yCDebug(MAP2DSERVER) << "Locations file" << locations_file << "loaded, " << m_locations_storage.size() << "locations and "<< m_areas_storage.size() << " areas available";
+    yCDebug(MAP2DSERVER) << "Locations file" << locations_file << "loaded, "
+                         << m_locations_storage.size() << "locations and "
+                         << m_areas_storage.size() << " areas and "
+                         << m_paths_storage.size() << " paths available";
     return true;
 }
 
@@ -1304,11 +1404,11 @@ bool Map2DServer::save_locations_and_areas(std::string locations_file)
     Map2DArea       area;
     s = " ";
 
-    file << "Version: \n";
+    file << "Version:\n";
     file << "2\n";
 
     {
-        file << "Locations: \n";
+        file << "Locations:\n";
         std::map<std::string, Map2DLocation>::iterator it;
         for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
         {
@@ -1318,7 +1418,7 @@ bool Map2DServer::save_locations_and_areas(std::string locations_file)
     }
 
     {
-        file << "Areas: \n";
+        file << "Areas:\n";
         std::map<std::string, Map2DArea>::iterator it2;
         for (it2 = m_areas_storage.begin(); it2 != m_areas_storage.end(); ++it2)
         {
@@ -1334,11 +1434,11 @@ bool Map2DServer::save_locations_and_areas(std::string locations_file)
     }
 
     {
-        file << "Paths: \n";
+        file << "Paths:\n";
         std::map<std::string, Map2DPath>::iterator it3;
         for (it3 = m_paths_storage.begin(); it3 != m_paths_storage.end(); ++it3)
         {
-            file << it3->first; // the name of the path
+            file << it3->first << " "; // the name of the path
             for (size_t i=0; i<it3->second.size(); i++)
             {
                 loc = it3->second[i];

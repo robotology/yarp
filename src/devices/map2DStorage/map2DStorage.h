@@ -109,11 +109,11 @@ public:
     bool clearAllPaths() override;
     bool clearAllMapsTemporaryFlags() override;
     bool clearMapTemporaryFlags(std::string map_name) override;
-    bool saveMapsCollection(std::string maps_colletion) override;
-    bool loadMapsCollection(std::string maps_colletion) override;
+    bool saveMapsCollection(std::string maps_collection_file) override;
+    bool loadMapsCollection(std::string maps_collection_file) override;
 
-    bool load_locations_and_areas(std::string locations_file);
-    bool save_locations_and_areas(std::string locations_file);
+    bool loadLocationsAndExtras(std::string locations_file) override;
+    bool saveLocationsAndExtras(std::string locations_file) override;
 
 private:
     bool priv_load_locations_and_areas_v1(std::ifstream& file);

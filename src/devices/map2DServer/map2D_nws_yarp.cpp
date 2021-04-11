@@ -84,6 +84,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             MapGrid2D map;
             if (m_iMap2D->get_map(name, map))
             {
+                map.enable_map_compression_over_network(m_send_maps_compressed);
                 out.clear();
                 out.addVocab(VOCAB_IMAP_OK);
                 yarp::os::Bottle& mapbot = out.addList();
@@ -129,32 +130,80 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             out.clear();
             out.addVocab(VOCAB_IMAP_OK);
         }
-        else if (cmd == VOCAB_IMAP_SAVE_COLLECTION)
+        else if (cmd == VOCAB_IMAP_SAVE_X)
         {
-            string mapfile = in.get(2).asString();
-            if (m_iMap2D->saveMapsCollection(mapfile))
+            if (in.get(2).asVocab() == VOCAB_IMAP_MAPS_COLLECTION)
             {
-                out.clear();
-                out.addVocab(VOCAB_IMAP_OK);
+                string mapfile = in.get(3).asString();
+                if (m_iMap2D->saveMapsCollection(mapfile))
+                {
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_OK);
+                }
+                else
+                {
+                    yCError(MAP2D_NWS_YARP, "Unable to save collection");
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_ERROR);
+                }
+            }
+            else if (in.get(2).asVocab() == VOCAB_IMAP_LOCATIONS_COLLECTION)
+            {
+                string locfile = in.get(3).asString();
+                if (m_iMap2D->saveLocationsAndExtras(locfile))
+                {
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_OK);
+                }
+                else
+                {
+                    yCError(MAP2D_NWS_YARP, "Unable to save collection");
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_ERROR);
+                }
             }
             else
             {
-                yCError(MAP2D_NWS_YARP, "Unable to save collection");
+                yCError(MAP2D_NWS_YARP, "Parser error");
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
         }
-        else if (cmd == VOCAB_IMAP_LOAD_COLLECTION)
+        else if (cmd == VOCAB_IMAP_LOAD_X)
         {
-            string mapfile = in.get(2).asString();
-            if (m_iMap2D->loadMapsCollection(mapfile))
+            if (in.get(2).asVocab()==VOCAB_IMAP_MAPS_COLLECTION)
             {
-                out.clear();
-                out.addVocab(VOCAB_IMAP_OK);
+                string mapfile = in.get(3).asString();
+                if (m_iMap2D->loadMapsCollection(mapfile))
+                {
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_OK);
+                }
+                else
+                {
+                    yCError(MAP2D_NWS_YARP, "Unable to load collection");
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_ERROR);
+                }
+            }
+            if (in.get(2).asVocab() == VOCAB_IMAP_LOCATIONS_COLLECTION)
+            {
+                string locfile = in.get(3).asString();
+                if (m_iMap2D->loadLocationsAndExtras(locfile))
+                {
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_OK);
+                }
+                else
+                {
+                    yCError(MAP2D_NWS_YARP, "Unable to load collection");
+                    out.clear();
+                    out.addVocab(VOCAB_IMAP_ERROR);
+                }
             }
             else
             {
-                yCError(MAP2D_NWS_YARP, "Unable to load collection");
+                yCError(MAP2D_NWS_YARP, "Parser error");
                 out.clear();
                 out.addVocab(VOCAB_IMAP_ERROR);
             }
@@ -487,7 +536,7 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
 {
     if (in.get(0).asString() == "save_locations&areas" && in.get(1).isString())
     {
-        if(save_locations_and_areas(in.get(1).asString()))
+        if(m_iMap2D->saveLocationsAndExtras(in.get(1).asString()))
         {
             out.addString(in.get(1).asString() + " successfully saved");
         }
@@ -498,7 +547,7 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
     }
     else if (in.get(0).asString() == "load_locations&areas" && in.get(1).isString())
     {
-        if(load_locations_and_areas(in.get(1).asString()))
+        if(m_iMap2D->loadLocationsAndExtras(in.get(1).asString()))
         {
             out.addString(in.get(1).asString() + " successfully loaded");
         }
@@ -628,13 +677,10 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
         m_iMap2D->clearAllMaps();
         out.addString("all maps cleared");
     }
-    else if (in.get(0).asString() == "enable_maps_compression")
+    else if (in.get(0).asString() == "send_maps_compressed")
     {
-        bool b = true;
-        for (auto it=m_maps_storage.begin(); it!= m_maps_storage.end(); it++)
-            {b &= it->second.enable_map_compression_over_network(in.get(1).asBool());}
-        if (b) {out.addString("compression mode of all maps set to:"+ in.get(1).asString());}
-        else   {out.addString("failed to set compression mode");}
+        m_send_maps_compressed  = in.get(1).asBool();
+        out.addString("compression mode of all maps set to:"+ in.get(1).asString());
     }
     else if(in.get(0).asString() == "help")
     {
@@ -653,7 +699,7 @@ void Map2D_nws_yarp::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle
         out.addString("'load_map <full path>' to load a single map");
         out.addString("'list_maps' to view a list of all stored maps");
         out.addString("'clear_all_maps' to clear all stored maps");
-        out.addString("'enable_maps_compression <0/1>' to set the map transmission mode");
+        out.addString("'send_maps_compressed <0/1>' to set the map transmission mode");
     }
     else
     {

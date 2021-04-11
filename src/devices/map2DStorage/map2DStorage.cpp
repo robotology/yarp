@@ -52,11 +52,14 @@ Map2DStorage::~Map2DStorage() = default;
 
 bool Map2DStorage::saveMapsCollection(std::string mapsfile)
 {
+    //check if the storage is not empty
     if (m_maps_storage.size() == 0)
     {
         yCError(MAP2DSTORAGE) << "Map storage is empty";
         return false;
     }
+
+    //open the map collection file
     std::ofstream file;
     file.open(mapsfile.c_str());
     if (!file.is_open())
@@ -64,15 +67,21 @@ bool Map2DStorage::saveMapsCollection(std::string mapsfile)
         yCError(MAP2DSTORAGE) << "Sorry unable to open" << mapsfile;
         return false;
     }
+
     bool ret = true;
+    //for each map...
     for (auto& it : m_maps_storage)
     {
+        //add an entry to the map collection file
         string map_filename = it.first + ".map";
         file << "mapfile: ";
         file << map_filename;
         file << endl;
+
+        //save each individual map to a file
         ret &= it.second.saveToFile(map_filename);
     }
+
     file.close();
     return ret;
 }
@@ -102,6 +111,8 @@ bool Map2DStorage::loadMapsCollection(std::string mapsfile)
             string option;
             iss >> option;
             string mapfilenameWithPath = m_rf_mapCollection.findFile(mapfilename);
+
+            //open the individual map file
             MapGrid2D map;
             bool r = map.loadFromFile(mapfilenameWithPath);
             if (r)
@@ -161,7 +172,7 @@ bool Map2DStorage::open(yarp::os::Searchable &config)
         }
         else
         {
-            bool ret  = load_locations_and_areas(locations_file_with_path);
+            bool ret  = loadLocationsAndExtras(locations_file_with_path);
             if (ret) { yCInfo(MAP2DSTORAGE) << "Location file" << locations_file_with_path << "successfully loaded."; }
             else { yCError(MAP2DSTORAGE) << "Problems opening file" << locations_file_with_path; }
         }
@@ -361,6 +372,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
     {
         Map2DArea       area;
         std::getline(file, buffer);
+        if (buffer == "Paths:") break;
         if (file.eof()) break;
 
         Bottle b;
@@ -382,10 +394,57 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
         }
         m_areas_storage[name] = area;
     }
+
+    if (buffer != "Paths:")
+    {
+        yCError(MAP2DSTORAGE) << "Unable to parse Paths section!";
+        return false;
+    }
+
+    while (1)
+    {
+        Map2DPath       path;
+        std::getline(file, buffer);
+        if (file.eof()) break;
+
+        Bottle b;
+        b.fromString(buffer);
+        size_t bot_size = b.size();
+        std::string name = b.get(0).asString();
+        size_t i = 1;
+        do
+        {
+            if (b.get(i).isList())
+            {
+                Bottle* ll = b.get(i).asList();
+                if (ll && ll->size() == 4)
+                {
+                    Map2DLocation loc;
+                    loc.map_id = ll->get(0).asString();
+                    loc.x = ll->get(1).asFloat64();
+                    loc.y = ll->get(2).asFloat64();
+                    loc.theta = ll->get(3).asFloat64();
+                    path.push_back(loc);
+                }
+                else
+                {
+                    yCError(MAP2DSTORAGE) << "Unable to parse contents of Paths section!";
+                    return false;
+                }
+            }
+            else
+            {
+                break;
+            }
+            i++;
+        } while (1);
+        m_paths_storage[name] = path;
+    }
+
     return true;
 }
 
-bool Map2DStorage::load_locations_and_areas(std::string locations_file)
+bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
 {
     std::ifstream file;
     file.open (locations_file.c_str());
@@ -435,11 +494,14 @@ bool Map2DStorage::load_locations_and_areas(std::string locations_file)
 
     //on success
     file.close();
-    yCDebug(MAP2DSTORAGE) << "Locations file" << locations_file << "loaded, " << m_locations_storage.size() << "locations and "<< m_areas_storage.size() << " areas available";
+    yCDebug(MAP2DSTORAGE) << "Locations file" << locations_file << "loaded, "
+                          << m_locations_storage.size() << "locations and "
+                          << m_areas_storage.size() << " areas and "
+                          << m_paths_storage.size() << " paths available";
     return true;
 }
 
-bool Map2DStorage::save_locations_and_areas(std::string locations_file)
+bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
 {
     std::ofstream file;
     file.open (locations_file.c_str());
@@ -455,11 +517,11 @@ bool Map2DStorage::save_locations_and_areas(std::string locations_file)
     Map2DArea       area;
     s = " ";
 
-    file << "Version: \n";
+    file << "Version:\n";
     file << "2\n";
 
     {
-        file << "Locations: \n";
+        file << "Locations:\n";
         std::map<std::string, Map2DLocation>::iterator it;
         for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
         {
@@ -469,7 +531,7 @@ bool Map2DStorage::save_locations_and_areas(std::string locations_file)
     }
 
     {
-        file << "Areas: \n";
+        file << "Areas:\n";
         std::map<std::string, Map2DArea>::iterator it2;
         for (it2 = m_areas_storage.begin(); it2 != m_areas_storage.end(); ++it2)
         {
@@ -485,11 +547,11 @@ bool Map2DStorage::save_locations_and_areas(std::string locations_file)
     }
 
     {
-        file << "Paths: \n";
+        file << "Paths:\n";
         std::map<std::string, Map2DPath>::iterator it3;
         for (it3 = m_paths_storage.begin(); it3 != m_paths_storage.end(); ++it3)
         {
-            file << it3->first; // the name of the path
+            file << it3->first << " "; // the name of the path
             for (size_t i=0; i<it3->second.size(); i++)
             {
                 loc = it3->second[i];

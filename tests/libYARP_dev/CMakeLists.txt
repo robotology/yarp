@@ -26,6 +26,7 @@ if(TARGET YARP::YARP_math)
   target_link_libraries(harness_dev PRIVATE YARP::YARP_math)
 else()
   set(_disabled_files FrameTransformClientTest.cpp
+                      Map2DClientTest.cpp
                       Navigation2DClientTest.cpp
                       MapGrid2DTest.cpp)
   set_source_files_properties(${_disabled_files} PROPERTIES HEADER_FILE_ONLY ON)

@@ -83,6 +83,7 @@ private:
     std::mutex                   m_mutex;
     std::string                  m_rpcPortName;
     yarp::os::RpcServer          m_rpcPort;
+    bool                         m_send_maps_compressed=false;
 
     bool read(yarp::os::ConnectionReader& connection) override;
 
