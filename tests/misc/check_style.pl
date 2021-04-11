@@ -50,7 +50,7 @@ foreach my $filename (@files) {
     }
 
     # Skip images and binary files
-    if ("$filename" =~ /\.(png|svg|jpg|ppm|bmp|ico|icns)$/) {
+    if ("$filename" =~ /\.(png|svg|jpg|ppm|pgm|bmp|ico|icns)$/) {
         print_if_verbose "[SKIP (image - $1)] $filename\n";
         $skip++;
         next;

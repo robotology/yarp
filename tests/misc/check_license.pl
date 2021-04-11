@@ -325,7 +325,7 @@ foreach my $filename (@files) {
     }
 
     # Skip images and binary files
-    if ("$filename" =~ /\.(png|svg|jpg|ppm|bmp|ico|icns)$/) {
+    if ("$filename" =~ /\.(png|svg|jpg|ppm|pgm|bmp|ico|icns)$/) {
         print_if_verbose "[SKIP (image - $1)] $filename\n";
         $skip++;
         next;
@@ -387,7 +387,7 @@ foreach my $filename (@files) {
     }
 
     # Skip more files
-    if ("$filename" =~ /\.(ui|rc|qrc|xml|xml.template|xslt|xsl|msg|srv|ini|cfg|txt|TXT|dox|md|plist.in|tex|mdl)$/) {
+    if ("$filename" =~ /\.(ui|rc|qrc|xml|xml.template|xslt|xsl|msg|srv|ini|cfg|txt|TXT|dox|md|plist.in|tex|mdl|map|yaml)$/) {
         if ("$filename" !~ /CMakeLists.txt$/) {
             print_if_verbose "[SKIP (.$1)] $filename\n";
             $skip++;

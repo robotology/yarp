@@ -11,6 +11,7 @@
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <catch.hpp>
@@ -20,6 +21,16 @@ using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
+
+std::string extractPathFromFile(std::string full_filename)
+{
+    size_t found;
+    found = full_filename.find_last_of('/');
+    if (found != std::string::npos) return full_filename.substr(0, found) + "/";
+    found = full_filename.find_last_of('\\');
+    if (found != std::string::npos) return full_filename.substr(0, found) + "\\";
+    return full_filename;
+}
 
 static void ReadMapfromString(Nav2D::MapGrid2D& m, std::string s)
 {
@@ -151,6 +162,42 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
             Nav2D::MapGrid2D output_map;
             bool b2 = Property::copyPortable(input_bot, output_map);
             CHECK(b2);
+        }
+    }
+
+    SECTION("Test load/save MapGrid2D")
+    {
+        Nav2D::MapGrid2D yarp_map;
+        Nav2D::MapGrid2D ros_map;
+        Nav2D::MapGrid2D yarpros_map;
+        yarp::os::ResourceFinder rf;
+        rf.setDefaultContext("mapGrid2DTest");
+        {
+            std::string si = rf.findFileByName("map_yarpOnly.map");
+            std::string so = extractPathFromFile(si);
+            bool b1 = yarp_map.loadFromFile(si);
+            yarp_map.m_map_name="testmap_yarpOnly_savedOutput";
+            bool b1b = yarp_map.saveToFile(so + "map_yarpOnlySaved.map");
+            CHECK(b1);
+            CHECK(b1b);
+        }
+        {
+            std::string si = rf.findFileByName("map_rosOnly.map");
+            std::string so = extractPathFromFile(si);
+            bool b2 = ros_map.loadFromFile(si);
+            ros_map.m_map_name = "testmap_rosOnly_savedOutput";
+            bool b2b = ros_map.saveToFile(so + "map_rosOnlySaved.map");
+            CHECK(b2);
+            CHECK(b2b);
+        }
+        {
+            std::string si = rf.findFileByName("map_yarpAndRos.map");
+            std::string so = extractPathFromFile(si);
+            bool b3 = yarpros_map.loadFromFile(si);
+            yarpros_map.m_map_name = "testmap_yarpAndRos_savedOutput";
+            bool b3b = yarpros_map.saveToFile(so + "map_yarpAndRosSaved.map");
+            CHECK(b3);
+            CHECK(b3b);
         }
     }
 
