@@ -96,6 +96,10 @@ public:
     bool     clearAllMapsTemporaryFlags() override;
     bool     clearMapTemporaryFlags(std::string map_name) override;
 
+    bool     saveMapsCollection(std::string maps_collection_file) override;
+    bool     loadMapsCollection(std::string maps_collection_file) override;
+    bool     saveLocationsAndExtras(std::string locations_collection_file) override;
+    bool     loadLocationsAndExtras(std::string locations_collection_file) override;
 };
 
 #endif // YARP_DEV_MAP2DCLIENT_H

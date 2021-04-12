@@ -56,6 +56,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(localization2DServer)
   add_subdirectory(map2DClient)
   add_subdirectory(map2DServer)
+  add_subdirectory(map2DStorage)
   add_subdirectory(navigation2DClient)
   add_subdirectory(navigation2DServer)
   add_subdirectory(Rangefinder2DClient)
