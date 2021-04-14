@@ -410,6 +410,7 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
         Bottle b;
         b.fromString(buffer);
         size_t bot_size = b.size();
+        YARP_UNUSED(bot_size);
         std::string name = b.get(0).asString();
         size_t i = 1;
         do
