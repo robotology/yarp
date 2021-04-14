@@ -64,7 +64,7 @@ public:
 
 private:
     bool abortSound();
-    bool configureDeviceAndStart();
+    bool configureDeviceAndStart() override;
 
 public: //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
