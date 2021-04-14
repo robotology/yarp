@@ -421,7 +421,7 @@ bool MapGrid2D::loadMapROSOnly(string ros_yaml_filename)
         {
             //occup_prob is a probability, in the range 0-100 (-1 = 255 = unknown)
             CellOccupancyData occup_prob = m_map_occupancy.safePixel(x, y);
-            if      (occup_prob >= 0  && occup_prob<50 )   {m_map_flags.safePixel(x, y) = MAP_CELL_FREE;}
+            if      (occup_prob != (unsigned char)(-1)  && occup_prob<50 )   {m_map_flags.safePixel(x, y) = MAP_CELL_FREE;}
             else if (occup_prob >= 50 && occup_prob<=100)  {m_map_flags.safePixel(x, y) = MAP_CELL_WALL;}
             else if (occup_prob > 100)                     {m_map_flags.safePixel(x, y) = MAP_CELL_UNKNOWN;}
             else { yError() << "Unreachable";}
@@ -611,7 +611,7 @@ yarp::sig::PixelMono MapGrid2D::CellOccupancyDataToPixel(const MapGrid2D::CellOc
         return 205;
     }
     //values in the range 0-100 are converted in the range 0-254
-    else if (cellin>=0 && cellin <=100)
+    else if (cellin != (unsigned char)(-1) && cellin <=100)
     {
         return (254 - (cellin * 254 / 100));
     }
@@ -633,7 +633,7 @@ MapGrid2D::CellOccupancyData MapGrid2D::PixelToCellOccupancyData(const yarp::sig
         return 255;
     }
     //values in the range 0-254 are converted in the range 0-100
-    else if (pixin>=0 && pixin <= 254)
+    else if (pixin != (unsigned char)(-1))
     {
         auto occ = (unsigned char)((254 - pixin) / 254.0);
         return occ * 100;
