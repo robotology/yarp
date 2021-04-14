@@ -300,12 +300,12 @@ bool Map2D_nws_ros::subscribeMapFromRos(string map_name)
             yCInfo(MAP2D_NWS_ROS) << "Added map " << map.getMapName() << " to storage";
             return true;
         }
-        else
-        {
-            yCInfo(MAP2D_NWS_ROS) << "Unable to add map " << map.getMapName() << " to storage";
-            return false;
-        }
+
+        yCInfo(MAP2D_NWS_ROS) << "Unable to add map " << map.getMapName() << " to storage";
+        return false;
     }
+
+    return false;
 }
 
 bool Map2D_nws_ros::close()
