@@ -32,6 +32,7 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>fakeFrameGrabber_rpc_port</td><td>rpc port for the fakeFrameGrabber</td><td>/fakeFrameGrabber/rpc</td></tr>
 <tr><td>width</td><td>desired width of test image</td><td>320</td></tr>
 <tr><td>height</td><td>desired height of test image</td><td>240</td></tr>
 <tr><td>horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
