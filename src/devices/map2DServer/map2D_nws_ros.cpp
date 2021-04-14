@@ -211,7 +211,7 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
 bool Map2D_nws_ros::publishMapToRos(string map_name)
 {
     MapGrid2D current_map;
-    if (!m_iMap2D->get_map(map_name, current_map));
+    if (!m_iMap2D->get_map(map_name, current_map))
     {
         yCError(MAP2D_NWS_ROS) << "publishMapToRos() " << map_name << " does not exists";
         return false;
