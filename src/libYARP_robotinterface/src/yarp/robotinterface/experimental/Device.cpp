@@ -187,28 +187,20 @@ public:
     Driver* driver;
 };
 
-std::ostream& std::operator<<(std::ostream& oss, const yarp::robotinterface::experimental::Device& t)
-{
-    oss << "(name = \"" << t.name() << "\", type = \"" << t.type() << "\"";
-    if (!t.params().empty()) {
-        oss << ", params = [";
-        oss << t.params();
-        oss << "]";
-    }
-    if (!t.actions().empty()) {
-        oss << ", actions = [";
-        oss << t.actions();
-        oss << "]";
-    }
-    oss << ")";
-    return oss;
-}
-
 yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Device& t)
 {
-    std::ostringstream oss;
-    oss << t;
-    dbg << oss.str();
+    dbg << "(name = \"" << t.name() << "\", type = \"" << t.type() << "\"";
+    if (!t.params().empty()) {
+        dbg << ", params = [";
+        dbg << t.params();
+        dbg << "]";
+    }
+    if (!t.actions().empty()) {
+        dbg << ", actions = [";
+        dbg << t.actions();
+        dbg << "]";
+    }
+    dbg << ")";
     return dbg;
 }
 

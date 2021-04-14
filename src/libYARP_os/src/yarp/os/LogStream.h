@@ -24,12 +24,6 @@
 #include <string>
 #include <vector>
 
-
-namespace std {
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& t);
-}
-
 namespace yarp {
 namespace os {
 
@@ -67,6 +61,7 @@ class YARP_os_API LogStream
         const yarp::os::Log::Predicate pred;
         const LogComponent& comp;
         int ref;
+        bool nospace {false};
     } * stream;
 
 public:
@@ -132,121 +127,149 @@ public:
     inline LogStream& operator<<(bool t)
     {
         stream->oss << (t ? "true" : "false");
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(char t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(signed short t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(unsigned short t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(signed int t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(unsigned int t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(signed long t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(unsigned long t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(signed long long t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(unsigned long long t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(float t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(double t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(const char* t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
     inline LogStream& operator<<(const void* t)
     {
         stream->oss << t;
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
 
     inline LogStream& operator<<(const std::string& t)
     {
         stream->oss << t.c_str();
-        stream->oss << ' ';
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
     }
 
     template <typename T>
     inline LogStream& operator<<(const std::vector<T>& t)
     {
-        stream->oss << t;
-        stream->oss << ' ';
+        bool nospace = stream->nospace;
+        stream->nospace = true;
+        stream->oss << '[';
+        for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); ++it) {
+            const T& p = *it;
+            if (it != t.begin()) {
+                stream->oss << ", ";
+            }
+            *this << p;
+        }
+        stream->oss << ']';
+        stream->nospace = nospace;
+        if (!stream->nospace) {
+            stream->oss << ' ';
+        }
         return *this;
-    }
+}
+
 }; // class LogStream
 
 } // namespace os
 } // namespace yarp
-
-
-template <typename T>
-inline std::ostream& std::operator<<(std::ostream& os, const std::vector<T>& t)
-{
-    os << '[';
-    for (typename std::vector<T>::const_iterator it = t.begin(); it != t.end(); ++it) {
-        const T& p = *it;
-        if (it != t.begin()) {
-            os << ", ";
-        }
-        os << p;
-    }
-    os << ']';
-    return os;
-}
 
 #endif // YARP_OS_LOGSTREAM_H
