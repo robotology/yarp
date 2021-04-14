@@ -107,7 +107,8 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     firstTime = true;
 
     // Set time base parameter
-    codecContext->time_base = (AVRational) { 1, 15 };
+    codecContext->time_base.num = 1;
+    codecContext->time_base.den = 15;
     // Set command line params
     if (setCommandLineParams() == -1)
         return false;
