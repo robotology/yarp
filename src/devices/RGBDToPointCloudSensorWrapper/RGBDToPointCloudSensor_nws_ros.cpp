@@ -96,7 +96,7 @@ bool RGBDToPointCloudSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
     }
     else
     {
-        period = config.find("period").asDouble();
+        period = config.find("period").asFloat64();
     }
 
     //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
