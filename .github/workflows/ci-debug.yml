@@ -1,13 +1,13 @@
 name: CI Workflow Debug
 
 on:
+  push:
+  release:
+    types: [published]
   pull_request:
     types: [opened, synchronize, reopened]
   pull_request_target:
     types: [opened, synchronize, reopened]
-    branches:
-      - 'master'
-      - 'yarp-*'
 
 jobs:
 
@@ -27,10 +27,39 @@ jobs:
     steps:
     - name: "Set output variables"
       id: select
+      env:
+        TOKEN: ${{ secrets.DRDANZ_TOKEN }}
       run: |
         echo "::set-output name=timestamp::$(/bin/date -u +%Y%m%d-%H%M%S)"
 
         echo "::set-output name=repository::${{ github.repository }}"
+
+
+
+
+
+
+          _robotology_users="";
+          i=0;
+          while true; do
+            _users=$(curl -s -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${TOKEN}" https://api.github.com/orgs/robotology/members?per_page=100\&page=$i | jq -r '.[].login');
+            if [[ -z "${_users}" ]]; then
+                break;
+            fi;
+            _robotology_users="${_robotology_users} ${_users}";
+            let "i=i+1";
+          done;
+
+
+
+          echo ${_robotology_users}
+
+
+
+
+
+
+
 
         if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
           echo "::set-output name=environment::code-analysis_unsafe"
