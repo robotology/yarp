@@ -42,6 +42,9 @@ jobs:
             echo "::set-output name=environment::code-analysis"
           fi
           echo "::set-output name=ref::refs/pull/$(cat $GITHUB_EVENT_PATH | jq .number)/merge"
+
+          echo "This should not be printed"
+
         else
           echo "::set-output name=environment::code-analysis"
           echo "::set-output name=ref::${{ github.ref }}"
