@@ -8,6 +8,8 @@
 
 #include <yarp/math/FrameTransform.h>
 
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
 #include <yarp/math/Math.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
@@ -163,4 +165,71 @@ std::string yarp::math::FrameTransform::toString(display_transform_mode_t format
         s_rotmd.c_str());
     }
     return std::string(buff);
+}
+
+bool yarp::math::FrameTransform::read(yarp::os::ConnectionReader& connection)
+{
+    // auto-convert text mode interaction
+    connection.convertTextMode();
+
+    connection.expectInt32();
+    connection.expectInt32();
+
+    connection.expectInt32();
+    src_frame_id = connection.expectString();
+    connection.expectInt32();
+    dst_frame_id = connection.expectString();
+    connection.expectInt32();
+    timestamp = connection.expectFloat64();
+
+    connection.expectInt32();
+    translation.tX = connection.expectFloat64();
+    connection.expectInt32();
+    translation.tY = connection.expectFloat64();
+    connection.expectInt32();
+    translation.tZ = connection.expectFloat64();
+
+    connection.expectInt32();
+    rotation.x() = connection.expectFloat64();
+    connection.expectInt32();
+    rotation.y() = connection.expectFloat64();
+    connection.expectInt32();
+    rotation.z() = connection.expectFloat64();
+    connection.expectInt32();
+    rotation.w() = connection.expectFloat64();
+
+    return !connection.isError();
+}
+
+bool yarp::math::FrameTransform::write(yarp::os::ConnectionWriter& connection) const
+{
+    connection.appendInt32(BOTTLE_TAG_LIST);
+    connection.appendInt32(3+3+4);
+
+    connection.appendInt32(BOTTLE_TAG_STRING);
+    connection.appendString(src_frame_id);
+    connection.appendInt32(BOTTLE_TAG_STRING);
+    connection.appendString(dst_frame_id);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(timestamp);
+
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(translation.tX);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(translation.tY);
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(translation.tZ);
+
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(rotation.x());
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(rotation.y());
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(rotation.z());
+    connection.appendInt32(BOTTLE_TAG_FLOAT64);
+    connection.appendFloat64(rotation.w());
+
+    connection.convertTextMode();
+
+    return !connection.isError();
 }
