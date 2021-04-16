@@ -29,6 +29,7 @@ extern "C"
 {
     #include <libavutil/opt.h>
     #include <libavcodec/avcodec.h>
+    #include <libavcodec/version.h>
     #include <libavutil/channel_layout.h>
     #include <libavutil/common.h>
     #include <libavutil/imgutils.h>
@@ -209,6 +210,11 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
     std::fstream fos;
     uint16_t * samples = nullptr;
 
+#if LIBAVCODEC_VERSION_MAJOR < 58
+    //register all the codecs, deprecated and useless in libffmpeg4.0
+    avcodec_register_all();
+#endif
+
     // find the MP3 encoder
     codec = avcodec_find_encoder(AV_CODEC_ID_MP2);
     if (!codec)
@@ -341,6 +347,12 @@ bool read_mp3_istream(Sound& sound_data, std::istream& istream)
     AVFrame* decoded_frame = nullptr;
 
     pkt = av_packet_alloc();
+
+#if LIBAVCODEC_VERSION_MAJOR < 58
+    //register all the codecs, deprecated and useless in libffmpeg4.0
+    avcodec_register_all();
+#endif
+
     // find the MPEG audio decoder
     codec = avcodec_find_decoder(AV_CODEC_ID_MP2);
     if (!codec)
