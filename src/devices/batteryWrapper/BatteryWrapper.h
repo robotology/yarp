@@ -23,6 +23,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <cmath>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
@@ -133,6 +134,12 @@ private:
     yarp::os::BufferedPort<yarp::os::Bottle> m_streamingPort;
 
     //data
+    double m_battery_charge = std::nan("");
+    double m_battery_voltage = std::nan("");
+    double m_battery_current = std::nan("");
+    double m_battery_temperature = std::nan("");
+    yarp::dev::IBattery::Battery_status m_battery_status = yarp::dev::IBattery::Battery_status::BATTERY_TIMEOUT;
+
     yarp::os::Stamp m_lastStateStamp;             // the last reading time stamp
     double m_period;
     bool m_ownDevices;
