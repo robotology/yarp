@@ -17,7 +17,7 @@
 namespace yarp {
 namespace math {
 
-class YARP_math_API FrameTransform
+class YARP_math_API FrameTransform : public yarp::os::Portable
 {
 public:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) src_frame_id;
@@ -67,7 +67,26 @@ public:
        rotation_as_matrix=1,
        rotation_as_rpy=2
     };
+
     std::string toString(display_transform_mode_t format= rotation_as_quaternion) const;
+
+    ///////// Serialization methods
+    /*
+    * Read data from a connection.
+    * return true iff data was read correctly
+    */
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    /**
+    * Write data to a connection.
+    * return true iff data was written correctly
+    */
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+
+    yarp::os::Type getType() const override
+    {
+        return yarp::os::Type::byName("yarp/frameTransform");
+    }
 };
 
 } // namespace sig
