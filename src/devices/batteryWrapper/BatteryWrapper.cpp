@@ -254,34 +254,50 @@ void BatteryWrapper::run()
     if (m_ibattery_p!=nullptr)
     {
         m_log_buffer[0] = 0;
-        double battery_charge  = 0;
-        double battery_voltage = 0;
-        double battery_current = 0;
-        double battery_temperature = 0;
-        IBattery::Battery_status status;
 
-        bool ret = true;
-        ret &= m_ibattery_p->getBatteryCharge(battery_charge);
-        ret &= m_ibattery_p->getBatteryVoltage(battery_voltage);
-        ret &= m_ibattery_p->getBatteryCurrent(battery_current);
-        ret &= m_ibattery_p->getBatteryTemperature(battery_temperature);
-        ret &= m_ibattery_p->getBatteryStatus(status);
+        //acquire data from the wrapped device
+        bool ret_sts, ret_chg, ret_vlt, ret_cur, ret_tmp;
+        {
+            double tmp;
+            ret_chg = m_ibattery_p->getBatteryCharge(tmp);
+            if (ret_chg) m_battery_charge = tmp;
+        }
+        {
+            double tmp;
+            ret_vlt = m_ibattery_p->getBatteryVoltage(tmp);
+            if (ret_vlt) m_battery_voltage = tmp;
+        }
+        {
+            double tmp;
+            ret_cur = m_ibattery_p->getBatteryCurrent(tmp);
+            if (ret_cur) m_battery_current = tmp;
+        }
+        {
+            double tmp;
+            ret_tmp = m_ibattery_p->getBatteryTemperature(tmp);
+            if (ret_tmp) m_battery_temperature = tmp;
+        }
+        {
+            IBattery::Battery_status tmp;
+            ret_sts = m_ibattery_p->getBatteryStatus(tmp);
+            if (ret_sts) m_battery_status = tmp;
+        }
 
-        if (ret)
+        if (ret_sts)
         {
             m_lastStateStamp.update();
             yarp::os::Bottle& b = m_streamingPort.prepare();
             b.clear();
-            b.addFloat64(battery_voltage); //0
-            b.addFloat64(battery_current); //1
-            b.addFloat64(battery_charge);  //2
-            b.addFloat64(battery_temperature); //3
-            b.addInt32(status); //4
+            b.addFloat64(m_battery_voltage); //0
+            b.addFloat64(m_battery_current); //1
+            b.addFloat64(m_battery_charge);  //2
+            b.addFloat64(m_battery_temperature); //3
+            b.addInt32(m_battery_status); //4
             m_streamingPort.setEnvelope(m_lastStateStamp);
             m_streamingPort.write();
 
             // if the battery is not charging, checks its status of charge
-            if (battery_current>0.4) check_battery_status(battery_charge);
+            if (m_battery_status >0.4) check_battery_status(m_battery_charge);
 
             // save data to file
             if (m_enable_log)
@@ -291,7 +307,7 @@ void BatteryWrapper::run()
                 time(&rawtime);
                 timeinfo = localtime(&rawtime);
                 char* battery_timestamp = asctime(timeinfo);
-                std::snprintf(m_log_buffer, 1024, "battery status: %+6.1fA   % 6.1fV   charge:% 6.1f%%    time: %s", battery_current, battery_voltage, battery_charge, battery_timestamp);
+                std::snprintf(m_log_buffer, 1024, "battery status: %+6.1fA   % 6.1fV   charge:% 6.1f%%    time: %s", m_battery_current, m_battery_voltage, m_battery_charge, battery_timestamp);
                 fprintf(m_logFile, "%s", m_log_buffer);
             }
         }
