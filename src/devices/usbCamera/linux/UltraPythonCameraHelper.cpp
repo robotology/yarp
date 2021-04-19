@@ -896,8 +896,8 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
 
 	if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTHON /*&& control.value > maxExposition_*/)  // trg_l
 	{
-		queryctrl.maximum = maxExposition_;
-		// control.value = maxExposition_;
+		queryctrl.maximum = maxPermittedExposition_;
+		queryctrl.minimum = minPermittedExposition_;
 	}
 	if (!absolute)
 		control.value = (int32_t)(value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
@@ -994,7 +994,8 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl, int fd)
 
 	if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTHON)	// trg_l
 	{
-		queryctrl.maximum = maxExposition_;
+		queryctrl.maximum = maxPermittedExposition_;
+		queryctrl.minimum = minPermittedExposition_;
 	}
 
 	return (double)(control.value - queryctrl.minimum) / (queryctrl.maximum - queryctrl.minimum);
@@ -1062,7 +1063,7 @@ bool UltraPythonCameraHelper::setDefaultControl()
 {
 	setControl(V4L2_EXTTRIGGGER_ULTRA_PYTHON, 1, true);	 // ext_trigger
 	setControl(V4L2_EXPOSURE_ULTRA_PYTHON, 20, true);	 // trg_l
-	setControl(V4L2_DEADTIME_ULTRA_PYTHON, 8, true);	 // trg_h
+	setControl(V4L2_DEADTIME_ULTRA_PYTHON, deadTime_, true);	 // trg_h
 	setControl(V4L2_CID_BRIGHTNESS, 200, true);
 	setControl(V4L2_CID_GAIN, 1, true);
 	return true;

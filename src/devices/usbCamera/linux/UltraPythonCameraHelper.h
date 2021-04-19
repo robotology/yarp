@@ -58,8 +58,11 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int lowresHeight_{512};										 // LOW RES height image
 	static constexpr unsigned int hiresImageBufferSize_{hiresWidth_ * hiresHeight_ * 3};	 // HI RES buffer size
 	static constexpr unsigned int lowresImageBufferSize_{lowresWidth_ * lowresHeight_ * 3};	 // LOW RES buffer size
-  static constexpr unsigned int lowresFrameRate_{35};
-  static constexpr unsigned int hiresFrameRate_{15};
+	static constexpr unsigned int lowresFrameRate_{35};
+	static constexpr unsigned int hiresFrameRate_{14};
+	static constexpr unsigned int deadTime_{8};
+	static constexpr unsigned int minPermittedExposition_{15};
+	static constexpr unsigned int maxPermittedExposition_{100};
 
    private:
 	static constexpr const char *mediaName_ = "/dev/media0";
@@ -80,8 +83,7 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int nativeWidth_{1280};	// Sensor HI RES width
 	static constexpr unsigned int nativeHeight_{1024};	// Sensor HI RES height
 
-	// Control value max
-	static constexpr unsigned int maxExposition_{100};
+	
 
 	// Ctrl for Python
 	static constexpr unsigned int V4L2_EXPOSURE_ULTRA_PYTHON{0x0098cb03};	  // trg_l
@@ -235,3 +237,4 @@ class UltraPythonCameraHelper
 		};
 	};
 };
+
