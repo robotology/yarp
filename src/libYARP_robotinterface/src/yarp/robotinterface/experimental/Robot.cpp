@@ -23,21 +23,21 @@
 #include <unordered_set>
 
 
-std::ostringstream& operator<<(std::ostringstream& oss, const yarp::robotinterface::experimental::Robot& t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Robot& t)
 {
-    oss << "(name = \"" << t.name() << "\"";
+    dbg << "(name = \"" << t.name() << "\"";
     if (!t.params().empty()) {
-        oss << ", params = [";
-        oss << t.params();
-        oss << "]";
+        dbg << ", params = [";
+        dbg << t.params();
+        dbg << "]";
     }
     if (!t.devices().empty()) {
-        oss << ", devices = [";
-        oss << t.devices();
-        oss << "]";
+        dbg << ", devices = [";
+        dbg << t.devices();
+        dbg << "]";
     }
-    oss << ")";
-    return oss;
+    dbg << ")";
+    return dbg;
 }
 
 
@@ -418,14 +418,6 @@ bool yarp::robotinterface::experimental::Robot::Private::custom(const yarp::robo
 {
     YARP_FIXME_NOTIMPLEMENTED("custom action")
     return true;
-}
-
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Robot& t)
-{
-    std::ostringstream oss;
-    oss << t;
-    dbg << oss.str();
-    return dbg;
 }
 
 yarp::robotinterface::experimental::Robot::Robot() :
