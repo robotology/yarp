@@ -59,6 +59,7 @@ jobs:
         if [[ "$GITHUB_EVENT_NAME" = "release" ]]; then
           echo "::set-output name=yarp_version::$(awk '/ VERSION /{print $2}' CMakeLists.txt)"
         fi
+        echo "This should not be printed"
 
     - name: 'Debug output variables'
       env:
