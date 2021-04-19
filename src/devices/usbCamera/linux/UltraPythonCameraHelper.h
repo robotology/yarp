@@ -58,8 +58,8 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int lowresHeight_{512};										 // LOW RES height image
 	static constexpr unsigned int hiresImageBufferSize_{hiresWidth_ * hiresHeight_ * 3};	 // HI RES buffer size
 	static constexpr unsigned int lowresImageBufferSize_{lowresWidth_ * lowresHeight_ * 3};	 // LOW RES buffer size
-	static constexpr unsigned int lowresFrameRate_{35};
-	static constexpr unsigned int hiresFrameRate_{14};
+	static constexpr int lowresFrameRate_{35};
+	static constexpr int hiresFrameRate_{14};
 	static constexpr unsigned int deadTime_{8};
 	static constexpr unsigned int minPermittedExposition_{15};
 	static constexpr unsigned int maxPermittedExposition_{100};

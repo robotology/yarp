@@ -30,6 +30,7 @@
 
 #include "USBcameraLogComponent.h"
 #include "list.h"
+#include "Statistics.h"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -495,7 +496,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 			{
 				if (param.fps > UltraPythonCameraHelper::hiresFrameRate_)
 				{
-					yCError(USBCAMERA) << "Framerate exceed maximum for HiRes:" << param.fps<<" set to:"<<UltraPythonCameraHelper::hiresFrameRate_;
+					yCError(USBCAMERA) << "Framerate exceed maximum for HiRes:" << param.fps << " set to:" << UltraPythonCameraHelper::hiresFrameRate_;
 					param.fps = UltraPythonCameraHelper::hiresFrameRate_;
 				}
 			}
@@ -514,12 +515,11 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 			{
 				if (param.fps > UltraPythonCameraHelper::lowresFrameRate_)
 				{
-					yCError(USBCAMERA) << "Framerate exceed maximum for LowRes:" << param.fps<<" auto set to:"<<UltraPythonCameraHelper::lowresFrameRate_;
+					yCError(USBCAMERA) << "Framerate exceed maximum for LowRes:" << param.fps << " auto set to:" << UltraPythonCameraHelper::lowresFrameRate_;
 					param.fps = UltraPythonCameraHelper::lowresFrameRate_;
 				}
 			}
 		}
-
 		setPeriod(1.0 / (double)param.fps);
 	}
 
@@ -720,17 +720,10 @@ void V4L_camera::run()
 		{
 			yCError(USBCAMERA) << "Failed acquiring new frame";
 		}
-
-		// FPS
-		timeNow = yarp::os::Time::now();
-		if ((timeElapsed = timeNow - timeStart) >= 0.5f)
-		{
-			yCInfo(USBCAMERA, "frames acquired %d in %f sec", frameCounter, timeElapsed);
-
-			frameCounter = 0;
-			timeStart = timeNow;
-		}
 	}
+
+	static Statistics stat("frames read by DRIVER");
+	stat.add();
 }
 
 void V4L_camera::threadRelease() { yCTrace(USBCAMERA); }
@@ -1098,6 +1091,7 @@ void V4L_camera::pythonPreprocess(const void *pythonbuffer, size_t size)
 // IFrameGrabberRgb Interface 777
 bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 {
+	static unsigned int frameCounterFpsRead = 0;
 	bool res = false;
 	mutex.wait();
 	if (configured)
@@ -1105,6 +1099,7 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 		if (param.camModel == ULTRAPYTON)
 		{
 			memcpy(buffer, pythonBuffer_, pythonBufferSize_);
+			frameCounterFpsRead++;
 		}
 		else
 		{
@@ -1118,6 +1113,7 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 			{
 				memcpy(buffer, param.outMat.data, param.outMat.total() * 3);
 			}
+			frameCounterFpsRead++;
 		}
 		mutex.post();
 		res = true;
@@ -1128,6 +1124,10 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 		yCError(USBCAMERA) << "unable to get the buffer, device uninitialized";
 		res = false;
 	}
+
+	static Statistics stat("frames read by YARP");
+	stat.add();
+	
 	return res;
 }
 
