@@ -32,9 +32,11 @@ jobs:
         echo "::set-output name=repository::${{ github.repository }}"
 
         _author_association="$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.author_association)"
-
         if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
-          if [ ${_author_association} = "NONE" ]; then
+          if [ ${_author_association} != "OWNER" ] &&
+             [ ${_author_association} != "MEMBER" ] &&
+             [ ${_author_association} != "COLLABORATOR" ] &&
+             [ ${_author_association} != "CONTRIBUTOR" ]; then
             echo "::set-output name=environment::code-analysis-unsafe"
           else
             echo "::set-output name=environment::code-analysis"
