@@ -33,8 +33,16 @@ jobs:
 
         echo "::set-output name=repository::${{ github.repository }}"
 
+        _author_association="$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.author_association)"
         if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
-          echo "::set-output name=environment::code-analysis_unsafe"
+          if [ ${_author_association} != "OWNER" ] &&
+             [ ${_author_association} != "MEMBER" ] &&
+             [ ${_author_association} != "COLLABORATOR" ] &&
+             [ ${_author_association} != "CONTRIBUTOR" ]; then
+            echo "::set-output name=environment::code-analysis-unsafe"
+          else
+            echo "::set-output name=environment::code-analysis"
+          fi
           echo "::set-output name=ref::refs/pull/$(cat $GITHUB_EVENT_PATH | jq .number)/merge"
         else
           echo "::set-output name=environment::code-analysis"
@@ -1258,6 +1266,7 @@ jobs:
 
 
   codacy-clang-tidy:
+    if: ${{ needs.select_environment.outputs.environment }} == 'code-analysis'
     environment: code-analysis
     name: 'Codacy - clang-tidy'
     needs: [select_environment, run-cmake]
@@ -1443,6 +1452,200 @@ jobs:
           -H "Content-type: application/json" \
           "${CODACY_URL}/2.0/commit/${COMMIT}/resultsFinal"
         echo
+
+  # This job is copied from the job above, please keep them in sync until we
+  # find a better way to do it automatically
+  codacy-clang-tidy-unsafe:
+    if: ${{ needs.select_environment.outputs.environment }} == 'code-analysis-unsafe'
+    environment: code-analysis-unsafe
+    name: 'Codacy - clang-tidy'
+    needs: [select_environment, run-cmake]
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
+
+    # This step is copied from the build step, please keep them in sync until we
+    # find a better way to do it automatically
+    - name: Dependencies [Linux]
+      if: runner.os == 'Linux'
+      uses: nick-invision/retry@v2.2.0
+      with:
+        timeout_minutes: 20
+        retry_wait_seconds: 300
+        max_attempts: 3
+        command: |
+          # Install Robotology dependencies from robotology ppa
+          sudo apt-add-repository -y ppa:robotology/ppa
+          sudo apt-get install -qq -y ycm-cmake-modules \
+                                      librobottestingframework-dev
+
+          # Install build tools
+          sudo apt-get install -qq -y cmake \
+                                      ccache \
+                                      ninja-build \
+                                      valgrind
+
+          sudo apt-get install -qq -y libace-dev \
+                                      libsqlite3-dev \
+                                      libtinyxml-dev \
+                                      libedit-dev \
+                                      qtbase5-dev \
+                                      qtdeclarative5-dev \
+                                      qtmultimedia5-dev \
+                                      libqt5opengl5-dev \
+                                      libqcustomplot-dev \
+                                      libopencv-dev \
+                                      libeigen3-dev \
+                                      libgraphviz-dev \
+                                      libgstreamer1.0-dev \
+                                      libgstreamer-plugins-base1.0-dev \
+                                      libpng-dev \
+                                      libv4l-dev \
+                                      libavcodec-dev \
+                                      libavdevice-dev \
+                                      libavformat-dev \
+                                      libavutil-dev \
+                                      portaudio19-dev \
+                                      libsdl1.2-dev \
+                                      libopenni2-dev \
+                                      libftdi-dev \
+                                      libi2c-dev \
+                                      libfuse-dev \
+                                      libjpeg-dev \
+                                      libpcl-dev
+
+          # Install SWIG and bindings dependencies
+          sudo apt-get install -qq -y swig \
+                                      mono-mcs \
+                                      liblua5.3-dev \
+                                      lua5.3 \
+                                      tcl-dev \
+                                      tk-dev \
+                                      python3-dev \
+                                      liboctave-dev \
+                                      default-jdk \
+                                      ruby-dev \
+                                      ruby \
+                                      perl
+
+          # Other tools useful in github actions
+          sudo apt-get install -qq -y jq \
+                                      wget \
+                                      curl \
+                                      lcov \
+                                      gcovr \
+                                      wget \
+                                      curl \
+                                      clang-11 \
+                                      clang-tidy-11 \
+                                      xsltproc \
+                                      libxml2-utils \
+                                      source-highlight
+
+          # Remove old packages from apt cache
+          sudo apt-get autoclean -qq
+
+    - name: Prepare environment
+      env:
+        CODACY_TOKEN: ${{ secrets.CODACY_TOKEN }}
+        CLANG_VERSION: 10
+        CODACY_CLANG_TIDY_VERSION: 1.2.1
+      run: |
+        echo "CLANG_VERSION=${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "CC=/usr/bin/clang-${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "CXX=/usr/bin/clang++-${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "CFLAGS=-fcolor-diagnostics" >> $GITHUB_ENV
+        echo "CXXFLAGS=-fcolor-diagnostics" >> $GITHUB_ENV
+        echo "CLANG_TIDY=/usr/bin/clang-tidy-${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "RUN_CLANG_TIDY=/usr/bin/run-clang-tidy-${CLANG_VERSION}" >> $GITHUB_ENV
+        echo "COLORCLI=1" >> $GITHUB_ENV
+        echo "CLICOLOR=1" >> $GITHUB_ENV
+        echo "CLICOLOR_FORCE=1" >> $GITHUB_ENV
+        echo "YARP_COLORED_OUTPUT=1" >> $GITHUB_ENV
+        echo "PROJECT_TOKEN=${CODACY_TOKEN}" >> $GITHUB_ENV
+        echo "COMMIT=${{ needs.select_environment.outputs.sha }}" >> $GITHUB_ENV
+        echo "CODACY_URL=https://api.codacy.com" >> $GITHUB_ENV
+        echo "CODACY_CLANG_TIDY_VERSION=${CODACY_CLANG_TIDY_VERSION}" >> $GITHUB_ENV
+
+    - name: Download codacy-clang-tidy
+      if: runner.os == 'Linux'
+      uses: nick-invision/retry@v2.2.0
+      with:
+        timeout_minutes: 20
+        retry_wait_seconds: 300
+        max_attempts: 3
+        command: |
+          # Download extra packages required
+          sudo apt-get install -qq -y clang-${CLANG_VERSION} \
+                                      clang-tidy-${CLANG_VERSION}
+
+          # Download codacy-clang-tidy
+          sudo wget https://github.com/codacy/codacy-clang-tidy/releases/download/${CODACY_CLANG_TIDY_VERSION}/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} -O /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
+          sudo chmod -v +x /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION}
+
+    - name: Run CMake
+      run: |
+        /usr/bin/cmake -S. -Bbuild \
+          -C .ci/initial-cache.gh.linux.cmake \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON \
+          -DYARP_NO_DEPRECATED:BOOL=ON \
+          -DYARP_COMPILE_BINDINGS:BOOL=OFF
+
+    - name: Link compile_commands.json in the source directory
+      run: |
+        ln -s build/compile_commands.json .
+
+    - name: Run make (required for files generated at build time)
+      run: |
+        (cd build && make)
+
+    - name: List clang-tidy checks
+      run: |
+        # Fix .clang-tidy for clang 10 (see https://reviews.llvm.org/D75621)
+        sed -i 's/;h;hh;hpp;hxx/,h,hh,hpp,hxx/g' .clang-tidy
+
+        # Print the .clang-tidy file
+        cat .clang-tidy
+        echo
+
+        # List checks
+        ${CLANG_TIDY} -list-checks
+
+    - name: Run clang-tidy
+      run: |
+        ${RUN_CLANG_TIDY} | sed "s|${PWD}/||g" | tee /tmp/out1
+
+    - name: Convert the clang-tidy output to a format that the Codacy API accepts
+      run: |
+        cat /tmp/out1 | \
+        /usr/local/bin/codacy-clang-tidy-${CODACY_CLANG_TIDY_VERSION} | tee /tmp/out2
+
+    - name: Send the results to Codacy
+      run: |
+        set -x
+        cat /tmp/out2 | \
+        curl --silent --show-error --fail \
+            -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+            -H "Content-type: application/json" -d @- \
+            "${CODACY_URL}/2.0/commit/${COMMIT}/issuesRemoteResults"
+        echo
+
+    - name: Signal that Codacy can use the sent results and start a new analysis
+      run: |
+        set -x
+        curl --silent --show-error --fail \
+          -XPOST -L -H "project-token: ${PROJECT_TOKEN}" \
+          -H "Content-type: application/json" \
+          "${CODACY_URL}/2.0/commit/${COMMIT}/resultsFinal"
+        echo
+
+
+
+
 
 
   codacy-coverage:
