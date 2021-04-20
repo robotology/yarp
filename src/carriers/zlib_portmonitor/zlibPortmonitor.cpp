@@ -8,6 +8,7 @@
 
 #include "zlibPortmonitor.h"
 
+#include <yarp/os/LogStream.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/sig/Image.h>
 
@@ -32,29 +33,12 @@ YARP_LOG_COMPONENT(ZLIBMONITOR,
 
 bool ZlibMonitorObject::create(const yarp::os::Property& options)
 {
-    shouldCompress = (options.find("sender_side").asBool());
-    compressed = nullptr;
-    decompressed = nullptr;
-    buffer = nullptr;
+    m_shouldCompress = (options.find("sender_side").asBool());
     return true;
 }
 
 void ZlibMonitorObject::destroy()
 {
-    if(compressed){
-        free(compressed);
-        compressed = nullptr;
-    }
-
-    if(buffer){
-        free(buffer);
-        buffer = nullptr;
-    }
-
-    if(decompressed){
-        free(decompressed);
-        decompressed = nullptr;
-    }
 }
 
 bool ZlibMonitorObject::setparam(const yarp::os::Property& params)
@@ -69,9 +53,10 @@ bool ZlibMonitorObject::getparam(yarp::os::Property& params)
 
 bool ZlibMonitorObject::accept(yarp::os::Things& thing)
 {
-    if(shouldCompress)
+    if(m_shouldCompress)
     {
-        yarp::os::Bottle* b = thing.cast_as<yarp::os::Bottle>();
+        //sender side / compressor
+        auto* b = thing.cast_as<ImageOf<PixelFloat>>();
         if(b == nullptr)
         {
             yCError(ZLIBMONITOR, "Expected type ImageOf<PixelFloat> in sender side, but got wrong data type!");
@@ -80,7 +65,8 @@ bool ZlibMonitorObject::accept(yarp::os::Things& thing)
     }
     else
     {
-        yarp::os::Bottle* b = thing.cast_as<yarp::os::Bottle>();
+        //receiver side / decompressor
+        auto* b = thing.cast_as<Bottle>();
         if(b == nullptr)
         {
             yCError(ZLIBMONITOR, "Expected type Bottle in receiver side, but got wrong data type!");
@@ -92,71 +78,80 @@ bool ZlibMonitorObject::accept(yarp::os::Things& thing)
 
 yarp::os::Things& ZlibMonitorObject::update(yarp::os::Things& thing)
 {
-   if(shouldCompress)
+   if(m_shouldCompress)
    {
-       yarp::os::Bottle* b = thing.cast_as<yarp::os::Bottle>();
-        // .... buffer, len
-        size_t sizeCompressed;
-        const char* bin = b->toBinary(&sizeCompressed);
-        compress(bin, sizeCompressed, sizeCompressed,  , );
-        if(!compressed)
+        //sender side / compressor
+       //it receives an image, it sends a bottle to the network
+        auto* b = thing.cast_as<ImageOf<PixelFloat>>();
+
+        size_t sizeUncompressed= b->getRawImageSize();
+        const unsigned char* uncompressedData = b->getRawImage();
+
+        size_t sizeCompressed = (sizeUncompressed * 1.1) + 12;
+        unsigned char* compressedData = (unsigned char*) malloc (sizeCompressed);
+
+        bool ret= compressData(uncompressedData, sizeUncompressed, compressedData, sizeCompressed);
+        if(!ret)
         {
             yCError(ZLIBMONITOR, "Failed to compress, exiting...");
+            free(compressedData);
             return thing;
         }
-        data.clear();
-        data.addInt32(sizeCompressed);
-        Value v(compressed, sizeCompressed);
-        data.add(v);
-        th.setPortWriter(&data);
+
+        m_data.clear();
+        Value v(compressedData, sizeCompressed);
+        m_data.addInt32(b->width());
+        m_data.addInt32(b->height());
+        m_data.addInt32(sizeCompressed);
+        m_data.addInt32(sizeUncompressed);
+        m_data.add(v);
+        m_th.setPortWriter(&m_data);
+
+        free(compressedData);
    }
    else
    {
+       //receiver side / decompressor
+       //it receives a bottle from the network, it creates an image
+       Bottle* b= thing.cast_as<Bottle>();
 
-       Bottle* compressedbt= thing.cast_as<Bottle>();
+       size_t w = b->get(0).asInt32();
+       size_t h = b->get(1).asInt32();
+       size_t check_sizeCompressed = b->get(2).asInt32();
+       size_t check_sizeUncompressed = b->get(3).asInt32();
+       size_t sizeCompressed=b->get(4).asBlobLength();
+       const unsigned char* CompressedData = (const unsigned char*) b->get(4).asBlob();
 
-       int width=compressedbt->get(0).asInt32();
-       int height=compressedbt->get(1).asInt32();
-       int sizeCompressed=compressedbt->get(2).asInt32();
-       // cast thing to compressed.
-       decompress((float*)compressedbt->get(3).asBlob(), decompressed, sizeCompressed, width, height,1e-3);
-
-       if(!decompressed)
+       size_t sizeUncompressed = w * h * 4;
+       if (check_sizeUncompressed != sizeUncompressed ||
+           check_sizeCompressed != sizeCompressed)
        {
-           yCError(ZLIBMONITOR, "Failed to decompress, exiting...");
+           yCError(ZLIBMONITOR, "Invalid data received: wrong blob size?");
            return thing;
        }
-       memcpy(imageOut.getRawImage(),decompressed,width*height*4);
-       th.setPortWriter(&imageOut);
+       unsigned char* uncompressedData = (unsigned char*)malloc(sizeUncompressed);
 
+       bool ret = decompressData(CompressedData, sizeCompressed, uncompressedData, sizeUncompressed);
+       if(!ret)
+       {
+           yCError(ZLIBMONITOR, "Failed to decompress, exiting...");
+           free(uncompressedData);
+           return thing;
+       }
+
+       m_imageOut.resize(w, h);
+       memcpy(m_imageOut.getRawImage(), uncompressedData, sizeUncompressed);
+       m_th.setPortWriter(&m_imageOut);
+
+       free(uncompressedData);
    }
 
-    return th;
+    return m_th;
 }
 
-int ZlibMonitorObject::compress(char* in, size_t in_size, char* out, size_t out_size)
+int ZlibMonitorObject::compressData(const unsigned char* in, const size_t& in_size, unsigned char* out, size_t& out_size)
 {
-    //read the compressed data
-    char* dataReadInCompressed = new char[sizeDataCompressed];
-    br = fread(dataReadInCompressed, 1, sizeDataCompressed, fp);
-    fclose(fp);
-
-    if (br != sizeDataCompressed) { yError() << "problems reading file!"; delete[] dataReadInCompressed; return false; }
-
-    size_t h = ((size_t*)(dataReadInCompressed))[0]; //byte 0
-    size_t w = ((size_t*)(dataReadInCompressed))[1]; //byte 8, because size_t is 8 bytes long
-    size_t hds = 2 * sizeof(size_t); //16 bytes
-
-    dest.resize(w, h);
-    unsigned char* destbuff = dest.getRawImage();
-    //this is the size of the image
-    size_t sizeDataUncompressed = dest.getRawImageSize();
-    //this is the size of the buffer. Extra space is required for temporary operations (I choose arbitrarily *2)
-    size_t sizeDataUncompressedExtra = sizeDataUncompressed * 2;
-
-    char* dataUncompressed = new char[sizeDataUncompressedExtra];
-
-    int z_result = uncompress((Bytef*)dataUncompressed, (uLongf*)&sizeDataUncompressedExtra, (const Bytef*)dataReadInCompressed + hds, sizeDataCompressed - hds);
+    int z_result = compress((Bytef*)out, (uLongf*)&out_size, (Bytef*)in, in_size);
     switch (z_result)
     {
     case Z_OK:
@@ -164,56 +159,21 @@ int ZlibMonitorObject::compress(char* in, size_t in_size, char* out, size_t out_
 
     case Z_MEM_ERROR:
         yCError(ZLIBMONITOR, "zlib compression: out of memory");
-        delete[] dataUncompressed;
         return false;
         break;
 
     case Z_BUF_ERROR:
         yCError(ZLIBMONITOR, "zlib compression: output buffer wasn't large enough");
-        delete[] dataUncompressed;
-        return false;
-        break;
-
-    case Z_DATA_ERROR:
-        yCError(ZLIBMONITOR, "zlib compression: file contains corrupted data");
-        delete[] dataUncompressed;
         return false;
         break;
     }
 
-    //here I am copy only the size of the image, obviously the extra space is not needed anymore.
-    for (size_t i = 0; i < sizeDataUncompressed; i++)
-    {
-        destbuff[i] = dataUncompressed[i];
-    }
-
-    delete[] dataUncompressed;
     return true;
 }
 
-int ZlibMonitorObject::decompress(char* in, size_t in_size, char* out, size_t out_size)
+int ZlibMonitorObject::decompressData(const unsigned char* in, const size_t& in_size, unsigned char* out, size_t& out_size)
 {
-    //read the compressed data
-    char* dataReadInCompressed = new char[sizeDataCompressed];
-    br = fread(dataReadInCompressed, 1, sizeDataCompressed, fp);
-    fclose(fp);
-
-    if (br != sizeDataCompressed) { yError() << "problems reading file!"; delete[] dataReadInCompressed; return false; }
-
-    size_t h = ((size_t*)(dataReadInCompressed))[0]; //byte 0
-    size_t w = ((size_t*)(dataReadInCompressed))[1]; //byte 8, because size_t is 8 bytes long
-    size_t hds = 2 * sizeof(size_t); //16 bytes
-
-    dest.resize(w, h);
-    unsigned char* destbuff = dest.getRawImage();
-    //this is the size of the image
-    size_t sizeDataUncompressed = dest.getRawImageSize();
-    //this is the size of the buffer. Extra space is required for temporary operations (I choose arbitrarily *2)
-    size_t sizeDataUncompressedExtra = sizeDataUncompressed * 2;
-
-    char* dataUncompressed = new char[sizeDataUncompressedExtra];
-
-    int z_result = uncompress((Bytef*)dataUncompressed, (uLongf*)&sizeDataUncompressedExtra, (const Bytef*)dataReadInCompressed + hds, sizeDataCompressed - hds);
+    int z_result = uncompress((Bytef*)out, (uLongf*)&out_size, (const Bytef*)in, in_size);
     switch (z_result)
     {
     case Z_OK:
@@ -221,30 +181,19 @@ int ZlibMonitorObject::decompress(char* in, size_t in_size, char* out, size_t ou
 
     case Z_MEM_ERROR:
         yCError(ZLIBMONITOR, "zlib compression: out of memory");
-        delete[] dataUncompressed;
         return false;
         break;
 
     case Z_BUF_ERROR:
         yCError(ZLIBMONITOR, "zlib compression: output buffer wasn't large enough");
-        delete[] dataUncompressed;
         return false;
         break;
 
     case Z_DATA_ERROR:
         yCError(ZLIBMONITOR, "zlib compression: file contains corrupted data");
-        delete[] dataUncompressed;
         return false;
         break;
     }
 
-    //here I am copy only the size of the image, obviously the extra space is not needed anymore.
-    for (size_t i = 0; i < sizeDataUncompressed; i++)
-    {
-        destbuff[i] = dataUncompressed[i];
-    }
-
-    delete[] dataUncompressed;
     return true;
-
 }

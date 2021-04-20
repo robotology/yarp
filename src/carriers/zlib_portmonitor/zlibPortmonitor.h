@@ -26,16 +26,16 @@ public:
 
     bool accept(yarp::os::Things& thing) override;
     yarp::os::Things& update(yarp::os::Things& thing) override;
+
 protected:
-    int compress(char* in, size_t in_size, char* out, size_t out_size);
-    int decompress(char* in, size_t in_size, char* out, size_t out_size);
+    int compressData  (const unsigned char* in, const size_t& in_size, unsigned char* out, size_t& out_size);
+    int decompressData(const unsigned char* in, const size_t& in_size, unsigned char* out, size_t& out_size);
+
 private:
-    yarp::os::Things th;
-    yarp::os::Bottle data;
-    bool shouldCompress;
-    void  *buffer;
-    float *compressed;
-    float *decompressed;
+    yarp::os::Things m_th;
+    yarp::os::Bottle m_data;
+    bool             m_shouldCompress;
+    yarp::sig::ImageOf<yarp::sig::PixelFloat> m_imageOut;
 };
 
 #endif
