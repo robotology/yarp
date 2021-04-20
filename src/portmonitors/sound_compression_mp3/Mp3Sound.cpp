@@ -19,7 +19,7 @@ using namespace yarp::sig;
 
 namespace {
 YARP_LOG_COMPONENT(MP3TOSOUND,
-                   "yarp.carrier.portmonitor.mp3Sound",
+                   "yarp.carrier.portmonitor.sound_compression_mp3",
                    yarp::os::Log::minimumPrintLevel(),
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),

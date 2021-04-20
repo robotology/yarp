@@ -40,7 +40,7 @@ static const std::vector<std::string> FFMPEGPORTMONITOR_IGNORE_PARAMS {
     "udp",
     "send.portmonitor",
     "recv.portmonitor",
-    "file.libffmpeg",
+    "file.image_compression_ffmpeg",
     "type.dll"
 };
 

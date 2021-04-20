@@ -19,7 +19,7 @@ using namespace yarp::sig;
 
 namespace {
 YARP_LOG_COMPONENT(SEGMENTATIONIMAGE,
-                   "yarp.carrier.portmonitor.segmentationimage",
+                   "yarp.carrier.portmonitor.segmentationimage_to_rgb",
                    yarp::os::Log::minimumPrintLevel(),
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),

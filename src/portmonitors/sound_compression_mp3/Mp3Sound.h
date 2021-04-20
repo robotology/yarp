@@ -15,7 +15,7 @@
 #include <yarp/os/MonitorObject.h>
 
 //example usage:
-//yarp connect /src /dest tcp+recv.portmonitor+type.dll+file.mp3Sound
+//yarp connect /src /dest tcp+recv.portmonitor+type.dll+file.sound_compression_mp3
 
 class Mp3SoundConverter : public yarp::os::MonitorObject
 {

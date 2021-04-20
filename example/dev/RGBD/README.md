@@ -8,7 +8,7 @@ A user can interact with a YARP device driver directly inside the local applicat
 A quick test can be performed by running the YARP devices with few simple commands. First we need to compile YARP repository, setting the following CMake flags to `true` in order to compile all required modules:
 
 ```
-cmake .. -DYARP_COMPILE_GUIS=true -DENABLE_yarpcar_depthimage=true -DENABLE_yarpmod_fakeDepthCamera=true
+cmake .. -DYARP_COMPILE_GUIS=true -DENABLE_yarppm_depthimage_to_rgb=true -DENABLE_yarpmod_fakeDepthCamera=true
 ```
 
 To fully run the test, we need to open 5 terminals for command line input.
@@ -36,7 +36,7 @@ Terminal 4: yarpview --name /view/depth
 Finally we connect the producer to the viewer
 ```
 Terminal 5: yarp connect /server/rgbImage:o   /view/rgb   udp
-Terminal 5: yarp connect /server/depthImage:o /view/depth udp+recv.portmonitor+type.dll+file.depthimage
+Terminal 5: yarp connect /server/depthImage:o /view/depth udp+recv.portmonitor+type.dll+file.depthimage_to_rgb
 ```
 
 Expected result:

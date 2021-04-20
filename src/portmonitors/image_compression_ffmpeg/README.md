@@ -1,5 +1,5 @@
 
-# libffmpeg_portmonitor
+# image_compression_ffmpeg portmonitor
 ## Description
 
 This port monitor allows you to compress a video stream while transmitting it from a source YARP port to a destination YARP port. The port monitor relies on the open source library Ffmpeg to encode and decode video streams.
@@ -11,11 +11,11 @@ If the "codec" parameter is not set, it will be set to a default value.
 
 To install/activate the port monitor you need to enter the <yarp_root>/build folder in a terminal (if the "build" folder does not exist, create it) and run the following command:
 ```
-cmake .. -DENABLE_yarpcar_libffmpeg=on
+cmake .. -DENABLE_yarppm_image_compression_ffmpeg=on
 ```
-Once the command is run, make sure there is an "x" in the brackets on the libffmpeg_portmonitor line in the command output in terminal, as you can see below:
+Once the command is run, make sure there is an "x" in the brackets on the image_compression_ffmpeg portmonitor line in the command output in terminal, as you can see below:
 ```
---  [x]   Plugin: yarpcar_libffmpeg (ENABLE_yarpcar_libffmpeg)
+--  [x]   Plugin: yarppm_image_compression_ffmpeg (ENABLE_yarppm_image_compression_ffmpeg)
 ```
 Then, run the following commands to make the changes effective:
 ```
@@ -33,7 +33,7 @@ to execute 4 recipes at a time.
 The software allows the insertion of a wide range of parameters via the command line.<br>
 The string:
 ```
-yarp connect /grabber /view <protocol>+send.portmonitor.+file.libffmpeg+recv.portmonitor+file.libffmpeg+type.dll
+yarp connect /grabber /view <protocol>+send.portmonitor.+file.image_compression_ffmpeg+recv.portmonitor+file.image_compression_ffmpeg+type.dll
 ```
 is the basic command to connect source and receiver through the port monitor; we will refer to this string in the following as “Connection base string”. <br>
 
@@ -103,7 +103,7 @@ yarpview --name /view
 
 ### Terminal 4 (can be run on both sides)
 ```
-yarp connect /grabber /view fast_tcp+send.portmonitor+file.libffmpeg+recv.portmonitor+file.libffmpeg+type.dll
+yarp connect /grabber /view fast_tcp+send.portmonitor+file.image_compression_ffmpeg+recv.portmonitor+file.image_compression_ffmpeg+type.dll
 ```
 <br>
 The following image is the output video stream, which is compressed in sender side, transmitted, decompressed in receiver side and then visualized through the YARP viewer.

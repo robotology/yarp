@@ -18,7 +18,9 @@ static int __custom_yarp_is_initialized = 0;
 #ifdef yarpcar_INIT_FUNCTION
 extern "C" YARP_IMPORT void yarpcar_INIT_FUNCTION();
 #endif
-
+#ifdef yarppm_INIT_FUNCTION
+extern "C" YARP_IMPORT void yarppm_INIT_FUNCTION();
+#endif
 #ifdef yarpmod_INIT_FUNCTION
 extern "C" YARP_IMPORT void yarpmod_INIT_FUNCTION();
 #endif
@@ -29,6 +31,9 @@ extern "C" YARP_IMPORT void yarprfmod_INIT_FUNCTION();
 extern "C" void yarpCustomInit() {
 #ifdef yarpcar_INIT_FUNCTION
   yarpcar_INIT_FUNCTION();
+#endif
+#ifdef yarppm_INIT_FUNCTION
+  yarppm_INIT_FUNCTION();
 #endif
 #ifdef yarpmod_INIT_FUNCTION
   yarpmod_INIT_FUNCTION();

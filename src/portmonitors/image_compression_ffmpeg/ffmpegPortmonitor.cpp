@@ -44,7 +44,7 @@ namespace {
 
 // YARP logging component
 YARP_LOG_COMPONENT(FFMPEGMONITOR,
-                   "yarp.carrier.portmonitor.ffmpeg",
+                   "yarp.carrier.portmonitor.image_compression_ffmpeg",
                    yarp::os::Log::minimumPrintLevel(),
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),
