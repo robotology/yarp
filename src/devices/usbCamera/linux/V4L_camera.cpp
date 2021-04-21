@@ -28,9 +28,9 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "Statistics.h"
 #include "USBcameraLogComponent.h"
 #include "list.h"
-#include "Statistics.h"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -468,37 +468,37 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 		{
 			param.user_height = config.find("height").asInt32();
 		}
-	}
 
-	if (!config.check("framerate"))
-	{
-		yCDebug(USBCAMERA) << "framerate parameter not found, using default value of " << DEFAULT_FRAMERATE;
-		param.fps = DEFAULT_FRAMERATE;
-	}
-	else
-	{
-		param.fps = config.find("framerate").asInt32();
+		if (!config.check("framerate"))
+		{
+			yCDebug(USBCAMERA) << "framerate parameter not found, using default value of " << DEFAULT_FRAMERATE;
+			param.fps = DEFAULT_FRAMERATE;
+		}
+		else
+		{
+			param.fps = config.find("framerate").asInt32();
+		}
 	}
 
 	if (param.camModel == ULTRAPYTON)
 	{
+		int period = 28;
+		if (config.check("period"))
+		{
+			auto tmp = config.find("period");
+			period = tmp.asInt32();
+			yCInfo(USBCAMERA) << "Period used:" << tmp.asInt32();
+		}
+
 		if (!config.check("subsampling"))
 		{
 			yCDebug(USBCAMERA) << "Python cam full-sampling ";
 			pythonCameraHelper_.setSubsamplingProperty(false);
 			param.user_height = 1024;
 			param.user_width = 2560;
-			if (!config.check("framerate"))
+			if (1000.0 / (double)period > UltraPythonCameraHelper::hiresFrameRate_)
 			{
-				param.fps = UltraPythonCameraHelper::hiresFrameRate_;
-			}
-			else
-			{
-				if (param.fps > UltraPythonCameraHelper::hiresFrameRate_)
-				{
-					yCError(USBCAMERA) << "Framerate exceed maximum for HiRes:" << param.fps << " set to:" << UltraPythonCameraHelper::hiresFrameRate_;
-					param.fps = UltraPythonCameraHelper::hiresFrameRate_;
-				}
+				yCWarning(USBCAMERA) << "FPS exceed suggested FPS for hires:" << 1000.0 / (double)period << " suggested:" << UltraPythonCameraHelper::hiresFrameRate_;
 			}
 		}
 		else
@@ -507,20 +507,13 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 			pythonCameraHelper_.setSubsamplingProperty(true);
 			param.user_height = 512;
 			param.user_width = 1280;
-			if (!config.check("framerate"))
+			if (1000.0 / (double)period > UltraPythonCameraHelper::lowresFrameRate_)
 			{
-				param.fps = UltraPythonCameraHelper::lowresFrameRate_;
-			}
-			else
-			{
-				if (param.fps > UltraPythonCameraHelper::lowresFrameRate_)
-				{
-					yCError(USBCAMERA) << "Framerate exceed maximum for LowRes:" << param.fps << " auto set to:" << UltraPythonCameraHelper::lowresFrameRate_;
-					param.fps = UltraPythonCameraHelper::lowresFrameRate_;
-				}
+				yCWarning(USBCAMERA) << "FPS exceed suggested FPS for lowres:" << 1000.0 / (double)period << " suggested:" << UltraPythonCameraHelper::lowresFrameRate_;
 			}
 		}
-		setPeriod(1.0 / (double)param.fps);
+		setPeriod(1.0);//Thread period, this thread is not used for UltraPython
+		pythonCameraHelper_.setStepPeriod(period);//For exposition setting check
 	}
 
 	if (!config.check("d"))
@@ -693,37 +686,27 @@ bool V4L_camera::threadInit()
 	yCTrace(USBCAMERA);
 
 	timeStart = timeNow = timeElapsed = yarp::os::Time::now();
-	frameCounter = 0;
 	return true;
 }
 
 void V4L_camera::run()
 {
+	static Statistics stat("frames read by DRIVER");
+
 	if (param.camModel == ULTRAPYTON)
 	{
-		if (pythonCameraHelper_.step())
-		{
-			frameCounter++;
-		}
-		else
-		{
-			yCError(USBCAMERA) << "Failed acquiring new frame";
-		}
+		// Not used called directly getRgbBuffer()
+		return;
+	}
+
+	if (full_FrameRead())
+	{
+		stat.add();
 	}
 	else
 	{
-		if (full_FrameRead())
-		{
-			frameCounter++;
-		}
-		else
-		{
-			yCError(USBCAMERA) << "Failed acquiring new frame";
-		}
+		yCError(USBCAMERA) << "Failed acquiring new frame";
 	}
-
-	static Statistics stat("frames read by DRIVER");
-	stat.add();
 }
 
 void V4L_camera::threadRelease() { yCTrace(USBCAMERA); }
@@ -1082,24 +1065,30 @@ void V4L_camera::pythonPreprocess(const void *pythonbuffer, size_t size)
 		yCError(USBCAMERA) << "Python buffer too big";
 		size = UltraPythonCameraHelper::hiresImageBufferSize_;
 	}
-	mutex.wait();
-	memcpy(pythonBuffer_, pythonbuffer, size);
+	pythonBuffer_ = (unsigned char *)pythonbuffer;
 	pythonBufferSize_ = size;
-	mutex.post();
 }
 
 // IFrameGrabberRgb Interface 777
 bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 {
-	static unsigned int frameCounterFpsRead = 0;
+	static Statistics stat("frames read by YARP");
+
 	bool res = false;
 	mutex.wait();
 	if (configured)
 	{
 		if (param.camModel == ULTRAPYTON)
 		{
-			memcpy(buffer, pythonBuffer_, pythonBufferSize_);
-			frameCounterFpsRead++;
+			if (pythonCameraHelper_.step())
+			{
+				stat.add();
+				memcpy(buffer, pythonBuffer_, pythonBufferSize_);
+			}
+			else
+			{
+				yCError(USBCAMERA) << "Failed acquiring new frame";
+			}
 		}
 		else
 		{
@@ -1113,7 +1102,7 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 			{
 				memcpy(buffer, param.outMat.data, param.outMat.total() * 3);
 			}
-			frameCounterFpsRead++;
+			stat.add();
 		}
 		mutex.post();
 		res = true;
@@ -1125,9 +1114,6 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 		res = false;
 	}
 
-	static Statistics stat("frames read by YARP");
-	stat.add();
-	
 	return res;
 }
 

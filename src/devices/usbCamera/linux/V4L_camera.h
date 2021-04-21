@@ -226,7 +226,6 @@ private:
     bool isActive_vector[YARP_FEATURE_NUMBER_OF];
     double timeStart, timeTot, timeNow, timeElapsed;
     int myCounter;
-    int frameCounter;
 
     std::map<std::string, supported_cams> camMap{{"default",STANDARD_UVC},{"leopard_python",LEOPARD_PYTHON},{"ultrapython",ULTRAPYTON}};   
 
@@ -320,7 +319,8 @@ private:
     //Only for PythonCamera
     UltraPythonCameraHelper pythonCameraHelper_;
     void pythonPreprocess(const void* pythonbuffer,size_t size);
-    unsigned char pythonBuffer_[UltraPythonCameraHelper::hiresImageBufferSize_];//Max size
+    //unsigned char pythonBuffer_[UltraPythonCameraHelper::hiresImageBufferSize_];//Max size
+    unsigned char *pythonBuffer_;
     unsigned int pythonBufferSize_{0};
 };
 

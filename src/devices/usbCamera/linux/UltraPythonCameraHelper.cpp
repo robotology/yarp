@@ -221,12 +221,6 @@ bool UltraPythonCameraHelper::checkIndex()
 		Log(*this, Severity::error) << "Cannot find imgfusionIndex";
 		return false;
 	}
-	if (packet32Index_ == -1)
-	{
-		// TO BE REMOVED
-		Log(*this, Severity::warning) << "Cannot find packet32Index";
-		// return false;
-	}
 	return true;
 }
 
@@ -351,6 +345,7 @@ bool UltraPythonCameraHelper::setFormat()
 	return true;
 }
 
+/*Unused for now*/
 bool UltraPythonCameraHelper::crop(int top, int left, int w, int h, int mytry)
 {
 	cropCheck();
@@ -442,17 +437,6 @@ bool UltraPythonCameraHelper::checkDevice(int mainSubdeviceFd)
 		}
 		return false;
 	}
-	/*
-		if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
-			log("ERROR-checkDevice:device is no video capture device",
-	   Severity::error); return false;
-		}
-
-		if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
-			log("ERROR-checkDevice-device does not support streaming i/o",
-	   Severity::error); return false;
-		}
-	*/
 	return true;
 }
 
@@ -640,10 +624,6 @@ bool UltraPythonCameraHelper::step()
 		Log(*this, Severity::warning) << "dropped frame..";
 		sequence = seq + 1;
 	}
-	if (seq)
-	{
-		fpsCalculus();
-	}
 	return true;
 }
 
@@ -760,27 +740,6 @@ bool UltraPythonCameraHelper::closePipeline()
 	return true;
 }
 
-void UltraPythonCameraHelper::fpsCalculus()
-{
-	static unsigned int frames = 0;
-	static std::chrono::steady_clock::time_point current;
-	static std::chrono::steady_clock::time_point prev = std::chrono::steady_clock::now();
-
-	current = std::chrono::steady_clock::now();
-	frames++;
-	unsigned int timeDelta = std::chrono::duration_cast<std::chrono::milliseconds>(current - prev).count();
-
-	if (timeDelta >= 1000)
-	{
-		fps_ = ((static_cast<double>(frames) / static_cast<double>(timeDelta)) * 1000.0);
-		prev = current;
-		frames = 0;
-		Log(*this, Severity::info) << "FPS:" << fps_;
-	}
-}
-
-double UltraPythonCameraHelper::getCurrentFps() const { return fps_; }
-
 void UltraPythonCameraHelper::setInjectedProcess(std::function<void(const void *, int)> toinJect) { injectedProcessImage_ = toinJect; }
 void UltraPythonCameraHelper::setInjectedUnlock(std::function<void()> toinJect) { unlock_ = toinJect; }
 void UltraPythonCameraHelper::setInjectedLock(std::function<void()> toinJect) { lock_ = toinJect; }
@@ -810,6 +769,8 @@ bool UltraPythonCameraHelper::openAll()
 	}
 	return true;
 }
+
+void UltraPythonCameraHelper::setStepPeriod(double msec) { stepPeriod_ = msec; }
 
 void UltraPythonCameraHelper::setInjectedLog(std::function<void(const std::string &, Severity)> toinJect) { log_ = toinJect; }
 
@@ -894,7 +855,7 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
 	memset(&control, 0, sizeof(control));
 	control.id = v4lCtrl;
 
-	if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTHON /*&& control.value > maxExposition_*/)  // trg_l
+	if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTHON)	// trg_l
 	{
 		queryctrl.maximum = maxPermittedExposition_;
 		queryctrl.minimum = minPermittedExposition_;
@@ -903,6 +864,18 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
 		control.value = (int32_t)(value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
 	else
 		control.value = (int32_t)value;
+
+	if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTHON)
+	{
+		if (stepPeriod_ <= control.value + deadTime_ + 2)
+		{
+			Log(*this, Severity::warning) << "Exposition will decrease FPS. Limit:" << control.value + deadTime_ + 5 << " current step:" << stepPeriod_;
+		}
+		else
+		{
+			Log(*this, Severity::debug) << "Exposition will mantain current FPS Limit:" << control.value + deadTime_ + 5 << " current step:" << stepPeriod_;
+		}
+	}
 
 	// Do set
 	if (-1 == interfaceCApi_->ioctl_control_c(fd, VIDIOC_S_CTRL, control))
@@ -1061,9 +1034,9 @@ bool UltraPythonCameraHelper::checkControl(uint32_t v4lCtrl)
 
 bool UltraPythonCameraHelper::setDefaultControl()
 {
-	setControl(V4L2_EXTTRIGGGER_ULTRA_PYTHON, 1, true);	 // ext_trigger
-	setControl(V4L2_EXPOSURE_ULTRA_PYTHON, 20, true);	 // trg_l
-	setControl(V4L2_DEADTIME_ULTRA_PYTHON, deadTime_, true);	 // trg_h
+	setControl(V4L2_EXTTRIGGGER_ULTRA_PYTHON, 1, true);		  // ext_trigger
+	setControl(V4L2_EXPOSURE_ULTRA_PYTHON, 20, true);		  // trg_l
+	setControl(V4L2_DEADTIME_ULTRA_PYTHON, deadTime_, true);  // trg_h
 	setControl(V4L2_CID_BRIGHTNESS, 200, true);
 	setControl(V4L2_CID_GAIN, 1, true);
 	return true;
@@ -1084,7 +1057,7 @@ uint32_t UltraPythonCameraHelper::remapControl(uint32_t v4lCtr) const
 			break;
 		case V4L2_CID_EXPOSURE:
 			out = V4L2_EXPOSURE_ULTRA_PYTHON;  // trg_l
-			Log(*this, Severity::debug) << "remap EXPOSURE in:"<<v4lCtr<<" out:"<<out;
+			Log(*this, Severity::debug) << "remap EXPOSURE in:" << v4lCtr << " out:" << out;
 			break;
 		default:
 			break;
