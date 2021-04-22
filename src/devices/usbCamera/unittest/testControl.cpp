@@ -226,6 +226,29 @@ TEST(UltraPython, setExposition_absolute_honoryes_ok) {
  // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
   UltraPythonCameraHelper helper(interface);
+  helper.setStepPeriod(90);
+  helper.setHonorFps(true);
+
+  struct v4l2_control control1;
+  control1.id = UltraPythonCameraHelper::V4L2_EXPOSURE_ULTRA_PYTHON;
+  control1.value = 20;
+  EXPECT_CALL(*interface, ioctl_query_c(_, _, _))
+      .WillOnce(Return(1));
+  EXPECT_CALL(*interface, ioctl_control_c(_, VIDIOC_S_CTRL, control1)).Times(1);
+
+  // when
+  bool res = helper.setControl(V4L2_CID_EXPOSURE, 20, true);
+
+  // then
+  EXPECT_TRUE(res);
+
+  delete interface;
+}
+
+TEST(UltraPython, setExposition_absolute_honoryes_ko) {
+ // given
+  InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
+  UltraPythonCameraHelper helper(interface);
   helper.setStepPeriod(20);
   helper.setHonorFps(true);
 

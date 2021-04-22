@@ -64,6 +64,14 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int minPermittedExposition_{15};
 	static constexpr unsigned int maxPermittedExposition_{100};
 
+	// Ctrl for Python
+	static constexpr unsigned int V4L2_EXPOSURE_ULTRA_PYTHON{0x0098cb03};	  // trg_l
+	static constexpr unsigned int V4L2_DEADTIME_ULTRA_PYTHON{0x0098cb02};	  // trg_h
+	static constexpr unsigned int V4L2_EXTTRIGGGER_ULTRA_PYTHON{0x0098cc03};  // ext_trigger
+	static constexpr unsigned int V4L2_REDBALANCE_ULTRA_PYTHON{0x0098c9a3};	  // Red Balance
+	static constexpr unsigned int V4L2_BLUEBALANCE_ULTRA_PYTHON{0x0098c9a5};  // Blue balance
+	static constexpr unsigned int V4L2_ANALOGGAIN_ULTRA_PYTHON{0x009e0903};	  // Analog gain
+
    private:
 	static constexpr const char *mediaName_ = "/dev/media0";
 
@@ -84,14 +92,6 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int nativeHeight_{1024};	// Sensor HI RES height
 
    public:
-	// Ctrl for Python
-	static constexpr unsigned int V4L2_EXPOSURE_ULTRA_PYTHON{0x0098cb03};	  // trg_l
-	static constexpr unsigned int V4L2_DEADTIME_ULTRA_PYTHON{0x0098cb02};	  // trg_h
-	static constexpr unsigned int V4L2_EXTTRIGGGER_ULTRA_PYTHON{0x0098cc03};  // ext_trigger
-	static constexpr unsigned int V4L2_REDBALANCE_ULTRA_PYTHON{0x0098c9a3};	  // Red Balance
-	static constexpr unsigned int V4L2_BLUEBALANCE_ULTRA_PYTHON{0x0098c9a5};  // Blue balance
-	static constexpr unsigned int V4L2_ANALOGGAIN_ULTRA_PYTHON{0x009e0903};	  // Analog gain
-
 	// Main
 	bool openAll();
 	bool step();
@@ -117,7 +117,7 @@ class UltraPythonCameraHelper
 	virtual ~UltraPythonCameraHelper();
 
    private:
-	InterfaceForCApi *interfaceCApi_;  // Unittest purpouse
+	InterfaceForCApi *interfaceCApi_;  // Unittest purpouse c interface
 	bool ownerCApi_{false};
 	bool openPipeline();
 	bool initDevice();
@@ -165,7 +165,7 @@ class UltraPythonCameraHelper
 	int packet32Index_ = -1;
 
 	double stepPeriod_{100};  // Interval for two step() call
-	bool honorfps_{false};//Keep FPS stable
+	bool honorfps_{false};	  // Keep FPS stable
 
 	const SpaceColor spaceColor_{SpaceColor::rgb};
 

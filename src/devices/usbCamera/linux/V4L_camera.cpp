@@ -488,14 +488,15 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 			auto tmp = config.find("period");
 			period = tmp.asInt32();
 			yCInfo(USBCAMERA) << "Period used:" << period;
+			pythonCameraHelper_.setStepPeriod(period);//For exposition setting check
 		}
 
 		bool honor;
-		if (config.check("honor"))
+		if (config.check("honorfps"))
 		{
-			auto tmp = config.find("honor");
+			auto tmp = config.find("honorfps");
 			honor = tmp.asBool();
-			yCInfo(USBCAMERA) << "Honor:" << honor;
+			yCInfo(USBCAMERA) << "HonorFps:" << honor;
 			pythonCameraHelper_.setHonorFps(honor);
 		}
 
@@ -522,7 +523,6 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 			}
 		}
 		setPeriod(1.0);//Thread period, this thread is not used for UltraPython
-		pythonCameraHelper_.setStepPeriod(period);//For exposition setting check
 	}
 
 	if (!config.check("d"))
