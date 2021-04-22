@@ -15,7 +15,7 @@
 #include <yarp/sig/Image.h>
 
 //example usage:
-//yarp connect /segmentationimage:o /yarpview/img:i tcp+recv.portmonitor+type.dll+file.segmentationimage
+//yarp connect /segmentationimage:o /yarpview/img:i tcp+recv.portmonitor+type.dll+file.segmentationimage_to_rgb
 
 struct rgbColor
 {

@@ -19,9 +19,9 @@ set(YARP_DISABLE_MACOS_BUNDLES ON CACHE BOOL "")
 set(YARP_USE_SYSTEM_SQLite OFF CACHE BOOL "")
 
 set(ENABLE_yarpcar_human ON CACHE BOOL "")
-set(ENABLE_yarpcar_depthimage ON CACHE BOOL "")
-set(ENABLE_yarpcar_depthimage2 ON CACHE BOOL "")
-set(ENABLE_yarpcar_segmentationimage ON CACHE BOOL "")
+set(ENABLE_yarppm_depthimage_to_mono ON CACHE BOOL "")
+set(ENABLE_yarppm_depthimage_to_rgb ON CACHE BOOL "")
+set(ENABLE_yarppm_segmentationimage_to_rgb ON CACHE BOOL "")
 # set(ENABLE_yarpcar_mjpeg ON CACHE BOOL "")
 
 set(ENABLE_yarpmod_fakebot ON CACHE BOOL "")

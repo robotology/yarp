@@ -15,7 +15,7 @@
 #include <yarp/sig/Image.h>
 
 //example usage:
-//yarp connect /grabber/depth:o /yarpview/img:i tcp+recv.portmonitor+type.dll+file.depthimage2
+//yarp connect /grabber/depth:o /yarpview/img:i tcp+recv.portmonitor+type.dll+file.depthimage_to_rgb
 
 class DepthImageConverter : public yarp::os::MonitorObject
 {

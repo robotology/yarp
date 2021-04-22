@@ -32,6 +32,7 @@ add_subdirectory(libYARP_robottestingframework)
 
 # plugins
 add_subdirectory(carriers)
+add_subdirectory(portmonitors)
 add_subdirectory(devices)
 add_subdirectory(libYARP_init)
 

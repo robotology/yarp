@@ -24,7 +24,7 @@ using namespace yarp::sig;
 
 namespace {
 YARP_LOG_COMPONENT(ZFPMONITOR,
-                   "yarp.carrier.portmonitor.zfp",
+                   "yarp.carrier.portmonitor.depthimage_compression_zfp",
                    yarp::os::Log::minimumPrintLevel(),
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),

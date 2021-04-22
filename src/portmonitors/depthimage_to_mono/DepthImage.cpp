@@ -19,7 +19,7 @@ using namespace yarp::sig;
 
 namespace {
 YARP_LOG_COMPONENT(DEPTHIMAGE,
-                   "yarp.carrier.portmonitor.depthimage",
+                   "yarp.carrier.portmonitor.depthimage_to_mono",
                    yarp::os::Log::minimumPrintLevel(),
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),
@@ -54,7 +54,7 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
 {
     auto* img = thing.cast_as<Image>();
     if(img == nullptr) {
-        yCError(DEPTHIMAGE, "DepthImageConverter: expected type FlexImage but got wrong data type!");
+        yCError(DEPTHIMAGE, "Expected type FlexImage but got wrong data type!");
         return false;
     }
 
@@ -64,7 +64,7 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
     }
 
     yCError(DEPTHIMAGE,
-            "DepthImageConverter: expected %s, got %s, not doing any conversion!",
+            "Expected %s, got %s, not doing any conversion!",
             yarp::os::Vocab::decode(VOCAB_PIXEL_MONO_FLOAT).c_str(),
             yarp::os::Vocab::decode(img->getPixelCode()).c_str() );
     return false;
