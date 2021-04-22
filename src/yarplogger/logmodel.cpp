@@ -405,7 +405,7 @@ void LogModel::clear()
 {
     beginResetModel();
     this->m_messages.clear();
-    endInsertRows();
+    endResetModel();
 }
 
 QString LogModel::logLevelToString(yarp::yarpLogger::LogLevel l)
