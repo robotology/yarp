@@ -487,7 +487,16 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 		{
 			auto tmp = config.find("period");
 			period = tmp.asInt32();
-			yCInfo(USBCAMERA) << "Period used:" << tmp.asInt32();
+			yCInfo(USBCAMERA) << "Period used:" << period;
+		}
+
+		bool honor;
+		if (config.check("honor"))
+		{
+			auto tmp = config.find("honor");
+			honor = tmp.asBool();
+			yCInfo(USBCAMERA) << "Honor:" << honor;
+			pythonCameraHelper_.setHonorFps(honor);
 		}
 
 		if (!config.check("subsampling"))

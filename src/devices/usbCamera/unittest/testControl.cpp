@@ -5,6 +5,7 @@
 #include "gtest/gtest.h"
 
 #include <chrono>
+#include <linux/v4l2-controls.h>
 #include <thread>
 
 using namespace std::chrono_literals;
@@ -194,6 +195,75 @@ TEST(UltraPython, setGain_valuenegative_fail) {
 
   // then
   EXPECT_FALSE(res);
+
+  delete interface;
+}
+
+TEST(UltraPython, setExposition_absolute_ok) {
+ // given
+  InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
+  UltraPythonCameraHelper helper(interface);
+  helper.setStepPeriod(100);
+
+  struct v4l2_control control1;
+  control1.id = UltraPythonCameraHelper::V4L2_EXPOSURE_ULTRA_PYTHON;
+  control1.value = 20;
+  EXPECT_CALL(*interface, ioctl_query_c(_, _, _))
+      .WillOnce(Return(1));
+  EXPECT_CALL(*interface, ioctl_control_c(_, VIDIOC_S_CTRL, control1)).Times(1);
+
+  // when
+  bool res = helper.setControl(V4L2_CID_EXPOSURE, 20, true);
+
+  // then
+  EXPECT_TRUE(res);
+
+  delete interface;
+}
+
+
+TEST(UltraPython, setExposition_absolute_honoryes_ok) {
+ // given
+  InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
+  UltraPythonCameraHelper helper(interface);
+  helper.setStepPeriod(20);
+  helper.setHonorFps(true);
+
+  struct v4l2_control control1;
+  control1.id = UltraPythonCameraHelper::V4L2_EXPOSURE_ULTRA_PYTHON;
+  control1.value = 20;
+  EXPECT_CALL(*interface, ioctl_query_c(_, _, _))
+      .WillOnce(Return(1));
+  EXPECT_CALL(*interface, ioctl_control_c(_, VIDIOC_S_CTRL, control1)).Times(0);
+
+  // when
+  bool res = helper.setControl(V4L2_CID_EXPOSURE, 20, true);
+
+  // then
+  EXPECT_FALSE(res);
+
+  delete interface;
+}
+
+TEST(UltraPython, setExposition_absolute_honorno_ok) {
+ // given
+  InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
+  UltraPythonCameraHelper helper(interface);
+  helper.setStepPeriod(20);
+  helper.setHonorFps(false);
+
+  struct v4l2_control control1;
+  control1.id = UltraPythonCameraHelper::V4L2_EXPOSURE_ULTRA_PYTHON;
+  control1.value = 20;
+  EXPECT_CALL(*interface, ioctl_query_c(_, _, _))
+      .WillOnce(Return(1));
+  EXPECT_CALL(*interface, ioctl_control_c(_, VIDIOC_S_CTRL, control1)).Times(1);
+
+  // when
+  bool res = helper.setControl(V4L2_CID_EXPOSURE, 20, true);
+
+  // then
+  EXPECT_TRUE(res);
 
   delete interface;
 }

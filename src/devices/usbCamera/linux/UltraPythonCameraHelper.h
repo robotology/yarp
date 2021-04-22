@@ -83,6 +83,7 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int nativeWidth_{1280};	// Sensor HI RES width
 	static constexpr unsigned int nativeHeight_{1024};	// Sensor HI RES height
 
+   public:
 	// Ctrl for Python
 	static constexpr unsigned int V4L2_EXPOSURE_ULTRA_PYTHON{0x0098cb03};	  // trg_l
 	static constexpr unsigned int V4L2_DEADTIME_ULTRA_PYTHON{0x0098cb02};	  // trg_h
@@ -91,7 +92,6 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int V4L2_BLUEBALANCE_ULTRA_PYTHON{0x0098c9a5};  // Blue balance
 	static constexpr unsigned int V4L2_ANALOGGAIN_ULTRA_PYTHON{0x009e0903};	  // Analog gain
 
-   public:
 	// Main
 	bool openAll();
 	bool step();
@@ -99,12 +99,13 @@ class UltraPythonCameraHelper
 
 	// Settings
 	void setSubsamplingProperty(bool value);
-	bool setControl(uint32_t v4lCtrl, double value, bool absolute);//if not absolute normalized between 0-1
-	double getControl(uint32_t v4lCtrl);  // Normalize control value
+	bool setControl(uint32_t v4lCtrl, double value, bool absolute);	 // if not absolute normalized between 0-1
+	double getControl(uint32_t v4lCtrl);							 // Normalize control value
 	bool hasControl(uint32_t v4lCtrl) const;
 	bool hasAutoControl(uint32_t v4lCtrl) const;
 	bool checkControl(uint32_t v4lCtr);
 	void setStepPeriod(double msec);
+	void setHonorFps(bool value);
 
 	// Inject function from out
 	void setInjectedProcess(std::function<void(const void *, int)> toinJect);
@@ -164,6 +165,7 @@ class UltraPythonCameraHelper
 	int packet32Index_ = -1;
 
 	double stepPeriod_{100};  // Interval for two step() call
+	bool honorfps_{false};//Keep FPS stable
 
 	const SpaceColor spaceColor_{SpaceColor::rgb};
 

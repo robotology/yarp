@@ -771,6 +771,7 @@ bool UltraPythonCameraHelper::openAll()
 }
 
 void UltraPythonCameraHelper::setStepPeriod(double msec) { stepPeriod_ = msec; }
+void UltraPythonCameraHelper::setHonorFps(bool value) { honorfps_ = value; }
 
 void UltraPythonCameraHelper::setInjectedLog(std::function<void(const std::string &, Severity)> toinJect) { log_ = toinJect; }
 
@@ -801,17 +802,16 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value, bool ab
 		case V4L2_ANALOGGAIN_ULTRA_PYTHON:
 		case V4L2_CID_BRIGHTNESS:
 		case V4L2_EXTTRIGGGER_ULTRA_PYTHON:	 // EXT_TRIGGER
-			setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex1_], value, absolute);
-			setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex2_], value, absolute);
-			return true;
+			bool out;
+			out=setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex1_], value, absolute);
+			out=out & setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex2_], value, absolute);
+			return out;
 		case V4L2_REDBALANCE_ULTRA_PYTHON:	 // V4L2_CID_RED_BALANCE
 		case V4L2_BLUEBALANCE_ULTRA_PYTHON:	 // V4L2_CID_BLUE_BALANCE
-			setControl(v4lCtrl, mainSubdeviceFd_, value, absolute);
-			return true;
+			return setControl(v4lCtrl, mainSubdeviceFd_, value, absolute);
 		case V4L2_DEADTIME_ULTRA_PYTHON:  // trg_h
 		case V4L2_EXPOSURE_ULTRA_PYTHON:  // EXPOSURE trg_l
-			setControl(v4lCtrl, mainSubdeviceFd_, value, absolute);
-			return true;
+			return setControl(v4lCtrl, mainSubdeviceFd_, value, absolute);
 		default:
 			return false;
 	}
@@ -867,9 +867,18 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
 
 	if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTHON)
 	{
-		if (stepPeriod_ <= control.value + deadTime_ + 2)
+		double limit = control.value + deadTime_ + 2;
+		if (stepPeriod_ <= limit)
 		{
-			Log(*this, Severity::warning) << "Exposition will decrease FPS. Limit:" << control.value + deadTime_ + 5 << " current step:" << stepPeriod_;
+			if (!honorfps_)
+			{
+				Log(*this, Severity::warning) << "Exposition will decrease FPS no honorfps. Limit:" << limit << " current step:" << stepPeriod_;
+			}
+			else
+			{
+				Log(*this, Severity::error) << "Exposition will decrease FPS honorfps so blocked. Limit:" << limit << " current step:" << stepPeriod_;
+				return false;
+			}
 		}
 		else
 		{
