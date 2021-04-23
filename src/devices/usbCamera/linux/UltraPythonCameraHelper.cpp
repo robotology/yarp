@@ -603,12 +603,14 @@ bool UltraPythonCameraHelper::step()
 	{
 		if (EINTR == errno)
 		{
+			// Not a real error
 			return false;
 		}
-		Log(*this, Severity::error) << "select";
+		Log(*this, Severity::error) << "on select";
 		return false;
 	}
-	else if (ret == 0)
+
+	if (ret == 0)
 	{
 		Log(*this, Severity::error) << "-select timeout";
 		return false;
@@ -636,7 +638,7 @@ int UltraPythonCameraHelper::readFrame()
 	buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	buf.memory = V4L2_MEMORY_MMAP;
 
-	if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_DQBUF, &buf))
+	if (interfaceCApi_->xioctl_v4l2(mainSubdeviceFd_, VIDIOC_DQBUF, &buf) == -1)
 	{
 		switch (errno)
 		{
@@ -644,8 +646,6 @@ int UltraPythonCameraHelper::readFrame()
 
 				Log(*this, Severity::error) << "VIDIOC_DQBUF eagain";
 				return -1;
-
-			case EIO:
 			default:
 				Log(*this, Severity::error) << "-VIDIOC_DQBUF";
 				return -1;
@@ -669,7 +669,7 @@ int UltraPythonCameraHelper::readFrame()
 	//**Debug start
 	// memset(mMapBuffers_[buf.index].start, 255, buf.bytesused);
 	//**Debug end
-	if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf))
+	if (interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf) == -1)
 	{
 		Log(*this, Severity::error) << "VIDIOC_QBUF";
 		return -1;
@@ -681,7 +681,9 @@ int UltraPythonCameraHelper::readFrame()
 void UltraPythonCameraHelper::processImage(const void *p, int size)
 {
 	if (injectedProcessImage_ == nullptr)
+	{
 		return;
+	}
 	injectedProcessImage_(p, size);
 }
 
@@ -740,11 +742,23 @@ bool UltraPythonCameraHelper::closePipeline()
 	return true;
 }
 
-void UltraPythonCameraHelper::setInjectedProcess(std::function<void(const void *, int)> toinJect) { injectedProcessImage_ = toinJect; }
-void UltraPythonCameraHelper::setInjectedUnlock(std::function<void()> toinJect) { unlock_ = toinJect; }
-void UltraPythonCameraHelper::setInjectedLock(std::function<void()> toinJect) { lock_ = toinJect; }
+void UltraPythonCameraHelper::setInjectedProcess(std::function<void(const void *, int)> toinJect)
+{
+	injectedProcessImage_ = toinJect;
+}
+void UltraPythonCameraHelper::setInjectedUnlock(std::function<void()> toinJect)
+{
+	unlock_ = toinJect;
+}
+void UltraPythonCameraHelper::setInjectedLock(std::function<void()> toinJect)
+{
+	lock_ = toinJect;
+}
 
-void UltraPythonCameraHelper::setSubsamplingProperty(bool value) { subsamplingEnabledProperty_ = value; }
+void UltraPythonCameraHelper::setSubsamplingProperty(bool value)
+{
+	subsamplingEnabledProperty_ = value;
+}
 
 bool UltraPythonCameraHelper::openAll()
 {
@@ -770,10 +784,19 @@ bool UltraPythonCameraHelper::openAll()
 	return true;
 }
 
-void UltraPythonCameraHelper::setStepPeriod(double msec) { stepPeriod_ = msec; }
-void UltraPythonCameraHelper::setHonorFps(bool value) { honorfps_ = value; }
+void UltraPythonCameraHelper::setStepPeriod(double msec)
+{
+	stepPeriod_ = msec;
+}
+void UltraPythonCameraHelper::setHonorFps(bool value)
+{
+	honorfps_ = value;
+}
 
-void UltraPythonCameraHelper::setInjectedLog(std::function<void(const std::string &, Severity)> toinJect) { log_ = toinJect; }
+void UltraPythonCameraHelper::setInjectedLog(std::function<void(const std::string &, Severity)> toinJect)
+{
+	log_ = toinJect;
+}
 
 bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value, bool absolute)
 {
@@ -803,8 +826,8 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value, bool ab
 		case V4L2_CID_BRIGHTNESS:
 		case V4L2_EXTTRIGGGER_ULTRA_PYTHON:	 // EXT_TRIGGER
 			bool out;
-			out=setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex1_], value, absolute);
-			out=out & setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex2_], value, absolute);
+			out = setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex1_], value, absolute);
+			out = out & setControl(v4lCtrl, pipelineSubdeviceFd_[sourceSubDeviceIndex2_], value, absolute);
 			return out;
 		case V4L2_REDBALANCE_ULTRA_PYTHON:	 // V4L2_CID_RED_BALANCE
 		case V4L2_BLUEBALANCE_ULTRA_PYTHON:	 // V4L2_CID_BLUE_BALANCE

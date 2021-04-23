@@ -28,6 +28,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "InterfaceForCApi.h"
 #include "Statistics.h"
 #include "USBcameraLogComponent.h"
 #include "list.h"

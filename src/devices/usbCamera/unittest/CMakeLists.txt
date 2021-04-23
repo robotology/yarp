@@ -3,7 +3,10 @@ project(ultrapythonunittest)
 
 set(SOURCES gtest_main.cc
             testUltraPythonGeneral.cpp
-            testControl.cpp
+            testControlExposition.cpp
+            testControlGain.cpp
+            testControlBrigthness.cpp
+            testUltraPytonRunning.cpp
             ../linux/InterfaceForCApi.h
             ../linux/UltraPythonCameraHelper.h
             ../linux/UltraPythonCameraHelper.cpp

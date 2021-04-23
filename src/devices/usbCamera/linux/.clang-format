@@ -11,3 +11,4 @@ DisableFormat:   false
 Standard: Cpp11
 BreakBeforeBraces: Allman
 AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
