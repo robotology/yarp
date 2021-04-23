@@ -4,15 +4,15 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-yarp_renamed_option(ENABLE_yarpcar_depthimage ENABLE_yarppm_depthimage_to_mono) # YARP_DEPRECATED since 3.5
-yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/depthimage.ini") # YARP_DEPRECATED since 3.5
-
 yarp_prepare_plugin(depthimage_to_mono
   TYPE DepthImageConverter
   INCLUDE DepthImage.h
   CATEGORY portmonitor
   DEPENDS "ENABLE_yarpcar_portmonitor"
 )
+
+yarp_renamed_option(ENABLE_yarpcar_depthimage ENABLE_yarppm_depthimage_to_mono) # YARP_DEPRECATED since 3.5
+yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/depthimage.ini") # YARP_DEPRECATED since 3.5
 
 if(SKIP_depthimage_to_mono)
   return()
