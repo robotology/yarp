@@ -29,9 +29,8 @@
 using namespace std::chrono_literals;
 using namespace testing;
 
-
 TEST(UltraPython, setBrithness_absolute_ok) {
- // given
+  // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
   UltraPythonCameraHelper helper(interface);
   helper.setStepPeriod(100);
@@ -40,7 +39,8 @@ TEST(UltraPython, setBrithness_absolute_ok) {
   control1.id = V4L2_CID_BRIGHTNESS;
   control1.value = 20;
   EXPECT_CALL(*interface, ioctl_query_c(_, _, _))
-      .WillOnce(Return(1)).WillOnce(Return(1));
+      .WillOnce(Return(1))
+      .WillOnce(Return(1));
   EXPECT_CALL(*interface, ioctl_control_c(_, VIDIOC_S_CTRL, control1)).Times(2);
 
   // when
@@ -53,20 +53,24 @@ TEST(UltraPython, setBrithness_absolute_ok) {
 }
 
 TEST(UltraPython, setBrithness_relative_ok) {
- // given
+  // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
   UltraPythonCameraHelper helper(interface);
   helper.setStepPeriod(100);
 
+  struct v4l2_queryctrl queryctrl;
+  queryctrl.maximum = 0;
+  queryctrl.minimum = 100;
   struct v4l2_control control1;
   control1.id = V4L2_CID_BRIGHTNESS;
-  control1.value = 0.5;
-  EXPECT_CALL(*interface, ioctl_query_c(_, _, _))
-      .WillOnce(Return(1)).WillOnce(Return(1));
+  control1.value = 50;
+  EXPECT_CALL(*interface, ioctl_query_c(_, VIDIOC_QUERYCTRL, _))
+      .WillOnce(DoAll(SetArgReferee<2>(queryctrl), Return(1)))
+      .WillOnce(DoAll(SetArgReferee<2>(queryctrl), Return(1)));
   EXPECT_CALL(*interface, ioctl_control_c(_, VIDIOC_S_CTRL, control1)).Times(2);
 
   // when
-  bool res = helper.setControl(V4L2_CID_BRIGHTNESS, 0.5, false);
+  bool res = helper.setControl(V4L2_CID_BRIGHTNESS, 0.50, false);
 
   // then
   EXPECT_TRUE(res);
