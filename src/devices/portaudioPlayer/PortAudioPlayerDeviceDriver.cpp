@@ -315,6 +315,8 @@ void PortAudioPlayerDeviceDriver::waitUntilPlaybackStreamIsComplete()
     while (Pa_IsStreamStopped(m_stream) == 0)
     {
         yarp::os::Time::delay(SLEEP_TIME);
+        size_t tmp = m_outputBuffer->size().getSamples();
+        if (tmp == 0) break;
     }
 }
 

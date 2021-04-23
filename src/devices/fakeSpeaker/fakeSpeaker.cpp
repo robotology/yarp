@@ -119,7 +119,7 @@ void fakeSpeaker::run()
 
 bool fakeSpeaker::setHWGain(double gain)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (gain > 0)
     {
         m_hw_gain = gain;

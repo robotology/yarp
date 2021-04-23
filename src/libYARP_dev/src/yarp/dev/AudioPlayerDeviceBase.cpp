@@ -62,7 +62,7 @@ AudioPlayerDeviceBase::~AudioPlayerDeviceBase()
 
 bool AudioPlayerDeviceBase::setSWGain(double gain)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (gain>0)
     {
         m_sw_gain = gain;
@@ -73,7 +73,7 @@ bool AudioPlayerDeviceBase::setSWGain(double gain)
 
 bool AudioPlayerDeviceBase::startPlayback()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     m_playback_enabled = true;
     if (m_enable_buffer_autoclear && this->m_outputBuffer)
         {this->m_outputBuffer->clear();}
@@ -83,7 +83,7 @@ bool AudioPlayerDeviceBase::startPlayback()
 
 bool AudioPlayerDeviceBase::stopPlayback()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     m_playback_enabled = false;
     if (m_enable_buffer_autoclear && this->m_outputBuffer)
         {this->m_outputBuffer->clear();}
@@ -104,7 +104,7 @@ bool AudioPlayerDeviceBase::resetPlaybackAudioBuffer()
         yCError(AUDIOPLAYER_BASE) << "resetPlaybackAudioBuffer() called, but no audio buffer is allocated yet";
         return false;
     }
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     this->m_outputBuffer->clear();
     return true;
 }
@@ -140,7 +140,7 @@ bool AudioPlayerDeviceBase::immediateSound(const yarp::sig::Sound& sound)
 bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
 {
     //prevents simultaneous start/stop/reset etc.
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
     size_t freq = sound.getFrequency();
     size_t chans = sound.getChannels();
@@ -173,6 +173,7 @@ bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
         yCInfo(AUDIOPLAYER_BASE) << "changing from: " << this->m_audioplayer_cfg.numChannels << "channels, " << this->m_audioplayer_cfg.frequency << " Hz, ->" <<
             chans << "channels, " << freq << " Hz";
 
+        bool was_playing = this->m_playback_enabled;
         //close is called in order to destroy the buffer
         this->interruptDeviceAndClose();
 
@@ -184,6 +185,11 @@ bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
         {
             yCError(AUDIOPLAYER_BASE, "error occurred during audio driver reconfiguration, aborting");
             return false;
+        }
+        //restore the playback_enabled status before device reconfiguration
+        if (was_playing)
+        {
+            this->startPlayback();
         }
     }
 
