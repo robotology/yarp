@@ -9,6 +9,7 @@
 
 #include <yarp/os/ResourceFinder.h>
 
+#include <yarp/conf/dirs.h>
 #include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
 
@@ -978,87 +979,6 @@ ResourceFinder& ResourceFinder::getResourceFinderSingleton()
     return instance;
 }
 
-std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
-{
-    std::string slash{fs::preferred_separator};
-    bool found = false;
-    std::string yarp_version = yarp::conf::environment::get_string("YARP_DATA_HOME",
-                                                           &found);
-    if (!yarp_version.empty()) {
-        return yarp_version;
-    }
-    std::string xdg_version = yarp::conf::environment::get_string("XDG_DATA_HOME",
-                                                          &found);
-    if (found) {
-        return createIfAbsent(mayCreate, xdg_version + slash + "yarp");
-    }
-#if defined(_WIN32)
-    std::string app_version = yarp::conf::environment::get_string("APPDATA");
-    if (app_version != "") {
-        return createIfAbsent(mayCreate, app_version + slash + "yarp");
-    }
-#endif
-    std::string home_version = yarp::conf::environment::get_string("HOME");
-#if defined(__APPLE__)
-    if (home_version != "") {
-        return createIfAbsent(mayCreate,
-                              home_version
-                                  + slash + "Library"
-                                  + slash + "Application Support"
-                                  + slash + "yarp");
-    }
-#endif
-    if (!home_version.empty()) {
-        return createIfAbsent(mayCreate,
-                              home_version
-                                  + slash + ".local"
-                                  + slash + "share"
-                                  + slash + "yarp");
-    }
-    return {};
-}
-
-
-std::string ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
-{
-    std::string slash{fs::preferred_separator};
-    bool found = false;
-    std::string yarp_version = yarp::conf::environment::get_string("YARP_CONFIG_HOME",
-                                                           &found);
-    if (found) {
-        return yarp_version;
-    }
-    std::string xdg_version = yarp::conf::environment::get_string("XDG_CONFIG_HOME",
-                                                          &found);
-    if (found) {
-        return createIfAbsent(mayCreate, xdg_version + slash + "yarp");
-    }
-#if defined(_WIN32)
-    std::string app_version = yarp::conf::environment::get_string("APPDATA");
-    if (app_version != "") {
-        return createIfAbsent(mayCreate,
-                              app_version + slash + "yarp" + slash + "config");
-    }
-#endif
-
-#if defined(__APPLE__)
-    std::string home_mac_version = getDataHomeNoCreate();
-    if (home_mac_version != "") {
-        return createIfAbsent(mayCreate,
-                              home_mac_version
-                                  + slash + "config");
-    }
-#endif
-    std::string home_version = yarp::conf::environment::get_string("HOME");
-    if (!home_version.empty()) {
-        return createIfAbsent(mayCreate,
-                              home_version
-                                  + slash + ".config"
-                                  + slash + "yarp");
-    }
-    return {};
-}
-
 std::string ResourceFinder::createIfAbsent(bool mayCreate,
                                            const std::string& path)
 {
@@ -1068,71 +988,6 @@ std::string ResourceFinder::createIfAbsent(bool mayCreate,
     yarp::os::mkdir_p(path.c_str(), 0);
     return path;
 }
-
-Bottle ResourceFinder::getDataDirs()
-{
-    std::string slash{fs::preferred_separator};
-    bool found = false;
-    Bottle yarp_version = parsePaths(yarp::conf::environment::get_string("YARP_DATA_DIRS",
-                                                                 &found));
-    if (found) {
-        return yarp_version;
-    }
-    Bottle xdg_version = parsePaths(yarp::conf::environment::get_string("XDG_DATA_DIRS",
-                                                                &found));
-    if (found) {
-        appendResourceType(xdg_version, "yarp");
-        return xdg_version;
-    }
-#if defined(_WIN32)
-    std::string app_version = yarp::conf::environment::get_string("YARP_DIR");
-    if (app_version != "") {
-        appendResourceType(app_version, "share");
-        appendResourceType(app_version, "yarp");
-        Bottle result;
-        result.addString(app_version);
-        return result;
-    }
-#endif
-    Bottle result;
-    result.addString("/usr/local/share/yarp");
-    result.addString("/usr/share/yarp");
-    return result;
-}
-
-
-Bottle ResourceFinder::getConfigDirs()
-{
-    bool found = false;
-    Bottle yarp_version = parsePaths(yarp::conf::environment::get_string("YARP_CONFIG_DIRS",
-                                                                 &found));
-    if (found) {
-        return yarp_version;
-    }
-    Bottle xdg_version = parsePaths(yarp::conf::environment::get_string("XDG_CONFIG_DIRS",
-                                                                &found));
-    if (found) {
-        appendResourceType(xdg_version, "yarp");
-        return xdg_version;
-    }
-#if defined(_WIN32)
-    std::string app_version = yarp::conf::environment::get_string("ALLUSERSPROFILE");
-    if (app_version != "") {
-        appendResourceType(app_version, "yarp");
-        Bottle result;
-        result.addString(app_version);
-        return result;
-    }
-#endif
-
-    Bottle result;
-#if defined(__APPLE__)
-    result.addString("/Library/Preferences/yarp");
-#endif
-    result.addString("/etc/yarp");
-    return result;
-}
-
 
 bool ResourceFinder::readConfig(Property& config,
                                 const std::string& key,
@@ -1147,3 +1002,39 @@ bool ResourceFinder::readConfig(Property& config,
 
     return bot.size() >= 1;
 }
+
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
+
+std::string ResourceFinder::getDataHomeWithPossibleCreation(bool mayCreate)
+{
+    return createIfAbsent(mayCreate, yarp::conf::dirs::yarpdatahome());
+}
+
+
+std::string ResourceFinder::getConfigHomeWithPossibleCreation(bool mayCreate)
+{
+    return createIfAbsent(mayCreate, yarp::conf::dirs::yarpconfighome());
+}
+
+
+Bottle ResourceFinder::getDataDirs()
+{
+    Bottle result;
+    for (const auto& dir : yarp::conf::dirs::yarpdatadirs()) {
+        result.addString(dir);
+    }
+    return result;
+}
+
+
+Bottle ResourceFinder::getConfigDirs()
+{
+    Bottle result;
+    for (const auto& dir : yarp::conf::dirs::yarpconfigdirs()) {
+        result.addString(dir);
+    }
+    return result;
+}
+
+#endif // YARP_NO_DEPRECATED

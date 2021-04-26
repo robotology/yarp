@@ -40,33 +40,6 @@ public:
 
     const ResourceFinder& operator=(const ResourceFinder& alt);
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
-    /**
-     * Request that information be printed to the console on how
-     * resources are being found.  This is especially useful to
-     * understand why resources are *not* found or the wrong resource
-     * is picked up.
-     *
-     * @param verbose set/suppress printing of information
-     *
-     * @return true iff information will be printed
-     * @deprecated since YARP 3.4
-     */
-    bool setVerbose(bool verbose = true);
-
-    /**
-     * Request that information be suppressed from the console.  By
-     * default ResourceFinder will print messages if it fails to find
-     * files, for example.
-     *
-     * @param quiet suppress printing of information
-     *
-     * @return true iff information will be suppressed
-     * @deprecated since YARP 3.4
-     */
-    bool setQuiet(bool quiet = true);
-#endif // YARP_NO_DEPRECATED
-
     /**
      * Sets up the ResourceFinder.
      *
@@ -258,122 +231,15 @@ public:
     using Searchable::check;
     using Searchable::findGroup;
 
-
-    /* YARP 2.4 changes begin */
-
     /**
-     *
-     * Location where user data files are stored.
-     * If $YARP_DATA_HOME is set, that is returned.  We do not check
-     * to see if that directory exists.
-     * Otherwise:
-     *   (In all the following cases, we attempt to create the directory
-     *   returned if it does not already exist).
-     *   If $XDG_DATA_HOME is set, "yarp" is appended to it after the
-     *   OS-appropriate directory separator, and the result returned.
-     *   Otherwise:
-     *     On Windows
-     *       %APPDATA%\yarp is returned.
-     *     On Linux and all others:
-     *       $HOME/.local/share is returned.
-     *     (an OSX-specific case remains to be defined)
-     *
-     */
-    static std::string getDataHome()
-    {
-        return getDataHomeWithPossibleCreation(true);
-    }
-
-
-    /**
-     *
-     * Variant of getDataHome that will never create the directory
-     * returned.
-     *
-     */
-    static std::string getDataHomeNoCreate()
-    {
-        return getDataHomeWithPossibleCreation(false);
-    }
-
-    /**
-     *
-     * Location where user config files are stored.
-     * If $YARP_CONFIG_HOME is set, that is returned.
-     * Otherwise:
-     *   If $XDG_CONFIG_HOME is set, "yarp" is appended to it after the
-     *   OS-appropriate directory separator, and the result returned.
-     *   Otherwise:
-     *     On Windows
-     *       %APPDATA%\yarp\config is returned.
-     *     On Linux and all others:
-     *       $HOME/.config/yarp is returned.
-     *     (an OSX-specific case remains to be defined)
-     *
-     */
-    static std::string getConfigHome()
-    {
-        return getConfigHomeWithPossibleCreation(true);
-    }
-
-    /**
-     *
-     * Variant of getConfigHome that will never create the directory
-     * returned.
-     *
-     */
-    static std::string getConfigHomeNoCreate()
-    {
-        return getConfigHomeWithPossibleCreation(false);
-    }
-
-    /**
-     *
      * Return the path to the "user" context directory for the current context
-     *
      */
     std::string getHomeContextPath();
 
     /**
-     *
      * Return the path to the "user" robot directory
-     *
      */
     std::string getHomeRobotPath();
-
-    /**
-     *
-     * Locations where packaged data and config files are stored.
-     * If $YARP_DATA_DIRS is set, that is returned.
-     * Otherwise:
-     *   If $XDG_DATA_DIRS is set, "/yarp" or "\yarp" as appropriate
-     *   is appended to each path and the result returned.
-     *   Otherwise:
-     *     On Windows
-     *       %YARP_DIR%\share\yarp
-     *     On Linux and all others:
-     *       /usr/local/share/yarp:/usr/share/yarp is returned.
-     *     (an OSX-specific case remains to be defined)
-     *
-     */
-    static Bottle getDataDirs();
-
-    /**
-     *
-     * Locations where system administrator data and config files are stored.
-     * If $YARP_CONFIG_DIRS is set, that is returned.
-     * Otherwise:
-     *   If $XDG_CONFIG_DIRS is set, "/yarp" or "\yarp" as appropriate
-     *   is appended to each path and the result returned.
-     *   Otherwise:
-     *     On Windows
-     *       %ALLUSERSPROFILE%\yarp
-     *     On Linux and all others:
-     *       /etc/yarp is returned.
-     *     (an OSX-specific case remains to be defined)
-     *
-     */
-    static Bottle getConfigDirs();
 
     yarp::os::Bottle findPaths(const std::string& name,
                                const ResourceFinderOptions& options);
@@ -391,7 +257,141 @@ public:
                     const std::string& key,
                     const ResourceFinderOptions& options);
 
-    /* YARP 2.4 changes end */
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+    /**
+     * Request that information be printed to the console on how
+     * resources are being found.  This is especially useful to
+     * understand why resources are *not* found or the wrong resource
+     * is picked up.
+     *
+     * @param verbose set/suppress printing of information
+     *
+     * @return true iff information will be printed
+     * @deprecated since YARP 3.4
+     */
+    bool setVerbose(bool verbose = true);
+
+    /**
+     * Request that information be suppressed from the console.  By
+     * default ResourceFinder will print messages if it fails to find
+     * files, for example.
+     *
+     * @param quiet suppress printing of information
+     *
+     * @return true iff information will be suppressed
+     * @deprecated since YARP 3.4
+     */
+    bool setQuiet(bool quiet = true);
+#endif // YARP_NO_DEPRECATED
+
+#ifndef YARP_NO_DEPRECATED // SINCE YARP 3.5
+    /**
+     * Location where user data files are stored.
+     * If $YARP_DATA_HOME is set, that is returned.  We do not check
+     * to see if that directory exists.
+     * Otherwise:
+     *   (In all the following cases, we attempt to create the directory
+     *   returned if it does not already exist).
+     *   If $XDG_DATA_HOME is set, "yarp" is appended to it after the
+     *   OS-appropriate directory separator, and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %APPDATA%\yarp is returned.
+     *     On Linux and all others:
+     *       $HOME/.local/share is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     * @deprecated since YARP 3.5
+     */
+    YARP_DEPRECATED_MSG("Use yarp::conf::dirs::data_home() + yarp::os::mkdir_p() instead")
+    static std::string getDataHome()
+    {
+        return getDataHomeWithPossibleCreation(true);
+    }
+
+
+    /**
+     * Variant of getDataHome that will never create the directory
+     * returned.
+     *
+     * @deprecated since YARP 3.5
+     */
+    YARP_DEPRECATED_MSG("Use yarp::conf::dirs::data_home() instead")
+    static std::string getDataHomeNoCreate()
+    {
+        return getDataHomeWithPossibleCreation(false);
+    }
+
+    /**
+     * Location where user config files are stored.
+     * If $YARP_CONFIG_HOME is set, that is returned.
+     * Otherwise:
+     *   If $XDG_CONFIG_HOME is set, "yarp" is appended to it after the
+     *   OS-appropriate directory separator, and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %APPDATA%\yarp\config is returned.
+     *     On Linux and all others:
+     *       $HOME/.config/yarp is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     * @deprecated since YARP 3.5
+     */
+    YARP_DEPRECATED_MSG("Use yarp::conf::dirs::config_home() + yarp::os::mkdir_p() instead")
+    static std::string getConfigHome()
+    {
+        return getConfigHomeWithPossibleCreation(true);
+    }
+
+    /**
+     * Variant of getConfigHome that will never create the directory
+     * returned.
+     *
+     * @deprecated since YARP 3.5
+     */
+    YARP_DEPRECATED_MSG("Use yarp::conf::dirs::config_home() instead")
+    static std::string getConfigHomeNoCreate()
+    {
+        return getConfigHomeWithPossibleCreation(false);
+    }
+
+    /**
+     * Locations where packaged data and config files are stored.
+     * If $YARP_DATA_DIRS is set, that is returned.
+     * Otherwise:
+     *   If $XDG_DATA_DIRS is set, "/yarp" or "\yarp" as appropriate
+     *   is appended to each path and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %YARP_DIR%\share\yarp
+     *     On Linux and all others:
+     *       /usr/local/share/yarp:/usr/share/yarp is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     * @deprecated since YARP 3.5
+     */
+    YARP_DEPRECATED_MSG("Use yarp::conf::dirs::yarpdatadirs() instead")
+    static Bottle getDataDirs();
+
+    /**
+     * Locations where system administrator data and config files are stored.
+     * If $YARP_CONFIG_DIRS is set, that is returned.
+     * Otherwise:
+     *   If $XDG_CONFIG_DIRS is set, "/yarp" or "\yarp" as appropriate
+     *   is appended to each path and the result returned.
+     *   Otherwise:
+     *     On Windows
+     *       %ALLUSERSPROFILE%\yarp
+     *     On Linux and all others:
+     *       /etc/yarp is returned.
+     *     (an OSX-specific case remains to be defined)
+     *
+     * @deprecated since YARP 3.5
+     */
+    YARP_DEPRECATED_MSG("Use yarp::conf::dirs::config_dirs() instead")
+    static Bottle getConfigDirs();
+#endif // YARP_NO_DEPRECATED
+
 
 private:
     // this might be useful, but is not in spec
@@ -405,9 +405,12 @@ private:
     bool m_isConfiguredFlag;
     yarp::os::Property m_configprop;
 
+    static std::string createIfAbsent(bool mayCreate, const std::string& path);
+
+#ifndef YARP_NO_DEPRECATED // SINCE YARP 3.5
     static std::string getDataHomeWithPossibleCreation(bool mayCreate);
     static std::string getConfigHomeWithPossibleCreation(bool mayCreate);
-    static std::string createIfAbsent(bool mayCreate, const std::string& path);
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 private:

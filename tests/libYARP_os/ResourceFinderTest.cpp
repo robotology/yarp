@@ -9,6 +9,7 @@
 
 #include <yarp/os/ResourceFinder.h>
 
+#include <yarp/conf/dirs.h>
 #include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
 
@@ -60,7 +61,7 @@ static void mkdir(const std::string& dirname)
         yarp::os::mkdir(dirname.c_str());
     }
     int r = yarp::os::stat(dirname.c_str());
-    CHECK(r>=0); // test directory present}
+    REQUIRE(r>=0); // test directory present}
 }
 
 static std::string pathify(const Bottle& dirs)
@@ -512,6 +513,10 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         CHECK(rf.find("list").asList()->get(0).asString() == "answers"); // default list set correctly
     }
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
+YARP_WARNING_PUSH
+YARP_DISABLE_DEPRECATED_WARNING
+#if !defined(_WIN32) && !defined(__APPLE__)
     SECTION("test getDataHome")
     {
         saveEnvironment("YARP_DATA_HOME");
@@ -524,10 +529,8 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
         CHECK(ResourceFinder::getDataHome() == (std::string("/foo") + slash + "yarp")); // XDG_DATA_HOME noticed
         yarp::conf::environment::unset("XDG_DATA_HOME");
-#ifdef __linux__
         yarp::conf::environment::set_string("HOME", "/foo");
         CHECK(ResourceFinder::getDataHome() == "/foo/.local/share/yarp"); // HOME noticed
-#endif
         restoreEnvironment();
     }
 
@@ -543,10 +546,8 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         std::string slash = std::string{yarp::conf::filesystem::preferred_separator};
         CHECK(ResourceFinder::getConfigHome() == (std::string("/foo") + slash + "yarp")); // XDG_CONFIG_HOME noticed
         yarp::conf::environment::unset("XDG_CONFIG_HOME");
-#ifdef __linux__
         yarp::conf::environment::set_string("HOME", "/foo");
         CHECK(ResourceFinder::getConfigHome() == "/foo/.config/yarp"); // HOME noticed
-#endif
         restoreEnvironment();
     }
 
@@ -578,12 +579,10 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         CHECK(dirs.get(1).asString() == ybar); // XDG_DATA_DIRS second dir ok
 
         yarp::conf::environment::unset("XDG_DATA_DIRS");
-#ifdef __linux__
         dirs = ResourceFinder::getDataDirs();
         CHECK(dirs.size() == (size_t) 2); // DATA_DIRS default length 2
         CHECK(dirs.get(0).asString() == "/usr/local/share/yarp"); // DATA_DIRS default element 0 is ok
         CHECK(dirs.get(1).asString() == "/usr/share/yarp"); // DATA_DIRS default element 1 is ok
-#endif
 
         restoreEnvironment();
     }
@@ -612,14 +611,15 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
         CHECK(dirs.get(1).asString() == ybar); // XDG_CONFIG_DIRS second dir ok
 
         yarp::conf::environment::unset("XDG_CONFIG_DIRS");
-#ifdef __linux__
         dirs = ResourceFinder::getConfigDirs();
         CHECK(dirs.size() == (size_t) 1); // CONFIG_DIRS default length 1
         CHECK(dirs.get(0).asString() == "/etc/yarp"); // CONFIG_DIRS default is ok
-#endif
 
         restoreEnvironment();
     }
+#endif // !defined(_WIN32) && !defined(__APPLE__)
+YARP_WARNING_POP
+#endif // YARP_NO_DEPRECATED
 
     SECTION("test readConfig")
     {
@@ -765,8 +765,8 @@ TEST_CASE("os::ResourceFinderTest", "[yarp::os]")
             bool found;
             std::string robot = yarp::conf::environment::get_string("YARP_ROBOT_NAME", &found);
             if (!found) robot = "default";
-            CHECK(rf.getHomeContextPath() == ResourceFinder::getDataHome() + slash + "contexts" + slash + "my_app"); // $YARP_DATA_HOME/contexts/my_app found as directory for writing
-            CHECK(rf.getHomeRobotPath() == ResourceFinder::getDataHome() + slash + "robots" + slash + robot); // $YARP_DATA_HOME/robots/dummyRobot found as directory for writing
+            CHECK(rf.getHomeContextPath() == yarp::conf::dirs::yarpdatahome() + slash + "contexts" + slash + "my_app"); // $YARP_DATA_HOME/contexts/my_app found as directory for writing
+            CHECK(rf.getHomeRobotPath() == yarp::conf::dirs::yarpdatahome() + slash + "robots" + slash + robot); // $YARP_DATA_HOME/robots/dummyRobot found as directory for writing
 
         }
         breakDownTestArea();
