@@ -37,9 +37,9 @@ class DataProcessor(yarp.PortReader):
 p = yarp.Port()
 r = DataProcessor()
 p.setReader(r)
-p.open("/python");
+p.open("/python")
 
 yarp.delay(100)
 print("Test program timer finished")
 
-yarp.Network.fini();
+yarp.Network.fini()
