@@ -8,6 +8,7 @@
 
 #include "yarpcontextutils.h"
 
+#include <yarp/conf/dirs.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/impl/PlatformDirent.h>
@@ -371,24 +372,25 @@ void printInstalledFolders(yarp::os::ResourceFinder &rf, folderType ftype)
 
 void prepareHomeFolder(yarp::os::ResourceFinder &rf, folderType ftype)
 {
-    yarp::os::impl::DIR* dir = yarp::os::impl::opendir((rf.getDataHome()).c_str());
+    std::string yarpdatahome = yarp::conf::dirs::yarpdatahome();
+    yarp::os::impl::DIR* dir = yarp::os::impl::opendir((yarpdatahome).c_str());
     if (dir != nullptr) {
         yarp::os::impl::closedir(dir);
     } else {
-        yarp::os::mkdir((rf.getDataHome()).c_str());
+        yarp::os::mkdir((yarpdatahome).c_str());
     }
 
-    dir = yarp::os::impl::opendir((rf.getDataHome().append(PATH_SEPARATOR).append(getFolderStringName(ftype))).c_str());
+    dir = yarp::os::impl::opendir((yarpdatahome.append(PATH_SEPARATOR).append(getFolderStringName(ftype))).c_str());
     if (dir != nullptr) {
         yarp::os::impl::closedir(dir);
     } else {
-        yarp::os::mkdir((rf.getDataHome().append(PATH_SEPARATOR).append(getFolderStringName(ftype))).c_str());
+        yarp::os::mkdir((yarpdatahome.append(PATH_SEPARATOR).append(getFolderStringName(ftype))).c_str());
     }
-    dir = yarp::os::impl::opendir((rf.getDataHome().append(PATH_SEPARATOR).append(getFolderStringNameHidden(ftype))).c_str());
+    dir = yarp::os::impl::opendir((yarpdatahome.append(PATH_SEPARATOR).append(getFolderStringNameHidden(ftype))).c_str());
     if (dir != nullptr) {
         yarp::os::impl::closedir(dir);
     } else {
-        std::string hiddenPath = (rf.getDataHome().append(PATH_SEPARATOR).append(getFolderStringNameHidden(ftype)));
+        std::string hiddenPath = (yarpdatahome.append(PATH_SEPARATOR).append(getFolderStringNameHidden(ftype)));
         yarp::os::mkdir(hiddenPath.c_str());
 #if defined(_WIN32)
         SetFileAttributes(hiddenPath.c_str(), FILE_ATTRIBUTE_HIDDEN);
@@ -618,10 +620,11 @@ YARP_WARNING_POP
 #endif
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::Installed;
+    std::string yarpdatahome = yarp::conf::dirs::yarpdatahome();
     std::string originalpath = rf.findPath(getFolderStringName(fType).append(PATH_SEPARATOR).append(contextName), opts);
-    std::string destDirname = rf.getDataHome().append(PATH_SEPARATOR).append(getFolderStringName(fType)).append(PATH_SEPARATOR).append(contextName);
+    std::string destDirname = yarpdatahome.append(PATH_SEPARATOR).append(getFolderStringName(fType)).append(PATH_SEPARATOR).append(contextName);
     //tmp:
-    std::string hiddenDirname = rf.getDataHome().append(PATH_SEPARATOR).append(getFolderStringNameHidden(fType)).append(PATH_SEPARATOR).append(contextName);
+    std::string hiddenDirname = yarpdatahome.append(PATH_SEPARATOR).append(getFolderStringNameHidden(fType)).append(PATH_SEPARATOR).append(contextName);
     prepareHomeFolder(rf, fType);
     if (fType== CONTEXTS && importArg.size() >= 3)
     {
@@ -695,6 +698,7 @@ YARP_WARNING_POP
     prepareHomeFolder(rf, fType);
     ResourceFinderOptions opts;
     opts.searchLocations = ResourceFinderOptions::Installed;
+    std::string yarpdatahome = yarp::conf::dirs::yarpdatahome();
     yarp::os::Bottle contextPaths = rf.findPaths(getFolderStringName(fType), opts);
     for (size_t curPathId = 0; curPathId<contextPaths.size(); ++curPathId)
     {
@@ -717,9 +721,9 @@ YARP_WARNING_POP
                 yarp::os::impl::stat(originalpath.c_str(), &statbuf);
                 if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
                 {
-                    std::string destDirname = rf.getDataHome().append(PATH_SEPARATOR).append(getFolderStringName(fType)).append(PATH_SEPARATOR).append(name);
+                    std::string destDirname = yarpdatahome.append(PATH_SEPARATOR).append(getFolderStringName(fType)).append(PATH_SEPARATOR).append(name);
                     recursiveCopy(originalpath, destDirname);
-                    std::string hiddenDirname = rf.getDataHome().append(PATH_SEPARATOR).append(getFolderStringNameHidden(fType)).append(PATH_SEPARATOR).append(name);
+                    std::string hiddenDirname = yarpdatahome.append(PATH_SEPARATOR).append(getFolderStringNameHidden(fType)).append(PATH_SEPARATOR).append(name);
                     recursiveCopy(originalpath, hiddenDirname, true, false);// TODO: check result!
                 }
             }
@@ -729,7 +733,7 @@ YARP_WARNING_POP
     }
 
     printf("New user %s:\n", fType == CONTEXTS ? "contexts" : "robots");
-    printContentDirs(rf.getDataHome().append(PATH_SEPARATOR).append(getFolderStringName(fType)));
+    printContentDirs(yarpdatahome.append(PATH_SEPARATOR).append(getFolderStringName(fType)));
     return 0;
 }
 
