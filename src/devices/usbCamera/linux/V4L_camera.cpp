@@ -103,10 +103,14 @@ int V4L_camera::convertYARP_to_V4L(int feature)
 
 V4L_camera::V4L_camera() : PeriodicThread(1.0 / DEFAULT_FRAMERATE), doCropping(false), toEpochOffset(getEpochTimeShift()), pythonCameraHelper_(nullptr)
 {
+	yCTrace(USBCAMERA) << "-------------------------------------------";
+	yCTrace(USBCAMERA) << "------UsbCamera device ready to start------";
+	yCTrace(USBCAMERA) << "-------------------------------------------";
+
 	pythonCameraHelper_.setInjectedProcess([this](const void *pythonBuffer, size_t size) { pythonPreprocess(pythonBuffer, size); });
 	pythonCameraHelper_.setInjectedUnlock([this]() { mutex.post(); });
 	pythonCameraHelper_.setInjectedLock([this]() { mutex.wait(); });
-	pythonCameraHelper_.setInjectedLog([this](const std::string &toLog, Severity severity) {
+	pythonCameraHelper_.setInjectedLog([](const std::string &toLog, Severity severity) {
 		switch (severity)
 		{
 			case Severity::error:
@@ -172,7 +176,10 @@ V4L_camera::V4L_camera() : PeriodicThread(1.0 / DEFAULT_FRAMERATE), doCropping(f
 	bit_bayer = 8;
 }
 
-yarp::os::Stamp V4L_camera::getLastInputStamp() { return timeStamp; }
+yarp::os::Stamp V4L_camera::getLastInputStamp()
+{
+	return timeStamp;
+}
 
 int V4L_camera::convertV4L_to_YARP_format(int format)
 {
@@ -351,9 +358,15 @@ bool V4L_camera::open(yarp::os::Searchable &config)
 	return true;
 }
 
-int V4L_camera::getRgbHeight() { return height(); }
+int V4L_camera::getRgbHeight()
+{
+	return height();
+}
 
-int V4L_camera::getRgbWidth() { return width(); }
+int V4L_camera::getRgbWidth()
+{
+	return width();
+}
 
 bool V4L_camera::getRgbSupportedConfigurations(yarp::sig::VectorOf<CameraConfig> &configurations)
 {
@@ -489,12 +502,12 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 			auto tmp = config.find("period");
 			period = tmp.asInt32();
 			yCInfo(USBCAMERA) << "Period used:" << period;
-			pythonCameraHelper_.setStepPeriod(period);//For exposition setting check
+			pythonCameraHelper_.setStepPeriod(period);	// For exposition setting check
 		}
 
-		bool honor;
 		if (config.check("honorfps"))
 		{
+			bool honor;
 			auto tmp = config.find("honorfps");
 			honor = tmp.asBool();
 			yCInfo(USBCAMERA) << "HonorFps:" << honor;
@@ -523,7 +536,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 				yCWarning(USBCAMERA) << "FPS exceed suggested FPS for lowres:" << 1000.0 / (double)period << " suggested:" << UltraPythonCameraHelper::lowresFrameRate_;
 			}
 		}
-		setPeriod(1.0);//Thread period, this thread is not used for UltraPython
+		setPeriod(1.0);	 // Thread period, this thread is not used for UltraPython
 	}
 
 	if (!config.check("d"))
@@ -689,7 +702,10 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 	return true;
 }
 
-int V4L_camera::getfd() { return param.fd; }
+int V4L_camera::getfd()
+{
+	return param.fd;
+}
 
 bool V4L_camera::threadInit()
 {
@@ -719,7 +735,10 @@ void V4L_camera::run()
 	}
 }
 
-void V4L_camera::threadRelease() { yCTrace(USBCAMERA); }
+void V4L_camera::threadRelease()
+{
+	yCTrace(USBCAMERA);
+}
 
 /**
  *    initialize device
@@ -1102,6 +1121,7 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 		}
 		else
 		{
+			yCDebug(USBCAMERA) << "-";
 			imagePreProcess();
 			imageProcess();
 			if (!param.addictionalResize)
@@ -1152,7 +1172,10 @@ bool V4L_camera::getRawBuffer(unsigned char *buffer)
 	return res;
 }
 
-int V4L_camera::getRawBufferSize() { return param.src_image_size; }
+int V4L_camera::getRawBufferSize()
+{
+	return param.src_image_size;
+}
 
 /**
  * Return the height of each frame.
@@ -1466,10 +1489,10 @@ void V4L_camera::imagePreProcess()
 			// Width and Height are not modified by this operation.
 			const uint _pixelNum = param.src_fmt.fmt.pix.width * param.src_fmt.fmt.pix.height;
 
-			uint16_t *raw_p = (uint16_t *)param.raw_image;
+			unsigned char *raw_p = param.raw_image;
 			for (uint i = 0; i < _pixelNum; i++)
 			{
-				param.src_image[i] = (unsigned char)(raw_p[i] >> bit_shift);
+				param.src_image[i] = raw_p[i] >> bit_shift;
 			}
 
 			// Set the correct pixel type fot the v4l_convert to work on.
@@ -1490,8 +1513,7 @@ void V4L_camera::imagePreProcess()
 void V4L_camera::imageProcess()
 {
 	static bool initted = false;
-	static int err = 0;
-
+	
 	timeStart = yarp::os::Time::now();
 
 	// imagePreProcess() should already be called before entering here!!
@@ -1500,6 +1522,7 @@ void V4L_camera::imageProcess()
 	// Convert from src type to RGB
 	if (v4lconvert_convert((v4lconvert_data *)_v4lconvert_data, &param.src_fmt, &param.dst_fmt, param.src_image, param.src_image_size, param.dst_image_rgb, param.dst_image_size_rgb) < 0)
 	{
+		static int err = 0;
 		if ((err % 20) == 0)
 		{
 			yCError(USBCAMERA, "error converting \n\t Error message is: %s", v4lconvert_get_error_message(_v4lconvert_data));
@@ -2334,6 +2357,7 @@ bool V4L_camera::hasOnePush(int feature, bool *_hasOnePush)
 
 bool V4L_camera::setMode(int feature, FeatureMode mode)
 {
+	bool _tmpAuto;
 	bool ret = false;
 	switch (feature)
 	{
@@ -2349,7 +2373,7 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
 			break;
 
 		case YARP_FEATURE_EXPOSURE:
-			bool _tmpAuto;
+			
 			hasAuto(V4L2_CID_EXPOSURE_AUTO, &_tmpAuto);
 
 			if (_tmpAuto)
@@ -2384,7 +2408,6 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
 
 		case YARP_FEATURE_BRIGHTNESS:
 		{
-			bool _tmpAuto;
 			hasAuto(YARP_FEATURE_BRIGHTNESS, &_tmpAuto);
 
 			if (_tmpAuto)

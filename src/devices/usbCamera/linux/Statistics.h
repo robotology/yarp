@@ -25,7 +25,7 @@
 class Statistics
 {
    public:
-	Statistics(const std::string& info) : info_(info) { timeStart_ = yarp::os::Time::now(); };
+	explicit Statistics(const std::string& info) : info_(info) { timeStart_ = yarp::os::Time::now(); };
 	void add()
 	{
 		++frameCounter_;
@@ -33,7 +33,7 @@ class Statistics
 		double timeElapsed;
 		if ((timeElapsed = timeNow - timeStart_) >= statPeriod_)
 		{
-			yCInfo(USBCAMERA) << info_ << " frame number:" << frameCounter_ << " fps:" << ((double)frameCounter_) / statPeriod_ << " interval:" << timeElapsed << " sec.";
+			yCInfo(USBCAMERA) << info_ << " frame number:" << frameCounter_ << " fps:" << (static_cast<double>(frameCounter_)) / statPeriod_ << " interval:" << timeElapsed << " sec.";
 
 			frameCounter_ = 0;
 			timeStart_ = timeNow;

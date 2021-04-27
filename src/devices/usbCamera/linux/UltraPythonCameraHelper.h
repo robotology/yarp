@@ -73,7 +73,7 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int V4L2_ANALOGGAIN_ULTRA_PYTHON{0x009e0903};	  // Analog gain
 
    private:
-	static constexpr const char *mediaName_ = "/dev/media0";
+	inline static constexpr const char *mediaName_ = "/dev/media0";
 
 	// Pipeline string
 	static constexpr const char *pipelineVideoName = "vcap_python output 0";
@@ -175,10 +175,10 @@ class UltraPythonCameraHelper
 																				 {7, {2, 3}}, {8, {2, 4}}, {9, {2, 5}}, {10, {2, 6}}, {11, {2, 7}}};
 
 	// Crop size
-	unsigned int cropLeft_{0};
-	unsigned int cropTop_{0};
-	unsigned int cropHeight_{0};
-	unsigned int cropWidth_{0};
+	int cropLeft_{0};
+	int cropTop_{0};
+	int cropHeight_{0};
+	int cropWidth_{0};
 
 	// injected functionality
 	std::function<void(const void *, int)> injectedProcessImage_;  // Process image external
@@ -196,7 +196,9 @@ class UltraPythonCameraHelper
 		explicit Locker(const UltraPythonCameraHelper &parent) : parent_(parent)
 		{
 			if (parent_.lock_)
+			{
 				parent_.lock_();
+			}
 		};
 		~Locker()
 		{

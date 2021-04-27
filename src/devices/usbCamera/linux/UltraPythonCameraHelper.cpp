@@ -88,7 +88,6 @@ bool UltraPythonCameraHelper::openPipeline()
 		int ret = interfaceCApi_->ioctl_media_c(fd, MEDIA_IOC_ENUM_ENTITIES, info);
 		if (ret < 0)
 		{
-			ret = errno != EINVAL ? -errno : 0;
 			Log(*this, Severity::warning) << "WARNING-cannot open device not media";
 			break;
 		}
@@ -268,14 +267,20 @@ bool UltraPythonCameraHelper::setSubDevFormat(int width, int height)
 			}
 			/* packet32, when there is an imgfusion IP receives 2x width frames */
 			if ((imgfusionIndex_ != -1) && (i == packet32Index_))
+			{
 				fmt.format.width *= 2;
+			}
 			/* tpg when there is an imgfusion IP receives 2x width frames */
 			if ((imgfusionIndex_ != -1) && (i == tpgIndex_))
+			{
 				fmt.format.width *= 2;
+			}
 
 			/* imgfusion source pad has 2* width */
 			if (j == 2)
+			{
 				fmt.format.width *= 2;
+			}
 
 			{
 				Log(*this, Severity::debug) << "subdev idx:" << i << " pad" << j << " setting format:" << fmt.format.width << ":" << fmt.format.height;
@@ -314,11 +319,17 @@ bool UltraPythonCameraHelper::setFormat()
 		}
 
 		if (spaceColor_ == SpaceColor::grgb)
+		{
 			fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_SRGGB8;
+		}
 		else if (spaceColor_ == SpaceColor::yuv)
+		{
 			fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+		}
 		else if (spaceColor_ == SpaceColor::rgb)
+		{
 			fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+		}
 
 		fmt.fmt.pix.field = 1;
 		fmt.fmt.pix.colorspace = 8;
@@ -334,14 +345,18 @@ bool UltraPythonCameraHelper::setFormat()
 		}
 
 		if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_S_FMT, &fmt))
+		{
 			return false;
+		}
 
 		/* Note VIDIOC_S_FMT may change width and height. */
 		return true;
 	}
 	/* Preserve original settings as set by v4l2-ctl for example */
-	if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_G_FMT, &fmt))
+	if (interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_G_FMT, &fmt) == -1)
+	{
 		return false;
+	}
 	return true;
 }
 
@@ -352,7 +367,9 @@ bool UltraPythonCameraHelper::crop(int top, int left, int w, int h, int mytry)
 
 	Log(*this, Severity::debug) << "crop is" << std::string(cropEnabledProperty_ ? "ENABLED" : "DISABLED");
 	if (!cropEnabledProperty_)
+	{
 		return true;
+	}
 
 	struct v4l2_subdev_crop _crop;
 
@@ -690,11 +707,17 @@ void UltraPythonCameraHelper::processImage(const void *p, int size)
 bool UltraPythonCameraHelper::closeAll()
 {
 	if (!stopCapturing())
+	{
 		return false;
+	}
 	if (!unInitDevice())
+	{
 		return false;
+	}
 	if (!closePipeline())
+	{
 		return false;
+	}
 	return true;
 }
 
@@ -831,9 +854,8 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, double value, bool ab
 			return out;
 		case V4L2_REDBALANCE_ULTRA_PYTHON:	 // V4L2_CID_RED_BALANCE
 		case V4L2_BLUEBALANCE_ULTRA_PYTHON:	 // V4L2_CID_BLUE_BALANCE
-			return setControl(v4lCtrl, mainSubdeviceFd_, value, absolute);
-		case V4L2_DEADTIME_ULTRA_PYTHON:  // trg_h
-		case V4L2_EXPOSURE_ULTRA_PYTHON:  // EXPOSURE trg_l
+		case V4L2_DEADTIME_ULTRA_PYTHON:	 // trg_h
+		case V4L2_EXPOSURE_ULTRA_PYTHON:	 // EXPOSURE trg_l
 			return setControl(v4lCtrl, mainSubdeviceFd_, value, absolute);
 		default:
 			return false;
@@ -884,9 +906,13 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
 		queryctrl.minimum = minPermittedExposition_;
 	}
 	if (!absolute)
-		control.value = (int32_t)(value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
+	{
+		control.value = static_cast<int32_t>(value * (queryctrl.maximum - queryctrl.minimum) + queryctrl.minimum);
+	}
 	else
-		control.value = (int32_t)value;
+	{
+		control.value = static_cast<int32_t>(value);
+	}
 
 	if (v4lCtrl == V4L2_EXPOSURE_ULTRA_PYTHON)
 	{
@@ -905,7 +931,7 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
 		}
 		else
 		{
-			Log(*this, Severity::debug) << "Exposition will mantain current FPS Limit:" << control.value + deadTime_ + 5 << " current step:" << stepPeriod_;
+			Log(*this, Severity::debug) << "Exposition will mantain current FPS Limit:" << limit << " current step:" << stepPeriod_;
 		}
 	}
 
@@ -916,7 +942,6 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
 		return false;
 	}
 
-	std::stringstream ss;
 	Log(*this, Severity::debug) << "SetControl done --> Ctrl name:" << queryctrl.name << " Ctrl value:" << control.value << " Ctrl id:" << control.id;
 	return true;
 }
@@ -963,7 +988,7 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl, int fd)
 	{
 		double min = gainMap_.begin()->first;
 		double max = gainMap_.end()->first;
-		return (double)(currentGainValue_ - min) / (max - min);
+		return (currentGainValue_ - min) / (max - min);
 	}
 
 	struct v4l2_queryctrl queryctrl;
@@ -1003,7 +1028,7 @@ double UltraPythonCameraHelper::getControl(uint32_t v4lCtrl, int fd)
 		queryctrl.minimum = minPermittedExposition_;
 	}
 
-	return (double)(control.value - queryctrl.minimum) / (queryctrl.maximum - queryctrl.minimum);
+	return static_cast<double>(control.value - queryctrl.minimum) / (queryctrl.maximum - queryctrl.minimum);
 }
 
 bool UltraPythonCameraHelper::hasControl(uint32_t v4lCtrl) const
@@ -1101,9 +1126,11 @@ bool UltraPythonCameraHelper::setGain(double value, bool absolute)
 {
 	double min = gainMap_.begin()->first;
 	double max = gainMap_.end()->first;
-	int absoluteValue = (int32_t)value;
+	int absoluteValue = static_cast<int32_t>(value);
 	if (!absolute)
-		absoluteValue = (int32_t)(value * (max - min) + min);
+	{
+		absoluteValue = static_cast<int32_t>(value * (max - min) + min);
+	}
 
 	auto it = gainMap_.find(absoluteValue);
 	if (it == gainMap_.end())
