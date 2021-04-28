@@ -7,6 +7,7 @@ set(SOURCES gtest_main.cc
             testControlGain.cpp
             testControlBrigthness.cpp
             testUltraPytonRunning.cpp
+            testDefalutOrNotUsedParam.cpp
             ../linux/InterfaceForCApi.h
             ../linux/UltraPythonCameraHelper.h
             ../linux/UltraPythonCameraHelper.cpp

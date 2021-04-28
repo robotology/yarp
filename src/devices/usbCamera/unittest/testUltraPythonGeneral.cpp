@@ -35,8 +35,16 @@ TEST(UltraPython, openAll_ok_002) {
   // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
   UltraPythonCameraHelper helper(interface);
-  EXPECT_CALL(*interface, open_c(_, _)).Times(1);
-  EXPECT_CALL(*interface, open_c(_, _, _)).Times(9);
+  EXPECT_CALL(*interface, open_c("/dev/media0", O_RDWR)).Times(1);
+  EXPECT_CALL(*interface, open_c("video1",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video2",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video3",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video4",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video5",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video6",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video7",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video8",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video9",O_RDWR | O_NONBLOCK, 0)).Times(1);
   EXPECT_CALL(*interface, udev_new_c()).WillOnce(Return(new udev()));
   struct media_entity_desc info1;
   strcpy(info1.name, "vcap_python output 0");
@@ -86,15 +94,15 @@ TEST(UltraPython, openAll_ok_002) {
       .WillOnce(Return(new udev_device()))
       .WillOnce(Return(new udev_device()));
   EXPECT_CALL(*interface, udev_device_get_devnode_c(_))
-      .WillOnce(Return("c"))
-      .WillOnce(Return("c"))
-      .WillOnce(Return("c"))
-      .WillOnce(Return("c"))
-      .WillOnce(Return("c"))
-      .WillOnce(Return("c"))
-      .WillOnce(Return("c"))
-      .WillOnce(Return("c"))
-      .WillOnce(Return("c"));
+      .WillOnce(Return("video1"))
+      .WillOnce(Return("video2"))
+      .WillOnce(Return("video3"))
+      .WillOnce(Return("video4"))
+      .WillOnce(Return("video5"))
+      .WillOnce(Return("video6"))
+      .WillOnce(Return("video7"))
+      .WillOnce(Return("video8"))
+      .WillOnce(Return("video9"));
   EXPECT_CALL(*interface, udev_device_unref_c(_))
       .WillOnce(Return(new udev_device()))
       .WillOnce(Return(new udev_device()))
@@ -118,13 +126,32 @@ TEST(UltraPython, openAll_ok_002) {
   delete interface;
 }
 
+//Missing main device
+TEST(UltraPython, openAll_ko_000) {
+  // given
+  InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
+  UltraPythonCameraHelper helper(interface);
+  EXPECT_CALL(*interface, open_c("/dev/media0", O_RDWR)).WillOnce(Return(-1));
+
+  // when
+  bool out = helper.openAll();
+
+  // then
+  EXPECT_FALSE(out);
+
+  delete interface;
+}
+
+//Missing sub device
 TEST(UltraPython, openAll_ko_001) {
   // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
   UltraPythonCameraHelper helper(interface);
-  EXPECT_CALL(*interface, open_c(_, _)).Times(1);
-  EXPECT_CALL(*interface, open_c(_, _, _)).Times(2);
+  EXPECT_CALL(*interface, open_c("/dev/media0", O_RDWR)).Times(1);
   EXPECT_CALL(*interface, udev_new_c()).WillOnce(Return(new udev()));
+  EXPECT_CALL(*interface, open_c("video1",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video2",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  
   struct media_entity_desc info1;
   strcpy(info1.name, "vcap_python output 0");
   struct media_entity_desc info2;
@@ -141,8 +168,8 @@ TEST(UltraPython, openAll_ko_001) {
       .WillOnce(Return(new udev_device()))
       .WillOnce(Return(new udev_device()));
   EXPECT_CALL(*interface, udev_device_get_devnode_c(_))
-      .WillOnce(Return("c"))
-      .WillOnce(Return("c"));
+      .WillOnce(Return("video1"))
+      .WillOnce(Return("video2"));
   EXPECT_CALL(*interface, udev_device_unref_c(_))
       .WillOnce(Return(new udev_device()))
       .WillOnce(Return(new udev_device()));

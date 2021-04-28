@@ -65,7 +65,7 @@ bool UltraPythonCameraHelper::openPipeline()
 	int fd = interfaceCApi_->open_c(mediaName_, O_RDWR);
 	if (fd == -1)
 	{
-		Log(*this, Severity::error) << "ERROR-cannot open media dev";
+		Log(*this, Severity::error) << "ERROR-cannot open media dev.Are modules loaded?";
 		return false;
 	}
 
@@ -73,7 +73,7 @@ bool UltraPythonCameraHelper::openPipeline()
 	udev = interfaceCApi_->udev_new_c();
 	if (udev == nullptr)
 	{
-		Log(*this, Severity::error) << "ERROR-cannot open udev";
+		Log(*this, Severity::error) << "ERROR-cannot open udev. Is libudev installed?";
 		return false;
 	}
 
@@ -309,6 +309,7 @@ bool UltraPythonCameraHelper::setFormat()
 
 	if (forceFormatProperty_ || cropEnabledProperty_)
 	{
+		// Not tested nor enabled
 		fmt.fmt.pix.width = cropEnabledProperty_ ? cropWidth_ : nativeWidth_;
 		fmt.fmt.pix.height = cropEnabledProperty_ ? cropHeight_ : nativeHeight_;
 
@@ -448,6 +449,7 @@ bool UltraPythonCameraHelper::checkDevice(int mainSubdeviceFd)
 	struct v4l2_capability cap;
 	if (-1 == interfaceCApi_->xioctl(mainSubdeviceFd, VIDIOC_QUERYCAP, &cap))
 	{
+		// Should not happen
 		if (EINVAL == errno)
 		{
 			Log(*this, Severity::error) << "checkDevice:device is no V4L2 device";
@@ -1148,4 +1150,22 @@ bool UltraPythonCameraHelper::setGain(double value, bool absolute)
 	setControl(V4L2_ANALOGGAIN_ULTRA_PYTHON, pipelineSubdeviceFd_[sourceSubDeviceIndex1_], current.second, true);
 	setControl(V4L2_ANALOGGAIN_ULTRA_PYTHON, pipelineSubdeviceFd_[sourceSubDeviceIndex2_], current.second, true);
 	return true;
+}
+
+bool UltraPythonCameraHelper::getCropEnabledProperty() const
+{
+	return cropEnabledProperty_;
+}
+bool UltraPythonCameraHelper::getForceFormatProperty() const
+{
+	return forceFormatProperty_;
+}
+
+bool UltraPythonCameraHelper::getHonorFps() const
+{
+	return honorfps_;
+}
+double UltraPythonCameraHelper::getStepPeriod() const
+{
+	return stepPeriod_;
 }

@@ -107,6 +107,12 @@ class UltraPythonCameraHelper
 	void setStepPeriod(double msec);
 	void setHonorFps(bool value);
 
+	// Getter
+	bool getCropEnabledProperty() const;
+	bool getForceFormatProperty() const;
+	bool getHonorFps() const;
+	double getStepPeriod() const;
+
 	// Inject function from out
 	void setInjectedProcess(std::function<void(const void *, int)> toinJect);
 	void setInjectedUnlock(std::function<void()> toinJect);
@@ -164,7 +170,7 @@ class UltraPythonCameraHelper
 	int imgfusionIndex_ = -1;
 	int packet32Index_ = -1;
 
-	double stepPeriod_{100};  // Interval for two step() call
+	double stepPeriod_{40};  // Interval for two step() call
 	bool honorfps_{false};	  // Keep FPS stable
 
 	const SpaceColor spaceColor_{SpaceColor::rgb};

@@ -25,7 +25,10 @@
 class Statistics
 {
    public:
-	explicit Statistics(const std::string& info) : info_(info) { timeStart_ = yarp::os::Time::now(); };
+	explicit Statistics(const std::string& info) : info_(info)
+	{
+		timeStart_ = yarp::os::Time::now();
+	};
 	void add()
 	{
 		++frameCounter_;
