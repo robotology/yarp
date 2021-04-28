@@ -363,7 +363,7 @@ public:
      *   is appended to each path and the result returned.
      *   Otherwise:
      *     On Windows
-     *       %YARP_DIR%\share\yarp
+     *       %ALLUSERSPROFILE%\yarp
      *     On Linux and all others:
      *       /usr/local/share/yarp:/usr/share/yarp is returned.
      *     (an OSX-specific case remains to be defined)
@@ -381,7 +381,7 @@ public:
      *   is appended to each path and the result returned.
      *   Otherwise:
      *     On Windows
-     *       %ALLUSERSPROFILE%\yarp
+     *       %ALLUSERSPROFILE%\yarp\config
      *     On Linux and all others:
      *       /etc/yarp is returned.
      *     (an OSX-specific case remains to be defined)
