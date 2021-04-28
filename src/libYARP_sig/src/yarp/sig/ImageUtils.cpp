@@ -8,6 +8,7 @@
 
 #include <yarp/sig/ImageUtils.h>
 #include <cstring>
+#include <algorithm> // std::math
 
 using namespace yarp::sig;
 
@@ -109,5 +110,37 @@ bool utils::vertConcat(const Image& inImgUp, const Image& inImgDown, Image& outI
     size_t imgSize = inImgUp.getRawImageSize();
     memcpy(outImg.getRawImage(), inImgUp.getRawImage(), imgSize);
     memcpy(outImg.getRawImage() + imgSize, inImgDown.getRawImage(), imgSize);
+    return true;
+}
+
+bool utils::cropRect(const yarp::sig::Image& inImg,
+                     const std::pair<unsigned int, unsigned int>& vertex1,
+                     const std::pair<unsigned int, unsigned int>& vertex2,
+                     yarp::sig::Image& outImg)
+{
+    if (inImg.getPixelCode() != outImg.getPixelCode()) {
+        return false;
+    }
+
+    // Normalize vertices: upper-left (tlx,tly) and bottom-right (brx,bry) corners
+    auto tlx = std::min(vertex1.first, vertex2.first);
+    auto tly = std::min(vertex1.second, vertex2.second);
+    auto brx = std::max(vertex1.first, vertex2.first);
+    auto bry = std::max(vertex1.second, vertex2.second);
+
+    if (!inImg.isPixel(brx, bry)) {
+        return false;
+    }
+
+    outImg.resize(brx - tlx + 1, bry - tly + 1); // width, height
+
+    auto * pixelOut = outImg.getRawImage();
+
+    for (unsigned int row = 0; row < outImg.height(); row++) {
+        const auto * pixelIn = inImg.getPixelAddress(tlx, tly + row);
+        memcpy(pixelOut, pixelIn, outImg.getRowSize());
+        pixelOut += outImg.getRowSize();
+    }
+
     return true;
 }
