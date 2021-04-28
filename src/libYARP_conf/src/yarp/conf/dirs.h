@@ -327,10 +327,7 @@ inline std::vector<std::string> yarpconfigdirs()
 #elif defined(__APPLE__)
     return yarp::conf::environment::get_path(YARP_CONFIG_DIRS, "", MACOS_CONFIG_DIRS_DEFAULT, YARP_SUFFIX);
 #else
-// FIXME In order to be compliant with xdg specifications, this should be
-//     return yarp::conf::environment::get_path(YARP_CONFIG_DIRS, XDG_CONFIG_DIRS, XDG_CONFIG_DIRS_DEFAULT, YARP_SUFFIX);
-//       but traditionally yarp uses "/etc" and not "/etc/xdg
-    return yarp::conf::environment::get_path(YARP_CONFIG_DIRS, XDG_CONFIG_DIRS, "/etc", YARP_SUFFIX);
+    return yarp::conf::environment::get_path(YARP_CONFIG_DIRS, XDG_CONFIG_DIRS, XDG_CONFIG_DIRS_DEFAULT, YARP_SUFFIX);
 #endif
 }
 

@@ -383,7 +383,7 @@ public:
      *     On Windows
      *       %ALLUSERSPROFILE%\yarp\config
      *     On Linux and all others:
-     *       /etc/yarp is returned.
+     *       /etc/xdg/yarp is returned.
      *     (an OSX-specific case remains to be defined)
      *
      * @deprecated since YARP 3.5

@@ -627,9 +627,7 @@ TEST_CASE("conf::dirs", "[yarp::conf]")
         // Test default
         dirs = yarp::conf::dirs::yarpconfigdirs();
         CHECK(dirs.size() == 1);
-// FIXME
-//         CHECK(dirs[0] == "/etc/xdg/yarp");
-        CHECK(dirs[0] == "/etc/yarp");
+        CHECK(dirs[0] == "/etc/xdg/yarp");
 #endif
     }
 

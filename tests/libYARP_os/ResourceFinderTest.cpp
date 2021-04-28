@@ -613,7 +613,7 @@ YARP_DISABLE_DEPRECATED_WARNING
         yarp::conf::environment::unset("XDG_CONFIG_DIRS");
         dirs = ResourceFinder::getConfigDirs();
         CHECK(dirs.size() == (size_t) 1); // CONFIG_DIRS default length 1
-        CHECK(dirs.get(0).asString() == "/etc/yarp"); // CONFIG_DIRS default is ok
+        CHECK(dirs.get(0).asString() == "/etc/xdg/yarp"); // CONFIG_DIRS default is ok
 
         restoreEnvironment();
     }
