@@ -126,12 +126,12 @@ code, in subdirectories of the `src/devices` and
 `src/carriers` directories.
 
 YARP is configured to aggregate `plugin.ini` files in a directory
-called `etc/yarp/plugins`.  The `ini` files are collected
+called `yarp/plugins`.  The `ini` files are collected
 in this directory irrespective of whether the corresponding plugins
 are compiled or not.  To add plugins not included with YARP, an `ini`
-file may be placed in `etc/yarp/plugins`.
+file may be placed in `yarp/plugins`.
 
-YARP looks for `etc/yarp/plugins` using
+YARP looks for `yarp/plugins` using
 a yarp::os::ResourceFinder.  If you don't already use configuration
 files with YARP, one way to get going would be to create a file
 in your home directory called `.yarp/plugins.ini` (or `yarp\plugins.ini` on Windows) containing:
@@ -146,7 +146,7 @@ and then set a `YARP_POLICY` environment variable to
 
 Each operating system has a convention for finding library files which
 YARP will also use (`LD_LIBRARY_PATH` etc), with one addition.
-Once the configuration files in `etc/yarp/plugins` can be
+Once the configuration files in `yarp/plugins` can be
 found, YARP will also use any "search" blocks it finds there.
 They look like this:
 \code

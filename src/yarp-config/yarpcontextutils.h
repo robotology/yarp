@@ -12,15 +12,11 @@
 
 #include <string>
 #include <yarp/os/ResourceFinder.h>
+#include <yarp/conf/filesystem.h>
 #include <iostream>
 #include <vector>
 
-
-#if defined(_WIN32)
-    #define PATH_SEPARATOR      "\\"
-#else
-    #define PATH_SEPARATOR      "/"
-#endif
+#define PATH_SEPARATOR std::string{yarp::conf::filesystem::preferred_separator}
 
 enum folderType{CONTEXTS=0, ROBOTS=1};
 //helpers:

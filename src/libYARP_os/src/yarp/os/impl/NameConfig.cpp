@@ -11,6 +11,7 @@
 #include <yarp/os/impl/NameConfig.h>
 
 #include <yarp/conf/system.h>
+#include <yarp/conf/dirs.h>
 #include <yarp/conf/filesystem.h>
 #include <yarp/conf/environment.h>
 #include <yarp/conf/string.h>
@@ -20,7 +21,6 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Os.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PlatformIfaddrs.h>
 #include <yarp/os/impl/PlatformLimits.h>
@@ -97,7 +97,7 @@ bool NameConfig::fromString(const std::string& txt)
 
 std::string NameConfig::expandFilename(const char* fname)
 {
-    std::string root = ResourceFinder::getConfigHome();
+    std::string root = yarp::conf::dirs::yarpconfighome();
     std::string conf;
     if (!root.empty()) {
         conf = root + std::string{yarp::conf::filesystem::preferred_separator} + fname;
