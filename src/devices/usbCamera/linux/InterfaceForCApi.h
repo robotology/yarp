@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+//Wraper for test use of c style API
 class InterfaceForCApi
 {
    public:

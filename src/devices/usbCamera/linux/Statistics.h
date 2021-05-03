@@ -22,6 +22,8 @@
 
 #include "USBcameraLogComponent.h"
 
+
+//For FPS statistics purpouse 
 class Statistics
 {
    public:

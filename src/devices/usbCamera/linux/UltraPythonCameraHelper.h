@@ -49,9 +49,11 @@ enum class Severity
 	error
 };
 
+// Helper for UltraPython functionalities through kernel modules
 class UltraPythonCameraHelper
 {
    public:
+	// Main properties
 	static constexpr unsigned int hiresWidth_{2560};										 // HI RES width image
 	static constexpr unsigned int hiresHeight_{1024};										 // HI RES height image
 	static constexpr unsigned int lowresWidth_{1280};										 // LOW RES width image
@@ -64,7 +66,7 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int minPermittedExposition_{15};
 	static constexpr unsigned int maxPermittedExposition_{100};
 
-	// Ctrl for Python
+	// V4l ctrl for UltraPython
 	static constexpr unsigned int V4L2_EXPOSURE_ULTRA_PYTHON{0x0098cb03};	  // trg_l
 	static constexpr unsigned int V4L2_DEADTIME_ULTRA_PYTHON{0x0098cb02};	  // trg_h
 	static constexpr unsigned int V4L2_EXTTRIGGGER_ULTRA_PYTHON{0x0098cc03};  // ext_trigger
@@ -84,6 +86,7 @@ class UltraPythonCameraHelper
 	static constexpr const char *pipelineImgfusionName = "imgfusion";
 	static constexpr const char *pipelineRxifName = "PYTHON1300_RXIF";
 
+	// Buffers
 	static constexpr unsigned int requestBufferNumber_ = {8};
 	static constexpr unsigned int pipelineMaxLen = {16};
 
@@ -99,19 +102,21 @@ class UltraPythonCameraHelper
 
 	// Settings
 	void setSubsamplingProperty(bool value);
-	bool setControl(uint32_t v4lCtrl, double value, bool absolute);	 // if not absolute normalized between 0-1
-	double getControl(uint32_t v4lCtrl);							 // Normalize control value
+	bool setControl(uint32_t v4lCtrl, double value, bool absolute);	 // if absolute==false, normalized between 0-1
 	bool hasControl(uint32_t v4lCtrl) const;
 	bool hasAutoControl(uint32_t v4lCtrl) const;
-	bool checkControl(uint32_t v4lCtr);
 	void setStepPeriod(double msec);
 	void setHonorFps(bool value);
 
 	// Getter
+	double getControl(uint32_t v4lCtrl);  // Normalized control value
 	bool getCropEnabledProperty() const;
 	bool getForceFormatProperty() const;
 	bool getHonorFps() const;
 	double getStepPeriod() const;
+
+	// Not used
+	bool checkControl(uint32_t v4lCtr);	 // Low level check control is available
 
 	// Inject function from out
 	void setInjectedProcess(std::function<void(const void *, int)> toinJect);
@@ -119,17 +124,22 @@ class UltraPythonCameraHelper
 	void setInjectedLock(std::function<void()> toinJect);
 	void setInjectedLog(std::function<void(const std::string &, Severity severity)> toinJect);
 
+	// General
 	explicit UltraPythonCameraHelper(InterfaceForCApi *interfaceC);
-	virtual ~UltraPythonCameraHelper();
+	UltraPythonCameraHelper(const UltraPythonCameraHelper &) = delete;
+	UltraPythonCameraHelper &operator=(const UltraPythonCameraHelper &) = delete;
+	UltraPythonCameraHelper(UltraPythonCameraHelper &&) = delete;
+	UltraPythonCameraHelper &operator=(UltraPythonCameraHelper &&) = delete;
+	~UltraPythonCameraHelper();
 
    private:
-	InterfaceForCApi *interfaceCApi_;  // Unittest purpouse c interface
+	InterfaceForCApi *interfaceCApi_;  // Unittest purpouse c API interface
 	bool ownerCApi_{false};
 	bool openPipeline();
 	bool initDevice();
 	bool startCapturing();
-	bool setDefaultControl();					   // Some important default controls
-	uint32_t remapControl(uint32_t v4lCtr) const;  // Different id from the official ones
+	bool setDefaultControl();					   // Set some important default controls
+	uint32_t remapControl(uint32_t v4lCtr) const;  // Remap different id from the official v4l ones
 	bool setControl(uint32_t v4lCtrl, int fd, double value, bool absolute);
 	double getControl(uint32_t v4lCtrl, int fd);
 	bool setSubDevFormat(int width, int height);
@@ -170,8 +180,8 @@ class UltraPythonCameraHelper
 	int imgfusionIndex_ = -1;
 	int packet32Index_ = -1;
 
-	double stepPeriod_{40};  // Interval for two step() call
-	bool honorfps_{false};	  // Keep FPS stable
+	double stepPeriod_{40};	 // Interval for two step() call
+	bool honorfps_{false};	 // Keep FPS stable
 
 	const SpaceColor spaceColor_{SpaceColor::rgb};
 
