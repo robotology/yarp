@@ -174,7 +174,7 @@ To minimize modifications in the old code and to keep separate old and new camer
 If necessary, the class is instantiated by the driver.  
 New PythonCameraHelper class in UML class diagram:
 
-<img src="img/UML003.png" width="600px">
+<img src="img/UML004.png" width="600px">
 
 An **dependency injection technique** is used to keep driver and UltraPython camera code separate, so
 test and use of the class in other environment, _are easier_.  
