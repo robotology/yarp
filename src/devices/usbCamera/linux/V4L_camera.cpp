@@ -721,7 +721,7 @@ void V4L_camera::run()
 
 	if (param.camModel == ULTRAPYTON)
 	{
-		// Not used called directly getRgbBuffer()
+		// This thread is not used by UltraPython, called directly getRgbBuffer() from yarpdev
 		return;
 	}
 
@@ -1513,7 +1513,7 @@ void V4L_camera::imagePreProcess()
 void V4L_camera::imageProcess()
 {
 	static bool initted = false;
-	
+
 	timeStart = yarp::os::Time::now();
 
 	// imagePreProcess() should already be called before entering here!!
@@ -2373,7 +2373,7 @@ bool V4L_camera::setMode(int feature, FeatureMode mode)
 			break;
 
 		case YARP_FEATURE_EXPOSURE:
-			
+
 			hasAuto(V4L2_CID_EXPOSURE_AUTO, &_tmpAuto);
 
 			if (_tmpAuto)
