@@ -20,7 +20,7 @@
 module thrift_test_server;
 
 import core.stdc.errno : errno;
-import core.stdc.signal : signal, sigfn_t, SIGINT, SIG_DFL, SIG_ERR;
+import core.stdc.signal : signal, SIGINT, SIG_DFL, SIG_ERR;
 import core.thread : dur, Thread;
 import std.algorithm;
 import std.exception : enforce;
@@ -42,6 +42,7 @@ import thrift.transport.base;
 import thrift.transport.buffered;
 import thrift.transport.framed;
 import thrift.transport.http;
+import thrift.transport.zlib;
 import thrift.transport.ssl;
 import thrift.util.cancellation;
 import thrift.util.hashset;
@@ -246,11 +247,12 @@ void main(string[] args) {
   size_t numIOThreads = 1;
   TransportType transportType;
   bool ssl = false;
+  bool zlib = false;
   bool trace = true;
   size_t taskPoolSize = totalCPUs;
 
   getopt(args, "port", &port, "protocol", &protocolType, "server-type",
-    &serverType, "ssl", &ssl, "num-io-threads", &numIOThreads,
+    &serverType, "ssl", &ssl, "zlib", &zlib, "num-io-threads", &numIOThreads,
     "task-pool-size", &taskPoolSize, "trace", &trace,
     "transport", &transportType);
 
@@ -314,8 +316,7 @@ void main(string[] args) {
     processor, serverSocket, transportFactory, protocolFactory);
 
   // Set up SIGINT signal handling
-  sigfn_t oldHandler = signal(SIGINT, &handleSignal);
-  enforce(oldHandler != SIG_ERR,
+  enforce(signal(SIGINT, &handleSignal) != SIG_ERR,
     "Could not replace the SIGINT signal handler: errno {0}".format(errno()));
   
   // Set up a server cancellation trigger

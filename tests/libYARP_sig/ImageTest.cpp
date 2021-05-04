@@ -743,5 +743,41 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
         CHECK(ok); // Checking data consistency bottom split
     }
 
+    SECTION("test image crop.")
+    {
+        ImageOf<PixelRgb> inImg, outImg;
+        inImg.resize(10, 10);
+
+        size_t tlx = 4;
+        size_t tly = 5;
+        size_t brx = 8;
+        size_t bry = 7;
+
+        PixelRgb pixelValue {255, 0, 0};
+
+        for (size_t u = tlx; u <= brx; u++) {
+            for (size_t v = tly; v <= bry; v++) {
+                inImg.pixel(u, v) = pixelValue;
+            }
+        }
+
+        CHECK(utils::cropRect(inImg, {tlx, tly}, {brx, bry}, outImg));
+
+        CHECK(outImg.width() == brx - tlx + 1);
+        CHECK(outImg.height() == bry - tly + 1);
+
+        bool ok = true;
+
+        for (size_t u = 0; u < outImg.width(); u++) {
+            for (size_t v = 0; v < outImg.height(); v++) {
+                ok &= outImg.pixel(u, v).r == pixelValue.r;
+                ok &= outImg.pixel(u, v).g == pixelValue.g;
+                ok &= outImg.pixel(u, v).b == pixelValue.b;
+            }
+        }
+
+        CHECK(ok);
+    }
+
     NetworkBase::setLocalMode(false);
 }

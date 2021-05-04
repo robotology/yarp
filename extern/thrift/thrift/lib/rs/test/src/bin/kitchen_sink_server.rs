@@ -15,11 +15,9 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#[macro_use]
-extern crate clap;
-extern crate kitchen_sink;
-extern crate thrift;
+use clap::{clap_app, value_t};
 
+use thrift;
 use thrift::protocol::{
     TBinaryInputProtocolFactory, TBinaryOutputProtocolFactory, TCompactInputProtocolFactory,
     TCompactOutputProtocolFactory, TInputProtocolFactory, TOutputProtocolFactory,
@@ -76,8 +74,8 @@ fn run() -> thrift::Result<()> {
     let w_transport_factory = TFramedWriteTransportFactory::new();
 
     let (i_protocol_factory, o_protocol_factory): (
-        Box<TInputProtocolFactory>,
-        Box<TOutputProtocolFactory>,
+        Box<dyn TInputProtocolFactory>,
+        Box<dyn TOutputProtocolFactory>,
     ) = match &*protocol {
         "binary" => (
             Box::new(TBinaryInputProtocolFactory::new()),

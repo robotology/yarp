@@ -31,7 +31,7 @@ public:
     size_t getSamples() { return m_samples; }
     size_t getChannels() { return m_channels; }
     size_t getBufferElements() { return size; }
-    size_t getBytes() { return m_samples * m_channels * m_depth; }
+    size_t getBytes() { return size_t(m_samples * m_channels * m_depth); }
 
     bool read(yarp::os::idl::WireReader& reader) override { return audioBufferSizeData::read(reader); }
     bool write(const yarp::os::idl::WireWriter& writer) const override { return audioBufferSizeData::write(writer); }

@@ -15,4 +15,4 @@ see the "python subdirectory.
 tcl/control-motor.tcl controls a YARP motor controlboard from TCL.
 Code written by someone who doesn't really know TCL very well,
 so beware.  Assumes that you have run:
-  yarpdev --device fakeMotor --name /controlboard
+  yarpdev --device fakeMotionControl --name /controlboard --GENERAL::Joints 4

@@ -420,6 +420,7 @@ void Rangefinder2D_nws_yarp::run()
                 lastStateStamp.update(yarp::os::Time::now());
 
             int ranges_size = ranges.size();
+            YARP_UNUSED(ranges_size);
 
             yarp::dev::LaserScan2D& b = streamingPort.prepare();
             //b.clear();

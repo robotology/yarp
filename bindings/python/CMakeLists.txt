@@ -12,12 +12,6 @@ set(CMAKE_SWIG_FLAGS "-module;yarp;-threads;${SWIG_COMMON_FLAGS}")
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-## in Windows it seems necessary to declare explictly the link_directory
-if(WIN32)
-  get_filename_component(Python3_DIR ${Python3_LIBRARY} DIRECTORY)
-  link_directories(${Python3_DIR})
-endif()
-
 set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/lib/python3")
 set(SWIG_OUTFILE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -44,7 +38,7 @@ else()
 endif()
 
 install(FILES ${CMAKE_BINARY_DIR}/lib/python3/yarp.py
-        DESTINATION ${Python3_INSTDIR})
+        DESTINATION ${CMAKE_INSTALL_PYTHON3DIR})
 
 
 # Update RPATH
@@ -60,7 +54,7 @@ if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
 endif()
 
 install(TARGETS ${SWIG_MODULE_yarp_python_REAL_NAME}
-        DESTINATION ${Python3_INSTDIR})
+        DESTINATION ${CMAKE_INSTALL_PYTHON3DIR})
 
 if(YARP_COMPILE_TESTS)
   add_subdirectory(tests)

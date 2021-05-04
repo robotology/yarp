@@ -55,7 +55,7 @@ class Navigation2DClient:
         public yarp::os::PortReader
 {
 protected:
-    std::mutex               m_mutex;
+    std::mutex                    m_mutex;
     yarp::os::Port                m_rpc_port_navigation_server;
     yarp::os::Port                m_rpc_port_map_locations_server;
     yarp::os::Port                m_rpc_port_localization_server;
@@ -65,12 +65,6 @@ protected:
     std::string                   m_map_locations_server_name;
     std::string                   m_localization_server_name;
     int                           m_period;
-
-private:
-    std::string                   m_current_goal_name;
-    bool                          reset_current_goal_name();
-    bool                          set_current_goal_name(const std::string& name);
-    bool                          get_current_goal_name(std::string& name);
 
 private: //math stuff
     double                        normalize_angle(double angle);

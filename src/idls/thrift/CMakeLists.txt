@@ -4,15 +4,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-include(YarpBackupVariable)
-yarp_backup_variable(PACKAGE_VERSION)
-set(PACKAGE_VERSION ${THRIFT_VERSION}-yarped)
-configure_file("${THRIFT_ROOT}/compiler/cpp/src/thrift/version.h.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/thrift/version.h"
-               @ONLY)
-yarp_restore_variable(PACKAGE_VERSION)
-
-set(yarpidl_thrift_SRCS "${CMAKE_CURRENT_BINARY_DIR}/thrift/version.h"
+set(yarpidl_thrift_SRCS "${THRIFT_ROOT}/compiler/cpp/src/thrift/version.h"
                         "${THRIFT_ROOT}/compiler/cpp/src/thrift/common.cc"
                         "${THRIFT_ROOT}/compiler/cpp/src/thrift/generate/t_generator.cc"
                         "${THRIFT_ROOT}/compiler/cpp/src/thrift/parse/t_typedef.cc"
@@ -27,27 +19,25 @@ set(yarpidl_thrift_YARP_SRCS src/t_yarp_generator.cc)
 if(YARP_HAS_BISON AND YARP_HAS_FLEX AND NOT CMAKE_CROSSCOMPILING)
   bison_target(thrifty
                "${THRIFT_ROOT}/compiler/cpp/src/thrift/thrifty.yy"
-               "${CMAKE_CURRENT_BINARY_DIR}/thrift/thrifty.cc"
+               "${CMAKE_CURRENT_BINARY_DIR}/thrifty.cc"
                COMPILE_FLAGS --no-lines)
   flex_target(thriftl
               "${THRIFT_ROOT}/compiler/cpp/src/thrift/thriftl.ll"
-              "${CMAKE_CURRENT_BINARY_DIR}/thrift/thriftl.cc"
+              "${CMAKE_CURRENT_BINARY_DIR}/thriftl.cc"
               COMPILE_FLAGS --noline)
   add_flex_bison_dependency(thriftl thrifty)
 else()
   # Simulate bison and flex run
   set(BISON_thrifty_DEFINED TRUE)
   set(BISON_thrifty_INPUT "${THRIFT_ROOT}/compiler/cpp/src/thrifty.yy")
-  set(BISON_thrifty_OUTPUT_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/src_gen/thrift/thrifty.cc")
-  set(BISON_thrifty_OUTPUT_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src_gen/thrift/thrifty.hh")
+  set(BISON_thrifty_OUTPUT_SOURCE "${THRIFT_ROOT}/compiler/cpp/src/thrift/thrifty.cc")
+  set(BISON_thrifty_OUTPUT_HEADER "${THRIFT_ROOT}/compiler/cpp/src/thrift/thrifty.hh")
   set(BISON_thrifty_OUTPUTS "${BISON_thrifty_OUTPUT_SOURCE}" "${BISON_thrifty_OUTPUT_HEADER}")
   set(BISON_thrifty_COMPILE_FLAGS -d)
   set(FLEX_thriftl_DEFINED TRUE)
-  set(FLEX_thriftl_OUTPUTS "${CMAKE_CURRENT_SOURCE_DIR}/src_gen/thrift/thriftl.cc")
+  set(FLEX_thriftl_OUTPUTS "${THRIFT_ROOT}/compiler/cpp/src/thrift/thriftl.cc")
   set(FLEX_thriftl_INPUT "${THRIFT_ROOT}/compiler/cpp/src/thriftl.ll")
   set(FLEX_thriftl_OUTPUT_HEADER "")
-  include_directories(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/src_gen")
-
 endif()
 
 set(yarpidl_thrift_GEN_SRCS ${BISON_thrifty_OUTPUTS} ${FLEX_thriftl_OUTPUTS})

@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(yarp_ros_example)
 
-find_package(YARP 3.3.103 COMPONENTS os rosmsg idl_tools REQUIRED)
+find_package(YARP 3.3.103 COMPONENTS os dev math rosmsg idl_tools REQUIRED)
 
 add_executable(add_int_client_v1)
 target_sources(add_int_client_v1 PRIVATE add_int_client_v1.cpp)
@@ -50,6 +50,16 @@ target_sources(talker PRIVATE talker.cpp)
 target_link_libraries(talker PRIVATE YARP::YARP_os
                                      YARP::YARP_init
                                      YARP::YARP_rosmsg)
+
+add_executable(rosmap_publisher)
+target_sources(rosmap_publisher PRIVATE rosmap_publisher.cpp)
+target_link_libraries(rosmap_publisher PRIVATE
+                                        YARP::YARP_os
+                                        YARP::YARP_dev
+                                        YARP::YARP_math
+                                        YARP::YARP_init
+                                        YARP::YARP_rosmsg)
+
 
 yarp_idl_to_dir(INPUT_FILES package/src/yarp_test/srv/AddTwoInts.srv
                 OUTPUT_DIR ${CMAKE_BINARY_DIR}/msg

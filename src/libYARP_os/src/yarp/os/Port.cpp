@@ -102,7 +102,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
 
     NameConfig conf;
     std::string nenv = std::string("YARP_RENAME") + conf.getSafeString(n);
-    std::string rename = yarp::conf::environment::getEnvironment(nenv.c_str());
+    std::string rename = yarp::conf::environment::get_string(nenv);
     if (!rename.empty()) {
         n = rename;
         contact2.setName(n);
@@ -148,7 +148,7 @@ bool Port::open(const Contact& contact, bool registerName, const char* fakeName)
     }
     if (!n.empty() && n != "..." && n[0] != '=' && n.substr(0, 3) != "...") {
         if (fakeName == nullptr) {
-            std::string prefix = yarp::conf::environment::getEnvironment("YARP_PORT_PREFIX");
+            std::string prefix = yarp::conf::environment::get_string("YARP_PORT_PREFIX");
             if (!prefix.empty()) {
                 n = prefix + n;
                 contact2.setName(n);

@@ -17,4 +17,4 @@ target_link_libraries(harness_robotinterface PRIVATE YARP_harness
 
 set_property(TARGET harness_robotinterface PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_robotinterface)
+yarp_catch_discover_tests(harness_robotinterface)

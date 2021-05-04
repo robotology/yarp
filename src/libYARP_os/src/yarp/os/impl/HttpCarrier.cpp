@@ -286,7 +286,7 @@ yarp::os::impl::HttpTwoWayStream::HttpTwoWayStream(TwoWayStream* delegate, const
         std::string body = from;
         if (chunked) {
             body += "Reading data from port...\n";
-            header += NetType::toHexString((int)(body.length() + N));
+            header += yarp::conf::numeric::to_hex_string((int)(body.length() + N));
             header += "\r\n";
         }
 
@@ -414,7 +414,7 @@ void yarp::os::impl::HttpTwoWayStream::apply(char ch)
                 proc += "<a href=\"http://";
                 proc += addr.getHost();
                 proc += ":";
-                proc += NetType::toString(addr.getPort());
+                proc += yarp::conf::numeric::to_string(addr.getPort());
                 proc += "\">";
                 proc += addr.getRegName();
                 proc += "</A> ";
@@ -710,7 +710,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto)
     std::string from = "<html><head><link href=\"http://";
     from += home.getHost();
     from += ":";
-    from += NetType::toString(home.getPort());
+    from += yarp::conf::numeric::to_string(home.getPort());
     from += R"(/web/main.css" rel="stylesheet" type="text/css"/></head><body bgcolor='#ffffcc'><h1>yarp port )";
     from += proto.getRoute().getToName();
     from += "</h1>\n";
@@ -718,25 +718,25 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto)
     from += "<p>(<a href=\"http://";
     from += home.getHost();
     from += ":";
-    from += NetType::toString(home.getPort());
+    from += yarp::conf::numeric::to_string(home.getPort());
     from += "/data=list\">All ports</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
     from += me.getHost();
     from += ":";
-    from += NetType::toString(me.getPort());
+    from += yarp::conf::numeric::to_string(me.getPort());
     from += "/\">connections</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
     from += me.getHost();
     from += ":";
-    from += NetType::toString(me.getPort());
+    from += yarp::conf::numeric::to_string(me.getPort());
     from += "/data=help\">help</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
     from += me.getHost();
     from += ":";
-    from += NetType::toString(me.getPort());
+    from += yarp::conf::numeric::to_string(me.getPort());
     from += "/r\">read</a>)&nbsp;&nbsp;\n";
 
     from += "</p>\n";
@@ -744,7 +744,7 @@ bool yarp::os::impl::HttpCarrier::expectSenderSpecifier(ConnectionState& proto)
     from += R"(<form method="post" action="http://)";
     from += me.getHost();
     from += ":";
-    from += NetType::toString(me.getPort());
+    from += yarp::conf::numeric::to_string(me.getPort());
     from += "/form\">";
 
     prefix = from;
@@ -834,7 +834,7 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
     std::string body = b.find("web").toString();
     if (body.length() != 0) {
         std::string header;
-        header += NetType::toHexString((int)body.length());
+        header += yarp::conf::numeric::to_hex_string((int)body.length());
         header += "\r\n";
 
         Bytes b2((char*)header.c_str(), header.length());
@@ -849,7 +849,7 @@ bool yarp::os::impl::HttpCarrier::write(ConnectionState& proto, SizedWriter& wri
     } else {
         std::string txt = b.toString() + "\r\n";
         std::string header;
-        header += NetType::toHexString((int)txt.length());
+        header += yarp::conf::numeric::to_hex_string((int)txt.length());
         header += "\r\n";
         Bytes b2((char*)header.c_str(), header.length());
         proto.os().write(b2);
@@ -896,7 +896,7 @@ bool yarp::os::impl::HttpCarrier::reply(ConnectionState& proto, SizedWriter& wri
         header += "Transfer-Encoding: chunked\r\n";
         header += "\r\n";
         int N = 2 * 1024;
-        header += NetType::toHexString((int)body.length() + N);
+        header += yarp::conf::numeric::to_hex_string((int)body.length() + N);
         header += "\r\n";
 
         Bytes b2((char*)header.c_str(), header.length());

@@ -65,7 +65,8 @@ bool yarp::os::Stamp::read(ConnectionReader& connection)
             return false;
         }
         std::int32_t len = connection.expectInt32();
-        if (len != 2) {
+        // len should be 2 for Stamp, 3 for Header
+        if (len != 2 && len != 3) {
             return false;
         }
         std::int32_t code = connection.expectInt32();
@@ -83,6 +84,19 @@ bool yarp::os::Stamp::read(ConnectionReader& connection)
             timeStamp = 0;
             return false;
         }
+
+        // Read frameId (unless receiving a Stamp), but just discard its value
+        if (len == 3) {
+            code = connection.expectInt32();
+            if (code != BOTTLE_TAG_STRING) {
+                sequenceNumber = -1;
+                timeStamp = 0;
+                return false;
+            }
+            std::string unused = connection.expectString();
+            YARP_UNUSED(unused);
+        }
+
     }
     return !connection.isError();
 }

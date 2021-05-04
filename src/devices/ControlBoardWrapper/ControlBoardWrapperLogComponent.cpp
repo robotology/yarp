@@ -8,4 +8,4 @@
 
 #include "ControlBoardWrapperLogComponent.h"
 
-YARP_LOG_COMPONENT(CONTROLBOARDWRAPPER, "yarp.devices.ControlBoardWrapper")
+YARP_LOG_COMPONENT(CONTROLBOARD, LOG_COMPONENT)

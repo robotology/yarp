@@ -451,9 +451,9 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgb
         {
-            unsigned char r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char r{0};
+            unsigned char g{0};
+            unsigned char b{0};
 
             PixelRgb() = default;
             PixelRgb(unsigned char n_r,
@@ -485,10 +485,10 @@ namespace yarp {
             {
             }
 
-            unsigned char r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char a{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char r{0};
+            unsigned char g{0};
+            unsigned char b{0};
+            unsigned char a{0};
         };
         YARP_END_PACK
 
@@ -498,10 +498,10 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelBgra
         {
-            unsigned char b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char a{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char b{0};
+            unsigned char g{0};
+            unsigned char r{0};
+            unsigned char a{0};
 
             PixelBgra() = default;
             PixelBgra(unsigned char n_r,
@@ -523,9 +523,9 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelBgr
         {
-            unsigned char b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            unsigned char r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            unsigned char b{0};
+            unsigned char g{0};
+            unsigned char r{0};
 
             PixelBgr() = default;
             PixelBgr(unsigned char n_r, unsigned char n_g, unsigned char n_b) :
@@ -577,9 +577,9 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgbFloat
         {
-            float r{0.0F}; // NOLINT(misc-non-private-member-variables-in-classes)
-            float g{0.0F}; // NOLINT(misc-non-private-member-variables-in-classes)
-            float b{0.0F}; // NOLINT(misc-non-private-member-variables-in-classes)
+            float r{0.0F};
+            float g{0.0F};
+            float b{0.0F};
 
             PixelRgbFloat() = default;
             PixelRgbFloat(float n_r,
@@ -599,9 +599,9 @@ namespace yarp {
         YARP_BEGIN_PACK
         struct YARP_sig_API PixelRgbInt
         {
-            yarp::os::NetInt32 r{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            yarp::os::NetInt32 g{0}; // NOLINT(misc-non-private-member-variables-in-classes)
-            yarp::os::NetInt32 b{0}; // NOLINT(misc-non-private-member-variables-in-classes)
+            yarp::os::NetInt32 r{0};
+            yarp::os::NetInt32 g{0};
+            yarp::os::NetInt32 b{0};
 
             PixelRgbInt() = default;
             PixelRgbInt(int n_r,

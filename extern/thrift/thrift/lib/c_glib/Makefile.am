@@ -16,7 +16,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-AUTOMAKE_OPTIONS = serial-tests
+AUTOMAKE_OPTIONS = serial-tests nostdinc
 SUBDIRS = . test
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -32,6 +32,7 @@ AM_CFLAGS = -Wall -Wextra -pedantic
 libthrift_c_glib_la_SOURCES = src/thrift/c_glib/thrift.c \
                               src/thrift/c_glib/thrift_struct.c \
                               src/thrift/c_glib/thrift_application_exception.c \
+                              src/thrift/c_glib/thrift_configuration.c \
                               src/thrift/c_glib/processor/thrift_processor.c \
                               src/thrift/c_glib/processor/thrift_dispatch_processor.c \
                               src/thrift/c_glib/processor/thrift_multiplexed_processor.c \
@@ -59,7 +60,7 @@ libthrift_c_glib_la_SOURCES = src/thrift/c_glib/thrift.c \
                               src/thrift/c_glib/server/thrift_server.c \
                               src/thrift/c_glib/server/thrift_simple_server.c
 
-libthrift_c_glib_la_CFLAGS = $(AM_CFLAGS) $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(OPENSSL_INCLUDES)
+libthrift_c_glib_la_CFLAGS = $(AM_CFLAGS) $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(OPENSSL_INCLUDES) -I$(top_builddir)/lib/c_glib/src/thrift
 libthrift_c_glib_la_LDFLAGS = $(AM_LDFLAGS) $(GLIB_LIBS) $(GOBJECT_LIBS)  $(OPENSSL_LDFLAGS) $(OPENSSL_LIBS) 
 
 include_thriftdir = $(includedir)/thrift/c_glib
@@ -67,7 +68,8 @@ include_thrift_HEADERS = \
                          $(top_builddir)/config.h \
                          src/thrift/c_glib/thrift.h \
                          src/thrift/c_glib/thrift_application_exception.h \
-                         src/thrift/c_glib/thrift_struct.h
+                         src/thrift/c_glib/thrift_struct.h \
+                         src/thrift/c_glib/thrift_configuration.h
 
 include_protocoldir = $(include_thriftdir)/protocol
 include_protocol_HEADERS = src/thrift/c_glib/protocol/thrift_protocol.h \

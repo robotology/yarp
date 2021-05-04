@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperMotor.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 bool ControlBoardWrapperMotor::getTemperature(int m, double* val)
 {

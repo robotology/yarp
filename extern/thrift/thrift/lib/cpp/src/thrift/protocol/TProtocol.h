@@ -27,9 +27,12 @@
 
 #include <thrift/transport/TTransport.h>
 #include <thrift/protocol/TProtocolException.h>
+#include <thrift/protocol/TEnum.h>
+#include <thrift/protocol/TList.h>
+#include <thrift/protocol/TSet.h>
+#include <thrift/protocol/TMap.h>
 
-#include <thrift/stdcxx.h>
-#include <boost/static_assert.hpp>
+#include <memory>
 
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
@@ -48,7 +51,7 @@
 // http://cellperformance.beyond3d.com/articles/2006/06/understanding-strict-aliasing.html
 template <typename To, typename From>
 static inline To bitwise_cast(From from) {
-  BOOST_STATIC_ASSERT(sizeof(From) == sizeof(To));
+  static_assert(sizeof(From) == sizeof(To), "sizeof(From) == sizeof(To)");
 
   // BAD!!!  These are all broken with -O2.
   //return *reinterpret_cast<To*>(&from);  // BAD!!!
@@ -89,15 +92,18 @@ static inline To bitwise_cast(From from) {
 #  define __THRIFT_LITTLE_ENDIAN LITTLE_ENDIAN
 #  define __THRIFT_BIG_ENDIAN BIG_ENDIAN
 # else
-#  include <boost/config.hpp>
-#  include <boost/detail/endian.hpp>
-#  define __THRIFT_BYTE_ORDER BOOST_BYTE_ORDER
+#  include <boost/predef/other/endian.h>
+#  if BOOST_ENDIAN_BIG_BYTE
+#    define __THRIFT_BYTE_ORDER 4321
+#    define __THRIFT_LITTLE_ENDIAN 0
+#    define __THRIFT_BIG_ENDIAN __THRIFT_BYTE_ORDER
+#  elif BOOST_ENDIAN_LITTLE_BYTE
+#    define __THRIFT_BYTE_ORDER 1234
+#    define __THRIFT_LITTLE_ENDIAN __THRIFT_BYTE_ORDER
+#    define __THRIFT_BIG_ENDIAN 0
+#  endif
 #  ifdef BOOST_LITTLE_ENDIAN
-#   define __THRIFT_LITTLE_ENDIAN __THRIFT_BYTE_ORDER
-#   define __THRIFT_BIG_ENDIAN 0
 #  else
-#   define __THRIFT_LITTLE_ENDIAN 0
-#   define __THRIFT_BIG_ENDIAN __THRIFT_BYTE_ORDER
 #  endif
 # endif
 #endif
@@ -167,45 +173,6 @@ namespace thrift {
 namespace protocol {
 
 using apache::thrift::transport::TTransport;
-
-/**
- * Enumerated definition of the types that the Thrift protocol supports.
- * Take special note of the T_END type which is used specifically to mark
- * the end of a sequence of fields.
- */
-enum TType {
-  T_STOP       = 0,
-  T_VOID       = 1,
-  T_BOOL       = 2,
-  T_BYTE       = 3,
-  T_I08        = 3,
-  T_I16        = 6,
-  T_I32        = 8,
-  T_U64        = 9,
-  T_I64        = 10,
-  T_DOUBLE     = 4,
-  T_STRING     = 11,
-  T_UTF7       = 11,
-  T_STRUCT     = 12,
-  T_MAP        = 13,
-  T_SET        = 14,
-  T_LIST       = 15,
-  T_UTF8       = 16,
-  T_UTF16      = 17
-};
-
-/**
- * Enumerated definition of the message types that the Thrift protocol
- * supports.
- */
-enum TMessageType {
-  T_CALL       = 1,
-  T_REPLY      = 2,
-  T_EXCEPTION  = 3,
-  T_ONEWAY     = 4
-};
-
-static const uint32_t DEFAULT_RECURSION_LIMIT = 64;
 
 /**
  * Abstract class for a thrift protocol driver. These are all the methods that
@@ -550,12 +517,12 @@ public:
   }
   virtual uint32_t skip_virt(TType type);
 
-  inline stdcxx::shared_ptr<TTransport> getTransport() { return ptrans_; }
+  inline std::shared_ptr<TTransport> getTransport() { return ptrans_; }
 
   // TODO: remove these two calls, they are for backwards
   // compatibility
-  inline stdcxx::shared_ptr<TTransport> getInputTransport() { return ptrans_; }
-  inline stdcxx::shared_ptr<TTransport> getOutputTransport() { return ptrans_; }
+  inline std::shared_ptr<TTransport> getInputTransport() { return ptrans_; }
+  inline std::shared_ptr<TTransport> getOutputTransport() { return ptrans_; }
 
   // input and output recursion depth are kept separate so that one protocol
   // can be used concurrently for both input and output.
@@ -576,15 +543,38 @@ public:
   uint32_t getRecursionLimit() const {return recursion_limit_;}
   void setRecurisionLimit(uint32_t depth) {recursion_limit_ = depth;}
 
+  // Returns the minimum amount of bytes needed to store the smallest possible instance of TType.
+  virtual int getMinSerializedSize(TType type) { 
+    THRIFT_UNUSED_VARIABLE(type);
+    return 0;
+  }
+
 protected:
-  TProtocol(stdcxx::shared_ptr<TTransport> ptrans)
-    : ptrans_(ptrans), input_recursion_depth_(0), output_recursion_depth_(0), recursion_limit_(DEFAULT_RECURSION_LIMIT)
+  TProtocol(std::shared_ptr<TTransport> ptrans)
+    : ptrans_(ptrans), input_recursion_depth_(0), output_recursion_depth_(0), 
+      recursion_limit_(ptrans->getConfiguration()->getRecursionLimit())
   {}
 
-  stdcxx::shared_ptr<TTransport> ptrans_;
+  virtual void checkReadBytesAvailable(TSet& set)
+  {
+      ptrans_->checkReadBytesAvailable(set.size_ * getMinSerializedSize(set.elemType_));
+  }
+
+  virtual void checkReadBytesAvailable(TList& list)
+  {
+      ptrans_->checkReadBytesAvailable(list.size_ * getMinSerializedSize(list.elemType_));
+  }
+
+  virtual void checkReadBytesAvailable(TMap& map)
+  {
+      int elmSize = getMinSerializedSize(map.keyType_) + getMinSerializedSize(map.valueType_);
+      ptrans_->checkReadBytesAvailable(map.size_ * elmSize);
+  }
+
+  std::shared_ptr<TTransport> ptrans_;
 
 private:
-  TProtocol() {}
+  TProtocol() = default;
   uint32_t input_recursion_depth_;
   uint32_t output_recursion_depth_;
   uint32_t recursion_limit_;
@@ -595,13 +585,13 @@ private:
  */
 class TProtocolFactory {
 public:
-  TProtocolFactory() {}
+  TProtocolFactory() = default;
 
   virtual ~TProtocolFactory();
 
-  virtual stdcxx::shared_ptr<TProtocol> getProtocol(stdcxx::shared_ptr<TTransport> trans) = 0;
-  virtual stdcxx::shared_ptr<TProtocol> getProtocol(stdcxx::shared_ptr<TTransport> inTrans,
-               stdcxx::shared_ptr<TTransport> outTrans) {
+  virtual std::shared_ptr<TProtocol> getProtocol(std::shared_ptr<TTransport> trans) = 0;
+  virtual std::shared_ptr<TProtocol> getProtocol(std::shared_ptr<TTransport> inTrans,
+               std::shared_ptr<TTransport> outTrans) {
     (void)outTrans;
     return getProtocol(inTrans);
   }
@@ -747,16 +737,12 @@ uint32_t skip(Protocol_& prot, TType type) {
     result += prot.readListEnd();
     return result;
   }
-  case T_STOP:
-  case T_VOID:
-  case T_U64:
-  case T_UTF8:
-  case T_UTF16:
-    break;
   default:
-    throw TProtocolException(TProtocolException::INVALID_DATA);
+    break;
   }
-  return 0;
+
+  throw TProtocolException(TProtocolException::INVALID_DATA,
+                           "invalid TType");
 }
 
 }}} // apache::thrift::protocol

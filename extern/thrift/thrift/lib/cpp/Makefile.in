@@ -109,27 +109,14 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-
-# This file is needed by compiler with plugin, while test/Makefile.am needs compiler
-# So test directory is directly picked by top level Makefile.am for plugin build
-@WITH_PLUGIN_FALSE@@WITH_TESTS_TRUE@am__append_1 = test
+@WITH_TESTS_TRUE@am__append_1 = test
 @AMX_HAVE_LIBEVENT_TRUE@am__append_2 = libthriftnb.la
 @AMX_HAVE_LIBEVENT_TRUE@am__append_3 = thrift-nb.pc
 @AMX_HAVE_ZLIB_TRUE@am__append_4 = libthriftz.la
 @AMX_HAVE_ZLIB_TRUE@am__append_5 = thrift-z.pc
-@AMX_HAVE_QT_TRUE@am__append_6 = libthriftqt.la
-@AMX_HAVE_QT_TRUE@am__append_7 = thrift-qt.pc
-@AMX_HAVE_QT5_TRUE@am__append_8 = libthriftqt5.la
-@AMX_HAVE_QT5_TRUE@am__append_9 = thrift-qt5.pc
-@WITH_BOOSTTHREADS_TRUE@am__append_10 = src/thrift/concurrency/BoostThreadFactory.cpp \
-@WITH_BOOSTTHREADS_TRUE@                        src/thrift/concurrency/BoostMonitor.cpp \
-@WITH_BOOSTTHREADS_TRUE@                        src/thrift/concurrency/BoostMutex.cpp
-
-@WITH_BOOSTTHREADS_FALSE@am__append_11 = src/thrift/concurrency/Mutex.cpp \
-@WITH_BOOSTTHREADS_FALSE@                        src/thrift/concurrency/Monitor.cpp \
-@WITH_BOOSTTHREADS_FALSE@                        src/thrift/concurrency/PosixThreadFactory.cpp
-
-@QT5_REDUCE_RELOCATIONS_TRUE@am__append_12 = -fPIC
+@AMX_HAVE_QT5_TRUE@am__append_6 = libthriftqt5.la
+@AMX_HAVE_QT5_TRUE@am__append_7 = thrift-qt5.pc
+@QT5_REDUCE_RELOCATIONS_TRUE@am__append_8 = -fPIC
 subdir = lib/cpp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
@@ -153,7 +140,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/aclocal/tar.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(include_async_HEADERS) \
@@ -165,8 +152,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h \
 	$(top_builddir)/lib/cpp/src/thrift/config.h \
 	$(top_builddir)/lib/c_glib/src/thrift/config.h
-CONFIG_CLEAN_FILES = thrift-nb.pc thrift-z.pc thrift-qt.pc \
-	thrift-qt5.pc thrift.pc
+CONFIG_CLEAN_FILES = thrift-nb.pc thrift-z.pc thrift-qt5.pc thrift.pc
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -207,58 +193,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 libthrift_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-am__libthrift_la_SOURCES_DIST = src/thrift/TApplicationException.cpp \
-	src/thrift/TOutput.cpp src/thrift/VirtualProfiling.cpp \
-	src/thrift/async/TAsyncChannel.cpp \
-	src/thrift/async/TAsyncProtocolProcessor.cpp \
-	src/thrift/async/TConcurrentClientSyncInfo.cpp \
-	src/thrift/concurrency/ThreadManager.cpp \
-	src/thrift/concurrency/TimerManager.cpp \
-	src/thrift/concurrency/Util.cpp \
-	src/thrift/processor/PeekProcessor.cpp \
-	src/thrift/protocol/TDebugProtocol.cpp \
-	src/thrift/protocol/TJSONProtocol.cpp \
-	src/thrift/protocol/TBase64Utils.cpp \
-	src/thrift/protocol/TMultiplexedProtocol.cpp \
-	src/thrift/protocol/TProtocol.cpp \
-	src/thrift/transport/TTransportException.cpp \
-	src/thrift/transport/TFDTransport.cpp \
-	src/thrift/transport/TFileTransport.cpp \
-	src/thrift/transport/TSimpleFileTransport.cpp \
-	src/thrift/transport/THttpTransport.cpp \
-	src/thrift/transport/THttpClient.cpp \
-	src/thrift/transport/THttpServer.cpp \
-	src/thrift/transport/TSocket.cpp \
-	src/thrift/transport/TPipe.cpp \
-	src/thrift/transport/TPipeServer.cpp \
-	src/thrift/transport/TSSLSocket.cpp \
-	src/thrift/transport/TSocketPool.cpp \
-	src/thrift/transport/TServerSocket.cpp \
-	src/thrift/transport/TSSLServerSocket.cpp \
-	src/thrift/transport/TNonblockingServerSocket.cpp \
-	src/thrift/transport/TNonblockingSSLServerSocket.cpp \
-	src/thrift/transport/TTransportUtils.cpp \
-	src/thrift/transport/TBufferTransports.cpp \
-	src/thrift/server/TConnectedClient.cpp \
-	src/thrift/server/TServer.cpp \
-	src/thrift/server/TServerFramework.cpp \
-	src/thrift/server/TSimpleServer.cpp \
-	src/thrift/server/TThreadPoolServer.cpp \
-	src/thrift/server/TThreadedServer.cpp \
-	src/thrift/concurrency/BoostThreadFactory.cpp \
-	src/thrift/concurrency/BoostMonitor.cpp \
-	src/thrift/concurrency/BoostMutex.cpp \
-	src/thrift/concurrency/Mutex.cpp \
-	src/thrift/concurrency/Monitor.cpp \
-	src/thrift/concurrency/PosixThreadFactory.cpp
 am__dirstamp = $(am__leading_dot)dirstamp
-@WITH_BOOSTTHREADS_TRUE@am__objects_1 = src/thrift/concurrency/BoostThreadFactory.lo \
-@WITH_BOOSTTHREADS_TRUE@	src/thrift/concurrency/BoostMonitor.lo \
-@WITH_BOOSTTHREADS_TRUE@	src/thrift/concurrency/BoostMutex.lo
-@WITH_BOOSTTHREADS_FALSE@am__objects_2 =  \
-@WITH_BOOSTTHREADS_FALSE@	src/thrift/concurrency/Mutex.lo \
-@WITH_BOOSTTHREADS_FALSE@	src/thrift/concurrency/Monitor.lo \
-@WITH_BOOSTTHREADS_FALSE@	src/thrift/concurrency/PosixThreadFactory.lo
 am_libthrift_la_OBJECTS = src/thrift/TApplicationException.lo \
 	src/thrift/TOutput.lo src/thrift/VirtualProfiling.lo \
 	src/thrift/async/TAsyncChannel.lo \
@@ -266,7 +201,6 @@ am_libthrift_la_OBJECTS = src/thrift/TApplicationException.lo \
 	src/thrift/async/TConcurrentClientSyncInfo.lo \
 	src/thrift/concurrency/ThreadManager.lo \
 	src/thrift/concurrency/TimerManager.lo \
-	src/thrift/concurrency/Util.lo \
 	src/thrift/processor/PeekProcessor.lo \
 	src/thrift/protocol/TDebugProtocol.lo \
 	src/thrift/protocol/TJSONProtocol.lo \
@@ -290,13 +224,18 @@ am_libthrift_la_OBJECTS = src/thrift/TApplicationException.lo \
 	src/thrift/transport/TNonblockingSSLServerSocket.lo \
 	src/thrift/transport/TTransportUtils.lo \
 	src/thrift/transport/TBufferTransports.lo \
+	src/thrift/transport/TWebSocketServer.lo \
+	src/thrift/transport/SocketCommon.lo \
 	src/thrift/server/TConnectedClient.lo \
 	src/thrift/server/TServer.lo \
 	src/thrift/server/TServerFramework.lo \
 	src/thrift/server/TSimpleServer.lo \
 	src/thrift/server/TThreadPoolServer.lo \
-	src/thrift/server/TThreadedServer.lo $(am__objects_1) \
-	$(am__objects_2)
+	src/thrift/server/TThreadedServer.lo \
+	src/thrift/concurrency/Mutex.lo \
+	src/thrift/concurrency/ThreadFactory.lo \
+	src/thrift/concurrency/Thread.lo \
+	src/thrift/concurrency/Monitor.lo
 libthrift_la_OBJECTS = $(am_libthrift_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -316,25 +255,12 @@ libthriftnb_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
 	$(libthriftnb_la_CXXFLAGS) $(CXXFLAGS) \
 	$(libthriftnb_la_LDFLAGS) $(LDFLAGS) -o $@
 @AMX_HAVE_LIBEVENT_TRUE@am_libthriftnb_la_rpath = -rpath $(libdir)
-libthriftqt_la_LIBADD =
-am_libthriftqt_la_OBJECTS =  \
-	src/thrift/qt/libthriftqt_la-TQIODeviceTransport.lo \
-	src/thrift/qt/libthriftqt_la-TQTcpServer.lo
-am__objects_3 = src/thrift/qt/libthriftqt_la-moc_TQTcpServer.lo
-nodist_libthriftqt_la_OBJECTS = $(am__objects_3)
-libthriftqt_la_OBJECTS = $(am_libthriftqt_la_OBJECTS) \
-	$(nodist_libthriftqt_la_OBJECTS)
-libthriftqt_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(libthriftqt_la_CXXFLAGS) $(CXXFLAGS) \
-	$(libthriftqt_la_LDFLAGS) $(LDFLAGS) -o $@
-@AMX_HAVE_QT_TRUE@am_libthriftqt_la_rpath = -rpath $(libdir)
 libthriftqt5_la_LIBADD =
 am_libthriftqt5_la_OBJECTS =  \
 	src/thrift/qt/libthriftqt5_la-TQIODeviceTransport.lo \
 	src/thrift/qt/libthriftqt5_la-TQTcpServer.lo
-am__objects_4 = src/thrift/qt/libthriftqt5_la-moc__TQTcpServer.lo
-nodist_libthriftqt5_la_OBJECTS = $(am__objects_4)
+am__objects_1 = src/thrift/qt/libthriftqt5_la-moc__TQTcpServer.lo
+nodist_libthriftqt5_la_OBJECTS = $(am__objects_1)
 libthriftqt5_la_OBJECTS = $(am_libthriftqt5_la_OBJECTS) \
 	$(nodist_libthriftqt5_la_OBJECTS)
 libthriftqt5_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
@@ -365,7 +291,7 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir) -I$(top_builddir)/lib/cpp/src/thrift -I$(top_builddir)/lib/c_glib/src/thrift
+DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -388,11 +314,9 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(libthrift_la_SOURCES) $(libthriftnb_la_SOURCES) \
-	$(libthriftqt_la_SOURCES) $(nodist_libthriftqt_la_SOURCES) \
 	$(libthriftqt5_la_SOURCES) $(nodist_libthriftqt5_la_SOURCES) \
 	$(libthriftz_la_SOURCES)
-DIST_SOURCES = $(am__libthrift_la_SOURCES_DIST) \
-	$(libthriftnb_la_SOURCES) $(libthriftqt_la_SOURCES) \
+DIST_SOURCES = $(libthrift_la_SOURCES) $(libthriftnb_la_SOURCES) \
 	$(libthriftqt5_la_SOURCES) $(libthriftz_la_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
@@ -442,9 +366,8 @@ ETAGS = etags
 CTAGS = ctags
 DIST_SUBDIRS = . test
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/thrift-nb.pc.in \
-	$(srcdir)/thrift-qt.pc.in $(srcdir)/thrift-qt5.pc.in \
-	$(srcdir)/thrift-z.pc.in $(srcdir)/thrift.pc.in \
-	$(top_srcdir)/depcomp
+	$(srcdir)/thrift-qt5.pc.in $(srcdir)/thrift-z.pc.in \
+	$(srcdir)/thrift.pc.in $(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -537,6 +460,7 @@ ERLC = @ERLC@
 ERLCFLAGS = @ERLCFLAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FLEX_COMPC = @FLEX_COMPC@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_CXXFLAGS = @GCOV_CXXFLAGS@
 GCOV_LDFLAGS = @GCOV_LDFLAGS@
@@ -547,6 +471,7 @@ GOBJECT_CFLAGS = @GOBJECT_CFLAGS@
 GOBJECT_LIBS = @GOBJECT_LIBS@
 GRADLE_OPTS = @GRADLE_OPTS@
 GREP = @GREP@
+GSETTINGS = @GSETTINGS@
 HAVE_CXX11 = @HAVE_CXX11@
 HAXE = @HAXE@
 HAXE_VERSION = @HAXE_VERSION@
@@ -582,18 +507,18 @@ LUA_SHORT_VERSION = @LUA_SHORT_VERSION@
 LUA_VERSION = @LUA_VERSION@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
+MAYBE_AS3 = @MAYBE_AS3@
 MAYBE_CL = @MAYBE_CL@
 MAYBE_CPP = @MAYBE_CPP@
-MAYBE_CSHARP = @MAYBE_CSHARP@
 MAYBE_C_GLIB = @MAYBE_C_GLIB@
 MAYBE_D = @MAYBE_D@
 MAYBE_DART = @MAYBE_DART@
-MAYBE_DOTNETCORE = @MAYBE_DOTNETCORE@
 MAYBE_ERLANG = @MAYBE_ERLANG@
 MAYBE_GO = @MAYBE_GO@
 MAYBE_HASKELL = @MAYBE_HASKELL@
 MAYBE_JAVA = @MAYBE_JAVA@
 MAYBE_LUA = @MAYBE_LUA@
+MAYBE_NETSTD = @MAYBE_NETSTD@
 MAYBE_NODEJS = @MAYBE_NODEJS@
 MAYBE_NODETS = @MAYBE_NODETS@
 MAYBE_PERL = @MAYBE_PERL@
@@ -602,10 +527,8 @@ MAYBE_PY3 = @MAYBE_PY3@
 MAYBE_PYTHON = @MAYBE_PYTHON@
 MAYBE_RS = @MAYBE_RS@
 MAYBE_RUBY = @MAYBE_RUBY@
-MCS = @MCS@
+MAYBE_SWIFT = @MAYBE_SWIFT@
 MKDIR_P = @MKDIR_P@
-MONO_CFLAGS = @MONO_CFLAGS@
-MONO_LIBS = @MONO_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 NODEJS = @NODEJS@
@@ -645,9 +568,6 @@ PY_PREFIX = @PY_PREFIX@
 QT5_CFLAGS = @QT5_CFLAGS@
 QT5_LIBS = @QT5_LIBS@
 QT5_MOC = @QT5_MOC@
-QT_CFLAGS = @QT_CFLAGS@
-QT_LIBS = @QT_LIBS@
-QT_MOC = @QT_MOC@
 RANLIB = @RANLIB@
 REBAR = @REBAR@
 RUBY = @RUBY@
@@ -659,6 +579,7 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SWIFT = @SWIFT@
 THRIFT = @THRIFT@
 TRIAL = @TRIAL@
 VERSION = @VERSION@
@@ -733,13 +654,13 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AUTOMAKE_OPTIONS = subdir-objects
+AUTOMAKE_OPTIONS = subdir-objects nostdinc
 SUBDIRS = . $(am__append_1)
 pkgconfigdir = $(libdir)/pkgconfig
 lib_LTLIBRARIES = libthrift.la $(am__append_2) $(am__append_4) \
-	$(am__append_6) $(am__append_8)
+	$(am__append_6)
 pkgconfig_DATA = thrift.pc $(am__append_3) $(am__append_5) \
-	$(am__append_7) $(am__append_9)
+	$(am__append_7)
 libthrift_la_LDFLAGS = -release $(VERSION)
 libthrift_la_LIBADD = $(BOOST_LDFLAGS) $(OPENSSL_LDFLAGS) $(OPENSSL_LIBS)
 AM_CXXFLAGS = -Wall -Wextra -pedantic
@@ -753,7 +674,6 @@ libthrift_la_SOURCES = src/thrift/TApplicationException.cpp \
 	src/thrift/async/TConcurrentClientSyncInfo.cpp \
 	src/thrift/concurrency/ThreadManager.cpp \
 	src/thrift/concurrency/TimerManager.cpp \
-	src/thrift/concurrency/Util.cpp \
 	src/thrift/processor/PeekProcessor.cpp \
 	src/thrift/protocol/TDebugProtocol.cpp \
 	src/thrift/protocol/TJSONProtocol.cpp \
@@ -778,13 +698,18 @@ libthrift_la_SOURCES = src/thrift/TApplicationException.cpp \
 	src/thrift/transport/TNonblockingSSLServerSocket.cpp \
 	src/thrift/transport/TTransportUtils.cpp \
 	src/thrift/transport/TBufferTransports.cpp \
+	src/thrift/transport/TWebSocketServer.cpp \
+	src/thrift/transport/SocketCommon.cpp \
 	src/thrift/server/TConnectedClient.cpp \
 	src/thrift/server/TServer.cpp \
 	src/thrift/server/TServerFramework.cpp \
 	src/thrift/server/TSimpleServer.cpp \
 	src/thrift/server/TThreadPoolServer.cpp \
-	src/thrift/server/TThreadedServer.cpp $(am__append_10) \
-	$(am__append_11)
+	src/thrift/server/TThreadedServer.cpp \
+	src/thrift/concurrency/Mutex.cpp \
+	src/thrift/concurrency/ThreadFactory.cpp \
+	src/thrift/concurrency/Thread.cpp \
+	src/thrift/concurrency/Monitor.cpp
 libthriftnb_la_SOURCES = src/thrift/server/TNonblockingServer.cpp \
                          src/thrift/async/TEvhttpServer.cpp \
                          src/thrift/async/TEvhttpClientChannel.cpp
@@ -793,36 +718,29 @@ libthriftz_la_SOURCES = src/thrift/transport/TZlibTransport.cpp \
                         src/thrift/transport/THeaderTransport.cpp \
                         src/thrift/protocol/THeaderProtocol.cpp
 
-libthriftqt_la_MOC = src/thrift/qt/moc_TQTcpServer.cpp
-nodist_libthriftqt_la_SOURCES = $(libthriftqt_la_MOC)
-libthriftqt_la_SOURCES = src/thrift/qt/TQIODeviceTransport.cpp \
-                         src/thrift/qt/TQTcpServer.cpp
-
-CLEANFILES = $(libthriftqt_la_MOC) $(libthriftqt5_la_MOC)
 libthriftqt5_la_MOC = src/thrift/qt/moc__TQTcpServer.cpp
 nodist_libthriftqt5_la_SOURCES = $(libthriftqt5_la_MOC)
 libthriftqt5_la_SOURCES = src/thrift/qt/TQIODeviceTransport.cpp \
                           src/thrift/qt/TQTcpServer.cpp
 
+CLEANFILES = $(libthriftqt5_la_MOC)
 
 # Flags for the various libraries
 libthriftnb_la_CPPFLAGS = $(AM_CPPFLAGS) $(LIBEVENT_CPPFLAGS)
 libthriftz_la_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_CPPFLAGS)
-libthriftqt_la_CPPFLAGS = $(AM_CPPFLAGS) $(QT_CFLAGS)
 libthriftqt5_la_CPPFLAGS = $(AM_CPPFLAGS) $(QT5_CFLAGS) \
-	$(am__append_12)
+	$(am__append_8)
 libthriftnb_la_CXXFLAGS = $(AM_CXXFLAGS)
 libthriftz_la_CXXFLAGS = $(AM_CXXFLAGS)
-libthriftqt_la_CXXFLAGS = $(AM_CXXFLAGS)
 libthriftqt5_la_CXXFLAGS = $(AM_CXXFLAGS)
 libthriftnb_la_LDFLAGS = -release $(VERSION) $(BOOST_LDFLAGS)
-libthriftz_la_LDFLAGS = -release $(VERSION) $(BOOST_LDFLAGS) $(ZLIB_LIBS)
-libthriftqt_la_LDFLAGS = -release $(VERSION) $(BOOST_LDFLAGS) $(QT_LIBS)
+libthriftz_la_LDFLAGS = -release $(VERSION) $(BOOST_LDFLAGS) $(ZLIB_LDFLAGS) $(ZLIB_LIBS)
 libthriftqt5_la_LDFLAGS = -release $(VERSION) $(BOOST_LDFLAGS) $(QT5_LIBS)
 include_thriftdir = $(includedir)/thrift
 include_thrift_HEADERS = \
                          $(top_builddir)/config.h \
                          src/thrift/thrift-config.h \
+                         src/thrift/thrift_export.h \
                          src/thrift/TDispatchProcessor.h \
                          src/thrift/Thrift.h \
                          src/thrift/TOutput.h \
@@ -830,29 +748,26 @@ include_thrift_HEADERS = \
                          src/thrift/TApplicationException.h \
                          src/thrift/TLogging.h \
                          src/thrift/TToString.h \
-                         src/thrift/stdcxx.h \
-                         src/thrift/TBase.h
+                         src/thrift/TBase.h \
+                         src/thrift/TConfiguration.h
 
 include_concurrencydir = $(include_thriftdir)/concurrency
 include_concurrency_HEADERS = \
-                         src/thrift/concurrency/BoostThreadFactory.h \
                          src/thrift/concurrency/Exception.h \
                          src/thrift/concurrency/Mutex.h \
                          src/thrift/concurrency/Monitor.h \
-                         src/thrift/concurrency/PlatformThreadFactory.h \
-                         src/thrift/concurrency/PosixThreadFactory.h \
-                         src/thrift/concurrency/StdMonitor.cpp \
-                         src/thrift/concurrency/StdMutex.cpp \
-                         src/thrift/concurrency/StdThreadFactory.cpp \
-                         src/thrift/concurrency/StdThreadFactory.h \
+                         src/thrift/concurrency/ThreadFactory.h \
                          src/thrift/concurrency/Thread.h \
                          src/thrift/concurrency/ThreadManager.h \
                          src/thrift/concurrency/TimerManager.h \
-                         src/thrift/concurrency/FunctionRunner.h \
-                         src/thrift/concurrency/Util.h
+                         src/thrift/concurrency/FunctionRunner.h
 
 include_protocoldir = $(include_thriftdir)/protocol
 include_protocol_HEADERS = \
+                         src/thrift/protocol/TEnum.h \
+                         src/thrift/protocol/TList.h \
+                         src/thrift/protocol/TSet.h \
+                         src/thrift/protocol/TMap.h \
                          src/thrift/protocol/TBinaryProtocol.h \
                          src/thrift/protocol/TBinaryProtocol.tcc \
                          src/thrift/protocol/TCompactProtocol.h \
@@ -886,6 +801,7 @@ include_transport_HEADERS = \
                          src/thrift/transport/THttpClient.h \
                          src/thrift/transport/THttpServer.h \
                          src/thrift/transport/TSocket.h \
+                         src/thrift/transport/TSocketUtils.h \
                          src/thrift/transport/TPipe.h \
                          src/thrift/transport/TPipeServer.h \
                          src/thrift/transport/TSSLSocket.h \
@@ -896,7 +812,9 @@ include_transport_HEADERS = \
                          src/thrift/transport/TTransportUtils.h \
                          src/thrift/transport/TBufferTransports.h \
                          src/thrift/transport/TShortReadTransport.h \
-                         src/thrift/transport/TZlibTransport.h
+                         src/thrift/transport/TZlibTransport.h \
+                         src/thrift/transport/TWebSocketServer.h \
+                         src/thrift/transport/SocketCommon.h
 
 include_serverdir = $(include_thriftdir)/server
 include_server_HEADERS = \
@@ -946,7 +864,6 @@ EXTRA_DIST = \
              thrift-nb.pc.in \
              thrift.pc.in \
              thrift-z.pc.in \
-             thrift-qt.pc.in \
              thrift-qt5.pc.in \
              src/thrift/qt/CMakeLists.txt \
              $(WINDOWS_DIST)
@@ -987,8 +904,6 @@ $(am__aclocal_m4_deps):
 thrift-nb.pc: $(top_builddir)/config.status $(srcdir)/thrift-nb.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 thrift-z.pc: $(top_builddir)/config.status $(srcdir)/thrift-z.pc.in
-	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
-thrift-qt.pc: $(top_builddir)/config.status $(srcdir)/thrift-qt.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 thrift-qt5.pc: $(top_builddir)/config.status $(srcdir)/thrift-qt5.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
@@ -1065,9 +980,6 @@ src/thrift/concurrency/ThreadManager.lo:  \
 	src/thrift/concurrency/$(am__dirstamp) \
 	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
 src/thrift/concurrency/TimerManager.lo:  \
-	src/thrift/concurrency/$(am__dirstamp) \
-	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
-src/thrift/concurrency/Util.lo:  \
 	src/thrift/concurrency/$(am__dirstamp) \
 	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
 src/thrift/processor/$(am__dirstamp):
@@ -1157,6 +1069,12 @@ src/thrift/transport/TTransportUtils.lo:  \
 src/thrift/transport/TBufferTransports.lo:  \
 	src/thrift/transport/$(am__dirstamp) \
 	src/thrift/transport/$(DEPDIR)/$(am__dirstamp)
+src/thrift/transport/TWebSocketServer.lo:  \
+	src/thrift/transport/$(am__dirstamp) \
+	src/thrift/transport/$(DEPDIR)/$(am__dirstamp)
+src/thrift/transport/SocketCommon.lo:  \
+	src/thrift/transport/$(am__dirstamp) \
+	src/thrift/transport/$(DEPDIR)/$(am__dirstamp)
 src/thrift/server/$(am__dirstamp):
 	@$(MKDIR_P) src/thrift/server
 	@: > src/thrift/server/$(am__dirstamp)
@@ -1179,22 +1097,16 @@ src/thrift/server/TThreadPoolServer.lo:  \
 src/thrift/server/TThreadedServer.lo:  \
 	src/thrift/server/$(am__dirstamp) \
 	src/thrift/server/$(DEPDIR)/$(am__dirstamp)
-src/thrift/concurrency/BoostThreadFactory.lo:  \
-	src/thrift/concurrency/$(am__dirstamp) \
-	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
-src/thrift/concurrency/BoostMonitor.lo:  \
-	src/thrift/concurrency/$(am__dirstamp) \
-	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
-src/thrift/concurrency/BoostMutex.lo:  \
-	src/thrift/concurrency/$(am__dirstamp) \
-	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
 src/thrift/concurrency/Mutex.lo:  \
 	src/thrift/concurrency/$(am__dirstamp) \
 	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
-src/thrift/concurrency/Monitor.lo:  \
+src/thrift/concurrency/ThreadFactory.lo:  \
 	src/thrift/concurrency/$(am__dirstamp) \
 	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
-src/thrift/concurrency/PosixThreadFactory.lo:  \
+src/thrift/concurrency/Thread.lo:  \
+	src/thrift/concurrency/$(am__dirstamp) \
+	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
+src/thrift/concurrency/Monitor.lo:  \
 	src/thrift/concurrency/$(am__dirstamp) \
 	src/thrift/concurrency/$(DEPDIR)/$(am__dirstamp)
 
@@ -1218,18 +1130,6 @@ src/thrift/qt/$(am__dirstamp):
 src/thrift/qt/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/thrift/qt/$(DEPDIR)
 	@: > src/thrift/qt/$(DEPDIR)/$(am__dirstamp)
-src/thrift/qt/libthriftqt_la-TQIODeviceTransport.lo:  \
-	src/thrift/qt/$(am__dirstamp) \
-	src/thrift/qt/$(DEPDIR)/$(am__dirstamp)
-src/thrift/qt/libthriftqt_la-TQTcpServer.lo:  \
-	src/thrift/qt/$(am__dirstamp) \
-	src/thrift/qt/$(DEPDIR)/$(am__dirstamp)
-src/thrift/qt/libthriftqt_la-moc_TQTcpServer.lo:  \
-	src/thrift/qt/$(am__dirstamp) \
-	src/thrift/qt/$(DEPDIR)/$(am__dirstamp)
-
-libthriftqt.la: $(libthriftqt_la_OBJECTS) $(libthriftqt_la_DEPENDENCIES) $(EXTRA_libthriftqt_la_DEPENDENCIES) 
-	$(AM_V_CXXLD)$(libthriftqt_la_LINK) $(am_libthriftqt_la_rpath) $(libthriftqt_la_OBJECTS) $(libthriftqt_la_LIBADD) $(LIBS)
 src/thrift/qt/libthriftqt5_la-TQIODeviceTransport.lo:  \
 	src/thrift/qt/$(am__dirstamp) \
 	src/thrift/qt/$(DEPDIR)/$(am__dirstamp)
@@ -1285,15 +1185,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/async/$(DEPDIR)/TConcurrentClientSyncInfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/async/$(DEPDIR)/libthriftnb_la-TEvhttpClientChannel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/async/$(DEPDIR)/libthriftnb_la-TEvhttpServer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/BoostMonitor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/BoostMutex.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/BoostThreadFactory.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/Monitor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/Mutex.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/PosixThreadFactory.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/Thread.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/ThreadFactory.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/ThreadManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/TimerManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/concurrency/$(DEPDIR)/Util.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/processor/$(DEPDIR)/PeekProcessor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/protocol/$(DEPDIR)/TBase64Utils.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/protocol/$(DEPDIR)/TDebugProtocol.Plo@am__quote@
@@ -1304,9 +1201,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/qt/$(DEPDIR)/libthriftqt5_la-TQIODeviceTransport.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/qt/$(DEPDIR)/libthriftqt5_la-TQTcpServer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/qt/$(DEPDIR)/libthriftqt5_la-moc__TQTcpServer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/qt/$(DEPDIR)/libthriftqt_la-TQIODeviceTransport.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/qt/$(DEPDIR)/libthriftqt_la-TQTcpServer.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/qt/$(DEPDIR)/libthriftqt_la-moc_TQTcpServer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/server/$(DEPDIR)/TConnectedClient.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/server/$(DEPDIR)/TServer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/server/$(DEPDIR)/TServerFramework.Plo@am__quote@
@@ -1314,6 +1208,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/server/$(DEPDIR)/TThreadPoolServer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/server/$(DEPDIR)/TThreadedServer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/server/$(DEPDIR)/libthriftnb_la-TNonblockingServer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/SocketCommon.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/TBufferTransports.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/TFDTransport.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/TFileTransport.Plo@am__quote@
@@ -1332,6 +1227,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/TSocketPool.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/TTransportException.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/TTransportUtils.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/TWebSocketServer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/libthriftz_la-THeaderTransport.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/transport/$(DEPDIR)/libthriftz_la-TZlibTransport.Plo@am__quote@
 
@@ -1379,27 +1275,6 @@ src/thrift/async/libthriftnb_la-TEvhttpClientChannel.lo: src/thrift/async/TEvhtt
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/thrift/async/TEvhttpClientChannel.cpp' object='src/thrift/async/libthriftnb_la-TEvhttpClientChannel.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libthriftnb_la_CPPFLAGS) $(CPPFLAGS) $(libthriftnb_la_CXXFLAGS) $(CXXFLAGS) -c -o src/thrift/async/libthriftnb_la-TEvhttpClientChannel.lo `test -f 'src/thrift/async/TEvhttpClientChannel.cpp' || echo '$(srcdir)/'`src/thrift/async/TEvhttpClientChannel.cpp
-
-src/thrift/qt/libthriftqt_la-TQIODeviceTransport.lo: src/thrift/qt/TQIODeviceTransport.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libthriftqt_la_CPPFLAGS) $(CPPFLAGS) $(libthriftqt_la_CXXFLAGS) $(CXXFLAGS) -MT src/thrift/qt/libthriftqt_la-TQIODeviceTransport.lo -MD -MP -MF src/thrift/qt/$(DEPDIR)/libthriftqt_la-TQIODeviceTransport.Tpo -c -o src/thrift/qt/libthriftqt_la-TQIODeviceTransport.lo `test -f 'src/thrift/qt/TQIODeviceTransport.cpp' || echo '$(srcdir)/'`src/thrift/qt/TQIODeviceTransport.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/thrift/qt/$(DEPDIR)/libthriftqt_la-TQIODeviceTransport.Tpo src/thrift/qt/$(DEPDIR)/libthriftqt_la-TQIODeviceTransport.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/thrift/qt/TQIODeviceTransport.cpp' object='src/thrift/qt/libthriftqt_la-TQIODeviceTransport.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libthriftqt_la_CPPFLAGS) $(CPPFLAGS) $(libthriftqt_la_CXXFLAGS) $(CXXFLAGS) -c -o src/thrift/qt/libthriftqt_la-TQIODeviceTransport.lo `test -f 'src/thrift/qt/TQIODeviceTransport.cpp' || echo '$(srcdir)/'`src/thrift/qt/TQIODeviceTransport.cpp
-
-src/thrift/qt/libthriftqt_la-TQTcpServer.lo: src/thrift/qt/TQTcpServer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libthriftqt_la_CPPFLAGS) $(CPPFLAGS) $(libthriftqt_la_CXXFLAGS) $(CXXFLAGS) -MT src/thrift/qt/libthriftqt_la-TQTcpServer.lo -MD -MP -MF src/thrift/qt/$(DEPDIR)/libthriftqt_la-TQTcpServer.Tpo -c -o src/thrift/qt/libthriftqt_la-TQTcpServer.lo `test -f 'src/thrift/qt/TQTcpServer.cpp' || echo '$(srcdir)/'`src/thrift/qt/TQTcpServer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/thrift/qt/$(DEPDIR)/libthriftqt_la-TQTcpServer.Tpo src/thrift/qt/$(DEPDIR)/libthriftqt_la-TQTcpServer.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/thrift/qt/TQTcpServer.cpp' object='src/thrift/qt/libthriftqt_la-TQTcpServer.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libthriftqt_la_CPPFLAGS) $(CPPFLAGS) $(libthriftqt_la_CXXFLAGS) $(CXXFLAGS) -c -o src/thrift/qt/libthriftqt_la-TQTcpServer.lo `test -f 'src/thrift/qt/TQTcpServer.cpp' || echo '$(srcdir)/'`src/thrift/qt/TQTcpServer.cpp
-
-src/thrift/qt/libthriftqt_la-moc_TQTcpServer.lo: src/thrift/qt/moc_TQTcpServer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libthriftqt_la_CPPFLAGS) $(CPPFLAGS) $(libthriftqt_la_CXXFLAGS) $(CXXFLAGS) -MT src/thrift/qt/libthriftqt_la-moc_TQTcpServer.lo -MD -MP -MF src/thrift/qt/$(DEPDIR)/libthriftqt_la-moc_TQTcpServer.Tpo -c -o src/thrift/qt/libthriftqt_la-moc_TQTcpServer.lo `test -f 'src/thrift/qt/moc_TQTcpServer.cpp' || echo '$(srcdir)/'`src/thrift/qt/moc_TQTcpServer.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/thrift/qt/$(DEPDIR)/libthriftqt_la-moc_TQTcpServer.Tpo src/thrift/qt/$(DEPDIR)/libthriftqt_la-moc_TQTcpServer.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/thrift/qt/moc_TQTcpServer.cpp' object='src/thrift/qt/libthriftqt_la-moc_TQTcpServer.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libthriftqt_la_CPPFLAGS) $(CPPFLAGS) $(libthriftqt_la_CXXFLAGS) $(CXXFLAGS) -c -o src/thrift/qt/libthriftqt_la-moc_TQTcpServer.lo `test -f 'src/thrift/qt/moc_TQTcpServer.cpp' || echo '$(srcdir)/'`src/thrift/qt/moc_TQTcpServer.cpp
 
 src/thrift/qt/libthriftqt5_la-TQIODeviceTransport.lo: src/thrift/qt/TQIODeviceTransport.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libthriftqt5_la_CPPFLAGS) $(CPPFLAGS) $(libthriftqt5_la_CXXFLAGS) $(CXXFLAGS) -MT src/thrift/qt/libthriftqt5_la-TQIODeviceTransport.lo -MD -MP -MF src/thrift/qt/$(DEPDIR)/libthriftqt5_la-TQIODeviceTransport.Tpo -c -o src/thrift/qt/libthriftqt5_la-TQIODeviceTransport.lo `test -f 'src/thrift/qt/TQIODeviceTransport.cpp' || echo '$(srcdir)/'`src/thrift/qt/TQIODeviceTransport.cpp
@@ -1975,9 +1850,6 @@ uninstall-am: uninstall-include_asyncHEADERS \
 
 .PRECIOUS: Makefile
 
-
-moc_%.cpp: %.h
-	$(QT_MOC) $(QT_CFLAGS) $< -o $@
 
 moc__%.cpp: %.h
 	$(QT5_MOC) $(QT5_CFLAGS) $< -o $@

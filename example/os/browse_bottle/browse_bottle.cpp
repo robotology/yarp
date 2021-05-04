@@ -37,7 +37,7 @@ void showBottle(Bottle& anUnknownBottle, int indentation = 0)
         case BOTTLE_TAG_BLOB:
             printf("binary blob of length %zd\n", element.asBlobLength());
             break;
-        case BOTTLE_TAG_VOCAB:
+        case BOTTLE_TAG_VOCAB32:
             printf("vocab [%s]\n", yarp::os::Vocab::decode(element.asVocab()).c_str());
             break;
         default:

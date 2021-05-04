@@ -10,13 +10,14 @@
 #include <yarp/os/Property.h>
 
 #include <yarp/conf/environment.h>
+#include <yarp/conf/string.h>
+
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/LogComponent.h>
 #include <yarp/os/impl/PlatformDirent.h>
-#include <yarp/os/impl/SplitString.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <algorithm>
@@ -38,14 +39,12 @@ class PropertyItem
 public:
     Bottle bot;
     std::unique_ptr<Property> backing;
-    bool singleton{false};
 
     PropertyItem() = default;
 
     PropertyItem(const PropertyItem& rhs) :
         bot(rhs.bot),
-        backing(nullptr),
-        singleton(rhs.singleton)
+        backing(nullptr)
     {
         if (rhs.backing) {
             backing = std::make_unique<Property>(*(rhs.backing));
@@ -59,7 +58,6 @@ public:
             if (rhs.backing) {
                 backing = std::make_unique<Property>(*(rhs.backing));
             }
-            singleton = rhs.singleton;
         }
         return *this;
     }
@@ -138,7 +136,6 @@ public:
     void put(const std::string& key, const std::string& val)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = true;
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
@@ -148,7 +145,6 @@ public:
     void put(const std::string& key, const Value& bit)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = true;
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
@@ -158,7 +154,6 @@ public:
     void put(const std::string& key, Value* bit)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = true;
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
@@ -168,7 +163,6 @@ public:
     Property& addGroup(const std::string& key)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = true;
         p->clear();
         p->bot.clear();
         p->bot.addString(key);
@@ -229,7 +223,6 @@ public:
     Bottle& putBottle(const char* key, const Bottle& val)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = false;
         p->clear();
         p->bot = val;
         return p->bot;
@@ -239,7 +232,6 @@ public:
     Bottle& putBottle(const char* key)
     {
         PropertyItem* p = getProp(key, true);
-        p->singleton = false;
         p->clear();
         p->bot.clear();
         return p->bot;
@@ -428,9 +420,8 @@ public:
         bool ok = true;
         if (!readFile(fname, txt, true)) {
             ok = false;
-            SplitString ss(searchPath.c_str(), ';');
-            for (int i = 0; i < ss.size(); i++) {
-                std::string trial = ss.get(i);
+            for (const auto& s : yarp::conf::string::split(searchPath, ';')) {
+                std::string trial = s;
                 trial += '/';
                 trial += fname;
 
@@ -439,7 +430,7 @@ public:
                 txt = "";
                 if (readFile(trial, txt, true)) {
                     ok = true;
-                    pathPrefix = ss.get(i);
+                    pathPrefix = s;
                     pathPrefix += '/';
                     break;
                 }
@@ -820,7 +811,7 @@ public:
                 }
                 inVar = false;
                 yCTrace(PROPERTY, "VARIABLE %s\n", var.c_str());
-                std::string add = yarp::conf::environment::getEnvironment(var.c_str());
+                std::string add = yarp::conf::environment::get_string(var);
                 if (add.empty()) {
                     add = env.find(var).toString();
                 }

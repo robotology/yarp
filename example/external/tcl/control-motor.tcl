@@ -11,7 +11,7 @@
 # It assumes you have some robot real or simulated to communicate with.
 #
 # Specifically, for testing, the program assumes you have run:
-#   yarpdev --device fakeMotor --name /controlboard
+#   yarpdev --device fakeMotionControl --name /controlboard --GENERAL::Joints 4
 # If you are doing something else, replace "/controlboard" below
 # with the suffix of the motor port you want to try controlling.
 #

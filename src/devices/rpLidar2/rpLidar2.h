@@ -42,10 +42,20 @@ typedef unsigned char byte;
 
 //---------------------------------------------------------------------------------------------------------------
 /**
- * @ingroup dev_impl_lidar
+ *  @ingroup dev_impl_lidar
  *
- * \brief `rpLidar2`: Documentation to be added
+ * \brief `rpLidar2`: The device driver for the RP2 lidar
+ *
+ *  Parameters required by this device are:
+ * | Parameter name | SubParameter    | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
+ * |:--------------:|:---------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+ * | GENERAL        | serial_port     | string  | -              |   -           | Yes          | Name of the serial port                                           |       |
+ * | GENERAL        | serial_baudrate | int     | -              |   -           | Yes          | Baud rate of the srial port                                       |       |
+ * | GENERAL        | sample_buffer_life | int  | -              |   -           | Yes          | Keeps data in memory for some iterations, in order to complete the scan with the missing values (the scan is not always complete)       |  |
+ * | GENERAL        | motor_pwm       | int     | -              |   0           | No           | Used by internal RPLidar APIs                                     |       |
+ * | GENERAL        | thread_period   | int     | ms             |   0           | No           | Acquisition thread period. The default value = 0 means maximum speed (measured duration ~75ms). It is useful to change it only if you need to slow down the device (e.g. 100ms)    |  |
  */
+
 class RpLidar2 : public PeriodicThread, public yarp::dev::Lidar2DDeviceBase, public DeviceDriver
 {
     typedef rp::standalone::rplidar::RPlidarDriver rplidardrv;
@@ -60,7 +70,7 @@ protected:
     rplidardrv*           m_drv;
 
 public:
-    RpLidar2(double period = 0.01) : PeriodicThread(period),
+    RpLidar2(double period = 0) : PeriodicThread(period), //period=0 allows to run the thead as fast as possibile, but it is not a busy loop since yield() is called internally
         m_buffer_life(0),
         m_inExpressMode(false),
         m_pwm_val(0),

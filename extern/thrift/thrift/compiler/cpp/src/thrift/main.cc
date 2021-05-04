@@ -53,9 +53,6 @@
 #include "thrift/parse/t_scope.h"
 #include "thrift/generate/t_generator.h"
 #include "thrift/audit/t_audit.h"
-#ifdef THRIFT_ENABLE_PLUGIN
-#include "thrift/plugin/plugin_output.h"
-#endif
 
 #include "thrift/version.h"
 
@@ -171,7 +168,7 @@ char* saferealpath(const char* path, char* resolved_path) {
 #ifdef _WIN32
   char buf[MAX_PATH];
   char* basename;
-  DWORD len = GetFullPathName(path, MAX_PATH, buf, &basename);
+  DWORD len = GetFullPathNameA(path, MAX_PATH, buf, &basename);
   if (len == 0 || len > MAX_PATH - 1) {
     strcpy(resolved_path, path);
   } else {
@@ -340,7 +337,7 @@ string include_file(string filename) {
     // Realpath!
     char rp[THRIFT_PATH_MAX];
     // cppcheck-suppress uninitvar
-    if (saferealpath(filename.c_str(), rp) == NULL) {
+    if (saferealpath(filename.c_str(), rp) == nullptr) {
       pwarning(0, "Cannot open include file %s\n", filename.c_str());
       return std::string();
     }
@@ -363,7 +360,7 @@ string include_file(string filename) {
       // Realpath!
       char rp[THRIFT_PATH_MAX];
       // cppcheck-suppress uninitvar
-      if (saferealpath(sfilename.c_str(), rp) == NULL) {
+      if (saferealpath(sfilename.c_str(), rp) == nullptr) {
         continue;
       }
 
@@ -385,20 +382,20 @@ string include_file(string filename) {
  * Also prints a warning if we are discarding information.
  */
 void clear_doctext() {
-  if (g_doctext != NULL) {
+  if (g_doctext != nullptr) {
     pwarning(2, "Uncaptured doctext at on line %d.", g_doctext_lineno);
   }
   free(g_doctext);
-  g_doctext = NULL;
+  g_doctext = nullptr;
 }
 
 /**
  * Reset program doctext information after processing a file
  */
 void reset_program_doctext_info() {
-  if (g_program_doctext_candidate != NULL) {
+  if (g_program_doctext_candidate != nullptr) {
     free(g_program_doctext_candidate);
-    g_program_doctext_candidate = NULL;
+    g_program_doctext_candidate = nullptr;
   }
   g_program_doctext_lineno = 0;
   g_program_doctext_status = INVALID;
@@ -409,7 +406,7 @@ void reset_program_doctext_info() {
  * We are sure the program doctext candidate is really the program doctext.
  */
 void declare_valid_program_doctext() {
-  if ((g_program_doctext_candidate != NULL) && (g_program_doctext_status == STILL_CANDIDATE)) {
+  if ((g_program_doctext_candidate != nullptr) && (g_program_doctext_status == STILL_CANDIDATE)) {
     g_program_doctext_status = ABSOLUTELY_SURE;
     pdebug("%s", "program doctext set to ABSOLUTELY_SURE");
   } else {
@@ -449,7 +446,7 @@ char* clean_up_doctext(char* doctext) {
 
   // A very profound docstring.
   if (lines.empty()) {
-    return NULL;
+    return nullptr;
   }
 
   // Clear leading whitespace from the first line.
@@ -619,7 +616,7 @@ void dump_docstrings(t_program* program) {
  * Emits a warning on list<byte>, binary type is typically a much better choice.
  */
 void check_for_list_of_bytes(t_type* list_elem_type) {
-  if ((g_parse_mode == PROGRAM) && (list_elem_type != NULL) && list_elem_type->is_base_type()) {
+  if ((g_parse_mode == PROGRAM) && (list_elem_type != nullptr) && list_elem_type->is_base_type()) {
     t_base_type* tbase = (t_base_type*)list_elem_type;
     if (tbase->get_base() == t_base_type::TYPE_I8) {
       pwarning(1, "Consider using the more efficient \"binary\" type instead of \"list<byte>\".");
@@ -643,12 +640,12 @@ void emit_byte_type_warning() {
 
 /**
  * Prints deprecation notice for old NS declarations that are no longer supported
- * If new_form is NULL, old_form is assumed to be a language identifier, such as "cpp"
- * If new_form is not NULL, both arguments are used exactly as given
+ * If new_form is nullptr, old_form is assumed to be a language identifier, such as "cpp"
+ * If new_form is not nullptr, both arguments are used exactly as given
  */
 void error_unsupported_namespace_decl(const char* old_form, const char* new_form) {
   const char* remainder = "";
-  if( new_form == NULL) {
+  if( new_form == nullptr) {
     new_form = old_form;
     remainder = "_namespace";
   }
@@ -811,13 +808,13 @@ void validate_const_rec(std::string name, t_type* type, t_const_value* value) {
       if (v_iter->first->get_type() != t_const_value::CV_STRING) {
         throw "type error: " + name + " struct key must be string";
       }
-      t_type* field_type = NULL;
+      t_type* field_type = nullptr;
       for (f_iter = fields.begin(); f_iter != fields.end(); ++f_iter) {
         if ((*f_iter)->get_name() == v_iter->first->get_string()) {
           field_type = (*f_iter)->get_type();
         }
       }
-      if (field_type == NULL) {
+      if (field_type == nullptr) {
         throw "type error: " + type->get_name() + " has no field " + v_iter->first->get_string();
       }
 
@@ -935,7 +932,7 @@ void parse(t_program* program, t_program* parent_program) {
     if (yyparse() != 0) {
       failure("Parser error during include pass.");
     }
-  } catch (string x) {
+  } catch (string &x) {
     failure(x.c_str());
   }
   fclose(yyin);
@@ -954,7 +951,7 @@ void parse(t_program* program, t_program* parent_program) {
   g_parse_mode = PROGRAM;
   g_program = program;
   g_scope = program->scope();
-  g_parent_scope = (parent_program != NULL) ? parent_program->scope() : NULL;
+  g_parent_scope = (parent_program != nullptr) ? parent_program->scope() : nullptr;
   g_parent_prefix = program->get_name() + ".";
   g_curpath = path;
 
@@ -973,7 +970,7 @@ void parse(t_program* program, t_program* parent_program) {
     if (yyparse() != 0) {
       failure("Parser error during types pass.");
     }
-  } catch (string x) {
+  } catch (string &x) {
     failure(x.c_str());
   }
   fclose(yyin);
@@ -985,12 +982,13 @@ void parse(t_program* program, t_program* parent_program) {
 void generate(t_program* program, const vector<string>& generator_strings) {
   // Oooohh, recursive code generation, hot!!
   if (gen_recurse) {
+    program->set_recursive(true);
     const vector<t_program*>& includes = program->get_includes();
-    for (size_t i = 0; i < includes.size(); ++i) {
+    for (auto include : includes) {
       // Propagate output path from parent to child programs
-      includes[i]->set_out_path(program->get_out_path(), program->is_out_path_absolute());
+      include->set_out_path(program->get_out_path(), program->is_out_path_absolute());
 
-      generate(includes[i], generator_strings);
+      generate(include, generator_strings);
     }
   }
 
@@ -1006,27 +1004,9 @@ void generate(t_program* program, const vector<string>& generator_strings) {
     for (iter = generator_strings.begin(); iter != generator_strings.end(); ++iter) {
       t_generator* generator = t_generator_registry::get_generator(program, *iter);
 
-      if (generator == NULL) {
-#ifdef THRIFT_ENABLE_PLUGIN
-        switch (plugin_output::delegateToPlugin(program, *iter)) {
-          case plugin_output::PLUGIN_NOT_FOUND:
-            pwarning(1, "Unable to get a generator for \"%s\".\n", iter->c_str());
-            g_generator_failure = true;
-            break;
-          case plugin_output::PLUGIN_FAILURE:
-            pwarning(1, "Plugin generator for \"%s\" failed.\n", iter->c_str());
-            g_generator_failure = true;
-            break;
-          case plugin_output::PLUGIN_SUCCEESS:
-            break;
-          default:
-            assert(false);
-            break;
-        }
-#else
+      if (generator == nullptr) {
         pwarning(1, "Unable to get a generator for \"%s\".\n", iter->c_str());
         g_generator_failure = true;
-#endif
       } else if (generator) {
         generator->validate_input();
         pverbose("Generating \"%s\"\n", iter->c_str());
@@ -1034,10 +1014,12 @@ void generate(t_program* program, const vector<string>& generator_strings) {
         delete generator;
       }
     }
-  } catch (string s) {
+  } catch (string &s) {
     failure("Error: %s\n", s.c_str());
   } catch (const char* exc) {
     failure("Error: %s\n", exc);
+  } catch (const std::invalid_argument& invalid_argument_exception) {
+    failure("Error: %s\n", invalid_argument_exception.what());
   }
 }
 
@@ -1050,14 +1032,14 @@ void audit(t_program* new_program,
     g_incl_searchpath.push_back(old_thrift_include_path);
   }
 
-  parse(old_program, NULL);
+  parse(old_program, nullptr);
 
   g_incl_searchpath = temp_incl_searchpath;
   if (!new_thrift_include_path.empty()) {
     g_incl_searchpath.push_back(new_thrift_include_path);
   }
 
-  parse(new_program, NULL);
+  parse(new_program, nullptr);
 
   compare_namespace(new_program, old_program);
   compare_services(new_program->get_services(), old_program->get_services());
@@ -1077,7 +1059,7 @@ int main(int argc, char** argv) {
   bool out_path_is_absolute = false;
 
   // Setup time string
-  time_t now = time(NULL);
+  time_t now = time(nullptr);
   g_time_str = ctime(&now);
 
   // Check for necessary arguments, you gotta have at least a filename and
@@ -1099,7 +1081,7 @@ int main(int argc, char** argv) {
     char* arg;
 
     arg = strtok(argv[i], " ");
-    while (arg != NULL) {
+    while (arg != nullptr) {
       // Treat double dashes as single dashes
       if (arg[0] == '-' && arg[1] == '-') {
         ++arg;
@@ -1127,24 +1109,24 @@ int main(int argc, char** argv) {
         g_allow_64bit_consts = true;
       } else if (strcmp(arg, "-gen") == 0) {
         arg = argv[++i];
-        if (arg == NULL) {
+        if (arg == nullptr) {
           fprintf(stderr, "Missing generator specification\n");
           usage();
         }
-        generator_strings.push_back(arg);
+        generator_strings.emplace_back(arg);
       } else if (strcmp(arg, "-I") == 0) {
         // An argument of "-I\ asdf" is invalid and has unknown results
         arg = argv[++i];
 
-        if (arg == NULL) {
+        if (arg == nullptr) {
           fprintf(stderr, "Missing Include directory\n");
           usage();
         }
-        g_incl_searchpath.push_back(arg);
+        g_incl_searchpath.emplace_back(arg);
       } else if ((strcmp(arg, "-o") == 0) || (strcmp(arg, "-out") == 0)) {
         out_path_is_absolute = (strcmp(arg, "-out") == 0) ? true : false;
         arg = argv[++i];
-        if (arg == NULL) {
+        if (arg == nullptr) {
           fprintf(stderr, "-o: missing output directory\n");
           usage();
         }
@@ -1162,14 +1144,14 @@ int main(int argc, char** argv) {
       } else if (strcmp(arg, "-audit") == 0) {
         g_audit = true;
         arg = argv[++i];
-        if (arg == NULL) {
+        if (arg == nullptr) {
           fprintf(stderr, "Missing old thrift file name for audit operation\n");
           usage();
         }
         char old_thrift_file_rp[THRIFT_PATH_MAX];
 
         // cppcheck-suppress uninitvar
-        if (saferealpath(arg, old_thrift_file_rp) == NULL) {
+        if (saferealpath(arg, old_thrift_file_rp) == nullptr) {
           failure("Could not open input file with realpath: %s", arg);
         }
         old_input_file = string(old_thrift_file_rp);
@@ -1177,14 +1159,14 @@ int main(int argc, char** argv) {
         g_audit_fatal = false;
       } else if (strcmp(arg, "-Iold") == 0) {
         arg = argv[++i];
-        if (arg == NULL) {
+        if (arg == nullptr) {
           fprintf(stderr, "Missing Include directory for old thrift file\n");
           usage();
         }
         old_thrift_include_path = string(arg);
       } else if (strcmp(arg, "-Inew") == 0) {
         arg = argv[++i];
-        if (arg == NULL) {
+        if (arg == nullptr) {
           fprintf(stderr, "Missing Include directory for new thrift file\n");
           usage();
         }
@@ -1195,7 +1177,7 @@ int main(int argc, char** argv) {
       }
 
       // Tokenize more
-      arg = strtok(NULL, " ");
+      arg = strtok(nullptr, " ");
     }
   }
 
@@ -1222,12 +1204,12 @@ int main(int argc, char** argv) {
     }
 
     char new_thrift_file_rp[THRIFT_PATH_MAX];
-    if (argv[i] == NULL) {
+    if (argv[i] == nullptr) {
       fprintf(stderr, "Missing file name of new thrift file for audit\n");
       usage();
     }
     // cppcheck-suppress uninitvar
-    if (saferealpath(argv[i], new_thrift_file_rp) == NULL) {
+    if (saferealpath(argv[i], new_thrift_file_rp) == nullptr) {
       failure("Could not open input file with realpath: %s", argv[i]);
     }
     string new_input_file(new_thrift_file_rp);
@@ -1248,12 +1230,12 @@ int main(int argc, char** argv) {
 
     // Real-pathify it
     char rp[THRIFT_PATH_MAX];
-    if (argv[i] == NULL) {
+    if (argv[i] == nullptr) {
       fprintf(stderr, "Missing file name\n");
       usage();
     }
     // cppcheck-suppress uninitvar
-    if (saferealpath(argv[i], rp) == NULL) {
+    if (saferealpath(argv[i], rp) == nullptr) {
       failure("Could not open input file with realpath: %s", argv[i]);
     }
     string input_file(rp);
@@ -1277,7 +1259,7 @@ int main(int argc, char** argv) {
     program->set_include_prefix(include_prefix);
 
     // Parse it!
-    parse(program, NULL);
+    parse(program, nullptr);
 
     // The current path is not really relevant when we are doing generation.
     // Reset the variable to make warning messages clearer.

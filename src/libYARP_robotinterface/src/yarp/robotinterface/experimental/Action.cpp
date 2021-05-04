@@ -31,24 +31,15 @@ public:
     ParamList params;
 };
 
-std::ostream& std::operator<<(std::ostream& oss, const yarp::robotinterface::experimental::Action& t)
-{
-    oss << "(\"" << ActionPhaseToString(t.phase()) << ":" << ActionTypeToString(t.type()) << ":" << t.level() << "\"";
-    if (!t.params().empty()) {
-        oss << ", params = [";
-        oss << t.params();
-        oss << "]";
-    }
-    oss << ")";
-    return oss;
-}
-
-
 yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Action& t)
 {
-    std::ostringstream oss;
-    oss << t;
-    dbg << oss.str();
+    dbg << "(\"" << ActionPhaseToString(t.phase()) << ":" << ActionTypeToString(t.type()) << ":" << t.level() << "\"";
+    if (!t.params().empty()) {
+        dbg << ", params = [";
+        dbg << t.params();
+        dbg << "]";
+    }
+    dbg << ")";
     return dbg;
 }
 

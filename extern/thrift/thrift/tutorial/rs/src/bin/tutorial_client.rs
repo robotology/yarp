@@ -15,11 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-#[macro_use]
-extern crate clap;
-
-extern crate thrift;
-extern crate thrift_tutorial;
+use clap::{clap_app, value_t};
 
 use thrift::protocol::{TCompactInputProtocol, TCompactOutputProtocol};
 use thrift::transport::{
@@ -75,7 +71,7 @@ fn run() -> thrift::Result<()> {
     println!("multiplied 7 and 8 and got {}", res);
 
     // let's get the log for it
-    let res = client.get_struct(32)?;
+    let res = client.get_struct(logid /* 32 */)?;
     println!("got log {:?} for operation {}", res, logid);
 
     // ok - let's be bad :(

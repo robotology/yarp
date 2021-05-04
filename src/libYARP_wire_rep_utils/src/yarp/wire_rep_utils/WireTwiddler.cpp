@@ -139,7 +139,7 @@ int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored,
         tag = BOTTLE_TAG_FLOAT64;
         unit_length = 8;
     } else if (kind=="vocab") {
-        tag = BOTTLE_TAG_VOCAB;
+        tag = BOTTLE_TAG_VOCAB32;
         unit_length = 4;
     } else if (kind=="string") {
         tag = BOTTLE_TAG_STRING;
@@ -285,7 +285,7 @@ std::string nameThatCode(int code) {
     case BOTTLE_TAG_FLOAT64:
         return "float64";
         break;
-    case BOTTLE_TAG_VOCAB:
+    case BOTTLE_TAG_VOCAB32:
         return "vocab";
         break;
     case BOTTLE_TAG_STRING:
@@ -323,7 +323,7 @@ std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
         result += codeName;
         result += " ";
     }
-    result += NetType::toString(len);
+    result += yarp::conf::numeric::to_string(len);
     result += " ";
     for (int i=0; i<len; i++) {
         Value&v = msg.get(i);

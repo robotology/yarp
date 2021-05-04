@@ -47,14 +47,7 @@
 
 #![crate_type = "lib"]
 #![doc(test(attr(allow(unused_variables), deny(warnings))))]
-
-extern crate byteorder;
-extern crate integer_encoding;
-extern crate threadpool;
-extern crate try_from;
-
-#[macro_use]
-extern crate log;
+#![deny(bare_trait_objects)]
 
 // NOTE: this macro has to be defined before any modules. See:
 // https://danielkeep.github.io/quick-intro-to-macros.html#some-more-gotchas
@@ -75,13 +68,16 @@ pub mod server;
 pub mod transport;
 
 mod errors;
-pub use errors::*;
+pub use crate::errors::*;
 
 mod autogen;
-pub use autogen::*;
+pub use crate::autogen::*;
 
 /// Result type returned by all runtime library functions.
 ///
 /// As is convention this is a typedef of `std::result::Result`
 /// with `E` defined as the `thrift::Error` type.
 pub type Result<T> = std::result::Result<T, self::Error>;
+
+// Re-export ordered-float, since it is used by the generator
+pub use ordered_float::OrderedFloat as OrderedFloat;

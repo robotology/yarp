@@ -89,6 +89,12 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     }
 
     /**********************************************************/
+    bool attach(Port& source) override
+    {
+        return this->yarp().attachAsServer(source);
+    }
+
+    /**********************************************************/
     bool attach(RpcServer &source) override
     {
         return this->yarp().attachAsServer(source);

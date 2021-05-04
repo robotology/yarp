@@ -96,12 +96,12 @@ class TJSONContext;
  */
 class TJSONProtocol : public TVirtualProtocol<TJSONProtocol> {
 public:
-  TJSONProtocol(stdcxx::shared_ptr<TTransport> ptrans);
+  TJSONProtocol(std::shared_ptr<TTransport> ptrans);
 
-  ~TJSONProtocol();
+  ~TJSONProtocol() override;
 
 private:
-  void pushContext(stdcxx::shared_ptr<TJSONContext> c);
+  void pushContext(std::shared_ptr<TJSONContext> c);
 
   void popContext();
 
@@ -245,10 +245,28 @@ public:
 
   uint32_t readBinary(std::string& str);
 
+  int getMinSerializedSize(TType type);
+
+  void checkReadBytesAvailable(TSet& set)
+  {
+      trans_->checkReadBytesAvailable(set.size_ * getMinSerializedSize(set.elemType_));
+  }
+
+  void checkReadBytesAvailable(TList& list)
+  {
+      trans_->checkReadBytesAvailable(list.size_ * getMinSerializedSize(list.elemType_));
+  }
+
+  void checkReadBytesAvailable(TMap& map)
+  {
+      int elmSize = getMinSerializedSize(map.keyType_) + getMinSerializedSize(map.valueType_);
+      trans_->checkReadBytesAvailable(map.size_ * elmSize);
+  }
+
   class LookaheadReader {
 
   public:
-    LookaheadReader(TTransport& trans) : trans_(&trans), hasData_(false) {}
+    LookaheadReader(TTransport& trans) : trans_(&trans), hasData_(false), data_(0) {}
 
     uint8_t read() {
       if (hasData_) {
@@ -276,8 +294,8 @@ public:
 private:
   TTransport* trans_;
 
-  std::stack<stdcxx::shared_ptr<TJSONContext> > contexts_;
-  stdcxx::shared_ptr<TJSONContext> context_;
+  std::stack<std::shared_ptr<TJSONContext> > contexts_;
+  std::shared_ptr<TJSONContext> context_;
   LookaheadReader reader_;
 };
 
@@ -286,12 +304,12 @@ private:
  */
 class TJSONProtocolFactory : public TProtocolFactory {
 public:
-  TJSONProtocolFactory() {}
+  TJSONProtocolFactory() = default;
 
-  virtual ~TJSONProtocolFactory() {}
+  ~TJSONProtocolFactory() override = default;
 
-  stdcxx::shared_ptr<TProtocol> getProtocol(stdcxx::shared_ptr<TTransport> trans) {
-    return stdcxx::shared_ptr<TProtocol>(new TJSONProtocol(trans));
+  std::shared_ptr<TProtocol> getProtocol(std::shared_ptr<TTransport> trans) override {
+    return std::shared_ptr<TProtocol>(new TJSONProtocol(trans));
   }
 };
 }
@@ -308,8 +326,8 @@ template <typename ThriftStruct>
 std::string ThriftJSONString(const ThriftStruct& ts) {
   using namespace apache::thrift::transport;
   using namespace apache::thrift::protocol;
-  TMemoryBuffer* buffer = new TMemoryBuffer;
-  stdcxx::shared_ptr<TTransport> trans(buffer);
+  auto* buffer = new TMemoryBuffer;
+  std::shared_ptr<TTransport> trans(buffer);
   TJSONProtocol protocol(trans);
 
   ts.write(&protocol);

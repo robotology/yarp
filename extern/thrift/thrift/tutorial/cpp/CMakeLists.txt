@@ -17,7 +17,8 @@
 # under the License.
 #
 
-include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
+include(BoostMacros)
+REQUIRE_BOOST_HEADERS()
 
 #Make sure gen-cpp files can be included
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
@@ -29,7 +30,6 @@ include(ThriftMacros)
 set(tutorialgencpp_SOURCES
     gen-cpp/Calculator.cpp
     gen-cpp/SharedService.cpp
-    gen-cpp/shared_constants.cpp
     gen-cpp/shared_types.cpp
     gen-cpp/tutorial_constants.cpp
     gen-cpp/tutorial_types.cpp
@@ -37,7 +37,7 @@ set(tutorialgencpp_SOURCES
 add_library(tutorialgencpp STATIC ${tutorialgencpp_SOURCES})
 LINK_AGAINST_THRIFT_LIBRARY(tutorialgencpp thrift)
 
-add_custom_command(OUTPUT gen-cpp/Calculator.cpp gen-cpp/SharedService.cpp gen-cpp/shared_constants.cpp gen-cpp/shared_types.cpp gen-cpp/tutorial_constants.cpp gen-cpp/tutorial_types.cpp
+add_custom_command(OUTPUT gen-cpp/Calculator.cpp gen-cpp/SharedService.cpp gen-cpp/shared_types.cpp gen-cpp/tutorial_constants.cpp gen-cpp/tutorial_types.cpp
     COMMAND ${THRIFT_COMPILER} --gen cpp -r ${PROJECT_SOURCE_DIR}/tutorial/tutorial.thrift
 )
 

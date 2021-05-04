@@ -24,7 +24,7 @@ on:
 
 jobs:
   tag-yarp:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - name: Checkout
@@ -216,7 +216,7 @@ jobs:
 
         echo "Update release notes file:"
 
-        head -n -1 ${YARP_RELEASE_NOTES_BRANCH_FILE} > ${YARP_RELEASE_NOTES_FILE}
+        cp ${YARP_RELEASE_NOTES_BRANCH_FILE} ${YARP_RELEASE_NOTES_FILE}
         cat << EOF >> ${YARP_RELEASE_NOTES_FILE}
 
         Contributors

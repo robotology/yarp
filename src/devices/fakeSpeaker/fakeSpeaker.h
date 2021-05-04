@@ -14,20 +14,25 @@
 #include <yarp/dev/CircularAudioBuffer.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
-
-
-#define DEFAULT_PERIOD 0.01   //s
+#include <yarp/dev/AudioPlayerDeviceBase.h>
 
 /**
- * @ingroup dev_impl_fake dev_impl_media
- *
- * \brief `fakeSpeaker` : fake device implementing the IAudioRender device interface to play sound
- *
- * Documentation to be added
- */
+* @ingroup dev_impl_fake dev_impl_media
+*
+* \brief `fakeSpeaker` : fake device implementing the IAudioRender device interface to play sound
+*
+* This device driver derives from AudioPlayerDeviceBase base class. Please check its documentation for additional details.
+*
+* Parameters used by this device are:
+* | Parameter name   | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
+* |:----------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
+* | AUDIO_BASE       |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioPlayerDeviceBase |       |
+* | period           |      -         | double  | s              |  0.010                   | No                          | the period of processing thread                                   | A value of 10ms is recommended. Do to not modify it |
+*/
+
 class fakeSpeaker :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IAudioRender,
+        public yarp::dev::AudioPlayerDeviceBase,
         public yarp::os::PeriodicThread
 {
 public:
@@ -36,31 +41,18 @@ public:
     fakeSpeaker(fakeSpeaker&&) = delete;
     fakeSpeaker& operator=(const fakeSpeaker&) = delete;
     fakeSpeaker& operator=(fakeSpeaker&&) = delete;
-
     ~fakeSpeaker() override;
 
     // Device Driver interface
     bool open(yarp::os::Searchable &config) override;
     bool close() override;
 
-    virtual bool startPlayback() override;
-    virtual bool stopPlayback() override;
-    virtual bool renderSound(const yarp::sig::Sound& sound)  override;
-    virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)  override;
-    virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)  override;
-    virtual bool resetPlaybackAudioBuffer() override;
+    //interface
+    virtual bool setHWGain(double gain) override;
+    virtual bool configureDeviceAndStart() override;
+    virtual bool interruptDeviceAndClose() override;
 
 private:
     bool threadInit() override;
     void run() override;
-
-    bool m_isPlaying = false;
-
-    size_t m_cfg_numSamples = 0;
-    size_t m_cfg_numChannels = 0;
-    size_t m_cfg_frequency = 0;
-    size_t m_cfg_bytesPerSample = 0;
-
-    yarp::dev::CircularAudioBuffer_16t* m_outputBuffer = nullptr;
-    bool m_renderSoundImmediate = false;
 };

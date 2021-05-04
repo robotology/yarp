@@ -107,7 +107,7 @@ public:
     int cmdPrioritySched(int argc, char *argv[]);
 
     // Defined in Companion.cmdRead.cpp
-    int read(const char *name, const char *src = nullptr, bool showEnvelope = false);
+    int read(const char *name, const char *src = nullptr, bool showEnvelope = false, int trim = -1);
     int cmdRead(int argc, char *argv[]);
 
     // Defined in Companion.cmdReadWrite.cpp

@@ -392,8 +392,13 @@ void QtYARPScope::routeMouseEvents( QMouseEvent* event )
 */
 void QtYARPScope::routeMouseEvents( QWheelEvent* event )
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+    int x = event->position().x();
+    int y = event->position().y();
+#else
     int x = event->x();
     int y = event->y();
+#endif
 
     for (int i=0; i<plotManager->getPlotters()->count();i++)
     {
@@ -402,7 +407,19 @@ void QtYARPScope::routeMouseEvents( QWheelEvent* event )
 
         if(r.contains(x,y)){
             QPoint pos = QPoint(x - r.x(), y - r.y());
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+            QWheelEvent* newEvent = new QWheelEvent(pos,
+                                                    event->globalPosition(),
+                                                    event->pixelDelta(),
+                                                    event->angleDelta(),
+                                                    event->buttons(),
+                                                    event->modifiers(),
+                                                    event->phase(),
+                                                    event->inverted(),
+                                                    event->source());
+#else
             QWheelEvent* newEvent = new QWheelEvent(pos, event->angleDelta().y(), event->buttons(), event->modifiers() );
+#endif
             QCoreApplication::postEvent( &plotter->customPlot, newEvent );
             update();
             break;

@@ -113,7 +113,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/aclocal/tar.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -127,9 +127,7 @@ LTLIBRARIES = $(noinst_LTLIBRARIES)
 libstresstestgencpp_la_DEPENDENCIES =  \
 	$(top_builddir)/lib/cpp/libthrift.la
 am__dirstamp = $(am__leading_dot)dirstamp
-nodist_libstresstestgencpp_la_OBJECTS =  \
-	gen-cpp/StressTest_constants.lo gen-cpp/StressTest_types.lo \
-	gen-cpp/Service.lo
+nodist_libstresstestgencpp_la_OBJECTS = gen-cpp/Service.lo
 libstresstestgencpp_la_OBJECTS =  \
 	$(nodist_libstresstestgencpp_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -175,7 +173,7 @@ AM_V_at = $(am__v_at_$(V))
 am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I. -I$(top_builddir) -I$(top_builddir)/lib/cpp/src/thrift -I$(top_builddir)/lib/c_glib/src/thrift
+DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -271,7 +269,7 @@ BOOST_THREAD_LDADD = /usr/lib/x86_64-linux-gnu/libboost_thread.a
 BUNDLER = /usr/bin/bundle
 CABAL = /usr/bin/cabal
 CABAL_CONFIGURE_FLAGS = 
-CARGO = /usr/bin/cargo
+CARGO = /root/.cargo/bin/cargo
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -294,7 +292,7 @@ DMD_LIBEVENT_FLAGS = -L-fuse-ld=gold -L-levent
 DMD_OF_DIRSEP = /
 DMD_OPENSSL_FLAGS = -L-fuse-ld=gold -L-lssl -L-lcrypto
 DOTNETCORE = /usr/bin/dotnet
-DOTNETCORE_VERSION = 2.2.101
+DOTNETCORE_VERSION = 3.1.102
 DSYMUTIL = 
 DUMPBIN = 
 D_EVENT_LIB_NAME = libthriftd-event.a
@@ -308,12 +306,13 @@ EGREP = /bin/grep -E
 ENABLE_COVERAGE = 2
 ERL = /usr/bin/erl
 ERLANG_INSTALL_LIB_DIR = /usr/lib/erlang/lib
-ERLANG_INSTALL_LIB_DIR_thrift = ${ERLANG_INSTALL_LIB_DIR}/thrift-0.12.0
+ERLANG_INSTALL_LIB_DIR_thrift = ${ERLANG_INSTALL_LIB_DIR}/thrift-0.14.1
 ERLANG_LIB_DIR = /usr/lib/erlang/lib
 ERLC = /usr/bin/erlc
 ERLCFLAGS = 
 EXEEXT = 
 FGREP = /bin/grep -F
+FLEX_COMPC = /usr/local/adobe/flex/4.6/bin/compc
 GCOV_CFLAGS = 
 GCOV_CXXFLAGS = 
 GCOV_LDFLAGS = 
@@ -324,6 +323,7 @@ GOBJECT_CFLAGS = -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/in
 GOBJECT_LIBS = -lgobject-2.0 -lglib-2.0
 GRADLE_OPTS = 
 GREP = /bin/grep
+GSETTINGS = /usr/bin/gsettings
 HAVE_CXX11 = 1
 HAXE = /usr/bin/haxe
 HAXE_VERSION = 3.4.4
@@ -359,18 +359,18 @@ LUA_SHORT_VERSION = 52
 LUA_VERSION = 5.2
 MAKEINFO = ${SHELL} /thrift/src/missing makeinfo
 MANIFEST_TOOL = :
+MAYBE_AS3 = as3
 MAYBE_CL = cl
 MAYBE_CPP = cpp
-MAYBE_CSHARP = csharp
 MAYBE_C_GLIB = c_glib
 MAYBE_D = d
 MAYBE_DART = dart
-MAYBE_DOTNETCORE = netcore
 MAYBE_ERLANG = erl
 MAYBE_GO = go
 MAYBE_HASKELL = hs
 MAYBE_JAVA = java
 MAYBE_LUA = lua
+MAYBE_NETSTD = netstd
 MAYBE_NODEJS = nodejs
 MAYBE_NODETS = nodets
 MAYBE_PERL = perl
@@ -379,10 +379,8 @@ MAYBE_PY3 = py3
 MAYBE_PYTHON = py
 MAYBE_RS = rs
 MAYBE_RUBY = rb
-MCS = /usr/bin/mcs
+MAYBE_SWIFT = swift
 MKDIR_P = /bin/mkdir -p
-MONO_CFLAGS = 
-MONO_LIBS = 
 NM = /usr/bin/nm -B
 NMEDIT = 
 NODEJS = /usr/bin/nodejs
@@ -398,10 +396,10 @@ OTOOL64 =
 PACKAGE = thrift
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = thrift
-PACKAGE_STRING = thrift 0.12.0
+PACKAGE_STRING = thrift 0.14.1
 PACKAGE_TARNAME = thrift
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.12.0
+PACKAGE_VERSION = 0.14.1
 PATH_SEPARATOR = :
 PERL = /usr/bin/perl
 PERL_PREFIX = /usr/local
@@ -422,23 +420,21 @@ PY_PREFIX = /usr
 QT5_CFLAGS = -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
 QT5_LIBS = -lQt5Network -lQt5Core
 QT5_MOC = /usr/bin/moc
-QT_CFLAGS = 
-QT_LIBS = 
-QT_MOC = 
 RANLIB = ranlib
-REBAR = /usr/bin/rebar
+REBAR = /usr/bin/rebar3
 RUBY = /usr/bin/ruby
 RUBY_PREFIX = 
 RUNHASKELL = /usr/bin/runhaskell
-RUSTC = /usr/bin/rustc
+RUSTC = /root/.cargo/bin/rustc
 SBCL = /usr/local/bin/sbcl
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = strip
+SWIFT = /usr/bin/swift
 THRIFT = /thrift/src/compiler/cpp/thrift
 TRIAL = /usr/bin/trial
-VERSION = 0.12.0
+VERSION = 0.14.1
 YACC = bison -y
 YFLAGS = 
 ZLIB_CPPFLAGS = 
@@ -455,7 +451,7 @@ ac_ct_DUMPBIN =
 am__include = include
 am__leading_dot = .
 am__quote = 
-am__tar = tar --format=ustar -chf - "$$tardir"
+am__tar = tar --hard-dereference --format=ustar -chf - "$$tardir"
 am__untar = tar -xf -
 bindir = ${exec_prefix}/bin
 build = x86_64-pc-linux-gnu
@@ -469,7 +465,7 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-golang_version = go version go1.11.4 linux/amd64
+golang_version = go version go1.13.1 linux/amd64
 have_prog_bison = yes
 host = x86_64-pc-linux-gnu
 host_alias = 
@@ -500,7 +496,7 @@ psdir = ${docdir}
 pyexecdir = ${exec_prefix}/lib/python2.7/dist-packages
 pythondir = ${prefix}/lib/python2.7/dist-packages
 runstatedir = ${localstatedir}/run
-rustc_version = rustc 1.30.0
+rustc_version = rustc 1.35.0 (3c235d560 2019-05-20)
 sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
 srcdir = .
@@ -529,13 +525,11 @@ top_srcdir = ../..
 # specific language governing permissions and limitations
 # under the License.
 #
-AUTOMAKE_OPTIONS = subdir-objects serial-tests
+AUTOMAKE_OPTIONS = subdir-objects serial-tests nostdinc
 BUILT_SOURCES = gen-cpp/ThriftTest.cpp \
                 gen-cpp/ThriftTest_types.cpp \
                 gen-cpp/ThriftTest_constants.cpp \
                 gen-cpp/SecondService.cpp \
-                gen-cpp/StressTest_types.cpp \
-                gen-cpp/StressTest_constants.cpp \
                 gen-cpp/Service.cpp
 
 noinst_LTLIBRARIES = libtestgencpp.la libstresstestgencpp.la
@@ -555,9 +549,6 @@ nodist_libtestgencpp_la_SOURCES = \
 
 libtestgencpp_la_LIBADD = $(top_builddir)/lib/cpp/libthrift.la
 nodist_libstresstestgencpp_la_SOURCES = \
-	gen-cpp/StressTest_constants.cpp \
-	gen-cpp/StressTest_types.cpp \
-	gen-cpp/StressTest_constants.h \
 	gen-cpp/StressTest_types.h \
 	gen-cpp/Service.cpp \
 	gen-cpp/Service.h
@@ -602,7 +593,7 @@ StressTestNonBlocking_LDADD = \
 	$(top_builddir)/lib/cpp/libthriftnb.la \
 	-levent
 
-AM_CPPFLAGS = $(BOOST_CPPFLAGS) $(LIBEVENT_CPPFLAGS) -I$(top_srcdir)/lib/cpp/src -Igen-cpp
+AM_CPPFLAGS = $(BOOST_CPPFLAGS) $(LIBEVENT_CPPFLAGS) -I$(top_srcdir)/lib/cpp/src -Igen-cpp -I.
 AM_CXXFLAGS = -Wall -Wextra -pedantic -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
 AM_LDFLAGS = $(BOOST_LDFLAGS) $(LIBEVENT_LDFLAGS) $(ZLIB_LIBS)
 EXTRA_DIST = \
@@ -662,10 +653,6 @@ gen-cpp/$(am__dirstamp):
 gen-cpp/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) gen-cpp/$(DEPDIR)
 	@: > gen-cpp/$(DEPDIR)/$(am__dirstamp)
-gen-cpp/StressTest_constants.lo: gen-cpp/$(am__dirstamp) \
-	gen-cpp/$(DEPDIR)/$(am__dirstamp)
-gen-cpp/StressTest_types.lo: gen-cpp/$(am__dirstamp) \
-	gen-cpp/$(DEPDIR)/$(am__dirstamp)
 gen-cpp/Service.lo: gen-cpp/$(am__dirstamp) \
 	gen-cpp/$(DEPDIR)/$(am__dirstamp)
 
@@ -736,8 +723,6 @@ distclean-compile:
 
 include gen-cpp/$(DEPDIR)/SecondService.Plo
 include gen-cpp/$(DEPDIR)/Service.Plo
-include gen-cpp/$(DEPDIR)/StressTest_constants.Plo
-include gen-cpp/$(DEPDIR)/StressTest_types.Plo
 include gen-cpp/$(DEPDIR)/ThriftTest.Plo
 include gen-cpp/$(DEPDIR)/ThriftTest_constants.Plo
 include gen-cpp/$(DEPDIR)/ThriftTest_types.Plo
@@ -1006,11 +991,14 @@ precross: TestServer TestClient
 gen-cpp/ThriftTest.cpp gen-cpp/ThriftTest_types.cpp gen-cpp/ThriftTest_constants.cpp gen-cpp/SecondService.cpp gen-cpp/SecondService.h gen-cpp/SecondService.tcc: $(top_srcdir)/test/ThriftTest.thrift $(THRIFT)
 	$(THRIFT) --gen cpp:templates,cob_style -r $<
 
-gen-cpp/StressTest_types.cpp gen-cpp/StressTest_constants.cpp gen-cpp/Service.cpp: $(top_srcdir)/test/StressTest.thrift $(THRIFT)
+gen-cpp/Service.cpp: $(top_srcdir)/test/StressTest.thrift $(THRIFT)
+	$(THRIFT) --gen cpp $<
+
+gen-cpp/SpecificNameTest_types.cpp gen-cpp/EchoService.cpp: $(top_srcdir)/test/SpecificName.thrift $(THRIFT)
 	$(THRIFT) --gen cpp $<
 
 clean-local:
-	$(RM) gen-cpp/*
+	$(RM) -r gen-cpp/
 
 style-local:
 	$(CPPSTYLE_CMD)

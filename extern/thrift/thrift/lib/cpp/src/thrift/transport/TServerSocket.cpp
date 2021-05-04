@@ -20,6 +20,7 @@
 #include <thrift/thrift-config.h>
 
 #include <cstring>
+#include <memory>
 #include <stdexcept>
 #include <sys/types.h>
 #ifdef HAVE_SYS_SOCKET_H
@@ -42,11 +43,15 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
 
-#include <thrift/transport/TSocket.h>
-#include <thrift/transport/TServerSocket.h>
 #include <thrift/transport/PlatformSocket.h>
-#include <thrift/stdcxx.h>
+#include <thrift/transport/TServerSocket.h>
+#include <thrift/transport/TSocket.h>
+#include <thrift/transport/TSocketUtils.h>
+#include <thrift/transport/SocketCommon.h>
 
 #ifndef AF_LOCAL
 #define AF_LOCAL AF_UNIX
@@ -58,6 +63,16 @@
 #else
 #define SOCKOPT_CAST_T char
 #endif // _WIN32
+#endif
+
+#ifdef _WIN32
+// Including Windows.h can conflict with Winsock2 usage, and also
+// adds problematic macros like min() and max(). Try to work around:
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#undef NOMINMAX
+#undef WIN32_LEAN_AND_MEAN
 #endif
 
 template <class T>
@@ -81,27 +96,7 @@ namespace apache {
 namespace thrift {
 namespace transport {
 
-using stdcxx::shared_ptr;
-
-TGetAddrInfoWrapper::TGetAddrInfoWrapper(const char* node,
-                                         const char* service,
-                                         const struct addrinfo* hints)
-  : node_(node), service_(service), hints_(hints), res_(NULL) {}
-
-TGetAddrInfoWrapper::~TGetAddrInfoWrapper() {
-  if (this->res_ != NULL)
-    freeaddrinfo(this->res_);
-}
-
-int TGetAddrInfoWrapper::init() {
-  if (this->res_ == NULL)
-    return getaddrinfo(this->node_, this->service_, this->hints_, &(this->res_));
-  return 0;
-}
-
-const struct addrinfo* TGetAddrInfoWrapper::res() {
-  return this->res_;
-}
+using std::shared_ptr;
 
 TServerSocket::TServerSocket(int port)
   : interruptableChildren_(true),
@@ -185,6 +180,35 @@ TServerSocket::~TServerSocket() {
   close();
 }
 
+bool TServerSocket::isOpen() const {
+  if (serverSocket_ == THRIFT_INVALID_SOCKET)
+    return false;
+
+  if (!listening_)
+    return false;
+
+  if (!path_.empty() && (path_[0] != '\0')) {
+    // On some platforms the domain socket file may not be instantly
+    // available yet, i.e. the Windows file system can be slow. Therefore
+    // we should check that the domain socket file actually exists.
+#ifdef _MSC_VER
+    // Currently there is a bug in ClangCl on Windows so the stat() call
+    // does not work. Workaround is a Windows-specific call if file exists:
+    DWORD const f_attrib = GetFileAttributesA(path_.c_str());
+    if (f_attrib == INVALID_FILE_ATTRIBUTES) {
+#else
+    struct THRIFT_STAT path_info;
+    if (::THRIFT_STAT(path_.c_str(), &path_info) < 0) {
+#endif
+      const std::string vError = "TServerSocket::isOpen(): The domain socket path '" + path_ + "' does not exist (yet).";
+      GlobalOutput.perror(vError.c_str(), THRIFT_GET_SOCKET_ERROR);
+      return false;
+    }
+  }
+
+  return true;
+}
+
 void TServerSocket::setSendTimeout(int sendTimeout) {
   sendTimeout_ = sendTimeout;
 }
@@ -224,82 +248,7 @@ void TServerSocket::setInterruptableChildren(bool enable) {
   interruptableChildren_ = enable;
 }
 
-void TServerSocket::listen() {
-  listening_ = true;
-#ifdef _WIN32
-  TWinsockSingleton::create();
-#endif // _WIN32
-  THRIFT_SOCKET sv[2];
-  // Create the socket pair used to interrupt
-  if (-1 == THRIFT_SOCKETPAIR(AF_LOCAL, SOCK_STREAM, 0, sv)) {
-    GlobalOutput.perror("TServerSocket::listen() socketpair() interrupt", THRIFT_GET_SOCKET_ERROR);
-    interruptSockWriter_ = THRIFT_INVALID_SOCKET;
-    interruptSockReader_ = THRIFT_INVALID_SOCKET;
-  } else {
-    interruptSockWriter_ = sv[1];
-    interruptSockReader_ = sv[0];
-  }
-
-  // Create the socket pair used to interrupt all clients
-  if (-1 == THRIFT_SOCKETPAIR(AF_LOCAL, SOCK_STREAM, 0, sv)) {
-    GlobalOutput.perror("TServerSocket::listen() socketpair() childInterrupt",
-                        THRIFT_GET_SOCKET_ERROR);
-    childInterruptSockWriter_ = THRIFT_INVALID_SOCKET;
-    pChildInterruptSockReader_.reset();
-  } else {
-    childInterruptSockWriter_ = sv[1];
-    pChildInterruptSockReader_
-        = stdcxx::shared_ptr<THRIFT_SOCKET>(new THRIFT_SOCKET(sv[0]), destroyer_of_fine_sockets);
-  }
-
-  // Validate port number
-  if (port_ < 0 || port_ > 0xFFFF) {
-    throw TTransportException(TTransportException::BAD_ARGS, "Specified port is invalid");
-  }
-
-  const struct addrinfo *res;
-  int error;
-  char port[sizeof("65535")];
-  THRIFT_SNPRINTF(port, sizeof(port), "%d", port_);
-
-  struct addrinfo hints;
-  std::memset(&hints, 0, sizeof(hints));
-  hints.ai_family = PF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_flags = AI_PASSIVE | AI_ADDRCONFIG;
-
-  // If address is not specified use wildcard address (NULL)
-  TGetAddrInfoWrapper info(address_.empty() ? NULL : &address_[0], port, &hints);
-
-  error = info.init();
-  if (error) {
-    GlobalOutput.printf("getaddrinfo %d: %s", error, THRIFT_GAI_STRERROR(error));
-    close();
-    throw TTransportException(TTransportException::NOT_OPEN,
-                              "Could not resolve host for server socket.");
-  }
-
-  // Pick the ipv6 address first since ipv4 addresses can be mapped
-  // into ipv6 space.
-  for (res = info.res(); res; res = res->ai_next) {
-    if (res->ai_family == AF_INET6 || res->ai_next == NULL)
-      break;
-  }
-
-  if (!path_.empty()) {
-    serverSocket_ = socket(PF_UNIX, SOCK_STREAM, IPPROTO_IP);
-  } else if (res != NULL) {
-    serverSocket_ = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-  }
-
-  if (serverSocket_ == THRIFT_INVALID_SOCKET) {
-    int errno_copy = THRIFT_GET_SOCKET_ERROR;
-    GlobalOutput.perror("TServerSocket::listen() socket() ", errno_copy);
-    close();
-    throw TTransportException(TTransportException::NOT_OPEN,
-                              "Could not create server socket.",
-                              errno_copy);
-  }
+void TServerSocket::_setup_sockopts() {
 
   // Set THRIFT_NO_SOCKET_CACHING to prevent 2MSL delay on accept
   int one = 1;
@@ -353,33 +302,6 @@ void TServerSocket::listen() {
     }
   }
 
-// Defer accept
-#ifdef TCP_DEFER_ACCEPT
-  if (path_.empty()) {
-    if (-1 == setsockopt(serverSocket_, IPPROTO_TCP, TCP_DEFER_ACCEPT, &one, sizeof(one))) {
-      int errno_copy = THRIFT_GET_SOCKET_ERROR;
-      GlobalOutput.perror("TServerSocket::listen() setsockopt() TCP_DEFER_ACCEPT ", errno_copy);
-      close();
-      throw TTransportException(TTransportException::NOT_OPEN,
-                                "Could not set TCP_DEFER_ACCEPT",
-                                errno_copy);
-    }
-  }
-#endif // #ifdef TCP_DEFER_ACCEPT
-
-#ifdef IPV6_V6ONLY
-  if (res->ai_family == AF_INET6 && path_.empty()) {
-    int zero = 0;
-    if (-1 == setsockopt(serverSocket_,
-                         IPPROTO_IPV6,
-                         IPV6_V6ONLY,
-                         cast_sockopt(&zero),
-                         sizeof(zero))) {
-      GlobalOutput.perror("TServerSocket::listen() IPV6_V6ONLY ", THRIFT_GET_SOCKET_ERROR);
-    }
-  }
-#endif // #ifdef IPV6_V6ONLY
-
   // Turn linger off, don't want to block on calls to close
   struct linger ling = {0, 0};
   if (-1 == setsockopt(serverSocket_, SOL_SOCKET, SO_LINGER, cast_sockopt(&ling), sizeof(ling))) {
@@ -387,20 +309,6 @@ void TServerSocket::listen() {
     GlobalOutput.perror("TServerSocket::listen() setsockopt() SO_LINGER ", errno_copy);
     close();
     throw TTransportException(TTransportException::NOT_OPEN, "Could not set SO_LINGER", errno_copy);
-  }
-
-  // Unix Sockets do not need that
-  if (path_.empty()) {
-    // TCP Nodelay, speed over bandwidth
-    if (-1
-        == setsockopt(serverSocket_, IPPROTO_TCP, TCP_NODELAY, cast_sockopt(&one), sizeof(one))) {
-      int errno_copy = THRIFT_GET_SOCKET_ERROR;
-      GlobalOutput.perror("TServerSocket::listen() setsockopt() TCP_NODELAY ", errno_copy);
-      close();
-      throw TTransportException(TTransportException::NOT_OPEN,
-                                "Could not set TCP_NODELAY",
-                                errno_copy);
-    }
   }
 
   // Set NONBLOCK on the accept socket
@@ -413,7 +321,6 @@ void TServerSocket::listen() {
                               "THRIFT_FCNTL() THRIFT_F_GETFL failed",
                               errno_copy);
   }
-
   if (-1 == THRIFT_FCNTL(serverSocket_, THRIFT_F_SETFL, flags | THRIFT_O_NONBLOCK)) {
     int errno_copy = THRIFT_GET_SOCKET_ERROR;
     GlobalOutput.perror("TServerSocket::listen() THRIFT_FCNTL() THRIFT_O_NONBLOCK ", errno_copy);
@@ -422,43 +329,120 @@ void TServerSocket::listen() {
                               "THRIFT_FCNTL() THRIFT_F_SETFL THRIFT_O_NONBLOCK failed",
                               errno_copy);
   }
+}
 
-  // prepare the port information
+void TServerSocket::_setup_unixdomain_sockopts() {
+}
+
+void TServerSocket::_setup_tcp_sockopts() {
+  int one = 1;
+
+  // Defer accept
+#ifdef TCP_DEFER_ACCEPT
+  if (path_.empty()) {
+    if (-1 == setsockopt(serverSocket_, IPPROTO_TCP, TCP_DEFER_ACCEPT, &one, sizeof(one))) {
+      int errno_copy = THRIFT_GET_SOCKET_ERROR;
+      GlobalOutput.perror("TServerSocket::listen() setsockopt() TCP_DEFER_ACCEPT ", errno_copy);
+      close();
+      throw TTransportException(TTransportException::NOT_OPEN, "Could not set TCP_DEFER_ACCEPT",
+                                errno_copy);
+    }
+  }
+#endif // #ifdef TCP_DEFER_ACCEPT
+
+  // TCP Nodelay, speed over bandwidth
+  if (-1
+      == setsockopt(serverSocket_, IPPROTO_TCP, TCP_NODELAY, cast_sockopt(&one), sizeof(one))) {
+    int errno_copy = THRIFT_GET_SOCKET_ERROR;
+    GlobalOutput.perror("TServerSocket::listen() setsockopt() TCP_NODELAY ", errno_copy);
+    close();
+    throw TTransportException(TTransportException::NOT_OPEN,
+                              "Could not set TCP_NODELAY",
+                              errno_copy);
+  }
+}
+
+void TServerSocket::listen() {
+#ifdef _WIN32
+  TWinsockSingleton::create();
+#endif // _WIN32
+
+  THRIFT_SOCKET sv[2];
+  // Create the socket pair used to interrupt
+  if (-1 == THRIFT_SOCKETPAIR(AF_LOCAL, SOCK_STREAM, 0, sv)) {
+    GlobalOutput.perror("TServerSocket::listen() socketpair() interrupt",
+                        THRIFT_GET_SOCKET_ERROR);
+    interruptSockWriter_ = THRIFT_INVALID_SOCKET;
+    interruptSockReader_ = THRIFT_INVALID_SOCKET;
+  } else {
+    interruptSockWriter_ = sv[1];
+    interruptSockReader_ = sv[0];
+  }
+
+  // Create the socket pair used to interrupt all clients
+  if (-1 == THRIFT_SOCKETPAIR(AF_LOCAL, SOCK_STREAM, 0, sv)) {
+    GlobalOutput.perror("TServerSocket::listen() socketpair() childInterrupt",
+                        THRIFT_GET_SOCKET_ERROR);
+    childInterruptSockWriter_ = THRIFT_INVALID_SOCKET;
+    pChildInterruptSockReader_.reset();
+  } else {
+    childInterruptSockWriter_ = sv[1];
+    pChildInterruptSockReader_
+        = std::shared_ptr<THRIFT_SOCKET>(new THRIFT_SOCKET(sv[0]), destroyer_of_fine_sockets);
+  }
+
+  // tcp == false means Unix Domain socket
+  bool tcp = (path_.empty());
+
+  // Validate port number
+  if (port_ < 0 || port_ > 0xFFFF) {
+    throw TTransportException(TTransportException::BAD_ARGS, "Specified port is invalid");
+  }
+
+  // Resolve host:port strings into an iterable of struct addrinfo*
+  AddressResolutionHelper resolved_addresses;
+  if (tcp) {
+    try {
+      resolved_addresses.resolve(address_, std::to_string(port_), SOCK_STREAM,
+                                 AI_PASSIVE | AI_V4MAPPED);
+    } catch (const std::system_error& e) {
+      GlobalOutput.printf("getaddrinfo() -> %d; %s", e.code().value(), e.what());
+      close();
+      throw TTransportException(TTransportException::NOT_OPEN,
+                                "Could not resolve host for server socket.");
+    }
+  }
+
   // we may want to try to bind more than once, since THRIFT_NO_SOCKET_CACHING doesn't
   // always seem to work. The client can configure the retry variables.
   int retries = 0;
   int errno_copy = 0;
 
-  if (!path_.empty()) {
+  if (!tcp) {
+    // -- Unix Domain Socket -- //
 
-#ifndef _WIN32
+    serverSocket_ = socket(PF_UNIX, SOCK_STREAM, IPPROTO_IP);
 
-    // Unix Domain Socket
-    size_t len = path_.size() + 1;
-    if (len > sizeof(((sockaddr_un*)NULL)->sun_path)) {
-      errno_copy = THRIFT_GET_SOCKET_ERROR;
-      GlobalOutput.perror("TSocket::listen() Unix Domain socket path too long", errno_copy);
+    if (serverSocket_ == THRIFT_INVALID_SOCKET) {
+      int errno_copy = THRIFT_GET_SOCKET_ERROR;
+      GlobalOutput.perror("TServerSocket::listen() socket() ", errno_copy);
+      close();
       throw TTransportException(TTransportException::NOT_OPEN,
-                                "Unix Domain socket path too long",
+                                "Could not create server socket.",
                                 errno_copy);
     }
 
+    _setup_sockopts();
+    _setup_unixdomain_sockopts();
+
+/*
+ * TODO: seems that windows now support unix sockets,
+ *       see: https://devblogs.microsoft.com/commandline/af_unix-comes-to-windows/
+ */
+#ifndef _WIN32
+
     struct sockaddr_un address;
-    address.sun_family = AF_UNIX;
-    memcpy(address.sun_path, path_.c_str(), len);
-
-    socklen_t structlen = static_cast<socklen_t>(sizeof(address));
-
-    if (!address.sun_path[0]) { // abstract namespace socket
-#ifdef __linux__
-      // sun_path is not null-terminated in this case and structlen determines its length
-      structlen -= sizeof(address.sun_path) - len;
-#else
-      GlobalOutput.perror("TSocket::open() Abstract Namespace Domain sockets only supported on linux: ", -99);
-      throw TTransportException(TTransportException::NOT_OPEN,
-                                " Abstract Namespace Domain socket path not supported");
-#endif
-    }
+    socklen_t structlen = fillUnixSocketAddr(address, path_);
 
     do {
       if (0 == ::bind(serverSocket_, (struct sockaddr*)&address, structlen)) {
@@ -473,11 +457,48 @@ void TServerSocket::listen() {
                               " Unix Domain socket path not supported");
 #endif
   } else {
+
+    // -- TCP socket -- //
+
+    auto addr_iter = AddressResolutionHelper::Iter{};
+
+    // Via DNS or somehow else, single hostname can resolve into many addresses.
+    // Results may contain perhaps a mix of IPv4 and IPv6.  Here, we iterate
+    // over what system gave us, picking the first address that works.
     do {
-      if (0 == ::bind(serverSocket_, res->ai_addr, static_cast<int>(res->ai_addrlen))) {
+      if (!addr_iter) {
+        // init + recycle over many retries
+        addr_iter = resolved_addresses.iterate();
+      }
+      auto trybind = *addr_iter++;
+
+      serverSocket_ = socket(trybind->ai_family, trybind->ai_socktype, trybind->ai_protocol);
+      if (serverSocket_ == -1) {
+        errno_copy = THRIFT_GET_SOCKET_ERROR;
+        continue;
+      }
+
+      _setup_sockopts();
+      _setup_tcp_sockopts();
+
+#ifdef IPV6_V6ONLY
+      if (trybind->ai_family == AF_INET6) {
+        int zero = 0;
+        if (-1 == setsockopt(serverSocket_,
+                             IPPROTO_IPV6,
+                             IPV6_V6ONLY,
+                             cast_sockopt(&zero),
+                             sizeof(zero))) {
+          GlobalOutput.perror("TServerSocket::listen() IPV6_V6ONLY ", THRIFT_GET_SOCKET_ERROR);
+        }
+      }
+#endif // #ifdef IPV6_V6ONLY
+
+      if (0 == ::bind(serverSocket_, trybind->ai_addr, static_cast<int>(trybind->ai_addrlen))) {
         break;
       }
       errno_copy = THRIFT_GET_SOCKET_ERROR;
+
       // use short circuit evaluation here to only sleep if we need to
     } while ((retries++ < retryLimit_) && (THRIFT_SLEEP_SEC(retryDelay_) == 0));
 
@@ -491,20 +512,29 @@ void TServerSocket::listen() {
         GlobalOutput.perror("TServerSocket::getPort() getsockname() ", errno_copy);
       } else {
         if (sa.ss_family == AF_INET6) {
-          const struct sockaddr_in6* sin = reinterpret_cast<const struct sockaddr_in6*>(&sa);
+          const auto* sin = reinterpret_cast<const struct sockaddr_in6*>(&sa);
           port_ = ntohs(sin->sin6_port);
         } else {
-          const struct sockaddr_in* sin = reinterpret_cast<const struct sockaddr_in*>(&sa);
+          const auto* sin = reinterpret_cast<const struct sockaddr_in*>(&sa);
           port_ = ntohs(sin->sin_port);
         }
       }
     }
+  } // TCP socket //
+
+  // throw error if socket still wasn't created successfully
+  if (serverSocket_ == THRIFT_INVALID_SOCKET) {
+    GlobalOutput.perror("TServerSocket::listen() socket() ", errno_copy);
+    close();
+    throw TTransportException(TTransportException::NOT_OPEN,
+                              "Could not create server socket.",
+                              errno_copy);
   }
 
   // throw an error if we failed to bind properly
   if (retries > retryLimit_) {
     char errbuf[1024];
-    if (!path_.empty()) {
+    if (!tcp) {
       THRIFT_SNPRINTF(errbuf, sizeof(errbuf), "TServerSocket::listen() PATH %s", path_.c_str());
     } else {
       THRIFT_SNPRINTF(errbuf, sizeof(errbuf), "TServerSocket::listen() BIND %d", port_);
@@ -528,6 +558,7 @@ void TServerSocket::listen() {
   }
 
   // The socket is now listening!
+  listening_ = true;
 }
 
 int TServerSocket::getPort() {
@@ -642,9 +673,9 @@ shared_ptr<TTransport> TServerSocket::acceptImpl() {
 
 shared_ptr<TSocket> TServerSocket::createSocket(THRIFT_SOCKET clientSocket) {
   if (interruptableChildren_) {
-    return shared_ptr<TSocket>(new TSocket(clientSocket, pChildInterruptSockReader_));
+    return std::make_shared<TSocket>(clientSocket, pChildInterruptSockReader_);
   } else {
-    return shared_ptr<TSocket>(new TSocket(clientSocket));
+    return std::make_shared<TSocket>(clientSocket);
   }
 }
 
@@ -693,6 +724,6 @@ void TServerSocket::close() {
   pChildInterruptSockReader_.reset();
   listening_ = false;
 }
-}
-}
-} // apache::thrift::transport
+} // namespace transport
+} // namespace thrift
+} // namespace apache

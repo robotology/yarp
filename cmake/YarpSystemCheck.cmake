@@ -46,6 +46,21 @@ endif()
 # Find 32, 64 and optionally 128-bit floating point types and check whether
 # floating point types are IEC559
 
+macro(CHECK_FLOATING_POINT_IS_IEC559 _type _result_var)
+  string(REPLACE " " "_" _type_s "${_type}")
+  file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type_s}-is_iec559.cpp"
+"#include <limits>
+int main() {
+  return std::numeric_limits<${_type}>::is_iec559 ? 1 : 0;
+}
+")
+
+  try_run(${_result_var}
+          _unused
+          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}"
+          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type_s}-is_iec559.cpp")
+endmacro()
+
 unset(YARP_FLOAT32)
 unset(YARP_FLOAT64)
 unset(YARP_FLOAT128)
@@ -56,71 +71,48 @@ set(YARP_FLOAT128_IS_IEC559 0)
 
 set(YARP_HAS_FLOAT128_T 0)
 
-
-macro(CHECK_FLOATING_POINT_IS_IEC559 _type)
-  string(REPLACE " " "_" _type_s "${_type}")
-  file(WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type_s}-is_iec559.cpp"
-"#include <limits>
-int main() {
-  return std::numeric_limits<${_type}>::is_iec559 ? 1 : 0;
-}
-")
-
-  try_run(YARP_${_type_s}_IS_IEC559
-          _unused
-          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}"
-          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type_s}-is_iec559.cpp")
-endmacro()
-
-check_floating_point_is_iec559("float")
-check_floating_point_is_iec559("double")
-check_floating_point_is_iec559("long double")
-
-
-
 check_type_size("float" SIZEOF_FLOAT)
 check_type_size("double" SIZEOF_DOUBLE)
 check_type_size("long double" SIZEOF_LONG_DOUBLE)
 
-if(YARP_float_IS_IEC559)
-  set(YARP_FLOAT32 "float")
-  set(YARP_FLOAT32_IS_IEC559 1)
-elseif(SIZEOF_FLOAT EQUAL 4)
+
+if(SIZEOF_FLOAT EQUAL 4)
   set(YARP_FLOAT32 "float")
 elseif(SIZEOF_DOUBLE EQUAL 4)
   set(YARP_FLOAT32 "double")
 elseif(SIZEOF_LONG_DOUBLE EQUAL 4)
   set(YARP_FLOAT32 "long double")
 endif()
-if(NOT YARP_FLOAT32)
+if(DEFINED YARP_FLOAT32)
+  check_floating_point_is_iec559("${YARP_FLOAT32}" YARP_FLOAT32_IS_IEC559)
+else()
   message(FATAL_ERROR "Cannot find a 32-bit floating point type")
 endif()
 
-if(YARP_double_IS_IEC559)
-  set(YARP_FLOAT64 "double")
-  set(YARP_FLOAT64_IS_IEC559 1)
+
+if(SIZEOF_FLOAT EQUAL 8)
+  set(YARP_FLOAT64 "float")
 elseif(SIZEOF_DOUBLE EQUAL 8)
   set(YARP_FLOAT64 "double")
 elseif(SIZEOF_LONG_DOUBLE EQUAL 8)
   set(YARP_FLOAT64 "long double")
-elseif(SIZEOF_FLOAT EQUAL 8)
-  set(YARP_FLOAT64 "float")
 endif()
-if(NOT YARP_FLOAT64)
+if(DEFINED YARP_FLOAT64)
+  check_floating_point_is_iec559("${YARP_FLOAT64}" YARP_FLOAT64_IS_IEC559)
+else()
   message(FATAL_ERROR "Cannot find a 64-bit floating point type")
 endif()
 
-if(YARP_long_double_IS_IEC559)
-  set(YARP_FLOAT128 "long double")
-  set(YARP_FLOAT128_IS_IEC559 1)
-elseif(SIZEOF_LONG_DOUBLE EQUAL 16)
-  set(YARP_FLOAT128 "long double")
+
+if(SIZEOF_FLOAT EQUAL 16)
+  set(YARP_FLOAT128 "float")
 elseif(SIZEOF_DOUBLE EQUAL 16)
   set(YARP_FLOAT128 "double")
-elseif(SIZEOF_FLOAT EQUAL 16)
-  set(YARP_FLOAT128 "float")
+elseif(SIZEOF_LONG_DOUBLE EQUAL 16)
+  set(YARP_FLOAT128 "long double")
 endif()
-if(YARP_FLOAT128)
+if(DEFINED YARP_FLOAT128)
+  check_floating_point_is_iec559("${YARP_FLOAT128}" YARP_FLOAT128_IS_IEC559)
   set(YARP_HAS_FLOAT128_T 1)
 endif()
 

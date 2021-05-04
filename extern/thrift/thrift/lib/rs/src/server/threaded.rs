@@ -15,15 +15,18 @@
 // specific language governing permissions and limitations
 // under the License.
 
-use std::net::{TcpListener, TcpStream};
+use log::warn;
+
+use std::net::{TcpListener, TcpStream, ToSocketAddrs};
 use std::sync::Arc;
 use threadpool::ThreadPool;
 
-use protocol::{TInputProtocol, TInputProtocolFactory, TOutputProtocol, TOutputProtocolFactory};
-use transport::{TIoChannel, TReadTransportFactory, TTcpChannel, TWriteTransportFactory};
-use {ApplicationError, ApplicationErrorKind};
+use crate::protocol::{TInputProtocol, TInputProtocolFactory, TOutputProtocol, TOutputProtocolFactory};
+use crate::transport::{TIoChannel, TReadTransportFactory, TTcpChannel, TWriteTransportFactory};
+use crate::{ApplicationError, ApplicationErrorKind};
 
 use super::TProcessor;
+use crate::TransportErrorKind;
 
 /// Fixed-size thread-pool blocking Thrift server.
 ///
@@ -43,7 +46,6 @@ use super::TProcessor;
 /// service code.
 ///
 /// ```no_run
-/// use thrift;
 /// use thrift::protocol::{TInputProtocolFactory, TOutputProtocolFactory};
 /// use thrift::protocol::{TBinaryInputProtocolFactory, TBinaryOutputProtocolFactory};
 /// use thrift::protocol::{TInputProtocol, TOutputProtocol};
@@ -65,7 +67,7 @@ use super::TProcessor;
 ///
 /// // `TProcessor` implementation for `SimpleService`
 /// impl TProcessor for SimpleServiceSyncProcessor {
-///     fn process(&self, i: &mut TInputProtocol, o: &mut TOutputProtocol) -> thrift::Result<()> {
+///     fn process(&self, i: &mut dyn TInputProtocol, o: &mut dyn TOutputProtocol) -> thrift::Result<()> {
 ///         unimplemented!();
 ///     }
 /// }
@@ -91,10 +93,10 @@ use super::TProcessor;
 /// let processor = SimpleServiceSyncProcessor::new(SimpleServiceHandlerImpl {});
 ///
 /// // instantiate the server
-/// let i_tr_fact: Box<TReadTransportFactory> = Box::new(TBufferedReadTransportFactory::new());
-/// let i_pr_fact: Box<TInputProtocolFactory> = Box::new(TBinaryInputProtocolFactory::new());
-/// let o_tr_fact: Box<TWriteTransportFactory> = Box::new(TBufferedWriteTransportFactory::new());
-/// let o_pr_fact: Box<TOutputProtocolFactory> = Box::new(TBinaryOutputProtocolFactory::new());
+/// let i_tr_fact: Box<dyn TReadTransportFactory> = Box::new(TBufferedReadTransportFactory::new());
+/// let i_pr_fact: Box<dyn TInputProtocolFactory> = Box::new(TBinaryInputProtocolFactory::new());
+/// let o_tr_fact: Box<dyn TWriteTransportFactory> = Box::new(TBufferedWriteTransportFactory::new());
+/// let o_pr_fact: Box<dyn TOutputProtocolFactory> = Box::new(TBinaryOutputProtocolFactory::new());
 ///
 /// let mut server = TServer::new(
 ///     i_tr_fact,
@@ -163,14 +165,13 @@ where
 
     /// Listen for incoming connections on `listen_address`.
     ///
-    /// `listen_address` should be in the form `host:port`,
-    /// for example: `127.0.0.1:8080`.
+    /// `listen_address` should implement `ToSocketAddrs` trait.
     ///
     /// Return `()` if successful.
     ///
     /// Return `Err` when the server cannot bind to `listen_address` or there
     /// is an unrecoverable error.
-    pub fn listen(&mut self, listen_address: &str) -> ::Result<()> {
+    pub fn listen<A: ToSocketAddrs>(&mut self, listen_address: A) -> crate::Result<()> {
         let listener = TcpListener::bind(listen_address)?;
         for stream in listener.incoming() {
             match stream {
@@ -186,7 +187,7 @@ where
             }
         }
 
-        Err(::Error::Application(ApplicationError {
+        Err(crate::Error::Application(ApplicationError {
             kind: ApplicationErrorKind::Unknown,
             message: "aborted listen loop".into(),
         }))
@@ -195,7 +196,7 @@ where
     fn new_protocols_for_connection(
         &mut self,
         stream: TcpStream,
-    ) -> ::Result<(Box<TInputProtocol + Send>, Box<TOutputProtocol + Send>)> {
+    ) -> crate::Result<(Box<dyn TInputProtocol + Send>, Box<dyn TOutputProtocol + Send>)> {
         // create the shared tcp stream
         let channel = TTcpChannel::with_stream(stream);
 
@@ -217,18 +218,23 @@ where
 
 fn handle_incoming_connection<PRC>(
     processor: Arc<PRC>,
-    i_prot: Box<TInputProtocol>,
-    o_prot: Box<TOutputProtocol>,
+    i_prot: Box<dyn TInputProtocol>,
+    o_prot: Box<dyn TOutputProtocol>,
 ) where
     PRC: TProcessor,
 {
     let mut i_prot = i_prot;
     let mut o_prot = o_prot;
     loop {
-        let r = processor.process(&mut *i_prot, &mut *o_prot);
-        if let Err(e) = r {
-            warn!("processor completed with error: {:?}", e);
-            break;
+        match processor.process(&mut *i_prot, &mut *o_prot) {
+            Ok(()) => {},
+            Err(err) => {
+                match err {
+                    crate::Error::Transport(ref transport_err) if transport_err.kind == TransportErrorKind::EndOfFile => {},
+                    other => warn!("processor completed with error: {:?}", other),
+                }
+                break;
+            }
         }
     }
 }

@@ -92,8 +92,9 @@ public:
         mutex.lock();
         value = datum;
         bottles_received++;
-        size_t  raw_bottle_bytes_c = 0;
+        size_t raw_bottle_bytes_c = 0;
         const char* raw_bottle_bytes_p = value.toBinary(&raw_bottle_bytes_c);
+        YARP_UNUSED(raw_bottle_bytes_p);
         bytes_received += raw_bottle_bytes_c;
         port->getEnvelope(stamp);
         mutex.unlock();
@@ -113,8 +114,9 @@ public:
         mutex.lock();
         value = datum;
         bottles_received++;
-        size_t  raw_bottle_bytes_c=0;
-        const char*   raw_bottle_bytes_p = value.toBinary(&raw_bottle_bytes_c);
+        size_t raw_bottle_bytes_c=0;
+        const char* raw_bottle_bytes_p = value.toBinary(&raw_bottle_bytes_c);
+        YARP_UNUSED(raw_bottle_bytes_p);
         bytes_received += raw_bottle_bytes_c;
         port->getEnvelope(stamp);
         mutex.unlock();
@@ -134,7 +136,7 @@ int Companion::cmdStats(int argc, char *argv[])
         yCInfo(COMPANION, "yarp stats /remote_port --port_type BufferedPort");
         yCInfo(COMPANION, "yarp stats /remote_port --port_type Port");
         yCInfo(COMPANION, "yarp stats /remote_port --duration <time_in_s> --protocol <protocol_name>");
-        yCInfo(COMPANION, "");
+        yCInfo(COMPANION);
         yCInfo(COMPANION, "If port_type is not specified, BufferedPort is assumed as default");
         return -1;
     }
@@ -161,7 +163,6 @@ int Companion::cmdStats(int argc, char *argv[])
         localPort = new Port;
         inData = new CompanionStatsInputPort;
         inData->init(localPort);
-        Port* pp = dynamic_cast<Port*>(localPort);
         localPort->setReader(*dynamic_cast<CompanionStatsInputPort*>(inData));
         yCInfo(COMPANION) << "Using standard Port for connection";
     }
@@ -213,7 +214,7 @@ int Companion::cmdStats(int argc, char *argv[])
         }
         yarp::os::Time::delay(0.001);
     }
-    double end_time = yarp::os::Time::now();
+    // double end_time = yarp::os::Time::now();
 
     yCInfo(COMPANION) << (total_bytes_received / 1000000) << "total MB received, "<< (total_bottles_received) << "total bottles received," << (periods/total_bottles_received) << "mean period (s)";
 

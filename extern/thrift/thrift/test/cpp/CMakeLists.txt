@@ -17,10 +17,14 @@
 # under the License.
 #
 
+# The test executables still depend on Boost
+include(BoostMacros)
+REQUIRE_BOOST_HEADERS()
+set(BOOST_COMPONENTS filesystem program_options random)
+REQUIRE_BOOST_LIBRARIES(BOOST_COMPONENTS)
+
 # Contains the thrift specific LINK_AGAINST_THRIFT_LIBRARY
 include(ThriftMacros)
-
-include_directories(SYSTEM "${Boost_INCLUDE_DIRS}")
 
 find_package(OpenSSL REQUIRED)
 include_directories(SYSTEM "${OPENSSL_INCLUDE_DIR}")
@@ -48,11 +52,16 @@ LINK_AGAINST_THRIFT_LIBRARY(crosstestgencpp thrift)
 
 set(crossstressgencpp_SOURCES
     gen-cpp/Service.cpp
-    gen-cpp/StressTest_types.cpp
-    gen-cpp/StressTest_constants.cpp
 )
 add_library(crossstressgencpp STATIC ${crossstressgencpp_SOURCES})
 LINK_AGAINST_THRIFT_LIBRARY(crossstressgencpp thrift)
+
+set(crossspecificnamegencpp_SOURCES
+    gen-cpp/EchoService.cpp 
+    gen-cpp/SpecificNameTest_types.cpp
+)
+add_library(crossspecificnamegencpp STATIC ${crossspecificnamegencpp_SOURCES})
+LINK_AGAINST_THRIFT_LIBRARY(crossspecificnamegencpp thrift)
 
 add_executable(TestServer src/TestServer.cpp)
 target_link_libraries(TestServer crosstestgencpp ${Boost_LIBRARIES} ${LIBEVENT_LIB})
@@ -71,13 +80,24 @@ target_link_libraries(StressTest crossstressgencpp ${Boost_LIBRARIES} ${LIBEVENT
 LINK_AGAINST_THRIFT_LIBRARY(StressTest thrift)
 LINK_AGAINST_THRIFT_LIBRARY(StressTest thriftnb)
 add_test(NAME StressTest COMMAND StressTest)
+add_test(NAME StressTestConcurrent COMMAND StressTest --client-type=concurrent)
 
-add_executable(StressTestNonBlocking src/StressTestNonBlocking.cpp)
-target_link_libraries(StressTestNonBlocking crossstressgencpp ${Boost_LIBRARIES} ${LIBEVENT_LIB})
-LINK_AGAINST_THRIFT_LIBRARY(StressTestNonBlocking thrift)
-LINK_AGAINST_THRIFT_LIBRARY(StressTestNonBlocking thriftnb)
-LINK_AGAINST_THRIFT_LIBRARY(StressTestNonBlocking thriftz)
-add_test(NAME StressTestNonBlocking COMMAND StressTestNonBlocking)
+# As of https://jira.apache.org/jira/browse/THRIFT-4282, StressTestNonBlocking
+# is broken on Windows. Contributions welcome.
+if (NOT WIN32 AND NOT CYGWIN)
+    add_executable(StressTestNonBlocking src/StressTestNonBlocking.cpp)
+    target_link_libraries(StressTestNonBlocking crossstressgencpp ${Boost_LIBRARIES} ${LIBEVENT_LIB})
+    LINK_AGAINST_THRIFT_LIBRARY(StressTestNonBlocking thrift)
+    LINK_AGAINST_THRIFT_LIBRARY(StressTestNonBlocking thriftnb)
+    LINK_AGAINST_THRIFT_LIBRARY(StressTestNonBlocking thriftz)
+    add_test(NAME StressTestNonBlocking COMMAND StressTestNonBlocking)
+endif()
+
+add_executable(SpecificNameTest src/SpecificNameTest.cpp)
+target_link_libraries(SpecificNameTest crossspecificnamegencpp ${Boost_LIBRARIES} ${LIBEVENT_LIB})
+LINK_AGAINST_THRIFT_LIBRARY(SpecificNameTest thrift)
+LINK_AGAINST_THRIFT_LIBRARY(SpecificNameTest thriftnb)
+add_test(NAME SpecificNameTest COMMAND SpecificNameTest)
 
 #
 # Common thrift code generation rules
@@ -87,6 +107,10 @@ add_custom_command(OUTPUT gen-cpp/SecondService.cpp gen-cpp/SecondService.h gen-
     COMMAND ${THRIFT_COMPILER} --gen cpp:templates,cob_style -r ${PROJECT_SOURCE_DIR}/test/ThriftTest.thrift
 )
 
-add_custom_command(OUTPUT gen-cpp/StressTest_types.cpp gen-cpp/StressTest_constants.cpp gen-cpp/Service.cpp
+add_custom_command(OUTPUT gen-cpp/Service.cpp
     COMMAND ${THRIFT_COMPILER} --gen cpp ${PROJECT_SOURCE_DIR}/test/StressTest.thrift
+)
+
+add_custom_command(OUTPUT gen-cpp/EchoService.cpp gen-cpp/SpecificNameTest_types.cpp
+    COMMAND ${THRIFT_COMPILER} --gen cpp ${PROJECT_SOURCE_DIR}/test/SpecificNameTest.thrift
 )

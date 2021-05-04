@@ -54,11 +54,9 @@
     <ClCompile Include="src\thrift\audit\t_audit.cpp" />
     <ClCompile Include="src\thrift\common.cc" />
     <ClCompile Include="src\thrift\generate\t_as3_generator.cc" />
-    <ClCompile Include="src\thrift\generate\t_cocoa_generator.cc" />
-    <ClCompile Include="src\thrift\generate\t_cpp_generator.cc" />
-    <ClCompile Include="src\thrift\generate\t_csharp_generator.cc" />
-    <ClCompile Include="src\thrift\generate\t_netcore_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_c_glib_generator.cc" />
+    <ClCompile Include="src\thrift\generate\t_cl_generator.cc" />
+    <ClCompile Include="src\thrift\generate\t_cpp_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_d_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_dart_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_delphi_generator.cc" />
@@ -69,11 +67,13 @@
     <ClCompile Include="src\thrift\generate\t_haxe_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_hs_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_html_generator.cc" />
-    <ClCompile Include="src\thrift\generate\t_javame_generator.cc" />
+    <ClCompile Include="src\thrift\generate\t_markdown_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_java_generator.cc" />
+    <ClCompile Include="src\thrift\generate\t_javame_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_js_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_json_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_lua_generator.cc" />
+    <ClCompile Include="src\thrift\generate\t_netstd_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_ocaml_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_perl_generator.cc" />
     <ClCompile Include="src\thrift\generate\t_php_generator.cc" />
@@ -171,6 +171,7 @@
       <PreprocessorDefinitions>WIN32;MINGW;YY_NO_UNISTD_H;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>thrift\windows\config.h</ForcedIncludeFiles>
       <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -189,6 +190,7 @@
       <PreprocessorDefinitions>WIN32;MINGW;YY_NO_UNISTD_H;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>thrift\windows\config.h</ForcedIncludeFiles>
       <CompileAs>CompileAsCpp</CompileAs>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -209,7 +211,7 @@
       <PreprocessorDefinitions>WIN32;MINGW;YY_NO_UNISTD_H;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>thrift\windows\config.h</ForcedIncludeFiles>
       <CompileAs>CompileAsCpp</CompileAs>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -232,7 +234,7 @@
       <PreprocessorDefinitions>WIN32;MINGW;YY_NO_UNISTD_H;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ForcedIncludeFiles>thrift\windows\config.h</ForcedIncludeFiles>
       <CompileAs>CompileAsCpp</CompileAs>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

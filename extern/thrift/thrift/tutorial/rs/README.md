@@ -4,43 +4,29 @@
 
 1. Get the [Thrift compiler](https://thrift.apache.org).
 
-2. Add the following crates to your `Cargo.toml`.
+2. Add the thrift crate to your `Cargo.toml`.
 
 ```toml
 thrift = "x.y.z" # x.y.z is the version of the thrift compiler
-ordered_float = "0.3.0"
-try_from = "0.2.0"
 ```
 
-3. Add the same crates to your `lib.rs` or `main.rs`.
-
-```rust
-extern crate ordered_float;
-extern crate thrift;
-extern crate try_from;
-```
-
-4. Generate Rust sources for your IDL (for example, `Tutorial.thrift`).
+3. Generate Rust sources for your IDL (for example, `Tutorial.thrift`).
 
 ```shell
 thrift -out my_rust_program/src --gen rs -r Tutorial.thrift
 ```
 
-5. Use the generated source in your code.
+4. Use the generated source in your code.
 
 ```rust
-// add extern crates here, or in your lib.rs
-extern crate ordered_float;
-extern crate thrift;
-extern crate try_from;
-
-// generated Rust module
-use tutorial;
+// generated Rust module from Thrift IDL
+mod tutorial;
 
 use thrift::protocol::{TCompactInputProtocol, TCompactOutputProtocol};
 use thrift::protocol::{TInputProtocol, TOutputProtocol};
 use thrift::transport::{TFramedReadTransport, TFramedWriteTransport};
 use thrift::transport::{TIoChannel, TTcpChannel};
+
 use tutorial::{CalculatorSyncClient, TCalculatorSyncClient};
 use tutorial::{Operation, Work};
 
@@ -60,7 +46,7 @@ fn run() -> thrift::Result<()> {
     //
 
     println!("connect to server on 127.0.0.1:9090");
-    let mut c = TTcpTransport::new();
+    let mut c = TTcpChannel::new();
     c.open("127.0.0.1:9090")?;
 
     let (i_chan, o_chan) = c.split()?;
@@ -72,7 +58,7 @@ fn run() -> thrift::Result<()> {
         TFramedWriteTransport::new(o_chan)
     );
 
-    let client = CalculatorSyncClient::new(i_prot, o_prot);
+    let mut client = CalculatorSyncClient::new(i_prot, o_prot);
 
     //
     // alright! - let's make some calls
@@ -84,14 +70,14 @@ fn run() -> thrift::Result<()> {
     // two-way with some return
     let res = client.calculate(
         72,
-        Work::new(7, 8, Operation::MULTIPLY, None)
+        Work::new(7, 8, Operation::Multiply, None)
     )?;
     println!("multiplied 7 and 8, got {}", res);
 
     // two-way and returns a Thrift-defined exception
     let res = client.calculate(
         77,
-        Work::new(2, 0, Operation::DIVIDE, None)
+        Work::new(2, 0, Operation::Divide, None)
     );
     match res {
         Ok(v) => panic!("shouldn't have succeeded with result {}", v),
@@ -119,7 +105,7 @@ each generated file.
 ### Results and Errors
 
 The Thrift runtime library defines a `thrift::Result` and a `thrift::Error` type,
-both of which are used throught the runtime library and in all generated code.
+both of which are used throughout the runtime library and in all generated code.
 Conversions are defined from `std::io::Error`, `str` and `String` into
 `thrift::Error`.
 

@@ -28,7 +28,7 @@ TEST_CASE("os::TimeTest", "[yarp::os]")
         double limit = 2.0; // don't be too picky, there is a lot of undefined slop
         bool inLimits = (-limit<dt)&&(dt<limit);
         INFO(std::string("delay was late(+) or early(-) by ") +
-               NetType::toString((int)(dt*1000)) +
+               yarp::conf::numeric::to_string((int)(dt*1000)) +
                " ms");
         CHECK(inLimits); // delay for 3.0 seconds
     }

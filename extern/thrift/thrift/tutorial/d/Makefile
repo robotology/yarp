@@ -130,7 +130,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/aclocal/tar.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -186,7 +186,7 @@ BOOST_THREAD_LDADD = /usr/lib/x86_64-linux-gnu/libboost_thread.a
 BUNDLER = /usr/bin/bundle
 CABAL = /usr/bin/cabal
 CABAL_CONFIGURE_FLAGS = 
-CARGO = /usr/bin/cargo
+CARGO = /root/.cargo/bin/cargo
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
@@ -209,7 +209,7 @@ DMD_LIBEVENT_FLAGS = -L-fuse-ld=gold -L-levent
 DMD_OF_DIRSEP = /
 DMD_OPENSSL_FLAGS = -L-fuse-ld=gold -L-lssl -L-lcrypto
 DOTNETCORE = /usr/bin/dotnet
-DOTNETCORE_VERSION = 2.2.101
+DOTNETCORE_VERSION = 3.1.102
 DSYMUTIL = 
 DUMPBIN = 
 D_EVENT_LIB_NAME = libthriftd-event.a
@@ -223,12 +223,13 @@ EGREP = /bin/grep -E
 ENABLE_COVERAGE = 2
 ERL = /usr/bin/erl
 ERLANG_INSTALL_LIB_DIR = /usr/lib/erlang/lib
-ERLANG_INSTALL_LIB_DIR_thrift = ${ERLANG_INSTALL_LIB_DIR}/thrift-0.12.0
+ERLANG_INSTALL_LIB_DIR_thrift = ${ERLANG_INSTALL_LIB_DIR}/thrift-0.14.1
 ERLANG_LIB_DIR = /usr/lib/erlang/lib
 ERLC = /usr/bin/erlc
 ERLCFLAGS = 
 EXEEXT = 
 FGREP = /bin/grep -F
+FLEX_COMPC = /usr/local/adobe/flex/4.6/bin/compc
 GCOV_CFLAGS = 
 GCOV_CXXFLAGS = 
 GCOV_LDFLAGS = 
@@ -239,6 +240,7 @@ GOBJECT_CFLAGS = -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/in
 GOBJECT_LIBS = -lgobject-2.0 -lglib-2.0
 GRADLE_OPTS = 
 GREP = /bin/grep
+GSETTINGS = /usr/bin/gsettings
 HAVE_CXX11 = 1
 HAXE = /usr/bin/haxe
 HAXE_VERSION = 3.4.4
@@ -274,18 +276,18 @@ LUA_SHORT_VERSION = 52
 LUA_VERSION = 5.2
 MAKEINFO = ${SHELL} /thrift/src/missing makeinfo
 MANIFEST_TOOL = :
+MAYBE_AS3 = as3
 MAYBE_CL = cl
 MAYBE_CPP = cpp
-MAYBE_CSHARP = csharp
 MAYBE_C_GLIB = c_glib
 MAYBE_D = d
 MAYBE_DART = dart
-MAYBE_DOTNETCORE = netcore
 MAYBE_ERLANG = erl
 MAYBE_GO = go
 MAYBE_HASKELL = hs
 MAYBE_JAVA = java
 MAYBE_LUA = lua
+MAYBE_NETSTD = netstd
 MAYBE_NODEJS = nodejs
 MAYBE_NODETS = nodets
 MAYBE_PERL = perl
@@ -294,10 +296,8 @@ MAYBE_PY3 = py3
 MAYBE_PYTHON = py
 MAYBE_RS = rs
 MAYBE_RUBY = rb
-MCS = /usr/bin/mcs
+MAYBE_SWIFT = swift
 MKDIR_P = /bin/mkdir -p
-MONO_CFLAGS = 
-MONO_LIBS = 
 NM = /usr/bin/nm -B
 NMEDIT = 
 NODEJS = /usr/bin/nodejs
@@ -313,10 +313,10 @@ OTOOL64 =
 PACKAGE = thrift
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = thrift
-PACKAGE_STRING = thrift 0.12.0
+PACKAGE_STRING = thrift 0.14.1
 PACKAGE_TARNAME = thrift
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.12.0
+PACKAGE_VERSION = 0.14.1
 PATH_SEPARATOR = :
 PERL = /usr/bin/perl
 PERL_PREFIX = /usr/local
@@ -337,23 +337,21 @@ PY_PREFIX = /usr
 QT5_CFLAGS = -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/x86_64-linux-gnu/qt5
 QT5_LIBS = -lQt5Network -lQt5Core
 QT5_MOC = /usr/bin/moc
-QT_CFLAGS = 
-QT_LIBS = 
-QT_MOC = 
 RANLIB = ranlib
-REBAR = /usr/bin/rebar
+REBAR = /usr/bin/rebar3
 RUBY = /usr/bin/ruby
 RUBY_PREFIX = 
 RUNHASKELL = /usr/bin/runhaskell
-RUSTC = /usr/bin/rustc
+RUSTC = /root/.cargo/bin/rustc
 SBCL = /usr/local/bin/sbcl
 SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = strip
+SWIFT = /usr/bin/swift
 THRIFT = /thrift/src/compiler/cpp/thrift
 TRIAL = /usr/bin/trial
-VERSION = 0.12.0
+VERSION = 0.14.1
 YACC = bison -y
 YFLAGS = 
 ZLIB_CPPFLAGS = 
@@ -370,7 +368,7 @@ ac_ct_DUMPBIN =
 am__include = include
 am__leading_dot = .
 am__quote = 
-am__tar = tar --format=ustar -chf - "$$tardir"
+am__tar = tar --hard-dereference --format=ustar -chf - "$$tardir"
 am__untar = tar -xf -
 bindir = ${exec_prefix}/bin
 build = x86_64-pc-linux-gnu
@@ -384,7 +382,7 @@ datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
-golang_version = go version go1.11.4 linux/amd64
+golang_version = go version go1.13.1 linux/amd64
 have_prog_bison = yes
 host = x86_64-pc-linux-gnu
 host_alias = 
@@ -415,7 +413,7 @@ psdir = ${docdir}
 pyexecdir = ${exec_prefix}/lib/python2.7/dist-packages
 pythondir = ${prefix}/lib/python2.7/dist-packages
 runstatedir = ${localstatedir}/run
-rustc_version = rustc 1.30.0
+rustc_version = rustc 1.35.0 (3c235d560 2019-05-20)
 sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
 srcdir = .
@@ -506,6 +504,9 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	$(MAKE) $(AM_MAKEFLAGS) \
+	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+	  dist-hook
 check-am: all-am
 check: check-am
 all-am: Makefile all-local
@@ -611,7 +612,7 @@ uninstall-am:
 .MAKE: install-am install-strip
 
 .PHONY: all all-am all-local check check-am clean clean-generic \
-	clean-libtool cscopelist-am ctags-am distclean \
+	clean-libtool cscopelist-am ctags-am dist-hook distclean \
 	distclean-generic distclean-libtool distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
@@ -642,6 +643,13 @@ all-local: $(PROGS)
 
 clean:
 	$(RM) -f $(PROGS)
+	$(RM) -r gen-d/
+	find . -type f -name '*.o' | xargs rm -f
+
+dist-hook:
+	$(RM) -f $(distdir)/$(PROGS)
+	$(RM) -r $(distdir)/gen-d/
+	find $(destdir) -type f -name '*.o' | xargs rm -f
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

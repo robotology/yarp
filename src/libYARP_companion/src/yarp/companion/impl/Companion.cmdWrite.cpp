@@ -14,9 +14,9 @@
 #include <yarp/os/impl/Terminal.h>
 
 #ifdef YARP_HAS_Libedit
+#include <yarp/conf/dirs.h>
 #include <yarp/conf/filesystem.h>
 #include <yarp/os/Os.h>
-#include <yarp/os/ResourceFinder.h>
 #include <yarp/os/impl/PlatformUnistd.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <algorithm>
@@ -28,10 +28,6 @@ using yarp::os::Bottle;
 using yarp::os::Port;
 using yarp::os::SystemClock;
 
-#ifdef YARP_HAS_Libedit
-using yarp::os::ResourceFinder;
-#endif
-
 int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
     applyArgs(port);
@@ -41,14 +37,11 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     bool disable_file_history=false;
     if (yarp::os::impl::isatty(yarp::os::impl::fileno(stdin))) //if interactive mode
     {
-        hist_file=yarp::os::ResourceFinder::getDataHome();
-        std::string slash{yarp::conf::filesystem::preferred_separator};
-        hist_file += slash;
-        hist_file += "yarp_write";
+        auto yarpdatahome = yarp::conf::dirs::yarpdatahome();
+        std::string hist_file = yarpdatahome + yarp::conf::filesystem::preferred_separator + "yarp_write";
         if (yarp::os::mkdir_p(hist_file.c_str(), 1) != 0)
         {
-            yCError(COMPANION, "Unable to create directory into \"%s\"",
-                    yarp::os::ResourceFinder::getDataHome().c_str());
+            yCError(COMPANION, "Unable to create directory into \"%s\"", yarpdatahome.c_str());
             return 1;
         }
         std::string temp;
@@ -58,7 +51,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
             temp = "any";
         }
         std::replace(temp.begin(), temp.end(), '/', '_');
-        hist_file += slash;
+        hist_file += yarp::conf::filesystem::preferred_separator;
         hist_file += temp;
         read_history(hist_file.c_str());
         disable_file_history=false;

@@ -37,7 +37,6 @@
 # Please see doc/old-thrift-license.txt in the Thrift distribution for
 # details.
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -112,7 +111,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@WITH_PLUGIN_TRUE@noinst_PROGRAMS = thrift/thrift-bootstrap$(EXEEXT)
 subdir = compiler/cpp/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
@@ -136,7 +134,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/aclocal/tar.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -159,45 +157,6 @@ am_thrift_libparse_a_OBJECTS =  \
 	thrift/thrift_libparse_a-thrifty.$(OBJEXT) \
 	thrift/thrift_libparse_a-thriftl.$(OBJEXT)
 thrift_libparse_a_OBJECTS = $(am_thrift_libparse_a_OBJECTS)
-PROGRAMS = $(noinst_PROGRAMS)
-am__thrift_thrift_bootstrap_SOURCES_DIST = thrift/common.h \
-	thrift/common.cc thrift/audit/t_audit.h \
-	thrift/audit/t_audit.cpp thrift/generate/t_generator.cc \
-	thrift/generate/t_generator_registry.h thrift/globals.h \
-	thrift/platform.h thrift/logging.h thrift/parse/t_doc.h \
-	thrift/parse/t_type.h thrift/parse/t_base_type.h \
-	thrift/parse/t_enum.h thrift/parse/t_enum_value.h \
-	thrift/parse/t_typedef.h thrift/parse/t_typedef.cc \
-	thrift/parse/t_container.h thrift/parse/t_list.h \
-	thrift/parse/t_set.h thrift/parse/t_map.h \
-	thrift/parse/t_struct.h thrift/parse/t_field.h \
-	thrift/parse/t_service.h thrift/parse/t_function.h \
-	thrift/parse/t_program.h thrift/parse/t_scope.h \
-	thrift/parse/t_const.h thrift/parse/t_const_value.h \
-	thrift/parse/parse.cc thrift/generate/t_generator.h \
-	thrift/generate/t_oop_generator.h \
-	thrift/generate/t_html_generator.h thrift/windows/config.h \
-	thrift/version.h thrift/generate/t_cpp_generator.cc \
-	thrift/main.h thrift/main.cc
-@WITH_PLUGIN_TRUE@am_thrift_thrift_bootstrap_OBJECTS = thrift/thrift_thrift_bootstrap-common.$(OBJEXT) \
-@WITH_PLUGIN_TRUE@	thrift/audit/thrift_thrift_bootstrap-t_audit.$(OBJEXT) \
-@WITH_PLUGIN_TRUE@	thrift/generate/thrift_thrift_bootstrap-t_generator.$(OBJEXT) \
-@WITH_PLUGIN_TRUE@	thrift/parse/thrift_thrift_bootstrap-t_typedef.$(OBJEXT) \
-@WITH_PLUGIN_TRUE@	thrift/parse/thrift_thrift_bootstrap-parse.$(OBJEXT) \
-@WITH_PLUGIN_TRUE@	thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.$(OBJEXT) \
-@WITH_PLUGIN_TRUE@	thrift/thrift_thrift_bootstrap-main.$(OBJEXT)
-thrift_thrift_bootstrap_OBJECTS =  \
-	$(am_thrift_thrift_bootstrap_OBJECTS)
-@WITH_PLUGIN_TRUE@thrift_thrift_bootstrap_DEPENDENCIES =  \
-@WITH_PLUGIN_TRUE@	thrift/libparse.a
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
-thrift_thrift_bootstrap_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CXXLD) \
-	$(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -210,10 +169,14 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir) -I$(top_builddir)/lib/cpp/src/thrift -I$(top_builddir)/lib/c_glib/src/thrift
+DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -267,10 +230,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(thrift_libparse_a_SOURCES) \
-	$(thrift_thrift_bootstrap_SOURCES)
-DIST_SOURCES = $(thrift_libparse_a_SOURCES) \
-	$(am__thrift_thrift_bootstrap_SOURCES_DIST)
+SOURCES = $(thrift_libparse_a_SOURCES)
+DIST_SOURCES = $(thrift_libparse_a_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -366,6 +327,7 @@ ERLC = @ERLC@
 ERLCFLAGS = @ERLCFLAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FLEX_COMPC = @FLEX_COMPC@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_CXXFLAGS = @GCOV_CXXFLAGS@
 GCOV_LDFLAGS = @GCOV_LDFLAGS@
@@ -376,6 +338,7 @@ GOBJECT_CFLAGS = @GOBJECT_CFLAGS@
 GOBJECT_LIBS = @GOBJECT_LIBS@
 GRADLE_OPTS = @GRADLE_OPTS@
 GREP = @GREP@
+GSETTINGS = @GSETTINGS@
 HAVE_CXX11 = @HAVE_CXX11@
 HAXE = @HAXE@
 HAXE_VERSION = @HAXE_VERSION@
@@ -411,18 +374,18 @@ LUA_SHORT_VERSION = @LUA_SHORT_VERSION@
 LUA_VERSION = @LUA_VERSION@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
+MAYBE_AS3 = @MAYBE_AS3@
 MAYBE_CL = @MAYBE_CL@
 MAYBE_CPP = @MAYBE_CPP@
-MAYBE_CSHARP = @MAYBE_CSHARP@
 MAYBE_C_GLIB = @MAYBE_C_GLIB@
 MAYBE_D = @MAYBE_D@
 MAYBE_DART = @MAYBE_DART@
-MAYBE_DOTNETCORE = @MAYBE_DOTNETCORE@
 MAYBE_ERLANG = @MAYBE_ERLANG@
 MAYBE_GO = @MAYBE_GO@
 MAYBE_HASKELL = @MAYBE_HASKELL@
 MAYBE_JAVA = @MAYBE_JAVA@
 MAYBE_LUA = @MAYBE_LUA@
+MAYBE_NETSTD = @MAYBE_NETSTD@
 MAYBE_NODEJS = @MAYBE_NODEJS@
 MAYBE_NODETS = @MAYBE_NODETS@
 MAYBE_PERL = @MAYBE_PERL@
@@ -431,10 +394,8 @@ MAYBE_PY3 = @MAYBE_PY3@
 MAYBE_PYTHON = @MAYBE_PYTHON@
 MAYBE_RS = @MAYBE_RS@
 MAYBE_RUBY = @MAYBE_RUBY@
-MCS = @MCS@
+MAYBE_SWIFT = @MAYBE_SWIFT@
 MKDIR_P = @MKDIR_P@
-MONO_CFLAGS = @MONO_CFLAGS@
-MONO_LIBS = @MONO_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 NODEJS = @NODEJS@
@@ -474,9 +435,6 @@ PY_PREFIX = @PY_PREFIX@
 QT5_CFLAGS = @QT5_CFLAGS@
 QT5_LIBS = @QT5_LIBS@
 QT5_MOC = @QT5_MOC@
-QT_CFLAGS = @QT_CFLAGS@
-QT_LIBS = @QT_LIBS@
-QT_MOC = @QT_MOC@
 RANLIB = @RANLIB@
 REBAR = @REBAR@
 RUBY = @RUBY@
@@ -488,6 +446,7 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SWIFT = @SWIFT@
 THRIFT = @THRIFT@
 TRIAL = @TRIAL@
 VERSION = @VERSION@
@@ -562,7 +521,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AUTOMAKE_OPTIONS = subdir-objects
+AUTOMAKE_OPTIONS = subdir-objects nostdinc
 AM_YFLAGS = -d
 BUILT_SOURCES = thrift/thrifty.cc
 noinst_LIBRARIES = thrift/libparse.a
@@ -571,52 +530,15 @@ thrift_libparse_a_CXXFLAGS = -Wall -Wno-sign-compare -Wno-unused
 thrift_libparse_a_SOURCES = thrift/thrifty.yy \
                      thrift/thriftl.ll
 
-@WITH_PLUGIN_TRUE@thrift_thrift_bootstrap_SOURCES = \
-@WITH_PLUGIN_TRUE@                 thrift/common.h \
-@WITH_PLUGIN_TRUE@                 thrift/common.cc \
-@WITH_PLUGIN_TRUE@                 thrift/audit/t_audit.h \
-@WITH_PLUGIN_TRUE@                 thrift/audit/t_audit.cpp \
-@WITH_PLUGIN_TRUE@                 thrift/generate/t_generator.cc \
-@WITH_PLUGIN_TRUE@                 thrift/generate/t_generator_registry.h \
-@WITH_PLUGIN_TRUE@                 thrift/globals.h \
-@WITH_PLUGIN_TRUE@                 thrift/platform.h \
-@WITH_PLUGIN_TRUE@                 thrift/logging.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_doc.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_type.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_base_type.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_enum.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_enum_value.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_typedef.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_typedef.cc \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_container.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_list.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_set.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_map.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_struct.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_field.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_service.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_function.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_program.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_scope.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_const.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/t_const_value.h \
-@WITH_PLUGIN_TRUE@                 thrift/parse/parse.cc \
-@WITH_PLUGIN_TRUE@                 thrift/generate/t_generator.h \
-@WITH_PLUGIN_TRUE@                 thrift/generate/t_oop_generator.h \
-@WITH_PLUGIN_TRUE@                 thrift/generate/t_html_generator.h \
-@WITH_PLUGIN_TRUE@                 thrift/windows/config.h \
-@WITH_PLUGIN_TRUE@                 thrift/version.h \
-@WITH_PLUGIN_TRUE@                 thrift/generate/t_cpp_generator.cc \
-@WITH_PLUGIN_TRUE@                 thrift/main.h \
-@WITH_PLUGIN_TRUE@                 thrift/main.cc
+EXTRA_DIST = \
+	thrift/logging.cc \
+	thrift/windows/config.h
 
-@WITH_PLUGIN_TRUE@thrift_thrift_bootstrap_CXXFLAGS = -Wall -Wextra -pedantic
-@WITH_PLUGIN_TRUE@thrift_thrift_bootstrap_LDADD = @LEXLIB@ thrift/libparse.a
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .cc .cpp .ll .lo .o .obj .yy
+.SUFFIXES: .cc .ll .lo .o .obj .yy
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -668,75 +590,15 @@ thrift/libparse.a: $(thrift_libparse_a_OBJECTS) $(thrift_libparse_a_DEPENDENCIES
 	$(AM_V_AR)$(thrift_libparse_a_AR) thrift/libparse.a $(thrift_libparse_a_OBJECTS) $(thrift_libparse_a_LIBADD)
 	$(AM_V_at)$(RANLIB) thrift/libparse.a
 
-clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-thrift/thrift_thrift_bootstrap-common.$(OBJEXT):  \
-	thrift/$(am__dirstamp) thrift/$(DEPDIR)/$(am__dirstamp)
-thrift/audit/$(am__dirstamp):
-	@$(MKDIR_P) thrift/audit
-	@: > thrift/audit/$(am__dirstamp)
-thrift/audit/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) thrift/audit/$(DEPDIR)
-	@: > thrift/audit/$(DEPDIR)/$(am__dirstamp)
-thrift/audit/thrift_thrift_bootstrap-t_audit.$(OBJEXT):  \
-	thrift/audit/$(am__dirstamp) \
-	thrift/audit/$(DEPDIR)/$(am__dirstamp)
-thrift/generate/$(am__dirstamp):
-	@$(MKDIR_P) thrift/generate
-	@: > thrift/generate/$(am__dirstamp)
-thrift/generate/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) thrift/generate/$(DEPDIR)
-	@: > thrift/generate/$(DEPDIR)/$(am__dirstamp)
-thrift/generate/thrift_thrift_bootstrap-t_generator.$(OBJEXT):  \
-	thrift/generate/$(am__dirstamp) \
-	thrift/generate/$(DEPDIR)/$(am__dirstamp)
-thrift/parse/$(am__dirstamp):
-	@$(MKDIR_P) thrift/parse
-	@: > thrift/parse/$(am__dirstamp)
-thrift/parse/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) thrift/parse/$(DEPDIR)
-	@: > thrift/parse/$(DEPDIR)/$(am__dirstamp)
-thrift/parse/thrift_thrift_bootstrap-t_typedef.$(OBJEXT):  \
-	thrift/parse/$(am__dirstamp) \
-	thrift/parse/$(DEPDIR)/$(am__dirstamp)
-thrift/parse/thrift_thrift_bootstrap-parse.$(OBJEXT):  \
-	thrift/parse/$(am__dirstamp) \
-	thrift/parse/$(DEPDIR)/$(am__dirstamp)
-thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.$(OBJEXT):  \
-	thrift/generate/$(am__dirstamp) \
-	thrift/generate/$(DEPDIR)/$(am__dirstamp)
-thrift/thrift_thrift_bootstrap-main.$(OBJEXT): thrift/$(am__dirstamp) \
-	thrift/$(DEPDIR)/$(am__dirstamp)
-
-thrift/thrift-bootstrap$(EXEEXT): $(thrift_thrift_bootstrap_OBJECTS) $(thrift_thrift_bootstrap_DEPENDENCIES) $(EXTRA_thrift_thrift_bootstrap_DEPENDENCIES) thrift/$(am__dirstamp)
-	@rm -f thrift/thrift-bootstrap$(EXEEXT)
-	$(AM_V_CXXLD)$(thrift_thrift_bootstrap_LINK) $(thrift_thrift_bootstrap_OBJECTS) $(thrift_thrift_bootstrap_LDADD) $(LIBS)
-
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f thrift/*.$(OBJEXT)
-	-rm -f thrift/audit/*.$(OBJEXT)
-	-rm -f thrift/generate/*.$(OBJEXT)
-	-rm -f thrift/parse/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@thrift/$(DEPDIR)/thrift_libparse_a-thriftl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@thrift/$(DEPDIR)/thrift_libparse_a-thrifty.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@thrift/$(DEPDIR)/thrift_thrift_bootstrap-common.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@thrift/$(DEPDIR)/thrift_thrift_bootstrap-main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@thrift/audit/$(DEPDIR)/thrift_thrift_bootstrap-t_audit.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_cpp_generator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_generator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-parse.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-t_typedef.Po@am__quote@
 
 .cc.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -790,128 +652,6 @@ thrift/thrift_libparse_a-thriftl.obj: thrift/thriftl.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(thrift_libparse_a_CPPFLAGS) $(CPPFLAGS) $(thrift_libparse_a_CXXFLAGS) $(CXXFLAGS) -c -o thrift/thrift_libparse_a-thriftl.obj `if test -f 'thrift/thriftl.cc'; then $(CYGPATH_W) 'thrift/thriftl.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/thriftl.cc'; fi`
 
-thrift/thrift_thrift_bootstrap-common.o: thrift/common.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/thrift_thrift_bootstrap-common.o -MD -MP -MF thrift/$(DEPDIR)/thrift_thrift_bootstrap-common.Tpo -c -o thrift/thrift_thrift_bootstrap-common.o `test -f 'thrift/common.cc' || echo '$(srcdir)/'`thrift/common.cc
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/$(DEPDIR)/thrift_thrift_bootstrap-common.Tpo thrift/$(DEPDIR)/thrift_thrift_bootstrap-common.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/common.cc' object='thrift/thrift_thrift_bootstrap-common.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/thrift_thrift_bootstrap-common.o `test -f 'thrift/common.cc' || echo '$(srcdir)/'`thrift/common.cc
-
-thrift/thrift_thrift_bootstrap-common.obj: thrift/common.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/thrift_thrift_bootstrap-common.obj -MD -MP -MF thrift/$(DEPDIR)/thrift_thrift_bootstrap-common.Tpo -c -o thrift/thrift_thrift_bootstrap-common.obj `if test -f 'thrift/common.cc'; then $(CYGPATH_W) 'thrift/common.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/common.cc'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/$(DEPDIR)/thrift_thrift_bootstrap-common.Tpo thrift/$(DEPDIR)/thrift_thrift_bootstrap-common.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/common.cc' object='thrift/thrift_thrift_bootstrap-common.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/thrift_thrift_bootstrap-common.obj `if test -f 'thrift/common.cc'; then $(CYGPATH_W) 'thrift/common.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/common.cc'; fi`
-
-thrift/audit/thrift_thrift_bootstrap-t_audit.o: thrift/audit/t_audit.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/audit/thrift_thrift_bootstrap-t_audit.o -MD -MP -MF thrift/audit/$(DEPDIR)/thrift_thrift_bootstrap-t_audit.Tpo -c -o thrift/audit/thrift_thrift_bootstrap-t_audit.o `test -f 'thrift/audit/t_audit.cpp' || echo '$(srcdir)/'`thrift/audit/t_audit.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/audit/$(DEPDIR)/thrift_thrift_bootstrap-t_audit.Tpo thrift/audit/$(DEPDIR)/thrift_thrift_bootstrap-t_audit.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/audit/t_audit.cpp' object='thrift/audit/thrift_thrift_bootstrap-t_audit.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/audit/thrift_thrift_bootstrap-t_audit.o `test -f 'thrift/audit/t_audit.cpp' || echo '$(srcdir)/'`thrift/audit/t_audit.cpp
-
-thrift/audit/thrift_thrift_bootstrap-t_audit.obj: thrift/audit/t_audit.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/audit/thrift_thrift_bootstrap-t_audit.obj -MD -MP -MF thrift/audit/$(DEPDIR)/thrift_thrift_bootstrap-t_audit.Tpo -c -o thrift/audit/thrift_thrift_bootstrap-t_audit.obj `if test -f 'thrift/audit/t_audit.cpp'; then $(CYGPATH_W) 'thrift/audit/t_audit.cpp'; else $(CYGPATH_W) '$(srcdir)/thrift/audit/t_audit.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/audit/$(DEPDIR)/thrift_thrift_bootstrap-t_audit.Tpo thrift/audit/$(DEPDIR)/thrift_thrift_bootstrap-t_audit.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/audit/t_audit.cpp' object='thrift/audit/thrift_thrift_bootstrap-t_audit.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/audit/thrift_thrift_bootstrap-t_audit.obj `if test -f 'thrift/audit/t_audit.cpp'; then $(CYGPATH_W) 'thrift/audit/t_audit.cpp'; else $(CYGPATH_W) '$(srcdir)/thrift/audit/t_audit.cpp'; fi`
-
-thrift/generate/thrift_thrift_bootstrap-t_generator.o: thrift/generate/t_generator.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/generate/thrift_thrift_bootstrap-t_generator.o -MD -MP -MF thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_generator.Tpo -c -o thrift/generate/thrift_thrift_bootstrap-t_generator.o `test -f 'thrift/generate/t_generator.cc' || echo '$(srcdir)/'`thrift/generate/t_generator.cc
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_generator.Tpo thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_generator.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/generate/t_generator.cc' object='thrift/generate/thrift_thrift_bootstrap-t_generator.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/generate/thrift_thrift_bootstrap-t_generator.o `test -f 'thrift/generate/t_generator.cc' || echo '$(srcdir)/'`thrift/generate/t_generator.cc
-
-thrift/generate/thrift_thrift_bootstrap-t_generator.obj: thrift/generate/t_generator.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/generate/thrift_thrift_bootstrap-t_generator.obj -MD -MP -MF thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_generator.Tpo -c -o thrift/generate/thrift_thrift_bootstrap-t_generator.obj `if test -f 'thrift/generate/t_generator.cc'; then $(CYGPATH_W) 'thrift/generate/t_generator.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/generate/t_generator.cc'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_generator.Tpo thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_generator.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/generate/t_generator.cc' object='thrift/generate/thrift_thrift_bootstrap-t_generator.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/generate/thrift_thrift_bootstrap-t_generator.obj `if test -f 'thrift/generate/t_generator.cc'; then $(CYGPATH_W) 'thrift/generate/t_generator.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/generate/t_generator.cc'; fi`
-
-thrift/parse/thrift_thrift_bootstrap-t_typedef.o: thrift/parse/t_typedef.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/parse/thrift_thrift_bootstrap-t_typedef.o -MD -MP -MF thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-t_typedef.Tpo -c -o thrift/parse/thrift_thrift_bootstrap-t_typedef.o `test -f 'thrift/parse/t_typedef.cc' || echo '$(srcdir)/'`thrift/parse/t_typedef.cc
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-t_typedef.Tpo thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-t_typedef.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/parse/t_typedef.cc' object='thrift/parse/thrift_thrift_bootstrap-t_typedef.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/parse/thrift_thrift_bootstrap-t_typedef.o `test -f 'thrift/parse/t_typedef.cc' || echo '$(srcdir)/'`thrift/parse/t_typedef.cc
-
-thrift/parse/thrift_thrift_bootstrap-t_typedef.obj: thrift/parse/t_typedef.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/parse/thrift_thrift_bootstrap-t_typedef.obj -MD -MP -MF thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-t_typedef.Tpo -c -o thrift/parse/thrift_thrift_bootstrap-t_typedef.obj `if test -f 'thrift/parse/t_typedef.cc'; then $(CYGPATH_W) 'thrift/parse/t_typedef.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/parse/t_typedef.cc'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-t_typedef.Tpo thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-t_typedef.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/parse/t_typedef.cc' object='thrift/parse/thrift_thrift_bootstrap-t_typedef.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/parse/thrift_thrift_bootstrap-t_typedef.obj `if test -f 'thrift/parse/t_typedef.cc'; then $(CYGPATH_W) 'thrift/parse/t_typedef.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/parse/t_typedef.cc'; fi`
-
-thrift/parse/thrift_thrift_bootstrap-parse.o: thrift/parse/parse.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/parse/thrift_thrift_bootstrap-parse.o -MD -MP -MF thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-parse.Tpo -c -o thrift/parse/thrift_thrift_bootstrap-parse.o `test -f 'thrift/parse/parse.cc' || echo '$(srcdir)/'`thrift/parse/parse.cc
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-parse.Tpo thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-parse.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/parse/parse.cc' object='thrift/parse/thrift_thrift_bootstrap-parse.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/parse/thrift_thrift_bootstrap-parse.o `test -f 'thrift/parse/parse.cc' || echo '$(srcdir)/'`thrift/parse/parse.cc
-
-thrift/parse/thrift_thrift_bootstrap-parse.obj: thrift/parse/parse.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/parse/thrift_thrift_bootstrap-parse.obj -MD -MP -MF thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-parse.Tpo -c -o thrift/parse/thrift_thrift_bootstrap-parse.obj `if test -f 'thrift/parse/parse.cc'; then $(CYGPATH_W) 'thrift/parse/parse.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/parse/parse.cc'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-parse.Tpo thrift/parse/$(DEPDIR)/thrift_thrift_bootstrap-parse.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/parse/parse.cc' object='thrift/parse/thrift_thrift_bootstrap-parse.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/parse/thrift_thrift_bootstrap-parse.obj `if test -f 'thrift/parse/parse.cc'; then $(CYGPATH_W) 'thrift/parse/parse.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/parse/parse.cc'; fi`
-
-thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.o: thrift/generate/t_cpp_generator.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.o -MD -MP -MF thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_cpp_generator.Tpo -c -o thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.o `test -f 'thrift/generate/t_cpp_generator.cc' || echo '$(srcdir)/'`thrift/generate/t_cpp_generator.cc
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_cpp_generator.Tpo thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_cpp_generator.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/generate/t_cpp_generator.cc' object='thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.o `test -f 'thrift/generate/t_cpp_generator.cc' || echo '$(srcdir)/'`thrift/generate/t_cpp_generator.cc
-
-thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.obj: thrift/generate/t_cpp_generator.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.obj -MD -MP -MF thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_cpp_generator.Tpo -c -o thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.obj `if test -f 'thrift/generate/t_cpp_generator.cc'; then $(CYGPATH_W) 'thrift/generate/t_cpp_generator.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/generate/t_cpp_generator.cc'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_cpp_generator.Tpo thrift/generate/$(DEPDIR)/thrift_thrift_bootstrap-t_cpp_generator.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/generate/t_cpp_generator.cc' object='thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/generate/thrift_thrift_bootstrap-t_cpp_generator.obj `if test -f 'thrift/generate/t_cpp_generator.cc'; then $(CYGPATH_W) 'thrift/generate/t_cpp_generator.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/generate/t_cpp_generator.cc'; fi`
-
-thrift/thrift_thrift_bootstrap-main.o: thrift/main.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/thrift_thrift_bootstrap-main.o -MD -MP -MF thrift/$(DEPDIR)/thrift_thrift_bootstrap-main.Tpo -c -o thrift/thrift_thrift_bootstrap-main.o `test -f 'thrift/main.cc' || echo '$(srcdir)/'`thrift/main.cc
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/$(DEPDIR)/thrift_thrift_bootstrap-main.Tpo thrift/$(DEPDIR)/thrift_thrift_bootstrap-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/main.cc' object='thrift/thrift_thrift_bootstrap-main.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/thrift_thrift_bootstrap-main.o `test -f 'thrift/main.cc' || echo '$(srcdir)/'`thrift/main.cc
-
-thrift/thrift_thrift_bootstrap-main.obj: thrift/main.cc
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -MT thrift/thrift_thrift_bootstrap-main.obj -MD -MP -MF thrift/$(DEPDIR)/thrift_thrift_bootstrap-main.Tpo -c -o thrift/thrift_thrift_bootstrap-main.obj `if test -f 'thrift/main.cc'; then $(CYGPATH_W) 'thrift/main.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/main.cc'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) thrift/$(DEPDIR)/thrift_thrift_bootstrap-main.Tpo thrift/$(DEPDIR)/thrift_thrift_bootstrap-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='thrift/main.cc' object='thrift/thrift_thrift_bootstrap-main.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(thrift_thrift_bootstrap_CXXFLAGS) $(CXXFLAGS) -c -o thrift/thrift_thrift_bootstrap-main.obj `if test -f 'thrift/main.cc'; then $(CYGPATH_W) 'thrift/main.cc'; else $(CYGPATH_W) '$(srcdir)/thrift/main.cc'; fi`
-
-.cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
-
-.cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
 .ll.cc:
 	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
 
@@ -923,7 +663,6 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-	-rm -rf thrift/.libs thrift/_libs
 style-local: 
 
 ID: $(am__tagged_files)
@@ -1011,7 +750,7 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS)
+all-am: Makefile $(LIBRARIES)
 installdirs:
 install: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) install-am
@@ -1042,12 +781,6 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f thrift/$(DEPDIR)/$(am__dirstamp)
 	-rm -f thrift/$(am__dirstamp)
-	-rm -f thrift/audit/$(DEPDIR)/$(am__dirstamp)
-	-rm -f thrift/audit/$(am__dirstamp)
-	-rm -f thrift/generate/$(DEPDIR)/$(am__dirstamp)
-	-rm -f thrift/generate/$(am__dirstamp)
-	-rm -f thrift/parse/$(DEPDIR)/$(am__dirstamp)
-	-rm -f thrift/parse/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1059,10 +792,10 @@ maintainer-clean-generic:
 clean: clean-am
 
 clean-am: clean-generic clean-libtool clean-local \
-	clean-noinstLIBRARIES clean-noinstPROGRAMS mostlyclean-am
+	clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf thrift/$(DEPDIR) thrift/audit/$(DEPDIR) thrift/generate/$(DEPDIR) thrift/parse/$(DEPDIR)
+	-rm -rf thrift/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1108,7 +841,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf thrift/$(DEPDIR) thrift/audit/$(DEPDIR) thrift/generate/$(DEPDIR) thrift/parse/$(DEPDIR)
+	-rm -rf thrift/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1134,27 +867,24 @@ uninstall-am:
 .MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-local clean-noinstLIBRARIES \
-	clean-noinstPROGRAMS cscopelist-am ctags ctags-am distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am style-am style-local tags tags-am \
-	uninstall uninstall-am
+	clean-libtool clean-local clean-noinstLIBRARIES cscopelist-am \
+	ctags ctags-am distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	style-am style-local tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
 
 clean-local:
 	$(RM) thrift/thriftl.cc thrift/thrifty.cc thrift/thrifty.h thrift/thrifty.hh
-
-@WITH_PLUGIN_TRUE@main.cc: version.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

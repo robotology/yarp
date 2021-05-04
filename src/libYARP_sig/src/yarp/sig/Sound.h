@@ -102,6 +102,60 @@ public:
     void clear();
 
     /**
+     * Normalize a specific channel of the sound
+     * @param channel the channel to normalize
+     */
+    void normalizeChannel(size_t channel);
+
+    /**
+     * Normalize a sound (the peak is searched among all channels)
+     */
+    void normalize();
+
+    /**
+     * Amplify a specific channel of the sound
+     * @param[in] gain the gain (1.0 = no amplification. Minimum value: 0)
+     * @param[in] channel the sample id
+     */
+    void amplifyChannel(size_t channel, double gain);
+
+    /**
+     * amplify a sound
+     * @param[in] gain the gain (1.0 = no amplification. Minimum value: 0)
+     */
+    void amplify(double gain);
+
+    /**
+     * find the peak in a specific channel of the sound
+     * @param[in] channelId the channel in which the peak is searched
+     * @param[out] sampleId the returned sampleId in which the peak is detected
+     * @param[out] sampleValue the returned value of the sample in which the peak is detected
+     */
+    void findPeakInChannel(size_t channelId, size_t& sampleId, audio_sample& sampleValue) const;
+
+    /**
+     * find the peak in a sound
+     * @param[out] channelId the returned channelId in which the peak is detected
+     * @param[out] sampleId the returned sampleId in which the peak is detected
+     * @param[out] sampleValue the returned value of the sample in which the peak is detected
+     */
+    void findPeak(size_t& channelId, size_t& sampleId, audio_sample& sampleValue) const;
+
+    /**
+     * Utility function: return the timestamp (in seconds) given the sample id
+     * @param sampleid the sample id
+     * @return the timestamp of the sample
+     */
+    inline double sample2timestamp( size_t sampleid) const {return static_cast<double>(sampleid / m_frequency);}
+
+    /**
+     * Utility function: return the sample id given the timestamp (in seconds)
+     * @param time the timestamp
+     * @return the sample id
+     */
+    inline size_t timestamp2sample( double time) const { return static_cast<size_t>(time * m_frequency);}
+
+    /**
      * set to zero all the samples of the specified channel
      * @ param channel the channel number
      * @return true iff operation is successful;

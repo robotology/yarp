@@ -57,7 +57,6 @@ class RPCMessagesParser :
         public yarp::dev::DeviceResponder
 {
 protected:
-    ControlBoardWrapperCommon* ControlBoardWrapper_p {nullptr};
     yarp::dev::IPidControl* rpc_IPid {nullptr};
     yarp::dev::IPositionControl* rpc_IPosCtrl {nullptr};
     yarp::dev::IPositionDirect* rpc_IPosDirect {nullptr};
@@ -95,6 +94,7 @@ public:
     * to the commands.
     */
     void init(yarp::dev::DeviceDriver* x);
+    void reset();
 
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 

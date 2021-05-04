@@ -29,7 +29,6 @@
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/PlatformSignal.h>
 #include <yarp/os/impl/PlatformStdio.h>
 
@@ -98,7 +97,7 @@ void sigstdio_handler(int sig)
 ////////////////////////////////////
 
 constexpr fs::value_type slash = fs::preferred_separator;
-constexpr fs::value_type sep   = fs::path_separator;
+constexpr auto sep = yarp::conf::environment::path_separator;
 ////// adapted from libYARP_OS: ResourceFinder.cpp
 static yarp::os::Bottle parsePaths(const std::string& txt)
 {
@@ -697,7 +696,7 @@ int yarp::run::Run::server()
             std::string fileName=msg.find("which").asString();
             if (fileName!="")
             {
-                yarp::os::Bottle possiblePaths = parsePaths(yarp::conf::environment::getEnvironment("PATH"));
+                yarp::os::Bottle possiblePaths = parsePaths(yarp::conf::environment::get_string("PATH"));
                 for (int i=0; i<possiblePaths.size(); ++i)
                 {
                     std::string guessString=possiblePaths.get(i).asString() +
@@ -922,7 +921,7 @@ int yarp::run::Run::server()
                 std::string fileName=msg.find("which").asString();
                 if (fileName!="")
                 {
-                    yarp::os::Bottle possiblePaths = parsePaths(yarp::conf::environment::getEnvironment("PATH"));
+                    yarp::os::Bottle possiblePaths = parsePaths(yarp::conf::environment::get_string("PATH"));
                     for (size_t i=0; i<possiblePaths.size(); ++i)
                     {
                         std::string guessString=possiblePaths.get(i).asString() + slash + fileName;
@@ -1801,9 +1800,9 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
     std::string cstrEnvName;
     if (msg.check("env"))
     {
-        yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
-        for(int i=0; i<ss.size(); i++) {
-            lstrcpy(lpNew, (LPTCH) ss.get(i));
+        auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+        for (const auto& s : ss) {
+            lstrcpy(lpNew, (LPTCH) s.c_str());
             lpNew += lstrlen(lpNew) + 1;
         }
     }
@@ -2661,18 +2660,18 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
 
                 // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
                 // process will now that is running inside yarprun.
-                yarp::conf::environment::setEnvironment("YARP_IS_YARPRUN", "1");
+                yarp::conf::environment::set_string("YARP_IS_YARPRUN", "1");
 
                 // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 1, so that
                 // the child process will now that yarprun is not logging the output.
-                yarp::conf::environment::setEnvironment("YARPRUN_IS_FORWARDING_LOG", "1");
+                yarp::conf::environment::set_string("YARPRUN_IS_FORWARDING_LOG", "1");
 
                 if (msg.check("env"))
                 {
-                    yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
-                    for(int i=0; i<ss.size(); i++) {
-                        char* szenv = new char[strlen(ss.get(i))+1];
-                        strcpy(szenv, ss.get(i));
+                    auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+                    for (const auto& s : ss) {
+                        char* szenv = new char[s.size()+1];
+                        strcpy(szenv, s.c_str());
                         yarp::run::impl::putenv(szenv); // putenv doesn't make copy of the string
                     }
                     //delete [] szenv;
@@ -3025,18 +3024,18 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
 
                 // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
                 // process will now that is running inside yarprun.
-                yarp::conf::environment::setEnvironment("YARP_IS_YARPRUN", "1");
+                yarp::conf::environment::set_string("YARP_IS_YARPRUN", "1");
 
                 // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 1, so that
                 // the child process will now that yarprun is not logging the output.
-                yarp::conf::environment::setEnvironment("YARPRUN_IS_FORWARDING_LOG", "1");
+                yarp::conf::environment::set_string("YARPRUN_IS_FORWARDING_LOG", "1");
 
                 if (msg.check("env"))
                 {
-                    yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
-                    for(int i=0; i<ss.size(); i++) {
-                        char* szenv = new char[strlen(ss.get(i))+1];
-                        strcpy(szenv, ss.get(i));
+                    auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+                    for (const auto& s : ss) {
+                        char* szenv = new char[s.size()+1];
+                        strcpy(szenv, s.c_str());
                         yarp::run::impl::putenv(szenv); // putenv doesn't make copy of the string
                     }
                     //delete [] szenv;
@@ -3467,18 +3466,18 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
 
         // Set the YARP_IS_YARPRUN environment variable to 1, so that the child
         // process will now that is running inside yarprun.
-        yarp::conf::environment::setEnvironment("YARP_IS_YARPRUN", "1");
+        yarp::conf::environment::set_string("YARP_IS_YARPRUN", "1");
 
         // Set the YARPRUN_IS_FORWARDING_LOG environment variable to 0, so that
         // the child process will now that yarprun is not logging the output.
-        yarp::conf::environment::setEnvironment("YARPRUN_IS_FORWARDING_LOG", "0");
+        yarp::conf::environment::set_string("YARPRUN_IS_FORWARDING_LOG", "0");
 
         if (msg.check("env"))
         {
-            yarp::os::impl::SplitString ss(msg.find("env").asString().c_str(), ';');
-            for(int i=0; i<ss.size(); i++) {
-                char* szenv = new char[strlen(ss.get(i))+1];
-                strcpy(szenv, ss.get(i));
+            auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+            for (const auto& s : ss) {
+                char* szenv = new char[s.size()+1];
+                strcpy(szenv, s.c_str());
                 yarp::run::impl::putenv(szenv); // putenv doesn't make copy of the string
             }
         }

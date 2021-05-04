@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperInteractionMode.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 using yarp::dev::VOCAB_IM_UNKNOWN;
 
@@ -18,7 +18,7 @@ bool ControlBoardWrapperInteractionMode::getInteractionMode(int j, yarp::dev::In
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -116,7 +116,7 @@ bool ControlBoardWrapperInteractionMode::setInteractionMode(int j, yarp::dev::In
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -173,7 +173,7 @@ bool ControlBoardWrapperInteractionMode::setInteractionModes(yarp::dev::Interact
         try {
             off = device.lut.at(j).offset;
         } catch (...) {
-            yCError(CONTROLBOARDWRAPPER, "Joint number %zu out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+            yCError(CONTROLBOARD, "Joint number %zu out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
             return false;
         }
         size_t subIndex = device.lut[j].deviceEntry;

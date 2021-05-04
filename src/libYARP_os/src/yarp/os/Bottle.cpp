@@ -400,7 +400,7 @@ Bottle Bottle::tail() const
 
 std::string Bottle::toString(int x)
 {
-    return NetType::toString(x);
+    return yarp::conf::numeric::to_string(x);
 }
 
 std::string Bottle::describeBottleCode(int code)
@@ -414,7 +414,7 @@ std::string Bottle::describeBottleCode(int code)
     case BOTTLE_TAG_INT32:
         unitName = "int";
         break;
-    case BOTTLE_TAG_VOCAB:
+    case BOTTLE_TAG_VOCAB32:
         unitName = "vocab";
         break;
     case BOTTLE_TAG_FLOAT64:

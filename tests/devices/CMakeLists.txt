@@ -29,7 +29,7 @@ set(_inis AudioPlayerWrapper_fakeSpeaker.ini
           portaudio_basic.ini
           remote_grabber_basic.ini
           fakeFrameGrabber_basic.ini
-          fakeMotor_basic.ini
+          fakeMotionControl_basic.ini
           usbCamera.ini)
 
 if(YARP_ENABLE_BROKEN_TESTS)
@@ -50,5 +50,5 @@ foreach(_ini_file ${_inis})
            COMMAND ${_cmd}
            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   set_property(TEST "device::${_test}" PROPERTY SKIP_RETURN_CODE 254)
-  set_property(TEST "device::${_test}" PROPERTY TIMEOUT 20)
+  set_property(TEST "device::${_test}" PROPERTY TIMEOUT ${YARP_TEST_TIMEOUT})
 endforeach()

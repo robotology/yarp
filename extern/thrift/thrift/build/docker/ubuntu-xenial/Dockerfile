@@ -14,10 +14,10 @@
 # Apache Thrift Docker build environment for Ubuntu Xenial
 # Using all stock Ubuntu Xenial packaging except for:
 # - d: does not come with Ubuntu so we're installing 2.075.1 for coverage
-# - dart: does not come with Ubuntu so we're installing 1.22.1 for coverage
+# - dart: does not come with Ubuntu so we're installing 2.0.0-1 for coverage
 # - dotnet: does not come with Ubuntu
-# - go: Xenial comes with 1.6, but we need 1.7 or later
-# - nodejs: Xenial comes with 4.2.6 which exits LTS April 2018, so we're installing 6.x
+# - go: Xenial comes with 1.6, but we need 1.10 or later
+# - nodejs: Xenial comes with 4.2.6 which exits LTS April 2018, so we're installing 10.x
 # - ocaml: causes stack overflow error, just started March 2018 not sure why
 #
 
@@ -35,31 +35,29 @@ RUN apt-get update && \
       apt-utils \
       curl \
       software-properties-common \
-      wget
-
-# csharp (mono)
-# RUN echo "deb http://download.mono-project.com/repo/debian xenial main" | tee /etc/apt/sources.list.d/mono.list && \
-#     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6A19B38D3D831EF
+      wget && \
 
 # D
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EBCF975E5BA24D5E && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EBCF975E5BA24D5E && \
     wget http://master.dl.sourceforge.net/project/d-apt/files/d-apt.list -O /etc/apt/sources.list.d/d-apt.list && \
-    wget -qO - https://dlang.org/d-keyring.gpg | apt-key add -
+    wget -qO - https://dlang.org/d-keyring.gpg | apt-key add - && \
 
 # Dart
-RUN curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    curl https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     curl https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > \
-      /etc/apt/sources.list.d/dart_stable.list
-ENV DART_VERSION 1.22.1-1
+      /etc/apt/sources.list.d/dart_stable.list && \
 
 # dotnet (core)
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/trusted.gpg.d/microsoft.gpg && \
     echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" > \
-      /etc/apt/sources.list.d/dotnetdev.list
+      /etc/apt/sources.list.d/dotnetdev.list && \
 
 # node.js
-RUN curl -sL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    echo "deb https://deb.nodesource.com/node_6.x xenial main" | tee /etc/apt/sources.list.d/nodesource.list
+    curl -sL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
+    echo "deb https://deb.nodesource.com/node_10.x xenial main" | tee /etc/apt/sources.list.d/nodesource.list && \
+
+# ruby 2.4
+    apt-add-repository ppa:brightbox/ruby-ng
 
 ### install general dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -95,10 +93,6 @@ RUN apt-get install -y --no-install-recommends \
       qtbase5-dev \
       qtbase5-dev-tools
 
-RUN apt-get install -y --no-install-recommends \
-`# csharp (mono) dependencies` \
-      mono-devel
-
 ENV D_VERSION 2.075.1-0
 RUN apt-get install -y --allow-unauthenticated --no-install-recommends \
 `# D dependencies` \
@@ -120,6 +114,7 @@ RUN curl -sSL https://github.com/D-Programming-Deimos/openssl/archive/v1.1.6+1.0
     mv openssl-1.1.6-1.0.1g/C/* /usr/include/dmd/druntime/import/C/ && \
     rm -rf openssl-1.1.6-1.0.1g
 
+ENV DART_VERSION 2.0.0-1
 RUN apt-get install -y --no-install-recommends \
 `# Dart dependencies` \
       dart=$DART_VERSION
@@ -127,7 +122,7 @@ ENV PATH /usr/lib/dart/bin:$PATH
 
 RUN apt-get install -y --no-install-recommends \
 `# dotnet core dependencies` \
-      dotnet-sdk-2.1.4
+      dotnet-sdk-3.1
 
 RUN apt-get install -y --no-install-recommends \
 `# Erlang dependencies` \
@@ -142,16 +137,16 @@ RUN apt-get install -y --no-install-recommends \
       libglib2.0-dev
 
 # golang
-ENV GOLANG_VERSION 1.7.6
+ENV GOLANG_VERSION 1.14.14
 ENV GOLANG_DOWNLOAD_URL https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
-ENV GOLANG_DOWNLOAD_SHA256 ad5808bf42b014c22dd7646458f631385003049ded0bb6af2efc7f1f79fa29ea
+ENV GOLANG_DOWNLOAD_SHA256 6f1354c9040d65d1622b451f43c324c1e5197aa9242d00c5a117d0e2625f3e0d
 RUN curl -fsSL "$GOLANG_DOWNLOAD_URL" -o golang.tar.gz && \
       echo "$GOLANG_DOWNLOAD_SHA256  golang.tar.gz" | sha256sum -c - && \
       tar -C /usr/local -xzf golang.tar.gz && \
       ln -s /usr/local/go/bin/go /usr/local/bin && \
       rm golang.tar.gz
 
-# due to a bug in cabal in xenial (cabal-install package) we pull in another:
+# cabal 1.22 in xenial is too old so we grab a pre-built 1.24 binary
 RUN apt-get install -y --no-install-recommends \
 `# Haskell dependencies` \
       ghc && \
@@ -160,7 +155,8 @@ RUN apt-get install -y --no-install-recommends \
     tar xzf cabal-install-1.24.0.2-x86_64-unknown-linux.tar.gz && \
     find dist-newstyle/ -type f -name cabal -exec mv {} /usr/bin \; && \
     rm -rf /tmp/cabal* && \
-    cabal --version
+    cabal --version && \
+    cabal update
 
 RUN apt-get install -y --no-install-recommends \
 `# Haxe dependencies` \
@@ -179,10 +175,11 @@ RUN apt-get install -y --no-install-recommends \
       openjdk-8-jdk \
       maven
 
-RUN apt-get install -y --no-install-recommends \
-`# Lua dependencies` \
-      lua5.2 \
-      lua5.2-dev
+# disabled: same as ubuntu-bionic jobs
+# RUN apt-get install -y --no-install-recommends \
+# `# Lua dependencies` \
+#       lua5.2 \
+#       lua5.2-dev
 # https://bugs.launchpad.net/ubuntu/+source/lua5.3/+bug/1707212
 # lua5.3 does not install alternatives so stick with 5.2 here
 
@@ -211,13 +208,15 @@ RUN apt-get install -y --no-install-recommends \
       libclass-accessor-class-perl \
       libcrypt-ssleay-perl \
       libio-socket-ssl-perl \
-      libnet-ssleay-perl
+      libnet-ssleay-perl \
+      libtest-exception-perl
 
 RUN apt-get install -y --no-install-recommends \
 `# Php dependencies` \
       php7.0 \
       php7.0-cli \
       php7.0-dev \
+      php-json \
       php-pear \
       re2c \
       composer
@@ -249,14 +248,12 @@ RUN apt-get install -y --no-install-recommends \
 
 RUN apt-get install -y --no-install-recommends \
 `# Ruby dependencies` \
-      ruby \
-      ruby-dev \
+      ruby2.4 \
+      ruby2.4-dev \
       ruby-bundler
 
-RUN apt-get install -y --no-install-recommends \
-`# Rust dependencies` \
-      cargo \
-      rustc
+# Rust dependencies
+RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain 1.40.0 -y
 
 # Clean up
 RUN rm -rf /var/cache/apt/* && \

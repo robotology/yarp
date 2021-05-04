@@ -20,6 +20,7 @@
 #include <yarp/dev/GenericVocabs.h>
 
 #include <cstring>
+#include <algorithm> // std::for_each
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -525,13 +526,14 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
 
                         // Default values here are valid for cases 1a and `left` side of 2a
                         IFrameGrabberImage *imageInterface = fgImage;
-                        int u_offset = 0;
 
                         if(param.twoCameras == false)   // a single HW source of images
                         {
                             imageInterface = fgImage;
                             if(left == false)                               // if left is false, implicitly split is true
-                                u_offset = imageInterface->width()/2;       // 1b
+                            {
+                                std::for_each(vertices.begin(), vertices.end(), [=](auto &pt) { pt.first += imageInterface->width() / 2; }); // 1b
+                            }
 
                         }
                         else
@@ -541,7 +543,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                                 if(left == false)
                                 {
                                     imageInterface = fgImage2;
-                                    u_offset = 0;
+                                    // no offset
                                 }
                             }
                             else
@@ -549,12 +551,11 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                                 if(vertices[0].first >= fgImage->width())    // 2b, right image
                                 {
                                     imageInterface = fgImage2;
-                                    u_offset = -fgImage->width();
+                                    std::for_each(vertices.begin(), vertices.end(), [=](auto &pt) { pt.first -= fgImage->width(); });
                                 }
                             }
 
                         }
-
 
                         if(imageInterface != nullptr)
                         {
@@ -576,16 +577,11 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                                     ImageOf< PixelRgb > full;
                                     imageInterface->getImage(full);
 
-                                    cropped.resize(vertices[1].first - vertices[0].first +1, vertices[1].second - vertices[0].second +1);  // +1 to be inclusive
-                                    cropped.zero();
-                                    for(int u_in=vertices[0].first + u_offset, u_out=0; u_in<=vertices[1].first + u_offset; u_in++, u_out++)
+                                    if(!utils::cropRect(full, vertices[0], vertices[1], cropped))
                                     {
-                                        for(int v_in=vertices[0].second, v_out=0; v_in <= vertices[1].second; v_in++, v_out++)
-                                        {
-                                            cropped.pixel(u_out, v_out).r = full.pixel(u_in, v_in).r;
-                                            cropped.pixel(u_out, v_out).g = full.pixel(u_in, v_in).g;
-                                            cropped.pixel(u_out, v_out).b = full.pixel(u_in, v_in).b;
-                                        }
+                                        response.addString("GetImageCrop failed: utils::cropRect error.");
+                                        yCError(SERVERGRABBER) << "GetImageCrop failed: utils::cropRect error";
+                                        return false;
                                     }
                                 }
                                 else if(cmd.get(3).asVocab() == YARP_CROP_LIST)

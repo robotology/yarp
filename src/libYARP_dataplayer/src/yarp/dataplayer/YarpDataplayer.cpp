@@ -726,7 +726,8 @@ int DataplayerWorker::sendBottle(int part, int frame)
     outBot = tmp;
 
     //propagate timestamp
-    Stamp ts(frame, utilities->partDetails[part].timestamp[frame]);
+    std::string time = yarp::conf::numeric::to_string(utilities->partDetails[part].timestamp[frame]);
+    Bottle ts(time);
     the_port->setEnvelope(ts);
 
     if (utilities->sendStrict) {

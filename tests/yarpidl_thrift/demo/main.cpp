@@ -13,6 +13,7 @@
 #include <DemoStructExt.h>
 #include <SurfaceMeshWithBoundingBox.h>
 #include <Wrapping.h>
+#include <TestAnnotatedTypes.h>
 #include <TestSomeMoreTypes.h>
 #if defined(THRIFT_INCLUDE_PREFIX) && defined(THRIFT_NO_NAMESPACE_PREFIX)
 # include <sub/directory/ClockServer.h>
@@ -584,8 +585,7 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         cmd.fromString("getBottle");
         client_port.write(cmd,reply);
         INFO("Bottle is " << reply.get(0).toString());
-        REQUIRE(reply.get(0).isList());
-        CHECK(reply.get(0).asList()->size() == 5);
+        CHECK(reply.size() == 5);
     }
 
     SECTION("test_missing_method")
@@ -804,6 +804,29 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         CHECK(a.a_i16 == b.a_i16);
         CHECK(a.a_i32 == b.a_i32);
         CHECK(a.a_i64 == b.a_i64);
+    }
+
+    SECTION("test annotated types")
+    {
+        TestAnnotatedTypes a, b;
+        Bottle tmp;
+        a.a_vocab = yarp::os::createVocab('d', 'e', 'm', 'o');
+        a.a_ui8 = 0xff;
+        a.a_ui16 = 0xffff;
+        a.a_ui32 = 0xffffffff;
+        a.a_ui64 = 0xffffffffffffffff;
+        a.a_float32 = 0.32;
+        a.a_float64 = 0.64;
+        a.a_size = sizeof(TestAnnotatedTypes);
+        tmp.read(a);
+        tmp.write(b);
+        CHECK(a.a_vocab == b.a_vocab);
+        CHECK(a.a_ui8 == b.a_ui8);
+        CHECK(a.a_ui16 == b.a_ui16);
+        CHECK(a.a_ui32 == b.a_ui32);
+        CHECK(a.a_ui64 == b.a_ui64);
+        CHECK(a.a_float32 == b.a_float32);
+        CHECK(a.a_float64 == b.a_float64);
     }
 
     SECTION("test settings")

@@ -40,7 +40,7 @@ G_DEFINE_TYPE(ThriftMultiplexedProtocol, thrift_multiplexed_protocol, THRIFT_TYP
 static GParamSpec *thrift_multiplexed_protocol_obj_properties[PROP_THRIFT_MULTIPLEXED_PROTOCOL_END] = { NULL, };
 
 gint32
-thrift_multiplexed_protocol_write_message_begin (ThriftMultiplexedProtocol *protocol,
+thrift_multiplexed_protocol_write_message_begin (ThriftProtocol *protocol,
     const gchar *name, const ThriftMessageType message_type,
     const gint32 seqid, GError **error)
 {
@@ -49,7 +49,6 @@ thrift_multiplexed_protocol_write_message_begin (ThriftMultiplexedProtocol *prot
   g_return_val_if_fail (THRIFT_IS_MULTIPLEXED_PROTOCOL (protocol), -1);
 
   ThriftMultiplexedProtocol *self = THRIFT_MULTIPLEXED_PROTOCOL (protocol);
-  ThriftMultiplexedProtocolClass *multiplexClass = THRIFT_MULTIPLEXED_PROTOCOL_GET_CLASS(self);
 
   if( (message_type == T_CALL || message_type == T_ONEWAY) && self->service_name != NULL) {
     service_name = g_strdup_printf("%s%s%s", self->service_name, THRIFT_MULTIPLEXED_PROTOCOL_DEFAULT_SEPARATOR, name);
@@ -77,6 +76,7 @@ thrift_multiplexed_protocol_set_property (GObject      *object,
   switch (property_id)
   {
   case PROP_THRIFT_MULTIPLEXED_PROTOCOL_SERVICE_NAME:
+    g_free(self->service_name);
     self->service_name = g_value_dup_string (value);
     break;
 

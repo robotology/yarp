@@ -22,4 +22,4 @@ target_link_libraries(harness_math PRIVATE YARP_harness
 
 set_property(TARGET harness_math PROPERTY FOLDER "Test")
 
-yarp_parse_and_add_catch_tests(harness_math)
+yarp_catch_discover_tests(harness_math)
