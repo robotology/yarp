@@ -216,17 +216,43 @@ public:
     * @return true/false
     */
     virtual bool clearMapTemporaryFlags(std::string map_name) = 0;
+
+    /**
+    * Save a collection of maps
+    * @return true/false
+    */
+    virtual bool saveMapsCollection(std::string maps_collection_file) = 0;
+
+    /**
+    * Load a collection of maps
+    * @return true/false
+    */
+    virtual bool loadMapsCollection(std::string maps_collection_file) = 0;
+
+    /**
+    * Save a collection of locations/area/paths etc
+    * @return true/false
+    */
+    virtual bool saveLocationsAndExtras(std::string locations_collection_file) = 0;
+
+    /**
+    * Load a collection of locations/areas/paths etc
+    * @return true/false
+    */
+    virtual bool loadLocationsAndExtras(std::string locations_collection_file) = 0;
 };
 
-constexpr yarp::conf::vocab32_t VOCAB_IMAP                    = yarp::os::createVocab('i','m','a','p');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_SET_MAP            = yarp::os::createVocab('s','e','t');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_GET_MAP            = yarp::os::createVocab('g','e','t');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_GET_NAMES          = yarp::os::createVocab('n','a','m','s');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_CLEAR              = yarp::os::createVocab('c','l','r');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_REMOVE             = yarp::os::createVocab('r','e','m','v');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_LOAD_COLLECTION    = yarp::os::createVocab('l','d','c','l');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_SAVE_COLLECTION    = yarp::os::createVocab('s','v','c','l');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_OK                 = yarp::os::createVocab('o','k','k');
-constexpr yarp::conf::vocab32_t VOCAB_IMAP_ERROR              = yarp::os::createVocab('e','r','r');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP                      = yarp::os::createVocab('i','m','a','p');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_SET_MAP              = yarp::os::createVocab('s','e','t');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_GET_MAP              = yarp::os::createVocab('g','e','t');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_GET_NAMES            = yarp::os::createVocab('n','a','m','s');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_CLEAR_ALL_MAPS       = yarp::os::createVocab('c','l','r');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_REMOVE               = yarp::os::createVocab('r','e','m','v');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_LOAD_X               = yarp::os::createVocab('l','o','a','d');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_SAVE_X               = yarp::os::createVocab('s','a','v','e');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_MAPS_COLLECTION      = yarp::os::createVocab('m','a','p','s');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_LOCATIONS_COLLECTION = yarp::os::createVocab('l','o','c','s');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_OK                   = yarp::os::createVocab('o','k','k');
+constexpr yarp::conf::vocab32_t VOCAB_IMAP_ERROR                = yarp::os::createVocab('e','r','r');
 
 #endif // YARP_DEV_IMAP2D_H

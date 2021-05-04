@@ -75,44 +75,12 @@ gint32_compare (gconstpointer a, gconstpointer b)
   return result;
 }
 
-/**
- * It gets a multiplexed protocol which uses a concrete protocol underneath
- * @param  protocol_name  the fully qualified protocol path (e.g. "binary:multi")
- * @param  transport      the underlying transport
- * @param  service_name   the single supported service name
- * @todo                  need to allow multiple services to fully test multiplexed
- * @return                a multiplexed protocol wrapping the correct underlying protocol
- */
-ThriftProtocol *
-get_multiplexed_protocol(gchar *protocol_name, ThriftTransport *transport, gchar *service_name)
-{
-  ThriftProtocol * multiplexed_protocol = NULL;
-
-  if ( strncmp(protocol_name, "binary:", 7) == 0) {
-    multiplexed_protocol = g_object_new (THRIFT_TYPE_BINARY_PROTOCOL,
-                 "transport", transport,
-                 NULL);
-  } else if ( strncmp(protocol_name, "compact:", 8) == 0) {
-    multiplexed_protocol = g_object_new (THRIFT_TYPE_COMPACT_PROTOCOL,
-                 "transport", transport,
-                 NULL);
-  } else {
-    fprintf(stderr, "Unknown multiplex protocol name: %s\n", protocol_name);
-    return NULL;
-  }
-
-  return g_object_new (THRIFT_TYPE_MULTIPLEXED_PROTOCOL,
-          "transport",      transport,
-          "protocol",       multiplexed_protocol,
-          "service-name",   service_name,
-          NULL);
-}
-
 int
 main (int argc, char **argv)
 {
   static gchar *  host = NULL;
   static gint     port = 9090;
+  static gchar *  path = NULL;
   static gboolean ssl  = FALSE;
   static gchar *  transport_option = NULL;
   static gchar *  protocol_option = NULL;
@@ -124,6 +92,8 @@ main (int argc, char **argv)
       "Host to connect (=localhost)", NULL },
     { "port",            'p', 0, G_OPTION_ARG_INT,      &port,
       "Port number to connect (=9090)", NULL },
+    { "domain-socket",    0, 0, G_OPTION_ARG_STRING,   &path,
+      "Unix socket domain path to connect", NULL },
     { "ssl",             's', 0, G_OPTION_ARG_NONE,     &ssl,
       "Enable SSL", NULL },
     { "transport",       't', 0, G_OPTION_ARG_STRING,   &transport_option,
@@ -148,6 +118,7 @@ main (int argc, char **argv)
   ThriftTransport *transport = NULL;
   ThriftProtocol  *protocol = NULL;
   ThriftProtocol  *protocol2 = NULL;            // for multiplexed tests
+  ThriftProtocol  *multiplexed_protocol = NULL;
 
   TTestThriftTestIf *test_client = NULL;
   TTestSecondServiceIf *second_service = NULL;  // for multiplexed tests
@@ -176,6 +147,8 @@ main (int argc, char **argv)
                                &argv,
                                &error)) {
     fprintf (stderr, "%s\n", error->message);
+    g_clear_error (&error);
+    g_option_context_free (option_context);
     return 255;
   }
   g_option_context_free (option_context);
@@ -227,12 +200,20 @@ main (int argc, char **argv)
   if (!options_valid)
     return 254;
 
-  printf ("Connecting (%s/%s) to: %s/%s:%d\n",
-          transport_name,
-          protocol_name,
-          socket_name,
-          host,
-          port);
+  if (path) {
+    printf ("Connecting (%s/%s) to: %s/%s\n",
+            transport_name,
+            protocol_name,
+            socket_name,
+            path);
+  } else {
+    printf ("Connecting (%s/%s) to: %s/%s:%d\n",
+            transport_name,
+            protocol_name,
+            socket_name,
+            host,
+            port);
+  }
 
   /* Install our SIGPIPE handler, which outputs an error message to
      standard error before exiting so testers can know what
@@ -247,10 +228,16 @@ main (int argc, char **argv)
   }
 
   /* Establish all our connection objects */
-  socket = g_object_new (socket_type,
-                         "hostname", host,
-                         "port",     port,
-                         NULL);
+  if (path) {
+    socket = g_object_new (socket_type,
+                           "path", path,
+                           NULL);
+  } else {
+    socket = g_object_new (socket_type,
+                           "hostname", host,
+                           "port",     port,
+                           NULL);
+  }
 
   if (ssl && !thrift_ssl_load_cert_from_file(THRIFT_SSL_SOCKET(socket), "../keys/CA.pem")) {
     fprintf(stderr, "Unable to load validation certificate ../keys/CA.pem - did you run in the test/c_glib directory?\n");
@@ -262,24 +249,47 @@ main (int argc, char **argv)
                             "transport", socket,
                             NULL);
 
-  if(protocol_type==THRIFT_TYPE_MULTIPLEXED_PROTOCOL) {
+  if (protocol_type == THRIFT_TYPE_MULTIPLEXED_PROTOCOL) {
     // TODO: A multiplexed test should also test "Second" (see Java TestServer)
     // The context comes from the name of the thrift file. If multiple thrift
     // schemas are used we have to redo the way this is done.
-    protocol = get_multiplexed_protocol(protocol_name, transport, "ThriftTest");
-    if (NULL == protocol) {
+    if (strncmp(protocol_name, "binary:", 7) == 0) {
+      multiplexed_protocol = g_object_new (THRIFT_TYPE_BINARY_PROTOCOL,
+                                           "transport", transport,
+                                           NULL);
+    } else if (strncmp(protocol_name, "compact:", 8) == 0) {
+      multiplexed_protocol = g_object_new (THRIFT_TYPE_COMPACT_PROTOCOL,
+                                           "transport", transport,
+                                           NULL);
+    } else {
+      fprintf(stderr, "Unknown multiplex protocol name: %s\n", protocol_name);
       g_clear_object (&transport);
       g_clear_object (&socket);
       return 252;
     }
+    protocol = g_object_new (THRIFT_TYPE_MULTIPLEXED_PROTOCOL,
+                             "transport",    transport,
+                             "protocol",     multiplexed_protocol,
+                             "service-name", "ThriftTest",
+                             NULL);;
+    if (NULL == protocol) {
+      g_clear_object (&multiplexed_protocol);
+      g_clear_object (&transport);
+      g_clear_object (&socket);
+      return 251;
+    }
 
     // Make a second protocol and client running on the same multiplexed transport
-    protocol2 = get_multiplexed_protocol(protocol_name, transport, "SecondService");
-    second_service = g_object_new (T_TEST_TYPE_SECOND_SERVICE_CLIENT,
-                                "input_protocol",  protocol2,
-                                "output_protocol", protocol2,
-                                NULL);
+    protocol2 = g_object_new (THRIFT_TYPE_MULTIPLEXED_PROTOCOL,
+                              "transport",    transport,
+                              "protocol",     multiplexed_protocol,
+                              "service-name", "SecondService",
+                              NULL);
 
+    second_service = g_object_new (T_TEST_TYPE_SECOND_SERVICE_CLIENT,
+                                   "input_protocol",  protocol2,
+                                   "output_protocol", protocol2,
+                                   NULL);
   }else{
     protocol = g_object_new (protocol_type,
            "transport", transport,
@@ -336,7 +346,11 @@ main (int argc, char **argv)
       gboolean first;
       gint32 i, j;
 
-      printf ("Test #%d, connect %s:%d\n", test_num + 1, host, port);
+      if (path) {
+        printf ("Test #%d, connect %s\n", test_num + 1, path);
+      } else {
+        printf ("Test #%d, connect %s:%d\n", test_num + 1, host, port);
+      }
       gettimeofday (&time_start, NULL);
 
       /* These test routines have been ported from the C++ test
@@ -1353,6 +1367,8 @@ main (int argc, char **argv)
                       byte_thing,
                       i32_thing,
                       i64_thing);
+              if (string != NULL)
+                g_free (string);
             }
             printf ("}");
             g_ptr_array_unref (xtructs);
@@ -1775,7 +1791,7 @@ main (int argc, char **argv)
       g_error_free (error);
       error = NULL;
 
-      return 1;
+      goto out;
     }
   }
 
@@ -1789,10 +1805,12 @@ main (int argc, char **argv)
   printf ("Max time: %" PRIu64 " us\n", time_max_usec);
   printf ("Avg time: %" PRIu64 " us\n", time_avg_usec);
 
+out:
   g_clear_object(&second_service);
   g_clear_object(&protocol2);
   g_clear_object(&test_client);
   g_clear_object(&protocol);
+  g_clear_object(&multiplexed_protocol);
   g_clear_object(&transport);
   g_clear_object(&socket);
 

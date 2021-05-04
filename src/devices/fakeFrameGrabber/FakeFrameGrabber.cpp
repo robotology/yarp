@@ -23,57 +23,173 @@ using namespace yarp::sig::draw;
 
 namespace {
 YARP_LOG_COMPONENT(FAKEFRAMEGRABBER, "yarp.device.fakeFrameGrabber")
+constexpr yarp::conf::vocab32_t VOCAB_LINE           = yarp::os::createVocab('l','i','n','e');
 constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
 constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
 constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
+constexpr yarp::conf::vocab32_t VOCAB_NOIS           = yarp::os::createVocab('n','o','i','s');
 constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab('n','o','n','e');
 constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s','i','z','e');
 constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab('t','i','m','e');
-}
 
-FakeFrameGrabber::FakeFrameGrabber() :
-    ct(0),
-    bx(0),
-    by(0),
-    w(128),
-    h(128),
-    rnd(0),
-    freq(30),
-    period(1/freq),
-    first(0),
-    horizontalFov(0.0),
-    verticalFov(0.0),
-    prev(0),
-    mode(0),
-    use_bayer(false),
-    use_mono(false),
-    mirror(false)
+//the following data are used by [time] test
+constexpr char num[12][16]
 {
-    //the following data are used by [time] test
-    std::snprintf(num[0].data,  16, "**** ** ** ****");
-    std::snprintf(num[1].data,  16, " *  *  *  *  * ");
-    std::snprintf(num[2].data,  16, "***  *****  ***");
-    std::snprintf(num[3].data,  16, "***  ****  ****");
-    std::snprintf(num[4].data,  16, "* ** ****  *  *");
-    std::snprintf(num[5].data,  16, "****  ***  ****");
-    std::snprintf(num[6].data,  16, "****  **** ****");
-    std::snprintf(num[7].data,  16, "***  *  *  *  *");
-    std::snprintf(num[8].data,  16, "**** ***** ****");
-    std::snprintf(num[9].data,  16, "**** ****  ****");
-    std::snprintf(num[10].data, 16, "               ");
-    std::snprintf(num[11].data, 16, "          ** **");
-    start_time = yarp::os::Time::now();
+    // '0'
+    "***"
+    "* *"
+    "* *"
+    "* *"
+    "***",
+
+    // '1'
+    " * "
+    " * "
+    " * "
+    " * "
+    " * ",
+
+    // '2'
+    "***"
+    "  *"
+    "***"
+    "*  "
+    "***",
+
+    // '3'
+    "***"
+    "  *"
+    "***"
+    "  *"
+    "***",
+
+    // '4'
+    "* *"
+    "* *"
+    "***"
+    "  *"
+    "  *",
+
+    // '5'
+    "***"
+    "*  "
+    "***"
+    "  *"
+    "***",
+
+    // '6'
+    "***"
+    "*  "
+    "***"
+    "* *"
+    "***",
+
+    // '7'
+    "***"
+    "  *"
+    "  *"
+    "  *"
+    "  *",
+
+    // '8'
+    "***"
+    "* *"
+    "***"
+    "* *"
+    "***",
+
+    // '9'
+    "***"
+    "* *"
+    "***"
+    "  *"
+    "***",
+
+    // ' '
+    "   "
+    "   "
+    "   "
+    "   "
+    "   ",
+
+    // '.'
+    "   "
+    "   "
+    "   "
+    " **"
+    " **",
+};
+constexpr size_t num_width = 3;
+constexpr size_t num_height = 5;
+
 }
 
+bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::Bottle command;
+    yarp::os::Bottle reply;
+    bool ok = command.read(connection);
+    if (!ok) return false;
+    reply.clear();
+
+    if (command.get(0).asString()=="help")
+    {
+        reply.addVocab(Vocab::encode("many"));
+        reply.addString("set_mode <mode>");
+        reply.addString("set_image <file_name>/off");
+        reply.addString("available modes: ball, line, grid, size, rand, nois, none, time");
+        reply.addString("");
+    }
+    else if (command.get(0).asString() == "set_mode")
+    {
+        mode= command.get(1).asVocab();
+        reply.addString("ack");
+    }
+    else if (command.get(0).asString() == "set_image")
+    {
+        if (command.get(1).asString() == "off")
+        {
+            have_bg=false;
+            reply.addString("ack");
+        }
+        else
+        {
+            if (yarp::sig::file::read(background, command.get(1).asString()))
+            {
+                w = background.width();
+                h = background.height();
+                have_bg = true;
+                reply.addString("ack");
+            }
+            else
+            {
+                have_bg = false;
+                reply.addString("err");
+            }
+        }
+    }
+    else
+    {
+        reply.addString("Unknown command. Type 'help'.");
+    }
+
+    yarp::os::ConnectionWriter* returnToSender = connection.getWriter();
+    if (returnToSender != nullptr)
+    {
+        reply.write(*returnToSender);
+    }
+
+    return true;
+}
 
 bool FakeFrameGrabber::close() {
+    stop();
+    m_rpcPort.close();
     return true;
 }
 
 bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
-    yarp::os::Value *val;
-    Value* retM;
-    retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
+    m_rpcPortName = config.check("fakeFrameGrabber_rpc_port", yarp::os::Value("/fakeFrameGrabber/rpc"), "rpc port for the fakeFrameGrabber").asString();
     w = config.check("width",yarp::os::Value(320),
                      "desired width of test image").asInt32();
     h = config.check("height",yarp::os::Value(240),
@@ -89,7 +205,12 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
     intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal length of the fakeFrameGrabber").asFloat64());
     intrinsic.put("principalPointX",config.check("principalPointX",Value(6.0),"X coordinate of the principal point of the fakeFrameGrabber").asFloat64());
     intrinsic.put("principalPointY",config.check("principalPointY",Value(7.0),"Y coordinate of the principal point of the fakeFrameGrabber").asFloat64());
+
+    Value* retM;
+    retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
     intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,"Matrix that describes the lens' distortion(fake)"));
+    delete retM;
+
     intrinsic.put("distortionModel",config.check("distortionModel",Value("FishEye"),"Reference to group of parameters describing the distortion model of the camera").asString());
     intrinsic.put("k1",config.check("k1",Value(8.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
     intrinsic.put("k2",config.check("k2",Value(9.0),"Radial distortion coefficient of the lens(fake)").asFloat64());
@@ -97,19 +218,32 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
     intrinsic.put("t1",config.check("t1",Value(11.0),"Tangential distortion of the lens(fake)").asFloat64());
     intrinsic.put("t2",config.check("t2",Value(12.0),"Tangential distortion of the lens(fake)").asFloat64());
     //Only for debug
-    CameraConfig conf1, conf2, conf3;
-    conf1.height=128; conf1.width=128; conf1.framerate=60.0; conf1.pixelCoding=VOCAB_PIXEL_RGB;
-    conf2.height=256; conf2.width=256; conf2.framerate=30.0; conf2.pixelCoding=VOCAB_PIXEL_BGR;
-    conf3.height=512; conf3.width=512; conf3.framerate=15.0; conf3.pixelCoding=VOCAB_PIXEL_MONO;
+    CameraConfig conf1;
+    conf1.height=128;
+    conf1.width=128;
+    conf1.framerate=60.0;
+    conf1.pixelCoding=VOCAB_PIXEL_RGB;
     configurations.push_back(conf1);
-    configurations.push_back(conf2);
-    configurations.push_back(conf3);
-    delete retM;
 
-    if (config.check("freq",val,"rate of test images in Hz")) {
+    CameraConfig conf2;
+    conf2.height=256;
+    conf2.width=256;
+    conf2.framerate=30.0;
+    conf2.pixelCoding=VOCAB_PIXEL_BGR;
+    configurations.push_back(conf2);
+
+    CameraConfig conf3;
+    conf3.height=512;
+    conf3.width=512;
+    conf3.framerate=15.0;
+    conf3.pixelCoding=VOCAB_PIXEL_MONO;
+    configurations.push_back(conf3);
+
+    yarp::os::Value *val;
+    if (config.check("freq", val, "rate of test images in Hz")) {
         freq = val->asFloat64();
         period = 1/freq;
-    } else if (config.check("period",val,
+    } else if (config.check("period", val,
                             "period of test images in seconds")) {
         period = val->asFloat64() / 1000.0;
         if(period<=0) {
@@ -117,9 +251,10 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
             freq = -1;
         }
     }
+
     mode = config.check("mode",
                         yarp::os::Value(VOCAB_LINE, true),
-                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]").asVocab();
+                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], noise [nois], none [none], time test[time]").asVocab();
 
     if (config.check("src")) {
         if (!yarp::sig::file::read(background,
@@ -129,10 +264,18 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
             return false;
         }
         if (background.width()>0) {
+            if (config.check("width") || config.check("height")) {
+                yCWarning(FAKEFRAMEGRABBER, "width and height option are ignored when passing a background image");
+            }
             w = background.width();
             h = background.height();
+            have_bg = true;
         }
     }
+
+    add_timestamp = config.check("timestamp", "should write the timestamp in the first bytes of the image");
+
+    snr = yarp::conf::clamp(config.check("snr",Value(default_snr), "Signal noise ratio ([0.0-1.0] default 0.5)").asFloat64(), 0.0, 1.0);
 
     use_bayer = config.check("bayer","should emit bayer test image?");
     use_mono = config.check("mono","should emit a monochrome image?");
@@ -153,6 +296,23 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
 
     bx = w/2;
     by = h/2;
+
+    for (auto& buff : buffs) {
+        buff.resize(w, h);
+        buff.zero();
+    }
+
+    if (!m_rpcPort.open(m_rpcPortName.c_str()))
+    {
+        yCError(FAKEFRAMEGRABBER, "Failed to open port %s", m_rpcPortName.c_str());
+        yCError(FAKEFRAMEGRABBER, "Do you have multiple FakeFrameGrabber devices running?");
+        yCError(FAKEFRAMEGRABBER, "If yes, use the `fakeFrameGrabber_rpc_port` parameter to set a different name for each of them");
+        return false;
+    }
+    m_rpcPort.setReader(*this);
+
+    start();
+
     return true;
 }
 
@@ -233,21 +393,77 @@ bool FakeFrameGrabber::setRgbMirroring(bool mirror){
     return true;
 }
 
-bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+void FakeFrameGrabber::run()
+{
+    while (!isStopping()) {
+        for (size_t i = 0; i < 2; ++i) {
+            std::unique_lock<std::mutex> lk(mutex[i]);
+            img_consumed_cv[i].wait(lk, [&]{ if (img_ready[i]) {img_ready_cv[i].notify_one();} return (isStopping() || img_consumed[i]);});
+            if (isStopping()) {
+                break;
+            }
+            img_ready[i] = false;
+            img_consumed[i] = false;
+            createTestImage(buffs[i], buff_ts[i]);
+            img_ready[i] = true;
+            img_ready_cv[i].notify_all();
+        }
+    }
+}
+
+void FakeFrameGrabber::onStop()
+{
+    // Unlock any blocked thread.
+    for (size_t i = 0; i < 2; ++i) {
+        std::unique_lock<std::mutex> lk(mutex[i]);
+        img_consumed[i] = true;
+        img_consumed_cv[i].notify_all();
+        img_ready[i] = true;
+        img_ready_cv[i].notify_all();
+    }
+}
+
+
+bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+{
     timing();
-    createTestImage(image);
+
+    std::unique_lock<std::mutex> lk(mutex[curr_buff]);
+    img_ready_cv[curr_buff].wait(lk, [&]{return (!isRunning() || img_ready[curr_buff]);});
+    if (!isRunning()) {
+        return false;
+    }
+    image.copy(buffs[curr_buff]);
+    stamp.update(buff_ts[curr_buff]);
+    img_consumed[curr_buff] = true;
+    img_consumed_cv[curr_buff].notify_one();
+
+    curr_buff = (curr_buff + 1) % 2;
+
     return true;
 }
 
 
-bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+{
     timing();
-    createTestImage(rgb_image);
-    if (use_bayer) {
-        makeSimpleBayer(rgb_image,image);
-    } else {
-        image.copy(rgb_image);
+
+    std::unique_lock<std::mutex> lk(mutex[curr_buff]);
+    img_ready_cv[curr_buff].wait(lk, [&]{return !isRunning() || img_ready[curr_buff];});
+    if (!isRunning()) {
+        return false;
     }
+    if (use_bayer) {
+        makeSimpleBayer(buffs[curr_buff],image);
+    } else {
+        image.copy(buffs[curr_buff]);
+    }
+    stamp.update(buff_ts[curr_buff]);
+    img_consumed[curr_buff] = true;
+    img_consumed_cv[curr_buff].notify_one();
+
+    curr_buff = (curr_buff + 1) % 2;
+
     return true;
 }
 
@@ -280,47 +496,40 @@ bool FakeFrameGrabber::setMode(int feature, FeatureMode mode) { return false; }
 bool FakeFrameGrabber::getMode(int feature, FeatureMode *mode) { return false; }
 bool FakeFrameGrabber::setOnePush(int feature) { return false; }
 
-void FakeFrameGrabber::printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf_h, int x, int y, char* s, int size)
+void FakeFrameGrabber::printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t pixbuf_h, size_t x, size_t y, char* s, size_t size)
 {
-    int pixelsize = 5;
-    for (int i = 0; i<size; i++)
+    for (size_t i = 0; i < size; i++)
     {
-        char* num_p = nullptr;
-        switch (s[i])
-        {
-            case '0': num_p = num[0].data; break;
-            case '1': num_p = num[1].data; break;
-            case '2': num_p = num[2].data; break;
-            case '3': num_p = num[3].data; break;
-            case '4': num_p = num[4].data; break;
-            case '5': num_p = num[5].data; break;
-            case '6': num_p = num[6].data; break;
-            case '7': num_p = num[7].data; break;
-            case '8': num_p = num[8].data; break;
-            case '9': num_p = num[9].data; break;
-            case ' ': num_p = num[10].data; break;
-            case '.': num_p = num[11].data; break;
+        const char* num_p = nullptr;
+        switch (s[i]) {
+            case '0': num_p = num[0]; break;
+            case '1': num_p = num[1]; break;
+            case '2': num_p = num[2]; break;
+            case '3': num_p = num[3]; break;
+            case '4': num_p = num[4]; break;
+            case '5': num_p = num[5]; break;
+            case '6': num_p = num[6]; break;
+            case '7': num_p = num[7]; break;
+            case '8': num_p = num[8]; break;
+            case '9': num_p = num[9]; break;
+            case ' ': num_p = num[10]; break;
+            case '.': num_p = num[11]; break;
+            default: num_p = num[10]; break;
         }
 
-        for (int yi = 0; yi<5; yi++)
-            for (int xi = 0; xi<3; xi++)
-            {
-                int ii = yi * 3 + xi;
-                if (num_p[ii] == '*')
-                {
-                    for (int r = yi * pixelsize; r<yi*pixelsize + pixelsize; r++)
-                    {
-                        int off = i * (pixelsize + 20);
-                        for (int c = xi * pixelsize + off; c<xi*pixelsize + pixelsize + off; c++)
-                        {
-                            if (c >= pixbuf_h ||
-                                r >= pixbuf_w)
-                            {
+        for (size_t yi = 0; yi < num_height; yi++)
+            for (size_t xi = 0; xi < num_width; xi++) {
+                size_t ii = yi * num_width + xi;
+                if (num_p[ii] == '*') {
+                    for (size_t r = yi * num_height; r < yi*num_height + num_height; r++) {
+                        size_t off = i * (num_height + 20);
+                        for (size_t c = xi * num_height + off; c < xi*num_height + num_height + off; c++) {
+                            if (c >= pixbuf_h || r >= pixbuf_w) {
                                 //avoid drawing out of the image memory
                                 return;
                             }
                             unsigned char *pixel = pixbuf;
-                            size_t offset = c * 3 + r * (pixbuf_w * 3);
+                            size_t offset = c * sizeof(yarp::sig::PixelRgb) + r * (pixbuf_w * sizeof(yarp::sig::PixelRgb));
                             pixel = pixel + offset;
                             pixel[0] = 0;
                             pixel[1] = 0;
@@ -332,24 +541,26 @@ void FakeFrameGrabber::printTime(unsigned char* pixbuf, int pixbuf_w, int pixbuf
     }
 }
 
-void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
-                                       image) {
+void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                       double& timestamp) {
     // to test IPreciselyTimed, make timestamps be mysteriously NNN.NNN42
     double t = Time::now();
-    t -= ((t*1000)-(int)t)/1000;
-    t+= 0.00042;
-    stamp.update(t);
-    if (background.width()>0) {
-        image.copy(background);
-    } else {
-        image.resize(w,h);
-        image.zero();
-    }
+    t -= (((t*1000) - static_cast<int64_t>(t*1000)) / 1000);
+    t += 0.00042;
+    timestamp = t;
+    image.resize(w,h);
+
     switch (mode) {
     case VOCAB_TIMETEXT:
         {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
             char txtbuf[50];
-            double time = yarp::os::Time::now() - start_time;
+            static const double start_time = t;
+            double time = t - start_time;
             std::snprintf(txtbuf, 50, "%.3f", time);
             int len = strlen(txtbuf);
             if (len < 20)
@@ -360,6 +571,11 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         break;
     case VOCAB_BALL:
         {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
             addCircle(image,PixelRgb{0,255,0},bx,by,15);
             addCircle(image,PixelRgb{0,255,255},bx,by,8);
             if (ct%5!=0) {
@@ -441,57 +657,28 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     case VOCAB_LINE:
     default:
         {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
             for (size_t i=0; i<image.width(); i++) {
                 image.pixel(i,ct).r = 255;
             }
-            char ttxt[50];
-            std::snprintf(ttxt, 50, "%021.10f", t);
-            image.pixel(0, 0).r = ttxt[0] - '0';
-            image.pixel(0, 0).g = ttxt[1] - '0';
-            image.pixel(0, 0).b = ttxt[2] - '0';
-
-            image.pixel(1, 0).r = ttxt[3] - '0';
-            image.pixel(1, 0).g = ttxt[4] - '0';
-            image.pixel(1, 0).b = ttxt[5] - '0';
-
-            image.pixel(2, 0).r = ttxt[6] - '0';
-            image.pixel(2, 0).g = ttxt[7] - '0';
-            image.pixel(2, 0).b = ttxt[8] - '0';
-
-            image.pixel(3, 0).r = ttxt[9] - '0';
-            image.pixel(3, 0).g = ttxt[10] - '0';
-            image.pixel(3, 0).b = ttxt[11] - '0';
-
-            image.pixel(4, 0).r = ttxt[12] - '0';
-            image.pixel(4, 0).g = ttxt[13] - '0';
-            image.pixel(4, 0).b = ttxt[14] - '0';
-
-            image.pixel(5, 0).r = ttxt[15] - '0';
-            image.pixel(5, 0).g = ttxt[16] - '0';
-            image.pixel(5, 0).b = ttxt[17] - '0';
-
-            image.pixel(6, 0).r = ttxt[18] - '0';
-            image.pixel(6, 0).g = ttxt[19] - '0';
-            image.pixel(6, 0).b = ttxt[20] - '0';
         }
         break;
     case VOCAB_RAND:
         {
-            // from Alessandro Scalzo
-
-            static unsigned char r=128,g=128,b=128;
+            static unsigned char r = 128;
+            static unsigned char g = 128;
+            static unsigned char b = 128;
 
             size_t ww = image.width();
             size_t hh = image.height();
 
             if (ww>1&&hh>1) {
-                std::default_random_engine randengine;
-                std::uniform_real_distribution<double> udist(-1.0, 1.0);
                 for (size_t x=0; x<ww; x++) {
                     for (size_t y=0; y<hh; y++) {
-                        //r+=(rand()%3)-1;
-                        //g+=(rand()%3)-1;
-                        //b+=(rand()%3)-1;
                         r += udist(randengine);
                         g += udist(randengine);
                         b += udist(randengine);
@@ -501,7 +688,43 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
             }
         }
         break;
+    case VOCAB_NOIS:
+        {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
+            static const double nsr = 1.0 - snr;
+            for (size_t x = 0; x < image.width(); ++x) {
+                for (size_t y = 0; y < image.height(); ++y) {
+                    auto rand = ucdist(randengine);
+                    if (have_bg) {
+                        image.pixel(x,y) = PixelRgb {
+                            static_cast<unsigned char>(image.pixel(x,y).r * snr + rand * nsr * 255),
+                            static_cast<unsigned char>(image.pixel(x,y).g * snr + rand * nsr * 255),
+                            static_cast<unsigned char>(image.pixel(x,y).b * snr + rand * nsr * 255)
+                        };
+                    } else {
+                        image.pixel(x,y) = PixelRgb{
+                            static_cast<unsigned char>(rand * nsr),
+                            static_cast<unsigned char>(rand * nsr),
+                            static_cast<unsigned char>(rand * nsr)
+                        };
+                    }
+                }
+            }
+        }
+        break;
+
     case VOCAB_NONE:
+        {
+            if (have_bg) {
+                image.copy(background);
+            } else {
+                image.zero();
+            }
+        }
         break;
     }
     ct++;
@@ -513,6 +736,38 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     }
     if (bx>=image.width()) {
         bx = image.width()-1;
+    }
+
+    if (add_timestamp) {
+        char ttxt[50];
+        std::snprintf(ttxt, 50, "%021.10f", timestamp);
+        image.pixel(0, 0).r = ttxt[0] - '0';
+        image.pixel(0, 0).g = ttxt[1] - '0';
+        image.pixel(0, 0).b = ttxt[2] - '0';
+
+        image.pixel(1, 0).r = ttxt[3] - '0';
+        image.pixel(1, 0).g = ttxt[4] - '0';
+        image.pixel(1, 0).b = ttxt[5] - '0';
+
+        image.pixel(2, 0).r = ttxt[6] - '0';
+        image.pixel(2, 0).g = ttxt[7] - '0';
+        image.pixel(2, 0).b = ttxt[8] - '0';
+
+        image.pixel(3, 0).r = ttxt[9] - '0';
+        image.pixel(3, 0).g = ttxt[10] - '0';
+        image.pixel(3, 0).b = ttxt[11] - '0';
+
+        image.pixel(4, 0).r = ttxt[12] - '0';
+        image.pixel(4, 0).g = ttxt[13] - '0';
+        image.pixel(4, 0).b = ttxt[14] - '0';
+
+        image.pixel(5, 0).r = ttxt[15] - '0';
+        image.pixel(5, 0).g = ttxt[16] - '0';
+        image.pixel(5, 0).b = ttxt[17] - '0';
+
+        image.pixel(6, 0).r = ttxt[18] - '0';
+        image.pixel(6, 0).g = ttxt[19] - '0';
+        image.pixel(6, 0).b = ttxt[20] - '0';
     }
 }
 

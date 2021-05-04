@@ -106,9 +106,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@WITH_PLUGIN_TRUE@@WITH_TESTS_TRUE@am__append_1 = lib/cpp/test
-@WITH_TESTS_TRUE@am__append_2 = test
-@WITH_TUTORIAL_TRUE@am__append_3 = tutorial
+@WITH_TESTS_TRUE@am__append_1 = test
+@WITH_TUTORIAL_TRUE@am__append_2 = tutorial
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
@@ -132,7 +131,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/aclocal/tar.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
@@ -142,8 +141,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h $(top_builddir)/lib/cpp/src/thrift/config.h \
 	$(top_builddir)/lib/c_glib/src/thrift/config.h
-CONFIG_CLEAN_FILES = compiler/cpp/src/thrift/version.h \
-	compiler/cpp/test/plugin/t_cpp_generator.cc
+CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -202,11 +200,9 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-DIST_SUBDIRS = compiler/cpp lib test tutorial lib/cpp lib/cpp/test
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.hin \
-	$(top_srcdir)/compiler/cpp/src/thrift/generate/t_cpp_generator.cc \
-	$(top_srcdir)/compiler/cpp/src/thrift/version.h.in compile \
-	config.guess config.sub install-sh ltmain.sh missing
+DIST_SUBDIRS = compiler/cpp lib test tutorial
+am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/config.hin compile \
+	config.guess config.sub depcomp install-sh ltmain.sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -315,6 +311,7 @@ ERLC = @ERLC@
 ERLCFLAGS = @ERLCFLAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FLEX_COMPC = @FLEX_COMPC@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_CXXFLAGS = @GCOV_CXXFLAGS@
 GCOV_LDFLAGS = @GCOV_LDFLAGS@
@@ -325,6 +322,7 @@ GOBJECT_CFLAGS = @GOBJECT_CFLAGS@
 GOBJECT_LIBS = @GOBJECT_LIBS@
 GRADLE_OPTS = @GRADLE_OPTS@
 GREP = @GREP@
+GSETTINGS = @GSETTINGS@
 HAVE_CXX11 = @HAVE_CXX11@
 HAXE = @HAXE@
 HAXE_VERSION = @HAXE_VERSION@
@@ -360,18 +358,18 @@ LUA_SHORT_VERSION = @LUA_SHORT_VERSION@
 LUA_VERSION = @LUA_VERSION@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
+MAYBE_AS3 = @MAYBE_AS3@
 MAYBE_CL = @MAYBE_CL@
 MAYBE_CPP = @MAYBE_CPP@
-MAYBE_CSHARP = @MAYBE_CSHARP@
 MAYBE_C_GLIB = @MAYBE_C_GLIB@
 MAYBE_D = @MAYBE_D@
 MAYBE_DART = @MAYBE_DART@
-MAYBE_DOTNETCORE = @MAYBE_DOTNETCORE@
 MAYBE_ERLANG = @MAYBE_ERLANG@
 MAYBE_GO = @MAYBE_GO@
 MAYBE_HASKELL = @MAYBE_HASKELL@
 MAYBE_JAVA = @MAYBE_JAVA@
 MAYBE_LUA = @MAYBE_LUA@
+MAYBE_NETSTD = @MAYBE_NETSTD@
 MAYBE_NODEJS = @MAYBE_NODEJS@
 MAYBE_NODETS = @MAYBE_NODETS@
 MAYBE_PERL = @MAYBE_PERL@
@@ -380,10 +378,8 @@ MAYBE_PY3 = @MAYBE_PY3@
 MAYBE_PYTHON = @MAYBE_PYTHON@
 MAYBE_RS = @MAYBE_RS@
 MAYBE_RUBY = @MAYBE_RUBY@
-MCS = @MCS@
+MAYBE_SWIFT = @MAYBE_SWIFT@
 MKDIR_P = @MKDIR_P@
-MONO_CFLAGS = @MONO_CFLAGS@
-MONO_LIBS = @MONO_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 NODEJS = @NODEJS@
@@ -423,9 +419,6 @@ PY_PREFIX = @PY_PREFIX@
 QT5_CFLAGS = @QT5_CFLAGS@
 QT5_LIBS = @QT5_LIBS@
 QT5_MOC = @QT5_MOC@
-QT_CFLAGS = @QT_CFLAGS@
-QT_LIBS = @QT_LIBS@
-QT_MOC = @QT_MOC@
 RANLIB = @RANLIB@
 REBAR = @REBAR@
 RUBY = @RUBY@
@@ -437,6 +430,7 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SWIFT = @SWIFT@
 THRIFT = @THRIFT@
 TRIAL = @TRIAL@
 VERSION = @VERSION@
@@ -512,16 +506,36 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I ./aclocal
-@WITH_PLUGIN_FALSE@SUBDIRS = compiler/cpp lib $(am__append_2) \
-@WITH_PLUGIN_FALSE@	$(am__append_3)
+SUBDIRS = compiler/cpp lib $(am__append_1) $(am__append_2)
+CLEANFILES = \
+	composer.lock \
+	dub.selections.json
 
-# To enable bootstrap, build order is lib/cpp -> compiler -> others
-@WITH_PLUGIN_TRUE@SUBDIRS = lib/cpp compiler/cpp lib $(am__append_1) \
-@WITH_PLUGIN_TRUE@	$(am__append_2) $(am__append_3)
+DISTCLEANFILES = \
+	Makefile \
+	Makefile.in \
+	aclocal.m4 \
+	apache-thrift-test-library \
+	autoscan.log \
+	compile \
+	config.guess \
+	config.hin \
+	config.hin~ \
+	config.log \
+	config.status \
+	config.sub \
+	configure \
+	configure.scan \
+    debcomp \
+    install-sh \
+    ltmain.sh \
+    missing \
+    ylwrap
+
 empty := 
 space := $(empty) $(empty)
 comma := ,
-CROSS_LANGS = @MAYBE_CPP@ @MAYBE_C_GLIB@ @MAYBE_CL@ @MAYBE_D@ @MAYBE_JAVA@ @MAYBE_CSHARP@ @MAYBE_PYTHON@ @MAYBE_PY3@ @MAYBE_RUBY@ @MAYBE_HASKELL@ @MAYBE_PERL@ @MAYBE_PHP@ @MAYBE_GO@ @MAYBE_NODEJS@ @MAYBE_DART@ @MAYBE_ERLANG@ @MAYBE_LUA@ @MAYBE_RS@ @MAYBE_DOTNETCORE@ @MAYBE_NODETS@
+CROSS_LANGS = @MAYBE_CPP@ @MAYBE_C_GLIB@ @MAYBE_CL@ @MAYBE_D@ @MAYBE_JAVA@ @MAYBE_PYTHON@ @MAYBE_PY3@ @MAYBE_RUBY@ @MAYBE_HASKELL@ @MAYBE_PERL@ @MAYBE_PHP@ @MAYBE_GO@ @MAYBE_NODEJS@ @MAYBE_DART@ @MAYBE_ERLANG@ @MAYBE_LUA@ @MAYBE_RS@ @MAYBE_NETSTD@ @MAYBE_NODETS@
 CROSS_LANGS_COMMA_SEPARATED = $(subst $(space),$(comma),$(CROSS_LANGS))
 @WITH_PY3_FALSE@CROSS_PY = $(PYTHON)
 @WITH_PY3_TRUE@CROSS_PY = $(PYTHON3)
@@ -548,30 +562,40 @@ codespell_skip_files = \
 
 skipped_files = $(subst $(space),$(comma),$(codespell_skip_files))
 EXTRA_DIST = \
+	.asf.yaml \
 	.clang-format \
+	.dockerignore \
 	.editorconfig \
+	.eslintignore \
+	.eslintrc.json \
+	.flake8 \
+	.gitattributes \
+	.gitignore \
 	.travis.yml \
 	.rustfmt.toml \
-	.dockerignore \
+	ApacheThrift.nuspec \
 	appveyor.yml \
+	bootstrap.sh \
 	bower.json \
 	build \
-	bootstrap.sh \
-	cleanup.sh \
+	CHANGES.md \
 	CMakeLists.txt \
 	composer.json \
 	contrib \
 	CONTRIBUTING.md \
 	debian \
-	doc \
 	doap.rdf \
-	package.json \
-	sonar-project.properties \
+	doc \
+	dub.json \
+	jitpack.yml \
 	LANGUAGES.md \
 	LICENSE \
-	CHANGES \
 	NOTICE \
+	package.json \
+	package-lock.json \
+	phpcs.xml.dist \
 	README.md \
+	sonar-project.properties \
 	Thrift.podspec
 
 all: config.h
@@ -642,8 +666,6 @@ lib/c_glib/src/thrift/stamp-h3: $(srcdir)/config.hin $(top_builddir)/config.stat
 
 distclean-hdr:
 	-rm -f config.h stamp-h1 lib/cpp/src/thrift/config.h lib/cpp/src/thrift/stamp-h2 lib/c_glib/src/thrift/config.h lib/c_glib/src/thrift/stamp-h3
-compiler/cpp/src/thrift/version.h: $(top_builddir)/config.status $(top_srcdir)/compiler/cpp/src/thrift/version.h.in
-	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -979,23 +1001,25 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libtool clean-local mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -f Makefile
 distclean-am: clean-am distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags
+	distclean-libtool distclean-local distclean-tags
 
 dvi: dvi-recursive
 
@@ -1065,26 +1089,34 @@ uninstall-am:
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--refresh check check-am clean clean-cscope clean-generic \
-	clean-libtool cscope cscopelist-am ctags ctags-am dist \
-	dist-all dist-bzip2 dist-gzip dist-hook dist-lzip dist-shar \
-	dist-tarZ dist-xz dist-zip distcheck distclean \
+	clean-libtool clean-local cscope cscopelist-am ctags ctags-am \
+	dist dist-all dist-bzip2 dist-gzip dist-hook dist-lzip \
+	dist-shar dist-tarZ dist-xz dist-zip distcheck distclean \
 	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	style-am style-local tags tags-am uninstall uninstall-am
+	distclean-local distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am style-am style-local tags tags-am uninstall \
+	uninstall-am
 
 .PRECIOUS: Makefile
 
 
+clean-local:
+	$(RM) -r vendor/
+
+distclean-local:
+	$(RM) -r .dub/
+	$(RM) -r autom4te.cache/
+
 dist-hook:
-	find $(distdir) -type f \( -iname ".DS_Store" -or -iname "._*" -or -iname ".gitignore" \) | xargs rm -rf
+	find $(distdir) -type f \( -iname ".DS_Store" -or -iname "._*" -or -iname ".gitignore" \) | xargs rm -f
 	find $(distdir) -type d \( -iname ".deps" -or -iname ".libs" \) | xargs rm -rf
 	find $(distdir) -type d \( -iname ".svn" -or -iname ".git" \) | xargs rm -rf
 

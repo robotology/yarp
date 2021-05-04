@@ -39,8 +39,6 @@
     <ClCompile Include="src\thrift\async\TConcurrentClientSyncInfo.cpp"/>
     <ClCompile Include="src\thrift\concurrency\BoostMonitor.cpp" />
     <ClCompile Include="src\thrift\concurrency\BoostMutex.cpp" />
-    <ClCompile Include="src\thrift\concurrency\BoostThreadFactory.cpp" />
-    <ClCompile Include="src\thrift\concurrency\StdThreadFactory.cpp" />
     <ClCompile Include="src\thrift\concurrency\ThreadManager.cpp"/>
     <ClCompile Include="src\thrift\concurrency\TimerManager.cpp"/>
     <ClCompile Include="src\thrift\concurrency\Util.cpp"/>
@@ -81,10 +79,7 @@
   <ItemGroup>
     <ClInclude Include="src\thrift\async\TAsyncChannel.h" />
     <ClInclude Include="src\thrift\async\TConcurrentClientSyncInfo.h" />
-    <ClInclude Include="src\thrift\concurrency\BoostThreadFactory.h" />
-    <ClInclude Include="src\thrift\concurrency\StdThreadFactory.h" />
     <ClInclude Include="src\thrift\concurrency\Exception.h" />
-    <ClInclude Include="src\thrift\concurrency\PlatformThreadFactory.h" />
     <ClInclude Include="src\thrift\processor\PeekProcessor.h" />
     <ClInclude Include="src\thrift\processor\TMultiplexedProcessor.h" />
     <ClInclude Include="src\thrift\protocol\TBinaryProtocol.h" />
@@ -260,7 +255,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>HAVE_CONFIG_H=1;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDataBaseFileName>$(IntDir)libthrift.pdb</ProgramDataBaseFileName>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -273,6 +268,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>HAVE_CONFIG_H=1;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -285,7 +281,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>HAVE_CONFIG_H=1;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -301,6 +297,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>HAVE_CONFIG_H=1;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDataBaseFileName>$(IntDir)libthrift.pdb</ProgramDataBaseFileName>
+      <RuntimeLibrary>MultiThreadedDll</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -318,7 +315,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>HAVE_CONFIG_H=1;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ProgramDataBaseFileName>$(IntDir)libthrift.pdb</ProgramDataBaseFileName>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDll</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -335,6 +332,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>HAVE_CONFIG_H=1;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDll</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -351,7 +349,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>HAVE_CONFIG_H=1;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDll</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

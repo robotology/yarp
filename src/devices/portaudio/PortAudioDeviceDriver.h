@@ -65,7 +65,8 @@ class streamThread :
 /**
  * @ingroup dev_impl_media
  *
- * \brief `portaudio`:  Documentation to be added
+ * \brief `portaudio`:  This device driver has been deprecated!
+ * Please use `PortAudioPlayerDeviceDriver` or  `PortAudioRecorderDeviceDriver`
  *
  * Requires the PortAudio library (http://www.portaudio.com), at least v19.
  */
@@ -119,6 +120,8 @@ public:
     bool stopRecording() override;
     bool startPlayback() override;
     bool stopPlayback() override;
+    bool isPlaying(bool& playback_enabled) override;
+    bool isRecording(bool& recording_enabled) override;
 
     bool abortSound();
     bool immediateSound(const yarp::sig::Sound& sound);
@@ -131,6 +134,9 @@ public:
     bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
     bool getRecordingAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
     bool resetRecordingAudioBuffer() override;
+
+    bool setHWGain(double gain) override;
+    bool setSWGain(double gain) override;
 
 protected:
     void*   m_system_resource;

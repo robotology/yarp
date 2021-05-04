@@ -14,7 +14,7 @@
 
 #include <yarp/dev/impl/jointData.h>
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 #include "RPCMessagesParser.h"
 #include "StreamingMessagesParser.h"
 #include <algorithm>
@@ -31,8 +31,7 @@ using namespace std;
 
 
 ControlBoardWrapper::ControlBoardWrapper() :
-        yarp::os::PeriodicThread(default_period),
-        ownDevices(true)
+        yarp::os::PeriodicThread(default_period)
 {
     streaming_parser.init(this);
     RPC_parser.init(this);
@@ -97,7 +96,7 @@ bool ControlBoardWrapper::checkPortName(Searchable& params)
      * marked as deprecated.
      */
     if (params.check("rootName")) {
-        yCWarning(CONTROLBOARDWRAPPER) <<
+        yCWarning(CONTROLBOARD) <<
             "************************************************************************************\n"
             "* controlboardwrapper2 is using the deprecated parameter 'rootName' for port name, *\n"
             "* It has to be removed and substituted with:                                       *\n"
@@ -108,7 +107,7 @@ bool ControlBoardWrapper::checkPortName(Searchable& params)
 
     // find name as port name (similar both in new and old policy
     if (!params.check("name")) {
-        yCError(CONTROLBOARDWRAPPER) <<
+        yCError(CONTROLBOARD) <<
             "************************************************************************************\n"
             "* controlboardwrapper2 missing mandatory parameter 'name' for port name, usage is: *\n"
             "*     name:    full port prefix name with leading '/',  e.g.  /robotName/part/     *\n"
@@ -118,7 +117,7 @@ bool ControlBoardWrapper::checkPortName(Searchable& params)
 
     partName = params.find("name").asString();
     if (partName[0] != '/') {
-        yCWarning(CONTROLBOARDWRAPPER) <<
+        yCWarning(CONTROLBOARD) <<
             "************************************************************************************\n"
             "* controlboardwrapper2 'name' parameter for port name does not follow convention,  *\n"
             "* it MUST start with a leading '/' since it is used as the full prefix port name   *\n"
@@ -141,75 +140,75 @@ bool ControlBoardWrapper::checkROSParams(Searchable& config)
         return true;
     }
 
-    yCInfo(CONTROLBOARDWRAPPER) << "ROS group was FOUND in config file.";
+    yCInfo(CONTROLBOARD) << "ROS group was FOUND in config file.";
 
     Bottle& rosGroup = config.findGroup("ROS");
     if (rosGroup.isNull()) {
-        yCError(CONTROLBOARDWRAPPER) << partName << "ROS group params is not a valid group or empty";
+        yCError(CONTROLBOARD) << partName << "ROS group params is not a valid group or empty";
         useROS = ROS_config_error;
         return false;
     }
 
     // check for useROS parameter
     if (!rosGroup.check("useROS")) {
-        yCError(CONTROLBOARDWRAPPER) << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
+        yCError(CONTROLBOARD) << partName << " cannot find useROS parameter, mandatory when using ROS message. \n \
                     Allowed values are true, false, ROS_only";
         useROS = ROS_config_error;
         return false;
     }
     std::string ros_use_type = rosGroup.find("useROS").asString();
     if (ros_use_type == "false") {
-        yCInfo(CONTROLBOARDWRAPPER) << partName << "useROS topic if set to 'false'";
+        yCInfo(CONTROLBOARD) << partName << "useROS topic if set to 'false'";
         useROS = ROS_disabled;
         return true;
     }
 
     if (ros_use_type == "true") {
-        yCInfo(CONTROLBOARDWRAPPER) << partName << "useROS topic if set to 'true'";
+        yCInfo(CONTROLBOARD) << partName << "useROS topic if set to 'true'";
         useROS = ROS_enabled;
     } else if (ros_use_type == "only") {
-        yCInfo(CONTROLBOARDWRAPPER) << partName << "useROS topic if set to 'only";
+        yCInfo(CONTROLBOARD) << partName << "useROS topic if set to 'only";
         useROS = ROS_only;
     } else {
-        yCInfo(CONTROLBOARDWRAPPER) << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
+        yCInfo(CONTROLBOARD) << partName << "useROS parameter is seet to unvalid value ('" << ros_use_type << "'), supported values are 'true', 'false', 'only'";
         useROS = ROS_config_error;
         return false;
     }
 
     // check for ROS_nodeName parameter
     if (!rosGroup.check("ROS_nodeName")) {
-        yCError(CONTROLBOARDWRAPPER) << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
+        yCError(CONTROLBOARD) << partName << " cannot find ROS_nodeName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     rosNodeName = rosGroup.find("ROS_nodeName").asString(); // TODO: check name is correct
-    yCInfo(CONTROLBOARDWRAPPER) << partName << "rosNodeName is " << rosNodeName;
+    yCInfo(CONTROLBOARD) << partName << "rosNodeName is " << rosNodeName;
 
     // check for ROS_topicName parameter
     if (!rosGroup.check("ROS_topicName")) {
-        yCError(CONTROLBOARDWRAPPER) << partName << " cannot find rosTopicName parameter, mandatory when using ROS message";
+        yCError(CONTROLBOARD) << partName << " cannot find rosTopicName parameter, mandatory when using ROS message";
         useROS = ROS_config_error;
         return false;
     }
     rosTopicName = rosGroup.find("ROS_topicName").asString();
-    yCInfo(CONTROLBOARDWRAPPER) << partName << "rosTopicName is " << rosTopicName;
+    yCInfo(CONTROLBOARD) << partName << "rosTopicName is " << rosTopicName;
 
     // check for rosNodeName parameter
     // UPDATE: joint names are got from MotionControl subdevice now.
     // An error should be thrown later on in case we fail getting names from device
     if (!rosGroup.check("jointNames")) {
-        yCInfo(CONTROLBOARDWRAPPER) << partName << "ROS topic has been required, jointNames will be got from motionControl subdevice.";
+        yCInfo(CONTROLBOARD) << partName << "ROS topic has been required, jointNames will be got from motionControl subdevice.";
     } else // if names are there, store them. They will be used for back compatibility if old policy is used.
     {
         Bottle nameList = rosGroup.findGroup("jointNames").tail();
         if (nameList.isNull()) {
-            yCError(CONTROLBOARDWRAPPER) << partName << " jointNames not found";
+            yCError(CONTROLBOARD) << partName << " jointNames not found";
             useROS = ROS_config_error;
             return false;
         }
 
         if (nameList.size() != static_cast<size_t>(controlledJoints)) {
-            yCError(CONTROLBOARDWRAPPER) << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected length is " << controlledJoints;
+            yCError(CONTROLBOARD) << partName << " jointNames incorrect number of entries. \n jointNames is " << nameList.toString() << "while expected length is " << controlledJoints;
             useROS = ROS_config_error;
             return false;
         }
@@ -231,13 +230,13 @@ bool ControlBoardWrapper::initialize_ROS()
         rosNode = new yarp::os::Node(rosNodeName); // add a ROS node
 
         if (rosNode == nullptr) {
-            yCError(CONTROLBOARDWRAPPER) << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration";
+            yCError(CONTROLBOARD) << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration";
             success = false;
             break;
         }
 
         if (!rosPublisherPort.topic(rosTopicName)) {
-            yCError(CONTROLBOARDWRAPPER) << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration";
+            yCError(CONTROLBOARD) << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration";
             success = false;
             break;
         }
@@ -245,18 +244,18 @@ bool ControlBoardWrapper::initialize_ROS()
     } break;
 
     case ROS_disabled: {
-        yCInfo(CONTROLBOARDWRAPPER) << partName << ": no ROS initialization required";
+        yCInfo(CONTROLBOARD) << partName << ": no ROS initialization required";
         success = true;
     } break;
 
     case ROS_config_error: {
-        yCError(CONTROLBOARDWRAPPER) << partName << " ROS parameter are not correct, check your configuration file";
+        yCError(CONTROLBOARD) << partName << " ROS parameter are not correct, check your configuration file";
         success = false;
     } break;
 
     default:
     {
-        yCError(CONTROLBOARDWRAPPER) << partName << " something went wrong with ROS configuration, we should never be here!!!";
+        yCError(CONTROLBOARD) << partName << " something went wrong with ROS configuration, we should never be here!!!";
         success = false;
     } break;
     }
@@ -269,16 +268,16 @@ bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable& prop)
 
     switch (useROS) {
     case ROS_only: {
-        yCInfo(CONTROLBOARDWRAPPER) << partName << " No YARP initialization required";
+        yCInfo(CONTROLBOARD) << partName << " No YARP initialization required";
         success = true;
     } break;
 
     default:
     {
-        yCInfo(CONTROLBOARDWRAPPER) << partName << " initting YARP initialization";
+        yCInfo(CONTROLBOARD) << partName << " initting YARP initialization";
         // initialize callback
         if (!streaming_parser.initialize()) {
-            yCError(CONTROLBOARDWRAPPER) << "Error could not initialize callback object";
+            yCError(CONTROLBOARD) << "Error could not initialize callback object";
             success = false;
             break;
         }
@@ -292,7 +291,7 @@ bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable& prop)
 
         ///// We now open ports, then attach the readers or callbacks
         if (!inputRPCPort.open((rootName + "/rpc:i"))) {
-            yCError(CONTROLBOARDWRAPPER) << "Error opening port " << rootName + "/rpc:i";
+            yCError(CONTROLBOARD) << "Error opening port " << rootName + "/rpc:i";
             success = false;
             break;
         }
@@ -301,7 +300,7 @@ bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable& prop)
         RPC_parser.attach(inputRPC_buffer);
 
         if (!inputStreamingPort.open(rootName + "/command:i")) {
-            yCError(CONTROLBOARDWRAPPER) << "Error opening port " << rootName + "/rpc:i";
+            yCError(CONTROLBOARD) << "Error opening port " << rootName + "/rpc:i";
             success = false;
             break;
         }
@@ -311,14 +310,14 @@ bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable& prop)
         inputStreamingPort.useCallback(streaming_parser);
 
         if (!outputPositionStatePort.open(rootName + "/state:o")) {
-            yCError(CONTROLBOARDWRAPPER) << "Error opening port " << rootName + "/state:o";
+            yCError(CONTROLBOARD) << "Error opening port " << rootName + "/state:o";
             success = false;
             break;
         }
 
         // new extended output state port
         if (!extendedOutputStatePort.open(rootName + "/stateExt:o")) {
-            yCError(CONTROLBOARDWRAPPER) << "Error opening port " << rootName + "/state:o";
+            yCError(CONTROLBOARD) << "Error opening port " << rootName + "/state:o";
             success = false;
             break;
         }
@@ -341,33 +340,33 @@ bool ControlBoardWrapper::open(Searchable& config)
     prop.fromString(config.toString());
 
     if (prop.check("verbose", "Deprecated flag. Use log components instead")) {
-        yCWarning(CONTROLBOARDWRAPPER) << "'verbose' flag is deprecated. Use log components instead";
+        yCWarning(CONTROLBOARD) << "'verbose' flag is deprecated. Use log components instead";
     }
 
     if (!checkPortName(config)) {
-        yCError(CONTROLBOARDWRAPPER) << "'portName' was not correctly set, check you r configuration file";
+        yCError(CONTROLBOARD) << "'portName' was not correctly set, check you r configuration file";
         return false;
     }
 
     // check FIRST for deprecated parameter
     if (prop.check("threadrate")) {
-        yCError(CONTROLBOARDWRAPPER) << "Using removed parameter 'threadrate', use 'period' instead";
+        yCError(CONTROLBOARD) << "Using removed parameter 'threadrate', use 'period' instead";
         return false;
     }
 
     // NOW, check for correct parameter, so if both are present we use the correct one
     if (prop.check("period")) {
         if (!prop.find("period").isInt32()) {
-            yCError(CONTROLBOARDWRAPPER) << "'period' parameter is not an integer value";
+            yCError(CONTROLBOARD) << "'period' parameter is not an integer value";
             return false;
         }
         period = prop.find("period").asInt32() / 1000.0;
         if (period <= 0) {
-            yCError(CONTROLBOARDWRAPPER) << "'period' parameter is not valid, read value is" << period;
+            yCError(CONTROLBOARD) << "'period' parameter is not valid, read value is" << period;
             return false;
         }
     } else {
-        yCDebug(CONTROLBOARDWRAPPER) << "'period' parameter missing, using default thread period = 20ms";
+        yCDebug(CONTROLBOARD) << "'period' parameter missing, using default thread period = 20ms";
         period = default_period;
     }
 
@@ -377,7 +376,7 @@ bool ControlBoardWrapper::open(Searchable& config)
         ownDevices = true;
         prop.setMonitor(config.getMonitor());
         if (!openAndAttachSubDevice(prop)) {
-            yCError(CONTROLBOARDWRAPPER, "Error while opening subdevice");
+            yCError(CONTROLBOARD, "Error while opening subdevice");
             return false;
         }
     } else {
@@ -393,7 +392,7 @@ bool ControlBoardWrapper::open(Searchable& config)
     /* This must be after the openAndAttachSubDevice() or openDeferredAttach() in order to have the correct number of controlledJoints,
         but before the initialize_ROS and initialize_YARP */
     if (!checkROSParams(config)) {
-        yCError(CONTROLBOARDWRAPPER) << partName << " ROS parameter are not correct, check your configuration file";
+        yCError(CONTROLBOARD) << partName << " ROS parameter are not correct, check your configuration file";
         return false;
     }
 
@@ -404,7 +403,7 @@ bool ControlBoardWrapper::open(Searchable& config)
 
     // call YARP port initialization, if needed
     if (!initialize_YARP(prop)) {
-        yCError(CONTROLBOARDWRAPPER) << partName << "Something wrong when initting yarp ports";
+        yCError(CONTROLBOARD) << partName << "Something wrong when initting yarp ports";
         return false;
     }
 
@@ -431,13 +430,13 @@ bool ControlBoardWrapper::open(Searchable& config)
 bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 {
     if (!prop.check("networks", "list of networks merged by this wrapper")) {
-        yCError(CONTROLBOARDWRAPPER) << "List of networks to attach to was not found.";
+        yCError(CONTROLBOARD) << "List of networks to attach to was not found.";
         return false;
     }
 
     Bottle* nets = prop.find("networks").asList();
     if (nets == nullptr) {
-        yCError(CONTROLBOARDWRAPPER) << "Error parsing parameters: \"networks\" should be followed by a list";
+        yCError(CONTROLBOARD) << "Error parsing parameters: \"networks\" should be followed by a list";
         return false;
     }
 
@@ -471,7 +470,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
                 tmpBot.fromString(bString);
 
                 if (tmpBot.size() != 4) {
-                    yCError(CONTROLBOARDWRAPPER) << "Error: check network parameters in part description"
+                    yCError(CONTROLBOARD) << "Error: check network parameters in part description"
                                                  << "--> I was expecting " << nets->get(k).asString() << " followed by a list of four integers in parenthesis"
                                                  << "Got: " << parameters.toString();
                     return false;
@@ -486,13 +485,13 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
             base = static_cast<size_t>(bot->get(2).asInt32());
             top = static_cast<size_t>(bot->get(3).asInt32());
         } else if (parameters.size() == 5) {
-            yCError(CONTROLBOARDWRAPPER) << "Parameter networks use deprecated syntax";
+            yCError(CONTROLBOARD) << "Parameter networks use deprecated syntax";
             wBase = static_cast<size_t>(parameters.get(1).asInt32());
             wTop = static_cast<size_t>(parameters.get(2).asInt32());
             base = static_cast<size_t>(parameters.get(3).asInt32());
             top = static_cast<size_t>(parameters.get(4).asInt32());
         } else {
-            yCError(CONTROLBOARDWRAPPER) << "Error: check network parameters in part description"
+            yCError(CONTROLBOARD) << "Error: check network parameters in part description"
                                          << "--> I was expecting " << nets->get(k).asString() << " followed by a list of four integers in parenthesis"
                                          << "Got: " << parameters.toString();
             return false;
@@ -500,31 +499,31 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
 
         SubDevice* tmpDevice = device.getSubdevice(k);
         if (!tmpDevice) {
-            yCError(CONTROLBOARDWRAPPER) << "Get of subdevice returned null";
+            yCError(CONTROLBOARD) << "Get of subdevice returned null";
             return false;
         }
 
         size_t axes = top - base + 1;
-        if (!tmpDevice->configure(wBase, wTop, base, top, axes, nets->get(k).asString(), this)) {
-            yCError(CONTROLBOARDWRAPPER) << "Configure of subdevice ret false";
+        if (!tmpDevice->configure(wBase, wTop, base, top, axes, nets->get(k).asString(), getId())) {
+            yCError(CONTROLBOARD) << "Configure of subdevice ret false";
             return false;
         }
 
         // Check input values are in range
         if ((wBase == static_cast<size_t>(-1)) || (wBase >= controlledJoints)) {
-            yCError(CONTROLBOARDWRAPPER) << "Input configuration for device " << partName << "has a wrong attach map."
+            yCError(CONTROLBOARD) << "Input configuration for device " << partName << "has a wrong attach map."
                                          << "First index " << wBase << "must be inside range from 0 to 'joints' (" << controlledJoints << ")";
             return false;
         }
 
         if ((wTop == static_cast<size_t>(-1)) || (wTop >= controlledJoints)) {
-            yCError(CONTROLBOARDWRAPPER) << "Input configuration for device " << partName << "has a wrong attach map."
+            yCError(CONTROLBOARD) << "Input configuration for device " << partName << "has a wrong attach map."
                                          << "Second index " << wTop << "must be inside range from 0 to 'joints' (" << controlledJoints << ")";
             return false;
         }
 
         if (wBase > wTop) {
-            yCError(CONTROLBOARDWRAPPER) << "Input configuration for device " << partName << "has a wrong attach map."
+            yCError(CONTROLBOARD) << "Input configuration for device " << partName << "has a wrong attach map."
                                          << "First index " << wBase << "must be lower than  second index " << wTop;
             return false;
         }
@@ -539,7 +538,7 @@ bool ControlBoardWrapper::openDeferredAttach(Property& prop)
     }
 
     if (totalJ != controlledJoints) {
-        yCError(CONTROLBOARDWRAPPER) << "Error total number of mapped joints (" << totalJ << ") does not correspond to part joints (" << controlledJoints << ")";
+        yCError(CONTROLBOARD) << "Error total number of mapped joints (" << totalJ << ") does not correspond to part joints (" << controlledJoints << ")";
         return false;
     }
     return true;
@@ -559,11 +558,11 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     p.put("device", subdevice); // subdevice was already checked before
 
     // if errors occurred during open, quit here.
-    yCDebug(CONTROLBOARDWRAPPER, "opening subdevice");
+    yCDebug(CONTROLBOARD, "opening subdevice");
     subDeviceOwned->open(p);
 
     if (!subDeviceOwned->isValid()) {
-        yCError(CONTROLBOARDWRAPPER, "opening subdevice... FAILED");
+        yCError(CONTROLBOARD, "opening subdevice... FAILED");
         return false;
     }
 
@@ -572,7 +571,7 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     subDeviceOwned->view(iencs);
 
     if (iencs == nullptr) {
-        yCError(CONTROLBOARDWRAPPER, "Opening IEncoders interface of subdevice... FAILED");
+        yCError(CONTROLBOARD, "Opening IEncoders interface of subdevice... FAILED");
         return false;
     }
 
@@ -580,12 +579,12 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     bool getAx = iencs->getAxes(&tmp_axes);
 
     if (!getAx) {
-        yCError(CONTROLBOARDWRAPPER, "Calling getAxes of subdevice... FAILED");
+        yCError(CONTROLBOARD, "Calling getAxes of subdevice... FAILED");
         return false;
     }
     controlledJoints = static_cast<size_t>(tmp_axes);
 
-    yCDebug(CONTROLBOARDWRAPPER, "Joints parameter is %zu", controlledJoints);
+    yCDebug(CONTROLBOARD, "Joints parameter is %zu", controlledJoints);
 
 
     device.lut.resize(controlledJoints);
@@ -600,8 +599,8 @@ bool ControlBoardWrapper::openAndAttachSubDevice(Property& prop)
     SubDevice* tmpDevice = device.getSubdevice(0);
 
     std::string subDevName((partName + "_" + subdevice));
-    if (!tmpDevice->configure(wbase, wtop, base, top, controlledJoints, subDevName, this)) {
-        yCError(CONTROLBOARDWRAPPER) << "Configure of subdevice ret false";
+    if (!tmpDevice->configure(wbase, wtop, base, top, controlledJoints, subDevName, getId())) {
+        yCError(CONTROLBOARD) << "Configure of subdevice ret false";
         return false;
     }
 
@@ -665,7 +664,7 @@ bool ControlBoardWrapper::updateAxisName()
 
     if (ret) {
         if (!jointNames.empty()) {
-            yCWarning(CONTROLBOARDWRAPPER) << "Found 2 instance of jointNames parameter: one in the wrapper [ROS] group and another one in the subdevice, the latter one will be used.";
+            yCWarning(CONTROLBOARD) << "Found 2 instance of jointNames parameter: one in the wrapper [ROS] group and another one in the subdevice, the latter one will be used.";
             std::string fullNames;
             for (size_t i = 0; i < controlledJoints; i++) {
                 fullNames.append(tmpVect[i]);
@@ -676,11 +675,11 @@ bool ControlBoardWrapper::updateAxisName()
         jointNames = tmpVect;
     } else {
         if (jointNames.empty()) {
-            yCError(CONTROLBOARDWRAPPER) << "Joint names were not found! they are mandatory when using ROS topic";
+            yCError(CONTROLBOARD) << "Joint names were not found! they are mandatory when using ROS topic";
             return false;
         }
 
-        yCWarning(CONTROLBOARDWRAPPER) << "\n" <<
+        yCWarning(CONTROLBOARD) << "\n" <<
             "************************************************************************************************** \n" <<
             "* Joint names for ROS topic were found in the [ROS] group in the wrapper config file for\n" <<
             "* '" << partName << "' device.\n" <<
@@ -702,7 +701,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList& polylist)
         // look if we have to attach to a calibrator
         std::string tmpKey = polylist[p]->key;
         if (tmpKey == "Calibrator" || tmpKey == "calibrator") {
-            // Set the IRemoteCalibrator interface, the wrapper must point to the calibrato rdevice
+            // Set the IRemoteCalibrator interface, the wrapper must point to the calibrator device
             yarp::dev::IRemoteCalibrator* calibrator;
             polylist[p]->poly->view(calibrator);
 
@@ -715,7 +714,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList& polylist)
         for (k = 0; k < device.subdevices.size(); k++) {
             if (device.subdevices[k].id == tmpKey) {
                 if (!device.subdevices[k].attach(polylist[p]->poly, tmpKey)) {
-                    yCError(CONTROLBOARDWRAPPER, "Attach to subdevice %s failed", polylist[p]->key.c_str());
+                    yCError(CONTROLBOARD, "Attach to subdevice %s failed", polylist[p]->key.c_str());
                     return false;
                 }
             }
@@ -726,18 +725,18 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList& polylist)
     bool ready = true;
     for (auto& subdevice : device.subdevices) {
         if (!subdevice.isAttached()) {
-            yCError(CONTROLBOARDWRAPPER, "Device %s was not found in the list passed to attachAll", subdevice.id.c_str());
+            yCError(CONTROLBOARD, "Device %s was not found in the list passed to attachAll", subdevice.id.c_str());
             ready = false;
         }
     }
 
     if (!ready) {
-        yCError(CONTROLBOARDWRAPPER, "AttachAll failed, some subdevice was not found or its attach failed");
+        yCError(CONTROLBOARD, "AttachAll failed, some subdevice was not found or its attach failed");
         stringstream ss;
         for (int p = 0; p < polylist.size(); p++) {
             ss << polylist[p]->key.c_str() << " ";
         }
-        yCError(CONTROLBOARDWRAPPER, "List of devices keys passed to attachAll: %s", ss.str().c_str());
+        yCError(CONTROLBOARD, "List of devices keys passed to attachAll: %s", ss.str().c_str());
         return false;
     }
 
@@ -778,7 +777,7 @@ void ControlBoardWrapper::run()
 {
     // check we are not overflowing with input messages
     if (inputStreamingPort.getPendingReads() >= 20) {
-        yCWarning(CONTROLBOARDWRAPPER) << "Number of streaming intput messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
+        yCWarning(CONTROLBOARD) << "Number of streaming input messages to be read is " << inputStreamingPort.getPendingReads() << " and can overflow";
     }
 
     // Small optimization: Avoid to call getEncoders twice, one for YARP port

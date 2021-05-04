@@ -37,67 +37,15 @@ brew doctor
 
 \section install_yarp Installing YARP
 
-Once you have installed the prerequisites, you can now proceed to install YARP choosing between two options:
+Once you have installed the prerequisites, you can now proceed to install YARP from source.
+First install the dependencies, download the code from the repository and then proceed with the installation.
 
-1. \subpage install_mac_Homebrew_YARP : if you are not explicitly interested  in the source code, this is the easiest way to install YARP but it implies that you will rely on the official stable releases.
-
-2. \subpage install_mac_from_source : being manual, this is a bit longer way for the installation but it allows you the full access to the source code and to be always updated with the latest features.
-
-In any case, you have to update and upgrade your Homebrew version.
-
-
-\subsection update_brew Updating and upgrading pre-existent Homebrew versions
-
- If you had Homebrew already installed on your system, update and upgrade:
-
- \code
- brew update
- brew upgrade
- \endcode
-
- Also, you will need to add the homebrew-science tap:
-
- \code
- brew tap homebrew/science
- \endcode
-
-
-\subsection  install_mac_Homebrew_YARP Install YARP from Homebrew
-Run on your terminal:
-
-\code
- brew install robotology/formulae/yarp
-\endcode
-
-The following options are also available:
-
-\code
---with-bindings
-    Build with binding (LUA, Python) support
---with-opencv
-    Build with opencv support
---with-serial
-    Build the serial/serialport devices
---with-yarprun-log
-    Build with LOG support for YARPRUN processes
---without-qt5
-    Build without GUI applications
---HEAD
-    Install HEAD version
-\endcode
-
-After the installation, you will need to set your \subpage environment_configuration.
-
-
-\subsection install_mac_from_source Install YARP from source
-If the options above are not enough and you want to install YARP with additional options or in a difference location, you can compile it from source, directly from the repository. First install the dependencies, download the code from the repository and then proceed with the installation.
-
- \subsubsection install_mac_YARP_Dependencies Installing YARP Dependencies
+ \subsection install_mac_YARP_Dependencies Installing YARP Dependencies
  Here we provide information for installing the <b>YARP dependencies</b> via Homebrew.
  In order to install the YARP dependencies enter the following command in a terminal:
 
  \code
- brew install robotology/formulae/yarp --only-dependencies
+ brew install ace boost cmake eigen jpeg libedit opencv pkg-config portaudio sqlite tinyxml
  \endcode
 
 
@@ -107,15 +55,9 @@ If the options above are not enough and you want to install YARP with additional
  brew install swig
  \endcode
 
- and the following for yarpbuilder:
-
- \code
- brew install goocanvas gtkmm libglademm gtk+
- \endcode
-
  For compiling the Qt5 GUIS:
  \code
- brew install qt5
+ brew install qt@5
  \endcode
 
  Now, add the <b>environmental variable</b> for Qt5
@@ -152,7 +94,7 @@ If the options above are not enough and you want to install YARP with additional
  \endcode
 
 
- \subsubsection install_mac_YARP Download and install
+ \subsection install_mac_YARP Download and install
 
  In the directory where you would like to store your code, e.g. /Users/your_user_name/Dev/ run the following git command to clone YARP on your system
 
@@ -208,7 +150,7 @@ If the options above are not enough and you want to install YARP with additional
 
 After the installation, you will need to set your \subpage environment_configuration.
 
- \subsubsection install_mac_YARP_Xcode Compile YARP using Xcode
+ \subsection install_mac_YARP_Xcode Compile YARP using Xcode
 
  In order to generate and Xcode project do the following:
 

@@ -419,6 +419,20 @@ thrift_protocol_read_binary (ThriftProtocol *protocol, gpointer *buf,
                                                             len, error);
 }
 
+gint
+thrift_protocol_get_min_serialized_size (ThriftProtocol *protocol, ThriftType type, GError ** error)
+{
+   return THRIFT_PROTOCOL_GET_CLASS (protocol)->get_min_serialized_size (protocol,
+                                                                         type, error);
+}
+
+#define THRIFT_SKIP_RESULT_OR_RETURN(_RES, _CALL) \
+  { \
+    gint32 _x = (_CALL); \
+    if (_x < 0) { return _x; } \
+    (_RES) += _x; \
+  }
+
 gint32
 thrift_protocol_skip (ThriftProtocol *protocol, ThriftType type, GError **error)
 {
@@ -469,24 +483,24 @@ thrift_protocol_skip (ThriftProtocol *protocol, ThriftType type, GError **error)
         gchar *name;
         gint16 fid;
         ThriftType ftype;
-        result += thrift_protocol_read_struct_begin (protocol, &name, error);
-
+        THRIFT_SKIP_RESULT_OR_RETURN(result,
+          thrift_protocol_read_struct_begin (protocol, &name, error))
         while (1)
         {
-          result += thrift_protocol_read_field_begin (protocol, &name, &ftype,
-                                                      &fid, error);
-          if (result < 0)
-          {
-            return result;  
-          }
+          THRIFT_SKIP_RESULT_OR_RETURN(result,
+            thrift_protocol_read_field_begin (protocol, &name, &ftype,
+                                              &fid, error))
           if (ftype == T_STOP)
           {
             break;
           }
-          result += thrift_protocol_skip (protocol, ftype, error);
-          result += thrift_protocol_read_field_end (protocol, error);
+          THRIFT_SKIP_RESULT_OR_RETURN(result,
+            thrift_protocol_skip (protocol, ftype, error))
+          THRIFT_SKIP_RESULT_OR_RETURN(result,
+            thrift_protocol_read_field_end (protocol, error))
         }
-        result += thrift_protocol_read_struct_end (protocol, error);
+        THRIFT_SKIP_RESULT_OR_RETURN(result,
+          thrift_protocol_read_struct_end (protocol, error))
         return result;
       }
     case T_SET:
@@ -494,13 +508,16 @@ thrift_protocol_skip (ThriftProtocol *protocol, ThriftType type, GError **error)
         gint32 result = 0;
         ThriftType elem_type;
         guint32 i, size;
-        result += thrift_protocol_read_set_begin (protocol, &elem_type, &size,
-                                                  error);
+        THRIFT_SKIP_RESULT_OR_RETURN(result,
+          thrift_protocol_read_set_begin (protocol, &elem_type, &size,
+                                          error))
         for (i = 0; i < size; i++)
         {
-          result += thrift_protocol_skip (protocol, elem_type, error);
+          THRIFT_SKIP_RESULT_OR_RETURN(result,
+            thrift_protocol_skip (protocol, elem_type, error))
         }
-        result += thrift_protocol_read_set_end (protocol, error);
+        THRIFT_SKIP_RESULT_OR_RETURN(result,
+          thrift_protocol_read_set_end (protocol, error))
         return result;
       }
     case T_MAP:
@@ -509,14 +526,18 @@ thrift_protocol_skip (ThriftProtocol *protocol, ThriftType type, GError **error)
         ThriftType elem_type;
         ThriftType key_type;
         guint32 i, size;
-        result += thrift_protocol_read_map_begin (protocol, &key_type, &elem_type, &size,
-                                                  error);
+        THRIFT_SKIP_RESULT_OR_RETURN(result,
+          thrift_protocol_read_map_begin (protocol, &key_type, &elem_type, &size,
+                                          error))
         for (i = 0; i < size; i++)
         {
-          result += thrift_protocol_skip (protocol, key_type, error);
-          result += thrift_protocol_skip (protocol, elem_type, error);
+          THRIFT_SKIP_RESULT_OR_RETURN(result,
+            thrift_protocol_skip (protocol, key_type, error))
+          THRIFT_SKIP_RESULT_OR_RETURN(result,
+            thrift_protocol_skip (protocol, elem_type, error))
         }
-        result += thrift_protocol_read_map_end (protocol, error);
+        THRIFT_SKIP_RESULT_OR_RETURN(result,
+          thrift_protocol_read_map_end (protocol, error))
         return result;
       }
     case T_LIST:
@@ -524,18 +545,26 @@ thrift_protocol_skip (ThriftProtocol *protocol, ThriftType type, GError **error)
         gint32 result = 0;
         ThriftType elem_type;
         guint32 i, size;
-        result += thrift_protocol_read_list_begin (protocol, &elem_type, &size,
-                                                   error);
+        THRIFT_SKIP_RESULT_OR_RETURN(result,
+          thrift_protocol_read_list_begin (protocol, &elem_type, &size,
+                                           error))
         for (i = 0; i < size; i++)
         {
-          result += thrift_protocol_skip (protocol, elem_type, error);
+          THRIFT_SKIP_RESULT_OR_RETURN(result,
+          thrift_protocol_skip (protocol, elem_type, error))
         }
-        result += thrift_protocol_read_list_end (protocol, error);
+        THRIFT_SKIP_RESULT_OR_RETURN(result,
+          thrift_protocol_read_list_end (protocol, error))
         return result;
       }
     default:
-      return 0;
+      break;
   }
+
+  g_set_error (error, THRIFT_PROTOCOL_ERROR,
+               THRIFT_PROTOCOL_ERROR_INVALID_DATA,
+               "unrecognized type");
+  return -1;
 }
 
 /* define the GError domain for Thrift protocols */
@@ -576,10 +605,10 @@ thrift_protocol_class_init (ThriftProtocolClass *cls)
   gobject_class->dispose = thrift_protocol_dispose;
 
   g_object_class_install_property (gobject_class,
-      PROP_THRIFT_PROTOCOL_TRANSPORT,
-      g_param_spec_object ("transport", "Transport", "Thrift Transport",
-                           THRIFT_TYPE_TRANSPORT,
-                           G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+                                   PROP_THRIFT_PROTOCOL_TRANSPORT,
+                                   g_param_spec_object ("transport", "Transport", "Thrift Transport",
+                                                        THRIFT_TYPE_TRANSPORT,
+                                                        G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
   cls->write_message_begin = thrift_protocol_write_message_begin;
   cls->write_message_end = thrift_protocol_write_message_end;
@@ -621,4 +650,5 @@ thrift_protocol_class_init (ThriftProtocolClass *cls)
   cls->read_double = thrift_protocol_read_double;
   cls->read_string = thrift_protocol_read_string;
   cls->read_binary = thrift_protocol_read_binary;
+  cls->get_min_serialized_size = thrift_protocol_get_min_serialized_size;
 }

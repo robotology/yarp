@@ -79,6 +79,7 @@ RUN apt-get install -y --no-install-recommends \
 RUN apt-get install -y --no-install-recommends \
 `# Ruby dependencies` \
       ruby \
+      ruby-bundler \
       ruby-dev \
 `# Perl dependencies` \
       libbit-vector-perl \
@@ -122,11 +123,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       nodejs-dev \
       nodejs-legacy \
       npm
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-`# CSharp dependencies` \
-      libmono-system-web2.0-cil \
-      mono-devel
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 `# D dependencies` \

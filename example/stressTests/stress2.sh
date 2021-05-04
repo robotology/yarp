@@ -8,7 +8,7 @@
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
 echo "Running yarpdev"
-yarpdev --device controlboard --subdevice fakeMotor &
+yarpdev --device controlboard --subdevice fakeMotionControl --GENERAL::Joints 4 &
 
 sleep 1
 

@@ -46,7 +46,7 @@ YARP_END_PACK
 const std::map<int, std::string> tag2FormatStr = {
     {BOTTLE_TAG_INT32, PRId32},
     {BOTTLE_TAG_INT64, PRId64},
-    {BOTTLE_TAG_VOCAB, "c"},
+    {BOTTLE_TAG_VOCAB32, "c"},
     {BOTTLE_TAG_STRING, "s"},
     {BOTTLE_TAG_FLOAT64, "lf"},
 };

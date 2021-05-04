@@ -70,7 +70,7 @@ class AudioPlayerWrapper :
 
     struct scheduled_sound_type
     {
-        double scheduled_time;
+        double scheduled_time=0;
         yarp::sig::Sound sound_data;
     };
 
@@ -107,17 +107,17 @@ private:
     std::string  m_audioInPortName;
     yarp::os::BufferedPort<yarp::sig::Sound> m_audioInPort;
     std::string  m_statusPortName;
-    yarp::os::BufferedPort<yarp::os::Bottle>  m_statusPort;
+    yarp::os::Port m_statusPort;
 
-    yarp::dev::IAudioRender *m_irender;
+    yarp::dev::IAudioRender *m_irender = nullptr;
     yarp::os::Stamp m_lastStateStamp;
     yarp::dev::AudioBufferSize m_current_buffer_size;
     yarp::dev::AudioBufferSize m_max_buffer_size;
     std::queue<scheduled_sound_type> m_sound_buffer;
     double m_period;
     double m_buffer_delay;
-    bool   m_isDeviceOwned;
-    bool   m_debug_enabled;
+    bool   m_isDeviceOwned = false;
+    bool   m_debug_enabled = false;
     bool   m_isPlaying = false;
 
     bool initialize_YARP(yarp::os::Searchable &config);

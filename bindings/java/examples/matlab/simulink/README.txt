@@ -24,5 +24,5 @@ Running
 Have a yarp server running. Additional dependencies can be solved with the following terminal commands:
 * yarpWriteDoubles: yarp read /read
 * yarpReadDoubles: yarp write /write
-* yarpRemotePosEnc: yarpdev --device fakeMotor
-* yarpRemoteVelEnc: yarpdev --device fakeMotor
+* yarpRemotePosEnc: yarpdev --device fakeMotionControl
+* yarpRemoteVelEnc: yarpdev --device fakeMotionControl

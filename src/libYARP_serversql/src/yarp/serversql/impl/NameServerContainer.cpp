@@ -129,7 +129,7 @@ bool NameServerContainer::open(Searchable& options)
         }
     }
 
-    if (options.check("ros") || yarp::conf::environment::getEnvironment("YARP_USE_ROS")!="") {
+    if (options.check("ros") || yarp::conf::environment::get_string("YARP_USE_ROS")!="") {
         yarp::os::Bottle lst = yarp::os::Carriers::listCarriers();
         std::string lstStr(lst.toString());
         if (lstStr.find("rossrv") == std::string::npos ||
@@ -141,7 +141,7 @@ bool NameServerContainer::open(Searchable& options)
             yCError(NAMESERVERCONTAINER, "Aborting.\n");
             return false;
         }
-        std::string addr = yarp::conf::environment::getEnvironment("ROS_MASTER_URI");
+        std::string addr = yarp::conf::environment::get_string("ROS_MASTER_URI");
         Contact c = Contact::fromString(addr);
         if (c.isValid()) {
             c.setCarrier("xmlrpc");

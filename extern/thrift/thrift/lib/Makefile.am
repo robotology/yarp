@@ -20,19 +20,16 @@
 SUBDIRS = json xml
 PRECROSS_TARGET =
 
-if WITH_CPP
-# cpp dir is picked directly by plugin build
-if !WITH_PLUGIN
-SUBDIRS += cpp
+if WITH_AS3
+SUBDIRS += as3
 endif
+
+if WITH_CPP
+SUBDIRS += cpp
 endif
 
 if WITH_C_GLIB
 SUBDIRS += c_glib
-endif
-
-if WITH_MONO
-SUBDIRS += csharp
 endif
 
 if WITH_JAVA
@@ -71,8 +68,8 @@ if WITH_DART
 SUBDIRS += dart
 endif
 
-if WITH_DOTNETCORE
-SUBDIRS += netcore
+if WITH_DOTNET
+SUBDIRS += netstd
 endif
 
 if WITH_GO
@@ -102,11 +99,14 @@ if WITH_CL
 SUBDIRS += cl
 endif
 
+if WITH_SWIFT
+SUBDIRS += swift
+endif
+
 # All of the libs that don't use Automake need to go in here
 # so they will end up in our release tarballs.
 EXTRA_DIST = \
 	as3 \
-	cocoa \
 	d \
 	dart \
 	delphi \

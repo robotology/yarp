@@ -35,28 +35,6 @@ namespace {
 YARP_LOG_COMPONENT(NAVIGATION2DCLIENT, "yarp.device.navigation2DClient")
 }
 
-bool Navigation2DClient::set_current_goal_name(const std::string& name)
-{
-    m_current_goal_name = name;
-    return true;
-}
-
-bool Navigation2DClient::get_current_goal_name(std::string& name)
-{
-    if (m_current_goal_name == "")
-    {
-        return false;
-    }
-    name = m_current_goal_name;
-    return true;
-}
-
-bool Navigation2DClient::reset_current_goal_name()
-{
-    m_current_goal_name = "";
-    return true;
-}
-
 //------------------------------------------------------------------------------------------------------------------------------
 
 bool Navigation2DClient::open(yarp::os::Searchable &config)
@@ -579,7 +557,6 @@ bool Navigation2DClient::gotoTargetByAbsoluteLocation(Map2DLocation loc)
         return false;
     }
 
-    reset_current_goal_name();
     return true;
 }
 
@@ -683,8 +660,30 @@ bool Navigation2DClient::gotoTargetByLocationName(std::string location_name)
     }
 
     //...otherwise we can go to the found/computed location!
-    this->gotoTargetByAbsoluteLocation(loc);
-    set_current_goal_name(location_name);
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GOTOABS_AND_NAME);
+    b.addString(loc.map_id);
+    b.addFloat64(loc.x);
+    b.addFloat64(loc.y);
+    b.addFloat64(loc.theta);
+    b.addString(location_name);
+    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yCError(NAVIGATION2DCLIENT) << "gotoTargetByLocationName() received error from navigation server";
+            return false;
+        }
+    }
+    else
+    {
+        yCError(NAVIGATION2DCLIENT) << "gotoTargetByLocationName() error on writing on rpc port";
+        return false;
+    }
 
     return true;
 }
@@ -714,7 +713,6 @@ bool Navigation2DClient::gotoTargetByRelativeLocation(double x, double y)
         return false;
     }
 
-    reset_current_goal_name();
     return true;
 }
 
@@ -744,7 +742,6 @@ bool Navigation2DClient::gotoTargetByRelativeLocation(double x, double y, double
         return false;
     }
 
-    reset_current_goal_name();
     return true;
 }
 
@@ -979,15 +976,31 @@ bool Navigation2DClient::getAbsoluteLocationOfCurrentTarget(Map2DLocation &loc)
 
 bool Navigation2DClient::getNameOfCurrentTarget(std::string& location_name)
 {
-    std::string s;
-    if (get_current_goal_name(s))
-    {
-        location_name = s;
-        return true;
-    }
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
 
-    location_name = "";
-    yCError(NAVIGATION2DCLIENT) << "No name for the current target, or no target set";
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GET_NAME_TARGET);
+
+    bool ret = m_rpc_port_navigation_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK)
+        {
+            yCError(NAVIGATION2DCLIENT) << "getNameOfCurrentTarget() received error from navigation server";
+            return false;
+        }
+        else
+        {
+            location_name = resp.get(1).asString();
+            return true;
+        }
+    }
+    else
+    {
+        yCError(NAVIGATION2DCLIENT) << "getNameOfCurrentTarget() error on writing on rpc port";
+        return false;
+    }
     return true;
 }
 
@@ -1520,7 +1533,6 @@ bool  Navigation2DClient::applyVelocityCommand(double x_vel, double y_vel, doubl
         return false;
     }
 
-    reset_current_goal_name();
     return true;
 }
 

@@ -46,7 +46,7 @@ var Thrift = {
      * @const {string} Version
      * @memberof Thrift
      */
-    Version: '0.12.0',
+    Version: '0.14.1',
 
     /**
      * Thrift IDL type string to Id mapping.
@@ -284,7 +284,9 @@ Thrift.TProtocolExceptionType = {
 
 Thrift.TProtocolException = function TProtocolException(type, message) {
     Error.call(this);
-    Error.captureStackTrace(this, this.constructor);
+    if (Error.captureStackTrace !== undefined) {
+        Error.captureStackTrace(this, this.constructor);
+    }
     this.name = this.constructor.name;
     this.type = type;
     this.message = message;
@@ -438,7 +440,12 @@ Thrift.TXHRTransport.prototype = {
                 }
             },
             context: client,
-            success: jQuery.makeArray(args).pop()
+            success: jQuery.makeArray(args).pop(),
+            beforeSend: function (xreq) {
+                Object.keys(thriftTransport.customHeaders).forEach(function (prop) {
+                    xreq.setRequestHeader(prop, thriftTransport.customHeaders[prop]);
+                });
+            }
         });
 
         return jqXHR;
@@ -1002,7 +1009,11 @@ Thrift.Protocol.prototype = {
 
     /** Serializes a number */
     writeI64: function(i64) {
-        this.tstack.push(i64);
+        if (typeof i64 === 'number') {
+            this.tstack.push(i64);
+        } else {
+            this.tstack.push(Int64Util.toDecimalString(i64));
+        }
     },
 
     /** Serializes a number */
@@ -1073,12 +1084,16 @@ Thrift.Protocol.prototype = {
         this.rstack = [];
         this.rpos = [];
 
-        if (typeof JSON !== 'undefined' && typeof JSON.parse === 'function') {
-            this.robj = JSON.parse(this.transport.readAll());
+        received = this.transport.readAll();
+
+        if (typeof JSONInt64 !== 'undefined' && typeof JSONInt64.parse === 'function') {
+            this.robj = JSONInt64.parse(received);
+        } else if (typeof JSON !== 'undefined' && typeof JSON.parse === 'function') {
+            this.robj = JSON.parse(received);
         } else if (typeof jQuery !== 'undefined') {
-            this.robj = jQuery.parseJSON(this.transport.readAll());
+            this.robj = jQuery.parseJSON(received);
         } else {
-            this.robj = eval(this.transport.readAll());
+            this.robj = eval(received);
         }
 
         var r = {};
@@ -1221,7 +1236,6 @@ Thrift.Protocol.prototype = {
         r.vtype = Thrift.Protocol.RType[map.shift()];
         r.size = map.shift();
 
-
         this.rpos.push(this.rstack.length);
         this.rstack.push(map.shift());
 
@@ -1346,8 +1360,54 @@ Thrift.Protocol.prototype = {
 
     /** Returns the an object with a value property set to the
         next value found in the protocol buffer */
-    readI64: function() {
-        return this.readI32();
+    readI64: function(f) {
+        if (f === undefined) {
+            f = this.rstack[this.rstack.length - 1];
+        }
+
+        var r = {};
+
+        if (f instanceof Array) {
+            if (f.length === 0) {
+                r.value = undefined;
+            } else {
+                if (!f.isReversed) {
+                    f.reverse();
+                    f.isReversed = true;
+                }
+                r.value = f.pop();
+            }
+        } else if (f instanceof Object) {
+            var int64Object = true;
+            var objectKeys = Object.keys(f).sort();
+            var int64Keys = ['buffer', 'offset'];
+            if (objectKeys.length !== int64Keys.length) {
+                int64Object = false;
+            }
+            for (var it=0; int64Object && it < objectKeys.length; ++it) {
+                if (objectKeys[it] !== int64Keys[it]) {
+                    int64Object = false;
+                }
+            }
+            if (int64Object) {
+                r.value = f;
+            } else {
+                for (var i in f) {
+                    if (i === null) {
+                    continue;
+                    }
+                    this.rstack.push(f[i]);
+                    delete f[i];
+
+                    r.value = i;
+                    break;
+                }
+            }
+        } else {
+            r.value = f;
+            this.rstack.pop();
+        }
+        return r;
     },
 
     /** Returns the an object with a value property set to the
@@ -1376,9 +1436,6 @@ Thrift.Protocol.prototype = {
     skip: function(type) {
         var ret, i;
         switch (type) {
-            case Thrift.Type.STOP:
-                return null;
-
             case Thrift.Type.BOOL:
                 return this.readBool();
 

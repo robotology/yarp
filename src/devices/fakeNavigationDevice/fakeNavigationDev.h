@@ -46,8 +46,12 @@ class fakeNavigation :
         public yarp::dev::Nav2D::INavigation2DTargetActions,
         public yarp::dev::Nav2D::INavigation2DControlActions
 {
+private:
+    yarp::dev::Nav2D::NavigationStatusEnum m_status = yarp::dev::Nav2D::NavigationStatusEnum::navigation_status_idle;
+    yarp::dev::Nav2D::Map2DLocation m_absgoal_loc;
+
 public:
-    fakeNavigationThread  *navThread;
+    fakeNavigationThread  *navThread=nullptr;
 
 public:
     virtual bool open(yarp::os::Searchable& config) override;

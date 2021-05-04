@@ -35,6 +35,13 @@ if(YARP_LINK_PLUGINS)
 #         list(APPEND YARP_init_PRIVATE_DEPS YARP_yarpcar) (This will cause circular inclusion)
     endif()
 
+    if(YARP_COMPILE_PORTMONITOR_PLUGINS)
+        set_property(SOURCE CustomInit.cpp
+                     APPEND PROPERTY COMPILE_DEFINITIONS yarppm_INIT_FUNCTION=add_yarppm_plugins)
+        target_link_libraries(YARP_init PRIVATE YARP::yarppm)
+#         list(APPEND YARP_init_PRIVATE_DEPS YARP_yarppm) (This will cause circular inclusion)
+    endif()
+
     if(YARP_COMPILE_DEVICE_PLUGINS)
         set_property(SOURCE CustomInit.cpp
                      APPEND PROPERTY COMPILE_DEFINITIONS yarpmod_INIT_FUNCTION=add_yarpmod_plugins)

@@ -242,7 +242,7 @@ type for ROS's benefit.  There is a tool to help with this.
 
 For testing purposes, let's start a fake motor control board:
 \verbatim
-yarpdev --device fakeMotor --name /motor
+yarpdev --device fakeMotionControl --name /motor --GENERAL::Joints 4
 \endverbatim
 
 One of the ports this creates is /motor/state:o.  ROS forbids

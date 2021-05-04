@@ -10,7 +10,7 @@
 
 #include <yarp/os/LogStream.h>
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 
 bool ControlBoardWrapperAmplifierControl::enableAmp(int j)
@@ -19,7 +19,7 @@ bool ControlBoardWrapperAmplifierControl::enableAmp(int j)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -42,7 +42,7 @@ bool ControlBoardWrapperAmplifierControl::disableAmp(int j)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -100,7 +100,7 @@ bool ControlBoardWrapperAmplifierControl::getAmpStatus(int j, int* v)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -120,7 +120,7 @@ bool ControlBoardWrapperAmplifierControl::setMaxCurrent(int j, double v)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -143,7 +143,7 @@ bool ControlBoardWrapperAmplifierControl::getMaxCurrent(int j, double* v)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -240,7 +240,7 @@ bool ControlBoardWrapperAmplifierControl::getPWM(int m, double* val)
     size_t subIndex = device.lut[m].deviceEntry;
     SubDevice* p = device.getSubdevice(subIndex);
 
-    yCTrace(CONTROLBOARDWRAPPER) << "CBW2::getPWMlimit j" << static_cast<int>(off + p->base) << " p " << (p ? "1" : "0") << " amp " << (p->amp ? "1" : "0");
+    yCTrace(CONTROLBOARD) << "CBW2::getPWMlimit j" << static_cast<int>(off + p->base) << " p " << (p ? "1" : "0") << " amp " << (p->amp ? "1" : "0");
     if (!p) {
         *val = 0.0;
         return false;
@@ -260,7 +260,7 @@ bool ControlBoardWrapperAmplifierControl::getPWMLimit(int m, double* val)
     size_t subIndex = device.lut[m].deviceEntry;
 
     SubDevice* p = device.getSubdevice(subIndex);
-    yCTrace(CONTROLBOARDWRAPPER) << "CBW2::getPWMlimit j" << static_cast<int>(off + p->base) << " p " << (p ? "1" : "0") << " amp " << (p->amp ? "1" : "0");
+    yCTrace(CONTROLBOARD) << "CBW2::getPWMlimit j" << static_cast<int>(off + p->base) << " p " << (p ? "1" : "0") << " amp " << (p->amp ? "1" : "0");
 
     if (!p) {
         *val = 0.0;

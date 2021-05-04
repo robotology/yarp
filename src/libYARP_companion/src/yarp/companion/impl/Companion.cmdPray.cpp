@@ -127,7 +127,7 @@ int Companion::cmdPray(int argc, char *argv[])
             state = "displeased";
         }
         bool found = false;
-        name = yarp::conf::environment::getEnvironment("YARP_ROBOT_NAME", &found);
+        name = yarp::conf::environment::get_string("YARP_ROBOT_NAME", &found);
         if (!found) {
             name = "YARPino";
         }

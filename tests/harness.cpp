@@ -12,12 +12,15 @@
 
 #include <yarp/conf/environment.h>
 #include <yarp/conf/filesystem.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Property.h>
-#include <yarp/os/NameStore.h>
-#include <yarp/os/YarpPlugin.h>
 
-#include <yarp/serversql/yarpserversql.h>
+#if !defined(WITHOUT_NETWORK)
+#  include <yarp/os/Network.h>
+#  include <yarp/os/Property.h>
+#  include <yarp/os/NameStore.h>
+#  include <yarp/os/YarpPlugin.h>
+
+#  include <yarp/serversql/yarpserversql.h>
+#endif // WITHOUT_NETWORK
 
 #include <YarpBuildLocation.h>
 
@@ -25,10 +28,7 @@ int yarp_tests_skipped = 0;
 
 namespace {
 
-static yarp::os::Network* net = nullptr;
-static yarp::os::NameStore* store = nullptr;
 static bool verbose = false;
-static bool no_bypass = false;
 
 static void setup_Environment()
 {
@@ -42,9 +42,9 @@ static void setup_Environment()
             "share" +
             std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp" +
-            std::string{yarp::conf::filesystem::path_separator}  +
+            std::string{yarp::conf::environment::path_separator}  +
             TEST_DATA_DIR;
-    yarp::conf::environment::setEnvironment("YARP_DATA_DIRS", yarp_data_dirs);
+    yarp::conf::environment::set_string("YARP_DATA_DIRS", yarp_data_dirs);
 
     std::string yarp_data_home =
             CMAKE_BINARY_DIR +
@@ -56,7 +56,7 @@ static void setup_Environment()
             ".local" +
             std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp";
-    yarp::conf::environment::setEnvironment("YARP_DATA_HOME", yarp_data_home);
+    yarp::conf::environment::set_string("YARP_DATA_HOME", yarp_data_home);
 
     // To ensure that this will behave in the same way if YARP is configured on
     // the user's system and on the build machines, YARP_CONFIG_DIRS and
@@ -66,7 +66,7 @@ static void setup_Environment()
             "etc" +
             std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp";
-    yarp::conf::environment::setEnvironment("YARP_CONFIG_DIRS", yarp_config_dirs);
+    yarp::conf::environment::set_string("YARP_CONFIG_DIRS", yarp_config_dirs);
 
     std::string yarp_config_home = CMAKE_BINARY_DIR +
             std::string{yarp::conf::filesystem::preferred_separator} +
@@ -77,15 +77,22 @@ static void setup_Environment()
             ".config" +
             std::string{yarp::conf::filesystem::preferred_separator} +
             "yarp";
-    yarp::conf::environment::setEnvironment("YARP_CONFIG_HOME", yarp_config_home);
+    yarp::conf::environment::set_string("YARP_CONFIG_HOME", yarp_config_home);
 
     if (verbose) {
-        printf("YARP_DATA_DIRS=\"%s\"\n", yarp::conf::environment::getEnvironment("YARP_DATA_DIRS").c_str());
-        printf("YARP_DATA_HOME=\"%s\"\n", yarp::conf::environment::getEnvironment("YARP_DATA_HOME").c_str());
-        printf("YARP_CONFIG_DIRS=\"%s\"\n", yarp::conf::environment::getEnvironment("YARP_CONFIG_DIRS").c_str());
-        printf("YARP_CONFIG_HOME=\"%s\"\n", yarp::conf::environment::getEnvironment("YARP_CONFIG_HOME").c_str());
+        printf("YARP_DATA_DIRS=\"%s\"\n", yarp::conf::environment::get_string("YARP_DATA_DIRS").c_str());
+        printf("YARP_DATA_HOME=\"%s\"\n", yarp::conf::environment::get_string("YARP_DATA_HOME").c_str());
+        printf("YARP_CONFIG_DIRS=\"%s\"\n", yarp::conf::environment::get_string("YARP_CONFIG_DIRS").c_str());
+        printf("YARP_CONFIG_HOME=\"%s\"\n", yarp::conf::environment::get_string("YARP_CONFIG_HOME").c_str());
     }
 }
+
+#if !defined(WITHOUT_NETWORK)
+
+static bool no_bypass = false;
+
+static yarp::os::Network* net = nullptr;
+static yarp::os::NameStore* store = nullptr;
 
 static void init_Network()
 {
@@ -135,6 +142,8 @@ static void fini_NameStore()
     }
 }
 
+#endif // WITHOUT_NETWORK
+
 } // namespace
 
 
@@ -143,7 +152,12 @@ int main(int argc, char *argv[])
     Catch::Session session;
 
     auto cli = session.cli() | Catch::clara::Opt(verbose)["--yarp-verbose"]("Enable verbose mode")
+#if !defined(WITHOUT_NETWORK)
                              | Catch::clara::Opt(no_bypass)["--yarp-no-bypass"]("Do not bypass yarpserver");
+#else
+                             ;
+#endif // WITHOUT_NETWORK
+
     session.cli( cli );
 
     int returnCode = session.applyCommandLine( argc, argv );
@@ -153,13 +167,17 @@ int main(int argc, char *argv[])
 
     setup_Environment();
 
+#if !defined(WITHOUT_NETWORK)
     init_Network();
     init_NameStore();
+#endif // WITHOUT_NETWORK
 
     int assertions_failed = session.run();
 
+#if !defined(WITHOUT_NETWORK)
     fini_NameStore();
     fini_Network();
+#endif // WITHOUT_NETWORK
 
     // 0 = All assertion passed
     // 255 = Probably an assert was hit and the program exited somewhere else

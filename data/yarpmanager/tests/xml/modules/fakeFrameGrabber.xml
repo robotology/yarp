@@ -1,6 +1,6 @@
 <module>
     <name>fakeFrameGrabber</name>
-    <description> A frame grabber test device (start up a fake image source)</description>
+    <description> A fake frame grabber device (start up a fake image source)</description>
     <version>1.0</version>
 
     <arguments>
@@ -9,26 +9,27 @@
         <param default="240" required="no" desc="desired height of test image">height</param>
         <param default="0.033" required="no" desc="period of test images in second">period</param>
         <param default="30" required="no" desc="rate of test images in Hz">freq</param>
-        <param default="line" required="no" desc="bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand]">mode</param>
+        <param default="line" required="no" desc="bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], noise [nois], none [none], time test[time]">mode</param>
+        <param default="" required="no" desc="background image to use, if any">src</param>
+        <param default="0.5" required="no" desc="Signal noise ratio ([0.0-1.0] default 0.5)">snr</param>
+        <param default="0" required="no" desc="mirroring disabled by default">mirror</param>
+        <param default="0" required="no" desc="should emit bayer test image?">bayer</param>
+        <param default="0" required="no" desc="should emit a monochrome image?">mono</param>
         <param default="1.0" required="no" desc="desired horizontal fov of test image">horizontalFov</param>
         <param default="2.0" required="no" desc="desired vertical fov of test image">verticalFov</param>
-        <param default="0" required="no" desc="mirroring disabled by default">mirror</param>
-        <param default="4.0" required="no" desc="">focalLengthX</param>
-        <param default="5.0" required="no" desc="">focalLengthY</param>
-        <param default="6.0" required="no" desc="">principalPointX</param>
-        <param default="7.0" required="no" desc="">principalPointY</param>
-        <param default="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" required="no" desc="">retificationMatrix</param>
-        <param default="FishEye" required="no" desc="">distortionModel</param>
-        <param default="8.0" required="no" desc="">k1</param>
-        <param default="9.0" required="no" desc="">k2</param>
-        <param default="10.0" required="no" desc="">k3</param>
-        <param default="11.0" required="no" desc="">t1</param>
-        <param default="12.0" required="no" desc="">t2</param>
+        <param default="3.0" required="no" desc="Physical focal length of the fakeFrameGrabber">physFocalLength</param>
+        <param default="4.0" required="no" desc="Horizontal component of the focal length of the fakeFrameGrabber">focalLengthX</param>
+        <param default="5.0" required="no" desc="Vertical component of the focal length of the fakeFrameGrabber">focalLengthY</param>
+        <param default="6.0" required="no" desc="X coordinate of the principal point of the fakeFrameGrabber">principalPointX</param>
+        <param default="7.0" required="no" desc="Y coordinate of the principal point of the fakeFrameGrabber">principalPointY</param>
+        <param default="8.0" required="no" desc="Radial distortion coefficient of the lens(fake)">k1</param>
+        <param default="9.0" required="no" desc="Radial distortion coefficient of the lens(fake)">k2</param>
+        <param default="10.0" required="no" desc="Radial distortion coefficient of the lens(fake)">k3</param>
+        <param default="11.0" required="no" desc="Tangential distortion of the lens(fake)">t1</param>
+        <param default="12.0" required="no" desc="Tangential distortion of the lens(fake)">t2</param>
+        <param default="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" required="no" desc="Matrix that describes the lens' distortion(fake)">retificationMatrix</param>
+        <param default="FishEye" required="no" desc="Reference to group of parameters describing the distortion model of the camera">distortionModel</param>
     </arguments>
-
-    <authors>
-        <author email="paulfitz@alum.mit.edu"> Paul Fitzpatrick </author>
-    </authors>
 
     <data>
         <input port_type="service">

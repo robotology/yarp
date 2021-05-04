@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperImpedanceControl.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 
 bool ControlBoardWrapperImpedanceControl::setImpedance(int j, double stiff, double damp)
@@ -17,7 +17,7 @@ bool ControlBoardWrapperImpedanceControl::setImpedance(int j, double stiff, doub
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -41,7 +41,7 @@ bool ControlBoardWrapperImpedanceControl::setImpedanceOffset(int j, double offse
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -65,7 +65,7 @@ bool ControlBoardWrapperImpedanceControl::getImpedance(int j, double* stiff, dou
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -89,7 +89,7 @@ bool ControlBoardWrapperImpedanceControl::getImpedanceOffset(int j, double* offs
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -113,7 +113,7 @@ bool ControlBoardWrapperImpedanceControl::getCurrentImpedanceLimit(int j, double
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;

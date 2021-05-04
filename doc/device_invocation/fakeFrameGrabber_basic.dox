@@ -32,6 +32,7 @@ So this is just an example
 <table>
 <tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>
 <tr><td>device</td><td></td><td></td></tr>
+<tr><td>fakeFrameGrabber_rpc_port</td><td>rpc port for the fakeFrameGrabber</td><td>/fakeFrameGrabber/rpc</td></tr>
 <tr><td>width</td><td>desired width of test image</td><td>320</td></tr>
 <tr><td>height</td><td>desired height of test image</td><td>240</td></tr>
 <tr><td>horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
@@ -51,8 +52,10 @@ So this is just an example
 <tr><td>t2</td><td>Tangential distortion of the lens(fake)</td><td>12.0</td></tr>
 <tr><td>freq</td><td>rate of test images in Hz</td><td></td></tr>
 <tr><td>period</td><td>period of test images in seconds</td><td></td></tr>
-<tr><td>mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]</td><td>line</td></tr>
+<tr><td>mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], noise [nois], none [none], time test[time]</td><td>line</td></tr>
 <tr><td>src</td><td></td><td></td></tr>
+<tr><td>timestamp</td><td>should write the timestamp in the first bytes of the image</td><td></td></tr>
+<tr><td>snr</td><td>Signal noise ratio ([0.0-1.0] default 0.5)</td><td>0.5</td></tr>
 <tr><td>bayer</td><td>should emit bayer test image?</td><td></td></tr>
 <tr><td>mono</td><td>should emit a monochrome image?</td><td></td></tr>
 </table>

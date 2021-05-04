@@ -26,7 +26,8 @@ using namespace yarp::dev;
 TEST_CASE("dev::ControlBoardWrapper2", "[yarp::dev]")
 {
     YARP_REQUIRE_PLUGIN("group", "device");
-    YARP_REQUIRE_PLUGIN("fakeMotor", "device");
+    YARP_REQUIRE_PLUGIN("fakeMotionControl", "device");
+    YARP_REQUIRE_PLUGIN("controlboardwrapper2", "device");
     YARP_REQUIRE_PLUGIN("remote_controlboard", "device");
 
     Network::setLocalMode(true);
@@ -36,9 +37,10 @@ TEST_CASE("dev::ControlBoardWrapper2", "[yarp::dev]")
         PolyDriver dd;
         Property p;
         p.put("device","controlboardwrapper2");
-        p.put("subdevice","fakeMotor");
+        p.put("subdevice","fakeMotionControl");
         p.put("name","/motor");
-        p.put("axes",16);
+        auto& pg = p.addGroup("GENERAL");
+        pg.put("Joints", 16);
         bool result;
         result = dd.open(p);
         REQUIRE(result); // controlboardwrapper open reported successful

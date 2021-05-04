@@ -10,25 +10,25 @@
 
 #include <yarp/os/LogStream.h>
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 using yarp::dev::IRemoteCalibrator;
 
 IRemoteCalibrator* ControlBoardWrapperRemoteCalibrator::getCalibratorDevice()
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     return yarp::dev::IRemoteCalibrator::getCalibratorDevice();
 }
 
 bool ControlBoardWrapperRemoteCalibrator::isCalibratorDevicePresent(bool* isCalib)
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     return yarp::dev::IRemoteCalibrator::isCalibratorDevicePresent(isCalib);
 }
 
 bool ControlBoardWrapperRemoteCalibrator::calibrateSingleJoint(int j)
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     if (!getCalibratorDevice()) {
         return false;
     }
@@ -38,7 +38,7 @@ bool ControlBoardWrapperRemoteCalibrator::calibrateSingleJoint(int j)
 
 bool ControlBoardWrapperRemoteCalibrator::calibrateWholePart()
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     if (!getCalibratorDevice()) {
         return false;
     }
@@ -48,7 +48,7 @@ bool ControlBoardWrapperRemoteCalibrator::calibrateWholePart()
 
 bool ControlBoardWrapperRemoteCalibrator::homingSingleJoint(int j)
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     if (!getCalibratorDevice()) {
         return false;
     }
@@ -58,7 +58,7 @@ bool ControlBoardWrapperRemoteCalibrator::homingSingleJoint(int j)
 
 bool ControlBoardWrapperRemoteCalibrator::homingWholePart()
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     if (!getCalibratorDevice()) {
         return false;
     }
@@ -68,7 +68,7 @@ bool ControlBoardWrapperRemoteCalibrator::homingWholePart()
 
 bool ControlBoardWrapperRemoteCalibrator::parkSingleJoint(int j, bool _wait)
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     if (!getCalibratorDevice()) {
         return false;
     }
@@ -78,7 +78,7 @@ bool ControlBoardWrapperRemoteCalibrator::parkSingleJoint(int j, bool _wait)
 
 bool ControlBoardWrapperRemoteCalibrator::parkWholePart()
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     if (!getCalibratorDevice()) {
         return false;
     }
@@ -88,7 +88,7 @@ bool ControlBoardWrapperRemoteCalibrator::parkWholePart()
 
 bool ControlBoardWrapperRemoteCalibrator::quitCalibrate()
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     if (!getCalibratorDevice()) {
         return false;
     }
@@ -98,7 +98,7 @@ bool ControlBoardWrapperRemoteCalibrator::quitCalibrate()
 
 bool ControlBoardWrapperRemoteCalibrator::quitPark()
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
     if (!getCalibratorDevice()) {
         return false;
     }

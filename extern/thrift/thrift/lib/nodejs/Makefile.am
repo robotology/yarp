@@ -32,12 +32,15 @@ check: deps
 	cd $(top_srcdir) && $(NPM) test && $(NPM) run lint-tests && cd lib/nodejs
 
 clean-local:
-	$(RM) -r test/gen-nodejs
+	$(RM) -r test/gen-*
 	$(RM) -r $(top_srcdir)/node_modules
+	$(RM) -r test/episodic-code-generation-test/gen*
+	$(RM) -r test/episodic-code-generation-test/node_modules
 
 EXTRA_DIST = \
 	examples \
 	lib \
 	test \
 	coding_standards.md \
+	CMakeLists.txt \
 	README.md

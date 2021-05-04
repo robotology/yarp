@@ -23,6 +23,7 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
+#include <yarp/dev/audioPlayerStatus.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include <cmath>
@@ -41,11 +42,8 @@ constexpr double DEFAULT_BUFFER_DELAY = 5.0; // seconds
 
 AudioPlayerWrapper::AudioPlayerWrapper() :
         PeriodicThread(DEFAULT_THREAD_PERIOD),
-        m_irender(nullptr),
         m_period(DEFAULT_THREAD_PERIOD),
-        m_buffer_delay(DEFAULT_BUFFER_DELAY),
-        m_isDeviceOwned(false),
-        m_debug_enabled(false)
+        m_buffer_delay(DEFAULT_BUFFER_DELAY)
 {
 }
 
@@ -120,15 +118,43 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
 
     if (command.get(0).asString() == "start")
     {
-        m_isPlaying = true;
         m_irender->startPlayback();
+        m_irender->isPlaying(m_isPlaying);
         reply.addVocab(VOCAB_OK);
     }
     else if (command.get(0).asString() == "stop")
     {
-        m_isPlaying = false;
         m_irender->stopPlayback();
+        m_irender->isPlaying(m_isPlaying);
         reply.addVocab(VOCAB_OK);
+    }
+    else if (command.get(0).asString() == "sw_audio_gain")
+    {
+        double val = command.get(1).asFloat64();
+        if (val>=0)
+        {
+            m_irender->setSWGain(val);
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yCError(AUDIOPLAYERWRAPPER) << "Invalid audio gain";
+            reply.addVocab(VOCAB_ERR);
+        }
+    }
+    else if (command.get(0).asString() == "hw_audio_gain")
+    {
+        double val = command.get(1).asFloat64();
+        if (val >= 0)
+        {
+            m_irender->setHWGain(val);
+            reply.addVocab(VOCAB_OK);
+        }
+        else
+        {
+            yCError(AUDIOPLAYERWRAPPER) << "Invalid audio gain";
+            reply.addVocab(VOCAB_ERR);
+        }
     }
     else if (command.get(0).asString() == "clear")
     {
@@ -141,6 +167,8 @@ bool AudioPlayerWrapper::read(yarp::os::ConnectionReader& connection)
         reply.addString("start");
         reply.addString("stop");
         reply.addString("clear");
+        reply.addString("sw_audio_gain <gain>");
+        reply.addString("hw_audio_gain <gain>");
     }
     else
     {
@@ -220,12 +248,6 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
         m_isDeviceOwned = true;
     }
 
-    if (config.check("start"))
-    {
-        m_isPlaying = true;
-        m_irender->startPlayback();
-    }
-
     if (m_irender == nullptr)
     {
         yCError(AUDIOPLAYERWRAPPER, "m_irender is null\n");
@@ -237,6 +259,12 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
     {
         yCError(AUDIOPLAYERWRAPPER, "getPlaybackAudioBufferMaxSize failed\n");
         return false;
+    }
+
+    if (config.check("start"))
+    {
+        m_irender->startPlayback();
+        m_irender->isPlaying(m_isPlaying);
     }
 
     return true;
@@ -280,6 +308,11 @@ void AudioPlayerWrapper::run()
     Sound* s = m_audioInPort.read(false);
     if (s != nullptr)
     {
+        if (m_debug_enabled)
+        {
+            yCDebug(AUDIOPLAYERWRAPPER) << "Received sound of:" << s->getSamples() << " samples";
+        }
+
         scheduled_sound_type ss;
 #if 1
         //This is simple, but we don't know how big the sound is...
@@ -310,6 +343,15 @@ void AudioPlayerWrapper::run()
             printer_wdt = yarp::os::Time::now();
         }
     }
+
+    m_irender->isPlaying(m_isPlaying);
+
+    //status port
+    yarp::dev::audioPlayerStatus status;
+    status.enabled = m_isPlaying;
+    status.current_buffer_size = m_current_buffer_size.getSamples();
+    status.max_buffer_size = m_max_buffer_size.getSamples();
+    m_statusPort.write(status);
 }
 
 bool AudioPlayerWrapper::close()

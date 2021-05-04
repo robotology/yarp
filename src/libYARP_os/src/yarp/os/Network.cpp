@@ -962,7 +962,7 @@ void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clo
 {
     std::string clock;
     if (clockType == YARP_CLOCK_DEFAULT) {
-        clock = yarp::conf::environment::getEnvironment("YARP_CLOCK");
+        clock = yarp::conf::environment::get_string("YARP_CLOCK");
         if (!clock.empty()) {
             clockType = YARP_CLOCK_NETWORK;
         } else {
@@ -978,7 +978,7 @@ void yarp::os::NetworkBase::yarpClockInit(yarp::os::yarpClockType clockType, Clo
 
     case YARP_CLOCK_NETWORK:
         yCDebug(NETWORK, "Using NETWORK clock");
-        clock = yarp::conf::environment::getEnvironment("YARP_CLOCK");
+        clock = yarp::conf::environment::get_string("YARP_CLOCK");
         // check of valid parameter is done inside the call, throws YARP_FAIL in case of error
         yarp::os::Time::useNetworkClock(clock);
         break;
@@ -1422,17 +1422,17 @@ NameStore* NetworkBase::getQueryBypass()
 std::string NetworkBase::getEnvironment(const char* key,
                                         bool* found)
 {
-    return yarp::conf::environment::getEnvironment(key, found);
+    return yarp::conf::environment::get_string(key, found);
 }
 
 void NetworkBase::setEnvironment(const std::string& key, const std::string& val)
 {
-    return yarp::conf::environment::setEnvironment(key, val);
+    yarp::conf::environment::set_string(key, val);
 }
 
 void NetworkBase::unsetEnvironment(const std::string& key)
 {
-    return yarp::conf::environment::unsetEnvironment(key);
+    yarp::conf::environment::unset(key);
 }
 
 #endif
@@ -1446,7 +1446,7 @@ std::string NetworkBase::getDirectorySeparator()
 
 std::string NetworkBase::getPathSeparator()
 {
-    return std::string{yarp::conf::filesystem::path_separator};
+    return std::string{yarp::conf::environment::path_separator};
 }
 
 #endif // YARP_NO_DEPRECATED
@@ -2004,9 +2004,9 @@ std::string NetworkBase::getConfigFile(const char* fname)
 
 int NetworkBase::getDefaultPortRange()
 {
-    std::string range = yarp::conf::environment::getEnvironment("YARP_PORT_RANGE");
+    std::string range = yarp::conf::environment::get_string("YARP_PORT_RANGE");
     if (!range.empty()) {
-        int irange = NetType::toInt(range);
+        int irange = yarp::conf::numeric::from_string<int>(range);
         if (irange != 0) {
             return irange;
         }

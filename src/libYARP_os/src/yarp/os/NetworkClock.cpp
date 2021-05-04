@@ -103,6 +103,7 @@ bool NetworkClock::Private::read(ConnectionReader& reader)
     }
 
     timeMutex.lock();
+    double oldTime = _time;
     sec = bot.get(0).asInt32();
     nsec = bot.get(1).asInt32();
     _time = sec + (nsec * 1e-9);
@@ -111,7 +112,14 @@ bool NetworkClock::Private::read(ConnectionReader& reader)
 
     listMutex.lock();
     auto waiter_it = waiters->begin();
-    while (waiter_it != waiters->end()) {
+    if (oldTime > _time) {
+        // Update the wake-up time. In case of a time reset it closes the gap
+        // between the waiter and _time.
+        waiter_it->first = _time + (waiter_it->first - oldTime);
+    }
+
+    while (waiter_it != waiters->end())
+    {
         if (waiter_it->first - _time < 1E-12) {
             Semaphore* waiterSemaphore = waiter_it->second;
             waiter_it = waiters->erase(waiter_it);

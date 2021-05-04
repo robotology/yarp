@@ -372,17 +372,30 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
         case t_base_type::TYPE_STRING:
             return "BOTTLE_TAG_STRING";
         case t_base_type::TYPE_BOOL:
-            return "BOTTLE_TAG_VOCAB";
+            return "BOTTLE_TAG_VOCAB32";
         case t_base_type::TYPE_I8:
             return "BOTTLE_TAG_INT8";
         case t_base_type::TYPE_I16:
             return "BOTTLE_TAG_INT16";
         case t_base_type::TYPE_I32:
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && it->second == "yarp::conf::vocab32_t") {
+                return "BOTTLE_TAG_VOCAB32";
+            }
             return "BOTTLE_TAG_INT32";
+        }
         case t_base_type::TYPE_I64:
             return "BOTTLE_TAG_INT64";
         case t_base_type::TYPE_DOUBLE:
-            return "BOTTLE_TAG_FLOAT64";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
+                return "BOTTLE_TAG_FLOAT32";
+            } else {
+                return "BOTTLE_TAG_FLOAT64";
+            }
+        }
         }
     } else if (type->is_enum()) {
         return "BOTTLE_TAG_INT32";
@@ -445,6 +458,11 @@ std::string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg
 {
     if (ttype->is_base_type()) {
         std::string bname = base_type_name(((t_base_type*)ttype)->get_base());
+        auto it = ttype->annotations_.find("yarp.type");
+        if (it != ttype->annotations_.end()) {
+            bname = it->second;
+        }
+
         if (!arg) {
             return bname;
         }
@@ -973,6 +991,12 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
         throw "CANNOT GENERATE SERIALIZE CODE FOR void TYPE: " + name;
     }
 
+    // Force nesting for fields annotated as "yarp.nested"
+    auto it = tfield->annotations_.find("yarp.nested");
+    if (it != tfield->annotations_.end() && it->second == "true") {
+        force_nesting = true;
+    }
+
     if (type->is_struct() || type->is_xception()) {
         f_cpp_ << indent_cpp() << "if (!writer.";
         generate_serialize_struct(f_cpp_,
@@ -1001,20 +1025,68 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
                 f_cpp_ << "writeBool(" << name << ")";
                 break;
             case t_base_type::TYPE_I8:
-                f_cpp_ << "writeI8(" << name << ")";
+            {
+                auto it = type->annotations_.find("yarp.type");
+                if (it != type->annotations_.end() && (it->second == "std::uint8_t" ||
+                                                       it->second == "uint8_t" ||
+                                                       it->second.find("unsigned") != std::string::npos)) {
+                    f_cpp_ << "writeUI8(" << name << ")";
+                } else {
+                    f_cpp_ << "writeI8(" << name << ")";
+                }
                 break;
+            }
             case t_base_type::TYPE_I16:
-                f_cpp_ << "writeI16(" << name << ")";
+            {
+                auto it = type->annotations_.find("yarp.type");
+                if (it != type->annotations_.end() && (it->second == "std::uint16_t" ||
+                                                       it->second == "uint16_t" ||
+                                                       it->second.find("unsigned") != std::string::npos)) {
+                    f_cpp_ << "writeUI16(" << name << ")";
+                } else {
+                    f_cpp_ << "writeI16(" << name << ")";
+                }
                 break;
+            }
             case t_base_type::TYPE_I32:
-                f_cpp_ << "writeI32(" << name << ")";
+            {
+                auto it = type->annotations_.find("yarp.type");
+                if (it != type->annotations_.end() && it->second == "yarp::conf::vocab32_t") {
+                    f_cpp_ << "writeVocab32(" << name << ")";
+                } else if (it != type->annotations_.end() && (it->second == "std::size_t" ||
+                                                              it->second == "size_t")) {
+                    f_cpp_ << "writeSizeT(" << name << ")";
+                } else if (it != type->annotations_.end() && (it->second == "std::uint32_t" ||
+                                                              it->second == "uint32_t" ||
+                                                              it->second.find("unsigned") != std::string::npos)) {
+                    f_cpp_ << "writeUI32(" << name << ")";
+                } else {
+                    f_cpp_ << "writeI32(" << name << ")";
+                }
                 break;
+            }
             case t_base_type::TYPE_I64:
-                f_cpp_ << "writeI64(" << name << ")";
+            {
+                auto it = type->annotations_.find("yarp.type");
+                if (it != type->annotations_.end() && (it->second == "std::uint64_t" ||
+                                                       it->second == "uint64_t" ||
+                                                       it->second.find("unsigned") != std::string::npos)) {
+                    f_cpp_ << "writeUI64(" << name << ")";
+                } else {
+                    f_cpp_ << "writeI64(" << name << ")";
+                }
                 break;
+            }
             case t_base_type::TYPE_DOUBLE:
-                f_cpp_ << "writeFloat64(" << name << ")";
+            {
+                auto it = type->annotations_.find("yarp.type");
+                if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
+                    f_cpp_ << "writeFloat32(" << name << ")";
+                } else {
+                    f_cpp_ << "writeFloat64(" << name << ")";
+                }
                 break;
+                }
             default:
                 throw "compiler error: no C++ writer for base type " + t_base_type::t_base_name(tbase) + name;
             }
@@ -1152,6 +1224,12 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         throw "CANNOT GENERATE DESERIALIZE CODE FOR void TYPE: " + prefix + tfield->get_name();
     }
 
+    // Force nesting for fields annotated as "yarp.nested"
+    auto it = tfield->annotations_.find("yarp.nested");
+    if (it != tfield->annotations_.end() && it->second == "true") {
+        force_nested = true;
+    }
+
     std::string name = prefix + tfield->get_name() + suffix;
 
     if (type->is_struct() || type->is_xception()) {
@@ -1184,20 +1262,68 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
             f_cpp_ << "readBool(" << name << ")";
             break;
         case t_base_type::TYPE_I8:
-            f_cpp_ << "readI8(" << name << ")";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && (it->second == "std::uint8_t" ||
+                                                   it->second == "uint8_t" ||
+                                                   it->second.find("unsigned") != std::string::npos)) {
+                f_cpp_ << "readUI8(" << name << ")";
+            } else {
+                f_cpp_ << "readI8(" << name << ")";
+            }
             break;
+        }
         case t_base_type::TYPE_I16:
-            f_cpp_ << "readI16(" << name << ")";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && (it->second == "std::uint16_t" ||
+                                                   it->second == "uint16_t" ||
+                                                   it->second.find("unsigned") != std::string::npos)) {
+                f_cpp_ << "readUI16(" << name << ")";
+            } else {
+                f_cpp_ << "readI16(" << name << ")";
+            }
             break;
+        }
         case t_base_type::TYPE_I32:
-            f_cpp_ << "readI32(" << name << ")";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && it->second == "yarp::conf::vocab32_t") {
+                f_cpp_ << "readVocab32(" << name << ")";
+            } else if (it != type->annotations_.end() && (it->second == "std::size_t" ||
+                                                          it->second == "size_t")) {
+                f_cpp_ << "readSizeT(" << name << ")";
+            } else if (it != type->annotations_.end() && (it->second == "std::uint32_t" ||
+                                                          it->second == "uint32_t" ||
+                                                          it->second.find("unsigned") != std::string::npos)) {
+                f_cpp_ << "readUI32(" << name << ")";
+            } else {
+                f_cpp_ << "readI32(" << name << ")";
+            }
             break;
+        }
         case t_base_type::TYPE_I64:
-            f_cpp_ << "readI64(" << name << ")";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && (it->second == "std::uint64_t" ||
+                                                   it->second == "uint64_t" ||
+                                                   it->second.find("unsigned") != std::string::npos)) {
+                f_cpp_ << "readUI64(" << name << ")";
+            } else {
+                f_cpp_ << "readI64(" << name << ")";
+            }
             break;
+        }
         case t_base_type::TYPE_DOUBLE:
-            f_cpp_ << "readFloat64(" << name << ")";
+        {
+            auto it = type->annotations_.find("yarp.type");
+            if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
+                f_cpp_ << "readFloat32(" << name << ")";
+            } else {
+                f_cpp_ << "readFloat64(" << name << ")";
+            }
             break;
+        }
         default:
             throw "compiler error: no C++ reader for base type " + t_base_type::t_base_name(tbase) + name;
         }
@@ -1560,7 +1686,14 @@ int t_yarp_generator::flat_element_count(t_struct* tstruct)
 {
     int ct = 0;
     for (const auto& member : tstruct->get_members()) {
-        ct += flat_element_count(member->get_type());
+        // If field is annotated as "yarp.nested", increment by one (it will be
+        // serialized as a list), otherwise increment by the number of members).
+        auto it = member->annotations_.find("yarp.nested");
+        if (it != member->annotations_.end() && it->second == "true") {
+            ++ct;
+        } else {
+            ct += flat_element_count(member->get_type());
+        }
     }
     return ct;
 }
@@ -1569,7 +1702,14 @@ int t_yarp_generator::flat_element_count(t_function* fn)
 {
     int ct = 0;
     for (const auto& member : fn->get_arglist()->get_members()) {
-        ct += flat_element_count(member->get_type());
+        // If field is annotated as "yarp.nested", increment by one (it will be
+        // serialized as a list), otherwise increment by the number of members).
+        auto it = member->annotations_.find("yarp.nested");
+        if (it != member->annotations_.end() && it->second == "true") {
+            ++ct;
+        } else {
+            ct += flat_element_count(member->get_type());
+        }
     }
     return ct;
 }
@@ -2910,7 +3050,7 @@ void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ostri
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(reader);\n";
         f_cpp_ << indent_cpp() << "if (writer.isNull())" << inline_return_cpp("true");
         f_cpp_ << indent_cpp() << "writer.writeListHeader(1);\n";
-        f_cpp_ << indent_cpp() << "writer.writeVocab(yarp::os::createVocab('o', 'k'));\n";
+        f_cpp_ << indent_cpp() << "writer.writeVocab32(yarp::os::createVocab('o', 'k'));\n";
         f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();
@@ -3470,7 +3610,12 @@ void t_yarp_generator::generate_service_helper_classes_impl_read(t_function* fun
     {
         if (!function->is_oneway()) {
             f_cpp_ << indent_cpp() << "yarp::os::idl::WireReader reader(connection);\n";
-            f_cpp_ << indent_cpp() << "if (!reader.readListReturn())" << inline_return_cpp("false");
+            if (returntype->annotations_.find("yarp.name") == (returntype->annotations_.end())) {
+                // Types annotated with yarp.name therefore are expected
+                // to be able to serialize by themselves, therefore there is
+                // no need to read them as lists.
+                f_cpp_ << indent_cpp() << "if (!reader.readListReturn())" << inline_return_cpp("false");
+            }
             if (!returntype->is_void()) {
                 generate_deserialize_field(f_cpp_, &returnfield, "");
             }
@@ -3744,7 +3889,13 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                     indent_up_cpp();
                     {
                         if (!function->is_oneway()) {
-                            f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(returntype) << "))" << inline_return_cpp("false");
+                            if (returntype->annotations_.find("yarp.name") == (returntype->annotations_.end())) {
+                                // Types annotated with yarp.name therefore are expected
+                                // to be able to serialize by themselves, therefore there is
+                                // no need to write them as lists.
+                                // For all the other types, append the number of fields
+                                f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(returntype) << "))" << inline_return_cpp("false");
+                            }
                             if (!returntype->is_void()) {
                                 generate_serialize_field(f_cpp_, &returnfield, helper_class + "::");
                             }

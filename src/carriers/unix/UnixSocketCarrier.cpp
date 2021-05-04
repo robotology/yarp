@@ -41,20 +41,20 @@ std::string getYARPRuntimeDir()
     }
 
     // Check YARP_RUNTIME_DIR
-    yarp_runtime_dir = yarp::conf::environment::getEnvironment("YARP_RUNTIME_DIR", &found);
+    yarp_runtime_dir = yarp::conf::environment::get_string("YARP_RUNTIME_DIR", &found);
     if (found) {
         return yarp_runtime_dir;
     }
 
     // Check XDG_RUNTIME_DIR
-    std::string xdg_runtime_dir = yarp::conf::environment::getEnvironment("XDG_RUNTIME_DIR", &found);
+    std::string xdg_runtime_dir = yarp::conf::environment::get_string("XDG_RUNTIME_DIR", &found);
     if (found) {
         yarp_runtime_dir = xdg_runtime_dir + fs::preferred_separator + "yarp";
         return yarp_runtime_dir;
     }
 
     // Use /tmp/runtime-user
-    std::string user = yarp::conf::environment::getEnvironment("USER", &found);
+    std::string user = yarp::conf::environment::get_string("USER", &found);
     if (found) {
         yarp_runtime_dir = "/tmp/runtime-" + user + fs::preferred_separator + "yarp";
         return yarp_runtime_dir;

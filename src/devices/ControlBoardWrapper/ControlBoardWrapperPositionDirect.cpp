@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperPositionDirect.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 
 bool ControlBoardWrapperPositionDirect::setPosition(int j, double ref)
@@ -17,7 +17,7 @@ bool ControlBoardWrapperPositionDirect::setPosition(int j, double ref)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -96,7 +96,7 @@ bool ControlBoardWrapperPositionDirect::getRefPosition(const int j, double* ref)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;

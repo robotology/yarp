@@ -645,3 +645,27 @@ bool PortAudioDeviceDriver::stopPlayback()
     pThread.something_to_play = false;
     return true;
 }
+
+bool PortAudioDeviceDriver::setSWGain( double gain)
+{
+    yCError(PORTAUDIO,"Not yet implemented");
+    return false;
+}
+
+bool PortAudioDeviceDriver::setHWGain(double gain)
+{
+    yCError(PORTAUDIO, "Not yet implemented");
+    return false;
+}
+
+bool PortAudioDeviceDriver::isPlaying(bool& playback_enabled)
+{
+    playback_enabled = true;
+    return true;
+}
+
+bool PortAudioDeviceDriver::isRecording(bool& recording_enabled)
+{
+    recording_enabled = true;
+    return true;
+}

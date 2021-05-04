@@ -18,8 +18,6 @@
 
 using yarp::companion::impl::Companion;
 using yarp::os::Bottle;
-using yarp::os::BufferedPort;
-using yarp::os::NetworkBase;
 using yarp::os::Property;
 using namespace std;
 
@@ -33,13 +31,14 @@ private:
     yarp::os::Bottle pp;
 
 public:
-    datasender(double period, string portname, double data_size_MB) : PeriodicThread (period)
+    datasender(double period, string portname, double data_size_MB) :
+            PeriodicThread (period),
+            m_data_size_MB(data_size_MB),
+            m_portname(std::move(portname))
     {
-        m_portname=portname;
-        m_data_size_MB = data_size_MB;
     }
 
-    bool threadInit()
+    bool threadInit() override
     {
         size_t data_size_B= (size_t)(m_data_size_MB*1000000.0);
         data_buff = new char[data_size_B +1];
@@ -62,7 +61,7 @@ public:
             outport.write(pp);
     }
 
-    void threadRelease()
+    void threadRelease() override
     {
         outport.interrupt();
         outport.close();
@@ -111,7 +110,7 @@ int Companion::cmdTrafficGen(int argc, char *argv[])
 
     string portname = argv[0];
 
-    yCInfo (COMPANION, "Starting trafficgen with the following options: period:%.3f(s), size:%.3f(MB), duration:%.3f(s), bandwidth:%.3f(Mb/s) ", period, size_MB, duration, period* size_MB *8);
+    yCInfo (COMPANION, "Starting trafficgen with the following options: period:%.3f(s), size:%.3f(MB), duration:%.3f(s), bandwidth:%.3f(Mb/s) ", period, size_MB, duration, size_MB / period *8);
 
     datasender pt(period, portname, size_MB);
     double start_time = yarp::os::Time::now();

@@ -455,8 +455,8 @@ FakeMotionControl::FakeMotionControl() :
     verbose                 (VERY_VERBOSE)
 {
     resizeBuffers();
-    std::string tmp = yarp::conf::environment::getEnvironment("VERBOSE_STICA");
-    verbosewhenok = (tmp != "") ? (bool)NetType::toInt(tmp) :
+    std::string tmp = yarp::conf::environment::get_string("VERBOSE_STICA");
+    verbosewhenok = (tmp != "") ? (bool)yarp::conf::numeric::from_string<int>(tmp) :
                                   false;
 }
 
@@ -534,6 +534,7 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     //  Read Configuration params from file
     //
     _njoints = config.findGroup("GENERAL").check("Joints",Value(1),   "Number of degrees of freedom").asInt32();
+    yCInfo(FAKEMOTIONCONTROL, "Using %d joint%s", _njoints, ((_njoints != 1) ? "s" : ""));
 
     if(!alloc(_njoints))
     {

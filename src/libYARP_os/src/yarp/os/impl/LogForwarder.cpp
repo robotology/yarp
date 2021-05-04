@@ -66,8 +66,8 @@ void yarp::os::impl::LogForwarder::shutdown()
         auto networktime = (!yarp::os::NetworkBase::isNetworkInitialized() ? 0.0 : (yarp::os::Time::isSystemClock() ? systemtime : yarp::os::Time::now()));
 
         ost << "(level INFO)";
-        ost << " (systemtime " << yarp::os::NetType::toString(systemtime)  << ")";
-        ost << " (networktime " << yarp::os::NetType::toString(networktime)  << ")";
+        ost << " (systemtime " << yarp::conf::numeric::to_string(systemtime)  << ")";
+        ost << " (networktime " << yarp::conf::numeric::to_string(networktime)  << ")";
 
         yarp::os::impl::LogForwarder& fw = getInstance();
         fw.forward(ost.str());

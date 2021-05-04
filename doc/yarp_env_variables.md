@@ -9,7 +9,7 @@ Logger and print configuration
 ==============================
 
 | Environmental variable        | Description | Related documentation page |
-|:----------------------       :|:-----------:|:--------------------------:|
+|:-----------------------------:|:-----------:|:--------------------------:|
 | `YARP_QUIET`                  | If this variables exists and is set to a positive integer, it disables the (internal) YARP messages prints. Note: this variable **do not** modify the behavior of `yError`, `yDebug`, ... . | \ref yarp_log |
 | `YARP_VERBOSE`                | If this variables exists and is set to a nonnegative integer, it sets the verbosity level (the higher the integer, the more messages will be printed) for YARP messages prints. This variable is ignored if `YARP_QUIET` is set to a positive integer. Note: this variable **does not** modify the behavior of `yError`, `yDebug`, ... . | \ref yarp_log |
 | `YARP_COLORED_OUTPUT`         | If this variable exists and is set to 1, it enables the YARP colored prints. Otherwise disable the colored prints. | \ref yarp_log |
@@ -20,25 +20,56 @@ Logger and print configuration
 | `YARP_FORWARD_LOG_ENABLE`     | If this variable exists and is set to 1, enables the forwarding of log over ports to be used by the yarplogger. Otherwise disable the forwarding. | \ref yarp_log |
 
 
-Configuration files
+Directories
+===========
+
+| Environmental variable        | Description | Related documentation page |
+|:-----------------------------:|:-----------:|:--------------------------:|
+| `YARP_DATA_HOME`              | Directory where user-specific YARP data files should be written.                     | yarp::conf::dirs::yarpdatahome()   |
+| `YARP_CONFIG_HOME`            | Directory where user-specific YARP configuration files should be written.            | yarp::conf::dirs::yarpconfighome() |
+| `YARP_DATA_DIRS`              | Directories where YARP data files are be searched.                                   | yarp::conf::dirs::yarpdatadirs()   |
+| `YARP_CONFIG_DIRS`            | Directories where YARP configuration files are searched.                             | yarp::conf::dirs::yarpconfigdirs() |
+| `YARP_CACHE_HOME`             | Directory where user-specific non-essential (cached) YARP data should be written.    | yarp::conf::dirs::yarpcachehome()  |
+| `YARP_RUNTIME_DIR`            | Directory where user-specific runtime files and other file objects should be placed. | yarp::conf::dirs::yarpruntimedir() |
+
+
+Defaults for these variables depend on the operating system and on other
+environment variables. See the relative documentation to understand how these
+influence each variable
+
+| Environmental variables checked on Linux |
+|:-----------------------------:|
+| `XDG_CONFIG_HOME`             |
+| `XDG_DATA_HOME`               |
+| `XDG_CONFIG_DIRS`             |
+| `XDG_DATA_DIRS`               |
+| `XDG_CACHE_HOME`              |
+| `XDG_RUNTIME_DIR`             |
+| `USER`                        |
+| `HOME`                        |
+| `TMPDIR`                      |
+
+| Environmental variables checked on Windows |
+|:-----------------------------:|
+| `APPDATA`                     |
+| `LOCALAPPDATA`                |
+| `ALLUSERSPROFILE`             |
+| `USERNAME`                    |
+| `USERPROFILE`                 |
+| `TEMP`                        |
+
+| Environmental variables checked on macOS |
+|:-----------------------------:|
+| `USER`                        |
+| `TMPDIR`                      |
+| `HOME`                        |
+
+Robot Configuration
 ===================
 
 | Environmental variable        | Description | Related documentation page |
 |:-----------------------------:|:-----------:|:--------------------------:|
-| `YARP_CONFIG_HOME`            | Location where user config files are stored. | \ref resource_finder_spec |
-| `XDG_CONFIG_HOME`             | Location where user config files are stored (only if `YARP_CONFIG_HOME` is not set). | \ref resource_finder_spec |
-| `YARP_DATA_HOME`              | Location where user data files are stored. | \ref resource_finder_spec |
-| `XDG_DATA_HOME`               | Location where user data files are stored (only if `YARP_DATA_HOME` is not set). | \ref resource_finder_spec |
-| `YARP_CONFIG_DIRS`            | Locations where system administrator data and config files are stored. | \ref resource_finder_spec |
-| `XDG_CONFIG_DIRS`             | Locations where system administrator data and config files are stored (only if `YARP_CONFIG_DIRS` is not set). | \ref resource_finder_spec |
-| `YARP_DATA_DIRS`              | Locations where installed data and config files are stored. | \ref resource_finder_spec |
-| `XDG_DATA_DIRS`               | Locations where installed data and config files are stored (only if `YARP_DATA_DIRS` is not set). | \ref resource_finder_spec |
 | `YARP_ROBOT_NAME`             | Variable used to refer to the name of the specific robot used in the system, to load its specific configuration files. | \ref yarp_data_dirs |
-
-Note that more platform-specific non-YARP environmental variables are used when
-searching for YARP configuration files.
-See \ref resource_finder_spec for a full description of the environmental
-variables used for finding configuration files.
 
 
 UDP Carrier configuration

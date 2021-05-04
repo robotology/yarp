@@ -556,7 +556,7 @@ Contact RosNameSpace::detectNameServer(bool useDetectedServer,
     if (!c.isValid()) {
         scanNeeded = true;
         yCInfo(ROSNAMESPACE, "Checking for ROS_MASTER_URI...");
-        std::string addr = yarp::conf::environment::getEnvironment("ROS_MASTER_URI");
+        std::string addr = yarp::conf::environment::get_string("ROS_MASTER_URI");
         c = Contact::fromString(addr);
         if (c.isValid()) {
             c.setCarrier("xmlrpc");

@@ -39,6 +39,8 @@ YARP_LOG_COMPONENT(RANGEFINDER2D_NWS_ROS, "yarp.devices.rangefinder2D_nws_ros")
   */
 
 Rangefinder2D_nws_ros::Rangefinder2D_nws_ros() : PeriodicThread(DEFAULT_THREAD_PERIOD),
+    rosNode(nullptr),
+    rosMsgCounter(0),
     sens_p(nullptr),
     iTimed(nullptr),
     _period(DEFAULT_THREAD_PERIOD),
@@ -47,13 +49,7 @@ Rangefinder2D_nws_ros::Rangefinder2D_nws_ros() : PeriodicThread(DEFAULT_THREAD_P
     minDistance(0),
     maxDistance(0),
     resolution(0),
-    isDeviceOwned(false),
-    // init ROS data
-    frame_id(""),
-    rosNodeName(""),
-    rosTopicName(""),
-    rosNode(nullptr),
-    rosMsgCounter(0)
+    isDeviceOwned(false)
 {}
 
 Rangefinder2D_nws_ros::~Rangefinder2D_nws_ros()

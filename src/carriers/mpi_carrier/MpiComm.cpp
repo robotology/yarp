@@ -71,7 +71,7 @@ bool MpiControlThread::threadInit() {
     }
     else {
         MPI_Finalize();
-        yCError(MPI_CARRIER, "MpiControlThread: MPI implementation doesn't provide required thread safety: requested %s, provided %s", NetType::toString(requested).c_str(), NetType::toString(provided).c_str());
+        yCError(MPI_CARRIER, "MpiControlThread: MPI implementation doesn't provide required thread safety: requested %s, provided %s", yarp::conf::numeric::to_string(requested).c_str(), yarp::conf::numeric::to_string(provided).c_str());
         return false;
     }
 }

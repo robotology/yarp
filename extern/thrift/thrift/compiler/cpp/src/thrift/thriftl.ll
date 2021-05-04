@@ -159,7 +159,7 @@ literal_begin (['\"])
     g_doctext[strlen(g_doctext) - 1] = '\0';
     g_doctext = clean_up_doctext(g_doctext);
     g_doctext_lineno = yylineno;
-    if( (g_program_doctext_candidate == NULL) && (g_program_doctext_status == INVALID)){
+    if( (g_program_doctext_candidate == nullptr) && (g_program_doctext_status == INVALID)){
       g_program_doctext_candidate = strdup(g_doctext);
       g_program_doctext_lineno = g_doctext_lineno;
       g_program_doctext_status = STILL_CANDIDATE;
@@ -207,15 +207,13 @@ literal_begin (['\"])
 "cpp_include"        { return tok_cpp_include;          }
 "cpp_type"           { return tok_cpp_type;             }
 "java_package"       { error_unsupported_namespace_decl("java_package", "java"); /* do nothing */ }
-"cocoa_prefix"       { error_unsupported_namespace_decl("cocoa_prefix", "cocoa"); /* do nothing */ }
-"csharp_namespace"   { error_unsupported_namespace_decl("csharp"); /* do nothing */ }
 "delphi_namespace"   { error_unsupported_namespace_decl("delphi"); /* do nothing */ }
 "php_namespace"      { error_unsupported_namespace_decl("php"); /* do nothing */ }
 "py_module"          { error_unsupported_namespace_decl("py_module", "py"); /* do nothing */ }
 "perl_package"       { error_unsupported_namespace_decl("perl_package", "perl"); /* do nothing */ }
 "ruby_namespace"     { error_unsupported_namespace_decl("ruby"); /* do nothing */ }
-"smalltalk_category" { error_unsupported_namespace_decl("smalltalk_category", "smalltalk.category"); /* do nothing */ }
-"smalltalk_prefix"   { error_unsupported_namespace_decl("smalltalk_category", "smalltalk.category"); /* do nothing */ }
+"smalltalk_category" { error_unsupported_namespace_decl("smalltalk_category", "st"); /* do nothing */ }
+"smalltalk_prefix"   { error_unsupported_namespace_decl("smalltalk_prefix", "st"); /* do nothing */ }
 "xsd_all"            { return tok_xsd_all;              }
 "xsd_optional"       { return tok_xsd_optional;         }
 "xsd_nillable"       { return tok_xsd_nillable;         }
@@ -266,7 +264,7 @@ literal_begin (['\"])
 
 {intconstant} {
   errno = 0;
-  yylval.iconst = strtoll(yytext, NULL, 10);
+  yylval.iconst = strtoll(yytext, nullptr, 10);
   if (errno == ERANGE) {
     integer_overflow(yytext);
   }
@@ -277,7 +275,7 @@ literal_begin (['\"])
   errno = 0;
   char sign = yytext[0];
   int shift = sign == '0' ? 2 : 3;
-  yylval.iconst = strtoll(yytext+shift, NULL, 16);
+  yylval.iconst = strtoll(yytext+shift, nullptr, 16);
   if (sign == '-') {
     yylval.iconst = -yylval.iconst;
   }

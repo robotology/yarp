@@ -17,8 +17,8 @@
 
 //! Types used to implement a Thrift server.
 
-use protocol::{TInputProtocol, TMessageIdentifier, TMessageType, TOutputProtocol};
-use {ApplicationError, ApplicationErrorKind};
+use crate::protocol::{TInputProtocol, TMessageIdentifier, TMessageType, TOutputProtocol};
+use crate::{ApplicationError, ApplicationErrorKind};
 
 mod multiplexed;
 mod threaded;
@@ -39,7 +39,6 @@ pub use self::threaded::TServer;
 /// a Thrift service `SimpleService`.
 ///
 /// ```no_run
-/// use thrift;
 /// use thrift::protocol::{TInputProtocol, TOutputProtocol};
 /// use thrift::server::TProcessor;
 ///
@@ -57,7 +56,7 @@ pub use self::threaded::TServer;
 ///
 /// // `TProcessor` implementation for `SimpleService`
 /// impl TProcessor for SimpleServiceSyncProcessor {
-///     fn process(&self, i: &mut TInputProtocol, o: &mut TOutputProtocol) -> thrift::Result<()> {
+///     fn process(&self, i: &mut dyn TInputProtocol, o: &mut dyn TOutputProtocol) -> thrift::Result<()> {
 ///         unimplemented!();
 ///     }
 /// }
@@ -92,19 +91,19 @@ pub trait TProcessor {
     /// the response to `o`.
     ///
     /// Returns `()` if the handler was executed; `Err` otherwise.
-    fn process(&self, i: &mut TInputProtocol, o: &mut TOutputProtocol) -> ::Result<()>;
+    fn process(&self, i: &mut dyn TInputProtocol, o: &mut dyn TOutputProtocol) -> crate::Result<()>;
 }
 
 /// Convenience function used in generated `TProcessor` implementations to
 /// return an `ApplicationError` if thrift message processing failed.
 pub fn handle_process_result(
     msg_ident: &TMessageIdentifier,
-    res: ::Result<()>,
-    o_prot: &mut TOutputProtocol,
-) -> ::Result<()> {
+    res: crate::Result<()>,
+    o_prot: &mut dyn TOutputProtocol,
+) -> crate::Result<()> {
     if let Err(e) = res {
         let e = match e {
-            ::Error::Application(a) => a,
+            crate::Error::Application(a) => a,
             _ => ApplicationError::new(ApplicationErrorKind::Unknown, format!("{:?}", e)),
         };
 
@@ -115,7 +114,7 @@ pub fn handle_process_result(
         );
 
         o_prot.write_message_begin(&ident)?;
-        ::Error::write_application_error_to_out_protocol(&e, o_prot)?;
+        crate::Error::write_application_error_to_out_protocol(&e, o_prot)?;
         o_prot.write_message_end()?;
         o_prot.flush()
     } else {

@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperPreciselyTimed.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 #include <yarp/os/Stamp.h>
 

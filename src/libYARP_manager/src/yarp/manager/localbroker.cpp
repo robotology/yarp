@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/os/impl/SplitString.h>
 #include <yarp/manager/localbroker.h>
+#include <yarp/conf/string.h>
 
 #include <csignal>
 #include <cstring>
@@ -658,9 +658,9 @@ int LocalBroker::ExecuteCmd()
     std::string cstrEnvName;
     if(strEnv.size())
     {
-        yarp::os::impl::SplitString ss(strEnv.c_str(), ';');
-        for(int i=0; i<ss.size(); i++) {
-            lstrcpy(lpNew, (LPTCH) ss.get(i));
+        auto ss = yarp::conf::string::split(strEnv, ';');
+        for (const auto& s : ss) {
+            lstrcpy(lpNew, (LPTCH) s.c_str());
             lpNew += lstrlen(lpNew) + 1;
         }
     }
@@ -908,11 +908,11 @@ int LocalBroker::ExecuteCmd()
         szarg[nargs]=nullptr;
         if(strEnv.size())
         {
-            yarp::os::impl::SplitString ss(strEnv.c_str(), ';');
-            for(int i=0; i<ss.size(); i++) {
-                char* szenv = new char[strlen(ss.get(i))+1];
-                strcpy(szenv,ss.get(i));
-                putenv(szenv);
+            auto ss = yarp::conf::string::split(strEnv, ';');
+            for (const auto& s : ss) {
+                char* szenv = new char[s.size()+1];
+                strcpy(szenv, s.c_str());
+                putenv(szenv); // putenv doesn't make copy of the string
             }
             //delete szenv;
         }

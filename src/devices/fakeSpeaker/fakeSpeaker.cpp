@@ -20,8 +20,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
-#define HW_CHANNELS         2
-#define SAMPLING_RATE       44100
+constexpr double c_DEFAULT_PERIOD = 0.01;   //s
 
 namespace {
 YARP_LOG_COMPONENT(FAKESPEAKER, "yarp.device.fakeSpeaker")
@@ -30,7 +29,7 @@ YARP_LOG_COMPONENT(FAKESPEAKER, "yarp.device.fakeSpeaker")
 typedef unsigned short int audio_sample_16t;
 
 fakeSpeaker::fakeSpeaker() :
-        PeriodicThread(DEFAULT_PERIOD)
+        PeriodicThread(c_DEFAULT_PERIOD)
 {
 }
 
@@ -41,6 +40,17 @@ fakeSpeaker::~fakeSpeaker()
 
 bool fakeSpeaker::open(yarp::os::Searchable &config)
 {
+    if (config.check("help"))
+    {
+        yCInfo(FAKESPEAKER, "Some examples:");
+        yCInfo(FAKESPEAKER, "yarpdev --device fakeSpeaker --help");
+        yCInfo(FAKESPEAKER, "yarpdev --device AudioPlayerWrapper --subdevice fakeSpeaker --start");
+        return false;
+    }
+
+    bool b = configurePlayerAudioDevice(config.findGroup("AUDIO_BASE"), "fakeSpeaker");
+    if (!b) { return false; }
+
     //sets the thread period
     if( config.check("period"))
     {
@@ -50,17 +60,8 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
     }
     else
     {
-        yCInfo(FAKESPEAKER) << "Using default period of " << DEFAULT_PERIOD << " s";
+        yCInfo(FAKESPEAKER) << "Using default period of " << c_DEFAULT_PERIOD << " s";
     }
-
-    //configuration of the simulated audio card
-    m_cfg_numSamples = config.check("samples",Value(SAMPLING_RATE),"Number of samples per network packet.").asInt32();
-    m_cfg_numChannels = config.check("channels",Value(HW_CHANNELS),"Number of audio channels.").asInt32();
-    m_cfg_frequency = config.check("frequency",Value(SAMPLING_RATE),"Sampling frequency.").asInt32();
-    m_cfg_bytesPerSample = config.check("channels",Value(2),"Bytes per sample.").asInt8();
-
-    AudioBufferSize buffer_size(m_cfg_numSamples, m_cfg_numChannels, m_cfg_bytesPerSample);
-    m_outputBuffer = new yarp::dev::CircularAudioBuffer_16t("fake_speaker_buffer", buffer_size);
 
     //start the capture thread
     start();
@@ -70,11 +71,9 @@ bool fakeSpeaker::open(yarp::os::Searchable &config)
 bool fakeSpeaker::close()
 {
     fakeSpeaker::stop();
-    if (m_outputBuffer)
-    {
-        delete m_outputBuffer;
-        m_outputBuffer = 0;
-    }
+
+    //wait until the thread is stopped...
+
     return true;
 }
 
@@ -84,20 +83,15 @@ bool fakeSpeaker::threadInit()
     return true;
 }
 
-bool fakeSpeaker::startPlayback()
-{
-    return true;
-}
-
-bool fakeSpeaker::stopPlayback()
-{
-    return true;
-}
-
 void fakeSpeaker::run()
 {
     // when not playing, do nothing
-    if (!m_isPlaying)
+    if (!m_playback_enabled)
+    {
+        return;
+    }
+    // if the buffer is empty, do nothing
+    if (m_outputBuffer->size().getSamples() == 0)
     {
         return;
     }
@@ -110,50 +104,38 @@ void fakeSpeaker::run()
     for (size_t i = 0; i<buffer_size; i++)
     {
         audio_sample_16t s = m_outputBuffer->read();
-        YARP_UNUSED(s);
+        s= audio_sample_16t(double(s)*m_hw_gain);
+        // if a stop is received during the playback, then exits...
+        if (!m_playback_enabled) {return;}
     }
-    yCDebug(FAKESPEAKER) << "Sound Playback complete";
-    yCDebug(FAKESPEAKER) << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";
 
-    m_isPlaying = false;
-#ifdef ADVANCED_DEBUG
-    yCDebug(FAKESPEAKER) << "b_pnt" << m_bpnt << "/" << fsize_in_bytes << " bytes";
-#endif
+    //the playback is complete...
+    if (m_outputBuffer->size().getSamples()==0)
+    {
+        yCDebug(FAKESPEAKER) << "Sound Playback complete";
+        yCDebug(FAKESPEAKER) << "Played " << siz_sam << " samples, " << siz_chn << " channels, " << siz_byt << " bytes";
+    }
 }
 
-bool fakeSpeaker::getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size)
+bool fakeSpeaker::setHWGain(double gain)
 {
-    size = this->m_outputBuffer->getMaxSize();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (gain > 0)
+    {
+        m_hw_gain = gain;
+        return true;
+    }
+    return false;
+}
+
+bool fakeSpeaker::configureDeviceAndStart()
+{
+    yCError(FAKESPEAKER, "configureDeviceAndStart() Not yet implemented");
     return true;
 }
 
-
-bool fakeSpeaker::getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size)
+bool fakeSpeaker::interruptDeviceAndClose()
 {
-    size = this->m_outputBuffer->size();
-    return true;
-}
-
-
-bool fakeSpeaker::resetPlaybackAudioBuffer()
-{
-    m_outputBuffer->clear();
-    return true;
-}
-
-bool fakeSpeaker::renderSound(const yarp::sig::Sound& sound)
-{
-    if (m_renderSoundImmediate) m_outputBuffer->clear();
-
-//     size_t num_bytes = sound.getBytesPerSample();
-    size_t num_channels = sound.getChannels();
-    size_t num_samples = sound.getSamples();
-
-    for (size_t i = 0; i<num_samples; i++)
-        for (size_t j = 0; j<num_channels; j++)
-            m_outputBuffer->write(sound.get(i, j));
-    auto debug_p = sound.getInterleavedAudioRawData();
-
-    m_isPlaying = true;
+    yCError(FAKESPEAKER, "interruptDeviceAndClose() Not yet implemented");
     return true;
 }

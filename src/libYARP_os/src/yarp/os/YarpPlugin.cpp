@@ -195,7 +195,7 @@ bool YarpPluginSettings::readFromSelector(const std::string& name)
     if (!selector)
         return false;
     Bottle plugins = selector->getSelectedPlugins();
-    Bottle group = plugins.findGroup(name.c_str()).tail();
+    Bottle group = plugins.findGroup(name).tail();
     if (group.isNull()) {
         yCError(YARPPLUGINSETTINGS,
                 "Cannot find \"%s\" plugin (not built in, and no .ini file found for it)"
@@ -229,6 +229,9 @@ void YarpPluginSelector::scan()
 
     // Search plugins directories
     ResourceFinder& rf = ResourceFinder::getResourceFinderSingleton();
+    static std::mutex rf_mutex;
+    std::lock_guard<std::mutex> rf_guard(rf_mutex);
+
     if (!rf.isConfigured()) {
         rf.configure(0, nullptr);
     }

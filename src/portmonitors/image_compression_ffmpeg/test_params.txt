@@ -1,0 +1,60 @@
+codecContext->bit_rate = 500*1000;
+codecContext->bit_rate_tolerance = 0;
+codecContext->rc_max_rate = 0;
+codecContext->rc_buffer_size = 0;
+codecContext->gop_size = 40;
+codecContext->max_b_frames = 3;
+codecContext->b_frame_strategy = 1;
+codecContext->coder_type = 1;
+codecContext->me_cmp = 1;
+codecContext->me_range = 16;
+//codecContext->qmin = 10;
+//codecContext->qmax = 51;
+codecContext->scenechange_threshold = 40;
+codecContext->flags |= AV_CODEC_FLAG_LOOP_FILTER;
+//codecContext->me_method = ME_HEX;
+codecContext->me_subpel_quality = 5;
+codecContext->i_quant_factor = 0.71;
+codecContext->qcompress = 0.6;
+//codecContext->directpred = 1;
+codecContext->flags2 |= AV_CODEC_FLAG2_FAST;
+
+av_opt_set(codecContext->priv_data, "preset", "ultrafast", 0);
+av_opt_set(codecContext->priv_data, "tune", "zerolatency", 0);
+av_opt_set(codecContext, "cabac", "0", 0);
+
+static const std::vector<std::string> FFMPEGPORTMONITOR_CL_CODECCONTEXT {
+    ""
+
+
+    "bit_rate",
+    "bit_rate_tolerance",
+    "rc_max_rate",
+    "rc_buffer_size",
+    "gop_size",
+    "max_b_frames",
+    "b_frame_strategy",
+    "coder_type",
+    "me_cmp",
+    "me_range",
+    "qmin",
+    "qmax",
+    "scenechange_threshold",
+    "flags",
+    "me_method",
+    "me_subpel_quality",
+    "i_quant_factor",
+    "qcompress",
+    "directpred",
+    "flags2",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+};

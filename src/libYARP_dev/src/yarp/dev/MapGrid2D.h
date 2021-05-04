@@ -31,7 +31,8 @@ namespace yarp
                                             public yarp::dev::Nav2D::MapGrid2DInfo
             {
             public:
-                typedef yarp::sig::PixelMono CellData;
+                typedef yarp::sig::PixelMono CellFlagData;
+                typedef yarp::sig::PixelMono CellOccupancyData;
                 //typedef yarp::math::Vec2D<int> XYCell;
                 //typedef yarp::math::Vec2D<double> XYWorld;
 
@@ -47,8 +48,8 @@ namespace yarp
 
             private:
                 //those two always have the same size
-                yarp::sig::ImageOf<CellData> m_map_occupancy;
-                yarp::sig::ImageOf<CellData> m_map_flags;
+                yarp::sig::ImageOf<CellOccupancyData> m_map_occupancy;
+                yarp::sig::ImageOf<CellFlagData> m_map_flags;
 
                 double m_occupied_thresh;
                 double m_free_thresh;
@@ -64,9 +65,13 @@ namespace yarp
                 //performs an obstacles enlargement on the specified cell.
                 void enlargeCell(XYCell cell);
 
-                //conversion from pixel color to CellData and viceversa
-                CellData PixelToCellData(const yarp::sig::PixelRgb& pixin) const;
-                yarp::sig::PixelRgb CellDataToPixel(const CellData& pixin) const;
+                //conversion from pixel color to CellFlagData (yarp format) and viceversa
+                CellFlagData PixelToCellFlagData(const yarp::sig::PixelRgb& pixin) const;
+                yarp::sig::PixelRgb CellFlagDataToPixel(const CellFlagData& cellin) const;
+
+                //conversion from pixel color to CellOccupancyData (occupancy grid, ros format) and viceversa
+                CellOccupancyData PixelToCellOccupancyData(const yarp::sig::PixelMono& pixin) const;
+                yarp::sig::PixelMono CellOccupancyDataToPixel(const CellOccupancyData& cellin) const;
 
                 //internal methods to read a map from file, either in yarp or ROS format
                 bool loadMapYarpOnly(std::string yarp_img_filename);

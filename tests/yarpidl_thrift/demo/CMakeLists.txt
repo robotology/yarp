@@ -15,19 +15,27 @@ set_property(GLOBAL PROPERTY USE_FOLDERS 1)
 set_property(GLOBAL PROPERTY AUTOGEN_TARGETS_FOLDER "Autogen Targets")
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated Files")
 
+find_package(YCM 0.11.0 REQUIRED)
 find_package(YARP COMPONENTS os sig idl_tools REQUIRED)
 
-include(ParseAndAddCatchTests)
-set(PARSE_CATCH_TESTS_VERBOSE OFF CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_NO_HIDDEN_TESTS ON CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_ADD_TARGET_IN_TEST_NAME ON CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_ADD_FIXTURE_IN_TEST_NAME ON CACHE INTERNAL "")
-set(PARSE_CATCH_TESTS_ADD_TO_CONFIGURE_DEPENDS ON CACHE INTERNAL "")
+include(Catch)
+set_property(CACHE YARP_TEST_TIMEOUT PROPERTY VALUE 120)
+function(yarp_catch_discover_tests _target)
+  # Workaround to force catch_discover_tests to run tests under valgrind
+  if(DEFINED YARP_TEST_LAUNCHER)
+    set_property(TARGET ${_target} PROPERTY CROSSCOMPILING_EMULATOR "${YARP_TEST_LAUNCHER}")
+  endif()
+  catch_discover_tests(
+    ${_target}
+    EXTRA_ARGS "-s" "--use-colour" "yes"
+    PROPERTIES
+      TIMEOUT ${YARP_TEST_TIMEOUT}
+    )
+endfunction()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/catch2)
-set(AdditionalCatchParameters "-s" "--use-colour" "yes")
-set(OptionalCatchTestLauncher ${YARP_TEST_LAUNCHER})
 
-set(IDL_FILES demo.thrift
+set(IDL_FILES annotated.thrift
+              demo.thrift
               namespaced.thrift
               objects3D.thrift
               wrapping.thrift
@@ -55,7 +63,7 @@ target_link_libraries(demo_yarp_idl_to_dir PRIVATE YARP::YARP_os
                                                    YARP::YARP_init
                                                    YARP::YARP_sig)
 
-ParseAndAddCatchTests(demo_yarp_idl_to_dir)
+yarp_catch_discover_tests(demo_yarp_idl_to_dir)
 
 
 # Test using yarp_add_idl
@@ -69,4 +77,4 @@ target_link_libraries(demo_yarp_add_idl PRIVATE YARP::YARP_os
                                                 YARP::YARP_init
                                                 YARP::YARP_sig)
 
-ParseAndAddCatchTests(demo_yarp_add_idl)
+yarp_catch_discover_tests(demo_yarp_add_idl)

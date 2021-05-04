@@ -113,7 +113,7 @@ am__aclocal_m4_deps = $(top_srcdir)/aclocal/ac_prog_bison.m4 \
 	$(top_srcdir)/aclocal/ltsugar.m4 \
 	$(top_srcdir)/aclocal/ltversion.m4 \
 	$(top_srcdir)/aclocal/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/aclocal/tar.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(include_processor_HEADERS) \
@@ -166,6 +166,7 @@ am_libthrift_c_glib_la_OBJECTS =  \
 	src/thrift/c_glib/libthrift_c_glib_la-thrift.lo \
 	src/thrift/c_glib/libthrift_c_glib_la-thrift_struct.lo \
 	src/thrift/c_glib/libthrift_c_glib_la-thrift_application_exception.lo \
+	src/thrift/c_glib/libthrift_c_glib_la-thrift_configuration.lo \
 	src/thrift/c_glib/processor/libthrift_c_glib_la-thrift_processor.lo \
 	src/thrift/c_glib/processor/libthrift_c_glib_la-thrift_dispatch_processor.lo \
 	src/thrift/c_glib/processor/libthrift_c_glib_la-thrift_multiplexed_processor.lo \
@@ -213,7 +214,7 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir) -I$(top_builddir)/lib/cpp/src/thrift -I$(top_builddir)/lib/c_glib/src/thrift
+DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -377,6 +378,7 @@ ERLC = @ERLC@
 ERLCFLAGS = @ERLCFLAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FLEX_COMPC = @FLEX_COMPC@
 GCOV_CFLAGS = @GCOV_CFLAGS@
 GCOV_CXXFLAGS = @GCOV_CXXFLAGS@
 GCOV_LDFLAGS = @GCOV_LDFLAGS@
@@ -387,6 +389,7 @@ GOBJECT_CFLAGS = @GOBJECT_CFLAGS@
 GOBJECT_LIBS = @GOBJECT_LIBS@
 GRADLE_OPTS = @GRADLE_OPTS@
 GREP = @GREP@
+GSETTINGS = @GSETTINGS@
 HAVE_CXX11 = @HAVE_CXX11@
 HAXE = @HAXE@
 HAXE_VERSION = @HAXE_VERSION@
@@ -422,18 +425,18 @@ LUA_SHORT_VERSION = @LUA_SHORT_VERSION@
 LUA_VERSION = @LUA_VERSION@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
+MAYBE_AS3 = @MAYBE_AS3@
 MAYBE_CL = @MAYBE_CL@
 MAYBE_CPP = @MAYBE_CPP@
-MAYBE_CSHARP = @MAYBE_CSHARP@
 MAYBE_C_GLIB = @MAYBE_C_GLIB@
 MAYBE_D = @MAYBE_D@
 MAYBE_DART = @MAYBE_DART@
-MAYBE_DOTNETCORE = @MAYBE_DOTNETCORE@
 MAYBE_ERLANG = @MAYBE_ERLANG@
 MAYBE_GO = @MAYBE_GO@
 MAYBE_HASKELL = @MAYBE_HASKELL@
 MAYBE_JAVA = @MAYBE_JAVA@
 MAYBE_LUA = @MAYBE_LUA@
+MAYBE_NETSTD = @MAYBE_NETSTD@
 MAYBE_NODEJS = @MAYBE_NODEJS@
 MAYBE_NODETS = @MAYBE_NODETS@
 MAYBE_PERL = @MAYBE_PERL@
@@ -442,10 +445,8 @@ MAYBE_PY3 = @MAYBE_PY3@
 MAYBE_PYTHON = @MAYBE_PYTHON@
 MAYBE_RS = @MAYBE_RS@
 MAYBE_RUBY = @MAYBE_RUBY@
-MCS = @MCS@
+MAYBE_SWIFT = @MAYBE_SWIFT@
 MKDIR_P = @MKDIR_P@
-MONO_CFLAGS = @MONO_CFLAGS@
-MONO_LIBS = @MONO_LIBS@
 NM = @NM@
 NMEDIT = @NMEDIT@
 NODEJS = @NODEJS@
@@ -485,9 +486,6 @@ PY_PREFIX = @PY_PREFIX@
 QT5_CFLAGS = @QT5_CFLAGS@
 QT5_LIBS = @QT5_LIBS@
 QT5_MOC = @QT5_MOC@
-QT_CFLAGS = @QT_CFLAGS@
-QT_LIBS = @QT_LIBS@
-QT_MOC = @QT_MOC@
 RANLIB = @RANLIB@
 REBAR = @REBAR@
 RUBY = @RUBY@
@@ -499,6 +497,7 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+SWIFT = @SWIFT@
 THRIFT = @THRIFT@
 TRIAL = @TRIAL@
 VERSION = @VERSION@
@@ -592,7 +591,7 @@ top_srcdir = @top_srcdir@
 # specific language governing permissions and limitations
 # under the License.
 #
-AUTOMAKE_OPTIONS = serial-tests
+AUTOMAKE_OPTIONS = serial-tests nostdinc
 SUBDIRS = . test
 pkgconfigdir = $(libdir)/pkgconfig
 lib_LTLIBRARIES = libthrift_c_glib.la
@@ -604,6 +603,7 @@ AM_CFLAGS = -Wall -Wextra -pedantic
 libthrift_c_glib_la_SOURCES = src/thrift/c_glib/thrift.c \
                               src/thrift/c_glib/thrift_struct.c \
                               src/thrift/c_glib/thrift_application_exception.c \
+                              src/thrift/c_glib/thrift_configuration.c \
                               src/thrift/c_glib/processor/thrift_processor.c \
                               src/thrift/c_glib/processor/thrift_dispatch_processor.c \
                               src/thrift/c_glib/processor/thrift_multiplexed_processor.c \
@@ -631,14 +631,15 @@ libthrift_c_glib_la_SOURCES = src/thrift/c_glib/thrift.c \
                               src/thrift/c_glib/server/thrift_server.c \
                               src/thrift/c_glib/server/thrift_simple_server.c
 
-libthrift_c_glib_la_CFLAGS = $(AM_CFLAGS) $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(OPENSSL_INCLUDES)
+libthrift_c_glib_la_CFLAGS = $(AM_CFLAGS) $(GLIB_CFLAGS) $(GOBJECT_CFLAGS) $(OPENSSL_INCLUDES) -I$(top_builddir)/lib/c_glib/src/thrift
 libthrift_c_glib_la_LDFLAGS = $(AM_LDFLAGS) $(GLIB_LIBS) $(GOBJECT_LIBS)  $(OPENSSL_LDFLAGS) $(OPENSSL_LIBS) 
 include_thriftdir = $(includedir)/thrift/c_glib
 include_thrift_HEADERS = \
                          $(top_builddir)/config.h \
                          src/thrift/c_glib/thrift.h \
                          src/thrift/c_glib/thrift_application_exception.h \
-                         src/thrift/c_glib/thrift_struct.h
+                         src/thrift/c_glib/thrift_struct.h \
+                         src/thrift/c_glib/thrift_configuration.h
 
 include_protocoldir = $(include_thriftdir)/protocol
 include_protocol_HEADERS = src/thrift/c_glib/protocol/thrift_protocol.h \
@@ -771,6 +772,9 @@ src/thrift/c_glib/libthrift_c_glib_la-thrift_struct.lo:  \
 src/thrift/c_glib/libthrift_c_glib_la-thrift_application_exception.lo:  \
 	src/thrift/c_glib/$(am__dirstamp) \
 	src/thrift/c_glib/$(DEPDIR)/$(am__dirstamp)
+src/thrift/c_glib/libthrift_c_glib_la-thrift_configuration.lo:  \
+	src/thrift/c_glib/$(am__dirstamp) \
+	src/thrift/c_glib/$(DEPDIR)/$(am__dirstamp)
 src/thrift/c_glib/processor/$(am__dirstamp):
 	@$(MKDIR_P) src/thrift/c_glib/processor
 	@: > src/thrift/c_glib/processor/$(am__dirstamp)
@@ -895,6 +899,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/c_glib/$(DEPDIR)/libthrift_c_glib_la-thrift.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/c_glib/$(DEPDIR)/libthrift_c_glib_la-thrift_application_exception.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/thrift/c_glib/$(DEPDIR)/libthrift_c_glib_la-thrift_configuration.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/c_glib/$(DEPDIR)/libthrift_c_glib_la-thrift_struct.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/c_glib/processor/$(DEPDIR)/libthrift_c_glib_la-thrift_dispatch_processor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/thrift/c_glib/processor/$(DEPDIR)/libthrift_c_glib_la-thrift_multiplexed_processor.Plo@am__quote@
@@ -967,6 +972,13 @@ src/thrift/c_glib/libthrift_c_glib_la-thrift_application_exception.lo: src/thrif
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/thrift/c_glib/thrift_application_exception.c' object='src/thrift/c_glib/libthrift_c_glib_la-thrift_application_exception.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libthrift_c_glib_la_CFLAGS) $(CFLAGS) -c -o src/thrift/c_glib/libthrift_c_glib_la-thrift_application_exception.lo `test -f 'src/thrift/c_glib/thrift_application_exception.c' || echo '$(srcdir)/'`src/thrift/c_glib/thrift_application_exception.c
+
+src/thrift/c_glib/libthrift_c_glib_la-thrift_configuration.lo: src/thrift/c_glib/thrift_configuration.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libthrift_c_glib_la_CFLAGS) $(CFLAGS) -MT src/thrift/c_glib/libthrift_c_glib_la-thrift_configuration.lo -MD -MP -MF src/thrift/c_glib/$(DEPDIR)/libthrift_c_glib_la-thrift_configuration.Tpo -c -o src/thrift/c_glib/libthrift_c_glib_la-thrift_configuration.lo `test -f 'src/thrift/c_glib/thrift_configuration.c' || echo '$(srcdir)/'`src/thrift/c_glib/thrift_configuration.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/thrift/c_glib/$(DEPDIR)/libthrift_c_glib_la-thrift_configuration.Tpo src/thrift/c_glib/$(DEPDIR)/libthrift_c_glib_la-thrift_configuration.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/thrift/c_glib/thrift_configuration.c' object='src/thrift/c_glib/libthrift_c_glib_la-thrift_configuration.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libthrift_c_glib_la_CFLAGS) $(CFLAGS) -c -o src/thrift/c_glib/libthrift_c_glib_la-thrift_configuration.lo `test -f 'src/thrift/c_glib/thrift_configuration.c' || echo '$(srcdir)/'`src/thrift/c_glib/thrift_configuration.c
 
 src/thrift/c_glib/processor/libthrift_c_glib_la-thrift_processor.lo: src/thrift/c_glib/processor/thrift_processor.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libthrift_c_glib_la_CFLAGS) $(CFLAGS) -MT src/thrift/c_glib/processor/libthrift_c_glib_la-thrift_processor.lo -MD -MP -MF src/thrift/c_glib/processor/$(DEPDIR)/libthrift_c_glib_la-thrift_processor.Tpo -c -o src/thrift/c_glib/processor/libthrift_c_glib_la-thrift_processor.lo `test -f 'src/thrift/c_glib/processor/thrift_processor.c' || echo '$(srcdir)/'`src/thrift/c_glib/processor/thrift_processor.c

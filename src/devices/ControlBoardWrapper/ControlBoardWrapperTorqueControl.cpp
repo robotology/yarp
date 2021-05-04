@@ -8,7 +8,7 @@
 
 #include "ControlBoardWrapperTorqueControl.h"
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 
 bool ControlBoardWrapperTorqueControl::getRefTorques(double* refs)
@@ -44,7 +44,7 @@ bool ControlBoardWrapperTorqueControl::getRefTorque(int j, double* t)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -88,7 +88,7 @@ bool ControlBoardWrapperTorqueControl::setRefTorque(int j, double t)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -139,7 +139,7 @@ bool ControlBoardWrapperTorqueControl::getMotorTorqueParams(int j, yarp::dev::Mo
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -161,7 +161,7 @@ bool ControlBoardWrapperTorqueControl::setMotorTorqueParams(int j, const yarp::d
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -183,7 +183,7 @@ bool ControlBoardWrapperTorqueControl::getTorque(int j, double* t)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -232,7 +232,7 @@ bool ControlBoardWrapperTorqueControl::getTorqueRange(int j, double* min, double
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;

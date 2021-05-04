@@ -63,7 +63,6 @@ private:
 } // namespace robotinterface
 } // namespace yarp
 
-YARP_robotinterface_API std::ostringstream& operator<<(std::ostringstream& oss, const yarp::robotinterface::experimental::Robot& t);
 YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Robot& t);
 
 

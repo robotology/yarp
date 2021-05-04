@@ -98,6 +98,10 @@ public:
         return true;
     }
 
+    bool isRecording(bool& recording_enabled) override {
+        return false;
+    }
+
     bool getRecordingAudioBufferMaxSize(yarp::dev::AudioBufferSize&) override {
         return false;
     }
@@ -107,6 +111,14 @@ public:
     }
 
     bool resetRecordingAudioBuffer() override {
+        return false;
+    }
+
+    bool setHWGain(double gain) override {
+        return false;
+    }
+
+    bool setSWGain(double gain) override {
         return false;
     }
 

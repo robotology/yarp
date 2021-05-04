@@ -10,7 +10,7 @@
 
 #include <yarp/os/LogStream.h>
 
-#include "ControlBoardWrapperLogComponent.h"
+#include "ControlBoardLogComponent.h"
 
 bool ControlBoardWrapperVelocityControl::velocityMove(int j, double v)
 {
@@ -18,7 +18,7 @@ bool ControlBoardWrapperVelocityControl::velocityMove(int j, double v)
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -102,13 +102,13 @@ bool ControlBoardWrapperVelocityControl::velocityMove(const int n_joints, const 
 
 bool ControlBoardWrapperVelocityControl::getRefVelocity(const int j, double* vel)
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
 
     size_t off;
     try {
         off = device.lut.at(j).offset;
     } catch (...) {
-        yCError(CONTROLBOARDWRAPPER, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
+        yCError(CONTROLBOARD, "Joint number %d out of bound [0-%zu] for part %s", j, controlledJoints, partName.c_str());
         return false;
     }
     size_t subIndex = device.lut[j].deviceEntry;
@@ -156,7 +156,7 @@ bool ControlBoardWrapperVelocityControl::getRefVelocities(double* vels)
 
 bool ControlBoardWrapperVelocityControl::getRefVelocities(const int n_joints, const int* joints, double* vels)
 {
-    yCTrace(CONTROLBOARDWRAPPER);
+    yCTrace(CONTROLBOARD);
 
     bool ret = true;
 

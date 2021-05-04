@@ -10,6 +10,7 @@
 #include <yarp/dev/IAudioRender.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
+#include <yarp/dev/AudioPlayerDeviceBase.h>
 
 #include <string>
 #include <mutex>
@@ -31,16 +32,19 @@
 * if save_mode = "rename_file", the output file is written every time the stop() method is called or when the module terminates.
 * The file name is modified, using an incremental counter appended at the end of the file name.
 *
+* This device driver derives from AudioPlayerDeviceBase base class. Please check its documentation for additional details.
+*
 * Parameters required by this device are:
 * | Parameter name | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
 * |:--------------:|:--------------:|:-------:|:--------------:|:------------------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
-* | file_name      |      -         | string  | -              |  audio_out.wav           | No                          | The name of the file written by the module                        | Only .wav files supported   |
+* | AUDIO_BASE     |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioPlayerDeviceBase |       |
+* | file_name      |      -         | string  | -              |  audio_out.wav           | No                          | The name of the file written by the module                        | Only .wav and .mp3 files are supported   |
 * | save_mode      |      -         | string  | -              |  overwrite_file          | No                          | Affects the behavior of the module and defines the save mode, as described in the documentation.   |       |
 */
 
 class audioToFileDevice :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IAudioRender
+        public yarp::dev::AudioPlayerDeviceBase
 {
 public:
     audioToFileDevice();
@@ -58,17 +62,17 @@ public:
     virtual bool renderSound(const yarp::sig::Sound& sound) override;
     virtual bool startPlayback() override;
     virtual bool stopPlayback()override;
-    virtual bool getPlaybackAudioBufferMaxSize(yarp::dev::AudioBufferSize& size) override;
-    virtual bool getPlaybackAudioBufferCurrentSize(yarp::dev::AudioBufferSize& size) override;
-    virtual bool resetPlaybackAudioBuffer() override;
+    virtual bool setHWGain(double gain) override;
+    virtual bool configureDeviceAndStart() override;
+    virtual bool interruptDeviceAndClose() override;
+    virtual void waitUntilPlaybackStreamIsComplete() override;
 
 private:
     yarp::sig::Sound m_audioFile;
     std::string      m_audio_filename = "audio_out.wav";
-    std::mutex       m_mutex;
-    bool             m_playback_running = false;
     std::deque<yarp::sig::Sound> m_sounds;
     size_t m_filename_counter = 0;
+
     enum save_mode_t
     {
         save_overwrite_file = 0,
