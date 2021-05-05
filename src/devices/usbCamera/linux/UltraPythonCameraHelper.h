@@ -1,11 +1,20 @@
 /*
  * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * All rights reserved.
  *
- * This software may be modified and distributed under the terms of the
- * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-//# @author Luca Tricerri <luca.tricerri@iit.it>
 
 #pragma once
 
@@ -53,7 +62,7 @@ class UltraPythonCameraHelper
 	static constexpr unsigned int lowresImageBufferSize_{lowresWidth_ * lowresHeight_ * 3};	 // LOW RES buffer size
 	static constexpr int lowresFrameRate_{35};
 	static constexpr int hiresFrameRate_{14};
-	static constexpr unsigned int deadTime_{8};
+	static constexpr unsigned int deadTime_{10};
 	static constexpr unsigned int minPermittedExposition_{15};
 	static constexpr unsigned int maxPermittedExposition_{100};
 
@@ -88,7 +97,7 @@ class UltraPythonCameraHelper
    public:
 	// Main
 	bool openAll();
-	bool step();
+	bool step(unsigned char *yarpbuffer);
 	bool closeAll();
 
 	// Settings
@@ -138,7 +147,7 @@ class UltraPythonCameraHelper
 	bool setSubsampling();
 	bool crop(int top, int left, int w, int h, int mytry);
 	bool checkDevice(int mainSubdeviceFd);
-	int readFrame();
+	int readFrame(unsigned char *yarpbuffer);
 	void processImage(const void *p, int size);
 	bool unInitDevice();
 	bool stopCapturing();

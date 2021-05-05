@@ -1,11 +1,20 @@
 /*
  * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * All rights reserved.
  *
- * This software may be modified and distributed under the terms of the
- * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-//# @author Luca Tricerri <luca.tricerri@iit.it>
 
 #include "UltraPythonCameraHelper.h"
 
@@ -593,7 +602,7 @@ bool UltraPythonCameraHelper::startCapturing()
 	return true;
 }
 
-bool UltraPythonCameraHelper::step()
+bool UltraPythonCameraHelper::step(unsigned char *yarpbuffer)
 {
 	static int seq = 0;
 	static int sequence = 0;
@@ -625,7 +634,7 @@ bool UltraPythonCameraHelper::step()
 		return false;
 	}
 
-	seq = readFrame();
+	seq = readFrame(yarpbuffer);
 	if (seq == -1)
 	{
 		return false;
@@ -638,7 +647,7 @@ bool UltraPythonCameraHelper::step()
 	return true;
 }
 
-int UltraPythonCameraHelper::readFrame()
+int UltraPythonCameraHelper::readFrame(unsigned char *yarpbuffer)
 {
 	struct v4l2_buffer buf;
 	int seq = 1;
@@ -674,9 +683,11 @@ int UltraPythonCameraHelper::readFrame()
 	}
 
 	seq = buf.sequence;
-	processImage(mMapBuffers_[buf.index].start, buf.bytesused);
-	//**Debug start
-	// memset(mMapBuffers_[buf.index].start, 255, buf.bytesused);
+
+	memcpy(yarpbuffer, mMapBuffers_[buf.index].start,  buf.bytesused);//Copy to out Yarp buffer
+	processImage(mMapBuffers_[buf.index].start, buf.bytesused);//Nothing to do
+	//**Debug for Kernel start
+	//memset(mMapBuffers_[buf.index].start, 255, buf.bytesused);
 	//**Debug end
 	if (interfaceCApi_->xioctl(mainSubdeviceFd_, VIDIOC_QBUF, &buf) == -1)
 	{

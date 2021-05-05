@@ -1,9 +1,19 @@
 /*
  * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * All rights reserved.
  *
- * This software may be modified and distributed under the terms of the
- * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include "V4L_camera.h"
@@ -472,7 +482,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 		{
 			param.user_height = config.find("height").asInt32();
 		}
-
+		
 		if (!config.check("framerate"))
 		{
 			yCDebug(USBCAMERA) << "framerate parameter not found, using default value of " << DEFAULT_FRAMERATE;
@@ -486,6 +496,11 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 
 	if (param.camModel == ULTRAPYTON)
 	{
+		if (config.check("framerate"))
+		{
+			yCWarning(USBCAMERA) << "Framerate not used for UltraPython";
+		}
+
 		int period = 28;
 		if (config.check("period"))
 		{
@@ -526,7 +541,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable &config)
 				yCWarning(USBCAMERA) << "FPS exceed suggested FPS for lowres:" << 1000.0 / (double)period << " suggested:" << UltraPythonCameraHelper::lowresFrameRate_;
 			}
 		}
-		setPeriod(1.0);	 // Thread period, this thread is not used for UltraPython
+		setPeriod(1.0);	 // Thread period, this thread is not used for UltraPython -- void V4L_camera::run() --
 	}
 
 	if (!config.check("d"))
@@ -1074,18 +1089,7 @@ bool V4L_camera::close()
 
 void V4L_camera::pythonPreprocess(const void *pythonbuffer, size_t size)
 {
-	if (size != UltraPythonCameraHelper::hiresImageBufferSize_ && size != UltraPythonCameraHelper::lowresImageBufferSize_)
-	{
-		yCError(USBCAMERA) << "Wrong buffer size" << size;
-	}
-
-	if (size > UltraPythonCameraHelper::hiresImageBufferSize_)
-	{
-		yCError(USBCAMERA) << "Python buffer too big";
-		size = UltraPythonCameraHelper::hiresImageBufferSize_;
-	}
-	pythonBuffer_ = (unsigned char *)pythonbuffer;
-	pythonBufferSize_ = size;
+	//Nothing to do
 }
 
 // IFrameGrabberRgb Interface 777
@@ -1099,10 +1103,9 @@ bool V4L_camera::getRgbBuffer(unsigned char *buffer)
 	{
 		if (param.camModel == ULTRAPYTON)
 		{
-			if (pythonCameraHelper_.step())
+			if (pythonCameraHelper_.step(buffer))
 			{
 				stat.add();
-				memcpy(buffer, pythonBuffer_, pythonBufferSize_);
 			}
 			else
 			{
