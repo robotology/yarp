@@ -310,12 +310,6 @@ bool Carriers::addCarrierPrototype(Carrier* carrier)
 }
 
 
-bool Carrier::reply(ConnectionState& proto, SizedWriter& writer)
-{
-    writer.write(proto.os());
-    return proto.os().isOk();
-}
-
 Carriers& Carriers::getInstance()
 {
     static Carriers instance;

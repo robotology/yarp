@@ -9,6 +9,7 @@
 
 #include <yarp/os/Carrier.h>
 #include <yarp/os/impl/TcpFace.h>
+#include <yarp/os/ConnectionState.h>
 
 using namespace yarp::os;
 
@@ -25,6 +26,12 @@ void Carrier::handleEnvelope(const std::string& envelope)
 bool Carrier::isPush() const
 {
     return true;
+}
+
+bool Carrier::reply(ConnectionState& proto, SizedWriter& writer)
+{
+    writer.write(proto.os());
+    return proto.os().isOk();
 }
 
 std::string Carrier::getBootstrapCarrierName() const
