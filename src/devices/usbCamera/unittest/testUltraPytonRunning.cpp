@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
 #include "../linux/UltraPythonCameraHelper.h"
@@ -39,14 +39,16 @@ TEST(UltraPython, step_base_ok) {
   buf.index = 1;
   buf.flags = 0;
   buf.sequence = 0;
-  buf.bytesused=10000;
+  buf.bytesused = 10000;
   EXPECT_CALL(*interface, select_c(_, _, nullptr, nullptr, _))
       .WillOnce(Return(1));
-  EXPECT_CALL(*interface, xioctl_v4l2(_, VIDIOC_DQBUF, _)).WillOnce(DoAll(SetArgPointee<2>(buf), Return(1)));
+  EXPECT_CALL(*interface, xioctl_v4l2(_, VIDIOC_DQBUF, _))
+      .WillOnce(DoAll(SetArgPointee<2>(buf), Return(1)));
   EXPECT_CALL(*interface, xioctl(_, VIDIOC_QBUF, _)).WillOnce(Return(1));
-  
+
   // when
-  bool out = helper.step();
+  unsigned char yarpbuffer[10000000];
+  bool out = helper.step(yarpbuffer);
 
   // then
   EXPECT_TRUE(out);
@@ -65,14 +67,16 @@ TEST(UltraPython, step_base_error1) {
   buf.index = 1;
   buf.flags = V4L2_BUF_FLAG_ERROR;
   buf.sequence = 0;
-  buf.bytesused=10000;
+  buf.bytesused = 10000;
   EXPECT_CALL(*interface, select_c(_, _, nullptr, nullptr, _))
       .WillOnce(Return(1));
-  EXPECT_CALL(*interface, xioctl_v4l2(_, VIDIOC_DQBUF, _)).WillOnce(DoAll(SetArgPointee<2>(buf), Return(1)));
+  EXPECT_CALL(*interface, xioctl_v4l2(_, VIDIOC_DQBUF, _))
+      .WillOnce(DoAll(SetArgPointee<2>(buf), Return(1)));
   EXPECT_CALL(*interface, xioctl(_, VIDIOC_QBUF, _)).Times(0);
-  
+
   // when
-  bool out = helper.step();
+  unsigned char yarpbuffer[10000000];
+  bool out = helper.step(yarpbuffer);
 
   // then
   EXPECT_FALSE(out);
@@ -89,7 +93,8 @@ TEST(UltraPython, step_base_timeout_ko) {
       .WillOnce(Return(0));
 
   // when
-  bool out = helper.step();
+  unsigned char yarpbuffer[10000000];
+  bool out = helper.step(yarpbuffer);
 
   // then
   EXPECT_FALSE(out);
@@ -106,7 +111,8 @@ TEST(UltraPython, step_base_error_ko) {
       .WillOnce(Return(-1));
 
   // when
-  bool out = helper.step();
+  unsigned char yarpbuffer[10000000];
+  bool out = helper.step(yarpbuffer);
 
   // then
   EXPECT_FALSE(out);

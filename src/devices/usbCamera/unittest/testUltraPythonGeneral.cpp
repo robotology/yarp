@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
 #include "../linux/InterfaceForCApi.h"
@@ -29,21 +29,20 @@
 using namespace std::chrono_literals;
 using namespace testing;
 
-
 TEST(UltraPython, openAll_ok_002) {
   // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
   UltraPythonCameraHelper helper(interface);
   EXPECT_CALL(*interface, open_c("/dev/media0", O_RDWR)).Times(1);
-  EXPECT_CALL(*interface, open_c("video1",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  EXPECT_CALL(*interface, open_c("video2",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  EXPECT_CALL(*interface, open_c("video3",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  EXPECT_CALL(*interface, open_c("video4",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  EXPECT_CALL(*interface, open_c("video5",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  EXPECT_CALL(*interface, open_c("video6",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  EXPECT_CALL(*interface, open_c("video7",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  EXPECT_CALL(*interface, open_c("video8",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  EXPECT_CALL(*interface, open_c("video9",O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video1", O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video2", O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video3", O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video4", O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video5", O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video6", O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video7", O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video8", O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video9", O_RDWR | O_NONBLOCK, 0)).Times(1);
   EXPECT_CALL(*interface, udev_new_c()).WillOnce(Return(new udev()));
   struct media_entity_desc info1;
   strcpy(info1.name, "vcap_python output 0");
@@ -59,7 +58,7 @@ TEST(UltraPython, openAll_ok_002) {
   strcpy(info6.name, "imgfusion");
   struct media_entity_desc info7;
   strcpy(info7.name, "PYTHON1300_RXIF");
-  EXPECT_CALL(*interface, ioctl_media_c(_, _,_ ))
+  EXPECT_CALL(*interface, ioctl_media_c(_, _, _))
       .WillOnce(DoAll(SetArgReferee<2>(info1), Return(1)))
       .WillOnce(DoAll(SetArgReferee<2>(info2), Return(1)))
       .WillOnce(DoAll(SetArgReferee<2>(info2), Return(1)))
@@ -70,7 +69,7 @@ TEST(UltraPython, openAll_ok_002) {
       .WillOnce(DoAll(SetArgReferee<2>(info7), Return(1)))
       .WillOnce(DoAll(SetArgReferee<2>(info7), Return(1)))
       .WillOnce(Return(-1));
-      
+
   EXPECT_CALL(*interface, xioctl(_, _, _)).WillRepeatedly(Return(1));
   EXPECT_CALL(*interface, makedev_c(_, _))
       .WillOnce(Return(1))
@@ -125,7 +124,7 @@ TEST(UltraPython, openAll_ok_002) {
   delete interface;
 }
 
-//Missing main device
+// Missing main device
 TEST(UltraPython, openAll_ko_000) {
   // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
@@ -141,21 +140,21 @@ TEST(UltraPython, openAll_ko_000) {
   delete interface;
 }
 
-//Missing sub device
+// Missing sub device
 TEST(UltraPython, openAll_ko_001) {
   // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
   UltraPythonCameraHelper helper(interface);
   EXPECT_CALL(*interface, open_c("/dev/media0", O_RDWR)).Times(1);
   EXPECT_CALL(*interface, udev_new_c()).WillOnce(Return(new udev()));
-  EXPECT_CALL(*interface, open_c("video1",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  EXPECT_CALL(*interface, open_c("video2",O_RDWR | O_NONBLOCK, 0)).Times(1);
-  
+  EXPECT_CALL(*interface, open_c("video1", O_RDWR | O_NONBLOCK, 0)).Times(1);
+  EXPECT_CALL(*interface, open_c("video2", O_RDWR | O_NONBLOCK, 0)).Times(1);
+
   struct media_entity_desc info1;
   strcpy(info1.name, "vcap_python output 0");
   struct media_entity_desc info2;
   strcpy(info2.name, "PYTHON1300");
-  EXPECT_CALL(*interface, ioctl_media_c(_, _,_))
+  EXPECT_CALL(*interface, ioctl_media_c(_, _, _))
       .WillOnce(DoAll(SetArgReferee<2>(info1), Return(1)))
       .WillOnce(DoAll(SetArgReferee<2>(info2), Return(1)))
       .WillOnce(Return(-1));

@@ -13,16 +13,16 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
 #ifndef YARP_DEVICE_USBCAMERA_LINUX_V4L_CAMERA_H
 #define YARP_DEVICE_USBCAMERA_LINUX_V4L_CAMERA_H
 
 #include <asm/types.h>
-#include <stdio.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <stdio.h>
 #include <jpeglib.h>
 #include <libv4l2.h>
 #include <libv4lconvert.h>
@@ -59,79 +59,71 @@
 #define DEFAULT_FRAMERATE 30
 #define VIDIOC_REQBUFS_COUNT 2
 
-typedef enum
-{
-	IO_METHOD_READ,
-	IO_METHOD_MMAP,
-	IO_METHOD_USERPTR,
+typedef enum {
+  IO_METHOD_READ,
+  IO_METHOD_MMAP,
+  IO_METHOD_USERPTR,
 } io_method;
 
-typedef enum
-{
-	STANDARD_UVC = 0,
-	LEOPARD_PYTHON,
-	ULTRAPYTON
-} supported_cams;
+typedef enum { STANDARD_UVC = 0, LEOPARD_PYTHON, ULTRAPYTON } supported_cams;
 
-struct buffer
-{
-	void* start;
-	size_t length;
+struct buffer {
+  void *start;
+  size_t length;
 };
 
-typedef struct
-{
-	int fd;
-	std::string deviceId;
+typedef struct {
+  int fd;
+  std::string deviceId;
 
-	bool addictionalResize;
-	int resizeOffset_x, resizeOffset_y;
-	int resizeWidth, resizeHeight;
+  bool addictionalResize;
+  int resizeOffset_x, resizeOffset_y;
+  int resizeWidth, resizeHeight;
 
-	__u32 user_width;
-	__u32 user_height;
+  __u32 user_width;
+  __u32 user_height;
 
-	double horizontalFov;
-	double verticalFov;
-	yarp::os::Property intrinsic;
-	bool dual;
+  double horizontalFov;
+  double verticalFov;
+  yarp::os::Property intrinsic;
+  bool dual;
 
-	io_method io;
-	int fps;
+  io_method io;
+  int fps;
 
-	// Temporary step required for leopard python camera only
-	// The image has to be converted into standard bayer format
-	// in order to be correctly converted into rgb
-	unsigned char* raw_image;
-	unsigned int raw_image_size;
+  // Temporary step required for leopard python camera only
+  // The image has to be converted into standard bayer format
+  // in order to be correctly converted into rgb
+  unsigned char *raw_image;
+  unsigned int raw_image_size;
 
-	// this is a helper pointer set either to raw_image or src_image,
-	// depending if the source is custom or standard
-	unsigned char* read_image;
+  // this is a helper pointer set either to raw_image or src_image,
+  // depending if the source is custom or standard
+  unsigned char *read_image;
 
-	// src image: standard image type read from the camera sensor
-	// used as input for color conversion
-	unsigned char* src_image;
-	unsigned int src_image_size;
+  // src image: standard image type read from the camera sensor
+  // used as input for color conversion
+  unsigned char *src_image;
+  unsigned int src_image_size;
 
-	// RGB image after color conversion. The size may not be the one
-	// requested by the user and a rescaling may be required afterwards
-	unsigned char* dst_image_rgb;
-	unsigned int dst_image_size_rgb;
+  // RGB image after color conversion. The size may not be the one
+  // requested by the user and a rescaling may be required afterwards
+  unsigned char *dst_image_rgb;
+  unsigned int dst_image_size_rgb;
 
-	// OpenCV object to perform the final rescaling of the image
-	cv::Mat outMat;	 // OpenCV output
+  // OpenCV object to perform the final rescaling of the image
+  cv::Mat outMat; // OpenCV output
 
-	yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
-	bool flip;
+  yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
+  bool flip;
 
-	unsigned int n_buffers;
-	struct buffer* buffers;
-	struct v4l2_format src_fmt;
-	struct v4l2_format dst_fmt;
-	struct v4l2_requestbuffers req;
-	size_t pixelType;
-	supported_cams camModel;  // In case some camera requires custom procedure
+  unsigned int n_buffers;
+  struct buffer *buffers;
+  struct v4l2_format src_fmt;
+  struct v4l2_format dst_fmt;
+  struct v4l2_requestbuffers req;
+  size_t pixelType;
+  supported_cams camModel; // In case some camera requires custom procedure
 } Video_params;
 
 /*
@@ -139,179 +131,186 @@ typedef struct
  */
 
 class V4L_camera : public yarp::dev::DeviceDriver,
-				   public yarp::dev::IFrameGrabberRgb,
-				   public yarp::dev::IFrameGrabber,
-				   public yarp::dev::IFrameGrabberControls,
-				   public yarp::dev::IPreciselyTimed,
-				   public yarp::os::PeriodicThread,
-				   public yarp::dev::IRgbVisualParams
-{
-   public:
-	V4L_camera();
+                   public yarp::dev::IFrameGrabberRgb,
+                   public yarp::dev::IFrameGrabber,
+                   public yarp::dev::IFrameGrabberControls,
+                   public yarp::dev::IPreciselyTimed,
+                   public yarp::os::PeriodicThread,
+                   public yarp::dev::IRgbVisualParams {
+public:
+  V4L_camera();
 
-	// DeviceDriver Interface
-	bool open(yarp::os::Searchable& config) override;
-	bool close() override;
+  // DeviceDriver Interface
+  bool open(yarp::os::Searchable &config) override;
+  bool close() override;
 
-	yarp::os::Stamp getLastInputStamp() override;
+  yarp::os::Stamp getLastInputStamp() override;
 
-	// IFrameGrabberRgb    Interface
-	bool getRgbBuffer(unsigned char* buffer) override;
+  // IFrameGrabberRgb    Interface
+  bool getRgbBuffer(unsigned char *buffer) override;
 
-	// IFrameGrabber Interface
-	bool getRawBuffer(unsigned char* buffer) override;
-	int getRawBufferSize() override;
+  // IFrameGrabber Interface
+  bool getRawBuffer(unsigned char *buffer) override;
+  int getRawBufferSize() override;
 
-	/**
-	 * Return the height of each frame.
-	 * @return image height
-	 */
-	int height() const override;
+  /**
+   * Return the height of each frame.
+   * @return image height
+   */
+  int height() const override;
 
-	/**
-	 * Return the width of each frame.
-	 * @return image width
-	 */
-	int width() const override;
+  /**
+   * Return the width of each frame.
+   * @return image width
+   */
+  int width() const override;
 
-	/*Implementation of IRgbVisualParams interface*/
-	int getRgbHeight() override;
-	int getRgbWidth() override;
-	bool getRgbSupportedConfigurations(yarp::sig::VectorOf<yarp::dev::CameraConfig>& configurations) override;
-	bool getRgbResolution(int& width, int& height) override;
-	bool setRgbResolution(int width, int height) override;
-	bool getRgbFOV(double& horizontalFov, double& verticalFov) override;
-	bool setRgbFOV(double horizontalFov, double verticalFov) override;
-	bool getRgbIntrinsicParam(yarp::os::Property& intrinsic) override;
-	bool getRgbMirroring(bool& mirror) override;
-	bool setRgbMirroring(bool mirror) override;
+  /*Implementation of IRgbVisualParams interface*/
+  int getRgbHeight() override;
+  int getRgbWidth() override;
+  bool getRgbSupportedConfigurations(
+      yarp::sig::VectorOf<yarp::dev::CameraConfig> &configurations) override;
+  bool getRgbResolution(int &width, int &height) override;
+  bool setRgbResolution(int width, int height) override;
+  bool getRgbFOV(double &horizontalFov, double &verticalFov) override;
+  bool setRgbFOV(double horizontalFov, double verticalFov) override;
+  bool getRgbIntrinsicParam(yarp::os::Property &intrinsic) override;
+  bool getRgbMirroring(bool &mirror) override;
+  bool setRgbMirroring(bool mirror) override;
 
-	/* Implementation of IFrameGrabberControls interface */
-	bool getCameraDescription(CameraDescriptor* camera) override;
-	bool hasFeature(int feature, bool* hasFeature) override;
-	bool setFeature(int feature, double value) override;
-	bool getFeature(int feature, double* value) override;
-	bool setFeature(int feature, double value1, double value2) override;
-	bool getFeature(int feature, double* value1, double* value2) override;
-	bool hasOnOff(int feature, bool* _hasOnOff) override;
-	bool setActive(int feature, bool onoff) override;
-	bool getActive(int feature, bool* _isActive) override;
-	bool hasAuto(int feature, bool* _hasAuto) override;
-	bool hasManual(int feature, bool* _hasManual) override;
-	bool hasOnePush(int feature, bool* _hasOnePush) override;
-	bool setMode(int feature, FeatureMode mode) override;
-	bool getMode(int feature, FeatureMode* mode) override;
-	bool setOnePush(int feature) override;
+  /* Implementation of IFrameGrabberControls interface */
+  bool getCameraDescription(CameraDescriptor *camera) override;
+  bool hasFeature(int feature, bool *hasFeature) override;
+  bool setFeature(int feature, double value) override;
+  bool getFeature(int feature, double *value) override;
+  bool setFeature(int feature, double value1, double value2) override;
+  bool getFeature(int feature, double *value1, double *value2) override;
+  bool hasOnOff(int feature, bool *_hasOnOff) override;
+  bool setActive(int feature, bool onoff) override;
+  bool getActive(int feature, bool *_isActive) override;
+  bool hasAuto(int feature, bool *_hasAuto) override;
+  bool hasManual(int feature, bool *_hasManual) override;
+  bool hasOnePush(int feature, bool *_hasOnePush) override;
+  bool setMode(int feature, FeatureMode mode) override;
+  bool getMode(int feature, FeatureMode *mode) override;
+  bool setOnePush(int feature) override;
 
-   private:
-	bool verbose{false};
-	v4lconvert_data* _v4lconvert_data;
-	bool use_exposure_absolute;
+private:
+  bool verbose{false};
+  v4lconvert_data *_v4lconvert_data;
+  bool use_exposure_absolute;
 
-	yarp::os::Stamp timeStamp;
-	Video_params param;
-	yarp::os::Semaphore mutex;
-	bool configFx, configFy;
-	bool configPPx, configPPy;
-	bool configRet, configDistM;
-	bool configIntrins;
-	bool configured;
-	bool doCropping;
-	bool isActive_vector[YARP_FEATURE_NUMBER_OF];
-	double timeStart, timeTot, timeNow, timeElapsed;
-	int myCounter;
+  yarp::os::Stamp timeStamp;
+  Video_params param;
+  yarp::os::Semaphore mutex;
+  bool configFx, configFy;
+  bool configPPx, configPPy;
+  bool configRet, configDistM;
+  bool configIntrins;
+  bool configured;
+  bool doCropping;
+  bool isActive_vector[YARP_FEATURE_NUMBER_OF];
+  double timeStart, timeTot, timeNow, timeElapsed;
+  int myCounter;
 
-	std::map<std::string, supported_cams> camMap{{"default", STANDARD_UVC}, {"leopard_python", LEOPARD_PYTHON}, {"ultrapython", ULTRAPYTON}};
+  std::map<std::string, supported_cams> camMap{
+      {"default", STANDARD_UVC},
+      {"leopard_python", LEOPARD_PYTHON},
+      {"ultrapython", ULTRAPYTON}};
 
-	bool fromConfig(yarp::os::Searchable& config);
+  bool fromConfig(yarp::os::Searchable &config);
 
-	void populateConfigurations();
+  void populateConfigurations();
 
-	int convertV4L_to_YARP_format(int format);
+  int convertV4L_to_YARP_format(int format);
 
-	double checkDouble(yarp::os::Searchable& config, const char* key);
+  double checkDouble(yarp::os::Searchable &config, const char *key);
 
-	// initialize device
-	bool deviceInit();
+  // initialize device
+  bool deviceInit();
 
-	// de-initialize device
-	bool deviceUninit();
+  // de-initialize device
+  bool deviceUninit();
 
-	void captureStart();
-	void captureStop();
+  void captureStart();
+  void captureStop();
 
-	bool threadInit() override;
-	void run() override;
-	void threadRelease() override;
+  bool threadInit() override;
+  void run() override;
+  void threadRelease() override;
 
-	/*
-	 *  Inintialize different types of reading frame
-	 */
+  /*
+   *  Inintialize different types of reading frame
+   */
 
-	// some description
-	bool readInit(unsigned int buffer_size);
+  // some description
+  bool readInit(unsigned int buffer_size);
 
-	// some description
-	bool mmapInit();
+  // some description
+  bool mmapInit();
 
-	// some description
-	bool userptrInit(unsigned int buffer_size);
+  // some description
+  bool userptrInit(unsigned int buffer_size);
 
-	// use the device for something
-	/**
-	 *    read single frame
-	 */
-	bool frameRead();
+  // use the device for something
+  /**
+   *    read single frame
+   */
+  bool frameRead();
 
-	bool full_FrameRead();
+  bool full_FrameRead();
 
-	/*
-	 * This function is intended to perform custom code to adapt
-	 * non standard pixel types to a standard one, in order to
-	 * use standard conversion libraries afterward.
-	 */
-	void imagePreProcess();
+  /*
+   * This function is intended to perform custom code to adapt
+   * non standard pixel types to a standard one, in order to
+   * use standard conversion libraries afterward.
+   */
+  void imagePreProcess();
 
-	/*
-	 * This function is intended to perform all the required conversions
-	 * from the camera pixel type to the RGB one and eventually rescaling
-	 * to size requested by the user.
-	 */
-	void imageProcess();
+  /*
+   * This function is intended to perform all the required conversions
+   * from the camera pixel type to the RGB one and eventually rescaling
+   * to size requested by the user.
+   */
+  void imageProcess();
 
-	int getfd();
+  int getfd();
 
-   private:
-	// low level stuff - all functions here uses the Linux V4L specific definitions
-	/**
-	 *    Do ioctl and retry if error was EINTR ("A signal was caught during the ioctl() operation."). Parameters are the same as on ioctl.
-	 *
-	 *    \param fd file descriptor
-	 *    \param request request
-	 *    \param argp argument
-	 *    \returns result from ioctl
-	 */
-	int xioctl(int fd, int request, void* argp);
+private:
+  // low level stuff - all functions here uses the Linux V4L specific
+  // definitions
+  /**
+   *    Do ioctl and retry if error was EINTR ("A signal was caught during the
+   * ioctl() operation."). Parameters are the same as on ioctl.
+   *
+   *    \param fd file descriptor
+   *    \param request request
+   *    \param argp argument
+   *    \returns result from ioctl
+   */
+  int xioctl(int fd, int request, void *argp);
 
-	int convertYARP_to_V4L(int feature);
-	void enumerate_menu();
-	bool enumerate_controls();
-	bool check_V4L2_control(uint32_t id);
-	bool set_V4L2_control(u_int32_t id, double value, bool verbatim = false);
-	double get_V4L2_control(uint32_t id, bool verbatim = false);  // verbatim = do not convert value, for enum types
+  int convertYARP_to_V4L(int feature);
+  void enumerate_menu();
+  bool enumerate_controls();
+  bool check_V4L2_control(uint32_t id);
+  bool set_V4L2_control(u_int32_t id, double value, bool verbatim = false);
+  double get_V4L2_control(
+      uint32_t id,
+      bool verbatim = false); // verbatim = do not convert value, for enum types
 
-	double toEpochOffset;
+  double toEpochOffset;
 
-	// leopard de-bayer test
-	int bit_shift;
-	int bit_bayer;
-	int pixel_fmt_leo;
+  // leopard de-bayer test
+  int bit_shift;
+  int bit_bayer;
+  int pixel_fmt_leo;
 
-	// Only for PythonCamera
-	UltraPythonCameraHelper pythonCameraHelper_;
-	void pythonPreprocess(const void* pythonbuffer, size_t size);
-	unsigned char* pythonBuffer_;
-	unsigned int pythonBufferSize_{0};
+  // Only for PythonCamera
+  UltraPythonCameraHelper pythonCameraHelper_;
+  void pythonPreprocess(const void *pythonbuffer, size_t size);
+  unsigned char *pythonBuffer_;
+  unsigned int pythonBufferSize_{0};
 };
 
-#endif	// YARP_DEVICE_USBCAMERA_LINUX_V4L_CAMERA_H
+#endif // YARP_DEVICE_USBCAMERA_LINUX_V4L_CAMERA_H

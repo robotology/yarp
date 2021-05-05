@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
 #include "../linux/UltraPythonCameraHelper.h"
@@ -127,7 +127,7 @@ TEST(UltraPython, setGainAbsolute_value12_fail) {
 }
 
 TEST(UltraPython, setGain_value05_ok) {
- // given
+  // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
   UltraPythonCameraHelper helper(interface);
 
@@ -155,7 +155,7 @@ TEST(UltraPython, setGain_value05_ok) {
 }
 
 TEST(UltraPython, setGain_value07_ok) {
- // given
+  // given
   InterfaceFoCApiMock *interface = new InterfaceFoCApiMock();
   UltraPythonCameraHelper helper(interface);
 
@@ -208,7 +208,7 @@ TEST(UltraPython, setGain_valuenegative_fail) {
   EXPECT_CALL(*interface, ioctl_control_c(_, VIDIOC_S_CTRL, _)).Times(0);
 
   // when
-  bool res = helper.setControl(V4L2_CID_GAIN,-11, false);
+  bool res = helper.setControl(V4L2_CID_GAIN, -11, false);
 
   // then
   EXPECT_FALSE(res);

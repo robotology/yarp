@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
 #include "../linux/UltraPythonCameraHelper.h"
@@ -45,7 +45,7 @@ TEST(UltraPython, notusedparams_ok) {
   EXPECT_TRUE(force);
   EXPECT_FALSE(autoCtrl);
   EXPECT_FALSE(honor);
-  EXPECT_EQ(40,step);
+  EXPECT_EQ(40, step);
 
   delete interface;
 }
@@ -58,11 +58,16 @@ TEST(UltraPython, hasControls_ok) {
   // when
   bool ret1 = helper.hasControl(V4L2_CID_GAIN);
   bool ret2 = helper.hasControl(V4L2_CID_BRIGHTNESS);
-  bool ret3 = helper.hasControl(UltraPythonCameraHelper::V4L2_ANALOGGAIN_ULTRA_PYTHON);
-  bool ret4 = helper.hasControl(UltraPythonCameraHelper::V4L2_EXTTRIGGGER_ULTRA_PYTHON);
-  bool ret5 = helper.hasControl(UltraPythonCameraHelper::V4L2_REDBALANCE_ULTRA_PYTHON);
-  bool ret6 = helper.hasControl(UltraPythonCameraHelper::V4L2_DEADTIME_ULTRA_PYTHON);
-  bool ret7 = helper.hasControl(UltraPythonCameraHelper::V4L2_EXPOSURE_ULTRA_PYTHON);
+  bool ret3 =
+      helper.hasControl(UltraPythonCameraHelper::V4L2_ANALOGGAIN_ULTRA_PYTHON);
+  bool ret4 =
+      helper.hasControl(UltraPythonCameraHelper::V4L2_EXTTRIGGGER_ULTRA_PYTHON);
+  bool ret5 =
+      helper.hasControl(UltraPythonCameraHelper::V4L2_REDBALANCE_ULTRA_PYTHON);
+  bool ret6 =
+      helper.hasControl(UltraPythonCameraHelper::V4L2_DEADTIME_ULTRA_PYTHON);
+  bool ret7 =
+      helper.hasControl(UltraPythonCameraHelper::V4L2_EXPOSURE_ULTRA_PYTHON);
 
   // then
   EXPECT_TRUE(ret1);
