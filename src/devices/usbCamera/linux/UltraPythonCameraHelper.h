@@ -108,6 +108,7 @@ public:
   bool getForceFormatProperty() const;
   bool getHonorFps() const;
   double getStepPeriod() const;
+  double getCurrentExposure() const;
 
   // Not used
   bool checkControl(uint32_t v4lCtr); // Low level check control is available
@@ -158,6 +159,7 @@ private:
   bool subsamplingEnabledProperty_{true};
   bool cropEnabledProperty_{false};
   bool forceFormatProperty_{true}; // Overwrite preesistent format
+  double currentExposure_{0};// Only for logging purpouse
 
   // Image memory map
   MmapBuffer mMapBuffers_[requestBufferNumber_];

@@ -23,7 +23,6 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 
-#include <stdio.h>
 #include <cstdio>
 #include <ctime>
 #include <opencv2/core/core.hpp>
@@ -714,7 +713,7 @@ bool V4L_camera::threadInit() {
 }
 
 void V4L_camera::run() {
-  static Statistics stat("frames read by DRIVER");
+  static Statistics stat("frames read by DRIVER", 0);
 
   if (param.camModel == ULTRAPYTON) {
     // This thread is not used by UltraPython, called directly getRgbBuffer()
@@ -1063,37 +1062,34 @@ void V4L_camera::pythonPreprocess(const void *pythonbuffer, size_t size) {
 
 // IFrameGrabberRgb Interface 777
 bool V4L_camera::getRgbBuffer(unsigned char *buffer) {
-  static Statistics stat("frames read by YARP");
-
-  bool res = false;
-  mutex.wait();
-  if (configured) {
-    if (param.camModel == ULTRAPYTON) {
-      if (pythonCameraHelper_.step(buffer)) {
-        stat.add();
-      } else {
-        yCError(USBCAMERA) << "Failed acquiring new frame";
-      }
-    } else {
-      yCDebug(USBCAMERA) << "-";
-      imagePreProcess();
-      imageProcess();
-      if (!param.addictionalResize) {
-        memcpy(buffer, param.dst_image_rgb, param.dst_image_size_rgb);
-      } else {
-        memcpy(buffer, param.outMat.data, param.outMat.total() * 3);
-      }
-      stat.add();
-    }
-    mutex.post();
-    res = true;
-  } else {
-    mutex.post();
+  if (!configured) {
     yCError(USBCAMERA) << "unable to get the buffer, device uninitialized";
-    res = false;
+    return false;
   }
 
-  return res;
+  mutex.wait();
+
+  if (param.camModel == ULTRAPYTON) {
+    static Statistics stat("frames read by YARP",
+                           pythonCameraHelper_.getCurrentExposure());
+    if (pythonCameraHelper_.step(buffer)) {
+      stat.add();
+    } else {
+      yCError(USBCAMERA) << "Failed acquiring new frame";
+    }
+  } else {
+    yCDebug(USBCAMERA) << "-";
+    imagePreProcess();
+    imageProcess();
+    if (!param.addictionalResize) {
+      memcpy(buffer, param.dst_image_rgb, param.dst_image_size_rgb);
+    } else {
+      memcpy(buffer, param.outMat.data, param.outMat.total() * 3);
+    }
+  }
+  
+  mutex.post();
+  return true;
 }
 
 // IFrameGrabber Interface

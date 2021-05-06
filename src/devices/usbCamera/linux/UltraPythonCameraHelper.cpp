@@ -819,6 +819,7 @@ bool UltraPythonCameraHelper::setControl(uint32_t v4lCtrl, int fd, double value,
           << "Exposition will mantain current FPS Limit:" << limit
           << " current step:" << stepPeriod_;
     }
+    currentExposure_ = control.value; // Logging purpouse
   }
 
   // Do set
@@ -1036,3 +1037,6 @@ bool UltraPythonCameraHelper::getForceFormatProperty() const {
 
 bool UltraPythonCameraHelper::getHonorFps() const { return honorfps_; }
 double UltraPythonCameraHelper::getStepPeriod() const { return stepPeriod_; }
+double UltraPythonCameraHelper::getCurrentExposure() const {
+  return currentExposure_;
+};
