@@ -19,6 +19,9 @@ if(NOT SKIP_RGBDSensorClient)
                                                RGBDSensorClient_StreamingMsgParser.cpp
                                                RGBDSensorClient_StreamingMsgParser.h)
 
+  target_sources(yarp_RGBDSensorClient PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
+  target_include_directories(yarp_RGBDSensorClient PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_RGBDSensorClient PRIVATE YARP::YARP_os
                                                       YARP::YARP_sig
                                                       YARP::YARP_dev)

@@ -18,9 +18,10 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IPreciselyTimed.h>
-#include <yarp/dev/IVisualParamsImpl.h>
-#include <yarp/dev/FrameGrabberControl2.h>
-#include <yarp/dev/FrameGrabberControlImpl.h>
+
+#include <yarp/proto/framegrabber/FrameGrabberControls_Forwarder.h>
+#include <yarp/proto/framegrabber/RgbVisualParams_Forwarder.h>
+#include <yarp/proto/framegrabber/DepthVisualParams_Forwarder.h>
 
 #define DEFAULT_THREAD_PERIOD       20    //ms
 #define RGBDSENSOR_TIMEOUT_DEFAULT  100   //ms
@@ -83,14 +84,14 @@ class RGBDSensor_StreamingMsgParser;
 
 class RGBDSensorClient :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::FrameGrabberControls_Sender,
+        public yarp::proto::framegrabber::FrameGrabberControls_Forwarder,
         public yarp::dev::IRGBDSensor
 {
 protected:
     yarp::os::Port rpcPort;
 private:
-    yarp::dev::Implement_RgbVisualParams_Sender* RgbMsgSender{nullptr};
-    yarp::dev::Implement_DepthVisualParams_Sender* DepthMsgSender{nullptr};
+    yarp::proto::framegrabber::RgbVisualParams_Forwarder* RgbMsgSender{nullptr};
+    yarp::proto::framegrabber::DepthVisualParams_Forwarder* DepthMsgSender{nullptr};
 protected:
     std::string local_colorFrame_StreamingPort_name;
     std::string local_depthFrame_StreamingPort_name;
@@ -272,21 +273,21 @@ public:
 
     // IFrame Grabber Control 2
     //
-    // Implemented by FrameGrabberControls2_Sender
+    // Implemented by FrameGrabberControls2_Forwarder
     //
-    using FrameGrabberControls_Sender::getCameraDescription;
-    using FrameGrabberControls_Sender::hasFeature;
-    using FrameGrabberControls_Sender::setFeature;
-    using FrameGrabberControls_Sender::getFeature;
-    using FrameGrabberControls_Sender::hasOnOff;
-    using FrameGrabberControls_Sender::setActive;
-    using FrameGrabberControls_Sender::getActive;
-    using FrameGrabberControls_Sender::hasAuto;
-    using FrameGrabberControls_Sender::hasManual;
-    using FrameGrabberControls_Sender::hasOnePush;
-    using FrameGrabberControls_Sender::setMode;
-    using FrameGrabberControls_Sender::getMode;
-    using FrameGrabberControls_Sender::setOnePush;
+    using FrameGrabberControls_Forwarder::getCameraDescription;
+    using FrameGrabberControls_Forwarder::hasFeature;
+    using FrameGrabberControls_Forwarder::setFeature;
+    using FrameGrabberControls_Forwarder::getFeature;
+    using FrameGrabberControls_Forwarder::hasOnOff;
+    using FrameGrabberControls_Forwarder::setActive;
+    using FrameGrabberControls_Forwarder::getActive;
+    using FrameGrabberControls_Forwarder::hasAuto;
+    using FrameGrabberControls_Forwarder::hasManual;
+    using FrameGrabberControls_Forwarder::hasOnePush;
+    using FrameGrabberControls_Forwarder::setMode;
+    using FrameGrabberControls_Forwarder::getMode;
+    using FrameGrabberControls_Forwarder::setOnePush;
 };
 
 #endif // YARP_DEV_RGBDSENSORCLIENT_RGBDSENSORCLIENT_H

@@ -16,8 +16,11 @@ if(NOT SKIP_RGBDSensorWrapper)
 
   target_sources(yarp_RGBDSensorWrapper PRIVATE RGBDSensorWrapper.cpp
                                                 RGBDSensorWrapper.h)
-  target_sources(yarp_RGBDSensorWrapper PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
 
+  target_sources(yarp_RGBDSensorWrapper PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
+  target_include_directories(yarp_RGBDSensorWrapper PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
+
+  target_sources(yarp_RGBDSensorWrapper PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
   target_include_directories(yarp_RGBDSensorWrapper PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_RGBDSensorWrapper PRIVATE YARP::YARP_os
@@ -55,8 +58,11 @@ if(NOT SKIP_rgbdSensor_nws_ros)
 
   target_sources(yarp_rgbdSensor_nws_ros PRIVATE rgbdSensor_nws_ros.cpp
                                                  rgbdSensor_nws_ros.h)
-  target_sources(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
 
+  target_sources(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
+  target_include_directories(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
+
+  target_sources(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
   target_include_directories(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_rgbdSensor_nws_ros PRIVATE YARP::YARP_os
@@ -95,6 +101,9 @@ if(NOT SKIP_rgbdSensor_nws_yarp)
 
   target_sources(yarp_rgbdSensor_nws_yarp PRIVATE rgbdSensor_nws_yarp.cpp
                                                   rgbdSensor_nws_yarp.h)
+
+  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
+  target_include_directories(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_rgbdSensor_nws_yarp PRIVATE YARP::YARP_os
                                                          YARP::YARP_sig

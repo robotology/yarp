@@ -30,14 +30,12 @@
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
-#include <yarp/dev/IVisualParamsImpl.h>
-#include <yarp/dev/FrameGrabberControlImpl.h>
 
+#include <yarp/proto/framegrabber/FrameGrabberControls_Responder.h>
+#include <yarp/proto/framegrabber/RgbVisualParams_Responder.h>
+#include <yarp/proto/framegrabber/DepthVisualParams_Responder.h>
 
-namespace RGBDImpl
-{
-    class RGBDSensorParser;
-}
+namespace RGBDImpl {
 
 #define DEFAULT_THREAD_PERIOD   0.03 // s
 
@@ -49,14 +47,14 @@ constexpr yarp::conf::vocab32_t VOCAB_PROTOCOL_VERSION = yarp::os::createVocab('
 
 
 
-class RGBDImpl::RGBDSensorParser :
+class RGBDSensorParser :
         public yarp::dev::DeviceResponder
 {
 private:
-    yarp::dev::IRGBDSensor  *iRGBDSensor;
-    yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
-    yarp::dev::Implement_DepthVisualParams_Parser depthParser;
-    yarp::dev::FrameGrabberControls_Parser fgCtrlParsers;
+    yarp::dev::IRGBDSensor *iRGBDSensor;
+    yarp::proto::framegrabber::RgbVisualParams_Responder rgbParser;
+    yarp::proto::framegrabber::DepthVisualParams_Responder depthParser;
+    yarp::proto::framegrabber::FrameGrabberControls_Responder fgCtrlParsers;
 
 public:
     RGBDSensorParser();
@@ -67,6 +65,7 @@ public:
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
+} // RGBDImpl
 
 /**
  *  @ingroup dev_impl_wrapper

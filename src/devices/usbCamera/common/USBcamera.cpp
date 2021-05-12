@@ -31,7 +31,6 @@
 #include <yarp/os/Stamp.h>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;

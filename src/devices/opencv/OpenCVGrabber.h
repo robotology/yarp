@@ -53,7 +53,7 @@ public:
      * reasonable default values, the real initialization is done in
      * open().
      */
-    OpenCVGrabber() : IFrameGrabberImage(), DeviceDriver(),
+    OpenCVGrabber() :
         m_w(0),
         m_h(0),
         m_loop(false),

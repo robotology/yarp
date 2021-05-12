@@ -18,6 +18,9 @@ if(NOT SKIP_grabber)
   target_sources(yarp_grabber PRIVATE ServerFrameGrabber.cpp
                                       ServerFrameGrabber.h)
 
+  target_sources(yarp_grabber PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
+  target_include_directories(yarp_grabber PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_grabber PRIVATE YARP::YARP_os
                                              YARP::YARP_sig
                                              YARP::YARP_dev)

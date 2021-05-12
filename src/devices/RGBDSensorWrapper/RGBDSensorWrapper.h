@@ -30,8 +30,10 @@
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
-#include <yarp/dev/IVisualParamsImpl.h>
-#include <yarp/dev/FrameGrabberControlImpl.h>
+
+#include <yarp/proto/framegrabber/FrameGrabberControls_Responder.h>
+#include <yarp/proto/framegrabber/RgbVisualParams_Responder.h>
+#include <yarp/proto/framegrabber/DepthVisualParams_Responder.h>
 
 // ROS stuff
 #include <yarp/os/Node.h>
@@ -68,9 +70,9 @@ class RGBDImpl::RGBDSensorParser :
 {
 private:
     yarp::dev::IRGBDSensor  *iRGBDSensor;
-    yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
-    yarp::dev::Implement_DepthVisualParams_Parser depthParser;
-    yarp::dev::FrameGrabberControls_Parser fgCtrlParsers;
+    yarp::proto::framegrabber::RgbVisualParams_Responder  rgbParser;
+    yarp::proto::framegrabber::DepthVisualParams_Responder depthParser;
+    yarp::proto::framegrabber::FrameGrabberControls_Responder fgCtrlParsers;
 
 public:
     RGBDSensorParser();
