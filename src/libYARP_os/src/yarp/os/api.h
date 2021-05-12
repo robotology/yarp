@@ -15,24 +15,28 @@
 #    ifdef YARP_os_EXPORTS
 #        define YARP_os_API YARP_EXPORT
 #        define YARP_os_EXTERN YARP_EXPORT_EXTERN
+#        define YARP_os_DEPRECATED_API YARP_DEPRECATED_EXPORT
+#        define YARP_os_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG_EXPORT(X)
 #    else
 #        define YARP_os_API YARP_IMPORT
 #        define YARP_os_EXTERN YARP_IMPORT_EXTERN
+#        define YARP_os_DEPRECATED_API YARP_DEPRECATED_IMPORT
+#        define YARP_os_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG_IMPORT(X)
 #    endif
-#    define YARP_os_DEPRECATED_API YARP_DEPRECATED_API
-#    define YARP_os_DEPRECATED_API_MSG(X) YARP_DEPRECATED_API_MSG(X)
 #endif
 
 #ifndef YARP_init_API
 #    ifdef YARP_init_EXPORTS
 #        define YARP_init_API YARP_EXPORT
 #        define YARP_init_EXTERN YARP_EXPORT_EXTERN
+#        define YARP_init_DEPRECATED_API YARP_DEPRECATED_EXPORT
+#        define YARP_init_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG_EXPORT(X)
 #    else
 #        define YARP_init_API YARP_IMPORT
 #        define YARP_init_EXTERN YARP_IMPORT_EXTERN
+#        define YARP_init_DEPRECATED_API YARP_DEPRECATED_IMPORT
+#        define YARP_init_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG_IMPORT(X)
 #    endif
-#    define YARP_init_DEPRECATED_API YARP_DEPRECATED_API
-#    define YARP_init_DEPRECATED_API_MSG(X) YARP_DEPRECATED_API_MSG(X)
 #endif
 
 #ifndef YARP_os_impl_API
