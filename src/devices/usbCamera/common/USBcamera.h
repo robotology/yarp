@@ -28,6 +28,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IFrameGrabber.h>
 #include <yarp/dev/IFrameGrabberRgb.h>
+#include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/IVisualParams.h>
 #include <yarp/dev/IPreciselyTimed.h>
