@@ -14,12 +14,14 @@
 #  ifdef YARP_robottestingframework_EXPORTS
 #    define YARP_robottestingframework_API YARP_EXPORT
 #    define YARP_robottestingframework_EXTERN YARP_EXPORT_EXTERN
+#    define YARP_robottestingframework_DEPRECATED_API YARP_DEPRECATED_EXPORT
+#    define YARP_robottestingframework_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG_EXPORT(X)
 #  else
 #    define YARP_robottestingframework_API YARP_IMPORT
 #    define YARP_robottestingframework_EXTERN YARP_IMPORT_EXTERN
+#    define YARP_robottestingframework_DEPRECATED_API YARP_DEPRECATED_IMPORT
+#    define YARP_robottestingframework_DEPRECATED_API_MSG(X) YARP_DEPRECATED_MSG_IMPORT(X)
 #  endif
-#  define YARP_robottestingframework_DEPRECATED_API YARP_DEPRECATED_API
-#  define YARP_robottestingframework_DEPRECATED_API_MSG(X) YARP_DEPRECATED_API_MSG(X)
 #endif
 
 #endif // YARP_ROBOTTESTINGFRAMEWORK_API_H
