@@ -12,6 +12,8 @@
 #include <cstring>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+
+// #include <yarp/proto/framegrabber/CameraVocabs.h> // FIXME
 #include <yarp/dev/GenericVocabs.h>
 
 using namespace RGBDImpl;

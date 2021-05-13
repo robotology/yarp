@@ -27,7 +27,7 @@
 #include <yarp/dev/IMultipleWrapper.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
-#include <yarp/dev/FrameGrabberControlImpl.h>
+#include <yarp/dev/FrameGrabberInterfaces.h>
 
 // ROS stuff
 #include <yarp/os/Node.h>

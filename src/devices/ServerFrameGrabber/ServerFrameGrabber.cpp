@@ -11,6 +11,8 @@
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+// #include <yarp/proto/framegrabber/CameraVocabs.h> // FIXME
+#include <yarp/dev/GenericVocabs.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -98,7 +100,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config)
         }
         poly.view(fgCtrl);
         if(fgCtrl)
-            ifgCtrl_Parser.configure(fgCtrl);
+            ifgCtrl_Responder.configure(fgCtrl);
         poly.view(fgTimed);
         poly.view(rgbVis_p);
 
@@ -205,7 +207,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
     // first check if requests are coming from new iFrameGrabberControl2 interface and process them
     case VOCAB_FRAMEGRABBER_CONTROL:
     {
-        return ifgCtrl_Parser.respond(cmd, response);    // I don't like all those returns everywhere!!! :-(
+        return ifgCtrl_Responder.respond(cmd, response);    // I don't like all those returns everywhere!!! :-(
     } break;
     case VOCAB_RGB_VISUAL_PARAMS:
     {

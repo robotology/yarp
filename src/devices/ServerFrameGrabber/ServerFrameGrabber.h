@@ -13,7 +13,6 @@
 #include <cstdio>
 
 #include <yarp/dev/FrameGrabberInterfaces.h>
-#include <yarp/dev/FrameGrabberControlImpl.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/ServiceInterfaces.h>
@@ -23,12 +22,14 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/dev/IVisualParamsImpl.h>
 
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/os/RateThread.h>
 #include <yarp/dev/DataSource.h>
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+
+#include <yarp/proto/framegrabber/RgbVisualParams_Responder.h>
+#include <yarp/proto/framegrabber/FrameGrabberControls_Responder.h>
 
 YARP_WARNING_PUSH
 YARP_DISABLE_DEPRECATED_WARNING
@@ -88,7 +89,7 @@ class ServerFrameGrabber :
         public yarp::dev::DataSource2<yarp::sig::ImageOf<yarp::sig::PixelRgb>,yarp::sig::Sound>
 {
 private:
-    yarp::dev::Implement_RgbVisualParams_Parser  rgbParser;
+    yarp::proto::framegrabber::RgbVisualParams_Responder rgbParser;
     yarp::dev::IRgbVisualParams* rgbVis_p{nullptr};
     yarp::os::Port p;
     yarp::os::Port *p2{nullptr};
@@ -109,7 +110,7 @@ YARP_WARNING_POP
     bool active{false};
     bool singleThreaded{false};
 
-    yarp::dev::FrameGrabberControls_Parser ifgCtrl_Parser;
+    yarp::proto::framegrabber::FrameGrabberControls_Responder ifgCtrl_Responder;
 
 public:
     ServerFrameGrabber() = default;

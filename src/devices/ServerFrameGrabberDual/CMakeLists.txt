@@ -17,6 +17,9 @@ if(NOT SKIP_grabberDual)
   target_sources(yarp_grabberDual PRIVATE ServerFrameGrabberDual.cpp
                                           ServerFrameGrabberDual.h)
 
+  target_sources(yarp_grabberDual PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
+  target_include_directories(yarp_grabberDual PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_grabberDual PRIVATE YARP::YARP_os
                                                  YARP::YARP_sig
                                                  YARP::YARP_dev)

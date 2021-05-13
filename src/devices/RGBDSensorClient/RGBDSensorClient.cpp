@@ -24,9 +24,9 @@ YARP_LOG_COMPONENT(RGBDSENSORCLIENT, "yarp.devices.RGBDSensorClient")
 
 
 RGBDSensorClient::RGBDSensorClient() :
-        FrameGrabberControls_Sender(rpcPort),
-        RgbMsgSender(new Implement_RgbVisualParams_Sender(rpcPort)),
-        DepthMsgSender(new Implement_DepthVisualParams_Sender(rpcPort)),
+        yarp::proto::framegrabber::FrameGrabberControls_Forwarder(rpcPort),
+        RgbMsgSender(new yarp::proto::framegrabber::RgbVisualParams_Forwarder(rpcPort)),
+        DepthMsgSender(new yarp::proto::framegrabber::DepthVisualParams_Forwarder(rpcPort)),
         streamingReader(new RGBDSensor_StreamingMsgParser)
 {
 }
@@ -261,13 +261,13 @@ bool RGBDSensorClient::close()
 /*
  * IDepthVisualParams interface. Look at IVisualParams.h for documentation
  *
- * Implemented by Implement_DepthVisualParams_Sender
+ * Implemented by DepthVisualParams_Forwarder
  */
 
 /*
  * IDepthVisualParams interface. Look at IVisualParams.h for documentation
  *
- * Implemented by Implement_DepthVisualParams_Sender
+ * Implemented by DepthVisualParams_Forwarder
  */
 
 
@@ -337,7 +337,7 @@ bool RGBDSensorClient::getImages(FlexImage &rgbImage, ImageOf<PixelFloat> &depth
 }
 
 //
-// IFrame Grabber Control 2 interface is implemented by FrameGrabberControls2_Sender
+// IFrame Grabber Control 2 interface is implemented by FrameGrabberControls2_Forwarder
 //
 
 //

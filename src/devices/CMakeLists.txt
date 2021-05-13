@@ -10,6 +10,7 @@ include(YarpPrintFeature)
 
 yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
                                   DEFAULT ON)
+  add_subdirectory(framegrabber_protocol)
   add_subdirectory(audioPlayerWrapper)
   add_subdirectory(audioRecorderWrapper)
   add_subdirectory(audioFromFileDevice)

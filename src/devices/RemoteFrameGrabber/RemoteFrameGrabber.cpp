@@ -16,7 +16,7 @@ using namespace yarp::sig;
 YARP_LOG_COMPONENT(REMOTEFRAMEGRABBER, "yarp.devices.RemoteFrameGrabber")
 
 RemoteFrameGrabber::RemoteFrameGrabber() :
-        FrameGrabberControls_Sender(port),
-        Implement_RgbVisualParams_Sender(port)
+        FrameGrabberControls_Forwarder(port),
+        RgbVisualParams_Forwarder(port)
 {
 }

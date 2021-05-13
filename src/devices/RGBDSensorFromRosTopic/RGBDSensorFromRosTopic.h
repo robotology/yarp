@@ -15,7 +15,6 @@
 #include <mutex>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberControl2.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/sig/all.h>
 #include <yarp/sig/Matrix.h>
@@ -234,10 +233,10 @@ public:
     bool   getExtrinsicParam(yarp::sig::Matrix &extrinsic) override;
     bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = nullptr) override;
     bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = nullptr) override;
-    bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
+    bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp = nullptr, Stamp* depthStamp = nullptr) override;
 
     RGBDSensor_status     getSensorStatus() override;
-    std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
+    std::string getLastErrorMsg(Stamp* timeStamp = nullptr) override;
 
     /*
     //IFrameGrabberControls

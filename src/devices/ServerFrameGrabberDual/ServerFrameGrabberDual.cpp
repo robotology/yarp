@@ -17,6 +17,8 @@
 #include <yarp/sig/ImageUtils.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
+
+// #include <yarp/proto/framegrabber/CameraVocabs.h> // FIXME
 #include <yarp/dev/GenericVocabs.h>
 
 #include <cstring>
@@ -30,128 +32,6 @@ namespace {
 YARP_LOG_COMPONENT(SERVERGRABBER, "yarp.device.grabberDual")
 }
 
-
-bool DC1394Parser::configure(IFrameGrabberControlsDC1394 *interface)
-{
-    fgCtrl_DC1394 = interface;
-    return true;
-}
-
-bool DC1394Parser::respond(const Bottle& cmd, Bottle& response)
-{
-    int code = cmd.get(1).asVocab();
-    if (fgCtrl_DC1394)
-    {
-        switch(code)
-        {
-        case VOCAB_DRGETMSK: // VOCAB_DRGETMSK 12
-            response.addInt32(int(fgCtrl_DC1394->getVideoModeMaskDC1394()));
-            return true;
-        case VOCAB_DRGETVMD: // VOCAB_DRGETVMD 13
-            response.addInt32(int(fgCtrl_DC1394->getVideoModeDC1394()));
-            return true;
-        case VOCAB_DRSETVMD: // VOCAB_DRSETVMD 14
-            response.addInt32(int(fgCtrl_DC1394->setVideoModeDC1394(cmd.get(1).asInt32())));
-            return true;
-        case VOCAB_DRGETFPM: // VOCAB_DRGETFPM 15
-            response.addInt32(int(fgCtrl_DC1394->getFPSMaskDC1394()));
-            return true;
-        case VOCAB_DRGETFPS: // VOCAB_DRGETFPS 16
-            response.addInt32(int(fgCtrl_DC1394->getFPSDC1394()));
-            return true;
-        case VOCAB_DRSETFPS: // VOCAB_DRSETFPS 17
-            response.addInt32(int(fgCtrl_DC1394->setFPSDC1394(cmd.get(1).asInt32())));
-            return true;
-
-        case VOCAB_DRGETISO: // VOCAB_DRGETISO 18
-            response.addInt32(int(fgCtrl_DC1394->getISOSpeedDC1394()));
-            return true;
-        case VOCAB_DRSETISO: // VOCAB_DRSETISO 19
-            response.addInt32(int(fgCtrl_DC1394->setISOSpeedDC1394(cmd.get(1).asInt32())));
-            return true;
-
-        case VOCAB_DRGETCCM: // VOCAB_DRGETCCM 20
-            response.addInt32(int(fgCtrl_DC1394->getColorCodingMaskDC1394(cmd.get(1).asInt32())));
-            return true;
-        case VOCAB_DRGETCOD: // VOCAB_DRGETCOD 21
-            response.addInt32(int(fgCtrl_DC1394->getColorCodingDC1394()));
-            return true;
-        case VOCAB_DRSETCOD: // VOCAB_DRSETCOD 22
-            response.addInt32(int(fgCtrl_DC1394->setColorCodingDC1394(cmd.get(1).asInt32())));
-            return true;
-
-        case VOCAB_DRGETF7M: // VOCAB_DRGETF7M 25
-            {
-                unsigned int xstep,ystep,xdim,ydim,xoffstep,yoffstep;
-                fgCtrl_DC1394->getFormat7MaxWindowDC1394(xdim,ydim,xstep,ystep,xoffstep,yoffstep);
-                response.addInt32(xdim);
-                response.addInt32(ydim);
-                response.addInt32(xstep);
-                response.addInt32(ystep);
-                response.addInt32(xoffstep);
-                response.addInt32(yoffstep);
-            }
-            return true;
-        case VOCAB_DRGETWF7: // VOCAB_DRGETWF7 26
-            {
-                unsigned int xdim,ydim;
-                int x0,y0;
-                fgCtrl_DC1394->getFormat7WindowDC1394(xdim,ydim,x0,y0);
-                response.addInt32(xdim);
-                response.addInt32(ydim);
-                response.addInt32(x0);
-                response.addInt32(y0);
-            }
-            return true;
-        case VOCAB_DRSETWF7: // VOCAB_DRSETWF7 27
-            response.addInt32(int(fgCtrl_DC1394->setFormat7WindowDC1394(cmd.get(1).asInt32(),cmd.get(2).asInt32(),cmd.get(3).asInt32(),cmd.get(4).asInt32())));
-            return true;
-        case VOCAB_DRSETOPM: // VOCAB_DRSETOPM 28
-            response.addInt32(int(fgCtrl_DC1394->setOperationModeDC1394(cmd.get(1).asInt32()!=0)));
-            return true;
-        case VOCAB_DRGETOPM: // VOCAB_DRGETOPM 29
-            response.addInt32(fgCtrl_DC1394->getOperationModeDC1394());
-            return true;
-
-        case VOCAB_DRSETTXM: // VOCAB_DRSETTXM 30
-            response.addInt32(int(fgCtrl_DC1394->setTransmissionDC1394(cmd.get(1).asInt32()!=0)));
-            return true;
-        case VOCAB_DRGETTXM: // VOCAB_DRGETTXM 31
-            response.addInt32(fgCtrl_DC1394->getTransmissionDC1394());
-            return true;
-        case VOCAB_DRSETBCS: // VOCAB_DRSETBCS 34
-            response.addInt32(int(fgCtrl_DC1394->setBroadcastDC1394(cmd.get(1).asInt32()!=0)));
-            return true;
-        case VOCAB_DRSETDEF: // VOCAB_DRSETDEF 35
-            response.addInt32(int(fgCtrl_DC1394->setDefaultsDC1394()));
-            return true;
-        case VOCAB_DRSETRST: // VOCAB_DRSETRST 36
-            response.addInt32(int(fgCtrl_DC1394->setResetDC1394()));
-            return true;
-        case VOCAB_DRSETPWR: // VOCAB_DRSETPWR 37
-            response.addInt32(int(fgCtrl_DC1394->setPowerDC1394(cmd.get(1).asInt32()!=0)));
-            return true;
-        case VOCAB_DRSETCAP: // VOCAB_DRSETCAP 38
-            response.addInt32(int(fgCtrl_DC1394->setCaptureDC1394(cmd.get(1).asInt32()!=0)));
-            return true;
-        case VOCAB_DRSETBPP: // VOCAB_DRSETCAP 39
-            response.addInt32(int(fgCtrl_DC1394->setBytesPerPacketDC1394(cmd.get(1).asInt32())));
-            return true;
-        case VOCAB_DRGETBPP: // VOCAB_DRGETTXM 40
-            response.addInt32(fgCtrl_DC1394->getBytesPerPacketDC1394());
-            return true;
-        }
-    }
-    else
-    {
-        yCWarning(SERVERGRABBER) << "DC1394Parser:  firewire interface not implemented in subdevice, some features could not be available";
-//        response.clear();
-//        response.addVocab(VOCAB_FAILED);
-        return DeviceResponder::respond(cmd,response);
-    }
-
-    return true;
-}
 
 // **********ServerGrabberResponder**********
 
@@ -624,8 +504,8 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
         {
             bool ret;
             if(both){
-                ret=ifgCtrl_Parser.respond(cmd, response);
-                ret&=ifgCtrl2_Parser.respond(cmd, response2);
+                ret=ifgCtrl_Responder.respond(cmd, response);
+                ret&=ifgCtrl2_Responder.respond(cmd, response2);
                 if(!ret || (response!=response2))
                 {
                     response.clear();
@@ -638,17 +518,17 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             {
                 if(left)
                 {
-                    ret=ifgCtrl_Parser.respond(cmd, response);
+                    ret=ifgCtrl_Responder.respond(cmd, response);
                 }
                 else
                 {
-                    ret=ifgCtrl2_Parser.respond(cmd, response);
+                    ret=ifgCtrl2_Responder.respond(cmd, response);
                 }
             }
             return ret;
         }
         else
-            return ifgCtrl_Parser.respond(cmd, response);
+            return ifgCtrl_Responder.respond(cmd, response);
     } break;
 
     case VOCAB_RGB_VISUAL_PARAMS:
@@ -700,8 +580,8 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             bool ret;
             if(both)
             {
-                ret=ifgCtrl_DC1394_Parser.respond(cmd, response);
-                ret&=ifgCtrl2_DC1394_Parser.respond(cmd, response2);
+                ret=ifgCtrl_DC1394_Responder.respond(cmd, response);
+                ret&=ifgCtrl2_DC1394_Responder.respond(cmd, response2);
                 if(!ret || (response!=response2))
                 {
                     response.clear();
@@ -715,17 +595,17 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             {
                 if(left)
                 {
-                    ret=ifgCtrl_DC1394_Parser.respond(cmd, response);
+                    ret=ifgCtrl_DC1394_Responder.respond(cmd, response);
                 }
                 else
                 {
-                    ret=ifgCtrl2_DC1394_Parser.respond(cmd, response);
+                    ret=ifgCtrl2_DC1394_Responder.respond(cmd, response);
                 }
             }
             return ret;
         }
         else
-            return ifgCtrl_DC1394_Parser.respond(cmd, response);
+            return ifgCtrl_DC1394_Responder.respond(cmd, response);
     } break;
     }
     yCError(SERVERGRABBER) << "Command not recognized" << cmd.toString();
@@ -811,7 +691,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         }
         if(fgCtrl != nullptr && fgCtrl2 != nullptr)
         {
-            if(!(ifgCtrl_Parser.configure(fgCtrl)) || !(ifgCtrl2_Parser.configure(fgCtrl2)))
+            if(!(ifgCtrl_Responder.configure(fgCtrl)) || !(ifgCtrl2_Responder.configure(fgCtrl2)))
             {
                 yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
@@ -819,7 +699,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         }
         if(fgCtrl_DC1394 != nullptr && fgCtrl2_DC1394 != nullptr)
         {
-            if(!(ifgCtrl_DC1394_Parser.configure(fgCtrl_DC1394)) || !(ifgCtrl2_DC1394_Parser.configure(fgCtrl2_DC1394)))
+            if(!(ifgCtrl_DC1394_Responder.configure(fgCtrl_DC1394)) || !(ifgCtrl2_DC1394_Responder.configure(fgCtrl2_DC1394)))
             {
                 yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
@@ -880,7 +760,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
         }
         if(fgCtrl != nullptr)
         {
-            if(!(ifgCtrl_Parser.configure(fgCtrl)))
+            if(!(ifgCtrl_Responder.configure(fgCtrl)))
             {
                 yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
@@ -889,7 +769,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
 
         if(fgCtrl_DC1394 != nullptr)
         {
-            if(!(ifgCtrl_DC1394_Parser.configure(fgCtrl_DC1394)))
+            if(!(ifgCtrl_DC1394_Responder.configure(fgCtrl_DC1394)))
             {
                 yCError(SERVERGRABBER) << "Error configuring interfaces for parsers";
                 return false;
