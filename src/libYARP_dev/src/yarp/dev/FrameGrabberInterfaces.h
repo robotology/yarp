@@ -19,6 +19,7 @@
 #include <yarp/dev/IFrameGrabber.h>
 #include <yarp/dev/IFrameGrabberRgb.h>
 #include <yarp/dev/IFrameGrabberControls.h>
+#include <yarp/dev/IFrameWriterImage.h>
 
 /*! \file FrameGrabberInterfaces.h define common interfaces for frame
   grabber devices */
@@ -135,30 +136,6 @@ public:
      */
     virtual int width() const =0;
 };
-
-/**
- * @ingroup dev_iface_media
- *
- * Read a YARP-format image to a device.
- */
-class YARP_dev_API IFrameWriterImage
-{
-public:
-    /**
-     * Destructor.
-     */
-    virtual ~IFrameWriterImage(){}
-
-    /**
-     * Write an image to the device.
-     *
-     * @param image the image to write
-     * @return true/false upon success/failure
-     */
-    virtual bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
-};
-
-
 
 class YARP_dev_API IFrameGrabberControlsDC1394
 {
