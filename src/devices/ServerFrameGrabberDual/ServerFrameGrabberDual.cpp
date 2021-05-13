@@ -18,8 +18,7 @@
 #include <yarp/os/PortablePair.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 
-// #include <yarp/proto/framegrabber/CameraVocabs.h> // FIXME
-#include <yarp/dev/GenericVocabs.h>
+#include <yarp/proto/framegrabber/CameraVocabs.h>
 
 #include <cstring>
 #include <algorithm> // std::for_each

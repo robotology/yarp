@@ -30,7 +30,6 @@ function test_vocab_global_scope()
   assert("number" == type(yarp.VOCAB_CM_POSITION))
   assert(7565168 == yarp.VOCAB_CM_POSITION) -- VOCAB3
   assert(1685286768 == yarp.VOCAB_CM_POSITION_DIRECT) -- VOCAB4
-  assert(6514534 == yarp.VOCAB_FRAMEGRABBER_CONTROL) -- VOCAB4
 end
 
 test_vocab()

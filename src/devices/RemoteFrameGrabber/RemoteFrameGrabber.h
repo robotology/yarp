@@ -21,8 +21,7 @@
 #include <yarp/proto/framegrabber/FrameGrabberControlsDC1394_Forwarder.h>
 #include <yarp/proto/framegrabber/FrameGrabberControls_Forwarder.h>
 #include <yarp/proto/framegrabber/RgbVisualParams_Forwarder.h>
-// #include <yarp/proto/framegrabber/CameraVocabs.h> // FIXME
-#include <yarp/dev/GenericVocabs.h>
+#include <yarp/proto/framegrabber/CameraVocabs.h>
 
 #include <mutex>
 

@@ -7,8 +7,7 @@
  */
 
 #include "FrameGrabberControls_Forwarder.h"
-// #include "CameraVocabs.h" // FIXME
-#include <yarp/dev/GenericVocabs.h>
+#include "CameraVocabs.h"
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/LogStream.h>

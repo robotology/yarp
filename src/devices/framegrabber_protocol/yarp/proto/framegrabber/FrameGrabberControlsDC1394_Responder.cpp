@@ -8,7 +8,7 @@
  */
 
 #include "FrameGrabberControlsDC1394_Responder.h"
-// #include "CameraVocabs.h" // FIXME
+#include "CameraVocabs.h"
 
 #include <yarp/os/LogStream.h>
 

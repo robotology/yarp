@@ -31,7 +31,6 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/DriverLinkCreator.h
                   yarp/dev/Drivers.h
                   yarp/dev/FrameGrabberControl2.h
-                  yarp/dev/FrameGrabberControlImpl.h
                   yarp/dev/FrameGrabberInterfaces.h
                   yarp/dev/GPUInterface.h
                   yarp/dev/GazeControl.h
@@ -80,7 +79,6 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/IVelocityControl2.h
                   yarp/dev/IVirtualAnalogSensor.h
                   yarp/dev/IVisualParams.h
-                  yarp/dev/IVisualParamsImpl.h
                   yarp/dev/IVisualServoing.h
                   yarp/dev/IWrapper.h
                   yarp/dev/ImplementAmplifierControl.h
@@ -154,7 +152,7 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/DeviceDriver.cpp
                   yarp/dev/DriverLinkCreator.cpp
                   yarp/dev/Drivers.cpp
-                  yarp/dev/FrameGrabberControlImpl.cpp
+                  yarp/dev/FrameGrabberInterfaces.cpp
                   yarp/dev/GazeControl.cpp
                   yarp/dev/IAnalogSensor.cpp
                   yarp/dev/IAudioGrabberSound.cpp
@@ -172,7 +170,6 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/IRemoteCalibrator.cpp
                   yarp/dev/IRobotDescription.cpp
                   yarp/dev/ISerialDevice.cpp
-                  yarp/dev/IVisualParamsImpl.cpp
                   yarp/dev/IVisualServoing.cpp
                   yarp/dev/IWrapper.cpp
                   yarp/dev/ImplementAmplifierControl.cpp
