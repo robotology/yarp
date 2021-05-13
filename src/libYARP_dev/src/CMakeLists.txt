@@ -53,6 +53,7 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/ICurrentControl.h
                   yarp/dev/IEncoders.h
                   yarp/dev/IEncodersTimed.h
+                  yarp/dev/IFrameGrabber.h
                   yarp/dev/IFrameWriterAudioVisual.h
                   yarp/dev/IGenericSensor.h
                   yarp/dev/IHapticDevice.h
@@ -160,6 +161,7 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/IAudioVisualGrabber.cpp
                   yarp/dev/IAudioVisualStream.cpp
                   yarp/dev/IBattery.cpp
+                  yarp/dev/IFrameGrabber.cpp
                   yarp/dev/IFrameWriterAudioVisual.cpp
                   yarp/dev/IGenericSensor.cpp
                   yarp/dev/IJoypadController.cpp
