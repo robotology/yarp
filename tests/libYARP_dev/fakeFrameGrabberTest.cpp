@@ -6,7 +6,7 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>

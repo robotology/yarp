@@ -16,7 +16,7 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 
 #include <yarp/proto/framegrabber/FrameGrabberControlsDC1394_Forwarder.h>
 #include <yarp/proto/framegrabber/FrameGrabberControls_Forwarder.h>

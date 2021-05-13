@@ -401,6 +401,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/Drivers.h>
 %include <yarp/dev/IFrameGrabber.h>
 %include <yarp/dev/IFrameGrabberRgb.h>
+%include <yarp/dev/IFrameGrabberImage.h>
 %include <yarp/dev/IFrameGrabberControls.h>
 %include <yarp/dev/IFrameGrabberControlsDC1394.h>
 %include <yarp/dev/IFrameWriterImage.h>

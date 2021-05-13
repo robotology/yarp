@@ -12,7 +12,7 @@
 #include <yarp/sig/ImageDraw.h>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 
 class FakeFrameGrabber :
         public yarp::dev::IFrameGrabberImage,

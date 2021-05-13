@@ -18,8 +18,8 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/sig/Image.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/IFrameGrabberControls.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 using namespace yarp::os;

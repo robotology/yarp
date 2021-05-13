@@ -28,7 +28,7 @@
 
 
 #include <yarp/os/Property.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IPreciselyTimed.h>

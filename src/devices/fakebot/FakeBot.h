@@ -10,7 +10,7 @@
 #include <yarp/dev/DeviceDriver.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Image.h>
 #include <yarp/os/Time.h>

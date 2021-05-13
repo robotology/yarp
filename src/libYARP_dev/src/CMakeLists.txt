@@ -55,6 +55,7 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/IEncodersTimed.h
                   yarp/dev/IFrameGrabber.h
                   yarp/dev/IFrameGrabberRgb.h
+                  yarp/dev/IFrameGrabberImage.h
                   yarp/dev/IFrameGrabberControls.h
                   yarp/dev/IFrameGrabberControlsDC1394.h
                   yarp/dev/IFrameWriterAudioVisual.h
@@ -167,6 +168,7 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/IBattery.cpp
                   yarp/dev/IFrameGrabber.cpp
                   yarp/dev/IFrameGrabberRgb.cpp
+                  yarp/dev/IFrameGrabberImage.cpp
                   yarp/dev/IFrameGrabberControls.cpp
                   yarp/dev/IFrameGrabberControlsDC1394.cpp
                   yarp/dev/IFrameWriterAudioVisual.cpp
