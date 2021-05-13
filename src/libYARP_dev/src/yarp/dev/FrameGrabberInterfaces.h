@@ -17,6 +17,7 @@
 #include <yarp/sig/Vector.h>
 
 #include <yarp/dev/IFrameGrabber.h>
+#include <yarp/dev/IFrameGrabberRgb.h>
 
 /*! \file FrameGrabberInterfaces.h define common interfaces for frame
   grabber devices */
@@ -76,37 +77,6 @@ typedef enum {
 
 namespace yarp {
 namespace dev {
-
-/**
- * @ingroup dev_iface_media
- *
- * RGB Interface to a FrameGrabber device.
- */
-class YARP_dev_API IFrameGrabberRgb
-{
-public:
-    virtual ~IFrameGrabberRgb(){}
-    /**
-     * Get a rgb buffer from the frame grabber, if required
-     * demosaicking/color reconstruction is applied
-     *
-     * @param buffer: pointer to the buffer to be filled (must be previously allocated)
-     * @return true/false upon success/failure
-     */
-    virtual bool getRgbBuffer(unsigned char *buffer)=0;
-
-    /**
-     * Return the height of each frame.
-     * @return image height
-     */
-    virtual int height() const =0;
-
-    /**
-     * Return the width of each frame.
-     * @return image width
-     */
-    virtual int width() const =0;
-};
 
 /**
  * @ingroup dev_iface_media
