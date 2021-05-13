@@ -10,7 +10,7 @@
 #ifndef YARP_FRAMEGRABBER_PROTOCOL_FRAMEGRABBERCONTROLSDC1394_FORWARDER_H
 #define YARP_FRAMEGRABBER_PROTOCOL_FRAMEGRABBERCONTROLSDC1394_FORWARDER_H
 
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberControlsDC1394.h>
 #include <yarp/os/Port.h>
 
 namespace yarp {

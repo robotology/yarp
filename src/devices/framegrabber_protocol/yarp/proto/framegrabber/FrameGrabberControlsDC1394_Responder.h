@@ -11,7 +11,7 @@
 #define YARP_FRAMEGRABBER_PROTOCOL_FRAMEGRABBERCONTROLSDC1394_RESPONDER_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberControlsDC1394.h>
 
 namespace yarp {
 namespace proto {
