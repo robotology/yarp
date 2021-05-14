@@ -9,14 +9,20 @@
 #ifndef YARP_DEV_FRAMEGRABBERCONTROL2_H
 #define YARP_DEV_FRAMEGRABBERCONTROL2_H
 
+#include <yarp/conf/system.h>
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/dev/FrameGrabberControl2.h> file is deprecated")
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+
 #include <yarp/dev/IFrameGrabberControls.h>
 
 /*! \file FrameGrabberControl2.h define common interfaces to discover
  * remote camera capabilities */
 
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 
-namespace yarp{
+namespace yarp {
 namespace dev {
 /**
  * This interface exports a list of general methods to discover the remote camera
@@ -28,6 +34,7 @@ YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IFrameGrabberControl instead") IFram
 
 } // namespace dev
 } // namespace yarp
-#endif
+
+#endif // YARP_NO_DEPRECATED
 
 #endif  // YARP_DEV_FRAMEGRABBERCONTROL2_H

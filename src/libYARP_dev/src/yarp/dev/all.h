@@ -31,7 +31,6 @@
 #include <yarp/dev/IFrameGrabberControlsDC1394.h>
 #include <yarp/dev/IFrameWriterImage.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
-#include <yarp/dev/FrameGrabberControl2.h>
 #include <yarp/dev/GazeControl.h>
 #include <yarp/dev/IGenericSensor.h>
 #include <yarp/dev/GPUInterface.h>
@@ -46,6 +45,12 @@
 #include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/IWrapper.h>
 #include <yarp/dev/IMultipleWrapper.h>
+
+#ifndef YARP_NO_DEPRECATED // since YARP 3.0
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#include <yarp/dev/FrameGrabberControl2.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif // YARP_NO_DEPRECATED
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.3
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE

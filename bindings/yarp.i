@@ -435,7 +435,9 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IAnalogSensor.h>
 %include <yarp/dev/IRemoteVariables.h>
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 %include <yarp/dev/FrameGrabberControl2.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #endif
 %include <yarp/dev/IPidControl.h>
 %include <yarp/dev/IPositionDirect.h>

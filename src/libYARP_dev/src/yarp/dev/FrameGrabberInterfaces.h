@@ -19,7 +19,9 @@
 #include <yarp/dev/IFrameWriterImage.h>
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/dev/FrameGrabberControl2.h>
-#endif
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_FRAMEGRABBERINTERFACES_H
