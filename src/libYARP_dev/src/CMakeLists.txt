@@ -159,7 +159,6 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/DeviceDriver.cpp
                   yarp/dev/DriverLinkCreator.cpp
                   yarp/dev/Drivers.cpp
-                  yarp/dev/FrameGrabberInterfaces.cpp
                   yarp/dev/GazeControl.cpp
                   yarp/dev/IAnalogSensor.cpp
                   yarp/dev/IAudioGrabberSound.cpp
