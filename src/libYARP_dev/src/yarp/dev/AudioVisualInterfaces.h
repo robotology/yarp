@@ -10,7 +10,10 @@
 #ifndef YARP_DEV_AUDIOVISUALINTERFACES_H
 #define YARP_DEV_AUDIOVISUALINTERFACES_H
 
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/dev/FrameGrabberInterfaces.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+
 #include <yarp/dev/AudioGrabberInterfaces.h>
 
 #include <yarp/dev/IAudioVisualGrabber.h>

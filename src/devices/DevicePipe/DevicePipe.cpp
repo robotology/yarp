@@ -12,6 +12,7 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/Time.h>
 
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/IFrameWriterImage.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 

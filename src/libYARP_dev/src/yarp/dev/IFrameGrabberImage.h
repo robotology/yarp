@@ -56,7 +56,7 @@ public:
      *       it. The crop is meant to be created by the image producer upon user
      *       request via RPC call.
      *
-     * @param cropType enum specifying how the crop shall be generated, defined at FrameGrabberInterfaces.h
+     * @param cropType enum specifying how the crop shall be generated
      * @param vertices the input coordinate (u,v) required by the cropType
      * @param image the image to be filled
      * @return true/false upon success/failure

@@ -30,7 +30,6 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/DeviceDriver.h
                   yarp/dev/DriverLinkCreator.h
                   yarp/dev/Drivers.h
-                  yarp/dev/FrameGrabberInterfaces.h
                   yarp/dev/GPUInterface.h
                   yarp/dev/GazeControl.h
                   yarp/dev/GenericVocabs.h
@@ -142,7 +141,9 @@ if(NOT YARP_NO_DEPRECATED)
                             yarp/dev/GenericSensorInterfaces.h # DEPRECATED Since YARP 3.3.0
                             yarp/dev/PreciselyTimed.h          # DEPRECATED Since YARP 3.3.0
                             yarp/dev/SerialInterfaces.h        # DEPRECATED Since YARP 3.3.0
-                            yarp/dev/Wrapper.h)                # DEPRECATED Since YARP 3.3.0
+                            yarp/dev/Wrapper.h                 # DEPRECATED Since YARP 3.3.0
+                            yarp/dev/FrameGrabberInterfaces.h  # DEPRECATED Since YARP 3.5.0
+  )
 endif()
 
 set(YARP_dev_IMPL_HDRS yarp/dev/impl/FixedSizeBuffersManager.h
