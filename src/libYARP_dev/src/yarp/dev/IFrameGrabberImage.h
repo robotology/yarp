@@ -61,10 +61,9 @@ public:
      * @param image the image to be filled
      * @return true/false upon success/failure
      */
-    virtual bool getImageCrop(cropType_id_t cropType, yarp::sig::VectorOf<std::pair<int, int>> vertices, yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
-    {
-        return false;
-    };
+    virtual bool getImageCrop(cropType_id_t cropType,
+                              yarp::sig::VectorOf<std::pair<int, int>> vertices,
+                              yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
     /**
      * Return the height of each frame.
