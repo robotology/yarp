@@ -15,8 +15,7 @@
 #include <yarp/rosmsg/impl/yarpRosHelper.h>
 #include "rosPixelCode.h"
 #include <RGBDRosConversionUtils.h>
-// #include <yarp/proto/framegrabber/CameraVocabs.h> // FIXME
-#include <yarp/dev/GenericVocabs.h>
+#include <yarp/proto/framegrabber/CameraVocabs.h>
 
 using namespace RGBDImpl;
 using namespace yarp::sig;

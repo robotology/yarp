@@ -7,8 +7,7 @@
  */
 
 #include "RgbVisualParams_Forwarder.h"
-// #include "CameraVocabs.h" // FIXME
-#include <yarp/dev/GenericVocabs.h>
+#include "CameraVocabs.h"
 
 using yarp::proto::framegrabber::RgbVisualParams_Forwarder;
 

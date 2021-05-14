@@ -11,8 +11,7 @@
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-// #include <yarp/proto/framegrabber/CameraVocabs.h> // FIXME
-#include <yarp/dev/GenericVocabs.h>
+#include <yarp/proto/framegrabber/CameraVocabs.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;

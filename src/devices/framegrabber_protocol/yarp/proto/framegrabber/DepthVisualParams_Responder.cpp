@@ -7,8 +7,7 @@
  */
 
 #include "DepthVisualParams_Responder.h"
-// #include "CameraVocabs.h" // FIXME
-#include <yarp/dev/GenericVocabs.h>
+#include "CameraVocabs.h"
 
 #include <yarp/os/LogStream.h>
 
