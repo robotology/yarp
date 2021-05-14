@@ -56,7 +56,7 @@
             }
             return;
         } else {
-            mexErrMsgIdAndTxt("yarp::vectorClass::wrongDimension",
+            mexErrMsgIdAndTxt("yarp:vectorClass:wrongDimension",
               "Wrong vector size. Matlab size: %d. vectorClass size: %d", matlabVecDim, selfDim);
         }
     }
