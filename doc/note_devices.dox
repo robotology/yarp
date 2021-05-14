@@ -42,8 +42,7 @@ Let's look at some examples to make this clear.
 
 We call devices that produce a stream of images "framegrabbers" for
 historical reasons.  There are a number of interfaces associated with
-framegrabbers.  Here's one, IFrameGrabberImage: (taken from
-FrameGrabberInterfaces.h in the YARP source code)
+framegrabbers.  Here's one, IFrameGrabberImage:
 
 \code
 class yarp::dev::IFrameGrabberImage {
@@ -257,7 +256,7 @@ that works for all framegrabber devices.
 You can instantiate any device listed here from your code as follows:
 \code
   #include <yarp/dev/PolyDriver.h>
-  #include <yarp/dev/FrameGrabberInterfaces.h>
+  #include <yarp/dev/IFrameGrabberImage.h>
   #include <yarp/sig/Image.h>
   using yarp::dev::PolyDriver;
   using yarp::dev::IFrameGrabberImage;

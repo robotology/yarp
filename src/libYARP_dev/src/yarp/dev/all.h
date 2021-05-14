@@ -24,6 +24,12 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/DriverLinkCreator.h>
 #include <yarp/dev/Drivers.h>
+#include <yarp/dev/IFrameGrabber.h>
+#include <yarp/dev/IFrameGrabberRgb.h>
+#include <yarp/dev/IFrameGrabberImage.h>
+#include <yarp/dev/IFrameGrabberControls.h>
+#include <yarp/dev/IFrameGrabberControlsDC1394.h>
+#include <yarp/dev/IFrameWriterImage.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/FrameGrabberControl2.h>
 #include <yarp/dev/GazeControl.h>

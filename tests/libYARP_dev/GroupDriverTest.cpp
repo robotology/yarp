@@ -10,7 +10,6 @@
 #include <yarp/dev/PolyDriver.h>
 
 #include <yarp/os/Network.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
 #include <string>
@@ -19,7 +18,6 @@
 #include <harness.h>
 
 using namespace yarp::os;
-using namespace yarp::sig;
 using namespace yarp::dev;
 
 TEST_CASE("dev::GroupDriver", "[yarp::dev]")

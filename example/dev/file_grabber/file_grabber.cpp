@@ -10,7 +10,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/dev/Drivers.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Image.h>
 

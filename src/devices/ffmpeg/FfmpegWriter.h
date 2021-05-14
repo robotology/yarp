@@ -21,7 +21,7 @@ extern "C" {
  * Uses ffmpeg to write images to movie files.
  */
 
-
+#include <yarp/dev/IFrameWriterImage.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
 

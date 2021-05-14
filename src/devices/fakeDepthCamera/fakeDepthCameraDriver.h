@@ -15,7 +15,7 @@
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/dev/IRGBDSensor.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/PolyDriver.h>
 
  /**

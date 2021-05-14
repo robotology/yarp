@@ -10,6 +10,8 @@
 #include "FrameGrabberControlsDC1394_Forwarder.h"
 #include "CameraVocabs.h"
 
+#include <yarp/os/Bottle.h>
+
 using yarp::proto::framegrabber::FrameGrabberControlsDC1394_Forwarder;
 
 void FrameGrabberControlsDC1394_Forwarder::init(yarp::os::Port* port)

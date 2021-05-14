@@ -10,7 +10,7 @@
 #include <yarp/sig/ImageFile.h>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 
 class FileFrameGrabber :
         public yarp::dev::IFrameGrabberImage,

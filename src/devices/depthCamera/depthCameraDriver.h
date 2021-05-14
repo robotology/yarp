@@ -23,7 +23,7 @@
 #include <map>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/sig/all.h>
 #include <yarp/sig/Matrix.h>

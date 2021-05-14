@@ -10,7 +10,7 @@
 #define YARP_FRAMEGRABBER_PROTOCOL_FRAMEGRABBERCONTROLS_RESPONDER_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberControls.h>
 
 namespace yarp {
 namespace proto {

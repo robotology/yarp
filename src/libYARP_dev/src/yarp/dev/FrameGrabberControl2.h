@@ -9,7 +9,7 @@
 #ifndef YARP_DEV_FRAMEGRABBERCONTROL2_H
 #define YARP_DEV_FRAMEGRABBERCONTROL2_H
 
-#include <yarp/dev/FrameGrabberInterfaces.h>        // to include VOCAB definitions
+#include <yarp/dev/IFrameGrabberControls.h>
 
 /*! \file FrameGrabberControl2.h define common interfaces to discover
  * remote camera capabilities */

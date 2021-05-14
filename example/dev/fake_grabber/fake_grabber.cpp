@@ -14,7 +14,7 @@
 #include <yarp/sig/Image.h>
 
 #include <yarp/dev/Drivers.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include "FakeFrameGrabber.h"
