@@ -10,15 +10,28 @@ set_source_files_properties(${SWIG_BINDINGS_SOURCE_FILE} PROPERTIES CPLUSPLUS ON
 
 set(CMAKE_SWIG_FLAGS "-module;yarp;-threads;${SWIG_COMMON_FLAGS}")
 
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+# https://github.com/pybind/pybind11/pull/2689
+if(${CMAKE_VERSION} VERSION_LESS "3.18.0")
+  set(YARP_Python_Development_Component "Development")
+else()
+  set(YARP_Python_Development_Component "Development.Module")
+endif()
+
+find_package(Python3 COMPONENTS Interpreter ${YARP_Python_Development_Component} REQUIRED)
 
 set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/lib/python3")
 set(SWIG_OUTFILE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
+if(${CMAKE_VERSION} VERSION_LESS "3.15.0")
+  set(YARP_Python_Module_Target "Python3::Python")
+else()
+  set(YARP_Python_Module_Target "Python3::Module")
+endif()
+
 swig_add_library(yarp_python
                  LANGUAGE python
                  SOURCES ${SWIG_BINDINGS_SOURCE_FILE})
-swig_link_libraries(yarp_python Python3::Python ${SWIG_YARP_LIBRARIES})
+swig_link_libraries(yarp_python ${YARP_Python_Module_Target} ${SWIG_YARP_LIBRARIES})
 
 set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME} PROPERTIES OUTPUT_NAME "_yarp"
                                                                       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/python3")
