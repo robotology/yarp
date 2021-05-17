@@ -21,6 +21,7 @@ namespace conf {
 namespace dirs {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+#ifndef SWIG
 
 // Constants defining environment variables names
 static constexpr const char YARP_DATA_HOME[]{"YARP_DATA_HOME"};
@@ -71,6 +72,7 @@ static constexpr const char YARP_CONFIG_SUFFIX[]{ yarp::conf::filesystem::prefer
 static constexpr const char RUNTIME_SUFFIX[]{ yarp::conf::filesystem::preferred_separator, 'r', 'u', 'n', 't', 'i', 'm', 'e', '\0' };  // "/runtime" or "\\runtime"
 static constexpr const char RUNTIME_YARP_SUFFIX[]{ yarp::conf::filesystem::preferred_separator, 'r', 'u', 'n', 't', 'i', 'm', 'e', yarp::conf::filesystem::preferred_separator, 'y', 'a', 'r', 'p', '\0' };  // "/runtime/yarp" or "\\runtime\\yarp"
 
+#endif // SWIG
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /** @{ */
