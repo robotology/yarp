@@ -1,0 +1,110 @@
+name: CI Workflow Debug2
+
+on:
+  push:
+  release:
+    types: [published]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+jobs:
+
+  select_environment:
+    name: 'Prepare Environment'
+    runs-on: ubuntu-20.04
+    outputs:
+      timestamp: ${{ steps.select.outputs.timestamp }}
+      repository: ${{ steps.select.outputs.repository }}
+      ref: ${{ steps.select.outputs.ref }}
+      environment: ${{ steps.select.outputs.environment }}
+      sha: ${{ steps.select.outputs.sha }}
+      head_ref: ${{ steps.select.outputs.head_ref }}
+      base_ref: ${{ steps.select.outputs.base_ref }}
+      pr_number: ${{ steps.select.outputs.pr_number }}
+      yarp_version: ${{ steps.select.outputs.yarp_version }}
+    steps:
+    - name: "Set output variables"
+      id: select
+      run: |
+        echo "::set-output name=timestamp::$(/bin/date -u +%Y%m%d-%H%M%S)"
+        echo "::set-output name=repository::${{ github.repository }}"
+
+        _author_association="$(cat $GITHUB_EVENT_PATH | jq -r .pull_request.author_association)"
+        if [[ "$GITHUB_EVENT_NAME" = "pull_request_target" ]]; then
+          if [ ${_author_association} != "OWNER" ] &&
+             [ ${_author_association} != "MEMBER" ] &&
+             [ ${_author_association} != "COLLABORATOR" ] &&
+             [ ${_author_association} != "CONTRIBUTOR" ]; then
+            echo "::set-output name=environment::code-analysis-unsafe"
+          else
+            echo "::set-output name=environment::code-analysis"
+          fi
+          echo "::set-output name=ref::refs/pull/$(cat $GITHUB_EVENT_PATH | jq .number)/merge"
+
+          echo "This should not be printed"
+
+        else
+          echo "::set-output name=environment::code-analysis"
+          echo "::set-output name=ref::${{ github.ref }}"
+        fi
+        if [[ "$GITHUB_EVENT_NAME" = "pull_request" || "$GITHUB_EVENT_NAME" == "pull_request_target" ]]; then
+          echo "::set-output name=sha::${{ github.event.pull_request.head.sha }}"
+          echo "::set-output name=head_ref::${GITHUB_HEAD_REF}"
+          echo "::set-output name=base_ref::${GITHUB_BASE_REF}"
+          echo "::set-output name=pr_number::$(cat $GITHUB_EVENT_PATH | jq .number)"
+        else
+          echo "::set-output name=sha::${{ github.sha }}"
+        fi
+
+        # Get YARP Project Version
+        if [[ "$GITHUB_EVENT_NAME" = "release" ]]; then
+          echo "::set-output name=yarp_version::$(awk '/ VERSION /{print $2}' CMakeLists.txt)"
+        fi
+
+    - name: 'Debug output variables'
+      env:
+        TIMESTAMP: ${{ steps.select.outputs.timestamp }}
+        REPOSITORY: ${{ steps.select.outputs.repository }}
+        REF: ${{ steps.select.outputs.ref }}
+        ENVIRONMENT: ${{ steps.select.outputs.environment }}
+        SHA: ${{ steps.select.outputs.sha }}
+        HEAD_REF: ${{ steps.select.outputs.head_ref }}
+        BASE_REF: ${{ steps.select.outputs.base_ref }}
+        PR_NUMBER: ${{ steps.select.outputs.pr_number }}
+        YARP_VERSION: ${{ steps.select.outputs.yarp_version }}
+      run: |
+        echo "TIMESTAMP = ${TIMESTAMP}"
+        echo "REPOSITORY = ${REPOSITORY}"
+        echo "REF = ${REF}"
+        echo "ENVIRONMENT = ${ENVIRONMENT}"
+        echo "SHA = ${SHA}"
+        echo "HEAD_REF = ${HEAD_REF}"
+        echo "BASE_REF = ${BASE_REF}"
+        echo "PR_NUMBER = ${PR_NUMBER}"
+        echo "YARP_VERSION = ${YARP_VERSION}"
+
+    - name: "Print Environment"
+      run: |
+        env
+
+    - name: "Print Event Json"
+      run: |
+        echo "::group::install jq"
+        sudo apt-get update -qq
+        sudo apt-get install -qq -y jq
+        echo "::endgroup::"
+
+        cat $GITHUB_EVENT_PATH | jq -C
+
+  clone_repo:
+    name: 'Clone Repository'
+    needs: select_environment
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ needs.select_environment.outputs.repository }}
+        ref: ${{ needs.select_environment.outputs.ref }}
