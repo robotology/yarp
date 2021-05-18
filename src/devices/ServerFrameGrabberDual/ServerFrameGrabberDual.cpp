@@ -16,7 +16,6 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/ImageUtils.h>
 #include <yarp/os/PortablePair.h>
-#include <yarp/dev/FrameGrabberInterfaces.h>
 
 #include <yarp/proto/framegrabber/CameraVocabs.h>
 

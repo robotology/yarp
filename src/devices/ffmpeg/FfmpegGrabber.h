@@ -23,6 +23,7 @@ extern "C" {
  */
 
 #include <yarp/dev/AudioVisualInterfaces.h>
+#include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/DeviceDriver.h>
 
 #include "ffmpeg_api.h"

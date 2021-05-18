@@ -405,7 +405,6 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IFrameGrabberControls.h>
 %include <yarp/dev/IFrameGrabberControlsDC1394.h>
 %include <yarp/dev/IFrameWriterImage.h>
-%include <yarp/dev/FrameGrabberInterfaces.h>
 %include <yarp/dev/AudioVisualInterfaces.h>
 %include <yarp/dev/ControlBoardInterfaces.h>
 %include <yarp/dev/IAxisInfo.h>
@@ -435,7 +434,9 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/IAnalogSensor.h>
 %include <yarp/dev/IRemoteVariables.h>
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 %include <yarp/dev/FrameGrabberControl2.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #endif
 %include <yarp/dev/IPidControl.h>
 %include <yarp/dev/IPositionDirect.h>
