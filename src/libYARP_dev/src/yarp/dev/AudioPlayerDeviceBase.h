@@ -53,7 +53,7 @@ class YARP_dev_API AudioPlayerDeviceBase : public yarp::dev::IAudioRender
 protected:
     bool                                m_enable_buffer_autoclear = false;
     bool                                m_playback_enabled = false;
-    std::mutex                          m_mutex;
+    std::recursive_mutex                m_mutex;
     yarp::dev::CircularAudioBuffer_16t* m_outputBuffer = nullptr;
     AudioDeviceDriverSettings           m_audioplayer_cfg;
     double                              m_sw_gain = 1.0;

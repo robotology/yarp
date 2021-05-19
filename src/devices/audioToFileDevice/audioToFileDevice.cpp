@@ -128,7 +128,7 @@ bool audioToFileDevice::close()
 
 bool audioToFileDevice::startPlayback()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "start";
     m_playback_enabled = true;
     if (m_save_mode != save_mode_t::save_append_data)
@@ -140,7 +140,7 @@ bool audioToFileDevice::startPlayback()
 
 bool audioToFileDevice::stopPlayback()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     yCDebug(AUDIOTOFILE) << "stop";
     m_playback_enabled = false;
     if (m_save_mode != save_mode_t::save_append_data)
@@ -152,7 +152,7 @@ bool audioToFileDevice::stopPlayback()
 
 bool audioToFileDevice::renderSound(const yarp::sig::Sound& sound)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (m_playback_enabled)
     {
         m_sounds.push_back(sound);
@@ -162,7 +162,7 @@ bool audioToFileDevice::renderSound(const yarp::sig::Sound& sound)
 
 bool audioToFileDevice::setHWGain(double gain)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
     if (gain > 0)
     {
         m_hw_gain = gain;
