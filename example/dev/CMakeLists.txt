@@ -18,6 +18,7 @@ foreach(example_name attachable
                      fake_motor
                      file_grabber
                      grabber_client
+                     grabber_crop
                      motortest
                      RGBD)
 

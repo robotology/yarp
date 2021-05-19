@@ -219,9 +219,19 @@ Demonstrates one way to access bottle objects.  See also \ref os/bottle_add/bott
 /**
  * \example dev/grabber_client/grabber_client.cpp
 
-How to grab images from a remote source using the yarp::dev::IFrameGrabber
+How to grab images from a remote source using the yarp::dev::IFrameGrabberImage
 interface.
 
+@sa yarp::dev::IFrameGrabberImage::getImage
+*/
+
+/**
+ * \example dev/grabber_crop/grabber_crop.cpp
+
+How to grab cropped images from a remote source using the
+yarp::dev::IFrameGrabberImage interface.
+
+@sa yarp::dev::IFrameGrabberImage::getImageCrop
 */
 
 /**

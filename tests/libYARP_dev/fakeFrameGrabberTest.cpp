@@ -45,6 +45,16 @@ TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
         REQUIRE(dd.view(grabber)); // interface reported
         ImageOf<PixelRgb> img;
         grabber->getImage(img);
+
+        // Test the crop function - must work.
+        ImageOf<PixelRgb> crop;
+        const yarp::sig::VectorOf<std::pair< int, int>> vertices {{0,0}, {10, 10}};
+
+        // check crop function
+        CHECK(grabber->getImageCrop(YARP_CROP_RECT, vertices, crop));
+        CHECK(crop.width() > 0);
+        CHECK(crop.height() > 0);
+
         CHECK(img.width() > 0); // interface seems functional");
         CHECK(dd.close()); // close reported successful
     }
@@ -175,20 +185,22 @@ TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
         CHECK(configurations[2].framerate == 15.0);
         CHECK(configurations[2].pixelCoding == VOCAB_PIXEL_MONO);
 
-        // Test the crop function - must NOT work.
-        // It is not implemeted in the old server
+        // Test the crop function - must work.
         IFrameGrabberImage *grabber = nullptr;
         REQUIRE(dd.view(grabber));
-        ImageOf<PixelRgb> img, crop;
+        ImageOf<PixelRgb> img;
+        ImageOf<PixelRgb> crop;
         grabber->getImage(img);
 
-        yarp::sig::VectorOf<std::pair< int, int> > vertices;
-        vertices.clear();
+        yarp::sig::VectorOf<std::pair< int, int>> vertices;
         vertices.resize(2);
         vertices[0] = std::pair <int, int> (0, 0);
-        vertices[1] = std::pair <int, int> ( 10, 10); // Configure a doable crop.
+        vertices[1] = std::pair <int, int> (10, 10); // Configure a doable crop.
 
+        // check crop function
         CHECK(grabber->getImageCrop(YARP_CROP_RECT, vertices, crop));
+        CHECK(crop.width() > 0);
+        CHECK(crop.height() > 0);
 
         CHECK(dd2.close()); // server close reported successful
         CHECK(dd.close()); // client close reported successful
@@ -399,15 +411,11 @@ TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
         CHECK(imgL->width() == width/2);
         CHECK(imgR->width() == width/2);
 
-        //Test the crop function - must work
+        // Test the crop function - must work
         ImageOf<PixelRgb> crop;
 
         // Configure a doable crop.
-        yarp::sig::VectorOf<std::pair< int, int> > vertices;
-        vertices.clear();
-        vertices.resize(2);
-        vertices[0] = std::pair <int, int> (0, 0);
-        vertices[1] = std::pair <int, int> (10, 10);
+        const yarp::sig::VectorOf<std::pair< int, int>> vertices {{0,0}, {10, 10}};
 
         // check crop function
         CHECK(grabber->getImageCrop(YARP_CROP_RECT, vertices, crop));
