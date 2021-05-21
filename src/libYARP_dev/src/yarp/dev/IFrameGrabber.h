@@ -10,6 +10,13 @@
 #ifndef YARP_DEV_IFRAMEGRABBER_H
 #define YARP_DEV_IFRAMEGRABBER_H
 
+#include <yarp/conf/system.h>
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/dev/IFrameGrabber.h> file is deprecated")
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+
 #include <yarp/dev/api.h>
 
 namespace yarp {
@@ -19,8 +26,10 @@ namespace dev {
  * @ingroup dev_iface_media
  *
  * Common interface to a FrameGrabber.
+ *
+ * @deprecated Since YARP 3.5
  */
-class YARP_dev_API IFrameGrabber
+class YARP_dev_DEPRECATED_API IFrameGrabber
 {
 public:
     virtual ~IFrameGrabber();
@@ -58,5 +67,7 @@ public:
 
 } // namespace dev
 } // namespace yarp
+
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_DEV_IFRAMEGRABBER_H

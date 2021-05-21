@@ -399,7 +399,9 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/Drivers.h>
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
 %include <yarp/dev/IFrameGrabber.h>
+#endif YARP_NO_DEPRECATED // Since YARP 3.5.0
 %include <yarp/dev/IFrameGrabberRgb.h>
 %include <yarp/dev/IFrameGrabberImage.h>
 %include <yarp/dev/IFrameGrabberControls.h>
