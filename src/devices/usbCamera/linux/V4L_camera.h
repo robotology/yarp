@@ -24,8 +24,8 @@
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IFrameGrabber.h>
-#include <yarp/dev/IFrameGrabberRgb.h>
+#include <yarp/dev/IFrameGrabberImage.h>
+#include <yarp/dev/IFrameGrabberImageRaw.h>
 #include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/IVisualParams.h>
 #include <yarp/dev/IPreciselyTimed.h>
@@ -142,8 +142,8 @@ typedef struct
 
 class V4L_camera :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IFrameGrabberRgb,
-        public yarp::dev::IFrameGrabber,
+        public yarp::dev::IFrameGrabberImage,
+        public yarp::dev::IFrameGrabberImageRaw,
         public yarp::dev::IFrameGrabberControls,
         public yarp::dev::IPreciselyTimed,
         public yarp::os::PeriodicThread,
@@ -158,23 +158,10 @@ public:
 
     yarp::os::Stamp getLastInputStamp() override;
 
-    // IFrameGrabberRgb    Interface
-    bool getRgbBuffer(unsigned char* buffer) override;
-
-    // IFrameGrabber Interface
-    bool getRawBuffer(unsigned char* buffer) override;
-    int getRawBufferSize() override;
-
-    /**
-     * Return the height of each frame.
-     * @return image height
-     */
+    /*Implementation of IFrameGrabberImage and IFrameGrabberImageRaw interfaces*/
+    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
+    bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
     int height() const override;
-
-    /**
-     * Return the width of each frame.
-     * @return image width
-     */
     int width() const override;
 
     /*Implementation of IRgbVisualParams interface*/
