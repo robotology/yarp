@@ -51,7 +51,6 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/ICurrentControl.h
                   yarp/dev/IEncoders.h
                   yarp/dev/IEncodersTimed.h
-                  yarp/dev/IFrameGrabberRgb.h
                   yarp/dev/IFrameGrabberImage.h
                   yarp/dev/IFrameGrabberImageRaw.h
                   yarp/dev/IFrameGrabberControls.h
@@ -143,6 +142,7 @@ if(NOT YARP_NO_DEPRECATED)
                             yarp/dev/Wrapper.h                 # DEPRECATED Since YARP 3.3.0
                             yarp/dev/FrameGrabberInterfaces.h  # DEPRECATED Since YARP 3.5.0
                             yarp/dev/IFrameGrabber.h           # DEPRECATED Since YARP 3.5.0
+                            yarp/dev/IFrameGrabberRgb.h        # DEPRECATED Since YARP 3.5.0
   )
 endif()
 
@@ -167,7 +167,6 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/IAudioVisualGrabber.cpp
                   yarp/dev/IAudioVisualStream.cpp
                   yarp/dev/IBattery.cpp
-                  yarp/dev/IFrameGrabberRgb.cpp
                   yarp/dev/IFrameGrabberImage.cpp
                   yarp/dev/IFrameGrabberImageRaw.cpp
                   yarp/dev/IFrameGrabberControls.cpp
@@ -227,6 +226,8 @@ endif()
 
 if(NOT YARP_NO_DEPRECATED)
   list(APPEND YARP_dev_SRCS yarp/dev/IFrameGrabber.cpp         # DEPRECATED Since YARP 3.5.0
+                            yarp/dev/IFrameGrabberRgb.cpp      # DEPRECATED Since YARP 3.5.0
+
   )
 endif()
 

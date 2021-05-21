@@ -24,7 +24,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/DriverLinkCreator.h>
 #include <yarp/dev/Drivers.h>
-#include <yarp/dev/IFrameGrabberRgb.h>
 #include <yarp/dev/IFrameGrabberImage.h>
 #include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/IFrameGrabberControlsDC1394.h>
@@ -59,6 +58,7 @@
 #ifndef YARP_NO_DEPRECATED // since YARP 3.5
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/dev/IFrameGrabber.h>
+#include <yarp/dev/IFrameGrabberRgb.h>
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #endif // YARP_NO_DEPRECATED
 
