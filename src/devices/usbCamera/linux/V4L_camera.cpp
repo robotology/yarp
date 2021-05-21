@@ -898,10 +898,10 @@ bool V4L_camera::close()
     return true;
 }
 
-
-// IFrameGrabberRgb Interface 777
-bool V4L_camera::getRgbBuffer(unsigned char* buffer)
+bool V4L_camera::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
+    image.resize(width(), height());
+
     bool res = false;
     mutex.wait();
     if (configured) {
@@ -909,9 +909,9 @@ bool V4L_camera::getRgbBuffer(unsigned char* buffer)
         imageProcess();
 
         if (!param.addictionalResize) {
-            memcpy(buffer, param.dst_image_rgb, param.dst_image_size_rgb);
+            memcpy(image.getRawImage(), param.dst_image_rgb, param.dst_image_size_rgb);
         } else {
-            memcpy(buffer, param.outMat.data, param.outMat.total() * 3);
+            memcpy(image.getRawImage(), param.outMat.data, param.outMat.total() * 3);
         }
         mutex.post();
         res = true;
@@ -923,14 +923,15 @@ bool V4L_camera::getRgbBuffer(unsigned char* buffer)
     return res;
 }
 
-// IFrameGrabber Interface
-bool V4L_camera::getRawBuffer(unsigned char* buffer)
+bool V4L_camera::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
+    image.resize(width(), height());
+
     bool res = false;
     mutex.wait();
     if (configured) {
         imagePreProcess();
-        memcpy(buffer, param.src_image, param.src_image_size);
+        memcpy(image.getRawImage(), param.src_image, param.src_image_size);
         res = true;
     } else {
         yCError(USBCAMERA) << "unable to get the buffer, device uninitialized";
@@ -938,11 +939,6 @@ bool V4L_camera::getRawBuffer(unsigned char* buffer)
     }
     mutex.post();
     return res;
-}
-
-int V4L_camera::getRawBufferSize()
-{
-    return param.src_image_size;
 }
 
 /**
