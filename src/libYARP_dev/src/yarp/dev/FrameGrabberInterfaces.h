@@ -17,7 +17,6 @@ YARP_COMPILER_WARNING("<yarp/dev/IFrameGrabberInterfaces.h> file is deprecated")
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
 
 #include <yarp/dev/IFrameGrabberImage.h>
-#include <yarp/dev/IFrameGrabberImageRaw.h>
 #include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/IFrameGrabberControlsDC1394.h>
 #include <yarp/dev/IFrameWriterImage.h>

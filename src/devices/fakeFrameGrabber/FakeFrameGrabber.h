@@ -15,7 +15,6 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/dev/IFrameGrabberImage.h>
-#include <yarp/dev/IFrameGrabberImageRaw.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/os/Searchable.h>
