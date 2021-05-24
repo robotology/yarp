@@ -8,6 +8,7 @@
  */
 
 #include <yarp/os/Log.h>
+#include <yarp/os/Vocab.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/impl/IplImage.h>
 
@@ -1487,7 +1488,9 @@ void Image::copyPixels(const unsigned char *src, size_t id1,
         MAKE_CASE(VOCAB_PIXEL_MONO16, VOCAB_PIXEL_MONO16)
 
         default:
-            printf("*** Tried to copy type %zu to %zu\n", id1, id2);
+            printf("*** Tried to copy type %s to %s\n",
+                   yarp::os::Vocab::decode(id1).c_str(),
+                   yarp::os::Vocab::decode(id2).c_str());
             std::exit(1);
             break;
     }
