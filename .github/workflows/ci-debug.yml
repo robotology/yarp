@@ -8,6 +8,8 @@ on:
     branches:
       - 'master'
       - 'yarp-*'
+      - 'feature/*'
+      - 'CI/*'
 
 jobs:
 

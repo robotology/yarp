@@ -7,6 +7,8 @@ on:
     branches:
       - 'master'
       - 'yarp-*'
+      - 'feature/*'
+      - 'CI/*'
   release:
     types: [published]
 
