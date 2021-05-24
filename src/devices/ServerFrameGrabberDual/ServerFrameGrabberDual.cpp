@@ -660,7 +660,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             {
                 if((fgImage==nullptr) || (fgImage2==nullptr))
                 {
-                    yCError(SERVERGRABBER) << "Capability required not supported";
+                    yCError(SERVERGRABBER) << "Capability \"COLOR\" required not supported";
                     return false;
                 }
             }
@@ -669,7 +669,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             {
                 if((fgImageRaw==nullptr) || (fgImageRaw2==nullptr))
                 {
-                    yCError(SERVERGRABBER) << "Capability required not supported";
+                    yCError(SERVERGRABBER) << "Capability \"RAW\" required not supported";
                     return false;
                 }
             }
@@ -721,7 +721,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             {
                 if(fgImage==nullptr)
                 {
-                    yCError(SERVERGRABBER) << "Capability required not supported";
+                    yCError(SERVERGRABBER) << "Capability \"COLOR\" required not supported";
                     return false;
                 }
             }
@@ -730,7 +730,7 @@ bool ServerGrabber::attachAll(const PolyDriverList &device2attach)
             {
                 if(fgImageRaw==nullptr)
                 {
-                    yCError(SERVERGRABBER) << "Capability required not supported";
+                    yCError(SERVERGRABBER) << "Capability \"RAW\" required not supported";
                     return false;
                 }
             }
