@@ -33,10 +33,6 @@ YARP_LOG_COMPONENT(FRAMETRANSFORSTORAGE, "yarp.device.frameTransformStorage")
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-/**
-  * Transforms storage
-  */
-
 bool FrameTransformStorage::open(yarp::os::Searchable& config)
 {
     return true;
@@ -49,7 +45,7 @@ bool FrameTransformStorage::close()
 
 bool FrameTransformStorage::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_trf_mutex);
     transforms = m_transforms;
     return true;
 }
@@ -65,7 +61,7 @@ bool FrameTransformStorage::setTransforms(const std::vector<yarp::math::FrameTra
 
 bool FrameTransformStorage::setTransform(const yarp::math::FrameTransform& t)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_trf_mutex);
     for (auto& it : m_transforms)
     {
         //this linear search may require some optimization
@@ -84,7 +80,7 @@ bool FrameTransformStorage::setTransform(const yarp::math::FrameTransform& t)
 
 bool FrameTransformStorage::delete_transform(string t1, string t2)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_trf_mutex);
     if (t1 == "*" && t2 == "*")
     {
         m_transforms.clear();
@@ -145,16 +141,53 @@ bool FrameTransformStorage::delete_transform(string t1, string t2)
     return false;
 }
 
+void FrameTransformStorage::run()
+{
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
+    for (size_t i = 0; i < iGetIf.size(); i++)
+    {
+        std::vector<yarp::math::FrameTransform> tfs;
+        bool b=iGetIf[i]->getTransforms(tfs);
+        if (b) this->setTransforms(tfs);
+    }
+}
+
+bool FrameTransformStorage::detachAll()
+{
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
+    iGetIf.clear();
+}
+
+bool FrameTransformStorage::attachAll(const yarp::dev::PolyDriverList& device2attach)
+{
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
+    pDriverList = device2attach;
+
+    for (size_t i = 0; i < pDriverList.size(); i++)
+    {
+        yarp::dev::PolyDriver* pd = pDriverList[i]->poly;
+        if (pd->isValid())
+        {
+            IFrameTransformStorageGet* pp=nullptr;
+            if (pd->view(pp) && pp!=nullptr)
+            {
+                iGetIf.push_back(pp);
+            }
+        }
+    }
+    return true;
+}
+
 bool FrameTransformStorage::clear()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_trf_mutex);
     m_transforms.clear();
     return true;
 }
 
 bool FrameTransformStorage::size(size_t& size) const
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock(m_trf_mutex);
     size = m_transforms.size();
     return true;
 }
