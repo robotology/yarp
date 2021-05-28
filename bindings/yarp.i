@@ -353,9 +353,6 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/os/Semaphore.h>
 %include <yarp/os/Thread.h>
 %include <yarp/os/PeriodicThread.h>
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-%include <yarp/os/RateThread.h>
-#endif
 %include <yarp/os/Time.h>
 %include <yarp/os/RFModule.h>
 %include <yarp/os/Stamp.h>
@@ -372,6 +369,10 @@ void setExternal2(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %include <yarp/os/LogStream.h>
 %include <yarp/os/Wire.h>
 %include <yarp/os/WireLink.h>
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+%include <yarp/os/RateThread.h>
+#endif
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
@@ -399,10 +400,6 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/Drivers.h>
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
-%include <yarp/dev/IFrameGrabber.h>
-%include <yarp/dev/IFrameGrabberRgb.h>
-#endif YARP_NO_DEPRECATED // Since YARP 3.5.0
 %include <yarp/dev/IFrameGrabberImage.h>
 %include <yarp/dev/IFrameGrabberControls.h>
 %include <yarp/dev/IFrameGrabberControlsDC1394.h>
@@ -421,9 +418,6 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/CalibratorInterfaces.h>
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/IControlMode.h>
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-%include <yarp/dev/IControlMode2.h>
-#endif
 %include <yarp/dev/IInteractionMode.h>
 %include <yarp/dev/IEncodersTimed.h>
 %include <yarp/dev/IMotor.h>
@@ -435,14 +429,20 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ICurrentControl.h>
 %include <yarp/dev/IAnalogSensor.h>
 %include <yarp/dev/IRemoteVariables.h>
-#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
-#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-%include <yarp/dev/FrameGrabberControl2.h>
-#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
-#endif
 %include <yarp/dev/IPidControl.h>
 %include <yarp/dev/IPositionDirect.h>
 %include <yarp/dev/MultipleAnalogSensorsInterfaces.h>
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+%include <yarp/dev/FrameGrabberControl2.h>
+%include <yarp/dev/IControlMode2.h>
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+%include <yarp/dev/IFrameGrabber.h>
+%include <yarp/dev/IFrameGrabberRgb.h>
+#endif YARP_NO_DEPRECATED // Since YARP 3.5.0
+
 
 %template(DVector) std::vector<double>;
 %template(BVector) std::vector<bool>;

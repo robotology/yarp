@@ -172,13 +172,13 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
     // checking minimum set of intefaces required
     if( !(pos) )
     {
-        yCError(CONTROLBOARDREMAPPER, "IPositionControl2 interface was not found in subdevice. Quitting");
+        yCError(CONTROLBOARDREMAPPER, "IPositionControl interface was not found in subdevice. Quitting");
         return false;
     }
 
     if( ! (vel) )
     {
-        yCError(CONTROLBOARDREMAPPER, "IVelocityControl2 interface was not found in subdevice. Quitting");
+        yCError(CONTROLBOARDREMAPPER, "IVelocityControl interface was not found in subdevice. Quitting");
         return false;
     }
 
@@ -190,7 +190,7 @@ bool RemappedSubControlBoard::attach(yarp::dev::PolyDriver *d, const std::string
 
     if(!iMode)
     {
-        yCError(CONTROLBOARDREMAPPER, "IControlMode2 interface was not found in subdevice, exiting.");
+        yCError(CONTROLBOARDREMAPPER, "IControlMode interface was not found in subdevice, exiting.");
         return false;
     }
 

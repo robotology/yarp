@@ -9,7 +9,7 @@
 #ifndef YARP_FRAMEGRABBER_PROTOCOL_DEPTHVISUALPARAMS_FORWARDER_H
 #define YARP_FRAMEGRABBER_PROTOCOL_DEPTHVISUALPARAMS_FORWARDER_H
 
-#include <yarp/dev/IVisualParams.h>
+#include <yarp/dev/IDepthVisualParams.h>
 #include <yarp/os/Port.h>
 
 namespace yarp {

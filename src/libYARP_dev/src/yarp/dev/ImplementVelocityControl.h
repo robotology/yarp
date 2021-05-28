@@ -80,7 +80,7 @@ public:
     bool stop() override;
 
 
-    // specific of IVelocityControl2
+    // specific of IVelocityControl
     bool velocityMove(const int n_joint, const int *joints, const double *spds) override;
     bool getRefVelocity(const int joint, double *vel) override;
     bool getRefVelocities(double *vels) override;
@@ -151,7 +151,7 @@ public:
     {return NOT_YET_IMPLEMENTED("stopRaw");}
 
 
-    // specific of IVelocityControl2
+    // specific of IVelocityControl
     bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds) override
     {return NOT_YET_IMPLEMENTED("velocityMoveRaw");}
 

@@ -23,10 +23,15 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 
+// #define YARP_INCLUDING_DEPRECATED_HEADER_YARP_OS_RATETHREAD_H_ON_PURPOSE
 #define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
 #include <yarp/os/RateThread.h>
-#include <yarp/dev/DataSource.h>
 #undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+// #undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_OS_RATETHREAD_H_ON_PURPOSE
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_DATASOURCE_H_ON_PURPOSE
+#include <yarp/dev/DataSource.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_DATASOURCE_H_ON_PURPOSE
 
 #include <yarp/proto/framegrabber/RgbVisualParams_Responder.h>
 #include <yarp/proto/framegrabber/FrameGrabberControls_Responder.h>

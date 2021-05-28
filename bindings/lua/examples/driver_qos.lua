@@ -44,9 +44,9 @@ if ipos == nil then
     os.exit()
 end
 
-icm = driver:viewIControlMode2()
+icm = driver:viewIControlMode()
 if icm == nil then
-    print("Cannot open the IControlMode2 interface");
+    print("Cannot open the IControlMode interface");
     driver:close()
     os.exit()
 end

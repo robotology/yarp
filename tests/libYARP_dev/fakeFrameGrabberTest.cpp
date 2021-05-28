@@ -7,12 +7,12 @@
  */
 
 #include <yarp/dev/IFrameGrabberImage.h>
+#include <yarp/dev/IRgbVisualParams.h>
 
 #include <yarp/os/Network.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IVisualParams.h>
 #include <yarp/os/Time.h>
 
 #include <string>

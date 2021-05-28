@@ -223,7 +223,7 @@ void RPCMessagesParser::handleControlModeMsg(const yarp::os::Bottle& cmd,
             // try to be compatible as much as I can
 
             yCError(CONTROLBOARD) << " Error, received a set control mode message using a legacy version, trying to be handle the message anyway "
-                                         << " but please update your client to be compatible with the IControlMode2 interface";
+                                  << " but please update your client to be compatible with the IControlMode interface";
 
             yCTrace(CONTROLBOARD) << " cmd.get(4).asVocab() is " << Vocab::decode(cmd.get(4).asVocab());
             int axis = cmd.get(3).asInt32();
