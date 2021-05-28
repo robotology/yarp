@@ -86,6 +86,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(JoypadControlNetUtils)
   add_subdirectory(JoypadControlClient)
   add_subdirectory(JoypadControlServer)
+  add_subdirectory(frameGrabberCropper)
 
   add_subdirectory(portaudio) # DEPRECATED Since YARP 3.2
   add_subdirectory(ServerSoundGrabber) # DEPRECATED Since YARP 3.2
