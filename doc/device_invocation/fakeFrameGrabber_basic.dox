@@ -38,6 +38,7 @@ So this is just an example
 <tr><td>horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
 <tr><td>verticalFov</td><td>desired vertical fov of test image</td><td>2.0</td></tr>
 <tr><td>mirror</td><td>mirroring disabled by default</td><td>0</td></tr>
+<tr><td>syncro</td><td>syncronize producer and consumer, so that all images are used once and only once</td><td>0</td></tr>
 <tr><td>physFocalLength</td><td>Physical focal length of the fakeFrameGrabber</td><td>3.0</td></tr>
 <tr><td>focalLengthX</td><td>Horizontal component of the focal length of the fakeFrameGrabber</td><td>4.0</td></tr>
 <tr><td>focalLengthY</td><td>Vertical component of the focal length of the fakeFrameGrabber</td><td>5.0</td></tr>

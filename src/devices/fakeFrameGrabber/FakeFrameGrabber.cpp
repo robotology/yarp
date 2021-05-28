@@ -200,6 +200,8 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
                                "desired vertical fov of test image").asFloat64();
     mirror=config.check("mirror",Value(false),
                         "mirroring disabled by default").asBool();
+    syncro=config.check("syncro",Value(false),
+                        "syncronize producer and consumer, so that all images are used once and only once").asBool();
     intrinsic.put("physFocalLength",config.check("physFocalLength",Value(3.0),"Physical focal length of the fakeFrameGrabber").asFloat64());
     intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal length of the fakeFrameGrabber").asFloat64());
     intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal length of the fakeFrameGrabber").asFloat64());
@@ -396,17 +398,26 @@ bool FakeFrameGrabber::setRgbMirroring(bool mirror){
 void FakeFrameGrabber::run()
 {
     while (!isStopping()) {
-        for (size_t i = 0; i < 2; ++i) {
-            std::unique_lock<std::mutex> lk(mutex[i]);
-            img_consumed_cv[i].wait(lk, [&]{ if (img_ready[i]) {img_ready_cv[i].notify_one();} return (isStopping() || img_consumed[i]);});
-            if (isStopping()) {
-                break;
+        for (size_t i = 0; i < 2 && !isStopping(); ++i) {
+            if (!syncro) {
+                std::unique_lock<std::mutex> lk(mutex[i]);
+                createTestImage(buffs[i], buff_ts[i]);
+                timing();
+                curr_buff_mutex.lock();
+                curr_buff = i;
+                curr_buff_mutex.unlock();
+            } else {
+                std::unique_lock<std::mutex> lk(mutex[i]);
+                img_consumed_cv[i].wait(lk, [&]{ if (img_ready[i]) {img_ready_cv[i].notify_one();} return (isStopping() || img_consumed[i]);});
+                if (isStopping()) {
+                    break;
+                }
+                img_ready[i] = false;
+                img_consumed[i] = false;
+                createTestImage(buffs[i], buff_ts[i]);
+                img_ready[i] = true;
+                img_ready_cv[i].notify_all();
             }
-            img_ready[i] = false;
-            img_consumed[i] = false;
-            createTestImage(buffs[i], buff_ts[i]);
-            img_ready[i] = true;
-            img_ready_cv[i].notify_all();
         }
     }
 }
@@ -414,31 +425,49 @@ void FakeFrameGrabber::run()
 void FakeFrameGrabber::onStop()
 {
     // Unlock any blocked thread.
-    for (size_t i = 0; i < 2; ++i) {
-        std::unique_lock<std::mutex> lk(mutex[i]);
-        img_consumed[i] = true;
-        img_consumed_cv[i].notify_all();
-        img_ready[i] = true;
-        img_ready_cv[i].notify_all();
+    if (syncro) {
+        for (size_t i = 0; i < 2; ++i) {
+            std::unique_lock<std::mutex> lk(mutex[i]);
+            img_consumed[i] = true;
+            img_consumed_cv[i].notify_all();
+            img_ready[i] = true;
+            img_ready_cv[i].notify_all();
+        }
     }
 }
 
 
 bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
-    timing();
-
-    std::unique_lock<std::mutex> lk(mutex[curr_buff]);
-    img_ready_cv[curr_buff].wait(lk, [&]{return (!isRunning() || img_ready[curr_buff]);});
     if (!isRunning()) {
         return false;
     }
-    image.copy(buffs[curr_buff]);
-    stamp.update(buff_ts[curr_buff]);
-    img_consumed[curr_buff] = true;
-    img_consumed_cv[curr_buff].notify_one();
 
-    curr_buff = (curr_buff + 1) % 2;
+    if (!syncro) {
+        curr_buff_mutex.lock();
+        size_t cb = curr_buff;
+        std::unique_lock<std::mutex> lk(mutex[cb]);
+        curr_buff_mutex.unlock();
+        image.copy(buffs[cb]);
+        stamp.update(buff_ts[cb]);
+    } else {
+        curr_buff_mutex.lock();
+        timing();
+        size_t cb = curr_buff;
+        std::unique_lock<std::mutex> lk(mutex[cb]);
+        img_ready_cv[cb].wait(lk, [&]{return (!isRunning() || img_ready[cb]);});
+        if (!isRunning()) {
+            return false;
+        }
+
+        image.copy(buffs[cb]);
+        stamp.update(buff_ts[cb]);
+        img_consumed[cb] = true;
+        img_consumed_cv[cb].notify_one();
+
+        curr_buff = (cb + 1) % 2;
+        curr_buff_mutex.unlock();
+    }
 
     return true;
 }
@@ -446,23 +475,42 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 
 bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
-    timing();
-
-    std::unique_lock<std::mutex> lk(mutex[curr_buff]);
-    img_ready_cv[curr_buff].wait(lk, [&]{return !isRunning() || img_ready[curr_buff];});
     if (!isRunning()) {
         return false;
     }
-    if (use_bayer) {
-        makeSimpleBayer(buffs[curr_buff],image);
-    } else {
-        image.copy(buffs[curr_buff]);
-    }
-    stamp.update(buff_ts[curr_buff]);
-    img_consumed[curr_buff] = true;
-    img_consumed_cv[curr_buff].notify_one();
 
-    curr_buff = (curr_buff + 1) % 2;
+    if (!syncro) {
+        curr_buff_mutex.lock();
+        size_t cb = curr_buff;
+        std::unique_lock<std::mutex> lk(mutex[cb]);
+        curr_buff_mutex.unlock();
+        if (use_bayer) {
+            makeSimpleBayer(buffs[cb], image);
+        } else {
+            image.copy(buffs[cb]);
+        }
+        stamp.update(buff_ts[cb]);
+    } else {
+        curr_buff_mutex.lock();
+        timing();
+        size_t cb = curr_buff;
+        std::unique_lock<std::mutex> lk(mutex[cb]);
+        img_ready_cv[cb].wait(lk, [&]{return (!isRunning() || img_ready[cb]);});
+        if (!isRunning()) {
+            return false;
+        }
+        if (use_bayer) {
+            makeSimpleBayer(buffs[cb], image);
+        } else {
+            image.copy(buffs[cb]);
+        }
+        stamp.update(buff_ts[cb]);
+        img_consumed[cb] = true;
+        img_consumed_cv[cb].notify_one();
+
+        curr_buff = (cb + 1) % 2;
+        curr_buff_mutex.unlock();
+    }
 
     return true;
 }

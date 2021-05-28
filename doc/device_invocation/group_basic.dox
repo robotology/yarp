@@ -64,6 +64,7 @@ So this is just an example
 <tr><td>mycam.horizontalFov</td><td>desired horizontal fov of test image</td><td>1.0</td></tr>
 <tr><td>mycam.verticalFov</td><td>desired vertical fov of test image</td><td>2.0</td></tr>
 <tr><td>mycam.mirror</td><td>mirroring disabled by default</td><td>0</td></tr>
+<tr><td>mycam.syncro</td><td>syncronize producer and consumer, so that all images are used once and only once</td><td>0</td></tr>
 <tr><td>mycam.physFocalLength</td><td>Physical focal length of the fakeFrameGrabber</td><td>3.0</td></tr>
 <tr><td>mycam.focalLengthX</td><td>Horizontal component of the focal length of the fakeFrameGrabber</td><td>4.0</td></tr>
 <tr><td>mycam.focalLengthY</td><td>Vertical component of the focal length of the fakeFrameGrabber</td><td>5.0</td></tr>

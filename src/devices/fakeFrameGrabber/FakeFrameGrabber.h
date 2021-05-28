@@ -180,6 +180,7 @@ private:
     bool use_bayer{false};
     bool use_mono{false};
     bool mirror{false};
+    bool syncro{false};
     yarp::os::Property intrinsic;
     yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
 
@@ -188,6 +189,7 @@ private:
     std::uniform_int_distribution<int> udist{-1, 1};
     std::uniform_real_distribution<double> ucdist{0.0, 1.0};
 
+    std::mutex curr_buff_mutex;
     size_t curr_buff{1};
     yarp::sig::ImageOf<yarp::sig::PixelRgb> buffs[2];
     bool img_ready[2] {false, false};
