@@ -117,7 +117,9 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/PolyDriverDescriptor.h
                   yarp/dev/PolyDriverList.h
                   yarp/dev/RGBDSensorParamParser.h
-                  yarp/dev/ServiceInterfaces.h)
+                  yarp/dev/ServiceInterfaces.h
+                  yarp/dev/WrapperMultiple.h
+                  yarp/dev/WrapperSingle.h)
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_HDRS yarp/dev/IFrameTransform.h
@@ -210,7 +212,9 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/PolyDriver.cpp
                   yarp/dev/PolyDriverDescriptor.cpp
                   yarp/dev/PolyDriverList.cpp
-                  yarp/dev/RGBDSensorParamParser.cpp)
+                  yarp/dev/RGBDSensorParamParser.cpp
+                  yarp/dev/WrapperMultiple.cpp
+                  yarp/dev/WrapperSingle.cpp)
 
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_SRCS yarp/dev/IFrameTransform.cpp
