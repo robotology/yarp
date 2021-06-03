@@ -35,10 +35,10 @@ public:
 
     /**
      * Attach to another object.
-     * @param poly the polydriver that you want to attach to.
+     * @param driver the polydriver that you want to attach to.
      * @return true/false on success failure.
      */
-    virtual bool attach(PolyDriver *poly) = 0;
+    virtual bool attach(PolyDriver* driver) = 0;
 
     /**
      * Detach the object (you must have first called attach).

@@ -36,16 +36,16 @@ public:
 
     /**
      * Attach to a list of objects.
-     * @param p the polydriver list that you want to attach to.
+     * @param drivers the polydriver list that you want to attach to.
      * @return true/false on success failure.
      */
-    virtual bool attachAll(const PolyDriverList &p)=0;
+    virtual bool attachAll(const PolyDriverList& drivers) = 0;
 
     /**
      * Detach the object (you must have first called attach).
      * @return true/false on success failure.
      */
-    virtual bool detachAll()=0;
+    virtual bool detachAll() = 0;
 };
 
 } // namespace dev
