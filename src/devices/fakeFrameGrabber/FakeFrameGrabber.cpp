@@ -208,7 +208,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
 
     Value* retM;
     retM=Value::makeList("1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0");
-    intrinsic.put("retificationMatrix",config.check("retificationMatrix",*retM,"Matrix that describes the lens' distortion(fake)"));
+    intrinsic.put("rectificationMatrix",config.check("rectificationMatrix",*retM,"Matrix that describes the lens' distortion(fake)"));
     delete retM;
 
     intrinsic.put("distortionModel",config.check("distortionModel",Value("FishEye"),"Reference to group of parameters describing the distortion model of the camera").asString());

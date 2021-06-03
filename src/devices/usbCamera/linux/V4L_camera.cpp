@@ -510,7 +510,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     configFy = config.check("verticalFov");
     configPPx = config.check("principalPointX");
     configPPy = config.check("principalPointY");
-    configRet = config.check("retificationMatrix");
+    configRet = config.check("rectificationMatrix");
     configDistM = config.check("distortionModel");
     Bottle bt;
     bt = config.findGroup("cameraDistortionModelGroup");
@@ -545,7 +545,7 @@ bool V4L_camera::fromConfig(yarp::os::Searchable& config)
     param.intrinsic.put("focalLengthY", config.check("focalLengthY", Value(0.0), "Vertical component of the focal lenght").asFloat64());
     param.intrinsic.put("principalPointX", config.check("principalPointX", Value(0.0), "X coordinate of the principal point").asFloat64());
     param.intrinsic.put("principalPointY", config.check("principalPointY", Value(0.0), "Y coordinate of the principal point").asFloat64());
-    param.intrinsic.put("retificationMatrix", config.check("retificationMatrix", *retM, "Matrix that describes the lens' distortion"));
+    param.intrinsic.put("rectificationMatrix", config.check("rectificationMatrix", *retM, "Matrix that describes the lens' distortion"));
     param.intrinsic.put("distortionModel", config.check("distortionModel", Value(""), "Reference to group of parameters describing the distortion model of the camera").asString());
     if (bt.isNull()) {
         param.intrinsic.put("name", "");
