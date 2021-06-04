@@ -864,6 +864,8 @@ bool Image::copy(const Image& alt)
             setQuantum(alt.getQuantum());
         }
         resize(alt.width(),alt.height());
+        setTopIsLowIndex(alt.topIsLowIndex());
+
         int q1 = alt.getQuantum();
         int q2 = getQuantum();
         if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
@@ -908,6 +910,7 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
     if (getPixelCode()==0) {
         setPixelCode(alt.getPixelCode());
         setQuantum(alt.getQuantum());
+        setTopIsLowIndex(alt.topIsLowIndex());
     }
     if (&alt==this) {
         FlexImage img;
@@ -919,6 +922,7 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
         FlexImage img;
         img.setPixelCode(getPixelCode());
         img.setQuantum(getQuantum());
+        img.setTopIsLowIndex(topIsLowIndex());
         img.copy(alt);
         return copy(img,w,h);
     }
