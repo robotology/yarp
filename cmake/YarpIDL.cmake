@@ -27,6 +27,7 @@
 #                   [THRIFT_NO_EDITOR]
 #                   [THRIFT_NO_DOC]
 #                   [THRIFT_DEBUG_GENERATOR]
+#                   [ROSMSG_WITH_ROS]
 #                   [VERBOSE])
 #
 # yarp_add_idl
@@ -88,7 +89,9 @@ endfunction()
 # Internal function.
 function(_YARP_IDL_ROSMSG_ARGS _prefix _out_dir _verbose _out_var)
   unset(_args)
-  list(APPEND _args --no-ros true)
+  if(NOT ${_prefix}_ROSMSG_WITH_ROS)
+    list(APPEND _args --no-ros true)
+  endif()
   list(APPEND _args --no-cache)
   if(_verbose)
     list(APPEND _args --verbose)
@@ -155,6 +158,7 @@ function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_
   endif()
 
   # Place the files in their final location.
+  message ("Index file name: ${_index_file_name}")
   file(STRINGS "${_temp_dir}/${_index_file_name}" _index)
   file(WRITE "${_output_dir}/${_index_file_name}" "")
   foreach(_gen_file ${_index})
@@ -196,7 +200,8 @@ function(YARP_IDL_TO_DIR)
                THRIFT_NO_COPYRIGHT
                THRIFT_NO_EDITOR
                THRIFT_NO_DOC
-               THRIFT_DEBUG_GENERATOR)
+               THRIFT_DEBUG_GENERATOR
+               ROSMSG_WITH_ROS)
   set(_oneValueArgs OUTPUT_DIR
                     SOURCES_VAR
                     HEADERS_VAR
@@ -313,10 +318,6 @@ function(YARP_IDL_TO_DIR)
     elseif("${_family}" STREQUAL "rosmsg")
       get_filename_component(_rospkg_name "${_include_prefix}" NAME)
       get_filename_component(_include_prefix "${_include_prefix}" DIRECTORY)
-      if(_rospkg_name MATCHES "(msg|srv)")
-        get_filename_component(_rospkg_name "${_include_prefix}" NAME)
-        get_filename_component(_include_prefix "${_include_prefix}" DIRECTORY)
-      endif()
       if(NOT "${_rospkg_name}" STREQUAL "")
         set(_target_name "${_rospkg_name}_${_name}${_ext}")
         set(_index_file_name "${_rospkg_name}_${_name}_index.txt")
