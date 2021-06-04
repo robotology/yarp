@@ -70,7 +70,15 @@ void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img)
         j+=4;
     }*/
 
-    memcpy(tmpBuf,rawImg,imgSize);
+    if (img.topIsLowIndex()) {
+        memcpy(tmpBuf, rawImg, imgSize);
+    } else {
+        for(int x = 0; x < s.height(); x++) {
+            memcpy(tmpBuf + x * img.getRowSize(),
+                   rawImg + (s.height() - x - 1) * img.getRowSize(),
+                   img.getRowSize());
+        }
+    }
 
     //unmap the buffer
     frame.unmap();
