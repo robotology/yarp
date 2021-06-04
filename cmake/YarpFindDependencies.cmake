@@ -307,7 +307,8 @@ buildandset_dependency(hmac)
 find_package(Eigen3 QUIET)
 checkandset_dependency(Eigen3)
 
-find_package(Qt5 COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport OPTIONAL_COMPONENTS DBus QUIET)
+set(Qt5_REQUIRED_VERSION 5.4)
+find_package(Qt5 ${Qt5_REQUIRED_VERSION} COMPONENTS Core Widgets Gui Quick Qml Multimedia Xml PrintSupport OPTIONAL_COMPONENTS DBus QUIET)
 checkandset_dependency(Qt5)
 
 find_package(QCustomPlot QUIET)
@@ -520,7 +521,7 @@ yarp_dependent_option(YARP_COMPILE_yarpdataplayer "Do you want to compile yarpda
 yarp_dependent_option(YARP_COMPILE_yarpmotorgui "Do you want to compile yarpmotorgui?" ON
                       "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
 yarp_dependent_option(YARP_COMPILE_yarpbatterygui "Do you want to compile yarpbatterygui?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;Qt5_VERSION VERSION_GREATER_EQUAL 5.4;" OFF)
+                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
 yarp_dependent_option(YARP_COMPILE_yarpmobilebasegui "Do you want to compile yarpmobilebasegui?" ON
                       "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
 yarp_dependent_option(YARP_COMPILE_yarplaserscannergui  "Do you want to compile yarplaserscannergui?" ON
