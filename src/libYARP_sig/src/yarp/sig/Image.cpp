@@ -79,11 +79,10 @@ public:
     size_t extern_type_quantum;
     size_t quantum;
     bool topIsLow;
+    int type_id;
 
 protected:
     Image& owner;
-
-    int type_id;
 
     int is_owner;
 
@@ -137,8 +136,6 @@ public:
 
     void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type,
                                 size_t quantum, bool topIsLow);
-    int getTypeId();
-
 };
 
 
@@ -158,15 +155,6 @@ void ImageStorage::resize(size_t x, size_t y, int pixel_type,
     extern_type_id = pixel_type;
     extern_type_quantum = quantum;
 }
-
-/**
- * @brief ImageStorage::getTypeId
- * @return The type_id value
- */
-int ImageStorage::getTypeId(){
-    return type_id;
-}
-
 
 // allocates an empty image.
 void ImageStorage::_alloc () {
@@ -505,13 +493,34 @@ void Image::setPixelSize(size_t imgPixelSize) {
 void Image::setPixelCode(int imgPixelCode) {
     this->imgPixelCode = imgPixelCode;
     this->imgPixelSize = (imgPixelCode < 0) ? -imgPixelCode : pixelCode2Size.at(static_cast<YarpVocabPixelTypesEnum>(imgPixelCode));
+
+    if (implementation) {
+        auto* impl = static_cast<ImageStorage*>(implementation);
+        impl->type_id = imgPixelCode;
+    }
 }
 
 
 void Image::setQuantum(size_t imgQuantum) {
     this->imgQuantum = imgQuantum;
+
+    if (implementation) {
+        auto* impl = static_cast<ImageStorage*>(implementation);
+        impl->quantum = imgQuantum;
+    }
 }
 
+
+void Image::setTopIsLowIndex(bool flag) {
+    topIsLow = flag;
+
+    if (implementation) {
+        auto* impl = static_cast<ImageStorage*>(implementation);
+        if (impl->pImage) {
+            impl->pImage->origin = topIsLow ? IPL_ORIGIN_TL : IPL_ORIGIN_BL;
+        }
+    }
+}
 
 void Image::synchronize() {
     auto* impl = static_cast<ImageStorage*>(implementation);
@@ -522,7 +531,7 @@ void Image::synchronize() {
         data = impl->Data;
         imgQuantum = impl->quantum;
         imgRowSize = impl->pImage->widthStep;
-        setPixelCode(impl->getTypeId());
+        setPixelCode(impl->type_id);
         topIsLow = impl->pImage->origin == IPL_ORIGIN_TL;
     } else {
         data = nullptr;
@@ -650,13 +659,15 @@ void Image::wrapIplImage(void *iplImage) {
         printf("Making a copy instead of just wrapping...\n");
         FlexImage img;
         img.setQuantum(p->align);
+        img.setTopIsLowIndex(p->origin == IPL_ORIGIN_TL);
         img.setPixelCode(code);
-        img.setExternal(p->imageData,p->width,p->height);
+        img.setExternal(p->imageData, p->width, p->height);
         copy(img);
     } else {
         setQuantum(p->align);
+        setTopIsLowIndex(p->origin == IPL_ORIGIN_TL);
         setPixelCode(code);
-        setExternal(p->imageData,p->width,p->height);
+        setExternal(p->imageData, p->width, p->height);
     }
 }
 
