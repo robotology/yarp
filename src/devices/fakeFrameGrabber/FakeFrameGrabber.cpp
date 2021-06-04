@@ -138,6 +138,7 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
         reply.addString("set_mode <mode>");
         reply.addString("set_image <file_name>/off");
         reply.addString("available modes: ball, line, grid, size, rand, nois, none, time");
+        reply.addString("set_topIsLow on/off");
         reply.addString("");
     }
     else if (command.get(0).asString() == "set_mode")
@@ -166,6 +167,18 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
                 have_bg = false;
                 reply.addString("err");
             }
+        }
+    }
+    else if (command.get(0).asString() == "set_topIsLow")
+    {
+        if (command.get(1).asString() == "off") {
+            topIsLow = false;
+            reply.addString("ack");
+        } else if (command.get(1).asString() == "on") {
+            topIsLow = true;
+            reply.addString("ack");
+        } else {
+            reply.addString("err");
         }
     }
     else
@@ -202,6 +215,8 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
                         "mirroring disabled by default").asBool();
     syncro=config.check("syncro",Value(false),
                         "syncronize producer and consumer, so that all images are used once and only once").asBool();
+    topIsLow=config.check("topIsLow",Value(true),
+                          "explicitly set the topIsLow field in the images").asBool();
     intrinsic.put("physFocalLength",config.check("physFocalLength",Value(3.0),"Physical focal length of the fakeFrameGrabber").asFloat64());
     intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal length of the fakeFrameGrabber").asFloat64());
     intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal length of the fakeFrameGrabber").asFloat64());
@@ -817,6 +832,8 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
         image.pixel(6, 0).g = ttxt[19] - '0';
         image.pixel(6, 0).b = ttxt[20] - '0';
     }
+
+    image.setTopIsLowIndex(topIsLow);
 }
 
 

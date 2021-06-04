@@ -181,6 +181,7 @@ private:
     bool use_mono{false};
     bool mirror{false};
     bool syncro{false};
+    bool topIsLow{true};
     yarp::os::Property intrinsic;
     yarp::sig::VectorOf<yarp::dev::CameraConfig> configurations;
 
