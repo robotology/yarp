@@ -180,7 +180,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     std::size_t pos = base.find(".");
     std::string str3(base);
     if (pos > 0){
-    	str3 = base.substr(0,pos);
+        str3 = base.substr(0,pos);
     }
     std::string path = env.findFile(str3.c_str());
     rosPath = path;
