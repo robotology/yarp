@@ -158,7 +158,6 @@ function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_
   endif()
 
   # Place the files in their final location.
-  message ("Index file name: ${_index_file_name}")
   file(STRINGS "${_temp_dir}/${_index_file_name}" _index)
   file(WRITE "${_output_dir}/${_index_file_name}" "")
   foreach(_gen_file ${_index})
