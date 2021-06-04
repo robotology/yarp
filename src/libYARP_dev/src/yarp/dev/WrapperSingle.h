@@ -33,6 +33,8 @@ class YARP_dev_API WrapperSingle :
         public yarp::dev::IWrapper,
         public yarp::dev::IMultipleWrapper
 {
+public:
+
     /**
      * Destructor.
      */
