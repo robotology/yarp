@@ -27,7 +27,6 @@ constexpr yarp::conf::vocab32_t VOCAB_LINE           = yarp::os::createVocab('l'
 constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
 constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
 constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
-constexpr yarp::conf::vocab32_t VOCAB_NOIS           = yarp::os::createVocab('n','o','i','s');
 constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab('n','o','n','e');
 constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s','i','z','e');
 constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab('t','i','m','e');
@@ -137,8 +136,10 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
         reply.addVocab(Vocab::encode("many"));
         reply.addString("set_mode <mode>");
         reply.addString("set_image <file_name>/off");
-        reply.addString("available modes: ball, line, grid, size, rand, nois, none, time");
+        reply.addString("available modes: ball, line, grid, size, rand, none, time");
         reply.addString("set_topIsLow on/off");
+        reply.addString("set_noise on/off");
+        reply.addString("set_snr <snr>");
         reply.addString("");
     }
     else if (command.get(0).asString() == "set_mode")
@@ -180,6 +181,23 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
         } else {
             reply.addString("err");
         }
+    }
+    else if (command.get(0).asString() == "set_noise")
+    {
+        if (command.get(1).asString() == "off") {
+            add_noise = false;
+            reply.addString("ack");
+        } else if (command.get(1).asString() == "on") {
+            add_noise = true;
+            reply.addString("ack");
+        } else {
+            reply.addString("err");
+        }
+    }
+    else if (command.get(0).asString() == "set_snr")
+    {
+        snr = yarp::conf::clamp(command.get(1).asFloat64(), 0.0, 1.0);
+        reply.addString("ack");
     }
     else
     {
@@ -271,7 +289,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
 
     mode = config.check("mode",
                         yarp::os::Value(VOCAB_LINE, true),
-                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], noise [nois], none [none], time test[time]").asVocab();
+                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]").asVocab();
 
     if (config.check("src")) {
         if (!yarp::sig::file::read(background,
@@ -291,6 +309,8 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
     }
 
     add_timestamp = config.check("timestamp", "should write the timestamp in the first bytes of the image");
+
+    add_noise = config.check("noise", "Should add noise to the image (uses snr)");
 
     snr = yarp::conf::clamp(config.check("snr",Value(default_snr), "Signal noise ratio ([0.0-1.0] default 0.5)").asFloat64(), 0.0, 1.0);
 
@@ -486,7 +506,6 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 
     return true;
 }
-
 
 bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
@@ -751,35 +770,6 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
             }
         }
         break;
-    case VOCAB_NOIS:
-        {
-            if (have_bg) {
-                image.copy(background);
-            } else {
-                image.zero();
-            }
-            static const double nsr = 1.0 - snr;
-            for (size_t x = 0; x < image.width(); ++x) {
-                for (size_t y = 0; y < image.height(); ++y) {
-                    auto rand = ucdist(randengine);
-                    if (have_bg) {
-                        image.pixel(x,y) = PixelRgb {
-                            static_cast<unsigned char>(image.pixel(x,y).r * snr + rand * nsr * 255),
-                            static_cast<unsigned char>(image.pixel(x,y).g * snr + rand * nsr * 255),
-                            static_cast<unsigned char>(image.pixel(x,y).b * snr + rand * nsr * 255)
-                        };
-                    } else {
-                        image.pixel(x,y) = PixelRgb{
-                            static_cast<unsigned char>(rand * nsr),
-                            static_cast<unsigned char>(rand * nsr),
-                            static_cast<unsigned char>(rand * nsr)
-                        };
-                    }
-                }
-            }
-        }
-        break;
-
     case VOCAB_NONE:
         {
             if (have_bg) {
@@ -799,6 +789,20 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
     }
     if (bx>=image.width()) {
         bx = image.width()-1;
+    }
+
+    if (add_noise) {
+        static const double nsr = 1.0 - snr;
+        for (size_t x = 0; x < image.width(); ++x) {
+            for (size_t y = 0; y < image.height(); ++y) {
+                auto rand = ucdist(randengine);
+                image.pixel(x,y) = PixelRgb {
+                    static_cast<unsigned char>(image.pixel(x,y).r * snr + (rand * nsr * 255)),
+                    static_cast<unsigned char>(image.pixel(x,y).g * snr + (rand * nsr * 255)),
+                    static_cast<unsigned char>(image.pixel(x,y).b * snr + (rand * nsr * 255))
+                };
+            }
+        }
     }
 
     if (add_timestamp) {

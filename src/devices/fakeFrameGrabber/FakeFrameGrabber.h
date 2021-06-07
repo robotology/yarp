@@ -176,6 +176,7 @@ private:
     bool have_bg{false};
     int mode{0};
     bool add_timestamp{false};
+    bool add_noise{false};
     double snr{default_snr};
     bool use_bayer{false};
     bool use_mono{false};
