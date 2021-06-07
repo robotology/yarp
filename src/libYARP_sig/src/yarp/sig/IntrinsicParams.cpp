@@ -29,7 +29,7 @@ void IntrinsicParams::toProperty(yarp::os::Property& intrinsic) const
     intrinsic.put("principalPointY", principalPointY);
     intrinsic.put("stamp", yarp::os::Time::now());
 
-    if (distortionModel.type != YarpDistortion::YARP_PLUM_BOB) {
+    if (distortionModel.type != YarpDistortion::YARP_PLUMB_BOB) {
         intrinsic.put("distortionModel", "none");
         return;
     }
@@ -59,7 +59,7 @@ void IntrinsicParams::fromProperty(const yarp::os::Property& intrinsic)
     if (intrinsic.find("distortionModel").asString() !=  "plumb_bob") {
         return;
     }
-    distortionModel.type = YarpDistortion::YARP_PLUM_BOB;
+    distortionModel.type = YarpDistortion::YARP_PLUMB_BOB;
     distortionModel.k1 = intrinsic.check("k1", yarp::os::Value(0.0)).asFloat64();
     distortionModel.k2 = intrinsic.check("k2", yarp::os::Value(0.0)).asFloat64();
     distortionModel.t1 = intrinsic.check("t1", yarp::os::Value(0.0)).asFloat64();

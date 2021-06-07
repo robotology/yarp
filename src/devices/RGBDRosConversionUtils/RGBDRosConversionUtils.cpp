@@ -175,7 +175,7 @@ bool commonImageProcessor::getIntrinsicParam(yarp::os::Property& intrinsic) cons
     // distortion model
     if (m_lastCameraInfo.distortion_model=="plumb_bob")
     {
-        params.distortionModel.type = YarpDistortion::YARP_PLUM_BOB;
+        params.distortionModel.type = YarpDistortion::YARP_PLUMB_BOB;
         params.distortionModel.k1 = m_lastCameraInfo.D[0];
         params.distortionModel.k2 = m_lastCameraInfo.D[1];
         params.distortionModel.t1 = m_lastCameraInfo.D[2];
