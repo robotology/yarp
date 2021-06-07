@@ -15,7 +15,10 @@ target_sources(harness_dev PRIVATE AnalogWrapperTest.cpp
                                    MultipleAnalogSensorsInterfacesTest.cpp
                                    PolyDriverTest.cpp
                                    robotDescriptionTest.cpp
-                                   fakeFrameGrabberTest.cpp)
+                                   fakeFrameGrabberTest.cpp
+                                   frameGrabberCropperTest.cpp
+                                   frameGrabber_nws_yarpTest.cpp
+                                   grabberDualTest.cpp)
 
 target_link_libraries(harness_dev PRIVATE YARP_harness
                                           YARP::YARP_os
