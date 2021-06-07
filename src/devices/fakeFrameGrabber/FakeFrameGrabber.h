@@ -111,8 +111,14 @@ public:
     bool setRgbMirroring(bool mirror) override;
     //
     bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
-
     bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
+
+    bool getImageCrop(cropType_id_t cropType,
+                      yarp::sig::VectorOf<std::pair<int, int>> vertices,
+                      yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) override;
+    bool getImageCrop(cropType_id_t cropType,
+                      yarp::sig::VectorOf<std::pair<int, int>> vertices,
+                      yarp::sig::ImageOf<yarp::sig::PixelMono>& image) override;
 
     yarp::os::Stamp getLastInputStamp() override;
 

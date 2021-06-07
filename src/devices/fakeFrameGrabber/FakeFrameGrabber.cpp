@@ -549,6 +549,21 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
     return true;
 }
 
+bool FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
+                                    yarp::sig::VectorOf<std::pair<int, int>> vertices,
+                                    yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+{
+    yCDebugThrottle(FAKEFRAMEGRABBER, 5.0) << "Hardware crop requested!";
+    return yarp::dev::IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::getImageCrop(cropType, vertices, image);
+}
+
+bool FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
+                                    yarp::sig::VectorOf<std::pair<int, int>> vertices,
+                                    yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+{
+    yCDebugThrottle(FAKEFRAMEGRABBER, 5.0) << "Hardware crop requested!";
+    return yarp::dev::IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelMono>>::getImageCrop(cropType, vertices, image);
+}
 
 yarp::os::Stamp FakeFrameGrabber::getLastInputStamp() {
     return stamp;
