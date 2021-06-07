@@ -157,7 +157,6 @@ public:
             yarp::os::Network::connect(local,remote);
         }
         reader.attach(port);
-        FrameGrabberControlsDC1394_Forwarder::init(&port);
         return true;
     }
 

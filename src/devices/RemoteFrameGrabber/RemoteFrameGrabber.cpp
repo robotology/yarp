@@ -17,6 +17,7 @@ YARP_LOG_COMPONENT(REMOTEFRAMEGRABBER, "yarp.devices.RemoteFrameGrabber")
 
 RemoteFrameGrabber::RemoteFrameGrabber() :
         FrameGrabberControls_Forwarder(port),
+        FrameGrabberControlsDC1394_Forwarder(port),
         RgbVisualParams_Forwarder(port)
 {
 }

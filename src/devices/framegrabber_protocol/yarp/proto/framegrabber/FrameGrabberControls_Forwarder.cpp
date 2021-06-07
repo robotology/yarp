@@ -14,8 +14,8 @@
 
 using yarp::proto::framegrabber::FrameGrabberControls_Forwarder;
 
-FrameGrabberControls_Forwarder::FrameGrabberControls_Forwarder(yarp::os::Port& port) :
-        m_port(port)
+FrameGrabberControls_Forwarder::FrameGrabberControls_Forwarder(yarp::os::Port& m_port) :
+        m_port(m_port)
 {
 };
 
