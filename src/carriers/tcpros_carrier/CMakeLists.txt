@@ -50,25 +50,35 @@ if(NOT SKIP_tcpros OR NOT SKIP_rossrv)
 
   set_property(TARGET yarp_tcpros PROPERTY FOLDER "Plugins/Carrier")
 
-
   # yarpros executable
-  add_executable(yarpros)
+  if(YARP_COMPILE_EXECUTABLES)
+    add_executable(yarpros)
 
-  target_sources(yarpros PRIVATE yarpros.cpp
-                                 TcpRosLogComponent.h
-                                 TcpRosLogComponent.cpp
-                                 TcpRosStream.cpp
-                                 RosLookup.cpp)
+    target_sources(yarpros
+      PRIVATE
+        yarpros.cpp
+        TcpRosLogComponent.h
+        TcpRosLogComponent.cpp
+        TcpRosStream.cpp
+        RosLookup.cpp
+    )
 
-  target_link_libraries(yarpros PRIVATE YARP::YARP_os
-                                        YARP::YARP_init
-                                        YARP::YARP_wire_rep_utils)
-  install(TARGETS yarpros
-          EXPORT YARP_${YARP_PLUGIN_MASTER}
-          COMPONENT utilities
-          DESTINATION ${CMAKE_INSTALL_BINDIR})
+    target_link_libraries(yarpros
+      PRIVATE
+        YARP::YARP_os
+        YARP::YARP_init
+        YARP::YARP_wire_rep_utils
+    )
 
-  set_property(TARGET yarpros PROPERTY FOLDER "Command Line Tools")
+    install(
+      TARGETS yarpros
+      EXPORT YARP_${YARP_PLUGIN_MASTER}
+      COMPONENT utilities
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+
+    set_property(TARGET yarpros PROPERTY FOLDER "Command Line Tools")
+  endif()
 endif()
 
 include(YarpRemoveFile)
