@@ -177,7 +177,15 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     }
 
     bool ok = true;
-    std::string path = env.findFile(base.c_str());
+    char dot = '.';
+    int count = std::count(base.begin(), base.end(), dot);
+    std::string str3(base);
+    if (count == 2){
+        int pos1 = base.find(dot,0);
+        int pos2 = base.find(dot,pos1);
+        str3 = base.substr(0,pos2);
+    }
+    std::string path = env.findFile(str3.c_str());
     rosPath = path;
 
     FILE *fin = fopen((env.getTargetDirectory() + "/" + path).c_str(),"r");
