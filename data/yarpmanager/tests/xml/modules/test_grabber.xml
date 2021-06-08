@@ -17,7 +17,7 @@
         <param default="5.0" required="no" desc="">focalLengthY</param>
         <param default="6.0" required="no" desc="">principalPointX</param>
         <param default="7.0" required="no" desc="">principalPointY</param>
-        <param default="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" required="no" desc="">retificationMatrix</param>
+        <param default="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" required="no" desc="">rectificationMatrix</param>
         <param default="FishEye" required="no" desc="">distortionModel</param>
         <param default="8.0" required="no" desc="">k1</param>
         <param default="9.0" required="no" desc="">k2</param>

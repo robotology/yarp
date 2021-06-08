@@ -27,7 +27,7 @@
         <param default="10.0" required="no" desc="Radial distortion coefficient of the lens(fake)">k3</param>
         <param default="11.0" required="no" desc="Tangential distortion of the lens(fake)">t1</param>
         <param default="12.0" required="no" desc="Tangential distortion of the lens(fake)">t2</param>
-        <param default="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" required="no" desc="Matrix that describes the lens' distortion(fake)">retificationMatrix</param>
+        <param default="1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0" required="no" desc="Matrix that describes the lens' distortion(fake)">rectificationMatrix</param>
         <param default="FishEye" required="no" desc="Reference to group of parameters describing the distortion model of the camera">distortionModel</param>
     </arguments>
 

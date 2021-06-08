@@ -43,7 +43,7 @@ So this is just an example
 <tr><td>focalLengthY</td><td>Vertical component of the focal length of the fakeFrameGrabber</td><td>5.0</td></tr>
 <tr><td>principalPointX</td><td>X coordinate of the principal point of the fakeFrameGrabber</td><td>6.0</td></tr>
 <tr><td>principalPointY</td><td>Y coordinate of the principal point of the fakeFrameGrabber</td><td>7.0</td></tr>
-<tr><td>retificationMatrix</td><td>Matrix that describes the lens' distortion(fake)</td><td>1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0</td></tr>
+<tr><td>rectificationMatrix</td><td>Matrix that describes the lens' distortion(fake)</td><td>1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0</td></tr>
 <tr><td>distortionModel</td><td>Reference to group of parameters describing the distortion model of the camera</td><td>FishEye</td></tr>
 <tr><td>k1</td><td>Radial distortion coefficient of the lens(fake)</td><td>8.0</td></tr>
 <tr><td>k2</td><td>Radial distortion coefficient of the lens(fake)</td><td>9.0</td></tr>

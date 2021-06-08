@@ -143,8 +143,8 @@ TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
         CHECK(intrinsics.find("t2").asFloat64() == 12.0);  // checking t2
         CHECK(intrinsics.find("distortionModel").asString() == "FishEye"); // checking distorionModel
 
-        // checking the retificationMatrix
-        retM = intrinsics.find("retificationMatrix").asList();
+        // checking the rectificationMatrix
+        retM = intrinsics.find("rectificationMatrix").asList();
         double data[9]= {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
         Vector v(9,data);
         Vector v2;
@@ -263,8 +263,8 @@ TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
         CHECK(intrinsics.find("t2").asFloat64() == 12.0);  // checking t2
         CHECK(intrinsics.find("distortionModel").asString() == "FishEye"); // checking distorionModel
 
-        // checking the retificationMatrix
-        retM = intrinsics.find("retificationMatrix").asList();
+        // checking the rectificationMatrix
+        retM = intrinsics.find("rectificationMatrix").asList();
         double data[9]= {1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
         Vector v(9,data);
         Vector v2;
@@ -295,8 +295,8 @@ TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
         CHECK(Network::exists("/grabber/left/rpc"));
         CHECK(Network::exists("/grabber/right/rpc"));
 
-        // checking the retificationMatrix
-        retM = bt.find("retificationMatrix").asList();
+        // checking the rectificationMatrix
+        retM = bt.find("rectificationMatrix").asList();
         Portable::copyPortable(*retM,v2);
         for(int i=0; i<3; i++) {
             for(int j=0; j<3; j++) {
@@ -347,8 +347,8 @@ TEST_CASE("dev::fakeFrameGrabberTest", "[yarp::dev]")
         CHECK(intrinsics.find("t2").asFloat64() == 12.0);  // checking t2
         CHECK(intrinsics.find("distortionModel").asString() == "FishEye"); // checking distorionModel
 
-        // checking the retificationMatrix
-        retM = intrinsics.find("retificationMatrix").asList();
+        // checking the rectificationMatrix
+        retM = intrinsics.find("rectificationMatrix").asList();
 
         Portable::copyPortable(*retM, v2);
         for(int i=0; i<3; i++) {
