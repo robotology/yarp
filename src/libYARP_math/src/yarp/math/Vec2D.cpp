@@ -272,6 +272,6 @@ template yarp::math::Vec2D<int>    YARP_math_API operator - (yarp::math::Vec2D<i
 template yarp::math::Vec2D<double> YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<double> rhs);
 template yarp::math::Vec2D<int>    YARP_math_API operator * (const yarp::sig::Matrix& lhs, yarp::math::Vec2D<int> rhs);
 
-template class YARP_math_API yarp::math::Vec2D<double>;
-template class YARP_math_API yarp::math::Vec2D<int>;
-template class YARP_math_API yarp::math::Vec2D<size_t>;
+template class yarp::math::Vec2D<double>;
+template class yarp::math::Vec2D<int>;
+template class yarp::math::Vec2D<size_t>;
