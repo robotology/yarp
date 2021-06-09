@@ -51,10 +51,10 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/ICurrentControl.h
                   yarp/dev/IEncoders.h
                   yarp/dev/IEncodersTimed.h
-                  yarp/dev/IFrameGrabberImage.h
-                  yarp/dev/IFrameGrabberImageRaw.h
                   yarp/dev/IFrameGrabberControls.h
                   yarp/dev/IFrameGrabberControlsDC1394.h
+                  yarp/dev/IFrameGrabberImage.h
+                  yarp/dev/IFrameGrabberImage-inl.h
                   yarp/dev/IFrameWriterAudioVisual.h
                   yarp/dev/IFrameWriterImage.h
                   yarp/dev/IGenericSensor.h
@@ -169,10 +169,9 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/IAudioVisualGrabber.cpp
                   yarp/dev/IAudioVisualStream.cpp
                   yarp/dev/IBattery.cpp
-                  yarp/dev/IFrameGrabberImage.cpp
-                  yarp/dev/IFrameGrabberImageRaw.cpp
                   yarp/dev/IFrameGrabberControls.cpp
                   yarp/dev/IFrameGrabberControlsDC1394.cpp
+                  yarp/dev/IFrameGrabberImage.cpp
                   yarp/dev/IFrameWriterAudioVisual.cpp
                   yarp/dev/IFrameWriterImage.cpp
                   yarp/dev/IGenericSensor.cpp

@@ -29,41 +29,13 @@ namespace dev {
  *
  * Read a YARP-format image from a device.
  */
-class YARP_dev_API IFrameGrabberImage
+class YARP_dev_API IFrameGrabberImageBase
 {
 public:
     /**
      * Destructor.
      */
-    virtual ~IFrameGrabberImage();
-
-    /**
-     * Get an rgb image from the frame grabber, if required
-     * demosaicking/color reconstruction is applied
-     *
-     * @param image the image to be filled
-     * @return true/false upon success/failure
-     */
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
-
-    /**
-     * Get a crop of the rgb image from the frame grabber, if required
-     * demosaicking/color reconstruction is applied
-     *
-     * Note: this is not configuring the camera sensor to acquire a crop
-     *       of the image, nor to generate a cropped version of the streaming.
-     *       Instead, the full image is acquired and then a crop is created from
-     *       it. The crop is meant to be created by the image producer upon user
-     *       request via RPC call.
-     *
-     * @param cropType enum specifying how the crop shall be generated
-     * @param vertices the input coordinate (u,v) required by the cropType
-     * @param image the image to be filled
-     * @return true/false upon success/failure
-     */
-    virtual bool getImageCrop(cropType_id_t cropType,
-                              yarp::sig::VectorOf<std::pair<int, int>> vertices,
-                              yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+    virtual ~IFrameGrabberImageBase();
 
     /**
      * Return the height of each frame.
@@ -77,6 +49,46 @@ public:
      */
     virtual int width() const = 0;
 };
+
+template <typename ImageType>
+class IFrameGrabberOf :
+        public IFrameGrabberImageBase
+{
+public:
+    /**
+     * @brief Get an image from the frame grabber.
+     *
+     * @param image the image to be filled
+     * @return true/false upon success/failure
+     */
+    virtual bool getImage(ImageType& image) = 0;
+
+    /**
+     * @brief Get a crop of the image from the frame grabber.
+     *
+     * Note: this is not configuring the camera sensor to acquire a crop
+     *       of the image, nor to generate a cropped version of the streaming.
+     *       Instead, the full image is acquired and then a crop is created from
+     *       it. If the hardware supports it, it is possible to override this
+     *       method and request a hardware crop.
+     *
+     * @param cropType enum specifying how the crop shall be generated
+     * @param vertices the input coordinate (u,v) required by the cropType
+     * @param image the image to be filled
+     * @return true/false upon success/failure
+     */
+    virtual bool getImageCrop(cropType_id_t cropType,
+                              yarp::sig::VectorOf<std::pair<int, int>> vertices,
+                              ImageType& image);
+};
+
+using IFrameGrabberImage = IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>;
+using IFrameGrabberImageRaw = IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelMono>>;
+
+YARP_dev_EXTERN template class YARP_dev_API IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>;
+YARP_dev_EXTERN template class YARP_dev_API IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelMono>>;
+YARP_dev_EXTERN template class YARP_dev_API IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelFloat>>;
+YARP_dev_EXTERN template class YARP_dev_API IFrameGrabberOf<yarp::sig::FlexImage>;
 
 } // namespace dev
 } // namespace yarp

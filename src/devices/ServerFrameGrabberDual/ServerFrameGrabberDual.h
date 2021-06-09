@@ -14,7 +14,6 @@
 
 
 #include <yarp/dev/IFrameGrabberImage.h>
-#include <yarp/dev/IFrameGrabberImageRaw.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/ServiceInterfaces.h>
