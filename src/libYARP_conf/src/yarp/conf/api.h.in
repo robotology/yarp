@@ -52,20 +52,20 @@ recommended usage of this header within YARP is:
 #  define YARP_HELPER_DLL_IMPORT __declspec(dllimport)
 #  define YARP_HELPER_DLL_EXPORT __declspec(dllexport)
 #  define YARP_HELPER_DLL_LOCAL
-#  define YARP_HELPER_DLL_IMPORT_EXTERN extern
+#  define YARP_HELPER_DLL_IMPORT_EXTERN YARP_EXTERN_TEMPLATE
 #  define YARP_HELPER_DLL_EXPORT_EXTERN
 #elif (YARP_COMPILER_IS_GNU && (__GNUC__ >= 4)) || YARP_COMPILER_IS_Clang || YARP_COMPILER_IS_AppleClang
 #  define YARP_HELPER_DLL_IMPORT __attribute__ ((visibility ("default")))
 #  define YARP_HELPER_DLL_EXPORT __attribute__ ((visibility ("default")))
 #  define YARP_HELPER_DLL_LOCAL  __attribute__ ((visibility ("hidden")))
-#  define YARP_HELPER_DLL_IMPORT_EXTERN
-#  define YARP_HELPER_DLL_EXPORT_EXTERN
+#  define YARP_HELPER_DLL_IMPORT_EXTERN YARP_EXTERN_TEMPLATE
+#  define YARP_HELPER_DLL_EXPORT_EXTERN YARP_EXTERN_TEMPLATE
 #else
 #  define YARP_HELPER_DLL_IMPORT
 #  define YARP_HELPER_DLL_EXPORT
 #  define YARP_HELPER_DLL_LOCAL
-#  define YARP_HELPER_DLL_IMPORT_EXTERN
-#  define YARP_HELPER_DLL_EXPORT_EXTERN
+#  define YARP_HELPER_DLL_IMPORT_EXTERN YARP_EXTERN_TEMPLATE
+#  define YARP_HELPER_DLL_EXPORT_EXTERN YARP_EXTERN_TEMPLATE
 #endif
 
 #if defined YARP_DLL
@@ -78,8 +78,8 @@ recommended usage of this header within YARP is:
 #  define YARP_IMPORT
 #  define YARP_EXPORT
 #  define YARP_LOCAL
-#  define YARP_IMPORT_EXTERN
-#  define YARP_EXPORT_EXTERN
+#  define YARP_IMPORT_EXTERN YARP_EXTERN_TEMPLATE
+#  define YARP_EXPORT_EXTERN YARP_EXTERN_TEMPLATE
 #endif
 
 // YARP_DEPRECATED and YARP_DEPRECATED_MSG are defined in compiler.h, but we
