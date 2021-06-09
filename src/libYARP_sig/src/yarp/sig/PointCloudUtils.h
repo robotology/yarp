@@ -23,6 +23,11 @@ namespace sig{
 namespace utils
 {
 
+enum class OrganizationType{
+    Organized,
+    Unorganized
+};
+
 struct PCL_ROI
 {
     size_t min_x {0};
@@ -72,7 +77,8 @@ YARP_sig_API yarp::sig::PointCloud<yarp::sig::DataXYZ> depthToPC(const yarp::sig
 template<typename T1, typename T2>
 yarp::sig::PointCloud<T1> depthRgbToPC(const yarp::sig::ImageOf<yarp::sig::PixelFloat>& depth,
                                        const yarp::sig::ImageOf<T2>& color,
-                                       const yarp::sig::IntrinsicParams& intrinsic);
+                                       const yarp::sig::IntrinsicParams& intrinsic,
+                                       const yarp::sig::utils::OrganizationType organizationType = yarp::sig::utils::OrganizationType::Organized);
 } // namespace utils
 } // namespace sig
 } // namespace yarp
