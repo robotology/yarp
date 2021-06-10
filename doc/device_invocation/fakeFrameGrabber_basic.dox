@@ -39,6 +39,7 @@ So this is just an example
 <tr><td>verticalFov</td><td>desired vertical fov of test image</td><td>2.0</td></tr>
 <tr><td>mirror</td><td>mirroring disabled by default</td><td>0</td></tr>
 <tr><td>syncro</td><td>syncronize producer and consumer, so that all images are used once and only once</td><td>0</td></tr>
+<tr><td>topIsLow</td><td>explicitly set the topIsLow field in the images</td><td>1</td></tr>
 <tr><td>physFocalLength</td><td>Physical focal length of the fakeFrameGrabber</td><td>3.0</td></tr>
 <tr><td>focalLengthX</td><td>Horizontal component of the focal length of the fakeFrameGrabber</td><td>4.0</td></tr>
 <tr><td>focalLengthY</td><td>Vertical component of the focal length of the fakeFrameGrabber</td><td>5.0</td></tr>
@@ -53,9 +54,10 @@ So this is just an example
 <tr><td>t2</td><td>Tangential distortion of the lens(fake)</td><td>12.0</td></tr>
 <tr><td>freq</td><td>rate of test images in Hz</td><td></td></tr>
 <tr><td>period</td><td>period of test images in seconds</td><td></td></tr>
-<tr><td>mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], noise [nois], none [none], time test[time]</td><td>line</td></tr>
+<tr><td>mode</td><td>bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]</td><td>line</td></tr>
 <tr><td>src</td><td></td><td></td></tr>
 <tr><td>timestamp</td><td>should write the timestamp in the first bytes of the image</td><td></td></tr>
+<tr><td>noise</td><td>Should add noise to the image (uses snr)</td><td></td></tr>
 <tr><td>snr</td><td>Signal noise ratio ([0.0-1.0] default 0.5)</td><td>0.5</td></tr>
 <tr><td>bayer</td><td>should emit bayer test image?</td><td></td></tr>
 <tr><td>mono</td><td>should emit a monochrome image?</td><td></td></tr>
