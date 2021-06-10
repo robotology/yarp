@@ -12,9 +12,6 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-#include <yarp/os/DummyConnector.h> // FIXME DRDANZ REMOVE
-#include <yarp/sig/ImageNetworkHeader.h> // FIXME DRDANZ REMOVE
-
 namespace {
 YARP_LOG_COMPONENT(FRAMEGRABBEROF_FORWARDER, "yarp.proto.framegrabber.FrameGrabberOf_Forwarder")
 }

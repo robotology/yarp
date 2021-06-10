@@ -98,7 +98,6 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
             reply.addVocab(VOCAB_IS);
             auto& b = reply.addList();
             yarp::os::Portable::copyPortable(image, b);
-//             yCDebug(FRAMEGRABBEROF_RESPONDER) << reply.toString().substr(0, 120); // FIXME DRDANZ REMOVE
         } break;
         case VOCAB_CROP: {
             reply.clear();
