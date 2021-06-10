@@ -360,10 +360,12 @@ bool RGBDToPointCloudSensor_nws_ros::writeData()
                 yarp::sig::ImageOf<yarp::sig::PixelRgb> colorImagePixelRGB;
                 colorImagePixelRGB.setExternal(colorImage.getRawImage(), colorImage.width(), colorImage.height());
                 // create point cloud in yarp format
-                yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> yarpCloud = yarp::sig::utils::depthRgbToPC<yarp::sig::DataXYZRGBA, yarp::sig::PixelRgb>(depthImage, colorImagePixelRGB, intrinsics);
-
+                yarp::sig::PointCloud<yarp::sig::DataXYZRGBA> yarpCloud = yarp::sig::utils::depthRgbToPC<yarp::sig::DataXYZRGBA,
+                                                                                                         yarp::sig::PixelRgb>(depthImage,
+                                                                                                                              colorImagePixelRGB,
+                                                                                                                              intrinsics,
+                                                                                                                              yarp::sig::utils::OrganizationType::Unorganized);
                 PointCloud2Type& pc2Ros = rosPublisherPort_pointCloud.prepare();
-
                 // filling ros header
                 yarp::rosmsg::std_msgs::Header headerRos;
                 headerRos.clear();
