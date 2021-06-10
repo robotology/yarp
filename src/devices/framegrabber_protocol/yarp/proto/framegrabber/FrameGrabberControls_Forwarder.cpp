@@ -14,8 +14,8 @@
 
 using yarp::proto::framegrabber::FrameGrabberControls_Forwarder;
 
-FrameGrabberControls_Forwarder::FrameGrabberControls_Forwarder(yarp::os::Port& port) :
-        m_port(port)
+FrameGrabberControls_Forwarder::FrameGrabberControls_Forwarder(yarp::os::Port& m_port) :
+        m_port(m_port)
 {
 };
 
@@ -223,3 +223,154 @@ bool FrameGrabberControls_Forwarder::setOnePush(int feature)
     cmd.addInt32(feature);
     return m_port.write(cmd, response);
 }
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+bool FrameGrabberControls_Forwarder::setCommand(int code, double v)
+{
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle response;
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
+    cmd.addVocab(VOCAB_SET);
+    cmd.addVocab(code);
+    cmd.addFloat64(v);
+    return m_port.write(cmd, response);
+}
+
+bool FrameGrabberControls_Forwarder::setCommand(int code, double b, double r)
+{
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle response;
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
+    cmd.addVocab(VOCAB_SET);
+    cmd.addVocab(code);
+    cmd.addFloat64(b);
+    cmd.addFloat64(r);
+    return m_port.write(cmd, response);
+}
+
+double FrameGrabberControls_Forwarder::getCommand(int code) const
+{
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle response;
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(code);
+    m_port.write(cmd,response);
+    // response should be [cmd] [name] value
+    return response.get(2).asFloat64();
+}
+
+bool FrameGrabberControls_Forwarder::getCommand(int code, double &b, double &r) const
+{
+    yarp::os::Bottle cmd;
+    yarp::os::Bottle response;
+    cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
+    cmd.addVocab(VOCAB_GET);
+    cmd.addVocab(code);
+    m_port.write(cmd,response);
+    // response should be [cmd] [name] value
+    b=response.get(2).asFloat64();
+    r=response.get(3).asFloat64();
+    return true;
+}
+
+bool FrameGrabberControls_Forwarder::setBrightness(double v)
+{
+    return setCommand(VOCAB_BRIGHTNESS, v);
+}
+
+double FrameGrabberControls_Forwarder::getBrightness()
+{
+    return getCommand(VOCAB_BRIGHTNESS);
+}
+
+bool FrameGrabberControls_Forwarder::setExposure(double v)
+{
+    return setCommand(VOCAB_EXPOSURE, v);
+}
+
+double FrameGrabberControls_Forwarder::getExposure()
+{
+    return getCommand(VOCAB_EXPOSURE);
+}
+
+bool FrameGrabberControls_Forwarder::setSharpness(double v)
+{
+    return setCommand(VOCAB_SHARPNESS, v);
+}
+
+double FrameGrabberControls_Forwarder::getSharpness()
+{
+    return getCommand(VOCAB_SHARPNESS);
+}
+
+bool FrameGrabberControls_Forwarder::setWhiteBalance(double blue, double red)
+{
+    return setCommand(VOCAB_WHITE, blue, red);
+}
+
+bool FrameGrabberControls_Forwarder::getWhiteBalance(double &blue, double &red)
+{
+    return getCommand(VOCAB_WHITE, blue, red);
+}
+
+bool FrameGrabberControls_Forwarder::setHue(double v)
+{
+    return setCommand(VOCAB_HUE,v);
+}
+
+double FrameGrabberControls_Forwarder::getHue()
+{
+    return getCommand(VOCAB_HUE);
+}
+
+bool FrameGrabberControls_Forwarder::setSaturation(double v)
+{
+    return setCommand(VOCAB_SATURATION,v);
+}
+
+double FrameGrabberControls_Forwarder::getSaturation()
+{
+    return getCommand(VOCAB_SATURATION);
+}
+
+bool FrameGrabberControls_Forwarder::setGamma(double v)
+{
+    return setCommand(VOCAB_GAMMA,v);
+}
+
+double FrameGrabberControls_Forwarder::getGamma()
+{
+    return getCommand(VOCAB_GAMMA);
+}
+
+bool FrameGrabberControls_Forwarder::setShutter(double v)
+{
+    return setCommand(VOCAB_SHUTTER,v);
+}
+
+double FrameGrabberControls_Forwarder::getShutter()
+{
+    return getCommand(VOCAB_SHUTTER);
+}
+
+bool FrameGrabberControls_Forwarder::setGain(double v)
+{
+    return setCommand(VOCAB_GAIN,v);
+}
+
+double FrameGrabberControls_Forwarder::getGain()
+{
+    return getCommand(VOCAB_GAIN);
+}
+
+bool FrameGrabberControls_Forwarder::setIris(double v)
+{
+    return setCommand(VOCAB_IRIS,v);
+}
+
+double FrameGrabberControls_Forwarder::getIris()
+{
+    return getCommand(VOCAB_IRIS);
+}
+#endif // YARP_NO_DEPRECATED

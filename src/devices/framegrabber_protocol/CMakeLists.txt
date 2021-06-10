@@ -21,6 +21,10 @@ if(YARP_COMPILE_DEVICE_PLUGINS)
       yarp/proto/framegrabber/FrameGrabberControls_Responder.h
       yarp/proto/framegrabber/FrameGrabberControls_Forwarder.cpp
       yarp/proto/framegrabber/FrameGrabberControls_Forwarder.h
+      yarp/proto/framegrabber/FrameGrabberOf_Forwarder.h
+      yarp/proto/framegrabber/FrameGrabberOf_Forwarder-inl.h
+      yarp/proto/framegrabber/FrameGrabberOf_Responder.h
+      yarp/proto/framegrabber/FrameGrabberOf_Responder-inl.h
       yarp/proto/framegrabber/RgbVisualParams_Responder.cpp
       yarp/proto/framegrabber/RgbVisualParams_Responder.h
       yarp/proto/framegrabber/RgbVisualParams_Forwarder.cpp

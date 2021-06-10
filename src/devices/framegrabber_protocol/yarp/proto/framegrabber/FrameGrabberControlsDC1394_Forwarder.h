@@ -21,7 +21,8 @@ class FrameGrabberControlsDC1394_Forwarder :
         public yarp::dev::IFrameGrabberControlsDC1394
 {
 public:
-    void init(yarp::os::Port* port);
+    FrameGrabberControlsDC1394_Forwarder(yarp::os::Port& port);
+    ~FrameGrabberControlsDC1394_Forwarder() override = default;
 
     unsigned int getVideoModeMaskDC1394() override;
     unsigned int getVideoModeDC1394() override;
@@ -61,7 +62,7 @@ public:
     unsigned int getBytesPerPacketDC1394() override;
 
 private:
-    yarp::os::Port* m_port {nullptr};
+    yarp::os::Port& m_port;
 
     bool setCommand(int code, double v);
     bool setCommand(int code, double b, double r);

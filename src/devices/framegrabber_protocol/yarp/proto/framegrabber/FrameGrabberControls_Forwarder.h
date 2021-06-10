@@ -45,6 +45,36 @@ public:
     bool setMode(int feature, FeatureMode mode) override;
     bool getMode(int feature, FeatureMode* mode) override;
     bool setOnePush(int feature) override;
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    bool setBrightness(double v) override;
+    double getBrightness() override;
+    bool setExposure(double v) override;
+    double getExposure() override;
+    bool setSharpness(double v) override;
+    double getSharpness() override;
+    bool setWhiteBalance(double blue, double red) override;
+    bool getWhiteBalance(double &blue, double &red) override;
+    bool setHue(double v) override;
+    double getHue() override;
+    bool setSaturation(double v) override;
+    double getSaturation() override;
+    bool setGamma(double v) override;
+    double getGamma() override;
+    bool setShutter(double v) override;
+    double getShutter() override;
+    bool setGain(double v) override;
+    double getGain() override;
+    bool setIris(double v) override;
+    double getIris() override;
+
+private:
+    bool setCommand(int code, double v);
+    bool setCommand(int code, double b, double r);
+    double getCommand(int code) const;
+    bool getCommand(int code, double &b, double &r) const;
+#endif // YARP_NO_DEPRECATED
+
 };
 
 } // namespace framegrabber
