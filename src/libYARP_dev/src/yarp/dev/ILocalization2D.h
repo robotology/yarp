@@ -120,6 +120,7 @@ constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_LIST_X            = yarp::os::crea
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_ABS_TARGET        = yarp::os::createVocab('g','a','b','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_REL_TARGET        = yarp::os::createVocab('g','r','e','l');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAME_TARGET       = yarp::os::createVocab('g','n','a','m');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_ESTIMATED_ODOM    = yarp::os::createVocab('g','o','d','m');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_POS       = yarp::os::createVocab('g','p','o','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_SET_INITIAL_POS       = yarp::os::createVocab('i','p','o','s');
 constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_POSCOV    = yarp::os::createVocab('g','c','o','v');

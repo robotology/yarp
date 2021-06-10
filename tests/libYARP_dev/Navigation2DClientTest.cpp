@@ -188,6 +188,17 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
                 test_similar_angles(inav,  +2.0, -718.0);
                 test_similar_angles(inav,  -2.0, -718.0);
             }
+            {
+                b0 = inav->setInitialPose(my_current_loc); CHECK(b0); yarp::os::Time::delay(0.1);
+                yarp::dev::OdometryData my_current_odom;
+                b1 = inav->getEstimatedOdometry(my_current_odom); CHECK(b1);
+                yInfo() << "Current position is:" << my_current_loc.toString();
+                yInfo() << "Estimated Odometry is:"<< my_current_odom.toString();
+                bool bodom = fabs(my_current_loc.x- my_current_odom.odom_x) < 0.0000001 &&
+                             fabs(my_current_loc.y - my_current_odom.odom_y) < 0.0000001 &&
+                             fabs(my_current_loc.theta - my_current_odom.odom_theta) < 0.0000001;
+                CHECK(bodom);
+            }
         }
 
         //////////"Checking INavigation2D methods

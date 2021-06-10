@@ -161,8 +161,40 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc, const yarp::
 
 bool  Localization2DClient::getEstimatedOdometry(yarp::dev::OdometryData& odom)
 {
-   yCError(LOCALIZATION2DCLIENT) << "getEstimatedOdometry is not yet implemented";
-   return false;
+    yarp::os::Bottle b;
+    yarp::os::Bottle resp;
+
+    b.addVocab(VOCAB_INAVIGATION);
+    b.addVocab(VOCAB_NAV_GET_ESTIMATED_ODOM);
+
+    bool ret = m_rpc_port_localization_server.write(b, resp);
+    if (ret)
+    {
+        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 10)
+        {
+            yCError(LOCALIZATION2DCLIENT) << "getEstimatedOdometry() received error from localization server";
+            return false;
+        }
+        else
+        {
+            odom.odom_x = resp.get(1).asFloat64();
+            odom.odom_y = resp.get(2).asFloat64();
+            odom.odom_theta = resp.get(3).asFloat64();
+            odom.base_vel_x = resp.get(4).asFloat64();
+            odom.base_vel_y = resp.get(5).asFloat64();
+            odom.base_vel_theta = resp.get(6).asFloat64();
+            odom.odom_vel_x = resp.get(7).asFloat64();
+            odom.odom_vel_y = resp.get(8).asFloat64();
+            odom.odom_vel_theta = resp.get(9).asFloat64();
+            return true;
+        }
+    }
+    else
+    {
+        yCError(LOCALIZATION2DCLIENT) << "getEstimatedOdometry() error on writing on rpc port";
+        return false;
+    }
+    return true;
 }
 
 bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc)
