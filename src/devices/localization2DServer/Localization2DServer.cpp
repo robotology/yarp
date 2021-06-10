@@ -344,9 +344,18 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
             int request = command.get(1).asVocab();
             if (request == VOCAB_NAV_GET_CURRENT_POS)
             {
+                bool b = true;
                 if (m_getdata_using_periodic_thread)
                 {
                     //m_current_position is obtained by run()
+                }
+                else
+                {
+                    //m_current_position is obtained by getCurrentPosition()
+                    b = iLoc->getCurrentPosition(m_current_position);
+                }
+                if (b)
+                {
                     reply.addVocab(VOCAB_OK);
                     reply.addString(m_current_position.map_id);
                     reply.addFloat64(m_current_position.x);
@@ -355,13 +364,37 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                 }
                 else
                 {
+                    reply.addVocab(VOCAB_ERR);
+                }
+            }
+            else if (request == VOCAB_NAV_GET_ESTIMATED_ODOM)
+            {
+                bool b = true;
+                if (m_getdata_using_periodic_thread)
+                {
+                    //m_current_position is obtained by run()
+                }
+                else
+                {
                     //m_current_position is obtained by getCurrentPosition()
-                    iLoc->getCurrentPosition(m_current_position);
+                    b = iLoc->getEstimatedOdometry(m_current_odometry);
+                }
+                if (b)
+                {
                     reply.addVocab(VOCAB_OK);
-                    reply.addString(m_current_position.map_id);
-                    reply.addFloat64(m_current_position.x);
-                    reply.addFloat64(m_current_position.y);
-                    reply.addFloat64(m_current_position.theta);
+                    reply.addFloat64(m_current_odometry.odom_x);
+                    reply.addFloat64(m_current_odometry.odom_y);
+                    reply.addFloat64(m_current_odometry.odom_theta);
+                    reply.addFloat64(m_current_odometry.base_vel_x);
+                    reply.addFloat64(m_current_odometry.base_vel_y);
+                    reply.addFloat64(m_current_odometry.base_vel_theta);
+                    reply.addFloat64(m_current_odometry.odom_vel_x);
+                    reply.addFloat64(m_current_odometry.odom_vel_y);
+                    reply.addFloat64(m_current_odometry.odom_vel_theta);
+                }
+                else
+                {
+                    reply.addVocab(VOCAB_ERR);
                 }
             }
             else if (request == VOCAB_NAV_SET_INITIAL_POS)
