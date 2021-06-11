@@ -16,6 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#define _USE_MATH_DEFINES
+
 #include <yarp/os/Network.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Time.h>
@@ -41,10 +43,6 @@ using namespace yarp::dev::Nav2D;
 using namespace std;
 
 #define DEFAULT_THREAD_PERIOD 0.01
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 namespace {
 YARP_LOG_COMPONENT(LOCALIZATION2D_NWS_ROS, "yarp.device.localization2D_nws_ros")
