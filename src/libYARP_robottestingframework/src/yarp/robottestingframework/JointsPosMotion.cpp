@@ -12,6 +12,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/IControlMode.h>
 
 #include <robottestingframework/TestAssert.h>
 

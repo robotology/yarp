@@ -10,7 +10,7 @@
 #define YARP_FRAMEGRABBER_PROTOCOL_RGBVISUALPARAMS_RESPONDER_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IVisualParams.h>
+#include <yarp/dev/IRgbVisualParams.h>
 
 namespace yarp {
 namespace proto {

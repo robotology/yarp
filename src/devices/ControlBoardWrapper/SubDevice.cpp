@@ -179,7 +179,7 @@ bool SubDevice::attach(yarp::dev::PolyDriver* d, const std::string& k)
     }
 
     if (!vel) {
-        yCError(CONTROLBOARD, "Part <%s>: IVelocityControl nor IVelocityControl2 interface was not found in subdevice. Quitting", parentName.c_str());
+        yCError(CONTROLBOARD, "Part <%s>: IVelocityControl interface was not found in subdevice. Quitting", parentName.c_str());
         return false;
     }
 

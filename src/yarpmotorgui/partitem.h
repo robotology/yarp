@@ -30,7 +30,8 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/IControlLimits2.h>
+#include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IControlMode.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>

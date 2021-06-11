@@ -45,10 +45,9 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/IControlCalibration.h
                   yarp/dev/IControlDebug.h
                   yarp/dev/IControlLimits.h
-                  yarp/dev/IControlLimits2.h
                   yarp/dev/IControlMode.h
-                  yarp/dev/IControlMode2.h
                   yarp/dev/ICurrentControl.h
+                  yarp/dev/IDepthVisualParams.h
                   yarp/dev/IEncoders.h
                   yarp/dev/IEncodersTimed.h
                   yarp/dev/IFrameGrabberControls.h
@@ -68,20 +67,18 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/IPWMControl.h
                   yarp/dev/IPidControl.h
                   yarp/dev/IPositionControl.h
-                  yarp/dev/IPositionControl2.h
                   yarp/dev/IPositionDirect.h
                   yarp/dev/IPreciselyTimed.h
                   yarp/dev/IRGBDSensor.h
                   yarp/dev/IRangefinder2D.h
                   yarp/dev/IRemoteCalibrator.h
                   yarp/dev/IRemoteVariables.h
+                  yarp/dev/IRgbVisualParams.h
                   yarp/dev/IRobotDescription.h
                   yarp/dev/ISerialDevice.h
                   yarp/dev/ITorqueControl.h
                   yarp/dev/IVelocityControl.h
-                  yarp/dev/IVelocityControl2.h
                   yarp/dev/IVirtualAnalogSensor.h
-                  yarp/dev/IVisualParams.h
                   yarp/dev/IVisualServoing.h
                   yarp/dev/IWrapper.h
                   yarp/dev/ImplementAmplifierControl.h
@@ -89,9 +86,7 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/ImplementControlBoardInterfaces.h
                   yarp/dev/ImplementControlCalibration.h
                   yarp/dev/ImplementControlLimits.h
-                  yarp/dev/ImplementControlLimits2.h
                   yarp/dev/ImplementControlMode.h
-                  yarp/dev/ImplementControlMode2.h
                   yarp/dev/ImplementCurrentControl.h
                   yarp/dev/ImplementEncoders.h
                   yarp/dev/ImplementEncodersTimed.h
@@ -102,12 +97,10 @@ set(YARP_dev_HDRS yarp/dev/all.h
                   yarp/dev/ImplementPWMControl.h
                   yarp/dev/ImplementPidControl.h
                   yarp/dev/ImplementPositionControl.h
-                  yarp/dev/ImplementPositionControl2.h
                   yarp/dev/ImplementPositionDirect.h
                   yarp/dev/ImplementRemoteVariables.h
                   yarp/dev/ImplementTorqueControl.h
                   yarp/dev/ImplementVelocityControl.h
-                  yarp/dev/ImplementVelocityControl2.h
                   yarp/dev/ImplementVirtualAnalogSensor.h
                   yarp/dev/LaserMeasurementData.h
                   yarp/dev/Lidar2DDeviceBase.h
@@ -136,15 +129,24 @@ if(TARGET YARP::YARP_math)
 endif()
 
 if(NOT YARP_NO_DEPRECATED)
-  list(APPEND YARP_dev_HDRS yarp/dev/FrameGrabberControl2.h    # DEPRECATED Since YARP 3.0.0
-                            yarp/dev/DataSource.h              # DEPRECATED Since YARP 3.3.0
-                            yarp/dev/GenericSensorInterfaces.h # DEPRECATED Since YARP 3.3.0
-                            yarp/dev/PreciselyTimed.h          # DEPRECATED Since YARP 3.3.0
-                            yarp/dev/SerialInterfaces.h        # DEPRECATED Since YARP 3.3.0
-                            yarp/dev/Wrapper.h                 # DEPRECATED Since YARP 3.3.0
-                            yarp/dev/FrameGrabberInterfaces.h  # DEPRECATED Since YARP 3.5.0
-                            yarp/dev/IFrameGrabber.h           # DEPRECATED Since YARP 3.5.0
-                            yarp/dev/IFrameGrabberRgb.h        # DEPRECATED Since YARP 3.5.0
+  list(APPEND YARP_dev_HDRS yarp/dev/FrameGrabberControl2.h      # DEPRECATED Since YARP 3.0.0
+                            yarp/dev/IControlLimits2.h           # DEPRECATED Since YARP 3.0.0
+                            yarp/dev/IControlMode2.h             # DEPRECATED Since YARP 3.0.0
+                            yarp/dev/IPositionControl2.h         # DEPRECATED Since YARP 3.0.0
+                            yarp/dev/IVelocityControl2.h         # DEPRECATED Since YARP 3.0.0
+                            yarp/dev/ImplementControlLimits2.h   # DEPRECATED Since YARP 3.0.0
+                            yarp/dev/ImplementControlMode2.h     # DEPRECATED Since YARP 3.0.0
+                            yarp/dev/ImplementPositionControl2.h # DEPRECATED Since YARP 3.0.0
+                            yarp/dev/ImplementVelocityControl2.h # DEPRECATED Since YARP 3.0.0
+                            yarp/dev/DataSource.h                # DEPRECATED Since YARP 3.3.0
+                            yarp/dev/GenericSensorInterfaces.h   # DEPRECATED Since YARP 3.3.0
+                            yarp/dev/PreciselyTimed.h            # DEPRECATED Since YARP 3.3.0
+                            yarp/dev/SerialInterfaces.h          # DEPRECATED Since YARP 3.3.0
+                            yarp/dev/Wrapper.h                   # DEPRECATED Since YARP 3.3.0
+                            yarp/dev/FrameGrabberInterfaces.h    # DEPRECATED Since YARP 3.5.0
+                            yarp/dev/IFrameGrabber.h             # DEPRECATED Since YARP 3.5.0
+                            yarp/dev/IFrameGrabberRgb.h          # DEPRECATED Since YARP 3.5.0
+                            yarp/dev/IVisualParams.h             # DEPRECATED Since YARP 3.5.0
   )
 endif()
 
@@ -169,6 +171,7 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/IAudioVisualGrabber.cpp
                   yarp/dev/IAudioVisualStream.cpp
                   yarp/dev/IBattery.cpp
+                  yarp/dev/IDepthVisualParams.cpp
                   yarp/dev/IFrameGrabberControls.cpp
                   yarp/dev/IFrameGrabberControlsDC1394.cpp
                   yarp/dev/IFrameGrabberImage.cpp
@@ -181,6 +184,7 @@ set(YARP_dev_SRCS yarp/dev/AudioBufferSize.cpp
                   yarp/dev/IRGBDSensor.cpp
                   yarp/dev/IRangefinder2D.cpp
                   yarp/dev/IRemoteCalibrator.cpp
+                  yarp/dev/IRgbVisualParams.cpp
                   yarp/dev/IRobotDescription.cpp
                   yarp/dev/ISerialDevice.cpp
                   yarp/dev/IVisualServoing.cpp

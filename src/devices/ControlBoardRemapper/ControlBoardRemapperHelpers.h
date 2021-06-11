@@ -19,9 +19,10 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IInteractionMode.h>
-#include <yarp/dev/IControlLimits2.h>
+#include <yarp/dev/IControlLimits.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IPreciselyTimed.h>
+#include <yarp/dev/IControlMode.h>
 
 
 #include <yarp/sig/Vector.h>

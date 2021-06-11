@@ -22,12 +22,9 @@
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/IEncodersTimed.h>
 #include <yarp/dev/ITorqueControl.h>
-#include <yarp/dev/IControlMode2.h>
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/IVelocityControl.h>
-#include <yarp/dev/IVelocityControl2.h>
 #include <yarp/dev/IPositionControl.h>
-#include <yarp/dev/IPositionControl2.h>
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/IPWMControl.h>
 #include <yarp/dev/IPidControl.h>
@@ -41,7 +38,20 @@
 #include <yarp/dev/IAmplifierControl.h>
 #include <yarp/dev/IAxisInfo.h>
 #include <yarp/dev/IControlLimits.h>
+#include <yarp/dev/IControlMode.h>
 
 #include <yarp/dev/ControlBoardVocabs.h>
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_ICONTROLMODE2_H_ON_PURPOSE
+#include <yarp/dev/IControlMode2.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_ICONTROLMODE2_H_ON_PURPOSE
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_IPOSITIONCONTROL2_H_ON_PURPOSE
+#include <yarp/dev/IPositionControl2.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_IPOSITIONCONTROL2_H_ON_PURPOSE
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_IVELOCITYCONTROL2_H_ON_PURPOSE
+#include <yarp/dev/IVelocityControl2.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_IVELOCITYCONTROL2_H_ON_PURPOSE
 
 #endif // YARP_DEV_CONTROLBOARDINTERFACES_H

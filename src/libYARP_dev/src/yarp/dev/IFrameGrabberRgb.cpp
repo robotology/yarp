@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#define YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_IFRAMEGRABBERRGB_H_ON_PURPOSE
 #include <yarp/dev/IFrameGrabberRgb.h>
-#undef YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_IFRAMEGRABBERRGB_H_ON_PURPOSE
 
 yarp::dev::IFrameGrabberRgb::~IFrameGrabberRgb() = default;

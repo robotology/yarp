@@ -18,6 +18,8 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/IVirtualAnalogSensor.h>
 #include <yarp/dev/ImplementVirtualAnalogSensor.h>
+#include <yarp/dev/ImplementPositionControl.h>
+#include <yarp/dev/ImplementVelocityControl.h>
 
 #include <mutex>
 
@@ -432,7 +434,7 @@ public:
     bool setMotorTorqueParamsRaw(int j, const yarp::dev::MotorTorqueParameters params) override;
 //     int32_t getRefSpeedInTbl(uint8_t boardNum, int j, eOmeas_position_t pos) override;
 
-    // IVelocityControl2
+    // IVelocityControl interface
     bool velocityMoveRaw(const int n_joint, const int *joints, const double *spds) override;
     bool getRefVelocityRaw(const int joint, double *ref) override;
     bool getRefVelocitiesRaw(double *refs) override;

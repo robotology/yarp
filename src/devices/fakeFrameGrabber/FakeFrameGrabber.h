@@ -23,7 +23,7 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/Value.h>
-#include <yarp/dev/IVisualParams.h>
+#include <yarp/dev/IRgbVisualParams.h>
 
 #include <cstdio>
 #include <random>

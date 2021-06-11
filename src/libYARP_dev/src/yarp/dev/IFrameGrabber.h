@@ -11,7 +11,7 @@
 #define YARP_DEV_IFRAMEGRABBER_H
 
 #include <yarp/conf/system.h>
-#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_ON_PURPOSE)
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_YARP_DEV_IFRAMEGRABBER_H_ON_PURPOSE)
 YARP_COMPILER_WARNING("<yarp/dev/IFrameGrabber.h> file is deprecated")
 #endif
 

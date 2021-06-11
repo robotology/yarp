@@ -502,7 +502,7 @@ public:
 
     bool getControlModes(int *modes) override;
 
-    // iControlMode2
+    // IControlMode interface
     bool getControlModes(const int n_joint, const int *joints, int *modes) override;
 
     bool setControlMode(const int j, const int mode) override;
@@ -525,9 +525,7 @@ public:
 
     yarp::os::Stamp getLastInputStamp() override;
 
-    //
-    // IVelocityControl2 Interface
-    //
+    // IVelocityControl interface
     bool velocityMove(const int n_joints, const int *joints, const double *spds) override;
 
     bool getRefVelocity(const int joint, double *vel) override;

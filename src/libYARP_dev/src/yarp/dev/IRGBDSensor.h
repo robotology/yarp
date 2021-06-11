@@ -9,26 +9,13 @@
 #ifndef YARP_DEV_IRGBDSENSOR_H
 #define YARP_DEV_IRGBDSENSOR_H
 
-#include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Property.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/dev/api.h>
-#include <yarp/dev/IVisualParams.h>
-
-
-// Interface name
-constexpr yarp::conf::vocab32_t VOCAB_RGBD_SENSOR            = yarp::os::createVocab('r','g','d','b');
-constexpr yarp::conf::vocab32_t VOCAB_RGBD_PROTOCOL_VERSION  = yarp::os::createVocab('p','r','o','t');
-
-// Methods
-constexpr yarp::conf::vocab32_t VOCAB_EXTRINSIC_PARAM   = yarp::os::createVocab('e','x','t');
-constexpr yarp::conf::vocab32_t VOCAB_ERROR_MSG         = yarp::os::createVocab('m','e','s','s');
-constexpr yarp::conf::vocab32_t VOCAB_RGB_IMAGE         = yarp::os::createVocab('i','m','g','r');
-constexpr yarp::conf::vocab32_t VOCAB_DEPTH_IMAGE       = yarp::os::createVocab('i','m','g','d');
-constexpr yarp::conf::vocab32_t VOCAB_IMAGES            = yarp::os::createVocab('i','m','m','s');
-constexpr yarp::conf::vocab32_t VOCAB_STATUS            = yarp::os::createVocab('s','t','a','t');
+#include <yarp/dev/IRgbVisualParams.h>
+#include <yarp/dev/IDepthVisualParams.h>
 
 
 namespace yarp {

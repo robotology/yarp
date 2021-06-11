@@ -3590,7 +3590,7 @@ bool ControlBoardRemapper::getControlModes(int *modes)
     return ret;
 }
 
-// iControlMode2
+// IControlMode interface
 bool ControlBoardRemapper::getControlModes(const int n_joints, const int *joints, int *modes)
 {
     bool ret=true;
@@ -3867,9 +3867,8 @@ bool ControlBoardRemapper::getRefPositions(const int n_joints, const int *joints
 }
 
 
-//
-// IVelocityControl2 Interface
-//
+
+// IVelocityControl interface
 bool ControlBoardRemapper::velocityMove(const int n_joints, const int *joints, const double *spds)
 {
     bool ret=true;

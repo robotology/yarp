@@ -2714,7 +2714,7 @@ bool FakeMotionControl::getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type
     }
 }
 
-// IControlLimits2
+// IControlLimits
 bool FakeMotionControl::setVelLimitsRaw(int axis, double min, double max)
 {
     return NOT_YET_IMPLEMENTED("setVelLimitsRaw");
@@ -2827,7 +2827,7 @@ bool FakeMotionControl::setMotorTorqueParamsRaw(int j, const MotorTorqueParamete
     return true;
 }
 
-// IVelocityControl2
+// IVelocityControl interface
 bool FakeMotionControl::velocityMoveRaw(const int n_joint, const int *joints, const double *spds)
 {
     bool ret = true;
