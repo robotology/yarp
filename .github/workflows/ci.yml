@@ -146,47 +146,52 @@ jobs:
         - {
             cmake_version: "3.12",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.12.1",
+            ycm_version: "0.12.2",
           }
         - {
             cmake_version: "3.13",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.12.1",
+            ycm_version: "0.12.2",
           }
         - {
             cmake_version: "3.14",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.12.1",
+            ycm_version: "0.12.2",
           }
         - {
             cmake_version: "3.15",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.12.1",
+            ycm_version: "0.12.2",
           }
         - {
             cmake_version: "3.16",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.12.1",
+            ycm_version: "0.12.2",
           }
         - {
             cmake_version: "3.17",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.12.1",
+            ycm_version: "0.12.2",
           }
         - {
             cmake_version: "3.18",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.12.1",
+            ycm_version: "0.12.2",
           }
         - {
             cmake_version: "3.19",
             cmake_generator: "Unix Makefiles",
-            ycm_version: "0.12.1",
+            ycm_version: "0.12.2",
           }
         - {
-            cmake_version: "3.19",
+            cmake_version: "3.20",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.12.2",
+          }
+        - {
+            cmake_version: "3.20",
             cmake_generator: "Ninja",
-            ycm_version: "0.12.1",
+            ycm_version: "0.12.2",
           }
     steps:
     - name: Clone repository
