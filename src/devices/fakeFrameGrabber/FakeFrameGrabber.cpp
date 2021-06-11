@@ -27,7 +27,6 @@ constexpr yarp::conf::vocab32_t VOCAB_LINE           = yarp::os::createVocab('l'
 constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
 constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
 constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
-constexpr yarp::conf::vocab32_t VOCAB_NOIS           = yarp::os::createVocab('n','o','i','s');
 constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab('n','o','n','e');
 constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s','i','z','e');
 constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab('t','i','m','e');
@@ -137,7 +136,10 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
         reply.addVocab(Vocab::encode("many"));
         reply.addString("set_mode <mode>");
         reply.addString("set_image <file_name>/off");
-        reply.addString("available modes: ball, line, grid, size, rand, nois, none, time");
+        reply.addString("available modes: ball, line, grid, size, rand, none, time");
+        reply.addString("set_topIsLow on/off");
+        reply.addString("set_noise on/off");
+        reply.addString("set_snr <snr>");
         reply.addString("");
     }
     else if (command.get(0).asString() == "set_mode")
@@ -167,6 +169,35 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
                 reply.addString("err");
             }
         }
+    }
+    else if (command.get(0).asString() == "set_topIsLow")
+    {
+        if (command.get(1).asString() == "off") {
+            topIsLow = false;
+            reply.addString("ack");
+        } else if (command.get(1).asString() == "on") {
+            topIsLow = true;
+            reply.addString("ack");
+        } else {
+            reply.addString("err");
+        }
+    }
+    else if (command.get(0).asString() == "set_noise")
+    {
+        if (command.get(1).asString() == "off") {
+            add_noise = false;
+            reply.addString("ack");
+        } else if (command.get(1).asString() == "on") {
+            add_noise = true;
+            reply.addString("ack");
+        } else {
+            reply.addString("err");
+        }
+    }
+    else if (command.get(0).asString() == "set_snr")
+    {
+        snr = yarp::conf::clamp(command.get(1).asFloat64(), 0.0, 1.0);
+        reply.addString("ack");
     }
     else
     {
@@ -200,6 +231,10 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
                                "desired vertical fov of test image").asFloat64();
     mirror=config.check("mirror",Value(false),
                         "mirroring disabled by default").asBool();
+    syncro=config.check("syncro",Value(false),
+                        "syncronize producer and consumer, so that all images are used once and only once").asBool();
+    topIsLow=config.check("topIsLow",Value(true),
+                          "explicitly set the topIsLow field in the images").asBool();
     intrinsic.put("physFocalLength",config.check("physFocalLength",Value(3.0),"Physical focal length of the fakeFrameGrabber").asFloat64());
     intrinsic.put("focalLengthX",config.check("focalLengthX",Value(4.0),"Horizontal component of the focal length of the fakeFrameGrabber").asFloat64());
     intrinsic.put("focalLengthY",config.check("focalLengthY",Value(5.0),"Vertical component of the focal length of the fakeFrameGrabber").asFloat64());
@@ -254,7 +289,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
 
     mode = config.check("mode",
                         yarp::os::Value(VOCAB_LINE, true),
-                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], noise [nois], none [none], time test[time]").asVocab();
+                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]").asVocab();
 
     if (config.check("src")) {
         if (!yarp::sig::file::read(background,
@@ -274,6 +309,8 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
     }
 
     add_timestamp = config.check("timestamp", "should write the timestamp in the first bytes of the image");
+
+    add_noise = config.check("noise", "Should add noise to the image (uses snr)");
 
     snr = yarp::conf::clamp(config.check("snr",Value(default_snr), "Signal noise ratio ([0.0-1.0] default 0.5)").asFloat64(), 0.0, 1.0);
 
@@ -396,17 +433,26 @@ bool FakeFrameGrabber::setRgbMirroring(bool mirror){
 void FakeFrameGrabber::run()
 {
     while (!isStopping()) {
-        for (size_t i = 0; i < 2; ++i) {
-            std::unique_lock<std::mutex> lk(mutex[i]);
-            img_consumed_cv[i].wait(lk, [&]{ if (img_ready[i]) {img_ready_cv[i].notify_one();} return (isStopping() || img_consumed[i]);});
-            if (isStopping()) {
-                break;
+        for (size_t i = 0; i < 2 && !isStopping(); ++i) {
+            if (!syncro) {
+                std::unique_lock<std::mutex> lk(mutex[i]);
+                createTestImage(buffs[i], buff_ts[i]);
+                timing();
+                curr_buff_mutex.lock();
+                curr_buff = i;
+                curr_buff_mutex.unlock();
+            } else {
+                std::unique_lock<std::mutex> lk(mutex[i]);
+                img_consumed_cv[i].wait(lk, [&]{ if (img_ready[i]) {img_ready_cv[i].notify_one();} return (isStopping() || img_consumed[i]);});
+                if (isStopping()) {
+                    break;
+                }
+                img_ready[i] = false;
+                img_consumed[i] = false;
+                createTestImage(buffs[i], buff_ts[i]);
+                img_ready[i] = true;
+                img_ready_cv[i].notify_all();
             }
-            img_ready[i] = false;
-            img_consumed[i] = false;
-            createTestImage(buffs[i], buff_ts[i]);
-            img_ready[i] = true;
-            img_ready_cv[i].notify_all();
         }
     }
 }
@@ -414,59 +460,110 @@ void FakeFrameGrabber::run()
 void FakeFrameGrabber::onStop()
 {
     // Unlock any blocked thread.
-    for (size_t i = 0; i < 2; ++i) {
-        std::unique_lock<std::mutex> lk(mutex[i]);
-        img_consumed[i] = true;
-        img_consumed_cv[i].notify_all();
-        img_ready[i] = true;
-        img_ready_cv[i].notify_all();
+    if (syncro) {
+        for (size_t i = 0; i < 2; ++i) {
+            std::unique_lock<std::mutex> lk(mutex[i]);
+            img_consumed[i] = true;
+            img_consumed_cv[i].notify_all();
+            img_ready[i] = true;
+            img_ready_cv[i].notify_all();
+        }
     }
 }
 
 
 bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
-    timing();
-
-    std::unique_lock<std::mutex> lk(mutex[curr_buff]);
-    img_ready_cv[curr_buff].wait(lk, [&]{return (!isRunning() || img_ready[curr_buff]);});
     if (!isRunning()) {
         return false;
     }
-    image.copy(buffs[curr_buff]);
-    stamp.update(buff_ts[curr_buff]);
-    img_consumed[curr_buff] = true;
-    img_consumed_cv[curr_buff].notify_one();
 
-    curr_buff = (curr_buff + 1) % 2;
+    if (!syncro) {
+        curr_buff_mutex.lock();
+        size_t cb = curr_buff;
+        std::unique_lock<std::mutex> lk(mutex[cb]);
+        curr_buff_mutex.unlock();
+        image.copy(buffs[cb]);
+        stamp.update(buff_ts[cb]);
+    } else {
+        curr_buff_mutex.lock();
+        timing();
+        size_t cb = curr_buff;
+        std::unique_lock<std::mutex> lk(mutex[cb]);
+        img_ready_cv[cb].wait(lk, [&]{return (!isRunning() || img_ready[cb]);});
+        if (!isRunning()) {
+            return false;
+        }
+
+        image.copy(buffs[cb]);
+        stamp.update(buff_ts[cb]);
+        img_consumed[cb] = true;
+        img_consumed_cv[cb].notify_one();
+
+        curr_buff = (cb + 1) % 2;
+        curr_buff_mutex.unlock();
+    }
 
     return true;
 }
-
 
 bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
 {
-    timing();
-
-    std::unique_lock<std::mutex> lk(mutex[curr_buff]);
-    img_ready_cv[curr_buff].wait(lk, [&]{return !isRunning() || img_ready[curr_buff];});
     if (!isRunning()) {
         return false;
     }
-    if (use_bayer) {
-        makeSimpleBayer(buffs[curr_buff],image);
-    } else {
-        image.copy(buffs[curr_buff]);
-    }
-    stamp.update(buff_ts[curr_buff]);
-    img_consumed[curr_buff] = true;
-    img_consumed_cv[curr_buff].notify_one();
 
-    curr_buff = (curr_buff + 1) % 2;
+    if (!syncro) {
+        curr_buff_mutex.lock();
+        size_t cb = curr_buff;
+        std::unique_lock<std::mutex> lk(mutex[cb]);
+        curr_buff_mutex.unlock();
+        if (use_bayer) {
+            makeSimpleBayer(buffs[cb], image);
+        } else {
+            image.copy(buffs[cb]);
+        }
+        stamp.update(buff_ts[cb]);
+    } else {
+        curr_buff_mutex.lock();
+        timing();
+        size_t cb = curr_buff;
+        std::unique_lock<std::mutex> lk(mutex[cb]);
+        img_ready_cv[cb].wait(lk, [&]{return (!isRunning() || img_ready[cb]);});
+        if (!isRunning()) {
+            return false;
+        }
+        if (use_bayer) {
+            makeSimpleBayer(buffs[cb], image);
+        } else {
+            image.copy(buffs[cb]);
+        }
+        stamp.update(buff_ts[cb]);
+        img_consumed[cb] = true;
+        img_consumed_cv[cb].notify_one();
+
+        curr_buff = (cb + 1) % 2;
+        curr_buff_mutex.unlock();
+    }
 
     return true;
 }
 
+bool FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
+                                    yarp::sig::VectorOf<std::pair<int, int>> vertices,
+                                    yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+{
+    yCDebugThrottle(FAKEFRAMEGRABBER, 5.0) << "Hardware crop requested!";
+    return yarp::dev::IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::getImageCrop(cropType, vertices, image);
+}
+
+bool FakeFrameGrabber::getImageCrop(cropType_id_t cropType,
+                                    yarp::sig::VectorOf<std::pair<int, int>> vertices,
+                                    yarp::sig::ImageOf<yarp::sig::PixelMono>& image)
+{
+    yCDebugThrottle(FAKEFRAMEGRABBER, 5.0) << "Hardware crop requested!";
+    return yarp::dev::IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelMono>>::getImageCrop(cropType, vertices, image);
+}
 
 yarp::os::Stamp FakeFrameGrabber::getLastInputStamp() {
     return stamp;
@@ -688,35 +785,6 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
             }
         }
         break;
-    case VOCAB_NOIS:
-        {
-            if (have_bg) {
-                image.copy(background);
-            } else {
-                image.zero();
-            }
-            static const double nsr = 1.0 - snr;
-            for (size_t x = 0; x < image.width(); ++x) {
-                for (size_t y = 0; y < image.height(); ++y) {
-                    auto rand = ucdist(randengine);
-                    if (have_bg) {
-                        image.pixel(x,y) = PixelRgb {
-                            static_cast<unsigned char>(image.pixel(x,y).r * snr + rand * nsr * 255),
-                            static_cast<unsigned char>(image.pixel(x,y).g * snr + rand * nsr * 255),
-                            static_cast<unsigned char>(image.pixel(x,y).b * snr + rand * nsr * 255)
-                        };
-                    } else {
-                        image.pixel(x,y) = PixelRgb{
-                            static_cast<unsigned char>(rand * nsr),
-                            static_cast<unsigned char>(rand * nsr),
-                            static_cast<unsigned char>(rand * nsr)
-                        };
-                    }
-                }
-            }
-        }
-        break;
-
     case VOCAB_NONE:
         {
             if (have_bg) {
@@ -736,6 +804,20 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
     }
     if (bx>=image.width()) {
         bx = image.width()-1;
+    }
+
+    if (add_noise) {
+        static const double nsr = 1.0 - snr;
+        for (size_t x = 0; x < image.width(); ++x) {
+            for (size_t y = 0; y < image.height(); ++y) {
+                auto rand = ucdist(randengine);
+                image.pixel(x,y) = PixelRgb {
+                    static_cast<unsigned char>(image.pixel(x,y).r * snr + (rand * nsr * 255)),
+                    static_cast<unsigned char>(image.pixel(x,y).g * snr + (rand * nsr * 255)),
+                    static_cast<unsigned char>(image.pixel(x,y).b * snr + (rand * nsr * 255))
+                };
+            }
+        }
     }
 
     if (add_timestamp) {
@@ -769,6 +851,8 @@ void FakeFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
         image.pixel(6, 0).g = ttxt[19] - '0';
         image.pixel(6, 0).b = ttxt[20] - '0';
     }
+
+    image.setTopIsLowIndex(topIsLow);
 }
 
 

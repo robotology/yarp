@@ -31,12 +31,10 @@ namespace yarp {
  */
 YARP_BEGIN_PACK
 struct yarp::dev::CameraConfig {
-    int width;
-    int height;
-    double framerate;
-    YarpVocabPixelTypesEnum pixelCoding;
-
-    CameraConfig() : width(0), height(0), framerate(0.0), pixelCoding(VOCAB_PIXEL_INVALID) {}
+    int width {0};
+    int height {0};
+    double framerate {0.0};
+    YarpVocabPixelTypesEnum pixelCoding {VOCAB_PIXEL_INVALID};
 };
 YARP_END_PACK
 
