@@ -202,7 +202,7 @@ private:
     yarp::sig::ImageOf<yarp::sig::PixelRgb> buffs[2];
     bool img_ready[2] {false, false};
     bool img_consumed[2] {true, true};
-    std::mutex mutex[2];
+    std::mutex mutex[2]; // FIXME C++17 perhaps use shared_mutex (check if this causes starvation)
     std::condition_variable img_ready_cv[2];
     std::condition_variable img_consumed_cv[2];
     double buff_ts[2];

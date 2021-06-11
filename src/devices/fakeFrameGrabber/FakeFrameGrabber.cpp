@@ -438,6 +438,8 @@ void FakeFrameGrabber::run()
                 std::unique_lock<std::mutex> lk(mutex[i]);
                 createTestImage(buffs[i], buff_ts[i]);
                 timing();
+                lk.unlock();
+
                 curr_buff_mutex.lock();
                 curr_buff = i;
                 curr_buff_mutex.unlock();
@@ -482,6 +484,8 @@ bool FakeFrameGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
         curr_buff_mutex.lock();
         size_t cb = curr_buff;
         std::unique_lock<std::mutex> lk(mutex[cb]);
+        // Release the mutex after we get the lock on current image to avoid
+        // that the image is swapped while we are waiting to read it
         curr_buff_mutex.unlock();
         image.copy(buffs[cb]);
         stamp.update(buff_ts[cb]);
