@@ -17,6 +17,8 @@
 #include <yarp/dev/ImplementMotor.h>
 #include <yarp/dev/ImplementRemoteVariables.h>
 #include <yarp/dev/ImplementControlMode.h>
+#include <yarp/dev/ImplementPositionControl.h>
+#include <yarp/dev/ImplementVelocityControl.h>
 #include <yarp/dev/ImplementTorqueControl.h>
 #include <yarp/dev/ImplementCurrentControl.h>
 #include <yarp/dev/ImplementPWMControl.h>
