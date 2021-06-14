@@ -10,10 +10,8 @@
 #define YARP_DEV_FRAMETRANSFORMGET_NWC_YARP_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IWrapper.h>
 #include <yarp/dev/IFrameTransformStorage.h>
 
-#include <yarp/os/PeriodicThread.h>
 
 #include <FrameTransformStorageGetRPC.h>
 
@@ -32,7 +30,6 @@
  *
  * \code{.unparsed}
  * device FrameTransformGet_nwc_yarp
- * period 0.01
  * rpc_port /frameTransformGet/rpc
  * \endcode
  */
