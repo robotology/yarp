@@ -46,26 +46,19 @@ public:
         DocTypeActions,
     };
 
-    RobotInterfaceDTD() :
-            type(DocTypeUnknown),
-            identifier(""),
-            uri(""),
-            majorVersion(0),
-            minorVersion(0)
-    {
-    }
+    RobotInterfaceDTD() = default;
 
     bool parse(TiXmlUnknown* unknownNode, const std::string& curr_filename);
 
-    bool valid();
+    bool valid() const;
 
     void setDefault();
 
-    DocType type;
+    DocType type {DocTypeUnknown};
     std::string identifier;
     std::string uri;
-    unsigned int majorVersion;
-    unsigned int minorVersion;
+    unsigned int majorVersion {0};
+    unsigned int minorVersion {0};
 
     static const std::string baseUri;
     static const std::string ext;

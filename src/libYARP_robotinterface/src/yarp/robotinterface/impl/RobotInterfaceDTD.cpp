@@ -43,11 +43,14 @@ RobotInterfaceDTD::DocType StringToDocType(const std::string& type)
 {
     if (type == "robot") {
         return RobotInterfaceDTD::DocTypeRobot;
-    } else if (type == "devices") {
+    }
+    if (type == "devices") {
         return RobotInterfaceDTD::DocTypeDevices;
-    } else if (type == "params") {
+    }
+    if (type == "params") {
         return RobotInterfaceDTD::DocTypeParams;
-    } else if (type == "actions") {
+    }
+    if (type == "actions") {
         return RobotInterfaceDTD::DocTypeActions;
     }
     return RobotInterfaceDTD::DocTypeUnknown;
@@ -69,7 +72,7 @@ std::string DocTypeToString(RobotInterfaceDTD::DocType doctype)
     }
 }
 
-bool RobotInterfaceDTD::valid()
+bool RobotInterfaceDTD::valid() const
 {
     return type != DocTypeUnknown && majorVersion != 0;
 }
@@ -107,10 +110,9 @@ bool RobotInterfaceDTD::parse(TiXmlUnknown* unknownNode, const std::string& curr
                         s += cit->substr(0, cit->size() - 1);
                         cit = tokens.erase(cit);
                         break;
-                    } else {
-                        s += *cit + " ";
-                        cit = tokens.erase(cit);
                     }
+                    s += *cit + " ";
+                    cit = tokens.erase(cit);
                 }
                 *it = s;
             }
