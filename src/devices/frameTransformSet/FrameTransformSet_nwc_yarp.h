@@ -23,32 +23,25 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/IFrameTransformStorage.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
 #include "FrameTransformStorageSetRPC.h"
 #include <mutex>
 #include <map>
 
-//#define SINGLE_SET
-
 class FrameTransformSet_nwc_yarp :
     public yarp::dev::DeviceDriver,
-    public yarp::dev::IFrameTransformStorageSet,
-    public yarp::os::PeriodicThread
+    public yarp::dev::IFrameTransformStorageSet
 {
 protected:
     mutable std::mutex  m_trf_mutex;
 
 public:
-    FrameTransformSet_nwc_yarp(double tperiod=0.010);
+    FrameTransformSet_nwc_yarp();
     ~FrameTransformSet_nwc_yarp() {}
 
     //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
-
-    //periodicThread
-    void run() override;
 
     //FrameTransformStorageSetRPC functions
     virtual bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
@@ -59,14 +52,6 @@ private:
     std::string m_thriftPortName;
     yarp::os::Port m_thriftPort;
     FrameTransformStorageSetRPC m_setRPC;
-    double m_period;
-
-#ifndef SINGLE_SET
-    std::vector<yarp::dev::IFrameTransformStorageSet*> m_iSetIfs;
-#else
-    yarp::dev::IFrameTransformStorageSet* m_iSetIf;
-#endif
-
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMSETNWCYARP_H

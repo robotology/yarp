@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "FrameTransformSet_nws_yarp.h"
+#include "frameTransformSet_nws_yarp.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
@@ -28,21 +28,21 @@ using namespace yarp::sig;
 using namespace yarp::math;
 
 namespace {
-YARP_LOG_COMPONENT(FRAMETRANSFORSETNWSYARP, "yarp.device.frameTransformSet_nws_yarp")
+YARP_LOG_COMPONENT(FRAMETRANSFORMSETNWSYARP, "yarp.device.frameTransformSet_nws_yarp")
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-FrameTransformSet_nws_yarp::FrameTransformSet_nws_yarp(double tperiod) :
-PeriodicThread(tperiod),
-m_thriftPortName("/frameTransformSet/rpc")
+FrameTransformSet_nws_yarp::FrameTransformSet_nws_yarp() :
+m_thriftPortName("/frameTransformSet/rpc"),
+m_pDriver(nullptr)
 {
 }
 
 bool FrameTransformSet_nws_yarp::open(yarp::os::Searchable& config)
 {
     if (!yarp::os::NetworkBase::checkNetwork()) {
-        yCError(FRAMETRANSFORSETNWSYARP,"Error! YARP Network is not initialized");
+        yCError(FRAMETRANSFORMSETNWSYARP,"Error! YARP Network is not initialized");
         return false;
     }
 
@@ -50,17 +50,16 @@ bool FrameTransformSet_nws_yarp::open(yarp::os::Searchable& config)
     if(okGeneral)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        if (general_config.check("period"))         {m_period = general_config.find("period").asDouble();}
         if (general_config.check("rpc_port"))       {m_thriftPortName = general_config.find("thrift_port").asString();}
     }
     if(!m_thriftPort.open(m_thriftPortName))
     {
-        yCError(FRAMETRANSFORSETNWSYARP,"Could not open \"%s\" port",m_thriftPortName.c_str());
+        yCError(FRAMETRANSFORMSETNWSYARP,"Could not open \"%s\" port",m_thriftPortName.c_str());
         return false;
     }
     if(!this->yarp().attachAsServer(m_thriftPort))
     {
-        yCError(FRAMETRANSFORSETNWSYARP,"Error! Cannot attach the port as a server");
+        yCError(FRAMETRANSFORMSETNWSYARP,"Error! Cannot attach the port as a server");
         return false;
     }
 
@@ -72,100 +71,50 @@ bool FrameTransformSet_nws_yarp::close()
     return true;
 }
 
-void FrameTransformSet_nws_yarp::run()
+bool FrameTransformSet_nws_yarp::detach()
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-    return;
-}
-
-bool FrameTransformSet_nws_yarp::detachAll()
-{
-    std::lock_guard <std::mutex> lg(m_pd_mutex);
-#ifndef SINGLE_SET
-    m_iSetIfs.clear();
-#else
     m_iSetIf = nullptr;
-#endif
     return true;
 }
 
 bool FrameTransformSet_nws_yarp::setTransform(const yarp::math::FrameTransform& transform)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-#ifndef SINGLE_SET
-    for (int i=0; i<m_iSetIfs.size(); i++)
-    {
-        if (!m_iSetIfs[i]->setTransform(transform))
-        {
-            yCError(FRAMETRANSFORSETNWSYARP, "Unable to set transform");
-            return false;
-        }
-    }
-#else
+
     if(!m_iSetIf->setTransform(transform))
     {
-        yCError(FRAMETRANSFORSETNWSYARP, "Unable to set transform");
+        yCError(FRAMETRANSFORMSETNWSYARP, "Unable to set transform");
         return false;
     }
-#endif
+
     return true;
 }
 
 bool FrameTransformSet_nws_yarp::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-#ifndef SINGLE_SET
-    for (int i=0; i<m_iSetIfs.size(); i++)
-    {
-        if (!m_iSetIfs[i]->setTransforms(transforms))
-        {
-            yCError(FRAMETRANSFORSETNWSYARP, "Unable to set transformations");
-            return false;
-        }
-    }
-#else
     if(!m_iSetIf->setTransforms(transforms))
     {
-        yCError(FRAMETRANSFORSETNWSYARP, "Unable to set transformations");
+        yCError(FRAMETRANSFORMSETNWSYARP, "Unable to set transformations");
         return false;
     }
-#endif
+
     return true;
 }
 
-bool FrameTransformSet_nws_yarp::attachAll(const yarp::dev::PolyDriverList& device2attach)
+bool FrameTransformSet_nws_yarp::attach(yarp::dev::PolyDriver* device2attach)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-    m_pDriverList = device2attach;
+    m_pDriver = device2attach;
 
-#ifndef SINGLE_SET
-    for (size_t i = 0; i < m_pDriverList.size(); i++)
+    if(m_pDriver->isValid())
     {
-        yarp::dev::PolyDriver* pd = m_pDriverList[i]->poly;
-        if (pd->isValid())
+        if (!m_pDriver->view(m_iSetIf) || m_iSetIf==nullptr)
         {
-            IFrameTransformStorageSet* pp=nullptr;
-            if (pd->view(pp) && pp!=nullptr)
-            {
-                m_iSetIfs.push_back(pp);
-            }
+            yCError(FRAMETRANSFORMSETNWSYARP, "Attach failed");
+            return false;
         }
     }
-#else
-    if (m_pDriverList.size() > 1)
-    {
-        yCError(FRAMETRANSFORSETNWSYARP,"Only one device can be attached");
-        return false;
-    }
-    yarp::dev::PolyDriver* pd = m_pDriverList[0]->poly;
-    if(pd->isValid())
-    {
-        IFrameTransformStorageSet* pp=nullptr;
-        if (pd->view(pp) && pp!=nullptr)
-        {
-            m_iSetIf = pp;
-        }
-    }
-#endif
     return true;
 }
