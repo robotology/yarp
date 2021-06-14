@@ -56,7 +56,7 @@ public:
 private:
     int    m_verbose{4};
 
-    // for the RPC with the NWC
+    // for the RPC with the NWS
     yarp::os::Port      m_thrift_rpcPort;
     std::string         m_thrift_rpcPort_Name;
     mutable FrameTransformStorageGetRPC m_frameTransformStorageGetRPC;

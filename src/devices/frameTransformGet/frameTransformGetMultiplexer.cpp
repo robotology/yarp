@@ -33,11 +33,6 @@ bool FrameTransformGetMultiplexer::open(yarp::os::Searchable &config)
         yCError(FRAMETRANSFORMGETMULTIPLEXER,"Error! YARP Network is not initialized");
         return false;
     }
-
-
-    if(m_verbose <= 2)
-        yCTrace(FRAMETRANSFORMGETMULTIPLEXER) << "\nParameters are: \n" << config.toString();
-
     return true;
 }
 
