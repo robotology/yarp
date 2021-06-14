@@ -372,7 +372,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         snd1.setFrequency(44100);
         generate_test_sound(snd1, 30000, 2);
         bool b1 = yarp::sig::file::write(snd1, "testmp3.mp3");
-        #if (YARP_MP3_SUPPORTED)
+        #ifdef YARP_MP3_SUPPORTED
             CHECK (b1);
         #endif
         if (!b1)
@@ -390,7 +390,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
     {
         Sound snd1;
         bool b1 = yarp::sig::file::read(snd1, "testmp3.mp3");
-        #if (YARP_MP3_SUPPORTED)
+        #ifdef YARP_MP3_SUPPORTED
             CHECK(b1);
             //CHECK(snd1.getSamples() == 30000);
             CHECK(snd1.getFrequency() == 44100);
@@ -417,7 +417,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
 
     SECTION("check conversions")
     {
-        #if (YARP_MP3_SUPPORTED)
+        #ifdef YARP_MP3_SUPPORTED
             Sound snd1;
             yarp::sig::file::read (snd1, "testmp3.mp3");
             yarp::sig::file::write(snd1, "testmp3b.mp3");
@@ -433,7 +433,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
     {
         std::ifstream is;
         is.open("testmp3.mp3", std::ios::binary);
-        #if (YARP_MP3_SUPPORTED)
+        #ifdef YARP_MP3_SUPPORTED
             CHECK (is.is_open());
         #endif
         if (is.is_open())
