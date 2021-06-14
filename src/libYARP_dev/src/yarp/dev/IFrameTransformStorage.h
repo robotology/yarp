@@ -90,7 +90,7 @@ public:
 
     virtual bool clear() = 0;
     
-    virtual bool delete_transform(std::string t1, std::string t2) = 0;
+    virtual bool deleteTransform(std::string t1, std::string t2) = 0;
 
     virtual bool size (size_t& size) const =0;
 

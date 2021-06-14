@@ -15,7 +15,10 @@ if(NOT SKIP_frameTransformManager)
   yarp_add_plugin(yarp_frameTransformStorage)
 
   target_sources(yarp_frameTransformStorage PRIVATE FrameTransformStorage.cpp
-                                                     FrameTransformStorage.h)
+                                                    FrameTransformStorage.h)
+
+  target_sources(yarp_frameTransformStorage PRIVATE $<TARGET_OBJECTS:FrameTransformUtils>)
+  target_include_directories(yarp_frameTransformStorage PRIVATE $<TARGET_PROPERTY:FrameTransformUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_frameTransformStorage PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
