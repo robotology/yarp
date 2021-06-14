@@ -19,10 +19,9 @@ if(NOT SKIP_frameTransformSetMultiplexer)
 
 
   target_link_libraries(yarp_frameTransformSetMultiplexer PRIVATE YARP::YARP_os
-                                                         YARP::YARP_dev)
+                                                                  YARP::YARP_dev)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
-                                                      YARP_sig
                                                       YARP_dev)
 
   yarp_install(TARGETS yarp_frameTransformSetMultiplexer
