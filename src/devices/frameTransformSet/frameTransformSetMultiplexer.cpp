@@ -83,7 +83,7 @@ bool FrameTransformSetMultiplexer::attachAll(const yarp::dev::PolyDriverList& de
 }
 
 
-bool FrameTransformSetMultiplexer::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)  
+bool FrameTransformSetMultiplexer::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
 {
     for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
     {
@@ -99,7 +99,7 @@ bool FrameTransformSetMultiplexer::setTransforms(const std::vector<yarp::math::F
 }
 
 
-bool FrameTransformSetMultiplexer::setTransform(const yarp::math::FrameTransform& transform)  
+bool FrameTransformSetMultiplexer::setTransform(const yarp::math::FrameTransform& transform)
 {
     for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
     {

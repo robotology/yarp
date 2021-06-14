@@ -83,7 +83,7 @@ bool FrameTransformGetMultiplexer::attachAll(const yarp::dev::PolyDriverList& de
 }
 
 
-bool FrameTransformGetMultiplexer::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const 
+bool FrameTransformGetMultiplexer::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
     for (size_t i = 0; i < m_iFrameTransformStorageGetList.size(); i++)
     {
