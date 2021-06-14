@@ -23,9 +23,8 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/IFrameTransformStorage.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include "FrameTransformStorageSetRPC.h"
 #include <mutex>
 #include <map>
@@ -33,14 +32,13 @@
 class FrameTransformSet_nws_yarp :
     public yarp::dev::DeviceDriver,
     public FrameTransformStorageSetRPC,
-    public yarp::os::PeriodicThread,
-    public yarp::dev::IMultipleWrapper
+    public yarp::dev::WrapperSingle
 {
 protected:
     mutable std::mutex  m_trf_mutex;
 
 public:
-    FrameTransformSet_nws_yarp(double tperiod=0.010);
+    FrameTransformSet_nws_yarp();
     ~FrameTransformSet_nws_yarp() {}
 
     //DeviceDriver
@@ -48,29 +46,19 @@ public:
     bool close() override;
 
     //wrapper and interfaces
-    bool attachAll(const yarp::dev::PolyDriverList& p) override;
-    bool detachAll() override;
-
-    //periodicThread
-    void run() override;
+    bool attach(yarp::dev::PolyDriver* device2attach) override;
+    bool detach() override;
 
     //FrameTransformStorageSetRPC functions
-    virtual bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
-    virtual bool setTransform(const yarp::math::FrameTransform& transform) override;
+    bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
+    bool setTransform(const yarp::math::FrameTransform& transform) override;
 
 private:
     mutable std::mutex  m_pd_mutex;
-    yarp::dev::PolyDriverList m_pDriverList;
+    yarp::dev::PolyDriver* m_pDriver;
     std::string m_thriftPortName;
     yarp::os::Port m_thriftPort;
-    double m_period;
-
-#ifndef SINGLE_SET
-    std::vector<yarp::dev::IFrameTransformStorageSet*> m_iSetIfs;
-#else
     yarp::dev::IFrameTransformStorageSet* m_iSetIf;
-#endif
-
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMSETNWSYARP_H

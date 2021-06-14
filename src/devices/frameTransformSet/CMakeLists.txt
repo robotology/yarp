@@ -41,14 +41,15 @@ endif()
 yarp_prepare_plugin(frameTransformSet_nws_yarp
                     CATEGORY device
                     TYPE FrameTransformSet_nws_yarp
-                    INCLUDE FrameTransformSet_nws_yarp.h
+                    INCLUDE frameTransformSet_nws_yarp.h
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformSet_nws_yarp)
   yarp_add_plugin(yarp_frameTransformSet_nws_yarp)
 
-  target_sources(yarp_frameTransformSet_nws_yarp PRIVATE FrameTransformSet_nws_yarp.cpp
-                                                         FrameTransformSet_nws_yarp.h
+  target_sources(yarp_frameTransformSet_nws_yarp PRIVATE frameTransformSet_nws_yarp.cpp
+                                                         frameTransformSet_nws_yarp.h
                                                          $<TARGET_OBJECTS:frameTransformStorageMsgs>)
   target_include_directories(yarp_frameTransformSet_nws_yarp PRIVATE $<TARGET_PROPERTY:frameTransformStorageMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
@@ -75,14 +76,15 @@ endif()
 yarp_prepare_plugin(frameTransformSet_nwc_yarp
                     CATEGORY device
                     TYPE FrameTransformSet_nwc_yarp
-                    INCLUDE FrameTransformSet_nwc_yarp.h
+                    INCLUDE frameTransformSet_nwc_yarp.h
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformSet_nwc_yarp)
   yarp_add_plugin(yarp_frameTransformSet_nwc_yarp)
 
-  target_sources(yarp_frameTransformSet_nwc_yarp PRIVATE FrameTransformSet_nwc_yarp.cpp
-                                                         FrameTransformSet_nwc_yarp.h
+  target_sources(yarp_frameTransformSet_nwc_yarp PRIVATE frameTransformSet_nwc_yarp.cpp
+                                                         frameTransformSet_nwc_yarp.h
                                                          $<TARGET_OBJECTS:frameTransformStorageMsgs>)
   target_include_directories(yarp_frameTransformSet_nwc_yarp PRIVATE $<TARGET_PROPERTY:frameTransformStorageMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
