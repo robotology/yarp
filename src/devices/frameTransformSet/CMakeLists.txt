@@ -14,18 +14,18 @@ yarp_prepare_plugin(frameTransformSetMultiplexer
 if(NOT SKIP_frameTransformSetMultiplexer)
   yarp_add_plugin(yarp_frameTransformSetMultiplexer)
 
-  tarSet_sources(yarp_frameTransformSetMultiplexer PRIVATE frameTransformSetMultiplexer.cpp
+  target_sources(yarp_frameTransformSetMultiplexer PRIVATE frameTransformSetMultiplexer.cpp
                                                   frameTransformSetMultiplexer.h)
 
 
-  tarSet_link_libraries(yarp_frameTransformSetMultiplexer PRIVATE YARP::YARP_os
+  target_link_libraries(yarp_frameTransformSetMultiplexer PRIVATE YARP::YARP_os
                                                          YARP::YARP_dev)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev)
 
-  yarp_install(TARSetS yarp_frameTransformSetMultiplexer
+  yarp_install(TARGETS yarp_frameTransformSetMultiplexer
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -34,6 +34,6 @@ if(NOT SKIP_frameTransformSetMultiplexer)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARSet yarp_frameTransformSetMultiplexer PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_frameTransformSetMultiplexer PROPERTY FOLDER "Plugins/Device")
 endif()
 ## YARP WRAPPER ##################################################################### END #
