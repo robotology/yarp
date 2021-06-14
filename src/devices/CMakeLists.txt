@@ -25,6 +25,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(frameTransformClient)
   add_subdirectory(frameTransformGet)
   add_subdirectory(frameTransformServer)
+  add_subdirectory(frameTransformSet)
   add_subdirectory(frameTransformStorageMsgs)
   add_subdirectory(frameTransformStorage)
   add_subdirectory(frameTransformUtils)
