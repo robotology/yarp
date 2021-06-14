@@ -16,13 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef YARP_DEV_FRAMETRANSFORMSTORAGE_H
-#define YARP_DEV_FRAMETRANSFORMSTORAGE_H
+#ifndef YARP_DEV_FRAMETRANSFORM_UTILS_H
+#define YARP_DEV_FRAMETRANSFORM_UTILS_H
 
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/IFrameTransformStorage.h>
-#include <FrameTransformUtils.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
@@ -30,24 +29,18 @@
 #include <mutex>
 #include <map>
 
-class FrameTransformStorage :
-    public yarp::dev::DeviceDriver,
+class FrameTransformContainer :
     public yarp::dev::IFrameTransformStorageSet,
     public yarp::dev::IFrameTransformStorageGet,
-    public yarp::dev::IFrameTransformStorageUtils,
-    public yarp::os::PeriodicThread,
-    public yarp::dev::IMultipleWrapper
+    public yarp::dev::IFrameTransformStorageUtils
 {
 protected:
-    FrameTransformContainer m_tf_container;
+    std::vector<yarp::math::FrameTransform> m_transforms;
+    mutable std::mutex  m_trf_mutex;
 
 public:
-    FrameTransformStorage(double tperiod=0.010) : PeriodicThread (tperiod) {}
-    ~FrameTransformStorage() {}
-
-    //DeviceDriver
-    bool open(yarp::os::Searchable& config) override;
-    bool close() override;
+    FrameTransformContainer() {}
+    ~FrameTransformContainer() {}
 
     //IFrameTransformStorageSet interface
     bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
@@ -61,16 +54,10 @@ public:
     bool size(size_t& size) const override;
     bool clear() override;
 
-    //wrapper and interfaces
-    mutable std::mutex  m_pd_mutex;
-    bool attachAll(const yarp::dev::PolyDriverList& p) override;
-    bool detachAll() override;
-    yarp::dev::PolyDriverList pDriverList;
-    std::vector<IFrameTransformStorageGet*> iGetIf;
-
-    //periodicThread
-    void     run() override;
+    //other
+    //yarp::math::FrameTransform& operator[]   (std::size_t idx) { return m_transforms[idx]; }
+    //bool     delete_transform(int id);
 
 };
 
-#endif // YARP_DEV_FRAMETRANSFORMSTORAGE_H
+#endif // YARP_DEV_FRAMETRANSFORM_UTILS_H
