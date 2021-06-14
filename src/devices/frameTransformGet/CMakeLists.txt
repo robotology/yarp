@@ -21,11 +21,9 @@ if(NOT SKIP_frameTransformGet_nws_yarp)
   target_include_directories(yarp_frameTransformGet_nws_yarp PRIVATE $<TARGET_PROPERTY:frameTransformStorageMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_frameTransformGet_nws_yarp PRIVATE YARP::YARP_os
-                                                         YARP::YARP_sig
                                                          YARP::YARP_dev)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
-                                                      YARP_sig
                                                       YARP_dev)
 
   yarp_install(TARGETS yarp_frameTransformGet_nws_yarp
@@ -59,11 +57,9 @@ if(NOT SKIP_frameTransformGet_nwc_yarp)
   target_include_directories(yarp_frameTransformGet_nwc_yarp PRIVATE $<TARGET_PROPERTY:frameTransformStorageMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_frameTransformGet_nwc_yarp PRIVATE YARP::YARP_os
-                                                         YARP::YARP_sig
                                                          YARP::YARP_dev)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
-                                                      YARP_sig
                                                       YARP_dev)
 
   yarp_install(TARGETS yarp_frameTransformGet_nwc_yarp
@@ -97,7 +93,6 @@ if(NOT SKIP_frameTransformGetMultiplexer)
                                                          YARP::YARP_dev)
 
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
-                                                      YARP_sig
                                                       YARP_dev)
 
   yarp_install(TARGETS yarp_frameTransformGetMultiplexer
