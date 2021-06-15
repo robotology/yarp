@@ -8,6 +8,10 @@ if(YARP_COMPILE_DEVICE_PLUGINS)
   include(YarpChooseIDL)
   yarp_choose_idl(FTM_THRIFT frameTransformStorageMsgs.thrift)
 
+if(YARP_COMPILE_DEVICE_PLUGINS)
+  include(YarpChooseIDL)
+  yarp_choose_idl(FTM_THRIFT frameTransformStorageMsgs.thrift)
+
   add_library(frameTransformStorageMsgs OBJECT)
 
   target_sources(frameTransformStorageMsgs PRIVATE ${FTM_THRIFT_GEN_FILES})
