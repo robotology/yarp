@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "FrameTransformUtils.h"
+#include "frameTransformUtils.h"
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
