@@ -4,9 +4,9 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-if(YARP_COMPILE_DEVICE_PLUGINS)
-  include(YarpChooseIDL)
-  yarp_choose_idl(FTM_THRIFT frameTransformStorageMsgs.thrift)
+if(NOT TARGET YARP::YARP_math)
+    return()
+endif()
 
 if(NOT YARP_COMPILE_DEVICE_PLUGINS)
   return()
