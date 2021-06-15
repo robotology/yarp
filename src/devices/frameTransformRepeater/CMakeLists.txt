@@ -16,6 +16,8 @@ if(NOT SKIP_frameTransformManager)
 
   target_sources(yarp_frameTransformRepeater PRIVATE frameTransformRepeater.cpp
                                                      frameTransformRepeater.h)
+  target_sources(yarp_frameTransformRepeater PRIVATE $<TARGET_OBJECTS:FrameTransformUtils>)
+  target_include_directories(yarp_frameTransformRepeater PRIVATE $<TARGET_PROPERTY:FrameTransformUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_frameTransformRepeater PRIVATE YARP::YARP_os
                                                      YARP::YARP_sig
