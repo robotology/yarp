@@ -11,6 +11,8 @@
 
 #include <yarp/robotinterface/experimental/Robot.h>
 
+#include <yarp/os/Searchable.h>
+
 #include <string>
 
 namespace yarp {
@@ -27,8 +29,12 @@ class XMLReaderFileVx
 public:
     bool verbose;
     virtual ~XMLReaderFileVx(){};
-    virtual yarp::robotinterface::experimental::XMLReaderResult getRobotFromFile(const std::string& filename, bool verbose = false) = 0;
-    virtual yarp::robotinterface::experimental::XMLReaderResult getRobotFromString(const std::string& xmlString, bool verbose = false) = 0;
+    virtual yarp::robotinterface::experimental::XMLReaderResult getRobotFromFile(const std::string& filename,
+                                                                                 const yarp::os::Searchable& config,
+                                                                                 bool verbose = false) = 0;
+    virtual yarp::robotinterface::experimental::XMLReaderResult getRobotFromString(const std::string& xmlString,
+                                                                                   const yarp::os::Searchable& config,
+                                                                                   bool verbose = false) = 0;
 };
 
 } // namespace impl

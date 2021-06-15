@@ -826,13 +826,17 @@ yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLRe
     return actions;
 }
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::getRobotFromFile(const std::string& filename, bool verb)
+yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::getRobotFromFile(const std::string& filename,
+                                                                                                                  const yarp::os::Searchable& /*config*/,
+                                                                                                                  bool verb)
 {
     mPriv->verbose_output = verb;
     return mPriv->readRobotFromFile(filename);
 }
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::getRobotFromString(const std::string& xmlString, bool verb)
+yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::getRobotFromString(const std::string& xmlString,
+                                                                                                                    const yarp::os::Searchable& /*config*/,
+                                                                                                                    bool verb)
 {
     mPriv->verbose_output = verb;
     return mPriv->readRobotFromString(xmlString);

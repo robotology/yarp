@@ -74,7 +74,8 @@ void yarp::robotinterface::experimental::XMLReader::setEnableDeprecated(bool ena
     mPriv->enable_deprecated = enab;
 }
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experimental::XMLReader::getRobotFromFile(const std::string& fileName)
+yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experimental::XMLReader::getRobotFromFile(const std::string& fileName,
+                                                                                                                    const yarp::os::Searchable& config)
 {
     std::string filename = fileName;
 #if defined(_WIN32)
@@ -121,15 +122,17 @@ yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experi
         if (mPriv->enable_deprecated) {
             yWarning() << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
             mPriv->mReader = new yarp::robotinterface::impl::XMLReaderFileV1;
-            return mPriv->mReader->getRobotFromFile(filename, mPriv->verbose);
-        } else {
-            yError("Invalid DTD version, execution stopped.");
-            return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
+            return mPriv->mReader->getRobotFromFile(filename, config, mPriv->verbose);
         }
-    } else if (dtd.majorVersion == 3) {
+
+        yError("Invalid DTD version, execution stopped.");
+        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
+
+    }
+    if (dtd.majorVersion == 3) {
         yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
         mPriv->mReader = new yarp::robotinterface::impl::XMLReaderFileV3;
-        return mPriv->mReader->getRobotFromFile(filename, mPriv->verbose);
+        return mPriv->mReader->getRobotFromFile(filename, config, mPriv->verbose);
     }
 
     //ERROR HERE
@@ -137,7 +140,8 @@ yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experi
     return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
 }
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experimental::XMLReader::getRobotFromString(const std::string& xmlString)
+yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experimental::XMLReader::getRobotFromString(const std::string& xmlString,
+                                                                                                                      const yarp::os::Searchable& config)
 {
     std::string curr_filename = " XML runtime string ";
     std::unique_ptr<TiXmlDocument> doc = std::make_unique<TiXmlDocument>();
@@ -177,7 +181,7 @@ yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experi
         if (mPriv->enable_deprecated) {
             yWarning() << "yarprobotinterface: using DEPRECATED xml parser for DTD v1.x";
             mPriv->mReader = new yarp::robotinterface::impl::XMLReaderFileV1;
-            return mPriv->mReader->getRobotFromString(xmlString, mPriv->verbose);
+            return mPriv->mReader->getRobotFromString(xmlString, config, mPriv->verbose);
         } else {
             yError("Invalid DTD version, execution stopped.");
             return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
@@ -185,7 +189,7 @@ yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::experi
     } else if (dtd.majorVersion == 3) {
         yDebug() << "yarprobotinterface: using xml parser for DTD v3.x";
         mPriv->mReader = new yarp::robotinterface::impl::XMLReaderFileV3;
-        return mPriv->mReader->getRobotFromString(xmlString, mPriv->verbose);
+        return mPriv->mReader->getRobotFromString(xmlString, config, mPriv->verbose);
     }
 
     //ERROR HERE
