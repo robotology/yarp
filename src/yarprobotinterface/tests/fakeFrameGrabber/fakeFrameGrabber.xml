@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE devices PUBLIC "-//YARP//DTD yarprobotinterface 3.1//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.1.dtd">
+
+<devices robot="grabber_left" build="3">
+    <device name="grabber_left" type="fakeFrameGrabber">
+        <param name="fakeFrameGrabber_rpc_port"> /fakeFrameGrabber_left/rpc </param>
+        <param name="width">360</param>
+        <param name="height">240</param>
+        <param name="mode" extern-name="mode">grid</param>
+    </device>
+
+    <device name="grabber_right" type="fakeFrameGrabber">
+        <param name="fakeFrameGrabber_rpc_port"> /fakeFrameGrabber_right/rpc </param>
+        <param name="width">360</param>
+        <param name="height">240</param>
+        <param name="mode" extern-name="mode">grid</param>
+    </device>
+
+    <device name="wrapper_left" type="grabberDual"> <!-- frameGrabber_nws_yarp -->
+        <param name="name">/left</param>
+        <param name="period">33</param>
+        <action phase="startup" level="10" type="attach">
+            <param name="device"> grabber_left </param>
+        </action>
+        <action phase="shutdown" level="5" type="detach" />
+    </device>
+
+    <device name="wrapper_right" type="grabberDual">--> <!-- frameGrabber_nws_yarp -->
+        <param name="name">/right</param>
+        <param name="period">33</param>
+        <action phase="startup" level="10" type="attach">
+            <param name="device"> grabber_right </param>
+        </action>
+        <action phase="shutdown" level="5" type="detach" />
+    </device>
+</devices>
