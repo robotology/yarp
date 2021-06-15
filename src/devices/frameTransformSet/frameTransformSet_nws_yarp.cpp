@@ -1,19 +1,9 @@
 /*
  * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #include "frameTransformSet_nws_yarp.h"
@@ -50,7 +40,7 @@ bool FrameTransformSet_nws_yarp::open(yarp::os::Searchable& config)
     if(okGeneral)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        if (general_config.check("rpc_port"))       {m_thriftPortName = general_config.find("thrift_port").asString();}
+        if (general_config.check("rpc_port"))       {m_thriftPortName = general_config.find("rpc_port").asString();}
     }
     if(!m_thriftPort.open(m_thriftPortName))
     {
