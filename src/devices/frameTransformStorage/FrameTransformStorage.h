@@ -22,7 +22,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/IFrameTransformStorage.h>
-#include <FrameTransformUtils.h>
+#include <frameTransformUtils.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
