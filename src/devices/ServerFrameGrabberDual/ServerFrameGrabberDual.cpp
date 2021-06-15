@@ -119,7 +119,7 @@ bool ServerGrabber::close() {
     if(responder2)
     {
         delete responder2;
-        responder=nullptr;
+        responder2=nullptr;
     }
 
     if(isSubdeviceOwned && poly2)
@@ -207,7 +207,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
             && config.find("period").isInt32())
         period = config.find("period").asInt32() / 1000.0;
     else
-        yCWarning(SERVERGRABBER) << "Period parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "s";
+        yCInfo(SERVERGRABBER) << "Period parameter not found, using default of"<< DEFAULT_THREAD_PERIOD << "s";
     if((config.check("subdevice")) && (config.check("left_config") || config.check("right_config")))
     {
         yCError(SERVERGRABBER) << "Found both 'subdevice' and 'left_config/right_config' parameters...";
@@ -235,7 +235,7 @@ bool ServerGrabber::fromConfig(yarp::os::Searchable &config)
 
     param.singleThreaded =
         config.check("single_threaded",
-                     "if present, operate in single threaded mode")!=0;
+                     "if present, operate in single threaded mode");
     //TODO audio part
     std::string rootName;
     rootName = config.check("name",Value("/grabber"),
