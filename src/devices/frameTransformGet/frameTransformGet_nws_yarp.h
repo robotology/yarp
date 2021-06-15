@@ -16,7 +16,6 @@
 
 #include <FrameTransformStorageGetRPC.h>
 
-constexpr double const_default_thread_period = 0.01; // 10 millisecond
 // TODO FIXME STE need to check subdevice option
 /*
  * \section FrameTransformGet_nws_yarp_device_parameters Description of input parameters
