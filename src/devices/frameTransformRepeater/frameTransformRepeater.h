@@ -18,11 +18,11 @@
 
 #ifndef YARP_DEV_FRAMETRANSFORMREPEATER_H
 #define YARP_DEV_FRAMETRANSFORMREPEATER_H
-#define SIMPLE_PASS
 
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/IFrameTransformStorage.h>
+#include <frameTransformUtils.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
@@ -36,11 +36,12 @@ class FrameTransformRepeater :
     public yarp::os::PeriodicThread
 {
 private:
-    std::vector<yarp::math::FrameTransform> m_transforms;
-    mutable std::mutex                      m_trf_mutex;
+    mutable std::mutex       m_trf_mutex;
+    FrameTransformContainer  m_ftContainer;
+    double                   m_period;
 
 public:
-    FrameTransformRepeater(double tperiod=0.010) : PeriodicThread (tperiod) {}
+    FrameTransformRepeater(double tperiod=0.010);
     ~FrameTransformRepeater() {}
 
     //DeviceDriver

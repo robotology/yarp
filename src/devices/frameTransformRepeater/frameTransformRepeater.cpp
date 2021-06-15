@@ -33,9 +33,30 @@ YARP_LOG_COMPONENT(FRAMETRANSFORREPEATER, "yarp.device.frameTransformRepeater")
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
+FrameTransformRepeater::FrameTransformRepeater(double tperiod) :
+PeriodicThread (tperiod),
+m_period(tperiod)
+{}
 
 bool FrameTransformRepeater::open(yarp::os::Searchable& config)
 {
+    if (!yarp::os::NetworkBase::checkNetwork()) {
+        yCError(FRAMETRANSFORREPEATER,"Error! YARP Network is not initialized");
+        return false;
+    }
+
+    bool okGeneral = config.check("GENERAL");
+    if(okGeneral)
+    {
+        yarp::os::Searchable& general_config = config.findGroup("GENERAL");
+        if (general_config.check("period"))
+        {
+            m_period = general_config.find("period").asFloat64();
+            setPeriod(m_period);
+        }
+    }
+
+    start();
     return true;
 }
 
@@ -47,16 +68,21 @@ bool FrameTransformRepeater::close()
 bool FrameTransformRepeater::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
     std::lock_guard<std::mutex> lock(m_trf_mutex);
-    transforms = m_transforms;
+    if(!m_ftContainer.getTransforms(transforms))
+    {
+        yCError(FRAMETRANSFORREPEATER,"Unable to retrieve transforms");
+        return false;
+    }
     return true;
 }
 
-#ifndef SIMPLE_PASS
 bool FrameTransformRepeater::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
 {
-    for (auto& it : transforms)
+    std::lock_guard<std::mutex> lock(m_trf_mutex);
+    if(!m_ftContainer.setTransforms(transforms))
     {
-        setTransform(it);
+        yCError(FRAMETRANSFORREPEATER,"Unable to set transforms");
+        return false;
     }
     return true;
 }
@@ -64,43 +90,13 @@ bool FrameTransformRepeater::setTransforms(const std::vector<yarp::math::FrameTr
 bool FrameTransformRepeater::setTransform(const yarp::math::FrameTransform& t)
 {
     std::lock_guard<std::mutex> lock(m_trf_mutex);
-    for (auto& it : m_transforms)
+    if(!m_ftContainer.setTransform(t))
     {
-        //this linear search may require some optimization
-        if (it.dst_frame_id == t.dst_frame_id && it.src_frame_id == t.src_frame_id)
-        {
-            //transform already exists, update it
-            it = t;
-            return true;
-        }
-    }
-
-    //add a new transform
-    m_transforms.push_back(t);
-    return true;
-}
-
-#else
-bool FrameTransformRepeater::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
-{
-    std::lock_guard<std::mutex> lock(m_trf_mutex);
-    m_transforms.clear();
-    for(auto& t : transforms)
-    {
-        m_transforms.push_back(t);
+        yCError(FRAMETRANSFORREPEATER,"Unable to set transform");
+        return false;
     }
     return true;
 }
-
-bool FrameTransformRepeater::setTransform(const yarp::math::FrameTransform& t)
-{
-    std::lock_guard<std::mutex> lock(m_trf_mutex);
-    m_transforms.clear();
-    m_transforms.push_back(t);
-    return true;
-}
-#endif
-
 
 void FrameTransformRepeater::run()
 {
