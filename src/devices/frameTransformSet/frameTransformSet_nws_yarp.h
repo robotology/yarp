@@ -1,19 +1,9 @@
 /*
  * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_FRAMETRANSFORMSETNWSYARP_H
@@ -28,6 +18,27 @@
 #include "FrameTransformStorageSetRPC.h"
 #include <mutex>
 #include <map>
+
+/*
+ * \section FrameTransformSet_nws_yarp_device_parameters Description of input parameters
+ * This device is paired with its server called FrameTransformSet_nwc_yarp.
+ *
+ *   Parameters required by this device are:
+ * | Parameter name | SubParameter            | Type    | Units          | Default Value             | Required     | Description                            |
+ * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------------------:|:-----------: |:--------------------------------------:|
+ * | GENERAL        |      -                  | group   | -              | -                         | No           |                                        |
+ * | -              | rpc_port                | string  | -              | /frameTransformSet/rpc    | No           | port on which rpc calls should be made |
+ *
+ * Some example of configuration files:
+ *
+ * Example of configuration file using .ini format.
+ *
+ * \code{.unparsed}
+ * device frameTransformSet_nws_yarp
+ * [GENERAL]
+ * rpc_port /frameTransformSet/rpc
+ * \endcode
+ */
 
 class FrameTransformSet_nws_yarp :
     public yarp::dev::DeviceDriver,
