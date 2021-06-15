@@ -9,6 +9,7 @@ yarp_prepare_plugin(frameTransformGet_nws_yarp
                     CATEGORY device
                     TYPE FrameTransformGet_nws_yarp
                     INCLUDE frameTransformGet_nws_yarp.h
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformGet_nws_yarp)
@@ -45,6 +46,7 @@ yarp_prepare_plugin(frameTransformGet_nwc_yarp
                     CATEGORY device
                     TYPE FrameTransformGet_nwc_yarp
                     INCLUDE frameTransformGet_nwc_yarp.h
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformGet_nwc_yarp)
@@ -80,6 +82,7 @@ yarp_prepare_plugin(frameTransformGetMultiplexer
                     CATEGORY device
                     TYPE FrameTransformGetMultiplexer
                     INCLUDE frameTransformGetMultiplexer.h
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformGetMultiplexer)

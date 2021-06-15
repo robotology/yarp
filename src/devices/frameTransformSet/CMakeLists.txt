@@ -9,6 +9,7 @@ yarp_prepare_plugin(frameTransformSetMultiplexer
                     CATEGORY device
                     TYPE FrameTransformSetMultiplexer
                     INCLUDE frameTransformSetMultiplexer.h
+                    DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformSetMultiplexer)
