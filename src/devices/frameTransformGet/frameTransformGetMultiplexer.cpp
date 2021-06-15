@@ -49,7 +49,6 @@ bool FrameTransformGetMultiplexer::close()
 {
     yCTrace(FRAMETRANSFORMGETMULTIPLEXER, "Close");
     detachAll();
-    // Closing port
     return true;
 }
 
