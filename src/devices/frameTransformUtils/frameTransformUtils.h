@@ -39,6 +39,10 @@ protected:
     mutable std::mutex  m_trf_mutex;
 
 public:
+    //non-static transforms older than value (seconds) will be removed by method checkAndRemoveExpired()
+    double m_timeout = 0.2;
+
+public:
     FrameTransformContainer() {}
     ~FrameTransformContainer() {}
 
@@ -54,7 +58,9 @@ public:
     bool size(size_t& size) const override;
     bool clear() override;
 
+public:
     //other
+    bool checkAndRemoveExpired();
     //yarp::math::FrameTransform& operator[]   (std::size_t idx) { return m_transforms[idx]; }
     //bool     delete_transform(int id);
 
