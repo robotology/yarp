@@ -52,6 +52,10 @@ bool FrameTransformSet_nwc_yarp::open(yarp::os::Searchable& config)
 
 bool FrameTransformSet_nwc_yarp::close()
 {
+    if(m_thriftPort.isOpen())
+    {
+        m_thriftPort.close();
+    }
     return true;
 }
 

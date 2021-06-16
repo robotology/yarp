@@ -62,11 +62,11 @@ public:
     bool setTransform(const yarp::math::FrameTransform& transform) override;
 
 private:
-    mutable std::mutex  m_pd_mutex;
-    mutable std::mutex  m_trf_mutex;
-    yarp::dev::PolyDriver* m_pDriver{nullptr};
-    std::string m_thriftPortName{"/frameTransformSet/rpc"};
-    yarp::os::Port m_thriftPort;
+    mutable std::mutex                    m_pd_mutex;
+    mutable std::mutex                    m_trf_mutex;
+    yarp::dev::PolyDriver*                m_pDriver{nullptr};
+    std::string                           m_thriftPortName{"/frameTransformSet/rpc"};
+    yarp::os::Port                        m_thriftPort;
     yarp::dev::IFrameTransformStorageSet* m_iSetIf;
 };
 
