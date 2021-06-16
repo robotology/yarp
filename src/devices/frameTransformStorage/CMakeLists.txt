@@ -11,7 +11,7 @@ yarp_prepare_plugin(frameTransformStorage
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
-if(NOT SKIP_frameTransformManager)
+if(NOT SKIP_frameTransformStorage)
   yarp_add_plugin(yarp_frameTransformStorage)
 
   target_sources(yarp_frameTransformStorage PRIVATE FrameTransformStorage.cpp
