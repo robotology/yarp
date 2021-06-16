@@ -19,19 +19,26 @@ using namespace yarp::sig;
 using namespace yarp::math;
 
 namespace {
-YARP_LOG_COMPONENT(FRAMETRANSFORREPEATER, "yarp.device.frameTransformRepeater")
+YARP_LOG_COMPONENT(FRAMETRANSFORMREPEATER, "yarp.device.frameTransformRepeater")
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
-FrameTransformRepeater::FrameTransformRepeater()
-{}
 
 bool FrameTransformRepeater::open(yarp::os::Searchable& config)
 {
     if (!yarp::os::NetworkBase::checkNetwork()) {
-        yCError(FRAMETRANSFORREPEATER,"Error! YARP Network is not initialized");
+        yCError(FRAMETRANSFORMREPEATER,"Error! YARP Network is not initialized");
         return false;
     }
+
+    bool okGeneral = config.check("GENERAL");
+    if(okGeneral)
+    {
+        const yarp::os::Searchable& general_config = config.findGroup("GENERAL");
+        if (general_config.check("refresh_interval"))       {m_refreshInterval = general_config.find("refresh_interval").asDouble();}
+    }
+
+    m_ftContainer.m_timeout = m_refreshInterval;
 
     return true;
 }
@@ -44,9 +51,14 @@ bool FrameTransformRepeater::close()
 bool FrameTransformRepeater::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
     std::lock_guard<std::mutex> lock(m_trf_mutex);
+    if(!m_ftContainer.checkAndRemoveExpired())
+    {
+        yCError(FRAMETRANSFORMREPEATER,"Unable to remove expired transforms");
+        return false;
+    }
     if(!m_ftContainer.getTransforms(transforms))
     {
-        yCError(FRAMETRANSFORREPEATER,"Unable to retrieve transforms");
+        yCError(FRAMETRANSFORMREPEATER,"Unable to retrieve transforms");
         return false;
     }
     return true;
@@ -57,7 +69,7 @@ bool FrameTransformRepeater::setTransforms(const std::vector<yarp::math::FrameTr
     std::lock_guard<std::mutex> lock(m_trf_mutex);
     if(!m_ftContainer.setTransforms(transforms))
     {
-        yCError(FRAMETRANSFORREPEATER,"Unable to set transforms");
+        yCError(FRAMETRANSFORMREPEATER,"Unable to set transforms");
         return false;
     }
     return true;
@@ -68,7 +80,7 @@ bool FrameTransformRepeater::setTransform(const yarp::math::FrameTransform& t)
     std::lock_guard<std::mutex> lock(m_trf_mutex);
     if(!m_ftContainer.setTransform(t))
     {
-        yCError(FRAMETRANSFORREPEATER,"Unable to set transform");
+        yCError(FRAMETRANSFORMREPEATER,"Unable to set transform");
         return false;
     }
     return true;

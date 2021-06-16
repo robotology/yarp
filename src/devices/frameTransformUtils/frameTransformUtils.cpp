@@ -154,6 +154,11 @@ bool FrameTransformContainer::checkAndRemoveExpired()
     return true;
 }
 
+bool FrameTransformContainer::checkAndRemoveExpired() const 
+{
+    return const_cast<FrameTransformContainer*>(this)->checkAndRemoveExpired();
+}
+
 bool FrameTransformContainer::size(size_t& size) const
 {
     std::lock_guard<std::mutex> lock(m_trf_mutex);
