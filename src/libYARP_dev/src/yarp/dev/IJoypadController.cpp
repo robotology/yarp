@@ -9,14 +9,15 @@
 #include <yarp/dev/IJoypadController.h>
 #include <yarp/os/LogStream.h>
 #include <cmath>
+
 using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
-#define MESSAGE_PREFIX "IJoypadController:"
-#define myInfo() yInfo() << MESSAGE_PREFIX
-#define myError() yError() << MESSAGE_PREFIX
-#define myDebug() yDebug() << MESSAGE_PREFIX
-#define myWarning() yWarning() << MESSAGE_PREFIX
+
+namespace {
+YARP_LOG_COMPONENT(IJOYPADCONTROLLER, "yarp.dev.IJoypadController")
+}
+
 #define buttActionGroupName "BUTTON_EXECUTE"
 
 #define JoyData yarp::dev::IJoypadEvent::joyData
@@ -393,12 +394,12 @@ bool yarp::dev::IJoypadController::executeAction(int action_id)
 {
     if (m_actions.find(action_id) != m_actions.end())
     {
-        myInfo() << "executing script" << action_id << ":" << m_actions[action_id];
+        yCInfo(IJOYPADCONTROLLER) << "executing script" << action_id << ":" << m_actions[action_id];
         system(m_actions[action_id].c_str());
     }
     else
     {
-        myWarning() << "no scripts associated to button" << action_id;
+        yCWarning(IJOYPADCONTROLLER) << "no scripts associated to button" << action_id;
         return false;
     }
     return true;
@@ -411,7 +412,7 @@ bool yarp::dev::IJoypadController::parseActions(const yarp::os::Searchable& cfg,
     int& actCount = count ? *count : dummy;
     if(!cfg.check(buttActionGroupName))
     {
-        myInfo() << "no actions found in the configuration file (no" << buttActionGroupName << "group found)";
+        yCInfo(IJOYPADCONTROLLER) << "no actions found in the configuration file (no" << buttActionGroupName << "group found)";
         actCount = 0;
         return true;
     }
@@ -419,7 +420,7 @@ bool yarp::dev::IJoypadController::parseActions(const yarp::os::Searchable& cfg,
 
     if(!actionsGroup.size())
     {
-        myError() << "no action found under" << buttActionGroupName << "group";
+        yCError(IJOYPADCONTROLLER) << "no action found under" << buttActionGroupName << "group";
         actCount = 0;
         return false;
     }
@@ -437,7 +438,7 @@ bool yarp::dev::IJoypadController::parseActions(const yarp::os::Searchable& cfg,
         unsigned int buttonCount;
         if(!this->getButtonCount(buttonCount))
         {
-            myError() << "unable to get button count while parsing the actions";
+            yCError(IJOYPADCONTROLLER) << "unable to get button count while parsing the actions";
             actCount = 0;
             return false;
         }
@@ -446,16 +447,16 @@ bool yarp::dev::IJoypadController::parseActions(const yarp::os::Searchable& cfg,
            (unsigned int) keyvalue.get(0).asInt32() > buttonCount-1 ||
            !keyvalue.get(1).isString())
         {
-            myError() << "Button's actions parameters must be in the format 'unsigned int string' and the button id must be in range";
+            yCError(IJOYPADCONTROLLER) << "Button's actions parameters must be in the format 'unsigned int string' and the button id must be in range";
             actCount = 0;
             return false;
         }
-        myInfo() << "assigning actions" << keyvalue.get(1).asString() << "to button" << keyvalue.get(0).asInt32();
+        yCInfo(IJOYPADCONTROLLER) << "assigning actions" << keyvalue.get(1).asString() << "to button" << keyvalue.get(0).asInt32();
         m_actions[keyvalue.get(0).asInt32()] = keyvalue.get(1).asString();
     }
 
     actCount = i;
-    myInfo() << actCount << "action parsed successfully";
+    yCInfo(IJOYPADCONTROLLER) << actCount << "action parsed successfully";
     return true;
 }
 
