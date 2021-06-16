@@ -138,6 +138,22 @@ bool FrameTransformContainer::clear()
     return true;
 }
 
+bool FrameTransformContainer::checkAndRemoveExpired()
+{
+    std::lock_guard<std::mutex> lock(m_trf_mutex);
+    double curr_t = yarp::os::Time::now();
+    for (auto it= m_transforms.begin(); it!= m_transforms.end(); it++)
+    {
+        if (it->timestamp- curr_t >m_timeout &&
+            it->isStatic == false)
+        {
+            m_transforms.erase(it);
+            it = m_transforms.begin();
+        }
+    }
+    return true;
+}
+
 bool FrameTransformContainer::size(size_t& size) const
 {
     std::lock_guard<std::mutex> lock(m_trf_mutex);

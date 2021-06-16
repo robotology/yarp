@@ -66,6 +66,11 @@ bool FrameTransformStorage::deleteTransform(string t1, string t2)
 void FrameTransformStorage::run()
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
+
+    // remove expired non static transforms
+    m_tf_container.checkAndRemoveExpired();
+
+    // get new transforms
     for (size_t i = 0; i < iGetIf.size(); i++)
     {
         std::vector<yarp::math::FrameTransform> tfs;
