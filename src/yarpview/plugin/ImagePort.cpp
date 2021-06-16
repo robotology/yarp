@@ -82,7 +82,15 @@ void InputCallback::onRead(yarp::sig::ImageOf<yarp::sig::PixelRgba> &img)
     }*/
 
 #if QT_VERSION >= 0x050302
-    memcpy(tmpBuf,rawImg,imgSize);
+    if (img.topIsLowIndex()) {
+        memcpy(tmpBuf, rawImg, imgSize);
+    } else {
+        for(int x = 0; x < s.height(); x++) {
+            memcpy(tmpBuf + x * img.getRowSize(),
+                   rawImg + (s.height() - x - 1) * img.getRowSize(),
+                   img.getRowSize());
+        }
+    }
 #else
     for(int x =0; x < s.height(); x++) {
         memcpy(tmpBuf + x * (img.width() * img.getPixelSize()),
