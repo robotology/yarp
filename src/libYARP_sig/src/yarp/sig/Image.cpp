@@ -54,11 +54,12 @@ inline bool readFromConnection(Image &dest, ImageNetworkHeader &header, Connecti
     //this check is redundant with assertion, I would remove it
     if (dest.getRawImageSize() != static_cast<size_t>(header.imgSize)) {
         printf("There is a problem reading an image\n");
-        printf("incoming: width %zu, height %zu, code %zu, quantum %zu, size %zu\n",
+        printf("incoming: width %zu, height %zu, code %zu, quantum %zu, topIsLow %zu, size %zu\n",
                static_cast<size_t>(header.width),
                static_cast<size_t>(header.height),
                static_cast<size_t>(header.id),
                static_cast<size_t>(header.quantum),
+               static_cast<size_t>(header.topIsLow),
                static_cast<size_t>(header.imgSize));
         printf("my space: width %zu, height %zu, code %d, quantum %zu, size %zu\n",
             dest.width(), dest.height(), dest.getPixelCode(), dest.getQuantum(), allocatedBytes);
@@ -78,11 +79,10 @@ public:
     size_t extern_type_quantum;
     size_t quantum;
     bool topIsLow;
+    int type_id;
 
 protected:
     Image& owner;
-
-    int type_id;
 
     int is_owner;
 
@@ -136,8 +136,6 @@ public:
 
     void _alloc_complete_extern(const void *buf, size_t x, size_t y, int pixel_type,
                                 size_t quantum, bool topIsLow);
-    int getTypeId();
-
 };
 
 
@@ -157,15 +155,6 @@ void ImageStorage::resize(size_t x, size_t y, int pixel_type,
     extern_type_id = pixel_type;
     extern_type_quantum = quantum;
 }
-
-/**
- * @brief ImageStorage::getTypeId
- * @return The type_id value
- */
-int ImageStorage::getTypeId(){
-    return type_id;
-}
-
 
 // allocates an empty image.
 void ImageStorage::_alloc () {
@@ -504,13 +493,34 @@ void Image::setPixelSize(size_t imgPixelSize) {
 void Image::setPixelCode(int imgPixelCode) {
     this->imgPixelCode = imgPixelCode;
     this->imgPixelSize = (imgPixelCode < 0) ? -imgPixelCode : pixelCode2Size.at(static_cast<YarpVocabPixelTypesEnum>(imgPixelCode));
+
+    if (implementation) {
+        auto* impl = static_cast<ImageStorage*>(implementation);
+        impl->type_id = imgPixelCode;
+    }
 }
 
 
 void Image::setQuantum(size_t imgQuantum) {
     this->imgQuantum = imgQuantum;
+
+    if (implementation) {
+        auto* impl = static_cast<ImageStorage*>(implementation);
+        impl->quantum = imgQuantum;
+    }
 }
 
+
+void Image::setTopIsLowIndex(bool flag) {
+    topIsLow = flag;
+
+    if (implementation) {
+        auto* impl = static_cast<ImageStorage*>(implementation);
+        if (impl->pImage) {
+            impl->pImage->origin = topIsLow ? IPL_ORIGIN_TL : IPL_ORIGIN_BL;
+        }
+    }
+}
 
 void Image::synchronize() {
     auto* impl = static_cast<ImageStorage*>(implementation);
@@ -521,7 +531,7 @@ void Image::synchronize() {
         data = impl->Data;
         imgQuantum = impl->quantum;
         imgRowSize = impl->pImage->widthStep;
-        setPixelCode(impl->getTypeId());
+        setPixelCode(impl->type_id);
         topIsLow = impl->pImage->origin == IPL_ORIGIN_TL;
     } else {
         data = nullptr;
@@ -649,13 +659,15 @@ void Image::wrapIplImage(void *iplImage) {
         printf("Making a copy instead of just wrapping...\n");
         FlexImage img;
         img.setQuantum(p->align);
+        img.setTopIsLowIndex(p->origin == IPL_ORIGIN_TL);
         img.setPixelCode(code);
-        img.setExternal(p->imageData,p->width,p->height);
+        img.setExternal(p->imageData, p->width, p->height);
         copy(img);
     } else {
         setQuantum(p->align);
+        setTopIsLowIndex(p->origin == IPL_ORIGIN_TL);
         setPixelCode(code);
-        setExternal(p->imageData,p->width,p->height);
+        setExternal(p->imageData, p->width, p->height);
     }
 }
 
@@ -696,6 +708,8 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         }
     }
 
+    setTopIsLowIndex(header.topIsLow == 0);
+
     // handle easy case, received and current image are compatible, no conversion needed
     if (getPixelCode() == header.id && q == static_cast<size_t>(header.quantum) && imgPixelSize == static_cast<size_t>(header.depth))
     {
@@ -723,6 +737,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         FlexImage flex;
         flex.setPixelCode(VOCAB_PIXEL_MONO);
         flex.setQuantum(header.quantum);
+        flex.setTopIsLowIndex(header.topIsLow == 0);
 
         bool ok = readFromConnection(flex, header, connection);
         if (!ok) {
@@ -849,6 +864,8 @@ bool Image::copy(const Image& alt)
             setQuantum(alt.getQuantum());
         }
         resize(alt.width(),alt.height());
+        setTopIsLowIndex(alt.topIsLowIndex());
+
         int q1 = alt.getQuantum();
         int q2 = getQuantum();
         if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
@@ -893,6 +910,7 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
     if (getPixelCode()==0) {
         setPixelCode(alt.getPixelCode());
         setQuantum(alt.getQuantum());
+        setTopIsLowIndex(alt.topIsLowIndex());
     }
     if (&alt==this) {
         FlexImage img;
@@ -904,6 +922,7 @@ bool Image::copy(const Image& alt, size_t w, size_t h) {
         FlexImage img;
         img.setPixelCode(getPixelCode());
         img.setQuantum(getQuantum());
+        img.setTopIsLowIndex(topIsLowIndex());
         img.copy(alt);
         return copy(img,w,h);
     }

@@ -349,9 +349,7 @@ public:
      * false if image has origin at bottom left.
      *
      */
-    void setTopIsLowIndex(bool flag) {
-        topIsLow = flag;
-    }
+    void setTopIsLowIndex(bool flag);
 
 
     /**
