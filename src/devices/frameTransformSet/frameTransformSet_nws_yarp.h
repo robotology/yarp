@@ -45,12 +45,9 @@ class FrameTransformSet_nws_yarp :
     public FrameTransformStorageSetRPC,
     public yarp::dev::WrapperSingle
 {
-protected:
-    mutable std::mutex  m_trf_mutex;
 
 public:
-    FrameTransformSet_nws_yarp();
-    ~FrameTransformSet_nws_yarp() {}
+    FrameTransformSet_nws_yarp() {};
 
     //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
@@ -66,8 +63,9 @@ public:
 
 private:
     mutable std::mutex  m_pd_mutex;
-    yarp::dev::PolyDriver* m_pDriver;
-    std::string m_thriftPortName;
+    mutable std::mutex  m_trf_mutex;
+    yarp::dev::PolyDriver* m_pDriver{nullptr};
+    std::string m_thriftPortName{"/frameTransformSet/rpc"};
     yarp::os::Port m_thriftPort;
     yarp::dev::IFrameTransformStorageSet* m_iSetIf;
 };
