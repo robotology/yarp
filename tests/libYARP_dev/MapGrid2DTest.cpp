@@ -10,27 +10,21 @@
 #include <yarp/dev/IMap2D.h>
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
+#include <yarp/os/Os.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/conf/filesystem.h>
 
 #include <catch.hpp>
 #include <harness.h>
+#include <YarpBuildLocation.h>
 
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-std::string extractPathFromFile(std::string full_filename)
-{
-    size_t found;
-    found = full_filename.find_last_of('/');
-    if (found != std::string::npos) return full_filename.substr(0, found) + "/";
-    found = full_filename.find_last_of('\\');
-    if (found != std::string::npos) return full_filename.substr(0, found) + "\\";
-    return full_filename;
-}
 
 static void ReadMapfromString(Nav2D::MapGrid2D& m, std::string s)
 {
@@ -56,6 +50,16 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
     YARP_REQUIRE_PLUGIN("map2DClient", "device");
 
     Network::setLocalMode(true);
+
+    // Prepare folder for saving files
+    const std::string sep {yarp::conf::filesystem::preferred_separator};
+    const std::string saveDir = std::string{CMAKE_BINARY_DIR} + sep +
+        "tests" + sep +
+        "conf" + sep +
+        "contexts" + sep +
+        "mapGrid2DTest";
+
+    yarp::os::mkdir_p(saveDir.c_str());
 
     SECTION("Test data type MapGrid2D")
     {
@@ -174,28 +178,25 @@ TEST_CASE("dev::MapGrid2DTest", "[yarp::dev]")
         rf.setDefaultContext("mapGrid2DTest");
         {
             std::string si = rf.findFileByName("map_yarpOnly.map");
-            std::string so = extractPathFromFile(si);
             bool b1 = yarp_map.loadFromFile(si);
             yarp_map.m_map_name="testmap_yarpOnly_savedOutput";
-            bool b1b = yarp_map.saveToFile(so + "map_yarpOnlySaved.map");
+            bool b1b = yarp_map.saveToFile(saveDir + sep + "map_yarpOnlySaved.map");
             CHECK(b1);
             CHECK(b1b);
         }
         {
             std::string si = rf.findFileByName("map_rosOnly.map");
-            std::string so = extractPathFromFile(si);
             bool b2 = ros_map.loadFromFile(si);
             ros_map.m_map_name = "testmap_rosOnly_savedOutput";
-            bool b2b = ros_map.saveToFile(so + "map_rosOnlySaved.map");
+            bool b2b = ros_map.saveToFile(saveDir + sep + "map_rosOnlySaved.map");
             CHECK(b2);
             CHECK(b2b);
         }
         {
             std::string si = rf.findFileByName("map_yarpAndRos.map");
-            std::string so = extractPathFromFile(si);
             bool b3 = yarpros_map.loadFromFile(si);
             yarpros_map.m_map_name = "testmap_yarpAndRos_savedOutput";
-            bool b3b = yarpros_map.saveToFile(so + "map_yarpAndRosSaved.map");
+            bool b3b = yarpros_map.saveToFile(saveDir + sep + "map_yarpAndRosSaved.map");
             CHECK(b3);
             CHECK(b3b);
         }
