@@ -127,7 +127,7 @@ bool WireLink::write(yarp::os::PortWriter& writer)
     return mPriv->port->write(writer);
 }
 
-bool WireLink::write(yarp::os::PortWriter& writer, yarp::os::PortReader& reader)
+bool WireLink::write(const yarp::os::PortWriter& writer, yarp::os::PortReader& reader) const
 {
     if (mPriv->reader != nullptr) {
         DummyConnector con;
