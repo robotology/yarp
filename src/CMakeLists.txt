@@ -38,7 +38,13 @@ add_subdirectory(libYARP_init)
 
 if(YARP_COMPILE_EXECUTABLES)
     # idl compilers (thrift and ros)
-    add_subdirectory(idls)
+    add_subdirectory(yarpidl_thrift)
+    add_subdirectory(yarpidl_rosmsg)
+    if(NOT CREATE_SHARED_LIBS)
+        include(YarpInstallBasicPackageFiles)
+        yarp_install_basic_package_files(YARP_idl_tools
+                                         INCLUDE_CONTENT "include(\"\\\${YARP_MODULE_DIR}/YarpIDL.cmake\")")
+    endif()
 
     # executables
     add_subdirectory(yarpserver)
