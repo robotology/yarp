@@ -1,19 +1,9 @@
 /*
  * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * All rights reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software may be modified and distributed under the terms of the
+ * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
 #ifndef YARP_DEV_FRAMETRANSFORMREPEATER_H
@@ -24,7 +14,6 @@
 #include <yarp/dev/IFrameTransformStorage.h>
 #include <frameTransformUtils.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <mutex>
 #include <map>
@@ -32,16 +21,14 @@
 class FrameTransformRepeater :
     public yarp::dev::DeviceDriver,
     public yarp::dev::IFrameTransformStorageSet,
-    public yarp::dev::IFrameTransformStorageGet,
-    public yarp::os::PeriodicThread
+    public yarp::dev::IFrameTransformStorageGet
 {
 private:
     mutable std::mutex       m_trf_mutex;
     FrameTransformContainer  m_ftContainer;
-    double                   m_period;
 
 public:
-    FrameTransformRepeater(double tperiod=0.010);
+    FrameTransformRepeater();
     ~FrameTransformRepeater() {}
 
     //DeviceDriver
@@ -55,8 +42,6 @@ public:
     //IFrameTransformStorageGet interface
     bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
 
-    //periodicThread
-    void run() override;
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMREPEATER_H

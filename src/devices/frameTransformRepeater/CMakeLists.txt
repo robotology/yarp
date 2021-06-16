@@ -11,7 +11,7 @@ yarp_prepare_plugin(frameTransformRepeater
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
-if(NOT SKIP_frameTransformManager)
+if(NOT SKIP_frameTransformRepeater)
   yarp_add_plugin(yarp_frameTransformRepeater)
 
   target_sources(yarp_frameTransformRepeater PRIVATE frameTransformRepeater.cpp
