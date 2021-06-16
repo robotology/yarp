@@ -38,9 +38,6 @@ bool FrameGrabberControls_Responder::respond(const yarp::os::Bottle& cmd, yarp::
     int action = cmd.get(1).asVocab();
     int param = cmd.get(2).asVocab();
 
-    //     yTrace() << "cmd received\n\t" << cmd.toString().c_str();
-
-
     if (!fgCtrl) {
         yError() << " Selected camera device has no IFrameGrabberControl interface";
         return false;

@@ -104,7 +104,7 @@ bool FrameGrabberControls_Forwarder::getFeature(int feature, double* value1, dou
     return ret;
 }
 
-bool FrameGrabberControls_Forwarder::hasOnOff(int feature, bool* _hasOnOff)
+bool FrameGrabberControls_Forwarder::hasOnOff(int feature, bool* hasOnOff)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
@@ -114,7 +114,7 @@ bool FrameGrabberControls_Forwarder::hasOnOff(int feature, bool* _hasOnOff)
     cmd.addInt32(feature);
     bool ret = m_port.write(cmd, response);
 
-    *_hasOnOff = response.get(4).asInt32() != 0 ? true : false;
+    *hasOnOff = response.get(4).asInt32() != 0 ? true : false;
     return ret;
 }
 
@@ -130,7 +130,7 @@ bool FrameGrabberControls_Forwarder::setActive(int feature, bool onoff)
     return m_port.write(cmd, response);
 }
 
-bool FrameGrabberControls_Forwarder::getActive(int feature, bool* _isActive)
+bool FrameGrabberControls_Forwarder::getActive(int feature, bool* isActive)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
@@ -140,11 +140,11 @@ bool FrameGrabberControls_Forwarder::getActive(int feature, bool* _isActive)
     cmd.addInt32(feature);
     bool ret = m_port.write(cmd, response);
 
-    *_isActive = response.get(3).asInt32() != 0 ? true : false;
+    *isActive = response.get(3).asInt32() != 0 ? true : false;
     return ret;
 }
 
-bool FrameGrabberControls_Forwarder::hasAuto(int feature, bool* _hasAuto)
+bool FrameGrabberControls_Forwarder::hasAuto(int feature, bool* hasAuto)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
@@ -154,12 +154,11 @@ bool FrameGrabberControls_Forwarder::hasAuto(int feature, bool* _hasAuto)
     cmd.addInt32(feature);
     bool ret = m_port.write(cmd, response);
 
-    *_hasAuto = response.get(4).asInt32() != 0 ? true : false;
-    ;
+    *hasAuto = response.get(4).asInt32() != 0 ? true : false;
     return ret;
 }
 
-bool FrameGrabberControls_Forwarder::hasManual(int feature, bool* _hasManual)
+bool FrameGrabberControls_Forwarder::hasManual(int feature, bool* hasManual)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
@@ -169,11 +168,11 @@ bool FrameGrabberControls_Forwarder::hasManual(int feature, bool* _hasManual)
     cmd.addInt32(feature);
     bool ret = m_port.write(cmd, response);
 
-    *_hasManual = response.get(4).asInt32() != 0 ? true : false;
+    *hasManual = response.get(4).asInt32() != 0 ? true : false;
     return ret;
 }
 
-bool FrameGrabberControls_Forwarder::hasOnePush(int feature, bool* _hasOnePush)
+bool FrameGrabberControls_Forwarder::hasOnePush(int feature, bool* hasOnePush)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
@@ -183,7 +182,7 @@ bool FrameGrabberControls_Forwarder::hasOnePush(int feature, bool* _hasOnePush)
     cmd.addInt32(feature);
     bool ret = m_port.write(cmd, response);
 
-    *_hasOnePush = response.get(4).asInt32() != 0 ? true : false;
+    *hasOnePush = response.get(4).asInt32() != 0 ? true : false;
     return ret;
 }
 

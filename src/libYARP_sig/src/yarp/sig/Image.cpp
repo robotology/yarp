@@ -788,24 +788,6 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 bool Image::write(yarp::os::ConnectionWriter& connection) const {
     ImageNetworkHeader header;
     header.setFromImage(*this);
-    /*
-    header.listTag = BOTTLE_TAG_LIST;
-    header.listLen = 4;
-    header.paramNameTag = BOTTLE_TAG_VOCAB32;
-    header.paramName = yarp::os::createVocab('m','a','t');
-    header.paramIdTag = BOTTLE_TAG_VOCAB32;
-    header.id = getPixelCode();
-    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
-    header.paramListLen = 5;
-    header.depth = getPixelSize();
-    header.imgSize = getRawImageSize();
-    header.quantum = getQuantum();
-    header.width = width();
-    header.height = height();
-    header.paramBlobTag = BOTTLE_TAG_BLOB;
-    header.paramBlobLen = getRawImageSize();
-    */
-
     connection.appendBlock(reinterpret_cast<char*>(&header),sizeof(header));
     unsigned char *mem = getRawImage();
     if (header.width!=0&&header.height!=0) {

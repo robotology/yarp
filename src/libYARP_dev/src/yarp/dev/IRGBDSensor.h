@@ -102,7 +102,7 @@ public:
      * Error message will be reset after any successful command
      * @return A string explaining the last error occurred.
      */
-    virtual std::string getLastErrorMsg(yarp::os::Stamp *timeStamp = NULL) = 0;
+    virtual std::string getLastErrorMsg(yarp::os::Stamp *timeStamp = nullptr) = 0;
 
     /**
      * Get the rgb frame from the device.
@@ -116,7 +116,7 @@ public:
      * @param timeStamp time in which the image was acquired. Optional, ignored if nullptr.
      * @return True on success
      */
-    virtual bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = NULL) = 0;
+    virtual bool getRgbImage(yarp::sig::FlexImage &rgbImage, yarp::os::Stamp *timeStamp = nullptr) = 0;
 
     /**
      * Get the depth frame from the device.
@@ -125,7 +125,7 @@ public:
      * @param timeStamp time in which the image was acquired. Optional, ignored if nullptr.
      * @return True on success
      */
-    virtual bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = NULL) = 0;
+    virtual bool getDepthImage(yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthImage, yarp::os::Stamp *timeStamp = nullptr) = 0;
 
     /**
     * Get the both the color and depth frame in a single call. Implementation should assure the best possible synchronization
@@ -138,7 +138,7 @@ public:
     * @param depthStamp pointer to memory to hold the Stamp of the depth frame
     * @return true if able to get both data.
     */
-    virtual bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=NULL, yarp::os::Stamp *depthStamp=NULL) = 0;
+    virtual bool getImages(yarp::sig::FlexImage &colorFrame, yarp::sig::ImageOf<yarp::sig::PixelFloat> &depthFrame, yarp::os::Stamp *colorStamp=nullptr, yarp::os::Stamp *depthStamp=nullptr) = 0;
 
     /**
      * Get the surrent status of the sensor, using enum type
