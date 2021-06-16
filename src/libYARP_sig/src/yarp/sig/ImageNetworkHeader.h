@@ -12,6 +12,7 @@
 
 #include <yarp/conf/system.h>
 
+#include <yarp/os/NetInt16.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Bottle.h>
 
@@ -43,7 +44,8 @@ public:
     yarp::os::NetInt32 paramListLen;
     yarp::os::NetInt32 depth;
     yarp::os::NetInt32 imgSize;
-    yarp::os::NetInt32 quantum;
+    yarp::os::NetInt16 quantum;
+    yarp::os::NetInt16 topIsLow;
     yarp::os::NetInt32 width;
     yarp::os::NetInt32 height;
     yarp::os::NetInt32 paramBlobTag;
@@ -52,7 +54,7 @@ public:
     ImageNetworkHeader() : listTag(0), listLen(0), paramNameTag(0),
                            paramName(0), paramIdTag(0), id(0),
                            paramListTag(0), paramListLen(0), depth(0),
-                           imgSize(0), quantum(0), width(0),
+                           imgSize(0), quantum(0), topIsLow(0), width(0),
                            height(0), paramBlobTag(0), paramBlobLen(0) {}
 
     void setFromImage(const Image& image) {
@@ -63,10 +65,16 @@ public:
         paramIdTag = BOTTLE_TAG_VOCAB;
         id = image.getPixelCode();
         paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT32;
+        // WARNING This is 5 and not 6 because quantum and topIsLow are
+        //         transmitted in the same 32 bits for compatibility with
+        //         YARP 3.4 and older
         paramListLen = 5;
         depth = image.getPixelSize();
         imgSize = image.getRawImageSize();
-        quantum = image.getQuantum();
+        quantum = static_cast<yarp::os::NetInt16>(image.getQuantum());
+        // WARNING The topIsLowIndex is always 0 for compatibility between
+        //         YARP 3.4 and YARP 3.5
+        topIsLow = 0;
         width = image.width();
         height = image.height();
         paramBlobTag = BOTTLE_TAG_BLOB;
