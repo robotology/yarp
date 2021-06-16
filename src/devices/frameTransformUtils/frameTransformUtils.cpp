@@ -154,7 +154,7 @@ bool FrameTransformContainer::checkAndRemoveExpired()
     return true;
 }
 
-bool FrameTransformContainer::checkAndRemoveExpired() const 
+bool FrameTransformContainer::checkAndRemoveExpired() const
 {
     return const_cast<FrameTransformContainer*>(this)->checkAndRemoveExpired();
 }
