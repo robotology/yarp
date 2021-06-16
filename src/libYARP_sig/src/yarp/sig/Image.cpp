@@ -775,6 +775,7 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
     FlexImage flex;
     flex.setPixelCode(header.id);
     flex.setQuantum(header.quantum);
+    flex.setTopIsLowIndex(header.topIsLow == 0);
     ok = readFromConnection(flex, header, connection);
     if (ok) {
         copy(flex);
