@@ -39,7 +39,7 @@ class FrameTransformGet_nwc_yarp:
     public yarp::dev::IFrameTransformStorageGet
 {
 public:
-    FrameTransformGet_nwc_yarp();
+    FrameTransformGet_nwc_yarp() = default;
     FrameTransformGet_nwc_yarp(const FrameTransformGet_nwc_yarp&) = delete;
     FrameTransformGet_nwc_yarp(FrameTransformGet_nwc_yarp&&) = delete;
     FrameTransformGet_nwc_yarp& operator=(const FrameTransformGet_nwc_yarp&) = delete;
