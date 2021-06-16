@@ -52,6 +52,10 @@ bool FrameTransformSet_nws_yarp::open(yarp::os::Searchable& config)
 
 bool FrameTransformSet_nws_yarp::close()
 {
+    if(m_thriftPort.isOpen())
+    {
+        m_thriftPort.close();
+    }
     return true;
 }
 
@@ -92,7 +96,7 @@ bool FrameTransformSet_nws_yarp::attach(yarp::dev::PolyDriver* device2attach)
     std::lock_guard <std::mutex> lg(m_pd_mutex);
     m_pDriver = device2attach;
 
-    if(!m_pDriver->isValid() || (!m_pDriver->view(m_iSetIf) || m_iSetIf==nullptr))
+    if(!m_pDriver->isValid()/* || (!m_pDriver->view(m_iSetIf) || m_iSetIf==nullptr)*/)
     {
         yCError(FRAMETRANSFORMSETNWSYARP, "Attach failed");
         return false;
