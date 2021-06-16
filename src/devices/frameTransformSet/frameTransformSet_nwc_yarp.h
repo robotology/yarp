@@ -43,25 +43,23 @@ class FrameTransformSet_nwc_yarp :
     public yarp::dev::DeviceDriver,
     public yarp::dev::IFrameTransformStorageSet
 {
-protected:
-    mutable std::mutex  m_trf_mutex;
 
 public:
-    FrameTransformSet_nwc_yarp();
-    ~FrameTransformSet_nwc_yarp() {}
+    FrameTransformSet_nwc_yarp() {}
 
     //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
 
     //FrameTransformStorageSetRPC functions
-    virtual bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
-    virtual bool setTransform(const yarp::math::FrameTransform& transform) override;
+    bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
+    bool setTransform(const yarp::math::FrameTransform& transform) override;
 
 private:
-    mutable std::mutex  m_pd_mutex;
-    std::string m_thriftPortName;
-    yarp::os::Port m_thriftPort;
+    mutable std::mutex          m_trf_mutex;
+    mutable std::mutex          m_pd_mutex;
+    std::string                 m_thriftPortName{"/frameTransformSet/rpc"};
+    yarp::os::Port              m_thriftPort;
     FrameTransformStorageSetRPC m_setRPC;
 };
 

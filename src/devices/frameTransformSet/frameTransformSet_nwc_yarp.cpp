@@ -23,11 +23,6 @@ YARP_LOG_COMPONENT(FRAMETRANSFORMSETNWCYARP, "yarp.device.frameTransformSet_nwc_
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-FrameTransformSet_nwc_yarp::FrameTransformSet_nwc_yarp() :
-m_thriftPortName("/frameTransformSet/rpc")
-{
-}
-
 bool FrameTransformSet_nwc_yarp::open(yarp::os::Searchable& config)
 {
     if (!yarp::os::NetworkBase::checkNetwork()) {
@@ -38,7 +33,7 @@ bool FrameTransformSet_nwc_yarp::open(yarp::os::Searchable& config)
     bool okGeneral = config.check("GENERAL");
     if(okGeneral)
     {
-        yarp::os::Searchable& general_config = config.findGroup("GENERAL");
+        const yarp::os::Searchable& general_config = config.findGroup("GENERAL");
         if (general_config.check("rpc_port"))       {m_thriftPortName = general_config.find("rpc_port").asString();}
     }
     if(!m_thriftPort.open(m_thriftPortName))
