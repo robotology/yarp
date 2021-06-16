@@ -61,6 +61,7 @@ public:
 public:
     //other
     bool checkAndRemoveExpired();
+    bool checkAndRemoveExpired() const;
     //yarp::math::FrameTransform& operator[]   (std::size_t idx) { return m_transforms[idx]; }
     //bool     delete_transform(int id);
 

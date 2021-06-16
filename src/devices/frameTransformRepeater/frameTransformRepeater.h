@@ -18,6 +18,26 @@
 #include <mutex>
 #include <map>
 
+/*
+ * \section FrameTransformRepeater_device_parameters Description of input parameters
+ *
+ *   Parameters required by this device are:
+ * | Parameter name | SubParameter            | Type    | Units          | Default Value       | Required     | Description                                                      |
+ * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------------:|:-----------: |:----------------------------------------------------------------:|
+ * | GENERAL        |      -                  | group   | -              | -                   | No           |                                                                  |
+ * | -              | refresh_interval        | double  | -              | 0.01                | No           | the maximum lifetime (in seconds) of stored timed frameTransform |
+ *
+ * Some example of configuration files:
+ *
+ * Example of configuration file using .ini format.
+ *
+ * \code{.unparsed}
+ * device frameTransformRepeater
+ * [GENERAL]
+ * refresh_interval 0.01
+ * \endcode
+ */
+
 class FrameTransformRepeater :
     public yarp::dev::DeviceDriver,
     public yarp::dev::IFrameTransformStorageSet,
@@ -26,10 +46,10 @@ class FrameTransformRepeater :
 private:
     mutable std::mutex       m_trf_mutex;
     FrameTransformContainer  m_ftContainer;
+    double                   m_refreshInterval{0.01};
 
 public:
-    FrameTransformRepeater();
-    ~FrameTransformRepeater() {}
+    FrameTransformRepeater()=default;
 
     //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
@@ -41,7 +61,6 @@ public:
 
     //IFrameTransformStorageGet interface
     bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
-
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMREPEATER_H
