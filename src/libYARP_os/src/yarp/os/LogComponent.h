@@ -96,16 +96,16 @@ private:
 #  define yCTraceExternalTimeThrottle(component, externaltime, period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period), component()).trace(__VA_ARGS__)
 #  define yCTraceExternalTimeThreadThrottle(component, externaltime, period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period), component()).trace(__VA_ARGS__)
 #else
-#  define yCTrace(component, ...)                                                 YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCTraceOnce(component, ...)                                             YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCTraceThreadOnce(component, ...)                                       YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCTraceThrottle(component, period, ...)                                 YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCTraceThreadThrottle(component, period, ...)                           YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCTraceExternalTime(component, externaltime, ...)                       YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCTraceExternalTimeOnce(component, externaltime, ...)                   YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCTraceExternalTimeThreadOnce(component, externaltime, ...)             YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCTraceExternalTimeThrottle(component, externaltime, period, ...)       YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCTraceExternalTimeThreadThrottle(component, externaltime, period, ...) YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTrace(component, ...)                                                 YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTraceOnce(component, ...)                                             YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTraceThreadOnce(component, ...)                                       YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTraceThrottle(component, period, ...)                                 YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTraceThreadThrottle(component, period, ...)                           YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTraceExternalTime(component, externaltime, ...)                       YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTraceExternalTimeOnce(component, externaltime, ...)                   YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTraceExternalTimeThreadOnce(component, externaltime, ...)             YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTraceExternalTimeThrottle(component, externaltime, period, ...)       YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCTraceExternalTimeThreadThrottle(component, externaltime, period, ...) YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
 #endif
 
 #ifndef YARP_NO_DEBUG_OUTPUT
@@ -120,16 +120,16 @@ private:
 #  define yCDebugExternalTimeThrottle(component, externaltime, period, ...)       yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THROTTLE_CALLBACK(period), component()).debug(__VA_ARGS__)
 #  define yCDebugExternalTimeThreadThrottle(component, externaltime, period, ...) yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, externaltime, YARP_THREADTHROTTLE_CALLBACK(period), component()).debug(__VA_ARGS__)
 #else
-#  define yCDebug(component, ...)                                                 YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCDebugOnce(component, ...)                                             YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCDebugThreadOnce(component, ...)                                       YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCDebugThrottle(component, period, ...)                                 YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCDebugThreadThrottle(component, period, ...)                           YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCDebugExternalTime(component, externaltime, ...)                       YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCDebugExternalTimeOnce(component, externaltime, ...)                   YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCDebugExternalTimeThreadOnce(component, externaltime, ...)             YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCDebugExternalTimeThrottle(component, externaltime, period, ...)       YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
-#  define yCDebugExternalTimeThreadThrottle(component, externaltime, period, ...) YARP_UNUSED(component); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebug(component, ...)                                                 YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebugOnce(component, ...)                                             YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebugThreadOnce(component, ...)                                       YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebugThrottle(component, period, ...)                                 YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebugThreadThrottle(component, period, ...)                           YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebugExternalTime(component, externaltime, ...)                       YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebugExternalTimeOnce(component, externaltime, ...)                   YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebugExternalTimeThreadOnce(component, externaltime, ...)             YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebugExternalTimeThrottle(component, externaltime, period, ...)       YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
+#  define yCDebugExternalTimeThreadThrottle(component, externaltime, period, ...) YARP_UNUSED(component()); yarp::os::Log::nolog(__VA_ARGS__)
 #endif
 
 #define yCInfo(component, ...)                                                    yarp::os::Log(__FILE__, __LINE__, __YFUNCTION__, nullptr, component()).info(__VA_ARGS__)
@@ -178,8 +178,8 @@ private:
         yCFatalExternalTime(component, externaltime, "Assertion failure at %s:%d (%s)", __FILE__, __LINE__, #x); \
     }
 #else
-#  define yCAssert(component, x) { YARP_UNUSED(component); }
-#  define yCAssertExternalTime(component, externaltime, x) { YARP_UNUSED(component); YARP_UNUSED(externaltime); }
+#  define yCAssert(component, x) { YARP_UNUSED(component()); }
+#  define yCAssertExternalTime(component, externaltime, x) { YARP_UNUSED(component()); YARP_UNUSED(externaltime); }
 #endif
 
 
