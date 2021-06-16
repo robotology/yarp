@@ -45,7 +45,7 @@ class FrameTransformSet_nwc_yarp :
 {
 
 public:
-    FrameTransformSet_nwc_yarp() {}
+    FrameTransformSet_nwc_yarp()=default;
 
     //DeviceDriver
     bool open(yarp::os::Searchable& config) override;
