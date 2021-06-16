@@ -147,6 +147,22 @@ public:
 
 
     /**
+     * move operator.
+     * Moves the content of another image.
+     * @param alt the image to move
+     */
+    bool move(Image&& alt) noexcept;
+
+
+    /**
+     * swap operator.
+     * Swap the content with another image.
+     * @param alt the image to swap with
+     */
+    bool swap(Image& alt);
+
+
+    /**
      * Gets width of image in pixels.
      * @return the width of the image in pixels (0 if no image present)
      */

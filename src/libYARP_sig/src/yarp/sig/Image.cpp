@@ -875,6 +875,36 @@ bool Image::copy(const Image& alt)
 }
 
 
+bool Image::move(Image&& alt) noexcept
+{
+    // Cannot move an image of the wrong type inside an ImageOf that does not
+    // support it.
+    yAssert(dynamic_cast<FlexImage*>(this) ||
+            getPixelCode() == alt.getPixelCode());
+    if (&alt != this) {
+        delete static_cast<ImageStorage*>(implementation);
+        implementation = std::exchange(alt.implementation, nullptr);
+        synchronize();
+    }
+    return true;
+}
+
+
+bool Image::swap(Image& alt)
+{
+    // Cannot swap two ImageOf of different type, or an image of the wrong type
+    // inside an ImageOf that does not support it.
+    yAssert((dynamic_cast<FlexImage*>(this) && dynamic_cast<FlexImage*>(&alt)) ||
+            getPixelCode() == alt.getPixelCode());
+    if (&alt != this) {
+        std::swap(alt.implementation, implementation);
+        synchronize();
+        alt.synchronize();
+    }
+    return true;
+}
+
+
 void Image::setExternal(const void *data, size_t imgWidth, size_t imgHeight) {
     if (imgQuantum==0) {
         imgQuantum = 1;
