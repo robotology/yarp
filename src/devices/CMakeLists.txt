@@ -24,6 +24,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(fakeIMU)
   add_subdirectory(frameTransformClient)
   add_subdirectory(frameTransformServer)
+  add_subdirectory(frameTransformRepeater)
   add_subdirectory(frameTransformStorageMsgs)
   add_subdirectory(frameTransformStorage)
   add_subdirectory(frameTransformUtils)
