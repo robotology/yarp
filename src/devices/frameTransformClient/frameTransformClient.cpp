@@ -23,9 +23,9 @@
 #include <yarp/math/Math.h>
 #include <mutex>
 
-/*! \file FrameTransformClient.cpp */
+ /*! \file FrameTransformClient.cpp */
 
-//example: yarpdev --device transformClient --local /transformClient --remote /transformServer
+//example: yarpdev --device frameTransformClient --local /transformClient --remote /transformServer
 
 using namespace yarp::dev;
 using namespace yarp::os;
@@ -237,6 +237,53 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
 
 bool FrameTransformClient::open(yarp::os::Searchable &config)
 {
+    yarp::os::Property cfg;
+    cfg.fromString(config.toString());
+    cfg.unput("filexml_option");
+
+    yarp::robotinterface::experimental::XMLReader reader;
+    yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromFile("file.xml", cfg);
+    yCAssert(FRAMETRANSFORMCLIENT, result.parsingIsSuccessful);
+
+    m_robot = std::move(result.robot); // FIXME std::move non serve
+
+    if (!result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseStartup)) {
+        return false;
+    }
+    
+    if (!result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseRun)) {
+        return false;
+    }
+
+    std::string setDevice = "foo";
+    if (m_robot.hasParam("setDevice")) {
+        setDevice = m_robot.findParam("setDevice");
+    }
+
+    const std::string getDevice = "bar";
+
+/*
+    std::string getDevice = "bar";
+    if (robot.hasParam("getDevice")) {
+        setDevice = robot.findParam("getDevice");
+    }
+*/
+    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(setDevice));
+    auto* polyset = m_robot.device(setDevice).driver();
+    yCAssert(FRAMETRANSFORMCLIENT, polyset);
+
+    polyset->view(m_ift_s);
+    yCAssert(FRAMETRANSFORMCLIENT, m_ift_s);
+
+    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(getDevice));
+    auto* polyget = m_robot.device(getDevice).driver();
+    yCAssert(FRAMETRANSFORMCLIENT, polyget);
+
+    polyget->view(m_ift_g);
+    yCAssert(FRAMETRANSFORMCLIENT, m_ift_g);
+
+
+/*
     m_local_name.clear();
     m_remote_name.clear();
 
@@ -299,11 +346,14 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 
 
     m_rpc_InterfaceToUser.setReader(*this);
+*/
     return true;
 }
 
 bool FrameTransformClient::close()
 {
+    m_robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseInterrupt1);
+    m_robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseShutdown);
     m_rpc_InterfaceToServer.close();
     m_rpc_InterfaceToUser.close();
     return true;

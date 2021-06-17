@@ -20,11 +20,13 @@ if(NOT SKIP_frameTransformClient)
   target_link_libraries(yarp_frameTransformClient PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev
-                                                          YARP::YARP_math)
+                                                          YARP::YARP_math
+                                                          YARP::YARP_robotinterface)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
-                                                      YARP_math)
+                                                      YARP_math
+                                                      YARP_robotinterface)
 
   yarp_install(TARGETS yarp_frameTransformClient
                EXPORT YARP_${YARP_PLUGIN_MASTER}
