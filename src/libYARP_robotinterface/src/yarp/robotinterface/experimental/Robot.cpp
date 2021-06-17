@@ -540,9 +540,15 @@ const yarp::robotinterface::experimental::ParamList& yarp::robotinterface::exper
     return mPriv->params;
 }
 
+
 const yarp::robotinterface::experimental::DeviceList& yarp::robotinterface::experimental::Robot::devices() const
 {
     return mPriv->devices;
+}
+
+bool yarp::robotinterface::experimental::Robot::hasDevice(const std::string& name) const
+{
+    return mPriv->hasDevice(name);
 }
 
 const yarp::robotinterface::experimental::Device& yarp::robotinterface::experimental::Robot::device(const std::string& name) const
