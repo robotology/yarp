@@ -20,8 +20,7 @@ namespace {
 YARP_LOG_COMPONENT(FRAMETRANSFORM, "yarp.math.FrameTransform")
 }
 
-yarp::math::FrameTransform::FrameTransform() :
-        timestamp(0)
+yarp::math::FrameTransform::FrameTransform()
 {
     translation.set(0, 0, 0);
 }
@@ -181,6 +180,8 @@ bool yarp::math::FrameTransform::read(yarp::os::ConnectionReader& connection)
     dst_frame_id = connection.expectString();
     connection.expectInt32();
     timestamp = connection.expectFloat64();
+    connection.expectInt32();
+    isStatic = (connection.expectInt8()==1);
 
     connection.expectInt32();
     translation.tX = connection.expectFloat64();
@@ -204,7 +205,7 @@ bool yarp::math::FrameTransform::read(yarp::os::ConnectionReader& connection)
 bool yarp::math::FrameTransform::write(yarp::os::ConnectionWriter& connection) const
 {
     connection.appendInt32(BOTTLE_TAG_LIST);
-    connection.appendInt32(3+3+4);
+    connection.appendInt32(4+3+4);
 
     connection.appendInt32(BOTTLE_TAG_STRING);
     connection.appendString(src_frame_id);
@@ -212,6 +213,8 @@ bool yarp::math::FrameTransform::write(yarp::os::ConnectionWriter& connection) c
     connection.appendString(dst_frame_id);
     connection.appendInt32(BOTTLE_TAG_FLOAT64);
     connection.appendFloat64(timestamp);
+    connection.appendInt32(BOTTLE_TAG_INT8);
+    connection.appendInt8(int8_t(isStatic));
 
     connection.appendInt32(BOTTLE_TAG_FLOAT64);
     connection.appendFloat64(translation.tX);

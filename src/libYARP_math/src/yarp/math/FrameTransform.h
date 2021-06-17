@@ -22,7 +22,8 @@ class YARP_math_API FrameTransform : public yarp::os::Portable
 public:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) src_frame_id;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) dst_frame_id;
-    double timestamp;
+    double timestamp = 0;
+    bool   isStatic  = false;
 
     struct Translation_t
     {
