@@ -155,7 +155,6 @@ FrameTransformServer::FrameTransformServer() : PeriodicThread(DEFAULT_THREAD_PER
     m_yarp_timed_transform_storage = nullptr;
     m_ros_static_transform_storage = nullptr;
     m_ros_timed_transform_storage = nullptr;
-    m_rosNode = nullptr;
     m_FrameTransformTimeout = 0.200; //ms
 }
 
@@ -543,46 +542,6 @@ bool FrameTransformServer::threadInit()
         return false;
     }
 
-    //open ros publisher (if requested)
-    if (m_enable_publish_ros_tf)
-    {
-        if (m_rosNode == nullptr)
-        {
-            m_rosNode = new yarp::os::Node(ROSNODENAME);
-        }
-        if (!m_rosPublisherPort_tf_timed.topic(ROSTOPICNAME_TF))
-        {
-            yCError(FRAMETRANSFORMSERVER) << "Unable to publish data on " << ROSTOPICNAME_TF << " topic, check your yarp-ROS network configuration";
-            return false;
-        }
-        if (!m_rosPublisherPort_tf_static.topic(ROSTOPICNAME_TF_STATIC))
-        {
-            yCError(FRAMETRANSFORMSERVER) << "Unable to publish data on " << ROSTOPICNAME_TF_STATIC << " topic, check your yarp-ROS network configuration";
-            return false;
-        }
-    }
-
-    //open ros subscriber(if requested)
-    if (m_enable_subscribe_ros_tf)
-    {
-        if (m_rosNode == nullptr)
-        {
-            m_rosNode = new yarp::os::Node(ROSNODENAME);
-        }
-        if (!m_rosSubscriberPort_tf_timed.topic(ROSTOPICNAME_TF))
-        {
-            yCError(FRAMETRANSFORMSERVER) << "Unable to subscribe to " << ROSTOPICNAME_TF << " topic, check your yarp-ROS network configuration";
-            return false;
-        }
-        m_rosSubscriberPort_tf_timed.setStrict();
-        if (!m_rosSubscriberPort_tf_static.topic(ROSTOPICNAME_TF_STATIC))
-        {
-            yCError(FRAMETRANSFORMSERVER) << "Unable to subscribe to " << ROSTOPICNAME_TF_STATIC << " topic, check your yarp-ROS network configuration";
-            return false;
-        }
-        m_rosSubscriberPort_tf_static.setStrict();
-    }
-
     m_yarp_static_transform_storage = new Transforms_server_storage();
     m_yarp_timed_transform_storage = new Transforms_server_storage();
 
@@ -761,32 +720,6 @@ void FrameTransformServer::threadRelease()
     m_streamingPort.close();
     m_rpcPort.interrupt();
     m_rpcPort.close();
-    if (m_enable_publish_ros_tf)
-    {
-        m_rosPublisherPort_tf_timed.interrupt();
-        m_rosPublisherPort_tf_timed.close();
-    }
-    if (m_enable_subscribe_ros_tf)
-    {
-        m_rosSubscriberPort_tf_timed.interrupt();
-        m_rosSubscriberPort_tf_timed.close();
-    }
-    if (m_enable_publish_ros_tf)
-    {
-        m_rosPublisherPort_tf_static.interrupt();
-        m_rosPublisherPort_tf_static.close();
-    }
-    if (m_enable_subscribe_ros_tf)
-    {
-        m_rosSubscriberPort_tf_static.interrupt();
-        m_rosSubscriberPort_tf_static.close();
-    }
-    if (m_rosNode)
-    {
-        m_rosNode->interrupt();
-        delete  m_rosNode;
-        m_rosNode = nullptr;
-    }
 }
 
 void FrameTransformServer::run()
@@ -829,66 +762,6 @@ void FrameTransformServer::run()
                 }
             }
         } while (repeat_check);
-
-        //ros subscriber
-        if (m_enable_subscribe_ros_tf)
-        {
-            yarp::rosmsg::tf2_msgs::TFMessage* rosInData_timed = nullptr;
-            do
-            {
-                rosInData_timed = m_rosSubscriberPort_tf_timed.read(false);
-                if (rosInData_timed != nullptr)
-                {
-                    std::vector <yarp::rosmsg::geometry_msgs::TransformStamped> tfs = rosInData_timed->transforms;
-                    size_t tfs_size = tfs.size();
-                    for (size_t i = 0; i < tfs_size; i++)
-                    {
-                        FrameTransform t;
-                        t.translation.tX = tfs[i].transform.translation.x;
-                        t.translation.tY = tfs[i].transform.translation.y;
-                        t.translation.tZ = tfs[i].transform.translation.z;
-                        t.rotation.x() = tfs[i].transform.rotation.x;
-                        t.rotation.y() = tfs[i].transform.rotation.y;
-                        t.rotation.z() = tfs[i].transform.rotation.z;
-                        t.rotation.w() = tfs[i].transform.rotation.w;
-                        t.src_frame_id = tfs[i].header.frame_id;
-                        t.dst_frame_id = tfs[i].child_frame_id;
-                        //@@@ should we use yarp or ROS timestamps?
-                        t.timestamp = yarp::os::Time::now();
-                        //t.timestamp = tfs[i].header.stamp.sec; //@@@this needs some revising
-                        (*m_ros_timed_transform_storage).set_transform(t);
-                    }
-                }
-            } while (rosInData_timed != nullptr);
-
-            yarp::rosmsg::tf2_msgs::TFMessage* rosInData_static = nullptr;
-            do
-            {
-                rosInData_static = m_rosSubscriberPort_tf_static.read(false);
-                if (rosInData_static != nullptr)
-                {
-                    std::vector <yarp::rosmsg::geometry_msgs::TransformStamped> tfs = rosInData_static->transforms;
-                    size_t tfs_size = tfs.size();
-                    for (size_t i = 0; i < tfs_size; i++)
-                    {
-                        FrameTransform t;
-                        t.translation.tX = tfs[i].transform.translation.x;
-                        t.translation.tY = tfs[i].transform.translation.y;
-                        t.translation.tZ = tfs[i].transform.translation.z;
-                        t.rotation.x() = tfs[i].transform.rotation.x;
-                        t.rotation.y() = tfs[i].transform.rotation.y;
-                        t.rotation.z() = tfs[i].transform.rotation.z;
-                        t.rotation.w() = tfs[i].transform.rotation.w;
-                        t.src_frame_id = tfs[i].header.frame_id;
-                        t.dst_frame_id = tfs[i].child_frame_id;
-                        //@@@ should we use yarp or ROS timestamps?
-                        t.timestamp = yarp::os::Time::now();
-                        //t.timestamp = tfs[i].header.stamp; //@@@ is this ok?
-                        (*m_ros_static_transform_storage).set_transform(t);
-                    }
-                }
-            } while (rosInData_static != nullptr);
-        }
 
         //yarp streaming port
         m_lastStateStamp.update();
@@ -969,56 +842,6 @@ void FrameTransformServer::run()
 
         m_streamingPort.setEnvelope(m_lastStateStamp);
         m_streamingPort.write();
-
-        //ros publisher
-        if (m_enable_publish_ros_tf)
-        {
-            static int                        rosMsgCounter = 0;
-            yarp::rosmsg::tf2_msgs::TFMessage& rosOutData_timed = m_rosPublisherPort_tf_timed.prepare();
-            yarp::rosmsg::geometry_msgs::TransformStamped transform_timed;
-            rosOutData_timed.transforms.clear();
-            for (size_t i = 0; i < tfVecSize_timed_yarp; i++)
-            {
-                transform_timed.child_frame_id = (*m_yarp_timed_transform_storage)[i].dst_frame_id;
-                transform_timed.header.frame_id = (*m_yarp_timed_transform_storage)[i].src_frame_id;
-                transform_timed.header.seq = rosMsgCounter;
-                transform_timed.header.stamp = (*m_yarp_timed_transform_storage)[i].timestamp;
-                transform_timed.transform.rotation.x = (*m_yarp_timed_transform_storage)[i].rotation.x();
-                transform_timed.transform.rotation.y = (*m_yarp_timed_transform_storage)[i].rotation.y();
-                transform_timed.transform.rotation.z = (*m_yarp_timed_transform_storage)[i].rotation.z();
-                transform_timed.transform.rotation.w = (*m_yarp_timed_transform_storage)[i].rotation.w();
-                transform_timed.transform.translation.x = (*m_yarp_timed_transform_storage)[i].translation.tX;
-                transform_timed.transform.translation.y = (*m_yarp_timed_transform_storage)[i].translation.tY;
-                transform_timed.transform.translation.z = (*m_yarp_timed_transform_storage)[i].translation.tZ;
-
-                rosOutData_timed.transforms.push_back(transform_timed);
-            }
-            m_rosPublisherPort_tf_timed.write();
-
-            yarp::rosmsg::tf2_msgs::TFMessage& rosOutData_static = m_rosPublisherPort_tf_static.prepare();
-            yarp::rosmsg::geometry_msgs::TransformStamped transform_static;
-            rosOutData_static.transforms.clear();
-            for (size_t i = 0; i < tfVecSize_static_yarp; i++)
-            {
-                transform_static.child_frame_id = (*m_yarp_static_transform_storage)[i].dst_frame_id;
-                transform_static.header.frame_id = (*m_yarp_static_transform_storage)[i].src_frame_id;
-                transform_static.header.seq = rosMsgCounter;
-                transform_static.header.stamp = yarp::os::Time::now(); //@@@check timestamp of static transform?
-                transform_static.transform.rotation.x = (*m_yarp_static_transform_storage)[i].rotation.x();
-                transform_static.transform.rotation.y = (*m_yarp_static_transform_storage)[i].rotation.y();
-                transform_static.transform.rotation.z = (*m_yarp_static_transform_storage)[i].rotation.z();
-                transform_static.transform.rotation.w = (*m_yarp_static_transform_storage)[i].rotation.w();
-                transform_static.transform.translation.x = (*m_yarp_static_transform_storage)[i].translation.tX;
-                transform_static.transform.translation.y = (*m_yarp_static_transform_storage)[i].translation.tY;
-                transform_static.transform.translation.z = (*m_yarp_static_transform_storage)[i].translation.tZ;
-
-                rosOutData_static.transforms.push_back(transform_static);
-            }
-            m_rosPublisherPort_tf_static.write();
-
-            rosMsgCounter++;
-        }
-
     }
     else
     {
