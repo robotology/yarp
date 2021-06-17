@@ -24,6 +24,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/IFrameTransformStorage.h>
 #include <yarp/dev/IFrameTransformClientControl.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ControlBoardHelpers.h>
@@ -34,10 +35,10 @@
 #include <yarp/math/FrameTransform.h>
 #include <yarp/os/PeriodicThread.h>
 #include <mutex>
-
+#include <yarp/robotinterface/experimental/Param.h>
+#include <yarp/robotinterface/experimental/XMLReader.h>
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
-const int TRANSFORM_TIMEOUT_MS = 100; //ms
 const int MAX_PORTS = 5;
 
 /**
@@ -84,6 +85,12 @@ protected:
         std::string transform_dst;
     };
     std::vector<broadcast_port_t*>  m_array_of_ports;
+
+
+    //new stuff
+    yarp::robotinterface::experimental::Robot m_robot;
+    yarp::dev::IFrameTransformStorageGet* m_ift_g = nullptr;
+    yarp::dev::IFrameTransformStorageSet* m_ift_s = nullptr;
 
 public:
 
