@@ -41,20 +41,9 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/api.h>
-#include <yarp/os/Publisher.h>
-#include <yarp/os/Subscriber.h>
-#include <yarp/os/Node.h>
 #include <yarp/dev/IFrameTransform.h>
-
 #include <yarp/math/FrameTransform.h>
 
-#include <yarp/rosmsg/geometry_msgs/TransformStamped.h>
-#include <yarp/rosmsg/tf2_msgs/TFMessage.h>
-
-
-#define ROSNODENAME "/tfNode"
-#define ROSTOPICNAME_TF "/tf"
-#define ROSTOPICNAME_TF_STATIC "/tf_static"
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
 class Transforms_server_storage
@@ -102,7 +91,6 @@ private:
     std::string        m_rpcPortName;
     yarp::os::Stamp              m_lastStateStamp;
     double                       m_period;
-    yarp::os::Node*              m_rosNode;
     bool                         m_enable_publish_ros_tf;
     bool                         m_enable_subscribe_ros_tf;
     Transforms_server_storage*   m_ros_timed_transform_storage;
@@ -122,10 +110,6 @@ private:
 
     yarp::os::RpcServer                      m_rpcPort;
     yarp::os::BufferedPort<yarp::os::Bottle> m_streamingPort;
-    yarp::os::Publisher<yarp::rosmsg::tf2_msgs::TFMessage> m_rosPublisherPort_tf_timed;
-    yarp::os::Publisher<yarp::rosmsg::tf2_msgs::TFMessage> m_rosPublisherPort_tf_static;
-    yarp::os::Subscriber<yarp::rosmsg::tf2_msgs::TFMessage> m_rosSubscriberPort_tf_timed;
-    yarp::os::Subscriber<yarp::rosmsg::tf2_msgs::TFMessage> m_rosSubscriberPort_tf_static;
 
     bool read(yarp::os::ConnectionReader& connection) override;
     inline  void list_response(yarp::os::Bottle& out);
