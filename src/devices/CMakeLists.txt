@@ -28,6 +28,7 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   add_subdirectory(frameTransformStorageMsgs)
   add_subdirectory(frameTransformStorage)
   add_subdirectory(frameTransformUtils)
+  add_subdirectory(frameTransformSet)
   add_subdirectory(SerialServoBoard)
   add_subdirectory(ffmpeg)
   add_subdirectory(opencv)
