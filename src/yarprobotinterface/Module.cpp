@@ -130,7 +130,14 @@ bool yarprobotinterface::Module::configure(yarp::os::ResourceFinder& rf)
     reader.setVerbose(verbosity);
     reader.setEnableDeprecated(deprecated);
 
-    yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromFile(filename);
+    // Prepare configuration for sub-devices
+    yarp::os::Property config;
+    config.fromString(rf.toString());
+    // The --config option is consumed by yarprobotinterface, and never
+    // forwarded to the devices)
+    config.unput("config");
+
+    yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromFile(filename, config);
 
     if (!result.parsingIsSuccessful) {
         yFatal() << "Config file " << filename << " not parsed correctly.";

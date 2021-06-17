@@ -13,6 +13,7 @@
 #include <yarp/os/LogStream.h>
 
 #include <yarp/sig/ImageNetworkHeader.h>
+#include <yarp/sig/ImageUtils.h>
 
 namespace {
 YARP_LOG_COMPONENT(FRAMEGRABBEROF_RESPONDER, "yarp.proto.framegrabber.FrameGrabberOf_Responder")

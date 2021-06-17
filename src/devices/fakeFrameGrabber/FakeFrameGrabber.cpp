@@ -14,6 +14,7 @@
 #include <yarp/sig/ImageDraw.h>
 
 #include <cstdio>
+#include <thread>
 #include <random>
 
 using namespace yarp::os;
@@ -443,6 +444,7 @@ void FakeFrameGrabber::run()
                 curr_buff_mutex.lock();
                 curr_buff = i;
                 curr_buff_mutex.unlock();
+                std::this_thread::yield();
             } else {
                 std::unique_lock<std::mutex> lk(mutex[i]);
                 img_consumed_cv[i].wait(lk, [&]{ if (img_ready[i]) {img_ready_cv[i].notify_one();} return (isStopping() || img_consumed[i]);});

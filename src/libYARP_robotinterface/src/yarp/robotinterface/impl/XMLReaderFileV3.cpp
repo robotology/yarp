@@ -68,6 +68,7 @@ public:
 #endif
 
     bool verbose_output;
+    const yarp::os::Searchable* config;
     std::string curr_filename;
     unsigned int minorVersion;
     unsigned int majorVersion;
@@ -415,7 +416,14 @@ yarp::robotinterface::experimental::Param yarp::robotinterface::impl::XMLReaderF
         result.parsingIsSuccessful = false;
         return yarp::robotinterface::experimental::Param();
     }
-    param.value() = valueText;
+
+    std::string extern_name;
+    if (paramElem->QueryStringAttribute("extern-name", &extern_name) == TIXML_SUCCESS && config && config->check(extern_name)) {
+        // FIXME Check DTD >= 3.1
+        param.value() = config->find(extern_name).asString();
+    } else {
+        param.value() = valueText;
+    }
 
     // yDebug() << param;
     return param;
@@ -700,16 +708,26 @@ yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLRe
 }
 
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV3::getRobotFromFile(const std::string& filename, bool verb)
+yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV3::getRobotFromFile(const std::string& filename,
+                                                                                                                  const yarp::os::Searchable& config,
+                                                                                                                  bool verb)
 {
+    mPriv->config = &config;
     mPriv->verbose_output = verb;
-    return mPriv->readRobotFromFile(filename);
+    auto ret = mPriv->readRobotFromFile(filename);
+    mPriv->config = nullptr;
+    return ret;
 }
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV3::getRobotFromString(const std::string& xmlString, bool verb)
+yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV3::getRobotFromString(const std::string& xmlString,
+                                                                                                                    const yarp::os::Searchable& config,
+                                                                                                                    bool verb)
 {
+    mPriv->config = &config;
     mPriv->verbose_output = verb;
-    return mPriv->readRobotFromString(xmlString);
+    auto ret = mPriv->readRobotFromString(xmlString);
+    mPriv->config = nullptr;
+    return ret;
 }
 
 

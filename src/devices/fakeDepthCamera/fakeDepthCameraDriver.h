@@ -35,7 +35,7 @@ private:
 
 public:
     fakeDepthCameraDriver();
-    ~fakeDepthCameraDriver();
+    ~fakeDepthCameraDriver() override;
 
     // DeviceDriver
     bool open(yarp::os::Searchable& config) override;
@@ -67,13 +67,13 @@ public:
     bool   setDepthMirroring(bool mirror) override;
 
 
-    bool   getExtrinsicParam(yarp::sig::Matrix& extrinsic) override;
-    bool   getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = NULL) override;
-    bool   getDepthImage(depthImage& depthImage, Stamp* timeStamp = NULL) override;
-    bool   getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp=NULL, Stamp* depthStamp=NULL) override;
+    bool getExtrinsicParam(yarp::sig::Matrix& extrinsic) override;
+    bool getRgbImage(FlexImage& rgbImage, Stamp* timeStamp = nullptr) override;
+    bool getDepthImage(depthImage& depthImage, Stamp* timeStamp = nullptr) override;
+    bool getImages(FlexImage& colorFrame, depthImage& depthFrame, Stamp* colorStamp = nullptr, Stamp* depthStamp = nullptr) override;
 
-    RGBDSensor_status     getSensorStatus() override;
-    std::string getLastErrorMsg(Stamp* timeStamp = NULL) override;
+    RGBDSensor_status getSensorStatus() override;
+    std::string getLastErrorMsg(Stamp* timeStamp = nullptr) override;
 
 private:
     double rgb_h{480};

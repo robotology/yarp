@@ -12,6 +12,9 @@
 #include <yarp/robotinterface/api.h>
 #include <yarp/robotinterface/experimental/Robot.h>
 
+#include <yarp/os/Searchable.h>
+#include <yarp/os/Property.h>
+
 #include <string>
 
 
@@ -55,7 +58,8 @@ public:
      * \param filename path to the XML file to load.
      * \return result of parsing.
      */
-    XMLReaderResult getRobotFromFile(const std::string& filename);
+    XMLReaderResult getRobotFromFile(const std::string& filename,
+                                     const yarp::os::Searchable& config = yarp::os::Property());
 
     /**
      * Parse the XML description of a robotinterface from a string.
@@ -63,7 +67,9 @@ public:
      * \param xmlString string containing the XML code to parse.
      * \return result of parsing.
      */
-    XMLReaderResult getRobotFromString(const std::string& xmlString);
+    XMLReaderResult getRobotFromString(const std::string& filename,
+                                       const yarp::os::Searchable& config = yarp::os::Property());
+
     void setVerbose(bool verbose);
     void setEnableDeprecated(bool enab);
 

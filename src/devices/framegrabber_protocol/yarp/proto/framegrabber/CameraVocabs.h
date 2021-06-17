@@ -53,10 +53,7 @@ constexpr yarp::conf::vocab32_t VOCAB_ACTIVE                    = yarp::os::crea
 constexpr yarp::conf::vocab32_t VOCAB_MODE                      = yarp::os::createVocab('m','o','d','e');
 
 
-/*
- * For usage with IFrameGrabberControlsDC1394 interface
- */
-
+// IFrameGrabberControlsDC1394 interface
 constexpr yarp::conf::vocab32_t VOCAB_DRHASFEA = yarp::os::createVocab('D','R','2','a');// 00
 constexpr yarp::conf::vocab32_t VOCAB_DRSETVAL = yarp::os::createVocab('D','R','2','b');// 01
 constexpr yarp::conf::vocab32_t VOCAB_DRGETVAL = yarp::os::createVocab('D','R','2','c');// 02
@@ -69,7 +66,6 @@ constexpr yarp::conf::vocab32_t VOCAB_DRHASONP = yarp::os::createVocab('D','R','
 constexpr yarp::conf::vocab32_t VOCAB_DRSETMOD = yarp::os::createVocab('D','R','2','j');// 09
 constexpr yarp::conf::vocab32_t VOCAB_DRGETMOD = yarp::os::createVocab('D','R','2','k');// 10
 constexpr yarp::conf::vocab32_t VOCAB_DRSETONP = yarp::os::createVocab('D','R','2','l');// 11
-
 // masks
 constexpr yarp::conf::vocab32_t VOCAB_DRGETMSK = yarp::os::createVocab('D','R','2','m'); // 12
 constexpr yarp::conf::vocab32_t VOCAB_DRGETVMD = yarp::os::createVocab('D','R','2','n'); // 13
