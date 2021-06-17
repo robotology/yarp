@@ -42,7 +42,9 @@ public:
     const unsigned int& build() const;
     const std::string& portprefix() const;
     const ParamList& params() const;
+
     const DeviceList& devices() const;
+    bool hasDevice(const std::string& name) const;
     const Device& device(const std::string& name) const;
 
     bool hasParam(const std::string& name) const;
