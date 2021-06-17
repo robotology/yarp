@@ -34,166 +34,8 @@ using namespace yarp::math;
 
 
 namespace {
-YARP_LOG_COMPONENT(FRAMETRANSFORMCLIENT, "yarp.device.transformClient")
+YARP_LOG_COMPONENT(FRAMETRANSFORMCLIENT, "yarp.device.FrameTransformClient")
 }
-
-inline void Transforms_client_storage::resetStat()
-{
-    std::lock_guard<std::recursive_mutex> l(m_mutex);
-}
-
-void Transforms_client_storage::onRead(yarp::os::Bottle &b)
-{
-    m_now = Time::now();
-    std::lock_guard<std::recursive_mutex> guard(m_mutex);
-
-    if (m_count>0)
-    {
-        double tmpDT = m_now - m_prev;
-        m_deltaT += tmpDT;
-        if (tmpDT>m_deltaTMax)
-            m_deltaTMax = tmpDT;
-        if (tmpDT<m_deltaTMin)
-            m_deltaTMin = tmpDT;
-
-        //compare network time
-        /*if (tmpDT*1000<TRANSFORM_TIMEOUT)
-        {
-            state = b.get(5).asInt32();
-        }
-        else
-        {
-            state = TRANSFORM_TIMEOUT;
-        }*/
-    }
-
-    m_prev = m_now;
-    m_count++;
-
-    m_lastBottle = b;
-    Stamp newStamp;
-    getEnvelope(newStamp);
-
-    //initialization (first received data)
-    if (m_lastStamp.isValid() == false)
-    {
-        m_lastStamp = newStamp;
-    }
-
-    //now compare timestamps
-   // if ((1000 * (newStamp.getTime() - m_lastStamp.getTime()))<TRANSFORM_TIMEOUT)
-    if (true)
-    {
-        m_state = IFrameTransform::TRANSFORM_OK;
-
-        m_transforms.clear();
-        int bsize= b.size();
-        for (int i = 0; i < bsize; i++)
-        {
-            //this includes: timed yarp transforms, static yarp transforms, ros transforms
-            Bottle* bt = b.get(i).asList();
-            if (bt != nullptr)
-            {
-                FrameTransform t;
-                t.src_frame_id = bt->get(0).asString();
-                t.dst_frame_id = bt->get(1).asString();
-                t.timestamp = bt->get(2).asFloat64();
-                t.translation.tX = bt->get(3).asFloat64();
-                t.translation.tY = bt->get(4).asFloat64();
-                t.translation.tZ = bt->get(5).asFloat64();
-                t.rotation.w() = bt->get(6).asFloat64();
-                t.rotation.x() = bt->get(7).asFloat64();
-                t.rotation.y() = bt->get(8).asFloat64();
-                t.rotation.z() = bt->get(9).asFloat64();
-                m_transforms.push_back(t);
-            }
-        }
-    }
-    else
-    {
-        m_state = IFrameTransform::TRANSFORM_TIMEOUT;
-    }
-    m_lastStamp = newStamp;
-}
-
-inline int Transforms_client_storage::getLast(yarp::os::Bottle &data, Stamp &stmp)
-{
-    std::lock_guard<std::recursive_mutex> guard(m_mutex);
-
-    int ret = m_state;
-    if (ret != IFrameTransform::TRANSFORM_GENERAL_ERROR)
-    {
-        data = m_lastBottle;
-        stmp = m_lastStamp;
-    }
-
-    return ret;
-}
-
-inline int Transforms_client_storage::getIterations()
-{
-    std::lock_guard<std::recursive_mutex> guard(m_mutex);
-    int ret = m_count;
-    return ret;
-}
-
-// time is in ms
-void Transforms_client_storage::getEstFrequency(int &ite, double &av, double &min, double &max)
-{
-    std::lock_guard<std::recursive_mutex> guard(m_mutex);
-    ite=m_count;
-    min=m_deltaTMin*1000;
-    max=m_deltaTMax*1000;
-    if (m_count<1)
-    {
-        av=0;
-    }
-    else
-    {
-        av=m_deltaT/m_count;
-    }
-    av=av*1000;
-}
-
-void Transforms_client_storage::clear()
-{
-    std::lock_guard<std::recursive_mutex> l(m_mutex);
-    m_transforms.clear();
-}
-
-Transforms_client_storage::Transforms_client_storage(std::string local_streaming_name)
-{
-    m_count = 0;
-    m_deltaT = 0;
-    m_deltaTMax = 0;
-    m_deltaTMin = 1e22;
-    m_now = Time::now();
-    m_prev = m_now;
-
-    if (!this->open(local_streaming_name))
-    {
-        yCError(FRAMETRANSFORMCLIENT, "open(): Could not open port %s, check network", local_streaming_name.c_str());
-    }
-    this->useCallback();
-}
-
-Transforms_client_storage::~Transforms_client_storage()
-{
-    this->interrupt();
-    this->close();
-}
-
-size_t   Transforms_client_storage::size()
-{
-    std::lock_guard<std::recursive_mutex> l(m_mutex);
-    return m_transforms.size();
-}
-
-yarp::math::FrameTransform& Transforms_client_storage::operator[]   (std::size_t idx)
-{
-    std::lock_guard<std::recursive_mutex> l(m_mutex);
-    return m_transforms[idx];
-};
 
 //------------------------------------------------------------------------------------------------------------------------------
 bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
@@ -441,7 +283,6 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    m_transform_storage = new Transforms_client_storage(m_local_streaming_name);
     bool ok = Network::connect(m_remote_streaming_name.c_str(), m_local_streaming_name.c_str(), m_streaming_connection_type.c_str());
     if (!ok)
     {
@@ -465,25 +306,21 @@ bool FrameTransformClient::close()
 {
     m_rpc_InterfaceToServer.close();
     m_rpc_InterfaceToUser.close();
-    if (m_transform_storage != nullptr)
-    {
-        delete m_transform_storage;
-        m_transform_storage = nullptr;
-    }
     return true;
 }
 
 bool FrameTransformClient::allFramesAsString(std::string &all_frames)
 {
-    for (size_t i = 0; i < m_transform_storage->size(); i++)
+/*    for (size_t i = 0; i < m_transform_storage->size(); i++)
     {
         all_frames += (*m_transform_storage)[i].toString() + " ";
-    }
+    }*/
     return true;
 }
 
 FrameTransformClient::ConnectionType FrameTransformClient::getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
 {
+/*
     if (target_frame == source_frame) {return IDENTITY;}
 
     Transforms_client_storage& tfVec = *m_transform_storage;
@@ -531,7 +368,7 @@ FrameTransformClient::ConnectionType FrameTransformClient::getConnectionType(con
             }
         }
     }
-
+*/
     return DISCONNECTED;
 }
 
@@ -541,7 +378,7 @@ bool FrameTransformClient::canTransform(const std::string &target_frame, const s
 }
 
 bool FrameTransformClient::clear()
-{
+{/*
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
     b.addVocab(VOCAB_ITRANSFORM);
@@ -561,23 +398,23 @@ bool FrameTransformClient::clear()
         return false;
     }
 
-    m_transform_storage->clear();
+    m_transform_storage->clear();*/
     return true;
 }
 
 bool FrameTransformClient::frameExists(const std::string &frame_id)
 {
-    for (size_t i = 0; i < m_transform_storage->size(); i++)
+/*    for (size_t i = 0; i < m_transform_storage->size(); i++)
     {
         if (((*m_transform_storage)[i].src_frame_id) == frame_id) { return true; }
         if (((*m_transform_storage)[i].dst_frame_id) == frame_id) { return true; }
-    }
+    }*/
     return false;
 }
 
 bool FrameTransformClient::getAllFrameIds(std::vector< std::string > &ids)
 {
-    for (size_t i = 0; i < m_transform_storage->size(); i++)
+/*    for (size_t i = 0; i < m_transform_storage->size(); i++)
     {
         bool found = false;
         for (const auto& id : ids)
@@ -596,12 +433,12 @@ bool FrameTransformClient::getAllFrameIds(std::vector< std::string > &ids)
         }
         if (found == false) ids.push_back((*m_transform_storage)[i].dst_frame_id);
     }
-
+*/
     return true;
 }
 
 bool FrameTransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
-{
+{/*
     for (size_t i = 0; i < m_transform_storage->size(); i++)
     {
         std::string par((*m_transform_storage)[i].dst_frame_id);
@@ -611,12 +448,12 @@ bool FrameTransformClient::getParent(const std::string &frame_id, std::string &p
             parent_frame_id = (*m_transform_storage)[i].src_frame_id;
             return true;
         }
-    }
+    }*/
     return false;
 }
 
 bool FrameTransformClient::canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const
-{
+{/*
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, tfVec_size;
     std::lock_guard<std::recursive_mutex>         l(tfVec.m_mutex);
@@ -628,12 +465,12 @@ bool FrameTransformClient::canExplicitTransform(const std::string& target_frame_
         {
             return true;
         }
-    }
+    }*/
     return false;
 }
 
 bool FrameTransformClient::getChainedTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform) const
-{
+{/*
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, tfVec_size;
     std::lock_guard<std::recursive_mutex>         l(tfVec.m_mutex);
@@ -658,7 +495,7 @@ bool FrameTransformClient::getChainedTransform(const std::string& target_frame_i
                 }
             }
         }
-    }
+    }*/
     return false;
 }
 
@@ -915,7 +752,6 @@ bool FrameTransformClient::waitForTransform(const std::string &target_frame_id, 
 }
 
 FrameTransformClient::FrameTransformClient() : PeriodicThread(0.01),
-    m_transform_storage(nullptr),
     m_period(0.01)
 {
 }

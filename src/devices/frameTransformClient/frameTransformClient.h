@@ -40,48 +40,10 @@
 const int TRANSFORM_TIMEOUT_MS = 100; //ms
 const int MAX_PORTS = 5;
 
-
-class Transforms_client_storage :
-        public yarp::os::BufferedPort<yarp::os::Bottle>
-{
-private:
-    yarp::os::Bottle m_lastBottle;
-    yarp::os::Stamp  m_lastStamp;
-    double           m_deltaT;
-    double           m_deltaTMax;
-    double           m_deltaTMin;
-    double           m_prev;
-    double           m_now;
-    int              m_state;
-    int              m_count;
-
-    std::vector <yarp::math::FrameTransform> m_transforms;
-
-public:
-    std::recursive_mutex  m_mutex;
-    size_t   size();
-    yarp::math::FrameTransform& operator[]   (std::size_t idx);
-    void clear();
-
-public:
-    Transforms_client_storage (std::string port_name);
-    ~Transforms_client_storage ( );
-    bool     set_transform(yarp::math::FrameTransform t);
-    bool     delete_transform(std::string t1, std::string t2);
-
-    inline void resetStat();
-    using yarp::os::BufferedPort<yarp::os::Bottle>::onRead;
-    void onRead(yarp::os::Bottle &v) override;
-    inline int getLast(yarp::os::Bottle &data, yarp::os::Stamp &stmp);
-    inline int getIterations();
-    void getEstFrequency(int &ite, double &av, double &min, double &max);
-};
-
-
 /**
 * @ingroup dev_impl_network_clients
 *
-* \brief `transformClient`: Documentation to be added
+* \brief `FrameTransformClient`: Documentation to be added
 */
 class FrameTransformClient :
         public yarp::dev::DeviceDriver,
@@ -112,7 +74,6 @@ protected:
     std::string         m_local_streaming_name;
 
     std::string         m_streaming_connection_type;
-    Transforms_client_storage*    m_transform_storage;
     double                        m_period;
     std::mutex               m_rpc_mutex;
     struct broadcast_port_t
