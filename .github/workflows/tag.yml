@@ -21,6 +21,10 @@ on:
         description: 'If not empty, merge in this branch at the end'
         required: false
         default: master
+      prepare_next_stable:
+        description: 'Prepare for the next stable release'
+        required: true
+        default: true
 
 jobs:
   tag-yarp:
@@ -36,6 +40,7 @@ jobs:
         echo "stable: ${{ github.event.inputs.stable }}"
         echo "version: ${{ github.event.inputs.version }}"
         echo "merge_branch: ${{ github.event.inputs.merge_branch }}"
+        echo "prepare_next_stable: ${{ github.event.inputs.prepare_next_stable }}
 
     - name: Configure git, Prepare Repository and environment variables
       env:
@@ -107,21 +112,21 @@ jobs:
 
         # Variables for next release
         if [ ${{ github.event.inputs.stable }} == true ]; then
-          export YARP_NEXT_TYPE=stable
-          export YARP_NEXT_VERSION_MAJOR=${YARP_VERSION_MAJOR}
-          export YARP_NEXT_VERSION_MINOR=${YARP_VERSION_MINOR}
-          let YARP_NEXT_VERSION_PATCH=${YARP_VERSION_PATCH}+1
-          #export YARP_NEXT_BRANCH=yarp-${YARP_NEXT_VERSION_MAJOR}.${YARP_NEXT_VERSION_MINOR}
-          export YARP_NEXT_BRANCH=${YARP_TAG_BRANCH}
+          export YARP_NEXT_STABLE_TYPE=stable
+          export YARP_NEXT_STABLE_VERSION_MAJOR=${YARP_VERSION_MAJOR}
+          export YARP_NEXT_STABLE_VERSION_MINOR=${YARP_VERSION_MINOR}
+          let YARP_NEXT_STABLE_VERSION_PATCH=${YARP_VERSION_PATCH}+1
+          #export YARP_NEXT_STABLE_BRANCH=yarp-${YARP_NEXT_STABLE_VERSION_MAJOR}.${YARP_NEXT_STABLE_VERSION_MINOR}
+          export YARP_NEXT_STABLE_BRANCH=${YARP_TAG_BRANCH}
         else
           # FIXME Should prepare 2 releases
           echo
         fi
 
-        export YARP_NEXT_VERSION=${YARP_NEXT_VERSION_MAJOR}.${YARP_NEXT_VERSION_MINOR}.${YARP_NEXT_VERSION_PATCH}
-        export YARP_NEXT_VERSION_C=$(echo ${YARP_NEXT_VERSION} | sed 's/\./_/g')
-        export YARP_NEXT_BRANCH_C=$(echo ${YARP_NEXT_BRANCH} | sed 's/[\.-]/_/g')
-        export YARP_NEXT_RELEASE_NOTES_DIR="doc/release/${YARP_NEXT_BRANCH_C}"
+        export YARP_NEXT_STABLE_VERSION=${YARP_NEXT_STABLE_VERSION_MAJOR}.${YARP_NEXT_STABLE_VERSION_MINOR}.${YARP_NEXT_STABLE_VERSION_PATCH}
+        export YARP_NEXT_STABLE_VERSION_C=$(echo ${YARP_NEXT_STABLE_VERSION} | sed 's/\./_/g')
+        export YARP_NEXT_STABLE_BRANCH_C=$(echo ${YARP_NEXT_STABLE_BRANCH} | sed 's/[\.-]/_/g')
+        export YARP_NEXT_STABLE_RELEASE_NOTES_DIR="doc/release/${YARP_NEXT_STABLE_BRANCH_C}"
 
 
         echo "Prepare environment for next steps"
@@ -139,20 +144,21 @@ jobs:
         echo "YARP_RELEASE_NOTES_FILE=${YARP_RELEASE_NOTES_FILE}" >> $GITHUB_ENV
         echo "YARP_RELEASE_NOTES_BRANCH_FILE=${YARP_RELEASE_NOTES_BRANCH_FILE}" >> $GITHUB_ENV
         echo "YARP_RELEASE_NOTES_DIR=${YARP_RELEASE_NOTES_DIR}" >> $GITHUB_ENV
-        echo "YARP_NEXT_TYPE=${YARP_NEXT_TYPE}" >> $GITHUB_ENV
-        echo "YARP_NEXT_VERSION=${YARP_NEXT_VERSION}" >> $GITHUB_ENV
-        echo "YARP_NEXT_VERSION_MAJOR=${YARP_NEXT_VERSION_MAJOR}" >> $GITHUB_ENV
-        echo "YARP_NEXT_VERSION_MINOR=${YARP_NEXT_VERSION_MINOR}" >> $GITHUB_ENV
-        echo "YARP_NEXT_VERSION_PATCH=${YARP_NEXT_VERSION_PATCH}" >> $GITHUB_ENV
-        echo "YARP_NEXT_VERSION_C=${YARP_NEXT_VERSION_C}" >> $GITHUB_ENV
-        echo "YARP_NEXT_BRANCH=${YARP_NEXT_BRANCH}" >> $GITHUB_ENV
-        echo "YARP_NEXT_BRANCH_C=${YARP_NEXT_BRANCH_C}" >> $GITHUB_ENV
-        echo "YARP_NEXT_RELEASE_NOTES_DIR=${YARP_NEXT_RELEASE_NOTES_DIR}" >> $GITHUB_ENV
+        echo "YARP_NEXT_STABLE_TYPE=${YARP_NEXT_STABLE_TYPE}" >> $GITHUB_ENV
+        echo "YARP_NEXT_STABLE_VERSION=${YARP_NEXT_STABLE_VERSION}" >> $GITHUB_ENV
+        echo "YARP_NEXT_STABLE_VERSION_MAJOR=${YARP_NEXT_STABLE_VERSION_MAJOR}" >> $GITHUB_ENV
+        echo "YARP_NEXT_STABLE_VERSION_MINOR=${YARP_NEXT_STABLE_VERSION_MINOR}" >> $GITHUB_ENV
+        echo "YARP_NEXT_STABLE_VERSION_PATCH=${YARP_NEXT_STABLE_VERSION_PATCH}" >> $GITHUB_ENV
+        echo "YARP_NEXT_STABLE_VERSION_C=${YARP_NEXT_STABLE_VERSION_C}" >> $GITHUB_ENV
+        echo "YARP_NEXT_STABLE_BRANCH=${YARP_NEXT_STABLE_BRANCH}" >> $GITHUB_ENV
+        echo "YARP_NEXT_STABLE_BRANCH_C=${YARP_NEXT_STABLE_BRANCH_C}" >> $GITHUB_ENV
+        echo "YARP_NEXT_STABLE_RELEASE_NOTES_DIR=${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}" >> $GITHUB_ENV
 
 
-        echo "-----------------------------------------------------------------"
+    - name: Print environment
+      run: |
         cat $GITHUB_ENV
-        echo "-----------------------------------------------------------------"
+
 
     - name: Sanity checks
       run: |
@@ -327,49 +333,50 @@ jobs:
 
 
     - name: Prepare for Next Stable
+      if: github.event.inputs.prepare_next_stable == 'true'
       env:
         INPUT_PUSH_TOKEN: ${{ secrets.drdanz_TOKEN }}
       run: |
 
-        echo "Create 'Fixed in: ${YARP_NEXT_BRANCH}'"
+        echo "Create 'Fixed in: ${YARP_NEXT_STABLE_BRANCH}'"
 
         curl -H "Content-Type: application/json" -H "Authorization: token ${INPUT_PUSH_TOKEN}" --request POST --data "
         {
-          \"name\": \"Fixed in: YARP ${YARP_NEXT_BRANCH}\",
+          \"name\": \"Fixed in: YARP ${YARP_NEXT_STABLE_BRANCH}\",
           \"color\": \"fbca04\"
         }" https://api.github.com/repos/${GITHUB_REPOSITORY}/labels
 
 
-        echo "Create 'Target: ${YARP_NEXT_BRANCH}'"
+        echo "Create 'Target: ${YARP_NEXT_STABLE_BRANCH}'"
 
         curl -H "Content-Type: application/json" -H "Authorization: token ${INPUT_PUSH_TOKEN}" --request POST --data "
         {
-          \"name\": \"Target: YARP ${YARP_NEXT_BRANCH}\",
+          \"name\": \"Target: YARP ${YARP_NEXT_STABLE_BRANCH}\",
           \"color\": \"d93f0b\"
         }" https://api.github.com/repos/${GITHUB_REPOSITORY}/labels
 
 
         # Create the folder for the release notes
-        mkdir -p ${YARP_NEXT_RELEASE_NOTES_DIR}
+        mkdir -p ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}
 
         # Create the 000_<branch>.md file
-        cat << EOF > ${YARP_NEXT_RELEASE_NOTES_DIR}/000_${YARP_NEXT_BRANCH_C}.md
-        YARP <${YARP_NEXT_BRANCH}> (UNRELEASED)                                         {#${YARP_NEXT_BRANCH_C}}
+        cat << EOF > ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/000_${YARP_NEXT_STABLE_BRANCH_C}.md
+        YARP <${YARP_NEXT_STABLE_BRANCH}> (UNRELEASED)                                         {#${YARP_NEXT_STABLE_BRANCH_C}}
         ============================
 
         [TOC]
 
-        YARP <${YARP_NEXT_BRANCH}> Release Notes
+        YARP <${YARP_NEXT_STABLE_BRANCH}> Release Notes
         =============================
 
 
         A (partial) list of bug fixed and issues resolved in this release can be found
-        [here](https://github.com/${GITHUB_REPOSITORY}/issues?q=label%3A%22Fixed+in%3A+YARP+${YARP_NEXT_BRANCH}%22).
+        [here](https://github.com/${GITHUB_REPOSITORY}/issues?q=label%3A%22Fixed+in%3A+YARP+${YARP_NEXT_STABLE_BRANCH}%22).
 
         EOF
 
         #Create the README.md file
-        cat << EOF > ${YARP_NEXT_RELEASE_NOTES_DIR}/README.md
+        cat << EOF > ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/README.md
         This is a placeholder.
 
         Please add in this folder a \`.md\` file for each branch, pull request or
@@ -378,7 +385,7 @@ jobs:
         Each file should have this format
 
         \`\`\`
-        branch_name {#${YARP_NEXT_BRANCH_C}}
+        branch_name {#${YARP_NEXT_STABLE_BRANCH_C}}
         -----------
 
         * Branch changes
@@ -386,18 +393,19 @@ jobs:
         EOF
 
         # Link the next release in the doc/releases.md file
-        sed -i "/^\* \\\\subpage v${YARP_VERSION_C}$/i * \\\\subpage ${YARP_NEXT_BRANCH_C}" doc/releases.md
+        sed -i "/^\* \\\\subpage v${YARP_VERSION_C}$/i * \\\\subpage ${YARP_NEXT_STABLE_BRANCH_C}" doc/releases.md
 
         git fetch origin
-        git checkout -f ${YARP_NEXT_BRANCH}
-        git reset --hard origin/${YARP_NEXT_BRANCH}
-        git add -v ${YARP_NEXT_RELEASE_NOTES_DIR}/000_${YARP_NEXT_BRANCH_C}.md
-        git add -v ${YARP_NEXT_RELEASE_NOTES_DIR}/README.md
+        git checkout -f ${YARP_NEXT_STABLE_BRANCH}
+        git reset --hard origin/${YARP_NEXT_STABLE_BRANCH}
+        git add -v ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/000_${YARP_NEXT_STABLE_BRANCH_C}.md
+        git add -v ${YARP_NEXT_STABLE_RELEASE_NOTES_DIR}/README.md
         git add -v doc/releases.md
-        git commit -v -m "Prepare for next ${YARP_NEXT_TYPE} release (${YARP_NEXT_VERSION})"
+        git commit -v -m "Prepare for next ${YARP_NEXT_STABLE_TYPE} release (${YARP_NEXT_STABLE_VERSION})"
 
 
     - name: Show "Prepare for next stable release" commit
+      if: github.event.inputs.prepare_next_stable == 'true'
       run: |
         git show --stat HEAD
         echo
@@ -406,16 +414,19 @@ jobs:
 
 
     - name: Push "Prepare for next stable release" commit
+      if: github.event.inputs.prepare_next_stable == 'true'
       run: |
         echo "Push:"
         git remote -v
-        git push origin ${YARP_NEXT_BRANCH}
+        git push origin ${YARP_NEXT_STABLE_BRANCH}
 
-    - name: Merge into master
+
+    - name: Merge into master "Prepare for next stable release" commit
+      if: github.event.inputs.prepare_next_stable == 'true'
       run: |
         echo "Merge into master"
         git fetch origin
         git checkout -f ${YARP_MERGE_BRANCH}
         git reset --hard origin/${YARP_MERGE_BRANCH}
-        git merge --no-ff -s recursive -X ours --no-edit ${YARP_NEXT_BRANCH}
+        git merge --no-ff -s recursive -X ours --no-edit ${YARP_NEXT_STABLE_BRANCH}
         git push -v origin ${YARP_MERGE_BRANCH}
