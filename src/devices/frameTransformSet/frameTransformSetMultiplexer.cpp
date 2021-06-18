@@ -55,30 +55,29 @@ bool FrameTransformSetMultiplexer::close()
 
 bool FrameTransformSetMultiplexer::attachAll(const yarp::dev::PolyDriverList& devices2attach)
 {
-    switch (devices2attach.size())
+    for (int i = 0; i < devices2attach.size(); i++)
     {
-        case 2:
-            // yarp tf repeater and nwc ros or ros2
-        case 3:
-            // yarp tf repeater, nwc ros and nwc ros2
-            for (int i = 0; i < devices2attach.size(); i++)
+        yarp::dev::PolyDriver* polyDriverLocal = devices2attach[i]->poly;
+        if (polyDriverLocal->isValid())
+        {
+            yarp::dev::IFrameTransformStorageSet* iFrameTransformStorageSet=nullptr;
+            if (polyDriverLocal->view(iFrameTransformStorageSet) && iFrameTransformStorageSet!=nullptr)
             {
-                yarp::dev::PolyDriver* polyDriverLocal = devices2attach[i]->poly;
-                if (polyDriverLocal->isValid())
-                {
-                    yarp::dev::IFrameTransformStorageSet* iFrameTransformStorageSet=nullptr;
-                    if (polyDriverLocal->view(iFrameTransformStorageSet) && iFrameTransformStorageSet!=nullptr)
-                    {
-                        m_iFrameTransformStorageSetList.push_back(iFrameTransformStorageSet);
-                    }
-                }
+                m_iFrameTransformStorageSetList.push_back(iFrameTransformStorageSet);
             }
-            return true;
-        default:
-            yCError(FRAMETRANSFORMSETMULTIPLEXER) << "need to attach 2 or 3 devices, " << devices2attach.size() << "found";
-            break;
+            else
+            {
+                yCError(FRAMETRANSFORMSETMULTIPLEXER) << "failed to attach all the devices";
+                return false;
+            }
+        }
+        else
+        {
+            yCError(FRAMETRANSFORMSETMULTIPLEXER) << "polydriver not valid";
+            return false;
+        }
     }
-    return false;
+    return true;
 }
 
 
