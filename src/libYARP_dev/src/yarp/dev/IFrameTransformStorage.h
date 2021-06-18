@@ -16,7 +16,6 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/math/FrameTransform.h>
 
-
 namespace yarp {
     namespace dev {
         class IFrameTransformStorageSet;
@@ -24,6 +23,8 @@ namespace yarp {
         class IFrameTransformStorageUtils;
       }
 }
+
+class FrameTransformContainer;
 
 /**
  * @ingroup dev_iface_transform
@@ -33,9 +34,6 @@ namespace yarp {
 class YARP_dev_API yarp::dev::IFrameTransformStorageSet
 {
 public:
-    /**
-     * Destructor.
-     */
     virtual ~IFrameTransformStorageSet();
 
     /**
@@ -61,9 +59,6 @@ public:
 class YARP_dev_API yarp::dev::IFrameTransformStorageGet
 {
 public:
-    /**
-     * Destructor.
-     */
     virtual ~IFrameTransformStorageGet();
 
     /**
@@ -83,9 +78,6 @@ public:
 class YARP_dev_API yarp::dev::IFrameTransformStorageUtils
 {
 public:
-    /**
-     * Destructor.
-     */
     virtual ~IFrameTransformStorageUtils();
 
     virtual bool clear() = 0;
@@ -94,6 +86,7 @@ public:
 
     virtual bool size (size_t& size) const =0;
 
+    virtual bool getInternalContainer(FrameTransformContainer* container) =0;
 };
 
 #endif // YARP_DEV_IFRAMETRANSFORM_STORAGE_H
