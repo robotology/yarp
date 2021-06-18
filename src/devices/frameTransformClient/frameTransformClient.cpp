@@ -56,30 +56,6 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         out.addString("'publish_transform <src> <dst> <portname> <format>: opens a port to publish transform from src to dst");
         out.addString("'unpublish_transform <portname>: closes a previously opened port to publish a transform");
         out.addString("'unpublish_all <portname>: closes a all previously opened ports to publish a transform");
-        out.addString("'is_connected'");
-        out.addString("'reconnect'");
-    }
-    else if (request == "is_connected")
-    {
-        if (isConnectedWithServer())
-        {
-            out.addString("yes");
-        }
-        else
-        {
-            out.addString("no");
-        }
-    }
-    else if (request == "reconnect")
-    {
-        if (reconnectWithServer())
-        {
-            out.addString("successful");
-        }
-        else
-        {
-            out.addString("unsuccessful");
-        }
     }
     else if (request == "list_frames")
     {
@@ -284,7 +260,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 
     FrameTransformContainer* p_cont=nullptr;
     m_ift_u->getInternalContainer(p_cont);
-    FrameTransform* ft = p_cont->begin();
+    auto ft = p_cont->begin();
 
 /*
     m_local_name.clear();
@@ -363,19 +339,25 @@ bool FrameTransformClient::close()
 
 bool FrameTransformClient::allFramesAsString(std::string &all_frames)
 {
-/*    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (br && p_cont)
     {
-        all_frames += (*m_transform_storage)[i].toString() + " ";
-    }*/
-    return true;
+        for (auto it = p_cont->begin(); it != p_cont->end(); it++)
+        all_frames += it->toString() + " ";
+        return true;
+    }
+    return false;
 }
 
 FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
 {
-/*
     if (target_frame == source_frame) {return IDENTITY;}
 
-    Transforms_client_storage& tfVec = *m_transform_storage;
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return DISCONNECTED; }
+
     size_t                     i, j;
     std::vector<std::string>   tar2root_vec;
     std::vector<std::string>   src2root_vec;
@@ -420,7 +402,7 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
             }
         }
     }
-*/
+
     return DISCONNECTED;
 }
 
@@ -430,99 +412,98 @@ bool FrameTransformClient::canTransform(const std::string &target_frame, const s
 }
 
 bool FrameTransformClient::clear()
-{/*
-    yarp::os::Bottle b;
-    yarp::os::Bottle resp;
-    b.addVocab(VOCAB_ITRANSFORM);
-    b.addVocab(VOCAB_TRANSFORM_DELETE_ALL);
-    bool ret = m_rpc_InterfaceToServer.write(b, resp);
-    if (ret)
-    {
-        if (resp.get(0).asVocab() != VOCAB_OK)
-        {
-            yCError(FRAMETRANSFORMCLIENT) << "clear(): Received error from server";
-            return false;
-        }
-    }
-    else
-    {
-        yCError(FRAMETRANSFORMCLIENT) << "clear(): Error on writing on rpc port";
-        return false;
-    }
+{
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
-    m_transform_storage->clear();*/
+    p_cont->clear();
     return true;
 }
 
 bool FrameTransformClient::frameExists(const std::string &frame_id)
 {
-/*    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+
+    for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
-        if (((*m_transform_storage)[i].src_frame_id) == frame_id) { return true; }
-        if (((*m_transform_storage)[i].dst_frame_id) == frame_id) { return true; }
-    }*/
+        if (it->src_frame_id == frame_id) { return true; }
+        if (it->dst_frame_id == frame_id) { return true; }
+        return false;
+    }
+    yCAssert(FRAMETRANSFORMCLIENT,false);
+    yCError(FRAMETRANSFORMCLIENT, "frameExists: fault");
     return false;
 }
 
 bool FrameTransformClient::getAllFrameIds(std::vector< std::string > &ids)
 {
-/*    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+
+    for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
         bool found = false;
         for (const auto& id : ids)
         {
-            if (((*m_transform_storage)[i].src_frame_id) == id) { found = true; break; }
+            if (it->src_frame_id == id) { found = true; break; }
         }
-        if (found == false) ids.push_back((*m_transform_storage)[i].src_frame_id);
+        if (found == false) ids.push_back(it->src_frame_id);
     }
 
-    for (size_t i = 0; i < m_transform_storage->size(); i++)
+    for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
         bool found = false;
         for (const auto& id : ids)
         {
-            if (((*m_transform_storage)[i].dst_frame_id) == id) { found = true; break; }
+            if (it->dst_frame_id == id) { found = true; break; }
         }
-        if (found == false) ids.push_back((*m_transform_storage)[i].dst_frame_id);
+        if (found == false) ids.push_back(it->dst_frame_id);
     }
-*/
+
     return true;
 }
 
 bool FrameTransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
-{/*
-    for (size_t i = 0; i < m_transform_storage->size(); i++)
+{
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+
+    for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
-        std::string par((*m_transform_storage)[i].dst_frame_id);
-        if (((*m_transform_storage)[i].dst_frame_id == frame_id))
+        std::string par(it->dst_frame_id);
+        if (it->dst_frame_id == frame_id)
         {
 
-            parent_frame_id = (*m_transform_storage)[i].src_frame_id;
+            parent_frame_id = it->src_frame_id;
             return true;
         }
-    }*/
+    }
     return false;
 }
 
 bool FrameTransformClient::priv_canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const
-{/*
-    Transforms_client_storage& tfVec = *m_transform_storage;
-    size_t                     i, tfVec_size;
-    std::lock_guard<std::recursive_mutex>         l(tfVec.m_mutex);
+{
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (!br || p_cont==nullptr) {yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
-    tfVec_size = tfVec.size();
-    for (i = 0; i < tfVec_size; i++)
+    for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
-        if (tfVec[i].dst_frame_id == target_frame_id && tfVec[i].src_frame_id == source_frame_id)
+        if (it->dst_frame_id == target_frame_id && it->src_frame_id == source_frame_id)
         {
             return true;
         }
-    }*/
+    }
     return false;
 }
 
 bool FrameTransformClient::priv_getChainedTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform) const
-{/*
+{
     Transforms_client_storage& tfVec = *m_transform_storage;
     size_t                     i, tfVec_size;
     std::lock_guard<std::recursive_mutex>         l(tfVec.m_mutex);
@@ -540,14 +521,14 @@ bool FrameTransformClient::priv_getChainedTransform(const std::string& target_fr
             else
             {
                 yarp::sig::Matrix m;
-                if (getChainedTransform(tfVec[i].src_frame_id, source_frame_id, m))
+                if (priv_getChainedTransform(tfVec[i].src_frame_id, source_frame_id, m))
                 {
                     transform = m * tfVec[i].toMatrix();
                     return true;
                 }
             }
         }
-    }*/
+    }
     return false;
 }
 
@@ -610,15 +591,16 @@ bool FrameTransformClient::setTransform(const std::string& target_frame_id, cons
         yCError(FRAMETRANSFORMCLIENT) << "setTransform(): Wrong matrix format, it has to be 4 by 4";
         return false;
     }
+
     tf.src_frame_id = source_frame_id;
     tf.dst_frame_id = target_frame_id;
     tf.isStatic = false;
     tf.timestamp = yarp::os::Time::now();
 
-    //
-    llllll
-
-    return true;
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (br && p_cont) { br = p_cont->setTransform(tf); }
+    return br;
 }
 
 bool FrameTransformClient::setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
@@ -647,10 +629,10 @@ bool FrameTransformClient::setTransformStatic(const std::string &target_frame_id
     tf.isStatic = true;
     tf.timestamp=-1;
 
-    //
-    llllll
-
-    return true;
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (br && p_cont) { br = p_cont->setTransform(tf); }
+    return br;
 }
 
 bool FrameTransformClient::deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)

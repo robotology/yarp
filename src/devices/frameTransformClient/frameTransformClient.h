@@ -64,12 +64,7 @@ private:
 protected:
 
     yarp::os::Port      m_rpc_InterfaceToUser;
-
-    std::string         m_local_rpcServer;
-    std::string         m_local_rpcUser;
-    std::string         m_remote_rpc;
-
-    std::string         m_streaming_connection_type;
+    std::string         m_local_name;
     double              m_period;
     std::mutex          m_rpc_mutex;
 
