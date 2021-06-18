@@ -23,7 +23,7 @@
 #include <map>
 
 #include <yarp/math/FrameTransform.h>
-#include <frameTransformUtils.h>
+#include <frameTransformContainer.h>
 
 #include <yarp/rosmsg/geometry_msgs/TransformStamped.h>
 #include <yarp/rosmsg/tf2_msgs/TFMessage.h>
