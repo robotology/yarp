@@ -22,7 +22,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/IFrameTransformStorage.h>
-#include <frameTransformUtils.h>
+#include <frameTransformContainer.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
@@ -60,6 +60,7 @@ public:
     bool deleteTransform(std::string t1, std::string t2) override;
     bool size(size_t& size) const override;
     bool clear() override;
+    bool getInternalContainer(FrameTransformContainer* container) override;
 
     //wrapper and interfaces
     mutable std::mutex  m_pd_mutex;
@@ -70,7 +71,6 @@ public:
 
     //periodicThread
     void     run() override;
-
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMSTORAGE_H
