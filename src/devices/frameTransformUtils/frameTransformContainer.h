@@ -31,8 +31,7 @@
 
 class FrameTransformContainer :
     public yarp::dev::IFrameTransformStorageSet,
-    public yarp::dev::IFrameTransformStorageGet,
-    public yarp::dev::IFrameTransformStorageUtils
+    public yarp::dev::IFrameTransformStorageGet
 {
 protected:
     std::vector<yarp::math::FrameTransform> m_transforms;
@@ -54,17 +53,19 @@ public:
     bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
 
     //IFrameTransformStorageUtils interface
-    bool deleteTransform(std::string t1, std::string t2) override;
-    bool size(size_t& size) const override;
-    bool clear() override;
+    bool deleteTransform(std::string t1, std::string t2);
+    bool size(size_t& size) const;
+    bool clear();
 
 public:
     //other
     bool checkAndRemoveExpired();
     bool checkAndRemoveExpired() const;
+    yarp::math::FrameTransform* begin();
+    yarp::math::FrameTransform* end();
+
     //yarp::math::FrameTransform& operator[]   (std::size_t idx) { return m_transforms[idx]; }
     //bool     delete_transform(int id);
-
 };
 
 #endif // YARP_DEV_FRAMETRANSFORM_UTILS_H
