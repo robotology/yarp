@@ -89,7 +89,7 @@ public:
      * @param reader a recipient for the reply.
      * @return true on success
      */
-    bool write(PortWriter& writer, PortReader& reader);
+    bool write(const PortWriter& writer, PortReader& reader) const;
 
     /**
      * Put a message in a stack to call later, asynchronously.  Used

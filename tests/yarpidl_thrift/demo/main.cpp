@@ -49,41 +49,41 @@ public:
         closing = false;
     }
 
-    virtual int32_t get_answer() override {
+    int32_t get_answer() override {
         return 42;
     }
 
-    virtual int32_t add_one(const int32_t x) override {
+    int32_t add_one(const int32_t x) override {
         INFO("adding 1 to " << x);
         return x+1;
     }
 
-    virtual int32_t add_pair(const int32_t x, const int32_t y) override {
+    int32_t add_pair(const int32_t x, const int32_t y) override {
         INFO("adding " << x << " and " << y);
         return x+y;
     }
 
-    virtual void test_void(const int32_t x) override {
+    void test_void(const int32_t x) override {
         INFO("test void with " << x);
     }
 
-    virtual void test_1way(const int32_t x) override {
+    void test_1way(const int32_t x) override {
         INFO("test oneway with " << x);
     }
 
-    virtual bool test_defaults(const int32_t x) override {
+    bool test_defaults(const int32_t x) override {
         INFO("test defaults with " << x);
         return (x==42);
     }
 
-    virtual std::vector<DemoEnum> test_enum_vector(const std::vector<DemoEnum> & x) override {
+    std::vector<DemoEnum> test_enum_vector(const std::vector<DemoEnum> & x) override {
         INFO("test_enum_vector");
         std::vector<DemoEnum> result = x;
         result.push_back(ENUM1);
         return result;
     }
 
-    virtual int32_t test_partial(const int32_t x,
+    int32_t test_partial(const int32_t x,
                                  const std::vector<int32_t> & lst,
                                  const int32_t y) override {
         INFO("test_partial with " << x << " and " << y);
@@ -91,14 +91,14 @@ public:
         return x+y;
     }
 
-    virtual int32_t test_tail_defaults(const DemoEnum x) override {
+    int32_t test_tail_defaults(const DemoEnum x) override {
         if (x==ENUM1) {
             return 42;
         }
         return 999;
     }
 
-    virtual int32_t test_longer_tail_defaults(const int32_t ignore, const DemoEnum _enum, const int32_t _int, const std::string& _string) override {
+    int32_t test_longer_tail_defaults(const int32_t ignore, const DemoEnum _enum, const int32_t _int, const std::string& _string) override {
         YARP_UNUSED(ignore);
         if (_enum==ENUM2 && _int==42 && _string=="Space Monkey from the Planet: Space") {
             return 999;
@@ -108,7 +108,7 @@ public:
 
 
 
-    virtual void do_start_a_service() override {
+    void do_start_a_service() override {
         running = true;
         while (!closing) {
             INFO("Operating...");
@@ -117,11 +117,11 @@ public:
         running = false;
     }
 
-    virtual bool do_check_for_service() override {
+    bool do_check_for_service() override {
         return running;
     }
 
-    virtual void do_stop_a_service() override {
+    void do_stop_a_service() override {
         closing = true;
         while (running) {
             Time::delay(0.1);
@@ -129,7 +129,7 @@ public:
         closing = false;
     }
 
-    virtual DemoStructMap get_demo_map_struct() override {
+    DemoStructMap get_demo_map_struct() override {
         DemoStructMap demoStructMap;
         demoStructMap.mapValues["map_0"] = {0, 10};
         demoStructMap.mapValues["map_1"] = {1, 11};
@@ -137,13 +137,17 @@ public:
         demoStructMap.mapValues["map_3"] = {3, 13};
         return demoStructMap;
     }
+
+    bool this_is_a_const_method() const {
+        return true;
+    }
 };
 
 
 class BrokenServer : public Demo
 {
 public:
-    virtual int32_t get_answer() override {
+    int32_t get_answer() override {
         return 42;
     }
 };
@@ -152,13 +156,13 @@ public:
 class WrappingServer : public Wrapping
 {
 public:
-    virtual int32_t check(const yarp::os::Value& param) override {
+    int32_t check(const yarp::os::Value& param) override {
         if (param.isInt32()) return param.asInt32()+1;
         if (param.asString()=="6*7") return 42;
         return 9;
     }
 
-    virtual Bottle getBottle() override {
+    Bottle getBottle() override {
         Bottle b("this is a test (bottle)");
         return b;
     }
@@ -173,22 +177,22 @@ public:
         wsx = dsx = wsy = dsy = 0;
     }
 
-    virtual bool will_set_x() override {
+    bool will_set_x() override {
         INFO("will_set_x called, x is " << get_x());
         wsx = get_x();
         return true;
     }
-    virtual bool will_set_y() override {
+    bool will_set_y() override {
         INFO("will_set_y called, y is " << get_y());
         wsy = get_y();
         return true;
     }
-    virtual bool did_set_x() override {
+    bool did_set_x() override {
         INFO("did_set_x called, x is " << get_x());
         dsx = get_x();
         return true;
     }
-    virtual bool did_set_y() override {
+    bool did_set_y() override {
         INFO("did_set_y called, y is " << get_y());
         dsy = get_y();
         return true;
@@ -198,7 +202,7 @@ public:
 class ClientPeek : public PortReader
 {
 public:
-    virtual bool read(ConnectionReader& con) override {
+    bool read(ConnectionReader& con) override {
         Bottle bot;
         bot.read(con);
         INFO("Got " << bot.toString());
@@ -221,12 +225,12 @@ public:
         called_did_set_id = false;
     }
 
-    virtual bool will_set_id() override {
+    bool will_set_id() override {
         called_will_set_id = true;
         return false;
     }
 
-    virtual bool did_set_id() override {
+    bool did_set_id() override {
         called_did_set_id = true;
         return false;
     }
@@ -926,5 +930,22 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         CHECK(demoStructMap.mapValues["map_2"].y == 12);
         CHECK(demoStructMap.mapValues["map_3"].x == 3);
         CHECK(demoStructMap.mapValues["map_3"].y == 13);
+    }
+
+    SECTION("test const")
+    {
+        Demo client;
+        Server server;
+        RpcClient client_port;
+        RpcServer server_port;
+        REQUIRE(client_port.open("/client"));
+        REQUIRE(server_port.open("/server"));
+        REQUIRE(yarp.connect(client_port.getName(), server_port.getName()));
+        client.yarp().attachAsClient(client_port);
+        server.yarp().attachAsServer(server_port);
+
+        INFO("calling a const method");
+        CHECK(const_cast<const Demo&>(client).this_is_a_const_method());
+
     }
 }

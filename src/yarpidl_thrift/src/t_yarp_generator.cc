@@ -196,6 +196,7 @@ public:
     std::string function_prototype(t_function* tfn,
                                    bool include_defaults,
                                    bool include_returntype = true,
+                                   bool include_qualifiers = false,
                                    const std::string& prefix = {},
                                    const std::string& override_name = {});
     std::string declare_field(t_field* tfield,
@@ -352,7 +353,7 @@ public:
     void generate_service_helper_classes_impl_read(t_function* function, std::ostringstream& f_cpp_);
 
     void generate_service_constructor(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
-    void generate_service_function(t_service* tservice, t_function* function, std::ostringstream&  f_h_, std::ostringstream& f_cpp_);
+    void generate_service_method(t_service* tservice, t_function* function, std::ostringstream&  f_h_, std::ostringstream& f_cpp_);
     void generate_service_help(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_service_read(t_service* tservice, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
 
@@ -779,7 +780,7 @@ std::vector<std::string> t_yarp_generator::print_help(t_function* tdoc)
     std::vector<std::string> doxyPar;
     std::string quotes = "\"";
     std::string replacement = "\\\"";
-    doxyPar.push_back(replaceInString(function_prototype(tdoc, true), quotes, replacement));
+    doxyPar.push_back(replaceInString(function_prototype(tdoc, true, true, true), quotes, replacement));
     quote_doc(doxyPar, tdoc);
     return doxyPar;
 }
@@ -932,6 +933,7 @@ void t_yarp_generator::get_needed_type(t_type* curType, std::set<std::string>& n
 std::string t_yarp_generator::function_prototype(t_function* tfn,
                                                  bool include_defaults,
                                                  bool include_returntype,
+                                                 bool include_qualifiers,
                                                  const std::string& prefix,
                                                  const std::string& override_name)
 {
@@ -971,6 +973,17 @@ std::string t_yarp_generator::function_prototype(t_function* tfn,
         }
     }
     result += ")";
+
+    if (include_qualifiers) {
+        auto it = tfn->annotations_.find("yarp.qualifier");
+        if (it != tfn->annotations_.end()) {
+            // For now support only the "const" qualifier.
+            assert(it->second == "const");
+            result += " ";
+            result += it->second;
+        }
+    }
+
     return result;
 }
 
@@ -3446,7 +3459,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
 
     // Functions
     for (const auto& function : tservice->get_functions()) {
-        generate_service_function(tservice, function, f_h_, f_cpp_);
+        generate_service_method(tservice, function, f_h_, f_cpp_);
     }
 
     generate_service_help(tservice, f_h_, f_cpp_);
@@ -3503,7 +3516,7 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
     indent_up_cpp();
     {
         f_cpp_ << indent_access_specifier_cpp() << "public:\n";
-        f_cpp_ << indent_cpp() << "explicit " << function_prototype(function, false, false, "", helper_class) << ";\n";
+        f_cpp_ << indent_cpp() << "explicit " << function_prototype(function, false, false, false, "", helper_class) << ";\n";
         f_cpp_ << indent_cpp() << "bool write(yarp::os::ConnectionWriter& connection) const override;\n";
         f_cpp_ << indent_cpp() << "bool read(yarp::os::ConnectionReader& connection) override;\n";
 
@@ -3542,7 +3555,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* fun
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
     auto returnfield = t_field{returntype, "s_return_helper"};
 
-    f_cpp_ << indent_cpp() << function_prototype(function, false, false, helper_class, helper_class);
+    f_cpp_ << indent_cpp() << function_prototype(function, false, false, false, helper_class, helper_class);
     bool first = true;
     for (const auto& arg : function->get_arglist()->get_members()) {
         if (first) {
@@ -3654,7 +3667,7 @@ void t_yarp_generator::generate_service_constructor(t_service* tservice, std::os
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_service_function(t_service* tservice, t_function* function, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
+void t_yarp_generator::generate_service_method(t_service* tservice, t_function* function, std::ostringstream&  f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -3665,10 +3678,10 @@ void t_yarp_generator::generate_service_function(t_service* tservice, t_function
     auto returnfield = t_field{returntype, "s_return_helper"};
 
     print_doc(f_h_, function);
-    f_h_ << indent_h() << "virtual " << function_prototype(function, true) << ";\n";
+    f_h_ << indent_h() << "virtual " << function_prototype(function, true, true, true) << ";\n";
     f_h_ << '\n';
 
-    f_cpp_ << indent_cpp() << function_prototype(function, false, true, service_name_) << '\n';
+    f_cpp_ << indent_cpp() << function_prototype(function, false, true, true, service_name_) << '\n';
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
@@ -3685,7 +3698,7 @@ void t_yarp_generator::generate_service_function(t_service* tservice, t_function
         indent_up_cpp();
         {
             f_cpp_ << indent_cpp() << "yError(\"Missing server method '%s'?\", \"";
-            f_cpp_ << function_prototype(function, false, true, service_name_);
+            f_cpp_ << function_prototype(function, false, true, true, service_name_);
             f_cpp_ << "\");\n";
         }
         indent_down_cpp();

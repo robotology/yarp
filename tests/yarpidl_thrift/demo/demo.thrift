@@ -105,5 +105,7 @@ service Demo {
 
   DemoStruct get_demo_struct();
 
-  DemoStructMap get_demo_map_struct()
+  DemoStructMap get_demo_map_struct();
+
+  bool this_is_a_const_method() (yarp.qualifier = "const");
 }

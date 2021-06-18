@@ -25,13 +25,21 @@ private:
 
 public:
     /**
-     *
      * Get YARP state associated with this object.
      *
      * @return state object.
-     *
      */
     yarp::os::WireLink& yarp()
+    {
+        return _yarp_link;
+    }
+
+    /**
+     * Get YARP state associated with this object (const version).
+     *
+     * @return state object.
+     */
+    const yarp::os::WireLink& yarp() const
     {
         return _yarp_link;
     }
