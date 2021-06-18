@@ -21,7 +21,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "FrameTransformServer.h"
+#include "frameTransformServer.h"
 #include <sstream>
 #include <limits>
 #include <yarp/dev/ControlBoardInterfaces.h>
