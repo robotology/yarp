@@ -77,8 +77,8 @@ bool FrameTransformGet_nws_yarp::attach( yarp::dev::PolyDriver* deviceToAttach)
     deviceToAttach->view(m_iFrameTransformStorageGet);
 
     if ( m_iFrameTransformStorageGet!=nullptr){
-        return false;
         yCError(FRAMETRANSFORMGETNWSYARP) << "could not attach to the device";
+        return false;
     }
     return true;
 }
