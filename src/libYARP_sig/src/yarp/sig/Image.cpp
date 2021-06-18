@@ -813,16 +813,15 @@ Image::Image(const Image& alt) : Portable()
 }
 
 Image::Image(Image&& other) noexcept
-    : implementation(other.implementation)
+    : implementation(std::exchange(other.implementation, nullptr))
 {
-    other.implementation = nullptr;
     synchronize();
 }
 
 Image& Image::operator=(Image&& other) noexcept
 {
-    Image moved(std::move(other));
-    std::swap(moved.implementation, implementation);
+    delete static_cast<ImageStorage*>(implementation);
+    implementation = std::exchange(other.implementation, nullptr);
     synchronize();
     return *this;
 }
