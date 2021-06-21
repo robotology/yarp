@@ -35,7 +35,7 @@ YARP_LOG_COMPONENT(FRAMETRANSFORSTORAGE, "yarp.device.frameTransformUtils")
 
 bool FrameTransformContainer::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
-    std::lock_guard<std::mutex> lock(m_trf_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     transforms = m_transforms;
     return true;
 }
@@ -51,7 +51,7 @@ bool FrameTransformContainer::setTransforms(const std::vector<yarp::math::FrameT
 
 bool FrameTransformContainer::setTransform(const yarp::math::FrameTransform& t)
 {
-    std::lock_guard<std::mutex> lock(m_trf_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     for (auto& it : m_transforms)
     {
         //this linear search may require some optimization
@@ -70,7 +70,7 @@ bool FrameTransformContainer::setTransform(const yarp::math::FrameTransform& t)
 
 bool FrameTransformContainer::deleteTransform(string t1, string t2)
 {
-    std::lock_guard<std::mutex> lock(m_trf_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     if (t1 == "*" && t2 == "*")
     {
         m_transforms.clear();
@@ -133,14 +133,14 @@ bool FrameTransformContainer::deleteTransform(string t1, string t2)
 
 bool FrameTransformContainer::clear()
 {
-    std::lock_guard<std::mutex> lock(m_trf_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     m_transforms.clear();
     return true;
 }
 
 bool FrameTransformContainer::checkAndRemoveExpired()
 {
-    std::lock_guard<std::mutex> lock(m_trf_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     double curr_t = yarp::os::Time::now();
     for (auto it= m_transforms.begin(); it!= m_transforms.end(); it++)
     {
@@ -161,7 +161,7 @@ bool FrameTransformContainer::checkAndRemoveExpired() const
 
 bool FrameTransformContainer::size(size_t& size) const
 {
-    std::lock_guard<std::mutex> lock(m_trf_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     size = m_transforms.size();
     return true;
 }
