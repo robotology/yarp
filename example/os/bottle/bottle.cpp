@@ -7,15 +7,15 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 
 using namespace yarp::os;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[])
+{
+    YARP_UNUSED(argc);
+    YARP_UNUSED(argv);
 
     Bottle b;
     b.addString("color");
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     printf("subProp: %s\n", subProp.toString().c_str());
 
     Value *lst = Value::makeList();
-    if (lst==NULL) {
+    if (lst == nullptr) {
         printf("Failed to allocate list\n");
         return 1;
     }
