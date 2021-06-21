@@ -215,10 +215,11 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 {
     yarp::os::Property cfg;
     cfg.fromString(config.toString());
+    std::string configuration_to_open = cfg.find("filexml_option").toString();
     cfg.unput("filexml_option");
 
     yarp::robotinterface::experimental::XMLReader reader;
-    yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromFile("file.xml", cfg);
+    yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromFile(configuration_to_open, cfg);
     yCAssert(FRAMETRANSFORMCLIENT, result.parsingIsSuccessful);
 
     m_robot = std::move(result.robot); // FIXME std::move non serve
@@ -231,56 +232,38 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    std::string setDevice = "foo";
-    if (m_robot.hasParam("setDevice")) {
-        setDevice = m_robot.findParam("setDevice");
-    }
-
-    const std::string getDevice = "bar";
-
 /*
-    std::string getDevice = "bar";
-    if (robot.hasParam("getDevice")) {
-        setDevice = robot.findParam("getDevice");
-    }
-*/
+    //probably useless, to be removed
+    std::string setDevice = "foo";
+    if (m_robot.hasParam("setDevice")) {setDevice = m_robot.findParam("setDevice");}
     yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(setDevice));
     auto* polyset = m_robot.device(setDevice).driver();
     yCAssert(FRAMETRANSFORMCLIENT, polyset);
-
     polyset->view(m_ift_s);
     yCAssert(FRAMETRANSFORMCLIENT, m_ift_s);
 
+    const std::string getDevice = "bar";
+    std::string getDevice = "bar";
+    if (robot.hasParam("getDevice")) {getDevice = robot.findParam("getDevice");}
     yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(getDevice));
     auto* polyget = m_robot.device(getDevice).driver();
     yCAssert(FRAMETRANSFORMCLIENT, polyget);
-
     polyget->view(m_ift_g);
     yCAssert(FRAMETRANSFORMCLIENT, m_ift_g);
+*/
+
+    const std::string uDevice = "ftc_storage";
+    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(uDevice));
+    auto* polyu = m_robot.device(uDevice).driver();
+    yCAssert(FRAMETRANSFORMCLIENT, polyu);
+    polyu->view(m_ift_u);
+    yCAssert(FRAMETRANSFORMCLIENT, m_ift_u);
 
     FrameTransformContainer* p_cont=nullptr;
     m_ift_u->getInternalContainer(p_cont);
     auto ft = p_cont->begin();
 
 /*
-    m_local_name.clear();
-    m_remote_name.clear();
-
-    m_local_name  = config.find("local").asString();
-    m_remote_name = config.find("remote").asString();
-    m_streaming_connection_type = "udp";
-
-    if (m_local_name == "")
-    {
-        yCError(FRAMETRANSFORMCLIENT, "open(): Invalid local name");
-        return false;
-    }
-    if (m_remote_name == "")
-    {
-        yCError(FRAMETRANSFORMCLIENT, "open(): Invalid remote name");
-        return false;
-    }
-
     if (config.check("period"))
     {
         m_period = config.find("period").asInt32() / 1000.0;
@@ -296,33 +279,6 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     m_remote_rpc = m_remote_name + "/rpc";
     m_remote_streaming_name = m_remote_name + "/transforms:o";
     m_local_streaming_name = m_local_name + "/transforms:i";
-
-    if (!m_rpc_InterfaceToUser.open(m_local_rpcUser))
-    {
-        yCError(FRAMETRANSFORMCLIENT, "open(): Could not open rpc port %s, check network", m_local_rpcUser.c_str());
-        return false;
-    }
-
-    if (!m_rpc_InterfaceToServer.open(m_local_rpcServer))
-    {
-        yCError(FRAMETRANSFORMCLIENT, "open(): Could not open rpc port %s, check network", m_local_rpcServer.c_str());
-        return false;
-    }
-
-    bool ok = Network::connect(m_remote_streaming_name.c_str(), m_local_streaming_name.c_str(), m_streaming_connection_type.c_str());
-    if (!ok)
-    {
-        yCError(FRAMETRANSFORMCLIENT, "open(): Could not connect to %s", m_remote_streaming_name.c_str());
-        return false;
-    }
-
-    ok = Network::connect(m_local_rpcServer, m_remote_rpc);
-    if (!ok)
-    {
-        yCError(FRAMETRANSFORMCLIENT, "open(): Could not connect to %s", m_remote_rpc.c_str());
-        return false;
-    }
-
 
     m_rpc_InterfaceToUser.setReader(*this);
 */
