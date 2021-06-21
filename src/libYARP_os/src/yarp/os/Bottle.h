@@ -142,7 +142,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Bottle();
+    ~Bottle() override;
 
     /**
      * Empties the bottle of any objects it contains.

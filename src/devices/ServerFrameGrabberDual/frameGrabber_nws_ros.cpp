@@ -101,6 +101,7 @@ bool FrameGrabber_nws_ros::open(yarp::os::Searchable& config)
     }
 
     // Check "cameraInfoTopicName" option and open publisher
+    // FIXME Should be fixed = imageTopicName + "/camera_info"
     std::string cameraInfoTopicName = config.check("cameraInfoTopicName", yarp::os::Value("/cameraInfo"), "name of the camera info topic").asString();
     if (!publisherPort_cameraInfo.topic(cameraInfoTopicName)) {
         yCError(FRAMEGRABBER_NWS_ROS) << "Unable to publish data on" << cameraInfoTopicName << "topic, check your yarp-ROS network configuration";
@@ -252,7 +253,7 @@ bool FrameGrabber_nws_ros::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cam
 {
     yarp::os::Property camData;
     if (!iRgbVisualParams->getRgbIntrinsicParam(camData)) {
-        yCError(FRAMEGRABBER_NWS_ROS) << "Unable to get intrinsic param from rgb sensor!";
+        yCErrorThreadOnce(FRAMEGRABBER_NWS_ROS) << "Unable to get intrinsic param from rgb sensor!";
         return false;
     }
 

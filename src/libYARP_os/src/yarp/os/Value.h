@@ -99,7 +99,7 @@ public:
     /**
      * Destructor
      */
-    virtual ~Value();
+    ~Value() override;
 
     /**
      * Checks if value is a boolean. If so, asBool() will return that boolean.
