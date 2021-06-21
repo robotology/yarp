@@ -162,8 +162,7 @@ bool FrameGrabber_nws_ros::attach(yarp::dev::PolyDriver* poly)
     }
 
     if (iRgbVisualParams == nullptr) {
-        yCError(FRAMEGRABBER_NWS_ROS) << "IRgbVisualParams interface is not available on the device";
-        return false;
+        yCWarning(FRAMEGRABBER_NWS_ROS) << "IRgbVisualParams interface is not available on the device";
     }
 
     return PeriodicThread::start();
