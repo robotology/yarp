@@ -363,7 +363,7 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
     std::vector<std::string>   src2root_vec;
     std::string                ancestor, child;
     child = target_frame;
-    std::lock_guard<std::recursive_mutex> l(tfVec.m_mutex);
+    std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
     while(getParent(child, ancestor))
     {
         if(ancestor == source_frame)
@@ -504,26 +504,28 @@ bool FrameTransformClient::priv_canExplicitTransform(const std::string& target_f
 
 bool FrameTransformClient::priv_getChainedTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform) const
 {
-    Transforms_client_storage& tfVec = *m_transform_storage;
-    size_t                     i, tfVec_size;
-    std::lock_guard<std::recursive_mutex>         l(tfVec.m_mutex);
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+    p_cont->m_trf_mutex;
 
-    tfVec_size = tfVec.size();
-    for (i = 0; i < tfVec_size; i++)
+    std::lock_guard<std::recursive_mutex>         l(p_cont->m_trf_mutex);
+
+    for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
-        if (tfVec[i].dst_frame_id == target_frame_id)
+        if (it->dst_frame_id == target_frame_id)
         {
-            if (tfVec[i].src_frame_id == source_frame_id)
+            if (it->src_frame_id == source_frame_id)
             {
-                transform = tfVec[i].toMatrix();
+                transform = it->toMatrix();
                 return true;
             }
             else
             {
                 yarp::sig::Matrix m;
-                if (priv_getChainedTransform(tfVec[i].src_frame_id, source_frame_id, m))
+                if (priv_getChainedTransform(it->src_frame_id, source_frame_id, m))
                 {
-                    transform = m * tfVec[i].toMatrix();
+                    transform = m * it->toMatrix();
                     return true;
                 }
             }
@@ -658,6 +660,9 @@ bool FrameTransformClient::deleteTransform(const std::string &target_frame_id, c
         return false;
     }
     return true;*/
+
+    yCError(FRAMETRANSFORMCLIENT) << "deleteFrame() Not yet implemented";
+    return false;
 }
 
 bool FrameTransformClient::transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)

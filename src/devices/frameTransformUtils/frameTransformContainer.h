@@ -57,7 +57,9 @@ public:
 
 protected:
     std::vector<yarp::math::FrameTransform> m_transforms;
-    mutable std::mutex  m_trf_mutex;
+
+public:
+    mutable std::recursive_mutex  m_trf_mutex;
 
 public:
     //non-static transforms older than value (seconds) will be removed by method checkAndRemoveExpired()
