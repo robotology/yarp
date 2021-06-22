@@ -56,6 +56,7 @@ protected:
     double          m_hw_gain = 1.0;
     AudioDeviceDriverSettings m_audiorecorder_cfg;
     bool            m_audiobase_debug = false;
+    int16_t         m_cliptol = 3;
 
 public:
     virtual bool getSound(yarp::sig::Sound& sound, size_t min_number_of_samples, size_t max_number_of_samples, double max_samples_timeout_s) override;

@@ -104,6 +104,11 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
         for (size_t j = 0; j < this->m_audiorecorder_cfg.numChannels; j++)
         {
             int16_t s = (int16_t)(m_inputBuffer->read());
+            if (s > (std::numeric_limits<int16_t>::max() - m_cliptol) ||
+                s < (std::numeric_limits<int16_t>::min() + m_cliptol))
+            {
+                yCWarningThrottle(AUDIORECORDER_BASE, 0.1) << "Sound clipped!";
+            }
             sound.set(s, i, j);
         }
     }
