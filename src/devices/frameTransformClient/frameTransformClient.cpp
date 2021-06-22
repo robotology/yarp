@@ -54,7 +54,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         out.addString("'get_transform <src> <dst>: print the transform from <src> to <dst>");
         out.addString("'list_frames: print all the available reference frames");
         out.addString("'list_ports: print all the opened ports for transform broadcasting");
-        out.addString("'publish_transform <src> <dst> <portname> <format>: opens a port to publish transform from src to dst");
+        out.addString("'publish_transform <src> <dst> <portname> [format]: opens a port to publish transform from src to dst");
         out.addString("'unpublish_transform <portname>: closes a previously opened port to publish a transform");
         out.addString("'unpublish_all: closes a all previously opened ports to publish a transform");
     }
@@ -104,8 +104,13 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         string src  = in.get(1).asString();
         string dst  = in.get(2).asString();
         string port_name = in.get(3).asString();
-        string format = "matrix";
-        if (in.size() > 4)  {format= in.get(4).asString();}
+        string format_s = "matrix";
+        broadcast_port_t::format_t eformat = broadcast_port_t::format_t::matrix;
+        if   (in.size() == 5) {format_s = in.get(4).asString();}
+
+        if (format_s == "matrix") {eformat = broadcast_port_t::format_t::matrix;}
+        else {yCError(FRAMETRANSFORMCLIENT) << "Invalid format" << format_s << "using format `matrix`. Only `matrix` is currently supported."; }
+
         if (port_name[0] == '/')  port_name.erase(port_name.begin());
         std::string full_port_name = m_local_name + "/" + port_name;
 
@@ -142,7 +147,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
             auto* b = new broadcast_port_t;
             b->transform_src = src;
             b->transform_dst = dst;
-            b->format = format;
+            b->format = eformat;
             bool pret = b->port.open(full_port_name);
             if (pret)
             {
@@ -275,10 +280,18 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     polyu->view(m_ift_u);
     yCAssert(FRAMETRANSFORMCLIENT, m_ift_u);
 
+    //////////////////////////////////////////////////////////////////////////////
     //this is just a test, and can be safely removed
     FrameTransformContainer* p_cont=nullptr;
     m_ift_u->getInternalContainer(p_cont);
     auto ft = p_cont->begin();
+    FrameTransform test_tf;
+    test_tf.isStatic=true;
+    test_tf.src_frame_id = "/att";
+    test_tf.dst_frame_id = "/btt";
+    test_tf.translation.set(1,2,3);
+    p_cont->setTransform(test_tf);
+    //////////////////////////////////////////////////////////////////////////////
 
 /*
     if (config.check("period"))
@@ -756,7 +769,7 @@ void     FrameTransformClient::run()
             string dst = m_array_of_port->transform_dst;
             yarp::sig::Matrix m;
             this->getTransform(src, dst, m);
-            if (m_array_of_port->format == "matrix")
+            if (m_array_of_port->format == broadcast_port_t::format_t::matrix)
             {
                 m_array_of_port->port.write(m);
             }
