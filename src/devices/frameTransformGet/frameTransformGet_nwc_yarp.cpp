@@ -20,18 +20,29 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
         yCError(FRAMETRANSFORMGETNWCYARP,"Error! YARP Network is not initialized");
         return false;
     }
-    // configuration
-    if (config.check("thrift_rpc_port")){
-        m_thrift_rpcPort_Name = config.find("thrift_rpc_port").asString();
+    // client port configuration
+    if (config.check("rpc_port_client")){
+        m_thrift_rpcPort_Name = config.find("rpc_port_client").asString();
+    } else {
+        yCWarning(FRAMETRANSFORMGETNWCYARP) << "no rpc_port_client param found, using default one: " << m_thrift_rpcPort_Name;
     }
-    else {
-        yCError(FRAMETRANSFORMGETNWCYARP) << "error, no thrift_rpc_port param found";
-        return false;
+
+    //server port configuration
+    if (config.check("rpc_port_server")){
+        m_thrift_server_rpcPort_Name = config.find("rpc_port_server").asString();
+    } else {
+        yCWarning(FRAMETRANSFORMGETNWCYARP) << "no rpc_port_server param found, using default one " << m_thrift_server_rpcPort_Name;
     }
     // rpc inizialisation
     if(!m_thrift_rpcPort.open(m_thrift_rpcPort_Name))
     {
         yCError(FRAMETRANSFORMGETNWCYARP,"Could not open \"%s\" port",m_thrift_rpcPort_Name.c_str());
+        return false;
+    }
+    // connect to server
+    if (!yarp::os::NetworkBase::connect(m_thrift_rpcPort_Name,m_thrift_server_rpcPort_Name))
+    {
+        yCError(FRAMETRANSFORMGETNWCYARP,"Could not connect \"%s\" to \"%s\" port",m_thrift_rpcPort_Name.c_str(), m_thrift_server_rpcPort_Name.c_str());
         return false;
     }
     if (!m_frameTransformStorageGetRPC.yarp().attachAsClient(m_thrift_rpcPort))

@@ -18,11 +18,17 @@
 /*
  * \section FrameTransformGet_nwc_yarp_device_parameters Description of input parameters
  * This device is paired with its server called FrameTransformGet_nws_yarp.
- *
+ * It is attached to a device with an IFrameTransformStorageGet interface and then 
+ * when it receives a call it forwards this call on a port (the interface is declared
+ * in thrift and is FrameTransformStorageGetRPC) and it returns all the transforms received
+ * from the port to the caller.
+ * For how to attach the various devices see FrameTransformClient.
+
  *   Parameters required by this device are:
- * | Parameter name | SubParameter            | Type    | Units          | Default Value             | Required     | Description                            |
- * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------------------:|:-----------: |:--------------------------------------:|
- * | rpc_port       |      -                  | string  | -              |   /frameTransformGet/rpc  | No           | port on which rpc calls should be made |
+ * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
+ * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------------------------:|:-----------: |:--------------------------------------:|
+ * | rpc_port_client |      -                  | string  | -              |   /frameTransformGet/clientRPC  | No           | port on which rpc calls should be made |
+ * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
  *
  * Some example of configuration files:
  *
@@ -30,7 +36,8 @@
  *
  * \code{.unparsed}
  * device FrameTransformGet_nwc_yarp
- * rpc_port /frameTransformGet/rpc
+ * rpc_port_client /frameTransformGet/clientRPC
+ * rpc_port_server /frameTransformGet/clientRPC
  * \endcode
  */
 
@@ -58,7 +65,8 @@ private:
 
     // for the RPC with the NWS
     yarp::os::Port      m_thrift_rpcPort;
-    std::string         m_thrift_rpcPort_Name;
+    std::string         m_thrift_rpcPort_Name{"/frameTransformGet/clientRPC"};
+    std::string         m_thrift_server_rpcPort_Name{"/frameTransformGet/serverRPC"};
     mutable FrameTransformStorageGetRPC m_frameTransformStorageGetRPC;
 
 };

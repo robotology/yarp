@@ -28,11 +28,11 @@ bool FrameTransformGet_nws_yarp::open(yarp::os::Searchable &config)
     }
 
     // configuration
-    if (config.check("thrift_rpc_port")){
-        m_thrift_rpcPort_Name = config.find("thrift_rpc_port").asString();
+    if (config.check("rpc_port")){
+        m_thrift_rpcPort_Name = config.find("rpc_port").asString();
     }
     else {
-        yCError(FRAMETRANSFORMGETNWSYARP) << "error, no thrift_rpc_port param found";
+        yCError(FRAMETRANSFORMGETNWSYARP) << "error, no rpc_port param found";
         return false;
     }
 
