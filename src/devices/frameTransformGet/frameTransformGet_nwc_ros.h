@@ -28,7 +28,7 @@
 #include <yarp/rosmsg/geometry_msgs/TransformStamped.h>
 #include <yarp/rosmsg/tf2_msgs/TFMessage.h>
 
-#define ROSNODENAME "/tfNode"
+#define ROSNODENAME "/tfNodeGet"
 #define ROSTOPICNAME_TF "/tf"
 #define ROSTOPICNAME_TF_STATIC "/tf_static"
 
@@ -36,7 +36,7 @@
  * \section FrameTransformGet_nwc_ros_device_parameters Description of input parameters
  *
  *   Parameters required by this device are:
- * | Parameter name | SubParameter         | Type    | Units          | Default Valu          | Required     | Description                                    -------            |
+ * | Parameter name | SubParameter         | Type    | Units          | Default Value         | Required     | Description                                    -------            |
  * |:--------------:|:--------------------:|:-------:|:--------------:|:---------------------:|:-----------: |:-----------------------------------------------------------------:|
  * | GENERAL        |      -               | group   | -              | -                     | No           |                                                                   |
  * | -              | period               | double  | seconds        | 0.01                  | No           | The PeriodicThread period in seconds                              |
@@ -44,7 +44,7 @@
  * | ROS            |      -               | group   | -              | -                     | No           |                                                                   |
  * | -              | ft_topic             | string  | -              | /tf                   | No           | The name of the ROS topic from which fts will be received         |
  * | -              | ft_topic_static      | string  | -              | /tf_static            | No           | The name of the ROS topic from which static fts will be received  |
- * | -              | ft_node              | string  | -              | /tfNode               | No           | The of the ROS node                                               |
+ * | -              | ft_node              | string  | -              | /tfNodeGet            | No           | The of the ROS node                                               |
  *
  * Some example of configuration files:
  *
@@ -57,7 +57,8 @@
  * refresh_interval 0.2
  * [ROS]
  * ft_topic /tf
- * ft_node /tfNode
+ * ft_topic_static /tf_static
+ * ft_node /tfNodeGet
  * \endcode
  */
 

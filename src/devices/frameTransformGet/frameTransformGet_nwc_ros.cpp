@@ -162,7 +162,6 @@ void FrameTransformGet_nwc_ros::receiveFrameTransforms()
         if (rosInData_timed != nullptr)
         {
             std::vector <yarp::rosmsg::geometry_msgs::TransformStamped> tfs = rosInData_timed->transforms;
-            size_t tfs_size = tfs.size();
             for (auto& tf : tfs)
             {
                 FrameTransform t;
@@ -178,7 +177,6 @@ void FrameTransformGet_nwc_ros::receiveFrameTransforms()
         if (rosInData_static != nullptr)
         {
             std::vector <yarp::rosmsg::geometry_msgs::TransformStamped> tfs = rosInData_static->transforms;
-            size_t tfs_size = tfs.size();
             for (auto& tf : tfs)
             {
                 FrameTransform t;
@@ -188,35 +186,3 @@ void FrameTransformGet_nwc_ros::receiveFrameTransforms()
         }
     } while (rosInData_static != nullptr);
 }
-
-/*void FrameTransformGet_nwc_ros::publishFrameTransforms(std::vector<yarp::math::FrameTransform>& transforms)
-{
-    static int rosMsgCounter = 0; // Ask for clarification!
-
-    yarp::rosmsg::tf2_msgs::TFMessage& rosOutTimedData = m_rosSubscriberPort_tf_timed.prepare();
-    yarp::rosmsg::tf2_msgs::TFMessage& rosOutStaticData = m_rosSubscriberPort_tf_static.prepare();
-    yarp::rosmsg::geometry_msgs::TransformStamped transform_timed;
-    yarp::rosmsg::geometry_msgs::TransformStamped transform_static;
-    rosOutTimedData.transforms.clear();
-    rosOutStaticData.transforms.clear();
-
-    for(auto& tf : transforms)
-    {
-        if(tf.isStatic)
-        {
-            yarpTransformToROSTransform(tf,transform_timed);
-            transform_timed.header.seq = rosMsgCounter;
-            rosOutTimedData.transforms.push_back(transform_timed);
-        }
-        else
-        {
-            yarpTransformToROSTransform(tf,transform_static);
-            transform_static.header.seq = rosMsgCounter;
-            rosOutStaticData.transforms.push_back(transform_static);
-        }
-    }
-    m_rosSubscriberPort_tf_timed.write();
-    m_rosSubscriberPort_tf_static.write();
-
-    rosMsgCounter++;
-}*/
