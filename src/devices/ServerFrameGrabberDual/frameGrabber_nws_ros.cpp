@@ -250,6 +250,8 @@ struct param
 
 bool FrameGrabber_nws_ros::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo)
 {
+    yCAssert(FRAMEGRABBER_NWS_ROS, iRgbVisualParams);
+
     yarp::os::Property camData;
     if (!iRgbVisualParams->getRgbIntrinsicParam(camData)) {
         yCErrorThreadOnce(FRAMEGRABBER_NWS_ROS) << "Unable to get intrinsic param from rgb sensor!";
