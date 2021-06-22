@@ -71,7 +71,7 @@ protected:
     //ports to broadcast stuff...
     struct broadcast_port_t
     {
-        std::string format;
+        enum format_t {matrix=0} format;
         yarp::os::Port port;
         std::string transform_src;
         std::string transform_dst;
