@@ -248,7 +248,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     if (!result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseStartup)) {
         return false;
     }
-    
+
     if (!result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseRun)) {
         return false;
     }

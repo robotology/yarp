@@ -28,11 +28,11 @@ bool FrameTransformGet_nws_yarp::open(yarp::os::Searchable &config)
     }
 
     // configuration
-    if (config.check("rpc_port")){
-        m_thrift_rpcPort_Name = config.find("rpc_port").asString();
+    if (config.check("rpc_port_server")){
+        m_thrift_rpcPort_Name = config.find("rpc_port_server").asString();
     }
     else {
-        yCError(FRAMETRANSFORMGETNWSYARP) << "error, no rpc_port param found";
+        yCError(FRAMETRANSFORMGETNWSYARP) << "error, no rpc_port_server param found";
         return false;
     }
 
@@ -76,7 +76,7 @@ bool FrameTransformGet_nws_yarp::attach( yarp::dev::PolyDriver* deviceToAttach)
 {
     deviceToAttach->view(m_iFrameTransformStorageGet);
 
-    if ( m_iFrameTransformStorageGet!=nullptr){
+    if ( m_iFrameTransformStorageGet==nullptr){
         yCError(FRAMETRANSFORMGETNWSYARP) << "could not attach to the device";
         return false;
     }
