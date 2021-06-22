@@ -28,7 +28,7 @@
 #include <yarp/rosmsg/geometry_msgs/TransformStamped.h>
 #include <yarp/rosmsg/tf2_msgs/TFMessage.h>
 
-#define ROSNODENAME "/tfNode"
+#define ROSNODENAME "/tfNodeSet"
 #define ROSTOPICNAME_TF "/tf"
 #define ROSTOPICNAME_TF_STATIC "/tf_static"
 
@@ -45,7 +45,7 @@
  * | ROS            |      -               | group   | -              | -                     | No           |                                                                                                         |
  * | -              | ft_topic             | string  | -              | /tf                   | No           | The name of the ROS topic on which fts will be published                                                |
  * | -              | ft_topic_static      | string  | -              | /tf_static            | No           | The name of the ROS topic on which static fts will be published                                         |
- * | -              | ft_node              | string  | -              | /tfNode               | No           | The of the ROS node                                                                                     |
+ * | -              | ft_node              | string  | -              | /tfNodeSet            | No           | The of the ROS node                                                                                     |
  *
  * Some example of configuration files:
  *
@@ -58,7 +58,8 @@
  * refresh_interval 0.2
  * [ROS]
  * ft_topic /tf
- * ft_node /tfNode
+ * ft_topic_static /tf_static
+ * ft_node /tfNodeSet
  * \endcode
  */
 

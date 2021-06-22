@@ -29,13 +29,7 @@ bool FrameTransformSet_nws_yarp::open(yarp::os::Searchable& config)
         yCError(FRAMETRANSFORMSETNWSYARP,"Error! YARP Network is not initialized");
         return false;
     }
-
-    bool okGeneral = config.check("GENERAL");
-    if(okGeneral)
-    {
-        const yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        if (general_config.check("rpc_port"))       {m_thriftPortName = general_config.find("rpc_port").asString();}
-    }
+    if (config.check("rpc_port_server"))       {m_thriftPortName = config.find("rpc_port_server").asString();}
     if(!m_thriftPort.open(m_thriftPortName))
     {
         yCError(FRAMETRANSFORMSETNWSYARP,"Could not open \"%s\" port",m_thriftPortName.c_str());

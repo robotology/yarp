@@ -24,10 +24,9 @@
  * This device is paired with its server called FrameTransformSet_nwc_yarp.
  *
  *   Parameters required by this device are:
- * | Parameter name | SubParameter            | Type    | Units          | Default Value             | Required     | Description                            |
- * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------------------:|:-----------: |:--------------------------------------:|
- * | GENERAL        |      -                  | group   | -              | -                         | No           |                                        |
- * | -              | rpc_port                | string  | -              | /frameTransformSet/rpc    | No           | port on which rpc calls should be made |
+ * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
+ * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------------------------:|:-----------: |:--------------------------------------:|
+ * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
  *
  * Some example of configuration files:
  *
@@ -35,8 +34,7 @@
  *
  * \code{.unparsed}
  * device frameTransformSet_nws_yarp
- * [GENERAL]
- * rpc_port /frameTransformSet/rpc
+ * rpc_port_server /frameTransformGet/serverRPC
  * \endcode
  */
 
@@ -65,7 +63,7 @@ private:
     mutable std::mutex                    m_pd_mutex;
     mutable std::mutex                    m_trf_mutex;
     yarp::dev::PolyDriver*                m_pDriver{nullptr};
-    std::string                           m_thriftPortName{"/frameTransformSet/rpc"};
+    std::string                           m_thriftPortName{"/frameTransformGet/serverRPC"};
     yarp::os::Port                        m_thriftPort;
     yarp::dev::IFrameTransformStorageSet* m_iSetIf;
 };
