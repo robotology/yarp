@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
 
-<robot name="frameTransformClient" build="2" portprefix="frameTransformClient" xmlns:xi="http://www.w3.org/2001/XInclude">      
+<robot name="frameTransformClient" build="2" portprefix="frameTransformClient" xmlns:xi="http://www.w3.org/2001/XInclude">
     <devices>
         <!-- **************** ROS NWC **************** -->
         <device name="ftSet_nwc_ros" type="frameTransformSet_nwc_ros">
