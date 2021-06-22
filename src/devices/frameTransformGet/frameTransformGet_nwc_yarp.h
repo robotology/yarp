@@ -18,7 +18,7 @@
 /*
  * \section FrameTransformGet_nwc_yarp_device_parameters Description of input parameters
  * This device is paired with its server called FrameTransformGet_nws_yarp.
- * It is attached to a device with an IFrameTransformStorageGet interface and then 
+ * It is attached to a device with an IFrameTransformStorageGet interface and then
  * when it receives a call it forwards this call on a port (the interface is declared
  * in thrift and is FrameTransformStorageGetRPC) and it returns all the transforms received
  * from the port to the caller.

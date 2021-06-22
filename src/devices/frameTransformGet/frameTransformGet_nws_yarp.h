@@ -27,9 +27,9 @@
  * For how to attach the various devices see FrameTransformServer.
  *
  *   Parameters required by this device are:
- * | Parameter name | SubParameter            | Type    | Units          | Default Value             | Required     | Description                                    | Notes        |
- * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------------------:|:-----------: |:----------------------------------------------:|:------------:|
- * | rpc_port       |      -                  | string  | -              |   /frameTransformGet/rpc  | No           | port opened by the device for rpc calls        |              |
+ * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
+ * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------------------------:|:-----------: |:--------------------------------------:|
+ * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
  *
  * Some example of configuration files:
  *
@@ -37,7 +37,7 @@
  *
  * \code{.unparsed}
  * device FrameTransformGet_nws_yarp
- * rpc_port /frameTransformGet/rpc
+ * rpc_port_server /frameTransformGet/serverRPC
  * \endcode
  */
 
@@ -77,7 +77,7 @@ private:
 
     // for the RPC with the NWC
     yarp::os::Port      m_thrift_rpcPort;
-    std::string         m_thrift_rpcPort_Name;
+    std::string         m_thrift_rpcPort_Name{"/frameTransformGet/serverRPC"};
 };
 
 #endif   // YARP_DEV_FRAMETRANSFORMGET_NWS_YARP_H
