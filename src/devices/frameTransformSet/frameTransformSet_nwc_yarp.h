@@ -23,19 +23,19 @@
  * This device is paired with its server called FrameTransformSet_nws_yarp.
  *
  *   Parameters required by this device are:
- * | Parameter name | SubParameter            | Type    | Units          | Default Value             | Required     | Description                            |
- * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------------------:|:-----------: |:--------------------------------------:|
- * | GENERAL        |      -                  | group   | -              | -                         | No           |                                        |
- * | -              | rpc_port                | string  | -              | /frameTransformSet/rpc    | No           | port on which rpc calls should be made |
+ * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
+ * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------------------------:|:-----------: |:--------------------------------------:|
+ * | rpc_port_client |      -                  | string  | -              |   /frameTransformGet/clientRPC  | No           | port on which rpc calls should be made |
+ * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
  *
  * Some example of configuration files:
  *
  * Example of configuration file using .ini format.
  *
  * \code{.unparsed}
- * device frameTransformSet_nwc_yarp
- * [GENERAL]
- * rpc_port /frameTransformSet/rpc
+ * device FrameTransformGet_nwc_yarp
+ * rpc_port_client /frameTransformGet/clientRPC
+ * rpc_port_server /frameTransformGet/clientRPC
  * \endcode
  */
 
@@ -58,8 +58,9 @@ public:
 private:
     mutable std::mutex          m_trf_mutex;
     mutable std::mutex          m_pd_mutex;
-    std::string                 m_thriftPortName{"/frameTransformSet/rpc"};
+    std::string                 m_thriftPortName{"/frameTransformSet/clientRPC"};
     yarp::os::Port              m_thriftPort;
+    std::string                 m_thrift_server_rpcPort_Name{"/frameTransformSet/serverRPC"};
     FrameTransformStorageSetRPC m_setRPC;
 };
 
