@@ -53,9 +53,6 @@ bool FrameGrabber_nws_ros::close()
         node = nullptr;
     }
 
-    delete img;
-    img = nullptr;
-
     if (subdevice) {
         subdevice->close();
         delete subdevice;
@@ -187,6 +184,13 @@ bool FrameGrabber_nws_ros::threadInit()
     img = new yarp::sig::ImageOf<yarp::sig::PixelRgb>;
     return true;
 }
+
+void FrameGrabber_nws_ros::threadRelease()
+{
+    delete img;
+    img = nullptr;
+}
+
 
 // Publish the images on the buffered port
 void FrameGrabber_nws_ros::run()
