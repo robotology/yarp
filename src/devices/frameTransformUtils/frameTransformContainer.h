@@ -33,30 +33,10 @@ class FrameTransformContainer :
     public yarp::dev::IFrameTransformStorageSet,
     public yarp::dev::IFrameTransformStorageGet
 {
-public:
-    struct Iterator
-    {
-        using iterator_category = std::forward_iterator_tag;
-        using difference_type = std::ptrdiff_t;
-        using value_type = yarp::math::FrameTransform;
-        using pointer = yarp::math::FrameTransform*;
-        using reference = yarp::math::FrameTransform&;
-
-        Iterator(pointer ptr) : m_ptr(ptr) {}
-
-        reference operator*() const { return *m_ptr; }
-        pointer operator->() { return m_ptr; }
-        Iterator& operator++() { m_ptr++; return *this; }
-        Iterator operator++(int) { Iterator tmp = *this; ++(*this); return tmp; }
-        friend bool operator== (const Iterator& a, const Iterator& b) { return a.m_ptr == b.m_ptr; };
-        friend bool operator!= (const Iterator& a, const Iterator& b) { return a.m_ptr != b.m_ptr; };
-
-     private:
-        pointer m_ptr;
-    };
+    using ContainerType = std::vector<yarp::math::FrameTransform>;
 
 protected:
-    std::vector<yarp::math::FrameTransform> m_transforms;
+    ContainerType m_transforms;
 
 public:
     mutable std::recursive_mutex  m_trf_mutex;
@@ -85,8 +65,8 @@ public:
     //other
     bool checkAndRemoveExpired();
     bool checkAndRemoveExpired() const;
-    Iterator begin();
-    Iterator end();
+    ContainerType::iterator begin() {return m_transforms.begin();}
+    ContainerType::iterator end()   {return m_transforms.end();}
 
     //yarp::math::FrameTransform& operator[]   (std::size_t idx) { return m_transforms[idx]; }
     //bool     delete_transform(int id);

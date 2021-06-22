@@ -32,7 +32,7 @@ YARP_LOG_COMPONENT(FRAMETRANSFORSTORAGE, "yarp.device.frameTransformStorage")
 }
 
 //------------------------------------------------------------------------------------------------------------------------------
-bool FrameTransformStorage::getInternalContainer(FrameTransformContainer* container)
+bool FrameTransformStorage::getInternalContainer(FrameTransformContainer*& container)
 {
     container = &m_tf_container;
     return true;

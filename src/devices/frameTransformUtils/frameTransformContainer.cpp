@@ -166,18 +166,6 @@ bool FrameTransformContainer::size(size_t& size) const
     return true;
 }
 
-FrameTransformContainer::Iterator FrameTransformContainer::begin()
-{
-    auto it = m_transforms.begin();
-    return Iterator (&*it);
-}
-
-FrameTransformContainer::Iterator FrameTransformContainer::end()
-{
-    auto it = m_transforms.end();
-    return Iterator(&*it);
-}
-
 /*
 bool FrameTransformStorage::delete_transform(int id)
 {
