@@ -79,6 +79,9 @@ endif()
 # md5
 set(md5_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/md5" PARENT_SCOPE)
 
+# WebSocket
+set(WebSocket_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/websocket/WebSocket" PARENT_SCOPE)
+
 # ROS messages
 unset(ROS_MSG_PACKAGES)
 
@@ -120,3 +123,4 @@ set(ROS_tf2_msgs_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/ros/geometry2/tf2_msgs" PAREN
 list(APPEND ROS_MSG_PACKAGES tf2_msgs)
 
 set(ROS_MSG_PACKAGES ${ROS_MSG_PACKAGES} PARENT_SCOPE)
+
