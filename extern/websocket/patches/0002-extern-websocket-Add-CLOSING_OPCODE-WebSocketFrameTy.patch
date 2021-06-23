@@ -1,0 +1,25 @@
+From 85175b73d3b9e97e275c07148dbf4741460acdfc Mon Sep 17 00:00:00 2001
+From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
+Date: Wed, 23 Jun 2021 12:38:51 +0200
+Subject: [PATCH 2/2] extern/websocket: Add CLOSING_OPCODE WebSocketFrameType
+
+---
+ extern/websocket/WebSocket/WebSocket/WebSocket.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/extern/websocket/WebSocket/WebSocket/WebSocket.h b/extern/websocket/WebSocket/WebSocket/WebSocket.h
+index 739860f35..76809023e 100644
+--- a/extern/websocket/WebSocket/WebSocket/WebSocket.h
++++ b/extern/websocket/WebSocket/WebSocket/WebSocket.h
+@@ -29,6 +29,8 @@ enum WebSocketFrameType {
+ 	INCOMPLETE_TEXT_FRAME=0x01,
+ 	INCOMPLETE_BINARY_FRAME=0x02,
+ 
++	CLOSING_OPCODE = 0x08,
++
+ 	TEXT_FRAME=0x81,
+ 	BINARY_FRAME=0x82,
+ 
+-- 
+2.30.2
+

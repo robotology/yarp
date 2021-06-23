@@ -30,3 +30,7 @@ License: MIT
   THE SOFTWARE.
 
 Version: 7ac51b89359667c07f44694b5c68aa5c33e40ea1
+
+Patches:
+  * 0001-extern-websocket-Add-missing-header.patch
+  * 0002-extern-websocket-Add-CLOSING_OPCODE-WebSocketFrameTy.patch
