@@ -173,7 +173,7 @@ void FrameTransformGet_nwc_ros::receiveFrameTransforms()
     yarp::rosmsg::tf2_msgs::TFMessage* rosInData_static = nullptr;
     do
     {
-        rosInData_timed = m_rosSubscriberPort_tf_static.read(false);
+        rosInData_static = m_rosSubscriberPort_tf_static.read(false);
         if (rosInData_static != nullptr)
         {
             std::vector <yarp::rosmsg::geometry_msgs::TransformStamped> tfs = rosInData_static->transforms;
