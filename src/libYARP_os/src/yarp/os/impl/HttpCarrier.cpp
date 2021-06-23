@@ -576,8 +576,8 @@ bool yarp::os::impl::HttpCarrier::checkHeader(const Bytes& header)
         // (leave that to xmlrpc carrier)
         ok = checkHeader(header, "POST /fo");
     } else {
-        // make sure it isn't a MJPEG stream get
-        ok = !checkHeader(header, "GET /?ac");
+        // make sure it isn't a MJPEG stream get or a websocket request
+        ok = !checkHeader(header, "GET /?ac") && !checkHeader(header, "GET /?ws");
     }
     return ok;
 }
