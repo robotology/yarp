@@ -9,6 +9,8 @@
 #ifndef WEBSOCKETCARRIER_H
 #define WEBSOCKETCARRIER_H
 
+#include "WebSocket/WebSocket.h"
+
 #include <yarp/os/Carrier.h>
 #include <yarp/os/ConnectionState.h>
 #include <yarp/os/LogComponent.h>
@@ -17,7 +19,6 @@
 #include <yarp/os/SizedWriter.h>
 #include <yarp/os/impl/TcpCarrier.h>
 
-#include "WebSocket/WebSocket.h"
 #include <cstring>
 
 using namespace yarp::os;

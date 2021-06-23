@@ -13,13 +13,7 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/NetInt64.h>
 
-#include <bitset>
-#include <iostream>
-#include <sys/un.h>
-
-
 using namespace yarp::os;
-
 
 YARP_LOG_COMPONENT(WEBSOCK_STREAM,
                    "yarp.stream.websocket",
@@ -38,7 +32,6 @@ WebSocketStream::WebSocketStream(yarp::os::TwoWayStream* delegate) :
 WebSocketStream::~WebSocketStream()
 {
     yCTrace(WEBSOCK_STREAM);
-    close();
 }
 
 
@@ -110,10 +103,11 @@ yarp::conf::ssize_t WebSocketStream::read(Bytes& b)
         currentHead += toAdd;
         bytesRead += toAdd;
     }
-    return b.length();
+    return static_cast<yarp::conf::ssize_t>(b.length());
 }
 
 
+//TODO FIXME STE can be selected the type of frame?
 void WebSocketStream::write(const yarp::os::Bytes& b)
 {
     yCTrace(WEBSOCK_STREAM);
@@ -123,23 +117,26 @@ void WebSocketStream::write(const yarp::os::Bytes& b)
     return delegate->getOutputStream().write(toWrite);
 }
 
+
 bool WebSocketStream::isOk() const
 {
     return true;
 }
 
+
 void WebSocketStream::reset()
 {
 }
+
 
 void WebSocketStream::beginPacket()
 {
 }
 
+
 void WebSocketStream::endPacket()
 {
 }
-
 
 
 WebSocketFrameType WebSocketStream::getFrame(yarp::os::ManagedBytes& payload)
@@ -151,8 +148,13 @@ WebSocketFrameType WebSocketStream::getFrame(yarp::os::ManagedBytes& payload)
     delegate->getInputStream().read(header.bytes());
     unsigned char msg_opcode = header.get()[0] & 0x0F;
     unsigned char msg_masked = (header.get()[1] >> 7) & 0x01;
-    if(msg_opcode == 0x9) return PING_FRAME;
-    if(msg_opcode == 0xA) return PONG_FRAME;
+    if(msg_opcode == 0x9)
+    {
+        return PING_FRAME;
+    }
+    if(msg_opcode == 0xA) {
+        return PONG_FRAME;
+    }
     if (msg_opcode == CLOSING_OPCODE)
     {
         // this returns a quit command to the caller through the yarp protocol,
@@ -163,14 +165,13 @@ WebSocketFrameType WebSocketStream::getFrame(yarp::os::ManagedBytes& payload)
         return CLOSING_OPCODE;
     }
     yarp::os::NetInt64 payload_length = 0;
-    int pos = 2;
     yarp::os::NetInt32 length_field = header.get()[1] & (0x7F);
 
     if (length_field <= 125) {
         payload_length = length_field;
     } else {
         yarp::os::ManagedBytes additionalLength;
-        int length_to_add;
+        int length_to_add = 0;
         if (length_field == 126) { //msglen is 16bit!
             length_to_add = 2;
         } else if (length_field == 127) { //msglen is 64bit!
@@ -179,16 +180,16 @@ WebSocketFrameType WebSocketStream::getFrame(yarp::os::ManagedBytes& payload)
         additionalLength.allocate(length_to_add);
         delegate->getInputStream().read(additionalLength.bytes());
         for (int i =0; i < length_to_add; i++) {
-            memcpy((unsigned char *)(&payload_length) + i,(unsigned char *) &additionalLength.get()[(length_to_add-1) - i], 1);
+            memcpy(reinterpret_cast<unsigned char *>(&payload_length) + i,
+                   reinterpret_cast<unsigned char *>(&additionalLength.get()[(length_to_add-1) - i]),
+                   1);
         }
-        pos += length_to_add;
     }
 
     if (msg_masked) {
         // get the mask
         mask_bytes.allocate(4);
         delegate->getInputStream().read(mask_bytes.bytes());
-        pos += 4;
     }
 
     payload.allocate(payload_length);
@@ -200,12 +201,19 @@ WebSocketFrameType WebSocketStream::getFrame(yarp::os::ManagedBytes& payload)
         }
     }
 
-    if(msg_opcode == 0x0 || msg_opcode == 0x1) return TEXT_FRAME;
-    if(msg_opcode == 0x2) return BINARY_FRAME;
+    if(msg_opcode == 0x0 || msg_opcode == 0x1)
+    {
+        return TEXT_FRAME;
+    }
+    if(msg_opcode == 0x2)
+    {
+        return BINARY_FRAME;
+    }
     return ERROR_FRAME;
 }
 
 
+// TODO FIXME STE need to manage if frame is not passed
 void WebSocketStream::makeFrame(WebSocketFrameType frame_type,
                                 const yarp::os::Bytes& payload,
                                 yarp::os::ManagedBytes& frame)
@@ -222,10 +230,13 @@ void WebSocketStream::makeFrame(WebSocketFrameType frame_type,
         frame.allocate(10 + size);
     }
 
-    frame.get()[pos] = (unsigned char)frame_type; // text frame
+    frame.get()[pos] = static_cast<char>(frame_type); // text frame
     pos++;
 
+
     if (size <= 125) {
+        // this is a 7 bit size (the first bit is the mask
+        // that must be set to 0)
         frame.get()[pos++] = size;
     } else if (size <= 65535) {
         frame.get()[pos++] = 126;                //16 bit length follows
@@ -238,5 +249,5 @@ void WebSocketStream::makeFrame(WebSocketFrameType frame_type,
             frame.get()[pos++] = ((size >> 8 * i) & 0xFF);
         }
     }
-    memcpy((void*)(frame.get() + pos), payload.get(), size);
+    memcpy(reinterpret_cast<void*>(frame.get() + pos), payload.get(), size);
 }

@@ -54,7 +54,6 @@ bool WebSocketCarrier::checkHeader(const yarp::os::Bytes& header)
             return false;
         }
     }
-    yCTrace(WEBSOCKETCARRIER, "Got header");
     return true;
 }
 
@@ -95,6 +94,7 @@ bool WebSocketCarrier::supportReply() const
 bool WebSocketCarrier::sendHeader(ConnectionState& proto)
 {
     yCTrace(WEBSOCKETCARRIER);
+    YARP_UNUSED(proto);
     return true;
 }
 
@@ -102,6 +102,7 @@ bool WebSocketCarrier::sendHeader(ConnectionState& proto)
 bool WebSocketCarrier::expectReplyToHeader(yarp::os::ConnectionState& proto)
 {
     yCTrace(WEBSOCKETCARRIER);
+    YARP_UNUSED(proto);
     return true;
 }
 
@@ -109,25 +110,22 @@ bool WebSocketCarrier::expectReplyToHeader(yarp::os::ConnectionState& proto)
 bool WebSocketCarrier::expectSenderSpecifier(yarp::os::ConnectionState& proto)
 {
     yCTrace(WEBSOCKETCARRIER);
-    bool urlDone = false;
     std::string url;
-    std::string result = "";
     Route route = proto.getRoute();
     route.setFromName("web");
     proto.setRoute(route);
     std::string remainder = proto.is().readLine();
-    result += remainder;
+    std::string result = remainder;
     result += "\r\n";
 
-    if (!urlDone) {
-        for (char i : remainder) {
-            if (i != ' ') {
-                url += i;
-            } else {
-                break;
-            }
+    for (char i : remainder) {
+        if (i != ' ') {
+            url += i;
+        } else {
+            break;
         }
     }
+
 
     bool done = false;
     while (!done) {
@@ -150,6 +148,8 @@ bool WebSocketCarrier::expectSenderSpecifier(yarp::os::ConnectionState& proto)
 bool WebSocketCarrier::sendIndex(yarp::os::ConnectionState& proto, yarp::os::SizedWriter& writer)
 {
     yCTrace(WEBSOCKETCARRIER);
+    YARP_UNUSED(proto);
+    YARP_UNUSED(writer);
     return true;
 }
 
@@ -157,6 +157,7 @@ bool WebSocketCarrier::sendIndex(yarp::os::ConnectionState& proto, yarp::os::Siz
 bool WebSocketCarrier::expectIndex(yarp::os::ConnectionState& proto)
 {
     yCTrace(WEBSOCKETCARRIER);
+    YARP_UNUSED(proto);
     return true;
 }
 
@@ -164,6 +165,7 @@ bool WebSocketCarrier::expectIndex(yarp::os::ConnectionState& proto)
 bool WebSocketCarrier::sendAck(yarp::os::ConnectionState& proto)
 {
     yCTrace(WEBSOCKETCARRIER);
+    YARP_UNUSED(proto);
     return true;
 }
 
@@ -171,6 +173,7 @@ bool WebSocketCarrier::sendAck(yarp::os::ConnectionState& proto)
 bool WebSocketCarrier::expectAck(yarp::os::ConnectionState& proto)
 {
     yCTrace(WEBSOCKETCARRIER);
+    YARP_UNUSED(proto);
     return true;
 }
 
