@@ -20,6 +20,7 @@ foreach(example_name
   file_grabber
   grabber_client
   grabber_crop
+  motorcontrol
   motortest
   RGBD
 )
