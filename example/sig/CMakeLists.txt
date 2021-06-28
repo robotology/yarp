@@ -8,6 +8,7 @@ foreach(example_name
   image_process
   image_process_module
   image_source
+  send_sound_file
   wav_test
 )
 
