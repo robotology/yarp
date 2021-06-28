@@ -10,6 +10,7 @@ foreach(example_name
   browse_bottle
   buffered_port
   database
+  hello
   image_process
   image_process_module
   image_source

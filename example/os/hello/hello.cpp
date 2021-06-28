@@ -7,25 +7,21 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-
-#include <yarp/os/Time.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Time.h>
 
-#include <iostream>
-
-using namespace yarp::os;
-
-int main() {
-    printf("Hello...\n");
-    Time::delay(1);
-    printf("...world\n");
-
-   //Yarp network initialization
+int main()
+{
+    //YARP network initialization
     yarp::os::Network yarp;
-    if (!yarp.checkNetwork()) {
-        std:: cerr << "Cannot connect to yarp network";
+    if (!yarp::os::NetworkBase::checkNetwork()) {
+        yError() << "Cannot connect to yarp network";
     }
+
+    yInfo("Hello...");
+    yarp::os::Time::delay(1);
+    yInfo("...world");
 
     return 0;
 }
