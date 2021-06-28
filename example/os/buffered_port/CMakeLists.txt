@@ -13,7 +13,13 @@ endif()
 
 add_executable(buffered_port)
 target_sources(buffered_port PRIVATE buffered_port.cpp)
-target_link_libraries(buffered_port PRIVATE YARP::YARP_os
-                                            YARP::YARP_init)
+target_link_libraries(buffered_port
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+)
 #! [buffered_port CMakeLists.txt]
-set_property(TARGET buffered_port PROPERTY FOLDER "Examples/os")
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET buffered_port PROPERTY FOLDER "Examples/os")
+endif()

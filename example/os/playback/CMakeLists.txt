@@ -12,6 +12,12 @@ endif()
 
 add_executable(playback)
 target_sources(playback PRIVATE playback.cpp)
-target_link_libraries(playback PRIVATE YARP::YARP_os
-                                       YARP::YARP_init)
-set_property(TARGET playback PROPERTY FOLDER "Examples/os")
+target_link_libraries(playback
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET playback PROPERTY FOLDER "Examples/os")
+endif()

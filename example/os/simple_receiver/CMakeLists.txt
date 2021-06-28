@@ -13,7 +13,13 @@ endif()
 
 add_executable(simple_receiver)
 target_sources(simple_receiver PRIVATE simple_receiver.cpp)
-target_link_libraries(simple_receiver PRIVATE YARP::YARP_os
-                                              YARP::YARP_init)
+target_link_libraries(simple_receiver
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+)
 #! [simple_receiver CMakeLists.txt]
-set_property(TARGET simple_receiver PROPERTY FOLDER "Examples/os")
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET simple_receiver PROPERTY FOLDER "Examples/os")
+endif()

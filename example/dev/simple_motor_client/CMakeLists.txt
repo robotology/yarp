@@ -12,7 +12,13 @@ endif()
 
 add_executable(simple_motor_client)
 target_sources(simple_motor_client PRIVATE simple_motor_client.cpp)
-target_link_libraries(simple_motor_client PRIVATE YARP::YARP_os
-                                                  YARP::YARP_init
-                                                  YARP::YARP_dev)
-set_property(TARGET simple_motor_client PROPERTY FOLDER "Examples/dev")
+target_link_libraries(simple_motor_client
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_dev
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET simple_motor_client PROPERTY FOLDER "Examples/dev")
+endif()

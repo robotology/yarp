@@ -12,6 +12,12 @@ endif()
 
 add_executable(summer)
 target_sources(summer PRIVATE summer.cpp)
-target_link_libraries(summer PRIVATE YARP::YARP_os
-                                     YARP::YARP_init)
-set_property(TARGET summer PROPERTY FOLDER "Examples/os")
+target_link_libraries(summer
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET summer PROPERTY FOLDER "Examples/os")
+endif()

@@ -12,8 +12,14 @@ endif()
 
 add_executable(audio_test)
 target_sources(audio_test PRIVATE audio_test.cpp)
-target_link_libraries(audio_test PRIVATE YARP::YARP_os
-                                         YARP::YARP_init
-                                         YARP::YARP_sig
-                                         YARP::YARP_dev)
-set_property(TARGET audio_test PROPERTY FOLDER "Examples/dev")
+target_link_libraries(audio_test
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_sig
+    YARP::YARP_dev
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET audio_test PROPERTY FOLDER "Examples/dev")
+endif()

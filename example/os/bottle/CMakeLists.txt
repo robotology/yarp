@@ -13,4 +13,7 @@ endif()
 add_executable(bottle)
 target_sources(bottle PRIVATE bottle.cpp)
 target_link_libraries(bottle PRIVATE YARP::YARP_os)
-set_property(TARGET bottle PROPERTY FOLDER "Examples/os")
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET bottle PROPERTY FOLDER "Examples/os")
+endif()

@@ -13,8 +13,14 @@ endif()
 
 add_executable(attachable)
 target_sources(attachable PRIVATE main.cpp)
-target_link_libraries(attachable PRIVATE YARP::YARP_os
-                                         YARP::YARP_sig
-                                         YARP::YARP_dev
-                                         YARP::YARP_init)
-set_property(TARGET attachable PROPERTY FOLDER "Examples/dev")
+target_link_libraries(attachable
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_sig
+    YARP::YARP_dev
+    YARP::YARP_init
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET attachable PROPERTY FOLDER "Examples/dev")
+endif()

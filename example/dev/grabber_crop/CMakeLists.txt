@@ -19,4 +19,7 @@ target_link_libraries(grabber_crop
     YARP::YARP_sig
     YARP::YARP_dev
 )
-set_property(TARGET grabber_crop PROPERTY FOLDER "Examples/dev")
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET grabber_crop PROPERTY FOLDER "Examples/dev")
+endif()

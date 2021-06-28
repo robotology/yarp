@@ -11,18 +11,15 @@ foreach(example_name
   buffered_port
   database
   hello
-  image_process
-  image_process_module
-  image_source
   internal_monologue
   listports
   log
   make_count
   playback
   portable_pair
-  queue_manager
   periodicthread
   periodicThreadTiming
+  queue_manager
   rfmodule
   rpc_client
   rpc_server

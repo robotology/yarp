@@ -12,7 +12,13 @@ endif()
 
 add_executable(double_server)
 target_sources(double_server PRIVATE double_server.cpp)
-target_link_libraries(double_server PRIVATE YARP::YARP_os
-                                            YARP::YARP_init
-                                            YARP::YARP_dev)
-set_property(TARGET double_server PROPERTY FOLDER "Examples/dev")
+target_link_libraries(double_server
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_dev
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET double_server PROPERTY FOLDER "Examples/dev")
+endif()
