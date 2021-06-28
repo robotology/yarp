@@ -434,18 +434,12 @@ public:
     // yarp::dev::IRgbVisualParams
     int getRgbHeight() override
     {
-        if (!iRgbVisualParams || !forwardRgbVisualParams) {
-            return false;
-        }
-        return iRgbVisualParams->getRgbHeight();
+        return FrameGrabberCropperOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::height();
     }
 
     int getRgbWidth() override
     {
-        if (!iRgbVisualParams || !forwardRgbVisualParams) {
-            return false;
-        }
-        return iRgbVisualParams->getRgbWidth();
+        return FrameGrabberCropperOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>::width();
     }
 
     bool setRgbResolution(int width, int height) override
