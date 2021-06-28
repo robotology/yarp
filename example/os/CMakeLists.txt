@@ -22,6 +22,7 @@ foreach(example_name
   queue_manager
   periodicthread
   periodicThreadTiming
+  rfmodule
   rpc_client
   rpc_server
   simple_receiver
