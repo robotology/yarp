@@ -81,6 +81,7 @@ public:
 
     //RateThread
     bool threadInit() override;
+    void threadRelease() override;
     void run() override;
 };
 

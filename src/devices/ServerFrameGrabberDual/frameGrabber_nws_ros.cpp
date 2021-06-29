@@ -53,9 +53,6 @@ bool FrameGrabber_nws_ros::close()
         node = nullptr;
     }
 
-    delete img;
-    img = nullptr;
-
     if (subdevice) {
         subdevice->close();
         delete subdevice;
@@ -101,6 +98,7 @@ bool FrameGrabber_nws_ros::open(yarp::os::Searchable& config)
     }
 
     // Check "cameraInfoTopicName" option and open publisher
+    // FIXME Should be fixed = imageTopicName + "/camera_info"
     std::string cameraInfoTopicName = config.check("cameraInfoTopicName", yarp::os::Value("/cameraInfo"), "name of the camera info topic").asString();
     if (!publisherPort_cameraInfo.topic(cameraInfoTopicName)) {
         yCError(FRAMEGRABBER_NWS_ROS) << "Unable to publish data on" << cameraInfoTopicName << "topic, check your yarp-ROS network configuration";
@@ -161,8 +159,7 @@ bool FrameGrabber_nws_ros::attach(yarp::dev::PolyDriver* poly)
     }
 
     if (iRgbVisualParams == nullptr) {
-        yCError(FRAMEGRABBER_NWS_ROS) << "IRgbVisualParams interface is not available on the device";
-        return false;
+        yCWarning(FRAMEGRABBER_NWS_ROS) << "IRgbVisualParams interface is not available on the device";
     }
 
     return PeriodicThread::start();
@@ -187,6 +184,13 @@ bool FrameGrabber_nws_ros::threadInit()
     img = new yarp::sig::ImageOf<yarp::sig::PixelRgb>;
     return true;
 }
+
+void FrameGrabber_nws_ros::threadRelease()
+{
+    delete img;
+    img = nullptr;
+}
+
 
 // Publish the images on the buffered port
 void FrameGrabber_nws_ros::run()
@@ -250,9 +254,11 @@ struct param
 
 bool FrameGrabber_nws_ros::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo)
 {
+    yCAssert(FRAMEGRABBER_NWS_ROS, iRgbVisualParams);
+
     yarp::os::Property camData;
     if (!iRgbVisualParams->getRgbIntrinsicParam(camData)) {
-        yCError(FRAMEGRABBER_NWS_ROS) << "Unable to get intrinsic param from rgb sensor!";
+        yCErrorThreadOnce(FRAMEGRABBER_NWS_ROS) << "Unable to get intrinsic param from rgb sensor!";
         return false;
     }
 
