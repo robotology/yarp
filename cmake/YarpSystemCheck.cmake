@@ -181,6 +181,11 @@ if(WIN32)
 
     # Traditionally, we add "d" postfix to debug libraries
     set(CMAKE_DEBUG_POSTFIX "d")
+
+    # Make __cplusplus definition accurate
+    if(MSVC_VERSION GREATER_EQUAL 1914)
+        add_compile_options(/Zc:__cplusplus)
+    endif()
   endif()
 else()
 
