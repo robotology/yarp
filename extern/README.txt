@@ -1,7 +1,3 @@
-# Copyright: (C) 2012 Istituto Italiano di Tecnologia (IIT)
-# Author: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 External libraries bundled with YARP go here.  Ideally, to make life
 easier for packagers, there should always be a CMake option to use
 system-installed versions of these libraries.

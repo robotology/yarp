@@ -1,0 +1,61 @@
+# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
+yarp_prepare_plugin(
+  websocket
+  CATEGORY carrier
+  TYPE WebSocketCarrier
+  INCLUDE WebSocketCarrier.h
+  EXTRA_CONFIG CODE="GET /?ws"
+)
+
+if(NOT SKIP_websocket)
+  yarp_add_plugin(yarp_websocket)
+
+  target_sources(
+    yarp_websocket
+    PRIVATE
+      WebSocketCarrier.h
+      WebSocketCarrier.cpp
+      WebSocketStream.cpp
+      ${WebSocket_ROOT}/WebSocket/WebSocket.cpp
+      ${WebSocket_ROOT}/WebSocket/base64/base64.cpp
+      ${WebSocket_ROOT}/WebSocket/sha1/sha1.cpp
+  )
+  target_include_directories(yarp_websocket
+    PRIVATE
+      ${WebSocket_ROOT}
+  )
+
+  target_link_libraries(
+    yarp_websocket
+    PRIVATE
+      YARP::YARP_os
+      YARP::YARP_sig
+      YARP::YARP_wire_rep_utils
+  )
+
+  list(
+    APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
+      YARP_os
+      YARP_sig
+      YARP_wire_rep_utils
+  )
+
+  target_compile_features(yarp_websocket PUBLIC)
+  yarp_install(
+    TARGETS yarp_websocket
+    EXPORT YARP_${YARP_PLUGIN_MASTER}
+    COMPONENT ${YARP_PLUGIN_MASTER}
+    LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
+    ARCHIVE DESTINATION ${YARP_STATIC_PLUGINS_INSTALL_DIR}
+    YARP_INI DESTINATION ${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}
+  )
+
+  set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
+
+  set_property(TARGET yarp_websocket PROPERTY FOLDER "Plugins/Carrier")
+endif()
