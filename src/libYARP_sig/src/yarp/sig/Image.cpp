@@ -878,8 +878,7 @@ bool Image::move(Image&& alt) noexcept
 {
     // Cannot move an image of the wrong type inside an ImageOf that does not
     // support it.
-    yAssert(dynamic_cast<FlexImage*>(this) ||
-            getPixelCode() == alt.getPixelCode());
+    yAssert(dynamic_cast<FlexImage*>(this) || getPixelCode() == alt.getPixelCode() || alt.getPixelCode() == 0);
     if (&alt != this) {
         delete static_cast<ImageStorage*>(implementation);
         implementation = std::exchange(alt.implementation, nullptr);
@@ -893,8 +892,8 @@ bool Image::swap(Image& alt)
 {
     // Cannot swap two ImageOf of different type, or an image of the wrong type
     // inside an ImageOf that does not support it.
-    yAssert((dynamic_cast<FlexImage*>(this) && dynamic_cast<FlexImage*>(&alt)) ||
-            getPixelCode() == alt.getPixelCode());
+    yAssert(dynamic_cast<FlexImage*>(this) || getPixelCode() == alt.getPixelCode() || alt.getPixelCode() == 0);
+    yAssert(dynamic_cast<FlexImage*>(&alt) || getPixelCode() == alt.getPixelCode() || getPixelCode() == 0);
     if (&alt != this) {
         std::swap(alt.implementation, implementation);
         synchronize();
