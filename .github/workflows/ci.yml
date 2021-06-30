@@ -1067,6 +1067,34 @@ jobs:
           message(FATAL_ERROR "Test step failed")
         endif()
 
+    - name: Status Check
+      shell: cmake -P {0}
+      run: |
+        cmake_minimum_required(VERSION 3.17)
+        include(${{ steps.prepare_environment_script.outputs.environment_script }})
+
+        execute_process_x(
+          COMMAND git status --porcelain=v1
+          WORKING_DIRECTORY .
+          RESULT_VARIABLE result
+          OUTPUT_VARIABLE output
+        )
+        if(NOT result EQUAL 0)
+          message(FATAL_ERROR "Test step failed")
+        endif()
+
+        string(REGEX REPLACE "\n" ";" output "${output}")
+
+        foreach(f IN LISTS output)
+          string(REGEX REPLACE ".+ " "" f "${f}")
+          message("::error file=${f},line=1,col=1::File modified.")
+        endforeach()
+        list(LENGTH output output_size)
+
+        if(NOT output_size EQUAL 0)
+          message(FATAL_ERROR "During build and tests, ${output_size} files were modified")
+        endif()
+
     - name: Test installation
       shell: cmake -P {0}
       run: |
