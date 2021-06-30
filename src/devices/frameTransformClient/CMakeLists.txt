@@ -4,6 +4,22 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
+include(CMakeRC)
+
+cmrc_add_resource_library(frameTransformRobotInterface
+                          NAMESPACE frameTransformRobotInterface
+                          WHENCE robotinterface_xml
+                          PREFIX config_xml
+                          robotinterface_xml/ftc_full_ros.xml
+                          robotinterface_xml/ftc_pub_ros.xml
+                          robotinterface_xml/ftc_ros.xml
+                          robotinterface_xml/ftc_sub_ros.xml
+                          robotinterface_xml/ftc_pub_yarp_only.xml
+                          robotinterface_xml/ftc_sub_yarp_only.xml
+                          robotinterface_xml/ftc_yarp_only.xml
+                          robotinterface_xml/ftc_yarp_only_single_client.xml
+                          robotinterface_xml/ftc_local_only.xml)
+
 yarp_prepare_plugin(frameTransformClient
                     CATEGORY device
                     TYPE FrameTransformClient
@@ -24,7 +40,8 @@ if(NOT SKIP_frameTransformClient)
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev
                                                           YARP::YARP_math
-                                                          YARP::YARP_robotinterface)
+                                                          YARP::YARP_robotinterface
+                                                          frameTransformRobotInterface)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev

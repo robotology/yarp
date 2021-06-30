@@ -23,6 +23,9 @@
 #include <yarp/math/Math.h>
 #include <mutex>
 
+#include <cmrc/cmrc.hpp>
+CMRC_DECLARE(frameTransformRobotInterface);
+
  /*! \file FrameTransformClient.cpp */
 
 //example: yarpdev --device frameTransformClient --local /transformClient --remote /transformServer
@@ -231,16 +234,23 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     yarp::os::Property cfg;
     cfg.fromString(config.toString());
 
-    string configuration_to_open;
-    if(cfg.check("filexml_option")) { configuration_to_open=cfg.find("filexml_option").toString();}
+    string configuration_to_open="";
+    string innerFilePath="config_xml/ftc_local_only.xml";
+    auto fs = cmrc::frameTransformRobotInterface::get_filesystem();
+    if(cfg.check("filexml_option")) { innerFilePath="config_xml/"+cfg.find("filexml_option").toString();}
     cfg.unput("filexml_option");
+    auto xmlFile = fs.open(innerFilePath);
+    for(auto& lemma : xmlFile)
+    {
+        configuration_to_open += lemma;
+    }
 
     string m_local_rpcUser = "/ftClient/rpc";
     if (cfg.check("local_rpc")) { m_local_rpcUser=cfg.find("local_rpc").toString();}
     cfg.unput("local_rpc");
 
     yarp::robotinterface::experimental::XMLReader reader;
-    yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromFile(configuration_to_open, cfg);
+    yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromString(configuration_to_open, cfg);
     yCAssert(FRAMETRANSFORMCLIENT, result.parsingIsSuccessful);
 
     m_robot = std::move(result.robot); // FIXME std::move non serve
