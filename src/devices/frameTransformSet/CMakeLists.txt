@@ -4,11 +4,7 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-<<<<<<< HEAD
-# SetMultiplexer ----------------------------------------------------------------------------------------------------- #
-=======
-########################################################## frameTransformSetMultiplexer #
->>>>>>> 54fdc1848... Added Set_nwc_ros and Get_nwc_ros
+# frameTransformSetMultiplexer -----------------------------------------------------------------------------------------------------
 yarp_prepare_plugin(frameTransformSetMultiplexer
                     CATEGORY device
                     TYPE FrameTransformSetMultiplexer
@@ -40,12 +36,8 @@ if(NOT SKIP_frameTransformSetMultiplexer)
 
   set_property(TARGET yarp_frameTransformSetMultiplexer PROPERTY FOLDER "Plugins/Device")
 endif()
-<<<<<<< HEAD
-=======
-## MULTIPLEXER #################################################################### END #
->>>>>>> 54fdc1848... Added Set_nwc_ros and Get_nwc_ros
 
-############################################################ frameTransformSet_nwc_yarp #
+# frameTransformSet_nws_yarp -----------------------------------------------------------------------------------------------------
 yarp_prepare_plugin(frameTransformSet_nws_yarp
                     CATEGORY device
                     TYPE FrameTransformSet_nws_yarp
@@ -79,8 +71,8 @@ if(NOT SKIP_frameTransformSet_nws_yarp)
 
   set_property(TARGET yarp_frameTransformSet_nws_yarp PROPERTY FOLDER "Plugins/Device")
 endif()
-## YARP WRAPPER ################################################################### END #
-############################################################ frameTransformSet_nwc_yarp #
+
+# frameTransformSet_nwc_yarp -----------------------------------------------------------------------------------------------------
 yarp_prepare_plugin(frameTransformSet_nwc_yarp
                     CATEGORY device
                     TYPE FrameTransformSet_nwc_yarp
@@ -114,8 +106,8 @@ if(NOT SKIP_frameTransformSet_nwc_yarp)
 
   set_property(TARGET yarp_frameTransformSet_nwc_yarp PROPERTY FOLDER "Plugins/Device")
 endif()
-## YARP WRAPPER ################################################################### END #
-############################################################# frameTransformSet_nwc_ros #
+
+# frameTransformSet_nwc_ros -----------------------------------------------------------------------------------------------------
 yarp_prepare_plugin(frameTransformSet_nwc_ros
         CATEGORY device
         TYPE FrameTransformSet_nwc_ros
@@ -153,4 +145,3 @@ if(NOT SKIP_frameTransformSet_nwc_ros)
 
   set_property(TARGET yarp_frameTransformSet_nwc_ros PROPERTY FOLDER "Plugins/Device")
 endif()
-## ROS WRAPPER #################################################################### END #
