@@ -24,7 +24,7 @@
 #include <mutex>
 
 #include <cmrc/cmrc.hpp>
-CMRC_DECLARE(frameTransformRobotInterface);
+CMRC_DECLARE(frameTransformRC);
 
  /*! \file FrameTransformClient.cpp */
 
@@ -236,7 +236,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 
     string configuration_to_open="";
     string innerFilePath="config_xml/ftc_local_only.xml";
-    auto fs = cmrc::frameTransformRobotInterface::get_filesystem();
+    auto fs = cmrc::frameTransformRC::get_filesystem();
     if(cfg.check("filexml_option")) { innerFilePath="config_xml/"+cfg.find("filexml_option").toString();}
     cfg.unput("filexml_option");
     auto xmlFile = fs.open(innerFilePath);
