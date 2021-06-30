@@ -4,29 +4,31 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-foreach(example_name bottle_add
-                     browse_bottle
-                     buffered_port
-                     database
-                     image_process
-                     image_process_module
-                     image_source
-                     internal_monologue
-                     listports
-                     log
-                     make_count
-                     playback
-                     portable_pair
-                     queue_manager
-                     periodicthread
-                     periodicThreadTiming
-                     rpc_client
-                     rpc_server
-                     simple_receiver
-                     simple_sender
-                     summer
-                     threads
-                     view_count)
+foreach(example_name
+  bottle
+  bottle_add
+  browse_bottle
+  buffered_port
+  database
+  hello
+  internal_monologue
+  listports
+  log
+  make_count
+  playback
+  portable_pair
+  periodicthread
+  periodicThreadTiming
+  queue_manager
+  rfmodule
+  rpc_client
+  rpc_server
+  simple_receiver
+  simple_sender
+  summer
+  threads
+  view_count
+)
 
   if(YARP_COMPILE_EXAMPLES)
     add_subdirectory(${example_name})

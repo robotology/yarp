@@ -6,41 +6,33 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/LogStream.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/Property.h>
 
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>
-#include <yarp/os/Property.h>
-#include <yarp/os/Port.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Log.h>
-#include <yarp/os/LogStream.h>
 
-using namespace yarp::os;
-
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     std::string filename;
-    if (argc < 2)
-    {
+    if (argc < 2) {
         yInfo() << "Syntax: send_sound_file <audiofile>";
-        return 0;
+        return 1;
     }
-    else
-    {
-        filename =argv[1];
-    }
+
+    filename = argv[1];
 
     yarp::sig::Sound audioFile;
     bool ret = yarp::sig::file::read(audioFile, filename.c_str());
-    if (ret == false)
-    {
+    if (ret == false) {
         yError() << "Unable to open file" << filename.c_str();
-        return false;
+        return 1;
     }
 
-    yarp::os::Network net;
+    yarp::os::Network yarp;
 
     yarp::os::Port p;
     p.open("/sound:o");

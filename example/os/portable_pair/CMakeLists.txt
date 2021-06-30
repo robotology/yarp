@@ -12,7 +12,13 @@ endif()
 
 add_executable(portable_pair)
 target_sources(portable_pair PRIVATE portable_pair.cpp)
-target_link_libraries(portable_pair PRIVATE YARP::YARP_os
-                                            YARP::YARP_init
-                                            YARP::YARP_sig)
-set_property(TARGET portable_pair PROPERTY FOLDER "Examples/os")
+target_link_libraries(portable_pair
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_sig
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET portable_pair PROPERTY FOLDER "Examples/os")
+endif()

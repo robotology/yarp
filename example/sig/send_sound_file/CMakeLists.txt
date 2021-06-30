@@ -4,22 +4,21 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-#! [simple_receiver CMakeLists.txt]
 if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.12)
-  project(simple_receiver)
-  find_package(YARP REQUIRED COMPONENTS os)
+  project(send_sound_file)
+  find_package(YARP REQUIRED COMPONENTS os sig)
 endif()
 
-add_executable(simple_receiver)
-target_sources(simple_receiver PRIVATE simple_receiver.cpp)
-target_link_libraries(simple_receiver
+add_executable(send_sound_file)
+target_sources(send_sound_file PRIVATE send_sound_file.cpp)
+target_link_libraries(send_sound_file
   PRIVATE
     YARP::YARP_os
     YARP::YARP_init
+    YARP::YARP_sig
 )
-#! [simple_receiver CMakeLists.txt]
 
 if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
-  set_property(TARGET simple_receiver PROPERTY FOLDER "Examples/os")
+  set_property(TARGET send_sound_file PROPERTY FOLDER "Examples/sig")
 endif()

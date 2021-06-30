@@ -13,4 +13,7 @@ endif()
 add_executable(wav_test)
 target_sources(wav_test PRIVATE wav_test.cpp)
 target_link_libraries(wav_test PRIVATE YARP::YARP_sig)
-set_property(TARGET wav_test PROPERTY FOLDER "Examples/sig")
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET wav_test PROPERTY FOLDER "Examples/sig")
+  endif()

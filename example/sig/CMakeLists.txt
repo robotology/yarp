@@ -4,7 +4,13 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-foreach(example_name wav_test)
+foreach(example_name
+  image_process
+  image_process_module
+  image_source
+  send_sound_file
+  wav_test
+)
 
   if(YARP_COMPILE_EXAMPLES)
     add_subdirectory(${example_name})

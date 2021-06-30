@@ -12,6 +12,12 @@ endif()
 
 add_executable(listports)
 target_sources(listports PRIVATE listports.cpp)
-target_link_libraries(listports PRIVATE YARP::YARP_os
-                                        YARP::YARP_init)
-set_property(TARGET listports PROPERTY FOLDER "Examples/os")
+target_link_libraries(listports
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET listports PROPERTY FOLDER "Examples/os")
+endif()

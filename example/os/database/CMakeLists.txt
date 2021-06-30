@@ -12,7 +12,13 @@ endif()
 
 add_executable(database)
 target_sources(database PRIVATE database.cpp)
-target_link_libraries(database PRIVATE YARP::YARP_os
-                                       YARP::YARP_init
-                                       YARP::YARP_dev)
-set_property(TARGET database PROPERTY FOLDER "Examples/os")
+target_link_libraries(database
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_dev
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET database PROPERTY FOLDER "Examples/os")
+endif()

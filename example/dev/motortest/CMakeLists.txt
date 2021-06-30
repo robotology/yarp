@@ -12,7 +12,13 @@ endif()
 
 add_executable(motortest)
 target_sources(motortest PRIVATE motortest.cpp)
-target_link_libraries(motortest PRIVATE YARP::YARP_os
-                                        YARP::YARP_init
-                                        YARP::YARP_dev)
-set_property(TARGET motortest PROPERTY FOLDER "Examples/dev")
+target_link_libraries(motortest
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_dev
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET motortest PROPERTY FOLDER "Examples/dev")
+endif()

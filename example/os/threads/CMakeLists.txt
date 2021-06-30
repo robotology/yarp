@@ -12,6 +12,12 @@ endif()
 
 add_executable(threads)
 target_sources(threads PRIVATE threads.cpp)
-target_link_libraries(threads PRIVATE YARP::YARP_os
-                                      YARP::YARP_init)
-set_property(TARGET threads PROPERTY FOLDER "Examples/os")
+target_link_libraries(threads
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET threads PROPERTY FOLDER "Examples/os")
+endif()

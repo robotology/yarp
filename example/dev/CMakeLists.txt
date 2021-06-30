@@ -11,16 +11,19 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-foreach(example_name attachable
-                     audio_test
-                     double_server
-                     fake_grabber
-                     fake_motor
-                     file_grabber
-                     grabber_client
-                     grabber_crop
-                     motortest
-                     RGBD)
+foreach(example_name
+  attachable
+  audio_test
+  double_server
+  fake_grabber
+  fake_motor
+  file_grabber
+  grabber_client
+  grabber_crop
+  motorcontrol
+  motortest
+  RGBD
+)
 
   if(YARP_COMPILE_EXAMPLES)
     add_subdirectory(${example_name})

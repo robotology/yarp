@@ -6,13 +6,19 @@
 
 if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.12)
-  project(image_process)
+  project(image_source)
   find_package(YARP REQUIRED COMPONENTS os sig)
 endif()
 
-add_executable(image_process)
-target_sources(image_process PRIVATE image_process.cpp)
-target_link_libraries(image_process PRIVATE YARP::YARP_os
-                                            YARP::YARP_init
-                                            YARP::YARP_sig)
-set_property(TARGET image_process PROPERTY FOLDER "Examples/os")
+add_executable(image_source)
+target_sources(image_source PRIVATE image_source.cpp)
+target_link_libraries(image_source
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_sig
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET image_source PROPERTY FOLDER "Examples/sig")
+endif()

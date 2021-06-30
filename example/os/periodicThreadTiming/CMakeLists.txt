@@ -12,7 +12,13 @@ endif()
 
 add_executable(periodicThreadTiming)
 target_sources(periodicThreadTiming PRIVATE periodicThreadTiming.cpp)
-target_link_libraries(periodicThreadTiming PRIVATE YARP::YARP_os
-                                                   YARP::YARP_init
-                                                   YARP::YARP_sig)
-set_property(TARGET periodicThreadTiming PROPERTY FOLDER "Examples/os")
+target_link_libraries(periodicThreadTiming
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_sig
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET periodicThreadTiming PROPERTY FOLDER "Examples/os")
+endif()

@@ -8,45 +8,49 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/RFModule.h>
+#include <yarp/os/LogStream.h>
 
-#include <iostream>
-
-class MyModule : public yarp::os::RFModule
+class MyModule :
+        public yarp::os::RFModule
 {
     yarp::os::Port handlerPort; // a port to handle messages
     int count;
+
 public:
-    double getPeriod()
+    double getPeriod() override
     {
         // module periodicity (seconds), called implicitly by the module.
         return 1.0;
     }
     // This is our main function. Will be called periodically every getPeriod() seconds
-    bool updateModule()
+    bool updateModule() override
     {
         count++;
-        std::cout << "[" << count << "]" << " updateModule..." << '\n';
+        yInfo() << "[" << count << "]" << " updateModule...";
         return true;
     }
     // Message handler. Just echo all received messages.
-    bool respond(const yarp::os::Bottle& command, yarp::os::Bottle& reply)
+    bool respond(const yarp::os::Bottle& command, yarp::os::Bottle& reply) override
     {
-        std::cout << "Got something, echo is on" << '\n';
-        if (command.get(0).asString() == "quit")
+        yInfo() << "Got something, echo is on";
+        if (command.get(0).asString() == "quit") {
             return false;
-        else
-            reply = command;
+        }
+        reply = command;
         return true;
     }
     // Configure function. Receive a previously initialized
     // resource finder object. Use it to configure your module.
     // If you are migrating from the old module, this is the function
     // equivalent to the "open" method.
-    bool configure(yarp::os::ResourceFinder &rf)
+    bool configure(yarp::os::ResourceFinder& rf) override
     {
-        count=0;
-        if (!handlerPort.open("/myModule"))
+        YARP_UNUSED(rf);
+
+        count = 0;
+        if (!handlerPort.open("/myModule")) {
             return false;
+        }
 
         // optional, attach a port to the module
         // so that messages received from the port are redirected
@@ -56,39 +60,39 @@ public:
         return true;
     }
     // Interrupt function.
-    bool interruptModule()
+    bool interruptModule() override
     {
-        std::cout << "Interrupting your module, for port cleanup" << '\n';
+        yInfo() << "Interrupting your module, for port cleanup";
         return true;
     }
     // Close function, to perform cleanup.
-    bool close()
+    bool close() override
     {
         // optional, close port explicitly
-        std::cout << "Calling close function\n";
+        yInfo() << "Calling close function";
         handlerPort.close();
         return true;
     }
 };
 
-int main(int argc, char * argv[])
+int main(int argc, char* argv[])
 {
     // initialize yarp network
     yarp::os::Network yarp;
-
-    // create your module
-    MyModule module;
 
     // prepare and configure the resource finder
     yarp::os::ResourceFinder rf;
     rf.configure(argc, argv);
 
-    std::cout << "Configuring and starting module.\n";
+    // create your module
+    MyModule module;
+
+    yInfo() << "Configuring and starting module.";
     // This calls configure(rf) and, upon success, the module execution begins with a call to updateModule()
     if (!module.runModule(rf)) {
-        std::cerr << "Error module did not start\n";
+        yError() << "Error module did not start";
     }
 
-    std::cout << "Main returning..." << '\n';
+    yInfo() << "Main returning...";
     return 0;
 }

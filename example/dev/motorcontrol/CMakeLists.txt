@@ -4,22 +4,21 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-#! [simple_receiver CMakeLists.txt]
 if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
   cmake_minimum_required(VERSION 3.12)
-  project(simple_receiver)
-  find_package(YARP REQUIRED COMPONENTS os)
+  project(motorcontrol)
+  find_package(YARP REQUIRED COMPONENTS os dev)
 endif()
 
-add_executable(simple_receiver)
-target_sources(simple_receiver PRIVATE simple_receiver.cpp)
-target_link_libraries(simple_receiver
+add_executable(motorcontrol)
+target_sources(motorcontrol PRIVATE motorcontrol.cpp)
+target_link_libraries(motorcontrol
   PRIVATE
     YARP::YARP_os
     YARP::YARP_init
+    YARP::YARP_dev
 )
-#! [simple_receiver CMakeLists.txt]
 
 if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
-  set_property(TARGET simple_receiver PROPERTY FOLDER "Examples/os")
+  set_property(TARGET motorcontrol PROPERTY FOLDER "Examples/dev")
 endif()

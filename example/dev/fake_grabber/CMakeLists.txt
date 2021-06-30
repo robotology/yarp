@@ -11,30 +11,57 @@ if(NOT DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
 endif()
 
 add_executable(fake_grabber)
-target_sources(fake_grabber PRIVATE fake_grabber.cpp
-                                    FakeFrameGrabber.h)
-target_link_libraries(fake_grabber PRIVATE YARP::YARP_os
-                                           YARP::YARP_init
-                                           YARP::YARP_sig
-                                           YARP::YARP_dev)
-set_property(TARGET fake_grabber PROPERTY FOLDER "Examples/dev")
+target_sources(fake_grabber
+  PRIVATE
+    fake_grabber.cpp
+    FakeFrameGrabber.h
+)
+target_link_libraries(fake_grabber
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_sig
+    YARP::YARP_dev
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET fake_grabber PROPERTY FOLDER "Examples/dev")
+endif()
 
 
 add_executable(fake_grabber_net)
-target_sources(fake_grabber_net PRIVATE fake_grabber_net.cpp
-                                        FakeFrameGrabber.h)
-target_link_libraries(fake_grabber_net PRIVATE YARP::YARP_os
-                                               YARP::YARP_init
-                                               YARP::YARP_sig
-                                               YARP::YARP_dev)
-set_property(TARGET fake_grabber_net PROPERTY FOLDER "Examples/dev")
+target_sources(fake_grabber_net
+  PRIVATE
+    fake_grabber_net.cpp
+    FakeFrameGrabber.h
+)
+target_link_libraries(fake_grabber_net
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_sig
+    YARP::YARP_dev
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET fake_grabber_net PROPERTY FOLDER "Examples/dev")
+endif()
 
 
 add_executable(fake_grabber_net2)
-target_sources(fake_grabber_net2 PRIVATE fake_grabber_net2.cpp
-                                         FakeFrameGrabber2.h)
-target_link_libraries(fake_grabber_net2 PRIVATE YARP::YARP_os
-                                                YARP::YARP_init
-                                                YARP::YARP_sig
-                                                YARP::YARP_dev)
-set_property(TARGET fake_grabber_net2 PROPERTY FOLDER "Examples/dev")
+target_sources(fake_grabber_net2
+  PRIVATE
+    fake_grabber_net2.cpp
+    FakeFrameGrabber2.h
+)
+target_link_libraries(fake_grabber_net2
+  PRIVATE
+    YARP::YARP_os
+    YARP::YARP_init
+    YARP::YARP_sig
+    YARP::YARP_dev
+)
+
+if(DEFINED CMAKE_MINIMUM_REQUIRED_VERSION)
+  set_property(TARGET fake_grabber_net2 PROPERTY FOLDER "Examples/dev")
+endif()
