@@ -181,7 +181,11 @@ bool ControlBoardWrapper::checkROSParams(Searchable& config)
         useROS = ROS_config_error;
         return false;
     }
-    rosNodeName = rosGroup.find("ROS_nodeName").asString(); // TODO: check name is correct
+    rosNodeName = rosGroup.find("ROS_nodeName").asString();
+    if(rosNodeName[0] != '/'){
+        yCError(CONTROLBOARD) << "ros node name must begin with an initial /";
+        return false;
+    }
     yCInfo(CONTROLBOARD) << partName << "rosNodeName is " << rosNodeName;
 
     // check for ROS_topicName parameter
