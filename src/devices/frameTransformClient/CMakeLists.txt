@@ -6,8 +6,8 @@
 
 include(CMakeRC)
 
-cmrc_add_resource_library(frameTransformRobotInterface
-                          NAMESPACE frameTransformRobotInterface
+cmrc_add_resource_library(frameTransformRC
+                          NAMESPACE frameTransformRC
                           WHENCE robotinterface_xml
                           PREFIX config_xml
                           robotinterface_xml/ftc_full_ros.xml
@@ -40,8 +40,9 @@ if(NOT SKIP_frameTransformClient)
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev
                                                           YARP::YARP_math
-                                                          YARP::YARP_robotinterface
-                                                          frameTransformRobotInterface)
+                                                          YARP::YARP_robotinterface)
+  target_sources(yarp_frameTransformClient PRIVATE $<TARGET_OBJECTS:frameTransformRC>)
+  target_include_directories(yarp_frameTransformClient PRIVATE $<TARGET_PROPERTY:frameTransformRC,INTERFACE_INCLUDE_DIRECTORIES>)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
