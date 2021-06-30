@@ -32,8 +32,8 @@ ControlBoard_nws_ros::ControlBoard_nws_ros() :
 
 void ControlBoard_nws_ros::closePorts()
 {
-    rosPublisherPort.interrupt();
-    rosPublisherPort.close();
+    publisherPort.interrupt();
+    publisherPort.close();
 
     delete node;
     node = nullptr;
@@ -103,7 +103,7 @@ bool ControlBoard_nws_ros::open(Searchable& config)
 
     // call ROS node/topic initialization
     node = new yarp::os::Node(nodeName);
-    if (!rosPublisherPort.topic(topicName)) {
+    if (!publisherPort.topic(topicName)) {
         yCError(CONTROLBOARD) << " opening " << topicName << " Topic, check your configuration";
         return false;
     }
@@ -264,35 +264,6 @@ bool ControlBoard_nws_ros::detach()
     return true;
 }
 
-bool ControlBoard_nws_ros::attachAll(const PolyDriverList& p)
-{
-    if (p.size() < 1) {
-        yCError(CONTROLBOARD, "No devices found");
-        return false;
-    }
-
-    if (p.size() > 1) {
-        yCError(CONTROLBOARD, "Cannot attach more than one device");
-        return false;
-    }
-
-    const auto& key = p[0]->key;
-    auto* poly = p[0]->poly;
-
-    if (!poly->isValid())
-    {
-        yCError(CONTROLBOARD, "Device %s is not valid", key.c_str());
-        return false;
-    }
-
-    return attach(poly);
-}
-
-bool ControlBoard_nws_ros::detachAll()
-{
-    return detach();
-}
-
 
 bool ControlBoard_nws_ros::updateAxisName()
 {
@@ -355,5 +326,5 @@ void ControlBoard_nws_ros::run()
     ros_struct.header.seq = counter++;
     ros_struct.header.stamp = averageTime.getTime();
 
-    rosPublisherPort.write(ros_struct);
+    publisherPort.write(ros_struct);
 }

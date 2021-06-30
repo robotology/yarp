@@ -10,8 +10,7 @@
 #define YARP_DEV_CONTROLBOARD_NWS_YARP_H
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
-#include <yarp/dev/IWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/PeriodicThread.h>
 
 #include <yarp/dev/IPidControl.h>
@@ -66,8 +65,7 @@
 class ControlBoard_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
-        public yarp::dev::IMultipleWrapper,
-        public yarp::dev::IWrapper
+        public yarp::dev::WrapperSingle
 {
 private:
     std::string rootName;
@@ -135,13 +133,9 @@ public:
     bool close() override;
     bool open(yarp::os::Searchable& prop) override;
 
-    // yarp::dev::IWrapper
+    // yarp::dev::WrapperSingle
     bool attach(yarp::dev::PolyDriver* poly) override;
     bool detach() override;
-
-    // yarp::dev::IMultipleWrapper
-    bool attachAll(const yarp::dev::PolyDriverList &l) override;
-    bool detachAll() override;
 
     // yarp::os::PeriodicThread
     void run() override;
