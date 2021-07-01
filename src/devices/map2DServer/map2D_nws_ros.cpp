@@ -58,9 +58,9 @@ YARP_LOG_COMPONENT(MAP2D_NWS_ROS, "yarp.device.map2D_nws_ros")
 
 Map2D_nws_ros::Map2D_nws_ros()
 {
-    m_enable_publish_ros_map = false;
-    m_enable_subscribe_ros_map = false;
-    m_rosNode = nullptr;
+    m_enable_publish_map = false;
+    m_enable_subscribe_map = false;
+    m_node = nullptr;
 }
 
 Map2D_nws_ros::~Map2D_nws_ros() = default;
@@ -112,7 +112,6 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
     if (config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
@@ -122,8 +121,7 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
             return false;
         }
 
-        driverlist.push(&m_drv, "1");
-        if (!attachAll(driverlist))
+        if (!attach(&m_drv))
         {
             yCError(MAP2D_NWS_ROS) << "Failed to open subdevice.. check params";
             return false;
@@ -148,30 +146,30 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
         yCInfo(MAP2D_NWS_ROS, "Configuring ROS params");
         Bottle ROS_config = config.findGroup("ROS");
 
-        if (ROS_config.find("enable_ros_publisher").asInt32() == 1 || ROS_config.find("enable_ros_publisher").asString() == "true")
+        if (ROS_config.find("enable_publisher").asInt32() == 1 || ROS_config.find("enable_publisher").asString() == "true")
         {
-            m_enable_publish_ros_map = true;
+            m_enable_publish_map = true;
             yCInfo(MAP2D_NWS_ROS) << "Enabled ROS publisher";
         }
 
-        if (ROS_config.find("enable_ros_subscriber").asInt32() == 1 || ROS_config.find("enable_ros_subscriber").asString() == "true")
+        if (ROS_config.find("enable_subscriber").asInt32() == 1 || ROS_config.find("enable_subscriber").asString() == "true")
         {
-            m_enable_subscribe_ros_map = true;
+            m_enable_subscribe_map = true;
             yCInfo(MAP2D_NWS_ROS) << "Enabled ROS subscriber";
         }
 
-        if (m_enable_publish_ros_map)
+        if (m_enable_publish_map)
         {
-            if (m_rosNode == nullptr)
+            if (m_node == nullptr)
             {
-                m_rosNode = new yarp::os::Node(ROSNODENAME);
+                m_node = new yarp::os::Node(ROSNODENAME);
             }
-            if (m_enable_publish_ros_map && !m_rosPublisherPort_map.topic(ROSTOPICNAME_MAP))
+            if (!m_publisherPort_map.topic(ROSTOPICNAME_MAP))
             {
                 yCError(MAP2D_NWS_ROS) << "Unable to publish to" << ROSTOPICNAME_MAP << "topic, check your YARP-ROS network configuration";
                 return false;
             }
-            if (m_enable_publish_ros_map && !m_rosPublisherPort_metamap.topic(ROSTOPICNAME_MAPMETADATA))
+            if (!m_publisherPort_metamap.topic(ROSTOPICNAME_MAPMETADATA))
             {
                 yCError(MAP2D_NWS_ROS) << "Unable to publish to " << ROSTOPICNAME_MAPMETADATA << " topic, check your YARP-ROS network configuration";
                 return false;
@@ -180,20 +178,20 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
             //publishMapToRos();
         }
 
-        if (m_enable_subscribe_ros_map)
+        if (m_enable_subscribe_map)
         {
-            if (m_enable_subscribe_ros_map && !m_rosSubscriberPort_map.topic(ROSTOPICNAME_MAP))
+            if (!m_subscriberPort_map.topic(ROSTOPICNAME_MAP))
             {
                 yCError(MAP2D_NWS_ROS) << "Unable to subscribe to " << ROSTOPICNAME_MAP << " topic, check your YARP-ROS network configuration";
                 return false;
             }
-            if (m_enable_subscribe_ros_map && !m_rosSubscriberPort_metamap.topic(ROSTOPICNAME_MAPMETADATA))
+            if (!m_subscriberPort_metamap.topic(ROSTOPICNAME_MAPMETADATA))
             {
                 yCError(MAP2D_NWS_ROS) << "Unable to subscribe to " << ROSTOPICNAME_MAPMETADATA << " topic, check your YARP-ROS network configuration";
                 return false;
             }
-            m_rosSubscriberPort_map.setStrict();
-            m_rosSubscriberPort_metamap.setStrict();
+            m_subscriberPort_map.setStrict();
+            m_subscriberPort_metamap.setStrict();
 
             //should I subscribe the map now ? with which name ?
             //subscribeMapFromRos();
@@ -218,7 +216,7 @@ bool Map2D_nws_ros::publishMapToRos(string map_name)
     }
 
     double tmp = 0;
-    yarp::rosmsg::nav_msgs::OccupancyGrid& ogrid = m_rosPublisherPort_map.prepare();
+    yarp::rosmsg::nav_msgs::OccupancyGrid& ogrid = m_publisherPort_map.prepare();
     ogrid.clear();
     ogrid.info.height = current_map.height();
     ogrid.info.width = current_map.width();
@@ -249,9 +247,9 @@ bool Map2D_nws_ros::publishMapToRos(string map_name)
             ogrid.data[index++] = (int)tmp;
         }
 
-    m_rosPublisherPort_map.write();
+    m_publisherPort_map.write();
 
-    //what about the m_rosPublisherPort_metamap ?
+    //what about the m_publisherPort_metamap ?
     //I don't know...
 
     return true;
@@ -264,8 +262,8 @@ bool Map2D_nws_ros::subscribeMapFromRos(string map_name)
     yarp::rosmsg::nav_msgs::OccupancyGrid* map_ros = nullptr;
     yarp::rosmsg::nav_msgs::MapMetaData* metamap_ros = nullptr;
 
-    map_ros = m_rosSubscriberPort_map.read(true);
-    metamap_ros = m_rosSubscriberPort_metamap.read(true);
+    map_ros = m_subscriberPort_map.read(true);
+    metamap_ros = m_subscriberPort_metamap.read(true);
     if (map_ros != nullptr && metamap_ros != nullptr)
     {
         yCInfo(MAP2D_NWS_ROS) << "Received map for ROS";
@@ -311,28 +309,28 @@ bool Map2D_nws_ros::subscribeMapFromRos(string map_name)
 bool Map2D_nws_ros::close()
 {
     yCTrace(MAP2D_NWS_ROS, "Close");
-    if (m_enable_publish_ros_map)
+    if (m_enable_publish_map)
     {
-        m_rosPublisherPort_map.interrupt();
-        m_rosPublisherPort_metamap.interrupt();
-        m_rosPublisherPort_map.close();
-        m_rosPublisherPort_metamap.close();
+        m_publisherPort_map.interrupt();
+        m_publisherPort_metamap.interrupt();
+        m_publisherPort_map.close();
+        m_publisherPort_metamap.close();
     }
-    if (m_enable_subscribe_ros_map)
+    if (m_enable_subscribe_map)
     {
-        m_rosSubscriberPort_map.interrupt();
-        m_rosSubscriberPort_metamap.interrupt();
-        m_rosSubscriberPort_map.close();
-        m_rosSubscriberPort_metamap.close();
+        m_subscriberPort_map.interrupt();
+        m_subscriberPort_metamap.interrupt();
+        m_subscriberPort_map.close();
+        m_subscriberPort_metamap.close();
     }
     return true;
 }
 
 bool Map2D_nws_ros::updateVizMarkers(std::string map_name)
 {
-    if (m_rosPublisherPort_markers.asPort().isOpen()==false)
+    if (m_publisherPort_markers.asPort().isOpen()==false)
     {
-        m_rosPublisherPort_markers.topic("/locationServerMarkers");
+        m_publisherPort_markers.topic("/locationServerMarkers");
     }
     yarp::rosmsg::TickDuration dur; dur.sec = 0xFFFFFFFF;
     double yarpTimeStamp = yarp::os::Time::now();
@@ -354,7 +352,7 @@ bool Map2D_nws_ros::updateVizMarkers(std::string map_name)
     yarp::sig::Vector         rpy(3);
     yarp::math::Quaternion    q;
 
-    yarp::rosmsg::visualization_msgs::MarkerArray& markers = m_rosPublisherPort_markers.prepare();
+    yarp::rosmsg::visualization_msgs::MarkerArray& markers = m_publisherPort_markers.prepare();
     markers.markers.clear();
 
     std::vector<std::string> locations;
@@ -398,30 +396,22 @@ bool Map2D_nws_ros::updateVizMarkers(std::string map_name)
         count++;
     }
 
-    m_rosPublisherPort_markers.write();
+    m_publisherPort_markers.write();
     return true;
 }
 
 
-bool Map2D_nws_ros::detachAll()
+bool Map2D_nws_ros::detach()
 {
     m_iMap2D = nullptr;
     return true;
 }
 
-bool Map2D_nws_ros::attachAll(const PolyDriverList& device2attach)
+bool Map2D_nws_ros::attach(PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(MAP2D_NWS_ROS, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver* Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(m_iMap2D);
+        driver->view(m_iMap2D);
     }
 
     if (nullptr == m_iMap2D)

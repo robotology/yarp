@@ -765,7 +765,6 @@ bool Map2D_nws_yarp::open(yarp::os::Searchable &config)
     if (config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
@@ -775,8 +774,7 @@ bool Map2D_nws_yarp::open(yarp::os::Searchable &config)
             return false;
         }
 
-        driverlist.push(&m_drv, "1");
-        if (!attachAll(driverlist))
+        if (!attach(&m_drv))
         {
             yCError(MAP2D_NWS_YARP) << "Failed to open subdevice.. check params";
             return false;
@@ -796,25 +794,17 @@ bool Map2D_nws_yarp::close()
     return true;
 }
 
-bool Map2D_nws_yarp::detachAll()
+bool Map2D_nws_yarp::detach()
 {
     m_iMap2D = nullptr;
     return true;
 }
 
-bool Map2D_nws_yarp::attachAll(const PolyDriverList& device2attach)
+bool Map2D_nws_yarp::attach(PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(MAP2D_NWS_YARP, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver* Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(m_iMap2D);
+        driver->view(m_iMap2D);
     }
 
     if (nullptr == m_iMap2D)
