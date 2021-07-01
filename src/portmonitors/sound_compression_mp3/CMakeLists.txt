@@ -11,9 +11,6 @@ yarp_prepare_plugin(sound_compression_mp3
   DEPENDS "ENABLE_yarpcar_portmonitor;YARP_HAS_FFMPEG"
 )
 
-yarp_renamed_option(ENABLE_yarpcar_mp3Sound ENABLE_yarppm_sound_compression_mp3) # YARP_DEPRECATED never released
-yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/mp3Sound.ini") # YARP_DEPRECATED never released
-
 if(SKIP_sound_compression_mp3)
   return()
 endif()

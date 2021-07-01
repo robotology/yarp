@@ -11,9 +11,6 @@ yarp_prepare_plugin(image_compression_ffmpeg
   DEPENDS "ENABLE_yarpcar_portmonitor;YARP_HAS_FFMPEG"
 )
 
-yarp_renamed_option(ENABLE_yarpcar_libffmpeg ENABLE_yarppm_image_compression_ffmpeg) # YARP_DEPRECATED never released
-yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/libffmpeg.ini") # YARP_DEPRECATED never released
-
 if(SKIP_image_compression_ffmpeg)
   return()
 endif()

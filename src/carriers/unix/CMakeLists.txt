@@ -36,5 +36,3 @@ if(ENABLE_unix_stream OR ENABLE_unix_stream_ack)
 
   set_property(TARGET yarp_unix PROPERTY FOLDER "Plugins/Carrier")
 endif()
-
-yarp_remove_file("${YARP_PLUGIN_MANIFESTS_INSTALL_DIR}/unix_stream_ack.ini") # YARP_DEPRECATED never released
