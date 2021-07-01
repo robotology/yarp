@@ -20,3 +20,6 @@ requires = [
 [tool.setuptools_scm]
 root = "../.."
 local_scheme = "dirty-tag"
+
+[tool.cibuildwheel]
+build-frontend = "build"
