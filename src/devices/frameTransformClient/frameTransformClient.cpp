@@ -234,13 +234,13 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     yarp::os::Property cfg;
     cfg.fromString(config.toString());
 
-    string configuration_to_open="";
+    string configuration_to_open;
     string innerFilePath="config_xml/ftc_local_only.xml";
     auto fs = cmrc::frameTransformRC::get_filesystem();
     if(cfg.check("filexml_option")) { innerFilePath="config_xml/"+cfg.find("filexml_option").toString();}
     cfg.unput("filexml_option");
     auto xmlFile = fs.open(innerFilePath);
-    for(auto& lemma : xmlFile)
+    for(const auto& lemma : xmlFile)
     {
         configuration_to_open += lemma;
     }
