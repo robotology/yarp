@@ -67,8 +67,13 @@ bool Rangefinder2D_nws_ros::checkROSParams(yarp::os::Searchable &config)
         yCError(RANGEFINDER2D_NWS_ROS) << "Cannot find nodeName parameter, mandatory when using ROS message";
         return false;
     }
-    nodeName = config.find("nodeName").asString();  // TODO: check name is correct
-    yCInfo(RANGEFINDER2D_NWS_ROS) << "NodeName is " << nodeName;
+
+    nodeName = config.find("nodeName").asString();
+    if(nodeName[0] != '/'){
+        yCError(RANGEFINDER2D_NWS_ROS) << "node name must begin with an initial /";
+        return false;
+    }
+    yCInfo(RANGEFINDER2D_NWS_ROS) << "NodeName is " << rosNodeName;
 
     // check for ROS_topicName parameter
     if (!config.check("topicName"))

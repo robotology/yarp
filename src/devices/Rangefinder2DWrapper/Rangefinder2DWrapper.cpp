@@ -122,9 +122,12 @@ bool Rangefinder2DWrapper::checkROSParams(yarp::os::Searchable &config)
         useROS = ROS_config_error;
         return false;
     }
-    rosNodeName = rosGroup.find("ROS_nodeName").asString();  // TODO: check name is correct
+    rosNodeName = rosGroup.find("ROS_nodeName").asString();
     yCInfo(RANGEFINDER2DWRAPPER) << partName << "rosNodeName is " << rosNodeName;
-
+    if(rosNodeName[0] != '/'){
+        yCError(RANGEFINDER2DWRAPPER) << "node name must begin with an initial /";
+        return false;
+    }
     // check for ROS_topicName parameter
     if (!rosGroup.check("ROS_topicName"))
     {
