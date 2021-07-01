@@ -16,24 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <sstream>
-#include <limits>
-#include "map2D_nws_ros.h"
-#include <yarp/dev/IMap2D.h>
-#include <yarp/dev/INavigation2D.h>
-#include <yarp/dev/GenericVocabs.h>
-#include <yarp/math/Math.h>
+#include "Map2D_nws_ros.h"
+
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <mutex>
-#include <cstdlib>
-#include <fstream>
+#include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
-#include <yarp/os/Node.h>
+
+#include <yarp/dev/GenericVocabs.h>
+#include <yarp/dev/IMap2D.h>
+#include <yarp/dev/INavigation2D.h>
+
+#include <yarp/math/Math.h>
+
 #include <yarp/rosmsg/TickDuration.h>
 #include <yarp/rosmsg/TickTime.h>
+
+#include <cstdlib>
+#include <fstream>
+#include <limits>
+#include <mutex>
+#include <sstream>
 
 using namespace yarp::sig;
 using namespace yarp::dev;

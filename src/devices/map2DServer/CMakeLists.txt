@@ -45,15 +45,15 @@ endif()
 yarp_prepare_plugin(map2D_nws_yarp
                     CATEGORY device
                     TYPE Map2D_nws_yarp
-                    INCLUDE map2D_nws_yarp.h
+                    INCLUDE Map2D_nws_yarp.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_map2D_nws_yarp)
   yarp_add_plugin(yarp_map2D_nws_yarp)
 
-  target_sources(yarp_map2D_nws_yarp PRIVATE map2D_nws_yarp.cpp
-                                             map2D_nws_yarp.h)
+  target_sources(yarp_map2D_nws_yarp PRIVATE Map2D_nws_yarp.cpp
+          Map2D_nws_yarp.h)
 
   target_link_libraries(yarp_map2D_nws_yarp PRIVATE YARP::YARP_os
                                                  YARP::YARP_sig
@@ -83,15 +83,15 @@ endif()
 yarp_prepare_plugin(map2D_nws_ros
                     CATEGORY device
                     TYPE Map2D_nws_ros
-                    INCLUDE map2D_nws_ros.h
+                    INCLUDE Map2D_nws_ros.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_map2D_nws_ros)
   yarp_add_plugin(yarp_map2D_nws_ros)
 
-  target_sources(yarp_map2D_nws_ros PRIVATE map2D_nws_ros.cpp
-                                            map2D_nws_ros.h)
+  target_sources(yarp_map2D_nws_ros PRIVATE Map2D_nws_ros.cpp
+          Map2D_nws_ros.h)
 
   target_link_libraries(yarp_map2D_nws_ros PRIVATE YARP::YARP_os
                                                  YARP::YARP_sig
