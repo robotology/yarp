@@ -7,10 +7,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "frameGrabber_nws_yarp.h"
+#include "FrameGrabber_nws_yarp.h"
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+
 #include <yarp/dev/PolyDriver.h>
 
 #include <yarp/proto/framegrabber/CameraVocabs.h>
