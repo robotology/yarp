@@ -16,9 +16,7 @@
 namespace yarp {
 namespace robotinterface {
 
-namespace experimental {
 class XMLReaderResult;
-} // namespace experimental
 
 namespace impl {
 
@@ -28,10 +26,10 @@ public:
     XMLReaderFileV1();
     ~XMLReaderFileV1() override;
 
-    yarp::robotinterface::experimental::XMLReaderResult getRobotFromFile(const std::string& filename,
+    yarp::robotinterface::XMLReaderResult getRobotFromFile(const std::string& filename,
                                                                          const yarp::os::Searchable& config,
                                                                          bool verbose = false) override;
-    yarp::robotinterface::experimental::XMLReaderResult getRobotFromString(const std::string& xmlString,
+    yarp::robotinterface::XMLReaderResult getRobotFromString(const std::string& xmlString,
                                                                            const yarp::os::Searchable& config,
                                                                            bool verbose = false) override;
 

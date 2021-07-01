@@ -36,8 +36,8 @@
 #include <yarp/math/FrameTransform.h>
 #include <yarp/os/PeriodicThread.h>
 #include <mutex>
-#include <yarp/robotinterface/experimental/Param.h>
-#include <yarp/robotinterface/experimental/XMLReader.h>
+#include <yarp/robotinterface/Param.h>
+#include <yarp/robotinterface/XMLReader.h>
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 const int MAX_PORTS = 5;
@@ -151,7 +151,7 @@ protected:
     std::vector<broadcast_port_t*>  m_array_of_ports;
 
     //new stuff
-    yarp::robotinterface::experimental::Robot m_robot;
+    yarp::robotinterface::Robot m_robot;
     yarp::dev::IFrameTransformStorageGet* m_ift_g = nullptr;
     yarp::dev::IFrameTransformStorageSet* m_ift_s = nullptr;
     yarp::dev::IFrameTransformStorageUtils* m_ift_u = nullptr;

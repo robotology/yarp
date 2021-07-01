@@ -6,53 +6,32 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_ROBOTINTERFACE_PARAM_H
-#define YARP_ROBOTINTERFACE_PARAM_H
+#ifndef YARP_ROBOTINTERFACE_EXPERIMENTAL_PARAM_H
+#define YARP_ROBOTINTERFACE_EXPERIMENTAL_PARAM_H
 
+#include <yarp/conf/system.h>
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_PARAM_H_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/dev/experimental/Param.h> file is deprecated in favour of <yarp/dev/Param.h>")
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+
+#include <yarp/robotinterface/Param.h>
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H_ON_PURPOSE
 #include <yarp/robotinterface/experimental/Types.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H_ON_PURPOSE
 
 namespace yarp {
-
-namespace os {
-class Property;
-} // namespace os
-
 namespace robotinterface {
 namespace experimental {
 
-class YARP_robotinterface_API Param
-{
-public:
-    explicit Param(bool isGroup = false);
-    Param(const std::string& name, const std::string& value, bool isGroup = false);
-    Param(const Param& other);
-    Param& operator=(const Param& other);
-
-    virtual ~Param();
-
-    std::string& name();
-    std::string& value();
-
-    const std::string& name() const;
-    const std::string& value() const;
-
-    bool isGroup() const;
-
-    yarp::os::Property toProperty() const;
-
-private:
-    class Private;
-    Private* const mPriv;
-}; // class Param
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::Param") yarp::robotinterface::Param Param;
 
 } // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
 
-namespace std {
-YARP_robotinterface_API std::ostream& operator<<(std::ostream& oss, const yarp::robotinterface::experimental::Param& t);
-}
-YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Param& t);
+#endif // YARP_NO_DEPRECATED
 
-
-#endif // YARP_ROBOTINTERFACE_PARAM_H
+#endif // YARP_ROBOTINTERFACE_EXPERIMENTAL_PARAM_H

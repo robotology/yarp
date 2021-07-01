@@ -6,92 +6,37 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_ROBOTINTERFACE_DEVICE_H
-#define YARP_ROBOTINTERFACE_DEVICE_H
+#ifndef YARP_ROBOTINTERFACE_EXPERIMENTAL_DEVICE_H
+#define YARP_ROBOTINTERFACE_EXPERIMENTAL_DEVICE_H
 
-#include <yarp/robotinterface/experimental/Action.h>
+#include <yarp/conf/system.h>
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_DEVICE_H_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/dev/experimental/Device.h> file is deprecated in favour of <yarp/dev/Device.h>")
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+
+#include <yarp/robotinterface/Device.h>
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_PARAM_H_ON_PURPOSE
 #include <yarp/robotinterface/experimental/Param.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_PARAM_H_ON_PURPOSE
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H_ON_PURPOSE
 #include <yarp/robotinterface/experimental/Types.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H_ON_PURPOSE
+
 
 namespace yarp {
-
-namespace dev {
-class PolyDriver;
-class PolyDriverDescriptor;
-class PolyDriverList;
-} // namespace dev
-
 namespace robotinterface {
 namespace experimental {
 
-class YARP_robotinterface_API Device
-{
-public:
-    explicit Device();
-    Device(const std::string& name,
-           const std::string& type,
-           const ParamList& params = ParamList(),
-           const ActionList& actions = ActionList());
-    Device(const Device& other);
-    Device& operator=(const Device& other);
-
-    virtual ~Device();
-
-    std::string& name();
-    std::string& type();
-    ParamList& params();
-    ActionList& actions();
-
-    const std::string& name() const;
-    const std::string& type() const;
-    const ParamList& params() const;
-    const ActionList& actions() const;
-
-    bool hasParam(const std::string& name) const;
-    std::string findParam(const std::string& name) const;
-
-    bool open();
-    bool close();
-
-    yarp::dev::PolyDriver* driver() const;
-
-    // thread handling methods
-    void registerThread(yarp::os::Thread* thread) const;
-    void joinThreads() const;
-    void stopThreads() const;
-
-    // configure action
-    bool configure(const Device& target, const ParamList& params) const;
-
-    // calibrate one device
-    bool calibrate(const yarp::dev::PolyDriverDescriptor& target) const;
-
-    // attach a list of drivers to this wrapper
-    bool attach(const yarp::dev::PolyDriverList& drivers) const;
-
-    // abort action
-    bool abort() const;
-
-    // detach all drivers attached to this wrapper
-    bool detach() const;
-
-    // park
-    bool park(const yarp::dev::PolyDriverDescriptor& target) const;
-
-    // custom action
-    bool custom(const ParamList& params) const;
-
-
-private:
-    class Private;
-    Private* const mPriv;
-}; // class Device
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::Device") yarp::robotinterface::Device Device;
 
 } // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
 
-YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Device& t);
+#endif // YARP_NO_DEPRECATED
 
-
-#endif // YARP_ROBOTINTERFACE_DEVICE_H
+#endif // YARP_ROBOTINTERFACE_EXPERIMENTAL_DEVICE_H

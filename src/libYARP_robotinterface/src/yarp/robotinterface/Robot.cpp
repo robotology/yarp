@@ -6,11 +6,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include <yarp/robotinterface/experimental/Robot.h>
+#include <yarp/robotinterface/Robot.h>
 
-#include <yarp/robotinterface/experimental/Action.h>
-#include <yarp/robotinterface/experimental/Device.h>
-#include <yarp/robotinterface/experimental/Param.h>
+#include <yarp/robotinterface/Action.h>
+#include <yarp/robotinterface/Device.h>
+#include <yarp/robotinterface/Param.h>
 
 #include <yarp/os/LogStream.h>
 
@@ -23,7 +23,7 @@
 #include <unordered_set>
 
 
-yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Robot& t)
+yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Robot& t)
 {
     dbg << "(name = \"" << t.name() << "\"";
     if (!t.params().empty()) {
@@ -41,7 +41,7 @@ yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterfa
 }
 
 
-class yarp::robotinterface::experimental::Robot::Private
+class yarp::robotinterface::Robot::Private
 {
 public:
     Private(Robot* /*parent*/) :
@@ -109,11 +109,11 @@ public:
     ParamList params;
     DeviceList devices;
     yarp::dev::PolyDriverList externalDevices;
-    yarp::robotinterface::experimental::ActionPhase currentPhase;
+    yarp::robotinterface::ActionPhase currentPhase;
     unsigned int currentLevel;
-}; // class yarp::robotinterface::experimental::Robot::Private
+}; // class yarp::robotinterface::Robot::Private
 
-bool yarp::robotinterface::experimental::Robot::Private::hasDevice(const std::string& name) const
+bool yarp::robotinterface::Robot::Private::hasDevice(const std::string& name) const
 {
     for (const auto& device : devices) {
         if (name == device.name()) {
@@ -123,7 +123,7 @@ bool yarp::robotinterface::experimental::Robot::Private::hasDevice(const std::st
     return false;
 }
 
-yarp::robotinterface::experimental::Device* yarp::robotinterface::experimental::Robot::Private::findDevice(const std::string& name)
+yarp::robotinterface::Device* yarp::robotinterface::Robot::Private::findDevice(const std::string& name)
 {
     for (auto& device : devices) {
         if (name == device.name()) {
@@ -133,7 +133,7 @@ yarp::robotinterface::experimental::Device* yarp::robotinterface::experimental::
     return nullptr;
 }
 
-bool yarp::robotinterface::experimental::Robot::Private::hasDeviceIncludingExternal(const std::string& name) const
+bool yarp::robotinterface::Robot::Private::hasDeviceIncludingExternal(const std::string& name) const
 {
     if (hasDevice(name)) {
         return true;
@@ -149,7 +149,7 @@ bool yarp::robotinterface::experimental::Robot::Private::hasDeviceIncludingExter
 }
 
 yarp::dev::PolyDriverDescriptor
-yarp::robotinterface::experimental::Robot::Private::findDeviceIncludingExternal(const std::string& name)
+yarp::robotinterface::Robot::Private::findDeviceIncludingExternal(const std::string& name)
 {
     yarp::dev::PolyDriverDescriptor deviceFound;
     deviceFound.poly = nullptr;
@@ -173,7 +173,7 @@ yarp::robotinterface::experimental::Robot::Private::findDeviceIncludingExternal(
     return deviceFound;
 }
 
-bool yarp::robotinterface::experimental::Robot::Private::checkForNamingConflictsInExternalDevices(const yarp::dev::PolyDriverList& externalDevicesList)
+bool yarp::robotinterface::Robot::Private::checkForNamingConflictsInExternalDevices(const yarp::dev::PolyDriverList& externalDevicesList)
 {
     std::unordered_set<std::string> externalDevicesNames;
 
@@ -193,7 +193,7 @@ bool yarp::robotinterface::experimental::Robot::Private::checkForNamingConflicts
 }
 
 
-bool yarp::robotinterface::experimental::Robot::Private::openDevices()
+bool yarp::robotinterface::Robot::Private::openDevices()
 {
     bool ret = true;
     for (auto& device : devices) {
@@ -213,11 +213,11 @@ bool yarp::robotinterface::experimental::Robot::Private::openDevices()
     return ret;
 }
 
-bool yarp::robotinterface::experimental::Robot::Private::closeDevices()
+bool yarp::robotinterface::Robot::Private::closeDevices()
 {
     bool ret = true;
     for (auto it = devices.rbegin(); it != devices.rend(); ++it) {
-        yarp::robotinterface::experimental::Device& device = *it;
+        yarp::robotinterface::Device& device = *it;
 
         // yDebug() << device;
 
@@ -235,7 +235,7 @@ bool yarp::robotinterface::experimental::Robot::Private::closeDevices()
     return ret;
 }
 
-std::vector<unsigned int> yarp::robotinterface::experimental::Robot::Private::getLevels(yarp::robotinterface::experimental::ActionPhase phase) const
+std::vector<unsigned int> yarp::robotinterface::Robot::Private::getLevels(yarp::robotinterface::ActionPhase phase) const
 {
     std::vector<unsigned int> levels;
     for (const auto& device : devices) {
@@ -258,9 +258,9 @@ std::vector<unsigned int> yarp::robotinterface::experimental::Robot::Private::ge
 }
 
 
-std::vector<std::pair<yarp::robotinterface::experimental::Device, yarp::robotinterface::experimental::Action>> yarp::robotinterface::experimental::Robot::Private::getActions(yarp::robotinterface::experimental::ActionPhase phase, unsigned int level) const
+std::vector<std::pair<yarp::robotinterface::Device, yarp::robotinterface::Action>> yarp::robotinterface::Robot::Private::getActions(yarp::robotinterface::ActionPhase phase, unsigned int level) const
 {
-    std::vector<std::pair<yarp::robotinterface::experimental::Device, yarp::robotinterface::experimental::Action>> actions;
+    std::vector<std::pair<yarp::robotinterface::Device, yarp::robotinterface::Action>> actions;
     for (const auto& device : devices) {
         if (device.actions().empty()) {
             continue;
@@ -276,20 +276,20 @@ std::vector<std::pair<yarp::robotinterface::experimental::Device, yarp::robotint
 }
 
 
-bool yarp::robotinterface::experimental::Robot::Private::configure(const yarp::robotinterface::experimental::Device& device, const yarp::robotinterface::experimental::ParamList& params)
+bool yarp::robotinterface::Robot::Private::configure(const yarp::robotinterface::Device& device, const yarp::robotinterface::ParamList& params)
 {
     YARP_FIXME_NOTIMPLEMENTED("configure action")
     return true;
 }
 
-bool yarp::robotinterface::experimental::Robot::Private::calibrate(const yarp::robotinterface::experimental::Device& device,
-                                                                   const yarp::robotinterface::experimental::ParamList& params)
+bool yarp::robotinterface::Robot::Private::calibrate(const yarp::robotinterface::Device& device,
+                                                                   const yarp::robotinterface::ParamList& params)
 {
-    if (!yarp::robotinterface::experimental::hasParam(params, "target")) {
+    if (!yarp::robotinterface::hasParam(params, "target")) {
         yError() << "Action \"" << ActionTypeToString(ActionTypeCalibrate) << R"(" requires "target" parameter)";
         return false;
     }
-    std::string targetDeviceName = yarp::robotinterface::experimental::findParam(params, "target");
+    std::string targetDeviceName = yarp::robotinterface::findParam(params, "target");
 
     if (!hasDeviceIncludingExternal(targetDeviceName)) {
         yError() << "Target device" << targetDeviceName << "does not exist.";
@@ -300,15 +300,15 @@ bool yarp::robotinterface::experimental::Robot::Private::calibrate(const yarp::r
     return device.calibrate(targetDevice);
 }
 
-bool yarp::robotinterface::experimental::Robot::Private::attach(const yarp::robotinterface::experimental::Device& device,
-                                                                const yarp::robotinterface::experimental::ParamList& params)
+bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::Device& device,
+                                                                const yarp::robotinterface::ParamList& params)
 {
     int check = 0;
-    if (yarp::robotinterface::experimental::hasParam(params, "network"))
+    if (yarp::robotinterface::hasParam(params, "network"))
         check++;
-    if (yarp::robotinterface::experimental::hasParam(params, "networks"))
+    if (yarp::robotinterface::hasParam(params, "networks"))
         check++;
-    if (yarp::robotinterface::experimental::hasParam(params, "all"))
+    if (yarp::robotinterface::hasParam(params, "all"))
         check++;
 
     if (check > 1) {
@@ -318,12 +318,12 @@ bool yarp::robotinterface::experimental::Robot::Private::attach(const yarp::robo
 
     yarp::dev::PolyDriverList drivers;
 
-    if (yarp::robotinterface::experimental::hasParam(params, "device")) {
-        std::string targetDeviceName = yarp::robotinterface::experimental::findParam(params, "device");
+    if (yarp::robotinterface::hasParam(params, "device")) {
+        std::string targetDeviceName = yarp::robotinterface::findParam(params, "device");
 
         std::string targetNetwork = "...";
-        if (yarp::robotinterface::experimental::hasParam(params, "network")) {
-            targetNetwork = yarp::robotinterface::experimental::findParam(params, "network");
+        if (yarp::robotinterface::hasParam(params, "network")) {
+            targetNetwork = yarp::robotinterface::findParam(params, "network");
         }
 
         if (!hasDeviceIncludingExternal(targetDeviceName)) {
@@ -335,7 +335,7 @@ bool yarp::robotinterface::experimental::Robot::Private::attach(const yarp::robo
         // yDebug() << "Attach device" << device.name() << "to" << targetDevice.name() << "as" << targetNetwork;
         drivers.push(targetDevice.poly, targetNetwork.c_str());
 
-    } else if (yarp::robotinterface::experimental::hasParam(params, "all")) {
+    } else if (yarp::robotinterface::hasParam(params, "all")) {
         for (auto& device : devices) {
             drivers.push(device.driver(), "all");
         }
@@ -344,19 +344,19 @@ bool yarp::robotinterface::experimental::Robot::Private::attach(const yarp::robo
             const yarp::dev::PolyDriverDescriptor* externalDevice = externalDevices[i];
             drivers.push(externalDevice->poly, "all");
         }
-    } else if (yarp::robotinterface::experimental::hasParam(params, "networks")) {
+    } else if (yarp::robotinterface::hasParam(params, "networks")) {
         yarp::os::Value v;
-        v.fromString(yarp::robotinterface::experimental::findParam(params, "networks").c_str());
+        v.fromString(yarp::robotinterface::findParam(params, "networks").c_str());
         yarp::os::Bottle& targetNetworks = *(v.asList());
 
         for (size_t i = 0; i < targetNetworks.size(); ++i) {
             std::string targetNetwork = targetNetworks.get(i).toString();
 
-            if (!yarp::robotinterface::experimental::hasParam(params, targetNetwork)) {
+            if (!yarp::robotinterface::hasParam(params, targetNetwork)) {
                 yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << "\" requires one parameter per network. \"" << targetNetwork << "\" parameter is missing.";
                 return false;
             }
-            std::string targetDeviceName = yarp::robotinterface::experimental::findParam(params, targetNetwork);
+            std::string targetDeviceName = yarp::robotinterface::findParam(params, targetNetwork);
             if (!hasDeviceIncludingExternal(targetDeviceName)) {
                 yError() << "Target device" << targetDeviceName << "(network =" << targetNetwork << ") does not exist.";
                 return false;
@@ -379,14 +379,14 @@ bool yarp::robotinterface::experimental::Robot::Private::attach(const yarp::robo
     return device.attach(drivers);
 }
 
-bool yarp::robotinterface::experimental::Robot::Private::abort(const yarp::robotinterface::experimental::Device& device, const yarp::robotinterface::experimental::ParamList& params)
+bool yarp::robotinterface::Robot::Private::abort(const yarp::robotinterface::Device& device, const yarp::robotinterface::ParamList& params)
 {
     YARP_FIXME_NOTIMPLEMENTED("abort action")
     return true;
 }
 
 
-bool yarp::robotinterface::experimental::Robot::Private::detach(const yarp::robotinterface::experimental::Device& device, const yarp::robotinterface::experimental::ParamList& params)
+bool yarp::robotinterface::Robot::Private::detach(const yarp::robotinterface::Device& device, const yarp::robotinterface::ParamList& params)
 {
 
     if (!params.empty()) {
@@ -396,14 +396,14 @@ bool yarp::robotinterface::experimental::Robot::Private::detach(const yarp::robo
     return device.detach();
 }
 
-bool yarp::robotinterface::experimental::Robot::Private::park(const yarp::robotinterface::experimental::Device& device,
-                                                              const yarp::robotinterface::experimental::ParamList& params)
+bool yarp::robotinterface::Robot::Private::park(const yarp::robotinterface::Device& device,
+                                                              const yarp::robotinterface::ParamList& params)
 {
-    if (!yarp::robotinterface::experimental::hasParam(params, "target")) {
+    if (!yarp::robotinterface::hasParam(params, "target")) {
         yError() << "Action \"" << ActionTypeToString(ActionTypePark) << R"(" requires "target" parameter)";
         return false;
     }
-    std::string targetDeviceName = yarp::robotinterface::experimental::findParam(params, "target");
+    std::string targetDeviceName = yarp::robotinterface::findParam(params, "target");
 
     if (!hasDeviceIncludingExternal(targetDeviceName)) {
         yError() << "Target device" << targetDeviceName << "does not exist.";
@@ -414,25 +414,25 @@ bool yarp::robotinterface::experimental::Robot::Private::park(const yarp::roboti
     return device.park(targetDevice);
 }
 
-bool yarp::robotinterface::experimental::Robot::Private::custom(const yarp::robotinterface::experimental::Device& device, const yarp::robotinterface::experimental::ParamList& params)
+bool yarp::robotinterface::Robot::Private::custom(const yarp::robotinterface::Device& device, const yarp::robotinterface::ParamList& params)
 {
     YARP_FIXME_NOTIMPLEMENTED("custom action")
     return true;
 }
 
-yarp::robotinterface::experimental::Robot::Robot() :
+yarp::robotinterface::Robot::Robot() :
         mPriv(new Private(this))
 {
 }
 
-yarp::robotinterface::experimental::Robot::Robot(const std::string& name, const yarp::robotinterface::experimental::DeviceList& devices) :
+yarp::robotinterface::Robot::Robot(const std::string& name, const yarp::robotinterface::DeviceList& devices) :
         mPriv(new Private(this))
 {
     mPriv->name = name;
     mPriv->devices = devices;
 }
 
-yarp::robotinterface::experimental::Robot::Robot(const yarp::robotinterface::experimental::Robot& other) :
+yarp::robotinterface::Robot::Robot(const yarp::robotinterface::Robot& other) :
         mPriv(new Private(this))
 {
     mPriv->name = other.mPriv->name;
@@ -444,7 +444,7 @@ yarp::robotinterface::experimental::Robot::Robot(const yarp::robotinterface::exp
     mPriv->params = other.mPriv->params;
 }
 
-yarp::robotinterface::experimental::Robot& yarp::robotinterface::experimental::Robot::operator=(const yarp::robotinterface::experimental::Robot& other)
+yarp::robotinterface::Robot& yarp::robotinterface::Robot::operator=(const yarp::robotinterface::Robot& other)
 {
     if (&other != this) {
         mPriv->name = other.mPriv->name;
@@ -463,100 +463,99 @@ yarp::robotinterface::experimental::Robot& yarp::robotinterface::experimental::R
     return *this;
 }
 
-yarp::robotinterface::experimental::Robot::~Robot()
+yarp::robotinterface::Robot::~Robot()
 {
     delete mPriv;
 }
 
-std::string& yarp::robotinterface::experimental::Robot::name()
+std::string& yarp::robotinterface::Robot::name()
 {
     return mPriv->name;
 }
 
-unsigned int& yarp::robotinterface::experimental::Robot::build()
+unsigned int& yarp::robotinterface::Robot::build()
 {
     return mPriv->build;
 }
 
-std::string& yarp::robotinterface::experimental::Robot::portprefix()
+std::string& yarp::robotinterface::Robot::portprefix()
 {
     return mPriv->portprefix;
 }
 
-void yarp::robotinterface::experimental::Robot::setVerbose(bool verbose)
+void yarp::robotinterface::Robot::setVerbose(bool verbose)
 {
     for (auto& device : devices()) {
         ParamList& params = device.params();
         // Do not override "verbose" param if explicitly set in the xml
-        if (verbose && !yarp::robotinterface::experimental::hasParam(params, "verbose")) {
+        if (verbose && !yarp::robotinterface::hasParam(params, "verbose")) {
             device.params().push_back(Param("verbose", "1"));
         }
     }
 }
 
-void yarp::robotinterface::experimental::Robot::setAllowDeprecatedDevices(bool allowDeprecatedDevices)
+void yarp::robotinterface::Robot::setAllowDeprecatedDevices(bool allowDeprecatedDevices)
 {
     for (auto& device : devices()) {
         ParamList& params = device.params();
         // Do not override "allow-deprecated-devices" param if explicitly set in the xml
-        if (allowDeprecatedDevices && !yarp::robotinterface::experimental::hasParam(params, "allow-deprecated-devices")) {
+        if (allowDeprecatedDevices && !yarp::robotinterface::hasParam(params, "allow-deprecated-devices")) {
             device.params().push_back(Param("allow-deprecated-devices", "1"));
         }
     }
 }
 
-yarp::robotinterface::experimental::ParamList& yarp::robotinterface::experimental::Robot::params()
+yarp::robotinterface::ParamList& yarp::robotinterface::Robot::params()
 {
     return mPriv->params;
 }
 
-yarp::robotinterface::experimental::DeviceList& yarp::robotinterface::experimental::Robot::devices()
+yarp::robotinterface::DeviceList& yarp::robotinterface::Robot::devices()
 {
     return mPriv->devices;
 }
 
-yarp::robotinterface::experimental::Device& yarp::robotinterface::experimental::Robot::device(const std::string& name)
+yarp::robotinterface::Device& yarp::robotinterface::Robot::device(const std::string& name)
 {
     return *mPriv->findDevice(name);
 }
 
-const std::string& yarp::robotinterface::experimental::Robot::name() const
+const std::string& yarp::robotinterface::Robot::name() const
 {
     return mPriv->name;
 }
 
-const unsigned int& yarp::robotinterface::experimental::Robot::build() const
+const unsigned int& yarp::robotinterface::Robot::build() const
 {
     return mPriv->build;
 }
 
-const std::string& yarp::robotinterface::experimental::Robot::portprefix() const
+const std::string& yarp::robotinterface::Robot::portprefix() const
 {
     return mPriv->portprefix;
 }
 
-const yarp::robotinterface::experimental::ParamList& yarp::robotinterface::experimental::Robot::params() const
+const yarp::robotinterface::ParamList& yarp::robotinterface::Robot::params() const
 {
     return mPriv->params;
 }
 
-
-const yarp::robotinterface::experimental::DeviceList& yarp::robotinterface::experimental::Robot::devices() const
+const yarp::robotinterface::DeviceList& yarp::robotinterface::Robot::devices() const
 {
     return mPriv->devices;
 }
 
-bool yarp::robotinterface::experimental::Robot::hasDevice(const std::string& name) const
+bool yarp::robotinterface::Robot::hasDevice(const std::string& name) const
 {
     return mPriv->hasDevice(name);
 }
 
-const yarp::robotinterface::experimental::Device& yarp::robotinterface::experimental::Robot::device(const std::string& name) const
+const yarp::robotinterface::Device& yarp::robotinterface::Robot::device(const std::string& name) const
 {
     return *mPriv->findDevice(name);
 }
 
-void yarp::robotinterface::experimental::Robot::interrupt()
+void yarp::robotinterface::Robot::interrupt()
 {
     yInfo() << "Interrupt received. Stopping all running threads.";
 
@@ -567,7 +566,7 @@ void yarp::robotinterface::experimental::Robot::interrupt()
     }
 }
 
-bool yarp::robotinterface::experimental::Robot::setExternalDevices(const yarp::dev::PolyDriverList& list)
+bool yarp::robotinterface::Robot::setExternalDevices(const yarp::dev::PolyDriverList& list)
 {
     bool nameConflict = mPriv->checkForNamingConflictsInExternalDevices(list);
     if (nameConflict) {
@@ -578,7 +577,7 @@ bool yarp::robotinterface::experimental::Robot::setExternalDevices(const yarp::d
     return true;
 }
 
-bool yarp::robotinterface::experimental::Robot::enterPhase(yarp::robotinterface::experimental::ActionPhase phase)
+bool yarp::robotinterface::Robot::enterPhase(yarp::robotinterface::ActionPhase phase)
 {
     yInfo() << ActionPhaseToString(phase) << "phase starting...";
 
@@ -724,22 +723,22 @@ bool yarp::robotinterface::experimental::Robot::enterPhase(yarp::robotinterface:
     return ret;
 }
 
-yarp::robotinterface::experimental::ActionPhase yarp::robotinterface::experimental::Robot::currentPhase() const
+yarp::robotinterface::ActionPhase yarp::robotinterface::Robot::currentPhase() const
 {
     return mPriv->currentPhase;
 }
 
-int yarp::robotinterface::experimental::Robot::currentLevel() const
+int yarp::robotinterface::Robot::currentLevel() const
 {
     return mPriv->currentLevel;
 }
 
-bool yarp::robotinterface::experimental::Robot::hasParam(const std::string& name) const
+bool yarp::robotinterface::Robot::hasParam(const std::string& name) const
 {
-    return yarp::robotinterface::experimental::hasParam(mPriv->params, name);
+    return yarp::robotinterface::hasParam(mPriv->params, name);
 }
 
-std::string yarp::robotinterface::experimental::Robot::findParam(const std::string& name) const
+std::string yarp::robotinterface::Robot::findParam(const std::string& name) const
 {
-    return yarp::robotinterface::experimental::findParam(mPriv->params, name);
+    return yarp::robotinterface::findParam(mPriv->params, name);
 }
