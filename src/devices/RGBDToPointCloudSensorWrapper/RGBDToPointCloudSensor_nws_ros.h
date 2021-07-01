@@ -23,8 +23,7 @@
 
 #include <yarp/sig/Vector.h>
 
-#include <yarp/dev/IWrapper.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IFrameGrabberControls.h>
@@ -55,7 +54,7 @@ namespace RGBDToPointCloudImpl{
  *   Parameters required by this device are:
  * | Parameter name         | SubParameter            | Type    | Units          | Default Value | Required                        | Description                                                                                         | Notes |
  * |:----------------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:------------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
- * | period                 |      -                  | int     |  s             |   0.033       |  No                             | refresh period of the broadcasted values in ms                                                      | default 0.033 s |
+ * | period                 |      -                  | double  |  s             |   0.033       |  No                             | refresh period of the broadcasted values in s                                                       | default 0.033 s |
  * | subdevice              |      -                  | string  |  -             |   -           |  alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | pointCloudTopicName    |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS point cloud topic                                                              | must start with a leading '/' |
  * | frame_Id               |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame                                                                 |                               |
@@ -69,7 +68,7 @@ namespace RGBDToPointCloudImpl{
  * \code{.unparsed}
  * device RGBDToPointCloudSensor_nws_ros
  * subdevice <RGBDsensor>
- * period 30
+ * period 0.03
  * pointCloudTopicName /<robotName>/RGBDToPointCloud
  * frame_Id /<robotName>/<framed_Id>
  * nodeName /<robotName>/RGBDToPointCloudSensorNode
@@ -78,8 +77,7 @@ namespace RGBDToPointCloudImpl{
 
 class RGBDToPointCloudSensor_nws_ros :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IWrapper,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread
 {
 private:
@@ -103,11 +101,11 @@ private:
         std::string     parname;
     };
 
-    PointCloudTopicType   rosPublisherPort_pointCloud;
-    yarp::os::Node*       rosNode = nullptr;
+    PointCloudTopicType   publisherPort_pointCloud;
+    yarp::os::Node*       m_node = nullptr;
     std::string           nodeName;
     std::string           pointCloudTopicName;
-    std::string           rosFrameId;
+    std::string           frameId;
 
     // images from device
     yarp::sig::FlexImage  colorImage;
@@ -126,7 +124,6 @@ private:
     int         verbose = 4;
     bool        forceInfoSync = true;
     bool        initialize_ROS(yarp::os::Searchable& config);
-    bool        read(yarp::os::ConnectionReader& connection);
 
     // Open the wrapper only, the attach method needs to be called before using it
     // Typical usage: yarprobotinterface
@@ -145,8 +142,6 @@ private:
 
     bool writeData();
 
-    static std::string yarp2RosPixelCode(int code);
-
 public:
     RGBDToPointCloudSensor_nws_ros();
     RGBDToPointCloudSensor_nws_ros(const RGBDToPointCloudSensor_nws_ros&) = delete;
@@ -159,17 +154,10 @@ public:
     bool        fromConfig(yarp::os::Searchable &params);
     bool        close() override;
 
-    void        setId(const std::string &id);
-    std::string getId();
-
     /**
       * Specify which sensor this thread has to read from.
       */
-    bool        attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool        detachAll() override;
-
     bool        attach(yarp::dev::PolyDriver *poly) override;
-    bool        attach(yarp::dev::IRGBDSensor *s);
     bool        detach() override;
 
     bool        threadInit() override;
