@@ -149,7 +149,11 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
                     if (!yarp::sig::utils::cropRect(full, vertices[0], vertices[1], cropped)) {
                         reply.addVocab(VOCAB_FAILED);
                         reply.addString("GetImageCrop failed: utils::cropRect error.");
-                        yCError(FRAMEGRABBEROF_RESPONDER) << "GetImageCrop failed: utils::cropRect error";
+                        yCError(FRAMEGRABBEROF_RESPONDER, "GetImageCrop failed: utils::cropRect error: (%d, %d) (%d, %d)",
+                                vertices[0].first,
+                                vertices[0].second,
+                                vertices[1].first,
+                                vertices[1].second);
                         return false;
                     }
                 } else if (cmd.get(3).asVocab() == YARP_CROP_LIST) {

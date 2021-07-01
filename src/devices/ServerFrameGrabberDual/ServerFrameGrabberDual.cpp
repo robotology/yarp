@@ -458,7 +458,11 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                                     if(!utils::cropRect(full, vertices[0], vertices[1], cropped))
                                     {
                                         response.addString("GetImageCrop failed: utils::cropRect error.");
-                                        yCError(SERVERGRABBER) << "GetImageCrop failed: utils::cropRect error";
+                                        yCError(SERVERGRABBER, "GetImageCrop failed: utils::cropRect error: (%d, %d) (%d, %d)",
+                                                vertices[0].first,
+                                                vertices[0].second,
+                                                vertices[1].first,
+                                                vertices[1].second);
                                         return false;
                                     }
                                 }

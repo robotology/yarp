@@ -32,7 +32,11 @@ bool IFrameGrabberOf<ImageType>::getImageCrop(cropType_id_t cropType,
         getImage(full);
 
         if (!yarp::sig::utils::cropRect(full, vertices[0], vertices[1], image)) {
-            yCError(IFRAMEGRABBEROF, "GetImageCrop failed: utils::cropRect error");
+            yCError(IFRAMEGRABBEROF, "GetImageCrop failed: utils::cropRect error: (%d, %d) (%d, %d)",
+                    vertices[0].first,
+                    vertices[0].second,
+                    vertices[1].first,
+                    vertices[1].second);
             return false;
         }
     } else if(cropType == YARP_CROP_LIST) {
