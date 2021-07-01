@@ -18,9 +18,11 @@
 
 #define _USE_MATH_DEFINES
 
-#include "rangefinder2D_nws_ros.h"
-#include <yarp/dev/ControlBoardInterfaces.h>
+#include "Rangefinder2D_nws_ros.h"
+
 #include <yarp/os/LogStream.h>
+
+#include <yarp/dev/ControlBoardInterfaces.h>
 
 #include <cmath>
 #include <sstream>

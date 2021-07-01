@@ -41,15 +41,15 @@ endif()
 yarp_prepare_plugin(rangefinder2D_nws_ros
                     CATEGORY device
                     TYPE Rangefinder2D_nws_ros
-                    INCLUDE rangefinder2D_nws_ros.h
+                    INCLUDE Rangefinder2D_nws_ros.h
                     EXTRA_CONFIG WRAPPER=rangefinder2D_nws_ros
                     DEFAULT ON)
 
 if(NOT SKIP_rangefinder2D_nws_ros)
   yarp_add_plugin(yarp_rangefinder2D_nws_ros)
 
-  target_sources(yarp_rangefinder2D_nws_ros PRIVATE rangefinder2D_nws_ros.cpp
-                                                      rangefinder2D_nws_ros.h)
+  target_sources(yarp_rangefinder2D_nws_ros PRIVATE Rangefinder2D_nws_ros.cpp
+          Rangefinder2D_nws_ros.h)
 
   target_link_libraries(yarp_rangefinder2D_nws_ros PRIVATE YARP::YARP_os
                                                            YARP::YARP_sig
@@ -76,15 +76,15 @@ endif()
 yarp_prepare_plugin(rangefinder2D_nws_yarp
                     CATEGORY device
                     TYPE Rangefinder2D_nws_yarp
-                    INCLUDE rangefinder2D_nws_yarp.h
+                    INCLUDE Rangefinder2D_nws_yarp.h
                     EXTRA_CONFIG WRAPPER=rangefinder2D_nws_yarp
                     DEFAULT ON)
 
 if(NOT SKIP_rangefinder2D_nws_yarp)
   yarp_add_plugin(yarp_rangefinder2D_nws_yarp)
 
-  target_sources(yarp_rangefinder2D_nws_yarp PRIVATE rangefinder2D_nws_yarp.cpp
-                                                     rangefinder2D_nws_yarp.h)
+  target_sources(yarp_rangefinder2D_nws_yarp PRIVATE Rangefinder2D_nws_yarp.cpp
+          Rangefinder2D_nws_yarp.h)
 
   target_link_libraries(yarp_rangefinder2D_nws_yarp PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig
