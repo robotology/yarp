@@ -8,14 +8,9 @@
 
 #include "RGBDToPointCloudSensor_nws_ros.h"
 #include <sstream>
-#include <cstdio>
-#include <cstring>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/GenericVocabs.h>
-#include <yarp/rosmsg/impl/yarpRosHelper.h>
 #include "rosPixelCode.h"
-#include <RGBDRosConversionUtils.h>
 #include <yarp/sig/PointCloudUtils.h>
 #include <yarp/rosmsg/std_msgs/Header.h>
 #include <yarp/rosmsg/sensor_msgs/PointField.h>
@@ -31,7 +26,6 @@ YARP_LOG_COMPONENT(RGBDTOPOINTCLOUDSENSORNWSROS, "yarp.devices.RGBDToPointCloudS
 RGBDToPointCloudSensor_nws_ros::RGBDToPointCloudSensor_nws_ros() :
     PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
-
 }
 
 
@@ -45,100 +39,59 @@ RGBDToPointCloudSensor_nws_ros::~RGBDToPointCloudSensor_nws_ros()
 
 bool RGBDToPointCloudSensor_nws_ros::open(yarp::os::Searchable &config)
 {
-    m_conf.fromString(config.toString());
-    if(verbose >= 5)
-    {
-        yCTrace(RGBDTOPOINTCLOUDSENSORNWSROS) << "\nParameters are: \n" << config.toString();
+    // check period
+    if (!config.check("period", "refresh period of the broadcasted values in s")) {
+        if(verbose >= 3) {
+            yCInfo(RGBDTOPOINTCLOUDSENSORNWSROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
+        }
+    }
+    else {
+        period = config.find("period").asFloat64();
     }
 
-    if(!fromConfig(config))
-    {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Failed to open, check previous log for error messages.";
+    // nodename parameter
+    if (!config.check("node_name", "the name of the ros node")) {
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "missing node_name parameter";
         return false;
     }
+    nodeName = config.find("node_name").asString();
 
-    if(!initialize_ROS(config))
+
+    // baseTopicName parameter
+    if (!config.check("base_topic_name", "the name of the ros node")) {
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "missing base_topic_name parameter, using default one";
+        return false;
+    }
+    pointCloudTopicName = config.find("base_topic_name").asString() + "/points";
+
+    // frame_id parameter
+    if (!config.check("frame_id", "the name of the ros node")) {
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "missing frame_id parameter";
+        return false;
+    }
+    frameId = config.find("frame_id").asString();
+
+    // open topics here if needed
+    m_node = new yarp::os::Node(nodeName);
+    nodeSeq = 0;
+    if (!publisherPort_pointCloud.topic(pointCloudTopicName))
     {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << nodeName << "Error initializing ROS topic";
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Unable to publish data on " << pointCloudTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
 
     // check if we need to create subdevice or if they are
     // passed later on through attachAll()
-    if(isSubdeviceOwned)
-    {
+    if(config.check("subdevice")) {
         if(! openAndAttachSubDevice(config))
         {
             yCError(RGBDTOPOINTCLOUDSENSORNWSROS, "Error while opening subdevice");
             return false;
         }
-    }
-    else
-    {
-        if(!openDeferredAttach(config))
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool RGBDToPointCloudSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
-{
-    if (!config.check("period", "refresh period of the broadcasted values in s"))
-    {
-        if(verbose >= 3)
-        {
-            yCInfo(RGBDTOPOINTCLOUDSENSORNWSROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
-        }
-    }
-    else
-    {
-        period = config.find("period").asFloat64();
-    }
-
-    //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
-    unsigned int                    i;
-    std::vector<param<string> >     rosStringParam;
-    param<string>*                  prm;
-
-    rosStringParam.emplace_back(nodeName,       nodeName_param          );
-    rosStringParam.emplace_back(frameId,     frameId_param           );
-    rosStringParam.emplace_back(pointCloudTopicName, pointCloudTopicName_param    );
-
-    for (i = 0; i < rosStringParam.size(); i++)
-    {
-        prm = &rosStringParam[i];
-        if (!config.check(prm->parname))
-        {
-            if(verbose >= 3)
-            {
-                yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Missing " << prm->parname << "check your configuration file";
-            }
-            return false;
-        }
-        *(prm->var) = config.find(prm->parname).asString();
-    }
-
-    if (config.check("forceInfoSync"))
-    {
-        forceInfoSync = config.find("forceInfoSync").asBool();
-    }
-
-    if(config.check("subdevice")) {
         isSubdeviceOwned=true;
     } else {
         isSubdeviceOwned=false;
     }
-
-    return true;
-}
-
-bool RGBDToPointCloudSensor_nws_ros::openDeferredAttach(Searchable& prop)
-{
-    // I dunno what to do here now...
-    isSubdeviceOwned = false;
     return true;
 }
 
@@ -194,21 +147,6 @@ bool RGBDToPointCloudSensor_nws_ros::close()
         m_node = nullptr;
     }
 
-    return true;
-}
-
-/* Helper functions */
-
-bool RGBDToPointCloudSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
-{
-    // open topics here if needed
-    m_node = new yarp::os::Node(nodeName);
-    nodeSeq = 0;
-    if (!publisherPort_pointCloud.topic(pointCloudTopicName))
-    {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Unable to publish data on " << pointCloudTopicName.c_str() << " topic, check your yarp-ROS network configuration";
-        return false;
-    }
     return true;
 }
 
@@ -281,22 +219,21 @@ bool RGBDToPointCloudSensor_nws_ros::writeData()
     yarp::os::Property propIntrinsic;
     bool rgb_data_ok = true;
     bool depth_data_ok = true;
-    bool intrinsic_ok = false;
 
-    if (((colorStamp.getTime() - oldColorStamp.getTime()) > 0) == false)
+    if ((colorStamp.getTime() - oldColorStamp.getTime()) <= 0)
     {
         rgb_data_ok=false;
         //return true;
     }
     else { oldColorStamp = colorStamp; }
 
-    if (((depthStamp.getTime() - oldDepthStamp.getTime()) > 0) == false)
+    if ((depthStamp.getTime() - oldDepthStamp.getTime()) <= 0)
     {
         depth_data_ok=false;
         //return true;
     }
     else { oldDepthStamp = depthStamp; }
-    intrinsic_ok = sensor_p->getRgbIntrinsicParam(propIntrinsic);
+    bool intrinsic_ok = sensor_p->getRgbIntrinsicParam(propIntrinsic);
 
 
     // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
