@@ -69,7 +69,7 @@ bool DeviceResponder::read(ConnectionReader& connection)
     if (!cmd.read(connection)) {
         return false;
     }
-    yCDebug(DEVICERESPONDER, "Command received: %s", cmd.toString().c_str());
+    yCTrace(DEVICERESPONDER, "Command received: %s", cmd.toString().c_str());
     respond(cmd, response);
     if (response.size() >= 1) {
         ConnectionWriter* writer = connection.getWriter();
@@ -89,7 +89,7 @@ bool DeviceResponder::read(ConnectionReader& connection)
                 response.write(*writer);
             }
 
-            yCDebug(DEVICERESPONDER, "Response sent: %s", response.toString().c_str());
+            yCTrace(DEVICERESPONDER, "Response sent: %s", response.toString().c_str());
         }
     } else {
         ConnectionWriter* writer = connection.getWriter();
