@@ -18,20 +18,24 @@
 
 #define _USE_MATH_DEFINES
 
-#include <yarp/os/Network.h>
-#include <yarp/os/RFModule.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Port.h>
+#include "Localization2D_nws_ros.h"
+
+#include <yarp/os/Bottle.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/os/Bottle.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/RFModule.h>
+#include <yarp/os/Time.h>
+
 #include <yarp/sig/Vector.h>
-#include <yarp/dev/IMap2D.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/IMap2D.h>
+#include <yarp/dev/PolyDriver.h>
+
 #include <yarp/math/Math.h>
-#include "localization2D_nws_ros.h"
 
 #include <cmath>
 

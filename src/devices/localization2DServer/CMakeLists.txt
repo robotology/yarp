@@ -45,15 +45,15 @@ endif()
 yarp_prepare_plugin(localization2D_nws_yarp
                     CATEGORY device
                     TYPE Localization2D_nws_yarp
-                    INCLUDE localization2D_nws_yarp.h
+                    INCLUDE Localization2D_nws_yarp.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_localization2D_nws_yarp)
   yarp_add_plugin(yarp_localization2D_nws_yarp)
 
-  target_sources(yarp_localization2D_nws_yarp PRIVATE localization2D_nws_yarp.h
-                                                   localization2D_nws_yarp.cpp)
+  target_sources(yarp_localization2D_nws_yarp PRIVATE Localization2D_nws_yarp.h
+          Localization2D_nws_yarp.cpp)
 
   target_link_libraries(yarp_localization2D_nws_yarp YARP::YARP_os
                                                   YARP::YARP_sig
@@ -81,15 +81,15 @@ endif()
 yarp_prepare_plugin(localization2D_nws_ros
                     CATEGORY device
                     TYPE Localization2D_nws_ros
-                    INCLUDE localization2D_nws_ros.h
+                    INCLUDE Localization2D_nws_ros.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_localization2D_nws_ros)
   yarp_add_plugin(yarp_localization2D_nws_ros)
 
-  target_sources(yarp_localization2D_nws_ros PRIVATE localization2D_nws_ros.h
-                                                   localization2D_nws_ros.cpp)
+  target_sources(yarp_localization2D_nws_ros PRIVATE Localization2D_nws_ros.h
+          Localization2D_nws_ros.cpp)
 
   target_link_libraries(yarp_localization2D_nws_ros YARP::YARP_os
                                                   YARP::YARP_sig
