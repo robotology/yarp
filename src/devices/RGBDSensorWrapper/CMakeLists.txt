@@ -49,15 +49,15 @@ endif()
 yarp_prepare_plugin(rgbdSensor_nws_ros
                     CATEGORY device
                     TYPE RgbdSensor_nws_ros
-                    INCLUDE rgbdSensor_nws_ros.h
+                    INCLUDE RgbdSensor_nws_ros.h
                     EXTRA_CONFIG WRAPPER=rgbdSensor_nws_ros
                     DEFAULT ON)
 
 if(NOT SKIP_rgbdSensor_nws_ros)
   yarp_add_plugin(yarp_rgbdSensor_nws_ros)
 
-  target_sources(yarp_rgbdSensor_nws_ros PRIVATE rgbdSensor_nws_ros.cpp
-                                                 rgbdSensor_nws_ros.h)
+  target_sources(yarp_rgbdSensor_nws_ros PRIVATE RgbdSensor_nws_ros.cpp
+          RgbdSensor_nws_ros.h)
 
   target_sources(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
   target_include_directories(yarp_rgbdSensor_nws_ros PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)
@@ -92,15 +92,15 @@ endif()
 yarp_prepare_plugin(rgbdSensor_nws_yarp
                     CATEGORY device
                     TYPE RgbdSensor_nws_yarp
-                    INCLUDE rgbdSensor_nws_yarp.h
+                    INCLUDE RgbdSensor_nws_yarp.h
                     EXTRA_CONFIG WRAPPER=rgbdSensor_nws_yarp
                     DEFAULT ON)
 
 if(NOT SKIP_rgbdSensor_nws_yarp)
   yarp_add_plugin(yarp_rgbdSensor_nws_yarp)
 
-  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE rgbdSensor_nws_yarp.cpp
-                                                  rgbdSensor_nws_yarp.h)
+  target_sources(yarp_rgbdSensor_nws_yarp PRIVATE RgbdSensor_nws_yarp.cpp
+          RgbdSensor_nws_yarp.h)
 
   target_sources(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
   target_include_directories(yarp_rgbdSensor_nws_yarp PRIVATE $<TARGET_PROPERTY:framegrabber_protocol,INTERFACE_INCLUDE_DIRECTORIES>)

@@ -6,14 +6,16 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "rgbdSensor_nws_yarp.h"
-#include <sstream>
-#include <cstdio>
-#include <cstring>
+#include "RgbdSensor_nws_yarp.h"
+
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
 #include <yarp/proto/framegrabber/CameraVocabs.h>
+
+#include <cstdio>
+#include <cstring>
+#include <sstream>
 
 using namespace RGBDImpl;
 using namespace yarp::sig;
