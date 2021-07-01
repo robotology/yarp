@@ -170,13 +170,11 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
 RgbdSensor_nws_yarp::RgbdSensor_nws_yarp() :
     PeriodicThread(DEFAULT_THREAD_PERIOD),
-    nodeSeq(0),
     period(DEFAULT_THREAD_PERIOD),
     sensor_p(nullptr),
     fgCtrl(nullptr),
     sensorStatus(IRGBDSensor::RGBD_SENSOR_NOT_READY),
     verbose(4),
-    forceInfoSync(true),
     isSubdeviceOwned(false),
     subDeviceOwned(nullptr)
 {}
@@ -235,13 +233,13 @@ bool RgbdSensor_nws_yarp::open(yarp::os::Searchable &config)
 
 bool RgbdSensor_nws_yarp::fromConfig(yarp::os::Searchable &config)
 {
-    if (!config.check("period", "refresh period of the broadcasted values in ms"))
+    if (!config.check("period", "refresh period of the broadcasted values in s"))
     {
         if(verbose >= 3)
             yCInfo(RGBDSENSORNWSYARP) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
     }
     else
-        period = config.find("period").asInt32() / 1000.0;
+        period = config.find("period").asFloat64();
 
     std::string rootName;
     rootName = config.check("name",Value("/"), "starting '/' if needed.").asString();
@@ -303,7 +301,7 @@ bool RgbdSensor_nws_yarp::openAndAttachSubDevice(Searchable& prop)
 bool RgbdSensor_nws_yarp::close()
 {
     yCTrace(RGBDSENSORNWSYARP, "Close");
-    detachAll();
+    detach();
 
     // close subdevice if it was created inside the open (--subdevice option)
     if(isSubdeviceOwned)
@@ -370,46 +368,10 @@ std::string RgbdSensor_nws_yarp::getId()
 }
 
 /**
-  * IWrapper and IMultipleWrapper interfaces
+  * WrapperSingle interface
   */
-bool RgbdSensor_nws_yarp::attachAll(const PolyDriverList &device2attach)
-{
-    // First implementation only accepts devices with both the interfaces Framegrabber and IDepthSensor,
-    // on a second version maybe two different devices could be accepted, one for each interface.
-    // Yet to be defined which and how parameters shall be used in this case ... using the name of the
-    // interface to view could be a good initial guess.
-    if (device2attach.size() != 1)
-    {
-        yCError(RGBDSENSORNWSYARP, "Cannot attach more than one device");
-        return false;
-    }
 
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-    if(device2attach[0]->key == "IRGBDSensor")
-    {
-        yCInfo(RGBDSENSORNWSYARP) << "Good name!";
-    }
-    else
-    {
-        yCInfo(RGBDSENSORNWSYARP) << "Bad name!";
-    }
-
-    if (!Idevice2attach->isValid())
-    {
-        yCError(RGBDSENSORNWSYARP) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
-        return false;
-    }
-
-    Idevice2attach->view(sensor_p);
-    Idevice2attach->view(fgCtrl);
-    if(!attach(sensor_p))
-        return false;
-
-    PeriodicThread::setPeriod(period);
-    return PeriodicThread::start();
-}
-
-bool RgbdSensor_nws_yarp::detachAll()
+bool RgbdSensor_nws_yarp::detach()
 {
     if (yarp::os::PeriodicThread::isRunning())
         yarp::os::PeriodicThread::stop();
@@ -420,32 +382,6 @@ bool RgbdSensor_nws_yarp::detachAll()
 
     sensor_p = nullptr;
     return true;
-}
-
-bool RgbdSensor_nws_yarp::attach(yarp::dev::IRGBDSensor *s)
-{
-    if(s == nullptr)
-    {
-        yCError(RGBDSENSORNWSYARP) << "Attached device has no valid IRGBDSensor interface.";
-        return false;
-    }
-    sensor_p = s;
-    if(!rgbdParser.configure(sensor_p))
-    {
-        yCError(RGBDSENSORNWSYARP) << "Error configuring interfaces for parsers";
-        return false;
-    }
-    if (fgCtrl)
-    {
-        if(!rgbdParser.configure(fgCtrl))
-        {
-            yCError(RGBDSENSORNWSYARP) << "Error configuring interfaces for parsers";
-            return false;
-        }
-    }
-
-    PeriodicThread::setPeriod(period);
-    return PeriodicThread::start();
 }
 
 bool RgbdSensor_nws_yarp::attach(PolyDriver* poly)
@@ -468,19 +404,20 @@ bool RgbdSensor_nws_yarp::attach(PolyDriver* poly)
         return false;
     }
 
-    if (!rgbdParser.configure(fgCtrl))
+    if(fgCtrl != nullptr)
     {
-        yCWarning(RGBDSENSORNWSYARP) <<"Interface IFrameGrabberControl not implemented by the device";
+        if (!rgbdParser.configure(fgCtrl)) {
+            yCError(RGBDSENSORNWSYARP) << "Error configuring interfaces for parsers";
+            return false;
+        }
+    }
+    else
+    {
+        yCWarning(RGBDSENSORNWSYARP) << "Attached device has no valid IFrameGrabberControls interface.";
     }
 
     PeriodicThread::setPeriod(period);
     return PeriodicThread::start();
-}
-
-bool RgbdSensor_nws_yarp::detach()
-{
-    sensor_p = nullptr;
-    return true;
 }
 
 /* IRateThread interface */

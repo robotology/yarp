@@ -28,7 +28,7 @@ YARP_LOG_COMPONENT(RGBDSENSORNWSROS, "yarp.devices.RgbdSensor_nws_ros")
 
 RgbdSensor_nws_ros::RgbdSensor_nws_ros() :
     PeriodicThread(DEFAULT_THREAD_PERIOD),
-    rosNode(nullptr),
+    m_node(nullptr),
     nodeSeq(0),
     period(DEFAULT_THREAD_PERIOD),
     sensor_p(nullptr),
@@ -90,13 +90,13 @@ bool RgbdSensor_nws_ros::open(yarp::os::Searchable &config)
 
 bool RgbdSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
 {
-    if (!config.check("period", "refresh period of the broadcasted values in ms"))
+    if (!config.check("period", "refresh period of the broadcasted values in s"))
     {
         if(verbose >= 3)
             yCInfo(RGBDSENSORNWSROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
     }
     else
-        period = config.find("period").asInt32() / 1000.0;
+        period = config.find("period").asFloat64();
 
     //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
     unsigned int                    i;
@@ -104,7 +104,7 @@ bool RgbdSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
     param<string>*                  prm;
 
     rosStringParam.emplace_back(nodeName,       nodeName_param          );
-    rosStringParam.emplace_back(rosFrameId,     frameId_param           );
+    rosStringParam.emplace_back(frameId,     frameId_param           );
     rosStringParam.emplace_back(colorTopicName, colorTopicName_param    );
     rosStringParam.emplace_back(depthTopicName, depthTopicName_param    );
     rosStringParam.emplace_back(cInfoTopicName, colorInfoTopicName_param);
@@ -175,7 +175,7 @@ bool RgbdSensor_nws_ros::openAndAttachSubDevice(Searchable& prop)
 bool RgbdSensor_nws_ros::close()
 {
     yCTrace(RGBDSENSORNWSROS, "Close");
-    detachAll();
+    detach();
 
     // close subdevice if it was created inside the open (--subdevice option)
     if(isSubdeviceOwned)
@@ -190,11 +190,11 @@ bool RgbdSensor_nws_ros::close()
         isSubdeviceOwned = false;
     }
 
-    if(rosNode!=nullptr)
+    if(m_node !=nullptr)
     {
-        rosNode->interrupt();
-        delete rosNode;
-        rosNode = nullptr;
+        m_node->interrupt();
+        delete m_node;
+        m_node = nullptr;
     }
 
     return true;
@@ -205,24 +205,24 @@ bool RgbdSensor_nws_ros::close()
 bool RgbdSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
 {
     // open topics here if needed
-    rosNode = new yarp::os::Node(nodeName);
+    m_node = new yarp::os::Node(nodeName);
     nodeSeq = 0;
-    if (!rosPublisherPort_color.topic(colorTopicName))
+    if (!publisherPort_color.topic(colorTopicName))
     {
         yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << colorTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
-    if (!rosPublisherPort_depth.topic(depthTopicName))
+    if (!publisherPort_depth.topic(depthTopicName))
     {
         yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << depthTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
-    if (!rosPublisherPort_colorCaminfo.topic(cInfoTopicName))
+    if (!publisherPort_colorCaminfo.topic(cInfoTopicName))
     {
         yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << cInfoTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
-    if (!rosPublisherPort_depthCaminfo.topic(dInfoTopicName))
+    if (!publisherPort_depthCaminfo.topic(dInfoTopicName))
     {
         yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << dInfoTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
@@ -241,46 +241,10 @@ std::string RgbdSensor_nws_ros::getId()
 }
 
 /**
-  * IWrapper and IMultipleWrapper interfaces
+  * WrapperSingle interface
   */
-bool RgbdSensor_nws_ros::attachAll(const PolyDriverList &device2attach)
-{
-    // First implementation only accepts devices with both the interfaces Framegrabber and IDepthSensor,
-    // on a second version maybe two different devices could be accepted, one for each interface.
-    // Yet to be defined which and how parameters shall be used in this case ... using the name of the
-    // interface to view could be a good initial guess.
-    if (device2attach.size() != 1)
-    {
-        yCError(RGBDSENSORNWSROS, "Cannot attach more than one device");
-        return false;
-    }
 
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-    if(device2attach[0]->key == "IRGBDSensor")
-    {
-        yCInfo(RGBDSENSORNWSROS) << "Good name!";
-    }
-    else
-    {
-        yCInfo(RGBDSENSORNWSROS) << "Bad name!";
-    }
-
-    if (!Idevice2attach->isValid())
-    {
-        yCError(RGBDSENSORNWSROS) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
-        return false;
-    }
-
-    Idevice2attach->view(sensor_p);
-    Idevice2attach->view(fgCtrl);
-    if(!attach(sensor_p))
-        return false;
-
-    PeriodicThread::setPeriod(period);
-    return PeriodicThread::start();
-}
-
-bool RgbdSensor_nws_ros::detachAll()
+bool RgbdSensor_nws_ros::detach()
 {
     if (yarp::os::PeriodicThread::isRunning())
         yarp::os::PeriodicThread::stop();
@@ -291,19 +255,6 @@ bool RgbdSensor_nws_ros::detachAll()
 
     sensor_p = nullptr;
     return true;
-}
-
-bool RgbdSensor_nws_ros::attach(yarp::dev::IRGBDSensor *s)
-{
-    if(s == nullptr)
-    {
-        yCError(RGBDSENSORNWSROS) << "Attached device has no valid IRGBDSensor interface.";
-        return false;
-    }
-    sensor_p = s;
-
-    PeriodicThread::setPeriod(period);
-    return PeriodicThread::start();
 }
 
 bool RgbdSensor_nws_ros::attach(PolyDriver* poly)
@@ -320,14 +271,13 @@ bool RgbdSensor_nws_ros::attach(PolyDriver* poly)
         return false;
     }
 
+    if(fgCtrl == nullptr)
+    {
+        yCWarning(RGBDSENSORNWSROS) << "Attached device has no valid IFrameGrabberControls interface.";
+    }
+
     PeriodicThread::setPeriod(period);
     return PeriodicThread::start();
-}
-
-bool RgbdSensor_nws_ros::detach()
-{
-    sensor_p = nullptr;
-    return true;
 }
 
 /* IRateThread interface */
@@ -488,18 +438,18 @@ bool RgbdSensor_nws_ros::writeData()
     // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
     if (rgb_data_ok)
     {
-        yarp::rosmsg::sensor_msgs::Image&      rColorImage     = rosPublisherPort_color.prepare();
-        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoC        = rosPublisherPort_colorCaminfo.prepare();
+        yarp::rosmsg::sensor_msgs::Image&      rColorImage     = publisherPort_color.prepare();
+        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoC        = publisherPort_colorCaminfo.prepare();
         yarp::rosmsg::TickTime                 cRosStamp       = colorStamp.getTime();
-        yarp::dev::RGBDRosConversionUtils::deepCopyImages(colorImage, rColorImage, rosFrameId, cRosStamp, nodeSeq);
-        rosPublisherPort_color.setEnvelope(colorStamp);
-        rosPublisherPort_color.write();
-        if (setCamInfo(camInfoC, rosFrameId, nodeSeq, COLOR_SENSOR))
+        yarp::dev::RGBDRosConversionUtils::deepCopyImages(colorImage, rColorImage, frameId, cRosStamp, nodeSeq);
+        publisherPort_color.setEnvelope(colorStamp);
+        publisherPort_color.write();
+        if (setCamInfo(camInfoC, frameId, nodeSeq, COLOR_SENSOR))
         {
             if(forceInfoSync)
                 {camInfoC.header.stamp = rColorImage.header.stamp;}
-            rosPublisherPort_colorCaminfo.setEnvelope(colorStamp);
-            rosPublisherPort_colorCaminfo.write();
+            publisherPort_colorCaminfo.setEnvelope(colorStamp);
+            publisherPort_colorCaminfo.write();
         }
         else
         {
@@ -508,18 +458,18 @@ bool RgbdSensor_nws_ros::writeData()
     }
     if (depth_data_ok)
     {
-        yarp::rosmsg::sensor_msgs::Image&      rDepthImage     = rosPublisherPort_depth.prepare();
-        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoD        = rosPublisherPort_depthCaminfo.prepare();
+        yarp::rosmsg::sensor_msgs::Image&      rDepthImage     = publisherPort_depth.prepare();
+        yarp::rosmsg::sensor_msgs::CameraInfo& camInfoD        = publisherPort_depthCaminfo.prepare();
         yarp::rosmsg::TickTime                 dRosStamp       = depthStamp.getTime();
-        yarp::dev::RGBDRosConversionUtils::deepCopyImages(depthImage, rDepthImage, rosFrameId, dRosStamp, nodeSeq);
-        rosPublisherPort_depth.setEnvelope(depthStamp);
-        rosPublisherPort_depth.write();
-        if (setCamInfo(camInfoD, rosFrameId, nodeSeq, DEPTH_SENSOR))
+        yarp::dev::RGBDRosConversionUtils::deepCopyImages(depthImage, rDepthImage, frameId, dRosStamp, nodeSeq);
+        publisherPort_depth.setEnvelope(depthStamp);
+        publisherPort_depth.write();
+        if (setCamInfo(camInfoD, frameId, nodeSeq, DEPTH_SENSOR))
         {
             if(forceInfoSync)
                 {camInfoD.header.stamp = rDepthImage.header.stamp;}
-            rosPublisherPort_depthCaminfo.setEnvelope(depthStamp);
-            rosPublisherPort_depthCaminfo.write();
+            publisherPort_depthCaminfo.setEnvelope(depthStamp);
+            publisherPort_depthCaminfo.write();
         }
         else
         {
