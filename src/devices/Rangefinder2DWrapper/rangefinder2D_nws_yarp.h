@@ -42,7 +42,7 @@
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/IPreciselyTimed.h>
 
@@ -60,7 +60,7 @@
    *   Parameters required by this device are:
    * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                                                         | Notes |
    * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
-   * | period         |      -                  | int     | ms             |   20          | No                             | refresh period of the broadcasted values in ms                                                      | default 20ms |
+   * | period         |      -                  | double  | s              |   0.02        | No                             | refresh period of the broadcasted values in s                                                      | default 0.02s |
    * | name           |      -                  | string  | -              |   -           | Yes, unless useROS='only'      | Prefix name of the ports opened by the wrapper, e.g. /robotName/Rangefinder2DSensor                 | Required suffix like '/rpc' will be added by the device      |
    * | subdevice      |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
    * | frame_id       |      -                  | string  | -              |   -           | No                             | name of the attached frame                                                                          | Currently not used, reserved for future use                  |
@@ -77,7 +77,7 @@
 class Rangefinder2D_nws_yarp :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PortReader
 {
 public:
@@ -87,11 +87,9 @@ public:
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
 
-    bool attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool detachAll() override;
-
     void attach(yarp::dev::IRangefinder2D *s);
-    void detach();
+    bool attach(yarp::dev::PolyDriver* driver) override;
+    bool detach() override;
 
     bool threadInit() override;
     void threadRelease() override;
@@ -106,13 +104,11 @@ private:
     yarp::os::Port rpcPort;
     yarp::os::BufferedPort<yarp::dev::LaserScan2D> streamingPort;
 
-private:
     //interfaces
-    yarp::dev::PolyDriver driver;
+    yarp::dev::PolyDriver m_driver;
     yarp::dev::IRangefinder2D *sens_p;
     yarp::dev::IPreciselyTimed *iTimed;
 
-private:
     //device data
     yarp::os::Stamp lastStateStamp;
     double _period;
@@ -121,7 +117,6 @@ private:
     double resolution;
     bool   isDeviceOwned;
 
-private:
     //private methods
     bool initialize_YARP(yarp::os::Searchable &config);
 };

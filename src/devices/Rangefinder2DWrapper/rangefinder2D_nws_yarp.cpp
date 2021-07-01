@@ -59,20 +59,12 @@ Rangefinder2D_nws_yarp::~Rangefinder2D_nws_yarp()
   * Specify which sensor this thread has to read from.
   */
 
-bool Rangefinder2D_nws_yarp::attachAll(const PolyDriverList &device2attach)
+bool Rangefinder2D_nws_yarp::attach(yarp::dev::PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(RANGEFINDER2D_NWS_YARP, "cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(sens_p);
-        Idevice2attach->view(iTimed);
+        driver->view(sens_p);
+        driver->view(iTimed);
     }
 
     if (nullptr == sens_p)
@@ -104,7 +96,12 @@ bool Rangefinder2D_nws_yarp::attachAll(const PolyDriverList &device2attach)
     return PeriodicThread::start();
 }
 
-bool Rangefinder2D_nws_yarp::detachAll()
+void Rangefinder2D_nws_yarp::attach(yarp::dev::IRangefinder2D *s)
+{
+    sens_p = s;
+}
+
+bool Rangefinder2D_nws_yarp::detach()
 {
     if (PeriodicThread::isRunning())
     {
@@ -112,20 +109,6 @@ bool Rangefinder2D_nws_yarp::detachAll()
     }
     sens_p = nullptr;
     return true;
-}
-
-void Rangefinder2D_nws_yarp::attach(yarp::dev::IRangefinder2D *s)
-{
-    sens_p = s;
-}
-
-void Rangefinder2D_nws_yarp::detach()
-{
-    if (PeriodicThread::isRunning())
-    {
-        PeriodicThread::stop();
-    }
-    sens_p = nullptr;
 }
 
 bool Rangefinder2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
@@ -329,7 +312,7 @@ bool Rangefinder2D_nws_yarp::open(yarp::os::Searchable &config)
         return false;
     }
     else
-        _period = config.find("period").asInt32() / 1000.0;
+        _period = config.find("period").asFloat64();
 
     if (!config.check("name"))
     {
@@ -357,18 +340,16 @@ bool Rangefinder2D_nws_yarp::open(yarp::os::Searchable &config)
     if(config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
-        if(!driver.open(p) || !driver.isValid())
+        if(!m_driver.open(p) || !m_driver.isValid())
         {
             yCError(RANGEFINDER2D_NWS_YARP) << "failed to open subdevice.. check params";
             return false;
         }
 
-        driverlist.push(&driver, "1");
-        if(!attachAll(driverlist))
+        if(!attach(&m_driver))
         {
             yCError(RANGEFINDER2D_NWS_YARP) << "failed to open subdevice.. check params";
             return false;
@@ -449,6 +430,6 @@ bool Rangefinder2D_nws_yarp::close()
         PeriodicThread::stop();
     }
 
-    detachAll();
+    detach();
     return true;
 }

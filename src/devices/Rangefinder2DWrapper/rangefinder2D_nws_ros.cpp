@@ -39,8 +39,8 @@ YARP_LOG_COMPONENT(RANGEFINDER2D_NWS_ROS, "yarp.devices.rangefinder2D_nws_ros")
   */
 
 Rangefinder2D_nws_ros::Rangefinder2D_nws_ros() : PeriodicThread(DEFAULT_THREAD_PERIOD),
-    rosNode(nullptr),
-    rosMsgCounter(0),
+    node(nullptr),
+    msgCounter(0),
     sens_p(nullptr),
     iTimed(nullptr),
     _period(DEFAULT_THREAD_PERIOD),
@@ -62,20 +62,20 @@ bool Rangefinder2D_nws_ros::checkROSParams(yarp::os::Searchable &config)
     // check for ROS_nodeName parameter
     if (!config.check("nodeName"))
     {
-        yCError(RANGEFINDER2D_NWS_ROS) << "Cannot find ROS_nodeName parameter, mandatory when using ROS message";
+        yCError(RANGEFINDER2D_NWS_ROS) << "Cannot find nodeName parameter, mandatory when using ROS message";
         return false;
     }
-    rosNodeName = config.find("nodeName").asString();  // TODO: check name is correct
-    yCInfo(RANGEFINDER2D_NWS_ROS) << "NodeName is " << rosNodeName;
+    nodeName = config.find("nodeName").asString();  // TODO: check name is correct
+    yCInfo(RANGEFINDER2D_NWS_ROS) << "NodeName is " << nodeName;
 
     // check for ROS_topicName parameter
     if (!config.check("topicName"))
     {
-        yCError(RANGEFINDER2D_NWS_ROS) << "Cannot find ROS_topicName parameter, mandatory when using ROS message";
+        yCError(RANGEFINDER2D_NWS_ROS) << "Cannot find topicName parameter, mandatory when using ROS message";
         return false;
     }
-    rosTopicName = config.find("topicName").asString();
-    yCInfo(RANGEFINDER2D_NWS_ROS) << "rosTopicName is " << rosTopicName;
+    topicName = config.find("topicName").asString();
+    yCInfo(RANGEFINDER2D_NWS_ROS) << "topicName is " << topicName;
 
     // check for frame_id parameter
     if (!config.check("frame_id"))
@@ -91,15 +91,15 @@ bool Rangefinder2D_nws_ros::checkROSParams(yarp::os::Searchable &config)
 
 bool Rangefinder2D_nws_ros::initialize_ROS()
 {
-    rosNode = new yarp::os::Node(rosNodeName);   // add a ROS node
-    if (rosNode == nullptr)
+    node = new yarp::os::Node(nodeName);   // add a ROS node
+    if (node == nullptr)
     {
-        yCError(RANGEFINDER2D_NWS_ROS) << " opening " << rosNodeName << " Node, check your yarp-ROS network configuration\n";
+        yCError(RANGEFINDER2D_NWS_ROS) << " opening " << nodeName << " Node, check your yarp-ROS network configuration\n";
         return false;
     }
-    if (!rosPublisherPort.topic(rosTopicName))
+    if (!publisherPort.topic(topicName))
     {
-        yCError(RANGEFINDER2D_NWS_ROS) << " opening " << rosTopicName << " Topic, check your yarp-ROS network configuration\n";
+        yCError(RANGEFINDER2D_NWS_ROS) << " opening " << topicName << " Topic, check your yarp-ROS network configuration\n";
         return false;
     }
     return true;
@@ -109,20 +109,12 @@ bool Rangefinder2D_nws_ros::initialize_ROS()
   * Specify which sensor this thread has to read from.
   */
 
-bool Rangefinder2D_nws_ros::attachAll(const PolyDriverList &device2attach)
+bool Rangefinder2D_nws_ros::attach(yarp::dev::PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(RANGEFINDER2D_NWS_ROS, "Rangefinder2DWrapper: cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(sens_p);
-        Idevice2attach->view(iTimed);
+        driver->view(sens_p);
+        driver->view(iTimed);
     }
 
     if (nullptr == sens_p)
@@ -154,7 +146,12 @@ bool Rangefinder2D_nws_ros::attachAll(const PolyDriverList &device2attach)
     return PeriodicThread::start();
 }
 
-bool Rangefinder2D_nws_ros::detachAll()
+void Rangefinder2D_nws_ros::attach(yarp::dev::IRangefinder2D *s)
+{
+    sens_p = s;
+}
+
+bool Rangefinder2D_nws_ros::detach()
 {
     if (PeriodicThread::isRunning())
     {
@@ -162,20 +159,6 @@ bool Rangefinder2D_nws_ros::detachAll()
     }
     sens_p = nullptr;
     return true;
-}
-
-void Rangefinder2D_nws_ros::attach(yarp::dev::IRangefinder2D *s)
-{
-    sens_p = s;
-}
-
-void Rangefinder2D_nws_ros::detach()
-{
-    if (PeriodicThread::isRunning())
-    {
-        PeriodicThread::stop();
-    }
-    sens_p = nullptr;
 }
 
 bool Rangefinder2D_nws_ros::threadInit()
@@ -193,8 +176,7 @@ bool Rangefinder2D_nws_ros::open(yarp::os::Searchable &config)
         yCError(RANGEFINDER2D_NWS_ROS) << "Rangefinder2DWrapper: missing 'period' parameter. Check you configuration file\n";
         return false;
     }
-    else
-        _period = config.find("period").asInt32() / 1000.0;
+    _period = config.find("period").asFloat64();
 
     checkROSParams(config);
 
@@ -207,18 +189,16 @@ bool Rangefinder2D_nws_ros::open(yarp::os::Searchable &config)
     if(config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
-        if(!driver.open(p) || !driver.isValid())
+        if(!m_driver.open(p) || !m_driver.isValid())
         {
             yCError(RANGEFINDER2D_NWS_ROS) << "failed to open subdevice.. check params";
             return false;
         }
 
-        driverlist.push(&driver, "1");
-        if(!attachAll(driverlist))
+        if(!attach(&m_driver))
         {
             yCError(RANGEFINDER2D_NWS_ROS) << "failed to open subdevice.. check params";
             return false;
@@ -231,7 +211,7 @@ bool Rangefinder2D_nws_ros::open(yarp::os::Searchable &config)
 
 void Rangefinder2D_nws_ros::threadRelease()
 {
-    rosPublisherPort.close();
+    publisherPort.close();
 }
 
 void Rangefinder2D_nws_ros::run()
@@ -254,8 +234,8 @@ void Rangefinder2D_nws_ros::run()
             int ranges_size = ranges.size();
 
             // publish ROS topic if required
-            yarp::rosmsg::sensor_msgs::LaserScan &rosData = rosPublisherPort.prepare();
-            rosData.header.seq = rosMsgCounter++;
+            yarp::rosmsg::sensor_msgs::LaserScan &rosData = publisherPort.prepare();
+            rosData.header.seq = msgCounter++;
             rosData.header.stamp = lastStateStamp.getTime();
             rosData.header.frame_id = frame_id;
 
@@ -284,11 +264,11 @@ void Rangefinder2D_nws_ros::run()
                     rosData.intensities[i] = 0.0;
                 }
             }
-            rosPublisherPort.write();
+            publisherPort.write();
         }
         else
         {
-            yCError(RANGEFINDER2D_NWS_ROS, "Rangefinder2D_nws_ros: %s: Sensor returned error", rosTopicName.c_str());
+            yCError(RANGEFINDER2D_NWS_ROS, "Rangefinder2D_nws_ros: %s: Sensor returned error", topicName.c_str());
         }
     }
 }
@@ -300,12 +280,12 @@ bool Rangefinder2D_nws_ros::close()
     {
         PeriodicThread::stop();
     }
-    if(rosNode!=nullptr) {
-        rosNode->interrupt();
-        delete rosNode;
-        rosNode = nullptr;
+    if(node!=nullptr) {
+        node->interrupt();
+        delete node;
+        node = nullptr;
     }
 
-    detachAll();
+    detach();
     return true;
 }
