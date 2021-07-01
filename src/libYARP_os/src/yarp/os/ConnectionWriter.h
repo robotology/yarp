@@ -61,7 +61,7 @@ public:
      * @param data the integer to send
      * @warning Unsafe, sizeof(int) is platform dependent. Use appendInt32 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use appendInt32 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use appendInt32 instead") // Since YARP 3.5.0
     virtual void appendInt(int data) final
     {
         appendInt32(static_cast<std::int32_t>(data));
@@ -98,7 +98,7 @@ public:
      * @param data the floating point number to send
      * @warning Unsafe, sizeof(double) is platform dependent. Use appendFloat64 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use appendFloat64 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use appendFloat64 instead") // Since YARP 3.5.0
     virtual void appendDouble(double data)
     {
         appendFloat64(static_cast<yarp::conf::float64_t>(data));

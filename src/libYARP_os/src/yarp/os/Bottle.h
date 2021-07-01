@@ -30,13 +30,13 @@
 #define BOTTLE_TAG_LIST 256        // 0000 0001 0000 0000
 #define BOTTLE_TAG_DICT 512        // 0000 0010 0000 0000
 
-YARP_DEPRECATED_INTERNAL_MSG("Use BOTTLE_TAG_INT32 instead") // Since YARP 3.0.0
+YARP_DEPRECATED_MSG("Use BOTTLE_TAG_INT32 instead") // Since YARP 3.5.0
 constexpr std::int32_t BOTTLE_TAG_DOUBLE = BOTTLE_TAG_FLOAT64;
 
-YARP_DEPRECATED_INTERNAL_MSG("Use BOTTLE_TAG_FLOAT64 instead") // Since YARP 3.0.0
+YARP_DEPRECATED_MSG("Use BOTTLE_TAG_FLOAT64 instead") // Since YARP 3.5.0
 constexpr std::int32_t BOTTLE_TAG_INT = BOTTLE_TAG_INT32;
 
-YARP_DEPRECATED_INTERNAL_MSG("Use BOTTLE_TAG_VOCAB32 instead") // Since YARP 3.5.0
+YARP_DEPRECATED_MSG("Use BOTTLE_TAG_VOCAB32 instead") // Since YARP 3.5.0
 constexpr std::int32_t BOTTLE_TAG_VOCAB = BOTTLE_TAG_VOCAB32;
 
 namespace yarp {
@@ -155,7 +155,7 @@ public:
      * @param x the integer to add.
      * @warning Unsafe, sizeof(int) is platform dependent. Use addInt32 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use addInt32 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use addInt32 instead") // Since YARP 3.5.0
     inline void addInt(int x)
     {
         addInt32(static_cast<std::int32_t>(x));
@@ -203,7 +203,7 @@ public:
      * @param x the number to add.
      * @warning Unsafe, sizeof(double) is platform dependent. Use addFloat64 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use addFloat64 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use addFloat64 instead") // Since YARP 3.5.0
     inline void addDouble(double x)
     {
         addFloat64(static_cast<yarp::conf::float64_t>(x));

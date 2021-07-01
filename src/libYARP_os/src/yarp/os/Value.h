@@ -112,7 +112,7 @@ public:
      * @return true iff value is an integer
      * @warning Unsafe, sizeof(int) is platform dependent. Use isInt32 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use isInt32 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use isInt32 instead") // Since YARP 3.5.0
     inline virtual bool isInt() const final
     {
         return isInt32();
@@ -152,7 +152,7 @@ public:
      * @return true iff value is a floating point number
      * @warning Unsafe, sizeof(double) is platform dependent. Use isFloat64 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use isFloat64 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use isFloat64 instead") // Since YARP 3.5.0
     inline virtual bool isDouble() const final
     {
         return isFloat64();
@@ -220,7 +220,7 @@ public:
      * Otherwise returns 0.
      * @warning Unsafe, sizeof(int) is platform dependent. Use asInt32 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use asInt32 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use asInt32 instead") // Since YARP 3.5.0
     inline virtual int asInt() const final
     {
         return static_cast<int>(asInt32());
@@ -277,7 +277,7 @@ public:
      * Otherwise returns 0.
      * @warning Unsafe, sizeof(double) is platform dependent. Use asFloat64 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use asFloat64 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use asFloat64 instead") // Since YARP 3.5.0
     inline virtual double asDouble() const final
     {
         return static_cast<double>(asFloat64());
@@ -420,7 +420,7 @@ public:
      * @return an integer Value
      * @warning Unsafe, sizeof(int) is platform dependent. Use makeInt instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use makeInt32 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use makeInt32 instead") // Since YARP 3.5.0
     inline static Value* makeInt(int x)
     {
         return makeInt32(static_cast<std::int32_t>(x));
@@ -460,7 +460,7 @@ public:
      * @return a floating point Value
      * @warning Unsafe, sizeof(double) is platform dependent. Use makeFloat64 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use makeFloat64 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use makeFloat64 instead") // Since YARP 3.5.0
     inline static Value* makeDouble(double x)
     {
         return makeFloat64(static_cast<yarp::conf::float64_t>(x));

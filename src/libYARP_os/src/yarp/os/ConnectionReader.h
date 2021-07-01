@@ -81,7 +81,7 @@ public:
      * @return the integer read from the connection
      * @warning Unsafe, sizeof(int) is platform dependent. Use expectInt32 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use expectInt32 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use expectInt32 instead") // Since YARP 3.5.0
     virtual int expectInt() final
     {
         return static_cast<int>(expectInt32());
@@ -116,7 +116,7 @@ public:
      * @return the floating point number read from the connection
      * @warning Unsafe, sizeof(double) is platform dependent. Use expectFloat64 instead.
      */
-    YARP_DEPRECATED_INTERNAL_MSG("Use expectFloat64 instead") // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use expectFloat64 instead") // Since YARP 3.5.0
     virtual double expectDouble()
     {
         return static_cast<double>(expectFloat64());
