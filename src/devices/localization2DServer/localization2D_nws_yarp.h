@@ -30,7 +30,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/OdometryData.h>
@@ -57,7 +57,7 @@
 class Localization2D_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PortReader
 {
 protected:
@@ -70,8 +70,6 @@ protected:
     std::string                               m_2DLocationPortName;
     yarp::os::BufferedPort<yarp::dev::OdometryData>  m_odometryPort;
     std::string                               m_odometryPortName;
-    std::string                               m_robot_frame;
-    std::string                               m_fixed_frame;
     bool                                      m_enable_publish_odometry=true;
     bool                                      m_enable_publish_location=true;
 
@@ -96,15 +94,14 @@ private:
 public:
     Localization2D_nws_yarp();
 
-public:
-    virtual bool open(yarp::os::Searchable& prop) override;
-    virtual bool close() override;
-    virtual bool detachAll() override;
-    virtual bool attachAll(const yarp::dev::PolyDriverList &l) override;
-    virtual void run() override;
+    bool open(yarp::os::Searchable& prop) override;
+    bool close() override;
+    bool detach() override;
+    bool attach(yarp::dev::PolyDriver* driver) override;
+    void run() override;
 
     bool initialize_YARP(yarp::os::Searchable &config);
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 #endif // YARP_DEV_LOCALIZATION2D_NWS_YARP_H

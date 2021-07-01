@@ -30,7 +30,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/ILocalization2D.h>
 #include <yarp/dev/OdometryData.h>
@@ -62,7 +62,7 @@
 class Localization2D_nws_ros :
         public yarp::dev::DeviceDriver,
         public yarp::os::PeriodicThread,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PortReader
 {
 protected:
@@ -79,8 +79,8 @@ protected:
     //ROS
     std::string                                           m_child_frame_id = "base_link";
     std::string                                           m_parent_frame_id = "odom";
-    std::string                                           m_ros_node_name;
-    yarp::os::Node*                                       m_ros_node = nullptr;
+    std::string                                           m_node_name;
+    yarp::os::Node*                                       m_node = nullptr;
     std::string                                           m_odom_topic_name;
     yarp::os::Publisher<yarp::rosmsg::nav_msgs::Odometry> m_odometry_publisher;
     yarp::os::Publisher<yarp::rosmsg::tf2_msgs::TFMessage>  m_tf_publisher;
@@ -106,15 +106,15 @@ public:
     Localization2D_nws_ros();
 
 public:
-    virtual bool open(yarp::os::Searchable& prop) override;
-    virtual bool close() override;
-    virtual bool detachAll() override;
-    virtual bool attachAll(const yarp::dev::PolyDriverList &l) override;
-    virtual void run() override;
+    bool open(yarp::os::Searchable& prop) override;
+    bool close() override;
+    bool detach() override;
+    bool attach(yarp::dev::PolyDriver* driver) override;
+    void run() override;
 
     bool initialize_YARP(yarp::os::Searchable &config);
     bool initialize_ROS(yarp::os::Searchable& config);
-    virtual bool read(yarp::os::ConnectionReader& connection) override;
+    bool read(yarp::os::ConnectionReader& connection) override;
 };
 
 #endif // YARP_DEV_LOCALIZATION2D_NWS_ROS

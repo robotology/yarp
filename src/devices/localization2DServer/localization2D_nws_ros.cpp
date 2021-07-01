@@ -56,19 +56,11 @@ Localization2D_nws_ros::Localization2D_nws_ros() : PeriodicThread(DEFAULT_THREAD
     m_stats_time_last = yarp::os::Time::now();
 }
 
-bool Localization2D_nws_ros::attachAll(const PolyDriverList &device2attach)
+bool Localization2D_nws_ros::attach(PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(LOCALIZATION2D_NWS_ROS, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(iLoc);
+        driver->view(iLoc);
     }
 
     if (nullptr == iLoc)
@@ -97,7 +89,7 @@ bool Localization2D_nws_ros::attachAll(const PolyDriverList &device2attach)
     return PeriodicThread::start();
 }
 
-bool Localization2D_nws_ros::detachAll()
+bool Localization2D_nws_ros::detach()
 {
     if (PeriodicThread::isRunning())
     {
@@ -157,7 +149,6 @@ bool Localization2D_nws_ros::open(Searchable& config)
     if (config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
@@ -166,9 +157,7 @@ bool Localization2D_nws_ros::open(Searchable& config)
             yCError(LOCALIZATION2D_NWS_ROS) << "Failed to open subdevice.. check params";
             return false;
         }
-
-        driverlist.push(&pLoc, "1");
-        if (!attachAll(driverlist))
+        if (!attach(&pLoc))
         {
             yCError(LOCALIZATION2D_NWS_ROS) << "Failed to open subdevice.. check params";
             return false;
@@ -197,7 +186,7 @@ bool Localization2D_nws_ros::open(Searchable& config)
 
 bool Localization2D_nws_ros::initialize_ROS(yarp::os::Searchable& params)
 {
-    m_ros_node_name = m_local_name + "_ROSnode";
+    m_node_name = m_local_name + "_ROSnode";
     m_odom_topic_name = m_local_name + "/odom";
 
     if (params.check("ROS"))
@@ -220,17 +209,17 @@ bool Localization2D_nws_ros::initialize_ROS(yarp::os::Searchable& params)
 
         if (ros_group.check("node_name"))
         {
-            m_ros_node_name = ros_group.find("node_name").asString();
+            m_node_name = ros_group.find("node_name").asString();
         }
     }
 
-    if (m_ros_node == nullptr)
+    if (m_node == nullptr)
     {
         bool b= false;
-        m_ros_node = new yarp::os::Node(m_ros_node_name);
-        if (m_ros_node == nullptr)
+        m_node = new yarp::os::Node(m_node_name);
+        if (m_node == nullptr)
         {
-            yCError(LOCALIZATION2D_NWS_ROS) << "Opening " << m_ros_node_name << " Node, check your yarp-ROS network configuration";
+            yCError(LOCALIZATION2D_NWS_ROS) << "Opening " << m_node_name << " Node, check your yarp-ROS network configuration";
         }
 
         b = m_odometry_publisher.topic(m_odom_topic_name);
@@ -268,17 +257,17 @@ bool Localization2D_nws_ros::close()
         PeriodicThread::stop();
     }
 
-    detachAll();
+    detach();
 
     m_rpcPort.interrupt();
     m_rpcPort.close();
 
-    if (m_ros_node)
+    if (m_node)
     {
         m_tf_publisher.close();
         m_odometry_publisher.close();
-        delete m_ros_node;
-        m_ros_node = nullptr;
+        delete m_node;
+        m_node = nullptr;
     }
 
     yCDebug(LOCALIZATION2D_NWS_ROS) << "Execution terminated";
@@ -392,7 +381,7 @@ void Localization2D_nws_ros::publish_odometry_on_TF_topic()
 
 void Localization2D_nws_ros::publish_odometry_on_ROS_topic()
 {
-    if (m_ros_node && m_odometry_publisher.asPort().getOutputCount() > 0)
+    if (m_node && m_odometry_publisher.asPort().getOutputCount() > 0)
     {
         yarp::rosmsg::nav_msgs::Odometry& odom = m_odometry_publisher.prepare();
         odom.clear();
