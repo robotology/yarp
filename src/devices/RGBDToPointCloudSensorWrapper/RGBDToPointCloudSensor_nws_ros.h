@@ -56,7 +56,7 @@ namespace RGBDToPointCloudImpl{
  * |:----------------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:------------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
  * | period                 |      -                  | double  |  s             |   0.033       |  No                             | refresh period of the broadcasted values in s                                                       | default 0.033 s |
  * | subdevice              |      -                  | string  |  -             |   -           |  alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
- * | base_topic_name        |      -                  | string  |  -             |               |  Yes                            | set the base name for ROS point cloud topic (/points is added)                                      | must start with a leading '/' |
+ * | topic_name             |      -                  | string  |  -             |               |  Yes                            | set the name for ROS point cloud topic                                                              | must start with a leading '/' |
  * | frame_id               |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame                                                                 |                               |
  * | node_name              |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS node                                                                           | must start with a leading '/' |
  *
@@ -69,7 +69,7 @@ namespace RGBDToPointCloudImpl{
  * device RGBDToPointCloudSensor_nws_ros
  * subdevice <RGBDsensor>
  * period 30
- * base_topic_name /camera
+ * topic_name /camera/points
  * frame_id depth_center
  * node_name /<robotName>/RGBDToPointCloudSensorNode
  * \endcode

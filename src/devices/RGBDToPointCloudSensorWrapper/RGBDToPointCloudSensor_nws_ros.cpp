@@ -58,11 +58,11 @@ bool RGBDToPointCloudSensor_nws_ros::open(yarp::os::Searchable &config)
 
 
     // baseTopicName parameter
-    if (!config.check("base_topic_name", "the name of the ros node")) {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "missing base_topic_name parameter, using default one";
+    if (!config.check("topic_name", "the name of the ros node")) {
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "missing topic_name parameter, using default one";
         return false;
     }
-    pointCloudTopicName = config.find("base_topic_name").asString() + "/points";
+    pointCloudTopicName = config.find("topic_name").asString();
 
     // frame_id parameter
     if (!config.check("frame_id", "the name of the ros node")) {
