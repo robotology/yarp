@@ -62,13 +62,13 @@ namespace RGBDImpl
  *   Parameters required by this device are:
  * | Parameter name         | SubParameter            | Type    | Units          | Default Value | Required                        | Description                                                                                         | Notes |
  * |:----------------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:------------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
- * | period                 |      -                  | double  | s              |   0.03        | No                              | refresh period of the broadcasted values in s                                                       | default 0.03s |
+ * | period                 |      -                  | double  | s              |   0.03        |  No                             | refresh period of the broadcasted values in s                                                       | default 0.03s |
  * | subdevice              |      -                  | string  |  -             |   -           |  alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | forceInfoSync          |      -                  | string  | bool           |   -           |  no                             | set 'true' to force the timestamp on the camera_info message to match the image one                 |  - |
- * | color_topic_base_name  |      -                  | string  | -              | /camera/color |  Yes                            | the color base topic from which will be derived /camera_info and /image_rect_color subtopics        |         |
- * | depth_topic_base_name  |      -                  | string  | -              | /camera/depth |  Yes                            | the depth base topic from which will be derived /camera_info and /image_rect subtopics              |         |
- * | color_frame_id         |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame for the color camera                                            |                               |
- * | depth_frame_id         |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame for the depth camera                                            |                               |
+ * | color_topic_name       |      -                  | string  | -              |   -           |  Yes                            | the color topic                                                                                     | recommended value /camera/color/image_rect_color  |
+ * | depth_topic_name       |      -                  | string  | -              |   -           |  Yes                            | the depth topic                                                                                     | recommended value /camera/depth/image_rect  |
+ * | color_frame_id         |      -                  | string  |  -             |   -           |  Yes                            | set the name of the reference frame for the color camera                                            |                               |
+ * | depth_frame_id         |      -                  | string  |  -             |   -           |  Yes                            | set the name of the reference frame for the depth camera                                            |                               |
  * | node_name              |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS node                                                                           | must start with a leading '/' |
  *
  * ROS message type used is sensor_msgs/Image.msg ( http://docs.ros.org/api/sensor_msgs/html/msg/Image.html)
@@ -80,8 +80,8 @@ namespace RGBDImpl
  * device rgbdSensor_nws_ros
  * subdevice <RGBDsensor>
  * period 30
- * color_topic_base_name /<robotName>/camera/color
- * depth_topic_base_name /<robotName>/camera/depth
+ * color_topic_name /<robotName>/camera/color/image_raw
+ * depth_topic_name /<robotName>/camera/depth/image_raw
  * color_frame_id rgbd_color_frame
  * depth_frame_id rgbd_depth_frame
  * node_name rgbdsensor

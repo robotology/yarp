@@ -173,24 +173,24 @@ bool RgbdSensor_nws_ros::close()
 bool RgbdSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
 {
     // depth topic base name check
-    if (!params.check("depth_topic_base_name")) {
-        yCError(RGBDSENSORNWSROS) << "missing depth_topic_base_name parameter";
+    if (!params.check("depth_topic_name")) {
+        yCError(RGBDSENSORNWSROS) << "missing depth_topic_name parameter";
         return false;
     }
-    std::string depth_topic_base_name = params.find("depth_topic_base_name").asString();
-    if(depth_topic_base_name[0] != '/'){
-        yCError(RGBDSENSORNWSROS) << "depth_topic_base_name must begin with an initial /";
+    std::string depth_topic_name = params.find("depth_topic_name").asString();
+    if(depth_topic_name[0] != '/'){
+        yCError(RGBDSENSORNWSROS) << "depth_topic_name must begin with an initial /";
         return false;
     }
 
     // color topic base name check
-    if (!params.check("color_topic_base_name")) {
-        yCError(RGBDSENSORNWSROS) << "missing color_topic_base_name parameter";
+    if (!params.check("color_topic_name")) {
+        yCError(RGBDSENSORNWSROS) << "missing color_topic_name parameter";
         return false;
     }
-    std::string color_topic_base_name = params.find("color_topic_base_name").asString();
-    if(color_topic_base_name[0] != '/'){
-        yCError(RGBDSENSORNWSROS) << "color_topic_base_name must begin with an initial /";
+    std::string color_topic_name = params.find("color_topic_name").asString();
+    if(color_topic_name[0] != '/'){
+        yCError(RGBDSENSORNWSROS) << "color_topic_name must begin with an initial /";
         return false;
     }
 
@@ -200,7 +200,7 @@ bool RgbdSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
         return false;
     }
     std::string node_name = params.find("node_name").asString();
-    if(color_topic_base_name[0] != '/'){
+    if(node_name[0] != '/'){
         yCError(RGBDSENSORNWSROS) << "node_name must begin with an initial /";
         return false;
     }
@@ -222,28 +222,25 @@ bool RgbdSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
     m_node = new yarp::os::Node(nodeName);
     nodeSeq = 0;
 
-    std::string rgb_data_topic_name = color_topic_base_name + "/image_rect_color";
-    if (!publisherPort_color.topic(rgb_data_topic_name))
+    if (!publisherPort_color.topic(color_topic_name))
     {
-        yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << rgb_data_topic_name.c_str() << " topic, check your yarp-ROS network configuration";
+        yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << color_topic_name.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
 
-    std::string depth_data_topic_name = depth_topic_base_name + "/image_rect";
-    if (!publisherPort_depth.topic(depth_data_topic_name))
+    if (!publisherPort_depth.topic(depth_topic_name))
     {
-        yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << depth_data_topic_name.c_str() << " topic, check your yarp-ROS network configuration";
+        yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << depth_topic_name.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
-
-    std::string rgb_info_topic_name = color_topic_base_name + "/camera_info";
+    std::string rgb_info_topic_name = color_topic_name.substr(0,color_topic_name.rfind('/')) + "/camera_info";
     if (!publisherPort_colorCaminfo.topic(rgb_info_topic_name))
     {
         yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << rgb_info_topic_name.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
 
-    std::string depth_info_topic_name = depth_topic_base_name + "/camera_info";
+    std::string depth_info_topic_name = depth_topic_name.substr(0,depth_topic_name.rfind('/')) + "/camera_info";
     if (!publisherPort_depthCaminfo.topic(depth_info_topic_name))
     {
         yCError(RGBDSENSORNWSROS) << "Unable to publish data on " << depth_info_topic_name.c_str() << " topic, check your yarp-ROS network configuration";
