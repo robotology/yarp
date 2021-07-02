@@ -12,14 +12,14 @@ refactor_cleanUpNwcNws {#master}
   * Paths/file names
   * WrapperSingle/WrapperMultiple
 * The modified nws/nwc are the following:
-  * ControlBoard_nws_ros
-  * ControlBoard_nws_yarp
+  * controlBoard_nws_ros
+  * controlBoard_nws_yarp
   * rgbdSensor_nws_ros
   * rgbdSensor_nws_yarp
-  * RGBDToPointCloudSensor_nws_ros
+  * rgbdToPointCloudSensor_nws_ros
   * rangefinder2D_nws_ros
   * rangefinder2D_nws_yarp
-  * FrameGrabber_nwc_yarp
+  * frameGrabber_nwc_yarp
   * frameGrabber_nws_ros
   * frameGrabber_nws_yarp
   * localization2D_nws_ros
@@ -28,11 +28,11 @@ refactor_cleanUpNwcNws {#master}
   * map2D_nws_yarp
 * For clarity sake, the commits of the branch have been divided into "code refactoring" and "file/folder names modifications" for each device. This should help the review process
 * The configuration parameters of the following files have been modified:
-  * ControlBoard_nws_ros
+  * controlBoard_nws_ros
   * frameGrabber_nws_ros
   * localization2D_nws_ros
   * map2D_nws_ros
   * rangefinder2D_nws_ros
   * rgbdSensor_nws_ros
-  * RGBDSensorFromRosTopic
-  * RGBDToPointCloudSensor_nws_ros
+  * rgbdSensorFromRosTopic
+  * rgbdToPointCloudSensor_nws_ros
