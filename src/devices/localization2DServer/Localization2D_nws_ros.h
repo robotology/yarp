@@ -47,17 +47,17 @@
  *
  *
  *  Parameters required by this device are:
- * | Parameter name   | SubParameter      | Type    | Units          | Default Value            | Required     | Description                                                        | Notes |
- * |:----------------:|:-----------------:|:-------:|:--------------:|:------------------------:|:-----------: |:-----------------------------------------------------------------: |:-----:|
- * | GENERAL          |  period           | double  | s              | 0.01                     | No           | The period of the working thread                                   |       |
- * | GENERAL          |  yarp_base_name   | string  |  -             |                          | Yes          | The name of the server, used as a prefix for the opened yarp ports | By default ports opened are: /xxx/rpc |
- * | GENERAL          |  publish_odometry | bool    |  -             | true                     | No           | Periodically publish odometry data over the network                | -     |
- * | GENERAL          |  publish_tf       | bool    |  -             | true                     | No           | Periodically publish tf data over the network                      | -     |
- * | ROS              | parent_frame_id   | string  |  -             | odom                     | No           | The name of the of the parent frame published in the /tf topic     | -     |
- * | ROS              | child_frame_id    | string  |  -             | base_link                | No           | The name of the of the child frame published in the /tf topic      | -     |
- * | ROS              | base_topic_name   | string  |  -             |                          | Yes          | The name of the of the odometry topic                              | -     |
- * | ROS              | node_name         | string  |  -             |                          | Yes          | The name of the of the ROS node                                    | -     |
- * | subdevice        |  -                | string  |  -             |  -                       | Yes          | The name of the of Localization device to be used                  | -     |
+ * | Parameter name   | Type    | Units          | Default Value            | Required     | Description                                                        | Notes |
+ * |:----------------:|:-------:|:--------------:|:------------------------:|:-----------: |:-----------------------------------------------------------------: |:-----:|
+ * | period           | double  | s              | 0.01                     | No           | The period of the working thread                                   |       |
+ * | yarp_base_name   | string  |  -             |                          | Yes          | The name of the server, used as a prefix for the opened yarp ports | By default ports opened are: /xxx/rpc |
+ * | publish_odometry | bool    |  -             | true                     | No           | Periodically publish odometry data over the network                | -     |
+ * | publish_tf       | bool    |  -             | true                     | No           | Periodically publish tf data over the network                      | -     |
+ * | parent_frame_id  | string  |  -             | odom                     | No           | The name of the of the parent frame published in the /tf topic     | -     |
+ * | child_frame_id   | string  |  -             | base_link                | No           | The name of the of the child frame published in the /tf topic      | -     |
+ * | topic_name       | string  |  -             |                          | Yes          | The name of the of the odometry topic                              | -     |
+ * | node_name        | string  |  -             |                          | Yes          | The name of the of the ROS node                                    | -     |
+ * | subdevice        | string  |  -             |  -                       | Yes          | The name of the of Localization device to be used                  | -     |
  */
 class Localization2D_nws_ros :
         public yarp::dev::DeviceDriver,

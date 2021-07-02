@@ -109,40 +109,34 @@ bool Localization2D_nws_ros::open(Searchable& config)
     params.fromString(config.toString().c_str());
     yCDebug(LOCALIZATION2D_NWS_ROS) << "Configuration: \n" << config.toString().c_str();
 
-    if (config.check("GENERAL") == false)
-    {
-        yCWarning(LOCALIZATION2D_NWS_ROS) << "Missing GENERAL group, assuming default options";
-    }
-
-    Bottle& general_group = config.findGroup("GENERAL");
-    if (!general_group.check("period"))
+    if (!config.check("period"))
     {
         yCInfo(LOCALIZATION2D_NWS_ROS) << "Missing 'period' parameter. Using default value: " << DEFAULT_THREAD_PERIOD;
         m_period = DEFAULT_THREAD_PERIOD;
     }
     else
     {
-        m_period = general_group.find("period").asFloat64();
+        m_period = config.find("period").asFloat64();
         yCInfo(LOCALIZATION2D_NWS_ROS) << "Period requested: " << m_period;
     }
 
-    if (!general_group.check("publish_odometry"))
+    if (!config.check("publish_odometry"))
     {
-        m_enable_publish_odometry_topic = general_group.find("publish_odometry").asBool();
+        m_enable_publish_odometry_topic = config.find("publish_odometry").asBool();
         yCInfo(LOCALIZATION2D_NWS_ROS) << "publish_odometry=" << m_enable_publish_odometry_topic;
     }
-    if (!general_group.check("publish_tf"))
+    if (!config.check("publish_tf"))
     {
-        m_enable_publish_odometry_tf = general_group.find("publish_tf").asBool();
+        m_enable_publish_odometry_tf = config.find("publish_tf").asBool();
         yCInfo(LOCALIZATION2D_NWS_ROS) << "publish_tf=" << m_enable_publish_odometry_tf;
     }
 
-    if (!general_group.check("yarp_base_name"))
+    if (!config.check("yarp_base_name"))
     {
         yCError(LOCALIZATION2D_NWS_ROS) << "Missing yarp_base_name parameter";
         return false;
     }
-    m_local_name = general_group.find("yarp_base_name").asString();
+    m_local_name = config.find("yarp_base_name").asString();
     if (m_local_name.c_str()[0] != '/') {
         yCError(LOCALIZATION2D_NWS_ROS) << "Missing '/' in yarp_base_name parameter";
         return false;
@@ -190,28 +184,24 @@ bool Localization2D_nws_ros::open(Searchable& config)
 
 bool Localization2D_nws_ros::initialize_ROS(yarp::os::Searchable& params)
 {
-    if (params.check("ROS"))
+    if (params.check("parent_frame_id"))
     {
-        Bottle& ros_group = params.findGroup("ROS");
-        if (ros_group.check("parent_frame_id"))
-        {
-            m_parent_frame_id = ros_group.find("parent_frame_id").asString();
-        }
+        m_parent_frame_id = params.find("parent_frame_id").asString();
+    }
 
-        if (ros_group.check("child_frame_id"))
-        {
-            m_child_frame_id = ros_group.find("child_frame_id").asString();
-        }
+    if (params.check("child_frame_id"))
+    {
+        m_child_frame_id = params.find("child_frame_id").asString();
+    }
 
-        if (ros_group.check("base_topic_name"))
-        {
-            m_odom_topic_name = ros_group.find("base_topic_name").asString();
-        }
+    if (params.check("topic_name"))
+    {
+        m_odom_topic_name = params.find("topic_name").asString();
+    }
 
-        if (ros_group.check("node_name"))
-        {
-            m_node_name = ros_group.find("node_name").asString();
-        }
+    if (params.check("node_name"))
+    {
+        m_node_name = params.find("node_name").asString();
     }
     m_odom_topic_name = m_odom_topic_name + "/odom";
 
