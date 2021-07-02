@@ -387,7 +387,7 @@ foreach my $filename (@files) {
     }
 
     # Skip more files
-    if ("$filename" =~ /\.(ui|rc|qrc|xml|xml.template|xslt|xsl|msg|srv|ini|cfg|txt|TXT|dox|md|plist.in|tex|mdl|map|yaml)$/) {
+    if ("$filename" =~ /\.(ui|rc|qrc|xml|xml.template|xslt|xsl|msg|srv|ini|cfg|toml|txt|TXT|dox|md|plist.in|tex|mdl|map|yaml)$/) {
         if ("$filename" !~ /CMakeLists.txt$/) {
             print_if_verbose "[SKIP (.$1)] $filename\n";
             $skip++;

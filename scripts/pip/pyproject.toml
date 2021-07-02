@@ -1,0 +1,25 @@
+# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
+# Copyright (C) 2006-2010 RobotCub Consortium
+# All rights reserved.
+#
+# This software may be modified and distributed under the terms of the
+# BSD-3-Clause license. See the accompanying LICENSE file for details.
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+    "wheel",
+    "setuptools>=45",
+    "setuptools_scm[toml]>=6.0",
+    "cmake-build-extension>=0.3.2",
+    "cmake>=3.18.2",
+    "ninja",
+    "ycm_cmake_modules",
+]
+
+[tool.setuptools_scm]
+root = "../.."
+local_scheme = "dirty-tag"
+
+[tool.cibuildwheel]
+build-frontend = "build"

@@ -82,3 +82,4 @@
 /src/yarpviz/**                                  @Nicogene
 CMakeLists.txt                                   @drdanz
 *.cmake                                          @drdanz
+scripts/pip/**                                   @dferigo
