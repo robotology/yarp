@@ -172,17 +172,17 @@ typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> depthImage;
  *   Parameters used by this device are:
  * | Parameter name               | SubParameter        | Type                | Units          | Default Value | Required  | Description                                                                                          | Notes   |
  * |:----------------------------:|:-------------------:|:-------------------:|:--------------:|:-------------:|:---------:|:----------------------------------------------------------------------------------------------------:|:-------:|
- * |  color_topic_base_name       |      -              | string              | -              | -             |  Yes       | The device connects to this ROS topic to get RGB data (to subtopic /image_rect_color and camera_info)|         |
- * |  depth_topic_base_name       |      -              | string              | -              | -             |  Yes       | The device connects to this ROS topic to get Depth data (to subtopic /image_rect and camera_info)    |         |
- * |  node_name                   |      -              | string              | -              | -             |  Yes       | the name of the ros node                                                                             |         |
+ * |  color_topic_name       |      -              | string              | -              | -             |  Yes       | The device connects to this ROS topic to get RGB data (there must be also camera_info with the last subtopic)|         |
+ * |  depth_topic_name       |      -              | string              | -              | -             |  Yes       | The device connects to this ROS topic to get Depth data (there must be also camera_info with the last subtopic)    |         | * |  node_name                   |      -              | string              | -              | -             |  Yes       | the name of the ros node                                                                             |         |
+ * |  node_name              |      -              | string              | -              | -             |  Yes       | the name of the ros node    |         | * |  node_name                   |      -              | string              | -              | -             |  Yes       | the name of the ros node                                                                             |         |
  *
  * Example of configuration file (using .ini format) when the device is wrapped by RGBDSensorWrapper.
  *
  * \code{.unparsed}
  * device       RGBDSensorWrapper
  * subdevice    RGBDSensorFromRosTopic
- * color_topic_base_name    /camera/color
- * depth_topic_base_name    /camera/depth
+ * color_topic_name    /camera/color/image_raw
+ * depth_topic_name    /camera/depth/image_raw
  * node_name    RGBDSensorFromRosTopic
  * \endcode
  */

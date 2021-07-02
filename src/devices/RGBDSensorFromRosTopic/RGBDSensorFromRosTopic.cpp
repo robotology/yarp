@@ -27,30 +27,27 @@ YARP_LOG_COMPONENT(RGBD_ROS_TOPIC, "yarp.device.RGBDSensorFromRosTopic")
 
 bool RGBDSensorFromRosTopic::open(Searchable& config)
 {
-    if (!config.check("depth_topic_base_name")) {
-        yCError(RGBD_ROS_TOPIC) << "missing depth_topic_base_name parameter, using default one";
+    if (!config.check("depth_topic_name")) {
+        yCError(RGBD_ROS_TOPIC) << "missing depth_topic_name parameter, using default one";
         return false;
     }
-    std::string depth_topic_base_name = config.find("depth_topic_base_name").asString();
-    if(depth_topic_base_name[0] != '/'){
-        yCError(RGBD_ROS_TOPIC) << "depth_topic_base_name must begin with an initial /";
+    std::string depth_topic_name = config.find("depth_topic_name").asString();
+    if(depth_topic_name[0] != '/'){
+        yCError(RGBD_ROS_TOPIC) << "depth_topic_name must begin with an initial /";
         return false;
     }
 
-    if (!config.check("color_topic_base_name")) {
-        yCError(RGBD_ROS_TOPIC) << "missing color_topic_base_name parameter, using default one";
+    if (!config.check("color_topic_name")) {
+        yCError(RGBD_ROS_TOPIC) << "missing color_topic_name parameter, using default one";
         return false;
     }
-    std::string color_topic_base_name = config.find("color_topic_base_name").asString();
-    if(color_topic_base_name[0] != '/'){
-        yCError(RGBD_ROS_TOPIC) << "color_topic_base_name must begin with an initial /";
+    std::string color_topic_name = config.find("color_topic_name").asString();
+    if(color_topic_name[0] != '/'){
+        yCError(RGBD_ROS_TOPIC) << "color_topic_name must begin with an initial /";
         return false;
     }
-    std::string rgb_data_topic_name = color_topic_base_name + "/image_rect_color";
-    std::string rgb_info_topic_name = color_topic_base_name + "/camera_info";
-    std::string depth_data_topic_name = depth_topic_base_name + "/image_rect";
-    std::string depth_info_topic_name = depth_topic_base_name + "/camera_info";
-
+    std::string rgb_info_topic_name = color_topic_name.substr(0,color_topic_name.rfind('/')) + "/camera_info";
+    std::string depth_info_topic_name = depth_topic_name.substr(0,depth_topic_name.rfind('/')) + "/camera_info";
 
     if (!config.check("node_name")) {
         yCError(RGBD_ROS_TOPIC) << "missing node_name parameter, using default one";
@@ -65,8 +62,8 @@ bool RGBDSensorFromRosTopic::open(Searchable& config)
 
     //m_rgb_input_processor.useCallback();    ///@@@<-SEGFAULT
     //m_depth_input_processor.useCallback();    ///@@@<-SEGFAULT
-    m_rgb_input_processor = new yarp::dev::RGBDRosConversionUtils::commonImageProcessor(rgb_data_topic_name, rgb_info_topic_name);
-    m_depth_input_processor = new yarp::dev::RGBDRosConversionUtils::commonImageProcessor(depth_data_topic_name, depth_info_topic_name);
+    m_rgb_input_processor = new yarp::dev::RGBDRosConversionUtils::commonImageProcessor(color_topic_name, rgb_info_topic_name);
+    m_depth_input_processor = new yarp::dev::RGBDRosConversionUtils::commonImageProcessor(depth_topic_name, depth_info_topic_name);
     m_rgb_input_processor->useCallback();    ///@@@<-OK
     m_depth_input_processor->useCallback();    ///@@@<-OK
 
