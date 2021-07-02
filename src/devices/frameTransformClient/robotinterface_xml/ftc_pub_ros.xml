@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="frameTransformClient" build="2" portprefix="frameTransformClient" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+        <!-- **************** ROS NWC **************** -->
+        <device name="ftSet_nwc_ros" type="frameTransformSet_nwc_ros">
+            <group name="GENERAL">
+                <param extern-name="ftSet_period" name="period"> 0.01 </param>
+                <param extern-name="ftSet_refInt" name="refresh_interval"> 0.1 </param>
+                <param extern-name="ftSet_asyncPub" name="asynch_pub"> 1 </param>
+            </group>
+            <group name="ROS">
+                <param extern-name="ftSet_ftTopic" name="ft_topic"> /tf </param>
+                <param extern-name="ftSet_ftTopicStatic" name="ft_topic_static"> /tf_static </param>
+                <param extern-name="ftSet_ftNode" name="ft_node"> /tfNodeSet </param>
+            </group>
+        </device>
+        <!-- **************** STORAGE **************** -->
+        <device name="ftc_storage" type="frameTransformStorage">
+        </device>
+    </devices>
+</robot>

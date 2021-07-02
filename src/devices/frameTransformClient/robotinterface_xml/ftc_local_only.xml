@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="ftc_local_only" build="2" portprefix="test" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+        <device name="ftc_storage" type="frameTransformStorage">
+        </device>
+    </devices>
+</robot>

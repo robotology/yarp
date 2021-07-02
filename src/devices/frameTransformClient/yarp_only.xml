@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="ftc_yarp_only" build="2" portprefix="test" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+        <device name="ftg_mpx_dev" type="frameTransformGetMultiplexer">
+        </device>
+        <device name="fts_mtx_dev" type="frameTransformSetMultiplexer">
+        </device>
+        <device name="ftr" type="frameTransformRepeater">
+        </device>
+    </devices>
+</robot>

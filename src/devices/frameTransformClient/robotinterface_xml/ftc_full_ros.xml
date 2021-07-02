@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="frameTransformClient" build="2" portprefix="frameTransformClient" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+        <!-- **************** YARP NWC **************** -->
+        <device name="ftSet_nwc_yarp" type="frameTransformSet_nwc_yarp">
+            <param extern-name="ftSet_client_port" name="rpc_port_client"> /frameTransformSet/clientRPC </param>
+            <param extern-name="ftSet_server_port" name="rpc_port_server"> /frameTransformSet/serverRPC </param>
+        </device>
+        <device name="ftGet_nwc_yarp" type="frameTransformGet_nwc_yarp">
+            <param extern-name="ftGet_client_port" name="rpc_port_client"> /frameTransformGet/clientRPC </param>
+            <param extern-name="ftGet_server_port" name="rpc_port_server"> /frameTransformGet/serverRPC </param>
+        </device>
+        <!-- **************** ROS NWC **************** -->
+        <device name="ftSet_nwc_ros" type="frameTransformSet_nwc_ros">
+            <group name="GENERAL">
+                <param extern-name="ftSet_period" name="period"> 0.01 </param>
+                <param extern-name="ftSet_refInt" name="refresh_interval"> 0.1 </param>
+                <param extern-name="ftSet_asyncPub" name="asynch_pub"> 1 </param>
+            </group>
+            <group name="ROS">
+                <param extern-name="ftSet_ftTopic" name="ft_topic"> /tf </param>
+                <param extern-name="ftSet_ftTopicStatic" name="ft_topic_static"> /tf_static </param>
+                <param extern-name="ftSet_ftNode" name="ft_node"> /tfNodeSet </param>
+            </group>
+        </device>
+        <device name="ftGet_nwc_ros" type="frameTransformGet_nwc_ros">
+            <group name="GENERAL">
+                <param extern-name="ftGet_period" name="period"> 0.01 </param>
+                <param extern-name="ftGet_refInt" name="refresh_interval"> 0.1 </param>
+            </group>
+            <group name="ROS">
+                <param extern-name="ftGet_ftTopic" name="ft_topic"> /tf </param>
+                <param extern-name="ftGet_ftTopicStatic" name="ft_topic_static"> /tf_static </param>
+                <param extern-name="ftGet_ftNode" name="ft_node"> /tfNodeGet </param>
+            </group>
+        </device>
+        <!-- **************** STORAGE **************** -->
+        <device name="ftc_storage" type="frameTransformStorage">
+            <action phase="startup" level="5" type="attach">
+                <paramlist name="networks">
+                    <elem name="subdevicegetmpx"> ftc_mpxGet </elem>
+                </paramlist>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+        <!-- **************** MULTIPLEXER **************** -->
+        <device name="ftc_mpxSet" type="frameTransformSetMultiplexer">
+            <action phase="startup" level="5" type="attach">
+                <paramlist name="networks">
+                    <elem name="subdevicestorage"> ftc_storage </elem>
+                    <elem name="subdevicesetyarp"> ftSet_nwc_yarp </elem>
+                    <elem name="subdevicesetros"> ftSet_nwc_ros </elem>
+                </paramlist>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+        <device name="ftc_mpxGet" type="frameTransformGetMultiplexer">
+            <action phase="startup" level="5" type="attach">
+                <paramlist name="networks">
+                    <elem name="subdevicegetyarp"> ftGet_nwc_yarp </elem>
+                    <elem name="subdevicegetros"> ftGet_nwc_ros </elem>
+                </paramlist>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+    </devices>
+</robot>

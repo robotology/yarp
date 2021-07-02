@@ -4,29 +4,29 @@
 # This software may be modified and distributed under the terms of the
 # BSD-3-Clause license. See the accompanying LICENSE file for details.
 
-yarp_prepare_plugin(frameTransformServer
+yarp_prepare_plugin(transformClient
                     CATEGORY device
-                    TYPE FrameTransformServer
-                    INCLUDE frameTransformServer.h
+                    TYPE TransformClient
+                    INCLUDE transformClient.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
-if(NOT SKIP_frameTransformServer)
-  yarp_add_plugin(yarp_frameTransformServer)
+if(NOT SKIP_transformClient)
+  yarp_add_plugin(yarp_transformClient)
 
-  target_sources(yarp_frameTransformServer PRIVATE frameTransformServer.cpp
-                                                   frameTransformServer.h)
+  target_sources(yarp_transformClient PRIVATE transformClient.cpp
+                                              transformClient.h)
 
-  target_link_libraries(yarp_frameTransformServer PRIVATE YARP::YARP_os
-                                                          YARP::YARP_sig
-                                                          YARP::YARP_dev
-                                                          YARP::YARP_math)
+  target_link_libraries(yarp_transformClient PRIVATE YARP::YARP_os
+                                                     YARP::YARP_sig
+                                                     YARP::YARP_dev
+                                                     YARP::YARP_math)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
                                                       YARP_math)
 
-  yarp_install(TARGETS yarp_frameTransformServer
+  yarp_install(TARGETS yarp_transformClient
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -35,5 +35,5 @@ if(NOT SKIP_frameTransformServer)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_frameTransformServer PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_transformClient PROPERTY FOLDER "Plugins/Device")
 endif()

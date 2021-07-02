@@ -21,7 +21,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#include "FrameTransformServer.h"
+#include "transformServer.h"
 #include <sstream>
 #include <limits>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -39,7 +39,7 @@ using namespace std;
 
 
 namespace {
-YARP_LOG_COMPONENT(FRAMETRANSFORMSERVER, "yarp.device.transformServer")
+YARP_LOG_COMPONENT(TRANSFORMSERVER, "yarp.device.transformServer")
 }
 
 
@@ -143,10 +143,10 @@ void Transforms_server_storage::clear()
 }
 
 /**
-  * FrameTransformServer
+  * TransformServer
   */
 
-FrameTransformServer::FrameTransformServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
+TransformServer::TransformServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
     m_period = DEFAULT_THREAD_PERIOD;
     m_enable_publish_ros_tf = false;
@@ -159,7 +159,7 @@ FrameTransformServer::FrameTransformServer() : PeriodicThread(DEFAULT_THREAD_PER
     m_FrameTransformTimeout = 0.200; //ms
 }
 
-FrameTransformServer::~FrameTransformServer()
+TransformServer::~TransformServer()
 {
     threadRelease();
     if (m_yarp_static_transform_storage)
@@ -184,7 +184,7 @@ FrameTransformServer::~FrameTransformServer()
     }
 }
 
-void FrameTransformServer::list_response(yarp::os::Bottle& out)
+void TransformServer::list_response(yarp::os::Bottle& out)
 {
     std::vector<Transforms_server_storage*> storages;
     std::vector<string>                     storageDescription;
@@ -227,7 +227,7 @@ void FrameTransformServer::list_response(yarp::os::Bottle& out)
     }
 }
 
-string FrameTransformServer::get_matrix_as_text(Transforms_server_storage* storage, int i)
+string TransformServer::get_matrix_as_text(Transforms_server_storage* storage, int i)
 {
     if (m_show_transforms_in_diagram==do_not_show)
     {
@@ -246,7 +246,7 @@ string FrameTransformServer::get_matrix_as_text(Transforms_server_storage* stora
         return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_rpy) + "\"";
     }
 
-    yCError(FRAMETRANSFORMSERVER) << "get_matrix_as_text() invalid option";
+    yCError(TRANSFORMSERVER) << "get_matrix_as_text() invalid option";
     return "";
     /*
         //this is a test to use Latek display
@@ -257,7 +257,7 @@ string FrameTransformServer::get_matrix_as_text(Transforms_server_storage* stora
     */
 }
 
-bool FrameTransformServer::generate_view()
+bool TransformServer::generate_view()
 {
     string dot_string = "digraph G { ";
     for (size_t i = 0; i < m_ros_timed_transform_storage->size(); i++)
@@ -321,25 +321,25 @@ bool FrameTransformServer::generate_view()
     int ret = std::system("dot -V");
     if (ret != 0)
     {
-        yCError(FRAMETRANSFORMSERVER) << "dot executable not found. Please install graphviz.";
+        yCError(TRANSFORMSERVER) << "dot executable not found. Please install graphviz.";
         return false;
     }
 
-    yCDebug(FRAMETRANSFORMSERVER) << "Command string is:" << command_string;
+    yCDebug(TRANSFORMSERVER) << "Command string is:" << command_string;
     ret = std::system(command_string.c_str());
     if (ret != 0)
     {
-        yCError(FRAMETRANSFORMSERVER) << "The following command failed to execute:" << command_string;
+        yCError(TRANSFORMSERVER) << "The following command failed to execute:" << command_string;
         return false;
     }
 #else
-    yCError(FRAMETRANSFORMSERVER) << "Not yet implemented. Available only Linux";
+    yCError(TRANSFORMSERVER) << "Not yet implemented. Available only Linux";
     return false;
 #endif
     return true;
 }
 
-bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
+bool TransformServer::read(yarp::os::ConnectionReader& connection)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     yarp::os::Bottle in;
@@ -359,7 +359,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         {
             if (in.size() != 12)
             {
-                yCError(FRAMETRANSFORMSERVER) << "read(): Protocol error";
+                yCError(TRANSFORMSERVER) << "read(): Protocol error";
                 out.clear();
                 out.addVocab(VOCAB_FAILED);
             }
@@ -396,7 +396,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
                 {
                     out.clear();
                     out.addVocab(VOCAB_FAILED);
-                    yCError(FRAMETRANSFORMSERVER) << "read(): Something strange happened";
+                    yCError(TRANSFORMSERVER) << "read(): Something strange happened";
                 }
             }
         }
@@ -432,7 +432,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         }
         else
         {
-            yCError(FRAMETRANSFORMSERVER, "Invalid vocab received");
+            yCError(TRANSFORMSERVER, "Invalid vocab received");
             out.clear();
             out.addVocab(VOCAB_ERR);
         }
@@ -468,12 +468,12 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         ret = m_yarp_static_transform_storage->set_transform(t);
         if (ret == true)
         {
-            yCInfo(FRAMETRANSFORMSERVER) << "set_static_transform done";
+            yCInfo(TRANSFORMSERVER) << "set_static_transform done";
             out.addString("set_static_transform done");
         }
         else
         {
-            yCError(FRAMETRANSFORMSERVER) << "read(): something strange happened";
+            yCError(TRANSFORMSERVER) << "read(): something strange happened";
         }
     }
     else if(request == "delete_all")
@@ -482,7 +482,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         m_yarp_static_transform_storage->clear();
         m_ros_timed_transform_storage->clear();
         m_ros_static_transform_storage->clear();
-        yCInfo(FRAMETRANSFORMSERVER) << "delete_all done";
+        yCInfo(TRANSFORMSERVER) << "delete_all done";
         out.addString("delete_all done");
     }
     else if (request == "list")
@@ -509,7 +509,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     }
     else
     {
-        yCError(FRAMETRANSFORMSERVER, "Invalid vocab received");
+        yCError(TRANSFORMSERVER, "Invalid vocab received");
         out.clear();
         out.addVocab(VOCAB_ERR);
     }
@@ -521,17 +521,17 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     }
     else
     {
-        yCError(FRAMETRANSFORMSERVER) << "Invalid return to sender";
+        yCError(TRANSFORMSERVER) << "Invalid return to sender";
     }
     return true;
 }
 
-bool FrameTransformServer::threadInit()
+bool TransformServer::threadInit()
 {
     //open rpc port
     if (!m_rpcPort.open(m_rpcPortName))
     {
-        yCError(FRAMETRANSFORMSERVER, "Failed to open port %s", m_rpcPortName.c_str());
+        yCError(TRANSFORMSERVER, "Failed to open port %s", m_rpcPortName.c_str());
         return false;
     }
     m_rpcPort.setReader(*this);
@@ -539,7 +539,7 @@ bool FrameTransformServer::threadInit()
     // open data port
     if (!m_streamingPort.open(m_streamingPortName))
     {
-        yCError(FRAMETRANSFORMSERVER, "Failed to open port %s", m_streamingPortName.c_str());
+        yCError(TRANSFORMSERVER, "Failed to open port %s", m_streamingPortName.c_str());
         return false;
     }
 
@@ -552,12 +552,12 @@ bool FrameTransformServer::threadInit()
         }
         if (!m_rosPublisherPort_tf_timed.topic(ROSTOPICNAME_TF))
         {
-            yCError(FRAMETRANSFORMSERVER) << "Unable to publish data on " << ROSTOPICNAME_TF << " topic, check your yarp-ROS network configuration";
+            yCError(TRANSFORMSERVER) << "Unable to publish data on " << ROSTOPICNAME_TF << " topic, check your yarp-ROS network configuration";
             return false;
         }
         if (!m_rosPublisherPort_tf_static.topic(ROSTOPICNAME_TF_STATIC))
         {
-            yCError(FRAMETRANSFORMSERVER) << "Unable to publish data on " << ROSTOPICNAME_TF_STATIC << " topic, check your yarp-ROS network configuration";
+            yCError(TRANSFORMSERVER) << "Unable to publish data on " << ROSTOPICNAME_TF_STATIC << " topic, check your yarp-ROS network configuration";
             return false;
         }
     }
@@ -571,13 +571,13 @@ bool FrameTransformServer::threadInit()
         }
         if (!m_rosSubscriberPort_tf_timed.topic(ROSTOPICNAME_TF))
         {
-            yCError(FRAMETRANSFORMSERVER) << "Unable to subscribe to " << ROSTOPICNAME_TF << " topic, check your yarp-ROS network configuration";
+            yCError(TRANSFORMSERVER) << "Unable to subscribe to " << ROSTOPICNAME_TF << " topic, check your yarp-ROS network configuration";
             return false;
         }
         m_rosSubscriberPort_tf_timed.setStrict();
         if (!m_rosSubscriberPort_tf_static.topic(ROSTOPICNAME_TF_STATIC))
         {
-            yCError(FRAMETRANSFORMSERVER) << "Unable to subscribe to " << ROSTOPICNAME_TF_STATIC << " topic, check your yarp-ROS network configuration";
+            yCError(TRANSFORMSERVER) << "Unable to subscribe to " << ROSTOPICNAME_TF_STATIC << " topic, check your yarp-ROS network configuration";
             return false;
         }
         m_rosSubscriberPort_tf_static.setStrict();
@@ -589,17 +589,17 @@ bool FrameTransformServer::threadInit()
     m_ros_static_transform_storage = new Transforms_server_storage();
     m_ros_timed_transform_storage = new Transforms_server_storage();
 
-    yCInfo(FRAMETRANSFORMSERVER) << "Transform server started";
+    yCInfo(TRANSFORMSERVER) << "Transform server started";
     return true;
 }
 
-bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
+bool TransformServer::parseStartingTf(yarp::os::Searchable &config)
 {
 
     if (config.check("USER_TF"))
     {
         Bottle all_transforms_group = config.findGroup("USER_TF").tail();
-        yCDebug(FRAMETRANSFORMSERVER) << all_transforms_group.toString();
+        yCDebug(TRANSFORMSERVER) << all_transforms_group.toString();
 
         for (size_t i = 0; i < all_transforms_group.size(); i++)
         {
@@ -608,7 +608,7 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
             Bottle*  b = all_transforms_group.get(i).asList();
             if(!b)
             {
-                yCError(FRAMETRANSFORMSERVER) << "No entries in USER_TF group";
+                yCError(TRANSFORMSERVER) << "No entries in USER_TF group";
                 return false;
             }
 
@@ -621,7 +621,7 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
                 {
                     if(!b->get(i).isFloat64())
                     {
-                        yCError(FRAMETRANSFORMSERVER) << "transformServer: element " << i << " is not a double.";
+                        yCError(TRANSFORMSERVER) << "transformServer: element " << i << " is not a double.";
                         r = false;
                     }
                     else
@@ -637,7 +637,7 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
 
                 if(!r)
                 {
-                    yCError(FRAMETRANSFORMSERVER) << "transformServer: param not correct.. for the 4x4 matrix mode" <<
+                    yCError(TRANSFORMSERVER) << "transformServer: param not correct.. for the 4x4 matrix mode" <<
                                 "you must provide 18 parameter. the matrix, the source frame(string) and the destination frame(string)";
                     return false;
                 }
@@ -663,30 +663,30 @@ bool FrameTransformServer::parseStartingTf(yarp::os::Searchable &config)
             }
             else
             {
-                yCError(FRAMETRANSFORMSERVER) << "transformServer: param not correct.. a tf requires 8 param in the format:" <<
+                yCError(TRANSFORMSERVER) << "transformServer: param not correct.. a tf requires 8 param in the format:" <<
                             "x(dbl) y(dbl) z(dbl) r(dbl) p(dbl) y(dbl) src(str) dst(str)";
                 return false;
             }
 
             if(m_yarp_static_transform_storage->set_transform(t))
             {
-                yCInfo(FRAMETRANSFORMSERVER) << "Transform from" << t.src_frame_id << "to" << t.dst_frame_id << "successfully set";
+                yCInfo(TRANSFORMSERVER) << "Transform from" << t.src_frame_id << "to" << t.dst_frame_id << "successfully set";
             }
             else
             {
-                yCInfo(FRAMETRANSFORMSERVER) << "Unbale to set transform from " << t.src_frame_id << "to" << t.dst_frame_id;
+                yCInfo(TRANSFORMSERVER) << "Unbale to set transform from " << t.src_frame_id << "to" << t.dst_frame_id;
             }
         }
         return true;
     }
     else
     {
-        yCInfo(FRAMETRANSFORMSERVER) << "No starting tf found";
+        yCInfo(TRANSFORMSERVER) << "No starting tf found";
     }
     return true;
 }
 
-bool FrameTransformServer::open(yarp::os::Searchable &config)
+bool TransformServer::open(yarp::os::Searchable &config)
 {
     Property params;
     params.fromString(config.toString());
@@ -698,13 +698,13 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
     else
     {
         m_period = config.find("period").asInt32() / 1000.0;
-        yCInfo(FRAMETRANSFORMSERVER) << "Thread period set to:" << m_period;
+        yCInfo(TRANSFORMSERVER) << "Thread period set to:" << m_period;
     }
 
     if (config.check("transforms_lifetime"))
     {
         m_FrameTransformTimeout = config.find("transforms_lifetime").asFloat64();
-        yCInfo(FRAMETRANSFORMSERVER) << "transforms_lifetime set to:" << m_FrameTransformTimeout;
+        yCInfo(TRANSFORMSERVER) << "transforms_lifetime set to:" << m_FrameTransformTimeout;
     }
 
     std::string name;
@@ -722,29 +722,29 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
     //ROS configuration
     if (!config.check("ROS"))
     {
-        yCError(FRAMETRANSFORMSERVER) << "Missing ROS group";
+        yCError(TRANSFORMSERVER) << "Missing ROS group";
         return false;
     }
     Bottle ROS_config = config.findGroup("ROS");
     if (ROS_config.check("enable_ros_publisher") == false)
     {
-        yCError(FRAMETRANSFORMSERVER) << "Missing 'enable_ros_publisher' in ROS group";
+        yCError(TRANSFORMSERVER) << "Missing 'enable_ros_publisher' in ROS group";
         return false;
     }
     if (ROS_config.find("enable_ros_publisher").asInt32() == 1 || ROS_config.find("enable_ros_publisher").asString() == "true")
     {
         m_enable_publish_ros_tf = true;
-        yCInfo(FRAMETRANSFORMSERVER) << "Enabled ROS publisher";
+        yCInfo(TRANSFORMSERVER) << "Enabled ROS publisher";
     }
     if (ROS_config.check("enable_ros_subscriber") == false)
     {
-        yCError(FRAMETRANSFORMSERVER) << "Missing 'enable_ros_subscriber' in ROS group";
+        yCError(TRANSFORMSERVER) << "Missing 'enable_ros_subscriber' in ROS group";
         return false;
     }
     if (ROS_config.find("enable_ros_subscriber").asInt32() == 1 || ROS_config.find("enable_ros_subscriber").asString() == "true")
     {
         m_enable_subscribe_ros_tf = true;
-        yCInfo(FRAMETRANSFORMSERVER) << "Enabled ROS subscriber";
+        yCInfo(TRANSFORMSERVER) << "Enabled ROS subscriber";
     }
 
     this->start();
@@ -755,7 +755,7 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
     return true;
 }
 
-void FrameTransformServer::threadRelease()
+void TransformServer::threadRelease()
 {
     m_streamingPort.interrupt();
     m_streamingPort.close();
@@ -789,7 +789,7 @@ void FrameTransformServer::threadRelease()
     }
 }
 
-void FrameTransformServer::run()
+void TransformServer::run()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (true)
@@ -897,7 +897,7 @@ void FrameTransformServer::run()
         size_t    tfVecSize_static_ros  = m_ros_static_transform_storage->size();
         size_t    tfVecSize_timed_ros = m_ros_timed_transform_storage->size();
 #if 0
-        yCDebug(FRAMETRANSFORMSERVER) << "yarp size" << tfVecSize_yarp << "ros_size" << tfVecSize_ros;
+        yCDebug(TRANSFORMSERVER) << "yarp size" << tfVecSize_yarp << "ros_size" << tfVecSize_ros;
 #endif
         yarp::os::Bottle& b = m_streamingPort.prepare();
         b.clear();
@@ -1022,13 +1022,13 @@ void FrameTransformServer::run()
     }
     else
     {
-        yCError(FRAMETRANSFORMSERVER, "Returned error");
+        yCError(TRANSFORMSERVER, "Returned error");
     }
 }
 
-bool FrameTransformServer::close()
+bool TransformServer::close()
 {
-    yCTrace(FRAMETRANSFORMSERVER, "Close");
+    yCTrace(TRANSFORMSERVER, "Close");
     if (PeriodicThread::isRunning())
     {
         PeriodicThread::stop();

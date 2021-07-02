@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
+
+<robot name="frameTransformClient" build="2" portprefix="frameTransformClient" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <devices>
+        <!-- **************** STORAGE **************** -->
+        <device name="ftc_storage" type="frameTransformStorage">
+        </device>
+        <!-- **************** YARP NWS **************** -->
+        <device name="ftSet_nws_yarp" type="frameTransformSet_nws_yarp">
+            <group name="GENERAL">
+                <param extern-name="ftSet_rpc_port" name="rpc_port"> /frameTransformSet/rpc </param>
+            </group>
+            <action phase="startup" level="5" type="attach">
+                <paramlist name="networks">
+                    <elem name="subdevicestorage"> ftc_storage </elem>
+                </paramlist>
+            </action>
+            <action phase="shutdown" level="5" type="detach" />
+        </device>
+    </devices>
+</robot>

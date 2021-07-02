@@ -79,14 +79,14 @@ public:
  *
  * \brief `transformServer`: Documentation to be added
  */
-class FrameTransformServer :
+class TransformServer :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader
 {
 public:
-    FrameTransformServer();
-    ~FrameTransformServer();
+    TransformServer();
+    ~TransformServer();
 
     bool open(yarp::os::Searchable &params) override;
     bool close() override;

@@ -83,7 +83,7 @@ public:
 *
 * \brief `transformClient`: Documentation to be added
 */
-class FrameTransformClient :
+class TransformClient :
         public yarp::dev::DeviceDriver,
         public yarp::dev::IFrameTransform,
         public yarp::dev::IFrameTransformClientControl,
@@ -93,7 +93,7 @@ class FrameTransformClient :
 private:
     enum ConnectionType {DISCONNECTED = 0, DIRECT, INVERSE, UNDIRECT, IDENTITY};
 
-    FrameTransformClient::ConnectionType getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor);
+    TransformClient::ConnectionType getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor);
 
     bool canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const;
     bool getChainedTransform(const std::string &target_frame_id, const std::string &source_frame_id, yarp::sig::Matrix &transform) const;
@@ -156,8 +156,8 @@ public:
      bool     isConnectedWithServer() override;
      bool     reconnectWithServer() override;
 
-     FrameTransformClient();
-    ~FrameTransformClient();
+     TransformClient();
+    ~TransformClient();
      bool     threadInit() override;
      void     threadRelease() override;
      void     run() override;
