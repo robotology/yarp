@@ -97,13 +97,13 @@ bool ControlBoard_nws_ros::open(Searchable& config)
     }
 
     // check for topicName parameter
-    if (!config.check("base_topic_name")) {
-        yCError(CONTROLBOARD) << nodeName << " cannot find base_topic_name parameter";
+    if (!config.check("topic_name")) {
+        yCError(CONTROLBOARD) << nodeName << " cannot find topic_name parameter";
         return false;
     }
-    topicName = config.find("base_topic_name").asString();
+    topicName = config.find("topic_name").asString();
     if(topicName[0] != '/'){
-        yCError(CONTROLBOARD) << "base_topic_name must begin with an initial /";
+        yCError(CONTROLBOARD) << "topic_name must begin with an initial /";
         return false;
     }
     topicName.append("/joint_states");
