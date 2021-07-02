@@ -141,7 +141,7 @@ jobs:
         if: |
           github.repository == 'robotology/yarp' &&
           ((github.event_name == 'release' && github.event.action == 'published') ||
-           (github.event_name == 'push' && github.ref == 'refs/heads/main'))
+           (github.event_name == 'push' && github.ref == 'refs/heads/master'))
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}
