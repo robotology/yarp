@@ -98,27 +98,28 @@ bool FrameGrabber_nws_ros::open(yarp::os::Searchable& config)
 
     node = new yarp::os::Node(nodeName);
 
-    // Check "base_topic_name" option and open publisher
-    if (!config.check("base_topic_name"))
+    // Check "topic_name" option and open publisher
+    if (!config.check("topic_name"))
     {
-        yCError(FRAMEGRABBER_NWS_ROS) << "Missing base_topic_name parameter";
+        yCError(FRAMEGRABBER_NWS_ROS) << "Missing topic_name parameter";
         return false;
     }
-    std::string baseTopicName = config.find("base_topic_name").asString();
-    if (baseTopicName.c_str()[0] != '/') {
-        yCError(FRAMEGRABBER_NWS_ROS) << "Missing '/' in base_topic_name parameter";
+    std::string topicName = config.find("topic_name").asString();
+    if (topicName.c_str()[0] != '/') {
+        yCError(FRAMEGRABBER_NWS_ROS) << "Missing '/' in topic_name parameter";
         return false;
     }
 
     // set "imageTopicName" and open publisher
-    std::string imageTopicName = baseTopicName + "/image_rect_color";
-    if (!publisherPort_image.topic(imageTopicName)) {
-        yCError(FRAMEGRABBER_NWS_ROS) << "Unable to publish data on " << imageTopicName << " topic, check your yarp-ROS network configuration";
+    if (!publisherPort_image.topic(topicName)) {
+        yCError(FRAMEGRABBER_NWS_ROS) << "Unable to publish data on " << topicName << " topic, check your yarp-ROS network configuration";
         return false;
     }
 
     // set "cameraInfoTopicName" and open publisher
-    std::string cameraInfoTopicName = baseTopicName + "/camera_info";
+
+
+    std::string cameraInfoTopicName = topicName.substr(0,topicName.rfind('/')) + "/camera_info";
     if (!publisherPort_cameraInfo.topic(cameraInfoTopicName)) {
         yCError(FRAMEGRABBER_NWS_ROS) << "Unable to publish data on" << cameraInfoTopicName << "topic, check your yarp-ROS network configuration";
         return false;
@@ -131,7 +132,7 @@ bool FrameGrabber_nws_ros::open(yarp::os::Searchable& config)
         return false;
     }
     m_frameId = config.find("frame_id").asString();
-    if (baseTopicName.c_str()[0] != '/') {
+    if (m_frameId.c_str()[0] != '/') {
         yCError(FRAMEGRABBER_NWS_ROS) << "Missing '/' in frame_id parameter";
         return false;
     }

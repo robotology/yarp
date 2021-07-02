@@ -30,13 +30,13 @@
  *  @ingroup dev_impl_wrapper
  *
  *  Parameters required by this device are:
- * | Parameter name  | Type   | Units   | Default Value | Required  | Description                                                                                  | Notes |
- * |:---------------:|:------:|:-------:|:-------------:|:--------: |:--------------------------------------------------------------------------------------------:|:-----:|
- * | period          | float  | seconds |  0.03 s       | No        | the period of publication                                                                    |       |
- * | node_name       | String | -       | -             | Yes       | the name of the ros node                                                                     | must begin with /      |
- * | base_topic_name | String | -       | -             | Yes       | the base name of the topic, the subtopics will be name/image_rect_color and name/camera_info | must begin with /      |
- * | frame_id        | String | -       | -             | Yes       | the frame where the grabber is placed                                                        |       |
- * | subdevice       | string | -       |  -            | Yes       | the name of the grabber used                                                                 | -     |
+ * | Parameter name  | Type   | Units   | Default Value | Required  | Description                              | Notes |
+ * |:---------------:|:------:|:-------:|:-------------:|:--------: |:----------------------------------------:|:-----:|
+ * | period          | float  | seconds |  0.03 s       | No        | the period of publication                |       |
+ * | node_name       | String | -       | -             | Yes       | the name of the ros node                 | must begin with /      |
+ * | topic_name      | String | -       | -             | Yes       | the name of the ros topic                | must begin with /      |
+ * | frame_id        | String | -       | -             | Yes       | the frame where the grabber is placed    |       |
+ * | subdevice       | string | -       |  -            | Yes       | the name of the grabber used             | -     |
  *
  */
 
