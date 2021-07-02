@@ -40,7 +40,7 @@ jobs:
         echo "stable: ${{ github.event.inputs.stable }}"
         echo "version: ${{ github.event.inputs.version }}"
         echo "merge_branch: ${{ github.event.inputs.merge_branch }}"
-        echo "prepare_next_stable: ${{ github.event.inputs.prepare_next_stable }}
+        echo "prepare_next_stable: ${{ github.event.inputs.prepare_next_stable }}"
 
     - name: Configure git, Prepare Repository and environment variables
       env:
