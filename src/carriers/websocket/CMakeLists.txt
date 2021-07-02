@@ -15,16 +15,30 @@ yarp_prepare_plugin(
 if(NOT SKIP_websocket)
   yarp_add_plugin(yarp_websocket)
 
+  set(WebSocket_SOURCES
+      ${WebSocket_ROOT}/WebSocket/WebSocket.cpp
+      ${WebSocket_ROOT}/WebSocket/WebSocket.h
+      ${WebSocket_ROOT}/WebSocket/base64/base64.cpp
+      ${WebSocket_ROOT}/WebSocket/base64/base64.h
+      ${WebSocket_ROOT}/WebSocket/md5/md5.c
+      ${WebSocket_ROOT}/WebSocket/md5/md5.h
+      ${WebSocket_ROOT}/WebSocket/md5/md5.hpp
+      ${WebSocket_ROOT}/WebSocket/sha1/sha1.cpp
+      ${WebSocket_ROOT}/WebSocket/sha1/sha1.h
+  )
+
   target_sources(
     yarp_websocket
     PRIVATE
-      WebSocketCarrier.h
       WebSocketCarrier.cpp
+      WebSocketCarrier.h
       WebSocketStream.cpp
-      ${WebSocket_ROOT}/WebSocket/WebSocket.cpp
-      ${WebSocket_ROOT}/WebSocket/base64/base64.cpp
-      ${WebSocket_ROOT}/WebSocket/sha1/sha1.cpp
+      WebSocketStream.h
+      ${WebSocket_SOURCES}
   )
+
+  set_source_files_properties(${WebSocket_SOURCES} PROPERTIES COMPILE_FLAGS "-w")
+
   target_include_directories(yarp_websocket
     PRIVATE
       ${WebSocket_ROOT}
