@@ -106,6 +106,7 @@ jobs:
       - build_sdist
       - build_wheels
     runs-on: ubuntu-latest
+    environment: pypi
     # Master branch produces pre-releases.
     # GitHub Releases 'vX.Y.Z' produce stable releases.
 
