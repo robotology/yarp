@@ -43,81 +43,26 @@
 const int MAX_PORTS = 5;
 
 /**
- * @ingroup dev_impl_network_clients
- * @brief A client to manage FrameTransforms for a robot
+ *  @ingroup dev_impl_network_clients
  *
- * This is a client for the frametransform device.\n
- * it has various configurations as below.
- * \section clients that doesn't need the FrameTransformServer
- * - **LOCAL ONLY** The first one is the local only, that maintain a storage inside
- * keeps all the transforms there and has no connection with the network.\n
- * it is useful when you don't need to communicate with the network but you need to have
- * the transforms locally.\n
- * The code to launch this client is:
- * \code{.unparsed}
- * yarpdev --device frameTransformClient --filexml_option ftc_local_only.xml
- * \endcode
- * \image  html frametransform/FTC_Local_only.png width=35%
- * - **ROS ONLY** The previous one and this one, the ros publisher only,
- * are the only two clients that doesn't need a server.\n
- * The ros publisher only is composed as below and is
- * useful  when you need to communicate to a ros server without the yarp server.\n
- * The code to launch this client is:
- * \code{.unparsed}
- * yarpdev --device frameTransformClient --filexml_option ftc_ros.xml
- * \endcode
- * \image  html frametransform/FTC_ROS_Only.png width=35%
- *   - **ROS PUB ONLY** and **ROS SUB ONLY** There are two other version of the previous client as below,\n
- *   these two clients are to publish only or to receive only the transforms.\n
- *   They are useful when you need to interact but you don't want the whole client.\n
- *   The codes to launch those clients are:
- *   \code{.unparsed}
- *   yarpdev --device frameTransformClient --filexml_option ftc_pub_ros.xml
- *   \endcode
- *   \code{.unparsed}
- *   yarpdev --device frameTransformClient --filexml_option ftc_sub_ros.xml
- *   \endcode
- *   \image  html frametransform/FTC_ROS_Pub_Only.png width=35%
- *   \image  html frametransform/FTC_ROS_Sub_Only.png width=35%
+ * \section FrameTransformClient_device_parameters Description of input parameters
  *
- * \section clients that need the FrameTransformServer
- * All the clients inside this section needs a server active, the composition
- * of the server depends from the type of client. The various clients are:
- * - **YARP ONLY** This is the full client that uses only yarp.\n
- * N.B. The client use only yarp but the server attached can be both ONLY YARP or YARP + ROS\n
- * The code to launch this client is:
- * \code{.unparsed}
- * yarpdev --device frameTransformClient --filexml_option ftc_yarp_only.xml
- * \endcode
- * \image  html frametransform/FTC_YARP_only.png width=35%
- *   - **YARP PUB ONLY** and **YARP SUB ONLY** As same as ROS client, there are also two other versions of this client,\n
- *   the one to publish only the transforms and the one to receive only the transforms.\n
- *   Like the one above this can be attached to both ONLY YARP or YARP + ROS\n
- *   The codes to launch those clients are:
- *   \code{.unparsed}
- *   yarpdev --device frameTransformClient --filexml_option ftc_pub_yarp_only.xml
- *   \endcode
- *   \code{.unparsed}
- *   yarpdev --device frameTransformClient --filexml_option ftc_sub_yarp_only.xml
- *   \endcode
- *   \image  html frametransform/FTC_PUB_YARP_only.png width=35%
- *   \image  html frametransform/FTC_SUB_YARP_only.png width=35%
- *   - **YARP UPDATE ONLY** There is a third version of the client that is useful when someone wants to receive only the\n
- *   updates from another client and is the one below:
- *   \code{.unparsed}
- *   yarpdev --device frameTransformClient --filexml_option ftc_yarp_only_single_client.xml
- *   \endcode
- *   \image  html frametransform/FTC_YARP_only_single_client.png width=35%
+ * \brief A client to manage FrameTransforms for a robot (see \ref FrameTransformClientDoc)
  *
- * - **YARP AND ROS** The last version available of the client is the one that has inside bot ros and yarp.\n
- * It is useful when you have both yarp and ros frametransform server and you need to keep  both updated.\n
- * the code to launch this client is:
+ *   Parameters required by this device are:
+ * | Parameter name   | SubParameter         | Type    | Units          | Default Value         | Required     | Description                                                          |
+ * |:----------------:|:--------------------:|:-------:|:--------------:|:---------------------:|:-----------: |:--------------------------------------------------------------------:|
+ * | filexml_option   | -                    | string  | -              | ftc_local_only.xml    | no           | The name of the xml file containing the needed client configuration  |
+ *
+ * Some example of configuration files:
+ *
+ * Example of configuration file using .ini format.
+ *
  * \code{.unparsed}
- * yarpdev --device frameTransformClient --filexml_option ftc_full_ros.xml
+ * device frameTransformClient
+ * filexml_option ftc_local_only.xml
  * \endcode
- * \image  html frametransform/FTC_YARP_+_ROS.png width=35%
- * .
-*/
+ */
 
 class FrameTransformClient :
         public yarp::dev::DeviceDriver,
