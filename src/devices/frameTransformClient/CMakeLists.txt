@@ -7,7 +7,7 @@
 include(CMakeRC)
 
 cmrc_add_resource_library(frameTransformRC
-                          NAMESPACE frameTransformRC
+                          TYPE OBJECT
                           WHENCE robotinterface_xml
                           PREFIX config_xml
                           robotinterface_xml/ftc_full_ros.xml

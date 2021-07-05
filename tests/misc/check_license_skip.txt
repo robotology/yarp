@@ -3,3 +3,4 @@ bindings/lua/argcargv.i
 src/devices/opencv/OpenCVGrabber.cpp
 src/devices/opencv/OpenCVGrabber.h
 cmake/FindFFMPEG.cmake
+cmake/CMakeRC.cmake
