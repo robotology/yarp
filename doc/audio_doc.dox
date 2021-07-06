@@ -1,0 +1,129 @@
+/**
+\page AudioDoc Audio in Yarp
+
+\section datatype yarp::sig::Sound data type
+yarp::sig::Sound is a yarp::os::Portable type, which means that can be transmitted/received over the network through a yarp::os::Yarp port.
+The internal storage currently supports only <b>16-bit audio</b>. The sampling frequency f (in Hz) and the channels number c can be freely chosen by the user.
+The Sound class behaves like a NxM vector, with N the number of samples and M the number of channels. Each sample ranges from -32768 to 32767 and represents
+1/f seconds of audio data.
+
+This matrix representation can be linearized to a plain vector in two different ways: <b>interleaved</b> (recommended) and <b>not-interleaved</b>. 
+Let's consider an example constituted by a two channels sound. Let's call 1,2,3,4 the first four samples of first channel of sound, and A,B,C,D the
+first four samples of the second channel. The interleaved representation will arrange the samples as 1A2B3C4D. This is representation allows easy 
+sound processing in the time domain (the time increases monotonically) The non-interleaved representation arranges the samples as 1234ABCD.
+This arrangement is useful when we want to process a specific audio channel only. 
+
+Sounds can be read/written to disk via the methods included in yarp::sig::file namespace.
+Read/write methods are implemented for .wav and .mp3 audio formats (SoundFile.h)
+Audio can be transmitted over the network <b>uncompressed</b> (default), or with <b>mp3 compression</b> (via sound_compression_mp3 portmonitor, see: Mp3SoundConverter)
+The yarp::sig::Sound also offer some basic processing functionalities such as <b>amplification</b>, <b>normalization</b>, <b>peak filtering</b>.
+See yarp::sig::Sound class documentation for additional details.
+
+
+\section devices_general yarp devices
+Audio-related devices include <b>physical device drivers</b> and <b>wrapper devices</b> which send/receive sound data over the network.
+
+\section driver_devices Physical device drivers 
+- fakeMicrophone a device which generates a predefined audio tone for testing purposes.
+- fakeSpeaker a device which receives audio data and consume it (without playing) for testing purposes.
+- audioFromFileDevice a device which reads a audio file from disk and sends it over the network via audioRecorderWrapper.
+- audioToFileDevice a device which receives audio data and writes it on disk.
+- portaudioRecorder (PortAudioRecorderDeviceDriver) a device which records audio from the local hardware using <a href="http://portaudio.com/">portaudio</a>  library and sends it over the network via audioRecorderWrapper
+- portaudioPlayer (PortAudioPlayerDeviceDriver) a device which receives audio data and plays it on the local hardware, using <a href="http://portaudio.com/">portaudio</a>  library.
+
+All these devices derive from the same base classes yarp::dev::AudioRecorderDeviceBase and yarp::dev::AudioPlayerDeviceBase which are also responsible for parsing 
+configuration parameters which are common for all the physical device drivers. They include: the sampling frequency (`AUDIO_BASE::rate`), the number of channels (`AUDIO_BASE::channels`), the hardware volume (`AUDIO_BASE::hw_gain`) etc.
+
+Important: the `AUDIO_BASE::samples` parameter requires additional explanation. It controls the size (in samples) of the internal buffer responsible
+for temporary storing the audio data during the recording/playback.
+The length of the buffer expressed in seconds is equal to the number of samples multiplied by the parameter `AUDIO_BASE::rate`.
+The size of this buffer should be large enough to store the data received by the attached wrapper. 
+For example a playback buffer of 2000 samples is required if the attached audioPlayerWrapper is expected to receive sounds which have a length of 1000 samples maximum
+(in general we recommend to use a buffer which has twice the size of the received audio sound).
+
+Another important parameter for the devices deriving from yarp::dev::AudioPlayerDeviceBase is the playback mode which can be either `immediate` or `append`. In the 
+first case, is a new audio is received while the current playback is still in progress, the current playback is interrupt, and the new sound is reproduced.
+Otherwise, the received Sound is appended in the buffer and will be played after the completion of the current playback (this is the default playback mode)
+Please note that the appending mode may trigger a buffer overrun if its size in not large enough to contain the appended sounds. In this case, just increasing the value of 
+`AUDIO_BASE::samples` will be enough to solve the problem, with no particular drawback (except for memory usage). 
+
+\section devices_wrappers wrapper devices
+- AudioPlayerWrapper is used to receive data from the network on yarp port and play it locally on a playback device.
+It uses the yarp::dev::IAudioRender to control the attached device.
+- AudioRecorderWrapper is used to record audio from a local device and send data to the network via yarp port.
+It uses the yarp::dev::IAudioGrabberSound to control the attached device.
+
+Both the wrappers are open a port to receive/send data, and RPC port to receive user commands, a status port which displays some infos about the status of
+the wrapper. 
+A list of the available RPC commands are displayed typing `help`.
+ - The `start` and `stop` commands are used to activate/disable the device. 
+ When stop command is sent to the recorder wrapper, it turns off the microphone of the attached device driver and no audio is grabbed from it.
+ The wrapper thread will thus just wait for incoming data and nothing will be sent to the network. When start command is sent to the recorder wrapper,
+ the recording is resumed and audio is sent to the network again.
+ By default, the AudioRecorderWrapper starts in disabled mode, and can be activated either via an rpc command or via --start parameter.
+ When stop command is sent to the player wrapper, it turns off the playback of the attached device driver and no audio is played.
+ When start command is sent to the player wrapper, the playback is resumed. Depending the configuration of the attached device, the buffer can
+ be cleared or not, meaning
+ that the interrupted audio can be resumed or start when a new audio is received. This functionality is managed through the DeviceBase class via
+ the `AUDIO_BASE::buffer_autoclear` parameter (default false).
+ A clear rpc command is also available to the user if he wants to clear the buffer on command.
+ By default, the AudioPlayerWrapper starts in disabled mode, and can be activated either via an rpc command or via --start parameter.
+ - The `sw_audio_gain` is multiplier factor which can be use to adjust the playback/recording audio volume. A value equal to 0 corresponds to mute, a value
+ between 0 and 1.0 corresponds to volume reduction, a value greater than 1.0 corresponds to amplification.
+ - The `hw_audio_gain` has the same meaning of the sw audio gain, excepts for the fact that is passed to the low level device driver (which may implement it or not, depending on the hardware
+  capabilities) instead of being handled by the wrapper. Both `sw_audio_gain` and `hw_audio_gain` can be set both via rpc command of as a startup parameter.
+
+An important AudioRecorderWrapper set of parameters to understand is the composed by `min_samples_over_network`, `max_samples_over_network`, 
+`max_samples_timeout` that are used to implement the following logic. The AudioRecorderWrapper is a thread which periodically asks to the 
+attached device new audio samples.
+This call is blocking until the device returns a number of samples greater than min_samples_over_network or if the max_samples_timeout timer 
+(in seconds) expires. If this happens, the yarp sound will be sent anyway over the network, unless its size is zero.
+Instead, if the number of available samples exceeds `max_samples_over_network`, then these samples will be left in the internal buffer and will
+by obtained during the next thread iteration.
+
+Regarding the AudioPlayerWrapper, another important parameter to understand is `playback_network_buffer_size`. 
+The values is expressed (in seconds). The wrapper stores received audio Sounds in an internal queue and starts the playback after waiting a
+corresponding amount of time. In this way the device driver has more to time to receive additional samples before a buffer underrun error 
+(i.e. buffer empty) is triggered. 
+ 
+One final note regards the two status ports opened by AudioPlayerWrapper and AudioRecorderWrapper devices. 
+These port broadcasts a specific yarp datatype yarp::dev::audioPlayerStatus / yarp::dev::audioRecorderStatus which contains info about the current status of the device,
+i.e. if is enabled or not, the size of internal buffer, the current number of samples contained in the buffer.
+
+
+\section AudioExamples Examples
+
+The following example reads an audio from a file, sends data through the network, and plays it on a speaker.
+The chosen configuration uses an internal buffer of 32000 samples (corresponding to 2 seconds of audio if audio samples with a freq of 16KHz are received).
+The playback has a latency of 0.1s.
+\code
+yarpdev --device audioRecorderWrapper --subdevice audioFromFileDevice --start --file_name audio_in.wav
+yarpdev --device audioPlayerWrapper --subdevice portaudioPlayer --start --playback_network_buffer_size 0.1 --AUDIO_BASE::samples 32000
+yarp connect /audioRecorderWrapper/audio:o /audioPlayerWrapper/audio:i
+\endcode
+
+The following example grabs data from a microphone, sends data through the network, and saves it to a file.
+The chosen configuration forces the recorderWrapper to send data packets composed by 3200 samples, corresponding to 0.2s.
+\code
+yarpdev --device audioRecorderWrapper --subdevice portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 3200 --AUDIO_BASE::channels 1
+yarpdev --device audioPlayerWrapper --subdevice audioToFileDevice --start  --file_name audio_out.wav --save_mode overwrite_file
+yarp connect /audioPlayerWrapper/audio:o /audioPlayerWrapper/audio:i
+\endcode
+
+
+\section AudioLimitations Limitations
+The audio system currently do not support real-time audio transmission for audio conference purposes. Of course the systems allows to do it, as shown in 
+following example:
+\code
+yarpdev --device audioRecorderWrapper --subdevice portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 3200 --AUDIO_BASE::channels 1
+yarpdev --device audioPlayerWrapper --subdevice portaudioPlayer --start --playback_network_buffer_size 0.1 --AUDIO_BASE::samples 32000
+yarp connect /audioPlayerWrapper/audio:o /audioPlayerWrapper/audio:i
+\endcode
+This example has several problems. First of some inevitable pop-clicks distortions will be happens,
+due to the fact the finite buffers have finite size. Since the network transmission has physical non-zero latency, the receiver accumulates
+more and more delay, having no physical way to recover from it and being unable to ask to the transmitter to perform a control action/send new data 
+The only possible workaround is to set a very large buffer, which will introduce extra-latency but will make the buffer underrun occur less frequently.
+ 
+
+ 
+*/

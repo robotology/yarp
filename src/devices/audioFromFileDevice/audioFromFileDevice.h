@@ -21,7 +21,7 @@
 *
 * \brief `audioFromFileDevice` : This device driver, wrapped by default by AudioRecorderWrapper,
 * is used to read data from a file and stream it to the network.
-* This device driver derives from AudioRecorderDeviceBase base class. Please check its documentation for additional details.
+* This device driver derives from \ref AudioRecorderDeviceBase base class, please check its documentation for additional details.
 *
 * Parameters required by this device are:
 * | Parameter name    | SubParameter   | Type    | Units          | Default Value            | Required                    | Description                                                       | Notes |
@@ -30,6 +30,8 @@
 * | file_name         |      -         | string  | -              |  audio.wav               | No                          | The name of the file opened by the module                         | Only .wav files supported   |
 * | period            |      -         | double  | s              |  0.010                   | No                          | the period of thread which processes the file                     | On each iteration xxx samples are processed |
 * | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the thread  | - |
+*
+* See \ref AudioDoc for additional documentation on Yarp audio.
 */
 
 class audioFromFileDevice :

@@ -41,7 +41,9 @@
 * | AUDIO_BASE        |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioRecorderDeviceBase |       |
 * | driver_frame_size |      -         | int     | samples        |  512                     | No                          | Number of samples grabbed by the device in a single uninterruptible operation |  It is recommended to NOT CHANGE this value from its default=512  |
 * | id                |      -         | int     | -              |  -1                      | No                          | Id of the sound card.                                             | if == -1, portaudio will choose automatically  |
- */
+*
+* See \ref AudioDoc for additional documentation on Yarp audio.
+*/
 
 class PortAudioRecorderDeviceDriver :
         public yarp::dev::AudioRecorderDeviceBase,

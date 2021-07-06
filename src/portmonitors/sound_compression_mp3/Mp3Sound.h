@@ -14,9 +14,15 @@
 #include <yarp/sig/Sound.h>
 #include <yarp/os/MonitorObject.h>
 
-//example usage:
-//yarp connect /src /dest tcp+recv.portmonitor+type.dll+file.sound_compression_mp3
-
+/**
+ * \brief `sound_compression_mp3`: A portmonitor which is able to convert apply mp3 compression/decompression
+ * to yarp::sig::Sound data transmitted over the network.
+ *
+ * Example usage:
+ * yarp connect /src /dest tcp+recv.portmonitor+type.dll+file.sound_compression_mp3
+ *
+ * See \ref AudioDoc for additional documentation on Yarp audio.
+ */
 class Mp3SoundConverter : public yarp::os::MonitorObject
 {
 public:
