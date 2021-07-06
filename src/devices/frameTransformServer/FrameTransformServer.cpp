@@ -19,17 +19,19 @@
 // example: yarpdev --device transformServer --ROS::enable_ros_publisher 0 --ROS::enable_ros_subscriber 0
 
 #define _USE_MATH_DEFINES
-#include <cmath>
+#include "FrameTransformServer.h"
 
-#include "frameTransformServer.h"
-#include <sstream>
-#include <limits>
-#include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <mutex>
+
+#include <yarp/dev/ControlBoardInterfaces.h>
+
+#include <cmath>
 #include <cstdlib>
+#include <limits>
+#include <mutex>
+#include <sstream>
 
 using namespace yarp::sig;
 using namespace yarp::math;

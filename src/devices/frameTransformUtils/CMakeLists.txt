@@ -14,8 +14,8 @@ endif()
 
 add_library(FrameTransformUtils OBJECT)
 
-target_sources(FrameTransformUtils PRIVATE frameTransformContainer.cpp
-                                           frameTransformContainer.h)
+target_sources(FrameTransformUtils PRIVATE FrameTransformContainer.cpp
+        FrameTransformContainer.h)
 
 target_include_directories(FrameTransformUtils PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 

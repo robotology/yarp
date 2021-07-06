@@ -20,24 +20,30 @@
 #define YARP_DEV_FRAMETRANSFORMCLIENT_H
 
 
-#include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
-#include <yarp/dev/IPreciselyTimed.h>
-#include <frameTransformContainer.h>
-#include <yarp/dev/IFrameTransform.h>
-#include <yarp/dev/IFrameTransformStorage.h>
-#include <yarp/dev/IFrameTransformClientControl.h>
-#include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/ControlBoardHelpers.h>
-#include <yarp/sig/Vector.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
+
+#include <yarp/sig/Vector.h>
+
+#include <yarp/dev/ControlBoardHelpers.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/IFrameTransformClientControl.h>
+#include <yarp/dev/IFrameTransformStorage.h>
+#include <yarp/dev/IPreciselyTimed.h>
 #include <yarp/dev/PolyDriver.h>
+
 #include <yarp/math/FrameTransform.h>
 #include <yarp/os/PeriodicThread.h>
 #include <mutex>
 #include <yarp/robotinterface/Param.h>
 #include <yarp/robotinterface/XMLReader.h>
+
+#include <FrameTransformContainer.h>
+#include <mutex>
 
 #define DEFAULT_THREAD_PERIOD 20 //ms
 const int MAX_PORTS = 5;
