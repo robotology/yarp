@@ -42,7 +42,7 @@ libyarp_dev interfaces:
 \section FrameTransformClient
 
 A client to manage frame transforms for robots.\n
-It can be configured in different ways to match the user's needs.\n
+This device implements the \ref yarp::dev::IFrameTransform interface and it can be configured in different ways to match the user's needs.\n
 In the following sections a brief description and simple graphic representation for each configuration are shown.\n\n
   \subsection nofts_sec Client configurations that DO NOT need a Server
 - **LOCAL ONLY** This first configuration have to be used when the the user needs only to manage and
@@ -112,7 +112,7 @@ yarpdev --device frameTransformClient --filexml_option ftc_full_ros.xml
 
 .
  \section FrameTransformServer
- For what is concerning the server part, there are 2 different configurations: (**Xml files of the server are located in**) TODO FIXME STE insert path
+ For what is concerning the server part, there are 2 different configurations: (*XML files path to be determined*)
 
 - The first one is the **YARP ONLY** configuration.\n
  It starts a server listening only to thrift ports with a small storage inside to update
