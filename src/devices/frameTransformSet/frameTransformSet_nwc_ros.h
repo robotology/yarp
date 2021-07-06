@@ -32,8 +32,10 @@
 #define ROSTOPICNAME_TF "/tf"
 #define ROSTOPICNAME_TF_STATIC "/tf_static"
 
-/*
- * \section FrameTransformSet_nwc_ros_device_parameters Description of input parameters
+/**
+ * @brief A network wrapper client to publish the transforms received on the yarp::dev::IFrameTransformStorageSet interface to ROS.
+ *
+ * \section FrameTransformSet_nwc_ros_device_parameters Parameters
  *
  *   Parameters required by this device are:
  * | Parameter name | SubParameter         | Type    | Units          | Default Valu          | Required     | Description                                                                                             |
@@ -47,9 +49,9 @@
  * | -              | ft_topic_static      | string  | -              | /tf_static            | No           | The name of the ROS topic on which static fts will be published                                         |
  * | -              | ft_node              | string  | -              | /tfNodeSet            | No           | The of the ROS node                                                                                     |
  *
- * Some example of configuration files:
+ * **N.B.** pay atttention to the difference between **tf** and **ft**
  *
- * Example of configuration file using .ini format.
+ * \section FrameTransformSet_nwc_ros_configuration Example of configuration file using .ini format.
  *
  * \code{.unparsed}
  * device frameTransformSet_nwc_yarp

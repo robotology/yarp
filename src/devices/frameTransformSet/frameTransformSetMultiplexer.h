@@ -6,12 +6,13 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-/*
- * \section FrameTransformSetMultiplexer_device_parameters Description of input parameters
+/**
+ * @brief A multiplexer to forward the input of one IFrameTransformStorageSet interfaces to many.
+ *
  * This device is a simple multiplexer of devices that implements the IFrameTransformStorageSet interface.
  * It can be attached to multiple devices and when the functions setTransform or setTransforms are called
- * they are forwarded to all the devices attached.
- * For how to attach the various devices see FrameTransformClient and FrameTransformServer.
+ * they are forwarded to all the devices attached.\n
+ * For how to attach the various devices see \subpage FrameTransform.
  */
 
 #include <yarp/dev/DeviceDriver.h>

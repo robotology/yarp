@@ -18,8 +18,10 @@
 #include <mutex>
 #include <map>
 
-/*
- * \section FrameTransformSet_nwc_yarp_device_parameters Description of input parameters
+/**
+ * @brief A network wrapper client to publish the transforms received on the thrift interface FrameTransformStorageSetRPC to yarp::dev::IFrameTransformStorageSet interface.
+ *
+ * \section FrameTransformSet_nwc_yarp_device_parameters Parameters
  * This device is paired with its server called FrameTransformSet_nws_yarp.
  *
  *   Parameters required by this device are:
@@ -28,9 +30,7 @@
  * | rpc_port_client |      -                  | string  | -              |   /frameTransformGet/clientRPC  | No           | port on which rpc calls should be made |
  * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
  *
- * Some example of configuration files:
- *
- * Example of configuration file using .ini format.
+ * \section FrameTransformSet_nwc_yarp_example Example of configuration file using .ini format.
  *
  * \code{.unparsed}
  * device FrameTransformGet_nwc_yarp
