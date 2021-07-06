@@ -47,7 +47,7 @@ const int MAX_PORTS = 5;
  *
  * \section FrameTransformClient_device_parameters Description of input parameters
  *
- * \brief A client to manage FrameTransforms for a robot (see \ref FrameTransformClientDoc)
+ * \brief A client to manage FrameTransforms for a robot (see \ref FrameTransform)
  *
  *   Parameters required by this device are:
  * | Parameter name   | SubParameter         | Type    | Units          | Default Value         | Required     | Description                                                          |

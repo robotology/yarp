@@ -115,6 +115,7 @@ periodically check it.
 
 \section Yarp Interfaces and Devices
 \li \subpage YarpDevicesPage
+\li \subpage FrameTransform
 
 \section yarp_more_info More information
 \li \subpage what_is_yarp

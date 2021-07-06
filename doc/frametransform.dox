@@ -1,12 +1,50 @@
 /**
-\page FrameTransformClientDoc Documentation for FrameTransformClient
+\page FrameTransform FrameTransform: start all the required devices needed for transforming frames
+
+\ingroup yarp_tools
 
 \tableofcontents
+
+\section FrameTransform_intro Description
+The devices related to frame transformation have been decomposed into various submodules:
+- frameTransformClient
+    - FrameTransformClient
+- frameTransformGet
+    - FrameTransformGet_nwc_ros
+    - FrameTransformGet_nwc_yarp
+    - FrameTransformGet_nws_yarp
+    - FrameTransformGetMultiplexer
+- frameTransformSet
+    - FrameTransformSet_nwc_ros
+    - FrameTransformSet_nwc_yarp
+    - FrameTransformSet_nws_yarp
+    - FrameTransformSetMultiplexer
+- frameTransformUtils
+    - FrameTransformContainer
+.
+
+Thrift interfaces:
+ - FrameTransformStorageGetRPC
+ - FrameTransformStorageSetRPC
+ - return_getAllTransforms
+.
+
+libyarp_dev interfaces:
+ - yarp::dev::IFrameTransform
+ - yarp::dev::IFrameTransformStorageSet
+ - yarp::dev::IFrameTransformStorageGet
+ - yarp::dev::IFrameTransformStorageUtils
+.
+
+ This particular device can be decomposed into client and server if needed, as can be seen below, and each client and
+ server can have various submodules so the user can choose a different structure depending on his need.
+
+\section FrameTransformClient
 
 A client to manage frame transforms for robots.\n
 It can be configured in different ways to match the user's needs.\n
 In the following sections a brief description and simple graphic representation for each configuration are shown.\n\n
-\section nofts_sec Client configurations that DO NOT need a Server
+  \subsection nofts_sec Client configurations that DO NOT need a Server
 - **LOCAL ONLY** This first configuration have to be used when the the user needs only to manage and
 store the transforms locally.\n
 Command line instructions to use the configuration:
@@ -34,7 +72,7 @@ yarpdev --device frameTransformClient --filexml_option ftc_ros.xml
   \image  html frametransform/FTC_ROS_Pub_Only.svg width=auto
   \image  html frametransform/FTC_ROS_Sub_Only.svg width=auto
  *
-\section fts_sec Client configurations that DO need a Server
+  \subsection fts_sec Client configurations that DO need a Server
 The following configurations need, as the section title suggests, a running server component.
 The appropriate client configuration depends on the running server.
 - **YARP ONLY** This is the full client that uses only yarp.\n
@@ -72,4 +110,25 @@ yarpdev --device frameTransformClient --filexml_option ftc_full_ros.xml
 \endcode
 \image  html frametransform/FTC_YARP_+_ROS.svg width=auto
 
+.
+ \section FrameTransformServer
+ For what is concerning the server part, there are 2 different configurations: (**Xml files of the server are located in**) TODO FIXME STE insert path
+
+- The first one is the **YARP ONLY** configuration.\n
+ It starts a server listening only to thrift ports with a small storage inside to update
+ all the clients that connects to it later with the latest transforms.\n
+ the code to launch this server is:
+ \code{.unparsed}
+ yarprobotinterface --config fts_yarp_only.xml
+ \endcode
+ \image  html frametransform/FTS_YARP_only.svg width=auto
+- The second one is the **YARP AND ROS** configuration.\n
+ It starts a server listening to both thrift ports and ros topics, so its updates came from both parts. It has also a small storage inside to update
+ all the clients that connects to it later with the latest transforms.\n
+ the code to launch this server is:
+ \code{.unparsed}
+ yarprobotinterface --config fts_full_ros.xml
+ \endcode
+ \image  html frametransform/FTS_YARP_+_ROS.svg width=auto
+.
 */
