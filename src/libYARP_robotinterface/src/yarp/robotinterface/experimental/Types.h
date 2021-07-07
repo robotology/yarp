@@ -6,82 +6,74 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_ROBOTINTERFACE_TYPES_H
-#define YARP_ROBOTINTERFACE_TYPES_H
+#ifndef YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H
+#define YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H
 
-#include <yarp/robotinterface/api.h>
+#include <yarp/conf/system.h>
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/dev/experimental/Types.h> file is deprecated in favour of <yarp/dev/Types.h>")
+#endif
 
-#include <iosfwd>
-#include <list>
-#include <string>
-#include <vector>
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+
+#include <yarp/robotinterface/Types.h>
 
 namespace yarp {
-
-namespace os {
-class Thread;
-class LogStream;
-} // namespace os
-
 namespace robotinterface {
 namespace experimental {
 
-class Param;
-class Action;
-class Device;
-class Robot;
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::ParamList") yarp::robotinterface::ParamList ParamList;
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::ActionList") yarp::robotinterface::ActionList ActionList;
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::DeviceList") yarp::robotinterface::DeviceList DeviceList;
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::ThreadList") yarp::robotinterface::ThreadList ThreadList;
 
-typedef std::vector<robotinterface::experimental::Param> ParamList;
-typedef std::vector<robotinterface::experimental::Action> ActionList;
-typedef std::vector<robotinterface::experimental::Device> DeviceList;
-typedef std::list<yarp::os::Thread*> ThreadList;
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::hasParam")
+using robotinterface::hasParam;
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::findParam")
+using robotinterface::findParam;
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::hasGroup")
+using robotinterface::hasGroup;
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::findGroup")
+using robotinterface::findGroup;
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::mergeDuplicateGroups")
+using robotinterface::mergeDuplicateGroups;
 
-YARP_robotinterface_API bool hasParam(const robotinterface::experimental::ParamList& list, const std::string& name);
-YARP_robotinterface_API std::string findParam(const robotinterface::experimental::ParamList& list, const std::string& name);
-YARP_robotinterface_API bool hasGroup(const robotinterface::experimental::ParamList& list, const std::string& name);
-YARP_robotinterface_API std::string findGroup(const robotinterface::experimental::ParamList& list, const std::string& name);
-YARP_robotinterface_API robotinterface::experimental::ParamList mergeDuplicateGroups(const robotinterface::experimental::ParamList& list);
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::ActionPhase")
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::ActionPhase") yarp::robotinterface::ActionPhase ActionPhase;
+using robotinterface::ActionPhaseUnknown;
+using robotinterface::ActionPhaseStartup;
+using robotinterface::ActionPhaseRun;
+using robotinterface::ActionPhaseInterrupt1;
+using robotinterface::ActionPhaseInterrupt2;
+using robotinterface::ActionPhaseInterrupt3;
+using robotinterface::ActionPhaseShutdown;
+using robotinterface::ActionPhaseReserved;
 
-enum ActionPhase
-{
-    ActionPhaseUnknown = 0,
-    ActionPhaseStartup,
-    ActionPhaseRun,
-    ActionPhaseInterrupt1,
-    ActionPhaseInterrupt2,
-    ActionPhaseInterrupt3,
-    ActionPhaseShutdown,
-
-    ActionPhaseReserved = 0xFF
-};
-
-YARP_robotinterface_API robotinterface::experimental::ActionPhase StringToActionPhase(const std::string& phase);
-YARP_robotinterface_API std::string ActionPhaseToString(robotinterface::experimental::ActionPhase actionphase);
-// Required by TiXmlElement::QueryValueAttribute<robotinterface::ActionPhase>
-YARP_robotinterface_API void operator>>(const std::stringstream& sstream, robotinterface::experimental::ActionPhase& actionphase);
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::StringToActionPhase")
+using robotinterface::StringToActionPhase;
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::ActionPhaseToString")
+using robotinterface::ActionPhaseToString;
 
 
-enum ActionType
-{
-    ActionTypeUnknown = 0,
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::ActionType") yarp::robotinterface::ActionType ActionType;
+using robotinterface::ActionTypeUnknown;
+using robotinterface::ActionTypeConfigure;
+using robotinterface::ActionTypeCalibrate;
+using robotinterface::ActionTypeAttach;
+using robotinterface::ActionTypeAbort;
+using robotinterface::ActionTypeDetach;
+using robotinterface::ActionTypePark;
+using robotinterface::ActionTypeCustom;
 
-    ActionTypeConfigure,
-    ActionTypeCalibrate,
-    ActionTypeAttach,
-    ActionTypeAbort,
-    ActionTypeDetach,
-    ActionTypePark,
-
-    ActionTypeCustom = 0xFF
-};
-
-YARP_robotinterface_API robotinterface::experimental::ActionType StringToActionType(const std::string& type);
-YARP_robotinterface_API std::string ActionTypeToString(robotinterface::experimental::ActionType actiontype);
-// Required by TiXmlElement::QueryValueAttribute<robotinterface::ActionType>
-YARP_robotinterface_API void operator>>(const std::stringstream& sstream, robotinterface::experimental::ActionType& actiontype);
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::StringToActionType")
+using robotinterface::StringToActionType;
+// YARP_DEPRECATED_MSG("Use yarp::robotinterface::ActionTypeToString")
+using robotinterface::ActionTypeToString;
 
 } // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
 
-#endif // YARP_ROBOTINTERFACE_TYPES_H
+#endif // YARP_NO_DEPRECATED
+
+#endif // YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H

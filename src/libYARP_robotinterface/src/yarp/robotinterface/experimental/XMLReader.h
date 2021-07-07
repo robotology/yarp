@@ -6,81 +6,33 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_ROBOTINTERFACE_XMLREADER_H
-#define YARP_ROBOTINTERFACE_XMLREADER_H
+#ifndef YARP_ROBOTINTERFACE_EXPERIMENTAL_XMLREADER_H
+#define YARP_ROBOTINTERFACE_EXPERIMENTAL_XMLREADER_H
 
-#include <yarp/robotinterface/api.h>
+#include <yarp/conf/system.h>
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_XMLREADER_H_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/dev/experimental/XMLReader.h> file is deprecated in favour of <yarp/dev/XMLReader.h>")
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+
+#include <yarp/robotinterface/XMLReader.h>
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_ROBOT_H_ON_PURPOSE
 #include <yarp/robotinterface/experimental/Robot.h>
-
-#include <yarp/os/Searchable.h>
-#include <yarp/os/Property.h>
-
-#include <string>
-
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_ROBOT_H_ON_PURPOSE
 
 namespace yarp {
 namespace robotinterface {
 namespace experimental {
 
-/**
- * Result of the parsing of XMLReader.
- */
-class YARP_robotinterface_API XMLReaderResult
-{
-public:
-    static XMLReaderResult ParsingFailed()
-    {
-        XMLReaderResult result;
-        result.parsingIsSuccessful = false;
-        return result;
-    }
-
-    /**
-     * True if the parsing was successful, false otherwise.
-     */
-    bool parsingIsSuccessful = false;
-
-    /**
-     * If parsingIsSuccessful is true, contains a valid robot instance.
-     */
-    Robot robot;
-};
-
-class YARP_robotinterface_API XMLReader
-{
-public:
-    XMLReader();
-    virtual ~XMLReader();
-
-    /**
-     * Parse the XML description of a robotinterface from a file.
-     *
-     * \param filename path to the XML file to load.
-     * \return result of parsing.
-     */
-    XMLReaderResult getRobotFromFile(const std::string& filename,
-                                     const yarp::os::Searchable& config = yarp::os::Property());
-
-    /**
-     * Parse the XML description of a robotinterface from a string.
-     *
-     * \param xmlString string containing the XML code to parse.
-     * \return result of parsing.
-     */
-    XMLReaderResult getRobotFromString(const std::string& filename,
-                                       const yarp::os::Searchable& config = yarp::os::Property());
-
-    void setVerbose(bool verbose);
-    void setEnableDeprecated(bool enab);
-
-private:
-    class Private;
-    Private* const mPriv;
-
-}; // class XMLReader
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::XMLReader") yarp::robotinterface::XMLReader XMLReader;
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::XMLReaderResult") yarp::robotinterface::XMLReaderResult XMLReaderResult;
 
 } // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
 
-#endif // YARP_ROBOTINTERFACE_XMLREADER_H
+#endif // YARP_NO_DEPRECATED
+
+#endif // YARP_ROBOTINTERFACE_EXPERIMENTAL_XMLREADER_H

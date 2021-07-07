@@ -6,50 +6,32 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef YARP_ROBOTINTERFACE_ACTION_H
-#define YARP_ROBOTINTERFACE_ACTION_H
+#ifndef YARP_ROBOTINTERFACE_EXPERIMENTAL_ACTION_H
+#define YARP_ROBOTINTERFACE_EXPERIMENTAL_ACTION_H
 
+#include <yarp/conf/system.h>
+#if !defined(YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_ACTION_H_ON_PURPOSE)
+YARP_COMPILER_WARNING("<yarp/dev/experimental/Action.h> file is deprecated in favour of <yarp/dev/Action.h>")
+#endif
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+
+#include <yarp/robotinterface/Action.h>
+
+#define YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H_ON_PURPOSE
 #include <yarp/robotinterface/experimental/Types.h>
+#undef YARP_INCLUDING_DEPRECATED_HEADER_YARP_ROBOTINTERFACE_EXPERIMENTAL_TYPES_H_ON_PURPOSE
 
 namespace yarp {
 namespace robotinterface {
 namespace experimental {
 
-class YARP_robotinterface_API Action
-{
-public:
-    explicit Action();
-    Action(ActionPhase phase, ActionType type, unsigned int level);
-    Action(const std::string& phase, const std::string& type, unsigned int level);
-    Action(const Action& other);
-    Action& operator=(const Action& other);
-
-    ActionPhase& phase();
-    ActionType& type();
-    unsigned int& level();
-    ParamList& params();
-
-    ActionPhase phase() const;
-    ActionType type() const;
-    unsigned int level() const;
-    const ParamList& params() const;
-
-    bool hasParam(const std::string& name) const;
-    std::string findParam(const std::string& name) const;
-
-    virtual ~Action();
-
-private:
-    class Private;
-    Private* const mPriv;
-}; // class Action
+YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::robotinterface::Action") yarp::robotinterface::Action Action;
 
 } // namespace experimental
 } // namespace robotinterface
 } // namespace yarp
 
+#endif // YARP_NO_DEPRECATED
 
-YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::experimental::Action& t);
-
-
-#endif // YARP_ROBOTINTERFACE_ACTION_H
+#endif // YARP_ROBOTINTERFACE_EXPERIMENTAL_ACTION_H

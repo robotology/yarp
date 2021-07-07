@@ -13,7 +13,7 @@
 
 #include <yarp/os/Thread.h>
 
-#include <yarp/robotinterface/experimental/Types.h>
+#include <yarp/robotinterface/Types.h>
 
 
 namespace yarp {

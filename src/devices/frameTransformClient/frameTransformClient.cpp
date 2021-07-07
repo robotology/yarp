@@ -249,17 +249,17 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     if (cfg.check("local_rpc")) { m_local_rpcUser=cfg.find("local_rpc").toString();}
     cfg.unput("local_rpc");
 
-    yarp::robotinterface::experimental::XMLReader reader;
-    yarp::robotinterface::experimental::XMLReaderResult result = reader.getRobotFromString(configuration_to_open, cfg);
+    yarp::robotinterface::XMLReader reader;
+    yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(configuration_to_open, cfg);
     yCAssert(FRAMETRANSFORMCLIENT, result.parsingIsSuccessful);
 
     m_robot = std::move(result.robot); // FIXME std::move non serve
 
-    if (!result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseStartup)) {
+    if (!result.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup)) {
         return false;
     }
 
-    if (!result.robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseRun)) {
+    if (!result.robot.enterPhase(yarp::robotinterface::ActionPhaseRun)) {
         return false;
     }
 
@@ -328,8 +328,8 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
 
 bool FrameTransformClient::close()
 {
-    m_robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseInterrupt1);
-    m_robot.enterPhase(yarp::robotinterface::experimental::ActionPhaseShutdown);
+    m_robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+    m_robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
     m_rpc_InterfaceToUser.close();
     return true;
 }

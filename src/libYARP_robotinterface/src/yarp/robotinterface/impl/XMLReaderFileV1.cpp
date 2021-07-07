@@ -8,12 +8,12 @@
 
 #include <yarp/robotinterface/impl/XMLReaderFileV1.h>
 
-#include <yarp/robotinterface/experimental/Action.h>
-#include <yarp/robotinterface/experimental/Device.h>
-#include <yarp/robotinterface/experimental/Param.h>
-#include <yarp/robotinterface/experimental/Robot.h>
-#include <yarp/robotinterface/experimental/Types.h>
-#include <yarp/robotinterface/experimental/XMLReader.h>
+#include <yarp/robotinterface/Action.h>
+#include <yarp/robotinterface/Device.h>
+#include <yarp/robotinterface/Param.h>
+#include <yarp/robotinterface/Robot.h>
+#include <yarp/robotinterface/Types.h>
+#include <yarp/robotinterface/XMLReader.h>
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/Network.h>
@@ -41,27 +41,27 @@ public:
     explicit Private(XMLReaderFileV1* parent);
     virtual ~Private();
 
-    yarp::robotinterface::experimental::XMLReaderResult readRobotFromFile(const std::string& fileName);
-    yarp::robotinterface::experimental::XMLReaderResult readRobotFromString(const std::string& xmlString);
-    yarp::robotinterface::experimental::XMLReaderResult readRobotTag(TiXmlElement* robotElem);
+    yarp::robotinterface::XMLReaderResult readRobotFromFile(const std::string& fileName);
+    yarp::robotinterface::XMLReaderResult readRobotFromString(const std::string& xmlString);
+    yarp::robotinterface::XMLReaderResult readRobotTag(TiXmlElement* robotElem);
 
-    yarp::robotinterface::experimental::DeviceList readDevices(TiXmlElement* devicesElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::Device readDeviceTag(TiXmlElement* deviceElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::DeviceList readDevicesTag(TiXmlElement* devicesElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::DeviceList readDevicesFile(const std::string& fileName, yarp::robotinterface::experimental::XMLReaderResult& result);
+    yarp::robotinterface::DeviceList readDevices(TiXmlElement* devicesElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::Device readDeviceTag(TiXmlElement* deviceElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::DeviceList readDevicesTag(TiXmlElement* devicesElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::DeviceList readDevicesFile(const std::string& fileName, yarp::robotinterface::XMLReaderResult& result);
 
-    yarp::robotinterface::experimental::ParamList readParams(TiXmlElement* paramsElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::Param readParamTag(TiXmlElement* paramElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::Param readGroupTag(TiXmlElement* groupElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::ParamList readParamListTag(TiXmlElement* paramListElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::ParamList readSubDeviceTag(TiXmlElement* subDeviceElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::ParamList readParamsTag(TiXmlElement* paramsElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::ParamList readParamsFile(const std::string& fileName, yarp::robotinterface::experimental::XMLReaderResult& result);
+    yarp::robotinterface::ParamList readParams(TiXmlElement* paramsElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::Param readParamTag(TiXmlElement* paramElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::Param readGroupTag(TiXmlElement* groupElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::ParamList readParamListTag(TiXmlElement* paramListElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::ParamList readSubDeviceTag(TiXmlElement* subDeviceElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::ParamList readParamsTag(TiXmlElement* paramsElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::ParamList readParamsFile(const std::string& fileName, yarp::robotinterface::XMLReaderResult& result);
 
-    yarp::robotinterface::experimental::ActionList readActions(TiXmlElement* actionsElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::Action readActionTag(TiXmlElement* actionElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::ActionList readActionsTag(TiXmlElement* actionsElem, yarp::robotinterface::experimental::XMLReaderResult& result);
-    yarp::robotinterface::experimental::ActionList readActionsFile(const std::string& fileName, yarp::robotinterface::experimental::XMLReaderResult& result);
+    yarp::robotinterface::ActionList readActions(TiXmlElement* actionsElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::Action readActionTag(TiXmlElement* actionElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::ActionList readActionsTag(TiXmlElement* actionsElem, yarp::robotinterface::XMLReaderResult& result);
+    yarp::robotinterface::ActionList readActionsFile(const std::string& fileName, yarp::robotinterface::XMLReaderResult& result);
 
     XMLReaderFileV1* const parent;
     std::string filename;
@@ -87,7 +87,7 @@ yarp::robotinterface::impl::XMLReaderFileV1::Private::Private(XMLReaderFileV1* p
 
 yarp::robotinterface::impl::XMLReaderFileV1::Private::~Private() = default;
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::Private::readRobotFromFile(const std::string& fileName)
+yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::Private::readRobotFromFile(const std::string& fileName)
 {
     filename = fileName;
 #ifdef WIN32
@@ -105,12 +105,12 @@ yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::
     auto* doc = new TiXmlDocument(filename.c_str());
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
-        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
     }
 
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
-        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
     }
 
 #ifdef USE_DTD
@@ -138,7 +138,7 @@ yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::
     }
 #endif
 
-    yarp::robotinterface::experimental::XMLReaderResult result = readRobotTag(doc->RootElement());
+    yarp::robotinterface::XMLReaderResult result = readRobotTag(doc->RootElement());
     delete doc;
 
     // yDebug() << robot;
@@ -146,40 +146,40 @@ yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::
     return result;
 }
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::Private::readRobotFromString(const std::string& xmlString)
+yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::Private::readRobotFromString(const std::string& xmlString)
 {
     curr_filename = " XML runtime string ";
     auto* doc = new TiXmlDocument();
     if (!doc->Parse(xmlString.c_str())) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
-        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
     }
 
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
-        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
     }
 
-    yarp::robotinterface::experimental::XMLReaderResult result = readRobotTag(doc->RootElement());
+    yarp::robotinterface::XMLReaderResult result = readRobotTag(doc->RootElement());
     delete doc;
 
     return result;
 }
 
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::Private::readRobotTag(TiXmlElement* robotElem)
+yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::Private::readRobotTag(TiXmlElement* robotElem)
 {
-    yarp::robotinterface::experimental::XMLReaderResult result;
+    yarp::robotinterface::XMLReaderResult result;
     result.parsingIsSuccessful = true;
 
     if (robotElem->ValueStr() != "robot") {
         SYNTAX_ERROR(robotElem->Row()) << "Root element should be \"robot\". Found" << robotElem->ValueStr();
-        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
     }
 
     if (robotElem->QueryStringAttribute("name", &result.robot.name()) != TIXML_SUCCESS) {
         SYNTAX_ERROR(robotElem->Row()) << R"("robot" element should contain the "name" attribute)";
-        return yarp::robotinterface::experimental::XMLReaderResult::ParsingFailed();
+        return yarp::robotinterface::XMLReaderResult::ParsingFailed();
     }
 
 #if TINYXML_UNSIGNED_INT_BUG
@@ -220,14 +220,14 @@ yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::
 }
 
 
-yarp::robotinterface::experimental::DeviceList yarp::robotinterface::impl::XMLReaderFileV1::Private::readDevices(TiXmlElement* devicesElem,
-                                                                                                                 yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::DeviceList yarp::robotinterface::impl::XMLReaderFileV1::Private::readDevices(TiXmlElement* devicesElem,
+                                                                                                                 yarp::robotinterface::XMLReaderResult& result)
 {
     const std::string& valueStr = devicesElem->ValueStr();
 
     if (valueStr == "device") {
         // yDebug() << valueStr;
-        yarp::robotinterface::experimental::DeviceList deviceList;
+        yarp::robotinterface::DeviceList deviceList;
         deviceList.push_back(readDeviceTag(devicesElem, result));
         return deviceList;
     }
@@ -239,11 +239,11 @@ yarp::robotinterface::experimental::DeviceList yarp::robotinterface::impl::XMLRe
 
     SYNTAX_ERROR(devicesElem->Row()) << R"(Expected "device" or "devices". Found)" << valueStr;
     result.parsingIsSuccessful = false;
-    return yarp::robotinterface::experimental::DeviceList();
+    return yarp::robotinterface::DeviceList();
 }
 
-yarp::robotinterface::experimental::Device yarp::robotinterface::impl::XMLReaderFileV1::Private::readDeviceTag(TiXmlElement* deviceElem,
-                                                                                                               yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::Device yarp::robotinterface::impl::XMLReaderFileV1::Private::readDeviceTag(TiXmlElement* deviceElem,
+                                                                                                               yarp::robotinterface::XMLReaderResult& result)
 {
     const std::string& valueStr = deviceElem->ValueStr();
 
@@ -252,7 +252,7 @@ yarp::robotinterface::experimental::Device yarp::robotinterface::impl::XMLReader
         result.parsingIsSuccessful = false;
     }
 
-    yarp::robotinterface::experimental::Device device;
+    yarp::robotinterface::Device device;
 
     if (deviceElem->QueryStringAttribute("name", &device.name()) != TIXML_SUCCESS) {
         SYNTAX_ERROR(deviceElem->Row()) << R"("device" element should contain the "name" attribute)";
@@ -266,7 +266,7 @@ yarp::robotinterface::experimental::Device yarp::robotinterface::impl::XMLReader
         result.parsingIsSuccessful = false;
     }
 
-    device.params().push_back(yarp::robotinterface::experimental::Param("robotName", result.robot.portprefix()));
+    device.params().push_back(yarp::robotinterface::Param("robotName", result.robot.portprefix()));
 
     for (TiXmlElement* childElem = deviceElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         if (childElem->ValueStr() == "action" || childElem->ValueStr() == "actions") {
@@ -284,8 +284,8 @@ yarp::robotinterface::experimental::Device yarp::robotinterface::impl::XMLReader
     return device;
 }
 
-yarp::robotinterface::experimental::DeviceList yarp::robotinterface::impl::XMLReaderFileV1::Private::readDevicesTag(TiXmlElement* devicesElem,
-                                                                                                                    yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::DeviceList yarp::robotinterface::impl::XMLReaderFileV1::Private::readDevicesTag(TiXmlElement* devicesElem,
+                                                                                                                    yarp::robotinterface::XMLReaderResult& result)
 {
     std::string filename;
     if (devicesElem->QueryStringAttribute("file", &filename) == TIXML_SUCCESS) {
@@ -299,7 +299,7 @@ yarp::robotinterface::experimental::DeviceList yarp::robotinterface::impl::XMLRe
         return readDevicesFile(filename, result);
     }
 
-    yarp::robotinterface::experimental::DeviceList devices;
+    yarp::robotinterface::DeviceList devices;
     for (TiXmlElement* childElem = devicesElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         for (const auto& childDevice : readDevices(childElem, result)) {
             devices.push_back(childDevice);
@@ -309,8 +309,8 @@ yarp::robotinterface::experimental::DeviceList yarp::robotinterface::impl::XMLRe
     return devices;
 }
 
-yarp::robotinterface::experimental::DeviceList yarp::robotinterface::impl::XMLReaderFileV1::Private::readDevicesFile(const std::string& fileName,
-                                                                                                                     yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::DeviceList yarp::robotinterface::impl::XMLReaderFileV1::Private::readDevicesFile(const std::string& fileName,
+                                                                                                                     yarp::robotinterface::XMLReaderResult& result)
 {
     std::string old_filename = curr_filename;
     curr_filename = fileName;
@@ -351,25 +351,25 @@ yarp::robotinterface::experimental::DeviceList yarp::robotinterface::impl::XMLRe
     }
 #endif
 
-    yarp::robotinterface::experimental::DeviceList devices = readDevicesTag(doc->RootElement(), result);
+    yarp::robotinterface::DeviceList devices = readDevicesTag(doc->RootElement(), result);
     delete doc;
     curr_filename = old_filename;
     return devices;
 }
 
 
-yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readParams(TiXmlElement* paramsElem,
-                                                                                                               yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readParams(TiXmlElement* paramsElem,
+                                                                                                               yarp::robotinterface::XMLReaderResult& result)
 {
     const std::string& valueStr = paramsElem->ValueStr();
 
     if (valueStr == "param") {
-        yarp::robotinterface::experimental::ParamList params;
+        yarp::robotinterface::ParamList params;
         params.push_back(readParamTag(paramsElem, result));
         return params;
     }
     if (valueStr == "group") {
-        yarp::robotinterface::experimental::ParamList params;
+        yarp::robotinterface::ParamList params;
         params.push_back(readGroupTag(paramsElem, result));
         return params;
     }
@@ -383,19 +383,19 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
         return readParamsTag(paramsElem, result);
     }
     SYNTAX_ERROR(paramsElem->Row()) << R"(Expected "param", "group", "paramlist", "subdevice", or "params". Found)" << valueStr;
-    return yarp::robotinterface::experimental::ParamList();
+    return yarp::robotinterface::ParamList();
 }
 
 
-yarp::robotinterface::experimental::Param yarp::robotinterface::impl::XMLReaderFileV1::Private::readParamTag(TiXmlElement* paramElem,
-                                                                                                             yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV1::Private::readParamTag(TiXmlElement* paramElem,
+                                                                                                             yarp::robotinterface::XMLReaderResult& result)
 {
     if (paramElem->ValueStr() != "param") {
         SYNTAX_ERROR(paramElem->Row()) << "Expected \"param\". Found" << paramElem->ValueStr();
         result.parsingIsSuccessful = false;
     }
 
-    yarp::robotinterface::experimental::Param param;
+    yarp::robotinterface::Param param;
 
     if (paramElem->QueryStringAttribute("name", &param.name()) != TIXML_SUCCESS) {
         SYNTAX_ERROR(paramElem->Row()) << R"("param" element should contain the "name" attribute)";
@@ -415,15 +415,15 @@ yarp::robotinterface::experimental::Param yarp::robotinterface::impl::XMLReaderF
     return param;
 }
 
-yarp::robotinterface::experimental::Param yarp::robotinterface::impl::XMLReaderFileV1::Private::readGroupTag(TiXmlElement* groupElem,
-                                                                                                             yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::Param yarp::robotinterface::impl::XMLReaderFileV1::Private::readGroupTag(TiXmlElement* groupElem,
+                                                                                                             yarp::robotinterface::XMLReaderResult& result)
 {
     if (groupElem->ValueStr() != "group") {
         SYNTAX_ERROR(groupElem->Row()) << "Expected \"group\". Found" << groupElem->ValueStr();
         result.parsingIsSuccessful = false;
     }
 
-    yarp::robotinterface::experimental::Param group(true);
+    yarp::robotinterface::Param group(true);
 
     if (groupElem->QueryStringAttribute("name", &group.name()) != TIXML_SUCCESS) {
         SYNTAX_ERROR(groupElem->Row()) << R"("group" element should contain the "name" attribute)";
@@ -432,7 +432,7 @@ yarp::robotinterface::experimental::Param yarp::robotinterface::impl::XMLReaderF
 
     // yDebug() << "Found group [" << group.name() << "]";
 
-    yarp::robotinterface::experimental::ParamList params;
+    yarp::robotinterface::ParamList params;
     for (TiXmlElement* childElem = groupElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         for (const auto& childParam : readParams(childElem, result)) {
             params.push_back(childParam);
@@ -455,16 +455,16 @@ yarp::robotinterface::experimental::Param yarp::robotinterface::impl::XMLReaderF
     return group;
 }
 
-yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readParamListTag(TiXmlElement* paramListElem,
-                                                                                                                     yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readParamListTag(TiXmlElement* paramListElem,
+                                                                                                                     yarp::robotinterface::XMLReaderResult& result)
 {
     if (paramListElem->ValueStr() != "paramlist") {
         SYNTAX_ERROR(paramListElem->Row()) << "Expected \"paramlist\". Found" << paramListElem->ValueStr();
         result.parsingIsSuccessful = false;
     }
 
-    yarp::robotinterface::experimental::ParamList params;
-    yarp::robotinterface::experimental::Param mainparam;
+    yarp::robotinterface::ParamList params;
+    yarp::robotinterface::Param mainparam;
 
     if (paramListElem->QueryStringAttribute("name", &mainparam.name()) != TIXML_SUCCESS) {
         SYNTAX_ERROR(paramListElem->Row()) << R"("paramlist" element should contain the "name" attribute)";
@@ -480,7 +480,7 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
             SYNTAX_ERROR(childElem->Row()) << "Expected \"elem\". Found" << childElem->ValueStr();
         }
 
-        yarp::robotinterface::experimental::Param childParam;
+        yarp::robotinterface::Param childParam;
 
         if (childElem->QueryStringAttribute("name", &childParam.name()) != TIXML_SUCCESS) {
             SYNTAX_ERROR(childElem->Row()) << R"("elem" element should contain the "name" attribute)";
@@ -505,7 +505,7 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
 
     // +1 skips the first element, that is the main param
     for (auto it = params.begin() + 1; it != params.end(); ++it) {
-        yarp::robotinterface::experimental::Param& param = *it;
+        yarp::robotinterface::Param& param = *it;
         params.at(0).value() += (params.at(0).value().empty() ? "(" : " ") + param.name();
     }
     params.at(0).value() += ")";
@@ -514,18 +514,18 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
     return params;
 }
 
-yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readSubDeviceTag(TiXmlElement* subDeviceElem,
-                                                                                                                     yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readSubDeviceTag(TiXmlElement* subDeviceElem,
+                                                                                                                     yarp::robotinterface::XMLReaderResult& result)
 {
     if (subDeviceElem->ValueStr() != "subdevice") {
         SYNTAX_ERROR(subDeviceElem->Row()) << "Expected \"subdevice\". Found" << subDeviceElem->ValueStr();
         result.parsingIsSuccessful = false;
     }
 
-    yarp::robotinterface::experimental::ParamList params;
+    yarp::robotinterface::ParamList params;
 
     //FIXME    Param featIdParam;
-    yarp::robotinterface::experimental::Param subDeviceParam;
+    yarp::robotinterface::Param subDeviceParam;
 
     //FIXME    featIdParam.name() = "FeatId";
     subDeviceParam.name() = "subdevice";
@@ -545,7 +545,7 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
 
     for (TiXmlElement* childElem = subDeviceElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         for (const auto& childParam : readParams(childElem, result)) {
-            params.push_back(yarp::robotinterface::experimental::Param(childParam.name(), childParam.value()));
+            params.push_back(yarp::robotinterface::Param(childParam.name(), childParam.value()));
         }
     }
 
@@ -553,8 +553,8 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
     return params;
 }
 
-yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readParamsTag(TiXmlElement* paramsElem,
-                                                                                                                  yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readParamsTag(TiXmlElement* paramsElem,
+                                                                                                                  yarp::robotinterface::XMLReaderResult& result)
 {
     //const std::string &valueStr = paramsElem->ValueStr();
 
@@ -600,7 +600,7 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
         SYNTAX_WARNING(paramsElem->Row()) << "Import a file for a different robot build. Found" << build << "instead of" << robot.build();
     }
     */
-    yarp::robotinterface::experimental::ParamList params;
+    yarp::robotinterface::ParamList params;
     for (TiXmlElement* childElem = paramsElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         for (const auto & childParam : readParams(childElem, result)) {
             params.push_back(childParam);
@@ -610,8 +610,8 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
     return params;
 }
 
-yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readParamsFile(const std::string& fileName,
-                                                                                                                   yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::ParamList yarp::robotinterface::impl::XMLReaderFileV1::Private::readParamsFile(const std::string& fileName,
+                                                                                                                   yarp::robotinterface::XMLReaderResult& result)
 {
     std::string old_filename = curr_filename;
     curr_filename = fileName;
@@ -621,13 +621,13 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
     if (!doc->LoadFile()) {
         SYNTAX_ERROR(doc->ErrorRow()) << doc->ErrorDesc();
         result.parsingIsSuccessful = false;
-        return yarp::robotinterface::experimental::ParamList();
+        return yarp::robotinterface::ParamList();
     }
 
     if (!doc->RootElement()) {
         SYNTAX_ERROR(doc->Row()) << "No root element.";
         result.parsingIsSuccessful = false;
-        return yarp::robotinterface::experimental::ParamList();
+        return yarp::robotinterface::ParamList();
     }
 
 #ifdef USE_DTD
@@ -656,14 +656,14 @@ yarp::robotinterface::experimental::ParamList yarp::robotinterface::impl::XMLRea
     }
 
 #endif
-    yarp::robotinterface::experimental::ParamList params = readParamsTag(doc->RootElement(), result);
+    yarp::robotinterface::ParamList params = readParamsTag(doc->RootElement(), result);
     delete doc;
     curr_filename = old_filename;
     return params;
 }
 
-yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLReaderFileV1::Private::readActions(TiXmlElement* actionsElem,
-                                                                                                                 yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::ActionList yarp::robotinterface::impl::XMLReaderFileV1::Private::readActions(TiXmlElement* actionsElem,
+                                                                                                                 yarp::robotinterface::XMLReaderResult& result)
 {
     const std::string& valueStr = actionsElem->ValueStr();
 
@@ -672,7 +672,7 @@ yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLRe
     }
 
     if (valueStr == "action") {
-        yarp::robotinterface::experimental::ActionList actionList;
+        yarp::robotinterface::ActionList actionList;
         actionList.push_back(readActionTag(actionsElem, result));
         return actionList;
     }
@@ -680,21 +680,21 @@ yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLRe
     return readActionsTag(actionsElem, result);
 }
 
-yarp::robotinterface::experimental::Action yarp::robotinterface::impl::XMLReaderFileV1::Private::readActionTag(TiXmlElement* actionElem,
-                                                                                                               yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::Action yarp::robotinterface::impl::XMLReaderFileV1::Private::readActionTag(TiXmlElement* actionElem,
+                                                                                                               yarp::robotinterface::XMLReaderResult& result)
 {
     if (actionElem->ValueStr() != "action") {
         SYNTAX_ERROR(actionElem->Row()) << "Expected \"action\". Found" << actionElem->ValueStr();
     }
 
-    yarp::robotinterface::experimental::Action action;
+    yarp::robotinterface::Action action;
 
-    if (actionElem->QueryValueAttribute<yarp::robotinterface::experimental::ActionPhase>("phase", &action.phase()) != TIXML_SUCCESS || action.phase() == yarp::robotinterface::experimental::ActionPhaseUnknown) {
+    if (actionElem->QueryValueAttribute<yarp::robotinterface::ActionPhase>("phase", &action.phase()) != TIXML_SUCCESS || action.phase() == yarp::robotinterface::ActionPhaseUnknown) {
         SYNTAX_ERROR(actionElem->Row()) << R"("action" element should contain the "phase" attribute [startup|interrupt{1,2,3}|shutdown])";
     }
 
 
-    if (actionElem->QueryValueAttribute<yarp::robotinterface::experimental::ActionType>("type", &action.type()) != TIXML_SUCCESS || action.type() == yarp::robotinterface::experimental::ActionTypeUnknown) {
+    if (actionElem->QueryValueAttribute<yarp::robotinterface::ActionType>("type", &action.type()) != TIXML_SUCCESS || action.type() == yarp::robotinterface::ActionTypeUnknown) {
         SYNTAX_ERROR(actionElem->Row()) << R"("action" element should contain the "type" attribute [configure|calibrate|attach|abort|detach|park|custom])";
     }
 
@@ -722,8 +722,8 @@ yarp::robotinterface::experimental::Action yarp::robotinterface::impl::XMLReader
     return action;
 }
 
-yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLReaderFileV1::Private::readActionsTag(TiXmlElement* actionsElem,
-                                                                                                                    yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::ActionList yarp::robotinterface::impl::XMLReaderFileV1::Private::readActionsTag(TiXmlElement* actionsElem,
+                                                                                                                    yarp::robotinterface::XMLReaderResult& result)
 {
     //const std::string &valueStr = actionsElem->ValueStr();
 
@@ -768,7 +768,7 @@ yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLRe
         SYNTAX_WARNING(actionsElem->Row()) << "Import a file for a different robot build. Found" << build << "instead of" << result.robot.build();
     }
 
-    yarp::robotinterface::experimental::ActionList actions;
+    yarp::robotinterface::ActionList actions;
     for (TiXmlElement* childElem = actionsElem->FirstChildElement(); childElem != nullptr; childElem = childElem->NextSiblingElement()) {
         for (const auto& childAction : readActions(childElem, result)) {
             actions.push_back(childAction);
@@ -778,8 +778,8 @@ yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLRe
     return actions;
 }
 
-yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLReaderFileV1::Private::readActionsFile(const std::string& fileName,
-                                                                                                                     yarp::robotinterface::experimental::XMLReaderResult& result)
+yarp::robotinterface::ActionList yarp::robotinterface::impl::XMLReaderFileV1::Private::readActionsFile(const std::string& fileName,
+                                                                                                                     yarp::robotinterface::XMLReaderResult& result)
 {
     std::string old_filename = curr_filename;
     curr_filename = fileName;
@@ -820,13 +820,13 @@ yarp::robotinterface::experimental::ActionList yarp::robotinterface::impl::XMLRe
     }
 
 #endif
-    yarp::robotinterface::experimental::ActionList actions = readActionsTag(doc->RootElement(), result);
+    yarp::robotinterface::ActionList actions = readActionsTag(doc->RootElement(), result);
     delete doc;
     curr_filename = old_filename;
     return actions;
 }
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::getRobotFromFile(const std::string& filename,
+yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::getRobotFromFile(const std::string& filename,
                                                                                                                   const yarp::os::Searchable& /*config*/,
                                                                                                                   bool verb)
 {
@@ -834,7 +834,7 @@ yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::
     return mPriv->readRobotFromFile(filename);
 }
 
-yarp::robotinterface::experimental::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::getRobotFromString(const std::string& xmlString,
+yarp::robotinterface::XMLReaderResult yarp::robotinterface::impl::XMLReaderFileV1::getRobotFromString(const std::string& xmlString,
                                                                                                                     const yarp::os::Searchable& /*config*/,
                                                                                                                     bool verb)
 {
