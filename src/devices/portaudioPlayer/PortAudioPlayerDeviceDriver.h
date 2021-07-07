@@ -42,6 +42,8 @@
  * | AUDIO_BASE        |     ***        |         | -              |  -                       | No                          | For the documentation of AUDIO_BASE group, please refer to the documentation of the base class AudioPlayerDeviceBase |       |
  * | id                |      -         | int     | -              |  -                       | No                          | The device id, if multiple sound cards are present                | if not specified, the default system device will be used |
  * | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the main thread  | - | *
+ *
+ * See \ref AudioDoc for additional documentation on Yarp audio.
  */
 
 class PortAudioPlayerDeviceDriver :

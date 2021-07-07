@@ -10,6 +10,10 @@ namespace yarp yarp.dev
 
 typedef i32 ( yarp.type = "size_t" ) size_t
 
+/**
+* \brief `audioPlayerStatus`: A class used to describe the status of an audio player device.
+* See \ref AudioDoc for additional documentation on Yarp audio.
+*/
 struct audioPlayerStatus
 {
     /** true if the playback is currently enabled */

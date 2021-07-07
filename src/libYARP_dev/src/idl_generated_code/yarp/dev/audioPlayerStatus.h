@@ -24,6 +24,10 @@
 namespace yarp {
 namespace dev {
 
+/**
+ * \brief `audioPlayerStatus`: A class used to describe the status of an audio player device.
+ * See \ref AudioDoc for additional documentation on Yarp audio.
+ */
 class YARP_dev_API audioPlayerStatus :
         public yarp::os::idl::WirePortable
 {
