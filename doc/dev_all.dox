@@ -118,6 +118,12 @@ For more information see the documentation of server, client and remapper device
 
 /**
 \ingroup dev_iface
+\defgroup dev_iface_transform Frame Transform Interfaces
+The interfaces in this group are to be implemented by devices who are meant to manage and/or store frame transformations
+*/
+
+/**
+\ingroup dev_iface
 
 \defgroup dev_iface_other Other Device Interfaces
 

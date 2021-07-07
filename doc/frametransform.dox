@@ -1,0 +1,134 @@
+/**
+\page FrameTransform FrameTransform: start all the required devices needed for transforming frames
+
+\ingroup yarp_tools
+
+\tableofcontents
+
+\section FrameTransform_intro Description
+The devices related to frame transformation have been decomposed into various submodules:
+- frameTransformClient
+    - FrameTransformClient
+- frameTransformGet
+    - FrameTransformGet_nwc_ros
+    - FrameTransformGet_nwc_yarp
+    - FrameTransformGet_nws_yarp
+    - FrameTransformGetMultiplexer
+- frameTransformSet
+    - FrameTransformSet_nwc_ros
+    - FrameTransformSet_nwc_yarp
+    - FrameTransformSet_nws_yarp
+    - FrameTransformSetMultiplexer
+- frameTransformUtils
+    - FrameTransformContainer
+.
+
+Thrift interfaces:
+ - FrameTransformStorageGetRPC
+ - FrameTransformStorageSetRPC
+ - return_getAllTransforms
+.
+
+libyarp_dev interfaces:
+ - yarp::dev::IFrameTransform
+ - yarp::dev::IFrameTransformStorageSet
+ - yarp::dev::IFrameTransformStorageGet
+ - yarp::dev::IFrameTransformStorageUtils
+.
+
+ This particular device can be decomposed into client and server if needed, as can be seen below, and each client and
+ server can have various submodules so the user can choose a different structure depending on his need.
+
+\section FrameTransformClient
+
+A client to manage frame transforms for robots.\n
+This device implements the \ref yarp::dev::IFrameTransform interface and it can be configured in different ways to match the user's needs.\n
+In the following sections a brief description and simple graphic representation for each configuration are shown.\n\n
+  \subsection nofts_sec Client configurations that DO NOT need a Server
+- **LOCAL ONLY** This first configuration have to be used when the the user needs only to manage and
+store the transforms locally.\n
+Command line instructions to use the configuration:
+\code{.unparsed}
+yarpdev --device frameTransformClient --filexml_option ftc_local_only.xml
+\endcode
+\image  html frametransform/FTC_Local_only.svg width=auto
+- **ROS ONLY** This second configuration is to be chosen everytime a bilateral communication (publish and subscribe)
+with ROS is needed.\n
+The picture hereunder shows, as in the previous case, a simplified schema of the configuration.
+Command line instructions to use the configuration:
+\code{.unparsed}
+yarpdev --device frameTransformClient --filexml_option ftc_ros.xml
+\endcode
+\image  html frametransform/FTC_ROS_Only.svg width=auto
+  - **ROS PUB ONLY** and **ROS SUB ONLY** These two configurations have been added in order to allow
+  a one way communication between the client and the ROS environment, be it publication or subscription.
+  To launch these configurations the following commands have to be used:
+  \code{.unparsed}
+  yarpdev --device frameTransformClient --filexml_option ftc_pub_ros.xml
+  \endcode
+  \code{.unparsed}
+  yarpdev --device frameTransformClient --filexml_option ftc_sub_ros.xml
+  \endcode
+  \image  html frametransform/FTC_ROS_Pub_Only.svg width=auto
+  \image  html frametransform/FTC_ROS_Sub_Only.svg width=auto
+ *
+  \subsection fts_sec Client configurations that DO need a Server
+The following configurations need, as the section title suggests, a running server component.
+The appropriate client configuration depends on the running server.
+- **YARP ONLY** This is the full client that uses only yarp.\n
+N.B. The client use only yarp but the server attached can be both ONLY YARP or YARP + ROS\n
+Command line instructions to use the configuration:
+\code{.unparsed}
+yarpdev --device frameTransformClient --filexml_option ftc_yarp_only.xml
+\endcode
+\image  html frametransform/FTC_YARP_only.svg width=auto
+  - **YARP PUB ONLY** and **YARP SUB ONLY** These two configurations, as the last two of the previous section, allow
+  to select only one of the two available communication routes.\n
+  Like the one above they can be used in combination with an ONLY YARP or YARP + ROS server configuration\n
+  - In the following lines, the commands to launch these two configurations are shown:
+  \code{.unparsed}
+  yarpdev --device frameTransformClient --filexml_option ftc_pub_yarp_only.xml
+  \endcode
+  \code{.unparsed}
+  yarpdev --device frameTransformClient --filexml_option ftc_sub_yarp_only.xml
+  \endcode
+  \image  html frametransform/FTC_PUB_YARP_only.svg width=auto
+  \image  html frametransform/FTC_SUB_YARP_only.svg width=auto
+  - **YARP UPDATE ONLY** This third YARP ONLY configuration allows to connect to another yarp client
+  (it must publish transforms to the network) in order to monitor the transforms coming from it.
+  \code{.unparsed}
+  yarpdev --device frameTransformClient --filexml_option ftc_yarp_only_single_client.xml
+  \endcode
+  \image  html frametransform/FTC_YARP_only_single_client.svg width=auto
+ *
+- **YARP AND ROS** The last available version of the client uses both YARP and ROS.\n
+It has to be used when a YARP only server is running and the client needs to store transform
+coming from both YARP and ROS.\n
+To launch this client the following command have to be employed:
+\code{.unparsed}
+yarpdev --device frameTransformClient --filexml_option ftc_full_ros.xml
+\endcode
+\image  html frametransform/FTC_YARP_+_ROS.svg width=auto
+
+.
+ \section FrameTransformServer
+ For what is concerning the server part, there are 2 different configurations: (*XML files path to be determined*)
+
+- The first one is the **YARP ONLY** configuration.\n
+ It starts a server listening only to thrift ports with a small storage inside to update
+ all the clients that connects to it later with the latest transforms.\n
+ the code to launch this server is:
+ \code{.unparsed}
+ yarprobotinterface --config fts_yarp_only.xml
+ \endcode
+ \image  html frametransform/FTS_YARP_only.svg width=auto
+- The second one is the **YARP AND ROS** configuration.\n
+ It starts a server listening to both thrift ports and ros topics, so its updates came from both parts. It has also a small storage inside to update
+ all the clients that connects to it later with the latest transforms.\n
+ the code to launch this server is:
+ \code{.unparsed}
+ yarprobotinterface --config fts_full_ros.xml
+ \endcode
+ \image  html frametransform/FTS_YARP_+_ROS.svg width=auto
+.
+*/
