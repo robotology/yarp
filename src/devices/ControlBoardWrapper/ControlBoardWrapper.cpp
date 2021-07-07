@@ -340,6 +340,10 @@ bool ControlBoardWrapper::initialize_YARP(yarp::os::Searchable& prop)
 
 bool ControlBoardWrapper::open(Searchable& config)
 {
+    yCWarning(CONTROLBOARD) << "The 'controlboardwrapper2' device is deprecated in favour of 'controlboardremapper' + 'controlBoard_nws_yarp'.";
+    yCWarning(CONTROLBOARD) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(CONTROLBOARD) << "Please update your scripts.";
+
     Property prop;
     prop.fromString(config.toString());
 

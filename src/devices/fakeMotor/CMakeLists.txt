@@ -9,7 +9,8 @@ yarp_prepare_plugin(fakeMotor
                     TYPE FakeMotor
                     INCLUDE FakeMotor.h
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2
-                    DEFAULT OFF)
+                    DEFAULT OFF
+                    DEPENDS "NOT YARP_NO_DEPRECATED") # DEPRECATED Since YARP 3.5
 
 # As discussed in #2308 test_motor should be renamed fakeMotor
 #
@@ -21,7 +22,8 @@ yarp_prepare_plugin(test_motor
                     TYPE TestMotor
                     INCLUDE FakeMotor.h
                     EXTRA_CONFIG WRAPPER=controlboardwrapper2
-                    DEFAULT OFF)
+                    DEFAULT OFF
+                    DEPENDS "NOT YARP_NO_DEPRECATED") # DEPRECATED Since YARP 3.5
 
 if(NOT SKIP_fakeMotor)
   yarp_add_plugin(yarp_fakeMotor)

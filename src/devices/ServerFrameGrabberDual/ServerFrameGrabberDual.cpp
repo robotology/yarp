@@ -137,6 +137,11 @@ bool ServerGrabber::close() {
 }
 
 bool ServerGrabber::open(yarp::os::Searchable& config) {
+
+    yCWarning(SERVERGRABBER) << "The 'grabberDual' device is deprecated in favour of 'frameGrabber_nws_yarp' (and eventually 'frameGrabberCropper').";
+    yCWarning(SERVERGRABBER) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(SERVERGRABBER) << "Please update your scripts.";
+
     if (param.active) {
         yCError(SERVERGRABBER, "Did you just try to open the same ServerGrabber twice?");
         return false;

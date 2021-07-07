@@ -11,20 +11,13 @@ yarp_prepare_plugin(fakeFrameGrabber
                     EXTRA_CONFIG WRAPPER=grabberDual
                     DEFAULT ON)
 
-# As discussed in #2308 test_grabber should be renamed fakeFrameGrabber
-#
-# For now, we just add a warning, but in one of the next releases,
-# test_grabber will become also a DeprecatedDevice, therefore it will not be
-# possible to launch it without --allow-deprecated-devices
-#
-# When this is deprecated/removed, also the
-# data/yarpmanager/tests/xml/modules/test_grabber.xml file should be updated
 yarp_prepare_plugin(test_grabber
                     CATEGORY device
                     TYPE TestFrameGrabber
                     INCLUDE FakeFrameGrabber.h
                     EXTRA_CONFIG WRAPPER=grabberDual
-                    DEFAULT ON)
+                    DEFAULT OFF
+                    DEPENDS "NOT YARP_NO_DEPRECATED") # DEPRECATED Since YARP 3.5
 
 if(ENABLE_fakeFrameGrabber)
   yarp_add_plugin(yarp_fakeFrameGrabber)

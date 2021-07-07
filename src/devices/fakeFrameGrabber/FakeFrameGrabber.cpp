@@ -919,9 +919,3 @@ bool FakeFrameGrabber::makeSimpleBayer(
 
     return true;
 }
-
-bool TestFrameGrabber::open(yarp::os::Searchable& config)
-{
-    yCWarning(FAKEFRAMEGRABBER, "'test_grabber' was renamed 'fakeFrameGrabber'. The old name is still supported for compatibility, but it will be deprecated and removed in a future release. Please update your scripts");
-    return FakeFrameGrabber::open(config);
-}

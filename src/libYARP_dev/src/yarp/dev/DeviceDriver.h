@@ -115,7 +115,7 @@ public:
  * Deprecated device drivers cannot be opened as PolyDriver unless the
  * "allow-deprecated-devices" option is passed in the configuration.
  */
-class YARP_dev_API yarp::dev::DeprecatedDeviceDriver : public yarp::dev::DeviceDriver
+class YARP_dev_API yarp::dev::DeprecatedDeviceDriver : virtual public yarp::dev::DeviceDriver
 {
 };
 
