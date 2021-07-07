@@ -23,8 +23,7 @@
 
 #include <yarp/sig/Vector.h>
 
-#include <yarp/dev/IWrapper.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 #include <yarp/dev/IFrameGrabberControls.h>
@@ -63,15 +62,14 @@ namespace RGBDImpl
  *   Parameters required by this device are:
  * | Parameter name         | SubParameter            | Type    | Units          | Default Value | Required                        | Description                                                                                         | Notes |
  * |:----------------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:------------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
- * | period                 |      -                  | int     |  ms            |   20          |  No                             | refresh period of the broadcasted values in ms                                                      | default 20ms |
+ * | period                 |      -                  | double  | s              |   0.03        |  No                             | refresh period of the broadcasted values in s                                                       | default 0.03s |
  * | subdevice              |      -                  | string  |  -             |   -           |  alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  * | forceInfoSync          |      -                  | string  | bool           |   -           |  no                             | set 'true' to force the timestamp on the camera_info message to match the image one                 |  - |
- * | colorTopicName         |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS image topic                                                                    | must start with a leading '/' |
- * | depthTopicName         |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS depth topic                                                                    | must start with a leading '/' |
- * | colorInfoTopicName     |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS imageInfo topic                                                                | must start with a leading '/' |
- * | depthInfoTopicName     |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS depthInfo topic                                                                | must start with a leading '/' |
- * | frame_Id               |      -                  | string  |  -             |               |  Yes                            | set the name of the reference frame                                                                 |                               |
- * | nodeName               |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS node                                                                           | must start with a leading '/' |
+ * | color_topic_name       |      -                  | string  | -              |   -           |  Yes                            | the color topic                                                                                     | recommended value /camera/color/image_rect_color  |
+ * | depth_topic_name       |      -                  | string  | -              |   -           |  Yes                            | the depth topic                                                                                     | recommended value /camera/depth/image_rect  |
+ * | color_frame_id         |      -                  | string  |  -             |   -           |  Yes                            | set the name of the reference frame for the color camera                                            |                               |
+ * | depth_frame_id         |      -                  | string  |  -             |   -           |  Yes                            | set the name of the reference frame for the depth camera                                            |                               |
+ * | node_name              |      -                  | string  |  -             |   -           |  Yes                            | set the name for ROS node                                                                           | must start with a leading '/' |
  *
  * ROS message type used is sensor_msgs/Image.msg ( http://docs.ros.org/api/sensor_msgs/html/msg/Image.html)
  * Some example of configuration files:
@@ -82,19 +80,17 @@ namespace RGBDImpl
  * device rgbdSensor_nws_ros
  * subdevice <RGBDsensor>
  * period 30
- * colorTopicName /<robotName>/RGBDSensorColor
- * depthTopicName /<robotName>/RGBDSensorDepth
- * colorInfoTopicName /<robotName>/RGBDSensorColorInfo
- * depthInfoTopicName /<robotName>/RGBDSensorDepthInfo
- * frame_Id /<robotName>/<framed_Id>
- * nodeName /<robotName>/RGBDSensorNode
+ * color_topic_name /<robotName>/camera/color/image_raw
+ * depth_topic_name /<robotName>/camera/depth/image_raw
+ * color_frame_id rgbd_color_frame
+ * depth_frame_id rgbd_depth_frame
+ * node_name rgbdsensor
  * \endcode
  */
 
 class RgbdSensor_nws_ros :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IWrapper,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread
 {
 private:
@@ -117,17 +113,14 @@ private:
         std::string     parname;
     };
 
-    ImageTopicType        rosPublisherPort_color;
-    ImageTopicType        rosPublisherPort_depth;
-    DepthTopicType        rosPublisherPort_colorCaminfo;
-    DepthTopicType        rosPublisherPort_depthCaminfo;
-    yarp::os::Node*       rosNode;
+    ImageTopicType        publisherPort_color;
+    ImageTopicType        publisherPort_depth;
+    DepthTopicType        publisherPort_colorCaminfo;
+    DepthTopicType        publisherPort_depthCaminfo;
+    yarp::os::Node*       m_node;
     std::string           nodeName;
-    std::string           depthTopicName;
-    std::string           colorTopicName;
-    std::string           dInfoTopicName;
-    std::string           cInfoTopicName;
-    std::string           rosFrameId;
+    std::string           m_color_frame_id;
+    std::string           m_depth_frame_id;
     yarp::sig::FlexImage  colorImage;
     DepthImage            depthImage;
     UInt                  nodeSeq;
@@ -142,7 +135,6 @@ private:
     int                            verbose;
     bool                           forceInfoSync;
     bool                           initialize_ROS(yarp::os::Searchable& config);
-    bool                           read(yarp::os::ConnectionReader& connection);
 
     // Open the wrapper only, the attach method needs to be called before using it
     // Typical usage: yarprobotinterface
@@ -157,15 +149,12 @@ private:
     // Synch
     yarp::os::Stamp                colorStamp;
     yarp::os::Stamp                depthStamp;
-    yarp::os::Property             m_conf;
 
     bool writeData();
     bool setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo,
                     const std::string&                     frame_id,
                     const UInt&                            seq,
                     const SensorType&                      sensorType);
-
-    static std::string yarp2RosPixelCode(int code);
 
 public:
     RgbdSensor_nws_ros();
@@ -176,7 +165,6 @@ public:
     ~RgbdSensor_nws_ros() override;
 
     bool        open(yarp::os::Searchable &params) override;
-    bool        fromConfig(yarp::os::Searchable &params);
     bool        close() override;
 
     void        setId(const std::string &id);
@@ -185,11 +173,7 @@ public:
     /**
       * Specify which sensor this thread has to read from.
       */
-    bool        attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool        detachAll() override;
-
     bool        attach(yarp::dev::PolyDriver *poly) override;
-    bool        attach(yarp::dev::IRGBDSensor *s);
     bool        detach() override;
 
     bool        threadInit() override;

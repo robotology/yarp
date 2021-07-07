@@ -26,8 +26,7 @@
 
 #include <yarp/sig/Vector.h>
 
-#include <yarp/dev/IWrapper.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/IRGBDSensor.h>
 
@@ -81,7 +80,7 @@ public:
  *   Parameters required by this device are:
  * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                                                         | Notes |
  * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------------------------------------:|:-----:|
- * | period         |      -                  | int     | ms             |   20          | No                             | refresh period of the broadcasted values in ms                                                      | default 20ms |
+ * | period         |      -                  | double  | s              |   0.02        | No                             | refresh period of the broadcasted values in s                                                       | default 0.02s |
  * | name           |      -                  | string  | -              |   -           | Yes                            | Prefix name of the ports opened by the RGBD wrapper, e.g. /robotName/RGBD                           | Required suffix like '/rpc' will be added by the device      |
  * | subdevice      |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                                                       | when used, parameters for the subdevice must be provided as well |
  *
@@ -92,15 +91,14 @@ public:
  * \code{.unparsed}
  * device RGBDSensorWrapper
  * subdevice <RGBDsensor>
- * period 30
+ * period 0.03
  * name /<robotName>/RGBDSensor
  * \endcode
  */
 
 class RgbdSensor_nws_yarp :
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IWrapper,
-        public yarp::dev::IMultipleWrapper,
+        public yarp::dev::WrapperSingle,
         public yarp::os::PeriodicThread
 {
 private:
@@ -132,13 +130,8 @@ private:
     yarp::os::Port        rpcPort;
     std::string           rpcPort_Name;
     std::string           nodeName;
-    std::string           depthTopicName;
-    std::string           colorTopicName;
-    std::string           dInfoTopicName;
-    std::string           cInfoTopicName;
     yarp::sig::FlexImage  colorImage;
     DepthImage            depthImage;
-    UInt                  nodeSeq;
 
     // It should be possible to attach this  guy to more than one port, try to see what
     // will happen when receiving 2 calls at the same time (receive one calls while serving
@@ -156,9 +149,7 @@ private:
     yarp::dev::IFrameGrabberControls* fgCtrl;
     yarp::dev::IRGBDSensor::RGBDSensor_status sensorStatus;
     int                            verbose;
-    bool                           forceInfoSync;
     bool                           initialize_YARP(yarp::os::Searchable& config);
-    bool                           read(yarp::os::ConnectionReader& connection);
 
     // Open the wrapper only, the attach method needs to be called before using it
     // Typical usage: yarprobotinterface
@@ -198,11 +189,8 @@ public:
     /**
       * Specify which sensor this thread has to read from.
       */
-    bool        attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool        detachAll() override;
 
     bool        attach(yarp::dev::PolyDriver *poly) override;
-    bool        attach(yarp::dev::IRGBDSensor *s);
     bool        detach() override;
 
     bool        threadInit() override;

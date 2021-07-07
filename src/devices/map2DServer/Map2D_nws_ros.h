@@ -40,7 +40,7 @@
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
 #include <yarp/dev/Map2DPath.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -64,8 +64,8 @@
  * | Parameter name | SubParameter           | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
  * |:--------------:|:----------------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
  * | name           |      -                 | string  | -              | /map2D_nws_ros/rpc   | No       | Full name of the rpc port opened by the Map2DServer device.       |       |
- * | ROS            | enable_ros_publisher   | bool    | -              | false            | No           | Publishes maps stored in a map2DStorage on a ROS topic            |       |
- * | ROS            | enable_ros_subscriber  | bool    | -              | false            | No           | Receives maps from a ROS topic and stores them in a map2DStorage  |       |
+ * | ROS            | enable_publisher       | bool    | -              | false            | No           | Publishes maps stored in a map2DStorage on a ROS topic            |       |
+ * | ROS            | enable_subscriber      | bool    | -              | false            | No           | Receives maps from a ROS topic and stores them in a map2DStorage  |       |
 
  * \section Notes:
  * Integration with ROS map server is currently under development.
@@ -74,38 +74,37 @@
 class Map2D_nws_ros :
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader,
-        public yarp::dev::IMultipleWrapper
+        public yarp::dev::WrapperSingle
 {
 public:
     Map2D_nws_ros();
     ~Map2D_nws_ros();
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
-    bool detachAll() override;
-    bool attachAll(const yarp::dev::PolyDriverList& l) override;
+    bool detach() override;
+    bool attach(yarp::dev::PolyDriver* driver) override;
 
 private:
     //drivers and interfaces
     yarp::dev::Nav2D::IMap2D*    m_iMap2D = nullptr;
     yarp::dev::PolyDriver        m_drv;
 
-private:
     std::mutex                   m_mutex;
     std::string                  m_rpcPortName;
-    yarp::os::Node*              m_rosNode = nullptr;
-    bool                         m_enable_publish_ros_map;
-    bool                         m_enable_subscribe_ros_map;
+    yarp::os::Node*              m_node = nullptr;
+    bool                         m_enable_publish_map;
+    bool                         m_enable_subscribe_map;
 
     #define ROSNODENAME "/map2DServerNode"
     #define ROSTOPICNAME_MAP "/map"
     #define ROSTOPICNAME_MAPMETADATA "/map_metadata"
 
     yarp::os::RpcServer                                                    m_rpcPort;
-    yarp::os::Publisher<yarp::rosmsg::nav_msgs::OccupancyGrid>             m_rosPublisherPort_map;
-    yarp::os::Publisher<yarp::rosmsg::nav_msgs::MapMetaData>               m_rosPublisherPort_metamap;
-    yarp::os::Subscriber<yarp::rosmsg::nav_msgs::OccupancyGrid>            m_rosSubscriberPort_map;
-    yarp::os::Subscriber<yarp::rosmsg::nav_msgs::MapMetaData>              m_rosSubscriberPort_metamap;
-    yarp::os::Publisher<yarp::rosmsg::visualization_msgs::MarkerArray>     m_rosPublisherPort_markers;
+    yarp::os::Publisher<yarp::rosmsg::nav_msgs::OccupancyGrid>             m_publisherPort_map;
+    yarp::os::Publisher<yarp::rosmsg::nav_msgs::MapMetaData>               m_publisherPort_metamap;
+    yarp::os::Subscriber<yarp::rosmsg::nav_msgs::OccupancyGrid>            m_subscriberPort_map;
+    yarp::os::Subscriber<yarp::rosmsg::nav_msgs::MapMetaData>              m_subscriberPort_metamap;
+    yarp::os::Publisher<yarp::rosmsg::visualization_msgs::MarkerArray>     m_publisherPort_markers;
 
     bool read(yarp::os::ConnectionReader& connection) override;
 

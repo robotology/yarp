@@ -42,7 +42,7 @@
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/IPreciselyTimed.h>
 
@@ -66,13 +66,13 @@
    * This device does not accepts YARP RPC commands, it is dedicated only to data publishing.
    *
    *   Parameters required by this device are:
-   * | Parameter name | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                           | Notes        |
-   * |:--------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------:|:------------:|
-   * | period         |      -                  | int     | ms             |   20          | No                             | refresh period of the broadcasted values in ms                        | default 20ms |
-   * | subdevice      |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                         | when used, parameters for the subdevice must be provided as well |
-   * | nodeName       |      -                  | string  | -              |   -           | Yes                            | name of ROS node,  e.g. /myRobotName                                  | -           |
-   * | namtopicNamee  |      -                  | string  | -              |   -           | Yes '                          | name of ROS topic, e.g. /Rangefinder2DSensor                          | -           |
-   * | frame_id       |      -                  | string  | -              |   -           | Yes                            | name of the attached frame                                            | -           |
+   * | Parameter name  | SubParameter            | Type    | Units          | Default Value | Required                       | Description                                                           | Notes        |
+   * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------:|:-----------------------------: |:---------------------------------------------------------------------:|:------------:|
+   * | period          |      -                  | int     | ms             |   20          | No                             | refresh period of the broadcasted values in ms                        | default 20ms |
+   * | subdevice       |      -                  | string  | -              |   -           | alternative to 'attach' action | name of the subdevice to use as a data source                         | when used, parameters for the subdevice must be provided as well |
+   * | node_name       |      -                  | string  | -              |   -           | Yes                            | name of ROS node,  e.g. /myRobotName                                  | -           |
+   * | topic_name      |      -                  | string  | -              |   -           | Yes                            | name of ROS topic, e.g. /Rangefinder2DSensor                          | -           |
+   * | frame_id        |      -                  | string  | -              |   -           | Yes                            | name of the attached frame                                            | -           |
    *
    * Example of configuration file using .ini format.
    *
@@ -80,13 +80,15 @@
    * device rangefinder2D_nws_ros
    * subdevice <Rangefinder2DSensor>
    * period 20
-   * name /<robotName>/Rangefinder2DSensor
+   * node_name /<robotName>/Rangefinder2DSensor
+   * topic_name /<robotName>/Rangefinder2DSensortopic
+   * frame_id base
    * \endcode
    */
 class Rangefinder2D_nws_ros :
         public yarp::os::PeriodicThread,
         public yarp::dev::DeviceDriver,
-        public yarp::dev::IMultipleWrapper
+        public yarp::dev::WrapperSingle
 {
 public:
     Rangefinder2D_nws_ros();
@@ -95,11 +97,9 @@ public:
     bool open(yarp::os::Searchable &params) override;
     bool close() override;
 
-    bool attachAll(const yarp::dev::PolyDriverList &p) override;
-    bool detachAll() override;
-
     void attach(yarp::dev::IRangefinder2D *s);
-    void detach();
+    bool attach(yarp::dev::PolyDriver* driver) override;
+    bool detach() override;
 
     bool threadInit() override;
     void threadRelease() override;
@@ -107,16 +107,16 @@ public:
 
 private:
     // ROS streaming data
-    std::string                                               frame_id;             // name of the frame measures are referred to
-    std::string                                               rosNodeName;          // name of the rosNode
-    std::string                                               rosTopicName;         // name of the rosTopic
-    yarp::os::Node*                                           rosNode;              // add a ROS node
-    yarp::os::NetUint32                                       rosMsgCounter;        // incremental counter in the ROS message
-    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::LaserScan> rosPublisherPort;     // Dedicated ROS topic publisher
+    std::string                                               frame_id;          // name of the frame measures are referred to
+    std::string                                               nodeName;          // name of the rosNode
+    std::string                                               topicName;         // name of the rosTopic
+    yarp::os::Node*                                           node;              // add a ROS node
+    yarp::os::NetUint32                                       msgCounter;        // incremental counter in the ROS message
+    yarp::os::Publisher<yarp::rosmsg::sensor_msgs::LaserScan> publisherPort;     // Dedicated ROS topic publisher
 
 private:
     //interfaces
-    yarp::dev::PolyDriver driver;
+    yarp::dev::PolyDriver m_driver;
     yarp::dev::IRangefinder2D* sens_p;
     yarp::dev::IPreciselyTimed* iTimed;
 

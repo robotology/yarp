@@ -16,24 +16,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <sstream>
-#include <limits>
-#include "map2D_nws_yarp.h"
-#include <yarp/dev/IMap2D.h>
-#include <yarp/dev/INavigation2D.h>
-#include <yarp/dev/GenericVocabs.h>
-#include <yarp/math/Math.h>
+#include "Map2D_nws_yarp.h"
+
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <mutex>
-#include <cstdlib>
-#include <fstream>
+#include <yarp/os/Node.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
-#include <yarp/os/Node.h>
+
+#include <yarp/dev/GenericVocabs.h>
+#include <yarp/dev/IMap2D.h>
+#include <yarp/dev/INavigation2D.h>
+
+#include <yarp/math/Math.h>
+
 #include <yarp/rosmsg/TickDuration.h>
 #include <yarp/rosmsg/TickTime.h>
+
+#include <cstdlib>
+#include <fstream>
+#include <limits>
+#include <mutex>
+#include <sstream>
 
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -765,7 +770,6 @@ bool Map2D_nws_yarp::open(yarp::os::Searchable &config)
     if (config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
@@ -775,8 +779,7 @@ bool Map2D_nws_yarp::open(yarp::os::Searchable &config)
             return false;
         }
 
-        driverlist.push(&m_drv, "1");
-        if (!attachAll(driverlist))
+        if (!attach(&m_drv))
         {
             yCError(MAP2D_NWS_YARP) << "Failed to open subdevice.. check params";
             return false;
@@ -796,25 +799,17 @@ bool Map2D_nws_yarp::close()
     return true;
 }
 
-bool Map2D_nws_yarp::detachAll()
+bool Map2D_nws_yarp::detach()
 {
     m_iMap2D = nullptr;
     return true;
 }
 
-bool Map2D_nws_yarp::attachAll(const PolyDriverList& device2attach)
+bool Map2D_nws_yarp::attach(PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(MAP2D_NWS_YARP, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver* Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(m_iMap2D);
+        driver->view(m_iMap2D);
     }
 
     if (nullptr == m_iMap2D)

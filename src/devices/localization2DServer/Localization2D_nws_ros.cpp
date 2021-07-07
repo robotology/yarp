@@ -18,20 +18,24 @@
 
 #define _USE_MATH_DEFINES
 
-#include <yarp/os/Network.h>
-#include <yarp/os/RFModule.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Port.h>
+#include "Localization2D_nws_ros.h"
+
+#include <yarp/os/Bottle.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/os/Bottle.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/RFModule.h>
+#include <yarp/os/Time.h>
+
 #include <yarp/sig/Vector.h>
-#include <yarp/dev/IMap2D.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/IMap2D.h>
+#include <yarp/dev/PolyDriver.h>
+
 #include <yarp/math/Math.h>
-#include "localization2D_nws_ros.h"
 
 #include <cmath>
 
@@ -56,19 +60,11 @@ Localization2D_nws_ros::Localization2D_nws_ros() : PeriodicThread(DEFAULT_THREAD
     m_stats_time_last = yarp::os::Time::now();
 }
 
-bool Localization2D_nws_ros::attachAll(const PolyDriverList &device2attach)
+bool Localization2D_nws_ros::attach(PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(LOCALIZATION2D_NWS_ROS, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(iLoc);
+        driver->view(iLoc);
     }
 
     if (nullptr == iLoc)
@@ -97,7 +93,7 @@ bool Localization2D_nws_ros::attachAll(const PolyDriverList &device2attach)
     return PeriodicThread::start();
 }
 
-bool Localization2D_nws_ros::detachAll()
+bool Localization2D_nws_ros::detach()
 {
     if (PeriodicThread::isRunning())
     {
@@ -113,43 +109,37 @@ bool Localization2D_nws_ros::open(Searchable& config)
     params.fromString(config.toString().c_str());
     yCDebug(LOCALIZATION2D_NWS_ROS) << "Configuration: \n" << config.toString().c_str();
 
-    if (config.check("GENERAL") == false)
-    {
-        yCWarning(LOCALIZATION2D_NWS_ROS) << "Missing GENERAL group, assuming default options";
-    }
-
-    Bottle& general_group = config.findGroup("GENERAL");
-    if (!general_group.check("period"))
+    if (!config.check("period"))
     {
         yCInfo(LOCALIZATION2D_NWS_ROS) << "Missing 'period' parameter. Using default value: " << DEFAULT_THREAD_PERIOD;
         m_period = DEFAULT_THREAD_PERIOD;
     }
     else
     {
-        m_period = general_group.find("period").asFloat64();
+        m_period = config.find("period").asFloat64();
         yCInfo(LOCALIZATION2D_NWS_ROS) << "Period requested: " << m_period;
     }
 
-    if (!general_group.check("publish_odometry"))
+    if (!config.check("publish_odometry"))
     {
-        m_enable_publish_odometry_topic = general_group.find("publish_odometry").asBool();
+        m_enable_publish_odometry_topic = config.find("publish_odometry").asBool();
         yCInfo(LOCALIZATION2D_NWS_ROS) << "publish_odometry=" << m_enable_publish_odometry_topic;
     }
-    if (!general_group.check("publish_tf"))
+    if (!config.check("publish_tf"))
     {
-        m_enable_publish_odometry_tf = general_group.find("publish_tf").asBool();
+        m_enable_publish_odometry_tf = config.find("publish_tf").asBool();
         yCInfo(LOCALIZATION2D_NWS_ROS) << "publish_tf=" << m_enable_publish_odometry_tf;
     }
 
-    if (!general_group.check("name"))
+    if (!config.check("yarp_base_name"))
     {
-        yCInfo(LOCALIZATION2D_NWS_ROS) << "Missing 'name' parameter. Using default value: " << m_local_name;
+        yCError(LOCALIZATION2D_NWS_ROS) << "Missing yarp_base_name parameter";
+        return false;
     }
-    else
-    {
-        m_local_name = general_group.find("name").asString();
-        if (m_local_name.c_str()[0] != '/') { yCError(LOCALIZATION2D_NWS_ROS) << "Missing '/' in name parameter" ;  return false; }
-        yCInfo(LOCALIZATION2D_NWS_ROS) << "Using local name:" << m_local_name;
+    m_local_name = config.find("yarp_base_name").asString();
+    if (m_local_name.c_str()[0] != '/') {
+        yCError(LOCALIZATION2D_NWS_ROS) << "Missing '/' in yarp_base_name parameter";
+        return false;
     }
 
     m_rpcPortName = m_local_name + "/rpc";
@@ -157,7 +147,6 @@ bool Localization2D_nws_ros::open(Searchable& config)
     if (config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
@@ -166,9 +155,7 @@ bool Localization2D_nws_ros::open(Searchable& config)
             yCError(LOCALIZATION2D_NWS_ROS) << "Failed to open subdevice.. check params";
             return false;
         }
-
-        driverlist.push(&pLoc, "1");
-        if (!attachAll(driverlist))
+        if (!attach(&pLoc))
         {
             yCError(LOCALIZATION2D_NWS_ROS) << "Failed to open subdevice.. check params";
             return false;
@@ -197,51 +184,48 @@ bool Localization2D_nws_ros::open(Searchable& config)
 
 bool Localization2D_nws_ros::initialize_ROS(yarp::os::Searchable& params)
 {
-    m_ros_node_name = m_local_name + "_ROSnode";
-    m_odom_topic_name = m_local_name + "/odom";
-
-    if (params.check("ROS"))
+    if (params.check("parent_frame_id"))
     {
-        Bottle& ros_group = params.findGroup("ROS");
-        if (ros_group.check("parent_frame_id"))
-        {
-            m_parent_frame_id = ros_group.find("parent_frame_id").asString();
-        }
-
-        if (ros_group.check("child_frame_id"))
-        {
-            m_child_frame_id = ros_group.find("child_frame_id").asString();
-        }
-
-        if (ros_group.check("odometry_topic"))
-        {
-            m_odom_topic_name = ros_group.find("odometry_topic").asString();
-        }
-
-        if (ros_group.check("node_name"))
-        {
-            m_ros_node_name = ros_group.find("node_name").asString();
-        }
+        m_parent_frame_id = params.find("parent_frame_id").asString();
     }
 
-    if (m_ros_node == nullptr)
+    if (params.check("child_frame_id"))
+    {
+        m_child_frame_id = params.find("child_frame_id").asString();
+    }
+
+    if (params.check("topic_name"))
+    {
+        m_odom_topic_name = params.find("topic_name").asString();
+    }
+
+    if (params.check("node_name"))
+    {
+        m_node_name = params.find("node_name").asString();
+    }
+    m_odom_topic_name = m_odom_topic_name + "/odom";
+
+    if (m_node == nullptr)
     {
         bool b= false;
-        m_ros_node = new yarp::os::Node(m_ros_node_name);
-        if (m_ros_node == nullptr)
+        m_node = new yarp::os::Node(m_node_name);
+        if (m_node == nullptr)
         {
-            yCError(LOCALIZATION2D_NWS_ROS) << "Opening " << m_ros_node_name << " Node, check your yarp-ROS network configuration";
+            yCError(LOCALIZATION2D_NWS_ROS) << "Opening " << m_node_name << " Node, check your yarp-ROS network configuration";
+            return false;
         }
 
         b = m_odometry_publisher.topic(m_odom_topic_name);
         if (!b)
         {
             yCError(LOCALIZATION2D_NWS_ROS) << "Unable to publish data on" << m_odom_topic_name << "topic";
+            return false;
         }
         b = m_tf_publisher.topic("/tf");
         if (!b)
         {
             yCError(LOCALIZATION2D_NWS_ROS) << "Unable to publish data on /tf topic";
+            return false;
         }
         yCInfo(LOCALIZATION2D_NWS_ROS) << "ROS initialized";
     }
@@ -268,17 +252,17 @@ bool Localization2D_nws_ros::close()
         PeriodicThread::stop();
     }
 
-    detachAll();
+    detach();
 
     m_rpcPort.interrupt();
     m_rpcPort.close();
 
-    if (m_ros_node)
+    if (m_node)
     {
         m_tf_publisher.close();
         m_odometry_publisher.close();
-        delete m_ros_node;
-        m_ros_node = nullptr;
+        delete m_node;
+        m_node = nullptr;
     }
 
     yCDebug(LOCALIZATION2D_NWS_ROS) << "Execution terminated";
@@ -392,7 +376,7 @@ void Localization2D_nws_ros::publish_odometry_on_TF_topic()
 
 void Localization2D_nws_ros::publish_odometry_on_ROS_topic()
 {
-    if (m_ros_node && m_odometry_publisher.asPort().getOutputCount() > 0)
+    if (m_node && m_odometry_publisher.asPort().getOutputCount() > 0)
     {
         yarp::rosmsg::nav_msgs::Odometry& odom = m_odometry_publisher.prepare();
         odom.clear();

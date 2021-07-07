@@ -7,10 +7,11 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "frameGrabber_nws_ros.h"
+#include "FrameGrabber_nws_ros.h"
 
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+
 #include <yarp/dev/PolyDriver.h>
 
 #include <rosPixelCode.h>
@@ -72,7 +73,6 @@ bool FrameGrabber_nws_ros::open(yarp::os::Searchable& config)
         return false;
     }
 
-
     // Check "period" option
     if (config.check("period", "refresh period(in s) of the broadcasted values through yarp ports") && config.find("period").isFloat64()) {
         m_period = config.find("period").asFloat64();
@@ -84,32 +84,58 @@ bool FrameGrabber_nws_ros::open(yarp::os::Searchable& config)
     }
     PeriodicThread::setPeriod(m_period);
 
-
-    // Check "nodeName" option and open node
-    std::string nodeName = config.check("nodeName", yarp::os::Value("/node"), "name of node").asString();
-    node = new yarp::os::Node(nodeName);
-
-
-    // Check "imageTopicName" option and open publisher
-    std::string imageTopicName = config.check("imageTopicName", yarp::os::Value("/image"), "name of the image topic").asString();
-    if (!publisherPort_image.topic(imageTopicName)) {
-        yCError(FRAMEGRABBER_NWS_ROS) << "Unable to publish data on " << imageTopicName << " topic, check your yarp-ROS network configuration";
+    // Check "node_name" option and open node
+    if (!config.check("node_name"))
+    {
+        yCError(FRAMEGRABBER_NWS_ROS) << "Missing node_name parameter";
+        return false;
+    }
+    std::string nodeName = config.find("node_name").asString();
+    if (nodeName.c_str()[0] != '/') {
+        yCError(FRAMEGRABBER_NWS_ROS) << "Missing '/' in node_name parameter";
         return false;
     }
 
-    // Check "cameraInfoTopicName" option and open publisher
-    // FIXME Should be fixed = imageTopicName + "/camera_info"
-    std::string cameraInfoTopicName = config.check("cameraInfoTopicName", yarp::os::Value("/cameraInfo"), "name of the camera info topic").asString();
+    node = new yarp::os::Node(nodeName);
+
+    // Check "topic_name" option and open publisher
+    if (!config.check("topic_name"))
+    {
+        yCError(FRAMEGRABBER_NWS_ROS) << "Missing topic_name parameter";
+        return false;
+    }
+    std::string topicName = config.find("topic_name").asString();
+    if (topicName.c_str()[0] != '/') {
+        yCError(FRAMEGRABBER_NWS_ROS) << "Missing '/' in topic_name parameter";
+        return false;
+    }
+
+    // set "imageTopicName" and open publisher
+    if (!publisherPort_image.topic(topicName)) {
+        yCError(FRAMEGRABBER_NWS_ROS) << "Unable to publish data on " << topicName << " topic, check your yarp-ROS network configuration";
+        return false;
+    }
+
+    // set "cameraInfoTopicName" and open publisher
+
+
+    std::string cameraInfoTopicName = topicName.substr(0,topicName.rfind('/')) + "/camera_info";
     if (!publisherPort_cameraInfo.topic(cameraInfoTopicName)) {
         yCError(FRAMEGRABBER_NWS_ROS) << "Unable to publish data on" << cameraInfoTopicName << "topic, check your yarp-ROS network configuration";
         return false;
     }
 
-    // Check "frameId" option
-    m_frameId = config.check("frameId", yarp::os::Value("frame_id"), "name of the frame id").asString();
-
-//     nodeSeq = 0;
-
+    // Check "frame_id" option
+    if (!config.check("frame_id"))
+    {
+        yCError(FRAMEGRABBER_NWS_ROS) << "Missing frame_id parameter";
+        return false;
+    }
+    m_frameId = config.find("frame_id").asString();
+    if (m_frameId.c_str()[0] != '/') {
+        yCError(FRAMEGRABBER_NWS_ROS) << "Missing '/' in frame_id parameter";
+        return false;
+    }
 
     // Check "subdevice" option and eventually open the device
     isSubdeviceOwned = config.check("subdevice");

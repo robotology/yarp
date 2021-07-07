@@ -428,35 +428,6 @@ bool ControlBoard_nws_yarp::detach()
     return true;
 }
 
-bool ControlBoard_nws_yarp::attachAll(const PolyDriverList& p)
-{
-    if (p.size() < 1) {
-        yCError(CONTROLBOARD, "No devices found");
-        return false;
-    }
-
-    if (p.size() > 1) {
-        yCError(CONTROLBOARD, "Cannot attach more than one device");
-        return false;
-    }
-
-    const auto& key = p[0]->key;
-    auto* poly = p[0]->poly;
-
-    if (!poly->isValid())
-    {
-        yCError(CONTROLBOARD, "Device %s is not valid", key.c_str());
-        return false;
-    }
-
-    return attach(poly);
-}
-
-bool ControlBoard_nws_yarp::detachAll()
-{
-    return detach();
-}
-
 void ControlBoard_nws_yarp::run()
 {
     // check we are not overflowing with input messages

@@ -18,20 +18,24 @@
 
 #define _USE_MATH_DEFINES
 
-#include <yarp/os/Network.h>
-#include <yarp/os/RFModule.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Port.h>
+#include "Localization2D_nws_yarp.h"
+
+#include <yarp/os/Bottle.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/os/Bottle.h>
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+#include <yarp/os/RFModule.h>
+#include <yarp/os/Time.h>
+
 #include <yarp/sig/Vector.h>
-#include <yarp/dev/IMap2D.h>
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/IFrameTransform.h>
+#include <yarp/dev/IMap2D.h>
+#include <yarp/dev/PolyDriver.h>
+
 #include <yarp/math/Math.h>
-#include "localization2D_nws_yarp.h"
 
 #include <cmath>
 
@@ -57,19 +61,11 @@ Localization2D_nws_yarp::Localization2D_nws_yarp() : PeriodicThread(DEFAULT_THRE
     m_stats_time_last = yarp::os::Time::now();
 }
 
-bool Localization2D_nws_yarp::attachAll(const PolyDriverList &device2attach)
+bool Localization2D_nws_yarp::attach(PolyDriver* driver)
 {
-    if (device2attach.size() != 1)
+    if (driver->isValid())
     {
-        yCError(LOCALIZATION2D_NWS_YARP, "Cannot attach more than one device");
-        return false;
-    }
-
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-
-    if (Idevice2attach->isValid())
-    {
-        Idevice2attach->view(iLoc);
+        driver->view(iLoc);
     }
 
     if (nullptr == iLoc)
@@ -98,7 +94,7 @@ bool Localization2D_nws_yarp::attachAll(const PolyDriverList &device2attach)
     return PeriodicThread::start();
 }
 
-bool Localization2D_nws_yarp::detachAll()
+bool Localization2D_nws_yarp::detach()
 {
     if (PeriodicThread::isRunning())
     {
@@ -174,7 +170,6 @@ bool Localization2D_nws_yarp::open(Searchable& config)
     if (config.check("subdevice"))
     {
         Property       p;
-        PolyDriverList driverlist;
         p.fromString(config.toString(), false);
         p.put("device", config.find("subdevice").asString());
 
@@ -184,8 +179,7 @@ bool Localization2D_nws_yarp::open(Searchable& config)
             return false;
         }
 
-        driverlist.push(&pLoc, "1");
-        if (!attachAll(driverlist))
+        if (!attach(&pLoc))
         {
             yCError(LOCALIZATION2D_NWS_YARP) << "Failed to open subdevice.. check params";
             return false;
@@ -238,7 +232,7 @@ bool Localization2D_nws_yarp::close()
         PeriodicThread::stop();
     }
 
-    detachAll();
+    detach();
 
     m_2DLocationPort.interrupt();
     m_2DLocationPort.close();

@@ -8,14 +8,9 @@
 
 #include "RGBDToPointCloudSensor_nws_ros.h"
 #include <sstream>
-#include <cstdio>
-#include <cstring>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
-#include <yarp/dev/GenericVocabs.h>
-#include <yarp/rosmsg/impl/yarpRosHelper.h>
 #include "rosPixelCode.h"
-#include <RGBDRosConversionUtils.h>
 #include <yarp/sig/PointCloudUtils.h>
 #include <yarp/rosmsg/std_msgs/Header.h>
 #include <yarp/rosmsg/sensor_msgs/PointField.h>
@@ -31,7 +26,6 @@ YARP_LOG_COMPONENT(RGBDTOPOINTCLOUDSENSORNWSROS, "yarp.devices.RGBDToPointCloudS
 RGBDToPointCloudSensor_nws_ros::RGBDToPointCloudSensor_nws_ros() :
     PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
-
 }
 
 
@@ -45,101 +39,59 @@ RGBDToPointCloudSensor_nws_ros::~RGBDToPointCloudSensor_nws_ros()
 
 bool RGBDToPointCloudSensor_nws_ros::open(yarp::os::Searchable &config)
 {
-    m_conf.fromString(config.toString());
-    if(verbose >= 5)
-    {
-        yCTrace(RGBDTOPOINTCLOUDSENSORNWSROS) << "\nParameters are: \n" << config.toString();
+    // check period
+    if (!config.check("period", "refresh period of the broadcasted values in s")) {
+        if(verbose >= 3) {
+            yCInfo(RGBDTOPOINTCLOUDSENSORNWSROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
+        }
+    }
+    else {
+        period = config.find("period").asFloat64();
     }
 
-    if(!fromConfig(config))
-    {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Failed to open, check previous log for error messages.";
+    // nodename parameter
+    if (!config.check("node_name", "the name of the ros node")) {
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "missing node_name parameter";
         return false;
     }
+    nodeName = config.find("node_name").asString();
 
-    if(!initialize_ROS(config))
+
+    // baseTopicName parameter
+    if (!config.check("topic_name", "the name of the ros node")) {
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "missing topic_name parameter, using default one";
+        return false;
+    }
+    pointCloudTopicName = config.find("topic_name").asString();
+
+    // frame_id parameter
+    if (!config.check("frame_id", "the name of the ros node")) {
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "missing frame_id parameter";
+        return false;
+    }
+    frameId = config.find("frame_id").asString();
+
+    // open topics here if needed
+    m_node = new yarp::os::Node(nodeName);
+    nodeSeq = 0;
+    if (!publisherPort_pointCloud.topic(pointCloudTopicName))
     {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << nodeName << "Error initializing ROS topic";
+        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Unable to publish data on " << pointCloudTopicName.c_str() << " topic, check your yarp-ROS network configuration";
         return false;
     }
 
     // check if we need to create subdevice or if they are
     // passed later on through attachAll()
-    if(isSubdeviceOwned)
-    {
+    if(config.check("subdevice")) {
         if(! openAndAttachSubDevice(config))
         {
             yCError(RGBDTOPOINTCLOUDSENSORNWSROS, "Error while opening subdevice");
             return false;
         }
-    }
-    else
-    {
-        if(!openDeferredAttach(config))
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool RGBDToPointCloudSensor_nws_ros::fromConfig(yarp::os::Searchable &config)
-{
-    if (!config.check("period", "refresh period of the broadcasted values in ms"))
-    {
-        if(verbose >= 3)
-        {
-            yCInfo(RGBDTOPOINTCLOUDSENSORNWSROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
-        }
-
-    }
-    else
-    {
-        period = config.find("period").asFloat64();
-    }
-
-    //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
-    unsigned int                    i;
-    std::vector<param<string> >     rosStringParam;
-    param<string>*                  prm;
-
-    rosStringParam.emplace_back(nodeName,       nodeName_param          );
-    rosStringParam.emplace_back(rosFrameId,     frameId_param           );
-    rosStringParam.emplace_back(pointCloudTopicName, pointCloudTopicName_param    );
-
-    for (i = 0; i < rosStringParam.size(); i++)
-    {
-        prm = &rosStringParam[i];
-        if (!config.check(prm->parname))
-        {
-            if(verbose >= 3)
-            {
-                yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Missing " << prm->parname << "check your configuration file";
-            }
-            return false;
-        }
-        *(prm->var) = config.find(prm->parname).asString();
-    }
-
-    if (config.check("forceInfoSync"))
-    {
-        forceInfoSync = config.find("forceInfoSync").asBool();
-    }
-
-    if(config.check("subdevice")) {
         isSubdeviceOwned=true;
     } else {
         isSubdeviceOwned=false;
     }
-
-    return true;
-}
-
-bool RGBDToPointCloudSensor_nws_ros::openDeferredAttach(Searchable& prop)
-{
-    // I dunno what to do here now...
-    isSubdeviceOwned = false;
     return true;
 }
 
@@ -173,7 +125,7 @@ bool RGBDToPointCloudSensor_nws_ros::openAndAttachSubDevice(Searchable& prop)
 bool RGBDToPointCloudSensor_nws_ros::close()
 {
     yCTrace(RGBDTOPOINTCLOUDSENSORNWSROS, "Close");
-    detachAll();
+    detach();
 
     // close subdevice if it was created inside the open (--subdevice option)
     if(isSubdeviceOwned)
@@ -188,66 +140,21 @@ bool RGBDToPointCloudSensor_nws_ros::close()
         isSubdeviceOwned = false;
     }
 
-    if(rosNode!=nullptr)
+    if(m_node !=nullptr)
     {
-        rosNode->interrupt();
-        delete rosNode;
-        rosNode = nullptr;
+        m_node->interrupt();
+        delete m_node;
+        m_node = nullptr;
     }
 
-    return true;
-}
-
-/* Helper functions */
-
-bool RGBDToPointCloudSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
-{
-    // open topics here if needed
-    rosNode = new yarp::os::Node(nodeName);
-    nodeSeq = 0;
-    if (!rosPublisherPort_pointCloud.topic(pointCloudTopicName))
-    {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Unable to publish data on " << pointCloudTopicName.c_str() << " topic, check your yarp-ROS network configuration";
-        return false;
-    }
     return true;
 }
 
 /**
-  * IWrapper and IMultipleWrapper interfaces
+  * WrapperSingle interface
   */
-bool RGBDToPointCloudSensor_nws_ros::attachAll(const PolyDriverList &device2attach)
-{
-    // First implementation only accepts devices with both the interfaces Framegrabber and IDepthSensor,
-    // on a second version maybe two different devices could be accepted, one for each interface.
-    // Yet to be defined which and how parameters shall be used in this case ... using the name of the
-    // interface to view could be a good initial guess.
-    if (device2attach.size() != 1)
-    {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS, "Cannot attach more than one device");
-        return false;
-    }
 
-    yarp::dev::PolyDriver * Idevice2attach = device2attach[0]->poly;
-
-    if (!Idevice2attach->isValid())
-    {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Device " << device2attach[0]->key << " to attach to is not valid ... cannot proceed";
-        return false;
-    }
-
-    Idevice2attach->view(sensor_p);
-    Idevice2attach->view(fgCtrl);
-    if(!attach(sensor_p))
-    {
-        return false;
-    }
-
-    PeriodicThread::setPeriod(period);
-    return PeriodicThread::start();
-}
-
-bool RGBDToPointCloudSensor_nws_ros::detachAll()
+bool RGBDToPointCloudSensor_nws_ros::detach()
 {
     if (yarp::os::PeriodicThread::isRunning())
     {
@@ -261,19 +168,6 @@ bool RGBDToPointCloudSensor_nws_ros::detachAll()
     }
     sensor_p = nullptr;
     return true;
-}
-
-bool RGBDToPointCloudSensor_nws_ros::attach(yarp::dev::IRGBDSensor *s)
-{
-    if(s == nullptr)
-    {
-        yCError(RGBDTOPOINTCLOUDSENSORNWSROS) << "Attached device has no valid IRGBDSensor interface.";
-        return false;
-    }
-    sensor_p = s;
-
-    PeriodicThread::setPeriod(period);
-    return PeriodicThread::start();
 }
 
 bool RGBDToPointCloudSensor_nws_ros::attach(PolyDriver* poly)
@@ -292,12 +186,6 @@ bool RGBDToPointCloudSensor_nws_ros::attach(PolyDriver* poly)
 
     PeriodicThread::setPeriod(period);
     return PeriodicThread::start();
-}
-
-bool RGBDToPointCloudSensor_nws_ros::detach()
-{
-    sensor_p = nullptr;
-    return true;
 }
 
 /* IRateThread interface */
@@ -331,22 +219,21 @@ bool RGBDToPointCloudSensor_nws_ros::writeData()
     yarp::os::Property propIntrinsic;
     bool rgb_data_ok = true;
     bool depth_data_ok = true;
-    bool intrinsic_ok = false;
 
-    if (((colorStamp.getTime() - oldColorStamp.getTime()) > 0) == false)
+    if ((colorStamp.getTime() - oldColorStamp.getTime()) <= 0)
     {
         rgb_data_ok=false;
         //return true;
     }
     else { oldColorStamp = colorStamp; }
 
-    if (((depthStamp.getTime() - oldDepthStamp.getTime()) > 0) == false)
+    if ((depthStamp.getTime() - oldDepthStamp.getTime()) <= 0)
     {
         depth_data_ok=false;
         //return true;
     }
     else { oldDepthStamp = depthStamp; }
-    intrinsic_ok = sensor_p->getRgbIntrinsicParam(propIntrinsic);
+    bool intrinsic_ok = sensor_p->getRgbIntrinsicParam(propIntrinsic);
 
 
     // TBD: We should check here somehow if the timestamp was correctly updated and, if not, update it ourselves.
@@ -365,12 +252,12 @@ bool RGBDToPointCloudSensor_nws_ros::writeData()
                                                                                                                               colorImagePixelRGB,
                                                                                                                               intrinsics,
                                                                                                                               yarp::sig::utils::OrganizationType::Unorganized);
-                PointCloud2Type& pc2Ros = rosPublisherPort_pointCloud.prepare();
+                PointCloud2Type& pc2Ros = publisherPort_pointCloud.prepare();
                 // filling ros header
                 yarp::rosmsg::std_msgs::Header headerRos;
                 headerRos.clear();
                 headerRos.seq = nodeSeq;
-                headerRos.frame_id = rosFrameId;
+                headerRos.frame_id = frameId;
                 headerRos.stamp = depthStamp.getTime();
 
                 // filling ros point field
@@ -407,7 +294,7 @@ bool RGBDToPointCloudSensor_nws_ros::writeData()
                 pc2Ros.point_step = sizeof (yarp::sig::DataXYZRGBA);
                 pc2Ros.row_step   = static_cast<std::uint32_t> (sizeof (yarp::sig::DataXYZRGBA) * pc2Ros.width);
 
-                rosPublisherPort_pointCloud.write();
+                publisherPort_pointCloud.write();
             }
         }
     }

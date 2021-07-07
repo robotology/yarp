@@ -26,6 +26,20 @@
 #include <yarp/rosmsg/sensor_msgs/CameraInfo.h>
 #include <yarp/rosmsg/sensor_msgs/Image.h>
 
+/**
+ *  @ingroup dev_impl_wrapper
+ *
+ *  Parameters required by this device are:
+ * | Parameter name  | Type   | Units   | Default Value | Required  | Description                              | Notes |
+ * |:---------------:|:------:|:-------:|:-------------:|:--------: |:----------------------------------------:|:-----:|
+ * | period          | float  | seconds |  0.03 s       | No        | the period of publication                |       |
+ * | node_name       | String | -       | -             | Yes       | the name of the ros node                 | must begin with /      |
+ * | topic_name      | String | -       | -             | Yes       | the name of the ros topic                | must begin with /      |
+ * | frame_id        | String | -       | -             | Yes       | the frame where the grabber is placed    |       |
+ * | subdevice       | string | -       |  -            | Yes       | the name of the grabber used             | -     |
+ *
+ */
+
 class FrameGrabber_nws_ros :
         public yarp::dev::DeviceDriver,
         public yarp::dev::WrapperSingle,

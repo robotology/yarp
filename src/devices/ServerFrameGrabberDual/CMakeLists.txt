@@ -53,7 +53,7 @@ endif()
 yarp_prepare_plugin(frameGrabber_nws_yarp
   CATEGORY device
   TYPE FrameGrabber_nws_yarp
-  INCLUDE frameGrabber_nws_yarp.h
+  INCLUDE FrameGrabber_nws_yarp.h
   EXTRA_CONFIG WRAPPER=frameGrabber_nws_yarp
   DEFAULT ON
 )
@@ -63,8 +63,8 @@ if(NOT SKIP_frameGrabber_nws_yarp)
 
   target_sources(yarp_frameGrabber_nws_yarp
     PRIVATE
-      frameGrabber_nws_yarp.cpp
-      frameGrabber_nws_yarp.h
+          FrameGrabber_nws_yarp.cpp
+          FrameGrabber_nws_yarp.h
   )
 
   target_sources(yarp_frameGrabber_nws_yarp PRIVATE $<TARGET_OBJECTS:framegrabber_protocol>)
@@ -100,7 +100,7 @@ endif()
 yarp_prepare_plugin(frameGrabber_nws_ros
   CATEGORY device
   TYPE FrameGrabber_nws_ros
-  INCLUDE frameGrabber_nws_ros.h
+  INCLUDE FrameGrabber_nws_ros.h
   EXTRA_CONFIG WRAPPER=frameGrabber_nws_ros
   DEFAULT ON
 )
@@ -110,8 +110,8 @@ if(NOT SKIP_frameGrabber_nws_ros)
 
   target_sources(yarp_frameGrabber_nws_ros
     PRIVATE
-      frameGrabber_nws_ros.cpp
-      frameGrabber_nws_ros.h
+          FrameGrabber_nws_ros.cpp
+          FrameGrabber_nws_ros.h
   )
 
   target_sources(yarp_frameGrabber_nws_ros PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)

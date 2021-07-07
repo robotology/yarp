@@ -40,7 +40,7 @@
 #include <yarp/dev/Map2DLocation.h>
 #include <yarp/dev/Map2DArea.h>
 #include <yarp/dev/Map2DPath.h>
-#include <yarp/dev/IMultipleWrapper.h>
+#include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/ResourceFinder.h>
 
 #include <yarp/dev/PolyDriver.h>
@@ -64,15 +64,15 @@
 class Map2D_nws_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::os::PortReader,
-        public yarp::dev::IMultipleWrapper
+        public yarp::dev::WrapperSingle
 {
 public:
     Map2D_nws_yarp();
     ~Map2D_nws_yarp();
     bool open(yarp::os::Searchable& params) override;
     bool close() override;
-    bool detachAll() override;
-    bool attachAll(const yarp::dev::PolyDriverList& l) override;
+    bool detach() override;
+    bool attach(yarp::dev::PolyDriver* driver) override;
 
 private:
     //drivers and interfaces
