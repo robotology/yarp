@@ -7,10 +7,10 @@
  */
 
 /**
- * @brief A multiplexer to collapse the output of many IFrameTransformStorageGet interfaces to one.
+ * @brief A multiplexer which collapses the output of many IFrameTransformStorageGet interfaces into one.
  *
- * This device is a simple multiplexer of devices that implements the IFrameTransformStorageGet interface.
- * It can be attached to multiple devices and when the function getTransforms is called it returns a
+ * This device is a multiplexer of devices that implements the IFrameTransformStorageGet interface.
+ * It can be attached to multiple devices. When the function getTransforms is called, it returns a
  * vector containing all the transforms taken from the attached devices.
  * For how to attach the various devices see \subpage FrameTransform.
  */

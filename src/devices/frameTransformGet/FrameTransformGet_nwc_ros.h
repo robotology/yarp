@@ -36,7 +36,7 @@
 #define ROSTOPICNAME_TF_STATIC "/tf_static"
 
 /**
- * @brief A ros network wrapper client that receives the transforms from a ros topic and forwards them to an IFrameTransformStorageGet interface. For how to use it see \subpage FrameTransform.
+ * @brief A ros network wrapper client that receives frame transforms from a ros topic and makes them available through an IFrameTransformStorageGet interface. See \subpage FrameTransform for additional info.
  *
  * \section FrameTransformGet_nwc_ros_device_parameters Parameters
  *
@@ -50,7 +50,7 @@
  * | -              | ft_topic             | string  | -              | /tf                   | No           | The name of the ROS topic from which fts will be received         |
  * | -              | ft_topic_static      | string  | -              | /tf_static            | No           | The name of the ROS topic from which static fts will be received  |
  * | -              | ft_node              | string  | -              | /tfNodeGet            | No           | The of the ROS node                                               |
- * **N.B.** pay atttention to the difference between **tf** and **ft**
+ * **N.B.** pay attention to the difference between **tf** and **ft**
  *
  * \section FrameTransformGet_nwc_ros_device_example Example of configuration file using .ini format.
  *

@@ -7,7 +7,7 @@
  */
 
 /**
- * @brief A multiplexer to forward the input of one IFrameTransformStorageSet interfaces to many.
+ * @brief A multiplexer which forwards the input of one IFrameTransformStorageSet interfaces to many.
  *
  * This device is a simple multiplexer of devices that implements the IFrameTransformStorageSet interface.
  * It can be attached to multiple devices and when the functions setTransform or setTransforms are called
