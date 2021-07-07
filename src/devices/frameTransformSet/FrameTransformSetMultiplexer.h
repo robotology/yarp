@@ -12,7 +12,7 @@
  * This device is a simple multiplexer of devices that implements the IFrameTransformStorageSet interface.
  * It can be attached to multiple devices and when the functions setTransform or setTransforms are called
  * they are forwarded to all the devices attached.\n
- * For how to attach the various devices see \subpage FrameTransform.
+ * For further information see \subpage FrameTransform.
  */
 
 #include <yarp/dev/DeviceDriver.h>

@@ -12,7 +12,7 @@
  * This device is a multiplexer of devices that implements the IFrameTransformStorageGet interface.
  * It can be attached to multiple devices. When the function getTransforms is called, it returns a
  * vector containing all the transforms taken from the attached devices.
- * For how to attach the various devices see \subpage FrameTransform.
+ * For further information see \subpage FrameTransform.
  */
 
 #include <yarp/dev/DeviceDriver.h>

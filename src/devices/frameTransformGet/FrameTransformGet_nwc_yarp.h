@@ -23,7 +23,7 @@
  * It is attached to a device with an IFrameTransformStorageGet interface.
  * When it a method of the interface is called, the request is forwarded on a RPC port (which uses the thrift FrameTransformStorageGetRPC interface) and it returns all the transforms received
  * from the port to the caller.
- * For how to attach the various devices see see \subpage FrameTransform.
+ * For further information see \subpage FrameTransform.
 
  *   Parameters required by this device are:
  * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |

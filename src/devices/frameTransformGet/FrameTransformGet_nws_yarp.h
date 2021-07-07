@@ -26,7 +26,7 @@
  * It receives a rpc from a port (the port is declared in thrift and is FrameTransformStorageGetRPC).
  * After that it sends on the port all the transforms taken from the attached device.
  * The attached device must implement an IFrameTransformStorageGet interface.
- * For how to attach the various devices see see \subpage FrameTransform.
+ * For further information see \subpage FrameTransform.
  *
  *   Parameters required by this device are:
  * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
