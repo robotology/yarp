@@ -114,7 +114,7 @@ periodically check it.
 \li \subpage carrier_h264_howto
 
 \section Yarp Interfaces and Devices
-\li \subpage YarpDevicesPage
+\li \subpage dev_all
 \li \subpage FrameTransform
 
 \section yarp_more_info More information
