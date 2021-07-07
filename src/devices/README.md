@@ -7,28 +7,27 @@
 <br/>
 <span class="free-text">
     This README file show the current  status of the `device` folder. Background colors and font color, weight and style represents the status of each device in the aforementioned folder
-</span>
+
 <br/>
 <span class="free-text">
     The tables shown hereunder report alle the information needed to understand the following devices list
-</span>
-
-| Background color                                                   | Font color | Font weight | Font style | Status      | Notes |
-|--------------------------------------------------------------------|------------|-------------|------------|-------------|-------|
-| -                                                                  | Black      | -           | -          | Done        |       |
-| -                                                                  | Black      | Bold        | Italic     | To do       |       |
-| <span style="background-color:#cc9900; color:black">#cc9900</span> | White      | -           | -          | Deprecated  |       |
 
 
+| Color tag                                                          | Font weight | Font style | Status      |
+|--------------------------------------------------------------------|-------------|------------|-------------|
+| -                                                                  | Normal      | Normal     | Done        |
+| -                                                                  | Bold        | Normal     | To do       |
+| ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+)    | Normal      | Italic     | Deprecated  |
 
-| Background color                                                          | Font color | Font weight | Font style | Type                         | Notes                                        |
-|---------------------------------------------------------------------------|------------|-------------|------------|------------------------------|----------------------------------------------|
-| <span style="background-color:green; color:black">green</span>            | -          | -           | -          | NWC                          |                                              |
-| <span style="background-color:cyan; color:black">cyan</span>              | -          | -           | -          | NWS                          |                                              |
-| <span style="background-color:magenta; color:black">magenta</span>        | -          | -           | -          | Multiplexer                  |                                              |
-| <span style="background-color:grey; color:black">grey</span>              | -          | -           | -          | Library/Protocol             |                                              |
-| <span style="background-color:yellow; color:black">yellow</span>          | -          | -           | -          | Logic/Virtual/regular device |                                              |
-| -                                                                         | Brown      | -           | Italic     | -                            | Simple reminders about what needs to be done |
+
+
+| Color Tag                                                                 | Type                         |
+|---------------------------------------------------------------------------|------------------------------|
+| ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+)           | NWC                          |
+| ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+)           | NWS                          |
+| ![#ff00ff](https://via.placeholder.com/15/ff00ff/000000?text=+)           | Multiplexer                  |
+| ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+)           | Library/Protocol             |
+| ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+)           | Logic/Virtual/regular device |
 <br/>
 
 ---
@@ -39,295 +38,295 @@
 
 <br/>
 
-* <span style="" class="folder">AnalogSensorClient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">analogsensorclient</span>
+* <span style="" class="folder">AnalogSensorClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **analogsensorclient**
 
-* <span style="" class="folder">AnalogWrapper</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">analogServer</span>
+* <span style="" class="folder">AnalogWrapper
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **analogServer**
 
-* <span style="" class="folder">ControlBoardRemapper</span>
-  * <span style="background-color:yellow; color:black">controlboardremapper</span>
-  * <span style="background-color:yellow; color:black">remotecontrolboardremapper</span>
+* <span style="" class="folder">ControlBoardRemapper
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) controlboardremapper
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) remotecontrolboardremapper
 
-* <span style="" class="folder">ControlBoardWrapper</span>
-  * <span style="background-color:#cc9900; color:white">controlboardwrapper2</span>
-  * <span style="background-color:cyan; color:black">controlBoard_nws_yarp</span>
-  * <span style="background-color:cyan; color:black">controlBoard_nws_ros</span>
+* <span style="" class="folder">ControlBoardWrapper
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *controlboardwrapper2*
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) controlBoard_nws_ros
 
-* <span style="" class="folder">DeviceGroup</span>
-  * <span style="background-color:yellow; color:black">group</span>
+* <span style="" class="folder">DeviceGroup
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) group
 
-* <span style="" class="folder">DevicePipe</span>
-  * <span style="background-color:yellow; color:black">pipe</span>
+* <span style="" class="folder">DevicePipe
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) pipe
 
-* <span style="" class="folder">DynamixelAX12Ftdi</span>
-  * <span style="background-color:yellow; color:black">dynamixelAX12Ftdi</span>
+* <span style="" class="folder">DynamixelAX12Ftdi
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) dynamixelAX12Ftdi
 
-* <span style="" class="folder">JoypadControlClient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">JoypadControlClient</span>
+* <span style="" class="folder">JoypadControlClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **JoypadControlClient**
 
-* <span style="background-color:grey; color:black" class="folder">JoypadControlNetUtils</span>
+* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) JoypadControlNetUtils
 
-* <span style="" class="folder">JoypadControlServer</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">JoypadControlServer</span>
+* <span style="" class="folder">JoypadControlServer
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **JoypadControlServer**
 
-* <span style="background-color:grey; color:black" class="folder">RGBDRosConversionUtils</span>
+* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) RGBDRosConversionUtils
 
-* <span style="" class="folder">RGBDSensorClient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">RGBDSensorClient</span>
+* <span style="" class="folder">RGBDSensorClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorClient**
 
-* <span style="" class="folder">RGBDSensorFromRosTopic</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">RGBDSensorFromRosTopic</span>
+* <span style="" class="folder">RGBDSensorFromRosTopic
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **RGBDSensorFromRosTopic**
 
-* <span style="" class="folder">RGBDSensorWrapper</span>
-  * <span style="background-color:#cc9900; color:white">RGBDSensorWrapper</span>
-  * <span style="background-color:cyan; color:black">rgbdSensor_nws_ros</span>
-  * <span style="background-color:cyan; color:black">rgbdSensor_nws_yarp</span>
+* <span style="" class="folder">RGBDSensorWrapper
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *RGBDSensorWrapper
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_ros
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rgbdSensor_nws_yarp
 
-* <span style="" class="folder">RGBDToPointCloudSensorWrapper</span>
-  * <span style="background-color:cyan; color:black">RGBDToPointCloudSensor_nws_ros</span>
+* <span style="" class="folder">RGBDToPointCloudSensorWrapper
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) RGBDToPointCloudSensor_nws_ros
 
-* <span style="" class="folder">Rangefinder2DClient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">Rangefinder2DClient</span>
+* <span style="" class="folder">Rangefinder2DClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **Rangefinder2DClient**
 
-* <span style="" class="folder">Rangefinder2DWrapper</span>
-  * <span style="background-color:#cc9900; color:white">Rangefinder2DWrapper</span>
-  * <span style="background-color:cyan; color:black">rangefinder2D_nws_ros</span>
-  * <span style="background-color:cyan; color:black">rangefinder2D_nws_yarp</span>
+* <span style="" class="folder">Rangefinder2DWrapper
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *Rangefinder2DWrapper*
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_ros
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) rangefinder2D_nws_yarp
 
-* <span style="" class="folder">RemoteControlBoard</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">remote_controlboard</span>
+* <span style="" class="folder">RemoteControlBoard
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **remote_controlboard**
 
-* <span style="" class="folder">RemoteFrameGrabber</span>
-  * <span style="background-color:cyan; color:black">frameGrabber_nwc_yarp</span>
+* <span style="" class="folder">RemoteFrameGrabber
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nwc_yarp
 
-* <span style="" class="folder">RobotDescriptionClient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">robotDescriptionClient</span>
+* <span style="" class="folder">RobotDescriptionClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **robotDescriptionClient**
 
-* <span style="" class="folder">RobotDescriptionServer</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">robotDescriptionServer</span>
+* <span style="" class="folder">RobotDescriptionServer
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **robotDescriptionServer**
 
-* <span style="" class="folder">SDLJoypad</span>
-  * <span style="background-color:yellow; color:black">SDLJoypad</span>
+* <span style="" class="folder">SDLJoypad
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) SDLJoypad
 
-* <span style="" class="folder">SerialServoBoard</span>
-  * <span style="background-color:yellow; color:black">SerialServoBoard</span>
+* <span style="" class="folder">SerialServoBoard
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) SerialServoBoard
 
-* <span style="" class="folder">ServerFrameGrabber</span>
-  * <span style="background-color:#cc9900; color:white">grabber</span>
+* <span style="" class="folder">ServerFrameGrabber
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *grabber*
 
-* <span style="" class="folder">ServerFrameGrabberDual</span>
-  * <span style="background-color:#cc9900; color:white">grabberDual</span>
-  * <span style="background-color:cyan; color:black">frameGrabber_nws_yarp</span>
-  * <span style="background-color:cyan; color:black">frameGrabber_nws_ros</span>
+* <span style="" class="folder">ServerFrameGrabberDual
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *grabberDual*
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameGrabber_nws_ros
 
-* <span style="" class="folder">ServerInertial</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">inertial</span>
+* <span style="" class="folder">ServerInertial
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **inertial**
 
-* <span style="" class="folder">ServerSerial</span>
-  * <span style="background-color:yellow; color:black">serial</span>
+* <span style="" class="folder">ServerSerial
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) serial
 
-* <span style="" class="folder">ServerSoundGrabber</span>
-  * <span style="background-color:#cc9900; color:white">ServerSoundGrabber</span>
+* <span style="" class="folder">ServerSoundGrabber
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *ServerSoundGrabber*
 
-* <span style="" class="folder">VirtualAnalogWrapper</span>
-  * <span style="background-color:yellow; color:black">virtualAnalogServer</span>
+* <span style="" class="folder">VirtualAnalogWrapper
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) virtualAnalogServer
 
-* <span style="" class="folder">audioFromFileDevice</span>
-  * <span style="background-color:yellow; color:black">audioFromFileDevice</span>
+* <span style="" class="folder">audioFromFileDevice
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) audioFromFileDevice
 
-* <span style="" class="folder">audioPlayerWrapper</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">AudioPlayerWrapper</span>
+* <span style="" class="folder">audioPlayerWrapper
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **AudioPlayerWrapper**
 
-* <span style="" class="folder">audioRecorderWrapper</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">AudioRecorderWrapper</span>
+* <span style="" class="folder">audioRecorderWrapper
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **AudioRecorderWrapper**
 
-* <span style="" class="folder">audioToFileDevice</span>
-  * <span style="background-color:yellow; color:black">audioToFileDevice</span>
+* <span style="" class="folder">audioToFileDevice
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) audioToFileDevice
 
-* <span style="" class="folder">batteryClient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">batteryClient</span>
+* <span style="" class="folder">batteryClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **batteryClient**
 
-* <span style="" class="folder">batteryWrapper</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">batteryWrapper</span>
+* <span style="" class="folder">batteryWrapper
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **batteryWrapper**
 
-* <span style="" class="folder">depthCamera</span>
-  * <span style="background-color:yellow; color:black">DepthCamera</span>
-    * <span style="color:brown; font-style:italic">Rename OpenNI*Something</span>
+* <span style="" class="folder">depthCamera
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) DepthCamera
+    * *Notes: Rename OpenNI*Something*
 
-* <span style="" class="folder">fakeAnalogSensor</span>
-  * <span style="background-color:yellow; color:black">fakeAnalogSensor</span>
+* <span style="" class="folder">fakeAnalogSensor
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeAnalogSensor
 
-* <span style="" class="folder">fakeBattery</span>
-  * <span style="background-color:yellow; color:black">fakeBattery</span>
+* <span style="" class="folder">fakeBattery
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeBattery
 
-* <span style="" class="folder">fakeDepthCamera</span>
-  * <span style="background-color:yellow; color:black">fakeDepthCamera</span>
+* <span style="" class="folder">fakeDepthCamera
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeDepthCamera
 
-* <span style="" class="folder">fakeFrameGrabber</span>
-  * <span style="background-color:yellow; color:black">fakeFrameGrabber</span>
-  * <span style="background-color:#cc9900; color:white">test_grabber</span>
+* <span style="" class="folder">fakeFrameGrabber
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeFrameGrabber
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *test_grabber*
 
-* <span style="" class="folder">fakeIMU</span>
-  * <span style="background-color:yellow; color:black">fakeIMU</span>
+* <span style="" class="folder">fakeIMU
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeIMU
 
-* <span style="" class="folder">fakeLaser</span>
-  * <span style="background-color:yellow; color:black">fakeLaser</span>
+* <span style="" class="folder">fakeLaser
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeLaser
 
-* <span style="" class="folder">fakeLocalizerDevice</span>
-  * <span style="background-color:yellow; color:black">fakeLocalizer</span>
+* <span style="" class="folder">fakeLocalizerDevice
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeLocalizer
 
-* <span style="" class="folder">fakeMicrophone</span>
-  * <span style="background-color:yellow; color:black">fakeMicrophone</span>
+* <span style="" class="folder">fakeMicrophone
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeMicrophone
 
-* <span style="" class="folder">fakeMotionControl</span>
-  * <span style="background-color:yellow; color:black">fakeMotionControl</span>
+* <span style="" class="folder">fakeMotionControl
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeMotionControl
 
-* <span style="" class="folder">fakeMotor</span>
-  * <span style="background-color:#cc9900; color:white">FakeMotor</span>
-  * <span style="background-color:#cc9900; color:white">test_motor</span>
+* <span style="" class="folder">fakeMotor
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *FakeMotor*
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *test_motor*
 
-* <span style="" class="folder">fakeNavigationDevice</span>
-  * <span style="background-color:yellow; color:black">fakeNavigation</span>
+* <span style="" class="folder">fakeNavigationDevice
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeNavigation
 
-* <span style="" class="folder">fakeSpeaker</span>
-  * <span style="background-color:yellow; color:black">fakeSpeaker</span>
+* <span style="" class="folder">fakeSpeaker
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) fakeSpeaker
 
-* <span style="" class="folder">fakebot</span>
-  * <span style="" class="ASKDANIELE">fakebot</span>
+* <span style="" class="folder">fakebot
+  * <span style="" class="ASKDANIELE">fakebot
 
-* <span style="" class="folder">ffmpeg</span>
-  * <span style="background-color:yellow; color:black">ffmpeg_grabber</span>
-  * <span style="background-color:yellow; color:black">ffmpeg_writer</span>
+* <span style="" class="folder">ffmpeg
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) ffmpeg_grabber
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) ffmpeg_writer
 
-* <span style="" class="folder">frameGrabberCropper</span>
-  * <span style="background-color:yellow; color:black">frameGrabberCropper</span>
+* <span style="" class="folder">frameGrabberCropper
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) frameGrabberCropper
 
-* <span style="" class="folder">frameTransformClient</span>
-  * <span style="background-color:#cc9900; color:white">frameTransformClient</span>
-  * <span style="background-color:yellow; color:black">frameTransformClient</span>
+* <span style="" class="folder">frameTransformClient
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *frameTransformClient*
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) frameTransformClient
 
-* <span style="" class="folder">frameTransformGet</span>
-  * <span style="background-color:cyan; color:black">frameTransformGet_nws_yarp</span>
-  * <span style="background-color:green; color:black">frameTransformGet_nwc_yarp</span>
-  * <span style="background-color:green; color:black">frameTransformGet_nwc_ros</span>
-  * <span style="background-color:magenta; color:black">frameTransformGetMultiplexer</span>
+* <span style="" class="folder">frameTransformGet
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameTransformGet_nws_yarp
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformGet_nwc_yarp
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformGet_nwc_ros
+  * ![#ff00ff](https://via.placeholder.com/15/ff00ff/000000?text=+) frameTransformGetMultiplexer
 
-* <span style="" class="folder">frameTransformServer</span>
-  * <span style="background-color:#cc9900; color:white">frameTransformServer</span>
+* <span style="" class="folder">frameTransformServer
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *frameTransformServer*
 
-* <span style="" class="folder">frameTransformSet</span>
-  * <span style="background-color:cyan; color:black">frameTransformSet_nws_yarp</span>
-  * <span style="background-color:green; color:black">frameTransformSet_nwc_yarp</span>
-  * <span style="background-color:green; color:black">frameTransformSet_nwc_ros</span>
-  * <span style="background-color:magenta; color:black">frameTransformSetMultiplexer</span>
+* <span style="" class="folder">frameTransformSet
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) frameTransformSet_nws_yarp
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformSet_nwc_yarp
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) frameTransformSet_nwc_ros
+  * ![#ff00ff](https://via.placeholder.com/15/ff00ff/000000?text=+) frameTransformSetMultiplexer
 
-* <span style="" class="folder">frameTransformStorage</span>
-  * <span style="background-color:yellow; color:black">frameTransformStorage</span>
+* <span style="" class="folder">frameTransformStorage
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) frameTransformStorage
 
-* <span style="background-color:grey; color:black" class="folder">frameTransformStorageMsgs</span>
+* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) frameTransformStorageMsgs
 
-* <span style="" class="folder">frameTransformUtils</span>
-  * <span style="background-color:yellow; color:black">frameTransformContainer</span>
+* <span style="" class="folder">frameTransformUtils
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) frameTransformContainer
 
-* <span style="background-color:grey; color:black" class="folder">framegrabber_protocol</span>
+* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) framegrabber_protocol
 
-* <span style="" class="folder">imuBosch_BNO055</span>
-  * <span style="background-color:yellow; color:black">imuBosch_BNO055</span>
+* <span style="" class="folder">imuBosch_BNO055
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) imuBosch_BNO055
 
-* <span style="" class="folder">laserFromDepth</span>
-  * <span style="background-color:yellow; color:black">laserFromDepth</span>
+* <span style="" class="folder">laserFromDepth
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) laserFromDepth
 
-* <span style="" class="folder">laserFromExternalPort</span>
-  * <span style="background-color:yellow; color:black">laserFromExternalPort</span>
+* <span style="" class="folder">laserFromExternalPort
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) laserFromExternalPort
 
-* <span style="" class="folder">laserFromPointCloud</span>
-  * <span style="background-color:yellow; color:black">laserFromPointCloud</span>
+* <span style="" class="folder">laserFromPointCloud
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) laserFromPointCloud
 
-* <span style="" class="folder">laserFromRosTopic</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">laserFromRosTopic</span>
+* <span style="" class="folder">laserFromRosTopic
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **laserFromRosTopic**
 
-* <span style="" class="folder">laserHokuyo</span>
-  * <span style="background-color:yellow; color:black">laserHokuyo</span>
+* <span style="" class="folder">laserHokuyo
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) laserHokuyo
 
-* <span style="" class="folder">localization2DClient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">localization2DClient</span>
+* <span style="" class="folder">localization2DClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **localization2DClient**
 
-* <span style="" class="folder">localization2DServer</span>
-  * <span style="background-color:#cc9900; color:white">localization2DServer</span>
-  * <span style="background-color:cyan; color:black">localization2D_nws_yarp</span>
-  * <span style="background-color:cyan; color:black">localization2D_nws_ros</span>
+* <span style="" class="folder">localization2DServer
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *localization2DServer*
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) localization2D_nws_ros
 
-* <span style="" class="folder">map2DClient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">map2DClient</span>
+* <span style="" class="folder">map2DClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **map2DClient**
 
-* <span style="" class="folder">map2DServer</span>
-  * <span style="background-color:#cc9900; color:white">map2DServer</span>
-  * <span style="background-color:cyan; color:black">map2D_nws_yarp</span>
-  * <span style="background-color:cyan; color:black">map2D_nws_ros</span>
+* <span style="" class="folder">map2DServer
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *map2DServer*
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_yarp
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) map2D_nws_ros
 
-* <span style="" class="folder">map2DStorage</span>
-  * <span style="background-color:yellow; color:black">map2DStorage</span>
+* <span style="" class="folder">map2DStorage
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) map2DStorage
 
-* <span style="background-color:grey; color:black" class="folder">multipleAnalogSensorsMsgs</span>
+* ![#a9a9a9](https://via.placeholder.com/15/a9a9a9/000000?text=+) multipleAnalogSensorsMsgs
 
-* <span style="" class="folder">multipleAnalogSensorsRosPublishers</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">IMURosPublisher</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">WrenchStampedRosPublisher</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">TemperatureRosPublisher</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">PoseStampedRosPublisher</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">MagneticFieldRosPublisher</span>
+* <span style="" class="folder">multipleAnalogSensorsRosPublishers
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **IMURosPublisher**
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **WrenchStampedRosPublisher**
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **TemperatureRosPublisher**
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **PoseStampedRosPublisher**
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **MagneticFieldRosPublisher**
 
-* <span style="" class="folder">multipleanalogsensorsclient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">multipleanalogsensorsclient</span>
+* <span style="" class="folder">multipleanalogsensorsclient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **multipleanalogsensorsclient**
 
-* <span style="" class="folder">multipleanalogsensorsremapper</span>
-  * <span style="background-color:yellow; color:black">multipleanalogsensorsremapper</span>
+* <span style="" class="folder">multipleanalogsensorsremapper
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) multipleanalogsensorsremapper
 
-* <span style="" class="folder">multipleanalogsensorsserver</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">multipleanalogsensorsserver</span>
+* <span style="" class="folder">multipleanalogsensorsserver
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **multipleanalogsensorsserver**
 
-* <span style="" class="folder">navigation2DClient</span>
-  * <span style="background-color:green; color:black; font-weight:bold; font-style:italic">navigation2DClient</span>
-    * <span style="color:brown; font-style:italic">PathPlanner2DClient + navigation2DClient</span>
+* <span style="" class="folder">navigation2DClient
+  * ![#00ff00](https://via.placeholder.com/15/00ff00/000000?text=+) **navigation2DClient**
+    * *Notes: PathPlanner2DClient + navigation2DClient*
 
-* <span style="" class="folder">navigation2DServer</span>
-  * <span style="background-color:cyan; color:black; font-weight:bold; font-style:italic">navigation2DServer</span>
-    * <span style="color:brown; font-style:italic">PathPlanner2DServer</span>
+* <span style="" class="folder">navigation2DServer
+  * ![#00ffff](https://via.placeholder.com/15/00ffff/000000?text=+) **navigation2DServer**
+    * *Notes: PathPlanner2DServer*
 
-* <span style="" class="folder">opencv</span>
-  * <span style="background-color:yellow; color:black">opencv_grabber</span>
+* <span style="" class="folder">opencv
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) opencv_grabber
 
-* <span style="" class="folder">portaudio</span>
-  * <span style="background-color:#cc9900; color:white">portaudio</span>
+* <span style="" class="folder">portaudio
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *portaudio*
 
-* <span style="" class="folder">portaudioPlayer</span>
-  * <span style="background-color:yellow; color:black">portaudioPlayer</span>
+* <span style="" class="folder">portaudioPlayer
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) portaudioPlayer
 
-* <span style="" class="folder">portaudioRecorder</span>
-  * <span style="background-color:yellow; color:black">portaudioRecorder</span>
+* <span style="" class="folder">portaudioRecorder
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) portaudioRecorder
 
-* <span style="" class="folder">rpLidar</span>
-  * <span style="background-color:yellow; color:black">rpLidar</span>
+* <span style="" class="folder">rpLidar
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) rpLidar
 
-* <span style="" class="folder">rpLidar2</span>
-  * <span style="background-color:yellow; color:black">rpLidar2</span>
+* <span style="" class="folder">rpLidar2
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) rpLidar2
 
-* <span style="" class="folder">serialport</span>
-  * <span style="background-color:yellow; color:black">serialport</span>
+* <span style="" class="folder">serialport
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) serialport
 
-* <span style="" class="folder">test_nop</span>
-  * <span style="background-color:yellow; color:black">test_nop</span>
+* <span style="" class="folder">test_nop
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) test_nop
 
-* <span style="" class="folder">test_segfault</span>
-  * <span style="background-color:yellow; color:black">test_segfault</span>
+* <span style="" class="folder">test_segfault
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) test_segfault
 
-* <span style="" class="folder">transformClient</span>
-  * <span style="background-color:#cc9900; color:white">transformClient</span>
+* <span style="" class="folder">transformClient
+  * ![#cc6600](https://via.placeholder.com/15/cc6600/000000?text=+) *transformClient*
 
-* <span style="" class="folder">upowerBattery</span>
-  * <span style="background-color:yellow; color:black">upowerBattery</span>
+* <span style="" class="folder">upowerBattery
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) upowerBattery
 
-* <span style="" class="folder">usbCamera</span>
-  * <span style="background-color:yellow; color:black">usbCamera</span>
-  * <span style="background-color:yellow; color:black">usbCameraRaw</span>
+* <span style="" class="folder">usbCamera
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) usbCamera
+  * ![#ffff00](https://via.placeholder.com/15/ffff00/000000?text=+) usbCameraRaw
