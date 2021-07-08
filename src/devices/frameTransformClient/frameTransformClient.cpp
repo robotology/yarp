@@ -290,19 +290,6 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     polyu->view(m_ift_u);
     yCAssert(FRAMETRANSFORMCLIENT, m_ift_u);
 
-    //////////////////////////////////////////////////////////////////////////////
-    //this is just a test, and can be safely removed
-    FrameTransformContainer* p_cont=nullptr;
-    m_ift_u->getInternalContainer(p_cont);
-    auto ft = p_cont->begin();
-    FrameTransform test_tf;
-    test_tf.isStatic=true;
-    test_tf.src_frame_id = "/att";
-    test_tf.dst_frame_id = "/btt";
-    test_tf.translation.set(1,2,3);
-    p_cont->setTransform(test_tf);
-    //////////////////////////////////////////////////////////////////////////////
-
 /*
     if (config.check("period"))
     {
@@ -503,9 +490,8 @@ bool FrameTransformClient::priv_getChainedTransform(const string& target_frame_i
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_u->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
-    p_cont->m_trf_mutex;
 
-    std::lock_guard<std::recursive_mutex>         l(p_cont->m_trf_mutex);
+    std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
 
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
