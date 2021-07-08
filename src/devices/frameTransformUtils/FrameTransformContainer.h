@@ -29,6 +29,15 @@
 #include <mutex>
 #include <map>
 
+/**
+ *  @ingroup dev_impl_other
+ *
+ * \brief A class that contains a vector of frame transformations and exposes
+ *  \ref yarp::dev::IFrameTransformStorageSet and \ref yarp::dev::IFrameTransformStorageGet
+ *  interfaces in order to allow external access to it.
+ *
+ */
+
 class FrameTransformContainer :
     public yarp::dev::IFrameTransformStorageSet,
     public yarp::dev::IFrameTransformStorageGet
