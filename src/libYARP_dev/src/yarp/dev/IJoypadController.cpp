@@ -395,7 +395,8 @@ bool yarp::dev::IJoypadController::executeAction(int action_id)
     if (m_actions.find(action_id) != m_actions.end())
     {
         yCInfo(IJOYPADCONTROLLER) << "executing script" << action_id << ":" << m_actions[action_id];
-        system(m_actions[action_id].c_str());
+        int ret = system(m_actions[action_id].c_str());
+        YARP_UNUSED(ret);
     }
     else
     {
