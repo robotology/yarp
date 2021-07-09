@@ -15,6 +15,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Searchable.h>
+#include <yarp/os/Vocab.h>
 
 #include <cstddef> // defines size_t
 #include <string>
@@ -535,10 +536,27 @@ public:
 
     /**
      * Create a vocabulary identifier Value
+     * @param a first character of the vocab
+     * @param b second character of the vocab
+     * @param c third character of the vocab
+     * @param d fourth character of the vocab
+     * @return a vocabulary identifier Value
+     */
+    static Value* makeVocab32(char a, char b = 0, char c = 0, char d = 0)
+    {
+        return makeVocab32(yarp::os::createVocab32(a, b, c, d));
+    }
+
+    /**
+     * Create a vocabulary identifier Value
+     * If the string is longer than 4 characters, only the first 4 are used.
      * @param str the value to take on
      * @return a vocabulary identifier Value
      */
-    static Value* makeVocab32(const std::string& str);
+    static Value* makeVocab32(const std::string& str)
+    {
+        return makeVocab32(yarp::os::Vocab32::encode(str));
+    }
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5
     /**

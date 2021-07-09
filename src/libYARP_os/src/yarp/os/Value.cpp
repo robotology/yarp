@@ -433,12 +433,6 @@ Value* Value::makeVocab32(yarp::conf::vocab32_t v)
 }
 
 
-Value* Value::makeVocab32(const std::string& str)
-{
-    return new StoreVocab32(Vocab32::encode(str));
-}
-
-
 Value* Value::makeBlob(void* data, int length)
 {
     std::string s((char*)data, length);
