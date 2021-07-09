@@ -149,17 +149,20 @@ public:
      */
     void clear();
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
     /**
      * Places an integer in the bottle, at the end of the list.
      *
      * @param x the integer to add.
      * @warning Unsafe, sizeof(int) is platform dependent. Use addInt32 instead.
+     * @deprecated Since YARP 3.5.0. Use addInt32 instead.
      */
-    YARP_DEPRECATED_MSG("Use addInt32 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use addInt32 instead")
     inline void addInt(int x)
     {
         addInt32(static_cast<std::int32_t>(x));
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Places a 8-bit integer in the bottle, at the end of the list.
@@ -196,18 +199,21 @@ public:
      */
     void addVocab(int x);
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
     /**
      * Places a floating point number in the bottle, at the end of the
      * list.
      *
      * @param x the number to add.
      * @warning Unsafe, sizeof(double) is platform dependent. Use addFloat64 instead.
+     * @deprecated Since YARP 3.5.0. Use addFloat64 instead.
      */
-    YARP_DEPRECATED_MSG("Use addFloat64 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use addFloat64 instead")
     inline void addDouble(double x)
     {
         addFloat64(static_cast<yarp::conf::float64_t>(x));
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Places a 32-bit floating point number in the bottle, at the end of the
