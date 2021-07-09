@@ -13,8 +13,6 @@ Copyright: 2010-2020 Two Blue Cubes Ltd
            2017 Justin R. Wilson
            Catch2 Authors
 
-License:
- Distributed under the Boost Software License, Version 1.0. (See accompanying
- file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+License: BSL-1.0
 
 Version: 2.13.4

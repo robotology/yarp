@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
-# Copyright (C) 2006-2010 RobotCub Consortium
-# All rights reserved.
-#
-# This software may be modified and distributed under the terms of the
-# BSD-3-Clause license. See the accompanying LICENSE file for details.
+# SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+# SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+# SPDX-License-Identifier: BSD-3-Clause
 
 PROTOCOLS="tcp udp"
 PAYLOAD="125 250 500 1000 2000 4000 8000 16000 32000 64000 128000 256000 512000 1000000 2000000 4000000"

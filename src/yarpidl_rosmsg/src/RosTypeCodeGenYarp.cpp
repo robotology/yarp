@@ -1,9 +1,6 @@
 /*
- * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * All rights reserved.
- *
- * This software may be modified and distributed under the terms of the
- * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <RosTypeCodeGenYarp.h>
@@ -84,11 +81,8 @@ static std::string getDoubleName(const std::string& tname, const std::string& se
 static void writeLicenseHeader(FILE* out)
 {
     fprintf(out, "/*\n");
-    fprintf(out, " * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)\n");
-    fprintf(out, " * All rights reserved.\n");
-    fprintf(out, " *\n");
-    fprintf(out, " * This software may be modified and distributed under the terms of the\n");
-    fprintf(out, " * BSD-3-Clause license. See the accompanying LICENSE file for details.\n");
+    fprintf(out, " * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)\n");
+    fprintf(out, " * SPDX-License-Identifier: BSD-3-Clause\n");
     fprintf(out, " */\n");
     fprintf(out, "\n");
     fprintf(out, "// This is an automatically generated file.\n");

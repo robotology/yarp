@@ -1,13 +1,10 @@
-Driver for Serial communications.
+# SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+# SPDX-FileCopyrightText: 2007 Alexandre Bernardino
+# SPDX-FileCopyrightText: 2007 Carlos Beltran-Gonzalez
+# SPDX-FileCopyrightText: 2007 Francesco Giovannini
+# SPDX-License-Identifier: BSD-3-Clause
 
-# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
-# Copyright (C) 2007 Alexandre Bernardino
-# Copyright (C) 2007 Carlos Beltran-Gonzalez
-# Copyright (C) 2007 Francesco Giovannini
-# All rights reserved.
-#
-# This software may be modified and distributed under the terms of the
-# BSD-3-Clause license. See the accompanying LICENSE file for details.
+Driver for Serial communications.
 
 This driver creates an OS independent serial communications driver for YARP.
 We exploit the capacity of ACE (Adaptive Communications Environment) to provide

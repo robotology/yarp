@@ -67,8 +67,13 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      [libftdi](https://www.intra2net.com/en/developer/libftdi/).
    + The `SDLJoypad` device uses alternatively
      [SDL 1.2](https://libsdl.org/license.php).
-   + The ffmpeg_grabber and ffmpeg_writer devices use
+   + The `ffmpeg_grabber` and `ffmpeg_writer` devices, and the
+     `image_compression_ffmpeg` and `sound_compression_mp3` portmonitors use
      [Ffmpeg](https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md).
+   + The websocket carrier uses the `Websocket` library, which contains some
+     files that are released under the
+     [FDL](https://github.com/katzarsky/WebSocket/blob/master/WebSocket/sha1/license.txt)
+     license.
  * A few optional parts of YARP are released under the terms of the GPL license,
    version 2 or later:
    + `YARP_gsl` uses the GNU Scientific Library, under the GPL 2 or later.
@@ -84,8 +89,8 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
 The list of committers in the YARP repository (ordered by number of commit) is:
   Daniele E. Domenichelli
   Paul Fitzpatrick
-  Nicolò Genesio
   Marco Randazzo
+  Nicolò Genesio
   Lorenzo Natale
   Alberto Cardellino
   Ugo Pattacini
@@ -97,31 +102,36 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Silvio Traversaro
   Elena Ceseracciu
   Francesco Romano
+  Stefano Bernagozzi
   Matteo Brunettini
   Giacomo Spigler
   Giorgio Metta
   Vadim Tikhanoff
+  Ettore Landini
   Davide Perrone
   Alessandro Roncone
-  Valentina Gaggero
   Bartek Łukawski
+  Valentina Gaggero
+  Giulia Martino
   Claudio Fantacci
   Konstantinos Theofilis
   Alexandre Bernardino
   Tobias Fischer
   Duarte Aragao
   Francesco Nori
+  Diego Ferigo
   Juan G. Victores
   Nuno Guedelha
   Andrea Del Prete
   Arjan Gijsberts
   Carlos Beltran-Gonzalez
   Claudio Castellini
-  Ettore Landini
   Daniel Krieg
-  Diego Ferigo
+  Fabio Valla
   Prashanth Ramadoss
   Alexandros Paraschos
+  Plinio Moreno
+  Valentina Vasco
   Yeshasvi Tirupachuri
   Giovanni Saponaro
   Giulia Vezzani
@@ -129,7 +139,6 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Lorenzo Rapetti
   Michael Bucko
   Stefano Dafarra
-  Valentina Vasco
   Giulio Romualdi
   Massimo Regoli
   Aiko Dinale
@@ -153,7 +162,6 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Mohamed Babiker Mohamed Elobaid
   Naeem Assif Mirza
   Nicola Piga
-  Plinio Moreno
   Ze Ji
   Austin Kothig
   Carlo Ciliberto
@@ -165,6 +173,7 @@ The list of committers in the YARP repository (ordered by number of commit) is:
   Enrico Mingo
   Francesca Stramandinoli
   Giovanni Saponaro
+  Giuseppe L'Erario
   Jason Chevrie
   Marco Monforte
   Massimiliano Iacono
@@ -176,8 +185,8 @@ The list of committers in the YARP repository (ordered by number of commit) is:
 
 The list of copyright holders for YARP is:
   Copyright (C) 1995, 2000, 2003, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021
-    Istituto Italiano di Tecnologia (IIT) (2428 files)
-    RobotCub Consortium (760 files)
+    Istituto Italiano di Tecnologia (IIT) (2588 files)
+    RobotCub Consortium (785 files)
     Daniel Krieg <krieg@fias.uni-frankfurt.de> (16 files)
     Anne van Rossum <anne@almende.com> (11 files)
     Arjan Gijsberts (10 files)
@@ -193,8 +202,8 @@ The list of copyright holders for YARP is:
     Fabrice Bellard (1 file)
     Francesco Giovannini (1 file)
     Jonas Ruesch (1 file)
-    Open Perception, Inc. (1 file)
-    Willow Garage, Inc. (1 file)
+    Open Perception Inc (1 file)
+    Willow Garage Inc (1 file)
 
 The identifier "RobotCub Consortium" used in some copyright statements is
 equivalent to the following list of institutions:

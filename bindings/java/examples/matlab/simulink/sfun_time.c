@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2009, The MathWorks, Inc.
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #define S_FUNCTION_LEVEL 2
 #define S_FUNCTION_NAME  sfun_time
 

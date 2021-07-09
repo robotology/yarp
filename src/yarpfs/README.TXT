@@ -1,20 +1,14 @@
-# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
-# Copyright (C) 2006-2010 RobotCub Consortium
-# Copyright (C) 2007 Giacomo Spigler
-# All rights reserved.
-#
-# This software may be modified and distributed under the terms of the
-# BSD-3-Clause license. See the accompanying LICENSE file for details.
+# SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+# SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+# SPDX-FileCopyrightText: 2007 Giacomo Spigler
+# SPDX-License-Identifier: BSD-3-Clause
 
-This directory is NOT included in the main YARP build.
-
-It contains experimental code for creating a mapping from the
-YARP Network to a file system, using the super-cool FUSE library.
+This directory contains experimental code for creating a mapping
+from the YARP Network to a file system, using the super-cool FUSE
+library.
 
 The code is just a start, hardly anything is implemented yet.
 Stay away if you wish to preserve your sanity.
-
-  --paulfitz
 
 ===================================================================
 
