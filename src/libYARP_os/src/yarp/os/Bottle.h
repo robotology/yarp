@@ -15,6 +15,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/Vocab.h>
 
 #include <string>
 
@@ -212,6 +213,29 @@ public:
      * @param x the item to add.
      */
     void addVocab32(yarp::conf::vocab32_t x);
+
+    /**
+     * Places a vocabulary item in the bottle, at the end of the list.
+     *
+     * @param a first character of the vocab
+     * @param b second character of the vocab
+     * @param c third character of the vocab
+     * @param d fourth character of the vocab
+     */
+    void addVocab32(char a, char b = 0, char c = 0, char d = 0)
+    {
+        addVocab32(yarp::os::createVocab32(a, b, c, d));
+    }
+
+    /**
+     * Places a vocabulary item in the bottle, at the end of the list.
+     * If the string is longer than 4 characters, only the first 4 are used.
+     * @param str The string to encode and add.
+     */
+    void addVocab32(const std::string& str)
+    {
+        addVocab32(yarp::os::Vocab32::encode(str));
+    }
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
     /**
