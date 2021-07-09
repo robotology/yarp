@@ -213,18 +213,21 @@ public:
      */
     virtual bool asBool() const;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
     /**
      * Get integer value.
      * @return integer value if value is indeed an integer.
      * If it is another numeric type, the appropriate cast value is returned.
      * Otherwise returns 0.
      * @warning Unsafe, sizeof(int) is platform dependent. Use asInt32 instead.
+     * @deprecated Since YARP 3.5. Use asInt32 instead.
      */
-    YARP_DEPRECATED_MSG("Use asInt32 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use asInt32 instead")
     inline virtual int asInt() const final
     {
         return static_cast<int>(asInt32());
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Get 8-bit integer value.
@@ -270,18 +273,21 @@ public:
      */
     virtual std::int64_t asInt64() const;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
     /**
      * Get floating point value.
      * @return floating point value if value is indeed a floating point.
      * If it is another numeric type, the appropriate cast value is returned.
      * Otherwise returns 0.
      * @warning Unsafe, sizeof(double) is platform dependent. Use asFloat64 instead.
+     * @deprecated Since YARP 3.5. Use asFloat64 instead.
      */
-    YARP_DEPRECATED_MSG("Use asFloat64 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use asFloat64 instead")
     inline virtual double asDouble() const final
     {
         return static_cast<double>(asFloat64());
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Get 32-bit floating point value.
@@ -414,17 +420,20 @@ public:
 
     virtual bool isLeaf() const;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
     /**
      * Create an integer Value
      * @param x the value to take on
      * @return an integer Value
      * @warning Unsafe, sizeof(int) is platform dependent. Use makeInt instead.
+     * @deprecated Since YARP 3.5. Use makeInt32 instead.
      */
-    YARP_DEPRECATED_MSG("Use makeInt32 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use makeInt32 instead")
     inline static Value* makeInt(int x)
     {
         return makeInt32(static_cast<std::int32_t>(x));
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Create a 8-bit integer Value
@@ -454,17 +463,20 @@ public:
      */
     static Value* makeInt64(std::int64_t x);
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
     /**
      * Create a floating point Value
      * @param x the value to take on
      * @return a floating point Value
      * @warning Unsafe, sizeof(double) is platform dependent. Use makeFloat64 instead.
+     * @deprecated Since YARP 3.5. Use makeFloat64 instead.
      */
-    YARP_DEPRECATED_MSG("Use makeFloat64 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use makeFloat64 instead")
     inline static Value* makeDouble(double x)
     {
         return makeFloat64(static_cast<yarp::conf::float64_t>(x));
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Create a 32-bit floating point Value
