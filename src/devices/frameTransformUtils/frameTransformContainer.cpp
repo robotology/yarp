@@ -128,6 +128,8 @@ bool FrameTransformContainer::deleteTransform(string t1, string t2)
             }
         }
     }
+
+    yCError(FRAMETRANSFORSTORAGE) << "Transformation deletion not successful";
     return false;
 }
 

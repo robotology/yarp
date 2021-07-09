@@ -162,19 +162,19 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
 
     while (dummyHeader != yarp::os::createVocab('d', 'a', 't', 'a'))
     {
-        fread(&dummyLength, sizeof(dummyLength), 1, fp);
+        ret = fread(&dummyLength, sizeof(dummyLength), 1, fp);
         if (ret != 1) {
             yCError(SOUNDFILE_WAV, "failed to read .wav file");
             return false;
         }
         dummyData.clear();
         dummyData.allocate(dummyLength);
-        fread(&dummyData, dummyLength, 1, fp);
+        ret = fread(&dummyData, dummyLength, 1, fp);
         if (ret != 1) {
             yCError(SOUNDFILE_WAV, "failed to read .wav file");
             return false;
         }
-        fread(&dummyHeader, sizeof(dummyHeader), 1, fp);
+        ret = fread(&dummyHeader, sizeof(dummyHeader), 1, fp);
         if (ret != 1) {
             yCError(SOUNDFILE_WAV, "failed to read .wav file");
             return false;
@@ -182,7 +182,7 @@ bool PcmWavHeader::parse_from_file(FILE *fp)
     }
 
     dataHeader = dummyHeader;
-    fread(&dataLength, sizeof(dataLength), 1, fp);
+    ret = fread(&dataLength, sizeof(dataLength), 1, fp);
     if (ret != 1) {
         yCError(SOUNDFILE_WAV, "failed to read .wav file");
         return false;

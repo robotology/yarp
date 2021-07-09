@@ -40,6 +40,7 @@ bool FrameTransformStorage::getInternalContainer(FrameTransformContainer*& conta
 
 bool FrameTransformStorage::open(yarp::os::Searchable& config)
 {
+    yCTrace(FRAMETRANSFORSTORAGE);
     return true;
 }
 
@@ -96,7 +97,7 @@ bool FrameTransformStorage::attachAll(const yarp::dev::PolyDriverList& device2at
     std::lock_guard <std::mutex> lg(m_pd_mutex);
     pDriverList = device2attach;
 
-    for (size_t i = 0; i < pDriverList.size(); i++)
+    for (int i = 0; i < pDriverList.size(); i++)
     {
         yarp::dev::PolyDriver* pd = pDriverList[i]->poly;
         if (pd->isValid())
