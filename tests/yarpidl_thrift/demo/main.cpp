@@ -424,25 +424,25 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         msg.fromString("add pair 4");
         client_port.write(msg,reply);
         INFO("(incomplete) " << msg.toString() << " -> " << reply.toString());
-        CHECK(reply.get(0).asVocab() == yarp::os::createVocab('f','a','i','l'));
+        CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f','a','i','l'));
 
         msg.fromString("add pair");
         reply.fromString("0");
         client_port.write(msg,reply);
         INFO("(incomplete) " << msg.toString() << " -> " << reply.toString());
-        CHECK(reply.get(0).asVocab() == yarp::os::createVocab('f','a','i','l'));
+        CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f','a','i','l'));
 
         msg.fromString("add");
         reply.fromString("0");
         client_port.write(msg,reply);
         INFO("(incomplete) " << msg.toString() << " -> " << reply.toString());
-        CHECK(reply.get(0).asVocab() == yarp::os::createVocab('f','a','i','l'));
+        CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f','a','i','l'));
 
         msg.fromString("");
         reply.fromString("0");
         client_port.write(msg,reply);
         INFO("(incomplete) " << msg.toString() << " -> " << reply.toString());
-        CHECK(reply.get(0).asVocab() == yarp::os::createVocab('f','a','i','l'));
+        CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f','a','i','l'));
 
         msg.fromString("add pair 10 20");
         reply.fromString("0");
@@ -460,7 +460,7 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         reply.fromString("0");
         client_port.write(msg,reply);
         INFO(msg.toString() << " -> " << reply.toString());
-        CHECK(reply.get(0).asVocab() == yarp::os::createVocab('f','a','i','l'));
+        CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f','a','i','l'));
     }
 
     SECTION("test defaults with rpc")
@@ -488,7 +488,7 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
         msg.fromString("test longer tail defaults");
         client_port.write(msg,reply);
         INFO(msg.toString() << " -> " << reply.toString());
-        CHECK(reply.get(0).asVocab() == yarp::os::createVocab('f','a','i','l'));
+        CHECK(reply.get(0).asVocab32() == yarp::os::createVocab32('f','a','i','l'));
 
         msg.fromString("test longer tail defaults 888");
         client_port.write(msg,reply);
@@ -814,7 +814,7 @@ TEST_CASE("IdlThriftTest", "[yarp::idl::thrift]")
     {
         TestAnnotatedTypes a, b;
         Bottle tmp;
-        a.a_vocab = yarp::os::createVocab('d', 'e', 'm', 'o');
+        a.a_vocab = yarp::os::createVocab32('d', 'e', 'm', 'o');
         a.a_ui8 = 0xff;
         a.a_ui16 = 0xffff;
         a.a_ui32 = 0xffffffff;

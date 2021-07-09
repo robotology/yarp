@@ -1531,35 +1531,35 @@ namespace {
 enum class PortCoreCommand : yarp::conf::vocab32_t
 {
     Unknown = 0,
-    Help = yarp::os::createVocab('h', 'e', 'l', 'p'),
-    Ver = yarp::os::createVocab('v', 'e', 'r'),
-    Pray = yarp::os::createVocab('p', 'r', 'a', 'y'),
-    Add = yarp::os::createVocab('a', 'd', 'd'),
-    Del = yarp::os::createVocab('d', 'e', 'l'),
-    Atch = yarp::os::createVocab('a', 't', 'c', 'h'),
-    Dtch = yarp::os::createVocab('d', 't', 'c', 'h'),
-    List = yarp::os::createVocab('l', 'i', 's', 't'),
-    Set = yarp::os::createVocab('s', 'e', 't'),
-    Get = yarp::os::createVocab('g', 'e', 't'),
-    Prop = yarp::os::createVocab('p', 'r', 'o', 'p'),
-    RosPublisherUpdate = yarp::os::createVocab('r', 'p', 'u', 'p'),
-    RosRequestTopic = yarp::os::createVocab('r', 't', 'o', 'p'),
-    RosGetPid = yarp::os::createVocab('p', 'i', 'd'),
-    RosGetBusInfo = yarp::os::createVocab('b', 'u', 's'),
+    Help = yarp::os::createVocab32('h', 'e', 'l', 'p'),
+    Ver = yarp::os::createVocab32('v', 'e', 'r'),
+    Pray = yarp::os::createVocab32('p', 'r', 'a', 'y'),
+    Add = yarp::os::createVocab32('a', 'd', 'd'),
+    Del = yarp::os::createVocab32('d', 'e', 'l'),
+    Atch = yarp::os::createVocab32('a', 't', 'c', 'h'),
+    Dtch = yarp::os::createVocab32('d', 't', 'c', 'h'),
+    List = yarp::os::createVocab32('l', 'i', 's', 't'),
+    Set = yarp::os::createVocab32('s', 'e', 't'),
+    Get = yarp::os::createVocab32('g', 'e', 't'),
+    Prop = yarp::os::createVocab32('p', 'r', 'o', 'p'),
+    RosPublisherUpdate = yarp::os::createVocab32('r', 'p', 'u', 'p'),
+    RosRequestTopic = yarp::os::createVocab32('r', 't', 'o', 'p'),
+    RosGetPid = yarp::os::createVocab32('p', 'i', 'd'),
+    RosGetBusInfo = yarp::os::createVocab32('b', 'u', 's'),
 };
 
 enum class PortCoreConnectionDirection : yarp::conf::vocab32_t
 {
     Error = 0,
-    Out = yarp::os::createVocab('o', 'u', 't'),
-    In = yarp::os::createVocab('i', 'n'),
+    Out = yarp::os::createVocab32('o', 'u', 't'),
+    In = yarp::os::createVocab32('i', 'n'),
 };
 
 enum class PortCorePropertyAction : yarp::conf::vocab32_t
 {
     Error = 0,
-    Get = yarp::os::createVocab('g', 'e', 't'),
-    Set = yarp::os::createVocab('s', 'e', 't')
+    Get = yarp::os::createVocab32('g', 'e', 't'),
+    Set = yarp::os::createVocab32('s', 'e', 't')
 };
 
 PortCoreCommand parseCommand(const yarp::os::Value& v)
@@ -1582,7 +1582,7 @@ PortCoreCommand parseCommand(const yarp::os::Value& v)
         }
     }
 
-    auto cmd = static_cast<PortCoreCommand>(v.asVocab());
+    auto cmd = static_cast<PortCoreCommand>(v.asVocab32());
     switch (cmd) {
     case PortCoreCommand::Help:
     case PortCoreCommand::Ver:
@@ -1676,7 +1676,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
     auto handleAdminHelpCmd = []() {
         Bottle result;
         // We give a list of the most useful administrative commands.
-        result.addVocab(yarp::os::createVocab('m', 'a', 'n', 'y'));
+        result.addVocab32('m', 'a', 'n', 'y');
         result.addString("[help]                  # give this help");
         result.addString("[ver]                   # report protocol version information");
         result.addString("[add] $portname         # add an output connection");
@@ -1706,7 +1706,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         // Gives a version number for the administrative commands.
         // It is distinct from YARP library versioning.
         Bottle result;
-        result.addVocab(Vocab::encode("ver"));
+        result.addVocab32("ver");
         result.addInt32(1);
         result.addInt32(2);
         result.addInt32(3);
@@ -1914,23 +1914,23 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         case PortCoreConnectionDirection::Out: {
             std::string errMsg;
             if (!attachPortMonitor(prop, true, errMsg)) {
-                result.addVocab(Vocab::encode("fail"));
+                result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
-                result.addVocab(Vocab::encode("ok"));
+                result.addVocab32("ok");
             }
         } break;
         case PortCoreConnectionDirection::In: {
             std::string errMsg;
             if (!attachPortMonitor(prop, false, errMsg)) {
-                result.addVocab(Vocab::encode("fail"));
+                result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
-                result.addVocab(Vocab::encode("ok"));
+                result.addVocab32("ok");
             }
         } break;
         case PortCoreConnectionDirection::Error:
-            result.addVocab(Vocab::encode("fail"));
+            result.addVocab32("fail");
             result.addString("attach command must be followed by [out] or [in]");
         }
         return result;
@@ -1941,20 +1941,20 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         switch (direction) {
         case PortCoreConnectionDirection::Out: {
             if (detachPortMonitor(true)) {
-                result.addVocab(Vocab::encode("ok"));
+                result.addVocab32("ok");
             } else {
-                result.addVocab(Vocab::encode("fail"));
+                result.addVocab32("fail");
             }
         } break;
         case PortCoreConnectionDirection::In: {
             if (detachPortMonitor(false)) {
-                result.addVocab(Vocab::encode("ok"));
+                result.addVocab32("ok");
             } else {
-                result.addVocab(Vocab::encode("fail"));
+                result.addVocab32("fail");
             }
         } break;
         case PortCoreConnectionDirection::Error:
-            result.addVocab(Vocab::encode("fail"));
+            result.addVocab32("fail");
             result.addString("detach command must be followed by [out] or [in]");
         };
         return result;
@@ -2015,10 +2015,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             if (target == getName()) {
                 std::string errMsg;
                 if (!setParamPortMonitor(property, false, errMsg)) {
-                    result.addVocab(Vocab::encode("fail"));
+                    result.addVocab32("fail");
                     result.addString(errMsg);
                 } else {
-                    result.addVocab(Vocab::encode("ok"));
+                    result.addVocab32("ok");
                 }
             } else {
                 for (auto* unit : m_units) {
@@ -2059,10 +2059,10 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             if (target == getName()) {
                 std::string errMsg;
                 if (!setParamPortMonitor(property, true, errMsg)) {
-                    result.addVocab(Vocab::encode("fail"));
+                    result.addVocab32("fail");
                     result.addString(errMsg);
                 } else {
-                    result.addVocab(Vocab::encode("ok"));
+                    result.addVocab32("ok");
                 }
             } else {
                 for (auto* unit : m_units) {
@@ -2102,7 +2102,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             yarp::os::Property property;
             std::string errMsg;
             if (!getParamPortMonitor(property, false, errMsg)) {
-                result.addVocab(Vocab::encode("fail"));
+                result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
                 result.addDict() = property;
@@ -2141,7 +2141,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             yarp::os::Property property;
             std::string errMsg;
             if (!getParamPortMonitor(property, true, errMsg)) {
-                result.addVocab(Vocab::encode("fail"));
+                result.addVocab32("fail");
                 result.addString(errMsg);
             } else {
                 result.addDict() = property;
@@ -2244,7 +2244,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                     }         // end portName == getname()
 
                     if (!bFound) { // cannot find any port matches the requested one
-                        result.addVocab(Vocab::encode("fail"));
+                        result.addVocab32("fail");
                         std::string msg = "cannot find any connection to/from ";
                         msg = msg + key;
                         result.addString(msg);
@@ -2347,19 +2347,19 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                         // set the packet TOS value on the socket based on some predefined
                                         // priority levels.
                                         // the expected levels are: LOW, NORM, HIGH, CRIT
-                                        NetInt32 priority = qos_prop->find("priority").asVocab();
+                                        NetInt32 priority = qos_prop->find("priority").asVocab32();
                                         int dscp;
                                         switch (priority) {
-                                        case yarp::os::createVocab('L', 'O', 'W'):
+                                        case yarp::os::createVocab32('L', 'O', 'W'):
                                             dscp = 10;
                                             break;
-                                        case yarp::os::createVocab('N', 'O', 'R', 'M'):
+                                        case yarp::os::createVocab32('N', 'O', 'R', 'M'):
                                             dscp = 0;
                                             break;
-                                        case yarp::os::createVocab('H', 'I', 'G', 'H'):
+                                        case yarp::os::createVocab32('H', 'I', 'G', 'H'):
                                             dscp = 36;
                                             break;
-                                        case yarp::os::createVocab('C', 'R', 'I', 'T'):
+                                        case yarp::os::createVocab32('C', 'R', 'I', 'T'):
                                             dscp = 44;
                                             break;
                                         default:
@@ -2370,7 +2370,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
                                         }
                                     } else if (qos_prop->check("dscp")) {
                                         // Set the packet TOS value on the socket based on the DSCP level
-                                        QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab());
+                                        QosStyle::PacketPriorityDSCP dscp_class = QosStyle::getDSCPByVocab(qos_prop->find("dscp").asVocab32());
                                         int dscp = -1;
                                         if (dscp_class == QosStyle::DSCP_Invalid) {
                                             auto dscp_val = qos_prop->find("dscp");
@@ -2404,7 +2404,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
         }
         releaseProperties(p);
-        result.addVocab((bOk) ? Vocab::encode("ok") : Vocab::encode("fail"));
+        result.addVocab32((bOk) ? "ok" : "fail");
         return result;
     };
 
@@ -2564,7 +2564,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             }
         }
         if (!ok) {
-            result.addVocab(Vocab::encode("fail"));
+            result.addVocab32("fail");
             result.addString("send [help] for list of valid commands");
         }
         return result;
@@ -2591,21 +2591,21 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         result = handleAdminDelCmd(dest);
     } break;
     case PortCoreCommand::Atch: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32());
         Property prop(cmd.get(2).asString().c_str());
         result = handleAdminAtchCmd(direction, std::move(prop));
     } break;
     case PortCoreCommand::Dtch: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab());
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32());
         result = handleAdminDtchCmd(direction);
     } break;
     case PortCoreCommand::List: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32(), true);
         const std::string target = cmd.get(2).asString();
         result = handleAdminListCmd(direction, target);
     } break;
     case PortCoreCommand::Set: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32(), true);
         const std::string target = cmd.get(2).asString();
         yarp::os::Property property;
         property.fromString(cmd.toString());
@@ -2622,7 +2622,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
     } break;
     case PortCoreCommand::Get: {
-        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab(), true);
+        const PortCoreConnectionDirection direction = parseConnectionDirection(cmd.get(1).asVocab32(), true);
         const std::string target = cmd.get(2).asString();
         switch (direction) {
         case PortCoreConnectionDirection::In:
@@ -2637,7 +2637,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
         }
     } break;
     case PortCoreCommand::Prop: {
-        PortCorePropertyAction action = parsePropertyAction(cmd.get(1).asVocab());
+        PortCorePropertyAction action = parsePropertyAction(cmd.get(1).asVocab32());
         const std::string key = cmd.get(2).asString();
         // Set/get arbitrary properties on a port.
         switch (action) {
@@ -2652,7 +2652,7 @@ bool PortCore::adminBlock(ConnectionReader& reader,
             result = handleAdminPropSetCmd(key, value, process, sched, qos);
         } break;
         case PortCorePropertyAction::Error:
-            result.addVocab(Vocab::encode("fail"));
+            result.addVocab32("fail");
             result.addString("property action not known");
             break;
         }

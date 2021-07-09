@@ -69,7 +69,7 @@ Contact NameServer::unregisterName(const std::string& name)
             tmpNames.release(name);
 
             Bottle event;
-            event.addVocab(Vocab::encode("del"));
+            event.addVocab32("del");
             event.addString(name.c_str());
             onEvent(event);
         }
@@ -143,7 +143,7 @@ Contact NameServer::registerName(const std::string& name,
     nameRecord.setAddress(suggestion, reusablePort, reusableIp);
 
     Bottle event;
-    event.addVocab(Vocab::encode("add"));
+    event.addVocab32("add");
     event.addString(suggestion.getRegName().c_str());
     onEvent(event);
 

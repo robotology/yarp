@@ -206,15 +206,15 @@ public:
 };
 
 // interface IEncoders sets
-constexpr yarp::conf::vocab32_t VOCAB_E_RESET  = yarp::os::createVocab('e','r','e');
-constexpr yarp::conf::vocab32_t VOCAB_E_RESETS = yarp::os::createVocab('e','r','e','s');
-constexpr yarp::conf::vocab32_t VOCAB_ENCODER  = yarp::os::createVocab('e','n','c');
-constexpr yarp::conf::vocab32_t VOCAB_ENCODERS = yarp::os::createVocab('e','n','c','s');
+constexpr yarp::conf::vocab32_t VOCAB_E_RESET  = yarp::os::createVocab32('e','r','e');
+constexpr yarp::conf::vocab32_t VOCAB_E_RESETS = yarp::os::createVocab32('e','r','e','s');
+constexpr yarp::conf::vocab32_t VOCAB_ENCODER  = yarp::os::createVocab32('e','n','c');
+constexpr yarp::conf::vocab32_t VOCAB_ENCODERS = yarp::os::createVocab32('e','n','c','s');
 
 // interface IEncoders gets
-constexpr yarp::conf::vocab32_t VOCAB_ENCODER_SPEED         = yarp::os::createVocab('e','s','p');
-constexpr yarp::conf::vocab32_t VOCAB_ENCODER_SPEEDS        = yarp::os::createVocab('e','s','p','s');
-constexpr yarp::conf::vocab32_t VOCAB_ENCODER_ACCELERATION  = yarp::os::createVocab('e','a','c');
-constexpr yarp::conf::vocab32_t VOCAB_ENCODER_ACCELERATIONS = yarp::os::createVocab('e','a','c','s');
+constexpr yarp::conf::vocab32_t VOCAB_ENCODER_SPEED         = yarp::os::createVocab32('e','s','p');
+constexpr yarp::conf::vocab32_t VOCAB_ENCODER_SPEEDS        = yarp::os::createVocab32('e','s','p','s');
+constexpr yarp::conf::vocab32_t VOCAB_ENCODER_ACCELERATION  = yarp::os::createVocab32('e','a','c');
+constexpr yarp::conf::vocab32_t VOCAB_ENCODER_ACCELERATIONS = yarp::os::createVocab32('e','a','c','s');
 
 #endif // YARP_DEV_IENCODERS_H

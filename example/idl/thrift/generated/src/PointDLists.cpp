@@ -398,7 +398,7 @@ bool PointDLists::Editor::read(yarp::os::ConnectionReader& connection)
         return true;
     }
     writer.writeListHeader(1);
-    writer.writeVocab(yarp::os::createVocab('o', 'k'));
+    writer.writeVocab32('o', 'k');
     return true;
 }
 
@@ -565,8 +565,8 @@ bool PointDLists::read_firstList(yarp::os::idl::WireReader& reader)
     yarp::os::idl::WireState _etype3;
     reader.readListBegin(_etype3, _size0);
     firstList.resize(_size0);
-    for (auto& _elem4 : firstList) {
-        if (!reader.readNested(_elem4)) {
+    for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
+        if (!reader.readNested(firstList[_i4])) {
             reader.fail();
             return false;
         }
@@ -600,8 +600,8 @@ bool PointDLists::nested_read_firstList(yarp::os::idl::WireReader& reader)
     yarp::os::idl::WireState _etype9;
     reader.readListBegin(_etype9, _size6);
     firstList.resize(_size6);
-    for (auto& _elem10 : firstList) {
-        if (!reader.readNested(_elem10)) {
+    for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
+        if (!reader.readNested(firstList[_i10])) {
             reader.fail();
             return false;
         }
@@ -635,8 +635,8 @@ bool PointDLists::read_secondList(yarp::os::idl::WireReader& reader)
     yarp::os::idl::WireState _etype15;
     reader.readListBegin(_etype15, _size12);
     secondList.resize(_size12);
-    for (auto& _elem16 : secondList) {
-        if (!reader.readNested(_elem16)) {
+    for (size_t _i16 = 0; _i16 < _size12; ++_i16) {
+        if (!reader.readNested(secondList[_i16])) {
             reader.fail();
             return false;
         }
@@ -670,8 +670,8 @@ bool PointDLists::nested_read_secondList(yarp::os::idl::WireReader& reader)
     yarp::os::idl::WireState _etype21;
     reader.readListBegin(_etype21, _size18);
     secondList.resize(_size18);
-    for (auto& _elem22 : secondList) {
-        if (!reader.readNested(_elem22)) {
+    for (size_t _i22 = 0; _i22 < _size18; ++_i22) {
+        if (!reader.readNested(secondList[_i22])) {
             reader.fail();
             return false;
         }

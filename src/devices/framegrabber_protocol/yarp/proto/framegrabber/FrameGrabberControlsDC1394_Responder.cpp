@@ -27,7 +27,7 @@ bool FrameGrabberControlsDC1394_Responder::respond(const yarp::os::Bottle& cmd, 
         return yarp::dev::DeviceResponder::respond(cmd, response);
     }
 
-    int code = cmd.get(1).asVocab();
+    int code = cmd.get(1).asVocab32();
     switch (code) {
     case VOCAB_DRGETMSK:
         response.addInt32(int(fgCtrl_DC1394->getVideoModeMaskDC1394()));

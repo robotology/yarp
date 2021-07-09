@@ -163,8 +163,8 @@ static int enactConnection(const Contact& src,
 
     Bottle cmd;
     Bottle reply;
-    cmd.addVocab(Vocab::encode("list"));
-    cmd.addVocab(Vocab::encode(reversed ? "in" : "out"));
+    cmd.addVocab32("list");
+    cmd.addVocab32(reversed ? "in" : "out");
     cmd.addString(dest.getName().c_str());
     yCDebug(NETWORK, "asking %s: %s", src.toString().c_str(), cmd.toString().c_str());
     bool ok = NetworkBase::write(src, cmd, reply, rpc);
@@ -205,14 +205,14 @@ static int enactConnection(const Contact& src,
         return 1;
     }
 
-    int act = (mode == YARP_ENACT_DISCONNECT) ? yarp::os::createVocab('d', 'e', 'l') : yarp::os::createVocab('a', 'd', 'd');
+    yarp::conf::vocab32_t act = (mode == YARP_ENACT_DISCONNECT) ? yarp::os::createVocab32('d', 'e', 'l') : yarp::os::createVocab32('a', 'd', 'd');
 
     // Let's ask the destination to connect/disconnect to the source.
     // We assume the YARP carrier will reverse the connection if
     // appropriate when connecting.
     cmd.clear();
     reply.clear();
-    cmd.addVocab(act);
+    cmd.addVocab32(act);
     Contact c = dest;
     if (!style.carrier.empty()) {
         c.setCarrier(style.carrier);

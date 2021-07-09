@@ -281,8 +281,8 @@ bool BatteryClient::getBatteryTemperature(double &temperature)
 bool BatteryClient::getBatteryInfo(std::string &battery_info)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_IBATTERY);
-    cmd.addVocab(VOCAB_BATTERY_INFO);
+    cmd.addVocab32(VOCAB_IBATTERY);
+    cmd.addVocab32(VOCAB_BATTERY_INFO);
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response)!=false)
     {

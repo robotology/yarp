@@ -53,13 +53,13 @@ bool yarp::os::QosStyle::setPacketPriority(const std::string& priority)
     }
 
     if (key == "LEVEL") {
-        PacketPriorityLevel level = getLevelByVocab(yarp::os::Vocab::encode(value));
+        PacketPriorityLevel level = getLevelByVocab(yarp::os::Vocab32::encode(value));
         if (level != PacketPriorityInvalid && level != PacketPriorityUndefined) {
             setPacketPriorityByLevel(level);
             return true;
         }
     } else if (key == "DSCP") {
-        PacketPriorityDSCP dscp = getDSCPByVocab(yarp::os::Vocab::encode(value));
+        PacketPriorityDSCP dscp = getDSCPByVocab(yarp::os::Vocab32::encode(value));
         if (dscp != DSCP_Invalid && dscp != DSCP_Undefined) {
             setPacketPriorityByDscp(dscp);
             return true;
@@ -155,52 +155,52 @@ yarp::os::QosStyle::PacketPriorityLevel yarp::os::QosStyle::getPacketPriorityAsL
 // | Low Drop  | AF11 (DSCP 10) | AF21 (DSCP 18) | AF31 (DSCP 26) | AF41 (DSCP 34) |
 // | Med Drop  | AF12 (DSCP 12) | AF22 (DSCP 20) | AF32 (DSCP 28) | AF42 (DSCP 36) |
 // | High Drop | AF13 (DSCP 14) | AF23 (DSCP 22) | AF33 (DSCP 30) | AF43 (DSCP 38) |
-yarp::os::QosStyle::PacketPriorityDSCP yarp::os::QosStyle::getDSCPByVocab(int vocab)
+yarp::os::QosStyle::PacketPriorityDSCP yarp::os::QosStyle::getDSCPByVocab(yarp::conf::vocab32_t vocab)
 {
     switch (vocab) {
-    case yarp::os::createVocab('C', 'S', '0'):
+    case yarp::os::createVocab32('C', 'S', '0'):
         return DSCP_CS0;
-    case yarp::os::createVocab('C', 'S', '1'):
+    case yarp::os::createVocab32('C', 'S', '1'):
         return DSCP_CS1;
-    case yarp::os::createVocab('C', 'S', '2'):
+    case yarp::os::createVocab32('C', 'S', '2'):
         return DSCP_CS2;
-    case yarp::os::createVocab('C', 'S', '3'):
+    case yarp::os::createVocab32('C', 'S', '3'):
         return DSCP_CS3;
-    case yarp::os::createVocab('C', 'S', '4'):
+    case yarp::os::createVocab32('C', 'S', '4'):
         return DSCP_CS4;
-    case yarp::os::createVocab('C', 'S', '5'):
+    case yarp::os::createVocab32('C', 'S', '5'):
         return DSCP_CS5;
-    case yarp::os::createVocab('C', 'S', '6'):
+    case yarp::os::createVocab32('C', 'S', '6'):
         return DSCP_CS6;
-    case yarp::os::createVocab('C', 'S', '7'):
+    case yarp::os::createVocab32('C', 'S', '7'):
         return DSCP_CS7;
-    case yarp::os::createVocab('A', 'F', '1', '1'):
+    case yarp::os::createVocab32('A', 'F', '1', '1'):
         return DSCP_AF11;
-    case yarp::os::createVocab('A', 'F', '1', '2'):
+    case yarp::os::createVocab32('A', 'F', '1', '2'):
         return DSCP_AF12;
-    case yarp::os::createVocab('A', 'F', '1', '3'):
+    case yarp::os::createVocab32('A', 'F', '1', '3'):
         return DSCP_AF13;
-    case yarp::os::createVocab('A', 'F', '2', '1'):
+    case yarp::os::createVocab32('A', 'F', '2', '1'):
         return DSCP_AF21;
-    case yarp::os::createVocab('A', 'F', '2', '2'):
+    case yarp::os::createVocab32('A', 'F', '2', '2'):
         return DSCP_AF22;
-    case yarp::os::createVocab('A', 'F', '2', '3'):
+    case yarp::os::createVocab32('A', 'F', '2', '3'):
         return DSCP_AF23;
-    case yarp::os::createVocab('A', 'F', '3', '1'):
+    case yarp::os::createVocab32('A', 'F', '3', '1'):
         return DSCP_AF31;
-    case yarp::os::createVocab('A', 'F', '3', '2'):
+    case yarp::os::createVocab32('A', 'F', '3', '2'):
         return DSCP_AF32;
-    case yarp::os::createVocab('A', 'F', '3', '3'):
+    case yarp::os::createVocab32('A', 'F', '3', '3'):
         return DSCP_AF33;
-    case yarp::os::createVocab('A', 'F', '4', '1'):
+    case yarp::os::createVocab32('A', 'F', '4', '1'):
         return DSCP_AF41;
-    case yarp::os::createVocab('A', 'F', '4', '2'):
+    case yarp::os::createVocab32('A', 'F', '4', '2'):
         return DSCP_AF42;
-    case yarp::os::createVocab('A', 'F', '4', '3'):
+    case yarp::os::createVocab32('A', 'F', '4', '3'):
         return DSCP_AF43;
-    case yarp::os::createVocab('V', 'A'):
+    case yarp::os::createVocab32('V', 'A'):
         return DSCP_VA;
-    case yarp::os::createVocab('E', 'F'):
+    case yarp::os::createVocab32('E', 'F'):
         return DSCP_EF;
     default:
         return DSCP_Invalid;
@@ -208,16 +208,16 @@ yarp::os::QosStyle::PacketPriorityDSCP yarp::os::QosStyle::getDSCPByVocab(int vo
 }
 
 
-yarp::os::QosStyle::PacketPriorityLevel yarp::os::QosStyle::getLevelByVocab(int vocab)
+yarp::os::QosStyle::PacketPriorityLevel yarp::os::QosStyle::getLevelByVocab(yarp::conf::vocab32_t vocab)
 {
     switch (vocab) {
-    case yarp::os::createVocab('N', 'O', 'R', 'M'):
+    case yarp::os::createVocab32('N', 'O', 'R', 'M'):
         return PacketPriorityNormal;
-    case yarp::os::createVocab('L', 'O', 'W'):
+    case yarp::os::createVocab32('L', 'O', 'W'):
         return PacketPriorityLow;
-    case yarp::os::createVocab('H', 'I', 'G', 'H'):
+    case yarp::os::createVocab32('H', 'I', 'G', 'H'):
         return PacketPriorityHigh;
-    case yarp::os::createVocab('C', 'R', 'I', 'T'):
+    case yarp::os::createVocab32('C', 'R', 'I', 'T'):
         return PacketPriorityCritical;
     default:
         return PacketPriorityInvalid;

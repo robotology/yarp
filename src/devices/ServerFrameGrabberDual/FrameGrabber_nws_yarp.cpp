@@ -299,7 +299,7 @@ void FrameGrabber_nws_yarp::run()
 bool FrameGrabber_nws_yarp::respond(const yarp::os::Bottle& command,
                                     yarp::os::Bottle& reply)
 {
-    yarp::conf::vocab32_t code = command.get(0).asVocab();
+    yarp::conf::vocab32_t code = command.get(0).asVocab32();
     switch (code) {
     case VOCAB_FRAMEGRABBER_IMAGE:
         return frameGrabberImage_Responder.respond(command, reply);

@@ -173,8 +173,8 @@ TEST_CASE("os::BottleTest", "[yarp::os]")
     {
         Bottle bot("[send] 10 20");
         CHECK(bot.size() == (size_t) 3); // "plausible parse"
-        CHECK(bot.get(0).isVocab()); // "vocab present"
-        CHECK(bot.get(0).asInt32() == yarp::os::createVocab('s', 'e', 'n', 'd')); // "vocab match"
+        CHECK(bot.get(0).isVocab32()); // "vocab present"
+        CHECK(bot.get(0).asVocab32() == yarp::os::createVocab32('s', 'e', 'n', 'd')); // "vocab match"
     }
 
 

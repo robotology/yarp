@@ -32,32 +32,32 @@ bool RgbVisualParams_Responder::respond(const yarp::os::Bottle& cmd, yarp::os::B
     response.clear();
     if (!iRgbVisual) {
         yError() << "Rgb Visual parameter Parser has not been correctly configures. IRgbVisualParams interface is not valid";
-        response.addVocab(VOCAB_FAILED);
+        response.addVocab32(VOCAB_FAILED);
         return false;
     }
 
-    int code = cmd.get(0).asVocab();
+    int code = cmd.get(0).asVocab32();
     if (code != VOCAB_RGB_VISUAL_PARAMS) {
-        yError() << "Rgb Visual Params Parser received a command not belonging to this interface. Required interface is " << yarp::os::Vocab::decode(code);
-        response.addVocab(VOCAB_FAILED);
+        yError() << "Rgb Visual Params Parser received a command not belonging to this interface. Required interface is " << yarp::os::Vocab32::decode(code);
+        response.addVocab32(VOCAB_FAILED);
         return false;
     }
 
-    switch (cmd.get(1).asVocab()) {
+    switch (cmd.get(1).asVocab32()) {
     case VOCAB_GET: {
-        switch (cmd.get(2).asVocab()) {
+        switch (cmd.get(2).asVocab32()) {
         case VOCAB_HEIGHT:
-            response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-            response.addVocab(VOCAB_HEIGHT);
-            response.addVocab(VOCAB_IS);
+            response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+            response.addVocab32(VOCAB_HEIGHT);
+            response.addVocab32(VOCAB_IS);
             response.addInt32(iRgbVisual->getRgbHeight());
             ret = true;
             break;
 
         case VOCAB_WIDTH:
-            response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-            response.addVocab(VOCAB_WIDTH);
-            response.addVocab(VOCAB_IS);
+            response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+            response.addVocab32(VOCAB_WIDTH);
+            response.addVocab32(VOCAB_IS);
             response.addInt32(iRgbVisual->getRgbWidth());
             ret = true;
             break;
@@ -66,18 +66,18 @@ bool RgbVisualParams_Responder::respond(const yarp::os::Bottle& cmd, yarp::os::B
             yarp::sig::VectorOf<yarp::dev::CameraConfig> conf;
             ret = iRgbVisual->getRgbSupportedConfigurations(conf);
             if (ret) {
-                response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-                response.addVocab(VOCAB_SUPPORTED_CONF);
-                response.addVocab(VOCAB_IS);
+                response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+                response.addVocab32(VOCAB_SUPPORTED_CONF);
+                response.addVocab32(VOCAB_IS);
                 response.addInt32(conf.size());
                 for (const auto& i : conf) {
                     response.addInt32(i.width);
                     response.addInt32(i.height);
                     response.addFloat64(i.framerate);
-                    response.addVocab(i.pixelCoding);
+                    response.addVocab32(i.pixelCoding);
                 }
             } else {
-                response.addVocab(VOCAB_FAILED);
+                response.addVocab32(VOCAB_FAILED);
             }
         } break;
 
@@ -87,13 +87,13 @@ bool RgbVisualParams_Responder::respond(const yarp::os::Bottle& cmd, yarp::os::B
             int height;
             ret = iRgbVisual->getRgbResolution(width, height);
             if (ret) {
-                response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-                response.addVocab(VOCAB_RESOLUTION);
-                response.addVocab(VOCAB_IS);
+                response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+                response.addVocab32(VOCAB_RESOLUTION);
+                response.addVocab32(VOCAB_IS);
                 response.addInt32(width);
                 response.addInt32(height);
             } else {
-                response.addVocab(VOCAB_FAILED);
+                response.addVocab32(VOCAB_FAILED);
             }
         } break;
 
@@ -102,13 +102,13 @@ bool RgbVisualParams_Responder::respond(const yarp::os::Bottle& cmd, yarp::os::B
             double vFov;
             ret = iRgbVisual->getRgbFOV(hFov, vFov);
             if (ret) {
-                response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-                response.addVocab(VOCAB_FOV);
-                response.addVocab(VOCAB_IS);
+                response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+                response.addVocab32(VOCAB_FOV);
+                response.addVocab32(VOCAB_IS);
                 response.addFloat64(hFov);
                 response.addFloat64(vFov);
             } else {
-                response.addVocab(VOCAB_FAILED);
+                response.addVocab32(VOCAB_FAILED);
             }
         } break;
 
@@ -116,13 +116,13 @@ bool RgbVisualParams_Responder::respond(const yarp::os::Bottle& cmd, yarp::os::B
             yarp::os::Property params;
             ret = iRgbVisual->getRgbIntrinsicParam(params);
             if (ret) {
-                response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-                response.addVocab(VOCAB_INTRINSIC_PARAM);
-                response.addVocab(VOCAB_IS);
+                response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+                response.addVocab32(VOCAB_INTRINSIC_PARAM);
+                response.addVocab32(VOCAB_IS);
                 yarp::os::Bottle& tmp = response.addList();
                 ret &= yarp::os::Property::copyPortable(params, tmp);
             } else {
-                response.addVocab(VOCAB_FAILED);
+                response.addVocab32(VOCAB_FAILED);
             }
         } break;
 
@@ -130,51 +130,51 @@ bool RgbVisualParams_Responder::respond(const yarp::os::Bottle& cmd, yarp::os::B
             bool mirror;
             ret = iRgbVisual->getRgbMirroring(mirror);
             if (ret) {
-                response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-                response.addVocab(VOCAB_MIRROR);
-                response.addVocab(VOCAB_IS);
+                response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+                response.addVocab32(VOCAB_MIRROR);
+                response.addVocab32(VOCAB_IS);
                 response.addInt32(mirror);
             } else {
-                response.addVocab(VOCAB_FAILED);
+                response.addVocab32(VOCAB_FAILED);
             }
         } break;
 
         default:
         {
             yError() << "Rgb Visual Parameter interface parser received an unknown GET command. Command is " << cmd.toString();
-            response.addVocab(VOCAB_FAILED);
+            response.addVocab32(VOCAB_FAILED);
             ret = false;
         } break;
         }
     } break;
 
     case VOCAB_SET: {
-        switch (cmd.get(2).asVocab()) {
+        switch (cmd.get(2).asVocab32()) {
         case VOCAB_RESOLUTION:
             ret = iRgbVisual->setRgbResolution(cmd.get(3).asInt32(), cmd.get(4).asInt32());
-            response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-            response.addVocab(VOCAB_SET);
+            response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+            response.addVocab32(VOCAB_SET);
             response.addInt32(ret);
             break;
 
         case VOCAB_FOV:
             ret = iRgbVisual->setRgbFOV(cmd.get(3).asFloat64(), cmd.get(4).asFloat64());
-            response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-            response.addVocab(VOCAB_SET);
+            response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+            response.addVocab32(VOCAB_SET);
             response.addInt32(ret);
             break;
 
         case VOCAB_MIRROR: {
             ret = iRgbVisual->setRgbMirroring(cmd.get(3).asBool());
-            response.addVocab(VOCAB_RGB_VISUAL_PARAMS);
-            response.addVocab(VOCAB_SET);
+            response.addVocab32(VOCAB_RGB_VISUAL_PARAMS);
+            response.addVocab32(VOCAB_SET);
             response.addInt32(ret);
         } break;
 
         default:
         {
             yError() << "Rgb Visual Parameter interface parser received am unknown SET command. Command is " << cmd.toString();
-            response.addVocab(VOCAB_FAILED);
+            response.addVocab32(VOCAB_FAILED);
             ret = false;
         } break;
         }
@@ -184,7 +184,7 @@ bool RgbVisualParams_Responder::respond(const yarp::os::Bottle& cmd, yarp::os::B
     default:
     {
         yError() << "Rgb Visual parameter interface Parser received a malformed request. Command should either be 'set' or 'get', received " << cmd.toString();
-        response.addVocab(VOCAB_FAILED);
+        response.addVocab32(VOCAB_FAILED);
         ret = false;
     } break;
     }

@@ -91,7 +91,7 @@ bool AnalogServerHandler::_handleIAnalog(yarp::os::Bottle &cmd, yarp::os::Bottle
     const size_t msgsize=cmd.size();
     int ret=IAnalogSensor::AS_ERROR;
 
-    int code=cmd.get(1).asVocab();
+    int code=cmd.get(1).asVocab32();
     switch (code)
     {
     case VOCAB_CALIBRATE:
@@ -137,7 +137,7 @@ bool AnalogServerHandler::read(yarp::os::ConnectionReader& connection)
     if (!ok) return false;
 
     // parse in, prepare out
-    int code = in.get(0).asVocab();
+    int code = in.get(0).asVocab32();
     bool ret=false;
     if (code==VOCAB_IANALOG)
     {
@@ -147,7 +147,7 @@ bool AnalogServerHandler::read(yarp::os::ConnectionReader& connection)
     if (!ret)
     {
         out.clear();
-        out.addVocab(VOCAB_FAILED);
+        out.addVocab32(VOCAB_FAILED);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();

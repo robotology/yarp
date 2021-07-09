@@ -197,7 +197,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config)
 bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                                  yarp::os::Bottle& response)
 {
-    int code = cmd.get(0).asVocab();
+    int code = cmd.get(0).asVocab32();
 
     auto* fgCtrlDC1394=dynamic_cast<IFrameGrabberControlsDC1394*>(fgCtrl);
 
@@ -219,7 +219,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
     {
         if (fgCtrlDC1394)
         {
-            int codeDC1394 = cmd.get(1).asVocab();
+            int codeDC1394 = cmd.get(1).asVocab32();
             switch(codeDC1394)
             {
             case VOCAB_DRGETMSK: // VOCAB_DRGETMSK 12
@@ -341,13 +341,13 @@ bool ServerFrameGrabber::read(ConnectionReader& connection)
     yarp::os::Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
     yCDebug(SERVERFRAMEGRABBER, "command received: %s\n", cmd.toString().c_str());
-    int code = cmd.get(0).asVocab();
+    int code = cmd.get(0).asVocab32();
     switch (code) {
     case VOCAB_SET:
         yCDebug(SERVERFRAMEGRABBER, "set command received\n");
         {
             bool ok = false;
-            switch(cmd.get(1).asVocab()) {
+            switch(cmd.get(1).asVocab32()) {
             case VOCAB_BRIGHTNESS:
                 ok = setBrightness(cmd.get(2).asFloat64());
                 break;
@@ -368,9 +368,9 @@ bool ServerFrameGrabber::read(ConnectionReader& connection)
         yCDebug(SERVERFRAMEGRABBER, "get command received\n");
         {
             bool ok = false;
-            response.addVocab(VOCAB_IS);
+            response.addVocab32(VOCAB_IS);
             response.add(cmd.get(1));
-            switch(cmd.get(1).asVocab()) {
+            switch(cmd.get(1).asVocab32()) {
             case VOCAB_BRIGHTNESS:
                 ok = true;
                 response.addFloat64(getBrightness());

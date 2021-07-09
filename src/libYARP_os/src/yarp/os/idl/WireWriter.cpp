@@ -12,10 +12,10 @@ using namespace yarp::os;
 using namespace yarp::os::idl;
 
 namespace {
-constexpr yarp::conf::vocab32_t VOCAB_OK = yarp::os::createVocab('o', 'k');
-constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
-constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab('i', 's');
-constexpr yarp::conf::vocab32_t VOCAB_DONE = yarp::os::createVocab('d', 'o', 'n', 'e');
+constexpr yarp::conf::vocab32_t VOCAB_OK = yarp::os::createVocab32('o', 'k');
+constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab32('f', 'a', 'i', 'l');
+constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab32('i', 's');
+constexpr yarp::conf::vocab32_t VOCAB_DONE = yarp::os::createVocab32('d', 'o', 'n', 'e');
 } // namespace
 
 
@@ -177,7 +177,7 @@ bool WireWriter::writeTag(const char* tag, int split, int len) const
         tag++;
         if (ch == '\0' || ch == '_') {
             if (bit.length() <= 4) {
-                writeVocab32(Vocab::encode(bit));
+                writeVocab32(bit);
             } else {
                 writeString(bit);
             }
@@ -215,7 +215,7 @@ bool WireWriter::writeListHeader(int len) const
         writer.appendInt32(VOCAB_IS);
         if (get_is_vocab32) {
             writer.appendInt32(BOTTLE_TAG_VOCAB32);
-            writer.appendInt32(Vocab::encode(get_string));
+            writer.appendInt32(Vocab32::encode(get_string));
         } else {
             writeString(get_string);
         }

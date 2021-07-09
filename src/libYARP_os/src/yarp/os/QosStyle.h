@@ -10,6 +10,7 @@
 #define YARP_OS_QOSSTYLE_H
 
 #include <yarp/os/api.h>
+#include <yarp/conf/numeric.h>
 
 #include <string>
 
@@ -192,7 +193,7 @@ public:
      * @param vocab a DSCP code (e.g., CS0)
      * @return the actual DSCP value
      */
-    static PacketPriorityDSCP getDSCPByVocab(int vocab);
+    static PacketPriorityDSCP getDSCPByVocab(yarp::conf::vocab32_t vocab);
 
 
     /**
@@ -200,7 +201,7 @@ public:
      * @param vocab a level code (e.g., HIGH)
      * @return the priority level
      */
-    static PacketPriorityLevel getLevelByVocab(int vocab);
+    static PacketPriorityLevel getLevelByVocab(yarp::conf::vocab32_t vocab);
 
 
 private:

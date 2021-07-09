@@ -549,7 +549,7 @@ bool LaserScan2D::Editor::read(yarp::os::ConnectionReader& connection)
         return true;
     }
     writer.writeListHeader(1);
-    writer.writeVocab32(yarp::os::createVocab('o', 'k'));
+    writer.writeVocab32('o', 'k');
     return true;
 }
 

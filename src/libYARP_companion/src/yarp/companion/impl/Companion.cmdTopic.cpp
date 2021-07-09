@@ -68,7 +68,7 @@ int Companion::cmdTopic(int argc, char *argv[])
                                  false,
                                  true);
     if (ok) {
-        ok = reply.get(0).asVocab()==yarp::os::createVocab('o', 'k');
+        ok = reply.get(0).asVocab32()==yarp::os::createVocab32('o', 'k');
     }
     if (!ok) {
         yCError(COMPANION,

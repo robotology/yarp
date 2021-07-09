@@ -572,11 +572,11 @@ bool RFModule::safeRespond(const Bottle& command, Bottle& reply)
 
 bool RFModule::basicRespond(const Bottle& command, Bottle& reply)
 {
-    switch (command.get(0).asVocab()) {
-    case yarp::os::createVocab('q', 'u', 'i', 't'):
-    case yarp::os::createVocab('e', 'x', 'i', 't'):
-    case yarp::os::createVocab('b', 'y', 'e'):
-        reply.addVocab(Vocab::encode("bye"));
+    switch (command.get(0).asVocab32()) {
+    case yarp::os::createVocab32('q', 'u', 'i', 't'):
+    case yarp::os::createVocab32('e', 'x', 'i', 't'):
+    case yarp::os::createVocab32('b', 'y', 'e'):
+        reply.addVocab32("bye");
         stopModule(false); //calls interruptModule()
         return true;
     default:

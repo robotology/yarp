@@ -179,13 +179,13 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
     {
         m_mic->startRecording();
         m_mic->isRecording(m_isRecording);
-        reply.addVocab(VOCAB_OK);
+        reply.addVocab32(VOCAB_OK);
     }
     else if (command.get(0).asString() == "stop")
     {
         m_mic->stopRecording();
         m_mic->isRecording(m_isRecording);
-        reply.addVocab(VOCAB_OK);
+        reply.addVocab32(VOCAB_OK);
     }
     else if (command.get(0).asString() == "sw_audio_gain")
     {
@@ -193,12 +193,12 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
         if (val >= 0)
         {
             m_mic->setSWGain(val);
-            reply.addVocab(VOCAB_OK);
+            reply.addVocab32(VOCAB_OK);
         }
         else
         {
             yCError(AUDIORECORDERWRAPPER) << "Invalid audio gain";
-            reply.addVocab(VOCAB_ERR);
+            reply.addVocab32(VOCAB_ERR);
         }
     }
     else if (command.get(0).asString() == "hw_audio_gain")
@@ -207,22 +207,22 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
         if (val >= 0)
         {
             m_mic->setHWGain(val);
-            reply.addVocab(VOCAB_OK);
+            reply.addVocab32(VOCAB_OK);
         }
         else
         {
             yCError(AUDIORECORDERWRAPPER) << "Invalid audio gain";
-            reply.addVocab(VOCAB_ERR);
+            reply.addVocab32(VOCAB_ERR);
         }
     }
     else if (command.get(0).asString() == "clear")
     {
         m_mic->resetRecordingAudioBuffer();
-        reply.addVocab(VOCAB_OK);
+        reply.addVocab32(VOCAB_OK);
     }
     else if (command.get(0).asString() == "help")
     {
-        reply.addVocab(yarp::os::Vocab::encode("many"));
+        reply.addVocab32("many");
         reply.addString("start");
         reply.addString("stop");
         reply.addString("clear");
@@ -232,7 +232,7 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
     else
     {
         yCError(AUDIORECORDERWRAPPER) << "Invalid command";
-        reply.addVocab(VOCAB_ERR);
+        reply.addVocab32(VOCAB_ERR);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();

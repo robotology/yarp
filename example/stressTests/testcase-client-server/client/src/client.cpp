@@ -76,7 +76,7 @@ void CollatzClient::run()
     while (!isStopping())
     {
         out.clear();
-        out.addVocab(COLLATZ_VOCAB_REQ_ITEM);
+        out.addVocab32(COLLATZ_VOCAB_REQ_ITEM);
         out.addInt32(replyField);
 
         fprintf(stdout,"Requiring item: %s\n",out.toString().c_str());
@@ -86,7 +86,7 @@ void CollatzClient::run()
 
         if (in.size()>0)
         {
-            if (in.get(0).asVocab()==COLLATZ_VOCAB_ITEM)
+            if (in.get(0).asVocab32()==COLLATZ_VOCAB_ITEM)
             {
                 // process the reply
                 const unsigned int num=(unsigned int)in.get(1).asInt32();

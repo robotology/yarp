@@ -60,11 +60,11 @@ Map2DServer::~Map2DServer() = default;
 
 void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out)
 {
-    int code = in.get(0).asVocab();
+    int code = in.get(0).asVocab32();
 //     bool ret = false;
     if (code == VOCAB_IMAP)
     {
-        int cmd = in.get(1).asVocab();
+        int cmd = in.get(1).asVocab32();
         if (cmd == VOCAB_IMAP_SET_MAP)
         {
             MapGrid2D the_map;
@@ -78,20 +78,20 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                     //add a new map
                     m_maps_storage[map_name] = the_map;
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_OK);
+                    out.addVocab32(VOCAB_IMAP_OK);
                 }
                 else
                 {
                     //the map already exists
                     m_maps_storage[map_name] = the_map;
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_OK);
+                    out.addVocab32(VOCAB_IMAP_OK);
                 }
             }
             else
             {
                 out.clear();
-                out.addVocab(VOCAB_IMAP_ERROR);
+                out.addVocab32(VOCAB_IMAP_ERROR);
                 yCError(MAP2DSERVER) << "Error in copyPortable";
             }
         }
@@ -102,21 +102,21 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             if (it != m_maps_storage.end())
             {
                 out.clear();
-                out.addVocab(VOCAB_IMAP_OK);
+                out.addVocab32(VOCAB_IMAP_OK);
                 yarp::os::Bottle& mapbot = out.addList();
                 Property::copyPortable(it->second, mapbot);
             }
             else
             {
                 out.clear();
-                out.addVocab(VOCAB_IMAP_ERROR);
+                out.addVocab32(VOCAB_IMAP_ERROR);
                 yCError(MAP2DSERVER) << "Map" << name << "not found";
             }
         }
         else if (cmd == VOCAB_IMAP_GET_NAMES)
         {
             out.clear();
-            out.addVocab(VOCAB_IMAP_OK);
+            out.addVocab32(VOCAB_IMAP_OK);
 
             for (auto& it : m_maps_storage)
             {
@@ -131,113 +131,113 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 yCError(MAP2DSERVER) << "Map not found";
                 out.clear();
-                out.addVocab(VOCAB_IMAP_ERROR);
+                out.addVocab32(VOCAB_IMAP_ERROR);
             }
             else
             {
                 out.clear();
-                out.addVocab(VOCAB_IMAP_OK);
+                out.addVocab32(VOCAB_IMAP_OK);
             }
         }
         else if (cmd == VOCAB_IMAP_CLEAR_ALL_MAPS)
         {
             m_maps_storage.clear();
             out.clear();
-            out.addVocab(VOCAB_IMAP_OK);
+            out.addVocab32(VOCAB_IMAP_OK);
         }
         else if (cmd == VOCAB_IMAP_SAVE_X)
         {
-            if (in.get(2).asVocab() == VOCAB_IMAP_MAPS_COLLECTION)
+            if (in.get(2).asVocab32() == VOCAB_IMAP_MAPS_COLLECTION)
             {
                 string mapfile = in.get(3).asString();
                 if (saveMaps(mapfile))
                 {
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_OK);
+                    out.addVocab32(VOCAB_IMAP_OK);
                 }
                 else
                 {
                     yCError(MAP2DSERVER, "Unable to save collection");
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_ERROR);
+                    out.addVocab32(VOCAB_IMAP_ERROR);
                 }
             }
-            else if (in.get(2).asVocab() == VOCAB_IMAP_LOCATIONS_COLLECTION)
+            else if (in.get(2).asVocab32() == VOCAB_IMAP_LOCATIONS_COLLECTION)
             {
                 string locfile = in.get(3).asString();
                 if (save_locations_and_areas(locfile))
                 {
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_OK);
+                    out.addVocab32(VOCAB_IMAP_OK);
                 }
                 else
                 {
                     yCError(MAP2DSERVER, "Unable to save collection");
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_ERROR);
+                    out.addVocab32(VOCAB_IMAP_ERROR);
                 }
             }
             else
             {
                 yCError(MAP2DSERVER, "Parser error");
                 out.clear();
-                out.addVocab(VOCAB_IMAP_ERROR);
+                out.addVocab32(VOCAB_IMAP_ERROR);
             }
         }
         else if (cmd == VOCAB_IMAP_LOAD_X)
         {
-            if (in.get(2).asVocab()==VOCAB_IMAP_MAPS_COLLECTION)
+            if (in.get(2).asVocab32()==VOCAB_IMAP_MAPS_COLLECTION)
             {
                 string mapfile = in.get(3).asString();
                 if (loadMaps(mapfile))
                 {
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_OK);
+                    out.addVocab32(VOCAB_IMAP_OK);
                 }
                 else
                 {
                     yCError(MAP2DSERVER, "Unable to load collection");
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_ERROR);
+                    out.addVocab32(VOCAB_IMAP_ERROR);
                 }
             }
-            if (in.get(2).asVocab() == VOCAB_IMAP_LOCATIONS_COLLECTION)
+            if (in.get(2).asVocab32() == VOCAB_IMAP_LOCATIONS_COLLECTION)
             {
                 string locfile = in.get(3).asString();
                 if (load_locations_and_areas(locfile))
                 {
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_OK);
+                    out.addVocab32(VOCAB_IMAP_OK);
                 }
                 else
                 {
                     yCError(MAP2DSERVER, "Unable to load collection");
                     out.clear();
-                    out.addVocab(VOCAB_IMAP_ERROR);
+                    out.addVocab32(VOCAB_IMAP_ERROR);
                 }
             }
             else
             {
                 yCError(MAP2DSERVER, "Parser error");
                 out.clear();
-                out.addVocab(VOCAB_IMAP_ERROR);
+                out.addVocab32(VOCAB_IMAP_ERROR);
             }
         }
         else
         {
             yCError(MAP2DSERVER, "Invalid vocab received in Map2DServer");
             out.clear();
-            out.addVocab(VOCAB_IMAP_ERROR);
+            out.addVocab32(VOCAB_IMAP_ERROR);
         }
     }
     else if (code == VOCAB_INAVIGATION)
     {
-        int cmd = in.get(1).asVocab();
-        if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
+        int cmd = in.get(1).asVocab32();
+        if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab32() == VOCAB_NAV_LOCATION)
         {
             std::string info;
 
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
             Bottle& l = out.addList();
 
             std::map<std::string, Map2DLocation>::iterator it;
@@ -248,11 +248,11 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             yCInfo(MAP2DSERVER) << "The following locations are currently stored in the server:" << l.toString();
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        else if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab32() == VOCAB_NAV_AREA)
         {
             std::string info;
 
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
             Bottle& l = out.addList();
 
             std::map<std::string, Map2DArea>::iterator it;
@@ -263,11 +263,11 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             yCInfo(MAP2DSERVER) << "The following areas are currently stored in the server:" << l.toString();
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
+        else if (cmd == VOCAB_NAV_GET_LIST_X && in.get(2).asVocab32() == VOCAB_NAV_PATH)
         {
             std::string info;
 
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
             Bottle& l = out.addList();
 
             std::map<std::string, Map2DPath>::iterator it;
@@ -278,38 +278,38 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             yCInfo(MAP2DSERVER) << "The following paths are currently stored in the server: " << l.toString();
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
+        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab32() == VOCAB_NAV_LOCATION)
         {
             m_locations_storage.clear();
             yCInfo(MAP2DSERVER) << "All locations deleted";
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab32() == VOCAB_NAV_AREA)
         {
             m_areas_storage.clear();
             yCInfo(MAP2DSERVER) << "All areas deleted";
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
+        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab32() == VOCAB_NAV_PATH)
         {
             m_paths_storage.clear();
             yCInfo(MAP2DSERVER) << "All paths deleted";
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab() == VOCAB_NAV_TEMPORARY_FLAGS)
+        else if (cmd == VOCAB_NAV_CLEARALL_X && in.get(2).asVocab32() == VOCAB_NAV_TEMPORARY_FLAGS)
         {
             for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
             {
                 it->second.clearMapTemporaryFlags();
             }
             yCInfo(MAP2DSERVER) << "Temporary flags deleted from all maps";
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_TEMPORARY_FLAGS)
+        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab32() == VOCAB_NAV_TEMPORARY_FLAGS)
         {
             std::string name = in.get(3).asString();
 
@@ -318,16 +318,16 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 yCInfo(MAP2DSERVER) << "Temporary flags cleaned" << name;
                 it->second.clearMapTemporaryFlags();
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
             }
             else
             {
                 yCError(MAP2DSERVER, "User requested an invalid map name");
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
             }
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
+        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab32() == VOCAB_NAV_LOCATION)
         {
             std::string name = in.get(3).asString();
 
@@ -337,16 +337,16 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 yCInfo(MAP2DSERVER) << "Deleted location" << name;
                 m_locations_storage.erase(it);
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
             }
             else
             {
                 yCError(MAP2DSERVER, "User requested an invalid location name");
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
             }
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
+        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab32() == VOCAB_NAV_PATH)
         {
             std::string name = in.get(3).asString();
 
@@ -356,17 +356,17 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 yCInfo(MAP2DSERVER) << "Deleted path" << name;
                 m_paths_storage.erase(it);
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
             }
             else
             {
                 yCError(MAP2DSERVER, "User requested an invalid location name");
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
             }
 
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_RENAME_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
+        else if (cmd == VOCAB_NAV_RENAME_X && in.get(2).asVocab32() == VOCAB_NAV_LOCATION)
         {
             std::string orig_name = in.get(3).asString();
             std::string new_name = in.get(4).asString();
@@ -383,16 +383,16 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 auto loc = orig_it->second;
                 m_locations_storage.erase(orig_it);
                 m_locations_storage.insert(std::pair<std::string, Map2DLocation>(new_name, loc));
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
             }
             else
             {
                 yCError(MAP2DSERVER, "User requested an invalid rename operation");
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
             }
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_RENAME_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        else if (cmd == VOCAB_NAV_RENAME_X && in.get(2).asVocab32() == VOCAB_NAV_AREA)
         {
             std::string orig_name = in.get(3).asString();
             std::string new_name = in.get(4).asString();
@@ -409,16 +409,16 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 auto area = orig_it->second;
                 m_areas_storage.erase(orig_it);
                 m_areas_storage.insert(std::pair<std::string, Map2DArea>(new_name,area));
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
             }
             else
             {
                 yCError(MAP2DSERVER, "User requested an invalid rename operation");
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
             }
 //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_RENAME_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
+        else if (cmd == VOCAB_NAV_RENAME_X && in.get(2).asVocab32() == VOCAB_NAV_PATH)
         {
             std::string orig_name = in.get(3).asString();
             std::string new_name = in.get(4).asString();
@@ -435,16 +435,16 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 auto area = orig_it->second;
                 m_paths_storage.erase(orig_it);
                 m_paths_storage.insert(std::pair<std::string, Map2DPath>(new_name, area));
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
             }
             else
             {
                 yCError(MAP2DSERVER, "User requested an invalid rename operation");
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
             }
             //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        else if (cmd == VOCAB_NAV_DELETE_X && in.get(2).asVocab32() == VOCAB_NAV_AREA)
         {
         std::string name = in.get(3).asString();
 
@@ -454,17 +454,17 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         {
             yCInfo(MAP2DSERVER) << "Deleted area" << name;
             m_areas_storage.erase(it);
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
         }
         else
         {
             yCError(MAP2DSERVER, "User requested an invalid area name");
-            out.addVocab(VOCAB_ERR);
+            out.addVocab32(VOCAB_ERR);
         }
 
         //             ret = true;
         }
-        else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
+        else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab32() == VOCAB_NAV_LOCATION)
         {
             std::string name = in.get(3).asString();
 
@@ -472,7 +472,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             it = m_locations_storage.find(name);
             if (it != m_locations_storage.end())
             {
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
                 Map2DLocation loc = it->second;
                 yCInfo(MAP2DSERVER) << "Retrieved location" << name << "at" << loc.toString();
                 out.addString(loc.map_id);
@@ -482,12 +482,12 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             else
             {
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
                 yCError(MAP2DSERVER, "User requested an invalid location name");
             }
             //ret = true;
         }
-        else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab32() == VOCAB_NAV_AREA)
         {
             std::string area_name = in.get(3).asString();
 
@@ -501,12 +501,12 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
                 if (Property::copyPortable(areatemp, areabot) == false)
                 {
                     yCError(MAP2DSERVER) << "VOCAB_NAV_GET_X VOCAB_NAV_AREA failed copyPortable()";
-                    out.addVocab(VOCAB_ERR);
+                    out.addVocab32(VOCAB_ERR);
                 }
                 else
                 {
                     yCInfo(MAP2DSERVER) << "Retrieved area" << area_name << "at" << area.toString();
-                    out.addVocab(VOCAB_OK);
+                    out.addVocab32(VOCAB_OK);
 
                     yarp::os::Bottle& areabot = out.addList();
                     Property::copyPortable(areatemp, areabot);
@@ -514,12 +514,12 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             else
             {
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
                 yCError(MAP2DSERVER, "User requested an invalid area name");
             }
             //ret = true;
         }
-        else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
+        else if (cmd == VOCAB_NAV_GET_X && in.get(2).asVocab32() == VOCAB_NAV_PATH)
         {
         std::string path_name = in.get(3).asString();
 
@@ -533,12 +533,12 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             if (Property::copyPortable(pathtemp, pathbot) == false)
             {
                 yCError(MAP2DSERVER) << "VOCAB_NAV_GET_X VOCAB_NAV_PATH failed copyPortable()";
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
             }
             else
             {
                 yCInfo(MAP2DSERVER) << "Retrieved path" << path_name << "at" << path.toString();
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
 
                 yarp::os::Bottle& pathbot = out.addList();
                 Property::copyPortable(pathtemp, pathbot);
@@ -546,12 +546,12 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         }
         else
         {
-            out.addVocab(VOCAB_ERR);
+            out.addVocab32(VOCAB_ERR);
             yCError(MAP2DSERVER, "User requested an invalid path name");
         }
         //ret = true;
         }
-        else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab() == VOCAB_NAV_LOCATION)
+        else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab32() == VOCAB_NAV_LOCATION)
         {
             Map2DLocation         location;
             std::string name = in.get(3).asString();
@@ -563,10 +563,10 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
 
             m_locations_storage.insert(std::pair<std::string, Map2DLocation>(name, location));
             yCInfo(MAP2DSERVER) << "Added location" << name << "at" << location.toString();
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
             //ret = true;
         }
-        else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab() == VOCAB_NAV_AREA)
+        else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab32() == VOCAB_NAV_AREA)
         {
             Map2DArea         area;
             std::string area_name = in.get(3).asString();
@@ -576,16 +576,16 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 m_areas_storage.insert(std::pair<std::string, Map2DArea>(area_name, area));
                 yCInfo(MAP2DSERVER) << "Added area" << area_name << "at" << area.toString();
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
             }
             else
             {
                 yCError(MAP2DSERVER) << "VOCAB_NAV_STORE_X VOCAB_NAV_AREA failed copyPortable()";
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
             }
             //ret = true;
         }
-        else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab() == VOCAB_NAV_PATH)
+        else if (cmd == VOCAB_NAV_STORE_X && in.get(2).asVocab32() == VOCAB_NAV_PATH)
         {
             Map2DPath         path;
             std::string path_name = in.get(3).asString();
@@ -595,12 +595,12 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             {
                 m_paths_storage.insert(std::pair<std::string, Map2DPath>(path_name, path));
                 yCInfo(MAP2DSERVER) << "Added path" << path_name << "at" << path.toString();
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
             }
             else
             {
                 yCError(MAP2DSERVER) << "VOCAB_NAV_STORE_X VOCAB_NAV_PATH failed copyPortable()";
-                out.addVocab(VOCAB_ERR);
+                out.addVocab32(VOCAB_ERR);
             }
             //ret = true;
         }
@@ -608,14 +608,14 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         {
             yCError(MAP2DSERVER) << "Invalid vocab received:" << in.toString();
             out.clear();
-            out.addVocab(VOCAB_ERR);
+            out.addVocab32(VOCAB_ERR);
         }
     }
     else
     {
         yCError(MAP2DSERVER) << "Invalid vocab received:" << in.toString();
         out.clear();
-        out.addVocab(VOCAB_IMAP_ERROR);
+        out.addVocab32(VOCAB_IMAP_ERROR);
     }
 }
 
@@ -772,7 +772,7 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
     }
     else if(in.get(0).asString() == "help")
     {
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         out.addString("'save_locations&areas <full path filename>' to save locations and areas on a file");
         out.addString("'load_locations&areas <full path filename>' to load locations and areas from a file");
         out.addString("'list_locations' to view a list of all stored locations");
@@ -811,7 +811,7 @@ bool Map2DServer::read(yarp::os::ConnectionReader& connection)
         parse_string_command(in, out);
     }
     // parse vocab command
-    else if(in.get(0).isVocab())
+    else if(in.get(0).isVocab32())
     {
         parse_vocab_command(in, out);
     }

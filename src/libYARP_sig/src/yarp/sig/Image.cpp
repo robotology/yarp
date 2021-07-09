@@ -654,8 +654,8 @@ void Image::wrapIplImage(void *iplImage) {
         printf("your specific IPL format (%s depth %d -> %s) does not match your YARP format (%s)\n",
                str.c_str(),
                p->depth,
-               Vocab::decode(code).c_str(),
-               Vocab::decode(getPixelCode()).c_str());
+               Vocab32::decode(code).c_str(),
+               Vocab32::decode(getPixelCode()).c_str());
         printf("Making a copy instead of just wrapping...\n");
         FlexImage img;
         img.setQuantum(p->align);

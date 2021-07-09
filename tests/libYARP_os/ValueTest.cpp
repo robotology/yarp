@@ -218,7 +218,7 @@ TEST_CASE("os::ValueTest", "[yarp::os]")
     {
         Value v1(10);
         Value v2(10, true);
-        CHECK(v2.isVocab()); // (vocab) type ok
+        CHECK(v2.isVocab32()); // (vocab) type ok
         CHECK(v1 != v2); // (vocab) operator!= ok
     }
 

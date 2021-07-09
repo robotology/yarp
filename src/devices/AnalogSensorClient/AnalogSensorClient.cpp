@@ -268,8 +268,8 @@ int AnalogSensorClient::getChannels()
 int AnalogSensorClient::calibrateSensor()
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_IANALOG);
-    cmd.addVocab(VOCAB_CALIBRATE);
+    cmd.addVocab32(VOCAB_IANALOG);
+    cmd.addVocab32(VOCAB_CALIBRATE);
     bool ok = rpcPort.write(cmd, response);
     return checkResponse(ok, response);
 }
@@ -277,8 +277,8 @@ int AnalogSensorClient::calibrateSensor()
 int AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& value)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_IANALOG);
-    cmd.addVocab(VOCAB_CALIBRATE);
+    cmd.addVocab32(VOCAB_IANALOG);
+    cmd.addVocab32(VOCAB_CALIBRATE);
     Bottle& l = cmd.addList();
     for (int i = 0; i < this->getChannels(); i++)
          l.addFloat64(value[i]);
@@ -289,8 +289,8 @@ int AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& value)
 int AnalogSensorClient::calibrateChannel(int ch)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_IANALOG);
-    cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
+    cmd.addVocab32(VOCAB_IANALOG);
+    cmd.addVocab32(VOCAB_CALIBRATE_CHANNEL);
     cmd.addInt32(ch);
     bool ok = rpcPort.write(cmd, response);
     return checkResponse(ok, response);
@@ -299,8 +299,8 @@ int AnalogSensorClient::calibrateChannel(int ch)
 int AnalogSensorClient::calibrateChannel(int ch, double value)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_IANALOG);
-    cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
+    cmd.addVocab32(VOCAB_IANALOG);
+    cmd.addVocab32(VOCAB_CALIBRATE_CHANNEL);
     cmd.addInt32(ch);
     cmd.addFloat64(value);
     bool ok = rpcPort.write(cmd, response);

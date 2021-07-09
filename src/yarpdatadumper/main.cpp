@@ -167,7 +167,7 @@ public:
         fName << setw(8) << setfill('0') << cnt << ext;
         file::write(*p,dirName+"/"+fName.str(), fileformat);
 
-        return (fName.str()+" ["+Vocab::decode(code)+"]");
+        return (fName.str()+" ["+Vocab32::decode(code)+"]");
     }
 
 #ifdef ADD_VIDEO

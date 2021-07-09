@@ -44,7 +44,7 @@ template <typename ImageType,
 bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& reply)
 {
     if (!iFrameGrabberOf) {
-        reply.addVocab(VOCAB_FAILED);
+        reply.addVocab32(VOCAB_FAILED);
         // FIXME C++17
         if /* constexpr */ (std::is_same<ImageType, yarp::sig::ImageOf<yarp::sig::PixelRgb>>::value) {
             reply.addString("Selected camera device has no IFrameGrabberImage interface");
@@ -59,27 +59,27 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
         return false;
     }
 
-    if (cmd.get(0).asVocab() != IfVocab) {
-        reply.addVocab(VOCAB_FAILED);
+    if (cmd.get(0).asVocab32() != IfVocab) {
+        reply.addVocab32(VOCAB_FAILED);
         yCError(FRAMEGRABBEROF_RESPONDER) << "Received a command not belonging to this interface.";
         return false;
     }
 
-    switch (cmd.get(1).asVocab()) {
+    switch (cmd.get(1).asVocab32()) {
     case VOCAB_GET: {
-        switch (cmd.get(2).asVocab()) {
+        switch (cmd.get(2).asVocab32()) {
         case VOCAB_HEIGHT:
             reply.clear();
-            reply.addVocab(IfVocab);
-            reply.addVocab(VOCAB_HEIGHT);
-            reply.addVocab(VOCAB_IS);
+            reply.addVocab32(IfVocab);
+            reply.addVocab32(VOCAB_HEIGHT);
+            reply.addVocab32(VOCAB_IS);
             reply.addInt32(iFrameGrabberOf->height());
             break;
         case VOCAB_WIDTH:
             reply.clear();
-            reply.addVocab(IfVocab);
-            reply.addVocab(VOCAB_WIDTH);
-            reply.addVocab(VOCAB_IS);
+            reply.addVocab32(IfVocab);
+            reply.addVocab32(VOCAB_WIDTH);
+            reply.addVocab32(VOCAB_IS);
             reply.addInt32(iFrameGrabberOf->width());
             break;
         case ImgVocab: {
@@ -88,15 +88,15 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
             iFrameGrabberOf->getImage(image);
 
             if (image.width() == 0 || image.height() == 0 || image.getRawImage() == nullptr) {
-                reply.addVocab(VOCAB_FAILED);
+                reply.addVocab32(VOCAB_FAILED);
                 reply.addString("Could not retrieve image from device.");
                 yCError(FRAMEGRABBEROF_RESPONDER) << "Could not retrieve image from device.";
                 return false;
             }
 
-            reply.addVocab(IfVocab);
-            reply.addVocab(ImgVocab);
-            reply.addVocab(VOCAB_IS);
+            reply.addVocab32(IfVocab);
+            reply.addVocab32(ImgVocab);
+            reply.addVocab32(VOCAB_IS);
             auto& b = reply.addList();
             yarp::os::Portable::copyPortable(image, b);
         } break;
@@ -106,7 +106,7 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
             // If not, acquire the whole image and crop it here before sending it.
 
             if (cmd.size() != 5) {
-                reply.addVocab(VOCAB_FAILED);
+                reply.addVocab32(VOCAB_FAILED);
                 reply.addString("GetImageCrop failed: Invalid command received.");
                 yCError(FRAMEGRABBEROF_RESPONDER) << "GetImageCrop failed: Invalid command received, got " << cmd.toString();
                 return false;
@@ -114,7 +114,7 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
 
             yarp::os::Bottle* list = cmd.get(4).asList();
             if (!list) {
-                reply.addVocab(VOCAB_FAILED);
+                reply.addVocab32(VOCAB_FAILED);
                 reply.addString("GetImageCrop failed: Empty vertices list received.");
                 yCError(FRAMEGRABBEROF_RESPONDER) << "GetImageCrop failed: Empty vertices list received.";
                 return false;
@@ -132,13 +132,13 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
 
             ImageType cropped;
 
-            if (iFrameGrabberOf->getImageCrop(static_cast<cropType_id_t>(cmd.get(3).asVocab()), vertices, cropped)) {
+            if (iFrameGrabberOf->getImageCrop(static_cast<cropType_id_t>(cmd.get(3).asVocab32()), vertices, cropped)) {
                 // use the device output
             } else {
                 // In case the device has not yet implemented this feature, do it here (less efficient)
-                if (cmd.get(3).asVocab() == YARP_CROP_RECT) {
+                if (cmd.get(3).asVocab32() == YARP_CROP_RECT) {
                     if (nPoints != 2) {
-                        reply.addVocab(VOCAB_FAILED);
+                        reply.addVocab32(VOCAB_FAILED);
                         reply.addString("GetImageCrop failed: RECT mode requires 2 vertices.");
                         yCError(FRAMEGRABBEROF_RESPONDER) << "GetImageCrop failed: RECT mode requires 2 vertices, got " << nPoints;
                         return false;
@@ -147,7 +147,7 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
                     iFrameGrabberOf->getImage(full);
 
                     if (!yarp::sig::utils::cropRect(full, vertices[0], vertices[1], cropped)) {
-                        reply.addVocab(VOCAB_FAILED);
+                        reply.addVocab32(VOCAB_FAILED);
                         reply.addString("GetImageCrop failed: utils::cropRect error.");
                         yCError(FRAMEGRABBEROF_RESPONDER, "GetImageCrop failed: utils::cropRect error: (%d, %d) (%d, %d)",
                                 vertices[0].first,
@@ -156,22 +156,22 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
                                 vertices[1].second);
                         return false;
                     }
-                } else if (cmd.get(3).asVocab() == YARP_CROP_LIST) {
-                    reply.addVocab(VOCAB_FAILED);
+                } else if (cmd.get(3).asVocab32() == YARP_CROP_LIST) {
+                    reply.addVocab32(VOCAB_FAILED);
                     reply.addString("List type not yet implemented");
                     yCError(FRAMEGRABBEROF_RESPONDER) << "List type not yet implemented";
                     return false;
                 } else {
-                    reply.addVocab(VOCAB_FAILED);
+                    reply.addVocab32(VOCAB_FAILED);
                     reply.addString("Crop type unknown");
                     yCError(FRAMEGRABBEROF_RESPONDER) << "Crop type unknown";
                     return false;
                 }
             }
 
-            reply.addVocab(IfVocab);
-            reply.addVocab(VOCAB_CROP);
-            reply.addVocab(VOCAB_IS);
+            reply.addVocab32(IfVocab);
+            reply.addVocab32(VOCAB_CROP);
+            reply.addVocab32(VOCAB_IS);
             auto& b = reply.addList();
             yarp::os::Portable::copyPortable(cropped, b);
             return true;
@@ -181,7 +181,7 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
 
     case VOCAB_SET: // Nothing to do here yet
     default:
-        reply.addVocab(VOCAB_FAILED);
+        reply.addVocab32(VOCAB_FAILED);
         reply.addString("Received an unknown command");
         yCError(FRAMEGRABBEROF_RESPONDER) << "Received an unknown command " << cmd.toString();
         break;

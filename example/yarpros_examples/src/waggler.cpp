@@ -9,14 +9,28 @@
 
 #include <ros/ros.h>
 #include <yarpros_examples/VocabVocabDoubles.h>
-#include <stdio.h>
+#include <cstdio>
+#include <cstdint>
 
 // A few YARP defines
 #define BOTTLE_TAG_INT32 1
 #define BOTTLE_TAG_VOCAB32 (1+8)
 #define BOTTLE_TAG_FLOAT64 (2+8)
 #define BOTTLE_TAG_LIST 256
-#define yarp::os::createVocab(a,b,c,d) ((((int)(d))<<24)+(((int)(c))<<16)+(((int)(b))<<8)+((int)(a)))
+namespace yarp {
+namespace conf {
+using vocab32_t = std::int32_t;
+} // namespace conf
+namespace os {
+constexpr yarp::conf::vocab32_t createVocab32(char a, char b = 0, char c = 0, char d = 0)
+{
+    return (static_cast<yarp::conf::vocab32_t>(a))       +
+           (static_cast<yarp::conf::vocab32_t>(b) << 8)  +
+           (static_cast<yarp::conf::vocab32_t>(c) << 16) +
+           (static_cast<yarp::conf::vocab32_t>(d) << 24);
+}
+} // namespace os
+} // namespace yarp
 // YARP defines over
 
 int main(int argc, char** argv) {
@@ -38,9 +52,9 @@ int main(int argc, char** argv) {
     msg.list_tag = BOTTLE_TAG_LIST;
     msg.list_len = 3;
     msg.vocab1_tag = BOTTLE_TAG_VOCAB32;
-    msg.vocab1_val = yarp::os::createVocab('s','e','t',0);
+    msg.vocab1_val = yarp::os::createVocab32('s','e','t',0);
     msg.vocab2_tag = BOTTLE_TAG_VOCAB32;
-    msg.vocab2_val = yarp::os::createVocab('p','o','s','s');
+    msg.vocab2_val = yarp::os::createVocab32('p','o','s','s');
     msg.setpoints_tag = BOTTLE_TAG_LIST+BOTTLE_TAG_FLOAT64;
     msg.setpoints.resize(joint_count);
     for (int i=0; i<joint_count; i++) {

@@ -435,26 +435,26 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
         std::string encoding = prop.find("encoding").asString();
         int bpp = 1;
         int translated_encoding = 0;
-        switch (Vocab::encode(encoding)) {
-        case yarp::os::createVocab('b','g','r','8'):
+        switch (Vocab32::encode(encoding)) {
+        case yarp::os::createVocab32('b','g','r','8'):
             bpp = 3;
             translated_encoding = VOCAB_PIXEL_BGR;
             break;
-        case yarp::os::createVocab('r','g','b','8'):
+        case yarp::os::createVocab32('r','g','b','8'):
             bpp = 3;
             translated_encoding = VOCAB_PIXEL_RGB;
             break;
-        case yarp::os::createVocab('3','2','F','C'):
+        case yarp::os::createVocab32('3','2','F','C'):
             yAssert(encoding=="32FC1");
             bpp = 4;
             translated_encoding = VOCAB_PIXEL_MONO_FLOAT;
             break;
-        case yarp::os::createVocab('1','6','U','C'):
+        case yarp::os::createVocab32('1','6','U','C'):
             yAssert(encoding=="16UC1");
             bpp = 2;
             translated_encoding = VOCAB_PIXEL_MONO16;
             break;
-        case yarp::os::createVocab('m','o','n','o'):
+        case yarp::os::createVocab32('m','o','n','o'):
             yAssert(encoding=="mono8"||encoding=="mono16");
             if (encoding == "mono8") {
                 bpp = 1;
@@ -464,7 +464,7 @@ void WireTwiddlerReader::compute(const WireTwiddlerGap& gap) {
                 translated_encoding = VOCAB_PIXEL_MONO16;
             }
             break;
-        case yarp::os::createVocab('b', 'a', 'y', 'e'):
+        case yarp::os::createVocab32('b', 'a', 'y', 'e'):
             bpp = 1;
             translated_encoding = VOCAB_PIXEL_MONO;
             if (encoding == "bayer_grbg8")

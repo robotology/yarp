@@ -93,7 +93,7 @@ void FakeMotionControl::run()
         else
         {
             //unsupported control mode
-            yCWarning(FAKEMOTIONCONTROL) << "Unsupported control mode, joint " << i << " " << yarp::os::Vocab::decode(_controlModes[i]);
+            yCWarning(FAKEMOTIONCONTROL) << "Unsupported control mode, joint " << i << " " << yarp::os::Vocab32::decode(_controlModes[i]);
         }
     }
     prev_time = yarp::os::Time::now();
@@ -2249,7 +2249,7 @@ bool FakeMotionControl::getControlModesRaw(const int n_joint, const int *joints,
 bool FakeMotionControl::setControlModeRaw(const int j, const int _mode)
 {
     if(verbose >= VERY_VERBOSE)
-        yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " mode: " << yarp::os::Vocab::decode(_mode);
+        yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " mode: " << yarp::os::Vocab32::decode(_mode);
 
     if (_mode==VOCAB_CM_FORCE_IDLE)
     {
@@ -2999,7 +2999,7 @@ bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 bool FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::InteractionModeEnum _mode)
 {
     if(verbose >= VERY_VERBOSE)
-        yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " interaction mode: " << yarp::os::Vocab::decode(_mode);
+        yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " interaction mode: " << yarp::os::Vocab32::decode(_mode);
 
     _interactMode[j] = _mode;
 

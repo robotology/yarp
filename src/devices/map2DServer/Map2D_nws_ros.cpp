@@ -81,13 +81,13 @@ bool Map2D_nws_ros::read(yarp::os::ConnectionReader& connection)
 
     if (command.get(0).isString() && command.get(0).asString() == "help")
     {
-        reply.addVocab(Vocab::encode("many"));
+        reply.addVocab32("many");
         reply.addString("No commands currently available:");
     }
     else
     {
         yCError(MAP2D_NWS_ROS) << "Invalid command. Try `help`";
-        reply.addVocab(VOCAB_ERR);
+        reply.addVocab32(VOCAB_ERR);
     }
 
     yarp::os::ConnectionWriter* returnToSender = connection.getWriter();

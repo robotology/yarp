@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.12)
 project(thrift_example)
 
 find_package(YARP COMPONENTS os idl_tools REQUIRED)
-set(CMAKE_CXX_FLAGS "-Weverything -Wno-c++98-compat -Wno-padded -Wno-shadow")
+set(CMAKE_CXX_FLAGS "${YARP_CXX_FLAGS}")
 
 set(THRIFT_FILES thrift/firstInterface/PointD.thrift
                  thrift/secondInterface/demo.thrift)

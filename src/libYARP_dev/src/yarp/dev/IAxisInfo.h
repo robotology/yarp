@@ -27,9 +27,9 @@ namespace yarp
 
         enum JointTypeEnum
         {
-            VOCAB_JOINTTYPE_REVOLUTE  = yarp::os::createVocab('a', 't', 'r', 'v'),
-            VOCAB_JOINTTYPE_PRISMATIC = yarp::os::createVocab('a', 't', 'p', 'r'),
-            VOCAB_JOINTTYPE_UNKNOWN   = yarp::os::createVocab('u', 'n', 'k', 'n')
+            VOCAB_JOINTTYPE_REVOLUTE  = yarp::os::createVocab32('a', 't', 'r', 'v'),
+            VOCAB_JOINTTYPE_PRISMATIC = yarp::os::createVocab32('a', 't', 'p', 'r'),
+            VOCAB_JOINTTYPE_UNKNOWN   = yarp::os::createVocab32('u', 'n', 'k', 'n')
         };
     }
 }
@@ -89,7 +89,7 @@ public:
 };
 
 // interface IAxisInfo
-constexpr yarp::conf::vocab32_t VOCAB_INFO_NAME            = yarp::os::createVocab('n','a','m','e');
-constexpr yarp::conf::vocab32_t VOCAB_INFO_TYPE            = yarp::os::createVocab('t','y','p','e');
+constexpr yarp::conf::vocab32_t VOCAB_INFO_NAME            = yarp::os::createVocab32('n','a','m','e');
+constexpr yarp::conf::vocab32_t VOCAB_INFO_TYPE            = yarp::os::createVocab32('t','y','p','e');
 
 #endif // YARP_DEV_IAXISINFO_H

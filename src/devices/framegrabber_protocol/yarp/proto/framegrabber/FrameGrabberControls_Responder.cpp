@@ -35,8 +35,8 @@ bool FrameGrabberControls_Responder::configure(yarp::dev::IFrameGrabberControls*
 bool FrameGrabberControls_Responder::respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response)
 {
     bool ok = false;
-    int action = cmd.get(1).asVocab();
-    int param = cmd.get(2).asVocab();
+    int action = cmd.get(1).asVocab32();
+    int param = cmd.get(2).asVocab32();
 
     if (!fgCtrl) {
         yError() << " Selected camera device has no IFrameGrabberControl interface";
@@ -47,9 +47,9 @@ bool FrameGrabberControls_Responder::respond(const yarp::os::Bottle& cmd, yarp::
 
     switch (action) {
     case VOCAB_HAS: {
-        response.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
-        response.addVocab(VOCAB_HAS);
-        response.addVocab(VOCAB_FEATURE);
+        response.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+        response.addVocab32(VOCAB_HAS);
+        response.addVocab32(VOCAB_FEATURE);
         response.addInt32(param);
 
         switch (param) {
@@ -86,7 +86,7 @@ bool FrameGrabberControls_Responder::respond(const yarp::os::Bottle& cmd, yarp::
 
         default:
         {
-            yError() << "Unknown command 'HAS " << yarp::os::Vocab::decode(param) << "' received on IFrameGrabber2 interface";
+            yError() << "Unknown command 'HAS " << yarp::os::Vocab32::decode(param) << "' received on IFrameGrabber2 interface";
             response.clear();
             ok = false;
         } break;
@@ -119,7 +119,7 @@ bool FrameGrabberControls_Responder::respond(const yarp::os::Bottle& cmd, yarp::
 
         default:
         {
-            yError() << "Unknown command 'SET " << yarp::os::Vocab::decode(param) << "' received on IFrameGrabber2 interface";
+            yError() << "Unknown command 'SET " << yarp::os::Vocab32::decode(param) << "' received on IFrameGrabber2 interface";
             response.clear();
             ok = false;
         }
@@ -129,9 +129,9 @@ bool FrameGrabberControls_Responder::respond(const yarp::os::Bottle& cmd, yarp::
     } break; // end VOCAB_SET
 
     case VOCAB_GET: {
-        response.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
-        response.addVocab(param);
-        response.addVocab(VOCAB_IS);
+        response.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+        response.addVocab32(param);
+        response.addVocab32(VOCAB_IS);
         switch (param) {
         case VOCAB_CAMERA_DESCRIPTION: {
             CameraDescriptor camera;
@@ -169,7 +169,7 @@ bool FrameGrabberControls_Responder::respond(const yarp::os::Bottle& cmd, yarp::
 
         default:
         {
-            yError() << "Unknown command 'GET " << yarp::os::Vocab::decode(param) << "' received on IFrameGrabber2 interface";
+            yError() << "Unknown command 'GET " << yarp::os::Vocab32::decode(param) << "' received on IFrameGrabber2 interface";
             response.clear();
             ok = false;
         }

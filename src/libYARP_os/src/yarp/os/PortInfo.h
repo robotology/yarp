@@ -40,10 +40,10 @@ public:
         PORTINFO_NULL = 0,
 
         /// Information about an incoming or outgoing connection.
-        PORTINFO_CONNECTION = yarp::os::createVocab('c', 'o', 'n', 'n'),
+        PORTINFO_CONNECTION = yarp::os::createVocab32('c', 'o', 'n', 'n'),
 
         /// Unspecified information.
-        PORTINFO_MISC = yarp::os::createVocab('m', 'i', 's', 'c')
+        PORTINFO_MISC = yarp::os::createVocab32('m', 'i', 's', 'c')
     };
 
     /// Type of information. PORTINFO_CONNECTION for information

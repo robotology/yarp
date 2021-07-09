@@ -24,13 +24,13 @@ using namespace yarp::sig::draw;
 
 namespace {
 YARP_LOG_COMPONENT(FAKEFRAMEGRABBER, "yarp.device.fakeFrameGrabber")
-constexpr yarp::conf::vocab32_t VOCAB_LINE           = yarp::os::createVocab('l','i','n','e');
-constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab('b','a','l','l');
-constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab('g','r','i','d');
-constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab('r','a','n','d');
-constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab('n','o','n','e');
-constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab('s','i','z','e');
-constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab('t','i','m','e');
+constexpr yarp::conf::vocab32_t VOCAB_LINE           = yarp::os::createVocab32('l','i','n','e');
+constexpr yarp::conf::vocab32_t VOCAB_BALL           = yarp::os::createVocab32('b','a','l','l');
+constexpr yarp::conf::vocab32_t VOCAB_GRID           = yarp::os::createVocab32('g','r','i','d');
+constexpr yarp::conf::vocab32_t VOCAB_RAND           = yarp::os::createVocab32('r','a','n','d');
+constexpr yarp::conf::vocab32_t VOCAB_NONE           = yarp::os::createVocab32('n','o','n','e');
+constexpr yarp::conf::vocab32_t VOCAB_GRID_MULTISIZE = yarp::os::createVocab32('s','i','z','e');
+constexpr yarp::conf::vocab32_t VOCAB_TIMETEXT       = yarp::os::createVocab32('t','i','m','e');
 
 //the following data are used by [time] test
 constexpr char num[12][16]
@@ -134,7 +134,7 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
 
     if (command.get(0).asString()=="help")
     {
-        reply.addVocab(Vocab::encode("many"));
+        reply.addVocab32("many");
         reply.addString("set_mode <mode>");
         reply.addString("set_image <file_name>/off");
         reply.addString("available modes: ball, line, grid, size, rand, none, time");
@@ -145,7 +145,7 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
     }
     else if (command.get(0).asString() == "set_mode")
     {
-        mode= command.get(1).asVocab();
+        mode= command.get(1).asVocab32();
         reply.addString("ack");
     }
     else if (command.get(0).asString() == "set_image")
@@ -290,7 +290,7 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
 
     mode = config.check("mode",
                         yarp::os::Value(VOCAB_LINE, true),
-                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]").asVocab();
+                        "bouncy [ball], scrolly [line], grid [grid], grid multisize [size], random [rand], none [none], time test[time]").asVocab32();
 
     if (config.check("src")) {
         if (!yarp::sig::file::read(background,
@@ -324,12 +324,12 @@ bool FakeFrameGrabber::open(yarp::os::Searchable& config) {
                "Test grabber period %g / freq %g , mode [%s]",
                period,
                freq,
-               yarp::os::Vocab::decode(mode).c_str());
+               yarp::os::Vocab32::decode(mode).c_str());
     } else {
         yCInfo(FAKEFRAMEGRABBER,
                "Test grabber period %g / freq [inf], mode [%s]",
                period,
-               yarp::os::Vocab::decode(mode).c_str());
+               yarp::os::Vocab32::decode(mode).c_str());
     }
 
     bx = w/2;

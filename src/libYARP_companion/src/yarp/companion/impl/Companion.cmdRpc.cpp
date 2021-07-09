@@ -77,7 +77,7 @@ char* command_generator (const char* text, int state)
         if (helpOk)
         {
             yarp::os::Bottle* cmdList = nullptr;
-            if (helpBottle.get(0).isVocab() && helpBottle.get(0).asVocab()==yarp::os::createVocab('m', 'a', 'n', 'y') )
+            if (helpBottle.get(0).isVocab32() && helpBottle.get(0).asVocab32()==yarp::os::createVocab32('m', 'a', 'n', 'y') )
             {
                 cmdList=helpBottle.get(1).asList();
             }
@@ -199,7 +199,7 @@ int Companion::rpc(const char *connectionName, const char *targetName)
                     resendCount++;
                     break;
                 }
-                if (reply.get(0).isVocab() && reply.get(0).asVocab()==yarp::os::createVocab('m', 'a', 'n', 'y')) {
+                if (reply.get(0).isVocab32() && reply.get(0).asVocab32()==yarp::os::createVocab32('m', 'a', 'n', 'y')) {
                     yCInfo(COMPANION, "Responses:");
                     Bottle *lst = &reply;
                     int start = 1;

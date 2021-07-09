@@ -318,17 +318,17 @@ public:
 };
 
 // interface IAmplifierControl sets/gets
-constexpr yarp::conf::vocab32_t VOCAB_AMP_ENABLE            = yarp::os::createVocab('a','e','n');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_DISABLE           = yarp::os::createVocab('a','d','i');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_STATUS            = yarp::os::createVocab('a','s','t','a');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_STATUS_SINGLE     = yarp::os::createVocab('a','s','t','s');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_CURRENT           = yarp::os::createVocab('a','c','u');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_CURRENTS          = yarp::os::createVocab('a','c','u','s');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_MAXCURRENT        = yarp::os::createVocab('m','a','x','c');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_NOMINAL_CURRENT   = yarp::os::createVocab('a','c','n','o');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_PEAK_CURRENT      = yarp::os::createVocab('a','c','p','k');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_PWM               = yarp::os::createVocab('p','w','m');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_PWM_LIMIT         = yarp::os::createVocab('p','w','m','l');
-constexpr yarp::conf::vocab32_t VOCAB_AMP_VOLTAGE_SUPPLY    = yarp::os::createVocab('a','v','s','u');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_ENABLE            = yarp::os::createVocab32('a','e','n');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_DISABLE           = yarp::os::createVocab32('a','d','i');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_STATUS            = yarp::os::createVocab32('a','s','t','a');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_STATUS_SINGLE     = yarp::os::createVocab32('a','s','t','s');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_CURRENT           = yarp::os::createVocab32('a','c','u');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_CURRENTS          = yarp::os::createVocab32('a','c','u','s');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_MAXCURRENT        = yarp::os::createVocab32('m','a','x','c');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_NOMINAL_CURRENT   = yarp::os::createVocab32('a','c','n','o');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_PEAK_CURRENT      = yarp::os::createVocab32('a','c','p','k');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_PWM               = yarp::os::createVocab32('p','w','m');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_PWM_LIMIT         = yarp::os::createVocab32('p','w','m','l');
+constexpr yarp::conf::vocab32_t VOCAB_AMP_VOLTAGE_SUPPLY    = yarp::os::createVocab32('a','v','s','u');
 
 #endif // YARP_DEV_IAMPLIFIERCONTROL_H

@@ -123,18 +123,18 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
     if (!ok) return false;
 
     // parse in, prepare out
-    code = in.get(0).asVocab();
+    code = in.get(0).asVocab32();
     ret = false;
 
     if (code == VOCAB_IROBOT_DESCRIPTION)
     {
-        int macro_cmd = in.get(1).asVocab();
+        int macro_cmd = in.get(1).asVocab32();
         if (macro_cmd == VOCAB_IROBOT_GET)
         {
-            int cmd = in.get(2).asVocab();
+            int cmd = in.get(2).asVocab32();
             if (cmd == VOCAB_IROBOT_ALL)
             {
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
                 Bottle& l = out.addList();
                 for (auto& m_robot_device : m_robot_devices)
                 {
@@ -146,7 +146,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
             else if (cmd == VOCAB_IROBOT_BY_TYPE)
             {
                 std::string type = in.get(3).asString();
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
                 Bottle& l = out.addList();
                 for (auto& m_robot_device : m_robot_devices)
                 {
@@ -167,7 +167,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
         }
         else if (macro_cmd == VOCAB_IROBOT_DELETE)
         {
-            int cmd = in.get(2).asVocab();
+            int cmd = in.get(2).asVocab32();
             if (cmd == VOCAB_IROBOT_DEVICE)
             {
                 std::string name = in.get(3).asString();
@@ -180,7 +180,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
                 }
                 else
                 {
-                    out.addVocab(VOCAB_OK);
+                    out.addVocab32(VOCAB_OK);
                     ret = true;
                 }
             }
@@ -192,7 +192,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
         }
         else if (macro_cmd == VOCAB_IROBOT_SET)
         {
-            int cmd = in.get(2).asVocab();
+            int cmd = in.get(2).asVocab32();
             if (cmd == VOCAB_IROBOT_DEVICE)
             {
                 DeviceDescription desc;
@@ -205,7 +205,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
                 }
                 else
                 {
-                    out.addVocab(VOCAB_OK);
+                    out.addVocab32(VOCAB_OK);
                     ret = true;
                 }
             }
@@ -230,7 +230,7 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
     if (!ret)
     {
         out.clear();
-        out.addVocab(VOCAB_FAILED);
+        out.addVocab32(VOCAB_FAILED);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();

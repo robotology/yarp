@@ -141,7 +141,7 @@ string showFormat(Bottle& b, string root) {
         char val_name[1000];
         sprintf(tag_name,"%s%zu_tag", root.c_str(), i);
         sprintf(val_name,"%s%zu", root.c_str(), i);
-        if (v.isVocab()) {
+        if (v.isVocab32()) {
             if (!specialized) {
                 r += addPart("int32",tag_name,BOTTLE_TAG_VOCAB32,nullptr,
                              "BOTTLE_TAG_VOCAB32");
@@ -430,7 +430,7 @@ int main(int argc, char *argv[]) {
         Bottle b;
         p.read(b);
         string r;
-        if (in&&b.get(0).asVocab()==yarp::os::createVocab('r','p','c')&&b.get(1).isList()) {
+        if (in&&b.get(0).asVocab32()==yarp::os::createVocab32('r','p','c')&&b.get(1).isList()) {
 
             r = showFormat(*b.get(1).asList(),"v");
         } else {

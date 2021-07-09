@@ -98,7 +98,7 @@ int Companion::cmdName(int argc, char* argv[])
     }
     if (reply.size() == 1 && reply.get(0).isString()) {
         yCInfo(COMPANION) << reply.get(0).asString().c_str();
-    } else if (reply.get(0).isVocab() && reply.get(0).asVocab() == yarp::os::createVocab('m', 'a', 'n', 'y')) {
+    } else if (reply.get(0).isVocab32() && reply.get(0).asVocab32() == yarp::os::createVocab32('m', 'a', 'n', 'y')) {
         for (size_t i = 1; i < reply.size(); i++) {
             Value& v = reply.get(i);
             if (v.isString()) {

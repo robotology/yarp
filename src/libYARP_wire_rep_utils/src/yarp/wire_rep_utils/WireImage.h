@@ -80,7 +80,7 @@ public:
         // probably need to translate encoding format better, but at
         // a guess "rgb" and "bgr" will work ok.
         std::string encoding =
-            yarp::os::Vocab::decode(image->getPixelCode()).c_str();
+            yarp::os::Vocab32::decode(image->getPixelCode()).c_str();
         switch (image->getPixelCode()) {
         case VOCAB_PIXEL_BGR:
             encoding = "bgr8";

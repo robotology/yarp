@@ -71,7 +71,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
 
     yCError(FRAMETRANSFORMSERVER, "Invalid vocab received");
     out.clear();
-    out.addVocab(VOCAB_ERR);
+    out.addVocab32(VOCAB_ERR);
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
     if (returnToSender != nullptr)

@@ -200,9 +200,9 @@ bool RGBDSensorClient::initialize_YARP(yarp::os::Searchable& /*config*/)
     // Check protocol version
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_RGBD_SENSOR);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
+    cmd.addVocab32(VOCAB_RGBD_SENSOR);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_RGBD_PROTOCOL_VERSION);
     rpcPort.write(cmd, response);
     int major = response.get(3).asInt32();
     int minor = response.get(4).asInt32();
@@ -279,13 +279,13 @@ bool RGBDSensorClient::getExtrinsicParam(yarp::sig::Matrix &extrinsic)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_RGBD_SENSOR);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_EXTRINSIC_PARAM);
+    cmd.addVocab32(VOCAB_RGBD_SENSOR);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_EXTRINSIC_PARAM);
     rpcPort.write(cmd, response);
 
     // Minimal check on response, we suppose the response is always correctly formatted
-    if((response.get(0).asVocab()) == VOCAB_FAILED)
+    if((response.get(0).asVocab32()) == VOCAB_FAILED)
     {
         extrinsic.zero();
         return false;
@@ -299,9 +299,9 @@ IRGBDSensor::RGBDSensor_status RGBDSensorClient::getSensorStatus()
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_RGBD_SENSOR);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_STATUS);
+    cmd.addVocab32(VOCAB_RGBD_SENSOR);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_STATUS);
     rpcPort.write(cmd, response);
     return static_cast<IRGBDSensor::RGBDSensor_status>(response.get(3).asInt32());
 }
@@ -311,9 +311,9 @@ std::string RGBDSensorClient::getLastErrorMsg(yarp::os::Stamp* /*timeStamp*/)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_RGBD_SENSOR);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_ERROR_MSG);
+    cmd.addVocab32(VOCAB_RGBD_SENSOR);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_ERROR_MSG);
     rpcPort.write(cmd, response);
     return response.get(3).asString();
 }
