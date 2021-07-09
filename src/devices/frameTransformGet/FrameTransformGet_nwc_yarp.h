@@ -15,14 +15,15 @@
 
 #include <FrameTransformStorageGetRPC.h>
 
-/*
- * \section FrameTransformGet_nwc_yarp_device_parameters Description of input parameters
+/**
+ * @brief A network wrapper client which converts the input retrieved from a FrameTransformStorageGetRPC thrift interface to an IFrameTransformStorageGet interface.
+ *
+ * \section FrameTransformGet_nwc_yarp_device_parameters Parameters
  * This device is paired with its server called FrameTransformGet_nws_yarp.
- * It is attached to a device with an IFrameTransformStorageGet interface and then
- * when it receives a call it forwards this call on a port (the interface is declared
- * in thrift and is FrameTransformStorageGetRPC) and it returns all the transforms received
+ * It is attached to a device with an IFrameTransformStorageGet interface.
+ * When it a method of the interface is called, the request is forwarded on a RPC port (which uses the thrift FrameTransformStorageGetRPC interface) and it returns all the transforms received
  * from the port to the caller.
- * For how to attach the various devices see FrameTransformClient.
+ * For further information see \subpage FrameTransform.
 
  *   Parameters required by this device are:
  * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
@@ -30,9 +31,7 @@
  * | rpc_port_client |      -                  | string  | -              |   /frameTransformGet/clientRPC  | No           | port on which rpc calls should be made |
  * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
  *
- * Some example of configuration files:
- *
- * Example of configuration file using .ini format.
+ * \section FrameTransformGet_nwc_yarp_device_configuration Example of configuration file using .ini format.
  *
  * \code{.unparsed}
  * device FrameTransformGet_nwc_yarp

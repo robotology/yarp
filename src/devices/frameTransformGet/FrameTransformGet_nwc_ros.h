@@ -11,29 +11,34 @@
 
 
 #include <yarp/os/Network.h>
-#include <yarp/dev/IFrameTransformStorage.h>
-#include <yarp/sig/Vector.h>
+#include <yarp/os/Node.h>
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/dev/PolyDriver.h>
-#include <yarp/dev/WrapperSingle.h>
 #include <yarp/os/Publisher.h>
 #include <yarp/os/Subscriber.h>
-#include <yarp/os/Node.h>
-#include <mutex>
-#include <map>
+
+#include <yarp/sig/Vector.h>
+
+#include <yarp/dev/IFrameTransformStorage.h>
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/WrapperSingle.h>
 
 #include <yarp/math/FrameTransform.h>
-#include <frameTransformContainer.h>
 
 #include <yarp/rosmsg/geometry_msgs/TransformStamped.h>
 #include <yarp/rosmsg/tf2_msgs/TFMessage.h>
+
+#include <FrameTransformContainer.h>
+#include <map>
+#include <mutex>
 
 #define ROSNODENAME "/tfNodeGet"
 #define ROSTOPICNAME_TF "/tf"
 #define ROSTOPICNAME_TF_STATIC "/tf_static"
 
-/*
- * \section FrameTransformGet_nwc_ros_device_parameters Description of input parameters
+/**
+ * @brief A ros network wrapper client that receives frame transforms from a ros topic and makes them available through an IFrameTransformStorageGet interface. See \subpage FrameTransform for additional info.
+ *
+ * \section FrameTransformGet_nwc_ros_device_parameters Parameters
  *
  *   Parameters required by this device are:
  * | Parameter name | SubParameter         | Type    | Units          | Default Value         | Required     | Description                                    -------            |
@@ -45,10 +50,9 @@
  * | -              | ft_topic             | string  | -              | /tf                   | No           | The name of the ROS topic from which fts will be received         |
  * | -              | ft_topic_static      | string  | -              | /tf_static            | No           | The name of the ROS topic from which static fts will be received  |
  * | -              | ft_node              | string  | -              | /tfNodeGet            | No           | The of the ROS node                                               |
+ * **N.B.** pay attention to the difference between **tf** and **ft**
  *
- * Some example of configuration files:
- *
- * Example of configuration file using .ini format.
+ * \section FrameTransformGet_nwc_ros_device_example Example of configuration file using .ini format.
  *
  * \code{.unparsed}
  * device frameTransformGet_nwc_yarp

@@ -7,15 +7,15 @@
 yarp_prepare_plugin(frameTransformServer
                     CATEGORY device
                     TYPE FrameTransformServer
-                    INCLUDE frameTransformServer.h
+                    INCLUDE FrameTransformServer.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformServer)
   yarp_add_plugin(yarp_frameTransformServer)
 
-  target_sources(yarp_frameTransformServer PRIVATE frameTransformServer.cpp
-                                                   frameTransformServer.h)
+  target_sources(yarp_frameTransformServer PRIVATE FrameTransformServer.cpp
+          FrameTransformServer.h)
 
   target_link_libraries(yarp_frameTransformServer PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig

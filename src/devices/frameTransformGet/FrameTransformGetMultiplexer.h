@@ -6,12 +6,13 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-/*
- * \section FrameTransformGetMultiplexer_device_parameters Description of input parameters
- * This device is a simple multiplexer of devices that implements the IFrameTransformStorageGet interface.
- * It can be attached to multiple devices and when the function getTransforms is called it returns a
+/**
+ * @brief A multiplexer which collapses the output of many IFrameTransformStorageGet interfaces into one.
+ *
+ * This device is a multiplexer of devices that implements the IFrameTransformStorageGet interface.
+ * It can be attached to multiple devices. When the function getTransforms is called, it returns a
  * vector containing all the transforms taken from the attached devices.
- * For how to attach the various devices see FrameTransformClient and FrameTransformServer.
+ * For further information see \subpage FrameTransform.
  */
 
 #include <yarp/dev/DeviceDriver.h>

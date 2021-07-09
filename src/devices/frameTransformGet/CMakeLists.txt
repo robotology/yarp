@@ -8,15 +8,15 @@
 yarp_prepare_plugin(frameTransformGet_nws_yarp
                     CATEGORY device
                     TYPE FrameTransformGet_nws_yarp
-                    INCLUDE frameTransformGet_nws_yarp.h
+                    INCLUDE FrameTransformGet_nws_yarp.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformGet_nws_yarp)
   yarp_add_plugin(yarp_frameTransformGet_nws_yarp)
 
-  target_sources(yarp_frameTransformGet_nws_yarp PRIVATE frameTransformGet_nws_yarp.cpp
-                                                  frameTransformGet_nws_yarp.h
+  target_sources(yarp_frameTransformGet_nws_yarp PRIVATE FrameTransformGet_nws_yarp.cpp
+          FrameTransformGet_nws_yarp.h
                                                   $<TARGET_OBJECTS:frameTransformStorageMsgs>)
 
   target_include_directories(yarp_frameTransformGet_nws_yarp PRIVATE $<TARGET_PROPERTY:frameTransformStorageMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
@@ -45,15 +45,15 @@ endif()
 yarp_prepare_plugin(frameTransformGet_nwc_yarp
                     CATEGORY device
                     TYPE FrameTransformGet_nwc_yarp
-                    INCLUDE frameTransformGet_nwc_yarp.h
+                    INCLUDE FrameTransformGet_nwc_yarp.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformGet_nwc_yarp)
   yarp_add_plugin(yarp_frameTransformGet_nwc_yarp)
 
-  target_sources(yarp_frameTransformGet_nwc_yarp PRIVATE frameTransformGet_nwc_yarp.cpp
-                                                  frameTransformGet_nwc_yarp.h
+  target_sources(yarp_frameTransformGet_nwc_yarp PRIVATE FrameTransformGet_nwc_yarp.cpp
+          FrameTransformGet_nwc_yarp.h
                                                   $<TARGET_OBJECTS:frameTransformStorageMsgs>)
 
   target_include_directories(yarp_frameTransformGet_nwc_yarp PRIVATE $<TARGET_PROPERTY:frameTransformStorageMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
@@ -81,15 +81,15 @@ endif()
 yarp_prepare_plugin(frameTransformGetMultiplexer
                     CATEGORY device
                     TYPE FrameTransformGetMultiplexer
-                    INCLUDE frameTransformGetMultiplexer.h
+                    INCLUDE FrameTransformGetMultiplexer.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformGetMultiplexer)
   yarp_add_plugin(yarp_frameTransformGetMultiplexer)
 
-  target_sources(yarp_frameTransformGetMultiplexer PRIVATE frameTransformGetMultiplexer.cpp
-                                                  frameTransformGetMultiplexer.h)
+  target_sources(yarp_frameTransformGetMultiplexer PRIVATE FrameTransformGetMultiplexer.cpp
+          FrameTransformGetMultiplexer.h)
 
 
   target_link_libraries(yarp_frameTransformGetMultiplexer PRIVATE YARP::YARP_os
@@ -115,15 +115,15 @@ endif()
 yarp_prepare_plugin(frameTransformGet_nwc_ros
         CATEGORY device
         TYPE FrameTransformGet_nwc_ros
-        INCLUDE frameTransformGet_nwc_ros.h
+        INCLUDE FrameTransformGet_nwc_ros.h
         DEPENDS "TARGET YARP::YARP_math"
         DEFAULT ON)
 
 if(NOT SKIP_frameTransformGet_nwc_ros)
   yarp_add_plugin(yarp_frameTransformGet_nwc_ros)
 
-  target_sources(yarp_frameTransformGet_nwc_ros PRIVATE frameTransformGet_nwc_ros.cpp
-                                                        frameTransformGet_nwc_ros.h)
+  target_sources(yarp_frameTransformGet_nwc_ros PRIVATE FrameTransformGet_nwc_ros.cpp
+          FrameTransformGet_nwc_ros.h)
   target_sources(yarp_frameTransformGet_nwc_ros PRIVATE $<TARGET_OBJECTS:FrameTransformUtils>)
   target_include_directories(yarp_frameTransformGet_nwc_ros PRIVATE $<TARGET_PROPERTY:FrameTransformUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 

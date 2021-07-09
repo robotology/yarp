@@ -23,15 +23,15 @@ cmrc_add_resource_library(frameTransformRC
 yarp_prepare_plugin(frameTransformClient
                     CATEGORY device
                     TYPE FrameTransformClient
-                    INCLUDE frameTransformClient.h
+                    INCLUDE FrameTransformClient.h
                     DEPENDS "TARGET YARP::YARP_math"
                     DEFAULT ON)
 
 if(NOT SKIP_frameTransformClient)
   yarp_add_plugin(yarp_frameTransformClient)
 
-  target_sources(yarp_frameTransformClient PRIVATE frameTransformClient.cpp
-                                                   frameTransformClient.h)
+  target_sources(yarp_frameTransformClient PRIVATE FrameTransformClient.cpp
+          FrameTransformClient.h)
 
   target_sources(yarp_frameTransformClient PRIVATE $<TARGET_OBJECTS:FrameTransformUtils>)
   target_include_directories(yarp_frameTransformClient PRIVATE $<TARGET_PROPERTY:FrameTransformUtils,INTERFACE_INCLUDE_DIRECTORIES>)

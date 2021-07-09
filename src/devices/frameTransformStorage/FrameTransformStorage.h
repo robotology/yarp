@@ -21,14 +21,17 @@
 
 
 #include <yarp/os/Network.h>
-#include <yarp/dev/IFrameTransformStorage.h>
-#include <frameTransformContainer.h>
-#include <yarp/sig/Vector.h>
 #include <yarp/os/PeriodicThread.h>
-#include <yarp/dev/PolyDriver.h>
+
+#include <yarp/sig/Vector.h>
+
+#include <yarp/dev/IFrameTransformStorage.h>
 #include <yarp/dev/IMultipleWrapper.h>
-#include <mutex>
+#include <yarp/dev/PolyDriver.h>
+
+#include <FrameTransformContainer.h>
 #include <map>
+#include <mutex>
 
 class FrameTransformStorage :
     public yarp::dev::DeviceDriver,

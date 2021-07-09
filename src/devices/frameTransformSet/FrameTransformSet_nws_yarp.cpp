@@ -6,7 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "frameTransformSet_nws_yarp.h"
+#include "FrameTransformSet_nws_yarp.h"
+
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>

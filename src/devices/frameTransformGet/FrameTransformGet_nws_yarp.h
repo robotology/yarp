@@ -17,23 +17,23 @@
 #include <FrameTransformStorageGetRPC.h>
 
 // TODO FIXME STE need to check subdevice option
-/*
- * \section FrameTransformGet_nws_yarp_device_parameters Description of input parameters
+/**
+ * @brief A network wrapper client which converts the input retrieved from an IFrameTransformStorageGet interface to a FrameTransformStorageGetRPC thrift interface.
+ *
+ * \section FrameTransformGet_nws_yarp_device_parameters Parameters
  * this device listens on a FrameTransformStorageGetRPC interface for an RPC and then forwards the request to an IFrameTransformStorageGet interface (device attached)
  * This device is paired with its client called FrameTransformGet_nwc_yarp.
- * It receives a rpc from a port (the port is declared in thrift and is FrameTransformStorageGetRPC)
- * and it sends on the port all the transforms taken from the attached device.
+ * It receives a rpc from a port (the port is declared in thrift and is FrameTransformStorageGetRPC).
+ * After that it sends on the port all the transforms taken from the attached device.
  * The attached device must implement an IFrameTransformStorageGet interface.
- * For how to attach the various devices see FrameTransformServer.
+ * For further information see \subpage FrameTransform.
  *
  *   Parameters required by this device are:
  * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
  * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------------------------:|:-----------: |:--------------------------------------:|
  * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
  *
- * Some example of configuration files:
- *
- * Example of configuration file using .ini format.
+ * \section FrameTransformGet_nws_yarp_device_configuration Example of configuration file using .ini format.
  *
  * \code{.unparsed}
  * device FrameTransformGet_nws_yarp

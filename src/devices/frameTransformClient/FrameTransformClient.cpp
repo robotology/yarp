@@ -16,14 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "frameTransformClient.h"
+#include "FrameTransformClient.h"
+
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
+
 #include <yarp/math/Math.h>
-#include <mutex>
 
 #include <cmrc/cmrc.hpp>
+#include <mutex>
 CMRC_DECLARE(frameTransformRC);
 
  /*! \file FrameTransformClient.cpp */
