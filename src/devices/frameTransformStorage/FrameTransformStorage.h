@@ -26,10 +26,10 @@
 #include <yarp/sig/Vector.h>
 
 #include <yarp/dev/IFrameTransformStorage.h>
-#include <yarp/dev/IMultipleWrapper.h>
-#include <yarp/dev/PolyDriver.h>
-
 #include <FrameTransformContainer.h>
+#include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/WrapperSingle.h>
+#include <mutex>
 #include <map>
 #include <mutex>
 
@@ -49,7 +49,7 @@ class FrameTransformStorage :
     public yarp::dev::IFrameTransformStorageGet,
     public yarp::dev::IFrameTransformStorageUtils,
     public yarp::os::PeriodicThread,
-    public yarp::dev::IMultipleWrapper
+    public yarp::dev::WrapperSingle
 {
 protected:
     FrameTransformContainer m_tf_container;
@@ -76,11 +76,12 @@ public:
     bool getInternalContainer(FrameTransformContainer*&  container) override;
 
     //wrapper and interfaces
+    bool attach(yarp::dev::PolyDriver* driver) override;
+    bool detach() override;
+private:
     mutable std::mutex  m_pd_mutex;
-    bool attachAll(const yarp::dev::PolyDriverList& p) override;
-    bool detachAll() override;
-    yarp::dev::PolyDriverList pDriverList;
-    std::vector<IFrameTransformStorageGet*> iGetIf;
+    yarp::dev::PolyDriver* pDriver;
+    IFrameTransformStorageGet* iGetIf;
 
     //periodicThread
     void     run() override;

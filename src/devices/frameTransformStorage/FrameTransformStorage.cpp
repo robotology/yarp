@@ -77,39 +77,32 @@ void FrameTransformStorage::run()
     m_tf_container.checkAndRemoveExpired();
 
     // get new transforms
-    for (size_t i = 0; i < iGetIf.size(); i++)
-    {
-        std::vector<yarp::math::FrameTransform> tfs;
-        bool b=iGetIf[i]->getTransforms(tfs);
-        if (b) this->setTransforms(tfs);
-    }
+    std::vector<yarp::math::FrameTransform> tfs;
+    bool b=iGetIf->getTransforms(tfs);
+    if (b) this->setTransforms(tfs);
 }
 
-bool FrameTransformStorage::detachAll()
+bool FrameTransformStorage::detach()
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-    iGetIf.clear();
+    iGetIf = nullptr;
+    pDriver = nullptr;
     return true;
 }
 
-bool FrameTransformStorage::attachAll(const yarp::dev::PolyDriverList& device2attach)
+bool FrameTransformStorage::attach(yarp::dev::PolyDriver* driver)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-    pDriverList = device2attach;
-
-    for (int i = 0; i < pDriverList.size(); i++)
+    if (driver->isValid())
     {
-        yarp::dev::PolyDriver* pd = pDriverList[i]->poly;
-        if (pd->isValid())
+        pDriver = driver;
+        if (pDriver->view(iGetIf) && iGetIf!=nullptr)
         {
-            IFrameTransformStorageGet* pp=nullptr;
-            if (pd->view(pp) && pp!=nullptr)
-            {
-                iGetIf.push_back(pp);
-            }
+            return true;
         }
     }
-    return true;
+
+    return false;
 }
 
 bool FrameTransformStorage::clear()
