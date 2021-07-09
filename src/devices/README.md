@@ -1,11 +1,11 @@
-## Yarp devices
+## YARP devices
 
 <br/>
 
 ---
 
-<br/>
-This README file shows the current status of the `device` folder. Colored squares and font weight and style represents the status of each device in the aforementioned folder
+
+This README file shows the current status of the `device` folder (link to the documentation: [Devices](https://www.yarp.it/latest/group__dev__impl.html) ). Colored squares and font weight and style represents the status of each device in the aforementioned folder
 
 <br/>
 The tables shown hereunder report all the information needed to understand the following devices list
