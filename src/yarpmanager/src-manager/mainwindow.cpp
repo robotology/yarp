@@ -1211,7 +1211,7 @@ void MainWindow::onYarpClean()
                                            "Timeout(seconds):", 0.3, 0, 2147483647, 1, &ok);
     if (ok)
     {
-        onLogMessage(QString("Yarp clean: cleaning death ports..."));
+        onLogMessage(QString("YARP clean: cleaning death ports..."));
         yarp::profiler::NetworkProfiler::yarpClean(timeout);
         onYarpNameList();
     }

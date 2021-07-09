@@ -379,7 +379,7 @@ public:
     bool getJointTypeRaw(int axis, yarp::dev::JointTypeEnum& type) override;
     ///////////////////////// END IAxisInfo Interface
 
-    //Internal use, not exposed by Yarp (yet)
+    //Internal use, not exposed by YARP (yet)
     bool getGearboxRatioRaw(int m, double *gearbox) override;
     virtual bool getRotorEncoderResolutionRaw(int m, double &rotres);
     virtual bool getJointEncoderResolutionRaw(int m, double &jntres);

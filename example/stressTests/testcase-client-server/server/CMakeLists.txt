@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(collatzServer)
 
-# Add Yarp to the "packages" used by this project.
+# Add YARP to the "packages" used by this project.
 find_package(YARP COMPONENTS os REQUIRED)
 
 # Find .cpp and .h automatically. This is a bit lazy,

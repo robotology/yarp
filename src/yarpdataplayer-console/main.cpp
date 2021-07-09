@@ -673,7 +673,7 @@ int main(int argc, char *argv[])
     yarp::os::Network yarp(yarp::os::YARP_CLOCK_SYSTEM);
     if (!yarp.checkNetwork())
     {
-        fprintf(stderr,"ERROR: check Yarp network.\n");
+        fprintf(stderr,"ERROR: check YARP network.\n");
         return -1;
     }
 

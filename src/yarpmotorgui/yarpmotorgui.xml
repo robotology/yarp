@@ -1,6 +1,6 @@
 <module>
     <name>yarpmotorgui</name>
-    <description> Yarp motor GUI</description>
+    <description> YARP motor GUI</description>
     <version>1.0</version>
 
     <authors>

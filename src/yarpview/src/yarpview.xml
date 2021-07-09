@@ -1,6 +1,6 @@
 <module>
     <name>yarpview</name>
-    <description> Yarp image viewer</description>
+    <description> YARP image viewer</description>
     <version>1.0</version>
 
     <authors>

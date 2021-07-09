@@ -1,10 +1,10 @@
 <module>
     <name>yarpscope</name>
-    <description> Yarp port scope</description>
+    <description> YARP port scope</description>
     <version>1.0</version>
 
     <arguments>
-        <param default="Yarp Port Scope" desc="Title of the window">title</param>
+        <param default="YARP Port Scope" desc="Title of the window">title</param>
         <param default="" desc="Initial X position of the window">x</param>
         <param default="" desc="Initial Y position of the window">y</param>
         <param default="" desc="Initial width of the window">dx</param>

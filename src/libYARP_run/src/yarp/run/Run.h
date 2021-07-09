@@ -21,7 +21,7 @@ class ZombieHunterThread;
 
 
 /*
- * Typical Yarp applications consist of several intercommunicating modules distributed on different machines.
+ * Typical YARP applications consist of several intercommunicating modules distributed on different machines.
  * If a yarprun server is running on each machine, distributed applications can be remotely launched,
  * monitored and terminated by yarprun commands.
  *
