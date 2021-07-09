@@ -11,7 +11,7 @@ audio_recorder_refactor {#master}
 * `fakeMicrophone`, `audioFromFileDevice`, `PortAudioRecorderDeviceDriver` derive from base class `AudioRecorderDeviceDriver` 
 * Added missing documentation to `audioRecorderWrapper`, `audioPlayerWrapper`
 
-### libYarp_dev
+### libYARP_dev
 
 * added new base class `AudioRecorderDeviceDriver`
 

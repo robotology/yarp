@@ -647,7 +647,7 @@ bool ControlBoardWrapper::updateAxisName()
     // FOR THE FUTURE: this double version will be dropped because it'll create confusion. Only the names
     // from the motionControl device will be considered good
 
-    // no need to update this variable if we are not using ROS. Yarp RPC will always call the sudevice.
+    // no need to update this variable if we are not using ROS. YARP RPC will always call the sudevice.
     if (useROS == ROS_disabled) {
         return true;
     }

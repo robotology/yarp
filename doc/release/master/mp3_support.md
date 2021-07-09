@@ -3,7 +3,7 @@ mp3_support {#master}
 
 ## Important Changes
 
-### libYarp_sig
+### libYARP_sig
 
 * `yarp\src\libYARP_sig\src\yarp\sig\SoundFile.h/cpp` the code has been refactored, and the private methods have been move to new files: `SoundFileWav.h/cpp` and SoundFileMp3.h/cpp`
 * The following methods were added (SoundFile.h): `read_bytestream()`

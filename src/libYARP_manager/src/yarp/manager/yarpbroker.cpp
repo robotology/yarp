@@ -68,7 +68,7 @@ bool YarpBroker::init()
 
     if(!NetworkBase::checkNetwork(CONNECTION_TIMEOUT))
     {
-        strError = "Yarp network server is not up.";
+        strError = "YARP network server is not up.";
         return false;
     }
     bInitialized = true;
@@ -149,7 +149,7 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
    __trace_message = "(init) checking yarp network";
     if(!NetworkBase::checkNetwork(5.0))
     {
-        strError = "Yarp network server is not up.";
+        strError = "YARP network server is not up.";
         __trace_message.clear();
         semParam.post();
         return false;

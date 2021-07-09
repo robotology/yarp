@@ -22,11 +22,11 @@ class LoadYarp {
         if (yarpInitialized == 0) {
             System.loadLibrary("yarp_java");
             Network.init();
-            System.out.println("Yarp library loaded and initialized");
+            System.out.println("YARP library loaded and initialized");
             System.out.flush();
         } else {
             System.out.println(
-                "Yarp library already loaded and initialized, doing nothing");
+                "YARP library already loaded and initialized, doing nothing");
             System.out.flush();
         }
         yarpInitialized = 1;

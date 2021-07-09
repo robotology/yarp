@@ -31,7 +31,7 @@
 * | period            |      -         | double  | s              |  0.010                   | No                          | the period of thread which processes the file                     | On each iteration xxx samples are processed |
 * | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the thread  | - |
 *
-* See \ref AudioDoc for additional documentation on Yarp audio.
+* See \ref AudioDoc for additional documentation on YARP audio.
 */
 
 class audioFromFileDevice :

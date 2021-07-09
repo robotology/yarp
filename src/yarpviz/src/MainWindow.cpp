@@ -502,7 +502,7 @@ void MainWindow::onSubGraphContextMenuProcess(QGVSubGraph *sgraph) {
 
 void MainWindow::onAbout() {
     QMessageBox::about(this, "yarpviz (version 2.0.0)",
-                       "A graphical tool for a graphical tool for profiling and visualizing Yarp network!");
+                       "A graphical tool for a graphical tool for profiling and visualizing YARP network!");
 }
 
 void MainWindow::onNodeContextMenuPort(QGVNode *node, GraphicVertex* vertex) {

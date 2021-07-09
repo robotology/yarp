@@ -21,7 +21,7 @@
  * Example usage:
  * yarp connect /src /dest tcp+recv.portmonitor+type.dll+file.sound_compression_mp3
  *
- * See \ref AudioDoc for additional documentation on Yarp audio.
+ * See \ref AudioDoc for additional documentation on YARP audio.
  */
 class Mp3SoundConverter : public yarp::os::MonitorObject
 {

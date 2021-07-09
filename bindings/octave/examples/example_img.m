@@ -9,10 +9,10 @@
 % the octave load path
 addpath([getenv('YARP_ROOT') '/build/lib/octave']);
 
-% Import Yarp library
+% Import YARP library
 yarp;
 
-% Initialize Yarp network
+% Initialize YARP network
 yarp.Network.init();
 
 

@@ -30,7 +30,7 @@ using yarp::sig::draw::addCircle;
 /*
   This example adds a moving circle to an image stream.
   It is the same as image_process.cpp, except it is built
-  as a Yarp "Module".  This makes it a bit cleaner to start/stop.
+  as a YARP "Module".  This makes it a bit cleaner to start/stop.
 
 
   Suppose we have an image source on port /source such as:

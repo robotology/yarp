@@ -166,7 +166,7 @@ bool LocalBroker::init()
     /*
     if(!NetworkBase::checkNetwork(5.0))
     {
-        strError = "Yarp network server is not up.";
+        strError = "YARP network server is not up.";
         return false;
     }
     */
@@ -220,7 +220,7 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
 
     if(!NetworkBase::checkNetwork(5.0))
     {
-        strError = "Yarp network server is not up.";
+        strError = "YARP network server is not up.";
         semParam.post();
         return false;
     }

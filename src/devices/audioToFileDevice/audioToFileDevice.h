@@ -41,7 +41,7 @@
 * | file_name      |      -         | string  | -              |  audio_out.wav           | No                          | The name of the file written by the module                        | Only .wav and .mp3 files are supported   |
 * | save_mode      |      -         | string  | -              |  overwrite_file          | No                          | Affects the behavior of the module and defines the save mode, as described in the documentation.   |       |
 *
-* See \ref AudioDoc for additional documentation on Yarp audio.
+* See \ref AudioDoc for additional documentation on YARP audio.
 */
 
 class audioToFileDevice :

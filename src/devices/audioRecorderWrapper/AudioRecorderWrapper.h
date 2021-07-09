@@ -54,7 +54,7 @@ class AudioRecorderDataThread;
  * | max_samples_timeout  |  -       | float   | s              |   1.0                    | No                          | timeout for sample collection                                              | the algorithm is implemented in AudioRecorderDeviceBase |
  * | start          |      -         | bool    | -              |   false                  | No                          | automatically activates the recording when the device is started           | if false, the recording is enabled via rpc port |
  *
- * See \ref AudioDoc for additional documentation on Yarp audio.
+ * See \ref AudioDoc for additional documentation on YARP audio.
 */
 class AudioRecorderWrapper :
         public yarp::dev::DeviceDriver,

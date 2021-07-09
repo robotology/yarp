@@ -26,7 +26,7 @@ namespace dev {
 
 /**
  * \brief `audioRecorderStatus`: A class used to describe the status of an audio recorder device.
- * See \ref AudioDoc for additional documentation on Yarp audio.
+ * See \ref AudioDoc for additional documentation on YARP audio.
  */
 class YARP_dev_API audioRecorderStatus :
         public yarp::os::idl::WirePortable

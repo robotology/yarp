@@ -986,7 +986,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
 void YConsoleManager::help()
 {
-    cout<<"Here is a list of Yarp manager keywords.\n"<<endl;
+    cout<<"Here is a list of YARP manager keywords.\n"<<endl;
     cout<<OKGREEN<<"help"<<INFO<<"                    : show help."<<ENDC<<endl;
     cout<<OKGREEN<<"exit"<<INFO<<"                    : exit yarp manager."<<ENDC<<endl;
     cout<<OKGREEN<<"list mod"<<INFO<<"                : list available modules."<<ENDC<<endl;

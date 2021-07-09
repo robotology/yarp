@@ -44,7 +44,7 @@ class AudioDeviceDriverSettings
 * | AUDIO_BASE       |  buffer_autoclear | bool    | -              | true                     | No                          | Automatically clear the buffer every time the devices is started/stopped | - |
 * | AUDIO_BASE       |  debug            | bool    | -              | false                    | No                          | Enable debug mode | The value is stored into variable m_audiobase_debug |
 *
-* See \ref AudioDoc for additional documentation on Yarp audio.
+* See \ref AudioDoc for additional documentation on YARP audio.
 */
 
 class YARP_dev_API AudioRecorderDeviceBase : public yarp::dev::IAudioGrabberSound

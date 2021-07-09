@@ -1,5 +1,5 @@
 /**
-\defgroup dev_all yarp::dev Yarp Devices
+\defgroup dev_all yarp::dev YARP Devices
 
 Dealing with devices. What do you need to know to use devices in
 YARP?  First, we try to write our devices so that they implement a

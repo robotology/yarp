@@ -8,7 +8,7 @@
  */
 
  /*
- * Yarp Driver for Dynamixel AX-12, controlled using USB to Dynamixel Adapter
+ * YARP Driver for Dynamixel AX-12, controlled using USB to Dynamixel Adapter
  * The default IDs for the motors are for Kaspar robot. As different robots would have different settings,
  * it is necessary to define the IDs, this can be done via a configuration file. In this example, check the
  * file sensorindex.cfg. The format is:

@@ -28,7 +28,7 @@ namespace os {
  * message. The Terminator/Terminee class pair starts a tcp socket on the
  * server side listening for incoming connections and the magic word "quit"
  * (all lowercase). The ip-port pair is registered with a symbolic name
- * on the Yarp name server and can be queried by the client to send the
+ * on the YARP name server and can be queried by the client to send the
  * termination message.
  */
 class YARP_os_API Terminator

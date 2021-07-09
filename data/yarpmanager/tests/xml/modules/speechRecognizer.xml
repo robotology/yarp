@@ -68,7 +68,7 @@
     <!-- specific libraries or header files which are used for development -->
     <development>
         <header></header>
-        <library>Yarp C# Wrapper (/yarp2/example/swig)</library>
+        <library>YARP C# Wrapper (/yarp2/example/swig)</library>
         <library>System.Speech (available by default in .NET framework 4)</library>
     </development>
 

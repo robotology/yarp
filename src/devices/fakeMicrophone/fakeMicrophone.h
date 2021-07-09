@@ -33,7 +33,7 @@
 * | signal_amplitude  |      -         | int     |                | 32000                    | No                          | Amplitude of the generated signal | - |
 * | driver_frame_size |      -         | int     | samples        |  512                     | No                          | the number of samples to process on each iteration of the thread  | - |
 *
-* See \ref AudioDoc for additional documentation on Yarp audio.
+* See \ref AudioDoc for additional documentation on YARP audio.
 */
 
 class fakeMicrophone :

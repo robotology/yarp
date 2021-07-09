@@ -23,7 +23,7 @@ namespace sig {
  * \ingroup sig_class
  *
  * Class for storing sounds
- * See \ref AudioDoc for additional documentation on Yarp audio.
+ * See \ref AudioDoc for additional documentation on YARP audio.
 */
 class YARP_sig_API Sound : public yarp::os::Portable
 {

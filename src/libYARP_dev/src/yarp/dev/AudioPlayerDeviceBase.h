@@ -47,7 +47,7 @@ class AudioDeviceDriverSettings
 * | AUDIO_BASE       | buffer_autoclear       | bool    | -              | false                    | No                          | Automatically clear the buffer every time the devices is started/stopped | If false, stop acts like a pause, and start allows to resume the playback |
 * | AUDIO_BASE       | debug                  | bool    | -              | false                    | No                          | Enable debug mode | The value is stored into variable m_audiobase_debug |
 *
-* See \ref AudioDoc for additional documentation on Yarp audio.
+* See \ref AudioDoc for additional documentation on YARP audio.
 */
 
 class YARP_dev_API AudioPlayerDeviceBase : public yarp::dev::IAudioRender

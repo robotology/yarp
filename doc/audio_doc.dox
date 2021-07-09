@@ -1,8 +1,8 @@
 /**
-\page AudioDoc Audio in Yarp
+\page AudioDoc Audio in YARP
 
 \section datatype yarp::sig::Sound data type
-yarp::sig::Sound is a yarp::os::Portable type, which means that can be transmitted/received over the network through a yarp::os::Yarp port.
+yarp::sig::Sound is a yarp::os::Portable type, which means that can be transmitted/received over the network through a yarp::os::Port.
 The internal storage currently supports only <b>16-bit audio</b>. The sampling frequency f (in Hz) and the channels number c can be freely chosen by the user.
 The Sound class behaves like a NxM vector, with N the number of samples and M the number of channels. Each sample ranges from -32768 to 32767 and represents
 1/f seconds of audio data.

@@ -113,7 +113,7 @@ periodically check it.
 \li \subpage yarp_pointcloud
 \li \subpage carrier_h264_howto
 
-\section Yarp Interfaces and Devices
+\section YARP Interfaces and Devices
 \li \subpage dev_all
 \li \subpage nws_and_nwc_architecture
 \li \subpage FrameTransform

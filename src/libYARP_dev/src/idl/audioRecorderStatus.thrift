@@ -12,7 +12,7 @@ typedef i32 ( yarp.type = "size_t" ) size_t
 
 /**
 * \brief `audioRecorderStatus`: A class used to describe the status of an audio recorder device.
-* See \ref AudioDoc for additional documentation on Yarp audio.
+* See \ref AudioDoc for additional documentation on YARP audio.
 */
 struct audioRecorderStatus
 {

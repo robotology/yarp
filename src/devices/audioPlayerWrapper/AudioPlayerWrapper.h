@@ -60,7 +60,7 @@
  * | playback_network_buffer_size  | - | float | s              |   5.0                   | No                          | size of the audio buffer in seconds, increasing this value to robustify the real-time audio stream (it will increase latency too) | Audio playback will start when the buffer is full |
  * | start          |      -         | bool    | -              |   false                 | No                          | automatically activates the playback when the device is started            | if false, the playback is enabled via rpc port |
  *
- * See \ref AudioDoc for additional documentation on Yarp audio.
+ * See \ref AudioDoc for additional documentation on YARP audio.
 */
 
 class AudioPlayerWrapper :

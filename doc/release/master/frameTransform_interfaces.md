@@ -11,7 +11,7 @@ frameTransform_interfaces {#master}
 
 * Added new device `frameTransformClient`. This device is now a empty container for multiple plugins that can be combined together through a 
   yarprobotinterface xml file. Different configuration files can be used for different purposes, such as publishing/subscribing transforms
-  on Yarp, ROS, ROS etc. Please refer to the documentation for additional details. The new plugins components which can be inserted in a 
+  on YARP, ROS, ROS2 etc. Please refer to the documentation for additional details. The new plugins components which can be inserted in a
   frameTransformClient device are:
   * `frameTransformGet` (nwc components for yarp, ros+ nws component for yarp + multiplexer)
   * `frameTransformSet` (nwc components for yarp, ros+ nws component for yarp + multiplexer)

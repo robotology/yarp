@@ -2782,7 +2782,7 @@ bool PortCore::attachPortMonitor(yarp::os::Property& prop, bool isOutput, std::s
     // attach to the current port
     Carrier* portmonitor = Carriers::chooseCarrier("portmonitor");
     if (portmonitor == nullptr) {
-        errMsg = "Portmonitor carrier modifier cannot be find or it is not enabled in Yarp!";
+        errMsg = "Portmonitor carrier modifier cannot be find or it is not enabled in YARP!";
         return false;
     }
 
