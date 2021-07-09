@@ -115,6 +115,7 @@ periodically check it.
 
 \section Yarp Interfaces and Devices
 \li \subpage dev_all
+\li \subpage nws_and_nwc_architecture
 \li \subpage FrameTransform
 
 \section yarp_more_info More information
