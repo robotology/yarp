@@ -164,10 +164,10 @@ void Bottle::addFloat64(yarp::conf::float64_t x)
     implementation->addFloat64(x);
 }
 
-void Bottle::addVocab(int x)
+void Bottle::addVocab32(yarp::conf::vocab32_t x)
 {
     implementation->edit();
-    implementation->addVocab(x);
+    implementation->addVocab32(x);
 }
 
 void Bottle::addString(const char* str)

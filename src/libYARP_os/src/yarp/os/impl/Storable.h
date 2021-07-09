@@ -193,12 +193,12 @@ public:
         return nullptr;
     }
 
-    bool isVocab() const override
+    bool isVocab32() const override
     {
         return false;
     }
 
-    std::int32_t asVocab() const override
+    yarp::conf::vocab32_t asVocab32() const override
     {
         return 0;
     }
@@ -413,7 +413,7 @@ public:
         return x;
     }
 
-    std::int32_t asVocab() const override
+    yarp::conf::vocab32_t asVocab32() const override
     {
         return x;
     }
@@ -499,7 +499,7 @@ public:
         return x;
     }
 
-    std::int32_t asVocab() const override
+    yarp::conf::vocab32_t asVocab32() const override
     {
         return x;
     }
@@ -585,7 +585,7 @@ public:
         return x;
     }
 
-    std::int32_t asVocab() const override
+    yarp::conf::vocab32_t asVocab32() const override
     {
         return x;
     }
@@ -670,9 +670,9 @@ public:
         return static_cast<yarp::conf::float64_t>(x);
     }
 
-    std::int32_t asVocab() const override
+    yarp::conf::vocab32_t asVocab32() const override
     {
-        return (std::int32_t)x;
+        return static_cast<yarp::conf::vocab32_t>(x);
     }
 };
 
@@ -829,27 +829,27 @@ public:
 /**
  * A vocabulary item.
  */
-class YARP_os_impl_API StoreVocab :
+class YARP_os_impl_API StoreVocab32 :
         public Storable
 {
-    std::int32_t x{0};
+    yarp::conf::vocab32_t x{0};
 
 public:
-    StoreVocab() = default;
+    StoreVocab32() = default;
 
-    StoreVocab(std::int32_t x) :
+    StoreVocab32(yarp::conf::vocab32_t x) :
             x(x)
     {
     }
 
     Storable* createStorable() const override
     {
-        return new StoreVocab();
+        return new StoreVocab32();
     }
 
     void copy(const Storable& alt) override
     {
-        x = alt.asVocab();
+        x = alt.asVocab32();
     }
 
     std::string toString() const override;
@@ -896,12 +896,12 @@ public:
         return x;
     }
 
-    bool isVocab() const override
+    bool isVocab32() const override
     {
         return true;
     }
 
-    std::int32_t asVocab() const override
+    yarp::conf::vocab32_t asVocab32() const override
     {
         return x;
     }
@@ -963,9 +963,9 @@ public:
         return x;
     }
 
-    std::int32_t asVocab() const override
+    yarp::conf::vocab32_t asVocab32() const override
     {
-        return yarp::os::Vocab::encode(x.c_str());
+        return yarp::os::Vocab32::encode(x);
     }
 
     // Quote and escape a string for printing it nested

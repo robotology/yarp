@@ -703,7 +703,7 @@ bool WireReader::getMode() const
     return get_mode;
 }
 
-bool WireReader::getIsVocab() const
+bool WireReader::getIsVocab32() const
 {
     return get_is_vocab;
 }

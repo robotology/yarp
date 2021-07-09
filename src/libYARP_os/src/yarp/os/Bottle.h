@@ -192,12 +192,26 @@ public:
      */
     void addInt64(std::int64_t x);
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+    /**
+     * Places a vocabulary item in the bottle, at the end of the list.
+     *
+     * @param x the item to add.
+     * @deprecated Since YARP 3.5.0. Use addVocab32 instead.
+     */
+    YARP_DEPRECATED_MSG("Use addVocab32 instead")
+    void addVocab(yarp::conf::vocab32_t x)
+    {
+        return addVocab32(x);
+    }
+#endif // YARP_NO_DEPRECATED
+
     /**
      * Places a vocabulary item in the bottle, at the end of the list.
      *
      * @param x the item to add.
      */
-    void addVocab(int x);
+    void addVocab32(yarp::conf::vocab32_t x);
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
     /**

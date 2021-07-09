@@ -125,7 +125,7 @@ public:
 private:
     bool get_mode;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
-    bool get_is_vocab;
+    bool get_is_vocab32;
     mutable bool need_ok;
     ConnectionWriter& writer;
 };

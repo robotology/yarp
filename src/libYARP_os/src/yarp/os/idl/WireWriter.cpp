@@ -22,7 +22,7 @@ constexpr yarp::conf::vocab32_t VOCAB_DONE = yarp::os::createVocab('d', 'o', 'n'
 WireWriter::WireWriter(ConnectionWriter& writer) :
         writer(writer)
 {
-    get_mode = get_is_vocab = false;
+    get_mode = get_is_vocab32 = false;
     need_ok = false;
     writer.convertTextMode();
 }
@@ -30,13 +30,13 @@ WireWriter::WireWriter(ConnectionWriter& writer) :
 WireWriter::WireWriter(WireReader& reader) :
         writer(reader.getWriter())
 {
-    get_is_vocab = false;
+    get_is_vocab32 = false;
     need_ok = false;
     writer.convertTextMode();
     get_mode = reader.getMode();
     if (get_mode) {
         get_string = reader.getString();
-        get_is_vocab = reader.getIsVocab();
+        get_is_vocab32 = reader.getIsVocab32();
     }
 }
 
@@ -213,7 +213,7 @@ bool WireWriter::writeListHeader(int len) const
         writer.appendInt32(len + 3);
         writer.appendInt32(BOTTLE_TAG_VOCAB32);
         writer.appendInt32(VOCAB_IS);
-        if (get_is_vocab) {
+        if (get_is_vocab32) {
             writer.appendInt32(BOTTLE_TAG_VOCAB32);
             writer.appendInt32(Vocab::encode(get_string));
         } else {
