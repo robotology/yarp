@@ -30,7 +30,7 @@
 
 
 /**
- * @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_nws_yarp
  *
  * \brief `frameGrabber_nws_yarp`: A YARP NWS for camera devices.
  *

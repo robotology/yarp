@@ -16,7 +16,9 @@
 #include <FrameTransformStorageGetRPC.h>
 
 /**
- * @brief A network wrapper client which converts the input retrieved from a FrameTransformStorageGetRPC thrift interface to an IFrameTransformStorageGet interface.
+ * @ingroup dev_impl_nwc_yarp
+ *
+ * @brief `frameTransformGet_nwc_yarp`: A network wrapper client which converts the input retrieved from a FrameTransformStorageGetRPC thrift interface to an IFrameTransformStorageGet interface.
  *
  * \section FrameTransformGet_nwc_yarp_device_parameters Parameters
  * This device is paired with its server called FrameTransformGet_nws_yarp.

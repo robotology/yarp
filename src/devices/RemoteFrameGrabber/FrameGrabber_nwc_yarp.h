@@ -78,7 +78,7 @@ private:
 
 
 /**
- * @ingroup dev_impl_network_clients
+ * @ingroup dev_impl_nwc_yarp
  *
  * \section frameGrabber_nws_yarp
  *

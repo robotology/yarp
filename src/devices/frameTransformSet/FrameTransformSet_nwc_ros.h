@@ -36,7 +36,9 @@
 #define ROSTOPICNAME_TF_STATIC "/tf_static"
 
 /**
- * @brief A network wrapper client which publishes the transforms received on the yarp::dev::IFrameTransformStorageSet interface to a ROS topic.
+ * @ingroup dev_impl_nwc_ros
+ *
+ * @brief `frameTransformSet_nwc_ros`: A network wrapper client which publishes the transforms received on the yarp::dev::IFrameTransformStorageSet interface to a ROS topic.
  *
  * \section FrameTransformSet_nwc_ros_device_parameters Parameters
  *

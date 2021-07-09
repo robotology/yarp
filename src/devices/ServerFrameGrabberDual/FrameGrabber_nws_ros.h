@@ -27,8 +27,11 @@
 #include <yarp/rosmsg/sensor_msgs/Image.h>
 
 /**
- *  @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_nws_ros
  *
+ * \section FrameGrabber_nws_ros_device_parameters Description of input parameters
+ *
+ * \brief `frameGrabber_nws_ros`: A ROS NWS for camera devices.
  *  Parameters required by this device are:
  * | Parameter name  | Type   | Units   | Default Value | Required  | Description                              | Notes |
  * |:---------------:|:------:|:-------:|:-------------:|:--------: |:----------------------------------------:|:-----:|

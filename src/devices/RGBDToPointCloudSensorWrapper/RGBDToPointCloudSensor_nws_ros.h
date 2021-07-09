@@ -43,10 +43,11 @@ namespace RGBDToPointCloudImpl{
     const std::string pointCloudTopicName_param     = "pointCloudTopicName";
 }
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_nws_ros
  *
  * \section RGBDToPointCloudSensor_nws_ros_device_parameters Description of input parameters
- * A Network grabber for kinect-like devices.
+ *
+ * \brief `RGBDToPointCloudSensor_nws_ros`: A Network grabber for kinect-like devices.
  * This device will produce one stream of data for the point cloud
  * derived fron the combination of the data derived from Framegrabber and IDepthSensor interfaces.
  * See they documentation for more details about each interface.

@@ -36,7 +36,9 @@
 #define ROSTOPICNAME_TF_STATIC "/tf_static"
 
 /**
- * @brief A ros network wrapper client that receives frame transforms from a ros topic and makes them available through an IFrameTransformStorageGet interface. See \subpage FrameTransform for additional info.
+ * @ingroup dev_impl_nwc_ros
+ *
+ * @brief `frameTransformGet_nwc_ros`: A ros network wrapper client that receives frame transforms from a ros topic and makes them available through an IFrameTransformStorageGet interface. See \subpage FrameTransform for additional info.
  *
  * \section FrameTransformGet_nwc_ros_device_parameters Parameters
  *

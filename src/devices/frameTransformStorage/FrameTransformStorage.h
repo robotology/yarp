@@ -36,7 +36,7 @@
 /**
  *  @ingroup dev_impl_other
  *
- * \brief A class that keeps a \ref FrameTransformContainer updated by receiving transformations
+ * \brief `frameTransformStorage`: A class that keeps a \ref FrameTransformContainer updated by receiving transformations
  *  through the \ref yarp::dev::IFrameTransformStorageSet interface and periodically querying a set of attached
  *  devices that expose the \ref yarp::dev::IFrameTransformStorageGet interface.
  *  It also exposes the \ref yarp::dev::IFrameTransformStorageGet interface to allow stored transformations retrieval

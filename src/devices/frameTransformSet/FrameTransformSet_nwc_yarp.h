@@ -19,7 +19,9 @@
 #include <map>
 
 /**
- * @brief A network wrapper client which publishes the transforms received on the thrift interface FrameTransformStorageSetRPC to yarp::dev::IFrameTransformStorageSet interface.
+ * @ingroup dev_impl_nwc_yarp
+ *
+ * @brief `frameTransformSet_nwc_yarp`: A network wrapper client which publishes the transforms received on the thrift interface FrameTransformStorageSetRPC to yarp::dev::IFrameTransformStorageSet interface.
  *
  * \section FrameTransformSet_nwc_yarp_device_parameters Parameters
  * This device is paired with its server called FrameTransformSet_nws_yarp.
