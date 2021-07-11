@@ -179,7 +179,7 @@ public:
         return port;
     }
 
-private:
+protected:
     Port port;
     BufferedPort<T>* buffered_port;
 
