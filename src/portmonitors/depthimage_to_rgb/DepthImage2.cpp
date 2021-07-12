@@ -88,8 +88,8 @@ bool DepthImageConverter::accept(yarp::os::Things& thing)
 
     yCError(DEPTHIMAGE2,
             "Expected %s, got %s, not doing any conversion!",
-            yarp::os::Vocab::decode(VOCAB_PIXEL_MONO_FLOAT).c_str(),
-            yarp::os::Vocab::decode(img->getPixelCode()).c_str() );
+            yarp::os::Vocab32::decode(VOCAB_PIXEL_MONO_FLOAT).c_str(),
+            yarp::os::Vocab32::decode(img->getPixelCode()).c_str() );
     return false;
 }
 

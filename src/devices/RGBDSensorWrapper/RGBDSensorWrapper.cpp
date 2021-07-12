@@ -59,7 +59,7 @@ bool RGBDSensorParser::configure(IFrameGrabberControls *_fgCtrl)
 bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 {
     bool ret = false;
-    int interfaceType = cmd.get(0).asVocab();
+    int interfaceType = cmd.get(0).asVocab32();
 
     response.clear();
     switch(interfaceType)
@@ -87,11 +87,11 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
         case VOCAB_RGBD_SENSOR:
         {
-            switch (cmd.get(1).asVocab())
+            switch (cmd.get(1).asVocab32())
             {
                 case VOCAB_GET:
                 {
-                    switch(cmd.get(2).asVocab())
+                    switch(cmd.get(2).asVocab32())
                     {
                         case VOCAB_EXTRINSIC_PARAM:
                         {
@@ -100,22 +100,22 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
                             if(ret)
                             {
                                 yarp::os::Bottle params_b;
-                                response.addVocab(VOCAB_RGBD_SENSOR);
-                                response.addVocab(VOCAB_EXTRINSIC_PARAM);
-                                response.addVocab(VOCAB_IS);
+                                response.addVocab32(VOCAB_RGBD_SENSOR);
+                                response.addVocab32(VOCAB_EXTRINSIC_PARAM);
+                                response.addVocab32(VOCAB_IS);
                                 ret &= Property::copyPortable(params, params_b);  // will it really work??
                                 response.append(params_b);
                             }
                             else
-                                response.addVocab(VOCAB_FAILED);
+                                response.addVocab32(VOCAB_FAILED);
                         }
                         break;
 
                         case VOCAB_ERROR_MSG:
                         {
-                            response.addVocab(VOCAB_RGBD_SENSOR);
-                            response.addVocab(VOCAB_ERROR_MSG);
-                            response.addVocab(VOCAB_IS);
+                            response.addVocab32(VOCAB_RGBD_SENSOR);
+                            response.addVocab32(VOCAB_ERROR_MSG);
+                            response.addVocab32(VOCAB_IS);
                             response.addString(iRGBDSensor->getLastErrorMsg());
                             ret = true;
                         }
@@ -123,9 +123,9 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
                         case VOCAB_RGBD_PROTOCOL_VERSION:
                         {
-                            response.addVocab(VOCAB_RGBD_SENSOR);
-                            response.addVocab(VOCAB_RGBD_PROTOCOL_VERSION);
-                            response.addVocab(VOCAB_IS);
+                            response.addVocab32(VOCAB_RGBD_SENSOR);
+                            response.addVocab32(VOCAB_RGBD_PROTOCOL_VERSION);
+                            response.addVocab32(VOCAB_IS);
                             response.addInt32(RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR);
                             response.addInt32(RGBD_INTERFACE_PROTOCOL_VERSION_MINOR);
                         }
@@ -133,9 +133,9 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
                         case VOCAB_STATUS:
                         {
-                            response.addVocab(VOCAB_RGBD_SENSOR);
-                            response.addVocab(VOCAB_STATUS);
-                            response.addVocab(VOCAB_IS);
+                            response.addVocab32(VOCAB_RGBD_SENSOR);
+                            response.addVocab32(VOCAB_STATUS);
+                            response.addVocab32(VOCAB_IS);
                             response.addInt32(iRGBDSensor->getSensorStatus());
                         }
                         break;
@@ -143,7 +143,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
                         default:
                         {
                             yCError(RGBDSENSORWRAPPER) << "Interface parser received an unknown GET command. Command is " << cmd.toString();
-                            response.addVocab(VOCAB_FAILED);
+                            response.addVocab32(VOCAB_FAILED);
                         }
                         break;
                     }
@@ -153,7 +153,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
                 case VOCAB_SET:
                 {
                     yCError(RGBDSENSORWRAPPER) << "Interface parser received an unknown SET command. Command is " << cmd.toString();
-                    response.addVocab(VOCAB_FAILED);
+                    response.addVocab32(VOCAB_FAILED);
                 }
                 break;
             }
@@ -162,7 +162,7 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
 
         default:
         {
-            yCError(RGBDSENSORWRAPPER) << "Received a command for a wrong interface " << yarp::os::Vocab::decode(interfaceType);
+            yCError(RGBDSENSORWRAPPER) << "Received a command for a wrong interface " << yarp::os::Vocab32::decode(interfaceType);
             return DeviceResponder::respond(cmd,response);
         }
         break;

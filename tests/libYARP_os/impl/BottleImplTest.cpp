@@ -40,7 +40,7 @@ TEST_CASE("os::BottleImplTest", "[yarp::os::impl]")
         ManagedBytes store2(bot3.byteCount());
         bot3.toBytes(store2.bytes());
         bot.fromBytes(store2.bytes());
-        CHECK(bot.get(0).isVocab()); // "type check"
+        CHECK(bot.get(0).isVocab32()); // "type check"
         CHECK(bot.get(1).isList()); //"type check"
 
         Bottle bot4("0 1 2.2 3");

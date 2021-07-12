@@ -35,9 +35,9 @@ int FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::height() const
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(IfVocab);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_HEIGHT);
+    cmd.addVocab32(IfVocab);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_HEIGHT);
 
     if (m_port.getOutputCount() == 0) {
         yCWarningThrottle(FRAMEGRABBEROF_FORWARDER, 5.0, "Remote port is not connected");
@@ -50,9 +50,9 @@ int FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::height() const
     }
 
     // reply should be [fgi|fgir] [h] [is] <height>
-    if (!response.get(0).isVocab() || (response.get(0).asVocab() != IfVocab) ||
-        !response.get(1).isVocab() || (response.get(1).asVocab() != VOCAB_HEIGHT) ||
-        !response.get(2).isVocab() || (response.get(2).asVocab() != VOCAB_IS) ||
+    if (!response.get(0).isVocab32() || (response.get(0).asVocab32() != IfVocab) ||
+        !response.get(1).isVocab32() || (response.get(1).asVocab32() != VOCAB_HEIGHT) ||
+        !response.get(2).isVocab32() || (response.get(2).asVocab32() != VOCAB_IS) ||
         !response.get(3).isInt32()) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "Invalid reply received");
         return 0;
@@ -68,9 +68,9 @@ int FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::width() const
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(IfVocab);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_WIDTH);
+    cmd.addVocab32(IfVocab);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_WIDTH);
 
     if (m_port.getOutputCount() == 0) {
         yCWarningThrottle(FRAMEGRABBEROF_FORWARDER, 5.0, "Remote port is not connected");
@@ -83,9 +83,9 @@ int FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::width() const
     }
 
     // reply should be [fgi|fgir] [w] [is] <width>
-    if (!response.get(0).isVocab() || (response.get(0).asVocab() != IfVocab) ||
-        !response.get(1).isVocab() || (response.get(1).asVocab() != VOCAB_WIDTH) ||
-        !response.get(2).isVocab() || (response.get(2).asVocab() != VOCAB_IS) ||
+    if (!response.get(0).isVocab32() || (response.get(0).asVocab32() != IfVocab) ||
+        !response.get(1).isVocab32() || (response.get(1).asVocab32() != VOCAB_WIDTH) ||
+        !response.get(2).isVocab32() || (response.get(2).asVocab32() != VOCAB_IS) ||
         !response.get(3).isInt32()) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "Invalid reply received");
         return 0;
@@ -103,9 +103,9 @@ bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImage(ImageType&
 
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(IfVocab);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(ImgVocab);
+    cmd.addVocab32(IfVocab);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(ImgVocab);
 
     if (m_port.getOutputCount() == 0) {
         yCWarningThrottle(FRAMEGRABBEROF_FORWARDER, 5.0, "Remote port is not connected");
@@ -118,9 +118,9 @@ bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImage(ImageType&
     }
 
     // reply should be [fgi|fgir] [imgr|?] [is] (<image>)
-    if (!response.get(0).isVocab() || (response.get(0).asVocab() != IfVocab) ||
-        !response.get(1).isVocab() || (response.get(1).asVocab() != ImgVocab) ||
-        !response.get(2).isVocab() || (response.get(2).asVocab() != VOCAB_IS) ||
+    if (!response.get(0).isVocab32() || (response.get(0).asVocab32() != IfVocab) ||
+        !response.get(1).isVocab32() || (response.get(1).asVocab32() != ImgVocab) ||
+        !response.get(2).isVocab32() || (response.get(2).asVocab32() != VOCAB_IS) ||
         !response.get(3).isList()) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "Invalid reply received");
         return false;
@@ -148,9 +148,9 @@ bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImageCrop(cropTy
 
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_FRAMEGRABBER_IMAGE);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_CROP);
+    cmd.addVocab32(VOCAB_FRAMEGRABBER_IMAGE);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_CROP);
     cmd.addInt32(cropType);
     yarp::os::Bottle & list = cmd.addList();
     for (size_t i=0; i<vertices.size(); i++)
@@ -170,9 +170,9 @@ bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImageCrop(cropTy
     }
 
     // reply should be [fgi|fgir] [crop] [is] (<image>)
-    if (!response.get(0).isVocab() || (response.get(0).asVocab() != IfVocab) ||
-        !response.get(1).isVocab() || (response.get(1).asVocab() != VOCAB_CROP) ||
-        !response.get(2).isVocab() || (response.get(2).asVocab() != VOCAB_IS) ||
+    if (!response.get(0).isVocab32() || (response.get(0).asVocab32() != IfVocab) ||
+        !response.get(1).isVocab32() || (response.get(1).asVocab32() != VOCAB_CROP) ||
+        !response.get(2).isVocab32() || (response.get(2).asVocab32() != VOCAB_IS) ||
         !response.get(3).isList()) {
         yCWarning(FRAMEGRABBEROF_FORWARDER, "Cropped image is not serialized properly");
         return false;

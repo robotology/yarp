@@ -99,8 +99,8 @@ public:
 
     int replyCode(bool flag)
     {
-        return flag ? yarp::os::createVocab('o', 'k')
-                    : yarp::os::createVocab('f', 'a', 'i', 'l');
+        return flag ? yarp::os::createVocab32('o', 'k')
+                    : yarp::os::createVocab32('f', 'a', 'i', 'l');
     }
 
     void setDelegate(yarp::os::NameSpace *delegate)

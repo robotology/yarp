@@ -72,6 +72,17 @@ public:
 
     bool writeVocab32(yarp::conf::vocab32_t x) const;
 
+    bool writeVocab32(char a, char b = 0, char c = 0, char d = 0) const
+    {
+        return writeVocab32(yarp::os::createVocab32(a, b, c, d));
+    }
+
+    // If the string is longer than 4 characters, only the first 4 are used.
+    bool writeVocab32(const std::string& str) const
+    {
+        return writeVocab32(yarp::os::Vocab32::encode(str));
+    }
+
     bool writeSizeT(std::size_t x) const;
 
     bool isValid() const;
@@ -125,7 +136,7 @@ public:
 private:
     bool get_mode;
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
-    bool get_is_vocab;
+    bool get_is_vocab32;
     mutable bool need_ok;
     ConnectionWriter& writer;
 };

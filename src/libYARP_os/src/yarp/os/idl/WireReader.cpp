@@ -12,8 +12,8 @@ using namespace yarp::os::idl;
 using namespace yarp::os;
 
 namespace {
-constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab('f', 'a', 'i', 'l');
-constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab('i', 's');
+constexpr yarp::conf::vocab32_t VOCAB_FAIL = yarp::os::createVocab32('f', 'a', 'i', 'l');
+constexpr yarp::conf::vocab32_t VOCAB_IS = yarp::os::createVocab32('i', 's');
 } // namespace
 
 WireReader::WireReader(ConnectionReader& reader) :
@@ -409,7 +409,7 @@ bool WireReader::readString(std::string& str, bool* is_vocab)
         if (reader.isError()) {
             return false;
         }
-        str = Vocab::decode(v);
+        str = Vocab32::decode(v);
         return true;
     }
     if (is_vocab != nullptr) {
@@ -703,7 +703,7 @@ bool WireReader::getMode() const
     return get_mode;
 }
 
-bool WireReader::getIsVocab() const
+bool WireReader::getIsVocab32() const
 {
     return get_is_vocab;
 }

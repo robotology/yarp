@@ -757,7 +757,7 @@ int DataplayerWorker::sendImages(int part, int frame)
     if (tmp.size()>0) {
         tmp.erase(tmp.begin());
         tmp.erase(tmp.end()-1);
-        code = Vocab::encode(tmp);
+        code = Vocab32::encode(tmp);
     }
 
     tmpPath = tmpPath + tmpName;

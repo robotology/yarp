@@ -47,11 +47,9 @@ constexpr static bool colored_output = false;
               << PRINT_BOOL(v->isInt8())    << "\t\t" \
               << PRINT_BOOL(v->isInt16())   << "\t\t" \
               << PRINT_BOOL(v->isInt32())   << "\t\t" \
-              << PRINT_BOOL(v->isInt())     << "\t\t" \
               << PRINT_BOOL(v->isInt64())   << "\t\t" \
               << PRINT_BOOL(v->isFloat32()) << "\t\t" \
               << PRINT_BOOL(v->isFloat64()) << "\t\t" \
-              << PRINT_BOOL(v->isDouble())  << "\t\t" \
               << PRINT_BOOL(v->isString())  << "\n"; \
     delete v; \
 }
@@ -64,11 +62,9 @@ constexpr static bool colored_output = false;
               << std::to_string(v->asInt8())    << "\t\t" \
               << std::to_string(v->asInt16())   << "\t\t" \
               << std::to_string(v->asInt32())   << "\t\t" \
-              << std::to_string(v->asInt())     << "\t\t" \
               << std::to_string(v->asInt64())   << "\t\t" \
               << std::to_string(v->asFloat32()) << "\t" \
               << std::to_string(v->asFloat64()) << "\t" \
-              << std::to_string(v->asDouble())  << "\t" \
               << GREY([) << xWHITE << v->asString() << xCLEAR << GREY(]) << "\t\t" \
               << GREY([) << xWHITE << v->toString() << xCLEAR << GREY(]) << "\n"; \
     delete v; \
@@ -88,21 +84,17 @@ YARP_DISABLE_DEPRECATED_WARNING
                 << CYAN(isInt8)    << "\t\t"
                 << CYAN(isInt16)   << "\t\t"
                 << CYAN(isInt32)   << "\t\t"
-                << CYAN(isInt)     << "\t\t"
                 << CYAN(isInt64)   << "\t\t"
                 << CYAN(isFloat32) << "\t"
                 << CYAN(isFloat64) << "\t"
-                << CYAN(isDouble)  << "\t"
                 << CYAN(isString)  << "\n";
 
     printIsType(Int8, std::int8_t);
     printIsType(Int16, std::int16_t);
     printIsType(Int32, std::int32_t);
-    printIsType(Int, int);
     printIsType(Int64, std::int64_t);
     printIsType(Float32, yarp::conf::float32_t);
     printIsType(Float64, yarp::conf::float64_t);
-    printIsType(Double, double);
 
 
     std::cout << "\n\t\t\t\t"
@@ -110,22 +102,18 @@ YARP_DISABLE_DEPRECATED_WARNING
                 << BLUE(asInt8)    << "\t\t"
                 << BLUE(asInt16)   << "\t\t"
                 << BLUE(asInt32)   << "\t\t"
-                << BLUE(asInt)     << "\t\t"
                 << BLUE(asInt64)   << "\t\t"
                 << BLUE(asFloat32) << "\t"
                 << BLUE(asFloat64) << "\t"
-                << BLUE(asDouble)  << "\t"
                 << BLUE(asString)  << "\t"
                 << MAGENTA(toString)  << "\n";
 
     printAsType(Int8, 8);
     printAsType(Int16, 16);
     printAsType(Int32, 32);
-    printAsType(Int, 32);
     printAsType(Int64, 64);
     printAsType(Float32, 32.01f);
     printAsType(Float64, 64.01);
-    printAsType(Double, 64.01);
 
 
     std::cout << "\n\t\t\t\t"
@@ -133,22 +121,18 @@ YARP_DISABLE_DEPRECATED_WARNING
                 << BLUE(asInt8)    << "\t\t"
                 << BLUE(asInt16)   << "\t\t"
                 << BLUE(asInt32)   << "\t\t"
-                << BLUE(asInt)     << "\t\t"
                 << BLUE(asInt64)   << "\t\t"
                 << BLUE(asFloat32) << "\t"
                 << BLUE(asFloat64) << "\t"
-                << BLUE(asDouble)  << "\t"
                 << BLUE(asString)  << "\t"
                 << MAGENTA(toString)  << "\n";
 
     printAsType(Int8, 0);
     printAsType(Int16, 0);
     printAsType(Int32, 0);
-    printAsType(Int, 0);
     printAsType(Int64, 0);
     printAsType(Float32, 0.0f);
     printAsType(Float64, 0.0);
-    printAsType(Double, 0.0);
 
     // Values that might not behave as expected:
     std::cout << "\n\t\t\t\t"
@@ -156,11 +140,9 @@ YARP_DISABLE_DEPRECATED_WARNING
                 << BLUE(asInt8)    << "\t\t"
                 << BLUE(asInt16)   << "\t\t"
                 << BLUE(asInt32)   << "\t\t"
-                << BLUE(asInt)     << "\t\t"
                 << BLUE(asInt64)   << "\t\t"
                 << BLUE(asFloat32) << "\t"
                 << BLUE(asFloat64) << "\t"
-                << BLUE(asDouble)  << "\t"
                 << BLUE(asString)  << "\t"
                 << MAGENTA(toString)  << "\n";
 
@@ -173,7 +155,6 @@ YARP_DISABLE_DEPRECATED_WARNING
     printAsType(Int32, 65535);
     printAsType(Float32, 31.99f);
     printAsType(Float64, 63.99);
-    printAsType(Double, 63.99);
 
     std::cout << std::flush;
 YARP_WARNING_POP

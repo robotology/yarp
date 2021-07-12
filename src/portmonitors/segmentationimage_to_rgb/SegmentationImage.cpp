@@ -140,9 +140,9 @@ bool SegmentationImageConverter::accept(yarp::os::Things& thing)
 
     yCError(SEGMENTATIONIMAGE,
             "SegmentationImageConverter: expected %s or %s, got %s, not doing any conversion!",
-            yarp::os::Vocab::decode(VOCAB_PIXEL_MONO).c_str(),
-            yarp::os::Vocab::decode(VOCAB_PIXEL_MONO16).c_str(),
-            yarp::os::Vocab::decode(img->getPixelCode()).c_str() );
+            yarp::os::Vocab32::decode(VOCAB_PIXEL_MONO).c_str(),
+            yarp::os::Vocab32::decode(VOCAB_PIXEL_MONO16).c_str(),
+            yarp::os::Vocab32::decode(img->getPixelCode()).c_str() );
     return false;
 }
 

@@ -55,7 +55,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     string request = in.get(0).asString();
     if (request == "help")
     {
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         out.addString("'get_transform <src> <dst>: print the transform from <src> to <dst>");
         out.addString("'list_frames: print all the available reference frames");
         out.addString("'list_ports: print all the opened ports for transform broadcasting");
@@ -67,7 +67,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     {
         std::vector<string> v;
         this->getAllFrameIds(v);
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         out.addString("List of available reference frames:");
         int count = 0;
         for (auto& vec : v)
@@ -81,7 +81,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     {
         string src = in.get(1).asString();
         string dst = in.get(2).asString();
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         yarp::sig::Matrix m;
         this->getTransform(src, dst, m);
         out.addString("Transform from " + src + " to " + dst + " is: ");
@@ -89,7 +89,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     }
     else if (request == "list_ports")
     {
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         if (m_array_of_ports.size()==0)
         {
             out.addString("No ports are currently active");
@@ -105,7 +105,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     }
     else if (request == "publish_transform")
     {
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         string src  = in.get(1).asString();
         string dst  = in.get(2).asString();
         string port_name = in.get(3).asString();
@@ -215,7 +215,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     {
         yCError(FRAMETRANSFORMCLIENT, "Invalid vocab received in FrameTransformClient");
         out.clear();
-        out.addVocab(VOCAB_ERR);
+        out.addVocab32(VOCAB_ERR);
         out.addString("Invalid command name");
     }
 
@@ -625,14 +625,14 @@ bool FrameTransformClient::deleteTransform(const string &target_frame_id, const 
 {
     /*yarp::os::Bottle b;
     yarp::os::Bottle resp;
-    b.addVocab(VOCAB_ITRANSFORM);
-    b.addVocab(VOCAB_TRANSFORM_DELETE);
+    b.addVocab32(VOCAB_ITRANSFORM);
+    b.addVocab32(VOCAB_TRANSFORM_DELETE);
     b.addString(target_frame_id);
     b.addString(source_frame_id);
     bool ret = m_rpc_InterfaceToServer.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab()!=VOCAB_OK)
+        if (resp.get(0).asVocab32()!=VOCAB_OK)
         {
             yCError(FRAMETRANSFORMCLIENT) << "Received error from server on deleting frame between "+source_frame_id+" and "+target_frame_id;
             return false;

@@ -299,8 +299,8 @@ public:
     virtual bool stop(const int n_joint, const int *joints)=0;
 };
 
-constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVE_GROUP = yarp::os::createVocab('v','m','o','g') ;
-constexpr yarp::conf::vocab32_t VOCAB_VEL_PID  = yarp::os::createVocab('v','p','d');
-constexpr yarp::conf::vocab32_t VOCAB_VEL_PIDS = yarp::os::createVocab('v','p','d','s');
+constexpr yarp::conf::vocab32_t VOCAB_VELOCITY_MOVE_GROUP = yarp::os::createVocab32('v','m','o','g') ;
+constexpr yarp::conf::vocab32_t VOCAB_VEL_PID  = yarp::os::createVocab32('v','p','d');
+constexpr yarp::conf::vocab32_t VOCAB_VEL_PIDS = yarp::os::createVocab32('v','p','d','s');
 
 #endif // YARP_DEV_IVELOCITYCONTROL_H

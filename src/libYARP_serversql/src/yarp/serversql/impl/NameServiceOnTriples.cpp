@@ -330,7 +330,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act)
 
     if (carrier!="mcast") {
         Bottle& event = act.event.addList();
-        event.addVocab(Vocab::encode("add"));
+        event.addVocab32("add");
         event.addString(port);
     }
     unlock();
@@ -381,7 +381,7 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act)
 
         if (contact.getCarrier()!="mcast") {
             Bottle& event = act.event.addList();
-            event.addVocab(Vocab::encode("del"));
+            event.addVocab32("del");
             event.addString(port);
         }
     }

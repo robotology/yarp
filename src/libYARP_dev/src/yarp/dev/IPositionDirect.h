@@ -190,8 +190,8 @@ public:
     virtual bool getRefPositionsRaw(const int n_joint, const int *joints, double *refs) {return false;}
 };
 
-constexpr yarp::conf::vocab32_t VOCAB_POSITION_DIRECT           = yarp::os::createVocab('d','p','o');
-constexpr yarp::conf::vocab32_t VOCAB_POSITION_DIRECTS          = yarp::os::createVocab('d','p','o','s');
-constexpr yarp::conf::vocab32_t VOCAB_POSITION_DIRECT_GROUP     = yarp::os::createVocab('d','p','o','g');
+constexpr yarp::conf::vocab32_t VOCAB_POSITION_DIRECT           = yarp::os::createVocab32('d','p','o');
+constexpr yarp::conf::vocab32_t VOCAB_POSITION_DIRECTS          = yarp::os::createVocab32('d','p','o','s');
+constexpr yarp::conf::vocab32_t VOCAB_POSITION_DIRECT_GROUP     = yarp::os::createVocab32('d','p','o','g');
 
 #endif // YARP_IPOSITIONDIRECT_H

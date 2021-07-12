@@ -42,11 +42,11 @@ public:
     enum
     {
         STATUS_NONE,                                                           //!< Not configured yet.
-        STATUS_OK = yarp::os::createVocab('o', 'k'),                           //!< Present and sane.
-        STATUS_LIBRARY_NOT_FOUND = yarp::os::createVocab('f', 'o', 'u', 'n'),  //!< Named shared library was not found.
-        STATUS_LIBRARY_NOT_LOADED = yarp::os::createVocab('l', 'o', 'a', 'd'), //!< Named shared library failed to load.
-        STATUS_FACTORY_NOT_FOUND = yarp::os::createVocab('f', 'a', 'c', 't'),  //!< Named method wasn't present in library.
-        STATUS_FACTORY_NOT_FUNCTIONAL = yarp::os::createVocab('r', 'u', 'n')   //!< Named method is not working right.
+        STATUS_OK = yarp::os::createVocab32('o', 'k'),                           //!< Present and sane.
+        STATUS_LIBRARY_NOT_FOUND = yarp::os::createVocab32('f', 'o', 'u', 'n'),  //!< Named shared library was not found.
+        STATUS_LIBRARY_NOT_LOADED = yarp::os::createVocab32('l', 'o', 'a', 'd'), //!< Named shared library failed to load.
+        STATUS_FACTORY_NOT_FOUND = yarp::os::createVocab32('f', 'a', 'c', 't'),  //!< Named method wasn't present in library.
+        STATUS_FACTORY_NOT_FUNCTIONAL = yarp::os::createVocab32('r', 'u', 'n')   //!< Named method is not working right.
     };
 
     /**

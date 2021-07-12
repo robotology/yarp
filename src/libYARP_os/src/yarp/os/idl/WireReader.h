@@ -161,7 +161,13 @@ public:
 
     bool getMode() const;
 
-    bool getIsVocab() const;
+    bool getIsVocab32() const;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
+    YARP_DEPRECATED_MSG("Use getIsVocab instead")
+    bool getIsVocab() const {
+        return getIsVocab32();
+    }
+#endif // YARP_NO_DEPRECATED
 
     const std::string& getString() const;
 

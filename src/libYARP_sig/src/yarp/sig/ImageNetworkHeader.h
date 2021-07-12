@@ -31,7 +31,7 @@ public:
     const yarp::os::NetInt32 listTag{BOTTLE_TAG_LIST};
     const yarp::os::NetInt32 listLen{4};
     const yarp::os::NetInt32 paramNameTag{BOTTLE_TAG_VOCAB32};
-    const yarp::os::NetInt32 paramName{yarp::os::createVocab('m','a','t')};
+    const yarp::os::NetInt32 paramName{yarp::os::createVocab32('m','a','t')};
     const yarp::os::NetInt32 paramIdTag{BOTTLE_TAG_VOCAB32};
     yarp::os::NetInt32 id{0};
     const yarp::os::NetInt32 paramListTag{BOTTLE_TAG_LIST + BOTTLE_TAG_INT32};

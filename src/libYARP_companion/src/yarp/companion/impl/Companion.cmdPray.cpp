@@ -153,7 +153,7 @@ int Companion::cmdPray(int argc, char *argv[])
 
     yarp::os::Bottle cmd;
     yarp::os::Bottle reply;
-    cmd.addVocab(yarp::os::createVocab('p', 'r', 'a', 'y'));
+    cmd.addVocab32('p', 'r', 'a', 'y');
     yarp::os::NetworkBase::write(name, cmd, reply, true, true);
 
     bool first = true;

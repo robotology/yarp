@@ -99,8 +99,8 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc)
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_SET_INITIAL_POS);
+    b.addVocab32(VOCAB_INAVIGATION);
+    b.addVocab32(VOCAB_NAV_SET_INITIAL_POS);
     b.addString(loc.map_id);
     b.addFloat64(loc.x);
     b.addFloat64(loc.y);
@@ -109,7 +109,7 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc)
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK)
+        if (resp.get(0).asVocab32() != VOCAB_OK)
         {
             yCError(LOCALIZATION2DCLIENT) << "setInitialPose() received error from localization server";
             return false;
@@ -133,8 +133,8 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc, const yarp::
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_SET_INITIAL_POSCOV);
+    b.addVocab32(VOCAB_INAVIGATION);
+    b.addVocab32(VOCAB_NAV_SET_INITIAL_POSCOV);
     b.addString(loc.map_id);
     b.addFloat64(loc.x);
     b.addFloat64(loc.y);
@@ -145,7 +145,7 @@ bool Localization2DClient::setInitialPose(const Map2DLocation& loc, const yarp::
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK)
+        if (resp.get(0).asVocab32() != VOCAB_OK)
         {
             yCError(LOCALIZATION2DCLIENT) << "setInitialPose() received error from localization server";
             return false;
@@ -164,13 +164,13 @@ bool  Localization2DClient::getEstimatedOdometry(yarp::dev::OdometryData& odom)
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_ESTIMATED_ODOM);
+    b.addVocab32(VOCAB_INAVIGATION);
+    b.addVocab32(VOCAB_NAV_GET_ESTIMATED_ODOM);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 10)
+        if (resp.get(0).asVocab32() != VOCAB_OK || resp.size() != 10)
         {
             yCError(LOCALIZATION2DCLIENT) << "getEstimatedOdometry() received error from localization server";
             return false;
@@ -202,13 +202,13 @@ bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc)
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_CURRENT_POS);
+    b.addVocab32(VOCAB_INAVIGATION);
+    b.addVocab32(VOCAB_NAV_GET_CURRENT_POS);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 5)
+        if (resp.get(0).asVocab32() != VOCAB_OK || resp.size() != 5)
         {
             yCError(LOCALIZATION2DCLIENT) << "getCurrentPosition() received error from localization server";
             return false;
@@ -235,13 +235,13 @@ bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Ma
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_CURRENT_POSCOV);
+    b.addVocab32(VOCAB_INAVIGATION);
+    b.addVocab32(VOCAB_NAV_GET_CURRENT_POSCOV);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 6)
+        if (resp.get(0).asVocab32() != VOCAB_OK || resp.size() != 6)
         {
             yCError(LOCALIZATION2DCLIENT) << "getCurrentPosition() received error from localization server";
             return false;
@@ -276,13 +276,13 @@ bool  Localization2DClient::getEstimatedPoses(std::vector<Map2DLocation>& poses)
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_LOCALIZER_POSES);
+    b.addVocab32(VOCAB_INAVIGATION);
+    b.addVocab32(VOCAB_NAV_GET_LOCALIZER_POSES);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK)
+        if (resp.get(0).asVocab32() != VOCAB_OK)
         {
             yCError(LOCALIZATION2DCLIENT) << "getEstimatedPoses() received error from localization server";
             return false;
@@ -326,20 +326,20 @@ bool  Localization2DClient::getLocalizationStatus(yarp::dev::Nav2D::Localization
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_GET_LOCALIZER_STATUS);
+    b.addVocab32(VOCAB_INAVIGATION);
+    b.addVocab32(VOCAB_NAV_GET_LOCALIZER_STATUS);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK || resp.size() != 2)
+        if (resp.get(0).asVocab32() != VOCAB_OK || resp.size() != 2)
         {
             yCError(LOCALIZATION2DCLIENT) << "getLocalizationStatus() received error from localization server";
             return false;
         }
         else
         {
-            status = (yarp::dev::Nav2D::LocalizationStatusEnum)(resp.get(1).asVocab());
+            status = (yarp::dev::Nav2D::LocalizationStatusEnum)(resp.get(1).asVocab32());
             return true;
         }
     }
@@ -356,13 +356,13 @@ bool  Localization2DClient::startLocalizationService()
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_LOCALIZATION_START);
+    b.addVocab32(VOCAB_INAVIGATION);
+    b.addVocab32(VOCAB_NAV_LOCALIZATION_START);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK)
+        if (resp.get(0).asVocab32() != VOCAB_OK)
         {
             yCError(LOCALIZATION2DCLIENT) << "startLocalizationService() received error from navigation server";
             return false;
@@ -381,13 +381,13 @@ bool  Localization2DClient::stopLocalizationService()
     yarp::os::Bottle b;
     yarp::os::Bottle resp;
 
-    b.addVocab(VOCAB_INAVIGATION);
-    b.addVocab(VOCAB_NAV_LOCALIZATION_STOP);
+    b.addVocab32(VOCAB_INAVIGATION);
+    b.addVocab32(VOCAB_NAV_LOCALIZATION_STOP);
 
     bool ret = m_rpc_port_localization_server.write(b, resp);
     if (ret)
     {
-        if (resp.get(0).asVocab() != VOCAB_OK)
+        if (resp.get(0).asVocab32() != VOCAB_OK)
         {
             yCError(LOCALIZATION2DCLIENT) << "stopLocalizationService() received error from navigation server";
             return false;

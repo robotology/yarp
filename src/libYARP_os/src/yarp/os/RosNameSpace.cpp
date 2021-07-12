@@ -607,7 +607,7 @@ bool RosNameSpace::writeToNameServer(PortWriter& cmd,
         }
 
         Bottle out;
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         Bottle* parts = cache.get(2).asList();
         Property nodes;
         Property topics;

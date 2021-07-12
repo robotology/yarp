@@ -474,11 +474,11 @@ public:
     virtual bool getTargetPositions(const int n_joint, const int *joints, double *refs) { return false;}
 };
 
-constexpr yarp::conf::vocab32_t VOCAB_POSITION_MOVE_GROUP    = yarp::os::createVocab('p','o','s','g');
-constexpr yarp::conf::vocab32_t VOCAB_RELATIVE_MOVE_GROUP    = yarp::os::createVocab('r','e','l','g');
-constexpr yarp::conf::vocab32_t VOCAB_MOTION_DONE_GROUP      = yarp::os::createVocab('d','o','n','g');
-constexpr yarp::conf::vocab32_t VOCAB_REF_SPEED_GROUP        = yarp::os::createVocab('v','e','l','g');
-constexpr yarp::conf::vocab32_t VOCAB_REF_ACCELERATION_GROUP = yarp::os::createVocab('a','c','c','g');
-constexpr yarp::conf::vocab32_t VOCAB_STOP_GROUP             = yarp::os::createVocab('s','t','o','g');
+constexpr yarp::conf::vocab32_t VOCAB_POSITION_MOVE_GROUP    = yarp::os::createVocab32('p','o','s','g');
+constexpr yarp::conf::vocab32_t VOCAB_RELATIVE_MOVE_GROUP    = yarp::os::createVocab32('r','e','l','g');
+constexpr yarp::conf::vocab32_t VOCAB_MOTION_DONE_GROUP      = yarp::os::createVocab32('d','o','n','g');
+constexpr yarp::conf::vocab32_t VOCAB_REF_SPEED_GROUP        = yarp::os::createVocab32('v','e','l','g');
+constexpr yarp::conf::vocab32_t VOCAB_REF_ACCELERATION_GROUP = yarp::os::createVocab32('a','c','c','g');
+constexpr yarp::conf::vocab32_t VOCAB_STOP_GROUP             = yarp::os::createVocab32('s','t','o','g');
 
 #endif // YARP_DEV_IPOSITIONCONTROL_H

@@ -127,7 +127,7 @@ public:
 };
 
 // interface IControlLimits sets/gets
-constexpr yarp::conf::vocab32_t VOCAB_LIMITS     = yarp::os::createVocab('l','l','i','m');
-constexpr yarp::conf::vocab32_t VOCAB_VEL_LIMITS = yarp::os::createVocab('v','l','i','m');
+constexpr yarp::conf::vocab32_t VOCAB_LIMITS     = yarp::os::createVocab32('l','l','i','m');
+constexpr yarp::conf::vocab32_t VOCAB_VEL_LIMITS = yarp::os::createVocab32('v','l','i','m');
 
 #endif // YARP_DEV_ICONTROLLIMITS_H

@@ -329,9 +329,9 @@ bool Rangefinder2DClient::getLaserMeasurement(std::vector<LaserMeasurementData> 
 bool Rangefinder2DClient::getDistanceRange(double& min, double& max)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_LASER_DISTANCE_RANGE);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_ILASER2D);
+    cmd.addVocab32(VOCAB_LASER_DISTANCE_RANGE);
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response) != false)
     {
@@ -345,9 +345,9 @@ bool Rangefinder2DClient::getDistanceRange(double& min, double& max)
 bool Rangefinder2DClient::setDistanceRange(double min, double max)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_LASER_DISTANCE_RANGE);
+    cmd.addVocab32(VOCAB_SET);
+    cmd.addVocab32(VOCAB_ILASER2D);
+    cmd.addVocab32(VOCAB_LASER_DISTANCE_RANGE);
     cmd.addFloat64(min);
     cmd.addFloat64(max);
     bool ok = rpcPort.write(cmd, response);
@@ -362,9 +362,9 @@ bool Rangefinder2DClient::setDistanceRange(double min, double max)
 bool Rangefinder2DClient::getScanLimits(double& min, double& max)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_LASER_ANGULAR_RANGE);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_ILASER2D);
+    cmd.addVocab32(VOCAB_LASER_ANGULAR_RANGE);
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response) != false)
     {
@@ -378,9 +378,9 @@ bool Rangefinder2DClient::getScanLimits(double& min, double& max)
 bool Rangefinder2DClient::setScanLimits(double min, double max)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_LASER_ANGULAR_RANGE);
+    cmd.addVocab32(VOCAB_SET);
+    cmd.addVocab32(VOCAB_ILASER2D);
+    cmd.addVocab32(VOCAB_LASER_ANGULAR_RANGE);
     cmd.addFloat64(min);
     cmd.addFloat64(max);
     bool ok = rpcPort.write(cmd, response);
@@ -390,9 +390,9 @@ bool Rangefinder2DClient::setScanLimits(double min, double max)
 bool Rangefinder2DClient::getHorizontalResolution(double& step)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_LASER_ANGULAR_STEP);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_ILASER2D);
+    cmd.addVocab32(VOCAB_LASER_ANGULAR_STEP);
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response) != false)
     {
@@ -405,9 +405,9 @@ bool Rangefinder2DClient::getHorizontalResolution(double& step)
 bool Rangefinder2DClient::setHorizontalResolution(double step)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_LASER_ANGULAR_STEP);
+    cmd.addVocab32(VOCAB_SET);
+    cmd.addVocab32(VOCAB_ILASER2D);
+    cmd.addVocab32(VOCAB_LASER_ANGULAR_STEP);
     cmd.addFloat64(step);
     bool ok = rpcPort.write(cmd, response);
     return (CHECK_FAIL(ok, response));
@@ -416,9 +416,9 @@ bool Rangefinder2DClient::setHorizontalResolution(double step)
 bool Rangefinder2DClient::getScanRate(double& rate)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_LASER_SCAN_RATE);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_ILASER2D);
+    cmd.addVocab32(VOCAB_LASER_SCAN_RATE);
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response) != false)
     {
@@ -431,9 +431,9 @@ bool Rangefinder2DClient::getScanRate(double& rate)
 bool Rangefinder2DClient::setScanRate(double rate)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_LASER_SCAN_RATE);
+    cmd.addVocab32(VOCAB_SET);
+    cmd.addVocab32(VOCAB_ILASER2D);
+    cmd.addVocab32(VOCAB_LASER_SCAN_RATE);
     cmd.addFloat64(rate);
     bool ok = rpcPort.write(cmd, response);
     return (CHECK_FAIL(ok, response));
@@ -448,9 +448,9 @@ bool Rangefinder2DClient::getDeviceStatus(Device_status &status)
 bool Rangefinder2DClient::getDeviceInfo(std::string &device_info)
 {
     Bottle cmd, response;
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_ILASER2D);
-    cmd.addVocab(VOCAB_DEVICE_INFO);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_ILASER2D);
+    cmd.addVocab32(VOCAB_DEVICE_INFO);
     bool ok = rpcPort.write(cmd, response);
     if (CHECK_FAIL(ok, response)!=false)
     {

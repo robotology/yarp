@@ -350,18 +350,18 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
     string request = in.get(0).asString();
 
     // parse in, prepare out
-    int code = in.get(0).asVocab();
+    int code = in.get(0).asVocab32();
     bool ret = false;
     if (code == VOCAB_ITRANSFORM)
     {
-        int cmd = in.get(1).asVocab();
+        int cmd = in.get(1).asVocab32();
         if (cmd == VOCAB_TRANSFORM_SET)
         {
             if (in.size() != 12)
             {
                 yCError(TRANSFORMSERVER) << "read(): Protocol error";
                 out.clear();
-                out.addVocab(VOCAB_FAILED);
+                out.addVocab32(VOCAB_FAILED);
             }
             else
             {
@@ -390,12 +390,12 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
                 if (ret == true)
                 {
                     out.clear();
-                    out.addVocab(VOCAB_OK);
+                    out.addVocab32(VOCAB_OK);
                 }
                 else
                 {
                     out.clear();
-                    out.addVocab(VOCAB_FAILED);
+                    out.addVocab32(VOCAB_FAILED);
                     yCError(TRANSFORMSERVER) << "read(): Something strange happened";
                 }
             }
@@ -407,7 +407,7 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
             m_ros_timed_transform_storage->clear();
             m_ros_static_transform_storage->clear();
             out.clear();
-            out.addVocab(VOCAB_OK);
+            out.addVocab32(VOCAB_OK);
         }
         else if (cmd == VOCAB_TRANSFORM_DELETE)
         {
@@ -417,7 +417,7 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
             if (ret1 == true)
             {
                 out.clear();
-                out.addVocab(VOCAB_OK);
+                out.addVocab32(VOCAB_OK);
             }
             else
             {
@@ -425,7 +425,7 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
                 if (ret2 == true)
                 {
                     out.clear();
-                    out.addVocab(VOCAB_OK);
+                    out.addVocab32(VOCAB_OK);
                 }
             }
 
@@ -434,12 +434,12 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
         {
             yCError(TRANSFORMSERVER, "Invalid vocab received");
             out.clear();
-            out.addVocab(VOCAB_ERR);
+            out.addVocab32(VOCAB_ERR);
         }
     }
     else if(request == "help")
     {
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         out.addString("'list': get all transforms stored");
         out.addString("'delete_all': delete all transforms");
         out.addString("'set_static_transform_rad <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform (angles in radians)");
@@ -487,7 +487,7 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
     }
     else if (request == "list")
     {
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         list_response(out);
     }
     else if (request == "generate_view")
@@ -511,7 +511,7 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
     {
         yCError(TRANSFORMSERVER, "Invalid vocab received");
         out.clear();
-        out.addVocab(VOCAB_ERR);
+        out.addVocab32(VOCAB_ERR);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();

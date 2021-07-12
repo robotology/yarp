@@ -144,7 +144,7 @@ void Ping::connect()
     rpc.quiet = true;
     Bottle cmd;
     Bottle reply;
-    cmd.addVocab(Vocab::encode("ver"));
+    cmd.addVocab32("ver");
     bool ok = NetworkBase::write(c, cmd, reply, rpc);
     if (!ok) {
         yCError(PING, "Port did not respond as expected");

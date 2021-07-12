@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     SharedLibraryClassFactory<Hello> helloFactory2("hello","hello_there");
     //SharedLibraryClassFactory<Hello> helloFactory2("hello","hello_there");
     if (!helloFactory2.isValid()) {
-        printf("Library problem: (%s)\n", Vocab::decode(helloFactory2.getStatus()).c_str());
+        printf("Library problem: (%s)\n", Vocab32::decode(helloFactory2.getStatus()).c_str());
         return 1;
     }
 

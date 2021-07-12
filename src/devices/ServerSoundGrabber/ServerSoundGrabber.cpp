@@ -172,17 +172,17 @@ bool ServerSoundGrabber::read(yarp::os::ConnectionReader& connection)
 
     if (command.get(0).asString() == "start") {
         mic->startRecording();
-        reply.addVocab(VOCAB_OK);
+        reply.addVocab32(VOCAB_OK);
     } else if (command.get(0).asString() == "stop") {
         mic->stopRecording();
-        reply.addVocab(VOCAB_OK);
+        reply.addVocab32(VOCAB_OK);
     } else if (command.get(0).asString() == "help") {
-        reply.addVocab(yarp::os::Vocab::encode("many"));
+        reply.addVocab32("many");
         reply.addString("start");
         reply.addString("stop");
     } else {
         yCError(SERVERSOUNDGRABBER) << "Invalid command";
-        reply.addVocab(VOCAB_ERR);
+        reply.addVocab32(VOCAB_ERR);
     }
 
     yarp::os::ConnectionWriter* returnToSender = connection.getWriter();

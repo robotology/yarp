@@ -15,6 +15,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/Vocab.h>
 
 #include <string>
 
@@ -149,17 +150,20 @@ public:
      */
     void clear();
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
     /**
      * Places an integer in the bottle, at the end of the list.
      *
      * @param x the integer to add.
      * @warning Unsafe, sizeof(int) is platform dependent. Use addInt32 instead.
+     * @deprecated Since YARP 3.5.0. Use addInt32 instead.
      */
-    YARP_DEPRECATED_MSG("Use addInt32 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use addInt32 instead")
     inline void addInt(int x)
     {
         addInt32(static_cast<std::int32_t>(x));
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Places a 8-bit integer in the bottle, at the end of the list.
@@ -189,25 +193,65 @@ public:
      */
     void addInt64(std::int64_t x);
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
+    /**
+     * Places a vocabulary item in the bottle, at the end of the list.
+     *
+     * @param x the item to add.
+     * @deprecated Since YARP 3.5.0. Use addVocab32 instead.
+     */
+    YARP_DEPRECATED_MSG("Use addVocab32 instead")
+    void addVocab(yarp::conf::vocab32_t x)
+    {
+        return addVocab32(x);
+    }
+#endif // YARP_NO_DEPRECATED
+
     /**
      * Places a vocabulary item in the bottle, at the end of the list.
      *
      * @param x the item to add.
      */
-    void addVocab(int x);
+    void addVocab32(yarp::conf::vocab32_t x);
 
+    /**
+     * Places a vocabulary item in the bottle, at the end of the list.
+     *
+     * @param a first character of the vocab
+     * @param b second character of the vocab
+     * @param c third character of the vocab
+     * @param d fourth character of the vocab
+     */
+    void addVocab32(char a, char b = 0, char c = 0, char d = 0)
+    {
+        addVocab32(yarp::os::createVocab32(a, b, c, d));
+    }
+
+    /**
+     * Places a vocabulary item in the bottle, at the end of the list.
+     * If the string is longer than 4 characters, only the first 4 are used.
+     * @param str The string to encode and add.
+     */
+    void addVocab32(const std::string& str)
+    {
+        addVocab32(yarp::os::Vocab32::encode(str));
+    }
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5.0
     /**
      * Places a floating point number in the bottle, at the end of the
      * list.
      *
      * @param x the number to add.
      * @warning Unsafe, sizeof(double) is platform dependent. Use addFloat64 instead.
+     * @deprecated Since YARP 3.5.0. Use addFloat64 instead.
      */
-    YARP_DEPRECATED_MSG("Use addFloat64 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use addFloat64 instead")
     inline void addDouble(double x)
     {
         addFloat64(static_cast<yarp::conf::float64_t>(x));
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Places a 32-bit floating point number in the bottle, at the end of the

@@ -15,6 +15,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Searchable.h>
+#include <yarp/os/Vocab.h>
 
 #include <cstddef> // defines size_t
 #include <string>
@@ -57,10 +58,10 @@ public:
     /**
      * Construct an integer Value
      * @param x the integer
-     * @param isVocab set this to true if the integer should be interpreted
+     * @param isVocab32 set this to true if the integer should be interpreted
      * as a vocabulary identifier
      */
-    explicit Value(std::int32_t x, bool isVocab = false);
+    explicit Value(std::int32_t x, bool isVocab32 = false);
 
     /**
      * Construct a floating point Value
@@ -71,10 +72,10 @@ public:
     /**
      * Construct a string Value
      * @param str the string
-     * @param isVocab set this to true if the string should be interpreted
+     * @param isVocab32 set this to true if the string should be interpreted
      * as a vocabulary identifier
      */
-    explicit Value(const std::string& str, bool isVocab = false);
+    explicit Value(const std::string& str, bool isVocab32 = false);
 
     /**
      * Construct a binary data Value
@@ -192,11 +193,25 @@ public:
     virtual bool isDict() const;
 
     /**
-     * Checks if value is a vocabulary identifier. If so, asVocab()
+     * Checks if value is a vocabulary identifier. If so, asVocab32()
      * will return it.
      * @return true iff value is a vocabulary identifier
      */
-    virtual bool isVocab() const;
+    virtual bool isVocab32() const;
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
+    /**
+     * Checks if value is a vocabulary identifier. If so, asVocab()
+     * will return it.
+     * @return true iff value is a vocabulary identifier
+     * @deprecated since YARP 3.5. Use isVocab32 instead.
+     */
+    YARP_DEPRECATED_MSG("Use isVocab32 instead") // Since YARP 3.5.0
+    virtual bool isVocab() const
+    {
+        return isVocab32();
+    }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Checks if value is a binary object. If so, asBlob() and asBlobLength()
@@ -213,18 +228,21 @@ public:
      */
     virtual bool asBool() const;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
     /**
      * Get integer value.
      * @return integer value if value is indeed an integer.
      * If it is another numeric type, the appropriate cast value is returned.
      * Otherwise returns 0.
      * @warning Unsafe, sizeof(int) is platform dependent. Use asInt32 instead.
+     * @deprecated Since YARP 3.5. Use asInt32 instead.
      */
-    YARP_DEPRECATED_MSG("Use asInt32 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use asInt32 instead")
     inline virtual int asInt() const final
     {
         return static_cast<int>(asInt32());
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Get 8-bit integer value.
@@ -270,18 +288,21 @@ public:
      */
     virtual std::int64_t asInt64() const;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
     /**
      * Get floating point value.
      * @return floating point value if value is indeed a floating point.
      * If it is another numeric type, the appropriate cast value is returned.
      * Otherwise returns 0.
      * @warning Unsafe, sizeof(double) is platform dependent. Use asFloat64 instead.
+     * @deprecated Since YARP 3.5. Use asFloat64 instead.
      */
-    YARP_DEPRECATED_MSG("Use asFloat64 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use asFloat64 instead")
     inline virtual double asDouble() const final
     {
         return static_cast<double>(asFloat64());
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Get 32-bit floating point value.
@@ -309,7 +330,20 @@ public:
      * Get vocabulary identifier as an integer.
      * @return integer value of vocabulary identifier.
      */
-    virtual std::int32_t asVocab() const;
+    virtual yarp::conf::vocab32_t asVocab32() const;
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
+    /**
+     * Get vocabulary identifier as an integer.
+     * @return integer value of vocabulary identifier.
+     * @deprecated Since YARP 3.5. Use asVocab32 instead.
+     */
+    YARP_DEPRECATED_MSG("Use asVocab32 instead")
+    virtual yarp::conf::vocab32_t asVocab() const
+    {
+        return asVocab32();
+    }
+#endif
 
     /**
      * Get string value.
@@ -414,17 +448,20 @@ public:
 
     virtual bool isLeaf() const;
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
     /**
      * Create an integer Value
      * @param x the value to take on
      * @return an integer Value
      * @warning Unsafe, sizeof(int) is platform dependent. Use makeInt instead.
+     * @deprecated Since YARP 3.5. Use makeInt32 instead.
      */
-    YARP_DEPRECATED_MSG("Use makeInt32 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use makeInt32 instead")
     inline static Value* makeInt(int x)
     {
         return makeInt32(static_cast<std::int32_t>(x));
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Create a 8-bit integer Value
@@ -454,17 +491,20 @@ public:
      */
     static Value* makeInt64(std::int64_t x);
 
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
     /**
      * Create a floating point Value
      * @param x the value to take on
      * @return a floating point Value
      * @warning Unsafe, sizeof(double) is platform dependent. Use makeFloat64 instead.
+     * @deprecated Since YARP 3.5. Use makeFloat64 instead.
      */
-    YARP_DEPRECATED_MSG("Use makeFloat64 instead") // Since YARP 3.5.0
+    YARP_DEPRECATED_MSG("Use makeFloat64 instead")
     inline static Value* makeDouble(double x)
     {
         return makeFloat64(static_cast<yarp::conf::float64_t>(x));
     }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Create a 32-bit floating point Value
@@ -492,14 +532,57 @@ public:
      * @param v the value to take on
      * @return a vocabulary identifier Value
      */
-    static Value* makeVocab(std::int32_t v);
+    static Value* makeVocab32(yarp::conf::vocab32_t v);
+
+    /**
+     * Create a vocabulary identifier Value
+     * @param a first character of the vocab
+     * @param b second character of the vocab
+     * @param c third character of the vocab
+     * @param d fourth character of the vocab
+     * @return a vocabulary identifier Value
+     */
+    static Value* makeVocab32(char a, char b = 0, char c = 0, char d = 0)
+    {
+        return makeVocab32(yarp::os::createVocab32(a, b, c, d));
+    }
+
+    /**
+     * Create a vocabulary identifier Value
+     * If the string is longer than 4 characters, only the first 4 are used.
+     * @param str the value to take on
+     * @return a vocabulary identifier Value
+     */
+    static Value* makeVocab32(const std::string& str)
+    {
+        return makeVocab32(yarp::os::Vocab32::encode(str));
+    }
+
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
+    /**
+     * Create a vocabulary identifier Value
+     * @param v the value to take on
+     * @return a vocabulary identifier Value
+     * @deprecated Since YARP 3.5. Use makeVocab32 instead.
+     */
+    YARP_DEPRECATED_MSG("Use makeVocab32 instead")
+    static Value* makeVocab(yarp::conf::vocab32_t v)
+    {
+        return makeVocab32(v);
+    }
 
     /**
      * Create a vocabulary identifier Value
      * @param str the value to take on
      * @return a vocabulary identifier Value
+     * @deprecated Since YARP 3.5. Use makeVocab32 instead.
      */
-    static Value* makeVocab(const std::string& str);
+    YARP_DEPRECATED_MSG("Use makeVocab32 instead")
+    static Value* makeVocab(const std::string& str)
+    {
+        return makeVocab32(str);
+    }
+#endif // YARP_NO_DEPRECATED
 
     /**
      * Create a Value containing binary data

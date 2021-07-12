@@ -116,7 +116,7 @@ YARP_END_PACK
         struct yarp::os::SharedLibraryClassApi* sapi = (struct yarp::os::SharedLibraryClassApi*)api; \
         if (len < (int)sizeof(yarp::os::SharedLibraryClassApi))                                      \
             return -1;                                                                               \
-        sapi->startCheck = yarp::os::createVocab('Y', 'A', 'R', 'P');                                \
+        sapi->startCheck = yarp::os::createVocab32('Y', 'A', 'R', 'P');                                \
         sapi->structureSize = sizeof(yarp::os::SharedLibraryClassApi);                               \
         sapi->systemVersion = 5;                                                                     \
         sapi->create = factoryname##_create;                                                         \
@@ -128,7 +128,7 @@ YARP_END_PACK
         for (int i = 0; i < YARP_SHAREDLIBRARYCLASSAPI_PADDING; i++) {                               \
             sapi->roomToGrow[i] = 0;                                                                 \
         }                                                                                            \
-        sapi->endCheck = yarp::os::createVocab('P', 'L', 'U', 'G');                                  \
+        sapi->endCheck = yarp::os::createVocab32('P', 'L', 'U', 'G');                                  \
         return sapi->startCheck;                                                                     \
     }
 // The double cast in the _create() and _destroy() functions are

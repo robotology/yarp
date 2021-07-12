@@ -30,28 +30,28 @@ namespace yarp {
 
             enum NavigationStatusEnum
             {
-                navigation_status_idle                  = yarp::os::createVocab('i', 'd', 'l', 'e'),
-                navigation_status_preparing_before_move = yarp::os::createVocab('p', 'r', 'e', 'p'),
-                navigation_status_moving                = yarp::os::createVocab('m', 'o', 'v', 'g'),
-                navigation_status_waiting_obstacle      = yarp::os::createVocab('w', 'a', 'i', 't'),
-                navigation_status_goal_reached          = yarp::os::createVocab('r', 'e', 'c', 'h'),
-                navigation_status_aborted               = yarp::os::createVocab('a', 'b', 'r', 't'),
-                navigation_status_failing               = yarp::os::createVocab('f', 'a', 'i', 'l'),
-                navigation_status_paused                = yarp::os::createVocab('p', 'a', 'u', 's'),
-                navigation_status_thinking              = yarp::os::createVocab('t', 'h', 'n', 'k'),
-                navigation_status_error                 = yarp::os::createVocab('e', 'r', 'r')
+                navigation_status_idle                  = yarp::os::createVocab32('i', 'd', 'l', 'e'),
+                navigation_status_preparing_before_move = yarp::os::createVocab32('p', 'r', 'e', 'p'),
+                navigation_status_moving                = yarp::os::createVocab32('m', 'o', 'v', 'g'),
+                navigation_status_waiting_obstacle      = yarp::os::createVocab32('w', 'a', 'i', 't'),
+                navigation_status_goal_reached          = yarp::os::createVocab32('r', 'e', 'c', 'h'),
+                navigation_status_aborted               = yarp::os::createVocab32('a', 'b', 'r', 't'),
+                navigation_status_failing               = yarp::os::createVocab32('f', 'a', 'i', 'l'),
+                navigation_status_paused                = yarp::os::createVocab32('p', 'a', 'u', 's'),
+                navigation_status_thinking              = yarp::os::createVocab32('t', 'h', 'n', 'k'),
+                navigation_status_error                 = yarp::os::createVocab32('e', 'r', 'r')
             };
 
             enum NavigationMapTypeEnum
             {
-                global_map                              = yarp::os::createVocab('g', 'l', 'o', 'b'),
-                local_map                               = yarp::os::createVocab('l', 'o', 'c', 'a')
+                global_map                              = yarp::os::createVocab32('g', 'l', 'o', 'b'),
+                local_map                               = yarp::os::createVocab32('l', 'o', 'c', 'a')
             };
 
             enum TrajectoryTypeEnum
             {
-                global_trajectory = yarp::os::createVocab('g', 'l', 'o', 'b'),
-                local_trajectory = yarp::os::createVocab('l', 'o', 'c', 'a')
+                global_trajectory = yarp::os::createVocab32('g', 'l', 'o', 'b'),
+                local_trajectory = yarp::os::createVocab32('l', 'o', 'c', 'a')
             };
 
             namespace INavigation2DHelpers
@@ -304,11 +304,11 @@ public:
     virtual bool clearAllLocations() = 0;
 };
 
-constexpr yarp::conf::vocab32_t VOCAB_NAV_STOP                     = yarp::os::createVocab('s', 't', 'o', 'p');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_SUSPEND                  = yarp::os::createVocab('s', 'u', 's', 'p');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_RESUME                   = yarp::os::createVocab('r', 'e', 's', 'm');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAVIGATION_WAYPOINTS = yarp::os::createVocab('w', 'a', 'y', 's');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_WAYPOINT     = yarp::os::createVocab('w', 'a', 'y');
-constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAV_MAP              = yarp::os::createVocab('n', 'm', 'a', 'p');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_STOP                     = yarp::os::createVocab32('s', 't', 'o', 'p');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_SUSPEND                  = yarp::os::createVocab32('s', 'u', 's', 'p');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_RESUME                   = yarp::os::createVocab32('r', 'e', 's', 'm');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAVIGATION_WAYPOINTS = yarp::os::createVocab32('w', 'a', 'y', 's');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_CURRENT_WAYPOINT     = yarp::os::createVocab32('w', 'a', 'y');
+constexpr yarp::conf::vocab32_t VOCAB_NAV_GET_NAV_MAP              = yarp::os::createVocab32('n', 'm', 'a', 'p');
 
 #endif // YARP_DEV_INAVIGATION2D_H

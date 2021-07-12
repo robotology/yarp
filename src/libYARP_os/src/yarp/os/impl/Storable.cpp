@@ -39,7 +39,7 @@ using yarp::os::impl::StoreInt64;
 using yarp::os::impl::StoreInt8;
 using yarp::os::impl::StoreList;
 using yarp::os::impl::StoreString;
-using yarp::os::impl::StoreVocab;
+using yarp::os::impl::StoreVocab32;
 
 
 YARP_OS_LOG_COMPONENT(STORABLE, "yarp.os.impl.Storable")
@@ -51,7 +51,7 @@ const int StoreInt32::code = BOTTLE_TAG_INT32;
 const int StoreInt64::code = BOTTLE_TAG_INT64;
 const int StoreFloat32::code = BOTTLE_TAG_FLOAT32;
 const int StoreFloat64::code = BOTTLE_TAG_FLOAT64;
-const int StoreVocab::code = BOTTLE_TAG_VOCAB32;
+const int StoreVocab32::code = BOTTLE_TAG_VOCAB32;
 const int StoreString::code = BOTTLE_TAG_STRING;
 const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
@@ -81,8 +81,8 @@ Storable* Storable::createByCode(std::int32_t id)
     case StoreInt64::code:
         storable = new StoreInt64();
         break;
-    case StoreVocab::code:
-        storable = new StoreVocab();
+    case StoreVocab32::code:
+        storable = new StoreVocab32();
         break;
     case StoreFloat32::code:
         storable = new StoreFloat32();
@@ -269,9 +269,9 @@ bool StoreInt64::writeRaw(ConnectionWriter& writer) const
 
 
 ////////////////////////////////////////////////////////////////////////////
-// StoreVocab
+// StoreVocab32
 
-std::string StoreVocab::toString() const
+std::string StoreVocab32::toString() const
 {
     if (x == 0) {
         return "false";
@@ -279,15 +279,15 @@ std::string StoreVocab::toString() const
     if (x == '1') {
         return "true";
     }
-    return Vocab::decode(x);
+    return Vocab32::decode(x);
 }
 
-void StoreVocab::fromString(const std::string& src)
+void StoreVocab32::fromString(const std::string& src)
 {
-    x = Vocab::encode(src);
+    x = Vocab32::encode(src);
 }
 
-std::string StoreVocab::toStringNested() const
+std::string StoreVocab32::toStringNested() const
 {
     if (x == 0) {
         return "false";
@@ -298,7 +298,7 @@ std::string StoreVocab::toStringNested() const
     return std::string("[") + toString() + "]";
 }
 
-void StoreVocab::fromStringNested(const std::string& src)
+void StoreVocab32::fromStringNested(const std::string& src)
 {
     x = 0;
     if (src.length() > 0) {
@@ -313,13 +313,13 @@ void StoreVocab::fromStringNested(const std::string& src)
     }
 }
 
-bool StoreVocab::readRaw(ConnectionReader& reader)
+bool StoreVocab32::readRaw(ConnectionReader& reader)
 {
     x = reader.expectInt32();
     return true;
 }
 
-bool StoreVocab::writeRaw(ConnectionWriter& writer) const
+bool StoreVocab32::writeRaw(ConnectionWriter& writer) const
 {
     writer.appendInt32(x);
     return true;

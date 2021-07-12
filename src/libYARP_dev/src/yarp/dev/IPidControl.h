@@ -381,8 +381,8 @@ public:
 };
 
 // interface IPositionControl gets
-constexpr yarp::conf::vocab32_t VOCAB_PID     = yarp::os::createVocab('p','i','d');
-constexpr yarp::conf::vocab32_t VOCAB_PIDS    = yarp::os::createVocab('p','i','d','s');
+constexpr yarp::conf::vocab32_t VOCAB_PID     = yarp::os::createVocab32('p','i','d');
+constexpr yarp::conf::vocab32_t VOCAB_PIDS    = yarp::os::createVocab32('p','i','d','s');
 
 
 #endif // YARP_DEV_CONTROLBOARDINTERFACES_H

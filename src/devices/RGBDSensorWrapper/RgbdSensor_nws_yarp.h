@@ -40,7 +40,7 @@ namespace RGBDImpl {
 
 // Following three definitions would fit better in a header file
 // shared between client and server ... where to place it?
-constexpr yarp::conf::vocab32_t VOCAB_PROTOCOL_VERSION = yarp::os::createVocab('p', 'r', 'o', 't');
+constexpr yarp::conf::vocab32_t VOCAB_PROTOCOL_VERSION = yarp::os::createVocab32('p', 'r', 'o', 't');
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MAJOR 1
 #define RGBD_WRAPPER_PROTOCOL_VERSION_MINOR 0
 

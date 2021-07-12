@@ -1489,8 +1489,8 @@ void Image::copyPixels(const unsigned char *src, size_t id1,
 
         default:
             printf("*** Tried to copy type %s to %s\n",
-                   yarp::os::Vocab::decode(id1).c_str(),
-                   yarp::os::Vocab::decode(id2).c_str());
+                   yarp::os::Vocab32::decode(id1).c_str(),
+                   yarp::os::Vocab32::decode(id2).c_str());
             std::exit(1);
             break;
     }

@@ -27,7 +27,7 @@ typedef yarp::os::PortablePair <yarp::os::Bottle, yarp::sig::Vector> CommandMess
 inline bool CHECK_FAIL(bool ok, yarp::os::Bottle& response)
 {
     if (ok) {
-        if (response.get(0).isVocab() && response.get(0).asVocab() == VOCAB_FAILED) {
+        if (response.get(0).isVocab32() && response.get(0).asVocab32() == VOCAB_FAILED) {
             return false;
         }
     } else {

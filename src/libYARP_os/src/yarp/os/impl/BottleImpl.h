@@ -87,9 +87,9 @@ public:
         add(new StoreFloat64(x));
     }
 
-    void addVocab(std::int32_t x)
+    void addVocab32(yarp::conf::vocab32_t x)
     {
-        add(new StoreVocab(x));
+        add(new StoreVocab32(x));
     }
 
     void addString(const std::string& text)

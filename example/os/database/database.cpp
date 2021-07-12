@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
         tmp.add(cmd.get(1));
         std::string key = tmp.toString();
 
-        switch (yarp::os::Vocab::encode(cmd.get(0).toString())) {
+        switch (cmd.get(0).asVocab32()) {
         case VOCAB_SET:
             state.put(key, cmd.get(2));
             break;
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
             break;
         }
         Value& v = state.find(key);
-        response.addVocab(v.isNull() ? VOCAB_NOT : VOCAB_IS);
+        response.addVocab32(v.isNull() ? VOCAB_NOT : VOCAB_IS);
         response.add(cmd.get(1));
         if (!v.isNull()) {
             response.add(v);

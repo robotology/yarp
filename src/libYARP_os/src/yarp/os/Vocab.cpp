@@ -11,7 +11,7 @@
 
 using namespace yarp::os;
 
-NetInt32 Vocab::encode(const std::string& str)
+NetInt32 Vocab32::encode(const std::string& str)
 {
     char a = '\0';
     char b = '\0';
@@ -29,11 +29,11 @@ NetInt32 Vocab::encode(const std::string& str)
             }
         }
     }
-    return createVocab(a, b, c, d);
+    return createVocab32(a, b, c, d);
 }
 
 
-std::string Vocab::decode(NetInt32 code)
+std::string Vocab32::decode(NetInt32 code)
 {
     std::string str;
     for (int i = 0; i < 4; i++) {

@@ -20,9 +20,9 @@ int DepthVisualParams_Forwarder::getDepthHeight()
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_HEIGHT);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_HEIGHT);
     m_port.write(cmd, response);
     return response.get(3).asInt32();
 }
@@ -31,9 +31,9 @@ int DepthVisualParams_Forwarder::getDepthWidth()
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_WIDTH);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_WIDTH);
     m_port.write(cmd, response);
     return response.get(3).asInt32();
 }
@@ -42,9 +42,9 @@ bool DepthVisualParams_Forwarder::setDepthResolution(int width, int height)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_RESOLUTION);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_SET);
+    cmd.addVocab32(VOCAB_RESOLUTION);
     cmd.addInt32(width);
     cmd.addInt32(height);
     m_port.write(cmd, response);
@@ -55,13 +55,13 @@ bool DepthVisualParams_Forwarder::getDepthFOV(double& horizontalFov, double& ver
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_FOV);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_FOV);
     m_port.write(cmd, response);
 
     // Minimal check on response, we suppose the response is always correctly formatted
-    if ((response.get(0).asVocab()) == VOCAB_FAILED) {
+    if ((response.get(0).asVocab32()) == VOCAB_FAILED) {
         horizontalFov = 0;
         verticalFov = 0;
         return false;
@@ -75,9 +75,9 @@ bool DepthVisualParams_Forwarder::setDepthFOV(double horizontalFov, double verti
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_FOV);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_SET);
+    cmd.addVocab32(VOCAB_FOV);
     cmd.addFloat64(horizontalFov);
     cmd.addFloat64(verticalFov);
     m_port.write(cmd, response);
@@ -88,9 +88,9 @@ double DepthVisualParams_Forwarder::getDepthAccuracy()
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_ACCURACY);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_ACCURACY);
     m_port.write(cmd, response);
     return response.get(3).asFloat64();
 }
@@ -99,9 +99,9 @@ bool DepthVisualParams_Forwarder::setDepthAccuracy(double accuracy)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_ACCURACY);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_SET);
+    cmd.addVocab32(VOCAB_ACCURACY);
     cmd.addFloat64(accuracy);
     m_port.write(cmd, response);
     return response.get(2).asBool();
@@ -111,13 +111,13 @@ bool DepthVisualParams_Forwarder::getDepthClipPlanes(double& nearPlane, double& 
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_CLIP_PLANES);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_CLIP_PLANES);
     m_port.write(cmd, response);
 
     // Minimal check on response, we suppose the response is always correctly formatted
-    if ((response.get(0).asVocab()) == VOCAB_FAILED) {
+    if ((response.get(0).asVocab32()) == VOCAB_FAILED) {
         nearPlane = 0;
         farPlane = 0;
         return false;
@@ -131,9 +131,9 @@ bool DepthVisualParams_Forwarder::setDepthClipPlanes(double nearPlane, double fa
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_CLIP_PLANES);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_SET);
+    cmd.addVocab32(VOCAB_CLIP_PLANES);
     cmd.addFloat64(nearPlane);
     cmd.addFloat64(farPlane);
     m_port.write(cmd, response);
@@ -144,13 +144,13 @@ bool DepthVisualParams_Forwarder::getDepthIntrinsicParam(yarp::os::Property& int
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_INTRINSIC_PARAM);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_INTRINSIC_PARAM);
     m_port.write(cmd, response);
 
     // Minimal check on response, we suppose the response is always correctly formatted
-    if ((response.get(0).asVocab()) == VOCAB_FAILED) {
+    if ((response.get(0).asVocab32()) == VOCAB_FAILED) {
         intrinsic.clear();
         return false;
     }
@@ -163,11 +163,11 @@ bool DepthVisualParams_Forwarder::getDepthMirroring(bool& mirror)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_GET);
-    cmd.addVocab(VOCAB_MIRROR);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_GET);
+    cmd.addVocab32(VOCAB_MIRROR);
     m_port.write(cmd, response);
-    if ((response.get(0).asVocab()) == VOCAB_FAILED) {
+    if ((response.get(0).asVocab32()) == VOCAB_FAILED) {
         return false;
     }
     mirror = response.get(3).asBool();
@@ -178,9 +178,9 @@ bool DepthVisualParams_Forwarder::setDepthMirroring(bool mirror)
 {
     yarp::os::Bottle cmd;
     yarp::os::Bottle response;
-    cmd.addVocab(VOCAB_DEPTH_VISUAL_PARAMS);
-    cmd.addVocab(VOCAB_SET);
-    cmd.addVocab(VOCAB_MIRROR);
+    cmd.addVocab32(VOCAB_DEPTH_VISUAL_PARAMS);
+    cmd.addVocab32(VOCAB_SET);
+    cmd.addVocab32(VOCAB_MIRROR);
     cmd.addInt32(mirror);
     m_port.write(cmd, response);
     return response.get(2).asBool();

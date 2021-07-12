@@ -3063,7 +3063,7 @@ void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ostri
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(reader);\n";
         f_cpp_ << indent_cpp() << "if (writer.isNull())" << inline_return_cpp("true");
         f_cpp_ << indent_cpp() << "writer.writeListHeader(1);\n";
-        f_cpp_ << indent_cpp() << "writer.writeVocab32(yarp::os::createVocab('o', 'k'));\n";
+        f_cpp_ << indent_cpp() << "writer.writeVocab32('o', 'k');\n";
         f_cpp_ << indent_cpp() << "return true;\n";
     }
     indent_down_cpp();

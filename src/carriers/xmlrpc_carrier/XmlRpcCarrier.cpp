@@ -36,7 +36,7 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout)
         vout = vin.asFloat64();
     } else if (vin.isString()) {
         vout = std::string(vin.asString());
-    } else if (vin.isVocab()) {
+    } else if (vin.isVocab32()) {
         vout = std::string("[") + std::string(vin.toString()) + "]";
     } else if (vin.isList()) {
         Bottle *bot = vin.asList();

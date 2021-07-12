@@ -45,7 +45,7 @@ static bool asJson(std::string& accum,
         accum += v.toString();
         return true;
     }
-    if (v.isString() || v.isVocab()) {
+    if (v.isString() || v.isVocab32()) {
         std::string x = v.toString();
         accum += "\"";
         for (char ch : x) {

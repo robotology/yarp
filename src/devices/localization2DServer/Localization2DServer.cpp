@@ -341,11 +341,11 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
 
     reply.clear();
 
-    if (command.get(0).isVocab())
+    if (command.get(0).isVocab32())
     {
-        if (command.get(0).asVocab() == VOCAB_INAVIGATION && command.get(1).isVocab())
+        if (command.get(0).asVocab32() == VOCAB_INAVIGATION && command.get(1).isVocab32())
         {
-            int request = command.get(1).asVocab();
+            int request = command.get(1).asVocab32();
             if (request == VOCAB_NAV_GET_CURRENT_POS)
             {
                 bool b = true;
@@ -360,7 +360,7 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                 }
                 if (b)
                 {
-                    reply.addVocab(VOCAB_OK);
+                    reply.addVocab32(VOCAB_OK);
                     reply.addString(m_current_position.map_id);
                     reply.addFloat64(m_current_position.x);
                     reply.addFloat64(m_current_position.y);
@@ -368,7 +368,7 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                 }
                 else
                 {
-                    reply.addVocab(VOCAB_ERR);
+                    reply.addVocab32(VOCAB_ERR);
                 }
             }
             else if (request == VOCAB_NAV_GET_ESTIMATED_ODOM)
@@ -385,7 +385,7 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                 }
                 if (b)
                 {
-                    reply.addVocab(VOCAB_OK);
+                    reply.addVocab32(VOCAB_OK);
                     reply.addFloat64(m_current_odometry.odom_x);
                     reply.addFloat64(m_current_odometry.odom_y);
                     reply.addFloat64(m_current_odometry.odom_theta);
@@ -398,7 +398,7 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                 }
                 else
                 {
-                    reply.addVocab(VOCAB_ERR);
+                    reply.addVocab32(VOCAB_ERR);
                 }
             }
             else if (request == VOCAB_NAV_SET_INITIAL_POS)
@@ -409,14 +409,14 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                 init_loc.y = command.get(4).asFloat64();
                 init_loc.theta = command.get(5).asFloat64();
                 iLoc->setInitialPose(init_loc);
-                reply.addVocab(VOCAB_OK);
+                reply.addVocab32(VOCAB_OK);
             }
             else if (request == VOCAB_NAV_GET_CURRENT_POSCOV)
             {
                 Map2DLocation init_loc;
                 yarp::sig::Matrix cov(3, 3);
                 iLoc->getCurrentPosition(init_loc, cov);
-                reply.addVocab(VOCAB_OK);
+                reply.addVocab32(VOCAB_OK);
                 reply.addString(m_current_position.map_id);
                 reply.addFloat64(m_current_position.x);
                 reply.addFloat64(m_current_position.y);
@@ -437,45 +437,45 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
                 {
                     for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = mc->get(i * 3 + j).asFloat64(); } }
                     bool ret = iLoc->setInitialPose(init_loc, cov);
-                    if (ret) { reply.addVocab(VOCAB_OK); }
-                    else     { reply.addVocab(VOCAB_ERR); }
+                    if (ret) { reply.addVocab32(VOCAB_OK); }
+                    else     { reply.addVocab32(VOCAB_ERR); }
                 }
                 else
                 {
-                    reply.addVocab(VOCAB_ERR);
+                    reply.addVocab32(VOCAB_ERR);
                 }
             }
             else if (request == VOCAB_NAV_LOCALIZATION_START)
             {
                 iLoc->startLocalizationService();
-                reply.addVocab(VOCAB_OK);
+                reply.addVocab32(VOCAB_OK);
             }
             else if (request == VOCAB_NAV_LOCALIZATION_STOP)
             {
                 iLoc->stopLocalizationService();
-                reply.addVocab(VOCAB_OK);
+                reply.addVocab32(VOCAB_OK);
             }
             else if (request == VOCAB_NAV_GET_LOCALIZER_STATUS)
             {
                 if (m_getdata_using_periodic_thread)
                 {
                     //m_current_status is obtained by run()
-                    reply.addVocab(VOCAB_OK);
-                    reply.addVocab(m_current_status);
+                    reply.addVocab32(VOCAB_OK);
+                    reply.addVocab32(m_current_status);
                 }
                 else
                 {
                     //m_current_status is obtained by getLocalizationStatus()
                     iLoc->getLocalizationStatus(m_current_status);
-                    reply.addVocab(VOCAB_OK);
-                    reply.addVocab(m_current_status);
+                    reply.addVocab32(VOCAB_OK);
+                    reply.addVocab32(m_current_status);
                 }
             }
             else if (request == VOCAB_NAV_GET_LOCALIZER_POSES)
             {
                 std::vector<Map2DLocation> poses;
                 iLoc->getEstimatedPoses(poses);
-                reply.addVocab(VOCAB_OK);
+                reply.addVocab32(VOCAB_OK);
                 reply.addInt32(poses.size());
                 for (size_t i=0; i<poses.size(); i++)
                 {
@@ -488,18 +488,18 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
             }
             else
             {
-                reply.addVocab(VOCAB_ERR);
+                reply.addVocab32(VOCAB_ERR);
             }
         }
         else
         {
             yCError(LOCALIZATION2DSERVER) << "Invalid vocab received";
-            reply.addVocab(VOCAB_ERR);
+            reply.addVocab32(VOCAB_ERR);
         }
     }
     else if (command.get(0).isString() && command.get(0).asString() == "help")
     {
-        reply.addVocab(Vocab::encode("many"));
+        reply.addVocab32("many");
         reply.addString("Available commands are:");
         reply.addString("getLoc");
         reply.addString("initLoc <map_name> <x> <y> <angle in degrees>");
@@ -525,7 +525,7 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
     else
     {
         yCError(LOCALIZATION2DSERVER) << "Invalid command type";
-        reply.addVocab(VOCAB_ERR);
+        reply.addVocab32(VOCAB_ERR);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();

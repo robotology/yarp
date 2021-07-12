@@ -355,17 +355,17 @@ bool ServerGrabber::initialize_YARP(yarp::os::Searchable &params)
 
 bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                                   yarp::os::Bottle& response, bool left, bool both=false) {
-    int code = cmd.get(0).asVocab();
+    int code = cmd.get(0).asVocab32();
     Bottle response2;
     switch (code)
     {
     case VOCAB_FRAMEGRABBER_IMAGE:
     {
-        switch (cmd.get(1).asVocab())
+        switch (cmd.get(1).asVocab32())
         {
             case VOCAB_GET:
             {
-                switch (cmd.get(2).asVocab())
+                switch (cmd.get(2).asVocab32())
                 {
                     case VOCAB_CROP:
                     {
@@ -442,14 +442,14 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
 
                         if(imageInterface != nullptr)
                         {
-                            if(imageInterface->getImageCrop((cropType_id_t) cmd.get(3).asVocab(), vertices, cropped) )
+                            if(imageInterface->getImageCrop((cropType_id_t) cmd.get(3).asVocab32(), vertices, cropped) )
                             {
                                 // use the device output
                             }
                             else
                             {
                                 // In case the device has not yet implemented this feature, do it here (less efficient)
-                                if(cmd.get(3).asVocab() == YARP_CROP_RECT)
+                                if(cmd.get(3).asVocab32() == YARP_CROP_RECT)
                                 {
                                     if(nPoints != 2)
                                     {
@@ -471,7 +471,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                                         return false;
                                     }
                                 }
-                                else if(cmd.get(3).asVocab() == YARP_CROP_LIST)
+                                else if(cmd.get(3).asVocab32() == YARP_CROP_LIST)
                                 {
                                     response.addString("List type not yet implemented");
                                 }
@@ -482,8 +482,8 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                             }
                         }
 
-                        response.addVocab(VOCAB_CROP);
-                        response.addVocab(VOCAB_IS);
+                        response.addVocab32(VOCAB_CROP);
+                        response.addVocab32(VOCAB_IS);
                         response.addInt32(cropped.width());                       // Actual width  of image in pixels, to check everything is ok
                         response.addInt32(cropped.height());                      // Actual height of image in pixels, to check everything is ok
 
@@ -516,7 +516,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                 if(!ret || (response!=response2))
                 {
                     response.clear();
-                    response.addVocab(VOCAB_FAILED);
+                    response.addVocab32(VOCAB_FAILED);
                     ret=false;
                     yCWarning(SERVERGRABBER) << "Response different among cameras or failed";
                 }
@@ -547,7 +547,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
             ret&=rgbParser2.respond(cmd,response2);
             if(ret)
             {
-                switch (cmd.get(2).asVocab())
+                switch (cmd.get(2).asVocab32())
                 {
                     //Only the intrinsic parameters are allowed to be different among the two cameras
                     // so we give both responses appending one to the other.
@@ -563,7 +563,7 @@ bool ServerGrabber::respond(const yarp::os::Bottle& cmd,
                         if(response!=response2)
                         {
                             response.clear();
-                            response.addVocab(VOCAB_FAILED);
+                            response.addVocab32(VOCAB_FAILED);
                             ret=false;
                             yCWarning(SERVERGRABBER) << "Response different among cameras or failed";
                         }

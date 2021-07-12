@@ -83,7 +83,7 @@ private:
 
     void addQueue(Bottle& status)
     {
-        status.add(Value::makeVocab("q"));
+        status.addVocab32('q');
         for (const auto& entry : q) {
             std::string name = entry.name;
             status.addString(name.c_str());
@@ -116,8 +116,8 @@ public:
                  yarp::os::Bottle& reply) override
     {
         mutex.lock();
-        switch (command.get(0).asVocab()) {
-        case yarp::os::createVocab('a', 'd', 'd'): {
+        switch (command.get(0).asVocab32()) {
+        case yarp::os::createVocab32('a', 'd', 'd'): {
             std::string name = command.get(1).asString();
             if (!name.empty()) {
                 removeName(name.c_str());
@@ -125,22 +125,22 @@ public:
                 entry.name = name;
                 q.push_back(entry);
                 reply.clear();
-                reply.add(Value::makeVocab("add"));
+                reply.addVocab32("add");
                 reply.addString(name.c_str());
                 addQueue(reply);
             }
         } break;
-        case yarp::os::createVocab('d', 'e', 'l'): {
+        case yarp::os::createVocab32('d', 'e', 'l'): {
             if (command.get(1).isInt32()) {
                 int idx = command.get(1).asInt32();
                 bool acted = removeName(idx);
                 if (acted) {
                     reply.clear();
-                    reply.add(Value::makeVocab("del"));
+                    reply.addVocab32("del");
                     reply.addInt32(idx);
                 } else {
                     reply.clear();
-                    reply.add(Value::makeVocab("no"));
+                    reply.addVocab32("no");
                     reply.addInt32(idx);
                 }
                 addQueue(reply);
@@ -150,18 +150,18 @@ public:
                     bool acted = removeName(name.c_str());
                     if (acted) {
                         reply.clear();
-                        reply.add(Value::makeVocab("del"));
+                        reply.addVocab32("del");
                         reply.addString(name.c_str());
                     } else {
                         reply.clear();
-                        reply.add(Value::makeVocab("no"));
+                        reply.addVocab32("no");
                         reply.addString(name.c_str());
                     }
                     addQueue(reply);
                 }
             }
         } break;
-        case yarp::os::createVocab('l', 'i', 's', 't'): {
+        case yarp::os::createVocab32('l', 'i', 's', 't'): {
             reply.clear();
             addQueue(reply);
         } break;

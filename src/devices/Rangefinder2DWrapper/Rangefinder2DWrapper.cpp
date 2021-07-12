@@ -277,15 +277,15 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
     if (!ok) return false;
 
     // parse in, prepare out
-    int action = in.get(0).asVocab();
-    int inter  = in.get(1).asVocab();
+    int action = in.get(0).asVocab32();
+    int inter  = in.get(1).asVocab32();
     bool ret = false;
 
     if (inter == VOCAB_ILASER2D)
     {
         if (action == VOCAB_GET)
         {
-            int cmd = in.get(2).asVocab();
+            int cmd = in.get(2).asVocab32();
             if (cmd == VOCAB_DEVICE_INFO)
             {
                 if (sens_p)
@@ -293,8 +293,8 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     std::string info;
                     if (sens_p->getDeviceInfo(info))
                     {
-                        out.addVocab(VOCAB_IS);
-                        out.addVocab(cmd);
+                        out.addVocab32(VOCAB_IS);
+                        out.addVocab32(cmd);
                         out.addString(info);
                         ret = true;
                     }
@@ -312,8 +312,8 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     double min = 0;
                     if (sens_p->getDistanceRange(min, max))
                     {
-                        out.addVocab(VOCAB_IS);
-                        out.addVocab(cmd);
+                        out.addVocab32(VOCAB_IS);
+                        out.addVocab32(cmd);
                         out.addFloat64(min);
                         out.addFloat64(max);
                         ret = true;
@@ -332,8 +332,8 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     double min = 0;
                     if (sens_p->getScanLimits(min, max))
                     {
-                        out.addVocab(VOCAB_IS);
-                        out.addVocab(cmd);
+                        out.addVocab32(VOCAB_IS);
+                        out.addVocab32(cmd);
                         out.addFloat64(min);
                         out.addFloat64(max);
                         ret = true;
@@ -351,8 +351,8 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     double step = 0;
                     if (sens_p->getHorizontalResolution(step))
                     {
-                        out.addVocab(VOCAB_IS);
-                        out.addVocab(cmd);
+                        out.addVocab32(VOCAB_IS);
+                        out.addVocab32(cmd);
                         out.addFloat64(step);
                         ret = true;
                     }
@@ -369,8 +369,8 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
                     double rate = 0;
                     if (sens_p->getScanRate(rate))
                     {
-                        out.addVocab(VOCAB_IS);
-                        out.addVocab(cmd);
+                        out.addVocab32(VOCAB_IS);
+                        out.addVocab32(cmd);
                         out.addFloat64(rate);
                         ret = true;
                     }
@@ -387,7 +387,7 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
         }
         else if (action == VOCAB_SET)
         {
-            int cmd = in.get(2).asVocab();
+            int cmd = in.get(2).asVocab32();
             if (cmd == VOCAB_LASER_DISTANCE_RANGE)
             {
                 if (sens_p)
@@ -444,7 +444,7 @@ bool Rangefinder2DWrapper::read(yarp::os::ConnectionReader& connection)
     if (!ret)
     {
         out.clear();
-        out.addVocab(VOCAB_FAILED);
+        out.addVocab32(VOCAB_FAILED);
     }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();

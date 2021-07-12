@@ -857,7 +857,7 @@ bool Map2DStorage::read(yarp::os::ConnectionReader& connection)
         //parse_string_command(in, out);
     }
     // parse vocab command
-    else if (in.get(0).isVocab())
+    else if (in.get(0).isVocab32())
     {
         //parse_vocab_command(in, out);
     }

@@ -14,7 +14,7 @@ function test_vocab()
   assert("number" == type(vocab))
   assert(1684234849 == vocab)
   assert("abcd" == yarp.decode(vocab))
-  vocab2 = yarp.createVocab('a','b','c','d')
+  vocab2 = yarp.createVocab32('a','b','c','d')
   assert("number" == type(vocab2))
   assert (vocab == vocab2)
 end

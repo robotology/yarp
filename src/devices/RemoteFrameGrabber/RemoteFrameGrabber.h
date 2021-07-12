@@ -76,9 +76,9 @@ public:
     {
         yarp::os::Bottle cmd;
         yarp::os::Bottle response;
-        cmd.addVocab(VOCAB_FRAMEGRABBER_IMAGE);
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_CROP);
+        cmd.addVocab32(VOCAB_FRAMEGRABBER_IMAGE);
+        cmd.addVocab32(VOCAB_GET);
+        cmd.addVocab32(VOCAB_CROP);
         cmd.addInt32(cropType);
         yarp::os::Bottle & list = cmd.addList();
         for(size_t i=0; i<vertices.size(); i++)
@@ -90,7 +90,7 @@ public:
 
         // Parse the response
         image.zero();
-        if( (response.get(0).asVocab() != VOCAB_CROP) || (response.size() != 5) || (!response.get(4).isBlob()))
+        if( (response.get(0).asVocab32() != VOCAB_CROP) || (response.size() != 5) || (!response.get(4).isBlob()))
         {
             yCError(REMOTEFRAMEGRABBER) << "getImageCrop: malformed response message. Size is " << response.size();
             return false;
@@ -275,9 +275,9 @@ protected:
     bool setCommand(int code, double v)
     {
         yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(code);
+        cmd.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+        cmd.addVocab32(VOCAB_SET);
+        cmd.addVocab32(code);
         cmd.addFloat64(v);
         port.write(cmd,response);
         return true;
@@ -286,9 +286,9 @@ protected:
     bool setCommand(int code, double b, double r)
     {
         yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(code);
+        cmd.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+        cmd.addVocab32(VOCAB_SET);
+        cmd.addVocab32(code);
         cmd.addFloat64(b);
         cmd.addFloat64(r);
         port.write(cmd,response);
@@ -298,9 +298,9 @@ protected:
     double getCommand(int code) const
     {
         yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(code);
+        cmd.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+        cmd.addVocab32(VOCAB_GET);
+        cmd.addVocab32(code);
         port.write(cmd,response);
         // response should be [cmd] [name] value
         return response.get(2).asFloat64();
@@ -309,9 +309,9 @@ protected:
     bool getCommand(int code, double &b, double &r) const
     {
         yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_FRAMEGRABBER_CONTROL);
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(code);
+        cmd.addVocab32(VOCAB_FRAMEGRABBER_CONTROL);
+        cmd.addVocab32(VOCAB_GET);
+        cmd.addVocab32(code);
         port.write(cmd,response);
         // response should be [cmd] [name] value
         b=response.get(2).asFloat64();
