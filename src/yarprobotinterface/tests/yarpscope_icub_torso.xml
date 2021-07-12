@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+  SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+  SPDX-License-Identifier: BSD-3-Clause
+-->
+
 <portscope rows="3" columns="1">
     <plot gridx="0"
           gridy="0"

@@ -1,10 +1,7 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
-# All rights reserved.
-#
-# This software may be modified and distributed under the terms of the
-# BSD-3-Clause license. See the accompanying LICENSE file for details.
+# SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+# SPDX-License-Identifier: BSD-3-Clause
 
 my $verbose_output = 0;
 
@@ -24,21 +21,15 @@ open my $handle, '<', "tests/misc/check_license_skip.txt";
 chomp(my @skip_files = <$handle>);
 close $handle;
 
-
-my $copyright_iit = "Copyright \\(C\\) 2006-2021 Istituto Italiano di Tecnologia \\(IIT\\)";
-my $copyright_robocub = "Copyright \\(C\\) 2006-2010 RobotCub Consortium";
-my $copyright_others = "Copyright \\(C\\) [^\n]+";
-
+my $copyright_iit = "2006-2021 Istituto Italiano di Tecnologia \\(IIT\\)";
+my $copyright_robocub = "2006-2010 RobotCub Consortium";
 
 my $str_bsd3_cpp = <<END;
 ^/\\*
- \\* $copyright_iit(
- \\* $copyright_robocub)?(
- \\* $copyright_others)*
- \\* All rights reserved\\.
- \\*
- \\* This software may be modified and distributed under the terms of the
- \\* BSD-3-Clause license\\. See the accompanying LICENSE file for details\\.
+ \\* SPDX-FileCopyrightText: $copyright_iit(
+ \\* SPDX-FileCopyrightText: $copyright_robocub)?(
+ \\* SPDX-FileCopyrightText: [^\n]+)*
+ \\* SPDX-License-Identifier: BSD-3-Clause
  \\*/
 
 END
@@ -49,25 +40,21 @@ my $str_bsd3_script = <<END;
 )?(#\\.rst:(
 #[^\n]*)+
 
-)?# $copyright_iit(
-# $copyright_robocub)?(
-# $copyright_others)*
-# All rights reserved\\.
-#
-# This software may be modified and distributed under the terms of the
-# BSD-3-Clause license\\. See the accompanying LICENSE file for details\\.
+)?# SPDX-FileCopyrightText: $copyright_iit(
+# SPDX-FileCopyrightText: $copyright_robocub)?(
+# SPDX-FileCopyrightText: [^\n]+)*
+# SPDX-License-Identifier: BSD-3-Clause
 
 END
 
 my $str_bsd3_xml = <<END;
-^<!--
-  $copyright_iit(
-  $copyright_robocub)?(
-  $copyright_others)*
-  All rights reserved\\.
+^(<\\?xml[^<]+
 
-  This software may be modified and distributed under the terms of the
-  BSD-3-Clause license\\. See the accompanying LICENSE file for details\\.
+)?<!--
+  SPDX-FileCopyrightText: $copyright_iit(
+  SPDX-FileCopyrightText: $copyright_robocub)?(
+  SPDX-FileCopyrightText: [^\n]+)*
+  SPDX-License-Identifier: BSD-3-Clause
 -->
 
 END
@@ -75,227 +62,105 @@ END
 my $str_bsd3_lua = <<END;
 ^(#!.+
 
-)?-- $copyright_iit(
--- $copyright_robocub)?(
--- $copyright_others)*
--- All rights reserved\\.
---
--- This software may be modified and distributed under the terms of the
--- BSD-3-Clause license\\. See the accompanying LICENSE file for details\\.
+)?-- SPDX-FileCopyrightText: $copyright_iit(
+-- SPDX-FileCopyrightText: $copyright_robocub)?(
+-- SPDX-FileCopyrightText: [^\n]+)*
+-- SPDX-License-Identifier: BSD-3-Clause
 
 END
 
 my $str_bsd3_swig = <<END;
-^// $copyright_iit(
-// $copyright_robocub)?(
-// $copyright_others)*
-// All rights reserved\\.
-//
-// This software may be modified and distributed under the terms of the
-// BSD-3-Clause license\\. See the accompanying LICENSE file for details\\.
+^// SPDX-FileCopyrightText: $copyright_iit(
+// SPDX-FileCopyrightText: $copyright_robocub)?(
+// SPDX-FileCopyrightText: [^\n]+)*
+// SPDX-License-Identifier: BSD-3-Clause
 
 END
 
 my $str_bsd3_mat = <<END;
-^% $copyright_iit(
-% $copyright_robocub)?(
-% $copyright_others)*
-% All rights reserved\\.
-%
-% This software may be modified and distributed under the terms of the
-% BSD-3-Clause license\\. See the accompanying LICENSE file for details\\.
+^% SPDX-FileCopyrightText: $copyright_iit(
+% SPDX-FileCopyrightText: $copyright_robocub)?(
+% SPDX-FileCopyrightText: [^\n]+)*
+% SPDX-License-Identifier: BSD-3-Clause
 
 END
 
 my $str_lgpl2_1_or_later = <<END;
 ^/\\*
- \\* $copyright_iit(
- \\* $copyright_robocub)?
- \\*
- \\* This library is free software; you can redistribute it and/or
- \\* modify it under the terms of the GNU Lesser General Public
- \\* License as published by the Free Software Foundation; either
- \\* version 2\\.1 of the License, or \\(at your option\\) any later version\\.
- \\*
- \\* This library is distributed in the hope that it will be useful,
- \\* but WITHOUT ANY WARRANTY; without even the implied warranty of
- \\* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\\.  See the GNU
- \\* Lesser General Public License for more details\\.
- \\*
- \\* You should have received a copy of the GNU Lesser General Public
- \\* License along with this library; if not, write to the Free Software
- \\* Foundation, Inc\\., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ \\* SPDX-FileCopyrightText: $copyright_iit(
+ \\* SPDX-FileCopyrightText: $copyright_robocub)?
+ \\* SPDX-License-Identifier: LGPL-2.1-or-later
  \\*/
 
 END
 
 my $str_lgpl2_1_or_later_other = <<END;
 ^/\\*
- \\* $copyright_iit(
- \\* $copyright_robocub)?(
- \\* $copyright_others)*
- \\*
- \\* This library is free software; you can redistribute it and/or
- \\* modify it under the terms of the GNU Lesser General Public
- \\* License as published by the Free Software Foundation; either
- \\* version 2\\.1 of the License, or \\(at your option\\) any later version\\.
- \\*
- \\* This library is distributed in the hope that it will be useful,
- \\* but WITHOUT ANY WARRANTY; without even the implied warranty of
- \\* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\\.  See the GNU
- \\* Lesser General Public License for more details\\.
- \\*
- \\* You should have received a copy of the GNU Lesser General Public
- \\* License along with this library; if not, write to the Free Software
- \\* Foundation, Inc\\., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ \\* SPDX-FileCopyrightText: $copyright_iit(
+ \\* SPDX-FileCopyrightText: $copyright_robocub)?(
+ \\* SPDX-FileCopyrightText: [^\n]+)*
+ \\* SPDX-License-Identifier: LGPL-2.1-or-later
  \\*/
 
 END
 
 my $str_gpl2_or_later = <<END;
 ^/\\*
- \\* $copyright_iit(
- \\* $copyright_robocub)?
- \\*
- \\* This program is free software; you can redistribute it and/or modify it under
- \\* the terms of the GNU General Public License as published by the Free Software
- \\* Foundation; either version 2 of the License, or \\(at your option\\) any later
- \\* version\\.
- \\*
- \\* This program is distributed in the hope that it will be useful, but WITHOUT
- \\* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- \\* FOR A PARTICULAR PURPOSE\\.  See the GNU General Public License for more
- \\* details\\.
- \\*
- \\* You should have received a copy of the GNU General Public License along with
- \\* this program; if not, write to the Free Software Foundation, Inc\\.,
- \\* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA\\.
+ \\* SPDX-FileCopyrightText: $copyright_iit(
+ \\* SPDX-FileCopyrightText: $copyright_robocub)?
+ \\* SPDX-License-Identifier: GPL-2.0-or-later
  \\*/
 
 END
 
 my $str_gpl2_or_later_other = <<END;
 ^/\\*
- \\* $copyright_iit(
- \\* $copyright_robocub)?(
- \\* $copyright_others)*
- \\*
- \\* This program is free software; you can redistribute it and/or modify it under
- \\* the terms of the GNU General Public License as published by the Free Software
- \\* Foundation; either version 2 of the License, or \\(at your option\\) any later
- \\* version\\.
- \\*
- \\* This program is distributed in the hope that it will be useful, but WITHOUT
- \\* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- \\* FOR A PARTICULAR PURPOSE\\.  See the GNU General Public License for more
- \\* details\\.
- \\*
- \\* You should have received a copy of the GNU General Public License along with
- \\* this program; if not, write to the Free Software Foundation, Inc\\.,
- \\* 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA\\.
+ \\* SPDX-FileCopyrightText: $copyright_iit(
+ \\* SPDX-FileCopyrightText: $copyright_robocub)?(
+ \\* SPDX-FileCopyrightText: [^\n]+)*
+ \\* SPDX-License-Identifier: GPL-2.0-or-later
  \\*/
 
 END
 
 my $str_apache_2 = <<END;
 ^/\\*
- \\* $copyright_iit
- \\*
- \\* Licensed under the Apache License, Version 2\\.0 \\(the "License"\\);
- \\* you may not use this file except in compliance with the License\\.
- \\* You may obtain a copy of the License at
- \\*
- \\*     http://www\\.apache\\.org/licenses/LICENSE-2\\.0
- \\*
- \\* Unless required by applicable law or agreed to in writing, software
- \\* distributed under the License is distributed on an "AS IS" BASIS,
- \\* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied\\.
- \\* See the License for the specific language governing permissions and
- \\* limitations under the License\\.
+ \\* SPDX-FileCopyrightText: $copyright_iit
+ \\* SPDX-License-Identifier: Apache-2.0
  \\*/
 
 END
 
 my $str_lgpl2_1_or_later_lua = <<END;
--- $copyright_iit(
--- $copyright_robocub)?
---
--- This library is free software; you can redistribute it and/or
--- modify it under the terms of the GNU Lesser General Public
--- License as published by the Free Software Foundation; either
--- version 2\\.1 of the License, or \\(at your option\\) any later version\\.
---
--- This library is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\\.  See the GNU
--- Lesser General Public License for more details\\.
---
--- You should have received a copy of the GNU Lesser General Public
--- License along with this library; if not, write to the Free Software
--- Foundation, Inc\\., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-- SPDX-FileCopyrightText: $copyright_iit(
+-- SPDX-FileCopyrightText: $copyright_robocub)?
+-- SPDX-License-Identifier: LGPL-2.1-or-later
 
 END
 
 my $str_lgpl2_1_or_later_lua_other = <<END;
--- $copyright_iit(
--- $copyright_robocub)?(
--- $copyright_others)*
---
--- This library is free software; you can redistribute it and/or
--- modify it under the terms of the GNU Lesser General Public
--- License as published by the Free Software Foundation; either
--- version 2\\.1 of the License, or \\(at your option\\) any later version\\.
---
--- This library is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\\.  See the GNU
--- Lesser General Public License for more details\\.
---
--- You should have received a copy of the GNU Lesser General Public
--- License along with this library; if not, write to the Free Software
--- Foundation, Inc\\., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-- SPDX-FileCopyrightText: $copyright_iit(
+-- SPDX-FileCopyrightText: $copyright_robocub)?(
+-- SPDX-FileCopyrightText: [^\n]+)*
+-- SPDX-License-Identifier: LGPL-2.1-or-later
 
 END
 
 my $str_gpl3_or_later = <<END;
 ^/\\*
- \\* $copyright_iit(
- \\* $copyright_robocub)?
- \\*
- \\* This program is free software: you can redistribute it and/or modify
- \\* it under the terms of the GNU General Public License as published by
- \\* the Free Software Foundation, either version 3 of the License, or
- \\* \\(at your option\\) any later version\\.
- \\*
- \\* This program is distributed in the hope that it will be useful,
- \\* but WITHOUT ANY WARRANTY; without even the implied warranty of
- \\* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\\.  See the
- \\* GNU General Public License for more details\\.
- \\*
- \\* You should have received a copy of the GNU General Public License
- \\* along with this program\\.  If not, see <https://www\\.gnu\\.org/licenses/>\\.
+ \\* SPDX-FileCopyrightText: $copyright_iit(
+ \\* SPDX-FileCopyrightText: $copyright_robocub)?
+ \\* SPDX-License-Identifier: GPL-3.0-or-later
  \\*/
 
 END
 
 my $str_gpl3_or_later_other = <<END;
 ^/\\*
- \\* $copyright_iit(
- \\* $copyright_robocub)?(
- \\* $copyright_others)*
- \\*
- \\* This program is free software: you can redistribute it and/or modify
- \\* it under the terms of the GNU General Public License as published by
- \\* the Free Software Foundation, either version 3 of the License, or
- \\* \\(at your option\\) any later version\\.
- \\*
- \\* This program is distributed in the hope that it will be useful,
- \\* but WITHOUT ANY WARRANTY; without even the implied warranty of
- \\* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE\\.  See the
- \\* GNU General Public License for more details\\.
- \\*
- \\* You should have received a copy of the GNU General Public License
- \\* along with this program\\.  If not, see <https://www\\.gnu\\.org/licenses/>\\.
+ \\* SPDX-FileCopyrightText: $copyright_iit(
+ \\* SPDX-FileCopyrightText: $copyright_robocub)?(
+ \\* SPDX-FileCopyrightText: [^\n]+)*
+ \\* SPDX-License-Identifier: GPL-3.0-or-later
  \\*/
 
 END
@@ -387,7 +252,7 @@ foreach my $filename (@files) {
     }
 
     # Skip more files
-    if ("$filename" =~ /\.(ui|rc|qrc|xml|xml.template|xslt|xsl|msg|srv|ini|cfg|toml|txt|TXT|dox|md|plist.in|tex|mdl|map|yaml)$/) {
+    if ("$filename" =~ /\.(ui|rc|qrc|xslt|xsl|msg|srv|ini|cfg|toml|txt|TXT|dox|md|plist.in|tex|mdl|map|yaml)$/) {
         if ("$filename" !~ /CMakeLists.txt$/) {
             print_if_verbose "[SKIP (.$1)] $filename\n";
             $skip++;
@@ -430,7 +295,7 @@ foreach my $filename (@files) {
 
     # Xml style BSD-3-Clause
     if ("$txt" =~ /$str_bsd3_xml/s) {
-        if ("$filename" =~ /\.xml$/) {
+        if ("$filename" =~ /\.(xml|xml.template)$/) {
             print_if_verbose "[OK - BSD (.xml)] $filename\n";
             $ok++;
         } else {

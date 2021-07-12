@@ -1,11 +1,8 @@
 #!/bin/bash
 
-# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
-# Copyright (C) 2006-2010 RobotCub Consortium
-# All rights reserved.
-#
-# This software may be modified and distributed under the terms of the
-# BSD-3-Clause license. See the accompanying LICENSE file for details.
+# SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+# SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+# SPDX-License-Identifier: BSD-3-Clause
 
 echo "Puts license text in order."
 echo "Make sure you run this as ./scripts/admin/update-license"
@@ -150,8 +147,13 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      [libftdi](https://www.intra2net.com/en/developer/libftdi/).
    + The \`SDLJoypad\` device uses alternatively
      [SDL 1.2](https://libsdl.org/license.php).
-   + The ffmpeg_grabber and ffmpeg_writer devices use
+   + The \`ffmpeg_grabber\` and \`ffmpeg_writer\` devices, and the
+     \`image_compression_ffmpeg\` and \`sound_compression_mp3\` portmonitors use
      [Ffmpeg](https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md).
+   + The websocket carrier uses the \`Websocket\` library, which contains some
+     files that are released under the
+     [FDL](https://github.com/katzarsky/WebSocket/blob/master/WebSocket/sha1/license.txt)
+     license.
  * A few optional parts of YARP are released under the terms of the GPL license,
    version 2 or later:
    + \`YARP_gsl\` uses the GNU Scientific Library, under the GPL 2 or later.

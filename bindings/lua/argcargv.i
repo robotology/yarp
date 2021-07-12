@@ -1,8 +1,8 @@
+// SPDX-FileCopyrightText: 2012 stack exchange inc, Konrad Eisele
+// SPDX-License-Identifier: CC-BY-SA-3.0
+
 // Port of Ruby argcargv.i typemap file
 // Code general idea was from: http://stackoverflow.com/questions/9860362/swig-lua-call-mint-argv-char-argc
-
-// Copyright: (C) 2012 stack exchange inc, Konrad Eisele
-// CopyPolicy: Creative Commons Attribution-ShareAlike 3.0 Unported License
 
 /* ------------------------------------------------------------
  * --- Argc & Argv ---

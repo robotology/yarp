@@ -16,6 +16,8 @@ Suggested layout is a little verbose:
     CMake script to build library.
   extern/libraryname/patches (optional)
     Patches applied to upstream source,
+  extern/libraryname/LICENSES
+    Licenses relative to the source code in the subdirectory
 
 The extra subdirectory is to give space for wrapper code/scripts
 without mixing it with the original code.

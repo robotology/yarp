@@ -8,7 +8,7 @@ Homepage: https://github.com/ros/std_msgs
 
 Copyright: See single packages
 
-License: BSD
+License: BSD-3-Clause
 
 Version: std_msgs      0.5.11
          common_msgs   1.12.5

@@ -1,0 +1,116 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: YARP
+Upstream-Contact: Istituto Italiano di Tecnologia (IIT)
+Source: https://github.com/robotology/yarp
+
+Files: *
+Copyright:
+ 2012-2021 Istituto Italiano di Tecnologia (IIT)
+ 2006-2010 RobotCub Consortium
+License: BSD-3-Clause
+
+Files: bindings/java/examples/matlab/simulink/utility.mdl
+Copyright: 2009, The MathWorks, Inc.
+License: BSD-3-Clause
+
+Files: extern/catch2/catch.hpp
+Copyright: 2019 Two Blue Cubes Ltd.
+License: BSL-1.0
+
+Files: extern/diff_match_patch/diff_match_patch.h
+Copyright: 2008 Google Inc.
+License: Apache-2.0
+
+Files: extern/dirent/dirent/*
+Copyright: 2006, Toni Ronkko
+License: MIT
+
+Files: extern/hmac/hmac/*
+Copyright: 2005, 2007 Olivier Gay
+License: BSD-3-Clause
+
+Files: extern/libdc1394_bayer/libdc1394_bayer.c
+Copyright: Damien Douxchamps and Frederic Devernay
+License: LGPL-2.1-or-later
+
+Files:
+ extern/md5/md5.c
+ extern/md5/md5.h
+Copyright: 1999-2000, 2002 Aladdin Enterprises.
+License: Zlib
+
+Files: extern/qcustomplot/qcustomplot/*
+Copyright: 2011-2018 Emanuel Eichhammer
+License: GPL-3.0-or-later
+
+Files: extern/qgv/qgv/*
+Copyright: 2014 Bergont Nicolas
+License: GPL-3.0-or-later
+
+Files: extern/ros/*
+Copyright: 2009 Willow Garage, Inc.
+License: BSD-3-Clause
+
+Files: extern/rplidar/sdk/*
+Copyright:
+ 2009-2014 RoboPeak Team (http://www.robopeak.com)
+ 2014-2018 Shanghai Slamtec Co., Ltd. (http://www.slamtec.com)
+License: BSD-2-Clause
+
+Files: extern/sqlite/sqlite/*
+Copyright: D. Richard Hipp <drh@hwaci.com>
+License: blessing
+
+Files: extern/tinyxml/tinyxml/*
+Copyright: Lee Thomason, Yves Berquin, Andrew Ellerton
+License: Zlib
+
+Files: extern/thrift/thrift/*
+Copyright: Copyright 2006- Apache Software Foundation
+License: Apache-2.0
+
+Files: extern/thrift/thrift/lib/py/compat/win32/stdint.h
+Copyright: 2006-2008, Alexander Chemeris
+License: BSD-3-Clause
+
+Files:
+ extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.cc
+ extern/thrift/thrift/compiler/cpp/src/thrift/thrifty.hh
+Copyright: Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+License: GPL-3-or-later WITH Bison-exception-2.2
+
+Files:
+ extern/thrift/thrift/compile
+ extern/thrift/thrift/ylwrap
+Copyright: Copyright (C) 1996-2014 Free Software Foundation, Inc.
+License: GPL-2.0-or-later
+
+Files: extern/thrift/thrift/build/cmake/FindGLIB.cmake
+Copyright: Copyright (C) 2012 Raphael Kubo da Costa <rakuco@webkit.org>
+License: BSD-2-Clause
+
+Files: extern/xmlrpcpp/xmlrpcpp/*
+Copyright: 2002-2003, Chris Morley
+License: LGPL-2.1-or-later
+
+Files: extern/websocket/WebSocket/*
+Copyright: Copyright (C) 2012-present by Boian Katzarsky
+License: MIT
+
+Files: extern/websocket/WebSocket/WebSocket/base64/*
+Copyright: Copyright (C) 2004-2008 René Nyffenegger
+License: Zlib
+
+Files:
+ extern/websocket/WebSocket/WebSocket/md5/md5.c
+ extern/websocket/WebSocket/WebSocket/md5/md5.h
+Copyright: Copyright (C) 1999, 2000, 2002 Aladdin Enterprises
+License: Zlib
+
+Files: extern/websocket/WebSocket/WebSocket/md5/md5.hpp
+Copyright: Copyright (c) 2011, Peter Thorson
+License: BSD-3-Clause
+
+Files: extern/websocket/WebSocket/WebSocket/sha1/*
+Copyright: Copyright (C) 1998, 2009 Paul E. Jones <paulej@packetizer.com>
+License: LicenseRef-FPL

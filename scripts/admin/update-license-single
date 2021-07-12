@@ -1,11 +1,8 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
-# Copyright (C) 2006-2010 RobotCub Consortium
-# All rights reserved.
-#
-# This software may be modified and distributed under the terms of the
-# BSD-3-Clause license. See the accompanying LICENSE file for details.
+# SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+# SPDX-FileCopyrightText: 2006-2010 RobotCub Consortium
+# SPDX-License-Identifier: BSD-3-Clause
 
 # use Data::Dumper;
 
@@ -26,14 +23,8 @@ close(FIN);
 ### Handle Policy
 my $policy = "unknown";
 
-if ($txt =~ /CopyPolicy\:\s*(.*)/i) {
+if ($txt =~ /SPDX-License-Identifier\:\s*(.*)/i) {
     $policy = $1;
-    if ($policy eq "Released under the terms of the LGPLv2.1 or later, see LICENSE") {
-        $policy = "LGPLv2.1 or later";
-    }
-    if ($policy eq "Released under the terms of the GNU GPL v2.0.") {
-        $policy = "GPLv2";
-    }
 } elsif ($txt =~ /BSD-3-Clause/) {
     $policy = "BSD-3-Clause";
 } elsif ($txt =~ /clause BSD/) {
@@ -50,7 +41,7 @@ if ($txt =~ /CopyPolicy\:\s*(.*)/i) {
     $policy = "BSD-3-Clause";
 } elsif ($txt =~ /Permission is granted to anyone to use this software for any/) {
     if ($txt =~ /This notice may not be removed or altered from any source/) {
-        $policy = "zlib";
+        $policy = "Zlib";
     } else {
         if ($txt =~ /All advertising materials mentioning features or use of this software/) {
             $policy = "BSD-4-Clause";
@@ -68,28 +59,28 @@ if ($txt =~ /CopyPolicy\:\s*(.*)/i) {
     }
 } elsif ($txt =~ /GNU Lesser General Public/) {
     if ($txt =~ /version 2.1.+later/) {
-        $policy = "LGPLv2.1 or later";
+        $policy = "LGPL-2.1-or-later";
     }
 } elsif ($txt =~ /LGPLv2.1\+/) {
-    $policy = "LGPLv2.1 or later";
+    $policy = "LGPL-2.1-or-later";
 } elsif ($txt =~ /GNU General Public License/) {
     if ($txt =~ /version 2 of the License, or/) {
-        $policy = "GPLv2 or later";
+        $policy = "GPL-2.0-or-later";
     } elsif ($txt =~ /version 3 of the License, or/) {
-        $policy = "GPLv3 or later";
+        $policy = "GPL-3.0-or-later";
     }
 } elsif ($txt =~ /GNU Library General Public/) {
     if ($txt =~ /version 2 of the License. or/) {
-        $policy = "LGPLv2 or later";
+        $policy = "LGPL-2-or-later";
     }
 } elsif ($txt =~ /GNU Lesser General Public/) {
     if ($txt =~ /version 2 of the License. or/) {
-        $policy = "LGPLv2 or later";
+        $policy = "LGPL-2-or-later";
     }
 } elsif ($txt =~ /Licensed to the Apache Software Foundation/) {
-    $policy = "Apache License, Version 2.0";
+    $policy = "Apache-2.0";
 } elsif ($txt =~ /Licensed under the Apache License/) {
-    $policy = "Apache License, Version 2.0";
+    $policy = "Apache-2.0";
 } elsif ($fname =~ /sfun_time.c/) {
     $policy = "BSD-3-Clause";
 }
@@ -105,7 +96,9 @@ $policy =~ s/^\s+//g;
 
 my @copyright = "unknown";
 # Match lines in files
-if ($txt =~ /copyright\:\s*([^ \"\'\*\r\n]+)\.?\s*[\n\r\*]/i) {
+if ($txt =~ /SPDX-FileCopyrightText\:\s*([^ \"\'\*\r\n]+)\.?\s*[\n\r\*]/i) {
+    @copyright = ($txt =~ /SPDX-FileCopyrightText\:\s*([^ \"\'\*\r\n]+)\.?\s*[\n\r\*]/ig);
+} elsif ($txt =~ /copyright\:\s*([^ \"\'\*\r\n]+)\.?\s*[\n\r\*]/i) {
     @copyright = ($txt =~ /copyright\:\s*([^ \"\'\*\r\n]+)\.?\s*[\n\r\*]/ig);
 } elsif ($txt =~ /copyright\:?\s*([^\(0-9][^\"\'\*\r\n]+)\.?\s*[\n\r\*]/i) {
     @copyright = ($txt =~ /copyright\:?\s*([^\(0-9][^\"\'\*\r\n]+)\.?\s*[\n\r\*]/ig);
@@ -164,15 +157,15 @@ if ($policy =~ /BSD-3-Clause/) {
     open(FOUT,">>license-bsd4.txt");
     print FOUT $txt2;
     close(FOUT);
-} elsif ($policy =~ /LGPLv2.1 or later/) {
+} elsif ($policy =~ /LGPL-2.1-or-later/) {
     open(FOUT,">>license-lgpl2.1+.txt");
     print FOUT $txt2;
     close(FOUT);
-} elsif ($policy =~ /GPLv2 or later/) {
+} elsif ($policy =~ /GPL-2.0-or-later/) {
     open(FOUT,">>license-gpl2+.txt");
     print FOUT $txt2;
     close(FOUT);
-} elsif ($policy =~ /GPLv3 or later/) {
+} elsif ($policy =~ /GPL-3.0-or-later/) {
     open(FOUT,">>license-gpl3+.txt");
     print FOUT $txt2;
     close(FOUT);

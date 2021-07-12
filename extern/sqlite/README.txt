@@ -8,14 +8,6 @@ source code for SQLite is in the public domain.
 
 Homepage: http://sqlite.org/
 
-Copyright: Public Domain
-
-License:
- The author disclaims copyright to this source code.  In place of
- a legal notice, here is a blessing:
- .
- May you do good and not evil.
- May you find forgiveness for yourself and forgive others.
- May you share freely, never taking more than you give.
+Copyright: blessing
 
 Version: 3.7.13 (3071300) amalgamation
