@@ -38,7 +38,11 @@
  * interfaces.
  */
 class FakeFrameGrabber :
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5`
+        virtual public yarp::dev::DeviceDriver,
+#else
         public yarp::dev::DeviceDriver,
+#endif
         public yarp::dev::IFrameGrabberImage,
         public yarp::dev::IFrameGrabberImageRaw,
         public yarp::dev::IFrameGrabberControls,
@@ -220,11 +224,12 @@ private:
     void printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t pixbuf_h, size_t x, size_t y, char* s, size_t size);
 };
 
-
-class TestFrameGrabber : public FakeFrameGrabber
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.5
+class TestFrameGrabber :
+        public yarp::dev::DeprecatedDeviceDriver,
+        public FakeFrameGrabber
 {
-public:
-    bool open(yarp::os::Searchable& config) override;
 };
+#endif // YARP_NO_DEPRECATED
 
 #endif // YARP_FAKEFRAMEGRABBER_FAKEFRAMEGRABBER_H

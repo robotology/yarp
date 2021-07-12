@@ -24,7 +24,7 @@ YARP_DECLARE_LOG_COMPONENT(FAKEBOT)
  * \brief `fakebot`: Documentation to be added
  */
 class FakeBot :
-        public yarp::dev::DeviceDriver,
+        public yarp::dev::DeprecatedDeviceDriver,
         public yarp::dev::IPositionControl,
         public yarp::dev::IVelocityControl,
         public yarp::dev::IAmplifierControl,

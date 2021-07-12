@@ -916,6 +916,10 @@ bool Map2DServer::loadMaps(std::string mapsfile)
 
 bool Map2DServer::open(yarp::os::Searchable &config)
 {
+    yCWarning(MAP2DSERVER) << "The 'map2DServer' device is deprecated in favour of 'map2D_nws_yarp'.";
+    yCWarning(MAP2DSERVER) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(MAP2DSERVER) << "Please update your scripts.";
+
     Property params;
     params.fromString(config.toString());
 
