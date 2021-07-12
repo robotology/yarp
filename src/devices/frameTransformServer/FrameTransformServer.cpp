@@ -3,62 +3,51 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-// example: yarpdev --device transformServer --ROS::enable_ros_publisher 0 --ROS::enable_ros_subscriber 0
-
-#define _USE_MATH_DEFINES
 #include "FrameTransformServer.h"
 
 #include <yarp/os/Log.h>
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/math/Math.h>
 
-#include <cmath>
-#include <cstdlib>
-#include <limits>
+#include <cmrc/cmrc.hpp>
 #include <mutex>
-#include <sstream>
+CMRC_DECLARE(frameTransformServerRC);
 
-using namespace yarp::sig;
-using namespace yarp::math;
 using namespace yarp::dev;
 using namespace yarp::os;
+using namespace yarp::sig;
+using namespace yarp::math;
 using namespace std;
-
 
 namespace {
 YARP_LOG_COMPONENT(FRAMETRANSFORMSERVER, "yarp.device.FrameTransformServer")
 }
+#define LOG_THROTTLE_PERIOD 1.0
 
-/**
-  * FrameTransformServer
-  */
-
-FrameTransformServer::FrameTransformServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
-{
-    m_period = DEFAULT_THREAD_PERIOD;
-    m_FrameTransformTimeout = 0.200; //ms
-}
-
-FrameTransformServer::~FrameTransformServer()
-{
-    threadRelease();
-}
-
+//------------------------------------------------------------------------------------------------------------------------------
 bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    std::lock_guard<std::mutex> lock (m_rpc_mutex);
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
     if (!ok) return false;
 
     string request = in.get(0).asString();
-
-    yCError(FRAMETRANSFORMSERVER, "Invalid vocab received");
-    out.clear();
-    out.addVocab32(VOCAB_ERR);
+    if (request == "help")
+    {
+        out.addVocab(Vocab::encode("many"));
+        out.addString("No RPC commands available");
+    }
+    else
+    {
+        yCError(FRAMETRANSFORMSERVER, "Invalid vocab received in FrameTransformServer");
+        out.clear();
+        out.addVocab32(VOCAB_ERR);
+        out.addString("Invalid command name");
+    }
 
     yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
     if (returnToSender != nullptr)
@@ -72,87 +61,77 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     return true;
 }
 
-bool FrameTransformServer::threadInit()
-{
-    //open rpc port
-    if (!m_rpcPort.open(m_rpcPortName))
-    {
-        yCError(FRAMETRANSFORMSERVER, "Failed to open port %s", m_rpcPortName.c_str());
-        return false;
-    }
-    m_rpcPort.setReader(*this);
-
-    // open data port
-    if (!m_streamingPort.open(m_streamingPortName))
-    {
-        yCError(FRAMETRANSFORMSERVER, "Failed to open port %s", m_streamingPortName.c_str());
-        return false;
-    }
-
-    yCInfo(FRAMETRANSFORMSERVER) << "Transform server started";
-    return true;
-}
-
 bool FrameTransformServer::open(yarp::os::Searchable &config)
 {
-    Property params;
-    params.fromString(config.toString());
+    yarp::os::Property cfg;
+    cfg.fromString(config.toString());
 
-    if (!config.check("period"))
+    string configuration_to_open;
+    string innerFilePath="config_xml/fts_yarp_only.xml";
+    auto fs = cmrc::frameTransformServerRC::get_filesystem();
+    if(cfg.check("filexml_option")) { innerFilePath="config_xml/"+cfg.find("filexml_option").toString();}
+    cfg.unput("filexml_option");
+    auto xmlFile = fs.open(innerFilePath);
+    for(const auto& lemma : xmlFile)
     {
-        m_period = 0.01;
-    }
-    else
-    {
-        m_period = config.find("period").asInt32() / 1000.0;
-        yCInfo(FRAMETRANSFORMSERVER) << "Thread period set to:" << m_period;
-    }
-
-    if (config.check("transforms_lifetime"))
-    {
-        m_FrameTransformTimeout = config.find("transforms_lifetime").asFloat64();
-        yCInfo(FRAMETRANSFORMSERVER) << "transforms_lifetime set to:" << m_FrameTransformTimeout;
+        configuration_to_open += lemma;
     }
 
-    std::string name;
-    if (!config.check("name"))
-    {
-        name = "transformServer";
-    }
-    else
-    {
-        name = config.find("name").asString();
-    }
-    m_streamingPortName =  "/"+ name + "/transforms:o";
-    m_rpcPortName = "/" + name + "/rpc";
+    string m_local_rpcUser = "/ftServer/rpc";
+    if (cfg.check("local_rpc")) { m_local_rpcUser=cfg.find("local_rpc").toString();}
+    cfg.unput("local_rpc");
 
-    this->start();
+    yarp::robotinterface::XMLReader reader;
+    yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(configuration_to_open, cfg);
+    yCAssert(FRAMETRANSFORMSERVER, result.parsingIsSuccessful);
 
-    yarp::os::Time::delay(0.5);
+    m_robot = std::move(result.robot);
+
+    if (!m_robot.enterPhase(yarp::robotinterface::ActionPhaseStartup)) {
+        return false;
+    }
+
+    if (!m_robot.enterPhase(yarp::robotinterface::ActionPhaseRun)) {
+        return false;
+    }
+
+    if (!m_rpc_InterfaceToUser.open(m_local_rpcUser))
+    {
+        yCError(FRAMETRANSFORMSERVER,"Failed to open rpc port");
+    }
+
+    m_rpc_InterfaceToUser.setReader(*this);
 
     return true;
-}
-
-void FrameTransformServer::threadRelease()
-{
-    m_streamingPort.interrupt();
-    m_streamingPort.close();
-    m_rpcPort.interrupt();
-    m_rpcPort.close();
-}
-
-void FrameTransformServer::run()
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
 }
 
 bool FrameTransformServer::close()
 {
-    yCTrace(FRAMETRANSFORMSERVER, "Close");
-    if (PeriodicThread::isRunning())
-    {
-        PeriodicThread::stop();
-    }
-
+    m_robot.enterPhase(yarp::robotinterface::ActionPhaseInterrupt1);
+    m_robot.enterPhase(yarp::robotinterface::ActionPhaseShutdown);
+    m_rpc_InterfaceToUser.close();
     return true;
+}
+
+FrameTransformServer::FrameTransformServer() : PeriodicThread(0.01),
+    m_period(0.01)
+{
+}
+
+FrameTransformServer::~FrameTransformServer() = default;
+
+bool     FrameTransformServer::threadInit()
+{
+    yCTrace(FRAMETRANSFORMSERVER, "Thread started");
+    return true;
+}
+
+void     FrameTransformServer::threadRelease()
+{
+    yCTrace(FRAMETRANSFORMSERVER, "Thread stopped");
+}
+
+void     FrameTransformServer::run()
+{
+    //Empty (placeholder for future developments)
 }

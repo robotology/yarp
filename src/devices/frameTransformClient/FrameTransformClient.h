@@ -48,10 +48,12 @@ const int MAX_PORTS = 5;
  * |:----------------:|:--------------------:|:-------:|:--------------:|:---------------------:|:-----------: |:--------------------------------------------------------------------:|
  * | filexml_option   | -                    | string  | -              | ftc_local_only.xml    | no           | The name of the xml file containing the needed client configuration  |
  *
- * Some example of configuration files:
+ * Example of command line:
+ * \code{.unparsed}
+ * yarpdev --device frameTransformClient --filexml_option ftc_local_only.xml
+ * \endcode
  *
  * Example of configuration file using .ini format.
- *
  * \code{.unparsed}
  * device frameTransformClient
  * filexml_option ftc_local_only.xml

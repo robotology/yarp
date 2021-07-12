@@ -15,10 +15,6 @@
 #include <mutex>
 CMRC_DECLARE(frameTransformRC);
 
- /*! \file FrameTransformClient.cpp */
-
-//example: yarpdev --device frameTransformClient --local /transformClient --remote /transformServer
-
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -242,13 +238,13 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     yarp::robotinterface::XMLReaderResult result = reader.getRobotFromString(configuration_to_open, cfg);
     yCAssert(FRAMETRANSFORMCLIENT, result.parsingIsSuccessful);
 
-    m_robot = std::move(result.robot); // FIXME std::move non serve
+    m_robot = std::move(result.robot);
 
-    if (!result.robot.enterPhase(yarp::robotinterface::ActionPhaseStartup)) {
+    if (!m_robot.enterPhase(yarp::robotinterface::ActionPhaseStartup)) {
         return false;
     }
 
-    if (!result.robot.enterPhase(yarp::robotinterface::ActionPhaseRun)) {
+    if (!m_robot.enterPhase(yarp::robotinterface::ActionPhaseRun)) {
         return false;
     }
 

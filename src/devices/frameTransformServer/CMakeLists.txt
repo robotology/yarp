@@ -1,6 +1,15 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
+include(CMakeRC)
+
+cmrc_add_resource_library(frameTransformServerRC
+                          TYPE OBJECT
+                          WHENCE robotinterface_xml
+                          PREFIX config_xml
+                          robotinterface_xml/fts_full_ros.xml
+                          robotinterface_xml/fts_yarp_only.xml)
+
 yarp_prepare_plugin(frameTransformServer
                     CATEGORY device
                     TYPE FrameTransformServer
@@ -17,11 +26,15 @@ if(NOT SKIP_frameTransformServer)
   target_link_libraries(yarp_frameTransformServer PRIVATE YARP::YARP_os
                                                           YARP::YARP_sig
                                                           YARP::YARP_dev
-                                                          YARP::YARP_math)
+                                                          YARP::YARP_math
+                                                          YARP::YARP_robotinterface)
+  target_sources(yarp_frameTransformServer PRIVATE $<TARGET_OBJECTS:frameTransformServerRC>)
+  target_include_directories(yarp_frameTransformServer PRIVATE $<TARGET_PROPERTY:frameTransformServerRC,INTERFACE_INCLUDE_DIRECTORIES>)
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS YARP_os
                                                       YARP_sig
                                                       YARP_dev
-                                                      YARP_math)
+                                                      YARP_math
+                                                      YARP_robotinterface)
 
   yarp_install(TARGETS yarp_frameTransformServer
                EXPORT YARP_${YARP_PLUGIN_MASTER}
