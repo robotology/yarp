@@ -18,7 +18,9 @@
 
 // TODO FIXME STE need to check subdevice option
 /**
- * @brief A network wrapper client which converts the input retrieved from an IFrameTransformStorageGet interface to a FrameTransformStorageGetRPC thrift interface.
+ * @ingroup dev_impl_nws_yarp
+ *
+ * @brief `frameTransformGet_nws_yarp`: A network wrapper client which converts the input retrieved from an IFrameTransformStorageGet interface to a FrameTransformStorageGetRPC thrift interface.
  *
  * \section FrameTransformGet_nws_yarp_device_parameters Parameters
  * this device listens on a FrameTransformStorageGetRPC interface for an RPC and then forwards the request to an IFrameTransformStorageGet interface (device attached)

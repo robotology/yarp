@@ -48,11 +48,11 @@
 #include <yarp/dev/api.h>
 
 /**
- *  @ingroup dev_impl_wrapper dev_impl_navigation
+ *  @ingroup dev_impl_nws_yarp dev_impl_navigation
  *
  * \section Map2D_nws_yarp
  *
- * \brief `Map2D_nws_yarp`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
+ * \brief `map2D_nws_yarp`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |

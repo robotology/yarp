@@ -57,10 +57,11 @@
 
 
   /**
-   *  @ingroup dev_impl_wrapper dev_impl_network_wrapper dev_impl_lidar
+   *  @ingroup dev_impl_nws_ros dev_impl_lidar
    *
    * \section Rangefinder2D_nws_ros_device_parameters Description of input parameters
-   * A Network grabber for 2D Rangefinder devices.
+   *
+   * \brief `rangefinder2D_nws_ros`: A Network grabber for 2D Rangefinder devices.
    * This device will publish data on the specified ROS topic.
    *
    * This device does not accepts YARP RPC commands, it is dedicated only to data publishing.

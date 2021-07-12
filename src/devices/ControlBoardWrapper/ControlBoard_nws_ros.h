@@ -30,7 +30,7 @@
 
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_nws_ros
  *
  * \brief `controlBoard_nws_ros`: A controlBoard network wrapper server for ROS.
  *

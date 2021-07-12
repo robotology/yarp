@@ -48,7 +48,7 @@
 
 
 /**
- * @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_nws_yarp
  *
  * \brief `controlBoard_nws_yarp`: A controlBoard network wrapper server for YARP.
  *

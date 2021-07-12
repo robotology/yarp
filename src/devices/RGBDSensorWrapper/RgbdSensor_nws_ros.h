@@ -49,10 +49,10 @@ namespace RGBDImpl
 }
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_nws_ros
  *
  * \section RgbdSensor_nws_ros_device_parameters Description of input parameters
- * A Network grabber for kinect-like devices.
+ * \brief `rgbdSensor_nws_ros`: A Network grabber for kinect-like devices.
  * This device will produce two streams of data through different ports, one for the color frame and the other one
  * for depth image following Framegrabber and IDepthSensor interfaces specification respectively.
  * See they documentation for more details about each interface.

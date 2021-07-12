@@ -49,10 +49,10 @@
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
   /**
-   *  @ingroup dev_impl_wrapper dev_impl_network_wrapper dev_impl_lidar
+   *  @ingroup dev_impl_nws_yarp dev_impl_lidar
    *
    * \section rangefinder2D_nws_yarp_device_parameters Description of input parameters
-   * A Network grabber for 2D Rangefinder devices.
+   * \brief `rangefinder2D_nws_yarp`: A Network grabber for 2D Rangefinder devices.
    * This device will stream data on the specified YARP ports.
    *
    * This device is paired with its YARP client called Rangefinder2DClient to receive the data streams and perform RPC operations.

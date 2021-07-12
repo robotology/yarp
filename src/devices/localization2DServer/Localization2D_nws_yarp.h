@@ -37,11 +37,11 @@
 #include <math.h>
 
  /**
- * @ingroup dev_impl_network_wrapper dev_impl_navigation
+ * @ingroup dev_impl_nws_yarp dev_impl_navigation
  *
  * \section Localization2D_nws_yarp
  *
- * \brief `Localization2D_nws_yarp`: A localization server which can be wrap multiple algorithms and devices to provide robot localization in a 2D World.
+ * \brief `localization2D_nws_yarp`: A localization server which can be wrap multiple algorithms and devices to provide robot localization in a 2D World.
  *
  *
  *  Parameters required by this device are:

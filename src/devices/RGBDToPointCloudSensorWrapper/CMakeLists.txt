@@ -6,23 +6,23 @@
 
 
 ## ROS WRAPPER #################################################################### START #
-yarp_prepare_plugin(RGBDToPointCloudSensor_nws_ros
+yarp_prepare_plugin(rgbdToPointCloudSensor_nws_ros
                     CATEGORY device
                     TYPE RGBDToPointCloudSensor_nws_ros
                     INCLUDE RGBDToPointCloudSensor_nws_ros.h
-                    EXTRA_CONFIG WRAPPER=RGBDToPointCloudSensor_nws_ros
+                    EXTRA_CONFIG WRAPPER=rgbdToPointCloudSensor_nws_ros
                     DEFAULT ON)
 
-if(NOT SKIP_RGBDToPointCloudSensor_nws_ros)
-  yarp_add_plugin(RGBDToPointCloudSensor_nws_ros)
+if(NOT SKIP_rgbdToPointCloudSensor_nws_ros)
+  yarp_add_plugin(yarp_rgbdToPointCloudSensor_nws_ros)
 
-  target_sources(RGBDToPointCloudSensor_nws_ros PRIVATE RGBDToPointCloudSensor_nws_ros.cpp
+  target_sources(yarp_rgbdToPointCloudSensor_nws_ros PRIVATE RGBDToPointCloudSensor_nws_ros.cpp
                                                  RGBDToPointCloudSensor_nws_ros.h)
-  target_sources(RGBDToPointCloudSensor_nws_ros PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
+  target_sources(yarp_rgbdToPointCloudSensor_nws_ros PRIVATE $<TARGET_OBJECTS:RGBDRosConversionUtils>)
 
-  target_include_directories(RGBDToPointCloudSensor_nws_ros PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_include_directories(yarp_rgbdToPointCloudSensor_nws_ros PRIVATE $<TARGET_PROPERTY:RGBDRosConversionUtils,INTERFACE_INCLUDE_DIRECTORIES>)
 
-  target_link_libraries(RGBDToPointCloudSensor_nws_ros PRIVATE YARP::YARP_os
+  target_link_libraries(yarp_rgbdToPointCloudSensor_nws_ros PRIVATE YARP::YARP_os
                                                         YARP::YARP_sig
                                                         YARP::YARP_dev
                                                         YARP::YARP_rosmsg)
@@ -32,7 +32,7 @@ if(NOT SKIP_RGBDToPointCloudSensor_nws_ros)
                                                       YARP_dev
                                                       YARP_rosmsg)
 
-  yarp_install(TARGETS RGBDToPointCloudSensor_nws_ros
+  yarp_install(TARGETS yarp_rgbdToPointCloudSensor_nws_ros
                EXPORT YARP_${YARP_PLUGIN_MASTER}
                COMPONENT ${YARP_PLUGIN_MASTER}
                LIBRARY DESTINATION ${YARP_DYNAMIC_PLUGINS_INSTALL_DIR}
@@ -41,6 +41,6 @@ if(NOT SKIP_RGBDToPointCloudSensor_nws_ros)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET RGBDToPointCloudSensor_nws_ros PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_rgbdToPointCloudSensor_nws_ros PROPERTY FOLDER "Plugins/Device")
 endif()
 ## ROS WRAPPER ###################################################################### END #
