@@ -5,10 +5,11 @@
 include(CMakeDependentOption)
 
 find_file(DOXYGEN_PLANTUM_JAR
-          NAMES plantuml.jar
-          PATHS /usr/share
-          PATH_SUFFIXES plantuml
-          DOC "PlantUML tool for using Doxygen")
+  NAMES plantuml.jar
+  PATHS /usr/share
+  PATH_SUFFIXES plantuml
+  DOC "PlantUML tool for using Doxygen"
+)
 if(NOT DOXYGEN_PLANTUM_JAR)
   set(DOXYGEN_PLANTUM_JAR "")
 endif()
@@ -41,17 +42,19 @@ if(DOXYGEN_FOUND)
   option(YARP_DOXYGEN_DOCBOOK "Generate doxygen DOCBOOK output" OFF)
   option(YARP_DOXYGEN_MAN "Generate doxygen MAN output" OFF)
 
-  mark_as_advanced(YARP_DOXYGEN_HTML
-                   YARP_DOXYGEN_HTML_DOCSET
-                   YARP_DOXYGEN_HTML_HTMLHELP
-                   YARP_DOXYGEN_HTML_QHP
-                   YARP_DOXYGEN_HTML_ECLIPSEHELP
-                   YARP_DOXYGEN_LATEX
-                   YARP_DOXYGEN_XML
-                   YARP_DOXYGEN_RTF
-                   YARP_DOXYGEN_TAGFILE
-                   YARP_DOXYGEN_DOCBOOK
-                   YARP_DOXYGEN_MAN)
+  mark_as_advanced(
+    YARP_DOXYGEN_HTML
+    YARP_DOXYGEN_HTML_DOCSET
+    YARP_DOXYGEN_HTML_HTMLHELP
+    YARP_DOXYGEN_HTML_QHP
+    YARP_DOXYGEN_HTML_ECLIPSEHELP
+    YARP_DOXYGEN_LATEX
+    YARP_DOXYGEN_XML
+    YARP_DOXYGEN_RTF
+    YARP_DOXYGEN_TAGFILE
+    YARP_DOXYGEN_DOCBOOK
+    YARP_DOXYGEN_MAN
+  )
 
   set(DOX_FILE Doxyfile)
   set(DOX_DESTINATION "${CMAKE_BINARY_DIR}/dox")

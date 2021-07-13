@@ -3,24 +3,40 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 include(CMakeDependentOption)
-cmake_dependent_option(CREATE_YARPC "Compile experimental stable C library" FALSE
-                       YARP_COMPILE_UNMAINTAINED FALSE)
+cmake_dependent_option(
+  CREATE_YARPC
+  "Compile experimental stable C library" FALSE
+  YARP_COMPILE_UNMAINTAINED FALSE
+)
 mark_as_advanced(CREATE_YARPC)
 
-cmake_dependent_option(CREATE_YARPC_STANDALONE "Make yarpc library fully standalone" TRUE
-                       CREATE_YARPC FALSE)
+cmake_dependent_option(
+  CREATE_YARPC_STANDALONE
+  "Make yarpc library fully standalone" TRUE
+  CREATE_YARPC FALSE
+)
 mark_as_advanced(CREATE_YARPC_STANDALONE)
 
 if(CREATE_YARPC)
-  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
-
   unset(YARP_COPY_SRC)
   if(CREATE_YARPC_STANDALONE)
     # in some cases, want to be fully stand-alone to not depend on C++ ABI.
-    foreach(_comp OS sig dev init)
+    set(_components
+     os
+     sig
+     dev
+     init
+    )
+    if (TARGET YARP::YARP_math)
+      list(APPEND _components math)
+    endif()
+    foreach(_comp ${_components})
       get_property(${_comp}_src TARGET YARP_${_comp} PROPERTY SOURCES)
       foreach(_file ${${_comp}_src})
-        list(APPEND YARP_COPY_SRC ${CMAKE_SOURCE_DIR}/src/libYARP_${_comp}/${_file})
+        if(NOT IS_ABSOLUTE "${_file}")
+          set(_file "${CMAKE_SOURCE_DIR}/src/libYARP_${_comp}/src/${_file}")
+        endif()
+        list(APPEND YARP_COPY_SRC ${_file})
         set_property(SOURCE ${CMAKE_SOURCE_DIR}/src/libYARP_${_comp}/${_file} APPEND_STRING PROPERTY COMPILE_FLAGS " -fvisibility=hidden")
       endforeach()
       get_property(YARP_${_comp}_INCLUDE_DIRS TARGET YARP_${_comp} PROPERTY INCLUDE_DIRECTORIES)
@@ -28,21 +44,25 @@ if(CREATE_YARPC)
     endforeach()
   endif(CREATE_YARPC_STANDALONE)
 
-  set(yarpc_HDRS yarp.h
-                 yarpimpl.h)
+  set(yarpc_HDRS
+    yarp.h
+    yarpimpl.h
+  )
 
-  set(yarpc_SRCS yarp.cpp
-                 yarpnetwork.cpp
-                 yarpport.cpp
-                 yarpcontact.cpp
-                 yarpreader.cpp
-                 yarpwriter.cpp
-                 yarpportable.cpp
-                 yarpstring.cpp
-                 yarpsemaphore.cpp
-                 yarpthread.cpp
-                 yarptime.cpp
-                 yarpbottle.cpp)
+  set(yarpc_SRCS
+    yarp.cpp
+    yarpnetwork.cpp
+    yarpport.cpp
+    yarpcontact.cpp
+    yarpreader.cpp
+    yarpwriter.cpp
+    yarpportable.cpp
+    yarpstring.cpp
+    yarpsemaphore.cpp
+    yarpthread.cpp
+    yarptime.cpp
+    yarpbottle.cpp
+  )
 
   foreach(_file ${yarpc_SRCS} ${yarpc_HDRS})
     set_property(SOURCE ${_file} APPEND_STRING PROPERTY COMPILE_FLAGS " -fvisibility=default")
@@ -51,33 +71,47 @@ if(CREATE_YARPC)
   add_library(yarpc)
   add_library(YARP::yarpc ALIAS yarpc)
 
-  target_sources(yarpc PRIVATE ${yarpc_HDRS}
-                               ${yarpc_SRCS}
-                               ${YARP_COPY_SRC})
+  target_sources(yarpc
+    PRIVATE
+      ${yarpc_HDRS}
+      ${yarpc_SRCS}
+      ${YARP_COPY_SRC}
+  )
 
   target_compile_definitions(yarpc PRIVATE YARP_HAS_ACE)
   target_link_libraries(yarpc PRIVATE ACE::ACE)
 
   if(NOT CREATE_YARPC_STANDALONE)
-    target_link_libraries(yarpc PRIVATE YARP::YARP_os
-                                        YARP::YARP_init)
+    target_link_libraries(yarpc
+      PRIVATE
+        YARP::YARP_os
+        YARP::YARP_init
+    )
     if(YARP_LINK_PLUGINS)
       if(YARP_COMPILE_CARRIER_PLUGINS)
-        set_property(SOURCE ${init_src}
-                     APPEND PROPERTY COMPILE_DEFINITIONS
-                     PLUGIN_INIT_FUNCTION=add_yarpcar_plugins)
+        set_property(
+          SOURCE ${init_src}
+          APPEND PROPERTY COMPILE_DEFINITIONS
+          PLUGIN_INIT_FUNCTION=add_yarpcar_plugins
+        )
         target_link_libraries(yarpc PRIVATE YARP::yarpcar)
       endif()
 
       if(YARP_COMPILE_DEVICE_PLUGINS)
-        set_property(SOURCE ${init_src}
-                     APPEND PROPERTY COMPILE_DEFINITIONS
-                     PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins)
-          target_link_libraries(yarpc PRIVATE YARP::yarpmod)
+        set_property(
+          SOURCE ${init_src}
+          APPEND PROPERTY COMPILE_DEFINITIONS
+          PLUGIN_INIT_FUNCTION2=add_yarpmod_plugins
+        )
+        target_link_libraries(yarpc PRIVATE YARP::yarpmod)
       endif()
     endif()
 
   else()
+    target_link_libraries(yarpc PRIVATE YARP::YARP_conf)
+    if (TARGET YARP::YARP_math)
+      target_link_libraries(yarpc PRIVATE YARP::YARP_eigen)
+    endif()
     if(LINUX)
       target_link_libraries(yarpc PRIVATE pthread m dl rt)
     endif()

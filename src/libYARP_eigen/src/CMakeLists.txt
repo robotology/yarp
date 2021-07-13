@@ -6,12 +6,17 @@ add_library(YARP::YARP_eigen ALIAS YARP_eigen)
 
 set(YARP_eigen_HDRS yarp/eigen/Eigen.h)
 
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-             PREFIX "Header Files"
-             FILES ${YARP_eigen_HDRS})
+source_group(
+  TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+  PREFIX "Header Files"
+  FILES ${YARP_eigen_HDRS}
+)
 
-target_include_directories(YARP_eigen INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-                                                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_include_directories(YARP_eigen
+  INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 target_compile_features(YARP_eigen INTERFACE cxx_std_14)
 
 target_link_libraries(YARP_eigen INTERFACE YARP_sig)
@@ -27,14 +32,18 @@ list(APPEND YARP_eigen_PUBLIC_DEPS Eigen3)
 # set_property(TARGET YARP_eigen PROPERTY FOLDER "Libraries")
 
 
-install(TARGETS YARP_eigen
-        EXPORT YARP_eigen)
+install(
+  TARGETS YARP_eigen
+  EXPORT YARP_eigen
+)
 
 # INTERFACE libraries do not support the PUBLIC_HEADER property
 # https://gitlab.kitware.com/cmake/cmake/issues/20056
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/yarp/eigen
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
-        COMPONENT YARP_eigen-dev)
+install(
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/yarp/eigen
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
+  COMPONENT YARP_eigen-dev
+)
 
 
 set(YARP_eigen_PUBLIC_DEPS ${YARP_eigen_PUBLIC_DEPS} PARENT_SCOPE)

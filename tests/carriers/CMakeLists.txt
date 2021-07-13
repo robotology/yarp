@@ -2,11 +2,17 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 add_executable(harness_carriers)
-target_sources(harness_carriers PRIVATE mjpeg.cpp)
+target_sources(harness_carriers
+  PRIVATE
+    mjpeg.cpp
+)
 
-target_link_libraries(harness_carriers PRIVATE YARP_harness
-                                               YARP::YARP_os
-                                               YARP::YARP_sig)
+target_link_libraries(harness_carriers
+  PRIVATE
+    YARP_harness
+    YARP::YARP_os
+    YARP::YARP_sig
+)
 
 set_property(TARGET harness_carriers PROPERTY FOLDER "Test")
 

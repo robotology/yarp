@@ -3,10 +3,16 @@
 
 if(YARP_COMPILE_yarplogger)
   add_executable(yarplogger-console)
-  target_sources(yarplogger-console PRIVATE main.cpp)
-  target_link_libraries(yarplogger-console PRIVATE YARP::YARP_os
-                                                   YARP::YARP_init
-                                                   YARP::YARP_logger)
+  target_sources(yarplogger-console
+    PRIVATE
+      main.cpp
+  )
+  target_link_libraries(yarplogger-console
+    PRIVATE
+      YARP::YARP_os
+      YARP::YARP_init
+      YARP::YARP_logger
+  )
 
   install(TARGETS yarplogger-console COMPONENT utilities DESTINATION ${CMAKE_INSTALL_BINDIR})
 

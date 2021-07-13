@@ -7,5 +7,6 @@ add_subdirectory(src)
 
 include(YarpInstallBasicPackageFiles)
 yarp_install_basic_package_files(YARP_wire_rep_utils
-                                 DEPENDENCIES ${YARP_wire_rep_utils_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_wire_rep_utils_PRIVATE_DEPS})
+  DEPENDENCIES ${YARP_wire_rep_utils_PUBLIC_DEPS}
+  PRIVATE_DEPENDENCIES ${YARP_wire_rep_utils_PRIVATE_DEPS}
+)

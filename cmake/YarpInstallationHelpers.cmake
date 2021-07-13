@@ -44,7 +44,10 @@ include(CMakeDependentOption)
 # be used.
 function(YARP_CONFIGURE_PLUGINS_INSTALLATION _package)
   set(_options)
-  set(_oneValueArgs INSTALL_COMPONENT INSTALL_VARS_PREFIX)
+  set(_oneValueArgs
+    INSTALL_COMPONENT
+    INSTALL_VARS_PREFIX
+  )
   set(_multiValueArgs )
   cmake_parse_arguments(YCPI "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
@@ -56,8 +59,9 @@ function(YARP_CONFIGURE_PLUGINS_INSTALLATION _package)
     set(YCPI_INSTALL_VARS_PREFIX YARP)
   endif()
 
-  cmake_dependent_option(YARP_FORCE_DYNAMIC_PLUGINS "Force YARP to create dynamically loaded plugins even if building static libraries." OFF
-                         "NOT BUILD_SHARED_LIBS" OFF)
+  cmake_dependent_option(
+    YARP_FORCE_DYNAMIC_PLUGINS "Force YARP to create dynamically loaded plugins even if building static libraries." OFF
+    "NOT BUILD_SHARED_LIBS" OFF)
   mark_as_advanced(YARP_FORCE_DYNAMIC_PLUGINS)
 
   set(_in_file "${CMAKE_BINARY_DIR}/CMakeFiles/${_package}.ini.in")
@@ -162,8 +166,12 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
 
   string(TOUPPER ${_name} _NAME)
 
-  set(_options NO_PATH_D WITH_PLUGINS)
-  set(_oneValueArgs INSTALL_COMPONENT)
+  set(_options
+    NO_PATH_D WITH_PLUGINS
+  )
+  set(_oneValueArgs
+    INSTALL_COMPONENT
+  )
   set(_multiValueArgs )
   cmake_parse_arguments(YCEI "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
@@ -186,18 +194,20 @@ function(YARP_CONFIGURE_EXTERNAL_INSTALLATION _name)
   set(${_NAME}_STATIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}" CACHE INTERNAL "static plugins installation directory for ${_name} (relative to build/installation dir)")
   set(${_NAME}_DYNAMIC_PLUGINS_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/${_name}" CACHE INTERNAL "dynamic plugins installation directory for ${_name} (relative to build/installation dir)")
 
-  foreach(_dir DATA
-               CONFIG
-               PLUGIN_MANIFESTS
-               MODULES
-               APPLICATIONS
-               TEMPLATES
-               CONTEXTS
-               APPLICATIONS_TEMPLATES
-               MODULES_TEMPLATES
-               ROBOTS
-               STATIC_PLUGINS
-               DYNAMIC_PLUGINS)
+  foreach(_dir
+    DATA
+    CONFIG
+    PLUGIN_MANIFESTS
+    MODULES
+    APPLICATIONS
+    TEMPLATES
+    CONTEXTS
+    APPLICATIONS_TEMPLATES
+    MODULES_TEMPLATES
+    ROBOTS
+    STATIC_PLUGINS
+    DYNAMIC_PLUGINS
+  )
     set(${_NAME}_${_dir}_INSTALL_DIR_FULL "${CMAKE_INSTALL_PREFIX}/${${_NAME}_${_dir}_INSTALL_DIR}" PARENT_SCOPE)
   endforeach()
 
@@ -248,10 +258,12 @@ path \"@_path@\"
       configure_file("${_in_file}" "${_install_file}" @ONLY)
 
       # Install the file into yarp config dir
-      install(FILES "${_install_file}"
-              RENAME ${_name}.ini
-              COMPONENT ${YCEI_INSTALL_COMPONENT}
-              DESTINATION "${_destination}")
+      install(
+        FILES "${_install_file}"
+        RENAME ${_name}.ini
+        COMPONENT ${YCEI_INSTALL_COMPONENT}
+        DESTINATION "${_destination}"
+      )
 
     else()
 
@@ -326,17 +338,21 @@ macro(YARP_INSTALL _what)
                        ";\\1_DESTINATION;" _fixedARGN "${ARGN}")
 
   set(_options )
-  set(_oneValueArgs DESTINATION
-                    COMPONENT
-                    EXPORT
-                    LIBRARY_DESTINATION
-                    YARP_INI_DESTINATION
-                    YARP_INI_COMPONENT)
-  set(_multiValueArgs PERMISSIONS
-                      FILES
-                      DIRECTORY
-                      PROGRAMS
-                      TARGETS)
+  set(_oneValueArgs
+    DESTINATION
+    COMPONENT
+    EXPORT
+    LIBRARY_DESTINATION
+    YARP_INI_DESTINATION
+    YARP_INI_COMPONENT
+  )
+  set(_multiValueArgs
+    PERMISSIONS
+    FILES
+    DIRECTORY
+    PROGRAMS
+    TARGETS
+  )
   cmake_parse_arguments(_YI "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" "${_what};${_fixedARGN}")
 
   # Remove targets from arguments
@@ -438,11 +454,15 @@ macro(YARP_INSTALL _what)
           set(_component COMPONENT "${_YI_COMPONENT}")
         endif()
         string(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}/" "" _YI_YARP_INI_DESTINATION_RELATIVE ${_YI_YARP_INI_DESTINATION})
-        file(COPY ${_yarp_ini_files}
-             DESTINATION "${CMAKE_BINARY_DIR}/${_YI_YARP_INI_DESTINATION_RELATIVE}")
-        install(FILES ${_yarp_ini_files}
-                ${_component}
-                DESTINATION ${_YI_YARP_INI_DESTINATION})
+        file(
+          COPY ${_yarp_ini_files}
+          DESTINATION "${CMAKE_BINARY_DIR}/${_YI_YARP_INI_DESTINATION_RELATIVE}"
+        )
+        install(
+          FILES ${_yarp_ini_files}
+          ${_component}
+          DESTINATION ${_YI_YARP_INI_DESTINATION}
+        )
       endif()
     endif()
   endif()

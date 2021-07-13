@@ -14,5 +14,6 @@ add_subdirectory(src)
 
 include(YarpInstallBasicPackageFiles)
 yarp_install_basic_package_files(YARP_pcl
-                                 DEPENDENCIES ${YARP_pcl_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_pcl_PRIVATE_DEPS})
+  DEPENDENCIES ${YARP_pcl_PUBLIC_DEPS}
+  PRIVATE_DEPENDENCIES ${YARP_pcl_PRIVATE_DEPS}
+)

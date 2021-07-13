@@ -278,7 +278,8 @@ endmacro()
 # look for it here.
 checkandset_dependency(YCM)
 
-find_package(ACE 6.0.0 QUIET)
+set(ACE_REQUIRED_VERSION 6.0.0)
+find_package(ACE ${ACE_REQUIRED_VERSION} QUIET)
 checkandset_dependency(ACE)
 
 set(RobotTestingFramework_REQUIRED_VERSION 2)
@@ -404,7 +405,6 @@ checkandset_dependency(FLEX)
 find_package(I2C QUIET)
 checkandset_dependency(I2C)
 
-
 find_package(Libv4l2 QUIET)
 checkandset_dependency(Libv4l2)
 
@@ -453,14 +453,18 @@ macro(YARP_DEPENDENT_OPTION _option _doc _default _deps _force)
     # still evaluates to false
     set(${_option} "OFF - Dependencies unsatisfied: '${_missing_deps}' - ${_option}-NOTFOUND" CACHE STRING "${_option_doc}" FORCE)
     string(REPLACE ";" "\;" _missing_deps "${_missing_deps}")
-    set_property(CACHE ${_option}
-                PROPERTY STRINGS "OFF - Dependencies unsatisfied: '${_missing_deps}' - ${_option}-NOTFOUND"
-                                 "OFF - You can try as much as you want, but '${_missing_deps}' is needed to enable ${_option} - ${_option}-NOTFOUND"
-                                 "OFF - Are you crazy or what? '${_missing_deps}' is needed to enable ${_option} - ${_option}-NOTFOUND"
-                                 "OFF - Didn't I already tell you that '${_missing_deps}' is needed to enable ${_option}? - ${_option}-NOTFOUND"
-                                 "OFF - Stop it! - ${_option}-NOTFOUND"
-                                 "OFF - This is insane! Leave me alone! - ${_option}-NOTFOUND"
-                                 "ON - All right, you win. The option is enabled. Are you happy now? You just broke the build.")
+    set_property(
+      CACHE ${_option}
+      PROPERTY
+        STRINGS
+          "OFF - Dependencies unsatisfied: '${_missing_deps}' - ${_option}-NOTFOUND"
+          "OFF - You can try as much as you want, but '${_missing_deps}' is needed to enable ${_option} - ${_option}-NOTFOUND"
+          "OFF - Are you crazy or what? '${_missing_deps}' is needed to enable ${_option} - ${_option}-NOTFOUND"
+          "OFF - Didn't I already tell you that '${_missing_deps}' is needed to enable ${_option}? - ${_option}-NOTFOUND"
+          "OFF - Stop it! - ${_option}-NOTFOUND"
+          "OFF - This is insane! Leave me alone! - ${_option}-NOTFOUND"
+          "ON - All right, you win. The option is enabled. Are you happy now? You just broke the build."
+    )
     # Set non-cache variable that will override the value in current scope
     # For parent scopes, the "-NOTFOUND ensures that the variable still
     # evaluates to false
@@ -488,46 +492,80 @@ endif()
 set_property(CACHE YARP_USE_ACE PROPERTY TYPE INTERNAL)
 
 
-yarp_dependent_option(YARP_COMPILE_libYARP_math "Create math library YARP_math?" ON
-                      YARP_HAS_Eigen3 OFF)
+yarp_dependent_option(
+  YARP_COMPILE_libYARP_math "Create math library YARP_math?" ON
+  YARP_HAS_Eigen3 OFF
+)
 yarp_renamed_option(CREATE_LIB_MATH YARP_COMPILE_libYARP_math) # Deprecated since YARP 3.2
 
-yarp_dependent_option(YARP_COMPILE_libYARP_robotinterface "Do you want to compile the library YARP_robotinterface?" ON
-                      "YARP_HAS_TinyXML" OFF)
+yarp_dependent_option(
+  YARP_COMPILE_libYARP_robotinterface "Do you want to compile the library YARP_robotinterface?" ON
+  "YARP_HAS_TinyXML" OFF
+)
 
-yarp_dependent_option(YARP_COMPILE_GUIS "Do you want to compile GUIs" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_HAS_Qt5" OFF)
+yarp_dependent_option(
+  YARP_COMPILE_GUIS "Do you want to compile GUIs" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_HAS_Qt5" OFF
+)
 yarp_renamed_option(CREATE_GUIS YARP_COMPILE_GUIS) # Deprecated since YARP 3.2
 
-yarp_dependent_option(YARP_COMPILE_yarprobotinterface "Do you want to compile yarprobotinterface?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_HAS_TinyXML" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpmanager-console "Do you want to compile YARP Module Manager (console)?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_HAS_TinyXML" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpdatadumper "Do you want to compile yarpdatadumper?" ON
-                      "YARP_COMPILE_EXECUTABLES" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpview "Do you want to compile yarpview?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpmanager "Do you want to compile yarpmanager?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_TinyXML" OFF)
-yarp_dependent_option(YARP_COMPILE_yarplogger "Do you want to create yarplogger?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpscope "Do you want to create yarpscope?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_TinyXML;YARP_HAS_QCustomPlot" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpdataplayer "Do you want to compile yarpdataplayer?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpmotorgui "Do you want to compile yarpmotorgui?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpbatterygui "Do you want to compile yarpbatterygui?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpmobilebasegui "Do you want to compile yarpmobilebasegui?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF)
-yarp_dependent_option(YARP_COMPILE_yarplaserscannergui  "Do you want to compile yarplaserscannergui?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_OpenCV" OFF)
-yarp_dependent_option(YARP_COMPILE_yarpviz "Do you want to compile yarpviz?" ON
-                      "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_Graphviz;YARP_HAS_QGVCore" OFF)
+yarp_dependent_option(
+  YARP_COMPILE_yarprobotinterface "Do you want to compile yarprobotinterface?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_HAS_TinyXML" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpmanager-console "Do you want to compile YARP Module Manager (console)?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_HAS_TinyXML" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpdatadumper "Do you want to compile yarpdatadumper?" ON
+  "YARP_COMPILE_EXECUTABLES" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpview "Do you want to compile yarpview?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpmanager "Do you want to compile yarpmanager?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_TinyXML" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarplogger "Do you want to create yarplogger?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpscope "Do you want to create yarpscope?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_TinyXML;YARP_HAS_QCustomPlot" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpdataplayer "Do you want to compile yarpdataplayer?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpmotorgui "Do you want to compile yarpmotorgui?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpbatterygui "Do you want to compile yarpbatterygui?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpmobilebasegui "Do you want to compile yarpmobilebasegui?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarplaserscannergui  "Do you want to compile yarplaserscannergui?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_OpenCV" OFF
+)
+yarp_dependent_option(
+  YARP_COMPILE_yarpviz "Do you want to compile yarpviz?" ON
+  "YARP_COMPILE_EXECUTABLES;YARP_COMPILE_GUIS;YARP_HAS_Qt5;YARP_HAS_Graphviz;YARP_HAS_QGVCore" OFF
+)
 
-yarp_dependent_option(YARP_COMPILE_RobotTestingFramework_ADDONS "Compile Robot Testing Framework addons." ON
-                      "YARP_HAS_RobotTestingFramework" OFF)
+yarp_dependent_option(
+  YARP_COMPILE_RobotTestingFramework_ADDONS "Compile Robot Testing Framework addons." ON
+  "YARP_HAS_RobotTestingFramework" OFF
+)
 
 yarp_renamed_option(CREATE_YARPROBOTINTERFACE YARP_COMPILE_yarprobotinterface) # Deprecated since YARP 3.2
 yarp_renamed_option(CREATE_YARPMANAGER_CONSOLE YARP_COMPILE_yarpmanager-console) # Deprecated since YARP 3.2

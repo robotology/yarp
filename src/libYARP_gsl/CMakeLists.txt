@@ -7,5 +7,6 @@ add_subdirectory(src)
 
 include(YarpInstallBasicPackageFiles)
 yarp_install_basic_package_files(YARP_gsl
-                                 DEPENDENCIES ${YARP_gsl_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_gsl_PRIVATE_DEPS})
+  DEPENDENCIES ${YARP_gsl_PUBLIC_DEPS}
+  PRIVATE_DEPENDENCIES ${YARP_gsl_PRIVATE_DEPS}
+)

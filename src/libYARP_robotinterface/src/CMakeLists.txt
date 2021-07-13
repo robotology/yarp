@@ -112,28 +112,32 @@ set_property(TARGET YARP_robotinterface PROPERTY SOVERSION ${YARP_SOVERSION})
 set_property(TARGET YARP_robotinterface PROPERTY FOLDER "Libraries")
 
 
-install(TARGETS YARP_robotinterface
-        EXPORT YARP_robotinterface
-        RUNTIME
-          DESTINATION "${CMAKE_INSTALL_BINDIR}"
-          COMPONENT YARP_robotinterface
-        LIBRARY
-          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          COMPONENT YARP_robotinterface
-          NAMELINK_COMPONENT YARP_robotinterface-dev
-        ARCHIVE
-          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          COMPONENT YARP_robotinterface-dev
-        PUBLIC_HEADER
-          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/robotinterface"
-          COMPONENT YARP_robotinterface-dev
-        PRIVATE_HEADER
-          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/robotinterface/impl"
-          COMPONENT YARP_robotinterface-priv-dev)
+install(
+  TARGETS YARP_robotinterface
+  EXPORT YARP_robotinterface
+  RUNTIME
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    COMPONENT YARP_robotinterface
+  LIBRARY
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT YARP_robotinterface
+    NAMELINK_COMPONENT YARP_robotinterface-dev
+  ARCHIVE
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT YARP_robotinterface-dev
+  PUBLIC_HEADER
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/robotinterface"
+    COMPONENT YARP_robotinterface-dev
+  PRIVATE_HEADER
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/robotinterface/impl"
+    COMPONENT YARP_robotinterface-priv-dev
+)
 
-install(FILES ${YARP_robotinterface_EXP_HDRS}
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/robotinterface/experimental"
-        COMPONENT YARP_robotinterface-dev)
+install(
+  FILES ${YARP_robotinterface_EXP_HDRS}
+  DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/robotinterface/experimental"
+  COMPONENT YARP_robotinterface-dev
+)
 
 set(YARP_robotinterface_PUBLIC_DEPS ${YARP_robotinterface_PUBLIC_DEPS} PARENT_SCOPE)
 set(YARP_robotinterface_PRIVATE_DEPS ${YARP_robotinterface_PRIVATE_DEPS} PARENT_SCOPE)

@@ -30,9 +30,11 @@ if(DEFINED YARP_GIT_WT_HASH)
 endif()
 
 include(CMakeDependentOption)
-cmake_dependent_option(YARP_DISABLE_VERSION_SOURCE OFF
-                       "Disable version source when building YARP (avoid rebuilding everything every commit, please disable this option when including YARP version in bugs reports)."
-                       "YARP_VERSION_SOURCE OR YARP_VERSION_DIRTY" OFF)
+cmake_dependent_option(
+  YARP_DISABLE_VERSION_SOURCE OFF
+  "Disable version source when building YARP (avoid rebuilding everything every commit, please disable this option when including YARP version in bugs reports)."
+  "YARP_VERSION_SOURCE OR YARP_VERSION_DIRTY" OFF
+)
 mark_as_advanced(YARP_DISABLE_VERSION_SOURCE)
 
 if(DEFINED YARP_VERSION_SOURCE AND NOT YARP_DISABLE_VERSION_SOURCE)

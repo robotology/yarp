@@ -52,10 +52,12 @@ int main() {
 }
 ")
 
-  try_run(${_result_var}
-          _unused
-          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}"
-          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type_s}-is_iec559.cpp")
+  try_run(
+    ${_result_var}
+    _unused
+    "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}"
+    "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type_s}-is_iec559.cpp"
+  )
 endmacro()
 
 unset(YARP_FLOAT32)
@@ -129,10 +131,12 @@ int main()
         static_cast<int>(std::floor(std::log10(${_type}_MIN_EXP))) + 1);
 }
 ")
-  try_run(YARP_${_type}_EXP_DIG
-          _unused
-          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}"
-          "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type}-exp-dig.cpp")
+  try_run(
+    YARP_${_type}_EXP_DIG
+    _unused
+    "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}"
+    "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_type}-exp-dig.cpp"
+  )
 endmacro()
 
 check_floating_point_exponent_digits(FLT)

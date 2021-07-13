@@ -3,11 +3,16 @@
 
 add_executable(harness_rosmsg)
 
-target_sources(harness_rosmsg PRIVATE ROSPropertiesTest.cpp)
+target_sources(harness_rosmsg
+  PRIVATE
+    ROSPropertiesTest.cpp)
 
-target_link_libraries(harness_rosmsg PRIVATE YARP_harness
-                                             YARP::YARP_os
-                                             YARP::YARP_rosmsg)
+target_link_libraries(harness_rosmsg
+  PRIVATE
+    YARP_harness
+    YARP::YARP_os
+    YARP::YARP_rosmsg
+)
 
 set_property(TARGET harness_rosmsg PROPERTY FOLDER "Test")
 

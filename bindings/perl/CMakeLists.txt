@@ -24,14 +24,18 @@ set(CMAKE_SWIG_OUTDIR "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PERLDIR}")
 set(SWIG_OUTFILE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
 swig_add_library(yarp_perl
-                 LANGUAGE perl5
-                 SOURCES ${SWIG_BINDINGS_SOURCE_FILE})
+  LANGUAGE perl5
+  SOURCES ${SWIG_BINDINGS_SOURCE_FILE}
+)
 swig_link_libraries(yarp_perl ${SWIG_YARP_LIBRARIES})
 target_include_directories(${SWIG_MODULE_yarp_perl_REAL_NAME} SYSTEM PRIVATE ${PERL_INCLUDE_PATH})
 
-set_target_properties(${SWIG_MODULE_yarp_perl_REAL_NAME} PROPERTIES PREFIX ""
-                                                                    OUTPUT_NAME "yarp"
-                                                                    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PERLDIR}/auto/yarp")
+set_target_properties(${SWIG_MODULE_yarp_perl_REAL_NAME}
+  PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "yarp"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_PERLDIR}/auto/yarp"
+)
 
 
 # Update RPATH
@@ -46,7 +50,11 @@ if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
   set_target_properties(${SWIG_MODULE_yarp_perl_REAL_NAME} PROPERTIES INSTALL_RPATH "${_current_rpath}")
 endif()
 
-install(TARGETS ${SWIG_MODULE_yarp_perl_REAL_NAME}
-        DESTINATION ${CMAKE_INSTALL_PERLDIR}/auto/yarp)
-install(FILES ${CMAKE_SWIG_OUTDIR}/yarp.pm
-        DESTINATION ${CMAKE_INSTALL_PERLDIR})
+install(
+  TARGETS ${SWIG_MODULE_yarp_perl_REAL_NAME}
+  DESTINATION ${CMAKE_INSTALL_PERLDIR}/auto/yarp
+)
+install(
+  FILES ${CMAKE_SWIG_OUTDIR}/yarp.pm
+  DESTINATION ${CMAKE_INSTALL_PERLDIR}
+)

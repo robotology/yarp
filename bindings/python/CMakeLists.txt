@@ -26,17 +26,23 @@ else()
 endif()
 
 swig_add_library(yarp_python
-                 LANGUAGE python
-                 SOURCES ${SWIG_BINDINGS_SOURCE_FILE})
+  LANGUAGE python
+  SOURCES ${SWIG_BINDINGS_SOURCE_FILE}
+)
 swig_link_libraries(yarp_python ${YARP_Python_Module_Target} ${SWIG_YARP_LIBRARIES})
 
-set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME} PROPERTIES OUTPUT_NAME "_yarp"
-                                                                      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/python3")
+set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME}
+  PROPERTIES
+    OUTPUT_NAME "_yarp"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/python3"
+)
 
 # installation path is determined reliably on most platforms using distutils
-execute_process(COMMAND ${Python3_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_lib(plat_specific=True,standard_lib=False,prefix=''))"
-                OUTPUT_VARIABLE Python3_INSTDIR
-                OUTPUT_STRIP_TRAILING_WHITESPACE )
+execute_process(
+  COMMAND ${Python3_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_lib(plat_specific=True,standard_lib=False,prefix=''))"
+  OUTPUT_VARIABLE Python3_INSTDIR
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
 set(_CMAKE_INSTALL_PYTHON3DIR "${Python3_INSTDIR}")
 set(CMAKE_INSTALL_PYTHON3DIR ${_CMAKE_INSTALL_PYTHON3DIR} CACHE PATH "python3 bindings (${_CMAKE_INSTALL_PYTHON3DIR})")
@@ -63,8 +69,10 @@ if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
   set_target_properties(${SWIG_MODULE_yarp_python_REAL_NAME} PROPERTIES INSTALL_RPATH "${_current_rpath}")
 endif()
 
-install(TARGETS ${SWIG_MODULE_yarp_python_REAL_NAME}
-        DESTINATION ${CMAKE_INSTALL_PYTHON3DIR})
+install(
+  TARGETS ${SWIG_MODULE_yarp_python_REAL_NAME}
+  DESTINATION ${CMAKE_INSTALL_PYTHON3DIR}
+)
 
 if(YARP_COMPILE_TESTS)
   add_subdirectory(tests)

@@ -11,5 +11,6 @@ add_subdirectory(src)
 
 include(YarpInstallBasicPackageFiles)
 yarp_install_basic_package_files(YARP_robottestingframework
-                                 DEPENDENCIES ${YARP_robottestingframework_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_robottestingframework_PRIVATE_DEPS})
+  DEPENDENCIES ${YARP_robottestingframework_PUBLIC_DEPS}
+  PRIVATE_DEPENDENCIES ${YARP_robottestingframework_PRIVATE_DEPS}
+)

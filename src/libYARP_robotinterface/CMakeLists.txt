@@ -11,5 +11,6 @@ add_subdirectory(src)
 
 include(YarpInstallBasicPackageFiles)
 yarp_install_basic_package_files(YARP_robotinterface
-                                 DEPENDENCIES ${YARP_robotinterface_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_robotinterface_PRIVATE_DEPS})
+  DEPENDENCIES ${YARP_robotinterface_PUBLIC_DEPS}
+  PRIVATE_DEPENDENCIES ${YARP_robotinterface_PRIVATE_DEPS}
+)

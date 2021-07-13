@@ -39,8 +39,10 @@ if(YARP_COMPILE_EXECUTABLES)
     add_subdirectory(yarpidl_rosmsg)
     if(NOT CREATE_SHARED_LIBS)
         include(YarpInstallBasicPackageFiles)
-        yarp_install_basic_package_files(YARP_idl_tools
-                                         INCLUDE_CONTENT "include(\"\\\${YARP_MODULE_DIR}/YarpIDL.cmake\")")
+        yarp_install_basic_package_files(
+          YARP_idl_tools
+          INCLUDE_CONTENT "include(\"\\\${YARP_MODULE_DIR}/YarpIDL.cmake\")"
+        )
     endif()
 
     # executables

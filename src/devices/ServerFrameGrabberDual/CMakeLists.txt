@@ -1,12 +1,15 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
+
 yarp_prepare_plugin(grabberDual
   CATEGORY device
   TYPE ServerGrabber
   INCLUDE ServerFrameGrabberDual.h
-  EXTRA_CONFIG WRAPPER=grabberDual
-  DEFAULT ON)
+  EXTRA_CONFIG
+    WRAPPER=grabberDual
+  DEFAULT ON
+)
 
 if(NOT SKIP_grabberDual)
   yarp_add_plugin(yarp_grabberDual)
@@ -47,11 +50,13 @@ if(NOT SKIP_grabberDual)
 endif()
 
 
+
 yarp_prepare_plugin(frameGrabber_nws_yarp
   CATEGORY device
   TYPE FrameGrabber_nws_yarp
   INCLUDE FrameGrabber_nws_yarp.h
-  EXTRA_CONFIG WRAPPER=frameGrabber_nws_yarp
+  EXTRA_CONFIG
+    WRAPPER=frameGrabber_nws_yarp
   DEFAULT ON
 )
 
@@ -90,15 +95,17 @@ if(NOT SKIP_frameGrabber_nws_yarp)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_frameGrabber_nws_yarp PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_frameGrabber_nws_yarp PROPERTY FOLDER "Plugins/Device/NWS")
 endif()
+
 
 
 yarp_prepare_plugin(frameGrabber_nws_ros
   CATEGORY device
   TYPE FrameGrabber_nws_ros
   INCLUDE FrameGrabber_nws_ros.h
-  EXTRA_CONFIG WRAPPER=frameGrabber_nws_ros
+  EXTRA_CONFIG
+    WRAPPER=frameGrabber_nws_ros
   DEFAULT ON
 )
 
@@ -139,5 +146,5 @@ if(NOT SKIP_frameGrabber_nws_ros)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_frameGrabber_nws_ros PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_frameGrabber_nws_ros PROPERTY FOLDER "Plugins/Device/NWS")
 endif()

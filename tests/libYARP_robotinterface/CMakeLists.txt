@@ -7,10 +7,16 @@ endif()
 
 add_executable(harness_robotinterface)
 
-target_sources(harness_robotinterface PRIVATE RobotinterfaceTest.cpp)
+target_sources(harness_robotinterface
+  PRIVATE
+    RobotinterfaceTest.cpp
+)
 
-target_link_libraries(harness_robotinterface PRIVATE YARP_harness
-                                                     YARP::YARP_robotinterface)
+target_link_libraries(harness_robotinterface
+  PRIVATE
+    YARP_harness
+    YARP::YARP_robotinterface
+)
 
 set_property(TARGET harness_robotinterface PROPERTY FOLDER "Test")
 

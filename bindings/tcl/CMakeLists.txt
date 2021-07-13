@@ -10,8 +10,9 @@ find_package(TCL REQUIRED)
 
 
 swig_add_library(yarp_tcl
-                 LANGUAGE tcl
-                 SOURCES ${SWIG_BINDINGS_SOURCE_FILE})
+  LANGUAGE tcl
+  SOURCES ${SWIG_BINDINGS_SOURCE_FILE}
+)
 swig_link_libraries(yarp_tcl ${TCL_LIBRARY} ${SWIG_YARP_LIBRARIES})
 target_include_directories(${SWIG_MODULE_yarp_tcl_REAL_NAME} SYSTEM PRIVATE ${TCL_INCLUDE_PATH})
 

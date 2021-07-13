@@ -5,8 +5,10 @@
 include(YarpPlugin)
 include(YarpPrintFeature)
 
-yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
-                                  DEFAULT ON)
+yarp_begin_plugin_library(yarpmod
+  OPTION YARP_COMPILE_DEVICE_PLUGINS
+  DEFAULT ON
+)
   add_subdirectory(framegrabber_protocol)
   add_subdirectory(audioPlayerWrapper)
   add_subdirectory(audioRecorderWrapper)
@@ -104,8 +106,10 @@ yarp_begin_plugin_library(yarpmod OPTION YARP_COMPILE_DEVICE_PLUGINS
   # We can also suck in other device libraries built the same way.
   # We seek an ExternalModules.cmake file either in the conf directory
   # or in our build directory
-  set(EXTFILES "${YARP_MODULE_DIR}/ExternalModules.cmake"
-               "${CMAKE_BINARY_DIR}/ExternalModules.cmake")
+  set(EXTFILES
+    "${YARP_MODULE_DIR}/ExternalModules.cmake"
+    "${CMAKE_BINARY_DIR}/ExternalModules.cmake"
+  )
   foreach(EXTFILE ${EXTFILES})
     if(EXISTS ${EXTFILE})
       include(${EXTFILE})
@@ -131,23 +135,20 @@ yarp_end_plugin_library(yarpmod QUIET)
 add_library(YARP::yarpmod ALIAS yarpmod)
 
 
-install(TARGETS yarpmod
-        EXPORT YARP_${YARP_PLUGIN_MASTER}
-        COMPONENT ${YARP_PLUGIN_MASTER}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(
+  TARGETS yarpmod
+  EXPORT YARP_${YARP_PLUGIN_MASTER}
+  COMPONENT ${YARP_PLUGIN_MASTER}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
 
 include(YarpInstallBasicPackageFiles)
-if(NOT "${YARP_yarpmod_PUBLIC_DEPS}" STREQUAL "")
-  list(REMOVE_DUPLICATES YARP_yarpmod_PUBLIC_DEPS)
-endif()
-if(NOT "${YARP_yarpmod_PRIVATE_DEPS}" STREQUAL "")
-  list(REMOVE_DUPLICATES YARP_yarpmod_PRIVATE_DEPS)
-endif()
 yarp_install_basic_package_files(YARP_yarpmod
-                                 DEPENDENCIES ${YARP_yarpmod_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_yarpmod_PRIVATE_DEPS})
+  DEPENDENCIES ${YARP_yarpmod_PUBLIC_DEPS}
+  PRIVATE_DEPENDENCIES ${YARP_yarpmod_PRIVATE_DEPS}
+)
 
 set_property(TARGET yarpmod PROPERTY FOLDER "Plugins/Device")
 

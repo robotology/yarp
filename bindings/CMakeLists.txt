@@ -83,20 +83,24 @@ yarp_print_feature(YARP_COMPILE_BINDINGS 0 "Bindings")
 ## about this list, any SWIG-supported language should work - take a
 ## look at e.g. ruby code below for how to do it.
 
-set(SUPPORTED_LANGUAGES "Java"
-                        "Python"
-                        "Perl"
-                        "CSharp"
-                        "TCL"
-                        "Ruby"
-                        "Lua"
-                        "Octave")
+set(SUPPORTED_LANGUAGES
+  "Java"
+  "Python"
+  "Perl"
+  "CSharp"
+  "TCL"
+  "Ruby"
+  "Lua"
+  "Octave"
+)
 
 foreach(Lang ${SUPPORTED_LANGUAGES})
   string(TOUPPER "${Lang}" LANG)
   string(REGEX REPLACE " .+" "" LANG "${LANG}")
-  cmake_dependent_option(CREATE_${LANG} "Do you want to create the ${Lang} interface" OFF
-                         YARP_COMPILE_BINDINGS OFF)
+  cmake_dependent_option(
+    CREATE_${LANG} "Do you want to create the ${Lang} interface" OFF
+    YARP_COMPILE_BINDINGS OFF
+  )
   yarp_print_feature(CREATE_${LANG} 1 "${Lang} bindings")
 endforeach()
 
@@ -111,20 +115,30 @@ if (_nested_build)
   # bindings for other languages to be compiled from the build material.
 
   # Install main CMakeLists and Swig input file
-  foreach(f CMakeLists.txt yarp.i macrosForMultipleAnalogSensors.i matlab/vectors_fromTo_matlab.i README.md)
-      install(FILES ${CMAKE_SOURCE_DIR}/bindings/${f}
-              COMPONENT development
-              DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/bindings)
-  endforeach(f)
+  foreach(f
+    CMakeLists.txt
+    yarp.i
+    macrosForMultipleAnalogSensors.i
+    matlab/vectors_fromTo_matlab.i
+    README.md
+  )
+    install(
+      FILES ${CMAKE_SOURCE_DIR}/bindings/${f}
+      COMPONENT development
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/bindings
+    )
+  endforeach()
 
   # Install supported languages data
   foreach(Lang ${SUPPORTED_LANGUAGES})
     string(TOLOWER "${Lang}" lang)
     string(REGEX REPLACE " .+" "" lang "${lang}")
 
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/bindings/${lang}
-            COMPONENT development
-            DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/bindings)
+    install(
+      DIRECTORY ${CMAKE_SOURCE_DIR}/bindings/${lang}
+      COMPONENT development
+      DESTINATION ${CMAKE_INSTALL_DATADIR}/yarp/bindings
+    )
   endforeach()
 
 endif()
@@ -154,10 +168,12 @@ if(YARP_COMPILE_BINDINGS)
   # Include SWIG use file
   include(${SWIG_USE_FILE})
 
-  set(SWIG_YARP_LIBRARIES YARP::YARP_os
-                          YARP::YARP_sig
-                          YARP::YARP_dev
-                          YARP::YARP_init)
+  set(SWIG_YARP_LIBRARIES
+    YARP::YARP_os
+    YARP::YARP_sig
+    YARP::YARP_dev
+    YARP::YARP_init
+  )
 
   set(SWIG_BINDINGS_SOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/yarp.i")
 

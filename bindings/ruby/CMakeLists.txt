@@ -10,8 +10,9 @@ set(CMAKE_SWIG_FLAGS "-module;yarp;${SWIG_COMMON_FLAGS}")
 
 
 swig_add_library(yarp_ruby
-                 LANGUAGE ruby
-                 SOURCES ${SWIG_BINDINGS_SOURCE_FILE})
+  LANGUAGE ruby
+  SOURCES ${SWIG_BINDINGS_SOURCE_FILE}
+)
 swig_link_libraries(yarp_ruby ${RUBY_LIBRARY} ${SWIG_YARP_LIBRARIES})
 target_include_directories(${SWIG_MODULE_yarp_ruby_REAL_NAME} SYSTEM PRIVATE ${RUBY_INCLUDE_DIRS})
 
@@ -20,12 +21,14 @@ set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME} PROPERTIES PREFIX ""
 
 # Define CMAKE_INSTALL_RUBYDIR for installing Ruby libraries
 function(_RUBY_CONFIG_VAR RBVAR OUTVAR)
-  execute_process(COMMAND ${RUBY_EXECUTABLE} -r rbconfig -e "print RbConfig::CONFIG['${RBVAR}']"
+  execute_process(
+    COMMAND ${RUBY_EXECUTABLE} -r rbconfig -e "print RbConfig::CONFIG['${RBVAR}']"
     RESULT_VARIABLE _RUBY_SUCCESS
     OUTPUT_VARIABLE _RUBY_OUTPUT
     ERROR_QUIET)
   if(_RUBY_SUCCESS OR _RUBY_OUTPUT STREQUAL "")
-    execute_process(COMMAND ${RUBY_EXECUTABLE} -r rbconfig -e "print Config::CONFIG['${RBVAR}']"
+    execute_process(
+      COMMAND ${RUBY_EXECUTABLE} -r rbconfig -e "print Config::CONFIG['${RBVAR}']"
       RESULT_VARIABLE _RUBY_SUCCESS
       OUTPUT_VARIABLE _RUBY_OUTPUT
       ERROR_QUIET)
@@ -47,9 +50,12 @@ else()
   set(CMAKE_INSTALL_FULL_RUBYDIR "${CMAKE_INSTALL_RUBYDIR}")
 endif()
 
-set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME} PROPERTIES PREFIX ""
-                                                                    OUTPUT_NAME "yarp"
-                                                                    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_RUBYDIR})
+set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME}
+  PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "yarp"
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_RUBYDIR}
+)
 
 # Update RPATH
 if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
@@ -63,8 +69,10 @@ if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH)
   set_target_properties(${SWIG_MODULE_yarp_ruby_REAL_NAME} PROPERTIES INSTALL_RPATH "${_current_rpath}")
 endif()
 
-install(TARGETS ${SWIG_MODULE_yarp_ruby_REAL_NAME}
-        DESTINATION ${CMAKE_INSTALL_RUBYDIR})
+install(
+  TARGETS ${SWIG_MODULE_yarp_ruby_REAL_NAME}
+  DESTINATION ${CMAKE_INSTALL_RUBYDIR}
+)
 
 if(YARP_COMPILE_TESTS)
   add_subdirectory(tests)

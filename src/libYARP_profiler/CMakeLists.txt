@@ -11,5 +11,6 @@ add_subdirectory(src)
 
 include(YarpInstallBasicPackageFiles)
 yarp_install_basic_package_files(YARP_profiler
-                                 DEPENDENCIES ${YARP_profiler_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_profiler_PRIVATE_DEPS})
+  DEPENDENCIES ${YARP_profiler_PUBLIC_DEPS}
+  PRIVATE_DEPENDENCIES ${YARP_profiler_PRIVATE_DEPS}
+)

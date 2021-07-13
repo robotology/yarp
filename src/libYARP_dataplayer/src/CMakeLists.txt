@@ -12,32 +12,53 @@ set(YARP_dataplayer_IMPL_HDRS )
 
 set(YARP_dataplayer_SRCS yarp/dataplayer/YarpDataplayer.cpp)
 
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-             PREFIX "Source Files"
-             FILES ${YARP_dataplayer_SRCS})
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-             PREFIX "Header Files"
-             FILES ${YARP_dataplayer_HDRS}
-                   ${YARP_dataplayer_IMPL_HDRS})
+source_group(
+  TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+  PREFIX "Source Files"
+  FILES ${YARP_dataplayer_SRCS}
+)
+source_group(
+  TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+  PREFIX "Header Files"
+  FILES
+    ${YARP_dataplayer_HDRS}
+    ${YARP_dataplayer_IMPL_HDRS}
+)
 
-target_sources(YARP_dataplayer PRIVATE ${YARP_dataplayer_SRCS}
-                                   ${YARP_dataplayer_HDRS}
-                                   ${YARP_dataplayer_IMPL_HDRS})
+target_sources(YARP_dataplayer
+  PRIVATE
+    ${YARP_dataplayer_SRCS}
+    ${YARP_dataplayer_HDRS}
+    ${YARP_dataplayer_IMPL_HDRS}
+)
 
-target_include_directories(YARP_dataplayer PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-                                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_include_directories(YARP_dataplayer
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 if(MSVC)
   target_include_directories(YARP_dataplayer SYSTEM PRIVATE ${dirent_INCLUDE_DIRS})
 endif()
 
 target_compile_features(YARP_dataplayer PUBLIC cxx_std_14)
 
-target_link_libraries(YARP_dataplayer PUBLIC YARP::YARP_os
-                                  PRIVATE YARP::YARP_sig YARP::YARP_init YARP::YARP_rosmsg)
-list(APPEND YARP_dataplayer_PUBLIC_DEPS YARP_os)
-list(APPEND YARP_dataplayer_PRIVATE_DEPS YARP_sig)
-list(APPEND YARP_dataplayer_PRIVATE_DEPS YARP_init)
-list(APPEND YARP_dataplayer_PRIVATE_DEPS YARP_rosmsg)
+target_link_libraries(YARP_dataplayer
+  PUBLIC
+    YARP::YARP_os
+  PRIVATE
+    YARP::YARP_sig
+    YARP::YARP_init
+    YARP::YARP_rosmsg
+)
+list(APPEND YARP_dataplayer_PUBLIC_DEPS
+  YARP_os
+)
+list(APPEND YARP_dataplayer_PRIVATE_DEPS
+  YARP_sig
+  YARP_init
+  YARP_rosmsg
+)
 
 
 set_property(TARGET YARP_dataplayer PROPERTY PUBLIC_HEADER ${YARP_dataplayer_HDRS})
@@ -47,24 +68,26 @@ set_property(TARGET YARP_dataplayer PROPERTY SOVERSION ${YARP_SOVERSION})
 set_property(TARGET YARP_dataplayer PROPERTY FOLDER "Libraries/Private")
 
 
-install(TARGETS YARP_dataplayer
-        EXPORT YARP_dataplayer
-        RUNTIME
-          DESTINATION "${CMAKE_INSTALL_BINDIR}"
-          COMPONENT YARP_dataplayer
-        LIBRARY
-          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          COMPONENT YARP_dataplayer
-          NAMELINK_COMPONENT YARP_dataplayer-dev
-        ARCHIVE
-          DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          COMPONENT YARP_dataplayer-dev
-        PUBLIC_HEADER
-          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/dataplayer"
-          COMPONENT YARP_dataplayer-dev
-        PRIVATE_HEADER
-          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/dataplayer/impl"
-          COMPONENT YARP_dataplayer-priv-dev)
+install(
+  TARGETS YARP_dataplayer
+  EXPORT YARP_dataplayer
+  RUNTIME
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    COMPONENT YARP_dataplayer
+  LIBRARY
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT YARP_dataplayer
+    NAMELINK_COMPONENT YARP_dataplayer-dev
+  ARCHIVE
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT YARP_dataplayer-dev
+  PUBLIC_HEADER
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/dataplayer"
+    COMPONENT YARP_dataplayer-dev
+  PRIVATE_HEADER
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/yarp/dataplayer/impl"
+    COMPONENT YARP_dataplayer-priv-dev
+)
 
 
 set(YARP_dataplayer_PUBLIC_DEPS ${YARP_dataplayer_PUBLIC_DEPS} PARENT_SCOPE)

@@ -23,9 +23,11 @@ endif()
 
 # Generate a matrix of SWIG tests
 foreach(lang PYTHON JAVA LUA RUBY CSHARP TCL PERL)
-  foreach(swig 1.3.40
-               2.0.12
-               3.0.8)
+  foreach(swig
+    1.3.40
+    2.0.12
+    3.0.8
+  )
     set(test_name "integration::swig::${lang}::${swig}")
     if("${test_name}" MATCHES "^integration::swig::PYTHON::1.3.37" OR
        "${test_name}" MATCHES "^integration::swig::(RUBY|LUA)::1.3.(37|38|39|40)$" OR

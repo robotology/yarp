@@ -33,14 +33,8 @@ list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
   YARP_sig
 )
 
-target_include_directories(yarp_pm_depthimage_compression_zfp
-  SYSTEM PRIVATE
-    ${ZFP_INCLUDE_DIRS}
-)
-target_link_libraries(yarp_pm_depthimage_compression_zfp
-  PRIVATE
-    ${ZFP_LIBRARIES}
-)
+target_include_directories(yarp_pm_depthimage_compression_zfp SYSTEM PRIVATE ${ZFP_INCLUDE_DIRS})
+target_link_libraries(yarp_pm_depthimage_compression_zfp PRIVATE ${ZFP_LIBRARIES})
 # list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ZFP) (not using targets)
 
 yarp_install(

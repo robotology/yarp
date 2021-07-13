@@ -32,12 +32,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
   set(CMAKE_STATIC_LINKER_FLAGS_DEBUGFULL "" CACHE STRING "Flags used by the linker during debugfull builds.")
 
-  mark_as_advanced(CMAKE_C_FLAGS_DEBUGFULL
-                   CMAKE_CXX_FLAGS_DEBUGFULL
-                   CMAKE_EXE_LINKER_FLAGS_DEBUGFULL
-                   CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL
-                   CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL
-                   CMAKE_STATIC_LINKER_FLAGS_DEBUGFULL)
+  mark_as_advanced(
+    CMAKE_C_FLAGS_DEBUGFULL
+    CMAKE_CXX_FLAGS_DEBUGFULL
+    CMAKE_EXE_LINKER_FLAGS_DEBUGFULL
+    CMAKE_MODULE_LINKER_FLAGS_DEBUGFULL
+    CMAKE_SHARED_LINKER_FLAGS_DEBUGFULL
+    CMAKE_STATIC_LINKER_FLAGS_DEBUGFULL
+  )
 
   list(APPEND YARP_DEBUG_CONFIGURATIONS "DebugFull")
 endif()
@@ -53,12 +55,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
   set(CMAKE_STATIC_LINKER_FLAGS_PROFILE "" CACHE STRING "Flags used by the linker during profile builds.")
 
-  mark_as_advanced(CMAKE_C_FLAGS_PROFILE
-                   CMAKE_CXX_FLAGS_PROFILE
-                   CMAKE_EXE_LINKER_FLAGS_PROFILE
-                   CMAKE_MODULE_LINKER_FLAGS_PROFILE
-                   CMAKE_SHARED_LINKER_FLAGS_PROFILE
-                   CMAKE_STATIC_LINKER_FLAGS_PROFILE)
+  mark_as_advanced(
+    CMAKE_C_FLAGS_PROFILE
+    CMAKE_CXX_FLAGS_PROFILE
+    CMAKE_EXE_LINKER_FLAGS_PROFILE
+    CMAKE_MODULE_LINKER_FLAGS_PROFILE
+    CMAKE_SHARED_LINKER_FLAGS_PROFILE
+    CMAKE_STATIC_LINKER_FLAGS_PROFILE
+  )
 
   list(APPEND YARP_DEBUG_CONFIGURATIONS "Profile")
 endif()
@@ -142,9 +146,11 @@ option(YARP_COMPILE_UNMAINTAINED "Enable unmaintained components" OFF)
 #########################################################################
 # Enable/Disable examples
 
-cmake_dependent_option(YARP_COMPILE_EXAMPLES
-                       "Enable YARP examples" OFF
-                       "YARP_COMPILE_EXECUTABLES" OFF)
+cmake_dependent_option(
+  YARP_COMPILE_EXAMPLES
+  "Enable YARP examples" OFF
+  "YARP_COMPILE_EXECUTABLES" OFF
+)
 
 
 #########################################################################
@@ -182,9 +188,11 @@ mark_as_advanced(YARP_TEST_TIMEOUT)
 #########################################################################
 # Run tests under Valgrind
 
-cmake_dependent_option(YARP_VALGRIND_TESTS
-                       "Run YARP tests under Valgrind" OFF
-                       "YARP_COMPILE_TESTS" OFF)
+cmake_dependent_option(
+  YARP_VALGRIND_TESTS
+  "Run YARP tests under Valgrind" OFF
+  "YARP_COMPILE_TESTS" OFF
+)
 mark_as_advanced(YARP_VALGRIND_TESTS)
 
 if(YARP_VALGRIND_TESTS)
@@ -271,9 +279,11 @@ if(YARP_NO_DEPRECATED)
   add_definitions("-DYARP_NO_DEPRECATED")
 endif()
 
-cmake_dependent_option(YARP_NO_DEPRECATED_WARNINGS
-                       "Do not warn when using YARP deprecated declarations" OFF
-                       "NOT YARP_NO_DEPRECATED" OFF)
+cmake_dependent_option(
+  YARP_NO_DEPRECATED_WARNINGS
+  "Do not warn when using YARP deprecated declarations" OFF
+  "NOT YARP_NO_DEPRECATED" OFF
+)
 mark_as_advanced(YARP_NO_DEPRECATED_WARNINGS)
 if(YARP_NO_DEPRECATED_WARNINGS)
   add_definitions("-DYARP_NO_DEPRECATED_WARNINGS")
@@ -296,11 +306,14 @@ endif()
 #########################################################################
 # Control setting an rpath
 
-add_install_rpath_support(LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"       # Libraries
-                          BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"       # Binaries
-                                   "${CMAKE_INSTALL_FULL_LIBDIR}/yarp"  # Plugins
-                          INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
-                          USE_LINK_PATH)
+add_install_rpath_support(
+  LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}" # Libraries
+  BIN_DIRS
+    "${CMAKE_INSTALL_FULL_BINDIR}"        # Binaries
+    "${CMAKE_INSTALL_FULL_LIBDIR}/yarp"   # Plugins
+  INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+  USE_LINK_PATH
+)
 
 
 #########################################################################

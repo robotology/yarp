@@ -15,9 +15,11 @@ if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.14)
 endif()
 
 # Main project
-project(YARP
-        VERSION 3.4.102
-        LANGUAGES C CXX)
+project(
+  YARP
+  VERSION 3.4.102
+  LANGUAGES C CXX
+)
 set(PROJECT_DESCRIPTION "YARP: A thin middleware for humanoid robots and more")
 
 

@@ -8,12 +8,14 @@ target_sources(harness_conf
     dirs.cpp
     environment.cpp
     numeric.cpp
-    string.cpp)
+    string.cpp
+)
 
 target_link_libraries(harness_conf
   PRIVATE
     YARP_harness_no_network
-    YARP::YARP_conf)
+    YARP::YARP_conf
+)
 
 set_property(TARGET harness_conf PROPERTY FOLDER "Test")
 

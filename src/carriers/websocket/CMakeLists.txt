@@ -6,26 +6,26 @@ yarp_prepare_plugin(
   CATEGORY carrier
   TYPE WebSocketCarrier
   INCLUDE WebSocketCarrier.h
-  EXTRA_CONFIG CODE="GET /?ws"
+  EXTRA_CONFIG
+    CODE="GET /?ws"
 )
 
 if(NOT SKIP_websocket)
   yarp_add_plugin(yarp_websocket)
 
   set(WebSocket_SOURCES
-      ${WebSocket_ROOT}/WebSocket/WebSocket.cpp
-      ${WebSocket_ROOT}/WebSocket/WebSocket.h
-      ${WebSocket_ROOT}/WebSocket/base64/base64.cpp
-      ${WebSocket_ROOT}/WebSocket/base64/base64.h
-      ${WebSocket_ROOT}/WebSocket/md5/md5.c
-      ${WebSocket_ROOT}/WebSocket/md5/md5.h
-      ${WebSocket_ROOT}/WebSocket/md5/md5.hpp
-      ${WebSocket_ROOT}/WebSocket/sha1/sha1.cpp
-      ${WebSocket_ROOT}/WebSocket/sha1/sha1.h
+    ${WebSocket_ROOT}/WebSocket/WebSocket.cpp
+    ${WebSocket_ROOT}/WebSocket/WebSocket.h
+    ${WebSocket_ROOT}/WebSocket/base64/base64.cpp
+    ${WebSocket_ROOT}/WebSocket/base64/base64.h
+    ${WebSocket_ROOT}/WebSocket/md5/md5.c
+    ${WebSocket_ROOT}/WebSocket/md5/md5.h
+    ${WebSocket_ROOT}/WebSocket/md5/md5.hpp
+    ${WebSocket_ROOT}/WebSocket/sha1/sha1.cpp
+    ${WebSocket_ROOT}/WebSocket/sha1/sha1.h
   )
 
-  target_sources(
-    yarp_websocket
+  target_sources(yarp_websocket
     PRIVATE
       WebSocketCarrier.cpp
       WebSocketCarrier.h
@@ -41,22 +41,18 @@ if(NOT SKIP_websocket)
       ${WebSocket_ROOT}
   )
 
-  target_link_libraries(
-    yarp_websocket
+  target_link_libraries(yarp_websocket
     PRIVATE
       YARP::YARP_os
       YARP::YARP_sig
       YARP::YARP_wire_rep_utils
   )
-
-  list(
-    APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
+  list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
       YARP_os
       YARP_sig
       YARP_wire_rep_utils
   )
 
-  target_compile_features(yarp_websocket PUBLIC)
   yarp_install(
     TARGETS yarp_websocket
     EXPORT YARP_${YARP_PLUGIN_MASTER}

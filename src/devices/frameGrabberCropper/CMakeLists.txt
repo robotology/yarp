@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 yarp_prepare_plugin(frameGrabberCropper
-                    CATEGORY device
-                    TYPE FrameGrabberCropper
-                    INCLUDE frameGrabberCropper.h
-                    EXTRA_CONFIG WRAPPER=grabberDual
-                    DEFAULT ON)
+  CATEGORY device
+  TYPE FrameGrabberCropper
+  INCLUDE frameGrabberCropper.h
+  EXTRA_CONFIG
+    WRAPPER=grabberDual
+  DEFAULT ON
+)
 
 if(NOT SKIP_grabberDual)
   yarp_add_plugin(yarp_frameGrabberCropper)

@@ -15,25 +15,29 @@ endif()
 
 add_library(YARP_priv_xmlrpcpp ${YARP_priv_xmlrpcpp_TYPE})
 
-set(xmlrpcpp_SRCS xmlrpcpp/src/base64.cpp
-                  xmlrpcpp/src/XmlRpcClient.cpp
-                  xmlrpcpp/src/XmlRpcServerConnection.cpp
-                  xmlrpcpp/src/XmlRpcServer.cpp
-                  xmlrpcpp/src/XmlRpcServerMethod.cpp
-                  xmlrpcpp/src/XmlRpcSource.cpp
-                  xmlrpcpp/src/XmlRpcUtil.cpp
-                  xmlrpcpp/src/XmlRpcValue.cpp)
+set(xmlrpcpp_SRCS
+  xmlrpcpp/src/base64.cpp
+  xmlrpcpp/src/XmlRpcClient.cpp
+  xmlrpcpp/src/XmlRpcServerConnection.cpp
+  xmlrpcpp/src/XmlRpcServer.cpp
+  xmlrpcpp/src/XmlRpcServerMethod.cpp
+  xmlrpcpp/src/XmlRpcSource.cpp
+  xmlrpcpp/src/XmlRpcUtil.cpp
+  xmlrpcpp/src/XmlRpcValue.cpp
+)
 
-set(xmlrpcpp_HDRS xmlrpcpp/src/base64.h
-                  xmlrpcpp/src/XmlRpcClient.h
-                  xmlrpcpp/src/XmlRpcException.h
-                  xmlrpcpp/src/XmlRpc.h
-                  xmlrpcpp/src/XmlRpcServerConnection.h
-                  xmlrpcpp/src/XmlRpcServer.h
-                  xmlrpcpp/src/XmlRpcServerMethod.h
-                  xmlrpcpp/src/XmlRpcSource.h
-                  xmlrpcpp/src/XmlRpcUtil.h
-                  xmlrpcpp/src/XmlRpcValue.h)
+set(xmlrpcpp_HDRS
+  xmlrpcpp/src/base64.h
+  xmlrpcpp/src/XmlRpcClient.h
+  xmlrpcpp/src/XmlRpcException.h
+  xmlrpcpp/src/XmlRpc.h
+  xmlrpcpp/src/XmlRpcServerConnection.h
+  xmlrpcpp/src/XmlRpcServer.h
+  xmlrpcpp/src/XmlRpcServerMethod.h
+  xmlrpcpp/src/XmlRpcSource.h
+  xmlrpcpp/src/XmlRpcUtil.h
+  xmlrpcpp/src/XmlRpcValue.h
+)
 
 target_sources(YARP_priv_xmlrpcpp PRIVATE  ${xmlrpcpp_SRCS})
 
@@ -44,12 +48,14 @@ set_property(TARGET YARP_priv_xmlrpcpp PROPERTY FOLDER "Libraries/External")
 set(xmlrpcpp_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/xmlrpcpp/src PARENT_SCOPE)
 set(xmlrpcpp_LIBRARIES "YARP_priv_xmlrpcpp" PARENT_SCOPE)
 
-install(TARGETS YARP_priv_xmlrpcpp
-        EXPORT YARP_priv_xmlrpcpp
-        COMPONENT YARP_priv_xmlrpcpp
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+install(
+  TARGETS YARP_priv_xmlrpcpp
+  EXPORT YARP_priv_xmlrpcpp
+  COMPONENT YARP_priv_xmlrpcpp
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)
 
 if(NOT CREATE_SHARED_LIBS)
   include(YarpInstallBasicPackageFiles)

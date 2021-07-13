@@ -5,8 +5,10 @@
 include(YarpPlugin)
 include(YarpPrintFeature)
 
-yarp_begin_plugin_library(yarppm OPTION YARP_COMPILE_PORTMONITOR_PLUGINS
-                                 DEFAULT ON)
+yarp_begin_plugin_library(yarppm
+  OPTION YARP_COMPILE_PORTMONITOR_PLUGINS
+  DEFAULT ON
+)
   add_subdirectory(depthimage_compression_zfp)
   add_subdirectory(depthimage_compression_zlib)
   add_subdirectory(depthimage_to_mono)
@@ -17,23 +19,20 @@ yarp_begin_plugin_library(yarppm OPTION YARP_COMPILE_PORTMONITOR_PLUGINS
 yarp_end_plugin_library(yarppm QUIET)
 add_library(YARP::yarppm ALIAS yarppm)
 
-install(TARGETS yarppm
-        EXPORT YARP_yarppm
-        COMPONENT yarppm
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+install(
+  TARGETS yarppm
+  EXPORT YARP_yarppm
+  COMPONENT yarppm
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)
 
 include(YarpInstallBasicPackageFiles)
-if(NOT "${YARP_yarppm_PUBLIC_DEPS}" STREQUAL "")
-  list(REMOVE_DUPLICATES YARP_yarppm_PUBLIC_DEPS)
-endif()
-if(NOT "${YARP_yarppm_PRIVATE_DEPS}" STREQUAL "")
-  list(REMOVE_DUPLICATES YARP_yarppm_PRIVATE_DEPS)
-endif()
 yarp_install_basic_package_files(YARP_yarppm
-                                 DEPENDENCIES ${YARP_yarppm_PUBLIC_DEPS}
-                                 PRIVATE_DEPENDENCIES ${YARP_yarppm_PRIVATE_DEPS})
+  DEPENDENCIES ${YARP_yarppm_PUBLIC_DEPS}
+  PRIVATE_DEPENDENCIES ${YARP_yarppm_PRIVATE_DEPS}
+)
 
 set_property(TARGET yarppm PROPERTY FOLDER "Plugins/PortMonitors")
 

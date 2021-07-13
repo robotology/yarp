@@ -8,30 +8,36 @@ if(YARP_COMPILE_yarpdataplayer)
 
   add_executable(yarpdataplayer WIN32)
 
-  set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+  set(yarpdataplayer_SRCS
+    src/aboutdlg.cpp
+    src/genericinfodlg.cpp
+    src/loadingwidget.cpp
+    src/main.cpp
+    src/mainwindow.cpp
+    src/utils.cpp
+    src/worker.cpp
+  )
 
-  set(yarpdataplayer_SRCS src/aboutdlg.cpp
-                          src/genericinfodlg.cpp
-                          src/loadingwidget.cpp
-                          src/main.cpp
-                          src/mainwindow.cpp
-                          src/utils.cpp
-                          src/worker.cpp)
 
+  set(yarpdataplayer_HDRS
+    include/aboutdlg.h
+    include/genericinfodlg.h
+    include/loadingwidget.h
+    include/mainwindow.h
+    include/utils.h
+    include/worker.h
+  )
 
-  set(yarpdataplayer_HDRS include/aboutdlg.h
-                          include/genericinfodlg.h
-                          include/loadingwidget.h
-                          include/mainwindow.h
-                          include/utils.h
-                          include/worker.h)
+  set(yarpdataplayer_QRC_FILES
+    src/RC/res.qrc
+  )
 
-  set(yarpdataplayer_QRC_FILES src/RC/res.qrc)
-
-  set(yarpdataplayer_UI_FILES include/UI/aboutdlg.ui
-                              include/UI/genericinfodlg.ui
-                              include/UI/loadingwidget.ui
-                              include/UI/mainwindow.ui)
+  set(yarpdataplayer_UI_FILES
+    include/UI/aboutdlg.ui
+    include/UI/genericinfodlg.ui
+    include/UI/loadingwidget.ui
+    include/UI/mainwindow.ui
+  )
 
   set(yarpdataplayer_THRIFT_FILES yarpdataplayer.thrift)
 
@@ -45,44 +51,76 @@ if(YARP_COMPILE_yarpdataplayer)
   include(YarpChooseIDL)
   yarp_choose_idl(yarpdataplayer_THRIFT ${yarpdataplayer_THRIFT_FILES})
 
-  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-               PREFIX "Source Files"
-               FILES ${yarpdataplayer_SRCS})
-  source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-               PREFIX "Header Files"
-               FILES ${yarpdataplayer_HDRS})
-  source_group("Resources Files" FILES ${yarpdataplayer_QRC_FILES}
-                                       ${yarpdataplayer_RC_FILES})
-  source_group("UI Files" FILES ${yarpdataplayer_UI_FILES})
-  source_group("Thrift Files" FILES ${yarpdataplayer_THRIFT_FILES})
-  source_group("Generated Files" FILES ${yarpdataplayer_QRC_GEN_SRCS}
-                                       ${yarpdataplayer_UI_GEN_SRCS}
-                                       ${yarpdataplayer_THRIFT_GEN_FILES})
+  source_group(
+    TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+    PREFIX "Source Files"
+    FILES ${yarpdataplayer_SRCS}
+  )
+  source_group(
+    TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+    PREFIX "Header Files"
+    FILES ${yarpdataplayer_HDRS}
+  )
+  source_group(
+    "Resources Files"
+    FILES
+      ${yarpdataplayer_QRC_FILES}
+      ${yarpdataplayer_RC_FILES}
+  )
+  source_group(
+    "UI Files"
+      FILES ${yarpdataplayer_UI_FILES}
+  )
+  source_group(
+    "Thrift Files"
+      FILES ${yarpdataplayer_THRIFT_FILES}
+  )
+  source_group(
+    "Generated Files"
+      FILES
+        ${yarpdataplayer_QRC_GEN_SRCS}
+        ${yarpdataplayer_UI_GEN_SRCS}
+        ${yarpdataplayer_THRIFT_GEN_FILES}
+  )
 
-  target_sources(yarpdataplayer PRIVATE ${yarpdataplayer_SRCS}
-                                        ${yarpdataplayer_HDRS}
-                                        ${yarpdataplayer_QRC_FILES}
-                                        ${yarpdataplayer_QRC_GEN_SRCS}
-                                        ${yarpdataplayer_UI_FILES}
-                                        ${yarpdataplayer_UI_GEN_SRCS}
-                                        ${yarpdataplayer_THRIFT_GEN_FILES}
-                                        ${yarpdataplayer_RC_FILES}
-                                        ${yarpdataplayer_THRIFT_FILES})
+  target_sources(yarpdataplayer
+    PRIVATE
+      ${yarpdataplayer_SRCS}
+      ${yarpdataplayer_HDRS}
+      ${yarpdataplayer_QRC_FILES}
+      ${yarpdataplayer_QRC_GEN_SRCS}
+      ${yarpdataplayer_UI_FILES}
+      ${yarpdataplayer_UI_GEN_SRCS}
+      ${yarpdataplayer_THRIFT_GEN_FILES}
+      ${yarpdataplayer_RC_FILES}
+      ${yarpdataplayer_THRIFT_FILES}
+  )
 
-  target_include_directories(yarpdataplayer PRIVATE ${yarpdataplayer_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS})
+  target_include_directories(yarpdataplayer
+    PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${yarpdataplayer_THRIFT_BUILD_INTERFACE_INCLUDE_DIRS}
+  )
 
-  target_link_libraries(yarpdataplayer PRIVATE YARP::YARP_os
-                                               YARP::YARP_init
-                                               YARP::YARP_sig
-                                               YARP::YARP_dataplayer
-                                               Qt5::Widgets
-                                               YARP::YARP_rosmsg)
+  target_link_libraries(yarpdataplayer
+    PRIVATE
+      YARP::YARP_os
+      YARP::YARP_init
+      YARP::YARP_sig
+      YARP::YARP_dataplayer
+      YARP::YARP_rosmsg
+      Qt5::Widgets
+  )
 
   if(YARP_HAS_OpenCV)
     target_compile_definitions(yarpdataplayer PRIVATE HAS_OPENCV)
     target_include_directories(yarpdataplayer PRIVATE ${OpenCV_INCLUDE_DIRS})
-    target_link_libraries(yarpdataplayer PRIVATE ${OpenCV_LIBRARIES}
-                                                 YARP::YARP_cv)
+    target_link_libraries(yarpdataplayer
+      PRIVATE
+        ${OpenCV_LIBRARIES}
+        YARP::YARP_cv
+    )
   endif()
 
   if(MSVC)
@@ -93,8 +131,10 @@ if(YARP_COMPILE_yarpdataplayer)
 
   set_property(TARGET yarpdataplayer PROPERTY FOLDER "Graphical User Interfaces")
 
-  yarp_macos_duplicate_and_add_bundle(TARGET yarpdataplayer
-                                      INSTALL_COMPONENT utilities
-                                      INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  yarp_macos_duplicate_and_add_bundle(
+    TARGET yarpdataplayer
+    INSTALL_COMPONENT utilities
+    INSTALL_DESTINATION "${CMAKE_INSTALL_BINDIR}"
+  )
 
 endif()

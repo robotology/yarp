@@ -1,11 +1,13 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
+
 yarp_prepare_plugin(remote_grabber
   CATEGORY device
   TYPE RemoteFrameGrabber
   INCLUDE RemoteFrameGrabber.h
-  EXTRA_CONFIG WRAPPER=grabber
+  EXTRA_CONFIG
+    WRAPPER=grabber
   DEFAULT ON
 )
 
@@ -27,7 +29,6 @@ if(NOT SKIP_remote_grabber)
       YARP::YARP_sig
       YARP::YARP_dev
   )
-
   list(APPEND YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS
     YARP_os
     YARP_sig
@@ -49,11 +50,13 @@ if(NOT SKIP_remote_grabber)
 endif()
 
 
+
 yarp_prepare_plugin(frameGrabber_nwc_yarp
   CATEGORY device
   TYPE FrameGrabber_nwc_yarp
   INCLUDE FrameGrabber_nwc_yarp.h
-  EXTRA_CONFIG WRAPPER=frameGrabber_nws_yarp
+  EXTRA_CONFIG
+    WRAPPER=frameGrabber_nws_yarp
   DEFAULT ON
 )
 
@@ -92,5 +95,5 @@ if(NOT SKIP_frameGrabber_nwc_yarp)
 
   set(YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS ${YARP_${YARP_PLUGIN_MASTER}_PRIVATE_DEPS} PARENT_SCOPE)
 
-  set_property(TARGET yarp_frameGrabber_nwc_yarp PROPERTY FOLDER "Plugins/Device")
+  set_property(TARGET yarp_frameGrabber_nwc_yarp PROPERTY FOLDER "Plugins/Device/NWC")
 endif()

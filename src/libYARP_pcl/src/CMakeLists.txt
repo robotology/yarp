@@ -4,14 +4,21 @@
 add_library(YARP_pcl INTERFACE)
 add_library(YARP::YARP_pcl ALIAS YARP_pcl)
 
-set(YARP_pcl_HDRS yarp/pcl/Pcl.h)
+set(YARP_pcl_HDRS
+  yarp/pcl/Pcl.h
+)
 
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}"
-             PREFIX "Header Files"
-             FILES ${YARP_pcl_HDRS})
+source_group(
+  TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+  PREFIX "Header Files"
+  FILES ${YARP_pcl_HDRS}
+)
 
-target_include_directories(YARP_pcl INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-                                              $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+target_include_directories(YARP_pcl
+  INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 target_compile_features(YARP_pcl INTERFACE cxx_std_14)
 
 target_link_libraries(YARP_pcl INTERFACE YARP::YARP_sig)
@@ -30,12 +37,16 @@ list(APPEND YARP_pcl_PUBLIC_DEPS "PCL COMPONENTS common io")
 
 # INTERFACE libraries do not support the PUBLIC_HEADER property
 # https://gitlab.kitware.com/cmake/cmake/issues/20056
-install(TARGETS YARP_pcl
-        EXPORT YARP_pcl)
+install(
+  TARGETS YARP_pcl
+  EXPORT YARP_pcl
+)
 
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/yarp/pcl
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
-        COMPONENT YARP_pcl)
+install(
+  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/yarp/pcl
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/yarp
+  COMPONENT YARP_pcl
+)
 
 
 set(YARP_pcl_PUBLIC_DEPS ${YARP_pcl_PUBLIC_DEPS} PARENT_SCOPE)

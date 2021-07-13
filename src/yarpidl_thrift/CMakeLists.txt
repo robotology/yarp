@@ -1,27 +1,33 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-set(yarpidl_thrift_SRCS "${THRIFT_ROOT}/compiler/cpp/src/thrift/version.h"
-                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/common.cc"
-                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/generate/t_generator.cc"
-                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/parse/t_typedef.cc"
-                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/parse/parse.cc"
-                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/main.cc"
-                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/audit/t_audit.cpp"
-                        "${THRIFT_ROOT}/compiler/cpp/src/thrift/generate/t_cpp_generator.cc")
+set(yarpidl_thrift_SRCS
+  "${THRIFT_ROOT}/compiler/cpp/src/thrift/version.h"
+  "${THRIFT_ROOT}/compiler/cpp/src/thrift/common.cc"
+  "${THRIFT_ROOT}/compiler/cpp/src/thrift/generate/t_generator.cc"
+  "${THRIFT_ROOT}/compiler/cpp/src/thrift/parse/t_typedef.cc"
+  "${THRIFT_ROOT}/compiler/cpp/src/thrift/parse/parse.cc"
+  "${THRIFT_ROOT}/compiler/cpp/src/thrift/main.cc"
+  "${THRIFT_ROOT}/compiler/cpp/src/thrift/audit/t_audit.cpp"
+  "${THRIFT_ROOT}/compiler/cpp/src/thrift/generate/t_cpp_generator.cc"
+)
 
 set(yarpidl_thrift_YARP_SRCS src/t_yarp_generator.cc)
 
 
 if(YARP_HAS_BISON AND YARP_HAS_FLEX AND NOT CMAKE_CROSSCOMPILING)
-  bison_target(thrifty
-               "${THRIFT_ROOT}/compiler/cpp/src/thrift/thrifty.yy"
-               "${CMAKE_CURRENT_BINARY_DIR}/thrifty.cc"
-               COMPILE_FLAGS --no-lines)
-  flex_target(thriftl
-              "${THRIFT_ROOT}/compiler/cpp/src/thrift/thriftl.ll"
-              "${CMAKE_CURRENT_BINARY_DIR}/thriftl.cc"
-              COMPILE_FLAGS --noline)
+  bison_target(
+    thrifty
+    "${THRIFT_ROOT}/compiler/cpp/src/thrift/thrifty.yy"
+    "${CMAKE_CURRENT_BINARY_DIR}/thrifty.cc"
+    COMPILE_FLAGS --no-lines
+  )
+  flex_target(
+    thriftl
+    "${THRIFT_ROOT}/compiler/cpp/src/thrift/thriftl.ll"
+    "${CMAKE_CURRENT_BINARY_DIR}/thriftl.cc"
+    COMPILE_FLAGS --noline
+  )
   add_flex_bison_dependency(thriftl thrifty)
 else()
   # Simulate bison and flex run
@@ -45,34 +51,44 @@ include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 add_definitions(-DYYENABLE_NLS=0)
 
 if(MSVC)
-  set_property(SOURCE ${yarpidl_thrift_SRCS}
-                      ${yarpidl_thrift_GEN_SRCS}
-               APPEND_STRING
-               PROPERTY COMPILE_FLAGS " /wd4003 /wd4005 /wd4065 /wd4068 /wd4102 /wd4244 ")
+  set_property(
+    SOURCE ${yarpidl_thrift_SRCS}
+           ${yarpidl_thrift_GEN_SRCS}
+    APPEND_STRING
+    PROPERTY COMPILE_FLAGS " /wd4003 /wd4005 /wd4065 /wd4068 /wd4102 /wd4244 "
+  )
 else()
   if(CXX_HAS_WREDUNDANT_DECLS)
-    set_property(SOURCE ${yarpidl_thrift_SRCS}
-                        ${yarpidl_thrift_GEN_SRCS}
-                 APPEND_STRING
-                 PROPERTY COMPILE_FLAGS " -Wno-redundant-decls")
+    set_property(
+      SOURCE ${yarpidl_thrift_SRCS}
+             ${yarpidl_thrift_GEN_SRCS}
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " -Wno-redundant-decls"
+    )
   endif()
   if(CXX_HAS_WSUGGEST_OVERRIDE)
-    set_property(SOURCE ${yarpidl_thrift_SRCS}
-                        ${yarpidl_thrift_GEN_SRCS}
-                 APPEND_STRING
-                 PROPERTY COMPILE_FLAGS " -Wno-suggest-override")
+    set_property(
+      SOURCE ${yarpidl_thrift_SRCS}
+             ${yarpidl_thrift_GEN_SRCS}
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " -Wno-suggest-override"
+    )
   endif()
   if(CXX_HAS_WSIGN_COMPARE)
-    set_property(SOURCE ${yarpidl_thrift_SRCS}
-                        ${yarpidl_thrift_GEN_SRCS}
-                 APPEND_STRING
-                 PROPERTY COMPILE_FLAGS " -Wno-sign-compare")
+    set_property(
+      SOURCE ${yarpidl_thrift_SRCS}
+             ${yarpidl_thrift_GEN_SRCS}
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " -Wno-sign-compare"
+    )
   endif()
   if(CXX_HAS_WNULL_CONVERSION)
-    set_property(SOURCE ${yarpidl_thrift_SRCS}
-                        ${yarpidl_thrift_GEN_SRCS}
-                 APPEND_STRING
-                 PROPERTY COMPILE_FLAGS " -Wno-null-conversion")
+    set_property(
+      SOURCE ${yarpidl_thrift_SRCS}
+             ${yarpidl_thrift_GEN_SRCS}
+      APPEND_STRING
+      PROPERTY COMPILE_FLAGS " -Wno-null-conversion"
+    )
   endif()
 
   # Building thrift with clang sanitizer will cause errors when running
@@ -98,14 +114,19 @@ endif()
 add_executable(yarpidl_thrift)
 add_executable(YARP::yarpidl_thrift ALIAS yarpidl_thrift)
 
-target_sources(yarpidl_thrift PRIVATE ${yarpidl_thrift_SRCS}
-                                      ${yarpidl_thrift_GEN_SRCS}
-                                      ${yarpidl_thrift_YARP_SRCS})
+target_sources(yarpidl_thrift
+  PRIVATE
+    ${yarpidl_thrift_SRCS}
+    ${yarpidl_thrift_GEN_SRCS}
+    ${yarpidl_thrift_YARP_SRCS}
+)
 
-install(TARGETS yarpidl_thrift
-        EXPORT YARP_idl_tools
-        COMPONENT YARP_idl_tools
-        DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(
+  TARGETS yarpidl_thrift
+  EXPORT YARP_idl_tools
+  COMPONENT YARP_idl_tools
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
 
 set_property(TARGET yarpidl_thrift PROPERTY FOLDER "Command Line Tools")
 

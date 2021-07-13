@@ -58,12 +58,14 @@ endif()
 function(_YARP_IDL_THRIFT_ARGS _prefix _out_dir _verbose _out_var)
   unset(_args)
   unset(_extra_args)
-  foreach(_ARG INCLUDE_PREFIX
-               NO_NAMESPACE_PREFIX
-               NO_COPYRIGHT
-               NO_EDITOR
-               NO_DOC
-               DEBUG_GENERATOR)
+  foreach(_ARG
+    INCLUDE_PREFIX
+    NO_NAMESPACE_PREFIX
+    NO_COPYRIGHT
+    NO_EDITOR
+    NO_DOC
+    DEBUG_GENERATOR
+  )
     if(${_prefix}_THRIFT_${_ARG})
       string(TOLOWER "${_ARG}" _arg)
       list(APPEND _extra_args ${_arg})
@@ -119,11 +121,12 @@ function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_
 
   # Generate code at configuration time, so we know filenames.
   find_program(YARPIDL_${_family}_LOCATION
-                NAMES yarpidl_${_family}
-                HINTS ${YARP_IDL_BINARY_HINT} # This is a list of directories defined
-                                              # in YarpOptions.cmake (for YARP) or in
-                                              # YARPConfig.cmake for dependencies
-                NO_DEFAULT_PATH)
+    NAMES yarpidl_${_family}
+    HINTS ${YARP_IDL_BINARY_HINT} # This is a list of directories defined
+                                  # in YarpOptions.cmake (for YARP) or in
+                                  # YARPConfig.cmake for dependencies
+    NO_DEFAULT_PATH
+  )
 
   if("${_family}" STREQUAL "thrift")
     _yarp_idl_thrift_args(_YITD "${_temp_dir}" ${_verbose} _args)
@@ -145,10 +148,12 @@ function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_
   endif()
 
   # Go ahead and generate files.
-  execute_process(COMMAND ${_cmd}
-                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                  RESULT_VARIABLE res
-                  ${_output_quiet})
+  execute_process(
+    COMMAND ${_cmd}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    RESULT_VARIABLE res
+    ${_output_quiet}
+  )
   # Failure is bad news, let user know.
   if(NOT "${res}" STREQUAL "0")
     message(FATAL_ERROR "yarpidl_${_family} (${YARPIDL_${_family}_LOCATION}) failed, aborting.")
@@ -178,9 +183,11 @@ function(_YARP_IDL_TO_DIR_GENERATE _family _file _name _index_file_name _output_
     string(REGEX REPLACE "^/+" "" _dest_file "${_dest_file}")
 
     file(APPEND "${_output_dir}/${_index_file_name}" "${_dest_file}\n")
-    configure_file("${_temp_dir}/${_gen_file}"
-                   "${_output_dir}/${_dest_file}"
-                   COPYONLY)
+    configure_file(
+      "${_temp_dir}/${_gen_file}"
+      "${_output_dir}/${_dest_file}"
+      COPYONLY
+    )
   endforeach()
 endfunction()
 
@@ -190,19 +197,23 @@ function(YARP_IDL_TO_DIR)
   # Flag to control whether IDL generation is allowed.
   option(ALLOW_IDL_GENERATION "Allow YARP to (re)build IDL files as needed" OFF)
 
-  set(_options VERBOSE
-               THRIFT_INCLUDE_PREFIX
-               THRIFT_NO_NAMESPACE_PREFIX
-               THRIFT_NO_COPYRIGHT
-               THRIFT_NO_EDITOR
-               THRIFT_NO_DOC
-               THRIFT_DEBUG_GENERATOR
-               ROSMSG_WITH_ROS)
-  set(_oneValueArgs OUTPUT_DIR
-                    SOURCES_VAR
-                    HEADERS_VAR
-                    INCLUDE_DIRS_VAR
-                    PLACEMENT)
+  set(_options
+    VERBOSE
+    THRIFT_INCLUDE_PREFIX
+    THRIFT_NO_NAMESPACE_PREFIX
+    THRIFT_NO_COPYRIGHT
+    THRIFT_NO_EDITOR
+    THRIFT_NO_DOC
+    THRIFT_DEBUG_GENERATOR
+    ROSMSG_WITH_ROS
+  )
+  set(_oneValueArgs
+    OUTPUT_DIR
+    SOURCES_VAR
+    HEADERS_VAR
+    INCLUDE_DIRS_VAR
+    PLACEMENT
+  )
   set(_multiValueArgs INPUT_FILES)
   cmake_parse_arguments(_YITD "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN} )
 
@@ -334,16 +345,18 @@ function(YARP_IDL_TO_DIR)
     string(REGEX REPLACE "/+$" "" _include_prefix "${_include_prefix}")
 
     if(ALLOW_IDL_GENERATION OR NOT EXISTS "${_index_file}")
-      _yarp_idl_to_dir_generate(${_family}
-                                "${_file}"
-                                ${_name}
-                                ${_index_file_name}
-                                "${_YITD_OUTPUT_DIR}"
-                                "${_include_prefix}"
-                                "${_cpp_placement_dir}"
-                                "${_h_placement_dir}"
-                                ${_cpp_placement_ns}
-                                ${_YITD_VERBOSE})
+      _yarp_idl_to_dir_generate(
+        ${_family}
+        "${_file}"
+        ${_name}
+        ${_index_file_name}
+        "${_YITD_OUTPUT_DIR}"
+        "${_include_prefix}"
+        "${_cpp_placement_dir}"
+        "${_h_placement_dir}"
+        ${_cpp_placement_ns}
+        ${_YITD_VERBOSE}
+      )
     endif()
 
     # Sanity check, it should never happen
@@ -597,11 +610,13 @@ function(YARP_ADD_IDL var)
       if(NOT native)
         list(APPEND depends ${file})
       endif()
-      add_custom_command(OUTPUT ${output}
-                         DEPENDS ${depends}
-                         COMMAND ${cmd}
-                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                         COMMENT "Generating code from ${file}")
+      add_custom_command(
+        OUTPUT ${output}
+        DEPENDS ${depends}
+        COMMAND ${cmd}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Generating code from ${file}"
+      )
 
       # Append output to return variable
       list(APPEND ${var} ${output})

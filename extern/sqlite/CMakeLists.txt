@@ -7,12 +7,14 @@ project(YARP_priv_sqlite)
 add_library(YARP_priv_sqlite STATIC)
 
 set(sqlite_SRCS
-    sqlite/shell.c
-    sqlite/sqlite3.c)
+  sqlite/shell.c
+  sqlite/sqlite3.c
+)
 
 set(sqlite_HDRS
-    sqlite/sqlite3ext.h
-    sqlite/sqlite3.h)
+  sqlite/sqlite3ext.h
+  sqlite/sqlite3.h
+)
 
 if(MSVC)
   set_source_files_properties(sqlite/sqlite3.c PROPERTIES COMPILE_FLAGS "/wd4996")
@@ -35,12 +37,14 @@ set(SQLite_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/sqlite PARENT_SCOPE)
 set(SQLite_LIBRARIES YARP_priv_sqlite PARENT_SCOPE)
 set(SQLite_DEFINITIONS "" PARENT_SCOPE)
 
-install(TARGETS YARP_priv_sqlite
-        EXPORT YARP_priv_sqlite
-        COMPONENT YARP_priv_sqlite
-        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+install(
+  TARGETS YARP_priv_sqlite
+  EXPORT YARP_priv_sqlite
+  COMPONENT YARP_priv_sqlite
+  RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)
 
 if(NOT CREATE_SHARED_LIBS)
   include(YarpInstallBasicPackageFiles)

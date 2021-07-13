@@ -5,11 +5,15 @@ include(InstallBasicPackageFiles)
 
 macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
   set(_options )
-  set(_oneValueArgs FIRST_TARGET
-                    STATIC_CONFIG_TEMPLATE
-                    COMPONENT)
-  set(_multiValueArgs DEPENDENCIES
-                      PRIVATE_DEPENDENCIES)
+  set(_oneValueArgs
+    FIRST_TARGET
+    STATIC_CONFIG_TEMPLATE
+    COMPONENT
+  )
+  set(_multiValueArgs
+    DEPENDENCIES
+    PRIVATE_DEPENDENCIES
+  )
   cmake_parse_arguments(_YIBPF "${_options}" "${_oneValueArgs}" "${_multiValueArgs}" ${ARGN})
 
   unset(_component)
@@ -17,6 +21,9 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
     set(_YIBPF_COMPONENT ${_export}-dev)
   endif()
 
+  if (NOT "${_YIBPF_DEPENDENCIES}" STREQUAL "")
+    list(REMOVE_DUPLICATES _YIBPF_DEPENDENCIES)
+  endif()
   unset(_deps)
   foreach(_dep ${_YIBPF_DEPENDENCIES})
     if("${_dep}" MATCHES "^YARP_")
@@ -32,6 +39,9 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
     endif()
   endforeach()
 
+  if (NOT "${_YIBPF_PRIVATE_DEPENDENCIES}" STREQUAL "")
+    list(REMOVE_DUPLICATES _YIBPF_PRIVATE_DEPENDENCIES)
+  endif()
   unset(_priv_deps)
   foreach(_dep ${_YIBPF_PRIVATE_DEPENDENCIES})
     if("${_dep}" MATCHES "^YARP_")
@@ -51,18 +61,20 @@ macro(YARP_INSTALL_BASIC_PACKAGE_FILES _export)
   if(NOT BUILD_SHARED_LIBS AND DEFINED _YIBPF_STATIC_CONFIG_TEMPLATE)
     set(_config_template CONFIG_TEMPLATE "${_YIBPF_STATIC_CONFIG_TEMPLATE}")
   endif()
-  install_basic_package_files(${_export}
-                              ${_config_template}
-                              VERSION ${YARP_VERSION}
-                              COMPATIBILITY SameMajorVersion
-                              EXPORT_DESTINATION "${CMAKE_BINARY_DIR}/${_export}"
-                              INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_export}"
-                              DEPENDENCIES ${_deps}
-                              PRIVATE_DEPENDENCIES ${_priv_deps}
-                              NO_CHECK_REQUIRED_COMPONENTS_MACRO
-                              NO_SET_AND_CHECK_MACRO
-                              COMPONENT ${_YIBPF_COMPONENT}
-                              NAMESPACE YARP::
-                              UPPERCASE_FILENAMES
-                              ${_YIBPF_UNPARSED_ARGUMENTS})
+  install_basic_package_files(
+    ${_export}
+    ${_config_template}
+    VERSION ${YARP_VERSION}
+    COMPATIBILITY SameMajorVersion
+    EXPORT_DESTINATION "${CMAKE_BINARY_DIR}/${_export}"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${_export}"
+    DEPENDENCIES ${_deps}
+    PRIVATE_DEPENDENCIES ${_priv_deps}
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+    NO_SET_AND_CHECK_MACRO
+    COMPONENT ${_YIBPF_COMPONENT}
+    NAMESPACE YARP::
+    UPPERCASE_FILENAMES
+    ${_YIBPF_UNPARSED_ARGUMENTS}
+  )
 endmacro()
