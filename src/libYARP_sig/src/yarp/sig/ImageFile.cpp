@@ -12,7 +12,7 @@
 #include <cstring>
 #include <cstdlib>
 
-#if YARP_HAS_JPEG_C
+#if defined (YARP_HAS_JPEG)
 #include "jpeglib.h"
 #endif
 
@@ -80,7 +80,7 @@ namespace
 namespace {
 bool ImageReadRGB_JPG(ImageOf<PixelRgb>& img, const char* filename)
 {
-#if defined (YARP_HAS_JPEG_C)
+#if defined (YARP_HAS_JPEG)
 
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr jerr;
@@ -142,7 +142,7 @@ bool ImageReadRGB_JPG(ImageOf<PixelRgb>& img, const char* filename)
 
 bool ImageReadBGR_JPG(ImageOf<PixelBgr>& img, const char* filename)
 {
-#if defined (YARP_HAS_JPEG_C)
+#if defined (YARP_HAS_JPEG)
     yCError(IMAGEFILE) << "Not yet implemented";
     return false;
 #else
@@ -153,7 +153,7 @@ bool ImageReadBGR_JPG(ImageOf<PixelBgr>& img, const char* filename)
 
 bool ImageReadMono_JPG(ImageOf<PixelMono>& img, const char* filename)
 {
-#if defined (YARP_HAS_JPEG_C)
+#if defined (YARP_HAS_JPEG)
     yCError(IMAGEFILE) << "Not yet implemented";
     return false;
 #else
@@ -698,7 +698,7 @@ bool SavePNG(char *src, const char *filename, size_t h, size_t w, size_t rowSize
 
 bool SaveJPG(char *src, const char *filename, size_t h, size_t w, size_t rowSize)
 {
-#if YARP_HAS_JPEG_C
+#if defined (YARP_HAS_JPEG)
     int quality = 100;
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
