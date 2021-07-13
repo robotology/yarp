@@ -53,9 +53,10 @@ public:
     bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
 
     //IFrameTransformStorageUtils interface
-    bool deleteTransform(std::string t1, std::string t2);
+    bool deleteTransform(std::string t1, std::string t2) override;
+    bool clearAll() override;
+
     bool size(size_t& size) const;
-    bool clear();
 
 public:
     //other

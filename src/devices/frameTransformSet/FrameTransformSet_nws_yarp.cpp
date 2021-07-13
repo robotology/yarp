@@ -58,7 +58,7 @@ bool FrameTransformSet_nws_yarp::detach()
     return true;
 }
 
-bool FrameTransformSet_nws_yarp::setTransform(const yarp::math::FrameTransform& transform)
+bool FrameTransformSet_nws_yarp::setTransformRPC(const yarp::math::FrameTransform& transform)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
 
@@ -71,7 +71,7 @@ bool FrameTransformSet_nws_yarp::setTransform(const yarp::math::FrameTransform& 
     return true;
 }
 
-bool FrameTransformSet_nws_yarp::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
+bool FrameTransformSet_nws_yarp::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
     if(!m_iSetIf->setTransforms(transforms))
@@ -83,12 +83,39 @@ bool FrameTransformSet_nws_yarp::setTransforms(const std::vector<yarp::math::Fra
     return true;
 }
 
+bool FrameTransformSet_nws_yarp::deleteTransformRPC(const std::string& src, const std::string& dst)
+{
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
+    if (!m_iSetIf->deleteTransform(src,dst))
+    {
+        yCError(FRAMETRANSFORMSETNWSYARP, "Unable to delete transforms");
+        return false;
+    }
+
+    return true;
+}
+
+bool FrameTransformSet_nws_yarp::clearAllRPC()
+{
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
+    if (!m_iSetIf->clearAll())
+    {
+        yCError(FRAMETRANSFORMSETNWSYARP, "Unable to clear all transforms");
+        return false;
+    }
+
+    return true;
+}
+
+
 bool FrameTransformSet_nws_yarp::attach(yarp::dev::PolyDriver* device2attach)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
     m_pDriver = device2attach;
 
-    if(!m_pDriver->isValid()/* || (!m_pDriver->view(m_iSetIf) || m_iSetIf==nullptr)*/)
+    if(!m_pDriver->isValid() ||
+      (!m_pDriver->view(m_iSetIf)   || m_iSetIf == nullptr) ||
+      (!m_pDriver->view(m_iUtilsIf) || m_iUtilsIf == nullptr))
     {
         yCError(FRAMETRANSFORMSETNWSYARP, "Attach failed");
         return false;

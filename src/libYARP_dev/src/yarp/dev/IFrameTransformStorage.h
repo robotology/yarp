@@ -46,6 +46,20 @@ public:
     * @return true/false
     */
     virtual bool setTransform(const yarp::math::FrameTransform& transform) = 0;
+
+    /**
+    * Delete all transforms in a storage.
+    * @return true/false
+    */
+    virtual bool clearAll() = 0;
+
+    /**
+    * Delete a single transform in the storage.
+    * @param src the source of frame transform to delete
+    * @param dst the destination of frame transform to delete
+    * @return true/false
+    */
+    virtual bool deleteTransform(std::string src, std::string dst) = 0;
 };
 
 /**
@@ -76,10 +90,6 @@ class YARP_dev_API yarp::dev::IFrameTransformStorageUtils
 {
 public:
     virtual ~IFrameTransformStorageUtils();
-
-    virtual bool clear() = 0;
-
-    virtual bool deleteTransform(std::string t1, std::string t2) = 0;
 
     virtual bool size (size_t& size) const =0;
 

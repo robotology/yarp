@@ -213,3 +213,17 @@ void FrameTransformSet_nwc_ros::publishFrameTransforms(const std::vector<yarp::m
 
     rosMsgCounter++;
 }
+
+bool FrameTransformSet_nwc_ros::deleteTransform(std::string t1, std::string t2)
+{
+    // Not yet implemented
+    yCError(FRAMETRANSFORSETNWCROS, "deleteTransform not yet implemented");
+    return false;
+}
+
+bool FrameTransformSet_nwc_ros::clearAll()
+{
+    // Not yet implemented
+    yCError(FRAMETRANSFORSETNWCROS, "clearAll not yet implemented");
+    return false;
+}

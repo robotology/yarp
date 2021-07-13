@@ -55,16 +55,19 @@ public:
     bool detach() override;
 
     //FrameTransformStorageSetRPC functions
-    bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
-    bool setTransform(const yarp::math::FrameTransform& transform) override;
+    bool setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms) override;
+    bool setTransformRPC(const yarp::math::FrameTransform& transform) override;
+    bool deleteTransformRPC(const std::string& src, const std::string& dst) override;
+    bool clearAllRPC()override;
 
 private:
-    mutable std::mutex                    m_pd_mutex;
-    mutable std::mutex                    m_trf_mutex;
-    yarp::dev::PolyDriver*                m_pDriver{nullptr};
-    std::string                           m_thriftPortName{"/frameTransformGet/serverRPC"};
-    yarp::os::Port                        m_thriftPort;
-    yarp::dev::IFrameTransformStorageSet* m_iSetIf;
+    mutable std::mutex                      m_pd_mutex;
+    mutable std::mutex                      m_trf_mutex;
+    yarp::dev::PolyDriver*                  m_pDriver{nullptr};
+    std::string                             m_thriftPortName{"/frameTransformGet/serverRPC"};
+    yarp::os::Port                          m_thriftPort;
+    yarp::dev::IFrameTransformStorageSet*   m_iSetIf   {nullptr};
+    yarp::dev::IFrameTransformStorageUtils* m_iUtilsIf {nullptr};
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMSETNWSYARP_H

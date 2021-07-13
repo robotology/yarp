@@ -12,36 +12,36 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
-class FrameTransformStorageGetRPC_getTransforms_helper :
+class FrameTransformStorageGetRPC_getTransformsRPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FrameTransformStorageGetRPC_getTransforms_helper();
+    explicit FrameTransformStorageGetRPC_getTransformsRPC_helper();
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     thread_local static return_getAllTransforms s_return_helper;
 };
 
-thread_local return_getAllTransforms FrameTransformStorageGetRPC_getTransforms_helper::s_return_helper = {};
+thread_local return_getAllTransforms FrameTransformStorageGetRPC_getTransformsRPC_helper::s_return_helper = {};
 
-FrameTransformStorageGetRPC_getTransforms_helper::FrameTransformStorageGetRPC_getTransforms_helper()
+FrameTransformStorageGetRPC_getTransformsRPC_helper::FrameTransformStorageGetRPC_getTransformsRPC_helper()
 {
 }
 
-bool FrameTransformStorageGetRPC_getTransforms_helper::write(yarp::os::ConnectionWriter& connection) const
+bool FrameTransformStorageGetRPC_getTransformsRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(1)) {
         return false;
     }
-    if (!writer.writeTag("getTransforms", 1, 1)) {
+    if (!writer.writeTag("getTransformsRPC", 1, 1)) {
         return false;
     }
     return true;
 }
 
-bool FrameTransformStorageGetRPC_getTransforms_helper::read(yarp::os::ConnectionReader& connection)
+bool FrameTransformStorageGetRPC_getTransformsRPC_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -60,14 +60,14 @@ FrameTransformStorageGetRPC::FrameTransformStorageGetRPC()
     yarp().setOwner(*this);
 }
 
-return_getAllTransforms FrameTransformStorageGetRPC::getTransforms()
+return_getAllTransforms FrameTransformStorageGetRPC::getTransformsRPC()
 {
-    FrameTransformStorageGetRPC_getTransforms_helper helper{};
+    FrameTransformStorageGetRPC_getTransformsRPC_helper helper{};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "return_getAllTransforms FrameTransformStorageGetRPC::getTransforms()");
+        yError("Missing server method '%s'?", "return_getAllTransforms FrameTransformStorageGetRPC::getTransformsRPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? FrameTransformStorageGetRPC_getTransforms_helper::s_return_helper : return_getAllTransforms{};
+    return ok ? FrameTransformStorageGetRPC_getTransformsRPC_helper::s_return_helper : return_getAllTransforms{};
 }
 
 // help method
@@ -77,11 +77,11 @@ std::vector<std::string> FrameTransformStorageGetRPC::help(const std::string& fu
     std::vector<std::string> helpString;
     if (showAll) {
         helpString.emplace_back("*** Available commands:");
-        helpString.emplace_back("getTransforms");
+        helpString.emplace_back("getTransformsRPC");
         helpString.emplace_back("help");
     } else {
-        if (functionName == "getTransforms") {
-            helpString.emplace_back("return_getAllTransforms getTransforms() ");
+        if (functionName == "getTransformsRPC") {
+            helpString.emplace_back("return_getAllTransforms getTransformsRPC() ");
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -112,14 +112,14 @@ bool FrameTransformStorageGetRPC::read(yarp::os::ConnectionReader& connection)
         tag = reader.readTag();
     }
     while (!reader.isError()) {
-        if (tag == "getTransforms") {
-            FrameTransformStorageGetRPC_getTransforms_helper::s_return_helper = getTransforms();
+        if (tag == "getTransformsRPC") {
+            FrameTransformStorageGetRPC_getTransformsRPC_helper::s_return_helper = getTransformsRPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(FrameTransformStorageGetRPC_getTransforms_helper::s_return_helper)) {
+                if (!writer.write(FrameTransformStorageGetRPC_getTransformsRPC_helper::s_return_helper)) {
                     return false;
                 }
             }

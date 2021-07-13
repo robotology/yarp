@@ -92,9 +92,9 @@ bool FrameTransformStorage::attach(yarp::dev::PolyDriver* driver)
     return false;
 }
 
-bool FrameTransformStorage::clear()
+bool FrameTransformStorage::clearAll()
 {
-    return m_tf_container.clear();
+    return m_tf_container.clearAll();
 }
 
 bool FrameTransformStorage::size(size_t& size) const

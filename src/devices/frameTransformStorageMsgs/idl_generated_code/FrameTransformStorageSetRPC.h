@@ -22,9 +22,13 @@ public:
     // Constructor
     FrameTransformStorageSetRPC();
 
-    virtual bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms);
+    virtual bool setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms);
 
-    virtual bool setTransform(const yarp::math::FrameTransform& transform);
+    virtual bool setTransformRPC(const yarp::math::FrameTransform& transform);
+
+    virtual bool deleteTransformRPC(const std::string& src, const std::string& dst);
+
+    virtual bool clearAllRPC();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

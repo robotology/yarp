@@ -121,7 +121,7 @@ bool FrameTransformContainer::deleteTransform(string t1, string t2)
     return false;
 }
 
-bool FrameTransformContainer::clear()
+bool FrameTransformContainer::clearAll()
 {
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     m_transforms.clear();

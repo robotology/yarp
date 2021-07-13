@@ -12,11 +12,11 @@
 
 #include <yarp/os/idl/WireTypes.h>
 
-class FrameTransformStorageSetRPC_setTransforms_helper :
+class FrameTransformStorageSetRPC_setTransformsRPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FrameTransformStorageSetRPC_setTransforms_helper(const std::vector<yarp::math::FrameTransform>& transforms);
+    explicit FrameTransformStorageSetRPC_setTransformsRPC_helper(const std::vector<yarp::math::FrameTransform>& transforms);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -25,21 +25,21 @@ public:
     thread_local static bool s_return_helper;
 };
 
-thread_local bool FrameTransformStorageSetRPC_setTransforms_helper::s_return_helper = {};
+thread_local bool FrameTransformStorageSetRPC_setTransformsRPC_helper::s_return_helper = {};
 
-FrameTransformStorageSetRPC_setTransforms_helper::FrameTransformStorageSetRPC_setTransforms_helper(const std::vector<yarp::math::FrameTransform>& transforms) :
+FrameTransformStorageSetRPC_setTransformsRPC_helper::FrameTransformStorageSetRPC_setTransformsRPC_helper(const std::vector<yarp::math::FrameTransform>& transforms) :
         m_transforms{transforms}
 {
     s_return_helper = {};
 }
 
-bool FrameTransformStorageSetRPC_setTransforms_helper::write(yarp::os::ConnectionWriter& connection) const
+bool FrameTransformStorageSetRPC_setTransformsRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    if (!writer.writeTag("setTransforms", 1, 1)) {
+    if (!writer.writeTag("setTransformsRPC", 1, 1)) {
         return false;
     }
     if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(m_transforms.size()))) {
@@ -56,7 +56,7 @@ bool FrameTransformStorageSetRPC_setTransforms_helper::write(yarp::os::Connectio
     return true;
 }
 
-bool FrameTransformStorageSetRPC_setTransforms_helper::read(yarp::os::ConnectionReader& connection)
+bool FrameTransformStorageSetRPC_setTransformsRPC_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -69,11 +69,11 @@ bool FrameTransformStorageSetRPC_setTransforms_helper::read(yarp::os::Connection
     return true;
 }
 
-class FrameTransformStorageSetRPC_setTransform_helper :
+class FrameTransformStorageSetRPC_setTransformRPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FrameTransformStorageSetRPC_setTransform_helper(const yarp::math::FrameTransform& transform);
+    explicit FrameTransformStorageSetRPC_setTransformRPC_helper(const yarp::math::FrameTransform& transform);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -82,21 +82,21 @@ public:
     thread_local static bool s_return_helper;
 };
 
-thread_local bool FrameTransformStorageSetRPC_setTransform_helper::s_return_helper = {};
+thread_local bool FrameTransformStorageSetRPC_setTransformRPC_helper::s_return_helper = {};
 
-FrameTransformStorageSetRPC_setTransform_helper::FrameTransformStorageSetRPC_setTransform_helper(const yarp::math::FrameTransform& transform) :
+FrameTransformStorageSetRPC_setTransformRPC_helper::FrameTransformStorageSetRPC_setTransformRPC_helper(const yarp::math::FrameTransform& transform) :
         m_transform{transform}
 {
     s_return_helper = {};
 }
 
-bool FrameTransformStorageSetRPC_setTransform_helper::write(yarp::os::ConnectionWriter& connection) const
+bool FrameTransformStorageSetRPC_setTransformRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    if (!writer.writeTag("setTransform", 1, 1)) {
+    if (!writer.writeTag("setTransformRPC", 1, 1)) {
         return false;
     }
     if (!writer.write(m_transform)) {
@@ -105,7 +105,104 @@ bool FrameTransformStorageSetRPC_setTransform_helper::write(yarp::os::Connection
     return true;
 }
 
-bool FrameTransformStorageSetRPC_setTransform_helper::read(yarp::os::ConnectionReader& connection)
+bool FrameTransformStorageSetRPC_setTransformRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readBool(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class FrameTransformStorageSetRPC_deleteTransformRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit FrameTransformStorageSetRPC_deleteTransformRPC_helper(const std::string& src, const std::string& dst);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_src;
+    std::string m_dst;
+
+    thread_local static bool s_return_helper;
+};
+
+thread_local bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::s_return_helper = {};
+
+FrameTransformStorageSetRPC_deleteTransformRPC_helper::FrameTransformStorageSetRPC_deleteTransformRPC_helper(const std::string& src, const std::string& dst) :
+        m_src{src},
+        m_dst{dst}
+{
+    s_return_helper = {};
+}
+
+bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(3)) {
+        return false;
+    }
+    if (!writer.writeTag("deleteTransformRPC", 1, 1)) {
+        return false;
+    }
+    if (!writer.writeString(m_src)) {
+        return false;
+    }
+    if (!writer.writeString(m_dst)) {
+        return false;
+    }
+    return true;
+}
+
+bool FrameTransformStorageSetRPC_deleteTransformRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readBool(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class FrameTransformStorageSetRPC_clearAllRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit FrameTransformStorageSetRPC_clearAllRPC_helper();
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    thread_local static bool s_return_helper;
+};
+
+thread_local bool FrameTransformStorageSetRPC_clearAllRPC_helper::s_return_helper = {};
+
+FrameTransformStorageSetRPC_clearAllRPC_helper::FrameTransformStorageSetRPC_clearAllRPC_helper()
+{
+    s_return_helper = {};
+}
+
+bool FrameTransformStorageSetRPC_clearAllRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(1)) {
+        return false;
+    }
+    if (!writer.writeTag("clearAllRPC", 1, 1)) {
+        return false;
+    }
+    return true;
+}
+
+bool FrameTransformStorageSetRPC_clearAllRPC_helper::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListReturn()) {
@@ -124,24 +221,44 @@ FrameTransformStorageSetRPC::FrameTransformStorageSetRPC()
     yarp().setOwner(*this);
 }
 
-bool FrameTransformStorageSetRPC::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
+bool FrameTransformStorageSetRPC::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)
 {
-    FrameTransformStorageSetRPC_setTransforms_helper helper{transforms};
+    FrameTransformStorageSetRPC_setTransformsRPC_helper helper{transforms};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)");
+        yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? FrameTransformStorageSetRPC_setTransforms_helper::s_return_helper : bool{};
+    return ok ? FrameTransformStorageSetRPC_setTransformsRPC_helper::s_return_helper : bool{};
 }
 
-bool FrameTransformStorageSetRPC::setTransform(const yarp::math::FrameTransform& transform)
+bool FrameTransformStorageSetRPC::setTransformRPC(const yarp::math::FrameTransform& transform)
 {
-    FrameTransformStorageSetRPC_setTransform_helper helper{transform};
+    FrameTransformStorageSetRPC_setTransformRPC_helper helper{transform};
     if (!yarp().canWrite()) {
-        yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::setTransform(const yarp::math::FrameTransform& transform)");
+        yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::setTransformRPC(const yarp::math::FrameTransform& transform)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? FrameTransformStorageSetRPC_setTransform_helper::s_return_helper : bool{};
+    return ok ? FrameTransformStorageSetRPC_setTransformRPC_helper::s_return_helper : bool{};
+}
+
+bool FrameTransformStorageSetRPC::deleteTransformRPC(const std::string& src, const std::string& dst)
+{
+    FrameTransformStorageSetRPC_deleteTransformRPC_helper helper{src, dst};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::deleteTransformRPC(const std::string& src, const std::string& dst)");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? FrameTransformStorageSetRPC_deleteTransformRPC_helper::s_return_helper : bool{};
+}
+
+bool FrameTransformStorageSetRPC::clearAllRPC()
+{
+    FrameTransformStorageSetRPC_clearAllRPC_helper helper{};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "bool FrameTransformStorageSetRPC::clearAllRPC()");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? FrameTransformStorageSetRPC_clearAllRPC_helper::s_return_helper : bool{};
 }
 
 // help method
@@ -151,15 +268,23 @@ std::vector<std::string> FrameTransformStorageSetRPC::help(const std::string& fu
     std::vector<std::string> helpString;
     if (showAll) {
         helpString.emplace_back("*** Available commands:");
-        helpString.emplace_back("setTransforms");
-        helpString.emplace_back("setTransform");
+        helpString.emplace_back("setTransformsRPC");
+        helpString.emplace_back("setTransformRPC");
+        helpString.emplace_back("deleteTransformRPC");
+        helpString.emplace_back("clearAllRPC");
         helpString.emplace_back("help");
     } else {
-        if (functionName == "setTransforms") {
-            helpString.emplace_back("bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) ");
+        if (functionName == "setTransformsRPC") {
+            helpString.emplace_back("bool setTransformsRPC(const std::vector<yarp::math::FrameTransform>& transforms) ");
         }
-        if (functionName == "setTransform") {
-            helpString.emplace_back("bool setTransform(const yarp::math::FrameTransform& transform) ");
+        if (functionName == "setTransformRPC") {
+            helpString.emplace_back("bool setTransformRPC(const yarp::math::FrameTransform& transform) ");
+        }
+        if (functionName == "deleteTransformRPC") {
+            helpString.emplace_back("bool deleteTransformRPC(const std::string& src, const std::string& dst) ");
+        }
+        if (functionName == "clearAllRPC") {
+            helpString.emplace_back("bool clearAllRPC() ");
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -190,7 +315,7 @@ bool FrameTransformStorageSetRPC::read(yarp::os::ConnectionReader& connection)
         tag = reader.readTag();
     }
     while (!reader.isError()) {
-        if (tag == "setTransforms") {
+        if (tag == "setTransformsRPC") {
             std::vector<yarp::math::FrameTransform> transforms;
             transforms.clear();
             uint32_t _size13;
@@ -204,32 +329,70 @@ bool FrameTransformStorageSetRPC::read(yarp::os::ConnectionReader& connection)
                 }
             }
             reader.readListEnd();
-            FrameTransformStorageSetRPC_setTransforms_helper::s_return_helper = setTransforms(transforms);
+            FrameTransformStorageSetRPC_setTransformsRPC_helper::s_return_helper = setTransformsRPC(transforms);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(FrameTransformStorageSetRPC_setTransforms_helper::s_return_helper)) {
+                if (!writer.writeBool(FrameTransformStorageSetRPC_setTransformsRPC_helper::s_return_helper)) {
                     return false;
                 }
             }
             reader.accept();
             return true;
         }
-        if (tag == "setTransform") {
+        if (tag == "setTransformRPC") {
             yarp::math::FrameTransform transform;
             if (!reader.read(transform)) {
                 reader.fail();
                 return false;
             }
-            FrameTransformStorageSetRPC_setTransform_helper::s_return_helper = setTransform(transform);
+            FrameTransformStorageSetRPC_setTransformRPC_helper::s_return_helper = setTransformRPC(transform);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(FrameTransformStorageSetRPC_setTransform_helper::s_return_helper)) {
+                if (!writer.writeBool(FrameTransformStorageSetRPC_setTransformRPC_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "deleteTransformRPC") {
+            std::string src;
+            std::string dst;
+            if (!reader.readString(src)) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(dst)) {
+                reader.fail();
+                return false;
+            }
+            FrameTransformStorageSetRPC_deleteTransformRPC_helper::s_return_helper = deleteTransformRPC(src, dst);
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeBool(FrameTransformStorageSetRPC_deleteTransformRPC_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "clearAllRPC") {
+            FrameTransformStorageSetRPC_clearAllRPC_helper::s_return_helper = clearAllRPC();
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeBool(FrameTransformStorageSetRPC_clearAllRPC_helper::s_return_helper)) {
                     return false;
                 }
             }

@@ -74,7 +74,7 @@ bool FrameTransformSet_nwc_yarp::close()
 bool FrameTransformSet_nwc_yarp::setTransform(const yarp::math::FrameTransform& transform)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-    if(!m_setRPC.setTransform(transform))
+    if(!m_setRPC.setTransformRPC(transform))
     {
         yCError(FRAMETRANSFORMSETNWCYARP, "Unable to set transformation");
         return false;
@@ -85,9 +85,31 @@ bool FrameTransformSet_nwc_yarp::setTransform(const yarp::math::FrameTransform& 
 bool FrameTransformSet_nwc_yarp::setTransforms(const std::vector<yarp::math::FrameTransform>& transforms)
 {
     std::lock_guard <std::mutex> lg(m_pd_mutex);
-    if(!m_setRPC.setTransforms(transforms))
+    if(!m_setRPC.setTransformsRPC(transforms))
     {
         yCError(FRAMETRANSFORMSETNWCYARP, "Unable to set transformations");
+        return false;
+    }
+    return true;
+}
+
+bool FrameTransformSet_nwc_yarp::deleteTransform(std::string t1, std::string t2)
+{
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
+    if (!m_setRPC.deleteTransformRPC(t1,t2))
+    {
+        yCError(FRAMETRANSFORMSETNWCYARP, "Unable to delete transformation");
+        return false;
+    }
+    return true;
+}
+
+bool FrameTransformSet_nwc_yarp::clearAll()
+{
+    std::lock_guard <std::mutex> lg(m_pd_mutex);
+    if (!m_setRPC.clearAllRPC())
+    {
+        yCError(FRAMETRANSFORMSETNWCYARP, "Unable to clear all transformations");
         return false;
     }
     return true;
