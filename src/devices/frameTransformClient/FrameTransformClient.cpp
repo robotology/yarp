@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
+#define _USE_MATH_DEFINES
+
 #include "FrameTransformClient.h"
 
 #include <yarp/os/Log.h>
@@ -38,13 +40,22 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     string request = in.get(0).asString();
     if (request == "help")
     {
-        out.addVocab32("many");
-        out.addString("'get_transform <src> <dst>: print the transform from <src> to <dst>");
-        out.addString("'list_frames: print all the available reference frames");
-        out.addString("'list_ports: print all the opened ports for transform broadcasting");
-        out.addString("'publish_transform <src> <dst> <portname> [format]: opens a port to publish transform from src to dst");
-        out.addString("'unpublish_transform <portname>: closes a previously opened port to publish a transform");
-        out.addString("'unpublish_all: closes a all previously opened ports to publish a transform");
+        out.addVocab32(Vocab::encode("many"));
+        out.addString("get_transform <src> <dst>: print the transform from <src> to <dst>");
+        out.addString("list_transforms: print all the stored frame transforms");
+        out.addString("list_frames: print all the available reference frames");
+        out.addString("list_ports: print all the opened ports for transform broadcasting");
+        out.addString("publish_transform <src> <dst> <portname> [format]: opens a port to publish transform from src to dst");
+        out.addString("unpublish_transform <portname>: closes a previously opened port to publish a transform");
+        out.addString("unpublish_all: closes a all previously opened ports to publish a transform");
+        out.addString("set_static_transform_rad <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform (angles in radians)");
+        out.addString("set_static_transform_deg <src> <dst> <x> <y> <z> <roll> <pitch> <yaw>': create a static transform (angles in degrees)");
+        out.addString("delete_static_transform <src> <dst>': delete a static transform");
+        out.addString("generate_view <option>': generate a frames.pdf file showing the transform tree diagram.");
+        out.addString("     The following values are valid for option (default=none)");
+        out.addString("    'show_rpy': show rotation as rpy angles");
+        out.addString("    'show_quaterion:'show rotation as a quaternion");
+        out.addString("    'show_matrix:'show rotation as a 3x3 rotation matrix");
     }
     else if (request == "list_frames")
     {
@@ -193,6 +204,57 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
             out.addString("Port " + full_port_name + " was not found.");
         }
         if (m_array_of_ports.size()==0) this->askToStop();
+    }
+    else if (request == "set_static_transform_rad" ||
+             request == "set_static_transform_deg")
+    {
+        FrameTransform t;
+        t.src_frame_id = in.get(1).asString();
+        t.dst_frame_id = in.get(2).asString();
+        t.translation.tX = in.get(3).asFloat64();
+        t.translation.tY = in.get(4).asFloat64();
+        t.translation.tZ = in.get(5).asFloat64();
+        if (request == "set_static_transform_rad")
+        {
+            t.rotFromRPY(in.get(6).asFloat64(),
+                         in.get(7).asFloat64(),
+                         in.get(8).asFloat64());
+        }
+        else if (request == "set_static_transform_deg")
+        {
+            t.rotFromRPY(in.get(6).asFloat64() * 180 / M_PI,
+                         in.get(7).asFloat64() * 180 / M_PI,
+                         in.get(8).asFloat64() * 180 / M_PI);
+        }
+        t.timestamp = yarp::os::Time::now();
+        bool ret = this->setTransformStatic(t.src_frame_id,t.dst_frame_id,t.toMatrix());
+        if (ret == true)
+        {
+            yCInfo(FRAMETRANSFORMCLIENT) << "set_static_transform done";
+            out.addString("set_static_transform done");
+        }
+        else
+        {
+            yCError(FRAMETRANSFORMCLIENT) << "read(): something strange happened";
+            out.addString("error");
+        }
+    }
+    else if (request == "generate_view")
+    {
+        m_show_transforms_in_diagram = do_not_show;
+        if (in.get(1).asString() == "show_quaternion") m_show_transforms_in_diagram = show_quaternion;
+        else if (in.get(1).asString() == "show_matrix") m_show_transforms_in_diagram = show_matrix;
+        else if (in.get(1).asString() == "show_rpy") m_show_transforms_in_diagram = show_rpy;
+        priv_generate_view();
+        out.addString("ok");
+    }
+    else if (request == "delete_static_transform")
+    {
+        std::string src = in.get(1).asString();
+        std::string dst = in.get(2).asString();
+        //@@@check if the transform is static?
+        this->deleteTransform(src,dst);
+        out.addString("delete_static_transform done");
     }
     else
     {
@@ -760,4 +822,94 @@ void     FrameTransformClient::run()
             }
         }
     }
+}
+
+string FrameTransformClient::priv_get_matrix_as_text(FrameTransform* t)
+{
+    if (t==nullptr) return "";
+
+    if (m_show_transforms_in_diagram == do_not_show)
+    {
+        return "";
+    }
+    else if (m_show_transforms_in_diagram == show_quaternion)
+    {
+        return string(",label=\" ") + t->toString(FrameTransform::display_transform_mode_t::rotation_as_quaternion) + "\"";
+    }
+    else if (m_show_transforms_in_diagram == show_matrix)
+    {
+        return string(",label=\" ") + t->toString(FrameTransform::display_transform_mode_t::rotation_as_matrix) + "\"";
+    }
+    else if (m_show_transforms_in_diagram == show_rpy)
+    {
+        return string(",label=\" ") + t->toString(FrameTransform::display_transform_mode_t::rotation_as_rpy) + "\"";
+    }
+
+    yCError(FRAMETRANSFORMCLIENT) << "get_matrix_as_text() invalid option";
+    return "";
+    /*
+        //this is a test to use Latek display
+        string s = "\\begin{ bmatrix } \
+        1 & 2 & 3\\ \
+        a & b & c \
+        \\end{ bmatrix }";
+    */
+}
+
+
+bool FrameTransformClient::priv_generate_view()
+{
+    FrameTransformContainer* p_cont = nullptr;
+    bool br = m_ift_u->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
+
+    string dot_string = "digraph G { ";
+    for (auto it = p_cont->begin(); it != p_cont->end(); it++)
+    {
+        FrameTransform t = *it;
+        string edge_text = priv_get_matrix_as_text(&t);
+        string trf_text = it->src_frame_id + "->" +
+            it->dst_frame_id + " " +
+            "[color = black]";
+        dot_string += trf_text + '\n';
+    }
+
+    string legend = "\n\
+        rankdir=LR\n\
+        node[shape=plaintext]\n\
+        subgraph cluster_01 {\n\
+          label = \"Legend\";\n\
+          key[label=<<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" cellborder=\"0\">\n\
+            <tr><td align=\"right\" port=\"i1\">YARP timed transform</td></tr>\n\
+            <tr><td align=\"right\" port=\"i2\">YARP static transform</td></tr>\n\
+            </table>>]\n\
+          key2[label=<<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\" cellborder=\"0\">\n\
+            <tr><td port = \"i1\">&nbsp;</td></tr>\n\
+            <tr><td port = \"i2\">&nbsp;</td></tr>\n\
+            </table>>]\n\
+          key:i1:e -> key2:i1:w [color = blue]\n\
+          key:i2:e -> key2:i2:w [color = blue, style=dashed]\n\
+        } }";
+
+    string command_string = "printf '" + dot_string + legend + "' | dot -Tpdf > frames.pdf";
+#if defined (__linux__)
+    int ret = std::system("dot -V");
+    if (ret != 0)
+    {
+        yCError(FRAMETRANSFORMCLIENT) << "dot executable not found. Please install graphviz.";
+        return false;
+    }
+
+    yCDebug(FRAMETRANSFORMCLIENT) << "Command string is:" << command_string;
+    ret = std::system(command_string.c_str());
+    if (ret != 0)
+    {
+        yCError(FRAMETRANSFORMCLIENT) << "The following command failed to execute:" << command_string;
+        return false;
+    }
+#else
+    yCError(FRAMETRANSFORMCLIENT) << "Not yet implemented. Available only Linux";
+    return false;
+#endif
+    return true;
 }

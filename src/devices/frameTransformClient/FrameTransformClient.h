@@ -91,6 +91,16 @@ protected:
     };
     std::vector<broadcast_port_t*>  m_array_of_ports;
 
+    //enum to generate tf diagrams
+    enum show_transforms_in_diagram_t
+    {
+        do_not_show = 0,
+        show_quaternion = 1,
+        show_matrix = 2,
+        show_rpy = 3
+    };
+    show_transforms_in_diagram_t  m_show_transforms_in_diagram = do_not_show;
+
     //new stuff
     yarp::robotinterface::Robot m_robot;
     yarp::dev::IFrameTransformStorageGet* m_ift_g = nullptr;
@@ -109,7 +119,7 @@ public:
     bool read(yarp::os::ConnectionReader& connection) override;
 
     // IPreciselyTimed methods
-    yarp::os::Stamp getLastInputStamp();
+    //yarp::os::Stamp getLastInputStamp() override;
 
     //IFrameTransform
     bool     allFramesAsString(std::string &all_frames) override;
@@ -131,6 +141,10 @@ public:
     bool     threadInit() override;
     void     threadRelease() override;
     void     run() override;
+
+    //extra
+    bool          priv_generate_view();
+    std::string   priv_get_matrix_as_text(yarp::math::FrameTransform* t);
 };
 
 #endif // YARP_DEV_FRAMETRANSFORMCLIENT_H
