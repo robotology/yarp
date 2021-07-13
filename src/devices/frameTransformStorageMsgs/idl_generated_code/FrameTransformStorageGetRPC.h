@@ -22,7 +22,7 @@ public:
     // Constructor
     FrameTransformStorageGetRPC();
 
-    virtual return_getAllTransforms getTransforms();
+    virtual return_getAllTransforms getTransformsRPC();
 
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");

@@ -17,11 +17,13 @@ struct return_getAllTransforms
 
 service FrameTransformStorageSetRPC
 {
-  bool setTransforms(1:list<YarpFrameTransform> transforms) ;
-  bool setTransform(1:YarpFrameTransform transform) ;
+  bool setTransformsRPC(1:list<YarpFrameTransform> transforms) ;
+  bool setTransformRPC(1:YarpFrameTransform transform);
+  bool deleteTransformRPC(1:string src, 2:string dst);
+  bool clearAllRPC()
 }
 
 service FrameTransformStorageGetRPC
 {
-  return_getAllTransforms getTransforms() ;
+  return_getAllTransforms getTransformsRPC() ;
 }
