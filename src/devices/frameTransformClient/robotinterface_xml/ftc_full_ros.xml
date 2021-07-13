@@ -8,6 +8,8 @@
 <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
 
 <robot name="frameTransformClient" build="2" portprefix="frameTransformClient" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <param name="getDeviceName"> ftc_storage </param>
+    <param name="setDeviceName"> ftc_mpxSet  </param>
     <devices>
         <!-- **************** YARP NWC **************** -->
         <device name="ftSet_nwc_yarp" type="frameTransformSet_nwc_yarp">

@@ -8,6 +8,7 @@
 <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 3.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV3.0.dtd">
 
 <robot name="frameTransformClient" build="2" portprefix="frameTransformClient" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <param name="setDeviceName"> ftSet_nwc_ros  </param>
     <devices>
         <!-- **************** ROS NWC **************** -->
         <device name="ftSet_nwc_ros" type="frameTransformSet_nwc_ros">
@@ -21,9 +22,6 @@
                 <param extern-name="ftSet_ftTopicStatic" name="ft_topic_static"> /tf_static </param>
                 <param extern-name="ftSet_ftNode" name="ft_node"> /tfNodeSet </param>
             </group>
-        </device>
-        <!-- **************** STORAGE **************** -->
-        <device name="ftc_storage" type="frameTransformStorage">
         </device>
     </devices>
 </robot>
