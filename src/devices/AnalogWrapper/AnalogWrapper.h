@@ -45,7 +45,7 @@ class AnalogServerHandler;
 class AnalogPortEntry;
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_wrapper dev_impl_deprecated
  *
  * \brief `analogServer`: Device that expose an AnalogSensor (using the IAnalogSensor interface) on the YARP or ROS network.
  *

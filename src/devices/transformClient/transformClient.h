@@ -66,7 +66,7 @@ public:
 
 
 /**
-* @ingroup dev_impl_network_clients
+* @ingroup dev_impl_network_clients dev_impl_deprecated
 *
 * \brief `transformClient`: Documentation to be added
 */

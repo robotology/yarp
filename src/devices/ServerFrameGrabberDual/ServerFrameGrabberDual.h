@@ -73,7 +73,7 @@ struct Configuration
 
 
 /**
- * @ingroup dev_impl_wrapper
+ * @ingroup dev_impl_wrapper dev_impl_deprecated
  *
  * \brief `grabberDual`: A Network grabber for camera devices.
  *

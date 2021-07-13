@@ -29,7 +29,7 @@
 
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_wrapper dev_impl_deprecated
  *
  * \brief `inertial`: Export an inertial sensor.
  * The network interface is a single Port.

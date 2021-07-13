@@ -43,7 +43,7 @@
 #define DEFAULT_THREAD_PERIOD 0.02 //s
 
  /**
- * @ingroup dev_impl_network_wrapper dev_impl_lidar
+ * @ingroup dev_impl_network_wrapper dev_impl_lidar dev_impl_deprecated
   *
   * \brief `Rangefinder2DWrapper`: Documentation to be added
   */

@@ -42,7 +42,7 @@
 #define DEFAULT_THREAD_PERIOD 20 //ms
 
 /**
- *  @ingroup dev_impl_wrapper dev_impl_navigation
+ *  @ingroup dev_impl_wrapper dev_impl_navigation dev_impl_deprecated
  *
  * \section Map2DServer
  *

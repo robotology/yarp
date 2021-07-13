@@ -26,7 +26,7 @@
 #include <math.h>
 
  /**
- * @ingroup dev_impl_network_wrapper dev_impl_navigation
+ * @ingroup dev_impl_network_wrapper dev_impl_navigation dev_impl_deprecated
  *
  * \section Localization2DServer
  *

@@ -50,7 +50,7 @@ class streamThread :
 };
 
 /**
- * @ingroup dev_impl_media
+ * @ingroup dev_impl_media dev_impl_deprecated
  *
  * \brief `portaudio`:  This device driver has been deprecated!
  * Please use `PortAudioPlayerDeviceDriver` or  `PortAudioRecorderDeviceDriver`

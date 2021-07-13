@@ -75,7 +75,7 @@ class SubDevice;
 
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_wrapper dev_impl_deprecated
  *
  * \brief `controlboardwrapper2`: An updated version of the controlBoard network wrapper.
  * It can merge together more than one control board device, or use only a

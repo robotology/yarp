@@ -21,7 +21,7 @@
 YARP_DECLARE_LOG_COMPONENT(FAKEMOTOR)
 
 /**
- * @ingroup dev_impl_fake dev_impl_motor
+ * @ingroup dev_impl_fake dev_impl_motor dev_impl_deprecated
  *
  * \brief `fakeMotor`: A fake motor control board for testing.
  *
@@ -402,7 +402,10 @@ public:
 
 };
 
-
+/**
+ * @ingroup dev_impl_fake dev_impl_deprecated
+ *
+ */
 class TestMotor : public FakeMotor
 {
 public:

@@ -64,7 +64,7 @@ public:
  */
 
 /**
- * @ingroup dev_impl_network_clients
+ * @ingroup dev_impl_network_clients dev_impl_deprecated
  *
  * \brief `analogsensorclient`: Device that reads an AnalogSensor (using the IAnalogSensor interface) from the YARP network.
  *

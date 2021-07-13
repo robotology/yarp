@@ -62,7 +62,7 @@ public:
 };
 
 /**
-* @ingroup dev_impl_network_wrapper
+* @ingroup dev_impl_network_wrapper dev_impl_deprecated
  *
  * \brief `transformServer`: Documentation to be added
  */

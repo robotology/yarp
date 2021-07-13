@@ -82,7 +82,7 @@ public:
 
 
 /**
- *  @ingroup dev_impl_wrapper
+ *  @ingroup dev_impl_wrapper dev_impl_deprecated
  *
  * \section RGBDSensorWrapper_device_parameters Description of input parameters
  *
