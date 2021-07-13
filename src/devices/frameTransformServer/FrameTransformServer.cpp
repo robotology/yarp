@@ -38,7 +38,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     string request = in.get(0).asString();
     if (request == "help")
     {
-        out.addVocab(Vocab::encode("many"));
+        out.addVocab32("many");
         out.addString("No RPC commands available");
     }
     else

@@ -41,7 +41,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     string request = in.get(0).asString();
     if (request == "help")
     {
-        out.addVocab32(Vocab::encode("many"));
+        out.addVocab32("many");
         out.addString("get_transform <src> <dst>: print the transform from <src> to <dst>");
         out.addString("list_transforms: print all the stored frame transforms");
         out.addString("list_frames: print all the available reference frames");
