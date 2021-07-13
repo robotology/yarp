@@ -42,23 +42,23 @@ public:
         }
     }
 
-    virtual bool read(yarp::os::ConnectionReader& connection) {
+    bool read(yarp::os::ConnectionReader& connection) override {
         yarpReader reader;
         reader.implementation = &connection;
         return (callbacks->read(&reader,ref->client)==0);
     }
 
-    virtual bool write(yarp::os::ConnectionWriter& connection) {
+    bool write(yarp::os::ConnectionWriter& connection) const override {
         yarpWriter writer;
         writer.implementation = &connection;
         return (callbacks->write(&writer,ref->client)==0);
     }
 
-    virtual void onCommencement() {
+    void onCommencement() const override {
         callbacks->onCommencement(ref->client);
     }
 
-    virtual void onCompletion() {
+    void onCompletion() const override {
         callbacks->onCompletion(ref->client);
     }
 

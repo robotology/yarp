@@ -41,8 +41,8 @@ YARP_DEFINE(void) yarpBottleAddInt32(yarpBottlePtr bottle, int x) {
     YARP_BOTTLE(bottle).addInt32(x);
 }
 
-YARP_DEFINE(void) yarpBottleAddDouble(yarpBottlePtr bottle, double x) {
-    YARP_BOTTLE(bottle).addDouble(x);
+YARP_DEFINE(void) yarpBottleAddFloat64(yarpBottlePtr bottle, double x) {
+    YARP_BOTTLE(bottle).addFloat64(x);
 }
 
 YARP_DEFINE(void) yarpBottleAddString(yarpBottlePtr bottle, const char *x) {

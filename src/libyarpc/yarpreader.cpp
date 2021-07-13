@@ -30,7 +30,7 @@ YARP_DEFINE(int) yarpReaderExpectInt32(yarpReaderPtr reader, int *data) {
      */
 YARP_DEFINE(int) yarpReaderExpectDouble(yarpReaderPtr reader, double *data) {
     YARP_OK(reader);
-    double x = YARP_READER(reader).expectDouble();
+    double x = YARP_READER(reader).expectFloat64();
     if (data!=NULL) {
         *data = x;
     }
@@ -57,7 +57,7 @@ YARP_DEFINE(int) yarpReaderExpectText(yarpReaderPtr reader,
      *
      */
 YARP_DEFINE(int) yarpReaderExpectBlock(yarpReaderPtr reader,
-                                       const char *data,
+                                       char *data,
                                        int len) {
     YARP_OK(reader);
     return !YARP_READER(reader).expectBlock(data,len);

@@ -34,32 +34,32 @@ public:
                   void *client) : callbacks(callbacks), client(client) {
     }
 
-    virtual void run() {
+    void run() override {
         if (callbacks->run) callbacks->run(client);
     }
 
-    virtual void beforeStart() {
+    void beforeStart() override {
         if (callbacks->beforeStart) {
             callbacks->beforeStart(client);
         }
     }
 
-    virtual void afterStart(bool success) {
+    void afterStart(bool success) override {
         if (callbacks->afterStart) {
             callbacks->afterStart(success,client);
         }
     }
 
-    virtual void onStop() {
+    void onStop() override {
         if (callbacks->onStop) callbacks->onStop(client);
     }
 
-    virtual bool threadInit() {
+    bool threadInit() override {
         if (callbacks->threadInit) return !callbacks->threadInit(client);
         return true;
     }
 
-    virtual void threadRelease() {
+    void threadRelease() override {
         if (callbacks->threadRelease) callbacks->threadRelease(client);
     }
 
