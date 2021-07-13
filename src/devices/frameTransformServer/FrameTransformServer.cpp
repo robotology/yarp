@@ -63,6 +63,8 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
 
 bool FrameTransformServer::open(yarp::os::Searchable &config)
 {
+    yCWarning(FRAMETRANSFORMSERVER) << "The 'FrameTransformServer' device is experimental and could be modified without any warning";
+
     yarp::os::Property cfg;
     cfg.fromString(config.toString());
 

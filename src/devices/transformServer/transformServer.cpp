@@ -216,19 +216,19 @@ void TransformServer::list_response(yarp::os::Bottle& out)
 
 string TransformServer::get_matrix_as_text(Transforms_server_storage* storage, int i)
 {
-    if (m_show_transforms_in_diagram==do_not_show)
+    if (m_show_transforms_in_diagram== show_transforms_in_diagram_t::do_not_show)
     {
         return "";
     }
-    else if (m_show_transforms_in_diagram==show_quaternion)
+    else if (m_show_transforms_in_diagram== show_transforms_in_diagram_t::show_quaternion)
     {
         return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_quaternion) + "\"";
     }
-    else if (m_show_transforms_in_diagram == show_matrix)
+    else if (m_show_transforms_in_diagram == show_transforms_in_diagram_t::show_matrix)
     {
         return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_matrix) + "\"";
     }
-    else if (m_show_transforms_in_diagram == show_rpy)
+    else if (m_show_transforms_in_diagram == show_transforms_in_diagram_t::show_rpy)
     {
         return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_rpy) + "\"";
     }
@@ -479,10 +479,10 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
     }
     else if (request == "generate_view")
     {
-        m_show_transforms_in_diagram  = do_not_show;
-        if      (in.get(1).asString() == "show_quaternion") m_show_transforms_in_diagram = show_quaternion;
-        else if (in.get(1).asString() == "show_matrix") m_show_transforms_in_diagram = show_matrix;
-        else if (in.get(1).asString() == "show_rpy") m_show_transforms_in_diagram = show_rpy;
+        m_show_transforms_in_diagram  = show_transforms_in_diagram_t::do_not_show;
+        if      (in.get(1).asString() == "show_quaternion") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_quaternion;
+        else if (in.get(1).asString() == "show_matrix") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_matrix;
+        else if (in.get(1).asString() == "show_rpy") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_rpy;
         generate_view();
         out.addString("ok");
     }

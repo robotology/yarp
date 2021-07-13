@@ -86,6 +86,8 @@ public:
     //IFrameTransformStorageSet interface
     bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
     bool setTransform(const yarp::math::FrameTransform& transform) override;
+    bool deleteTransform(std::string t1, std::string t2) override;
+    bool clearAll() override;
 
     //own
     void publishFrameTransforms(const std::vector<yarp::math::FrameTransform>& transforms);

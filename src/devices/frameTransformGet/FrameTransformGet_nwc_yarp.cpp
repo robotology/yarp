@@ -48,12 +48,32 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
         return false;
     }
 
+    if (m_streaming_port_enabled)
+    {
+        yCInfo(FRAMETRANSFORMGETNWCYARP) << "Receiving transforms from Yarp port enabled";
+        m_dataReader = new FrameTransformGet_nwc_yarp::DataReader();
+        if (!m_dataReader->open(m_streaming_port_name))
+        {
+            yCError(FRAMETRANSFORMGETNWCYARP, "Could not open \"%s\" port", m_streaming_port_name.c_str());
+            return false;
+        }
+    }
+    else
+    {
+        yCInfo(FRAMETRANSFORMGETNWCYARP) << "Receiving transforms from Yarp port NOT enabled";
+    }
+
     return true;
 }
 
 
 bool FrameTransformGet_nwc_yarp::close()
 {
+    if (m_streaming_port_enabled)
+    {
+        m_dataReader->interrupt();
+        m_dataReader->close();
+    }
     m_thrift_rpcPort.close();
     return true;
 }
@@ -61,12 +81,42 @@ bool FrameTransformGet_nwc_yarp::close()
 
 bool FrameTransformGet_nwc_yarp::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
-    return_getAllTransforms retrievedFromRPC = m_frameTransformStorageGetRPC.getTransforms();
-    if(!retrievedFromRPC.retvalue)
+    if (m_streaming_port_enabled==false)
     {
+        return_getAllTransforms retrievedFromRPC = m_frameTransformStorageGetRPC.getTransformsRPC();
+        if(!retrievedFromRPC.retvalue)
+        {
+            yCError(FRAMETRANSFORMGETNWCYARP, "Unable to get transformations");
+            return false;
+        }
+        transforms = retrievedFromRPC.transforms_list;
+        return true;
+    }
+    else
+    {
+        if (m_dataReader)
+        {
+            return_getAllTransforms retrievedFromSteaming;
+            m_dataReader->getData(retrievedFromSteaming);
+            transforms = retrievedFromSteaming.transforms_list;
+            return true;
+        }
         yCError(FRAMETRANSFORMGETNWCYARP, "Unable to get transformations");
         return false;
     }
-    transforms = retrievedFromRPC.transforms_list;
+}
+
+bool FrameTransformGet_nwc_yarp::DataReader::getData(return_getAllTransforms& data)
+{
+    m_mutex.lock();
+    data = m_Transforms;
+    m_mutex.unlock();
     return true;
+}
+
+void FrameTransformGet_nwc_yarp::DataReader::onRead(return_getAllTransforms& v)
+{
+    m_mutex.lock();
+    m_Transforms = v;
+    m_mutex.unlock();
 }

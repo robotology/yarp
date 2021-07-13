@@ -106,3 +106,33 @@ bool FrameTransformSetMultiplexer::setTransform(const yarp::math::FrameTransform
     }
     return true;
 }
+
+bool FrameTransformSetMultiplexer::deleteTransform(std::string t1, std::string t2)
+{
+    for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
+    {
+        if (m_iFrameTransformStorageSetList[i] != nullptr) {
+            m_iFrameTransformStorageSetList[i]->deleteTransform(t1,t2);
+        }
+        else {
+            yCError(FRAMETRANSFORMSETMULTIPLEXER) << "pointer to interface IFrameTransformStorageSet not valid";
+            return false;
+        }
+    }
+    return true;
+}
+
+bool FrameTransformSetMultiplexer::clearAll()
+{
+    for (size_t i = 0; i < m_iFrameTransformStorageSetList.size(); i++)
+    {
+        if (m_iFrameTransformStorageSetList[i] != nullptr) {
+            m_iFrameTransformStorageSetList[i]->clearAll();
+        }
+        else {
+            yCError(FRAMETRANSFORMSETMULTIPLEXER) << "pointer to interface IFrameTransformStorageSet not valid";
+            return false;
+        }
+    }
+    return true;
+}

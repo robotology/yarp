@@ -10,7 +10,7 @@
 #include <yarp/dev/WrapperSingle.h>
 #include <yarp/dev/IFrameTransformStorage.h>
 
-
+#include <yarp/os/PeriodicThread.h>
 #include <FrameTransformStorageGetRPC.h>
 
 // TODO FIXME STE need to check subdevice option
@@ -30,7 +30,10 @@
  *   Parameters required by this device are:
  * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
  * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------------------------:|:-----------: |:--------------------------------------:|
- * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
+ * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | name of the port on which rpc calls should be made |
+ * | streaming_port_server |      -            | string  | -              |   /frameTransformGet/tf:o       | No           | name of the port on which the tfs are published periodically |
+ * | streaming_enabled |      -                | bool    | -              |   true                          | No           | enable/disable the tf publishing on the streaming port |
+ * | period |                                  | float   | s              |   0.010                         | No           | It affects the period of thread publishing transforms on the streaming port |
  *
  * \section FrameTransformGet_nws_yarp_device_configuration Example of configuration file using .ini format.
  *
@@ -43,7 +46,8 @@
 class FrameTransformGet_nws_yarp :
         public yarp::dev::DeviceDriver,
         public FrameTransformStorageGetRPC,
-        public yarp::dev::WrapperSingle
+        public yarp::dev::WrapperSingle,
+        public yarp::os::PeriodicThread
 {
 
 public:
@@ -54,9 +58,16 @@ public:
     FrameTransformGet_nws_yarp& operator=(FrameTransformGet_nws_yarp&&) = delete;
     ~FrameTransformGet_nws_yarp() = default;
 
+    // yarp::os::PeriodicThread
+    bool threadInit() override;
+    void threadRelease() override;
+    void run() override;
+    bool m_streaming_port_enabled = true;
+    yarp::os::Port m_streaming_port;
+    std::string    m_streaming_port_name{ "/frameTransformGet/tf:o" };
+
     // yarp::dev::DeviceDriver
     bool  open(yarp::os::Searchable &params) override;
-    bool  fromConfig(yarp::os::Searchable &params);
     bool  close() override;
 
     // yarp::dev::IWrapper
@@ -64,7 +75,7 @@ public:
     bool  detach() override;
 
     // FrameTransformStorageGetRPC
-    return_getAllTransforms getTransforms() override;
+    return_getAllTransforms getTransformsRPC() override;
 
 private:
     // mutable std::vector<std::mutex> m_PolyDriver_mutex;
@@ -72,7 +83,7 @@ private:
     int    m_verbose{4};
 
     // for requesting the transforms to FrameTransformStorageGetMultiplexer
-    yarp::dev::IFrameTransformStorageGet* m_iFrameTransformStorageGet;
+    yarp::dev::IFrameTransformStorageGet* m_iFrameTransformStorageGet = nullptr;
 
     // for the RPC with the NWC
     yarp::os::Port      m_thrift_rpcPort;

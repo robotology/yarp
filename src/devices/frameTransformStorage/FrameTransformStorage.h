@@ -59,7 +59,7 @@ public:
     //IFrameTransformStorageUtils interface
     bool deleteTransform(std::string t1, std::string t2) override;
     bool size(size_t& size) const override;
-    bool clear() override;
+    bool clearAll() override;
     bool getInternalContainer(FrameTransformContainer*&  container) override;
 
     //wrapper and interfaces

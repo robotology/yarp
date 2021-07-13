@@ -6,6 +6,8 @@
 #ifndef YARP_DEV_FRAMETRANSFORMGET_NWC_YARP_H
 #define YARP_DEV_FRAMETRANSFORMGET_NWC_YARP_H
 
+#include <yarp/os/PeriodicThread.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IFrameTransformStorage.h>
 
@@ -27,8 +29,10 @@
  *   Parameters required by this device are:
  * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
  * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------------------------:|:-----------: |:--------------------------------------:|
- * | rpc_port_client |      -                  | string  | -              |   /frameTransformGet/clientRPC  | No           | port on which rpc calls should be made |
- * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
+ * | rpc_port_client |      -                  | string  | -              |   /frameTransformGet/clientRPC  | No           | name of the port on which rpc calls should be made |
+ * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | name of the port on which rpc calls should be made |
+ * | streaming_port_client |      -            | string  | -              |   /frameTransformGet/tf:i       | No           | name of the port on which the tfs are received (if the port is enabled) |
+ * | streaming_enabled |      -                | bool    | -              |   false                         | No           | if enabled, tfs are received from the streaming port instead of using RPCs |
  *
  * \section FrameTransformGet_nwc_yarp_device_configuration Example of configuration file using .ini format.
  *
@@ -38,11 +42,23 @@
  * rpc_port_server /frameTransformGet/clientRPC
  * \endcode
  */
-
 class FrameTransformGet_nwc_yarp:
     public yarp::dev::DeviceDriver,
     public yarp::dev::IFrameTransformStorageGet
 {
+    class DataReader : public yarp::os::BufferedPort<return_getAllTransforms>
+    {
+        std::mutex m_mutex;
+        return_getAllTransforms m_Transforms;
+
+        public:
+        DataReader() = default;
+
+        using               yarp::os::BufferedPort<return_getAllTransforms>::onRead;
+        virtual void        onRead(return_getAllTransforms& v) override;
+        bool                getData(return_getAllTransforms& data);
+    };
+
 public:
     FrameTransformGet_nwc_yarp() = default;
     FrameTransformGet_nwc_yarp(const FrameTransformGet_nwc_yarp&) = delete;
@@ -54,6 +70,11 @@ public:
     // yarp::dev::DeviceDriver
     bool  open(yarp::os::Searchable &params) override;
     bool  close() override;
+
+    // yarp::os::PeriodicThread
+    bool m_streaming_port_enabled = false;
+    std::string    m_streaming_port_name{ "/frameTransformGet/tf:i" };
+    DataReader*    m_dataReader =nullptr;
 
     // yarp::dev::IFrameTransformStorageGet
     bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
@@ -68,5 +89,6 @@ private:
     mutable FrameTransformStorageGetRPC m_frameTransformStorageGetRPC;
 
 };
+
 
 #endif // YARP_DEV_FRAMETRANSFORMGET_NWC_YARP_H

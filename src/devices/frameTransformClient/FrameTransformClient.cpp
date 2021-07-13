@@ -4,6 +4,7 @@
  */
 
 #define _USE_MATH_DEFINES
+#include <cmath>
 
 #include "FrameTransformClient.h"
 
@@ -241,10 +242,10 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     }
     else if (request == "generate_view")
     {
-        m_show_transforms_in_diagram = do_not_show;
-        if (in.get(1).asString() == "show_quaternion") m_show_transforms_in_diagram = show_quaternion;
-        else if (in.get(1).asString() == "show_matrix") m_show_transforms_in_diagram = show_matrix;
-        else if (in.get(1).asString() == "show_rpy") m_show_transforms_in_diagram = show_rpy;
+        m_show_transforms_in_diagram = show_transforms_in_diagram_t::do_not_show;
+        if (in.get(1).asString() == "show_quaternion") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_quaternion;
+        else if (in.get(1).asString() == "show_matrix") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_matrix;
+        else if (in.get(1).asString() == "show_rpy") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_rpy;
         priv_generate_view();
         out.addString("ok");
     }
@@ -278,6 +279,8 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
 
 bool FrameTransformClient::open(yarp::os::Searchable &config)
 {
+    yCWarning(FRAMETRANSFORMCLIENT) << "The 'FrameTransformClient' device is experimental and could be modified without any warning";
+
     yarp::os::Property cfg;
     cfg.fromString(config.toString());
 
@@ -310,45 +313,29 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-/*
-    //probably useless, to be removed
-    string setDevice = "foo";
-    if (m_robot.hasParam("setDevice")) {setDevice = m_robot.findParam("setDevice");}
-    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(setDevice));
-    auto* polyset = m_robot.device(setDevice).driver();
+    string setdeviceName = "ftc_storage";
+    if (m_robot.hasParam("setDeviceName")) { setdeviceName = m_robot.findParam("setDeviceName");}
+    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(setdeviceName));
+    auto* polyset = m_robot.device(setdeviceName).driver();
     yCAssert(FRAMETRANSFORMCLIENT, polyset);
-    polyset->view(m_ift_s);
-    yCAssert(FRAMETRANSFORMCLIENT, m_ift_s);
+    polyset->view(m_ift_set);
+    yCAssert(FRAMETRANSFORMCLIENT, m_ift_set);
 
-    const string getDevice = "bar";
-    string getDevice = "bar";
-    if (robot.hasParam("getDevice")) {getDevice = robot.findParam("getDevice");}
-    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(getDevice));
-    auto* polyget = m_robot.device(getDevice).driver();
+    string getdeviceName = "ftc_storage";
+    if (m_robot.hasParam("getDeviceName")) {getdeviceName = m_robot.findParam("getDeviceName");}
+    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(getdeviceName));
+    auto* polyget = m_robot.device(getdeviceName).driver();
     yCAssert(FRAMETRANSFORMCLIENT, polyget);
-    polyget->view(m_ift_g);
-    yCAssert(FRAMETRANSFORMCLIENT, m_ift_g);
-*/
+    polyget->view(m_ift_get);
+    yCAssert(FRAMETRANSFORMCLIENT, m_ift_get);
+    polyget->view(m_ift_util);
+    yCAssert(FRAMETRANSFORMCLIENT, m_ift_util);
 
-    const string uDevice = "ftc_storage";
-    yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(uDevice));
-    auto* polyu = m_robot.device(uDevice).driver();
-    yCAssert(FRAMETRANSFORMCLIENT, polyu);
-    polyu->view(m_ift_u);
-    yCAssert(FRAMETRANSFORMCLIENT, m_ift_u);
-
-/*
     if (config.check("period"))
     {
-        m_period = config.find("period").asInt32() / 1000.0;
+        m_period = config.find("period").asFloat64();
+        this->setPeriod(m_period);
     }
-    else
-    {
-        m_period = 0.010;
-        yCWarning(FRAMETRANSFORMCLIENT, "Using default period of %f s" , m_period);
-    }
-*/
-
 
     if (!m_rpc_InterfaceToUser.open(m_local_rpcUser))
     {
@@ -371,7 +358,7 @@ bool FrameTransformClient::close()
 bool FrameTransformClient::allFramesAsString(string &all_frames)
 {
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
+    bool br = m_ift_util->getInternalContainer(p_cont);
     if (br && p_cont)
     {
         for (auto it = p_cont->begin(); it != p_cont->end(); it++)
@@ -383,11 +370,11 @@ bool FrameTransformClient::allFramesAsString(string &all_frames)
 
 FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionType(const string &target_frame, const string &source_frame, string* commonAncestor = nullptr)
 {
-    if (target_frame == source_frame) {return IDENTITY;}
+    if (target_frame == source_frame) {return ConnectionType::IDENTITY;}
 
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
-    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return DISCONNECTED; }
+    bool br = m_ift_util->getInternalContainer(p_cont);
+    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return ConnectionType::DISCONNECTED; }
 
     size_t                     i, j;
     std::vector<string>   tar2root_vec;
@@ -399,7 +386,7 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
     {
         if(ancestor == source_frame)
         {
-            return DIRECT;
+            return ConnectionType::DIRECT;
         }
 
         tar2root_vec.push_back(ancestor);
@@ -410,7 +397,7 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
     {
         if(ancestor == target_frame)
         {
-            return INVERSE;
+            return ConnectionType::INVERSE;
         }
 
         src2root_vec.push_back(ancestor);
@@ -429,33 +416,33 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
                 {
                     *commonAncestor = a;
                 }
-                return UNDIRECT;
+                return ConnectionType::UNDIRECT;
             }
         }
     }
 
-    return DISCONNECTED;
+    return ConnectionType::DISCONNECTED;
 }
 
 bool FrameTransformClient::canTransform(const string &target_frame, const string &source_frame)
 {
-    return priv_getConnectionType(target_frame, source_frame) != DISCONNECTED;
+    return priv_getConnectionType(target_frame, source_frame) != ConnectionType::DISCONNECTED;
 }
 
 bool FrameTransformClient::clear()
 {
-    FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
-    if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
-
-    p_cont->clear();
-    return true;
+    if (m_ift_set)
+    {
+        return m_ift_set->clearAll();
+    }
+    yCError(FRAMETRANSFORMCLIENT, "clear(): interface not available");
+    return false;
 }
 
 bool FrameTransformClient::frameExists(const string &frame_id)
 {
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
+    bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
@@ -471,7 +458,7 @@ bool FrameTransformClient::frameExists(const string &frame_id)
 bool FrameTransformClient::getAllFrameIds(std::vector< string > &ids)
 {
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
+    bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
@@ -500,7 +487,7 @@ bool FrameTransformClient::getAllFrameIds(std::vector< string > &ids)
 bool FrameTransformClient::getParent(const string &frame_id, string &parent_frame_id)
 {
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
+    bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
@@ -519,7 +506,7 @@ bool FrameTransformClient::getParent(const string &frame_id, string &parent_fram
 bool FrameTransformClient::priv_canExplicitTransform(const string& target_frame_id, const string& source_frame_id) const
 {
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
+    bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont==nullptr) {yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
@@ -535,7 +522,7 @@ bool FrameTransformClient::priv_canExplicitTransform(const string& target_frame_
 bool FrameTransformClient::priv_getChainedTransform(const string& target_frame_id, const string& source_frame_id, yarp::sig::Matrix& transform) const
 {
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
+    bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
     std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
@@ -568,18 +555,18 @@ bool FrameTransformClient::getTransform(const string& target_frame_id, const str
     ConnectionType ct;
     string    ancestor;
     ct = priv_getConnectionType(target_frame_id, source_frame_id, &ancestor);
-    if (ct == DIRECT)
+    if (ct == ConnectionType::DIRECT)
     {
         return priv_getChainedTransform(target_frame_id, source_frame_id, transform);
     }
-    else if (ct == INVERSE)
+    else if (ct == ConnectionType::INVERSE)
     {
         yarp::sig::Matrix m(4, 4);
         priv_getChainedTransform(source_frame_id, target_frame_id, m);
         transform = yarp::math::SE3inv(m);
         return true;
     }
-    else if(ct == UNDIRECT)
+    else if(ct == ConnectionType::UNDIRECT)
     {
         yarp::sig::Matrix root2tar(4, 4), root2src(4, 4);
         priv_getChainedTransform(source_frame_id, ancestor, root2src);
@@ -587,7 +574,7 @@ bool FrameTransformClient::getTransform(const string& target_frame_id, const str
         transform = yarp::math::SE3inv(root2src) * root2tar;
         return true;
     }
-    else if (ct == IDENTITY)
+    else if (ct == ConnectionType::IDENTITY)
     {
         yarp::sig::Matrix tmp(4, 4); tmp.eye();
         transform = tmp;
@@ -628,10 +615,12 @@ bool FrameTransformClient::setTransform(const string& target_frame_id, const str
     tf.isStatic = false;
     tf.timestamp = yarp::os::Time::now();
 
-    FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
-    if (br && p_cont) { br = p_cont->setTransform(tf); }
-    return br;
+    if (m_ift_set)
+    {
+        return m_ift_set->setTransform(tf);
+    }
+    yCError(FRAMETRANSFORMCLIENT, "setTransform(): interface not available");
+    return false;
 }
 
 bool FrameTransformClient::setTransformStatic(const string &target_frame_id, const string &source_frame_id, const yarp::sig::Matrix &transform)
@@ -660,37 +649,21 @@ bool FrameTransformClient::setTransformStatic(const string &target_frame_id, con
     tf.isStatic = true;
     tf.timestamp=-1;
 
-    FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
-    if (br && p_cont) { br = p_cont->setTransform(tf); }
-    return br;
+    if (m_ift_set)
+    {
+        return m_ift_set->setTransform(tf);
+    }
+    yCError(FRAMETRANSFORMCLIENT, "setTransformStatic(): interface not available");
+    return false;
 }
 
 bool FrameTransformClient::deleteTransform(const string &target_frame_id, const string &source_frame_id)
 {
-    /*yarp::os::Bottle b;
-    yarp::os::Bottle resp;
-    b.addVocab32(VOCAB_ITRANSFORM);
-    b.addVocab32(VOCAB_TRANSFORM_DELETE);
-    b.addString(target_frame_id);
-    b.addString(source_frame_id);
-    bool ret = m_rpc_InterfaceToServer.write(b, resp);
-    if (ret)
+    if (m_ift_set)
     {
-        if (resp.get(0).asVocab32()!=VOCAB_OK)
-        {
-            yCError(FRAMETRANSFORMCLIENT) << "Received error from server on deleting frame between "+source_frame_id+" and "+target_frame_id;
-            return false;
-        }
+        return m_ift_set->deleteTransform(target_frame_id, source_frame_id);
     }
-    else
-    {
-        yCError(FRAMETRANSFORMCLIENT) << "deleteFrame(): Error on writing on rpc port";
-        return false;
-    }
-    return true;*/
-
-    yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "deleteFrame() Not yet implemented";
+    yCError(FRAMETRANSFORMCLIENT, "deleteTransform(): interface not available");
     return false;
 }
 
@@ -818,7 +791,7 @@ void     FrameTransformClient::run()
             }
             else
             {
-                yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "Unknown format requested: " << m_array_of_port->format;
+                yCErrorThrottle(FRAMETRANSFORMCLIENT, LOG_THROTTLE_PERIOD) << "Unknown format requested: " << (int)(m_array_of_port->format);
             }
         }
     }
@@ -860,7 +833,7 @@ string FrameTransformClient::priv_get_matrix_as_text(FrameTransform* t)
 bool FrameTransformClient::priv_generate_view()
 {
     FrameTransformContainer* p_cont = nullptr;
-    bool br = m_ift_u->getInternalContainer(p_cont);
+    bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
     string dot_string = "digraph G { ";

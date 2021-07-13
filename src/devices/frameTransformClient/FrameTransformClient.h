@@ -47,6 +47,7 @@ const int MAX_PORTS = 5;
  * | Parameter name   | SubParameter         | Type    | Units          | Default Value         | Required     | Description                                                          |
  * |:----------------:|:--------------------:|:-------:|:--------------:|:---------------------:|:-----------: |:--------------------------------------------------------------------:|
  * | filexml_option   | -                    | string  | -              | ftc_local_only.xml    | no           | The name of the xml file containing the needed client configuration  |
+ * | period           | -                    | float   | -              | 10ms                  | no           | The period for publishing individual tfs on port                     |
  *
  * Example of command line:
  * \code{.unparsed}
@@ -67,7 +68,7 @@ class FrameTransformClient :
         public yarp::os::PeriodicThread
 {
 private:
-    enum ConnectionType {DISCONNECTED = 0, DIRECT, INVERSE, UNDIRECT, IDENTITY};
+    enum class ConnectionType {DISCONNECTED = 0, DIRECT, INVERSE, UNDIRECT, IDENTITY};
 
     FrameTransformClient::ConnectionType priv_getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor);
 
@@ -84,7 +85,7 @@ protected:
     //ports to broadcast stuff...
     struct broadcast_port_t
     {
-        enum format_t {matrix=0} format;
+        enum class format_t {matrix=0} format= format_t::matrix;
         yarp::os::Port port;
         std::string transform_src;
         std::string transform_dst;
@@ -103,9 +104,9 @@ protected:
 
     //new stuff
     yarp::robotinterface::Robot m_robot;
-    yarp::dev::IFrameTransformStorageGet* m_ift_g = nullptr;
-    yarp::dev::IFrameTransformStorageSet* m_ift_s = nullptr;
-    yarp::dev::IFrameTransformStorageUtils* m_ift_u = nullptr;
+    yarp::dev::IFrameTransformStorageGet* m_ift_get = nullptr;
+    yarp::dev::IFrameTransformStorageSet* m_ift_set = nullptr;
+    yarp::dev::IFrameTransformStorageUtils* m_ift_util = nullptr;
 
 
 public:
@@ -117,9 +118,6 @@ public:
     bool open(yarp::os::Searchable& config) override;
     bool close() override;
     bool read(yarp::os::ConnectionReader& connection) override;
-
-    // IPreciselyTimed methods
-    //yarp::os::Stamp getLastInputStamp() override;
 
     //IFrameTransform
     bool     allFramesAsString(std::string &all_frames) override;

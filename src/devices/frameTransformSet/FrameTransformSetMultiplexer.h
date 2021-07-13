@@ -43,6 +43,8 @@ public:
     // yarp::dev::IFrameTransformStorageSet
     bool setTransform(const yarp::math::FrameTransform& transform) override;
     bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
+    virtual bool deleteTransform(std::string t1, std::string t2) override;
+    virtual bool clearAll() override;
 
 private:
     int    m_verbose{4};

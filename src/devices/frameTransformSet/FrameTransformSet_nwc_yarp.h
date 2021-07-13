@@ -51,8 +51,10 @@ public:
     bool close() override;
 
     //FrameTransformStorageSetRPC functions
-    bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
-    bool setTransform(const yarp::math::FrameTransform& transform) override;
+    virtual bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
+    virtual bool setTransform(const yarp::math::FrameTransform& transform) override;
+    virtual bool deleteTransform(std::string t1, std::string t2) override;
+    virtual bool clearAll() override;
 
 private:
     mutable std::mutex          m_trf_mutex;
