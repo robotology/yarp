@@ -87,7 +87,7 @@ corresponding amount of time. In this way the device driver has more to time to 
 (i.e. buffer empty) is triggered. 
  
 One final note regards the two status ports opened by AudioPlayerWrapper and AudioRecorderWrapper devices. 
-These port broadcasts a specific yarp datatype yarp::dev::audioPlayerStatus / yarp::dev::audioRecorderStatus which contains info about the current status of the device,
+These port broadcasts a specific yarp datatype yarp::dev::AudioPlayerStatus / yarp::dev::AudioRecorderStatus which contains info about the current status of the device,
 i.e. if is enabled or not, the size of internal buffer, the current number of samples contained in the buffer.
 
 

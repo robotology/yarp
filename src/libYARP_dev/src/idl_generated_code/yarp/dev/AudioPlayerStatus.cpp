@@ -8,13 +8,13 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/audioRecorderStatus.h>
+#include <yarp/dev/AudioPlayerStatus.h>
 
 namespace yarp {
 namespace dev {
 
 // Default constructor
-audioRecorderStatus::audioRecorderStatus() :
+AudioPlayerStatus::AudioPlayerStatus() :
         WirePortable(),
         enabled(0),
         current_buffer_size(0),
@@ -23,9 +23,9 @@ audioRecorderStatus::audioRecorderStatus() :
 }
 
 // Constructor with field values
-audioRecorderStatus::audioRecorderStatus(const bool enabled,
-                                         const size_t current_buffer_size,
-                                         const size_t max_buffer_size) :
+AudioPlayerStatus::AudioPlayerStatus(const bool enabled,
+                                     const size_t current_buffer_size,
+                                     const size_t max_buffer_size) :
         WirePortable(),
         enabled(enabled),
         current_buffer_size(current_buffer_size),
@@ -34,7 +34,7 @@ audioRecorderStatus::audioRecorderStatus(const bool enabled,
 }
 
 // Read structure on a Wire
-bool audioRecorderStatus::read(yarp::os::idl::WireReader& reader)
+bool AudioPlayerStatus::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_enabled(reader)) {
         return false;
@@ -49,7 +49,7 @@ bool audioRecorderStatus::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool audioRecorderStatus::read(yarp::os::ConnectionReader& connection)
+bool AudioPlayerStatus::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(3)) {
@@ -59,7 +59,7 @@ bool audioRecorderStatus::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool audioRecorderStatus::write(const yarp::os::idl::WireWriter& writer) const
+bool AudioPlayerStatus::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_enabled(writer)) {
         return false;
@@ -74,7 +74,7 @@ bool audioRecorderStatus::write(const yarp::os::idl::WireWriter& writer) const
 }
 
 // Write structure on a Connection
-bool audioRecorderStatus::write(yarp::os::ConnectionWriter& connection) const
+bool AudioPlayerStatus::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(3)) {
@@ -84,7 +84,7 @@ bool audioRecorderStatus::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string audioRecorderStatus::toString() const
+std::string AudioPlayerStatus::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -92,17 +92,17 @@ std::string audioRecorderStatus::toString() const
 }
 
 // Editor: default constructor
-audioRecorderStatus::Editor::Editor()
+AudioPlayerStatus::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new audioRecorderStatus;
+    obj = new AudioPlayerStatus;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-audioRecorderStatus::Editor::Editor(audioRecorderStatus& obj)
+AudioPlayerStatus::Editor::Editor(AudioPlayerStatus& obj)
 {
     group = 0;
     obj_owned = false;
@@ -111,7 +111,7 @@ audioRecorderStatus::Editor::Editor(audioRecorderStatus& obj)
 }
 
 // Editor: destructor
-audioRecorderStatus::Editor::~Editor()
+AudioPlayerStatus::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -119,7 +119,7 @@ audioRecorderStatus::Editor::~Editor()
 }
 
 // Editor: edit
-bool audioRecorderStatus::Editor::edit(audioRecorderStatus& obj, bool dirty)
+bool AudioPlayerStatus::Editor::edit(AudioPlayerStatus& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -131,25 +131,25 @@ bool audioRecorderStatus::Editor::edit(audioRecorderStatus& obj, bool dirty)
 }
 
 // Editor: validity check
-bool audioRecorderStatus::Editor::isValid() const
+bool AudioPlayerStatus::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-audioRecorderStatus& audioRecorderStatus::Editor::state()
+AudioPlayerStatus& AudioPlayerStatus::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void audioRecorderStatus::Editor::start_editing()
+void AudioPlayerStatus::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void audioRecorderStatus::Editor::stop_editing()
+void AudioPlayerStatus::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
@@ -157,7 +157,7 @@ void audioRecorderStatus::Editor::stop_editing()
     }
 }
 // Editor: enabled setter
-void audioRecorderStatus::Editor::set_enabled(const bool enabled)
+void AudioPlayerStatus::Editor::set_enabled(const bool enabled)
 {
     will_set_enabled();
     obj->enabled = enabled;
@@ -167,25 +167,25 @@ void audioRecorderStatus::Editor::set_enabled(const bool enabled)
 }
 
 // Editor: enabled getter
-bool audioRecorderStatus::Editor::get_enabled() const
+bool AudioPlayerStatus::Editor::get_enabled() const
 {
     return obj->enabled;
 }
 
 // Editor: enabled will_set
-bool audioRecorderStatus::Editor::will_set_enabled()
+bool AudioPlayerStatus::Editor::will_set_enabled()
 {
     return true;
 }
 
 // Editor: enabled did_set
-bool audioRecorderStatus::Editor::did_set_enabled()
+bool AudioPlayerStatus::Editor::did_set_enabled()
 {
     return true;
 }
 
 // Editor: current_buffer_size setter
-void audioRecorderStatus::Editor::set_current_buffer_size(const size_t current_buffer_size)
+void AudioPlayerStatus::Editor::set_current_buffer_size(const size_t current_buffer_size)
 {
     will_set_current_buffer_size();
     obj->current_buffer_size = current_buffer_size;
@@ -195,25 +195,25 @@ void audioRecorderStatus::Editor::set_current_buffer_size(const size_t current_b
 }
 
 // Editor: current_buffer_size getter
-size_t audioRecorderStatus::Editor::get_current_buffer_size() const
+size_t AudioPlayerStatus::Editor::get_current_buffer_size() const
 {
     return obj->current_buffer_size;
 }
 
 // Editor: current_buffer_size will_set
-bool audioRecorderStatus::Editor::will_set_current_buffer_size()
+bool AudioPlayerStatus::Editor::will_set_current_buffer_size()
 {
     return true;
 }
 
 // Editor: current_buffer_size did_set
-bool audioRecorderStatus::Editor::did_set_current_buffer_size()
+bool AudioPlayerStatus::Editor::did_set_current_buffer_size()
 {
     return true;
 }
 
 // Editor: max_buffer_size setter
-void audioRecorderStatus::Editor::set_max_buffer_size(const size_t max_buffer_size)
+void AudioPlayerStatus::Editor::set_max_buffer_size(const size_t max_buffer_size)
 {
     will_set_max_buffer_size();
     obj->max_buffer_size = max_buffer_size;
@@ -223,31 +223,31 @@ void audioRecorderStatus::Editor::set_max_buffer_size(const size_t max_buffer_si
 }
 
 // Editor: max_buffer_size getter
-size_t audioRecorderStatus::Editor::get_max_buffer_size() const
+size_t AudioPlayerStatus::Editor::get_max_buffer_size() const
 {
     return obj->max_buffer_size;
 }
 
 // Editor: max_buffer_size will_set
-bool audioRecorderStatus::Editor::will_set_max_buffer_size()
+bool AudioPlayerStatus::Editor::will_set_max_buffer_size()
 {
     return true;
 }
 
 // Editor: max_buffer_size did_set
-bool audioRecorderStatus::Editor::did_set_max_buffer_size()
+bool AudioPlayerStatus::Editor::did_set_max_buffer_size()
 {
     return true;
 }
 
 // Editor: clean
-void audioRecorderStatus::Editor::clean()
+void AudioPlayerStatus::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool audioRecorderStatus::Editor::read(yarp::os::ConnectionReader& connection)
+bool AudioPlayerStatus::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -389,7 +389,7 @@ bool audioRecorderStatus::Editor::read(yarp::os::ConnectionReader& connection)
 }
 
 // Editor: write
-bool audioRecorderStatus::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool AudioPlayerStatus::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -447,7 +447,7 @@ bool audioRecorderStatus::Editor::write(yarp::os::ConnectionWriter& connection) 
 }
 
 // Editor: send if possible
-void audioRecorderStatus::Editor::communicate()
+void AudioPlayerStatus::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -459,13 +459,13 @@ void audioRecorderStatus::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void audioRecorderStatus::Editor::mark_dirty()
+void AudioPlayerStatus::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
 // Editor: enabled mark_dirty
-void audioRecorderStatus::Editor::mark_dirty_enabled()
+void AudioPlayerStatus::Editor::mark_dirty_enabled()
 {
     if (is_dirty_enabled) {
         return;
@@ -476,7 +476,7 @@ void audioRecorderStatus::Editor::mark_dirty_enabled()
 }
 
 // Editor: current_buffer_size mark_dirty
-void audioRecorderStatus::Editor::mark_dirty_current_buffer_size()
+void AudioPlayerStatus::Editor::mark_dirty_current_buffer_size()
 {
     if (is_dirty_current_buffer_size) {
         return;
@@ -487,7 +487,7 @@ void audioRecorderStatus::Editor::mark_dirty_current_buffer_size()
 }
 
 // Editor: max_buffer_size mark_dirty
-void audioRecorderStatus::Editor::mark_dirty_max_buffer_size()
+void AudioPlayerStatus::Editor::mark_dirty_max_buffer_size()
 {
     if (is_dirty_max_buffer_size) {
         return;
@@ -498,7 +498,7 @@ void audioRecorderStatus::Editor::mark_dirty_max_buffer_size()
 }
 
 // Editor: dirty_flags
-void audioRecorderStatus::Editor::dirty_flags(bool flag)
+void AudioPlayerStatus::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
     is_dirty_enabled = flag;
@@ -508,7 +508,7 @@ void audioRecorderStatus::Editor::dirty_flags(bool flag)
 }
 
 // read enabled field
-bool audioRecorderStatus::read_enabled(yarp::os::idl::WireReader& reader)
+bool AudioPlayerStatus::read_enabled(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(enabled)) {
         reader.fail();
@@ -518,7 +518,7 @@ bool audioRecorderStatus::read_enabled(yarp::os::idl::WireReader& reader)
 }
 
 // write enabled field
-bool audioRecorderStatus::write_enabled(const yarp::os::idl::WireWriter& writer) const
+bool AudioPlayerStatus::write_enabled(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(enabled)) {
         return false;
@@ -527,7 +527,7 @@ bool audioRecorderStatus::write_enabled(const yarp::os::idl::WireWriter& writer)
 }
 
 // read (nested) enabled field
-bool audioRecorderStatus::nested_read_enabled(yarp::os::idl::WireReader& reader)
+bool AudioPlayerStatus::nested_read_enabled(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(enabled)) {
         reader.fail();
@@ -537,7 +537,7 @@ bool audioRecorderStatus::nested_read_enabled(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) enabled field
-bool audioRecorderStatus::nested_write_enabled(const yarp::os::idl::WireWriter& writer) const
+bool AudioPlayerStatus::nested_write_enabled(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(enabled)) {
         return false;
@@ -546,7 +546,7 @@ bool audioRecorderStatus::nested_write_enabled(const yarp::os::idl::WireWriter& 
 }
 
 // read current_buffer_size field
-bool audioRecorderStatus::read_current_buffer_size(yarp::os::idl::WireReader& reader)
+bool AudioPlayerStatus::read_current_buffer_size(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readSizeT(current_buffer_size)) {
         reader.fail();
@@ -556,7 +556,7 @@ bool audioRecorderStatus::read_current_buffer_size(yarp::os::idl::WireReader& re
 }
 
 // write current_buffer_size field
-bool audioRecorderStatus::write_current_buffer_size(const yarp::os::idl::WireWriter& writer) const
+bool AudioPlayerStatus::write_current_buffer_size(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeSizeT(current_buffer_size)) {
         return false;
@@ -565,7 +565,7 @@ bool audioRecorderStatus::write_current_buffer_size(const yarp::os::idl::WireWri
 }
 
 // read (nested) current_buffer_size field
-bool audioRecorderStatus::nested_read_current_buffer_size(yarp::os::idl::WireReader& reader)
+bool AudioPlayerStatus::nested_read_current_buffer_size(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readSizeT(current_buffer_size)) {
         reader.fail();
@@ -575,7 +575,7 @@ bool audioRecorderStatus::nested_read_current_buffer_size(yarp::os::idl::WireRea
 }
 
 // write (nested) current_buffer_size field
-bool audioRecorderStatus::nested_write_current_buffer_size(const yarp::os::idl::WireWriter& writer) const
+bool AudioPlayerStatus::nested_write_current_buffer_size(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeSizeT(current_buffer_size)) {
         return false;
@@ -584,7 +584,7 @@ bool audioRecorderStatus::nested_write_current_buffer_size(const yarp::os::idl::
 }
 
 // read max_buffer_size field
-bool audioRecorderStatus::read_max_buffer_size(yarp::os::idl::WireReader& reader)
+bool AudioPlayerStatus::read_max_buffer_size(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readSizeT(max_buffer_size)) {
         reader.fail();
@@ -594,7 +594,7 @@ bool audioRecorderStatus::read_max_buffer_size(yarp::os::idl::WireReader& reader
 }
 
 // write max_buffer_size field
-bool audioRecorderStatus::write_max_buffer_size(const yarp::os::idl::WireWriter& writer) const
+bool AudioPlayerStatus::write_max_buffer_size(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeSizeT(max_buffer_size)) {
         return false;
@@ -603,7 +603,7 @@ bool audioRecorderStatus::write_max_buffer_size(const yarp::os::idl::WireWriter&
 }
 
 // read (nested) max_buffer_size field
-bool audioRecorderStatus::nested_read_max_buffer_size(yarp::os::idl::WireReader& reader)
+bool AudioPlayerStatus::nested_read_max_buffer_size(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readSizeT(max_buffer_size)) {
         reader.fail();
@@ -613,7 +613,7 @@ bool audioRecorderStatus::nested_read_max_buffer_size(yarp::os::idl::WireReader&
 }
 
 // write (nested) max_buffer_size field
-bool audioRecorderStatus::nested_write_max_buffer_size(const yarp::os::idl::WireWriter& writer) const
+bool AudioPlayerStatus::nested_write_max_buffer_size(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeSizeT(max_buffer_size)) {
         return false;

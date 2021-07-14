@@ -259,8 +259,8 @@ set(YARP_dev_IDL
   idl/OdometryData6D.thrift
   idl/LaserScan2D.thrift
   idl/MobileBaseVelocity.thrift
-  idl/audioPlayerStatus.thrift
-  idl/audioRecorderStatus.thrift
+  idl/AudioPlayerStatus.thrift
+  idl/AudioRecorderStatus.thrift
 )
 
 if(TARGET YARP::YARP_math)
