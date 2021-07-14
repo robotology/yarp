@@ -8,24 +8,24 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H
-#define YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_AUDIORECORDERSTATUS_H
+#define YARP_THRIFT_GENERATOR_STRUCT_AUDIORECORDERSTATUS_H
 
 #include <yarp/dev/api.h>
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-#include <yarp/dev/audioPlayerStatus_common.h>
+#include <yarp/dev/AudioRecorderStatus_common.h>
 
 namespace yarp {
 namespace dev {
 
 /**
- * \brief `audioPlayerStatus`: A class used to describe the status of an audio player device.
+ * \brief `AudioRecorderStatus`: A class used to describe the status of an audio recorder device.
  * See \ref AudioDoc for additional documentation on YARP audio.
  */
-class YARP_dev_API audioPlayerStatus :
+class YARP_dev_API AudioRecorderStatus :
         public yarp::os::idl::WirePortable
 {
 public:
@@ -44,12 +44,12 @@ public:
     size_t max_buffer_size;
 
     // Default constructor
-    audioPlayerStatus();
+    AudioRecorderStatus();
 
     // Constructor with field values
-    audioPlayerStatus(const bool enabled,
-                      const size_t current_buffer_size,
-                      const size_t max_buffer_size);
+    AudioRecorderStatus(const bool enabled,
+                        const size_t current_buffer_size,
+                        const size_t max_buffer_size);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -67,7 +67,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<audioPlayerStatus> unwrapped;
+    typedef yarp::os::idl::Unwrapped<AudioRecorderStatus> unwrapped;
 
     class Editor :
             public yarp::os::Wire,
@@ -78,7 +78,7 @@ public:
         Editor();
 
         // Editor: constructor with base class
-        Editor(audioPlayerStatus& obj);
+        Editor(AudioRecorderStatus& obj);
 
         // Editor: destructor
         ~Editor() override;
@@ -90,13 +90,13 @@ public:
         Editor& operator=(Editor&& rhs) = delete;
 
         // Editor: edit
-        bool edit(audioPlayerStatus& obj, bool dirty = true);
+        bool edit(AudioRecorderStatus& obj, bool dirty = true);
 
         // Editor: validity check
         bool isValid() const;
 
         // Editor: state
-        audioPlayerStatus& state();
+        AudioRecorderStatus& state();
 
         // Editor: start editing
         void start_editing();
@@ -149,7 +149,7 @@ public:
 
     private:
         // Editor: state
-        audioPlayerStatus* obj;
+        AudioRecorderStatus* obj;
         bool obj_owned;
         int group;
 
@@ -198,4 +198,4 @@ private:
 } // namespace yarp
 } // namespace dev
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_AUDIORECORDERSTATUS_H
