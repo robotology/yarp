@@ -1,0 +1,844 @@
+YARP <master> (UNRELEASED)                                         {#master}
+============================
+
+[TOC]
+
+YARP <master> Release Notes
+=============================
+
+
+A (partial) list of bug fixed and issues resolved in this release can be found
+[here](https://github.com/robotology/yarp/issues?q=label%3A%22Fixed+in%3A+YARP+master%22).
+
+
+
+Important Changes
+-----------------
+
+### Dependencies
+
+* OpenCV 2 is no longer supported.
+* Added optional Zlib dependency.
+* Qt 5.4 or later is now requred to build YARP GUIs.
+
+### Libraries
+
+#### `sig`
+
+##### `Image`
+
+* Bottom to top images are no longer flipped when sent through the network. This
+  means that the image needs to be manually flipped after it is received.
+* Bottom to top images might cause issues when received by YARP 3.4.5 or
+  earlier.
+
+### Devices
+
+* The `ovrheadset` device driver was moved to
+  https://github.com/robotology/yarp-device-ovrheadset
+* The `realsense2`, `realsense2withIMU` and `realsense2Tracking` device drivers
+  were moved to https://github.com/robotology/yarp-device-realsense2
+* This release introduces the Network Wrapper Server/Client Architecture
+  as described in #2441. This architecture enables ROS2 compatibility
+  which is currently developed in the
+  [yarp-ros2](https://github.com/robotology-playground/yarp-ros2/) repository.
+
+
+Deprecation and Behaviour Changes
+---------------------------------
+
+### Libraries
+
+#### `conf`
+
+* `filesystem::path_separator` is deprecated in favour of
+  `environment::path_separator`
+* `yarp::conf::environment::getEnvironment` is deprecated in favour of
+  `yarp::conf::environment::get_string`
+* `yarp::conf::environment::setEnvironment` is deprecated in favour of
+  `yarp::conf::environment::set_string`
+* `yarp::conf::environment::unsetEnvironment` is deprecated in favour of
+  `yarp::conf::environment::unset`
+* The `YARP_DEPRECATED_API` and `YARP_DEPRECATED_API_MSG` defines are now
+  deprecated in favour of `YARP_DEPRECATED_EXPORT`, `YARP_DEPRECATED_IMPORT`,
+  `YARP_DEPRECATED_MSG_EXPORT`, and `YARP_DEPRECATED_MSG_IMPORT`.
+
+#### `os`
+
+##### `Bottle`
+
+* `BOTTLE_TAG_INT` is deprecated in favour of `BOTTLE_TAG_INT32`
+* `BOTTLE_TAG_DOUBLE` is deprecated in favour of `BOTTLE_TAG_FLOAT64`
+* `BOTTLE_TAG_VOCAB` is deprecated in favour of `BOTTLE_TAG_VOCAB32`
+* `addInt` is deprecated in favour of `addInt32`
+* `addDouble` is deprecated in favour of `addFloat64`
+* `yarp::os::Bottle::addVocab()` is deprecated in favour of
+  `yarp::os::Bottle::addVocab32()`
+
+##### `ConnectionReader`
+
+* `expectInt` is deprecated in favour of `expectInt32`
+* `expectDouble` is deprecated in favour of `expectFloat64`
+
+##### `ConnectionWriter`
+
+* `appendInt` is deprecated in favour of `appendInt32`
+* `appendDouble` is deprecated in favour of `appendFloat64`
+
+##### `LogStream`
+
+* The `operator<<` for `std::ostream` and `std::vector` which caused conflicts
+  with Casadi was removed (#2067).
+
+##### `NetType`
+
+* `toHexString` is deprecated in favour of `yarp::conf::numeric::to_hex_string`
+* `toString` is deprecated in favour of `yarp::conf::numeric::to_string`
+* `toInt`, `toFloat32` and `toFloat64` are deprecated in favour of
+  `yarp::conf::numeric::from_string`
+
+##### `Stamp`
+
+* Using `Header` instead of `Stamp` is now recommended.
+
+##### `Value`
+
+* `isInt()` is deprecated in favour of `isInt32()`
+* `isDouble()` is deprecated in favour of `isFloat64()`
+* `asInt()` is deprecated in favour of `asInt32()`
+* `asDouble()` is deprecated in favour of `asFloat64()`
+* `makeInt()` is deprecated in favour of `makeInt32()`
+* `makeDouble()` is deprecated in favour of `makeFloat64()`
+* `isVocab()` is deprecated in favour of `isVocab32()`
+* `asVocab()` is deprecated in favour of `asVocab32()`
+* `makeVocab()` is deprecated in favour of `makeVocab32()`
+
+##### `Vocab`
+
+* `yarp::os::createVocab()` is deprecated in favour of
+  `yarp::os::createVocab32()`
+* `yarp::os::Vocab::encode()` is deprecated in favour of
+  `yarp::os::Vocab32::encode()`
+* `yarp::os::Vocab::decode()` is deprecated in favour of
+  `yarp::os::Vocab32::decode()`
+
+##### `WireReader`
+
+* `getIsVocab()` is deprecated in favour of `getIsVocab32()`
+* `readVocab()` is now deprecated in favour of `readVocab32()`
+
+##### `WireWriter`
+
+ * `writeVocab()` is now deprecated in favour of `writeVocab32()`
+
+#### `sig`
+
+##### `IntrinsicParams`
+
+* `YARP_PLUM_BOB` is deprecated in favour of `YARP_PLUMB_BOB`.
+
+
+#### `dev`
+
+* The `yarp/dev/FrameGrabberControl2.h` header file was properly marked as
+  deprecated (it should have been deprecated in YARP 3.0)
+* The `yarp/dev/FrameGrabberInterfaces.h` header file was deprecated.
+  All interfaces were moved in the corresponding header.
+* All classes and vocabs moved in `framegrabber_protocol` library were removed.
+  This is an API break, but nobody should be using these outside of YARP.
+* The flag `VOCAB_NAV_CLEAR_X`, defined in file `ILocalization2D.h` has been
+  renamed to `VOCAB_NAV_CLEARALL_X` to avoid confusion with flag
+  `VOCAB_NAV_DELETE_X`.
+  `VOCAB_NAV_CLEARALL_X` clears all data belonging to the same category (all
+  maps, all locations, all areas, etc), while `VOCAB_NAV_DELETE_X`, deletes a
+  single entity (a map with name x, a location with name x etc).
+* The `IVisualParams.h` file was deprecated in favour of `IRgbVisualParams.h`
+  and `IDepthVisualParams`.
+* All headers for the deprecated interfaces are now properly deprecated.
+* The interfaces `IFrameGrabber` and `IFrameGrabberRgb` are now deprecated.
+
+##### `IDepthVisualParams`
+
+* The `retificationMatrix` parameter was renamed `rectificationMatrix`
+
+##### `IRgbVisualParams`
+
+* The `retificationMatrix` parameter was renamed `rectificationMatrix`
+
+
+#### `robotinterface`
+
+* The `robotinterface` library is no longer considered experimental, all
+  files in the `experimental` folder and classes in the `experimental` namespace
+  are now deprecated and will be removed in the next release.
+
+
+### Port Monitors
+
+* Port monitors were reorganized and renamed without keeping the back
+  compatibility with the old name.
+  The new names are:
+  * `depthimage_compression_zfp` (`zfp`)
+  * `depthimage_to_mono` (`depthimage`)
+  * `depthimage_to_rgb` (`depthimage2`)
+  * `segmentationimage_to_rgb` (`segmentationimage`)
+
+
+### Devices
+
+* The following devices are now deprecated:
+  * `test_grabber` in favour of `fakeFrameGrabber`
+  * `fakeMotor` in favour of `fakeMotionControl`
+  * `test_motor` in favour of `fakeMotionControl`
+  * `fakebot`
+
+* The following devices will be replaced by NWS/NWC in the next release, and
+  print a warning when opened:
+  * `controlboardwrapper2` (replaced by `controlboardremapper` + `controlBoard_nws_yarp`)
+  * `RGBDSensorWrapper` (replaced by `rgbdSensor_nws_yarp`)
+  * `Rangefinder2DWrapper` (replaced by `rangefinder2D_nws_yarp`)
+  * `grabberDual` (replaced by `frameGrabber_nws_yarp`, and eventually `frameGrabberCropper`)
+  * `inertial` (replaced by `multipleanalogsensorsremapper` + `multipleanalogsensorsserver` + `IMURosPublisher`)
+  * `localization2DServer` (replaced by `localization2D_nws_yarp`)
+  * `map2DServer` (replaced by `map2D_nws_yarp`)
+  * `transformClient` (replaced by `frameTransformClient`)
+  * `transformServer` (replaced by `frameTransformServer`)
+
+
+New Features
+------------
+
+### Libraries
+
+#### `conf`
+
+* Added the following functions in `<yarp/conf/numeric.h>`:
+  * `yarp::conf::numeric::from_string`
+  * `yarp::conf::numeric::to_string`
+  * `yarp::conf::numeric::to_hex_string`
+* Added the header `<yarp/conf/string.h>` containing the following functions:
+  * `yarp::conf::string::split`
+  * `yarp::conf::string::join`
+* Added `environment::path_separator`
+* Added the following functions in `<yarp/conf/environment.h>`:
+  * `yarp::conf::environment::get_string`
+  * `yarp::conf::environment::set_string`
+  * `yarp::conf::environment::get_bool`
+  * `yarp::conf::environment::set_bool`
+  * `yarp::conf::environment::get_numeric`
+  * `yarp::conf::environment::set_numeric`
+  * `yarp::conf::environment::split_path`
+  * `yarp::conf::environment::join_path`
+  * `yarp::conf::environment::get_path`
+  * `yarp::conf::environment::set_path`
+  * `yarp::conf::environment::unset`
+  * `yarp::conf::environment::is_set`
+
+
+#### `os`
+
+* Introduced the `yarp::os::Header` class, intended to gradually replace the
+  `yarp::os::Stamp` class to handle envelopes, maintaining backwards
+  compatibility.
+  The differences with the `Stamp` class:
+  * `Header` has an extra field to handle the frame id, making it comparable
+    with ROS [`std_msgs/Header`](http://docs.ros.org/en/api/std_msgs/html/msg/Header.html)
+    message.
+  * The counter uses unsigned int instead of int.
+  * `Stamp::getMaxCount()` is replaced with `Header::npos`
+  * `Stamp::getCount()` is replaced with `Header::count()`
+  * `Stamp::getTime()` is replaced with `Header::timeStamp()`
+
+#### `Bottle`
+
+ * Added `BOTTLE_TAG_VOCAB32` tag. This is the same as `BOTTLE_TAG_VOCAB`.
+ * The usage of `BOTTLE_TAG_VOCAB` is not recommended in new code, use
+   `BOTTLE_TAG_VOCAB32` instead.
+  * Added `addVocab32()` overloads accepting 4 chars and string.
+
+##### `DummyConnector`
+
+* The `getReader` methods now accepts a `ConnectionWriter` as optional
+  parameter. This writer is returned by `getWriter` is called on the
+  `ConnectionReader` returned by the writer, and it is therefore used for the
+  replies in `Portable`s and in a few other cases.
+
+##### `Log`
+
+* The `YARP_FORWARD_CODEINFO_ENABLE`, `YARP_FORWARD_HOSTNAME_ENABLE`,
+  `YARP_FORWARD_PROCESSINFO_ENABLE`, and `YARP_FORWARD_BACKTRACE_ENABLE` are no
+  longer considered experimental.
+
+##### `PeriodicThread`
+
+* The constructor now accepts a third (optional) parameter, `clockAccuracy`,
+  which enables drift compensation using an absolute time reference to ensure
+  all steps trigger at precise intervals, thus avoiding error accumulation over
+  time. Set it to `PeriodicThreadClock::Absolute` to enable the new behavior,
+  default is `PeriodicThreadClock::Relative` (old behavior). Beware that, in
+  absolute mode, starvation may occur if two busy threads share a common
+  resource (#2488).
+* Added new constructor:
+  * `PeriodicThread(double period, PeriodicThreadClock clockAccuracy)`.
+
+##### `Property`
+
+* `.ini` configuration files can now contain the command
+  `[import <contextname> <filename>]` which includes a `.ini` file from a
+  different context.
+
+##### `Value`
+
+* Added `makeVocab32()` overload accepting 4 chars
+
+
+##### `Wire`
+
+* Added `yarp()` const overload
+
+##### `WireLink`
+
+* The write method is now const. The signature is now:
+  ```c++
+  bool write(const PortWriter& writer, PortReader& reader) const
+  ```
+
+##### `WireReader`
+
+* Vocabs are now accepted in readI32
+ * Added the following methods:
+   * `readVocab32`
+   * `readUI8`
+   * `readUI16`
+   * `readUI32`
+   * `readUI64`
+   * `readSizeT`
+
+##### `WireWriter`
+
+ * Added the following methods:
+   * `writeVocab32`
+   * `writeUI8`
+   * `writeUI16`
+   * `writeUI32`
+   * `writeUI64`
+   * `writeSizeT`
+ * Added `addVocab32()` overloads accepting 4 chars and string
+
+
+#### `sig`
+
+##### `file`
+
+* Added read support for JPEG files.
+* added read/write support for MP3 files.
+* Added the following methods:
+  * `yarp::sig::file::read_bytestream(Sound& data, const char* bytestream, size_t streamsize, std::string format)`
+
+##### `utils`
+
+* Added an optional parameter to `depthRgbToPC` to make the pointcloud
+  unorganized and remove zero points.
+
+##### `Image`
+
+* Added `move()` and `swap()` methods.
+
+##### `Sound`
+
+* Added the following methods:
+  * `void amplifyChannel(size_t channel, double gain)`
+  * `void amplify(double gain)`
+  * `void findPeakInChannel(size_t channelId, size_t& sampleId, audio_sample& sampleValue) const`
+  * `void findPeak(size_t& channelId, size_t& sampleId, audio_sample& sampleValue) const`
+  * `void normalizeChannel(size_t channel)`
+  * `void normalize()`
+
+##### `utils`
+
+* Added `cropRect()` helper function for cropping a rectangle area out of an
+  image given two opposite vertices.
+
+
+#### `dev`
+
+* Added the new `WrapperSingle` and `WrapperMultiple` helper classes, that
+  inherit from both `IWrapper` and `IMultipleWrapper` but require to implement
+  only one of these interfaces.
+* Added the template class `IFrameGrabberOf<typename ImageType>`.
+  It is now possible to implement the same interface as for `IFrameGrabberImage`
+  and `IFrameGrabberImageRaw`, but for different pixel types or for `FlexImage`.
+* Added the new datatypes generated by thrift:
+  * `yarp::dev::AudioRecorderStatus`
+  * `yarp::dev::AudioPlayerStatus`
+* Added the new class `AudioPlayerDeviceBase`, all playback device drivers now
+  inherit from this class.
+* Added the new class `AudioRecorerDeviceBase`, all recording device drivers now
+  inherit from this class.
+
+##### `IFrameGrabberImage`
+
+* The `getImageCrop` method has now a working default implementation.
+* The `IFrameGrabberImage` interface is now an alias for
+  `IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelRgb>>`.
+
+##### `IFrameGrabberImageRaw`
+
+* The `getImageCrop` method has now a working default implementation.
+* The `IFrameGrabberImageRaw` interface is now an alias for
+  `IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelMono>>`.
+
+##### `IAudioRender`
+
+* Added the new methods:
+  * `bool setHWGain(double gain)`
+  * `bool setSWGain(double gain)`
+
+##### `IAudioGrabberSound`
+
+* Added the new methods:
+  * `bool setHWGain(double gain)`
+  * `bool setSWGain(double gain)`
+
+##### `Lidar2DDeviceBase`
+
+* The `Lidar2DDeviceBase` class, now implements `yarp::dev::IPreciselyTimed`.
+* All lidar devices must implement the method `acquireDataFromHW()` which is
+  pure virtual in `Lidar2DDeviceBase`
+* Lidar devices can optionally call the method
+  `Lidar2DDeviceBase::updateLidarData`, which calls `acquireDataFromHW()` and a
+  few other utility functions (e.g. updateTimestamp(), etc.)
+* The run() method of the devices, which was previously responsible for the data
+  collection, now just calls `updateLidarData()`.
+
+##### `Nav2D::IMap2D`
+
+* Added the new methods:
+  * `bool clearAllMapsTemporaryFlags()`
+  * `bool clearMapTemporaryFlags(std::string map_name)`
+  * `bool saveLocationsAndExtras(std::string locations_collection_file)`
+  * `bool loadLocationsAndExtras(std::string locations_collection_file)`
+
+##### `Nav2D::MapGrid2D`
+
+* Added the new method:
+  * `void clearMapTemporaryFlags()`
+* Added internal lossless compression using Zlib.
+  The `write()` and `read()` methods handle the compression before sending data
+  to the network.
+* Added method `enable_map_compression_over_network()` to enables/disables data
+  compression over the network (default true). Compression is always disabled if
+  Zlib library is not available.
+* Improved logic to convert ros map images to ros occupancy data and viceversa.
+
+##### `Nav2D::Map2DLocation`
+
+* Added the new method
+  * `bool is_near_to(const Map2DLocation& other_loc, double linear_tolerance, double angular_tolerance) const`
+
+
+#### `robotinterface`
+
+* The robotinterface library is no longer considered experimental, files and
+  classes have been moved accordingly.
+* robotinterface DTD version is now 3.1.
+* It is now possible to pass the `device` parameter to the `attach` action,
+  without defining `network` or `networks`. For example:
+
+  ```.xml
+  <device name="foo_name" type="foo_type">
+    <action phase="startup" level="5" type="attach">
+      <param name="device"> bar_name </param>
+    </action>
+    <action phase="shutdown" level="5" type="detach" />
+  </device>
+  ```
+
+##### `XMLReader`
+
+* The `getRobotFromFile` and `getRobotFromString` now accept a `Searchable` that
+  is used to replace params with the attribute `extern-name`.
+  The signatures are now:
+  ```
+      XMLReaderResult getRobotFromFile(const std::string& filename,
+                                       const yarp::os::Searchable& config = yarp::os::Property());
+      XMLReaderResult getRobotFromString(const std::string& filename,
+                                         const yarp::os::Searchable& config = yarp::os::Property());
+  ```
+
+
+### Carriers
+
+* The `unix_stream` carrier is no longer considered experimental.
+
+
+### Port Monitors
+
+* There is now a new `yarppm` library (similar to `yarpcar` and `yarpmod`) that
+  links all the portmonitors in static builds.
+* Added `image_compression_ffmpeg` port monitor to compress a video stream using
+  the H264, H265, or MPEG2VIDEO codec.
+* Added `sound_compression_mp3` port monitor to decompress a mp3 bytestream to
+ `yarp::sig::Sound`. Encoding not supported yet.
+* Added `depthimage_compression_zlib` port monitor which uses the Zlib library
+  to compress/decompress (lossless) depth images through the network.
+
+
+### Devices
+
+#### `AudioPlayerWrapper`
+
+* Added RPC commands to control the volume via `setHWGain()` and `setSWGain()`.
+* It now broadcasts its internal status on a `xxx/status:o` port
+
+#### `AudioRecorderWrapper`
+
+* Added RPC commands to control the volume via `setHWGain()` and `setSWGain()`.
+* It now broadcasts its internal status on a `xxx/status:o` port
+
+#### `fakeFrameGrabber`
+
+* added RPC port, to change its mode at runtime. It is also possibile to load a
+  new background image at runtime.
+  Rpc command 'help' will display available commands.
+* Added `--timestamp` option to write the timestamp in the first bytes of the
+  image. This was previously automatically enabled in `line` mode, but it can
+  now be used in all modes.
+* Double buffering is now used to produce the image on a separate thread. This
+  should improve performances when generating large images.
+* The `getImage()` method no longer blocks the caller.
+  The `--syncro` option was added to restore the old behavior.
+* The `topIsLow` option and the `set_topIsLow` rpc command were added to produce
+  images with bottom to top scanlines.
+* Added `--noise` options and `set_noise` RPC commands to add a a white noise to
+  the generated image.
+* Added `--snr` option and `set_snr` RPC commands. to specify the signal noise
+  ratio if `noise` is enabled.
+
+#### `fakeLaser`
+
+* Added rpc port to dynamically create obstacles in the map. Use the rpc command
+  'help' to get additional information.
+* Improved the ray tracing algorithm: laser scans are now bound to the map size.
+* Added `map_context` parameter to load a test map from a specific context.
+
+#### `fakeMicrophone`
+
+* It now generates a fixed tone sound.
+
+#### `fakeNavigation`
+
+* Several improvements for testing purposes.
+
+#### `frameTransformServer`
+
+* Added a new RPC command `generate_view` which generates via `dot (graphviz)`
+  a pdf file, containing a diagram of the transforms tree.
+
+
+#### `map2DServer`
+
+* Added `enable_maps_compression <0/1>` RPC command.
+
+#### `navigation2DClient`
+
+* `getNameOfCurrentTarget()` logic moved from `Navigation2DClient` to
+  `navigation2DServer`.
+
+
+### Tools
+
+* Added `yarpdataplayer-console` tool that works without without a graphic
+  server.
+
+#### `yarp`
+
+* The `read` subcommand now accepts the `trim` argument to reduce the number of
+  characters printed for each message received.
+* Added the following new subcommands:
+  * `yarp latency-test`: performs a latency test exchanging data between a
+    server and a client node.
+  * `yarp repeat`: repeats in an output port all data received in an input port.
+    The command is useful to control stream flows on a wifi/mobile connection.
+  * `yarp stats`: opens a temporary port to receive data from a remote port (at
+    maximum speed). It also prints basic statistics about data trasferred on the
+    instantiated connection.
+  * `yarp trafficgen`: sends generated data over a yarp port. The tool allows to
+    test the communication and the available bandwidth over the network.
+
+#### `yarpdatadumper`
+
+* The following data outputs for the `--type` parameter are now supported:
+  * `bottle` (default)
+  * `image`
+  * `image_jpg`
+  * `image_png`
+  * `video`
+  * `depth`
+  * `depth_compressed`
+
+#### `yarprobotinterface`
+
+* Arguments taken from the command line are now handled and used to replace
+  parameters marked with the attribute `extern-name`.
+
+#### `yarpidl_thrift`
+
+* Thrift was updated to version 0.14.1.
+* Added support for `uint8_t`, `uint16_t`, `uint32_t`, `uint64_t`, `size_t`,
+  `float32_t` and `float64_t` using annotated types.
+  It is now possible to use these types in thrift by defining them using a
+  `typedef`, for example:
+  ```
+  typedef i32 ( yarp.type = "yarp::conf::vocab32_t" ) vocab
+  typedef i8 ( yarp.type = "std::uint8_t" ) ui8
+  typedef i16 ( yarp.type = "std::uint16_t" ) ui16
+  typedef i32 ( yarp.type = "std::uint32_t" ) ui32
+  typedef i64 ( yarp.type = "std::uint64_t" ) ui64
+  typedef i32 ( yarp.type = "size_t" ) size_t
+  typedef double ( yarp.type = "yarp::conf::float32_t" ) float32
+  typedef double ( yarp.type = "yarp::conf::float32_t" ) float64
+
+  struct TestAnnotatedTypes
+  {
+    1: vocab a_vocab,
+    2: ui8 a_ui8,
+    3: ui16 a_ui16,
+    4: ui32 a_ui32,
+    5: ui64 a_ui64,
+    6: float32 a_float32,
+    7: float64 a_float64,
+    8: size_t a_size;
+  }
+  ```
+* Types annotated with "yarp.type" are no longer serialized as nested.
+  This improves the compatibility with existing services returning Bottle
+  or other YARP types, and makes it possible to write a thrift file for
+  existing protocols.
+  On the other hand, this breaks compatibility with thrift services
+  returning Bottles or other annotated types, generated before this
+  commit. This is a breaking change, but should impact only a very
+  limited number of cases, and it can be easily fixed by regenerating the
+  files.
+* Added support for vocabs in structs (#2476).
+  Vocabs can be defined in this way:
+  ```cpp
+  typedef i32 ( yarp.type = "yarp::conf::vocab32_t" ) vocab
+
+  struct FooStruct
+  {
+      1: vocab foo;
+  }
+  ```
+* Added "yarp.nested" annotation for struct fields
+  When defined = "true", this serialize a struct as a bottle instead of as a
+  flat structure.
+  For example, given these 2 structs:
+  ```cpp
+  struct Foo
+  {
+      1: double foo1;
+      2: double foo2;
+  }
+
+  struct Bar
+  {
+      1: double bar1;
+      2: Foo ( yarp.nested = "true" );
+  }
+  ```
+  The `Bar` struct will be serialized as `bar1 (foo1 foo2)`, instead of as a
+  flat struct `bar1 foo1 foo2`.
+* It is now possible to specify a "const" qualifier to service methods using the
+  `yarp.qualifier` annotation. For example, this code:
+  ```
+  service Foo {
+    bool const_method() (yarp.qualifier = "const");
+  }
+  ```
+  will generate a service `Foo` with this method:
+  ```c++
+  bool const_method() const
+  ```
+
+
+### GUIs
+
+#### `yarpview`
+
+* Added the `--rightout <portname>` option that enables intercepting the mouse
+  right button click events:
+  * Single click (sends the current cursor coordinates to the specified output
+    port)
+  * Press, drag, and release (sends the coordinates of the `press` point and of
+    the `release` one to the specified output port)
+* Added `Image/Intercept right click` checkable menu item to enable/disable
+  the right click interception (not available in `minimal` or `compact` mode or
+  if the `--rightout` option was not enabled).
+
+#### yarpdataplayer
+
+* It is now possible to reproduce `depth` and `depth_compressed` data types.
+* The `yarpdataplayer` tool was refactored, several bugs fixed, and new features
+  added (#1144, #2140, #2151, #2400, #2401, #2442).
+
+
+### Bindings
+
+* Added support for `std::vector<short int>`.
+* Added support for `yarp::sig::VectorOf<int>`.
+* Added the following extensions to `yarp::sig::Sound`
+  * `sound2VecNonInterleaved()`
+  * `vecNonInterleaved2Sound()`
+  * `sound2VecInterleaved()`
+  * `vecInterleaved2Sound()`
+
+
+
+New Experimental Features
+-------------------------
+
+**EXPERIMENTAL** means that the software is under development, provided with
+incomplete documentation and it may be modified/renamed/removed without any
+notice.
+
+### Carriers
+
+* Added new **EXPERIMENTAL** `websocket` carrier.
+  It works only on the receiving side, and it works on an http request
+  that starts with `"GET /?ws"` (for example 'http://127.0.0.1:10002/?ws'
+  or 'ws://127.0.0.1:10002/?ws' if a read port is opened by yarp).
+  The websocket, on the browser side, needs to communicate using the YARP
+  protocol.
+
+### Devices
+
+* Added the following new **EXPERIMENTAL** devices:
+  * `RGBDFromRosTopic`: it can be wrapped by `RGBDSSensorWrapper` to make RGBD
+    data, collected by a ROS device, available on YARP via `RGBDSensorClient`.
+  * `map2DStorage`: store navigation data, e.g `MapGrid2D`,`Map2DLocation` etc.
+    It implements all the logic previously located inside device 'Map2DServer'.
+  * `audioFromFileDevice`: wrapped by `audioRecorderWrapper`.
+  * `audioToFileDevice`: wrapped by `audioPlayerWrapper`.
+  * `frameGrabberCropper`: attaches to a frameGrabber and published part of the
+    image
+  * `frameTransformStorage`
+  * `frameTransformSetMultiplexer`
+  * `frameTransformGetMultiplexer`
+* Several new **EXPERIMENTAL** devices were added in order to implement the
+  Network Wrapper Server/Client Architecture described in #2441.
+  These devices do not implement internal logic, therefore they might need to be
+  used together with a different device.
+  This architecture and all these devices are to be considered experimental,
+  and may be modified/renamed/removed at any time without any notice.
+  * `controlBoard_nws_ros`: ROS NWS that can be used to replace
+    `controlboardwrapper2` (does not handle networks, use `controlboardremapper`
+    for that). It requires that the `yarp::dev::IAxisInfo` is implemented in the
+    device.
+  * `controlBoard_nws_yarp`: YARP NWS that can be used to replace
+    `controlboardwrapper2` (does not handle networks, use `controlboardremapper`
+    for that).
+  * `frameGrabber_nws_ros`: ROS NWS that can be used to replace
+    `grabberDual` (does not handle image split, use `frameGrabberCropper` for
+    that)
+  * `frameGrabber_nws_yarp`: YARP NWS that can be used to replace
+    `grabberDual` (does not handle image split, use `frameGrabberCropper` for
+    that)
+  * `frameGrabber_nwc_yarp`: YARP NWC that can be used to replace
+    `remote_grabber`
+  * `localization2D_nws_ros`: ROS NWS for devices which implement the
+    `ILocalization2D` interface, that can be used to replace
+    `localization2DServer`.
+  * `localization2D_nws_yarp`: YARP NWS for devices which implement the
+    `ILocalization2D` interface, that can be used to replace
+    `localization2DServer`.
+  * `map2D_nws_ros`: ROS NWS for a `map2DStorage` device.
+  * `map2D_nws_yarp`: YARP NWS for a `map2DStorage` device.
+  * `rangefinder2D_nws_ros`: ROS NWS for devices exposing
+    `IRangefinder2D` interface.
+  * `rangefinder2D_nws_yarp`: YARP NWS for devices exposing
+    `IRangefinder2D` interface.
+  * `rgbdSensor_nws_ros`: ROS NWS to replace `RGBDSensorWrapper`.
+  * `rgbdSensor_nws_yarp`: YARP NWS to replace `RGBDSensorWrapper`.
+  * `rgbdToPointCloudSensor_nws_ros`: enables point cloud publication from yarp
+    to ros. It converts RGBD data to point cloud and publishes it on a ros
+    topic.
+  * `frameTransformGet_nws_ros`
+  * `frameTransformGet_nws_yarp`
+  * `frameTransformSet_nws_ros`
+  * `frameTransformSet_nws_yarp`
+  All these interfaces have the following differences with their original
+  wrappers:
+  * All deprecated parameters were removed
+  * Periods are in seconds, and not in milliseconds.
+  * Parameters in `nws_ros` devices no longer have the "ROS_" prefix".
+* Added new **EXPERIMENTAL** devices `frameTransformClient` and `frameTransformServer`.
+  These devices are mostly empty containers for multiple plugins that can be
+  combined together through a `yarprobotinterface` xml file.
+  Different configuration files can be used for different purposes, such as
+  publishing/subscribing transforms on YARP, ROS, ROS2 etc. Please refer to the
+  documentation for additional details.
+  Old devices with frame transform management functionality are called
+  `transformServer` and `transformClient`. These devices should be now
+  considered deprecated and they must be not confused with the new devices
+  included in this PR. A yarp page documentation has been added to show the
+  different possible configurations.
+* The `laserFromRosTopic` is still considered **EXPERIMENTAL**, since it will
+  be replaced by an appropriate NWC
+
+### Bindings
+
+#### Python
+
+* Introduced unofficial support to install YARP with tools like `pip`.
+  A new `yarp-middleware` package is now distributed in PyPI.
+
+Bug Fixes
+---------
+
+### Libraries
+
+#### `sig`
+
+##### `Image`
+
+* The `topIsLow` flag is now properly handled, kept in sync with the internal
+  `IplImage`, and forwarded through the network.
+
+##### `ImageFile`
+
+* Fixed `SavePNG()` producing corrupted output files.
+
+
+## Carriers
+
+### `portmonitor`
+
+* The reply handler is now set correctly, it is therefore now possible to
+  monitor RPC connections.
+
+
+### Devices
+
+#### `grabberDual`
+
+* The `topIsLow` flag is no longer changed.
+
+### Devices
+
+#### `RGBDSensorClient`
+
+* The device no longer crashes when no image was received yet (#2349).
+* The timestamp is now correct.
+
+#### `map2DServer`
+
+* Fixed issue preventing correct file save/load operations of locations data.
+
+
+### GUIs
+
+#### yarpdataplayer
+
+* Timestamp is now interpreted correctly, dealing with locale issues (#2558).
+* Fixed step command in RPC exhibiting odd behaviors (#2151).

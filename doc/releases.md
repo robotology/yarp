@@ -3,7 +3,7 @@ YARP ChangeLog                                                      {#changelog}
 
 This page lists the main changes introduced in YARP at each release.
 
-## Next YARP Release                                              {#yarp_master}
+## YARP 3.5 Series                                            {#yarp_3_5_series}
 * \subpage master
 
 ## YARP 3.4 Series                                            {#yarp_3_4_series}
