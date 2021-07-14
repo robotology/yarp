@@ -228,8 +228,9 @@ bool ShmemOutputStreamImpl::write(const yarp::os::Bytes& b)
 
 void ShmemOutputStreamImpl::close()
 {
-    if (!m_bOpen)
+    if (!m_bOpen) {
         return;
+    }
 
     m_bOpen = false;
 

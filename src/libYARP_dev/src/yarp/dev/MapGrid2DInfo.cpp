@@ -42,9 +42,15 @@ MapGrid2DOrigin::MapGrid2DOrigin(double x_init, double y_init, double t_init)
 
 bool MapGrid2DOrigin::operator != (const MapGrid2DOrigin& other) const
 {
-    if (x != other.x) return true;
-    if (y != other.y) return true;
-    if (theta != other.theta) return true; //should I check for 360 wrap?
+    if (x != other.x) {
+        return true;
+    }
+    if (y != other.y) {
+        return true;
+    }
+    if (theta != other.theta) {
+        return true; //should I check for 360 wrap?
+    }
     return false;
 }
 
@@ -117,10 +123,12 @@ bool MapGrid2DInfo::isInsideMap(XYCell cell) const
 {
     //if (cell.x < 0) return false;
     //if (cell.y < 0) return false;
-    if (cell.x >= m_width)
+    if (cell.x >= m_width) {
         return false;
-    if (cell.y >= m_height)
+    }
+    if (cell.y >= m_height) {
         return false;
+    }
     return true;
 }
 

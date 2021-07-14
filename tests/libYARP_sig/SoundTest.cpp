@@ -78,7 +78,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
         snd1.resize(10, 3);
         generate_test_sound(snd1, 10, 3);
 
-        for (auto i=0; i<10; i++)
+        for (auto i = 0; i < 10; i++) {
             for (auto j = 0; j < 3; j++)
             {
                 ok = true;
@@ -89,6 +89,7 @@ TEST_CASE("sig::SoundTest", "[yarp::sig]")
                 ok &= (snd1 == snd2);
                 CHECK(!ok);
             }
+        }
     }
 
     SECTION("check replace channel.")

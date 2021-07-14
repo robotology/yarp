@@ -460,8 +460,9 @@ void EntitiesTreeWidget::clearPorts()
 
 QTreeWidgetItem * EntitiesTreeWidget::getWidgetItemByFilename(const QString xmlFile){
     QList<QTreeWidgetItem*> clist = this->findItems(xmlFile, Qt::MatchContains|Qt::MatchRecursive, 0);
-    if (clist.size())
+    if (clist.size()) {
         return clist.at(0)->parent();
+    }
     return nullptr;
 }
 

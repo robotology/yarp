@@ -69,7 +69,9 @@ public:
     {
         for (int i = 0; i < size; i++)
         {
-            if (write_elem(elems[i]) == false) return false;
+            if (write_elem(elems[i]) == false) {
+                return false;
+            }
         }
         return true;
     }
@@ -77,12 +79,13 @@ public:
     inline int size()
     {
         int i;
-        if (end>start)
+        if (end > start) {
             i = end - start;
-        else if (end == start)
+        } else if (end == start) {
             i = 0;
-        else
+        } else {
             i = maxsize - start + end;
+        }
         return i;
     }
 
@@ -125,7 +128,9 @@ public:
     {
         for (int i = 0; i < size; i++)
         {
-            if (read_elem(&elems[i]) == false) return false;
+            if (read_elem(&elems[i]) == false) {
+                return false;
+            }
         }
         return true;
     }

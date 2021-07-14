@@ -36,7 +36,9 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     string request = in.get(0).asString();
     if (request == "help")
@@ -111,7 +113,9 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         if (format_s == "matrix") {eformat = broadcast_port_t::format_t::matrix;}
         else {yCError(FRAMETRANSFORMCLIENT) << "Invalid format" << format_s << "using format `matrix`. Only `matrix` is currently supported."; }
 
-        if (port_name[0] == '/')  port_name.erase(port_name.begin());
+        if (port_name[0] == '/') {
+            port_name.erase(port_name.begin());
+        }
         std::string full_port_name = m_local_name + "/" + port_name;
 
         //print a warning if the frames do not exists yet
@@ -153,7 +157,9 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
             {
                 out.addString("Operation complete. Port " + full_port_name + " opened.");
                 m_array_of_ports.push_back(b);
-                if (m_array_of_ports.size()==1) this->start();
+                if (m_array_of_ports.size() == 1) {
+                    this->start();
+                }
             }
             else
             {
@@ -175,14 +181,18 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
             m_array_of_port=nullptr;
         }
         m_array_of_ports.clear();
-        if (m_array_of_ports.size()==0) this->askToStop();
+        if (m_array_of_ports.size() == 0) {
+            this->askToStop();
+        }
         out.addString("Operation complete");
     }
     else if (request == "unpublish_transform")
     {
         bool ret = false;
         string port_name = in.get(1).asString();
-        if (port_name[0]=='/')  port_name.erase(port_name.begin());
+        if (port_name[0] == '/') {
+            port_name.erase(port_name.begin());
+        }
         string full_port_name = m_local_name + "/" + port_name;
         for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
         {
@@ -204,7 +214,9 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         {
             out.addString("Port " + full_port_name + " was not found.");
         }
-        if (m_array_of_ports.size()==0) this->askToStop();
+        if (m_array_of_ports.size() == 0) {
+            this->askToStop();
+        }
     }
     else if (request == "set_static_transform_rad" ||
              request == "set_static_transform_deg")
@@ -243,9 +255,13 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     else if (request == "generate_view")
     {
         m_show_transforms_in_diagram = show_transforms_in_diagram_t::do_not_show;
-        if (in.get(1).asString() == "show_quaternion") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_quaternion;
-        else if (in.get(1).asString() == "show_matrix") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_matrix;
-        else if (in.get(1).asString() == "show_rpy") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_rpy;
+        if (in.get(1).asString() == "show_quaternion") {
+            m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_quaternion;
+        } else if (in.get(1).asString() == "show_matrix") {
+            m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_matrix;
+        } else if (in.get(1).asString() == "show_rpy") {
+            m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_rpy;
+        }
         priv_generate_view();
         out.addString("ok");
     }
@@ -361,8 +377,9 @@ bool FrameTransformClient::allFramesAsString(string &all_frames)
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (br && p_cont)
     {
-        for (auto it = p_cont->begin(); it != p_cont->end(); it++)
-        all_frames += it->toString() + " ";
+        for (auto it = p_cont->begin(); it != p_cont->end(); it++) {
+            all_frames += it->toString() + " ";
+        }
         return true;
     }
     return false;
@@ -468,7 +485,9 @@ bool FrameTransformClient::getAllFrameIds(std::vector< string > &ids)
         {
             if (it->src_frame_id == id) { found = true; break; }
         }
-        if (found == false) ids.push_back(it->src_frame_id);
+        if (found == false) {
+            ids.push_back(it->src_frame_id);
+        }
     }
 
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
@@ -478,7 +497,9 @@ bool FrameTransformClient::getAllFrameIds(std::vector< string > &ids)
         {
             if (it->dst_frame_id == id) { found = true; break; }
         }
-        if (found == false) ids.push_back(it->dst_frame_id);
+        if (found == false) {
+            ids.push_back(it->dst_frame_id);
+        }
     }
 
     return true;
@@ -799,7 +820,9 @@ void     FrameTransformClient::run()
 
 string FrameTransformClient::priv_get_matrix_as_text(FrameTransform* t)
 {
-    if (t==nullptr) return "";
+    if (t == nullptr) {
+        return "";
+    }
 
     if (m_show_transforms_in_diagram == do_not_show)
     {

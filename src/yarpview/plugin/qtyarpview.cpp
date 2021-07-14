@@ -157,20 +157,23 @@ QString QtYARPView::getPixelAsStr(int x, int y){
 
 void QtYARPView::periodToFreq(double avT, double mT, double MT, double &avH, double &mH, double &MH)
 {
-    if (avT!=0)
+    if (avT != 0) {
         avH=1.0/avT;
-    else
-        avH=0;
+    } else {
+        avH = 0;
+    }
 
-    if (mT!=0)
+    if (mT != 0) {
         MH=1.0/mT;
-    else
-        MH=0;
+    } else {
+        MH = 0;
+    }
 
-    if (MT!=0)
+    if (MT != 0) {
         mH=1.0/MT;
-    else
-        mH=0;
+    } else {
+        mH = 0;
+    }
 }
 
 void QtYARPView::onSendFps(double portAvg, double portMin, double portMax,
@@ -214,10 +217,12 @@ void QtYARPView::createObjects() {
 
 /*! \brief Deletes the input port and the port callback.*/
 void QtYARPView::deleteObjects() {
-    if (ptr_inputPort!=nullptr)
+    if (ptr_inputPort != nullptr) {
         delete ptr_inputPort;
-    if (ptr_portCallback!=nullptr)
+    }
+    if (ptr_portCallback != nullptr) {
         delete ptr_portCallback;
+    }
 }
 
 /*! \brief parse the parameters received from the main container in QstringList form
@@ -438,10 +443,11 @@ void QtYARPView::closePorts()
     if (_options.m_outputEnabled == 1 && _pOutPort){
         _pOutPort->close();
         bool ok = true;
-        if  (ok)
+        if (ok) {
             qDebug("Port %s unregistration succeed!\n", _options.m_outPortName);
-        else
+        } else {
             qDebug("ERROR: Port %s unregistration failed.\n", _options.m_outPortName);
+        }
         delete _pOutPort;
         _pOutPort = nullptr;
     }
@@ -449,10 +455,11 @@ void QtYARPView::closePorts()
     if (_options.m_rightEnabled == 1 && _pOutRightPort){
         _pOutRightPort->close();
         bool ok = true;
-        if  (ok)
+        if (ok) {
             qDebug("Port %s unregistration succeed!\n", _options.m_outRightPortName);
-        else
+        } else {
             qDebug("ERROR: Port %s unregistration failed.\n", _options.m_outRightPortName);
+        }
         delete _pOutRightPort;
         _pOutRightPort = nullptr;
     }

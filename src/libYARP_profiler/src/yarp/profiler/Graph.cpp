@@ -64,12 +64,16 @@ Vertex::Vertex(const Vertex &vertex) = default;
 Vertex::~Vertex() = default;
 
 void Vertex::insertOuts(const yarp::profiler::graph::Edge& edge) {
-    if( find(outs.begin(), outs.end(), edge) != outs.end()) return;
+    if (find(outs.begin(), outs.end(), edge) != outs.end()) {
+        return;
+    }
     outs.push_back(edge);
 }
 
 void Vertex::insertIns(const yarp::profiler::graph::Edge& edge) {
-    if( find(ins.begin(), ins.end(), edge) != ins.end()) return;
+    if (find(ins.begin(), ins.end(), edge) != ins.end()) {
+        return;
+    }
     ins.push_back(edge);
 }
 
@@ -115,7 +119,9 @@ void Graph::insert(Vertex *vertex) {
 
 pvertex_iterator Graph::insert(const Vertex &vertex){
     pvertex_iterator itr = find(vertex);
-    if( itr != mVertices.end()) return itr;
+    if (itr != mVertices.end()) {
+        return itr;
+    }
    // Vertex* v = new Vertex(vertex);
     mVertices.push_back((Vertex*) &vertex);
     return mVertices.end()-1;
@@ -127,7 +133,9 @@ void Graph::remove(const Vertex &vertex){
 }
 
 void Graph::remove(const pvertex_iterator vi) {
-    if(vi == mVertices.end()) return;
+    if (vi == mVertices.end()) {
+        return;
+    }
     Vertex* v = *vi;
     mVertices.erase(vi);
     delete v;
@@ -152,8 +160,9 @@ void Graph::insertEdge(const pvertex_iterator vi1, const pvertex_iterator vi2,
 const pvertex_iterator Graph::find(const Vertex &vertex) {
     auto itr = mVertices.begin();
     for(;itr!=mVertices.end(); itr++) {
-        if(*(*itr) == vertex)
+        if (*(*itr) == vertex) {
             return itr;
+        }
     }
     return mVertices.end();
 
@@ -162,8 +171,9 @@ const pvertex_iterator Graph::find(const Vertex &vertex) {
 size_t Graph::size() {
     auto itr = mVertices.begin();
     size_t count = 0;
-    for(; itr!=mVertices.end(); itr++)
+    for (; itr != mVertices.end(); itr++) {
         count += (**itr).degree();
+    }
     return count/2;
 }
 
@@ -174,8 +184,9 @@ size_t Graph::nodesCount() {
 
 void Graph::clear() {
     auto itr = mVertices.begin();
-    for(; itr!=mVertices.end(); itr++)
+    for (; itr != mVertices.end(); itr++) {
         delete *itr;
+    }
     mVertices.clear();
 }
 
@@ -252,8 +263,9 @@ bool Algorithm::calcSCC(yarp::profiler::graph::Graph& graph, graph_subset &scc) 
     int index = 0;
     for(vitr = vertices.begin(); vitr!=vertices.end(); vitr++) {
         Vertex* v = (*vitr);
-        if(!v->property.check("index"))
+        if (!v->property.check("index")) {
             strongConnect(v, scc, S, index);
+        }
     }
     return true;
 }

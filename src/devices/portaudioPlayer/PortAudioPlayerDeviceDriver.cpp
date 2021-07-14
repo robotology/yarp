@@ -79,13 +79,19 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             for( i=0; i<framesLeft/ num_play_channels; i++ )
             {
                 *wptr++ = playdata->read();  // left
-                if( num_play_channels == 2 ) *wptr++ = playdata->read();  // right
-                for (size_t chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
+                if (num_play_channels == 2) {
+                    *wptr++ = playdata->read(); // right
+                }
+                for (size_t chs = 2; chs < num_play_channels; chs++) {
+                    playdata->read(); //remove all additional channels > 2
+                }
             }
             for( ; i<framesPerBuffer; i++ )
             {
                 *wptr++ = 0;  // left
-                if(num_play_channels == 2 ) *wptr++ = 0;  // right
+                if (num_play_channels == 2) {
+                    *wptr++ = 0; // right
+                }
             }
 #ifdef STOP_PLAY_ON_EMPTY_BUFFER
             //if we return paComplete, then the callback is not called anymore.
@@ -104,8 +110,12 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             for( i=0; i<framesPerBuffer; i++ )
             {
                 *wptr++ = playdata->read();  // left
-                if( num_play_channels == 2 ) *wptr++ = playdata->read();  // right
-                for (size_t chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
+                if (num_play_channels == 2) {
+                    *wptr++ = playdata->read(); // right
+                }
+                for (size_t chs = 2; chs < num_play_channels; chs++) {
+                    playdata->read(); //remove all additional channels > 2
+                }
             }
             //if we return paContinue, then the callback will be invoked again later
             //method Pa_IsStreamActive() will return 0
@@ -197,8 +207,9 @@ bool PortAudioPlayerDeviceDriver::interruptDeviceAndClose()
 bool PortAudioPlayerDeviceDriver::configureDeviceAndStart()
 {
     AudioBufferSize playback_buffer_size(m_audioplayer_cfg.numSamples, m_audioplayer_cfg.numChannels, m_audioplayer_cfg.bytesPerSample);
-    if (m_outputBuffer == nullptr)
+    if (m_outputBuffer == nullptr) {
         m_outputBuffer = new CircularAudioBuffer_16t("portatudio_play", playback_buffer_size);
+    }
 
     m_err = Pa_Initialize();
     if (m_err != paNoError)
@@ -251,7 +262,9 @@ bool PortAudioPlayerDeviceDriver::open(yarp::os::Searchable& config)
 
     m_device_id = config.check("id", Value(-1), "which portaudio index to use (-1=automatic)").asInt32();
     m_driver_frame_size = config.check("driver_frame_size", Value(0), "").asInt32();
-    if (m_driver_frame_size == 0)  m_driver_frame_size = DEFAULT_FRAMES_PER_BUFFER;
+    if (m_driver_frame_size == 0) {
+        m_driver_frame_size = DEFAULT_FRAMES_PER_BUFFER;
+    }
 
     b = configureDeviceAndStart();
     return (m_err==paNoError);
@@ -303,7 +316,9 @@ void PortAudioPlayerDeviceDriver::waitUntilPlaybackStreamIsComplete()
     {
         yarp::os::Time::delay(SLEEP_TIME);
         size_t tmp = m_outputBuffer->size().getSamples();
-        if (tmp == 0) break;
+        if (tmp == 0) {
+            break;
+        }
     }
 }
 

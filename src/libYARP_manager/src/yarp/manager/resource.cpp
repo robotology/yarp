@@ -17,8 +17,9 @@ GenericResource::GenericResource(const char* szTypeName) : Node(RESOURCE)
     modOwner = nullptr;
     bAvailable = true;
     bDisabled = false;
-    if(szTypeName)
+    if (szTypeName) {
         strTypeName = szTypeName;
+    }
 }
 
 GenericResource::~GenericResource() = default;
@@ -80,8 +81,9 @@ void MultiResource::swap(const MultiResource &res)
 {
     clear();
     // deep copy
-    for(int i=0; i<res.resourceCount(); i++)
+    for (int i = 0; i < res.resourceCount(); i++) {
         addResource(res.getResourceAt(i));
+    }
 }
 
 void MultiResource::clear()

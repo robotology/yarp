@@ -90,7 +90,9 @@ bool Map2DStorage::loadMapsCollection(std::string mapsfile)
         std::getline(file, buffer);
         std::istringstream iss(buffer);
         iss >> dummy;
-        if (dummy == "") break;
+        if (dummy == "") {
+            break;
+        }
         if (dummy == "mapfile:")
         {
             string mapfilename;
@@ -108,8 +110,9 @@ bool Map2DStorage::loadMapsCollection(std::string mapsfile)
                 auto p = m_maps_storage.find(map_name);
                 if (p == m_maps_storage.end())
                 {
-                    if (option == "crop")
-                        map.crop(-1,-1,-1,-1);
+                    if (option == "crop") {
+                        map.crop(-1, -1, -1, -1);
+                    }
                     m_maps_storage[map_name] = map;
                 }
                 else
@@ -256,7 +259,9 @@ bool Map2DStorage::priv_load_locations_and_areas_v1(std::ifstream& file)
     while (1)
     {
         std::getline(file, buffer);
-        if (buffer == "Areas:") break;
+        if (buffer == "Areas:") {
+            break;
+        }
         if (file.eof())
         {
             yCError(MAP2DSTORAGE) << "Unexpected End Of File";
@@ -289,7 +294,9 @@ bool Map2DStorage::priv_load_locations_and_areas_v1(std::ifstream& file)
     {
         Map2DArea       area;
         std::getline(file, buffer);
-        if (file.eof()) break;
+        if (file.eof()) {
+            break;
+        }
 
         Bottle b;
         b.fromString(buffer);
@@ -326,7 +333,9 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
     while (1)
     {
         std::getline(file, buffer);
-        if (buffer == "Areas:") break;
+        if (buffer == "Areas:") {
+            break;
+        }
         if (file.eof())
         {
             yCError(MAP2DSTORAGE) << "Unexpected End Of File";
@@ -359,8 +368,12 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
     {
         Map2DArea       area;
         std::getline(file, buffer);
-        if (buffer == "Paths:") break;
-        if (file.eof()) break;
+        if (buffer == "Paths:") {
+            break;
+        }
+        if (file.eof()) {
+            break;
+        }
 
         Bottle b;
         b.fromString(buffer);
@@ -392,7 +405,9 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
     {
         Map2DPath       path;
         std::getline(file, buffer);
-        if (file.eof()) break;
+        if (file.eof()) {
+            break;
+        }
 
         Bottle b;
         b.fromString(buffer);
@@ -836,7 +851,9 @@ bool Map2DStorage::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     //parse string command
     if (in.get(0).isString())

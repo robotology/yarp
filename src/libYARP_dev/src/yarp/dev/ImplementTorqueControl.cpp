@@ -27,8 +27,9 @@ ImplementTorqueControl::~ImplementTorqueControl()
 
 bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw, const double* amps, const double* dutys, const double* bemfs, const double* ktaus)
 {
-    if (helper!=nullptr)
+    if (helper != nullptr) {
         return false;
+    }
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw, amps, nullptr, dutys,bemfs,ktaus));
     yAssert (helper != nullptr);
@@ -154,8 +155,9 @@ bool ImplementTorqueControl::getTorques(double *t)
 
 bool ImplementTorqueControl::setRefTorques(const int n_joint, const int *joints, const double *t)
 {
-    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
+    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
         return false;
+    }
 
     yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();

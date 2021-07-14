@@ -386,8 +386,9 @@ bool MainWindow::cmdSafeExit()
         if (verbose){
             yInfo() << "done stopping!";
         }
-        for (int i=0; i < subDirCnt; i++)
+        for (int i = 0; i < subDirCnt; i++) {
             qutilities->partDetails[i].currFrame = 1;
+        }
 
         if (verbose){
             yInfo() << "Module closing...\nCleaning up...";
@@ -430,8 +431,9 @@ bool MainWindow::safeExit()
         if (verbose){
             yInfo() << "done stopping!";
         }
-        for (int i=0; i < subDirCnt; i++)
+        for (int i = 0; i < subDirCnt; i++) {
             qutilities->partDetails[i].currFrame = 1;
+        }
 
         if (verbose){
             yInfo() << "Module closing...\nCleaning up...";
@@ -748,8 +750,9 @@ void MainWindow::onMenuFileOpen()
     if(!dir.isEmpty())
     {
         ui->mainWidget->clear();
-        for (int x=0; x < subDirCnt; x++)
+        for (int x = 0; x < subDirCnt; x++) {
             qutilities->closePorts(qutilities->partDetails[x]);
+        }
 
         doGuiSetup(dir);
     }
@@ -849,8 +852,9 @@ void MainWindow::onMenuPlayBackPlay()
             if (verbose){
                 yInfo() << "done stopping!";
             }
-            for (int i=0; i < subDirCnt; i++)
+            for (int i = 0; i < subDirCnt; i++) {
                 qutilities->partDetails[i].currFrame = 1;
+            }
 
             if (verbose){
                 yInfo() << "done stopping the thread...";
@@ -871,8 +875,9 @@ void MainWindow::onMenuPlayBackPlay()
                 yInfo() << "asking the thread to resume";
             }
 
-            for (int i=0; i < subDirCnt; i++)
+            for (int i = 0; i < subDirCnt; i++) {
                 qutilities->partDetails[i].worker->resetTime();
+            }
 
             qutilities->qengine->resume();
         } else if (!qutilities->qengine->isRunning()) {
@@ -881,8 +886,9 @@ void MainWindow::onMenuPlayBackPlay()
                 yInfo() <<"initializing the workers...";
             }
 
-            for (int i=0; i < subDirCnt; i++)
+            for (int i = 0; i < subDirCnt; i++) {
                 qutilities->partDetails[i].worker->init();
+            }
 
             if (verbose){
                 yInfo() << "starting the master thread...";
@@ -943,8 +949,9 @@ void MainWindow::onMenuPlayBackStop()
         if (verbose){
             yInfo() << "done stopping!";
         }
-        for (int i=0; i < subDirCnt; i++)
+        for (int i = 0; i < subDirCnt; i++) {
             qutilities->partDetails[i].currFrame = 1;
+        }
 
         if (verbose){
             yInfo() << "done stopping the thread...";
@@ -964,15 +971,17 @@ void MainWindow::onMenuPlayBackStop()
 /**********************************************************/
 void MainWindow::onMenuPlayBackForward()
 {
-    if (subDirCnt > 0)
+    if (subDirCnt > 0) {
         qutilities->qengine->forward(5);
+    }
 }
 
 /**********************************************************/
 void MainWindow::onMenuPlayBackBackward()
 {
-    if (subDirCnt > 0)
+    if (subDirCnt > 0) {
         qutilities->qengine->backward(5);
+    }
 }
 
 /**********************************************************/
@@ -1122,8 +1131,9 @@ void MainWindow::onUpdateGuiRateThread()
                     double time = qutilities->partDetails[i].worker->getTimeTaken();
                     if (time > 700000){ //value of a time stamp...
                         setTimeTaken(qutilities->partDetails[i].name.c_str(),0.0);
-                    }else
-                        setTimeTaken(qutilities->partDetails[i].name.c_str(),time);
+                    } else {
+                        setTimeTaken(qutilities->partDetails[i].name.c_str(), time);
+                    }
                 }
             }
             //percentage = 0;

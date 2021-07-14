@@ -43,7 +43,9 @@ bool isEqual(const double& a, const double& b, const double& tolerance)
 
 bool isEqual(const yarp::sig::Vector& a, const yarp::sig::Vector& b, const double& tolerance)
 {
-    if (a.size() != b.size()) return false;
+    if (a.size() != b.size()) {
+        return false;
+    }
 
     for (size_t i = 0; i < a.size(); i++)
     {

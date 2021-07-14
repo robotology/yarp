@@ -37,20 +37,24 @@ int Companion::cmdPray(int argc, char *argv[])
 #if defined(__unix__)
         char buf = 0;
         struct termios old;
-        if (tcgetattr(0, &old) < 0)
-                perror("tcsetattr()");
+        if (tcgetattr(0, &old) < 0) {
+            perror("tcsetattr()");
+        }
         old.c_lflag &= ~ICANON;
         old.c_lflag &= ~ECHO;
         old.c_cc[VMIN] = 1;
         old.c_cc[VTIME] = 0;
-        if (tcsetattr(0, TCSANOW, &old) < 0)
-                perror("tcsetattr ICANON");
-        if (::read(0, &buf, 1) < 0)
-                perror ("read()");
+        if (tcsetattr(0, TCSANOW, &old) < 0) {
+            perror("tcsetattr ICANON");
+        }
+        if (::read(0, &buf, 1) < 0) {
+            perror("read()");
+        }
         old.c_lflag |= ICANON;
         old.c_lflag |= ECHO;
-        if (tcsetattr(0, TCSADRAIN, &old) < 0)
-                perror ("tcsetattr ~ICANON");
+        if (tcsetattr(0, TCSADRAIN, &old) < 0) {
+            perror("tcsetattr ~ICANON");
+        }
         return (buf);
 #elif defined(_MSC_VER)
         return static_cast<char>(_getch());

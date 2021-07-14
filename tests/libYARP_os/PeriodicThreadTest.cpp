@@ -90,10 +90,11 @@ public:
 
     void threadRelease() override
     {
-        if (n>0)
+        if (n > 0) {
             period=average/(n-1);
-        else
-            period=0;
+        } else {
+            period = 0;
+        }
     }
 
 };
@@ -163,10 +164,11 @@ public:
 
     void afterStart(bool s) override
     {
-        if (s)
+        if (s) {
             state++;
-        else
-            state=-2;
+        } else {
+            state = -2;
+        }
     }
 
     void run() override
@@ -191,8 +193,9 @@ public:
             count--;
 
             //terminate when count is zero
-            if (count==0)
+            if (count == 0) {
                 PeriodicThread::askToStop();
+            }
     }
 
 };
@@ -237,7 +240,9 @@ public:
     }
 
     void run() override {
-        if (done) askToStop();
+        if (done) {
+            askToStop();
+        }
     }
 
     void threadRelease() override {
@@ -421,13 +426,17 @@ TEST_CASE("os::PeriodicThreadTest", "[yarp::os]")
         SystemClock clk;
         for (int i=0; i<20; i++) {
             clk.delay(0.1);
-            if (thread.count == 1) break;
+            if (thread.count == 1) {
+                break;
+            }
         }
         CHECK(thread.count); // 1
         clock.t += 100*1000;
         for (int i=0; i<20; i++) {
             clk.delay(0.1);
-            if (thread.count == 2) break;
+            if (thread.count == 2) {
+                break;
+            }
         }
         CHECK(thread.count); // 2
         clock.done = true;

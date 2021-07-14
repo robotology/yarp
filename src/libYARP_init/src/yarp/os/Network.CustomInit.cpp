@@ -83,5 +83,7 @@ void yarp::os::Network::fini() {
         yarpCustomFini();
         finiMinimum();
     }
-    if (__custom_yarp_is_initialized>0) __custom_yarp_is_initialized--;
+    if (__custom_yarp_is_initialized > 0) {
+        __custom_yarp_is_initialized--;
+    }
 }

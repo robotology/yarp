@@ -41,7 +41,9 @@ bool MpiCarrier::sendHeader(ConnectionState& proto) {
     ManagedBytes header(8);
     getHeader(header.bytes());
     proto.os().write(header.bytes());
-    if (!proto.os().isOk()) return false;
+    if (!proto.os().isOk()) {
+        return false;
+    }
 
     // Now we can do whatever we want, as long as somehow
     // we also send the name of the originating port
@@ -58,9 +60,12 @@ bool MpiCarrier::sendHeader(ConnectionState& proto) {
 
     createStream(true);
 
-    if (!MpiControl) return false;
-    if (! MpiControl->isRunning())
+    if (!MpiControl) {
         return false;
+    }
+    if (!MpiControl->isRunning()) {
+        return false;
+    }
     comm->openPort();
     char* port = comm->port_name;
     char* uid = comm->unique_id;
@@ -100,9 +105,12 @@ bool MpiCarrier::expectSenderSpecifier(ConnectionState& proto) {
     route = name + "<-" + other;
 
     createStream(false);
-    if (!MpiControl) return false;
-    if (! MpiControl->isRunning())
+    if (!MpiControl) {
         return false;
+    }
+    if (!MpiControl->isRunning()) {
+        return false;
+    }
 
     std::string other_id = proto.is().readLine();
     bool notLocal = comm->notLocal(other_id);

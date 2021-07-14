@@ -223,10 +223,11 @@ void Rangefinder2D_nws_ros::run()
 
         if (ret)
         {
-            if(iTimed)
+            if (iTimed) {
                 lastStateStamp = iTimed->getLastInputStamp();
-            else
+            } else {
                 lastStateStamp.update(yarp::os::Time::now());
+            }
 
             int ranges_size = ranges.size();
 

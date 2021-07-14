@@ -105,7 +105,9 @@ bool Rangefinder2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     // parse in, prepare out
     int action = in.get(0).asVocab32();
@@ -299,9 +301,9 @@ bool Rangefinder2D_nws_yarp::open(yarp::os::Searchable &config)
     {
         yCError(RANGEFINDER2D_NWS_YARP) << "missing 'period' parameter. Check you configuration file\n";
         return false;
-    }
-    else
+    } else {
         _period = config.find("period").asFloat64();
+    }
 
     if (!config.check("name"))
     {
@@ -384,10 +386,11 @@ void Rangefinder2D_nws_yarp::run()
 
         if (ret)
         {
-            if(iTimed)
+            if (iTimed) {
                 lastStateStamp = iTimed->getLastInputStamp();
-            else
+            } else {
                 lastStateStamp.update(yarp::os::Time::now());
+            }
 
             int ranges_size = ranges.size();
             YARP_UNUSED(ranges_size);

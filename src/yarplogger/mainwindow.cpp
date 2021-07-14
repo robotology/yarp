@@ -38,9 +38,9 @@ void MainWindow::updateMain()
         {
             std::tm* tm = localtime(&it->last_update);
             sprintf(time_text, "%02d:%02d:%02d %02d/%02d/%02d", tm->tm_hour, tm->tm_min, tm->tm_sec, tm->tm_mday, tm->tm_mon, tm->tm_year+1900);
+        } else {
+            sprintf(time_text, "no data received yet");
         }
-        else
-           sprintf ( time_text, "no data received yet");
 
         char logsize_text[10];
         sprintf (logsize_text, "%d", it->logsize);
@@ -72,10 +72,14 @@ void MainWindow::updateMain()
                 bool     log_enabled =  this->theLogger->get_log_enable_by_port_complete(it->port_complete);
                 if (log_enabled)
                 {
-                    if      (last_error==yarp::yarpLogger::LOGLEVEL_ERROR)   rowcolor = QColor("#FF7070");
-                    else if (last_error==yarp::yarpLogger::LOGLEVEL_WARNING) rowcolor = QColor("#FFFF70");
-                    for (int j=0; j<model_yarprunports->columnCount(); j++)
-                        model_yarprunports->item(i,j)->setBackground(rowcolor);
+                    if (last_error == yarp::yarpLogger::LOGLEVEL_ERROR) {
+                        rowcolor = QColor("#FF7070");
+                    } else if (last_error == yarp::yarpLogger::LOGLEVEL_WARNING) {
+                        rowcolor = QColor("#FFFF70");
+                    }
+                    for (int j = 0; j < model_yarprunports->columnCount(); j++) {
+                        model_yarprunports->item(i, j)->setBackground(rowcolor);
+                    }
                 }
 
                 existing = true;
@@ -172,16 +176,18 @@ void MainWindow::on_enableLogTab(int model_row)
     if (log_enabled)
     {
         theLogger->set_log_enable_by_port_complete(logname,false);
-        for (int j=0; j<model_yarprunports->columnCount(); j++)
-            model_yarprunports->item(model_row,j)->setBackground(QColor("#808080"));
+        for (int j = 0; j < model_yarprunports->columnCount(); j++) {
+            model_yarprunports->item(model_row, j)->setBackground(QColor("#808080"));
+        }
         QString message = logname.c_str() + QString(" log disabled");
         system_message->addMessage(message);
     }
     else
     {
         theLogger->set_log_enable_by_port_complete(logname,true);
-        for (int j=0; j<model_yarprunports->columnCount(); j++)
-            model_yarprunports->item(model_row,j)->setBackground(QColor(Qt::white));
+        for (int j = 0; j < model_yarprunports->columnCount(); j++) {
+            model_yarprunports->item(model_row, j)->setBackground(QColor(Qt::white));
+        }
         QString message = logname.c_str() + QString(" log enabled");
         system_message->addMessage(message);
     }
@@ -209,7 +215,9 @@ void MainWindow::on_clearLogTab(int model_row)
         if (ui->logtabs->tabText(i) == logname)
         {
             auto* l = ui->logtabs->widget(i)->findChild<LogTab*>("logtab");
-            if (l) l->clearLogModel();
+            if (l) {
+                l->clearLogModel();
+            }
             break;
         }
     }
@@ -245,8 +253,9 @@ void MainWindow::on_saveLogTab(int model_row)
     QString fileName = QFileDialog::getSaveFileName(this, tr("Export log to text file"),preferred_filename.c_str(), tr("Text Files (*.txt)"));
     if (fileName.size()!=0)
     {
-        if (theLogger->export_log_to_text_file(fileName.toStdString(),logname))
+        if (theLogger->export_log_to_text_file(fileName.toStdString(), logname)) {
             system_message->addMessage(QString("Current log successfully exported to file: ") + fileName);
+        }
     }
 }
 
@@ -371,7 +380,9 @@ void MainWindow::on_filterLineEdit_textChanged(const QString &text)
     QRegExp regExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard);
 
     auto* logtab = ui->logtabs->currentWidget()->findChild<LogTab*>("logtab");
-    if (logtab) logtab->proxyModelSearch->setFilterRegExp(regExp);
+    if (logtab) {
+        logtab->proxyModelSearch->setFilterRegExp(regExp);
+    }
 #endif
 }
 
@@ -392,8 +403,11 @@ void MainWindow::on_yarprunTreeView_doubleClicked(const QModelIndex &pre_index)
     QString tabname = model_yarprunports->item(model_row,1)->text();
 
     int exists = -1;
-    for (int i=0; i<ui->logtabs->count(); i++)
-        if (ui->logtabs->tabText(i) == tabname) exists = i;
+    for (int i = 0; i < ui->logtabs->count(); i++) {
+        if (ui->logtabs->tabText(i) == tabname) {
+            exists = i;
+        }
+    }
 
     if (exists>=0)
     {
@@ -443,12 +457,48 @@ QString MainWindow::recomputeFilters()
     bool e_all     = this->ui->DisplayUnformattedEnable->isChecked();
     int f = 0;
     if (e_trace)                                {filter = filter + "^TRACE$";   f++;}
-    if (e_debug)   {if (f>0) filter=filter +"|"; filter = filter + "^DEBUG$";   f++;}
-    if (e_info)    {if (f>0) filter=filter +"|"; filter = filter + "^INFO$";    f++;}
-    if (e_warning) {if (f>0) filter=filter +"|"; filter = filter + "^WARNING$"; f++;}
-    if (e_error)   {if (f>0) filter=filter +"|"; filter = filter + "^ERROR$";   f++;}
-    if (e_all)     {if (f>0) filter=filter +"|"; filter = filter + "^$";        f++;}
-    if (true)      {if (f>0) filter=filter +"|"; filter = filter + "^FATAL$";   f++;}
+    if (e_debug)   {
+        if (f > 0) {
+            filter = filter + "|";
+        }
+        filter = filter + "^DEBUG$";
+        f++;
+    }
+    if (e_info)    {
+        if (f > 0) {
+            filter = filter + "|";
+        }
+        filter = filter + "^INFO$";
+        f++;
+    }
+    if (e_warning) {
+        if (f > 0) {
+            filter = filter + "|";
+        }
+        filter = filter + "^WARNING$";
+        f++;
+    }
+    if (e_error)   {
+        if (f > 0) {
+            filter = filter + "|";
+        }
+        filter = filter + "^ERROR$";
+        f++;
+    }
+    if (e_all)     {
+        if (f > 0) {
+            filter = filter + "|";
+        }
+        filter = filter + "^$";
+        f++;
+    }
+    if (true)      {
+        if (f > 0) {
+            filter = filter + "|";
+        }
+        filter = filter + "^FATAL$";
+        f++;
+    }
     std::string debug = filter.toStdString();
     return filter;
 }
@@ -721,10 +771,11 @@ void MainWindow::on_actionSave_Log_triggered(bool checked)
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save to log file"),preferred_filename, tr("Log Files (*.log)"));
     if (fileName.size()!=0)
     {
-        if (theLogger->save_all_logs_to_file(fileName.toStdString()))
+        if (theLogger->save_all_logs_to_file(fileName.toStdString())) {
             system_message->addMessage(QString("Log saved to file: ") + fileName);
-        else
-           system_message->addMessage(QString("Unable to save file: ") + fileName,MESSAGE_LEVEL_ERROR);
+        } else {
+            system_message->addMessage(QString("Unable to save file: ") + fileName, MESSAGE_LEVEL_ERROR);
+        }
     }
 }
 
@@ -735,10 +786,11 @@ void MainWindow::on_actionLoad_Log_triggered()
     {
         on_actionStop_Logger_triggered();
         on_actionClear_triggered();
-        if (theLogger->load_all_logs_from_file(fileName.toStdString()))
+        if (theLogger->load_all_logs_from_file(fileName.toStdString())) {
             system_message->addMessage(QString("Log loaded from file: ") + fileName);
-        else
-            system_message->addMessage(QString("Unable to load file: ") + fileName,MESSAGE_LEVEL_ERROR);
+        } else {
+            system_message->addMessage(QString("Unable to load file: ") + fileName, MESSAGE_LEVEL_ERROR);
+        }
     }
 }
 
@@ -815,7 +867,9 @@ void MainWindow::on_actionClear_triggered()
             model_yarprunports->clear();
             resetMainWindowHeaders();
         }
-        if (ui->logtabs) ui->logtabs->clear();
+        if (ui->logtabs) {
+            ui->logtabs->clear();
+        }
 
         system_message->addMessage("Log cleared");
     }
@@ -889,8 +943,9 @@ void MainWindow::dropEvent(QDropEvent *e)
     on_actionStop_Logger_triggered();
     on_actionClear_triggered();
 
-    if (theLogger->load_all_logs_from_file(fileName.toStdString()))
+    if (theLogger->load_all_logs_from_file(fileName.toStdString())) {
         system_message->addMessage(QString("Log loaded from file: ") + fileName);
-    else
-        system_message->addMessage(QString("Unable to load file: ") + fileName,MESSAGE_LEVEL_ERROR);
+    } else {
+        system_message->addMessage(QString("Unable to load file: ") + fileName, MESSAGE_LEVEL_ERROR);
+    }
 }

@@ -30,8 +30,9 @@ ImplementAmplifierControl::~ImplementAmplifierControl()
 
 bool ImplementAmplifierControl:: initialize (int size, const int *amap, const double *enc, const double *zos, const double *ampereFactor, const double *voltFactor)
 {
-    if (helper!=nullptr)
+    if (helper != nullptr) {
         return false;
+    }
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,nullptr, ampereFactor, voltFactor));
     yAssert (helper != nullptr);
@@ -49,8 +50,9 @@ bool ImplementAmplifierControl:: initialize (int size, const int *amap, const do
 */
 bool ImplementAmplifierControl::uninitialize ()
 {
-    if (helper!=nullptr)
+    if (helper != nullptr) {
         delete castToMapper(helper);
+    }
 
     delete [] dTemp;
     delete [] iTemp;

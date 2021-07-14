@@ -195,16 +195,18 @@ bool ApplicationViewWidget::save()
 
 QString ApplicationViewWidget::getFileName()
 {
-    if (builder)
+    if (builder) {
         return builder->getFileName();
-    else
+    } else {
         return {};
+    };
 }
 
 void ApplicationViewWidget::setFileName(QString filename)
 {
-    if (builder)
+    if (builder) {
         builder->setFileName(filename);
+    }
     return;
 }
 
@@ -212,15 +214,16 @@ QString ApplicationViewWidget::getAppName()
 {
     if (builder) {
         return builder->getAppName();
-    }
-    else
+    } else {
         return {};
+    };
 }
 
 void ApplicationViewWidget::setAppName(QString appName)
 {
-    if (builder)
+    if (builder) {
         builder->setAppName(appName);
+    }
     return;
 }
 
@@ -614,10 +617,11 @@ void ApplicationViewWidget::updateApplicationWindow()
         l << command << id << "stopped" << host << param << stdio << workDir << env;
 
         CustomTreeWidgetItem *it;
-        if (!appNode)
+        if (!appNode) {
             it = new CustomTreeWidgetItem(ui->moduleList,l);
-        else
-            it = new CustomTreeWidgetItem(appNode,l);
+        } else {
+            it = new CustomTreeWidgetItem(appNode, l);
+        }
 
         //it->setFlags(it->flags() | Qt::ItemIsEditable);
         it->setData(0,Qt::UserRole,yarp::manager::MODULE);
@@ -630,14 +634,14 @@ void ApplicationViewWidget::updateApplicationWindow()
     for(cnnitr=connections.begin(); cnnitr<connections.end(); cnnitr++)
     {
         QString type;
-        if ((*cnnitr).isPersistent())
+        if ((*cnnitr).isPersistent()) {
             type = "Persistent";
-        else
-        {
-            if ((*cnnitr).isExternalFrom() || (*cnnitr).isExternalTo())
+        } else {
+            if ((*cnnitr).isExternalFrom() || (*cnnitr).isExternalTo()) {
                 type = "External";
-            else
+            } else {
                 type = "Internal";
+            }
         }
         QString sId = QString("%1").arg(id);
         QString from = QString("%1").arg((*cnnitr).from());
@@ -1497,10 +1501,11 @@ bool ApplicationViewWidget::scanAvailableCarriers(QString carrier, bool isConnec
     stringLst.push_back(carrier);
     for (size_t i=0; i<lst.size(); i++)
     {
-        if (lst.get(i).asString() == carrier.toStdString())
+        if (lst.get(i).asString() == carrier.toStdString()) {
             res = true;
-        else
+        } else {
             stringLst.push_back(lst.get(i).asString().c_str());
+        }
     }
     if (!res && isConnection)
     {
@@ -1613,40 +1618,45 @@ void ApplicationViewWidget::selectAll()
 /*! \brief Run all modules in the application */
 void ApplicationViewWidget::runApplicationSet(bool onlySelected)
 {
-    if(!onlySelected)
+    if (!onlySelected) {
         selectAllModule(true);
+    }
     onRun();
 }
 
 /*! \brief Stop all modules in the application */
 void ApplicationViewWidget::stopApplicationSet(bool onlySelected)
 {
-    if(!onlySelected)
+    if (!onlySelected) {
         selectAllModule(true);
+    }
     onStop();
 }
 
 /*! \brief Kill all running modules in the application */
 void ApplicationViewWidget::killApplicationSet(bool onlySelected)
 {
-    if(!onlySelected)
+    if (!onlySelected) {
         selectAllModule(true);
+    }
     onKill();
 }
 
 /*! \brief Connect all modules in the application to their ports using connections list*/
 void ApplicationViewWidget::connectConnectionSet(bool onlySelected)
 {
-    if(!onlySelected)
+    if (!onlySelected) {
         selectAllConnections(true);
+    }
     onConnect();
 }
 
 /*! \brief Disconnect all modules in the application to their ports using connections list*/
 void ApplicationViewWidget::disconnectConnectionSet(bool onlySelected)
 {
-    if(!onlySelected)
+    if (!onlySelected) {
         selectAllConnections(true);
+    }
     onDisconnect();
 }
 
@@ -1922,8 +1932,11 @@ void ApplicationViewWidget::onYARPScope()
                 else{
                     // waiting for the port to get open
                     double base = yarp::os::SystemClock::nowSystem();
-                    while(!timeout(base, 3.0))
-                        if (launcher.exists(to.toLatin1().data())) break;
+                    while (!timeout(base, 3.0)) {
+                        if (launcher.exists(to.toLatin1().data())) {
+                            break;
+                        }
+                    }
                     if (!launcher.connect(from.toLatin1().data(), to.toLatin1().data(), "udp")) {
                         QString msg;
                         msg = QString("Cannot inspect '%1' : %2").arg(from).arg(launcher.error());
@@ -1944,8 +1957,9 @@ void ApplicationViewWidget::onYARPScope()
 bool ApplicationViewWidget::timeout(double base, double timeout)
 {
     yarp::os::SystemClock::delaySystem(1.0);
-    if ((yarp::os::SystemClock::nowSystem()-base) > timeout)
+    if ((yarp::os::SystemClock::nowSystem() - base) > timeout) {
         return true;
+    }
     return false;
 }
 

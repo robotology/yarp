@@ -38,13 +38,17 @@ public:
 
     size_t length(size_t index) const override {
         index += payload_index;
-        if (index==payload_index) return delegate->length(index)-payload_offset;
+        if (index == payload_index) {
+            return delegate->length(index) - payload_offset;
+        }
         return delegate->length(index);
     }
 
     const char *data(size_t index) const override {
         index += payload_index;
-        if (index==payload_index) return delegate->data(index)+payload_offset;
+        if (index == payload_index) {
+            return delegate->data(index) + payload_offset;
+        }
         return delegate->data(index);
     }
 

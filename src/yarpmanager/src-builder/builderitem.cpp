@@ -38,10 +38,9 @@ QList<Arrow *>* BuilderItem::getArrows()
 void BuilderItem::removeArrow(Arrow *arrow){
     int index = arrows.indexOf(arrow);
 
-    if (index != -1)
+    if (index != -1) {
         arrows.removeAt(index);
-
-
+    }
 }
 
 bool BuilderItem::arrowAlreadyPresent(BuilderItem *endItem)

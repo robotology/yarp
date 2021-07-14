@@ -32,17 +32,23 @@ YarprunCheckpoints::YarprunCheckpoints()
 
     for (int t=10; t<256 && path[t]; ++t)
     {
-        if (path[t]=='\n' || path[t]=='\r' || path[t]==' ' || path[t]==':' || path[t]=='?') path[t]='_';
+        if (path[t] == '\n' || path[t] == '\r' || path[t] == ' ' || path[t] == ':' || path[t] == '?') {
+            path[t] = '_';
+        }
     }
 
     mLogFile=fopen(path, "w");
 
-    if (!mLogFile) perror(path);
+    if (!mLogFile) {
+        perror(path);
+    }
 }
 
 YarprunCheckpoints::~YarprunCheckpoints()
 {
-    if (mLogFile) fclose(mLogFile);
+    if (mLogFile) {
+        fclose(mLogFile);
+    }
 }
 
 YarprunCheckpoints& YarprunCheckpoints::instance()
@@ -54,7 +60,9 @@ YarprunCheckpoints& YarprunCheckpoints::instance()
 
 void YarprunCheckpoints::checkpoint(const char *prefix, const char* sFile, const char* sFunction, int line)
 {
-    if (!mLogFile) return;
+    if (!mLogFile) {
+        return;
+    }
 
     fprintf(mLogFile, "%s: file %s function %s line %d\n", prefix, sFile, sFunction, line);
     fflush(mLogFile);

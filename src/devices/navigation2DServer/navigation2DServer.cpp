@@ -493,7 +493,9 @@ bool navigation2DServer::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
     bool ok = command.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
     reply.clear();
 
     //^^^^^^^^^^^^^^^^^ STRING SECTION
@@ -542,16 +544,27 @@ void navigation2DServer::run()
 
 std::string navigation2DServer::getStatusAsString(NavigationStatusEnum status)
 {
-    if (status == navigation_status_idle) return std::string("navigation_status_idle");
-    else if (status == navigation_status_moving) return std::string("navigation_status_moving");
-    else if (status == navigation_status_waiting_obstacle) return std::string("navigation_status_waiting_obstacle");
-    else if (status == navigation_status_goal_reached) return std::string("navigation_status_goal_reached");
-    else if (status == navigation_status_aborted) return std::string("navigation_status_aborted");
-    else if (status == navigation_status_failing) return std::string("navigation_status_failing");
-    else if (status == navigation_status_paused) return std::string("navigation_status_paused");
-    else if (status == navigation_status_preparing_before_move) return std::string("navigation_status_preparing_before_move");
-    else if (status == navigation_status_thinking) return std::string("navigation_status_thinking");
-    else if (status == navigation_status_error) return std::string("navigation_status_error");
+    if (status == navigation_status_idle) {
+        return std::string("navigation_status_idle");
+    } else if (status == navigation_status_moving) {
+        return std::string("navigation_status_moving");
+    } else if (status == navigation_status_waiting_obstacle) {
+        return std::string("navigation_status_waiting_obstacle");
+    } else if (status == navigation_status_goal_reached) {
+        return std::string("navigation_status_goal_reached");
+    } else if (status == navigation_status_aborted) {
+        return std::string("navigation_status_aborted");
+    } else if (status == navigation_status_failing) {
+        return std::string("navigation_status_failing");
+    } else if (status == navigation_status_paused) {
+        return std::string("navigation_status_paused");
+    } else if (status == navigation_status_preparing_before_move) {
+        return std::string("navigation_status_preparing_before_move");
+    } else if (status == navigation_status_thinking) {
+        return std::string("navigation_status_thinking");
+    } else if (status == navigation_status_error) {
+        return std::string("navigation_status_error");
+    }
     return std::string("navigation_status_error");
 }
 

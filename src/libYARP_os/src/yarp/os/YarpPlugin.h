@@ -60,8 +60,9 @@ public:
     {
         close();
         factory = new SharedLibraryClassFactory<T>();
-        if (!factory)
+        if (!factory) {
             return false;
+        }
         if (!settings.open(*factory)) {
             settings.reportStatus(*factory);
             close();

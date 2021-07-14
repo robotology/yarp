@@ -3674,8 +3674,9 @@ void t_yarp_generator::generate_service_method(t_service* tservice, t_function* 
         f_cpp_ << indent_cpp() << helper_class << " helper{";
         bool first = true;
         for (const auto& arg : function->get_arglist()->get_members()) {
-            if (!first)
+            if (!first) {
                 f_cpp_ << ", ";
+            }
             first = false;
             f_cpp_ << arg->get_name();
         }

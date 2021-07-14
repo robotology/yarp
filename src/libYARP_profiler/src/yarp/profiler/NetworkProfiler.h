@@ -69,11 +69,13 @@ public:
             str<<"port name: "<<name<<std::endl;
             str<<"outputs:"<<std::endl;
             std::vector<ConnectionInfo>::const_iterator itr;
-            for(itr=outputs.begin(); itr!=outputs.end(); itr++)
-                str<<"   + "<<(*itr).name<<" ("<<(*itr).carrier<<")"<<std::endl;
+            for (itr = outputs.begin(); itr != outputs.end(); itr++) {
+                str << "   + " << (*itr).name << " (" << (*itr).carrier << ")" << std::endl;
+            }
             str<<"inputs:"<<std::endl;
-            for(itr=inputs.begin(); itr!=inputs.end(); itr++)
-                str<<"   + "<<(*itr).name<<" ("<<(*itr).carrier<<")"<<std::endl;
+            for (itr = inputs.begin(); itr != inputs.end(); itr++) {
+                str << "   + " << (*itr).name << " (" << (*itr).carrier << ")" << std::endl;
+            }
             str<<"owner:"<<std::endl;
             str<<"   + name:      "<<owner.name<<std::endl;
             str<<"   + arguments: "<<owner.arguments<<std::endl;

@@ -163,8 +163,9 @@ int ShmemInputStreamImpl::read(char* data, int len)
         return -1;
     }
 
-    while (m_pHeader->resize)
+    while (m_pHeader->resize) {
         Resize();
+    }
 
     if (m_pHeader->avail < len) {
         ++m_pHeader->waiting;
@@ -229,8 +230,9 @@ yarp::conf::ssize_t ShmemInputStreamImpl::read(yarp::os::Bytes& b)
 
 void ShmemInputStreamImpl::close()
 {
-    if (!m_bOpen)
+    if (!m_bOpen) {
         return;
+    }
 
     m_bOpen = false;
 

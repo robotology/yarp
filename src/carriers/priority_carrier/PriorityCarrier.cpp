@@ -61,7 +61,9 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
     portName = proto.getRoute().getToName();
     sourceName = proto.getRoute().getFromName();
     group = getPeers().add(portName,this);
-    if (!group) return false;
+    if (!group) {
+        return false;
+    }
 
     Property options;
     options.fromString(proto.getSenderSpecifier());
@@ -70,8 +72,9 @@ bool PriorityCarrier::configure(yarp::os::ConnectionState& proto) {
     timeResting = fabs(options.check("tr",Value(0.0)).asFloat64());
     stimulation = fabs(options.check("st",Value(STIMUL_THRESHOLD*10)).asFloat64());
     // Zero stimulation is undefined and will be interpreted as S=Thresould.
-    if(stimulation == 0)
-        stimulation = STIMUL_THRESHOLD*10;
+    if (stimulation == 0) {
+        stimulation = STIMUL_THRESHOLD * 10;
+    }
     stimulation /= 10.0;
 
     bias = options.check("bs",Value(STIMUL_THRESHOLD*10)).asFloat64();
@@ -155,42 +158,43 @@ double PriorityCarrier::getActualStimulation(double t)
     double dt = t - timeArrival;
     // Temporal priority is inverted if this is a neuron model and the temporal
     // stimulation has already reached to STIMUL_THRESHOLD and waited for Tc.
-    if((timeResting > 0)
-       && (dt >= fabs(timeConstant))
-       && (temporalStimulation >= STIMUL_THRESHOLD))
-       temporalStimulation = -temporalStimulation;
+    if ((timeResting > 0)
+        && (dt >= fabs(timeConstant))
+        && (temporalStimulation >= STIMUL_THRESHOLD)) {
+        temporalStimulation = -temporalStimulation;
+    }
 
     double actualStimulation;
     if(!isResting(temporalStimulation)) // behavior is in stimulation state
     {
         // After a gap bigger than Tc, the
         // priority is set to zero to avoid redundant calculation.
-        if(dt > fabs(timeConstant))
+        if (dt > fabs(timeConstant)) {
             actualStimulation = 0;
-        else
-            actualStimulation = temporalStimulation *
-                (1.0 - exp((dt-timeConstant)/timeConstant*5.0) + exp(-5.0));
+        } else {
+            actualStimulation = temporalStimulation * (1.0 - exp((dt - timeConstant) / timeConstant * 5.0) + exp(-5.0));
+        }
     }
     else // behavior is in resting state
     {
         // it is in waiting state for Tc
-        if(temporalStimulation > 0)
+        if (temporalStimulation > 0) {
             actualStimulation = temporalStimulation;
-        else
-        {
+        } else {
             dt -= fabs(timeConstant);
             // After a gap bigger than Tr, the
             // priority is set to zero to avoid redundant calculation.
-            if(dt > fabs(timeResting))
+            if (dt > fabs(timeResting)) {
                 actualStimulation = 0;
-            else
-                actualStimulation = temporalStimulation *
-                    (1.0 - exp((dt-timeResting)/timeResting*5.0) + exp(-5.0));
+            } else {
+                actualStimulation = temporalStimulation * (1.0 - exp((dt - timeResting) / timeResting * 5.0) + exp(-5.0));
+            }
         }
     }
 
-    if(actualStimulation <= 0)
+    if (actualStimulation <= 0) {
         isActive = false;
+    }
 
     return actualStimulation;
 }
@@ -198,8 +202,9 @@ double PriorityCarrier::getActualStimulation(double t)
 double PriorityCarrier::getActualInput(double t)
 {
     // calculating E(t) = Sum(e.I(t)) + b
-    if(!isActive)
+    if (!isActive) {
         return 0.0;
+    }
 
     double E = 0;
     for (auto& it : group->peerSet)
@@ -214,8 +219,9 @@ double PriorityCarrier::getActualInput(double t)
                 {
                     Bottle* b = v.asList();
                     // an exitatory to this priority carrier
-                    if(sourceName == b->get(0).asString())
-                        E += peer->getActualInput(t) * (b->get(1).asFloat64()/10.0);
+                    if (sourceName == b->get(0).asString()) {
+                        E += peer->getActualInput(t) * (b->get(1).asFloat64() / 10.0);
+                    }
                 }
             }
 
@@ -235,8 +241,9 @@ bool PriorityGroup::recalculate(double t)
 {
     //TODO: find the correct way to get the size of peerSet
     int nConnections = 0;
-    for(auto it=peerSet.begin(); it!=peerSet.end(); it++)
+    for (auto it = peerSet.begin(); it != peerSet.end(); it++) {
         nConnections++;
+    }
 
     // calculate matrices X, B, InvA and Y
     X.resize(nConnections, 1);
@@ -266,8 +273,9 @@ bool PriorityGroup::recalculate(double t)
                 {
                     Bottle* b = v.asList();
                     // an exitatory link to this connection
-                    if(peer->sourceName == b->get(0).asString())
-                        InvA(row,col) = -(b->get(1).asFloat64()/10.0)*xi;
+                    if (peer->sourceName == b->get(0).asString()) {
+                        InvA(row, col) = -(b->get(1).asFloat64() / 10.0) * xi;
+                    }
                 }
             }
             col++;
@@ -305,8 +313,9 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
     double tNow = yarp::os::Time::now();
     source->stimulate(tNow);
 
-    if(!recalculate(tNow))
+    if (!recalculate(tNow)) {
         return false;
+    }
 
     int row = 0;
     PriorityCarrier *maxPeer = nullptr;
@@ -331,8 +340,9 @@ bool PriorityGroup::acceptIncomingData(yarp::os::ConnectionReader& reader,
 
     // a virtual message will never be delivered. It will be only
     // used for the coordination
-    if(source->isVirtual)
+    if (source->isVirtual) {
         accept = false;
+    }
 
     return accept;
 }
@@ -351,7 +361,9 @@ PriorityDebugThread::PriorityDebugThread(PriorityCarrier* carrier) : PeriodicThr
 
 PriorityDebugThread::~PriorityDebugThread()
 {
-    if(isRunning()) stop();
+    if (isRunning()) {
+        stop();
+    }
 }
 
 void PriorityDebugThread::run()

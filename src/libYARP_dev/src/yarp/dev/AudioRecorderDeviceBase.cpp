@@ -85,7 +85,9 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
 
     //prepare the sound data struct
     size_t samples_to_be_copied = buff_size;
-    if (samples_to_be_copied > max_number_of_samples) samples_to_be_copied = max_number_of_samples;
+    if (samples_to_be_copied > max_number_of_samples) {
+        samples_to_be_copied = max_number_of_samples;
+    }
     if (sound.getChannels() != this->m_audiorecorder_cfg.numChannels && sound.getSamples() != samples_to_be_copied)
     {
         sound.resize(samples_to_be_copied, this->m_audiorecorder_cfg.numChannels);
@@ -213,9 +215,15 @@ bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable&
     m_audiorecorder_cfg.numSamples = config.check("samples", Value(0), "number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
     m_audiorecorder_cfg.numChannels = config.check("channels", Value(0), "number of audio channels (0=automatic, max is 2)").asInt32();
 
-    if (m_audiorecorder_cfg.frequency == 0)  m_audiorecorder_cfg.frequency = DEFAULT_SAMPLE_RATE;
-    if (m_audiorecorder_cfg.numChannels == 0)  m_audiorecorder_cfg.numChannels = DEFAULT_NUM_CHANNELS;
-    if (m_audiorecorder_cfg.numSamples == 0) m_audiorecorder_cfg.numSamples = m_audiorecorder_cfg.frequency; //  by default let's use chunks of 1 second
+    if (m_audiorecorder_cfg.frequency == 0) {
+        m_audiorecorder_cfg.frequency = DEFAULT_SAMPLE_RATE;
+    }
+    if (m_audiorecorder_cfg.numChannels == 0) {
+        m_audiorecorder_cfg.numChannels = DEFAULT_NUM_CHANNELS;
+    }
+    if (m_audiorecorder_cfg.numSamples == 0) {
+        m_audiorecorder_cfg.numSamples = m_audiorecorder_cfg.frequency; //  by default let's use chunks of 1 second
+    }
 
     yCInfo(AUDIORECORDER_BASE) << "Device configured with the following options:";
     yCInfo(AUDIORECORDER_BASE) << "Frequency:"<< m_audiorecorder_cfg.frequency;

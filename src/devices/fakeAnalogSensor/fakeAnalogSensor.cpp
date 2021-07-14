@@ -142,10 +142,11 @@ void FakeAnalogSensor::run()
     double timeNow = yarp::os::Time::now();
 
     //if 100ms have passed since the last received message
-    if (timeNow > timeStamp+10)
+    if (timeNow > timeStamp + 10) {
         status = IAnalogSensor::AS_TIMEOUT;
-    else
+    } else {
         status = IAnalogSensor::AS_OK;
+    }
 
     timeStamp = timeNow;
     mutex.unlock();

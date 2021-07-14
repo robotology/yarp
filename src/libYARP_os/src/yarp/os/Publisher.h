@@ -161,8 +161,9 @@ public:
 
     virtual int getPendingReads()
     {
-        if (buffered_port)
+        if (buffered_port) {
             return buffered_port->getPendingReads();
+        }
         return 0;
     }
 
@@ -182,8 +183,9 @@ private:
 
     Contactable& active()
     {
-        if (buffered_port)
+        if (buffered_port) {
             return *buffered_port;
+        }
         return port;
     }
 
@@ -197,8 +199,9 @@ private:
 
     void clear()
     {
-        if (!buffered_port)
+        if (!buffered_port) {
             return;
+        }
         delete buffered_port;
         buffered_port = nullptr;
     }

@@ -46,10 +46,12 @@ void BatteryInputPortProcessor::onRead(yarp::os::Bottle &b)
     {
         double tmpDT=now-prev;
         deltaT+=tmpDT;
-        if (tmpDT>deltaTMax)
-            deltaTMax=tmpDT;
-        if (tmpDT<deltaTMin)
-            deltaTMin=tmpDT;
+        if (tmpDT > deltaTMax) {
+            deltaTMax = tmpDT;
+        }
+        if (tmpDT < deltaTMin) {
+            deltaTMin = tmpDT;
+        }
 
         //compare network time
         if (tmpDT*1000<BATTERY_TIMEOUT)

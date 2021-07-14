@@ -64,8 +64,9 @@ public:
     bool expectReplyToHeader(yarp::os::ConnectionState&  proto) override {
         bool ok = MpiCarrier::expectReplyToHeader(proto);
         MpiBcastStream *mpiStream = dynamic_cast<MpiBcastStream*> (stream);
-        if(mpiStream)
+        if (mpiStream) {
             mpiStream->post();
+        }
         return ok;
     }
 

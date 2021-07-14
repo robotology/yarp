@@ -22,12 +22,14 @@ ssize_t MpiP2PStream::read(Bytes& b) {
         int rank = comm->rank();
         MPI_Status status;
         while (true) {
-            if (terminate)
+            if (terminate) {
                 return -1;
+            }
             // Check for a message
             MPI_Iprobe(!rank, tag, comm->comm, &available, &status);
-            if (available)
+            if (available) {
                 break;
+            }
             // Prevent the busy polling which hurts
             // performance in the oversubscription scenario
             Time::yield();
@@ -84,8 +86,9 @@ void MpiP2PStream::write(const Bytes& b) {
         */
         // Check if message has been received
         MPI_Test(&request, &flag, &status);
-        if (flag)
+        if (flag) {
             break;
+        }
         // Prevent the busy polling which hurts
         // performance in the oversubscription scenario
         Time::yield();

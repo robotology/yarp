@@ -125,8 +125,9 @@ void QEngine::runNormally()
 
                     if (stopAll == this->numPart){
                         yInfo() << "All parts have Finished!";
-                        if (qutils->partDetails[i].currFrame > 1)
+                        if (qutils->partDetails[i].currFrame > 1) {
                             emit qutils->updateGuiThread();
+                        }
                         qutils->stopAtEnd();
                         qutils->resetButton();
                         allPartsStatus = true;

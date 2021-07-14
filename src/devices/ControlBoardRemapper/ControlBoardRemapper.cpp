@@ -464,8 +464,9 @@ bool ControlBoardRemapper::detachAll()
 {
     //check if we already instantiated a subdevice previously
     int devices=remappedControlBoards.getNrOfSubControlBoards();
-    for(int k=0;k<devices;k++)
+    for (int k = 0; k < devices; k++) {
         remappedControlBoards.getSubControlBoard(k)->detach();
+    }
 
     IRemoteCalibrator::releaseCalibratorDevice();
     return true;
@@ -2351,15 +2352,16 @@ bool ControlBoardRemapper::getMotorEncoders(double *encs)
         size_t subIndex=remappedControlBoards.lut[l].subControlBoardIndex;
 
         RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
-        if (!p)
+        if (!p) {
             return false;
+        }
 
         if (p->iMotEnc)
         {
             ret=ret&&p->iMotEnc->getMotorEncoder(off, encs+l);
+        } else {
+            ret = false;
         }
-        else
-            ret=false;
     }
     return ret;
 }
@@ -3550,8 +3552,9 @@ bool ControlBoardRemapper::getControlMode(int j, int *mode)
     size_t subIndex=remappedControlBoards.lut[j].subControlBoardIndex;
 
     RemappedSubControlBoard *p=remappedControlBoards.getSubControlBoard(subIndex);
-    if (!p)
+    if (!p) {
         return false;
+    }
 
     return p->iMode->getControlMode(off, mode);
 

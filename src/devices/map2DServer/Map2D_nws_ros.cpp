@@ -62,7 +62,9 @@ bool Map2D_nws_ros::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
     bool ok = command.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     reply.clear();
 
@@ -232,12 +234,13 @@ bool Map2D_nws_ros::publishMapToRos(string map_name)
     ogrid.data.resize(current_map.width() * current_map.height());
     int index = 0;
     yarp::dev::Nav2D::XYCell cell;
-    for (cell.y = current_map.height(); cell.y-- > 0;)
+    for (cell.y = current_map.height(); cell.y-- > 0;) {
         for (cell.x = 0; cell.x < current_map.width(); cell.x++)
         {
             current_map.getOccupancyData(cell, tmp);
             ogrid.data[index++] = (int)tmp;
         }
+    }
 
     m_publisherPort_map.write();
 
@@ -280,9 +283,13 @@ bool Map2D_nws_ros::subscribeMapFromRos(string map_name)
                 double occ = map_ros->data[x + y * map_ros->info.width];
                 map.setOccupancyData(cell,occ);
 
-                if (occ >= 0 && occ <= 70)  map.setMapFlag(cell, MapGrid2D::MAP_CELL_FREE);
-                else if (occ >= 71 && occ <= 100)  map.setMapFlag(cell, MapGrid2D::MAP_CELL_WALL);
-                else                               map.setMapFlag(cell, MapGrid2D::MAP_CELL_UNKNOWN);
+                if (occ >= 0 && occ <= 70) {
+                    map.setMapFlag(cell, MapGrid2D::MAP_CELL_FREE);
+                } else if (occ >= 71 && occ <= 100) {
+                    map.setMapFlag(cell, MapGrid2D::MAP_CELL_WALL);
+                } else {
+                    map.setMapFlag(cell, MapGrid2D::MAP_CELL_UNKNOWN);
+                }
             }
         }
         if (m_iMap2D->store_map(map))

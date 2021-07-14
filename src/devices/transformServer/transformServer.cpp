@@ -332,7 +332,9 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     string request = in.get(0).asString();
 
@@ -480,9 +482,13 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
     else if (request == "generate_view")
     {
         m_show_transforms_in_diagram  = show_transforms_in_diagram_t::do_not_show;
-        if      (in.get(1).asString() == "show_quaternion") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_quaternion;
-        else if (in.get(1).asString() == "show_matrix") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_matrix;
-        else if (in.get(1).asString() == "show_rpy") m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_rpy;
+        if (in.get(1).asString() == "show_quaternion") {
+            m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_quaternion;
+        } else if (in.get(1).asString() == "show_matrix") {
+            m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_matrix;
+        } else if (in.get(1).asString() == "show_rpy") {
+            m_show_transforms_in_diagram = show_transforms_in_diagram_t::show_rpy;
+        }
         generate_view();
         out.addString("ok");
     }

@@ -50,8 +50,9 @@ void BatchQosConfDialog::openCons()
     QString filename = QFileDialog::getOpenFileName(nullptr, "Load connections list",
                                                     QDir::homePath(),
                                                     filters, &defaultFilter);
-    if(filename.size() == 0)
+    if (filename.size() == 0) {
         return;
+    }
 
     fstream file;
     file.open(filename.toStdString().c_str());
@@ -78,9 +79,9 @@ void BatchQosConfDialog::openCons()
             prop.append(sample.get(2).asString().c_str());
             item = new QTreeWidgetItem( ui->treeWidgetCons, prop);
             YARP_UNUSED(item);
+        } else {
+            yWarning() << "Wrong connection data at line" << count;
         }
-        else
-            yWarning()<<"Wrong connection data at line"<<count;
     }
     file.close();
 
@@ -139,9 +140,9 @@ void BatchQosConfDialog::updateQos()
             qosStr = NetworkProfiler::packetPrioToString(toStyle.getPacketPriorityAsLevel()).c_str();
             qosStr += ", " + QString::number(toStyle.getThreadPolicy()) + ", " + QString::number(toStyle.getThreadPriority());
             item->setText(5, qosStr);
+        } else {
+            yWarning() << "Cannot retrieve Qos property of" << item->text(0).toUtf8().constData() << "->" << item->text(0).toUtf8().constData();
         }
-        else
-            yWarning()<<"Cannot retrieve Qos property of"<<item->text(0).toUtf8().constData()<<"->"<<item->text(0).toUtf8().constData();
     }
     ui->treeWidgetCons->update();
 }
@@ -150,8 +151,9 @@ void BatchQosConfDialog::configureQos() {
     yarp::os::QosStyle fromStyle, toStyle;
     QosConfigDialog dialog(nullptr);
     dialog.setModal(true);
-    if(dialog.exec() != QDialog::Accepted )
+    if (dialog.exec() != QDialog::Accepted) {
         return;
+    }
     dialog.getUserQosStyles(fromStyle, toStyle);
     for( int i=0; i < ui->treeWidgetCons->topLevelItemCount(); ++i ){
         QTreeWidgetItem *item = ui->treeWidgetCons->topLevelItem(i);

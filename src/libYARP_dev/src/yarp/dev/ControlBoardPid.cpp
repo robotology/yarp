@@ -106,35 +106,45 @@ void Pid::setKff(double ff)
 bool Pid::operator==(const yarp::dev::Pid &p) const
 {
 
-    if(kp != p.kp)
+    if (kp != p.kp) {
         return false;
+    }
 
-    if(ki != p.ki)
+    if (ki != p.ki) {
         return false;
+    }
 
-    if(kd != p.kd)
+    if (kd != p.kd) {
         return false;
+    }
 
-    if(max_output != p.max_output)
+    if (max_output != p.max_output) {
         return false;
+    }
 
-    if(max_int != p.max_int)
+    if (max_int != p.max_int) {
         return false;
+    }
 
-    if(kff != p.kff)
+    if (kff != p.kff) {
         return false;
+    }
 
-    if(offset != p.offset)
+    if (offset != p.offset) {
         return false;
+    }
 
-    if(scale != p.scale)
+    if (scale != p.scale) {
         return false;
+    }
 
-    if(stiction_down_val !=  p.stiction_down_val)
+    if (stiction_down_val != p.stiction_down_val) {
         return false;
+    }
 
-    if(stiction_up_val != p.stiction_up_val)
+    if (stiction_up_val != p.stiction_up_val) {
         return false;
+    }
 
     return true;
 

@@ -52,9 +52,15 @@ bool FrameTransformSet_nwc_ros::open(yarp::os::Searchable& config)
     {
         yCInfo(FRAMETRANSFORSETNWCROS, "Configuring ROS params");
         Bottle ROS_config = config.findGroup("ROS");
-        if(ROS_config.check("ft_topic")) m_topic = ROS_config.find("ft_topic").asString();
-        if(ROS_config.check("ft_topic_static")) m_topic_static = ROS_config.find("ft_topic_static").asString();
-        if(ROS_config.check("ft_node")) m_nodeName = ROS_config.find("ft_node").asString();
+        if (ROS_config.check("ft_topic")) {
+            m_topic = ROS_config.find("ft_topic").asString();
+        }
+        if (ROS_config.check("ft_topic_static")) {
+            m_topic_static = ROS_config.find("ft_topic_static").asString();
+        }
+        if (ROS_config.check("ft_node")) {
+            m_nodeName = ROS_config.find("ft_node").asString();
+        }
 
         //open ros publisher
         if (m_rosNode == nullptr)

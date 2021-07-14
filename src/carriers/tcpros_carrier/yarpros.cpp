@@ -71,15 +71,21 @@ string addPart(string t, string name, int code, Value *val, string orig, string 
             r += '\''; r += char1; r += "\'*256^3";
         }
         if (char2!=0) {
-            if (r!="") r += "+";
+            if (r != "") {
+                r += "+";
+            }
             r += '\''; r += char2; r += "\'*256^2";
         }
         if (char3!=0) {
-            if (r!="") r += "+";
+            if (r != "") {
+                r += "+";
+            }
             r += '\''; r += char3; r += "\'*256";
         }
         if (char4!=0) {
-            if (r!="") r += "+";
+            if (r != "") {
+                r += "+";
+            }
             r += '\''; r += char4; r += '\'';
         }
         if (r.length()==0) {
@@ -355,11 +361,15 @@ int main(int argc, char *argv[]) {
         RosLookup lookup;
         yCDebug(YARPROS, "  * looking up ros node %s", ros_port.c_str());
         bool ok = lookup.lookupCore(ros_port);
-        if (!ok) return 1;
+        if (!ok) {
+            return 1;
+        }
         yCDebug(YARPROS, "  * found ros node %s", ros_port.c_str());
         yCDebug(YARPROS, "  * looking up topic %s", topic.c_str());
         ok = lookup.lookupTopic(topic);
-        if (!ok) return 1;
+        if (!ok) {
+            return 1;
+        }
         yCDebug(YARPROS, "  * found topic %s", topic.c_str());
         string carrier = "tcpros+role.pub+topic.";
         if (service) {
@@ -391,7 +401,9 @@ int main(int argc, char *argv[]) {
         RosLookup lookup;
         yCDebug(YARPROS, "  * looking up ros node %s", ros_port.c_str());
         bool ok = lookup.lookupCore(ros_port);
-        if (!ok) return 1;
+        if (!ok) {
+            return 1;
+        }
         yCDebug(YARPROS, "  * found ros node %s", ros_port.c_str());
         ok = register_port(yarp_port.c_str(),
                       (string("tcpros+role.sub+topic.")+topic).c_str(),
@@ -410,19 +422,27 @@ int main(int argc, char *argv[]) {
         }
         std::string dir = cmd.get(1).asString();
         bool in = false;
-        if (dir=="in") in = true;
-        else if (dir=="out") in = false;
-        else {
+        if (dir == "in") {
+            in = true;
+        } else if (dir == "out") {
+            in = false;
+        } else {
             yCError(YARPROS, "Please specify one of 'in' or 'out'.");
             return 1;
         }
         std::string pname = cmd.get(2).asString();
         Port p;
-        if (!p.open("...")) return 1;
+        if (!p.open("...")) {
+            return 1;
+        }
         if (in) {
-            if (!Network::connect(pname,p.getName(),"tcp+log.in")) return 1;
+            if (!Network::connect(pname, p.getName(), "tcp+log.in")) {
+                return 1;
+            }
         } else {
-            if (!Network::connect(pname,p.getName())) return 1;
+            if (!Network::connect(pname, p.getName())) {
+                return 1;
+            }
         }
         Bottle b;
         p.read(b);

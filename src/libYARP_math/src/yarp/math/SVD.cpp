@@ -52,9 +52,11 @@ Matrix yarp::math::pinv(const Matrix &in, double tol)
     yarp::math::SVD(in, U, Sdiag, V);
 
     Matrix Spinv = zeros(k,k);
-    for (int c=0;c<k; c++)
-        if ( Sdiag(c)> tol)
-            Spinv(c,c) = 1/Sdiag(c);
+    for (int c = 0; c < k; c++) {
+        if (Sdiag(c) > tol) {
+            Spinv(c, c) = 1 / Sdiag(c);
+        }
+    }
     return V*Spinv*U.transposed();
 }
 
@@ -67,9 +69,11 @@ void yarp::math::pinv(const Matrix &in, Matrix &out, double tol)
     yarp::math::SVD(in, U, Sdiag, V);
 
     Matrix Spinv = zeros(k,k);
-    for (int c=0;c<k; c++)
-        if ( Sdiag(c)> tol)
-            Spinv(c,c) = 1/Sdiag(c);
+    for (int c = 0; c < k; c++) {
+        if (Sdiag(c) > tol) {
+            Spinv(c, c) = 1 / Sdiag(c);
+        }
+    }
     out = V*Spinv*U.transposed();
 }
 
@@ -77,15 +81,18 @@ Matrix yarp::math::pinv(const Matrix &in, Vector &sv, double tol)
 {
     int m = in.rows(), n = in.cols(), k = m<n?m:n;
     Matrix U(m,k), V(n,k);
-    if((int)sv.size()!=k)
+    if ((int)sv.size() != k) {
         sv.resize(k);
+    }
 
     yarp::math::SVD(in, U, sv, V);
 
     Matrix Spinv = zeros(k,k);
-    for (int c=0;c<k; c++)
-        if ( sv(c)> tol)
-            Spinv(c,c) = 1/sv(c);
+    for (int c = 0; c < k; c++) {
+        if (sv(c) > tol) {
+            Spinv(c, c) = 1 / sv(c);
+        }
+    }
 
     return V*Spinv*U.transposed();
 }
@@ -94,15 +101,18 @@ void yarp::math::pinv(const Matrix &in, Matrix &out, Vector &sv, double tol)
 {
     int m = in.rows(), n = in.cols(), k = m<n?m:n;
     Matrix U(m,k), V(n,k);
-    if((int)sv.size()!=k)
+    if ((int)sv.size() != k) {
         sv.resize(k);
+    }
 
     yarp::math::SVD(in, U, sv, V);
 
     Matrix Spinv = zeros(k,k);
-    for (int c=0;c<k; c++)
-        if ( sv(c)> tol)
-            Spinv(c,c) = 1/sv(c);
+    for (int c = 0; c < k; c++) {
+        if (sv(c) > tol) {
+            Spinv(c, c) = 1 / sv(c);
+        }
+    }
 
     out = V*Spinv*U.transposed();
 }
@@ -134,15 +144,17 @@ void yarp::math::pinvDamped(const Matrix &in, Matrix &out, Vector &sv, double da
 {
     int m = in.rows(), n = in.cols(), k = m<n?m:n;
     Matrix U(m,k), V(n,k);
-    if((int)sv.size()!=k)
+    if ((int)sv.size() != k) {
         sv.resize(k);
+    }
 
     yarp::math::SVD(in, U, sv, V);
 
     Matrix Spinv = zeros(k,k);
     double damp2 = damp*damp;
-    for (int c=0;c<k; c++)
-        Spinv(c,c) = sv(c) / (sv(c)*sv(c) + damp2);
+    for (int c = 0; c < k; c++) {
+        Spinv(c, c) = sv(c) / (sv(c) * sv(c) + damp2);
+    }
 
     out = V*Spinv*U.transposed();
 }

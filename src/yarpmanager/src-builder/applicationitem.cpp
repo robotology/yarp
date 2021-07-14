@@ -461,8 +461,9 @@ PortItem* ApplicationItem::findModelFromOutput(OutputData* output)
                         //QString prefix = QString("%1%2").arg(application->getInnerApplication()->getPrefix()).arg(module->getInnerModule()->getBasePrefix());
 
                         //if(!strcmp(port->outData.getPort(), (*output).getPort()) && modulePrefix == prefix)  {
-                        if(port->outData == output)
+                        if (port->outData == output) {
                             return port;
+                        }
                     }
                 }
             }

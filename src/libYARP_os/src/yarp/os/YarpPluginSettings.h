@@ -114,13 +114,16 @@ public:
         std::string iname = options.find("library").toString();
         std::string pname = options.find("part").toString();
 
-        if (iname == "")
+        if (iname == "") {
             iname = name;
-        if (pname == "")
+        }
+        if (pname == "") {
             pname = name;
+        }
 
-        if (this->name == "")
+        if (this->name == "") {
             this->name = iname;
+        }
         this->dll_name = iname;
         this->fn_name = pname;
         this->wrapper_name = options.find("wrapper").toString();

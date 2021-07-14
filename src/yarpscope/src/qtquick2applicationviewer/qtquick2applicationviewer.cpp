@@ -37,12 +37,14 @@ QString QtQuick2ApplicationViewerPrivate::adjustPath(const QString &path)
 #elif !defined(Q_OS_ANDROID)
     QString pathInInstallDir =
             QString::fromLatin1("%1/../%2").arg(QCoreApplication::applicationDirPath(), path);
-    if (QFileInfo(pathInInstallDir).exists())
+    if (QFileInfo(pathInInstallDir).exists()) {
         return pathInInstallDir;
+    }
     pathInInstallDir =
             QString::fromLatin1("%1/%2").arg(QCoreApplication::applicationDirPath(), path);
-    if (QFileInfo(pathInInstallDir).exists())
+    if (QFileInfo(pathInInstallDir).exists()) {
         return pathInInstallDir;
+    }
 #elif defined(Q_OS_ANDROID_NO_SDK)
     return QLatin1String("/data/user/qt/") + path;
 #endif

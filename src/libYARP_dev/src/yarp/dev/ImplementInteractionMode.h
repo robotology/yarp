@@ -116,10 +116,11 @@ protected:
      */
     bool NOT_YET_IMPLEMENTED(const char *func = 0)
     {
-        if (func)
+        if (func) {
             yError("%s: not yet implemented\n", func);
-        else
+        } else {
             yError("Function not yet implemented\n");
+        }
 
         return false;
     }

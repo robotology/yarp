@@ -60,7 +60,9 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
     }
 
     bool verbose = false;
-    if (p.check("details")) verbose=true;
+    if (p.check("details")) {
+        verbose = true;
+    }
 
     if (p.check("server"))
     {
@@ -81,12 +83,18 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
         int frames = p.find("nframes").asInt32();
 
         double client_wait = 0;
-        if (p.check("client_wait")) client_wait = p.find("client_wait").asFloat64();
+        if (p.check("client_wait")) {
+            client_wait = p.find("client_wait").asFloat64();
+        }
 
         string logfilename = "log_";
-        if (p.check("logfile")) logfilename = p.find("logfile").asString();
+        if (p.check("logfile")) {
+            logfilename = p.find("logfile").asString();
+        }
 
-        if (p.check("protocol")) proto = p.find("protocol").asString();
+        if (p.check("protocol")) {
+            proto = p.find("protocol").asString();
+        }
 
         bool no_reply = p.check("no-reply");
 
@@ -116,7 +124,9 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
                     for (size_t id=0 ; id<4; id++)
                     {
                         //yCInfo(COMPANION) << val;
-                        if (val>=min && val<=max) psizes.push_back(val);
+                        if (val >= min && val <= max) {
+                            psizes.push_back(val);
+                        }
                         val*=2;
                     }
                     val=val-val%(int(pow(10,pot)));
@@ -212,8 +222,11 @@ server_return_code_t server(double server_wait, bool verbose)
         {
             yCInfo(COMPANION, "Received: \"%s\"", b.toString().c_str());
         }
-        if      (b.get(0).asString() == "stop") break;
-        else if (b.get(0).asString() == "quit") return SERVER_QUIT;
+        if (b.get(0).asString() == "stop") {
+            break;
+        } else if (b.get(0).asString() == "quit") {
+            return SERVER_QUIT;
+        }
         double tt1 = yarp::os::Time::now();
         b.append(payloadbottle);
         double tt2 = yarp::os::Time::now();
@@ -235,7 +248,9 @@ server_return_code_t server(double server_wait, bool verbose)
         }
 
         //Give the CPU some idle time
-        if (server_wait > 0) Time::delay(server_wait);
+        if (server_wait > 0) {
+            Time::delay(server_wait);
+        }
         serverframecounter++;
     }
 
@@ -332,8 +347,12 @@ client_return_code_t client(int nframes, int payload_size, string proto, double 
         double latency_ms = (finaltime - time - copytime) * 1000;
         test_data[clientframecounter].latency = latency_ms;
         test_data[clientframecounter].copytime = copytime;
-        if (latency_ms>latency_max) latency_max = latency_ms;
-        if (latency_ms<latency_min) latency_min = latency_ms;
+        if (latency_ms > latency_max) {
+            latency_max = latency_ms;
+        }
+        if (latency_ms < latency_min) {
+            latency_min = latency_ms;
+        }
 
         if (verbose)
         {

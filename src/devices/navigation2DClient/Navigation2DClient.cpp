@@ -328,8 +328,9 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
                 yarp::sig::Matrix cov(3,3);
                 for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = b->get(i * 3 + j).asFloat64(); } }
                 ret = this->setInitialPose(init_loc, cov);
+            } else {
+                ret = false;
             }
-            else ret = false;
         }
 
         if (ret)
@@ -439,8 +440,9 @@ bool Navigation2DClient::parse_respond_string(const yarp::os::Bottle& command, y
     else if (command.get(0).asString() == "pause_nav")
     {
         double time = -1;
-        if (command.size() > 1)
+        if (command.size() > 1) {
             time = command.get(1).asFloat64();
+        }
         this->suspendNavigation(time);
         reply.addString("Pausing.");
     }
@@ -467,7 +469,9 @@ bool Navigation2DClient::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
     bool ok = command.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
     reply.clear();
 
     if (command.get(0).isString())
@@ -850,7 +854,9 @@ bool  Navigation2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matr
             loc.y = resp.get(3).asFloat64();
             loc.theta = resp.get(4).asFloat64();
             Bottle* mc = resp.get(5).asList();
-            if (mc == nullptr) return false;
+            if (mc == nullptr) {
+                return false;
+            }
             for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = mc->get(i * 3 + j).asFloat64(); } }
             return true;
         }

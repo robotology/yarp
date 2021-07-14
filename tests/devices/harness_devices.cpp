@@ -32,7 +32,9 @@ static std::string getFile(const char *fname)
 {
     char buf[25600];
     FILE *fin = fopen(fname, "r");
-    if (fin==nullptr) return "";
+    if (fin == nullptr) {
+        return "";
+    }
     std::string result = "";
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;

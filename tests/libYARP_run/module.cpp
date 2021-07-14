@@ -38,10 +38,11 @@ public:
     bool respond(const Bottle& command, Bottle& reply) override
     {
         printf("Got something, echo is on\n");
-        if (command.get(0).asString()=="quit")
+        if (command.get(0).asString() == "quit") {
             return false;
-        else
-            reply=command;
+        } else {
+            reply = command;
+        }
         return true;
     }
 

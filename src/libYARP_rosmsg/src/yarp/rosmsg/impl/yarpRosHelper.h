@@ -31,8 +31,9 @@ inline double convertDegreesToRadians(double degrees)
 
 inline void convertDegreesToRadians(std::vector<yarp::os::NetFloat64>  &degrees)
 {
-    for(size_t i=0; i<degrees.size(); i++)
+    for (size_t i = 0; i < degrees.size(); i++) {
         degrees[i] = convertDegreesToRadians(degrees[i]);
+    }
 }
 
 /* return false if errors occourr, like norm of the resulting vector is not 1*/

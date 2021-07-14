@@ -52,17 +52,21 @@ public:
             m.resize(4,4);
             int r=0;
             int c=0;
-            for(r=0; r<4; r++)
-                for (c=0; c<4; c++)
-                    m[r][c]=99;
+            for (r = 0; r < 4; r++) {
+                for (c = 0; c < 4; c++) {
+                    m[r][c] = 99;
+                }
+            }
 
             portOut->write(m);
             Time::delay(0.1);
 
             m.resize(2,4);
-            for(r=0; r<2; r++)
-                for (c=0; c<4; c++)
-                    m[r][c]=66;
+            for (r = 0; r < 2; r++) {
+                for (c = 0; c < 4; c++) {
+                    m[r][c] = 66;
+                }
+            }
 
             portOut->write(m);
         }
@@ -97,14 +101,16 @@ public:
         while(times--)
         {
             portIn->read(m);
-            if ( (m.rows()!=4)||(m.cols()!=4))
-                ok=false;
+            if ((m.rows() != 4) || (m.cols() != 4)) {
+                ok = false;
+            }
 
 
             portIn->read(m);
 
-            if ( (m.rows()!=2)||(m.cols()!=4))
-                ok=false;
+            if ((m.rows() != 2) || (m.cols() != 4)) {
+                ok = false;
+            }
         }
 
         success=ok;
@@ -122,20 +128,25 @@ bool checkConsistency(Matrix &a)
     tmp=(gsl_matrix *)(tmpGSL.getGslMatrix());
 
     bool ret=true;
-    if (tmp->size1!=a.rows())
-        ret=false;
+    if (tmp->size1 != a.rows()) {
+        ret = false;
+    }
 
-    if (tmp->size2!=a.cols())
-        ret=false;
+    if (tmp->size2 != a.cols()) {
+        ret = false;
+    }
 
-    if (tmp->block->size!=a.cols()*a.rows())
-        ret=false;
+    if (tmp->block->size != a.cols() * a.rows()) {
+        ret = false;
+    }
 
-    if (tmp->data!=a.data())
-        ret=false;
+    if (tmp->data != a.data()) {
+        ret = false;
+    }
 
-    if (tmp->block->data!=a.data())
-        ret=false;
+    if (tmp->block->data != a.data()) {
+        ret = false;
+    }
 
     return ret;
 }
@@ -164,13 +175,15 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         M2=1; //now we have to identical vectors
 
         bool ok=false;
-        if (M1==M2)
-            ok=true;
+        if (M1 == M2) {
+            ok = true;
+        }
 
         M1=2;
         M2=1; //now vectors are different
-        if (M1==M2)
-            ok=false;
+        if (M1 == M2) {
+            ok = false;
+        }
 
         CHECK(ok); // operator== for matrix work
     }
@@ -211,8 +224,9 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         int c=0;
         for(r=0; r<10; r++)
         {
-            for (c=0; c<40; c++)
-                m[r][c]=1333;
+            for (c = 0; c < 40; c++) {
+                m[r][c] = 1333;
+            }
         }
 
         Matrix m2(m);
@@ -220,9 +234,11 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         CHECK(m.cols() == m2.cols()); // cols matches
 
         bool ok=true;
-        for(r=0; r<10; r++)
-            for (c=0; c<40; c++)
-                ok=ok && ((m[r])[c]==(m2[r])[c]);
+        for (r = 0; r < 10; r++) {
+            for (c = 0; c < 40; c++) {
+                ok = ok && ((m[r])[c] == (m2[r])[c]);
+            }
+        }
 
         CHECK(ok); // elements match
 
@@ -236,9 +252,11 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         Matrix m(10,40);
         int r=0;
         int c=0;
-        for(r=0; r<10; r++)
-            for (c=0; c<40; c++)
-                m[r][c]=99;
+        for (r = 0; r < 10; r++) {
+            for (c = 0; c < 40; c++) {
+                m[r][c] = 99;
+            }
+        }
 
         Matrix m2;
         m2=m;
@@ -246,9 +264,11 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         CHECK(m.cols() == m2.cols()); // cols matches
 
         bool ok=true;
-        for(r=0; r<10; r++)
-            for (c=0; c<40; c++)
-                ok=ok && (m[r][c]==m2[r][c]);
+        for (r = 0; r < 10; r++) {
+            for (c = 0; c < 40; c++) {
+                ok = ok && (m[r][c] == m2[r][c]);
+            }
+        }
         CHECK(ok); // elements match
     }
 
@@ -275,9 +295,11 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         size_t r=0;
         size_t c=0;
         int kk=0;
-        for(r=0; r<R; r++)
-            for (c=0; c<C; c++)
-                m[r][c]=kk++;
+        for (r = 0; r < R; r++) {
+            for (c = 0; c < C; c++) {
+                m[r][c] = kk++;
+            }
+        }
 
         INFO("extracting submatrix...");
         size_t r1=5;
@@ -296,8 +318,9 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
             int cc=kk;
             for(c=0;c<m2.cols();c++)
             {
-                if (m2[r][c]!=cc++)
-                    ok=false;
+                if (m2[r][c] != cc++) {
+                    ok = false;
+                }
             }
             kk+=C;
         }
@@ -316,8 +339,9 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
             int cc=kk;
             for(c=0;c<m3.cols();c++)
             {
-                if (m3[r][c]!=cc++)
-                    ok=false;
+                if (m3[r][c] != cc++) {
+                    ok = false;
+                }
             }
             kk+=C;
         }
@@ -353,9 +377,11 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         resized.resize(12, 15);
 
         bool ok=true;
-        for(unsigned int r=0; r<10; r++)
-            for(unsigned int c=0; c<10; c++)
-                ok=ok&&(resized[r][c]==1.1);
+        for (unsigned int r = 0; r < 10; r++) {
+            for (unsigned int c = 0; c < 10; c++) {
+                ok = ok && (resized[r][c] == 1.1);
+            }
+        }
 
         CHECK(ok); // resize(int r, int c) keeps old values [1]
 
@@ -372,18 +398,22 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         resized.resize(6, 5);
 
         ok=true;
-        for(unsigned int r=0; r<5; r++)
-            for(unsigned int c=0; c<5; c++)
-                ok=ok&&(resized[r][c]==eye[r][c]);
+        for (unsigned int r = 0; r < 5; r++) {
+            for (unsigned int c = 0; c < 5; c++) {
+                ok = ok && (resized[r][c] == eye[r][c]);
+            }
+        }
 
         CHECK(ok); // resize(int r, int c) keeps old values [2]
 
         resized=ones;
         resized.resize(3, 5);
         ok=true;
-        for(unsigned int r=0; r<3; r++)
-            for(unsigned int c=0; c<5; c++)
-                ok=ok&&(resized[r][c]==ones[r][c]);
+        for (unsigned int r = 0; r < 3; r++) {
+            for (unsigned int c = 0; c < 5; c++) {
+                ok = ok && (resized[r][c] == ones[r][c]);
+            }
+        }
 
         CHECK(ok); // resizing to smaller size keeps old values [1]
 
@@ -391,9 +421,11 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         resized.resize(3,5);
 
         ok=true;
-        for(unsigned int r=0; r<3; r++)
-            for(unsigned int c=0; c<5; c++)
-                ok=ok&&(resized[r][c]==eye[r][c]);
+        for (unsigned int r = 0; r < 3; r++) {
+            for (unsigned int c = 0; c < 5; c++) {
+                ok = ok && (resized[r][c] == eye[r][c]);
+            }
+        }
 
         CHECK(ok); // resizing to smaller size keeps old values [2]
 
@@ -415,9 +447,13 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         CHECK((size_t) bot.get(1).asInt32() == cc); // column count matches
         Bottle *lst = bot.get(2).asList();
         CHECK(lst!=nullptr); // have data
-        if (!lst) return;
+        if (!lst) {
+            return;
+        }
         CHECK(lst->size() == (rr*cc)); // data length matches
-        if (lst->size()!=(rr*cc)) return;
+        if (lst->size() != (rr * cc)) {
+            return;
+        }
         bool ok = true;
         for (int i=0; i<(int)(rr*cc); i++) {
             double v = lst->get(i).asFloat64();
@@ -458,12 +494,16 @@ TEST_CASE("sig::MatrixTest", "[yarp::sig]")
         Bottle *bot1 = bot.get(0).asList();
         Bottle *bot2 = bot.get(1).asList();
         CHECK((bot1!=nullptr&&bot2!=nullptr)); // got head/body
-        if (bot1==nullptr || bot2==nullptr) return;
+        if (bot1 == nullptr || bot2 == nullptr) {
+            return;
+        }
         CHECK((size_t) bot1->get(0).asInt32() == rr); // row count matches
         CHECK((size_t) bot1->get(1).asInt32() == cc); // column count matches
         Bottle *lst = bot1->get(2).asList();
         CHECK(lst!=nullptr); // have data
-        if (!lst) return;
+        if (!lst) {
+            return;
+        }
         CHECK(lst->size() == (rr*cc)); // data length matches
         CHECK(bot2->get(0).asFloat64() == Approx(value)); // "value match"
     }

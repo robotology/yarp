@@ -108,8 +108,9 @@ int check_sample_fmt(const AVCodec * codec, enum AVSampleFormat sample_fmt)
 
     while (*p != AV_SAMPLE_FMT_NONE)
     {
-        if (*p == sample_fmt)
+        if (*p == sample_fmt) {
             return 1;
+        }
         p++;
     }
     return 0;
@@ -120,14 +121,16 @@ int select_sample_rate(const AVCodec * codec)
     const int* p;
     int best_samplerate = 0;
 
-    if (!codec->supported_samplerates)
+    if (!codec->supported_samplerates) {
         return 44100;
+    }
 
     p = codec->supported_samplerates;
     while (*p)
     {
-         if (!best_samplerate || abs(44100 - *p) < abs(44100 - best_samplerate))
+        if (!best_samplerate || abs(44100 - *p) < abs(44100 - best_samplerate)) {
             best_samplerate = *p;
+        }
          p++;
     }
     return best_samplerate;
@@ -172,8 +175,9 @@ int select_channel_layout(const AVCodec * codec)
    uint64_t best_ch_layout = 0;
    int best_nb_channels = 0;
 
-   if (!codec->channel_layouts)
-      return AV_CH_LAYOUT_STEREO;
+   if (!codec->channel_layouts) {
+       return AV_CH_LAYOUT_STEREO;
+   }
 
    p = codec->channel_layouts;
    while (*p)
@@ -297,13 +301,16 @@ bool yarp::sig::file::write_mp3_file(const Sound& sound_data, const char* filena
     for (size_t i = 0; i < nframes; i++)
     {
         ret = av_frame_make_writable(frame);
-        if (ret < 0)  exit(1);
+        if (ret < 0) {
+            exit(1);
+        }
 
         samples = (uint16_t*)frame->data[0];
         for (int j = 0; j < c->frame_size; j++)
         {
-            for (int k = 0; k < c->channels; k++)
-                samples[j*c->channels + k] = sound_data.get(j+i* c->frame_size,k);
+            for (int k = 0; k < c->channels; k++) {
+                samples[j * c->channels + k] = sound_data.get(j + i * c->frame_size, k);
+            }
         }
         if (encode(c, frame, pkt, fos) == false)
         {
@@ -403,16 +410,18 @@ bool read_mp3_istream(Sound& sound_data, std::istream& istream)
         }
         data += ret;
         data_size -= ret;
-        if (pkt->size)
+        if (pkt->size) {
             decode(c, pkt, decoded_frame, sound_data);
+        }
         if (data_size < AUDIO_REFILL_THRESH)
         {
             memmove(inbuf, data, data_size);
             data = inbuf;
             istream.read((char*)(data + data_size), AUDIO_INBUF_SIZE - data_size);
             len = istream.gcount();
-            if (len > 0)
+            if (len > 0) {
                 data_size += len;
+            }
         }
     }
     // flush the decoder

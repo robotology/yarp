@@ -119,7 +119,9 @@ int Companion::cmdMerge(int argc, char *argv[])
     yCInfo(COMPANION, "Ready. Output goes to %s", outPort.getName().c_str());
     while(true) {
         product.wait();
-        while (product.check()) product.wait();
+        while (product.check()) {
+            product.wait();
+        }
 
         //write
         outStamp.update();

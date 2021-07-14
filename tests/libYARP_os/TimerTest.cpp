@@ -84,10 +84,11 @@ static void monoMultiThreadTest(bool multiThread)
         t->start();
     }
 
-    if (multiThread)
+    if (multiThread) {
         CHECK(yarp::os::Thread::getCount() - threadCount == 3); // multiThread test
-    else
+    } else {
         CHECK(yarp::os::Thread::getCount() - threadCount == 1); // singleThread test
+    }
 
     for (auto& t : timers)
     {

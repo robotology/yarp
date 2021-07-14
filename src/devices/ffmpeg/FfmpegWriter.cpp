@@ -170,8 +170,9 @@ static void get_audio_frame(int16_t *samples, int frame_size, int nb_channels)
     q = samples;
     for(j=0;j<frame_size;j++) {
         v = (int)(sin(t) * 10000);
-        for(i = 0; i < nb_channels; i++)
+        for (i = 0; i < nb_channels; i++) {
             *q++ = v;
+        }
         t += tincr;
         tincr += tincr2;
     }
@@ -372,8 +373,9 @@ static AVStream *add_video_stream(AVFormatContext *oc, AVCodecID codec_id,
         c->mb_decision=2;
     }
     // some formats want stream headers to be separate
-    if(!strcmp(oc->oformat->name, "mp4") || !strcmp(oc->oformat->name, "mov") || !strcmp(oc->oformat->name, "3gp"))
+    if (!strcmp(oc->oformat->name, "mp4") || !strcmp(oc->oformat->name, "mov") || !strcmp(oc->oformat->name, "3gp")) {
         c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+    }
 
 
     return st;
@@ -386,8 +388,9 @@ static AVFrame *alloc_picture(int pix_fmt, int width, int height)
     int size;
 
     picture = av_frame_alloc();
-    if (!picture)
+    if (!picture) {
         return nullptr;
+    }
     size = avpicture_get_size((AVPixelFormat)pix_fmt, width, height);
     picture_buf = (uint8_t*)av_malloc(size);
     if (!picture_buf) {
@@ -499,8 +502,9 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
         av_init_packet(&pkt);
 
         pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, st->time_base);
-        if(c->coded_frame->key_frame)
+        if (c->coded_frame->key_frame) {
             pkt.flags |= AV_PKT_FLAG_KEY;
+        }
         pkt.stream_index= st->index;
         pkt.data= video_outbuf;
         pkt.size= out_size;
@@ -669,10 +673,12 @@ bool FfmpegWriter::close() {
     if (!isOk()) { return false; }
 
     /* close each codec */
-    if (video_st)
+    if (video_st) {
         close_video(oc, video_st);
-    if (audio_st)
+    }
+    if (audio_st) {
         close_audio(oc, audio_st);
+    }
 
     /* write the trailer, if any */
     av_write_trailer(oc);
@@ -704,18 +710,21 @@ bool FfmpegWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
     if (!isOk()) { return false; }
 
     /* compute current audio and video time */
-    if (audio_st)
+    if (audio_st) {
         audio_pts = (double)av_stream_get_end_pts(audio_st) * audio_st->time_base.num / audio_st->time_base.den;
-    else
+    } else {
         audio_pts = 0.0;
+    }
 
-    if (video_st)
+    if (video_st) {
         video_pts = (double)av_stream_get_end_pts(video_st) * video_st->time_base.num / video_st->time_base.den;
-    else
+    } else {
         video_pts = 0.0;
+    }
 
-    if (!(audio_st||video_st))
+    if (!(audio_st || video_st)) {
         return false;
+    }
 
     /* write interleaved audio and video frames */
     if (!video_st || (video_st && audio_st && audio_pts < video_pts)) {

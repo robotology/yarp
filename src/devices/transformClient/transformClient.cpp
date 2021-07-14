@@ -38,10 +38,12 @@ void Transforms_client_storage::onRead(yarp::os::Bottle &b)
     {
         double tmpDT = m_now - m_prev;
         m_deltaT += tmpDT;
-        if (tmpDT>m_deltaTMax)
+        if (tmpDT > m_deltaTMax) {
             m_deltaTMax = tmpDT;
-        if (tmpDT<m_deltaTMin)
+        }
+        if (tmpDT < m_deltaTMin) {
             m_deltaTMin = tmpDT;
+        }
 
         //compare network time
         /*if (tmpDT*1000<TRANSFORM_TIMEOUT)
@@ -189,7 +191,9 @@ bool TransformClient::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     std::string request = in.get(0).asString();
     if (request == "help")
@@ -275,7 +279,9 @@ bool TransformClient::read(yarp::os::ConnectionReader& connection)
         std::string format = "matrix";
         if (in.size() > 4)
             {format= in.get(4).asString();}
-        if (port_name[0]=='/')  port_name.erase(port_name.begin());
+        if (port_name[0] == '/') {
+            port_name.erase(port_name.begin());
+        }
         std::string full_port_name = m_local_name + "/" + port_name;
         bool ret = true;
         for (auto& m_array_of_port : m_array_of_ports)
@@ -307,7 +313,9 @@ bool TransformClient::read(yarp::os::ConnectionReader& connection)
             {
                 out.addString("Operation complete. Port " + full_port_name + " opened.");
                 m_array_of_ports.push_back(b);
-                if (m_array_of_ports.size()==1) this->start();
+                if (m_array_of_ports.size() == 1) {
+                    this->start();
+                }
             }
             else
             {
@@ -329,14 +337,18 @@ bool TransformClient::read(yarp::os::ConnectionReader& connection)
             m_array_of_port=nullptr;
         }
         m_array_of_ports.clear();
-        if (m_array_of_ports.size()==0) this->askToStop();
+        if (m_array_of_ports.size() == 0) {
+            this->askToStop();
+        }
         out.addString("Operation complete");
     }
     else if (request == "unpublish_transform")
     {
         bool ret = false;
         std::string port_name = in.get(1).asString();
-        if (port_name[0]=='/')  port_name.erase(port_name.begin());
+        if (port_name[0] == '/') {
+            port_name.erase(port_name.begin());
+        }
         std::string full_port_name = m_local_name + "/" + port_name;
         for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
         {
@@ -358,7 +370,9 @@ bool TransformClient::read(yarp::os::ConnectionReader& connection)
         {
             out.addString("Port " + full_port_name + " was not found.");
         }
-        if (m_array_of_ports.size()==0) this->askToStop();
+        if (m_array_of_ports.size() == 0) {
+            this->askToStop();
+        }
     }
     else
     {
@@ -575,7 +589,9 @@ bool TransformClient::getAllFrameIds(std::vector< std::string > &ids)
         {
             if (((*m_transform_storage)[i].src_frame_id) == id) { found = true; break; }
         }
-        if (found == false) ids.push_back((*m_transform_storage)[i].src_frame_id);
+        if (found == false) {
+            ids.push_back((*m_transform_storage)[i].src_frame_id);
+        }
     }
 
     for (size_t i = 0; i < m_transform_storage->size(); i++)
@@ -585,7 +601,9 @@ bool TransformClient::getAllFrameIds(std::vector< std::string > &ids)
         {
             if (((*m_transform_storage)[i].dst_frame_id) == id) { found = true; break; }
         }
-        if (found == false) ids.push_back((*m_transform_storage)[i].dst_frame_id);
+        if (found == false) {
+            ids.push_back((*m_transform_storage)[i].dst_frame_id);
+        }
     }
 
     return true;
@@ -955,10 +973,14 @@ void     TransformClient::run()
 bool     TransformClient::isConnectedWithServer()
 {
     bool ok1 = Network::isConnected(m_local_rpcServer.c_str(), m_remote_rpc.c_str());
-    if (!ok1) yCInfo(TRANSFORMCLIENT) << m_local_rpcServer << "is not connected to: " << m_remote_rpc;
+    if (!ok1) {
+        yCInfo(TRANSFORMCLIENT) << m_local_rpcServer << "is not connected to: " << m_remote_rpc;
+    }
 
     bool ok2 = Network::isConnected(m_remote_streaming_name.c_str(), m_local_streaming_name.c_str(),m_streaming_connection_type.c_str());
-    if (!ok2) yCInfo(TRANSFORMCLIENT) << m_remote_streaming_name << "is not connected to: " << m_local_streaming_name;
+    if (!ok2) {
+        yCInfo(TRANSFORMCLIENT) << m_remote_streaming_name << "is not connected to: " << m_local_streaming_name;
+    }
 
     return ok1 && ok2;
 }

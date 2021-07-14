@@ -40,8 +40,9 @@ bool ImplementInteractionMode::initialize(int size, const int *amap)
 
 bool ImplementInteractionMode::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if(helper != nullptr)
+    if (helper != nullptr) {
         return false;
+    }
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);
@@ -89,8 +90,9 @@ bool ImplementInteractionMode::getInteractionMode(int axis, yarp::dev::Interacti
 
 bool ImplementInteractionMode::getInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    if(!castToMapper(helper)->checkAxesIds(n_joints, joints))
+    if (!castToMapper(helper)->checkAxesIds(n_joints, joints)) {
         return false;
+    }
 
     yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
 
@@ -129,8 +131,9 @@ bool ImplementInteractionMode::setInteractionMode(int axis, yarp::dev::Interacti
 
 bool ImplementInteractionMode::setInteractionModes(int n_joints, int *joints, yarp::dev::InteractionModeEnum* modes)
 {
-    if(!castToMapper(helper)->checkAxesIds(n_joints, joints))
+    if (!castToMapper(helper)->checkAxesIds(n_joints, joints)) {
         return false;
+    }
 
     yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
 

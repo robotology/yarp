@@ -237,7 +237,9 @@ bool Localization2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
     bool ok = command.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     reply.clear();
 
@@ -481,8 +483,12 @@ void Localization2D_nws_yarp::run()
         }
     }
 
-    if (m_enable_publish_odometry) publish_odometry_on_yarp_port();
-    if (m_enable_publish_location) publish_2DLocation_on_yarp_port();
+    if (m_enable_publish_odometry) {
+        publish_odometry_on_yarp_port();
+    }
+    if (m_enable_publish_location) {
+        publish_2DLocation_on_yarp_port();
+    }
 }
 
 void Localization2D_nws_yarp::publish_odometry_on_yarp_port()

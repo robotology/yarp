@@ -33,13 +33,15 @@ bool YarpPluginFixture::scanPlugins(std::string name, std::string type)
         Value& options = lst.get(i);
         if(!type.empty())
         {
-            if(name == options.check("name",Value("untitled")).asString() && type== options.check("type",Value("untitled")).asString())
-                res=true;
+            if (name == options.check("name", Value("untitled")).asString() && type == options.check("type", Value("untitled")).asString()) {
+                res = true;
+            }
         }
         else
         {
-            if(name == options.check("name",Value("untitled")).asString())
-                    res=true;
+            if (name == options.check("name", Value("untitled")).asString()) {
+                res = true;
+            }
         }
     }
     return res;

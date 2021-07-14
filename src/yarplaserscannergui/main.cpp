@@ -70,10 +70,11 @@ void drawGrid(IplImage *img, double scale)
 */
     char buff [10];
     int  rad_step=0;
-    if   (scale>60)
+    if (scale > 60) {
         rad_step=1;
-    else
-        rad_step=2;
+    } else {
+        rad_step = 2;
+    }
     for (int rad=0; rad<20; rad+=rad_step)
     {
         sprintf (buff,"%3.1fm",float(rad)/2);
@@ -88,9 +89,18 @@ void drawRobot (IplImage *img, double robot_radius, double scale)
     cvRectangle(img,cvPoint(0,0),cvPoint(img->width,img->height),cvScalar(0,0,0),CV_FILLED);
 
     //draw a circle
-    double v1 = robot_radius*scale; if (v1 < 0) v1 = 0;
-    double v2 = robot_radius*scale - 1; if (v2 < 0) v2 = 0;
-    double v3 = robot_radius*scale - 2; if (v3 < 0) v3 = 0;
+    double v1 = robot_radius*scale;
+    if (v1 < 0) {
+        v1 = 0;
+    }
+    double v2 = robot_radius*scale - 1;
+    if (v2 < 0) {
+        v2 = 0;
+    }
+    double v3 = robot_radius*scale - 2;
+    if (v3 < 0) {
+        v3 = 0;
+    }
 
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(v1),color_gray,CV_FILLED);
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(v2),color_black);
@@ -110,8 +120,11 @@ void drawCompass(const yarp::sig::Vector *comp, IplImage *img, bool absolute)
     for (int i=0; i<360; i+=10)
     {
         double ang;
-        if  (absolute) ang = i+180;
-        else           ang = i+(*comp)[0]+180;
+        if (absolute) {
+            ang = i + 180;
+        } else {
+            ang = i + (*comp)[0] + 180;
+        }
         sx = int(-250*sin(ang/180.0*M_PI)+img->width/2);
         sy = int(250*cos(ang/180.0*M_PI)+img->height/2);
         ex = int(-260*sin(ang/180.0*M_PI)+img->width/2);
@@ -181,8 +194,11 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
     CvPoint center;
 
     double center_angle=sens_position_t;
-    if (!absolute) center_angle = 0;
-    else center_angle = -180 - (*comp)[0];
+    if (!absolute) {
+        center_angle = 0;
+    } else {
+        center_angle = -180 - (*comp)[0];
+    }
     center.x = (int)(img->width / 2 + (sens_position_x*scale)*sin(center_angle / 180 * M_PI));
     center.y = (int)(img->height / 2 - (sens_position_y*scale)*cos(center_angle / 180 * M_PI));
 
@@ -194,10 +210,16 @@ void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las,
     }
 
     double curr_time = yarp::os::Time::now();
-    if (verbose) yError("received vector size:%d ", int(las->size()));
+    if (verbose) {
+        yError("received vector size:%d ", int(las->size()));
+    }
     static int timeout_count = 0;
-    if (curr_time - old_time > 0.40) timeout_count++;
-    if (verbose) yWarning("time:%f timeout:%d\n", curr_time - old_time, timeout_count);
+    if (curr_time - old_time > 0.40) {
+        timeout_count++;
+    }
+    if (verbose) {
+        yWarning("time:%f timeout:%d\n", curr_time - old_time, timeout_count);
+    }
     old_time = curr_time;
     for (int i = 0; i<scans; i++)
     {
@@ -421,7 +443,9 @@ int main(int argc, char *argv[])
         if (compass)
         {
             yarp::sig::Vector *cmp = compassInPort.read(false);
-            if (cmp) compass_data = *cmp;
+            if (cmp) {
+                compass_data = *cmp;
+            }
         }
 
         iLas->getLaserMeasurement(laser_data);
@@ -465,7 +489,9 @@ int main(int argc, char *argv[])
             }
             drawRobot(img2,robot_radius, scale);
             drawGrid(img,scale);
-            if (compass) drawCompass(&compass_data,img,absolute);
+            if (compass) {
+                drawCompass(&compass_data, img, absolute);
+            }
 
             yarp::os::Bottle *nav_display = navDisplayInPort.read(false);
             if (nav_display)
@@ -482,7 +508,9 @@ int main(int argc, char *argv[])
         //if ESC is pressed, exit.
         int keypressed = cvWaitKey(2); //wait 2ms. Lower values do not work under Linux
         keypressed &= 0xFF; //this mask is required in Linux systems
-        if(keypressed == 27) exit = true;
+        if (keypressed == 27) {
+            exit = true;
+        }
         if(keypressed == 'w' && scale <500)
         {
             //scale+=0.001;
@@ -498,21 +526,32 @@ int main(int argc, char *argv[])
         if(keypressed == 'v' )
         {
            verbose= (!verbose);
-           if (verbose) yInfo("verbose mode is now ON");
-           else         yInfo("verbose mode is now OFF");
+           if (verbose) {
+               yInfo("verbose mode is now ON");
+           } else {
+               yInfo("verbose mode is now OFF");
+           }
         }
         if(keypressed == 'a' )
         {
             absolute= (!absolute);
-            if (absolute) yInfo("display is now in ABSOLUTE mode");
-            else          yInfo("display is now in RELATIVE mode");
+            if (absolute) {
+                yInfo("display is now in ABSOLUTE mode");
+            } else {
+                yInfo("display is now in RELATIVE mode");
+            }
         }
         if(keypressed == 'r' )
         {
-            if      (period == 0)  period = 50;
-            else if (period == 50) period = 100;
-            else if (period == 100) period = 200;
-            else if (period == 200) period = 0;
+            if (period == 0) {
+                period = 50;
+            } else if (period == 50) {
+                period = 100;
+            } else if (period == 100) {
+                period = 200;
+            } else if (period == 200) {
+                period = 0;
+            }
             yInfo("refresh period set to %d ms.", period);
         }
         if(keypressed == 'c' )
@@ -524,7 +563,9 @@ int main(int argc, char *argv[])
         if (keypressed == 'b')
         {
             aspect = aspect + 1;
-            if (aspect > 1) aspect = 0;
+            if (aspect > 1) {
+                aspect = 0;
+            }
         }
         if(keypressed == 'h' ||
             keypressed == 'H')
@@ -545,5 +586,7 @@ int main(int argc, char *argv[])
     navDisplayInPort.close();
     cvDestroyAllWindows();
     cvReleaseImage(&img);
-    if (drv) delete drv;
+    if (drv) {
+        delete drv;
+    }
 }

@@ -96,8 +96,9 @@ public:
         image.resize(response.get(2).asInt32(), response.get(3).asInt32());
         unsigned char *pixelOut    = image.getRawImage();
 
-        if(response.get(4).asBlob())
-            memcpy(pixelOut, response.get(4).asBlob(), (size_t) image.getRawImageSize());
+        if (response.get(4).asBlob()) {
+            memcpy(pixelOut, response.get(4).asBlob(), (size_t)image.getRawImageSize());
+        }
 
         return true;
     }
@@ -142,11 +143,12 @@ public:
             if(!config.check("no_stream") )
             {
                 no_stream = false;
-                if(!yarp::os::Network::connect(remote,local,carrier))
-                    yCError(REMOTEFRAMEGRABBER) << "cannot connect "  << local << " to " << remote;
-            }
-            else
+                if (!yarp::os::Network::connect(remote, local, carrier)) {
+                    yCError(REMOTEFRAMEGRABBER) << "cannot connect " << local << " to " << remote;
+                }
+            } else {
                 no_stream = true;
+            }
 
             // reverse connection for RPC
             // could choose to do this only on need

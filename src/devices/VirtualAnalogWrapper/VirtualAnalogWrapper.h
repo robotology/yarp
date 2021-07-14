@@ -122,7 +122,9 @@ public:
 
     void setTorque(int joint,double torque)
     {
-        if (joint<mMap0 || mMap1<joint) return;
+        if (joint < mMap0 || mMap1 < joint) {
+            return;
+        }
 
         mTorques[joint-mMap0]=torque;
     }
@@ -134,7 +136,9 @@ public:
 
     void flushTorques()
     {
-        if (mpSensor) mpSensor->updateVirtualAnalogSensorMeasure(mTorques);
+        if (mpSensor) {
+            mpSensor->updateVirtualAnalogSensorMeasure(mTorques);
+        }
     }
 
     const std::string& getKey(){ return mKey; }

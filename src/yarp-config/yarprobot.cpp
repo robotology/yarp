@@ -51,12 +51,15 @@ YARP_WARNING_POP
 #endif // YARP_NO_DEPRECATED
         if(options.check("user") || options.check("sysadm") || options.check("installed"))
         {
-            if (options.check("user"))
+            if (options.check("user")) {
                 printUserFolders(rf, ROBOTS);
-            if (options.check("sysadm"))
+            }
+            if (options.check("sysadm")) {
                 printSysadmFolders(rf, ROBOTS);
-            if (options.check("installed"))
+            }
+            if (options.check("installed")) {
                 printInstalledFolders(rf, ROBOTS);
+            }
         }
         else
         {
@@ -109,12 +112,15 @@ YARP_WARNING_POP
         if (options.check("user") || options.check("sysadm") || options.check("installed"))
         {
             opts.searchLocations=ResourceFinderOptions::NoLocation;
-            if(options.check("user"))
-                opts.searchLocations= ResourceFinderOptions::SearchLocations ( opts.searchLocations | ResourceFinderOptions::User);
-            if(options.check("sysadm"))
-                opts.searchLocations= ResourceFinderOptions::SearchLocations ( opts.searchLocations | ResourceFinderOptions::Sysadmin);
-            if (options.check("installed"))
-                opts.searchLocations= ResourceFinderOptions::SearchLocations ( opts.searchLocations | ResourceFinderOptions::Installed);
+            if (options.check("user")) {
+                opts.searchLocations = ResourceFinderOptions::SearchLocations(opts.searchLocations | ResourceFinderOptions::User);
+            }
+            if (options.check("sysadm")) {
+                opts.searchLocations = ResourceFinderOptions::SearchLocations(opts.searchLocations | ResourceFinderOptions::Sysadmin);
+            }
+            if (options.check("installed")) {
+                opts.searchLocations = ResourceFinderOptions::SearchLocations(opts.searchLocations | ResourceFinderOptions::Installed);
+            }
         }
         yarp::os::ResourceFinder rf;
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.4
@@ -127,17 +133,19 @@ YARP_WARNING_POP
 #endif // YARP_NO_DEPRECATED
 
         yarp::os::Bottle paths=rf.findPaths(std::string("robots") + PATH_SEPARATOR +contextName, opts);
-        for (size_t curCont=0; curCont<paths.size(); ++curCont)
+        for (size_t curCont = 0; curCont < paths.size(); ++curCont) {
             printf("%s\n", paths.get(curCont).asString().c_str());
+        }
         return 0;
     }
     if(options.check("current"))
     {
         std::string result = yarp::conf::environment::get_string("YARP_ROBOT_NAME");
-        if (result.empty())
+        if (result.empty()) {
             printf("Current robot is %s, identified by the environment variable YARP_ROBOT_NAME\n", result.c_str());
-        else
+        } else {
             printf("No robot is set; please set the YARP_ROBOT_NAME environment variable.\n");
+        }
         return 0;
 
     }

@@ -30,7 +30,9 @@ yarp::conf::ssize_t TcpRosStream::read(Bytes& b) {
       return twiddlerReader.read(b);
     }
 
-    if (phase==-1) return -1;
+    if (phase == -1) {
+        return -1;
+    }
     if (remaining==0) {
         if (phase==1) {
             phase = 2;
@@ -68,7 +70,9 @@ yarp::conf::ssize_t TcpRosStream::read(Bytes& b) {
         yCTrace(TCPROSCARRIER, "Unit length %d\n", len);
 
         // inhibit type scanning for now, it is unreliable
-        if (raw==-1) raw = 2;
+        if (raw == -1) {
+            raw = 2;
+        }
         if (raw==-2) {
             scan.allocate(len);
             int res = delegate->getInputStream().readFull(scan.bytes());
@@ -172,7 +176,9 @@ std::map<std::string, std::string> TcpRosStream::rosToKind() {
 }
 
 std::string TcpRosStream::rosToKind(const char *rosname) {
-    if (std::string(rosname)=="") return {};
+    if (std::string(rosname) == "") {
+        return {};
+    };
     std::map<std::string, std::string> kinds = rosToKind();
 
     if (kinds.find(rosname)!=kinds.end()) {
@@ -187,7 +193,9 @@ std::string TcpRosStream::rosToKind(const char *rosname) {
         port.write(cmd,resp);
         yCTrace(TCPROSCARRIER, "GOT yarpidl_rosmsg %s\n", resp.toString().c_str());
         std::string txt = resp.get(0).asString();
-        if (txt!="?") return txt;
+        if (txt != "?") {
+            return txt;
+        }
     }
     port.close();
     if (std::string(rosname)!="") {

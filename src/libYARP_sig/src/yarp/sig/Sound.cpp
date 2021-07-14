@@ -101,12 +101,15 @@ void Sound::synchronize()
 
 Sound Sound::subSound(size_t first_sample, size_t last_sample)
 {
-    if (last_sample  > this->m_samples)
+    if (last_sample > this->m_samples) {
         last_sample = m_samples;
-    if (first_sample > this->m_samples)
+    }
+    if (first_sample > this->m_samples) {
         first_sample = m_samples;
-    if (last_sample < first_sample)
+    }
+    if (last_sample < first_sample) {
         last_sample = first_sample;
+    }
 
     Sound s;
 
@@ -128,8 +131,9 @@ Sound Sound::subSound(size_t first_sample, size_t last_sample)
     size_t j=0;
     for (size_t i=first_sample; i<last_sample; i++)
     {
-        for (size_t c=0; c< this->m_channels; c++)
-            s.set(this->get(i,c),j,c);
+        for (size_t c = 0; c < this->m_channels; c++) {
+            s.set(this->get(i, c), j, c);
+        }
         j++;
     }
 
@@ -192,7 +196,9 @@ void Sound::clear()
 
 bool Sound::clearChannel(size_t chan)
 {
-    if (chan > this->m_channels) return false;
+    if (chan > this->m_channels) {
+        return false;
+    }
     for (size_t i = 0; i < this->m_samples; i++)
     {
         set(0, i, chan);
@@ -292,10 +298,18 @@ Sound Sound::extractChannelAsSound(size_t channel_id) const
 
 bool Sound::operator==(const Sound& alt) const
 {
-    if (this->m_channels != alt.getChannels()) return false;
-    if (this->m_bytesPerSample != alt.getBytesPerSample()) return false;
-    if (this->m_frequency != alt.getFrequency()) return false;
-    if (this->m_samples != alt.getSamples()) return false;
+    if (this->m_channels != alt.getChannels()) {
+        return false;
+    }
+    if (this->m_bytesPerSample != alt.getBytesPerSample()) {
+        return false;
+    }
+    if (this->m_frequency != alt.getFrequency()) {
+        return false;
+    }
+    if (this->m_samples != alt.getSamples()) {
+        return false;
+    }
 
     for (size_t ch = 0; ch < this->m_channels; ch++)
     {
@@ -313,8 +327,12 @@ bool Sound::operator==(const Sound& alt) const
 
 bool Sound::replaceChannel(size_t id, Sound schannel)
 {
-    if (schannel.getChannels() != 1) return false;
-    if (this->m_samples != schannel.getSamples()) return false;
+    if (schannel.getChannels() != 1) {
+        return false;
+    }
+    if (this->m_samples != schannel.getSamples()) {
+        return false;
+    }
     for (size_t s = 0; s < this->m_samples; s++)
     {
         this->setSafe(schannel.getSafe(s, 0), s, id);

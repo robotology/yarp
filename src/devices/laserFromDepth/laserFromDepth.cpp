@@ -90,8 +90,9 @@ bool LaserFromDepth::close()
 {
     PeriodicThread::stop();
 
-    if(driver.isValid())
+    if (driver.isValid()) {
         driver.close();
+    }
 
     yCInfo(LASER_FROM_DEPTH) << "closed";
     return true;

@@ -22,21 +22,21 @@ using namespace std;
 
 bool Map2DPath::operator!=(const Map2DPath& r) const
 {
-    for (size_t i = 0; i < waypoints.size(); i++)
-        if (this->waypoints[i].map_id == r.waypoints[i].map_id ||
-            this->waypoints[i].x == r.waypoints[i].x ||
-            this->waypoints[i].y == r.waypoints[i].y ||
-            this->waypoints[i].theta == r.waypoints[i].theta) return false;
+    for (size_t i = 0; i < waypoints.size(); i++) {
+        if (this->waypoints[i].map_id == r.waypoints[i].map_id || this->waypoints[i].x == r.waypoints[i].x || this->waypoints[i].y == r.waypoints[i].y || this->waypoints[i].theta == r.waypoints[i].theta) {
+            return false;
+        }
+    }
     return true;
 }
 
 bool Map2DPath::operator==(const Map2DPath& r) const
 {
-    for (size_t i = 0; i < waypoints.size(); i++)
-        if (this->waypoints[i].map_id != r.waypoints[i].map_id ||
-            this->waypoints[i].x != r.waypoints[i].x ||
-            this->waypoints[i].y != r.waypoints[i].y ||
-            this->waypoints[i].theta != r.waypoints[i].theta) return false;
+    for (size_t i = 0; i < waypoints.size(); i++) {
+        if (this->waypoints[i].map_id != r.waypoints[i].map_id || this->waypoints[i].x != r.waypoints[i].x || this->waypoints[i].y != r.waypoints[i].y || this->waypoints[i].theta != r.waypoints[i].theta) {
+            return false;
+        }
+    }
     return true;
 }
 
@@ -91,11 +91,15 @@ double Map2DPath::getLength() const
 
 bool Map2DPath::isOnSingleMap() const
 {
-    if (waypoints.size() == 0) return true;
+    if (waypoints.size() == 0) {
+        return true;
+    }
     string mapname = waypoints[0].map_id;
     for (auto it = waypoints.begin(); it != waypoints.end(); it++)
     {
-        if (it->map_id != mapname) return false;
+        if (it->map_id != mapname) {
+            return false;
+        }
     }
     return true;
 }

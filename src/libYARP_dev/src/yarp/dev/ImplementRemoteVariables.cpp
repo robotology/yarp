@@ -26,8 +26,9 @@ ImplementRemoteVariables::~ImplementRemoteVariables()
 
 bool ImplementRemoteVariables::initialize(int size, const int *amap)
 {
-    if (helper!=nullptr)
+    if (helper != nullptr) {
         return false;
+    }
 
     helper=(void *)(new ControlBoardHelper(size, amap));
     yAssert (helper != nullptr);

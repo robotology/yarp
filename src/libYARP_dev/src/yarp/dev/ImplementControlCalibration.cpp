@@ -36,9 +36,9 @@ bool IControlCalibration::calibrateRobot()
     {
         yDebug("Going to call calibrator\n");
         ret=calibrator->calibrate(dynamic_cast<DeviceDriver *>(this));
-    }
-    else
+    } else {
         yWarning("Warning called calibrate but no calibrator was set\n");
+    }
 
     return ret;
 }
@@ -46,16 +46,18 @@ bool IControlCalibration::calibrateRobot()
 bool IControlCalibration::abortCalibration()
 {
     bool ret=false;
-    if (calibrator!=nullptr)
-        ret=calibrator->quitCalibrate();
+    if (calibrator != nullptr) {
+        ret = calibrator->quitCalibrate();
+    }
     return ret;
 }
 
 bool IControlCalibration::abortPark()
 {
     bool ret=false;
-    if (calibrator!=nullptr)
-        ret=calibrator->quitPark();
+    if (calibrator != nullptr) {
+        ret = calibrator->quitPark();
+    }
     return ret;
 }
 
@@ -66,9 +68,9 @@ bool IControlCalibration::park(bool wait)
     {
         yDebug("Going to call calibrator\n");
         ret=calibrator->park(dynamic_cast<DeviceDriver *>(this), wait);
-    }
-    else
+    } else {
         yWarning("Warning called park but no calibrator was set\n");
+    }
 
     return ret;
 }
@@ -89,8 +91,9 @@ ImplementControlCalibration::~ImplementControlCalibration()
 
 bool ImplementControlCalibration::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
-    if (helper != nullptr)
+    if (helper != nullptr) {
         return false;
+    }
 
     helper = (void *)(new ControlBoardHelper(size, amap, enc, zos));
     yAssert(helper != nullptr);

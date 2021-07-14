@@ -100,9 +100,15 @@ bool OpenCVGrabber::open(Searchable & config) {
             m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FPS, m_fps);
         }
 
-        if (config.check("flip_x", "if present, flip the image along the x-axis"))         m_flip_x = true;
-        if (config.check("flip_y", "if present, flip the image along the y-axis"))         m_flip_y = true;
-        if (config.check("transpose", "if present, rotate the image along of 90 degrees")) m_transpose = true;
+        if (config.check("flip_x", "if present, flip the image along the x-axis")) {
+            m_flip_x = true;
+        }
+        if (config.check("flip_y", "if present, flip the image along the y-axis")) {
+            m_flip_y = true;
+        }
+        if (config.check("transpose", "if present, rotate the image along of 90 degrees")) {
+            m_transpose = true;
+        }
     }
 
 
@@ -224,7 +230,9 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
 
     if (frame.empty() && m_loop) {
         bool ok = open(m_config);
-        if (!ok) return false;
+        if (!ok) {
+            return false;
+        }
         m_cap.read(frame);
     }
 

@@ -40,7 +40,9 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
             pending = true;
         } else if (ch=='\r'||ch=='\t'||((ch==' '||ch=='=')&&can_quote)) {
             if (pending) {
-                if (result[0]=='#') return all;
+                if (result[0] == '#') {
+                    return all;
+                }
                 all.push_back(result);
                 pending = false;
             }
@@ -55,7 +57,9 @@ std::vector<std::string> normalizedMessage(const std::string& line) {
         }
     }
     if (pending&&result!="") {
-        if (result[0]=='#'&&can_quote) return all;
+        if (result[0] == '#' && can_quote) {
+            return all;
+        }
         all.push_back(result);
     }
     return all;
@@ -205,7 +209,9 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
     char buf[2048];
     do {
         result = fgets(buf,sizeof(buf),fin);
-        if (result==nullptr) break;
+        if (result == nullptr) {
+            break;
+        }
         txt += "//   ";
         txt += result;
         source += result;
@@ -347,7 +353,9 @@ bool RosType::cache(const char *tname, RosTypeSearch& env,
     do {
         char buf[2048];
         char *result = fgets(buf,sizeof(buf),fin);
-        if (result==nullptr) break;
+        if (result == nullptr) {
+            break;
+        }
         fputs(result,fout);
     } while (true);
     fclose(fout);
@@ -361,14 +369,18 @@ void RosType::show() {
     if (rosName!="") {
         printf("%s:",rosName.c_str());
     }
-    if (!isValid) printf("INVALID:");
+    if (!isValid) {
+        printf("INVALID:");
+    }
     if (isPrimitive) {
         printf("%s", rosType.c_str());
     }
     if (!isPrimitive) {
         printf("(");
         for (size_t i=0; i<subRosType.size(); i++) {
-            if (i>0) printf(" ");
+            if (i > 0) {
+                printf(" ");
+            }
             subRosType[i].show();
         }
         printf(")");
@@ -460,56 +472,106 @@ bool RosType::emitType(RosTypeCodeGen& gen,
         }
     }
 
-    if (!gen.beginType(rosType,state)) return false;
-
-    if (!gen.beginDeclare()) return false;
-    for (const auto& i : subRosType) {
-        if (!gen.declareField(i)) return false;
+    if (!gen.beginType(rosType, state)) {
+        return false;
     }
-    if (!gen.endDeclare()) return false;
 
-    if (!gen.beginConstruct()) return false;
+    if (!gen.beginDeclare()) {
+        return false;
+    }
+    for (const auto& i : subRosType) {
+        if (!gen.declareField(i)) {
+            return false;
+        }
+    }
+    if (!gen.endDeclare()) {
+        return false;
+    }
+
+    if (!gen.beginConstruct()) {
+        return false;
+    }
     bool isFirst = true;
     for (const auto& i : subRosType) {
-        if (!gen.initField(i, isFirst)) return false;
+        if (!gen.initField(i, isFirst)) {
+            return false;
+        }
     }
-    if (!gen.endInitConstruct()) return false;
+    if (!gen.endInitConstruct()) {
+        return false;
+    }
     for (const auto& i : subRosType) {
-        if (!gen.constructField(i)) return false;
+        if (!gen.constructField(i)) {
+            return false;
+        }
     }
-    if (!gen.endConstruct()) return false;
+    if (!gen.endConstruct()) {
+        return false;
+    }
 
-    if (!gen.beginClear()) return false;
+    if (!gen.beginClear()) {
+        return false;
+    }
     for (const auto& i : subRosType) {
-        if (!gen.clearField(i)) return false;
+        if (!gen.clearField(i)) {
+            return false;
+        }
     }
-    if (!gen.endClear()) return false;
+    if (!gen.endClear()) {
+        return false;
+    }
 
-    if (!gen.beginRead(true,(int)subRosType.size())) return false;
+    if (!gen.beginRead(true, (int)subRosType.size())) {
+        return false;
+    }
     for (const auto& i : subRosType) {
-        if (!gen.readField(true,i)) return false;
+        if (!gen.readField(true, i)) {
+            return false;
+        }
     }
-    if (!gen.endRead(true)) return false;
+    if (!gen.endRead(true)) {
+        return false;
+    }
 
-    if (!gen.beginRead(false,(int)subRosType.size())) return false;
+    if (!gen.beginRead(false, (int)subRosType.size())) {
+        return false;
+    }
     for (const auto& i : subRosType) {
-        if (!gen.readField(false,i)) return false;
+        if (!gen.readField(false, i)) {
+            return false;
+        }
     }
-    if (!gen.endRead(false)) return false;
+    if (!gen.endRead(false)) {
+        return false;
+    }
 
-    if (!gen.beginWrite(true,(int)subRosType.size())) return false;
+    if (!gen.beginWrite(true, (int)subRosType.size())) {
+        return false;
+    }
     for (const auto& i : subRosType) {
-        if (!gen.writeField(true,i)) return false;
+        if (!gen.writeField(true, i)) {
+            return false;
+        }
     }
-    if (!gen.endWrite(true)) return false;
+    if (!gen.endWrite(true)) {
+        return false;
+    }
 
-    if (!gen.beginWrite(false,(int)subRosType.size())) return false;
+    if (!gen.beginWrite(false, (int)subRosType.size())) {
+        return false;
+    }
     for (const auto& i : subRosType) {
-        if (!gen.writeField(false,i)) return false;
+        if (!gen.writeField(false, i)) {
+            return false;
+        }
     }
-    if (!gen.endWrite(false)) return false;
+    if (!gen.endWrite(false)) {
+        return false;
+    }
 
-    if (!gen.endType(rosType,*this)) return false;
+    if (!gen.endType(rosType, *this)) {
+        return false;
+    }
 
     state.generated[rosType] = this;
 
@@ -528,7 +590,9 @@ static std::vector<std::string> &split(const std::string &s, char delim, std::ve
 std::string RosTypeSearch::readFile(const char *fname) {
     char buf[25600];
     FILE *fin = fopen(fname,"r");
-    if (fin==nullptr) return {};
+    if (fin == nullptr) {
+        return {};
+    };
     std::string result;
     while(fgets(buf, sizeof(buf)-1, fin) != nullptr) {
         result += buf;

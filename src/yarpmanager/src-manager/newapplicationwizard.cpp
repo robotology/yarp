@@ -119,16 +119,18 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
             string::size_type pos=appPaths.find(';');
             strPath=appPaths.substr(0, pos);
             trimString(strPath);
-            if (!absolute(strPath.c_str()))
-                strPath=basepath+strPath;
+            if (!absolute(strPath.c_str())) {
+                strPath = basepath + strPath;
+            }
 
-            if((strPath.rfind(directorySeparator)==string::npos) ||
-                    (strPath.rfind(directorySeparator)!=strPath.size()-1))
+            if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
                 strPath = strPath + string(directorySeparator);
+            }
             folderCombo->addItem(QString("%1").arg(strPath.c_str()));
 
-            if (pos==string::npos)
+            if (pos == string::npos) {
                 break;
+            }
             appPaths=appPaths.substr(pos+1);
         }
         while (appPaths!="");
@@ -139,8 +141,9 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
        homePath +=  string(directorySeparator) + string("applications");
 
-       if (appPaths.find(homePath)==string::npos)
+       if (appPaths.find(homePath) == string::npos) {
            folderCombo->addItem(QString("%1").arg(homePath.c_str()));
+       }
    }
 
     if(folderCombo->count() <= 0){

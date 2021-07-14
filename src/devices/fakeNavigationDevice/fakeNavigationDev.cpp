@@ -31,8 +31,12 @@ bool fakeNavigation :: open(yarp::os::Searchable& config)
     std::string context_name = "robotGoto";
     std::string file_name = "robotGoto_cer.ini";
 
-    if (config.check("context"))   context_name = config.find("context").asString();
-    if (config.check("from")) file_name    = config.find("from").asString();
+    if (config.check("context")) {
+        context_name = config.find("context").asString();
+    }
+    if (config.check("from")) {
+        file_name = config.find("from").asString();
+    }
 
     yarp::os::ResourceFinder rf;
     rf.setDefaultContext(context_name.c_str());
@@ -40,7 +44,9 @@ bool fakeNavigation :: open(yarp::os::Searchable& config)
 
     yarp::os::Property p;
     std::string configFile = rf.findFile("from");
-    if (configFile != "") p.fromConfigFile(configFile.c_str());
+    if (configFile != "") {
+        p.fromConfigFile(configFile.c_str());
+    }
     yCDebug(FAKENAVIGATION) << "robotGotoDev configuration: \n" << p.toString().c_str();
 
 #else

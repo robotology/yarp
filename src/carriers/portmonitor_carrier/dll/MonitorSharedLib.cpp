@@ -30,8 +30,9 @@ MonitorSharedLib::MonitorSharedLib()
 
 MonitorSharedLib::~MonitorSharedLib()
 {
-    if(monitor.isValid())
+    if (monitor.isValid()) {
         monitor->destroy();
+    }
     monitor.close();
 }
 
@@ -97,8 +98,9 @@ bool MonitorSharedLib::peerTrigged()
 
 bool MonitorSharedLib::canAccept()
 {
-    if(constraint == "")
+    if (constraint == "") {
         return true;
+    }
      //TODO: constraint checking should be implemented here!
      return true;
 }

@@ -74,7 +74,9 @@ public:
     {}
 
     ~BayerCarrier() {
-        if (local) delete local;
+        if (local) {
+            delete local;
+        }
     }
 
     Carrier *create() const override {

@@ -57,7 +57,9 @@ int Companion::detectRos(bool write)
     yCError(COMPANION, "Trying ROS_MASTER_URI=%s...", uri.c_str());
     OutputProtocol *out = Carriers::connect(root);
     bool ok = (out != nullptr);
-    if (ok) delete out;
+    if (ok) {
+        delete out;
+    }
     if (!ok) {
         yCError(COMPANION, "Could not reach server.");
         return 1;
@@ -110,7 +112,9 @@ int Companion::cmdDetect(int argc, char *argv[])
     }
     OutputProtocol *out = Carriers::connect(addr);
     bool ok = (out != nullptr);
-    if (ok) delete out;
+    if (ok) {
+        delete out;
+    }
     if (ok) {
         yCInfo(COMPANION);
         yCInfo(COMPANION, "=========================================================");

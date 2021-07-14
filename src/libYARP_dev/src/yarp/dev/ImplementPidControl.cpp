@@ -30,8 +30,9 @@ ImplementPidControl::~ImplementPidControl()
 
 bool ImplementPidControl:: initialize (int size, const int *amap, const double *enc, const double *zos, const double* newtons, const double* amps, const double* dutys)
 {
-    if (helper!=nullptr)
+    if (helper != nullptr) {
         return false;
+    }
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,newtons,amps,nullptr,dutys));
     yAssert (helper != nullptr);

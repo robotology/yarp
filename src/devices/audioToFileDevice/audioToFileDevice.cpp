@@ -73,7 +73,9 @@ bool audioToFileDevice::open(yarp::os::Searchable &config)
 void audioToFileDevice::save_to_file()
 {
     //of the buffer is empty, there is nothing to save
-    if (m_sounds.size() == 0) return;
+    if (m_sounds.size() == 0) {
+        return;
+    }
 
     //we need to set the number of channels and the frequency before calling the
     //concatenation operator

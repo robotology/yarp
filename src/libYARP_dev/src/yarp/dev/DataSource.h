@@ -107,10 +107,12 @@ public:
         {
             deltaT=now-timePrevious;
             cumulativeT+=deltaT;
-            if (deltaT>maxT)
-               maxT=deltaT;
-            if (deltaT<minT)
-               minT=deltaT;
+            if (deltaT > maxT) {
+                maxT = deltaT;
+            }
+            if (deltaT < minT) {
+                minT = deltaT;
+            }
             timePrevious=now;
         }
 

@@ -75,8 +75,9 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
 
     // Parse command line parameters and set them into global variable "paramsMap"
     std::string str = options.find("carrier").asString();
-    if (getParamsFromCommandLine(str, codecId) == -1)
+    if (getParamsFromCommandLine(str, codecId) == -1) {
         return false;
+    }
 
     // Find encoder/decoder
     if (senderSide) {
@@ -107,8 +108,9 @@ bool FfmpegMonitorObject::create(const yarp::os::Property& options)
     codecContext->time_base.num = 1;
     codecContext->time_base.den = 15;
     // Set command line params
-    if (setCommandLineParams() == -1)
+    if (setCommandLineParams() == -1) {
         return false;
+    }
 
     return true;
 }

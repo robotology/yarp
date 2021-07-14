@@ -413,7 +413,9 @@ bool RosTypeCodeGenYarp::beginRead(bool bare, int len)
 
 bool RosTypeCodeGenYarp::readField(bool bare, const RosField& field)
 {
-    if (field.isConst()) return true;
+    if (field.isConst()) {
+        return true;
+    }
     RosYarpType t = mapPrimitive(field);
     if (!first) {
         fprintf(out, "\n");
@@ -600,7 +602,9 @@ bool RosTypeCodeGenYarp::beginWrite(bool bare, int len)
 
 bool RosTypeCodeGenYarp::writeField(bool bare, const RosField& field)
 {
-    if (field.isConst()) return true;
+    if (field.isConst()) {
+        return true;
+    }
     RosYarpType t = mapPrimitive(field);
     if (!first) {
         fprintf(out, "\n");
