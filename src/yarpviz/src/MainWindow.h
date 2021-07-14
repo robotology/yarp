@@ -46,10 +46,15 @@ public:
     void check(bool flag) {
         checkFlag = flag;
         setCheckState( 0, (flag == true) ? Qt::Checked : Qt::Unchecked);
-        if(!checkFlag)
-            vertex->property.put("hidden", true);
-        else
-            vertex->property.put("hidden",false);
+        if (!checkFlag) {
+            {
+                vertex->property.put("hidden", true);
+            }
+        } else {
+            {
+                vertex->property.put("hidden", false);
+            }
+        }
     }
 
     bool checked() { return checkFlag; }

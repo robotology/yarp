@@ -233,7 +233,9 @@ int main(int argc, char *argv[])
         QString part = QString("%1").arg(pParts.get(n).asString().c_str());
         if (b_part_skip)
         {
-            if (b_part_skip->check(part.toStdString())) continue;
+            if (b_part_skip->check(part.toStdString())) {
+                continue;
+            }
         }
         yDebug("Appending %s", part.toUtf8().constData());
         partsName.append(part);

@@ -41,9 +41,13 @@ static string extractPathFromFile(string full_filename)
 {
     size_t found;
     found = full_filename.find_last_of('/');
-    if (found != string::npos) return full_filename.substr(0, found)+"/";
+    if (found != string::npos) {
+        return full_filename.substr(0, found) + "/";
+    }
     found = full_filename.find_last_of('\\');
-    if (found != string::npos) return full_filename.substr(0, found)+"\\";
+    if (found != string::npos) {
+        return full_filename.substr(0, found) + "\\";
+    }
     return full_filename;
 }
 
@@ -56,15 +60,35 @@ static string extractExtensionFromFile(string full_filename)
 
 bool MapGrid2D::isIdenticalTo(const MapGrid2D& other) const
 {
-    if (m_map_name != other.m_map_name) return false;
-    if (m_origin != other.m_origin) return false;
-    if (m_resolution != other.m_resolution) return false;
-    if (m_width != other.width()) return false;
-    if (m_height != other.height()) return false;
-    for (size_t y = 0; y < m_height; y++) for (size_t x = 0; x < m_width;  x++)
-        if (m_map_occupancy.safePixel(x, y) != other.m_map_occupancy.safePixel(x, y)) return false;
-    for (size_t y = 0; y < m_height; y++) for (size_t x = 0; x < m_width; x++)
-        if (m_map_flags.safePixel(x, y) != other.m_map_flags.safePixel(x, y)) return false;
+    if (m_map_name != other.m_map_name) {
+        return false;
+    }
+    if (m_origin != other.m_origin) {
+        return false;
+    }
+    if (m_resolution != other.m_resolution) {
+        return false;
+    }
+    if (m_width != other.width()) {
+        return false;
+    }
+    if (m_height != other.height()) {
+        return false;
+    }
+    for (size_t y = 0; y < m_height; y++) {
+        for (size_t x = 0; x < m_width; x++) {
+            if (m_map_occupancy.safePixel(x, y) != other.m_map_occupancy.safePixel(x, y)) {
+                return false;
+            }
+        }
+    }
+    for (size_t y = 0; y < m_height; y++) {
+        for (size_t x = 0; x < m_width; x++) {
+            if (m_map_flags.safePixel(x, y) != other.m_map_flags.safePixel(x, y)) {
+                return false;
+            }
+        }
+    }
     return true;
 }
 
@@ -100,10 +124,18 @@ bool MapGrid2D::isNotFree(XYCell cell) const
 {
     if (isInsideMap(cell))
     {
-        if (m_map_occupancy.safePixel(cell.x, cell.y) != 0) return true;
-        if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_KEEP_OUT) return true;
-        if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_TEMPORARY_OBSTACLE) return true;
-        if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_ENLARGED_OBSTACLE) return true;
+        if (m_map_occupancy.safePixel(cell.x, cell.y) != 0) {
+            return true;
+        }
+        if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_KEEP_OUT) {
+            return true;
+        }
+        if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_TEMPORARY_OBSTACLE) {
+            return true;
+        }
+        if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_ENLARGED_OBSTACLE) {
+            return true;
+        }
     }
     return false;
 }
@@ -112,9 +144,9 @@ bool MapGrid2D::isFree(XYCell cell) const
 {
     if (isInsideMap(cell))
     {
-        if (m_map_occupancy.safePixel(cell.x, cell.y) == 0 &&
-            m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_FREE)
+        if (m_map_occupancy.safePixel(cell.x, cell.y) == 0 && m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_FREE) {
             return true;
+        }
     }
     return false;
 }
@@ -123,8 +155,9 @@ bool MapGrid2D::isKeepOut(XYCell cell) const
 {
     if (isInsideMap(cell))
     {
-        if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_KEEP_OUT)
+        if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_KEEP_OUT) {
             return true;
+        }
     }
     return false;
 }
@@ -135,8 +168,9 @@ bool MapGrid2D::isWall(XYCell cell) const
     {
        // if (m_map_occupancy.safePixel(cell.x, cell.y) == 0)
        //     return true;
-        if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_WALL)
-            return true;
+       if (m_map_flags.safePixel(cell.x, cell.y) == MapGrid2D::map_flags::MAP_CELL_WALL) {
+           return true;
+       }
     }
     return false;
 }
@@ -239,14 +273,30 @@ void MapGrid2D::enlargeCell(XYCell cell)
     size_t ju = cell.y > 1 ? cell.y - 1 : 0;
     size_t jd = cell.y + 1 < (m_height)-1 ? cell.y + 1 : (m_height)-1;
 
-    if (m_map_flags.pixel(il, j) == MAP_CELL_FREE) m_map_flags.pixel(il, j) = MAP_CELL_ENLARGED_OBSTACLE;
-    if (m_map_flags.pixel(ir, j) == MAP_CELL_FREE) m_map_flags.pixel(ir, j) = MAP_CELL_ENLARGED_OBSTACLE;
-    if (m_map_flags.pixel(i, ju) == MAP_CELL_FREE) m_map_flags.pixel(i, ju) = MAP_CELL_ENLARGED_OBSTACLE;
-    if (m_map_flags.pixel(i, jd) == MAP_CELL_FREE) m_map_flags.pixel(i, jd) = MAP_CELL_ENLARGED_OBSTACLE;
-    if (m_map_flags.pixel(il, ju) == MAP_CELL_FREE) m_map_flags.pixel(il, ju) = MAP_CELL_ENLARGED_OBSTACLE;
-    if (m_map_flags.pixel(il, jd) == MAP_CELL_FREE) m_map_flags.pixel(il, jd) = MAP_CELL_ENLARGED_OBSTACLE;
-    if (m_map_flags.pixel(ir, ju) == MAP_CELL_FREE) m_map_flags.pixel(ir, ju) = MAP_CELL_ENLARGED_OBSTACLE;
-    if (m_map_flags.pixel(ir, jd) == MAP_CELL_FREE) m_map_flags.pixel(ir, jd) = MAP_CELL_ENLARGED_OBSTACLE;
+    if (m_map_flags.pixel(il, j) == MAP_CELL_FREE) {
+        m_map_flags.pixel(il, j) = MAP_CELL_ENLARGED_OBSTACLE;
+    }
+    if (m_map_flags.pixel(ir, j) == MAP_CELL_FREE) {
+        m_map_flags.pixel(ir, j) = MAP_CELL_ENLARGED_OBSTACLE;
+    }
+    if (m_map_flags.pixel(i, ju) == MAP_CELL_FREE) {
+        m_map_flags.pixel(i, ju) = MAP_CELL_ENLARGED_OBSTACLE;
+    }
+    if (m_map_flags.pixel(i, jd) == MAP_CELL_FREE) {
+        m_map_flags.pixel(i, jd) = MAP_CELL_ENLARGED_OBSTACLE;
+    }
+    if (m_map_flags.pixel(il, ju) == MAP_CELL_FREE) {
+        m_map_flags.pixel(il, ju) = MAP_CELL_ENLARGED_OBSTACLE;
+    }
+    if (m_map_flags.pixel(il, jd) == MAP_CELL_FREE) {
+        m_map_flags.pixel(il, jd) = MAP_CELL_ENLARGED_OBSTACLE;
+    }
+    if (m_map_flags.pixel(ir, ju) == MAP_CELL_FREE) {
+        m_map_flags.pixel(ir, ju) = MAP_CELL_ENLARGED_OBSTACLE;
+    }
+    if (m_map_flags.pixel(ir, jd) == MAP_CELL_FREE) {
+        m_map_flags.pixel(ir, jd) = MAP_CELL_ENLARGED_OBSTACLE;
+    }
 }
 
 bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename, double& resolution, double& orig_x, double& orig_y, double& orig_t )
@@ -459,13 +509,21 @@ bool MapGrid2D::loadMapYarpOnly(string yarp_filename)
         {
             yarp::sig::PixelMono pix_flg = m_map_flags.safePixel(x, y);
 
-            if      (pix_flg == MAP_CELL_FREE) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
-            else if (pix_flg == MAP_CELL_KEEP_OUT) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
-            else if (pix_flg == MAP_CELL_TEMPORARY_OBSTACLE) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
-            else if (pix_flg == MAP_CELL_ENLARGED_OBSTACLE) m_map_occupancy.safePixel(x, y) = 0;//@@@SET HERE
-            else if (pix_flg == MAP_CELL_WALL) m_map_occupancy.safePixel(x, y) = 100;//@@@SET HERE
-            else if (pix_flg == MAP_CELL_UNKNOWN) m_map_occupancy.safePixel(x, y) = 255;//@@@SET HERE
-            else m_map_occupancy.safePixel(x, y) = 255;//@@@SET HERE
+            if (pix_flg == MAP_CELL_FREE) {
+                m_map_occupancy.safePixel(x, y) = 0; //@@@SET HERE
+            } else if (pix_flg == MAP_CELL_KEEP_OUT) {
+                m_map_occupancy.safePixel(x, y) = 0; //@@@SET HERE
+            } else if (pix_flg == MAP_CELL_TEMPORARY_OBSTACLE) {
+                m_map_occupancy.safePixel(x, y) = 0; //@@@SET HERE
+            } else if (pix_flg == MAP_CELL_ENLARGED_OBSTACLE) {
+                m_map_occupancy.safePixel(x, y) = 0; //@@@SET HERE
+            } else if (pix_flg == MAP_CELL_WALL) {
+                m_map_occupancy.safePixel(x, y) = 100; //@@@SET HERE
+            } else if (pix_flg == MAP_CELL_UNKNOWN) {
+                m_map_occupancy.safePixel(x, y) = 255; //@@@SET HERE
+            } else {
+                m_map_occupancy.safePixel(x, y) = 255; //@@@SET HERE
+            }
         }
     }
     m_occupied_thresh = 0.80; //@@@SET HERE
@@ -574,10 +632,15 @@ bool  MapGrid2D::loadFromFile(std::string map_file_with_path)
 
 MapGrid2D::CellFlagData MapGrid2D::PixelToCellFlagData(const yarp::sig::PixelRgb& pixin) const
 {
-    if (pixin.r == 0 && pixin.g == 0 && pixin.b == 0)   return MAP_CELL_WALL;
-    else if (pixin.r == 205 && pixin.g == 205 && pixin.b == 205) return  MAP_CELL_UNKNOWN;
-    else if (pixin.r == 254 && pixin.g == 254 && pixin.b == 254) return  MAP_CELL_FREE;
-    else if (pixin.r == 255 && pixin.g == 0 && pixin.b == 0) return  MAP_CELL_KEEP_OUT;
+    if (pixin.r == 0 && pixin.g == 0 && pixin.b == 0) {
+        return MAP_CELL_WALL;
+    } else if (pixin.r == 205 && pixin.g == 205 && pixin.b == 205) {
+        return MAP_CELL_UNKNOWN;
+    } else if (pixin.r == 254 && pixin.g == 254 && pixin.b == 254) {
+        return MAP_CELL_FREE;
+    } else if (pixin.r == 255 && pixin.g == 0 && pixin.b == 0) {
+        return MAP_CELL_KEEP_OUT;
+    }
     return  MAP_CELL_UNKNOWN;
 }
 
@@ -704,10 +767,18 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
     }
     rightFound:
 
-    if (left   > (int)this->width()) return false;
-    if (right  > (int)this->width()) return false;
-    if (top    > (int)this->height()) return false;
-    if (bottom > (int)this->height()) return false;
+        if (left > (int)this->width()) {
+            return false;
+        }
+        if (right > (int)this->width()) {
+            return false;
+        }
+        if (top > (int)this->height()) {
+            return false;
+        }
+        if (bottom > (int)this->height()) {
+            return false;
+        }
 
     yarp::sig::ImageOf<CellOccupancyData> new_map_occupancy;
     yarp::sig::ImageOf<CellFlagData> new_map_flags;
@@ -720,12 +791,13 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
 //     size_t original_width = m_map_occupancy.width();
     size_t original_height = m_map_occupancy.height();
 
-    for (int j=top, y=0; j<bottom; j++, y++)
+    for (int j = top, y = 0; j < bottom; j++, y++) {
         for (int i=left, x=0; i<right; i++, x++)
         {
             new_map_occupancy.safePixel(x,y) = m_map_occupancy.safePixel(i,j);
             new_map_flags.safePixel(x,y)     = m_map_flags.safePixel(i,j);
         }
+    }
     m_map_occupancy.copy(new_map_occupancy);
     m_map_flags.copy(new_map_flags);
     this->m_width=m_map_occupancy.width();
@@ -871,7 +943,9 @@ bool MapGrid2D::read(yarp::os::ConnectionReader& connection)
             unsigned char* mem = m_map_flags.getRawImage();
             ok &= connection.expectBlock((char*)mem, memsize);
         }
-        if (!ok) return false;
+        if (!ok) {
+            return false;
+        }
     }
     return !connection.isError();
 }

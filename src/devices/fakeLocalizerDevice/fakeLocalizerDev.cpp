@@ -150,8 +150,11 @@ void fakeLocalizerThread::run()
 
         m_current_loc.theta = m_current_odom.theta                   - m_initial_odom.theta + m_initial_loc.theta;
 
-        if      (m_current_loc.theta >= +360) m_current_loc.theta -= 360;
-        else if (m_current_loc.theta <= -360) m_current_loc.theta += 360;
+        if (m_current_loc.theta >= +360) {
+            m_current_loc.theta -= 360;
+        } else if (m_current_loc.theta <= -360) {
+            m_current_loc.theta += 360;
+        }
     }
     if (current_time - m_last_locdata_received > 0.1)
     {

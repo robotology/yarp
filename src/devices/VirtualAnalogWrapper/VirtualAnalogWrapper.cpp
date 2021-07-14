@@ -110,7 +110,9 @@ bool VirtualAnalogWrapper::open(Searchable& config)
 
     mIsVerbose = (config.check("verbose","if present, give detailed output"));
 
-    if (mIsVerbose) yCDebug(VIRTUALANALOGSERVER) << "Running with verbose output\n";
+    if (mIsVerbose) {
+        yCDebug(VIRTUALANALOGSERVER) << "Running with verbose output\n";
+    }
 
     //thus thread period is useful for output port... this input port has callback so maybe can skip it (?)
     //thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt32();
@@ -296,7 +298,9 @@ bool VirtualAnalogWrapper::detachAll()
 
 bool VirtualAnalogWrapper::perform_first_check(int elems)
 {
-    if (first_check) return true;
+    if (first_check) {
+        return true;
+    }
 
     for (int i=0; i<elems; i++)
     {
@@ -331,7 +335,9 @@ void VirtualAnalogWrapper::run()
             switch (pTorques->get(0).asInt32())
             {
                 case 1: //arm torque message
-                    if (perform_first_check(6)==false) break;
+                    if (perform_first_check(6) == false) {
+                        break;
+                    }
                     mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asFloat64()); //shoulder 1 pitch      (0)
                     mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asFloat64()); //shoulder 2 roll       (1)
                     mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asFloat64()); //shoulder 3 yaw        (2)
@@ -341,7 +347,9 @@ void VirtualAnalogWrapper::run()
                 break;
 
                 case 2: //legs torque message
-                    if (perform_first_check(6)==false) break;
+                    if (perform_first_check(6) == false) {
+                        break;
+                    }
                     mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asFloat64()); //hip pitch
                     mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asFloat64()); //hip roll
                     mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asFloat64()); //hip yaw
@@ -351,7 +359,9 @@ void VirtualAnalogWrapper::run()
                 break;
 
                 case 3: //wrist torque message
-                    if (perform_first_check(6)==false) break;
+                    if (perform_first_check(6) == false) {
+                        break;
+                    }
                     mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(6).asFloat64()); //wrist yaw   (6)
                     mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(7).asFloat64()); //wrist pitch (7)
                     mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],0.0);
@@ -361,7 +371,9 @@ void VirtualAnalogWrapper::run()
                 break;
 
                 case 4: // torso
-                    if (perform_first_check(3)==false) break;
+                    if (perform_first_check(3) == false) {
+                        break;
+                    }
                     mSubdevices[mChan2Board[0]].setTorque(mChan2BAddr[0],pTorques->get(1).asFloat64()); //torso yaw (respect gravity)
                     mSubdevices[mChan2Board[1]].setTorque(mChan2BAddr[1],pTorques->get(2).asFloat64()); //torso roll (lateral movement)
                     mSubdevices[mChan2Board[2]].setTorque(mChan2BAddr[2],pTorques->get(3).asFloat64()); //torso pitch (front-back movement)

@@ -60,7 +60,9 @@ std::string TcpRosCarrier::getRosType(ConnectionState& proto) {
             rtyp = "";
         } else if (typ=="yarp/bottle") {
             rtyp = proto.getContactable()->getType().getNameOnWire();
-            if (rtyp=="yarp/image") rtyp = "sensor_msgs/Image";
+            if (rtyp == "yarp/image") {
+                rtyp = "sensor_msgs/Image";
+            }
             wire_type = rtyp;
         } else if (typ!="") {
             rtyp = typ;
@@ -461,7 +463,9 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
         break;
     }
 
-    if (!reversed) return -1;
+    if (!reversed) {
+        return -1;
+    }
 
     Contact fullDest = dest;
     if (fullDest.getPort()<=0) {

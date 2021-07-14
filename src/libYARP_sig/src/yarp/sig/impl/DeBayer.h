@@ -18,24 +18,20 @@
 
 inline bool isBayer8(int v)
 {
-    if ((v == VOCAB_PIXEL_ENCODING_BAYER_GRBG8) ||
-        (v == VOCAB_PIXEL_ENCODING_BAYER_BGGR8) ||
-        (v == VOCAB_PIXEL_ENCODING_BAYER_GBRG8) ||
-        (v == VOCAB_PIXEL_ENCODING_BAYER_RGGB8))
+    if ((v == VOCAB_PIXEL_ENCODING_BAYER_GRBG8) || (v == VOCAB_PIXEL_ENCODING_BAYER_BGGR8) || (v == VOCAB_PIXEL_ENCODING_BAYER_GBRG8) || (v == VOCAB_PIXEL_ENCODING_BAYER_RGGB8)) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
 inline bool isBayer16(int v)
 {
-    if ((v == VOCAB_PIXEL_ENCODING_BAYER_GRBG16) ||
-        (v == VOCAB_PIXEL_ENCODING_BAYER_BGGR16) ||
-        (v == VOCAB_PIXEL_ENCODING_BAYER_GBRG16) ||
-        (v == VOCAB_PIXEL_ENCODING_BAYER_RGGB16))
+    if ((v == VOCAB_PIXEL_ENCODING_BAYER_GRBG16) || (v == VOCAB_PIXEL_ENCODING_BAYER_BGGR16) || (v == VOCAB_PIXEL_ENCODING_BAYER_GBRG16) || (v == VOCAB_PIXEL_ENCODING_BAYER_RGGB16)) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
 /*

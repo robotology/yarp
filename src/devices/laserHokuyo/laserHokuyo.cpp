@@ -185,21 +185,37 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     //parsing the answer
     size_t found;
     found = ans.find("MODL");
-    if (found!=string::npos) sensor_properties.MODL = string(ans.c_str()+found+5);
+    if (found != string::npos) {
+        sensor_properties.MODL = string(ans.c_str() + found + 5);
+    }
     found = ans.find("DMIN");
-    if (found!=string::npos) sensor_properties.DMIN = atoi(ans.c_str()+found+5);
+    if (found != string::npos) {
+        sensor_properties.DMIN = atoi(ans.c_str() + found + 5);
+    }
     found = ans.find("DMAX");
-    if (found!=string::npos) sensor_properties.DMAX = atoi(ans.c_str()+found+5);
+    if (found != string::npos) {
+        sensor_properties.DMAX = atoi(ans.c_str() + found + 5);
+    }
     found = ans.find("ARES");
-    if (found!=string::npos) sensor_properties.ARES = atoi(ans.c_str()+found+5);
+    if (found != string::npos) {
+        sensor_properties.ARES = atoi(ans.c_str() + found + 5);
+    }
     found = ans.find("AMIN");
-    if (found!=string::npos) sensor_properties.AMIN = atoi(ans.c_str()+found+5);
+    if (found != string::npos) {
+        sensor_properties.AMIN = atoi(ans.c_str() + found + 5);
+    }
     found = ans.find("AMAX");
-    if (found!=string::npos) sensor_properties.AMAX = atoi(ans.c_str()+found+5);
+    if (found != string::npos) {
+        sensor_properties.AMAX = atoi(ans.c_str() + found + 5);
+    }
     found = ans.find("AFRT");
-    if (found!=string::npos) sensor_properties.AFRT = atoi(ans.c_str()+found+5);
+    if (found != string::npos) {
+        sensor_properties.AFRT = atoi(ans.c_str() + found + 5);
+    }
     found = ans.find("SCAN");
-    if (found!=string::npos) sensor_properties.SCAN = atoi(ans.c_str()+found+5);
+    if (found != string::npos) {
+        sensor_properties.SCAN = atoi(ans.c_str() + found + 5);
+    }
     b.clear();
     b_ans.clear();
 
@@ -440,9 +456,9 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
             {
                 yCTrace(LASERHOKUYO, "Invalid answer to a MD command: %s", text_data);
                 return HOKUYO_STATUS_ERROR_INVALID_COMMAND;
-            }
-            else
-                return  HOKUYO_STATUS_OK;
+        } else {
+            return HOKUYO_STATUS_OK;
+        }
     }
 
     // check in the second line if the status of the sensor is ok
@@ -453,9 +469,9 @@ int laserHokuyo::readData(const Laser_mode_type laser_mode, const char* text_dat
             {
                 yCTrace(LASERHOKUYO, "Invalid sensor status: %s", text_data);
                 return HOKUYO_STATUS_ERROR_BUSY;
-            }
-            else
-                return HOKUYO_STATUS_OK;
+        } else {
+            return HOKUYO_STATUS_OK;
+        }
     }
 
     // verify the checksum for all the following lines
@@ -523,7 +539,9 @@ void laserHokuyo::run()
             rx_completed = true;
         }
         t2 = yarp::os::SystemClock::nowSystem();
-        if (t2-t1>maxtime) timeout = true;
+        if (t2 - t1 > maxtime) {
+            timeout = true;
+        }
     }
     while (rx_completed == false && timeout == false && error == false);
 

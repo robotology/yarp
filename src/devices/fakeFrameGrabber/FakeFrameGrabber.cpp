@@ -126,7 +126,9 @@ bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
     bool ok = command.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
     reply.clear();
 
     if (command.get(0).asString()=="help")
@@ -617,7 +619,7 @@ void FakeFrameGrabber::printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t 
             default: num_p = num[10]; break;
         }
 
-        for (size_t yi = 0; yi < num_height; yi++)
+        for (size_t yi = 0; yi < num_height; yi++) {
             for (size_t xi = 0; xi < num_width; xi++) {
                 size_t ii = yi * num_width + xi;
                 if (num_p[ii] == '*') {
@@ -638,6 +640,7 @@ void FakeFrameGrabber::printTime(unsigned char* pixbuf, size_t pixbuf_w, size_t 
                     }
                 }
             }
+        }
     }
 }
 

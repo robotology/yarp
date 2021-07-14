@@ -42,11 +42,12 @@ yarp::sig::Vector NormRand::vector(const yarp::sig::Vector &u, const yarp::sig::
 yarp::sig::Matrix NormRand::matrix(int rows, int cols, double u, double sigma)
 {
     yarp::sig::Matrix ret(rows,cols);
-    for(int r=0;r<rows;r++)
+    for (int r = 0; r < rows; r++) {
         for(int c=0;c<cols;c++)
         {
             ret[r][c]=theRandnScalar.get(u, sigma);
         }
+    }
     return ret;
 }
 

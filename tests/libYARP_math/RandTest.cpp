@@ -69,10 +69,12 @@ TEST_CASE("math::RandTest", "[yarp::math]")
         bool avOk=false;
         bool stdOk=false;
 
-        if (fabs(average-u)<0.075)
-            avOk=true;
-        if (fabs(std-sigma)<0.075)
-            stdOk=true;
+        if (fabs(average - u) < 0.075) {
+            avOk = true;
+        }
+        if (fabs(std - sigma) < 0.075) {
+            stdOk = true;
+        }
 
         CHECK(avOk); // normal distribution average ~as requested
         CHECK(stdOk); // normal distribution std ~as requested
@@ -84,15 +86,17 @@ TEST_CASE("math::RandTest", "[yarp::math]")
         int C=100;
         Matrix rndM=Rand::matrix(R,C);
         double average=0.0;
-        for(int r=0; r<R; r++)
+        for (int r = 0; r < R; r++) {
             for(int c=0; c<C;c++)
             {
                 average+=rndM[r][c];
             }
+        }
         average/=R*C;
         bool mGood=false;
-        if(fabs(average-0.5)<0.01)
-            mGood=true;
+        if (fabs(average - 0.5) < 0.01) {
+            mGood = true;
+        }
 
         CHECK(mGood); // random matrix
     }
@@ -117,10 +121,12 @@ TEST_CASE("math::RandTest", "[yarp::math]")
         int k=0;
         for(k=0;k<N;k++)
         {
-            if (rv[k]>max)
-                max=rv[k];
-            if (rv[k]<min)
-                min=rv[k];
+            if (rv[k] > max) {
+                max = rv[k];
+            }
+            if (rv[k] < min) {
+                min = rv[k];
+            }
 
             average+=rv[k];
         }
@@ -146,10 +152,12 @@ TEST_CASE("math::RandTest", "[yarp::math]")
         bool stdGood=false;
 
         // 0.01 looks like a reasonable threhold, no particular reasons
-        if (fabs(average-0.5)<0.01)
-            avGood=true;
-        if (fabs(std-0.28)<0.01)
-            stdGood=true;
+        if (fabs(average - 0.5) < 0.01) {
+            avGood = true;
+        }
+        if (fabs(std - 0.28) < 0.01) {
+            stdGood = true;
+        }
 
         CHECK(avGood); // average is ~0.5;
         CHECK(stdGood); // std is ~0.28;

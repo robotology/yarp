@@ -88,11 +88,13 @@ bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
     config2.SerialParams.databits = config.check("databits",Value(7),"Data bits. Valid values 5, 6, 7 and 8 data bits. Additionally Win32 supports 4 data bits.").asInt32();
     config2.SerialParams.stopbits = config.check("stopbits",Value(1),"Stop bits. Valid values are 1 and 2.").asInt32();
 
-    if (config.check("line_terminator_char1", "line terminator character for receiveLine(), default '\r'"))
+    if (config.check("line_terminator_char1", "line terminator character for receiveLine(), default '\r'")) {
         line_terminator_char1 = config.find("line_terminator_char1").asInt32();
+    }
 
-    if (config.check("line_terminator_char2", "line terminator character for receiveLine(), default '\n'"))
+    if (config.check("line_terminator_char2", "line terminator character for receiveLine(), default '\n'")) {
         line_terminator_char2 = config.find("line_terminator_char2").asInt32();
+    }
 
     return open(config2);
 }
@@ -105,10 +107,14 @@ bool SerialDeviceDriver::close() {
 bool SerialDeviceDriver::setDTR(bool value) {
     ACE_TTY_IO::Serial_Params arg;
     int ret = _serial_dev.control(_serial_dev.GETPARAMS, &arg);
-    if (ret == -1) return false;
+    if (ret == -1) {
+        return false;
+    }
     arg.dtrdisable = !value;
     ret = _serial_dev.control(_serial_dev.SETPARAMS, &arg);
-    if (ret == -1) return false;
+    if (ret == -1) {
+        return false;
+    }
     return true;
 }
 
@@ -136,13 +142,17 @@ bool SerialDeviceDriver::send(const Bottle& msg)
         }
         else
         {
-           if (verbose) yCDebug(SERIALPORT, "The input command bottle contains an empty string.");
+            if (verbose) {
+                yCDebug(SERIALPORT, "The input command bottle contains an empty string.");
+            }
            return false;
         }
     }
     else
     {
-        if (verbose) yCDebug(SERIALPORT, "The input command bottle is empty. \n");
+        if (verbose) {
+            yCDebug(SERIALPORT, "The input command bottle is empty. \n");
+        }
         return false;
     }
 
@@ -169,7 +179,9 @@ bool SerialDeviceDriver::send(char *msg, size_t size)
     }
     else
     {
-        if (verbose) yCDebug(SERIALPORT, "The input message is empty. \n");
+        if (verbose) {
+            yCDebug(SERIALPORT, "The input message is empty. \n");
+        }
         return false;
     }
 
@@ -207,7 +219,9 @@ int  SerialDeviceDriver::flush()
     {
         bytes_read = _serial_dev.recv((void *) &chr, 100);
         count+=bytes_read;
-        if (count > MAX_FLUSHED_BYTES) break; //to prevent endless loop
+        if (count > MAX_FLUSHED_BYTES) {
+            break; //to prevent endless loop
+        }
     }
     while (bytes_read>0);
     return count;
@@ -276,8 +290,9 @@ bool SerialDeviceDriver::receive(Bottle& msg)
         return false;
     }
 
-    if (bytes_read == 0)  //nothing there
+    if (bytes_read == 0) { //nothing there
         return true;
+    }
 
     message[bytes_read] = 0;
 

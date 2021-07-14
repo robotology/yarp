@@ -47,7 +47,9 @@ int Companion::cmdRepeat(int argc, char *argv[])
     while (true)
     {
         Bottle *bot = port.read();
-        if (!bot) continue;
+        if (!bot) {
+            continue;
+        }
         if (port.getOutputCount()>0)
         {
             port.prepare() = *bot;

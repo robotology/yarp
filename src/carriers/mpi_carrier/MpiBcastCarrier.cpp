@@ -39,8 +39,9 @@ void MpiBcastCarrier::createStream(bool sender) {
         }
         stream = new MpiBcastStream(name+"->bcast", comm);
         auto* mpiStream = dynamic_cast<MpiBcastStream*> (stream);
-        if(mpiStream)
+        if (mpiStream) {
             mpiStream->startJoin();
+        }
         getCaster().add(name, this);
         electionMember = true;
     } else {

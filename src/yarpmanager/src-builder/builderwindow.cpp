@@ -102,8 +102,9 @@ bool BuilderWindow::save()
         return true;
     }
     Application* application = manager.getKnowledgeBase()->getApplication();
-    if(!application)
+    if (!application) {
         return true;
+    }
 
     foreach (QGraphicsItem *it, scene->items()) {
         if(it->type() == QGraphicsItem::UserType+SourcePortItemType){
@@ -126,29 +127,33 @@ bool BuilderWindow::save()
 QString BuilderWindow::getFileName()
 {
     Application* application = manager.getKnowledgeBase()->getApplication();
-    if(!application)
+    if (!application) {
         return {};
+    };
     return QString(application->getXmlFile());
 }
 void BuilderWindow::setFileName(QString filename)
 {
     Application* application = manager.getKnowledgeBase()->getApplication();
-    if(application)
+    if (application) {
         application->setXmlFile(filename.toStdString().c_str());
+    }
     return;
 }
 QString BuilderWindow::getAppName()
 {
     Application* application = manager.getKnowledgeBase()->getApplication();
-    if(!application)
+    if (!application) {
         return {};
+    };
     return QString(application->getName());
 }
 void BuilderWindow::setAppName(QString appName)
 {
     Application* application = manager.getKnowledgeBase()->getApplication();
-    if(application)
+    if (application) {
         application->setName(appName.toStdString().c_str());
+    }
     return;
 }
 
@@ -160,16 +165,19 @@ void BuilderWindow::prepareManagerFrom(Manager* lazy,
     KnowledgeBase* lazy_kb = lazy->getKnowledgeBase();
 
     ModulePContainer mods =  lazy_kb->getModules();
-    for(auto& mod : mods)
+    for (auto& mod : mods) {
         manager.getKnowledgeBase()->addModule(mod);
+    }
 
     ResourcePContainer res =  lazy_kb->getResources();
-    for(auto& re : res)
+    for (auto& re : res) {
         manager.getKnowledgeBase()->addResource(re);
+    }
 
     ApplicaitonPContainer apps =  lazy_kb->getApplications();
-    for(auto& app : apps)
+    for (auto& app : apps) {
         manager.getKnowledgeBase()->addApplication(app);
+    }
 
     // loading application
     manager.loadApplication(szAppName);
@@ -835,8 +843,9 @@ void BuilderWindow::onAddedApplication(void *app,QPointF pos)
     iapp.setModelBase(modBase);
 
     Application* mainApplication = manager.getKnowledgeBase()->getApplication();
-    if(!mainApplication)
+    if (!mainApplication) {
         return;
+    }
 
     string strPrefix = "/";
     string  uniqeId = manager.getKnowledgeBase()->getUniqueAppID(mainApplication, iapp.getName());

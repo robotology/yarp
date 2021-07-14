@@ -38,8 +38,9 @@ Vector operator+(const double &s, const Vector &a)
 Vector& operator+=(Vector &a, const double &s)
 {
     size_t l = a.size();
-    for(size_t i=0; i<l; i++)
+    for (size_t i = 0; i < l; i++) {
         a[i] += s;
+    }
     return a;
 }
 
@@ -53,8 +54,9 @@ Vector& operator+=(Vector &a, const Vector &b)
 {
     size_t s=a.size();
     yCAssert(MATH, s==b.size());
-    for (size_t k=0; k<s;k++)
-        a[k]+=b[k];
+    for (size_t k = 0; k < s; k++) {
+        a[k] += b[k];
+    }
     return a;
 }
 
@@ -69,9 +71,11 @@ Matrix& operator+=(Matrix &a, const Matrix &b)
     size_t n=a.cols();
     size_t m=a.rows();
     yCAssert(MATH, m==b.rows() && n==b.cols());
-    for (size_t r=0; r<m;r++)
-        for (size_t c=0; c<n;c++)
-            a(r,c)+=b(r,c);
+    for (size_t r = 0; r < m; r++) {
+        for (size_t c = 0; c < n; c++) {
+            a(r, c) += b(r, c);
+        }
+    }
     return a;
 }
 
@@ -85,16 +89,18 @@ Vector operator-(const double &s, const Vector &a)
 {
     size_t l = a.size();
     Vector ret(l);
-    for(size_t i=0; i<l; i++)
-        ret[i] = s-a[i];
+    for (size_t i = 0; i < l; i++) {
+        ret[i] = s - a[i];
+    }
     return ret;
 }
 
 Vector& operator-=(Vector &a, const double &s)
 {
     size_t l = a.size();
-    for(size_t i=0; i<l; i++)
+    for (size_t i = 0; i < l; i++) {
         a[i] -= s;
+    }
     return a;
 }
 
@@ -108,8 +114,9 @@ Vector& operator-=(Vector &a, const Vector &b)
 {
     size_t s=a.size();
     yCAssert(MATH, s==b.size());
-    for (size_t k=0; k<s;k++)
-        a[k]-=b[k];
+    for (size_t k = 0; k < s; k++) {
+        a[k] -= b[k];
+    }
     return a;
 }
 
@@ -125,9 +132,11 @@ Matrix& operator-=(Matrix &a, const Matrix &b)
     size_t m=a.rows();
     yCAssert(MATH, m==b.rows());
     yCAssert(MATH, n==b.cols());
-    for (size_t r=0; r<m;r++)
-        for (size_t c=0; c<n;c++)
-            a(r,c)-=b(r,c);
+    for (size_t r = 0; r < m; r++) {
+        for (size_t c = 0; c < n; c++) {
+            a(r, c) -= b(r, c);
+        }
+    }
     return a;
 }
 
@@ -145,8 +154,9 @@ Vector operator*(const Vector &a, double k)
 Vector& operator*=(Vector &a, double k)
 {
     size_t size=a.size();
-    for (size_t i = 0; i < size; i++)
-        a[i]*=k;
+    for (size_t i = 0; i < size; i++) {
+        a[i] *= k;
+    }
     return a;
 }
 
@@ -215,9 +225,11 @@ Matrix operator*(const Matrix &M, const double k)
 
 Matrix& operator*=(Matrix &M, const double k)
 {
-    for (size_t r=0; r<M.rows(); r++)
-        for (size_t c=0; c<M.cols(); c++)
-            M(r,c)*=k;
+    for (size_t r = 0; r < M.rows(); r++) {
+        for (size_t c = 0; c < M.cols(); c++) {
+            M(r, c) *= k;
+        }
+    }
     return M;
 }
 
@@ -231,8 +243,9 @@ Vector& operator*=(Vector &a, const Vector &b)
 {
     size_t n =a.length();
     yCAssert(MATH, n==b.length());
-    for (size_t i=0; i<n; i++)
-        a[i]*=b[i];
+    for (size_t i = 0; i < n; i++) {
+        a[i] *= b[i];
+    }
     return a;
 }
 
@@ -254,8 +267,9 @@ Vector& operator/=(Vector &a, const Vector &b)
 {
     size_t n =a.length();
     yCAssert(MATH, n==b.length());
-    for (size_t i=0; i<n; i++)
-        a[i]/=b[i];
+    for (size_t i = 0; i < n; i++) {
+        a[i] /= b[i];
+    }
     return a;
 }
 
@@ -269,8 +283,9 @@ Vector& operator/=(Vector &b, double k)
 {
     size_t n=b.length();
     yCAssert(MATH, k!=0.0);
-    for (size_t i = 0; i < n; i++)
-        b[i]/=k;
+    for (size_t i = 0; i < n; i++) {
+        b[i] /= k;
+    }
     return b;
 }
 
@@ -285,9 +300,11 @@ Matrix& operator/=(Matrix &M, const double k)
     yCAssert(MATH, k!=0.0);
     int rows=M.rows();
     int cols=M.cols();
-    for (int r=0; r<rows; r++)
-        for (int c=0; c<cols; c++)
-            M(r,c)/=k;
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            M(r, c) /= k;
+        }
+    }
     return M;
 }
 
@@ -468,9 +485,11 @@ Matrix yarp::math::outerProduct(const Vector &a, const Vector &b)
     size_t s = a.size();
     yCAssert(MATH, s==b.size());
     Matrix res(s, s);
-    for(size_t i=0;i<s;i++)
-        for(size_t j=0;j<s;j++)
-            res(i,j) = a(i) * b(j);
+    for (size_t i = 0; i < s; i++) {
+        for (size_t j = 0; j < s; j++) {
+            res(i, j) = a(i) * b(j);
+        }
+    }
     return res;
 }
 
@@ -500,10 +519,12 @@ Matrix yarp::math::crossProductMatrix(const Vector &v)
 
 bool yarp::math::crossProductMatrix(const Vector &v, Matrix &res)
 {
-    if(v.size()!=3)
+    if (v.size() != 3) {
         return false;
-    if(res.cols()!=3 || res.rows()!=3)
-        res.resize(3,3);
+    }
+    if (res.cols() != 3 || res.rows() != 3) {
+        res.resize(3, 3);
+    }
     res(0,0) = res(1,1) = res(2,2) = 0.0;
     res(1,0) = v(2);
     res(0,1) = -v(2);
@@ -526,23 +547,29 @@ double yarp::math::norm2(const Vector &v)
 
 double yarp::math::findMax(const Vector &v)
 {
-    if (v.length()<=0)
+    if (v.length() <= 0) {
         return 0.0;
+    }
     double ret=v[0];
-    for (size_t i=1; i<v.size(); i++)
-        if (v[i]>ret)
-            ret=v[i];
+    for (size_t i = 1; i < v.size(); i++) {
+        if (v[i] > ret) {
+            ret = v[i];
+        }
+    }
     return ret;
 }
 
 double yarp::math::findMin(const Vector &v)
 {
-    if (v.length()<=0)
+    if (v.length() <= 0) {
         return 0.0;
+    }
     double ret=v[0];
-    for (size_t i=1; i<v.length(); i++)
-        if (v[i]<ret)
-            ret=v[i];
+    for (size_t i = 1; i < v.length(); i++) {
+        if (v[i] < ret) {
+            ret = v[i];
+        }
+    }
     return ret;
 }
 
@@ -597,8 +624,9 @@ Matrix yarp::math::luinv(const Matrix& in)
 bool yarp::math::eigenValues(const Matrix& in, Vector &real, Vector &img)
 {
     // return error for non-square matrix
-    if(in.cols() != in.rows())
+    if (in.cols() != in.rows()) {
         return false;
+    }
 
     int n = in.cols();
     real.resize(n);
@@ -635,8 +663,9 @@ double yarp::math::sign(const double &v)
 Vector yarp::math::sign(const Vector &v)
 {
     Vector ret(v.length());
-    for (size_t i=0; i<v.length(); i++)
-        ret[i]=sign(v[i]);
+    for (size_t i = 0; i < v.length(); i++) {
+        ret[i] = sign(v[i]);
+    }
 
     return ret;
 }
@@ -690,8 +719,9 @@ Matrix yarp::math::axis2dcm(const Vector &v)
     Matrix R=eye(4,4);
 
     double theta=v[3];
-    if (theta==0.0)
+    if (theta == 0.0) {
         return R;
+    }
 
     double c=cos(theta);
     double s=sin(theta);
@@ -752,8 +782,9 @@ Vector yarp::math::dcm2euler(const Matrix &R)
         v[2]=0.0;
     }
 
-    if (singularity)
+    if (singularity) {
         yCWarning(MATH, "dcm2euler() in singularity: choosing one solution among multiple");
+    }
 
     return v;
 }
@@ -806,8 +837,9 @@ Vector yarp::math::dcm2rpy(const Matrix &R)
         v[2]=atan2(-R(1,2),R(1,1));
     }
 
-    if (singularity)
+    if (singularity) {
         yCWarning(MATH, "dcm2rpy() in singularity: choosing one solution among multiple");
+    }
 
     return v;
 }

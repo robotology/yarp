@@ -63,9 +63,9 @@ void checkEqual(const Matrix &A, const Vector &b)
     if(A.cols() == 1){
         Vector a = A.getCol(0);
         checkEqual(a, b);
-    }
-    else if(A.rows() == 1)
+    } else if (A.rows() == 1) {
         checkEqual(A.getRow(0), b);
+    }
 }
 
 void checkEqual(const Vector &b, const Matrix &A)
@@ -202,9 +202,11 @@ TEST_CASE("math::MathTest", "[yarp::math]")
         res = A/3.0; //divide all by 3
         //sum elements
         double acc = 0.0;
-        for(size_t r = 0; r<res.rows(); r++)
-            for(size_t c = 0; c<res.cols(); c++)
-                    acc += res[r][c];
+        for (size_t r = 0; r < res.rows(); r++) {
+            for (size_t c = 0; c < res.cols(); c++) {
+                acc += res[r][c];
+            }
+        }
 
         double expected = res.rows()*res.cols()*3.0;
 
@@ -213,12 +215,13 @@ TEST_CASE("math::MathTest", "[yarp::math]")
         A = 3.0; //initialize all with 3
         res = A*3.0; // multiply all by 3
         acc = 0.0;
-        for(size_t r = 0; r<res.rows(); r++)
+        for (size_t r = 0; r < res.rows(); r++) {
             for(size_t c = 0; c<res.cols(); c++)
             {
                 //INFO(res[r][c]);
                 acc += res[r][c];
             }
+        }
 
         expected = res.rows()*res.cols()*9;
 
@@ -265,13 +268,14 @@ TEST_CASE("math::MathTest", "[yarp::math]")
 
         bool invGood = true;
         Matrix ref = eye(4, 4);
-        for(size_t r = 0; r<I.rows(); r++)
+        for (size_t r = 0; r < I.rows(); r++) {
             for(size_t c = 0; c<I.cols(); c++)
             {
-                if (fabs(I[r][c]-ref[r][c])>0.0001)
+                if (fabs(I[r][c] - ref[r][c]) > 0.0001) {
                     invGood = false;
-
+                }
             }
+        }
 
         CHECK(invGood); // luinv
 

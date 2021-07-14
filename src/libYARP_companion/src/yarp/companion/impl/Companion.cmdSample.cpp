@@ -57,7 +57,9 @@ int Companion::cmdSample(int argc, char *argv[]) {
     bool show = options.check("show");
     while (true) {
         Bottle *bot = port.read();
-        if (!bot) continue;
+        if (!bot) {
+            continue;
+        }
         if (show) {
             yCInfo(COMPANION, "%s", bot->toString().c_str());
         }

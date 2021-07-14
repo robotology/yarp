@@ -34,16 +34,17 @@ XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
 {
     parser = new(TextParser);
     app.clear();
-    if(szAppName)
+    if (szAppName) {
         strAppName = szAppName;
+    }
 
     if(strlen(szPath))
     {
         const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
         strPath = szPath;
-        if((strPath.rfind(directorySeparator)==string::npos) ||
-            (strPath.rfind(directorySeparator)!=strPath.size()-1))
+        if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
             strPath = strPath + string(directorySeparator);
+        }
     }
 }
 
@@ -54,8 +55,9 @@ XmlAppLoader::XmlAppLoader(const char* szFileName)
 {
     parser = new(TextParser);
     app.clear();
-    if(szFileName)
+    if (szFileName) {
         strFileName = szFileName;
+    }
 }
 
 
@@ -106,8 +108,9 @@ bool XmlAppLoader::init()
         if(name.size() > 3)
         {
             string ext = name.substr(name.size()-3,3);
-            if(compareString(ext.c_str(), "xml"))
-                fileNames.push_back(strPath+name);
+            if (compareString(ext.c_str(), "xml")) {
+                fileNames.push_back(strPath + name);
+            }
         }
     }
     closedir(dir);
@@ -144,8 +147,9 @@ Application* XmlAppLoader::getNextApplication()
         Application* app = nullptr;
         while(!app)
         {
-            if(fileNames.empty())
+            if (fileNames.empty()) {
                 return nullptr;
+            }
             string fname = fileNames.back();
             fileNames.pop_back();
             app = parsXml(fname.c_str());
@@ -158,8 +162,9 @@ Application* XmlAppLoader::getNextApplication()
         for(itr=fileNames.begin(); itr<fileNames.end(); itr++)
         {
          Application* app = parsXml((*itr).c_str());
-         if(app && (string(app->getName())==strAppName))
-            return app;
+         if (app && (string(app->getName()) == strAppName)) {
+             return app;
+         }
         }
     }
  return nullptr;
@@ -224,21 +229,25 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     if(name)
     {
         string strname = parser->parseText(name->GetText());
-        for(char& i : strname)
-            if(i == ' ')
+        for (char& i : strname) {
+            if (i == ' ') {
                 i = '_';
+            }
+        }
         app.setName(strname.c_str());
     }
 
     /* retrieving description */
     TiXmlElement* desc;
-    if((desc = (TiXmlElement*) root->FirstChild("description")))
+    if ((desc = (TiXmlElement*)root->FirstChild("description"))) {
         app.setDescription(parser->parseText(desc->GetText()).c_str());
+    }
 
     /* retrieving version */
     TiXmlElement* ver;
-    if((ver = (TiXmlElement*) root->FirstChild("version")))
+    if ((ver = (TiXmlElement*)root->FirstChild("version"))) {
         app.setVersion(parser->parseText(ver->GetText()).c_str());
+    }
 
     /*
      * TODO: setting prefix of the main application is inactivated.
@@ -253,17 +262,19 @@ Application* XmlAppLoader::parsXml(const char* szFile)
 
     /* retrieving authors information*/
     TiXmlElement* authors;
-    if((authors = (TiXmlElement*) root->FirstChild("authors")))
+    if ((authors = (TiXmlElement*)root->FirstChild("authors"))) {
         for(TiXmlElement* ath = authors->FirstChildElement(); ath;
                 ath = ath->NextSiblingElement())
         {
             if(compareString(ath->Value(), "author"))
             {
                 Author author;
-                if(ath->GetText())
+                if (ath->GetText()) {
                     author.setName(parser->parseText(ath->GetText()).c_str());
-                if(ath->Attribute("email"))
+                }
+                if (ath->Attribute("email")) {
                     author.setEmail(ath->Attribute("email"));
+                }
                 app.addAuthor(author);
             }
             else
@@ -274,10 +285,11 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 logger->addWarning(war);
             }
         }
+    }
 
     /* retrieving resources information*/
     TiXmlElement* resources;
-    if((resources = (TiXmlElement*) root->FirstChild("dependencies")))
+    if ((resources = (TiXmlElement*)root->FirstChild("dependencies"))) {
         for(TiXmlElement* res = resources->FirstChildElement(); res;
                 res = res->NextSiblingElement())
         {
@@ -298,6 +310,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 logger->addWarning(war);
             }
         }
+    }
 
     /* retrieving modules information*/
     using setter = void (ModuleInterface::*)(const char*);
@@ -388,12 +401,15 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                             {
                                 ResYarpPort resource(parser->parseText(res->GetText()).c_str());
                                 resource.setPort(parser->parseText(res->GetText()).c_str());
-                                if(res->Attribute("timeout"))
+                                if (res->Attribute("timeout")) {
                                     resource.setTimeout(atof(res->Attribute("timeout")));
-                                if(res->Attribute("request"))
+                                }
+                                if (res->Attribute("request")) {
                                     resource.setRequest(res->Attribute("request"));
-                                if(res->Attribute("reply"))
+                                }
+                                if (res->Attribute("reply")) {
                                     resource.setReply(res->Attribute("reply"));
+                                }
                                 module.addResource(resource);
                             }
                         }
@@ -417,12 +433,14 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         if(compareString(res->Value(), "wait"))
                         {
                             if (res->Attribute("when") && compareString(res->Attribute("when"), "start")) {
-                                if(parser->parseText(res->GetText()).c_str())
+                                if (parser->parseText(res->GetText()).c_str()) {
                                     module.setPostExecWait(atof(parser->parseText(res->GetText()).c_str()));
+                                }
                             }
                             else if (res->Attribute("when") && compareString(res->Attribute("when"), "stop")) {
-                                if(parser->parseText(res->GetText()).c_str())
+                                if (parser->parseText(res->GetText()).c_str()) {
                                     module.setPostStopWait(atof(parser->parseText(res->GetText()).c_str()));
+                                }
                             }
                             else if (res->Attribute("when") && strlen(res->Attribute("when"))) {
                                 OSTRINGSTREAM war;
@@ -430,8 +448,9 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                                 logger->addWarning(war);
                             }
                             else {  // if "when" has not been specified, use setPostExecWait!
-                                if(parser->parseText(res->GetText()).c_str())
+                                if (parser->parseText(res->GetText()).c_str()) {
                                     module.setPostExecWait(atof(parser->parseText(res->GetText()).c_str()));
+                                }
                             }
                         }
                         else
@@ -444,8 +463,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                     }
                 }
                 /* retrieving portmaps */
-                for(TiXmlElement* map = mod->FirstChildElement(); map;
-                            map = map->NextSiblingElement())
+                for (TiXmlElement* map = mod->FirstChildElement(); map;
+                     map = map->NextSiblingElement()) {
                     if(compareString(map->Value(), "portmap"))
                     {
                         TiXmlElement* first;
@@ -457,6 +476,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                             module.addPortmap(portmap);
                         }
                     }
+                }
 
                 app.addImodule(module);
             }
@@ -482,8 +502,9 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             if((name=(TiXmlElement*) embApp->FirstChild("name")))
             {
                 ApplicationInterface IApp(parser->parseText(name->GetText()).c_str());
-                if((prefix=(TiXmlElement*) embApp->FirstChild("prefix")))
+                if ((prefix = (TiXmlElement*)embApp->FirstChild("prefix"))) {
                     IApp.setPrefix(parser->parseText(prefix->GetText()).c_str());
+                }
 #ifdef WITH_GEOMETRY
                 auto* element = (TiXmlElement*) embApp->FirstChild("geometry");
                 if(element && element->GetText())
@@ -530,8 +551,9 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                 {
                     if(compareString(rule->Value(), "rule"))
                     {
-                        if(rule->Attribute("connection"))
+                        if (rule->Attribute("connection")) {
                             arbitrator.addRule(rule->Attribute("connection"), parser->parseText(rule->GetText()).c_str());
+                        }
                     }
                 }
 #ifdef WITH_GEOMETRY
@@ -575,18 +597,20 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             auto* from = (TiXmlElement*) cnn->FirstChild("from");
             auto* to = (TiXmlElement*) cnn->FirstChild("to");
 
-            if(!from)
-                from = (TiXmlElement*) cnn->FirstChild("output");
-            if(!to)
-                to = (TiXmlElement*) cnn->FirstChild("input");
+            if (!from) {
+                from = (TiXmlElement*)cnn->FirstChild("output");
+            }
+            if (!to) {
+                to = (TiXmlElement*)cnn->FirstChild("input");
+            }
 
             TiXmlElement* protocol;
             if(from && to)
             {
                 string strCarrier;
-                if((protocol=(TiXmlElement*) cnn->FirstChild("protocol")) &&
-                    protocol->GetText())
+                if ((protocol = (TiXmlElement*)cnn->FirstChild("protocol")) && protocol->GetText()) {
                     strCarrier = parser->parseText(protocol->GetText());
+                }
                 Connection connection(parser->parseText(from->GetText()).c_str(),
                                     parser->parseText(to->GetText()).c_str(),
                                     strCarrier.c_str());
@@ -608,8 +632,9 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         app.addResource(resource);
                     }
                 }
-                if(from->Attribute("qos"))
+                if (from->Attribute("qos")) {
                     connection.setQosFrom(from->Attribute("qos"));
+                }
                 if(to->Attribute("external") &&
                     compareString(to->Attribute("external"), "true"))
                 {
@@ -621,26 +646,30 @@ Application* XmlAppLoader::parsXml(const char* szFile)
                         app.addResource(resource);
                     }
                 }
-                if(to->Attribute("qos"))
+                if (to->Attribute("qos")) {
                     connection.setQosTo(to->Attribute("qos"));
+                }
 
                 //Connections which have the same port name in Port Resources
                 // should also be set as external
                 for(int i=0; i<app.resourcesCount(); i++)
                 {
                     ResYarpPort res = app.getResourceAt(i);
-                    if(compareString(res.getPort(), connection.from()))
+                    if (compareString(res.getPort(), connection.from())) {
                         connection.setFromExternal(true);
-                    if(compareString(res.getPort(), connection.to()))
+                    }
+                    if (compareString(res.getPort(), connection.to())) {
                         connection.setToExternal(true);
+                    }
                 }
 
-                if(cnn->Attribute("id"))
+                if (cnn->Attribute("id")) {
                     connection.setId(cnn->Attribute("id"));
+                }
 
-                if(cnn->Attribute("persist") &&
-                        compareString(cnn->Attribute("persist"), "true"))
+                if (cnn->Attribute("persist") && compareString(cnn->Attribute("persist"), "true")) {
                     connection.setPersistent(true);
+                }
 
 #ifdef WITH_GEOMETRY
                 auto* geometry = (TiXmlElement*) cnn->FirstChild("geometry");

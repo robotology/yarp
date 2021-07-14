@@ -261,28 +261,36 @@ void MainWindow::handleButton_Er()
 void MainWindow::handleButton_I()
 {
     max_vel_lin += lin_vel_step;
-    if (max_vel_lin < 0) max_vel_lin = 0;
+    if (max_vel_lin < 0) {
+        max_vel_lin = 0;
+    }
     snprintf(buff,100, s_max_lin_vel, max_vel_lin);
     ui->label_max_lin_vel->setText(buff);
 }
 void MainWindow::handleButton_K()
 {
     max_vel_lin -= lin_vel_step;
-    if (max_vel_lin < 0) max_vel_lin = 0;
+    if (max_vel_lin < 0) {
+        max_vel_lin = 0;
+    }
     snprintf(buff, 100, s_max_lin_vel, max_vel_lin);
     ui->label_max_lin_vel->setText(buff);
 }
 void MainWindow::handleButton_O()
 {
     max_vel_theta += ang_vel_step;
-    if (max_vel_theta < 0) max_vel_theta = 0;
+    if (max_vel_theta < 0) {
+        max_vel_theta = 0;
+    }
     snprintf(buff, 100, s_max_ang_vel, max_vel_theta);
     ui->label_max_ang_vel->setText(buff);
 }
 void MainWindow::handleButton_L()
 {
     max_vel_theta -= ang_vel_step;
-    if (max_vel_theta < 0) max_vel_theta = 0;
+    if (max_vel_theta < 0) {
+        max_vel_theta = 0;
+    }
     snprintf(buff, 100, s_max_ang_vel, max_vel_theta);
     ui->label_max_ang_vel->setText(buff);
 }

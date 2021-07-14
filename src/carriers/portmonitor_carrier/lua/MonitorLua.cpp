@@ -48,8 +48,9 @@ MonitorLua::~MonitorLua()
         //  call PortMonitor.destroy if exists
         if(getLocalFunction("destroy"))
         {
-            if(lua_pcall(L, 0, 0, 0) != 0)
+            if (lua_pcall(L, 0, 0, 0) != 0) {
                 yCError(PORTMONITORCARRIER, "%s", lua_tostring(L, -1));
+            }
         }
         // closing lua state handler
         lua_close(L);
@@ -119,9 +120,9 @@ bool MonitorLua::load(const Property &options)
             L = nullptr;
             luaMutex.unlock();
             return false;
-        }
-        else
+        } else {
             result = lua_toboolean(L, -1);
+        }
     }
     lua_pop(L,1);
 
@@ -400,8 +401,9 @@ bool MonitorLua::registerExtraFunctions()
 
 bool MonitorLua::canAccept()
 {
-    if(constraint == "")
+    if (constraint == "") {
         return true;
+    }
 
     MonitorEventRecord& record = MonitorEventRecord::getInstance();
 
@@ -473,20 +475,24 @@ inline void MonitorLua::trimString(string& str)
   if(pos != string::npos) {
     str.erase(pos + 1);
     pos = str.find_first_not_of(' ');
-    if(pos != string::npos) str.erase(0, pos);
+    if (pos != string::npos) {
+        str.erase(0, pos);
+    }
+  } else {
+      str.erase(str.begin(), str.end());
   }
-  else str.erase(str.begin(), str.end());
 }
 
 inline bool MonitorLua::isKeyword(const char* str)
 {
-    if(!str)
+    if (!str) {
         return false;
+    }
 
     string token = str;
-    if((token == "true") || (token == "false") ||
-       (token == "and") || (token == "or") || (token == "not") )
-       return true;
+    if ((token == "true") || (token == "false") || (token == "and") || (token == "or") || (token == "not")) {
+        return true;
+    }
     return false;
 }
 
@@ -540,10 +546,9 @@ int MonitorLua::setEvent(lua_State* L)
         // check if the event's lifetime is given as argument
         if(n_args > 1)
         {
-            if(lua_isnumber(L,2))
+            if (lua_isnumber(L, 2)) {
                 lifetime = (double) luaL_checknumber(L,2);
-            else
-            {
+            } else {
                 yCError(PORTMONITORCARRIER, "The second arguemnt of setEvent() must be number");
                 return 0;
             }
@@ -557,8 +562,9 @@ int MonitorLua::setEvent(lua_State* L)
         }
         auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
         yCAssert(PORTMONITORCARRIER, owner);
-        if(owner->isKeyword(event_name))
+        if (owner->isKeyword(event_name)) {
             return 0;
+        }
         MonitorEventRecord& record = MonitorEventRecord::getInstance();
         record.lock();
         record.setEvent(event_name, owner, lifetime);
@@ -580,8 +586,9 @@ int MonitorLua::unsetEvent(lua_State* L)
         }
         auto* owner = static_cast<MonitorLua*>(lua_touserdata(L, -1));
         yCAssert(PORTMONITORCARRIER, owner);
-        if(owner->isKeyword(event_name))
+        if (owner->isKeyword(event_name)) {
             return 0;
+        }
         MonitorEventRecord& record = MonitorEventRecord::getInstance();
         record.lock();
         record.unsetEvent(event_name, owner);
@@ -595,9 +602,9 @@ int MonitorLua::setTrigInterval(lua_State* L)
     double period = 0.0;
     int n_args =  lua_gettop(L);
     if(n_args > 0) {
-        if(lua_isnumber(L, 1))
+        if (lua_isnumber(L, 1)) {
             period = (double) luaL_checknumber(L,1);
-        else {
+        } else {
             yCError(PORTMONITORCARRIER, "The arguemnt of setTrigInterval() must be number");
             return 0;
         }

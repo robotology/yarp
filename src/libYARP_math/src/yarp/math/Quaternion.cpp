@@ -110,7 +110,9 @@ bool Quaternion::read(yarp::os::ConnectionReader& connection)
     connection.convertTextMode();
     QuaternionPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     if (header.listLen == 4 &&  header.listTag == (BOTTLE_TAG_LIST | BOTTLE_TAG_FLOAT64))
     {
@@ -172,8 +174,9 @@ void Quaternion::fromRotationMatrix(const yarp::sig::Matrix &R)
         double sqdip1 = sqrt(R(1, 1) - R(0, 0) - R(2, 2) + 1.0);
         internal_data[2] = 0.5*sqdip1;
 
-        if (sqdip1>0.0)
+        if (sqdip1 > 0.0) {
             sqdip1 = 0.5 / sqdip1;
+        }
 
         internal_data[0] = (R(0, 2) - R(2, 0))*sqdip1;
         internal_data[1] = (R(1, 0) + R(0, 1))*sqdip1;
@@ -184,8 +187,9 @@ void Quaternion::fromRotationMatrix(const yarp::sig::Matrix &R)
         double sqdip1 = sqrt(R(2, 2) - R(0, 0) - R(1, 1) + 1.0);
         internal_data[3] = 0.5*sqdip1;
 
-        if (sqdip1>0.0)
+        if (sqdip1 > 0.0) {
             sqdip1 = 0.5 / sqdip1;
+        }
 
         internal_data[0] = (R(1, 0) - R(0, 1))*sqdip1;
         internal_data[1] = (R(0, 2) + R(2, 0))*sqdip1;
@@ -196,8 +200,9 @@ void Quaternion::fromRotationMatrix(const yarp::sig::Matrix &R)
         double sqdip1 = sqrt(R(0, 0) - R(1, 1) - R(2, 2) + 1.0);
         internal_data[1] = 0.5*sqdip1;
 
-        if (sqdip1>0.0)
+        if (sqdip1 > 0.0) {
             sqdip1 = 0.5 / sqdip1;
+        }
 
         internal_data[0] = (R(2, 1) - R(1, 2))*sqdip1;
         internal_data[2] = (R(1, 0) + R(0, 1))*sqdip1;

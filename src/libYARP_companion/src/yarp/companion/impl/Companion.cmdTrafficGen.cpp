@@ -54,8 +54,9 @@ public:
 
     void run() override
     {
-        if (outport.getOutputCount()>0)
+        if (outport.getOutputCount() > 0) {
             outport.write(pp);
+        }
     }
 
     void threadRelease() override

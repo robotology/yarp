@@ -245,7 +245,9 @@ bool  Localization2DClient::getCurrentPosition(Map2DLocation& loc, yarp::sig::Ma
             loc.y = resp.get(3).asFloat64();
             loc.theta = resp.get(4).asFloat64();
             Bottle* mc = resp.get(5).asList();
-            if (mc == nullptr) return false;
+            if (mc == nullptr) {
+                return false;
+            }
             for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = mc->get(i*3+j).asFloat64(); } }
             return true;
         }

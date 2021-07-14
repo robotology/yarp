@@ -55,10 +55,12 @@ void InputPortProcessor::onRead(yarp::sig::Vector &v)
     {
         double tmpDT=now-prev;
         deltaT+=tmpDT;
-        if (tmpDT>deltaTMax)
-            deltaTMax=tmpDT;
-        if (tmpDT<deltaTMin)
-            deltaTMin=tmpDT;
+        if (tmpDT > deltaTMax) {
+            deltaTMax = tmpDT;
+        }
+        if (tmpDT < deltaTMin) {
+            deltaTMin = tmpDT;
+        }
 
         //compare network time
         if (tmpDT*1000<ANALOG_TIMEOUT)
@@ -175,9 +177,9 @@ void  AnalogSensorClient::removeLeadingTrailingSlashesOnly(std::string &name)
         {
             done = false;       // we could have both leading and trailing, so let's check again
             name.erase(found,1);
+        } else {
+            done = true; // there is some '/', but their are in the middle and they are allowed
         }
-        else
-            done = true;        // there is some '/', but their are in the middle and they are allowed
     }
 
     yCDebug(ANALOGSENSORCLIENT) << name;
@@ -281,8 +283,9 @@ int AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& value)
     cmd.addVocab32(VOCAB_IANALOG);
     cmd.addVocab32(VOCAB_CALIBRATE);
     Bottle& l = cmd.addList();
-    for (int i = 0; i < this->getChannels(); i++)
-         l.addFloat64(value[i]);
+    for (int i = 0; i < this->getChannels(); i++) {
+        l.addFloat64(value[i]);
+    }
     bool ok = rpcPort.write(cmd, response);
     return checkResponse(ok, response);
 }

@@ -333,8 +333,9 @@ bool BoschIMU::sendWriteCommandSer(unsigned char register_add, int len, unsigned
     command[1]= WRITE_CMD;      // read operation
     command[2]= register_add;   // operation mode register
     command[3]= (unsigned char) len;     // length 1 byte
-    for(int i=0; i<len; i++)
-        command[4+i] = cmd[i];  // data
+    for (int i = 0; i < len; i++) {
+        command[4 + i] = cmd[i]; // data
+    }
 
 //     yCTrace(IMUBOSCH_BNO055, "> WRITE_COMMAND:  %s ... ", comment.c_str());
 //     yCTrace(IMUBOSCH_BNO055, "Command is:");
@@ -371,8 +372,9 @@ int BoschIMU::readBytes(unsigned char* buffer, int bytes)
     do
     {
         r = ::read(fd, (void*)&buffer[bytesRead], 1);
-        if(r > 0)
+        if (r > 0) {
             bytesRead += r;
+        }
     }
     while(r!=0 && bytesRead < bytes);
 
@@ -391,16 +393,18 @@ void BoschIMU::dropGarbage()
 
 void BoschIMU::printBuffer(unsigned char* buffer, int length)
 {
-    for(int i=0; i< length; i++)
+    for (int i = 0; i < length; i++) {
         printf("\t0x%02X ", buffer[i]);
+    }
     printf("\n");
 }
 
 void BoschIMU::readSysError()
 {
     // avoid recursive error check
-    if(checkError)
+    if (checkError) {
         return;
+    }
 
     checkError = true;
     yarp::os::SystemClock::delaySystem(0.002);
@@ -589,10 +593,11 @@ bool BoschIMU::threadInit()
     {
         // read data from IMU
         run();
-        if(dataIsValid)
+        if (dataIsValid) {
             break;
-        else
+        } else {
             yarp::os::SystemClock::delaySystem(0.01);
+        }
     }
 
     if(!dataIsValid)

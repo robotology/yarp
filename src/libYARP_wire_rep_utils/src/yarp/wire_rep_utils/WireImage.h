@@ -71,7 +71,9 @@ public:
         image = &img;
         yarp::os::ConnectionWriter *pbuf =
             yarp::os::ConnectionWriter::createBufferedConnectionWriter();
-        if (!pbuf) ::exit(1);
+        if (!pbuf) {
+            ::exit(1);
+        }
         yarp::os::ConnectionWriter& buf = *pbuf;
         yarp::os::StringOutputStream ss;
         // probably need to translate encoding format better, but at

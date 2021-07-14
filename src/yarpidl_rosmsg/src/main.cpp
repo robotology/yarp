@@ -55,7 +55,9 @@ void show_usage()
 
 static void generateTypeMap1(RosType& t, std::string& txt)
 {
-    if (!t.isValid) return;
+    if (!t.isValid) {
+        return;
+    }
     std::vector<RosType>& lst = t.subRosType;
     if (lst.size()>0) {
         bool simple = true;
@@ -84,7 +86,9 @@ static void generateTypeMap1(RosType& t, std::string& txt)
         }
         return;
     }
-    if (!t.isPrimitive) return;
+    if (!t.isPrimitive) {
+        return;
+    }
     txt += " ";
     if (t.isArray) {
         txt += "vector ";
@@ -102,7 +106,9 @@ static void generateTypeMap(RosType& t, std::string& txt)
     if (txt.length()>0) {
         txt = txt.substr(1,txt.length());
     }
-    if (!t.reply) return;
+    if (!t.reply) {
+        return;
+    }
     txt += " ---";
     generateTypeMap1(*(t.reply),txt);
 }
@@ -262,11 +268,15 @@ int main(int argc, char *argv[])
         } else {
             resp.addString("?");
         }
-        if (!has_cmd) port.reply(resp);
+        if (!has_cmd) {
+            port.reply(resp);
+        }
         if (verbose||has_cmd) {
             printf("Response: %s\n", resp.toString().c_str());
         }
-        if (has_cmd) break;
+        if (has_cmd) {
+            break;
+        }
     }
     return 0;
 }

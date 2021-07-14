@@ -102,9 +102,9 @@ bool RGBDSensorParser::respond(const Bottle& cmd, Bottle& response)
                                 response.addVocab32(VOCAB_IS);
                                 ret &= Property::copyPortable(params, params_b);  // will it really work??
                                 response.append(params_b);
-                            }
-                            else
+                            } else {
                                 response.addVocab32(VOCAB_FAILED);
+                            }
                         }
                         break;
 
@@ -204,8 +204,10 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
 //     addUsage("[set] [expo] $fExposure", "set exposure");
 //
     m_conf.fromString(config.toString());
-    if(verbose >= 5)
-        yCTrace(RGBDSENSORWRAPPER) << "\nParameters are: \n" << config.toString();
+    if (verbose >= 5) {
+        yCTrace(RGBDSENSORWRAPPER) << "\nParameters are: \n"
+                                   << config.toString();
+    }
 
     if(!fromConfig(config))
     {
@@ -239,8 +241,9 @@ bool RGBDSensorWrapper::open(yarp::os::Searchable &config)
     }
     else
     {
-        if(!openDeferredAttach(config))
+        if (!openDeferredAttach(config)) {
             return false;
+        }
     }
 
     return true;
@@ -250,17 +253,19 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
 {
     if (!config.check("period", "refresh period of the broadcasted values in ms"))
     {
-        if(verbose >= 3)
+        if (verbose >= 3) {
             yCInfo(RGBDSENSORWRAPPER) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
-    }
-    else
+        }
+    } else {
         period = config.find("period").asInt32() / 1000.0;
+    }
 
     Bottle &rosGroup = config.findGroup("ROS");
     if(rosGroup.isNull())
     {
-        if(verbose >= 3)
+        if (verbose >= 3) {
             yCInfo(RGBDSENSORWRAPPER) << "ROS configuration parameters are not set, skipping ROS topic initialization.";
+        }
         use_ROS  = false;
         use_YARP = true;
     }
@@ -534,8 +539,9 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
 
     Idevice2attach->view(sensor_p);
     Idevice2attach->view(fgCtrl);
-    if(!attach(sensor_p))
+    if (!attach(sensor_p)) {
         return false;
+    }
 
     PeriodicThread::setPeriod(period);
     return PeriodicThread::start();
@@ -543,12 +549,14 @@ bool RGBDSensorWrapper::attachAll(const PolyDriverList &device2attach)
 
 bool RGBDSensorWrapper::detachAll()
 {
-    if (yarp::os::PeriodicThread::isRunning())
+    if (yarp::os::PeriodicThread::isRunning()) {
         yarp::os::PeriodicThread::stop();
+    }
 
     //check if we already instantiated a subdevice previously
-    if (isSubdeviceOwned)
+    if (isSubdeviceOwned) {
         return false;
+    }
 
     sensor_p = nullptr;
     return true;

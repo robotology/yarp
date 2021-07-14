@@ -88,8 +88,9 @@ bool YarpFixManager::setup(int argc, char** argv) {
 void YarpFixManager::tearDown() {
     ROBOTTESTINGFRAMEWORK_FIXTURE_REPORT("yarpmanager is tearing down the fixture...");
     bool ret = manager->stop();
-    if(!ret)
+    if (!ret) {
         ret = manager->kill();
+    }
     const char* szerror = manager->getLogger()->getLastError();
     ROBOTTESTINGFRAMEWORK_ASSERT_ERROR_IF_FALSE(ret,
                         "yarpmanager cannot teardown the fixture because " +

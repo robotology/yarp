@@ -77,8 +77,9 @@ bool fakeIMU::close()
 
 bool fakeIMU::read(Vector &out)
 {
-    if(out.size() != nchannels)
+    if (out.size() != nchannels) {
         out.resize(nchannels);
+    }
 
     out.zero();
 
@@ -146,8 +147,9 @@ void fakeIMU::run()
         count++;
     }
 
-    if(count >= 360)
+    if (count >= 360) {
         count = 0;
+    }
 }
 
 yarp::os::Stamp fakeIMU::getLastInputStamp()

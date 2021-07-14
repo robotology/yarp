@@ -146,9 +146,15 @@ std::string Map2DArea::toString() const
 
 bool Map2DArea::checkLocationInsideArea(Map2DLocation loc)
 {
-    if (loc.map_id != this->map_id) return false;
-    if (points.size() < 3) return false;
-    if (pnpoly(points, loc.x, loc.y) > 0) return true;
+    if (loc.map_id != this->map_id) {
+        return false;
+    }
+    if (points.size() < 3) {
+        return false;
+    }
+    if (pnpoly(points, loc.x, loc.y) > 0) {
+        return true;
+    }
     return false;
 }
 
@@ -178,8 +184,12 @@ bool Map2DArea::operator==(const Map2DArea& r) const
 
 bool Map2DArea::isValid() const
 {
-    if (points.size() < 3) return false;
-    if (map_id == "") return false;
+    if (points.size() < 3) {
+        return false;
+    }
+    if (map_id == "") {
+        return false;
+    }
     return true;
 }
 
@@ -188,7 +198,9 @@ bool  Map2DArea::findAreaBounds(Map2DLocation& lt, Map2DLocation& rb)
     lt.map_id = rb.map_id = this->map_id;
     lt.x = lt.y = std::numeric_limits<double>::max();
     rb.x = rb.y = std::numeric_limits<double>::min();
-    if (isValid() == false) return false;
+    if (isValid() == false) {
+        return false;
+    }
     for (auto it = points.begin(); it != points.end(); it++)
     {
         if (it->x > rb.x) { rb.x = it->x; }
@@ -203,8 +215,9 @@ bool  Map2DArea::getRandomLocation(Map2DLocation& loc)
 {
     Map2DLocation lt;
     Map2DLocation rb;
-    if (findAreaBounds(lt, rb) == false)
+    if (findAreaBounds(lt, rb) == false) {
         return false;
+    }
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -222,7 +235,9 @@ bool  Map2DArea::getRandomLocation(Map2DLocation& loc)
         loc.y = rnd_y;
         loc.theta = 0;
         count_trials++;
-        if (this->checkLocationInsideArea(loc)) break;
+        if (this->checkLocationInsideArea(loc)) {
+            break;
+        }
     } while (count_trials < 20);
 
     if (count_trials >= 20)

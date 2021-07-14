@@ -95,8 +95,9 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config)
             poly.view(fgAv);
         }
         poly.view(fgCtrl);
-        if(fgCtrl)
+        if (fgCtrl) {
             ifgCtrl_Responder.configure(fgCtrl);
+        }
         poly.view(fgTimed);
         poly.view(rgbVis_p);
 

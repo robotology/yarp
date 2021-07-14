@@ -706,7 +706,9 @@ bool Map2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     //parse string command
     if(in.get(0).isString())

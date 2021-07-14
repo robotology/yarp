@@ -137,7 +137,9 @@ void ros_compute_and_send_pc(const yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc
     }
    //yCDebug(LASER_FROM_POINTCLOUD)<<elem <<yelem;
 
-    if (pointCloud_outTopic) pointCloud_outTopic->write(rosPC_data);
+    if (pointCloud_outTopic) {
+        pointCloud_outTopic->write(rosPC_data);
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -281,11 +283,13 @@ bool LaserFromPointCloud::close()
 {
     PeriodicThread::stop();
 
-    if(m_rgbd_driver.isValid())
+    if (m_rgbd_driver.isValid()) {
         m_rgbd_driver.close();
+    }
 
-    if(m_tc_driver.isValid())
+    if (m_tc_driver.isValid()) {
         m_tc_driver.close();
+    }
 
     yCInfo(LASER_FROM_POINTCLOUD) << "closed";
     return true;
@@ -445,16 +449,18 @@ bool LaserFromPointCloud::acquireDataFromHW()
     {
         left_theta += 360;
         left_elem_neg = 1;
+    } else if (left_theta > 360) {
+        left_theta -= 360;
     }
-    else if (left_theta > 360) left_theta -= 360;
     size_t left_elem = left_theta / m_resolution;
 
     if (right_theta < 0)
     {
         right_theta += 360;
         right_elem_neg = 1;
+    } else if (right_theta > 360) {
+        right_theta -= 360;
     }
-    else if (right_theta > 360) right_theta -= 360;
     size_t right_elem = right_theta / m_resolution;
 
     //enter critical section and protect m_laser_data
@@ -517,8 +523,11 @@ bool LaserFromPointCloud::acquireDataFromHW()
 
             //compute the right element of the vector where to put distance data. This is done by clusterizing angles, depending on the laser resolution.
             theta = theta * 180 / M_PI;
-            if (theta < 0)   theta += 360;
-            else if (theta > 360) theta -= 360;
+            if (theta < 0) {
+                theta += 360;
+            } else if (theta > 360) {
+                theta -= 360;
+            }
             size_t elem = theta / m_resolution;
             if (elem >= m_laser_data.size())
             {

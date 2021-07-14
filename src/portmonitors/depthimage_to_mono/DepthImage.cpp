@@ -88,10 +88,12 @@ yarp::os::Things& DepthImageConverter::update(yarp::os::Things& thing)
                 pixels[w + (h * (img->width() ))] = 0;
             } else {
                 int val = (int) (255.0 - (inVal * 255.0 / (max - min)));
-                if(val >= 255)
+                if (val >= 255) {
                     val = 255;
-                if(val <= 0)
+                }
+                if (val <= 0) {
                     val = 0;
+                }
                 pixels[w + (h * (img->width() ))] = (char) val;
             }
         }

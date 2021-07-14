@@ -158,7 +158,9 @@ bool MjpegCarrier::write(ConnectionState& proto, SizedWriter& writer) {
     WireImage rep;
     FlexImage *img = rep.checkForImage(writer);
 
-    if (img==nullptr) return false;
+    if (img == nullptr) {
+        return false;
+    }
     int w = img->width();
     int h = img->height();
     int row_stride = img->getRowSize();

@@ -17,10 +17,12 @@ Graph::~Graph()
 Node* Graph::addNode(Node* _node)
 {
     //__CHECK_NULLPTR(_node);
-    if(!_node)
+    if (!_node) {
         return nullptr;
-    if(hasNode(_node))
+    }
+    if (hasNode(_node)) {
         return nullptr;
+    }
 
     Node* node = _node->clone();
     nodes[node->getLabel()] = node;
@@ -32,8 +34,9 @@ bool Graph::removeNode(Node* node)
     __CHECK_NULLPTR(node);
 
     auto itr = nodes.find(node->getLabel());
-    if(itr == nodes.end())
+    if (itr == nodes.end()) {
         return true;
+    }
     delete (*itr).second;
     nodes.erase(itr);
     return true;
@@ -43,8 +46,9 @@ bool Graph::removeNode(Node* node)
 bool Graph::removeNode(const char* szLabel)
 {
     auto itr = nodes.find(szLabel);
-    if(itr == nodes.end())
+    if (itr == nodes.end()) {
         return true;
+    }
     delete (*itr).second;
     nodes.erase(itr);
     return true;
@@ -53,30 +57,34 @@ bool Graph::removeNode(const char* szLabel)
 void Graph::clear()
 {
     NodePIterator itr;
-    for(itr=nodes.begin(); itr!=nodes.end(); itr++)
+    for (itr = nodes.begin(); itr != nodes.end(); itr++) {
         delete ((*itr).second);
+    }
     nodes.clear();
 }
 
 void Graph::setSatisfied(bool sat)
 {
     NodePIterator itr;
-    for(itr=nodes.begin(); itr!=nodes.end(); itr++)
+    for (itr = nodes.begin(); itr != nodes.end(); itr++) {
         ((*itr).second)->setSatisfied(sat);
+    }
 }
 
 void Graph::setVisited(bool vis)
 {
     NodePIterator itr;
-    for(itr=nodes.begin(); itr!=nodes.end(); itr++)
+    for (itr = nodes.begin(); itr != nodes.end(); itr++) {
         ((*itr).second)->setVisited(vis);
+    }
 }
 
 Node* Graph::getNode( const char* szLabel)
 {
     auto itr = nodes.find(szLabel);
-    if(itr != nodes.end())
+    if (itr != nodes.end()) {
         return (*itr).second;
+    }
     return nullptr;
 }
 
@@ -129,15 +137,17 @@ bool Graph::hasNode(Node* node)
     __CHECK_NULLPTR(node);
 
     auto itr = nodes.find(node->getLabel());
-    if(itr == nodes.end())
+    if (itr == nodes.end()) {
         return false;
+    }
     return true;
 }
 
 bool Graph::hasNode(const char* szLabel)
 {
-    if(getNode(szLabel))
+    if (getNode(szLabel)) {
         return true;
+    }
     return false;
 }
 
@@ -145,8 +155,9 @@ bool Graph::hasNode(const char* szLabel)
 Node* Graph::getNodeAt(int index)
 {
     auto itr = nodes.begin();
-    for(int i=0; i<index; i++)
+    for (int i = 0; i < index; i++) {
         itr++;
+    }
     return (*itr).second;
 }
 
@@ -168,8 +179,10 @@ GraphIterator Graph::end()
 NodePIterator Graph::findNode(Node* node)
 {
     NodePIterator itr;
-    for(itr=nodes.begin(); itr!=nodes.end(); itr++)
-        if ((*itr).second == node)
+    for (itr = nodes.begin(); itr != nodes.end(); itr++) {
+        if ((*itr).second == node) {
             return itr;
+        }
+    }
     return nodes.end();
 }

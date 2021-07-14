@@ -251,7 +251,9 @@ bool fakeDepthCameraDriver::getRgbImage(FlexImage& rgbImage, Stamp* timeStamp)
     rgbImage.setPixelCode(VOCAB_PIXEL_RGB);
     rgbImage.resize(imageof);
     memcpy((void*)rgbImage.getRawImage(), (void*)imageof.getRawImage(), imageof.getRawImageSize());
-    if(timeStamp) timeStamp->update(yarp::os::Time::now());
+    if (timeStamp) {
+        timeStamp->update(yarp::os::Time::now());
+    }
     return true;
 }
 
@@ -267,8 +269,9 @@ bool fakeDepthCameraDriver::getDepthImage(ImageOf<PixelFloat>& depthImage, Stamp
             *(PixelFloat*)depthImage.getPixelAddress(i, j) = (float(pix.b) / 255.0)/3.0 + (float(pix.g) / 255.0) / 3.0 + (float(pix.r) / 255.0) / 3.0;
         }
     }
-    if(timeStamp)
+    if (timeStamp) {
         timeStamp->update(yarp::os::Time::now());
+    }
     return true;
 }
 

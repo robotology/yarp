@@ -13,8 +13,12 @@ using namespace yarp::manager;
 
 SingleAppLoader::SingleAppLoader(const char* szModule, const char* szHost)
 {
-    if(szModule) strModule = szModule;
-    if(szHost) strHost = szHost;
+    if (szModule) {
+        strModule = szModule;
+    }
+    if (szHost) {
+        strHost = szHost;
+    }
 }
 
 

@@ -50,10 +50,9 @@ static Bottle parsePaths(const std::string& txt) {
 static bool fileExists(const char *fname) {
         FILE *fp=nullptr;
         fp = fopen(fname,"r");
-        if(fp == nullptr)
+        if (fp == nullptr) {
             return false;
-        else
-        {
+        } else {
             fclose(fp);
             return true;
         }
@@ -87,9 +86,12 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
         }
 
     }
-    if(strCmd=="")
+    if (strCmd == "") {
         return false;
-    if(szparam) strParam = szparam;
+    }
+    if (szparam) {
+        strParam = szparam;
+    }
     strDevParam<<strCmd<<" "<<strParam;
     return LocalBroker::init(script.c_str(), strDevParam.str().c_str(),
                                 szhost, szstdio, szworkdir, szenv);
@@ -98,8 +100,9 @@ bool ScriptLocalBroker::init(const char* szcmd, const char* szparam,
 
 bool ScriptYarprunBroker::whichFile(const char* server, const char* filename, std::string& filenameWithPath)
 {
-    if(!strlen(server))
+    if (!strlen(server)) {
         return false;
+    }
 
     yarp::os::Bottle msg, grp;
     grp.clear();
@@ -144,13 +147,16 @@ bool ScriptYarprunBroker::init(const char* szcmd, const char* szparam,
     if(szcmd)
     {
         std::string strHost;
-        if(szhost[0] != '/')
+        if (szhost[0] != '/') {
             strHost = string("/") + string(szhost);
-        else
+        } else {
             strHost = szhost;
+        }
         whichFile(strHost.c_str(), szcmd, strCmd);
     }
-    if(szparam) strParam = szparam;
+    if (szparam) {
+        strParam = szparam;
+    }
     strDevParam<<strCmd<<" "<<strParam;
     return YarpBroker::init(script.c_str(), strDevParam.str().c_str(),
                                 szhost, szstdio, szworkdir, szenv);

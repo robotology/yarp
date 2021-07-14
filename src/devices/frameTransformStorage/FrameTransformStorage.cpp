@@ -66,7 +66,9 @@ void FrameTransformStorage::run()
     // get new transforms
     std::vector<yarp::math::FrameTransform> tfs;
     bool b=iGetIf->getTransforms(tfs);
-    if (b) this->setTransforms(tfs);
+    if (b) {
+        this->setTransforms(tfs);
+    }
 }
 
 bool FrameTransformStorage::detach()

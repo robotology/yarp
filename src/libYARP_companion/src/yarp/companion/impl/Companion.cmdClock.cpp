@@ -116,9 +116,9 @@ int Companion::cmdClock(int argc, char *argv[])
                 std::fflush(stdout);
             }
             done = true;
-        }
-        else
+        } else {
             done = false;
+        }
 
         clock.delay(period);
     }

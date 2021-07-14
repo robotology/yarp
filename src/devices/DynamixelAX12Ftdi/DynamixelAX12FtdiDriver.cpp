@@ -158,12 +158,15 @@ bool DynamixelAX12FtdiDriver::open(yarp::os::Searchable& config) {
 
     // We have an open device and it is accessible, so set parameters
 
-    if ((retCode = ftdi_set_baudrate(&ftdic, ftdiSetting.baudrate)) != 0)
+    if ((retCode = ftdi_set_baudrate(&ftdic, ftdiSetting.baudrate)) != 0) {
         yCError(DYNAMIXELAX12FTDIDRIVER, "Error setting baudrate, ret=%d", retCode);
-    if (ftdi_set_line_property(&ftdic, BITS_8, STOP_BIT_1, NONE) == -1)
+    }
+    if (ftdi_set_line_property(&ftdic, BITS_8, STOP_BIT_1, NONE) == -1) {
         yCError(DYNAMIXELAX12FTDIDRIVER, "Error setting connection properties");
-    if (ftdi_setflowctrl(&ftdic, SIO_DISABLE_FLOW_CTRL) == -1)
+    }
+    if (ftdi_setflowctrl(&ftdic, SIO_DISABLE_FLOW_CTRL) == -1) {
         yCError(DYNAMIXELAX12FTDIDRIVER, "Error setting flow control");
+    }
 
     // Set chunk sizes for in and out
     ftdi_write_data_set_chunksize(&ftdic, ftdiSetting.write_chunksize);
@@ -287,7 +290,9 @@ int DynamixelAX12FtdiDriver::sendCommand(unsigned char id, unsigned char inst[],
                 } else {
                     //check checksum
                     chksum = 0;
-                    for (i = 0; i < retCode - 1; i++) chksum += body[i];
+                    for (i = 0; i < retCode - 1; i++) {
+                        chksum += body[i];
+                    }
                     if (body[retCode - 1] != (unsigned char) ~(chksum + header[2] + header[3])) {
                         badAnswer = true;
                         yCInfo(DYNAMIXELAX12FTDIDRIVER, "Received data with wrong checksum (%X != %X): ", body[retCode - 1], (unsigned char) ~(chksum + header[2] + header[3]));
@@ -411,8 +416,9 @@ bool DynamixelAX12FtdiDriver::positionMove(int j, double ref) {
 bool DynamixelAX12FtdiDriver::positionMove(const double *refs) {
     bool t = true;
     for (int k = 0; k < numOfAxes; k++) {
-        if (!this->positionMove(k, refs[k]))
+        if (!this->positionMove(k, refs[k])) {
             t = false;
+        }
     }
     return t;
 }
@@ -421,15 +427,17 @@ bool DynamixelAX12FtdiDriver::relativeMove(int j, double delta) {
     double v = positions[j];
     if (getEncoder(j, &v)) {
         return this->positionMove(j, v + delta);
-    } else
+    } else {
         return false;
+    }
 }
 
 bool DynamixelAX12FtdiDriver::relativeMove(const double *deltas) {
     bool t = true;
     for (int k = 0; k < numOfAxes; k++) {
-        if (!this->positionMove(k, positions[k] + deltas[k]))
+        if (!this->positionMove(k, positions[k] + deltas[k])) {
             t = false;
+        }
     }
     return t;
 }
@@ -448,8 +456,9 @@ bool DynamixelAX12FtdiDriver::checkMotionDone(bool *flag) {
     bool tmp_done(false), all_done(true);
     for (int k = 0; k < numOfAxes; k++)
     {
-        if (!this->checkMotionDone(k, &tmp_done))
+        if (!this->checkMotionDone(k, &tmp_done)) {
             t = false;
+        }
         all_done &= tmp_done;
     }
     *flag = all_done;
@@ -474,8 +483,9 @@ bool DynamixelAX12FtdiDriver::setRefSpeed(int j, double sp) {
 bool DynamixelAX12FtdiDriver::setRefSpeeds(const double *spds) {
     bool t = true;
     for (int k = 0; k < numOfAxes; k++) {
-        if (!setRefSpeed(k, spds[k]))
+        if (!setRefSpeed(k, spds[k])) {
             t = false;
+        }
     }
     return t;
 }
@@ -526,8 +536,9 @@ bool DynamixelAX12FtdiDriver::stop(int j) {
 
 bool DynamixelAX12FtdiDriver::stop() {
     for (int i = 0; i < numOfAxes; i++) {
-        if (!stop(i))
+        if (!stop(i)) {
             return false;
+        }
     }
     return true;
 }
@@ -574,8 +585,9 @@ bool DynamixelAX12FtdiDriver::getRefTorque(int j, double *t) {
 bool DynamixelAX12FtdiDriver::setTorques(const double *t) {
     bool tt = true;
     for (int k = 0; k < numOfAxes; k++) {
-        if (!this->setTorque(k, t[k]))
+        if (!this->setTorque(k, t[k])) {
             tt = false;
+        }
     }
     return tt;
 }
@@ -636,8 +648,9 @@ bool DynamixelAX12FtdiDriver::getTorques(double *t) {
     int k = 0;
     bool tt = true;
     for (k = 0; k < numOfAxes; k++) {
-        if (!getTorque(k, &t[k]))
+        if (!getTorque(k, &t[k])) {
             tt = false;
+        }
     }
     return tt;
 }
@@ -783,9 +796,10 @@ bool DynamixelAX12FtdiDriver::getEncoder(int j, double *v) {
             return false;
         }
 
-    }        // pos = (blankReturn[1]&0b00000011)*0x100 + blankReturn[0];
-    else
+    } // pos = (blankReturn[1]&0b00000011)*0x100 + blankReturn[0];
+    else {
         return false;
+    }
 }
 
 bool DynamixelAX12FtdiDriver::getEncoders(double *encs) {
@@ -831,8 +845,9 @@ bool DynamixelAX12FtdiDriver::getEncoderSpeeds(double *spds) {
     int k = 0;
     bool tt = true;
     for (k = 0; k < numOfAxes; k++) {
-        if (!getEncoderSpeed(k, &spds[k]))
+        if (!getEncoderSpeed(k, &spds[k])) {
             tt = false;
+        }
     }
     return tt;
 }

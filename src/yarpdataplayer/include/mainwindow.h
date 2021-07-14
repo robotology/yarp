@@ -101,7 +101,7 @@ public:
     /**
      * function that returns the player status (playing, paused, stopped)
      */
-    std::string getStatus() override;
+    std::string getStatus();
     /**
      * function that handles an IDL message - play
      */

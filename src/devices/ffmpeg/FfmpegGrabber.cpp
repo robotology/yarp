@@ -317,7 +317,9 @@ public:
 
 const char *xstrdup(const char *str)
 {
-    if (str[0]=='-') return nullptr;
+    if (str[0] == '-') {
+        return nullptr;
+    }
     return strdup(str);
 }
 
@@ -568,7 +570,9 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config)
     if (_hasAudio) {
         ok = ok && audioDecoder.getCodec(pAudioFormatCtx);
     }
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     if (_hasVideo) {
         ok = ok && videoDecoder.allocateImage();
@@ -576,7 +580,9 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config)
     if (_hasAudio) {
         ok = ok && audioDecoder.allocateSound();
     }
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     if (_hasVideo) {
         m_w = videoDecoder.getWidth();

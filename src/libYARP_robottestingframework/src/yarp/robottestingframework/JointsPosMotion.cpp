@@ -216,11 +216,13 @@ bool yarp::robottestingframework::jointsPosMotion::goTo(yarp::sig::Vector positi
         size_t in_position = 0;
         for (size_t i = 0; i < mPriv->n_joints; i++) {
             mPriv->ienc->getEncoder((int)mPriv->jointsList[i], &tmp[i]);
-            if (fabs(tmp[i]-positions[i])<mPriv->tolerance)
+            if (fabs(tmp[i] - positions[i]) < mPriv->tolerance) {
                 in_position++;
+            }
         }
-        if (in_position == mPriv->n_joints)
+        if (in_position == mPriv->n_joints) {
             break;
+        }
 
         if (yarp::os::Time::now()-time_started > mPriv->timeout) {
             ret = false;

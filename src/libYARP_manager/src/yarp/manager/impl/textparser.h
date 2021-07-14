@@ -32,7 +32,9 @@ public:
         if (key.empty())
         {
             war << "TextParser: empty key on variable setting..";
-            if (logger) logger->addWarning(war);
+            if (logger) {
+                logger->addWarning(war);
+            }
             return false;
         }
         variables[key] = parseText(value.c_str());
@@ -85,7 +87,9 @@ public:
             if(badSymbol)
             {
                 war << "use of symbol '$' detected but no keyword understood.. possible use: ${foo} for internal variable or $ENV{foo} for environment variable";
-                if (logger) logger->addWarning(war);
+                if (logger) {
+                    logger->addWarning(war);
+                }
             }
         }
 

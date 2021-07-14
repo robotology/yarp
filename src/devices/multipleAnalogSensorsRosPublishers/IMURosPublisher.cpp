@@ -19,7 +19,9 @@ bool IMURosPublisher::viewInterfaces()
     ok &= m_poly->view(m_iThreeAxisLinearAccelerometers);
     ok &= m_poly->view(m_iThreeAxisMagnetometers);
     ok &= m_poly->view(m_iOrientationSensors);
-    if (m_iThreeAxisGyroscopes) m_iThreeAxisGyroscopes->getThreeAxisGyroscopeFrameName(m_sens_index, m_framename);
+    if (m_iThreeAxisGyroscopes) {
+        m_iThreeAxisGyroscopes->getThreeAxisGyroscopeFrameName(m_sens_index, m_framename);
+    }
     return ok;
 }
 

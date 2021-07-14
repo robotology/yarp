@@ -23,8 +23,9 @@ ImplementImpedanceControl::ImplementImpedanceControl(IImpedanceControlRaw *r)
 
 bool ImplementImpedanceControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw)
 {
-    if (helper!=nullptr)
+    if (helper != nullptr) {
         return false;
+    }
 
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw));
     yAssert (helper != nullptr);

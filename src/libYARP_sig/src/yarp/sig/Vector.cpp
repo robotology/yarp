@@ -53,17 +53,22 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     connection.convertTextMode();
     VectorPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
     if (header.listLen > 0 &&
       header.listTag == (BOTTLE_TAG_LIST | getBottleTag()))
     {
-        if ((size_t)getListSize() != (size_t)(header.listLen))
+        if ((size_t)getListSize() != (size_t)(header.listLen)) {
             resize(header.listLen);
+        }
         char* ptr = getMemoryBlock();
         yCAssert(VECTOR, ptr != nullptr);
         int elemSize=getElementSize();
         ok = connection.expectBlock(ptr, elemSize*header.listLen);
-        if (!ok) return false;
+        if (!ok) {
+            return false;
+        }
     } else {
         return false;
     }

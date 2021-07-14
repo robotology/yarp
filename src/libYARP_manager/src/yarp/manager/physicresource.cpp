@@ -65,12 +65,14 @@ Node* GPU::clone()
 
 bool GPU::satisfy(GenericResource* resource)
 {
-    if(!getAvailability() || getDisable())
+    if (!getAvailability() || getDisable()) {
         return false;
+    }
 
     GPU* gpu = dynamic_cast<GPU*>(resource);
-    if(!gpu)
+    if (!gpu) {
         return false;
+    }
     bool ret = (!strlen(gpu->getCompCompatibility()))? true : (compCompatibility == string(gpu->getCompCompatibility()));
     ret &= (cores >= gpu->getCores());
     ret &= (frequency >= gpu->getFrequency());

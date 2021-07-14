@@ -214,24 +214,27 @@ public:
     void setTxStamp(const double stamp) { txStamp=stamp; txOk=true; }
     double getStamp() const
     {
-        if (txOk)
+        if (txOk) {
             return txStamp;
-        else if (rxOk)
+        } else if (rxOk) {
             return rxStamp;
-        else
+        } else {
             return -1.0;
+        }
     }
     string getString() const
     {
         ostringstream ret;
         ret<<fixed;
 
-        if (txOk)
-            ret<<txStamp;
+        if (txOk) {
+            ret << txStamp;
+        }
         if (rxOk)
         {
-            if (!ret.str().empty())
-                ret<<' ';
+            if (!ret.str().empty()) {
+                ret << ' ';
+            }
             ret<<rxStamp;
         }
         return ret.str();
@@ -307,11 +310,13 @@ private:
             BufferedPort<T>::getEnvelope(info);
             item.seqNumber=info.getCount();
 
-            if (txTime || (info.isValid() && !rxTime))
+            if (txTime || (info.isValid() && !rxTime)) {
                 item.timeStamp.setTxStamp(info.getTime());
+            }
 
-            if (rxTime || !info.isValid())
+            if (rxTime || !info.isValid()) {
                 item.timeStamp.setRxStamp(Time::now());
+            }
 
             item.obj=factory(obj);
             item.obj->attachFormat(itemformat);
@@ -425,43 +430,35 @@ public:
         }
 
         finfo<<"Type: ";
-        if (type== DumpFormat::bottle)
+        if (type == DumpFormat::bottle) {
             finfo<<"Bottle;";
-        else if (type== DumpFormat::image)
-        {
+        } else if (type == DumpFormat::image) {
             ///this is ppm/pgm image format
             finfo<<"Image;";
-            if (videoOn) finfo<<" Video:"<<videoType<<"(huffyuv);";
-        }
-        else if (type == DumpFormat::depth)
-        {
+            if (videoOn) {
+                finfo << " Video:" << videoType << "(huffyuv);";
+            }
+        } else if (type == DumpFormat::depth) {
             finfo << "Depth;";
-        }
-        else if (type == DumpFormat::depth_compressed)
-        {
+        } else if (type == DumpFormat::depth_compressed) {
             finfo << "DepthCompressed;";
-        }
-        else if (type == DumpFormat::image_jpg)
-        {
+        } else if (type == DumpFormat::image_jpg) {
             finfo << "Image:jpg;";
-        }
-        else if (type == DumpFormat::image_png)
-        {
+        } else if (type == DumpFormat::image_png) {
             finfo << "Image:png;";
-        }
-        else
-        {
+        } else {
             yError() << "I should not reach this line! Unknown data type" << (int)type;
         }
         finfo<<endl;
 
         finfo<<"Stamp: ";
-        if (txTime && rxTime)
+        if (txTime && rxTime) {
             finfo<<"tx+rx;";
-        else if (txTime)
+        } else if (txTime) {
             finfo<<"tx;";
-        else
-            finfo<<"rx;";
+        } else {
+            finfo << "rx;";
+        }
         finfo<<endl;
 
         fdata.open(dataFile.c_str());
@@ -542,16 +539,15 @@ public:
                 buf.unlock();
 
                 fdata << item.seqNumber << ' ' << item.timeStamp.getString() << ' ';
-                if (saveData)
+                if (saveData) {
                     fdata << item.obj->toFile(dirName,counter++) << endl;
-                else
-                {
+                } else {
                     ostringstream frame;
                     frame << "frame_" << setw(8) << setfill('0') << counter++;
                     fdata << frame.str() << endl;
                 }
 
-            #ifdef ADD_VIDEO
+#ifdef ADD_VIDEO
                 if (doSaveFrame)
                 {
                     videoWriter << static_cast<DumpImage*>(item.obj)->getImage();
@@ -580,9 +576,10 @@ public:
         fdata.close();
 
     #ifdef ADD_VIDEO
-        if (videoOn)
+        if (videoOn) {
             ftimecodes.close();
-    #endif
+        }
+#endif
     }
 };
 
@@ -598,8 +595,9 @@ public:
     void setThread(DumpThread *thread) { this->thread=thread; }
     void report(const PortInfo &info) override
     {
-        if ((thread!=nullptr) && info.incoming)
-            thread->writeSource(info.sourceName,info.created);
+        if ((thread != nullptr) && info.incoming) {
+            thread->writeSource(info.sourceName, info.created);
+        }
     }
 };
 
@@ -644,8 +642,9 @@ public:
     bool configure(ResourceFinder &rf) override
     {
         portName=rf.check("name",Value("/dump")).asString();
-        if (portName[0]!='/')
-            portName="/"+portName;
+        if (portName[0] != '/') {
+            portName = "/" + portName;
+        }
 
         bool saveData=true;
         bool videoOn=false;
@@ -670,22 +669,28 @@ public:
             {
                 dumptype = DumpFormat::image;
                 #ifdef ADD_VIDEO
-                if (rf.check("addVideo"))   videoOn = true;
-                #endif
+                if (rf.check("addVideo")) {
+                    videoOn = true;
+                }
+#endif
             }
             else if ((optTypeName == "image_jpg"))
             {
                 dumptype = DumpFormat::image_jpg;
                 #ifdef ADD_VIDEO
-                if (rf.check("addVideo"))   videoOn = true;
-                #endif
+                if (rf.check("addVideo")) {
+                    videoOn = true;
+                }
+#endif
             }
             else if ((optTypeName == "image_png"))
             {
                 dumptype = DumpFormat::image_png;
                 #ifdef ADD_VIDEO
-                if (rf.check("addVideo"))   videoOn = true;
-                #endif
+                if (rf.check("addVideo")) {
+                    videoOn = true;
+                }
+#endif
             }
         #ifdef ADD_VIDEO
             else if (optTypeName=="video")
@@ -711,23 +716,24 @@ public:
         txTime=rf.check("txTime");
         string templateDirName=rf.check("dir")?rf.find("dir").asString():portName;
         polish_filename(templateDirName);
-        if (templateDirName[0]!='/')
-            templateDirName="/"+templateDirName;
+        if (templateDirName[0] != '/') {
+            templateDirName = "/" + templateDirName;
+        }
 
         string dirName;
-        if (rf.check("overwrite"))
+        if (rf.check("overwrite")) {
             dirName="."+templateDirName;
-        else
-        {
+        } else {
             // look for a proper directory
             int i=0;
             do
             {
                 ostringstream checkDirName;
-                if (i>0)
+                if (i > 0) {
                     checkDirName << "." << templateDirName << "_" << setw(5) << setfill('0') << i;
-                else
+                } else {
                     checkDirName << "." << templateDirName;
+                }
 
                 dirName=checkDirName.str();
                 i++;
@@ -776,10 +782,11 @@ public:
             ostringstream msg;
             msg << "Connection to " << srcPort << " " << (ok?"successful":"failed");
 
-            if (ok)
+            if (ok) {
                 yInfo() << msg.str();
-            else
+            } else {
                 yWarning() << msg.str();
+            }
         }
 
         // this port serves to handle the "quit" rpc command

@@ -72,6 +72,8 @@ int Companion::cmdRpcServer(int argc, char *argv[])
         } else {
             port.reply(response);
         }
-        if (stop) return 0;
+        if (stop) {
+            return 0;
+        }
     }
 }

@@ -26,8 +26,11 @@ advanced_dialog::advanced_dialog(yarp::yarpLogger::LoggerEngine* logger, QWidget
     bool enable_log_lines_limit;
     int  log_lines_limit;
     theLogger->get_log_lines_max_size(enable_log_lines_limit,log_lines_limit);
-    if (enable_log_lines_limit) ui->radio_log_limited->setChecked(true);
-    else  ui->radio_log_unlimited->setChecked(true);
+    if (enable_log_lines_limit) {
+        ui->radio_log_limited->setChecked(true);
+    } else {
+        ui->radio_log_unlimited->setChecked(true);
+    }
     char log_lines_limit_s [20];
     sprintf(log_lines_limit_s, "%d", log_lines_limit);
     ui->log_max_size->setText(log_lines_limit_s);
@@ -35,8 +38,11 @@ advanced_dialog::advanced_dialog(yarp::yarpLogger::LoggerEngine* logger, QWidget
     bool enable_log_ports_limit;
     int  log_ports_limit;
     theLogger->get_log_list_max_size(enable_log_ports_limit,log_ports_limit);
-    if (enable_log_ports_limit) ui->radio_ports_limited->setChecked(true);
-    else  ui->radio_ports_unlimited->setChecked(true);
+    if (enable_log_ports_limit) {
+        ui->radio_ports_limited->setChecked(true);
+    } else {
+        ui->radio_ports_unlimited->setChecked(true);
+    }
     char log_ports_limit_s [20];
     sprintf(log_ports_limit_s, "%d", log_ports_limit);
     ui->ports_max_size->setText(log_ports_limit_s);

@@ -12,7 +12,9 @@ bool HumanCarrier::sendHeader(ConnectionState& proto) {
     ManagedBytes header(8);
     getHeader(header.bytes());
     proto.os().write(header.bytes());
-    if (!proto.os().isOk()) return false;
+    if (!proto.os().isOk()) {
+        return false;
+    }
 
     // Now we can do whatever we want, as long as somehow
     // we also send the name of the originating port

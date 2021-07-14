@@ -159,7 +159,9 @@ bool AudioRecorderWrapper::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
     bool ok = command.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
     reply.clear();
 
     if (command.get(0).asString()=="start")

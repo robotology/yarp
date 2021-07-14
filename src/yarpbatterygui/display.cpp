@@ -121,8 +121,11 @@ void MainWindow::updateMain()
         int n_blocks = int(charge * 11 / 100.0);
         for (int i = 0; i < n_blocks; i++)
         {
-            if (current < -0.3) qpp = &qpm0;   //draw charging arrows
-            else                qpp = &qpm1;   //draw standard boxes
+            if (current < -0.3) {
+                qpp = &qpm0; //draw charging arrows
+            } else {
+                qpp = &qpm1; //draw standard boxes
+            }
 
             int xpos = 166;
             int ypos = 135 - i * 6;
@@ -141,7 +144,9 @@ void MainWindow::updateMain()
         int point_off = 0;
         for (int i = 0; i < len; i++)
         {
-            if (buff[i] == '.') point_off = 17;
+            if (buff[i] == '.') {
+                point_off = 17;
+            }
             if (buff[i] >= '0' && buff[i] <= '9')
             {
                 QRect rect((buff[i] - '0') * 29, 0, 29, 52);
@@ -161,7 +166,9 @@ void MainWindow::updateMain()
         int point_off = 0;
         for (int i = 0; i < len; i++)
         {
-            if (buff[i] == '.') point_off = 17;
+            if (buff[i] == '.') {
+                point_off = 17;
+            }
             if (buff[i] >= '0' && buff[i] <= '9')
             {
                 QRect rect((buff[i] - '0') * 29, 0, 29, 52);

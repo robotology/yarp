@@ -56,12 +56,13 @@ class CircularAudioBuffer
     AudioBufferSize size()
     {
         size_t i;
-        if (end>start)
+        if (end > start) {
             i = end-start;
-        else if (end==start)
+        } else if (end == start) {
             i = 0;
-        else
+        } else {
             i = maxsize.size - start + end;
+        }
         return AudioBufferSize(i/maxsize.m_channels, maxsize.m_channels, sizeof(SAMPLE));
     }
 

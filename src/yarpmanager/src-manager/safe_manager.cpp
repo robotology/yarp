@@ -35,35 +35,41 @@ bool SafeManager::prepare(Manager* lazy,
     eventReceiver = event;
     m_pConfig = pConfig;
 
-    if(pConfig->find("watchdog").asString() == "yes")
+    if (pConfig->find("watchdog").asString() == "yes") {
         enableWatchDog();
-    else
+    } else {
         disableWatchod();
+    }
 
-    if(pConfig->find("auto_dependency").asString() == "yes")
+    if (pConfig->find("auto_dependency").asString() == "yes") {
         enableAutoDependency();
-    else
+    } else {
         disableAutoDependency();
+    }
 
-    if(pConfig->find("auto_connect").asString() == "yes")
+    if (pConfig->find("auto_connect").asString() == "yes") {
         enableAutoConnect();
-    else
+    } else {
         disableAutoConnect();
+    }
 
     // making manager from lazy manager
     KnowledgeBase* lazy_kb = lazy->getKnowledgeBase();
 
     ModulePContainer mods =  lazy_kb->getModules();
-    for(auto& mod : mods)
+    for (auto& mod : mods) {
         getKnowledgeBase()->addModule(mod);
+    }
 
     ResourcePContainer res =  lazy_kb->getResources();
-    for(auto& re : res)
+    for (auto& re : res) {
         getKnowledgeBase()->addResource(re);
+    }
 
     ApplicaitonPContainer apps =  lazy_kb->getApplications();
-    for(auto& app : apps)
+    for (auto& app : apps) {
         getKnowledgeBase()->addApplication(app);
+    }
 
     return true;
 }
@@ -195,8 +201,9 @@ void SafeManager::run()
             break;
         }
     case MKILL:{
-            for(int local_modId : local_modIds)
-                Manager::kill(local_modId, true);
+        for (int local_modId : local_modIds) {
+            Manager::kill(local_modId, true);
+        }
             /*for(unsigned int i=0; i<local_modIds.size(); i++)
                 Manager::waitingModuleKill(local_modIds[i]);
 
@@ -231,11 +238,15 @@ void SafeManager::run()
                 refreshPortStatus(local_conId);
                 if(Manager::connect(local_conId))
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(local_conId);
+                    if (eventReceiver) {
+                        eventReceiver->onConConnect(local_conId);
+                    }
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
+                    if (eventReceiver) {
+                        eventReceiver->onConDisconnect(local_conId);
+                    }
                 }
             }
             break;
@@ -246,11 +257,15 @@ void SafeManager::run()
                 refreshPortStatus(local_conId);
                 if(Manager::disconnect(local_conId))
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
+                    if (eventReceiver) {
+                        eventReceiver->onConDisconnect(local_conId);
+                    }
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(local_conId);
+                    if (eventReceiver) {
+                        eventReceiver->onConConnect(local_conId);
+                    }
                 }
             }
             break;
@@ -263,11 +278,15 @@ void SafeManager::run()
             {
                 if(Manager::running(local_modId))
                 {
-                    if(eventReceiver) eventReceiver->onModStart(local_modId);
+                    if (eventReceiver) {
+                        eventReceiver->onModStart(local_modId);
+                    }
                 }
                 else //if(Manager::suspended(local_modIds[i]))
                 {
-                    if(eventReceiver) eventReceiver->onModStop(local_modId);
+                    if (eventReceiver) {
+                        eventReceiver->onModStop(local_modId);
+                    }
                 }
             }
 
@@ -276,11 +295,15 @@ void SafeManager::run()
                 refreshPortStatus(local_conId);
                 if(Manager::connected(local_conId))
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(local_conId);
+                    if (eventReceiver) {
+                        eventReceiver->onConConnect(local_conId);
+                    }
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
+                    if (eventReceiver) {
+                        eventReceiver->onConDisconnect(local_conId);
+                    }
                 }
             }
 
@@ -288,11 +311,15 @@ void SafeManager::run()
             {
                 if(Manager::exist(local_resId))
                 {
-                    if(eventReceiver) eventReceiver->onResAvailable(local_resId);
+                    if (eventReceiver) {
+                        eventReceiver->onResAvailable(local_resId);
+                    }
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onResUnAvailable(local_resId);
+                    if (eventReceiver) {
+                        eventReceiver->onResUnAvailable(local_resId);
+                    }
                 }
             }
             busyAction = false;
@@ -305,32 +332,40 @@ void SafeManager::run()
                 refreshPortStatus(local_conId);
                 if(Manager::connected(local_conId))
                 {
-                    if(eventReceiver) eventReceiver->onConConnect(local_conId);
+                    if (eventReceiver) {
+                        eventReceiver->onConConnect(local_conId);
+                    }
                 }
                 else
                 {
-                    if(eventReceiver) eventReceiver->onConDisconnect(local_conId);
+                    if (eventReceiver) {
+                        eventReceiver->onConDisconnect(local_conId);
+                    }
                 }
             }
             break;
         }
 
     case MATTACHSTDOUT:{
-            for(int local_modId : local_modIds)
-                Manager::attachStdout(local_modId);
+        for (int local_modId : local_modIds) {
+            Manager::attachStdout(local_modId);
+        }
             break;
         }
 
     case MDETACHSTDOUT:{
-            for(int local_modId : local_modIds)
-                Manager::detachStdout(local_modId);
+        for (int local_modId : local_modIds) {
+            Manager::detachStdout(local_modId);
+        }
             break;
         }
 
     case MLOADBALANCE:{
                 busyAction = true;
                 Manager::loadBalance();
-                if(eventReceiver) eventReceiver->onLoadBalance();
+                if (eventReceiver) {
+                    eventReceiver->onLoadBalance();
+                }
                 busyAction = false;
             break;
         }
@@ -340,13 +375,16 @@ void SafeManager::run()
         break;
     };
 
-    if(eventReceiver)
+    if (eventReceiver) {
         eventReceiver->onError();
+    }
 }
 
 void SafeManager::safeRun(std::vector<int>& MIDs, std::vector<int>& CIDs, std::vector<int> &RIDs)
 {
-    if(busy()) return;
+    if (busy()) {
+        return;
+    }
 
     WAIT_SEMAPHOR();
     modIds = MIDs;
@@ -354,13 +392,16 @@ void SafeManager::safeRun(std::vector<int>& MIDs, std::vector<int>& CIDs, std::v
     resIds = RIDs;
     action = MRUN;
     POST_SEMAPHOR();
-    if(!yarp::os::Thread::isRunning())
+    if (!yarp::os::Thread::isRunning()) {
         yarp::os::Thread::start();
+    }
 }
 
 void SafeManager::safeStop(std::vector<int>& MIDs, std::vector<int>& CIDs, std::vector<int> &RIDs)
 {
-    if(busy()) return;
+    if (busy()) {
+        return;
+    }
 
     WAIT_SEMAPHOR();
     modIds = MIDs;
@@ -368,13 +409,16 @@ void SafeManager::safeStop(std::vector<int>& MIDs, std::vector<int>& CIDs, std::
     resIds = RIDs;
     action = MSTOP;
     POST_SEMAPHOR();
-    if(!yarp::os::Thread::isRunning())
+    if (!yarp::os::Thread::isRunning()) {
         yarp::os::Thread::start();
+    }
 }
 
 void SafeManager::safeKill(std::vector<int>& MIDs, std::vector<int> &CIDs, std::vector<int> &RIDs)
 {
-    if(busy()) return;
+    if (busy()) {
+        return;
+    }
 
     WAIT_SEMAPHOR();
     modIds = MIDs;
@@ -382,35 +426,41 @@ void SafeManager::safeKill(std::vector<int>& MIDs, std::vector<int> &CIDs, std::
     resIds = RIDs;
     action = MKILL;
     POST_SEMAPHOR();
-    if(!yarp::os::Thread::isRunning())
+    if (!yarp::os::Thread::isRunning()) {
         yarp::os::Thread::start();
-
+    }
 }
 
 
 void SafeManager::safeConnect(std::vector<int>& CIDs)
 {
-    if(busy()) return;
+    if (busy()) {
+        return;
+    }
 
     WAIT_SEMAPHOR();
     conIds = CIDs;
     action = MCONNECT;
     POST_SEMAPHOR();
-    if(!yarp::os::Thread::isRunning())
+    if (!yarp::os::Thread::isRunning()) {
         yarp::os::Thread::start();
+    }
 }
 
 
 void SafeManager::safeDisconnect(std::vector<int>& CIDs)
 {
-    if(busy()) return;
+    if (busy()) {
+        return;
+    }
 
     WAIT_SEMAPHOR();
     conIds = CIDs;
     action = MDISCONNECT;
     POST_SEMAPHOR();
-    if(!yarp::os::Thread::isRunning())
+    if (!yarp::os::Thread::isRunning()) {
         yarp::os::Thread::start();
+    }
 }
 
 
@@ -418,7 +468,9 @@ void SafeManager::safeRefresh(std::vector<int>& MIDs,
                      std::vector<int>& CIDs,
                      std::vector<int>& RIDs)
 {
-    if(busy()) return;
+    if (busy()) {
+        return;
+    }
 
     WAIT_SEMAPHOR();
     modIds = MIDs;
@@ -426,51 +478,62 @@ void SafeManager::safeRefresh(std::vector<int>& MIDs,
     resIds = RIDs;
     action = MREFRESH;
     POST_SEMAPHOR();
-    if(!yarp::os::Thread::isRunning())
+    if (!yarp::os::Thread::isRunning()) {
         yarp::os::Thread::start();
+    }
 }
 
 
 void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
 {
-    if(busy()) return;
+    if (busy()) {
+        return;
+    }
     WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MATTACHSTDOUT;
     POST_SEMAPHOR();
-    if(!yarp::os::Thread::isRunning())
+    if (!yarp::os::Thread::isRunning()) {
         yarp::os::Thread::start();
+    }
 }
 
 void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
 {
-    if(busy()) return;
+    if (busy()) {
+        return;
+    }
 
     WAIT_SEMAPHOR();
     modIds = MIDs;
     action = MDETACHSTDOUT;
     POST_SEMAPHOR();
-    if(!yarp::os::Thread::isRunning())
+    if (!yarp::os::Thread::isRunning()) {
         yarp::os::Thread::start();
+    }
 }
 
 void SafeManager::safeLoadBalance()
 {
-   if(busy()) return;
+    if (busy()) {
+        return;
+    }
 
    WAIT_SEMAPHOR();
    action = MLOADBALANCE;
    POST_SEMAPHOR();
-   if(!yarp::os::Thread::isRunning())
+   if (!yarp::os::Thread::isRunning()) {
        yarp::os::Thread::start();
+   }
 }
 
 void SafeManager::onExecutableStart(void* which)
 {
     WAIT_SEMAPHOR();
     auto* exe = static_cast<Executable*>(which);
-    if(eventReceiver && exe)
+    if (eventReceiver && exe) {
         eventReceiver->onModStart(exe->getID());
+    }
     POST_SEMAPHOR();
 }
 
@@ -478,8 +541,9 @@ void SafeManager::onExecutableStop(void* which)
 {
     WAIT_SEMAPHOR();
     auto* exe = static_cast<Executable*>(which);
-    if(eventReceiver && exe)
+    if (eventReceiver && exe) {
         eventReceiver->onModStop(exe->getID());
+    }
     POST_SEMAPHOR();
     // Experimental:
     //  do auto refresh on connections whenever a module stops
@@ -503,8 +567,9 @@ void SafeManager::onExecutableDied(void* which)
 {
     WAIT_SEMAPHOR();
     auto* exe = static_cast<Executable*>(which);
-    if(eventReceiver && exe)
+    if (eventReceiver && exe) {
         eventReceiver->onModStop(exe->getID());
+    }
     POST_SEMAPHOR();
 }
 
@@ -521,8 +586,9 @@ void SafeManager::onExecutableFailed(void* which)
             OSTRINGSTREAM err;
             err<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! [id:"<<exe->getID()<<"]";
             logger->addError(err);
-            if(eventReceiver && exe)
+            if (eventReceiver && exe) {
                 eventReceiver->onModStop(exe->getID());
+            }
         }
 
         if(m_pConfig->find("module_failure").asString() == "recover")
@@ -542,8 +608,9 @@ void SafeManager::onExecutableFailed(void* which)
         }
     }
 
-    if(eventReceiver)
-            eventReceiver->onError();
+    if (eventReceiver) {
+        eventReceiver->onError();
+    }
     POST_SEMAPHOR();
 }
 
@@ -574,8 +641,9 @@ void SafeManager::onCnnFailed(void* which)
         }
     }
 
-    if(eventReceiver)
+    if (eventReceiver) {
         eventReceiver->onError();
+    }
     POST_SEMAPHOR();
 }
 
@@ -584,16 +652,18 @@ void SafeManager::onExecutableStdout(void* which, const char* msg)
 {
     WAIT_SEMAPHOR();
     auto* exe = static_cast<Executable*>(which);
-    if(eventReceiver)
+    if (eventReceiver) {
         eventReceiver->onModStdout(exe->getID(), msg);
+    }
     POST_SEMAPHOR();
 }
 
 void SafeManager::onError(void* which)
 {
     WAIT_SEMAPHOR();
-    if(eventReceiver)
+    if (eventReceiver) {
         eventReceiver->onError();
+    }
     POST_SEMAPHOR();
 }
 
@@ -602,19 +672,27 @@ void SafeManager::refreshPortStatus(int id)
     // refreshing ports status
     if(Manager::existPortFrom(id))
     {
-        if(eventReceiver) eventReceiver->onConAvailable(id, -1);
+        if (eventReceiver) {
+            eventReceiver->onConAvailable(id, -1);
+        }
     }
     else
     {
-        if(eventReceiver) eventReceiver->onConUnAvailable(id, -1);
+        if (eventReceiver) {
+            eventReceiver->onConUnAvailable(id, -1);
+        }
     }
 
     if(Manager::existPortTo(id))
     {
-        if(eventReceiver) eventReceiver->onConAvailable(-1, id);
+        if (eventReceiver) {
+            eventReceiver->onConAvailable(-1, id);
+        }
     }
     else
     {
-        if(eventReceiver) eventReceiver->onConUnAvailable(-1, id);
+        if (eventReceiver) {
+            eventReceiver->onConUnAvailable(-1, id);
+        }
     }
 }

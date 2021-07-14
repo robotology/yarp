@@ -62,8 +62,12 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
     //PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
 
-    if (robotName.at(0) == '/') robotName.remove(0, 1);
-    if (partName.at(0) == '/')  partName.remove(0, 1);
+    if (robotName.at(0) == '/') {
+        robotName.remove(0, 1);
+    }
+    if (partName.at(0) == '/') {
+        partName.remove(0, 1);
+    }
     m_robotPartPort = QString("/%1/%2").arg(robotName).arg(partName);
     m_partName = partName;
     m_robotName = robotName;
@@ -135,16 +139,46 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
         m_iPos->getAxes(&number_of_joints);
 
         m_controlModes = new int[number_of_joints]; //for (i = 0; i < number_of_joints; i++) m_controlModes = 0;
-        m_refTrajectorySpeeds = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_refTrajectorySpeeds[i] = std::nan("");
-        m_refTrajectoryPositions = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_refTrajectoryPositions[i] = std::nan("");
-        m_refTorques = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_refTorques[i] = std::nan("");
-        m_refVelocitySpeeds = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_refVelocitySpeeds[i] = std::nan("");
-        m_torques = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_torques[i] = std::nan("");
-        m_positions = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_positions[i] = std::nan("");
-        m_speeds = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_speeds[i] = std::nan("");
-        m_currents = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_currents[i] = std::nan("");
-        m_motorPositions = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_motorPositions[i] = std::nan("");
-        m_dutyCycles = new double[number_of_joints]; for (i = 0; i < number_of_joints; i++) m_dutyCycles[i] = std::nan("");
+        m_refTrajectorySpeeds = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_refTrajectorySpeeds[i] = std::nan("");
+        }
+        m_refTrajectoryPositions = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_refTrajectoryPositions[i] = std::nan("");
+        }
+        m_refTorques = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_refTorques[i] = std::nan("");
+        }
+        m_refVelocitySpeeds = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_refVelocitySpeeds[i] = std::nan("");
+        }
+        m_torques = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_torques[i] = std::nan("");
+        }
+        m_positions = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_positions[i] = std::nan("");
+        }
+        m_speeds = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_speeds[i] = std::nan("");
+        }
+        m_currents = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_currents[i] = std::nan("");
+        }
+        m_motorPositions = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_motorPositions[i] = std::nan("");
+        }
+        m_dutyCycles = new double[number_of_joints];
+        for (i = 0; i < number_of_joints; i++) {
+            m_dutyCycles[i] = std::nan("");
+        }
         m_done = new bool[number_of_joints];
         m_interactionModes = new yarp::dev::InteractionModeEnum[number_of_joints];
 
@@ -186,7 +220,9 @@ PartItem::PartItem(QString robotName, int id, QString partName, ResourceFinder& 
 
             QSettings settings("YARP", "yarpmotorgui");
             double max_slider_vel = settings.value("velocity_slider_limit", 100.0).toDouble();
-            if (max_vel > max_slider_vel) max_vel = max_slider_vel;
+            if (max_vel > max_slider_vel) {
+                max_vel = max_slider_vel;
+            }
 
             m_iinfo->getAxisName(k, jointname);
             yarp::dev::JointTypeEnum jtype = yarp::dev::VOCAB_JOINTTYPE_REVOLUTE;
@@ -810,10 +846,11 @@ void PartItem::onCalibClicked(JointItem *joint)
         // provide better feedback to user by verifying if the calibrator device was set or not
         bool isCalib = false;
         m_iremCalib->isCalibratorDevicePresent(&isCalib);
-        if(!isCalib)
+        if (!isCalib) {
             QMessageBox::critical(this,"Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file has the 'Calibrator' keyword in the attach phase"));
-        else
-            QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+        } else {
+            QMessageBox::critical(this, "Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+        }
     }
 
 }
@@ -1077,10 +1114,11 @@ void PartItem::calibratePart()
         // provide better feedback to user by verifying if the calibrator device was set or not
         bool isCalib = false;
         m_iremCalib->isCalibratorDevicePresent(&isCalib);
-        if(!isCalib)
+        if (!isCalib) {
             QMessageBox::critical(this, "Calibration failed", QString("No calibrator device was configured to perform this action, please verify that the wrapper config file for part %1 has the 'Calibrator' keyword in the attach phase").arg(m_partName));
-        else
-            QMessageBox::critical(this,"Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+        } else {
+            QMessageBox::critical(this, "Calibration failed", QString("The remote calibrator reported that something went wrong during the calibration procedure"));
+        }
     }
 }
 
@@ -2109,8 +2147,11 @@ bool PartItem::updatePart()
     bool ret = false;
     int number_of_joints=0;
     m_iPos->getAxes(&number_of_joints);
-    if (m_slow_k >= number_of_joints - 1) m_slow_k = 0;
-    else m_slow_k++;
+    if (m_slow_k >= number_of_joints - 1) {
+        m_slow_k = 0;
+    } else {
+        m_slow_k++;
+    }
 
     if (number_of_joints == 0)
     {

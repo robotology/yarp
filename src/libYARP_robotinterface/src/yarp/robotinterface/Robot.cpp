@@ -301,12 +301,15 @@ bool yarp::robotinterface::Robot::Private::attach(const yarp::robotinterface::De
                                                                 const yarp::robotinterface::ParamList& params)
 {
     int check = 0;
-    if (yarp::robotinterface::hasParam(params, "network"))
+    if (yarp::robotinterface::hasParam(params, "network")) {
         check++;
-    if (yarp::robotinterface::hasParam(params, "networks"))
+    }
+    if (yarp::robotinterface::hasParam(params, "networks")) {
         check++;
-    if (yarp::robotinterface::hasParam(params, "all"))
+    }
+    if (yarp::robotinterface::hasParam(params, "all")) {
         check++;
+    }
 
     if (check > 1) {
         yError() << "Action \"" << ActionTypeToString(ActionTypeAttach) << R"(" : you can have only one option: "network" , "networks" or "all" )";

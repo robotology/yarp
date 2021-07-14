@@ -76,8 +76,12 @@ void scramble(unsigned char& ch, float f) {
     //x += (int)(Random::normal(0,x*f));
     x += (int)(rnds[idx]*f);
     idx = (idx+17)%MAXRND;
-    if (x<0) x = 0;
-    if (x>255) x = 255;
+    if (x < 0) {
+        x = 0;
+    }
+    if (x > 255) {
+        x = 255;
+    }
     ch = (unsigned char) x;
 }
 

@@ -27,16 +27,17 @@ using namespace yarp::manager;
  */
 XmlTempLoader::XmlTempLoader(const char* szPath, const char* szAppName)
 {
-    if(szAppName)
+    if (szAppName) {
         strAppName = szAppName;
+    }
 
     if(strlen(szPath))
     {
         const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
         strPath = szPath;
-        if((strPath.rfind(directorySeparator)==string::npos) ||
-            (strPath.rfind(directorySeparator)!=strPath.size()-1))
+        if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
             strPath = strPath + string(directorySeparator);
+        }
     }
 }
 
@@ -45,8 +46,9 @@ XmlTempLoader::XmlTempLoader(const char* szPath, const char* szAppName)
  */
 XmlTempLoader::XmlTempLoader(const char* szFileName)
 {
-    if(szFileName)
+    if (szFileName) {
         strFileName = szFileName;
+    }
 }
 
 
@@ -90,8 +92,9 @@ bool XmlTempLoader::init()
         if(name.size() > 12)
         {
             string ext = name.substr(name.size()-12,12);
-            if(compareString(ext.c_str(), "xml.template"))
-                fileNames.push_back(strPath+name);
+            if (compareString(ext.c_str(), "xml.template")) {
+                fileNames.push_back(strPath + name);
+            }
         }
     }
     closedir(dir);
@@ -118,8 +121,9 @@ AppTemplate* XmlTempLoader::getNextAppTemplate()
         AppTemplate* app = nullptr;
         while(!app)
         {
-            if(fileNames.empty())
+            if (fileNames.empty()) {
                 return nullptr;
+            }
             string fname = fileNames.back();
             fileNames.pop_back();
             app = parsXml(fname.c_str());
@@ -132,8 +136,9 @@ AppTemplate* XmlTempLoader::getNextAppTemplate()
         for(itr=fileNames.begin(); itr<fileNames.end(); itr++)
         {
          AppTemplate* app = parsXml((*itr).c_str());
-         if(app && (app->name==strAppName))
-            return app;
+         if (app && (app->name == strAppName)) {
+             return app;
+         }
         }
     }
  return nullptr;
@@ -189,9 +194,11 @@ AppTemplate* XmlTempLoader::parsXml(const char* szFile)
     else
     {
         string strname = name->GetText();
-        for(char& i : strname)
-            if(i == ' ')
+        for (char& i : strname) {
+            if (i == ' ') {
                 i = '_';
+            }
+        }
         app.name = strname;
     }
 

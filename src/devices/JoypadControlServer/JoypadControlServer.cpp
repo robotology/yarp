@@ -340,8 +340,9 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
         return false;
     }
     m_isSubdeviceOwned = true;
-    if(!attach(m_subDeviceOwned))
+    if (!attach(m_subDeviceOwned)) {
         return false;
+    }
 
     if(!m_parser.configure(m_device) )
     {
@@ -356,8 +357,9 @@ bool JoypadControlServer::openAndAttachSubDevice(Searchable& prop)
 
 bool JoypadControlServer::attach(PolyDriver* poly)
 {
-    if(poly)
+    if (poly) {
         poly->view(m_device);
+    }
 
     if(m_device == nullptr)
     {
@@ -663,7 +665,9 @@ void JoypadControlServer::run()
                 }
                 b.push_back(v);
             }
-            if(write)m_portButtons.write();
+            if (write) {
+                m_portButtons.write();
+            }
         }
 
         if (m_portHats.valid)
@@ -683,7 +687,9 @@ void JoypadControlServer::run()
                 }
                 b.push_back(v);
             }
-            if(write)m_portHats.write();
+            if (write) {
+                m_portHats.write();
+            }
         }
 
         if (m_portAxis.valid)
@@ -704,7 +710,9 @@ void JoypadControlServer::run()
                 }
                 b.push_back(v);
             }
-            if(write)m_portAxis.write();
+            if (write) {
+                m_portAxis.write();
+            }
         }
 
         if (m_portTrackball.valid)
@@ -725,7 +733,9 @@ void JoypadControlServer::run()
                 }
                 cat(b, v);
             }
-            if(write)m_portTrackball.write();
+            if (write) {
+                m_portTrackball.write();
+            }
         }
 
         if (m_portStick.valid)
@@ -745,7 +755,9 @@ void JoypadControlServer::run()
                 }
                 cat(b, v);
             }
-            if(write)m_portStick.write();
+            if (write) {
+                m_portStick.write();
+            }
         }
 
         if (m_portTouch.valid)
@@ -765,7 +777,9 @@ void JoypadControlServer::run()
                 cat(b, v);
             }
 
-            if(write)m_portTouch.write();
+            if (write) {
+                m_portTouch.write();
+            }
         }
     }
     else
@@ -807,12 +821,14 @@ bool JoypadControlServer::attachAll(const PolyDriverList& p)
     }
 
     Idevice2attach->view(m_device);
-    if(!attach(m_device))
+    if (!attach(m_device)) {
         return false;
+    }
 
     PeriodicThread::setPeriod(m_period);
-    if (!PeriodicThread::start())
+    if (!PeriodicThread::start()) {
         return false;
+    }
 
     openPorts();
     return true;
@@ -820,12 +836,14 @@ bool JoypadControlServer::attachAll(const PolyDriverList& p)
 
 bool JoypadControlServer::detachAll()
 {
-    if (yarp::os::PeriodicThread::isRunning())
+    if (yarp::os::PeriodicThread::isRunning()) {
         yarp::os::PeriodicThread::stop();
+    }
 
     //check if we already instantiated a subdevice previously
-    if (m_isSubdeviceOwned)
+    if (m_isSubdeviceOwned) {
         return false;
+    }
 
     m_device = nullptr;
     return true;
@@ -838,7 +856,9 @@ bool JoypadControlServer::close()
     // close subdevice if it was created inside the open (--subdevice option)
     if(m_isSubdeviceOwned)
     {
-        if(m_subDeviceOwned)m_subDeviceOwned->close();
+        if (m_subDeviceOwned) {
+            m_subDeviceOwned->close();
+        }
 
         m_subDeviceOwned   = nullptr;
         m_device           = nullptr;

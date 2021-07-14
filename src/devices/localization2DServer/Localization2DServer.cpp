@@ -324,7 +324,9 @@ bool Localization2DServer::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
     bool ok = command.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     reply.clear();
 
@@ -571,11 +573,18 @@ void Localization2DServer::run()
         }
     }
 
-    if (1) publish_odometry_on_yarp_port();
-    if (1) publish_2DLocation_on_yarp_port();
-    if (m_ros_publish_odometry_on_topic) publish_odometry_on_ROS_topic();
-    if (m_ros_publish_odometry_on_tf) publish_odometry_on_TF_topic();
-
+    if (1) {
+        publish_odometry_on_yarp_port();
+    }
+    if (1) {
+        publish_2DLocation_on_yarp_port();
+    }
+    if (m_ros_publish_odometry_on_topic) {
+        publish_odometry_on_ROS_topic();
+    }
+    if (m_ros_publish_odometry_on_tf) {
+        publish_odometry_on_TF_topic();
+    }
 }
 
 void Localization2DServer::publish_odometry_on_yarp_port()

@@ -540,8 +540,9 @@ bool FakeMotionControl::open(yarp::os::Searchable &config)
     }
 
     // Default value
-    for(int i=0; i<_njoints; i++)
+    for (int i = 0; i < _njoints; i++) {
         _newtonsToSensor[i] = 1;
+    }
 
     if(!fromConfig(config))
     {
@@ -721,8 +722,9 @@ bool FakeMotionControl::parsePositionPidsGroup(Bottle& pidsGroup, Pid myPid[])
         }
 
         yCInfo(FAKEMOTIONCONTROL) << "Using LIMITED PWM!!";
-        for (j=0; j<_njoints; j++)
-            myPid[j].max_output = xtmp.get(j+1).asFloat64();
+        for (j = 0; j < _njoints; j++) {
+            myPid[j].max_output = xtmp.get(j + 1).asFloat64();
+        }
     }
 
     return true;
@@ -843,7 +845,9 @@ bool FakeMotionControl::parseTorquePidsGroup(Bottle& pidsGroup, Pid myPid[], dou
         }
 
         yCInfo(FAKEMOTIONCONTROL) << "Using LIMITED PWM!!";
-        for (j=0; j<_njoints; j++) myPid[j].max_output = xtmp.get(j+1).asFloat64();
+        for (j = 0; j < _njoints; j++) {
+            myPid[j].max_output = xtmp.get(j + 1).asFloat64();
+        }
     }
 
     return true;
@@ -860,17 +864,19 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
     {
         if(extractGroup(general, xtmp, "AxisMap", "a list of reordered indices for the axes", _njoints))
         {
-            for (i = 1; (size_t) i < xtmp.size(); i++)
+            for (i = 1; (size_t)i < xtmp.size(); i++) {
                 _axisMap[i - 1] = xtmp.get(i).asInt32();
-        }
-        else
+            }
+        } else {
             return false;
+        }
     }
     else
     {
         yCInfo(FAKEMOTIONCONTROL) << "Using default AxisMap";
-        for (i = 0; i < _njoints; i++)
+        for (i = 0; i < _njoints; i++) {
             _axisMap[i] = i;
+        }
     }
 
     if(general.check("AxisName"))
@@ -882,9 +888,9 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             {
                 _axisName[_axisMap[i - 1]] = xtmp.get(i).asString();
             }
-        }
-        else
+        } else {
             return false;
+        }
     }
     else
     {
@@ -902,18 +908,19 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             for (i = 1; (size_t) i < xtmp.size(); i++)
             {
                 string typeString = xtmp.get(i).asString();
-                if (typeString == "revolute")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
-                else if (typeString == "prismatic")  _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_PRISMATIC;
-                else
-                {
+                if (typeString == "revolute") {
+                    _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
+                } else if (typeString == "prismatic") {
+                    _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_PRISMATIC;
+                } else {
                     yCError(FAKEMOTIONCONTROL, "Unknown AxisType value %s!", typeString.c_str());
                     _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_UNKNOWN;
                     return false;
                 }
             }
-        }
-        else
+        } else {
             return false;
+        }
     }
     else
     {
@@ -936,9 +943,9 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
                     _ampsToSensor[i - 1] = xtmp.get(i).asFloat64();
                 }
             }
-        }
-        else
+        } else {
             return false;
+        }
     }
     else
     {
@@ -961,15 +968,16 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
                     _dutycycleToPWM[i - 1] = xtmp.get(i).asFloat64() / 100.0;
                 }
             }
-        }
-        else
+        } else {
             return false;
+        }
     }
     else
     {
         yCInfo(FAKEMOTIONCONTROL) << "Using default dutycycleToPWM=1.0";
-        for (i = 0; i < _njoints; i++)
+        for (i = 0; i < _njoints; i++) {
             _dutycycleToPWM[i] = 1.0;
+        }
     }
 
 //     double tmp_A2E;
@@ -982,15 +990,16 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             {
                 _angleToEncoder[i-1] = xtmp.get(i).asFloat64();
             }
-        }
-        else
+        } else {
             return false;
+        }
     }
     else
     {
         yCInfo(FAKEMOTIONCONTROL) << "Using default Encoder";
-        for (i = 0; i < _njoints; i++)
+        for (i = 0; i < _njoints; i++) {
             _angleToEncoder[i] = 1;
+        }
     }
 
     // Joint encoder resolution
@@ -1842,8 +1851,9 @@ bool FakeMotionControl::velocityMoveRaw(const double *sp)
 {
     yCTrace(FAKEMOTIONCONTROL);
     bool ret = true;
-    for(int i=0; i<_njoints; i++)
+    for (int i = 0; i < _njoints; i++) {
         ret &= velocityMoveRaw(i, sp[i]);
+    }
     return ret;
 }
 
@@ -1884,8 +1894,9 @@ bool FakeMotionControl::getAxes(int *ax)
 
 bool FakeMotionControl::positionMoveRaw(int j, double ref)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j " << j << " ref " << ref;
+    }
 
 //     if (yarp::os::Time::now()-_last_position_move_time[j]<MAX_POSITION_MOVE_INTERVAL)
 //     {
@@ -1908,8 +1919,9 @@ bool FakeMotionControl::positionMoveRaw(int j, double ref)
 
 bool FakeMotionControl::positionMoveRaw(const double *refs)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
+    }
 
     bool ret = true;
     for(int j=0, index=0; j< _njoints; j++, index++)
@@ -1921,8 +1933,9 @@ bool FakeMotionControl::positionMoveRaw(const double *refs)
 
 bool FakeMotionControl::relativeMoveRaw(int j, double delta)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j " << j << " ref " << delta;
+    }
 //     if (yarp::os::Time::now()-_last_position_move_time[j]<MAX_POSITION_MOVE_INTERVAL)
 //     {
 //         yCWarning(FAKEMOTIONCONTROL) << "Performance warning: You are using positionMove commands at high rate (<"<< MAX_POSITION_MOVE_INTERVAL*1000.0 <<" ms). Probably position control mode is not the right control mode to use.";
@@ -1944,8 +1957,9 @@ bool FakeMotionControl::relativeMoveRaw(int j, double delta)
 
 bool FakeMotionControl::relativeMoveRaw(const double *deltas)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
+    }
 
     bool ret = true;
     for(int j=0, index=0; j< _njoints; j++, index++)
@@ -1958,8 +1972,9 @@ bool FakeMotionControl::relativeMoveRaw(const double *deltas)
 
 bool FakeMotionControl::checkMotionDoneRaw(int j, bool *flag)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j ";
+    }
 
     *flag = false;
     return false;
@@ -1967,8 +1982,9 @@ bool FakeMotionControl::checkMotionDoneRaw(int j, bool *flag)
 
 bool FakeMotionControl::checkMotionDoneRaw(bool *flag)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
+    }
 
     bool ret = true;
     bool val, tot_res = true;
@@ -2091,8 +2107,9 @@ bool FakeMotionControl::stopRaw()
 
 bool FakeMotionControl::positionMoveRaw(const int n_joint, const int *joints, const double *refs)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << " -> n_joint " << n_joint;
+    }
 
     for(int j=0; j<n_joint; j++)
     {
@@ -2109,8 +2126,9 @@ bool FakeMotionControl::positionMoveRaw(const int n_joint, const int *joints, co
 
 bool FakeMotionControl::relativeMoveRaw(const int n_joint, const int *joints, const double *deltas)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
+    }
 
     bool ret = true;
     for(int j=0; j<n_joint; j++)
@@ -2122,8 +2140,9 @@ bool FakeMotionControl::relativeMoveRaw(const int n_joint, const int *joints, co
 
 bool FakeMotionControl::checkMotionDoneRaw(const int n_joint, const int *joints, bool *flag)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
+    }
 
     bool ret = true;
     bool val = true;
@@ -2140,8 +2159,9 @@ bool FakeMotionControl::checkMotionDoneRaw(const int n_joint, const int *joints,
 
 bool FakeMotionControl::setRefSpeedsRaw(const int n_joint, const int *joints, const double *spds)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
+    }
 
     bool ret = true;
     for(int j=0; j<n_joint; j++)
@@ -2153,8 +2173,9 @@ bool FakeMotionControl::setRefSpeedsRaw(const int n_joint, const int *joints, co
 
 bool FakeMotionControl::setRefAccelerationsRaw(const int n_joint, const int *joints, const double *accs)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
+    }
 
     bool ret = true;
     for(int j=0; j<n_joint; j++)
@@ -2166,8 +2187,9 @@ bool FakeMotionControl::setRefAccelerationsRaw(const int n_joint, const int *joi
 
 bool FakeMotionControl::getRefSpeedsRaw(const int n_joint, const int *joints, double *spds)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
+    }
 
     bool ret = true;
     for(int j=0; j<n_joint; j++)
@@ -2179,8 +2201,9 @@ bool FakeMotionControl::getRefSpeedsRaw(const int n_joint, const int *joints, do
 
 bool FakeMotionControl::getRefAccelerationsRaw(const int n_joint, const int *joints, double *accs)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
+    }
 
     bool ret = true;
     for(int j=0; j<n_joint; j++)
@@ -2192,8 +2215,9 @@ bool FakeMotionControl::getRefAccelerationsRaw(const int n_joint, const int *joi
 
 bool FakeMotionControl::stopRaw(const int n_joint, const int *joints)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joint " << _njoints;
+    }
 
     bool ret = true;
     for(int j=0; j<n_joint; j++)
@@ -2210,8 +2234,9 @@ bool FakeMotionControl::stopRaw(const int n_joint, const int *joints)
 // puo' essere richiesto con get
 bool FakeMotionControl::getControlModeRaw(int j, int *v)
 {
-    if(verbose > VERY_VERY_VERBOSE)
+    if (verbose > VERY_VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j;
+    }
 
     *v = _controlModes[j];
     return true;
@@ -2245,8 +2270,9 @@ bool FakeMotionControl::getControlModesRaw(const int n_joint, const int *joints,
 // con il control mode il can ora lo fa ma e' giusto? era cosi' anche in passato?
 bool FakeMotionControl::setControlModeRaw(const int j, const int _mode)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " mode: " << yarp::os::Vocab32::decode(_mode);
+    }
 
     if (_mode==VOCAB_CM_FORCE_IDLE)
     {
@@ -2263,8 +2289,9 @@ bool FakeMotionControl::setControlModeRaw(const int j, const int _mode)
 
 bool FakeMotionControl::setControlModesRaw(const int n_joint, const int *joints, int *modes)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "n_joints: " << n_joint;
+    }
 
     bool ret = true;
     for(int i=0; i<n_joint; i++)
@@ -2276,8 +2303,9 @@ bool FakeMotionControl::setControlModesRaw(const int n_joint, const int *joints,
 
 bool FakeMotionControl::setControlModesRaw(int *modes)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL);
+    }
 
     bool ret = true;
     for(int i=0; i<_njoints; i++)
@@ -2374,8 +2402,9 @@ bool FakeMotionControl::getEncodersTimedRaw(double *encs, double *stamps)
 {
     bool ret = getEncodersRaw(encs);
     _mutex.lock();
-    for(int i=0; i<_njoints; i++)
+    for (int i = 0; i < _njoints; i++) {
         stamps[i] = _encodersStamp[i];
+    }
     _mutex.unlock();
     return ret;
 }
@@ -2481,8 +2510,9 @@ bool FakeMotionControl::getMotorEncodersTimedRaw(double *encs, double *stamps)
 {
     bool ret = getMotorEncodersRaw(encs);
     _mutex.lock();
-    for(int i=0; i<_njoints; i++)
+    for (int i = 0; i < _njoints; i++) {
         stamps[i] = _encodersStamp[i];
+    }
     _mutex.unlock();
 
     return ret;
@@ -2754,8 +2784,9 @@ bool FakeMotionControl::getTorqueRangesRaw(double *min, double *max)
 bool FakeMotionControl::setRefTorquesRaw(const double *t)
 {
     bool ret = true;
-    for(int j=0; j<_njoints && ret; j++)
+    for (int j = 0; j < _njoints && ret; j++) {
         ret &= setRefTorqueRaw(j, t[j]);
+    }
     return ret;
 }
 
@@ -2863,8 +2894,9 @@ bool FakeMotionControl::setPositionsRaw(const double *refs)
 
 bool FakeMotionControl::getTargetPositionRaw(int axis, double *ref)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j " << axis << " ref " << _posCtrl_references[axis];
+    }
 
     int mode = 0;
     getControlModeRaw(axis, &mode);
@@ -2882,8 +2914,9 @@ bool FakeMotionControl::getTargetPositionRaw(int axis, double *ref)
 bool FakeMotionControl::getTargetPositionsRaw(double *refs)
 {
     bool ret = true;
-    for(int i=0; i<_njoints; i++)
+    for (int i = 0; i < _njoints; i++) {
         ret &= getTargetPositionRaw(i, &refs[i]);
+    }
     return ret;
 }
 
@@ -2965,8 +2998,9 @@ bool FakeMotionControl::getRefPositionsRaw(int nj, const int * jnts, double *ref
 // InteractionMode
 bool FakeMotionControl::getInteractionModeRaw(int j, yarp::dev::InteractionModeEnum* _mode)
 {
-    if(verbose > VERY_VERY_VERBOSE)
+    if (verbose > VERY_VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j;
+    }
 
     *_mode = (yarp::dev::InteractionModeEnum)_interactMode[j];
     return true;}
@@ -2985,8 +3019,9 @@ bool FakeMotionControl::getInteractionModesRaw(int n_joints, int *joints, yarp::
 bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* modes)
 {
     bool ret = true;
-    for(int j=0; j<_njoints; j++)
+    for (int j = 0; j < _njoints; j++) {
         ret = ret && getInteractionModeRaw(j, &modes[j]);
+    }
     return ret;
 }
 
@@ -2995,8 +3030,9 @@ bool FakeMotionControl::getInteractionModesRaw(yarp::dev::InteractionModeEnum* m
 // con il interaction mode il can ora non lo fa. mentre lo fa per il control mode. perche' diverso?
 bool FakeMotionControl::setInteractionModeRaw(int j, yarp::dev::InteractionModeEnum _mode)
 {
-    if(verbose >= VERY_VERBOSE)
+    if (verbose >= VERY_VERBOSE) {
         yCTrace(FAKEMOTIONCONTROL) << "j: " << j << " interaction mode: " << yarp::os::Vocab32::decode(_mode);
+    }
 
     _interactMode[j] = _mode;
 

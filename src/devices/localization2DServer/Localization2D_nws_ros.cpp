@@ -261,7 +261,9 @@ bool Localization2D_nws_ros::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle command;
     yarp::os::Bottle reply;
     bool ok = command.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     reply.clear();
 
@@ -326,9 +328,12 @@ void Localization2D_nws_ros::run()
         yCWarning(LOCALIZATION2D_NWS_ROS, "The system is not properly localized!");
     }
 
-    if (m_enable_publish_odometry_topic) publish_odometry_on_ROS_topic();
-    if (m_enable_publish_odometry_tf)    publish_odometry_on_TF_topic();
-
+    if (m_enable_publish_odometry_topic) {
+        publish_odometry_on_ROS_topic();
+    }
+    if (m_enable_publish_odometry_tf) {
+        publish_odometry_on_TF_topic();
+    }
 }
 
 void Localization2D_nws_ros::publish_odometry_on_TF_topic()

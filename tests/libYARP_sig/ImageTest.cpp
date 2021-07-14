@@ -509,24 +509,25 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
 
         // do the same on img2, but using the
         // pixel function
-        for(r=0; r<img2.height(); r++)
-            for(c=0;c<img2.width(); c++)
-                {
+            for (r = 0; r < img2.height(); r++) {
+                for (c = 0; c < img2.width(); c++) {
                     img2(c,r).r=r;
                     img2(c,r).g=r;
                     img2(c,r).b=r;
                 }
+            }
 
 
         // now make sure the two images are the same
         int acc=0;
-        for(r=0; r<img2.height(); r++)
+        for (r = 0; r < img2.height(); r++) {
             for(c=0;c<img2.width(); c++)
                 {
                     acc+=(img2(c,r).r-img1(c,r).r);
                     acc+=(img2(c,r).g-img1(c,r).g);
                     acc+=(img2(c,r).b-img1(c,r).b);
-                }
+            }
+        }
 
         CHECK(acc == 0); // pointer to row access
     }
@@ -541,12 +542,13 @@ TEST_CASE("sig::ImageTest", "[yarp::sig]")
         size_t r,c;
         int acc1=0;
         int acc2=0;
-        for(r=0; r<img1.height(); r++)
+        for (r = 0; r < img1.height(); r++) {
             for(c=0;c<img1.width(); c++)
                 {
                     img1(c,r)=(unsigned char) r;
                     acc1+=r;
-                }
+            }
+        }
 
         const ImageOf<PixelMono> &constImg=img1;
         for(r=0; r<constImg.height(); r++)

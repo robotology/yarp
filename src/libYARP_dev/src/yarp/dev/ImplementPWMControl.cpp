@@ -23,8 +23,9 @@ ImplementPWMControl::ImplementPWMControl(IPWMControlRaw *r) :
 
 bool ImplementPWMControl::initialize(int size, const int *amap, const double* dutyToPWM)
 {
-    if (helper != nullptr)
+    if (helper != nullptr) {
         return false;
+    }
 
     helper = (void *)(new ControlBoardHelper(size, amap, nullptr, nullptr, nullptr, nullptr, nullptr, dutyToPWM));
     yAssert(helper != nullptr);

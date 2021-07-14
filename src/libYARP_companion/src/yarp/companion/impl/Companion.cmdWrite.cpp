@@ -52,9 +52,9 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         hist_file += temp;
         read_history(hist_file.c_str());
         disable_file_history=false;
+    } else {
+        disable_file_history = true;
     }
-    else
-        disable_file_history=true;
 #endif
     if (Companion::getActivePort() == nullptr) {
         Companion::installHandler();
@@ -103,13 +103,16 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
                 while (port.getOutputCount()<1) {
                     SystemClock::delaySystem(delay);
                     delay *= 2;
-                    if (delay>4) delay = 4;
+                    if (delay > 4) {
+                        delay = 4;
+                    }
                 }
             }
             port.write(bot);
 #ifdef YARP_HAS_Libedit
-            if (!disable_file_history)
+            if (!disable_file_history) {
                 write_history(hist_file.c_str());
+            }
 #endif
         }
     }
@@ -119,7 +122,9 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         while (port.isWriting()) {
             SystemClock::delaySystem(delay);
             delay *= 2;
-            if (delay>4) delay = 4;
+            if (delay > 4) {
+                delay = 4;
+            }
         }
     }
 

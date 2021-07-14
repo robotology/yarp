@@ -112,9 +112,11 @@ bool AudioPlayerDeviceBase::appendSound(const yarp::sig::Sound& sound)
     size_t num_channels = sound.getChannels();
     size_t num_samples = sound.getSamples();
 
-    for (size_t i = 0; i < num_samples; i++)
-        for (size_t j = 0; j < num_channels; j++)
+    for (size_t i = 0; i < num_samples; i++) {
+        for (size_t j = 0; j < num_channels; j++) {
             m_outputBuffer->write(sound.get(i, j));
+        }
+    }
 
     return true;
 }
@@ -127,9 +129,11 @@ bool AudioPlayerDeviceBase::immediateSound(const yarp::sig::Sound& sound)
     size_t num_channels = sound.getChannels();
     size_t num_samples = sound.getSamples();
 
-    for (size_t i = 0; i < num_samples; i++)
-        for (size_t j = 0; j < num_channels; j++)
+    for (size_t i = 0; i < num_samples; i++) {
+        for (size_t j = 0; j < num_channels; j++) {
             m_outputBuffer->write(sound.get(i, j));
+        }
+    }
 
     return true;
 }
@@ -190,10 +194,11 @@ bool AudioPlayerDeviceBase::renderSound(const yarp::sig::Sound& sound)
         }
     }
 
-    if (m_renderMode == RENDER_IMMEDIATE)
+    if (m_renderMode == RENDER_IMMEDIATE) {
         return immediateSound(procsound);
-    else if (m_renderMode == RENDER_APPEND)
+    } else if (m_renderMode == RENDER_APPEND) {
         return appendSound(procsound);
+    }
 
     return false;
 }
@@ -204,9 +209,15 @@ bool AudioPlayerDeviceBase::configurePlayerAudioDevice(yarp::os::Searchable& con
     m_audioplayer_cfg.numSamples = config.check("samples", Value(0), "number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
     m_audioplayer_cfg.numChannels = config.check("channels", Value(0), "number of audio channels (0=automatic, max is 2)").asInt32();
 
-    if (m_audioplayer_cfg.numChannels == 0)  m_audioplayer_cfg.numChannels = DEFAULT_NUM_CHANNELS;
-    if (m_audioplayer_cfg.frequency == 0)  m_audioplayer_cfg.frequency = DEFAULT_SAMPLE_RATE;
-    if (m_audioplayer_cfg.numSamples == 0) m_audioplayer_cfg.numSamples = m_audioplayer_cfg.frequency; //  by default let's use chunks of 1 second
+    if (m_audioplayer_cfg.numChannels == 0) {
+        m_audioplayer_cfg.numChannels = DEFAULT_NUM_CHANNELS;
+    }
+    if (m_audioplayer_cfg.frequency == 0) {
+        m_audioplayer_cfg.frequency = DEFAULT_SAMPLE_RATE;
+    }
+    if (m_audioplayer_cfg.numSamples == 0) {
+        m_audioplayer_cfg.numSamples = m_audioplayer_cfg.frequency; //  by default let's use chunks of 1 second
+    }
 
     if (config.check("render_mode_append"))
     {

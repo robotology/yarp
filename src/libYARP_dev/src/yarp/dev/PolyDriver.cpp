@@ -200,8 +200,12 @@ bool PolyDriver::isValid() const
 
 bool PolyDriver::link(PolyDriver& alt)
 {
-    if (!alt.isValid()) return false;
-    if (isValid()) return false;
+    if (!alt.isValid()) {
+        return false;
+    }
+    if (isValid()) {
+        return false;
+    }
     dd = alt.dd;
     if (mPriv!=nullptr) {
         int ct = mPriv->removeRef();

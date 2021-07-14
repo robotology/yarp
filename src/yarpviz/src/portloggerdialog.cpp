@@ -82,8 +82,9 @@ void PortLoggerDialog::openCons()
     QString filename = QFileDialog::getOpenFileName(nullptr, "Load connections list",
                                                     QDir::homePath(),
                                                     filters, &defaultFilter);
-    if(filename.size() == 0)
+    if (filename.size() == 0) {
         return;
+    }
 
     fstream file;
     file.open(filename.toStdString().c_str());
@@ -109,9 +110,9 @@ void PortLoggerDialog::openCons()
             prop.append(sample.get(2).asString().c_str());
             item = new QTreeWidgetItem( ui->treeWidgetCons, prop);
             YARP_UNUSED(item);
+        } else {
+            yWarning() << "Wrong connection data at line" << count;
         }
-        else
-            yWarning()<<"Wrong connection data at line"<<count;
     }
     file.close();
 }
@@ -219,8 +220,9 @@ void PortLoggerDialog::startStopLoggers() {
                     QString filename = portname.c_str();
                     filename.replace("/", "_");
                     filename = ui->lineEditLogPath->text() + "/port." +filename + ".log";
-                    if(!saveLog(filename.toStdString(), samples))
-                        yError()<<"could not save the result into "<<filename.toStdString();
+                    if (!saveLog(filename.toStdString(), samples)) {
+                        yError() << "could not save the result into " << filename.toStdString();
+                    }
                 }
             }
             else {
@@ -273,7 +275,8 @@ void PortLoggerDialog::setLogPath() {
     //QString defaultFilter("Log file (*.log)");
     QString filename = QFileDialog::getExistingDirectory(nullptr, "Set the log files path",
                                                     QDir::homePath(),QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    if(filename.size() == 0)
+    if (filename.size() == 0) {
         return;
+    }
     ui->lineEditLogPath->setText(filename);
 }

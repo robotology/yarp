@@ -250,8 +250,9 @@ bool MultipleAnalogSensorsClient::genericGetMeasure(const std::vector<SensorMeta
         return false;
     }
 
-    if (!m_externalConnection)
+    if (!m_externalConnection) {
         assert(metadataVector.size() == measurementsVector.measurements.size());
+    }
 
     timestamp = measurementsVector.measurements[sens_index].timestamp;
     out = measurementsVector.measurements[sens_index].measurement;

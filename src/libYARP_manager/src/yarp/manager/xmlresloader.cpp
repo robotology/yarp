@@ -29,13 +29,14 @@ XmlResLoader::XmlResLoader(const char* szPath, const char* szName)
     {
         const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
         strPath = szPath;
-        if((strPath.rfind(directorySeparator)==string::npos) ||
-            (strPath.rfind(directorySeparator)!=strPath.size()-1))
+        if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
             strPath = strPath + string(directorySeparator);
+        }
     }
 
-    if(szName)
+    if (szName) {
         strName = szName;
+    }
 }
 
 /**
@@ -44,8 +45,9 @@ XmlResLoader::XmlResLoader(const char* szPath, const char* szName)
 XmlResLoader::XmlResLoader(const char* szFileName)
 {
     parser = new(TextParser);
-    if(szFileName)
+    if (szFileName) {
         strFileName = szFileName;
+    }
 }
 
 
@@ -96,8 +98,9 @@ bool XmlResLoader::init()
         if(name.size() > 3)
         {
             string ext = name.substr(name.size()-3,3);
-            if(compareString(ext.c_str(), "xml"))
-                fileNames.push_back(strPath+name);
+            if (compareString(ext.c_str(), "xml")) {
+                fileNames.push_back(strPath + name);
+            }
         }
     }
     closedir(dir);
@@ -143,8 +146,9 @@ GenericResource* XmlResLoader::getNextResource()
             bool ret = false;
             do
             {
-                if(fileNames.empty())
+                if (fileNames.empty()) {
                     return nullptr;
+                }
 
                 string fname = fileNames.back();
                 fileNames.pop_back();
@@ -166,9 +170,11 @@ GenericResource* XmlResLoader::getNextResource()
          {
              if(parsXml((*itr).c_str()))
              {
-                for(auto& computer : computers)
-                if(string(computer.getName()) == strName)
-                    return &computer;
+                 for (auto& computer : computers) {
+                     if (string(computer.getName()) == strName) {
+                         return &computer;
+                     }
+                 }
              }
          }
     }
@@ -238,18 +244,21 @@ bool XmlResLoader::parsXml(const char* szFile)
                 comptag; comptag = comptag->NextSiblingElement())
             {
                  /* retrieving name */
-                if(compareString(comptag->Value(), "name"))
-                    computer.setName(parser->parseText(comptag->GetText()).c_str());
+                 if (compareString(comptag->Value(), "name")) {
+                     computer.setName(parser->parseText(comptag->GetText()).c_str());
+                 }
 
                 /* retrieving description */
-                 if(compareString(comptag->Value(), "description"))
-                    computer.setDescription(parser->parseText(comptag->GetText()).c_str());
+                 if (compareString(comptag->Value(), "description")) {
+                     computer.setDescription(parser->parseText(comptag->GetText()).c_str());
+                 }
 
                 /* retrieving disablility */
                 if(compareString(comptag->Value(), "disable"))
                 {
-                    if(compareString(parser->parseText(comptag->GetText()).c_str(), "yes"))
+                    if (compareString(parser->parseText(comptag->GetText()).c_str(), "yes")) {
                         computer.setDisable(true);
+                    }
                 }
 
                 // platform
@@ -257,21 +266,22 @@ bool XmlResLoader::parsXml(const char* szFile)
                 {
                     Platform os;
                     TiXmlElement* element;
-                    if((element = (TiXmlElement*) comptag->FirstChild("name")))
+                    if ((element = (TiXmlElement*)comptag->FirstChild("name"))) {
                         os.setName(parser->parseText(element->GetText()).c_str());
-                    else
-                    {
+                    } else {
                         OSTRINGSTREAM war;
                         war<<"Platform from "<<szFile<<" at line "\
                            <<comptag->Row()<<" has no name.";
                         logger->addWarning(war);
                     }
 
-                    if((element = (TiXmlElement*) comptag->FirstChild("distribution")))
+                    if ((element = (TiXmlElement*)comptag->FirstChild("distribution"))) {
                         os.setDistribution(parser->parseText(element->GetText()).c_str());
+                    }
 
-                    if((element = (TiXmlElement*) comptag->FirstChild("release")))
+                    if ((element = (TiXmlElement*)comptag->FirstChild("release"))) {
                         os.setRelease(parser->parseText(element->GetText()).c_str());
+                    }
 
                     computer.setPlatform(os);
                 } // end of platform tag
@@ -281,8 +291,9 @@ bool XmlResLoader::parsXml(const char* szFile)
                 {
                     Memory mem;
                     TiXmlElement* element;
-                    if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
+                    if ((element = (TiXmlElement*)comptag->FirstChild("total_space"))) {
                         mem.setTotalSpace((Capacity)atol(parser->parseText(element->GetText()).c_str()));
+                    }
                    computer.setMemory(mem);
                 } // end of memory tag
 
@@ -291,8 +302,9 @@ bool XmlResLoader::parsXml(const char* szFile)
                 {
                     Storage stg;
                     TiXmlElement* element;
-                    if((element = (TiXmlElement*) comptag->FirstChild("total_space")))
+                    if ((element = (TiXmlElement*)comptag->FirstChild("total_space"))) {
                         stg.setTotalSpace((Capacity)atol(parser->parseText(element->GetText()).c_str()));
+                    }
                    computer.setStorage(stg);
                 } // end of storage tag
 
@@ -301,14 +313,18 @@ bool XmlResLoader::parsXml(const char* szFile)
                 {
                     Processor proc;
                     TiXmlElement* element;
-                    if((element = (TiXmlElement*) comptag->FirstChild("architecture")))
+                    if ((element = (TiXmlElement*)comptag->FirstChild("architecture"))) {
                         proc.setArchitecture(parser->parseText(element->GetText()).c_str());
-                    if((element = (TiXmlElement*) comptag->FirstChild("model")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("model"))) {
                         proc.setModel(parser->parseText(element->GetText()).c_str());
-                    if((element = (TiXmlElement*) comptag->FirstChild("cores")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("cores"))) {
                         proc.setCores((size_t)atoi(parser->parseText(element->GetText()).c_str()));
-                    if((element = (TiXmlElement*) comptag->FirstChild("frequency")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("frequency"))) {
                         proc.setFrequency(atof(parser->parseText(element->GetText()).c_str()));
+                    }
                    computer.setProcessor(proc);
                 } // end of processor tag
 
@@ -317,12 +333,15 @@ bool XmlResLoader::parsXml(const char* szFile)
                 {
                     Network net;
                     TiXmlElement* element;
-                    if((element = (TiXmlElement*) comptag->FirstChild("ip4")))
+                    if ((element = (TiXmlElement*)comptag->FirstChild("ip4"))) {
                         net.setIP4(parser->parseText(element->GetText()).c_str());
-                    if((element = (TiXmlElement*) comptag->FirstChild("ip6")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("ip6"))) {
                         net.setIP6(parser->parseText(element->GetText()).c_str());
-                    if((element = (TiXmlElement*) comptag->FirstChild("mac")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("mac"))) {
                         net.setMAC(parser->parseText(element->GetText()).c_str());
+                    }
                     computer.setNetwork(net);
                 } // end of network tag
 
@@ -332,24 +351,31 @@ bool XmlResLoader::parsXml(const char* szFile)
                 {
                     GPU gpu;
                     TiXmlElement* element;
-                    if((element = (TiXmlElement*) comptag->FirstChild("name")))
+                    if ((element = (TiXmlElement*)comptag->FirstChild("name"))) {
                         gpu.setName(parser->parseText(element->GetText()).c_str());
-                    if((element = (TiXmlElement*) comptag->FirstChild("capability")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("capability"))) {
                         gpu.setCompCompatibility(parser->parseText(element->GetText()).c_str());
-                    if((element = (TiXmlElement*) comptag->FirstChild("cores")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("cores"))) {
                         gpu.setCores((size_t)atoi(parser->parseText(element->GetText()).c_str()));
-                    if((element = (TiXmlElement*) comptag->FirstChild("frequency")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("frequency"))) {
                         gpu.setFrequency(atof(parser->parseText(element->GetText()).c_str()));
-                    if((element = (TiXmlElement*) comptag->FirstChild("register_block")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("register_block"))) {
                         gpu.setResgisterPerBlock((size_t)atoi(parser->parseText(element->GetText()).c_str()));
-                    if((element = (TiXmlElement*) comptag->FirstChild("thread_block")))
+                    }
+                    if ((element = (TiXmlElement*)comptag->FirstChild("thread_block"))) {
                         gpu.setThreadPerBlock((size_t)atoi(parser->parseText(element->GetText()).c_str()));
+                    }
                     if((element = (TiXmlElement*) comptag->FirstChild("overlap")))
                     {
-                        if(compareString(parser->parseText(element->GetText()).c_str(), "yes"))
+                        if (compareString(parser->parseText(element->GetText()).c_str(), "yes")) {
                             gpu.setOverlap(true);
-                        else
+                        } else {
                             gpu.setOverlap(false);
+                        }
                     }
 
                     // global memory
@@ -357,8 +383,9 @@ bool XmlResLoader::parsXml(const char* szFile)
                     {
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("global_memory");
-                        if((element = (TiXmlElement*) element->FirstChild("total_space")))
+                        if ((element = (TiXmlElement*)element->FirstChild("total_space"))) {
                             gpu.setGlobalMemory((Capacity)atol(parser->parseText(element->GetText()).c_str()));
+                        }
                     } // end of global memory tag
 
                     // shared memory
@@ -366,8 +393,9 @@ bool XmlResLoader::parsXml(const char* szFile)
                     {
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("shared_memory");
-                        if((element = (TiXmlElement*) element->FirstChild("total_space")))
+                        if ((element = (TiXmlElement*)element->FirstChild("total_space"))) {
                             gpu.setSharedMemory((Capacity)atol(parser->parseText(element->GetText()).c_str()));
+                        }
                     } // end of shared memory tag
 
                     // constant memory
@@ -375,8 +403,9 @@ bool XmlResLoader::parsXml(const char* szFile)
                     {
                         TiXmlElement* element;
                         element = (TiXmlElement*) comptag->FirstChild("constant_memory");
-                        if((element = (TiXmlElement*) element->FirstChild("total_space")))
+                        if ((element = (TiXmlElement*)element->FirstChild("total_space"))) {
                             gpu.setConstantMemory((Capacity)atol(parser->parseText(element->GetText()).c_str()));
+                        }
                     } // end of shared memory tag
 
                    computer.addPeripheral(gpu);

@@ -28,8 +28,9 @@ ImplementVelocityControl::~ImplementVelocityControl()
 
 bool ImplementVelocityControl::initialize(int size, const int *axis_map, const double *enc, const double *zeros)
 {
-    if (helper != nullptr)
+    if (helper != nullptr) {
         return false;
+    }
 
     helper=(void *)(new ControlBoardHelper(size, axis_map, enc, zeros));
     yAssert (helper != nullptr);
@@ -83,8 +84,9 @@ bool ImplementVelocityControl::velocityMove(int j, double sp)
 
 bool ImplementVelocityControl::velocityMove(const int n_joint, const int *joints, const double *spds)
 {
-    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
+    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
         return false;
+    }
 
     yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
@@ -132,8 +134,9 @@ bool ImplementVelocityControl::getRefVelocities(double *vels)
 
 bool ImplementVelocityControl::getRefVelocities(const int n_joint, const int *joints, double *vels)
 {
-    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
+    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
         return false;
+    }
 
     yarp::dev::impl::Buffer<int> buffJoints = intBuffManager->getBuffer();
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
@@ -166,8 +169,9 @@ bool ImplementVelocityControl::setRefAcceleration(int j, double acc)
 
 bool ImplementVelocityControl::setRefAccelerations(const int n_joint, const int *joints, const double *accs)
 {
-    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
+    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
         return false;
+    }
 
     yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
@@ -206,8 +210,9 @@ bool ImplementVelocityControl::getRefAcceleration(int j, double *acc)
 
 bool ImplementVelocityControl::getRefAccelerations(const int n_joint, const int *joints, double *accs)
 {
-    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
+    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
         return false;
+    }
 
     yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
     yarp::dev::impl::Buffer<double> buffValues = doubleBuffManager->getBuffer();
@@ -251,8 +256,9 @@ bool ImplementVelocityControl::stop(int j)
 
 bool ImplementVelocityControl::stop(const int n_joint, const int *joints)
 {
-    if(!castToMapper(helper)->checkAxesIds(n_joint, joints))
+    if (!castToMapper(helper)->checkAxesIds(n_joint, joints)) {
         return false;
+    }
 
     yarp::dev::impl::Buffer<int> buffJoints =  intBuffManager->getBuffer();
     for(int idx=0; idx<n_joint; idx++)

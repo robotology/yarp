@@ -117,7 +117,9 @@ bool RobotDescriptionServer::read(yarp::os::ConnectionReader& connection)
     int              code;
 
     bool ok = in.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     // parse in, prepare out
     code = in.get(0).asVocab32();

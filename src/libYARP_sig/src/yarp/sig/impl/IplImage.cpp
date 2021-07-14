@@ -13,11 +13,12 @@
 // this was from iplUtil.cpp
 bool compareHeader(IplImage* A, IplImage* B)
 {
-    if( A->nChannels == B->nChannels && !strcmp(A->colorModel, B->colorModel) && !strcmp(A->channelSeq,B->channelSeq) && A->width == B->width
-        && A->height == B->height)
+    if (A->nChannels == B->nChannels && !strcmp(A->colorModel, B->colorModel) && !strcmp(A->channelSeq, B->channelSeq) && A->width == B->width
+        && A->height == B->height) {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
 ///
@@ -44,7 +45,9 @@ T* AllocAligned (int size)
 template <class T>
 void FreeAligned (T* ptr)
 {
-    if (ptr == nullptr) return;
+    if (ptr == nullptr) {
+        return;
+    }
 
     const char addbytes = *(((char *)ptr) - 1);
     delete[] reinterpret_cast<T*>(((char *)ptr) - addbytes);
@@ -147,8 +150,9 @@ IPLAPIIMPL(void,iplGetConvKernelFP,(IplConvKernelFP* kernel,int* nCols, int* nRo
 
 IPLAPIIMPL(void, iplDeleteConvKernel,(IplConvKernel* kernel))
 {
-    if (kernel == nullptr)
+    if (kernel == nullptr) {
         return;
+    }
 
     delete[] kernel->values;
     delete kernel;
@@ -156,8 +160,9 @@ IPLAPIIMPL(void, iplDeleteConvKernel,(IplConvKernel* kernel))
 
 IPLAPIIMPL(void, iplDeleteConvKernelFP,(IplConvKernelFP* kernel))
 {
-    if (kernel == nullptr)
+    if (kernel == nullptr) {
         return;
+    }
 
     delete[] kernel->values;
     delete kernel;
@@ -225,18 +230,19 @@ IPLAPIIMPL(void, iplConvolve2D,(IplImage* srcImage, IplImage* dstImage,
                         for (int j = borderx; j < w - borderx; j++)
                             {
                                 tmp = 0;
-                                for (int k = 0; k < krows; k++)
+                                for (int k = 0; k < krows; k++) {
                                     for (int l = 0; l < kcols; l++)
                                         {
                                             tmp += srcImage->imageData[(i + k - bordery) * w + j + l - borderx]
                                                 * values[ksize - k * kcols - l - 1];
-                                        }
+                                    }
+                                }
                                 tmp >>= ktmp->nShiftR;
-                                if (tmp > 255)
+                                if (tmp > 255) {
                                     tmp = 255;
-                                else
-                                    if (tmp < 0)
-                                        tmp = 0;
+                                } else if (tmp < 0) {
+                                    tmp = 0;
+                                }
                                 __tmp_res[i * w + j] = char(tmp);
                             }
                     }
@@ -253,18 +259,19 @@ IPLAPIIMPL(void, iplConvolve2D,(IplImage* srcImage, IplImage* dstImage,
                         for (int j = borderx; j < w - borderx; j++)
                             {
                                 tmp = 0;
-                                for (int k = 0; k < krows; k++)
+                                for (int k = 0; k < krows; k++) {
                                     for (int l = 0; l < kcols; l++)
                                         {
                                             tmp += srcImage->imageData[(i + k - bordery) * w + j + l - borderx]
                                                 * values[ksize - k * kcols - l - 1];
-                                        }
+                                    }
+                                }
                                 tmp >>= ktmp->nShiftR;
-                                if (tmp > 127)
+                                if (tmp > 127) {
                                     tmp = 127;
-                                else
-                                    if (tmp < -128)
-                                        tmp = -128;
+                                } else if (tmp < -128) {
+                                    tmp = -128;
+                                }
                                 __tmp_res[i * w + j] = char(tmp);
                             }
                     }
@@ -344,12 +351,13 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
                     for (int j = borderx; j < w - borderx; j++)
                         {
                             tmp = 0;
-                            for (int k = 0; k < krows; k++)
+                            for (int k = 0; k < krows; k++) {
                                 for (int l = 0; l < kcols; l++)
                                     {
                                         tmp += source[(i + k - bordery) * w + j + l - borderx]
                                             * values[ksize - k * kcols - l - 1];
-                                    }
+                                }
+                            }
                             dest[i * w + j] = tmp;
                         }
                 }
@@ -365,12 +373,13 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
                     for (int j = borderx; j < w - borderx; j++)
                         {
                             tmp = 0;
-                            for (int k = 0; k < krows; k++)
+                            for (int k = 0; k < krows; k++) {
                                 for (int l = 0; l < kcols; l++)
                                     {
                                         tmp += source[(i + k - bordery) * w + j + l - borderx]
                                             * values[ksize - k * kcols - l - 1];
-                                    }
+                                }
+                            }
                             __tmp_res[i * w + j] = tmp;
                         }
                 }
@@ -563,11 +572,11 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
                                                     * xvalues[xksize - k - 1];
                                             }
                                         tmp >>= xKernel->nShiftR;
-                                        if (tmp > 255)
+                                        if (tmp > 255) {
                                             tmp = 255;
-                                        else
-                                            if (tmp < 0)
-                                                tmp = 0;
+                                        } else if (tmp < 0) {
+                                            tmp = 0;
+                                        }
                                         __tmp_res[i * w + j] = char(tmp);
                                     }
                             }
@@ -589,11 +598,11 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
                                                     * yvalues[yksize - k - 1];
                                             }
                                         tmp >>= yKernel->nShiftR;
-                                        if (tmp > 255)
+                                        if (tmp > 255) {
                                             tmp = 255;
-                                        else
-                                            if (tmp < 0)
-                                                tmp = 0;
+                                        } else if (tmp < 0) {
+                                            tmp = 0;
+                                        }
                                         dstImage->imageData[i * w + j] = char(tmp);
                                     }
                             }
@@ -617,11 +626,11 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
                                                     * xvalues[xksize - k - 1];
                                             }
                                         tmp >>= xKernel->nShiftR;
-                                        if (tmp > 127)
+                                        if (tmp > 127) {
                                             tmp = 127;
-                                        else
-                                            if (tmp < -128)
-                                                tmp = -128;
+                                        } else if (tmp < -128) {
+                                            tmp = -128;
+                                        }
                                         __tmp_res[i * w + j] = char(tmp);
                                     }
                             }
@@ -641,11 +650,11 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
                                                     * yvalues[yksize - k - 1];
                                             }
                                         tmp >>= yKernel->nShiftR;
-                                        if (tmp > 127)
+                                        if (tmp > 127) {
                                             tmp = 127;
-                                        else
-                                            if (tmp < -128)
-                                                tmp = -128;
+                                        } else if (tmp < -128) {
+                                            tmp = -128;
+                                        }
                                         dstImage->imageData[i * w + j] = char(tmp);
                                     }
                             }
@@ -666,10 +675,11 @@ IPLAPIIMPL(void, iplAllocateImage,(IplImage* image, int doFill, int fillValue))
     image->imageData = AllocAligned<char> (image->imageSize); // new char[image->imageSize];
     yAssert(image->imageData != nullptr);
 
-    if (image->origin == IPL_ORIGIN_TL)
+    if (image->origin == IPL_ORIGIN_TL) {
         image->imageDataOrigin = image->imageData + image->imageSize - image->widthStep;
-    else
+    } else {
         image->imageDataOrigin = image->imageData;
+    }
 
     if (doFill)
         {
@@ -698,10 +708,11 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
     image->imageData = AllocAligned<char> (image->imageSize);
     yAssert(image->imageData != nullptr);
 
-    if (image->origin == IPL_ORIGIN_TL)
+    if (image->origin == IPL_ORIGIN_TL) {
         image->imageDataOrigin = image->imageData + image->imageSize - image->widthStep;
-    else
+    } else {
         image->imageDataOrigin = image->imageData;
+    }
 
     if (doFill)
         {
@@ -727,8 +738,9 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
 
 IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image))
 {
-    if (image->imageData != nullptr)
-        FreeAligned<char> (image->imageData); ///delete[] image->imageData;
+    if (image->imageData != nullptr) {
+        FreeAligned<char>(image->imageData); ///delete[] image->imageData;
+    }
     image->imageData = nullptr;
 
     // Not allocated.
@@ -881,8 +893,9 @@ IPLAPIIMPL(void, iplCopy, (IplImage* srcImage, IplImage* dstImage))
 
 IPLAPIIMPL(void, iplDeallocateHeader,(IplImage* image))
 {
-    if (image == nullptr)
+    if (image == nullptr) {
         return;
+    }
 
     yAssert(image->nSize == sizeof(IplImage));
     if (image->imageData != nullptr)
@@ -918,12 +931,13 @@ IPLAPIIMPL(void, iplDeallocate,(IplImage* image, int flag))
 
 IPLAPIIMPL(void,iplSetBorderMode,(IplImage *src,int mode,int border,int constVal))
 {
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++) {
         if ((border >> i) & 0x1)
             {
                 src->BorderMode[i] = mode;
                 src->BorderConst[i] = constVal;
-            }
+        }
+    }
 }
 
 // this is ok only for 8 bits pixel/planes images. RGB and HSV are ok too.
@@ -941,8 +955,9 @@ IPLAPIIMPL(void, iplSetFP, (IplImage* image, float fillValue))
 
     const int size = image->imageSize / sizeof(float);
     auto* tmp = reinterpret_cast<float*>(image->imageData);
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; i++) {
         *tmp++ = fillValue;
+    }
 }
 
 // only 8 bits supported. Clipping is carried out to be ipl compatible.
@@ -965,11 +980,11 @@ IPLAPIIMPL(void, iplAddS,(IplImage* srcImage, IplImage* dstImage, int value))
                 for (int i = 0; i < size; i++)
                     {
                         tmp = *src++ + value;
-                        if (tmp < 0)
+                        if (tmp < 0) {
                             tmp = 0;
-                        else
-                            if (tmp > 255)
-                                tmp = 255;
+                        } else if (tmp > 255) {
+                            tmp = 255;
+                        }
                         *dst++ = char(tmp);
                     }
             }
@@ -986,11 +1001,11 @@ IPLAPIIMPL(void, iplAddS,(IplImage* srcImage, IplImage* dstImage, int value))
                 for (int i = 0; i < size; i++)
                     {
                         tmp = *src++ + value;
-                        if (tmp < -128)
+                        if (tmp < -128) {
                             tmp = -128;
-                        else
-                            if (tmp > 127)
-                                tmp = 127;
+                        } else if (tmp > 127) {
+                            tmp = 127;
+                        }
                         *dst++ = char(tmp);
                     }
             }
@@ -1027,8 +1042,9 @@ IPLAPIIMPL(void, iplAdd,(IplImage* srcImageA, IplImage* srcImageB,
                 for (int i = 0; i < size; i++)
                     {
                         tmp = *src1++ + *src2++;
-                        if (tmp > 255)
+                        if (tmp > 255) {
                             tmp = 255;
+                        }
                         *dst++ = char(tmp);
                     }
             }
@@ -1046,11 +1062,11 @@ IPLAPIIMPL(void, iplAdd,(IplImage* srcImageA, IplImage* srcImageB,
                 for (int i = 0; i < size; i++)
                     {
                         tmp = *src1++ + *src2++;
-                        if (tmp < -128)
+                        if (tmp < -128) {
                             tmp = -128;
-                        else
-                            if (tmp > 127)
-                                tmp = 127;
+                        } else if (tmp > 127) {
+                            tmp = 127;
+                        }
                         *dst++ = char(tmp);
                     }
             }
@@ -1098,10 +1114,12 @@ IPLAPIIMPL(void, iplSubtract,(IplImage* srcImageA, IplImage* srcImageB,
                 for (int i = 0; i < size; i++)
                     {
                         tmp = *src1++ - *src2++;
-                        if (tmp < 0)
+                        if (tmp < 0) {
                             tmp = 0;
-                        if (tmp > 255)
+                        }
+                        if (tmp > 255) {
                             tmp = 255;
+                        }
                         *dst++ = char(tmp);
                     }
             }
@@ -1119,11 +1137,11 @@ IPLAPIIMPL(void, iplSubtract,(IplImage* srcImageA, IplImage* srcImageB,
                 for (int i = 0; i < size; i++)
                     {
                         tmp = *src1++ - *src2++;
-                        if (tmp < -128)
+                        if (tmp < -128) {
                             tmp = -128;
-                        else
-                            if (tmp > 127)
-                                tmp = 127;
+                        } else if (tmp > 127) {
+                            tmp = 127;
+                        }
                         *dst++ = char(tmp);
                     }
             }
@@ -1166,16 +1184,17 @@ IPLAPIIMPL(void, iplSubtractS,(IplImage* srcImage, IplImage* dstImage, int value
 
                 for (int i = 0; i < size; i++)
                     {
-                        if (flip)
-                            tmp = value - *src++;
-                        else
-                            tmp = *src++ - value;
+                    if (flip) {
+                        tmp = value - *src++;
+                    } else {
+                        tmp = *src++ - value;
+                    }
 
-                        if (tmp < 0)
-                            tmp = 0;
-                        else
-                            if (tmp > 255)
-                                tmp = 255;
+                    if (tmp < 0) {
+                        tmp = 0;
+                    } else if (tmp > 255) {
+                        tmp = 255;
+                    }
                         *dst++ = char(tmp);
                     }
             }
@@ -1191,16 +1210,17 @@ IPLAPIIMPL(void, iplSubtractS,(IplImage* srcImage, IplImage* dstImage, int value
 
                 for (int i = 0; i < size; i++)
                     {
-                        if (flip)
-                            tmp = value - *src++;
-                        else
-                            tmp = *src++ - value;
+                    if (flip) {
+                        tmp = value - *src++;
+                    } else {
+                        tmp = *src++ - value;
+                    }
 
-                        if (tmp < -128)
-                            tmp = -128;
-                        else
-                            if (tmp > 127)
-                                tmp = 127;
+                    if (tmp < -128) {
+                        tmp = -128;
+                    } else if (tmp > 127) {
+                        tmp = 127;
+                    }
                         *dst++ = char(tmp);
                     }
             }
@@ -1247,10 +1267,11 @@ IPLAPIIMPL(void, iplAbs,(IplImage* srcImage, IplImage* dstImage))
 
                 for (int i = 0; i < size; i++)
                     {
-                        if (*src < 0)
-                            *dst++ = -*src++;
-                        else
-                            *dst++ = *src++;
+                    if (*src < 0) {
+                        *dst++ = -*src++;
+                    } else {
+                        *dst++ = *src++;
+                    }
                     }
             }
             break;
@@ -1274,10 +1295,11 @@ IPLAPIIMPL(void, iplThreshold, (IplImage* srcImage, IplImage* dstImage, int thre
 
                 for (int i = 0; i < size; i++)
                     {
-                        if (*src++ < threshold)
-                            *dst++ = 0;
-                        else
-                            *dst++ = 255;
+                    if (*src++ < threshold) {
+                        *dst++ = 0;
+                    } else {
+                        *dst++ = 255;
+                    }
                     }
             }
             break;
@@ -1290,10 +1312,11 @@ IPLAPIIMPL(void, iplThreshold, (IplImage* srcImage, IplImage* dstImage, int thre
 
                 for (int i = 0; i < size; i++)
                     {
-                        if (*src++ < threshold)
-                            *dst++ = -128;
-                        else
-                            *dst++ = 127;
+                    if (*src++ < threshold) {
+                        *dst++ = -128;
+                    } else {
+                        *dst++ = 127;
+                    }
                     }
             }
             break;
@@ -1373,27 +1396,30 @@ IPLAPIIMPL(void, iplRGB2HSV,(IplImage* rgbImage, IplImage* hsvImage))
             if (red > green && red > blue)
                 {
                     max = red;
-                    if (green > blue)
+                    if (green > blue) {
                         min = blue;
-                    else
+                    } else {
                         min = green;
+                    }
                 }
             else
                 if (green > red && green > blue)
                     {
                         max = green;
-                        if (red > blue)
+                        if (red > blue) {
                             min = blue;
-                        else
+                        } else {
                             min = red;
+                        }
                     }
                 else
                     {
                         max = blue;
-                        if (red > green)
+                        if (red > green) {
                             min = green;
-                        else
+                        } else {
                             min = red;
+                        }
                     }
 
             // value
@@ -1404,42 +1430,42 @@ IPLAPIIMPL(void, iplRGB2HSV,(IplImage* rgbImage, IplImage* hsvImage))
             if (max != 0.0)
                 {
                     sat = *ddata1 = (unsigned char)(255 * (max - min) / max);
-                }
-            else
+            } else {
                 sat = *ddata1 = 0;
+            }
             ddata1 += 3;
 
             // hue
-            if (sat == 0)
+            if (sat == 0) {
                 *ddata0 = 0;
-            else
-                {
-                    double rc = (max - red) / (max - min);
-                    double gc = (max - green) / (max - min);
-                    double bc = (max - blue) / (max - min);
-                    if (red == max)
-                        hue = bc - gc;
-                    else
-                        if (green == max)
-                            hue = 2 + rc - bc;
-                        else
-                            if (blue == max)
-                                hue = 4 + gc - rc;
-
-                    hue *= 60.0;
-                    if (hue < 0.0)
-                        hue += 360.0;
-
-                    yAssert(hue >= 0.0 && hue < 360.0);
-                    // IPL 2.5 compatibility. Scaling to 0-255
-                    // there's a little chance that the value rounds to 256.0!
-                    // need clipping rather than truncation.
-                    hue = (hue / 360.0 * 256.0);
-                    if (hue == 256.0)
-                        hue = 255.0;
-
-                    *ddata0 = (unsigned char)(hue);
+            } else {
+                double rc = (max - red) / (max - min);
+                double gc = (max - green) / (max - min);
+                double bc = (max - blue) / (max - min);
+                if (red == max) {
+                    hue = bc - gc;
+                } else if (green == max) {
+                    hue = 2 + rc - bc;
+                } else if (blue == max) {
+                    hue = 4 + gc - rc;
                 }
+
+                hue *= 60.0;
+                if (hue < 0.0) {
+                    hue += 360.0;
+                }
+
+                yAssert(hue >= 0.0 && hue < 360.0);
+                // IPL 2.5 compatibility. Scaling to 0-255
+                // there's a little chance that the value rounds to 256.0!
+                // need clipping rather than truncation.
+                hue = (hue / 360.0 * 256.0);
+                if (hue == 256.0) {
+                    hue = 255.0;
+                }
+
+                *ddata0 = (unsigned char)(hue);
+            }
 
             ddata0 += 3;
         }

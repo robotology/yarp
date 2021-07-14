@@ -15,8 +15,12 @@ YARP_LOG_COMPONENT(MAP2DLOCATION, "yarp.Map2DLocation")
 
 bool Map2DLocation::is_near_to(const Map2DLocation& other_loc, double linear_tolerance, double angular_tolerance) const
 {
-    if (linear_tolerance < 0) return false;
-    if (angular_tolerance < 0) return false;
+    if (linear_tolerance < 0) {
+        return false;
+    }
+    if (angular_tolerance < 0) {
+        return false;
+    }
     yCAssert(MAP2DLOCATION, linear_tolerance >= 0);
     yCAssert(MAP2DLOCATION, angular_tolerance >= 0);
 

@@ -90,7 +90,9 @@ bool BatteryWrapper::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     // parse in, prepare out
     int code = in.get(0).asVocab32();
@@ -247,27 +249,37 @@ void BatteryWrapper::run()
         {
             double tmp;
             ret_chg = m_ibattery_p->getBatteryCharge(tmp);
-            if (ret_chg) m_battery_charge = tmp;
+            if (ret_chg) {
+                m_battery_charge = tmp;
+            }
         }
         {
             double tmp;
             ret_vlt = m_ibattery_p->getBatteryVoltage(tmp);
-            if (ret_vlt) m_battery_voltage = tmp;
+            if (ret_vlt) {
+                m_battery_voltage = tmp;
+            }
         }
         {
             double tmp;
             ret_cur = m_ibattery_p->getBatteryCurrent(tmp);
-            if (ret_cur) m_battery_current = tmp;
+            if (ret_cur) {
+                m_battery_current = tmp;
+            }
         }
         {
             double tmp;
             ret_tmp = m_ibattery_p->getBatteryTemperature(tmp);
-            if (ret_tmp) m_battery_temperature = tmp;
+            if (ret_tmp) {
+                m_battery_temperature = tmp;
+            }
         }
         {
             IBattery::Battery_status tmp;
             ret_sts = m_ibattery_p->getBatteryStatus(tmp);
-            if (ret_sts) m_battery_status = tmp;
+            if (ret_sts) {
+                m_battery_status = tmp;
+            }
         }
 
         if (ret_sts)
@@ -284,7 +296,9 @@ void BatteryWrapper::run()
             m_streamingPort.write();
 
             // if the battery is not charging, checks its status of charge
-            if (m_battery_status >0.4) check_battery_status(m_battery_charge);
+            if (m_battery_status > 0.4) {
+                check_battery_status(m_battery_charge);
+            }
 
             // save data to file
             if (m_enable_log)

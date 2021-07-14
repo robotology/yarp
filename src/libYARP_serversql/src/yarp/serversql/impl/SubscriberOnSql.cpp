@@ -192,7 +192,9 @@ bool SubscriberOnSql::addSubscription(const std::string& src,
     }
     char *msg = nullptr;
     const char *zmode = mode.c_str();
-    if (mode == "") zmode = nullptr;
+    if (mode == "") {
+        zmode = nullptr;
+    }
     char *query = sqlite3_mprintf("INSERT INTO subscriptions (src,dest,srcFull,destFull,mode) VALUES(%Q,%Q,%Q,%Q,%Q)",
                                   psrc.getPortName().c_str(),
                                   pdest.getPortName().c_str(),
@@ -570,8 +572,12 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
         }
         sqlite3_free(query);
         mutex.unlock();
-        if (!ok) return false;
-        if (!active) return true;
+        if (!ok) {
+            return false;
+        }
+        if (!active) {
+            return true;
+        }
     }
 
     bool have_topic = false;
@@ -599,7 +605,9 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
         mutex.lock();
         char *msg = nullptr;
         const char *pstructure = structure.c_str();
-        if (structure=="") pstructure = nullptr;
+        if (structure == "") {
+            pstructure = nullptr;
+        }
         char *query = sqlite3_mprintf("INSERT INTO topics (topic,structure) VALUES(%Q,%Q)",
                                       port.c_str(),pstructure);
         yCDebug(SUBSCRIBERONSQL, "Query: %s", query);
@@ -615,7 +623,9 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
         }
         sqlite3_free(query);
         mutex.unlock();
-        if (!ok) return false;
+        if (!ok) {
+            return false;
+        }
     }
 
     vector<vector<std::string> > subs;

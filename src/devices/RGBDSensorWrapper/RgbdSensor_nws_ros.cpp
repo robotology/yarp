@@ -56,8 +56,9 @@ bool RgbdSensor_nws_ros::open(yarp::os::Searchable &config)
     }
     if (!config.check("period", "refresh period of the broadcasted values in ms"))
     {
-        if(verbose >= 3)
+        if (verbose >= 3) {
             yCInfo(RGBDSENSORNWSROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
+        }
     }
     else
     {
@@ -96,8 +97,9 @@ bool RgbdSensor_nws_ros::open(yarp::os::Searchable &config)
     }
     else
     {
-        if(!openDeferredAttach(config))
+        if (!openDeferredAttach(config)) {
             return false;
+        }
     }
 
     return true;
@@ -262,12 +264,14 @@ std::string RgbdSensor_nws_ros::getId()
 
 bool RgbdSensor_nws_ros::detach()
 {
-    if (yarp::os::PeriodicThread::isRunning())
+    if (yarp::os::PeriodicThread::isRunning()) {
         yarp::os::PeriodicThread::stop();
+    }
 
     //check if we already instantiated a subdevice previously
-    if (isSubdeviceOwned)
+    if (isSubdeviceOwned) {
         return false;
+    }
 
     sensor_p = nullptr;
     return true;

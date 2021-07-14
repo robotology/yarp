@@ -150,12 +150,15 @@ depthCameraDriver::depthCameraDriver() : m_depthFrame(nullptr), m_imageFrame(nul
 depthCameraDriver::~depthCameraDriver()
 {
     close();
-    if (m_depthFrame)
+    if (m_depthFrame) {
         delete m_depthFrame;
-    if (m_imageFrame)
+    }
+    if (m_imageFrame) {
         delete m_imageFrame;
-    if (m_paramParser)
+    }
+    if (m_paramParser) {
         delete m_paramParser;
+    }
 }
 
 bool depthCameraDriver::initializeOpeNIDevice()
@@ -252,24 +255,29 @@ bool depthCameraDriver::setParams()
     //ACCURACY
     if (params_map[accuracy].isSetting && ret)
     {
-        if (!params_map[accuracy].val[0].isFloat64() )
+        if (!params_map[accuracy].val[0].isFloat64()) {
             settingErrorMsg("Param " + params_map[accuracy].name + " is not a double as it should be.", ret);
+        }
 
-        if (! setDepthAccuracy(params_map[accuracy].val[0].asFloat64() ) )
+        if (!setDepthAccuracy(params_map[accuracy].val[0].asFloat64())) {
             settingErrorMsg("Setting param " + params_map[accuracy].name + " failed... quitting.", ret);
+        }
     }
 
     //CLIP_PLANES
     if (params_map[clipPlanes].isSetting && ret)
     {
-        if (!params_map[clipPlanes].val[0].isFloat64() )
+        if (!params_map[clipPlanes].val[0].isFloat64()) {
             settingErrorMsg("Param " + params_map[clipPlanes].name + " is not a double as it should be.", ret);
+        }
 
-        if (!params_map[clipPlanes].val[1].isFloat64() )
+        if (!params_map[clipPlanes].val[1].isFloat64()) {
             settingErrorMsg("Param " + params_map[clipPlanes].name + " is not a double as it should be.", ret);
+        }
 
-        if (! setDepthClipPlanes(params_map[clipPlanes].val[0].asFloat64(), params_map[clipPlanes].val[1].asFloat64() ) )
+        if (!setDepthClipPlanes(params_map[clipPlanes].val[0].asFloat64(), params_map[clipPlanes].val[1].asFloat64())) {
             settingErrorMsg("Setting param " + params_map[clipPlanes].name + " failed... quitting.", ret);
+        }
     }
 
     //DEPTH_FOV
@@ -279,11 +287,13 @@ bool depthCameraDriver::setParams()
         p1 = params_map[depth_Fov].val[0];
         p2 = params_map[depth_Fov].val[1];
 
-        if (!p1.isFloat64() || !p2.isFloat64() )
+        if (!p1.isFloat64() || !p2.isFloat64()) {
             settingErrorMsg("Param " + params_map[depth_Fov].name + " is not a double as it should be.", ret);
+        }
 
-        if (! setDepthFOV(p1.asFloat64(), p2.asFloat64() ) )
+        if (!setDepthFOV(p1.asFloat64(), p2.asFloat64())) {
             settingErrorMsg("Setting param " + params_map[depth_Fov].name + " failed... quitting.", ret);
+        }
     }
 
 

@@ -103,8 +103,9 @@ ErrorLogger* ErrorLogger::Instance()
 }
 
 void ErrorLogger::addWarning(const char* szWarning) {
-    if(szWarning)
+    if (szWarning) {
         warnings.emplace_back(szWarning);
+    }
 }
 
 void ErrorLogger::addWarning(const string &str) {
@@ -116,8 +117,9 @@ void ErrorLogger::addWarning(OSTRINGSTREAM &stream) {
 }
 
 void ErrorLogger::addError(const char* szError) {
-    if(szError)
+    if (szError) {
         errors.emplace_back(szError);
+    }
 }
 
 void ErrorLogger::addError(const string &str) {
@@ -129,8 +131,9 @@ void ErrorLogger::addError(OSTRINGSTREAM &stream) {
 }
 
 const char* ErrorLogger::getLastError() {
-    if(errors.empty())
+    if (errors.empty()) {
         return nullptr;
+    }
     static string msg;
     msg = errors.back();
     errors.pop_back();
@@ -140,14 +143,16 @@ const char* ErrorLogger::getLastError() {
 const char* ErrorLogger::getFormatedErrorString() {
     static string msgs;
     char* err;
-    while((err=(char*)getLastError()) != nullptr)
+    while ((err = (char*)getLastError()) != nullptr) {
         msgs += string(err) + " ";
+    }
     return msgs.c_str();
 }
 
 const char* ErrorLogger::getLastWarning() {
-    if(warnings.empty())
+    if (warnings.empty()) {
         return nullptr;
+    }
     static string msg;
     msg = warnings.back();
     warnings.pop_back();
@@ -157,8 +162,9 @@ const char* ErrorLogger::getLastWarning() {
 const char* ErrorLogger::getFormatedWarningString() {
     static string msgs;
     char* err;
-    while((err=(char*)getLastWarning()) != nullptr)
+    while ((err = (char*)getLastWarning()) != nullptr) {
         msgs += string(err) + " ";
+    }
     return msgs.c_str();
 }
 
@@ -288,12 +294,15 @@ OS yarp::manager::strToOS(const char* szOS)
 {
     if(szOS)
     {
-        if(compareString(szOS, "LINUX"))
+        if (compareString(szOS, "LINUX")) {
             return LINUX;
-        if (compareString(szOS, "WINDOWS"))
+        }
+        if (compareString(szOS, "WINDOWS")) {
             return WINDOWS;
-        if (compareString(szOS, "MAC"))
+        }
+        if (compareString(szOS, "MAC")) {
             return MAC;
+        }
     }
     return OTHER;
 }
@@ -301,10 +310,12 @@ OS yarp::manager::strToOS(const char* szOS)
 
 bool yarp::manager::compareString(const char* szFirst, const char* szSecond)
 {
-    if(!szFirst && !szSecond)
+    if (!szFirst && !szSecond) {
         return true;
-    if( !szFirst || !szSecond)
+    }
+    if (!szFirst || !szSecond) {
         return false;
+    }
 
     string strFirst(szFirst);
     string strSecond(szSecond);
@@ -312,8 +323,9 @@ bool yarp::manager::compareString(const char* szFirst, const char* szSecond)
               (int(*)(int))toupper);
     transform(strSecond.begin(), strSecond.end(), strSecond.begin(),
               (int(*)(int))toupper);
-    if(strFirst == strSecond)
+    if (strFirst == strSecond) {
         return true;
+    }
     return false;
 }
 
@@ -324,10 +336,12 @@ void yarp::manager::trimString(string& str)
     {
         str.erase(pos + 1);
         pos = str.find_first_not_of(' ');
-        if(pos != string::npos)
+        if (pos != string::npos) {
             str.erase(0, pos);
+        }
+    } else {
+        str.erase(str.begin(), str.end());
     }
-    else str.erase(str.begin(), str.end());
 }
 
 
@@ -335,8 +349,9 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
 {
     ofstream dot;
     dot.open(szFileName);
-    if(!dot.is_open())
+    if (!dot.is_open()) {
         return false;
+    }
 
     dot<<"digraph G {"<<endl;
     dot<<"rankdir=LR;"<<endl;
@@ -357,11 +372,11 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                         auto* in = (InputData*)l.to();
                         dot<<"\""<<mod->getLabel()<<"\" -> ";
                         dot<<"\""<<in->getLabel()<<"\"";
-                        if(!l.isVirtual())
+                        if (!l.isVirtual()) {
                             dot<<" [label=\"\"];"<<endl;
-                        else
-                            dot<<" [label=\"\" style=dashed];"<<endl;
-
+                        } else {
+                            dot << " [label=\"\" style=dashed];" << endl;
+                        }
                     }
 
                     break;
@@ -385,10 +400,11 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                         auto* out = (OutputData*)l.to();
                         dot<<"\""<<in->getLabel()<<"\" -> ";
                         dot<<"\""<<out->getLabel()<<"\"";
-                        if(!l.isVirtual())
+                        if (!l.isVirtual()) {
                             dot<<" [label=\""<<l.weight()<<"\"];"<<endl;
-                        else
-                            dot<<" [label=\""<<l.weight()<<"\" style=dashed];"<<endl;
+                        } else {
+                            dot << " [label=\"" << l.weight() << "\" style=dashed];" << endl;
+                        }
                     }
 
                     break;
@@ -421,10 +437,11 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                         auto* mod = (Module*)l.to();
                         dot<<"\""<<app->getLabel()<<"\" -> ";
                         dot<<"\""<<mod->getLabel()<<"\"";
-                        if(!l.isVirtual())
+                        if (!l.isVirtual()) {
                             dot<<" [label=\"\"];"<<endl;
-                        else
-                            dot<<" [label=\"\" style=dashed];"<<endl;
+                        } else {
+                            dot << " [label=\"\" style=dashed];" << endl;
+                        }
                     }
                     break;
             }
@@ -432,10 +449,11 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
             case RESOURCE:{
                     auto* res = (GenericResource*)(*itr);
                     dot<<"\""<<res->getLabel()<<"\"";
-                    if(res->owner())
+                    if (res->owner()) {
                         dot<<" [shape=rect, color=black, fillcolor=salmon, peripheries=1, style=filled ";
-                    else
-                        dot<<" [shape=house, color=maroon, fillcolor=indianred, peripheries=1, style=filled, penwidth=2";
+                    } else {
+                        dot << " [shape=house, color=maroon, fillcolor=indianred, peripheries=1, style=filled, penwidth=2";
+                    }
                     dot<<" label=\""<<res->getName()<<"\""<<"];"<<endl;
                     for(int i=0; i<res->sucCount(); i++)
                     {

@@ -99,7 +99,9 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             for( i=0; i<framesToCalc; i++ )
             {
                 recdata->write(0); // left
-                if(num_rec_channels == 2 ) recdata->write(0);  // right
+                if (num_rec_channels == 2) {
+                    recdata->write(0); // right
+                }
             }
         }
         else
@@ -108,7 +110,9 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             for( i=0; i<framesToCalc; i++ )
             {
                 recdata->write(*rptr++);  // left
-                if(num_rec_channels == 2 ) recdata->write(*rptr++);  // right
+                if (num_rec_channels == 2) {
+                    recdata->write(*rptr++); // right
+                }
             }
         }
         //note: you can record or play but not simultaneously (for now)
@@ -133,13 +137,19 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             for( i=0; i<framesLeft/ num_play_channels; i++ )
             {
                 *wptr++ = playdata->read();  // left
-                if( num_play_channels == 2 ) *wptr++ = playdata->read();  // right
-                for (int chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
+                if (num_play_channels == 2) {
+                    *wptr++ = playdata->read(); // right
+                }
+                for (int chs = 2; chs < num_play_channels; chs++) {
+                    playdata->read(); //remove all additional channels > 2
+                }
             }
             for( ; i<framesPerBuffer; i++ )
             {
                 *wptr++ = 0;  // left
-                if(num_play_channels == 2 ) *wptr++ = 0;  // right
+                if (num_play_channels == 2) {
+                    *wptr++ = 0; // right
+                }
             }
 #ifdef STOP_PLAY_ON_EMPTY_BUFFER
             //if we return paComplete, then the callback is not called anymore.
@@ -158,8 +168,12 @@ static int bufferIOCallback( const void *inputBuffer, void *outputBuffer,
             for( i=0; i<framesPerBuffer; i++ )
             {
                 *wptr++ = playdata->read();  // left
-                if( num_play_channels == 2 ) *wptr++ = playdata->read();  // right
-                for (int chs=2; chs<num_play_channels; chs++) playdata->read(); //remove all additional channels > 2
+                if (num_play_channels == 2) {
+                    *wptr++ = playdata->read(); // right
+                }
+                for (int chs = 2; chs < num_play_channels; chs++) {
+                    playdata->read(); //remove all additional channels > 2
+                }
             }
             //if we return paContinue, then the callback will be invoked again later
             //method Pa_IsStreamActive() will return 0
@@ -240,18 +254,25 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config)
     bool wantWrite = config.wantWrite;
     int deviceNumber = config.deviceNumber;
 
-    if (playChannels==0) playChannels = DEFAULT_NUM_CHANNELS;
-    if (recChannels == 0) recChannels = DEFAULT_NUM_CHANNELS;
+    if (playChannels == 0) {
+        playChannels = DEFAULT_NUM_CHANNELS;
+    }
+    if (recChannels == 0) {
+        recChannels = DEFAULT_NUM_CHANNELS;
+    }
     m_numPlaybackChannels = playChannels;
     m_numRecordChannels = recChannels;
 
-    if (rate==0) rate = DEFAULT_SAMPLE_RATE;
+    if (rate == 0) {
+        rate = DEFAULT_SAMPLE_RATE;
+    }
     m_frequency = rate;
 
-    if (samples==0)
+    if (samples == 0) {
         numSamples = m_frequency; //  by default let's stream chunks of 1 second
-    else
+    } else {
         numSamples = samples;
+    }
 
 //     size_t numPlayBytes = numSamples * sizeof(SAMPLE) * m_numPlaybackChannels;
 //     size_t numRecBytes = numSamples * sizeof(SAMPLE) * m_numRecordChannels;
@@ -260,12 +281,18 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config)
     AudioBufferSize rec_buffer_size (numSamples, m_numRecordChannels, sizeof(SAMPLE));
     dataBuffers.numPlayChannels = m_numPlaybackChannels;
     dataBuffers.numRecChannels = m_numRecordChannels;
-    if (dataBuffers.playData==nullptr)
+    if (dataBuffers.playData == nullptr) {
         dataBuffers.playData = new CircularAudioBuffer_16t("portatudio_play", playback_buffer_size);
-    if (dataBuffers.recData==nullptr)
+    }
+    if (dataBuffers.recData == nullptr) {
         dataBuffers.recData = new CircularAudioBuffer_16t("portatudio_rec", rec_buffer_size);
-    if (wantRead) dataBuffers.canRec = true;
-    if (wantWrite) dataBuffers.canPlay = true;
+    }
+    if (wantRead) {
+        dataBuffers.canRec = true;
+    }
+    if (wantWrite) {
+        dataBuffers.canPlay = true;
+    }
 
     err = Pa_Initialize();
     if( err != paNoError )
@@ -424,12 +451,13 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound, size_t min_number_
     }
     sound.setFrequency(this->m_frequency);
 
-    for (size_t i=0; i<this->numSamples; i++)
+    for (size_t i = 0; i < this->numSamples; i++) {
         for (size_t j=0; j<this->m_numRecordChannels; j++)
         {
             SAMPLE s = dataBuffers.recData->read();
             sound.set(s,i,j);
         }
+    }
     return true;
 }
 
@@ -527,9 +555,11 @@ bool PortAudioDeviceDriver::immediateSound(const yarp::sig::Sound& sound)
     size_t num_channels = sound.getChannels();
     size_t num_samples = sound.getSamples();
 
-    for (size_t i=0; i<num_samples; i++)
-        for (size_t j=0; j<num_channels; j++)
-            dataBuffers.playData->write (sound.get(i,j));
+    for (size_t i = 0; i < num_samples; i++) {
+        for (size_t j = 0; j < num_channels; j++) {
+            dataBuffers.playData->write(sound.get(i, j));
+        }
+    }
 
     pThread.something_to_play = true;
     return true;
@@ -563,10 +593,11 @@ bool PortAudioDeviceDriver::renderSound(const yarp::sig::Sound& sound)
         }
     }
 
-    if (renderMode == RENDER_IMMEDIATE)
+    if (renderMode == RENDER_IMMEDIATE) {
         return immediateSound(sound);
-    else if (renderMode == RENDER_APPEND)
+    } else if (renderMode == RENDER_APPEND) {
         return appendSound(sound);
+    }
 
     return false;
 }
@@ -577,9 +608,11 @@ bool PortAudioDeviceDriver::appendSound(const yarp::sig::Sound& sound)
     size_t num_channels = sound.getChannels();
     size_t num_samples = sound.getSamples();
 
-    for (size_t i=0; i<num_samples; i++)
-        for (size_t j=0; j<num_channels; j++)
-            dataBuffers.playData->write (sound.get(i,j));
+    for (size_t i = 0; i < num_samples; i++) {
+        for (size_t j = 0; j < num_channels; j++) {
+            dataBuffers.playData->write(sound.get(i, j));
+        }
+    }
 
     pThread.something_to_play = true;
     return true;

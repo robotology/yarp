@@ -48,15 +48,17 @@ public:
         {
             v.clear();
             int k=0;
-            for(k=0;k<10;k++)
+            for (k = 0; k < 10; k++) {
                 v.push_back(3.14159265);
+            }
 
             portOut->write(v);
             Time::delay(0.1);
             v.clear();
 
-            for(k=0;k<5;k++)
+            for (k = 0; k < 5; k++) {
                 v.push_back(k);
+            }
 
             portOut->write(v);
         }
@@ -95,22 +97,26 @@ public:
 
             int k;
             int s=(int)v.size();
-            if (s!=10)
-                ok=false;
+            if (s != 10) {
+                ok = false;
+            }
             for(k=0;k<s;k++)
             {
-                if (v[k]!=3.14159265)
-                    ok=false;
+                if (v[k] != 3.14159265) {
+                    ok = false;
+                }
             }
 
             portIn->read(v);
             s=(int)v.size();
-            if (s!=5)
-                ok=false;
+            if (s != 5) {
+                ok = false;
+            }
             for(k=0;k<s;k++)
             {
-                if (v[k]!=k)
-                    ok=false;
+                if (v[k] != k) {
+                    ok = false;
+                }
             }
 
         }
@@ -128,14 +134,17 @@ bool checkConsistency(Vector &a) {
     tmp = (gsl_vector *)(tmpGSL.getGslVector());
 
     bool ret=true;
-    if ((int)tmp->size!=(int)a.size())
-        ret=false;
+    if ((int)tmp->size != (int)a.size()) {
+        ret = false;
+    }
 
-    if (tmp->data!=a.data())
-        ret=false;
+    if (tmp->data != a.data()) {
+        ret = false;
+    }
 
-    if (tmp->block->data!=a.data())
-        ret=false;
+    if (tmp->block->data != a.data()) {
+        ret = false;
+    }
 
     return ret;
 }
@@ -160,8 +169,9 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         b.resize(100);
         CHECK(checkConsistency(b)); // gsldata consistent after resize
 
-        for(int k=0;k<100;k++)
+        for (int k = 0; k < 100; k++) {
             a.push_back(1.0);
+        }
 
         checkConsistency(a);
         CHECK(checkConsistency(a)); // gsldata consistent after push
@@ -242,8 +252,9 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         CHECK((int)v.size() == (int)v2.size()); // size matches
 
         bool ok=true;
-        for (int k=0; k<4; k++)
-            ok=ok&&(v2[k]==v[k]);
+        for (int k = 0; k < 4; k++) {
+            ok = ok && (v2[k] == v[k]);
+        }
 
         CHECK(ok); // elements match
 
@@ -266,8 +277,9 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         CHECK((int)v.size() == (int)v2.size()); // size matches
 
         bool ok=true;
-        for (int k=0; k<4; k++)
-            ok=ok&&(v2[k]==v[k]);
+        for (int k = 0; k < 4; k++) {
+            ok = ok && (v2[k] == v[k]);
+        }
 
         CHECK(ok); // elements match
 
@@ -291,13 +303,15 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         v2=1; //now we have to identical vectors
 
         bool ok=false;
-        if (v1==v2)
-            ok=true;
+        if (v1 == v2) {
+            ok = true;
+        }
 
         v1=2;
         v2=1; //now vectors are different
-        if (v1==v2)
-            ok=false;
+        if (v1 == v2) {
+            ok = false;
+        }
 
         CHECK(ok); // operator== for vectors works
     }
@@ -308,34 +322,39 @@ TEST_CASE("sig::VectorTest", "[yarp::sig]")
         ones.resize(10, 1.1);
 
         bool ok=true;
-        for(unsigned int k=0; k<ones.size(); k++)
-            ok=ok&&(ones[k]==1.1);
+        for (unsigned int k = 0; k < ones.size(); k++) {
+            ok = ok && (ones[k] == 1.1);
+        }
 
         CHECK(ok); // resize(int, double) works
 
         ones.resize(15);
         // fill new values
-        for(unsigned int k=10; k<ones.size(); k++)
-            ones[k]=1.1;
+        for (unsigned int k = 10; k < ones.size(); k++) {
+            ones[k] = 1.1;
+        }
 
         ok=true;
-        for(unsigned int k=0; k<ones.size(); k++)
-            ok=ok&&(ones[k]==1.1);
+        for (unsigned int k = 0; k < ones.size(); k++) {
+            ok = ok && (ones[k] == 1.1);
+        }
 
         CHECK(ok); // resize(int) works
 
         ones.resize(9);
         ok=true;
-        for(unsigned int k=0; k<ones.size(); k++)
-            ok=ok&&(ones[k]==1.1);
+        for (unsigned int k = 0; k < ones.size(); k++) {
+            ok = ok && (ones[k] == 1.1);
+        }
 
         CHECK(ok); // resizing to smaller vector
 
         ones.resize(10, 42.42);
 
         ok=true;
-        for(unsigned int k=0; k<ones.size(); k++)
-            ok=ok&&(ones[k]==42.42);
+        for (unsigned int k = 0; k < ones.size(); k++) {
+            ok = ok && (ones[k] == 42.42);
+        }
 
         CHECK(ok); // resize(int, double) works
     }

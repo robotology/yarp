@@ -92,8 +92,9 @@ void ClusterWidget::init()
     {
         addRow(node.name, node.displayValue, node.user, node.address, node.onOff, node.log, i);
         i++;
-        if (cluster.nsNode == node.name)
+        if (cluster.nsNode == node.name) {
             continue;
+        }
         l.push_back(node.name.c_str());
     }
 
@@ -432,10 +433,11 @@ void ClusterWidget::onNodeSelectionChanged()
 
 void ClusterWidget::onExecuteTextChanged()
 {
-    if (ui->lineEditExecute->text().trimmed().size() > 0)
+    if (ui->lineEditExecute->text().trimmed().size() > 0) {
         ui->executeBtn->setDisabled(false);
-    else
+    } else {
         ui->executeBtn->setDisabled(true);
+    }
 }
 
 

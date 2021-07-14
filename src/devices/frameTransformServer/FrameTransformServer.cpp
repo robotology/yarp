@@ -33,7 +33,9 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
     yarp::os::Bottle in;
     yarp::os::Bottle out;
     bool ok = in.read(connection);
-    if (!ok) return false;
+    if (!ok) {
+        return false;
+    }
 
     string request = in.get(0).asString();
     if (request == "help")

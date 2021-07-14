@@ -228,8 +228,9 @@ GstFlowReturn new_sample(GstAppSink *appsink, gpointer user_data)
     gst_buffer_unmap(buffer, &map);
 
     gst_sample_unref(sample);
-    if(dec_data->isReq)
+    if (dec_data->isReq) {
         dec_data->s->post();
+    }
 
 
 #ifdef debug_time
