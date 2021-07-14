@@ -6,6 +6,8 @@
 #include <yarp/os/AbstractContactable.h>
 #include <yarp/os/Type.h>
 
+#include <functional>
+
 bool yarp::os::AbstractContactable::open(const std::string& name)
 {
     return asPort().open(name);
@@ -78,12 +80,12 @@ int yarp::os::AbstractContactable::getOutputCount()
     return asPort().getOutputCount();
 }
 
-void yarp::os::AbstractContactable::getReport(PortReport& reporter)
+void yarp::os::AbstractContactable::getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter)
 {
     asPort().getReport(reporter);
 }
 
-void yarp::os::AbstractContactable::setReporter(PortReport& reporter)
+void yarp::os::AbstractContactable::setReporter(const std::function<void(const yarp::os::PortInfo&)>& reporter)
 {
     asPort().setReporter(reporter);
 }

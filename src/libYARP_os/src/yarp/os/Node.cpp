@@ -13,7 +13,6 @@
 #include <yarp/os/Os.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/PortInfo.h>
-#include <yarp/os/PortReport.h>
 #include <yarp/os/RosNameSpace.h>
 #include <yarp/os/Type.h>
 #include <yarp/os/impl/LogComponent.h>
@@ -23,8 +22,8 @@
 #include <cstdlib>
 #include <list>
 #include <map>
-#include <vector>
 #include <mutex>
+#include <vector>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -33,30 +32,6 @@ namespace {
 YARP_OS_LOG_COMPONENT(NODE, "yarp.os.Node")
 }
 
-
-class ROSReport : public PortReport
-{
-public:
-    std::multimap<std::string, std::string> outgoingURIs;
-    std::multimap<std::string, std::string> incomingURIs;
-
-    ROSReport() = default;
-
-    void report(const PortInfo& info) override
-    {
-        if (info.tag == PortInfo::PORTINFO_CONNECTION) {
-            NameClient& nic = NameClient::getNameClient();
-            Contact c;
-            if (info.incoming) {
-                c = RosNameSpace::rosify(nic.queryName(info.sourceName));
-                incomingURIs.insert(std::make_pair(info.portName, c.toURI()));
-            } else {
-                c = RosNameSpace::rosify(nic.queryName(info.targetName));
-                outgoingURIs.insert(std::make_pair(info.portName, c.toURI()));
-            }
-        }
-    }
-};
 
 static std::string toRosName(const std::string& str)
 {
@@ -251,9 +226,10 @@ public:
     void getBusInfo(NodeArgs& na)
     {
         unsigned int opaque_id = 1;
-        ROSReport report;
         Value v;
         Bottle* connections = v.asList();
+
+        std::multimap<std::string, std::string> outgoingURIs, incomingURIs;
 
         mutex.lock();
         for (auto& it : by_part_name) {
@@ -262,11 +238,23 @@ public:
                 continue;
             }
             item.update();
-            item.contactable->getReport(report);
+            item.contactable->getReport([&outgoingURIs, &incomingURIs](const PortInfo& info) {
+                if (info.tag == PortInfo::PORTINFO_CONNECTION) {
+                    NameClient& nic = NameClient::getNameClient();
+                    Contact c;
+                    if (info.incoming) {
+                        c = RosNameSpace::rosify(nic.queryName(info.sourceName));
+                        incomingURIs.insert(std::make_pair(info.portName, c.toURI()));
+                    } else {
+                        c = RosNameSpace::rosify(nic.queryName(info.targetName));
+                        outgoingURIs.insert(std::make_pair(info.portName, c.toURI()));
+                    }
+                }
+            });
         }
         mutex.unlock();
 
-        for (std::multimap<std::string, std::string>::const_iterator it = report.outgoingURIs.begin(); it != report.outgoingURIs.end(); ++it) {
+        for (std::multimap<std::string, std::string>::const_iterator it = outgoingURIs.begin(); it != outgoingURIs.end(); ++it) {
             Bottle& lst = connections->addList();
             lst.addInt32(opaque_id); // connectionId
             lst.addString(it->second);
@@ -277,7 +265,7 @@ public:
             opaque_id++;
         }
 
-        for (std::multimap<std::string, std::string>::const_iterator it = report.incomingURIs.begin(); it != report.incomingURIs.end(); ++it) {
+        for (std::multimap<std::string, std::string>::const_iterator it = incomingURIs.begin(); it != incomingURIs.end(); ++it) {
             Bottle& lst = connections->addList();
             lst.addInt32(opaque_id); // connectionId
             lst.addString(it->second);

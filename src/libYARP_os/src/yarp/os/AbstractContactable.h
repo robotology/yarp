@@ -9,6 +9,8 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/UnbufferedContactable.h>
 
+#include <functional>
+
 namespace yarp {
 namespace os {
 
@@ -78,10 +80,16 @@ public:
     int getOutputCount() override;
 
     // Documented in Contactable
-    void getReport(PortReport& reporter) override;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+    using yarp::os::Contactable::getReport;
+#endif // YARP_NO_DEPRECATED
+    void getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter) override;
 
     // Documented in Contactable
-    void setReporter(PortReport& reporter) override;
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+    using yarp::os::Contactable::setReporter;
+#endif // YARP_NO_DEPRECATED
+    void setReporter(const std::function<void(const yarp::os::PortInfo&)>& reporter) override;
 
     // Documented in Contactable
     void resetReporter() override;

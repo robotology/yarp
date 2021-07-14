@@ -20,7 +20,6 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/PortReport.h>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
 #include <yarp/os/PortInfo.h>
@@ -271,16 +270,14 @@ public:
 };
 
 
-class MyReport :
-        public PortReport
+class MyReport
 {
 public:
     int ct {0};
     int oct {0};
     int ict {0};
 
-    void report(const PortInfo& info) override
-    {
+    void operator()(const PortInfo& info) {
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
             if (info.incoming == false) {
                 oct++;
@@ -1202,7 +1199,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/foo");
         Network::sync("/bar");
         MyReport report;
-        p1.getReport(report);
+        p1.getReport(std::ref(report));
         CHECK(report.ct>0); // got some report
         CHECK(report.oct == 1); // exactly one output
         p1.close();
@@ -1215,8 +1212,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Port p2;
         MyReport report1;
         MyReport report2;
-        p1.setReporter(report1);
-        p2.setReporter(report2);
+        p1.setReporter(std::ref(report1));
+        p2.setReporter(std::ref(report2));
         p1.open("/foo");
         p2.open("/bar");
         Network::connect("/foo", "/bar");
@@ -1242,7 +1239,7 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         Network::sync("/foo");
         Network::sync("/bar");
         MyReport report;
-        p1.getReport(report);
+        p1.getReport(std::ref(report));
         CHECK(report.ct>0); // got some report
         CHECK(report.oct == 1); // exactly one output
         p1.close();
@@ -1255,8 +1252,8 @@ TEST_CASE("os::PortTest", "[yarp::os]")
         RpcServer p2;
         MyReport report1;
         MyReport report2;
-        p1.setReporter(report1);
-        p2.setReporter(report2);
+        p1.setReporter(std::ref(report1));
+        p2.setReporter(std::ref(report2));
         p1.open("/foo");
         p2.open("/bar");
         Network::connect("/foo", "/bar");

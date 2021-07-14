@@ -13,7 +13,6 @@
 #include <yarp/os/ModifyingCarrier.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortReaderCreator.h>
-#include <yarp/os/PortReport.h>
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Type.h>
@@ -30,6 +29,7 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <functional>
 #include <mutex>
 #include <vector>
 
@@ -219,7 +219,7 @@ public:
      * Generate a description of the connections associated with the
      * port.
      */
-    void describe(yarp::os::PortReport& reporter);
+    void describe(const std::function<void(const yarp::os::PortInfo&)>& reporter);
 
     /**
      * Read a block of regular payload data.
@@ -453,7 +453,7 @@ public:
     /**
      * Set a callback to be notified of changes in port status.
      */
-    void setReportCallback(yarp::os::PortReport* reporter);
+    void setReportCallback(const std::function<void(const yarp::os::PortInfo&)>& reporter);
 
     /**
      * Reset the callback to be notified of changes in port status.
@@ -528,7 +528,7 @@ private:
     yarp::os::PortReader *m_reader {nullptr}; ///< where to send read events
     yarp::os::PortReader *m_adminReader {nullptr}; ///< where to send admin read events
     yarp::os::PortReaderCreator *m_readableCreator {nullptr}; ///< factory for readers
-    yarp::os::PortReport *m_eventReporter {nullptr}; ///< where to send general events
+    std::function<void(const yarp::os::PortInfo&)> m_eventReporter; ///< where to send general events
     std::atomic<bool> m_listening {false}; ///< is the port server listening on the network?
     std::atomic<bool> m_running {false};   ///< is the port server thread running?
     std::atomic<bool> m_starting {false};  ///< is the port in its startup phase?

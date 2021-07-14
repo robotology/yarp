@@ -587,22 +587,6 @@ public:
 };
 
 
-/**************************************************************************/
-class DumpReporter : public PortReport
-{
-private:
-    DumpThread *thread{nullptr};
-
-public:
-    DumpReporter() = default;
-    void setThread(DumpThread *thread) { this->thread=thread; }
-    void report(const PortInfo &info) override
-    {
-        if ((thread!=nullptr) && info.incoming)
-            thread->writeSource(info.sourceName,info.created);
-    }
-};
-
 
 /**************************************************************************/
 class DumpModule: public RFModule
@@ -612,7 +596,6 @@ private:
     DumpPort<Bottle> *p_bottle{nullptr};
     DumpPort<Image>  *p_image{nullptr};
     DumpThread       *t{nullptr};
-    DumpReporter      reporter;
     Port              rpcPort;
     DumpFormat        dumptype{ DumpFormat::bottle};
     bool              rxTime{false};
@@ -747,7 +730,11 @@ public:
             return false;
         }
 
-        reporter.setThread(t);
+        auto reporter = [this](const PortInfo& info)
+        {
+            if ((t != nullptr) && info.incoming)
+                t->writeSource(info.sourceName, info.created);
+        };
 
         if (dumptype == DumpFormat::bottle)
         {

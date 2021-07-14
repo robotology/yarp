@@ -562,17 +562,17 @@ int Port::getOutputCount()
     return core.getOutputCount();
 }
 
-void Port::getReport(PortReport& reporter)
+void Port::getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter)
 {
     PortCoreAdapter& core = IMPL();
     core.describe(reporter);
 }
 
 
-void Port::setReporter(PortReport& reporter)
+void Port::setReporter(const std::function<void(const yarp::os::PortInfo&)>& reporter)
 {
     PortCoreAdapter& core = IMPL();
-    core.setReportCallback(&reporter);
+    core.setReportCallback(reporter);
 }
 
 

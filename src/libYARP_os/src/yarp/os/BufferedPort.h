@@ -237,11 +237,17 @@ public:
     // documented in Contactable
     bool isWriting() override;
 
-    // documented in Contactable
-    void getReport(PortReport& reporter) override;
+    // Documented in Contactable
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+    using yarp::os::Contactable::getReport;
+#endif // YARP_NO_DEPRECATED
+    void getReport(const std::function<void(const yarp::os::PortInfo&)>& reporter) override;
 
-    // documented in Contactable
-    void setReporter(PortReport& reporter) override;
+    // Documented in Contactable
+#ifndef YARP_NO_DEPRECATED // Since YARP 3.4
+    using yarp::os::Contactable::setReporter;
+#endif // YARP_NO_DEPRECATED
+    void setReporter(const std::function<void(const yarp::os::PortInfo&)>& reporter) override;
 
     // documented in Contactable
     void resetReporter() override;

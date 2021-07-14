@@ -1102,8 +1102,7 @@ void PortCore::describe(void* id, OutputStream* os)
     }
 }
 
-
-void PortCore::describe(PortReport& reporter)
+void PortCore::describe(const std::function<void(const yarp::os::PortInfo&)>& reporter)
 {
     cleanUnits();
 
@@ -1114,7 +1113,7 @@ void PortCore::describe(PortReport& reporter)
     baseInfo.tag = yarp::os::PortInfo::PORTINFO_MISC;
     std::string portName = m_address.getRegName();
     baseInfo.message = std::string("This is ") + portName + " at " + m_address.toURI();
-    reporter.report(baseInfo);
+    reporter(baseInfo);
 
     // Report outgoing connections.
     int oct = 0;
@@ -1130,7 +1129,7 @@ void PortCore::describe(PortReport& reporter)
             info.sourceName = route.getFromName();
             info.targetName = route.getToName();
             info.carrierName = route.getCarrierName();
-            reporter.report(info);
+            reporter(info);
             oct++;
         }
     }
@@ -1138,7 +1137,7 @@ void PortCore::describe(PortReport& reporter)
         PortInfo info;
         info.tag = yarp::os::PortInfo::PORTINFO_MISC;
         info.message = "There are no outgoing connections";
-        reporter.report(info);
+        reporter(info);
     }
 
     // Report incoming connections.
@@ -1155,7 +1154,7 @@ void PortCore::describe(PortReport& reporter)
             info.sourceName = route.getFromName();
             info.targetName = route.getToName();
             info.carrierName = route.getCarrierName();
-            reporter.report(info);
+            reporter(info);
             ict++;
         }
     }
@@ -1163,12 +1162,12 @@ void PortCore::describe(PortReport& reporter)
         PortInfo info;
         info.tag = yarp::os::PortInfo::PORTINFO_MISC;
         info.message = "There are no incoming connections";
-        reporter.report(info);
+        reporter(info);
     }
 }
 
 
-void PortCore::setReportCallback(yarp::os::PortReport* reporter)
+void PortCore::setReportCallback(const std::function<void(const yarp::os::PortInfo&)>& reporter)
 {
     std::lock_guard<std::mutex> lock(m_stateMutex);
     if (reporter != nullptr) {
@@ -1191,7 +1190,7 @@ void PortCore::report(const PortInfo& info)
     // kept constant over the lifetime of the input/output threads.
 
     if (m_eventReporter != nullptr) {
-        m_eventReporter->report(info);
+        m_eventReporter(info);
     }
 }
 
