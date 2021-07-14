@@ -30,7 +30,7 @@
  *
  * \section Localization2DServer
  *
- * \brief `localization2DServer`: A localization server which can be wrap multiple algorithms and devices to provide robot localization in a 2D World.
+ * \brief `localization2DServer` *deprecated*: A localization server which can be wrap multiple algorithms and devices to provide robot localization in a 2D World.
  *
  *
  *  Parameters required by this device are:

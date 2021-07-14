@@ -52,7 +52,7 @@ class streamThread :
 /**
  * @ingroup dev_impl_media dev_impl_deprecated
  *
- * \brief `portaudio`:  This device driver has been deprecated!
+ * \brief `portaudio` *deprecated*:  This device driver has been deprecated!
  * Please use `PortAudioPlayerDeviceDriver` or  `PortAudioRecorderDeviceDriver`
  *
  * Requires the PortAudio library (http://www.portaudio.com), at least v19.

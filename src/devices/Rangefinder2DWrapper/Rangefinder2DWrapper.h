@@ -45,7 +45,7 @@
  /**
  * @ingroup dev_impl_network_wrapper dev_impl_lidar dev_impl_deprecated
   *
-  * \brief `Rangefinder2DWrapper`: Documentation to be added
+  * \brief `Rangefinder2DWrapper` *deprecated*: Documentation to be added
   */
 class Rangefinder2DWrapper:
         public yarp::os::PeriodicThread,

@@ -23,7 +23,7 @@ YARP_DECLARE_LOG_COMPONENT(FAKEMOTOR)
 /**
  * @ingroup dev_impl_fake dev_impl_motor dev_impl_deprecated
  *
- * \brief `fakeMotor`: A fake motor control board for testing.
+ * \brief `fakeMotor` *deprecated*: A fake motor control board for testing.
  *
  * Implements the IPositionControl, IEncoders and IVelocityControl interfaces.
  */
@@ -404,7 +404,7 @@ public:
 
 /**
  * @ingroup dev_impl_fake dev_impl_deprecated
- *
+ * \brief `testMotor` *deprecated*
  */
 class TestMotor : public FakeMotor
 {

@@ -64,7 +64,7 @@ public:
 /**
 * @ingroup dev_impl_network_wrapper dev_impl_deprecated
  *
- * \brief `transformServer`: Documentation to be added
+ * \brief `transformServer` *deprecated*: Documentation to be added
  */
 class TransformServer :
         public yarp::os::PeriodicThread,

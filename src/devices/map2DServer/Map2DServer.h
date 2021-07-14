@@ -46,7 +46,7 @@
  *
  * \section Map2DServer
  *
- * \brief `map2DServer`: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
+ * \brief `map2DServer` *deprecated*: A device capable of read/save collections of maps from disk, and make them accessible to any Map2DClient device.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |

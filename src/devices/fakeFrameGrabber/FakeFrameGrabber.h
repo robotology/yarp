@@ -224,6 +224,7 @@ private:
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.5
 /**
  * @ingroup dev_impl_fake dev_impl_deprecated
+ * \brief `testFrameGrabber` *deprecated*
  *
  */
 class TestFrameGrabber :

@@ -86,7 +86,7 @@ public:
  *
  * \section RGBDSensorWrapper_device_parameters Description of input parameters
  *
- * \brief `RGBDSensorWrapper`: A Network grabber for kinect-like devices.
+ * \brief `RGBDSensorWrapper` *deprecated*: A Network grabber for kinect-like devices.
  *
  * This device will produce two streams of data through different ports, one for the color frame and the other one
  * for depth image following Framegrabber and IDepthSensor interfaces specification respectively.

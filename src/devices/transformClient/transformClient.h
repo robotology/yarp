@@ -68,7 +68,7 @@ public:
 /**
 * @ingroup dev_impl_network_clients dev_impl_deprecated
 *
-* \brief `transformClient`: Documentation to be added
+* \brief `transformClient` *deprecated*: Documentation to be added
 */
 class TransformClient :
         public yarp::dev::DeviceDriver,

@@ -31,7 +31,7 @@
 /**
  *  @ingroup dev_impl_wrapper dev_impl_deprecated
  *
- * \brief `inertial`: Export an inertial sensor.
+ * \brief `inertial` *deprecated*: Export an inertial sensor.
  * The network interface is a single Port.
  * We will stream bottles with 12 floats:
  * \code{.unparsed}
