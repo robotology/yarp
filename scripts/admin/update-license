@@ -171,7 +171,7 @@ cat<<EOF
 
 The list of committers in the YARP repository (ordered by number of commit) is:
 EOF
-git shortlog -esn --no-merges | awk 'BEGIN{FS="\t"}{print "  " $2}' | sed "s/ <.\+>//"
+git shortlog -esn --no-merges HEAD | awk 'BEGIN{FS="\t"}{print "  " $2}' | sed "s/ <.\+>//"
 cat<<EOF
 
 The list of copyright holders for YARP is:
