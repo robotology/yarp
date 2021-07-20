@@ -141,15 +141,16 @@ void audioFromFileDevice::run()
     //samples (m_samples_to_be_copied) in the buffer. This operation cannot be interrupted by stopping the device
     //with m_recording_enabled=false. When the pointer reaches the end of the sound (audioFile),
     //just restart from the beginning in an endless loop
+    size_t chan_num = m_audioFile.getChannels();
     for (size_t i = 0; i < m_samples_to_be_copied; i++)
     {
         if (m_bpnt >= m_fsize_in_samples)
         {
             m_bpnt = 0;
         }
-        for (size_t c=0; c< m_audioFile.getChannels(); c++)
+        for (size_t c=0; c< chan_num; c++)
         {
-            m_inputBuffer->write((unsigned short)(m_datap.at(m_bpnt+c).get()));
+            m_inputBuffer->write((unsigned short)(m_datap.at(m_bpnt* chan_num +c).get()));
         }
         m_bpnt++;
     }
