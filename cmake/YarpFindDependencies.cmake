@@ -665,6 +665,7 @@ print_dependency(Libv4l2)
 print_dependency(Libv4lconvert)
 print_dependency(Fuse)
 print_dependency(ZLIB)
+print_dependency(SOXR)
 
 ################################################################################
 # Print information for user

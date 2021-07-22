@@ -25,6 +25,27 @@ namespace
 
 bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
 {
+    if (frequency == 0)
+    {
+        yCError(SOUNDFILTERS) << "invalid frequency value = 0";
+        return false;
+    }
+    if (snd.getChannels() != 1)
+    {
+        yCError(SOUNDFILTERS) << "only 1 channel is currently supported";
+        return false;
+    }
+    if (snd.getSamples() == 0)
+    {
+        yCError(SOUNDFILTERS) << "empty sound received?!";
+        return false;
+    }
+    if (snd.getFrequency() == frequency)
+    {
+        yCWarning(SOUNDFILTERS) << "no resampling needed";
+        return true;
+    }
+
 #if !defined (YARP_HAS_SOXR)
 
     yCError(SOUNDFILTERS) << "libsoxr not available";
