@@ -20,9 +20,20 @@ bool MicrophoneFilter::create(const yarp::os::Property &options)
 
     m_channel = (options.check("channel") ? options.find("channel").asInt8() : 0);
     yCDebug(MICROPHONE_FILTER, "channel number : %d", m_channel);
-    m_channel = (options.check("frequency") ? options.find("frequency").asInt32() : 0);
+    m_output_freq = (options.check("frequency") ? options.find("frequency").asInt32() : 0);
     yCDebug(MICROPHONE_FILTER, "output frequency : %d", m_output_freq);
 
+	if (m_channel < 0)
+	{
+		yCError(MICROPHONE_FILTER,"Invalid channel value");
+		return false;
+	}
+	if (m_output_freq < 0)
+	{
+		yCError(MICROPHONE_FILTER,"Invalid frequency value");
+		return false;
+	}
+	
     return true;
 }
 
@@ -69,7 +80,10 @@ yarp::os::Things &MicrophoneFilter::update(yarp::os::Things &thing)
     //extract one channel
     m_s2.clear();
     m_s2 = s->extractChannelAsSound(m_channel);
-    yarp::sig::soundfilters::resample (m_s2,m_output_freq);
+    if (m_output_freq>0)
+    { 
+		yarp::sig::soundfilters::resample (m_s2,m_output_freq);
+	}
 
     //send data
     m_th.setPortWriter(&m_s2);
