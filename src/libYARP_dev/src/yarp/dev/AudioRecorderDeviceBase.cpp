@@ -214,6 +214,8 @@ bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable&
     m_audiorecorder_cfg.frequency = config.check("rate", Value(0), "audio sample rate (0=automatic)").asInt32();
     m_audiorecorder_cfg.numSamples = config.check("samples", Value(0), "number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();
     m_audiorecorder_cfg.numChannels = config.check("channels", Value(0), "number of audio channels (0=automatic, max is 2)").asInt32();
+    m_hw_gain = config.check("hw_gain", Value(1.0), "HW gain").asFloat32();
+    m_sw_gain = config.check("sw_gain", Value(1.0), "SW gain").asFloat32();
 
     if (m_audiorecorder_cfg.frequency == 0) {
         m_audiorecorder_cfg.frequency = DEFAULT_SAMPLE_RATE;
