@@ -21,6 +21,8 @@ namespace
 #include <soxr.h>
 #endif
 
+//#define MULTICHANS_TESTED
+
 //#######################################################################################################
 
 bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
@@ -30,11 +32,13 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
         yCError(SOUNDFILTERS) << "invalid frequency value = 0";
         return false;
     }
+#ifndef MULTICHANS_TESTED
     if (snd.getChannels() != 1)
     {
         yCError(SOUNDFILTERS) << "only 1 channel is currently supported";
         return false;
     }
+#endif
     if (snd.getSamples() == 0)
     {
         yCError(SOUNDFILTERS) << "empty sound received?!";
@@ -47,7 +51,6 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
     }
 
 #if !defined (YARP_HAS_SOXR)
-
     yCError(SOUNDFILTERS) << "libsoxr not available";
     return false;
 #else
@@ -59,24 +62,32 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
 
     double irate = snd.getFrequency();
     double orate = double(frequency);
-    size_t ilen = snd.getSamples();
+    size_t ismp = snd.getSamples();
+#ifdef MULTICHANS_TESTED
+    size_t ichans = snd.getChannels();
+#else
+    size_t ichans = 1;
+#endif
+    size_t ilen = ismp*ichans;
     yarp::sig::Sound::audio_sample* arri = new yarp::sig::Sound::audio_sample[ilen];
 
     //copy from sound to buffer
-    for (size_t t = 0; t < ilen; t++)
+    for (size_t t = 0; t < ismp; t++)
     {
-        for (size_t c = 0; c < 1; c++)
+        for (size_t c = 0; c < ichans; c++)
         {
             arri[t] = snd.getSafe(t, c);
         }
     }
 
-    size_t olen = (size_t)(ilen * orate / irate + .5);
+    size_t osmp = (size_t)(ilen * orate / irate + .5);
+    size_t ochans = ichans;
+    size_t olen = osmp*ochans;
     yarp::sig::Sound::audio_sample* arro = new yarp::sig::Sound::audio_sample[olen];
 
     //resample
     size_t odone;
-    soxr_error_t error = soxr_oneshot(irate, orate, 1,            // Rates and # of channels
+    soxr_error_t error = soxr_oneshot(irate, orate, ,            // Rates and # of channels
         arri, ilen, NULL,           // Input
         arro, olen, &odone,         // Output
         &tit, NULL, NULL);          // Configuration
@@ -90,9 +101,9 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
     //copy from buffer to sound
     snd.setFrequency(size_t(orate));
     snd.resize(olen);
-    for (size_t t = 0; t < olen; t++)
+    for (size_t t = 0; t < osmp; t++)
     {
-        for (size_t c = 0; c < 1; c++)
+        for (size_t c = 0; c < ochans; c++)
         {
             snd.setSafe(arro[t], t, c);
         }
