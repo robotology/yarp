@@ -16,7 +16,7 @@ yarp_begin_plugin_library(yarppm
   add_subdirectory(image_compression_ffmpeg)
   add_subdirectory(segmentationimage_to_rgb)
   add_subdirectory(sound_compression_mp3)
-  add_subdirectory(microphoneFilter)
+  add_subdirectory(soundfilter_resample)
 yarp_end_plugin_library(yarppm QUIET)
 add_library(YARP::yarppm ALIAS yarppm)
 

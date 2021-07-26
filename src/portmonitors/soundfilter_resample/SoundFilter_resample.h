@@ -6,8 +6,8 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#ifndef SIMPLE_INC
-#define SIMPLE_INC
+#ifndef SOUNDFILTER_RESAMPLE
+#define SOUNDFILTER_RESAMPLE
 #include <yarp/os/Things.h>
 #include <yarp/os/MonitorObject.h>
 #include <yarp/sig/Sound.h>
@@ -16,7 +16,7 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-class MicrophoneFilter : public yarp::os::MonitorObject
+class SoundFilter_resample : public yarp::os::MonitorObject
 {
     yarp::os::Things m_th;
     yarp::sig::Sound m_s2;

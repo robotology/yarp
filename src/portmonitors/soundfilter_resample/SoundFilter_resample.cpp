@@ -6,13 +6,13 @@
  * BSD-3-Clause license. See the accompanying LICENSE file for details.
  */
 
-#include "MicrophoneFilter.h"
+#include "SoundFilter_resample.h"
 #include <yarp/sig/SoundFilters.h>
 
 using namespace yarp::os;
-YARP_LOG_COMPONENT(MICROPHONE_FILTER, "Microphone_Filter", yarp::os::Log::TraceType)
+YARP_LOG_COMPONENT(MICROPHONE_FILTER, "SoundFilter_resample", yarp::os::Log::TraceType)
 
-bool MicrophoneFilter::create(const yarp::os::Property &options)
+bool SoundFilter_resample::create(const yarp::os::Property &options)
 {
     yCDebug(MICROPHONE_FILTER, "created!\n");
     yCDebug(MICROPHONE_FILTER, "I am attached to the %s\n",
@@ -23,39 +23,39 @@ bool MicrophoneFilter::create(const yarp::os::Property &options)
     m_output_freq = (options.check("frequency") ? options.find("frequency").asInt32() : 0);
     yCDebug(MICROPHONE_FILTER, "output frequency : %d", m_output_freq);
 
-	if (m_channel < 0)
-	{
-		yCError(MICROPHONE_FILTER,"Invalid channel value");
-		return false;
-	}
-	if (m_output_freq < 0)
-	{
-		yCError(MICROPHONE_FILTER,"Invalid frequency value");
-		return false;
-	}
-	
+    if (m_channel < 0)
+    {
+        yCError(MICROPHONE_FILTER,"Invalid channel value");
+        return false;
+    }
+    if (m_output_freq < 0)
+    {
+        yCError(MICROPHONE_FILTER,"Invalid frequency value");
+        return false;
+    }
+
     return true;
 }
 
-void MicrophoneFilter::destroy()
+void SoundFilter_resample::destroy()
 {
 }
 
-bool MicrophoneFilter::setparam(const yarp::os::Property &params)
+bool SoundFilter_resample::setparam(const yarp::os::Property &params)
 {
     m_channel = params.find("channel").asInt8();
     m_output_freq = params.find("frequency").asInt32();
     return false;
 }
 
-bool MicrophoneFilter::getparam(yarp::os::Property &params)
+bool SoundFilter_resample::getparam(yarp::os::Property &params)
 {
     params.put("channel", m_channel);
     params.put("frequency", m_output_freq);
     return false;
 }
 
-bool MicrophoneFilter::accept(yarp::os::Things &thing)
+bool SoundFilter_resample::accept(yarp::os::Things &thing)
 {
     yarp::sig::Sound *bt = thing.cast_as<yarp::sig::Sound>();
     if (bt == NULL)
@@ -67,7 +67,7 @@ bool MicrophoneFilter::accept(yarp::os::Things &thing)
     return true;
 }
 
-yarp::os::Things &MicrophoneFilter::update(yarp::os::Things &thing)
+yarp::os::Things & SoundFilter_resample::update(yarp::os::Things &thing)
 {
     //get data to process
     yarp::sig::Sound *s = thing.cast_as<yarp::sig::Sound>();
@@ -81,15 +81,15 @@ yarp::os::Things &MicrophoneFilter::update(yarp::os::Things &thing)
     m_s2.clear();
     m_s2 = s->extractChannelAsSound(m_channel);
     if (m_output_freq>0)
-    { 
-		yarp::sig::soundfilters::resample (m_s2,m_output_freq);
-	}
+    {
+        yarp::sig::soundfilters::resample (m_s2,m_output_freq);
+    }
 
     //send data
     m_th.setPortWriter(&m_s2);
     return m_th;
 }
 
-void MicrophoneFilter::trig()
+void SoundFilter_resample::trig()
 {
 }
