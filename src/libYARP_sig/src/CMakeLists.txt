@@ -121,7 +121,7 @@ endif()
 if(YARP_HAS_SOXR)
   target_include_directories(YARP_sig SYSTEM PRIVATE ${SOXR_INCLUDE_DIR})
   target_compile_definitions(YARP_sig PRIVATE YARP_HAS_SOXR)
-  target_link_libraries(YARP_sig PRIVATE ${SOXR_LIBRARY})
+  target_link_libraries(YARP_sig PRIVATE ${SOXR_LIBRARIES})
   list(APPEND YARP_sig_PRIVATE_DEPS SOXR)
 endif()
 

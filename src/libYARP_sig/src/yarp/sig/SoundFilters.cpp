@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -87,7 +87,7 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
 
     //resample
     size_t odone;
-    soxr_error_t error = soxr_oneshot(irate, orate, ,            // Rates and # of channels
+    soxr_error_t error = soxr_oneshot(irate, orate, ichans,            // Rates and # of channels
         arri, ilen, NULL,           // Input
         arro, olen, &odone,         // Output
         &tit, NULL, NULL);          // Configuration
