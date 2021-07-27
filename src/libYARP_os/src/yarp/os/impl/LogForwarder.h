@@ -8,7 +8,8 @@
 
 #include <yarp/os/api.h>
 
-#include <yarp/os/Port.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/BufferedPort.h>
 
 #include <mutex>
 #include <string>
@@ -32,7 +33,7 @@ private:
     LogForwarder& operator=(LogForwarder const&) = delete;
 
     std::mutex mutex;
-    yarp::os::Port outputPort;
+    yarp::os::BufferedPort<yarp::os::Bottle> outputPort;
     static bool started;
 };
 
