@@ -1,13 +1,11 @@
 /*
- * Copyright (C) 2006-2021 Istituto Italiano di Tecnologia (IIT)
- * All rights reserved.
- *
- * This software may be modified and distributed under the terms of the
- * BSD-3-Clause license. See the accompanying LICENSE file for details.
+ * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef SOUNDFILTER_RESAMPLE
-#define SOUNDFILTER_RESAMPLE
+#ifndef SOUNDFILTER_RESAMPLE_H
+#define SOUNDFILTER_RESAMPLE_H
+
 #include <yarp/os/Things.h>
 #include <yarp/os/MonitorObject.h>
 #include <yarp/sig/Sound.h>
@@ -20,20 +18,20 @@ class SoundFilter_resample : public yarp::os::MonitorObject
 {
     yarp::os::Things m_th;
     yarp::sig::Sound m_s2;
-    int m_channel = 0;
-    int m_output_freq = 16000;
+    int m_channel = -1;
+    int m_output_freq = -1;
 
 public:
-    bool create(const yarp::os::Property &options);
-    void destroy();
+    bool create(const yarp::os::Property &options) override;
+    void destroy() override;
 
-    bool setparam(const yarp::os::Property &params);
-    bool getparam(yarp::os::Property &params);
+    bool setparam(const yarp::os::Property &params) override;
+    bool getparam(yarp::os::Property &params) override;
 
-    void trig();
+    void trig() override;;
 
-    bool accept(yarp::os::Things &thing);
-    yarp::os::Things &update(yarp::os::Things &thing);
+    bool accept(yarp::os::Things &thing) override;
+    yarp::os::Things &update(yarp::os::Things &thing) override;
 };
 
 #endif
