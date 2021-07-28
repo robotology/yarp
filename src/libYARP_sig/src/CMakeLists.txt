@@ -24,6 +24,7 @@ set(YARP_sig_HDRS
   yarp/sig/PointCloudUtils-inl.h
   yarp/sig/Sound.h
   yarp/sig/SoundFile.h
+  yarp/sig/SoundFilters.h
   yarp/sig/SoundFileMp3.h
   yarp/sig/SoundFileWav.h
   yarp/sig/Vector.h
@@ -45,6 +46,7 @@ set(YARP_sig_SRCS
   yarp/sig/PointCloudBase.cpp
   yarp/sig/PointCloudUtils.cpp
   yarp/sig/Sound.cpp
+  yarp/sig/SoundFilters.cpp
   yarp/sig/SoundFile.cpp
   yarp/sig/SoundFileMp3.cpp
   yarp/sig/SoundFileWav.cpp
@@ -114,6 +116,13 @@ if(YARP_HAS_JPEG)
   target_compile_definitions(YARP_sig PRIVATE YARP_HAS_JPEG)
   target_link_libraries(YARP_sig PRIVATE ${JPEG_LIBRARY})
   list(APPEND YARP_sig_PRIVATE_DEPS JPEG)
+endif()
+
+if(YARP_HAS_SOXR)
+  target_include_directories(YARP_sig SYSTEM PRIVATE ${SOXR_INCLUDE_DIR})
+  target_compile_definitions(YARP_sig PRIVATE YARP_HAS_SOXR)
+  target_link_libraries(YARP_sig PRIVATE ${SOXR_LIBRARIES})
+  list(APPEND YARP_sig_PRIVATE_DEPS SOXR)
 endif()
 
 if(YARP_HAS_ZLIB)

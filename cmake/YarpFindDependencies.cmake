@@ -387,6 +387,9 @@ checkandset_dependency(GObject)
 find_package(GLIB2 QUIET)
 checkandset_dependency(GLIB2)
 
+find_package(SOXR QUIET)
+checkandset_dependency(SOXR)
+
 set(GStreamer_REQUIRED_VERSION 1.4)
 find_package(GStreamer ${GStreamer_REQUIRED_VERSION} QUIET)
 checkandset_dependency(GStreamer)
@@ -662,6 +665,7 @@ print_dependency(Libv4l2)
 print_dependency(Libv4lconvert)
 print_dependency(Fuse)
 print_dependency(ZLIB)
+print_dependency(SOXR)
 
 ################################################################################
 # Print information for user
