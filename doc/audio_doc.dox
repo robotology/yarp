@@ -105,9 +105,9 @@ yarp connect /audioRecorderWrapper/audio:o /audioPlayerWrapper/audio:i
 The following example grabs data from a microphone, sends data through the network, and saves it to a file.
 The chosen configuration forces the recorderWrapper to send data packets composed by 3200 samples, corresponding to 0.2s.
 \code
-yarpdev --device audioRecorderWrapper --subdevice portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 3200 --AUDIO_BASE::channels 1
+yarpdev --device audioRecorderWrapper --subdevice portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 6400 --AUDIO_BASE::channels 1
 yarpdev --device audioPlayerWrapper --subdevice audioToFileDevice --start  --file_name audio_out.wav --save_mode overwrite_file
-yarp connect /audioPlayerWrapper/audio:o /audioPlayerWrapper/audio:i
+yarp connect /audioRecorderWrapper/audio:o /audioPlayerWrapper/audio:i
 \endcode
 
 
@@ -115,9 +115,9 @@ yarp connect /audioPlayerWrapper/audio:o /audioPlayerWrapper/audio:i
 The audio system currently do not support real-time audio transmission for audio conference purposes. Of course the systems allows to do it, as shown in 
 following example:
 \code
-yarpdev --device audioRecorderWrapper --subdevice portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 3200 --AUDIO_BASE::channels 1
+yarpdev --device audioRecorderWrapper --subdevice portaudioRecorder --start --min_samples_over_network 3200 --max_samples_over_network 3200 --AUDIO_BASE::rate 16000 --AUDIO_BASE::samples 6400 --AUDIO_BASE::channels 1
 yarpdev --device audioPlayerWrapper --subdevice portaudioPlayer --start --playback_network_buffer_size 0.1 --AUDIO_BASE::samples 32000
-yarp connect /audioPlayerWrapper/audio:o /audioPlayerWrapper/audio:i
+yarp connect /audioRecorderWrapper/audio:o /audioPlayerWrapper/audio:i
 \endcode
 This example has several problems. First of some inevitable pop-clicks distortions will be happens,
 due to the fact the finite buffers have finite size. Since the network transmission has physical non-zero latency, the receiver accumulates

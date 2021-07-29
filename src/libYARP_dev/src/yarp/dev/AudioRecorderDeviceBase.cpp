@@ -60,7 +60,7 @@ bool AudioRecorderDeviceBase::getSound(yarp::sig::Sound& sound, size_t min_numbe
     }
     if (max_number_of_samples > this->m_audiorecorder_cfg.numSamples)
     {
-        yCWarning(AUDIORECORDER_BASE) << "max_number_of_samples bigger than the internal audio buffer! It will be truncated to:" << this->m_audiorecorder_cfg.numSamples;
+        yCWarning(AUDIORECORDER_BASE) << "max_number_of_samples ("<< max_number_of_samples <<") is bigger than the internal audio buffer! It will be truncated to:" << this->m_audiorecorder_cfg.numSamples;
         max_number_of_samples = this->m_audiorecorder_cfg.numSamples;
     }
 
