@@ -688,7 +688,8 @@ jobs:
                                       libi2c-dev \
                                       libfuse-dev \
                                       libjpeg-dev \
-                                      libpcl-dev
+                                      libpcl-dev \
+                                      libsoxr-dev
 
           # Install SWIG and bindings dependencies
           sudo apt-get install -qq -y swig \
@@ -770,7 +771,7 @@ jobs:
           brew update
           brew install ccache
           brew install ace
-          brew install sqlite tinyxml libedit libpng qt5 opencv eigen graphviz
+          brew install sqlite tinyxml libedit libpng qt5 opencv eigen graphviz libsoxr
           brew install robotology/formulae/ycm
 
     - name: Prepare Environment Script
