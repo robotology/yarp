@@ -3,9 +3,9 @@
 
 
 yarp_prepare_plugin(soundfilter_resample TYPE SoundFilter_resample
-                                        INCLUDE SoundFilter_resample.h
-                                        CATEGORY portmonitor
-                                        DEPENDS "ENABLE_yarpcar_portmonitor")
+                                         INCLUDE SoundFilter_resample.h
+                                         CATEGORY portmonitor
+                                         DEPENDS "ENABLE_yarpcar_portmonitor")
 
 if(SKIP_soundfilter_resample)
   return()
@@ -14,11 +14,11 @@ endif()
 yarp_add_plugin(yarp_pm_soundfilter_resample)
 
 target_sources(yarp_pm_soundfilter_resample PRIVATE SoundFilter_resample.cpp
-                                      SoundFilter_resample.h)
+                                                    SoundFilter_resample.h)
 
 target_link_libraries(yarp_pm_soundfilter_resample YARP::YARP_os
-                                     YARP::YARP_sig
-                                     YARP::YARP_dev)
+                                                   YARP::YARP_sig
+                                                   YARP::YARP_dev)
 
 yarp_install(TARGETS yarp_pm_soundfilter_resample
              EXPORT yarp_pm_soundfilter_resample

@@ -20,8 +20,11 @@ class SoundFilter_resample : public yarp::os::MonitorObject
     yarp::sig::Sound m_s2;
     int m_channel = -1;
     int m_output_freq = -1;
+    double m_gain = -1;
 
 public:
+    void getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop);
+
     bool create(const yarp::os::Property &options) override;
     void destroy() override;
 

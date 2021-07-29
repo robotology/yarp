@@ -8,8 +8,46 @@
 #include <yarp/sig/SoundFilters.h>
 
 using namespace yarp::os;
+using namespace std;
 
 YARP_LOG_COMPONENT(SOUNDFILTER_RESAMPLE, "soundfilter_resample")
+
+void split(const std::string& s, char delim, vector<string>& elements)
+{
+    std::istringstream iss(s);
+    std::string item;
+    while (std::getline(iss, item, delim)) {
+        elements.push_back(item);
+    }
+}
+
+void SoundFilter_resample::getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop)
+{
+    // Split command line string using '+' delimiter
+    vector<string> parameters;
+    split(carrierString, '+', parameters);
+
+    // Iterate over result strings
+    for (string param : parameters)
+    {
+        // If there is no '.', then the param is bad formatted, skip it.
+        auto pointPosition = param.find('.');
+        if (pointPosition == string::npos)
+        {
+            continue;
+        }
+
+        // Otherwise, separate key and value
+        string paramKey = param.substr(0, pointPosition);
+        yarp::os::Value paramValue;
+        string s = param.substr(pointPosition + 1, param.length());
+        paramValue.fromString(s.c_str());
+
+        //and append to the returned property
+        prop.put(paramKey, paramValue);
+    }
+    return;
+}
 
 bool SoundFilter_resample::create(const yarp::os::Property &options)
 {
@@ -17,8 +55,17 @@ bool SoundFilter_resample::create(const yarp::os::Property &options)
     yCDebug(SOUNDFILTER_RESAMPLE, "I am attached to the %s\n",
             (options.find("sender_side").asBool()) ? "sender side" : "receiver side");
 
-    m_channel = (options.check("channel") ? options.find("channel").asInt8() : -1);
-    m_output_freq = (options.check("frequency") ? options.find("frequency").asInt32() : -1);
+    //parse the user parameters
+    yarp::os::Property m_user_params;
+    yCDebug(SOUNDFILTER_RESAMPLE) << "user params:" << options.toString();
+    std::string str = options.find("carrier").asString();
+    getParamsFromCommandLine(str, m_user_params);
+    yCDebug(SOUNDFILTER_RESAMPLE) << "parsed params:" << m_user_params.toString();
+
+    //set the user parameters
+    m_channel = (m_user_params.check("channel") ? m_user_params.find("channel").asInt8() : -1);
+    m_output_freq = (m_user_params.check("frequency") ? m_user_params.find("frequency").asInt32() : -1);
+    m_gain = (m_user_params.check("gain_percent") ? m_user_params.find("gain_percent").asFloat32() : -1)/100;
 
     if (m_channel < 0)
     {
@@ -27,6 +74,15 @@ bool SoundFilter_resample::create(const yarp::os::Property &options)
     else
     {
         yCInfo(SOUNDFILTER_RESAMPLE, "channel selected: %d", m_channel);
+    }
+
+    if (m_gain < 0)
+    {
+        yCInfo(SOUNDFILTER_RESAMPLE, "No amplification requested");
+    }
+    else
+    {
+        yCInfo(SOUNDFILTER_RESAMPLE, "Amplification gain: %f (%d%%)",  m_gain, int(m_gain*100));
     }
 
     if (m_output_freq < 0)
@@ -88,7 +144,20 @@ yarp::os::Things & SoundFilter_resample::update(yarp::os::Things &thing)
 
     //extract one channel
     m_s2.clear();
-    m_s2 = s->extractChannelAsSound(m_channel);
+    if (m_channel >=0)
+    {
+        m_s2 = s->extractChannelAsSound(m_channel);
+    }
+    else
+    {
+        m_s2 = *s;
+    }
+
+    if (m_gain >= 0)
+    {
+        m_s2.amplify(m_gain);
+    }
+
     if (m_output_freq>0)
     {
         yarp::sig::soundfilters::resample (m_s2,m_output_freq);
