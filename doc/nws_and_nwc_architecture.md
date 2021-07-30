@@ -25,13 +25,14 @@ The following sections are supposed to give a rationale to the changes that are 
 ### YARP and ROS wrappers
 
 In the past, network wrappers were for YARP only.
+
 Recently, with the introduction of YARP-ROS compatibility layer, wrappers started implementing also the compatibility with the ROS middleware, with tons of if and switch cases inside the code. Obviously, this doesn't scale to other middlewares.
 
 There is no limit to how many wrappers can be attached to a device. We are therefore currently working to split the wrappers in two separate wrappers (one for YARP and one for ROS) that can be attached to the same device. Unfortunately this has the limitation that only one of them can be launched using `yarpdev`, and in order to use both of them contemporarily, it is necessary to use `yarprobotinterface`. We are currently considering whether to modify `yarpdev` to support attaching multiple wrappers.
 
 ### Naming
 
-In the past (and at the time of writing), NWS have often been called including one or more of these terms:
+Before YARP 3.5, NWS have often been called including one or more of these terms:
 
 * Wrapper
 * Network Wrapper
