@@ -497,6 +497,7 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
                                   -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
@@ -528,6 +529,7 @@ jobs:
                                   -DYARP_ENABLE_EXAMPLES_AS_TESTS:BOOL=OFF
                                   -DYARP_COMPILE_BINDINGS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_FFMPEG=ON
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON
                                   -DENABLE_yarpcar_h264:BOOL=OFF
                                   -DENABLE_yarpcar_mjpeg:BOOL=OFF
                                   -DENABLE_yarppm_image_compression_ffmpeg:BOOL=OFF
