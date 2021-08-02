@@ -346,7 +346,8 @@ jobs:
             cxx: "g++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
           }
         - {
             id: '10',
@@ -357,7 +358,8 @@ jobs:
             cxx: "clang++",
             cmake_generator: "Unix Makefiles",
             cmake_initial_cache_file: ".ci/initial-cache.gh.linux.cmake",
-            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF",
+            cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
           }
         - {
             id: '11',
@@ -371,7 +373,8 @@ jobs:
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
                                   -DSKIP_ACE:BOOL=ON
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
           }
         - {
             id: '12',
@@ -385,7 +388,8 @@ jobs:
             cmake_extra_options: "-DBUILD_SHARED_LIBS:BOOL=OFF
                                   -DCMAKE_DISABLE_FIND_PACKAGE_ACE:BOOL=ON
                                   -DSKIP_ACE:BOOL=ON
-                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF",
+                                  -DYARP_COMPILE_BINDINGS:BOOL=OFF
+                                  -DCMAKE_DISABLE_FIND_PACKAGE_SOXR=ON", # FIXME Enable when YCM 0.14 is available
           }
         - {
             id: '13',
