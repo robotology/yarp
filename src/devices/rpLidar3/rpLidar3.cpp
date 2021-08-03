@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#include "rpLidar2.h"
+#include "rpLidar3.h"
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
@@ -31,11 +31,11 @@
 using namespace std;
 using namespace rp::standalone::rplidar;
 
-YARP_LOG_COMPONENT(RP2_LIDAR, "yarp.devices.rpLidar2")
+YARP_LOG_COMPONENT(RP2_LIDAR, "yarp.devices.RpLidar3")
 
 //-------------------------------------------------------------------------------------
 
-bool RpLidar2::open(yarp::os::Searchable& config)
+bool RpLidar3::open(yarp::os::Searchable& config)
 {
     string   serial;
     int      baudrate;
@@ -178,7 +178,7 @@ bool RpLidar2::open(yarp::os::Searchable& config)
     return true;
 }
 
-bool RpLidar2::close()
+bool RpLidar3::close()
 {
     m_drv->stopMotor();
     RPlidarDriver::DisposeDriver(m_drv);
@@ -187,7 +187,7 @@ bool RpLidar2::close()
     return true;
 }
 
-bool RpLidar2::setDistanceRange(double min, double max)
+bool RpLidar3::setDistanceRange(double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     m_min_distance = min;
@@ -195,7 +195,7 @@ bool RpLidar2::setDistanceRange(double min, double max)
     return true;
 }
 
-bool RpLidar2::setScanLimits(double min, double max)
+bool RpLidar3::setScanLimits(double min, double max)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     m_min_angle = min;
@@ -203,21 +203,21 @@ bool RpLidar2::setScanLimits(double min, double max)
     return true;
 }
 
-bool RpLidar2::setHorizontalResolution(double step)
+bool RpLidar3::setHorizontalResolution(double step)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     m_resolution = step;
     return true;
 }
 
-bool RpLidar2::setScanRate(double rate)
+bool RpLidar3::setScanRate(double rate)
 {
     std::lock_guard<std::mutex> guard(m_mutex);
     yCWarning(RP2_LIDAR, "setScanRate not yet implemented");
     return false;
 }
 
-bool RpLidar2::threadInit()
+bool RpLidar3::threadInit()
 {
     return true;
 }
@@ -227,14 +227,14 @@ bool RpLidar2::threadInit()
 #define _countof(_Array) (int)(sizeof(_Array) / sizeof (_Array[0]))
 #endif
 
-void RpLidar2::run()
+void RpLidar3::run()
 {
     updateLidarData();
     m_mutex.unlock();
     return;
 }
 
-bool RpLidar2::acquireDataFromHW()
+bool RpLidar3::acquireDataFromHW()
 {
     u_result                            op_result;
     rplidar_response_measurement_node_hq_t nodes[8192];
@@ -309,7 +309,7 @@ bool RpLidar2::acquireDataFromHW()
     return true;
 }
 
-void RpLidar2::threadRelease()
+void RpLidar3::threadRelease()
 {
 #ifdef LASER_DEBUG
     yCDebug(RP2_LIDAR,"RpLidar Thread releasing...");
@@ -319,7 +319,7 @@ void RpLidar2::threadRelease()
     return;
 }
 
-void RpLidar2::handleError(u_result error)
+void RpLidar3::handleError(u_result error)
 {
     switch (error)
     {
@@ -353,7 +353,7 @@ void RpLidar2::handleError(u_result error)
     }
 }
 
-std::string RpLidar2::deviceinfo()
+std::string RpLidar3::deviceinfo()
 {
     if (m_drv)
     {

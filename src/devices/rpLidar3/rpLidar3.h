@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#ifndef RPLIDAR2_H
-#define RPLIDAR2_H
+#ifndef RPLIDAR3_H
+#define RPLIDAR3_H
 
 
 #include <yarp/os/PeriodicThread.h>
@@ -43,7 +43,7 @@ typedef unsigned char byte;
  * | GENERAL        | thread_period   | int     | ms             |   0           | No           | Acquisition thread period. The default value = 0 means maximum speed (measured duration ~75ms). It is useful to change it only if you need to slow down the device (e.g. 100ms)    |  |
  */
 
-class RpLidar2 : public PeriodicThread, public yarp::dev::Lidar2DDeviceBase, public DeviceDriver
+class RpLidar3 : public PeriodicThread, public yarp::dev::Lidar2DDeviceBase, public DeviceDriver
 {
     typedef rp::standalone::rplidar::RPlidarDriver rplidardrv;
 
@@ -57,7 +57,7 @@ protected:
     rplidardrv*           m_drv;
 
 public:
-    RpLidar2(double period = 0) : PeriodicThread(period), //period=0 allows to run the thead as fast as possibile, but it is not a busy loop since yield() is called internally
+    RpLidar3(double period = 0) : PeriodicThread(period), //period=0 allows to run the thead as fast as possibile, but it is not a busy loop since yield() is called internally
         m_buffer_life(0),
         m_inExpressMode(false),
         m_pwm_val(0),
@@ -65,7 +65,7 @@ public:
     {}
 
 
-    ~RpLidar2()
+    ~RpLidar3()
     {
     }
 
