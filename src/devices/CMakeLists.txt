@@ -47,6 +47,7 @@ yarp_begin_plugin_library(yarpmod
   add_subdirectory(laserFromRosTopic)
   add_subdirectory(rpLidar)
   add_subdirectory(rpLidar2)
+  add_subdirectory(rpLidar3)
   add_subdirectory(laserHokuyo)
   add_subdirectory(fakeFrameGrabber)
   add_subdirectory(SDLJoypad)
