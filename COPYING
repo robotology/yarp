@@ -33,6 +33,7 @@ GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License:
      - `Rangefinder2DWrapper`
      - `rpLidar`
      - `rpLidar2`
+     - `roLidar3`
      - `SDLJoypad`
      - `transformClient`
      - `transformServer`

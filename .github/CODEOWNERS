@@ -34,6 +34,7 @@
 /src/devices/portaudioRecorder/**                @randaz81
 /src/devices/rpLidar/**                          @randaz81
 /src/devices/rpLidar2/**                         @randaz81
+/src/devices/rpLidar3/**                         @randaz81
 /src/devices/transformClient/**                  @randaz81
 /src/devices/transformServer/**                  @randaz81
 /src/devices/usbCamera/**                        @Nicogene
