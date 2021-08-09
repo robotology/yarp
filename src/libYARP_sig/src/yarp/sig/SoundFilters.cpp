@@ -44,7 +44,7 @@ bool yarp::sig::soundfilters::resample(yarp::sig::Sound& snd, size_t frequency)
         yCError(SOUNDFILTERS) << "empty sound received?!";
         return false;
     }
-    if (snd.getFrequency() == frequency)
+    if (static_cast<unsigned>(snd.getFrequency()) == frequency)
     {
         yCWarning(SOUNDFILTERS) << "no resampling needed";
         return true;
