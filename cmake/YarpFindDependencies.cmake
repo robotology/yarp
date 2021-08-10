@@ -334,9 +334,6 @@ if(NOT OpenCV_FOUND)
 endif()
 checkandset_dependency(OpenCV)
 
-find_package(PCL COMPONENTS common io QUIET)
-checkandset_dependency(PCL)
-
 find_package(Lua QUIET)
 checkandset_dependency(Lua)
 
@@ -377,6 +374,9 @@ checkandset_dependency(ZFP)
 
 find_package(OpenNI2 QUIET)
 checkandset_dependency(OpenNI2)
+
+find_package(PCL COMPONENTS common io QUIET)
+checkandset_dependency(PCL)
 
 find_package(Doxygen)
 checkandset_dependency(Doxygen)
