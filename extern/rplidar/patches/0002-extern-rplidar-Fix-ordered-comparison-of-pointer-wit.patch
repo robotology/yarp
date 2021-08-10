@@ -1,0 +1,26 @@
+From 864d4b59ba92fbeeea30724108a57d26b764e6a3 Mon Sep 17 00:00:00 2001
+From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
+Date: Wed, 18 Aug 2021 12:59:18 +0200
+Subject: [PATCH] extern/rplidar: Fix ordered comparison of pointer with
+ integer zero
+
+---
+ extern/rplidar/sdk/src/arch/linux/net_socket.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/extern/rplidar/sdk/src/arch/linux/net_socket.cpp b/extern/rplidar/sdk/src/arch/linux/net_socket.cpp
+index 0124a13af..5f1bd50b3 100644
+--- a/extern/rplidar/sdk/src/arch/linux/net_socket.cpp
++++ b/extern/rplidar/sdk/src/arch/linux/net_socket.cpp
+@@ -167,7 +167,7 @@ u_result SocketAddress::getAddressAsString(char * buffer, size_t buffersize) con
+ 
+         break;
+     }
+-    return ans<=0?RESULT_OPERATION_FAIL:RESULT_OK;
++    return ans==NULL?RESULT_OPERATION_FAIL:RESULT_OK;
+ }
+ 
+ 
+-- 
+2.30.2
+
