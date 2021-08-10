@@ -221,7 +221,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             m_iMap2D->getLocationsList(loc_names);
             for (auto& it : loc_names)
             {
-                out.addString(it);
+                l.addString(it);
             }
             yCInfo(MAP2D_NWS_YARP) << "The following locations are currently stored in the server:" << l.toString();
         }
@@ -236,7 +236,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             m_iMap2D->getAreasList(area_names);
             for (auto& it : area_names)
             {
-                out.addString(it);
+                l.addString(it);
             }
             yCInfo(MAP2D_NWS_YARP) << "The following areas are currently stored in the server:" << l.toString();
         }
@@ -251,7 +251,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             m_iMap2D->getPathsList(path_names);
             for (auto& it : path_names)
             {
-                out.addString(it);
+                l.addString(it);
             }
             yCInfo(MAP2D_NWS_YARP) << "The following paths are currently stored in the server: " << l.toString();
         }
