@@ -61,7 +61,7 @@ void drawGrid(IplImage *img, double scale)
     cvLine(img,cvPoint(img->width,0),cvPoint(0,img->height),color_black);
     cvLine(img,cvPoint(img->width/2,0),cvPoint(img->width/2,img->height),color_black);
     cvLine(img,cvPoint(0,img->height/2),cvPoint(img->width,img->height/2),color_black);
-    const int step = (int)(0.5 * scale); //mm
+    const float step = (0.5 * scale); //mm
 /*
     for (int xi=0; xi<img->width; xi+=step)
         cvLine(img,cvPoint(xi,0),cvPoint(xi,img->height),color_black);
@@ -69,17 +69,34 @@ void drawGrid(IplImage *img, double scale)
         cvLine(img,cvPoint(0,yi),cvPoint(img->width,yi),color_black);
 */
     char buff [10];
-    int  rad_step=0;
-    if (scale > 60) {
+    float  rad_step=0;
+    string fmt = "%3.1fm";
+    if (scale > 174)
+    {
+        rad_step = 0.5;
+        fmt = "%3.2fm";
+    }
+    else if (scale > 50 && scale <=174)
+    {
         rad_step=1;
-    } else {
+    }
+    else if (scale > 22 && scale <= 50)
+    {
         rad_step = 2;
     }
-    for (int rad=0; rad<20; rad+=rad_step)
+    else if (scale > 9 && scale <= 22)
     {
-        sprintf (buff,"%3.1fm",float(rad)/2);
+        rad_step = 4;
+    }
+    else
+    {
+        rad_step = 8;
+    }
+    for (float rad=0; rad<80; rad+=rad_step)
+    {
+        sprintf (buff,fmt.c_str(),float(rad)/2);
         cvPutText(img, buff, cvPoint(img->width/2,int(float(img->height)/2.0-float(step)*rad)), &font, cvScalar(0, 0, 0, 0));
-        cvCircle(img,cvPoint(img->width/2,img->height/2),step*rad,color_black);
+        cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(step*rad),color_black);
     }
 
 }
@@ -517,7 +534,7 @@ int main(int argc, char *argv[])
             scale*=1.02;
             yInfo("scale factor is now:%.3f",scale);
         }
-        if(keypressed == 's' && scale >15)
+        if(keypressed == 's' && scale >8)
         {
            //scale-=0.001;
            scale/=1.02;
