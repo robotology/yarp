@@ -40,6 +40,7 @@ bool RpLidar3::startMotor()
     if (result != RESULT_OK)
     {
         handleError(result);
+        yCError(RP_LIDAR3) << "Unable to start motor";
         return false;
     }
     yCInfo(RP_LIDAR3) << "Motor started successfully";
@@ -50,6 +51,7 @@ bool RpLidar3::startMotor()
         if (result != RESULT_OK)
         {
             handleError(result);
+            yCError(RP_LIDAR3) << "Unable to setMotorPWM";
             return false;
         }
         yCInfo(RP_LIDAR3) << "Motor pwm set to " << m_pwm_val;
@@ -77,15 +79,15 @@ bool RpLidar3::startScan()
             << ", us per sample:" << scanModes[i].us_per_sample
             << ", samples/s:" << 1.0 / scanModes[i].us_per_sample * 1000000;
     }
-    string  scan_mode = "Boost";
-    yInfo() << "Using scan mode: " << scan_mode;
+
+    yInfo() << "Using scan mode: " << m_scan_mode;
 
     if (IS_OK(op_result))
     {
         _u16 selectedScanMode = _u16(-1);
         for (std::vector<RplidarScanMode>::iterator iter = scanModes.begin(); iter != scanModes.end(); iter++)
         {
-            if (iter->scan_mode == scan_mode)
+            if (iter->scan_mode == m_scan_mode)
             {
                 selectedScanMode = iter->id;
                 break;
@@ -94,7 +96,7 @@ bool RpLidar3::startScan()
 
         if (selectedScanMode == _u16(-1))
         {
-            yCInfo(RP_LIDAR3, "scan mode `%s' is not supported by lidar, supported modes:", scan_mode.c_str());
+            yCInfo(RP_LIDAR3, "scan mode `%s' is not supported by lidar, supported modes:", m_scan_mode.c_str());
             for (std::vector<RplidarScanMode>::iterator iter = scanModes.begin(); iter != scanModes.end(); iter++)
             {
                 yCInfo(RP_LIDAR3, "\t%s: max_distance: %.1f m, Point number: %.1fK", iter->scan_mode, iter->max_distance, (1000 / iter->us_per_sample));
@@ -134,34 +136,42 @@ bool RpLidar3::open(yarp::os::Searchable& config)
     bool br       = config.check("GENERAL");
     if (br != false)
     {
-        yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        if (general_config.check("serial_port") == false)         { yCError(RP_LIDAR3)  << "Missing serial_port param in GENERAL group"; return false; }
-        if (general_config.check("serial_baudrate") == false)     { yCError(RP_LIDAR3)  << "Missing serial_baudrate param in GENERAL group"; return false; }
-        if (general_config.check("sample_buffer_life") == false)  { yCError(RP_LIDAR3)  << "Missing sample_buffer_life param in GENERAL group"; return false; }
+        //general options
+        {
+            yarp::os::Searchable& general_config = config.findGroup("GENERAL");
+            if (general_config.check("serial_port") == false)         { yCError(RP_LIDAR3)  << "Missing serial_port param in GENERAL group"; return false; }
+            if (general_config.check("serial_baudrate") == false)     { yCError(RP_LIDAR3)  << "Missing serial_baudrate param in GENERAL group"; return false; }
+            if (general_config.check("sample_buffer_life") == false)  { yCError(RP_LIDAR3)  << "Missing sample_buffer_life param in GENERAL group"; return false; }
+            if (general_config.check("thread_period"))
+            {
+                double thread_period = general_config.find("thread_period").asInt32() / 1000.0;
+                this->setPeriod(thread_period);
+            }
 
-        baudrate    = general_config.find("serial_baudrate").asInt32();
-        m_serialPort  = general_config.find("serial_port").asString();
-        m_buffer_life = general_config.find("sample_buffer_life").asInt32();
-        if (general_config.check("motor_pwm"))
-        {
-            m_pwm_val     = general_config.find("motor_pwm").asInt32();
+            baudrate    = general_config.find("serial_baudrate").asInt32();
+            m_serialPort  = general_config.find("serial_port").asString();
+            m_buffer_life = general_config.find("sample_buffer_life").asInt32();
         }
-        if (general_config.check("express_mode"))
+
+        //options specific to the rplidar sdk
         {
-            m_inExpressMode = general_config.find("express_mode").asInt32();
-        }
-        if (general_config.check("scan_mode"))
-        {
-            m_scan_mode = general_config.find("scan_mode").asString();
-        }
-        if (general_config.check("force_scan"))
-        {
-            m_force_scan = general_config.find("force_scan").asInt32();
-        }
-        if (general_config.check("thread_period"))
-        {
-            double thread_period = general_config.find("thread_period").asInt32() / 1000.0;
-            this->setPeriod(thread_period);
+            yarp::os::Searchable& rplidar_config = config.findGroup("RPLIDAR");
+            if (rplidar_config.check("motor_pwm"))
+            {
+                m_pwm_val     = rplidar_config.find("motor_pwm").asInt32();
+            }
+            if (rplidar_config.check("express_mode"))
+            {
+                m_inExpressMode = rplidar_config.find("express_mode").asInt32();
+            }
+            if (rplidar_config.check("scan_mode"))
+            {
+                m_scan_mode = rplidar_config.find("scan_mode").asString();
+            }
+            if (rplidar_config.check("force_scan"))
+            {
+                m_force_scan = rplidar_config.find("force_scan").asInt32();
+            }
         }
     }
     else
@@ -184,8 +194,7 @@ bool RpLidar3::open(yarp::os::Searchable& config)
         return false;
     }
 
-    m_info = deviceinfo();
-
+    if (!deviceinfo()) return false;
     if (!startMotor()) return false;
     if (!startScan()) return false;
 
@@ -200,9 +209,12 @@ bool RpLidar3::open(yarp::os::Searchable& config)
 
 bool RpLidar3::close()
 {
-    m_drv->stopMotor();
-    RPlidarDriver::DisposeDriver(m_drv);
+    yCDebug(RP_LIDAR3) << "closing..";
     PeriodicThread::stop();
+
+    m_drv->stopMotor();
+    m_drv->stop();
+    RPlidarDriver::DisposeDriver(m_drv);
     yCInfo(RP_LIDAR3) << "rpLidar closed";
     return true;
 }
@@ -249,18 +261,24 @@ bool RpLidar3::threadInit()
 
 void RpLidar3::run()
 {
-    updateLidarData();
-    m_mutex.unlock();
+    bool b = updateLidarData();
+    if (b)
+    {
+        m_mutex.unlock();
+    }
+    else
+    {
+        yCWarning(RP_LIDAR3, "updateLidarData() failed.");
+    }
     return;
 }
 
 bool RpLidar3::acquireDataFromHW()
 {
     u_result                            op_result;
-    rplidar_response_measurement_node_hq_t nodes[8192];
-    size_t                              count = _countof(nodes);
+    size_t                              count = m_nodes_num;
     static int                          life = 0;
-    op_result = m_drv->grabScanDataHq(nodes, count);
+    op_result = m_drv->grabScanDataHq(m_nodes, count);
     if (op_result != RESULT_OK)
     {
         yCError(RP_LIDAR3) << m_serialPort << ": grabbing scan data failed";
@@ -268,7 +286,7 @@ bool RpLidar3::acquireDataFromHW()
         return false;
     }
 
-    m_drv->ascendScanData(nodes, count);
+    m_drv->ascendScanData(m_nodes, count);
 
     if (op_result != RESULT_OK)
     {
@@ -293,9 +311,9 @@ bool RpLidar3::acquireDataFromHW()
     for (size_t i = 0; i < count; ++i)
     {
 
-        double distance = (nodes[i].dist_mm_q2 / 1000.f / (1 << 2)); //m
-        double angle = (nodes[i].angle_z_q14 * 90.f / (1 << 14)); //deg
-        double quality = (nodes[i].quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT); //to be verified
+        double distance = (m_nodes[i].dist_mm_q2 / 1000.f / (1 << 2)); //m
+        double angle = (m_nodes[i].angle_z_q14 * 90.f / (1 << 14)); //deg
+        double quality = (m_nodes[i].quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT); //to be verified
         angle = (360 - angle);
 
         if (angle >= 360)
@@ -373,7 +391,7 @@ void RpLidar3::handleError(u_result error)
     }
 }
 
-std::string RpLidar3::deviceinfo()
+bool RpLidar3::deviceinfo()
 {
     if (m_drv)
     {
@@ -385,7 +403,8 @@ std::string RpLidar3::deviceinfo()
         if (result != RESULT_OK)
         {
             handleError(result);
-            return {};
+            yCError(RP_LIDAR3) << "Unable to getDeviceInfo";
+            return false;
         }
 
         for (unsigned char i : info.serialnum)
@@ -393,10 +412,12 @@ std::string RpLidar3::deviceinfo()
             serialNumber += to_string(i);
         }
 
-        return "Firmware Version: "   + to_string(info.firmware_version) +
-               "\nHardware Version: " + to_string(info.hardware_version) +
-               "\nModel: "            + to_string(info.model) +
-               "\nSerial Number:"     + serialNumber;
+        m_info = std::string("Firmware Version: ")  + to_string(info.firmware_version) +
+                 "\nHardware Version: " + to_string(info.hardware_version) +
+                 "\nModel: "            + to_string(info.model) +
+                 "\nSerial Number:"     + serialNumber;
+        return true;
     }
-    return {};
+    yCError(RP_LIDAR3) << "sdk driver not intialised?!";
+    return false;
 }

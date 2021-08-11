@@ -159,9 +159,10 @@ bool RpLidar2::open(yarp::os::Searchable& config)
 
 bool RpLidar2::close()
 {
+    PeriodicThread::stop();
+
     m_drv->stopMotor();
     RPlidarDriver::DisposeDriver(m_drv);
-    PeriodicThread::stop();
     yCInfo(RP2_LIDAR) << "rpLidar closed";
     return true;
 }
