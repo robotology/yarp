@@ -51,17 +51,20 @@ public:
     bool close() override;
 
     //FrameTransformStorageSetRPC functions
-    virtual bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
-    virtual bool setTransform(const yarp::math::FrameTransform& transform) override;
-    virtual bool deleteTransform(std::string t1, std::string t2) override;
-    virtual bool clearAll() override;
+    bool setTransforms(const std::vector<yarp::math::FrameTransform>& transforms) override;
+    bool setTransform(const yarp::math::FrameTransform& transform) override;
+    bool deleteTransform(std::string t1, std::string t2) override;
+    bool clearAll() override;
 
 private:
     mutable std::mutex          m_trf_mutex;
     mutable std::mutex          m_pd_mutex;
-    std::string                 m_thriftPortName{"/frameTransformSet/clientRPC"};
+    std::string                 m_deviceName{"frameTransformSet_nwc_yarp"};
+    std::string                 m_defaultConfigPrefix{"/frameTransformClient"};
+    std::string                 m_defaultServerPrefix{"/frameTransformServer/frameTransformSet_nws_yarp"};
+    std::string                 m_thriftPortName;
+    std::string                 m_thrift_server_rpcPort_Name;
     yarp::os::Port              m_thriftPort;
-    std::string                 m_thrift_server_rpcPort_Name{"/frameTransformSet/serverRPC"};
     FrameTransformStorageSetRPC m_setRPC;
 };
 
