@@ -63,8 +63,10 @@ public:
 private:
     mutable std::mutex                      m_pd_mutex;
     mutable std::mutex                      m_trf_mutex;
+    std::string                             m_defaultConfigPrefix{"/frameTransformServer"};
+    std::string                             m_deviceName{"frameTransformSet_nws_yarp"};
     yarp::dev::PolyDriver*                  m_pDriver{nullptr};
-    std::string                             m_thriftPortName{"/frameTransformGet/serverRPC"};
+    std::string                             m_thriftPortName;
     yarp::os::Port                          m_thriftPort;
     yarp::dev::IFrameTransformStorageSet*   m_iSetIf   {nullptr};
     yarp::dev::IFrameTransformStorageUtils* m_iUtilsIf {nullptr};
