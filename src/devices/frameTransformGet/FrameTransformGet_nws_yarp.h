@@ -62,9 +62,6 @@ public:
     bool threadInit() override;
     void threadRelease() override;
     void run() override;
-    bool m_streaming_port_enabled = true;
-    yarp::os::Port m_streaming_port;
-    std::string    m_streaming_port_name{ "/frameTransformGet/tf:o" };
 
     // yarp::dev::DeviceDriver
     bool  open(yarp::os::Searchable &params) override;
@@ -80,14 +77,19 @@ public:
 private:
     // mutable std::vector<std::mutex> m_PolyDriver_mutex;
     // double m_period{const_default_thread_period};
-    int    m_verbose{4};
+    bool            m_streaming_port_enabled = true;
+    int             m_verbose{4};
+    yarp::os::Port  m_streaming_port;
+    std::string     m_streaming_port_name;
+    std::string     m_defaultConfigPrefix{"/frameTransformServer"};
+    std::string     m_deviceName{"frameTransformGet_nws_yarp"};
 
     // for requesting the transforms to FrameTransformStorageGetMultiplexer
     yarp::dev::IFrameTransformStorageGet* m_iFrameTransformStorageGet = nullptr;
 
     // for the RPC with the NWC
-    yarp::os::Port      m_thrift_rpcPort;
-    std::string         m_thrift_rpcPort_Name{"/frameTransformGet/serverRPC"};
+    yarp::os::Port  m_thrift_rpcPort;
+    std::string     m_thrift_rpcPort_Name;
 };
 
 #endif   // YARP_DEV_FRAMETRANSFORMGET_NWS_YARP_H

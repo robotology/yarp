@@ -25,16 +25,25 @@ bool FrameTransformGet_nws_yarp::open(yarp::os::Searchable &config)
         yCError(FRAMETRANSFORMGETNWSYARP,"Error! YARP Network is not initialized");
         return false;
     }
-
+    std::string prefix;
+    //checking default config param
+    bool default_config = true;
+    if(config.check("default-config")) {
+        default_config = config.find("default-config").asString() == "true";
+    }
     // configuration
-    if (config.check("rpc_port_server")){
-        m_thrift_rpcPort_Name = config.find("rpc_port_server").asString();
+    if (config.check("nws_thrift_port_prefix")){
+        prefix = config.find("nws_thrift_port_prefix").asString() + (default_config ? m_defaultConfigPrefix : "");
+        if(prefix[0] != '/') {prefix = "/"+prefix;}
+        m_thrift_rpcPort_Name = prefix + "/" + m_deviceName + "/thrift";
     }
-    if (config.check("streaming_port_server")) {
-        m_streaming_port_name = config.find("streaming_port_server").asString();
+    else {
+        prefix =  default_config ? m_defaultConfigPrefix : "";
+        m_thrift_rpcPort_Name = prefix + "/" + m_deviceName + "/thrift";
+        yCWarning(FRAMETRANSFORMGETNWSYARP) << "no nws_thrift_port_prefix param found. The resulting port name will be: " << m_thrift_rpcPort_Name;
     }
-    if (config.check("streaming_enabled")) {
-        m_streaming_port_enabled = config.find("streaming_enabled").asBool();
+    if(config.check("streaming_enabled")) {
+        m_streaming_port_enabled = config.find("streaming_enabled").asString() == "true";
     }
     if (config.check("period")) {
         double period = config.find("period").asFloat64();
@@ -58,6 +67,16 @@ bool FrameTransformGet_nws_yarp::open(yarp::os::Searchable &config)
 
     if (m_streaming_port_enabled)
     {
+        if (config.check("output_streaming_port_prefix")){
+            prefix = config.find("output_streaming_port_prefix").asString() + (default_config ? m_defaultConfigPrefix : "");
+            if(prefix[0] != '/') {prefix = "/"+prefix;}
+            m_streaming_port_name = prefix + "/" + m_deviceName + "/tf:o";
+        }
+        else {
+            prefix =  default_config ? m_defaultConfigPrefix : "";
+            m_streaming_port_name = prefix + "/" + m_deviceName + "/tf:o";
+            yCWarning(FRAMETRANSFORMGETNWSYARP) << "no output_streaming_port_prefix param found. The resulting port name will be: " << m_streaming_port_name;
+        }
         yCInfo(FRAMETRANSFORMGETNWSYARP) << "Streaming transforms on Yarp port enabled";
         this->start();
     }
