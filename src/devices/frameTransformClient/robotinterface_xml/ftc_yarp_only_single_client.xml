@@ -16,7 +16,7 @@
         <!-- **************** YARP NWS **************** -->
         <device name="ftSet_nws_yarp" type="frameTransformSet_nws_yarp">
             <group name="GENERAL">
-                <param extern-name="ftSet_rpc_port" name="rpc_port"> /frameTransformSet/rpc </param>
+                <param extern-name="ft_client_prefix" name="nws_thrift_port_prefix">""</param>
             </group>
             <action phase="startup" level="5" type="attach">
                 <paramlist name="networks">
