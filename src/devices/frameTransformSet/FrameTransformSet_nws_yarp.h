@@ -25,15 +25,32 @@
  * This device is paired with its server called FrameTransformSet_nwc_yarp.
  *
  *   Parameters required by this device are:
- * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
- * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------------------------:|:-----------: |:--------------------------------------:|
- * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | port on which rpc calls should be made |
+ * | Parameter name               | SubParameter            | Type    | Units          | Default Value  | Required  | Description                                                                                                                                             |
+ * |:----------------------------:|:-----------------------:|:-------:|:--------------:|:--------------:|:------- -:|:-------------------------------------------------------------------------------------------------------------------------------------------------------:|
+ * | default-config               |      -                  | bool    | -              | true           | No        | tells whether or not the nws is instanciated by the frameTransformServer device. If true, "/frameTransformServer" will appended to the port name prefix |
+ * | nws_thrift_port_prefix       |      -                  | string  | -              | ""             | No        | a prefix for the nws thrift rpc port name                                                                                                               |
+ *
+ * \section FrameTransformGet_nwc_yarp_port_example Port names examples
+ * Here follow some examples of port names obtained with different parameters configurations
+ * -# With
+ *      - default-config = true
+ *      - nws_thrift_port_prefix = ""\n
+ *        The frameTransformSet_nws_yarp thrift port name will be: `/frameTransformServer/frameTransformSet_nws_yarp/thrift`
+ * -# With
+ *      - default-config = true
+ *      - nws_thrift_port_prefix = "/cer"\n
+ *        The frameTransformSet_nws_yarp thrift port name will be: `/cer/frameTransformServer/frameTransformSet_nws_yarp/thrift`
+ * -# With
+ *      - default-config = false
+ *      - nws_thrift_port_prefix = "/cer"\n
+ *        The frameTransformSet_nws_yarp thrift port name will be: `/cer/frameTransformSet_nws_yarp/thrift`
  *
  * \section FrameTransformSet_nws_yarp_example Example of configuration file using .ini format.
  *
  * \code{.unparsed}
  * device frameTransformSet_nws_yarp
- * rpc_port_server /frameTransformGet/serverRPC
+ * default-config true
+ * nws_thrift_port_prefix /cer
  * \endcode
  */
 

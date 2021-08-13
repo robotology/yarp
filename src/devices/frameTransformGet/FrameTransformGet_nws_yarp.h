@@ -28,18 +28,47 @@
  * For further information see \subpage FrameTransform.
  *
  *   Parameters required by this device are:
- * | Parameter name  | SubParameter            | Type    | Units          | Default Value                   | Required     | Description                            |
- * |:---------------:|:-----------------------:|:-------:|:--------------:|:-------------------------------:|:-----------: |:--------------------------------------:|
- * | rpc_port_server |      -                  | string  | -              |   /frameTransformGet/serverRPC  | No           | name of the port on which rpc calls should be made |
- * | streaming_port_server |      -            | string  | -              |   /frameTransformGet/tf:o       | No           | name of the port on which the tfs are published periodically |
- * | streaming_enabled |      -                | bool    | -              |   true                          | No           | enable/disable the tf publishing on the streaming port |
- * | period |                                  | float   | s              |   0.010                         | No           | It affects the period of thread publishing transforms on the streaming port |
+ * | Parameter name               | SubParameter            | Type    | Units          | Default Value  | Required  | Description                                                                                                                                             |
+ * |:----------------------------:|:-----------------------:|:-------:|:--------------:|:--------------:|:------- -:|:-------------------------------------------------------------------------------------------------------------------------------------------------------:|
+ * | default-config               |      -                  | bool    | -              | true           | No        | tells whether or not the nws is instanciated by the frameTransformServer device. If true, "/frameTransformServer" will appended to the port name prefix |
+ * | nws_thrift_port_prefix       |      -                  | string  | -              | ""             | No        | a prefix for the nws thrift rpc port name                                                                                                               |
+ * | output_streaming_port_prefix |      -                  | string  | -              | ""             | No        | a prefix for the output streaming port name                                                                                                             |
+ * | streaming_enabled            |      -                  | bool    | -              | true           | No        | enable/disable the tf publishing on the streaming port                                                                                                  |
+ * | period                       |                         | float   | s              | 0.010          | No        | It affects the period of thread publishing transforms on the streaming port                                                                             |
+ *
+ * \section FrameTransformGet_nwc_yarp_port_example Port names examples
+ * Here follow some examples of port names obtained with different parameters configurations
+ * -# With
+ *      - default-config = true
+ *      - nws_thrift_port_prefix = ""\n
+ *        The frameTransformGet_nws_yarp thrift port name will be: `/frameTransformServer/frameTransformGet_nws_yarp/thrift`
+ * -# With
+ *      - default-config = true
+ *      - nws_thrift_port_prefix = "/cer"\n
+ *        The frameTransformGet_nws_yarp thrift port name will be: `/cer/frameTransformServer/frameTransformGet_nws_yarp/thrift`
+ * -# With
+ *      - default-config = false
+ *      - nws_thrift_port_prefix = "/cer"\n
+ *        The frameTransformGet_nws_yarp thrift port name will be: `/cer/frameTransformGet_nws_yarp/thrift`
+ * -# With
+ *      - default-config = true
+ *      - output_streaming_port_prefix = ""\n
+ *        The name of the frameTransformGet_nws_yarp output port for the tf stream will be: `/frameTransformServer/frameTransformGet_nws_yarp/tf:o`
+ * -# With
+ *      - default-config = true
+ *      - output_streaming_port_prefix = "/cer"\n
+ *        The name of the frameTransformGet_nws_yarp output port for the tf stream will be: `/cer/frameTransformServer/frameTransformGet_nws_yarp/tf:o`
+ * -# With
+ *      - default-config = false
+ *      - output_streaming_port_prefix = "/cer"\n
+ *        The name of the frameTransformGet_nws_yarp output port for the tf stream will be: `/cer/frameTransformGet_nws_yarp/tf:o`
  *
  * \section FrameTransformGet_nws_yarp_device_configuration Example of configuration file using .ini format.
  *
  * \code{.unparsed}
- * device FrameTransformGet_nws_yarp
- * rpc_port_server /frameTransformGet/serverRPC
+ * device frameTransformGet_nws_yarp
+ * default-config true
+ * thrift_port_prefix /cer
  * \endcode
  */
 
