@@ -55,7 +55,7 @@ class FrameTransformGet_nwc_yarp:
         DataReader() = default;
 
         using               yarp::os::BufferedPort<return_getAllTransforms>::onRead;
-        virtual void        onRead(return_getAllTransforms& v) override;
+        void        onRead(return_getAllTransforms& v) override;
         bool                getData(return_getAllTransforms& data);
     };
 
@@ -71,21 +71,25 @@ public:
     bool  open(yarp::os::Searchable &params) override;
     bool  close() override;
 
-    // yarp::os::PeriodicThread
-    bool m_streaming_port_enabled = false;
-    std::string    m_streaming_port_name{ "/frameTransformGet/tf:i" };
-    DataReader*    m_dataReader =nullptr;
-
     // yarp::dev::IFrameTransformStorageGet
     bool getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const override;
 
 private:
-    int    m_verbose{4};
+    int            m_verbose{4};
+    std::string    m_deviceName{"frameTransformGet_nwc_yarp"};
+    std::string    m_defaultConfigPrefix{"/frameTransformClient"};
+    std::string    m_defaultServerPrefix{"/frameTransformServer/frameTransformGet_nws_yarp"};
+
+    //streaming port
+    bool           m_streaming_port_enabled = false;
+    std::string    m_streaming_input_port_name;
+    std::string    m_streaming_output_port_name;
+    DataReader*    m_dataReader =nullptr;
 
     // for the RPC with the NWS
-    yarp::os::Port      m_thrift_rpcPort;
-    std::string         m_thrift_rpcPort_Name{"/frameTransformGet/clientRPC"};
-    std::string         m_thrift_server_rpcPort_Name{"/frameTransformGet/serverRPC"};
+    yarp::os::Port                      m_thrift_rpcPort;
+    std::string                         m_thrift_rpcPort_Name;
+    std::string                         m_thrift_server_rpcPort_Name;
     mutable FrameTransformStorageGetRPC m_frameTransformStorageGetRPC;
 
 };
