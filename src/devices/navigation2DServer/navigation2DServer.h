@@ -43,8 +43,9 @@ protected:
 
     //drivers and interfaces
     yarp::dev::PolyDriver                   pNav;
-    yarp::dev::Nav2D::INavigation2DControlActions* iNav_ctrl;
-    yarp::dev::Nav2D::INavigation2DTargetActions*  iNav_target;
+    yarp::dev::Nav2D::INavigation2DControlActions* iNav_ctrl = nullptr;
+    yarp::dev::Nav2D::INavigation2DTargetActions*  iNav_target = nullptr;
+    yarp::dev::Nav2D::INavigation2DVelocityActions* iNav_vel = nullptr;
 
     double                                  m_period;
     double                                  m_stats_time_last;
