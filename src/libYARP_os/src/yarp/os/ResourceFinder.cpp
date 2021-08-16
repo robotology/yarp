@@ -685,10 +685,10 @@ public:
 
         std::string parentPath = getPath(yarp::conf::dirs::yarpdatahome(), "contexts", "", "");
         if (yarp::os::stat(parentPath.c_str()) != 0) {
-            yarp::os::mkdir(parentPath.c_str());
+            yarp::os::mkdir_p(parentPath.c_str());
         }
 
-        if (yarp::os::mkdir(path.c_str()) < 0 && errno != EEXIST) {
+        if (yarp::os::mkdir_p(path.c_str()) < 0 && errno != EEXIST) {
             yCWarning(RESOURCEFINDER, "Could not create %s directory", path.c_str());
         }
         return path;
@@ -715,10 +715,10 @@ public:
 
         std::string parentPath = getPath(yarp::conf::dirs::yarpdatahome(), "robots", "", "");
         if (yarp::os::stat(parentPath.c_str()) != 0) {
-            yarp::os::mkdir(parentPath.c_str());
+            yarp::os::mkdir_p(parentPath.c_str());
         }
 
-        if (yarp::os::mkdir(path.c_str()) < 0 && errno != EEXIST) {
+        if (yarp::os::mkdir_p(path.c_str()) < 0 && errno != EEXIST) {
             yCWarning(RESOURCEFINDER, "Could not create %s directory", path.c_str());
         }
         return path;
