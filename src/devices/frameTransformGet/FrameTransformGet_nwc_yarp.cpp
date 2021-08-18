@@ -17,18 +17,38 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
         yCError(FRAMETRANSFORMGETNWCYARP,"Error! YARP Network is not initialized");
         return false;
     }
+    std::string prefix;
+    //checking default config params
+    bool default_config = true;
+    if(config.check("default-client")) {
+        default_config = config.find("default-client").asString() == "true";
+    }
+    bool default_server = true;
+    if(config.check("default-server")) {
+        default_server = config.find("default-server").asString() == "true";
+    }
     // client port configuration
-    if (config.check("rpc_port_client")){
-        m_thrift_rpcPort_Name = config.find("rpc_port_client").asString();
-    } else {
-        yCWarning(FRAMETRANSFORMGETNWCYARP) << "no rpc_port_client param found, using default one: " << m_thrift_rpcPort_Name;
+    if (config.check("nwc_thrift_port_prefix")){
+        prefix = config.find("nwc_thrift_port_prefix").asString() + (default_config ? m_defaultConfigPrefix : "");
+        if(prefix[0] != '/') {prefix = "/"+prefix;}
+        m_thrift_rpcPort_Name = prefix + "/" + m_deviceName + "/thrift";
+    }
+    else {
+        prefix =  default_config ? m_defaultConfigPrefix : "";
+        m_thrift_rpcPort_Name = prefix + "/" + m_deviceName + "/thrift";
+        yCWarning(FRAMETRANSFORMGETNWCYARP) << "no nwc_thrift_port_prefix param found. The resulting port name will be: " << m_thrift_rpcPort_Name;
     }
 
     //server port configuration
-    if (config.check("rpc_port_server")){
-        m_thrift_server_rpcPort_Name = config.find("rpc_port_server").asString();
-    } else {
-        yCWarning(FRAMETRANSFORMGETNWCYARP) << "no rpc_port_server param found, using default one " << m_thrift_server_rpcPort_Name;
+    if (config.check("nws_thrift_port_prefix")){
+        prefix = config.find("nws_thrift_port_prefix").asString() + (default_server ? m_defaultServerPrefix : "");
+        if(prefix[0] != '/') {prefix = "/"+prefix;}
+        m_thrift_server_rpcPort_Name = prefix + "/thrift";
+    }
+    else {
+        prefix =  default_server ? m_defaultServerPrefix : "";
+        m_thrift_server_rpcPort_Name = prefix + "/thrift";
+        yCWarning(FRAMETRANSFORMGETNWCYARP) << "no nws_thrift_port_prefix param found. The resulting port name will be: " << m_thrift_server_rpcPort_Name;
     }
     // rpc inizialisation
     if(!m_thrift_rpcPort.open(m_thrift_rpcPort_Name))
@@ -48,13 +68,48 @@ bool FrameTransformGet_nwc_yarp::open(yarp::os::Searchable& config)
         return false;
     }
 
+    //checking streaming_enabled param
+    if(config.check("streaming_enabled")) {
+        m_streaming_port_enabled = config.find("streaming_enabled").asString() == "true";
+    }
+
     if (m_streaming_port_enabled)
     {
         yCInfo(FRAMETRANSFORMGETNWCYARP) << "Receiving transforms from Yarp port enabled";
+        if (config.check("input_streaming_port_prefix")){
+            prefix = config.find("input_streaming_port_prefix").asString() + (default_config ? m_defaultConfigPrefix : "");
+            if(prefix[0] != '/') {prefix = "/"+prefix;}
+            m_streaming_input_port_name = prefix + "/" + m_deviceName + "/tf:i";
+        }
+        else {
+            prefix =  default_config ? m_defaultConfigPrefix : "";
+            m_streaming_input_port_name = prefix + "/" + m_deviceName + "/tf:i";
+            yCWarning(FRAMETRANSFORMGETNWCYARP) << "no input_streaming_port_prefix param found. The resulting port name will be: " << m_streaming_input_port_name;
+        }
+
+        //server port configuration
+        if (config.check("output_streaming_port_prefix")){
+            prefix = config.find("output_streaming_port_prefix").asString() + (default_server ? m_defaultServerPrefix : "");
+            if(prefix[0] != '/') {prefix = "/"+prefix;}
+            m_streaming_output_port_name = prefix + "/tf:o";
+        }
+        else {
+            prefix =  default_server ? m_defaultServerPrefix : "";
+            m_streaming_output_port_name = prefix + "/tf:o";
+            yCWarning(FRAMETRANSFORMGETNWCYARP) << "no output_streaming_port_prefix param found. The resulting port name will be: " << m_streaming_output_port_name;
+        }
+
+        // rpc inizialisation
         m_dataReader = new FrameTransformGet_nwc_yarp::DataReader();
-        if (!m_dataReader->open(m_streaming_port_name))
+        if(!m_dataReader->open(m_streaming_input_port_name))
         {
-            yCError(FRAMETRANSFORMGETNWCYARP, "Could not open \"%s\" port", m_streaming_port_name.c_str());
+            yCError(FRAMETRANSFORMGETNWCYARP,"Could not open \"%s\" port",m_streaming_input_port_name.c_str());
+            return false;
+        }
+        // connect to server
+        if (!yarp::os::NetworkBase::connect(m_streaming_output_port_name,m_streaming_input_port_name))
+        {
+            yCError(FRAMETRANSFORMGETNWCYARP,"Could not connect \"%s\" to \"%s\" port",m_streaming_output_port_name.c_str(), m_streaming_input_port_name.c_str());
             return false;
         }
     }
@@ -81,7 +136,7 @@ bool FrameTransformGet_nwc_yarp::close()
 
 bool FrameTransformGet_nwc_yarp::getTransforms(std::vector<yarp::math::FrameTransform>& transforms) const
 {
-    if (m_streaming_port_enabled==false)
+    if (!m_streaming_port_enabled)
     {
         return_getAllTransforms retrievedFromRPC = m_frameTransformStorageGetRPC.getTransformsRPC();
         if(!retrievedFromRPC.retvalue)

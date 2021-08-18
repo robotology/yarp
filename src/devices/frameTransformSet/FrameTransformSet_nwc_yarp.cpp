@@ -28,19 +28,40 @@ bool FrameTransformSet_nwc_yarp::open(yarp::os::Searchable& config)
         yCError(FRAMETRANSFORMSETNWCYARP,"Error! YARP Network is not initialized");
         return false;
     }
+    std::string prefix;
+    //checking default config params
+    bool default_config = true;
+    if(config.check("default-client")) {
+        default_config = config.find("default-client").asString() == "true";
+    }
+    bool default_server = true;
+    if(config.check("default-server")) {
+        default_server = config.find("default-server").asString() == "true";
+    }
     // client port configuration
-    if (config.check("rpc_port_client")){
-        m_thriftPortName = config.find("rpc_port_client").asString();
-    } else {
-        yCWarning(FRAMETRANSFORMSETNWCYARP) << "no rpc_port_client param found, using default one: " << m_thriftPortName;
+    if (config.check("nwc_thrift_port_prefix")){
+        prefix = config.find("nwc_thrift_port_prefix").asString() + (default_config ? m_defaultConfigPrefix : "");
+        if(prefix[0] != '/') {prefix = "/"+prefix;}
+        m_thriftPortName = prefix + "/" + m_deviceName + "/thrift";
+    }
+    else {
+        prefix =  default_config ? m_defaultConfigPrefix : "";
+        m_thriftPortName = prefix + "/" + m_deviceName + "/thrift";
+        yCWarning(FRAMETRANSFORMSETNWCYARP) << "no nwc_thrift_port_prefix param found. The resulting port name will be: " << m_thriftPortName;
     }
 
     //server port configuration
-    if (config.check("rpc_port_server")){
-        m_thrift_server_rpcPort_Name = config.find("rpc_port_server").asString();
-    } else {
-        yCWarning(FRAMETRANSFORMSETNWCYARP) << "no rpc_port_server param found, using default one " << m_thrift_server_rpcPort_Name;
+    if (config.check("nws_thrift_port_prefix")){
+        prefix = config.find("nws_thrift_port_prefix").asString() + (default_server ? m_defaultServerPrefix : "");
+        if(prefix[0] != '/') {prefix = "/"+prefix;}
+        m_thrift_server_rpcPort_Name = prefix + "/thrift";
     }
+    else {
+        prefix =  default_server ? m_defaultServerPrefix : "";
+        m_thrift_server_rpcPort_Name = prefix + "/thrift";
+        yCWarning(FRAMETRANSFORMSETNWCYARP) << "no nws_thrift_port_prefix param found. The resulting port name will be: " << m_thrift_server_rpcPort_Name;
+    }
+
     // rpc inizialisation
     if(!m_thriftPort.open(m_thriftPortName))
     {

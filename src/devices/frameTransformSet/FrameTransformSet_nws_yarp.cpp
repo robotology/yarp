@@ -27,7 +27,25 @@ bool FrameTransformSet_nws_yarp::open(yarp::os::Searchable& config)
         yCError(FRAMETRANSFORMSETNWSYARP,"Error! YARP Network is not initialized");
         return false;
     }
-    if (config.check("rpc_port_server"))       {m_thriftPortName = config.find("rpc_port_server").asString();}
+
+    std::string prefix;
+    //checking default config param
+    bool default_config = true;
+    if(config.check("default-config")) {
+        default_config = config.find("default-config").asString() == "true";
+    }
+    // configuration
+    if (config.check("nws_thrift_port_prefix")){
+        prefix = config.find("nws_thrift_port_prefix").asString() + (default_config ? m_defaultConfigPrefix : "");
+        if(prefix[0] != '/') {prefix = "/"+prefix;}
+        m_thriftPortName = prefix + "/" + m_deviceName + "/thrift";
+    }
+    else {
+        prefix =  default_config ? m_defaultConfigPrefix : "";
+        m_thriftPortName = prefix + "/" + m_deviceName + "/thrift";
+        yCWarning(FRAMETRANSFORMSETNWSYARP) << "no nws_thrift_port_prefix param found. The resulting port name will be: " << m_thriftPortName;
+    }
+
     if(!m_thriftPort.open(m_thriftPortName))
     {
         yCError(FRAMETRANSFORMSETNWSYARP,"Could not open \"%s\" port",m_thriftPortName.c_str());

@@ -42,9 +42,10 @@ const int MAX_PORTS = 5;
  * \brief A server to manage FrameTransforms for a robot (see \ref FrameTransform)
  *
  *   Parameters required by this device are:
- * | Parameter name   | SubParameter         | Type    | Units          | Default Value         | Required     | Description                                                          |
- * |:----------------:|:--------------------:|:-------:|:--------------:|:---------------------:|:-----------: |:--------------------------------------------------------------------:|
- * | filexml_option   | -                    | string  | -              | fts_yarp_only.xml    | no           | The name of the xml file containing the needed server configuration  |
+ * | Parameter name   | SubParameter         | Type    | Units          | Default Value        | Required     | Description                                                                                               |
+ * |:----------------:|:--------------------:|:-------:|:--------------:|:--------------------:|:-----------: |:---------------------------------------------------------------------------------------------------------:|
+ * | filexml_option   | -                    | string  | -              | fts_yarp_only.xml    | no           | The name of the xml file containing the needed server configuration                                       |
+ * | ft_server_prefix | -                    | string  | -              | ""                   | no           | A prefix to add to the names of all the ports opened by the NWSs instantiated by the frameTransformServer |
  *
  * Example of command line:
  * \code{.unparsed}

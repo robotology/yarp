@@ -11,7 +11,7 @@
     <devices>
         <!-- **************** YARP NWS **************** -->
         <device name="ftSet_nws_yarp" type="frameTransformSet_nws_yarp">
-            <param extern-name="ftSet_server_port" name="rpc_port_server"> /frameTransformSet/serverRPC </param>
+            <param extern-name="ft_server_prefix" name="nws_thrift_port_prefix">""</param>
             <action phase="startup" level="5" type="attach">
                 <paramlist name="networks">
                     <elem name="subdevicestorage"> ftc_storage </elem>
@@ -20,7 +20,8 @@
             <action phase="shutdown" level="5" type="detach" />
         </device>
         <device name="ftGet_nws_yarp" type="frameTransformGet_nws_yarp">
-            <param extern-name="ftGet_server_port" name="rpc_port_server"> /frameTransformGet/serverRPC </param>
+            <param extern-name="ft_server_prefix" name="nws_thrift_port_prefix">""</param>
+            <param extern-name="ft_server_prefix" name="output_streaming_port_prefix">""</param>
             <action phase="startup" level="5" type="attach">
                 <paramlist name="networks">
                     <elem name="subdevicestorage"> ftc_storage </elem>
