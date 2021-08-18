@@ -1955,8 +1955,24 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
     return cmd_process_info.dwProcessId;
 }
 
+std::string getProcLabel (const yarp::os::Bottle& msg)
+{
+    auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+    for (const auto& s_iter : ss)
+    {
+        auto sss = yarp::conf::string::split(s_iter, '=');
+        if (sss.size() == 2 && sss[0] == "YARP_LOG_PROCESS_LABEL")
+        {
+            return sss[1];
+        }
+    }
+    return "";
+}
+
 int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName)
 {
+    std::string proc_label = getProcLabel(msg);
+
     std::string strAlias=msg.find("as").asString();
     std::string portName="/log";
     portName+=mPortName+"/";
@@ -1964,6 +1980,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
     command = command.substr(0, command.find(' '));
     command = command.substr(command.find_last_of("\\/") + 1);
     portName+=command;
+    if (proc_label != "") { portName += "[" + proc_label + "]"; }
 
     // PIPES
     SECURITY_ATTRIBUTES pipe_sec_attr;
@@ -2908,6 +2925,8 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
 
 int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName)
 {
+    std::string proc_label = getProcLabel(msg);
+
     std::string strAlias=msg.find("as").asString();
     std::string strCmd=msg.find("cmd").asString();
 
@@ -2919,7 +2938,7 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
     command = command.substr(command.find_last_of("\\/") + 1);
 
     portName+=command;
-
+    if (proc_label != "") { portName += "[" + proc_label + "]"; }
 
 
     int  pipe_cmd_to_stdout[2];
