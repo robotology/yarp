@@ -13,6 +13,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/PlatformLimits.h>
 
+#include <yarp/conf/environment.h>
+
 #include <sstream>
 
 bool yarp::os::impl::LogForwarder::started{false};
@@ -31,9 +33,16 @@ yarp::os::impl::LogForwarder::LogForwarder()
     yarp::os::gethostname(hostname, HOST_NAME_MAX);
 
     yarp::os::SystemInfo::ProcessInfo processInfo = yarp::os::SystemInfo::getProcessInfo();
+    std::string proc_label = yarp::conf::environment::get_string("YARP_LOG_PROCESS_LABEL");
 
     outputPort.setWriteOnly();
-    std::string logPortName = "/log/" + std::string(hostname) + "/" + processInfo.name.substr(processInfo.name.find_last_of("\\/") + 1) + "/" + std::to_string(processInfo.pid);
+    std::string logPortName = "/log/" + std::string(hostname) +
+                              "/" + processInfo.name.substr(processInfo.name.find_last_of("\\/") + 1);
+
+    if (proc_label!="") { logPortName += "[" + proc_label + "]"; }
+
+    logPortName += "/" + std::to_string(processInfo.pid);
+
     if (!outputPort.open(logPortName)) {
         printf("LogForwarder error while opening port %s\n", logPortName.c_str());
     }
