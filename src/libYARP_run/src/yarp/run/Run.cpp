@@ -133,6 +133,19 @@ static bool fileExists(const char *fname)
     }
 }
 
+static std::string getProcLabel(const yarp::os::Bottle& msg)
+{
+    auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+    for (const auto& s_iter : ss)
+    {
+        auto sss = yarp::conf::string::split(s_iter, '=');
+        if (sss.size() == 2 && sss[0] == "YARP_LOG_PROCESS_LABEL")
+        {
+            return sss[1];
+        }
+    }
+    return "";
+}
 
 /////////
 int yarp::run::Run::main(int argc, char *argv[])
@@ -1953,20 +1966,6 @@ int yarp::run::Run::executeCmdAndStdio(yarp::os::Bottle& msg, yarp::os::Bottle& 
     fprintf(stderr, "%s", out.c_str());
 
     return cmd_process_info.dwProcessId;
-}
-
-std::string getProcLabel (const yarp::os::Bottle& msg)
-{
-    auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
-    for (const auto& s_iter : ss)
-    {
-        auto sss = yarp::conf::string::split(s_iter, '=');
-        if (sss.size() == 2 && sss[0] == "YARP_LOG_PROCESS_LABEL")
-        {
-            return sss[1];
-        }
-    }
-    return "";
 }
 
 int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& result, std::string& loggerName)
