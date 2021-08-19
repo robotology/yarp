@@ -12,8 +12,11 @@
     <devices>
         <!-- **************** YARP NWC **************** -->
         <device name="ftGet_nwc_yarp" type="frameTransformGet_nwc_yarp">
-            <param extern-name="ftGet_client_port" name="rpc_port_client"> /frameTransformGet/clientRPC </param>
-            <param extern-name="ftGet_server_port" name="rpc_port_server"> /frameTransformGet/serverRPC </param>
+            <param extern-name="ft_client_prefix" name="nwc_thrift_port_prefix">""</param>
+            <param extern-name="ft_server_prefix" name="nws_thrift_port_prefix">""</param>
+            <param extern-name="ftGet_client_enable_stream" name="streaming_enabled"> true </param>
+            <param extern-name="ft_client_prefix" name="input_streaming_port_prefix">""</param>
+            <param extern-name="ft_server_prefix" name="output_streaming_port_prefix">""</param>
         </device>
         <!-- **************** STORAGE **************** -->
         <device name="ftc_storage" type="frameTransformStorage">
