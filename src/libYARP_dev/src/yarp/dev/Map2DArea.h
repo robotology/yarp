@@ -88,6 +88,13 @@ namespace yarp
                 bool findAreaBounds(yarp::dev::Nav2D::Map2DLocation& lt, yarp::dev::Nav2D::Map2DLocation& rb);
 
                 /**
+                * retrieves the centroid of the area
+                * @cent the centroid
+                * @return true if the centroid was successfully generated (the Map2DArea must be valid)
+                */
+                bool getCentroid(yarp::dev::Nav2D::Map2DLocation& cent);
+
+                /**
                 * get a random Map2DLocation inside the Map2DArea
                 * @loc the computed Map2DLocation
                 * @return true if the Location was successfully generated (the Map2DArea must be valid)
