@@ -2068,8 +2068,11 @@ int yarp::run::Run::executeCmdStdout(yarp::os::Bottle& msg, yarp::os::Bottle& re
     std::string cstrEnvName;
     if (msg.check("env"))
     {
-        lstrcpy(lpNew, (LPTCH) msg.find("env").asString().c_str());
-        lpNew += lstrlen(lpNew) + 1;
+        auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+        for (const auto& s : ss) {
+            lstrcpy(lpNew, (LPTCH)s.c_str());
+            lpNew += lstrlen(lpNew) + 1;
+        }
     }
 
     // closing env block
@@ -2228,8 +2231,11 @@ int yarp::run::Run::executeCmd(yarp::os::Bottle& msg, yarp::os::Bottle& result)
     std::string cstrEnvName;
     if (msg.check("env"))
     {
-        lstrcpy(lpNew, (LPTCH) msg.find("env").asString().c_str());
-        lpNew += lstrlen(lpNew) + 1;
+        auto ss = yarp::conf::string::split(msg.find("env").asString(), ';');
+        for (const auto& s : ss) {
+            lstrcpy(lpNew, (LPTCH)s.c_str());
+            lpNew += lstrlen(lpNew) + 1;
+        }
     }
 
     // closing env block
