@@ -203,15 +203,15 @@ void FrameTransformSet_nwc_ros::publishFrameTransforms(const std::vector<yarp::m
     {
         if(tf.isStatic)
         {
-            yarpTransformToROSTransform(tf,transform_timed);
-            transform_timed.header.seq = rosMsgCounter;
-            rosOutTimedData.transforms.push_back(transform_timed);
-        }
-        else
-        {
             yarpTransformToROSTransform(tf,transform_static);
             transform_static.header.seq = rosMsgCounter;
             rosOutStaticData.transforms.push_back(transform_static);
+        }
+        else
+        {
+            yarpTransformToROSTransform(tf,transform_timed);
+            transform_timed.header.seq = rosMsgCounter;
+            rosOutTimedData.transforms.push_back(transform_timed);
         }
     }
     m_rosPublisherPort_tf_timed.write();
