@@ -193,6 +193,21 @@ bool Map2DArea::isValid() const
     return true;
 }
 
+bool Map2DArea::getCentroid(yarp::dev::Nav2D::Map2DLocation& cent)
+{
+    Map2DLocation lt;
+    Map2DLocation rb;
+    bool ret = findAreaBounds (lt,rb);
+    if (ret == true)
+    {
+        cent.map_id=this->map_id;
+        cent.x = (rb.x - lt.x) / 2.0;
+        cent.y = (rb.y - lt.y) / 2.0;
+        return true;
+    }
+    return false;
+}
+
 bool  Map2DArea::findAreaBounds(Map2DLocation& lt, Map2DLocation& rb)
 {
     lt.map_id = rb.map_id = this->map_id;
