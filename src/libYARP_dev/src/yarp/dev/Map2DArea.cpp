@@ -38,14 +38,14 @@ int pnpoly(std::vector<yarp::math::Vec2D<double>> points, double testx, double t
     return c;
 }
 
-Map2DArea::Map2DArea(const std::string& map_name, const std::vector<yarp::math::Vec2D<double>> area_points, const std::string& desc)
+Map2DArea::Map2DArea(const std::string& map_name, const std::vector<yarp::math::Vec2D<double>>& area_points, const std::string& desc)
 {
     map_id = map_name;
     points = area_points;
     description = desc;
 }
 
-Map2DArea::Map2DArea(const std::string& map_name, const std::vector<Map2DLocation> area_points, const std::string& desc)
+Map2DArea::Map2DArea(const std::string& map_name, const std::vector<Map2DLocation>& area_points, const std::string& desc)
 {
     map_id = map_name;
     description = desc;

@@ -27,7 +27,7 @@ namespace yarp
                 * Constructor
                 * @param area_points: a set of Map2DLocations defining the path.
                 */
-                Map2DPath(const std::vector<yarp::dev::Nav2D::Map2DLocation> map_waypoints, const std::string& desc = "");
+                Map2DPath(const std::vector<yarp::dev::Nav2D::Map2DLocation>& map_waypoints, const std::string& desc = "");
 
                 /**
                 * Default constructor: the map name is empty, coordinates are set to zero.

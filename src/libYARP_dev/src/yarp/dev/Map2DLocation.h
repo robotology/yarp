@@ -49,7 +49,7 @@ namespace yarp
                 * @param inY: location coordinates w.r.t. map reference frame (expressed in meters)
                 * @param inT: location orientation w.r.t. map reference frame (expressed in degrees)
                 */
-                Map2DLocation(const std::string& map_name, yarp::dev::Nav2D::XYWorld location, const std::string& desc="")
+                Map2DLocation(const std::string& map_name, const yarp::dev::Nav2D::XYWorld& location, const std::string& desc="")
                 {
                     map_id = map_name;
                     x = location.x;

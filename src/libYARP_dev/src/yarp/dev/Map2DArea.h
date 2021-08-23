@@ -32,14 +32,14 @@ namespace yarp
                 * @param map_name: the name of the map the location refers to.
                 * @param area_points: a set of vertexes defining the area. At least three points are required to define a valid area.
                 */
-                Map2DArea(const std::string& map_name, const std::vector<yarp::math::Vec2D<double>> area_points, const std::string& desc = "");
+                Map2DArea(const std::string& map_name, const std::vector<yarp::math::Vec2D<double>>& area_points, const std::string& desc = "");
 
                 /**
                 * Constructor
                 * @param map_name: the name of the map the location refers to.
                 * @param area_points: a set of Map2DLocations defining the area. At least three points are required to define a valid area.
                 */
-                Map2DArea(const std::string& map_name, const std::vector<yarp::dev::Nav2D::Map2DLocation> area_points, const std::string& desc = "");
+                Map2DArea(const std::string& map_name, const std::vector<yarp::dev::Nav2D::Map2DLocation>& area_points, const std::string& desc = "");
 
                 /**
                 * Default constructor: the map name is empty, coordinates are set to zero.

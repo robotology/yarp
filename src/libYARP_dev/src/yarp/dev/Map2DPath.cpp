@@ -59,7 +59,7 @@ void Map2DPath::clear()
     description = "";
 }
 
-Map2DPath::Map2DPath(const std::vector<Map2DLocation> map_waypoints, const std::string& desc)
+Map2DPath::Map2DPath(const std::vector<Map2DLocation>& map_waypoints, const std::string& desc)
 {
     description = desc;
     for (const auto& map_waypoint : map_waypoints)
