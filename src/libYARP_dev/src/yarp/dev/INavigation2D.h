@@ -21,6 +21,7 @@ namespace yarp {
     namespace dev {
         namespace Nav2D
         {
+            class INavigation2DVelocityActions;
             class INavigation2DTargetActions;
             class INavigation2DControlActions;
             class INavigation2D;
@@ -63,6 +64,25 @@ namespace yarp {
         }
     }
 }
+
+class YARP_dev_API yarp::dev::Nav2D::INavigation2DVelocityActions
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~INavigation2DVelocityActions() {}
+
+    /**
+     * Apply a velocity command. Velocities are expressed in the robot reference frame.
+     * @param x [m/s]
+     * @param y [m/s]
+     * @param theta [deg/s]
+     * @param timeout The velocity command expires after the specified amount of time (by default 0.1 seconds)
+     * @return true/false
+     */
+    virtual bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) = 0;
+};
 
 class YARP_dev_API yarp::dev::Nav2D::INavigation2DTargetActions
 {
@@ -111,16 +131,6 @@ public:
      * @return true/false
      */
     virtual bool getRelativeLocationOfCurrentTarget(double& x, double& y, double& theta) = 0;
-
-    /**
-     * Apply a velocity command. velocities are expressed in the robot reference frame
-     * @param x [m/s]
-     * @param y [m/s]
-     * @param theta [deg/s]
-     * @param timeout The velocity command expires after the specified amount of time (by default 0.1 seconds)
-     * @return true/false
-     */
-    virtual bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) = 0;
 };
 
 class YARP_dev_API yarp::dev::Nav2D::INavigation2DControlActions
@@ -194,6 +204,7 @@ public:
  */
 class YARP_dev_API yarp::dev::Nav2D::INavigation2D :  public yarp::dev::Nav2D::INavigation2DTargetActions,
                                                       public yarp::dev::Nav2D::INavigation2DControlActions,
+                                                      public yarp::dev::Nav2D::INavigation2DVelocityActions,
                                                       public yarp::dev::Nav2D::ILocalization2D
 {
 public:

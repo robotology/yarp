@@ -33,8 +33,6 @@ YARP_LOG_COMPONENT(NAVIGATION2DSERVER, "yarp.device.navigation2DServer")
 
 navigation2DServer::navigation2DServer() : PeriodicThread(DEFAULT_THREAD_PERIOD)
 {
-    iNav_target = nullptr;
-    iNav_ctrl = nullptr;
     m_navigation_status=yarp::dev::Nav2D::navigation_status_idle;
     m_stats_time_last = yarp::os::Time::now();
 }
@@ -53,10 +51,12 @@ bool navigation2DServer::attachAll(const PolyDriverList &device2attach)
     {
         Idevice2attach->view(iNav_target);
         Idevice2attach->view(iNav_ctrl);
+        Idevice2attach->view(iNav_vel);
     }
 
     if (nullptr == iNav_target ||
-        nullptr == iNav_ctrl)
+        nullptr == iNav_ctrl ||
+        nullptr == iNav_vel)
     {
         yCError(NAVIGATION2DSERVER, "Subdevice passed to attach method is invalid");
         return false;
@@ -72,8 +72,6 @@ bool navigation2DServer::detachAll()
     {
         PeriodicThread::stop();
     }
-    iNav_target = nullptr;
-    iNav_ctrl = nullptr;
     return true;
 }
 
@@ -296,7 +294,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
         double y_vel   = command.get(3).asFloat64();
         double t_vel   = command.get(4).asFloat64();
         double timeout = command.get(5).asFloat64();
-        bool ret = iNav_target->applyVelocityCommand(x_vel,y_vel,t_vel,timeout);
+        bool ret = iNav_vel->applyVelocityCommand(x_vel,y_vel,t_vel,timeout);
         if (ret)
         {
             clear_current_goal_name();
