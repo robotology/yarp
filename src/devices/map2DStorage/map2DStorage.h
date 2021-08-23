@@ -105,6 +105,7 @@ public:
 private:
     bool priv_load_locations_and_areas_v1(std::ifstream& file);
     bool priv_load_locations_and_areas_v2(std::ifstream& file);
+    bool priv_load_locations_and_areas_v3(std::ifstream& file);
 
 private:
     yarp::os::ResourceFinder     m_rf_mapCollection;

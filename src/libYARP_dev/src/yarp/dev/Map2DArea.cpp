@@ -38,15 +38,17 @@ int pnpoly(std::vector<yarp::math::Vec2D<double>> points, double testx, double t
     return c;
 }
 
-Map2DArea::Map2DArea(const std::string& map_name, const std::vector<yarp::math::Vec2D<double>> area_points)
+Map2DArea::Map2DArea(const std::string& map_name, const std::vector<yarp::math::Vec2D<double>>& area_points, const std::string& desc)
 {
     map_id = map_name;
     points = area_points;
+    description = desc;
 }
 
-Map2DArea::Map2DArea(const std::string& map_name, const std::vector<Map2DLocation> area_points)
+Map2DArea::Map2DArea(const std::string& map_name, const std::vector<Map2DLocation>& area_points, const std::string& desc)
 {
     map_id = map_name;
+    description = desc;
     for (auto it = area_points.begin(); it != area_points.end(); it++)
     {
 #if 0
@@ -69,68 +71,6 @@ Map2DArea::Map2DArea()
     map_id = "";
 }
 
-bool Map2DArea::read(yarp::os::ConnectionReader& connection)
-{
-    // auto-convert text mode interaction
-    connection.convertTextMode();
-
-    //[[maybe_unused]] int32_t dummy; //@@@FIXME To be used as soon as C++17 becomes available
-    int32_t dummy;
-
-    dummy = connection.expectInt32();
-    assert(dummy == BOTTLE_TAG_LIST);
-    dummy = connection.expectInt32();
-
-    dummy = connection.expectInt32();
-    assert(dummy == BOTTLE_TAG_STRING);
-    int string_size = connection.expectInt32();
-    this->map_id.resize(string_size);
-    connection.expectBlock(const_cast<char*>(this->map_id.data()), string_size);
-
-    dummy = connection.expectInt32();
-    assert(dummy == BOTTLE_TAG_INT32);
-    size_t siz = connection.expectInt32();
-
-    this->points.clear();
-    for (size_t i = 0; i < siz; i++)
-    {
-        dummy = connection.expectInt32();
-        assert(dummy == BOTTLE_TAG_FLOAT64);
-        double x = connection.expectFloat64();
-        dummy = connection.expectInt32();
-        assert(dummy == BOTTLE_TAG_FLOAT64);
-        double y = connection.expectFloat64();
-        this->points.push_back(yarp::math::Vec2D<double>(x, y));
-    }
-
-    return !connection.isError();
-}
-
-bool Map2DArea::write(yarp::os::ConnectionWriter& connection) const
-{
-    size_t siz = this->points.size();
-
-    connection.appendInt32(BOTTLE_TAG_LIST);
-    connection.appendInt32(2+siz*2);
-
-    connection.appendInt32(BOTTLE_TAG_STRING);
-    connection.appendString(map_id);
-
-    connection.appendInt32(BOTTLE_TAG_INT32);
-    connection.appendInt32(siz);
-
-    for (size_t i = 0; i < siz; i++)
-    {
-        connection.appendInt32(BOTTLE_TAG_FLOAT64);
-        connection.appendFloat64(this->points[i].x);
-        connection.appendInt32(BOTTLE_TAG_FLOAT64);
-        connection.appendFloat64(this->points[i].y);
-    }
-
-    connection.convertTextMode();
-    return !connection.isError();
-}
-
 std::string Map2DArea::toString() const
 {
     std::ostringstream stringStream;
@@ -141,6 +81,7 @@ std::string Map2DArea::toString() const
     {
         stringStream << " point " << i << "(" << points[i].x << "," << points[i].y << ")";
     }
+    stringStream << std::string("desc:") << description;
     return stringStream.str();
 }
 
@@ -266,6 +207,7 @@ bool  Map2DArea::getRandomLocation(Map2DLocation& loc)
 
 void Map2DArea::clear()
 {
+    this->description="";
     this->map_id = "";
     this->points.clear();
 }

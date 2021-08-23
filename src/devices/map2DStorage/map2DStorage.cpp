@@ -447,6 +447,136 @@ bool Map2DStorage::priv_load_locations_and_areas_v2(std::ifstream& file)
     return true;
 }
 
+bool Map2DStorage::priv_load_locations_and_areas_v3(std::ifstream& file)
+{
+    std::string     buffer;
+    std::getline(file, buffer);
+    if (buffer != "Locations:")
+    {
+        yCError(MAP2DSTORAGE) << "Unable to parse Locations section!";
+        return false;
+    }
+
+    while (1)
+    {
+        std::getline(file, buffer);
+        if (buffer == "Areas:") {
+            break;
+        }
+        if (file.eof())
+        {
+            yCError(MAP2DSTORAGE) << "Unexpected End Of File";
+            return false;
+        }
+        Bottle b;
+        b.fromString(buffer);
+        size_t bot_size = b.size();
+        if (bot_size != 6)
+        {
+            yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
+            return false;
+        }
+        Map2DLocation   location;
+        std::string name = b.get(0).asString();
+        location.map_id = b.get(1).asString();
+        location.x = b.get(2).asFloat64();
+        location.y = b.get(3).asFloat64();
+        location.theta = b.get(4).asFloat64();
+        location.description = b.get(5).asString();
+        m_locations_storage[name] = location;
+    }
+
+    if (buffer != "Areas:")
+    {
+        yCError(MAP2DSTORAGE) << "Unable to parse Areas section!";
+        return false;
+    }
+
+    while (1)
+    {
+        Map2DArea       area;
+        std::getline(file, buffer);
+        if (buffer == "Paths:") {
+            break;
+        }
+        if (file.eof()) {
+            break;
+        }
+
+        Bottle b;
+        b.fromString(buffer);
+        size_t bot_size = b.size();
+        std::string name = b.get(0).asString();
+        area.map_id = b.get(1).asString();
+        size_t area_size = b.get(2).asInt32();
+        if (area_size <= 0 || bot_size != 3 + area_size * 2 + 1)
+        {
+            yCError(MAP2DSTORAGE) << "Unable to parse contents of Areas section!";
+            return false;
+        }
+        for (size_t ai = 3; ai < bot_size-1; ai += 2)
+        {
+            double xpos = b.get(ai).asFloat64();
+            double ypos = b.get(ai + 1).asFloat64();
+            area.points.push_back(yarp::math::Vec2D<double>(xpos, ypos));
+        }
+        area.description = b.get(bot_size-1).asString();
+        m_areas_storage[name] = area;
+    }
+
+    if (buffer != "Paths:")
+    {
+        yCError(MAP2DSTORAGE) << "Unable to parse Paths section!";
+        return false;
+    }
+
+    while (1)
+    {
+        Map2DPath       path;
+        std::getline(file, buffer);
+        if (file.eof()) {
+            break;
+        }
+
+        Bottle b;
+        b.fromString(buffer);
+        size_t bot_size = b.size();
+        YARP_UNUSED(bot_size);
+        std::string name = b.get(0).asString();
+        size_t i = 1;
+        do
+        {
+            if (b.get(i).isList())
+            {
+                Bottle* ll = b.get(i).asList();
+                if (ll && ll->size() == 4)
+                {
+                    Map2DLocation loc;
+                    loc.map_id = ll->get(0).asString();
+                    loc.x = ll->get(1).asFloat64();
+                    loc.y = ll->get(2).asFloat64();
+                    loc.theta = ll->get(3).asFloat64();
+                    path.push_back(loc);
+                }
+                else
+                {
+                    yCError(MAP2DSTORAGE) << "Unable to parse contents of Paths section!";
+                    return false;
+                }
+            }
+            else
+            {
+                break;
+            }
+            i++;
+        } while (1);
+        path.description = b.get(bot_size - 1).asString();
+        m_paths_storage[name] = path;
+    }
+
+    return true;
+}
+
 bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
 {
     std::ifstream file;
@@ -488,9 +618,18 @@ bool Map2DStorage::loadLocationsAndExtras(std::string locations_file)
             return false;
         }
     }
+    else if (version == 3)
+    {
+        if (!priv_load_locations_and_areas_v3(file))
+        {
+            yCError(MAP2DSTORAGE) << "Call to load_locations_and_areas_v3 failed";
+            file.close();
+            return false;
+        }
+    }
     else
     {
-        yCError(MAP2DSTORAGE) << "Only versions 1,2 supported!";
+        yCError(MAP2DSTORAGE) << "Only versions 1-3 supported!";
         file.close();
         return false;
     }
@@ -515,51 +654,56 @@ bool Map2DStorage::saveLocationsAndExtras(std::string locations_file)
         return false;
     }
 
-    std::string     s;
-    Map2DLocation   loc;
-    Map2DArea       area;
-    s = " ";
+    std::string s = " ";
 
     file << "Version:\n";
-    file << "2\n";
+    file << "3\n";
 
     {
+        Map2DLocation   tmp_loc;
         file << "Locations:\n";
         std::map<std::string, Map2DLocation>::iterator it;
         for (it = m_locations_storage.begin(); it != m_locations_storage.end(); ++it)
         {
-            loc = it->second;
-            file << it->first << s << loc.map_id << s << loc.x << s << loc.y << s << loc.theta << "\n";
+            tmp_loc = it->second;
+            file << it->first << s << tmp_loc.map_id << s << tmp_loc.x << s << tmp_loc.y << s << tmp_loc.theta << s;
+            file << tmp_loc.description << "\n";
         }
     }
 
     {
+        Map2DArea       tmp_area;
         file << "Areas:\n";
         std::map<std::string, Map2DArea>::iterator it2;
         for (it2 = m_areas_storage.begin(); it2 != m_areas_storage.end(); ++it2)
         {
-            area = it2->second;
-            file << it2->first << s << area.map_id << s << area.points.size() << s;
-            for (size_t i = 0; i < area.points.size(); i++)
+            tmp_area = it2->second;
+            file << it2->first << s << tmp_area.map_id << s << tmp_area.points.size() << s;
+            for (size_t i = 0; i < tmp_area.points.size(); i++)
             {
-                file << area.points[i].x << s;
-                file << area.points[i].y << s;
+                file << tmp_area.points[i].x << s;
+                file << tmp_area.points[i].y << s;
             }
+            file << tmp_area.description;
             file << "\n";
         }
     }
 
     {
+
+        Map2DPath       tmp_path;
         file << "Paths:\n";
         std::map<std::string, Map2DPath>::iterator it3;
         for (it3 = m_paths_storage.begin(); it3 != m_paths_storage.end(); ++it3)
         {
+            tmp_path = it3->second;
             file << it3->first << " "; // the name of the path
             for (size_t i=0; i<it3->second.size(); i++)
             {
-                loc = it3->second[i];
-                file << "( " <<loc.map_id << s << loc.x << s << loc.y << s << loc.theta << ") ";
+                Map2DLocation tmp_loc = tmp_path[i];
+                file << "( " << tmp_loc.map_id << s << tmp_loc.x << s << tmp_loc.y << s << tmp_loc.theta << ") ";
             }
+            file << tmp_path.description;
             file << "\n";
         }
     }

@@ -19,7 +19,8 @@ Map2DLocationData::Map2DLocationData() :
         map_id(""),
         x(0),
         y(0),
-        theta(0)
+        theta(0),
+        description("")
 {
 }
 
@@ -27,12 +28,14 @@ Map2DLocationData::Map2DLocationData() :
 Map2DLocationData::Map2DLocationData(const std::string& map_id,
                                      const double x,
                                      const double y,
-                                     const double theta) :
+                                     const double theta,
+                                     const std::string& description) :
         WirePortable(),
         map_id(map_id),
         x(x),
         y(y),
-        theta(theta)
+        theta(theta),
+        description(description)
 {
 }
 
@@ -51,6 +54,9 @@ bool Map2DLocationData::read(yarp::os::idl::WireReader& reader)
     if (!read_theta(reader)) {
         return false;
     }
+    if (!read_description(reader)) {
+        return false;
+    }
     return !reader.isError();
 }
 
@@ -58,7 +64,7 @@ bool Map2DLocationData::read(yarp::os::idl::WireReader& reader)
 bool Map2DLocationData::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(4)) {
+    if (!reader.readListHeader(5)) {
         return false;
     }
     return read(reader);
@@ -79,6 +85,9 @@ bool Map2DLocationData::write(const yarp::os::idl::WireWriter& writer) const
     if (!write_theta(writer)) {
         return false;
     }
+    if (!write_description(writer)) {
+        return false;
+    }
     return !writer.isError();
 }
 
@@ -86,7 +95,7 @@ bool Map2DLocationData::write(const yarp::os::idl::WireWriter& writer) const
 bool Map2DLocationData::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(4)) {
+    if (!writer.writeListHeader(5)) {
         return false;
     }
     return write(writer);
@@ -277,6 +286,34 @@ bool Map2DLocationData::Editor::did_set_theta()
     return true;
 }
 
+// Editor: description setter
+void Map2DLocationData::Editor::set_description(const std::string& description)
+{
+    will_set_description();
+    obj->description = description;
+    mark_dirty_description();
+    communicate();
+    did_set_description();
+}
+
+// Editor: description getter
+const std::string& Map2DLocationData::Editor::get_description() const
+{
+    return obj->description;
+}
+
+// Editor: description will_set
+bool Map2DLocationData::Editor::will_set_description()
+{
+    return true;
+}
+
+// Editor: description did_set
+bool Map2DLocationData::Editor::did_set_description()
+{
+    return true;
+}
+
 // Editor: clean
 void Map2DLocationData::Editor::clean()
 {
@@ -327,39 +364,62 @@ bool Map2DLocationData::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             if (field == "map_id") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("std::string map_id")) {
                     return false;
                 }
+                if (!writer.writeString("name of the map")) {
+                    return false;
+                }
             }
             if (field == "x") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double x")) {
                     return false;
                 }
+                if (!writer.writeString("x position of the location [m], expressed in the map reference frame")) {
+                    return false;
+                }
             }
             if (field == "y") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double y")) {
                     return false;
                 }
+                if (!writer.writeString("y position of the location [m], expressed in the map reference frame")) {
+                    return false;
+                }
             }
             if (field == "theta") {
-                if (!writer.writeListHeader(1)) {
+                if (!writer.writeListHeader(2)) {
                     return false;
                 }
                 if (!writer.writeString("double theta")) {
                     return false;
                 }
+                if (!writer.writeString("orientation [deg] in the map reference frame")) {
+                    return false;
+                }
+            }
+            if (field == "description") {
+                if (!writer.writeListHeader(2)) {
+                    return false;
+                }
+                if (!writer.writeString("std::string description")) {
+                    return false;
+                }
+                if (!writer.writeString("user defined string")) {
+                    return false;
+                }
             }
         }
-        if (!writer.writeListHeader(5)) {
+        if (!writer.writeListHeader(6)) {
             return false;
         }
         writer.writeString("*** Available fields:");
@@ -367,6 +427,7 @@ bool Map2DLocationData::Editor::read(yarp::os::ConnectionReader& connection)
         writer.writeString("x");
         writer.writeString("y");
         writer.writeString("theta");
+        writer.writeString("description");
         return true;
     }
     bool nested = true;
@@ -417,6 +478,12 @@ bool Map2DLocationData::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             did_set_theta();
+        } else if (key == "description") {
+            will_set_description();
+            if (!obj->nested_read_description(reader)) {
+                return false;
+            }
+            did_set_description();
         } else {
             // would be useful to have a fallback here
         }
@@ -500,6 +567,20 @@ bool Map2DLocationData::Editor::write(yarp::os::ConnectionWriter& connection) co
             return false;
         }
     }
+    if (is_dirty_description) {
+        if (!writer.writeListHeader(3)) {
+            return false;
+        }
+        if (!writer.writeString("set")) {
+            return false;
+        }
+        if (!writer.writeString("description")) {
+            return false;
+        }
+        if (!obj->nested_write_description(writer)) {
+            return false;
+        }
+    }
     return !writer.isError();
 }
 
@@ -565,6 +646,17 @@ void Map2DLocationData::Editor::mark_dirty_theta()
     mark_dirty();
 }
 
+// Editor: description mark_dirty
+void Map2DLocationData::Editor::mark_dirty_description()
+{
+    if (is_dirty_description) {
+        return;
+    }
+    dirty_count++;
+    is_dirty_description = true;
+    mark_dirty();
+}
+
 // Editor: dirty_flags
 void Map2DLocationData::Editor::dirty_flags(bool flag)
 {
@@ -573,7 +665,8 @@ void Map2DLocationData::Editor::dirty_flags(bool flag)
     is_dirty_x = flag;
     is_dirty_y = flag;
     is_dirty_theta = flag;
-    dirty_count = flag ? 4 : 0;
+    is_dirty_description = flag;
+    dirty_count = flag ? 5 : 0;
 }
 
 // read map_id field
@@ -723,6 +816,44 @@ bool Map2DLocationData::nested_read_theta(yarp::os::idl::WireReader& reader)
 bool Map2DLocationData::nested_write_theta(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeFloat64(theta)) {
+        return false;
+    }
+    return true;
+}
+
+// read description field
+bool Map2DLocationData::read_description(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readString(description)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write description field
+bool Map2DLocationData::write_description(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(description)) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) description field
+bool Map2DLocationData::nested_read_description(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readString(description)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write (nested) description field
+bool Map2DLocationData::nested_write_description(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(description)) {
         return false;
     }
     return true;

@@ -32,12 +32,13 @@ namespace yarp
                 * @param inY: location coordinates w.r.t. map reference frame (expressed in meters)
                 * @param inT: location orientation w.r.t. map reference frame (expressed in degrees)
                 */
-                Map2DLocation(const std::string& map_name, const double& inX, const double& inY, const double& inT)
+                Map2DLocation(const std::string& map_name, const double& inX, const double& inY, const double& inT, const std::string& desc="")
                 {
                     map_id = map_name;
                     x = inX;
                     y = inY;
                     theta = inT;
+                    description = desc;
                 }
 
                 /**
@@ -48,12 +49,13 @@ namespace yarp
                 * @param inY: location coordinates w.r.t. map reference frame (expressed in meters)
                 * @param inT: location orientation w.r.t. map reference frame (expressed in degrees)
                 */
-                Map2DLocation(const std::string& map_name, yarp::dev::Nav2D::XYWorld location)
+                Map2DLocation(const std::string& map_name, const yarp::dev::Nav2D::XYWorld& location, const std::string& desc="")
                 {
                     map_id = map_name;
                     x = location.x;
                     y = location.y;
                     theta = 0;
+                    description = desc;
                 }
 
                 /**
@@ -62,6 +64,7 @@ namespace yarp
                 Map2DLocation()
                 {
                     map_id = "";
+                    description = "";
                     x = 0;
                     y = 0;
                     theta = 0;
@@ -77,6 +80,7 @@ namespace yarp
                     stringStream.precision(-1);
                     stringStream.width(-1);
                     stringStream << std::string("map_id:") << map_id << std::string(" x:") << x << std::string(" y:") << y << std::string(" theta:") << theta;
+                    stringStream << std::string("desc:") << description;
                     return stringStream.str();
                 }
 

@@ -8,37 +8,42 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_MAP2DPATHDATA_H
-#define YARP_THRIFT_GENERATOR_STRUCT_MAP2DPATHDATA_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_MAP2DAREADATA_H
+#define YARP_THRIFT_GENERATOR_STRUCT_MAP2DAREADATA_H
 
 #include <yarp/dev/api.h>
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp/dev/Map2DLocation.h>
+#include <yarp/math/Vec2D.h>
 
 namespace yarp {
 namespace dev {
 
-class YARP_dev_API Map2DPathData :
+class YARP_dev_API Map2DAreaData :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     /**
-     * list of waypoints which define the path
+     * name of the map
      */
-    std::vector<yarp::dev::Nav2D::Map2DLocation> waypoints;
+    std::string map_id;
+    /**
+     * list of points which define the vertices of the area
+     */
+    std::vector<yarp::math::Vec2D<double>> points;
     /**
      * user defined string
      */
     std::string description;
 
     // Default constructor
-    Map2DPathData();
+    Map2DAreaData();
 
     // Constructor with field values
-    Map2DPathData(const std::vector<yarp::dev::Nav2D::Map2DLocation>& waypoints,
+    Map2DAreaData(const std::string& map_id,
+                  const std::vector<yarp::math::Vec2D<double>>& points,
                   const std::string& description);
 
     // Read structure on a Wire
@@ -57,7 +62,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<Map2DPathData> unwrapped;
+    typedef yarp::os::idl::Unwrapped<Map2DAreaData> unwrapped;
 
     class Editor :
             public yarp::os::Wire,
@@ -68,7 +73,7 @@ public:
         Editor();
 
         // Editor: constructor with base class
-        Editor(Map2DPathData& obj);
+        Editor(Map2DAreaData& obj);
 
         // Editor: destructor
         ~Editor() override;
@@ -80,13 +85,13 @@ public:
         Editor& operator=(Editor&& rhs) = delete;
 
         // Editor: edit
-        bool edit(Map2DPathData& obj, bool dirty = true);
+        bool edit(Map2DAreaData& obj, bool dirty = true);
 
         // Editor: validity check
         bool isValid() const;
 
         // Editor: state
-        Map2DPathData& state();
+        Map2DAreaData& state();
 
         // Editor: start editing
         void start_editing();
@@ -110,12 +115,18 @@ public:
         }
 #endif // YARP_NO_DEPRECATED
 
-        // Editor: waypoints field
-        void set_waypoints(const std::vector<yarp::dev::Nav2D::Map2DLocation>& waypoints);
-        void set_waypoints(size_t index, const yarp::dev::Nav2D::Map2DLocation& elem);
-        const std::vector<yarp::dev::Nav2D::Map2DLocation>& get_waypoints() const;
-        virtual bool will_set_waypoints();
-        virtual bool did_set_waypoints();
+        // Editor: map_id field
+        void set_map_id(const std::string& map_id);
+        const std::string& get_map_id() const;
+        virtual bool will_set_map_id();
+        virtual bool did_set_map_id();
+
+        // Editor: points field
+        void set_points(const std::vector<yarp::math::Vec2D<double>>& points);
+        void set_points(size_t index, const yarp::math::Vec2D<double>& elem);
+        const std::vector<yarp::math::Vec2D<double>>& get_points() const;
+        virtual bool will_set_points();
+        virtual bool did_set_points();
 
         // Editor: description field
         void set_description(const std::string& description);
@@ -134,13 +145,14 @@ public:
 
     private:
         // Editor: state
-        Map2DPathData* obj;
+        Map2DAreaData* obj;
         bool obj_owned;
         int group;
 
         // Editor: dirty variables
         bool is_dirty;
-        bool is_dirty_waypoints;
+        bool is_dirty_map_id;
+        bool is_dirty_points;
         bool is_dirty_description;
         int dirty_count;
 
@@ -151,7 +163,8 @@ public:
         void mark_dirty();
 
         // Editor: mark dirty single fields
-        void mark_dirty_waypoints();
+        void mark_dirty_map_id();
+        void mark_dirty_points();
         void mark_dirty_description();
 
         // Editor: dirty_flags
@@ -159,11 +172,17 @@ public:
     };
 
 private:
-    // read/write waypoints field
-    bool read_waypoints(yarp::os::idl::WireReader& reader);
-    bool write_waypoints(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_waypoints(yarp::os::idl::WireReader& reader);
-    bool nested_write_waypoints(const yarp::os::idl::WireWriter& writer) const;
+    // read/write map_id field
+    bool read_map_id(yarp::os::idl::WireReader& reader);
+    bool write_map_id(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_map_id(yarp::os::idl::WireReader& reader);
+    bool nested_write_map_id(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write points field
+    bool read_points(yarp::os::idl::WireReader& reader);
+    bool write_points(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_points(yarp::os::idl::WireReader& reader);
+    bool nested_write_points(const yarp::os::idl::WireWriter& writer) const;
 
     // read/write description field
     bool read_description(yarp::os::idl::WireReader& reader);
@@ -175,4 +194,4 @@ private:
 } // namespace yarp
 } // namespace dev
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_MAP2DPATHDATA_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_MAP2DAREADATA_H

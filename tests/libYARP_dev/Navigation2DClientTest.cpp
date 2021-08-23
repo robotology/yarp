@@ -110,7 +110,7 @@ TEST_CASE("dev::Navigation2DClientTest", "[yarp::dev]")
             Map2DArea area_test("map_1", std::vector<Map2DLocation> {Map2DLocation("map_1", -10, -10, 0),
                 Map2DLocation("map_1", -10, +10, 0),
                 Map2DLocation("map_1", +10, +10, 0),
-                Map2DLocation("map_1", +10, -10, 0)});
+                Map2DLocation("map_1", +10, -10, 0)}, "this is a test area");
             bool b0, b1;
             b0 = imap->storeArea("area_test", area_test); CHECK(b0);
             b0 = imap->storeLocation("loc_test", loc_test); CHECK(b0);

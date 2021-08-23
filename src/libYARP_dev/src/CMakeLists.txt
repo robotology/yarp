@@ -266,6 +266,7 @@ set(YARP_dev_IDL
 if(TARGET YARP::YARP_math)
   list(APPEND YARP_dev_IDL
     idl/Map2DLocationData.thrift
+    idl/Map2DAreaData.thrift
     idl/Map2DPathData.thrift
   )
 endif()

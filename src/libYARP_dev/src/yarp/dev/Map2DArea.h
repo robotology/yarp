@@ -10,6 +10,7 @@
 #include <yarp/math/Vec2D.h>
 #include <yarp/dev/api.h>
 #include <yarp/dev/Map2DLocation.h>
+#include <yarp/dev/Map2DAreaData.h>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -23,25 +24,22 @@ namespace yarp
     {
         namespace Nav2D
         {
-            class YARP_dev_API Map2DArea : public yarp::os::Portable
+            class YARP_dev_API Map2DArea : public Map2DAreaData
             {
-            private:
-                yarp::dev::Nav2D::Map2DLocation helper_tmp_location;
-
             public:
                 /**
                 * Constructor
                 * @param map_name: the name of the map the location refers to.
                 * @param area_points: a set of vertexes defining the area. At least three points are required to define a valid area.
                 */
-                Map2DArea(const std::string& map_name, const std::vector<yarp::math::Vec2D<double>> area_points);
+                Map2DArea(const std::string& map_name, const std::vector<yarp::math::Vec2D<double>>& area_points, const std::string& desc = "");
 
                 /**
                 * Constructor
                 * @param map_name: the name of the map the location refers to.
                 * @param area_points: a set of Map2DLocations defining the area. At least three points are required to define a valid area.
                 */
-                Map2DArea(const std::string& map_name, const std::vector<yarp::dev::Nav2D::Map2DLocation> area_points);
+                Map2DArea(const std::string& map_name, const std::vector<yarp::dev::Nav2D::Map2DLocation>& area_points, const std::string& desc = "");
 
                 /**
                 * Default constructor: the map name is empty, coordinates are set to zero.
@@ -113,22 +111,13 @@ namespace yarp
                 */
                 void clear();
 
-            public:
-                std::string map_id;
-                std::vector<yarp::math::Vec2D<double>> points;
-
-            public:
-                /*
-                * Read a map2DArea from a connection.
-                * return true iff a map2DArea was read correctly
-                */
-                bool read(yarp::os::ConnectionReader& connection) override;
-
                 /**
-                * Write a map2DArea to a connection.
-                * return true iff a map2DArea was written correctly
+                * Serialization methods
                 */
-                bool write(yarp::os::ConnectionWriter& connection) const override;
+                bool read(yarp::os::idl::WireReader& reader) override { return Map2DAreaData::read(reader); }
+                bool write(const yarp::os::idl::WireWriter& writer) const override { return Map2DAreaData::write(writer); }
+                bool read(yarp::os::ConnectionReader& reader) override { return Map2DAreaData::read(reader); }
+                bool write(yarp::os::ConnectionWriter& writer) const override { return Map2DAreaData::write(writer); }
             };
         }
     }
