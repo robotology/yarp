@@ -16,6 +16,9 @@ YARP is also able to detect if it is running on a console or inside
 [yarplogger](@ref yarplogger) (using the `--log` option), and change its
 output accordingly, so that the extra information is forwarded properly.
 
+When the log is forwarded over the network, the logging process opens a yarp port
+with the following syntax: `/log/hostname/processname/pid`. 
+NOTE: If yarprun is used, hostname is replaced by the name of yarprun server.
 
 ## Log Levels
 
@@ -438,6 +441,18 @@ colored character instead of the log level.
 
 If `YARP_VERBOSE_OUTPUT` is set to `1`, YARP will print several extra
 information for each log line.
+
+User can set 'YARP_LOG_PROCESS_LABEL` to specify a string which can help in identifying the
+process which is currently broadcasting the log over the network. 
+The string will be appended after the process name in the log port and included between
+two square brackets, i.e. `/log/hostname/processname[user_label]/pid`. 
+A typical use case for this environment variable is when multiple [yarprobotinterface](@ref yarprobotinterface)
+and/or [yarpdev](@ref yarpdev) are running simultaneously. In this case, the name log ports are 
+difficult to interpret, since the process name alone is not enough to identify them.
+In this case the user can set a custom label for each of them to better distinguish them
+in the [yarplogger](@ref yarplogger) gui.
+`YARP_LOG_PROCESS_LABEL` can be easily set for each individual process, via [yarpmanager](@ref yarpmanager),
+using the `environment` section.
 
 `YARP_FORWARD_LOG_ENABLE` can be used to enable the forwarding of the log to
 [yarplogger](@ref yarplogger).

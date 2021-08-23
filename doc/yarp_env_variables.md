@@ -18,7 +18,7 @@ Logger and print configuration
 | `YARP_TRACE_ENABLE`           | If this variable exists and is set to 1, it enables the YARP trace prints. Otherwise disable the trace prints. | \ref yarp_log |
 | `YARP_DEBUG_ENABLE`           | If this variable exists and is set to 0, it disables the YARP debug prints. Otherwise leaves them enabled. | \ref yarp_log |
 | `YARP_FORWARD_LOG_ENABLE`     | If this variable exists and is set to 1, enables the forwarding of log over ports to be used by the yarplogger. Otherwise disable the forwarding. | \ref yarp_log |
-
+| `YARP_LOG_PROCESS_LABEL`      | If this variable exists and is set to a string, the specified label is attached to the log port to better specify the name of the process to which the log belongs to. | \ref yarp_log |
 
 Directories
 ===========
