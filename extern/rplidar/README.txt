@@ -12,3 +12,8 @@ License: BSD-2-Clause
 Version: 1.12.0
 
 Notes: Only the `sdk/sdk` folder is imported.
+
+Patches:
+ * 0001-extern-rplidar-Fix-build-on-clang.patch: Fix build on clang
+ * 0002-extern-rplidar-Fix-ordered-comparison-of-pointer-wit.patch: Fix ordered
+     comparison of pointer with integer zero

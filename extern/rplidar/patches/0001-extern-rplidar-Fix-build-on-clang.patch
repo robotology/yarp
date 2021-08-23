@@ -1,0 +1,34 @@
+From 2a5d4cc7750b7edd5d699998b2c8f96bf7ba7716 Mon Sep 17 00:00:00 2001
+From: "Daniele E. Domenichelli" <daniele.domenichelli@iit.it>
+Date: Tue, 10 Aug 2021 16:33:01 +0200
+Subject: [PATCH] extern/rplidar: Fix build on clang
+
+---
+ extern/rplidar/sdk/src/rplidar_driver.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/extern/rplidar/sdk/src/rplidar_driver.cpp b/extern/rplidar/sdk/src/rplidar_driver.cpp
+index af244f8b7..dbc0dfda0 100644
+--- a/extern/rplidar/sdk/src/rplidar_driver.cpp
++++ b/extern/rplidar/sdk/src/rplidar_driver.cpp
+@@ -1823,7 +1823,7 @@ u_result RPlidarDriverImplCommon::grabScanData(rplidar_response_measurement_node
+ 
+     switch (_dataEvt.wait(timeout))
+     {
+-    case rp::hal::Event::EVENT_TIMEOUT:
++    case static_cast<unsigned long>(rp::hal::Event::EVENT_TIMEOUT):
+         count = 0;
+         return RESULT_OPERATION_TIMEOUT;
+     case rp::hal::Event::EVENT_OK:
+@@ -1852,7 +1852,7 @@ u_result RPlidarDriverImplCommon::grabScanDataHq(rplidar_response_measurement_no
+ {
+     switch (_dataEvt.wait(timeout))
+     {
+-    case rp::hal::Event::EVENT_TIMEOUT:
++    case static_cast<unsigned long>(rp::hal::Event::EVENT_TIMEOUT):
+         count = 0;
+         return RESULT_OPERATION_TIMEOUT;
+     case rp::hal::Event::EVENT_OK:
+-- 
+2.30.2
+
