@@ -24,10 +24,26 @@ class YARP_dev_API Map2DLocationData :
 {
 public:
     // Fields
+    /**
+     * name of the map
+     */
     std::string map_id;
+    /**
+     * x position of the location [m], expressed in the map reference frame
+     */
     double x;
+    /**
+     * y position of the location [m], expressed in the map reference frame
+     */
     double y;
+    /**
+     * orientation [deg] in the map reference frame
+     */
     double theta;
+    /**
+     * user defined string
+     */
+    std::string description;
 
     // Default constructor
     Map2DLocationData();
@@ -36,7 +52,8 @@ public:
     Map2DLocationData(const std::string& map_id,
                       const double x,
                       const double y,
-                      const double theta);
+                      const double theta,
+                      const std::string& description);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -131,6 +148,12 @@ public:
         virtual bool will_set_theta();
         virtual bool did_set_theta();
 
+        // Editor: description field
+        void set_description(const std::string& description);
+        const std::string& get_description() const;
+        virtual bool will_set_description();
+        virtual bool did_set_description();
+
         // Editor: clean
         void clean();
 
@@ -152,6 +175,7 @@ public:
         bool is_dirty_x;
         bool is_dirty_y;
         bool is_dirty_theta;
+        bool is_dirty_description;
         int dirty_count;
 
         // Editor: send if possible
@@ -165,6 +189,7 @@ public:
         void mark_dirty_x();
         void mark_dirty_y();
         void mark_dirty_theta();
+        void mark_dirty_description();
 
         // Editor: dirty_flags
         void dirty_flags(bool flag);
@@ -194,6 +219,12 @@ private:
     bool write_theta(const yarp::os::idl::WireWriter& writer) const;
     bool nested_read_theta(yarp::os::idl::WireReader& reader);
     bool nested_write_theta(const yarp::os::idl::WireWriter& writer) const;
+
+    // read/write description field
+    bool read_description(yarp::os::idl::WireReader& reader);
+    bool write_description(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_description(yarp::os::idl::WireReader& reader);
+    bool nested_write_description(const yarp::os::idl::WireWriter& writer) const;
 };
 
 } // namespace yarp

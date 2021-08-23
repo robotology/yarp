@@ -8,32 +8,38 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <yarp/dev/Map2DPathData.h>
+#include <yarp/dev/Map2DAreaData.h>
 
 namespace yarp {
 namespace dev {
 
 // Default constructor
-Map2DPathData::Map2DPathData() :
+Map2DAreaData::Map2DAreaData() :
         WirePortable(),
-        waypoints(),
+        map_id(""),
+        points(),
         description("")
 {
 }
 
 // Constructor with field values
-Map2DPathData::Map2DPathData(const std::vector<yarp::dev::Nav2D::Map2DLocation>& waypoints,
+Map2DAreaData::Map2DAreaData(const std::string& map_id,
+                             const std::vector<yarp::math::Vec2D<double>>& points,
                              const std::string& description) :
         WirePortable(),
-        waypoints(waypoints),
+        map_id(map_id),
+        points(points),
         description(description)
 {
 }
 
 // Read structure on a Wire
-bool Map2DPathData::read(yarp::os::idl::WireReader& reader)
+bool Map2DAreaData::read(yarp::os::idl::WireReader& reader)
 {
-    if (!read_waypoints(reader)) {
+    if (!read_map_id(reader)) {
+        return false;
+    }
+    if (!read_points(reader)) {
         return false;
     }
     if (!read_description(reader)) {
@@ -43,19 +49,22 @@ bool Map2DPathData::read(yarp::os::idl::WireReader& reader)
 }
 
 // Read structure on a Connection
-bool Map2DPathData::read(yarp::os::ConnectionReader& connection)
+bool Map2DAreaData::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
-    if (!reader.readListHeader(2)) {
+    if (!reader.readListHeader(3)) {
         return false;
     }
     return read(reader);
 }
 
 // Write structure on a Wire
-bool Map2DPathData::write(const yarp::os::idl::WireWriter& writer) const
+bool Map2DAreaData::write(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!write_waypoints(writer)) {
+    if (!write_map_id(writer)) {
+        return false;
+    }
+    if (!write_points(writer)) {
         return false;
     }
     if (!write_description(writer)) {
@@ -65,17 +74,17 @@ bool Map2DPathData::write(const yarp::os::idl::WireWriter& writer) const
 }
 
 // Write structure on a Connection
-bool Map2DPathData::write(yarp::os::ConnectionWriter& connection) const
+bool Map2DAreaData::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
-    if (!writer.writeListHeader(2)) {
+    if (!writer.writeListHeader(3)) {
         return false;
     }
     return write(writer);
 }
 
 // Convert to a printable string
-std::string Map2DPathData::toString() const
+std::string Map2DAreaData::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -83,17 +92,17 @@ std::string Map2DPathData::toString() const
 }
 
 // Editor: default constructor
-Map2DPathData::Editor::Editor()
+Map2DAreaData::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new Map2DPathData;
+    obj = new Map2DAreaData;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-Map2DPathData::Editor::Editor(Map2DPathData& obj)
+Map2DAreaData::Editor::Editor(Map2DAreaData& obj)
 {
     group = 0;
     obj_owned = false;
@@ -102,7 +111,7 @@ Map2DPathData::Editor::Editor(Map2DPathData& obj)
 }
 
 // Editor: destructor
-Map2DPathData::Editor::~Editor()
+Map2DAreaData::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -110,7 +119,7 @@ Map2DPathData::Editor::~Editor()
 }
 
 // Editor: edit
-bool Map2DPathData::Editor::edit(Map2DPathData& obj, bool dirty)
+bool Map2DAreaData::Editor::edit(Map2DAreaData& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -122,71 +131,99 @@ bool Map2DPathData::Editor::edit(Map2DPathData& obj, bool dirty)
 }
 
 // Editor: validity check
-bool Map2DPathData::Editor::isValid() const
+bool Map2DAreaData::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-Map2DPathData& Map2DPathData::Editor::state()
+Map2DAreaData& Map2DAreaData::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void Map2DPathData::Editor::start_editing()
+void Map2DAreaData::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void Map2DPathData::Editor::stop_editing()
+void Map2DAreaData::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
         communicate();
     }
 }
-// Editor: waypoints setter
-void Map2DPathData::Editor::set_waypoints(const std::vector<yarp::dev::Nav2D::Map2DLocation>& waypoints)
+// Editor: map_id setter
+void Map2DAreaData::Editor::set_map_id(const std::string& map_id)
 {
-    will_set_waypoints();
-    obj->waypoints = waypoints;
-    mark_dirty_waypoints();
+    will_set_map_id();
+    obj->map_id = map_id;
+    mark_dirty_map_id();
     communicate();
-    did_set_waypoints();
+    did_set_map_id();
 }
 
-// Editor: waypoints setter (list)
-void Map2DPathData::Editor::set_waypoints(size_t index, const yarp::dev::Nav2D::Map2DLocation& elem)
+// Editor: map_id getter
+const std::string& Map2DAreaData::Editor::get_map_id() const
 {
-    will_set_waypoints();
-    obj->waypoints[index] = elem;
-    mark_dirty_waypoints();
-    communicate();
-    did_set_waypoints();
+    return obj->map_id;
 }
 
-// Editor: waypoints getter
-const std::vector<yarp::dev::Nav2D::Map2DLocation>& Map2DPathData::Editor::get_waypoints() const
-{
-    return obj->waypoints;
-}
-
-// Editor: waypoints will_set
-bool Map2DPathData::Editor::will_set_waypoints()
+// Editor: map_id will_set
+bool Map2DAreaData::Editor::will_set_map_id()
 {
     return true;
 }
 
-// Editor: waypoints did_set
-bool Map2DPathData::Editor::did_set_waypoints()
+// Editor: map_id did_set
+bool Map2DAreaData::Editor::did_set_map_id()
+{
+    return true;
+}
+
+// Editor: points setter
+void Map2DAreaData::Editor::set_points(const std::vector<yarp::math::Vec2D<double>>& points)
+{
+    will_set_points();
+    obj->points = points;
+    mark_dirty_points();
+    communicate();
+    did_set_points();
+}
+
+// Editor: points setter (list)
+void Map2DAreaData::Editor::set_points(size_t index, const yarp::math::Vec2D<double>& elem)
+{
+    will_set_points();
+    obj->points[index] = elem;
+    mark_dirty_points();
+    communicate();
+    did_set_points();
+}
+
+// Editor: points getter
+const std::vector<yarp::math::Vec2D<double>>& Map2DAreaData::Editor::get_points() const
+{
+    return obj->points;
+}
+
+// Editor: points will_set
+bool Map2DAreaData::Editor::will_set_points()
+{
+    return true;
+}
+
+// Editor: points did_set
+bool Map2DAreaData::Editor::did_set_points()
 {
     return true;
 }
 
 // Editor: description setter
-void Map2DPathData::Editor::set_description(const std::string& description)
+void Map2DAreaData::Editor::set_description(const std::string& description)
 {
     will_set_description();
     obj->description = description;
@@ -196,31 +233,31 @@ void Map2DPathData::Editor::set_description(const std::string& description)
 }
 
 // Editor: description getter
-const std::string& Map2DPathData::Editor::get_description() const
+const std::string& Map2DAreaData::Editor::get_description() const
 {
     return obj->description;
 }
 
 // Editor: description will_set
-bool Map2DPathData::Editor::will_set_description()
+bool Map2DAreaData::Editor::will_set_description()
 {
     return true;
 }
 
 // Editor: description did_set
-bool Map2DPathData::Editor::did_set_description()
+bool Map2DAreaData::Editor::did_set_description()
 {
     return true;
 }
 
 // Editor: clean
-void Map2DPathData::Editor::clean()
+void Map2DAreaData::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool Map2DPathData::Editor::read(yarp::os::ConnectionReader& connection)
+bool Map2DAreaData::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -262,14 +299,25 @@ bool Map2DPathData::Editor::read(yarp::os::ConnectionReader& connection)
             if (!reader.readString(field)) {
                 return false;
             }
-            if (field == "waypoints") {
+            if (field == "map_id") {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.writeString("std::vector<yarp::dev::Nav2D::Map2DLocation> waypoints")) {
+                if (!writer.writeString("std::string map_id")) {
                     return false;
                 }
-                if (!writer.writeString("list of waypoints which define the path")) {
+                if (!writer.writeString("name of the map")) {
+                    return false;
+                }
+            }
+            if (field == "points") {
+                if (!writer.writeListHeader(2)) {
+                    return false;
+                }
+                if (!writer.writeString("std::vector<yarp::math::Vec2D<double>> points")) {
+                    return false;
+                }
+                if (!writer.writeString("list of points which define the vertices of the area")) {
                     return false;
                 }
             }
@@ -285,11 +333,12 @@ bool Map2DPathData::Editor::read(yarp::os::ConnectionReader& connection)
                 }
             }
         }
-        if (!writer.writeListHeader(3)) {
+        if (!writer.writeListHeader(4)) {
             return false;
         }
         writer.writeString("*** Available fields:");
-        writer.writeString("waypoints");
+        writer.writeString("map_id");
+        writer.writeString("points");
         writer.writeString("description");
         return true;
     }
@@ -317,12 +366,18 @@ bool Map2DPathData::Editor::read(yarp::os::ConnectionReader& connection)
         if (!reader.readString(key)) {
             return false;
         }
-        if (key == "waypoints") {
-            will_set_waypoints();
-            if (!obj->nested_read_waypoints(reader)) {
+        if (key == "map_id") {
+            will_set_map_id();
+            if (!obj->nested_read_map_id(reader)) {
                 return false;
             }
-            did_set_waypoints();
+            did_set_map_id();
+        } else if (key == "points") {
+            will_set_points();
+            if (!obj->nested_read_points(reader)) {
+                return false;
+            }
+            did_set_points();
         } else if (key == "description") {
             will_set_description();
             if (!obj->nested_read_description(reader)) {
@@ -344,7 +399,7 @@ bool Map2DPathData::Editor::read(yarp::os::ConnectionReader& connection)
 }
 
 // Editor: write
-bool Map2DPathData::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool Map2DAreaData::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -356,17 +411,31 @@ bool Map2DPathData::Editor::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeString("patch")) {
         return false;
     }
-    if (is_dirty_waypoints) {
+    if (is_dirty_map_id) {
         if (!writer.writeListHeader(3)) {
             return false;
         }
         if (!writer.writeString("set")) {
             return false;
         }
-        if (!writer.writeString("waypoints")) {
+        if (!writer.writeString("map_id")) {
             return false;
         }
-        if (!obj->nested_write_waypoints(writer)) {
+        if (!obj->nested_write_map_id(writer)) {
+            return false;
+        }
+    }
+    if (is_dirty_points) {
+        if (!writer.writeListHeader(3)) {
+            return false;
+        }
+        if (!writer.writeString("set")) {
+            return false;
+        }
+        if (!writer.writeString("points")) {
+            return false;
+        }
+        if (!obj->nested_write_points(writer)) {
             return false;
         }
     }
@@ -388,7 +457,7 @@ bool Map2DPathData::Editor::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Editor: send if possible
-void Map2DPathData::Editor::communicate()
+void Map2DAreaData::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -400,24 +469,35 @@ void Map2DPathData::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void Map2DPathData::Editor::mark_dirty()
+void Map2DAreaData::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
-// Editor: waypoints mark_dirty
-void Map2DPathData::Editor::mark_dirty_waypoints()
+// Editor: map_id mark_dirty
+void Map2DAreaData::Editor::mark_dirty_map_id()
 {
-    if (is_dirty_waypoints) {
+    if (is_dirty_map_id) {
         return;
     }
     dirty_count++;
-    is_dirty_waypoints = true;
+    is_dirty_map_id = true;
+    mark_dirty();
+}
+
+// Editor: points mark_dirty
+void Map2DAreaData::Editor::mark_dirty_points()
+{
+    if (is_dirty_points) {
+        return;
+    }
+    dirty_count++;
+    is_dirty_points = true;
     mark_dirty();
 }
 
 // Editor: description mark_dirty
-void Map2DPathData::Editor::mark_dirty_description()
+void Map2DAreaData::Editor::mark_dirty_description()
 {
     if (is_dirty_description) {
         return;
@@ -428,24 +508,63 @@ void Map2DPathData::Editor::mark_dirty_description()
 }
 
 // Editor: dirty_flags
-void Map2DPathData::Editor::dirty_flags(bool flag)
+void Map2DAreaData::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
-    is_dirty_waypoints = flag;
+    is_dirty_map_id = flag;
+    is_dirty_points = flag;
     is_dirty_description = flag;
-    dirty_count = flag ? 2 : 0;
+    dirty_count = flag ? 3 : 0;
 }
 
-// read waypoints field
-bool Map2DPathData::read_waypoints(yarp::os::idl::WireReader& reader)
+// read map_id field
+bool Map2DAreaData::read_map_id(yarp::os::idl::WireReader& reader)
 {
-    waypoints.clear();
+    if (!reader.readString(map_id)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write map_id field
+bool Map2DAreaData::write_map_id(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(map_id)) {
+        return false;
+    }
+    return true;
+}
+
+// read (nested) map_id field
+bool Map2DAreaData::nested_read_map_id(yarp::os::idl::WireReader& reader)
+{
+    if (!reader.readString(map_id)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+// write (nested) map_id field
+bool Map2DAreaData::nested_write_map_id(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeString(map_id)) {
+        return false;
+    }
+    return true;
+}
+
+// read points field
+bool Map2DAreaData::read_points(yarp::os::idl::WireReader& reader)
+{
+    points.clear();
     uint32_t _size0;
     yarp::os::idl::WireState _etype3;
     reader.readListBegin(_etype3, _size0);
-    waypoints.resize(_size0);
+    points.resize(_size0);
     for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
-        if (!reader.readNested(waypoints[_i4])) {
+        if (!reader.readNested(points[_i4])) {
             reader.fail();
             return false;
         }
@@ -454,13 +573,13 @@ bool Map2DPathData::read_waypoints(yarp::os::idl::WireReader& reader)
     return true;
 }
 
-// write waypoints field
-bool Map2DPathData::write_waypoints(const yarp::os::idl::WireWriter& writer) const
+// write points field
+bool Map2DAreaData::write_points(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(waypoints.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(points.size()))) {
         return false;
     }
-    for (const auto& _item5 : waypoints) {
+    for (const auto& _item5 : points) {
         if (!writer.writeNested(_item5)) {
             return false;
         }
@@ -471,16 +590,16 @@ bool Map2DPathData::write_waypoints(const yarp::os::idl::WireWriter& writer) con
     return true;
 }
 
-// read (nested) waypoints field
-bool Map2DPathData::nested_read_waypoints(yarp::os::idl::WireReader& reader)
+// read (nested) points field
+bool Map2DAreaData::nested_read_points(yarp::os::idl::WireReader& reader)
 {
-    waypoints.clear();
+    points.clear();
     uint32_t _size6;
     yarp::os::idl::WireState _etype9;
     reader.readListBegin(_etype9, _size6);
-    waypoints.resize(_size6);
+    points.resize(_size6);
     for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
-        if (!reader.readNested(waypoints[_i10])) {
+        if (!reader.readNested(points[_i10])) {
             reader.fail();
             return false;
         }
@@ -489,13 +608,13 @@ bool Map2DPathData::nested_read_waypoints(yarp::os::idl::WireReader& reader)
     return true;
 }
 
-// write (nested) waypoints field
-bool Map2DPathData::nested_write_waypoints(const yarp::os::idl::WireWriter& writer) const
+// write (nested) points field
+bool Map2DAreaData::nested_write_points(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(waypoints.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(points.size()))) {
         return false;
     }
-    for (const auto& _item11 : waypoints) {
+    for (const auto& _item11 : points) {
         if (!writer.writeNested(_item11)) {
             return false;
         }
@@ -507,7 +626,7 @@ bool Map2DPathData::nested_write_waypoints(const yarp::os::idl::WireWriter& writ
 }
 
 // read description field
-bool Map2DPathData::read_description(yarp::os::idl::WireReader& reader)
+bool Map2DAreaData::read_description(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readString(description)) {
         reader.fail();
@@ -517,7 +636,7 @@ bool Map2DPathData::read_description(yarp::os::idl::WireReader& reader)
 }
 
 // write description field
-bool Map2DPathData::write_description(const yarp::os::idl::WireWriter& writer) const
+bool Map2DAreaData::write_description(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeString(description)) {
         return false;
@@ -526,7 +645,7 @@ bool Map2DPathData::write_description(const yarp::os::idl::WireWriter& writer) c
 }
 
 // read (nested) description field
-bool Map2DPathData::nested_read_description(yarp::os::idl::WireReader& reader)
+bool Map2DAreaData::nested_read_description(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readString(description)) {
         reader.fail();
@@ -536,7 +655,7 @@ bool Map2DPathData::nested_read_description(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) description field
-bool Map2DPathData::nested_write_description(const yarp::os::idl::WireWriter& writer) const
+bool Map2DAreaData::nested_write_description(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeString(description)) {
         return false;
