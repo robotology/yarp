@@ -49,16 +49,19 @@ std::string Map2DPath::toString() const
     {
         stringStream << " waypoint " << i << "(" << waypoints[i].map_id << " " << waypoints[i].x << "," << waypoints[i].y << "," << waypoints[i].theta << ")";
     }
+    stringStream << " desc: " << description;
     return stringStream.str();
 }
 
 void Map2DPath::clear()
 {
     this->waypoints.clear();
+    description = "";
 }
 
-Map2DPath::Map2DPath(const std::vector<Map2DLocation> map_waypoints)
+Map2DPath::Map2DPath(const std::vector<Map2DLocation> map_waypoints, const std::string& desc)
 {
+    description = desc;
     for (const auto& map_waypoint : map_waypoints)
     {
         waypoints.push_back(map_waypoint);
