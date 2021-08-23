@@ -76,6 +76,10 @@ bool FrameTransformStorage::detach()
     std::lock_guard <std::mutex> lg(m_pd_mutex);
     iGetIf = nullptr;
     pDriver = nullptr;
+    if(isRunning())
+    {
+        stop();
+    }
     return true;
 }
 
@@ -87,6 +91,7 @@ bool FrameTransformStorage::attach(yarp::dev::PolyDriver* driver)
         pDriver = driver;
         if (pDriver->view(iGetIf) && iGetIf!=nullptr)
         {
+            start();
             return true;
         }
     }
