@@ -18,6 +18,9 @@ if(NOT SKIP_mobileBaseVelocityControl_nwc_yarp)
       MobileBaseVelocityControl_nwc_yarp.h
   )
 
+  target_sources(yarp_mobileBaseVelocityControl_nwc_yarp PRIVATE $<TARGET_OBJECTS:MobileBaseVelocityControlMsgs>)
+  target_include_directories(yarp_mobileBaseVelocityControl_nwc_yarp PRIVATE $<TARGET_PROPERTY:MobileBaseVelocityControlMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
+
   target_link_libraries(yarp_mobileBaseVelocityControl_nwc_yarp
     PRIVATE
       YARP::YARP_os
@@ -67,6 +70,9 @@ if(NOT SKIP_mobileBaseVelocityControl_nws_yarp)
       MobileBaseVelocityControl_nws_yarp.cpp
       MobileBaseVelocityControl_nws_yarp.h
   )
+
+  target_sources(yarp_mobileBaseVelocityControl_nws_yarp PRIVATE $<TARGET_OBJECTS:MobileBaseVelocityControlMsgs>)
+  target_include_directories(yarp_mobileBaseVelocityControl_nws_yarp PRIVATE $<TARGET_PROPERTY:MobileBaseVelocityControlMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_mobileBaseVelocityControl_nws_yarp
     PRIVATE

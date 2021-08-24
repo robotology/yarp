@@ -45,7 +45,12 @@ bool MobileBaseVelocityControl_nws_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
-    m_rpc_port_navigation_server.setReader(*this);
+    if (!this->yarp().attachAsServer(m_rpc_port_navigation_server))
+    {
+        yCError(MOBVEL_NWS_YARP, "Error! Cannot attach the port as a server");
+        return false;
+    }
+
     return true;
 }
 
@@ -68,7 +73,7 @@ bool MobileBaseVelocityControl_nws_yarp::attach(PolyDriver* driver)
         driver->view(m_iNavVel);
     }
 
-    if (nullptr == MOBVEL_NWS_YARP)
+    if (nullptr == m_iNavVel)
     {
         yCError(MOBVEL_NWS_YARP, "Subdevice passed to attach method is invalid");
         return false;
@@ -77,63 +82,28 @@ bool MobileBaseVelocityControl_nws_yarp::attach(PolyDriver* driver)
     return true;
 }
 
-bool MobileBaseVelocityControl_nws_yarp::read(yarp::os::ConnectionReader& connection)
+bool MobileBaseVelocityControl_nws_yarp::applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    yarp::os::Bottle command;
-    yarp::os::Bottle reply;
-    bool ok = command.read(connection);
-    if (!ok) {
+    std::lock_guard <std::mutex> lg(m_mutex);
+    if (!m_iNavVel->applyVelocityCommand(x_vel,y_vel,theta_vel,timeout))
+    {
+        yCError(MOBVEL_NWS_YARP, "Unable to applyVelocityCommandRPC");
         return false;
-    }
-
-    if (command.get(0).isVocab32() == false)
-    {
-        yCError(MOBVEL_NWS_YARP) << "General error";
-        return false;
-    }
-
-    if (command.get(0).asVocab32() != VOCAB_INAVIGATION ||
-        command.get(1).isVocab32() == false)
-    {
-        yCError(MOBVEL_NWS_YARP) << "Invalid vocab received";
-        reply.addVocab32(VOCAB_ERR);
-        return true;
-    }
-
-    int request = command.get(1).asVocab32();
-    if (request == VOCAB_NAV_VELOCITY_CMD)
-    {
-        double x_vel = command.get(2).asFloat64();
-        double y_vel = command.get(3).asFloat64();
-        double t_vel = command.get(4).asFloat64();
-        double timeout = command.get(5).asFloat64();
-        bool ret = m_iNavVel->applyVelocityCommand(x_vel, y_vel, t_vel, timeout);
-        if (ret)
-        {
-            //clear_current_goal_name();
-            reply.addVocab32(VOCAB_OK);
-        }
-        else
-        {
-            yCError(MOBVEL_NWS_YARP) << "applyVelocityCommand() failed";
-            reply.addVocab32(VOCAB_ERR);
-        }
-    }
-    else
-    {
-        yCError(MOBVEL_NWS_YARP) << "Invalid vocab received:" << yarp::os::Vocab32::decode(request);
-        reply.addVocab32(VOCAB_ERR);
-    }
-
-    yarp::os::ConnectionWriter* returnToSender = connection.getWriter();
-    if (returnToSender != nullptr)
-    {
-        reply.write(*returnToSender);
-    }
-    else
-    {
-        yCError(MOBVEL_NWS_YARP) << "Invalid return to sender";
     }
     return true;
+}
+
+return_getLastVelocityCommand MobileBaseVelocityControl_nws_yarp::getLastVelocityCommandRPC()
+{
+    double x_vel = 0;
+    double y_vel = 0;
+    double t_vel = 0;
+    bool b = m_iNavVel->getLastVelocityCommand(x_vel, y_vel, t_vel);
+
+    return_getLastVelocityCommand retrievedFromRPC;
+    retrievedFromRPC.retvalue = b;
+    retrievedFromRPC.x_vel = x_vel;
+    retrievedFromRPC.y_vel = x_vel;
+    retrievedFromRPC.theta_vel = t_vel;
+    return retrievedFromRPC;
 }

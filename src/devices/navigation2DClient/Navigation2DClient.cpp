@@ -1531,6 +1531,12 @@ bool  Navigation2DClient::getLocalizationStatus(yarp::dev::Nav2D::LocalizationSt
     return true;
 }
 
+bool  Navigation2DClient::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
+{
+    yCError(NAVIGATION2DCLIENT) << "getLastVelocityCommand() not yet implemented";
+    return false;
+}
+
 bool  Navigation2DClient::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
 {
     yarp::os::Bottle b;

@@ -65,4 +65,5 @@ public:
     bool getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) override;
     bool recomputeCurrentNavigationPath() override;
     bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
+    bool getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
 };

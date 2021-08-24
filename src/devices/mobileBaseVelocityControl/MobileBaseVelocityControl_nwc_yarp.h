@@ -13,6 +13,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/INavigation2D.h>
+#include "MobileBaseVelocityControlRPC.h"
 
 #include <mutex>
 #include <string>
@@ -40,6 +41,7 @@ protected:
     yarp::os::Port                m_rpc_port;
     std::string                   m_local_name;
     std::string                   m_server_name;
+    MobileBaseVelocityControlRPC  m_RPC;
 
 public:
 
@@ -49,6 +51,7 @@ public:
 
     /* The following methods belong to INavigation2D interface */
     bool   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
+    bool   getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
 };
 
 #endif // YARP_DEV_MOBILEBASEVELOCITYCONTROL_NWC_YARP

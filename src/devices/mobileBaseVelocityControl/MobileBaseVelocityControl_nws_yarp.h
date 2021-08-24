@@ -14,6 +14,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/INavigation2D.h>
 #include <yarp/dev/WrapperSingle.h>
+#include "MobileBaseVelocityControlRPC.h"
 
 #include <mutex>
 #include <string>
@@ -33,8 +34,8 @@
 
 class MobileBaseVelocityControl_nws_yarp:
         public yarp::dev::DeviceDriver,
-        public yarp::os::PortReader,
-        public yarp::dev::WrapperSingle
+        public yarp::dev::WrapperSingle,
+        public MobileBaseVelocityControlRPC
 {
 protected:
     std::mutex                    m_mutex;
@@ -50,7 +51,9 @@ public:
     bool detach() override;
     bool attach(yarp::dev::PolyDriver* driver) override;
 
-    bool read(yarp::os::ConnectionReader& connection) override;
+public:
+    bool applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout) override;
+    return_getLastVelocityCommand getLastVelocityCommandRPC() override;
 };
 
 #endif // YARP_DEV_MOBILEBASEVELOCITYCONTROL_NWS_YARP

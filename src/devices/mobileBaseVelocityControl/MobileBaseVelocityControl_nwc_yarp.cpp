@@ -65,6 +65,12 @@ bool MobileBaseVelocityControl_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
+    if (!m_RPC.yarp().attachAsClient(m_rpc_port))
+    {
+        yCError(MOBVEL_NWC_YARP, "Error! Cannot attach the port as a client");
+        return false;
+    }
+
     return true;
 }
 
@@ -74,32 +80,23 @@ bool MobileBaseVelocityControl_nwc_yarp::close()
     return true;
 }
 
-bool  MobileBaseVelocityControl_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+bool MobileBaseVelocityControl_nwc_yarp::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
 {
-    yarp::os::Bottle b;
-    yarp::os::Bottle resp;
-
-    b.addVocab32(VOCAB_INAVIGATION);
-    b.addVocab32(VOCAB_NAV_VELOCITY_CMD);
-    b.addFloat64(x_vel);
-    b.addFloat64(y_vel);
-    b.addFloat64(theta_vel);
-    b.addFloat64(timeout);
-
-    bool ret = m_rpc_port.write(b, resp);
-    if (ret)
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getLastVelocityCommandRPC();
+    if (!ret.retvalue)
     {
-        if (resp.get(0).asVocab32() != VOCAB_OK)
-        {
-            yCError(MOBVEL_NWC_YARP) << "applyVelocityCommand() received error from navigation server";
-            return false;
-        }
-    }
-    else
-    {
-        yCError(MOBVEL_NWC_YARP) << "applyVelocityCommand() error on writing on rpc port";
+        yCError(MOBVEL_NWC_YARP, "Unable to set transformation");
         return false;
     }
-
+    x_vel = ret.x_vel;
+    y_vel = ret.y_vel;
+    theta_vel = ret.theta_vel;
     return true;
+}
+
+bool MobileBaseVelocityControl_nwc_yarp::applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_RPC.applyVelocityCommandRPC(x_vel,y_vel,theta_vel,timeout);
 }
