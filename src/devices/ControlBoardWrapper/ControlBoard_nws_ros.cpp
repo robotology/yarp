@@ -103,7 +103,6 @@ bool ControlBoard_nws_ros::open(Searchable& config)
         yCError(CONTROLBOARD) << "topic_name must begin with an initial /";
         return false;
     }
-    topicName.append("/joint_states");
     yCInfo(CONTROLBOARD) << "topicName is " << topicName;
     // call ROS node/topic initialization
     node = new yarp::os::Node(nodeName);
