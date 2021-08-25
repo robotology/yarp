@@ -24,6 +24,7 @@ namespace yarp {
             class INavigation2DVelocityActions;
             class INavigation2DTargetActions;
             class INavigation2DControlActions;
+            class INavigation2DExtraActions;
             class INavigation2D;
 
             enum NavigationStatusEnum
@@ -206,22 +207,9 @@ public:
     virtual bool getCurrentNavigationMap(yarp::dev::Nav2D::NavigationMapTypeEnum map_type, yarp::dev::Nav2D::MapGrid2D& map) = 0;
 };
 
-/**
- * @ingroup dev_iface_navigation
- *
- * An interface to control the navigation of a mobile robot in a 2D environment.
- */
-class YARP_dev_API yarp::dev::Nav2D::INavigation2D :  public yarp::dev::Nav2D::INavigation2DTargetActions,
-                                                      public yarp::dev::Nav2D::INavigation2DControlActions,
-                                                      public yarp::dev::Nav2D::INavigation2DVelocityActions,
-                                                      public yarp::dev::Nav2D::ILocalization2D
+class YARP_dev_API yarp::dev::Nav2D::INavigation2DExtraActions
 {
 public:
-    /**
-     * Destructor.
-     */
-    virtual ~INavigation2D() {}
-
     /**
      * Ask the robot to reach a previously stored location/area
      * @param location_name the name of a location/area previously saved
@@ -241,7 +229,7 @@ public:
      * @param area the area to be checked
      * @return true/false
      */
-    virtual bool checkInsideArea (Nav2D::Map2DArea area) = 0;
+    virtual bool checkInsideArea(Nav2D::Map2DArea area) = 0;
 
     /**
      * Check if the robot is currently near to the specified area
@@ -319,6 +307,29 @@ public:
      * @return true/false
      */
     virtual bool clearAllLocations() = 0;
+
+    /**
+     * Destructor.
+     */
+    virtual ~INavigation2DExtraActions() {}
+};
+
+/**
+ * @ingroup dev_iface_navigation
+ *
+ * An interface to control the navigation of a mobile robot in a 2D environment.
+ */
+class YARP_dev_API yarp::dev::Nav2D::INavigation2D :  public yarp::dev::Nav2D::INavigation2DTargetActions,
+                                                      public yarp::dev::Nav2D::INavigation2DControlActions,
+                                                      public yarp::dev::Nav2D::INavigation2DVelocityActions,
+                                                      public yarp::dev::Nav2D::INavigation2DExtraActions,
+                                                      public yarp::dev::Nav2D::ILocalization2D
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~INavigation2D() {}
 };
 
 constexpr yarp::conf::vocab32_t VOCAB_NAV_STOP                     = yarp::os::createVocab32('s', 't', 'o', 'p');
