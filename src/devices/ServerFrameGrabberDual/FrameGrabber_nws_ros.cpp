@@ -129,10 +129,6 @@ bool FrameGrabber_nws_ros::open(yarp::os::Searchable& config)
         return false;
     }
     m_frameId = config.find("frame_id").asString();
-    if (m_frameId.c_str()[0] != '/') {
-        yCError(FRAMEGRABBER_NWS_ROS) << "Missing '/' in frame_id parameter";
-        return false;
-    }
 
     // Check "subdevice" option and eventually open the device
     isSubdeviceOwned = config.check("subdevice");
