@@ -37,7 +37,7 @@
  * | Parameter name  | SubParameter   | Type    | Units          | Default Value | Required                    | Description                                                       | Notes |
  * |:---------------:|:--------------:|:-------:|:--------------:|:-------------:|:--------------------------: |:-----------------------------------------------------------------:|:-----:|
  * | node_name       |      -         | string  | -              |   -           | Yes                         | set the name for ROS node                                         | must start with a leading '/' |
- * | topic_name      |      -         | string  | -              |   -           | Yes                         | set the name for ROS topic                                        | must start with a leading '/' |
+ * | topic_name      |      -         | string  | -              |   -           | Yes                         | set the name for ROS topic                                        | must start with a leading '/', recommended value is /joint_states |
  * | period          |      -         | double  | s              |   0.02        | No                          | refresh period of the broadcasted values in s                     | optional, default 20ms |
  * | subdevice       |      -         | string  | -              |   -           | No                          | name of the subdevice to instantiate                              | when used, parameters for the subdevice must be provided as well |
  *
