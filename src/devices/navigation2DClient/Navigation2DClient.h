@@ -77,6 +77,8 @@ public:
     bool   gotoTargetByRelativeLocation(double x, double y, double theta) override;
     bool   gotoTargetByRelativeLocation(double x, double y) override;
     bool   applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) override;
+    bool   getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) override;
+
     bool   recomputeCurrentNavigationPath() override;
 
     bool   getAbsoluteLocationOfCurrentTarget(yarp::dev::Nav2D::Map2DLocation& loc) override;

@@ -82,6 +82,15 @@ public:
      * @return true/false
      */
     virtual bool applyVelocityCommand(double x_vel, double y_vel, double theta_vel, double timeout = 0.1) = 0;
+
+    /**
+     * Returns the last applied velocity command.
+     * @param x [m/s]
+     * @param y [m/s]
+     * @param theta [deg/s]
+     * @return true/false
+     */
+    virtual bool getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel) = 0;
 };
 
 class YARP_dev_API yarp::dev::Nav2D::INavigation2DTargetActions

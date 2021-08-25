@@ -107,6 +107,12 @@ bool fakeNavigation::applyVelocityCommand(double x_vel, double y_vel, double the
     return true;
 }
 
+bool fakeNavigation::getLastVelocityCommand(double& x_vel, double& y_vel, double& theta_vel)
+{
+    yCInfo(FAKENAVIGATION) << "getLastVelocityCommand not yet implemented";
+    return true;
+}
+
 bool fakeNavigation::stopNavigation()
 {
     m_status=NavigationStatusEnum::navigation_status_idle;
