@@ -55,8 +55,7 @@ bool navigation2DServer::attachAll(const PolyDriverList &device2attach)
     }
 
     if (nullptr == iNav_target ||
-        nullptr == iNav_ctrl ||
-        nullptr == iNav_vel)
+        nullptr == iNav_ctrl)
     {
         yCError(NAVIGATION2DSERVER, "Subdevice passed to attach method is invalid");
         return false;
@@ -285,24 +284,6 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
         else
         {
             yCError(NAVIGATION2DSERVER) << "Invalid number of params";
-            reply.addVocab32(VOCAB_ERR);
-        }
-    }
-    else if (request == VOCAB_NAV_VELOCITY_CMD)
-    {
-        double x_vel   = command.get(2).asFloat64();
-        double y_vel   = command.get(3).asFloat64();
-        double t_vel   = command.get(4).asFloat64();
-        double timeout = command.get(5).asFloat64();
-        bool ret = iNav_vel->applyVelocityCommand(x_vel,y_vel,t_vel,timeout);
-        if (ret)
-        {
-            clear_current_goal_name();
-            reply.addVocab32(VOCAB_OK);
-        }
-        else
-        {
-            yCError(NAVIGATION2DSERVER) << "applyVelocityCommand() failed";
             reply.addVocab32(VOCAB_ERR);
         }
     }

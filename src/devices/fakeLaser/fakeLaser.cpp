@@ -178,7 +178,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     }
 
     yCInfo(FAKE_LASER) << "Starting debug mode";
-    yCInfo(FAKE_LASER) << "test mode:"<< m_test_mode;
+    yCInfo(FAKE_LASER) << "test mode:"<< m_test_mode << " i.e. " << string_test_mode;
 
     if (!m_rpcPort.open("/fakeLaser/rpc:i"))
     {
