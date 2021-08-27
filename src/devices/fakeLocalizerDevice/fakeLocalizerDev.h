@@ -44,6 +44,7 @@ public:
 public:
     bool initializeLocalization(const yarp::dev::Nav2D::Map2DLocation& loc);
     bool getCurrentLoc(yarp::dev::Nav2D::Map2DLocation& loc);
+    bool getCurrentLoc(yarp::dev::Nav2D::Map2DLocation& loc, yarp::sig::Matrix& cov);
 };
 
 /**

@@ -23,6 +23,8 @@
 #include <yarp/dev/OdometryData.h>
 #include <math.h>
 
+#include "ILocalization2DServerImpl.h"
+
  /**
  * @ingroup dev_impl_nws_yarp dev_impl_navigation
  *
@@ -49,6 +51,9 @@ class Localization2D_nws_yarp :
 {
 protected:
 
+    //thrift
+    ILocalization2DRPCd                       m_RPC;
+
     //yarp
     std::string                               m_local_name = "/localization2D_nws_yarp";
     yarp::os::Port                            m_rpcPort;
@@ -66,13 +71,6 @@ protected:
 
     double                                  m_stats_time_last;
     double                                  m_period;
-    yarp::os::Stamp                         m_loc_stamp;
-    yarp::os::Stamp                         m_odom_stamp;
-    bool                                    m_getdata_using_periodic_thread = true;
-
-    yarp::dev::OdometryData                     m_current_odometry;
-    yarp::dev::Nav2D::Map2DLocation             m_current_position;
-    yarp::dev::Nav2D::LocalizationStatusEnum    m_current_status = yarp::dev::Nav2D::LocalizationStatusEnum::localization_status_not_yet_localized;
 
 private:
     void publish_2DLocation_on_yarp_port();

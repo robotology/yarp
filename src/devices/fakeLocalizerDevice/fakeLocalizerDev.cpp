@@ -86,7 +86,7 @@ bool   fakeLocalizer::setInitialPose(const Map2DLocation& loc)
 
 bool   fakeLocalizer::getCurrentPosition(Map2DLocation& loc, yarp::sig::Matrix& cov)
 {
-    locThread->getCurrentLoc(loc);
+    locThread->getCurrentLoc(loc,cov);
     return true;
 }
 
@@ -190,6 +190,15 @@ bool fakeLocalizerThread::getCurrentLoc(Map2DLocation& loc)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     loc = m_current_loc;
+    return true;
+}
+
+bool fakeLocalizerThread::getCurrentLoc(Map2DLocation& loc, yarp::sig::Matrix& cov)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    loc = m_current_loc;
+    cov.resize(3,3);
+    cov.eye();
     return true;
 }
 

@@ -52,6 +52,7 @@ bool Localization2D_nws_yarp::attach(PolyDriver* driver)
     if (driver->isValid())
     {
         driver->view(iLoc);
+        m_RPC.setInterface(iLoc);
     }
 
     if (nullptr == iLoc)
@@ -68,8 +69,8 @@ bool Localization2D_nws_yarp::attach(PolyDriver* driver)
     ret &= iLoc->getCurrentPosition(loc);
     if (ret)
     {
-        m_current_status = status;
-        m_current_position = loc;
+        m_RPC.m_current_status = status;
+        m_RPC.m_current_position = loc;
     }
     else
     {
@@ -127,12 +128,12 @@ bool Localization2D_nws_yarp::open(Searchable& config)
     if (!general_group.check("retrieve_position_periodically"))
     {
         yCInfo(LOCALIZATION2D_NWS_YARP) << "Missing 'retrieve_position_periodically' parameter. Using default value: true. Period:" << m_period ;
-        m_getdata_using_periodic_thread = true;
+        m_RPC.m_getdata_using_periodic_thread = true;
     }
     else
     {
-        m_getdata_using_periodic_thread = general_group.find("retrieve_position_periodically").asBool();
-        if (m_getdata_using_periodic_thread)
+        m_RPC.m_getdata_using_periodic_thread = general_group.find("retrieve_position_periodically").asBool();
+        if (m_RPC.m_getdata_using_periodic_thread)
             { yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically requested, Period:" << m_period; }
         else
             { yCInfo(LOCALIZATION2D_NWS_YARP) << "retrieve_position_periodically NOT requested. Localization data obtained asynchronously."; }
@@ -233,209 +234,16 @@ bool Localization2D_nws_yarp::close()
 
 bool Localization2D_nws_yarp::read(yarp::os::ConnectionReader& connection)
 {
-    yarp::os::Bottle command;
-    yarp::os::Bottle reply;
-    bool ok = command.read(connection);
-    if (!ok) {
-        return false;
-    }
-
-    reply.clear();
-
-    if (command.get(0).isVocab32())
+    bool b = m_RPC.read(connection);
+    if (b)
     {
-        if (command.get(0).asVocab32() == VOCAB_INAVIGATION && command.get(1).isVocab32())
-        {
-            int request = command.get(1).asVocab32();
-            if (request == VOCAB_NAV_GET_CURRENT_POS)
-            {
-                bool b = true;
-                if (m_getdata_using_periodic_thread)
-                {
-                    //m_current_position is obtained by run()
-                }
-                else
-                {
-                    //m_current_position is obtained by getCurrentPosition()
-                    b = iLoc->getCurrentPosition(m_current_position);
-                }
-                if (b)
-                {
-                    reply.addVocab32(VOCAB_OK);
-                    reply.addString(m_current_position.map_id);
-                    reply.addFloat64(m_current_position.x);
-                    reply.addFloat64(m_current_position.y);
-                    reply.addFloat64(m_current_position.theta);
-                }
-                else
-                {
-                    reply.addVocab32(VOCAB_ERR);
-                }
-            }
-            else if (request == VOCAB_NAV_GET_ESTIMATED_ODOM)
-            {
-                bool b = true;
-                if (m_getdata_using_periodic_thread)
-                {
-                    //m_current_position is obtained by run()
-                }
-                else
-                {
-                    //m_current_position is obtained by getCurrentPosition()
-                    b = iLoc->getEstimatedOdometry(m_current_odometry);
-                }
-                if (b)
-                {
-                    reply.addVocab32(VOCAB_OK);
-                    reply.addFloat64(m_current_odometry.odom_x);
-                    reply.addFloat64(m_current_odometry.odom_y);
-                    reply.addFloat64(m_current_odometry.odom_theta);
-                    reply.addFloat64(m_current_odometry.base_vel_x);
-                    reply.addFloat64(m_current_odometry.base_vel_y);
-                    reply.addFloat64(m_current_odometry.base_vel_theta);
-                    reply.addFloat64(m_current_odometry.odom_vel_x);
-                    reply.addFloat64(m_current_odometry.odom_vel_y);
-                    reply.addFloat64(m_current_odometry.odom_vel_theta);
-                }
-                else
-                {
-                    reply.addVocab32(VOCAB_ERR);
-                }
-            }
-            else if (request == VOCAB_NAV_SET_INITIAL_POS)
-            {
-                Map2DLocation init_loc;
-                init_loc.map_id = command.get(2).asString();
-                init_loc.x = command.get(3).asFloat64();
-                init_loc.y = command.get(4).asFloat64();
-                init_loc.theta = command.get(5).asFloat64();
-                iLoc->setInitialPose(init_loc);
-                reply.addVocab32(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_GET_CURRENT_POSCOV)
-            {
-                Map2DLocation init_loc;
-                yarp::sig::Matrix cov(3, 3);
-                iLoc->getCurrentPosition(init_loc, cov);
-                reply.addVocab32(VOCAB_OK);
-                reply.addString(m_current_position.map_id);
-                reply.addFloat64(m_current_position.x);
-                reply.addFloat64(m_current_position.y);
-                reply.addFloat64(m_current_position.theta);
-                yarp::os::Bottle& mc = reply.addList();
-                for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { mc.addFloat64(cov[i][j]); } }
-            }
-            else if (request == VOCAB_NAV_SET_INITIAL_POSCOV)
-            {
-                Map2DLocation init_loc;
-                yarp::sig::Matrix cov(3,3);
-                init_loc.map_id = command.get(2).asString();
-                init_loc.x = command.get(3).asFloat64();
-                init_loc.y = command.get(4).asFloat64();
-                init_loc.theta = command.get(5).asFloat64();
-                Bottle* mc = command.get(6).asList();
-                if (mc!=nullptr && mc->size() == 9)
-                {
-                    for (size_t i = 0; i < 3; i++) { for (size_t j = 0; j < 3; j++) { cov[i][j] = mc->get(i * 3 + j).asFloat64(); } }
-                    bool ret = iLoc->setInitialPose(init_loc, cov);
-                    if (ret) { reply.addVocab32(VOCAB_OK); }
-                    else     { reply.addVocab32(VOCAB_ERR); }
-                }
-                else
-                {
-                    reply.addVocab32(VOCAB_ERR);
-                }
-            }
-            else if (request == VOCAB_NAV_LOCALIZATION_START)
-            {
-                iLoc->startLocalizationService();
-                reply.addVocab32(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_LOCALIZATION_STOP)
-            {
-                iLoc->stopLocalizationService();
-                reply.addVocab32(VOCAB_OK);
-            }
-            else if (request == VOCAB_NAV_GET_LOCALIZER_STATUS)
-            {
-                if (m_getdata_using_periodic_thread)
-                {
-                    //m_current_status is obtained by run()
-                    reply.addVocab32(VOCAB_OK);
-                    reply.addVocab32(m_current_status);
-                }
-                else
-                {
-                    //m_current_status is obtained by getLocalizationStatus()
-                    iLoc->getLocalizationStatus(m_current_status);
-                    reply.addVocab32(VOCAB_OK);
-                    reply.addVocab32(m_current_status);
-                }
-            }
-            else if (request == VOCAB_NAV_GET_LOCALIZER_POSES)
-            {
-                std::vector<Map2DLocation> poses;
-                iLoc->getEstimatedPoses(poses);
-                reply.addVocab32(VOCAB_OK);
-                reply.addInt32(poses.size());
-                for (size_t i=0; i<poses.size(); i++)
-                {
-                    Bottle& b = reply.addList();
-                    b.addString(poses[i].map_id);
-                    b.addFloat64(poses[i].x);
-                    b.addFloat64(poses[i].y);
-                    b.addFloat64(poses[i].theta);
-                }
-            }
-            else
-            {
-                reply.addVocab32(VOCAB_ERR);
-            }
-        }
-        else
-        {
-            yCError(LOCALIZATION2D_NWS_YARP) << "Invalid vocab received";
-            reply.addVocab32(VOCAB_ERR);
-        }
-    }
-    else if (command.get(0).isString() && command.get(0).asString() == "help")
-    {
-        reply.addVocab32("many");
-        reply.addString("Available commands are:");
-        reply.addString("getLoc");
-        reply.addString("initLoc <map_name> <x> <y> <angle in degrees>");
-    }
-    else if (command.get(0).isString() && command.get(0).asString() == "getLoc")
-    {
-        Map2DLocation curr_loc;
-        iLoc->getCurrentPosition(curr_loc);
-        std::string s = std::string("Current Location is: ") + curr_loc.toString();
-        reply.addString(s);
-    }
-    else if (command.get(0).isString() && command.get(0).asString() == "initLoc")
-    {
-        Map2DLocation init_loc;
-        init_loc.map_id = command.get(1).asString();
-        init_loc.x = command.get(2).asFloat64();
-        init_loc.y = command.get(3).asFloat64();
-        init_loc.theta = command.get(4).asFloat64();
-        iLoc->setInitialPose(init_loc);
-        std::string s = std::string("Localization initialized to: ") + init_loc.toString();
-        reply.addString(s);
+        return true;
     }
     else
     {
-        yCError(LOCALIZATION2D_NWS_YARP) << "Invalid command type";
-        reply.addVocab32(VOCAB_ERR);
+        yCDebug(LOCALIZATION2D_NWS_YARP) << "read() Command failed";
+        return false;
     }
-
-    yarp::os::ConnectionWriter *returnToSender = connection.getWriter();
-    if (returnToSender != nullptr)
-    {
-        reply.write(*returnToSender);
-    }
-
-    return true;
 }
 
 void Localization2D_nws_yarp::run()
@@ -447,40 +255,45 @@ void Localization2D_nws_yarp::run()
         m_stats_time_last = yarp::os::Time::now();
     }
 
-    if (m_getdata_using_periodic_thread)
+    //enter the critical section
+    m_RPC.getMutex()->lock();
     {
-        bool ret = iLoc->getLocalizationStatus(m_current_status);
-        if (ret == false)
+        if (m_RPC.m_getdata_using_periodic_thread)
         {
-            yCError(LOCALIZATION2D_NWS_YARP) << "getLocalizationStatus() failed";
-        }
+            bool ret = iLoc->getLocalizationStatus(m_RPC.m_current_status);
+            if (ret == false)
+            {
+                yCError(LOCALIZATION2D_NWS_YARP) << "getLocalizationStatus() failed";
+            }
 
-        if (m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
-        {
-            bool ret2 = iLoc->getCurrentPosition(m_current_position);
-            if (ret2 == false)
+            if (m_RPC.m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
             {
-                yCError(LOCALIZATION2D_NWS_YARP) << "getCurrentPosition() failed";
+                bool ret2 = iLoc->getCurrentPosition(m_RPC.m_current_position);
+                if (ret2 == false)
+                {
+                    yCError(LOCALIZATION2D_NWS_YARP) << "getCurrentPosition() failed";
+                }
+                else
+                {
+                    m_RPC.m_loc_stamp.update();
+                }
+                bool ret3 = iLoc->getEstimatedOdometry(m_RPC.m_current_odometry);
+                if (ret3 == false)
+                {
+                    //yCError(LOCALIZATION2D_NWS_YARP) << "getEstimatedOdometry() failed";
+                }
+                else
+                {
+                    m_RPC.m_odom_stamp.update();
+                }
             }
             else
             {
-                m_loc_stamp.update();
+                yCWarning(LOCALIZATION2D_NWS_YARP, "The system is not properly localized!");
             }
-            bool ret3 = iLoc->getEstimatedOdometry(m_current_odometry);
-            if (ret3 == false)
-            {
-                //yCError(LOCALIZATION2D_NWS_YARP) << "getEstimatedOdometry() failed";
-            }
-            else
-            {
-                m_odom_stamp.update();
-            }
-        }
-        else
-        {
-            yCWarning(LOCALIZATION2D_NWS_YARP, "The system is not properly localized!");
         }
     }
+    m_RPC.getMutex()->unlock();
 
     if (m_enable_publish_odometry) {
         publish_odometry_on_yarp_port();
@@ -495,10 +308,10 @@ void Localization2D_nws_yarp::publish_odometry_on_yarp_port()
     if (m_odometryPort.getOutputCount() > 0)
     {
         yarp::dev::OdometryData& odom = m_odometryPort.prepare();
-        odom = m_current_odometry;
+        odom = m_RPC.m_current_odometry;
 
         //send data to port
-        m_odometryPort.setEnvelope(m_odom_stamp);
+        m_odometryPort.setEnvelope(m_RPC.m_odom_stamp);
         m_odometryPort.write();
     }
 }
@@ -508,9 +321,9 @@ void Localization2D_nws_yarp::publish_2DLocation_on_yarp_port()
     if (m_2DLocationPort.getOutputCount() > 0)
     {
         Nav2D::Map2DLocation& loc = m_2DLocationPort.prepare();
-        if (m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
+        if (m_RPC.m_current_status == LocalizationStatusEnum::localization_status_localized_ok)
         {
-            loc = m_current_position;
+            loc = m_RPC.m_current_position;
         }
         else
         {
@@ -522,7 +335,7 @@ void Localization2D_nws_yarp::publish_2DLocation_on_yarp_port()
         }
 
         //send data to port
-        m_2DLocationPort.setEnvelope(m_loc_stamp);
+        m_2DLocationPort.setEnvelope(m_RPC.m_loc_stamp);
         m_2DLocationPort.write();
     }
 }
