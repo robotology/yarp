@@ -232,10 +232,6 @@ endif()
 #message(STATUS "UNWANTED_WARNING_FLAGS = ${UNWANTED_WARNING_FLAGS}")
 #message(STATUS "DEPRECATED_DECLARATIONS_FLAGS = ${DEPRECATED_DECLARATIONS_FLAGS}")
 #message(STATUS "HARDENING_FLAGS = ${HARDENING_FLAGS}")
-#message(STATUS "CXX98_FLAGS = ${CXX98_FLAGS}")
-#message(STATUS "CXX11_FLAGS = ${CXX11_FLAGS}")
-#message(STATUS "CXX14_FLAGS = ${CXX14_FLAGS}")
-#message(STATUS "CXX17_FLAGS = ${CXX17_FLAGS}")
 
 
 #########################################################################
