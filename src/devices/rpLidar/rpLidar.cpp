@@ -23,8 +23,6 @@
 //#define LASER_DEBUG
 //#define FORCE_SCAN
 
-using namespace std;
-
 #ifndef DEG2RAD
 #define DEG2RAD M_PI/180.0
 #endif
@@ -317,7 +315,7 @@ bool RpLidar::threadInit()
     return true;
 }
 
-bool RpLidar::HW_getInfo(string& s_info)
+bool RpLidar::HW_getInfo(std::string& s_info)
 {
     int r = 0;
     unsigned char cmd_arr[2];

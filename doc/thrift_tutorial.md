@@ -220,16 +220,16 @@ Thrift allows you to customize the namespace behavior on a per-language basis.
 YARP example:
 
 ~~~{.thrift}
-namespace yarp yarp.test
+namespace yarp foo.example
 ~~~
 
 means that all the code in the generated files will be included in
 
 ~~~{.cpp}
-namespace yarp {
-namespace test {
- ... all
- ... code
+namespace foo {
+namespace example {
+// ... all
+// ... code
 }
 }
 ~~~
@@ -400,7 +400,7 @@ implements the methods of that interface, and attaching it to a YARP port.
 #include <secondInterface/Demo.h>
 
 
-class DemoServer : public yarp::test::Demo
+class DemoServer : public foo::example::Demo
 {
 public:
     int32_t get_answer() override
@@ -418,10 +418,10 @@ public:
         std::cout<<"Server::double_down called with "<< x <<std::endl;
         return x*2;
     }
-    ::yarp::test::PointD add_point(const  ::yarp::test::PointD& x, const  ::yarp::test::PointD& y) override
+    foo::example::PointD add_point(const  foo::example::PointD& x, const  foo::example::PointD& y) override
     {
         std::cout<<"Server::add_point called"<<std::endl;
-        ::yarp::test::PointD z;
+        foo::example::PointD z;
         z.x = x.x + y.x;
         z.y = x.y + y.y;
         z.z = x.z + y.z;
@@ -459,7 +459,7 @@ interface:
 #include <secondInterface/Demo.h>
 
 
-class DemoServerModule : public yarp::test::Demo, public yarp::os::RFModule
+class DemoServerModule : public foo::example::Demo, public yarp::os::RFModule
 {
 public:
   // Thrift Interface Implementation
@@ -539,33 +539,30 @@ Simple example:
 #include <yarp/os/all.h>
 #include <secondInterface/Demo.h>
 
-using namespace yarp::test;
-using namespace yarp::os;
-
 int main(int argc, char *argv[])
 {
-    Property config;
+    yarp::os::Property config;
     config.fromCommand(argc,argv);
 
-    Network yarp;
-    Port client_port;
+    yarp::os::Network yarp;
+    yarp::os::Port client_port;
 
-    std::string servername= config.find("server").asString().c_str();
+    std::string servername= config.find("server").asString();
     client_port.open("/demo/client");
-    if (!yarp.connect("/demo/client",servername.c_str()))
+    if (!yarp.connect("/demo/client",servername))
     {
         std::cout << "Error! Could not connect to server " << servername << std::endl;
         return -1;
     }
 
-    Demo demo;
+    foo::example::Demo demo;
     demo.yarp().attachAsClient(client_port);
 
-    PointD point;
+    foo::example::PointD point;
     point.x = 0;
     point.y = 0;
     point.z = 0;
-    PointD offset;
+    foo::example::PointD offset;
     offset.x = 1;
     offset.y = 2;
     offset.z = 3;

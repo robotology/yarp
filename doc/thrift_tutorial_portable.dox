@@ -92,8 +92,6 @@ Now we write the code for the sender in `sender.cpp`:
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 
-using namespace std;
-
 int main()
 {
    yarp::os::Network network;
@@ -102,11 +100,11 @@ int main()
 
    if (!port.open("/sender"))
    {
-       cerr<<"Error opening port, check your yarp network\n";
+       std::cerr<<"Error opening port, check your yarp network\n";
        return -1;
    }
 
-   cout<<"Starting sender\n";
+   std::cout<<"Starting sender\n";
 
    while(true)
    {
@@ -173,18 +171,16 @@ This is the receiver code in `receiver.cpp`:
 #include <yarp/os/Network.h>
 #include <yarp/os/BufferedPort.h>
 
-using namespace std;
-
 int main()
 {
    yarp::os::Network network;
 
-   cout<<"Starting receiver\n";
+   std::cout<<"Starting receiver\n";
 
    yarp::os::Port port;
    if (!port.open("/receiver"))
    {
-       cerr<<"Error opening port, check your yarp network\n";
+       std::cerr<<"Error opening port, check your yarp network\n";
        return -1;
    }
 

@@ -26,8 +26,6 @@ The <tt>sender</tt> program from
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 
-using namespace std;
-
 int main()
 {
     yarp::os::Network network;
@@ -36,11 +34,11 @@ int main()
 
     if (!port.open("/sender"))
     {
-        cerr<<"Error opening port, check your yarp network\n";
+       std::cerr<<"Error opening port, check your yarp network\n";
        return -1;
     }
 
-    cout<<"Starting sender\n";
+    std::cout<<"Starting sender\n";
     double count=0.0;
     while(true)
     {
