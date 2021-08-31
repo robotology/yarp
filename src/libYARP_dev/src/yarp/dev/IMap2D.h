@@ -239,6 +239,8 @@ public:
     virtual bool loadLocationsAndExtras(std::string locations_collection_file) = 0;
 };
 
+//This section of vocabs is used just by deprecated device Map2DServer and Map2DClient
+//It can be thus safely eliminated as soon as these devices are removed from yarp
 constexpr yarp::conf::vocab32_t VOCAB_IMAP                      = yarp::os::createVocab32('i','m','a','p');
 constexpr yarp::conf::vocab32_t VOCAB_IMAP_SET_MAP              = yarp::os::createVocab32('s','e','t');
 constexpr yarp::conf::vocab32_t VOCAB_IMAP_GET_MAP              = yarp::os::createVocab32('g','e','t');

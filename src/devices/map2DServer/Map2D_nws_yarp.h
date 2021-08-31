@@ -34,6 +34,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/api.h>
 
+#include "Map2DServerImpl.h"
+
 /**
  *  @ingroup dev_impl_nws_yarp dev_impl_navigation
  *
@@ -44,7 +46,7 @@
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value    | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:----------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | name           |      -         | string  | -              | /map2D_nws_yarp/rpc   | No           | Full name of the rpc port opened by the Map2DServer device.       |       |
+ * | name           |      -         | string  | -              | /map2D_nws_yarp/rpc   | No           | Full name of the rpc port opened by the map2D_nws_yarp device.       |       |
 
  */
 
@@ -62,6 +64,9 @@ public:
     bool attach(yarp::dev::PolyDriver* driver) override;
 
 private:
+    //thrift
+    IMap2DRPCd                   m_RPC;
+
     //drivers and interfaces
     yarp::dev::Nav2D::IMap2D*    m_iMap2D = nullptr;
     yarp::dev::PolyDriver        m_drv;
@@ -75,7 +80,6 @@ private:
     bool read(yarp::os::ConnectionReader& connection) override;
 
     void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
-    void parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
 };
 
 #endif // YARP_DEV_MAP2D_NWS_YARP
