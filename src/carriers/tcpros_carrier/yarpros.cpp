@@ -16,7 +16,6 @@
 #include <string>
 
 using namespace yarp::os;
-using namespace std;
 
 
 namespace {
@@ -55,7 +54,7 @@ YARP_LOG_COMPONENT(YARPROS,
 }
 
 
-string addPart(string t, string name, int code, Value *val, string orig, string mode="") {
+std::string addPart(std::string t, std::string name, int code, Value *val, std::string orig, std::string mode="") {
     char buf[5000];
     if (mode=="length") {
         sprintf(buf,"%s %s # suggested length: %d", t.c_str(), name.c_str(), code);
@@ -66,7 +65,7 @@ string addPart(string t, string name, int code, Value *val, string orig, string 
         char char3 = (code>>16)%256;
         char char2 = (code>>8)%256;
         char char1 = code%256;
-        string r;
+        std::string r;
         if (char1!=0) {
             r += '\''; r += char1; r += "\'*256^3";
         }
@@ -102,8 +101,8 @@ string addPart(string t, string name, int code, Value *val, string orig, string 
     return buf;
 }
 
-string showFormat(Bottle& b, string root) {
-    string r;
+std::string showFormat(Bottle& b, std::string root) {
+    std::string r;
     int code = b.getSpecialization();
     r += addPart("int32",root + "_tag",BOTTLE_TAG_LIST+code,nullptr,"BOTTLE_TAG_LIST+code");
     r += "\n";
@@ -371,7 +370,7 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         yCDebug(YARPROS, "  * found topic %s", topic.c_str());
-        string carrier = "tcpros+role.pub+topic.";
+        std::string carrier = "tcpros+role.pub+topic.";
         if (service) {
             carrier = "rossrv+service.";
         }
@@ -406,7 +405,7 @@ int main(int argc, char *argv[]) {
         }
         yCDebug(YARPROS, "  * found ros node %s", ros_port.c_str());
         ok = register_port(yarp_port.c_str(),
-                      (string("tcpros+role.sub+topic.")+topic).c_str(),
+                      (std::string("tcpros+role.sub+topic.")+topic).c_str(),
                       lookup.hostname.c_str(),
                       lookup.portnum,
                       reply);
@@ -446,7 +445,7 @@ int main(int argc, char *argv[]) {
         }
         Bottle b;
         p.read(b);
-        string r;
+        std::string r;
         if (in&&b.get(0).asVocab32()==yarp::os::createVocab32('r','p','c')&&b.get(1).isList()) {
 
             r = showFormat(*b.get(1).asList(),"v");

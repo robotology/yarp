@@ -20,13 +20,12 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::dev::RGBDRosConversionUtils;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(RGBD_ROS, "yarp.device.RGBDRosConversion")
 }
 
-commonImageProcessor::commonImageProcessor(string cameradata_topic_name, string camerainfo_topic_name)
+commonImageProcessor::commonImageProcessor(std::string cameradata_topic_name, std::string camerainfo_topic_name)
 {
     if (this->topic(cameradata_topic_name)==false)
     {
@@ -203,7 +202,7 @@ void yarp::dev::RGBDRosConversionUtils::shallowCopyImages(const ImageOf<PixelFlo
 
 void yarp::dev::RGBDRosConversionUtils::deepCopyImages(const yarp::sig::FlexImage& src,
     yarp::rosmsg::sensor_msgs::Image& dest,
-    const string& frame_id,
+    const std::string& frame_id,
     const yarp::rosmsg::TickTime& timeStamp,
     const unsigned int& seq)
 {
@@ -221,7 +220,7 @@ void yarp::dev::RGBDRosConversionUtils::deepCopyImages(const yarp::sig::FlexImag
 
 void yarp::dev::RGBDRosConversionUtils::deepCopyImages(const DepthImage& src,
     yarp::rosmsg::sensor_msgs::Image& dest,
-    const string& frame_id,
+    const std::string& frame_id,
     const yarp::rosmsg::TickTime& timeStamp,
     const unsigned int& seq)
 {

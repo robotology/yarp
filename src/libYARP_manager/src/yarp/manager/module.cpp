@@ -9,7 +9,6 @@
 #include <cstring>
 
 
-using namespace std;
 using namespace yarp::manager;
 
 
@@ -293,9 +292,9 @@ bool Module::getParamValue(const char* key, bool bSwitch, std::string &param)
     }
 
     //printf("\n\nparsing '%s' for %s (switch:%d)\n", strParam.c_str(), key, bSwitch);
-    string strKey = string("--") + string(key);
+    std::string strKey = std::string("--") + std::string(key);
     size_t pos = strParam.find(strKey);
-    if(pos == string::npos)
+    if(pos == std::string::npos)
     {
         param = "off";
         return true;

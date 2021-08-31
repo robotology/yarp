@@ -22,7 +22,6 @@
 #include <cstdlib>
 
 using namespace yarp::os;
-using namespace std;
 
 void show_usage()
 {
@@ -135,7 +134,7 @@ int generate_cpp(int argc, char *argv[])
     bool is_service = false;
 
     Property p;
-    string fname;
+    std::string fname;
     p.fromCommand(argc,argv);
     bool verbose = p.check("verbose");
     bool no_cache = p.check("no-cache");
@@ -143,8 +142,8 @@ int generate_cpp(int argc, char *argv[])
 
     fname = argv[argc-1];
 
-    if (fname.rfind('.')!=string::npos) {
-        string ext = fname.substr(fname.rfind('.'),fname.length());
+    if (fname.rfind('.')!=std::string::npos) {
+        std::string ext = fname.substr(fname.rfind('.'),fname.length());
         if (ext==".srv" || ext==".SRV") {
             is_service = true;
         }
@@ -249,9 +248,9 @@ int main(int argc, char *argv[])
         }
         Bottle resp;
         std::string tag = req.get(0).asString();
-        string fname0 = req.get(1).asString();
-        string fname = env.findFile(fname0.c_str());
-        string txt;
+        std::string fname0 = req.get(1).asString();
+        std::string fname = env.findFile(fname0.c_str());
+        std::string txt;
         if (tag=="raw") {
             txt = env.readFile(fname.c_str());
             resp.addString(txt);

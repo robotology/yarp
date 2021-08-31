@@ -24,7 +24,6 @@
 #include <yarp/os/Os.h>
 #include <yarp/sig/Image.h>
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::wire_rep_utils;
 
@@ -309,7 +308,7 @@ std::string nameThatCode(int code) {
 }
 
 std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
-    string result;
+    std::string result;
 
     // assume we want to remove any meta-information
 
@@ -326,7 +325,7 @@ std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
             code = -1;
         }
     }
-    string codeName = nameThatCode(code);
+    std::string codeName = nameThatCode(code);
     if (code == -1) {
         result += "list ";
     } else {

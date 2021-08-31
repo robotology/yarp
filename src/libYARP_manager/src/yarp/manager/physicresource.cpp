@@ -9,7 +9,6 @@
 
 
 using namespace yarp::manager;
-using namespace std;
 
 
 /**
@@ -73,7 +72,7 @@ bool GPU::satisfy(GenericResource* resource)
     if (!gpu) {
         return false;
     }
-    bool ret = (!strlen(gpu->getCompCompatibility()))? true : (compCompatibility == string(gpu->getCompCompatibility()));
+    bool ret = (!strlen(gpu->getCompCompatibility()))? true : (compCompatibility == std::string(gpu->getCompCompatibility()));
     ret &= (cores >= gpu->getCores());
     ret &= (frequency >= gpu->getFrequency());
     ret &= (globalMemory >= gpu->getGlobalMemory());

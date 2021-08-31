@@ -21,7 +21,6 @@ using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::math;
-using namespace std;
 
 int pnpoly(std::vector<yarp::math::Vec2D<double>> points, double testx, double testy)
 {

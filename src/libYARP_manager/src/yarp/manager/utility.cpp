@@ -14,7 +14,6 @@
 
 
 using namespace yarp::manager;
-using namespace std;
 
 
 //#if defined(_MSC_VER) && (_MSC_VER == 1600)
@@ -108,7 +107,7 @@ void ErrorLogger::addWarning(const char* szWarning) {
     }
 }
 
-void ErrorLogger::addWarning(const string &str) {
+void ErrorLogger::addWarning(const std::string &str) {
     warnings.push_back(str);
 }
 
@@ -122,7 +121,7 @@ void ErrorLogger::addError(const char* szError) {
     }
 }
 
-void ErrorLogger::addError(const string &str) {
+void ErrorLogger::addError(const std::string &str) {
     errors.push_back(str);
 }
 
@@ -134,17 +133,17 @@ const char* ErrorLogger::getLastError() {
     if (errors.empty()) {
         return nullptr;
     }
-    static string msg;
+    static std::string msg;
     msg = errors.back();
     errors.pop_back();
     return msg.c_str();
 }
 
 const char* ErrorLogger::getFormatedErrorString() {
-    static string msgs;
+    static std::string msgs;
     char* err;
     while ((err = (char*)getLastError()) != nullptr) {
-        msgs += string(err) + " ";
+        msgs += std::string(err) + " ";
     }
     return msgs.c_str();
 }
@@ -153,17 +152,17 @@ const char* ErrorLogger::getLastWarning() {
     if (warnings.empty()) {
         return nullptr;
     }
-    static string msg;
+    static std::string msg;
     msg = warnings.back();
     warnings.pop_back();
     return msg.c_str();
 }
 
 const char* ErrorLogger::getFormatedWarningString() {
-    static string msgs;
+    static std::string msgs;
     char* err;
     while ((err = (char*)getLastWarning()) != nullptr) {
-        msgs += string(err) + " ";
+        msgs += std::string(err) + " ";
     }
     return msgs.c_str();
 }
@@ -183,7 +182,7 @@ int ErrorLogger::warningCount() {
 }
 
 
-const string GRAPH_LEGEND =
+const std::string GRAPH_LEGEND =
 "{"
 "   rank=sink;"
 "   style=filled;"
@@ -317,8 +316,8 @@ bool yarp::manager::compareString(const char* szFirst, const char* szSecond)
         return false;
     }
 
-    string strFirst(szFirst);
-    string strSecond(szSecond);
+    std::string strFirst(szFirst);
+    std::string strSecond(szSecond);
     transform(strFirst.begin(), strFirst.end(), strFirst.begin(),
               (int(*)(int))toupper);
     transform(strSecond.begin(), strSecond.end(), strSecond.begin(),
@@ -329,14 +328,14 @@ bool yarp::manager::compareString(const char* szFirst, const char* szSecond)
     return false;
 }
 
-void yarp::manager::trimString(string& str)
+void yarp::manager::trimString(std::string& str)
 {
-    string::size_type pos = str.find_last_not_of(' ');
-    if(pos != string::npos)
+    std::string::size_type pos = str.find_last_not_of(' ');
+    if(pos != std::string::npos)
     {
         str.erase(pos + 1);
         pos = str.find_first_not_of(' ');
-        if (pos != string::npos) {
+        if (pos != std::string::npos) {
             str.erase(0, pos);
         }
     } else {
@@ -347,16 +346,16 @@ void yarp::manager::trimString(string& str)
 
 bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
 {
-    ofstream dot;
+    std::ofstream dot;
     dot.open(szFileName);
     if (!dot.is_open()) {
         return false;
     }
 
-    dot<<"digraph G {"<<endl;
-    dot<<"rankdir=LR;"<<endl;
-    dot<<"ranksep=0.0;"<<endl;
-    dot<<"nodesep=0.2;"<<endl;
+    dot<<"digraph G {\n";
+    dot<<"rankdir=LR\n;";
+    dot<<"ranksep=0.0\n;";
+    dot<<"nodesep=0.2\n;";
 
     for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)
     {
@@ -365,7 +364,7 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                     auto* mod = (Module*)(*itr);
                     dot<<"\""<<mod->getLabel()<<"\"";
                     dot<<" [label=\""<< mod->getName()<<"\"";
-                    dot<<" shape=component, color=midnightblue, fillcolor=lightslategrey, peripheries=1, style=filled, penwidth=2];"<<endl;
+                    dot<<" shape=component, color=midnightblue, fillcolor=lightslategrey, peripheries=1, style=filled, penwidth=2];\n";
                     for(int i=0; i<mod->sucCount(); i++)
                     {
                         Link l = mod->getLinkAt(i);
@@ -373,9 +372,9 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                         dot<<"\""<<mod->getLabel()<<"\" -> ";
                         dot<<"\""<<in->getLabel()<<"\"";
                         if (!l.isVirtual()) {
-                            dot<<" [label=\"\"];"<<endl;
+                            dot<<" [label=\"\"];\n";
                         } else {
-                            dot << " [label=\"\" style=dashed];" << endl;
+                            dot << " [label=\"\" style=dashed];\n";
                         }
                     }
 
@@ -387,12 +386,12 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                     if(in->withPriority())
                     {
                         dot<<" [color=red, fillcolor=lightgrey, peripheries=1, style=filled";
-                        dot<<" label=\""<< in->getName()<<"\\n"<<in->getPort()<<"\"];"<<endl;
+                        dot<<" label=\""<< in->getName()<<"\\n"<<in->getPort()<<"\"];\n";
                     }
                     else
                     {
                         dot<<" [color=black, fillcolor=lightgrey, peripheries=1, style=filled";
-                        dot<<" label=\""<< in->getName()<<"\\n"<<in->getPort()<<"\"];"<<endl;
+                        dot<<" label=\""<< in->getName()<<"\\n"<<in->getPort()<<"\"];\n";
                     }
                     for(int i=0; i<in->sucCount(); i++)
                     {
@@ -401,9 +400,9 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                         dot<<"\""<<in->getLabel()<<"\" -> ";
                         dot<<"\""<<out->getLabel()<<"\"";
                         if (!l.isVirtual()) {
-                            dot<<" [label=\""<<l.weight()<<"\"];"<<endl;
+                            dot<<" [label=\""<<l.weight()<<"\"];\n";
                         } else {
-                            dot << " [label=\"" << l.weight() << "\" style=dashed];" << endl;
+                            dot << " [label=\"" << l.weight() << "\" style=dashed];\n";
                         }
                     }
 
@@ -413,14 +412,14 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                     auto* out = (OutputData*)(*itr);
                     dot<<"\""<<out->getLabel()<<"\"";
                     dot<<" [color=black, fillcolor=wheat, peripheries=1, style=filled";
-                    dot<<" label=\""<< out->getName()<<"\\n"<<out->getPort()<<"\"];"<<endl;
+                    dot<<" label=\""<< out->getName()<<"\\n"<<out->getPort()<<"\"];\n";
                     for(int i=0; i<out->sucCount(); i++)
                     {
                         Link l = out->getLinkAt(i);
                         auto* mod = (Module*)l.to();
                         dot<<"\""<<out->getLabel()<<"\" -> ";
                         dot<<"\""<<mod->getLabel()<<"\"";
-                        dot<<" [label=\"\" arrowhead=none];"<<endl;
+                        dot<<" [label=\"\" arrowhead=none];\n";
                     }
 
                     break;
@@ -430,7 +429,7 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                     auto* app = (Application*)(*itr);
                     dot<<"\""<<app->getLabel()<<"\"";
                     dot<<" [shape=folder, color=darkgreen, fillcolor=darkseagreen, peripheries=1, style=filled, penwidth=2";
-                    dot<<" label=\""<<app->getLabel()<<"\""<<"];"<<endl;
+                    dot<<" label=\""<<app->getLabel()<<"\""<<"];\n";
                     for(int i=0; i<app->sucCount(); i++)
                     {
                         Link l = app->getLinkAt(i);
@@ -438,9 +437,9 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                         dot<<"\""<<app->getLabel()<<"\" -> ";
                         dot<<"\""<<mod->getLabel()<<"\"";
                         if (!l.isVirtual()) {
-                            dot<<" [label=\"\"];"<<endl;
+                            dot<<" [label=\"\"];\n";
                         } else {
-                            dot << " [label=\"\" style=dashed];" << endl;
+                            dot << " [label=\"\" style=dashed];\n";
                         }
                     }
                     break;
@@ -454,14 +453,14 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
                     } else {
                         dot << " [shape=house, color=maroon, fillcolor=indianred, peripheries=1, style=filled, penwidth=2";
                     }
-                    dot<<" label=\""<<res->getName()<<"\""<<"];"<<endl;
+                    dot<<" label=\""<<res->getName()<<"\""<<"];\n";
                     for(int i=0; i<res->sucCount(); i++)
                     {
                         Link l = res->getLinkAt(i);
                         Node* prov = l.to();
                         dot<<"\""<<res->getLabel()<<"\" -> ";
                         dot<<"\""<<prov->getLabel()<<"\"";
-                        dot<<" [label=\""<<l.weight()<<"\"];"<<endl;
+                        dot<<" [label=\""<<l.weight()<<"\"];\n";
                     }
 
                     break;
@@ -473,7 +472,7 @@ bool yarp::manager::exportDotGraph(Graph& graph, const char* szFileName)
     }
 
     dot<<GRAPH_LEGEND;
-    dot<<"}"<<endl;
+    dot<<"}\n";
     dot.close();
     return true;
 }

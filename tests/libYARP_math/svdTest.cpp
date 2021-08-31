@@ -24,12 +24,11 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
-using namespace std;
 
 const double TOL = 1e-8;
 
 // Assert that 2 matrices are equal
-void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)
+void assertEqual(const Matrix &A, const Matrix &B, std::string testName, bool verbose=false)
 {
     if(A.cols() != B.cols() || A.rows()!=B.rows()){
         if (verbose) {
@@ -54,7 +53,7 @@ void assertEqual(const Matrix &A, const Matrix &B, string testName, bool verbose
 }
 
 // Assert that 2 matrices are not equal
-void assertNotEqual(const Matrix &A, const Matrix &B, string testName, bool verbose=false)
+void assertNotEqual(const Matrix &A, const Matrix &B, std::string testName, bool verbose=false)
 {
     if(A.cols() != B.cols() || A.rows()!=B.rows()){
         CHECK(true);

@@ -9,7 +9,6 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-using namespace std;
 using namespace yarp::dev;
 
 namespace {

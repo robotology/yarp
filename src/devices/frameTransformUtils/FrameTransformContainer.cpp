@@ -9,7 +9,6 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -56,7 +55,7 @@ bool FrameTransformContainer::setTransform(const yarp::math::FrameTransform& t)
     return true;
 }
 
-bool FrameTransformContainer::deleteTransform(string t1, string t2)
+bool FrameTransformContainer::deleteTransform(std::string t1, std::string t2)
 {
     std::lock_guard<std::recursive_mutex> lock(m_trf_mutex);
     if (t1 == "*" && t2 == "*")

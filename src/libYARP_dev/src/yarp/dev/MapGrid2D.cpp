@@ -26,7 +26,6 @@ using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::math;
-using namespace std;
 
 #ifndef DEG2RAD
 #define DEG2RAD M_PI/180.0
@@ -37,21 +36,21 @@ using namespace std;
 #endif
 
 //helper functions
-static string extractPathFromFile(string full_filename)
+static std::string extractPathFromFile(std::string full_filename)
 {
     size_t found;
     found = full_filename.find_last_of('/');
-    if (found != string::npos) {
+    if (found != std::string::npos) {
         return full_filename.substr(0, found) + "/";
     }
     found = full_filename.find_last_of('\\');
-    if (found != string::npos) {
+    if (found != std::string::npos) {
         return full_filename.substr(0, found) + "\\";
     }
     return full_filename;
 }
 
-static string extractExtensionFromFile(string full_filename)
+static std::string extractExtensionFromFile(std::string full_filename)
 {
     int start = full_filename.length() - 3;
     return full_filename.substr(start, 3);
@@ -299,7 +298,7 @@ void MapGrid2D::enlargeCell(XYCell cell)
     }
 }
 
-bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename, double& resolution, double& orig_x, double& orig_y, double& orig_t )
+bool MapGrid2D::loadROSParams(std::string ros_yaml_filename, std::string& pgm_occ_filename, double& resolution, double& orig_x, double& orig_y, double& orig_t )
 {
     std::string file_string;
     std::ifstream file;
@@ -310,7 +309,7 @@ bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename
         return false;
     }
 
-    string line;
+    std::string line;
     while (getline(file, line))
     {
         if (line.find("origin") != std::string::npos)
@@ -320,9 +319,9 @@ bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename
             std::replace(line.begin(), line.end(), ']', ')');
             /*
             auto it = line.find('[');
-            if (it != string::npos) line.replace(it, 1, "(");
+            if (it != std::string::npos) line.replace(it, 1, "(");
             it = line.find(']');
-            if(it != string::npos) line.replace(it, 1, ")");*/
+            if(it != std::string::npos) line.replace(it, 1, ")");*/
         }
         file_string += (line + '\n');
     }
@@ -331,7 +330,7 @@ bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename
     bool ret = true;
     Bottle bbb;
     bbb.fromString(file_string);
-    string debug_s = bbb.toString();
+    std::string debug_s = bbb.toString();
 
     if (bbb.check("image:") == false) { yError() << "missing image"; ret = false; }
     pgm_occ_filename = bbb.find("image:").asString();
@@ -358,7 +357,7 @@ bool MapGrid2D::loadROSParams(string ros_yaml_filename, string& pgm_occ_filename
     return ret;
 }
 
-bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename)
+bool MapGrid2D::loadMapYarpAndRos(std::string yarp_filename, std::string ros_yaml_filename)
 {
     yarp::sig::ImageOf<yarp::sig::PixelRgb> yarp_img;
     yarp::sig::ImageOf<yarp::sig::PixelMono> ros_img;
@@ -368,7 +367,7 @@ bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename
         yError() << "Unable to load map data" << yarp_filename;
         return false;
     }
-    string pgm_occ_filename;
+    std::string pgm_occ_filename;
     double resolution=0;
     double orig_x = 0;
     double orig_y = 0;
@@ -379,9 +378,9 @@ bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename
         yError() << "Unable to ros params from" << ros_yaml_filename;
         return false;
     }
-    string path = extractPathFromFile(ros_yaml_filename);
-    string extension = extractExtensionFromFile(pgm_occ_filename);
-    string pgm_occ_filename_with_path = path + pgm_occ_filename;
+    std::string path = extractPathFromFile(ros_yaml_filename);
+    std::string extension = extractExtensionFromFile(pgm_occ_filename);
+    std::string pgm_occ_filename_with_path = path + pgm_occ_filename;
     bool b3 = yarp::sig::file::read(ros_img, pgm_occ_filename_with_path);
     if (b3 == false)
     {
@@ -423,10 +422,10 @@ bool MapGrid2D::loadMapYarpAndRos(string yarp_filename, string ros_yaml_filename
     return true;
 }
 
-bool MapGrid2D::loadMapROSOnly(string ros_yaml_filename)
+bool MapGrid2D::loadMapROSOnly(std::string ros_yaml_filename)
 {
     yarp::sig::ImageOf<yarp::sig::PixelMono> ros_img;
-    string pgm_occ_filename;
+    std::string pgm_occ_filename;
     double resolution = 0;
     double orig_x = 0;
     double orig_y = 0;
@@ -437,9 +436,9 @@ bool MapGrid2D::loadMapROSOnly(string ros_yaml_filename)
         yError() << "Unable to ros params from" << ros_yaml_filename;
         return false;
     }
-    string path = extractPathFromFile(ros_yaml_filename);
-    string extension = extractExtensionFromFile(pgm_occ_filename);
-    string pgm_occ_filename_with_path = path + pgm_occ_filename;
+    std::string path = extractPathFromFile(ros_yaml_filename);
+    std::string extension = extractExtensionFromFile(pgm_occ_filename);
+    std::string pgm_occ_filename_with_path = path + pgm_occ_filename;
     bool b3 = yarp::sig::file::read(ros_img, pgm_occ_filename_with_path);
     if (b3 == false)
     {
@@ -477,7 +476,7 @@ bool MapGrid2D::loadMapROSOnly(string ros_yaml_filename)
     return true;
 }
 
-bool MapGrid2D::loadMapYarpOnly(string yarp_filename)
+bool MapGrid2D::loadMapYarpOnly(std::string yarp_filename)
 {
     yarp::sig::ImageOf<yarp::sig::PixelRgb> yarp_img;
     bool b1 = yarp::sig::file::read(yarp_img, yarp_filename);
@@ -557,7 +556,7 @@ bool MapGrid2D::parseMapParameters(const Property& mapfile)
 bool  MapGrid2D::loadFromFile(std::string map_file_with_path)
 {
     Property mapfile_prop;
-    string mapfile_path = extractPathFromFile(map_file_with_path);
+    std::string mapfile_path = extractPathFromFile(map_file_with_path);
     if (mapfile_prop.fromConfigFile(map_file_with_path) == false)
     {
         yError() << "Unable to open .map description file:" << map_file_with_path;
@@ -572,7 +571,7 @@ bool  MapGrid2D::loadFromFile(std::string map_file_with_path)
     m_map_name = mapfile_prop.find("MapName").asString();
 
     bool YarpMapDataFound = false;
-    string ppm_flg_filename;
+    std::string ppm_flg_filename;
     if (mapfile_prop.check("YarpMapData") == false)
     {
         yWarning() << "Unable to find 'YarpMapData' parameter inside:" << map_file_with_path;
@@ -585,7 +584,7 @@ bool  MapGrid2D::loadFromFile(std::string map_file_with_path)
     }
 
     bool RosMapDataFound = false;
-    string yaml_filename;
+    std::string yaml_filename;
     if (mapfile_prop.check("RosMapData") == false)
     {
         yWarning() << "Unable to find 'RosMapData' parameter inside:" << map_file_with_path;
@@ -599,8 +598,8 @@ bool  MapGrid2D::loadFromFile(std::string map_file_with_path)
 
     m_width = -1;
     m_height = -1;
-    string yarp_flg_filename_with_path = mapfile_path + ppm_flg_filename;
-    string ros_yaml_filename_with_path = mapfile_path + yaml_filename;
+    std::string yarp_flg_filename_with_path = mapfile_path + ppm_flg_filename;
+    std::string ros_yaml_filename_with_path = mapfile_path + yaml_filename;
     if (YarpMapDataFound && RosMapDataFound)
     {
         //yarp and ros
@@ -811,7 +810,7 @@ bool  MapGrid2D::crop (int left, int top, int right, int bottom)
 
 bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
 {
-    string mapfile_path = extractPathFromFile(map_file_with_path);
+    std::string mapfile_path = extractPathFromFile(map_file_with_path);
 
     std::string yarp_filename = this->getMapName() + "_yarpflags.ppm";
     std::string yaml_filename = this->getMapName() + "_grid.yaml";
@@ -823,9 +822,9 @@ bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
     {
         return false;
     }
-    map_file << "MapName: "<< this->getMapName() << endl;
-    map_file << "YarpMapData: "<< yarp_filename << endl;
-    map_file << "RosMapData: "<< yaml_filename << endl;
+    map_file << "MapName: "<< this->getMapName() << '\n';
+    map_file << "YarpMapData: "<< yarp_filename << '\n';
+    map_file << "RosMapData: "<< yaml_filename << '\n';
     map_file.close();
 
     std::ofstream yaml_file;
@@ -834,12 +833,12 @@ bool  MapGrid2D::saveToFile(std::string map_file_with_path) const
     {
         return false;
     }
-    yaml_file << "image: " << pgm_occ_filename << endl;
-    yaml_file << "resolution: " << m_resolution << endl;
-    yaml_file << "origin: [ " << m_origin.get_x() << " " << m_origin.get_y() << " " << m_origin.get_theta() << " ]"<< endl;
-    yaml_file << "negate: 0" << endl;
-    yaml_file << "occupied_thresh: " << m_occupied_thresh << endl;
-    yaml_file << "free_thresh: " << m_free_thresh << endl;
+    yaml_file << "image: " << pgm_occ_filename << '\n';
+    yaml_file << "resolution: " << m_resolution << '\n';
+    yaml_file << "origin: [ " << m_origin.get_x() << " " << m_origin.get_y() << " " << m_origin.get_theta() << " ]"<< '\n';
+    yaml_file << "negate: 0" << '\n';
+    yaml_file << "occupied_thresh: " << m_occupied_thresh << '\n';
+    yaml_file << "free_thresh: " << m_free_thresh << '\n';
 
     yaml_file.close();
 

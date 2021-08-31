@@ -35,7 +35,6 @@ extern "C" {
 
 using namespace yarp::os;
 using namespace yarp::sig;
-using namespace std;
 
 namespace {
 
@@ -56,7 +55,7 @@ YARP_LOG_COMPONENT(FFMPEGMONITOR,
  * @param delim     The delimiter character.
  * @param elements  The final vector of strings.
  */
-void split(const std::string &s, char delim, vector<string> &elements) {
+void split(const std::string &s, char delim, std::vector<std::string> &elements) {
     std::istringstream iss(s);
     std::string item;
     while (std::getline(iss, item, delim)) {
@@ -570,14 +569,14 @@ int FfmpegMonitorObject::decompress(AVPacket* pkt, int w, int h, int pixelCode) 
 
 }
 
-int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecID &codecId) {
+int FfmpegMonitorObject::getParamsFromCommandLine(std::string carrierString, AVCodecID &codecId) {
 
-    vector<string> parameters;
+    std::vector<std::string> parameters;
     // Split command line string using '+' delimiter
     split(carrierString, '+', parameters);
 
     // Iterate over result strings
-    for (string param: parameters) {
+    for (std::string param: parameters) {
 
         // Skip YARP initial parameters
         if (find(FFMPEGPORTMONITOR_IGNORE_PARAMS.begin(), FFMPEGPORTMONITOR_IGNORE_PARAMS.end(), param) != FFMPEGPORTMONITOR_IGNORE_PARAMS.end()) {
@@ -586,14 +585,14 @@ int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecI
 
         // If there is no '.', the param is bad formatted, return error
         auto pointPosition = param.find('.');
-        if (pointPosition == string::npos) {
+        if (pointPosition == std::string::npos) {
             yCError(FFMPEGMONITOR, "Error parsing parameters!");
             return -1;
         }
 
         // Otherwise, separate key and value
-        string paramKey = param.substr(0, pointPosition);
-        string paramValue = param.substr(pointPosition + 1, param.length());
+        std::string paramKey = param.substr(0, pointPosition);
+        std::string paramValue = param.substr(pointPosition + 1, param.length());
 
         // Parsing codec
         if (paramKey == FFMPEGPORTMONITOR_CL_CODEC_KEY) {
@@ -621,7 +620,7 @@ int FfmpegMonitorObject::getParamsFromCommandLine(string carrierString, AVCodecI
         }
 
         // Save param into params map
-        paramsMap.insert( pair<string, string>(paramKey, paramValue) );
+        paramsMap.insert( std::pair<std::string, std::string>(paramKey, paramValue) );
     }
     return 0;
 
@@ -633,8 +632,8 @@ int FfmpegMonitorObject::setCommandLineParams() {
     for (auto const& x : paramsMap) {
 
         // Get key and value
-        string key = x.first;
-        string value = x.second;
+        std::string key = x.first;
+        std::string value = x.second;
 
         // Try to set this pair (key, value) into codec context (global parameters).
         int globalError = av_opt_set(codecContext, key.c_str(), value.c_str(), 0);

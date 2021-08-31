@@ -17,7 +17,6 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace openni;
-using namespace std;
 
 #ifndef RETURN_FALSE_STATUS_NOT_OK
 #define RETURN_FALSE_STATUS_NOT_OK(s) if(s != STATUS_OK) { yCError(DEPTHCAMERA) << OpenNI::getExtendedError(); return false; }
@@ -239,7 +238,7 @@ bool depthCameraDriver::initializeOpeNIDevice()
 }
 
 
-void depthCameraDriver::settingErrorMsg(const string& error, bool& ret)
+void depthCameraDriver::settingErrorMsg(const std::string& error, bool& ret)
 {
     yCError(DEPTHCAMERA) << error;
     ret = false;

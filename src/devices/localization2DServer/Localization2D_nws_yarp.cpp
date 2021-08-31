@@ -31,7 +31,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
-using namespace std;
 
 #define DEFAULT_THREAD_PERIOD 0.01
 

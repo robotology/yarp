@@ -12,7 +12,6 @@
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(JOYPADCONTROLCLIENT, "yarp.device.JoypadControlClient")
@@ -36,7 +35,7 @@ bool JoypadControlClient::getJoypadInfo()
 
     temp       = m_rpc_only;
     m_rpc_only = true;
-    vector<tuple<int, JoypadControl::LoopablePort*, string> > vocabs_ports;
+    std::vector<std::tuple<int, JoypadControl::LoopablePort*, std::string> > vocabs_ports;
     vocabs_ports.emplace_back(VOCAB_BUTTON,    &m_buttonsPort,   "/buttons");
     vocabs_ports.emplace_back(VOCAB_AXIS,      &m_axisPort,      "/axis");
     vocabs_ports.emplace_back(VOCAB_STICK,     &m_stickPort,     "/stick");
@@ -46,18 +45,18 @@ bool JoypadControlClient::getJoypadInfo()
 
     for(auto vocab_port : vocabs_ports)
     {
-        if (!getCount(get<0>(vocab_port), count)) {
+        if (!getCount(std::get<0>(vocab_port), count)) {
             return false;
         }
         if(count)
         {
-            string source;
-            string destination;
-            std::string portname = m_local + get<2>(vocab_port) + ":i";
-            get<1>(vocab_port)->valid = true;
-            get<1>(vocab_port)->count = count;
+            std::string source;
+            std::string destination;
+            std::string portname = m_local + std::get<2>(vocab_port) + ":i";
+            std::get<1>(vocab_port)->valid = true;
+            std::get<1>(vocab_port)->count = count;
 
-            if(get<0>(vocab_port) == VOCAB_STICK)
+            if(std::get<0>(vocab_port) == VOCAB_STICK)
             {
                 for(unsigned int i = 0; i < count; i++)
                 {
@@ -73,21 +72,21 @@ bool JoypadControlClient::getJoypadInfo()
 
             yCInfo(JOYPADCONTROLCLIENT) << "Opening" << portname;
 
-            if(!get<1>(vocab_port)->contactable->open(portname))
+            if(!std::get<1>(vocab_port)->contactable->open(portname))
             {
                 yCError(JOYPADCONTROLCLIENT) << "Unable to open" << portname << "port";
                 return false;
             }
 
-            source      = m_remote + get<2>(vocab_port) + ":o";
-            destination = m_local  + get<2>(vocab_port) + ":i";
+            source      = m_remote + std::get<2>(vocab_port) + ":o";
+            destination = m_local  + std::get<2>(vocab_port) + ":i";
             if(!yarp::os::NetworkBase::connect(source.c_str(), destination.c_str(), "udp"))
             {
                 yCError(JOYPADCONTROLCLIENT) << "Unable to connect" << portname << "port";
                 return false;
             }
 
-            get<1>(vocab_port)->useCallback();
+            std::get<1>(vocab_port)->useCallback();
         }
     }
     m_rpc_only = temp;
@@ -536,7 +535,7 @@ bool JoypadControlClient::getRawTouch(unsigned int touch_id, yarp::sig::Vector& 
 bool JoypadControlClient::close()
 {
 
-    vector<JoypadControl::LoopablePort*> portv;
+    std::vector<JoypadControl::LoopablePort*> portv;
     portv.push_back(&m_buttonsPort);
     portv.push_back(&m_axisPort);
     portv.push_back(&m_hatsPort);

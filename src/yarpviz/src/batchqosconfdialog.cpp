@@ -15,7 +15,6 @@
 
 #include "qosconfigdialog.h"
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::profiler;
 
@@ -54,7 +53,7 @@ void BatchQosConfDialog::openCons()
         return;
     }
 
-    fstream file;
+    std::fstream file;
     file.open(filename.toStdString().c_str());
     if (!file.is_open()) {
         QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr("Cannot open the file for loading"));
@@ -62,7 +61,7 @@ void BatchQosConfDialog::openCons()
     }
 
    ui->treeWidgetCons->clear();
-    string line;
+    std::string line;
     unsigned int count = 0;
     while(getline(file, line)) {
         count++;

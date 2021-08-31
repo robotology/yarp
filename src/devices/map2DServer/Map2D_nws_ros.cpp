@@ -31,7 +31,6 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(MAP2D_NWS_ROS, "yarp.device.map2D_nws_ros")
@@ -200,7 +199,7 @@ bool Map2D_nws_ros::open(yarp::os::Searchable &config)
     return true;
 }
 
-bool Map2D_nws_ros::publishMapToRos(string map_name)
+bool Map2D_nws_ros::publishMapToRos(std::string map_name)
 {
     MapGrid2D current_map;
     if (!m_iMap2D->get_map(map_name, current_map))
@@ -250,7 +249,7 @@ bool Map2D_nws_ros::publishMapToRos(string map_name)
     return true;
 }
 
-bool Map2D_nws_ros::subscribeMapFromRos(string map_name)
+bool Map2D_nws_ros::subscribeMapFromRos(std::string map_name)
 {
     //In this block receives data from a ROS topic and stores data on attached device
     //yarp::os::Time::delay(5);
@@ -262,7 +261,7 @@ bool Map2D_nws_ros::subscribeMapFromRos(string map_name)
     if (map_ros != nullptr && metamap_ros != nullptr)
     {
         yCInfo(MAP2D_NWS_ROS) << "Received map for ROS";
-        string map_name = "ros_map";
+        std::string map_name = "ros_map";
         MapGrid2D map;
         map.setSize_in_cells(map_ros->info.width,map_ros->info.height);
         map.setResolution(map_ros->info.resolution);

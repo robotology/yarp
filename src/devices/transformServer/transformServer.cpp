@@ -22,7 +22,6 @@ using namespace yarp::sig;
 using namespace yarp::math;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 
 namespace {
@@ -64,7 +63,7 @@ bool Transforms_server_storage::set_transform(const FrameTransform& t)
     return true;
 }
 
-bool Transforms_server_storage::delete_transform(string t1, string t2)
+bool Transforms_server_storage::delete_transform(std::string t1, std::string t2)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (t1=="*" && t2=="*")
@@ -174,7 +173,7 @@ TransformServer::~TransformServer()
 void TransformServer::list_response(yarp::os::Bottle& out)
 {
     std::vector<Transforms_server_storage*> storages;
-    std::vector<string>                     storageDescription;
+    std::vector<std::string> storageDescription;
     storages.push_back(m_ros_timed_transform_storage);
     storageDescription.emplace_back("ros timed transforms");
 
@@ -214,7 +213,7 @@ void TransformServer::list_response(yarp::os::Bottle& out)
     }
 }
 
-string TransformServer::get_matrix_as_text(Transforms_server_storage* storage, int i)
+std::string TransformServer::get_matrix_as_text(Transforms_server_storage* storage, int i)
 {
     if (m_show_transforms_in_diagram== show_transforms_in_diagram_t::do_not_show)
     {
@@ -222,22 +221,22 @@ string TransformServer::get_matrix_as_text(Transforms_server_storage* storage, i
     }
     else if (m_show_transforms_in_diagram== show_transforms_in_diagram_t::show_quaternion)
     {
-        return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_quaternion) + "\"";
+        return std::string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_quaternion) + "\"";
     }
     else if (m_show_transforms_in_diagram == show_transforms_in_diagram_t::show_matrix)
     {
-        return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_matrix) + "\"";
+        return std::string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_matrix) + "\"";
     }
     else if (m_show_transforms_in_diagram == show_transforms_in_diagram_t::show_rpy)
     {
-        return string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_rpy) + "\"";
+        return std::string(",label=\" ") + (*storage)[i].toString(FrameTransform::display_transform_mode_t::rotation_as_rpy) + "\"";
     }
 
     yCError(TRANSFORMSERVER) << "get_matrix_as_text() invalid option";
     return "";
     /*
         //this is a test to use Latek display
-        string s = "\\begin{ bmatrix } \
+        std::string s = "\\begin{ bmatrix } \
         1 & 2 & 3\\ \
         a & b & c \
         \\end{ bmatrix }";
@@ -246,41 +245,41 @@ string TransformServer::get_matrix_as_text(Transforms_server_storage* storage, i
 
 bool TransformServer::generate_view()
 {
-    string dot_string = "digraph G { ";
+    std::string dot_string = "digraph G { ";
     for (size_t i = 0; i < m_ros_timed_transform_storage->size(); i++)
     {
-        string edge_text = get_matrix_as_text(m_ros_timed_transform_storage, i);
-        string trf_text = (*m_ros_timed_transform_storage)[i].src_frame_id + "->" +
+        std::string edge_text = get_matrix_as_text(m_ros_timed_transform_storage, i);
+        std::string trf_text = (*m_ros_timed_transform_storage)[i].src_frame_id + "->" +
                           (*m_ros_timed_transform_storage)[i].dst_frame_id + " " +
                           "[color = black]";
         dot_string += trf_text + '\n';
     }
     for (size_t i = 0; i < m_ros_static_transform_storage->size(); i++)
     {
-        string edge_text = get_matrix_as_text(m_ros_static_transform_storage,i);
-        string trf_text = (*m_ros_static_transform_storage)[i].src_frame_id + "->" +
+        std::string edge_text = get_matrix_as_text(m_ros_static_transform_storage,i);
+        std::string trf_text = (*m_ros_static_transform_storage)[i].src_frame_id + "->" +
                           (*m_ros_static_transform_storage)[i].dst_frame_id + " " +
                           "[color = black, style=dashed "+ edge_text + "]";
         dot_string += trf_text + '\n';
     }
     for (size_t i = 0; i < m_yarp_timed_transform_storage->size(); i++)
     {
-        string edge_text = get_matrix_as_text(m_yarp_timed_transform_storage, i);
-        string trf_text = (*m_yarp_timed_transform_storage)[i].src_frame_id + "->" +
+        std::string edge_text = get_matrix_as_text(m_yarp_timed_transform_storage, i);
+        std::string trf_text = (*m_yarp_timed_transform_storage)[i].src_frame_id + "->" +
                           (*m_yarp_timed_transform_storage)[i].dst_frame_id + " " +
                           "[color = blue "+ edge_text + "]";
         dot_string += trf_text + '\n';
     }
     for (size_t i = 0; i < m_yarp_static_transform_storage->size(); i++)
     {
-        string edge_text = get_matrix_as_text(m_yarp_static_transform_storage, i);
-        string trf_text = (*m_yarp_static_transform_storage)[i].src_frame_id + "->" +
+        std::string edge_text = get_matrix_as_text(m_yarp_static_transform_storage, i);
+        std::string trf_text = (*m_yarp_static_transform_storage)[i].src_frame_id + "->" +
                           (*m_yarp_static_transform_storage)[i].dst_frame_id + " " +
                           "[color = blue, style=dashed " + edge_text + "]";
         dot_string += trf_text + '\n';
     }
 
-    string legend = "\n\
+    std::string legend = "\n\
         rankdir=LR\n\
         node[shape=plaintext]\n\
         subgraph cluster_01 {\n\
@@ -303,7 +302,7 @@ bool TransformServer::generate_view()
           key:i4:e -> key2:i4:w [color = black, style=dashed]\n\
         } }";
 
-    string command_string = "printf '"+dot_string+ legend + "' | dot -Tpdf > frames.pdf";
+    std::string command_string = "printf '"+dot_string+ legend + "' | dot -Tpdf > frames.pdf";
 #if defined (__linux__)
     int ret = std::system("dot -V");
     if (ret != 0)
@@ -336,7 +335,7 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    string request = in.get(0).asString();
+    std::string request = in.get(0).asString();
 
     // parse in, prepare out
     int code = in.get(0).asVocab32();
@@ -400,8 +399,8 @@ bool TransformServer::read(yarp::os::ConnectionReader& connection)
         }
         else if (cmd == VOCAB_TRANSFORM_DELETE)
         {
-            string frame1 = in.get(2).asString();
-            string frame2 = in.get(3).asString();
+            std::string frame1 = in.get(2).asString();
+            std::string frame2 = in.get(3).asString();
             bool ret1 = m_yarp_timed_transform_storage->delete_transform(frame1, frame2);
             if (ret1 == true)
             {

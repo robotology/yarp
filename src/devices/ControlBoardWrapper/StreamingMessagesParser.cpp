@@ -16,7 +16,6 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::impl;
 using namespace yarp::sig;
-using namespace std;
 
 
 void StreamingMessagesParser::init(yarp::dev::DeviceDriver* x)

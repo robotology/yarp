@@ -15,7 +15,6 @@
 #include <tinyxml.h>
 
 
-using namespace std;
 using namespace yarp::manager;
 
 
@@ -260,7 +259,7 @@ bool XmlAppSaver::serialXml(Application* app, const char* szFile)
             port->LinkEndChild(new TiXmlText(arb.getPort()));
             newArb->LinkEndChild(port);
 
-            std::map<string, string> &rules = arb.getRuleMap();
+            std::map<std::string, std::string> &rules = arb.getRuleMap();
             for(auto& it : rules)
             {
                 auto* rule = new TiXmlElement("rule");

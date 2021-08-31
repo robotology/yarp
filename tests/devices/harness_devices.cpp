@@ -21,7 +21,6 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-using namespace std;
 
 namespace {
 

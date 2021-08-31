@@ -12,7 +12,6 @@
 #include <dirent.h>
 #include <yarp/conf/filesystem.h>
 
-using namespace std;
 using namespace yarp::manager;
 
 inline bool absolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
@@ -110,25 +109,25 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
 
     const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
     if(m_config->check("apppath")){
-        string basepath=m_config->check("ymanagerini_dir", yarp::os::Value("")).asString();
-        string appPaths(m_config->find("apppath").asString());
-        string strPath;
+        std::string basepath=m_config->check("ymanagerini_dir", yarp::os::Value("")).asString();
+        std::string appPaths(m_config->find("apppath").asString());
+        std::string strPath;
 
         do
         {
-            string::size_type pos=appPaths.find(';');
+            std::string::size_type pos=appPaths.find(';');
             strPath=appPaths.substr(0, pos);
             trimString(strPath);
             if (!absolute(strPath.c_str())) {
                 strPath = basepath + strPath;
             }
 
-            if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
-                strPath = strPath + string(directorySeparator);
+            if ((strPath.rfind(directorySeparator) == std::string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
+                strPath = strPath + std::string(directorySeparator);
             }
             folderCombo->addItem(QString("%1").arg(strPath.c_str()));
 
-            if (pos == string::npos) {
+            if (pos == std::string::npos) {
                 break;
             }
             appPaths=appPaths.substr(pos+1);
@@ -136,12 +135,12 @@ NewApplicationWizard::NewApplicationWizard(yarp::os::Property *config, bool _sav
         while (appPaths!="");
     }
     if (m_config->check("yarpdatahome")){
-       string appPaths(m_config->find("apppath").asString());
-       string homePath=m_config->find("yarpdatahome").asString();
+       std::string appPaths(m_config->find("apppath").asString());
+       std::string homePath=m_config->find("yarpdatahome").asString();
 
-       homePath +=  string(directorySeparator) + string("applications");
+       homePath +=  std::string(directorySeparator) + std::string("applications");
 
-       if (appPaths.find(homePath) == string::npos) {
+       if (appPaths.find(homePath) == std::string::npos) {
            folderCombo->addItem(QString("%1").arg(homePath.c_str()));
        }
    }

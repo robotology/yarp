@@ -25,7 +25,6 @@
 #define PRECISION(max_value) sizeof(max_value) * 8
 
 
-using namespace std;
 using namespace yarp::manager;
 
 
@@ -33,10 +32,10 @@ BinaryExpParser::BinaryExpParser() = default;
 
 BinaryExpParser::~BinaryExpParser() = default;
 
-bool BinaryExpParser::parse(string _exp)
+bool BinaryExpParser::parse(std::string _exp)
 {
     expression = _exp;
-    string strexp = expression;
+    std::string strexp = expression;
     if (!checkExpression(strexp)) {
         return false;
     }
@@ -48,14 +47,14 @@ bool BinaryExpParser::parse(string _exp)
     if(root == nullptr)
     {
         ErrorLogger* logger = ErrorLogger::Instance();
-        string msg = "BinaryExpParser: failed to parse the expression";
+        std::string msg = "BinaryExpParser: failed to parse the expression";
         logger->addError(msg);
         return false;
     }
     if(invalidOperands.size())
     {
         ErrorLogger* logger = ErrorLogger::Instance();
-        string msg = "Invalid operands";
+        std::string msg = "Invalid operands";
         for (const auto& invalidOperand : invalidOperands) {
             msg += " '" + invalidOperand + "'";
         }
@@ -80,13 +79,13 @@ bool BinaryExpParser::parse(string _exp)
 
 bool BinaryExpParser::exportDotGraph(const char* szFileName)
 {
-    ofstream dot;
+    std::ofstream dot;
     dot.open(szFileName);
     if (!dot.is_open()) {
         return false;
     }
 
-    dot<<"digraph G {"<<endl;
+    dot<<"digraph G {\n";
     for(GraphIterator itr=binTree.begin(); itr!=binTree.end(); itr++)
     {
         switch((*itr)->getType()) {
@@ -94,14 +93,14 @@ bool BinaryExpParser::exportDotGraph(const char* szFileName)
                     auto node = (BinaryNodePtr)(*itr);
                     dot<<"\""<<node->getLabel()<<"\"";
                     dot<<" [label=\""<< node->getName()<<"\"";
-                    dot<<" shape=circle, fillcolor=lightslategrey, style=filled];"<<endl;
+                    dot<<" shape=circle, fillcolor=lightslategrey, style=filled];\n";
                     for(int i=0; i<node->sucCount(); i++)
                     {
                         Link l = node->getLinkAt(i);
                         auto to = (BinaryNodePtr)l.to();
                         dot<<"\""<<node->getLabel()<<"\" -> ";
                         dot<<"\""<<to->getLabel()<<"\"";
-                        dot<<" [label=\"\"];"<<endl;
+                        dot<<" [label=\"\"];\n";
                     }
                     break;
                 }
@@ -109,14 +108,14 @@ bool BinaryExpParser::exportDotGraph(const char* szFileName)
                     auto node = (BinaryNodePtr)(*itr);
                     dot<<"\""<<node->getLabel()<<"\"";
                     dot<<" [label=\""<< node->getName()<<"\"";
-                    dot<<" shape=square];"<<endl;
+                    dot<<" shape=square];\n";
                     break;
                 }
             default:
                 break;
         };
     }
-    dot<<"}"<<endl;
+    dot << "}\n";
     dot.close();
     return true;
 }
@@ -186,7 +185,7 @@ bool BinaryExpParser::checkExpression(std::string& strexp)
     }
 
     // making a copy of strexp and checking more
-    string  dummy = strexp;
+    std::string  dummy = strexp;
     // removing all pranteses
     dummy.erase(std::remove_if(dummy.begin(), dummy.end(), isParentheses), dummy.end());
     leftOpr = dummy.substr(0, dummy.find(IMPLY));
@@ -202,7 +201,7 @@ bool BinaryExpParser::checkExpression(std::string& strexp)
     }
 
     dummy.erase(0, dummy.find(IMPLY)+1);
-    if(dummy.find(leftOpr) != string::npos)
+    if(dummy.find(leftOpr) != std::string::npos)
     {
         std::string msg;
         msg = "recursive assignment of operand '" + leftOpr + "'";
@@ -212,7 +211,7 @@ bool BinaryExpParser::checkExpression(std::string& strexp)
 
     // checking '~'
     size_t n = dummy.find(EXPNOT);
-    while(n != string::npos)
+    while(n != std::string::npos)
     {
         OSTRINGSTREAM msg;
         bool bError = ((n+1) == dummy.length()); // empty operand after ~
@@ -235,7 +234,7 @@ bool BinaryExpParser::checkExpression(std::string& strexp)
 
     // checking '| &'
     n = dummy.find_first_of("&|");
-    while(n != string::npos)
+    while(n != std::string::npos)
     {
         OSTRINGSTREAM msg;
         bool bError = ((n+1) == dummy.length());    // empty operand after & or |
@@ -267,7 +266,7 @@ bool BinaryExpParser::checkExpression(std::string& strexp)
 
 void BinaryExpParser::parseExpression(std::string &strexp, BinaryNodePtr& node)
 {
-    string op;
+    std::string op;
     BinaryNodePtr rightNode = nullptr;
     parseNot(strexp, node);
     while(!strexp.empty() &&
@@ -284,7 +283,7 @@ void BinaryExpParser::parseExpression(std::string &strexp, BinaryNodePtr& node)
 
 
 void BinaryExpParser::parseNot(std::string &strexp, BinaryNodePtr& node) {
-    string op;
+    std::string op;
     BinaryNodePtr rightNode;
     if (*strexp.begin() != EXPNOT) {
         parseFactor(strexp, node);
@@ -303,7 +302,7 @@ void BinaryExpParser::parseNot(std::string &strexp, BinaryNodePtr& node) {
 void BinaryExpParser::parseFactor(std::string &strexp, BinaryNodePtr& node) {
     if(!strexp.empty() && (*strexp.begin() != '('))
     {
-        string op = popNextOperand(strexp);
+        std::string op = popNextOperand(strexp);
         BinaryNode tmpNode(op.c_str());
         node = (BinaryNodePtr) binTree.addNode(&tmpNode);
         operands[op] = false;
@@ -327,7 +326,7 @@ void BinaryExpParser::parseFactor(std::string &strexp, BinaryNodePtr& node) {
 
 
 std::string BinaryExpParser::getNextOperand(std::string &strexp) {
-        string token;
+        std::string token;
         std::string::iterator it;
         for (it = strexp.begin(); it != strexp.end(); ++it) {
             if ((*it != EXPAND) && (*it != EXPOR) && (*it != EXPNOT) && (*it != ')') && (*it != '(')) {
@@ -340,7 +339,7 @@ std::string BinaryExpParser::getNextOperand(std::string &strexp) {
 }
 
 std::string BinaryExpParser::popNextOperand(std::string &strexp) {
-        string token;
+        std::string token;
         std::string::iterator it;
         for (it = strexp.begin(); it != strexp.end(); ++it) {
             if ((*it != EXPAND) && (*it != EXPOR) && (*it != EXPNOT) && (*it != ')') && (*it != '(')) {
@@ -383,22 +382,22 @@ void BinaryExpParser::printTruthTable(std::string lopr)
     yAssert((unsigned)(n-1) < PRECISION(INT_MAX));
     yAssert(1 <= (INT_MAX >> (n-1)));
 
-    map<string, bool>::iterator itr;
+    std::map<std::string, bool>::iterator itr;
     for (itr = operands.begin(); itr != operands.end(); itr++) {
-        cout << (*itr).first << "\t";
+        std::cout << (*itr).first << "\t";
     }
-    cout<<lopr<<endl;
+    std::cout << lopr << '\n';
     for (int i = 0; i < (int)operands.size() * 8 + 1; i++) {
-        cout << "-";
+        std::cout << "-";
     }
-    cout<<endl;
+    std::cout << '\n';
 
     for(int x = 0; x < (1<<(n-1)); ++x)
     {
         for (int y = 0; y < n; ++y) {
             std::cout << truthTable[y][x] << "\t";
         }
-        std::cout<<std::endl;
+        std::cout << '\n';
     }
 }
 
@@ -428,7 +427,7 @@ bool LinkTrainer::train(const std::vector<std::vector<int> >&  truthTable)
             out = (out>0) ? 1 : 0;
             double err = P - out;
             sumerr += fabs(err);
-            //cout<<P<<"\t"<<out<<"\terr:"<<err<<endl;
+            //std::cout<<P<<"\t"<<out<<"\terr:"<<err<<'\n';
             bias = bias + trainRate * err;
             for (int y = 0; y < (n - 1); ++y) {
                 alphas[y] = alphas[y] + (trainRate * err * (double)truthTable[y][x]);

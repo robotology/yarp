@@ -16,7 +16,6 @@
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(FAKEDEPTHCAMERA, "yarp.device.fakeDepthCamera")
@@ -46,7 +45,7 @@ bool fakeDepthCameraDriver::open(Searchable& config)
     testgrabber.open(cfg);
     testgrabber.view(image);
 
-    vector<tuple<double*, string, double> > param;
+    std::vector<std::tuple<double*, std::string, double> > param;
     param.emplace_back(&rgb_h,    "rgb_h",    480.0);
     param.emplace_back(&rgb_w,    "rgb_w",    640.0);
     param.emplace_back(&dep_h,    "rgb_h",    480.0);
@@ -60,13 +59,13 @@ bool fakeDepthCameraDriver::open(Searchable& config)
     param.emplace_back(&dep_far,  "dep_far",  6.0);
     for (auto p : param)
     {
-        if (config.check(get<1>(p)))
+        if (config.check(std::get<1>(p)))
         {
-            *get<0>(p) = config.find(get<1>(p)).asFloat64();
+            *std::get<0>(p) = config.find(std::get<1>(p)).asFloat64();
         }
         else
         {
-            *get<0>(p) = get<2>(p);
+            *std::get<0>(p) = std::get<2>(p);
         }
 
     }

@@ -19,7 +19,6 @@
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(AUDIOPLAYERWRAPPER, "yarp.device.AudioPlayerWrapper")
@@ -191,7 +190,7 @@ bool AudioPlayerWrapper::open(yarp::os::Searchable &config)
         m_period = config.find("period").asFloat64();
     }
 
-    string name = "/audioPlayerWrapper";
+    std::string name = "/audioPlayerWrapper";
     if (config.check("name"))
     {
         name = config.find("name").asString();

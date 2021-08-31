@@ -8,7 +8,6 @@
 #include <QHBoxLayout>
 #include <QSplitter>
 
-using namespace std;
 
 BuilderWindow::BuilderWindow(Application *app, Manager *lazyManager, SafeManager *safeManager, bool editingMode, QWidget *parent) :
     QWidget(parent)/*,
@@ -492,7 +491,7 @@ void BuilderWindow::load(bool refresh)
 
             //Arrow *arrow;
             // check for arbitrators
-            string strCarrier = baseCon.carrier();
+            std::string strCarrier = baseCon.carrier();
             if((strCarrier.find("recv.priority") != std::string::npos)){
                 // TODO
             }else{
@@ -586,7 +585,7 @@ BuilderItem *BuilderWindow::onAddNewConnection(void *startItem ,void *endItem, i
     InputData* input = nullptr;
     OutputData* output = nullptr;
 
-    string strFrom,strTo ;
+    std::string strFrom,strTo ;
 
     // Source
     if(myStartItem->type() == (QGraphicsItem::UserType + (int)ModulePortItemType)){
@@ -595,7 +594,7 @@ BuilderItem *BuilderWindow::onAddNewConnection(void *startItem ,void *endItem, i
         int portType = port->getPortType();
         if(portType == OUTPUT_PORT){
             output = port->getOutputData();
-            strFrom = string(module->getInnerModule()->getPrefix()) + string(port->getOutputData()->getPort());
+            strFrom = std::string(module->getInnerModule()->getPrefix()) + std::string(port->getOutputData()->getPort());
             label = QString("%1").arg(port->getOutputData()->getCarrier());
 
             if(((ModuleItem*)port->parentItem())->getInnerModule()->owner() != mainApplication){
@@ -604,7 +603,7 @@ BuilderItem *BuilderWindow::onAddNewConnection(void *startItem ,void *endItem, i
         }
 
     }else if(myStartItem->type() == (QGraphicsItem::UserType + (int)SourcePortItemType)){
-        strFrom = string(myStartItem->getItemName().toLatin1().data());
+        strFrom = std::string(myStartItem->getItemName().toLatin1().data());
         bExternFrom = true;
     }
 
@@ -615,7 +614,7 @@ BuilderItem *BuilderWindow::onAddNewConnection(void *startItem ,void *endItem, i
         int portType = port->getPortType();
         if(portType == INPUT_PORT){
             input = port->getInputData();
-            strTo = string(module->getInnerModule()->getPrefix()) + string(port->getInputData()->getPort());
+            strTo = std::string(module->getInnerModule()->getPrefix()) + std::string(port->getInputData()->getPort());
             label = QString("%1").arg(port->getInputData()->getCarrier());
 
             if(((ModuleItem*)port->parentItem())->getInnerModule()->owner() != mainApplication){
@@ -624,7 +623,7 @@ BuilderItem *BuilderWindow::onAddNewConnection(void *startItem ,void *endItem, i
         }
 
     }else if(myEndItem->type() == (QGraphicsItem::UserType + (int)DestinationPortItemType)){
-        strTo = string(myEndItem->getItemName().toLatin1().data());
+        strTo = std::string(myEndItem->getItemName().toLatin1().data());
         bExternTo = true;
 
     }
@@ -847,8 +846,8 @@ void BuilderWindow::onAddedApplication(void *app,QPointF pos)
         return;
     }
 
-    string strPrefix = "/";
-    string  uniqeId = manager.getKnowledgeBase()->getUniqueAppID(mainApplication, iapp.getName());
+    std::string strPrefix = "/";
+    std::string  uniqeId = manager.getKnowledgeBase()->getUniqueAppID(mainApplication, iapp.getName());
 
     strPrefix += (uniqeId);
     iapp.setPrefix(strPrefix.c_str());
@@ -886,7 +885,7 @@ BuilderItem *BuilderWindow::onAddModule(void *mod,QPointF pos)
     Module* module = manager.getKnowledgeBase()->addIModuleToApplication(mainApplication, imod, true);
 
     if(module){
-        string strPrefix = string("/") + module->getLabel();
+        std::string strPrefix = std::string("/") + module->getLabel();
         module->setBasePrefix(strPrefix.c_str());
         //module->setBasePrefix(((Module*)mod)->getBasePrefix());
         module->setBroker(((Module*)mod)->getBroker());
@@ -896,8 +895,8 @@ BuilderItem *BuilderWindow::onAddModule(void *mod,QPointF pos)
         module->setStdio(((Module*)mod)->getStdio());
 
 
-        string strAppPrefix = mainApplication->getBasePrefix();
-        string prefix = strAppPrefix+module->getBasePrefix();
+        std::string strAppPrefix = mainApplication->getBasePrefix();
+        std::string prefix = strAppPrefix+module->getBasePrefix();
         manager.getKnowledgeBase()->setModulePrefix(module, prefix.c_str(), false);
 
         modIt = addModule(module,-1);
@@ -1138,8 +1137,8 @@ void BuilderWindow::findInputOutputData(Connection& cnn,  ModulePContainer &modu
 {
     input_ = nullptr;
     output_ = nullptr;
-    string strTo = cnn.to();
-    string strFrom = cnn.from();
+    std::string strTo = cnn.to();
+    std::string strFrom = cnn.from();
     qDebug() << "CONNECTION FROM " << strFrom.data() << " TO " << strTo.data();
 
     ModulePIterator itr;
@@ -1149,7 +1148,7 @@ void BuilderWindow::findInputOutputData(Connection& cnn,  ModulePContainer &modu
         for(int i=0; i<module->inputCount(); i++)
         {
             InputData &input = module->getInputAt(i);
-            string strInput = string(module->getPrefix()) + string(input.getPort());
+            std::string strInput = std::string(module->getPrefix()) + std::string(input.getPort());
             if(strTo == strInput)
             {
                 input_ = &input;
@@ -1161,7 +1160,7 @@ void BuilderWindow::findInputOutputData(Connection& cnn,  ModulePContainer &modu
         for(int i=0; i<module->outputCount(); i++)
         {
             OutputData &output = module->getOutputAt(i);
-            string strOutput = string(module->getPrefix()) + string(output.getPort());
+            std::string strOutput = std::string(module->getPrefix()) + std::string(output.getPort());
             if(strFrom == strOutput)
             {
                 output_ = &output;

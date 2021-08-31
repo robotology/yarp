@@ -18,7 +18,6 @@
 #include <QKeyEvent>
 
 
-using namespace std;
 
 MainWindow::~MainWindow()
 {

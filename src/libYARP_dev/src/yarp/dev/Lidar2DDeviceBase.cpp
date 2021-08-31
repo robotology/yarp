@@ -13,7 +13,6 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
-using namespace std;
 
 #ifndef DEG2RAD
 #define DEG2RAD M_PI/180.0
