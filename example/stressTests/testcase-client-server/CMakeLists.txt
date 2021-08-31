@@ -4,7 +4,7 @@
 
 project(collatzConjecture)
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 add_subdirectory(client)
 add_subdirectory(server)

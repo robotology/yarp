@@ -11,7 +11,7 @@ For example, to call a ROS service that adds two integers, we could do this:
 An example CMakeLists.txt file to compile this and link with YARP would be:
 
 ~~~{.cmake}
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 find_package(YARP COMPONENTS os REQUIRED)
 add_executable(add_int_client_v1)
 target_sources(add_int_client_v1 PRIVATE add_int_client_v1.cpp)

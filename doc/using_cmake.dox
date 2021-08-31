@@ -43,7 +43,7 @@ Then save the following as "CMakeLists.txt" within the
 same directory:
 
 \verbatim
-    cmake_minimum_required(VERSION 3.12)
+    cmake_minimum_required(VERSION 3.16)
     project(MyProject)
     add_executable(hello)
     target_sources(hello PRIVATE main.cpp)
@@ -219,7 +219,7 @@ Now we update the "CMakeLists.txt" to tell it about the library
 and to make sure the header file can be found by both the library
 and by "main.cpp":
 \verbatim
-    cmake_minimum_required(VERSION 3.12)
+    cmake_minimum_required(VERSION 3.16)
     project(MyProject)
     add_library(namer)
     target_sources(namer PRIVATE namer/world.cpp
@@ -263,7 +263,7 @@ two separate projects.
 
 Add the following CMake file for the library in "namer/CMakeLists.txt":
 \verbatim
-    cmake_minimum_required(VERSION 3.12)
+    cmake_minimum_required(VERSION 3.16)
     project(Namer)
     add_library(namer)
     target_sources(namer PRIVATE world.cpp world.h)
@@ -277,7 +277,7 @@ Make a subdirectory "hello" and move "main.cpp" into it.  Then add
 "hello/CMakeLists.txt":
 
 \verbatim
-    cmake_minimum_required(VERSION 3.12)
+    cmake_minimum_required(VERSION 3.16)
     project(hello)
     find_package(Namer REQUIRED)
     add_executable(hello)
@@ -336,7 +336,7 @@ then a directory specified by an environment variable.
 
 Now modify "hello/CMakeLists.txt" so that it can find this script:
 \verbatim
-    cmake_minimum_required(VERSION 3.12)
+    cmake_minimum_required(VERSION 3.16)
     set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
     find_package(Namer REQUIRED)
     include_directories("${Namer_INCLUDE_DIRS}")

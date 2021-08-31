@@ -50,7 +50,7 @@ configuration file in which we call the `yarp_idl_to_dir` macro:
 
 ~~~{.cmake}
 #CMakeList.txt
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 #find YARP
 find_package(YARP REQUIRED)
