@@ -67,9 +67,9 @@ basic dependencies:
 sudo apt-get install build-essential git cmake cmake-curses-gui
 ~~~
 
-(Please note that you need some extra step to install CMake 3.12 on Debian 9 and
-Ubuntu 18.40, see
-[robotology/QA#364](https://github.com/robotology/QA/issues/364)
+(Please note that you need some extra step to install CMake 3.16 on
+Ubuntu 18.04, see
+[robotology/QA#364](https://github.com/robotology/QA/issues/364))
 
 
 Install [YCM](https://github.com/robotology/ycm/) from sources or install it

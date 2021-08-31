@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 project(yarp_ros_example)
 
 find_package(YARP 3.3.103 COMPONENTS os dev math rosmsg idl_tools REQUIRED)

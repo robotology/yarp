@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 project(yarp_pm_asciiimage)
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 
 find_package(YARP COMPONENTS os sig dev REQUIRED)
 
