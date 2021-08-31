@@ -82,7 +82,7 @@ bool ControlBoard_nws_ros::open(Searchable& config)
         subdevice_ready = true;
     }
 
-    // check for nodeName parameter
+    // check for node_name parameter
     if (!config.check("node_name")) {
         yCError(CONTROLBOARD) << nodeName << " cannot find node_name parameter";
         return false;
@@ -93,7 +93,7 @@ bool ControlBoard_nws_ros::open(Searchable& config)
         return false;
     }
 
-    // check for topicName parameter
+    // check for topic_name parameter
     if (!config.check("topic_name")) {
         yCError(CONTROLBOARD) << nodeName << " cannot find topic_name parameter";
         return false;
@@ -103,7 +103,7 @@ bool ControlBoard_nws_ros::open(Searchable& config)
         yCError(CONTROLBOARD) << "topic_name must begin with an initial /";
         return false;
     }
-    yCInfo(CONTROLBOARD) << "topicName is " << topicName;
+    yCInfo(CONTROLBOARD) << "topic_name is " << topicName;
     // call ROS node/topic initialization
     node = new yarp::os::Node(nodeName);
     if (!publisherPort.topic(topicName)) {
