@@ -204,13 +204,14 @@ bool RgbdSensor_nws_ros::initialize_ROS(yarp::os::Searchable &params)
         return false;
     }
 
-    // node_name check
+    // depth_frame_id check
     if (!params.check("depth_frame_id")) {
         yCError(RGBDSENSORNWSROS) << "missing depth_frame_id parameter";
         return false;
     }
     m_depth_frame_id = params.find("depth_frame_id").asString();
 
+    // m_color_frame_id check
     if (!params.check("color_frame_id")) {
         yCError(RGBDSENSORNWSROS) << "missing color_frame_id parameter";
         return false;

@@ -30,8 +30,9 @@ struct SharedRFPlugin
 };
 
 
-struct RFPlugin::Private
+class RFPlugin::Private
 {
+public:
     Private() = default;
 
     string alias;
