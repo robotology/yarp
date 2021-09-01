@@ -31,7 +31,6 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(MAP2D_NWS_YARP, "yarp.device.map2D_nws_yarp")

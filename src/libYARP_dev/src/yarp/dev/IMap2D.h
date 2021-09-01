@@ -259,7 +259,7 @@ public:
 
     /**
     * 99999999999
-    * @param enable 
+    * @param enable
     * @return true/false
     */
     virtual bool enableMapsCompression(bool enable) = 0;

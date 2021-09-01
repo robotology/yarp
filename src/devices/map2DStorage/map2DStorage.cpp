@@ -1052,7 +1052,7 @@ bool Map2DStorage::loadMapFromDisk(std::string file_name)
     bool r = map.loadFromFile(file_name);
     if (r)
     {
-        string map_name = map.getMapName();
+        std::string map_name = map.getMapName();
         auto p = m_maps_storage.find(map_name);
         if (p == m_maps_storage.end())
         {
