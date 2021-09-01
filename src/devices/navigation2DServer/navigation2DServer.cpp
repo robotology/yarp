@@ -21,7 +21,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(NAVIGATION2DSERVER, "yarp.device.navigation2DServer")
@@ -90,7 +89,7 @@ bool navigation2DServer::open(Searchable& config)
         m_period = config.find("period").asFloat64();
     }
 
-    string local_name = "/navigationServer";
+    std::string local_name = "/navigationServer";
     if (!config.check("name"))
     {
         yCInfo(NAVIGATION2DSERVER) << "Missing 'name' parameter. Using default value: /navigationServer";
@@ -219,7 +218,7 @@ bool navigation2DServer::parse_respond_vocab(const yarp::os::Bottle& command, ya
         loc.x = command.get(3).asFloat64();
         loc.y = command.get(4).asFloat64();
         loc.theta = command.get(5).asFloat64();
-        string location_name = command.get(6).asString();
+        std::string location_name = command.get(6).asString();
         bool ret = iNav_target->gotoTargetByAbsoluteLocation(loc);
         if (ret)
         {

@@ -16,7 +16,6 @@
 #include <QDragEnterEvent>
 #include <QPainter>
 
-using namespace std;
 
 EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
@@ -88,7 +87,7 @@ EntitiesTreeWidget::EntitiesTreeWidget(QWidget *parent) : QTreeWidget(parent)
     setDragDropMode(DragOnly);
 }
 
-void EntitiesTreeWidget::setExtEditor(string editor)
+void EntitiesTreeWidget::setExtEditor(std::string editor)
 {
     ext_editor = editor.c_str();
 }
@@ -105,15 +104,15 @@ void EntitiesTreeWidget::addApplication(yarp::manager::Application *app)
 
 
 
-    string fname;
-    string fpath = app->getXmlFile();
+    std::string fname;
+    std::string fpath = app->getXmlFile();
     size_t pos = fpath.rfind(yarp::conf::filesystem::preferred_separator);
-    if (pos!=string::npos) {
+    if (pos!=std::string::npos) {
         fname = fpath.substr(pos+1);
     } else {
         fname = fpath;
     }
-    fname = fname + string(" (") + fpath + string(")");
+    fname = fname + std::string(" (") + fpath + std::string(")");
 
     QTreeWidgetItem *xml = new QTreeWidgetItem(item,QStringList() << fname.data());
     xml->setData(0,Qt::UserRole + 1,QString(fpath.data()));
@@ -131,15 +130,15 @@ void EntitiesTreeWidget::addComputer(yarp::manager::Computer* comp)
     item->setData(0,Qt::UserRole, yarp::manager::RESOURCE);
     item->setIcon(0,QIcon(":/computer22.svg"));
 
-    string fname;
-    string fpath = comp->getXmlFile();
+    std::string fname;
+    std::string fpath = comp->getXmlFile();
     size_t pos = fpath.rfind(yarp::conf::filesystem::preferred_separator);
-    if (pos!=string::npos) {
+    if (pos!=std::string::npos) {
         fname = fpath.substr(pos+1);
     } else {
         fname = fpath;
     }
-    fname = fname + string(" (") + fpath + string(")");
+    fname = fname + std::string(" (") + fpath + std::string(")");
 
     QTreeWidgetItem *xml = new QTreeWidgetItem(item,QStringList() << fname.data());
     xml->setData(0,Qt::UserRole + 1,QString(fpath.data()));
@@ -156,15 +155,15 @@ void EntitiesTreeWidget::addModule(yarp::manager::Module* mod)
     item->setData(0,Qt::UserRole, yarp::manager::MODULE);
     item->setIcon(0,QIcon(":/module22.svg"));
 
-    string fname;
-    string fpath = mod->getXmlFile();
+    std::string fname;
+    std::string fpath = mod->getXmlFile();
     size_t pos = fpath.rfind(yarp::conf::filesystem::preferred_separator);
-    if (pos!=string::npos) {
+    if (pos!=std::string::npos) {
         fname = fpath.substr(pos+1);
     } else {
         fname = fpath;
     }
-    fname = fname + string(" (") + fpath + string(")");
+    fname = fname + std::string(" (") + fpath + std::string(")");
 
     QTreeWidgetItem *xml = new QTreeWidgetItem(item,QStringList() << fname.data());
     xml->setData(0,Qt::UserRole + 1,QString(fpath.data()));

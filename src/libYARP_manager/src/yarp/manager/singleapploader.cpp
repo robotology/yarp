@@ -7,7 +7,6 @@
 #include <yarp/manager/utility.h>
 
 
-using namespace std;
 using namespace yarp::manager;
 
 

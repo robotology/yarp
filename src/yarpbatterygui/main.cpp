@@ -25,7 +25,6 @@
 #include "display.h"
 #include "ui_display.h"
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 

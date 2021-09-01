@@ -14,7 +14,6 @@
 using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
-using namespace std;
 using namespace SDLJoypadImpl;
 
 namespace {
@@ -94,7 +93,7 @@ bool SDLJoypad::open(yarp::os::Searchable& rf)
                 {
                     yCWarning(SDLJOYPAD, "No default joystick specified in the configuration options");
                     yCWarning(SDLJOYPAD, "Which joystick you want to use? (choose number)");
-                    cin >> joy_id;
+                    std::cin >> joy_id;
                 }
                 m_allJoypad = false;
             }
@@ -175,7 +174,7 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
     m_stickCount = cfg.find("sticks").asInt32();
     for(unsigned int i = 0; i < m_stickCount; i++)
     {
-        string stickName;
+        std::string stickName;
         int    axesCount;
         stick  currentStick;
 
@@ -205,7 +204,7 @@ bool SDLJoypad::parseStickInfo(const yarp::os::Searchable& cfg)
 
         for(int j = 0; j < axesCount; j++)
         {
-            string       axisName, invertName;
+            std::string       axisName, invertName;
             unsigned int axis_id;
             axisName   = "axis"         + std::to_string(j) + "_id";
             invertName = "invert_axis_" + std::to_string(j);

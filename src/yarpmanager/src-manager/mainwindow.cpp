@@ -55,7 +55,6 @@
  #define APP_NAME "yarpmanager"
 #endif
 
-using namespace std;
 
 
 bool isAbsolute(const char *path) {  //copied from yarp_OS ResourceFinder.cpp
@@ -210,23 +209,23 @@ void MainWindow::init(yarp::os::Property config)
     this->config = config;
     const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
 
-    string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString();
+    std::string basepath=config.check("ymanagerini_dir", yarp::os::Value("")).asString();
 
     if(config.check("modpath")){
-        string strPath;
-        string modPaths(config.find("modpath").asString());
+        std::string strPath;
+        std::string modPaths(config.find("modpath").asString());
         while (modPaths!=""){
-            string::size_type pos=modPaths.find(';');
+            std::string::size_type pos=modPaths.find(';');
             strPath=modPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())) {
                 strPath.insert(0, basepath);
             }
-            if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
+            if ((strPath.rfind(directorySeparator) == std::string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
                 strPath.append(directorySeparator);
             }
             lazyManager.addModules(strPath.c_str());
-            if (pos == string::npos || pos == 0) {
+            if (pos == std::string::npos || pos == 0) {
                 break;
             }
             modPaths=modPaths.substr(pos+1);
@@ -234,22 +233,22 @@ void MainWindow::init(yarp::os::Property config)
     }
 
     if(config.check("respath")){
-        string strPath;
-        string resPaths(config.find("respath").asString());
+        std::string strPath;
+        std::string resPaths(config.find("respath").asString());
         while (resPaths!=""){
-            string::size_type pos=resPaths.find(';');
+            std::string::size_type pos=resPaths.find(';');
             strPath=resPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())) {
                 strPath.insert(0, basepath);
             }
 
-            if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
+            if ((strPath.rfind(directorySeparator) == std::string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
                 strPath.append(directorySeparator);
             }
 
             lazyManager.addResources(strPath.c_str());
-            if (pos == string::npos) {
+            if (pos == std::string::npos) {
                 break;
             }
             resPaths=resPaths.substr(pos+1);
@@ -260,17 +259,17 @@ void MainWindow::init(yarp::os::Property config)
 
 
     if(config.check("apppath")){
-        string strPath;
-        string appPaths(config.find("apppath").asString());
+        std::string strPath;
+        std::string appPaths(config.find("apppath").asString());
         while (appPaths!=""){
-            string::size_type pos=appPaths.find(';');
+            std::string::size_type pos=appPaths.find(';');
             strPath=appPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())){
                 strPath.insert(0, basepath);
             }
 
-            if((strPath.rfind(directorySeparator)==string::npos) ||
+            if((strPath.rfind(directorySeparator)==std::string::npos) ||
                 (strPath.rfind(directorySeparator)!=strPath.size()-1)){
                     strPath.append(directorySeparator);
             }
@@ -285,7 +284,7 @@ void MainWindow::init(yarp::os::Property config)
             else{
                 lazyManager.addApplications(strPath.c_str());
             }
-            if (pos==string::npos){
+            if (pos==std::string::npos){
                 break;
             }
             appPaths=appPaths.substr(pos+1);
@@ -293,10 +292,10 @@ void MainWindow::init(yarp::os::Property config)
     }
 
     if (config.check("templpath")){
-        string strPath;
-        string templPaths(config.find("templpath").asString());
+        std::string strPath;
+        std::string templPaths(config.find("templpath").asString());
         while (templPaths!=""){
-            string::size_type pos=templPaths.find(';');
+            std::string::size_type pos=templPaths.find(';');
             strPath=templPaths.substr(0, pos);
             yarp::manager::trimString(strPath);
             if (!isAbsolute(strPath.c_str())){
@@ -307,7 +306,7 @@ void MainWindow::init(yarp::os::Property config)
                 logger->addError("Cannot load the templates from  " + strPath);
             }
 
-            if (pos==string::npos){
+            if (pos==std::string::npos){
                 break;
             }
             templPaths=templPaths.substr(pos+1);
@@ -427,8 +426,8 @@ void MainWindow::syncApplicationList(QString selectNodeForEditing, bool open)
 bool MainWindow::loadRecursiveTemplates(const char* szPath)
 {
     const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
-    string strPath = szPath;
-    if((strPath.rfind(directorySeparator)==string::npos) ||
+    std::string strPath = szPath;
+    if((strPath.rfind(directorySeparator)==std::string::npos) ||
             (strPath.rfind(directorySeparator)!=strPath.size()-1)) {
         strPath.append(directorySeparator);
     }
@@ -451,11 +450,11 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
 
     while((entry = readdir(dir)))
     {
-        if((string(entry->d_name) != string("."))
-        && (string(entry->d_name) != string("..")))
+        if((std::string(entry->d_name) != std::string("."))
+        && (std::string(entry->d_name) != std::string("..")))
         {
 
-            string name = strPath + string(entry->d_name);
+            std::string name = strPath + std::string(entry->d_name);
             loadRecursiveTemplates(name.c_str());
         }
     }
@@ -470,8 +469,8 @@ bool MainWindow::loadRecursiveTemplates(const char* szPath)
 bool MainWindow::loadRecursiveApplications(const char* szPath)
 {
     const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
-    string strPath = szPath;
-    if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
+    std::string strPath = szPath;
+    if ((strPath.rfind(directorySeparator) == std::string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
         strPath = strPath + directorySeparator;
     }
 
@@ -485,10 +484,10 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
 
     while((entry = readdir(dir)))
     {
-        if((string(entry->d_name) != string("."))
-        && (string(entry->d_name) != string("..")))
+        if((std::string(entry->d_name) != std::string("."))
+        && (std::string(entry->d_name) != std::string("..")))
         {
-            string name = strPath + string(entry->d_name);
+            std::string name = strPath + std::string(entry->d_name);
             loadRecursiveApplications(name.c_str());
         }
     }
@@ -496,7 +495,7 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
     return true;
 }
 
-bool MainWindow::initializeFile(string _class)
+bool MainWindow::initializeFile(std::string _class)
 {
     QFile f(fileName);
     bool b = f.open(QIODevice::ReadWrite);
@@ -1268,7 +1267,7 @@ void MainWindow::onSaveAs()
         return;
     }
     if(fileName.trimmed().size() == 0 || fileName.contains(" ")){
-        QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr(string("Invalid file name " + fileName.toStdString()).c_str()));
+        QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr(std::string("Invalid file name " + fileName.toStdString()).c_str()));
         return;
     }
 
@@ -1283,14 +1282,14 @@ void MainWindow::onSaveAs()
         QString oldFileName = ww->getFileName();
         ww->setFileName(fileName);
         size_t it1 = fileName.toStdString().find(".xml");
-        if(it1 == string::npos)
+        if(it1 == std::string::npos)
         {
             yError("yarpmanager: '.xml' not present in filename");
             return;
         }
         QString appName = fileName.toStdString().substr(0,it1).c_str();
         size_t it2 =appName.toStdString().find_last_of('/');
-        if(it2 != string::npos)
+        if(it2 != std::string::npos)
         {
             currentAppName = appName.toStdString().substr(it2+1).c_str();
         }

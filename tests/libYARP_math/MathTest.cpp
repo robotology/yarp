@@ -22,7 +22,6 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
-using namespace std;
 
 // Assert that 2 vectors are equal
 void checkEqual(const Vector &a, const Vector &b)
@@ -701,7 +700,7 @@ TEST_CASE("math::MathTest", "[yarp::math]")
 
         CHECK_EQUAL(vz_out, vz); // check toAxisAngle
 
-        INFO( string("check toString() method: ") + q1.toString());
+        INFO("check toString() method: " + q1.toString());
     }
 
     SECTION("check Matrix concatenations")

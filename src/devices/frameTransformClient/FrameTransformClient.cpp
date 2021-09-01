@@ -22,7 +22,6 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::math;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(FRAMETRANSFORMCLIENT, "yarp.device.FrameTransformClient")
@@ -40,7 +39,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    string request = in.get(0).asString();
+    std::string request = in.get(0).asString();
     if (request == "help")
     {
         out.addVocab32("many");
@@ -62,7 +61,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     }
     else if (request == "list_frames")
     {
-        std::vector<string> v;
+        std::vector<std::string> v;
         this->getAllFrameIds(v);
         out.addVocab32("many");
         out.addString("List of available reference frames:");
@@ -70,14 +69,14 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         for (auto& vec : v)
         {
             count++;
-            string str = std::to_string(count) + "- " + vec;
+            std::string str = std::to_string(count) + "- " + vec;
             out.addString(str.c_str());
         }
     }
     else if (request == "get_transform")
     {
-        string src = in.get(1).asString();
-        string dst = in.get(2).asString();
+        std::string src = in.get(1).asString();
+        std::string dst = in.get(2).asString();
         out.addVocab32("many");
         yarp::sig::Matrix m;
         this->getTransform(src, dst, m);
@@ -95,7 +94,7 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
         {
             if (m_array_of_port)
             {
-                string  s = m_array_of_port->port.getName() + " "+ m_array_of_port->transform_src +  " -> " + m_array_of_port->transform_dst;
+                std::string  s = m_array_of_port->port.getName() + " "+ m_array_of_port->transform_src +  " -> " + m_array_of_port->transform_dst;
                 out.addString(s);
             }
         }
@@ -103,10 +102,10 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     else if (request == "publish_transform")
     {
         out.addVocab32("many");
-        string src  = in.get(1).asString();
-        string dst  = in.get(2).asString();
-        string port_name = in.get(3).asString();
-        string format_s = "matrix";
+        std::string src  = in.get(1).asString();
+        std::string dst  = in.get(2).asString();
+        std::string port_name = in.get(3).asString();
+        std::string format_s = "matrix";
         broadcast_port_t::format_t eformat = broadcast_port_t::format_t::matrix;
         if   (in.size() == 5) {format_s = in.get(4).asString();}
 
@@ -189,11 +188,11 @@ bool FrameTransformClient::read(yarp::os::ConnectionReader& connection)
     else if (request == "unpublish_transform")
     {
         bool ret = false;
-        string port_name = in.get(1).asString();
+        std::string port_name = in.get(1).asString();
         if (port_name[0] == '/') {
             port_name.erase(port_name.begin());
         }
-        string full_port_name = m_local_name + "/" + port_name;
+        std::string full_port_name = m_local_name + "/" + port_name;
         for (auto it = m_array_of_ports.begin(); it != m_array_of_ports.end(); it++)
         {
             if ((*it)->port.getName() == port_name)
@@ -300,8 +299,8 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     yarp::os::Property cfg;
     cfg.fromString(config.toString());
 
-    string configuration_to_open;
-    string innerFilePath="config_xml/ftc_local_only.xml";
+    std::string configuration_to_open;
+    std::string innerFilePath="config_xml/ftc_local_only.xml";
     auto fs = cmrc::frameTransformRC::get_filesystem();
     if(cfg.check("filexml_option")) { innerFilePath="config_xml/"+cfg.find("filexml_option").toString();}
     cfg.unput("filexml_option");
@@ -311,7 +310,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         configuration_to_open += lemma;
     }
 
-    string m_local_rpcUser = "/ftClient/rpc";
+    std::string m_local_rpcUser = "/ftClient/rpc";
     if (cfg.check("local_rpc")) { m_local_rpcUser=cfg.find("local_rpc").toString();}
     cfg.unput("local_rpc");
 
@@ -329,7 +328,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    string setdeviceName = "ftc_storage";
+    std::string setdeviceName = "ftc_storage";
     if (m_robot.hasParam("setDeviceName")) { setdeviceName = m_robot.findParam("setDeviceName");}
     yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(setdeviceName));
     auto* polyset = m_robot.device(setdeviceName).driver();
@@ -337,7 +336,7 @@ bool FrameTransformClient::open(yarp::os::Searchable &config)
     polyset->view(m_ift_set);
     yCAssert(FRAMETRANSFORMCLIENT, m_ift_set);
 
-    string getdeviceName = "ftc_storage";
+    std::string getdeviceName = "ftc_storage";
     if (m_robot.hasParam("getDeviceName")) {getdeviceName = m_robot.findParam("getDeviceName");}
     yCAssert(FRAMETRANSFORMCLIENT, m_robot.hasDevice(getdeviceName));
     auto* polyget = m_robot.device(getdeviceName).driver();
@@ -371,7 +370,7 @@ bool FrameTransformClient::close()
     return true;
 }
 
-bool FrameTransformClient::allFramesAsString(string &all_frames)
+bool FrameTransformClient::allFramesAsString(std::string &all_frames)
 {
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
@@ -385,7 +384,7 @@ bool FrameTransformClient::allFramesAsString(string &all_frames)
     return false;
 }
 
-FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionType(const string &target_frame, const string &source_frame, string* commonAncestor = nullptr)
+FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionType(const std::string &target_frame, const std::string &source_frame, std::string* commonAncestor = nullptr)
 {
     if (target_frame == source_frame) {return ConnectionType::IDENTITY;}
 
@@ -394,9 +393,9 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return ConnectionType::DISCONNECTED; }
 
     size_t                     i, j;
-    std::vector<string>   tar2root_vec;
-    std::vector<string>   src2root_vec;
-    string                ancestor, child;
+    std::vector<std::string>   tar2root_vec;
+    std::vector<std::string>   src2root_vec;
+    std::string                ancestor, child;
     child = target_frame;
     std::lock_guard<std::recursive_mutex> l(p_cont->m_trf_mutex);
     while(getParent(child, ancestor))
@@ -423,7 +422,7 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
 
     for(i = 0; i < tar2root_vec.size(); i++)
     {
-        string a;
+        std::string a;
         a = tar2root_vec[i];
         for(j = 0; j < src2root_vec.size(); j++)
         {
@@ -441,7 +440,7 @@ FrameTransformClient::ConnectionType FrameTransformClient::priv_getConnectionTyp
     return ConnectionType::DISCONNECTED;
 }
 
-bool FrameTransformClient::canTransform(const string &target_frame, const string &source_frame)
+bool FrameTransformClient::canTransform(const std::string &target_frame, const std::string &source_frame)
 {
     return priv_getConnectionType(target_frame, source_frame) != ConnectionType::DISCONNECTED;
 }
@@ -456,7 +455,7 @@ bool FrameTransformClient::clear()
     return false;
 }
 
-bool FrameTransformClient::frameExists(const string &frame_id)
+bool FrameTransformClient::frameExists(const std::string &frame_id)
 {
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
@@ -472,7 +471,7 @@ bool FrameTransformClient::frameExists(const string &frame_id)
     return false;
 }
 
-bool FrameTransformClient::getAllFrameIds(std::vector< string > &ids)
+bool FrameTransformClient::getAllFrameIds(std::vector<std::string> &ids)
 {
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
@@ -505,7 +504,7 @@ bool FrameTransformClient::getAllFrameIds(std::vector< string > &ids)
     return true;
 }
 
-bool FrameTransformClient::getParent(const string &frame_id, string &parent_frame_id)
+bool FrameTransformClient::getParent(const std::string &frame_id, std::string &parent_frame_id)
 {
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
@@ -513,7 +512,7 @@ bool FrameTransformClient::getParent(const string &frame_id, string &parent_fram
 
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
-        string par(it->dst_frame_id);
+        std::string par(it->dst_frame_id);
         if (it->dst_frame_id == frame_id)
         {
 
@@ -524,7 +523,7 @@ bool FrameTransformClient::getParent(const string &frame_id, string &parent_fram
     return false;
 }
 
-bool FrameTransformClient::priv_canExplicitTransform(const string& target_frame_id, const string& source_frame_id) const
+bool FrameTransformClient::priv_canExplicitTransform(const std::string& target_frame_id, const std::string& source_frame_id) const
 {
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
@@ -540,7 +539,7 @@ bool FrameTransformClient::priv_canExplicitTransform(const string& target_frame_
     return false;
 }
 
-bool FrameTransformClient::priv_getChainedTransform(const string& target_frame_id, const string& source_frame_id, yarp::sig::Matrix& transform) const
+bool FrameTransformClient::priv_getChainedTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform) const
 {
     FrameTransformContainer* p_cont = nullptr;
     bool br = m_ift_util->getInternalContainer(p_cont);
@@ -571,10 +570,10 @@ bool FrameTransformClient::priv_getChainedTransform(const string& target_frame_i
     return false;
 }
 
-bool FrameTransformClient::getTransform(const string& target_frame_id, const string& source_frame_id, yarp::sig::Matrix& transform)
+bool FrameTransformClient::getTransform(const std::string& target_frame_id, const std::string& source_frame_id, yarp::sig::Matrix& transform)
 {
     ConnectionType ct;
-    string    ancestor;
+    std::string ancestor;
     ct = priv_getConnectionType(target_frame_id, source_frame_id, &ancestor);
     if (ct == ConnectionType::DIRECT)
     {
@@ -606,7 +605,7 @@ bool FrameTransformClient::getTransform(const string& target_frame_id, const str
     return false;
 }
 
-bool FrameTransformClient::setTransform(const string& target_frame_id, const string& source_frame_id, const yarp::sig::Matrix& transform)
+bool FrameTransformClient::setTransform(const std::string& target_frame_id, const std::string& source_frame_id, const yarp::sig::Matrix& transform)
 {
     if(target_frame_id == source_frame_id)
     {
@@ -644,7 +643,7 @@ bool FrameTransformClient::setTransform(const string& target_frame_id, const str
     return false;
 }
 
-bool FrameTransformClient::setTransformStatic(const string &target_frame_id, const string &source_frame_id, const yarp::sig::Matrix &transform)
+bool FrameTransformClient::setTransformStatic(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Matrix &transform)
 {
     if(target_frame_id == source_frame_id)
     {
@@ -678,7 +677,7 @@ bool FrameTransformClient::setTransformStatic(const string &target_frame_id, con
     return false;
 }
 
-bool FrameTransformClient::deleteTransform(const string &target_frame_id, const string &source_frame_id)
+bool FrameTransformClient::deleteTransform(const std::string &target_frame_id, const std::string &source_frame_id)
 {
     if (m_ift_set)
     {
@@ -688,7 +687,7 @@ bool FrameTransformClient::deleteTransform(const string &target_frame_id, const 
     return false;
 }
 
-bool FrameTransformClient::transformPoint(const string &target_frame_id, const string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
+bool FrameTransformClient::transformPoint(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_point, yarp::sig::Vector &transformed_point)
 {
     if (input_point.size() != 3)
     {
@@ -708,7 +707,7 @@ bool FrameTransformClient::transformPoint(const string &target_frame_id, const s
     return true;
 }
 
-bool FrameTransformClient::transformPose(const string &target_frame_id, const string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose)
+bool FrameTransformClient::transformPose(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::sig::Vector &input_pose, yarp::sig::Vector &transformed_pose)
 {
     if (input_pose.size() != 6)
     {
@@ -742,7 +741,7 @@ bool FrameTransformClient::transformPose(const string &target_frame_id, const st
     return true;
 }
 
-bool FrameTransformClient::transformQuaternion(const string &target_frame_id, const string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion)
+bool FrameTransformClient::transformQuaternion(const std::string &target_frame_id, const std::string &source_frame_id, const yarp::math::Quaternion &input_quaternion, yarp::math::Quaternion &transformed_quaternion)
 {
     yarp::sig::Matrix m(4, 4);
     if (!getTransform(target_frame_id, source_frame_id, m))
@@ -756,7 +755,7 @@ bool FrameTransformClient::transformQuaternion(const string &target_frame_id, co
     return true;
 }
 
-bool FrameTransformClient::waitForTransform(const string &target_frame_id, const string &source_frame_id, const double &timeout)
+bool FrameTransformClient::waitForTransform(const std::string &target_frame_id, const std::string &source_frame_id, const double &timeout)
 {
     //loop until canTransform == true or timeout expires
     double start = yarp::os::SystemClock::nowSystem();
@@ -802,8 +801,8 @@ void     FrameTransformClient::run()
     {
         if (m_array_of_port)
         {
-            string src = m_array_of_port->transform_src;
-            string dst = m_array_of_port->transform_dst;
+            std::string src = m_array_of_port->transform_src;
+            std::string dst = m_array_of_port->transform_dst;
             yarp::sig::Matrix m;
             this->getTransform(src, dst, m);
             if (m_array_of_port->format == broadcast_port_t::format_t::matrix)
@@ -818,7 +817,7 @@ void     FrameTransformClient::run()
     }
 }
 
-string FrameTransformClient::priv_get_matrix_as_text(FrameTransform* t)
+std::string FrameTransformClient::priv_get_matrix_as_text(FrameTransform* t)
 {
     if (t == nullptr) {
         return "";
@@ -830,22 +829,22 @@ string FrameTransformClient::priv_get_matrix_as_text(FrameTransform* t)
     }
     else if (m_show_transforms_in_diagram == show_quaternion)
     {
-        return string(",label=\" ") + t->toString(FrameTransform::display_transform_mode_t::rotation_as_quaternion) + "\"";
+        return std::string(",label=\" ") + t->toString(FrameTransform::display_transform_mode_t::rotation_as_quaternion) + "\"";
     }
     else if (m_show_transforms_in_diagram == show_matrix)
     {
-        return string(",label=\" ") + t->toString(FrameTransform::display_transform_mode_t::rotation_as_matrix) + "\"";
+        return std::string(",label=\" ") + t->toString(FrameTransform::display_transform_mode_t::rotation_as_matrix) + "\"";
     }
     else if (m_show_transforms_in_diagram == show_rpy)
     {
-        return string(",label=\" ") + t->toString(FrameTransform::display_transform_mode_t::rotation_as_rpy) + "\"";
+        return std::string(",label=\" ") + t->toString(FrameTransform::display_transform_mode_t::rotation_as_rpy) + "\"";
     }
 
     yCError(FRAMETRANSFORMCLIENT) << "get_matrix_as_text() invalid option";
     return "";
     /*
         //this is a test to use Latek display
-        string s = "\\begin{ bmatrix } \
+        std::string s = "\\begin{ bmatrix } \
         1 & 2 & 3\\ \
         a & b & c \
         \\end{ bmatrix }";
@@ -859,18 +858,18 @@ bool FrameTransformClient::priv_generate_view()
     bool br = m_ift_util->getInternalContainer(p_cont);
     if (!br || p_cont == nullptr) { yCError(FRAMETRANSFORMCLIENT) << "Failure"; return false; }
 
-    string dot_string = "digraph G { ";
+    std::string dot_string = "digraph G { ";
     for (auto it = p_cont->begin(); it != p_cont->end(); it++)
     {
         FrameTransform t = *it;
-        string edge_text = priv_get_matrix_as_text(&t);
-        string trf_text = it->src_frame_id + "->" +
+        std::string edge_text = priv_get_matrix_as_text(&t);
+        std::string trf_text = it->src_frame_id + "->" +
             it->dst_frame_id + " " +
             "[color = black]";
         dot_string += trf_text + '\n';
     }
 
-    string legend = "\n\
+    std::string legend = "\n\
         rankdir=LR\n\
         node[shape=plaintext]\n\
         subgraph cluster_01 {\n\
@@ -887,7 +886,7 @@ bool FrameTransformClient::priv_generate_view()
           key:i2:e -> key2:i2:w [color = blue, style=dashed]\n\
         } }";
 
-    string command_string = "printf '" + dot_string + legend + "' | dot -Tpdf > frames.pdf";
+    std::string command_string = "printf '" + dot_string + legend + "' | dot -Tpdf > frames.pdf";
 #if defined (__linux__)
     int ret = std::system("dot -V");
     if (ret != 0)

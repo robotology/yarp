@@ -44,7 +44,6 @@
 #include <yarp/rosmsg/geometry_msgs/Pose2D.h>
 
 
-using namespace std;
 using namespace yarp::yarpDataplayer;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -93,7 +92,7 @@ DataplayerUtilities::DataplayerUtilities() :
 }
 
 /**********************************************************/
-DataplayerUtilities::DataplayerUtilities(string name, bool _add_prefix, bool _verbose) :
+DataplayerUtilities::DataplayerUtilities(std::string name, bool _add_prefix, bool _verbose) :
     dir_count(0),
     moduleName(std::move(name)),
     add_prefix(_add_prefix),
@@ -133,20 +132,20 @@ void DataplayerUtilities::setVerbose(const bool &verbose)
 }
 
 /**********************************************************/
-string DataplayerUtilities::getCurrentPath()
+std::string DataplayerUtilities::getCurrentPath()
 {
     char cCurrentPath[FILENAME_MAX];
     if (!yarp::os::getcwd(cCurrentPath, sizeof(cCurrentPath) )){
         yError() << "ERROR GETTING THE CURRENT DIR";
     }
     //cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
-    string currentPath = cCurrentPath;
+    std::string currentPath = cCurrentPath;
 
     return currentPath;
 }
 
 /**********************************************************/
-int DataplayerUtilities::getRecSubDirList(const string& dir, vector<RowInfo>& rowInfoVec, int recursive)
+int DataplayerUtilities::getRecSubDirList(const std::string& dir, std::vector<RowInfo>& rowInfoVec, int recursive)
 {
     struct dirent *direntp = nullptr;
     DIR *dirp = nullptr;
@@ -195,12 +194,12 @@ int DataplayerUtilities::getRecSubDirList(const string& dir, vector<RowInfo>& ro
             continue;
         }
         if (S_ISDIR(fstat.st_mode)) {
-            string recDir = full_name;
+            std::string recDir = full_name;
             struct stat st;
-            string fullName = string(dir + "/" + direntp->d_name + "/info.log");
+            std::string fullName = std::string(dir + "/" + direntp->d_name + "/info.log");
             const char * filename = fullName.c_str();
             if(stat(filename,&st) == 0) {
-                string dataFileName = string(dir + "/" + direntp->d_name + "/data.log");
+                std::string dataFileName = std::string(dir + "/" + direntp->d_name + "/data.log");
 
                 bool checkLog = checkLogValidity( filename );
                 bool checkData = checkLogValidity( dataFileName.c_str() );
@@ -242,10 +241,10 @@ int DataplayerUtilities::getRecSubDirList(const string& dir, vector<RowInfo>& ro
                 recursiveIterations ++;
                 if (recursiveIterations > 1){
                     if (recursiveName.empty()){
-                        recursiveName = string( direntp->d_name );
+                        recursiveName = std::string( direntp->d_name );
                     }
                 } else {
-                    recursiveName = string( direntp->d_name );
+                    recursiveName = std::string( direntp->d_name );
                 }
 
                 getRecSubDirList(recDir, rowInfoVec, 1);
@@ -271,11 +270,11 @@ int DataplayerUtilities::getRecSubDirList(const string& dir, vector<RowInfo>& ro
 bool DataplayerUtilities::checkLogValidity(const char *filename)
 {
     bool check = true;
-    fstream str;
-    str.open (filename, ios_base::in);//, ios::binary);
+    std::fstream str;
+    str.open (filename, std::ios_base::in);//, ios::binary);
 
     if (str.is_open()){
-        string line;
+        std::string line;
         int itr = 0;
         while( getline( str, line ) && itr < 3){
             Bottle b( line );
@@ -296,16 +295,16 @@ bool DataplayerUtilities::checkLogValidity(const char *filename)
 /**********************************************************/
 bool DataplayerUtilities::setupDataFromParts(PartsData &part)
 {
-    fstream str;
+    std::fstream str;
 
     // info part
     if (verbose){
         yInfo() << "opening file " <<  part.infoFile.c_str() ;
     }
 
-    str.open (part.infoFile.c_str(), ios_base::in);//, ios::binary);
+    str.open (part.infoFile.c_str(), std::ios_base::in);//, ios::binary);
     if (str.is_open()){
-        string line;
+        std::string line;
         int itr = 0;
         while( getline( str, line ) && (itr < 3) ){
             Bottle b( line );
@@ -321,8 +320,8 @@ bool DataplayerUtilities::setupDataFromParts(PartsData &part)
                 part.type.erase(part.type.size() -1 );          // remove the ";" character
             }
             else{
-                string stamp_tag = b.get(0).toString();
-                if (stamp_tag.find("Stamp") == string::npos){   // skip stamp information
+                std::string stamp_tag = b.get(0).toString();
+                if (stamp_tag.find("Stamp") == std::string::npos){   // skip stamp information
                     part.portName = b.get(1).toString();
                     if (verbose) {
                         yInfo() << "the name of the port is " << part.portName.c_str();
@@ -340,11 +339,11 @@ bool DataplayerUtilities::setupDataFromParts(PartsData &part)
     if (verbose){
         yInfo() <<"opening file " << part.logFile.c_str();
     }
-    str.open (part.logFile.c_str(), ios_base::in);//, ios::binary);
+    str.open (part.logFile.c_str(), std::ios_base::in);//, ios::binary);
 
     //read throughout
     if (str.is_open()){
-        string line;
+        std::string line;
         int itr = 0;
         while( getline( str, line ) ){
             Bottle b( line );
@@ -434,7 +433,7 @@ void DataplayerUtilities::resetDirCount()
 /**********************************************************/
 bool DataplayerUtilities::configurePorts(PartsData &part)
 {
-    string tmp_port_name=part.portName;
+    std::string tmp_port_name=part.portName;
     if(add_prefix){
         tmp_port_name="/"+moduleName+tmp_port_name;
     }
@@ -739,8 +738,8 @@ int DataplayerWorker::sendBottle(int part, int frame)
 /**********************************************************/
 int DataplayerWorker::sendImages(int part, int frame)
 {
-    string tmpPath = utilities->partDetails[part].path;
-    string tmpName, tmp;
+    std::string tmpPath = utilities->partDetails[part].path;
+    std::string tmpName, tmp;
     bool fileValid = false;
     if (utilities->withExtraColumn) {
         tmpName = utilities->partDetails[part].bot.get(frame).asList()->tail().tail().get(1).asString();
@@ -758,12 +757,12 @@ int DataplayerWorker::sendImages(int part, int frame)
     }
 
     tmpPath = tmpPath + tmpName;
-    unique_ptr<Image> img_yarp = nullptr;
+    std::unique_ptr<Image> img_yarp = nullptr;
 
 #ifdef HAS_OPENCV
     cv::Mat cv_img;
     if (code==VOCAB_PIXEL_MONO_FLOAT) {
-        img_yarp = unique_ptr<Image>(new ImageOf<PixelFloat>);
+        img_yarp = std::unique_ptr<Image>(new ImageOf<PixelFloat>);
         fileValid = read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath);
     }
     else {
@@ -771,26 +770,26 @@ int DataplayerWorker::sendImages(int part, int frame)
         if ( cv_img.data != nullptr ) {
             if (code==VOCAB_PIXEL_RGB)
             {
-                img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
+                img_yarp = std::unique_ptr<Image>(new ImageOf<PixelRgb>);
                 *img_yarp = yarp::cv::fromCvMat<PixelRgb>(cv_img);
             }
             else if (code==VOCAB_PIXEL_BGR)
             {
-                img_yarp = unique_ptr<Image>(new ImageOf<PixelBgr>);
+                img_yarp = std::unique_ptr<Image>(new ImageOf<PixelBgr>);
                 *img_yarp = yarp::cv::fromCvMat<PixelBgr>(cv_img);
             }
             else if (code==VOCAB_PIXEL_RGBA)
             {
-                img_yarp = unique_ptr<Image>(new ImageOf<PixelRgba>);
+                img_yarp = std::unique_ptr<Image>(new ImageOf<PixelRgba>);
                 *img_yarp = yarp::cv::fromCvMat<PixelRgba>(cv_img);
             }
             else if (code==VOCAB_PIXEL_MONO){
-                img_yarp = unique_ptr<Image>(new ImageOf<PixelMono>);
+                img_yarp = std::unique_ptr<Image>(new ImageOf<PixelMono>);
                 *img_yarp = yarp::cv::fromCvMat<PixelMono>(cv_img);
             }
             else
             {
-                img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
+                img_yarp = std::unique_ptr<Image>(new ImageOf<PixelRgb>);
                 *img_yarp = yarp::cv::fromCvMat<PixelRgb>(cv_img);
             }
             fileValid = true;
@@ -798,22 +797,22 @@ int DataplayerWorker::sendImages(int part, int frame)
     }
 #else
     if (code==VOCAB_PIXEL_RGB) {
-        img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
+        img_yarp = std::unique_ptr<Image>(new ImageOf<PixelRgb>);
         fileValid = read(*static_cast<ImageOf<PixelRgb>*>(img_yarp.get()),tmpPath.c_str());
     } else if (code==VOCAB_PIXEL_BGR) {
-        img_yarp = unique_ptr<Image>(new ImageOf<PixelBgr>);
+        img_yarp = std::unique_ptr<Image>(new ImageOf<PixelBgr>);
         fileValid = read(*static_cast<ImageOf<PixelBgr>*>(img_yarp.get()),tmpPath.c_str());
     } else if (code==VOCAB_PIXEL_RGBA) {
-        img_yarp = unique_ptr<Image>(new ImageOf<PixelRgba>);
+        img_yarp = std::unique_ptr<Image>(new ImageOf<PixelRgba>);
         fileValid = read(*static_cast<ImageOf<PixelRgba>*>(img_yarp.get()),tmpPath.c_str());
     } else if (code==VOCAB_PIXEL_MONO_FLOAT) {
-        img_yarp = unique_ptr<Image>(new ImageOf<PixelFloat>);
+        img_yarp = std::unique_ptr<Image>(new ImageOf<PixelFloat>);
         fileValid = read(*static_cast<ImageOf<PixelFloat>*>(img_yarp.get()),tmpPath.c_str());
     } else if (code==VOCAB_PIXEL_MONO) {
-        img_yarp = unique_ptr<Image>(new ImageOf<PixelMono>);
+        img_yarp = std::unique_ptr<Image>(new ImageOf<PixelMono>);
         fileValid = read(*static_cast<ImageOf<PixelMono>*>(img_yarp.get()),tmpPath.c_str());
     } else {
-        img_yarp = unique_ptr<Image>(new ImageOf<PixelRgb>);
+        img_yarp = std::unique_ptr<Image>(new ImageOf<PixelRgb>);
         fileValid = read(*static_cast<ImageOf<PixelRgb>*>(img_yarp.get()),tmpPath.c_str());
     }
 #endif

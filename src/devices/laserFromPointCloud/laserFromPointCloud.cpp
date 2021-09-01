@@ -24,7 +24,6 @@
 #include <limits>
 #include <mutex>
 
-using namespace std;
 
 #ifndef DEG2RAD
 #define DEG2RAD M_PI/180.0
@@ -73,7 +72,7 @@ void ros_init_pc()
     }
 }
 
-void ros_compute_and_send_pc(const yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc, string frame_id)
+void ros_compute_and_send_pc(const yarp::sig::PointCloud<yarp::sig::DataXYZ>& pc, std::string frame_id)
 {
     //yCDebug(LASER_FROM_POINTCLOUD) << "sizeof:" << sizeof(yarp::sig::DataXYZ);
 

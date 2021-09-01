@@ -19,7 +19,6 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::math;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(FRAMETRANSFORMSERVER, "yarp.device.FrameTransformServer")
@@ -37,7 +36,7 @@ bool FrameTransformServer::read(yarp::os::ConnectionReader& connection)
         return false;
     }
 
-    string request = in.get(0).asString();
+    std::string request = in.get(0).asString();
     if (request == "help")
     {
         out.addVocab32("many");
@@ -70,8 +69,8 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
     yarp::os::Property cfg;
     cfg.fromString(config.toString());
 
-    string configuration_to_open;
-    string innerFilePath="config_xml/fts_yarp_only.xml";
+    std::string configuration_to_open;
+    std::string innerFilePath="config_xml/fts_yarp_only.xml";
     auto fs = cmrc::frameTransformServerRC::get_filesystem();
     if(cfg.check("filexml_option")) { innerFilePath="config_xml/"+cfg.find("filexml_option").toString();}
     cfg.unput("filexml_option");
@@ -81,7 +80,7 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
         configuration_to_open += lemma;
     }
 
-    string m_local_rpcUser = "/ftServer/rpc";
+    std::string m_local_rpcUser = "/ftServer/rpc";
     if (cfg.check("local_rpc")) { m_local_rpcUser=cfg.find("local_rpc").toString();}
     cfg.unput("local_rpc");
 

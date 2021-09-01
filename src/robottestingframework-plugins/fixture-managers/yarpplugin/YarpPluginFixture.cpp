@@ -15,7 +15,6 @@
 #include <yarp/os/Carriers.h>
 #include <yarp/dev/Drivers.h>
 
-using namespace std;
 using namespace robottestingframework;
 using namespace yarp::os;
 using namespace yarp::dev;

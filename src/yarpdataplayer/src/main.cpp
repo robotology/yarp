@@ -29,7 +29,6 @@
     #include <csignal>
 #endif
 
-using namespace std;
 using namespace yarp::os;
 
 int main(int argc, char *argv[])

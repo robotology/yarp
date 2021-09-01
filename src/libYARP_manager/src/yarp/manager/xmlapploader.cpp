@@ -21,7 +21,6 @@
 
 
 
-using namespace std;
 using namespace yarp::manager;
 
 
@@ -42,8 +41,8 @@ XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
     {
         const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
         strPath = szPath;
-        if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
-            strPath = strPath + string(directorySeparator);
+        if ((strPath.rfind(directorySeparator) == std::string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
+            strPath = strPath + std::string(directorySeparator);
         }
     }
 }
@@ -104,10 +103,10 @@ bool XmlAppLoader::init()
     /* we need to load all xml apps */
     while((entry = readdir(dir)))
     {
-        string name = entry->d_name;
+        std::string name = entry->d_name;
         if(name.size() > 3)
         {
-            string ext = name.substr(name.size()-3,3);
+            std::string ext = name.substr(name.size()-3,3);
             if (compareString(ext.c_str(), "xml")) {
                 fileNames.push_back(strPath + name);
             }
@@ -150,7 +149,7 @@ Application* XmlAppLoader::getNextApplication()
             if (fileNames.empty()) {
                 return nullptr;
             }
-            string fname = fileNames.back();
+            std::string fname = fileNames.back();
             fileNames.pop_back();
             app = parsXml(fname.c_str());
         }
@@ -158,11 +157,11 @@ Application* XmlAppLoader::getNextApplication()
     }
     else
     {
-        vector<string>::iterator itr;
+        std::vector<std::string>::iterator itr;
         for(itr=fileNames.begin(); itr<fileNames.end(); itr++)
         {
          Application* app = parsXml((*itr).c_str());
-         if (app && (string(app->getName()) == strAppName)) {
+         if (app && (std::string(app->getName()) == strAppName)) {
              return app;
          }
         }
@@ -228,7 +227,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
 
     if(name)
     {
-        string strname = parser->parseText(name->GetText());
+        std::string strname = parser->parseText(name->GetText());
         for (char& i : strname) {
             if (i == ' ') {
                 i = '_';
@@ -315,8 +314,8 @@ Application* XmlAppLoader::parsXml(const char* szFile)
     /* retrieving modules information*/
     using setter = void (ModuleInterface::*)(const char*);
 
-    vector<pair<const char*, setter> > modList;
-    pair<const char*, setter>          pairNode;
+    std::vector<std::pair<const char*, setter> > modList;
+    std::pair<const char*, setter>          pairNode;
 
     pairNode.first = "node";        pairNode.second = &ModuleInterface::setHost;        modList.push_back(pairNode);
     pairNode.first = "parameters";  pairNode.second = &ModuleInterface::setParam;       modList.push_back(pairNode);
@@ -333,7 +332,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             TiXmlElement* element;
             if((element = (TiXmlElement*) mod->FirstChild("name")))
             {
-                string                             elemText;
+                std::string                             elemText;
                 const char*                        text;
 
 
@@ -607,7 +606,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
             TiXmlElement* protocol;
             if(from && to)
             {
-                string strCarrier;
+                std::string strCarrier;
                 if ((protocol = (TiXmlElement*)cnn->FirstChild("protocol")) && protocol->GetText()) {
                     strCarrier = parser->parseText(protocol->GetText());
                 }

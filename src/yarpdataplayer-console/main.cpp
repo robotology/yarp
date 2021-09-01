@@ -25,7 +25,6 @@ __ _____ ________  ___/ /__ _/ /____ ____  / /__ ___ _____ ____ \n\
 /___/        /_/                     /_/          /___/ "
 
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::yarpDataplayer;
 
@@ -36,15 +35,15 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     int subDirCnt;
     yarp::os::RpcServer rpcPort;
     bool verbose;
-    string dataset;
-    string status;
+    std::string dataset;
+    std::string status;
 
     float progress;
 
     /**********************************************************/
     bool configure(yarp::os::ResourceFinder &rf) override
     {
-        string moduleName = rf.check("module_name", Value("yarpdataplayer")).asString();
+        std::string moduleName = rf.check("module_name", Value("yarpdataplayer")).asString();
         bool add_prefix = rf.check("add_prefix", Value(false)).asBool();
         verbose = rf.check("verbose",Value(false)).asBool();
         dataset = rf.check("dataset",Value("")).asString();
@@ -122,7 +121,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     }
 
     /**********************************************************/
-    bool load(const string &filename) override
+    bool load(const std::string &filename) override
     {
         utilities->resetMaxTimeStamp();
         subDirCnt = utilities->getRecSubDirList(filename, rowInfoVec, 1);
@@ -356,11 +355,11 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     }
 
     /**********************************************************/
-    bool enable(const string &part) override
+    bool enable(const std::string &part) override
     {
         for (int i=0; i < subDirCnt; i++)
         {
-            string partname = utilities->partDetails[i].name;
+            std::string partname = utilities->partDetails[i].name;
             if (strcmp( partname.c_str() , part.c_str()) == 0)
             {
                 if (verbose)
@@ -377,11 +376,11 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
 
 
     /**********************************************************/
-    bool disable(const string &part) override
+    bool disable(const std::string &part) override
     {
         for (int i=0; i < subDirCnt; i++)
         {
-            string partname = utilities->partDetails[i].name;
+            std::string partname = utilities->partDetails[i].name;
             if (strcmp( partname.c_str() , part.c_str()) == 0)
             {
                 if (verbose)
@@ -397,14 +396,14 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     }
 
     /**********************************************************/
-    vector<string> getAllParts() override
+    std::vector<std::string> getAllParts() override
     {
-        vector<string> parts(subDirCnt, "");
+        std::vector<std::string> parts(subDirCnt, "");
         if (subDirCnt > 0)
         {
             for (int i=0; i < subDirCnt; i++)
             {
-                string partname = utilities->partDetails[i].name;
+                std::string partname = utilities->partDetails[i].name;
                 parts[i] = partname;
             }
         }
@@ -412,9 +411,9 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     }
 
     /**********************************************************/
-    string getPortName(const string &part) override
+    std::string getPortName(const std::string &part) override
     {
-        string portname = "";
+        std::string portname = "";
         if (subDirCnt > 0)
         {
             for (int i=0; i < subDirCnt; i++)
@@ -429,13 +428,13 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     }
 
     /**********************************************************/
-    bool setPortName(const string &part, const string &new_name) override
+    bool setPortName(const std::string &part, const std::string &new_name) override
     {
         if (subDirCnt > 0)
         {
             for (int i=0; i < subDirCnt; i++)
             {
-                string partname = utilities->partDetails[i].name;
+                std::string partname = utilities->partDetails[i].name;
                 if (partname == part)
                 {
                     utilities->partDetails[i].portName = new_name;
@@ -448,7 +447,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     }
 
     /**********************************************************/
-    int getFrame(const string &partname) override
+    int getFrame(const std::string &partname) override
     {
         if (subDirCnt > 0)
         {
@@ -592,7 +591,7 @@ class dataplayer_module : public yarp::os::RFModule, public yarpdataplayer_conso
     }
 
     /**********************************************************/
-    string getStatus() override
+    std::string getStatus() override
     {
         return status;
     }

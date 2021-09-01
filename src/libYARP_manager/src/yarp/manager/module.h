@@ -234,39 +234,39 @@ typedef std::vector<Module*>::iterator ModulePIterator;
 
 #define PRINT_MODULE(m)\
         {\
-        cout<<"Name     : "<<m->getName()<<endl;\
-        cout<<"Desc     : "<<m->getDescription()<<endl;\
-        cout<<"Version  : "<<m->getVersion()<<endl;\
-        cout<<"Rank     : "<<m->getRank()<<endl;\
-        cout<<"Param    : "<<endl;\
+        std::cout<<"Name     : "<<m->getName()<<'\n';\
+        std::cout<<"Desc     : "<<m->getDescription()<<'\n';\
+        std::cout<<"Version  : "<<m->getVersion()<<'\n';\
+        std::cout<<"Rank     : "<<m->getRank()<<'\n';\
+        std::cout<<"Param    : "<<'\n';\
         for(int i=0; i<m->argumentCount(); i++)\
         {\
-            cout<<"           "<<m->getArgumentAt(i).getParam()<<" (";\
-            cout<<m->getArgumentAt(i).getDescription()<<")"<<endl;\
+            std::cout<<"           "<<m->getArgumentAt(i).getParam()<<" (";\
+            std::cout<<m->getArgumentAt(i).getDescription()<<")"<<'\n';\
         }\
-        cout<<"Authors  : "<<endl;\
+        std::cout<<"Authors  : "<<'\n';\
         for(int i=0; i<m->authorCount(); i++)\
-            cout<<"           "<<m->getAuthorAt(i).getName()<<" ("<<m->getAuthorAt(i).getEmail()<<")"<<endl;\
-        /*cout<<"Platforms: "<<endl;\
+            std::cout<<"           "<<m->getAuthorAt(i).getName()<<" ("<<m->getAuthorAt(i).getEmail()<<")"<<'\n';\
+        /*std::cout<<"Platforms: "<<'\n';\
         for(int i=0; i<m->platformCount(); i++)\
-            cout<<"           "<<m->getPlatformAt(i).getOS()\
-            <<", "<<m->getPlatformAt(i).getDistribution()<<endl;*/\
-        cout<<"Inputs   : "<<endl;\
+            std::cout<<"           "<<m->getPlatformAt(i).getOS()\
+            <<", "<<m->getPlatformAt(i).getDistribution()<<'\n';*/\
+        std::cout<<"Inputs   : "<<'\n';\
         for(int i=0; i<m->inputCount(); i++)\
         {\
-            cout<<"           "<<m->getInputAt(i).getName()\
+            std::cout<<"           "<<m->getInputAt(i).getName()\
             <<", "<<m->getInputAt(i).getPort();\
             if(m->getInputAt(i).isRequired())\
-                cout<<", [REQUIRED]";\
+                std::cout<<", [REQUIRED]";\
             if(m->getInputAt(i).withPriority())\
-                cout<<", [PRIORITY]";\
-            cout<<endl;\
+                std::cout<<", [PRIORITY]";\
+            std::cout<<'\n';\
         }\
-        cout<<"Outputs  : "<<endl;\
+        std::cout<<"Outputs  : "<<'\n';\
         for(int i=0; i<m->outputCount(); i++)\
-            cout<<"           "<<m->getOutputAt(i).getName()\
-            <<", "<<m->getOutputAt(i).getPort()<<endl;\
-        cout<<endl;\
+            std::cout<<"           "<<m->getOutputAt(i).getName()\
+            <<", "<<m->getOutputAt(i).getPort()<<'\n';\
+        std::cout<<'\n';\
         }
 
 } // namespace yarp

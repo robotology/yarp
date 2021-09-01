@@ -19,7 +19,6 @@
 
 
 
-using namespace std;
 using namespace yarp::sig;
 using namespace yarp::manager;
 
@@ -52,7 +51,7 @@ void Arbitrator::removeRule(const char* con)
         std::map<std::string, double>& w = itr->second;
         std::map<std::string, double>::iterator jtr;
         for(jtr=w.begin(); jtr!=w.end(); jtr++)
-            if(jtr->first == string(con))
+            if(jtr->first == std::string(con))
                 w.erase(jtr);
     }
     */
@@ -65,7 +64,7 @@ bool Arbitrator::trainWeights(const char* opnd)
 
     ErrorLogger* logger  = ErrorLogger::Instance();
 
-    string rule = getRule(opnd);
+    std::string rule = getRule(opnd);
     if(!rule.length())
     {
         std::map<std::string, double> w;
@@ -75,13 +74,13 @@ bool Arbitrator::trainWeights(const char* opnd)
     }
 
     BinaryExpParser parser;
-    std::map<string, string>::iterator itr;
+    std::map<std::string, std::string>::iterator itr;
     for (itr = rules.begin(); itr != rules.end(); itr++) {
         parser.addRestrictedOperand((itr->first).c_str());
     }
 
     // parsing the compact logic
-    rule = string(opnd) + " : " + rule;
+    rule = std::string(opnd) + " : " + rule;
     if (!parser.parse(rule)) {
         return false;
     }
@@ -119,7 +118,7 @@ bool Arbitrator::trainWeights()
     biases.clear();
     alphas.clear();
     bool bAllOk = true;
-    std::map<string, string>::iterator itr;
+    std::map<std::string, std::string>::iterator itr;
     for (itr = rules.begin(); itr != rules.end(); itr++) {
         bAllOk &= trainWeights((itr->first).c_str());
     }

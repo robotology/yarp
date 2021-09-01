@@ -32,7 +32,6 @@
 
 using namespace yarp::os;
 using namespace yarp::serversql::impl;
-using namespace std;
 
 namespace {
 YARP_SERVERSQL_LOG_COMPONENT(SUBSCRIBERONSQL, "yarp.serversql.impl.SubscriberOnSql")
@@ -628,7 +627,7 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
         }
     }
 
-    vector<vector<std::string> > subs;
+    std::vector<std::vector<std::string> > subs;
 
     // go ahead and connect anything needed
     mutex.lock();
@@ -650,7 +649,7 @@ bool SubscriberOnSql::setTopic(const std::string& port, const std::string& struc
         char *srcFull = (char *)sqlite3_column_text(statement,2);
         char *destFull = (char *)sqlite3_column_text(statement,3);
         char *mode = (char *)sqlite3_column_text(statement,4);
-        vector<std::string> sub;
+        std::vector<std::string> sub;
         sub.emplace_back(src);
         sub.emplace_back(dest);
         sub.emplace_back(srcFull);

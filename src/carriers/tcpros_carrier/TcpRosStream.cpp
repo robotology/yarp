@@ -18,7 +18,6 @@
 
 using namespace yarp::os;
 using namespace yarp::wire_rep_utils;
-using namespace std;
 
 yarp::conf::ssize_t TcpRosStream::read(Bytes& b) {
     if (!setInitiative) {
@@ -150,7 +149,7 @@ void TcpRosStream::write(const Bytes& b) {
 
 
 void TcpRosStream::updateKind(const char *kind, bool sender, bool reply) {
-    string code = rosToKind(kind);
+    std::string code = rosToKind(kind);
     if (code!="") {
         configureTwiddler(twiddler,code.c_str(),kind,sender,reply);
         this->kind = code;

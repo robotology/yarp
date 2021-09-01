@@ -22,7 +22,6 @@
 
 #include <mainwindow.h>
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::manager;
 
@@ -58,7 +57,7 @@ ClusterWidget::ClusterWidget(QWidget *parent) :
 
 }
 
-void ClusterWidget::setConfigFile(const string &_confFile)
+void ClusterWidget::setConfigFile(const std::string &_confFile)
 {
     confFile = _confFile;
 }
@@ -158,7 +157,7 @@ void ClusterWidget::onRunServer()
 {
     updateServerEntries();
 
-    string cmdRunServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
+    std::string cmdRunServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
     if (ui->checkRos->isChecked())
     {
         cmdRunServer = cmdRunServer + " yarpserver --portdb :memory: --subdb :memory: --ros >/dev/null 2>&1 &";
@@ -198,7 +197,7 @@ void ClusterWidget::onStopServer()
         }
     }
 
-    string cmdStopServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
+    std::string cmdStopServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
 
     cmdStopServer = cmdStopServer + " killall yarpserver &";
 
@@ -229,7 +228,7 @@ void ClusterWidget::onKillServer()
 {
     updateServerEntries();
 
-    string cmdKillServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
+    std::string cmdKillServer = getSSHCmd(cluster.user, cluster.nsNode, cluster.ssh_options);
 
     cmdKillServer = cmdKillServer + " killall -9 yarpserver &";
 
@@ -254,7 +253,7 @@ void ClusterWidget::onRunSelected()
     {
         int itr = it->text(6).toInt();
         ClusterNode node = cluster.nodes[itr];
-        string portName = node.name;
+        std::string portName = node.name;
 
         if (portName.find('/') == std::string::npos)
         {
@@ -266,7 +265,7 @@ void ClusterWidget::onRunSelected()
             continue;
         }
 
-        string cmdRunYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
+        std::string cmdRunYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
         if (node.display)
         {
             cmdRunYarprun.append(" 'export DISPLAY=").append(node.displayValue).append(" && ");
@@ -313,13 +312,13 @@ void ClusterWidget::onStopSelected()
         {
             continue;
         }
-        string portName = node.name;
+        std::string portName = node.name;
         if (portName.find('/') == std::string::npos)
         {
             portName.insert(0, 1, '/');
         }
 
-        string cmdStopYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
+        std::string cmdStopYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
 
         cmdStopYarprun.append(" yarprun --exit --on ").append(portName).append(" &");
 
@@ -351,7 +350,7 @@ void ClusterWidget::onKillSelected()
             continue;
         }
 
-        string cmdKillYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
+        std::string cmdKillYarprun = getSSHCmd(node.user, node.address, node.ssh_options);
 
         cmdKillYarprun.append(" killall -9 yarprun &");
 
@@ -396,7 +395,7 @@ void ClusterWidget::onExecute()
     auto node = *nodeItr;
     auto command = ui->lineEditExecute->text().toStdString();
 
-    string cmdExecute = getSSHCmd(node.user, node.address, node.ssh_options);
+    std::string cmdExecute = getSSHCmd(node.user, node.address, node.ssh_options);
 
     cmdExecute.append(" ").append(command);
 
@@ -467,9 +466,9 @@ void ClusterWidget::addRow(const std::string& name,const std::string& display,
 
 }
 
-std::string ClusterWidget::getSSHCmd(const string &user, const string &host, const string &ssh_options)
+std::string ClusterWidget::getSSHCmd(const std::string &user, const std::string &host, const std::string &ssh_options)
 {
-    string cmd;
+    std::string cmd;
     cmd = "ssh -f";
     if (!ssh_options.empty())
     {
@@ -489,7 +488,7 @@ std::string ClusterWidget::getSSHCmd(const string &user, const string &host, con
 
 bool ClusterWidget::checkNameserver()
 {
-    string name = ui->lineEditNs->text().toStdString();
+    std::string name = ui->lineEditNs->text().toStdString();
 
     if (name.empty())
     {
@@ -537,9 +536,9 @@ bool ClusterWidget::checkNameserver()
     }
 }
 
-bool ClusterWidget::checkNode(const string &name)
+bool ClusterWidget::checkNode(const std::string &name)
 {
-    string portname = name;
+    std::string portname = name;
     if (portname.find('/') == std::string::npos)
     {
         portname = "/" + portname;

@@ -11,7 +11,6 @@
 
 #define DEFAULT_THREAD_PERIOD   0.010 //s
 
-using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -45,12 +44,12 @@ bool JoypadCtrlParser::configure(yarp::dev::IJoypadController* interface)
         ret = false;
     }
 
-    countGetters.insert(make_pair(VOCAB_BUTTON,    &IJoypadController::getButtonCount));
-    countGetters.insert(make_pair(VOCAB_HAT,       &IJoypadController::getHatCount));
-    countGetters.insert(make_pair(VOCAB_TRACKBALL, &IJoypadController::getTrackballCount));
-    countGetters.insert(make_pair(VOCAB_AXIS,      &IJoypadController::getAxisCount));
-    countGetters.insert(make_pair(VOCAB_STICK,     &IJoypadController::getStickCount));
-    countGetters.insert(make_pair(VOCAB_TOUCH,     &IJoypadController::getTouchSurfaceCount));
+    countGetters.insert(std::make_pair(VOCAB_BUTTON,    &IJoypadController::getButtonCount));
+    countGetters.insert(std::make_pair(VOCAB_HAT,       &IJoypadController::getHatCount));
+    countGetters.insert(std::make_pair(VOCAB_TRACKBALL, &IJoypadController::getTrackballCount));
+    countGetters.insert(std::make_pair(VOCAB_AXIS,      &IJoypadController::getAxisCount));
+    countGetters.insert(std::make_pair(VOCAB_STICK,     &IJoypadController::getStickCount));
+    countGetters.insert(std::make_pair(VOCAB_TOUCH,     &IJoypadController::getTouchSurfaceCount));
 
     return ret;
 }
@@ -526,7 +525,7 @@ bool JoypadControlServer::openPorts()
             {}
         };
 
-        vector<solver> getters;
+        std::vector<solver> getters;
 
         getters.emplace_back(&IJoypadController::getAxisCount,         &m_portAxis     );
         getters.emplace_back(&IJoypadController::getButtonCount,       &m_portButtons  );
@@ -566,7 +565,7 @@ bool JoypadControlServer::openPorts()
 
 void JoypadControlServer::profile()
 {
-    string       message;
+    std::string       message;
     unsigned int count;
 
     message = "Axes: ";
@@ -575,7 +574,7 @@ void JoypadControlServer::profile()
     {
         double data;
         m_device->getAxis(i, data);
-        message += to_string(data) + " ";
+        message += std::to_string(data) + " ";
     }
     yCInfo(JOYPADCONTROLSERVER) << message;
 
@@ -585,7 +584,7 @@ void JoypadControlServer::profile()
     {
         unsigned char data;
         m_device->getHat(i, data);
-        message += to_string(data) + " ";
+        message += std::to_string(data) + " ";
     }
     yCInfo(JOYPADCONTROLSERVER) << message;
 
@@ -595,7 +594,7 @@ void JoypadControlServer::profile()
     {
         float data;
         m_device->getButton(i, data);
-        message += to_string(data) + " ";
+        message += std::to_string(data) + " ";
     }
     yCInfo(JOYPADCONTROLSERVER) << message;
 
@@ -605,10 +604,10 @@ void JoypadControlServer::profile()
     {
         Vector data;
         m_device->getStick(i, data, yarp::dev::IJoypadController::JypCtrlcoord_CARTESIAN);
-        message += "n_" + to_string(i) + ": ";
+        message += "n_" + std::to_string(i) + ": ";
         for (size_t j = 0; j < data.size(); ++j)
         {
-            message += to_string(data[j]) + " ";
+            message += std::to_string(data[j]) + " ";
         }
         message += "\n";
 
@@ -621,10 +620,10 @@ void JoypadControlServer::profile()
     {
         Vector data;
         m_device->getTrackball(i, data);
-        message += "n_" + to_string(i) + ": ";
+        message += "n_" + std::to_string(i) + ": ";
         for (size_t j = 0; j < data.size(); ++j)
         {
-            message += to_string(data[j]) + " ";
+            message += std::to_string(data[j]) + " ";
         }
         message += "\n";
     }
@@ -635,10 +634,10 @@ void JoypadControlServer::profile()
     {
         Vector data;
         m_device->getTouch(i, data);
-        message += "n_" + to_string(i) + ": ";
+        message += "n_" + std::to_string(i) + ": ";
         for (size_t j = 0; j < data.size(); ++j)
         {
-            message += to_string(data[j]) + " ";
+            message += std::to_string(data[j]) + " ";
         }
         message += "\n";
     }
@@ -866,7 +865,7 @@ bool JoypadControlServer::close()
     }
 
     // Closing port
-    vector<JoypadControl::LoopablePort*> portv;
+    std::vector<JoypadControl::LoopablePort*> portv;
     portv.push_back(&m_portButtons);
     portv.push_back(&m_portAxis);
     portv.push_back(&m_portStick);

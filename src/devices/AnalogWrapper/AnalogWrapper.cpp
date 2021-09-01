@@ -13,7 +13,6 @@
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 
 YARP_LOG_COMPONENT(ANALOGWRAPPER, "yarp.devices.AnalogWrapper")
@@ -832,8 +831,8 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                         return false;
                     }
 
-                    if (Network::exists(streamingPortName + "/" + string(ports->get(k).asString()) + "/rpc:i")
-                        || Network::exists(streamingPortName + "/" + string(ports->get(k).asString())))
+                    if (Network::exists(streamingPortName + "/" + std::string(ports->get(k).asString()) + "/rpc:i")
+                        || Network::exists(streamingPortName + "/" + std::string(ports->get(k).asString())))
                     {
                         yCError(ANALOGWRAPPER) << "AnalogWrapper: unable to open the analog server, address conflict";
                         return false;
@@ -856,7 +855,7 @@ bool AnalogWrapper::initialize_YARP(yarp::os::Searchable &params)
                     tmpPorts[k].length = portChannels;
                     tmpPorts[k].offset = wBase;
                     yCDebug(ANALOGWRAPPER) << "opening port " << ports->get(k).asString().c_str();
-                    tmpPorts[k].port_name = streamingPortName+ "/" + string(ports->get(k).asString());
+                    tmpPorts[k].port_name = streamingPortName+ "/" + std::string(ports->get(k).asString());
 
                     sumOfChannels+=portChannels;
                 }

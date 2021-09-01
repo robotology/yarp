@@ -16,7 +16,6 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::impl;
 using namespace yarp::sig;
-using namespace std;
 
 
 inline void appendTimeStamp(Bottle& bot, Stamp& st)
@@ -1200,7 +1199,7 @@ void RPCMessagesParser::handleRemoteVariablesMsg(const yarp::os::Bottle& cmd, ya
         switch (action) {
         case VOCAB_VARIABLE: {
             Bottle btail = cmd.tail().tail().tail().tail(); // remove the first four elements
-            string s = btail.toString();
+            std::string s = btail.toString();
             *ok = rpc_IVar->setRemoteVariable(cmd.get(3).asString(), btail);
         } break;
 

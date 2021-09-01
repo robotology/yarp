@@ -29,7 +29,6 @@
 
 
 using namespace yarp::manager;
-using namespace std;
 
 
 /**
@@ -352,12 +351,12 @@ bool Manager::prepare(bool silent)
         exe->setPostStopWait((*itr)->getPostStopWait());
         exe->setOriginalPostExecWait((*itr)->getPostExecWait());
         exe->setOriginalPostStopWait((*itr)->getPostStopWait());
-        string env;
+        std::string env;
         if ((*itr)->getPrefix() && strlen((*itr)->getPrefix())) {
-            env = string("YARP_PORT_PREFIX=") + string((*itr)->getPrefix());
+            env = std::string("YARP_PORT_PREFIX=") + std::string((*itr)->getPrefix());
         }
         if ((*itr)->getEnvironment() && strlen((*itr)->getEnvironment())) {
-            env += (env.length()) ? (string(";") + (*itr)->getEnvironment()) : (*itr)->getEnvironment();
+            env += (env.length()) ? (std::string(";") + (*itr)->getEnvironment()) : (*itr)->getEnvironment();
         }
         exe->setEnv(env.c_str());
 
@@ -481,7 +480,7 @@ bool Manager::updateConnection(unsigned int id, const char* from,
     return true;
 }
 
-Node* Manager::getNode(string appName)
+Node* Manager::getNode(std::string appName)
 {
     Node* node = knowledge.getNode(appName);
     return node;
@@ -506,9 +505,9 @@ bool Manager::exist(unsigned int id)
         {
             //YarpBroker broker;
             //broker.init();
-            string strPort = res->getName();
+            std::string strPort = res->getName();
             if (strPort[0] != '/') {
-                strPort = string("/") + strPort;
+                strPort = std::string("/") + strPort;
             }
             if(dynamic_cast<ResYarpPort*>(res))
             {
@@ -557,7 +556,7 @@ bool Manager::updateResources()
     broker.init();
 
     // finding all available yarp ports
-    vector<string> ports;
+    std::vector<std::string> ports;
     broker.getAllPorts(ports);
 
     ResourcePContainer allresources = knowledge.getResources();
@@ -586,7 +585,7 @@ bool Manager::updateResources()
                 for(int i=0; i<comp->peripheralCount(); i++)
                 {
                     auto* res = dynamic_cast<ResYarpPort*>(&comp->getPeripheralAt(i));
-                    if(res && (string(res->getName()) == string(resport.getName())))
+                    if(res && (std::string(res->getName()) == std::string(resport.getName())))
                     {
                         res->setAvailability(true);
                         bfound = true;
@@ -628,9 +627,9 @@ bool Manager::updateResource(GenericResource* resource)
     }
 
     yarp::os::SystemInfoSerializer info;
-    string strServer = comp->getName();
+    std::string strServer = comp->getName();
     if (strServer[0] != '/') {
-        strServer = string("/") + strServer;
+        strServer = std::string("/") + strServer;
     }
     if(!broker.getSystemInfo(strServer.c_str(), info))
     {

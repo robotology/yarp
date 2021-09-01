@@ -10,7 +10,6 @@
 #include <yarp/os/YarpPluginSelector.h>
 #include <yarp/os/impl/RFModuleFactory.h>
 
-using namespace std;
 using namespace yarp::os;
 
 class RFModuleSelector :
@@ -35,9 +34,9 @@ class RFPlugin::Private
 public:
     Private() = default;
 
-    string alias;
-    string name;
-    string command;
+    std::string alias;
+    std::string name;
+    std::string command;
     int threadID{0};
     SharedRFPlugin* shared{nullptr};
 
@@ -58,7 +57,7 @@ RFPlugin::~RFPlugin()
     delete mPriv;
 }
 
-string RFPlugin::getCmd()
+std::string RFPlugin::getCmd()
 {
     return mPriv->command;
 }
@@ -94,13 +93,13 @@ std::pair<int, char**> str2ArgcArgv(char* str)
         p2 = strtok(nullptr, " ");
     }
     argv[argc] = nullptr;
-    return make_pair(argc, argv);
+    return std::make_pair(argc, argv);
 }
 
-bool RFPlugin::open(const string& inCommand)
+bool RFPlugin::open(const std::string& inCommand)
 {
     ResourceFinder rf;
-    string name = inCommand.substr(0, inCommand.find(' '));
+    std::string name = inCommand.substr(0, inCommand.find(' '));
 
     char* str = new char[inCommand.size() + 1];
     memcpy(str, inCommand.c_str(), inCommand.size());

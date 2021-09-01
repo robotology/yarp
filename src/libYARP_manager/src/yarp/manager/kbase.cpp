@@ -13,7 +13,6 @@
 #include <cstring>
 
 
-using namespace std;
 using namespace yarp::manager;
 
 
@@ -78,11 +77,11 @@ bool KnowledgeBase::addApplication(Application* app, char** szAppName_, bool mod
 {
     __CHECK_NULLPTR(app);
     ErrorLogger* logger  = ErrorLogger::Instance();
-    static map<string, int> mapId;
+    static std::map<std::string, int> mapId;
     app->setLabel(app->getName());
     if(kbGraph.hasNode(app))
     {
-        if (mapId.find(string(app->getName())) == mapId.end()) {
+        if (mapId.find(std::string(app->getName())) == mapId.end()) {
             mapId[app->getName()] = 1;
         } else {
             mapId[app->getName()] = mapId[app->getName()] + 1;
@@ -269,7 +268,7 @@ const ResourcePContainer& KnowledgeBase::getResources(Application* parent)
         {
             bool bHas = false;
             for (auto& dummyResource : dummyResources) {
-                if(string(dummyResource->getName()) == string(res->getName()))
+                if(std::string(dummyResource->getName()) == std::string(res->getName()))
                 {
                     bHas = true;
                     break;
@@ -288,7 +287,7 @@ const ResourcePContainer& KnowledgeBase::getResources(Application* parent)
         {
             bool bHas = false;
             for (auto& dummyResource : dummyResources) {
-                if(string(dummyResource->getName()) == string(res->getName()))
+                if(std::string(dummyResource->getName()) == std::string(res->getName()))
                 {
                     bHas = true;
                     break;
@@ -355,7 +354,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
     for(int i=0; i<application->iapplicationCount(); i++)
     {
         ApplicationInterface interfaceApp = application->getIapplicationAt(i);
-        if(string(interfaceApp.getName()) == string(application->getName()))
+        if(std::string(interfaceApp.getName()) == std::string(application->getName()))
         {
             OSTRINGSTREAM msg;
             msg<<"Application "<<interfaceApp.getName()<<" cannot be called from itself.";
@@ -373,7 +372,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
             else
             {
 
-                if (appList.find(string(interfaceApp.getName())) == appList.end()) {
+                if (appList.find(std::string(interfaceApp.getName())) == appList.end()) {
                     appList[interfaceApp.getName()] = 1;
                 }
                 OSTRINGSTREAM newname;
@@ -388,8 +387,8 @@ bool KnowledgeBase::makeupApplication(Application* application)
                 // adding applicattion prefix to child application
                 if( strlen(application->getPrefix()) )
                 {
-                    string strPrefix = string(application->getPrefix()) +
-                                       string(interfaceApp.getPrefix());
+                    std::string strPrefix = std::string(application->getPrefix()) +
+                                       std::string(interfaceApp.getPrefix());
                     interfaceApp.setPrefix(strPrefix.c_str());
                 }
 
@@ -410,7 +409,7 @@ bool KnowledgeBase::makeupApplication(Application* application)
     /**
      * loading modules
      */
-    //map<string, int> modList;
+    //std::map<std::string, int> modList;
     for(int i=0; i<application->imoduleCount(); i++)
     {
         ModuleInterface &mod = application->getImoduleAt(i);
@@ -428,13 +427,13 @@ bool KnowledgeBase::makeupApplication(Application* application)
         cnn->setOwner(application);
         if(!cnn->isExternalFrom())
         {
-            string strPort = string(application->getPrefix()) + string(cnn->from());
+            std::string strPort = std::string(application->getPrefix()) + std::string(cnn->from());
             cnn->setFrom(strPort.c_str());
         }
 
         if(!cnn->isExternalTo())
         {
-            string strPort = string(application->getPrefix()) + string(cnn->to());
+            std::string strPort = std::string(application->getPrefix()) + std::string(cnn->to());
             cnn->setTo(strPort.c_str());
         }
     }
@@ -483,7 +482,7 @@ bool KnowledgeBase::setModulePrefix(Module* module, const char* szPrefix, bool u
         InputData* input = dynamic_cast<InputData*>(module->getLinkAt(i).to());
         if(input)
         {
-            string strPort = string(szPrefix) + string(input->getPort());
+            std::string strPort = std::string(szPrefix) + std::string(input->getPort());
             input->setPort(strPort.c_str());
         }
     }
@@ -496,7 +495,7 @@ bool KnowledgeBase::setModulePrefix(Module* module, const char* szPrefix, bool u
             Module* producer = dynamic_cast<Module*>(output->getLinkAt(0).to());
             if(producer == module)
             {
-                string strPort = string(szPrefix) + string(output->getPort());
+                std::string strPort = std::string(szPrefix) + std::string(output->getPort());
                 output->setPort(strPort.c_str());
             }
         }
@@ -523,7 +522,7 @@ bool KnowledgeBase::setApplicationPrefix(Application* application, const char* s
         auto* nestedApp = dynamic_cast<Application*>(application->getLinkAt(i).to());
         if(nestedApp)
         {
-            string strPrefix = string(szPrefix) + string(nestedApp->getBasePrefix());
+            std::string strPrefix = std::string(szPrefix) + std::string(nestedApp->getBasePrefix());
             setApplicationPrefix(nestedApp, strPrefix.c_str(), false);
         }
         else
@@ -531,7 +530,7 @@ bool KnowledgeBase::setApplicationPrefix(Application* application, const char* s
              auto* module = dynamic_cast<Module*>(application->getLinkAt(i).to());
              if(module)
              {
-                string strPrefix = string(szPrefix) + string(module->getBasePrefix());
+                std::string strPrefix = std::string(szPrefix) + std::string(module->getBasePrefix());
                 setModulePrefix(module, strPrefix.c_str(), false);
              }
         }
@@ -546,13 +545,13 @@ bool KnowledgeBase::setApplicationPrefix(Application* application, const char* s
         Connection* cnn = &application->getConnectionAt(i);
         if(!cnn->isExternalFrom())
         {
-            string strPort = string(szPrefix) + string(cnn->from());
+            std::string strPort = std::string(szPrefix) + std::string(cnn->from());
             cnn->setFrom(strPort.c_str());
         }
 
         if(!cnn->isExternalTo())
         {
-            string strPort = string(szPrefix) + string(cnn->to());
+            std::string strPort = std::string(szPrefix) + std::string(cnn->to());
             cnn->setTo(strPort.c_str());
         }
     }
@@ -650,7 +649,7 @@ bool KnowledgeBase::removeConnectionFromApplication(Application* application, Co
 
 const std::string KnowledgeBase::getUniqueAppID(Application* parent, const char* szAppName)
 {
-    if (appList.find(string(szAppName)) == appList.end()) {
+    if (appList.find(std::string(szAppName)) == appList.end()) {
         appList[szAppName] = 1;
     }
     OSTRINGSTREAM newname;
@@ -667,7 +666,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
     Application* repapp = nullptr;
 
     ErrorLogger* logger  = ErrorLogger::Instance();
-    if(string(interfaceApp.getName()) == string(application->getName()))
+    if(std::string(interfaceApp.getName()) == std::string(application->getName()))
     {
         OSTRINGSTREAM msg;
         msg<<"Application "<<interfaceApp.getName()<<" cannot be called from itself.";
@@ -684,7 +683,7 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
         }
         else
         {
-            if (appList.find(string(interfaceApp.getName())) == appList.end()) {
+            if (appList.find(std::string(interfaceApp.getName())) == appList.end()) {
                 appList[interfaceApp.getName()] = 1;
             }
             OSTRINGSTREAM newname;
@@ -697,8 +696,8 @@ Application* KnowledgeBase::addIApplicationToApplication(Application* applicatio
             // adding application prefix to child application
             if( strlen(application->getPrefix()) )
             {
-                string strPrefix = string(application->getPrefix()) +
-                                   string(interfaceApp.getPrefix());
+                std::string strPrefix = std::string(application->getPrefix()) +
+                                   std::string(interfaceApp.getPrefix());
                 interfaceApp.setPrefix(strPrefix.c_str());
             }
 
@@ -724,7 +723,7 @@ Module* KnowledgeBase::addIModuleToApplication(Application* application,
 
     Module* module;
 
-    if (application->modList.find(string(mod.getName())) == application->modList.end()) {
+    if (application->modList.find(std::string(mod.getName())) == application->modList.end()) {
         application->modList[mod.getName()] = 1;
     }
     OSTRINGSTREAM newname;
@@ -747,8 +746,8 @@ Module* KnowledgeBase::addIModuleToApplication(Application* application,
     // adding application prefix to module prefix
     if( strlen(application->getPrefix()) )
     {
-        string strPrefix = string(application->getPrefix()) +
-                           string(mod.getPrefix());
+        std::string strPrefix = std::string(application->getPrefix()) +
+                           std::string(mod.getPrefix());
         mod.setPrefix(strPrefix.c_str());
     }
 
@@ -852,7 +851,7 @@ GenericResource* KnowledgeBase::findResByName(Graph& graph, const char* szName)
     {
         auto* res = dynamic_cast<GenericResource*>(*itr);
         if (res) {
-            if (string(res->getName()) == string(szName)) {
+            if (std::string(res->getName()) == std::string(szName)) {
                 return res;
             }
         }
@@ -900,7 +899,7 @@ bool KnowledgeBase::reasolveDependency(const char* szAppName,
     if(!app)
     {
         OSTRINGSTREAM msg;
-        msg<<"Application "<<string(szAppName)<<" not found.";
+        msg<<"Application "<<std::string(szAppName)<<" not found.";
         logger->addError(msg.str().c_str());
         mainApplication = nullptr;
         return false;
@@ -1415,10 +1414,10 @@ bool KnowledgeBase::moduleCompleteness(Module* module)
         const char* szType = module->getInputAt(i).getName();
         const char* szPort = module->getInputAt(i).getPort();
         if (!strlen(szType)) {
-            logger->addWarning(string(module->getName()) + string(" has an input with no type."));
+            logger->addWarning(std::string(module->getName()) + std::string(" has an input with no type."));
         }
         if (!strlen(szPort)) {
-            logger->addWarning(string(module->getName()) + string(" has an input with no port."));
+            logger->addWarning(std::string(module->getName()) + std::string(" has an input with no port."));
         }
     }
 
@@ -1428,10 +1427,10 @@ bool KnowledgeBase::moduleCompleteness(Module* module)
         const char* szType = module->getOutputAt(i).getName();
         const char* szPort = module->getOutputAt(i).getPort();
         if (!strlen(szType)) {
-            logger->addWarning(string(module->getName()) + string(" has an output with no type."));
+            logger->addWarning(std::string(module->getName()) + std::string(" has an output with no type."));
         }
         if (!strlen(szPort)) {
-            logger->addWarning(string(module->getName()) + string(" has an output with no port."));
+            logger->addWarning(std::string(module->getName()) + std::string(" has an output with no port."));
         }
     }
     return true;
@@ -1662,7 +1661,7 @@ bool KnowledgeBase::checkConsistency()
     return true;
 }
 
-Node* KnowledgeBase::getNode(string appName)
+Node* KnowledgeBase::getNode(std::string appName)
 {
     return kbGraph.getNode(appName.c_str());
 }
@@ -1861,11 +1860,11 @@ const char* KnowledgeBase::createDataLabel(const char* modlabel,
                                            const char* port,
                                            const char* postfix)
 {
-    static string name;
+    static std::string name;
     name.clear();
-    name = string(modlabel) + string(port);
+    name = std::string(modlabel) + std::string(port);
     if (postfix) {
-        name += string(postfix);
+        name += std::string(postfix);
     }
     return name.c_str();
 }

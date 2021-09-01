@@ -22,7 +22,6 @@
 
 #include <string>
 using namespace yarp::serversql::impl;
-using namespace std;
 
 
 static bool sql_enact(sqlite3 *db, const char *cmd) {
@@ -67,7 +66,7 @@ TripleSource *TripleSourceCreator::open(const char *filename,
     }
 
 
-    string create_main_table = "CREATE TABLE IF NOT EXISTS tags (\n\
+    std::string create_main_table = "CREATE TABLE IF NOT EXISTS tags (\n\
     id INTEGER PRIMARY KEY,\n\
     rid INTEGER,\n\
     ns TEXT,\n\
@@ -85,7 +84,7 @@ TripleSource *TripleSourceCreator::open(const char *filename,
         std::exit(1);
     }
 
-    string cmd_synch = string("PRAGMA synchronous=") + (cautious?"FULL":"OFF") + ";";
+    std::string cmd_synch = std::string("PRAGMA synchronous=") + (cautious?"FULL":"OFF") + ";";
     sql_enact(db,cmd_synch.c_str());
 
     sql_enact(db,"CREATE INDEX IF NOT EXISTS tagsRidNameValue on tags(rid,name,value);");

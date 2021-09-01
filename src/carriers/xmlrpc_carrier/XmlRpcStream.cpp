@@ -11,7 +11,6 @@
 #include <yarp/os/Value.h>
 
 using namespace yarp::os;
-using namespace std;
 using YarpXmlRpc::XmlRpcValue;
 
 Value toValue(XmlRpcValue& v, bool outer)
@@ -26,7 +25,7 @@ Value toValue(XmlRpcValue& v, bool outer)
         break;
     case XmlRpcValue::TypeString:
         {
-            string s = (string)v;
+            std::string s = (std::string)v;
             if (s.length()==0 || s[0]!='[') {
                 return Value(s);
             } else {
@@ -115,7 +114,7 @@ yarp::conf::ssize_t XmlRpcStream::read(Bytes& b)
             if (result2<=0) {
                 return result2;
             }
-            string s(buf,result2);
+            std::string s(buf,result2);
             yCTrace(XMLRPCCARRIER, "Giving %s to parser", s.c_str());
             if (sender) {
                 ok = client.read(s);

@@ -12,21 +12,20 @@
 
 using namespace yarp::os;
 using namespace yarp::serversql::impl;
-using namespace std;
 
 namespace {
 YARP_SERVERSQL_LOG_COMPONENT(ALLOCATORONTRIPLES, "yarp.serversql.impl.AllocatorOnTriples")
 } // namespace
 
 Contact AllocatorOnTriples::completePortName(const Contact& c) {
-    string name;
+    std::string name;
     Triple t;
     t.setNsNameValue("alloc","tmpid","*");
     TripleContext context;
     context.setRid(db->find(t, nullptr));
     if (context.rid>=0) {
         t.setNsNameValue("alloc","*","free");
-        list<Triple> match = db->query(t,&context);
+        std::list<Triple> match = db->query(t,&context);
         if (match.size()>0) {
             name = match.begin()->name;
         }
@@ -35,7 +34,7 @@ Contact AllocatorOnTriples::completePortName(const Contact& c) {
     if (name=="") {
         if (tmpid==-1) {
             t.setNsNameValue("alloc","tmpid","*");
-            list<Triple> lst = db->query(t, nullptr);
+            std::list<Triple> lst = db->query(t, nullptr);
             if (lst.size()>0) {
                 tmpid = atoi(lst.begin()->value.c_str());
             }
@@ -80,9 +79,9 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
     // we also try to keep port numbers stable for port names,
     // when possible.
 
-    string npref;
+    std::string npref;
     int pref = -1;
-    string nstring;
+    std::string nstring;
     int number = -1;
     Triple t;
     t.setNsNameValue("alloc","regid","*");
@@ -90,7 +89,7 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
     context.setRid(db->find(t, nullptr));
     if (context.rid>=0) {
         t.setNsNameValue("prefer","*",c.getName().c_str());
-        list<Triple> match = db->query(t,&context);
+        std::list<Triple> match = db->query(t,&context);
         if (match.size()>0) {
             npref = match.begin()->name;
             pref = atoi(npref.c_str());
@@ -107,7 +106,7 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
         if (regid==-1) {
             Triple t;
             t.setNsNameValue("alloc","regid","*");
-            list<Triple> lst = db->query(t, nullptr);
+            std::list<Triple> lst = db->query(t, nullptr);
             if (lst.size()>0) {
                 regid = atoi(lst.begin()->value.c_str());
             }
@@ -118,7 +117,7 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
         if (regid>=config.maxPortNumber && config.maxPortNumber!=0) {
             if (nstring == "") {
                 t.setNsNameValue("alloc","*","free");
-                list<Triple> match = db->query(t,&context);
+                std::list<Triple> match = db->query(t,&context);
                 if (match.size()>0) {
                     nstring = match.begin()->name;
                     number = atoi(nstring.c_str());
@@ -164,14 +163,14 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
         return c;
     }
 
-    string name;
+    std::string name;
     Triple t;
     t.setNsNameValue("alloc","mcastCursor","*");
     TripleContext context;
     context.setRid(db->find(t, nullptr));
     if (context.rid>=0) {
         t.setNsNameValue("alloc","*","free");
-        list<Triple> match = db->query(t,&context);
+        std::list<Triple> match = db->query(t,&context);
         if (match.size()>0) {
             name = match.begin()->name;
         }
@@ -180,7 +179,7 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
     if (name=="") {
         if (mcastCursor==-1) {
             t.setNsNameValue("alloc","mcastCursor","*");
-            list<Triple> lst = db->query(t, nullptr);
+            std::list<Triple> lst = db->query(t, nullptr);
             if (lst.size()>0) {
                 mcastCursor = atoi(lst.begin()->value.c_str());
             }
@@ -216,9 +215,9 @@ Contact AllocatorOnTriples::completeHost(const yarp::os::Contact& c) {
 
 
 bool AllocatorOnTriples::freePortResources(const yarp::os::Contact& c) {
-    string portName = c.getName();
+    std::string portName = c.getName();
     int portNumber = c.getPort();
-    string hostName = c.getHost();
+    std::string hostName = c.getHost();
 
     // free up automatic name for port, if one was allocated
     Triple t;

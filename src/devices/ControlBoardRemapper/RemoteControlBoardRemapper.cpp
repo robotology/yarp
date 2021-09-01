@@ -17,7 +17,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(REMOTECONTROLBOARDREMAPPER, "yarp.device.remotecontrolboardremapper")

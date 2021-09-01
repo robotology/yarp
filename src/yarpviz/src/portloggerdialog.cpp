@@ -15,7 +15,6 @@
 #include <yarp/profiler/NetworkProfiler.h>
 #include <QMessageBox>
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::profiler;
 using namespace yarp::profiler::graph;
@@ -86,7 +85,7 @@ void PortLoggerDialog::openCons()
         return;
     }
 
-    fstream file;
+    std::fstream file;
     file.open(filename.toStdString().c_str());
     if (!file.is_open()) {
         QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr("Cannot open the file for loading"));
@@ -94,7 +93,7 @@ void PortLoggerDialog::openCons()
     }
 
    ui->treeWidgetCons->clear();
-    string line;
+    std::string line;
     unsigned int count = 0;
     while(getline(file, line)) {
         count++;
@@ -255,7 +254,7 @@ void PortLoggerDialog::MyTimerSlot() {
 }
 
 bool PortLoggerDialog::saveLog(std::string filename, yarp::os::Bottle* samples) {
-    ofstream file;
+    std::ofstream file;
     file.open(filename.c_str());
     if(!file.is_open()) {
         return false;
@@ -263,7 +262,7 @@ bool PortLoggerDialog::saveLog(std::string filename, yarp::os::Bottle* samples) 
 
     for(size_t k=0; k<samples->size(); k++) {
         Bottle* smp = samples->get(k).asList();
-        file<<smp->toString().c_str()<<endl;
+        file<<smp->toString().c_str()<<'\n';
     }
 
     file.close();

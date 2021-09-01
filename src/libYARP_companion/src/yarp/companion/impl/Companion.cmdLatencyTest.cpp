@@ -22,7 +22,6 @@
 #include <vector>
 
 using namespace yarp::os;
-using namespace std;
 using yarp::companion::impl::Companion;
 
 
@@ -32,7 +31,7 @@ enum client_return_code_t { CLIENT_END_TEST = 0, CLIENT_CARRIER_ERROR = 1};
 enum server_return_code_t { SERVER_END_TEST = 0, SERVER_QUIT = 1,SERVER_ERROR =2 };
 
 server_return_code_t server(double server_wait, bool verbose = false);
-client_return_code_t client(int nframes, int payload_size, string proto, double pause, bool no_reply, string logfilename = "log_", bool verbose = false);
+client_return_code_t client(int nframes, int payload_size, std::string proto, double pause, bool no_reply, std::string logfilename = "log_", bool verbose = false);
 
 //------------------------------------------------------------------------------------------------------------------------------
 
@@ -40,7 +39,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
 {
     Property p;
     p.fromCommand(argc, argv, false);
-    string proto="tcp";
+    std::string proto="tcp";
 
     if (p.check("help") || argc==0)
     {
@@ -87,7 +86,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
             client_wait = p.find("client_wait").asFloat64();
         }
 
-        string logfilename = "log_";
+        std::string logfilename = "log_";
         if (p.check("logfile")) {
             logfilename = p.find("logfile").asString();
         }
@@ -262,7 +261,7 @@ server_return_code_t server(double server_wait, bool verbose)
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-client_return_code_t client(int nframes, int payload_size, string proto, double client_wait, bool no_reply, string logfilename, bool verbose)
+client_return_code_t client(int nframes, int payload_size, std::string proto, double client_wait, bool no_reply, std::string logfilename, bool verbose)
 {
     //the structure where to save the data
     struct stats

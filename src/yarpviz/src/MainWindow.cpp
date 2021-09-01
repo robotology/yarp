@@ -28,7 +28,6 @@
 #include <iomanip>
 #include <random>
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::profiler;
 using namespace yarp::profiler::graph;
@@ -169,7 +168,7 @@ void MainWindow::drawGraph(Graph &graph)
         QGVSubGraph *sgraph;
         if(dynamic_cast<MachineVertex*>(*itr))
         {
-            string hostname =  prop.find("hostname").asString();
+            std::string hostname =  prop.find("hostname").asString();
             if(layoutSubgraph) {
                 std::stringstream key;
                 key<<hostname;
@@ -181,13 +180,13 @@ void MainWindow::drawGraph(Graph &graph)
                     sgraph->setVertex(*itr);
                     //sgraph->setAttribute("label", prop.find("name").asString().c_str());
                     sgraph->setAttribute("color", "#FFFFFF");
-                    string sgraphLabel = prop.find("hostname").toString();
+                    std::string sgraphLabel = prop.find("hostname").toString();
                     int blankLength = std::max(int(sgraphLabel.length()/2.5),4);
                     blankLength = blankLength%2!=0 ? blankLength+1 : blankLength;
-                    string nodeS(size_t(blankLength/2), ' ');
+                    std::string nodeS(size_t(blankLength/2), ' ');
                     sgraphLabel = nodeS+sgraphLabel+nodeS;
                     sgraph->setAttribute("label", sgraphLabel.c_str());
-                    string host = prop.find("os").asString();
+                    std::string host = prop.find("os").asString();
                     if (host == "Linux") {
                         sgraph->setIcon(QImage(":/icons/resources/os-linux.png"));
                     } else if (host == "Windows") {
@@ -223,16 +222,16 @@ void MainWindow::drawGraph(Graph &graph)
         if(dynamic_cast<ProcessVertex*>(*itr) && !prop.find("hidden").asBool())
         {
             int randNum = rand()%(16777214 - 0 + 1) + 0;
-            stringstream hexStream;
+            std::stringstream hexStream;
             hexStream<<std::hex<< randNum;
-            string hexRandNum ="#" + hexStream.str();
-            string name =  std::string(prop.find("name").asString()) + std::to_string(countChild);
+            std::string hexRandNum ="#" + hexStream.str();
+            std::string name =  std::string(prop.find("name").asString()) + std::to_string(countChild);
             if(layoutSubgraph)
             {
                 std::stringstream key;
                 key<<prop.find("hostname").asString();
                 QGVSubGraph *sgraphParent = sceneSubGraphMap[key.str()];
-                if(sgraphParent == nullptr || (!ui->actionDebugMode->isChecked() && name.find("yarplogger") != string::npos))
+                if(sgraphParent == nullptr || (!ui->actionDebugMode->isChecked() && name.find("yarplogger") != std::string::npos))
                 {
                     continue;
                 }
@@ -249,8 +248,8 @@ void MainWindow::drawGraph(Graph &graph)
                          << " (" << prop.find("pid").asInt32() << ")";
             int blankLength = std::max(int(labelStream.str().length()/2.5),4);
             blankLength = blankLength%2!=0 ? blankLength+1 : blankLength;
-            string nodeS(size_t(blankLength/2), ' ');
-            string label = nodeS+labelStream.str()+nodeS;
+            std::string nodeS(size_t(blankLength/2), ' ');
+            std::string label = nodeS+labelStream.str()+nodeS;
             sgraph->setAttribute("shape", "box");
             sgraph->setAttribute("label", label.c_str());
             if(prop.check("color")) {
@@ -288,14 +287,14 @@ void MainWindow::drawGraph(Graph &graph)
 
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Property& prop = (*itr)->property;
-        string portName = prop.find("name").asString();
+        std::string portName = prop.find("name").asString();
         if(dynamic_cast<PortVertex*>(*itr)) {
             auto* pv = dynamic_cast<PortVertex*>(*itr);
             auto* v = (ProcessVertex*) pv->getOwner();
             if (ui->actionHideDisconnectedPorts->isChecked() && pv->property.find("orphan").asBool()) {
                 continue;
             }
-            if (!ui->actionDebugMode->isChecked() && (portName.find("/log") != string::npos || portName.find("/yarplogger") != string::npos)) {
+            if (!ui->actionDebugMode->isChecked() && (portName.find("/log") != std::string::npos || portName.find("/yarplogger") != std::string::npos)) {
                 continue;
             }
             std::stringstream key;
@@ -312,8 +311,8 @@ void MainWindow::drawGraph(Graph &graph)
 
             int blankLength = std::round(portName.length()/7);
             blankLength = blankLength%2!=0 ? blankLength+1 : blankLength;
-            string nodeS(size_t(blankLength/2), ' ');
-            string nodeName = nodeS+portName+nodeS;
+            std::string nodeS(size_t(blankLength/2), ' ');
+            std::string nodeName = nodeS+portName+nodeS;
             if(layoutSubgraph) {
                 key<<v->property.find("hostname").asString()<<v->property.find("pid").asInt32();
                 QGVSubGraph *sgraph = sceneSubGraphMap[key.str()];
@@ -365,8 +364,8 @@ void MainWindow::drawGraph(Graph &graph)
         const Vertex &v1 = (**itr);
         for(const auto& edge : v1.outEdges()) {
             const Vertex &v2 = edge.second();
-            string targetName = v2.property.find("name").asString();
-            if (!ui->actionDebugMode->isChecked() && targetName.find("/yarplogger") != string::npos) {
+            std::string targetName = v2.property.find("name").asString();
+            if (!ui->actionDebugMode->isChecked() && targetName.find("/yarplogger") != std::string::npos) {
                 continue;
             }
             //yInfo()<<"Drawing:"<<v1.property.find("name").asString()<<" -> "<<v2.property.find("name").asString();
@@ -380,13 +379,13 @@ void MainWindow::drawGraph(Graph &graph)
                 if(edge.property.find("type").asString() == "connection") {
                     //QGVEdge* gve = scene->addEdge(nodeSet[&v1], nodeSet[&v2],
                     //                               edge.property.find("carrier").asString().c_str());
-                    string label;
+                    std::string label;
                     if(!ui->actionHideConnectionsLable->isChecked())
                     {
                         label = edge.property.find("carrier").asString();
                         int blankLength = std::max(int(label.length()/2.5),4);
                         blankLength = blankLength%2!=0 ? blankLength+1 : blankLength;
-                        string nodeS(size_t(blankLength/2), ' ');
+                        std::string nodeS(size_t(blankLength/2), ' ');
                         label = nodeS+label+nodeS;
                     }
                     QGVEdge* gve = scene->addEdge((QGVNode*)((GraphicVertex*)&v1)->getGraphicItem(),
@@ -580,7 +579,7 @@ void MainWindow::onProfileYarpNetwork() {
     for(size_t i=0; i<ports.size(); i++) {
         NetworkProfiler::PortDetails info;
         std::string portname = ports[i].find("name").asString();
-        std::string msg = string("Checking ") + portname + "...";
+        std::string msg = std::string("Checking ") + portname + "...";
         messages.append(QString(msg.c_str()));
         if (NetworkProfiler::getPortDetails(portname, info)) {
             portsInfo.push_back(info);
@@ -694,8 +693,8 @@ void MainWindow::populateTreeWidget(){
     for(itr = vertices.begin(); itr!=vertices.end(); itr++) {
         const Property& prop = (*itr)->property;
         if(dynamic_cast<ProcessVertex*>(*itr)) {
-            string processName = prop.find("name").asString();
-            if(!ui->actionDebugMode->isChecked() && processName.find("yarplogger") != string::npos)
+            std::string processName = prop.find("name").asString();
+            if(!ui->actionDebugMode->isChecked() && processName.find("yarplogger") != std::string::npos)
             {
                 continue;
             }
@@ -704,13 +703,13 @@ void MainWindow::populateTreeWidget(){
             moduleItem->check(true);
         }
         else if(dynamic_cast<PortVertex*>(*itr) && !ui->actionHidePorts->isChecked()) {
-            string portName = prop.find("name").asString();
+            std::string portName = prop.find("name").asString();
             if(ui->actionHideDisconnectedPorts->isChecked()){
                 if (prop.check("orphan")) {
                     continue;
                 }
             }
-            if (!ui->actionDebugMode->isChecked() && (portName.find("/log") != string::npos || portName.find("/yarplogger") != string::npos)) {
+            if (!ui->actionDebugMode->isChecked() && (portName.find("/log") != std::string::npos || portName.find("/yarplogger") != std::string::npos)) {
                 continue;
             }
             auto* portItem =  new NodeWidgetItem(portParentItem, (*itr), PORT);
@@ -843,7 +842,7 @@ void MainWindow::onExportConList() {
         return;
     }
 
-    ofstream file;
+    std::ofstream file;
     file.open(filename.toStdString().c_str());
     if(!file.is_open()) {
         QMessageBox::critical(nullptr, QObject::tr("Error"), QObject::tr("Cannot open the file for saving"));
@@ -864,7 +863,7 @@ void MainWindow::onExportConList() {
                     bt.addString(v1.property.find("name").asString());
                     bt.addString(v2.property.find("name").asString());
                     bt.addString(edge.property.find("carrier").asString());
-                    file<<bt.toString().c_str()<<endl;
+                    file<<bt.toString().c_str()<<'\n';
                     //yInfo()<<v1.property.find("name").asString()<<"->"<<v2.property.find("name").asString();
                 }
             }

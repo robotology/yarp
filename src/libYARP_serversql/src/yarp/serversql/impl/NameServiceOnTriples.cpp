@@ -17,7 +17,6 @@
 
 using namespace yarp::os;
 using namespace yarp::serversql::impl;
-using namespace std;
 
 namespace {
 YARP_SERVERSQL_LOG_COMPONENT(NAMESERVICEONTRIPLES, "yarp.serversql.impl.NameServiceOnTriples")
@@ -42,7 +41,7 @@ Contact NameServiceOnTriples::query(const std::string& portName,
         if (!std::string(prefix).empty()) {
             printf("LOOKING AT IPS FOR %s\n", prefix.c_str());
             t.setNameValue("ips","*");
-            list<Triple> lst = act.mem.query(t,&context);
+            std::list<Triple> lst = act.mem.query(t,&context);
             for (auto& it : lst) {
                 printf("LOOKING AT IPS %s\n", it.value.c_str());
                 if (it.value.find(prefix)==0) {
@@ -53,7 +52,7 @@ Contact NameServiceOnTriples::query(const std::string& portName,
         }
         if (host.empty()) {
             t.setNameValue("host","*");
-            list<Triple> lst = act.mem.query(t,&context);
+            std::list<Triple> lst = act.mem.query(t,&context);
             if (!lst.empty()) {
                 host = lst.begin()->value;
             }
@@ -62,7 +61,7 @@ Contact NameServiceOnTriples::query(const std::string& portName,
             host = "localhost";
         }
         t.setNameValue("socket","*");
-        list<Triple> lst = act.mem.query(t,&context);
+        std::list<Triple> lst = act.mem.query(t,&context);
         int sock = 10000;
         if (!lst.empty()) {
             sock = atoi(lst.begin()->value.c_str());
@@ -360,7 +359,7 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act)
     context.setRid(result);
     if (result!=-1) {
         t.setNameValue("owns","*");
-        list<Triple> lst = act.mem.query(t,&context);
+        std::list<Triple> lst = act.mem.query(t,&context);
         unlock();
         for (auto& it : lst) {
             act.cmd.clear();
@@ -403,7 +402,7 @@ bool NameServiceOnTriples::cmdListRunners(NameTripleState& act)
     t.setNameValue("port","*");
 
     // obtain all ports names
-    list<Triple> lst = act.mem.query(t, nullptr);
+    std::list<Triple> lst = act.mem.query(t, nullptr);
     act.nestedMode = true;
 
     for (auto& it : lst)
@@ -423,7 +422,7 @@ bool NameServiceOnTriples::cmdListRunners(NameTripleState& act)
         TripleContext context;
         context.setRid(rid);
         t.setNameValue("yarprun","true");
-        list<Triple> lst = act.mem.query(t,&context);
+        std::list<Triple> lst = act.mem.query(t,&context);
 
         if (!lst.empty())
         { // if the port is a runner, do a classic query to build the reply with complete information about the port
@@ -452,7 +451,7 @@ bool NameServiceOnTriples::cmdList(NameTripleState& act)
     if (act.cmd.size()>1) {
         prefix = act.cmd.get(1).asString();
     }
-    list<Triple> lst = act.mem.query(t, nullptr);
+    std::list<Triple> lst = act.mem.query(t, nullptr);
     act.nestedMode = true;
     for (auto& it : lst) {
         if (prefix.empty()) {
@@ -536,7 +535,7 @@ bool NameServiceOnTriples::cmdGet(NameTripleState& act)
     TripleContext context;
     context.setRid(result);
     t.setNameValue(key.c_str(),"*");
-    list<Triple> lst = act.mem.query(t,&context);
+    std::list<Triple> lst = act.mem.query(t,&context);
     Bottle& q = (act.bottleMode?act.reply:act.reply.addList());
     if (!act.bottleMode) {
         q.addString("port");
@@ -578,7 +577,7 @@ bool NameServiceOnTriples::cmdCheck(NameTripleState& act)
     TripleContext context;
     context.setRid(result);
     t.setNameValue(key.c_str(),"*");
-    list<Triple> lst = act.mem.query(t,&context);
+    std::list<Triple> lst = act.mem.query(t,&context);
     Bottle& q = act.reply.addList();
     q.addString("port");
     q.addString(port);

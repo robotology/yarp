@@ -18,7 +18,6 @@ using namespace RGBDImpl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 YARP_LOG_COMPONENT(RGBDSENSORNWSYARP, "yarp.devices.RgbdSensor_nws_yarp")
 
@@ -438,7 +437,7 @@ void RgbdSensor_nws_yarp::threadRelease()
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
-bool RgbdSensor_nws_yarp::setCamInfo(const string& frame_id, const UInt& seq, const SensorType& sensorType)
+bool RgbdSensor_nws_yarp::setCamInfo(const std::string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
     double phyF = 0.0;
     double fx = 0.0;
@@ -452,10 +451,10 @@ bool RgbdSensor_nws_yarp::setCamInfo(const string& frame_id, const UInt& seq, co
     double k3 = 0.0;
     double stamp = 0.0;
 
-    string                  distModel, currentSensor;
+    std::string                  distModel, currentSensor;
     UInt                    i;
     Property                camData;
-    vector<param<double> >  parVector;
+    std::vector<param<double> >  parVector;
     param<double>*          par;
     bool                    ok;
 
@@ -481,8 +480,8 @@ bool RgbdSensor_nws_yarp::setCamInfo(const string& frame_id, const UInt& seq, co
         return false;
     }
 
-    //std::vector<param<string> >     rosStringParam;
-    //rosStringParam.push_back(param<string>(nodeName, "asd"));
+    //std::vector<param<std::string> >     rosStringParam;
+    //rosStringParam.push_back(param<std::string>(nodeName, "asd"));
 
     parVector.emplace_back(phyF,"physFocalLength");
     parVector.emplace_back(fx,"focalLengthX");

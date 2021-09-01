@@ -25,7 +25,6 @@
 
 YARP_LOG_COMPONENT(FAKE_LASER, "yarp.devices.fakeLaser")
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
@@ -64,7 +63,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
         m_period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt32() / 1000.0;
     }
 
-    string string_test_mode = config.check("test", Value(string("use_pattern")), "string to select test mode").asString();
+    std::string string_test_mode = config.check("test", Value(std::string("use_pattern")), "string to select test mode").asString();
     if      (string_test_mode == "no_obstacles") { m_test_mode = NO_OBSTACLES; }
     else if (string_test_mode == "use_pattern") { m_test_mode = USE_PATTERN; }
     else if (string_test_mode == "use_mapfile") { m_test_mode = USE_MAPFILE; }
@@ -88,12 +87,12 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     }
     else if (m_test_mode == USE_MAPFILE)
     {
-        string map_file;
+        std::string map_file;
         if (config.check("map_context") && config.check("map_file"))
         {
             yarp::os::ResourceFinder rf;
-            string tmp_filename = config.find("map_file").asString();
-            string tmp_contextname = config.find("map_context").asString();
+            std::string tmp_filename = config.find("map_file").asString();
+            std::string tmp_contextname = config.find("map_context").asString();
             rf.setDefaultContext(tmp_contextname);
             rf.setDefaultConfigFile(tmp_filename);
             bool b = rf.configure(0, nullptr);
@@ -112,7 +111,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
         }
         else if (config.check("map_file"))
         {
-            map_file = config.check("map_file", Value(string("map.yaml")), "map filename").asString();
+            map_file = config.check("map_file", Value(std::string("map.yaml")), "map filename").asString();
         }
         else
         {
@@ -135,7 +134,7 @@ bool FakeLaser::open(yarp::os::Searchable& config)
 
         if (config.check("localization_port"))
         {
-            string localization_port_name = config.check("localization_port", Value(string("/fakeLaser/location:i")), "name of localization input port").asString();
+            std::string localization_port_name = config.check("localization_port", Value(std::string("/fakeLaser/location:i")), "name of localization input port").asString();
             m_loc_port = new yarp::os::BufferedPort<yarp::os::Bottle>;
             m_loc_port->open(localization_port_name);
             yCInfo(FAKE_LASER) << "Robot localization will be obtained from port" << localization_port_name;
@@ -145,8 +144,8 @@ bool FakeLaser::open(yarp::os::Searchable& config)
                  config.check("localization_server" ))
         {
             Property loc_options;
-            string localization_client_name = config.check("localization_client", Value(string("/fakeLaser/localizationClient")), "local name of localization client device").asString();
-            string localization_server_name = config.check("localization_server", Value(string("/localizationServer")), "the name of the remote localization server device").asString();
+            std::string localization_client_name = config.check("localization_client", Value(std::string("/fakeLaser/localizationClient")), "local name of localization client device").asString();
+            std::string localization_server_name = config.check("localization_server", Value(std::string("/localizationServer")), "the name of the remote localization server device").asString();
             loc_options.put("device", "localization2DClient");
             loc_options.put("local", localization_client_name);
             loc_options.put("remote", localization_server_name);

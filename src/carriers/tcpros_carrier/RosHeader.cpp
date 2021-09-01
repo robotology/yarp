@@ -12,7 +12,6 @@
 #include <yarp/os/NetType.h>
 
 using namespace yarp::os;
-using namespace std;
 
 void RosHeader::appendInt32(char *&buf,int x) {
     Bytes bytes(buf,4);
@@ -20,14 +19,14 @@ void RosHeader::appendInt32(char *&buf,int x) {
     buf += 4;
 }
 
-void RosHeader::appendString(char *&buf,const string& str) {
+void RosHeader::appendString(char *&buf,const std::string& str) {
     memcpy(buf,str.c_str(),str.length());
     buf += str.length();
 }
 
 
-string RosHeader::showMessage(string s) {
-    string result;
+std::string RosHeader::showMessage(std::string s) {
+    std::string result;
     for (char ch : s) {
         char buf[256];
         sprintf(buf, "%c (%#x) ", (ch>=' ')?ch:'.', *reinterpret_cast<unsigned char*>(&ch));
@@ -36,28 +35,28 @@ string RosHeader::showMessage(string s) {
     return result;
 }
 
-string RosHeader::writeHeader() {
+std::string RosHeader::writeHeader() {
     size_t len = 0;
     for (auto& it : data) {
-        string key = it.first;
-        string val = it.second;
+        std::string key = it.first;
+        std::string val = it.second;
         len += 4 + key.length() + 1 + val.length();
     }
-    string result(len,'\0');
+    std::string result(len,'\0');
     char *buf = (char *)result.c_str();
     for (auto& it : data) {
-        string key = it.first;
-        string val = it.second;
+        std::string key = it.first;
+        std::string val = it.second;
         appendInt32(buf,key.length()+1+val.length());
         appendString(buf,key);
-        appendString(buf,string("="));
+        appendString(buf,std::string("="));
         appendString(buf,val);
     }
     return result;
 }
 
 
-bool RosHeader::readHeader(const string& bin) {
+bool RosHeader::readHeader(const std::string& bin) {
     data.clear();
 
     unsigned int len = bin.length();
@@ -68,13 +67,13 @@ bool RosHeader::readHeader(const string& bin) {
         int slen = NetType::netInt(bytes);
         at += 4;
         len -= 4;
-        string keyval(at,slen);
+        std::string keyval(at,slen);
         size_t delim = keyval.find_first_of('=',0);
-        if (delim == string::npos) {
+        if (delim == std::string::npos) {
             yCWarning(TCPROSCARRIER, "Corrupt ROS header");
         }
-        string key = keyval.substr(0,delim);
-        string val = keyval.substr(delim+1);
+        std::string key = keyval.substr(0,delim);
+        std::string val = keyval.substr(delim+1);
         yCTrace(TCPROSCARRIER, "key %s => val %s\n", key.c_str(), val.c_str());
         data[key] = val;
         at += slen;
@@ -85,10 +84,10 @@ bool RosHeader::readHeader(const string& bin) {
 
 
 std::string RosHeader::toString() const {
-    string result;
+    std::string result;
     for (const auto& it : data) {
-        string key = it.first;
-        string val = it.second;
+        std::string key = it.first;
+        std::string val = it.second;
         result += key;
         result += "->";
         result += val;

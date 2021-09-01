@@ -15,7 +15,6 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::os;
 
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(RGBD_ROS_TOPIC, "yarp.device.RGBDSensorFromRosTopic")

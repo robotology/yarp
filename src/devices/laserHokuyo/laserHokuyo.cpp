@@ -21,7 +21,6 @@
 #define DEG2RAD M_PI/180.0
 #endif
 
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(LASERHOKUYO, "yarp.devices.laserHokuyo")
@@ -91,7 +90,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
         return false;
     }
     yarp::os::Searchable& serial_config = config.findGroup("SERIAL_PORT_CONFIGURATION");
-    string ss = serial_config.toString();
+    std::string ss = serial_config.toString();
     Property prop;
     prop.fromString(ss);
     prop.put("device", "serialport");
@@ -114,7 +113,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 
     Bottle b;
     Bottle b_ans;
-    string ans;
+    std::string ans;
 
     // *** Check if the URG device is present ***
     b.addString("SCIP2.0\n");
@@ -185,35 +184,35 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     //parsing the answer
     size_t found;
     found = ans.find("MODL");
-    if (found != string::npos) {
-        sensor_properties.MODL = string(ans.c_str() + found + 5);
+    if (found != std::string::npos) {
+        sensor_properties.MODL = std::string(ans.c_str() + found + 5);
     }
     found = ans.find("DMIN");
-    if (found != string::npos) {
+    if (found != std::string::npos) {
         sensor_properties.DMIN = atoi(ans.c_str() + found + 5);
     }
     found = ans.find("DMAX");
-    if (found != string::npos) {
+    if (found != std::string::npos) {
         sensor_properties.DMAX = atoi(ans.c_str() + found + 5);
     }
     found = ans.find("ARES");
-    if (found != string::npos) {
+    if (found != std::string::npos) {
         sensor_properties.ARES = atoi(ans.c_str() + found + 5);
     }
     found = ans.find("AMIN");
-    if (found != string::npos) {
+    if (found != std::string::npos) {
         sensor_properties.AMIN = atoi(ans.c_str() + found + 5);
     }
     found = ans.find("AMAX");
-    if (found != string::npos) {
+    if (found != std::string::npos) {
         sensor_properties.AMAX = atoi(ans.c_str() + found + 5);
     }
     found = ans.find("AFRT");
-    if (found != string::npos) {
+    if (found != std::string::npos) {
         sensor_properties.AFRT = atoi(ans.c_str() + found + 5);
     }
     found = ans.find("SCAN");
-    if (found != string::npos) {
+    if (found != std::string::npos) {
         sensor_properties.SCAN = atoi(ans.c_str() + found + 5);
     }
     b.clear();
@@ -514,7 +513,7 @@ void laserHokuyo::run()
     static double old;
     yarp::sig::Vector data_vector;
 
-    string data_text;
+    std::string data_text;
     double t1 = yarp::os::SystemClock::nowSystem();
     double t2 = 0;
     bool timeout = false;

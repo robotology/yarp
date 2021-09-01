@@ -30,7 +30,6 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
-using namespace std;
 
 
 TEST_CASE("math::Vec2DTest", "[yarp::math]")

@@ -19,7 +19,6 @@
 #include <limits>
 #include <mutex>
 
-using namespace std;
 
 #ifndef DEG2RAD
 #define DEG2RAD M_PI/180.0

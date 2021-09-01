@@ -37,7 +37,6 @@
  #define APP_NAME "yarpdataplayer"
 #endif
 
-using namespace std;
 using namespace yarp::os;
 
 void sighandler(int sig)
@@ -181,7 +180,7 @@ void MainWindow::onInternalSetFrame(const int frameNum)
 }
 
 /**********************************************************/
-int MainWindow::getFrame(const string &name)
+int MainWindow::getFrame(const std::string &name)
 {
     int frame = 0;
     emit internalGetFrame(name,&frame);
@@ -193,7 +192,7 @@ int MainWindow::getFrame(const string &name)
 }
 
 /**********************************************************/
-void MainWindow::onInternalGetFrame(const string &name, int *frame)
+void MainWindow::onInternalGetFrame(const std::string &name, int *frame)
 {
     getFrameCmd(name.c_str(),frame);
 }
@@ -217,7 +216,7 @@ void MainWindow::onInternalGetSliderPercentage(int *percentage)
 }
 
 /**********************************************************/
-string MainWindow::getStatus()
+std::string MainWindow::getStatus()
 {
     if (qutilities->qengine->isSuspended()){
         return "paused";
@@ -232,14 +231,14 @@ string MainWindow::getStatus()
 }
 
 /**********************************************************/
-bool MainWindow::load(const string &path)
+bool MainWindow::load(const std::string &path)
 {
-    string cmdPath = path;
+    std::string cmdPath = path;
     QString sPath = QString("%1").arg(path.c_str());
 
     size_t slashErr = cmdPath.find('/');
 
-    if (slashErr == string::npos){
+    if (slashErr == std::string::npos){
         if (verbose){
             yError() << "Error, please make sure you are using forward slashes '/' in path.";
         }

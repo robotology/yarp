@@ -13,7 +13,6 @@
 #include <yarp/os/Carrier.h>
 #include <yarp/companion/impl/Companion.h>
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::profiler;
 using namespace yarp::profiler::graph;
@@ -28,7 +27,7 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
     ContactStyle style;
     style.quiet = true;
     style.timeout = 3.0;
-    string nameserver = NetworkBase::getNameServerName();
+    std::string nameserver = NetworkBase::getNameServerName();
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");
@@ -67,7 +66,7 @@ bool NetworkProfiler::yarpNameList(ports_name_set &ports, bool complete) {
     return true;
 }
 
-bool NetworkProfiler::getPortDetails(const string& portName, PortDetails& info) {
+bool NetworkProfiler::getPortDetails(const std::string& portName, PortDetails& info) {
 
     info.name = portName;
     Port ping;
@@ -239,7 +238,7 @@ bool NetworkProfiler::yarpClean(float timeout) {
         timeout = -1;
     }
 
-    stringstream sstream;
+    std::stringstream sstream;
     sstream<<timeout;
     char* argv[2];
     argv[0] = (char*) "--timeout";
@@ -299,7 +298,7 @@ bool NetworkProfiler::creatSimpleModuleGraph(yarp::profiler::graph::Graph& graph
             for(peitr = pouts.begin(); peitr!=pouts.end(); peitr++) {
                 const Vertex& p2 = (*peitr).second();
                 Property prop((*peitr).property);
-                string label = p1.property.find("name").asString();
+                std::string label = p1.property.find("name").asString();
                 label.append(" - ").append(p2.property.find("name").asString());
                 prop.put("label", label);
                 subgraph.insertEdge(*v1, p2.outEdges()[0].second(), prop);

@@ -18,7 +18,6 @@
 
 using namespace yarp::os;
 using namespace yarp::manager;
-using namespace std;
 namespace fs = yarp::conf::filesystem;
 
 constexpr fs::value_type slash = fs::preferred_separator;
@@ -148,7 +147,7 @@ bool ScriptYarprunBroker::init(const char* szcmd, const char* szparam,
     {
         std::string strHost;
         if (szhost[0] != '/') {
-            strHost = string("/") + string(szhost);
+            strHost = std::string("/") + std::string(szhost);
         } else {
             strHost = szhost;
         }

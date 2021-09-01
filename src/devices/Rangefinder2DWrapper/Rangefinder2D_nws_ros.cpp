@@ -17,7 +17,6 @@
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 YARP_LOG_COMPONENT(RANGEFINDER2D_NWS_ROS, "yarp.devices.rangefinder2D_nws_ros")
 

@@ -9,7 +9,6 @@
 
 
 using namespace yarp::manager;
-using namespace std;
 
 
 /**
@@ -87,8 +86,8 @@ bool ResYarpPort::satisfy(GenericResource* resource)
     if (!resport) {
         return false;
     }
-    return (strPort == string(resport->getPort()) ||
-            strPort == string(resport->getName()) );
+    return (strPort == std::string(resport->getPort()) ||
+            strPort == std::string(resport->getName()) );
 }
 
 ResYarpPort::~ResYarpPort() = default;
