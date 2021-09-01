@@ -69,7 +69,7 @@ void drawGrid(IplImage *img, double scale)
 */
     char buff [10];
     float  rad_step=0;
-    string fmt = "%3.1fm";
+    std::string fmt = "%3.1fm";
     if (scale > 174)
     {
         rad_step = 0.5;

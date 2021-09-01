@@ -8,7 +8,6 @@
 #include <yarp/sig/SoundFilters.h>
 
 using namespace yarp::os;
-using namespace std;
 
 YARP_LOG_COMPONENT(SOUNDFILTER_RESAMPLE, "soundfilter_resample")
 
