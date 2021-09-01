@@ -978,3 +978,21 @@ bool Map2DClient::loadLocationsAndExtras(std::string locations_collection)
     }
     return true;
 }
+
+bool Map2DClient::saveMapToDisk(std::string map_name, std::string file_name)
+{
+    yCError(MAP2DCLIENT) << "saveMapToDisk() not implemented";
+    return false;
+}
+
+bool Map2DClient::loadMapFromDisk(std::string file_name)
+{
+    yCError(MAP2DCLIENT) << "saveMapToDisk() not implemented";
+    return false;
+}
+
+bool Map2DClient::enableMapsCompression(bool enable)
+{
+    yCError(MAP2DCLIENT) << "enableMapsCompression() not implemented";
+    return false;
+}

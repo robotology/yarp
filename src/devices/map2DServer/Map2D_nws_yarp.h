@@ -75,11 +75,8 @@ private:
     std::mutex                   m_mutex;
     std::string                  m_rpcPortName;
     yarp::os::RpcServer          m_rpcPort;
-    bool                         m_send_maps_compressed=false;
 
     bool read(yarp::os::ConnectionReader& connection) override;
-
-    void parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& out);
 };
 
 #endif // YARP_DEV_MAP2D_NWS_YARP

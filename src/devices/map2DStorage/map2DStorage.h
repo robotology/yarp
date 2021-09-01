@@ -96,11 +96,13 @@ public:
     bool clearAllPaths() override;
     bool clearAllMapsTemporaryFlags() override;
     bool clearMapTemporaryFlags(std::string map_name) override;
+    bool saveMapToDisk(std::string map_name, std::string file_name) override;
+    bool loadMapFromDisk(std::string file_name) override;
     bool saveMapsCollection(std::string maps_collection_file) override;
     bool loadMapsCollection(std::string maps_collection_file) override;
-
     bool loadLocationsAndExtras(std::string locations_file) override;
     bool saveLocationsAndExtras(std::string locations_file) override;
+    bool enableMapsCompression(bool enable) override;
 
 private:
     bool priv_load_locations_and_areas_v1(std::ifstream& file);

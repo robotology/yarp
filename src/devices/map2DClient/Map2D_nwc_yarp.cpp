@@ -32,12 +32,12 @@ bool Map2D_nwc_yarp::open(yarp::os::Searchable &config)
     m_local_name       = config.find("local").asString();
     m_map_server       = config.find("remote").asString();
 
-    if (m_local_name == "")
+    if (m_local_name.empty())
     {
         yCError(MAP2D_NWC_YARP, "open() error you have to provide valid local name");
         return false;
     }
-    if (m_map_server == "")
+    if (m_map_server.empty())
     {
         yCError(MAP2D_NWC_YARP, "open() error you have to provide valid remote name");
         return false;
@@ -305,4 +305,22 @@ bool Map2D_nwc_yarp::loadLocationsAndExtras(std::string locations_collection)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
     return m_RPC.loadLocationsAndExtrasRPC(locations_collection);
+}
+
+bool Map2D_nwc_yarp::saveMapToDisk(std::string map_name, std::string file_name)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_RPC.saveMapToDiskRPC(map_name,file_name);
+}
+
+bool Map2D_nwc_yarp::loadMapFromDisk(std::string file_name)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_RPC.loadMapFromDiskRPC(file_name);
+}
+
+bool Map2D_nwc_yarp::enableMapsCompression(bool enable)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    return m_RPC.enableMapsCompressionRPC(enable);
 }

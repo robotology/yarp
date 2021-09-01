@@ -91,6 +91,12 @@ public:
 
     virtual bool loadLocationsAndExtrasRPC(const std::string& locations_collection_file);
 
+    virtual bool saveMapToDiskRPC(const std::string& map_name, const std::string& file_name);
+
+    virtual bool loadMapFromDiskRPC(const std::string& file_name);
+
+    virtual bool enableMapsCompressionRPC(const bool enable_compression);
+
     // help method
     virtual std::vector<std::string> help(const std::string& functionName = "--all");
 

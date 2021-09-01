@@ -215,28 +215,54 @@ public:
     virtual bool clearMapTemporaryFlags(std::string map_name) = 0;
 
     /**
-    * Save a collection of maps
+    * Save a map to disk
+    * @param map_name the name of the area
+    * @param file_name file name with full path
     * @return true/false
     */
-    virtual bool saveMapsCollection(std::string maps_collection_file) = 0;
+    virtual bool saveMapToDisk(std::string map_name, std::string file_name) = 0;
 
     /**
-    * Load a collection of maps
+    * Load a map from disk
+    * @param file_name file name with full path
     * @return true/false
     */
-    virtual bool loadMapsCollection(std::string maps_collection_file) = 0;
+    virtual bool loadMapFromDisk(std::string file_name) = 0;
 
     /**
-    * Save a collection of locations/area/paths etc
+    * Save a collection of maps to disk
+    * @param file_name file name with full path
     * @return true/false
     */
-    virtual bool saveLocationsAndExtras(std::string locations_collection_file) = 0;
+    virtual bool saveMapsCollection(std::string file_name) = 0;
 
     /**
-    * Load a collection of locations/areas/paths etc
+    * Load a collection of maps from disk
+    * @param file_name file name with full path
     * @return true/false
     */
-    virtual bool loadLocationsAndExtras(std::string locations_collection_file) = 0;
+    virtual bool loadMapsCollection(std::string file_name) = 0;
+
+    /**
+    * Save a collection of locations/area/paths etc to disk
+    * @param file_name file name with full path
+    * @return true/false
+    */
+    virtual bool saveLocationsAndExtras(std::string file_name) = 0;
+
+    /**
+    * Load a collection of locations/areas/paths etc from disk
+    * @param file_name file name with full path
+    * @return true/false
+    */
+    virtual bool loadLocationsAndExtras(std::string file_name) = 0;
+
+    /**
+    * 99999999999
+    * @param enable 
+    * @return true/false
+    */
+    virtual bool enableMapsCompression(bool enable) = 0;
 };
 
 //This section of vocabs is used just by deprecated device Map2DServer and Map2DClient

@@ -89,6 +89,9 @@ public:
     bool     loadMapsCollection(std::string maps_collection_file) override;
     bool     saveLocationsAndExtras(std::string locations_collection_file) override;
     bool     loadLocationsAndExtras(std::string locations_collection_file) override;
+    bool     saveMapToDisk(std::string map_name, std::string file_name) override;
+    bool     loadMapFromDisk(std::string file_name) override;
+    bool     enableMapsCompression(bool enable) override;
 };
 
 #endif // YARP_DEV_MAP2D_NWC_YARP_H

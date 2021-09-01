@@ -1401,6 +1401,158 @@ bool IMap2DMsgsRPC_loadLocationsAndExtrasRPC_helper::read(yarp::os::ConnectionRe
     return true;
 }
 
+class IMap2DMsgsRPC_saveMapToDiskRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit IMap2DMsgsRPC_saveMapToDiskRPC_helper(const std::string& map_name, const std::string& file_name);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_map_name;
+    std::string m_file_name;
+
+    thread_local static bool s_return_helper;
+};
+
+thread_local bool IMap2DMsgsRPC_saveMapToDiskRPC_helper::s_return_helper = {};
+
+IMap2DMsgsRPC_saveMapToDiskRPC_helper::IMap2DMsgsRPC_saveMapToDiskRPC_helper(const std::string& map_name, const std::string& file_name) :
+        m_map_name{map_name},
+        m_file_name{file_name}
+{
+    s_return_helper = {};
+}
+
+bool IMap2DMsgsRPC_saveMapToDiskRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(3)) {
+        return false;
+    }
+    if (!writer.writeTag("saveMapToDiskRPC", 1, 1)) {
+        return false;
+    }
+    if (!writer.writeString(m_map_name)) {
+        return false;
+    }
+    if (!writer.writeString(m_file_name)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgsRPC_saveMapToDiskRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readBool(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class IMap2DMsgsRPC_loadMapFromDiskRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit IMap2DMsgsRPC_loadMapFromDiskRPC_helper(const std::string& file_name);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    std::string m_file_name;
+
+    thread_local static bool s_return_helper;
+};
+
+thread_local bool IMap2DMsgsRPC_loadMapFromDiskRPC_helper::s_return_helper = {};
+
+IMap2DMsgsRPC_loadMapFromDiskRPC_helper::IMap2DMsgsRPC_loadMapFromDiskRPC_helper(const std::string& file_name) :
+        m_file_name{file_name}
+{
+    s_return_helper = {};
+}
+
+bool IMap2DMsgsRPC_loadMapFromDiskRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(2)) {
+        return false;
+    }
+    if (!writer.writeTag("loadMapFromDiskRPC", 1, 1)) {
+        return false;
+    }
+    if (!writer.writeString(m_file_name)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgsRPC_loadMapFromDiskRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readBool(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
+class IMap2DMsgsRPC_enableMapsCompressionRPC_helper :
+        public yarp::os::Portable
+{
+public:
+    explicit IMap2DMsgsRPC_enableMapsCompressionRPC_helper(const bool enable_compression);
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+    bool read(yarp::os::ConnectionReader& connection) override;
+
+    bool m_enable_compression;
+
+    thread_local static bool s_return_helper;
+};
+
+thread_local bool IMap2DMsgsRPC_enableMapsCompressionRPC_helper::s_return_helper = {};
+
+IMap2DMsgsRPC_enableMapsCompressionRPC_helper::IMap2DMsgsRPC_enableMapsCompressionRPC_helper(const bool enable_compression) :
+        m_enable_compression{enable_compression}
+{
+    s_return_helper = {};
+}
+
+bool IMap2DMsgsRPC_enableMapsCompressionRPC_helper::write(yarp::os::ConnectionWriter& connection) const
+{
+    yarp::os::idl::WireWriter writer(connection);
+    if (!writer.writeListHeader(2)) {
+        return false;
+    }
+    if (!writer.writeTag("enableMapsCompressionRPC", 1, 1)) {
+        return false;
+    }
+    if (!writer.writeBool(m_enable_compression)) {
+        return false;
+    }
+    return true;
+}
+
+bool IMap2DMsgsRPC_enableMapsCompressionRPC_helper::read(yarp::os::ConnectionReader& connection)
+{
+    yarp::os::idl::WireReader reader(connection);
+    if (!reader.readListReturn()) {
+        return false;
+    }
+    if (!reader.readBool(s_return_helper)) {
+        reader.fail();
+        return false;
+    }
+    return true;
+}
+
 // Constructor
 IMap2DMsgsRPC::IMap2DMsgsRPC()
 {
@@ -1697,6 +1849,36 @@ bool IMap2DMsgsRPC::loadLocationsAndExtrasRPC(const std::string& locations_colle
     return ok ? IMap2DMsgsRPC_loadLocationsAndExtrasRPC_helper::s_return_helper : bool{};
 }
 
+bool IMap2DMsgsRPC::saveMapToDiskRPC(const std::string& map_name, const std::string& file_name)
+{
+    IMap2DMsgsRPC_saveMapToDiskRPC_helper helper{map_name, file_name};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "bool IMap2DMsgsRPC::saveMapToDiskRPC(const std::string& map_name, const std::string& file_name)");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? IMap2DMsgsRPC_saveMapToDiskRPC_helper::s_return_helper : bool{};
+}
+
+bool IMap2DMsgsRPC::loadMapFromDiskRPC(const std::string& file_name)
+{
+    IMap2DMsgsRPC_loadMapFromDiskRPC_helper helper{file_name};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "bool IMap2DMsgsRPC::loadMapFromDiskRPC(const std::string& file_name)");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? IMap2DMsgsRPC_loadMapFromDiskRPC_helper::s_return_helper : bool{};
+}
+
+bool IMap2DMsgsRPC::enableMapsCompressionRPC(const bool enable_compression)
+{
+    IMap2DMsgsRPC_enableMapsCompressionRPC_helper helper{enable_compression};
+    if (!yarp().canWrite()) {
+        yError("Missing server method '%s'?", "bool IMap2DMsgsRPC::enableMapsCompressionRPC(const bool enable_compression)");
+    }
+    bool ok = yarp().write(helper, helper);
+    return ok ? IMap2DMsgsRPC_enableMapsCompressionRPC_helper::s_return_helper : bool{};
+}
+
 // help method
 std::vector<std::string> IMap2DMsgsRPC::help(const std::string& functionName)
 {
@@ -1733,6 +1915,9 @@ std::vector<std::string> IMap2DMsgsRPC::help(const std::string& functionName)
         helpString.emplace_back("loadMapsCollectionRPC");
         helpString.emplace_back("saveLocationsAndExtrasRPC");
         helpString.emplace_back("loadLocationsAndExtrasRPC");
+        helpString.emplace_back("saveMapToDiskRPC");
+        helpString.emplace_back("loadMapFromDiskRPC");
+        helpString.emplace_back("enableMapsCompressionRPC");
         helpString.emplace_back("help");
     } else {
         if (functionName == "clearAllMapsRPC") {
@@ -1821,6 +2006,15 @@ std::vector<std::string> IMap2DMsgsRPC::help(const std::string& functionName)
         }
         if (functionName == "loadLocationsAndExtrasRPC") {
             helpString.emplace_back("bool loadLocationsAndExtrasRPC(const std::string& locations_collection_file) ");
+        }
+        if (functionName == "saveMapToDiskRPC") {
+            helpString.emplace_back("bool saveMapToDiskRPC(const std::string& map_name, const std::string& file_name) ");
+        }
+        if (functionName == "loadMapFromDiskRPC") {
+            helpString.emplace_back("bool loadMapFromDiskRPC(const std::string& file_name) ");
+        }
+        if (functionName == "enableMapsCompressionRPC") {
+            helpString.emplace_back("bool enableMapsCompressionRPC(const bool enable_compression) ");
         }
         if (functionName == "help") {
             helpString.emplace_back("std::vector<std::string> help(const std::string& functionName = \"--all\")");
@@ -2381,6 +2575,68 @@ bool IMap2DMsgsRPC::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
                 if (!writer.writeBool(IMap2DMsgsRPC_loadLocationsAndExtrasRPC_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "saveMapToDiskRPC") {
+            std::string map_name;
+            std::string file_name;
+            if (!reader.readString(map_name)) {
+                reader.fail();
+                return false;
+            }
+            if (!reader.readString(file_name)) {
+                reader.fail();
+                return false;
+            }
+            IMap2DMsgsRPC_saveMapToDiskRPC_helper::s_return_helper = saveMapToDiskRPC(map_name, file_name);
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeBool(IMap2DMsgsRPC_saveMapToDiskRPC_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "loadMapFromDiskRPC") {
+            std::string file_name;
+            if (!reader.readString(file_name)) {
+                reader.fail();
+                return false;
+            }
+            IMap2DMsgsRPC_loadMapFromDiskRPC_helper::s_return_helper = loadMapFromDiskRPC(file_name);
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeBool(IMap2DMsgsRPC_loadMapFromDiskRPC_helper::s_return_helper)) {
+                    return false;
+                }
+            }
+            reader.accept();
+            return true;
+        }
+        if (tag == "enableMapsCompressionRPC") {
+            bool enable_compression;
+            if (!reader.readBool(enable_compression)) {
+                reader.fail();
+                return false;
+            }
+            IMap2DMsgsRPC_enableMapsCompressionRPC_helper::s_return_helper = enableMapsCompressionRPC(enable_compression);
+            yarp::os::idl::WireWriter writer(reader);
+            if (!writer.isNull()) {
+                if (!writer.writeListHeader(1)) {
+                    return false;
+                }
+                if (!writer.writeBool(IMap2DMsgsRPC_enableMapsCompressionRPC_helper::s_return_helper)) {
                     return false;
                 }
             }

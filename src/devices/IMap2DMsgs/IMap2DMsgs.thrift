@@ -95,4 +95,7 @@ service IMap2DMsgsRPC
     bool loadMapsCollectionRPC (string maps_collection_file);
     bool saveLocationsAndExtrasRPC (string locations_collection_file);
     bool loadLocationsAndExtrasRPC (string locations_collection_file);
+    bool saveMapToDiskRPC(string map_name, string file_name);
+    bool loadMapFromDiskRPC(string file_name);
+    bool enableMapsCompressionRPC(bool enable_compression);
 }
