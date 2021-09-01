@@ -28,7 +28,6 @@
 //#define LASER_DEBUG
 //#define FORCE_SCAN
 
-using namespace std;
 using namespace rp::standalone::rplidar;
 
 YARP_LOG_COMPONENT(RP_LIDAR3, "yarp.devices.RpLidar3")
@@ -121,7 +120,7 @@ bool RpLidar3::startScan()
 
 bool RpLidar3::open(yarp::os::Searchable& config)
 {
-    string   serial;
+    std::string   serial;
     int      baudrate;
 
     m_device_status = DEVICE_OK_STANBY;
@@ -397,7 +396,7 @@ bool RpLidar3::deviceinfo()
     {
         u_result                       result;
         rplidar_response_device_info_t info;
-        string                         serialNumber;
+        std::string                    serialNumber;
 
         result = m_drv->getDeviceInfo(info);
         if (result != RESULT_OK)
@@ -409,12 +408,12 @@ bool RpLidar3::deviceinfo()
 
         for (unsigned char i : info.serialnum)
         {
-            serialNumber += to_string(i);
+            serialNumber += std::to_string(i);
         }
 
-        m_info = std::string("Firmware Version: ")  + to_string(info.firmware_version) +
-                 "\nHardware Version: " + to_string(info.hardware_version) +
-                 "\nModel: "            + to_string(info.model) +
+        m_info = std::string("Firmware Version: ")  + std::to_string(info.firmware_version) +
+                 "\nHardware Version: " + std::to_string(info.hardware_version) +
+                 "\nModel: "            + std::to_string(info.model) +
                  "\nSerial Number:"     + serialNumber;
         return true;
     }
