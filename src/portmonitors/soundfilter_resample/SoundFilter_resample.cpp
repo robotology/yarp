@@ -11,7 +11,7 @@ using namespace yarp::os;
 
 YARP_LOG_COMPONENT(SOUNDFILTER_RESAMPLE, "soundfilter_resample")
 
-void split(const std::string& s, char delim, vector<string>& elements)
+void split(const std::string& s, char delim, std::vector<std::string>& elements)
 {
     std::istringstream iss(s);
     std::string item;
@@ -23,23 +23,23 @@ void split(const std::string& s, char delim, vector<string>& elements)
 void SoundFilter_resample::getParamsFromCommandLine(std::string carrierString, yarp::os::Property& prop)
 {
     // Split command line string using '+' delimiter
-    vector<string> parameters;
+    std::vector<std::string> parameters;
     split(carrierString, '+', parameters);
 
     // Iterate over result strings
-    for (string param : parameters)
+    for (std::string param : parameters)
     {
         // If there is no '.', then the param is bad formatted, skip it.
         auto pointPosition = param.find('.');
-        if (pointPosition == string::npos)
+        if (pointPosition == std::string::npos)
         {
             continue;
         }
 
         // Otherwise, separate key and value
-        string paramKey = param.substr(0, pointPosition);
+        std::string paramKey = param.substr(0, pointPosition);
         yarp::os::Value paramValue;
-        string s = param.substr(pointPosition + 1, param.length());
+        std::string s = param.substr(pointPosition + 1, param.length());
         paramValue.fromString(s.c_str());
 
         //and append to the returned property
