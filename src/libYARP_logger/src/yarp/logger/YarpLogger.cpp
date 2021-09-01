@@ -16,7 +16,6 @@
 
 using namespace yarp::os;
 using namespace yarp::yarpLogger;
-using namespace std;
 /*
 const std::string RED    ="\033[01;31m";
 const std::string GREEN  ="\033[01;32m";
@@ -104,7 +103,7 @@ void LogEntryInfo::setNewError(LogLevel level)
 void LoggerEngine::discover  (std::list<std::string>& ports)
 {
     RpcClient p;
-    string logger_portname = log_updater->getPortName();
+    std::string logger_portname = log_updater->getPortName();
     p.open(logger_portname+"/discover");
     std::string yarpservername = yarp::os::Network::getNameServerName();
     yarp::os::Network::connect(logger_portname+"/discover",yarpservername);
@@ -244,7 +243,7 @@ void LoggerEngine::logger_thread::run()
             static double d_time_i = yarp::os::SystemClock::nowSystem();
             double d_time = yarp::os::SystemClock::nowSystem() - d_time_i;
             sprintf(machine_current_time_c,"%f",d_time);
-            string machine_current_time_s = string(machine_current_time_c);
+            std::string machine_current_time_s = std::string(machine_current_time_c);
 
             Bottle *b = logger_port.read(); //this is blocking
             bufferport_size = logger_port.getPendingReads();
@@ -281,7 +280,7 @@ void LoggerEngine::logger_thread::run()
             char ttstr [20];
             static int count=0;
             sprintf(ttstr,"%d",count++);
-            body.yarprun_timestamp = string(ttstr);
+            body.yarprun_timestamp = std::string(ttstr);
             body.local_timestamp   = machine_current_time_s;
 
             std::string s;
@@ -878,13 +877,13 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
     {
         if (it->logInfo.port_complete == portname)
         {
-            ofstream file1;
+            std::ofstream file1;
             file1.open(filename.c_str());
             if (file1.is_open() == false) {log_updater->mutex.unlock(); return false;}
             std::vector<MessageEntry>::iterator it1;
             for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
             {
-                file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " " << it1->level.toString() << " " << it1->text << " " << std::endl;
+                file1 << it1->yarprun_timestamp << " " << it1->local_timestamp << " " << it1->level.toString() << " " << it1->text << '\n';
             }
             file1.close();
         }
@@ -895,8 +894,8 @@ bool LoggerEngine::export_log_to_text_file   (std::string  filename, std::string
 
 bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
 {
-    string start_string ="<#STRING_START#>";
-    string end_string ="<#STRING_END#>";
+    std::string start_string ="<#STRING_START#>";
+    std::string end_string ="<#STRING_END#>";
 
     if (log_updater == nullptr) {
         return false;
@@ -907,7 +906,7 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
 
     const int      LOGFILE_VERSION = 1;
 
-    ofstream file1;
+    std::ofstream file1;
     file1.open(filename.c_str());
     if (file1.is_open() == false) {
         return false;
@@ -918,35 +917,35 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
         log_updater->stop();
     }
     std::list<LogEntry>::iterator it;
-    file1 << LOGFILE_VERSION << std::endl;
-    file1 << log_updater->log_list.size() << std::endl;
+    file1 << LOGFILE_VERSION << '\n';
+    file1 << log_updater->log_list.size() << '\n';
     for (it = log_updater->log_list.begin(); it != log_updater->log_list.end(); it++)
     {
-        file1 << it->logInfo.ip_address << std::endl;
-        file1 << it->logInfo.port_complete << std::endl;
-        file1 << it->logInfo.port_prefix << std::endl;
-        file1 << it->logInfo.port_system << std::endl;
-        file1 << it->logInfo.process_name << std::endl;
-        file1 << it->logInfo.process_pid << std::endl;
-        file1 << it->logInfo.get_number_of_traces() << std::endl;
-        file1 << it->logInfo.get_number_of_debugs() << std::endl;
-        file1 << it->logInfo.get_number_of_infos() << std::endl;
-        file1 << it->logInfo.get_number_of_warnings() << std::endl;
-        file1 << it->logInfo.get_number_of_errors() << std::endl;
-        file1 << it->logInfo.get_number_of_fatals() << std::endl;
-        file1 << it->logInfo.logsize << std::endl;
-        file1 << it->entry_list.size() << std::endl;
+        file1 << it->logInfo.ip_address << '\n';
+        file1 << it->logInfo.port_complete << '\n';
+        file1 << it->logInfo.port_prefix << '\n';
+        file1 << it->logInfo.port_system << '\n';
+        file1 << it->logInfo.process_name << '\n';
+        file1 << it->logInfo.process_pid << '\n';
+        file1 << it->logInfo.get_number_of_traces() << '\n';
+        file1 << it->logInfo.get_number_of_debugs() << '\n';
+        file1 << it->logInfo.get_number_of_infos() << '\n';
+        file1 << it->logInfo.get_number_of_warnings() << '\n';
+        file1 << it->logInfo.get_number_of_errors() << '\n';
+        file1 << it->logInfo.get_number_of_fatals() << '\n';
+        file1 << it->logInfo.logsize << '\n';
+        file1 << it->entry_list.size() << '\n';
         std::vector<MessageEntry>::iterator it1;
         for (it1 = it->entry_list.begin(); it1 != it->entry_list.end(); it1++)
         {
-            file1 << it1->yarprun_timestamp << std::endl;
-            file1 << it1->local_timestamp << std::endl;
-            file1 << it1->level.toInt() << std::endl;
+            file1 << it1->yarprun_timestamp << '\n';
+            file1 << it1->local_timestamp << '\n';
+            file1 << it1->level.toInt() << '\n';
             file1 << start_string;
             for (char s : it1->text) {
                 file1.put(s);
             }
-            file1 << end_string <<endl;
+            file1 << end_string <<'\n';
         }
     }
     file1.close();
@@ -956,7 +955,7 @@ bool LoggerEngine::save_all_logs_to_file   (std::string  filename)
     return true;
 }
 
-std::streamoff get_tag(ifstream& file, const char* tag)
+std::streamoff get_tag(std::ifstream& file, const char* tag)
 {
     std::streamoff pos=file.tellg();
     int tag_size=strlen(tag);
@@ -984,9 +983,9 @@ std::streamoff get_tag(ifstream& file, const char* tag)
 
 bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
 {
-    string start_string ="<#STRING_START#>";
+    std::string start_string ="<#STRING_START#>";
     int start_string_size=strlen(start_string.c_str());
-    string end_string ="<#STRING_END#>";
+    std::string end_string ="<#STRING_END#>";
     int end_string_size=strlen(end_string.c_str());
 
     if (log_updater == nullptr) {
@@ -998,7 +997,7 @@ bool LoggerEngine::load_all_logs_from_file   (std::string  filename)
 
     const int      LOGFILE_VERSION = 1;
 
-    ifstream file1;
+    std::ifstream file1;
     file1.open(filename.c_str(),std::ifstream::binary);
     if (file1.is_open() == false) {
         return false;

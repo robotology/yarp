@@ -13,7 +13,6 @@ using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::math;
-using namespace std;
 
 #ifndef DEG2RAD
 #define DEG2RAD M_PI/180.0

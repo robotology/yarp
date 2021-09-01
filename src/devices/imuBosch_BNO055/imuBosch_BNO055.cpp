@@ -34,7 +34,6 @@ extern "C" {
 
 #include "imuBosch_BNO055.h"
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -749,7 +748,7 @@ yarp::dev::MAS_status BoschIMU::genericGetStatus(size_t sens_index) const
     return yarp::dev::MAS_status::MAS_OK;
 }
 
-bool BoschIMU::genericGetSensorName(size_t sens_index, string& name) const
+bool BoschIMU::genericGetSensorName(size_t sens_index, std::string& name) const
 {
     if (sens_index != 0)
     {
@@ -761,7 +760,7 @@ bool BoschIMU::genericGetSensorName(size_t sens_index, string& name) const
     return true;
 }
 
-bool BoschIMU::genericGetFrameName(size_t sens_index, string& frameName) const
+bool BoschIMU::genericGetFrameName(size_t sens_index, std::string& frameName) const
 {
     if (sens_index != 0)
     {
@@ -785,12 +784,12 @@ yarp::dev::MAS_status BoschIMU::getThreeAxisLinearAccelerometerStatus(size_t sen
     return genericGetStatus(sens_index);
 }
 
-bool BoschIMU::getThreeAxisLinearAccelerometerName(size_t sens_index, string& name) const
+bool BoschIMU::getThreeAxisLinearAccelerometerName(size_t sens_index, std::string& name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool BoschIMU::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, string& frameName) const
+bool BoschIMU::getThreeAxisLinearAccelerometerFrameName(size_t sens_index, std::string& frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
@@ -825,12 +824,12 @@ yarp::dev::MAS_status BoschIMU::getThreeAxisGyroscopeStatus(size_t sens_index) c
     return genericGetStatus(sens_index);
 }
 
-bool BoschIMU::getThreeAxisGyroscopeName(size_t sens_index, string& name) const
+bool BoschIMU::getThreeAxisGyroscopeName(size_t sens_index, std::string& name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool BoschIMU::getThreeAxisGyroscopeFrameName(size_t sens_index, string& frameName) const
+bool BoschIMU::getThreeAxisGyroscopeFrameName(size_t sens_index, std::string& frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
@@ -863,12 +862,12 @@ yarp::dev::MAS_status BoschIMU::getOrientationSensorStatus(size_t sens_index) co
     return genericGetStatus(sens_index);
 }
 
-bool BoschIMU::getOrientationSensorName(size_t sens_index, string& name) const
+bool BoschIMU::getOrientationSensorName(size_t sens_index, std::string& name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool BoschIMU::getOrientationSensorFrameName(size_t sens_index, string& frameName) const
+bool BoschIMU::getOrientationSensorFrameName(size_t sens_index, std::string& frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }
@@ -901,12 +900,12 @@ yarp::dev::MAS_status BoschIMU::getThreeAxisMagnetometerStatus(size_t sens_index
     return genericGetStatus(sens_index);
 }
 
-bool BoschIMU::getThreeAxisMagnetometerName(size_t sens_index, string& name) const
+bool BoschIMU::getThreeAxisMagnetometerName(size_t sens_index, std::string& name) const
 {
     return genericGetSensorName(sens_index, name);
 }
 
-bool BoschIMU::getThreeAxisMagnetometerFrameName(size_t sens_index, string& frameName) const
+bool BoschIMU::getThreeAxisMagnetometerFrameName(size_t sens_index, std::string& frameName) const
 {
     return genericGetFrameName(sens_index, frameName);
 }

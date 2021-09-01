@@ -8,7 +8,6 @@
 #include <yarp/os/LogComponent.h>
 #include <yarp/os/LogStream.h>
 
-using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -51,7 +50,7 @@ bool FrameTransformStorage::setTransform(const yarp::math::FrameTransform& t)
     return m_tf_container.setTransform (t);
 }
 
-bool FrameTransformStorage::deleteTransform(string t1, string t2)
+bool FrameTransformStorage::deleteTransform(std::string t1, std::string t2)
 {
     return m_tf_container.deleteTransform(t1,t2);
 }

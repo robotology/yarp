@@ -15,7 +15,6 @@
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 YARP_LOG_COMPONENT(RANGEFINDER2DWRAPPER, "yarp.devices.Rangefinder2DWrapper")
 

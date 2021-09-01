@@ -6,7 +6,6 @@
 #include "propertiestable.h"
 #include <QDebug>
 
-using namespace std;
 
 PropertiesTable::PropertiesTable(Manager *manager,QWidget *parent) :
     QWidget(parent),
@@ -304,20 +303,20 @@ void PropertiesTable::onModItemChanged(QTreeWidgetItem *it,int col)
         if(lastPrefix != modPrefix->text(1)){
             currentModule->getInnerModule()->setBasePrefix(modPrefix->text(1).toLatin1().data());
 
-            string strPrefix;
+            std::string strPrefix;
             Application* application = manager->getKnowledgeBase()->getApplication();
             if(application) {
-                strPrefix = string(application->getPrefix()) + string(modPrefix->text(1).toLatin1().data());
+                strPrefix = std::string(application->getPrefix()) + std::string(modPrefix->text(1).toLatin1().data());
                 for(int j=0; j<currentModule->getInnerModule()->outputCount(); j++){
                     OutputData *output = &currentModule->getInnerModule()->getOutputAt(j);
 
                     for(int i=0; i<application->connectionCount(); i++){
                         Connection con = application->getConnectionAt(i);
-                        //string strOldFrom = con.from();
+                        //std::string strOldFrom = con.from();
                         Connection updatedCon = con;
                         if(con.getCorOutputData()){
                             if(con.getCorOutputData() == output){
-                                string strFrom = strPrefix + string(output->getPort());
+                                std::string strFrom = strPrefix + std::string(output->getPort());
 //                                updatedCon.setFrom(strFrom.c_str());
 //                                manager->getKnowledgeBase()->updateConnectionOfApplication(application,
 //                                                            con, updatedCon);
@@ -342,7 +341,7 @@ void PropertiesTable::onModItemChanged(QTreeWidgetItem *it,int col)
                         Connection updatedCon = con;
                         if(con.getCorInputData()){
                             if(con.getCorInputData() == input){
-                                string strTo = strPrefix + string(input->getPort());
+                                std::string strTo = strPrefix + std::string(input->getPort());
 //                              updatedCon.setTo(strTo.c_str());
 //                              manager->getKnowledgeBase()->updateConnectionOfApplication(application,
 //                                                          con, updatedCon);

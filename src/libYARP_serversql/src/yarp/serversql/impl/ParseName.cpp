@@ -9,7 +9,6 @@
 #include <string>
 
 using namespace yarp::serversql::impl;
-using namespace std;
 
 void ParseName::apply(const std::string& s) {
     std::string name = s;

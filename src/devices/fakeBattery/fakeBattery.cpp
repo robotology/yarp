@@ -13,7 +13,6 @@
 #include <iostream>
 #include <cstring>
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -123,7 +122,7 @@ bool FakeBattery::getBatteryTemperature(double& temperature)
     return true;
 }
 
-bool FakeBattery::getBatteryInfo(string& info)
+bool FakeBattery::getBatteryInfo(std::string& info)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     info = battery_info;

@@ -24,7 +24,6 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::impl;
 using namespace yarp::sig;
-using namespace std;
 
 
 ControlBoardWrapper::ControlBoardWrapper() :
@@ -656,7 +655,7 @@ bool ControlBoardWrapper::updateAxisName()
     std::string tmp;
     // I need a temporary vector because if I'm wrapping more than one subdevice, and one of them
     // does not have the axesName, then I'd stick with the old names from wrpper config file, if any.
-    vector<string> tmpVect;
+    std::vector<std::string> tmpVect;
     bool ret = true;
 
     tmpVect.clear();
@@ -737,7 +736,7 @@ bool ControlBoardWrapper::attachAll(const PolyDriverList& polylist)
 
     if (!ready) {
         yCError(CONTROLBOARD, "AttachAll failed, some subdevice was not found or its attach failed");
-        stringstream ss;
+        std::stringstream ss;
         for (int p = 0; p < polylist.size(); p++) {
             ss << polylist[p]->key.c_str() << " ";
         }

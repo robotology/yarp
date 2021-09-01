@@ -37,7 +37,6 @@
 
 using namespace yarp::os;
 using namespace yarp::manager;
-using namespace std;
 
 
 #if defined(_WIN32)
@@ -206,7 +205,7 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
     if(szstdio && strlen(szstdio))
     {
         if (szstdio[0] != '/') {
-            strStdio = string("/") + string(szstdio);
+            strStdio = std::string("/") + std::string(szstdio);
         } else {
             strStdio = szstdio;
         }
@@ -390,7 +389,7 @@ bool LocalBroker::connect(const char* from, const char* to,
     {
         strError = "cannot connect ";
         strError +=from;
-        strError += " to " + string(to);
+        strError += " to " + std::string(to);
         return false;
     }
     return true;
@@ -433,7 +432,7 @@ bool LocalBroker::disconnect(const char* from, const char* to, const char *carri
     {
         strError = "cannot disconnect ";
         strError +=from;
-        strError += " from " + string(to);
+        strError += " from " + std::string(to);
         return false;
     }
     return true;
@@ -566,10 +565,10 @@ void LocalBroker::run()
         {
            if(fd_stdout)
            {
-                string strmsg;
+                std::string strmsg;
                 char buff[1024];
                 while (fgets(buff, 1024, fd_stdout)) {
-                    strmsg += string(buff);
+                    strmsg += std::string(buff);
                 }
                 if (eventSink && strmsg.size()) {
                     eventSink->onBrokerStdout(strmsg.c_str());
@@ -595,12 +594,12 @@ void LocalBroker::setWindowMode(WindowMode m)
 
 #if defined(_WIN32)
 
-string LocalBroker::lastError2String()
+std::string LocalBroker::lastError2String()
 {
     int error=GetLastError();
     char buff[1024];
     FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,nullptr,error,0,buff,1024,nullptr);
-    return string(buff);
+    return std::string(buff);
 }
 
 bool LocalBroker::startStdout()
@@ -618,7 +617,7 @@ void LocalBroker::stopStdout()
 
 int LocalBroker::ExecuteCmd()
 {
-    string strCmdLine = strCmd + string(" ") + strParam;
+    std::string strCmdLine = strCmd + std::string(" ") + strParam;
 
     PROCESS_INFORMATION cmd_process_info;
     STARTUPINFO cmd_startup_info;
@@ -627,7 +626,7 @@ int LocalBroker::ExecuteCmd()
     cmd_startup_info.cb = sizeof(STARTUPINFO);
 
 
-    string strDisplay=getDisplay();
+    std::string strDisplay=getDisplay();
 
     DWORD dwCreationFlags;
 
@@ -703,7 +702,7 @@ int LocalBroker::ExecuteCmd()
     *lpNew = (TCHAR)0;
 
     bool bWorkdir=(strWorkdir.size()) ? true : false;
-    string strWorkdirOk = bWorkdir ? strWorkdir+string("\\") : "";
+    std::string strWorkdirOk = bWorkdir ? strWorkdir+std::string("\\") : "";
 
     BOOL bSuccess=CreateProcess(nullptr,   // command name
                                 (char*)(strWorkdirOk+strCmdLine).c_str(), // command line
@@ -738,7 +737,7 @@ int LocalBroker::ExecuteCmd()
 
     if (!bSuccess)
     {
-        strError = string("Can't execute command because ") + lastError2String();
+        strError = std::string("Can't execute command because ") + lastError2String();
         return 0;
     }
 
@@ -868,7 +867,7 @@ bool LocalBroker::startStdout()
     fd_stdout = fdopen(pipe_to_stdout[READ_FROM_PIPE], "r");
     if(!fd_stdout)
     {
-        strError = "cannot open pipe. " + string(strerror(errno));
+        strError = "cannot open pipe. " + std::string(strerror(errno));
         //close(pipe_to_stdout[READ_FROM_PIPE]);
         return false;
     }
@@ -876,7 +875,7 @@ bool LocalBroker::startStdout()
     int oflags = fcntl(pipe_to_stdout[READ_FROM_PIPE], F_GETFL);
     if(fcntl(pipe_to_stdout[READ_FROM_PIPE], F_SETFL, oflags|O_NONBLOCK) == -1)
     {
-        strError = "cannot set flag on pipe: " + string(strerror(errno));
+        strError = "cannot set flag on pipe: " + std::string(strerror(errno));
         //close(pipe_to_stdout[READ_FROM_PIPE]);
         return false;
     }
@@ -901,14 +900,14 @@ int LocalBroker::ExecuteCmd()
     int ret = pipe(pipe_child_to_parent);
     if (ret!=0)
     {
-        strError = string("Can't create child pipe because") + string(strerror(errno));
+        strError = std::string("Can't create child pipe because") + std::string(strerror(errno));
         return 0;
     }
 
     ret = pipe(pipe_to_stdout);
     if (ret!=0)
     {
-        strError = string("Can't create stdout pipe because") + string(strerror(errno));
+        strError = std::string("Can't create stdout pipe because") + std::string(strerror(errno));
         return 0;
     }
 
@@ -916,7 +915,7 @@ int LocalBroker::ExecuteCmd()
 
     if(IS_INVALID(pid_cmd))
     {
-        strError = string("Can't fork command because ") + string(strerror(errno));
+        strError = std::string("Can't fork command because ") + std::string(strerror(errno));
         return 0;
     }
 
@@ -927,18 +926,18 @@ int LocalBroker::ExecuteCmd()
         dup2(pipe_to_stdout[WRITE_TO_PIPE], STDOUT_FILENO);
         dup2(pipe_to_stdout[WRITE_TO_PIPE], STDERR_FILENO);
         if (fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL) | O_NONBLOCK) == -1) {
-            strError = string("Can't set flag on stdout: ") + string(strerror(errno));
+            strError = std::string("Can't set flag on stdout: ") + std::string(strerror(errno));
             return 0;
         }
         if (fcntl(STDERR_FILENO, F_SETFL, fcntl(STDERR_FILENO, F_GETFL) | O_NONBLOCK) == -1) {
-            strError = string("Can't set flag on stderr: ") + string(strerror(errno));
+            strError = std::string("Can't set flag on stderr: ") + std::string(strerror(errno));
             return 0;
         }
 
         close(pipe_to_stdout[WRITE_TO_PIPE]);
         close(pipe_to_stdout[READ_FROM_PIPE]);
 
-        strCmd = strCmd + string(" ") + strParam;
+        strCmd = strCmd + std::string(" ") + strParam;
         char *szcmd = new char[strCmd.size()+1];
         strcpy(szcmd,strCmd.c_str());
         int nargs = 0;
@@ -961,7 +960,7 @@ int LocalBroker::ExecuteCmd()
             int ret = chdir(strWorkdir.c_str());
             if (ret!=0)
             {
-                strError = string("Can't set working directory because ") + string(strerror(errno));
+                strError = std::string("Can't set working directory because ") + std::string(strerror(errno));
                 FILE* out_to_parent = fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
                 fprintf(out_to_parent,"%s", strError.c_str());
                 fflush(out_to_parent);
@@ -1001,7 +1000,7 @@ int LocalBroker::ExecuteCmd()
 
         if (ret==-1)
         {
-            strError = string("Can't execute command because ") + string(strerror(errno));
+            strError = std::string("Can't execute command because ") + std::string(strerror(errno));
             FILE* out_to_parent = fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
             fprintf(out_to_parent,"%s", strError.c_str());
             fflush(out_to_parent);
@@ -1020,16 +1019,16 @@ int LocalBroker::ExecuteCmd()
         int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
         if (fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK) == -1)
         {
-            strError = string("Can't set flag on pipe: ") + string(strerror(errno));
+            strError = std::string("Can't set flag on pipe: ") + std::string(strerror(errno));
             fclose(in_from_child);
             return 0;
         }
 
-        string retError;
+        std::string retError;
         waitPipe(pipe_child_to_parent[READ_FROM_PIPE]);
 
         for (char buff[1024]; fgets(buff, 1024, in_from_child);) {
-            retError += string(buff);
+            retError += std::string(buff);
         }
         fclose(in_from_child);
 

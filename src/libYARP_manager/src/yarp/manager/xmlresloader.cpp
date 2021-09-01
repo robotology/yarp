@@ -18,7 +18,6 @@
 #include <tinyxml.h>
 
 
-using namespace std;
 using namespace yarp::manager;
 
 
@@ -29,8 +28,8 @@ XmlResLoader::XmlResLoader(const char* szPath, const char* szName)
     {
         const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
         strPath = szPath;
-        if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
-            strPath = strPath + string(directorySeparator);
+        if ((strPath.rfind(directorySeparator) == std::string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
+            strPath = strPath + std::string(directorySeparator);
         }
     }
 
@@ -94,10 +93,10 @@ bool XmlResLoader::init()
     /* we need to load all xml files */
     while((entry = readdir(dir)))
     {
-        string name = entry->d_name;
+        std::string name = entry->d_name;
         if(name.size() > 3)
         {
-            string ext = name.substr(name.size()-3,3);
+            std::string ext = name.substr(name.size()-3,3);
             if (compareString(ext.c_str(), "xml")) {
                 fileNames.push_back(strPath + name);
             }
@@ -150,7 +149,7 @@ GenericResource* XmlResLoader::getNextResource()
                     return nullptr;
                 }
 
-                string fname = fileNames.back();
+                std::string fname = fileNames.back();
                 fileNames.pop_back();
                 ret = parsXml(fname.c_str());
             } while(!ret);
@@ -165,13 +164,13 @@ GenericResource* XmlResLoader::getNextResource()
         /**
          * we need to check for a single resource
          */
-         vector<string>::iterator itr;
+         std::vector<std::string>::iterator itr;
          for(itr=fileNames.begin(); itr<fileNames.end(); itr++)
          {
              if(parsXml((*itr).c_str()))
              {
                  for (auto& computer : computers) {
-                     if (string(computer.getName()) == strName) {
+                     if (std::string(computer.getName()) == strName) {
                          return &computer;
                      }
                  }

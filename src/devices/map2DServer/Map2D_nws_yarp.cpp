@@ -31,7 +31,6 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(MAP2D_NWS_YARP, "yarp.device.map2D_nws_yarp")
@@ -72,7 +71,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
         }
         else if (cmd == VOCAB_IMAP_GET_MAP)
         {
-            string name = in.get(2).asString();
+            std::string name = in.get(2).asString();
             MapGrid2D map;
             if (m_iMap2D->get_map(name, map))
             {
@@ -103,7 +102,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
         }
         else if (cmd == VOCAB_IMAP_REMOVE)
         {
-            string name = in.get(2).asString();
+            std::string name = in.get(2).asString();
             if (m_iMap2D->remove_map(name))
             {
                 out.clear();
@@ -126,7 +125,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
         {
             if (in.get(2).asVocab32() == VOCAB_IMAP_MAPS_COLLECTION)
             {
-                string mapfile = in.get(3).asString();
+                std::string mapfile = in.get(3).asString();
                 if (m_iMap2D->saveMapsCollection(mapfile))
                 {
                     out.clear();
@@ -141,7 +140,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             }
             else if (in.get(2).asVocab32() == VOCAB_IMAP_LOCATIONS_COLLECTION)
             {
-                string locfile = in.get(3).asString();
+                std::string locfile = in.get(3).asString();
                 if (m_iMap2D->saveLocationsAndExtras(locfile))
                 {
                     out.clear();
@@ -165,7 +164,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
         {
             if (in.get(2).asVocab32()==VOCAB_IMAP_MAPS_COLLECTION)
             {
-                string mapfile = in.get(3).asString();
+                std::string mapfile = in.get(3).asString();
                 if (m_iMap2D->loadMapsCollection(mapfile))
                 {
                     out.clear();
@@ -180,7 +179,7 @@ void Map2D_nws_yarp::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle&
             }
             if (in.get(2).asVocab32() == VOCAB_IMAP_LOCATIONS_COLLECTION)
             {
-                string locfile = in.get(3).asString();
+                std::string locfile = in.get(3).asString();
                 if (m_iMap2D->loadLocationsAndExtras(locfile))
                 {
                     out.clear();

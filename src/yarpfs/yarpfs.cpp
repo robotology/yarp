@@ -24,7 +24,6 @@
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
-using namespace std;
 
 
 #include "yarputils.h"

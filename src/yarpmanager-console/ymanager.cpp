@@ -22,7 +22,6 @@
 
 using namespace yarp::os;
 using namespace yarp::manager;
-using namespace std;
 
 #if defined(_WIN32)
 # define HEADER      ""
@@ -143,13 +142,13 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
     if(config.check("help"))
     {
-        cout<<HELP_MESSAGE<<endl;
+        std::cout<<HELP_MESSAGE<<'\n';
         return;
     }
 
     if(config.check("version"))
     {
-        cout<<VERSION_MESSAGE<<endl;
+        std::cout<<VERSION_MESSAGE<<'\n';
         return;
     }
 
@@ -244,14 +243,14 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
     if(!config.check("silent"))
     {
-        cout<<endl<<OKGREEN<<LOGO_MESSAGE<<ENDC<<endl;
-        cout<<endl<<WELCOME_MESSAGE<<endl<<endl;
+        std::cout<<'\n'<<OKGREEN<<LOGO_MESSAGE<<ENDC<<'\n';
+        std::cout<<'\n'<<WELCOME_MESSAGE<<'\n'<<'\n';
     }
 
     if(config.check("modpath"))
     {
-        string strPath;
-        stringstream modPaths(config.find("modpath").asString());
+        std::string strPath;
+        std::stringstream modPaths(config.find("modpath").asString());
         while (getline(modPaths, strPath, ';'))
         {
             trimString(strPath);
@@ -264,8 +263,8 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
     if(config.check("respath"))
     {
-        string strPath;
-        stringstream resPaths(config.find("respath").asString());
+        std::string strPath;
+        std::stringstream resPaths(config.find("respath").asString());
         while (getline(resPaths, strPath, ';'))
         {
             trimString(strPath);
@@ -279,8 +278,8 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
     ErrorLogger* logger  = ErrorLogger::Instance();
     if(config.check("apppath"))
     {
-        string strPath;
-        stringstream appPaths(config.find("apppath").asString());
+        std::string strPath;
+        std::stringstream appPaths(config.find("apppath").asString());
         while (getline(appPaths, strPath, ';'))
         {
             trimString(strPath);
@@ -404,7 +403,7 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 
                     if (config.check("check_dep")) {
                         if (checkDependency()) {
-                            cout << INFO << "All of resource dependencies are satisfied." << ENDC << endl;
+                            std::cout << INFO << "All of resource dependencies are satisfied." << ENDC << '\n';
                         }
                     }
                 }
@@ -427,11 +426,11 @@ YConsoleManager::~YConsoleManager() = default;
 void YConsoleManager::onSignal(int signum)
 {
 #if defined(_WIN32)
-    cout<<INFO<<"[force exit] yarpmanager will terminate all of the running modules on exit.";
+    std::cout<<INFO<<"[force exit] yarpmanager will terminate all of the running modules on exit.";
     if( __pManager)
         __pManager->kill();
 #else
-    cout<<endl<<INFO<<"use"<<OKGREEN<<" 'exit' "<<INFO<<"to quit!"<<ENDC<<endl;
+    std::cout<<'\n'<<INFO<<"use"<<OKGREEN<<" 'exit' "<<INFO<<"to quit!"<<ENDC<<'\n';
 #endif
 }
 
@@ -444,9 +443,9 @@ void YConsoleManager::myMain()
     rl_attempted_completion_function = my_completion;
 #endif
 
-    while(!cin.eof())
+    while(!std::cin.eof())
     {
-        string temp;
+        std::string temp;
 
 #ifdef YARP_HAS_Libedit
         static char* szLine = (char*)nullptr;
@@ -465,14 +464,14 @@ void YConsoleManager::myMain()
             temp = "";
         }
 #else
-        cout << ">> ";
-        getline(cin, temp);
+        std::cout << ">> ";
+        getline(std::cin, temp);
 #endif
 
         //Break string into separate strings on whitespace
-        vector<string> cmdList;
-        stringstream foo(temp);
-        string s;
+        std::vector<std::string> cmdList;
+        std::stringstream foo(temp);
+        std::string s;
         while (foo >> s)
         {
             if (s[0] == '~') {
@@ -490,8 +489,8 @@ void YConsoleManager::myMain()
             }
             else
             {
-                cout<<"'"<<cmdList[0]<<"'"<<INFO<<" is not correct. ";
-                cout<<"type \"help\" for more information."<<ENDC<<endl;
+                std::cout<<"'"<<cmdList[0]<<"'"<<INFO<<" is not correct. ";
+                std::cout<<"type \"help\" for more information."<<ENDC<<'\n';
             }
         }
     }
@@ -503,7 +502,7 @@ void YConsoleManager::myMain()
         reportErrors();
     }
 #endif
-    cout<<"bye."<<endl;
+    std::cout<<"bye."<<'\n';
 
 }
 
@@ -513,10 +512,10 @@ bool YConsoleManager::exit()
         return true;
     }
 
-    string ans;
-    cout<<WARNING<<"WARNING: ";
-    cout<<INFO<<"You have some running modules. You might not be able to recover them later. Are you sure? [No/yes] "<<ENDC;
-    getline(cin, ans);
+    std::string ans;
+    std::cout<<WARNING<<"WARNING: ";
+    std::cout<<INFO<<"You have some running modules. You might not be able to recover them later. Are you sure? [No/yes] "<<ENDC;
+    getline(std::cin, ans);
     if(compareString(ans.c_str(),"yes"))
     {
         bShouldRun = false;
@@ -528,7 +527,7 @@ bool YConsoleManager::exit()
 }
 
 
-bool YConsoleManager::process(const vector<string> &cmdList)
+bool YConsoleManager::process(const std::vector<std::string> &cmdList)
 {
     if (!cmdList.size() || cmdList[0] == "") {
         return true;
@@ -552,7 +551,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         (cmdList[0] == "add") && (cmdList[1] == "app"))
      {
          if (addApplication(cmdList[2].c_str())) {
-             cout << INFO << cmdList[2] << " is successfully added." << ENDC << endl;
+             std::cout << INFO << cmdList[2] << " is successfully added." << ENDC << '\n';
          }
          reportErrors();
         #ifdef YARP_HAS_Libedit
@@ -568,7 +567,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         (cmdList[0] == "add") && (cmdList[1] == "mod"))
      {
          if (addModule(cmdList[2].c_str())) {
-             cout << INFO << cmdList[2] << " is successfully added." << ENDC << endl;
+             std::cout << INFO << cmdList[2] << " is successfully added." << ENDC << '\n';
          }
          reportErrors();
          return true;
@@ -581,7 +580,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         (cmdList[0] == "add") && (cmdList[1] == "res"))
      {
          if (addResource(cmdList[2].c_str())) {
-             cout << INFO << cmdList[2] << " is successfully added." << ENDC << endl;
+             std::cout << INFO << cmdList[2] << " is successfully added." << ENDC << '\n';
          }
          reportErrors();
          return true;
@@ -596,7 +595,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
      {
          if(loadApplication(cmdList[2].c_str()))
          {
-            //cout<<cmdList[2]<<" is successfully loaded."<<endl;
+            //std::cout<<cmdList[2]<<" is successfully loaded."<<'\n';
             which();
          }
          reportErrors();
@@ -613,11 +612,11 @@ bool YConsoleManager::process(const vector<string> &cmdList)
          if(cmdList.size() > 3)
          {
             if(manager.loadModule(cmdList[2].c_str(), cmdList[3].c_str()))
-                cout<<cmdList[2]<<" is successfully loaded."<<endl;
+                std::cout<<cmdList[2]<<" is successfully loaded."<<'\n';
          }
         else
             if(manager.loadModule(cmdList[2].c_str()))
-                cout<<cmdList[2]<<" is successfully loaded."<<endl;
+                std::cout<<cmdList[2]<<" is successfully loaded."<<'\n';
          reportErrors();
          return true;
      }
@@ -749,7 +748,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         (cmdList[0] == "check") && (cmdList[1] == "dep"))
     {
         if (checkDependency()) {
-            cout << INFO << "All of resource dependencies are satisfied." << ENDC << endl;
+            std::cout << INFO << "All of resource dependencies are satisfied." << ENDC << '\n';
         }
         reportErrors();
         return true;
@@ -766,18 +765,18 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         auto id = (unsigned int)atoi(cmdList[2].c_str());
         if(id>=modules.size())
         {
-            cout<<FAIL<<"ERROR:   "<<INFO<<"Module id is out of range."<<ENDC<<endl;
+            std::cout<<FAIL<<"ERROR:   "<<INFO<<"Module id is out of range."<<ENDC<<'\n';
             return true;
         }
 
         if (running(id)) {
-            cout<<OKGREEN<<"<RUNNING> ";
+            std::cout<<OKGREEN<<"<RUNNING> ";
         } else {
-            cout << FAIL << "<STOPPED> ";
+            std::cout << FAIL << "<STOPPED> ";
         }
-        cout<<INFO<<"("<<id<<") ";
-        cout<<modules[id]->getCommand();
-        cout<<" ["<<modules[id]->getHost()<<"]"<<ENDC<<endl;
+        std::cout<<INFO<<"("<<id<<") ";
+        std::cout<<modules[id]->getCommand();
+        std::cout<<" ["<<modules[id]->getHost()<<"]"<<ENDC<<'\n';
         reportErrors();
         return true;
     }
@@ -801,19 +800,19 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         auto id = (unsigned int)atoi(cmdList[2].c_str());
         if(id>=connections.size())
         {
-            cout<<FAIL<<"ERROR:   "<<INFO<<"Connection id is out of range."<<ENDC<<endl;
+            std::cout<<FAIL<<"ERROR:   "<<INFO<<"Connection id is out of range."<<ENDC<<'\n';
             return true;
         }
 
         if (connected(id)) {
-            cout<<OKGREEN<<"<CONNECTED> ";
+            std::cout<<OKGREEN<<"<CONNECTED> ";
         } else {
-            cout << FAIL << "<DISCONNECTED> ";
+            std::cout << FAIL << "<DISCONNECTED> ";
         }
 
-        cout<<INFO<<"("<<id<<") ";
-        cout<<connections[id].from()<<" - "<<connections[id].to();
-                cout<<" ["<<connections[id].carrier()<<"]"<<ENDC<<endl;
+        std::cout<<INFO<<"("<<id<<") ";
+        std::cout<<connections[id].from()<<" - "<<connections[id].to();
+                std::cout<<" ["<<connections[id].carrier()<<"]"<<ENDC<<'\n';
         reportErrors();
         return true;
     }
@@ -837,18 +836,18 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         int id = 0;
         for(auto& mod : mods)
         {
-            string fname;
-            string fpath = mod->getXmlFile();
+            std::string fname;
+            std::string fpath = mod->getXmlFile();
 
             size_t pos = fpath.rfind(directorySeparator);
-            if (pos != string::npos) {
+            if (pos != std::string::npos) {
                 fname = fpath.substr(pos);
             } else {
                 fname = fpath;
             }
-            cout<<INFO<<"("<<id++<<") ";
-            cout<<OKBLUE<<mod->getName()<<ENDC;
-            cout<<INFO<<" ["<<fname<<"]"<<ENDC<<endl;
+            std::cout<<INFO<<"("<<id++<<") ";
+            std::cout<<OKBLUE<<mod->getName()<<ENDC;
+            std::cout<<INFO<<" ["<<fname<<"]"<<ENDC<<'\n';
         }
         return true;
     }
@@ -865,18 +864,18 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         int id = 0;
         for(auto& app : apps)
         {
-            string fname;
-            string fpath = app->getXmlFile();
+            std::string fname;
+            std::string fpath = app->getXmlFile();
 
             size_t pos = fpath.rfind(directorySeparator);
-            if (pos != string::npos) {
+            if (pos != std::string::npos) {
                 fname = fpath.substr(pos);
             } else {
                 fname = fpath;
             }
-            cout<<INFO<<"("<<id++<<") ";
-            cout<<OKBLUE<<app->getName()<<ENDC;
-            cout<<INFO<<" ["<<fname<<"]"<<ENDC<<endl;
+            std::cout<<INFO<<"("<<id++<<") ";
+            std::cout<<OKBLUE<<app->getName()<<ENDC;
+            std::cout<<INFO<<" ["<<fname<<"]"<<ENDC<<'\n';
         }
         return true;
     }
@@ -895,21 +894,21 @@ bool YConsoleManager::process(const vector<string> &cmdList)
             auto* comp = dynamic_cast<Computer*>(resource);
             if(comp)
             {
-                string fname;
-                string fpath = comp->getXmlFile();
+                std::string fname;
+                std::string fpath = comp->getXmlFile();
                 size_t pos = fpath.rfind(directorySeparator);
-                if (pos != string::npos) {
+                if (pos != std::string::npos) {
                     fname = fpath.substr(pos);
                 } else {
                     fname = fpath;
                 }
-                cout<<INFO<<"("<<id++<<") ";
+                std::cout<<INFO<<"("<<id++<<") ";
                 if (comp->getDisable()) {
-                    cout<<WARNING<<comp->getName()<<ENDC;
+                    std::cout<<WARNING<<comp->getName()<<ENDC;
                 } else {
-                    cout << OKBLUE << comp->getName() << ENDC;
+                    std::cout << OKBLUE << comp->getName() << ENDC;
                 }
-                cout<<INFO<<" ["<<fname<<"]"<<ENDC<<endl;
+                std::cout<<INFO<<" ["<<fname<<"]"<<ENDC<<'\n';
             }
         }
         return true;
@@ -923,7 +922,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         (cmdList[0] == "export") )
     {
         if (!exportDependencyGraph(cmdList[1].c_str())) {
-            cout << FAIL << "ERROR:   " << INFO << "Cannot export graph to " << cmdList[1] << "." << ENDC << endl;
+            std::cout << FAIL << "ERROR:   " << INFO << "Cannot export graph to " << cmdList[1] << "." << ENDC << '\n';
         }
         return true;
     }
@@ -938,12 +937,12 @@ bool YConsoleManager::process(const vector<string> &cmdList)
         KnowledgeBase* kb = getKnowledgeBase();
         if(!kb->getModule(cmdList[2].c_str()))
         {
-            cout<<FAIL<<"ERROR:   "<<INFO<<"'"<<cmdList[2].c_str()<<"' not found."<<ENDC<<endl;
+            std::cout<<FAIL<<"ERROR:   "<<INFO<<"'"<<cmdList[2].c_str()<<"' not found."<<ENDC<<'\n';
             return true;
         }
-        cout<<INFO;
+        std::cout<<INFO;
         PRINT_MODULE(kb->getModule(cmdList[2].c_str()));
-        cout<<ENDC;
+        std::cout<<ENDC;
         return true;
     }
 
@@ -956,38 +955,38 @@ bool YConsoleManager::process(const vector<string> &cmdList)
          config.unput(cmdList[1]);
          config.put(cmdList[1], cmdList[2]);
 
-        if(cmdList[1] == string("watchdog"))
+        if(cmdList[1] == std::string("watchdog"))
         {
-            if (cmdList[2] == string("yes")) {
+            if (cmdList[2] == std::string("yes")) {
                 enableWatchDog();
             } else {
                 disableWatchod();
             }
         }
 
-        if(cmdList[1] == string("auto_dependency"))
+        if(cmdList[1] == std::string("auto_dependency"))
         {
-            if (cmdList[2] == string("yes")) {
+            if (cmdList[2] == std::string("yes")) {
                 enableAutoDependency();
             } else {
                 disableAutoDependency();
             }
         }
 
-        if(cmdList[1] == string("auto_connect"))
+        if(cmdList[1] == std::string("auto_connect"))
         {
-            if (cmdList[2] == string("yes")) {
+            if (cmdList[2] == std::string("yes")) {
                 enableAutoConnect();
             } else {
                 disableAutoConnect();
             }
         }
 
-        if(cmdList[1] == string("color_theme"))
+        if(cmdList[1] == std::string("color_theme"))
         {
-            if (cmdList[2] == string("dark")) {
+            if (cmdList[2] == std::string("dark")) {
                 setColorTheme(THEME_DARK);
-            } else if (cmdList[2] == string("light")) {
+            } else if (cmdList[2] == std::string("light")) {
                 setColorTheme(THEME_LIGHT);
             } else {
                 setColorTheme(THEME_NONE);
@@ -1006,10 +1005,10 @@ bool YConsoleManager::process(const vector<string> &cmdList)
      {
          if(config.check(cmdList[1]))
          {
-            cout<<OKBLUE<<cmdList[1]<<INFO<<" = ";
-            cout<<OKGREEN<<config.find(cmdList[1]).asString()<<ENDC<<endl;
+            std::cout<<OKBLUE<<cmdList[1]<<INFO<<" = ";
+            std::cout<<OKGREEN<<config.find(cmdList[1]).asString()<<ENDC<<'\n';
          } else {
-             cout << FAIL << "ERROR:   " << INFO << "'" << cmdList[1].c_str() << "' not found." << ENDC << endl;
+             std::cout << FAIL << "ERROR:   " << INFO << "'" << cmdList[1].c_str() << "' not found." << ENDC << '\n';
          }
          return true;
      }
@@ -1031,35 +1030,35 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 
 void YConsoleManager::help()
 {
-    cout<<"Here is a list of YARP manager keywords.\n"<<endl;
-    cout<<OKGREEN<<"help"<<INFO<<"                    : show help."<<ENDC<<endl;
-    cout<<OKGREEN<<"exit"<<INFO<<"                    : exit yarp manager."<<ENDC<<endl;
-    cout<<OKGREEN<<"list mod"<<INFO<<"                : list available modules."<<ENDC<<endl;
-    cout<<OKGREEN<<"list app"<<INFO<<"                : list available applications."<<ENDC<<endl;
-    cout<<OKGREEN<<"list res"<<INFO<<"                : list available resources. (i.e. nodes in a cluster)"<<ENDC<<endl;
-    cout<<OKGREEN<<"add mod <filename>"<<INFO<<"      : add a module from its description file."<<ENDC<<endl;
-    cout<<OKGREEN<<"add app <filename>"<<INFO<<"      : add an application from its description file."<<ENDC<<endl;
-    cout<<OKGREEN<<"add res <filename>"<<INFO<<"      : add resources from a description file."<<ENDC<<endl;
-    cout<<OKGREEN<<"load app <application>"<<INFO<<"  : load an application to run."<<endl;
-//  cout<<"load mod <module> <host>: load a module to run on an optional host."<<endl;
-    cout<<OKGREEN<<"run [IDs]"<<INFO<<"               : run application or a modules indicated by IDs."<<ENDC<<endl;
-    cout<<OKGREEN<<"stop [IDs]"<<INFO<<"              : stop running application or modules indicated by IDs."<<ENDC<<endl;
-    cout<<OKGREEN<<"kill [IDs]"<<INFO<<"              : kill running application or modules indicated by IDs."<<ENDC<<endl;
-    cout<<OKGREEN<<"connect [IDs]"<<INFO<<"           : stablish all connections or just one connection indicated by IDs."<<ENDC<<endl;
-    cout<<OKGREEN<<"disconnect [IDs]"<<INFO<<"        : remove all connections or just one connection indicated by IDs."<<ENDC<<endl;
-    cout<<OKGREEN<<"which"<<INFO<<"                   : list loaded modules, connections and resource dependencies."<<ENDC<<endl;
-    cout<<OKGREEN<<"check dep"<<INFO<<"               : check for all resource dependencies."<<ENDC<<endl;
-    cout<<OKGREEN<<"check state [id]"<<INFO<<"        : check for running state of application or a module indicated by id."<<ENDC<<endl;
-    cout<<OKGREEN<<"check con [id]"<<INFO<<"          : check for all connections state or just one connection indicated by id."<<ENDC<<endl;
-    cout<<OKGREEN<<"set <option> <value>"<<INFO<<"    : set value to an option."<<ENDC<<endl;
-    cout<<OKGREEN<<"get <option>"<<INFO<<"            : show value of an option."<<ENDC<<endl;
-    cout<<OKGREEN<<"export <filename>"<<INFO<<"       : export application's graph as Graphviz dot format."<<ENDC<<endl;
-//  cout<<"edit mod <modname>      : open module relevant xml file to edit."<<endl;
-//  cout<<"edit app <appname>      : open application relevant xml file to edit."<<endl;
-    cout<<OKGREEN<<"show mod <modname>"<<INFO<<"      : display module information (description, input, output,...)."<<ENDC<<endl;
-    cout<<OKGREEN<<"assign hosts"<<INFO<<"            : automatically assign modules to proper nodes using load balancer."<<ENDC<<endl;
+    std::cout<<"Here is a list of YARP manager keywords.\n"<<'\n';
+    std::cout<<OKGREEN<<"help"<<INFO<<"                    : show help."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"exit"<<INFO<<"                    : exit yarp manager."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"list mod"<<INFO<<"                : list available modules."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"list app"<<INFO<<"                : list available applications."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"list res"<<INFO<<"                : list available resources. (i.e. nodes in a cluster)"<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"add mod <filename>"<<INFO<<"      : add a module from its description file."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"add app <filename>"<<INFO<<"      : add an application from its description file."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"add res <filename>"<<INFO<<"      : add resources from a description file."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"load app <application>"<<INFO<<"  : load an application to run."<<'\n';
+//  std::cout<<"load mod <module> <host>: load a module to run on an optional host."<<'\n';
+    std::cout<<OKGREEN<<"run [IDs]"<<INFO<<"               : run application or a modules indicated by IDs."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"stop [IDs]"<<INFO<<"              : stop running application or modules indicated by IDs."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"kill [IDs]"<<INFO<<"              : kill running application or modules indicated by IDs."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"connect [IDs]"<<INFO<<"           : stablish all connections or just one connection indicated by IDs."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"disconnect [IDs]"<<INFO<<"        : remove all connections or just one connection indicated by IDs."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"which"<<INFO<<"                   : list loaded modules, connections and resource dependencies."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"check dep"<<INFO<<"               : check for all resource dependencies."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"check state [id]"<<INFO<<"        : check for running state of application or a module indicated by id."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"check con [id]"<<INFO<<"          : check for all connections state or just one connection indicated by id."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"set <option> <value>"<<INFO<<"    : set value to an option."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"get <option>"<<INFO<<"            : show value of an option."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"export <filename>"<<INFO<<"       : export application's graph as Graphviz dot format."<<ENDC<<'\n';
+//  std::cout<<"edit mod <modname>      : open module relevant xml file to edit."<<'\n';
+//  std::cout<<"edit app <appname>      : open application relevant xml file to edit."<<'\n';
+    std::cout<<OKGREEN<<"show mod <modname>"<<INFO<<"      : display module information (description, input, output,...)."<<ENDC<<'\n';
+    std::cout<<OKGREEN<<"assign hosts"<<INFO<<"            : automatically assign modules to proper nodes using load balancer."<<ENDC<<'\n';
 
-    cout<<endl;
+    std::cout<<'\n';
 }
 
 
@@ -1070,37 +1069,37 @@ void YConsoleManager::which()
     ExecutablePIterator moditr;
     CnnIterator cnnitr;
 
-    cout<<endl<<HEADER<<"Application: "<<ENDC<<endl;
-    cout<<OKBLUE<<getApplicationName()<<ENDC<<endl;
+    std::cout<<'\n'<<HEADER<<"Application: "<<ENDC<<'\n';
+    std::cout<<OKBLUE<<getApplicationName()<<ENDC<<'\n';
 
-    cout<<endl<<HEADER<<"Modules: "<<ENDC<<endl;
+    std::cout<<'\n'<<HEADER<<"Modules: "<<ENDC<<'\n';
     int id = 0;
     for(moditr=modules.begin(); moditr<modules.end(); moditr++)
     {
-        cout<<INFO<<"("<<id++<<") ";
-        cout<<OKBLUE<<(*moditr)->getCommand()<<INFO;
-        cout<<" ["<<(*moditr)->getHost()<<"] ["<<(*moditr)->getParam()<<"]";
-        cout<<" ["<<(*moditr)->getEnv()<<"]"<<ENDC<<endl;
+        std::cout<<INFO<<"("<<id++<<") ";
+        std::cout<<OKBLUE<<(*moditr)->getCommand()<<INFO;
+        std::cout<<" ["<<(*moditr)->getHost()<<"] ["<<(*moditr)->getParam()<<"]";
+        std::cout<<" ["<<(*moditr)->getEnv()<<"]"<<ENDC<<'\n';
     }
-    cout<<endl<<HEADER<<"Connections: "<<ENDC<<endl;
+    std::cout<<'\n'<<HEADER<<"Connections: "<<ENDC<<'\n';
     id = 0;
     for(cnnitr=connections.begin(); cnnitr<connections.end(); cnnitr++)
     {
-        cout<<INFO<<"("<<id++<<") ";
-        cout<<OKBLUE<<(*cnnitr).from()<<" - "<<(*cnnitr).to()<<INFO;
-            cout<<" ["<<(*cnnitr).carrier()<<"]";
-        cout<<ENDC<<endl;
+        std::cout<<INFO<<"("<<id++<<") ";
+        std::cout<<OKBLUE<<(*cnnitr).from()<<" - "<<(*cnnitr).to()<<INFO;
+            std::cout<<" ["<<(*cnnitr).carrier()<<"]";
+        std::cout<<ENDC<<'\n';
     }
 
-    cout<<endl<<HEADER<<"Resources:"<<ENDC<<endl;
+    std::cout<<'\n'<<HEADER<<"Resources:"<<ENDC<<'\n';
     id = 0;
     ResourcePIterator itrS;
     for(itrS=getResources().begin(); itrS!=getResources().end(); itrS++)
     {
-        cout<<INFO<<"("<<id++<<") ";
-        cout<<OKBLUE<<(*itrS)->getName()<<INFO<<" ["<<(*itrS)->getTypeName()<<"]"<<ENDC<<endl;
+        std::cout<<INFO<<"("<<id++<<") ";
+        std::cout<<OKBLUE<<(*itrS)->getName()<<INFO<<" ["<<(*itrS)->getTypeName()<<"]"<<ENDC<<'\n';
     }
-    cout<<endl;
+    std::cout<<'\n';
 }
 
 void YConsoleManager::checkStates()
@@ -1114,13 +1113,13 @@ void YConsoleManager::checkStates()
         if(running(id))
         {
             bShouldRun = true;
-            cout<<OKGREEN<<"<RUNNING> ";
+            std::cout<<OKGREEN<<"<RUNNING> ";
         } else {
-            cout << FAIL << "<STOPPED> ";
+            std::cout << FAIL << "<STOPPED> ";
         }
-        cout<<INFO<<"("<<id<<") ";
-        cout<<(*moditr)->getCommand();
-        cout<<" ["<<(*moditr)->getHost()<<"]"<<ENDC<<endl;
+        std::cout<<INFO<<"("<<id<<") ";
+        std::cout<<(*moditr)->getCommand();
+        std::cout<<" ["<<(*moditr)->getHost()<<"]"<<ENDC<<'\n';
         id++;
     }
 }
@@ -1133,14 +1132,14 @@ void YConsoleManager::checkConnections()
     for(cnnitr=connections.begin(); cnnitr<connections.end(); cnnitr++)
     {
         if (connected(id)) {
-            cout<<OKGREEN<<"<CONNECTED> ";
+            std::cout<<OKGREEN<<"<CONNECTED> ";
         } else {
-            cout << FAIL << "<DISCONNECTED> ";
+            std::cout << FAIL << "<DISCONNECTED> ";
         }
 
-        cout<<INFO<<"("<<id<<") ";
-        cout<<(*cnnitr).from()<<" - "<<(*cnnitr).to();
-            cout<<" ["<<(*cnnitr).carrier()<<"]"<<ENDC<<endl;
+        std::cout<<INFO<<"("<<id<<") ";
+        std::cout<<(*cnnitr).from()<<" - "<<(*cnnitr).to();
+            std::cout<<" ["<<(*cnnitr).carrier()<<"]"<<ENDC<<'\n';
         id++;
     }
 }
@@ -1152,11 +1151,11 @@ void YConsoleManager::reportErrors()
     {
         const char* msg;
         while ((msg = logger->getLastError())) {
-            cout << FAIL << "ERROR:   " << INFO << msg << ENDC << endl;
+            std::cout << FAIL << "ERROR:   " << INFO << msg << ENDC << '\n';
         }
 
         while ((msg = logger->getLastWarning())) {
-            cout << WARNING << "WARNING: " << INFO << msg << ENDC << endl;
+            std::cout << WARNING << "WARNING: " << INFO << msg << ENDC << '\n';
         }
     }
 }
@@ -1172,18 +1171,18 @@ void YConsoleManager::onExecutableFailed(void* which)
 {
     auto* exe = (Executable*) which;
     if (config.find("module_failure").asString() == "prompt") {
-        cout << exe->getCommand() << " from " << exe->getHost() << " is failed!" << endl;
+        std::cout << exe->getCommand() << " from " << exe->getHost() << " is failed!" << '\n';
     }
 
     if(config.find("module_failure").asString() == "recover")
     {
-        cout<<endl<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! (restarting...)"<<endl;
+        std::cout<<'\n'<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! (restarting...)"<<'\n';
         exe->start();
     }
 
     if(config.find("module_failure").asString() == "terminate")
     {
-        cout<<endl<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! (terminating application...)"<<endl;
+        std::cout<<'\n'<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! (terminating application...)"<<'\n';
         bShouldRun = false;
         stop();
         reportErrors();
@@ -1196,14 +1195,14 @@ void YConsoleManager::onCnnFailed(void* which)
 {
     auto* cnn = (Connection*) which;
     if (config.check("connection_failure") && config.find("connection_failure").asString() == "prompt") {
-        cout << endl
-             << "connection failed between " << cnn->from() << " and " << cnn->to() << endl;
+        std::cout << '\n'
+             << "connection failed between " << cnn->from() << " and " << cnn->to() << '\n';
     }
 
     if(bShouldRun && config.check("connection_failure") &&
      config.find("connection_failure").asString() == "terminate")
      {
-        cout<<endl<<"connection failed between "<<cnn->from()<<" and "<<cnn->to()<<"(terminating application...)"<<endl;
+        std::cout<<'\n'<<"connection failed between "<<cnn->from()<<" and "<<cnn->to()<<"(terminating application...)"<<'\n';
         bShouldRun = false;
         stop();
         reportErrors();
@@ -1214,9 +1213,9 @@ void YConsoleManager::onCnnFailed(void* which)
 bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 {
     const std::string directorySeparator{yarp::conf::filesystem::preferred_separator};
-    string strPath = szPath;
-    if ((strPath.rfind(directorySeparator) == string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
-        strPath = strPath + string(directorySeparator);
+    std::string strPath = szPath;
+    if ((strPath.rfind(directorySeparator) == std::string::npos) || (strPath.rfind(directorySeparator) != strPath.size() - 1)) {
+        strPath = strPath + std::string(directorySeparator);
     }
 
     DIR *dir;
@@ -1229,10 +1228,10 @@ bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 
     while((entry = readdir(dir)))
     {
-        if((string(entry->d_name) != string("."))
-        && (string(entry->d_name) != string("..")))
+        if((std::string(entry->d_name) != std::string("."))
+        && (std::string(entry->d_name) != std::string("..")))
         {
-            string name = strPath + string(entry->d_name);
+            std::string name = strPath + std::string(entry->d_name);
             loadRecursiveApplications(name.c_str());
         }
     }
@@ -1242,7 +1241,7 @@ bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 
 
 
-void YConsoleManager::updateAppNames(vector<string>* names)
+void YConsoleManager::updateAppNames(std::vector<std::string>* names)
 {
     names->clear();
     KnowledgeBase* kb = getKnowledgeBase();

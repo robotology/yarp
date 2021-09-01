@@ -25,7 +25,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
-using namespace std;
 
 #define DEFAULT_THREAD_PERIOD 0.01
 
@@ -250,7 +249,7 @@ bool Localization2DServer::initialize_ROS(yarp::os::Searchable& params)
             yCError(LOCALIZATION2DSERVER) << "Opening " << m_local_name << " Node, check your yarp-ROS network configuration";
         }
 
-        string ros_odom_topic = m_local_name + string("/odom");
+        std::string ros_odom_topic = m_local_name + std::string("/odom");
         b = m_odometry_publisher.topic(ros_odom_topic);
         if (!b)
         {

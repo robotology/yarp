@@ -31,7 +31,6 @@
 #include <yarp/dev/IRangefinder2D.h>
 #include <yarp/dev/PolyDriver.h>
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
 
@@ -187,7 +186,7 @@ void drawNav(const yarp::os::Bottle *display, IplImage *img, double scale)
     cvCircle(img,cvPoint(img->width/2,img->height/2),(int)(max_obs_dist*scale-1),color_black);
 }
 
-void drawLaser(const Vector *comp, vector<yarp::dev::LaserMeasurementData> *las, vector<yarp::dev::LaserMeasurementData> *lmap, IplImage *img, double angle_tot, int scans, double sens_position_x, double sens_position_y, double sens_position_t, double scale, bool absolute, bool verbose, int aspect)
+void drawLaser(const Vector *comp, std::vector<yarp::dev::LaserMeasurementData> *las, std::vector<yarp::dev::LaserMeasurementData> *lmap, IplImage *img, double angle_tot, int scans, double sens_position_x, double sens_position_y, double sens_position_t, double scale, bool absolute, bool verbose, int aspect)
 {
     cvZero(img);
     cvRectangle(img, cvPoint(0, 0), cvPoint(img->width, img->height), cvScalar(255, 0, 0), -1);
@@ -339,7 +338,6 @@ void display_help()
     yInfo() << "v ...... set verbose mode on/off.";
     yInfo() << "r ...... set refresh period (50/100/200ms).";
     yInfo() << "b ...... change aspect (lines/points)";
-    cout << "prova";
 }
 
 int main(int argc, char *argv[])
@@ -366,17 +364,17 @@ int main(int argc, char *argv[])
     bool compass = rf.check("compass", Value(true), "compass [0/1]").asBool();
     int period = rf.check("period",Value(50),"period [ms]").asInt32(); //ms
     int aspect = rf.check("aspect", Value(0), "0 draw lines, 1 draw points").asInt32();
-    string laserport = rf.check("sens_port", Value("/laser:o"), "laser port name").asString();
-    string localprefix = rf.check("local", Value("/laserScannerGui"), "prefix for the client port").asString();
+    std::string laserport = rf.check("sens_port", Value("/laser:o"), "laser port name").asString();
+    std::string localprefix = rf.check("local", Value("/laserScannerGui"), "prefix for the client port").asString();
     if (rf.check ("lidar_debug"))     { g_lidar_debug_nan = g_lidar_debug_inf = true;}
     if (rf.check ("lidar_debug_nan")) { g_lidar_debug_nan = true; }
     if (rf.check ("lidar_debug_inf")) { g_lidar_debug_inf = true; }
 
-    string laser_map_port_name;
+    std::string laser_map_port_name;
     laser_map_port_name = localprefix + "/laser_map:i";
-    string compass_port_name;
+    std::string compass_port_name;
     compass_port_name = localprefix + "/compass:i";
-    string nav_display;
+    std::string nav_display;
     nav_display = localprefix + "/nav_display:i";
 
     int width = 600;
@@ -420,7 +418,7 @@ int main(int argc, char *argv[])
     BufferedPort<yarp::os::Bottle> navDisplayInPort;
     navDisplayInPort.open(nav_display);
 
-    string window_name = "LaserScannerGui connected to " + laserport;
+    std::string window_name = "LaserScannerGui connected to " + laserport;
     IplImage *img  = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
     IplImage *img2 = cvCreateImage(cvSize(width,height),IPL_DEPTH_8U,3);
     cvNamedWindow(window_name.c_str(),CV_WINDOW_AUTOSIZE);

@@ -20,7 +20,6 @@
 #include <limits>
 #include <mutex>
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -140,7 +139,7 @@ bool LaserFromExternalPort::open(yarp::os::Searchable& config)
 
     if (general_config.check("base_type")) //this parameter is optional
     {
-        string bt = general_config.find("base_type").asString();
+        std::string bt = general_config.find("base_type").asString();
         if (bt=="infinity") { m_base_type = base_enum::BASE_IS_INF; }
         else if (bt=="nan") { m_base_type = base_enum::BASE_IS_NAN; }
         else if (bt=="zero") {m_base_type = base_enum::BASE_IS_ZERO;}

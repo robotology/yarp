@@ -15,7 +15,6 @@
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(BATTERYWRAPPER, "yarp.devices.BatteryWrapper")
@@ -346,28 +345,28 @@ bool BatteryWrapper::close()
     return true;
 }
 
-void BatteryWrapper::notify_message(string msg)
+void BatteryWrapper::notify_message(std::string msg)
 {
 #ifdef WIN32
     yCWarning(BATTERYWRAPPER, "%s", msg.c_str());
 #else
     yCWarning(BATTERYWRAPPER, "%s", msg.c_str());
-    string cmd = "echo " + msg + " | wall";
+    std::string cmd = "echo " + msg + " | wall";
     int retval;
     retval = system(cmd.c_str());
     yCDebug(BATTERYWRAPPER) << "system executed command" << cmd.c_str() << " with return value:" << retval;
 #endif
 }
 
-void BatteryWrapper::emergency_shutdown(string msg)
+void BatteryWrapper::emergency_shutdown(std::string msg)
 {
 #ifdef WIN32
-    string cmd;
+    std::string cmd;
     cmd = "shutdown /s /t 120 /c " + msg;
     yCWarning(BATTERYWRAPPER, "%s", msg.c_str());
     system(cmd.c_str());
 #else
-    string cmd;
+    std::string cmd;
     int retval;
     yCWarning(BATTERYWRAPPER, "%s", msg.c_str());
     cmd = "echo " + msg + " | wall";
@@ -432,7 +431,7 @@ void BatteryWrapper::check_battery_status(double battery_charge)
     }
 }
 
-void BatteryWrapper::stop_robot(string quit_port)
+void BatteryWrapper::stop_robot(std::string quit_port)
 {
     //typical quit_port:
     // "/icub/quit"

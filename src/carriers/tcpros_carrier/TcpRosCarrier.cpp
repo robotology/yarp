@@ -20,7 +20,6 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::wire_rep_utils;
-using namespace std;
 
 void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
@@ -133,8 +132,8 @@ bool TcpRosCarrier::sendHeader(ConnectionState& proto) {
     NestedContact nc(proto.getRoute().getFromName());
     header.data["callerid"] = nc.getNodeName();
     header.data["persistent"] = "1";
-    string header_serial = header.writeHeader();
-    string header_len(4,'\0');
+    std::string header_serial = header.writeHeader();
+    std::string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
     RosHeader::appendInt32(at,header_serial.length());
     yCTrace(TCPROSCARRIER, "Writing %s -- %d bytes",
@@ -176,7 +175,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
         yCWarning(TCPROSCARRIER, "Fail %s %d", __FILE__, __LINE__);
         return false;
     }
-    header.readHeader(string(m.get(),m.length()));
+    header.readHeader(std::string(m.get(),m.length()));
     yCTrace(TCPROSCARRIER, "Message header: %s", header.toString().c_str());
     std::string rosname;
     if (header.data.find("type")!=header.data.end()) {
@@ -184,7 +183,7 @@ bool TcpRosCarrier::expectReplyToHeader(ConnectionState& proto) {
     }
     yCTrace(TCPROSCARRIER, "<incoming> Type of data is [%s]s", rosname.c_str());
     if (header.data.find("callerid")!=header.data.end()) {
-        string name = header.data["callerid"];
+        std::string name = header.data["callerid"];
         yCTrace(TCPROSCARRIER, "<incoming> callerid is %s", name.c_str());
         yCTrace(TCPROSCARRIER, "Route was %s", proto.getRoute().toString().c_str());
         Route route = proto.getRoute();
@@ -248,7 +247,7 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
         return false;
     }
     RosHeader header;
-    header.readHeader(string(m.get(),m.length()));
+    header.readHeader(std::string(m.get(),m.length()));
     yCTrace(TCPROSCARRIER, "Got header %s", header.toString().c_str());
 
     std::string rosname;
@@ -280,8 +279,8 @@ bool TcpRosCarrier::expectSenderSpecifier(ConnectionState& proto) {
     NestedContact nc(proto.getRoute().getToName());
     header.data["callerid"] = nc.getNodeName();
 
-    string header_serial = header.writeHeader();
-    string header_len(4,'\0');
+    std::string header_serial = header.writeHeader();
+    std::string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
     RosHeader::appendInt32(at,header_serial.length());
     yCTrace(TCPROSCARRIER, "Writing %s -- %d bytes",
@@ -418,7 +417,7 @@ bool TcpRosCarrier::write(ConnectionState& proto, SizedWriter& writer) {
                (int)flex_writer->length(),
                len);
 
-    string header_len(4,'\0');
+    std::string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
     RosHeader::appendInt32(at,len);
     Bytes b1((char*)header_len.c_str(),header_len.length());

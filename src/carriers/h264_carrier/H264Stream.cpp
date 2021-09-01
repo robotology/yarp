@@ -24,7 +24,6 @@
 
 using namespace yarp::os;
 using namespace yarp::sig;
-using namespace std;
 
 H264Stream::H264Stream(h264Decoder_cfgParamters &config) :
         delegate(nullptr),

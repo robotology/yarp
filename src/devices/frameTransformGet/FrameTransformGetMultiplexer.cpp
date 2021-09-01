@@ -16,7 +16,6 @@
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 YARP_LOG_COMPONENT(FRAMETRANSFORMGETMULTIPLEXER, "yarp.devices.FrameTransformGetMultiplexer")
 

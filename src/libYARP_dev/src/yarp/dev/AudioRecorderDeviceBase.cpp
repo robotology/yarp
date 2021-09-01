@@ -11,7 +11,6 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
-using namespace std;
 
 constexpr double c_sleep_time=0.005;
 
@@ -209,7 +208,7 @@ AudioRecorderDeviceBase::~AudioRecorderDeviceBase()
     delete m_inputBuffer;
 }
 
-bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable& config, string device_name)
+bool AudioRecorderDeviceBase::configureRecorderAudioDevice(yarp::os::Searchable& config, std::string device_name)
 {
     m_audiorecorder_cfg.frequency = config.check("rate", Value(0), "audio sample rate (0=automatic)").asInt32();
     m_audiorecorder_cfg.numSamples = config.check("samples", Value(0), "number of samples per network packet (0=automatic). For chunks of 1 second of recording set samples=rate. Channels number is handled internally.").asInt32();

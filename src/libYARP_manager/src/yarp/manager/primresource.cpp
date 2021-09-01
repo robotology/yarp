@@ -8,7 +8,6 @@
 #include <cstring>
 
 using namespace yarp::manager;
-using namespace std;
 
 
 /**
@@ -118,9 +117,9 @@ bool Network::satisfy(GenericResource* resource)
     if (!net) {
         return false;
     }
-    bool ret = (!strlen(net->getIP4()))? true : (strIP4 == string(net->getIP4()));
-    ret &= (!strlen(net->getIP6()))? true : (strIP6 == string(net->getIP6()));
-    ret &= (!strlen(net->getMAC()))? true : (strMAC == string(net->getMAC()));
+    bool ret = (!strlen(net->getIP4()))? true : (strIP4 == std::string(net->getIP4()));
+    ret &= (!strlen(net->getIP6()))? true : (strIP6 == std::string(net->getIP6()));
+    ret &= (!strlen(net->getMAC()))? true : (strMAC == std::string(net->getMAC()));
     return ret;
 }
 
@@ -173,8 +172,8 @@ bool Processor::satisfy(GenericResource* resource)
         return false;
     }
 
-    bool ret = (!strlen(proc->getArchitecture()))? true : (strArchitecure == string(proc->getArchitecture()));
-    ret &= (!strlen(proc->getModel()))? true : (strModel == string(proc->getModel()));
+    bool ret = (!strlen(proc->getArchitecture()))? true : (strArchitecure == std::string(proc->getArchitecture()));
+    ret &= (!strlen(proc->getModel()))? true : (strModel == std::string(proc->getModel()));
     ret &= (cores >= proc->getCores());
     ret &= (siblings >= proc->getSiblings());
     ret &= (frequency >= proc->getFrequency());

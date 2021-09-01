@@ -18,7 +18,6 @@ using namespace RGBDImpl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 
 #define RGBD_INTERFACE_PROTOCOL_VERSION_MAJOR 1
@@ -274,7 +273,7 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
         //if(verbose >= 2)
         //    yCWarning(RGBDSENSORWRAPPER) << "RGBDSensorWrapper: ROS topic support is not yet implemented";
 
-        string confUseRos;
+        std::string confUseRos;
 
         if (!rosGroup.check("use_ROS"))
         {
@@ -303,8 +302,8 @@ bool RGBDSensorWrapper::fromConfig(yarp::os::Searchable &config)
     {
         //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
         unsigned int                    i;
-        std::vector<param<string> >     rosStringParam;
-        param<string>*                  prm;
+        std::vector<param<std::string> >     rosStringParam;
+        param<std::string>*                  prm;
 
         rosStringParam.emplace_back(nodeName,       nodeName_param          );
         rosStringParam.emplace_back(rosFrameId,     frameId_param           );
@@ -636,7 +635,7 @@ void RGBDSensorWrapper::threadRelease()
     // Detach() calls stop() which in turns calls this functions, therefore no calls to detach here!
 }
 
-bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo, const string& frame_id, const UInt& seq, const SensorType& sensorType)
+bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& cameraInfo, const std::string& frame_id, const UInt& seq, const SensorType& sensorType)
 {
     double phyF = 0.0;
     double fx = 0.0;
@@ -650,10 +649,11 @@ bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& camera
     double k3 = 0.0;
     double stamp = 0.0;
 
-    string                  distModel, currentSensor;
+    std::string distModel;
+    std::string currentSensor;
     UInt                    i;
     Property                camData;
-    vector<param<double> >  parVector;
+    std::vector<param<double> >  parVector;
     param<double>*          par;
     bool                    ok;
 
@@ -679,8 +679,8 @@ bool RGBDSensorWrapper::setCamInfo(yarp::rosmsg::sensor_msgs::CameraInfo& camera
         return false;
     }
 
-    //std::vector<param<string> >     rosStringParam;
-    //rosStringParam.push_back(param<string>(nodeName, "asd"));
+    //std::vector<param<std::string> >     rosStringParam;
+    //rosStringParam.push_back(param<std::string>(nodeName, "asd"));
 
     parVector.emplace_back(phyF,"physFocalLength");
     parVector.emplace_back(fx,"focalLengthX");

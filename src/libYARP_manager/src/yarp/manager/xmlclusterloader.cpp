@@ -18,13 +18,12 @@
 
 
 
-using namespace std;
 using namespace yarp::manager;
 
 /**
  * load only one application indicated by its xml file name
  */
-XmlClusterLoader::XmlClusterLoader(string szFileName) : confFile(std::move(szFileName))
+XmlClusterLoader::XmlClusterLoader(std::string szFileName) : confFile(std::move(szFileName))
 {
 }
 

@@ -26,7 +26,6 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::dev::Nav2D;
 using namespace yarp::os;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(MAP2DSERVER, "yarp.device.map2DServer")
@@ -58,7 +57,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             Value& b = in.get(2);
             if (Property::copyPortable(b, the_map))
             {
-                string map_name = the_map.getMapName();
+                std::string map_name = the_map.getMapName();
                 auto it = m_maps_storage.find(map_name);
                 if (it == m_maps_storage.end())
                 {
@@ -84,7 +83,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         }
         else if (cmd == VOCAB_IMAP_GET_MAP)
         {
-            string name = in.get(2).asString();
+            std::string name = in.get(2).asString();
             auto it = m_maps_storage.find(name);
             if (it != m_maps_storage.end())
             {
@@ -112,7 +111,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         }
         else if (cmd == VOCAB_IMAP_REMOVE)
         {
-            string name = in.get(2).asString();
+            std::string name = in.get(2).asString();
             size_t rem = m_maps_storage.erase(name);
             if (rem == 0)
             {
@@ -136,7 +135,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         {
             if (in.get(2).asVocab32() == VOCAB_IMAP_MAPS_COLLECTION)
             {
-                string mapfile = in.get(3).asString();
+                std::string mapfile = in.get(3).asString();
                 if (saveMaps(mapfile))
                 {
                     out.clear();
@@ -151,7 +150,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             else if (in.get(2).asVocab32() == VOCAB_IMAP_LOCATIONS_COLLECTION)
             {
-                string locfile = in.get(3).asString();
+                std::string locfile = in.get(3).asString();
                 if (save_locations_and_areas(locfile))
                 {
                     out.clear();
@@ -175,7 +174,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
         {
             if (in.get(2).asVocab32()==VOCAB_IMAP_MAPS_COLLECTION)
             {
-                string mapfile = in.get(3).asString();
+                std::string mapfile = in.get(3).asString();
                 if (loadMaps(mapfile))
                 {
                     out.clear();
@@ -190,7 +189,7 @@ void Map2DServer::parse_vocab_command(yarp::os::Bottle& in, yarp::os::Bottle& ou
             }
             if (in.get(2).asVocab32() == VOCAB_IMAP_LOCATIONS_COLLECTION)
             {
-                string locfile = in.get(3).asString();
+                std::string locfile = in.get(3).asString();
                 if (load_locations_and_areas(locfile))
                 {
                     out.clear();
@@ -704,7 +703,7 @@ void Map2DServer::parse_string_command(yarp::os::Bottle& in, yarp::os::Bottle& o
         bool r = map.loadFromFile(in.get(1).asString());
         if(r)
         {
-            string map_name= map.getMapName();
+            std::string map_name= map.getMapName();
             auto p = m_maps_storage.find(map_name);
             if (p == m_maps_storage.end())
             {
@@ -834,10 +833,10 @@ bool Map2DServer::saveMaps(std::string mapsfile)
     bool ret = true;
     for (auto& it : m_maps_storage)
     {
-        string map_filename = it.first + ".map";
+        std::string map_filename = it.first + ".map";
         file << "mapfile: ";
         file << map_filename;
-        file << endl;
+        file << '\n';
         ret &= it.second.saveToFile(map_filename);
     }
     file.close();
@@ -856,8 +855,8 @@ bool Map2DServer::loadMaps(std::string mapsfile)
     }
     while (!file.eof())
     {
-        string dummy;
-        string buffer;
+        std::string dummy;
+        std::string buffer;
         std::getline(file, buffer);
         std::istringstream iss(buffer);
         iss >> dummy;
@@ -866,16 +865,16 @@ bool Map2DServer::loadMaps(std::string mapsfile)
         }
         if (dummy == "mapfile:")
         {
-            string mapfilename;
+            std::string mapfilename;
             iss >> mapfilename;
-            string option;
+            std::string option;
             iss >> option;
-            string mapfilenameWithPath = m_rf_mapCollection.findFile(mapfilename);
+            std::string mapfilenameWithPath = m_rf_mapCollection.findFile(mapfilename);
             MapGrid2D map;
             bool r = map.loadFromFile(mapfilenameWithPath);
             if (r)
             {
-                string map_name= map.getMapName();
+                std::string map_name= map.getMapName();
                 auto p = m_maps_storage.find(map_name);
                 if (p == m_maps_storage.end())
                 {
@@ -915,8 +914,8 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     Property params;
     params.fromString(config.toString());
 
-    string collection_file_name="maps_collection.ini";
-    string locations_file_name="locations.ini";
+    std::string collection_file_name="maps_collection.ini";
+    std::string locations_file_name="locations.ini";
     if (config.check("mapCollectionFile"))
     {
         collection_file_name= config.find("mapCollectionFile").asString();
@@ -924,10 +923,10 @@ bool Map2DServer::open(yarp::os::Searchable &config)
 
     if (config.check("mapCollectionContext"))
     {
-        string collection_context_name= config.find("mapCollectionContext").asString();
+        std::string collection_context_name= config.find("mapCollectionContext").asString();
         m_rf_mapCollection.setDefaultContext(collection_context_name.c_str());
-        string collection_file_with_path = m_rf_mapCollection.findFile(collection_file_name);
-        string locations_file_with_path = m_rf_mapCollection.findFile(locations_file_name);
+        std::string collection_file_with_path = m_rf_mapCollection.findFile(collection_file_name);
+        std::string locations_file_with_path = m_rf_mapCollection.findFile(locations_file_name);
 
         if (locations_file_with_path=="")
         {
@@ -1084,7 +1083,7 @@ bool Map2DServer::open(yarp::os::Searchable &config)
     if (map_ros!=nullptr && metamap_ros!=nullptr)
     {
         yCInfo(MAP2DSERVER) << "Received map for ROS";
-        string map_name = "ros_map";
+        std::string map_name = "ros_map";
         MapGrid2D map;
         map.setSize_in_cells(map_ros->info.width,map_ros->info.height);
         map.setResolution( map_ros->info.resolution);

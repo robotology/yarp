@@ -18,7 +18,6 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
-using namespace std;
 
 
 bool SubDevice::configure(size_t wb, size_t wt, size_t b, size_t t, size_t n, const std::string& key, const std::string& _parentName)

@@ -18,7 +18,6 @@ using namespace yarp::dev::Nav2D;
 using namespace yarp::sig;
 using namespace yarp::os;
 using namespace yarp::math;
-using namespace std;
 
 bool Map2DPath::operator!=(const Map2DPath& r) const
 {
@@ -94,7 +93,7 @@ bool Map2DPath::isOnSingleMap() const
     if (waypoints.size() == 0) {
         return true;
     }
-    string mapname = waypoints[0].map_id;
+    std::string mapname = waypoints[0].map_id;
     for (auto it = waypoints.begin(); it != waypoints.end(); it++)
     {
         if (it->map_id != mapname) {

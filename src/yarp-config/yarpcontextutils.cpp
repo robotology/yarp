@@ -48,7 +48,6 @@
 
 
 using namespace yarp::os;
-using namespace std;
 
 std::string getFolderStringName(folderType ftype)
 {
@@ -164,7 +163,7 @@ int recursiveCopy(std::string srcDirName, std::string destDirName, bool force, b
         if (n<0)
         {
             if (verbose) {
-                std::cerr << "Could not read from directory " << srcDirName << std::endl;
+                std::cerr << "Could not read from directory " << srcDirName << '\n';
             }
             return -1;
         }
@@ -408,15 +407,15 @@ void prepareHomeFolder(yarp::os::ResourceFinder &rf, folderType ftype)
 
 bool prepareSubFolders(const std::string& startDir, const std::string& fileName)
 {
-    string fname(fileName);
-    if (fname.find('/') == string::npos) {
+    std::string fname(fileName);
+    if (fname.find('/') == std::string::npos) {
         return true;
     } else {
         size_t curPos, startPos = 0;
-        while ((curPos = fname.find('/', startPos)) != string::npos)
+        while ((curPos = fname.find('/', startPos)) != std::string::npos)
         {
             yarp::os::mkdir((startDir + PATH_SEPARATOR + fname.substr(0, curPos)).c_str());
-            startPos = curPos + string(PATH_SEPARATOR).length();
+            startPos = curPos + std::string(PATH_SEPARATOR).length();
         }
     }
     return true;
@@ -424,15 +423,15 @@ bool prepareSubFolders(const std::string& startDir, const std::string& fileName)
 
 bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::string>& filenames)
 {
-    string strPath = string(basePath);
-    if ((strPath.rfind('/') == string::npos) || (strPath.rfind('/') != strPath.size() - 1)) {
-        strPath = strPath + string(PATH_SEPARATOR);
+    std::string strPath = std::string(basePath);
+    if ((strPath.rfind('/') == std::string::npos) || (strPath.rfind('/') != strPath.size() - 1)) {
+        strPath = strPath + std::string(PATH_SEPARATOR);
     }
 
-    string mySuffix = string(suffix);
+    std::string mySuffix = std::string(suffix);
 
-    if (((mySuffix.rfind('/') == string::npos) || (mySuffix.rfind('/') != mySuffix.size() - 1)) && mySuffix != "") {
-        mySuffix = mySuffix + string(PATH_SEPARATOR);
+    if (((mySuffix.rfind('/') == std::string::npos) || (mySuffix.rfind('/') != mySuffix.size() - 1)) && mySuffix != "") {
+        mySuffix = mySuffix + std::string(PATH_SEPARATOR);
     }
 
     strPath += mySuffix;
@@ -441,7 +440,7 @@ bool recursiveFileList(const char* basePath, const char* suffix, std::set<std::s
     int n = yarp::os::impl::scandir(strPath.c_str(), &namelist, nullptr, yarp::os::impl::alphasort);
     if (n<0)
     {
-        std::cerr << "Could not read from  directory " << strPath << std::endl;
+        std::cerr << "Could not read from  directory " << strPath << '\n';
         return false;
     }
     bool ok = true;
@@ -500,16 +499,16 @@ int recursiveDiff(std::string srcDirName, std::string destDirName, std::ostream 
             std::string patchString = dmp.patch_toText(dmp.patch_make(srcStr, destStr));
             if (patchString != "")
             {
-                output << "- " << srcDirName << PATH_SEPARATOR << srcIt << endl;
-                output << "+ " << destDirName << PATH_SEPARATOR << (*destPos) << endl;
-                output << dmp.patch_toText(dmp.patch_make(srcStr, destStr)) << std::endl;
+                output << "- " << srcDirName << PATH_SEPARATOR << srcIt << '\n';
+                output << "+ " << destDirName << PATH_SEPARATOR << (*destPos) << '\n';
+                output << dmp.patch_toText(dmp.patch_make(srcStr, destStr)) << '\n';
                 nModifiedFiles++;
             }
             destFileList.erase(destPos);
         }
         //         else
         //         {
-        //             output << "Added file  " << srcDirName+PATH_SEPARATOR +(*srcIt) <<endl;
+        //             output << "Added file  " << srcDirName+PATH_SEPARATOR +(*srcIt) <<'\n';
         //             nModifiedFiles++;
         //         }
     }
@@ -520,7 +519,7 @@ int recursiveDiff(std::string srcDirName, std::string destDirName, std::ostream 
     //         if(isHidden(destFileName))
     //             continue;
     //
-    //         output << "Removed file " << destFileName <<endl;
+    //         output << "Removed file " << destFileName <<'\n';
     //         nModifiedFiles++;
     //
     //     }
@@ -540,7 +539,7 @@ int fileMerge(std::string srcFileName, std::string destFileName, std::string com
     in.open(commonParentName.c_str());
     std::string hiddenDestStr((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
     in.close();
-    diff_match_patch<string>::Patches patches = dmp.patch_make(hiddenDestStr, destStr);
+    diff_match_patch<std::string>::Patches patches = dmp.patch_make(hiddenDestStr, destStr);
     std::pair<std::string, std::vector<bool> > mergeResults = dmp.patch_apply(patches, srcStr);
     std::ofstream out(destFileName.c_str());
     out << mergeResults.first;
@@ -593,7 +592,7 @@ int recursiveMerge(std::string srcDirName, std::string destDirName, std::string 
         //             std::set<std::string>::iterator hiddenDestPos=hiddenFilesList.find(*srcIt);
         //             if (hiddenDestPos==hiddenFilesList.end())
         //             {
-        //                 output << "File  " << srcDirName+PATH_SEPARATOR +(*srcIt) << " has been added to the original context" << endl;
+        //                 output << "File  " << srcDirName+PATH_SEPARATOR +(*srcIt) << " has been added to the original context" << '\n';
         //             }
         //         }
     }
@@ -602,7 +601,7 @@ int recursiveMerge(std::string srcDirName, std::string destDirName, std::string 
     //     {
     //         std::set<std::string>::iterator hiddenDestPos=hiddenFilesList.find(*destIt);
     //         if (hiddenDestPos==hiddenFilesList.end())
-    //             output << "File " << destDirName+PATH_SEPARATOR +(*destIt) << " does not belong to the original context" << endl;
+    //             output << "File " << destDirName+PATH_SEPARATOR +(*destIt) << " does not belong to the original context" << '\n';
     //     }
 
     return (ok ? 0 : 1);//tbm
@@ -916,7 +915,7 @@ int diffList(folderType fType)
         std::vector<std::string> subDirs = listContentDirs(installedPath);
         for (auto& subDir : subDirs)
         {
-            ostream tmp(nullptr);
+            std::ostream tmp(nullptr);
             opts.searchLocations = ResourceFinderOptions::User;
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.4
 YARP_WARNING_PUSH
@@ -931,7 +930,7 @@ YARP_WARNING_POP
             try
             {
                 if (recursiveDiff(installedPath.append(PATH_SEPARATOR).append(subDir), userPath, tmp) > 0) {
-                    std::cout << subDir << std::endl;
+                    std::cout << subDir << '\n';
                 }
             }
             catch (...)

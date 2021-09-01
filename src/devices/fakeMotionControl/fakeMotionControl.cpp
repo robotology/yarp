@@ -18,7 +18,6 @@
 #include <sstream>
 #include <cstring>
 
-using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -236,7 +235,7 @@ bool FakeMotionControl::alloc(int nj)
 
 //     _impedance_params=allocAndCheck<ImpedanceParameters>(nj);
 //     _impedance_limits=allocAndCheck<ImpedanceLimits>(nj);
-    _axisName = new string[nj];
+    _axisName = new std::string[nj];
     _jointType = new JointTypeEnum[nj];
 
     _limitsMax=allocAndCheck<double>(nj);
@@ -907,7 +906,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
             //beware: axis type has to be remapped here because they are not set using the toHw() helper function
             for (i = 1; (size_t) i < xtmp.size(); i++)
             {
-                string typeString = xtmp.get(i).asString();
+                std::string typeString = xtmp.get(i).asString();
                 if (typeString == "revolute") {
                     _jointType[_axisMap[i - 1]] = VOCAB_JOINTTYPE_REVOLUTE;
                 } else if (typeString == "prismatic") {
@@ -1025,7 +1024,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         for (i = 1; i < xtmp.size(); i++)
         {
             uint8_t val;
-            string s = xtmp.get(i).asString();
+            std::string s = xtmp.get(i).asString();
             bool b = EncoderType_iCub2eo(&s, &val);
             if (b == false)
             {
@@ -1139,7 +1138,7 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
         for (i = 1; i < xtmp.size(); i++)
         {
             uint8_t val;
-            string s = xtmp.get(i).asString();
+            std::string s = xtmp.get(i).asString();
             bool b = EncoderType_iCub2eo(&s, &val);
             if (b == false)
             {
@@ -1214,11 +1213,11 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
            Value &controlUnits=posPidsGroup.find("controlUnits");
            if  (controlUnits.isNull() == false && controlUnits.isString() == true)
            {
-                if      (controlUnits.toString()==string("metric_units"))
+                if      (controlUnits.toString()==std::string("metric_units"))
                 {
                     yCDebug(FAKEMOTIONCONTROL, "POSITION_CONTROL: using metric_units");  _positionControlUnits=P_METRIC_UNITS;
                 }
-                else if (controlUnits.toString()==string("machine_units"))
+                else if (controlUnits.toString()==std::string("machine_units"))
                 {
                     yCDebug(FAKEMOTIONCONTROL, "POSITION_CONTROL: using machine_units"); _positionControlUnits=P_MACHINE_UNITS;
                 }
@@ -1237,8 +1236,8 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
 //            Value &controlLaw=posPidsGroup.find("controlLaw");
 //            if (controlLaw.isNull() == false && controlLaw.isString() == true)
 //            {
-//                string s_controlaw = controlLaw.toString();
-//                if (s_controlaw==string("joint_pid_v1"))
+//                std::string s_controlaw = controlLaw.toString();
+//                if (s_controlaw==std::string("joint_pid_v1"))
 //                {
 //                    if (!parsePositionPidsGroup (posPidsGroup, _pids))
 //                    {
@@ -1250,12 +1249,12 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
 //                         yCDebug(FAKEMOTIONCONTROL, "POSITION_CONTROL: using control law joint_pid_v1");
 //                    }
 //                }
-//                else if (s_controlaw==string("not_implemented"))
+//                else if (s_controlaw==std::string("not_implemented"))
 //                {
 //                    yCDebug(FAKEMOTIONCONTROL) << "found 'not_impelemented' in position control_law. This will terminate yarprobotinterface execution.";
 //                    return false;
 //                }
-//                else if (s_controlaw==string("disabled"))
+//                else if (s_controlaw==std::string("disabled"))
 //                {
 //                    yCDebug(FAKEMOTIONCONTROL) << "found 'disabled' in position control_law. This will terminate yarprobotinterface execution.";
 //                    return false;
@@ -1286,8 +1285,8 @@ bool FakeMotionControl::fromConfig(yarp::os::Searchable &config)
            Value &controlUnits=trqPidsGroup.find("controlUnits");
            if  (controlUnits.isNull() == false && controlUnits.isString() == true)
            {
-                if      (controlUnits.toString()==string("metric_units"))  {yCDebug(FAKEMOTIONCONTROL, "TORQUE_CONTROL: using metric_units"); _torqueControlUnits=T_METRIC_UNITS;}
-                else if (controlUnits.toString()==string("machine_units")) {yCDebug(FAKEMOTIONCONTROL, "TORQUE_CONTROL: using metric_units"); _torqueControlUnits=T_MACHINE_UNITS;}
+                if      (controlUnits.toString()==std::string("metric_units"))  {yCDebug(FAKEMOTIONCONTROL, "TORQUE_CONTROL: using metric_units"); _torqueControlUnits=T_METRIC_UNITS;}
+                else if (controlUnits.toString()==std::string("machine_units")) {yCDebug(FAKEMOTIONCONTROL, "TORQUE_CONTROL: using metric_units"); _torqueControlUnits=T_MACHINE_UNITS;}
                 else    {yCError(FAKEMOTIONCONTROL) << "fromConfig(): TORQUE_CONTROL section: invalid controlUnits value";
                          return false;}
            }

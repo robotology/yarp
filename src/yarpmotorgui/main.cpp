@@ -26,7 +26,6 @@
 
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 
 QStringList partsName;
@@ -72,7 +71,7 @@ int main(int argc, char *argv[])
 
     Bottle         pParts;
     QStringList    enabledParts;
-    vector<bool>   enabled;
+    std::vector<bool>   enabled;
     MainWindow     w;
 
     qRegisterMetaType<Pid>("Pid");
@@ -197,7 +196,7 @@ int main(int argc, char *argv[])
             //check parts from config file
             for (size_t i = 0; i < b_part->size(); i++)
             {
-                string ss = b_part->get(i).asString();
+                std::string ss = b_part->get(i).asString();
                 if (ss.at(0) != '/')
                 {
                     ss.insert(0, "/" + robotName + "/");

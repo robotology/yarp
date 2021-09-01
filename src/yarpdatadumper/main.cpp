@@ -31,7 +31,6 @@
 #endif // ADD_VIDEO
 
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::sig;
 
@@ -51,7 +50,7 @@ protected:
 
 public:
     virtual ~DumpObj() = default;
-    virtual const string toFile(const string&, unsigned int) = 0;
+    virtual const std::string toFile(const std::string&, unsigned int) = 0;
     virtual void attachFormat(const DumpFormat &format) { m_dump_format=format; }
 };
 
@@ -70,9 +69,9 @@ public:
     const DumpBottle &operator=(const DumpBottle &obj) { *p=*(obj.p); return *this; }
     ~DumpBottle() { delete p; }
 
-    const string toFile(const string &dirName, unsigned int cnt) override
+    const std::string toFile(const std::string &dirName, unsigned int cnt) override
     {
-        string ret=p->toString();
+        std::string ret=p->toString();
         return ret;
     }
 };
@@ -104,10 +103,10 @@ public:
     const DumpImage &operator=(const DumpImage &obj) { *p=*(obj.p); return *this; }
     ~DumpImage() { delete p; }
 
-    const string toFile(const string &dirName, unsigned int cnt) override
+    const std::string toFile(const std::string &dirName, unsigned int cnt) override
     {
         file::image_fileformat fileformat = file::FORMAT_NULL;
-        string ext;
+        std::string ext;
 
         int code=p->getPixelCode();
         switch (code)
@@ -160,8 +159,8 @@ public:
             break;
         }
 
-        ostringstream fName;
-        fName << setw(8) << setfill('0') << cnt << ext;
+        std::ostringstream fName;
+        fName << std::setw(8) << std::setfill('0') << cnt << ext;
         file::write(*p,dirName+"/"+fName.str(), fileformat);
 
         return (fName.str()+" ["+Vocab32::decode(code)+"]");
@@ -222,10 +221,10 @@ public:
             return -1.0;
         }
     }
-    string getString() const
+    std::string getString() const
     {
-        ostringstream ret;
-        ret<<fixed;
+        std::ostringstream ret;
+        ret<<std::fixed;
 
         if (txOk) {
             ret << txStamp;
@@ -257,7 +256,7 @@ struct DumpItem
 // 1) the port, which listens to incoming data
 // 2) the thread, which stores the data to disk
 /**************************************************************************/
-class DumpQueue : public deque<DumpItem>
+class DumpQueue : public std::deque<DumpItem>
 {
 private:
     std::mutex mutex;
@@ -337,11 +336,11 @@ class DumpThread : public PeriodicThread
 private:
     DumpQueue      &buf;
     DumpFormat      type;
-    ofstream        finfo;
-    ofstream        fdata;
-    string          dirName;
-    string          infoFile;
-    string          dataFile;
+    std::ofstream   finfo;
+    std::ofstream   fdata;
+    std::string     dirName;
+    std::string     infoFile;
+    std::string     dataFile;
     unsigned int    blockSize;
     unsigned int    cumulSize;
     unsigned int    counter;
@@ -349,15 +348,15 @@ private:
 
     bool            saveData;
     bool            videoOn;
-    string          videoType;
+    std::string     videoType;
     bool            rxTime;
     bool            txTime;
     bool            closing;
 
 #ifdef ADD_VIDEO
-    ofstream        ftimecodes;
-    string          videoFile;
-    string          timecodesFile;
+    std::ofstream   ftimecodes;
+    std::string     videoFile;
+    std::string     timecodesFile;
     double          t0;
     bool            doImgParamsExtraction;
     bool            doSaveFrame;
@@ -365,8 +364,8 @@ private:
 #endif
 
 public:
-    DumpThread(DumpFormat _type, DumpQueue &Q, const string &_dirName, const int szToWrite,
-               const bool _saveData, const bool _videoOn, const string &_videoType,
+    DumpThread(DumpFormat _type, DumpQueue &Q, const std::string &_dirName, const int szToWrite,
+               const bool _saveData, const bool _videoOn, const std::string &_videoType,
                const bool _rxTime, const bool _txTime) :
         PeriodicThread(0.05),
         buf(Q),
@@ -411,11 +410,11 @@ public:
     #endif
     }
 
-    void writeSource(const string &sourceName, const bool connected)
+    void writeSource(const std::string &sourceName, const bool connected)
     {
-        finfo << "[" << fixed << Time::now() << "] ";
+        finfo << "[" << std::fixed << Time::now() << "] ";
         finfo << sourceName << " ";
-        finfo << (connected?"[connected]":"[disconnected]") << endl;
+        finfo << (connected?"[connected]":"[disconnected]") << '\n';
     }
 
     bool threadInit() override
@@ -449,7 +448,7 @@ public:
         } else {
             yError() << "I should not reach this line! Unknown data type" << (int)type;
         }
-        finfo<<endl;
+        finfo<<'\n';
 
         finfo<<"Stamp: ";
         if (txTime && rxTime) {
@@ -459,7 +458,7 @@ public:
         } else {
             finfo << "rx;";
         }
-        finfo<<endl;
+        finfo<<'\n';
 
         fdata.open(dataFile.c_str());
         if (!fdata.is_open())
@@ -477,7 +476,7 @@ public:
                 yError() << "unable to open file: " << timecodesFile;
                 return false;
             }
-            ftimecodes<<"# timecode format v2"<<endl;
+            ftimecodes<<"# timecode format v2\n";
         }
     #endif
 
@@ -540,11 +539,11 @@ public:
 
                 fdata << item.seqNumber << ' ' << item.timeStamp.getString() << ' ';
                 if (saveData) {
-                    fdata << item.obj->toFile(dirName,counter++) << endl;
+                    fdata << item.obj->toFile(dirName,counter++) << '\n';
                 } else {
-                    ostringstream frame;
-                    frame << "frame_" << setw(8) << setfill('0') << counter++;
-                    fdata << frame.str() << endl;
+                    std::ostringstream frame;
+                    frame << "frame_" << std::setw(8) << std::setfill('0') << counter++;
+                    fdata << frame.str() << '\n';
                 }
 
 #ifdef ADD_VIDEO
@@ -554,7 +553,7 @@ public:
 
                     // write the timecode of the frame
                     int dt=(int)(1000.0*(item.timeStamp.getStamp()-t0));
-                    ftimecodes << dt << endl;
+                    ftimecodes << dt << '\n';
                 }
             #endif
 
@@ -616,11 +615,11 @@ private:
     bool              rxTime{false};
     bool              txTime{false};
     unsigned int      dwnsample{0};
-    string            portName;
+    std::string            portName;
 
-    void polish_filename(string &fname)
+    void polish_filename(std::string &fname)
     {
-        array<char,6> notallowed={':','*','?','|','>','<'};
+        std::array<char,6> notallowed={':','*','?','|','>','<'};
         for (const auto& c : notallowed)
         {
 #if (__cplusplus >= 201703L) || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
@@ -648,11 +647,11 @@ public:
 
         bool saveData=true;
         bool videoOn=false;
-        string videoType=rf.check("videoType",Value("mkv")).asString();
+        std::string videoType=rf.check("videoType",Value("mkv")).asString();
 
         if (rf.check("type"))
         {
-            string optTypeName=rf.find("type").asString();
+            std::string optTypeName=rf.find("type").asString();
             if (optTypeName=="bottle")
             {
                 dumptype = DumpFormat::bottle;
@@ -714,13 +713,13 @@ public:
         dwnsample=rf.check("downsample",Value(1)).asInt32();
         rxTime=rf.check("rxTime");
         txTime=rf.check("txTime");
-        string templateDirName=rf.check("dir")?rf.find("dir").asString():portName;
+        std::string templateDirName=rf.check("dir")?rf.find("dir").asString():portName;
         polish_filename(templateDirName);
         if (templateDirName[0] != '/') {
             templateDirName = "/" + templateDirName;
         }
 
-        string dirName;
+        std::string dirName;
         if (rf.check("overwrite")) {
             dirName="."+templateDirName;
         } else {
@@ -728,9 +727,9 @@ public:
             int i=0;
             do
             {
-                ostringstream checkDirName;
+                std::ostringstream checkDirName;
                 if (i > 0) {
-                    checkDirName << "." << templateDirName << "_" << setw(5) << setfill('0') << i;
+                    checkDirName << "." << templateDirName << "_" << std::setw(5) << std::setfill('0') << i;
                 } else {
                     checkDirName << "." << templateDirName;
                 }
@@ -774,12 +773,12 @@ public:
 
         if (rf.check("connect"))
         {
-            string srcPort=rf.find("connect").asString();
+            std::string srcPort=rf.find("connect").asString();
             bool ok=Network::connect(srcPort.c_str(),
                                     (dumptype == DumpFormat::bottle)?  p_bottle->getName().c_str() : p_image->getName().c_str(),
                                     "tcp");
 
-            ostringstream msg;
+            std::ostringstream msg;
             msg << "Connection to " << srcPort << " " << (ok?"successful":"failed");
 
             if (ok) {

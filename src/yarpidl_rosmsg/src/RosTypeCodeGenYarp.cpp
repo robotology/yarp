@@ -10,24 +10,23 @@
 
 #include <yarp/os/Os.h>
 #include <iostream>
-using namespace std;
 
 static std::string getPackageName(const std::string& name)
 {
 
-    string tname = name;
-    string pname;
+    std::string tname = name;
+    std::string pname;
     if (name == "Header") {
         tname = "std_msgs";
     } else {
         size_t at = tname.rfind('/');
-        if (at == string::npos) {
+        if (at == std::string::npos) {
             tname = "";
         } else {
             tname = pname = tname.substr(0, at);
             do {
                 at = pname.rfind('/');
-                if (at == string::npos) {
+                if (at == std::string::npos) {
                     tname = pname;
                     break;
                 }
@@ -44,12 +43,12 @@ static std::string getPackageName(const std::string& name)
 
 static std::string getPartName(const std::string& tname)
 {
-    string part_tname = tname;
+    std::string part_tname = tname;
     size_t at = tname.rfind('/');
-    if (at != string::npos) {
+    if (at != std::string::npos) {
         part_tname = tname.substr(at+1, tname.length());
     }
-    if (part_tname.find('.') != string::npos) {
+    if (part_tname.find('.') != std::string::npos) {
         part_tname = part_tname.substr(0, part_tname.rfind('.'));
     }
     return part_tname;
@@ -57,9 +56,9 @@ static std::string getPartName(const std::string& tname)
 
 static std::string getSafeName(const std::string& tname)
 {
-    string pack = getPackageName(tname);
-    string part = getPartName(tname);
-    string safe_tname;
+    std::string pack = getPackageName(tname);
+    std::string part = getPartName(tname);
+    std::string safe_tname;
     if (pack != "") {
         safe_tname = pack + "_" + part;
     } else {
@@ -70,8 +69,8 @@ static std::string getSafeName(const std::string& tname)
 
 static std::string getDoubleName(const std::string& tname, const std::string& separator = "/")
 {
-    string package_name = getPackageName(tname);
-    string part_name = getPartName(tname);
+    std::string package_name = getPackageName(tname);
+    std::string part_name = getPartName(tname);
     if (package_name != "") {
         part_name = package_name + separator + part_name;
     }
@@ -96,17 +95,17 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     len = state.getFreeVariable("len");
     len2 = state.getFreeVariable("len2");
 
-    string safename = getSafeName(tname);
-    string doublename = getDoubleName(tname);
-    string hdr_name = "yarp/rosmsg/" + doublename + ".h";
-    string fullClassName = "yarp::rosmsg::" + getDoubleName(tname, "::");
+    std::string safename = getSafeName(tname);
+    std::string doublename = getDoubleName(tname);
+    std::string hdr_name = "yarp/rosmsg/" + doublename + ".h";
+    std::string fullClassName = "yarp::rosmsg::" + getDoubleName(tname, "::");
     packageName = getPackageName(tname);
     className = getPartName(tname);
-    string root = (target != "") ? (target + "/") : "";
+    std::string root = (target != "") ? (target + "/") : "";
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.0.0
-    string deprecated_fname1 = safename + ".h";
-    string deprecated_fname2 = doublename + ".h";
+    std::string deprecated_fname1 = safename + ".h";
+    std::string deprecated_fname2 = doublename + ".h";
 
     // package_class.h
     yarp::os::mkdir_p((root + deprecated_fname1).c_str(), 1);
@@ -792,9 +791,9 @@ static bool output_type(FILE *out,
 bool RosTypeCodeGenYarp::endType(const std::string& tname,
                                  const RosField& field)
 {
-    string safename = getSafeName(tname);
-    string dbl_name = getDoubleName(tname);
-    string fullClassName = "yarp::rosmsg::" + getDoubleName(tname, "::");
+    std::string safename = getSafeName(tname);
+    std::string dbl_name = getDoubleName(tname);
+    std::string fullClassName = "yarp::rosmsg::" + getDoubleName(tname, "::");
     fprintf(out, "    // This class will serialize ROS style or YARP style depending on protocol.\n");
     fprintf(out, "    // If you need to force a serialization style, use one of these classes:\n");
     fprintf(out, "    typedef yarp::os::idl::BareStyle<%s> rosStyle;\n", fullClassName.c_str());
@@ -859,8 +858,8 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field)
     if (!field.isPrimitive) {
         return ry;
     }
-    string name = field.rosType;
-    string flavor;
+    std::string name = field.rosType;
+    std::string flavor;
     if (name == "bool" && !field.isArray) {
         ry.yarpType = "bool";
         ry.writer = "appendInt8";
@@ -959,8 +958,8 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field)
 bool RosTypeCodeGenYarp::writeIndex(RosTypeCodeGenState& state)
 {
     // Generate _index.txt file
-    string root = (target != "") ? (target + "/") : "";
-    string index_fname;
+    std::string root = (target != "") ? (target + "/") : "";
+    std::string index_fname;
     if(!packageName.empty()) {
         index_fname = packageName + "_" + className + "_index.txt";
     } else {

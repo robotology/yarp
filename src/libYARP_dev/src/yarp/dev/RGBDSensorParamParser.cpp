@@ -9,7 +9,6 @@
 
 using namespace yarp::os;
 using namespace yarp::dev;
-using namespace std;
 
 namespace {
 YARP_LOG_COMPONENT(RGBDSENSORPARAMPARSER, "yarp.dev.RGBDSensorParamParser")
@@ -75,11 +74,11 @@ static bool checkParam(const Bottle& settings, const Bottle& description, RGBDSe
 }
 
 
-static bool parseIntrinsic(const Searchable& config, const string& groupName, yarp::sig::IntrinsicParams &params)
+static bool parseIntrinsic(const Searchable& config, const std::string& groupName, yarp::sig::IntrinsicParams &params)
 {
 
-    pair<string, double*>          realparam;
-    vector<pair<string, double*> > realParams;
+    std::pair<std::string, double*>          realparam;
+    std::vector<std::pair<std::string, double*> > realParams;
     size_t                         i;
 
     if (!config.check(groupName))

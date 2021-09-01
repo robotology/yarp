@@ -11,7 +11,6 @@
 #include "MonitorLogComponent.h"
 
 using namespace yarp::os;
-using namespace std;
 
 
 /**
@@ -411,22 +410,22 @@ bool MonitorLua::canAccept()
      * following piece of code replaces each event symbolic name
      * with a boolean value based on their existence in MonitorEventRecord
      */
-    string strConstraint = constraint;
-    string strDummy = strConstraint;
+    std::string strConstraint = constraint;
+    std::string strDummy = strConstraint;
     searchReplace(strDummy, "(", " ");
     searchReplace(strDummy, ")", " ");
     // wrap it with some  guard space
     strDummy = " " + strDummy + " ";
-    string delimiter = " ";
+    std::string delimiter = " ";
     size_t pos = 0;
-    string token;
-    while ((pos = strDummy.find(delimiter)) != string::npos)
+    std::string token;
+    while ((pos = strDummy.find(delimiter)) != std::string::npos)
     {
         token = strDummy.substr(0, pos);
         if(token.size() && !isKeyword(token.c_str()))
         {
             record.lock();
-            string value = (record.hasEvent(token.c_str())) ? "true" : "false";
+            std::string value = (record.hasEvent(token.c_str())) ? "true" : "false";
             record.unlock();
             searchReplace(strConstraint, token, value);
         }
@@ -459,23 +458,23 @@ bool MonitorLua::canAccept()
 }
 
 
-inline void MonitorLua::searchReplace(string& str, const string& oldStr, const string& newStr)
+inline void MonitorLua::searchReplace(std::string& str, const std::string& oldStr, const std::string& newStr)
 {
   size_t pos = 0;
-  while((pos = str.find(oldStr, pos)) != string::npos)
+  while((pos = str.find(oldStr, pos)) != std::string::npos)
   {
      str.replace(pos, oldStr.length(), newStr);
      pos += newStr.length();
   }
 }
 
-inline void MonitorLua::trimString(string& str)
+inline void MonitorLua::trimString(std::string& str)
 {
-  string::size_type pos = str.find_last_not_of(' ');
-  if(pos != string::npos) {
+  std::string::size_type pos = str.find_last_not_of(' ');
+  if(pos != std::string::npos) {
     str.erase(pos + 1);
     pos = str.find_first_not_of(' ');
-    if (pos != string::npos) {
+    if (pos != std::string::npos) {
         str.erase(0, pos);
     }
   } else {
@@ -489,7 +488,7 @@ inline bool MonitorLua::isKeyword(const char* str)
         return false;
     }
 
-    string token = str;
+    std::string token = str;
     if ((token == "true") || (token == "false") || (token == "and") || (token == "or") || (token == "not")) {
         return true;
     }

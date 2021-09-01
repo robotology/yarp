@@ -17,7 +17,6 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 
-using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 
@@ -124,7 +123,7 @@ bool UpowerBattery::getBatteryTemperature(double& temperature)
     return true;
 }
 
-bool UpowerBattery::getBatteryInfo(string& info)
+bool UpowerBattery::getBatteryInfo(std::string& info)
 {
     info = QStringLiteral("Vendor: %1, Model: %2, Serial: %3")
                 .arg(m_interface->property("Vendor").toString())

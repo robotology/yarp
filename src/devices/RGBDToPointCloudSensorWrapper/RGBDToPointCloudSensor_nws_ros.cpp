@@ -16,7 +16,6 @@ using namespace RGBDToPointCloudImpl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace std;
 
 YARP_LOG_COMPONENT(RGBDTOPOINTCLOUDSENSORNWSROS, "yarp.devices.RGBDToPointCloudSensor_nws_ros");
 
@@ -281,7 +280,7 @@ bool RGBDToPointCloudSensor_nws_ros::writeData()
                 pointFieldRos[3].count = 1;
                 pc2Ros.fields = pointFieldRos;
 
-                vector<unsigned char> vec(yarpCloud.getRawData(), yarpCloud.getRawData() + yarpCloud.dataSizeBytes() );
+                std::vector<unsigned char> vec(yarpCloud.getRawData(), yarpCloud.getRawData() + yarpCloud.dataSizeBytes() );
                 pc2Ros.data = vec;
                 pc2Ros.header = headerRos;
                 pc2Ros.width = yarpCloud.width() * yarpCloud.height();

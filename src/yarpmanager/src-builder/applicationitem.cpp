@@ -12,7 +12,6 @@
 #include <QGraphicsDropShadowEffect>
 #include <QDebug>
 
-using namespace std;
 
 ApplicationItem::ApplicationItem(Application* application, Manager *manager,  QList <int> *usedIds,bool isInApp,
                                  bool editingMode,
@@ -229,7 +228,7 @@ void ApplicationItem::init()
 
         Arrow *arrow;
         // check for arbitrators
-        string strCarrier = baseCon.carrier();
+        std::string strCarrier = baseCon.carrier();
         if((strCarrier.find("recv.priority") != std::string::npos)){
             // TODO
         }else{
@@ -412,8 +411,8 @@ void ApplicationItem::findInputOutputData(Connection& cnn,  ModulePContainer &mo
 {
     input_ = nullptr;
     output_ = nullptr;
-    string strTo = cnn.to();
-    string strFrom = cnn.from();
+    std::string strTo = cnn.to();
+    std::string strFrom = cnn.from();
 
     ModulePIterator itr;
     for(itr=modules.begin(); itr!=modules.end(); itr++)
@@ -424,7 +423,7 @@ void ApplicationItem::findInputOutputData(Connection& cnn,  ModulePContainer &mo
             for(int i=0; i<module->inputCount(); i++)
             {
                 InputData &input = module->getInputAt(i);
-                string strInput = string(module->getPrefix()) + string(input.getPort());
+                std::string strInput = std::string(module->getPrefix()) + std::string(input.getPort());
                 if(strTo == strInput)
                 {
                     input_ = &input;
@@ -435,7 +434,7 @@ void ApplicationItem::findInputOutputData(Connection& cnn,  ModulePContainer &mo
             for(int i=0; i<module->outputCount(); i++)
             {
                 OutputData &output = module->getOutputAt(i);
-                string strOutput = string(module->getPrefix()) + string(output.getPort());
+                std::string strOutput = std::string(module->getPrefix()) + std::string(output.getPort());
                 if(strFrom == strOutput)
                 {
                     output_ = &output;

@@ -7,7 +7,6 @@
 #include <yarp/os/LogStream.h>
 #include <cmath>
 
-using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
 

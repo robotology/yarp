@@ -17,7 +17,6 @@
 #include <QBitmap>
 
 
-using namespace std;
 
 MainWindow::~MainWindow()
 {

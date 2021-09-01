@@ -16,7 +16,6 @@
 using yarp::companion::impl::Companion;
 using yarp::os::Bottle;
 using yarp::os::Property;
-using namespace std;
 
 class datasender : public yarp::os::PeriodicThread
 {
@@ -28,7 +27,7 @@ private:
     yarp::os::Bottle pp;
 
 public:
-    datasender(double period, string portname, double data_size_MB) :
+    datasender(double period, std::string portname, double data_size_MB) :
             PeriodicThread (period),
             m_data_size_MB(data_size_MB),
             m_portname(std::move(portname))
@@ -106,7 +105,7 @@ int Companion::cmdTrafficGen(int argc, char *argv[])
         return 0;
     }
 
-    string portname = argv[0];
+    std::string portname = argv[0];
 
     yCInfo (COMPANION, "Starting trafficgen with the following options: period:%.3f(s), size:%.3f(MB), duration:%.3f(s), bandwidth:%.3f(Mb/s) ", period, size_MB, duration, size_MB / period *8);
 
