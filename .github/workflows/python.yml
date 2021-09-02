@@ -88,7 +88,7 @@ jobs:
           CIBW_ENVIRONMENT_LINUX: "AUDITWHEEL_PLAT=manylinux_2_24_x86_64 CC=clang-7 CXX=clang++-7"
           CIBW_BEFORE_ALL_LINUX: |
               apt-get update &&\
-              apt-get install -y libace-dev &&\
+              apt-get install -y libace-dev libeigen3-dev &&\
               # Use clang: http://www.open-std.org/jtc1/sc22/wg21/docs/cwg_defects.html#1684
               apt-get install -y clang-7
           CIBW_TEST_COMMAND: "python -c 'import yarp; yarp.Bottle()'"
