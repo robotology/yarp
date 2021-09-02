@@ -419,7 +419,7 @@ bool WireReader::readString(std::string& str, bool* is_vocab)
     if (reader.isError()) {
         return false;
     }
-    if (noMore()) {
+    if (len != 0 && noMore()) {
         return false;
     }
     str.resize(len);
