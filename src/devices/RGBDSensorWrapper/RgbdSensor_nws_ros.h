@@ -76,7 +76,7 @@ namespace RGBDImpl
  * \code{.unparsed}
  * device rgbdSensor_nws_ros
  * subdevice <RGBDsensor>
- * period 30
+ * period 0.03
  * color_topic_name /<robotName>/camera/color/image_raw
  * depth_topic_name /<robotName>/camera/depth/image_raw
  * color_frame_id rgbd_color_frame

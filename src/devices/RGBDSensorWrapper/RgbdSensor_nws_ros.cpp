@@ -53,7 +53,7 @@ bool RgbdSensor_nws_ros::open(yarp::os::Searchable &config)
     {
         yCTrace(RGBDSENSORNWSROS) << "\nParameters are: \n" << config.toString();
     }
-    if (!config.check("period", "refresh period of the broadcasted values in ms"))
+    if (!config.check("period", "refresh period of the broadcasted values in s"))
     {
         if (verbose >= 3) {
             yCInfo(RGBDSENSORNWSROS) << "Using default 'period' parameter of " << DEFAULT_THREAD_PERIOD << "s";
@@ -61,7 +61,7 @@ bool RgbdSensor_nws_ros::open(yarp::os::Searchable &config)
     }
     else
     {
-        period = config.find("period").asInt32() / 1000.0;
+        period = config.find("period").asFloat64();
     }
 
     //check if param exist and assign it to corresponding variable.. if it doesn't, initialize the variable with default value.
