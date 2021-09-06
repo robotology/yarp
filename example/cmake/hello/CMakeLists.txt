@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 # YARP needs CMake 3.0 or greater
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.12)
 
 # find YARP
 find_package(YARP COMPONENTS os REQUIRED)

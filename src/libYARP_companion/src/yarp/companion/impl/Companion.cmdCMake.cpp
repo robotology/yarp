@@ -39,7 +39,7 @@ int Companion::cmdCMake(int argc, char *argv[])
     f.addString("# the current directory.");
     f.addString("# Replace \"yarpy\" with whatever your executable should be called.");
     f.addString("");
-    f.addString("cmake_minimum_required(VERSION 3.16)");
+    f.addString("cmake_minimum_required(VERSION 3.12)");
     f.addString("project(yarpy)");
     f.addString("");
     f.addString("# Find YARP.  Point the YARP_DIR environment variable at your build.");

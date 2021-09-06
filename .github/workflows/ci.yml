@@ -152,6 +152,26 @@ jobs:
       matrix:
         config:
         - {
+            cmake_version: "3.12",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.13.0",
+          }
+        - {
+            cmake_version: "3.13",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.13.0",
+          }
+        - {
+            cmake_version: "3.14",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.13.0",
+          }
+        - {
+            cmake_version: "3.15",
+            cmake_generator: "Unix Makefiles",
+            ycm_version: "0.13.0",
+          }
+        - {
             cmake_version: "3.16",
             cmake_generator: "Unix Makefiles",
             ycm_version: "0.13.0",
@@ -181,6 +201,7 @@ jobs:
             cmake_generator: "Ninja",
             ycm_version: "0.13.0",
           }
+        # CMake 3.21 is still a release candidate
         - {
             cmake_version: "3.21",
             cmake_generator: "Unix Makefiles",

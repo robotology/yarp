@@ -32,7 +32,7 @@ Type the following code in a file, e.g. listener.cpp:
 An example CMakeLists.txt file to compile this code would be:
 
 ~~~{.cpp}
-    cmake_minimum_required(VERSION 3.16)
+    cmake_minimum_required(VERSION 3.12)
     find_package(YARP COMPONENTS os REQUIRED)
     add_executable(listener)
     target_sources(listener PRIVATE listener.cpp)
@@ -79,7 +79,7 @@ in a file, e.g. talker.cpp:
 an example `CMakeLists.txt` file to compile this code would be:
 
 ~~~{.cmake}
-    cmake_minimum_required(VERSION 3.16)
+    cmake_minimum_required(VERSION 3.12)
     find_package(YARP COMPONENTS os REQUIRED)
     add_executable(talker)
     target_sources(talker PRIVATE talker.cpp)

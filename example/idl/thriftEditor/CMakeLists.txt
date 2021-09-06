@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.12)
 project(thriftEditor_example)
 
 find_package(YARP COMPONENTS os idl_tools REQUIRED)
