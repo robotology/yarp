@@ -22,19 +22,9 @@ std::atomic<yarp::os::Log::LogType> minimumOsPrintLevel(
 
 } // namespace
 
-void yarp::os::impl::LogComponent::print_callback(yarp::os::Log::LogType type,
-                                                  const char* msg,
-                                                  const char* file,
-                                                  const unsigned int line,
-                                                  const char* func,
-                                                  double systemtime,
-                                                  double networktime,
-                                                  double externaltime,
-                                                  const char* comp_name)
+yarp::os::Log::LogType yarp::os::impl::LogComponent::minimumLogType()
 {
-    if (type >= minimumOsPrintLevel.load()) {
-        yarp::os::Log::printCallback()(type, msg, file, line, func, systemtime, networktime, externaltime, comp_name);
-    }
+    return minimumOsPrintLevel.load();
 }
 
 void yarp::os::impl::LogComponent::setMinumumLogType(yarp::os::Log::LogType minumumLogType)
