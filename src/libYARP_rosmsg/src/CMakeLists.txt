@@ -27,7 +27,7 @@ target_include_directories(YARP_rosmsg
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_compile_features(YARP_rosmsg INTERFACE cxx_std_17)
+target_compile_features(YARP_rosmsg INTERFACE cxx_std_14)
 target_link_libraries(YARP_rosmsg INTERFACE YARP::YARP_os)
 list(APPEND YARP_rosmsg_PUBLIC_DEPS YARP_os)
 
@@ -54,7 +54,7 @@ target_include_directories(YARP_rosmsg_native
     $<BUILD_INTERFACE:${native_MSG_BUILD_INTERFACE_INCLUDE_DIRS}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_compile_features(YARP_rosmsg_native INTERFACE cxx_std_17)
+target_compile_features(YARP_rosmsg_native INTERFACE cxx_std_14)
 target_link_libraries(YARP_rosmsg_native INTERFACE YARP::YARP_os)
 list(APPEND YARP_rosmsg_native_PUBLIC_DEPS YARP_os)
 
@@ -116,7 +116,7 @@ foreach(_pkg ${ROS_MSG_PACKAGES})
       $<BUILD_INTERFACE:${${_pkg}_SRV_BUILD_INTERFACE_INCLUDE_DIRS}>
       $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
   )
-  target_compile_features(YARP_rosmsg_${_pkg} INTERFACE cxx_std_17)
+  target_compile_features(YARP_rosmsg_${_pkg} INTERFACE cxx_std_14)
   target_link_libraries(YARP_rosmsg_${_pkg}
     INTERFACE
       YARP::YARP_os

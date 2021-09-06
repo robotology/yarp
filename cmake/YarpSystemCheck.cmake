@@ -21,7 +21,7 @@ include(GNUInstallDirs)
 # These variables are used by try_compile, so they must be set here
 
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
@@ -226,6 +226,7 @@ else()
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wredundant-decls")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunknown-pragmas")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wunused-result")
+    yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wc++17-compat")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wc++2a-compat")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wheader-guard")
     yarp_check_and_append_cxx_compiler_flag(WANTED_WARNING_FLAGS "-Wignored-attributes")
@@ -280,6 +281,37 @@ else()
     yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-Wl,-zrelro")
     yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-Wl,-znow")
     yarp_check_and_append_cxx_compiler_flag(HARDENING_FLAGS "-fPIE -pie")
+
+
+    ## C++11 flags ##
+    unset(CXX11_FLAGS)
+    check_cxx_compiler_flag("-std=c++11" CXX_HAS_STD_CXX11)
+    check_cxx_compiler_flag("-std=c++0x" CXX_HAS_STD_CXX0X)
+    if(CXX_HAS_STD_CXX11)
+      set(CXX11_FLAGS "-std=c++11")
+    elseif(CXX_HAS_STD_CXX0X)
+      set(CXX11_FLAGS "-std=c++0x")
+    endif()
+
+    ## C++14 flags ##
+    unset(CXX14_FLAGS)
+    check_cxx_compiler_flag("-std=c++14" CXX_HAS_STD_CXX14)
+    check_cxx_compiler_flag("-std=c++1y" CXX_HAS_STD_CXX1Y)
+    if(CXX_HAS_STD_CXX14)
+      set(CXX14_FLAGS "-std=c++14")
+    elseif(CXX_HAS_STD_CXX1Y)
+      set(CXX14_FLAGS "-std=c++1y")
+    endif()
+
+    ## C++17 flags ##
+    unset(CXX14_FLAGS)
+    check_cxx_compiler_flag("-std=c++17" CXX_HAS_STD_CXX17)
+    check_cxx_compiler_flag("-std=c++1z" CXX_HAS_STD_CXX1Z)
+    if(CXX_HAS_STD_CXX17)
+      set(CXX17_FLAGS "-std=c++17")
+    elseif(CXX_HAS_STD_CXX1Z)
+      set(CXX17_FLAGS "-std=c++1z")
+    endif()
 
 
     ## Error and warning flags ##

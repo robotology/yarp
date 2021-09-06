@@ -30,7 +30,7 @@ target_include_directories(YARP_wire_rep_utils
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_compile_features(YARP_wire_rep_utils PUBLIC cxx_std_17)
+target_compile_features(YARP_wire_rep_utils PUBLIC cxx_std_14)
 
 target_link_libraries(YARP_wire_rep_utils
   PUBLIC
