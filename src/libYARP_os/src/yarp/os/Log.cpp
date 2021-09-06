@@ -5,10 +5,13 @@
 
 #include <yarp/os/Log.h>
 
+#include <yarp/conf/environment.h>
+#include <yarp/conf/system.h>
+
 #include <yarp/os/LogComponent.h>
+#include <yarp/os/LogStream.h>
 #include <yarp/os/NetType.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/Os.h>
 #include <yarp/os/SystemClock.h>
 #include <yarp/os/SystemInfo.h>
 #include <yarp/os/Time.h>
@@ -20,6 +23,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cstdarg>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -37,13 +41,6 @@
 #elif defined(YARP_HAS_EXECINFO_H)
 #    include <execinfo.h>
 #endif
-
-#include <yarp/conf/system.h>
-
-#include <yarp/os/LogStream.h>
-#include <yarp/os/Os.h>
-
-#include <cstdio>
 
 #ifdef YARP_HAS_WIN_VT_SUPPORT
 #include <windows.h>
@@ -195,31 +192,6 @@ public:
 #define CLEAR        (yarp::os::impl::LogPrivate::colored_output.load() ? "\033[00m" : "")
 
 namespace {
-
-inline bool from_env(const char* name, bool defaultvalue)
-{
-    const char *strvalue = std::getenv(name);
-
-    if(!strvalue) { return defaultvalue; }
-
-    if(strcmp(strvalue, "1") == 0) { return true; }
-    if(strcmp(strvalue, "true") == 0) { return true; }
-    if(strcmp(strvalue, "True") == 0) { return true; }
-    if(strcmp(strvalue, "TRUE") == 0) { return true; }
-    if(strcmp(strvalue, "on") == 0) { return true; }
-    if(strcmp(strvalue, "On") == 0) { return true; }
-    if(strcmp(strvalue, "ON") == 0) { return true; }
-
-    if(strcmp(strvalue, "0") == 0) { return false; }
-    if(strcmp(strvalue, "false") == 0) { return false; }
-    if(strcmp(strvalue, "False") == 0) { return false; }
-    if(strcmp(strvalue, "FALSE") == 0) { return false; }
-    if(strcmp(strvalue, "off") == 0) { return false; }
-    if(strcmp(strvalue, "Off") == 0) { return false; }
-    if(strcmp(strvalue, "OFF") == 0) { return false; }
-
-    return defaultvalue;
-}
 
 inline const char* logTypeToString(yarp::os::Log::LogType t)
 {
@@ -531,36 +503,36 @@ inline void printable_output_verbose(std::ostream* ost,
 // BEGIN LogPrivate static variables initialization
 
 //   BEGIN Environment variables
-std::atomic<bool> yarp::os::impl::LogPrivate::yarprun_format(from_env("YARP_IS_YARPRUN", false) &&
-                                                             from_env("YARPRUN_IS_FORWARDING_LOG", false));
+std::atomic<bool> yarp::os::impl::LogPrivate::yarprun_format(yarp::conf::environment::get_bool("YARP_IS_YARPRUN", false) &&
+                                                             yarp::conf::environment::get_bool("YARPRUN_IS_FORWARDING_LOG", false));
 
 #if defined(_WIN32) && !defined(YARP_HAS_WIN_VT_SUPPORT)
 std::atomic<bool> yarp::os::impl::LogPrivate::colored_output(false);
 #else
-std::atomic<bool> yarp::os::impl::LogPrivate::colored_output(from_env("YARP_COLORED_OUTPUT", false) &&
+std::atomic<bool> yarp::os::impl::LogPrivate::colored_output(yarp::conf::environment::get_bool("YARP_COLORED_OUTPUT", false) &&
                                                              !yarp::os::impl::LogPrivate::yarprun_format.load());
 #endif
-std::atomic<bool> yarp::os::impl::LogPrivate::verbose_output(from_env("YARP_VERBOSE_OUTPUT", false) &&
+std::atomic<bool> yarp::os::impl::LogPrivate::verbose_output(yarp::conf::environment::get_bool("YARP_VERBOSE_OUTPUT", false) &&
                                                              !yarp::os::impl::LogPrivate::yarprun_format.load());
-std::atomic<bool> yarp::os::impl::LogPrivate::compact_output(from_env("YARP_COMPACT_OUTPUT", false) &&
+std::atomic<bool> yarp::os::impl::LogPrivate::compact_output(yarp::conf::environment::get_bool("YARP_COMPACT_OUTPUT", false) &&
                                                              !yarp::os::impl::LogPrivate::yarprun_format.load() &&
                                                              !yarp::os::impl::LogPrivate::verbose_output.load());
-std::atomic<bool> yarp::os::impl::LogPrivate::forward_output(from_env("YARP_FORWARD_LOG_ENABLE", false) &&
+std::atomic<bool> yarp::os::impl::LogPrivate::forward_output(yarp::conf::environment::get_bool("YARP_FORWARD_LOG_ENABLE", false) &&
                                                              !yarp::os::impl::LogPrivate::yarprun_format.load());
 
 // The following 4 environment variables are to be considered experimental
 // until we have a reason to believe that this extra traffic does not impact
 // on the performances (and that all these info are actually useful).
-std::atomic<bool> yarp::os::impl::LogPrivate::forward_codeinfo(from_env("YARP_FORWARD_CODEINFO_ENABLE", false));
-std::atomic<bool> yarp::os::impl::LogPrivate::forward_hostname(from_env("YARP_FORWARD_HOSTNAME_ENABLE", false));
-std::atomic<bool> yarp::os::impl::LogPrivate::forward_processinfo(from_env("YARP_FORWARD_PROCESSINFO_ENABLE", false));
-std::atomic<bool> yarp::os::impl::LogPrivate::forward_backtrace(from_env("YARP_FORWARD_BACKTRACE_ENABLE", false));
+std::atomic<bool> yarp::os::impl::LogPrivate::forward_codeinfo(yarp::conf::environment::get_bool("YARP_FORWARD_CODEINFO_ENABLE", false));
+std::atomic<bool> yarp::os::impl::LogPrivate::forward_hostname(yarp::conf::environment::get_bool("YARP_FORWARD_HOSTNAME_ENABLE", false));
+std::atomic<bool> yarp::os::impl::LogPrivate::forward_processinfo(yarp::conf::environment::get_bool("YARP_FORWARD_PROCESSINFO_ENABLE", false));
+std::atomic<bool> yarp::os::impl::LogPrivate::forward_backtrace(yarp::conf::environment::get_bool("YARP_FORWARD_BACKTRACE_ENABLE", false));
 
-std::atomic<bool> yarp::os::impl::LogPrivate::debug_output(from_env("YARP_DEBUG_ENABLE", true));
-std::atomic<bool> yarp::os::impl::LogPrivate::trace_output(from_env("YARP_TRACE_ENABLE", false) &&
+std::atomic<bool> yarp::os::impl::LogPrivate::debug_output(yarp::conf::environment::get_bool("YARP_DEBUG_ENABLE", true));
+std::atomic<bool> yarp::os::impl::LogPrivate::trace_output(yarp::conf::environment::get_bool("YARP_TRACE_ENABLE", false) &&
                                                            yarp::os::impl::LogPrivate::debug_output.load());
 
-std::atomic<bool> yarp::os::impl::LogPrivate::debug_log(from_env("YARP_DEBUG_LOG_ENABLE", false));
+std::atomic<bool> yarp::os::impl::LogPrivate::debug_log(yarp::conf::environment::get_bool("YARP_DEBUG_LOG_ENABLE", false));
 //   END Environment variables
 
 #ifdef YARP_HAS_WIN_VT_SUPPORT
