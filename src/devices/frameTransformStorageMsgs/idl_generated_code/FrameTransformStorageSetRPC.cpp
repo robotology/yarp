@@ -429,7 +429,7 @@ bool FrameTransformStorageSetRPC::read(yarp::os::ConnectionReader& connection)
             return false;
         }
         std::string next_tag = reader.readTag();
-        if (next_tag == "") {
+        if (next_tag.empty()) {
             break;
         }
         tag.append("_").append(next_tag);

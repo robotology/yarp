@@ -4094,7 +4094,7 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
             f_cpp_ << indent_cpp() << "}\n";
 
             f_cpp_ << indent_cpp() << "std::string next_tag = reader.readTag();\n";
-            f_cpp_ << indent_cpp() << "if (next_tag == \"\") {\n";
+            f_cpp_ << indent_cpp() << "if (next_tag.empty()) {\n";
             indent_up_cpp();
             {
                 f_cpp_ << indent_cpp() << "break;\n";
