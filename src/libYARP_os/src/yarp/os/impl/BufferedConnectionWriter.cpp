@@ -457,11 +457,15 @@ void BufferedConnectionWriter::stopWrite() const
     applyConvertTextMode();
 }
 
-SizedWriter* BufferedConnectionWriter::getBuffer() const
+SizedWriter* BufferedConnectionWriter::getBuffer()
 {
-    return const_cast<BufferedConnectionWriter*>(this);
+    return this;
 }
 
+const SizedWriter* BufferedConnectionWriter::getBuffer() const
+{
+    return this;
+}
 
 void BufferedConnectionWriter::setInitialPoolSize(size_t size)
 {

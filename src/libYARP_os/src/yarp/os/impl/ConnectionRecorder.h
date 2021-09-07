@@ -86,7 +86,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     void requestDrop() override;
     const yarp::os::Searchable& getConnectionModifiers() const override;
-    yarp::os::SizedWriter* getBuffer() const override;
+    yarp::os::SizedWriter* getBuffer() override;
+    const yarp::os::SizedWriter* getBuffer() const override;
     bool setSize(size_t len) override;
 };
 
