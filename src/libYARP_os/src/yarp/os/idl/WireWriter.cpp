@@ -17,6 +17,7 @@ constexpr yarp::conf::vocab32_t VOCAB_DONE = yarp::os::createVocab32('d', 'o', '
 
 
 WireWriter::WireWriter(ConnectionWriter& writer) :
+        reader(nullptr),
         writer(writer)
 {
     get_mode = get_is_vocab32 = false;
@@ -25,6 +26,7 @@ WireWriter::WireWriter(ConnectionWriter& writer) :
 }
 
 WireWriter::WireWriter(WireReader& reader) :
+        reader(&reader.getReader()),
         writer(reader.getWriter())
 {
     get_is_vocab32 = false;
@@ -41,6 +43,9 @@ WireWriter::~WireWriter()
 {
     if (need_ok) {
         writeBool(true);
+    }
+    if(reader) {
+        reader->flushWriter();
     }
 }
 

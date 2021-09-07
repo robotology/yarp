@@ -133,6 +133,7 @@ private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
     bool get_is_vocab32;
     mutable bool need_ok;
+    ConnectionReader* reader;
     ConnectionWriter& writer;
 };
 
