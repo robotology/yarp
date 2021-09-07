@@ -85,6 +85,9 @@ public:
     bool getLocationsList(std::vector<std::string> & locations) override;
     bool getAreasList(std::vector<std::string> & areas) override;
     bool getPathsList(std::vector<std::string> & paths) override;
+    bool getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations) override;
+    bool getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas) override;
+    bool getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths) override;
     bool renameLocation(std::string original_name, std::string new_name) override;
     bool deleteLocation(std::string location_name) override;
     bool deletePath(std::string path_name) override;

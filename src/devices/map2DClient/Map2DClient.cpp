@@ -735,6 +735,24 @@ bool   Map2DClient::renamePath(std::string original_name, std::string new_name)
     return true;
 }
 
+bool   Map2DClient::getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
+{
+    yCError(MAP2DCLIENT) << "getAllLocations() not implemented";
+    return false;
+}
+
+bool   Map2DClient::getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
+{
+    yCError(MAP2DCLIENT) << "getAllAreas() not implemented";
+    return false;
+}
+
+bool   Map2DClient::getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
+{
+    yCError(MAP2DCLIENT) << "getAllPaths() not implemented";
+    return false;
+}
+
 bool   Map2DClient::clearAllLocations()
 {
     yarp::os::Bottle b;

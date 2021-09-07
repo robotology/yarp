@@ -13,6 +13,9 @@
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <return_getAllAreas.h>
+#include <return_getAllLocations.h>
+#include <return_getAllPaths.h>
 #include <return_getArea.h>
 #include <return_getAreasList.h>
 #include <return_getLocation.h>
@@ -60,6 +63,12 @@ public:
     virtual return_getAreasList getAreasListRPC();
 
     virtual return_getPathsList getPathsListRPC();
+
+    virtual return_getAllLocations getAllLocationsRPC();
+
+    virtual return_getAllAreas getAllAreasRPC();
+
+    virtual return_getAllPaths getAllPathsRPC();
 
     virtual bool renameLocationRPC(const std::string& original_name, const std::string& new_name);
 

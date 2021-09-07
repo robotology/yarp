@@ -173,6 +173,45 @@ bool   Map2D_nwc_yarp::getPathsList(std::vector<std::string>& paths)
     return true;
 }
 
+bool   Map2D_nwc_yarp::getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getAllLocationsRPC();
+    if (!ret.retval)
+    {
+        yCError(MAP2D_NWC_YARP, "Unable to getAllLocations");
+        return false;
+    }
+    locations = ret.locations;
+    return true;
+}
+
+bool   Map2D_nwc_yarp::getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getAllAreasRPC();
+    if (!ret.retval)
+    {
+        yCError(MAP2D_NWC_YARP, "Unable to getAllAreas");
+        return false;
+    }
+    areas = ret.areas;
+    return true;
+}
+
+bool   Map2D_nwc_yarp::getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
+{
+    std::lock_guard <std::mutex> lg(m_mutex);
+    auto ret = m_RPC.getAllPathsRPC();
+    if (!ret.retval)
+    {
+        yCError(MAP2D_NWC_YARP, "Unable to getAllPaths");
+        return false;
+    }
+    paths = ret.paths;
+    return true;
+}
+
 bool   Map2D_nwc_yarp::getLocation(std::string location_name, Map2DLocation& loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);

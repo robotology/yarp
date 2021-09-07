@@ -119,25 +119,46 @@ public:
     virtual bool getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) = 0;
 
     /**
+    * Get a list of the names of all stored locations
+    * @param the returned list of locations names
+    * @return true/false
+    */
+    virtual bool getLocationsList(std::vector<std::string>& locations) = 0;
+
+    /**
+    * Get a list of the names of all stored areas
+    * @param the returned list of areas names
+    * @return true/false
+    */
+    virtual bool getAreasList(std::vector<std::string>& areas) = 0;
+
+    /**
+    * Get a list of the names of all stored paths
+    * @param the returned list of paths names
+    * @return true/false
+    */
+    virtual bool getPathsList(std::vector<std::string>& paths) = 0;
+
+    /**
     * Get a list of all stored locations
     * @param the returned list of locations
     * @return true/false
     */
-    virtual bool getLocationsList(std::vector<std::string>& locations) = 0;
+    virtual bool getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations) = 0;
 
     /**
     * Get a list of all stored areas
     * @param the returned list of areas
     * @return true/false
     */
-    virtual bool getAreasList(std::vector<std::string>& areas) = 0;
+    virtual bool getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas) = 0;
 
     /**
     * Get a list of all stored paths
     * @param the returned list of paths
     * @return true/false
     */
-    virtual bool getPathsList(std::vector<std::string>& paths) = 0;
+    virtual bool getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths) = 0;
 
     /**
     * Searches for a location and renames it

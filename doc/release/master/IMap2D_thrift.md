@@ -4,6 +4,14 @@ IMap2D_thrift {#master}
 Important Changes
 -----------------
 
+### Libraries
+
+#### `yarp::dev`
+* Added the following three methods to `yarp::dev::Nav2D::IMap2D`
+   getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
+   getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
+   getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
+
 ### devices
 
 *  Added new thrift interface `IMap2DMsgs`.

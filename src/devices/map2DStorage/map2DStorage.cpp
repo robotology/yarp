@@ -851,6 +851,35 @@ bool Map2DStorage::getPathsList(std::vector<std::string>& paths)
     return true;
 }
 
+bool Map2DStorage::getAllLocations (std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
+{
+    locations.clear();
+    for (auto& it : m_locations_storage)
+    {
+        locations.push_back(it.second);
+    }
+    return true;
+}
+
+bool Map2DStorage::getAllAreas (std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
+{
+    for (auto& it : m_areas_storage)
+    {
+        areas.push_back(it.second);
+    }
+    return true;
+}
+
+bool Map2DStorage::getAllPaths (std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
+{
+    paths.clear();
+    for (auto& it : m_paths_storage)
+    {
+        paths.push_back(it.second);
+    }
+    return true;
+}
+
 bool Map2DStorage::renameLocation(std::string original_name, std::string new_name)
 {
     std::map<std::string, Map2DLocation>::iterator orig_it;

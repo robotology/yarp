@@ -61,6 +61,18 @@ struct return_getPathsList {
   1: bool retval = false;
   2: list<string> paths;
 }
+struct return_getAllLocations {
+  1: bool retval = false;
+  2: list<yarp_dev_Nav2D_Map2DLocation> locations;
+}
+struct return_getAllAreas {
+  1: bool retval = false;
+  2: list<yarp_dev_Nav2D_Map2DArea> areas;
+}
+struct return_getAllPaths {
+  1: bool retval = false;
+  2: list<yarp_dev_Nav2D_Map2DPath> paths;
+}
 
 //-------------------------------------------------
 
@@ -80,6 +92,9 @@ service IMap2DMsgsRPC
     return_getLocationsList getLocationsListRPC ();
     return_getAreasList getAreasListRPC ();
     return_getPathsList getPathsListRPC ();
+    return_getAllLocations getAllLocationsRPC ();
+    return_getAllAreas getAllAreasRPC ();
+    return_getAllPaths getAllPathsRPC ();
     bool renameLocationRPC (string original_name, string new_name);
     bool deleteLocationRPC (string location_name);
     bool deletePathRPC (string path_name);

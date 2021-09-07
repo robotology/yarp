@@ -14,5 +14,11 @@ return_getAreasList.h
 return_getAreasList.cpp
 return_getPathsList.h
 return_getPathsList.cpp
+return_getAllLocations.h
+return_getAllLocations.cpp
+return_getAllAreas.h
+return_getAllAreas.cpp
+return_getAllPaths.h
+return_getAllPaths.cpp
 IMap2DMsgsRPC.h
 IMap2DMsgsRPC.cpp
