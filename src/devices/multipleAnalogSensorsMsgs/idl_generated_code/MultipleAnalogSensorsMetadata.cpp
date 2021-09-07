@@ -20,10 +20,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static SensorRPCData s_return_helper;
+    SensorRPCData m_return_helper{};
 };
-
-thread_local SensorRPCData MultipleAnalogSensorsMetadata_getMetadata_helper::s_return_helper = {};
 
 MultipleAnalogSensorsMetadata_getMetadata_helper::MultipleAnalogSensorsMetadata_getMetadata_helper()
 {
@@ -47,7 +45,7 @@ bool MultipleAnalogSensorsMetadata_getMetadata_helper::read(yarp::os::Connection
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -67,7 +65,7 @@ SensorRPCData MultipleAnalogSensorsMetadata::getMetadata()
         yError("Missing server method '%s'?", "SensorRPCData MultipleAnalogSensorsMetadata::getMetadata()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? MultipleAnalogSensorsMetadata_getMetadata_helper::s_return_helper : SensorRPCData{};
+    return ok ? helper.m_return_helper : SensorRPCData{};
 }
 
 // help method
@@ -114,13 +112,14 @@ bool MultipleAnalogSensorsMetadata::read(yarp::os::ConnectionReader& connection)
     }
     while (!reader.isError()) {
         if (tag == "getMetadata") {
-            MultipleAnalogSensorsMetadata_getMetadata_helper::s_return_helper = getMetadata();
+            MultipleAnalogSensorsMetadata_getMetadata_helper helper{};
+            helper.m_return_helper = getMetadata();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(10)) {
                     return false;
                 }
-                if (!writer.write(MultipleAnalogSensorsMetadata_getMetadata_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }

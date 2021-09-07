@@ -3614,7 +3614,7 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
     const auto& args = function->get_arglist()->get_members();
     const auto& returntype = function->get_returntype();
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
-    auto returnfield = t_field{returntype, "s_return_helper"};
+    auto returnfield = t_field{returntype, "m_return_helper"};
 
     f_cpp_ << "class " << helper_class << " :\n";
     f_cpp_ << indent_initializer_cpp() << "public yarp::os::Portable\n";
@@ -3637,19 +3637,12 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
 
         if (!returntype->is_void()) {
             f_cpp_ << '\n';
-            // This variable is declared thread_local because of #2021, see
-            // https://github.com/robotology/yarp/issues/2021 for details
-            f_cpp_ << indent_cpp() << "thread_local static " << declare_field(&returnfield) << ";\n";
+            f_cpp_ << indent_cpp() << declare_field(&returnfield) << "{};\n";
         }
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "};\n";
     f_cpp_ << '\n';
-
-    if (!returntype->is_void()) {
-        f_cpp_ << indent_cpp() << "thread_local " << type_name(returntype) << " " << helper_class << "::" << returnfield.get_name() << " = {};\n";
-        f_cpp_ << '\n';
-    }
 }
 
 void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* function, std::ostringstream& f_cpp_)
@@ -3659,7 +3652,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* fun
     const auto& fname = function->get_name();
     const auto& returntype = function->get_returntype();
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
-    auto returnfield = t_field{returntype, "s_return_helper"};
+    auto returnfield = t_field{returntype, "m_return_helper"};
 
     f_cpp_ << indent_cpp() << function_prototype(function, false, false, false, helper_class, helper_class);
     bool first = true;
@@ -3672,18 +3665,20 @@ void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* fun
         }
         f_cpp_ << indent_initializer_cpp() << "m_" << arg->get_name() << "{" << arg->get_name() << "}";
     }
+    if (!returntype->is_void()) {
+        if (returntype->is_base_type() || returntype->is_enum()) {
+            if (first) {
+                f_cpp_ << " :\n";
+                first = false;
+            } else {
+                f_cpp_ << ",\n";
+            }
+            f_cpp_ << indent_initializer_cpp() << returnfield.get_name() << "{}";
+        }
+    }
 
     f_cpp_ << '\n';
     f_cpp_ << indent_cpp() << "{\n";
-    indent_up_cpp();
-    {
-        if (!returntype->is_void()) {
-            if (returntype->is_base_type() || returntype->is_enum()) {
-                f_cpp_ << indent_cpp() << returnfield.get_name() << " = {};\n";
-            }
-        }
-    }
-    indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
     f_cpp_ << '\n';
 }
@@ -3721,7 +3716,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_read(t_function* fun
     const auto& fname = function->get_name();
     const auto& returntype = function->get_returntype();
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
-    auto returnfield = t_field{returntype, "s_return_helper"};
+    auto returnfield = t_field{returntype, "m_return_helper"};
 
     f_cpp_ << indent_cpp() << "bool " << helper_class << "::read(yarp::os::ConnectionReader& connection)\n";
     f_cpp_ << indent_cpp() << "{\n";
@@ -3781,7 +3776,7 @@ void t_yarp_generator::generate_service_method(t_service* tservice, t_function* 
     const auto& fname = function->get_name();
     const auto& returntype = function->get_returntype();
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
-    auto returnfield = t_field{returntype, "s_return_helper"};
+    auto returnfield = t_field{returntype, "m_return_helper"};
 
     print_doc(f_h_, function);
     f_h_ << indent_h() << "virtual " << function_prototype(function, true, true, true) << ";\n";
@@ -3816,7 +3811,7 @@ void t_yarp_generator::generate_service_method(t_service* tservice, t_function* 
                     << (!function->is_oneway() ? "yarp().write(helper, helper);" : "yarp().write(helper);")
                     << '\n';
         if (!returntype->is_void()) {
-            f_cpp_ << indent_cpp() << "return ok ? " << helper_class << "::" << returnfield.get_name() << " : " << type_name(returntype) << "{};\n";
+            f_cpp_ << indent_cpp() << "return ok ? helper." << returnfield.get_name() << " : " << type_name(returntype) << "{};\n";
         }
     }
     indent_down_cpp();
@@ -3949,7 +3944,7 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                 const auto& args = function->get_arglist()->get_members();
                 const auto& returntype = function->get_returntype();
                 const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
-                auto returnfield = t_field{returntype, "s_return_helper"};
+                auto returnfield = t_field{returntype, "m_return_helper"};
 
                 f_cpp_ << indent_cpp() << "if (tag == \"" << fname << "\") {\n";
                 indent_up_cpp();
@@ -3985,7 +3980,17 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                     }
 
                     if (!returntype->is_void()) {
-                        f_cpp_ << indent_cpp() << helper_class << "::" << returnfield.get_name() << " = ";
+                        f_cpp_ << indent_cpp() << helper_class << " helper{";
+                        bool first = true;
+                        for (const auto& arg : args) {
+                            if (!first) {
+                                f_cpp_ << ", ";
+                            }
+                            first = false;
+                            f_cpp_ << arg->get_name();
+                        }
+                        f_cpp_ << "};\n";
+                        f_cpp_ << indent_cpp() << "helper." << returnfield.get_name() << " = ";
                     } else {
                         f_cpp_ << indent_cpp();
                     }
@@ -4005,6 +4010,10 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                         f_cpp_ << indent_cpp() << "}\n";
                     }
 
+                    // The WireWriter must be destroyed after the helper class, because
+                    // its dtor will flush the ConnectionWriter, ensuring that any
+                    // appendExternalBlock contained in helper serializationis actually
+                    // written before the helper is destroyed.
                     f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(reader);\n";
                     f_cpp_ << indent_cpp() << "if (!writer.isNull()) {\n";
                     indent_up_cpp();
@@ -4018,7 +4027,7 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                                 f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(returntype) << "))" << inline_return_cpp("false");
                             }
                             if (!returntype->is_void()) {
-                                generate_serialize_field(f_cpp_, &returnfield, helper_class + "::");
+                                generate_serialize_field(f_cpp_, &returnfield, "helper.");
                             }
                         } else {
                             // we are a oneway function

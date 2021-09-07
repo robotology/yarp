@@ -20,14 +20,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static std::string s_return_helper;
+    std::string m_return_helper{};
 };
 
-thread_local std::string yarprobotinterfaceRpc_get_phase_helper::s_return_helper = {};
-
-yarprobotinterfaceRpc_get_phase_helper::yarprobotinterfaceRpc_get_phase_helper()
+yarprobotinterfaceRpc_get_phase_helper::yarprobotinterfaceRpc_get_phase_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool yarprobotinterfaceRpc_get_phase_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -48,7 +46,7 @@ bool yarprobotinterfaceRpc_get_phase_helper::read(yarp::os::ConnectionReader& co
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readString(s_return_helper)) {
+    if (!reader.readString(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -63,14 +61,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static std::int32_t s_return_helper;
+    std::int32_t m_return_helper{};
 };
 
-thread_local std::int32_t yarprobotinterfaceRpc_get_level_helper::s_return_helper = {};
-
-yarprobotinterfaceRpc_get_level_helper::yarprobotinterfaceRpc_get_level_helper()
+yarprobotinterfaceRpc_get_level_helper::yarprobotinterfaceRpc_get_level_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool yarprobotinterfaceRpc_get_level_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -91,7 +87,7 @@ bool yarprobotinterfaceRpc_get_level_helper::read(yarp::os::ConnectionReader& co
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readI32(s_return_helper)) {
+    if (!reader.readI32(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -106,14 +102,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static std::string s_return_helper;
+    std::string m_return_helper{};
 };
 
-thread_local std::string yarprobotinterfaceRpc_get_robot_helper::s_return_helper = {};
-
-yarprobotinterfaceRpc_get_robot_helper::yarprobotinterfaceRpc_get_robot_helper()
+yarprobotinterfaceRpc_get_robot_helper::yarprobotinterfaceRpc_get_robot_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool yarprobotinterfaceRpc_get_robot_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -134,7 +128,7 @@ bool yarprobotinterfaceRpc_get_robot_helper::read(yarp::os::ConnectionReader& co
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readString(s_return_helper)) {
+    if (!reader.readString(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -149,14 +143,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool yarprobotinterfaceRpc_is_ready_helper::s_return_helper = {};
-
-yarprobotinterfaceRpc_is_ready_helper::yarprobotinterfaceRpc_is_ready_helper()
+yarprobotinterfaceRpc_is_ready_helper::yarprobotinterfaceRpc_is_ready_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool yarprobotinterfaceRpc_is_ready_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -177,7 +169,7 @@ bool yarprobotinterfaceRpc_is_ready_helper::read(yarp::os::ConnectionReader& con
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -192,14 +184,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static std::string s_return_helper;
+    std::string m_return_helper{};
 };
 
-thread_local std::string yarprobotinterfaceRpc_quit_helper::s_return_helper = {};
-
-yarprobotinterfaceRpc_quit_helper::yarprobotinterfaceRpc_quit_helper()
+yarprobotinterfaceRpc_quit_helper::yarprobotinterfaceRpc_quit_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool yarprobotinterfaceRpc_quit_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -220,7 +210,7 @@ bool yarprobotinterfaceRpc_quit_helper::read(yarp::os::ConnectionReader& connect
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readString(s_return_helper)) {
+    if (!reader.readString(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -235,14 +225,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static std::string s_return_helper;
+    std::string m_return_helper{};
 };
 
-thread_local std::string yarprobotinterfaceRpc_bye_helper::s_return_helper = {};
-
-yarprobotinterfaceRpc_bye_helper::yarprobotinterfaceRpc_bye_helper()
+yarprobotinterfaceRpc_bye_helper::yarprobotinterfaceRpc_bye_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool yarprobotinterfaceRpc_bye_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -263,7 +251,7 @@ bool yarprobotinterfaceRpc_bye_helper::read(yarp::os::ConnectionReader& connecti
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readString(s_return_helper)) {
+    if (!reader.readString(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -278,14 +266,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static std::string s_return_helper;
+    std::string m_return_helper{};
 };
 
-thread_local std::string yarprobotinterfaceRpc_exit_helper::s_return_helper = {};
-
-yarprobotinterfaceRpc_exit_helper::yarprobotinterfaceRpc_exit_helper()
+yarprobotinterfaceRpc_exit_helper::yarprobotinterfaceRpc_exit_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool yarprobotinterfaceRpc_exit_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -306,7 +292,7 @@ bool yarprobotinterfaceRpc_exit_helper::read(yarp::os::ConnectionReader& connect
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readString(s_return_helper)) {
+    if (!reader.readString(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -326,7 +312,7 @@ std::string yarprobotinterfaceRpc::get_phase()
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::get_phase()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? yarprobotinterfaceRpc_get_phase_helper::s_return_helper : std::string{};
+    return ok ? helper.m_return_helper : std::string{};
 }
 
 std::int32_t yarprobotinterfaceRpc::get_level()
@@ -336,7 +322,7 @@ std::int32_t yarprobotinterfaceRpc::get_level()
         yError("Missing server method '%s'?", "std::int32_t yarprobotinterfaceRpc::get_level()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? yarprobotinterfaceRpc_get_level_helper::s_return_helper : std::int32_t{};
+    return ok ? helper.m_return_helper : std::int32_t{};
 }
 
 std::string yarprobotinterfaceRpc::get_robot()
@@ -346,7 +332,7 @@ std::string yarprobotinterfaceRpc::get_robot()
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::get_robot()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? yarprobotinterfaceRpc_get_robot_helper::s_return_helper : std::string{};
+    return ok ? helper.m_return_helper : std::string{};
 }
 
 bool yarprobotinterfaceRpc::is_ready()
@@ -356,7 +342,7 @@ bool yarprobotinterfaceRpc::is_ready()
         yError("Missing server method '%s'?", "bool yarprobotinterfaceRpc::is_ready()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? yarprobotinterfaceRpc_is_ready_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 std::string yarprobotinterfaceRpc::quit()
@@ -366,7 +352,7 @@ std::string yarprobotinterfaceRpc::quit()
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::quit()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? yarprobotinterfaceRpc_quit_helper::s_return_helper : std::string{};
+    return ok ? helper.m_return_helper : std::string{};
 }
 
 std::string yarprobotinterfaceRpc::bye()
@@ -376,7 +362,7 @@ std::string yarprobotinterfaceRpc::bye()
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::bye()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? yarprobotinterfaceRpc_bye_helper::s_return_helper : std::string{};
+    return ok ? helper.m_return_helper : std::string{};
 }
 
 std::string yarprobotinterfaceRpc::exit()
@@ -386,7 +372,7 @@ std::string yarprobotinterfaceRpc::exit()
         yError("Missing server method '%s'?", "std::string yarprobotinterfaceRpc::exit()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? yarprobotinterfaceRpc_exit_helper::s_return_helper : std::string{};
+    return ok ? helper.m_return_helper : std::string{};
 }
 
 // help method
@@ -464,13 +450,14 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
     }
     while (!reader.isError()) {
         if (tag == "get_phase") {
-            yarprobotinterfaceRpc_get_phase_helper::s_return_helper = get_phase();
+            yarprobotinterfaceRpc_get_phase_helper helper{};
+            helper.m_return_helper = get_phase();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString(yarprobotinterfaceRpc_get_phase_helper::s_return_helper)) {
+                if (!writer.writeString(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -478,13 +465,14 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "get_level") {
-            yarprobotinterfaceRpc_get_level_helper::s_return_helper = get_level();
+            yarprobotinterfaceRpc_get_level_helper helper{};
+            helper.m_return_helper = get_level();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeI32(yarprobotinterfaceRpc_get_level_helper::s_return_helper)) {
+                if (!writer.writeI32(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -492,13 +480,14 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "get_robot") {
-            yarprobotinterfaceRpc_get_robot_helper::s_return_helper = get_robot();
+            yarprobotinterfaceRpc_get_robot_helper helper{};
+            helper.m_return_helper = get_robot();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString(yarprobotinterfaceRpc_get_robot_helper::s_return_helper)) {
+                if (!writer.writeString(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -506,13 +495,14 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "is_ready") {
-            yarprobotinterfaceRpc_is_ready_helper::s_return_helper = is_ready();
+            yarprobotinterfaceRpc_is_ready_helper helper{};
+            helper.m_return_helper = is_ready();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(yarprobotinterfaceRpc_is_ready_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -520,13 +510,14 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "quit") {
-            yarprobotinterfaceRpc_quit_helper::s_return_helper = quit();
+            yarprobotinterfaceRpc_quit_helper helper{};
+            helper.m_return_helper = quit();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString(yarprobotinterfaceRpc_quit_helper::s_return_helper)) {
+                if (!writer.writeString(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -534,13 +525,14 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "bye") {
-            yarprobotinterfaceRpc_bye_helper::s_return_helper = bye();
+            yarprobotinterfaceRpc_bye_helper helper{};
+            helper.m_return_helper = bye();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString(yarprobotinterfaceRpc_bye_helper::s_return_helper)) {
+                if (!writer.writeString(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -548,13 +540,14 @@ bool yarprobotinterfaceRpc::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "exit") {
-            yarprobotinterfaceRpc_exit_helper::s_return_helper = exit();
+            yarprobotinterfaceRpc_exit_helper helper{};
+            helper.m_return_helper = exit();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString(yarprobotinterfaceRpc_exit_helper::s_return_helper)) {
+                if (!writer.writeString(helper.m_return_helper)) {
                     return false;
                 }
             }

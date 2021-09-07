@@ -25,18 +25,16 @@ public:
     double m_theta_vel;
     double m_timeout;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
-
-thread_local bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::s_return_helper = {};
 
 MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper(const double x_vel, const double y_vel, const double theta_vel, const double timeout) :
         m_x_vel{x_vel},
         m_y_vel{y_vel},
         m_theta_vel{theta_vel},
-        m_timeout{timeout}
+        m_timeout{timeout},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -69,7 +67,7 @@ bool MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::read(yarp::os:
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -84,10 +82,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static return_getLastVelocityCommand s_return_helper;
+    return_getLastVelocityCommand m_return_helper{};
 };
-
-thread_local return_getLastVelocityCommand MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::s_return_helper = {};
 
 MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper()
 {
@@ -111,7 +107,7 @@ bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::read(yarp::o
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -131,7 +127,7 @@ bool MobileBaseVelocityControlRPC::applyVelocityCommandRPC(const double x_vel, c
         yError("Missing server method '%s'?", "bool MobileBaseVelocityControlRPC::applyVelocityCommandRPC(const double x_vel, const double y_vel, const double theta_vel, const double timeout)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 return_getLastVelocityCommand MobileBaseVelocityControlRPC::getLastVelocityCommandRPC()
@@ -141,7 +137,7 @@ return_getLastVelocityCommand MobileBaseVelocityControlRPC::getLastVelocityComma
         yError("Missing server method '%s'?", "return_getLastVelocityCommand MobileBaseVelocityControlRPC::getLastVelocityCommandRPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::s_return_helper : return_getLastVelocityCommand{};
+    return ok ? helper.m_return_helper : return_getLastVelocityCommand{};
 }
 
 // help method
@@ -211,13 +207,14 @@ bool MobileBaseVelocityControlRPC::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::s_return_helper = applyVelocityCommandRPC(x_vel, y_vel, theta_vel, timeout);
+            MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper helper{x_vel, y_vel, theta_vel, timeout};
+            helper.m_return_helper = applyVelocityCommandRPC(x_vel, y_vel, theta_vel, timeout);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -225,13 +222,14 @@ bool MobileBaseVelocityControlRPC::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "getLastVelocityCommandRPC") {
-            MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::s_return_helper = getLastVelocityCommandRPC();
+            MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper helper{};
+            helper.m_return_helper = getLastVelocityCommandRPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(4)) {
                     return false;
                 }
-                if (!writer.write(MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }

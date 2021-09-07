@@ -20,14 +20,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_clear_all_maps_RPC_helper::s_return_helper = {};
-
-IMap2DMsgs_clear_all_maps_RPC_helper::IMap2DMsgs_clear_all_maps_RPC_helper()
+IMap2DMsgs_clear_all_maps_RPC_helper::IMap2DMsgs_clear_all_maps_RPC_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_clear_all_maps_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -48,7 +46,7 @@ bool IMap2DMsgs_clear_all_maps_RPC_helper::read(yarp::os::ConnectionReader& conn
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -65,15 +63,13 @@ public:
 
     yarp::dev::Nav2D::MapGrid2D m_themap;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_store_map_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_store_map_RPC_helper::IMap2DMsgs_store_map_RPC_helper(const yarp::dev::Nav2D::MapGrid2D& themap) :
-        m_themap{themap}
+        m_themap{themap},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_store_map_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -97,7 +93,7 @@ bool IMap2DMsgs_store_map_RPC_helper::read(yarp::os::ConnectionReader& connectio
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -114,10 +110,8 @@ public:
 
     std::string m_map_name;
 
-    thread_local static return_get_map s_return_helper;
+    return_get_map m_return_helper{};
 };
-
-thread_local return_get_map IMap2DMsgs_get_map_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_map_RPC_helper::IMap2DMsgs_get_map_RPC_helper(const std::string& map_name) :
         m_map_name{map_name}
@@ -145,7 +139,7 @@ bool IMap2DMsgs_get_map_RPC_helper::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -160,10 +154,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static return_get_map_names s_return_helper;
+    return_get_map_names m_return_helper{};
 };
-
-thread_local return_get_map_names IMap2DMsgs_get_map_names_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_map_names_RPC_helper::IMap2DMsgs_get_map_names_RPC_helper()
 {
@@ -187,7 +179,7 @@ bool IMap2DMsgs_get_map_names_RPC_helper::read(yarp::os::ConnectionReader& conne
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -204,15 +196,13 @@ public:
 
     std::string m_map_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_remove_map_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_remove_map_RPC_helper::IMap2DMsgs_remove_map_RPC_helper(const std::string& map_name) :
-        m_map_name{map_name}
+        m_map_name{map_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_remove_map_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -236,7 +226,7 @@ bool IMap2DMsgs_remove_map_RPC_helper::read(yarp::os::ConnectionReader& connecti
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -254,16 +244,14 @@ public:
     std::string m_location_name;
     yarp::dev::Nav2D::Map2DLocation m_loc;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
-
-thread_local bool IMap2DMsgs_store_location_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_store_location_RPC_helper::IMap2DMsgs_store_location_RPC_helper(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc) :
         m_location_name{location_name},
-        m_loc{loc}
+        m_loc{loc},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_store_location_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -290,7 +278,7 @@ bool IMap2DMsgs_store_location_RPC_helper::read(yarp::os::ConnectionReader& conn
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -308,16 +296,14 @@ public:
     std::string m_area_name;
     yarp::dev::Nav2D::Map2DArea m_area;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
-
-thread_local bool IMap2DMsgs_store_area_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_store_area_RPC_helper::IMap2DMsgs_store_area_RPC_helper(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area) :
         m_area_name{area_name},
-        m_area{area}
+        m_area{area},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_store_area_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -344,7 +330,7 @@ bool IMap2DMsgs_store_area_RPC_helper::read(yarp::os::ConnectionReader& connecti
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -362,16 +348,14 @@ public:
     std::string m_path_name;
     yarp::dev::Nav2D::Map2DPath m_path;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
-
-thread_local bool IMap2DMsgs_store_path_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_store_path_RPC_helper::IMap2DMsgs_store_path_RPC_helper(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path) :
         m_path_name{path_name},
-        m_path{path}
+        m_path{path},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_store_path_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -398,7 +382,7 @@ bool IMap2DMsgs_store_path_RPC_helper::read(yarp::os::ConnectionReader& connecti
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -415,10 +399,8 @@ public:
 
     std::string m_location_name;
 
-    thread_local static return_get_location s_return_helper;
+    return_get_location m_return_helper{};
 };
-
-thread_local return_get_location IMap2DMsgs_get_location_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_location_RPC_helper::IMap2DMsgs_get_location_RPC_helper(const std::string& location_name) :
         m_location_name{location_name}
@@ -446,7 +428,7 @@ bool IMap2DMsgs_get_location_RPC_helper::read(yarp::os::ConnectionReader& connec
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -463,10 +445,8 @@ public:
 
     std::string m_area_name;
 
-    thread_local static return_get_area s_return_helper;
+    return_get_area m_return_helper{};
 };
-
-thread_local return_get_area IMap2DMsgs_get_area_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_area_RPC_helper::IMap2DMsgs_get_area_RPC_helper(const std::string& area_name) :
         m_area_name{area_name}
@@ -494,7 +474,7 @@ bool IMap2DMsgs_get_area_RPC_helper::read(yarp::os::ConnectionReader& connection
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -511,10 +491,8 @@ public:
 
     std::string m_path_name;
 
-    thread_local static return_get_path s_return_helper;
+    return_get_path m_return_helper{};
 };
-
-thread_local return_get_path IMap2DMsgs_get_path_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_path_RPC_helper::IMap2DMsgs_get_path_RPC_helper(const std::string& path_name) :
         m_path_name{path_name}
@@ -542,7 +520,7 @@ bool IMap2DMsgs_get_path_RPC_helper::read(yarp::os::ConnectionReader& connection
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -557,10 +535,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static return_get_locations_list s_return_helper;
+    return_get_locations_list m_return_helper{};
 };
-
-thread_local return_get_locations_list IMap2DMsgs_get_locations_list_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_locations_list_RPC_helper::IMap2DMsgs_get_locations_list_RPC_helper()
 {
@@ -584,7 +560,7 @@ bool IMap2DMsgs_get_locations_list_RPC_helper::read(yarp::os::ConnectionReader& 
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -599,10 +575,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static return_get_areas_list s_return_helper;
+    return_get_areas_list m_return_helper{};
 };
-
-thread_local return_get_areas_list IMap2DMsgs_get_areas_list_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_areas_list_RPC_helper::IMap2DMsgs_get_areas_list_RPC_helper()
 {
@@ -626,7 +600,7 @@ bool IMap2DMsgs_get_areas_list_RPC_helper::read(yarp::os::ConnectionReader& conn
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -641,10 +615,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static return_get_paths_list s_return_helper;
+    return_get_paths_list m_return_helper{};
 };
-
-thread_local return_get_paths_list IMap2DMsgs_get_paths_list_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_paths_list_RPC_helper::IMap2DMsgs_get_paths_list_RPC_helper()
 {
@@ -668,7 +640,7 @@ bool IMap2DMsgs_get_paths_list_RPC_helper::read(yarp::os::ConnectionReader& conn
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -683,10 +655,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static return_get_all_locations s_return_helper;
+    return_get_all_locations m_return_helper{};
 };
-
-thread_local return_get_all_locations IMap2DMsgs_get_all_locations_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_all_locations_RPC_helper::IMap2DMsgs_get_all_locations_RPC_helper()
 {
@@ -710,7 +680,7 @@ bool IMap2DMsgs_get_all_locations_RPC_helper::read(yarp::os::ConnectionReader& c
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -725,10 +695,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static return_get_all_areas s_return_helper;
+    return_get_all_areas m_return_helper{};
 };
-
-thread_local return_get_all_areas IMap2DMsgs_get_all_areas_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_all_areas_RPC_helper::IMap2DMsgs_get_all_areas_RPC_helper()
 {
@@ -752,7 +720,7 @@ bool IMap2DMsgs_get_all_areas_RPC_helper::read(yarp::os::ConnectionReader& conne
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -767,10 +735,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static return_get_all_paths s_return_helper;
+    return_get_all_paths m_return_helper{};
 };
-
-thread_local return_get_all_paths IMap2DMsgs_get_all_paths_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_get_all_paths_RPC_helper::IMap2DMsgs_get_all_paths_RPC_helper()
 {
@@ -794,7 +760,7 @@ bool IMap2DMsgs_get_all_paths_RPC_helper::read(yarp::os::ConnectionReader& conne
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -812,16 +778,14 @@ public:
     std::string m_original_name;
     std::string m_new_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
-
-thread_local bool IMap2DMsgs_rename_location_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_rename_location_RPC_helper::IMap2DMsgs_rename_location_RPC_helper(const std::string& original_name, const std::string& new_name) :
         m_original_name{original_name},
-        m_new_name{new_name}
+        m_new_name{new_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_rename_location_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -848,7 +812,7 @@ bool IMap2DMsgs_rename_location_RPC_helper::read(yarp::os::ConnectionReader& con
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -865,15 +829,13 @@ public:
 
     std::string m_location_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_delete_location_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_delete_location_RPC_helper::IMap2DMsgs_delete_location_RPC_helper(const std::string& location_name) :
-        m_location_name{location_name}
+        m_location_name{location_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_delete_location_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -897,7 +859,7 @@ bool IMap2DMsgs_delete_location_RPC_helper::read(yarp::os::ConnectionReader& con
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -914,15 +876,13 @@ public:
 
     std::string m_path_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_delete_path_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_delete_path_RPC_helper::IMap2DMsgs_delete_path_RPC_helper(const std::string& path_name) :
-        m_path_name{path_name}
+        m_path_name{path_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_delete_path_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -946,7 +906,7 @@ bool IMap2DMsgs_delete_path_RPC_helper::read(yarp::os::ConnectionReader& connect
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -964,16 +924,14 @@ public:
     std::string m_original_name;
     std::string m_new_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
-
-thread_local bool IMap2DMsgs_rename_area_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_rename_area_RPC_helper::IMap2DMsgs_rename_area_RPC_helper(const std::string& original_name, const std::string& new_name) :
         m_original_name{original_name},
-        m_new_name{new_name}
+        m_new_name{new_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_rename_area_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1000,7 +958,7 @@ bool IMap2DMsgs_rename_area_RPC_helper::read(yarp::os::ConnectionReader& connect
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1018,16 +976,14 @@ public:
     std::string m_original_name;
     std::string m_new_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
-
-thread_local bool IMap2DMsgs_rename_path_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_rename_path_RPC_helper::IMap2DMsgs_rename_path_RPC_helper(const std::string& original_name, const std::string& new_name) :
         m_original_name{original_name},
-        m_new_name{new_name}
+        m_new_name{new_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_rename_path_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1054,7 +1010,7 @@ bool IMap2DMsgs_rename_path_RPC_helper::read(yarp::os::ConnectionReader& connect
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1071,15 +1027,13 @@ public:
 
     std::string m_area_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_delete_area_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_delete_area_RPC_helper::IMap2DMsgs_delete_area_RPC_helper(const std::string& area_name) :
-        m_area_name{area_name}
+        m_area_name{area_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_delete_area_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1103,7 +1057,7 @@ bool IMap2DMsgs_delete_area_RPC_helper::read(yarp::os::ConnectionReader& connect
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1118,14 +1072,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_clear_all_locations_RPC_helper::s_return_helper = {};
-
-IMap2DMsgs_clear_all_locations_RPC_helper::IMap2DMsgs_clear_all_locations_RPC_helper()
+IMap2DMsgs_clear_all_locations_RPC_helper::IMap2DMsgs_clear_all_locations_RPC_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_clear_all_locations_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1146,7 +1098,7 @@ bool IMap2DMsgs_clear_all_locations_RPC_helper::read(yarp::os::ConnectionReader&
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1161,14 +1113,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_clear_all_areas_RPC_helper::s_return_helper = {};
-
-IMap2DMsgs_clear_all_areas_RPC_helper::IMap2DMsgs_clear_all_areas_RPC_helper()
+IMap2DMsgs_clear_all_areas_RPC_helper::IMap2DMsgs_clear_all_areas_RPC_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_clear_all_areas_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1189,7 +1139,7 @@ bool IMap2DMsgs_clear_all_areas_RPC_helper::read(yarp::os::ConnectionReader& con
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1204,14 +1154,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_clear_all_paths_RPC_helper::s_return_helper = {};
-
-IMap2DMsgs_clear_all_paths_RPC_helper::IMap2DMsgs_clear_all_paths_RPC_helper()
+IMap2DMsgs_clear_all_paths_RPC_helper::IMap2DMsgs_clear_all_paths_RPC_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_clear_all_paths_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1232,7 +1180,7 @@ bool IMap2DMsgs_clear_all_paths_RPC_helper::read(yarp::os::ConnectionReader& con
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1247,14 +1195,12 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::s_return_helper = {};
-
-IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper()
+IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper() :
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1275,7 +1221,7 @@ bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::read(yarp::os::Connec
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1292,15 +1238,13 @@ public:
 
     std::string m_map_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_clear_map_temporary_flags_RPC_helper::IMap2DMsgs_clear_map_temporary_flags_RPC_helper(const std::string& map_name) :
-        m_map_name{map_name}
+        m_map_name{map_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1324,7 +1268,7 @@ bool IMap2DMsgs_clear_map_temporary_flags_RPC_helper::read(yarp::os::ConnectionR
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1341,15 +1285,13 @@ public:
 
     std::string m_maps_collection_file;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_save_maps_collection_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_save_maps_collection_RPC_helper::IMap2DMsgs_save_maps_collection_RPC_helper(const std::string& maps_collection_file) :
-        m_maps_collection_file{maps_collection_file}
+        m_maps_collection_file{maps_collection_file},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_save_maps_collection_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1373,7 +1315,7 @@ bool IMap2DMsgs_save_maps_collection_RPC_helper::read(yarp::os::ConnectionReader
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1390,15 +1332,13 @@ public:
 
     std::string m_maps_collection_file;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_load_maps_collection_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_load_maps_collection_RPC_helper::IMap2DMsgs_load_maps_collection_RPC_helper(const std::string& maps_collection_file) :
-        m_maps_collection_file{maps_collection_file}
+        m_maps_collection_file{maps_collection_file},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_load_maps_collection_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1422,7 +1362,7 @@ bool IMap2DMsgs_load_maps_collection_RPC_helper::read(yarp::os::ConnectionReader
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1439,15 +1379,13 @@ public:
 
     std::string m_locations_collection_file;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_save_locations_and_extras_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_save_locations_and_extras_RPC_helper::IMap2DMsgs_save_locations_and_extras_RPC_helper(const std::string& locations_collection_file) :
-        m_locations_collection_file{locations_collection_file}
+        m_locations_collection_file{locations_collection_file},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_save_locations_and_extras_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1471,7 +1409,7 @@ bool IMap2DMsgs_save_locations_and_extras_RPC_helper::read(yarp::os::ConnectionR
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1488,15 +1426,13 @@ public:
 
     std::string m_locations_collection_file;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_load_locations_and_extras_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_load_locations_and_extras_RPC_helper::IMap2DMsgs_load_locations_and_extras_RPC_helper(const std::string& locations_collection_file) :
-        m_locations_collection_file{locations_collection_file}
+        m_locations_collection_file{locations_collection_file},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_load_locations_and_extras_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1520,7 +1456,7 @@ bool IMap2DMsgs_load_locations_and_extras_RPC_helper::read(yarp::os::ConnectionR
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1538,16 +1474,14 @@ public:
     std::string m_map_name;
     std::string m_file_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
-
-thread_local bool IMap2DMsgs_save_map_to_disk_RPC_helper::s_return_helper = {};
 
 IMap2DMsgs_save_map_to_disk_RPC_helper::IMap2DMsgs_save_map_to_disk_RPC_helper(const std::string& map_name, const std::string& file_name) :
         m_map_name{map_name},
-        m_file_name{file_name}
+        m_file_name{file_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_save_map_to_disk_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1574,7 +1508,7 @@ bool IMap2DMsgs_save_map_to_disk_RPC_helper::read(yarp::os::ConnectionReader& co
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1591,15 +1525,13 @@ public:
 
     std::string m_file_name;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_load_map_from_disk_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_load_map_from_disk_RPC_helper::IMap2DMsgs_load_map_from_disk_RPC_helper(const std::string& file_name) :
-        m_file_name{file_name}
+        m_file_name{file_name},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_load_map_from_disk_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1623,7 +1555,7 @@ bool IMap2DMsgs_load_map_from_disk_RPC_helper::read(yarp::os::ConnectionReader& 
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1640,15 +1572,13 @@ public:
 
     bool m_enable_compression;
 
-    thread_local static bool s_return_helper;
+    bool m_return_helper{};
 };
 
-thread_local bool IMap2DMsgs_enable_maps_compression_RPC_helper::s_return_helper = {};
-
 IMap2DMsgs_enable_maps_compression_RPC_helper::IMap2DMsgs_enable_maps_compression_RPC_helper(const bool enable_compression) :
-        m_enable_compression{enable_compression}
+        m_enable_compression{enable_compression},
+        m_return_helper{}
 {
-    s_return_helper = {};
 }
 
 bool IMap2DMsgs_enable_maps_compression_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
@@ -1672,7 +1602,7 @@ bool IMap2DMsgs_enable_maps_compression_RPC_helper::read(yarp::os::ConnectionRea
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.readBool(s_return_helper)) {
+    if (!reader.readBool(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -1692,7 +1622,7 @@ bool IMap2DMsgs::clear_all_maps_RPC()
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_maps_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_clear_all_maps_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap)
@@ -1702,7 +1632,7 @@ bool IMap2DMsgs::store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap)
         yError("Missing server method '%s'?", "bool IMap2DMsgs::store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_store_map_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 return_get_map IMap2DMsgs::get_map_RPC(const std::string& map_name)
@@ -1712,7 +1642,7 @@ return_get_map IMap2DMsgs::get_map_RPC(const std::string& map_name)
         yError("Missing server method '%s'?", "return_get_map IMap2DMsgs::get_map_RPC(const std::string& map_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_map_RPC_helper::s_return_helper : return_get_map{};
+    return ok ? helper.m_return_helper : return_get_map{};
 }
 
 return_get_map_names IMap2DMsgs::get_map_names_RPC()
@@ -1722,7 +1652,7 @@ return_get_map_names IMap2DMsgs::get_map_names_RPC()
         yError("Missing server method '%s'?", "return_get_map_names IMap2DMsgs::get_map_names_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_map_names_RPC_helper::s_return_helper : return_get_map_names{};
+    return ok ? helper.m_return_helper : return_get_map_names{};
 }
 
 bool IMap2DMsgs::remove_map_RPC(const std::string& map_name)
@@ -1732,7 +1662,7 @@ bool IMap2DMsgs::remove_map_RPC(const std::string& map_name)
         yError("Missing server method '%s'?", "bool IMap2DMsgs::remove_map_RPC(const std::string& map_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_remove_map_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc)
@@ -1742,7 +1672,7 @@ bool IMap2DMsgs::store_location_RPC(const std::string& location_name, const yarp
         yError("Missing server method '%s'?", "bool IMap2DMsgs::store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_store_location_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::store_area_RPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area)
@@ -1752,7 +1682,7 @@ bool IMap2DMsgs::store_area_RPC(const std::string& area_name, const yarp::dev::N
         yError("Missing server method '%s'?", "bool IMap2DMsgs::store_area_RPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_store_area_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::store_path_RPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path)
@@ -1762,7 +1692,7 @@ bool IMap2DMsgs::store_path_RPC(const std::string& path_name, const yarp::dev::N
         yError("Missing server method '%s'?", "bool IMap2DMsgs::store_path_RPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_store_path_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 return_get_location IMap2DMsgs::get_location_RPC(const std::string& location_name)
@@ -1772,7 +1702,7 @@ return_get_location IMap2DMsgs::get_location_RPC(const std::string& location_nam
         yError("Missing server method '%s'?", "return_get_location IMap2DMsgs::get_location_RPC(const std::string& location_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_location_RPC_helper::s_return_helper : return_get_location{};
+    return ok ? helper.m_return_helper : return_get_location{};
 }
 
 return_get_area IMap2DMsgs::get_area_RPC(const std::string& area_name)
@@ -1782,7 +1712,7 @@ return_get_area IMap2DMsgs::get_area_RPC(const std::string& area_name)
         yError("Missing server method '%s'?", "return_get_area IMap2DMsgs::get_area_RPC(const std::string& area_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_area_RPC_helper::s_return_helper : return_get_area{};
+    return ok ? helper.m_return_helper : return_get_area{};
 }
 
 return_get_path IMap2DMsgs::get_path_RPC(const std::string& path_name)
@@ -1792,7 +1722,7 @@ return_get_path IMap2DMsgs::get_path_RPC(const std::string& path_name)
         yError("Missing server method '%s'?", "return_get_path IMap2DMsgs::get_path_RPC(const std::string& path_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_path_RPC_helper::s_return_helper : return_get_path{};
+    return ok ? helper.m_return_helper : return_get_path{};
 }
 
 return_get_locations_list IMap2DMsgs::get_locations_list_RPC()
@@ -1802,7 +1732,7 @@ return_get_locations_list IMap2DMsgs::get_locations_list_RPC()
         yError("Missing server method '%s'?", "return_get_locations_list IMap2DMsgs::get_locations_list_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_locations_list_RPC_helper::s_return_helper : return_get_locations_list{};
+    return ok ? helper.m_return_helper : return_get_locations_list{};
 }
 
 return_get_areas_list IMap2DMsgs::get_areas_list_RPC()
@@ -1812,7 +1742,7 @@ return_get_areas_list IMap2DMsgs::get_areas_list_RPC()
         yError("Missing server method '%s'?", "return_get_areas_list IMap2DMsgs::get_areas_list_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_areas_list_RPC_helper::s_return_helper : return_get_areas_list{};
+    return ok ? helper.m_return_helper : return_get_areas_list{};
 }
 
 return_get_paths_list IMap2DMsgs::get_paths_list_RPC()
@@ -1822,7 +1752,7 @@ return_get_paths_list IMap2DMsgs::get_paths_list_RPC()
         yError("Missing server method '%s'?", "return_get_paths_list IMap2DMsgs::get_paths_list_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_paths_list_RPC_helper::s_return_helper : return_get_paths_list{};
+    return ok ? helper.m_return_helper : return_get_paths_list{};
 }
 
 return_get_all_locations IMap2DMsgs::get_all_locations_RPC()
@@ -1832,7 +1762,7 @@ return_get_all_locations IMap2DMsgs::get_all_locations_RPC()
         yError("Missing server method '%s'?", "return_get_all_locations IMap2DMsgs::get_all_locations_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_all_locations_RPC_helper::s_return_helper : return_get_all_locations{};
+    return ok ? helper.m_return_helper : return_get_all_locations{};
 }
 
 return_get_all_areas IMap2DMsgs::get_all_areas_RPC()
@@ -1842,7 +1772,7 @@ return_get_all_areas IMap2DMsgs::get_all_areas_RPC()
         yError("Missing server method '%s'?", "return_get_all_areas IMap2DMsgs::get_all_areas_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_all_areas_RPC_helper::s_return_helper : return_get_all_areas{};
+    return ok ? helper.m_return_helper : return_get_all_areas{};
 }
 
 return_get_all_paths IMap2DMsgs::get_all_paths_RPC()
@@ -1852,7 +1782,7 @@ return_get_all_paths IMap2DMsgs::get_all_paths_RPC()
         yError("Missing server method '%s'?", "return_get_all_paths IMap2DMsgs::get_all_paths_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_get_all_paths_RPC_helper::s_return_helper : return_get_all_paths{};
+    return ok ? helper.m_return_helper : return_get_all_paths{};
 }
 
 bool IMap2DMsgs::rename_location_RPC(const std::string& original_name, const std::string& new_name)
@@ -1862,7 +1792,7 @@ bool IMap2DMsgs::rename_location_RPC(const std::string& original_name, const std
         yError("Missing server method '%s'?", "bool IMap2DMsgs::rename_location_RPC(const std::string& original_name, const std::string& new_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_rename_location_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::delete_location_RPC(const std::string& location_name)
@@ -1872,7 +1802,7 @@ bool IMap2DMsgs::delete_location_RPC(const std::string& location_name)
         yError("Missing server method '%s'?", "bool IMap2DMsgs::delete_location_RPC(const std::string& location_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_delete_location_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::delete_path_RPC(const std::string& path_name)
@@ -1882,7 +1812,7 @@ bool IMap2DMsgs::delete_path_RPC(const std::string& path_name)
         yError("Missing server method '%s'?", "bool IMap2DMsgs::delete_path_RPC(const std::string& path_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_delete_path_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::rename_area_RPC(const std::string& original_name, const std::string& new_name)
@@ -1892,7 +1822,7 @@ bool IMap2DMsgs::rename_area_RPC(const std::string& original_name, const std::st
         yError("Missing server method '%s'?", "bool IMap2DMsgs::rename_area_RPC(const std::string& original_name, const std::string& new_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_rename_area_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::rename_path_RPC(const std::string& original_name, const std::string& new_name)
@@ -1902,7 +1832,7 @@ bool IMap2DMsgs::rename_path_RPC(const std::string& original_name, const std::st
         yError("Missing server method '%s'?", "bool IMap2DMsgs::rename_path_RPC(const std::string& original_name, const std::string& new_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_rename_path_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::delete_area_RPC(const std::string& area_name)
@@ -1912,7 +1842,7 @@ bool IMap2DMsgs::delete_area_RPC(const std::string& area_name)
         yError("Missing server method '%s'?", "bool IMap2DMsgs::delete_area_RPC(const std::string& area_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_delete_area_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_all_locations_RPC()
@@ -1922,7 +1852,7 @@ bool IMap2DMsgs::clear_all_locations_RPC()
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_locations_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_clear_all_locations_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_all_areas_RPC()
@@ -1932,7 +1862,7 @@ bool IMap2DMsgs::clear_all_areas_RPC()
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_areas_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_clear_all_areas_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_all_paths_RPC()
@@ -1942,7 +1872,7 @@ bool IMap2DMsgs::clear_all_paths_RPC()
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_paths_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_clear_all_paths_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_all_maps_temporary_flags_RPC()
@@ -1952,7 +1882,7 @@ bool IMap2DMsgs::clear_all_maps_temporary_flags_RPC()
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_all_maps_temporary_flags_RPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::clear_map_temporary_flags_RPC(const std::string& map_name)
@@ -1962,7 +1892,7 @@ bool IMap2DMsgs::clear_map_temporary_flags_RPC(const std::string& map_name)
         yError("Missing server method '%s'?", "bool IMap2DMsgs::clear_map_temporary_flags_RPC(const std::string& map_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_clear_map_temporary_flags_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::save_maps_collection_RPC(const std::string& maps_collection_file)
@@ -1972,7 +1902,7 @@ bool IMap2DMsgs::save_maps_collection_RPC(const std::string& maps_collection_fil
         yError("Missing server method '%s'?", "bool IMap2DMsgs::save_maps_collection_RPC(const std::string& maps_collection_file)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_save_maps_collection_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::load_maps_collection_RPC(const std::string& maps_collection_file)
@@ -1982,7 +1912,7 @@ bool IMap2DMsgs::load_maps_collection_RPC(const std::string& maps_collection_fil
         yError("Missing server method '%s'?", "bool IMap2DMsgs::load_maps_collection_RPC(const std::string& maps_collection_file)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_load_maps_collection_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::save_locations_and_extras_RPC(const std::string& locations_collection_file)
@@ -1992,7 +1922,7 @@ bool IMap2DMsgs::save_locations_and_extras_RPC(const std::string& locations_coll
         yError("Missing server method '%s'?", "bool IMap2DMsgs::save_locations_and_extras_RPC(const std::string& locations_collection_file)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_save_locations_and_extras_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::load_locations_and_extras_RPC(const std::string& locations_collection_file)
@@ -2002,7 +1932,7 @@ bool IMap2DMsgs::load_locations_and_extras_RPC(const std::string& locations_coll
         yError("Missing server method '%s'?", "bool IMap2DMsgs::load_locations_and_extras_RPC(const std::string& locations_collection_file)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_load_locations_and_extras_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::save_map_to_disk_RPC(const std::string& map_name, const std::string& file_name)
@@ -2012,7 +1942,7 @@ bool IMap2DMsgs::save_map_to_disk_RPC(const std::string& map_name, const std::st
         yError("Missing server method '%s'?", "bool IMap2DMsgs::save_map_to_disk_RPC(const std::string& map_name, const std::string& file_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_save_map_to_disk_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::load_map_from_disk_RPC(const std::string& file_name)
@@ -2022,7 +1952,7 @@ bool IMap2DMsgs::load_map_from_disk_RPC(const std::string& file_name)
         yError("Missing server method '%s'?", "bool IMap2DMsgs::load_map_from_disk_RPC(const std::string& file_name)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_load_map_from_disk_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 bool IMap2DMsgs::enable_maps_compression_RPC(const bool enable_compression)
@@ -2032,7 +1962,7 @@ bool IMap2DMsgs::enable_maps_compression_RPC(const bool enable_compression)
         yError("Missing server method '%s'?", "bool IMap2DMsgs::enable_maps_compression_RPC(const bool enable_compression)");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? IMap2DMsgs_enable_maps_compression_RPC_helper::s_return_helper : bool{};
+    return ok ? helper.m_return_helper : bool{};
 }
 
 // help method
@@ -2214,13 +2144,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
     }
     while (!reader.isError()) {
         if (tag == "clear_all_maps_RPC") {
-            IMap2DMsgs_clear_all_maps_RPC_helper::s_return_helper = clear_all_maps_RPC();
+            IMap2DMsgs_clear_all_maps_RPC_helper helper{};
+            helper.m_return_helper = clear_all_maps_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_clear_all_maps_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2233,13 +2164,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_store_map_RPC_helper::s_return_helper = store_map_RPC(themap);
+            IMap2DMsgs_store_map_RPC_helper helper{themap};
+            helper.m_return_helper = store_map_RPC(themap);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_store_map_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2252,13 +2184,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_get_map_RPC_helper::s_return_helper = get_map_RPC(map_name);
+            IMap2DMsgs_get_map_RPC_helper helper{map_name};
+            helper.m_return_helper = get_map_RPC(map_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_map_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2266,13 +2199,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "get_map_names_RPC") {
-            IMap2DMsgs_get_map_names_RPC_helper::s_return_helper = get_map_names_RPC();
+            IMap2DMsgs_get_map_names_RPC_helper helper{};
+            helper.m_return_helper = get_map_names_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_map_names_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2285,13 +2219,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_remove_map_RPC_helper::s_return_helper = remove_map_RPC(map_name);
+            IMap2DMsgs_remove_map_RPC_helper helper{map_name};
+            helper.m_return_helper = remove_map_RPC(map_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_remove_map_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2309,13 +2244,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_store_location_RPC_helper::s_return_helper = store_location_RPC(location_name, loc);
+            IMap2DMsgs_store_location_RPC_helper helper{location_name, loc};
+            helper.m_return_helper = store_location_RPC(location_name, loc);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_store_location_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2333,13 +2269,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_store_area_RPC_helper::s_return_helper = store_area_RPC(area_name, area);
+            IMap2DMsgs_store_area_RPC_helper helper{area_name, area};
+            helper.m_return_helper = store_area_RPC(area_name, area);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_store_area_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2357,13 +2294,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_store_path_RPC_helper::s_return_helper = store_path_RPC(path_name, path);
+            IMap2DMsgs_store_path_RPC_helper helper{path_name, path};
+            helper.m_return_helper = store_path_RPC(path_name, path);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_store_path_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2376,13 +2314,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_get_location_RPC_helper::s_return_helper = get_location_RPC(location_name);
+            IMap2DMsgs_get_location_RPC_helper helper{location_name};
+            helper.m_return_helper = get_location_RPC(location_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_location_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2395,13 +2334,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_get_area_RPC_helper::s_return_helper = get_area_RPC(area_name);
+            IMap2DMsgs_get_area_RPC_helper helper{area_name};
+            helper.m_return_helper = get_area_RPC(area_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_area_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2414,13 +2354,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_get_path_RPC_helper::s_return_helper = get_path_RPC(path_name);
+            IMap2DMsgs_get_path_RPC_helper helper{path_name};
+            helper.m_return_helper = get_path_RPC(path_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_path_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2428,13 +2369,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "get_locations_list_RPC") {
-            IMap2DMsgs_get_locations_list_RPC_helper::s_return_helper = get_locations_list_RPC();
+            IMap2DMsgs_get_locations_list_RPC_helper helper{};
+            helper.m_return_helper = get_locations_list_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_locations_list_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2442,13 +2384,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "get_areas_list_RPC") {
-            IMap2DMsgs_get_areas_list_RPC_helper::s_return_helper = get_areas_list_RPC();
+            IMap2DMsgs_get_areas_list_RPC_helper helper{};
+            helper.m_return_helper = get_areas_list_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_areas_list_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2456,13 +2399,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "get_paths_list_RPC") {
-            IMap2DMsgs_get_paths_list_RPC_helper::s_return_helper = get_paths_list_RPC();
+            IMap2DMsgs_get_paths_list_RPC_helper helper{};
+            helper.m_return_helper = get_paths_list_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_paths_list_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2470,13 +2414,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "get_all_locations_RPC") {
-            IMap2DMsgs_get_all_locations_RPC_helper::s_return_helper = get_all_locations_RPC();
+            IMap2DMsgs_get_all_locations_RPC_helper helper{};
+            helper.m_return_helper = get_all_locations_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_all_locations_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2484,13 +2429,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "get_all_areas_RPC") {
-            IMap2DMsgs_get_all_areas_RPC_helper::s_return_helper = get_all_areas_RPC();
+            IMap2DMsgs_get_all_areas_RPC_helper helper{};
+            helper.m_return_helper = get_all_areas_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_all_areas_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2498,13 +2444,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "get_all_paths_RPC") {
-            IMap2DMsgs_get_all_paths_RPC_helper::s_return_helper = get_all_paths_RPC();
+            IMap2DMsgs_get_all_paths_RPC_helper helper{};
+            helper.m_return_helper = get_all_paths_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(IMap2DMsgs_get_all_paths_RPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2522,13 +2469,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_rename_location_RPC_helper::s_return_helper = rename_location_RPC(original_name, new_name);
+            IMap2DMsgs_rename_location_RPC_helper helper{original_name, new_name};
+            helper.m_return_helper = rename_location_RPC(original_name, new_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_rename_location_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2541,13 +2489,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_delete_location_RPC_helper::s_return_helper = delete_location_RPC(location_name);
+            IMap2DMsgs_delete_location_RPC_helper helper{location_name};
+            helper.m_return_helper = delete_location_RPC(location_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_delete_location_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2560,13 +2509,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_delete_path_RPC_helper::s_return_helper = delete_path_RPC(path_name);
+            IMap2DMsgs_delete_path_RPC_helper helper{path_name};
+            helper.m_return_helper = delete_path_RPC(path_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_delete_path_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2584,13 +2534,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_rename_area_RPC_helper::s_return_helper = rename_area_RPC(original_name, new_name);
+            IMap2DMsgs_rename_area_RPC_helper helper{original_name, new_name};
+            helper.m_return_helper = rename_area_RPC(original_name, new_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_rename_area_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2608,13 +2559,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_rename_path_RPC_helper::s_return_helper = rename_path_RPC(original_name, new_name);
+            IMap2DMsgs_rename_path_RPC_helper helper{original_name, new_name};
+            helper.m_return_helper = rename_path_RPC(original_name, new_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_rename_path_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2627,13 +2579,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_delete_area_RPC_helper::s_return_helper = delete_area_RPC(area_name);
+            IMap2DMsgs_delete_area_RPC_helper helper{area_name};
+            helper.m_return_helper = delete_area_RPC(area_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_delete_area_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2641,13 +2594,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "clear_all_locations_RPC") {
-            IMap2DMsgs_clear_all_locations_RPC_helper::s_return_helper = clear_all_locations_RPC();
+            IMap2DMsgs_clear_all_locations_RPC_helper helper{};
+            helper.m_return_helper = clear_all_locations_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_clear_all_locations_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2655,13 +2609,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "clear_all_areas_RPC") {
-            IMap2DMsgs_clear_all_areas_RPC_helper::s_return_helper = clear_all_areas_RPC();
+            IMap2DMsgs_clear_all_areas_RPC_helper helper{};
+            helper.m_return_helper = clear_all_areas_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_clear_all_areas_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2669,13 +2624,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "clear_all_paths_RPC") {
-            IMap2DMsgs_clear_all_paths_RPC_helper::s_return_helper = clear_all_paths_RPC();
+            IMap2DMsgs_clear_all_paths_RPC_helper helper{};
+            helper.m_return_helper = clear_all_paths_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_clear_all_paths_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2683,13 +2639,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
             return true;
         }
         if (tag == "clear_all_maps_temporary_flags_RPC") {
-            IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::s_return_helper = clear_all_maps_temporary_flags_RPC();
+            IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper helper{};
+            helper.m_return_helper = clear_all_maps_temporary_flags_RPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2702,13 +2659,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_clear_map_temporary_flags_RPC_helper::s_return_helper = clear_map_temporary_flags_RPC(map_name);
+            IMap2DMsgs_clear_map_temporary_flags_RPC_helper helper{map_name};
+            helper.m_return_helper = clear_map_temporary_flags_RPC(map_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_clear_map_temporary_flags_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2721,13 +2679,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_save_maps_collection_RPC_helper::s_return_helper = save_maps_collection_RPC(maps_collection_file);
+            IMap2DMsgs_save_maps_collection_RPC_helper helper{maps_collection_file};
+            helper.m_return_helper = save_maps_collection_RPC(maps_collection_file);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_save_maps_collection_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2740,13 +2699,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_load_maps_collection_RPC_helper::s_return_helper = load_maps_collection_RPC(maps_collection_file);
+            IMap2DMsgs_load_maps_collection_RPC_helper helper{maps_collection_file};
+            helper.m_return_helper = load_maps_collection_RPC(maps_collection_file);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_load_maps_collection_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2759,13 +2719,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_save_locations_and_extras_RPC_helper::s_return_helper = save_locations_and_extras_RPC(locations_collection_file);
+            IMap2DMsgs_save_locations_and_extras_RPC_helper helper{locations_collection_file};
+            helper.m_return_helper = save_locations_and_extras_RPC(locations_collection_file);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_save_locations_and_extras_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2778,13 +2739,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_load_locations_and_extras_RPC_helper::s_return_helper = load_locations_and_extras_RPC(locations_collection_file);
+            IMap2DMsgs_load_locations_and_extras_RPC_helper helper{locations_collection_file};
+            helper.m_return_helper = load_locations_and_extras_RPC(locations_collection_file);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_load_locations_and_extras_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2802,13 +2764,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_save_map_to_disk_RPC_helper::s_return_helper = save_map_to_disk_RPC(map_name, file_name);
+            IMap2DMsgs_save_map_to_disk_RPC_helper helper{map_name, file_name};
+            helper.m_return_helper = save_map_to_disk_RPC(map_name, file_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_save_map_to_disk_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2821,13 +2784,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_load_map_from_disk_RPC_helper::s_return_helper = load_map_from_disk_RPC(file_name);
+            IMap2DMsgs_load_map_from_disk_RPC_helper helper{file_name};
+            helper.m_return_helper = load_map_from_disk_RPC(file_name);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_load_map_from_disk_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }
@@ -2840,13 +2804,14 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            IMap2DMsgs_enable_maps_compression_RPC_helper::s_return_helper = enable_maps_compression_RPC(enable_compression);
+            IMap2DMsgs_enable_maps_compression_RPC_helper helper{enable_compression};
+            helper.m_return_helper = enable_maps_compression_RPC(enable_compression);
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeBool(IMap2DMsgs_enable_maps_compression_RPC_helper::s_return_helper)) {
+                if (!writer.writeBool(helper.m_return_helper)) {
                     return false;
                 }
             }

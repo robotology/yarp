@@ -20,10 +20,8 @@ public:
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
-    thread_local static return_getAllTransforms s_return_helper;
+    return_getAllTransforms m_return_helper{};
 };
-
-thread_local return_getAllTransforms FrameTransformStorageGetRPC_getTransformsRPC_helper::s_return_helper = {};
 
 FrameTransformStorageGetRPC_getTransformsRPC_helper::FrameTransformStorageGetRPC_getTransformsRPC_helper()
 {
@@ -47,7 +45,7 @@ bool FrameTransformStorageGetRPC_getTransformsRPC_helper::read(yarp::os::Connect
     if (!reader.readListReturn()) {
         return false;
     }
-    if (!reader.read(s_return_helper)) {
+    if (!reader.read(m_return_helper)) {
         reader.fail();
         return false;
     }
@@ -67,7 +65,7 @@ return_getAllTransforms FrameTransformStorageGetRPC::getTransformsRPC()
         yError("Missing server method '%s'?", "return_getAllTransforms FrameTransformStorageGetRPC::getTransformsRPC()");
     }
     bool ok = yarp().write(helper, helper);
-    return ok ? FrameTransformStorageGetRPC_getTransformsRPC_helper::s_return_helper : return_getAllTransforms{};
+    return ok ? helper.m_return_helper : return_getAllTransforms{};
 }
 
 // help method
@@ -113,13 +111,14 @@ bool FrameTransformStorageGetRPC::read(yarp::os::ConnectionReader& connection)
     }
     while (!reader.isError()) {
         if (tag == "getTransformsRPC") {
-            FrameTransformStorageGetRPC_getTransformsRPC_helper::s_return_helper = getTransformsRPC();
+            FrameTransformStorageGetRPC_getTransformsRPC_helper helper{};
+            helper.m_return_helper = getTransformsRPC();
             yarp::os::idl::WireWriter writer(reader);
             if (!writer.isNull()) {
                 if (!writer.writeListHeader(2)) {
                     return false;
                 }
-                if (!writer.write(FrameTransformStorageGetRPC_getTransformsRPC_helper::s_return_helper)) {
+                if (!writer.write(helper.m_return_helper)) {
                     return false;
                 }
             }
