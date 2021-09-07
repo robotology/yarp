@@ -179,6 +179,8 @@ public:
         return state->len;
     }
 
+    ConnectionReader& getReader();
+
     ConnectionWriter& getWriter();
 
     bool isValid();

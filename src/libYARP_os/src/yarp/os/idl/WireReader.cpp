@@ -526,6 +526,11 @@ bool WireReader::readListReturn()
     return true;
 }
 
+ConnectionReader& WireReader::getReader()
+{
+    return reader;
+}
+
 ConnectionWriter& WireReader::getWriter()
 {
     flush_if_needed = false;
