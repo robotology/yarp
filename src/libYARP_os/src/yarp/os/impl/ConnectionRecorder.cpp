@@ -299,3 +299,8 @@ bool yarp::os::impl::ConnectionRecorder::setSize(size_t len)
 {
     return reader->setSize(len);
 }
+
+void yarp::os::impl::ConnectionRecorder::flushWriter()
+{
+    reader->flushWriter();
+}

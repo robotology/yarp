@@ -89,6 +89,7 @@ public:
     yarp::os::SizedWriter* getBuffer() override;
     const yarp::os::SizedWriter* getBuffer() const override;
     bool setSize(size_t len) override;
+    void flushWriter() override;
 };
 
 } // namespace yarp::os::impl

@@ -196,6 +196,10 @@ public:
         return parent->setSize(len);
     }
 
+    void flushWriter() override {
+        parent->flushWriter();
+    }
+
     ////////////////////////////////////////////////////////////////////////
     // InputStream methods
 

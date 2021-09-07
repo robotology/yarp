@@ -259,6 +259,8 @@ public:
      * Used by PortCoreInputUnit
      */
     virtual void setParentConnectionReader(ConnectionReader* parentConnectionReader);
+
+    virtual void flushWriter() = 0;
 };
 
 } // namespace yarp::os
