@@ -24,6 +24,7 @@ void print_callback(yarp::os::Log::LogType type,
                     double externaltime,
                     const char* comp_name);
 
+yarp::os::Log::LogType minimumLogType();
 void setMinumumLogType(yarp::os::Log::LogType minumumLogType);
 
 } // namespace LogComponent
@@ -35,9 +36,9 @@ void setMinumumLogType(yarp::os::Log::LogType minumumLogType);
     const yarp::os::LogComponent& name() \
     { \
         static const yarp::os::LogComponent component(name_string, \
-                                                      yarp::os::Log::TraceType, \
+                                                      yarp::os::impl::LogComponent::minimumLogType(), \
                                                       yarp::os::Log::LogTypeReserved, \
-                                                      yarp::os::impl::LogComponent::print_callback, \
+                                                      yarp::os::Log::defaultPrintCallback(), \
                                                       nullptr); \
         return component; \
     }
@@ -46,9 +47,9 @@ void setMinumumLogType(yarp::os::Log::LogType minumumLogType);
     yarp::os::LogComponent& name() \
     { \
         static yarp::os::LogComponent component(name_string, \
-                                                yarp::os::Log::TraceType, \
+                                                yarp::os::impl::LogComponent::minimumLogType(), \
                                                 yarp::os::Log::LogTypeReserved, \
-                                                yarp::os::impl::LogComponent::print_callback, \
+                                                yarp::os::Log::defaultPrintCallback(), \
                                                 nullptr); \
         return component; \
     }
