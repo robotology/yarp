@@ -276,3 +276,10 @@ bool WireWriter::writeOnewayResponse() const
     writer.appendInt32(VOCAB_DONE);
     return true;
 }
+
+void WireWriter::flush()
+{
+    if (reader) {
+        reader->flushWriter();
+    }
+}
