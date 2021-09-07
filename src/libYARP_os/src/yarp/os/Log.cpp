@@ -718,7 +718,7 @@ void yarp::os::impl::LogPrivate::do_log(yarp::os::Log::LogType type,
                                         double externaltime,
                                         const LogComponent& comp)
 {
-    auto* print_cb = yarprun_format ? yarp::os::impl::LogPrivate::print_callback : comp.printCallback(type);
+    auto* print_cb = (yarprun_format && comp != log_internal_component) ? yarp::os::impl::LogPrivate::print_callback : comp.printCallback(type);
     if (print_cb) {
         print_cb(type, msg, file, line, func, systemtime, networktime, externaltime, comp.name());
     } else {
