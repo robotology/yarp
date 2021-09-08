@@ -464,52 +464,6 @@ bool WireReader::readBinary(std::string& str)
     return !reader.isError();
 }
 
-bool WireReader::readEnum(std::int32_t& x, WireVocab& converter)
-{
-    std::int32_t tag = state->code;
-    if (tag < 0) {
-        if (noMore()) {
-            return false;
-        }
-        tag = reader.expectInt32();
-    }
-    if (tag == BOTTLE_TAG_INT32) {
-        if (noMore()) {
-            return false;
-        }
-        std::int32_t v = reader.expectInt32();
-        x = v;
-        state->len--;
-        return !reader.isError();
-    }
-    if (tag == BOTTLE_TAG_STRING) {
-        if (noMore()) {
-            return false;
-        }
-        std::int32_t len = reader.expectInt32();
-        if (reader.isError()) {
-            return false;
-        }
-        if (len < 1) {
-            return false;
-        }
-        if (noMore()) {
-            return false;
-        }
-        std::string str;
-        str.resize(len);
-        reader.expectBlock(const_cast<char*>(str.data()), len);
-        str.resize(len - 1);
-        state->len--;
-        if (reader.isError()) {
-            return false;
-        }
-        x = static_cast<std::int32_t>(converter.fromString(str));
-        return (x >= 0);
-    }
-    return false;
-}
-
 bool WireReader::readListHeader()
 {
     std::int32_t x1 = 0;

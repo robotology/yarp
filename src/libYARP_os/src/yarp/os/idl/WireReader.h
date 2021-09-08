@@ -14,7 +14,6 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/idl/WirePortable.h>
 #include <yarp/os/idl/WireState.h>
-#include <yarp/os/idl/WireVocab.h>
 
 #include <string>
 
@@ -119,7 +118,55 @@ public:
 
     bool readBinary(std::string& str);
 
-    bool readEnum(std::int32_t& x, yarp::os::idl::WireVocab& converter);
+    template <typename EnumBase, typename ConverterType>
+    bool readEnum(EnumBase& x)
+    {
+        std::int32_t tag = state->code;
+        if (tag < 0) {
+            if (noMore()) {
+                return false;
+            }
+            tag = reader.expectInt32();
+        }
+        if (noMore()) {
+            return false;
+        }
+        switch(tag) {
+        case BOTTLE_TAG_INT8:
+            x = static_cast<EnumBase>(reader.expectInt8());
+            state->len--;
+            return !reader.isError();
+        case BOTTLE_TAG_INT16:
+            x = static_cast<EnumBase>(reader.expectInt16());
+            state->len--;
+            return !reader.isError();
+        case BOTTLE_TAG_INT32: [[fallthrough]];
+        case BOTTLE_TAG_VOCAB32:
+            x = static_cast<EnumBase>(reader.expectInt32());
+            state->len--;
+            return !reader.isError();
+        case BOTTLE_TAG_INT64:
+            x = static_cast<EnumBase>(reader.expectInt64());
+            state->len--;
+            return !reader.isError();
+        case BOTTLE_TAG_STRING: {
+            std::int32_t len = reader.expectInt32();
+            if (reader.isError() || len < 1 || noMore()) {
+                return false;
+            }
+            std::string str;
+            str.resize(len);
+            reader.expectBlock(const_cast<char*>(str.data()), len);
+            str.resize(len - 1);
+            state->len--;
+            if (reader.isError()) {
+                return false;
+            }
+            x = ConverterType::fromString(str);
+            return (x >= 0);
+        }}
+        return false;
+    }
 
     bool readListHeader();
 

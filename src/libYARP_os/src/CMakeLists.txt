@@ -265,9 +265,14 @@ set(YARP_os_IDL_HDRS
   yarp/os/idl/WireReader.h
   yarp/os/idl/WireState.h
   yarp/os/idl/WireTypes.h
-  yarp/os/idl/WireVocab.h
   yarp/os/idl/WireWriter.h
 )
+
+if(NOT YARP_NO_DEPRECATED)
+  list(APPEND YARP_os_IDL_HDRS
+    yarp/os/idl/WireVocab.h    # DEPRECATED since YARP 3.6.0
+  )
+endif()
 
 set(YARP_os_IDL_SRCS
   yarp/os/idl/WirePortable.cpp
