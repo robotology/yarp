@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#ifndef YARP_DEV_NAVIGATION2DCLIENT_H
-#define YARP_DEV_NAVIGATION2DCLIENT_H
+#ifndef YARP_DEV_NAVIGATION2D_NWC_YARP_H
+#define YARP_DEV_NAVIGATION2D_NWC_YARP_H
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
@@ -13,6 +13,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/INavigation2D.h>
+#include "IMap2DMsgs.h"
+#include "ILocalization2DMsgs.h"
 
 #include <mutex>
 #include <string>
@@ -23,25 +25,29 @@
 /**
  *  @ingroup dev_impl_network_clients dev_impl_navigation
  *
- * \section Navigation2DClient
+ * \section Navigation2D_nwc_yarp
  *
- * \brief `navigation2DClient`: A device which allows a client application to perform navigation tasks, such as commanding the robot to reach a specific location in a map.
+ * \brief `navigation2D_nwc_yarp`: A device which allows a client application to perform navigation tasks, such as commanding the robot to reach a specific location in a map.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the Navigation2DClient device.                             |       |
- * | navigation_server    |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Navigation server, to which the Navigation2DClient connects to.           |  |
- * | map_locations_server |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Navigation2DClient connects to.           |  |
- * | localization_server  |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Localization server, to which the Navigation2DClient connects to.           |  |
- * | carrier        |     -          | string  | -              | tcp           | No           | The carier used for the connection with the server.          |  |
+ * | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the Navigation2D_nwc_yarp device.                             |       |
+ * | navigation_server    |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Navigation server, to which the Navigation2D_nwc_yarp connects to.           |  |
+ * | map_locations_server |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Navigation2D_nwc_yarp connects to.           |  |
+ * | localization_server  |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Localization server, to which the Navigation2D_nwc_yarp connects to.           |  |
  */
 
-class Navigation2DClient:
+class Navigation2D_nwc_yarp:
         public yarp::dev::DeviceDriver,
         public yarp::dev::Nav2D::INavigation2D,
         public yarp::os::PortReader
 {
+protected:
+    //thrift stuff
+    IMap2DMsgs                    m_map_RPC;
+    ILocalization2DMsgs           m_loc_RPC;
+
 protected:
     std::mutex                    m_mutex;
     yarp::os::Port                m_rpc_port_to_navigation_server;
@@ -53,7 +59,6 @@ protected:
     std::string                   m_map_locations_server_name;
     std::string                   m_localization_server_name;
     int                           m_period;
-    std::string                   m_carrier;
 
 private: //math stuff
     double                        normalize_angle(double angle);
@@ -156,4 +161,4 @@ public:
     bool   enableMapsCompression(bool enable) override;
 };
 
-#endif // YARP_DEV_NAVIGATION2DCLIENT_H
+#endif // YARP_DEV_NAVIGATION2D_NWC_YARP_H
