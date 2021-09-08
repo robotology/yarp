@@ -52,7 +52,7 @@ class t_yarp_generator : public t_oop_generator
     ofstream_with_content_based_conditional_update f_out_common_;
     ofstream_with_content_based_conditional_update f_out_index_;
 
-    std::map<std::string, std::string> structure_names_;
+    std::map<std::string, std::string> type_names_;
 
 public:
     t_yarp_generator(t_program* program,
@@ -407,10 +407,10 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
 std::string t_yarp_generator::get_struct_name(t_struct* tstruct)
 {
     std::string name = tstruct->get_name();
-    if (structure_names_.find(name) == structure_names_.end()) {
+    if (type_names_.find(name) == type_names_.end()) {
         return name;
     }
-    return structure_names_[name];
+    return type_names_[name];
 }
 
 std::string t_yarp_generator::copyright_comment()
@@ -499,8 +499,8 @@ std::string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg
     std::string pname;
 
     if (ttype->is_struct()) {
-        if (structure_names_.find(ttype->get_name()) != structure_names_.end()) {
-            pname = structure_names_[ttype->get_name()];
+        if (type_names_.find(ttype->get_name()) != type_names_.end()) {
+            pname = type_names_[ttype->get_name()];
         }
     }
 
@@ -1957,11 +1957,11 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     const auto& annotations = tstruct->annotations_;
 
     if (annotations.find("yarp.name") != annotations.end()) {
-        structure_names_[name] = annotations.at("yarp.name");
+        type_names_[name] = annotations.at("yarp.name");
         return;
     }
     if (annotations.find("cpp.name") != annotations.end()) {
-        structure_names_[name] = annotations.at("cpp.name");
+        type_names_[name] = annotations.at("cpp.name");
         return;
     }
 
