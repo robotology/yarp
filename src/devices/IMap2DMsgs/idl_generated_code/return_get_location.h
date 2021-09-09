@@ -8,27 +8,27 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETAREA_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETAREA_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_LOCATION_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_LOCATION_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
-#include <yarp/dev/Map2DArea.h>
+#include <yarp/dev/Map2DLocation.h>
 
-class return_getArea :
+class return_get_location :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     bool retval;
-    yarp::dev::Nav2D::Map2DArea area;
+    yarp::dev::Nav2D::Map2DLocation loc;
 
     // Default constructor
-    return_getArea();
+    return_get_location();
 
     // Constructor with field values
-    return_getArea(const bool retval,
-                   const yarp::dev::Nav2D::Map2DArea& area);
+    return_get_location(const bool retval,
+                        const yarp::dev::Nav2D::Map2DLocation& loc);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -46,7 +46,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_getArea> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_get_location> unwrapped;
 
     class Editor :
             public yarp::os::Wire,
@@ -57,7 +57,7 @@ public:
         Editor();
 
         // Editor: constructor with base class
-        Editor(return_getArea& obj);
+        Editor(return_get_location& obj);
 
         // Editor: destructor
         ~Editor() override;
@@ -69,13 +69,13 @@ public:
         Editor& operator=(Editor&& rhs) = delete;
 
         // Editor: edit
-        bool edit(return_getArea& obj, bool dirty = true);
+        bool edit(return_get_location& obj, bool dirty = true);
 
         // Editor: validity check
         bool isValid() const;
 
         // Editor: state
-        return_getArea& state();
+        return_get_location& state();
 
         // Editor: start editing
         void start_editing();
@@ -105,11 +105,11 @@ public:
         virtual bool will_set_retval();
         virtual bool did_set_retval();
 
-        // Editor: area field
-        void set_area(const yarp::dev::Nav2D::Map2DArea& area);
-        const yarp::dev::Nav2D::Map2DArea& get_area() const;
-        virtual bool will_set_area();
-        virtual bool did_set_area();
+        // Editor: loc field
+        void set_loc(const yarp::dev::Nav2D::Map2DLocation& loc);
+        const yarp::dev::Nav2D::Map2DLocation& get_loc() const;
+        virtual bool will_set_loc();
+        virtual bool did_set_loc();
 
         // Editor: clean
         void clean();
@@ -122,14 +122,14 @@ public:
 
     private:
         // Editor: state
-        return_getArea* obj;
+        return_get_location* obj;
         bool obj_owned;
         int group;
 
         // Editor: dirty variables
         bool is_dirty;
         bool is_dirty_retval;
-        bool is_dirty_area;
+        bool is_dirty_loc;
         int dirty_count;
 
         // Editor: send if possible
@@ -140,7 +140,7 @@ public:
 
         // Editor: mark dirty single fields
         void mark_dirty_retval();
-        void mark_dirty_area();
+        void mark_dirty_loc();
 
         // Editor: dirty_flags
         void dirty_flags(bool flag);
@@ -153,11 +153,11 @@ private:
     bool nested_read_retval(yarp::os::idl::WireReader& reader);
     bool nested_write_retval(const yarp::os::idl::WireWriter& writer) const;
 
-    // read/write area field
-    bool read_area(yarp::os::idl::WireReader& reader);
-    bool write_area(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_area(yarp::os::idl::WireReader& reader);
-    bool nested_write_area(const yarp::os::idl::WireWriter& writer) const;
+    // read/write loc field
+    bool read_loc(yarp::os::idl::WireReader& reader);
+    bool write_loc(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_loc(yarp::os::idl::WireReader& reader);
+    bool nested_write_loc(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETAREA_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_LOCATION_H

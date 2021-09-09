@@ -8,39 +8,39 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getMap.h>
+#include <return_get_areas_list.h>
 
 // Default constructor
-return_getMap::return_getMap() :
+return_get_areas_list::return_get_areas_list() :
         WirePortable(),
         retval(false),
-        themap()
+        areas()
 {
 }
 
 // Constructor with field values
-return_getMap::return_getMap(const bool retval,
-                             const yarp::dev::Nav2D::MapGrid2D& themap) :
+return_get_areas_list::return_get_areas_list(const bool retval,
+                                             const std::vector<std::string>& areas) :
         WirePortable(),
         retval(retval),
-        themap(themap)
+        areas(areas)
 {
 }
 
 // Read structure on a Wire
-bool return_getMap::read(yarp::os::idl::WireReader& reader)
+bool return_get_areas_list::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_themap(reader)) {
+    if (!read_areas(reader)) {
         return false;
     }
     return !reader.isError();
 }
 
 // Read structure on a Connection
-bool return_getMap::read(yarp::os::ConnectionReader& connection)
+bool return_get_areas_list::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -50,19 +50,19 @@ bool return_getMap::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getMap::write(const yarp::os::idl::WireWriter& writer) const
+bool return_get_areas_list::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_themap(writer)) {
+    if (!write_areas(writer)) {
         return false;
     }
     return !writer.isError();
 }
 
 // Write structure on a Connection
-bool return_getMap::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_areas_list::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -72,7 +72,7 @@ bool return_getMap::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string return_getMap::toString() const
+std::string return_get_areas_list::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -80,17 +80,17 @@ std::string return_getMap::toString() const
 }
 
 // Editor: default constructor
-return_getMap::Editor::Editor()
+return_get_areas_list::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new return_getMap;
+    obj = new return_get_areas_list;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-return_getMap::Editor::Editor(return_getMap& obj)
+return_get_areas_list::Editor::Editor(return_get_areas_list& obj)
 {
     group = 0;
     obj_owned = false;
@@ -99,7 +99,7 @@ return_getMap::Editor::Editor(return_getMap& obj)
 }
 
 // Editor: destructor
-return_getMap::Editor::~Editor()
+return_get_areas_list::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -107,7 +107,7 @@ return_getMap::Editor::~Editor()
 }
 
 // Editor: edit
-bool return_getMap::Editor::edit(return_getMap& obj, bool dirty)
+bool return_get_areas_list::Editor::edit(return_get_areas_list& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -119,25 +119,25 @@ bool return_getMap::Editor::edit(return_getMap& obj, bool dirty)
 }
 
 // Editor: validity check
-bool return_getMap::Editor::isValid() const
+bool return_get_areas_list::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-return_getMap& return_getMap::Editor::state()
+return_get_areas_list& return_get_areas_list::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void return_getMap::Editor::start_editing()
+void return_get_areas_list::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void return_getMap::Editor::stop_editing()
+void return_get_areas_list::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
@@ -145,7 +145,7 @@ void return_getMap::Editor::stop_editing()
     }
 }
 // Editor: retval setter
-void return_getMap::Editor::set_retval(const bool retval)
+void return_get_areas_list::Editor::set_retval(const bool retval)
 {
     will_set_retval();
     obj->retval = retval;
@@ -155,59 +155,69 @@ void return_getMap::Editor::set_retval(const bool retval)
 }
 
 // Editor: retval getter
-bool return_getMap::Editor::get_retval() const
+bool return_get_areas_list::Editor::get_retval() const
 {
     return obj->retval;
 }
 
 // Editor: retval will_set
-bool return_getMap::Editor::will_set_retval()
+bool return_get_areas_list::Editor::will_set_retval()
 {
     return true;
 }
 
 // Editor: retval did_set
-bool return_getMap::Editor::did_set_retval()
+bool return_get_areas_list::Editor::did_set_retval()
 {
     return true;
 }
 
-// Editor: themap setter
-void return_getMap::Editor::set_themap(const yarp::dev::Nav2D::MapGrid2D& themap)
+// Editor: areas setter
+void return_get_areas_list::Editor::set_areas(const std::vector<std::string>& areas)
 {
-    will_set_themap();
-    obj->themap = themap;
-    mark_dirty_themap();
+    will_set_areas();
+    obj->areas = areas;
+    mark_dirty_areas();
     communicate();
-    did_set_themap();
+    did_set_areas();
 }
 
-// Editor: themap getter
-const yarp::dev::Nav2D::MapGrid2D& return_getMap::Editor::get_themap() const
+// Editor: areas setter (list)
+void return_get_areas_list::Editor::set_areas(size_t index, const std::string& elem)
 {
-    return obj->themap;
+    will_set_areas();
+    obj->areas[index] = elem;
+    mark_dirty_areas();
+    communicate();
+    did_set_areas();
 }
 
-// Editor: themap will_set
-bool return_getMap::Editor::will_set_themap()
+// Editor: areas getter
+const std::vector<std::string>& return_get_areas_list::Editor::get_areas() const
+{
+    return obj->areas;
+}
+
+// Editor: areas will_set
+bool return_get_areas_list::Editor::will_set_areas()
 {
     return true;
 }
 
-// Editor: themap did_set
-bool return_getMap::Editor::did_set_themap()
+// Editor: areas did_set
+bool return_get_areas_list::Editor::did_set_areas()
 {
     return true;
 }
 
 // Editor: clean
-void return_getMap::Editor::clean()
+void return_get_areas_list::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool return_getMap::Editor::read(yarp::os::ConnectionReader& connection)
+bool return_get_areas_list::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -257,11 +267,11 @@ bool return_getMap::Editor::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
             }
-            if (field == "themap") {
+            if (field == "areas") {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString("yarp::dev::Nav2D::MapGrid2D themap")) {
+                if (!writer.writeString("std::vector<std::string> areas")) {
                     return false;
                 }
             }
@@ -271,7 +281,7 @@ bool return_getMap::Editor::read(yarp::os::ConnectionReader& connection)
         }
         writer.writeString("*** Available fields:");
         writer.writeString("retval");
-        writer.writeString("themap");
+        writer.writeString("areas");
         return true;
     }
     bool nested = true;
@@ -304,12 +314,12 @@ bool return_getMap::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             did_set_retval();
-        } else if (key == "themap") {
-            will_set_themap();
-            if (!obj->nested_read_themap(reader)) {
+        } else if (key == "areas") {
+            will_set_areas();
+            if (!obj->nested_read_areas(reader)) {
                 return false;
             }
-            did_set_themap();
+            did_set_areas();
         } else {
             // would be useful to have a fallback here
         }
@@ -325,7 +335,7 @@ bool return_getMap::Editor::read(yarp::os::ConnectionReader& connection)
 }
 
 // Editor: write
-bool return_getMap::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_areas_list::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -351,17 +361,17 @@ bool return_getMap::Editor::write(yarp::os::ConnectionWriter& connection) const
             return false;
         }
     }
-    if (is_dirty_themap) {
+    if (is_dirty_areas) {
         if (!writer.writeListHeader(3)) {
             return false;
         }
         if (!writer.writeString("set")) {
             return false;
         }
-        if (!writer.writeString("themap")) {
+        if (!writer.writeString("areas")) {
             return false;
         }
-        if (!obj->nested_write_themap(writer)) {
+        if (!obj->nested_write_areas(writer)) {
             return false;
         }
     }
@@ -369,7 +379,7 @@ bool return_getMap::Editor::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Editor: send if possible
-void return_getMap::Editor::communicate()
+void return_get_areas_list::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -381,13 +391,13 @@ void return_getMap::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void return_getMap::Editor::mark_dirty()
+void return_get_areas_list::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
 // Editor: retval mark_dirty
-void return_getMap::Editor::mark_dirty_retval()
+void return_get_areas_list::Editor::mark_dirty_retval()
 {
     if (is_dirty_retval) {
         return;
@@ -397,28 +407,28 @@ void return_getMap::Editor::mark_dirty_retval()
     mark_dirty();
 }
 
-// Editor: themap mark_dirty
-void return_getMap::Editor::mark_dirty_themap()
+// Editor: areas mark_dirty
+void return_get_areas_list::Editor::mark_dirty_areas()
 {
-    if (is_dirty_themap) {
+    if (is_dirty_areas) {
         return;
     }
     dirty_count++;
-    is_dirty_themap = true;
+    is_dirty_areas = true;
     mark_dirty();
 }
 
 // Editor: dirty_flags
-void return_getMap::Editor::dirty_flags(bool flag)
+void return_get_areas_list::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
     is_dirty_retval = flag;
-    is_dirty_themap = flag;
+    is_dirty_areas = flag;
     dirty_count = flag ? 2 : 0;
 }
 
 // read retval field
-bool return_getMap::read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_areas_list::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -427,7 +437,7 @@ bool return_getMap::read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write retval field
-bool return_getMap::write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_areas_list::write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -436,7 +446,7 @@ bool return_getMap::write_retval(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) retval field
-bool return_getMap::nested_read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_areas_list::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -445,7 +455,7 @@ bool return_getMap::nested_read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) retval field
-bool return_getMap::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_areas_list::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -453,39 +463,71 @@ bool return_getMap::nested_write_retval(const yarp::os::idl::WireWriter& writer)
     return true;
 }
 
-// read themap field
-bool return_getMap::read_themap(yarp::os::idl::WireReader& reader)
+// read areas field
+bool return_get_areas_list::read_areas(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.read(themap)) {
-        reader.fail();
+    areas.clear();
+    uint32_t _size24;
+    yarp::os::idl::WireState _etype27;
+    reader.readListBegin(_etype27, _size24);
+    areas.resize(_size24);
+    for (size_t _i28 = 0; _i28 < _size24; ++_i28) {
+        if (!reader.readString(areas[_i28])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write areas field
+bool return_get_areas_list::write_areas(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(areas.size()))) {
+        return false;
+    }
+    for (const auto& _item29 : areas) {
+        if (!writer.writeString(_item29)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
         return false;
     }
     return true;
 }
 
-// write themap field
-bool return_getMap::write_themap(const yarp::os::idl::WireWriter& writer) const
+// read (nested) areas field
+bool return_get_areas_list::nested_read_areas(yarp::os::idl::WireReader& reader)
 {
-    if (!writer.write(themap)) {
-        return false;
+    areas.clear();
+    uint32_t _size30;
+    yarp::os::idl::WireState _etype33;
+    reader.readListBegin(_etype33, _size30);
+    areas.resize(_size30);
+    for (size_t _i34 = 0; _i34 < _size30; ++_i34) {
+        if (!reader.readString(areas[_i34])) {
+            reader.fail();
+            return false;
+        }
     }
+    reader.readListEnd();
     return true;
 }
 
-// read (nested) themap field
-bool return_getMap::nested_read_themap(yarp::os::idl::WireReader& reader)
+// write (nested) areas field
+bool return_get_areas_list::nested_write_areas(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!reader.readNested(themap)) {
-        reader.fail();
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(areas.size()))) {
         return false;
     }
-    return true;
-}
-
-// write (nested) themap field
-bool return_getMap::nested_write_themap(const yarp::os::idl::WireWriter& writer) const
-{
-    if (!writer.writeNested(themap)) {
+    for (const auto& _item35 : areas) {
+        if (!writer.writeString(_item35)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
         return false;
     }
     return true;

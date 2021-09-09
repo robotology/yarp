@@ -8,26 +8,27 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETPATHSLIST_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETPATHSLIST_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_AREA_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_AREA_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
+#include <yarp/dev/Map2DArea.h>
 
-class return_getPathsList :
+class return_get_area :
         public yarp::os::idl::WirePortable
 {
 public:
     // Fields
     bool retval;
-    std::vector<std::string> paths;
+    yarp::dev::Nav2D::Map2DArea area;
 
     // Default constructor
-    return_getPathsList();
+    return_get_area();
 
     // Constructor with field values
-    return_getPathsList(const bool retval,
-                        const std::vector<std::string>& paths);
+    return_get_area(const bool retval,
+                    const yarp::dev::Nav2D::Map2DArea& area);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -45,7 +46,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_getPathsList> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_get_area> unwrapped;
 
     class Editor :
             public yarp::os::Wire,
@@ -56,7 +57,7 @@ public:
         Editor();
 
         // Editor: constructor with base class
-        Editor(return_getPathsList& obj);
+        Editor(return_get_area& obj);
 
         // Editor: destructor
         ~Editor() override;
@@ -68,13 +69,13 @@ public:
         Editor& operator=(Editor&& rhs) = delete;
 
         // Editor: edit
-        bool edit(return_getPathsList& obj, bool dirty = true);
+        bool edit(return_get_area& obj, bool dirty = true);
 
         // Editor: validity check
         bool isValid() const;
 
         // Editor: state
-        return_getPathsList& state();
+        return_get_area& state();
 
         // Editor: start editing
         void start_editing();
@@ -104,12 +105,11 @@ public:
         virtual bool will_set_retval();
         virtual bool did_set_retval();
 
-        // Editor: paths field
-        void set_paths(const std::vector<std::string>& paths);
-        void set_paths(size_t index, const std::string& elem);
-        const std::vector<std::string>& get_paths() const;
-        virtual bool will_set_paths();
-        virtual bool did_set_paths();
+        // Editor: area field
+        void set_area(const yarp::dev::Nav2D::Map2DArea& area);
+        const yarp::dev::Nav2D::Map2DArea& get_area() const;
+        virtual bool will_set_area();
+        virtual bool did_set_area();
 
         // Editor: clean
         void clean();
@@ -122,14 +122,14 @@ public:
 
     private:
         // Editor: state
-        return_getPathsList* obj;
+        return_get_area* obj;
         bool obj_owned;
         int group;
 
         // Editor: dirty variables
         bool is_dirty;
         bool is_dirty_retval;
-        bool is_dirty_paths;
+        bool is_dirty_area;
         int dirty_count;
 
         // Editor: send if possible
@@ -140,7 +140,7 @@ public:
 
         // Editor: mark dirty single fields
         void mark_dirty_retval();
-        void mark_dirty_paths();
+        void mark_dirty_area();
 
         // Editor: dirty_flags
         void dirty_flags(bool flag);
@@ -153,11 +153,11 @@ private:
     bool nested_read_retval(yarp::os::idl::WireReader& reader);
     bool nested_write_retval(const yarp::os::idl::WireWriter& writer) const;
 
-    // read/write paths field
-    bool read_paths(yarp::os::idl::WireReader& reader);
-    bool write_paths(const yarp::os::idl::WireWriter& writer) const;
-    bool nested_read_paths(yarp::os::idl::WireReader& reader);
-    bool nested_write_paths(const yarp::os::idl::WireWriter& writer) const;
+    // read/write area field
+    bool read_area(yarp::os::idl::WireReader& reader);
+    bool write_area(const yarp::os::idl::WireWriter& writer) const;
+    bool nested_read_area(yarp::os::idl::WireReader& reader);
+    bool nested_write_area(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETPATHSLIST_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_AREA_H

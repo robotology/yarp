@@ -63,7 +63,7 @@ bool Map2D_nwc_yarp::open(yarp::os::Searchable &config)
         return false;
     }
 
-    if (!m_RPC.yarp().attachAsClient(m_rpcPort_to_Map2D_nws))
+    if (!m_map_RPC.yarp().attachAsClient(m_rpcPort_to_Map2D_nws))
     {
         yCError(MAP2D_NWC_YARP, "Error! Cannot attach the port as a client");
         return false;
@@ -75,13 +75,13 @@ bool Map2D_nwc_yarp::open(yarp::os::Searchable &config)
 bool Map2D_nwc_yarp::store_map(const MapGrid2D& map)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.store_mapRPC(map);
+    return m_map_RPC.store_map_RPC(map);
 }
 
 bool Map2D_nwc_yarp::get_map(std::string map_name, MapGrid2D& map)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getMapRPC(map_name);
+    auto ret = m_map_RPC.get_map_RPC(map_name);
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to get_map");
@@ -94,13 +94,13 @@ bool Map2D_nwc_yarp::get_map(std::string map_name, MapGrid2D& map)
 bool Map2D_nwc_yarp::clearAllMaps()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.clearAllMapsRPC();
+    return m_map_RPC.clear_all_maps_RPC();
 }
 
 bool Map2D_nwc_yarp::get_map_names(std::vector<std::string>& map_names)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getMapNamesRPC();
+    auto ret = m_map_RPC.get_map_names_RPC();
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to get_map_names");
@@ -113,31 +113,31 @@ bool Map2D_nwc_yarp::get_map_names(std::vector<std::string>& map_names)
 bool Map2D_nwc_yarp::remove_map(std::string map_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.remove_mapRPC(map_name);
+    return m_map_RPC.remove_map_RPC(map_name);
 }
 
 bool Map2D_nwc_yarp::storeLocation(std::string location_name, Map2DLocation loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.storeLocationRPC(location_name,loc);
+    return m_map_RPC.store_location_RPC(location_name,loc);
 }
 
 bool Map2D_nwc_yarp::storeArea(std::string area_name, Map2DArea area)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.storeAreaRPC(area_name, area);
+    return m_map_RPC.store_area_RPC(area_name, area);
 }
 
 bool Map2D_nwc_yarp::storePath(std::string path_name, Map2DPath path)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.storePathRPC(path_name, path);
+    return m_map_RPC.store_path_RPC(path_name, path);
 }
 
 bool   Map2D_nwc_yarp::getLocationsList(std::vector<std::string>& locations)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getLocationsListRPC();
+    auto ret = m_map_RPC.get_locations_list_RPC();
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to getLocationsList");
@@ -150,7 +150,7 @@ bool   Map2D_nwc_yarp::getLocationsList(std::vector<std::string>& locations)
 bool   Map2D_nwc_yarp::getAreasList(std::vector<std::string>& areas)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getAreasListRPC();
+    auto ret = m_map_RPC.get_areas_list_RPC();
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to getAreasList");
@@ -163,7 +163,7 @@ bool   Map2D_nwc_yarp::getAreasList(std::vector<std::string>& areas)
 bool   Map2D_nwc_yarp::getPathsList(std::vector<std::string>& paths)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getPathsListRPC();
+    auto ret = m_map_RPC.get_paths_list_RPC();
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to getPathsList");
@@ -176,7 +176,7 @@ bool   Map2D_nwc_yarp::getPathsList(std::vector<std::string>& paths)
 bool   Map2D_nwc_yarp::getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getAllLocationsRPC();
+    auto ret = m_map_RPC.get_all_locations_RPC();
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to getAllLocations");
@@ -189,7 +189,7 @@ bool   Map2D_nwc_yarp::getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocati
 bool   Map2D_nwc_yarp::getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getAllAreasRPC();
+    auto ret = m_map_RPC.get_all_areas_RPC();
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to getAllAreas");
@@ -202,7 +202,7 @@ bool   Map2D_nwc_yarp::getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& are
 bool   Map2D_nwc_yarp::getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getAllPathsRPC();
+    auto ret = m_map_RPC.get_all_paths_RPC();
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to getAllPaths");
@@ -215,7 +215,7 @@ bool   Map2D_nwc_yarp::getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& pat
 bool   Map2D_nwc_yarp::getLocation(std::string location_name, Map2DLocation& loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getLocationRPC(location_name);
+    auto ret = m_map_RPC.get_location_RPC(location_name);
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to getLocation");
@@ -228,7 +228,7 @@ bool   Map2D_nwc_yarp::getLocation(std::string location_name, Map2DLocation& loc
 bool   Map2D_nwc_yarp::getArea(std::string area_name, Map2DArea& area)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getAreaRPC(area_name);
+    auto ret = m_map_RPC.get_area_RPC(area_name);
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to getArea");
@@ -241,7 +241,7 @@ bool   Map2D_nwc_yarp::getArea(std::string area_name, Map2DArea& area)
 bool   Map2D_nwc_yarp::getPath(std::string path_name, Map2DPath& path)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    auto ret = m_RPC.getPathRPC(path_name);
+    auto ret = m_map_RPC.get_path_RPC(path_name);
     if (!ret.retval)
     {
         yCError(MAP2D_NWC_YARP, "Unable to getPath");
@@ -254,67 +254,67 @@ bool   Map2D_nwc_yarp::getPath(std::string path_name, Map2DPath& path)
 bool   Map2D_nwc_yarp::deleteLocation(std::string location_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.deleteLocationRPC(location_name);
+    return m_map_RPC.delete_location_RPC(location_name);
 }
 
 bool   Map2D_nwc_yarp::renameLocation(std::string original_name, std::string new_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.renameLocationRPC(original_name,new_name);
+    return m_map_RPC.rename_location_RPC(original_name,new_name);
 }
 
 bool   Map2D_nwc_yarp::deleteArea(std::string location_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.deleteAreaRPC(location_name);
+    return m_map_RPC.delete_area_RPC(location_name);
 }
 
 bool   Map2D_nwc_yarp::deletePath(std::string path_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.deletePathRPC(path_name);
+    return m_map_RPC.delete_path_RPC(path_name);
 }
 
 bool   Map2D_nwc_yarp::renameArea(std::string original_name, std::string new_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.renameAreaRPC(original_name, new_name);
+    return m_map_RPC.rename_area_RPC(original_name, new_name);
 }
 
 bool   Map2D_nwc_yarp::renamePath(std::string original_name, std::string new_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.renamePathRPC(original_name, new_name);
+    return m_map_RPC.rename_path_RPC(original_name, new_name);
 }
 
 bool   Map2D_nwc_yarp::clearAllLocations()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.clearAllLocationsRPC();
+    return m_map_RPC.clear_all_locations_RPC();
 }
 
 bool   Map2D_nwc_yarp::clearAllAreas()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.clearAllAreasRPC();
+    return m_map_RPC.clear_all_areas_RPC();
 }
 
 bool   Map2D_nwc_yarp::clearAllMapsTemporaryFlags()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.clearAllMapsTemporaryFlagsRPC();
+    return m_map_RPC.clear_all_maps_temporary_flags_RPC();
 }
 
 bool   Map2D_nwc_yarp::clearMapTemporaryFlags(std::string map_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.clearMapTemporaryFlagsRPC(map_name);
+    return m_map_RPC.clear_map_temporary_flags_RPC(map_name);
 }
 
 bool   Map2D_nwc_yarp::clearAllPaths()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.clearAllPathsRPC();
+    return m_map_RPC.clear_all_paths_RPC();
 }
 
 bool Map2D_nwc_yarp::close()
@@ -325,41 +325,41 @@ bool Map2D_nwc_yarp::close()
 bool Map2D_nwc_yarp::saveMapsCollection(std::string maps_collection)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.saveMapsCollectionRPC(maps_collection);
+    return m_map_RPC.save_maps_collection_RPC(maps_collection);
 }
 
 bool Map2D_nwc_yarp::loadMapsCollection(std::string maps_collection)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.loadMapsCollectionRPC(maps_collection);
+    return m_map_RPC.load_maps_collection_RPC(maps_collection);
 }
 
 bool Map2D_nwc_yarp::saveLocationsAndExtras(std::string locations_collection)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.saveLocationsAndExtrasRPC(locations_collection);
+    return m_map_RPC.save_locations_and_extras_RPC(locations_collection);
 }
 
 bool Map2D_nwc_yarp::loadLocationsAndExtras(std::string locations_collection)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.loadLocationsAndExtrasRPC(locations_collection);
+    return m_map_RPC.load_locations_and_extras_RPC(locations_collection);
 }
 
 bool Map2D_nwc_yarp::saveMapToDisk(std::string map_name, std::string file_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.saveMapToDiskRPC(map_name,file_name);
+    return m_map_RPC.save_map_to_disk_RPC(map_name,file_name);
 }
 
 bool Map2D_nwc_yarp::loadMapFromDisk(std::string file_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.loadMapFromDiskRPC(file_name);
+    return m_map_RPC.load_map_from_disk_RPC(file_name);
 }
 
 bool Map2D_nwc_yarp::enableMapsCompression(bool enable)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
-    return m_RPC.enableMapsCompressionRPC(enable);
+    return m_map_RPC.enable_maps_compression_RPC(enable);
 }

@@ -18,7 +18,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
-#include "IMap2DMsgsRPC.h"
+#include "IMap2DMsgs.h"
 
 /**
  * @ingroup dev_impl_network_clients dev_impl_navigation
@@ -42,7 +42,7 @@ protected:
     yarp::os::Port      m_rpcPort_to_Map2D_nws;
     std::string         m_local_name;
     std::string         m_map_server;
-    IMap2DMsgsRPC       m_RPC;
+    IMap2DMsgs          m_map_RPC;
     std::mutex          m_mutex;
 
 public:

@@ -8,13 +8,13 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETLOCATIONSLIST_H
-#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETLOCATIONSLIST_H
+#ifndef YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_LOCATIONS_LIST_H
+#define YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_LOCATIONS_LIST_H
 
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-class return_getLocationsList :
+class return_get_locations_list :
         public yarp::os::idl::WirePortable
 {
 public:
@@ -23,11 +23,11 @@ public:
     std::vector<std::string> locations;
 
     // Default constructor
-    return_getLocationsList();
+    return_get_locations_list();
 
     // Constructor with field values
-    return_getLocationsList(const bool retval,
-                            const std::vector<std::string>& locations);
+    return_get_locations_list(const bool retval,
+                              const std::vector<std::string>& locations);
 
     // Read structure on a Wire
     bool read(yarp::os::idl::WireReader& reader) override;
@@ -45,7 +45,7 @@ public:
     std::string toString() const;
 
     // If you want to serialize this class without nesting, use this helper
-    typedef yarp::os::idl::Unwrapped<return_getLocationsList> unwrapped;
+    typedef yarp::os::idl::Unwrapped<return_get_locations_list> unwrapped;
 
     class Editor :
             public yarp::os::Wire,
@@ -56,7 +56,7 @@ public:
         Editor();
 
         // Editor: constructor with base class
-        Editor(return_getLocationsList& obj);
+        Editor(return_get_locations_list& obj);
 
         // Editor: destructor
         ~Editor() override;
@@ -68,13 +68,13 @@ public:
         Editor& operator=(Editor&& rhs) = delete;
 
         // Editor: edit
-        bool edit(return_getLocationsList& obj, bool dirty = true);
+        bool edit(return_get_locations_list& obj, bool dirty = true);
 
         // Editor: validity check
         bool isValid() const;
 
         // Editor: state
-        return_getLocationsList& state();
+        return_get_locations_list& state();
 
         // Editor: start editing
         void start_editing();
@@ -122,7 +122,7 @@ public:
 
     private:
         // Editor: state
-        return_getLocationsList* obj;
+        return_get_locations_list* obj;
         bool obj_owned;
         int group;
 
@@ -160,4 +160,4 @@ private:
     bool nested_write_locations(const yarp::os::idl::WireWriter& writer) const;
 };
 
-#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GETLOCATIONSLIST_H
+#endif // YARP_THRIFT_GENERATOR_STRUCT_RETURN_GET_LOCATIONS_LIST_H

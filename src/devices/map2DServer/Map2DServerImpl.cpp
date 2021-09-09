@@ -27,7 +27,7 @@ YARP_LOG_COMPONENT(MAP2DSERVER, "yarp.device.localization2DServer")
 
 #define CHECK_POINTER(xxx) {if (xxx==nullptr) {yCError(MAP2DSERVER, "Invalid interface"); return false;}}
 
-bool IMap2DRPCd::clearAllMapsRPC()
+bool IMap2DRPCd::clear_all_maps_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -41,7 +41,7 @@ bool IMap2DRPCd::clearAllMapsRPC()
     return true;
 }
 
-bool IMap2DRPCd::store_mapRPC(const yarp::dev::Nav2D::MapGrid2D& themap)
+bool IMap2DRPCd::store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -55,11 +55,11 @@ bool IMap2DRPCd::store_mapRPC(const yarp::dev::Nav2D::MapGrid2D& themap)
     return true;
 }
 
-return_getMap IMap2DRPCd::getMapRPC(const std::string& map_name)
+return_get_map IMap2DRPCd::get_map_RPC(const std::string& map_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    return_getMap ret;
+    return_get_map ret;
     {if (m_iMap == nullptr) { yCError(MAP2DSERVER, "Invalid interface"); return ret; }}
     yarp::dev::Nav2D::MapGrid2D map;
     if (!m_iMap->get_map(map_name,map))
@@ -75,11 +75,11 @@ return_getMap IMap2DRPCd::getMapRPC(const std::string& map_name)
     return ret;
 }
 
-return_getMapNames IMap2DRPCd::getMapNamesRPC()
+return_get_map_names IMap2DRPCd::get_map_names_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    return_getMapNames ret;
+    return_get_map_names ret;
     {if (m_iMap == nullptr) { yCError(MAP2DSERVER, "Invalid interface"); return ret; }}
     std::vector<string> map_names;
     if (!m_iMap->get_map_names(map_names))
@@ -95,7 +95,7 @@ return_getMapNames IMap2DRPCd::getMapNamesRPC()
     return ret;
 }
 
-bool IMap2DRPCd::remove_mapRPC(const std::string& map_name)
+bool IMap2DRPCd::remove_map_RPC(const std::string& map_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -109,7 +109,7 @@ bool IMap2DRPCd::remove_mapRPC(const std::string& map_name)
     return true;
 }
 
-bool IMap2DRPCd::storeLocationRPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc)
+bool IMap2DRPCd::store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -123,7 +123,7 @@ bool IMap2DRPCd::storeLocationRPC(const std::string& location_name, const yarp::
     return true;
 }
 
-bool IMap2DRPCd::storeAreaRPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area)
+bool IMap2DRPCd::store_area_RPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -137,7 +137,7 @@ bool IMap2DRPCd::storeAreaRPC(const std::string& area_name, const yarp::dev::Nav
     return true;
 }
 
-bool IMap2DRPCd::storePathRPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path)
+bool IMap2DRPCd::store_path_RPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -151,7 +151,7 @@ bool IMap2DRPCd::storePathRPC(const std::string& path_name, const yarp::dev::Nav
     return true;
 }
 
-bool IMap2DRPCd::renameLocationRPC(const std::string& original_name, const std::string& new_name)
+bool IMap2DRPCd::rename_location_RPC(const std::string& original_name, const std::string& new_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -165,7 +165,7 @@ bool IMap2DRPCd::renameLocationRPC(const std::string& original_name, const std::
     return true;
 }
 
-bool IMap2DRPCd::deleteLocationRPC(const std::string& location_name)
+bool IMap2DRPCd::delete_location_RPC(const std::string& location_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -179,7 +179,7 @@ bool IMap2DRPCd::deleteLocationRPC(const std::string& location_name)
     return true;
 }
 
-bool IMap2DRPCd::deletePathRPC(const std::string& path_name)
+bool IMap2DRPCd::delete_path_RPC(const std::string& path_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -193,7 +193,7 @@ bool IMap2DRPCd::deletePathRPC(const std::string& path_name)
     return true;
 }
 
-bool IMap2DRPCd::renameAreaRPC(const std::string& original_name, const std::string& new_name)
+bool IMap2DRPCd::rename_area_RPC(const std::string& original_name, const std::string& new_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -207,7 +207,7 @@ bool IMap2DRPCd::renameAreaRPC(const std::string& original_name, const std::stri
     return true;
 }
 
-bool IMap2DRPCd::renamePathRPC(const std::string& original_name, const std::string& new_name)
+bool IMap2DRPCd::rename_path_RPC(const std::string& original_name, const std::string& new_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -221,7 +221,7 @@ bool IMap2DRPCd::renamePathRPC(const std::string& original_name, const std::stri
     return true;
 }
 
-bool IMap2DRPCd::deleteAreaRPC(const std::string& area_name)
+bool IMap2DRPCd::delete_area_RPC(const std::string& area_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -235,7 +235,7 @@ bool IMap2DRPCd::deleteAreaRPC(const std::string& area_name)
     return true;
 }
 
-bool IMap2DRPCd::clearAllLocationsRPC()
+bool IMap2DRPCd::clear_all_locations_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -249,7 +249,7 @@ bool IMap2DRPCd::clearAllLocationsRPC()
     return true;
 }
 
-bool IMap2DRPCd::clearAllAreasRPC()
+bool IMap2DRPCd::clear_all_areas_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -263,7 +263,7 @@ bool IMap2DRPCd::clearAllAreasRPC()
     return true;
 }
 
-bool IMap2DRPCd::clearAllPathsRPC()
+bool IMap2DRPCd::clear_all_paths_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -277,7 +277,7 @@ bool IMap2DRPCd::clearAllPathsRPC()
     return true;
 }
 
-bool IMap2DRPCd::clearAllMapsTemporaryFlagsRPC()
+bool IMap2DRPCd::clear_all_maps_temporary_flags_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -291,7 +291,7 @@ bool IMap2DRPCd::clearAllMapsTemporaryFlagsRPC()
     return true;
 }
 
-bool IMap2DRPCd::clearMapTemporaryFlagsRPC(const std::string& map_name)
+bool IMap2DRPCd::clear_map_temporary_flags_RPC(const std::string& map_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -305,7 +305,7 @@ bool IMap2DRPCd::clearMapTemporaryFlagsRPC(const std::string& map_name)
     return true;
 }
 
-bool IMap2DRPCd::saveMapsCollectionRPC(const std::string& maps_collection_file)
+bool IMap2DRPCd::save_maps_collection_RPC(const std::string& maps_collection_file)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -319,7 +319,7 @@ bool IMap2DRPCd::saveMapsCollectionRPC(const std::string& maps_collection_file)
     return true;
 }
 
-bool IMap2DRPCd::loadMapsCollectionRPC(const std::string& maps_collection_file)
+bool IMap2DRPCd::load_maps_collection_RPC(const std::string& maps_collection_file)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -333,7 +333,7 @@ bool IMap2DRPCd::loadMapsCollectionRPC(const std::string& maps_collection_file)
     return true;
 }
 
-bool IMap2DRPCd::saveLocationsAndExtrasRPC(const std::string& locations_collection_file)
+bool IMap2DRPCd::save_locations_and_extras_RPC(const std::string& locations_collection_file)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -347,7 +347,7 @@ bool IMap2DRPCd::saveLocationsAndExtrasRPC(const std::string& locations_collecti
     return true;
 }
 
-bool IMap2DRPCd::loadLocationsAndExtrasRPC(const std::string& locations_collection_file)
+bool IMap2DRPCd::load_locations_and_extras_RPC(const std::string& locations_collection_file)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
@@ -361,11 +361,11 @@ bool IMap2DRPCd::loadLocationsAndExtrasRPC(const std::string& locations_collecti
     return true;
 }
 
-return_getLocation IMap2DRPCd::getLocationRPC(const std::string& location_name)
+return_get_location IMap2DRPCd::get_location_RPC(const std::string& location_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    return_getLocation ret;
+    return_get_location ret;
     {if (m_iMap == nullptr) { yCError(MAP2DSERVER, "Invalid interface"); return ret; }}
     yarp::dev::Nav2D::Map2DLocation loc;
     if (!m_iMap->getLocation(location_name, loc))
@@ -381,11 +381,11 @@ return_getLocation IMap2DRPCd::getLocationRPC(const std::string& location_name)
     return ret;
 }
 
-return_getArea IMap2DRPCd::getAreaRPC(const std::string& area_name)
+return_get_area IMap2DRPCd::get_area_RPC(const std::string& area_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    return_getArea ret;
+    return_get_area ret;
     {if (m_iMap == nullptr) { yCError(MAP2DSERVER, "Invalid interface"); return ret; }}
     yarp::dev::Nav2D::Map2DArea area;
     if (!m_iMap->getArea(area_name,area))
@@ -401,11 +401,11 @@ return_getArea IMap2DRPCd::getAreaRPC(const std::string& area_name)
     return ret;
 }
 
-return_getPath IMap2DRPCd::getPathRPC(const std::string& path_name)
+return_get_path IMap2DRPCd::get_path_RPC(const std::string& path_name)
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    return_getPath ret;
+    return_get_path ret;
     {if (m_iMap == nullptr) { yCError(MAP2DSERVER, "Invalid interface"); return ret; }}
     yarp::dev::Nav2D::Map2DPath path;
     if (!m_iMap->getPath(path_name, path))
@@ -421,11 +421,11 @@ return_getPath IMap2DRPCd::getPathRPC(const std::string& path_name)
     return ret;
 }
 
-return_getLocationsList IMap2DRPCd::getLocationsListRPC()
+return_get_locations_list IMap2DRPCd::get_locations_list_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    return_getLocationsList ret;
+    return_get_locations_list ret;
     {if (m_iMap == nullptr) { yCError(MAP2DSERVER, "Invalid interface"); return ret; }}
     std::vector<string> loc_names;
     if (!m_iMap->getLocationsList(loc_names))
@@ -441,11 +441,11 @@ return_getLocationsList IMap2DRPCd::getLocationsListRPC()
     return ret;
 }
 
-return_getAreasList IMap2DRPCd::getAreasListRPC()
+return_get_areas_list IMap2DRPCd::get_areas_list_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    return_getAreasList ret;
+    return_get_areas_list ret;
     {if (m_iMap == nullptr) { yCError(MAP2DSERVER, "Invalid interface"); return ret; }}
     std::vector<string> area_names;
     if (!m_iMap->getAreasList(area_names))
@@ -461,11 +461,11 @@ return_getAreasList IMap2DRPCd::getAreasListRPC()
     return ret;
 }
 
-return_getPathsList IMap2DRPCd::getPathsListRPC()
+return_get_paths_list IMap2DRPCd::get_paths_list_RPC()
 {
     std::lock_guard <std::mutex> lg(m_mutex);
 
-    return_getPathsList ret;
+    return_get_paths_list ret;
     {if (m_iMap == nullptr) { yCError(MAP2DSERVER, "Invalid interface"); return ret; }}
     std::vector<string> path_names;
     if (!m_iMap->getPathsList(path_names))

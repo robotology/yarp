@@ -8,39 +8,39 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getArea.h>
+#include <return_get_location.h>
 
 // Default constructor
-return_getArea::return_getArea() :
+return_get_location::return_get_location() :
         WirePortable(),
         retval(false),
-        area()
+        loc()
 {
 }
 
 // Constructor with field values
-return_getArea::return_getArea(const bool retval,
-                               const yarp::dev::Nav2D::Map2DArea& area) :
+return_get_location::return_get_location(const bool retval,
+                                         const yarp::dev::Nav2D::Map2DLocation& loc) :
         WirePortable(),
         retval(retval),
-        area(area)
+        loc(loc)
 {
 }
 
 // Read structure on a Wire
-bool return_getArea::read(yarp::os::idl::WireReader& reader)
+bool return_get_location::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_area(reader)) {
+    if (!read_loc(reader)) {
         return false;
     }
     return !reader.isError();
 }
 
 // Read structure on a Connection
-bool return_getArea::read(yarp::os::ConnectionReader& connection)
+bool return_get_location::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -50,19 +50,19 @@ bool return_getArea::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getArea::write(const yarp::os::idl::WireWriter& writer) const
+bool return_get_location::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_area(writer)) {
+    if (!write_loc(writer)) {
         return false;
     }
     return !writer.isError();
 }
 
 // Write structure on a Connection
-bool return_getArea::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_location::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -72,7 +72,7 @@ bool return_getArea::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string return_getArea::toString() const
+std::string return_get_location::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -80,17 +80,17 @@ std::string return_getArea::toString() const
 }
 
 // Editor: default constructor
-return_getArea::Editor::Editor()
+return_get_location::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new return_getArea;
+    obj = new return_get_location;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-return_getArea::Editor::Editor(return_getArea& obj)
+return_get_location::Editor::Editor(return_get_location& obj)
 {
     group = 0;
     obj_owned = false;
@@ -99,7 +99,7 @@ return_getArea::Editor::Editor(return_getArea& obj)
 }
 
 // Editor: destructor
-return_getArea::Editor::~Editor()
+return_get_location::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -107,7 +107,7 @@ return_getArea::Editor::~Editor()
 }
 
 // Editor: edit
-bool return_getArea::Editor::edit(return_getArea& obj, bool dirty)
+bool return_get_location::Editor::edit(return_get_location& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -119,25 +119,25 @@ bool return_getArea::Editor::edit(return_getArea& obj, bool dirty)
 }
 
 // Editor: validity check
-bool return_getArea::Editor::isValid() const
+bool return_get_location::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-return_getArea& return_getArea::Editor::state()
+return_get_location& return_get_location::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void return_getArea::Editor::start_editing()
+void return_get_location::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void return_getArea::Editor::stop_editing()
+void return_get_location::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
@@ -145,7 +145,7 @@ void return_getArea::Editor::stop_editing()
     }
 }
 // Editor: retval setter
-void return_getArea::Editor::set_retval(const bool retval)
+void return_get_location::Editor::set_retval(const bool retval)
 {
     will_set_retval();
     obj->retval = retval;
@@ -155,59 +155,59 @@ void return_getArea::Editor::set_retval(const bool retval)
 }
 
 // Editor: retval getter
-bool return_getArea::Editor::get_retval() const
+bool return_get_location::Editor::get_retval() const
 {
     return obj->retval;
 }
 
 // Editor: retval will_set
-bool return_getArea::Editor::will_set_retval()
+bool return_get_location::Editor::will_set_retval()
 {
     return true;
 }
 
 // Editor: retval did_set
-bool return_getArea::Editor::did_set_retval()
+bool return_get_location::Editor::did_set_retval()
 {
     return true;
 }
 
-// Editor: area setter
-void return_getArea::Editor::set_area(const yarp::dev::Nav2D::Map2DArea& area)
+// Editor: loc setter
+void return_get_location::Editor::set_loc(const yarp::dev::Nav2D::Map2DLocation& loc)
 {
-    will_set_area();
-    obj->area = area;
-    mark_dirty_area();
+    will_set_loc();
+    obj->loc = loc;
+    mark_dirty_loc();
     communicate();
-    did_set_area();
+    did_set_loc();
 }
 
-// Editor: area getter
-const yarp::dev::Nav2D::Map2DArea& return_getArea::Editor::get_area() const
+// Editor: loc getter
+const yarp::dev::Nav2D::Map2DLocation& return_get_location::Editor::get_loc() const
 {
-    return obj->area;
+    return obj->loc;
 }
 
-// Editor: area will_set
-bool return_getArea::Editor::will_set_area()
+// Editor: loc will_set
+bool return_get_location::Editor::will_set_loc()
 {
     return true;
 }
 
-// Editor: area did_set
-bool return_getArea::Editor::did_set_area()
+// Editor: loc did_set
+bool return_get_location::Editor::did_set_loc()
 {
     return true;
 }
 
 // Editor: clean
-void return_getArea::Editor::clean()
+void return_get_location::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool return_getArea::Editor::read(yarp::os::ConnectionReader& connection)
+bool return_get_location::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -257,11 +257,11 @@ bool return_getArea::Editor::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
             }
-            if (field == "area") {
+            if (field == "loc") {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString("yarp::dev::Nav2D::Map2DArea area")) {
+                if (!writer.writeString("yarp::dev::Nav2D::Map2DLocation loc")) {
                     return false;
                 }
             }
@@ -271,7 +271,7 @@ bool return_getArea::Editor::read(yarp::os::ConnectionReader& connection)
         }
         writer.writeString("*** Available fields:");
         writer.writeString("retval");
-        writer.writeString("area");
+        writer.writeString("loc");
         return true;
     }
     bool nested = true;
@@ -304,12 +304,12 @@ bool return_getArea::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             did_set_retval();
-        } else if (key == "area") {
-            will_set_area();
-            if (!obj->nested_read_area(reader)) {
+        } else if (key == "loc") {
+            will_set_loc();
+            if (!obj->nested_read_loc(reader)) {
                 return false;
             }
-            did_set_area();
+            did_set_loc();
         } else {
             // would be useful to have a fallback here
         }
@@ -325,7 +325,7 @@ bool return_getArea::Editor::read(yarp::os::ConnectionReader& connection)
 }
 
 // Editor: write
-bool return_getArea::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_location::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -351,17 +351,17 @@ bool return_getArea::Editor::write(yarp::os::ConnectionWriter& connection) const
             return false;
         }
     }
-    if (is_dirty_area) {
+    if (is_dirty_loc) {
         if (!writer.writeListHeader(3)) {
             return false;
         }
         if (!writer.writeString("set")) {
             return false;
         }
-        if (!writer.writeString("area")) {
+        if (!writer.writeString("loc")) {
             return false;
         }
-        if (!obj->nested_write_area(writer)) {
+        if (!obj->nested_write_loc(writer)) {
             return false;
         }
     }
@@ -369,7 +369,7 @@ bool return_getArea::Editor::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Editor: send if possible
-void return_getArea::Editor::communicate()
+void return_get_location::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -381,13 +381,13 @@ void return_getArea::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void return_getArea::Editor::mark_dirty()
+void return_get_location::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
 // Editor: retval mark_dirty
-void return_getArea::Editor::mark_dirty_retval()
+void return_get_location::Editor::mark_dirty_retval()
 {
     if (is_dirty_retval) {
         return;
@@ -397,28 +397,28 @@ void return_getArea::Editor::mark_dirty_retval()
     mark_dirty();
 }
 
-// Editor: area mark_dirty
-void return_getArea::Editor::mark_dirty_area()
+// Editor: loc mark_dirty
+void return_get_location::Editor::mark_dirty_loc()
 {
-    if (is_dirty_area) {
+    if (is_dirty_loc) {
         return;
     }
     dirty_count++;
-    is_dirty_area = true;
+    is_dirty_loc = true;
     mark_dirty();
 }
 
 // Editor: dirty_flags
-void return_getArea::Editor::dirty_flags(bool flag)
+void return_get_location::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
     is_dirty_retval = flag;
-    is_dirty_area = flag;
+    is_dirty_loc = flag;
     dirty_count = flag ? 2 : 0;
 }
 
 // read retval field
-bool return_getArea::read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_location::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -427,7 +427,7 @@ bool return_getArea::read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write retval field
-bool return_getArea::write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_location::write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -436,7 +436,7 @@ bool return_getArea::write_retval(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) retval field
-bool return_getArea::nested_read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_location::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -445,7 +445,7 @@ bool return_getArea::nested_read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) retval field
-bool return_getArea::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_location::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -453,39 +453,39 @@ bool return_getArea::nested_write_retval(const yarp::os::idl::WireWriter& writer
     return true;
 }
 
-// read area field
-bool return_getArea::read_area(yarp::os::idl::WireReader& reader)
+// read loc field
+bool return_get_location::read_loc(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.read(area)) {
+    if (!reader.read(loc)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write area field
-bool return_getArea::write_area(const yarp::os::idl::WireWriter& writer) const
+// write loc field
+bool return_get_location::write_loc(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.write(area)) {
+    if (!writer.write(loc)) {
         return false;
     }
     return true;
 }
 
-// read (nested) area field
-bool return_getArea::nested_read_area(yarp::os::idl::WireReader& reader)
+// read (nested) loc field
+bool return_get_location::nested_read_loc(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.readNested(area)) {
+    if (!reader.readNested(loc)) {
         reader.fail();
         return false;
     }
     return true;
 }
 
-// write (nested) area field
-bool return_getArea::nested_write_area(const yarp::os::idl::WireWriter& writer) const
+// write (nested) loc field
+bool return_get_location::nested_write_loc(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeNested(area)) {
+    if (!writer.writeNested(loc)) {
         return false;
     }
     return true;

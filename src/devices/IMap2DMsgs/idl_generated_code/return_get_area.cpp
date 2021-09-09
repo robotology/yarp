@@ -8,39 +8,39 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getAreasList.h>
+#include <return_get_area.h>
 
 // Default constructor
-return_getAreasList::return_getAreasList() :
+return_get_area::return_get_area() :
         WirePortable(),
         retval(false),
-        areas()
+        area()
 {
 }
 
 // Constructor with field values
-return_getAreasList::return_getAreasList(const bool retval,
-                                         const std::vector<std::string>& areas) :
+return_get_area::return_get_area(const bool retval,
+                                 const yarp::dev::Nav2D::Map2DArea& area) :
         WirePortable(),
         retval(retval),
-        areas(areas)
+        area(area)
 {
 }
 
 // Read structure on a Wire
-bool return_getAreasList::read(yarp::os::idl::WireReader& reader)
+bool return_get_area::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_areas(reader)) {
+    if (!read_area(reader)) {
         return false;
     }
     return !reader.isError();
 }
 
 // Read structure on a Connection
-bool return_getAreasList::read(yarp::os::ConnectionReader& connection)
+bool return_get_area::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -50,19 +50,19 @@ bool return_getAreasList::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getAreasList::write(const yarp::os::idl::WireWriter& writer) const
+bool return_get_area::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_areas(writer)) {
+    if (!write_area(writer)) {
         return false;
     }
     return !writer.isError();
 }
 
 // Write structure on a Connection
-bool return_getAreasList::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_area::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -72,7 +72,7 @@ bool return_getAreasList::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string return_getAreasList::toString() const
+std::string return_get_area::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -80,17 +80,17 @@ std::string return_getAreasList::toString() const
 }
 
 // Editor: default constructor
-return_getAreasList::Editor::Editor()
+return_get_area::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new return_getAreasList;
+    obj = new return_get_area;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-return_getAreasList::Editor::Editor(return_getAreasList& obj)
+return_get_area::Editor::Editor(return_get_area& obj)
 {
     group = 0;
     obj_owned = false;
@@ -99,7 +99,7 @@ return_getAreasList::Editor::Editor(return_getAreasList& obj)
 }
 
 // Editor: destructor
-return_getAreasList::Editor::~Editor()
+return_get_area::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -107,7 +107,7 @@ return_getAreasList::Editor::~Editor()
 }
 
 // Editor: edit
-bool return_getAreasList::Editor::edit(return_getAreasList& obj, bool dirty)
+bool return_get_area::Editor::edit(return_get_area& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -119,25 +119,25 @@ bool return_getAreasList::Editor::edit(return_getAreasList& obj, bool dirty)
 }
 
 // Editor: validity check
-bool return_getAreasList::Editor::isValid() const
+bool return_get_area::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-return_getAreasList& return_getAreasList::Editor::state()
+return_get_area& return_get_area::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void return_getAreasList::Editor::start_editing()
+void return_get_area::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void return_getAreasList::Editor::stop_editing()
+void return_get_area::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
@@ -145,7 +145,7 @@ void return_getAreasList::Editor::stop_editing()
     }
 }
 // Editor: retval setter
-void return_getAreasList::Editor::set_retval(const bool retval)
+void return_get_area::Editor::set_retval(const bool retval)
 {
     will_set_retval();
     obj->retval = retval;
@@ -155,69 +155,59 @@ void return_getAreasList::Editor::set_retval(const bool retval)
 }
 
 // Editor: retval getter
-bool return_getAreasList::Editor::get_retval() const
+bool return_get_area::Editor::get_retval() const
 {
     return obj->retval;
 }
 
 // Editor: retval will_set
-bool return_getAreasList::Editor::will_set_retval()
+bool return_get_area::Editor::will_set_retval()
 {
     return true;
 }
 
 // Editor: retval did_set
-bool return_getAreasList::Editor::did_set_retval()
+bool return_get_area::Editor::did_set_retval()
 {
     return true;
 }
 
-// Editor: areas setter
-void return_getAreasList::Editor::set_areas(const std::vector<std::string>& areas)
+// Editor: area setter
+void return_get_area::Editor::set_area(const yarp::dev::Nav2D::Map2DArea& area)
 {
-    will_set_areas();
-    obj->areas = areas;
-    mark_dirty_areas();
+    will_set_area();
+    obj->area = area;
+    mark_dirty_area();
     communicate();
-    did_set_areas();
+    did_set_area();
 }
 
-// Editor: areas setter (list)
-void return_getAreasList::Editor::set_areas(size_t index, const std::string& elem)
+// Editor: area getter
+const yarp::dev::Nav2D::Map2DArea& return_get_area::Editor::get_area() const
 {
-    will_set_areas();
-    obj->areas[index] = elem;
-    mark_dirty_areas();
-    communicate();
-    did_set_areas();
+    return obj->area;
 }
 
-// Editor: areas getter
-const std::vector<std::string>& return_getAreasList::Editor::get_areas() const
-{
-    return obj->areas;
-}
-
-// Editor: areas will_set
-bool return_getAreasList::Editor::will_set_areas()
+// Editor: area will_set
+bool return_get_area::Editor::will_set_area()
 {
     return true;
 }
 
-// Editor: areas did_set
-bool return_getAreasList::Editor::did_set_areas()
+// Editor: area did_set
+bool return_get_area::Editor::did_set_area()
 {
     return true;
 }
 
 // Editor: clean
-void return_getAreasList::Editor::clean()
+void return_get_area::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool return_getAreasList::Editor::read(yarp::os::ConnectionReader& connection)
+bool return_get_area::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -267,11 +257,11 @@ bool return_getAreasList::Editor::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
             }
-            if (field == "areas") {
+            if (field == "area") {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString("std::vector<std::string> areas")) {
+                if (!writer.writeString("yarp::dev::Nav2D::Map2DArea area")) {
                     return false;
                 }
             }
@@ -281,7 +271,7 @@ bool return_getAreasList::Editor::read(yarp::os::ConnectionReader& connection)
         }
         writer.writeString("*** Available fields:");
         writer.writeString("retval");
-        writer.writeString("areas");
+        writer.writeString("area");
         return true;
     }
     bool nested = true;
@@ -314,12 +304,12 @@ bool return_getAreasList::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             did_set_retval();
-        } else if (key == "areas") {
-            will_set_areas();
-            if (!obj->nested_read_areas(reader)) {
+        } else if (key == "area") {
+            will_set_area();
+            if (!obj->nested_read_area(reader)) {
                 return false;
             }
-            did_set_areas();
+            did_set_area();
         } else {
             // would be useful to have a fallback here
         }
@@ -335,7 +325,7 @@ bool return_getAreasList::Editor::read(yarp::os::ConnectionReader& connection)
 }
 
 // Editor: write
-bool return_getAreasList::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_area::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -361,17 +351,17 @@ bool return_getAreasList::Editor::write(yarp::os::ConnectionWriter& connection) 
             return false;
         }
     }
-    if (is_dirty_areas) {
+    if (is_dirty_area) {
         if (!writer.writeListHeader(3)) {
             return false;
         }
         if (!writer.writeString("set")) {
             return false;
         }
-        if (!writer.writeString("areas")) {
+        if (!writer.writeString("area")) {
             return false;
         }
-        if (!obj->nested_write_areas(writer)) {
+        if (!obj->nested_write_area(writer)) {
             return false;
         }
     }
@@ -379,7 +369,7 @@ bool return_getAreasList::Editor::write(yarp::os::ConnectionWriter& connection) 
 }
 
 // Editor: send if possible
-void return_getAreasList::Editor::communicate()
+void return_get_area::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -391,13 +381,13 @@ void return_getAreasList::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void return_getAreasList::Editor::mark_dirty()
+void return_get_area::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
 // Editor: retval mark_dirty
-void return_getAreasList::Editor::mark_dirty_retval()
+void return_get_area::Editor::mark_dirty_retval()
 {
     if (is_dirty_retval) {
         return;
@@ -407,28 +397,28 @@ void return_getAreasList::Editor::mark_dirty_retval()
     mark_dirty();
 }
 
-// Editor: areas mark_dirty
-void return_getAreasList::Editor::mark_dirty_areas()
+// Editor: area mark_dirty
+void return_get_area::Editor::mark_dirty_area()
 {
-    if (is_dirty_areas) {
+    if (is_dirty_area) {
         return;
     }
     dirty_count++;
-    is_dirty_areas = true;
+    is_dirty_area = true;
     mark_dirty();
 }
 
 // Editor: dirty_flags
-void return_getAreasList::Editor::dirty_flags(bool flag)
+void return_get_area::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
     is_dirty_retval = flag;
-    is_dirty_areas = flag;
+    is_dirty_area = flag;
     dirty_count = flag ? 2 : 0;
 }
 
 // read retval field
-bool return_getAreasList::read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_area::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -437,7 +427,7 @@ bool return_getAreasList::read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write retval field
-bool return_getAreasList::write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_area::write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -446,7 +436,7 @@ bool return_getAreasList::write_retval(const yarp::os::idl::WireWriter& writer) 
 }
 
 // read (nested) retval field
-bool return_getAreasList::nested_read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_area::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -455,7 +445,7 @@ bool return_getAreasList::nested_read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) retval field
-bool return_getAreasList::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_area::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -463,71 +453,39 @@ bool return_getAreasList::nested_write_retval(const yarp::os::idl::WireWriter& w
     return true;
 }
 
-// read areas field
-bool return_getAreasList::read_areas(yarp::os::idl::WireReader& reader)
+// read area field
+bool return_get_area::read_area(yarp::os::idl::WireReader& reader)
 {
-    areas.clear();
-    uint32_t _size24;
-    yarp::os::idl::WireState _etype27;
-    reader.readListBegin(_etype27, _size24);
-    areas.resize(_size24);
-    for (size_t _i28 = 0; _i28 < _size24; ++_i28) {
-        if (!reader.readString(areas[_i28])) {
-            reader.fail();
-            return false;
-        }
-    }
-    reader.readListEnd();
-    return true;
-}
-
-// write areas field
-bool return_getAreasList::write_areas(const yarp::os::idl::WireWriter& writer) const
-{
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(areas.size()))) {
-        return false;
-    }
-    for (const auto& _item29 : areas) {
-        if (!writer.writeString(_item29)) {
-            return false;
-        }
-    }
-    if (!writer.writeListEnd()) {
+    if (!reader.read(area)) {
+        reader.fail();
         return false;
     }
     return true;
 }
 
-// read (nested) areas field
-bool return_getAreasList::nested_read_areas(yarp::os::idl::WireReader& reader)
+// write area field
+bool return_get_area::write_area(const yarp::os::idl::WireWriter& writer) const
 {
-    areas.clear();
-    uint32_t _size30;
-    yarp::os::idl::WireState _etype33;
-    reader.readListBegin(_etype33, _size30);
-    areas.resize(_size30);
-    for (size_t _i34 = 0; _i34 < _size30; ++_i34) {
-        if (!reader.readString(areas[_i34])) {
-            reader.fail();
-            return false;
-        }
+    if (!writer.write(area)) {
+        return false;
     }
-    reader.readListEnd();
     return true;
 }
 
-// write (nested) areas field
-bool return_getAreasList::nested_write_areas(const yarp::os::idl::WireWriter& writer) const
+// read (nested) area field
+bool return_get_area::nested_read_area(yarp::os::idl::WireReader& reader)
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(areas.size()))) {
+    if (!reader.readNested(area)) {
+        reader.fail();
         return false;
     }
-    for (const auto& _item35 : areas) {
-        if (!writer.writeString(_item35)) {
-            return false;
-        }
-    }
-    if (!writer.writeListEnd()) {
+    return true;
+}
+
+// write (nested) area field
+bool return_get_area::nested_write_area(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeNested(area)) {
         return false;
     }
     return true;

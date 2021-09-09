@@ -8,39 +8,39 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getPath.h>
+#include <return_get_all_paths.h>
 
 // Default constructor
-return_getPath::return_getPath() :
+return_get_all_paths::return_get_all_paths() :
         WirePortable(),
         retval(false),
-        path()
+        paths()
 {
 }
 
 // Constructor with field values
-return_getPath::return_getPath(const bool retval,
-                               const yarp::dev::Nav2D::Map2DPath& path) :
+return_get_all_paths::return_get_all_paths(const bool retval,
+                                           const std::vector<yarp::dev::Nav2D::Map2DPath>& paths) :
         WirePortable(),
         retval(retval),
-        path(path)
+        paths(paths)
 {
 }
 
 // Read structure on a Wire
-bool return_getPath::read(yarp::os::idl::WireReader& reader)
+bool return_get_all_paths::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_path(reader)) {
+    if (!read_paths(reader)) {
         return false;
     }
     return !reader.isError();
 }
 
 // Read structure on a Connection
-bool return_getPath::read(yarp::os::ConnectionReader& connection)
+bool return_get_all_paths::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -50,19 +50,19 @@ bool return_getPath::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getPath::write(const yarp::os::idl::WireWriter& writer) const
+bool return_get_all_paths::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_path(writer)) {
+    if (!write_paths(writer)) {
         return false;
     }
     return !writer.isError();
 }
 
 // Write structure on a Connection
-bool return_getPath::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_all_paths::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -72,7 +72,7 @@ bool return_getPath::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string return_getPath::toString() const
+std::string return_get_all_paths::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -80,17 +80,17 @@ std::string return_getPath::toString() const
 }
 
 // Editor: default constructor
-return_getPath::Editor::Editor()
+return_get_all_paths::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new return_getPath;
+    obj = new return_get_all_paths;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-return_getPath::Editor::Editor(return_getPath& obj)
+return_get_all_paths::Editor::Editor(return_get_all_paths& obj)
 {
     group = 0;
     obj_owned = false;
@@ -99,7 +99,7 @@ return_getPath::Editor::Editor(return_getPath& obj)
 }
 
 // Editor: destructor
-return_getPath::Editor::~Editor()
+return_get_all_paths::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -107,7 +107,7 @@ return_getPath::Editor::~Editor()
 }
 
 // Editor: edit
-bool return_getPath::Editor::edit(return_getPath& obj, bool dirty)
+bool return_get_all_paths::Editor::edit(return_get_all_paths& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -119,25 +119,25 @@ bool return_getPath::Editor::edit(return_getPath& obj, bool dirty)
 }
 
 // Editor: validity check
-bool return_getPath::Editor::isValid() const
+bool return_get_all_paths::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-return_getPath& return_getPath::Editor::state()
+return_get_all_paths& return_get_all_paths::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void return_getPath::Editor::start_editing()
+void return_get_all_paths::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void return_getPath::Editor::stop_editing()
+void return_get_all_paths::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
@@ -145,7 +145,7 @@ void return_getPath::Editor::stop_editing()
     }
 }
 // Editor: retval setter
-void return_getPath::Editor::set_retval(const bool retval)
+void return_get_all_paths::Editor::set_retval(const bool retval)
 {
     will_set_retval();
     obj->retval = retval;
@@ -155,59 +155,69 @@ void return_getPath::Editor::set_retval(const bool retval)
 }
 
 // Editor: retval getter
-bool return_getPath::Editor::get_retval() const
+bool return_get_all_paths::Editor::get_retval() const
 {
     return obj->retval;
 }
 
 // Editor: retval will_set
-bool return_getPath::Editor::will_set_retval()
+bool return_get_all_paths::Editor::will_set_retval()
 {
     return true;
 }
 
 // Editor: retval did_set
-bool return_getPath::Editor::did_set_retval()
+bool return_get_all_paths::Editor::did_set_retval()
 {
     return true;
 }
 
-// Editor: path setter
-void return_getPath::Editor::set_path(const yarp::dev::Nav2D::Map2DPath& path)
+// Editor: paths setter
+void return_get_all_paths::Editor::set_paths(const std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
 {
-    will_set_path();
-    obj->path = path;
-    mark_dirty_path();
+    will_set_paths();
+    obj->paths = paths;
+    mark_dirty_paths();
     communicate();
-    did_set_path();
+    did_set_paths();
 }
 
-// Editor: path getter
-const yarp::dev::Nav2D::Map2DPath& return_getPath::Editor::get_path() const
+// Editor: paths setter (list)
+void return_get_all_paths::Editor::set_paths(size_t index, const yarp::dev::Nav2D::Map2DPath& elem)
 {
-    return obj->path;
+    will_set_paths();
+    obj->paths[index] = elem;
+    mark_dirty_paths();
+    communicate();
+    did_set_paths();
 }
 
-// Editor: path will_set
-bool return_getPath::Editor::will_set_path()
+// Editor: paths getter
+const std::vector<yarp::dev::Nav2D::Map2DPath>& return_get_all_paths::Editor::get_paths() const
+{
+    return obj->paths;
+}
+
+// Editor: paths will_set
+bool return_get_all_paths::Editor::will_set_paths()
 {
     return true;
 }
 
-// Editor: path did_set
-bool return_getPath::Editor::did_set_path()
+// Editor: paths did_set
+bool return_get_all_paths::Editor::did_set_paths()
 {
     return true;
 }
 
 // Editor: clean
-void return_getPath::Editor::clean()
+void return_get_all_paths::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool return_getPath::Editor::read(yarp::os::ConnectionReader& connection)
+bool return_get_all_paths::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -257,11 +267,11 @@ bool return_getPath::Editor::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
             }
-            if (field == "path") {
+            if (field == "paths") {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString("yarp::dev::Nav2D::Map2DPath path")) {
+                if (!writer.writeString("std::vector<yarp::dev::Nav2D::Map2DPath> paths")) {
                     return false;
                 }
             }
@@ -271,7 +281,7 @@ bool return_getPath::Editor::read(yarp::os::ConnectionReader& connection)
         }
         writer.writeString("*** Available fields:");
         writer.writeString("retval");
-        writer.writeString("path");
+        writer.writeString("paths");
         return true;
     }
     bool nested = true;
@@ -304,12 +314,12 @@ bool return_getPath::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             did_set_retval();
-        } else if (key == "path") {
-            will_set_path();
-            if (!obj->nested_read_path(reader)) {
+        } else if (key == "paths") {
+            will_set_paths();
+            if (!obj->nested_read_paths(reader)) {
                 return false;
             }
-            did_set_path();
+            did_set_paths();
         } else {
             // would be useful to have a fallback here
         }
@@ -325,7 +335,7 @@ bool return_getPath::Editor::read(yarp::os::ConnectionReader& connection)
 }
 
 // Editor: write
-bool return_getPath::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_all_paths::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -351,17 +361,17 @@ bool return_getPath::Editor::write(yarp::os::ConnectionWriter& connection) const
             return false;
         }
     }
-    if (is_dirty_path) {
+    if (is_dirty_paths) {
         if (!writer.writeListHeader(3)) {
             return false;
         }
         if (!writer.writeString("set")) {
             return false;
         }
-        if (!writer.writeString("path")) {
+        if (!writer.writeString("paths")) {
             return false;
         }
-        if (!obj->nested_write_path(writer)) {
+        if (!obj->nested_write_paths(writer)) {
             return false;
         }
     }
@@ -369,7 +379,7 @@ bool return_getPath::Editor::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Editor: send if possible
-void return_getPath::Editor::communicate()
+void return_get_all_paths::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -381,13 +391,13 @@ void return_getPath::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void return_getPath::Editor::mark_dirty()
+void return_get_all_paths::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
 // Editor: retval mark_dirty
-void return_getPath::Editor::mark_dirty_retval()
+void return_get_all_paths::Editor::mark_dirty_retval()
 {
     if (is_dirty_retval) {
         return;
@@ -397,28 +407,28 @@ void return_getPath::Editor::mark_dirty_retval()
     mark_dirty();
 }
 
-// Editor: path mark_dirty
-void return_getPath::Editor::mark_dirty_path()
+// Editor: paths mark_dirty
+void return_get_all_paths::Editor::mark_dirty_paths()
 {
-    if (is_dirty_path) {
+    if (is_dirty_paths) {
         return;
     }
     dirty_count++;
-    is_dirty_path = true;
+    is_dirty_paths = true;
     mark_dirty();
 }
 
 // Editor: dirty_flags
-void return_getPath::Editor::dirty_flags(bool flag)
+void return_get_all_paths::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
     is_dirty_retval = flag;
-    is_dirty_path = flag;
+    is_dirty_paths = flag;
     dirty_count = flag ? 2 : 0;
 }
 
 // read retval field
-bool return_getPath::read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_all_paths::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -427,7 +437,7 @@ bool return_getPath::read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write retval field
-bool return_getPath::write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_all_paths::write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -436,7 +446,7 @@ bool return_getPath::write_retval(const yarp::os::idl::WireWriter& writer) const
 }
 
 // read (nested) retval field
-bool return_getPath::nested_read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_all_paths::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -445,7 +455,7 @@ bool return_getPath::nested_read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) retval field
-bool return_getPath::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_all_paths::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -453,39 +463,71 @@ bool return_getPath::nested_write_retval(const yarp::os::idl::WireWriter& writer
     return true;
 }
 
-// read path field
-bool return_getPath::read_path(yarp::os::idl::WireReader& reader)
+// read paths field
+bool return_get_all_paths::read_paths(yarp::os::idl::WireReader& reader)
 {
-    if (!reader.read(path)) {
-        reader.fail();
+    paths.clear();
+    uint32_t _size72;
+    yarp::os::idl::WireState _etype75;
+    reader.readListBegin(_etype75, _size72);
+    paths.resize(_size72);
+    for (size_t _i76 = 0; _i76 < _size72; ++_i76) {
+        if (!reader.readNested(paths[_i76])) {
+            reader.fail();
+            return false;
+        }
+    }
+    reader.readListEnd();
+    return true;
+}
+
+// write paths field
+bool return_get_all_paths::write_paths(const yarp::os::idl::WireWriter& writer) const
+{
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(paths.size()))) {
+        return false;
+    }
+    for (const auto& _item77 : paths) {
+        if (!writer.writeNested(_item77)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
         return false;
     }
     return true;
 }
 
-// write path field
-bool return_getPath::write_path(const yarp::os::idl::WireWriter& writer) const
+// read (nested) paths field
+bool return_get_all_paths::nested_read_paths(yarp::os::idl::WireReader& reader)
 {
-    if (!writer.write(path)) {
-        return false;
+    paths.clear();
+    uint32_t _size78;
+    yarp::os::idl::WireState _etype81;
+    reader.readListBegin(_etype81, _size78);
+    paths.resize(_size78);
+    for (size_t _i82 = 0; _i82 < _size78; ++_i82) {
+        if (!reader.readNested(paths[_i82])) {
+            reader.fail();
+            return false;
+        }
     }
+    reader.readListEnd();
     return true;
 }
 
-// read (nested) path field
-bool return_getPath::nested_read_path(yarp::os::idl::WireReader& reader)
+// write (nested) paths field
+bool return_get_all_paths::nested_write_paths(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!reader.readNested(path)) {
-        reader.fail();
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(paths.size()))) {
         return false;
     }
-    return true;
-}
-
-// write (nested) path field
-bool return_getPath::nested_write_path(const yarp::os::idl::WireWriter& writer) const
-{
-    if (!writer.writeNested(path)) {
+    for (const auto& _item83 : paths) {
+        if (!writer.writeNested(_item83)) {
+            return false;
+        }
+    }
+    if (!writer.writeListEnd()) {
         return false;
     }
     return true;

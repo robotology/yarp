@@ -8,39 +8,39 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getLocationsList.h>
+#include <return_get_paths_list.h>
 
 // Default constructor
-return_getLocationsList::return_getLocationsList() :
+return_get_paths_list::return_get_paths_list() :
         WirePortable(),
         retval(false),
-        locations()
+        paths()
 {
 }
 
 // Constructor with field values
-return_getLocationsList::return_getLocationsList(const bool retval,
-                                                 const std::vector<std::string>& locations) :
+return_get_paths_list::return_get_paths_list(const bool retval,
+                                             const std::vector<std::string>& paths) :
         WirePortable(),
         retval(retval),
-        locations(locations)
+        paths(paths)
 {
 }
 
 // Read structure on a Wire
-bool return_getLocationsList::read(yarp::os::idl::WireReader& reader)
+bool return_get_paths_list::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_locations(reader)) {
+    if (!read_paths(reader)) {
         return false;
     }
     return !reader.isError();
 }
 
 // Read structure on a Connection
-bool return_getLocationsList::read(yarp::os::ConnectionReader& connection)
+bool return_get_paths_list::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -50,19 +50,19 @@ bool return_getLocationsList::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getLocationsList::write(const yarp::os::idl::WireWriter& writer) const
+bool return_get_paths_list::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_locations(writer)) {
+    if (!write_paths(writer)) {
         return false;
     }
     return !writer.isError();
 }
 
 // Write structure on a Connection
-bool return_getLocationsList::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_paths_list::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -72,7 +72,7 @@ bool return_getLocationsList::write(yarp::os::ConnectionWriter& connection) cons
 }
 
 // Convert to a printable string
-std::string return_getLocationsList::toString() const
+std::string return_get_paths_list::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -80,17 +80,17 @@ std::string return_getLocationsList::toString() const
 }
 
 // Editor: default constructor
-return_getLocationsList::Editor::Editor()
+return_get_paths_list::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new return_getLocationsList;
+    obj = new return_get_paths_list;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-return_getLocationsList::Editor::Editor(return_getLocationsList& obj)
+return_get_paths_list::Editor::Editor(return_get_paths_list& obj)
 {
     group = 0;
     obj_owned = false;
@@ -99,7 +99,7 @@ return_getLocationsList::Editor::Editor(return_getLocationsList& obj)
 }
 
 // Editor: destructor
-return_getLocationsList::Editor::~Editor()
+return_get_paths_list::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -107,7 +107,7 @@ return_getLocationsList::Editor::~Editor()
 }
 
 // Editor: edit
-bool return_getLocationsList::Editor::edit(return_getLocationsList& obj, bool dirty)
+bool return_get_paths_list::Editor::edit(return_get_paths_list& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -119,25 +119,25 @@ bool return_getLocationsList::Editor::edit(return_getLocationsList& obj, bool di
 }
 
 // Editor: validity check
-bool return_getLocationsList::Editor::isValid() const
+bool return_get_paths_list::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-return_getLocationsList& return_getLocationsList::Editor::state()
+return_get_paths_list& return_get_paths_list::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void return_getLocationsList::Editor::start_editing()
+void return_get_paths_list::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void return_getLocationsList::Editor::stop_editing()
+void return_get_paths_list::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
@@ -145,7 +145,7 @@ void return_getLocationsList::Editor::stop_editing()
     }
 }
 // Editor: retval setter
-void return_getLocationsList::Editor::set_retval(const bool retval)
+void return_get_paths_list::Editor::set_retval(const bool retval)
 {
     will_set_retval();
     obj->retval = retval;
@@ -155,69 +155,69 @@ void return_getLocationsList::Editor::set_retval(const bool retval)
 }
 
 // Editor: retval getter
-bool return_getLocationsList::Editor::get_retval() const
+bool return_get_paths_list::Editor::get_retval() const
 {
     return obj->retval;
 }
 
 // Editor: retval will_set
-bool return_getLocationsList::Editor::will_set_retval()
+bool return_get_paths_list::Editor::will_set_retval()
 {
     return true;
 }
 
 // Editor: retval did_set
-bool return_getLocationsList::Editor::did_set_retval()
+bool return_get_paths_list::Editor::did_set_retval()
 {
     return true;
 }
 
-// Editor: locations setter
-void return_getLocationsList::Editor::set_locations(const std::vector<std::string>& locations)
+// Editor: paths setter
+void return_get_paths_list::Editor::set_paths(const std::vector<std::string>& paths)
 {
-    will_set_locations();
-    obj->locations = locations;
-    mark_dirty_locations();
+    will_set_paths();
+    obj->paths = paths;
+    mark_dirty_paths();
     communicate();
-    did_set_locations();
+    did_set_paths();
 }
 
-// Editor: locations setter (list)
-void return_getLocationsList::Editor::set_locations(size_t index, const std::string& elem)
+// Editor: paths setter (list)
+void return_get_paths_list::Editor::set_paths(size_t index, const std::string& elem)
 {
-    will_set_locations();
-    obj->locations[index] = elem;
-    mark_dirty_locations();
+    will_set_paths();
+    obj->paths[index] = elem;
+    mark_dirty_paths();
     communicate();
-    did_set_locations();
+    did_set_paths();
 }
 
-// Editor: locations getter
-const std::vector<std::string>& return_getLocationsList::Editor::get_locations() const
+// Editor: paths getter
+const std::vector<std::string>& return_get_paths_list::Editor::get_paths() const
 {
-    return obj->locations;
+    return obj->paths;
 }
 
-// Editor: locations will_set
-bool return_getLocationsList::Editor::will_set_locations()
+// Editor: paths will_set
+bool return_get_paths_list::Editor::will_set_paths()
 {
     return true;
 }
 
-// Editor: locations did_set
-bool return_getLocationsList::Editor::did_set_locations()
+// Editor: paths did_set
+bool return_get_paths_list::Editor::did_set_paths()
 {
     return true;
 }
 
 // Editor: clean
-void return_getLocationsList::Editor::clean()
+void return_get_paths_list::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool return_getLocationsList::Editor::read(yarp::os::ConnectionReader& connection)
+bool return_get_paths_list::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -267,11 +267,11 @@ bool return_getLocationsList::Editor::read(yarp::os::ConnectionReader& connectio
                     return false;
                 }
             }
-            if (field == "locations") {
+            if (field == "paths") {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString("std::vector<std::string> locations")) {
+                if (!writer.writeString("std::vector<std::string> paths")) {
                     return false;
                 }
             }
@@ -281,7 +281,7 @@ bool return_getLocationsList::Editor::read(yarp::os::ConnectionReader& connectio
         }
         writer.writeString("*** Available fields:");
         writer.writeString("retval");
-        writer.writeString("locations");
+        writer.writeString("paths");
         return true;
     }
     bool nested = true;
@@ -314,12 +314,12 @@ bool return_getLocationsList::Editor::read(yarp::os::ConnectionReader& connectio
                 return false;
             }
             did_set_retval();
-        } else if (key == "locations") {
-            will_set_locations();
-            if (!obj->nested_read_locations(reader)) {
+        } else if (key == "paths") {
+            will_set_paths();
+            if (!obj->nested_read_paths(reader)) {
                 return false;
             }
-            did_set_locations();
+            did_set_paths();
         } else {
             // would be useful to have a fallback here
         }
@@ -335,7 +335,7 @@ bool return_getLocationsList::Editor::read(yarp::os::ConnectionReader& connectio
 }
 
 // Editor: write
-bool return_getLocationsList::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_paths_list::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -361,17 +361,17 @@ bool return_getLocationsList::Editor::write(yarp::os::ConnectionWriter& connecti
             return false;
         }
     }
-    if (is_dirty_locations) {
+    if (is_dirty_paths) {
         if (!writer.writeListHeader(3)) {
             return false;
         }
         if (!writer.writeString("set")) {
             return false;
         }
-        if (!writer.writeString("locations")) {
+        if (!writer.writeString("paths")) {
             return false;
         }
-        if (!obj->nested_write_locations(writer)) {
+        if (!obj->nested_write_paths(writer)) {
             return false;
         }
     }
@@ -379,7 +379,7 @@ bool return_getLocationsList::Editor::write(yarp::os::ConnectionWriter& connecti
 }
 
 // Editor: send if possible
-void return_getLocationsList::Editor::communicate()
+void return_get_paths_list::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -391,13 +391,13 @@ void return_getLocationsList::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void return_getLocationsList::Editor::mark_dirty()
+void return_get_paths_list::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
 // Editor: retval mark_dirty
-void return_getLocationsList::Editor::mark_dirty_retval()
+void return_get_paths_list::Editor::mark_dirty_retval()
 {
     if (is_dirty_retval) {
         return;
@@ -407,28 +407,28 @@ void return_getLocationsList::Editor::mark_dirty_retval()
     mark_dirty();
 }
 
-// Editor: locations mark_dirty
-void return_getLocationsList::Editor::mark_dirty_locations()
+// Editor: paths mark_dirty
+void return_get_paths_list::Editor::mark_dirty_paths()
 {
-    if (is_dirty_locations) {
+    if (is_dirty_paths) {
         return;
     }
     dirty_count++;
-    is_dirty_locations = true;
+    is_dirty_paths = true;
     mark_dirty();
 }
 
 // Editor: dirty_flags
-void return_getLocationsList::Editor::dirty_flags(bool flag)
+void return_get_paths_list::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
     is_dirty_retval = flag;
-    is_dirty_locations = flag;
+    is_dirty_paths = flag;
     dirty_count = flag ? 2 : 0;
 }
 
 // read retval field
-bool return_getLocationsList::read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_paths_list::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -437,7 +437,7 @@ bool return_getLocationsList::read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write retval field
-bool return_getLocationsList::write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_paths_list::write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -446,7 +446,7 @@ bool return_getLocationsList::write_retval(const yarp::os::idl::WireWriter& writ
 }
 
 // read (nested) retval field
-bool return_getLocationsList::nested_read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_paths_list::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -455,7 +455,7 @@ bool return_getLocationsList::nested_read_retval(yarp::os::idl::WireReader& read
 }
 
 // write (nested) retval field
-bool return_getLocationsList::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_paths_list::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -463,16 +463,16 @@ bool return_getLocationsList::nested_write_retval(const yarp::os::idl::WireWrite
     return true;
 }
 
-// read locations field
-bool return_getLocationsList::read_locations(yarp::os::idl::WireReader& reader)
+// read paths field
+bool return_get_paths_list::read_paths(yarp::os::idl::WireReader& reader)
 {
-    locations.clear();
-    uint32_t _size12;
-    yarp::os::idl::WireState _etype15;
-    reader.readListBegin(_etype15, _size12);
-    locations.resize(_size12);
-    for (size_t _i16 = 0; _i16 < _size12; ++_i16) {
-        if (!reader.readString(locations[_i16])) {
+    paths.clear();
+    uint32_t _size36;
+    yarp::os::idl::WireState _etype39;
+    reader.readListBegin(_etype39, _size36);
+    paths.resize(_size36);
+    for (size_t _i40 = 0; _i40 < _size36; ++_i40) {
+        if (!reader.readString(paths[_i40])) {
             reader.fail();
             return false;
         }
@@ -481,14 +481,14 @@ bool return_getLocationsList::read_locations(yarp::os::idl::WireReader& reader)
     return true;
 }
 
-// write locations field
-bool return_getLocationsList::write_locations(const yarp::os::idl::WireWriter& writer) const
+// write paths field
+bool return_get_paths_list::write_paths(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(locations.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(paths.size()))) {
         return false;
     }
-    for (const auto& _item17 : locations) {
-        if (!writer.writeString(_item17)) {
+    for (const auto& _item41 : paths) {
+        if (!writer.writeString(_item41)) {
             return false;
         }
     }
@@ -498,16 +498,16 @@ bool return_getLocationsList::write_locations(const yarp::os::idl::WireWriter& w
     return true;
 }
 
-// read (nested) locations field
-bool return_getLocationsList::nested_read_locations(yarp::os::idl::WireReader& reader)
+// read (nested) paths field
+bool return_get_paths_list::nested_read_paths(yarp::os::idl::WireReader& reader)
 {
-    locations.clear();
-    uint32_t _size18;
-    yarp::os::idl::WireState _etype21;
-    reader.readListBegin(_etype21, _size18);
-    locations.resize(_size18);
-    for (size_t _i22 = 0; _i22 < _size18; ++_i22) {
-        if (!reader.readString(locations[_i22])) {
+    paths.clear();
+    uint32_t _size42;
+    yarp::os::idl::WireState _etype45;
+    reader.readListBegin(_etype45, _size42);
+    paths.resize(_size42);
+    for (size_t _i46 = 0; _i46 < _size42; ++_i46) {
+        if (!reader.readString(paths[_i46])) {
             reader.fail();
             return false;
         }
@@ -516,14 +516,14 @@ bool return_getLocationsList::nested_read_locations(yarp::os::idl::WireReader& r
     return true;
 }
 
-// write (nested) locations field
-bool return_getLocationsList::nested_write_locations(const yarp::os::idl::WireWriter& writer) const
+// write (nested) paths field
+bool return_get_paths_list::nested_write_paths(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(locations.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(paths.size()))) {
         return false;
     }
-    for (const auto& _item23 : locations) {
-        if (!writer.writeString(_item23)) {
+    for (const auto& _item47 : paths) {
+        if (!writer.writeString(_item47)) {
             return false;
         }
     }

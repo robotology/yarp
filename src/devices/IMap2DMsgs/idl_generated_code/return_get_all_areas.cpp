@@ -8,39 +8,39 @@
 // This is an automatically generated file.
 // It could get re-generated if the ALLOW_IDL_GENERATION flag is on.
 
-#include <return_getMapNames.h>
+#include <return_get_all_areas.h>
 
 // Default constructor
-return_getMapNames::return_getMapNames() :
+return_get_all_areas::return_get_all_areas() :
         WirePortable(),
         retval(false),
-        map_names()
+        areas()
 {
 }
 
 // Constructor with field values
-return_getMapNames::return_getMapNames(const bool retval,
-                                       const std::vector<std::string>& map_names) :
+return_get_all_areas::return_get_all_areas(const bool retval,
+                                           const std::vector<yarp::dev::Nav2D::Map2DArea>& areas) :
         WirePortable(),
         retval(retval),
-        map_names(map_names)
+        areas(areas)
 {
 }
 
 // Read structure on a Wire
-bool return_getMapNames::read(yarp::os::idl::WireReader& reader)
+bool return_get_all_areas::read(yarp::os::idl::WireReader& reader)
 {
     if (!read_retval(reader)) {
         return false;
     }
-    if (!read_map_names(reader)) {
+    if (!read_areas(reader)) {
         return false;
     }
     return !reader.isError();
 }
 
 // Read structure on a Connection
-bool return_getMapNames::read(yarp::os::ConnectionReader& connection)
+bool return_get_all_areas::read(yarp::os::ConnectionReader& connection)
 {
     yarp::os::idl::WireReader reader(connection);
     if (!reader.readListHeader(2)) {
@@ -50,19 +50,19 @@ bool return_getMapNames::read(yarp::os::ConnectionReader& connection)
 }
 
 // Write structure on a Wire
-bool return_getMapNames::write(const yarp::os::idl::WireWriter& writer) const
+bool return_get_all_areas::write(const yarp::os::idl::WireWriter& writer) const
 {
     if (!write_retval(writer)) {
         return false;
     }
-    if (!write_map_names(writer)) {
+    if (!write_areas(writer)) {
         return false;
     }
     return !writer.isError();
 }
 
 // Write structure on a Connection
-bool return_getMapNames::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_all_areas::write(yarp::os::ConnectionWriter& connection) const
 {
     yarp::os::idl::WireWriter writer(connection);
     if (!writer.writeListHeader(2)) {
@@ -72,7 +72,7 @@ bool return_getMapNames::write(yarp::os::ConnectionWriter& connection) const
 }
 
 // Convert to a printable string
-std::string return_getMapNames::toString() const
+std::string return_get_all_areas::toString() const
 {
     yarp::os::Bottle b;
     b.read(*this);
@@ -80,17 +80,17 @@ std::string return_getMapNames::toString() const
 }
 
 // Editor: default constructor
-return_getMapNames::Editor::Editor()
+return_get_all_areas::Editor::Editor()
 {
     group = 0;
     obj_owned = true;
-    obj = new return_getMapNames;
+    obj = new return_get_all_areas;
     dirty_flags(false);
     yarp().setOwner(*this);
 }
 
 // Editor: constructor with base class
-return_getMapNames::Editor::Editor(return_getMapNames& obj)
+return_get_all_areas::Editor::Editor(return_get_all_areas& obj)
 {
     group = 0;
     obj_owned = false;
@@ -99,7 +99,7 @@ return_getMapNames::Editor::Editor(return_getMapNames& obj)
 }
 
 // Editor: destructor
-return_getMapNames::Editor::~Editor()
+return_get_all_areas::Editor::~Editor()
 {
     if (obj_owned) {
         delete obj;
@@ -107,7 +107,7 @@ return_getMapNames::Editor::~Editor()
 }
 
 // Editor: edit
-bool return_getMapNames::Editor::edit(return_getMapNames& obj, bool dirty)
+bool return_get_all_areas::Editor::edit(return_get_all_areas& obj, bool dirty)
 {
     if (obj_owned) {
         delete this->obj;
@@ -119,25 +119,25 @@ bool return_getMapNames::Editor::edit(return_getMapNames& obj, bool dirty)
 }
 
 // Editor: validity check
-bool return_getMapNames::Editor::isValid() const
+bool return_get_all_areas::Editor::isValid() const
 {
     return obj != nullptr;
 }
 
 // Editor: state
-return_getMapNames& return_getMapNames::Editor::state()
+return_get_all_areas& return_get_all_areas::Editor::state()
 {
     return *obj;
 }
 
 // Editor: grouping begin
-void return_getMapNames::Editor::start_editing()
+void return_get_all_areas::Editor::start_editing()
 {
     group++;
 }
 
 // Editor: grouping end
-void return_getMapNames::Editor::stop_editing()
+void return_get_all_areas::Editor::stop_editing()
 {
     group--;
     if (group == 0 && is_dirty) {
@@ -145,7 +145,7 @@ void return_getMapNames::Editor::stop_editing()
     }
 }
 // Editor: retval setter
-void return_getMapNames::Editor::set_retval(const bool retval)
+void return_get_all_areas::Editor::set_retval(const bool retval)
 {
     will_set_retval();
     obj->retval = retval;
@@ -155,69 +155,69 @@ void return_getMapNames::Editor::set_retval(const bool retval)
 }
 
 // Editor: retval getter
-bool return_getMapNames::Editor::get_retval() const
+bool return_get_all_areas::Editor::get_retval() const
 {
     return obj->retval;
 }
 
 // Editor: retval will_set
-bool return_getMapNames::Editor::will_set_retval()
+bool return_get_all_areas::Editor::will_set_retval()
 {
     return true;
 }
 
 // Editor: retval did_set
-bool return_getMapNames::Editor::did_set_retval()
+bool return_get_all_areas::Editor::did_set_retval()
 {
     return true;
 }
 
-// Editor: map_names setter
-void return_getMapNames::Editor::set_map_names(const std::vector<std::string>& map_names)
+// Editor: areas setter
+void return_get_all_areas::Editor::set_areas(const std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
 {
-    will_set_map_names();
-    obj->map_names = map_names;
-    mark_dirty_map_names();
+    will_set_areas();
+    obj->areas = areas;
+    mark_dirty_areas();
     communicate();
-    did_set_map_names();
+    did_set_areas();
 }
 
-// Editor: map_names setter (list)
-void return_getMapNames::Editor::set_map_names(size_t index, const std::string& elem)
+// Editor: areas setter (list)
+void return_get_all_areas::Editor::set_areas(size_t index, const yarp::dev::Nav2D::Map2DArea& elem)
 {
-    will_set_map_names();
-    obj->map_names[index] = elem;
-    mark_dirty_map_names();
+    will_set_areas();
+    obj->areas[index] = elem;
+    mark_dirty_areas();
     communicate();
-    did_set_map_names();
+    did_set_areas();
 }
 
-// Editor: map_names getter
-const std::vector<std::string>& return_getMapNames::Editor::get_map_names() const
+// Editor: areas getter
+const std::vector<yarp::dev::Nav2D::Map2DArea>& return_get_all_areas::Editor::get_areas() const
 {
-    return obj->map_names;
+    return obj->areas;
 }
 
-// Editor: map_names will_set
-bool return_getMapNames::Editor::will_set_map_names()
+// Editor: areas will_set
+bool return_get_all_areas::Editor::will_set_areas()
 {
     return true;
 }
 
-// Editor: map_names did_set
-bool return_getMapNames::Editor::did_set_map_names()
+// Editor: areas did_set
+bool return_get_all_areas::Editor::did_set_areas()
 {
     return true;
 }
 
 // Editor: clean
-void return_getMapNames::Editor::clean()
+void return_get_all_areas::Editor::clean()
 {
     dirty_flags(false);
 }
 
 // Editor: read
-bool return_getMapNames::Editor::read(yarp::os::ConnectionReader& connection)
+bool return_get_all_areas::Editor::read(yarp::os::ConnectionReader& connection)
 {
     if (!isValid()) {
         return false;
@@ -267,11 +267,11 @@ bool return_getMapNames::Editor::read(yarp::os::ConnectionReader& connection)
                     return false;
                 }
             }
-            if (field == "map_names") {
+            if (field == "areas") {
                 if (!writer.writeListHeader(1)) {
                     return false;
                 }
-                if (!writer.writeString("std::vector<std::string> map_names")) {
+                if (!writer.writeString("std::vector<yarp::dev::Nav2D::Map2DArea> areas")) {
                     return false;
                 }
             }
@@ -281,7 +281,7 @@ bool return_getMapNames::Editor::read(yarp::os::ConnectionReader& connection)
         }
         writer.writeString("*** Available fields:");
         writer.writeString("retval");
-        writer.writeString("map_names");
+        writer.writeString("areas");
         return true;
     }
     bool nested = true;
@@ -314,12 +314,12 @@ bool return_getMapNames::Editor::read(yarp::os::ConnectionReader& connection)
                 return false;
             }
             did_set_retval();
-        } else if (key == "map_names") {
-            will_set_map_names();
-            if (!obj->nested_read_map_names(reader)) {
+        } else if (key == "areas") {
+            will_set_areas();
+            if (!obj->nested_read_areas(reader)) {
                 return false;
             }
-            did_set_map_names();
+            did_set_areas();
         } else {
             // would be useful to have a fallback here
         }
@@ -335,7 +335,7 @@ bool return_getMapNames::Editor::read(yarp::os::ConnectionReader& connection)
 }
 
 // Editor: write
-bool return_getMapNames::Editor::write(yarp::os::ConnectionWriter& connection) const
+bool return_get_all_areas::Editor::write(yarp::os::ConnectionWriter& connection) const
 {
     if (!isValid()) {
         return false;
@@ -361,17 +361,17 @@ bool return_getMapNames::Editor::write(yarp::os::ConnectionWriter& connection) c
             return false;
         }
     }
-    if (is_dirty_map_names) {
+    if (is_dirty_areas) {
         if (!writer.writeListHeader(3)) {
             return false;
         }
         if (!writer.writeString("set")) {
             return false;
         }
-        if (!writer.writeString("map_names")) {
+        if (!writer.writeString("areas")) {
             return false;
         }
-        if (!obj->nested_write_map_names(writer)) {
+        if (!obj->nested_write_areas(writer)) {
             return false;
         }
     }
@@ -379,7 +379,7 @@ bool return_getMapNames::Editor::write(yarp::os::ConnectionWriter& connection) c
 }
 
 // Editor: send if possible
-void return_getMapNames::Editor::communicate()
+void return_get_all_areas::Editor::communicate()
 {
     if (group != 0) {
         return;
@@ -391,13 +391,13 @@ void return_getMapNames::Editor::communicate()
 }
 
 // Editor: mark dirty overall
-void return_getMapNames::Editor::mark_dirty()
+void return_get_all_areas::Editor::mark_dirty()
 {
     is_dirty = true;
 }
 
 // Editor: retval mark_dirty
-void return_getMapNames::Editor::mark_dirty_retval()
+void return_get_all_areas::Editor::mark_dirty_retval()
 {
     if (is_dirty_retval) {
         return;
@@ -407,28 +407,28 @@ void return_getMapNames::Editor::mark_dirty_retval()
     mark_dirty();
 }
 
-// Editor: map_names mark_dirty
-void return_getMapNames::Editor::mark_dirty_map_names()
+// Editor: areas mark_dirty
+void return_get_all_areas::Editor::mark_dirty_areas()
 {
-    if (is_dirty_map_names) {
+    if (is_dirty_areas) {
         return;
     }
     dirty_count++;
-    is_dirty_map_names = true;
+    is_dirty_areas = true;
     mark_dirty();
 }
 
 // Editor: dirty_flags
-void return_getMapNames::Editor::dirty_flags(bool flag)
+void return_get_all_areas::Editor::dirty_flags(bool flag)
 {
     is_dirty = flag;
     is_dirty_retval = flag;
-    is_dirty_map_names = flag;
+    is_dirty_areas = flag;
     dirty_count = flag ? 2 : 0;
 }
 
 // read retval field
-bool return_getMapNames::read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_all_areas::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -437,7 +437,7 @@ bool return_getMapNames::read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write retval field
-bool return_getMapNames::write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_all_areas::write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -446,7 +446,7 @@ bool return_getMapNames::write_retval(const yarp::os::idl::WireWriter& writer) c
 }
 
 // read (nested) retval field
-bool return_getMapNames::nested_read_retval(yarp::os::idl::WireReader& reader)
+bool return_get_all_areas::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
         retval = 0;
@@ -455,7 +455,7 @@ bool return_getMapNames::nested_read_retval(yarp::os::idl::WireReader& reader)
 }
 
 // write (nested) retval field
-bool return_getMapNames::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
+bool return_get_all_areas::nested_write_retval(const yarp::os::idl::WireWriter& writer) const
 {
     if (!writer.writeBool(retval)) {
         return false;
@@ -463,16 +463,16 @@ bool return_getMapNames::nested_write_retval(const yarp::os::idl::WireWriter& wr
     return true;
 }
 
-// read map_names field
-bool return_getMapNames::read_map_names(yarp::os::idl::WireReader& reader)
+// read areas field
+bool return_get_all_areas::read_areas(yarp::os::idl::WireReader& reader)
 {
-    map_names.clear();
-    uint32_t _size0;
-    yarp::os::idl::WireState _etype3;
-    reader.readListBegin(_etype3, _size0);
-    map_names.resize(_size0);
-    for (size_t _i4 = 0; _i4 < _size0; ++_i4) {
-        if (!reader.readString(map_names[_i4])) {
+    areas.clear();
+    uint32_t _size60;
+    yarp::os::idl::WireState _etype63;
+    reader.readListBegin(_etype63, _size60);
+    areas.resize(_size60);
+    for (size_t _i64 = 0; _i64 < _size60; ++_i64) {
+        if (!reader.readNested(areas[_i64])) {
             reader.fail();
             return false;
         }
@@ -481,14 +481,14 @@ bool return_getMapNames::read_map_names(yarp::os::idl::WireReader& reader)
     return true;
 }
 
-// write map_names field
-bool return_getMapNames::write_map_names(const yarp::os::idl::WireWriter& writer) const
+// write areas field
+bool return_get_all_areas::write_areas(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(map_names.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(areas.size()))) {
         return false;
     }
-    for (const auto& _item5 : map_names) {
-        if (!writer.writeString(_item5)) {
+    for (const auto& _item65 : areas) {
+        if (!writer.writeNested(_item65)) {
             return false;
         }
     }
@@ -498,16 +498,16 @@ bool return_getMapNames::write_map_names(const yarp::os::idl::WireWriter& writer
     return true;
 }
 
-// read (nested) map_names field
-bool return_getMapNames::nested_read_map_names(yarp::os::idl::WireReader& reader)
+// read (nested) areas field
+bool return_get_all_areas::nested_read_areas(yarp::os::idl::WireReader& reader)
 {
-    map_names.clear();
-    uint32_t _size6;
-    yarp::os::idl::WireState _etype9;
-    reader.readListBegin(_etype9, _size6);
-    map_names.resize(_size6);
-    for (size_t _i10 = 0; _i10 < _size6; ++_i10) {
-        if (!reader.readString(map_names[_i10])) {
+    areas.clear();
+    uint32_t _size66;
+    yarp::os::idl::WireState _etype69;
+    reader.readListBegin(_etype69, _size66);
+    areas.resize(_size66);
+    for (size_t _i70 = 0; _i70 < _size66; ++_i70) {
+        if (!reader.readNested(areas[_i70])) {
             reader.fail();
             return false;
         }
@@ -516,14 +516,14 @@ bool return_getMapNames::nested_read_map_names(yarp::os::idl::WireReader& reader
     return true;
 }
 
-// write (nested) map_names field
-bool return_getMapNames::nested_write_map_names(const yarp::os::idl::WireWriter& writer) const
+// write (nested) areas field
+bool return_get_all_areas::nested_write_areas(const yarp::os::idl::WireWriter& writer) const
 {
-    if (!writer.writeListBegin(BOTTLE_TAG_STRING, static_cast<uint32_t>(map_names.size()))) {
+    if (!writer.writeListBegin(BOTTLE_TAG_LIST, static_cast<uint32_t>(areas.size()))) {
         return false;
     }
-    for (const auto& _item11 : map_names) {
-        if (!writer.writeString(_item11)) {
+    for (const auto& _item71 : areas) {
+        if (!writer.writeNested(_item71)) {
             return false;
         }
     }

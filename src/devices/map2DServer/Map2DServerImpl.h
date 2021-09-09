@@ -6,13 +6,13 @@
 #ifndef YARP_DEV_MAP2DSERVERIMPL_H
 #define YARP_DEV_MAP2DSERVERIMPL_H
 
-#include "IMap2DMsgsRPC.h"
+#include "IMap2DMsgs.h"
 #include <yarp/dev/IMap2D.h>
 #include <yarp/os/Stamp.h>
 
 class Localization2DServer;
 
-class IMap2DRPCd : public IMap2DMsgsRPC
+class IMap2DRPCd : public IMap2DMsgs
 {
     private:
     yarp::dev::Nav2D::IMap2D* m_iMap = nullptr;
@@ -21,35 +21,35 @@ class IMap2DRPCd : public IMap2DMsgsRPC
     public:
     void setInterface(yarp::dev::Nav2D::IMap2D* _imap) { m_iMap = _imap; }
 
-    bool clearAllMapsRPC() override;
-    bool store_mapRPC(const yarp::dev::Nav2D::MapGrid2D& themap) override;
-    return_getMap getMapRPC(const std::string& map_name) override;
-    return_getMapNames getMapNamesRPC() override;
-    bool remove_mapRPC(const std::string& map_name) override;
-    bool storeLocationRPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc) override;
-    bool storeAreaRPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area) override;
-    bool storePathRPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path) override;
-    return_getLocation getLocationRPC(const std::string& location_name) override;
-    return_getArea getAreaRPC(const std::string& area_name) override;
-    return_getPath getPathRPC(const std::string& path_name) override;
-    return_getLocationsList getLocationsListRPC() override;
-    return_getAreasList getAreasListRPC() override;
-    return_getPathsList getPathsListRPC() override;
-    bool renameLocationRPC(const std::string& original_name, const std::string& new_name) override;
-    bool deleteLocationRPC(const std::string& location_name) override;
-    bool deletePathRPC(const std::string& path_name) override;
-    bool renameAreaRPC(const std::string& original_name, const std::string& new_name) override;
-    bool renamePathRPC(const std::string& original_name, const std::string& new_name) override;
-    bool deleteAreaRPC(const std::string& area_name) override;
-    bool clearAllLocationsRPC() override;
-    bool clearAllAreasRPC() override;
-    bool clearAllPathsRPC() override;
-    bool clearAllMapsTemporaryFlagsRPC() override;
-    bool clearMapTemporaryFlagsRPC(const std::string& map_name) override;
-    bool saveMapsCollectionRPC(const std::string& maps_collection_file) override;
-    bool loadMapsCollectionRPC(const std::string& maps_collection_file) override;
-    bool saveLocationsAndExtrasRPC(const std::string& locations_collection_file) override;
-    bool loadLocationsAndExtrasRPC(const std::string& locations_collection_file) override;
+    bool clear_all_maps_RPC() override;
+    bool store_map_RPC(const yarp::dev::Nav2D::MapGrid2D& themap) override;
+    return_get_map get_map_RPC(const std::string& map_name) override;
+    return_get_map_names get_map_names_RPC() override;
+    bool remove_map_RPC(const std::string& map_name) override;
+    bool store_location_RPC(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc) override;
+    bool store_area_RPC(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area) override;
+    bool store_path_RPC(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path) override;
+    return_get_location get_location_RPC(const std::string& location_name) override;
+    return_get_area get_area_RPC(const std::string& area_name) override;
+    return_get_path get_path_RPC(const std::string& path_name) override;
+    return_get_locations_list get_locations_list_RPC() override;
+    return_get_areas_list get_areas_list_RPC() override;
+    return_get_paths_list get_paths_list_RPC() override;
+    bool rename_location_RPC(const std::string& original_name, const std::string& new_name) override;
+    bool delete_location_RPC(const std::string& location_name) override;
+    bool delete_path_RPC(const std::string& path_name) override;
+    bool rename_area_RPC(const std::string& original_name, const std::string& new_name) override;
+    bool rename_path_RPC(const std::string& original_name, const std::string& new_name) override;
+    bool delete_area_RPC(const std::string& area_name) override;
+    bool clear_all_locations_RPC() override;
+    bool clear_all_areas_RPC() override;
+    bool clear_all_paths_RPC() override;
+    bool clear_all_maps_temporary_flags_RPC() override;
+    bool clear_map_temporary_flags_RPC(const std::string& map_name) override;
+    bool save_maps_collection_RPC(const std::string& maps_collection_file) override;
+    bool load_maps_collection_RPC(const std::string& maps_collection_file) override;
+    bool save_locations_and_extras_RPC(const std::string& locations_collection_file) override;
+    bool load_locations_and_extras_RPC(const std::string& locations_collection_file) override;
 
     std::mutex* getMutex() {return &m_mutex;}
 };
