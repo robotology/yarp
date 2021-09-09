@@ -53,6 +53,7 @@ class t_yarp_generator : public t_oop_generator
     ofstream_with_content_based_conditional_update f_out_index_;
 
     std::map<std::string, std::string> type_names_;
+    std::map<std::string, int> type_bottlesizes_;
     std::map<std::string, std::string> enum_bases_;
 
 public:
@@ -1752,10 +1753,10 @@ int t_yarp_generator::flat_element_count(t_type* type)
     if (!type->is_struct()) {
         return 1;
     }
-    if (((t_struct*)type)->annotations_.find("yarp.name") != ((t_struct*)type)->annotations_.end()) {
-        return 1;
+    if (type_bottlesizes_.find(type->get_name()) != type_bottlesizes_.end()) {
+        return type_bottlesizes_[type->get_name()];
     }
-    return flat_element_count((t_struct*)type);
+    return flat_element_count(static_cast<t_struct*>(type));
 }
 
 int t_yarp_generator::flat_element_count(t_struct* tstruct)
@@ -2046,6 +2047,11 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
 
     if (annotations.find("yarp.name") != annotations.end()) {
         type_names_[name] = annotations.at("yarp.name");
+        if (annotations.find("yarp.bottlesize") != annotations.end()) {
+            type_bottlesizes_[name] = std::max(1, atoi(annotations.at("yarp.bottlesize").c_str()));
+        } else {
+            type_bottlesizes_[name] = 1;
+        }
         return;
     }
     if (annotations.find("cpp.name") != annotations.end()) {
