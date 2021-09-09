@@ -851,6 +851,35 @@ bool Map2DStorage::getPathsList(std::vector<std::string>& paths)
     return true;
 }
 
+bool Map2DStorage::getAllLocations (std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
+{
+    locations.clear();
+    for (auto& it : m_locations_storage)
+    {
+        locations.push_back(it.second);
+    }
+    return true;
+}
+
+bool Map2DStorage::getAllAreas (std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
+{
+    for (auto& it : m_areas_storage)
+    {
+        areas.push_back(it.second);
+    }
+    return true;
+}
+
+bool Map2DStorage::getAllPaths (std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
+{
+    paths.clear();
+    for (auto& it : m_paths_storage)
+    {
+        paths.push_back(it.second);
+    }
+    return true;
+}
+
 bool Map2DStorage::renameLocation(std::string original_name, std::string new_name)
 {
     std::map<std::string, Map2DLocation>::iterator orig_it;
@@ -1019,4 +1048,75 @@ bool Map2DStorage::read(yarp::os::ConnectionReader& connection)
         yCError(MAP2DSTORAGE) << "Invalid return to sender";
     }
     return true;
+}
+
+bool Map2DStorage::saveMapToDisk(std::string map_name, std::string file_name)
+{
+    auto p = m_maps_storage.find(map_name);
+    if (p == m_maps_storage.end())
+    {
+        yCError(MAP2DSTORAGE) << "saveMapToDisk failed: map " << map_name << " not found";
+        return false;
+    }
+    else
+    {
+        bool b = p->second.saveToFile(file_name);
+        if (b)
+        {
+            yCInfo(MAP2DSTORAGE) << "file" << file_name << " successfully saved";
+            return true;
+        }
+        else
+        {
+            yCError(MAP2DSTORAGE) << "save_map failed: unable to save " << map_name << " to " << file_name;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Map2DStorage::loadMapFromDisk(std::string file_name)
+{
+    MapGrid2D map;
+    bool r = map.loadFromFile(file_name);
+    if (r)
+    {
+        std::string map_name = map.getMapName();
+        auto p = m_maps_storage.find(map_name);
+        if (p == m_maps_storage.end())
+        {
+            m_maps_storage[map_name] = map;
+            yCInfo (MAP2DSTORAGE) << "file" << file_name << "successfully loaded.";
+            return true;
+        }
+        else
+        {
+            yCError(MAP2DSTORAGE) << map_name << " already exists, skipping.";
+            return false;
+        }
+    }
+    else
+    {
+        yCError(MAP2DSTORAGE) <<  "load_map failed. Unable to load " + file_name;
+        return false;
+    }
+    return true;
+}
+
+bool Map2DStorage::enableMapsCompression(bool enable)
+{
+    bool b = true;
+    for (auto it = m_maps_storage.begin(); it != m_maps_storage.end(); it++)
+    {
+        b &= it->second.enable_map_compression_over_network(enable);
+    }
+    if (b)
+    {
+        if (enable) {yCInfo(MAP2DSTORAGE) << "compression mode of all maps enabled";}
+        else        {yCInfo(MAP2DSTORAGE) << "compression mode of all maps disabled";}
+        return true;
+    }
+
+    yCError(MAP2DSTORAGE) << "failed to set compression mode";
+    return false;
 }

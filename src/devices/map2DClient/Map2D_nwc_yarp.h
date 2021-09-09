@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later
  */
 
-#ifndef YARP_DEV_MAP2DCLIENT_H
-#define YARP_DEV_MAP2DCLIENT_H
+#ifndef YARP_DEV_MAP2D_NWC_YARP_H
+#define YARP_DEV_MAP2D_NWC_YARP_H
 
 
 #include <yarp/os/Network.h>
@@ -18,30 +18,32 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
-
+#include "IMap2DMsgs.h"
 
 /**
  * @ingroup dev_impl_network_clients dev_impl_navigation
  *
- * \section Map2DClient
+ * \section Map2D_nwc_yarp
  *
- * \brief `map2DClient`: A device which allows a client application to store/retrieve user maps device in a map server.
+ * \brief `Map2D_nwc_yarp`: A device which allows a client application to store/retrieve user maps device in a map server.
  *
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Map2DClient device.                             |       |
- * | remote         |     -          | string  | -   |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Map2DClient connects to.           |  |
+ * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Map2D_nwc_yarp device.                             |       |
+ * | remote         |     -          | string  | -   |   -           | Yes          | Full port name of the port remotely opened by the Map2D_nws_yarp, to which the Map2D_nwc_yarp connects to.           |  |
  */
 
-class Map2DClient :
+class Map2D_nwc_yarp :
         public yarp::dev::DeviceDriver,
         public yarp::dev::Nav2D::IMap2D
 {
 protected:
-    yarp::os::Port      m_rpcPort_to_Map2DServer;
+    yarp::os::Port      m_rpcPort_to_Map2D_nws;
     std::string         m_local_name;
     std::string         m_map_server;
+    IMap2DMsgs          m_map_RPC;
+    std::mutex          m_mutex;
 
 public:
 
@@ -57,7 +59,7 @@ public:
     bool     get_map_names(std::vector<std::string>& map_names) override;
 
     bool     storeLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation loc) override;
-    bool     storeArea(std::string location_name, yarp::dev::Nav2D::Map2DArea area) override;
+    bool     storeArea(std::string area_name, yarp::dev::Nav2D::Map2DArea area) override;
     bool     storePath(std::string path_name, yarp::dev::Nav2D::Map2DPath path) override;
 
     bool     getLocation(std::string location_name, yarp::dev::Nav2D::Map2DLocation& loc) override;
@@ -91,11 +93,9 @@ public:
     bool     loadMapsCollection(std::string maps_collection_file) override;
     bool     saveLocationsAndExtras(std::string locations_collection_file) override;
     bool     loadLocationsAndExtras(std::string locations_collection_file) override;
-
     bool     saveMapToDisk(std::string map_name, std::string file_name) override;
     bool     loadMapFromDisk(std::string file_name) override;
-
     bool     enableMapsCompression(bool enable) override;
 };
 
-#endif // YARP_DEV_MAP2DCLIENT_H
+#endif // YARP_DEV_MAP2D_NWC_YARP_H

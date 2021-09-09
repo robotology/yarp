@@ -119,25 +119,46 @@ public:
     virtual bool getPath(std::string path_name, yarp::dev::Nav2D::Map2DPath& path) = 0;
 
     /**
+    * Get a list of the names of all stored locations
+    * @param the returned list of locations names
+    * @return true/false
+    */
+    virtual bool getLocationsList(std::vector<std::string>& locations) = 0;
+
+    /**
+    * Get a list of the names of all stored areas
+    * @param the returned list of areas names
+    * @return true/false
+    */
+    virtual bool getAreasList(std::vector<std::string>& areas) = 0;
+
+    /**
+    * Get a list of the names of all stored paths
+    * @param the returned list of paths names
+    * @return true/false
+    */
+    virtual bool getPathsList(std::vector<std::string>& paths) = 0;
+
+    /**
     * Get a list of all stored locations
     * @param the returned list of locations
     * @return true/false
     */
-    virtual bool getLocationsList(std::vector<std::string>& locations) = 0;
+    virtual bool getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations) = 0;
 
     /**
     * Get a list of all stored areas
     * @param the returned list of areas
     * @return true/false
     */
-    virtual bool getAreasList(std::vector<std::string>& areas) = 0;
+    virtual bool getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas) = 0;
 
     /**
     * Get a list of all stored paths
     * @param the returned list of paths
     * @return true/false
     */
-    virtual bool getPathsList(std::vector<std::string>& paths) = 0;
+    virtual bool getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths) = 0;
 
     /**
     * Searches for a location and renames it
@@ -215,30 +236,58 @@ public:
     virtual bool clearMapTemporaryFlags(std::string map_name) = 0;
 
     /**
-    * Save a collection of maps
+    * Save a map to disk
+    * @param map_name the name of the area
+    * @param file_name file name with full path
     * @return true/false
     */
-    virtual bool saveMapsCollection(std::string maps_collection_file) = 0;
+    virtual bool saveMapToDisk(std::string map_name, std::string file_name) = 0;
 
     /**
-    * Load a collection of maps
+    * Load a map from disk
+    * @param file_name file name with full path
     * @return true/false
     */
-    virtual bool loadMapsCollection(std::string maps_collection_file) = 0;
+    virtual bool loadMapFromDisk(std::string file_name) = 0;
 
     /**
-    * Save a collection of locations/area/paths etc
+    * Save a collection of maps to disk
+    * @param file_name file name with full path
     * @return true/false
     */
-    virtual bool saveLocationsAndExtras(std::string locations_collection_file) = 0;
+    virtual bool saveMapsCollection(std::string file_name) = 0;
 
     /**
-    * Load a collection of locations/areas/paths etc
+    * Load a collection of maps from disk
+    * @param file_name file name with full path
     * @return true/false
     */
-    virtual bool loadLocationsAndExtras(std::string locations_collection_file) = 0;
+    virtual bool loadMapsCollection(std::string file_name) = 0;
+
+    /**
+    * Save a collection of locations/area/paths etc to disk
+    * @param file_name file name with full path
+    * @return true/false
+    */
+    virtual bool saveLocationsAndExtras(std::string file_name) = 0;
+
+    /**
+    * Load a collection of locations/areas/paths etc from disk
+    * @param file_name file name with full path
+    * @return true/false
+    */
+    virtual bool loadLocationsAndExtras(std::string file_name) = 0;
+
+    /**
+    * 99999999999
+    * @param enable
+    * @return true/false
+    */
+    virtual bool enableMapsCompression(bool enable) = 0;
 };
 
+//This section of vocabs is used just by deprecated device Map2DServer and Map2DClient
+//It can be thus safely eliminated as soon as these devices are removed from yarp
 constexpr yarp::conf::vocab32_t VOCAB_IMAP                      = yarp::os::createVocab32('i','m','a','p');
 constexpr yarp::conf::vocab32_t VOCAB_IMAP_SET_MAP              = yarp::os::createVocab32('s','e','t');
 constexpr yarp::conf::vocab32_t VOCAB_IMAP_GET_MAP              = yarp::os::createVocab32('g','e','t');

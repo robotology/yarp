@@ -26,6 +26,10 @@ YARP_LOG_COMPONENT(MAP2DCLIENT, "yarp.device.map2DClient")
 
 bool Map2DClient::open(yarp::os::Searchable &config)
 {
+    yCWarning(MAP2DCLIENT) << "The 'Map2DClient' device is deprecated in favour of 'map2D_nwc_yarp'.";
+    yCWarning(MAP2DCLIENT) << "The old device is no longer supported, and it will be deprecated in YARP 3.6 and removed in YARP 4.";
+    yCWarning(MAP2DCLIENT) << "Please update your scripts.";
+
     m_local_name.clear();
     m_map_server.clear();
 
@@ -731,6 +735,24 @@ bool   Map2DClient::renamePath(std::string original_name, std::string new_name)
     return true;
 }
 
+bool   Map2DClient::getAllLocations(std::vector<yarp::dev::Nav2D::Map2DLocation>& locations)
+{
+    yCError(MAP2DCLIENT) << "getAllLocations() not implemented";
+    return false;
+}
+
+bool   Map2DClient::getAllAreas(std::vector<yarp::dev::Nav2D::Map2DArea>& areas)
+{
+    yCError(MAP2DCLIENT) << "getAllAreas() not implemented";
+    return false;
+}
+
+bool   Map2DClient::getAllPaths(std::vector<yarp::dev::Nav2D::Map2DPath>& paths)
+{
+    yCError(MAP2DCLIENT) << "getAllPaths() not implemented";
+    return false;
+}
+
 bool   Map2DClient::clearAllLocations()
 {
     yarp::os::Bottle b;
@@ -973,4 +995,22 @@ bool Map2DClient::loadLocationsAndExtras(std::string locations_collection)
         return false;
     }
     return true;
+}
+
+bool Map2DClient::saveMapToDisk(std::string map_name, std::string file_name)
+{
+    yCError(MAP2DCLIENT) << "saveMapToDisk() not implemented";
+    return false;
+}
+
+bool Map2DClient::loadMapFromDisk(std::string file_name)
+{
+    yCError(MAP2DCLIENT) << "saveMapToDisk() not implemented";
+    return false;
+}
+
+bool Map2DClient::enableMapsCompression(bool enable)
+{
+    yCError(MAP2DCLIENT) << "enableMapsCompression() not implemented";
+    return false;
 }

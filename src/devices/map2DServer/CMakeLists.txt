@@ -68,7 +68,12 @@ if(NOT SKIP_map2D_nws_yarp)
     PRIVATE
       Map2D_nws_yarp.cpp
       Map2D_nws_yarp.h
+      Map2DServerImpl.cpp
+      Map2DServerImpl.h
   )
+
+  target_sources(yarp_map2D_nws_yarp PRIVATE $<TARGET_OBJECTS:IMap2DMsgs>)
+  target_include_directories(yarp_map2D_nws_yarp PRIVATE $<TARGET_PROPERTY:IMap2DMsgs,INTERFACE_INCLUDE_DIRECTORIES>)
 
   target_link_libraries(yarp_map2D_nws_yarp
     PRIVATE YARP::YARP_os
