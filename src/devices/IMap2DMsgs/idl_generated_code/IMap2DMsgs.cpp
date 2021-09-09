@@ -2229,7 +2229,7 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == "store_map_RPC") {
             yarp::dev::Nav2D::MapGrid2D themap;
-            if (!reader.read(themap)) {
+            if (!reader.readNested(themap)) {
                 reader.fail();
                 return false;
             }
@@ -2305,7 +2305,7 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            if (!reader.read(loc)) {
+            if (!reader.readNested(loc)) {
                 reader.fail();
                 return false;
             }
@@ -2329,7 +2329,7 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            if (!reader.read(area)) {
+            if (!reader.readNested(area)) {
                 reader.fail();
                 return false;
             }
@@ -2353,7 +2353,7 @@ bool IMap2DMsgs::read(yarp::os::ConnectionReader& connection)
                 reader.fail();
                 return false;
             }
-            if (!reader.read(path)) {
+            if (!reader.readNested(path)) {
                 reader.fail();
                 return false;
             }

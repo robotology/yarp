@@ -1059,12 +1059,6 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
         throw "CANNOT GENERATE SERIALIZE CODE FOR void TYPE: " + name;
     }
 
-    // Force nesting for fields annotated as "yarp.nested"
-    auto it = tfield->annotations_.find("yarp.nested");
-    if (it != tfield->annotations_.end() && it->second == "true") {
-        force_nesting = true;
-    }
-
     if (type->is_struct() || type->is_xception()) {
         f_cpp_ << indent_cpp() << "if (!writer.";
         generate_serialize_struct(f_cpp_,
@@ -1292,12 +1286,6 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
 
     if (type->is_void()) {
         throw "CANNOT GENERATE DESERIALIZE CODE FOR void TYPE: " + prefix + tfield->get_name();
-    }
-
-    // Force nesting for fields annotated as "yarp.nested"
-    auto it = tfield->annotations_.find("yarp.nested");
-    if (it != tfield->annotations_.end() && it->second == "true") {
-        force_nested = true;
     }
 
     std::string name = prefix + tfield->get_name() + suffix;
@@ -2331,7 +2319,13 @@ void t_yarp_generator::generate_struct_read_wirereader(t_struct* tstruct, std::o
     {
         for (const auto& member : members) {
             std::string mname = member->get_name();
-            f_cpp_ << indent_cpp() << "if (!read_" << mname << "(reader))" << inline_return_cpp("false");
+            // Force nesting for fields annotated as "yarp.nested"
+            auto it = member->annotations_.find("yarp.nested");
+            if (it != member->annotations_.end() && it->second == "true") {
+                f_cpp_ << indent_cpp() << "if (!nested_read_" << mname << "(reader))" << inline_return_cpp("false");
+            } else {
+                f_cpp_ << indent_cpp() << "if (!read_" << mname << "(reader))" << inline_return_cpp("false");
+            }
         }
         f_cpp_ << indent_cpp() << "return !reader.isError();\n";
     }
@@ -2349,6 +2343,7 @@ void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, 
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
     const auto& name = tstruct->get_name();
+    const auto& members = tstruct->get_members();
 
     f_h_ << indent_h() << "// Read structure on a Connection\n";
     f_h_ << indent_h() << "bool read(yarp::os::ConnectionReader& connection) override;\n";
@@ -2361,7 +2356,16 @@ void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, 
     {
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireReader reader(connection);\n";
         f_cpp_ << indent_cpp() << "if (!reader.readListHeader(" << flat_element_count(tstruct) << "))" << inline_return_cpp("false");
-        f_cpp_ << indent_cpp() << "return read(reader);" << '\n';
+        for (const auto& member : members) {
+            std::string mname = member->get_name();
+            auto it = member->annotations_.find("yarp.nested");
+            if (it != member->annotations_.end() && it->second == "true") {
+                f_cpp_ << indent_cpp() << "if (!nested_read_" << mname << "(reader))" << inline_return_cpp("false");
+            } else {
+                f_cpp_ << indent_cpp() << "if (!read_" << mname << "(reader))" << inline_return_cpp("false");
+            }
+        }
+        f_cpp_ << indent_cpp() << "return !reader.isError();\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
@@ -2390,7 +2394,12 @@ void t_yarp_generator::generate_struct_write_wirewriter(t_struct* tstruct, std::
     {
         for (const auto& member : members) {
             std::string mname = member->get_name();
-            f_cpp_ << indent_cpp() << "if (!write_" << mname << "(writer))" << inline_return_cpp("false");
+            auto it = member->annotations_.find("yarp.nested");
+            if (it != member->annotations_.end() && it->second == "true") {
+                f_cpp_ << indent_cpp() << "if (!nested_write_" << mname << "(writer))" << inline_return_cpp("false");
+            } else {
+                f_cpp_ << indent_cpp() << "if (!write_" << mname << "(writer))" << inline_return_cpp("false");
+            }
         }
         f_cpp_ << indent_cpp() << "return !writer.isError();\n";
     }
@@ -2408,6 +2417,7 @@ void t_yarp_generator::generate_struct_write_connectionwriter(t_struct* tstruct,
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
     const auto& name = tstruct->get_name();
+    const auto& members = tstruct->get_members();
 
     f_h_ << indent_h() << "// Write structure on a Connection\n";
     f_h_ << indent_h() << "bool write(yarp::os::ConnectionWriter& connection) const override;\n";
@@ -2420,7 +2430,16 @@ void t_yarp_generator::generate_struct_write_connectionwriter(t_struct* tstruct,
     {
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(connection);\n";
         f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(tstruct) << "))" << inline_return_cpp("false");
-        f_cpp_ << indent_cpp() << "return write(writer);\n";
+        for (const auto& member : members) {
+            std::string mname = member->get_name();
+            auto it = member->annotations_.find("yarp.nested");
+            if (it != member->annotations_.end() && it->second == "true") {
+                f_cpp_ << indent_cpp() << "if (!nested_write_" << mname << "(writer))" << inline_return_cpp("false");
+            } else {
+                f_cpp_ << indent_cpp() << "if (!write_" << mname << "(writer))" << inline_return_cpp("false");
+            }
+        }
+        f_cpp_ << indent_cpp() << "return !writer.isError();\n";
     }
     indent_down_cpp();
     f_cpp_ << indent_cpp() << "}\n";
@@ -3939,7 +3958,8 @@ void t_yarp_generator::generate_service_read(t_service* tservice, std::ostringst
                         f_cpp_ << indent_cpp() << declare_field(arg) << ";\n";
                     }
                     for (const auto& arg : args) {
-                        generate_deserialize_field(f_cpp_, arg, "");
+                        bool force_nested = (returntype->annotations_.find("yarp.name") == (returntype->annotations_.end()));
+                        generate_deserialize_field(f_cpp_, arg, "", "", force_nested);
                     }
 
 

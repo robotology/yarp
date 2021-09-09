@@ -55,7 +55,16 @@ bool Map2DAreaData::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(3)) {
         return false;
     }
-    return read(reader);
+    if (!read_map_id(reader)) {
+        return false;
+    }
+    if (!read_points(reader)) {
+        return false;
+    }
+    if (!read_description(reader)) {
+        return false;
+    }
+    return !reader.isError();
 }
 
 // Write structure on a Wire
@@ -80,7 +89,16 @@ bool Map2DAreaData::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(3)) {
         return false;
     }
-    return write(writer);
+    if (!write_map_id(writer)) {
+        return false;
+    }
+    if (!write_points(writer)) {
+        return false;
+    }
+    if (!write_description(writer)) {
+        return false;
+    }
+    return !writer.isError();
 }
 
 // Convert to a printable string

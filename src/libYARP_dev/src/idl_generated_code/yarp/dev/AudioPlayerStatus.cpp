@@ -55,7 +55,16 @@ bool AudioPlayerStatus::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(3)) {
         return false;
     }
-    return read(reader);
+    if (!read_enabled(reader)) {
+        return false;
+    }
+    if (!read_current_buffer_size(reader)) {
+        return false;
+    }
+    if (!read_max_buffer_size(reader)) {
+        return false;
+    }
+    return !reader.isError();
 }
 
 // Write structure on a Wire
@@ -80,7 +89,16 @@ bool AudioPlayerStatus::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(3)) {
         return false;
     }
-    return write(writer);
+    if (!write_enabled(writer)) {
+        return false;
+    }
+    if (!write_current_buffer_size(writer)) {
+        return false;
+    }
+    if (!write_max_buffer_size(writer)) {
+        return false;
+    }
+    return !writer.isError();
 }
 
 // Convert to a printable string

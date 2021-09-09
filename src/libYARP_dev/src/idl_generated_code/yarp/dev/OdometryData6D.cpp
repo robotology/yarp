@@ -145,7 +145,61 @@ bool OdometryData6D::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(18)) {
         return false;
     }
-    return read(reader);
+    if (!read_odom_x(reader)) {
+        return false;
+    }
+    if (!read_odom_y(reader)) {
+        return false;
+    }
+    if (!read_odom_z(reader)) {
+        return false;
+    }
+    if (!read_odom_roll(reader)) {
+        return false;
+    }
+    if (!read_odom_pitch(reader)) {
+        return false;
+    }
+    if (!read_odom_yaw(reader)) {
+        return false;
+    }
+    if (!read_base_vel_x(reader)) {
+        return false;
+    }
+    if (!read_base_vel_y(reader)) {
+        return false;
+    }
+    if (!read_base_vel_z(reader)) {
+        return false;
+    }
+    if (!read_base_vel_roll(reader)) {
+        return false;
+    }
+    if (!read_base_vel_pitch(reader)) {
+        return false;
+    }
+    if (!read_base_vel_yaw(reader)) {
+        return false;
+    }
+    if (!read_odom_vel_x(reader)) {
+        return false;
+    }
+    if (!read_odom_vel_y(reader)) {
+        return false;
+    }
+    if (!read_odom_vel_z(reader)) {
+        return false;
+    }
+    if (!read_odom_vel_roll(reader)) {
+        return false;
+    }
+    if (!read_odom_vel_pitch(reader)) {
+        return false;
+    }
+    if (!read_odom_vel_yaw(reader)) {
+        return false;
+    }
+    return !reader.isError();
 }
 
 // Write structure on a Wire
@@ -215,7 +269,61 @@ bool OdometryData6D::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(18)) {
         return false;
     }
-    return write(writer);
+    if (!write_odom_x(writer)) {
+        return false;
+    }
+    if (!write_odom_y(writer)) {
+        return false;
+    }
+    if (!write_odom_z(writer)) {
+        return false;
+    }
+    if (!write_odom_roll(writer)) {
+        return false;
+    }
+    if (!write_odom_pitch(writer)) {
+        return false;
+    }
+    if (!write_odom_yaw(writer)) {
+        return false;
+    }
+    if (!write_base_vel_x(writer)) {
+        return false;
+    }
+    if (!write_base_vel_y(writer)) {
+        return false;
+    }
+    if (!write_base_vel_z(writer)) {
+        return false;
+    }
+    if (!write_base_vel_roll(writer)) {
+        return false;
+    }
+    if (!write_base_vel_pitch(writer)) {
+        return false;
+    }
+    if (!write_base_vel_yaw(writer)) {
+        return false;
+    }
+    if (!write_odom_vel_x(writer)) {
+        return false;
+    }
+    if (!write_odom_vel_y(writer)) {
+        return false;
+    }
+    if (!write_odom_vel_z(writer)) {
+        return false;
+    }
+    if (!write_odom_vel_roll(writer)) {
+        return false;
+    }
+    if (!write_odom_vel_pitch(writer)) {
+        return false;
+    }
+    if (!write_odom_vel_yaw(writer)) {
+        return false;
+    }
+    return !writer.isError();
 }
 
 // Convert to a printable string

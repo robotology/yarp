@@ -46,7 +46,13 @@ bool SensorMeasurement::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(2)) {
         return false;
     }
-    return read(reader);
+    if (!read_measurement(reader)) {
+        return false;
+    }
+    if (!read_timestamp(reader)) {
+        return false;
+    }
+    return !reader.isError();
 }
 
 // Write structure on a Wire
@@ -68,7 +74,13 @@ bool SensorMeasurement::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    return write(writer);
+    if (!write_measurement(writer)) {
+        return false;
+    }
+    if (!write_timestamp(writer)) {
+        return false;
+    }
+    return !writer.isError();
 }
 
 // Convert to a printable string

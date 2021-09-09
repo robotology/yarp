@@ -46,7 +46,13 @@ bool return_get_all_areas::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(2)) {
         return false;
     }
-    return read(reader);
+    if (!read_retval(reader)) {
+        return false;
+    }
+    if (!read_areas(reader)) {
+        return false;
+    }
+    return !reader.isError();
 }
 
 // Write structure on a Wire
@@ -68,7 +74,13 @@ bool return_get_all_areas::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(2)) {
         return false;
     }
-    return write(writer);
+    if (!write_retval(writer)) {
+        return false;
+    }
+    if (!write_areas(writer)) {
+        return false;
+    }
+    return !writer.isError();
 }
 
 // Convert to a printable string

@@ -170,7 +170,73 @@ bool jointData::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(22)) {
         return false;
     }
-    return read(reader);
+    if (!read_jointPosition(reader)) {
+        return false;
+    }
+    if (!read_jointPosition_isValid(reader)) {
+        return false;
+    }
+    if (!read_jointVelocity(reader)) {
+        return false;
+    }
+    if (!read_jointVelocity_isValid(reader)) {
+        return false;
+    }
+    if (!read_jointAcceleration(reader)) {
+        return false;
+    }
+    if (!read_jointAcceleration_isValid(reader)) {
+        return false;
+    }
+    if (!read_motorPosition(reader)) {
+        return false;
+    }
+    if (!read_motorPosition_isValid(reader)) {
+        return false;
+    }
+    if (!read_motorVelocity(reader)) {
+        return false;
+    }
+    if (!read_motorVelocity_isValid(reader)) {
+        return false;
+    }
+    if (!read_motorAcceleration(reader)) {
+        return false;
+    }
+    if (!read_motorAcceleration_isValid(reader)) {
+        return false;
+    }
+    if (!read_torque(reader)) {
+        return false;
+    }
+    if (!read_torque_isValid(reader)) {
+        return false;
+    }
+    if (!read_pwmDutycycle(reader)) {
+        return false;
+    }
+    if (!read_pwmDutycycle_isValid(reader)) {
+        return false;
+    }
+    if (!read_current(reader)) {
+        return false;
+    }
+    if (!read_current_isValid(reader)) {
+        return false;
+    }
+    if (!read_controlMode(reader)) {
+        return false;
+    }
+    if (!read_controlMode_isValid(reader)) {
+        return false;
+    }
+    if (!read_interactionMode(reader)) {
+        return false;
+    }
+    if (!read_interactionMode_isValid(reader)) {
+        return false;
+    }
+    return !reader.isError();
 }
 
 // Write structure on a Wire
@@ -252,7 +318,73 @@ bool jointData::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(22)) {
         return false;
     }
-    return write(writer);
+    if (!write_jointPosition(writer)) {
+        return false;
+    }
+    if (!write_jointPosition_isValid(writer)) {
+        return false;
+    }
+    if (!write_jointVelocity(writer)) {
+        return false;
+    }
+    if (!write_jointVelocity_isValid(writer)) {
+        return false;
+    }
+    if (!write_jointAcceleration(writer)) {
+        return false;
+    }
+    if (!write_jointAcceleration_isValid(writer)) {
+        return false;
+    }
+    if (!write_motorPosition(writer)) {
+        return false;
+    }
+    if (!write_motorPosition_isValid(writer)) {
+        return false;
+    }
+    if (!write_motorVelocity(writer)) {
+        return false;
+    }
+    if (!write_motorVelocity_isValid(writer)) {
+        return false;
+    }
+    if (!write_motorAcceleration(writer)) {
+        return false;
+    }
+    if (!write_motorAcceleration_isValid(writer)) {
+        return false;
+    }
+    if (!write_torque(writer)) {
+        return false;
+    }
+    if (!write_torque_isValid(writer)) {
+        return false;
+    }
+    if (!write_pwmDutycycle(writer)) {
+        return false;
+    }
+    if (!write_pwmDutycycle_isValid(writer)) {
+        return false;
+    }
+    if (!write_current(writer)) {
+        return false;
+    }
+    if (!write_current_isValid(writer)) {
+        return false;
+    }
+    if (!write_controlMode(writer)) {
+        return false;
+    }
+    if (!write_controlMode_isValid(writer)) {
+        return false;
+    }
+    if (!write_interactionMode(writer)) {
+        return false;
+    }
+    if (!write_interactionMode_isValid(writer)) {
+        return false;
+    }
+    return !writer.isError();
 }
 
 // Convert to a printable string

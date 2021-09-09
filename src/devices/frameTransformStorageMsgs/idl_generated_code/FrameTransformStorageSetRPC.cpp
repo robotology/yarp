@@ -344,7 +344,7 @@ bool FrameTransformStorageSetRPC::read(yarp::os::ConnectionReader& connection)
         }
         if (tag == "setTransformRPC") {
             yarp::math::FrameTransform transform;
-            if (!reader.read(transform)) {
+            if (!reader.readNested(transform)) {
                 reader.fail();
                 return false;
             }

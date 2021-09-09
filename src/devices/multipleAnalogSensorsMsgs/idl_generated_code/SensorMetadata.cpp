@@ -52,7 +52,16 @@ bool SensorMetadata::read(yarp::os::ConnectionReader& connection)
     if (!reader.readListHeader(3)) {
         return false;
     }
-    return read(reader);
+    if (!read_name(reader)) {
+        return false;
+    }
+    if (!read_frameName(reader)) {
+        return false;
+    }
+    if (!read_additionalMetadata(reader)) {
+        return false;
+    }
+    return !reader.isError();
 }
 
 // Write structure on a Wire
@@ -77,7 +86,16 @@ bool SensorMetadata::write(yarp::os::ConnectionWriter& connection) const
     if (!writer.writeListHeader(3)) {
         return false;
     }
-    return write(writer);
+    if (!write_name(writer)) {
+        return false;
+    }
+    if (!write_frameName(writer)) {
+        return false;
+    }
+    if (!write_additionalMetadata(writer)) {
+        return false;
+    }
+    return !writer.isError();
 }
 
 // Convert to a printable string
