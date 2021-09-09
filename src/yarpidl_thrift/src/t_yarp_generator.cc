@@ -307,8 +307,8 @@ public:
     void generate_struct_constructor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_read_wirereader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_read_connectionreader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
-    void generate_struct_write_wirereader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
-    void generate_struct_write_connectionreader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_write_wirewriter(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
+    void generate_struct_write_connectionwriter(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_tostring(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_unwrapped_helper(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
     void generate_struct_editor(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_);
@@ -2140,8 +2140,8 @@ void t_yarp_generator::generate_struct(t_struct* tstruct)
     generate_struct_constructor(tstruct, f_h_, f_cpp_);
     generate_struct_read_wirereader(tstruct, f_h_, f_cpp_);
     generate_struct_read_connectionreader(tstruct, f_h_, f_cpp_);
-    generate_struct_write_wirereader(tstruct, f_h_, f_cpp_);
-    generate_struct_write_connectionreader(tstruct, f_h_, f_cpp_);
+    generate_struct_write_wirewriter(tstruct, f_h_, f_cpp_);
+    generate_struct_write_connectionwriter(tstruct, f_h_, f_cpp_);
     generate_struct_tostring(tstruct, f_h_, f_cpp_);
     generate_struct_unwrapped_helper(tstruct, f_h_, f_cpp_);
 
@@ -2365,7 +2365,7 @@ void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, 
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_write_wirereader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
+void t_yarp_generator::generate_struct_write_wirewriter(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
@@ -2396,7 +2396,7 @@ void t_yarp_generator::generate_struct_write_wirereader(t_struct* tstruct, std::
     assert(indent_count_cpp() == 0);
 }
 
-void t_yarp_generator::generate_struct_write_connectionreader(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
+void t_yarp_generator::generate_struct_write_connectionwriter(t_struct* tstruct, std::ostringstream& f_h_, std::ostringstream& f_cpp_)
 {
     THRIFT_DEBUG_COMMENT(f_h_);
     THRIFT_DEBUG_COMMENT(f_cpp_);
