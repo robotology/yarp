@@ -58,6 +58,7 @@ setup(
                 "-DYARP_COMPILE_GUIS:BOOL=OFF",
                 "-DYARP_COMPILE_TESTS:BOOL=OFF",
                 "-DYARP_COMPILE_UNMAINTAINED:BOOL=OFF",
+                "-DYARP_COMPILE_libYARP_math:BOOL=ON",
             ]
             + CIBW_CMAKE_OPTIONS,
         )
