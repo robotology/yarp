@@ -39,6 +39,7 @@
 * | test                | string |   -   |       -       | Yes      | Choose the modality   | It can be one of the following: no_obstacles, use_pattern, use_mapfile |
 * | localization_port   | string |   -   |       -       | No       | Full name of the port to which device connects to receive the localization data   |  |
 * | localization_client | string |   -   |       -       | No       | Full name of the local transformClient opened by the device | It cannot be used togheter if localization_port parameter is set |
+* | localization_device | string |   -   |       -       | No       | Type of localization device, e.g. localization2DClient, localization2D_nwc_yarp | It cannot be used togheter if localization_port parameter is set |
 * | map_file            | string |   -   |       -       | No       | Full path to a .map file   | Mandatory if --test use_mapfile option has been set |
 * | clip_max            | double |   m   | 3.5           | No       | Maximum detectable distance for an obstacle | - |
 * | clip_min            | double |   m   | 0.1           | No       | Minimum detectable distance for an obstacle | - |
@@ -48,11 +49,12 @@
 *
 * \section Usage examples:
 * yarpdev --device fakeLaser --help
-* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test no_obstacles
-* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_pattern
-* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map
-* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i
-* yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
+* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test no_obstacles
+* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_pattern
+* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_mapfile --map_file mymap.map
+* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i
+* yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient
+* yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /ikart/laser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_device localization2D_nwc_yarp
 */
 
 class FakeLaser : public yarp::os::PeriodicThread,
