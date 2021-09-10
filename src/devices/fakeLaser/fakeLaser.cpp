@@ -44,15 +44,16 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     {
         yCInfo(FAKE_LASER,"Some examples:");
         yCInfo(FAKE_LASER,"yarpdev --device fakeLaser --help");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test no_obstacles");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_pattern");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_constant --const_distance 0.5");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_constant --const_distance 0.5 --SENSOR::resolution 0.5 --SKIP::min 0 50 --SKIP::max 10 60");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
-        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper --subdevice fakeLaser --period 10 --name /fakeLaser:o --test use_mapfile --map_context context --map_file mymap.map");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test no_obstacles");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_pattern");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_constant --const_distance 0.5");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_constant --const_distance 0.5 --SENSOR::resolution 0.5 --SKIP::min 0 50 --SKIP::max 10 60");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_port /fakeLaser/location:i");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_server /localizationServer");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localizationServer");
+        yCInfo(FAKE_LASER,"yarpdev --device Rangefinder2DWrapper   --subdevice fakeLaser --period 10   --name /fakeLaser:o --test use_mapfile --map_context context --map_file mymap.map");
+        yCInfo(FAKE_LASER,"yarpdev --device rangefinder2D_nws_yarp --subdevice fakeLaser --period 0.01 --name /fakeLaser:o --test use_mapfile --map_file mymap.map --localization_client /fakeLaser/localizationClient --localization_server /localization2D_nws_yarp --localization_device localization2D_nwc_yarp");
         return false;
     }
 
@@ -60,7 +61,8 @@ bool FakeLaser::open(yarp::os::Searchable& config)
     if (br != false)
     {
         yarp::os::Searchable& general_config = config.findGroup("GENERAL");
-        m_period = general_config.check("Period", Value(50), "Period of the sampling thread").asInt32() / 1000.0;
+        m_period = general_config.check("period", Value(0.02), "Period of the sampling thread in s").asFloat64();
+        this->setPeriod(m_period);
     }
 
     std::string string_test_mode = config.check("test", Value(std::string("use_pattern")), "string to select test mode").asString();
@@ -141,15 +143,16 @@ bool FakeLaser::open(yarp::os::Searchable& config)
             m_loc_mode = LOC_FROM_PORT;
         }
         else if (config.check("localization_client") ||
-                 config.check("localization_server" ))
+                 config.check("localization_server") ||
+                 config.check("localization_device"))
         {
             Property loc_options;
             std::string localization_client_name = config.check("localization_client", Value(std::string("/fakeLaser/localizationClient")), "local name of localization client device").asString();
             std::string localization_server_name = config.check("localization_server", Value(std::string("/localizationServer")), "the name of the remote localization server device").asString();
-            loc_options.put("device", "localization2DClient");
+            std::string localization_device_name = config.check("localization_device", Value(std::string("localization2DClient")), "the type of localization device").asString();
+            loc_options.put("device", localization_device_name);
             loc_options.put("local", localization_client_name);
             loc_options.put("remote", localization_server_name);
-            loc_options.put("period", 10);
             m_pLoc = new PolyDriver;
             if (m_pLoc->open(loc_options) == false)
             {
