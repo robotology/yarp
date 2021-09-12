@@ -99,18 +99,19 @@ bool OpenCVGrabber::open(Searchable & config) {
             double m_fps = config.check("framerate", Value(-1)).asFloat64();
             m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FPS, m_fps);
         }
-
-        if (config.check("flip_x", "if present, flip the image along the x-axis")) {
-            m_flip_x = true;
-        }
-        if (config.check("flip_y", "if present, flip the image along the y-axis")) {
-            m_flip_y = true;
-        }
-        if (config.check("transpose", "if present, rotate the image along of 90 degrees")) {
-            m_transpose = true;
-        }
     }
 
+    if (config.check("flip_x", "if present, flip the image along the x-axis")) {
+        m_flip_x = true;
+    }
+
+    if (config.check("flip_y", "if present, flip the image along the y-axis")) {
+        m_flip_y = true;
+    }
+
+    if (config.check("transpose", "if present, rotate the image along of 90 degrees")) {
+        m_transpose = true;
+    }
 
     // Extract the desired image size from the configuration if
     // present, otherwise query the capture device
@@ -238,7 +239,7 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
         m_h = frame.rows;
     }
 
-    if (fromFile && m_w > 0 && m_h > 0 && (frame.cols != m_w || frame.rows != m_h)) {
+    if (fromFile && (frame.cols != (!m_transpose ? m_w : m_h) || frame.rows != (!m_transpose ? m_h : m_w))) {
         if (!m_saidResize) {
             yCDebug(OPENCVGRABBER, "Software scaling from %dx%d to %dx%d", frame.cols, frame.rows, m_w, m_h);
             m_saidResize = true;
