@@ -120,7 +120,7 @@ bool OpenCVGrabber::open(Searchable & config) {
             m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH, m_w);
         }
     } else {
-        m_w = (size_t)m_cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH);
+        m_w = m_cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_WIDTH);
     }
 
     if (config.check("height","if present, specifies desired image height")) {
@@ -129,7 +129,7 @@ bool OpenCVGrabber::open(Searchable & config) {
             m_cap.set(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT, m_h);
         }
     } else {
-        m_h = (size_t)m_cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT);
+        m_h = m_cap.get(cv::VideoCaptureProperties::CAP_PROP_FRAME_HEIGHT);
     }
 
     // Ignore capture properties - they are unreliable
@@ -171,96 +171,87 @@ bool OpenCVGrabber::close() {
  * returned, the image will be resized to the dimensions used by
  * the grabber, but all pixels will be zeroed.
  */
-bool OpenCVGrabber::sendImage(const cv::Mat & frame, ImageOf<PixelRgb> & image)
-{
-    // Resize the output image, this should not result in new
-    // memory allocation if the image is already the correct size
-    image.resize(frame.cols, frame.rows);
-
-    if (!m_saidSize) {
-        yCDebug(OPENCVGRABBER, "Received image of size %zux%zu", image.width(), image.height());
-        m_saidSize = true;
-    }
-
-    // create the timestamp
-    m_laststamp.update();
-
-    // Convert to RGB color space
-    cv::Mat frame_rgb;
-    cv::cvtColor(frame, frame_rgb, cv::COLOR_BGR2RGB);
-
-    // Copy the captured image to the output image
-    memcpy(image.getRawImage(), frame_rgb.data, sizeof(unsigned char) * frame_rgb.rows * frame_rgb.cols * frame_rgb.channels());
-
-    if (m_w == 0) {
-        m_w = image.width();
-    }
-    if (m_h == 0) {
-        m_h = image.height();
-    }
-    if (fromFile) {
-        if (m_w>0 && m_h>0) {
-            if (image.width() != m_w || image.height() != m_h) {
-                if (!m_saidResize) {
-                    yCDebug(OPENCVGRABBER, "Software scaling from %zux%zu to %zux%zu",  image.width(), image.height(), m_w, m_h);
-                    m_saidResize = true;
-                }
-                image.copy(image, m_w, m_h);
-            }
-        }
-    }
-
-    yCTrace(OPENCVGRABBER, "%zu by %zu image", image.width(), image.height());
-
-    return true;
-
-}
-
 bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
-
     // Must have a capture object
     if (!m_cap.isOpened()) {
         image.zero();
         return false;
     }
 
-    // Grab and retrieve a frame
-    cv::Mat frame;
-    m_cap.read(frame);
+    // Callers may have not initialized the image dimensions (may happen if this device is not wrapped)
+    if (static_cast<int>(image.width()) != m_w || static_cast<int>(image.height()) != m_h) {
+        image.resize(m_w, m_h);
+    }
 
-    if (frame.empty() && m_loop) {
+    // Grab and retrieve a frame,
+    cv::Mat bgr;
+    m_cap.read(bgr);
+
+    if (bgr.empty() && m_loop) {
         bool ok = open(m_config);
         if (!ok) {
             return false;
         }
-        m_cap.read(frame);
+        m_cap.read(bgr);
     }
 
-    if (frame.empty()) {
+    if (bgr.empty()) {
         image.zero();
         return false;
     }
 
-    if (m_transpose)
-    {
-        cv::transpose(frame, frame);
+    // Memory allocation occurs at the YARP image object
+    cv::Mat frame(image.height(), image.width(), CV_8UC3, image.getRawImage(), image.getRowSize());
+
+    // Comply with the expected pixel color of the output YARP frame
+    cv::cvtColor(bgr, frame, cv::COLOR_BGR2RGB);
+
+    if (m_transpose) {
+        cv::Mat transposed;
+        cv::transpose(frame, transposed);
+        image.resize(transposed.cols, transposed.rows); // erases previous content
+        frame = cv::Mat(image.height(), image.width(), CV_8UC3, image.getRawImage(), image.getRowSize());
+        transposed.copyTo(frame);
     }
 
-    if (m_flip_x && m_flip_y)
-    {
+    if (m_flip_x && m_flip_y) {
         cv::flip(frame, frame, -1);
-    }
-    else if (m_flip_x)
-    {
+    } else if (m_flip_x) {
         cv::flip(frame, frame, 0);
-    }
-    else if (m_flip_y)
-    {
+    } else if (m_flip_y) {
         cv::flip(frame, frame, 1);
     }
 
-    return sendImage(frame, image);
+    if (!m_saidSize) {
+        yCDebug(OPENCVGRABBER, "Received image of size %dx%d", frame.cols, frame.rows);
+        m_saidSize = true;
+    }
+
+    // create the timestamp
+    m_laststamp.update();
+
+    if (m_w == 0) {
+        m_w = frame.cols;
+    }
+
+    if (m_h == 0) {
+        m_h = frame.rows;
+    }
+
+    if (fromFile && m_w > 0 && m_h > 0 && (frame.cols != m_w || frame.rows != m_h)) {
+        if (!m_saidResize) {
+            yCDebug(OPENCVGRABBER, "Software scaling from %dx%d to %dx%d", frame.cols, frame.rows, m_w, m_h);
+            m_saidResize = true;
+        }
+
+        cv::Mat resized;
+        cv::resize(frame, resized, {m_w, m_h});
+        image.resize(resized.cols, resized.rows); // erases previous content
+        frame = cv::Mat(image.height(), image.width(), CV_8UC3, image.getRawImage(), image.getRowSize());
+        resized.copyTo(frame);
+    }
+
+    yCTrace(OPENCVGRABBER, "%d by %d image", frame.cols, frame.rows);
+
+    return true;
 }
-
-
-// End: OpenCVGrabber.cpp
