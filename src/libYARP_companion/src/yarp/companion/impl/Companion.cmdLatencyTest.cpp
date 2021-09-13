@@ -31,7 +31,7 @@ enum client_return_code_t { CLIENT_END_TEST = 0, CLIENT_CARRIER_ERROR = 1};
 enum server_return_code_t { SERVER_END_TEST = 0, SERVER_QUIT = 1,SERVER_ERROR =2 };
 
 server_return_code_t server(double server_wait, bool verbose = false);
-client_return_code_t client(int nframes, int payload_size, std::string proto, double pause, bool no_reply, std::string logfilename = "log_", bool verbose = false);
+client_return_code_t client(int nframes, int payload_size, std::string proto, double pause, bool no_reply, std::string logfilename = "log_", size_t test_number = 0, bool verbose = false);
 
 //------------------------------------------------------------------------------------------------------------------------------
 
@@ -80,6 +80,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
         if (p.check("nframes") == false)
         {  yCError(COMPANION) << "Missing mandatory parameter nframes. See available options with yarp latency-test";  return -1; }
         int frames = p.find("nframes").asInt32();
+        if (frames == 0) { yCError(COMPANION, "nframes cannot be 0!"); return false; }
 
         double client_wait = 0;
         if (p.check("client_wait")) {
@@ -97,11 +98,13 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
 
         bool no_reply = p.check("no-reply");
 
+        //this is a single test, defined by param 'payload_size'
         if (p.check("payload_size") && !p.check ("multitest") && !p.check ("customtest"))
         {
             int payload = p.find("payload_size").asInt32();
-            return client(frames, payload, proto, client_wait, no_reply, logfilename, verbose);
+            return client(frames, payload, proto, client_wait, no_reply, logfilename, 0, verbose);
         }
+        //this is a multiple test, defined by param 'multitest'
         else if (!p.check("payload_size") && p.check("multitest") && !p.check ("customtest"))
         {
             Bottle* b =p.find("multitest").asList();
@@ -134,10 +137,11 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
             //execute the tests
             for (size_t i = 0; i < psizes.size(); i++)
             {
-               client(frames, psizes[i], proto, client_wait, no_reply, logfilename, verbose);
+               client(frames, psizes[i], proto, client_wait, no_reply, logfilename, i, verbose);
             }
             return 0;
         }
+        //this is a multiple test, defined by param 'customtest'
         else if (!p.check("payload_size") && !p.check("multitest") && p.check ("customtest"))
         {
             Bottle* b =p.find("customtest").asList();
@@ -147,7 +151,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
                 {
                     if (b->get(i).isInt32())
                     {
-                        client(frames, b->get(i).asInt32(), proto, client_wait, no_reply, logfilename, verbose);
+                        client(frames, b->get(i).asInt32(), proto, client_wait, no_reply, logfilename, i, verbose);
                     }
                     else
                     {
@@ -261,7 +265,7 @@ server_return_code_t server(double server_wait, bool verbose)
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-client_return_code_t client(int nframes, int payload_size, std::string proto, double client_wait, bool no_reply, std::string logfilename, bool verbose)
+client_return_code_t client(int nframes, int payload_size, std::string proto, double client_wait, bool no_reply, std::string logfilename, size_t test_number, bool verbose)
 {
     //the structure where to save the data
     struct stats
@@ -397,17 +401,40 @@ client_return_code_t client(int nframes, int payload_size, std::string proto, do
     yCInfo(COMPANION, "Processed %d frames of %d bytes, average latency %.3lf[ms], max %.3lf[ms], min %.3lf[ms], stdev %.3lf[ms]\n", clientframecounter, payload_size, latency_mean, latency_max, latency_min, latency_stdev);
 
     //save the stats to a logfile
-    std::fstream fs;
-    std::string filename = logfilename;
-    filename += std::to_string(payload_size);
-    filename += ".txt";
-    fs.open(filename, std::fstream::out );
-    for (int i = 0; i < nframes; i++)
     {
-        fs << test_data[i].latency << " " << test_data[i].copytime << std::endl;
+        std::fstream fs;
+        std::string filename = logfilename;
+        filename += std::to_string(payload_size);
+        filename += ".txt";
+        fs.open(filename, std::fstream::out );
+        for (int i = 0; i < nframes; i++)
+        {
+            fs << test_data[i].latency << " " << test_data[i].copytime << std::endl;
+        }
+        fs.close();
+        yCInfo(COMPANION, "Test complete. Data saved to file: %s", filename.c_str());
     }
-    fs.close();
-    yCInfo(COMPANION, "Test complete. Data saved to file: %s", filename.c_str());
+
+    //save the report of all tests to a logfile
+    {
+        std::fstream fs;
+        std::string filename = logfilename;
+        filename += "report";
+        filename += ".txt";
+        if (test_number==0)
+        {
+            //if this is the first test of a long series, then just create the file from scratch
+            fs.open(filename, std::fstream::out);
+        }
+        else
+        {
+            //..otherwise append to existing file
+            fs.open(filename, std::fstream::out | std::fstream::app);
+        }
+        fs << payload_size << " " << latency_mean << " " << latency_stdev << "\n";
+        fs.close();
+        yCInfo(COMPANION, "Report written to file: %s", filename.c_str());
+    }
 
     return CLIENT_END_TEST;
 }
