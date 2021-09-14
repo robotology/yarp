@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "zlibPortmonitor.h"
+#include "BottleZlibPortmonitor.h"
 
 #include <yarp/os/LogStream.h>
 #include <yarp/os/LogComponent.h>
@@ -19,8 +19,8 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 namespace {
-YARP_LOG_COMPONENT(ZLIBMONITOR,
-                   "yarp.carrier.portmonitor.zlib",
+YARP_LOG_COMPONENT(BOTTLE_ZLIB_MONITOR,
+                   "yarp.carrier.portmonitor.bottle_zlib",
                    yarp::os::Log::minimumPrintLevel(),
                    yarp::os::Log::LogTypeReserved,
                    yarp::os::Log::printCallback(),
@@ -28,35 +28,35 @@ YARP_LOG_COMPONENT(ZLIBMONITOR,
 }
 
 
-bool ZlibMonitorObject::create(const yarp::os::Property& options)
+bool BottleZlibMonitorObject::create(const yarp::os::Property& options)
 {
     m_shouldCompress = (options.find("sender_side").asBool());
     return true;
 }
 
-void ZlibMonitorObject::destroy()
+void BottleZlibMonitorObject::destroy()
 {
 }
 
-bool ZlibMonitorObject::setparam(const yarp::os::Property& params)
-{
-    return false;
-}
-
-bool ZlibMonitorObject::getparam(yarp::os::Property& params)
+bool BottleZlibMonitorObject::setparam(const yarp::os::Property& params)
 {
     return false;
 }
 
-bool ZlibMonitorObject::accept(yarp::os::Things& thing)
+bool BottleZlibMonitorObject::getparam(yarp::os::Property& params)
+{
+    return false;
+}
+
+bool BottleZlibMonitorObject::accept(yarp::os::Things& thing)
 {
     if(m_shouldCompress)
     {
         //sender side / compressor
-        auto* b = thing.cast_as<ImageOf<PixelFloat>>();
+        auto* b = thing.cast_as<Bottle>();
         if(b == nullptr)
         {
-            yCError(ZLIBMONITOR, "Expected type ImageOf<PixelFloat> in sender side, but got wrong data type!");
+            yCError(BOTTLE_ZLIB_MONITOR, "Expected type Bottle in sender side, but got wrong data type!");
             return false;
         }
     }
@@ -66,23 +66,23 @@ bool ZlibMonitorObject::accept(yarp::os::Things& thing)
         auto* b = thing.cast_as<Bottle>();
         if(b == nullptr)
         {
-            yCError(ZLIBMONITOR, "Expected type Bottle in receiver side, but got wrong data type!");
+            yCError(BOTTLE_ZLIB_MONITOR, "Expected type Bottle in receiver side, but got wrong data type!");
             return false;
         }
     }
     return true;
 }
 
-yarp::os::Things& ZlibMonitorObject::update(yarp::os::Things& thing)
+yarp::os::Things& BottleZlibMonitorObject::update(yarp::os::Things& thing)
 {
    if(m_shouldCompress)
    {
         //sender side / compressor
        //it receives an image, it sends a bottle to the network
-        auto* b = thing.cast_as<ImageOf<PixelFloat>>();
+        auto* b = thing.cast_as<Bottle>();
 
-        size_t sizeUncompressed= b->getRawImageSize();
-        const unsigned char* uncompressedData = b->getRawImage();
+        size_t sizeUncompressed = 0;
+        const unsigned char* uncompressedData = (const unsigned char*)(b->toBinary(&sizeUncompressed));
 
         size_t sizeCompressed = (sizeUncompressed * 1.1) + 12;
         unsigned char* compressedData = (unsigned char*) malloc (sizeCompressed);
@@ -90,16 +90,13 @@ yarp::os::Things& ZlibMonitorObject::update(yarp::os::Things& thing)
         bool ret= compressData(uncompressedData, sizeUncompressed, compressedData, sizeCompressed);
         if(!ret)
         {
-            yCError(ZLIBMONITOR, "Failed to compress, exiting...");
+            yCError(BOTTLE_ZLIB_MONITOR, "Failed to compress, exiting...");
             free(compressedData);
             return thing;
         }
 
         m_data.clear();
         Value v(compressedData, sizeCompressed);
-        m_data.addInt32(b->width());
-        m_data.addInt32(b->height());
-        m_data.addInt32(sizeCompressed);
         m_data.addInt32(sizeUncompressed);
         m_data.add(v);
         m_th.setPortWriter(&m_data);
@@ -112,33 +109,22 @@ yarp::os::Things& ZlibMonitorObject::update(yarp::os::Things& thing)
        //it receives a bottle from the network, it creates an image
        Bottle* b= thing.cast_as<Bottle>();
 
-       size_t w = b->get(0).asInt32();
-       size_t h = b->get(1).asInt32();
-       size_t check_sizeCompressed = b->get(2).asInt32();
-       size_t check_sizeUncompressed = b->get(3).asInt32();
-       size_t sizeCompressed=b->get(4).asBlobLength();
-       const unsigned char* CompressedData = (const unsigned char*) b->get(4).asBlob();
+       size_t sizeUncompressed = b->get(0).asInt32();
+       size_t sizeCompressed=b->get(1).asBlobLength();
+       const unsigned char* CompressedData = (const unsigned char*) b->get(2).asBlob();
 
-       size_t sizeUncompressed = w * h * 4;
-       if (check_sizeUncompressed != sizeUncompressed ||
-           check_sizeCompressed != sizeCompressed)
-       {
-           yCError(ZLIBMONITOR, "Invalid data received: wrong blob size?");
-           return thing;
-       }
        unsigned char* uncompressedData = (unsigned char*)malloc(sizeUncompressed);
 
        bool ret = decompressData(CompressedData, sizeCompressed, uncompressedData, sizeUncompressed);
        if(!ret)
        {
-           yCError(ZLIBMONITOR, "Failed to decompress, exiting...");
+           yCError(BOTTLE_ZLIB_MONITOR, "Failed to decompress, exiting...");
            free(uncompressedData);
            return thing;
        }
 
-       m_imageOut.resize(w, h);
-       memcpy(m_imageOut.getRawImage(), uncompressedData, sizeUncompressed);
-       m_th.setPortWriter(&m_imageOut);
+       m_data.fromBinary((const char*)(uncompressedData),sizeUncompressed);
+       m_th.setPortWriter(&m_data);
 
        free(uncompressedData);
    }
@@ -146,7 +132,7 @@ yarp::os::Things& ZlibMonitorObject::update(yarp::os::Things& thing)
     return m_th;
 }
 
-int ZlibMonitorObject::compressData(const unsigned char* in, const size_t& in_size, unsigned char* out, size_t& out_size)
+int BottleZlibMonitorObject::compressData(const unsigned char* in, const size_t& in_size, unsigned char* out, size_t& out_size)
 {
     int z_result = compress((Bytef*)out, (uLongf*)&out_size, (Bytef*)in, in_size);
     switch (z_result)
@@ -155,12 +141,12 @@ int ZlibMonitorObject::compressData(const unsigned char* in, const size_t& in_si
         break;
 
     case Z_MEM_ERROR:
-        yCError(ZLIBMONITOR, "zlib compression: out of memory");
+        yCError(BOTTLE_ZLIB_MONITOR, "zlib compression: out of memory");
         return false;
         break;
 
     case Z_BUF_ERROR:
-        yCError(ZLIBMONITOR, "zlib compression: output buffer wasn't large enough");
+        yCError(BOTTLE_ZLIB_MONITOR, "zlib compression: output buffer wasn't large enough");
         return false;
         break;
     }
@@ -168,7 +154,7 @@ int ZlibMonitorObject::compressData(const unsigned char* in, const size_t& in_si
     return true;
 }
 
-int ZlibMonitorObject::decompressData(const unsigned char* in, const size_t& in_size, unsigned char* out, size_t& out_size)
+int BottleZlibMonitorObject::decompressData(const unsigned char* in, const size_t& in_size, unsigned char* out, size_t& out_size)
 {
     int z_result = uncompress((Bytef*)out, (uLongf*)&out_size, (const Bytef*)in, in_size);
     switch (z_result)
@@ -177,17 +163,17 @@ int ZlibMonitorObject::decompressData(const unsigned char* in, const size_t& in_
         break;
 
     case Z_MEM_ERROR:
-        yCError(ZLIBMONITOR, "zlib compression: out of memory");
+        yCError(BOTTLE_ZLIB_MONITOR, "zlib compression: out of memory");
         return false;
         break;
 
     case Z_BUF_ERROR:
-        yCError(ZLIBMONITOR, "zlib compression: output buffer wasn't large enough");
+        yCError(BOTTLE_ZLIB_MONITOR, "zlib compression: output buffer wasn't large enough");
         return false;
         break;
 
     case Z_DATA_ERROR:
-        yCError(ZLIBMONITOR, "zlib compression: file contains corrupted data");
+        yCError(BOTTLE_ZLIB_MONITOR, "zlib compression: file contains corrupted data");
         return false;
         break;
     }

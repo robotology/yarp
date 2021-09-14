@@ -11,8 +11,12 @@
 #include <yarp/sig/Image.h>
 #include <yarp/os/MonitorObject.h>
 
-
-class ZlibMonitorObject : public yarp::os::MonitorObject
+ /**
+  * \brief `depthimage_compression_zlib_portmonitor`: Portmonitor plugin for compression and decompression of depth images using zlib library.
+  * Example usage:
+  * yarp connect /depthCamera/depthImage:o /view tcp+send.portmonitor+file.depthimage_compression_zlib+recv.portmonitor+file.depthimage_compression_zlib+type.dll
+  */
+class DepthImageZlibMonitorObject : public yarp::os::MonitorObject
 {
 public:
     bool create(const yarp::os::Property& options) override;
