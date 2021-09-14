@@ -9,6 +9,7 @@ yarp_begin_plugin_library(yarppm
   OPTION YARP_COMPILE_PORTMONITOR_PLUGINS
   DEFAULT ON
 )
+  add_subdirectory(bottle_compression_zlib)
   add_subdirectory(depthimage_compression_zfp)
   add_subdirectory(depthimage_compression_zlib)
   add_subdirectory(depthimage_to_mono)
