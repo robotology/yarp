@@ -50,10 +50,12 @@ bool BottleZlibMonitorObject::getparam(yarp::os::Property& params)
 
 bool BottleZlibMonitorObject::accept(yarp::os::Things& thing)
 {
+  /*
+    //FIXME by DrDanz using c++17
     if(m_shouldCompress)
     {
         //sender side / compressor
-        auto* b = thing.cast_as<Bottle>();
+        auto* b = thing.cast_as<yarp::os::Portable>();
         if(b == nullptr)
         {
             yCError(BOTTLE_ZLIB_MONITOR, "Expected type Bottle in sender side, but got wrong data type!");
@@ -63,13 +65,14 @@ bool BottleZlibMonitorObject::accept(yarp::os::Things& thing)
     else
     {
         //receiver side / decompressor
-        auto* b = thing.cast_as<Bottle>();
+        auto* b = thing.cast_as<yarp::os::Portable>();
         if(b == nullptr)
         {
             yCError(BOTTLE_ZLIB_MONITOR, "Expected type Bottle in receiver side, but got wrong data type!");
             return false;
         }
     }
+    */
     return true;
 }
 
@@ -78,11 +81,13 @@ yarp::os::Things& BottleZlibMonitorObject::update(yarp::os::Things& thing)
    if(m_shouldCompress)
    {
         //sender side / compressor
-       //it receives an image, it sends a bottle to the network
-        auto* b = thing.cast_as<Bottle>();
+        //auto zzz = thing.cast_as<yarp::os::Portable>(); //FIXME by DrDanz using c++17
+        yarp::os::Portable* pwrite = dynamic_cast<yarp::os::Portable*>(thing.getPortWriter());//.cast_as<yarp::os::Portable>();
+        yarp::os::Bottle b;
+        yarp::os::Portable::copyPortable(*pwrite,b);
 
         size_t sizeUncompressed = 0;
-        const unsigned char* uncompressedData = (const unsigned char*)(b->toBinary(&sizeUncompressed));
+        const unsigned char* uncompressedData = (const unsigned char*)(b.toBinary(&sizeUncompressed));
 
         size_t sizeCompressed = (sizeUncompressed * 1.1) + 12;
         unsigned char* compressedData = (unsigned char*) malloc (sizeCompressed);
@@ -106,12 +111,11 @@ yarp::os::Things& BottleZlibMonitorObject::update(yarp::os::Things& thing)
    else
    {
        //receiver side / decompressor
-       //it receives a bottle from the network, it creates an image
-       Bottle* b= thing.cast_as<Bottle>();
+       yarp::os::Bottle* b = thing.cast_as<yarp::os::Bottle>();
 
        size_t sizeUncompressed = b->get(0).asInt32();
        size_t sizeCompressed=b->get(1).asBlobLength();
-       const unsigned char* CompressedData = (const unsigned char*) b->get(2).asBlob();
+       const unsigned char* CompressedData = (const unsigned char*) b->get(1).asBlob();
 
        unsigned char* uncompressedData = (unsigned char*)malloc(sizeUncompressed);
 
