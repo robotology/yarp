@@ -179,6 +179,7 @@ bool BatteryClient::open(yarp::os::Searchable &config)
     yCDebug(BATTERYCLIENT) << config.toString();
     local  = config.find("local").asString();
     remote = config.find("remote").asString();
+    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
 
     if (local=="")
     {
@@ -213,7 +214,7 @@ bool BatteryClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool ok=Network::connect(remote_stream.c_str(), local_stream.c_str(), "udp");
+    bool ok=Network::connect(remote_stream.c_str(), local_stream.c_str(), m_carrier);
     if (!ok)
     {
         yCError(BATTERYCLIENT, "open(): Could not connect %s -> %s", remote_stream.c_str(), local_stream.c_str());

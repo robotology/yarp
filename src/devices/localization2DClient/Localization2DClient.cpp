@@ -30,6 +30,7 @@ bool Localization2DClient::open(yarp::os::Searchable &config)
 
     m_local_name = config.find("local").asString();
     m_remote_name = config.find("remote").asString();
+    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
 
     if (m_local_name == "")
     {
@@ -62,7 +63,7 @@ bool Localization2DClient::open(yarp::os::Searchable &config)
 
     /*
     //currently unused
-    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), "tcp");
+    bool ok=Network::connect(remote_streaming_name.c_str(), local_streaming_name.c_str(), m_carrier);
     if (!ok)
     {
         yCError(LOCALIZATION2DCLIENT, "open() error could not connect to %s", remote_streaming_name.c_str());
@@ -71,7 +72,7 @@ bool Localization2DClient::open(yarp::os::Searchable &config)
 
     bool ok = true;
 
-    ok = Network::connect(local_rpc, remote_rpc);
+    ok = Network::connect(local_rpc, remote_rpc, m_carrier);
     if (!ok)
     {
         yCError(LOCALIZATION2DCLIENT, "open() error could not connect to %s", remote_rpc.c_str());

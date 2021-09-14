@@ -33,8 +33,9 @@
  *  Parameters required by this device are:
  * | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
- * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Localization2DClient device.                             |       |
- * | remote         |      -         | string  | -   |   -           | Yes          | Full port name of the port opened on the server side, to which the Localization2DClient connects to.                           | E.g.(https://github.com/robotology/navigation/src/localizationServer)    |
+ * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Localization2DClient device.                    |       |
+ * | remote         |      -         | string  | -   |   -           | Yes          | Full port name of the port opened on the server side, to which the Localization2DClient connects to.   |     |
+ * | carrier        |     -          | string  | -   | tcp           | No           | The carier used for the connection with the server.                          |       |
  */
 class Localization2DClient :
         public yarp::dev::DeviceDriver,
@@ -45,6 +46,7 @@ protected:
     yarp::os::Port                m_rpc_port_localization_server;
     std::string         m_local_name;
     std::string         m_remote_name;
+    std::string         m_carrier;
 
 public:
     /* DeviceDriver methods */

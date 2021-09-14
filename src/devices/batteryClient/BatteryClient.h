@@ -66,7 +66,15 @@ public:
 * @ingroup dev_impl_network_clients
 *
 * \brief `batteryClient`: The client side of any IBattery capable device.
+*
 * Still single thread! concurrent access is unsafe.
+*
+*  Parameters required by this device are:
+* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
+* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+* | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the batteryClient device.                |       |
+* | remote         |      -         | string  | -              |   -           | Yes          | Full port name of the port opened on the server side, to which the batteryClient connects to.    |     |
+* | carrier        |     -          | string  | -              | tcp           | No           | The carier used for the connection with the server.               |       |
 */
 class BatteryClient :
         public yarp::dev::DeviceDriver,
@@ -78,6 +86,7 @@ protected:
     yarp::os::Port rpcPort;
     std::string local;
     std::string remote;
+    std::string m_carrier;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
 

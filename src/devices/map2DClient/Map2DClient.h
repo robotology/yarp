@@ -32,6 +32,7 @@
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
  * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Map2DClient device.                             |       |
  * | remote         |     -          | string  | -   |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Map2DClient connects to.           |  |
+ * | carrier        |     -          | string  | -   | tcp           | No           | The carier used for the connection with the server.          |  |
  */
 
 class Map2DClient :
@@ -42,6 +43,7 @@ protected:
     yarp::os::Port      m_rpcPort_to_Map2DServer;
     std::string         m_local_name;
     std::string         m_map_server;
+    std::string         m_carrier;
 
 public:
 

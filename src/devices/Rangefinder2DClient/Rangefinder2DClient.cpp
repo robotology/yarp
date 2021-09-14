@@ -167,6 +167,8 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
     local  = config.find("local").asString();
     remote = config.find("remote").asString();
 
+    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
+
     if (local=="")
     {
         yCError(RANGEFINDER2DCLIENT, "open() error you have to provide valid local name");
@@ -196,7 +198,7 @@ bool Rangefinder2DClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-    bool ok=Network::connect(remote.c_str(), local.c_str(), "udp");
+    bool ok=Network::connect(remote.c_str(), local.c_str(), m_carrier);
     if (!ok)
     {
         yCError(RANGEFINDER2DCLIENT, "open() error could not connect to %s\n", remote.c_str());

@@ -39,6 +39,8 @@ void SensorStreamingDataInputPort::updateTimeoutStatus() const
 
 bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
 {
+    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
+
     m_externalConnection = config.check("externalConnection",yarp::os::Value(false)).asBool();
     if (!config.check("remote"))
     {
@@ -96,7 +98,7 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
 
     // Connect ports
     if (!m_externalConnection) {
-        ok = yarp::os::Network::connect(m_localRPCPortName, m_remoteRPCPortName);
+        ok = yarp::os::Network::connect(m_localRPCPortName, m_remoteRPCPortName, m_carrier);
         if (!ok) {
             yCError(MULTIPLEANALOGSENSORSCLIENT,
                     "Failure connecting port %s to %s.",
@@ -108,7 +110,7 @@ bool MultipleAnalogSensorsClient::open(yarp::os::Searchable& config)
         }
         m_RPCConnectionActive = true;
 
-        ok = yarp::os::Network::connect(m_remoteStreamingPortName, m_localStreamingPortName);
+        ok = yarp::os::Network::connect(m_remoteStreamingPortName, m_localStreamingPortName, m_carrier);
         if (!ok) {
             yCError(MULTIPLEANALOGSENSORSCLIENT,
                     "Failure connecting port %s to %s.",

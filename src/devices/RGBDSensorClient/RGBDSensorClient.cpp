@@ -128,7 +128,7 @@ bool RGBDSensorClient::fromConfig(yarp::os::Searchable &config)
         image_carrier_type = config.find("ImageCarrier").asString();
     }
 
-    if (config.check("DepthCarrier", "carrier for the depth tream"))
+    if (config.check("DepthCarrier", "carrier for the depth stream"))
     {
         depth_carrier_type = config.find("DepthCarrier").asString();
     }

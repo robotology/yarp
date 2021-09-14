@@ -36,6 +36,8 @@ bool Navigation2DClient::open(yarp::os::Searchable &config)
     m_map_locations_server_name = config.find("map_locations_server").asString();
     m_localization_server_name = config.find("localization_server").asString();
 
+    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
+
     if (m_local_name == "")
     {
         yCError(NAVIGATION2DCLIENT, "open() error you have to provide a valid 'local' param");
@@ -111,21 +113,21 @@ bool Navigation2DClient::open(yarp::os::Searchable &config)
 
     bool ok = true;
 
-    ok = Network::connect(local_rpc_1, remote_rpc_1);
+    ok = Network::connect(local_rpc_1, remote_rpc_1, m_carrier);
     if (!ok)
     {
         yCError(NAVIGATION2DCLIENT, "open() error could not connect to %s", remote_rpc_1.c_str());
         return false;
     }
 
-    ok = Network::connect(local_rpc_2, remote_rpc_2);
+    ok = Network::connect(local_rpc_2, remote_rpc_2, m_carrier);
     if (!ok)
     {
         yCError(NAVIGATION2DCLIENT, "open() error could not connect to %s", remote_rpc_2.c_str());
         return false;
     }
 
-    ok = Network::connect(local_rpc_3, remote_rpc_3);
+    ok = Network::connect(local_rpc_3, remote_rpc_3, m_carrier);
     if (!ok)
     {
         yCError(NAVIGATION2DCLIENT, "open() error could not connect to %s", remote_rpc_3.c_str());

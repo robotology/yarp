@@ -34,6 +34,7 @@
  * | navigation_server    |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Navigation server, to which the Navigation2DClient connects to.           |  |
  * | map_locations_server |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Map2DServer, to which the Navigation2DClient connects to.           |  |
  * | localization_server  |     -    | string  | -              |   -           | Yes          | Full port name of the port remotely opened by the Localization server, to which the Navigation2DClient connects to.           |  |
+ * | carrier        |     -          | string  | -              | tcp           | No           | The carier used for the connection with the server.          |  |
  */
 
 class Navigation2DClient:
@@ -52,6 +53,7 @@ protected:
     std::string                   m_map_locations_server_name;
     std::string                   m_localization_server_name;
     int                           m_period;
+    std::string                   m_carrier;
 
 private: //math stuff
     double                        normalize_angle(double angle);

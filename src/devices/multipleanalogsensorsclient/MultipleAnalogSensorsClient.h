@@ -49,6 +49,7 @@ public:
 * | local              |       -        | string  | -              |   -           | Yes          | Port prefix of the ports opened by this device.                                        |       |
 * | timeout            |       -        | double  | seconds        | 0.01          | No           | Timeout after which the device reports an error if no measurement was received.        |       |
 * | externalConnection |       -        | bool    | -              | false         | No           | If set to true, the connection to the rpc port of the MAS server is skipped and it is possible to connect to the data source externally after being opened | Use case: e.g yarpdataplayer source. Note that with this configuration some information like sensor name, frame name and sensor number will be not available.|
+* | carrier            |     -          | string  | -              | tcp           | No           | The carier used for the connection with the server.          |  |
 *
 */
 class MultipleAnalogSensorsClient :
@@ -70,6 +71,7 @@ class MultipleAnalogSensorsClient :
     std::string m_localStreamingPortName;
     std::string m_remoteRPCPortName;
     std::string m_remoteStreamingPortName;
+    std::string m_carrier;
     bool m_RPCConnectionActive{false};
     bool m_StreamingConnectionActive{false};
     bool m_externalConnection{false};
