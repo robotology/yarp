@@ -44,10 +44,11 @@ const int MAX_PORTS = 5;
  * (For more information, go to \ref FrameTransform)
  *
  *   Parameters required by this device are:
- * | Parameter name   | SubParameter         | Type    | Units          | Default Value         | Required     | Description                                                                             |
- * |:----------------:|:--------------------:|:-------:|:--------------:|:---------------------:|:-----------: |:---------------------------------------------------------------------------------------:|
- * | filexml_option   | -                    | string  | -              | ftc_local_only.xml    | no           | The name of the xml file containing the needed client configuration                     |
- * | period           | -                    | float   | -              | 10ms                  | no           | The period for publishing individual tfs on port                                        |
+ * | Parameter name   | SubParameter         | Type    | Units          | Default Value         | Required     | Description                                                                                                |
+ * |:----------------:|:--------------------:|:-------:|:--------------:|:---------------------:|:-----------: |:----------------------------------------------------------------------------------------------------------:|
+ * | filexml_option   | -                    | string  | -              | ftc_local_only.xml    | no           | The name of the xml file containing the needed client configuration                                        |
+ * | testxml_option   | -                    | string  | -              | -                     | no           | NB: FOR TEST ONLY. The absolute path of the xml file containing the configuration to test                  |
+ * | period           | -                    | float   | -              | 10ms                  | no           | The period for publishing individual tfs on port                                                           |
  * | ft_client_prefix | -                    | string  | -              | ""                    | no           | A prefix to add to the names of all the ports opened by the NWCs instantiated by the frameTransformClient  |
  * | ft_server_prefix | -                    | string  | -              | ""                    | no           | The prefix added to all the names of the ports opened by the NWSs instantiated by the frameTransformServer |
  *
