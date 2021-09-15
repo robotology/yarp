@@ -31,6 +31,7 @@ bool MobileBaseVelocityControl_nwc_yarp::open(yarp::os::Searchable &config)
 
     m_local_name = config.find("local").asString();
     m_server_name = config.find("server").asString();
+    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
 
     if (m_local_name.empty())
     {
@@ -58,7 +59,7 @@ bool MobileBaseVelocityControl_nwc_yarp::open(yarp::os::Searchable &config)
 
     bool ok = true;
 
-    ok = Network::connect(local_rpc_1, remote_rpc_1);
+    ok = Network::connect(local_rpc_1, remote_rpc_1, m_carrier);
     if (!ok)
     {
         yCError(MOBVEL_NWC_YARP, "open() error could not connect to %s", remote_rpc_1.c_str());

@@ -32,6 +32,7 @@
  * |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
  * | local          |      -         | string  | -   |   -           | Yes          | Full port name opened by the Map2D_nwc_yarp device.                             |       |
  * | remote         |     -          | string  | -   |   -           | Yes          | Full port name of the port remotely opened by the Map2D_nws_yarp, to which the Map2D_nwc_yarp connects to.           |  |
+ * | carrier        |     -          | string  | -   | tcp           | No           | The carier used for the connection with the server.          |  |
  */
 
 class Map2D_nwc_yarp :
@@ -42,6 +43,7 @@ protected:
     yarp::os::Port      m_rpcPort_to_Map2D_nws;
     std::string         m_local_name;
     std::string         m_map_server;
+    std::string         m_carrier;
     IMap2DMsgs          m_map_RPC;
     std::mutex          m_mutex;
 

@@ -344,6 +344,7 @@ void display_help()
     yInfo() << "--period <double> the refresh period (default 50 ms)";
     yInfo() << "--aspect <0/1> draws line/points (default 0=lines)";
     yInfo() << "--sens_port <string> the name of the port used by Rangefinder2DClient to connect to the laser device. (mandatory)";
+    yInfo() << "--carrier <string> the name of the carrier used by Rangefinder2DClient for connection to the server";
     yInfo() << "--lidar_debug shows NaN values";
     yInfo() << "--local <string> the orefix for the client port. By default /laserScannerGui. Useful in case of multiple instances.";
     yInfo() << "";
@@ -382,6 +383,7 @@ int main(int argc, char *argv[])
     int period = rf.check("period",Value(50),"period [ms]").asInt32(); //ms
     int aspect = rf.check("aspect", Value(0), "0 draw lines, 1 draw points").asInt32();
     std::string laserport = rf.check("sens_port", Value("/laser:o"), "laser port name").asString();
+    std::string carrier  = rf.check("carrier", Value("tcp"), "Rangefinder2DClient connection carrier").asString();
     std::string localprefix = rf.check("local", Value("/laserScannerGui"), "prefix for the client port").asString();
     if (rf.check ("lidar_debug"))     { g_lidar_debug_nan = g_lidar_debug_inf = true;}
     if (rf.check ("lidar_debug_nan")) { g_lidar_debug_nan = true; }
@@ -403,6 +405,7 @@ int main(int argc, char *argv[])
     lasOptions.put("local", localprefix + "/laser:i");
     lasOptions.put("remote", laserport);
     lasOptions.put("period", "10");
+    lasOptions.put("carrier", carrier);
     bool b = drv->open(lasOptions);
     if (!b)
     {

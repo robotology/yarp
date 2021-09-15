@@ -35,6 +35,7 @@ bool Map2DClient::open(yarp::os::Searchable &config)
 
     m_local_name       = config.find("local").asString();
     m_map_server       = config.find("remote").asString();
+    m_carrier = config.check("carrier", yarp::os::Value("tcp"), "the carrier used for the connection with the server").asString();
 
     if (m_local_name == "")
     {
@@ -60,7 +61,7 @@ bool Map2DClient::open(yarp::os::Searchable &config)
     }
 
     bool ok=false;
-    ok=Network::connect(local_rpc1, remote_rpc1);
+    ok=Network::connect(local_rpc1, remote_rpc1, m_carrier);
     if (!ok)
     {
         yCError(MAP2DCLIENT, "open() error could not connect to %s", remote_rpc1.c_str());

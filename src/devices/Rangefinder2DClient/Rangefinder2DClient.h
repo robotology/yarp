@@ -64,7 +64,15 @@ public:
 * @ingroup dev_impl_network_clients dev_impl_network_lidar
 *
 * \brief `Rangefinder2DClient`: The client side of any ILaserRangefinder2D capable device.
+*
 * Still single thread! concurrent access is unsafe.
+*
+*  Parameters required by this device are:
+* | Parameter name | SubParameter   | Type    | Units          | Default Value | Required     | Description                                                       | Notes |
+* |:--------------:|:--------------:|:-------:|:--------------:|:-------------:|:-----------: |:-----------------------------------------------------------------:|:-----:|
+* | local          |      -         | string  | -              |   -           | Yes          | Full port name opened by the Rangefinder2DClient device.          |       |
+* | remote         |      -         | string  | -              |   -           | Yes          | Full port name of the port opened on the server side, to which the Rangefinder2DClient connects to.    |     |
+* | carrier        |     -          | string  | -              | tcp           | No           | The carier used for the connection with the server.               |       |
 */
 class Rangefinder2DClient:
         public yarp::dev::DeviceDriver,
@@ -76,6 +84,7 @@ protected:
     yarp::os::Port rpcPort;
     std::string local;
     std::string remote;
+    std::string m_carrier;
     yarp::os::Stamp lastTs; //used by IPreciselyTimed
     std::string deviceId;
 
