@@ -30,7 +30,7 @@ using yarp::companion::impl::Companion;
 enum client_return_code_t { CLIENT_END_TEST = 0, CLIENT_CARRIER_ERROR = 1};
 enum server_return_code_t { SERVER_END_TEST = 0, SERVER_QUIT = 1,SERVER_ERROR =2 };
 
-server_return_code_t server(double server_wait, bool verbose = false);
+server_return_code_t server(double server_wait, std::string filename = "", bool verbose = false);
 client_return_code_t client(int nframes, int payload_size, std::string proto, double pause, bool no_reply, std::string logfilename = "log_", size_t test_number = 0, bool verbose = false);
 
 //------------------------------------------------------------------------------------------------------------------------------
@@ -47,6 +47,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
         yCInfo(COMPANION, "Syntax for the server:");
         yCInfo(COMPANION, "yarp latency-test --server [--details]");
         yCInfo(COMPANION, "--server_wait <time>");
+        yCInfo(COMPANION, "--testdata_filename <path_to_input_file>");
         yCInfo(COMPANION, " ");
         yCInfo(COMPANION, "Syntax for the client:");
         yCInfo(COMPANION, "yarp latency-test --client [--details]");
@@ -66,10 +67,11 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
     if (p.check("server"))
     {
         double server_wait = p.find("server_wait").asFloat64();
+        std::string input_filename    = p.find("testdata_filename").asString();
         size_t servercounter=0;
         while(1)
         {
-            int returncode = server(server_wait, verbose);
+            int returncode = server(server_wait, input_filename, verbose);
             if      (returncode == SERVER_END_TEST) { yCInfo(COMPANION, "Test %zu complete", servercounter++);}
             else if (returncode == SERVER_QUIT)     { yCInfo(COMPANION, "Test %zu complete, quitting", servercounter++); break;}
             else if (returncode == SERVER_ERROR)    { yCError(COMPANION, "Test %zu error", servercounter++); }
@@ -177,7 +179,7 @@ int Companion::cmdLatencyTest(int argc, char* argv[])
 
 //------------------------------------------------------------------------------------------------------------------------------
 
-server_return_code_t server(double server_wait, bool verbose)
+server_return_code_t server(double server_wait, std::string datafilename, bool verbose )
 {
     //Open the port for connection with the client
     Port port;
@@ -196,13 +198,41 @@ server_return_code_t server(double server_wait, bool verbose)
     //Creates a payload bottle, consisting of a string with the size requested by the client
     int payload_reqsize = startbot.get(1).asInt32();
     bool use_reply = (startbot.get(2).asInt32() == 1);
-
     char* buf = new char[payload_reqsize];
-    for (int elem = 0; elem < payload_reqsize - 1; elem++)
+
+    if (datafilename.empty())
     {
-        buf[elem] = 112;
+        for (int elem = 0; elem < payload_reqsize - 1; elem++)
+        {
+            buf[elem] = 112;
+        }
     }
-    buf[payload_reqsize - 1] = '\0';
+    else
+    {
+        std::ifstream file (datafilename, std::ios::in| std::ios::binary| std::ios::ate);
+        size_t max_data_size;
+        char* memblock;
+        if (file.is_open())
+        {
+            max_data_size = file.tellg();
+            memblock = new char[max_data_size];
+            file.seekg(0, std::ios::beg);
+            file.read(memblock, max_data_size);
+        }
+        else
+        {
+            yCError(COMPANION) << "Unable to open filename:" << datafilename;
+            return SERVER_ERROR;
+        }
+
+        for (size_t elem = 0, pf=0; elem < payload_reqsize - 1; elem++)
+        {
+            buf[elem] = memblock[pf++];
+            if (pf > max_data_size) { pf =0;}
+        }
+
+        buf[payload_reqsize - 1] = '\0';
+    }
 
     Bottle payloadbottle;
     payloadbottle.addString(buf);
