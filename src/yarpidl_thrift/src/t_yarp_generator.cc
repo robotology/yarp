@@ -59,7 +59,7 @@ class t_yarp_generator : public t_oop_generator
 public:
     t_yarp_generator(t_program* program,
                      const std::map<std::string, std::string>& parsed_options,
-                     const std::string& option_string) :
+                     const std::string& option_string [[maybe_unused]]) :
             t_oop_generator{program},
             use_include_prefix_{parsed_options.find("include_prefix") != parsed_options.end()},
             no_namespace_prefix_{parsed_options.find("no_namespace_prefix") != parsed_options.end()},
@@ -87,7 +87,7 @@ public:
 
     std::string indent_whitespaces_str(size_t whitespaces) const
     {
-        std::string ind = "";
+        std::string ind;
         for (size_t i = 0; i < whitespaces; ++i) {
             ind += ' ';
         }
@@ -98,24 +98,25 @@ public:
     using indent_count_t = std::function<int()>;
     using indent_t = std::function<std::string()>;
 
-    std::string indent_impl(indent_count_t indent_count_fn)
+    std::string indent_impl(const indent_count_t& indent_count_fn) const
     {
-        std::string ind = "";
+        std::string ind;
         for (int i = 0; i < indent_count_fn(); ++i) {
             ind += indent_str();
         }
         return ind;
     }
 
-    std::string indent_access_specifier_str_impl(indent_count_t indent_count_fn) {
-        std::string ind = "";
+    std::string indent_access_specifier_str_impl(const indent_count_t& indent_count_fn) const
+    {
+        std::string ind;
         for (int i = 0; i < indent_count_fn() - 1; ++i) {
             ind += indent_str();
         }
         return ind;
     }
 
-    std::string inline_return_impl(indent_t indent_fn, const std::string& val = "")
+    std::string inline_return_impl(const indent_t& indent_fn, const std::string& val = "") const
     {
         std::string str = " {\n";
         str += indent_fn();
@@ -131,14 +132,14 @@ public:
         return str;
     }
 
-    std::string indent_initializer_impl(indent_t indent_fn)
+    std::string indent_initializer_impl(const indent_t& indent_fn) const
     {
         std::string str = indent_fn();
         str += indent_initializer_str();
         return str;
     }
 
-    std::string indent_whitespaces_impl(indent_t indent_fn, size_t whitespaces)
+    std::string indent_whitespaces_impl(const indent_t& indent_fn, size_t whitespaces) const
     {
         std::string str = indent_fn();
         str += indent_whitespaces_str(whitespaces);
@@ -210,12 +211,12 @@ public:
                                   t_field* tfield,
                                   const std::string& prefix = "",
                                   const std::string& suffix = "",
-                                  bool force_nesting = false);
+                                  bool force_nested = false);
 
     void generate_serialize_struct(std::ostringstream& out,
                                    t_struct* tstruct,
                                    const std::string& prefix = "",
-                                   bool force_nesting = false);
+                                   bool force_nested = false);
 
     void generate_serialize_container(std::ostringstream& out,
                                       t_type* ttype,
@@ -284,7 +285,7 @@ public:
     int flat_element_count(t_struct* type);
     int flat_element_count(t_function* fn);
 
-    std::string copyright_comment();
+    std::string copyright_comment() const;
     std::string autogen_comment() override;
 
     void init_generator() override;
@@ -359,7 +360,7 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
     type = get_true_type(type);
 
     if (type->is_base_type()) {
-        t_base_type::t_base tbase = ((t_base_type*)type)->get_base();
+        t_base_type::t_base tbase = static_cast<t_base_type*>(type)->get_base();
         switch (tbase) {
         case t_base_type::TYPE_VOID:
             throw "NO T_VOID CONSTRUCT";
@@ -386,23 +387,19 @@ std::string t_yarp_generator::type_to_enum(t_type* type)
             auto it = type->annotations_.find("yarp.type");
             if (it != type->annotations_.end() && it->second == "yarp::conf::float32_t") {
                 return "BOTTLE_TAG_FLOAT32";
-            } else {
-                return "BOTTLE_TAG_FLOAT64";
             }
+            return "BOTTLE_TAG_FLOAT64";
         }
         }
     } else if (type->is_enum()) {
         return "BOTTLE_TAG_INT32";
-    } else if (type->is_struct()) {
+    } else if (type->is_struct() ||
+               type->is_map() ||
+               type->is_set() ||
+               type->is_list()) {
         return "BOTTLE_TAG_LIST";
     } else if (type->is_xception()) {
         return "::apache::thrift::protocol::T_STRUCT";
-    } else if (type->is_map()) {
-        return "BOTTLE_TAG_LIST";
-    } else if (type->is_set()) {
-        return "BOTTLE_TAG_LIST";
-    } else if (type->is_list()) {
-        return "BOTTLE_TAG_LIST";
     }
 
     throw "INVALID TYPE IN type_to_enum: " + type->get_name();
@@ -457,7 +454,7 @@ std::string t_yarp_generator::enum_base_to_id(const std::string& enum_base)
 
 std::string t_yarp_generator::get_struct_name(t_struct* tstruct)
 {
-    std::string name = tstruct->get_name();
+    const std::string& name = tstruct->get_name();
     if (type_names_.find(name) == type_names_.end()) {
         return name;
     }
@@ -466,7 +463,7 @@ std::string t_yarp_generator::get_struct_name(t_struct* tstruct)
 
 std::string t_yarp_generator::get_enum_base(t_enum* tenum)
 {
-    std::string name = tenum->get_name();
+    const std::string& name = tenum->get_name();
     if (enum_bases_.find(name) == enum_bases_.end()) {
         return "int32_t";
     }
@@ -474,9 +471,9 @@ std::string t_yarp_generator::get_enum_base(t_enum* tenum)
 }
 
 
-std::string t_yarp_generator::copyright_comment()
+std::string t_yarp_generator::copyright_comment() const
 {
-    std::string ret = "";
+    std::string ret;
     if (!no_copyright_) {
         ret += "/*\n";
         ret += " * SPDX-FileCopyrightText: 2006-2021 Istituto Italiano di Tecnologia (IIT)\n";
@@ -489,7 +486,7 @@ std::string t_yarp_generator::copyright_comment()
 
 std::string t_yarp_generator::autogen_comment()
 {
-    std::string ret = "";
+    std::string ret;
     ret += "// " + autogen_summary() + "\n";
     ret += "//\n";
     ret += "// This is an automatically generated file.\n";
@@ -505,7 +502,8 @@ std::string t_yarp_generator::autogen_comment()
 std::string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg, bool ret)
 {
     if (ttype->is_base_type()) {
-        std::string bname = base_type_name(((t_base_type*)ttype)->get_base());
+        const t_base_type::t_base base = static_cast<t_base_type*>(ttype)->get_base();
+        std::string bname = base_type_name(base);
         auto it = ttype->annotations_.find("yarp.type");
         if (it != ttype->annotations_.end()) {
             bname = it->second;
@@ -515,7 +513,7 @@ std::string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg
             return bname;
         }
 
-        if (((t_base_type*)ttype)->get_base() == t_base_type::TYPE_STRING) {
+        if (base == t_base_type::TYPE_STRING) {
             return "const " + bname + "&";
         }
 
@@ -530,25 +528,24 @@ std::string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg
     if (ttype->is_container()) {
         std::string cname;
 
-        t_container* tcontainer = (t_container*)ttype;
+        auto* tcontainer = static_cast<t_container*>(ttype);
         if (tcontainer->has_cpp_name()) {
             cname = tcontainer->get_cpp_name();
         } else if (ttype->is_map()) {
-            t_map* tmap = (t_map*)ttype;
+            auto* tmap = static_cast<t_map*>(ttype);
             cname = "std::map<" + type_name(tmap->get_key_type(), in_typedef) + ", " + type_name(tmap->get_val_type(), in_typedef) + ">";
         } else if (ttype->is_set()) {
-            t_set* tset = (t_set*)ttype;
+            auto* tset = static_cast<t_set*>(ttype);
             cname = "std::set<" + type_name(tset->get_elem_type(), in_typedef) + ">";
         } else if (ttype->is_list()) {
-            t_list* tlist = (t_list*)ttype;
+            auto* tlist = static_cast<t_list*>(ttype);
             cname = "std::vector<" + type_name(tlist->get_elem_type(), in_typedef) + ">";
         }
 
         if (arg) {
             return "const " + cname + "&";
-        } else {
-            return cname;
         }
+        return cname;
     }
 
     std::string class_prefix;
@@ -565,7 +562,7 @@ std::string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg
         }
     }
 
-    if (pname == "") {
+    if (pname.empty()) {
         t_program* program = ttype->get_program();
         if (program != nullptr && program != program_) {
             pname = class_prefix + namespace_prefix(program->get_namespace("yarp")) + ttype->get_name();
@@ -577,14 +574,13 @@ std::string t_yarp_generator::type_name(t_type* ttype, bool in_typedef, bool arg
     if (arg) {
         if (is_complex_type(ttype)) {
             return "const " + pname + "&";
-        } else if (ret) {
-            return pname;
-        } else {
-            return "const " + pname;
         }
-    } else {
-        return pname;
+        if (ret) {
+            return pname;
+        }
+        return "const " + pname;
     }
+    return pname;
 }
 
 std::string t_yarp_generator::base_type_name(t_base_type::t_base tbase)
@@ -618,12 +614,12 @@ std::string t_yarp_generator::namespace_prefix(std::string ns)
     }
     std::string result;
     std::string::size_type loc;
-    while ((loc = ns.find(".")) != std::string::npos) {
+    while ((loc = ns.find('.')) != std::string::npos) {
         result += ns.substr(0, loc);
         result += "::";
         ns = ns.substr(loc + 1);
     }
-    if (ns.size() > 0) {
+    if (!ns.empty()) {
         result += ns + "::";
     }
     return result;
@@ -636,9 +632,9 @@ void t_yarp_generator::namespace_open(std::ostream& out, std::string ns)
     }
 
     ns += ".";
-    std::string separator = "";
+    std::string separator;
     std::string::size_type loc;
-    while ((loc = ns.find(".")) != std::string::npos) {
+    while ((loc = ns.find('.')) != std::string::npos) {
         out << separator << "namespace " << ns.substr(0, loc) << " {";
         separator = "\n";
         ns = ns.substr(loc + 1);
@@ -657,7 +653,7 @@ void t_yarp_generator::namespace_close(std::ostream& out, std::string ns)
     std::string::size_type loc;
 
     out << '\n';
-    while ((loc = ns.find(".")) != std::string::npos) {
+    while ((loc = ns.find('.')) != std::string::npos) {
         out << "} // namespace " << ns.substr(0, loc) << '\n';
         ns = ns.substr(loc + 1);
     }
@@ -670,7 +666,10 @@ void t_yarp_generator::namespace_close(std::ostream& out, std::string ns)
 bool t_yarp_generator::is_complex_type(t_type* ttype)
 {
     ttype = get_true_type(ttype);
-    return ttype->is_container() || ttype->is_struct() || ttype->is_xception() || (ttype->is_base_type() && (((t_base_type*)ttype)->get_base() == t_base_type::TYPE_STRING));
+    return ttype->is_container() ||
+           ttype->is_struct() ||
+           ttype->is_xception() ||
+           (ttype->is_base_type() && static_cast<t_base_type*>(ttype)->get_base() == t_base_type::TYPE_STRING);
 }
 
 /**
@@ -684,12 +683,12 @@ void t_yarp_generator::init_generator()
     std::string dir = get_include_prefix(program_);
     std::string subdir = get_out_dir();
     std::string::size_type loc;
-    while ((loc = dir.find("/")) != std::string::npos) {
+    while ((loc = dir.find('/')) != std::string::npos) {
         subdir = subdir + "/" + dir.substr(0, loc);
         MKDIR(subdir.c_str());
         dir = dir.substr(loc + 1);
     }
-    if (dir.size() > 0) {
+    if (!dir.empty()) {
         subdir = subdir + "/" + dir;
         MKDIR(subdir.c_str());
     }
@@ -792,7 +791,7 @@ void t_yarp_generator::print_doc(std::ostringstream& f_h_, t_doc* tdoc)
     }
 }
 
-static std::string replaceInString(const std::string& originalString, std::string toFind, std::string replacement)
+static std::string replaceInString(const std::string& originalString, const std::string& toFind, const std::string& replacement)
 {
     std::string docString(originalString);
     size_t foundToken = docString.find(toFind);
@@ -841,15 +840,12 @@ std::string t_yarp_generator::print_const_value(t_const_value* tvalue, t_type* t
 {
     std::string result;
     bool first = true;
-    char buf[10000];
     switch (tvalue->get_type()) {
     case t_const_value::CV_INTEGER:
-        sprintf(buf, "%d", (int)tvalue->get_integer());
-        result += buf;
+        result += std::to_string(tvalue->get_integer());
         break;
     case t_const_value::CV_DOUBLE:
-        sprintf(buf, "%g", tvalue->get_double());
-        result += buf;
+        result += std::to_string(tvalue->get_double());
         break;
     case t_const_value::CV_STRING:
         result += std::string("\"") + get_escaped_string(tvalue) + "\"";
@@ -992,7 +988,7 @@ std::string t_yarp_generator::function_prototype(t_function* tfn,
                                                  const std::string& prefix,
                                                  const std::string& override_name)
 {
-    std::string result = "";
+    std::string result;
 
     if (include_returntype) {
         std::string return_type = type_name(tfn->get_returntype());
@@ -1046,7 +1042,7 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
                                                 t_field* tfield,
                                                 const std::string& prefix,
                                                 const std::string& suffix,
-                                                bool force_nesting)
+                                                bool force_nested)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
@@ -1064,7 +1060,7 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
         generate_serialize_struct(f_cpp_,
                                   (t_struct*)type,
                                   name,
-                                  force_nesting);
+                                  force_nested);
         f_cpp_ << ")" << inline_return_cpp("false");
     } else if (type->is_container()) {
         generate_serialize_container(f_cpp_, type, name);
@@ -1168,11 +1164,11 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
 void t_yarp_generator::generate_serialize_struct(std::ostringstream& f_cpp_,
                                                  t_struct* tstruct,
                                                  const std::string& prefix,
-                                                 bool force_nesting)
+                                                 bool force_nested)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
-    if (force_nesting) {
+    if (force_nested) {
         f_cpp_ << "writeNested(" << prefix << ")";
     } else {
         f_cpp_ << "write(" << prefix << ")";
@@ -1567,7 +1563,7 @@ std::string t_yarp_generator::declare_field(t_field* tfield,
                                             const std::string& prefix)
 {
     // TODO: do we ever need to initialize the field?
-    std::string result = "";
+    std::string result;
     if (is_constant) {
         result += "const ";
     }
@@ -2191,7 +2187,7 @@ void t_yarp_generator::generate_struct_fields(t_struct* tstruct, std::ostringstr
 
     f_h_ << indent_h() << "// Fields\n";
     for (const auto& member : tstruct->get_members()) {
-        std::string mname = member->get_name();
+        const auto& mname = member->get_name();
         std::string mtype = type_name(member->get_type());
 
         print_doc(f_h_, member);
@@ -2318,7 +2314,7 @@ void t_yarp_generator::generate_struct_read_wirereader(t_struct* tstruct, std::o
     indent_up_cpp();
     {
         for (const auto& member : members) {
-            std::string mname = member->get_name();
+            const auto& mname = member->get_name();
             // Force nesting for fields annotated as "yarp.nested"
             auto it = member->annotations_.find("yarp.nested");
             if (it != member->annotations_.end() && it->second == "true") {
@@ -2357,7 +2353,7 @@ void t_yarp_generator::generate_struct_read_connectionreader(t_struct* tstruct, 
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireReader reader(connection);\n";
         f_cpp_ << indent_cpp() << "if (!reader.readListHeader(" << flat_element_count(tstruct) << "))" << inline_return_cpp("false");
         for (const auto& member : members) {
-            std::string mname = member->get_name();
+            const auto& mname = member->get_name();
             auto it = member->annotations_.find("yarp.nested");
             if (it != member->annotations_.end() && it->second == "true") {
                 f_cpp_ << indent_cpp() << "if (!nested_read_" << mname << "(reader))" << inline_return_cpp("false");
@@ -2393,7 +2389,7 @@ void t_yarp_generator::generate_struct_write_wirewriter(t_struct* tstruct, std::
     indent_up_cpp();
     {
         for (const auto& member : members) {
-            std::string mname = member->get_name();
+            const auto& mname = member->get_name();
             auto it = member->annotations_.find("yarp.nested");
             if (it != member->annotations_.end() && it->second == "true") {
                 f_cpp_ << indent_cpp() << "if (!nested_write_" << mname << "(writer))" << inline_return_cpp("false");
@@ -2431,7 +2427,7 @@ void t_yarp_generator::generate_struct_write_connectionwriter(t_struct* tstruct,
         f_cpp_ << indent_cpp() << "yarp::os::idl::WireWriter writer(connection);\n";
         f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << flat_element_count(tstruct) << "))" << inline_return_cpp("false");
         for (const auto& member : members) {
-            std::string mname = member->get_name();
+            const auto& mname = member->get_name();
             auto it = member->annotations_.find("yarp.nested");
             if (it != member->annotations_.end() && it->second == "true") {
                 f_cpp_ << indent_cpp() << "if (!nested_write_" << mname << "(writer))" << inline_return_cpp("false");
@@ -3072,7 +3068,7 @@ void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ostri
                 f_cpp_ << indent_cpp() << "if (!reader.readString(field))" << inline_return_cpp("false");
 
                 for (const auto& member : members) {
-                    std::string mname = member->get_name();
+                    const auto& mname = member->get_name();
                     f_cpp_ << indent_cpp() << "if (field == \"" << mname << "\") {\n";
                     indent_up_cpp();
                     {
@@ -3095,7 +3091,7 @@ void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ostri
             f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << (members.size() + 1) << "))" << inline_return_cpp("false");
             f_cpp_ << indent_cpp() << "writer.writeString(\"*** Available fields:\");\n";
             for (const auto& member : members) {
-                std::string mname = member->get_name();
+                const auto& mname = member->get_name();
                 f_cpp_ << indent_cpp() << "writer.writeString(\"" << mname << "\");\n";
             }
             f_cpp_ << indent_cpp() << "return true;\n";
@@ -3135,7 +3131,7 @@ void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ostri
             // TODO: inefficient code follows
             bool first = true;
             for (const auto& member : members) {
-                std::string mname = member->get_name();
+                const auto& mname = member->get_name();
                 if (first) {
                     f_cpp_ << indent_cpp();
                     first = false;
@@ -3202,7 +3198,7 @@ void t_yarp_generator::generate_struct_editor_write(t_struct* tstruct, std::ostr
         f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(dirty_count + 1))" << inline_return_cpp("false");
         f_cpp_ << indent_cpp() << "if (!writer.writeString(\"patch\"))" << inline_return_cpp("false");
         for (const auto& member : members) {
-            std::string mname = member->get_name();
+            const auto& mname = member->get_name();
             f_cpp_ << indent_cpp() << "if (is_dirty_" << mname << ") {\n";
             indent_up_cpp();
             {
@@ -3332,7 +3328,7 @@ void t_yarp_generator::generate_struct_editor_dirty_flags(t_struct* tstruct, std
     {
         f_cpp_ << indent_cpp() << "is_dirty = flag;\n";
         for (const auto& member : members) {
-            std::string mname = member->get_name();
+            const auto& mname = member->get_name();
             f_cpp_ << indent_cpp() << "is_dirty_" << mname << " = flag;\n";
         }
         f_cpp_ << indent_cpp() << "dirty_count = flag ? " << members.size() << " : 0;\n";
@@ -3523,7 +3519,7 @@ void t_yarp_generator::generate_service(t_service* tservice)
 
     std::set<std::string> neededTypes;
     for (const auto& function : tservice->get_functions()) {
-        auto returntype = function->get_returntype();
+        auto* returntype = function->get_returntype();
         if (!returntype->is_void()) {
             get_needed_type(returntype, neededTypes);
         }
