@@ -39,7 +39,7 @@ target_include_directories(YARP_robottestingframework
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_compile_features(YARP_robottestingframework PUBLIC cxx_std_14)
+target_compile_features(YARP_robottestingframework PUBLIC cxx_std_17)
 
 target_link_libraries(YARP_robottestingframework
   PUBLIC
