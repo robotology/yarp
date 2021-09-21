@@ -842,7 +842,11 @@ std::string t_yarp_generator::print_const_value(t_const_value* tvalue, t_type* t
     bool first = true;
     switch (tvalue->get_type()) {
     case t_const_value::CV_INTEGER:
-        result += std::to_string(tvalue->get_integer());
+        if (ttype != nullptr && ttype->is_bool()) {
+            result += (tvalue->get_integer() ? "true" : "false");
+        } else {
+            result += std::to_string(tvalue->get_integer());
+        }
         break;
     case t_const_value::CV_DOUBLE:
         result += std::to_string(tvalue->get_double());

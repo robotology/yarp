@@ -1337,13 +1337,13 @@ std::vector<std::string> yarpdataplayer_console_IDL::help(const std::string& fun
             helpString.emplace_back("@return value of the player speed ");
         }
         if (functionName == "repeat") {
-            helpString.emplace_back("bool repeat(const bool val = 0) ");
+            helpString.emplace_back("bool repeat(const bool val = false) ");
             helpString.emplace_back("Sets repeat mode ");
             helpString.emplace_back("@param val if true repeat mode is active. ");
             helpString.emplace_back("@return true/false on success/failure ");
         }
         if (functionName == "setStrict") {
-            helpString.emplace_back("bool setStrict(const bool val = 0) ");
+            helpString.emplace_back("bool setStrict(const bool val = false) ");
             helpString.emplace_back("Sets strict mode ");
             helpString.emplace_back("@param val if true strict mode is active. ");
             helpString.emplace_back("@return true/false on success/failure ");
@@ -1675,7 +1675,7 @@ bool yarpdataplayer_console_IDL::read(yarp::os::ConnectionReader& connection)
         if (tag == "repeat") {
             bool val;
             if (!reader.readBool(val)) {
-                val = 0;
+                val = false;
             }
             yarpdataplayer_console_IDL_repeat_helper helper{val};
             helper.m_return_helper = repeat(val);
@@ -1694,7 +1694,7 @@ bool yarpdataplayer_console_IDL::read(yarp::os::ConnectionReader& connection)
         if (tag == "setStrict") {
             bool val;
             if (!reader.readBool(val)) {
-                val = 0;
+                val = false;
             }
             yarpdataplayer_console_IDL_setStrict_helper helper{val};
             helper.m_return_helper = setStrict(val);

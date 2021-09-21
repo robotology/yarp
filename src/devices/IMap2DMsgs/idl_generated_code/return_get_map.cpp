@@ -433,7 +433,7 @@ void return_get_map::Editor::dirty_flags(bool flag)
 bool return_get_map::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -451,7 +451,7 @@ bool return_get_map::write_retval(const yarp::os::idl::WireWriter& writer) const
 bool return_get_map::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }

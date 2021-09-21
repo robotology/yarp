@@ -433,7 +433,7 @@ void return_get_path::Editor::dirty_flags(bool flag)
 bool return_get_path::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -451,7 +451,7 @@ bool return_get_path::write_retval(const yarp::os::idl::WireWriter& writer) cons
 bool return_get_path::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }

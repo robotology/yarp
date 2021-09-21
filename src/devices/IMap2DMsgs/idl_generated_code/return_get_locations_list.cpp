@@ -443,7 +443,7 @@ void return_get_locations_list::Editor::dirty_flags(bool flag)
 bool return_get_locations_list::read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
@@ -461,7 +461,7 @@ bool return_get_locations_list::write_retval(const yarp::os::idl::WireWriter& wr
 bool return_get_locations_list::nested_read_retval(yarp::os::idl::WireReader& reader)
 {
     if (!reader.readBool(retval)) {
-        retval = 0;
+        retval = false;
     }
     return true;
 }
