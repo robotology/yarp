@@ -16,7 +16,13 @@ find_package(YCM 0.11.0 REQUIRED)
 find_package(YARP COMPONENTS os sig idl_tools REQUIRED)
 
 include(Catch)
-set_property(CACHE YARP_TEST_TIMEOUT PROPERTY VALUE 120)
+# Test timeout.
+set(YARP_TEST_TIMEOUT_DEFAULT 120)
+if (APPLE)
+  set(YARP_TEST_TIMEOUT_DEFAULT 300)
+endif()
+set(YARP_TEST_TIMEOUT ${YARP_TEST_TIMEOUT_DEFAULT} CACHE STRING "Timeout for unit tests")
+mark_as_advanced(YARP_TEST_TIMEOUT)
 function(yarp_catch_discover_tests _target)
   # Workaround to force catch_discover_tests to run tests under valgrind
   if(DEFINED YARP_TEST_LAUNCHER)
@@ -27,7 +33,7 @@ function(yarp_catch_discover_tests _target)
     EXTRA_ARGS "-s" "--use-colour" "yes"
     PROPERTIES
       TIMEOUT ${YARP_TEST_TIMEOUT}
-    )
+  )
 endfunction()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/catch2)
 
