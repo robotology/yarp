@@ -921,7 +921,7 @@ void t_yarp_generator::generate_namespace_close(std::ostringstream& f_h_, std::o
 std::string t_yarp_generator::get_include_prefix(const t_program* const program) const
 {
     std::string include_prefix = program->get_include_prefix();
-    if (!use_include_prefix_ || (include_prefix.size() > 0 && include_prefix[0] == '/')) {
+    if (!use_include_prefix_ || (!include_prefix.empty() && include_prefix[0] == '/')) {
         // if flag is turned off or this is absolute path, return the file path
         // is not used.
         include_prefix = "";
@@ -945,8 +945,9 @@ void t_yarp_generator::get_needed_type(t_type* curType, std::set<std::string>& n
     const auto& program = curType->get_program();
 
     if (curType->is_struct()) {
-        if (((t_struct*)curType)->annotations_.find("yarp.includefile") != ((t_struct*)curType)->annotations_.end()) {
-            mtype = ((t_struct*)curType)->annotations_["yarp.includefile"];
+        auto annotations = static_cast<t_struct*>(curType)->annotations_;
+        if (annotations.find("yarp.includefile") != annotations.end()) {
+            mtype = annotations["yarp.includefile"];
         } else {
             mtype = get_include_prefix(program) + curType->get_name() + ".h";
         }
@@ -968,18 +969,21 @@ void t_yarp_generator::get_needed_type(t_type* curType, std::set<std::string>& n
     }
 
     if (curType->is_list()) {
-        get_needed_type(((t_list*)curType)->get_elem_type(), neededTypes);
+        auto* curList = static_cast<t_list*>(curType);
+        get_needed_type(curList->get_elem_type(), neededTypes);
         return;
     }
 
     if (curType->is_set()) {
-        get_needed_type(((t_set*)curType)->get_elem_type(), neededTypes);
+        auto* curSet = static_cast<t_set*>(curType);
+        get_needed_type(curSet->get_elem_type(), neededTypes);
         return;
     }
 
     if (curType->is_map()) {
-        get_needed_type(((t_map*)curType)->get_key_type(), neededTypes);
-        get_needed_type(((t_map*)curType)->get_val_type(), neededTypes);
+        auto* curMap = static_cast<t_map*>(curType);
+        get_needed_type(curMap->get_key_type(), neededTypes);
+        get_needed_type(curMap->get_val_type(), neededTypes);
         return;
     }
 }
@@ -1059,7 +1063,7 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
     if (type->is_struct() || type->is_xception()) {
         f_cpp_ << indent_cpp() << "if (!writer.";
         generate_serialize_struct(f_cpp_,
-                                  (t_struct*)type,
+                                  static_cast<t_struct*>(type),
                                   name,
                                   force_nested);
         f_cpp_ << ")" << inline_return_cpp("false");
@@ -1068,13 +1072,13 @@ void t_yarp_generator::generate_serialize_field(std::ostringstream& f_cpp_,
     } else if (type->is_base_type() || type->is_enum()) {
         f_cpp_ << indent_cpp() << "if (!writer.";
         if (type->is_base_type()) {
-            t_base_type::t_base tbase = ((t_base_type*)type)->get_base();
+            t_base_type::t_base tbase = static_cast<t_base_type*>(type)->get_base();
             switch (tbase) {
             case t_base_type::TYPE_VOID:
                 throw "compiler error: cannot serialize void field in a struct: " + name;
                 break;
             case t_base_type::TYPE_STRING:
-                if (((t_base_type*)type)->is_binary()) {
+                if (static_cast<t_base_type*>(type)->is_binary()) {
                     f_cpp_ << "writeBinary(" << name << ")";
                 } else {
                     f_cpp_ << "writeString(" << name << ")";
@@ -1184,15 +1188,15 @@ void t_yarp_generator::generate_serialize_container(std::ostringstream& f_cpp_,
 
     if (ttype->is_map()) {
         f_cpp_ << indent_cpp() << "if (!writer.writeMapBegin("
-                        << type_to_enum(((t_map*)ttype)->get_key_type())
+                        << type_to_enum(static_cast<t_map*>(ttype)->get_key_type())
                         << ", "
-                        << type_to_enum(((t_map*)ttype)->get_val_type());
+                        << type_to_enum(static_cast<t_map*>(ttype)->get_val_type());
     } else if (ttype->is_set()) {
         f_cpp_ << indent_cpp() << "if (!writer.writeSetBegin("
-                        << type_to_enum(((t_set*)ttype)->get_elem_type());
+                        << type_to_enum(static_cast<t_set*>(ttype)->get_elem_type());
     } else if (ttype->is_list()) {
         f_cpp_ << indent_cpp() << "if (!writer.writeListBegin("
-                        << type_to_enum(((t_list*)ttype)->get_elem_type());
+                        << type_to_enum(static_cast<t_list*>(ttype)->get_elem_type());
     }
     f_cpp_ << ", " << "static_cast<uint32_t>(" << prefix << ".size())))" << inline_return_cpp("false");
 
@@ -1201,11 +1205,11 @@ void t_yarp_generator::generate_serialize_container(std::ostringstream& f_cpp_,
     indent_up_cpp();
     {
         if (ttype->is_map()) {
-            generate_serialize_map_element(f_cpp_, (t_map*)ttype, item);
+            generate_serialize_map_element(f_cpp_, static_cast<t_map*>(ttype), item);
         } else if (ttype->is_set()) {
-            generate_serialize_set_element(f_cpp_, (t_set*)ttype, item);
+            generate_serialize_set_element(f_cpp_, static_cast<t_set*>(ttype), item);
         } else if (ttype->is_list()) {
-            generate_serialize_list_element(f_cpp_, (t_list*)ttype, item);
+            generate_serialize_list_element(f_cpp_, static_cast<t_list*>(ttype), item);
         }
     }
     indent_down_cpp();
@@ -1289,7 +1293,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
 
     if (type->is_struct() || type->is_xception()) {
         f_cpp_ << indent_cpp() << "if (!reader.";
-        generate_deserialize_struct(f_cpp_, (t_struct*)type, name, force_nested);
+        generate_deserialize_struct(f_cpp_, static_cast<t_struct*>(type), name, force_nested);
         f_cpp_ << ") {\n";
         indent_up_cpp();
         {
@@ -1301,13 +1305,13 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         generate_deserialize_container(f_cpp_, type, name);
     } else if (type->is_base_type()) {
         f_cpp_ << indent_cpp() << "if (!reader.";
-        t_base_type::t_base tbase = ((t_base_type*)type)->get_base();
+        t_base_type::t_base tbase = static_cast<t_base_type*>(type)->get_base();
         switch (tbase) {
         case t_base_type::TYPE_VOID:
             throw "compiler error: cannot serialize void field in a struct: " + name;
             break;
         case t_base_type::TYPE_STRING:
-            if (((t_base_type*)type)->is_binary()) {
+            if (static_cast<t_base_type*>(type)->is_binary()) {
                 f_cpp_ << "readBinary(" << name << ")";
             } else {
                 f_cpp_ << "readString(" << name << ")";
@@ -1443,7 +1447,7 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
     std::string vtype = tmp("_vtype");
     std::string etype = tmp("_etype");
 
-    t_container* tcontainer = (t_container*)ttype;
+    t_container* tcontainer = static_cast<t_container*>(ttype);
     bool use_push = tcontainer->has_cpp_name();
 
     f_cpp_ << indent_cpp() << prefix << ".clear();\n";
@@ -1472,11 +1476,11 @@ void t_yarp_generator::generate_deserialize_container(std::ostringstream& f_cpp_
     indent_up_cpp();
     {
         if (ttype->is_map()) {
-            generate_deserialize_map_element(f_cpp_, (t_map*)ttype, prefix);
+            generate_deserialize_map_element(f_cpp_, static_cast<t_map*>(ttype), prefix);
         } else if (ttype->is_set()) {
-            generate_deserialize_set_element(f_cpp_, (t_set*)ttype, prefix);
+            generate_deserialize_set_element(f_cpp_, static_cast<t_set*>(ttype), prefix);
         } else if (ttype->is_list()) {
-            generate_deserialize_list_element(f_cpp_, (t_list*)ttype, prefix, use_push, prefix + "[" + i + "]");
+            generate_deserialize_list_element(f_cpp_, static_cast<t_list*>(ttype), prefix, use_push, prefix + "[" + i + "]");
         }
     }
     indent_down_cpp();
@@ -1636,7 +1640,7 @@ void t_yarp_generator::print_const_value(std::ostringstream& f_cpp_,
         f_cpp_ << indent_cpp() << name << " = static_cast<" << type_name(type) << ">(" << value->get_integer() << ");\n"
                     << '\n';
     } else if (type->is_struct() || type->is_xception()) {
-        const auto& fields = ((t_struct*)type)->get_members();
+        const auto& fields = static_cast<t_struct*>(type)->get_members();
         const auto& value_map = value->get_map();
         for (const auto& value_item : value_map) {
             t_type* field_type = nullptr;
@@ -1654,8 +1658,8 @@ void t_yarp_generator::print_const_value(std::ostringstream& f_cpp_,
         }
         f_cpp_ << '\n';
     } else if (type->is_map()) {
-        t_type* ktype = ((t_map*)type)->get_key_type();
-        t_type* vtype = ((t_map*)type)->get_val_type();
+        t_type* ktype = static_cast<t_map*>(type)->get_key_type();
+        t_type* vtype = static_cast<t_map*>(type)->get_val_type();
         const auto& value_map = value->get_map();
         for (const auto& value_item : value_map) {
             std::string key = render_const_value(f_cpp_, name, ktype, value_item.first);
@@ -1664,7 +1668,7 @@ void t_yarp_generator::print_const_value(std::ostringstream& f_cpp_,
         }
         f_cpp_ << '\n';
     } else if (type->is_list()) {
-        t_type* etype = ((t_list*)type)->get_elem_type();
+        t_type* etype = static_cast<t_list*>(type)->get_elem_type();
         const auto& values = value->get_list();
         for (const auto& value : values) {
             std::string val = render_const_value(f_cpp_, name, etype, value);
@@ -1672,7 +1676,7 @@ void t_yarp_generator::print_const_value(std::ostringstream& f_cpp_,
         }
         f_cpp_ << '\n';
     } else if (type->is_set()) {
-        t_type* etype = ((t_set*)type)->get_elem_type();
+        t_type* etype = static_cast<t_set*>(type)->get_elem_type();
         const auto& values = value->get_list();
         for (const auto& value : values) {
             std::string val = render_const_value(f_cpp_, name, etype, value);
@@ -1692,7 +1696,7 @@ std::string t_yarp_generator::render_const_value(std::ostringstream& f_cpp_,
     std::ostringstream render;
 
     if (type->is_base_type()) {
-        t_base_type::t_base tbase = ((t_base_type*)type)->get_base();
+        t_base_type::t_base tbase = static_cast<t_base_type*>(type)->get_base();
         switch (tbase) {
         case t_base_type::TYPE_STRING:
             render << '"' << get_escaped_string(value) << '"';
