@@ -13,6 +13,7 @@
 
 #include <cmrc/cmrc.hpp>
 #include <mutex>
+#include <fstream>
 CMRC_DECLARE(frameTransformServerRC);
 
 using namespace yarp::dev;
@@ -71,13 +72,24 @@ bool FrameTransformServer::open(yarp::os::Searchable &config)
 
     std::string configuration_to_open;
     std::string innerFilePath="config_xml/fts_yarp_only.xml";
-    auto fs = cmrc::frameTransformServerRC::get_filesystem();
-    if(cfg.check("filexml_option")) { innerFilePath="config_xml/"+cfg.find("filexml_option").toString();}
-    cfg.unput("filexml_option");
-    auto xmlFile = fs.open(innerFilePath);
-    for(const auto& lemma : xmlFile)
+    if(cfg.check("testxml_option"))
     {
-        configuration_to_open += lemma;
+        innerFilePath = cfg.find("testxml_option").asString();
+        std::ifstream xmlFile(innerFilePath);
+        std::stringstream stream_file;
+        stream_file << xmlFile.rdbuf();
+        configuration_to_open = stream_file.str();
+    }
+    else
+    {
+        auto fs = cmrc::frameTransformServerRC::get_filesystem();
+        if(cfg.check("filexml_option")) { innerFilePath="config_xml/"+cfg.find("filexml_option").toString();}
+        cfg.unput("filexml_option");
+        auto xmlFile = fs.open(innerFilePath);
+        for(const auto& lemma : xmlFile)
+        {
+            configuration_to_open += lemma;
+        }
     }
 
     std::string m_local_rpcUser = "/ftServer/rpc";
