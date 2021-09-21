@@ -33,6 +33,7 @@ function(yarp_catch_discover_tests _target)
     EXTRA_ARGS "-s" "--use-colour" "yes"
     PROPERTIES
       TIMEOUT ${YARP_TEST_TIMEOUT}
+    ${ARGN}
   )
 endfunction()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../extern/catch2)
@@ -74,7 +75,10 @@ target_link_libraries(demo_yarp_idl_to_dir
     YARP::YARP_sig
 )
 
-yarp_catch_discover_tests(demo_yarp_idl_to_dir)
+yarp_catch_discover_tests(
+  demo_yarp_idl_to_dir
+  TEST_PREFIX demo::yarp_idl_to_dir::
+)
 
 
 # Test using yarp_add_idl
@@ -93,4 +97,7 @@ target_link_libraries(demo_yarp_add_idl
     YARP::YARP_sig
 )
 
-yarp_catch_discover_tests(demo_yarp_add_idl)
+yarp_catch_discover_tests(
+  demo_yarp_add_idl
+  TEST_PREFIX demo::yarp_add_idl::
+)
