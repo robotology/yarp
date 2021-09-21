@@ -996,9 +996,6 @@ std::string t_yarp_generator::function_prototype(t_function* tfn,
 
     if (include_returntype) {
         std::string return_type = type_name(tfn->get_returntype());
-        if (!override_name.empty()) {
-            return_type = "void";
-        }
         result += return_type;
         result += std::string(" ");
     }
