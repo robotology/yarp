@@ -30,10 +30,7 @@ using namespace yarp::sig;
 namespace
 {
     YARP_LOG_COMPONENT(IMAGEFILE, "yarp.sig.ImageFile")
-}
 
-namespace
-{
     bool ImageReadRGB_JPG(ImageOf<PixelRgb>& img, const char* filename);
     bool ImageReadBGR_JPG(ImageOf<PixelBgr>& img, const char* filename);
     bool ImageReadMono_JPG(ImageOf<PixelMono>& img, const char* filename);
@@ -71,12 +68,10 @@ namespace
 
     bool ImageWriteFloat_PlainHeaderless(ImageOf<PixelFloat>& img, const char* filename);
     bool ImageWriteFloat_CompressedHeaderless(ImageOf<PixelFloat>& img, const char* filename);
-    } // namespace
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // private read methods for JPG Files
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-namespace {
 bool ImageReadRGB_JPG(ImageOf<PixelRgb>& img, const char* filename)
 {
 #if defined (YARP_HAS_JPEG)
@@ -160,12 +155,10 @@ bool ImageReadMono_JPG(ImageOf<PixelMono>& img, const char* filename)
     return false;
 #endif
 }
-} // namespace
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // private read methods for PNG Files
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-namespace {
 bool ImageReadRGB_PNG(ImageOf<PixelRgb>& img, const char* filename)
 {
 #if defined (YARP_HAS_PNG)

@@ -10,7 +10,7 @@
 
 #include <string>
 
-namespace yarp::os {
+namespace yarp::os::impl {
 
 class YARP_os_API RFModuleFactory
 {
@@ -30,6 +30,6 @@ private:
 
 };
 
-} // namespace yarp::os
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_RFPLUGINFACTORY_H

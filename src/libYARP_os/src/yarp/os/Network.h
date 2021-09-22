@@ -20,7 +20,7 @@
 namespace yarp::os {
 class ContactStyle;
 class QosStyle;
-} // namespace yarp
+} // namespace yarp::os
 
 // Make plugins in a library available for use
 #define YARP_DECLARE_PLUGINS(name) extern "C" void add_ ## name ## _plugins();

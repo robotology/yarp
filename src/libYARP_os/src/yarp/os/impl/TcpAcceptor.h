@@ -27,6 +27,6 @@ typedef ACE_SOCK_Acceptor TcpAcceptor;
 typedef yarp::os::impl::posix::TcpAcceptor TcpAcceptor;
 #endif
 
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_TCPACCEPTOR_H

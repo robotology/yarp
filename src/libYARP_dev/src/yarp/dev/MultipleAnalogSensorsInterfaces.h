@@ -35,8 +35,8 @@ enum MAS_status
     MAS_TIMEOUT = 3,                ///< The sensor is read through the network, and the latest measurement was received before an implementation-define timeout period.
     MAS_WAITING_FOR_FIRST_READ = 4, ///< The sensor is read through the network, and the device is waiting to receive the first measurement.
     MAS_UNKNOWN = 5                 ///< The sensor is in an unknown state.
-        };
-        } // namespace yarp::dev
+};
+} // namespace yarp::dev
 
 /**
  * @ingroup dev_iface_multiple_analog

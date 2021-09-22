@@ -23,7 +23,7 @@ class CanBuffer;
 class CanErrors;
 template <class M, class T>
 class ImplementCanBufferFactory;
-} // namespace yarp
+} // namespace yarp::dev
 
 class YARP_dev_API yarp::dev::CanErrors
 {

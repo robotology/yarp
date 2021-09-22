@@ -25,7 +25,7 @@ using ACE_OS::fileno;
 using ::fileno;
 #endif
 
-} // namespace yarp
+} // namespace yarp::os::impl
 
 
 #endif // YARP_OS_IMPL_PLATFORMSTDIO_H

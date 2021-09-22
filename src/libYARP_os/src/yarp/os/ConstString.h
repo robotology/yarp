@@ -21,6 +21,6 @@ namespace yarp::os {
 YARP_DEPRECATED_TYPEDEF_MSG("Use std::string instead")
 std::string ConstString;
 
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_CONSTSTRING_H

@@ -27,6 +27,6 @@ typedef ACE_SOCK_Connector TcpConnector;
 typedef yarp::os::impl::posix::TcpConnector TcpConnector;
 #endif
 
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_TCPCONNECTOR_H

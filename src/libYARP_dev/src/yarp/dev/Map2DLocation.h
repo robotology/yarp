@@ -130,7 +130,7 @@ struct YARP_dev_API Map2DLocation : public Map2DLocationData
     {
         return Map2DLocationData::write(writer);
     }
-            };
-            } // namespace yarp::dev::Nav2D
+};
+} // namespace yarp::dev::Nav2D
 
 #endif // YARP_DEV_MAP2DLOCATION_H

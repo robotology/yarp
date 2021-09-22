@@ -11,7 +11,7 @@
 // forward declarations:
 namespace yarp::os {
 class Node;
-} // namespace yarp
+} // namespace yarp::os
 
 namespace yarp::os {
 

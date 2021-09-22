@@ -57,44 +57,44 @@ public:
     {
         return sa;
     }
-            };
+};
 
-            class YARP_dev_API MapGrid2DInfo
-            {
-            public:
-                MapGrid2DInfo();
+class YARP_dev_API MapGrid2DInfo
+{
+public:
+    MapGrid2DInfo();
 
-                YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) m_map_name;
-                double          m_resolution;   ///< meters/pixel
-                MapGrid2DOrigin m_origin;       ///< pose of the map frame w.r.t. the bottom left corner of the map image
-                size_t          m_width;        ///< cells
-                size_t          m_height;       ///< cells
+    YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) m_map_name;
+    double          m_resolution;   ///< meters/pixel
+    MapGrid2DOrigin m_origin;       ///< pose of the map frame w.r.t. the bottom left corner of the map image
+    size_t          m_width;        ///< cells
+    size_t          m_height;       ///< cells
 
-                //------------------------------utility functions-------------------------------
-                //convert a cell (from the upper-left corner) to the map reference frame (located in m_origin, measured in meters)
-                XYWorld cell2World(XYCell cell) const;
-                yarp::dev::Nav2D::Map2DLocation toLocation(XYCell cell) const;
-                XYCell toXYCell(yarp::dev::Nav2D::Map2DLocation loc) const;
+    //------------------------------utility functions-------------------------------
+    //convert a cell (from the upper-left corner) to the map reference frame (located in m_origin, measured in meters)
+    XYWorld cell2World(XYCell cell) const;
+    yarp::dev::Nav2D::Map2DLocation toLocation(XYCell cell) const;
+    XYCell toXYCell(yarp::dev::Nav2D::Map2DLocation loc) const;
 
-                //convert a world location (wrt the map reference frame located in m_origin, measured in meters), to a cell from the upper-left corner.
-                XYCell world2Cell(XYWorld world) const;
-                XYCell world2Cell_unsafeFast(XYWorld world) const;
-                yarp::dev::Nav2D::Map2DLocation toLocation(XYWorld cell) const;
-                XYWorld toXYWorld(yarp::dev::Nav2D::Map2DLocation loc) const;
+    //convert a world location (wrt the map reference frame located in m_origin, measured in meters), to a cell from the upper-left corner.
+    XYCell world2Cell(XYWorld world) const;
+    XYCell world2Cell_unsafeFast(XYWorld world) const;
+    yarp::dev::Nav2D::Map2DLocation toLocation(XYWorld cell) const;
+    XYWorld toXYWorld(yarp::dev::Nav2D::Map2DLocation loc) const;
 
-                /** Checks if a cell is inside the map.
-                * @param cell is the cell location, referred to the top - left corner of the map.
-                * @return true if cell is inside the map, false otherwise.
-                */
-                bool   isInsideMap(XYCell cell) const;
+    /** Checks if a cell is inside the map.
+    * @param cell is the cell location, referred to the top - left corner of the map.
+    * @return true if cell is inside the map, false otherwise.
+    */
+    bool   isInsideMap(XYCell cell) const;
 
-                /**
-                * Checks if a world coordinate is inside the map.
-                * @param world is the world coordinate, expressed in meters, referred to the map origin reference frame.
-                * @return true if cell is inside the map, false otherwise.
-                */
-                bool   isInsideMap(XYWorld world) const;
-            };
-            } // namespace yarp::dev::Nav2D
+    /**
+    * Checks if a world coordinate is inside the map.
+    * @param world is the world coordinate, expressed in meters, referred to the map origin reference frame.
+    * @return true if cell is inside the map, false otherwise.
+    */
+    bool   isInsideMap(XYWorld world) const;
+};
+} // namespace yarp::dev::Nav2D
 
 #endif // YARP_DEV_MAPGRID2D_H

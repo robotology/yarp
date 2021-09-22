@@ -27,6 +27,6 @@ typedef ACE_SOCK_Stream TcpStream;
 typedef yarp::os::impl::posix::TcpStream TcpStream;
 #endif
 
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_TCPSTREAM_H

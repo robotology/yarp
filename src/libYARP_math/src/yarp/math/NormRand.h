@@ -18,7 +18,7 @@ namespace yarp::math {
  * This class groups routines for random number generation, normal distribution.
  */
 class NormRand;
-} // namespace yarp
+} // namespace yarp::math
 
 
 /**

@@ -20,7 +20,7 @@ namespace yarp::dev::impl {
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace yarp
+} // namespace yarp::dev::impl
 
 /**
  * @ingroup dev_iface_motor

@@ -6,14 +6,18 @@
 #ifndef YARP_DEV_MAPGRID2D_H
 #define YARP_DEV_MAPGRID2D_H
 
-#include <string>
-
-#include <yarp/os/Portable.h>
-#include <yarp/os/ConnectionReader.h>
-#include <yarp/sig/Image.h>
-#include <yarp/math/Vec2D.h>
 #include <yarp/dev/api.h>
+
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/Portable.h>
+
+#include <yarp/sig/Image.h>
+
 #include <yarp/dev/MapGrid2DInfo.h>
+
+#include <yarp/math/Vec2D.h>
+
+#include <string>
 
 /**
 * \file MapGrid2D.h contains the definition of a map type
@@ -230,64 +234,64 @@ public:
     bool crop(int left, int top, int right, int bottom);
 
 #if 0
-                /**
-                * Checks if a cell is inside the map.
-                * @param cell is the cell location, referred to the top-left corner of the map.
-                * @return true if cell is inside the map, false otherwise.
-                */
-                bool   isInsideMap(XYCell cell) const;
+    /**
+     * Checks if a cell is inside the map.
+     * @param cell is the cell location, referred to the top-left corner of the map.
+     * @return true if cell is inside the map, false otherwise.
+     */
+    bool   isInsideMap(XYCell cell) const;
 
-                /**
-                * Checks if a world coordinate is inside the map.
-                * @param world is the world coordinate, expressed in meters, referred to the map origin reference frame.
-                * @return true if cell is inside the map, false otherwise.
-                */
-                bool   isInsideMap(XYWorld world) const;
+    /**
+     * Checks if a world coordinate is inside the map.
+     * @param world is the world coordinate, expressed in meters, referred to the map origin reference frame.
+     * @return true if cell is inside the map, false otherwise.
+     */
+    bool   isInsideMap(XYWorld world) const;
 #endif
 
-                /**
-                * Checks is two maps are identical.
-                * @return true if all the internal data of the maps are identical, false otherwise.
-                */
-                bool   isIdenticalTo(const MapGrid2D& otherMap) const;
+    /**
+     * Checks is two maps are identical.
+     * @return true if all the internal data of the maps are identical, false otherwise.
+     */
+    bool isIdenticalTo(const MapGrid2D& otherMap) const;
 
-                /**
-                * Performs the obstacle enlargement operation. It's useful to set size to a value equal or larger to the radius of the robot bounding box.
-                * In this way a navigation algorithm can easily check obstacle collision by comparing the location of the center of the robot with cell value (free/occupied etc)
-                * @param size the size of the enlargement, in meters. If size>0 the requested enlargement is performed. If the function is called multiple times, the enlargement sums up.
-                If size <= 0 the enlargement stored in the map is cleaned up.
-                * @return true always.
-                */
-                bool   enlargeObstacles(double size);
+    /**
+     * Performs the obstacle enlargement operation. It's useful to set size to a value equal or larger to the radius of the robot bounding box.
+     * In this way a navigation algorithm can easily check obstacle collision by comparing the location of the center of the robot with cell value (free/occupied etc)
+     * @param size the size of the enlargement, in meters. If size>0 the requested enlargement is performed. If the function is called multiple times, the enlargement sums up.
+     * If size <= 0 the enlargement stored in the map is cleaned up.
+     * @return true always.
+     */
+    bool enlargeObstacles(double size);
 
-                //-------------------------------file access functions-------------------------------
+    //-------------------------------file access functions-------------------------------
 
-                /**
-                * Loads a yarp map file from disk. File must have .map extension.
-                * param map_filename is the full path to the map file.
-                * @return true if load was successful, false otherwise.
-                */
-                bool   loadFromFile(std::string map_filename);
+    /**
+     * Loads a yarp map file from disk. File must have .map extension.
+     * param map_filename is the full path to the map file.
+     * @return true if load was successful, false otherwise.
+     */
+    bool loadFromFile(std::string map_filename);
 
-                /**
-                * Store a yarp map file to disk. File must have .map extension.
-                * param map_filename is the full path to the map file.
-                * @return true if load was successful, false otherwise.
-                */
-                bool   saveToFile(std::string map_filename) const;
+    /**
+     * Store a yarp map file to disk. File must have .map extension.
+     * param map_filename is the full path to the map file.
+     * @return true if load was successful, false otherwise.
+     */
+    bool saveToFile(std::string map_filename) const;
 
-                /*
-                * Read vector from a connection.
-                * return true iff a vector was read correctly
-                */
-                bool read(yarp::os::ConnectionReader& connection) override;
+    /*
+     * Read vector from a connection.
+     * return true iff a vector was read correctly
+     */
+    bool read(yarp::os::ConnectionReader& connection) override;
 
-                /**
-                * Write vector to a connection.
-                * return true iff a vector was written correctly
-                */
-                bool write(yarp::os::ConnectionWriter& connection) const override;
-            };
-            } // namespace yarp::dev::Nav2D
+    /**
+     * Write vector to a connection.
+     * return true iff a vector was written correctly
+     */
+    bool write(yarp::os::ConnectionWriter& connection) const override;
+};
+} // namespace yarp::dev::Nav2D
 
 #endif // YARP_DEV_MAPGRID2D_H

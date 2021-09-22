@@ -22,7 +22,7 @@
 namespace yarp::os {
 class Value;
 class Bottle;
-} // namespace yarp
+} // namespace yarp::os
 
 namespace yarp::os {
 

@@ -19,12 +19,13 @@
 
 namespace yarp::os {
 class Property;
+} // namespace yarp::os
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace impl {
+namespace yarp::os::impl {
 class Storable;
-}
+} // namespace yarp::os::impl
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-} // namespace yarp
 
 namespace yarp::os {
 

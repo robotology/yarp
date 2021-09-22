@@ -125,7 +125,7 @@ public:
     {
         return Map2DAreaData::write(writer);
     }
-            };
-            } // namespace yarp::dev::Nav2D
+};
+} // namespace yarp::dev::Nav2D
 
 #endif // YARP_DEV_MAP2DAREA_H

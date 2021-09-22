@@ -21,8 +21,8 @@ enum LocalizationStatusEnum
     localization_status_not_yet_localized = yarp::os::createVocab32('l', 'o', 'c', 'n'),
     localization_status_localized_ok = yarp::os::createVocab32('l', 'o', 'c', 'y'),
     localization_status_error = yarp::os::createVocab32('e', 'r', 'r')
-            };
-            } // namespace yarp
+};
+} // namespace yarp
 
 /**
  * @ingroup dev_iface_navigation

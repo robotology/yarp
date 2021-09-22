@@ -13,10 +13,10 @@
 #include <string>
 
 namespace yarp::robotinterface {
-
 class XMLReaderResult;
+} // namespace yarp::robotinterface
 
-namespace impl {
+namespace yarp::robotinterface::impl {
 
 class XMLReaderFileVx
 {
@@ -31,7 +31,6 @@ public:
                                                                                    bool verbose = false) = 0;
 };
 
-} // namespace impl
-} // namespace yarp::robotinterface
+} // namespace yarp::robotinterface::impl
 
 #endif // YARP_ROBOTINTERFACE_XMLREADERFILEVX_H

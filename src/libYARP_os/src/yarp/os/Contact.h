@@ -16,7 +16,7 @@
 
 namespace yarp::os {
 class Searchable;
-} // namespace yarp
+} // namespace yarp::os
 
 
 namespace yarp::os {

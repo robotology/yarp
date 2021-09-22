@@ -20,7 +20,9 @@ class Property;
 class ConnectionReader;
 class ConnectionWriter;
 
-namespace impl {
+} // namespace yarp::os
+
+namespace yarp::os::impl {
 
 
 /**
@@ -199,8 +201,7 @@ private:
     void synch() const;
 };
 
-} // namespace impl
-} // namespace yarp::os
+} // namespace yarp::os::impl
 
 
 #endif // YARP_OS_IMPL_BOTTLEIMPL_H

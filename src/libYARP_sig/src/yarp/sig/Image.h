@@ -31,8 +31,8 @@ inline size_t PAD_BYTES(size_t len, size_t pad)
 {
     const size_t rem = len % pad;
     return (rem != 0) ? (pad - rem) : rem;
-        }
-        } // namespace yarp::sig
+}
+} // namespace yarp::sig
 
 // the image types partially reflect the IPL image types.
 // There must be a pixel type for every ImageType entry.
@@ -471,169 +471,169 @@ struct YARP_sig_API PixelRgb
             b(n_b)
     {
     }
-        };
-        YARP_END_PACK
+};
+YARP_END_PACK
 
-        /**
-         * Packed RGBA pixel type.
-         */
-        YARP_BEGIN_PACK
-        struct YARP_sig_API PixelRgba
-        {
-            PixelRgba() = default;
-            PixelRgba(unsigned char n_r,
-                      unsigned char n_g,
-                      unsigned char n_b,
-                      unsigned char n_a) :
-                    r(n_r),
-                    g(n_g),
-                    b(n_b),
-                    a(n_a)
-            {
-            }
+/**
+ * Packed RGBA pixel type.
+ */
+YARP_BEGIN_PACK
+struct YARP_sig_API PixelRgba
+{
+    PixelRgba() = default;
+    PixelRgba(unsigned char n_r,
+              unsigned char n_g,
+              unsigned char n_b,
+              unsigned char n_a) :
+            r(n_r),
+            g(n_g),
+            b(n_b),
+            a(n_a)
+    {
+    }
 
-            unsigned char r{0};
-            unsigned char g{0};
-            unsigned char b{0};
-            unsigned char a{0};
-        };
-        YARP_END_PACK
+    unsigned char r{0};
+    unsigned char g{0};
+    unsigned char b{0};
+    unsigned char a{0};
+};
+YARP_END_PACK
 
-        /**
-         * Packed BGRA pixel type.
-         */
-        YARP_BEGIN_PACK
-        struct YARP_sig_API PixelBgra
-        {
-            unsigned char b{0};
-            unsigned char g{0};
-            unsigned char r{0};
-            unsigned char a{0};
+/**
+ * Packed BGRA pixel type.
+ */
+YARP_BEGIN_PACK
+struct YARP_sig_API PixelBgra
+{
+    unsigned char b{0};
+    unsigned char g{0};
+    unsigned char r{0};
+    unsigned char a{0};
 
-            PixelBgra() = default;
-            PixelBgra(unsigned char n_r,
-                      unsigned char n_g,
-                      unsigned char n_b,
-                      unsigned char n_a) :
-                    b(n_b),
-                    g(n_g),
-                    r(n_r),
-                    a(n_a)
-            {
-            }
-        };
-        YARP_END_PACK
+    PixelBgra() = default;
+    PixelBgra(unsigned char n_r,
+              unsigned char n_g,
+              unsigned char n_b,
+              unsigned char n_a) :
+            b(n_b),
+            g(n_g),
+            r(n_r),
+            a(n_a)
+    {
+    }
+};
+YARP_END_PACK
 
-        /**
-         * Packed RGB pixel type, with pixels stored in reverse order.
-         */
-        YARP_BEGIN_PACK
-        struct YARP_sig_API PixelBgr
-        {
-            unsigned char b{0};
-            unsigned char g{0};
-            unsigned char r{0};
+/**
+ * Packed RGB pixel type, with pixels stored in reverse order.
+ */
+YARP_BEGIN_PACK
+struct YARP_sig_API PixelBgr
+{
+    unsigned char b{0};
+    unsigned char g{0};
+    unsigned char r{0};
 
-            PixelBgr() = default;
-            PixelBgr(unsigned char n_r, unsigned char n_g, unsigned char n_b) :
-                    b(n_b),
-                    g(n_g),
-                    r(n_r)
-            {
-            }
-        };
-        YARP_END_PACK
+    PixelBgr() = default;
+    PixelBgr(unsigned char n_r, unsigned char n_g, unsigned char n_b) :
+            b(n_b),
+            g(n_g),
+            r(n_r)
+    {
+    }
+};
+YARP_END_PACK
 
-        /**
-         * Packed HSV (hue/saturation/value pixel type.
-         */
-        YARP_BEGIN_PACK
-        struct YARP_sig_API PixelHsv
-        {
-            unsigned char h{0};
-            unsigned char s{0};
-            unsigned char v{0};
-        };
-        YARP_END_PACK
+/**
+ * Packed HSV (hue/saturation/value pixel type.
+ */
+YARP_BEGIN_PACK
+struct YARP_sig_API PixelHsv
+{
+    unsigned char h{0};
+    unsigned char s{0};
+    unsigned char v{0};
+};
+YARP_END_PACK
 
-        /**
-         * Signed byte pixel type.
-         */
-        typedef char PixelMonoSigned;
+/**
+ * Signed byte pixel type.
+ */
+typedef char PixelMonoSigned;
 
-        /**
-         * Signed, packed RGB pixel type.
-         */
-        YARP_BEGIN_PACK
-        struct YARP_sig_API PixelRgbSigned
-        {
-            char r{0};
-            char g{0};
-            char b{0};
-        };
-        YARP_END_PACK
+/**
+ * Signed, packed RGB pixel type.
+ */
+YARP_BEGIN_PACK
+struct YARP_sig_API PixelRgbSigned
+{
+    char r{0};
+    char g{0};
+    char b{0};
+};
+YARP_END_PACK
 
-        /**
-         * Floating point pixel type.
-         */
-        typedef float PixelFloat;
+/**
+ * Floating point pixel type.
+ */
+typedef float PixelFloat;
 
-        /**
-         * Floating point RGB pixel type.
-         */
-        YARP_BEGIN_PACK
-        struct YARP_sig_API PixelRgbFloat
-        {
-            float r{0.0F};
-            float g{0.0F};
-            float b{0.0F};
+/**
+ * Floating point RGB pixel type.
+ */
+YARP_BEGIN_PACK
+struct YARP_sig_API PixelRgbFloat
+{
+    float r{0.0F};
+    float g{0.0F};
+    float b{0.0F};
 
-            PixelRgbFloat() = default;
-            PixelRgbFloat(float n_r,
-                          float n_g,
-                          float n_b) :
-                    r(n_r),
-                    g(n_g),
-                    b(n_b)
-            {
-            }
-        };
-        YARP_END_PACK
+    PixelRgbFloat() = default;
+    PixelRgbFloat(float n_r,
+                  float n_g,
+                  float n_b) :
+            r(n_r),
+            g(n_g),
+            b(n_b)
+    {
+    }
+};
+YARP_END_PACK
 
-        /**
-         * Integer RGB pixel type.
-         */
-        YARP_BEGIN_PACK
-        struct YARP_sig_API PixelRgbInt
-        {
-            yarp::os::NetInt32 r{0};
-            yarp::os::NetInt32 g{0};
-            yarp::os::NetInt32 b{0};
+/**
+ * Integer RGB pixel type.
+ */
+YARP_BEGIN_PACK
+struct YARP_sig_API PixelRgbInt
+{
+    yarp::os::NetInt32 r{0};
+    yarp::os::NetInt32 g{0};
+    yarp::os::NetInt32 b{0};
 
-            PixelRgbInt() = default;
-            PixelRgbInt(int n_r,
-                        int n_g,
-                        int n_b) :
-                    r(n_r),
-                    g(n_g),
-                    b(n_b)
-            {
-            }
-        };
-        YARP_END_PACK
+    PixelRgbInt() = default;
+    PixelRgbInt(int n_r,
+                int n_g,
+                int n_b) :
+            r(n_r),
+            g(n_g),
+            b(n_b)
+    {
+    }
+};
+YARP_END_PACK
 
-        /**
-         * Floating point HSV pixel type.
-         */
-        YARP_BEGIN_PACK
-        struct PixelHsvFloat
-        {
-            float h{0.0F};
-            float s{0.0F};
-            float v{0.0F};
-        };
-        YARP_END_PACK
-        } // namespace yarp::sig
+/**
+ * Floating point HSV pixel type.
+ */
+YARP_BEGIN_PACK
+struct PixelHsvFloat
+{
+    float h{0.0F};
+    float s{0.0F};
+    float v{0.0F};
+};
+YARP_END_PACK
+} // namespace yarp::sig
 
 
 /**

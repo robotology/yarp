@@ -20,7 +20,7 @@ class PortWriter;
 class Portable;
 class SizedWriter;
 class OutputStream;
-} // namespace yarp
+} // namespace yarp::os
 
 
 namespace yarp::os {

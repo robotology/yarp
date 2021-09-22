@@ -36,30 +36,30 @@ enum NavigationStatusEnum
     navigation_status_paused = yarp::os::createVocab32('p', 'a', 'u', 's'),
     navigation_status_thinking = yarp::os::createVocab32('t', 'h', 'n', 'k'),
     navigation_status_error = yarp::os::createVocab32('e', 'r', 'r')
-            };
+};
 
-            enum NavigationMapTypeEnum
-            {
-                global_map                              = yarp::os::createVocab32('g', 'l', 'o', 'b'),
-                local_map                               = yarp::os::createVocab32('l', 'o', 'c', 'a')
-            };
+enum NavigationMapTypeEnum
+{
+    global_map = yarp::os::createVocab32('g', 'l', 'o', 'b'),
+    local_map = yarp::os::createVocab32('l', 'o', 'c', 'a')
+};
 
-            enum TrajectoryTypeEnum
-            {
-                global_trajectory = yarp::os::createVocab32('g', 'l', 'o', 'b'),
-                local_trajectory = yarp::os::createVocab32('l', 'o', 'c', 'a')
-            };
+enum TrajectoryTypeEnum
+{
+    global_trajectory = yarp::os::createVocab32('g', 'l', 'o', 'b'),
+    local_trajectory = yarp::os::createVocab32('l', 'o', 'c', 'a')
+};
 
-            namespace INavigation2DHelpers
-            {
-                //converts a string to a NavigationStatusEnum.
-                //navigation_status_error is returned if the string is not recognized.
-                YARP_dev_API NavigationStatusEnum stringToStatus(std::string s);
+namespace INavigation2DHelpers
+{
+    //converts a string to a NavigationStatusEnum.
+    //navigation_status_error is returned if the string is not recognized.
+    YARP_dev_API NavigationStatusEnum stringToStatus(std::string s);
 
-                //converts a NavigationStatusEnum to a string.
-                YARP_dev_API std::string statusToString(NavigationStatusEnum status);
-            }
-            } // namespace yarp::dev::Nav2D
+    //converts a NavigationStatusEnum to a string.
+    YARP_dev_API std::string statusToString(NavigationStatusEnum status);
+} // namespace INavigation2DHelpers
+} // namespace yarp::dev::Nav2D
 
 class YARP_dev_API yarp::dev::Nav2D::INavigation2DVelocityActions
 {

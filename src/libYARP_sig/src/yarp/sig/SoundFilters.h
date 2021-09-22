@@ -16,6 +16,6 @@ namespace yarp::sig::soundfilters {
  * @return true on success
  */
 bool YARP_sig_API resample(yarp::sig::Sound& snd, size_t frequency);
-} // namespace yarp
+} // namespace yarp::sig::soundfilters
 
 #endif // YARP_SIG_SOUNDFILTERS_H

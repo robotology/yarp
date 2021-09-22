@@ -34,7 +34,7 @@ namespace yarp::run::impl {
     using ::execvp;
 #endif
 
-    } // namespace yarp::run::impl
+} // namespace yarp::run::impl
 
 
 #endif // YARP_RUN_IMPL_PLATFORMUNISTD_H

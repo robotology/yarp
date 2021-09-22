@@ -13,6 +13,6 @@ namespace yarp::os {
  */
 typedef std::int8_t NetInt8;
 
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NETINT8_H

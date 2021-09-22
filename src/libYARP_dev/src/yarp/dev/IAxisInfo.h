@@ -24,8 +24,8 @@ enum JointTypeEnum
     VOCAB_JOINTTYPE_REVOLUTE = yarp::os::createVocab32('a', 't', 'r', 'v'),
     VOCAB_JOINTTYPE_PRISMATIC = yarp::os::createVocab32('a', 't', 'p', 'r'),
     VOCAB_JOINTTYPE_UNKNOWN = yarp::os::createVocab32('u', 'n', 'k', 'n')
-        };
-        } // namespace yarp::dev
+};
+} // namespace yarp::dev
 
 /**
  * @ingroup dev_iface_motor

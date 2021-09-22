@@ -19,7 +19,7 @@ namespace yarp::dev::impl {
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace yarp
+} // namespace yarp::dev::impl
 
 /**
  * Default implementation of the IPositionControl interface. This class can

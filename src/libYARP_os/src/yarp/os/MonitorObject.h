@@ -12,7 +12,7 @@
 namespace yarp::os {
 class Property;
 class Things;
-} // namespace yarp
+} // namespace yarp::os
 
 namespace yarp::os {
 

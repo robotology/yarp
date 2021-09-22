@@ -50,7 +50,7 @@ class  DataplayerUtilities;
 
 struct PartsData;
 struct RowInfo;
-} // namespace yarp
+} // namespace yarp::yarpDataplayer
 
 struct yarp::yarpDataplayer::PartsData
 {

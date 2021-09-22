@@ -124,7 +124,7 @@ public:
      * @loc   the location to be inserted
      */
     void push_back(yarp::dev::Nav2D::Map2DLocation loc);
-            };
-            } // namespace yarp::dev::Nav2D
+};
+} // namespace yarp::dev::Nav2D
 
 #endif

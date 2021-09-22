@@ -19,7 +19,7 @@
 namespace yarp::gsl {
 class GslMatrix;
 class GslVector;
-} // namespace yarp
+} // namespace yarp::gsl
 
 /**
 * Classes for compatibility with the GSL library.

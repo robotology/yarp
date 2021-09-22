@@ -42,19 +42,15 @@ private:
     size_t m_totsize = 0;
 
 public:
-    soundStreamReader()
-    {
-    }
-    ~soundStreamReader()
-    {
-    }
+    soundStreamReader() = default;
+    ~soundStreamReader() = default;
 
     bool open(const char* filename);
     bool close();
     size_t readBlock(Sound& dest, size_t block_size);
     bool rewind(size_t sample_offset = 0);
     size_t getIndex();
-            };
-            } // namespace yarp::sig::file
+};
+} // namespace yarp::sig::file
 
 #endif // YARP_SIG_SOUNDFILE_H

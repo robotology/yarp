@@ -16,7 +16,9 @@ namespace yarp::os {
 class Bottle;
 class NameStore;
 
-namespace impl {
+} // namespace yarp::os
+
+namespace yarp::os::impl {
 
 class NameServer;
 
@@ -211,7 +213,6 @@ private:
     void setup();
 };
 
-} // namespace impl
-} // namespace yarp::os
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_NAMECLIENT_H

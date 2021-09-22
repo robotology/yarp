@@ -111,7 +111,7 @@ bool RFPlugin::open(const std::string& inCommand)
     delete[] str;
 
     RFModule* staticmodule{nullptr};
-    staticmodule = RFModuleFactory::GetInstance().GetModule(name);
+    staticmodule = yarp::os::impl::RFModuleFactory::GetInstance().GetModule(name);
     if (staticmodule != nullptr) {
         try {
             if (!staticmodule->configure(rf)) {

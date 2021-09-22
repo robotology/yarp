@@ -20,7 +20,7 @@ class ConnectionWriter;
 class PortReader;
 class Portable;
 class InputStream;
-} // namespace yarp
+} // namespace yarp::os
 
 
 namespace yarp::os {

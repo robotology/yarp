@@ -30,7 +30,7 @@ namespace yarp::dev {
  */
 YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IFrameGrabberControl instead") IFrameGrabberControls IFrameGrabberControls2;
 
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_NO_DEPRECATED
 

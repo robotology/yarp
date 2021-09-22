@@ -30,11 +30,11 @@
   YARP_COMPILER_ERROR("Unsupported compiler. Please implement yarp::os::NetFloat32")
 #endif
 
-  namespace yarp::os {
+namespace yarp::os {
 
-  /**
-   * Definition of the NetFloat32 type
-   */
+/**
+ * Definition of the NetFloat32 type
+ */
 
 #ifdef YARP_LITTLE_ENDIAN
 

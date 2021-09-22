@@ -17,7 +17,7 @@
 namespace yarp::os {
 class InputProtocol;
 class Contactable;
-} // namespace yarp
+} // namespace yarp::os
 
 namespace yarp::os {
 /**

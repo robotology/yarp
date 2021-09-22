@@ -20,7 +20,7 @@ namespace yarp::dev::impl {
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace yarp
+} // namespace yarp::dev::impl
 
 class YARP_dev_API yarp::dev::ImplementVelocityControl : public IVelocityControl
 {

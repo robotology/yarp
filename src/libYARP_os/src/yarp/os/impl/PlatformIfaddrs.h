@@ -21,6 +21,6 @@ using ::freeifaddrs;
 using ::getifaddrs;
 #endif
 
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PLATFORMIFADDRS_H

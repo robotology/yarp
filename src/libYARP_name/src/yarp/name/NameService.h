@@ -14,7 +14,7 @@
 
 namespace yarp::name {
 class NameService;
-} // namespace yarp
+} // namespace yarp::name
 
 /**
  *

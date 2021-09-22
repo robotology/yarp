@@ -20,7 +20,7 @@
 namespace yarp::os {
 class OutputProtocol;
 class Contactable;
-} // namespace yarp
+} // namespace yarp::os
 
 
 namespace yarp::os {

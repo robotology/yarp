@@ -19,7 +19,9 @@ namespace yarp::os {
 class Bytes;
 class ManagedBytes;
 
-namespace impl {
+} // namespace yarp::os
+
+namespace yarp::os::impl {
 
 /*
  * When allocating space to store serialized data, we start off with
@@ -266,7 +268,6 @@ private:
 };
 
 
-} // namespace impl
-} // namespace yarp::os
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_BUFFEREDCONNECTIONWRITER_H
