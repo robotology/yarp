@@ -17,26 +17,19 @@ constexpr yarp::conf::vocab32_t VOCAB_DONE = yarp::os::createVocab32('d', 'o', '
 
 
 WireWriter::WireWriter(ConnectionWriter& writer) :
-        reader(nullptr),
         writer(writer)
 {
-    get_mode = get_is_vocab32 = false;
-    need_ok = false;
     writer.convertTextMode();
 }
 
 WireWriter::WireWriter(WireReader& reader) :
+        get_mode(reader.getMode()),
+        get_string(get_mode ? reader.getString() : ""),
+        get_is_vocab32(get_mode ? reader.getIsVocab32() : false),
         reader(&reader.getReader()),
         writer(reader.getWriter())
 {
-    get_is_vocab32 = false;
-    need_ok = false;
     writer.convertTextMode();
-    get_mode = reader.getMode();
-    if (get_mode) {
-        get_string = reader.getString();
-        get_is_vocab32 = reader.getIsVocab32();
-    }
 }
 
 WireWriter::~WireWriter()
