@@ -254,13 +254,13 @@ private:
     NullConnectionWriter null_writer;
     ConnectionReader& reader;
     WireState baseState;
-    WireState* state;
-    bool flush_if_needed;
-    bool support_get_mode;
-    bool expecting;
-    bool get_is_vocab;
+    WireState* state {&baseState};
+    bool flush_if_needed {false};
+    bool support_get_mode {false};
+    bool expecting {false};
+    bool get_is_vocab {false};
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) get_string;
-    bool get_mode;
+    bool get_mode {false};
 
 
     void scanString(std::string& str, bool is_vocab);

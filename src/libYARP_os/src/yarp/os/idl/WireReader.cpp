@@ -17,12 +17,6 @@ WireReader::WireReader(ConnectionReader& reader) :
         reader(reader)
 {
     reader.convertTextMode();
-    state = &baseState;
-    flush_if_needed = false;
-    get_mode = false;
-    support_get_mode = false;
-    expecting = false;
-    get_is_vocab = false;
 }
 
 WireReader::~WireReader()
