@@ -10,11 +10,9 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 
-namespace yarp {
-    namespace dev {
-        class IPositionControlRaw;
-        class IPositionControl;
-    }
+namespace yarp::dev {
+class IPositionControlRaw;
+class IPositionControl;
 }
 
 /**

@@ -9,10 +9,8 @@
 
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    namespace dev {
-        class IService;
-    }
+namespace yarp::dev {
+class IService;
 }
 
 /**

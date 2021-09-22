@@ -9,8 +9,7 @@
 #include <yarp/os/YarpPluginSelector.h>
 #include <yarp/os/YarpPluginSettings.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  *
@@ -183,7 +182,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_YARPPLUGIN_H

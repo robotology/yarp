@@ -10,8 +10,7 @@
 
 #include <yarp/os/ConnectionWriter.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  *
@@ -44,7 +43,6 @@ public:
     SizedWriter* getBuffer() const override;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NULLCONNECTIONWRITER_H

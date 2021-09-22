@@ -8,18 +8,14 @@
 
 #include <yarp/sig/Sound.h>
 
-namespace yarp {
-    namespace sig{
-        namespace soundfilters {
-            /**
-             * Resample a sound
-             * @param snd the sound to resample
-             * @param frequency the output frequency
-             * @return true on success
-             */
-            bool YARP_sig_API resample(yarp::sig::Sound& snd, size_t frequency);
-        }
-    }
-}
+namespace yarp::sig::soundfilters {
+/**
+ * Resample a sound
+ * @param snd the sound to resample
+ * @param frequency the output frequency
+ * @return true on success
+ */
+bool YARP_sig_API resample(yarp::sig::Sound& snd, size_t frequency);
+} // namespace yarp
 
 #endif // YARP_SIG_SOUNDFILTERS_H

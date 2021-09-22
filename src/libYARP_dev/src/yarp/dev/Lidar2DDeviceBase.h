@@ -14,8 +14,7 @@
 #ifndef YARP_DEV_2DLIDARDEVICETEMPLATE_H
 #define YARP_DEV_2DLIDARDEVICETEMPLATE_H
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 struct Range_t
 {
@@ -110,7 +109,6 @@ private:
     virtual bool checkSkipAngle(const double& angle, double& distance);
 };
 
-} // dev
-} // yarp
+} // namespace yarp::dev
 
 #endif

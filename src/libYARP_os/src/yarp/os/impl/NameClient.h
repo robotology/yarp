@@ -11,8 +11,7 @@
 #include <yarp/os/ContactStyle.h>
 #include <yarp/os/Nodes.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Bottle;
 class NameStore;
@@ -213,7 +212,6 @@ private:
 };
 
 } // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_IMPL_NAMECLIENT_H

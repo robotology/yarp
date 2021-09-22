@@ -9,8 +9,7 @@
 
 #include <yarp/os/AbstractContactable.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup comm_class
@@ -73,7 +72,6 @@ private:
     const RpcServer& operator=(const RpcServer& alt);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_RPCSERVER_H

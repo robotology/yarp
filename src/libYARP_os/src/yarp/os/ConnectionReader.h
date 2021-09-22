@@ -15,18 +15,15 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 class ConnectionWriter;
 class PortReader;
 class Portable;
 class InputStream;
-} // namespace os
 } // namespace yarp
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * An interface for reading from a network connection.
@@ -264,7 +261,6 @@ public:
     virtual void setParentConnectionReader(ConnectionReader* parentConnectionReader);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_CONNECTIONREADER_H

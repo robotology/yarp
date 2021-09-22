@@ -8,21 +8,15 @@
 
 #include <yarp/dev/IMotorEncoders.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementMotorEncoders;
-    }
+namespace yarp::dev {
+class ImplementMotorEncoders;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
 } // namespace yarp
 
 class YARP_dev_API yarp::dev::ImplementMotorEncoders: public IMotorEncoders

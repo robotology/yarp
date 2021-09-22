@@ -14,10 +14,8 @@
 // network stuff
 #include <yarp/os/NetInt32.h>
 
-namespace yarp {
-    namespace math {
-        class Quaternion;
-    }
+namespace yarp::math {
+class Quaternion;
 }
 
 class YARP_math_API yarp::math::Quaternion : public yarp::os::Portable

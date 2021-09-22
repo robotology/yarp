@@ -17,9 +17,7 @@
 #    include <stdlib.h>
 #endif
 
-namespace yarp {
-namespace run {
-namespace impl {
+namespace yarp::run::impl {
 
 
 #if defined(YARP_HAS_ACE)
@@ -48,8 +46,6 @@ using ::unsetenv;
 using ::putenv;
 #endif
 
-} // namespace impl
-} // namespace run
-} // namespace yarp
+} // namespace yarp::run::impl
 
 #endif // YARP_RUN_IMPL_PLATFORMSTDLIB_H

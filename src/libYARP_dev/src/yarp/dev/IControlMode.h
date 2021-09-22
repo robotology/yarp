@@ -9,11 +9,9 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    namespace dev {
-    class IControlModeRaw;
-    class IControlMode;
-    }
+namespace yarp::dev {
+class IControlModeRaw;
+class IControlMode;
 }
 
 /**

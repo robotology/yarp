@@ -14,9 +14,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Simple Readable and Writable object representing a command to a YARP port.
@@ -58,8 +56,6 @@ public:
     mutable yarp::os::ManagedBytes header;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PORTCOMMAND_H

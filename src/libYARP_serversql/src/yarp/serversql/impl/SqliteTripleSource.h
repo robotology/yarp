@@ -12,9 +12,7 @@
 
 #include <sqlite3.h>
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * Sqlite database, viewed as a collection of triples.  These are the
@@ -42,9 +40,7 @@ private:
     sqlite3 *db;
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_SQLITETRIPLESOURCE_H

@@ -19,9 +19,7 @@
 
 #include <mutex>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 class PortCoreAdapter :
         public PortCore
@@ -101,8 +99,6 @@ YARP_WARNING_POP
     void includeNodeInName(bool flag);
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PORTCOREADAPTER_H

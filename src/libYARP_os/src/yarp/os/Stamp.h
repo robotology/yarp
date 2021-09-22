@@ -12,8 +12,7 @@
 #include <yarp/os/Portable.h>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * An abstraction for a time stamp and/or sequence number.
@@ -109,7 +108,6 @@ public:
 };
 #endif // YARP_NO_DEPRECATED
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_STAMP_H

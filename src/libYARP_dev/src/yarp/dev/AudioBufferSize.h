@@ -12,8 +12,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/audioBufferSizeData.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 template <typename SAMPLE>
 class CircularAudioBuffer;
@@ -39,7 +38,6 @@ public:
     AudioBufferSize(size_t samples, size_t channels, size_t depth_in_bytes);
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_AUDIOBUFFERSIZE_H

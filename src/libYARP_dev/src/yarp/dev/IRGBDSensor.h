@@ -15,8 +15,7 @@
 #include <yarp/dev/IDepthVisualParams.h>
 
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_other
@@ -146,7 +145,6 @@ public:
     virtual RGBDSensor_status getSensorStatus() = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif   // YARP_DEV_IRGBDSENSOR_H

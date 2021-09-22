@@ -25,9 +25,7 @@
 
 typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> DepthImage;
 
-namespace yarp {
-    namespace dev {
-        namespace RGBDRosConversionUtils {
+namespace yarp::dev::RGBDRosConversionUtils {
 
 class commonImageProcessor:
     public yarp::os::Subscriber<yarp::rosmsg::sensor_msgs::Image>
@@ -79,8 +77,6 @@ void shallowCopyImages(const yarp::sig::FlexImage& src, yarp::sig::FlexImage& de
 
 void shallowCopyImages(const DepthImage& src, DepthImage& dest);
 
-}
-}
-}
+} // namespace yarp::dev::RGBDRosConversionUtils
 
 #endif

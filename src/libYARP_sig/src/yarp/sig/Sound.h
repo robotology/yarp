@@ -13,8 +13,7 @@
 #include <vector>
 #include <string>
 
-namespace yarp {
-namespace sig {
+namespace yarp::sig {
 
 /**
  * \ingroup sig_class
@@ -264,7 +263,6 @@ private:
     int    m_frequency;
 };
 
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig
 
 #endif // YARP_SIG_SOUND_H

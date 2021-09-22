@@ -9,9 +9,7 @@
 #include <yarp/dev/IFrameGrabberControls.h>
 #include <yarp/os/Port.h>
 
-namespace yarp {
-namespace proto {
-namespace framegrabber {
+namespace yarp::proto::framegrabber {
 
 /**
  * This classes implement a sender / parser for IFrameGrabberControls
@@ -74,8 +72,6 @@ private:
 
 };
 
-} // namespace framegrabber
-} // namespace proto
-} // namespace yarp
+} // namespace yarp::proto::framegrabber
 
 #endif // YARP_FRAMEGRABBER_PROTOCOL_FRAMEGRABBERCONTROLS_FORWARDER_H

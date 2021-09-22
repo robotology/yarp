@@ -12,13 +12,9 @@
 
 /*! \file IControlLimits.h define control board standard interfaces*/
 
-namespace yarp
-{
-    namespace dev
-    {
-        class IControlLimitsRaw;
-        class IControlLimits;
-    }
+namespace yarp::dev {
+class IControlLimitsRaw;
+class IControlLimits;
 }
 
 /**

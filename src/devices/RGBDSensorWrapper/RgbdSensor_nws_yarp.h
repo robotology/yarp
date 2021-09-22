@@ -61,7 +61,7 @@ public:
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
-} // RGBDImpl
+} // namespace RGBDImpl
 
 /**
  *  @ingroup dev_impl_nws_yarp

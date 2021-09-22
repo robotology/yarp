@@ -9,9 +9,7 @@
 
 #include <yarp/os/AbstractCarrier.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Communicating between two ports via TCP.
@@ -40,8 +38,6 @@ private:
     bool requireAckFlag;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_TCPCARRIER_H

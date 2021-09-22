@@ -11,8 +11,7 @@
 #include <vector>
 #include <string>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 struct DeviceDescription
 {
@@ -59,8 +58,7 @@ public:
     virtual bool unregisterDevice(const std::string& device_name) = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 constexpr yarp::conf::vocab32_t VOCAB_IROBOT_DESCRIPTION            = yarp::os::createVocab32('i','r','o','b');
 constexpr yarp::conf::vocab32_t VOCAB_IROBOT_GET                    = yarp::os::createVocab32('g','e','t');

@@ -9,8 +9,7 @@
 
 #include <yarp/os/TwoWayStream.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A container for a stream, allowing the stream implementation to
@@ -86,7 +85,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SHIFTSTREAM_H

@@ -8,8 +8,7 @@
 
 #include <yarp/os/Clock.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API SystemClock : public Clock
 {
@@ -23,7 +22,6 @@ public:
     static void delaySystem(double seconds);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SYSTEMCLOCK_H

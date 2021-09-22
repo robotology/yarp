@@ -11,8 +11,7 @@
 #include <yarp/manager/application.h>
 #include <yarp/manager/resource.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 /**
@@ -113,8 +112,7 @@ private:
 
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_MANIFESTLOADER__

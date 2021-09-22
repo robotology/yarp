@@ -24,9 +24,7 @@
 
 YARP_DECLARE_LOG_COMPONENT(NAMESERVER)
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Stub for a YARP2-conforming name server.
@@ -486,8 +484,6 @@ private:
     std::mutex mutex;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_NAMESERVER_H

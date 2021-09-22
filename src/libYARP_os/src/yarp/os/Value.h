@@ -17,19 +17,16 @@
 #include <cstddef> // defines size_t
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 class Property;
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace impl {
 class Storable;
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-} // namespace os
 } // namespace yarp
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A single value (typically within a Bottle). Values can be integers, strings,
@@ -626,7 +623,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_VALUE_H

@@ -8,8 +8,7 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API Clock
 {
@@ -40,7 +39,6 @@ public:
     virtual bool isValid() const = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_CLOCK_H

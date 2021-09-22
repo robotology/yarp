@@ -13,9 +13,7 @@
 
 #include <list>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * A collection of messages being transmitted over connections.
@@ -70,8 +68,6 @@ public:
 };
 
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PORTCOREPACKETS_H

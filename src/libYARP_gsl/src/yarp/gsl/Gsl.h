@@ -16,17 +16,10 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/gsl/api.h>
 
-namespace yarp {
-    /**
-     * A library for interoperability with the GSL library.
-     *
-     * @warning Including/linking GSL forces this library to be GPL.
-     */
-    namespace gsl {
-        class GslMatrix;
-        class GslVector;
-    }
-}
+namespace yarp::gsl {
+class GslMatrix;
+class GslVector;
+} // namespace yarp
 
 /**
 * Classes for compatibility with the GSL library.

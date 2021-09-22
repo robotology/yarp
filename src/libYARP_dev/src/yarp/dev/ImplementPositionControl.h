@@ -9,22 +9,16 @@
 
 #include <yarp/dev/IPositionControl.h>
 
-namespace yarp{
-    namespace dev {
-        class ImplementPositionControl;
-        class StubImplPositionControlRaw;
-    }
+namespace yarp::dev {
+class ImplementPositionControl;
+class StubImplPositionControlRaw;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
 } // namespace yarp
 
 /**

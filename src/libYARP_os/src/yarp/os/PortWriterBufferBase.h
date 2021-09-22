@@ -9,8 +9,7 @@
 
 #include <yarp/os/PortWriter.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Port;
 
@@ -63,7 +62,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTWRITERBUFFERBASE_H

@@ -12,8 +12,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Sound.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_media
@@ -39,7 +38,6 @@ public:
                                 yarp::sig::Sound& sound) = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IFRAMEWRITERAUDIOVISUAL_H

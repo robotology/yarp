@@ -19,32 +19,44 @@
 /**
 * \file MapGrid2D.h contains the definition of a map type
 */
-namespace yarp
+namespace yarp::dev::Nav2D {
+class YARP_dev_API MapGrid2DOrigin
 {
-    namespace dev
+private:
+    double sa;
+    double ca;
+
+private:
+    double x;     ///< in meters
+    double y;     ///< in meters
+    double theta; ///< in degrees
+public:
+    MapGrid2DOrigin();
+    MapGrid2DOrigin(double x_init, double y_init, double t_init);
+    inline double get_x() const
     {
-        namespace Nav2D
-        {
-            class YARP_dev_API MapGrid2DOrigin
-            {
-            private:
-                double sa;
-                double ca;
-            private:
-                double x;     ///< in meters
-                double y;     ///< in meters
-                double theta; ///< in degrees
-            public:
-                MapGrid2DOrigin();
-                MapGrid2DOrigin(double x_init, double y_init, double t_init);
-                inline double get_x() const     { return x; }
-                inline double get_y() const     { return y; }
-                inline double get_theta() const { return theta; }
-                void   setOrigin(double x_init, double y_init, double t_init);
-                bool operator != (const MapGrid2DOrigin& other) const;
-            public:
-                inline double get_ca() const { return ca; }
-                inline double get_sa() const { return sa; }
+        return x;
+    }
+    inline double get_y() const
+    {
+        return y;
+    }
+    inline double get_theta() const
+    {
+        return theta;
+    }
+    void setOrigin(double x_init, double y_init, double t_init);
+    bool operator!=(const MapGrid2DOrigin& other) const;
+
+public:
+    inline double get_ca() const
+    {
+        return ca;
+    }
+    inline double get_sa() const
+    {
+        return sa;
+    }
             };
 
             class YARP_dev_API MapGrid2DInfo
@@ -83,8 +95,6 @@ namespace yarp
                 */
                 bool   isInsideMap(XYWorld world) const;
             };
-        }
-    }
-}
+            } // namespace yarp::dev::Nav2D
 
 #endif // YARP_DEV_MAPGRID2D_H

@@ -14,8 +14,7 @@
 #include <yarp/manager/utility.h>
 
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 /**
@@ -91,8 +90,7 @@ private:
 typedef std::vector<Arbitrator> ArbContainer;
 typedef std::vector<Arbitrator>::iterator ArbIterator;
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_ARBITRATOR__

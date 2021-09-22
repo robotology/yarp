@@ -10,8 +10,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Maintain a stack of messages to send asynchronously.
@@ -58,7 +57,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_MESSAGESTACK_H

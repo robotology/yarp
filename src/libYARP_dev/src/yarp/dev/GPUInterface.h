@@ -12,10 +12,8 @@
 
 /*! \file GPUInterface.h define interfaces for a generic GPU*/
 
-namespace yarp {
-    namespace dev {
-        class IGPUDevice;
-    }
+namespace yarp::dev {
+class IGPUDevice;
 }
 
 /**

@@ -32,7 +32,7 @@ constexpr char rgb_Fov        [] = "rgb_Fov";
 constexpr char rgbRes         [] = "rgbResolution";
 constexpr char rgbMirroring   [] = "rgbMirroring";
 constexpr char depthMirroring [] = "depthMirroring";
-}
+} // namespace
 
 static std::map<std::string, RGBDSensorParamParser::RGBDParam> params_map =
 {

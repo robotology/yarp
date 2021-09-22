@@ -9,8 +9,7 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class ConnectionWriter;
 class Type;
@@ -57,7 +56,6 @@ public:
     virtual yarp::os::Type getWriteType() const;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTWRITER_H

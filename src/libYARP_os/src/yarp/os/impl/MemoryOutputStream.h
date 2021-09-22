@@ -11,9 +11,7 @@
 
 #include <cstring>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * An OutputStream that writes to a given memory buffer address.  For speeding up.
@@ -47,8 +45,6 @@ private:
     char* _location;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_MEMORYOUTPUTSTREAM_H

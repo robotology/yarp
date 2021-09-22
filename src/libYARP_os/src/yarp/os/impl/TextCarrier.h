@@ -9,9 +9,7 @@
 
 #include <yarp/os/impl/TcpCarrier.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Communicating between two ports via a plain-text protocol.
@@ -46,8 +44,6 @@ private:
     bool ackVariant;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_TEXTCARRIER_H

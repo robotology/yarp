@@ -22,9 +22,7 @@
 #    include <csignal>
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 #if defined(YARP_HAS_ACE)
 using ACE_OS::kill;
@@ -57,9 +55,7 @@ using ::signal;
 #    endif
 #endif
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 
 #endif // YARP_OS_IMPL_PLATFORMSIGNAL_H

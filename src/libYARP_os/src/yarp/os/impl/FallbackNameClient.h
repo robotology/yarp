@@ -11,9 +11,7 @@
 #include <yarp/os/impl/DgramTwoWayStream.h>
 #include <yarp/os/impl/ThreadImpl.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * A client for the FallbackNameServer class.  Provides a last-resort
@@ -39,8 +37,6 @@ private:
 };
 
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_FALLBACKNAMECLIENT_H

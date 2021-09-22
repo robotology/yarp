@@ -9,8 +9,7 @@
 
 #include <yarp/dev/api.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_motor
@@ -45,7 +44,6 @@ public:
     virtual bool saveBootMemory() = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_ICONTROLDEBUG_H

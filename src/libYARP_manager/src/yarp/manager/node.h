@@ -13,8 +13,7 @@
 #include <yarp/manager/ymm-types.h>
 
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 class Node;
 class Link;
@@ -121,8 +120,7 @@ private:
 typedef std::vector<Node*> NodePVector;
 typedef std::vector<Node*>::iterator NodePVIterator;
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_NODE_

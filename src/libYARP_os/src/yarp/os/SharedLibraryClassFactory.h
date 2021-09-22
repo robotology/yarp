@@ -8,8 +8,7 @@
 
 #include <yarp/os/SharedLibraryFactory.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A type-safe wrapper for SharedLibraryFactory, committing to
@@ -45,7 +44,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SHAREDLIBRARYCLASSFACTORY_H

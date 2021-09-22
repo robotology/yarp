@@ -18,9 +18,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
-namespace idl {
+namespace yarp::os::idl {
 
 /**
  * IDL-friendly connection writer. Used by YARP IDL tools, not intended
@@ -138,8 +136,6 @@ private:
     ConnectionWriter& writer;
 };
 
-} // namespace idl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::idl
 
 #endif // YARP_OS_IDL_WIREWRITER_H

@@ -22,10 +22,8 @@
 #include <string>
 #include <algorithm>
 
-namespace yarp {
-    namespace name {
-        class NameServerConnectionHandler;
-    }
+namespace yarp::name {
+class NameServerConnectionHandler;
 }
 
 

@@ -11,8 +11,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <string>
 
-namespace yarp {
-namespace robottestingframework {
+namespace yarp::robottestingframework {
 
 /**
  * \brief The JointPosMotion class is used
@@ -113,7 +112,6 @@ private:
     Private * const mPriv;
 };
 
-} // namespace robottestingframework
-} // namespace yarp
+} // namespace yarp::robottestingframework
 
 #endif // YARP_ROBOTTESTINGFRAMEWORK_JOINTSPOSMOVE_H

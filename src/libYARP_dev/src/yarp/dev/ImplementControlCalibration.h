@@ -11,10 +11,8 @@
 #include <yarp/dev/ControlBoardHelper.h>
 
 #include <yarp/dev/api.h>
-namespace yarp{
-    namespace dev {
-        class ImplementControlCalibration;
-    }
+namespace yarp::dev {
+class ImplementControlCalibration;
 }
 
 class YARP_dev_API yarp::dev::ImplementControlCalibration : public IControlCalibration

@@ -20,8 +20,7 @@
 #include <yarp/manager/execstate.h>
 
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 #define DEF_PERIOD      0.1  //s
@@ -216,8 +215,7 @@ private:
     Executable* executable;
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_Executable__

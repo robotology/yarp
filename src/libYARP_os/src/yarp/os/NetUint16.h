@@ -18,8 +18,7 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Definition of the NetUint16 type
@@ -57,7 +56,6 @@ public:
 
 #endif // YARP_LITTLE_ENDIAN
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NETUINT16_H

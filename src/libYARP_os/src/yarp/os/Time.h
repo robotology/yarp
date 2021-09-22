@@ -13,8 +13,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 enum class ShouldUseSystemClock
 {
@@ -142,7 +141,6 @@ YARP_os_API void turboBoost();
 #endif
 
 } // namespace Time
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_TIME_H

@@ -12,9 +12,7 @@
 #include <mutex>
 
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * Interface for maintaining persistent connections using SQL.
@@ -90,9 +88,7 @@ private:
     std::mutex mutex;
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_SUBSCRIBERONSQL_H

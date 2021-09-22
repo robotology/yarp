@@ -11,8 +11,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/NetInt32.h>
 
-namespace yarp {
-namespace wire_rep_utils {
+namespace yarp::wire_rep_utils {
 
 // translate to blobs for now; better translation requires type system
 YARP_BEGIN_PACK
@@ -32,7 +31,6 @@ public:
 };
 YARP_END_PACK
 
-} // namespace wire_rep_utils
-} // namespace yarp
+} // namespace yarp::wire_rep_utils
 
 #endif

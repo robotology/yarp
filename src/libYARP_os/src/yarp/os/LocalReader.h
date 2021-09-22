@@ -7,8 +7,7 @@
 #ifndef YARP_OS_LOCALREADER_H
 #define YARP_OS_LOCALREADER_H
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 class PortWriter;
 
 /**
@@ -32,7 +31,6 @@ public:
     virtual bool forgetObject(T* obj, PortWriter* wrapper) = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_LOCALREADER_H

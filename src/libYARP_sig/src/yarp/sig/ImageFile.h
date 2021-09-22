@@ -10,25 +10,17 @@
 #include <string>
 #include <yarp/sig/Image.h>
 
-namespace yarp {
-    namespace sig{
-        /**
-         * \ingroup sig_class
-         *
-         * Image file operations.
-         */
-        namespace file
-        {
-            enum image_fileformat
-                {
-                    FORMAT_NULL,
-                    FORMAT_ANY,
-                    FORMAT_PGM,
-                    FORMAT_PPM,
-                    FORMAT_JPG,
-                    FORMAT_NUMERIC,
-                    FORMAT_NUMERIC_COMPRESSED,
-                    FORMAT_PNG
+namespace yarp::sig::file {
+enum image_fileformat
+{
+    FORMAT_NULL,
+    FORMAT_ANY,
+    FORMAT_PGM,
+    FORMAT_PPM,
+    FORMAT_JPG,
+    FORMAT_NUMERIC,
+    FORMAT_NUMERIC_COMPRESSED,
+    FORMAT_PNG
                 };
 
             // read methods
@@ -45,8 +37,6 @@ namespace yarp {
             bool YARP_sig_API write(const ImageOf<PixelMono>& src,  const std::string& dest, image_fileformat format = FORMAT_PGM);
             bool YARP_sig_API write(const ImageOf<PixelFloat>& src, const std::string& dest, image_fileformat format = FORMAT_NUMERIC);
             bool YARP_sig_API write(const Image& src,               const std::string& dest, image_fileformat format = FORMAT_PPM);
-        }
-    }
-}
+            } // namespace yarp::sig::file
 
 #endif // YARP_SIG_IMAGEFILE_H

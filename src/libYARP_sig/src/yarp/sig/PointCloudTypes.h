@@ -16,8 +16,7 @@
 #include <yarp/os/NetInt32.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-namespace sig {
+namespace yarp::sig {
 
 
 // Plain xy point is not supported for now ... does it make sense to have it?
@@ -907,8 +906,7 @@ YARP_END_PACK
 
 // TBD: many others ...
 
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig
 
 
 #endif // YARP_SIG_POINTCLOUDTYPES_H

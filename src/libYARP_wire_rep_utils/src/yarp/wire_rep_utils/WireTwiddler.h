@@ -21,8 +21,7 @@
 #include <vector>
 #include <string>
 
-namespace yarp {
-namespace wire_rep_utils {
+namespace yarp::wire_rep_utils {
 
 class WireTwiddlerGap
 {
@@ -361,7 +360,6 @@ public:
     }
 };
 
-} // namespace wire_rep_utils
-} // namespace yarp
+} // namespace yarp::wire_rep_utils
 
 #endif

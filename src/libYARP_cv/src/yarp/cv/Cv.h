@@ -13,8 +13,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 
-namespace yarp {
-namespace cv {
+namespace yarp::cv {
 
 /**
  * Convert a yarp::sig::ImageOf to a cv::Mat object
@@ -52,8 +51,7 @@ template<typename T>
 template<typename T>
 yarp::sig::ImageOf<T> fromCvMat(::cv::Mat& cvImage);
 
-} // namespace cv
-} // namespace yarp
+} // namespace yarp::cv
 
 #include "Cv-inl.h"
 

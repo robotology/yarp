@@ -10,16 +10,13 @@
 #include <yarp/conf/system.h>
 #include <yarp/dev/api.h>
 
-namespace yarp
+namespace yarp::dev {
+enum YARP_dev_API PidControlTypeEnum
 {
-    namespace dev
-    {
-        enum YARP_dev_API PidControlTypeEnum
-        {
-            VOCAB_PIDTYPE_POSITION = yarp::os::createVocab32('p', 'o', 's'),
-            VOCAB_PIDTYPE_VELOCITY = yarp::os::createVocab32('v', 'e', 'l'),
-            VOCAB_PIDTYPE_TORQUE   = yarp::os::createVocab32('t', 'r', 'q'),
-            VOCAB_PIDTYPE_CURRENT  = yarp::os::createVocab32('c', 'u', 'r')
+    VOCAB_PIDTYPE_POSITION = yarp::os::createVocab32('p', 'o', 's'),
+    VOCAB_PIDTYPE_VELOCITY = yarp::os::createVocab32('v', 'e', 'l'),
+    VOCAB_PIDTYPE_TORQUE = yarp::os::createVocab32('t', 'r', 'q'),
+    VOCAB_PIDTYPE_CURRENT = yarp::os::createVocab32('c', 'u', 'r')
         };
 
 YARP_WARNING_PUSH
@@ -40,7 +37,6 @@ YARP_DISABLE_CLASS_ENUM_API_WARNING
             CURRENT_METRIC = 5
         };
 YARP_WARNING_POP
-    }
-}
+} // namespace yarp::dev
 
 #endif // YARP_DEV_PIDENUMS_H

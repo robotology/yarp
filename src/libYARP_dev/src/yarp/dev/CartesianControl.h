@@ -16,13 +16,11 @@
  * \file CartesianControl.h defines operational control interfaces
  */
 
-namespace yarp {
-    namespace dev {
-        struct CartesianEventParameters;
-        struct CartesianEventVariables;
-        class  CartesianEvent;
-        class  ICartesianControl;
-    }
+namespace yarp::dev {
+struct CartesianEventParameters;
+struct CartesianEventVariables;
+class CartesianEvent;
+class ICartesianControl;
 }
 
 

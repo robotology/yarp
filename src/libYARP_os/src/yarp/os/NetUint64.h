@@ -18,8 +18,7 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Definition of the NetInt64 type
@@ -61,7 +60,6 @@ public:
 
 #endif // YARP_LITTLE_ENDIAN
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NETUINT64_H

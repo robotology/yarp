@@ -13,8 +13,7 @@
 #include <yarp/manager/logicresource.h>
 #include <yarp/conf/api.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 typedef size_t Capacity;
 
@@ -223,8 +222,7 @@ private:
 typedef std::vector<Computer> ComputerContainer;
 typedef std::vector<Computer>::iterator ComputerIterator;
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_PRIMRESOURCE__

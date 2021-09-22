@@ -12,8 +12,7 @@
 
 #include <yarp/sig/PointCloudTypes.h>
 
-namespace yarp {
-namespace sig {
+namespace yarp::sig {
 
 YARP_BEGIN_PACK
 /**
@@ -37,8 +36,7 @@ public:
 };
 YARP_END_PACK
 
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig
 
 
 #endif // YARP_SIG_POINTCLOUDNETWORKHEADER_H

@@ -10,8 +10,7 @@
 
 #include <yarp/os/Thread.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \file Terminator.h classes to handle graceful process termination.
@@ -88,7 +87,6 @@ public:
     void onStop() override;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_TERMINATOR_H

@@ -12,8 +12,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * @brief A creator for readers.
@@ -43,7 +42,6 @@ public:
     virtual PortReader* create() const = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTREADERCREATOR_H

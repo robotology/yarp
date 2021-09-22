@@ -15,27 +15,24 @@
 #include <yarp/sig/api.h>
 #include <map>
 
-namespace yarp {
-    /**
-     * Signal processing.
-     */
-    namespace sig {
-        class Image;
-        class FlexImage;
-        template <class T> class ImageOf;
+namespace yarp::sig {
+class Image;
+class FlexImage;
+template <class T>
+class ImageOf;
 
-        /**
-         * computes the padding of YARP images.
-         * @param len is the row length in bytes
-         * @param pad is the desired padding (e.g. 8 bytes)
-         * @return the number of extra bytes to add at the end of the image row
-         */
-        inline size_t PAD_BYTES (size_t len, size_t pad) {
-            const size_t rem = len % pad;
-            return (rem != 0) ? (pad - rem) : rem;
+/**
+ * computes the padding of YARP images.
+ * @param len is the row length in bytes
+ * @param pad is the desired padding (e.g. 8 bytes)
+ * @return the number of extra bytes to add at the end of the image row
+ */
+inline size_t PAD_BYTES(size_t len, size_t pad)
+{
+    const size_t rem = len % pad;
+    return (rem != 0) ? (pad - rem) : rem;
         }
-    }
-}
+        } // namespace yarp::sig
 
 // the image types partially reflect the IPL image types.
 // There must be a pixel type for every ImageType entry.
@@ -438,43 +435,42 @@ private:
 
 #include <yarp/os/NetInt32.h>
 
-namespace yarp {
-    namespace sig {
+namespace yarp::sig {
 
-        /**
-         * Monochrome pixel type.
-         */
-        typedef unsigned char PixelMono;
+/**
+ * Monochrome pixel type.
+ */
+typedef unsigned char PixelMono;
 
-        /**
-         * 16-bit monochrome pixel type.
-         */
-        typedef yarp::os::NetUint16 PixelMono16;
+/**
+ * 16-bit monochrome pixel type.
+ */
+typedef yarp::os::NetUint16 PixelMono16;
 
-        /**
-         * 32-bit integer pixel type.
-         */
-        typedef yarp::os::NetInt32 PixelInt;
+/**
+ * 32-bit integer pixel type.
+ */
+typedef yarp::os::NetInt32 PixelInt;
 
-        /**
-         * Packed RGB pixel type.
-         */
-        YARP_BEGIN_PACK
-        struct YARP_sig_API PixelRgb
-        {
-            unsigned char r{0};
-            unsigned char g{0};
-            unsigned char b{0};
+/**
+ * Packed RGB pixel type.
+ */
+YARP_BEGIN_PACK
+struct YARP_sig_API PixelRgb
+{
+    unsigned char r {0};
+    unsigned char g {0};
+    unsigned char b {0};
 
-            PixelRgb() = default;
-            PixelRgb(unsigned char n_r,
-                     unsigned char n_g,
-                     unsigned char n_b) :
-                    r(n_r),
-                    g(n_g),
-                    b(n_b)
-            {
-            }
+    PixelRgb() = default;
+    PixelRgb(unsigned char n_r,
+             unsigned char n_g,
+             unsigned char n_b) :
+            r(n_r),
+            g(n_g),
+            b(n_b)
+    {
+    }
         };
         YARP_END_PACK
 
@@ -637,8 +633,7 @@ namespace yarp {
             float v{0.0F};
         };
         YARP_END_PACK
-    }
-}
+        } // namespace yarp::sig
 
 
 /**
@@ -698,8 +693,7 @@ public:
     }
 };
 
-namespace yarp {
-namespace sig {
+namespace yarp::sig {
 
 template<>
 inline int ImageOf<yarp::sig::PixelMono>::getPixelCode() const {
@@ -776,7 +770,6 @@ inline int ImageOf<T>::getPixelCode() const {
     return -(static_cast<int>(sizeof(T)));
 }
 
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig
 
 #endif // YARP_SIG_IMAGE_H

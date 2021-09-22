@@ -89,7 +89,7 @@ namespace
             return getPeriod() - elapsed;
         }
     };
-}
+    } // namespace
 
 
 class yarp::os::PeriodicThread::Private : public ThreadImpl

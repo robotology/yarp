@@ -46,10 +46,8 @@ void checkAndDestroy(T* &p) {
     }
 }
 
-namespace yarp {
-    namespace dev {
-        class ControlBoardHelper;
-    }
+namespace yarp::dev {
+class ControlBoardHelper;
 }
 
 //////////////// Control Board Helper

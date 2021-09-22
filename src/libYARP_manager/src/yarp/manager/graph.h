@@ -14,8 +14,7 @@
 #include <yarp/manager/node.h>
 
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 typedef std::map<std::string, Node*> NodePContainer;
 typedef std::map<std::string, Node*>::iterator NodePIterator;
@@ -103,8 +102,7 @@ private:
             printf("%s, ", ((vertex*)list_get_at(&l.nodes, i))->label);\
 */
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_GRAPH__

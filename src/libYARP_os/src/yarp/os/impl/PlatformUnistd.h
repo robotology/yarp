@@ -17,9 +17,7 @@
 #    include <unistd.h>
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 #if defined(YARP_HAS_ACE)
 using ACE_OS::rmdir;
@@ -44,9 +42,7 @@ using ::rmdir;
 using ::unlink;
 #endif
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 
 #endif // YARP_OS_IMPL_PLATFORMUNISTD_H

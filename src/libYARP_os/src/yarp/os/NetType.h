@@ -16,8 +16,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Various utilities related to types and formats.
@@ -72,7 +71,6 @@ public:
 #endif // YARP_NO_DEPRECATED
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NETTYPE_H

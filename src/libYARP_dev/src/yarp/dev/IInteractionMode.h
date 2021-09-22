@@ -9,19 +9,17 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    namespace dev {
-        class IInteractionMode;
-        class IInteractionModeRaw;
+namespace yarp::dev {
+class IInteractionMode;
+class IInteractionModeRaw;
 
-        enum InteractionModeEnum
-        {
-            VOCAB_IM_STIFF        =   yarp::os::createVocab32('s','t','i','f'),
-            VOCAB_IM_COMPLIANT    =   yarp::os::createVocab32('c','o','m','p'),
-            VOCAB_IM_UNKNOWN      =   yarp::os::createVocab32('u','n','k','n')
+enum InteractionModeEnum
+{
+    VOCAB_IM_STIFF = yarp::os::createVocab32('s', 't', 'i', 'f'),
+    VOCAB_IM_COMPLIANT = yarp::os::createVocab32('c', 'o', 'm', 'p'),
+    VOCAB_IM_UNKNOWN = yarp::os::createVocab32('u', 'n', 'k', 'n')
         };
-    }
-}
+        } // namespace yarp::dev
 
 constexpr yarp::conf::vocab32_t VOCAB_INTERFACE_INTERACTION_MODE    = yarp::os::createVocab32('i','n','t','m');
 constexpr yarp::conf::vocab32_t VOCAB_INTERACTION_MODE              = yarp::os::createVocab32('m','o','d','e');

@@ -14,8 +14,7 @@
 #include <string>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup comm_class
@@ -69,7 +68,6 @@ public:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) message;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTINFO_H

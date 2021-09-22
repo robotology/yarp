@@ -57,8 +57,7 @@ typedef enum {
     YARP_FEATURE_NUMBER_OF          // this has to be the last one
 } cameraFeature_id_t;
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_media
@@ -357,7 +356,6 @@ public:
     virtual bool setOnePush(int feature)=0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IFRAMEGRABBERCONTROLS_H

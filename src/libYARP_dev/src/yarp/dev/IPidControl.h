@@ -12,13 +12,9 @@
 #include <yarp/dev/PidEnums.h>
 #include <yarp/dev/ControlBoardPid.h>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class IPidControlRaw;
-        class IPidControl;
-    }
+namespace yarp::dev {
+class IPidControlRaw;
+class IPidControl;
 }
 
 

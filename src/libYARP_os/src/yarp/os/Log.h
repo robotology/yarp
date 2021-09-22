@@ -34,8 +34,7 @@
 
 
 // Forward declarations
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class LogComponent;
 class LogStream;
@@ -162,10 +161,7 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 }; // class Log
 
-} // namespace os
-} // namespace yarp
-
-
+} // namespace yarp::os
 
 
 #define YARP_ONCE_CALLBACK                               \

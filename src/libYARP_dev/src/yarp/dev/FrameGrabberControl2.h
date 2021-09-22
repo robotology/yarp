@@ -21,8 +21,7 @@ YARP_COMPILER_WARNING("<yarp/dev/FrameGrabberControl2.h> file is deprecated")
  * remote camera capabilities */
 
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 /**
  * This interface exports a list of general methods to discover the remote camera
  * capabilities. It also has the get/set feature methods so can be used in conjuntion
@@ -31,7 +30,6 @@ namespace dev {
  */
 YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IFrameGrabberControl instead") IFrameGrabberControls IFrameGrabberControls2;
 
-} // namespace dev
 } // namespace yarp
 
 #endif // YARP_NO_DEPRECATED

@@ -12,9 +12,7 @@
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/impl/NameServer.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Multi-cast server, for last resort information sharing about
@@ -41,8 +39,6 @@ private:
     bool closed;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_FALLBACKNAMESERVER_H

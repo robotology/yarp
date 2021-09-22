@@ -13,15 +13,12 @@
 constexpr yarp::conf::vocab32_t VOCAB_IVIRTUAL_ANALOG   = yarp::os::createVocab32('i','v','a','n');
 
 /*! \file IVirtualAnalogSensor.h virtual analog sensor interface */
-namespace yarp {
-    namespace dev {
-        class IVirtualAnalogSensor;
-        class IVirtualAnalogSensorRaw;
-    }
+namespace yarp::dev {
+class IVirtualAnalogSensor;
+class IVirtualAnalogSensorRaw;
 }
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 YARP_WARNING_PUSH
 YARP_DISABLE_CLASS_ENUM_API_WARNING
 enum class YARP_dev_API VAS_status
@@ -32,8 +29,7 @@ enum class YARP_dev_API VAS_status
     VAS_TIMEOUT = 3
 };
 YARP_WARNING_POP
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 /**
  * @ingroup dev_iface_other

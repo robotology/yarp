@@ -12,8 +12,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * An abstraction for a sequence number, time stamp and/or frame id.
@@ -143,7 +142,6 @@ private:
 };
 
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_HEADER_H

@@ -12,28 +12,20 @@
 #include <yarp/sig/Image.h>
 
 
-namespace yarp {
-    namespace sig{
-        /**
-         * \ingroup sig_class
-         *
-         *  Very basic drawing functions, in case you don't have
-         *  anything better available.
-         */
-        namespace draw {
+namespace yarp::sig::draw {
 
-            template <class T>
-            void addSegment(ImageOf<T>& dest, const T& pix,
-                            int x, int y, int dx, int dy) {
-                const double vx = double(dx - x);
-                const double vy = double(dy - y);
-                // can't use fmax - not portable --paulfitz
-                double vbigger = fabs((fabs(vy)>fabs(vx))?vy:vx);
-                const int steps = int(2*vbigger);
-                const double r = 1.0 / steps;
-                for (int i = 0; i <= steps; i++) {
-                    dest.safePixel(int(x+vx*i*r),int(y+vy*i*r)) = pix;
-                }
+template <class T>
+void addSegment(ImageOf<T>& dest, const T& pix, int x, int y, int dx, int dy)
+{
+    const double vx = double(dx - x);
+    const double vy = double(dy - y);
+    // can't use fmax - not portable --paulfitz
+    double vbigger = fabs((fabs(vy) > fabs(vx)) ? vy : vx);
+    const int steps = int(2 * vbigger);
+    const double r = 1.0 / steps;
+    for (int i = 0; i <= steps; i++) {
+        dest.safePixel(int(x + vx * i * r), int(y + vy * i * r)) = pix;
+    }
             }
 
             template <class T>
@@ -151,8 +143,6 @@ namespace yarp {
 #define IMGFOR(img,i,j) for (size_t i=0; i<(img).width(); i++) for (size_t j=0; j<(img).height(); j++)
 #endif
 
-        }
-    }
-}  // end namespace yarp::sig::draw
+            } // namespace yarp::sig::draw
 
 #endif // YARP_SIG_IMAGEDRAW_H

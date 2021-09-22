@@ -11,14 +11,13 @@
 #include <yarp/os/Property.h>
 #include <yarp/dev/DeviceDriver.h>
 
-namespace yarp {
-    namespace dev {
-        template <class T> class DriverCreatorOf;
-        class DriverCreator;
-        class Drivers;
-        class PolyDriver;
-        class StubDriverCreator;
-    }
+namespace yarp::dev {
+template <class T>
+class DriverCreatorOf;
+class DriverCreator;
+class Drivers;
+class PolyDriver;
+class StubDriverCreator;
 }
 
 /**

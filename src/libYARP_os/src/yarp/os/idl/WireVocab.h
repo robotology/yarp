@@ -8,9 +8,7 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
-namespace idl {
+namespace yarp::os::idl {
 
 class YARP_os_API WireVocab
 {
@@ -20,8 +18,6 @@ public:
     virtual std::string toString(int input) const = 0;
 };
 
-} // namespace idl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::idl
 
 #endif // YARP_OS_IDL_WIREVOCAB_H

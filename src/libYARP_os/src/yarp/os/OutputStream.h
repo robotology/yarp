@@ -9,8 +9,7 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Bytes;
 
@@ -96,7 +95,6 @@ public:
 };
 
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_OUTPUTSTREAM_H

@@ -17,8 +17,7 @@
 
 #include <yarp/dev/api.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API IAudioVisualStream
 {
@@ -37,7 +36,6 @@ public:
     }
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IAUDIOVISUALSTREAM_H

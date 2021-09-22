@@ -10,8 +10,7 @@
 #include <yarp/os/Carrier.h>
 #include <yarp/os/NetType.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \brief A starter class for implementing simple carriers.
@@ -161,7 +160,6 @@ protected:
     /** @} */
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_ABSTRACTCARRIER_H

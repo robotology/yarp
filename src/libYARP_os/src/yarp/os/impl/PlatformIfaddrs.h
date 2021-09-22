@@ -12,9 +12,7 @@
 #    include <ifaddrs.h>
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 // ACE_OS::getifaddrs, etc are not implemented, anyway ACE implementation
 // is different, therefore they are not needed.
@@ -23,8 +21,6 @@ using ::freeifaddrs;
 using ::getifaddrs;
 #endif
 
-} // namespace impl
-} // namespace os
 } // namespace yarp
 
 #endif // YARP_OS_IMPL_PLATFORMIFADDRS_H

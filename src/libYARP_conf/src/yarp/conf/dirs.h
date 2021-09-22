@@ -13,9 +13,7 @@
 #include <string>
 #include <vector>
 
-namespace yarp {
-namespace conf {
-namespace dirs {
+namespace yarp::conf::dirs {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifndef SWIG
@@ -373,9 +371,7 @@ inline std::string yarpruntimedir()
 }
 /** @} */
 
-} // namespace dirs
-} // namespace conf
-} // namespace yarp
+} // namespace yarp::conf::dirs
 
 
 #endif // YARP_CONF_DIRS_H

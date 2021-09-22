@@ -13,9 +13,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * This manages a single threaded resource related to a single
@@ -288,8 +286,6 @@ private:
     std::string pupString; ///< the target of the connection if created by `publisherUpdate`
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PORTCOREUNIT_H

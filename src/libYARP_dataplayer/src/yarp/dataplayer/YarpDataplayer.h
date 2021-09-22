@@ -43,18 +43,14 @@
 #include <string>
 #include <ctime>
 
-namespace yarp
-{
-namespace yarpDataplayer
-{
+namespace yarp::yarpDataplayer {
 class  DataplayerEngine;
 class  DataplayerWorker;
 class  DataplayerUtilities;
 
 struct PartsData;
 struct RowInfo;
-}
-}
+} // namespace yarp
 
 struct yarp::yarpDataplayer::PartsData
 {

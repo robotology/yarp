@@ -9,8 +9,7 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 template <typename T>
 class TypedReader;
@@ -52,8 +51,7 @@ public:
     virtual void onRead(T& datum, const yarp::os::TypedReader<T>& reader);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #include <yarp/os/TypedReaderCallback-inl.h>
 

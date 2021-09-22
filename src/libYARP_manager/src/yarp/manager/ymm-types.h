@@ -6,8 +6,7 @@
 #ifndef YARP_MANAGER_YMMTYPES
 #define YARP_MANAGER_YMMTYPES
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 #define WITH_GEOMETRY
@@ -57,9 +56,7 @@ typedef enum __Carrier {
 */
 
 
-} // namespace yarp
-} // namespace manager
-
+} // namespace yarp::manager
 
 
 /*

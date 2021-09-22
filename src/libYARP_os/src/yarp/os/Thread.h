@@ -9,8 +9,7 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 
 /**
@@ -226,7 +225,6 @@ private:
 #endif
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_THREAD_H

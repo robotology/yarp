@@ -14,8 +14,7 @@
 #define YARP_ENACT_EXISTS 3
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class SizedWriter;
 class Bytes;
@@ -456,7 +455,6 @@ public:
     virtual yarp::os::Face* createFace() const;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_CARRIER_H

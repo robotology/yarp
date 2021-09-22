@@ -14,9 +14,7 @@
 
 #include <mutex>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Manager for a single output from a port.  Associated
@@ -136,8 +134,6 @@ private:
     void closeMain();
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PORTCOREOUTPUTUNIT_H

@@ -11,9 +11,7 @@
 #include <yarp/conf/compiler.h>
 
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * Open and close a database, viewed as a collection of triples.
@@ -41,9 +39,7 @@ private:
     TripleSource* accessor {nullptr};
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_TRIPLESOURCECREATOR_H

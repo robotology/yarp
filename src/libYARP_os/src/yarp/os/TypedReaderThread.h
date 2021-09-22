@@ -9,8 +9,7 @@
 
 #include <yarp/os/Thread.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 template <typename T>
 class TypedReader;
@@ -35,8 +34,7 @@ public:
     void onStop() override;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #include <yarp/os/TypedReaderThread-inl.h>
 

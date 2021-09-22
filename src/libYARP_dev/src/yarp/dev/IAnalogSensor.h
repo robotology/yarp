@@ -15,8 +15,7 @@ constexpr yarp::conf::vocab32_t VOCAB_IANALOG           = yarp::os::createVocab3
 
 /*! \file IAnalogSensor.h analog sensor interface */
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_other
@@ -86,7 +85,6 @@ public:
     virtual int calibrateChannel(int ch, double value)=0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IANALOGSENSOR_H

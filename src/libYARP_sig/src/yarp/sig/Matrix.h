@@ -17,18 +17,14 @@
 * \file Matrix.h contains the definition of a Matrix type
 */
 
-namespace yarp {
-    namespace sig {
-        class Matrix;
-    }
+namespace yarp::sig {
+class Matrix;
 }
 
-namespace yarp {
-    namespace sig {
-        YARP_sig_API bool submatrix(const Matrix &in, Matrix &out, size_t r1, size_t r2, size_t c1, size_t c2);
-        YARP_sig_API bool removeCols(const Matrix &in, Matrix &out, size_t first_col, size_t how_many);
-        YARP_sig_API bool removeRows(const Matrix &in, Matrix &out, size_t first_row, size_t how_many);
-    }
+namespace yarp::sig {
+YARP_sig_API bool submatrix(const Matrix& in, Matrix& out, size_t r1, size_t r2, size_t c1, size_t c2);
+YARP_sig_API bool removeCols(const Matrix& in, Matrix& out, size_t first_col, size_t how_many);
+YARP_sig_API bool removeRows(const Matrix& in, Matrix& out, size_t first_row, size_t how_many);
 }
 
 /**

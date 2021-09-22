@@ -10,8 +10,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/SystemInfo.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup key_class
@@ -83,7 +82,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SYSTEMINFOSERIALIZER_H

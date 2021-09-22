@@ -9,8 +9,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API ICalibrator
 {
@@ -26,7 +25,6 @@ public:
     virtual bool quitPark() = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_ICALIBRATOR_H

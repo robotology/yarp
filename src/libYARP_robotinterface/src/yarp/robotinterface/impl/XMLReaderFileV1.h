@@ -10,8 +10,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace robotinterface {
+namespace yarp::robotinterface {
 
 class XMLReaderResult;
 
@@ -36,7 +35,6 @@ private:
 };
 
 } // namespace impl
-} // namespace robotinterface
-} // namespace yarp
+} // namespace yarp::robotinterface
 
 #endif // YARP_ROBOTINTERFACE_XMLREADERFILEV1_H

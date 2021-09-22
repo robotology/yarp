@@ -11,9 +11,7 @@
 #include <yarp/conf/compiler.h>
 
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * The basic unit of data the name server works with.  There are three
@@ -132,9 +130,7 @@ public:
     }
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_TRIPLE_H

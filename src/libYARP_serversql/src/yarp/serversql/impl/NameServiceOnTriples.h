@@ -16,9 +16,7 @@
 
 #include <mutex>
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * State information for a single name server operation on a database.
@@ -155,9 +153,7 @@ public:
     }
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_NAMESERVICEONTRIPLES_H

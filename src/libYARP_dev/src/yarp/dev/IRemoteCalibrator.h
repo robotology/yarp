@@ -9,8 +9,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * IRemoteCalibrator interface is meant to remotize the access of the calibration device
@@ -112,7 +111,6 @@ public:
     virtual bool quitPark() = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_REMOTECALIBRATOR_H

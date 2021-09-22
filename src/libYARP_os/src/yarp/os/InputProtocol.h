@@ -17,16 +17,13 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 class OutputProtocol;
 class Contactable;
-} // namespace os
 } // namespace yarp
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * The input side of an active connection between two ports.
@@ -142,7 +139,6 @@ public:
     virtual bool isReplying() const = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_INPUTPROTOCOL_H

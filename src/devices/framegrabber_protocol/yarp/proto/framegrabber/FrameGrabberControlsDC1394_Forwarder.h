@@ -10,9 +10,7 @@
 #include <yarp/dev/IFrameGrabberControlsDC1394.h>
 #include <yarp/os/Port.h>
 
-namespace yarp {
-namespace proto {
-namespace framegrabber {
+namespace yarp::proto::framegrabber {
 
 class FrameGrabberControlsDC1394_Forwarder :
         public yarp::dev::IFrameGrabberControlsDC1394
@@ -67,8 +65,6 @@ private:
     bool getCommand(int code, double& b, double& r) const;
 };
 
-} // namespace framegrabber
-} // namespace proto
-} // namespace yarp
+} // namespace yarp::proto::framegrabber
 
 #endif // YARP_FRAMEGRABBER_PROTOCOL_FRAMEGRABBERCONTROLSDC1394_FORWARDER_H

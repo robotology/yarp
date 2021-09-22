@@ -11,10 +11,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
-namespace impl {
-namespace Terminal {
+namespace yarp::os::impl::Terminal {
 
 YARP_os_impl_API
 bool EOFreached();
@@ -25,9 +22,6 @@ std::string getStdin();
 YARP_os_impl_API
 std::string readString(bool* eof);
 
-} // namespace Terminal
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl::Terminal
 
 #endif // YARP_OS_IMPL_TERMINAL_H

@@ -10,8 +10,7 @@
 
 #include <cstdio>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API YarpNameSpace : public NameSpace
 {
@@ -185,7 +184,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_YARPNAMESPACE_H

@@ -44,6 +44,6 @@ private:
     Private * const mPriv;
 }; // class Module
 
-} // namespace RobotInterface
+} // namespace yarprobotinterface
 
 #endif // YARP_YARPROBOTINTERFACE_MODULE_H

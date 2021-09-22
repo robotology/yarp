@@ -14,8 +14,7 @@
 #ifndef YARP_DEV_AUDIOPLAYERDEVICETEMPLATE_H
 #define YARP_DEV_AUDIOPLAYERDEVICETEMPLATE_H
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 
 class AudioDeviceDriverSettings
@@ -82,7 +81,6 @@ protected:
     bool configurePlayerAudioDevice(yarp::os::Searchable& config, std::string device_name);
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif

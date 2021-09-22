@@ -14,8 +14,7 @@
 #ifndef YARP_DEV_RGBDSENSORPARAMPARSER_H
 #define YARP_DEV_RGBDSENSORPARAMPARSER_H
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @brief The RGBDSensorParamParser class.
@@ -87,7 +86,6 @@ public:
     bool isOptionalExtrinsic;
 };
 
-} // dev
-} // yarp
+} // namespace yarp::dev
 
 #endif

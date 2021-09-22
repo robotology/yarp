@@ -10,8 +10,7 @@
 
 #include <yarp/os/Contactables.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * @brief The Node class
@@ -80,7 +79,6 @@ private:
     Helper* const mPriv;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NODE_H

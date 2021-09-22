@@ -14,8 +14,7 @@
 #include <vector>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Bytes;
 class ManagedBytes;
@@ -268,7 +267,6 @@ private:
 
 
 } // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_IMPL_BUFFEREDCONNECTIONWRITER_H

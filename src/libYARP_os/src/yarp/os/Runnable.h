@@ -17,8 +17,7 @@ YARP_COMPILER_WARNING("<yarp/os/Runnable.h> file is deprecated")
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A class that can be managed by another thread.
@@ -78,8 +77,7 @@ public:
     virtual void threadRelease();
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_NO_DEPRECATED
 

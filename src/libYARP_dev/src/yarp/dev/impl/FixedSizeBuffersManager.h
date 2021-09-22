@@ -10,9 +10,7 @@
 #include <mutex>
 
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 
 /**
@@ -137,9 +135,7 @@ private:
 };
 
 
-} // namespace impl
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev::impl
 
 #include "FixedSizeBuffersManager-inl.h"
 

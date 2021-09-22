@@ -21,8 +21,7 @@
 #include <cstdio>
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Buffer incoming data to a port.
@@ -144,8 +143,7 @@ private:
     TypedReaderThread<T>* reader;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #include <yarp/os/PortReaderBuffer-inl.h>
 

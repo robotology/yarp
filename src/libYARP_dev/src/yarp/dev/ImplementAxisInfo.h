@@ -8,10 +8,8 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementAxisInfo;
-    }
+namespace yarp::dev {
+class ImplementAxisInfo;
 }
 
 class YARP_dev_API yarp::dev::ImplementAxisInfo: public IAxisInfo

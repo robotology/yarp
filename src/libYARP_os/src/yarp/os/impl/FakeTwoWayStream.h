@@ -11,9 +11,7 @@
 #include <yarp/os/StringOutputStream.h>
 #include <yarp/os/TwoWayStream.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * A dummy two way stream for testing purposes.
@@ -132,8 +130,6 @@ private:
     StringInputStream* target;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_FAKETWOWAYSTREAM_H

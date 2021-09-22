@@ -10,8 +10,7 @@
 
 #include <yarp/os/Searchable.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  *
@@ -53,7 +52,6 @@ public:
     virtual bool configure(Searchable& config);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_ICONFIG_H

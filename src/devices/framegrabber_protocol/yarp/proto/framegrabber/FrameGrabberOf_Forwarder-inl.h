@@ -13,9 +13,7 @@ namespace {
 YARP_LOG_COMPONENT(FRAMEGRABBEROF_FORWARDER, "yarp.proto.framegrabber.FrameGrabberOf_Forwarder")
 }
 
-namespace yarp {
-namespace proto {
-namespace framegrabber {
+namespace yarp::proto::framegrabber {
 
 template <typename ImageType,
           yarp::conf::vocab32_t IfVocab,
@@ -186,9 +184,6 @@ bool FrameGrabberOf_Forwarder<ImageType, IfVocab, ImgVocab>::getImageCrop(cropTy
 }
 
 
-
-} // namespace framegrabber
-} // namespace proto
-} // namespace yarp
+} // namespace yarp::proto::framegrabber
 
 #endif // YARP_FRAMEGRABBER_PROTOCOL_FRAMEGRABBEROF_FORWARDER_INL_H

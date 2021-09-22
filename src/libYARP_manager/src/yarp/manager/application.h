@@ -17,8 +17,7 @@
 #include <yarp/manager/arbitrator.h>
 
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 /**
@@ -406,8 +405,7 @@ private:
 typedef std::vector<Application*> ApplicaitonPContainer;
 typedef std::vector<Application*>::iterator ApplicationPIterator;
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_APPLICATION__

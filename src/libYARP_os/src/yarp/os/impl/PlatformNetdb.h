@@ -18,9 +18,7 @@
 #endif
 
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 #ifdef YARP_HAS_ACE
 using ACE_OS::gethostbyaddr;
@@ -36,9 +34,7 @@ using ::gethostbyname;
 using ::getnameinfo;
 #endif
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 
 #endif // YARP_OS_IMPL_PLATFORMNETDB_H

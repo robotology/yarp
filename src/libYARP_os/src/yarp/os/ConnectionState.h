@@ -10,8 +10,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Connection;
 class InputStream;
@@ -131,7 +130,6 @@ public:
 };
 
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_CONNECTIONSTATE_H

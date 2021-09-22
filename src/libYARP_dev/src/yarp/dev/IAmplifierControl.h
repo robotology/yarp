@@ -12,13 +12,9 @@
 
 /*! \file IAmplifierControl.h define control board standard interfaces*/
 
-namespace yarp
-{
-    namespace dev
-    {
-        class IAmplifierControlRaw;
-        class IAmplifierControl;
-    }
+namespace yarp::dev {
+class IAmplifierControlRaw;
+class IAmplifierControl;
 }
 
 /**

@@ -11,9 +11,7 @@
 
 #include "CameraVocabs.h"
 
-namespace yarp {
-namespace proto {
-namespace framegrabber {
+namespace yarp::proto::framegrabber {
 
 /**
  * This classes implement a sender / parser for IFrameGrabberOf
@@ -40,9 +38,7 @@ public:
                       ImageType& image) override;
 };
 
-} // namespace framegrabber
-} // namespace proto
-} // namespace yarp
+} // namespace yarp::proto::framegrabber
 
 
 #include <yarp/proto/framegrabber/FrameGrabberOf_Forwarder-inl.h>

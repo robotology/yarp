@@ -9,12 +9,8 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/api.h>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class ImplementAmplifierControl;
-    }
+namespace yarp::dev {
+class ImplementAmplifierControl;
 }
 
 class YARP_dev_API yarp::dev::ImplementAmplifierControl : public IAmplifierControl

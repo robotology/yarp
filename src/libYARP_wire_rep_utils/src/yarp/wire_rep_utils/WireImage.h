@@ -18,22 +18,21 @@
 
 #include <yarp/wire_rep_utils/api.h>
 
-namespace yarp {
-namespace wire_rep_utils {
+namespace yarp::wire_rep_utils {
 
-    /*
-    // layout for ROS:
-    // Header header
-    //   uint32 seq      --> +1
-    //   time stamp      --> int32 secs, int32 nsecs (sync by time)
-    //   string frame_id --> string! argh / just pass it along
-    // uint32 height
-    // uint32 width
-    // string encoding   --> string! argh
-    // uint8 is_bigendian
-    // uint32 step
-    // uint8[] data      --> real payload
-    */
+/*
+// layout for ROS:
+// Header header
+//   uint32 seq      --> +1
+//   time stamp      --> int32 secs, int32 nsecs (sync by time)
+//   string frame_id --> string! argh / just pass it along
+// uint32 height
+// uint32 width
+// string encoding   --> string! argh
+// uint8 is_bigendian
+// uint32 step
+// uint8[] data      --> real payload
+*/
 
 YARP_BEGIN_PACK
 class RosImageStamp {
@@ -178,7 +177,6 @@ public:
     yarp::sig::FlexImage *checkForImage(yarp::os::SizedWriter& writer);
 };
 
-} // namespace wire_rep_utils
-} // namespace yarp
+} // namespace yarp::wire_rep_utils
 
 #endif

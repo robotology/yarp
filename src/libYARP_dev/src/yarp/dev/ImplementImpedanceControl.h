@@ -9,10 +9,8 @@
 #include <yarp/dev/IImpedanceControl.h>
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementImpedanceControl;
-    }
+namespace yarp::dev {
+class ImplementImpedanceControl;
 }
 
 class YARP_dev_API yarp::dev::ImplementImpedanceControl: public IImpedanceControl

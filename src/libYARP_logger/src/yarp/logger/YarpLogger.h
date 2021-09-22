@@ -22,24 +22,21 @@
 #include <string>
 #include <ctime>
 
-namespace yarp
-{
-    namespace yarpLogger
-    {
-        class  LoggerEngine;
-        class  LogEntry;
-        class  LogEntryInfo;
-        struct MessageEntry;
+namespace yarp::yarpLogger {
+class LoggerEngine;
+class LogEntry;
+class LogEntryInfo;
+struct MessageEntry;
 
-        enum LogLevelEnum
-        {
-            LOGLEVEL_UNDEFINED = 0,
-            LOGLEVEL_TRACE = 1,
-            LOGLEVEL_DEBUG = 2,
-            LOGLEVEL_INFO = 3,
-            LOGLEVEL_WARNING = 4,
-            LOGLEVEL_ERROR = 5,
-            LOGLEVEL_FATAL = 6
+enum LogLevelEnum
+{
+    LOGLEVEL_UNDEFINED = 0,
+    LOGLEVEL_TRACE = 1,
+    LOGLEVEL_DEBUG = 2,
+    LOGLEVEL_INFO = 3,
+    LOGLEVEL_WARNING = 4,
+    LOGLEVEL_ERROR = 5,
+    LOGLEVEL_FATAL = 6
         };
 
         class  LogLevel
@@ -111,8 +108,7 @@ namespace yarp
             LOGSYSTEM_YARP    = 0,
             LOGSYSTEM_YARPRUN = 1
         };
-    }
-}
+        } // namespace yarp::yarpLogger
 
 struct yarp::yarpLogger::MessageEntry
 {

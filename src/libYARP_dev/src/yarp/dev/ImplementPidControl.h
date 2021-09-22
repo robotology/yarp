@@ -8,21 +8,15 @@
 
 #include <yarp/dev/IPidControl.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementPidControl;
-    }
+namespace yarp::dev {
+class ImplementPidControl;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
 } // namespace yarp
 
 class YARP_dev_API yarp::dev::ImplementPidControl : public IPidControl

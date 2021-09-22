@@ -9,8 +9,7 @@
 
 #include <yarp/serversql/api.h>
 
-namespace yarp {
-namespace serversql {
+namespace yarp::serversql {
 
 class YARP_serversql_API Server
 {
@@ -22,7 +21,6 @@ private:
     bool   shouldStop{false};
 };
 
-} // namespace yarpserversql
-} // namespace yarp
+} // namespace yarp::serversql
 
 #endif // YARP_SERVERSQL_SERVER_H

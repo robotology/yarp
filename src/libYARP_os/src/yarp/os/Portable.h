@@ -12,8 +12,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup comm_class
@@ -40,7 +39,6 @@ public:
     static bool copyPortable(const PortWriter& writer, PortReader& reader);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTABLE_H

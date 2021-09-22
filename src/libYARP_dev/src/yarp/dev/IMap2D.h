@@ -16,15 +16,8 @@
 #include <vector>
 #include <string>
 
-namespace yarp
-{
-    namespace dev
-    {
-        namespace Nav2D
-        {
-            class IMap2D;
-        }
-    }
+namespace yarp::dev::Nav2D {
+class IMap2D;
 }
 
 /**

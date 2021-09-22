@@ -13,9 +13,7 @@
 #include <yarp/os/PortWriter.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 
 /**
@@ -92,8 +90,6 @@ public:
     bool setSize(size_t len) override;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_CONNECTIONRECORDER_H

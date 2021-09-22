@@ -12,8 +12,7 @@
 #include <yarp/manager/ymm-types.h>
 
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 class BrokerEventSink
@@ -74,8 +73,7 @@ private:
 
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_BROKER__

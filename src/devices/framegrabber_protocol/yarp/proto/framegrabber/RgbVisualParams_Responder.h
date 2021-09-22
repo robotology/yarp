@@ -9,9 +9,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/IRgbVisualParams.h>
 
-namespace yarp {
-namespace proto {
-namespace framegrabber {
+namespace yarp::proto::framegrabber {
 
 class RgbVisualParams_Responder :
         public yarp::dev::DeviceResponder
@@ -27,8 +25,6 @@ public:
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
-} // namespace framegrabber
-} // namespace proto
-} // namespace yarp
+} // namespace yarp::proto::framegrabber
 
 #endif // YARP_FRAMEGRABBER_PROTOCOL_RGBVISUALPARAMS_RESPONDER_H

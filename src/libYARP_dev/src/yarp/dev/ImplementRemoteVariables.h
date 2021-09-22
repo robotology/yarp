@@ -8,10 +8,8 @@
 
 #include <yarp/dev/IRemoteVariables.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementRemoteVariables;
-    }
+namespace yarp::dev {
+class ImplementRemoteVariables;
 }
 
 class YARP_dev_API yarp::dev::ImplementRemoteVariables: public IRemoteVariables

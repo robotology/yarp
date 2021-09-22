@@ -9,8 +9,7 @@
 #include <yarp/robottestingframework/api.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-namespace robottestingframework {
+namespace yarp::robottestingframework {
 
 /**
  * @brief The yarp::robottestingframework::TestAsserter class is used to throw
@@ -100,7 +99,6 @@ private:
 };
 
 
-} // namespace robottestingframework
-} // namespace yarp
+} // namespace yarp::robottestingframework
 
 #endif // YARP_ROBOTTESTINGFRAMEWORK_YARPTESTASSERTER_H

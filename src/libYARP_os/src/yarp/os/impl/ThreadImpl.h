@@ -12,9 +12,7 @@
 #include <atomic>
 #include <thread>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * An abstraction for a thread of execution.
@@ -82,8 +80,6 @@ private:
     bool initWasSuccessful{false};
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_THREADIMPL_H

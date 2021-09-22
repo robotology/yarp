@@ -13,8 +13,7 @@
 #include <mutex>
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 template <class T>
 class PeerRecord
@@ -141,7 +140,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_ELECTION_H

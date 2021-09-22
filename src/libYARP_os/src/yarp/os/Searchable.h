@@ -19,15 +19,12 @@
 #endif // YARP_NO_DEPRECATED
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 class Value;
 class Bottle;
-} // namespace os
 } // namespace yarp
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -219,7 +216,6 @@ public:
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SEARCHABLE_H

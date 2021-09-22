@@ -9,8 +9,7 @@
 
 #include <yarp/os/Portable.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * @ingroup comm_class
@@ -43,8 +42,7 @@ public:
     bool write(ConnectionWriter& connection) const override;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #include <yarp/os/BinPortable-inl.h>
 

@@ -11,8 +11,7 @@
 #include <yarp/os/Property.h>
 #include <yarp/sig/api.h>
 
-namespace yarp {
-namespace sig {
+namespace yarp::sig {
 /**
  * @brief The YarpDistortion enum to define the
  * type of the distortion model of the camera.
@@ -104,9 +103,7 @@ struct YARP_sig_API IntrinsicParams : public yarp::os::Portable
     bool     isOptional;
 };
 
-} // namespace sig
-} // namespace yarp
-
+} // namespace yarp::sig
 
 
 #endif // YARP_SIG_INTRINSICPARAMS_H

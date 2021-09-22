@@ -13,10 +13,8 @@
  * \file IHapticDevice.h defines control board standard interfaces
  */
 
-namespace yarp {
-    namespace dev {
-        class IHapticDevice;
-    }
+namespace yarp::dev {
+class IHapticDevice;
 }
 
 

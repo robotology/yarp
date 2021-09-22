@@ -11,12 +11,8 @@
 #include <yarp/math/RandScalar.h>
 #include <yarp/math/api.h>
 
-namespace yarp {
-    namespace math {
-        namespace impl {
-            class RandVector;
-        }
-    }
+namespace yarp::math::impl {
+class RandVector;
 }
 
 /**

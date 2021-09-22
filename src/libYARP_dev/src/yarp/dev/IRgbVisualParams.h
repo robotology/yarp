@@ -13,8 +13,7 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * Struct describing a possible camera configuration
@@ -150,7 +149,6 @@ public:
     virtual bool setRgbMirroring(bool mirror) = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IRGBVISUALPARAMS_H

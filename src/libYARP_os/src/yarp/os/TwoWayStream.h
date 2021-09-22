@@ -13,8 +13,7 @@
 #include <yarp/os/InputStream.h>
 #include <yarp/os/OutputStream.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A stream which can be asked to perform bidirectional communication.
@@ -129,7 +128,6 @@ public:
     void write(const Bytes& b) override;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_TWOWAYSTREAM_H

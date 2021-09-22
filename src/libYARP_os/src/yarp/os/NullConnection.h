@@ -10,8 +10,7 @@
 
 #include <yarp/os/Connection.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API NullConnection : public Connection
 {
@@ -42,8 +41,7 @@ public:
     std::string getName() const override;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 
 #endif // YARP_OS_NULLCONNECTION_H

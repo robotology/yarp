@@ -8,8 +8,7 @@
 
 #include<cassert>
 
-namespace yarp {
-namespace cv {
+namespace yarp::cv {
 
 template <typename T>
 struct type_code;
@@ -67,8 +66,7 @@ template<> struct convert_code_from_cv<yarp::sig::PixelRgba> : std::integral_con
 template<> struct convert_code_from_cv<yarp::sig::PixelBgra> : std::integral_constant<int, -1> {};
 
 
-} // namespace cv
-} // namespace yarp
+} // namespace yarp::cv
 
 
 template<typename T>

@@ -20,10 +20,8 @@ constexpr yarp::conf::vocab32_t VOCAB_LASER_ANGULAR_RANGE  = yarp::os::createVoc
 constexpr yarp::conf::vocab32_t VOCAB_LASER_ANGULAR_STEP   = yarp::os::createVocab32('l','s','a','s');
 constexpr yarp::conf::vocab32_t VOCAB_LASER_SCAN_RATE      = yarp::os::createVocab32('l','s','s','r');
 
-namespace yarp {
-    namespace dev {
-        class IRangefinder2D;
-    }
+namespace yarp::dev {
+class IRangefinder2D;
 }
 
 /**

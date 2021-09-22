@@ -9,8 +9,7 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class ConnectionReader;
 class Type;
@@ -42,8 +41,7 @@ public:
     virtual Type getReadType() const;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 
 #endif // YARP_OS_PORTREADER_H

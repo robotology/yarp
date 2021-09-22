@@ -20,9 +20,7 @@
 #define HMAC_FINAL hmac_sha256_final
 #define NONCE_LEN 8
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * 3-way authentication via HMAC
@@ -53,8 +51,6 @@ private:
     HMAC_CONTEXT context;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_AUTHHMAC_H

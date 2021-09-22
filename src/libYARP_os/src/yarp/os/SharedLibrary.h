@@ -11,17 +11,12 @@
 #include <string>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 class SharedLibraryImpl;
-}
-} // namespace os
 } // namespace yarp
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Low-level wrapper for loading shared libraries (DLLs) and accessing
@@ -93,7 +88,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SHAREDLIBRARY_H

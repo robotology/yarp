@@ -12,8 +12,7 @@
 #include <map>
 #include <vector>
 
-namespace yarp {
-namespace sig {
+namespace yarp::sig {
 
 /**
  * @brief The PointCloudBase class
@@ -104,7 +103,6 @@ protected:
 };
 
 
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig
 
 #endif

@@ -9,12 +9,10 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    namespace dev {
-        class ITorqueControlRaw;
-        class ITorqueControl;
-        class MotorTorqueParameters;
-      }
+namespace yarp::dev {
+class ITorqueControlRaw;
+class ITorqueControl;
+class MotorTorqueParameters;
 }
 
 class YARP_dev_API yarp::dev::MotorTorqueParameters

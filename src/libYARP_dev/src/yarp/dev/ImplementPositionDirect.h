@@ -9,22 +9,16 @@
 
 #include <yarp/dev/IPositionDirect.h>
 
-namespace yarp{
-    namespace dev {
-        class ImplementPositionDirect;
-        class StubImplPositionDirectRaw;
-    }
+namespace yarp::dev {
+class ImplementPositionDirect;
+class StubImplPositionDirectRaw;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
 } // namespace yarp
 
 /**

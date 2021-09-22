@@ -10,8 +10,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Bytes;
 class ConnectionReader;
@@ -260,8 +259,7 @@ public:
     virtual std::string getName() const = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 
 #endif // YARP_OS_CONNECTION_H

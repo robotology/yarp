@@ -10,9 +10,7 @@
 #include <yarp/os/AbstractCarrier.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Communicating between two ports via UDP.
@@ -38,8 +36,6 @@ public:
     bool expectReplyToHeader(ConnectionState& proto) override;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_UDPCARRIER_H

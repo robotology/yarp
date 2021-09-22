@@ -12,22 +12,18 @@
 #include <vector>
 #include <string>
 
-namespace yarp {
-    namespace profiler {
-        namespace graph {
-            class Vertex;
-            class Edge;
-            class Graph;
-            class Algorithm;
-            class GraphicVertex;
-            class OwnedVertex;
-            class ProcessVertex;
-            class PortVertex;
-            class MachineVertex;
+namespace yarp::profiler::graph {
+class Vertex;
+class Edge;
+class Graph;
+class Algorithm;
+class GraphicVertex;
+class OwnedVertex;
+class ProcessVertex;
+class PortVertex;
+class MachineVertex;
 
-        }
-    }
-}
+} // namespace yarp::profiler::graph
 
 
 typedef  std::vector<yarp::profiler::graph::Edge> edge_set;

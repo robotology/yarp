@@ -9,8 +9,7 @@
 #include <yarp/manager/ymm-types.h>
 #include <yarp/manager/manifestloader.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 /**
@@ -31,8 +30,7 @@ private:
     std::string strFileName;
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_XMLAPPSAVER__

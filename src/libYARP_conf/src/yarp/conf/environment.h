@@ -19,9 +19,7 @@
 #include <type_traits>
 #include <vector>
 
-namespace yarp {
-namespace conf {
-namespace environment {
+namespace yarp::conf::environment {
 
 #if defined(_WIN32)
 static constexpr char path_separator = ';';
@@ -343,8 +341,6 @@ inline void unsetEnvironment(const std::string& key)
 
 #endif // YARP_NO_DEPRECATED
 
-} // namespace environment
-} // namespace conf
-} // namespace yarp
+} // namespace yarp::conf::environment
 
 #endif // YARP_CONF_ENVIRONMENT_H

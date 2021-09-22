@@ -49,7 +49,7 @@ std::string bytes_to_string(const Bytes& header)
     ret += "]";
     return ret;
 }
-}
+} // namespace
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

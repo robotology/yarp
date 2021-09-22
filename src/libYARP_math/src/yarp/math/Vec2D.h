@@ -15,8 +15,7 @@
 
 #include <type_traits>
 
-namespace yarp {
-namespace math {
+namespace yarp::math {
 
 template <typename T>
 class YARP_math_API Vec2D :
@@ -76,8 +75,7 @@ public:
     bool operator!=(const yarp::math::Vec2D<T>& rhs) const;
 };
 
-} // namespace math
-} // namespace yarp
+} // namespace yarp::math
 
 // Forward declarations of specialized methods
 template<> bool YARP_math_API yarp::math::Vec2D<double>::read(yarp::os::ConnectionReader& connection);

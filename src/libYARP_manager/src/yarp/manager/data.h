@@ -12,8 +12,7 @@
 #include <yarp/conf/api.h>
 
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 /**
@@ -108,8 +107,7 @@ private:
     NodeType portType;
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_MODULE__

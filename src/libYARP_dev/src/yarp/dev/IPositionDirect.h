@@ -10,11 +10,9 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    namespace dev {
-        class IPositionDirect;
-        class IPositionDirectRaw;
-    }
+namespace yarp::dev {
+class IPositionDirect;
+class IPositionDirectRaw;
 }
 
 /**

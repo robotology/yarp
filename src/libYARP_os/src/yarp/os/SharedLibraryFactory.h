@@ -15,8 +15,7 @@
 #include <string>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A wrapper for a named factory method in a named shared library.
@@ -167,7 +166,6 @@ private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) error;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SHAREDLIBRARYFACTORY_H

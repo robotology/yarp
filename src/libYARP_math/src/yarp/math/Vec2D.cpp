@@ -33,8 +33,7 @@ public:
 };
 YARP_END_PACK
 
-namespace yarp {
-namespace math {
+namespace yarp::math {
 template<>
 bool Vec2D<double>::read(yarp::os::ConnectionReader& connection)
 {
@@ -161,8 +160,7 @@ bool Vec2D<size_t>::write(yarp::os::ConnectionWriter& connection) const
     return !connection.isError();
 }
 
-} // namespace math
-} // namespace yarp
+} // namespace yarp::math
 
 
 template <typename T>

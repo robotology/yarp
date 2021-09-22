@@ -15,11 +15,9 @@ YARP_COMPILER_WARNING("<yarp/dev/IVelocityControl2.h> file is deprecated")
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.0.0
 
 #include <yarp/dev/IVelocityControl.h>
-namespace yarp {
-    namespace dev {
+namespace yarp::dev {
 YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IVelocityControl instead") IVelocityControl IVelocityControl2;
 YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IVelocityControlRaw instead") IVelocityControlRaw IVelocityControl2Raw;
-    }
 }
 
 #endif // YARP_NO_DEPRECATED

@@ -16,15 +16,11 @@
 #include <yarp/math/RandnVector.h>
 #include <yarp/math/api.h>
 
-namespace yarp
-{
-    namespace math
-    {
-        /**
-        * This class groups routines for random number generation, uniform distribution.
-        */
-       class Rand;
-    }
+namespace yarp::math {
+/**
+ * This class groups routines for random number generation, uniform distribution.
+ */
+class Rand;
 };
 
 

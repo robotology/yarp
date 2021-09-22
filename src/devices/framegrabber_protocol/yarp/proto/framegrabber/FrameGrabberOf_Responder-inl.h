@@ -16,9 +16,7 @@ namespace {
 YARP_LOG_COMPONENT(FRAMEGRABBEROF_RESPONDER, "yarp.proto.framegrabber.FrameGrabberOf_Responder")
 }
 
-namespace yarp {
-namespace proto {
-namespace framegrabber {
+namespace yarp::proto::framegrabber {
 
 
 template <typename ImageType,
@@ -187,9 +185,7 @@ bool FrameGrabberOf_Responder<ImageType, IfVocab, ImgVocab>::respond(const yarp:
     return true;
 }
 
-} // namespace framegrabber
-} // namespace proto
-} // namespace yarp
+} // namespace yarp::proto::framegrabber
 
 
 #endif // YARP_FRAMEGRABBER_PROTOCOL_FRAMEGRABBEROF_RESPONDER_INL_H

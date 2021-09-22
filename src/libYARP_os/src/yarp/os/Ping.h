@@ -13,8 +13,7 @@
 #include <string>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Stat
 {
@@ -90,7 +89,6 @@ private:
     ConnectResult lastConnect, accumConnect;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PING_H

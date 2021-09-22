@@ -17,8 +17,7 @@ YARP_COMPILER_WARNING("<yarp/os/Mutex.h> file is deprecated")
 #include <yarp/os/api.h>
 #include <mutex>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Basic wrapper for mutual exclusion.
@@ -83,8 +82,7 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_NO_DEPRECATED
 

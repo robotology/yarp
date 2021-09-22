@@ -11,8 +11,7 @@
 #include <yarp/os/TypedReaderCallback.h>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A base class for sources of typed data.  This could be a
@@ -140,7 +139,6 @@ public:
     virtual void setTargetPeriod(double period) = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_TYPEDREADER_H

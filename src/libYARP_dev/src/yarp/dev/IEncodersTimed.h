@@ -9,11 +9,9 @@
 #include <yarp/dev/IEncoders.h>
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    namespace dev {
-        class IEncodersTimed;
-        class IEncodersTimedRaw;
-    }
+namespace yarp::dev {
+class IEncodersTimed;
+class IEncodersTimedRaw;
 }
 
 /**

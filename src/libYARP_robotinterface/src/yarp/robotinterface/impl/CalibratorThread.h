@@ -24,8 +24,7 @@ class ICalibrator;
 class DeviceDriver;
 } // namespace dev
 
-namespace robotinterface {
-namespace impl {
+namespace robotinterface::impl {
 
 class CalibratorThread : public yarp::os::Thread
 {
@@ -51,8 +50,7 @@ private:
     Private* const mPriv;
 };
 
-} // namespace impl
-} // namespace robotinterface
+} // namespace robotinterface::impl
 } // namespace yarp
 
 #endif // YARP_ROBOTINTERFACE_CALIBRATORTHREAD_H

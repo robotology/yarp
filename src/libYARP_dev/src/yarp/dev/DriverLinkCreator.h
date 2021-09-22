@@ -10,8 +10,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * A factory for creating links to a driver that has already been
@@ -66,7 +65,6 @@ public:
     }
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_DRIVERLINKCREATOR_H

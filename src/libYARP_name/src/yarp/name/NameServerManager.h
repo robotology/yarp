@@ -14,10 +14,8 @@
 #include <yarp/os/Port.h>
 
 
-namespace yarp {
-    namespace name {
-        class NameServerManager;
-    }
+namespace yarp::name {
+class NameServerManager;
 }
 
 /**

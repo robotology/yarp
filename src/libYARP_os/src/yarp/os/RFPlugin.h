@@ -10,8 +10,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API RFPlugin
 {
@@ -55,7 +54,6 @@ private:
 };
 
 
-}
-}
+} // namespace yarp::os
 
 #endif // YARP_OS_RFPLUGIN_H

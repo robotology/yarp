@@ -11,9 +11,7 @@
 
 #include "CameraVocabs.h"
 
-namespace yarp {
-namespace proto {
-namespace framegrabber {
+namespace yarp::proto::framegrabber {
 
 template <typename ImageType,
           yarp::conf::vocab32_t IfVocab = VOCAB_FRAMEGRABBER_IMAGE,
@@ -32,9 +30,7 @@ public:
     bool respond(const yarp::os::Bottle& cmd, yarp::os::Bottle& response) override;
 };
 
-} // namespace framegrabber
-} // namespace proto
-} // namespace yarp
+} // namespace yarp::proto::framegrabber
 
 #include <yarp/proto/framegrabber/FrameGrabberOf_Responder-inl.h>
 

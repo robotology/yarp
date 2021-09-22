@@ -71,7 +71,7 @@ namespace
 
     bool ImageWriteFloat_PlainHeaderless(ImageOf<PixelFloat>& img, const char* filename);
     bool ImageWriteFloat_CompressedHeaderless(ImageOf<PixelFloat>& img, const char* filename);
-};
+    } // namespace
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // private read methods for JPG Files
@@ -160,7 +160,7 @@ bool ImageReadMono_JPG(ImageOf<PixelMono>& img, const char* filename)
     return false;
 #endif
 }
-}
+} // namespace
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // private read methods for PNG Files
@@ -913,7 +913,7 @@ bool ImageWriteFloat_CompressedHeaderless(ImageOf<PixelFloat>& img, const char* 
     return false;
 #endif
 }
-}
+} // namespace
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // public read methods

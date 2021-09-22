@@ -14,8 +14,7 @@
 #include <cstdio>
 #include <mutex>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API RosNameSpace : public NameSpace, public Thread
 {
@@ -101,7 +100,6 @@ private:
     std::mutex mutex;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_ROSNAMESPACE_H

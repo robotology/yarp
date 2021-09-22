@@ -14,17 +14,16 @@
 
 /*! \file CanBusInterface.h define interface for can bus devices*/
 
-namespace yarp {
-    namespace dev {
-        class ICanBus;
-        class ICanBufferFactory;
-        class ICanBusErrors;
-        class CanMessage;
-        class CanBuffer;
-        class CanErrors;
-        template <class M, class T> class ImplementCanBufferFactory;
-    }
-}
+namespace yarp::dev {
+class ICanBus;
+class ICanBufferFactory;
+class ICanBusErrors;
+class CanMessage;
+class CanBuffer;
+class CanErrors;
+template <class M, class T>
+class ImplementCanBufferFactory;
+} // namespace yarp
 
 class YARP_dev_API yarp::dev::CanErrors
 {

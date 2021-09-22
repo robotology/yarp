@@ -17,19 +17,16 @@
 #include <yarp/os/Value.h>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 class ContactStyle;
 class QosStyle;
-} // namespace os
 } // namespace yarp
 
 // Make plugins in a library available for use
 #define YARP_DECLARE_PLUGINS(name) extern "C" void add_ ## name ## _plugins();
 #define YARP_REGISTER_PLUGINS(name) add_ ## name ## _plugins();
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup comm_class
@@ -834,7 +831,6 @@ public:
     static void fini();
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NETWORK_H

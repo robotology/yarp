@@ -18,9 +18,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
-namespace idl {
+namespace yarp::os::idl {
 
 /**
  * IDL-friendly connection reader.  Used by YARP IDL tools, not intended
@@ -219,9 +217,7 @@ private:
     void scanString(std::string& str, bool is_vocab);
 };
 
-} // namespace idl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::idl
 
 
 #endif // YARP_OS_IDL_WIREREADER_H

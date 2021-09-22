@@ -12,9 +12,7 @@
 #include <yarp/name/NameService.h>
 
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * Compose two name services into one.
@@ -80,8 +78,6 @@ private:
     NameService *ns2;
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 #endif // YARP_SERVERSQL_IMPL_COMPOSEDNAMESERVICE_H

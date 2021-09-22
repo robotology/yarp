@@ -8,9 +8,7 @@
 
 #include <yarp/os/impl/PlatformUnistd.h>
 
-namespace yarp {
-namespace run {
-namespace impl {
+namespace yarp::run::impl {
 
 #if defined(YARP_HAS_ACE)
     using ACE_OS::fork;
@@ -36,9 +34,7 @@ namespace impl {
     using ::execvp;
 #endif
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+    } // namespace yarp::run::impl
 
 
 #endif // YARP_RUN_IMPL_PLATFORMUNISTD_H

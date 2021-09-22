@@ -16,9 +16,7 @@
 #include <yarp/os/NameSpace.h>
 
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * Abstract interface for maintaining persistent connections.
@@ -116,9 +114,7 @@ private:
     yarp::os::NameSpace *delegate;
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_SUBSCRIBER_H

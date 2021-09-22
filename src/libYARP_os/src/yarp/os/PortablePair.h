@@ -10,8 +10,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Portable.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API PortablePairBase : public Portable
 {
@@ -88,7 +87,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTABLEPAIR_H

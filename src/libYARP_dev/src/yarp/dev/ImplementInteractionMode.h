@@ -10,22 +10,16 @@
 #include <yarp/dev/IInteractionMode.h>
 #include <yarp/os/Log.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementInteractionMode;
-        class StubImplInteractionModeRaw;
-    }
+namespace yarp::dev {
+class ImplementInteractionMode;
+class StubImplInteractionModeRaw;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
 } // namespace yarp
 
 /**

@@ -12,8 +12,7 @@
 #include <cstddef>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \brief A simple abstraction for a block of bytes.
@@ -56,7 +55,6 @@ private:
     size_t len;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_BYTES_H

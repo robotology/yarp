@@ -13,8 +13,7 @@
 #include <yarp/sig/Vector.h>
 
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * \ingroup dev_iface_other
@@ -78,7 +77,6 @@ public:
     virtual int flush() = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_ISERIALDEVICE_H

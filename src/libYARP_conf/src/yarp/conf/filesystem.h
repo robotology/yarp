@@ -7,9 +7,7 @@
 #ifndef YARP_CONF_FILESYSTEM_H
 #define YARP_CONF_FILESYSTEM_H
 
-namespace yarp {
-namespace conf {
-namespace filesystem {
+namespace yarp::conf::filesystem {
 #if (defined _WIN32)
 #  if (_MSC_VER >= 1920)
 typedef wchar_t             value_type;
@@ -39,9 +37,7 @@ static constexpr value_type path_separator = ':';
 #endif // YARP_NO_DEPRECATED
 
 
-} // namespace filesystem
-} // namespace conf
-} // namespace yarp
+} // namespace yarp::conf::filesystem
 
 
 #endif // YARP_CONF_FILESYSTEM_H
