@@ -10,8 +10,7 @@
 
 #include <yarp/dev/audioBufferSizeData.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 audioBufferSizeData::audioBufferSizeData() :
@@ -752,5 +751,4 @@ bool audioBufferSizeData::nested_write_size(const yarp::os::idl::WireWriter& wri
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

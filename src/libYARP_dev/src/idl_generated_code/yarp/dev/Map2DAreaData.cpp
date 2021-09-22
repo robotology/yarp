@@ -10,8 +10,7 @@
 
 #include <yarp/dev/Map2DAreaData.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 Map2DAreaData::Map2DAreaData() :
@@ -681,5 +680,4 @@ bool Map2DAreaData::nested_write_description(const yarp::os::idl::WireWriter& wr
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

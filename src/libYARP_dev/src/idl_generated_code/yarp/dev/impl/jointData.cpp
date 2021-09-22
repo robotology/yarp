@@ -10,9 +10,7 @@
 
 #include <yarp/dev/impl/jointData.h>
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 // Default constructor
 jointData::jointData() :
@@ -2949,6 +2947,4 @@ bool jointData::nested_write_interactionMode_isValid(const yarp::os::idl::WireWr
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
-} // namespace impl
+} // namespace yarp::dev::impl

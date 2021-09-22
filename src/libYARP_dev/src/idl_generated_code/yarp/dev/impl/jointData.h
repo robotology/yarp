@@ -17,9 +17,7 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 class YARP_dev_API jointData :
         public yarp::os::idl::WirePortable
@@ -486,8 +484,6 @@ private:
     bool nested_write_interactionMode_isValid(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
-} // namespace impl
+} // namespace yarp::dev::impl
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_JOINTDATA_H

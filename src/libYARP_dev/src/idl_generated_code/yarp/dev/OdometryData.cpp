@@ -10,8 +10,7 @@
 
 #include <yarp/dev/OdometryData.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 OdometryData::OdometryData() :
@@ -1389,5 +1388,4 @@ bool OdometryData::nested_write_odom_vel_theta(const yarp::os::idl::WireWriter& 
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

@@ -10,8 +10,7 @@
 
 #include <yarp/dev/OdometryData6D.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 OdometryData6D::OdometryData6D() :
@@ -2514,5 +2513,4 @@ bool OdometryData6D::nested_write_odom_vel_yaw(const yarp::os::idl::WireWriter& 
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

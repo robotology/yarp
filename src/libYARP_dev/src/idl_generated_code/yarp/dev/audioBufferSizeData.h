@@ -16,8 +16,7 @@
 #include <yarp/os/Wire.h>
 #include <yarp/os/idl/WireTypes.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API audioBufferSizeData :
         public yarp::os::idl::WirePortable
@@ -196,7 +195,6 @@ private:
     bool nested_write_size(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_AUDIOBUFFERSIZEDATA_H

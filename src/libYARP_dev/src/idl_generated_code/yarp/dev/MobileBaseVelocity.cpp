@@ -10,8 +10,7 @@
 
 #include <yarp/dev/MobileBaseVelocity.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 MobileBaseVelocity::MobileBaseVelocity() :
@@ -639,5 +638,4 @@ bool MobileBaseVelocity::nested_write_vel_theta(const yarp::os::idl::WireWriter&
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

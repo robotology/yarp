@@ -10,8 +10,7 @@
 
 #include <yarp/dev/Map2DPathData.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 Map2DPathData::Map2DPathData() :
@@ -556,5 +555,4 @@ bool Map2DPathData::nested_write_description(const yarp::os::idl::WireWriter& wr
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

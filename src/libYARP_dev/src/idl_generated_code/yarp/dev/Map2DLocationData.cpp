@@ -10,8 +10,7 @@
 
 #include <yarp/dev/Map2DLocationData.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 Map2DLocationData::Map2DLocationData() :
@@ -889,5 +888,4 @@ bool Map2DLocationData::nested_write_description(const yarp::os::idl::WireWriter
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

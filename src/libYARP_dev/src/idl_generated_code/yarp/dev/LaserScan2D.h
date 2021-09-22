@@ -17,8 +17,7 @@
 #include <yarp/os/idl/WireTypes.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API LaserScan2D :
         public yarp::os::idl::WirePortable
@@ -244,7 +243,6 @@ private:
     bool nested_write_status(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_LASERSCAN2D_H

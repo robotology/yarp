@@ -18,8 +18,7 @@
 
 #include <yarp/dev/AudioPlayerStatus_common.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * \brief `AudioPlayerStatus`: A class used to describe the status of an audio player device.
@@ -195,7 +194,6 @@ private:
     bool nested_write_max_buffer_size(const yarp::os::idl::WireWriter& writer) const;
 };
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_STRUCT_AUDIOPLAYERSTATUS_H

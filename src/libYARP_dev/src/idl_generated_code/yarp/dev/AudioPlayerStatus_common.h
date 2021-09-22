@@ -12,12 +12,10 @@
 #define YARP_THRIFT_GENERATOR_COMMON_AUDIOPLAYERSTATUS_H
 
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 typedef size_t size_t;
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev
 
 #endif // YARP_THRIFT_GENERATOR_COMMON_AUDIOPLAYERSTATUS_H

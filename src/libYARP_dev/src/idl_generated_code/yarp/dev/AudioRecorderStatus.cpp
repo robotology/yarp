@@ -10,8 +10,7 @@
 
 #include <yarp/dev/AudioRecorderStatus.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 AudioRecorderStatus::AudioRecorderStatus() :
@@ -639,5 +638,4 @@ bool AudioRecorderStatus::nested_write_max_buffer_size(const yarp::os::idl::Wire
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

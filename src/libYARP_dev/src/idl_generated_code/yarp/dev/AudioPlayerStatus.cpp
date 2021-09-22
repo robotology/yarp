@@ -10,8 +10,7 @@
 
 #include <yarp/dev/AudioPlayerStatus.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 AudioPlayerStatus::AudioPlayerStatus() :
@@ -639,5 +638,4 @@ bool AudioPlayerStatus::nested_write_max_buffer_size(const yarp::os::idl::WireWr
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

@@ -10,8 +10,7 @@
 
 #include <yarp/dev/LaserScan2D.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 // Default constructor
 LaserScan2D::LaserScan2D() :
@@ -1011,5 +1010,4 @@ bool LaserScan2D::nested_write_status(const yarp::os::idl::WireWriter& writer) c
     return true;
 }
 
-} // namespace yarp
-} // namespace dev
+} // namespace yarp::dev

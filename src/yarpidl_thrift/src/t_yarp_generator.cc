@@ -14,6 +14,7 @@
 #include <functional>
 #include <iostream>
 #include <map>
+#include <regex>
 #include <set>
 #include <sstream>
 #include <string>
@@ -201,9 +202,9 @@ public:
 
     std::string type_name(t_type* ttype, bool in_typedef = false, bool arg = false, bool ret = false);
     std::string base_type_name(t_base_type::t_base tbase);
-    std::string namespace_prefix(std::string ns);
-    void namespace_open(std::ostream& out, std::string ns);
-    void namespace_close(std::ostream& out, std::string ns);
+    std::string namespace_prefix(const std::string& ns);
+    void namespace_open(std::ostream& out, const std::string& ns);
+    void namespace_close(std::ostream& out, const std::string& ns);
 
     bool is_complex_type(t_type* ttype);
 
@@ -607,56 +608,29 @@ std::string t_yarp_generator::base_type_name(t_base_type::t_base tbase)
     }
 }
 
-std::string t_yarp_generator::namespace_prefix(std::string ns)
+std::string t_yarp_generator::namespace_prefix(const std::string& ns)
 {
     if (ns.empty()) {
         return {};
     }
-    std::string result;
-    std::string::size_type loc;
-    while ((loc = ns.find('.')) != std::string::npos) {
-        result += ns.substr(0, loc);
-        result += "::";
-        ns = ns.substr(loc + 1);
-    }
-    if (!ns.empty()) {
-        result += ns + "::";
-    }
-    return result;
+
+    return std::regex_replace(ns, std::regex("\\."), "::") + "::";
 }
 
-void t_yarp_generator::namespace_open(std::ostream& out, std::string ns)
+void t_yarp_generator::namespace_open(std::ostream& out, const std::string& ns)
 {
     if (ns.empty()) {
         return;
     }
-
-    ns += ".";
-    std::string separator;
-    std::string::size_type loc;
-    while ((loc = ns.find('.')) != std::string::npos) {
-        out << separator << "namespace " << ns.substr(0, loc) << " {";
-        separator = "\n";
-        ns = ns.substr(loc + 1);
-    }
-    out << '\n';
-    out << '\n';
+    out << "namespace " << std::regex_replace(ns, std::regex("\\."), "::") << " {\n\n";
 }
 
-void t_yarp_generator::namespace_close(std::ostream& out, std::string ns)
+void t_yarp_generator::namespace_close(std::ostream& out, const std::string& ns)
 {
     if (ns.empty()) {
         return;
     }
-
-    ns += ".";
-    std::string::size_type loc;
-
-    out << '\n';
-    while ((loc = ns.find('.')) != std::string::npos) {
-        out << "} // namespace " << ns.substr(0, loc) << '\n';
-        ns = ns.substr(loc + 1);
-    }
+    out << "\n} // namespace " << std::regex_replace(ns, std::regex("\\."), "::") << '\n';
 }
 
 /////////////////////////////////////////////////////////////////////
