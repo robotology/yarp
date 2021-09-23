@@ -242,7 +242,9 @@ public:
                                 const std::string& arg_prefix);
 
     void generate_deserialize_field_fallback(std::ostringstream& out,
-                                             t_field* tfield);
+                                             t_field* tfield,
+                                             const std::string &prefix = "",
+                                             const std::string &suffix = "");
 
     void generate_deserialize_field(std::ostringstream& out,
                                     t_field* tfield,
@@ -1237,12 +1239,15 @@ void t_yarp_generator::generate_serialize_list_element(std::ostringstream& f_cpp
 
 
 void t_yarp_generator::generate_deserialize_field_fallback(std::ostringstream& f_cpp_,
-                                                           t_field* tfield)
+                                                           t_field* tfield,
+                                                           const std::string &prefix,
+                                                           const std::string &suffix)
 {
     THRIFT_DEBUG_COMMENT(f_cpp_);
 
+    std::string name = prefix + tfield->get_name() + suffix;
     if (tfield->get_value() != nullptr) {
-        f_cpp_ << indent_cpp() << tfield->get_name() << " = " << print_const_value(tfield->get_value(), tfield->get_type()) << ";\n";
+        f_cpp_ << indent_cpp() << name << " = " << print_const_value(tfield->get_value(), tfield->get_type()) << ";\n";
     } else {
         f_cpp_ << indent_cpp() << "reader.fail();\n";
         f_cpp_ << indent_cpp() << "return false;\n";
@@ -1271,7 +1276,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         f_cpp_ << ") {\n";
         indent_up_cpp();
         {
-            generate_deserialize_field_fallback(f_cpp_, tfield);
+            generate_deserialize_field_fallback(f_cpp_, tfield, prefix, suffix);
         }
         indent_down_cpp();
         f_cpp_ << indent_cpp() << "}\n";
@@ -1363,7 +1368,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         f_cpp_ << ") {\n";
         indent_up_cpp();
         {
-            generate_deserialize_field_fallback(f_cpp_, tfield);
+            generate_deserialize_field_fallback(f_cpp_, tfield, prefix, suffix);
         }
         indent_down_cpp();
         f_cpp_ << indent_cpp() << "}\n";
@@ -1382,7 +1387,7 @@ void t_yarp_generator::generate_deserialize_field(std::ostringstream& f_cpp_,
         f_cpp_ << "(" << t << ")) {\n";
         indent_up_cpp();
         {
-            generate_deserialize_field_fallback(f_cpp_, tfield);
+            generate_deserialize_field_fallback(f_cpp_, tfield, prefix, suffix);
         }
         indent_down_cpp();
         f_cpp_ << indent_cpp() << "} else {\n";
