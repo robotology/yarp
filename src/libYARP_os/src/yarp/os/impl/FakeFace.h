@@ -9,9 +9,7 @@
 
 #include <yarp/os/Face.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * A dummy Face for testing purposes.
@@ -28,8 +26,6 @@ public:
 private:
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_FAKEFACE_H

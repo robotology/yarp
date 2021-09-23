@@ -25,7 +25,7 @@ void writeBottleAsFile(const char *fileName, const Bottle& bot)
     fclose(fout);
     fout = nullptr;
 }
-}
+} // namespace
 
 int Companion::cmdCMake(int argc, char *argv[])
 {

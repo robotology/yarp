@@ -11,8 +11,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup comm_class
@@ -207,7 +206,6 @@ private:
     int packetPriority;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_QOSSTYLE_H

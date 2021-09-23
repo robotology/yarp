@@ -12,8 +12,7 @@
 #include <yarp/manager/resource.h>
 #include <yarp/conf/api.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 class Platform : public GenericResource
@@ -66,8 +65,7 @@ private:
     double timeout;
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_LOGICRESOURCE__

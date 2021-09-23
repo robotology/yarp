@@ -13,9 +13,7 @@
 #include <mutex>
 #include <string>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 class YARP_os_impl_API LogForwarder
 {
@@ -36,8 +34,6 @@ private:
     static bool started;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_LOGFORWARDER_H

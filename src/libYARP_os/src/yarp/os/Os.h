@@ -13,8 +13,7 @@
 #include <string>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 #ifndef YARP_NO_DEPRECATED // Since YARP 3.4.0
 /**
@@ -185,7 +184,6 @@ int fork();
 #endif // YARP_NO_DEPRECATED
 
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_OS_H

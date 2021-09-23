@@ -16,9 +16,7 @@
 
 YARP_DECLARE_LOG_COMPONENT(DISPATCHER)
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Dispatch to named methods based on string input.
@@ -75,9 +73,7 @@ public:
     }
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 
 #endif // YARP_OS_IMPL_DISPATCHER_H

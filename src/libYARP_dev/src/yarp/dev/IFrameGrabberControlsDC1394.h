@@ -9,8 +9,7 @@
 
 #include <yarp/dev/api.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API IFrameGrabberControlsDC1394
 {
@@ -82,7 +81,6 @@ public:
     virtual bool setBytesPerPacketDC1394(unsigned int bpp)=0;//{ return true; }
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IFRAMEGRABBERCONTROLSDC1394_H

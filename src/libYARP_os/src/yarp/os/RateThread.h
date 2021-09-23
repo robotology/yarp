@@ -22,8 +22,7 @@ YARP_DISABLE_DEPRECATED_WARNING
 #include <yarp/os/PeriodicThread.h>
 #include <yarp/os/Runnable.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup key_class
@@ -270,8 +269,7 @@ public:
     Runnable* getAttachment() const;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 YARP_WARNING_POP
 #endif // YARP_NO_DEPRECATED

@@ -17,8 +17,7 @@ YARP_COMPILER_WARNING("<yarp/os/LockGuard.h> file is deprecated")
 #include <yarp/os/api.h>
 #include <mutex>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Mutex;
 class RecursiveMutex;
@@ -94,8 +93,7 @@ YARP_DEPRECATED_TYPEDEF_MSG("use std::lock_guard or std::scoped_lock instead") A
 
 YARP_WARNING_POP
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_NO_DEPRECATED
 

@@ -9,8 +9,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/SharedLibraryClassFactory.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Container for an object created using a factory provided by a shared library.
@@ -168,7 +167,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SHAREDLIBRARYCLASS_H

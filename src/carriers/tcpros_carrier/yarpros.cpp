@@ -51,7 +51,7 @@ YARP_LOG_COMPONENT(YARPROS,
                    yarp::os::Log::LogTypeReserved,
                    print_callback,
                    nullptr)
-}
+} // namespace
 
 
 std::string addPart(std::string t, std::string name, int code, Value *val, std::string orig, std::string mode="") {

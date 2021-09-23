@@ -12,17 +12,13 @@
 #include <yarp/math/Rand.h>
 #include <yarp/math/api.h>
 
-namespace yarp
-{
-    namespace math
-    {
+namespace yarp::math {
 
-        /**
-        * This class groups routines for random number generation, normal distribution.
-        */
-        class NormRand;
-    }
-}
+/**
+ * This class groups routines for random number generation, normal distribution.
+ */
+class NormRand;
+} // namespace yarp::math
 
 
 /**

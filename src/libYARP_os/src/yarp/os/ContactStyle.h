@@ -11,8 +11,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup comm_class
@@ -86,7 +85,6 @@ public:
     explicit ContactStyle();
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_CONTACTSTYLE_H

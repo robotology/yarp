@@ -13,8 +13,7 @@
 
 #include <yarp/os/PortWriter.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class ConnectionWriter;
 class OutputStream;
@@ -65,7 +64,6 @@ public:
     virtual void clear();
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SIZEDWRITER_H

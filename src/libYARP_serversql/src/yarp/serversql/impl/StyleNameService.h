@@ -10,9 +10,7 @@
 #include <yarp/name/NameService.h>
 
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 class StyleNameService : public yarp::name::NameService
 {
@@ -36,9 +34,7 @@ private:
     yarp::os::Property mime;
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_STYLENAMESERVICE_H

@@ -11,17 +11,10 @@
 /**
 * \file NavTypes.h contains definitions for common types used in navigation interfaces
 */
-namespace yarp
-{
-    namespace dev
-    {
-        namespace Nav2D
-        {
-            typedef yarp::math::Vec2D<int>       XYCell_unbounded;
-            typedef yarp::math::Vec2D<size_t>    XYCell;
-            typedef yarp::math::Vec2D<double>    XYWorld;
-        }
-    }
-}
+namespace yarp::dev::Nav2D {
+typedef yarp::math::Vec2D<int> XYCell_unbounded;
+typedef yarp::math::Vec2D<size_t> XYCell;
+typedef yarp::math::Vec2D<double> XYWorld;
+} // namespace yarp::dev::Nav2D
 
 #endif // YARP_DEV_NAVTYPES_H

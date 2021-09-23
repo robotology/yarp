@@ -11,10 +11,8 @@
 #include <yarp/dev/api.h>
 #include <yarp/conf/system.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementVirtualAnalogSensor;
-    }
+namespace yarp::dev {
+class ImplementVirtualAnalogSensor;
 }
 
 class YARP_dev_API yarp::dev::ImplementVirtualAnalogSensor: public IVirtualAnalogSensor

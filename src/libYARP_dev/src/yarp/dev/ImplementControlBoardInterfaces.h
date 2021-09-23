@@ -10,13 +10,9 @@
 #include <yarp/dev/ImplementControlCalibration.h>
 #include <yarp/dev/api.h>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class StubImplPositionControlRaw;
-        class StubImplEncodersRaw;
-    }
+namespace yarp::dev {
+class StubImplPositionControlRaw;
+class StubImplEncodersRaw;
 }
 
 /**

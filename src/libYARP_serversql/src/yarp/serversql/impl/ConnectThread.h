@@ -11,9 +11,7 @@
 
 #include <mutex>
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 class ConnectThread : public yarp::os::Thread
 {
@@ -31,9 +29,7 @@ public:
     void run() override;
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_CONNECTTHREAD_H

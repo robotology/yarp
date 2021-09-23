@@ -32,9 +32,7 @@
 
 YARP_DECLARE_LOG_COMPONENT(STORABLE)
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * A single item in a Bottle.  This extends the public yarp::os::Value
@@ -1184,8 +1182,6 @@ inline std::int32_t subCoder(T& content)
     return c;
 }
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_STORABLE_H

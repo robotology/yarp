@@ -8,8 +8,7 @@
 
 #include <yarp/os/Contactable.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * @brief The yarp::os::Contactables class
@@ -46,7 +45,6 @@ public:
                           const std::string& category = "") = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_CONTACTABLES_H

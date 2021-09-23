@@ -13,8 +13,7 @@
 #include <yarp/os/PortWriterBuffer.h>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * @ingroup comm_class
@@ -318,8 +317,7 @@ private:
     bool sharedOpen(Port& port);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #include <yarp/os/BufferedPort-inl.h>
 

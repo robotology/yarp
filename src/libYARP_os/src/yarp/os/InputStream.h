@@ -13,8 +13,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Bytes;
 
@@ -136,7 +135,6 @@ public:
     virtual bool setReadEnvelopeCallback(readEnvelopeCallbackType callback, void* data);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_INPUTSTREAM_H

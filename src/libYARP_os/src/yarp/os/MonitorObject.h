@@ -9,15 +9,12 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 class Property;
 class Things;
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API MonitorObject
 {
@@ -93,7 +90,6 @@ public:
     virtual yarp::os::Things& updateReply(yarp::os::Things& thing);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_MONITOROBJECT_H

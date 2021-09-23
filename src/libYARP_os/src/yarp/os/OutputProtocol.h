@@ -14,15 +14,12 @@
 #include <yarp/os/Route.h>
 #include <yarp/os/SizedWriter.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 class InputProtocol;
 class Contactable;
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 /**
  * The output side of an active connection between two ports.
  */
@@ -128,7 +125,6 @@ public:
     virtual void beginWrite() = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_OUTPUTPROTOCOL_H

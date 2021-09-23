@@ -22,9 +22,7 @@
 #    define PLATFORM_TIME_SET(x, y) fromDouble(x, y)
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 #ifdef YARP_HAS_ACE
 typedef ACE_Time_Value YARP_timeval;
@@ -40,8 +38,6 @@ void subtractTime(YARP_timeval& val,
 double toDouble(const YARP_timeval& v);
 void fromDouble(YARP_timeval& v, double x, int unit = 1);
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PLATFORMTIME_H

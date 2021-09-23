@@ -9,11 +9,9 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Vocab.h>
 
-namespace yarp {
-    namespace dev {
-        class IPWMControlRaw;
-        class IPWMControl;
-    }
+namespace yarp::dev {
+class IPWMControlRaw;
+class IPWMControl;
 }
 
 /**

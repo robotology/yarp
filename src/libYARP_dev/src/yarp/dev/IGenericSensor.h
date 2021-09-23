@@ -10,8 +10,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_other
@@ -46,7 +45,6 @@ public:
     virtual bool calibrate(int ch, double v) = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IGENERICSENSOR_H

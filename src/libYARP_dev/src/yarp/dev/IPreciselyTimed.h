@@ -11,8 +11,7 @@
 
 #include <yarp/dev/api.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API IPreciselyTimed
 {
@@ -25,7 +24,6 @@ public:
     virtual yarp::os::Stamp getLastInputStamp() = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IPRECISELYTIMED_H

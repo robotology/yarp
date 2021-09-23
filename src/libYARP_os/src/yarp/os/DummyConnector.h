@@ -10,8 +10,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A dummy connection to test yarp::os::Portable implementations.
@@ -85,7 +84,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_DUMMYCONNECTOR_H

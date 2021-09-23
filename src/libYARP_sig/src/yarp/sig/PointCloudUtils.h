@@ -10,15 +10,7 @@
 #include <yarp/sig/IntrinsicParams.h>
 #include <yarp/sig/PointCloud.h>
 
-namespace yarp {
-namespace sig{
-/**
- * \ingroup sig_class
- *
- * PointCloud utilities.
- */
-namespace utils
-{
+namespace yarp::sig::utils {
 
 enum class OrganizationType{
     Organized,
@@ -76,9 +68,7 @@ yarp::sig::PointCloud<T1> depthRgbToPC(const yarp::sig::ImageOf<yarp::sig::Pixel
                                        const yarp::sig::ImageOf<T2>& color,
                                        const yarp::sig::IntrinsicParams& intrinsic,
                                        const yarp::sig::utils::OrganizationType organizationType = yarp::sig::utils::OrganizationType::Organized);
-} // namespace utils
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig::utils
 
 #include <yarp/sig/PointCloudUtils-inl.h>
 

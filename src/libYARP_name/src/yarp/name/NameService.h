@@ -12,21 +12,9 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/NameStore.h>
 
-namespace yarp {
-    /**
-     *
-     * Classes for constructing name servers.  While YARP comes with
-     * a standard, centralized server for mapping port names to
-     * resources, there are plenty of alternatives in how this could
-     * be done.  This namespace collects classes that are of use for
-     * creating alternative name servers (or avoiding name servers
-     * altogether).
-     *
-     */
-    namespace name {
-        class NameService;
-    }
-}
+namespace yarp::name {
+class NameService;
+} // namespace yarp::name
 
 /**
  *

@@ -14,8 +14,7 @@
 #include <yarp/manager/resource.h>
 #include <yarp/conf/api.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 class Author {
@@ -269,8 +268,7 @@ typedef std::vector<Module*>::iterator ModulePIterator;
         std::cout<<'\n';\
         }
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // YARP_MANAGER_MODULE

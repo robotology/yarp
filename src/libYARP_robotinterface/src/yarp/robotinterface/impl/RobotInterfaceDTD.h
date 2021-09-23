@@ -26,8 +26,7 @@
 
 class TiXmlUnknown;
 
-namespace yarp {
-namespace robotinterface {
+namespace yarp::robotinterface {
 
 // Represent something like this in the xml file
 // <!DOCTYPE robot PUBLIC "-//YARP//DTD yarprobotinterface 1.0//EN" "http://www.yarp.it/DTD/yarprobotinterfaceV1.0.dtd">
@@ -64,7 +63,6 @@ public:
 
 std::string DocTypeToString(RobotInterfaceDTD::DocType doctype);
 
-} // namespace robotinterface
-} // namespace yarp
+} // namespace yarp::robotinterface
 
 #endif // YARP_ROBOTINTERFACE_ROBOTINTERFACEDTD_H

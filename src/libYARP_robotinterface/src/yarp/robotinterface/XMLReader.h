@@ -15,8 +15,7 @@
 #include <string>
 
 
-namespace yarp {
-namespace robotinterface {
+namespace yarp::robotinterface {
 
 /**
  * Result of the parsing of XMLReader.
@@ -75,7 +74,6 @@ private:
 
 }; // class XMLReader
 
-} // namespace robotinterface
-} // namespace yarp
+} // namespace yarp::robotinterface
 
 #endif // YARP_ROBOTINTERFACE_XMLREADER_H

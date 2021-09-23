@@ -10,8 +10,7 @@
 #include <yarp/os/api.h>
 #include <yarp/os/Time.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 enum class PeriodicThreadClock
 {
@@ -239,7 +238,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PERIODICTHREAD_H

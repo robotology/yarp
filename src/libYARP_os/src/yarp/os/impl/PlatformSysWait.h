@@ -17,9 +17,7 @@
 #    include <sys/wait.h>
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 #if defined(YARP_HAS_ACE)
 using ACE_OS::wait;
@@ -29,8 +27,6 @@ using ::wait;
 using ::waitpid;
 #endif
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PLATFORMSYSWAIT_H

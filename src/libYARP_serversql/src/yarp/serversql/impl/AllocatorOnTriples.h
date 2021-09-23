@@ -10,9 +10,7 @@
 #include <yarp/serversql/impl/Allocator.h>
 #include <yarp/serversql/impl/TripleSource.h>
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * Allocates network resources, and tracks them using a TripleSource.
@@ -53,9 +51,7 @@ private:
     AllocatorConfig config;
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_ALLOCATORONTRIPLES_H

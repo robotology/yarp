@@ -11,8 +11,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Portable.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * An abstraction for a block of bytes, with optional
@@ -169,7 +168,6 @@ private:
     bool use_set;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_MANAGEDBYTES_H

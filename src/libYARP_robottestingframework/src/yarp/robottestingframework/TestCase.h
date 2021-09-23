@@ -11,8 +11,7 @@
 #include <robottestingframework/TestCase.h>
 #include <string>
 
-namespace yarp {
-namespace robottestingframework {
+namespace yarp::robottestingframework {
 
 /**
  * @brief The YarpTestCase is a helper class to facilitate loading the tests
@@ -41,7 +40,6 @@ private:
     Private * const mPriv;
 };
 
-} // namespace robottestingframework
-} // namespace yarp
+} // namespace yarp::robottestingframework
 
 #endif // YARP_ROBOTTESTINGFRAMEWORK_YARPTESTCASE_H

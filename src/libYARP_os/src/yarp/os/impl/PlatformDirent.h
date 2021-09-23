@@ -18,9 +18,7 @@
 #    include <sys/types.h>
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 #if defined(YARP_HAS_ACE)
 typedef ACE_DIRENT dirent;
@@ -41,8 +39,6 @@ using ::opendir;
 using ::scandir;
 #endif
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PLATFORMDIRENT_H

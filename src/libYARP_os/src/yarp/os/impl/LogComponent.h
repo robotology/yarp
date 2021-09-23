@@ -9,10 +9,7 @@
 #include <yarp/os/api.h>
 #include <yarp/os/LogComponent.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
-namespace LogComponent {
+namespace yarp::os::impl::LogComponent {
 
 void print_callback(yarp::os::Log::LogType type,
                     const char* msg,
@@ -27,10 +24,7 @@ void print_callback(yarp::os::Log::LogType type,
 yarp::os::Log::LogType minimumLogType();
 void setMinumumLogType(yarp::os::Log::LogType minumumLogType);
 
-} // namespace LogComponent
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl::LogComponent
 
 #define YARP_OS_LOG_COMPONENT(name, name_string) \
     const yarp::os::LogComponent& name() \

@@ -9,9 +9,7 @@
 #include <list>
 #include <mutex>
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 #ifndef YARP_SERVERSQL_IMPL_CONNECTMANAGER_H
 #define YARP_SERVERSQL_IMPL_CONNECTMANAGER_H
@@ -38,9 +36,7 @@ public:
                  bool positive = true);
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_CONNECTMANAGER_H

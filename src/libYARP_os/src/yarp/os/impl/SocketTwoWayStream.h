@@ -28,9 +28,7 @@
 
 YARP_DECLARE_LOG_COMPONENT(SOCKETTWOWAYSTREAM)
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * A stream abstraction for socket communication.  It supports TCP.
@@ -238,8 +236,6 @@ private:
     void updateAddresses();
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_SOCKETTWOWAYSTREAM_H

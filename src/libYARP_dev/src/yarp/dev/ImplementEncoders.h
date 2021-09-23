@@ -9,12 +9,8 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/api.h>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class ImplementEncoders;
-    }
+namespace yarp::dev {
+class ImplementEncoders;
 }
 
 class YARP_dev_API yarp::dev::ImplementEncoders : public IEncoders

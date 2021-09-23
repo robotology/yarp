@@ -10,8 +10,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/PolyDriverList.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_imultiplewrapper
@@ -45,7 +44,6 @@ public:
     virtual bool detachAll() = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IMULTIPLEWRAPPER_H

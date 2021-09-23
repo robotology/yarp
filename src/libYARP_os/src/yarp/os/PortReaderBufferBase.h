@@ -11,8 +11,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Port;
 class PortReaderBufferBaseCreator;
@@ -77,7 +76,6 @@ private:
 };
 
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTREADERBUFFERBASE_H

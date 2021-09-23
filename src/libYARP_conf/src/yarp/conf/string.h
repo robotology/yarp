@@ -11,9 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace yarp {
-namespace conf {
-namespace string {
+namespace yarp::conf::string {
 
 /**
  * Utility to split a string by a @c separator, into a vector of strings.
@@ -127,8 +125,6 @@ inline typename ContainerT::value_type join(typename ContainerT::const_iterator 
     return join<ContainerT>(begin, end, typename ContainerT::value_type{separator});
 }
 
-} // namespace string
-} // namespace conf
-} // namespace yarp
+} // namespace yarp::conf::string
 
 #endif // YARP_CONF_STRING_H

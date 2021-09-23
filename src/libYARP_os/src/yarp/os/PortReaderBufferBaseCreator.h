@@ -9,8 +9,7 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class PortReader;
 
@@ -22,7 +21,6 @@ public:
     virtual yarp::os::PortReader* create() const = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTREADERBUFFERBASECREATOR_H

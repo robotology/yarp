@@ -18,14 +18,10 @@
 
 #define HAT_ACTIONS_ID_SHIFT 100
 
-namespace yarp
-{
-    namespace dev
-    {
-        class IJoypadController;
-        class IJoypadEvent;
-        class IJoypadEventDriven;
-    }
+namespace yarp::dev {
+class IJoypadController;
+class IJoypadEvent;
+class IJoypadEventDriven;
 }
 
 class YARP_dev_API yarp::dev::IJoypadController

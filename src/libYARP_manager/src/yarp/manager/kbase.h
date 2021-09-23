@@ -16,8 +16,7 @@
 #include <yarp/manager/logicresource.h>
 #include <yarp/manager/primresource.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 #define NODELINK_SUPERFICIAL    1
@@ -235,8 +234,7 @@ public:
      }
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_KBASE__

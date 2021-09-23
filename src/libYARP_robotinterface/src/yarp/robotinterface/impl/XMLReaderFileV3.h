@@ -10,12 +10,11 @@
 
 #include <string>
 
-namespace yarp {
-namespace robotinterface {
-
+namespace yarp::robotinterface {
 class XMLReaderResult;
+} // namespace yarp::robotinterface
 
-namespace impl {
+namespace yarp::robotinterface::impl {
 
 class XMLReaderFileV3 : public XMLReaderFileVx
 {
@@ -35,8 +34,6 @@ private:
     Private* const mPriv;
 };
 
-} // namespace impl
-} // namespace robotinterface
-} // namespace yarp
+} // namespace yarp::robotinterface::impl
 
 #endif // YARP_ROBOTINTERFACE_XMLREADERFILEV3_H

@@ -17,9 +17,7 @@
 #    include <stdio.h>
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 #ifdef YARP_HAS_ACE
 using ACE_OS::fileno;
@@ -27,9 +25,7 @@ using ACE_OS::fileno;
 using ::fileno;
 #endif
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 
 #endif // YARP_OS_IMPL_PLATFORMSTDIO_H

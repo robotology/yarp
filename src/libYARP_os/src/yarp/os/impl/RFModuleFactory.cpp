@@ -10,6 +10,7 @@
 #include <map>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 class RFModuleFactory::Private
 {

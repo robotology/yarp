@@ -23,9 +23,7 @@
 #include <yarp/os/StringInputStream.h>
 #include <yarp/os/TwoWayStream.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 class BufferedConnectionWriter;
 class Protocol;
@@ -109,8 +107,6 @@ private:
     ConnectionReader* parentConnectionReader;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_STREAMCONNECTIONREADER_H

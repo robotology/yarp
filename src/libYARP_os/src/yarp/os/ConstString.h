@@ -16,13 +16,11 @@ YARP_COMPILER_WARNING("<yarp/os/ConstString.h> file is deprecated")
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 YARP_DEPRECATED_TYPEDEF_MSG("Use std::string instead")
 std::string ConstString;
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_CONSTSTRING_H

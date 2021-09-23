@@ -11,22 +11,16 @@
 #include <yarp/dev/api.h>
 #include <yarp/conf/system.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementPWMControl;
-    }
+namespace yarp::dev {
+class ImplementPWMControl;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev::impl
 
 class YARP_dev_API yarp::dev::ImplementPWMControl: public IPWMControl
 {

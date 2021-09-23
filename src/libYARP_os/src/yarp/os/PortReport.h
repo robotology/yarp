@@ -9,14 +9,11 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 class PortInfo;
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup comm_class
@@ -45,7 +42,6 @@ public:
     virtual void report(const PortInfo& info) = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTREPORT_H

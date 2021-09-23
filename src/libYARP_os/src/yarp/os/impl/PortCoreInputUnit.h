@@ -12,9 +12,7 @@
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/PortCoreUnit.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Manager for a single input to a port.  Associated
@@ -97,8 +95,6 @@ private:
     static void envelopeReadCallback(void* data, const Bytes& envelope);
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PORTCOREINPUTUNIT_H

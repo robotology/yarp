@@ -15,21 +15,17 @@
 
 /*! \file IAxisInfo.h define control board standard interfaces*/
 
-namespace yarp
-{
-    namespace dev
-    {
-        class IAxisInfo;
-        class IAxisInfoRaw;
+namespace yarp::dev {
+class IAxisInfo;
+class IAxisInfoRaw;
 
-        enum JointTypeEnum
-        {
-            VOCAB_JOINTTYPE_REVOLUTE  = yarp::os::createVocab32('a', 't', 'r', 'v'),
-            VOCAB_JOINTTYPE_PRISMATIC = yarp::os::createVocab32('a', 't', 'p', 'r'),
-            VOCAB_JOINTTYPE_UNKNOWN   = yarp::os::createVocab32('u', 'n', 'k', 'n')
-        };
-    }
-}
+enum JointTypeEnum
+{
+    VOCAB_JOINTTYPE_REVOLUTE = yarp::os::createVocab32('a', 't', 'r', 'v'),
+    VOCAB_JOINTTYPE_PRISMATIC = yarp::os::createVocab32('a', 't', 'p', 'r'),
+    VOCAB_JOINTTYPE_UNKNOWN = yarp::os::createVocab32('u', 'n', 'k', 'n')
+};
+} // namespace yarp::dev
 
 /**
  * @ingroup dev_iface_motor

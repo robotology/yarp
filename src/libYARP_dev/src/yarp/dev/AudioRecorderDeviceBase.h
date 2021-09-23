@@ -14,8 +14,7 @@
 #ifndef YARP_DEV_AUDIORECORDERDEVICETEMPLATE_H
 #define YARP_DEV_AUDIORECORDERDEVICETEMPLATE_H
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class AudioDeviceDriverSettings
 {
@@ -73,7 +72,6 @@ protected:
     bool configureRecorderAudioDevice(yarp::os::Searchable& config, std::string device_name);
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif

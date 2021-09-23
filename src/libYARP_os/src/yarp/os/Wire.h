@@ -9,8 +9,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/WireLink.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Base class for IDL client/server.
@@ -42,7 +41,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_WIRE_H

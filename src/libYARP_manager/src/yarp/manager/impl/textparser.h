@@ -13,8 +13,7 @@
 #include <iostream>
 #include <yarp/manager/utility.h>
 
-namespace yarp{
-namespace manager{
+namespace yarp::manager {
 
 
 class TextParser
@@ -97,7 +96,6 @@ public:
 
     }
 };
-}//manager
-}//yarp
+} // namespace yarp::manager
 
 #endif // TEXTPARSER_H

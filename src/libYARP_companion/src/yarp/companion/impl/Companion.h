@@ -20,9 +20,7 @@
 
 YARP_DECLARE_LOG_COMPONENT(COMPANION);
 
-namespace yarp {
-namespace companion {
-namespace impl {
+namespace yarp::companion::impl {
 
 /**
  * Implementation of a standard set of YARP utilities.
@@ -201,9 +199,7 @@ private:
 
 };
 
-} // namespace impl
-} // namespace companion
-} // namespace yarp
+} // namespace yarp::companion::impl
 
 
 #endif // YARP_COMPANION_IMPL_COMPANION_H

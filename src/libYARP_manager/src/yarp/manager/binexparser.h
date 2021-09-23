@@ -14,8 +14,7 @@
 #include <yarp/manager/graph.h>
 #include <yarp/conf/api.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 typedef enum __BinNodeType {
@@ -167,8 +166,7 @@ private:
 
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_BINEXPARSER____

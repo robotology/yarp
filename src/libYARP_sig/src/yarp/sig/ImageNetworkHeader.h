@@ -15,8 +15,7 @@
 
 #include <yarp/sig/Image.h>
 
-namespace yarp {
-namespace sig {
+namespace yarp::sig {
 
 /**
  * Byte order in image header for network transmission.
@@ -62,7 +61,6 @@ public:
 };
 YARP_END_PACK
 
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig
 
 #endif // YARP_SIG_IMAGENETWORKHEADER_H

@@ -13,12 +13,10 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/math/FrameTransform.h>
 
-namespace yarp {
-    namespace dev {
-        class IFrameTransformStorageSet;
-        class IFrameTransformStorageGet;
-        class IFrameTransformStorageUtils;
-      }
+namespace yarp::dev {
+class IFrameTransformStorageSet;
+class IFrameTransformStorageGet;
+class IFrameTransformStorageUtils;
 }
 
 class FrameTransformContainer;

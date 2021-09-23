@@ -31,11 +31,9 @@ TEST_CASE("robotinterface::ParamTest", "[yarp::robotinterface]")
 };
 
 // Dummy device used in "Check valid robot file with two devices" test
-namespace yarp {
-    namespace dev {
-        class RobotInterfaceTestMockDriver;
-        class RobotInterfaceTestMockWrapper;
-    }
+namespace yarp::dev {
+class RobotInterfaceTestMockDriver;
+class RobotInterfaceTestMockWrapper;
 }
 
 struct GlobalState

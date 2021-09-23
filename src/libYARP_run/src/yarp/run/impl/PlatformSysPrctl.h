@@ -11,16 +11,12 @@
 # include <sys/prctl.h>
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::run::impl {
 
 #if defined(YARP_HAS_SYS_PRCTL_H)
     using ::prctl;
 #endif
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::run::impl
 
 #endif // YARP_RUN_IMPL_PLATFORMSYSPRCTL_H

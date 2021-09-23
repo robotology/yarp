@@ -119,7 +119,7 @@ constexpr char num[12][16]
 constexpr size_t num_width = 3;
 constexpr size_t num_height = 5;
 
-}
+} // namespace
 
 bool FakeFrameGrabber::read(yarp::os::ConnectionReader& connection)
 {

@@ -10,23 +10,17 @@
 #include <yarp/dev/IVelocityControl.h>
 #include <yarp/os/Log.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementVelocityControl;
-        class StubImplVelocityControlRaw;
-    }
+namespace yarp::dev {
+class ImplementVelocityControl;
+class StubImplVelocityControlRaw;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev::impl
 
 class YARP_dev_API yarp::dev::ImplementVelocityControl : public IVelocityControl
 {

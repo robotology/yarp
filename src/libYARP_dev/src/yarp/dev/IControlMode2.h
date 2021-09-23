@@ -15,11 +15,9 @@ YARP_COMPILER_WARNING("<yarp/dev/IControlMode2.h> file is deprecated")
 
 #include <yarp/dev/IControlMode.h>
 
-namespace yarp {
-    namespace dev {
+namespace yarp::dev {
 YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlModeRaw instead") IControlModeRaw IControlMode2Raw;
 YARP_DEPRECATED_TYPEDEF_MSG("Use yarp::dev::IControlMode instead") IControlMode IControlMode2;
-    }
 }
 
 #endif

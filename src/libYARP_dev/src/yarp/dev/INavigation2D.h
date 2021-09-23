@@ -17,54 +17,49 @@
 #include <limits>
 #include <string>
 
-namespace yarp {
-    namespace dev {
-        namespace Nav2D
-        {
-            class INavigation2DVelocityActions;
-            class INavigation2DTargetActions;
-            class INavigation2DControlActions;
-            class INavigation2DExtraActions;
-            class INavigation2D;
+namespace yarp::dev::Nav2D {
+class INavigation2DVelocityActions;
+class INavigation2DTargetActions;
+class INavigation2DControlActions;
+class INavigation2DExtraActions;
+class INavigation2D;
 
-            enum NavigationStatusEnum
-            {
-                navigation_status_idle                  = yarp::os::createVocab32('i', 'd', 'l', 'e'),
-                navigation_status_preparing_before_move = yarp::os::createVocab32('p', 'r', 'e', 'p'),
-                navigation_status_moving                = yarp::os::createVocab32('m', 'o', 'v', 'g'),
-                navigation_status_waiting_obstacle      = yarp::os::createVocab32('w', 'a', 'i', 't'),
-                navigation_status_goal_reached          = yarp::os::createVocab32('r', 'e', 'c', 'h'),
-                navigation_status_aborted               = yarp::os::createVocab32('a', 'b', 'r', 't'),
-                navigation_status_failing               = yarp::os::createVocab32('f', 'a', 'i', 'l'),
-                navigation_status_paused                = yarp::os::createVocab32('p', 'a', 'u', 's'),
-                navigation_status_thinking              = yarp::os::createVocab32('t', 'h', 'n', 'k'),
-                navigation_status_error                 = yarp::os::createVocab32('e', 'r', 'r')
-            };
+enum NavigationStatusEnum
+{
+    navigation_status_idle = yarp::os::createVocab32('i', 'd', 'l', 'e'),
+    navigation_status_preparing_before_move = yarp::os::createVocab32('p', 'r', 'e', 'p'),
+    navigation_status_moving = yarp::os::createVocab32('m', 'o', 'v', 'g'),
+    navigation_status_waiting_obstacle = yarp::os::createVocab32('w', 'a', 'i', 't'),
+    navigation_status_goal_reached = yarp::os::createVocab32('r', 'e', 'c', 'h'),
+    navigation_status_aborted = yarp::os::createVocab32('a', 'b', 'r', 't'),
+    navigation_status_failing = yarp::os::createVocab32('f', 'a', 'i', 'l'),
+    navigation_status_paused = yarp::os::createVocab32('p', 'a', 'u', 's'),
+    navigation_status_thinking = yarp::os::createVocab32('t', 'h', 'n', 'k'),
+    navigation_status_error = yarp::os::createVocab32('e', 'r', 'r')
+};
 
-            enum NavigationMapTypeEnum
-            {
-                global_map                              = yarp::os::createVocab32('g', 'l', 'o', 'b'),
-                local_map                               = yarp::os::createVocab32('l', 'o', 'c', 'a')
-            };
+enum NavigationMapTypeEnum
+{
+    global_map = yarp::os::createVocab32('g', 'l', 'o', 'b'),
+    local_map = yarp::os::createVocab32('l', 'o', 'c', 'a')
+};
 
-            enum TrajectoryTypeEnum
-            {
-                global_trajectory = yarp::os::createVocab32('g', 'l', 'o', 'b'),
-                local_trajectory = yarp::os::createVocab32('l', 'o', 'c', 'a')
-            };
+enum TrajectoryTypeEnum
+{
+    global_trajectory = yarp::os::createVocab32('g', 'l', 'o', 'b'),
+    local_trajectory = yarp::os::createVocab32('l', 'o', 'c', 'a')
+};
 
-            namespace INavigation2DHelpers
-            {
-                //converts a string to a NavigationStatusEnum.
-                //navigation_status_error is returned if the string is not recognized.
-                YARP_dev_API NavigationStatusEnum stringToStatus(std::string s);
+namespace INavigation2DHelpers
+{
+    //converts a string to a NavigationStatusEnum.
+    //navigation_status_error is returned if the string is not recognized.
+    YARP_dev_API NavigationStatusEnum stringToStatus(std::string s);
 
-                //converts a NavigationStatusEnum to a string.
-                YARP_dev_API std::string statusToString(NavigationStatusEnum status);
-            }
-        }
-    }
-}
+    //converts a NavigationStatusEnum to a string.
+    YARP_dev_API std::string statusToString(NavigationStatusEnum status);
+} // namespace INavigation2DHelpers
+} // namespace yarp::dev::Nav2D
 
 class YARP_dev_API yarp::dev::Nav2D::INavigation2DVelocityActions
 {

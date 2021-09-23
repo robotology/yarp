@@ -12,8 +12,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * An OutputStream that produces a string.  Handy for testing purposes.
@@ -61,7 +60,6 @@ private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) data;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_STRINGOUTPUTSTREAM_H

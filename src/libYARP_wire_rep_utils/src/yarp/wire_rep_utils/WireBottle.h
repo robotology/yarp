@@ -11,8 +11,7 @@
 
 #include <yarp/wire_rep_utils/api.h>
 
-namespace yarp {
-namespace wire_rep_utils {
+namespace yarp::wire_rep_utils {
 
 class YARP_wire_rep_utils_API SizedWriterTail :
         public yarp::os::SizedWriter
@@ -78,7 +77,6 @@ public:
                                       SizedWriterTail& dest);
 };
 
-} // namespace wire_rep_utils
-} // namespace yarp
+} // namespace yarp::wire_rep_utils
 
 #endif

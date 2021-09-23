@@ -10,8 +10,7 @@
 #include <yarp/conf/api.h>
 
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 class Executable;
 
@@ -225,8 +224,7 @@ private:
     Dying* dying;
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_Exec_State__

@@ -14,9 +14,7 @@
 #include <yarp/os/TwoWayStream.h>
 #include <yarp/os/impl/TcpCarrier.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Minimal http connection support.
@@ -131,8 +129,6 @@ public:
     bool write(ConnectionState& proto, SizedWriter& writer) override;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_HTTPCARRIER

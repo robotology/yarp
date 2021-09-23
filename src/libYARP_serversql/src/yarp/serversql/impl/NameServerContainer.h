@@ -18,9 +18,7 @@
 #include <yarp/serversql/impl/SubscriberOnSql.h>
 #include <yarp/serversql/impl/TripleSourceCreator.h>
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 class NameServerContainer : public ComposedNameService
 {
@@ -45,9 +43,7 @@ public:
     bool open(yarp::os::Searchable& options);
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_NAMESERVERCONTAINER_H

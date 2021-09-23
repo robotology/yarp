@@ -39,13 +39,15 @@ YARP_DISABLE_DEPRECATED_WARNING
 
 const int REPORT_TIME=5; //seconds
 
-namespace yarp {
-    namespace dev {
-        template <class T> class DataSource;
-        template <class T> class DataWriter;
-        template <class T1, class T2> class DataSource2;
-        template <class T1, class T2> class DataWriter2;
-    }
+namespace yarp::dev {
+template <class T>
+class DataSource;
+template <class T>
+class DataWriter;
+template <class T1, class T2>
+class DataSource2;
+template <class T1, class T2>
+class DataWriter2;
 }
 
 template <class T>

@@ -10,11 +10,9 @@
 #include <yarp/os/Log.h>
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    namespace dev {
-        class IMotorRaw;
-        class IMotor;
-      }
+namespace yarp::dev {
+class IMotorRaw;
+class IMotor;
 }
 
 /**

@@ -8,22 +8,16 @@
 
 #include <yarp/dev/IMotor.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementMotor;
-    }
+namespace yarp::dev {
+class ImplementMotor;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev::impl
 
 
 class YARP_dev_API yarp::dev::ImplementMotor: public IMotor

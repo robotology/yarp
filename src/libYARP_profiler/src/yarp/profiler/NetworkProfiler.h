@@ -17,8 +17,7 @@
 #include <yarp/os/Bottle.h>
 
 
-namespace yarp {
-    namespace profiler {
+namespace yarp::profiler {
 
 class NetworkProfiler
 {
@@ -146,8 +145,7 @@ private:
 
 };
 
-    }
-}
+} // namespace yarp::profiler
 
 
 #endif //YARP_PROFILER_NETWORK_PROFILER_H

@@ -11,8 +11,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/AudioBufferSize.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 class YARP_dev_API IAudioRender
 {
@@ -72,7 +71,6 @@ public:
     virtual bool setHWGain(double gain) = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IAUDIORENDER_H

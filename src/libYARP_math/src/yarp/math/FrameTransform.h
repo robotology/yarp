@@ -11,8 +11,7 @@
 #include <yarp/math/api.h>
 #include <yarp/math/Quaternion.h>
 
-namespace yarp {
-namespace math {
+namespace yarp::math {
 
 class YARP_math_API FrameTransform : public yarp::os::Portable
 {
@@ -87,7 +86,6 @@ public:
     }
 };
 
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::math
 
 #endif // YARP_MATH_TRANSFORM_H

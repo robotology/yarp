@@ -37,8 +37,7 @@ constexpr std::int32_t BOTTLE_TAG_INT = BOTTLE_TAG_INT32;
 YARP_DEPRECATED_MSG("Use BOTTLE_TAG_VOCAB32 instead") // Since YARP 3.5.0
 constexpr std::int32_t BOTTLE_TAG_VOCAB = BOTTLE_TAG_VOCAB32;
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class NetworkBase;
 
@@ -526,7 +525,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_BOTTLE_H

@@ -9,8 +9,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Property.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_other
@@ -140,7 +139,6 @@ public:
     virtual bool setDepthMirroring(bool mirror) = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IDEPTHVISUALPARAMS_H

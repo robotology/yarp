@@ -12,10 +12,8 @@
  * \file LaserMeasurementData.h
  */
 
-namespace yarp{
-    namespace dev{
-        class LaserMeasurementData;
-    }
+namespace yarp::dev {
+class LaserMeasurementData;
 }
 
 /*!

@@ -10,9 +10,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 #define YARP_CONFIG_FILENAME "yarp.conf"
 #define YARP_CONFIG_NAMESPACE_FILENAME "yarp_namespace.conf"
@@ -77,8 +75,6 @@ private:
     bool fromString(const std::string& txt);
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_NAMECONFIG_H

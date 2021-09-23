@@ -8,9 +8,7 @@
 
 #include <yarp/os/api.h>
 
-namespace yarp {
-namespace os {
-namespace idl {
+namespace yarp::os::idl {
 
 /**
  * IDL-friendly state.
@@ -28,8 +26,6 @@ public:
     bool isValid() const;
 };
 
-} // namespace idl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::idl
 
 #endif // YARP_OS_IDL_WIRESTATE_H

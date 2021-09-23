@@ -13,20 +13,16 @@
 #include <yarp/sig/Matrix.h>
 #include <vector>
 
-namespace yarp {
-    namespace dev {
-        namespace Nav2D {
-            class ILocalization2D;
+namespace yarp::dev::Nav2D {
+class ILocalization2D;
 
-            enum LocalizationStatusEnum
-            {
-                localization_status_not_yet_localized = yarp::os::createVocab32('l', 'o', 'c', 'n'),
-                localization_status_localized_ok      = yarp::os::createVocab32('l', 'o', 'c', 'y'),
-                localization_status_error             = yarp::os::createVocab32('e', 'r', 'r')
-            };
-        }
-    }
-}
+enum LocalizationStatusEnum
+{
+    localization_status_not_yet_localized = yarp::os::createVocab32('l', 'o', 'c', 'n'),
+    localization_status_localized_ok = yarp::os::createVocab32('l', 'o', 'c', 'y'),
+    localization_status_error = yarp::os::createVocab32('e', 'r', 'r')
+};
+} // namespace yarp
 
 /**
  * @ingroup dev_iface_navigation

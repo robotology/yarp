@@ -18,13 +18,11 @@
  * \file GazeControl.h defines gaze control interfaces
  */
 
-namespace yarp {
-    namespace dev {
-        struct GazeEventParameters;
-        struct GazeEventVariables;
-        class  GazeEvent;
-        class  IGazeControl;
-    }
+namespace yarp::dev {
+struct GazeEventParameters;
+struct GazeEventVariables;
+class GazeEvent;
+class IGazeControl;
 }
 
 

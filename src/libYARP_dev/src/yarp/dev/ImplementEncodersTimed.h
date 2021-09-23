@@ -8,22 +8,16 @@
 
 #include <yarp/dev/IEncodersTimed.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementEncodersTimed;
-    }
+namespace yarp::dev {
+class ImplementEncodersTimed;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev::impl
 
 class YARP_dev_API yarp::dev::ImplementEncodersTimed: public IEncodersTimed
 {

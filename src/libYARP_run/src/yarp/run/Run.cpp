@@ -217,7 +217,7 @@ int yarp::run::Run::main(int argc, char *argv[])
 
         if (getppid()==1) return 0;
 #else
-        yarp::os::impl::prctl(PR_SET_PDEATHSIG, SIGTERM);
+        yarp::run::impl::prctl(PR_SET_PDEATHSIG, SIGTERM);
 
         struct sigaction new_action;
         new_action.sa_handler=sigstdio_handler;

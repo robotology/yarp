@@ -12,8 +12,7 @@
 #include <yarp/manager/localbroker.h>
 
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 class YarpdevLocalBroker: public LocalBroker
 {
@@ -68,8 +67,7 @@ public:
      }
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_YARPDEVBROKER__

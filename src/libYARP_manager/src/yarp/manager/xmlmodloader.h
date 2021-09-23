@@ -11,8 +11,7 @@
 #include <yarp/manager/data.h>
 #include <yarp/manager/manifestloader.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 class TextParser;
 /**
@@ -41,8 +40,7 @@ private:
     Module* parsXml(const char* szFile);
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_XMLMODLOADER__

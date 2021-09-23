@@ -6,15 +6,13 @@
 #ifndef YARP_OS_NETUINT8_H
 #define YARP_OS_NETUINT8_H
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Definition of the NetUint8 type
  */
 typedef std::uint8_t NetUint8;
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NETUINT8_H

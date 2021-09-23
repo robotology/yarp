@@ -12,8 +12,7 @@
 #include <string>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup key_class
@@ -168,7 +167,6 @@ public:
 };
 
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SYSTEMINFO_H

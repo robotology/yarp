@@ -19,9 +19,7 @@
 YARP_COMPILER_ERROR(Cannot implement TcpConnector on this platform)
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 #ifdef YARP_HAS_ACE
 typedef ACE_SOCK_Connector TcpConnector;
@@ -29,8 +27,6 @@ typedef ACE_SOCK_Connector TcpConnector;
 typedef yarp::os::impl::posix::TcpConnector TcpConnector;
 #endif
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_TCPCONNECTOR_H

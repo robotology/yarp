@@ -11,8 +11,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/os/Log.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_motor
@@ -126,7 +125,6 @@ public:
 
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_ICONTROLLIMITSIMPL_H

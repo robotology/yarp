@@ -10,9 +10,7 @@
 #include <yarp/os/idl/WireReader.h>
 #include <yarp/os/idl/WireWriter.h>
 
-namespace yarp {
-namespace os {
-namespace idl {
+namespace yarp::os::idl {
 
 template <class T>
 class BareStyle : public T
@@ -29,8 +27,6 @@ public:
     }
 };
 
-} // namespace idl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::idl
 
 #endif // YARP_OS_IDL_BARESTYLE_H

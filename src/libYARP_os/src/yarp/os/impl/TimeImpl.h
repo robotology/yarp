@@ -6,10 +6,7 @@
 #ifndef YARP_OS_IMPL_TIMEIMPL_H
 #define YARP_OS_IMPL_TIMEIMPL_H
 
-namespace yarp {
-namespace os {
-namespace impl {
-namespace Time {
+namespace yarp::os::impl::Time {
 
 void removeClock();
 
@@ -28,9 +25,6 @@ void removeClock();
 void startTurboBoost();
 void endTurboBoost();
 
-} // namespace Time
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl::Time
 
 #endif // YARP_OS_IMPL_TIMEIMPL_H

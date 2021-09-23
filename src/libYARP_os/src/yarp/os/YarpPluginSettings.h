@@ -12,8 +12,7 @@
 #include <yarp/os/SharedLibraryClass.h>
 #include <yarp/os/YarpPluginSelector.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Collect hints for finding a particular plugin.
@@ -228,7 +227,6 @@ private:
     bool readFromSelector(const std::string& name);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_YARPPLUGINSELECTOR_H

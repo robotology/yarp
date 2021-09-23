@@ -9,8 +9,7 @@
 #include <yarp/dev/IWrapper.h>
 #include <yarp/dev/IMultipleWrapper.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  *
@@ -43,7 +42,6 @@ public:
 };
 
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_WRAPPERSINGLE_H

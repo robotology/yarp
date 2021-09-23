@@ -16,9 +16,7 @@
 
 #include <mutex>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 class LocalCarrier;
 
@@ -127,8 +125,6 @@ protected:
     static LocalCarrierManager manager;
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_LOCALCARRIER_H

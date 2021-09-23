@@ -13,9 +13,7 @@
 #include <yarp/os/impl/AuthHMAC.h>
 #include <yarp/os/impl/TcpAcceptor.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Communicating with a port via TCP.
@@ -49,8 +47,6 @@ private:
 };
 
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_TCPFACE_H

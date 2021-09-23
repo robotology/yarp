@@ -10,8 +10,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class PortReader;
 class PortWriter;
@@ -115,7 +114,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_WIRELINK_H

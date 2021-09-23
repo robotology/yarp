@@ -13,8 +13,7 @@
 
 #include <mutex>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  *
@@ -98,7 +97,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_YARPPLUGINSELECTOR_H

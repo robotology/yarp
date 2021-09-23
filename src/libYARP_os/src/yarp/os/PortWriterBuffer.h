@@ -10,8 +10,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortWriterBufferBase.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class Port;
 
@@ -147,7 +146,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORTWRITERBUFFER_H

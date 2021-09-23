@@ -9,8 +9,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Portable.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Base class for generic things.
@@ -82,7 +81,6 @@ private:
     yarp::os::Portable* portable;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_THINGS_H

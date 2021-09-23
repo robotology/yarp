@@ -11,8 +11,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/Value.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  *
@@ -49,7 +48,6 @@ public:
     const Searchable& getConnectionModifiers() const override;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NULLCONNECTIONREADER_H

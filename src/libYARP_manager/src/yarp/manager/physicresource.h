@@ -12,8 +12,7 @@
 #include <yarp/manager/primresource.h>
 #include <yarp/manager/resource.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 class GPU : public GenericResource {
@@ -60,8 +59,7 @@ private:
     bool bOverlap;
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_PHYSICRESOURCE__

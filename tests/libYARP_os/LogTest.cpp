@@ -34,7 +34,7 @@ YARP_LOG_COMPONENT(LOG_COMPONENT_NULL,
                    yarp::os::Log::LogTypeReserved,
                    nullptr,
                    nullptr)
-}
+} // namespace
 
 #if 1
 # define CNT_RESET

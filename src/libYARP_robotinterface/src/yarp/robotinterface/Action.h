@@ -8,8 +8,7 @@
 
 #include <yarp/robotinterface/Types.h>
 
-namespace yarp {
-namespace robotinterface {
+namespace yarp::robotinterface {
 
 class YARP_robotinterface_API Action
 {
@@ -40,8 +39,7 @@ private:
     Private* const mPriv;
 }; // class Action
 
-} // namespace robotinterface
-} // namespace yarp
+} // namespace yarp::robotinterface
 
 
 YARP_robotinterface_API yarp::os::LogStream operator<<(yarp::os::LogStream dbg, const yarp::robotinterface::Action& t);

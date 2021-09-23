@@ -11,8 +11,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Value.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * An abstract name space for ports. This collects all the services
@@ -212,7 +211,6 @@ public:
 
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NAMESPACE_H

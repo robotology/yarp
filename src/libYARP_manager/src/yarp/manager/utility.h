@@ -16,8 +16,7 @@
 
 #include <yarp/manager/ymm-types.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 class StrStream
@@ -87,8 +86,7 @@ OS strToOS(const char* szOS);
 class Graph;
 bool exportDotGraph(Graph& graph, const char* szFileName);
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_UTILITY__

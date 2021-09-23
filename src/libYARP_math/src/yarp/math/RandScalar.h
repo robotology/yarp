@@ -9,10 +9,8 @@
 
 #include <yarp/math/api.h>
 
-namespace yarp {
-    namespace math {
-            class RandScalar;
-    }
+namespace yarp::math {
+class RandScalar;
 }
 
 /**

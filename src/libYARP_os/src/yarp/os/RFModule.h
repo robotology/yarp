@@ -11,8 +11,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/RpcServer.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A base-class for standard YARP modules that supports ResourceFinder.
@@ -293,7 +292,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_RFMODULE_H

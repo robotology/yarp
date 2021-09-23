@@ -11,10 +11,8 @@
 #include <yarp/dev/PolyDriver.h>
 #include <string>
 
-namespace yarp {
-    namespace dev {
-        class PolyDriverDescriptor;
-    }
+namespace yarp::dev {
+class PolyDriverDescriptor;
 }
 
 class YARP_dev_API yarp::dev::PolyDriverDescriptor

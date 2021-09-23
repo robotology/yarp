@@ -9,9 +9,7 @@
 #include <string>
 #include <yarp/sig/Image.h>
 
-namespace yarp {
-    namespace dev {
-        namespace ROSPixelCode {
+namespace yarp::dev::ROSPixelCode {
 
 #define BAYER_BGGR16 "bayer_bggr16"
 #define BAYER_BGGR8  "bayer_bggr8"
@@ -65,6 +63,6 @@ std::string yarp2RosPixelCode(int code);
 
 int Ros2YarpPixelCode(const std::string& roscode);
 
-}}}
+} // namespace yarp::dev::ROSPixelCode
 
 #endif // YARP_DEV_RGBDSENSORWRAPPER_ROSPIXELCODE_H

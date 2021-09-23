@@ -9,22 +9,16 @@
 #include <yarp/dev/ICurrentControl.h>
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    namespace dev {
-        class ImplementCurrentControl;
-    }
+namespace yarp::dev {
+class ImplementCurrentControl;
 }
 
-namespace yarp {
-namespace dev {
-namespace impl {
+namespace yarp::dev::impl {
 
 template <typename T>
 class FixedSizeBuffersManager;
 
-} // namespace impl
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev::impl
 
 class YARP_dev_API yarp::dev::ImplementCurrentControl: public ICurrentControl
 {

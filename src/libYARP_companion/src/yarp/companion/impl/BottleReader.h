@@ -25,9 +25,7 @@ using yarp::os::PortReader;
 using yarp::os::Semaphore;
 using yarp::os::impl::BottleImpl;
 
-namespace yarp {
-namespace companion {
-namespace impl {
+namespace yarp::companion::impl {
 
 // used by Companion::cmdRead and Companion::cmdReadWrite
 
@@ -116,8 +114,6 @@ public:
     }
 };
 
-} // namespace impl
-} // namespace companion
-} // namespace yarp
+} // namespace yarp::companion::impl
 
 #endif // YARP_COMPANION_IMPL_BOTTLEREADER_H

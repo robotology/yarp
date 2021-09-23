@@ -12,8 +12,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * An InputStream that reads from a string.  Handy For testing purposes.
@@ -87,7 +86,6 @@ private:
     unsigned int at;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_STRINGINPUTSTREAM_H

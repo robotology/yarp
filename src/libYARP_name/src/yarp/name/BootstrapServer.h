@@ -11,10 +11,8 @@
 #include <yarp/os/Contact.h>
 #include <yarp/name/NameService.h>
 
-namespace yarp {
-    namespace name {
-        class BootstrapServer;
-    }
+namespace yarp::name {
+class BootstrapServer;
 }
 
 /**

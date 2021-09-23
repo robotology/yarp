@@ -67,8 +67,7 @@ class ZombieHunterThread;
  *
  */
 
-namespace yarp {
-namespace run {
+namespace yarp::run {
 
 /**
  * \class yarp::os::Run
@@ -210,8 +209,7 @@ YARP_SUPPRESS_DLL_INTERFACE_WARNING
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 };
 
-} // namespace run
-} // namespace yarp
+} // namespace yarp::run
 
 
 #endif // YARP_RUN_RUN_H

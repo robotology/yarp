@@ -24,8 +24,7 @@
 #include <yarp/manager/broker.h>
 #include <yarp/manager/primresource.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 
 /**
@@ -102,8 +101,7 @@ private:
 
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_YARPBROKER__

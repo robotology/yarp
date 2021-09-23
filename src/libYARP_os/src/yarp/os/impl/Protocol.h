@@ -15,9 +15,7 @@
 #include <yarp/os/ShiftStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * Connection choreographer.  Handles one side of a single YARP connection.
@@ -201,8 +199,6 @@ private:
     bool pendingReply;             ///< will we be making a reply
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PROTOCOL_H

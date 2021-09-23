@@ -13,10 +13,8 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/api.h>
 
-namespace yarp{
-    namespace dev {
-        class IVisualServoing;
-    }
+namespace yarp::dev {
+class IVisualServoing;
 }
 
 

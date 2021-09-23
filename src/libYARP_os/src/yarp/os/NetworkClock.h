@@ -12,8 +12,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API NetworkClock : public Clock
 {
@@ -34,8 +33,7 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 
 #endif // YARP_OS_NETWORKCLOCK_H

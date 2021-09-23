@@ -9,8 +9,7 @@
 #include <yarp/os/Contactable.h>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * An abstract unbuffered port.
@@ -80,7 +79,6 @@ public:
     virtual bool replyAndDrop(PortWriter& writer) = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_UNBUFFEREDCONTACTABLE_H

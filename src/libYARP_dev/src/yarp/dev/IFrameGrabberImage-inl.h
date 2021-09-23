@@ -12,8 +12,7 @@
 
 YARP_DECLARE_LOG_COMPONENT(IFRAMEGRABBEROF)
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 template <typename ImageType>
 bool IFrameGrabberOf<ImageType>::getImageCrop(cropType_id_t cropType,
@@ -44,7 +43,6 @@ bool IFrameGrabberOf<ImageType>::getImageCrop(cropType_id_t cropType,
     return true;
 }
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IFRAMEGRABBERIMAGE_INL_H

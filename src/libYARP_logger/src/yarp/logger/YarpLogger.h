@@ -22,97 +22,93 @@
 #include <string>
 #include <ctime>
 
-namespace yarp
+namespace yarp::yarpLogger {
+class LoggerEngine;
+class LogEntry;
+class LogEntryInfo;
+struct MessageEntry;
+
+enum LogLevelEnum
 {
-    namespace yarpLogger
+    LOGLEVEL_UNDEFINED = 0,
+    LOGLEVEL_TRACE = 1,
+    LOGLEVEL_DEBUG = 2,
+    LOGLEVEL_INFO = 3,
+    LOGLEVEL_WARNING = 4,
+    LOGLEVEL_ERROR = 5,
+    LOGLEVEL_FATAL = 6
+};
+
+class  LogLevel
+{
+private:
+    LogLevelEnum e_level {LOGLEVEL_UNDEFINED};
+
+public:
+    LogLevel() = default;
+
+    LogLevel(int l) :
+            e_level(static_cast<LogLevelEnum>(l))
     {
-        class  LoggerEngine;
-        class  LogEntry;
-        class  LogEntryInfo;
-        struct MessageEntry;
-
-        enum LogLevelEnum
-        {
-            LOGLEVEL_UNDEFINED = 0,
-            LOGLEVEL_TRACE = 1,
-            LOGLEVEL_DEBUG = 2,
-            LOGLEVEL_INFO = 3,
-            LOGLEVEL_WARNING = 4,
-            LOGLEVEL_ERROR = 5,
-            LOGLEVEL_FATAL = 6
-        };
-
-        class  LogLevel
-        {
-        private:
-            LogLevelEnum e_level {LOGLEVEL_UNDEFINED};
-
-        public:
-            LogLevel() = default;
-
-            LogLevel(int l) :
-                    e_level(static_cast<LogLevelEnum>(l))
-            {
-            }
-
-            void setLevel(LogLevelEnum level)
-            {
-                e_level = level;
-            }
-
-            void setLevel(int level)
-            {
-                e_level = static_cast<LogLevelEnum>(level);
-            }
-
-            int toInt()
-            {
-                return static_cast<int>(e_level);
-            }
-
-            std::string toString() const
-            {
-                if (e_level == LOGLEVEL_UNDEFINED) { return "<UNDEFINED>"; }
-                if (e_level == LOGLEVEL_TRACE) { return "<TRACE>"; }
-                if (e_level == LOGLEVEL_DEBUG) { return "<DEBUG>"; }
-                if (e_level == LOGLEVEL_INFO) { return "<INFO>"; }
-                if (e_level == LOGLEVEL_WARNING) { return "<WARNING>"; }
-                if (e_level == LOGLEVEL_ERROR) { return "<ERROR>"; }
-                if (e_level == LOGLEVEL_FATAL) { return "<FATAL>"; }
-                else { return "<UNDEFINED>"; }
-            }
-
-            void operator=(LogLevelEnum level)
-            {
-                e_level = level;
-            }
-
-            explicit operator LogLevelEnum() const
-            {
-                return e_level;
-            }
-
-            bool operator==(const LogLevel& other) const
-            {
-                return this->e_level == other.e_level;
-            }
-            bool operator==(const LogLevelEnum& other) const
-            {
-                return this->e_level == other;
-            }
-            bool operator>(const LogLevel& other) const
-            {
-                return this->e_level > other.e_level;
-            }
-        };
-
-        enum LogSystemEnum
-        {
-            LOGSYSTEM_YARP    = 0,
-            LOGSYSTEM_YARPRUN = 1
-        };
     }
-}
+
+    void setLevel(LogLevelEnum level)
+    {
+        e_level = level;
+    }
+
+    void setLevel(int level)
+    {
+        e_level = static_cast<LogLevelEnum>(level);
+    }
+
+    int toInt()
+    {
+        return static_cast<int>(e_level);
+    }
+
+    std::string toString() const
+    {
+        if (e_level == LOGLEVEL_UNDEFINED) { return "<UNDEFINED>"; }
+        if (e_level == LOGLEVEL_TRACE) { return "<TRACE>"; }
+        if (e_level == LOGLEVEL_DEBUG) { return "<DEBUG>"; }
+        if (e_level == LOGLEVEL_INFO) { return "<INFO>"; }
+        if (e_level == LOGLEVEL_WARNING) { return "<WARNING>"; }
+        if (e_level == LOGLEVEL_ERROR) { return "<ERROR>"; }
+        if (e_level == LOGLEVEL_FATAL) { return "<FATAL>"; }
+        else { return "<UNDEFINED>"; }
+    }
+
+    void operator=(LogLevelEnum level)
+    {
+        e_level = level;
+    }
+
+    explicit operator LogLevelEnum() const
+    {
+        return e_level;
+    }
+
+    bool operator==(const LogLevel& other) const
+    {
+        return this->e_level == other.e_level;
+    }
+    bool operator==(const LogLevelEnum& other) const
+    {
+        return this->e_level == other;
+    }
+    bool operator>(const LogLevel& other) const
+    {
+        return this->e_level > other.e_level;
+    }
+};
+
+enum LogSystemEnum
+{
+    LOGSYSTEM_YARP    = 0,
+    LOGSYSTEM_YARPRUN = 1
+};
+} // namespace yarp::yarpLogger
 
 struct yarp::yarpLogger::MessageEntry
 {

@@ -9,8 +9,7 @@
 #include <yarp/os/NameSpace.h>
 #include <yarp/os/NameStore.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API MultiNameSpace : public NameSpace
 {
@@ -103,7 +102,6 @@ private:
     NameStore* altStore;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_MULTINAMESPACE_H

@@ -17,8 +17,7 @@
 #include <string>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Collection of carriers, a singleton.
@@ -109,8 +108,7 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 
 #endif // YARP_OS_CARRIERS_H

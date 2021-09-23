@@ -33,9 +33,7 @@
 #include <mutex>
 #include <vector>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 class PortCoreUnit;
 
@@ -614,8 +612,6 @@ YARP_WARNING_POP
     int getNextIndex();
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PORTCORE_H

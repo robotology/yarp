@@ -11,8 +11,7 @@
 
 #include <atomic>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 class YARP_os_API LogComponent
 {
@@ -180,7 +179,6 @@ private:
 #endif
 
 
-} // namespace yarp
-} // namespace os
+} // namespace yarp::os
 
 #endif // YARP_OS_LOGCOMPONENT_H

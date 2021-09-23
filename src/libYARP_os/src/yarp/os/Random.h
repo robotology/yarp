@@ -15,8 +15,7 @@
  */
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * \ingroup key_class
@@ -61,7 +60,6 @@ public:
     static int uniform(int min, int max);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_RANDOM_H

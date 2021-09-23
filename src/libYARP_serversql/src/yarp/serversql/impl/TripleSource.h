@@ -13,9 +13,7 @@
 #include <list>
 
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * Side information for controlling access to triples.
@@ -69,9 +67,7 @@ public:
     virtual void end(TripleContext *context) = 0;
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 
 #endif // YARP_SERVERSQL_IMPL_TRIPLESOURCE_H

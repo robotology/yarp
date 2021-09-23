@@ -23,8 +23,7 @@
 /**
 * \file Vector.h contains the definition of a Vector type
 */
-namespace yarp {
-namespace sig {
+namespace yarp::sig {
 
 class VectorBase;
 template<class T> class VectorOf;
@@ -37,8 +36,7 @@ template<class T> class VectorOf;
 typedef VectorOf<double> Vector;
 #endif
 
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig
 
 
 /**

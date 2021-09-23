@@ -11,8 +11,7 @@
 #include <yarp/os/InputProtocol.h>
 #include <yarp/os/OutputProtocol.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * The initial point-of-contact with a port.
@@ -86,7 +85,6 @@ public:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_FACE_H

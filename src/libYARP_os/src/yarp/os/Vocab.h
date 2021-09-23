@@ -11,8 +11,7 @@
 
 #include <string>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 // We need a constexpr for efficient switching.
 /**
@@ -104,10 +103,7 @@ inline std::string decode(NetInt32 code)
 #endif // SWIG
 #endif // YARP_NO_DEPRECATED
 
-} // namespace os
-} // namespace yarp
-
-
+} // namespace yarp::os
 
 
 #ifndef YARP_NO_DEPRECATED // since YARP 3.1.0

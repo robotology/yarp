@@ -9,15 +9,7 @@
 #include <utility> // std::pair
 #include <yarp/sig/Image.h>
 
-namespace yarp {
-namespace sig{
-/**
- * \ingroup sig_class
- *
- * Image utilities.
- */
-namespace utils
-{
+namespace yarp::sig::utils {
 
 /**
  * @brief Split vertically an image in two images of the same size.
@@ -75,8 +67,6 @@ bool YARP_sig_API cropRect(const yarp::sig::Image& inImg,
                            const std::pair<unsigned int, unsigned int>& vertex1,
                            const std::pair<unsigned int, unsigned int>& vertex2,
                            yarp::sig::Image& outImg);
-} // namespace utils
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig::utils
 
 #endif // YARP_SIG_IMAGEUTILS_H

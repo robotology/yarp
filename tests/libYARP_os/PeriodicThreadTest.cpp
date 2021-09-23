@@ -24,8 +24,7 @@
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-namespace harness_os {
-namespace periodicThread {
+namespace harness_os::periodicThread {
 
 class MyClock : public Clock {
 public:
@@ -250,8 +249,7 @@ public:
     }
 };
 
-} // namespace harness_os
-} // namespace periodicThread
+} // namespace harness_os::periodicThread
 
 using namespace harness_os::periodicThread;
 

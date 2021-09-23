@@ -16,8 +16,7 @@
 #include <yarp/os/UnbufferedContactable.h>
 
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * @ingroup comm_class
@@ -278,7 +277,6 @@ private:
               const char* fakeName);
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_PORT_H

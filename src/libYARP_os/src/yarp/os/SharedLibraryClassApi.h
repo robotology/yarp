@@ -18,8 +18,7 @@
 
 #define YARP_SHAREDLIBRARYCLASSAPI_PADDING (30 - 2 * (YARP_POINTER_SIZE / 4))
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 extern "C" {
 
@@ -52,8 +51,7 @@ YARP_END_PACK
 
 } // extern "C"
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #define YARP_SHARED_CLASS_FN extern "C" YARP_EXPORT
 

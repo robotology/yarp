@@ -10,9 +10,7 @@
 #include <yarp/manager/manifestloader.h>
 
 
-
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 class TextParser;
 
 /**
@@ -42,8 +40,7 @@ private:
     Application*   parsXml(const char* szFile);
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_XMLAPPLOADER__

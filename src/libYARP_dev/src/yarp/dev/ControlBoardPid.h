@@ -13,10 +13,8 @@
  * \file ControlBoardPid.h define control board standard interfaces
  */
 
-namespace yarp{
-    namespace dev{
-        class Pid;
-    }
+namespace yarp::dev {
+class Pid;
 }
 
 /*!

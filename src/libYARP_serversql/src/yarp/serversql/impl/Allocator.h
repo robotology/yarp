@@ -10,9 +10,7 @@
 #include <yarp/os/Contact.h>
 
 
-namespace yarp {
-namespace serversql {
-namespace impl {
+namespace yarp::serversql::impl {
 
 /**
  * Upper and lower bounds on port numbers etc for allocation.
@@ -47,8 +45,6 @@ public:
     virtual bool freePortResources(const yarp::os::Contact& c) = 0;
 };
 
-} // namespace impl
-} // namespace serversql
-} // namespace yarp
+} // namespace yarp::serversql::impl
 
 #endif // YARP_SERVERSQL_IMPL_ALLOCATOR_H

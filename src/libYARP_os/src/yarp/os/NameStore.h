@@ -10,8 +10,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Abstract interface for a database of port names.
@@ -27,7 +26,6 @@ public:
                          const Contact& source) = 0;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NAMESTORE_H

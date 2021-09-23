@@ -8,9 +8,7 @@
 
 #include <yarp/os/Portable.h>
 
-namespace yarp {
-namespace os {
-namespace idl {
+namespace yarp::os::idl {
 
 class WireReader;
 class WireWriter;
@@ -50,8 +48,6 @@ public:
     }
 };
 
-} // namespace idl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::idl
 
 #endif // YARP_OS_IDL_WIREPORTABLE_H

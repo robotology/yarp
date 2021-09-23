@@ -17,8 +17,7 @@
 #include <functional>
 #include <mutex>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 struct YARP_os_API YarpTimerEvent
 {
@@ -251,7 +250,6 @@ private:
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_TIMER_H

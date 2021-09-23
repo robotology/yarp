@@ -25,8 +25,7 @@
     #include<Windows.h>
 #endif
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 /**
  * Class LocalBroker
@@ -114,8 +113,7 @@ private:
     inline bool IS_INVALID(int pid){ return pid<0; }
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_LOCALBROKER__

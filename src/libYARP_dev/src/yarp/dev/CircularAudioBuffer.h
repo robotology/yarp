@@ -13,8 +13,7 @@
 
 #include <yarp/os/LogStream.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 
 template <typename SAMPLE>
@@ -116,7 +115,6 @@ typedef yarp::dev::CircularAudioBuffer<unsigned char> CircularAudioBuffer_8t;
 typedef yarp::dev::CircularAudioBuffer<unsigned short int> CircularAudioBuffer_16t;
 typedef yarp::dev::CircularAudioBuffer<unsigned int> CircularAudioBuffer_32t;
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_CIRCULARAUDIOBUFFER_H

@@ -9,8 +9,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/UnbufferedContactable.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A default implementation of an abstract port. The class hierarchy
@@ -162,7 +161,6 @@ YARP_WARNING_POP
     void unlockCallback() override;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_ABSTRACTCONTACTABLE_H

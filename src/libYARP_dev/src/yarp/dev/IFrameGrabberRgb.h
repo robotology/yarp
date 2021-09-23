@@ -16,8 +16,7 @@ YARP_COMPILER_WARNING("<yarp/dev/IFrameGrabberRgb.h> file is deprecated")
 
 #include <yarp/dev/api.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_media
@@ -52,8 +51,7 @@ public:
     virtual int width() const = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_NO_DEPRECATED
 

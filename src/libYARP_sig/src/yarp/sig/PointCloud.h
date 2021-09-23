@@ -12,9 +12,7 @@
 #include <yarp/os/ConnectionWriter.h>
 
 
-
-namespace yarp {
-namespace sig {
+namespace yarp::sig {
 
 template <class T>
 /**
@@ -454,8 +452,7 @@ using PointCloudInterestPointXYZ = PointCloud<DataInterestPointXYZ>;
 using PointCloudXYZNormal        = PointCloud<DataXYZNormal>;
 using PointCloudXYZNormalRGBA    = PointCloud<DataXYZNormalRGBA>;
 
-} // namespace sig
-} // namespace yarp
+} // namespace yarp::sig
 
 template <>
 inline int BottleTagMap<yarp::sig::DataXY>()

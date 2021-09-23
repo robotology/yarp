@@ -18,8 +18,7 @@ typedef enum {
                                     // pixel color.
 } cropType_id_t;
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_media
@@ -87,7 +86,6 @@ YARP_dev_EXTERN template class YARP_dev_API IFrameGrabberOf<yarp::sig::ImageOf<y
 YARP_dev_EXTERN template class YARP_dev_API IFrameGrabberOf<yarp::sig::ImageOf<yarp::sig::PixelFloat>>;
 YARP_dev_EXTERN template class YARP_dev_API IFrameGrabberOf<yarp::sig::FlexImage>;
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IFRAMEGRABBERIMAGE_H

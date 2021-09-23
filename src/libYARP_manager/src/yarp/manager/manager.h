@@ -12,8 +12,7 @@
 #include <yarp/manager/executable.h>
 #include <yarp/manager/yarpbroker.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 /**
  * Class Manager
@@ -147,8 +146,7 @@ private:
     bool removeBroker(Executable* exe);
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_MANAGER__

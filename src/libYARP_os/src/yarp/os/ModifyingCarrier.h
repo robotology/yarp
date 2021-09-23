@@ -8,8 +8,7 @@
 
 #include <yarp/os/AbstractCarrier.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A starter class for implementing simple modifying carriers.
@@ -35,7 +34,6 @@ public:
     // only remains to implement modifyIncomingData()
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_MODIFYINGCARRIER_H

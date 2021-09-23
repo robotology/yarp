@@ -15,10 +15,8 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/math/Quaternion.h>
 
-namespace yarp {
-    namespace dev {
-        class IFrameTransform;
-      }
+namespace yarp::dev {
+class IFrameTransform;
 }
 
 /**

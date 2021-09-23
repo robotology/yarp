@@ -11,8 +11,7 @@
 #include <yarp/manager/utility.h>
 #include <yarp/conf/api.h>
 
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 class GenericResource : public Node
 {
@@ -87,8 +86,7 @@ private:
     void swap(const MultiResource &res);
 };
 
-} // namespace yarp
-} // namespace manager
+} // namespace yarp::manager
 
 
 #endif // __YARP_MANAGER_RESOURCE__

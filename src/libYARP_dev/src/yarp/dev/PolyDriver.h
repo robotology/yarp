@@ -10,8 +10,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/dev/Drivers.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 
 /**
@@ -151,7 +150,6 @@ private:
 #endif
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_POLYDRIVER_H

@@ -10,9 +10,7 @@
 #include <yarp/os/NetType.h>
 #include <yarp/os/PortWriter.h>
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * A single message, potentially being transmitted on multiple connections.
@@ -150,8 +148,6 @@ public:
     }
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_PORTCOREPACKET_H

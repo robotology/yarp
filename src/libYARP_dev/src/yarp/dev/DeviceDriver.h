@@ -15,15 +15,10 @@
 
 #include <yarp/dev/api.h>
 
-namespace yarp {
-    /**
-     * An interface for the device drivers
-     */
-    namespace dev {
-        class DeviceDriver;
-        class DeprecatedDeviceDriver;
-        class DeviceResponder;
-    }
+namespace yarp::dev {
+class DeviceDriver;
+class DeprecatedDeviceDriver;
+class DeviceResponder;
 }
 
 /**

@@ -22,9 +22,7 @@
 #    endif
 #endif
 
-namespace yarp {
-namespace os {
-namespace impl {
+namespace yarp::os::impl {
 
 /**
  * A stream abstraction for datagram communication.  It supports UDP and
@@ -186,8 +184,6 @@ private:
     void configureSystemBuffers();
 };
 
-} // namespace impl
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os::impl
 
 #endif // YARP_OS_IMPL_DGRAMTWOWAYSTREAM_H

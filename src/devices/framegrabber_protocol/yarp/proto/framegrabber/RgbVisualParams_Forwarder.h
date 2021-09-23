@@ -9,9 +9,7 @@
 #include <yarp/dev/IRgbVisualParams.h>
 #include <yarp/os/Port.h>
 
-namespace yarp {
-namespace proto {
-namespace framegrabber {
+namespace yarp::proto::framegrabber {
 
 class RgbVisualParams_Forwarder :
         public yarp::dev::IRgbVisualParams
@@ -35,8 +33,6 @@ public:
     bool setRgbMirroring(bool mirror) override;
 };
 
-} // namespace framegrabber
-} // namespace proto
-} // namespace yarp
+} // namespace yarp::proto::framegrabber
 
 #endif // YARP_FRAMEGRABBER_PROTOCOL_RGBVISUALPARAMS_FORWARDER_H

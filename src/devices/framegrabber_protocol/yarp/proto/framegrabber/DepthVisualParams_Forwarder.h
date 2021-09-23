@@ -9,9 +9,7 @@
 #include <yarp/dev/IDepthVisualParams.h>
 #include <yarp/os/Port.h>
 
-namespace yarp {
-namespace proto {
-namespace framegrabber {
+namespace yarp::proto::framegrabber {
 
 class DepthVisualParams_Forwarder :
         public yarp::dev::IDepthVisualParams
@@ -37,8 +35,6 @@ public:
     bool setDepthMirroring(bool mirror) override;
 };
 
-} // namespace framegrabber
-} // namespace proto
-} // namespace yarp
+} // namespace yarp::proto::framegrabber
 
 #endif // YARP_FRAMEGRABBER_PROTOCOL_DEPTHVISUALPARAMS_FORWARDER_H

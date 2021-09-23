@@ -10,9 +10,7 @@
 #include <yarp/manager/manifestloader.h>
 
 
-
-namespace yarp {
-namespace manager {
+namespace yarp::manager {
 
 struct ClusterNode
 {
@@ -53,8 +51,7 @@ private:
     Cluster     cluster;
 };
 
-} // namespace manager
-} // namespace yarp
+} // namespace yarp::manager
 
 
 #endif // YARP_MANAGER_XMLCLUSTERLOADER_H

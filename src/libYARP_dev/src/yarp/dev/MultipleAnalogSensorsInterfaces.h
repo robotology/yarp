@@ -12,35 +12,31 @@
 #include <yarp/dev/api.h>
 #include <yarp/sig/Vector.h>
 
-namespace yarp
-{
-    namespace dev
-    {
-        class IThreeAxisGyroscopes;
-        class IThreeAxisLinearAccelerometers;
-        class IThreeAxisMagnetometers;
-        class IPositionSensors;
-        class IOrientationSensors;
-        class ITemperatureSensors;
-        class ISixAxisForceTorqueSensors;
-        class IContactLoadCellArrays;
-        class IEncoderArrays;
-        class ISkinPatches;
+namespace yarp::dev {
+class IThreeAxisGyroscopes;
+class IThreeAxisLinearAccelerometers;
+class IThreeAxisMagnetometers;
+class IPositionSensors;
+class IOrientationSensors;
+class ITemperatureSensors;
+class ISixAxisForceTorqueSensors;
+class IContactLoadCellArrays;
+class IEncoderArrays;
+class ISkinPatches;
 
-        /**
-         * Status of a given analog sensor exposed by a multiple analog sensors interface.
-         */
-        enum MAS_status
-        {
-            MAS_OK=0,         ///< The sensor is working correctly.
-            MAS_ERROR=1,      ///< The sensor is in generic error state.
-            MAS_OVF=2,        ///< The sensor reached an overflow.
-            MAS_TIMEOUT=3,    ///< The sensor is read through the network, and the latest measurement was received before an implementation-define timeout period.
-            MAS_WAITING_FOR_FIRST_READ=4, ///< The sensor is read through the network, and the device is waiting to receive the first measurement.
-            MAS_UNKNOWN=5     ///< The sensor is in an unknown state.
-        };
-    }
-}
+/**
+ * Status of a given analog sensor exposed by a multiple analog sensors interface.
+ */
+enum MAS_status
+{
+    MAS_OK = 0,                     ///< The sensor is working correctly.
+    MAS_ERROR = 1,                  ///< The sensor is in generic error state.
+    MAS_OVF = 2,                    ///< The sensor reached an overflow.
+    MAS_TIMEOUT = 3,                ///< The sensor is read through the network, and the latest measurement was received before an implementation-define timeout period.
+    MAS_WAITING_FOR_FIRST_READ = 4, ///< The sensor is read through the network, and the device is waiting to receive the first measurement.
+    MAS_UNKNOWN = 5                 ///< The sensor is in an unknown state.
+};
+} // namespace yarp::dev
 
 /**
  * @ingroup dev_iface_multiple_analog

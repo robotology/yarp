@@ -10,8 +10,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Log.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * A port specialized for reading data of a constant type published on a topic.
@@ -190,7 +189,6 @@ private:
     }
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_SUBSCRIBER_H

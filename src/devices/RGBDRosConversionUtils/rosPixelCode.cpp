@@ -5,9 +5,7 @@
 
 #include "rosPixelCode.h"
 
-namespace yarp {
-    namespace dev {
-        namespace ROSPixelCode {
+namespace yarp::dev::ROSPixelCode {
 
 std::string yarp2RosPixelCode(int code)
 {
@@ -83,4 +81,4 @@ int Ros2YarpPixelCode(const std::string& roscode)
     }
 }
 
-}}}
+} // namespace yarp::dev::ROSPixelCode

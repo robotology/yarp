@@ -19,13 +19,11 @@
 
 #include <yarp/os/PortablePair.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 typedef yarp::os::PortablePair<yarp::sig::ImageOf<yarp::sig::PixelRgb>,
                                yarp::sig::Sound> ImageRgbSound;
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_AUDIOVISUALINTERFACES_H

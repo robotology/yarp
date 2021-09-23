@@ -10,8 +10,7 @@
 #include <yarp/dev/api.h>
 #include <yarp/sig/Image.h>
 
-namespace yarp {
-namespace dev {
+namespace yarp::dev {
 
 /**
  * @ingroup dev_iface_media
@@ -35,7 +34,6 @@ public:
     virtual bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
 };
 
-} // namespace dev
-} // namespace yarp
+} // namespace yarp::dev
 
 #endif // YARP_DEV_IFRAMEGRABBER_H

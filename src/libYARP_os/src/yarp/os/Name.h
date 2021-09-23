@@ -9,8 +9,7 @@
 
 #include <yarp/os/Contact.h>
 
-namespace yarp {
-namespace os {
+namespace yarp::os {
 
 /**
  * Simple abstraction for a YARP port name.
@@ -48,7 +47,6 @@ private:
     YARP_SUPPRESS_DLL_INTERFACE_WARNING_ARG(std::string) txt;
 };
 
-} // namespace os
-} // namespace yarp
+} // namespace yarp::os
 
 #endif // YARP_OS_NAME_H
