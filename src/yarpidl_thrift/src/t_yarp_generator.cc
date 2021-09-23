@@ -3056,8 +3056,8 @@ void t_yarp_generator::generate_struct_editor_read(t_struct* tstruct, std::ostri
                         f_cpp_ << indent_cpp() << "if (!writer.writeListHeader(" << (1 + doc.size()) << "))" << inline_return_cpp("false");
                         std::string mtype = type_name(member->get_type());
                         f_cpp_ << indent_cpp() << "if (!writer.writeString(\"" << mtype << " " << mname << "\"))" << inline_return_cpp("false");
-                        for (int i = 0; i < (int)doc.size(); i++) {
-                            f_cpp_ << indent_cpp() << "if (!writer.writeString(\"" << doc[i] << "\"))" << inline_return_cpp("false");
+                        for (auto & i : doc) {
+                            f_cpp_ << indent_cpp() << "if (!writer.writeString(\"" << i << "\"))" << inline_return_cpp("false");
                         }
                     }
                     indent_down_cpp();
