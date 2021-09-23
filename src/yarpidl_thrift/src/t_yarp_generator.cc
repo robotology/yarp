@@ -187,11 +187,13 @@ public:
     std::vector<std::string> print_help(t_function* tdoc);
     std::string print_const_value(t_const_value* tvalue, t_type* ttype = nullptr);
     std::string function_prototype(t_function* tfn,
-                                   bool include_defaults,
                                    bool include_returntype = true,
                                    bool include_qualifiers = false,
+                                   bool include_argnames = true,
+                                   bool include_argdefaults = true,
                                    const std::string& prefix = {},
-                                   const std::string& override_name = {});
+                                   const std::string& override_name = {},
+                                   const std::string& extra_args_pre = {});
     std::string declare_field(t_field* tfield,
                               bool init = false,
                               bool pointer = false,
@@ -816,7 +818,7 @@ std::vector<std::string> t_yarp_generator::print_help(t_function* tdoc)
     std::vector<std::string> doxyPar;
     std::string quotes = "\"";
     std::string replacement = "\\\"";
-    doxyPar.push_back(replaceInString(function_prototype(tdoc, true, true, true), quotes, replacement));
+    doxyPar.push_back(replaceInString(function_prototype(tdoc, true, true), quotes, replacement));
     quote_doc(doxyPar, tdoc);
     return doxyPar;
 }
@@ -978,11 +980,13 @@ void t_yarp_generator::get_needed_type(t_type* curType, std::set<std::string>& n
 
 
 std::string t_yarp_generator::function_prototype(t_function* tfn,
-                                                 bool include_defaults,
                                                  bool include_returntype,
                                                  bool include_qualifiers,
+                                                 bool include_argnames,
+                                                 bool include_argdefaults,
                                                  const std::string& prefix,
-                                                 const std::string& override_name)
+                                                 const std::string& override_name,
+                                                 const std::string& extra_args_pre)
 {
     std::string result;
 
@@ -1004,16 +1008,22 @@ std::string t_yarp_generator::function_prototype(t_function* tfn,
 
     result += fn_name + "(";
     bool first = true;
+    if (!extra_args_pre.empty()) {
+        result += extra_args_pre;
+        first = false;
+    }
     for (const auto& arg : tfn->get_arglist()->get_members()) {
         if (!first) {
             result += ", ";
         }
         first = false;
         result += type_name(arg->get_type(), false, true);
-        result += std::string(" ") + arg->get_name();
-        if (include_defaults && arg->get_value() != nullptr) {
-            result += " = ";
-            result += print_const_value(arg->get_value(), arg->get_type());
+        if (include_argnames) {
+            result += std::string(" ") + arg->get_name();
+            if (include_argdefaults && arg->get_value() != nullptr) {
+                result += " = ";
+                result += print_const_value(arg->get_value(), arg->get_type());
+            }
         }
     }
     result += ")";
@@ -3637,7 +3647,7 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
             if (args.size() == 1) {
                 f_cpp_ << "explicit ";
             }
-            f_cpp_ << function_prototype(function, false, false, false, "", helper_class) << ";\n";
+            f_cpp_ << function_prototype(function, false, false, true, false, "", helper_class) << ";\n";
         }
         f_cpp_ << indent_cpp() << "bool write(yarp::os::ConnectionWriter& connection) const override;\n";
         f_cpp_ << indent_cpp() << "bool read(yarp::os::ConnectionReader& connection) override;\n";
@@ -3681,7 +3691,7 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
         f_cpp_ << indent_cpp() << "static constexpr size_t s_tag_len{" << tag_len << "};\n";
         f_cpp_ << indent_cpp() << "static constexpr size_t s_cmd_len{" << flat_element_count(function) + tag_len << "};\n";
         f_cpp_ << indent_cpp() << "static constexpr size_t s_reply_len{" << flat_element_count(returntype) << "};\n";
-        f_cpp_ << indent_cpp() << "static constexpr const char* s_prototype{\"" << replaceInString(function_prototype(function, false, true, true, service_name_), "\"", "\\\"") << "\"};\n";
+        f_cpp_ << indent_cpp() << "static constexpr const char* s_prototype{\"" << replaceInString(function_prototype(function, true, true, true, false, service_name_), "\"", "\\\"") << "\"};\n";
 
         std::vector<std::string> helpList;
         quote_doc(helpList, function);
@@ -3749,7 +3759,7 @@ void t_yarp_generator::generate_service_helper_classes_impl_ctor(t_function* fun
     const auto helper_class = std::string{service_name_ + "_" + fname + "_helper"};
     auto returnfield = t_field{returntype, "m_return_helper"};
 
-    f_cpp_ << indent_cpp() << function_prototype(function, false, false, false, helper_class, helper_class);
+    f_cpp_ << indent_cpp() << function_prototype(function, false, false, true, false, helper_class, helper_class);
     bool first = true;
     for (const auto& arg : function->get_arglist()->get_members()) {
         if (first) {
@@ -4188,10 +4198,10 @@ void t_yarp_generator::generate_service_method(t_service* tservice, t_function* 
     auto returnfield = t_field{returntype, "m_return_helper"};
 
     print_doc(f_h_, function);
-    f_h_ << indent_h() << "virtual " << function_prototype(function, true, true, true) << ";\n";
+    f_h_ << indent_h() << "virtual " << function_prototype(function, true, true) << ";\n";
     f_h_ << '\n';
 
-    f_cpp_ << indent_cpp() << function_prototype(function, false, true, true, service_name_) << '\n';
+    f_cpp_ << indent_cpp() << function_prototype(function, true, true, true, false, service_name_) << '\n';
     f_cpp_ << indent_cpp() << "{\n";
     indent_up_cpp();
     {
