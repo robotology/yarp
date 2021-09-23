@@ -3577,7 +3577,9 @@ void t_yarp_generator::generate_service_helper_classes(t_service* tservice, std:
         generate_service_helper_classes_decl(function, f_cpp_);
 
         // Helper classes implementations
-        generate_service_helper_classes_impl_ctor(function, f_cpp_);
+        if (!function->get_arglist()->get_members().empty()) {
+            generate_service_helper_classes_impl_ctor(function, f_cpp_);
+        }
         generate_service_helper_classes_impl_write(function, f_cpp_);
         generate_service_helper_classes_impl_read(function, f_cpp_);
 
@@ -3602,7 +3604,14 @@ void t_yarp_generator::generate_service_helper_classes_decl(t_function* function
     indent_up_cpp();
     {
         f_cpp_ << indent_access_specifier_cpp() << "public:\n";
-        f_cpp_ << indent_cpp() << "explicit " << function_prototype(function, false, false, false, "", helper_class) << ";\n";
+        f_cpp_ << indent_cpp() << helper_class << "() = default;\n";
+        if (!args.empty()) {
+            f_cpp_ << indent_cpp();
+            if (args.size() == 1) {
+                f_cpp_ << "explicit ";
+            }
+            f_cpp_ << function_prototype(function, false, false, false, "", helper_class) << ";\n";
+        }
         f_cpp_ << indent_cpp() << "bool write(yarp::os::ConnectionWriter& connection) const override;\n";
         f_cpp_ << indent_cpp() << "bool read(yarp::os::ConnectionReader& connection) override;\n";
 

@@ -16,7 +16,8 @@ class MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper(const double x_vel, const double y_vel, const double theta_vel, const double timeout);
+    MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper() = default;
+    MobileBaseVelocityControlRPC_applyVelocityCommandRPC_helper(const double x_vel, const double y_vel, const double theta_vel, const double timeout);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -78,16 +79,12 @@ class MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper();
+    MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_getLastVelocityCommand m_return_helper{};
 };
-
-MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper()
-{
-}
 
 bool MobileBaseVelocityControlRPC_getLastVelocityCommandRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {

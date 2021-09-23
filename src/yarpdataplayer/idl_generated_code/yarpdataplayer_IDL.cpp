@@ -16,17 +16,12 @@ class yarpdataplayer_IDL_step_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_IDL_step_helper();
+    yarpdataplayer_IDL_step_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-yarpdataplayer_IDL_step_helper::yarpdataplayer_IDL_step_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarpdataplayer_IDL_step_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -57,6 +52,7 @@ class yarpdataplayer_IDL_setFrame_helper :
         public yarp::os::Portable
 {
 public:
+    yarpdataplayer_IDL_setFrame_helper() = default;
     explicit yarpdataplayer_IDL_setFrame_helper(const std::int32_t frameNum);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -104,6 +100,7 @@ class yarpdataplayer_IDL_getFrame_helper :
         public yarp::os::Portable
 {
 public:
+    yarpdataplayer_IDL_getFrame_helper() = default;
     explicit yarpdataplayer_IDL_getFrame_helper(const std::string& name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -151,6 +148,7 @@ class yarpdataplayer_IDL_load_helper :
         public yarp::os::Portable
 {
 public:
+    yarpdataplayer_IDL_load_helper() = default;
     explicit yarpdataplayer_IDL_load_helper(const std::string& path);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -198,17 +196,12 @@ class yarpdataplayer_IDL_getSliderPercentage_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_IDL_getSliderPercentage_helper();
+    yarpdataplayer_IDL_getSliderPercentage_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::int32_t m_return_helper{};
 };
-
-yarpdataplayer_IDL_getSliderPercentage_helper::yarpdataplayer_IDL_getSliderPercentage_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarpdataplayer_IDL_getSliderPercentage_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -239,17 +232,12 @@ class yarpdataplayer_IDL_getStatus_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_IDL_getStatus_helper();
+    yarpdataplayer_IDL_getStatus_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::string m_return_helper{};
 };
-
-yarpdataplayer_IDL_getStatus_helper::yarpdataplayer_IDL_getStatus_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarpdataplayer_IDL_getStatus_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -280,17 +268,12 @@ class yarpdataplayer_IDL_play_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_IDL_play_helper();
+    yarpdataplayer_IDL_play_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-yarpdataplayer_IDL_play_helper::yarpdataplayer_IDL_play_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarpdataplayer_IDL_play_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -321,17 +304,12 @@ class yarpdataplayer_IDL_pause_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_IDL_pause_helper();
+    yarpdataplayer_IDL_pause_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-yarpdataplayer_IDL_pause_helper::yarpdataplayer_IDL_pause_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarpdataplayer_IDL_pause_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -362,17 +340,12 @@ class yarpdataplayer_IDL_stop_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_IDL_stop_helper();
+    yarpdataplayer_IDL_stop_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-yarpdataplayer_IDL_stop_helper::yarpdataplayer_IDL_stop_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarpdataplayer_IDL_stop_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -403,17 +376,12 @@ class yarpdataplayer_IDL_quit_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarpdataplayer_IDL_quit_helper();
+    yarpdataplayer_IDL_quit_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-yarpdataplayer_IDL_quit_helper::yarpdataplayer_IDL_quit_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarpdataplayer_IDL_quit_helper::write(yarp::os::ConnectionWriter& connection) const
 {

@@ -16,6 +16,7 @@ class FrameTransformStorageSetRPC_setTransformsRPC_helper :
         public yarp::os::Portable
 {
 public:
+    FrameTransformStorageSetRPC_setTransformsRPC_helper() = default;
     explicit FrameTransformStorageSetRPC_setTransformsRPC_helper(const std::vector<yarp::math::FrameTransform>& transforms);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -71,6 +72,7 @@ class FrameTransformStorageSetRPC_setTransformRPC_helper :
         public yarp::os::Portable
 {
 public:
+    FrameTransformStorageSetRPC_setTransformRPC_helper() = default;
     explicit FrameTransformStorageSetRPC_setTransformRPC_helper(const yarp::math::FrameTransform& transform);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -118,7 +120,8 @@ class FrameTransformStorageSetRPC_deleteTransformRPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FrameTransformStorageSetRPC_deleteTransformRPC_helper(const std::string& src, const std::string& dst);
+    FrameTransformStorageSetRPC_deleteTransformRPC_helper() = default;
+    FrameTransformStorageSetRPC_deleteTransformRPC_helper(const std::string& src, const std::string& dst);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -170,17 +173,12 @@ class FrameTransformStorageSetRPC_clearAllRPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FrameTransformStorageSetRPC_clearAllRPC_helper();
+    FrameTransformStorageSetRPC_clearAllRPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-FrameTransformStorageSetRPC_clearAllRPC_helper::FrameTransformStorageSetRPC_clearAllRPC_helper() :
-        m_return_helper{}
-{
-}
 
 bool FrameTransformStorageSetRPC_clearAllRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {

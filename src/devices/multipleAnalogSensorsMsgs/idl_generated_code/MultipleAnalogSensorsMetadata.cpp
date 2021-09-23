@@ -16,16 +16,12 @@ class MultipleAnalogSensorsMetadata_getMetadata_helper :
         public yarp::os::Portable
 {
 public:
-    explicit MultipleAnalogSensorsMetadata_getMetadata_helper();
+    MultipleAnalogSensorsMetadata_getMetadata_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     SensorRPCData m_return_helper{};
 };
-
-MultipleAnalogSensorsMetadata_getMetadata_helper::MultipleAnalogSensorsMetadata_getMetadata_helper()
-{
-}
 
 bool MultipleAnalogSensorsMetadata_getMetadata_helper::write(yarp::os::ConnectionWriter& connection) const
 {

@@ -16,17 +16,12 @@ class yarprobotinterfaceRpc_get_phase_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarprobotinterfaceRpc_get_phase_helper();
+    yarprobotinterfaceRpc_get_phase_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::string m_return_helper{};
 };
-
-yarprobotinterfaceRpc_get_phase_helper::yarprobotinterfaceRpc_get_phase_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarprobotinterfaceRpc_get_phase_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -57,17 +52,12 @@ class yarprobotinterfaceRpc_get_level_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarprobotinterfaceRpc_get_level_helper();
+    yarprobotinterfaceRpc_get_level_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::int32_t m_return_helper{};
 };
-
-yarprobotinterfaceRpc_get_level_helper::yarprobotinterfaceRpc_get_level_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarprobotinterfaceRpc_get_level_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -98,17 +88,12 @@ class yarprobotinterfaceRpc_get_robot_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarprobotinterfaceRpc_get_robot_helper();
+    yarprobotinterfaceRpc_get_robot_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::string m_return_helper{};
 };
-
-yarprobotinterfaceRpc_get_robot_helper::yarprobotinterfaceRpc_get_robot_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarprobotinterfaceRpc_get_robot_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -139,17 +124,12 @@ class yarprobotinterfaceRpc_is_ready_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarprobotinterfaceRpc_is_ready_helper();
+    yarprobotinterfaceRpc_is_ready_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-yarprobotinterfaceRpc_is_ready_helper::yarprobotinterfaceRpc_is_ready_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarprobotinterfaceRpc_is_ready_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -180,17 +160,12 @@ class yarprobotinterfaceRpc_quit_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarprobotinterfaceRpc_quit_helper();
+    yarprobotinterfaceRpc_quit_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::string m_return_helper{};
 };
-
-yarprobotinterfaceRpc_quit_helper::yarprobotinterfaceRpc_quit_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarprobotinterfaceRpc_quit_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -221,17 +196,12 @@ class yarprobotinterfaceRpc_bye_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarprobotinterfaceRpc_bye_helper();
+    yarprobotinterfaceRpc_bye_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::string m_return_helper{};
 };
-
-yarprobotinterfaceRpc_bye_helper::yarprobotinterfaceRpc_bye_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarprobotinterfaceRpc_bye_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -262,17 +232,12 @@ class yarprobotinterfaceRpc_exit_helper :
         public yarp::os::Portable
 {
 public:
-    explicit yarprobotinterfaceRpc_exit_helper();
+    yarprobotinterfaceRpc_exit_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::string m_return_helper{};
 };
-
-yarprobotinterfaceRpc_exit_helper::yarprobotinterfaceRpc_exit_helper() :
-        m_return_helper{}
-{
-}
 
 bool yarprobotinterfaceRpc_exit_helper::write(yarp::os::ConnectionWriter& connection) const
 {

@@ -16,16 +16,12 @@ class FrameTransformStorageGetRPC_getTransformsRPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FrameTransformStorageGetRPC_getTransformsRPC_helper();
+    FrameTransformStorageGetRPC_getTransformsRPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_getAllTransforms m_return_helper{};
 };
-
-FrameTransformStorageGetRPC_getTransformsRPC_helper::FrameTransformStorageGetRPC_getTransformsRPC_helper()
-{
-}
 
 bool FrameTransformStorageGetRPC_getTransformsRPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {

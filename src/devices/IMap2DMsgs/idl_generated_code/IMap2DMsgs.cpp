@@ -16,17 +16,12 @@ class IMap2DMsgs_clear_all_maps_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_clear_all_maps_RPC_helper();
+    IMap2DMsgs_clear_all_maps_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-IMap2DMsgs_clear_all_maps_RPC_helper::IMap2DMsgs_clear_all_maps_RPC_helper() :
-        m_return_helper{}
-{
-}
 
 bool IMap2DMsgs_clear_all_maps_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -57,6 +52,7 @@ class IMap2DMsgs_store_map_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_store_map_RPC_helper() = default;
     explicit IMap2DMsgs_store_map_RPC_helper(const yarp::dev::Nav2D::MapGrid2D& themap);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -104,6 +100,7 @@ class IMap2DMsgs_get_map_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_get_map_RPC_helper() = default;
     explicit IMap2DMsgs_get_map_RPC_helper(const std::string& map_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -150,16 +147,12 @@ class IMap2DMsgs_get_map_names_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_get_map_names_RPC_helper();
+    IMap2DMsgs_get_map_names_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_get_map_names m_return_helper{};
 };
-
-IMap2DMsgs_get_map_names_RPC_helper::IMap2DMsgs_get_map_names_RPC_helper()
-{
-}
 
 bool IMap2DMsgs_get_map_names_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -190,6 +183,7 @@ class IMap2DMsgs_remove_map_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_remove_map_RPC_helper() = default;
     explicit IMap2DMsgs_remove_map_RPC_helper(const std::string& map_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -237,7 +231,8 @@ class IMap2DMsgs_store_location_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_store_location_RPC_helper(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc);
+    IMap2DMsgs_store_location_RPC_helper() = default;
+    IMap2DMsgs_store_location_RPC_helper(const std::string& location_name, const yarp::dev::Nav2D::Map2DLocation& loc);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -289,7 +284,8 @@ class IMap2DMsgs_store_area_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_store_area_RPC_helper(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area);
+    IMap2DMsgs_store_area_RPC_helper() = default;
+    IMap2DMsgs_store_area_RPC_helper(const std::string& area_name, const yarp::dev::Nav2D::Map2DArea& area);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -341,7 +337,8 @@ class IMap2DMsgs_store_path_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_store_path_RPC_helper(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path);
+    IMap2DMsgs_store_path_RPC_helper() = default;
+    IMap2DMsgs_store_path_RPC_helper(const std::string& path_name, const yarp::dev::Nav2D::Map2DPath& path);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -393,6 +390,7 @@ class IMap2DMsgs_get_location_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_get_location_RPC_helper() = default;
     explicit IMap2DMsgs_get_location_RPC_helper(const std::string& location_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -439,6 +437,7 @@ class IMap2DMsgs_get_area_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_get_area_RPC_helper() = default;
     explicit IMap2DMsgs_get_area_RPC_helper(const std::string& area_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -485,6 +484,7 @@ class IMap2DMsgs_get_path_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_get_path_RPC_helper() = default;
     explicit IMap2DMsgs_get_path_RPC_helper(const std::string& path_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -531,16 +531,12 @@ class IMap2DMsgs_get_locations_list_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_get_locations_list_RPC_helper();
+    IMap2DMsgs_get_locations_list_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_get_locations_list m_return_helper{};
 };
-
-IMap2DMsgs_get_locations_list_RPC_helper::IMap2DMsgs_get_locations_list_RPC_helper()
-{
-}
 
 bool IMap2DMsgs_get_locations_list_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -571,16 +567,12 @@ class IMap2DMsgs_get_areas_list_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_get_areas_list_RPC_helper();
+    IMap2DMsgs_get_areas_list_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_get_areas_list m_return_helper{};
 };
-
-IMap2DMsgs_get_areas_list_RPC_helper::IMap2DMsgs_get_areas_list_RPC_helper()
-{
-}
 
 bool IMap2DMsgs_get_areas_list_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -611,16 +603,12 @@ class IMap2DMsgs_get_paths_list_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_get_paths_list_RPC_helper();
+    IMap2DMsgs_get_paths_list_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_get_paths_list m_return_helper{};
 };
-
-IMap2DMsgs_get_paths_list_RPC_helper::IMap2DMsgs_get_paths_list_RPC_helper()
-{
-}
 
 bool IMap2DMsgs_get_paths_list_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -651,16 +639,12 @@ class IMap2DMsgs_get_all_locations_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_get_all_locations_RPC_helper();
+    IMap2DMsgs_get_all_locations_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_get_all_locations m_return_helper{};
 };
-
-IMap2DMsgs_get_all_locations_RPC_helper::IMap2DMsgs_get_all_locations_RPC_helper()
-{
-}
 
 bool IMap2DMsgs_get_all_locations_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -691,16 +675,12 @@ class IMap2DMsgs_get_all_areas_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_get_all_areas_RPC_helper();
+    IMap2DMsgs_get_all_areas_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_get_all_areas m_return_helper{};
 };
-
-IMap2DMsgs_get_all_areas_RPC_helper::IMap2DMsgs_get_all_areas_RPC_helper()
-{
-}
 
 bool IMap2DMsgs_get_all_areas_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -731,16 +711,12 @@ class IMap2DMsgs_get_all_paths_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_get_all_paths_RPC_helper();
+    IMap2DMsgs_get_all_paths_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     return_get_all_paths m_return_helper{};
 };
-
-IMap2DMsgs_get_all_paths_RPC_helper::IMap2DMsgs_get_all_paths_RPC_helper()
-{
-}
 
 bool IMap2DMsgs_get_all_paths_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -771,7 +747,8 @@ class IMap2DMsgs_rename_location_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_rename_location_RPC_helper(const std::string& original_name, const std::string& new_name);
+    IMap2DMsgs_rename_location_RPC_helper() = default;
+    IMap2DMsgs_rename_location_RPC_helper(const std::string& original_name, const std::string& new_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -823,6 +800,7 @@ class IMap2DMsgs_delete_location_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_delete_location_RPC_helper() = default;
     explicit IMap2DMsgs_delete_location_RPC_helper(const std::string& location_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -870,6 +848,7 @@ class IMap2DMsgs_delete_path_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_delete_path_RPC_helper() = default;
     explicit IMap2DMsgs_delete_path_RPC_helper(const std::string& path_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -917,7 +896,8 @@ class IMap2DMsgs_rename_area_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_rename_area_RPC_helper(const std::string& original_name, const std::string& new_name);
+    IMap2DMsgs_rename_area_RPC_helper() = default;
+    IMap2DMsgs_rename_area_RPC_helper(const std::string& original_name, const std::string& new_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -969,7 +949,8 @@ class IMap2DMsgs_rename_path_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_rename_path_RPC_helper(const std::string& original_name, const std::string& new_name);
+    IMap2DMsgs_rename_path_RPC_helper() = default;
+    IMap2DMsgs_rename_path_RPC_helper(const std::string& original_name, const std::string& new_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -1021,6 +1002,7 @@ class IMap2DMsgs_delete_area_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_delete_area_RPC_helper() = default;
     explicit IMap2DMsgs_delete_area_RPC_helper(const std::string& area_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -1068,17 +1050,12 @@ class IMap2DMsgs_clear_all_locations_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_clear_all_locations_RPC_helper();
+    IMap2DMsgs_clear_all_locations_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-IMap2DMsgs_clear_all_locations_RPC_helper::IMap2DMsgs_clear_all_locations_RPC_helper() :
-        m_return_helper{}
-{
-}
 
 bool IMap2DMsgs_clear_all_locations_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -1109,17 +1086,12 @@ class IMap2DMsgs_clear_all_areas_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_clear_all_areas_RPC_helper();
+    IMap2DMsgs_clear_all_areas_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-IMap2DMsgs_clear_all_areas_RPC_helper::IMap2DMsgs_clear_all_areas_RPC_helper() :
-        m_return_helper{}
-{
-}
 
 bool IMap2DMsgs_clear_all_areas_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -1150,17 +1122,12 @@ class IMap2DMsgs_clear_all_paths_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_clear_all_paths_RPC_helper();
+    IMap2DMsgs_clear_all_paths_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-IMap2DMsgs_clear_all_paths_RPC_helper::IMap2DMsgs_clear_all_paths_RPC_helper() :
-        m_return_helper{}
-{
-}
 
 bool IMap2DMsgs_clear_all_paths_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -1191,17 +1158,12 @@ class IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper();
+    IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     bool m_return_helper{};
 };
-
-IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper() :
-        m_return_helper{}
-{
-}
 
 bool IMap2DMsgs_clear_all_maps_temporary_flags_RPC_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -1232,6 +1194,7 @@ class IMap2DMsgs_clear_map_temporary_flags_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_clear_map_temporary_flags_RPC_helper() = default;
     explicit IMap2DMsgs_clear_map_temporary_flags_RPC_helper(const std::string& map_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -1279,6 +1242,7 @@ class IMap2DMsgs_save_maps_collection_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_save_maps_collection_RPC_helper() = default;
     explicit IMap2DMsgs_save_maps_collection_RPC_helper(const std::string& maps_collection_file);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -1326,6 +1290,7 @@ class IMap2DMsgs_load_maps_collection_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_load_maps_collection_RPC_helper() = default;
     explicit IMap2DMsgs_load_maps_collection_RPC_helper(const std::string& maps_collection_file);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -1373,6 +1338,7 @@ class IMap2DMsgs_save_locations_and_extras_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_save_locations_and_extras_RPC_helper() = default;
     explicit IMap2DMsgs_save_locations_and_extras_RPC_helper(const std::string& locations_collection_file);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -1420,6 +1386,7 @@ class IMap2DMsgs_load_locations_and_extras_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_load_locations_and_extras_RPC_helper() = default;
     explicit IMap2DMsgs_load_locations_and_extras_RPC_helper(const std::string& locations_collection_file);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -1467,7 +1434,8 @@ class IMap2DMsgs_save_map_to_disk_RPC_helper :
         public yarp::os::Portable
 {
 public:
-    explicit IMap2DMsgs_save_map_to_disk_RPC_helper(const std::string& map_name, const std::string& file_name);
+    IMap2DMsgs_save_map_to_disk_RPC_helper() = default;
+    IMap2DMsgs_save_map_to_disk_RPC_helper(const std::string& map_name, const std::string& file_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
@@ -1519,6 +1487,7 @@ class IMap2DMsgs_load_map_from_disk_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_load_map_from_disk_RPC_helper() = default;
     explicit IMap2DMsgs_load_map_from_disk_RPC_helper(const std::string& file_name);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -1566,6 +1535,7 @@ class IMap2DMsgs_enable_maps_compression_RPC_helper :
         public yarp::os::Portable
 {
 public:
+    IMap2DMsgs_enable_maps_compression_RPC_helper() = default;
     explicit IMap2DMsgs_enable_maps_compression_RPC_helper(const bool enable_compression);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;

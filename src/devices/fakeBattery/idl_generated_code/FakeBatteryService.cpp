@@ -16,6 +16,7 @@ class FakeBatteryService_setBatteryVoltage_helper :
         public yarp::os::Portable
 {
 public:
+    FakeBatteryService_setBatteryVoltage_helper() = default;
     explicit FakeBatteryService_setBatteryVoltage_helper(const double voltage);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -53,6 +54,7 @@ class FakeBatteryService_setBatteryCurrent_helper :
         public yarp::os::Portable
 {
 public:
+    FakeBatteryService_setBatteryCurrent_helper() = default;
     explicit FakeBatteryService_setBatteryCurrent_helper(const double current);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -90,6 +92,7 @@ class FakeBatteryService_setBatteryCharge_helper :
         public yarp::os::Portable
 {
 public:
+    FakeBatteryService_setBatteryCharge_helper() = default;
     explicit FakeBatteryService_setBatteryCharge_helper(const double charge);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -127,6 +130,7 @@ class FakeBatteryService_setBatteryInfo_helper :
         public yarp::os::Portable
 {
 public:
+    FakeBatteryService_setBatteryInfo_helper() = default;
     explicit FakeBatteryService_setBatteryInfo_helper(const std::string& info);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -164,6 +168,7 @@ class FakeBatteryService_setBatteryTemperature_helper :
         public yarp::os::Portable
 {
 public:
+    FakeBatteryService_setBatteryTemperature_helper() = default;
     explicit FakeBatteryService_setBatteryTemperature_helper(const double temperature);
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
@@ -201,17 +206,12 @@ class FakeBatteryService_getBatteryVoltage_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FakeBatteryService_getBatteryVoltage_helper();
+    FakeBatteryService_getBatteryVoltage_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     double m_return_helper{};
 };
-
-FakeBatteryService_getBatteryVoltage_helper::FakeBatteryService_getBatteryVoltage_helper() :
-        m_return_helper{}
-{
-}
 
 bool FakeBatteryService_getBatteryVoltage_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -242,17 +242,12 @@ class FakeBatteryService_getBatteryCurrent_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FakeBatteryService_getBatteryCurrent_helper();
+    FakeBatteryService_getBatteryCurrent_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     double m_return_helper{};
 };
-
-FakeBatteryService_getBatteryCurrent_helper::FakeBatteryService_getBatteryCurrent_helper() :
-        m_return_helper{}
-{
-}
 
 bool FakeBatteryService_getBatteryCurrent_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -283,17 +278,12 @@ class FakeBatteryService_getBatteryCharge_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FakeBatteryService_getBatteryCharge_helper();
+    FakeBatteryService_getBatteryCharge_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     double m_return_helper{};
 };
-
-FakeBatteryService_getBatteryCharge_helper::FakeBatteryService_getBatteryCharge_helper() :
-        m_return_helper{}
-{
-}
 
 bool FakeBatteryService_getBatteryCharge_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -324,17 +314,12 @@ class FakeBatteryService_getBatteryStatus_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FakeBatteryService_getBatteryStatus_helper();
+    FakeBatteryService_getBatteryStatus_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::string m_return_helper{};
 };
-
-FakeBatteryService_getBatteryStatus_helper::FakeBatteryService_getBatteryStatus_helper() :
-        m_return_helper{}
-{
-}
 
 bool FakeBatteryService_getBatteryStatus_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -365,17 +350,12 @@ class FakeBatteryService_getBatteryInfo_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FakeBatteryService_getBatteryInfo_helper();
+    FakeBatteryService_getBatteryInfo_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     std::string m_return_helper{};
 };
-
-FakeBatteryService_getBatteryInfo_helper::FakeBatteryService_getBatteryInfo_helper() :
-        m_return_helper{}
-{
-}
 
 bool FakeBatteryService_getBatteryInfo_helper::write(yarp::os::ConnectionWriter& connection) const
 {
@@ -406,17 +386,12 @@ class FakeBatteryService_getBatteryTemperature_helper :
         public yarp::os::Portable
 {
 public:
-    explicit FakeBatteryService_getBatteryTemperature_helper();
+    FakeBatteryService_getBatteryTemperature_helper() = default;
     bool write(yarp::os::ConnectionWriter& connection) const override;
     bool read(yarp::os::ConnectionReader& connection) override;
 
     double m_return_helper{};
 };
-
-FakeBatteryService_getBatteryTemperature_helper::FakeBatteryService_getBatteryTemperature_helper() :
-        m_return_helper{}
-{
-}
 
 bool FakeBatteryService_getBatteryTemperature_helper::write(yarp::os::ConnectionWriter& connection) const
 {
